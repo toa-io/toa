@@ -7,9 +7,9 @@ const connector = {
     initial: jest.fn(() => ({ _id: string() })),
     add: jest.fn((object) => {
         object._id = string();
-        return true;
+        return 1;
     }),
-    update: jest.fn(() => true),
+    update: jest.fn(() => 1),
     find: jest.fn(() => [{ _id: string() }, { _id: string() }]),
 };
 

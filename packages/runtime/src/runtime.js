@@ -15,7 +15,7 @@ class Runtime {
         const operation = this.operations[name];
 
         if (!operation)
-            throw new Error(`Operation ${name}} not found`);
+            throw new Error(`Operation '${name}' not found`);
 
         await operation.invoke(io, query);
 

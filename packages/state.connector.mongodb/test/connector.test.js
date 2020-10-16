@@ -19,7 +19,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 
     const loc = mock.location;
-    connector = new Connector(loc.host, loc.db, loc.collection, mock.schema);
+    connector = new Connector(loc.host, loc.db, loc.collection);
 });
 
 it('should create client', () => {
@@ -118,20 +118,24 @@ describe('add', () => {
 });
 
 describe('update', () => {
-    const object = { _id: 'test-id', prop: 'test-value' };
+    let object;
 
     beforeEach(async () => {
         await connector.connect();
+        object = await connector.get(mock.query);
     });
 
     it('should replace document', async () => {
+        object.prop = Math.random();
+
         await connector.update(object);
         const method = mock.Collection.mock.instances[0].findOneAndReplace;
 
-        const filter = { _id: mock.ObjectID.createFromHexString.mock.results[0].value };
+        const id = mock.ObjectID.createFromHexString.mock.results[0].value;
+        const filter = { _id: id };
         const expected = clone(object);
 
-        delete expected._id;
+        expected._id = id;
 
         expect(method).toBeCalledTimes(1);
         expect(method.mock.calls[0][0]).toEqual(filter);
@@ -139,6 +143,8 @@ describe('update', () => {
     });
 
     it('should return result', async () => {
+        object.prop = Math.random();
+
         const ok = await connector.update(object);
         const error = await connector.update({ error: 1 });
 

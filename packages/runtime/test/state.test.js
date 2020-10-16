@@ -32,7 +32,7 @@ describe('object', () => {
         expect(mock.connector.get).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties);
-        expect(mock.connector.get).toBeCalledWith(mock.parse.mock.results[0].value.criteria);
+        expect(mock.connector.get).toBeCalledWith(mock.parse.mock.results[0].value);
         expect(object).toEqual(mock.connector.get.mock.results[0].value);
     });
 
@@ -45,7 +45,7 @@ describe('object', () => {
         expect(mock.connector.add).toBeCalledTimes(1);
         expect(mock.connector.add).toBeCalledWith(object);
 
-        expect(result).toBeTruthy();
+        expect(result).toStrictEqual(1);
         expect(object._id).toBeDefined();
     });
 
@@ -62,9 +62,10 @@ describe('object', () => {
     it('shouldn`t update unchanged object', async () => {
         const object = await state.object(mock.query);
 
-        await object._commit();
+        const result = await object._commit();
 
         expect(mock.connector.update).toBeCalledTimes(0);
+        expect(result).toStrictEqual(1);
     });
 
     it('should throw if object doesnt match schema', async () => {

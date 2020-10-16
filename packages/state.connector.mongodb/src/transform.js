@@ -1,3 +1,5 @@
+const { ObjectID } = require('mongodb');
+
 const LOGIC = {
     'and': '$and',
     ';': '$and',
@@ -27,7 +29,10 @@ operators.LOGIC = (expression) => {
 
 operators.COMPARISON = (expression) => {
     const left = transform(expression.left);
-    const right = transform(expression.right);
+    let right = transform(expression.right);
+
+    if (expression.left.type === 'SELECTOR' && expression.left.selector === '_id')
+        right = new ObjectID(right)
 
     return { [left]: { [COMPARISON[expression.operator]]: right } };
 };

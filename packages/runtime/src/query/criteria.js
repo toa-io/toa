@@ -11,7 +11,7 @@ const transformations = {
     COMPARISON: (node) => {
         const name = node.left.selector;
         const value = node.right.value;
-        const type = TYPES[props[name].type];
+        const type = props[name] && TYPES[props[name].type];
 
         if (type)
             node.right.value = type(value);

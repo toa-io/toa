@@ -23,7 +23,7 @@ module.exports = class {
         const q = this._parse(query);
 
         if (q.criteria)
-            object = await this._connector.get(q.criteria);
+            object = await this._connector.get(q);
         else
             object = {};
 
@@ -31,7 +31,7 @@ module.exports = class {
 
         const commit = async () => {
             if (equal(object, current))
-                return true;
+                return 1;
 
             this._validate(object);
             current = clone(object);

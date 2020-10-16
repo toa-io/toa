@@ -2,10 +2,11 @@ const string = () => Math.random().toString(36).substring(2);
 
 
 const ObjectID = jest.fn(function (value) {
+    this['instance'] = string();
     this.toHexString = jest.fn(() => value || string());
 });
 
-ObjectID.createFromHexString = jest.fn(() => ({ prop: Math.random() }));
+ObjectID.createFromHexString = jest.fn((value) => { return new ObjectID(value); });
 
 const Collection = jest.fn().mockImplementation(function () {
 
@@ -18,7 +19,7 @@ const Collection = jest.fn().mockImplementation(function () {
         toArray: jest.fn(() => ([
             {
                 _id: new ObjectID(string()),
-                prop: Math.random(string()),
+                prop: string(),
             },
             {
                 _id: new ObjectID('2'),

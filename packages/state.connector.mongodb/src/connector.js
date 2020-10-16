@@ -72,11 +72,9 @@ class Connector {
         const document = unformat(object);
 
         const filter = { _id: document._id };
-        delete document._id;
+        const result = await this._collection.findOneAndReplace(filter, document);
 
-        const { ok } = this._collection.findOneAndReplace(filter, document);
-
-        return ok;
+        return result.ok;
     }
 
 }
