@@ -1,0 +1,17 @@
+{
+  "name": "@kookaburra/cli",
+  "version": "0.0.1",
+  "description": "Kookaburra cli",
+  "main": "index.js",
+  "bin": {
+    "koo": "./bin/koo"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@kookaburra/boot": "^0.0.1",
+    "commander": "^6.1.0",
+    "relaxed-json": "^1.0.3"
+  }
+}

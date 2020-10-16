@@ -1,0 +1,15 @@
+domain: teapots
+
+state:
+  name: teapots
+  schema:
+    properties:
+      name:
+        type: string
+      volume:
+        type: number
+      material:
+        type: string
+        enum: [glass, metal]
+    required: [name, volume]
+    unlisted: [volume]

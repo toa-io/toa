@@ -1,0 +1,15 @@
+{
+  "name": "@kookaburra/state.connector.mongodb",
+  "version": "0.0.1",
+  "description": "MongoDB state connector for Kookaburra",
+  "main": "./src/connector.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "mongodb": "^3.6.2"
+  },
+  "devDependencies": {
+    "clone": "^2.1.2"
+  }
+}

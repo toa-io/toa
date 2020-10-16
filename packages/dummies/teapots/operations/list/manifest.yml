@@ -1,0 +1,5 @@
+schema:
+  properties:
+    material:
+      type: string
+      enum: [glass, metal]

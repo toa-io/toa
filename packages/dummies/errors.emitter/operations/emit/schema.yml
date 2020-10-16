@@ -1,0 +1,8 @@
+properties:
+  type:
+    type: number
+  argument:
+    type: number
+
+required:
+  - a

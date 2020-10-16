@@ -1,0 +1,17 @@
+{
+  "name": "@kookaburra/boot",
+  "version": "0.0.1",
+  "description": "Kookaburra boot",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@kookaburra/explorer": "^0.0.1",
+    "@kookaburra/runtime": "^0.0.1",
+    "@kookaburra/state.connector.mongodb": "^0.0.1"
+  },
+  "devDependencies": {
+    "clone": "^2.1.2"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "kookaburra",
+  "version": "0.0.1",
+  "description": "Kookaburra",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "jest": "^26.4.2"
+  }
+}

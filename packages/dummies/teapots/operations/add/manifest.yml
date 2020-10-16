@@ -1,0 +1,16 @@
+type: [upsert,get,find,delete]
+schema:
+  properties:
+    email:
+      type: string
+      format: email
+    name:
+      type: string
+    volume:
+      type: number
+    material:
+      type: string
+      enum: ['glass', 'metal']
+  required:
+    - name
+    - volume
