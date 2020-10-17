@@ -52,8 +52,8 @@ it('should create Locator', () => {
 
 it('should create State', () => {
     const options = {
-        collection: mock.manifest.state.collection,
-        object: mock.manifest.state.object,
+        collection: mock.parsedManifest.state.collection,
+        object: mock.parsedManifest.state.object,
     };
 
     expect(mock.State)
@@ -66,7 +66,7 @@ it('should create State', () => {
 
 it('should call connector', () => {
     expect(connector)
-        .toBeCalledWith(mock.Locator.mock.instances[0], mock.manifest.state);
+        .toBeCalledWith(mock.Locator.mock.instances[0], mock.parsedManifest.state);
 });
 
 it('should call schema', () => {

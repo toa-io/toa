@@ -24,8 +24,36 @@ it('should parse omit', () => {
     expect(result.omit).toEqual(mock.omit);
 });
 
+it('should shrink omit value', () => {
+    const q = clone(mock.query);
+    q.omit = 1000000;
+
+    result = query(q, mock.properties, mock.options);
+
+    expect(result.omit).toEqual(mock.options.omit.limit);
+});
+
 it('should parse select', () => {
     expect(result.select).toEqual(mock.select);
+});
+
+it('should assign default select value', () => {
+    const q = clone(mock.query);
+    delete q.select;
+
+    result = query(q, mock.properties, mock.options);
+
+    expect(result.select).toEqual(mock.options.select.default);
+});
+
+
+it('should shrink select value', () => {
+    const q = clone(mock.query);
+    q.select = 1000000;
+
+    result = query(q, mock.properties, mock.options);
+
+    expect(result.select).toEqual(mock.options.select.limit);
 });
 
 it('should parse query projection', () => {
@@ -46,5 +74,5 @@ it('should throw if schema missing projection property', () => {
 
     broken.projection.push('foo');
 
-    expect(() => query(broken, mock.properties)).toThrow(/Schema missing projection property/);
+    expect(() => query(broken, mock.properties, mock.options)).toThrow(/Schema missing projection property/);
 });

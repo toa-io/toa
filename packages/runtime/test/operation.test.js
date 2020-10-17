@@ -66,7 +66,7 @@ describe('invoke', () => {
             const mockFn = jest.fn(() => 1);
             const algorithm = ({ input, output }, object) => mockFn({ input, output }, object);
 
-            const operation = new Operation(mock.endpoint, algorithm, mock.state);
+            const operation = new Operation(mock.endpoint, algorithm, mock.state, mock.options);
 
             await operation.invoke(mock.io(), mock.query);
 

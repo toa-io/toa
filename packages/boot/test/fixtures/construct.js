@@ -1,3 +1,5 @@
+const clone = require('clone');
+
 const string = () => Math.random().toString(36).substring(2);
 
 const path = string();
@@ -28,6 +30,7 @@ const manifest = {
             },
         },
         collection: {
+            select: 1000,
             projection: ['a'],
         },
         object: {
@@ -36,9 +39,16 @@ const manifest = {
     },
 };
 
+const parsedManifest = clone(manifest);
+
+parsedManifest.state.collection.select = {
+    default: 1000,
+    limit: 1000,
+};
+
 const load = jest.fn(() => ({
-    manifest,
-    operations,
+    manifest: clone(manifest),
+    operations: clone(operations),
 }));
 
 const Locator = jest.fn(function () {
@@ -53,4 +63,4 @@ const State = jest.fn(function () {
     this.instance = string();
 });
 
-module.exports = { path, operations, manifest, load, Locator, Runtime, State };
+module.exports = { path, operations, manifest, parsedManifest, load, Locator, Runtime, State };

@@ -30,6 +30,13 @@ const omit = +query.omit;
 const select = +query.select;
 
 const options = {
+    omit: {
+        limit: 1000
+    },
+    select: {
+        default: 100,
+        limit: 1000,
+    },
     projection: ['a'],
 };
 

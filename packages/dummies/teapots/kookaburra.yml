@@ -13,6 +13,10 @@ state:
         enum: [glass, metal]
     required: [name, volume]
   collection:
+    select:
+      default: 1
+      limit: 3
+    omit: 1000
     projection: [name]
   object:
     projection: [name, volume, material]

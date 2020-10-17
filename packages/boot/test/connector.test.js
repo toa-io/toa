@@ -22,7 +22,7 @@ it('should return connector', () => {
 
 it('should create Connector', () => {
     const host = mock.locator.host.mock.results[0].value;
-    expect(Connector).toBeCalledWith(host, mock.locator.domain, mock.state.name, mock.schema);
+    expect(Connector).toBeCalledWith(host, mock.locator.domain, mock.state.name);
 });
 
 it('should load provided connector', () => {

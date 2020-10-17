@@ -4,7 +4,7 @@ const MODULE = {
     'mongodb': '@kookaburra/state.connector.mongodb',
 };
 
-module.exports = (locator, manifest, schema) => {
+module.exports = (locator, manifest) => {
     const type = manifest.connector || DEFAULT;
 
     let Connector;
@@ -18,5 +18,5 @@ module.exports = (locator, manifest, schema) => {
 
     const host = locator.host(type);
 
-    return new Connector(host, locator.domain, manifest.name, schema);
+    return new Connector(host, locator.domain, manifest.name);
 };

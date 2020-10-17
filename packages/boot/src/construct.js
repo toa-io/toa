@@ -14,7 +14,7 @@ module.exports = async (path) => {
 
     if (component.manifest.state) {
         const options = {
-            collection: component.manifest.state.collection,
+            collection: collection(component.manifest.state.collection),
             object: component.manifest.state.object,
         };
 
@@ -30,3 +30,13 @@ module.exports = async (path) => {
     const operations = component.operations.map(invocation(locator, state));
     return new Runtime(locator, operations, starters);
 };
+
+const collection = (object) => {
+    if (object.select !== undefined && typeof object.select !== 'object')
+        object.select = { limit: object.select, default: object.select };
+
+    if (object.omit !== undefined && typeof object.omit !== 'object')
+        object.omit = { limit: object.select };
+
+    return object;
+}

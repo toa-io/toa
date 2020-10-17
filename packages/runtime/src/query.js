@@ -22,11 +22,23 @@ module.exports = (query, properties, options) => {
         }, {});
     }
 
-    if (query.omit)
-        result.omit = +query.omit;
+    let omit = +(query.omit);
 
-    if (query.select)
-        result.select = +query.select;
+    if (omit) {
+        if (options.omit?.limit && omit > options.omit.limit)
+            omit = options.omit.limit;
+
+        result.omit = omit;
+    }
+
+    let select = +(query.select || options.select?.default);
+
+    if (select) {
+        if (options.select?.limit && select > options.select.limit)
+            select = options.select.limit;
+
+        result.select = select;
+    }
 
     const projection = query.projection || options.projection;
 
