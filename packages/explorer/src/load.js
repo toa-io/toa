@@ -16,8 +16,9 @@ const load = (current) => {
 
 const loadManifest = (root) => {
     const manifestYaml = path.resolve(root, config.paths.manifest);
+    const contents = fs.readFileSync(manifestYaml);
 
-    return yaml.safeLoad(fs.readFileSync(manifestYaml));
+    return yaml.safeLoad(contents);
 };
 
 const loadOperations = (root, manifest) => {

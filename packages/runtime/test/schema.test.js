@@ -47,10 +47,6 @@ it('should provide property if missing required', () => {
     expect(schema.errors[0].property).toEqual('a');
 });
 
-it('should provide projection', () => {
-    expect(schema.projection).toEqual({ c: 0 });
-});
-
 it('should provide properties', () => {
     expect(schema.properties).toEqual(mock.schema.properties);
 });
@@ -72,7 +68,7 @@ it('should list allowed values for enum errors', () => {
     const valid = schema.fit(wrongC);
 
     expect(valid).toBeFalsy();
-    expect(schema.error).toMatch(/one,two,three/)
+    expect(schema.error).toMatch(/one,two,three/);
 });
 
 it('should forbid additional properties', () => {
@@ -81,4 +77,20 @@ it('should forbid additional properties', () => {
 
     expect(schema.fit(valid)).toBeFalsy();
     expect(schema.error).toMatch(/\bexcess\b/);
+});
+
+it('should resolve references', () => {
+    const child = {
+        properties: {
+            a: {
+                $ref: './#/properties/c',
+            },
+        },
+    };
+
+    schema = new Schema(child, clone(mock.schema));
+
+    const result = schema.fit({ a: 'two' });
+
+    expect(result).toBeTruthy();
 });

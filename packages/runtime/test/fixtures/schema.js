@@ -1,6 +1,7 @@
 const bDefault = Math.random().toString();
 
 const schema = {
+    $id: 'parent/',
     properties: {
         a: {
             type: 'number',
@@ -18,7 +19,6 @@ const schema = {
         }
     },
     required: ['a'],
-    unlisted: ['c'],
 };
 
 const objects = {

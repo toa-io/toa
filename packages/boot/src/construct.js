@@ -27,7 +27,7 @@ module.exports = async (path) => {
         starters.push(state);
     }
 
-    const operations = component.operations.map(invocation(locator, state));
+    const operations = component.operations.map(invocation(locator, state, component.manifest.state.schema));
     return new Runtime(locator, operations, starters);
 };
 

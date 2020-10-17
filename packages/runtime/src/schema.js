@@ -5,23 +5,25 @@ const OPTIONS = { useDefaults: true };
 
 module.exports = class {
 
-    constructor(schema= {}) {
+    constructor(schema = {}, parent) {
         this.properties = schema.properties;
-        this.projection = undefined;
         this.error = undefined;
         this.errors = undefined;
 
         schema.additionalProperties = false;
+
+        const ajv = new Ajv(OPTIONS);
+
+        if (parent) {
+            schema.$id = 'parent/child';
+            parent.$id = 'parent/';
+            ajv.addSchema(parent);
+        }
+
         freeze(schema);
 
         this._schema = schema;
-        this._validate = (new Ajv(OPTIONS)).compile(schema);
-
-        if (schema.unlisted)
-            this.projection = schema.unlisted.reduce((c, p) => {
-                c[p] = 0;
-                return c;
-            }, {});
+        this._validate = ajv.compile(schema);
     }
 
     fit(object = {}) {

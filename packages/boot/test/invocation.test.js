@@ -17,7 +17,7 @@ let result = undefined;
 beforeEach(() => {
     jest.resetAllMocks();
 
-    result = invocation(mock.locator, mock.state)(mock.descriptor);
+    result = invocation(mock.locator, mock.state, mock.stateSchema)(mock.descriptor);
 });
 
 it('should return Invocation', () => {
@@ -34,7 +34,7 @@ it('should create Invocation', () => {
 
 it('should call schema', () => {
     expect(schema).toBeCalledTimes(1);
-    expect(schema).toBeCalledWith(mock.descriptor.manifest.schema);
+    expect(schema).toBeCalledWith(mock.descriptor.manifest.schema, mock.stateSchema);
 });
 
 it('should create Operation', () => {

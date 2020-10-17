@@ -10,38 +10,30 @@ state:
         type: number
       material:
         type: string
-        enum: [glass, metal]
-    required: [name, volume]
+        enum: [ glass, metal ]
+    required: [ name, volume ]
   collection:
     select:
       default: 1
       limit: 3
     omit: 1000
-    projection: [name]
+    projection: [ name ]
   object:
-    projection: [name, volume, material]
+    projection: [ name, volume, material ]
 
 operations:
   add:
     schema:
       properties:
-        name:
-          type: string
-        volume:
-          type: number
-        material:
-          type: string
-          enum: ['glass', 'metal']
+        name: ~name
+        volume: ~
+        material: ~
       required:
         - name
         - volume
   update:
     schema:
       properties:
-        name:
-          type: string
-        volume:
-          type: number
-        material:
-          type: string
-          enum: [ 'glass', 'metal' ]
+        name: ~
+        volume: ~
+        material: ~

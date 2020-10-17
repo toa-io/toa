@@ -11,7 +11,7 @@ let result = undefined;
 beforeEach(() => {
     jest.clearAllMocks();
 
-    result = schema(clone(mock.schema));
+    result = schema(clone(mock.schema), mock.parentSchema);
 });
 
 it('should return Schema', () => {
@@ -20,5 +20,5 @@ it('should return Schema', () => {
 });
 
 it('should resolve shorthanded properties', () => {
-    expect(mock.Schema).toBeCalledWith(mock.fixedSchema);
+    expect(mock.Schema).toBeCalledWith(mock.fixedSchema,  mock.parentSchema);
 });
