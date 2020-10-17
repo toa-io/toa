@@ -79,16 +79,14 @@ describe('object', () => {
 
 describe('collection', () => {
 
-    it('should return collection matching criteria and projection', async () => {
+    it('should return collection query', async () => {
         const collection = await state.collection(mock.query);
 
         expect(mock.connector.find).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties);
 
-        const q = Object.assign({ projection: mock.schema.projection }, mock.parse.mock.results[0].value);
-
-        expect(mock.connector.find).toBeCalledWith(q);
+        expect(mock.connector.find).toBeCalledWith(mock.parse.mock.results[0].value);
         expect(collection).toEqual(mock.connector.find.mock.results[0].value);
     });
 

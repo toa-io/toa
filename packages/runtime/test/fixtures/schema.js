@@ -41,5 +41,4 @@ const objects = {
     }
 };
 
-
 module.exports = { schema, objects, bDefault };

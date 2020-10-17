@@ -52,8 +52,6 @@ module.exports = class {
     async collection(query) {
         const q = this._parse(query);
 
-        q.projection = this._schema.projection;
-
         return this._connector.find(q);
     }
 

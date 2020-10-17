@@ -12,4 +12,3 @@ state:
         type: string
         enum: [glass, metal]
     required: [name, volume]
-    unlisted: [volume]

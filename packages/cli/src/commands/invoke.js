@@ -5,8 +5,8 @@ const { construct } = require('@kookaburra/boot');
 
 const invoke = async (component, operation, inputStr, queryStr) => {
     const dir = path.resolve(process.cwd(), component);
-    const input = inputStr && JSON.parse(rjson.transform(inputStr));
-    const query = queryStr && JSON.parse(rjson.transform(queryStr));
+    const input = inputStr ? JSON.parse(rjson.transform(inputStr)) : undefined;
+    const query = queryStr ? JSON.parse(rjson.transform(queryStr)) : undefined;
 
     const runtime = await construct(dir);
 

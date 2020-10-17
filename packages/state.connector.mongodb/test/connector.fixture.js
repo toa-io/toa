@@ -6,7 +6,9 @@ const ObjectID = jest.fn(function (value) {
     this.toHexString = jest.fn(() => value || string());
 });
 
-ObjectID.createFromHexString = jest.fn((value) => { return new ObjectID(value); });
+ObjectID.createFromHexString = jest.fn((value) => {
+    return new ObjectID(value);
+});
 
 const Collection = jest.fn().mockImplementation(function () {
 
@@ -66,10 +68,8 @@ const query = {
     },
     omit: 100,
     select: 10,
-    sort: {
-        a: 1,
-        b: -2,
-    },
+    sort: [{ key: 'a', direction: 1 }, { key: 'b', direction: -1 }],
+    projection: ['a', 'b'],
 };
 
 const criteria = {
@@ -83,7 +83,11 @@ const options = {
     skip: 100,
     sort: {
         a: 1,
-        b: -2,
+        b: -1,
+    },
+    projection: {
+        a: 1,
+        b: 1,
     },
 };
 

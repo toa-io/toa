@@ -9,6 +9,12 @@ beforeEach(() => {
     invocation = new Invocation(mock.operation, mock.schema);
 });
 
+it('should provide endpoint', () => {
+    expect(invocation.endpoint).toBeDefined();
+    expect(invocation.endpoint).toEqual(mock.operation.endpoint);
+});
+
+
 it('should invoke operation', () => {
     const io = mock.io();
     invocation.invoke(io, mock.query);
@@ -17,9 +23,21 @@ it('should invoke operation', () => {
     expect(mock.operation.invoke).toBeCalledWith(io, mock.query);
 });
 
-it('should provide endpoint', () => {
-    expect(invocation.endpoint).toBeDefined();
-    expect(invocation.endpoint).toEqual(mock.operation.endpoint);
+it('should validate input', async () => {
+    const io = mock.io();
+
+    await invocation.invoke(io);
+
+    expect(mock.schema.fit).toBeCalledTimes(1);
+});
+
+it('should not validate undefined input', async () => {
+    const io = mock.io();
+    io.input = undefined;
+
+    await invocation.invoke(io);
+
+    expect(mock.schema.fit).toBeCalledTimes(0);
 });
 
 it('should write io.error if invalid input', () => {
@@ -42,18 +60,3 @@ it('should freeze input', () => {
     expect(input.foo).not.toBeDefined();
 });
 
-it('should not validate undefined input', async () => {
-    const io = mock.io();
-    io.input = undefined;
-
-    await invocation.invoke(io);
-
-    await expect(mock.schema.fit).toBeCalledTimes(0);
-});
-
-it('should not throw on empty input', async () => {
-    const io = mock.io();
-    io.input = '';
-
-    await expect(invocation.invoke(io)).resolves.not.toThrow();
-});

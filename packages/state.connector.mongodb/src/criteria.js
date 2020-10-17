@@ -21,15 +21,15 @@ const COMPARISON = {
 const operators = {};
 
 operators.LOGIC = (expression) => {
-    const left = transform(expression.left);
-    const right = transform(expression.right);
+    const left = criteria(expression.left);
+    const right = criteria(expression.right);
 
     return { [LOGIC[expression.operator]]: [left, right] };
 };
 
 operators.COMPARISON = (expression) => {
-    const left = transform(expression.left);
-    let right = transform(expression.right);
+    const left = criteria(expression.left);
+    let right = criteria(expression.right);
 
     if (expression.left.type === 'SELECTOR' && expression.left.selector === '_id')
         right = new ObjectID(right)
@@ -40,11 +40,11 @@ operators.COMPARISON = (expression) => {
 operators.SELECTOR = (expression) => expression.selector;
 operators.VALUE = (expression) => expression.value;
 
-const transform = (ast) => {
+const criteria = (ast) => {
     if (!operators[ast.type])
         throw new Error('AST parse error');
 
     return operators[ast.type](ast);
 };
 
-module.exports = transform;
+module.exports = criteria;

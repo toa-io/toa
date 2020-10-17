@@ -10,10 +10,11 @@ module.exports = class {
     }
 
     async invoke(io, ...args) {
-        if (io.input) {
+        if (io.input !== undefined) {
             const valid = this._schema.fit(io.input);
 
             if (!valid) {
+                io.error.type = 'InputValidationError';
                 io.error.message = this._schema.error;
                 io.error.fields = this._schema.errors;
 

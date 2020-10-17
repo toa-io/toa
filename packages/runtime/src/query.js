@@ -13,12 +13,12 @@ module.exports = (query, properties) => {
             desc: -1,
         };
 
-        result.sort = query.sort.split(',').reduce((a, c) => {
-            const [key, direction] = c.split(':');
+        result.sort = query.sort.split(',').map((kv) => {
+            let [key, direction] = kv.split(':');
 
-            a[key] = SORT[direction || DEFAULT];
+            direction = SORT[direction || DEFAULT];
 
-            return a;
+            return { key, direction };
         }, {});
     }
 
@@ -27,6 +27,15 @@ module.exports = (query, properties) => {
 
     if (query.select)
         result.select = +query.select;
+
+    if (query.projection) {
+        query.projection.forEach((prop) => {
+            if (!properties[prop])
+                throw new Error(`Schema missing projection property '${prop}'`);
+        });
+
+        result.projection = query.projection;
+    }
 
     return result;
 };

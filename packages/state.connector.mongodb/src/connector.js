@@ -1,5 +1,5 @@
 const { ObjectID, MongoClient } = require('mongodb');
-const transform = require('./transform');
+const parse = require('./query');
 
 const OPTIONS = {
     useNewUrlParser: true,
@@ -32,8 +32,8 @@ class Connector {
     }
 
     async get(query) {
-        const criteria = transform(query.criteria);
-        const object = await this._collection.findOne(criteria);
+        const { criteria, options } = parse(query);
+        const object = await this._collection.findOne(criteria, options);
 
         format(object);
 
@@ -41,13 +41,7 @@ class Connector {
     }
 
     async find(query) {
-        const criteria = transform(query.criteria);
-
-        const options = {
-            limit: query.select,
-            skip: query.omit,
-            sort: query.sort,
-        };
+        const { criteria, options } = parse(query);
 
         const cursor = await this._collection.find(criteria, options);
         const objects = await cursor.toArray();
