@@ -42,6 +42,9 @@ const schema = {
 };
 
 const parse = jest.fn((query) => {
+    if (!query)
+        return;
+
     return query?.criteria ? { criteria: ast } : {};
 });
 

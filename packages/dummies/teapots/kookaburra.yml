@@ -20,3 +20,28 @@ state:
     projection: [name]
   object:
     projection: [name, volume, material]
+
+operations:
+  add:
+    schema:
+      properties:
+        name:
+          type: string
+        volume:
+          type: number
+        material:
+          type: string
+          enum: ['glass', 'metal']
+      required:
+        - name
+        - volume
+  update:
+    schema:
+      properties:
+        name:
+          type: string
+        volume:
+          type: number
+        material:
+          type: string
+          enum: [ 'glass', 'metal' ]

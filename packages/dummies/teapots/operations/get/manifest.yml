@@ -1,5 +1,0 @@
-schema:
-  properties:
-    _id: string #_id must be predefined type
-  required:
-    - _id

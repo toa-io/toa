@@ -1,7 +1,7 @@
 const locate = require('../src/locate');
 const paths = require('./fixtures/paths');
 
-const DUMMY = 'math.calculator';
+const DUMMY = 'teapots';
 const ROOT = paths.root(DUMMY);
 
 it('should locate root from root', () => {

@@ -9,7 +9,7 @@ const load = (current) => {
     const root = locate(current);
 
     const manifest = loadManifest(root);
-    const operations = loadOperations(root);
+    const operations = loadOperations(root, manifest.operations);
 
     return { manifest, operations };
 };
@@ -20,27 +20,24 @@ const loadManifest = (root) => {
     return yaml.safeLoad(fs.readFileSync(manifestYaml));
 };
 
-const loadOperations = (root) => {
+const loadOperations = (root, manifest) => {
     const operationsRoot = path.resolve(root, config.paths.operations);
 
-    return dirs(operationsRoot).map(loadOperation(operationsRoot));
+    return loadAlgorithms(operationsRoot).map(({ name, algorithm }) => ({ name, algorithm, manifest: manifest[name] }));
 };
 
-const loadOperation = (root) => (name) => {
-    const operationRoot = path.resolve(root, name);
-    const algorithm = require(path.resolve(operationRoot, config.paths.algorithm));
-    const manifestYaml = path.resolve(operationRoot, config.paths.descriptor);
-    const manifest = yaml.safeLoad(fs.readFileSync(manifestYaml));
-
-    return { name, algorithm, manifest };
-};
-
-const dirs = (root) => {
+const loadAlgorithms = (root) => {
     // noinspection JSValidateTypes
     return fs
         .readdirSync(root, { withFileTypes: true })
-        .filter(ent => ent.isDirectory())
-        .map(ent => ent.name);
+        .filter(ent => ent.isFile())
+        .map(ent => {
+            const algorithm = require(path.resolve(root, ent.name))
+            const name = path.basename(ent.name, '.js');
+
+            return { name, algorithm };
+        });
 };
+
 
 module.exports = load;

@@ -2,7 +2,7 @@ const load = require('../src/load');
 
 const paths = require('./fixtures/paths');
 
-const DUMMY = 'math.calculator';
+const DUMMY = 'teapots';
 
 let component = undefined;
 
@@ -11,10 +11,7 @@ beforeEach(async () => {
 });
 
 it('should load manifest', () => {
-    const [ domain, name ] = DUMMY.split('.');
-
-    expect(component.manifest.component.domain).toEqual(domain);
-    expect(component.manifest.component.name).toEqual(name);
+    expect(component.manifest.domain).toEqual(DUMMY);
 });
 
 it('should load operations', () => {

@@ -23,7 +23,7 @@ module.exports = class {
 
         const q = this._parse(query, 'object');
 
-        if (q.criteria)
+        if (q)
             object = await this._connector.get(q);
         else
             object = {};
