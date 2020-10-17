@@ -12,7 +12,6 @@
     "deep-equal": "^2.0.4",
     "deep-freeze": "^0.0.1",
     "esprima": "^4.0.1",
-    "uuid": "^8.3.1",
     "clone": "^2.1.2"
   }
 }

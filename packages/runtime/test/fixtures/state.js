@@ -45,4 +45,13 @@ const parse = jest.fn((query) => {
     return query?.criteria ? { criteria: ast } : {};
 });
 
-module.exports = { connector, query, parse, schema };
+const options = {
+    collection: {
+        prop: string(),
+    },
+    object: {
+        prop: string(),
+    },
+};
+
+module.exports = { connector, query, parse, schema, options };

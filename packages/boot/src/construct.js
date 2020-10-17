@@ -13,7 +13,17 @@ module.exports = async (path) => {
     let state = undefined;
 
     if (component.manifest.state) {
-        state = new State(connector(locator, component.manifest.state), schema(component.manifest.state.schema));
+        const options = {
+            collection: component.manifest.state.collection,
+            object: component.manifest.state.object,
+        };
+
+        state = new State(
+            connector(locator, component.manifest.state),
+            schema(component.manifest.state.schema),
+            options
+        );
+
         starters.push(state);
     }
 

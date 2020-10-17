@@ -27,6 +27,12 @@ const manifest = {
                 type: 'number',
             },
         },
+        collection: {
+            projection: ['a'],
+        },
+        object: {
+            projection: ['a', 'b'],
+        },
     },
 };
 

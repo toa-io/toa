@@ -62,7 +62,7 @@ describe('get', () => {
     it('should return object matching criteria', () => {
         const method = mock.Collection.mock.instances[0].findOne;
 
-        expect(method).toBeCalledWith(mock.criteria);
+        expect(method).toBeCalledWith(mock.criteria, mock.options);
         expect(method.mock.results[0].value).toEqual(object);
     });
 

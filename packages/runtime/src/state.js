@@ -4,9 +4,10 @@ const parse = require('./query');
 
 module.exports = class {
 
-    constructor(connector, schema) {
+    constructor(connector, schema, options) {
         this._connector = connector;
         this._schema = schema;
+        this._options = options;
     }
 
     async connect() {
@@ -20,7 +21,7 @@ module.exports = class {
     async object(query) {
         let object = undefined;
 
-        const q = this._parse(query);
+        const q = this._parse(query, 'object');
 
         if (q.criteria)
             object = await this._connector.get(q);
@@ -50,7 +51,7 @@ module.exports = class {
     }
 
     async collection(query) {
-        const q = this._parse(query);
+        const q = this._parse(query, 'collection');
 
         return this._connector.find(q);
     }
@@ -67,8 +68,8 @@ module.exports = class {
             throw new Error(this._schema.error);
     }
 
-    _parse(query) {
-        return parse(query, this._schema.properties);
+    _parse(query, type) {
+        return parse(query, this._schema.properties, this._options?.[type]);
     }
 
 };

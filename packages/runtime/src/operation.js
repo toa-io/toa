@@ -2,7 +2,7 @@ const esprima = require('esprima');
 
 const ERROR_NOT_FOUND = {
     status: 4,
-    message: 'No matching objects found',
+    message: 'No matching object(s) found',
 };
 
 const ERROR_PERSISTENCE = {

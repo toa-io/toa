@@ -51,8 +51,17 @@ it('should create Locator', () => {
 });
 
 it('should create State', () => {
+    const options = {
+        collection: mock.manifest.state.collection,
+        object: mock.manifest.state.object,
+    };
+
     expect(mock.State)
-        .toBeCalledWith(connector.mock.results[0].value, schema.mock.results[0].value);
+        .toBeCalledWith(
+            connector.mock.results[0].value,
+            schema.mock.results[0].value,
+            options
+            );
 });
 
 it('should call connector', () => {

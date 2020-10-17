@@ -8,7 +8,7 @@ const query = require('../src/query');
 let result;
 
 beforeEach(() => {
-    result = query(mock.query, mock.properties);
+    result = query(mock.query, mock.properties, mock.options);
 });
 
 it('should parse criteria', () => {
@@ -28,8 +28,17 @@ it('should parse select', () => {
     expect(result.select).toEqual(mock.select);
 });
 
-it('should parse projection', () => {
-    expect(result.projection).toEqual(mock.projection);
+it('should parse query projection', () => {
+    expect(result.projection).toEqual(mock.query.projection);
+});
+
+it('should parse state projection if no query projection', () => {
+    const q = clone(mock.query);
+    delete q.projection;
+
+    result = query(q, mock.properties, mock.options);
+
+    expect(result.projection).toEqual(mock.options.projection);
 });
 
 it('should throw if schema missing projection property', () => {

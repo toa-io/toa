@@ -12,3 +12,7 @@ state:
         type: string
         enum: [glass, metal]
     required: [name, volume]
+  collection:
+    projection: [name]
+  object:
+    projection: [name, volume, material]

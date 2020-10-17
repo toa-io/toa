@@ -9,7 +9,7 @@ let state;
 beforeEach(() => {
     jest.clearAllMocks();
 
-    state = new State(mock.connector, mock.schema);
+    state = new State(mock.connector, mock.schema, mock.options);
 });
 
 it('should connect', () => {
@@ -31,7 +31,7 @@ describe('object', () => {
 
         expect(mock.connector.get).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledTimes(1);
-        expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties);
+        expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties, mock.options.object);
         expect(mock.connector.get).toBeCalledWith(mock.parse.mock.results[0].value);
         expect(object).toEqual(mock.connector.get.mock.results[0].value);
     });
@@ -84,7 +84,7 @@ describe('collection', () => {
 
         expect(mock.connector.find).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledTimes(1);
-        expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties);
+        expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties, mock.options.collection);
 
         expect(mock.connector.find).toBeCalledWith(mock.parse.mock.results[0].value);
         expect(collection).toEqual(mock.connector.find.mock.results[0].value);

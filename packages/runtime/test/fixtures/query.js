@@ -29,6 +29,8 @@ const sort = [{key: 'a', direction: 1}, {key: 'b', direction: -1}, {key: 'c', di
 const omit = +query.omit;
 const select = +query.select;
 
-const projection = ['a', 'b'];
+const options = {
+    projection: ['a'],
+};
 
-module.exports = { criteria, query, properties, sort, omit, select, projection };
+module.exports = { criteria, query, properties, sort, omit, select, options };

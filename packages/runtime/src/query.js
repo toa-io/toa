@@ -1,9 +1,9 @@
 const criteria = require('./query/criteria');
 
-module.exports = (query, properties) => {
+module.exports = (query, properties, options) => {
     const result = {};
 
-    if (query?.criteria)
+    if (query.criteria)
         result.criteria = criteria(query.criteria, properties);
 
     if (query.sort) {
@@ -28,13 +28,15 @@ module.exports = (query, properties) => {
     if (query.select)
         result.select = +query.select;
 
-    if (query.projection) {
-        query.projection.forEach((prop) => {
+    const projection = query.projection || options.projection;
+
+    if (projection) {
+        projection.forEach((prop) => {
             if (!properties[prop])
                 throw new Error(`Schema missing projection property '${prop}'`);
         });
 
-        result.projection = query.projection;
+        result.projection = projection;
     }
 
     return result;
