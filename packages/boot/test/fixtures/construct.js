@@ -24,9 +24,11 @@ const manifest = {
     domain: string(),
     name: string(),
     state: {
-        properties: {
-            a: {
-                type: 'number',
+        schema: {
+            properties: {
+                a: {
+                    type: 'number',
+                },
             },
         },
         collection: {
@@ -36,6 +38,7 @@ const manifest = {
         object: {
             projection: ['a', 'b'],
         },
+
     },
 };
 
@@ -45,6 +48,8 @@ parsedManifest.state.collection.select = {
     default: 1000,
     limit: 1000,
 };
+
+parsedManifest.state.name = parsedManifest.domain;
 
 const load = jest.fn(() => ({
     manifest: clone(manifest),

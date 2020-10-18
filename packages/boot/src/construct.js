@@ -18,6 +18,9 @@ module.exports = async (path) => {
             object: component.manifest.state.object,
         };
 
+        if (!component.manifest.state.name)
+            component.manifest.state.name = component.manifest.domain;
+
         state = new State(
             connector(locator, component.manifest.state),
             schema(component.manifest.state.schema),
