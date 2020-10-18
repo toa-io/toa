@@ -14,26 +14,28 @@ state:
     required: [ name, volume ]
   collection:
     select:
-      default: 1
-      limit: 3
+      default: 10
+      limit: 100
     omit: 1000
+    sort: name:asc
     projection: [ name ]
   object:
     projection: [ name, volume, material ]
 
 operations:
-  add:
-    schema:
-      properties:
-        name: ~name
-        volume: ~
-        material: ~
-      required:
-        - name
-        - volume
+  add: ~
   update:
+    template: ~
     schema:
       properties:
         name: ~
-        volume: ~
-        material: ~
+  list:
+    template: find
+  get:
+    template:
+      package: '@kookaburra/templates'
+      operation: get
+  boil:
+    schema:
+      properties:
+        interval: number

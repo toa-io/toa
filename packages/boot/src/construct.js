@@ -30,7 +30,12 @@ module.exports = async (path) => {
         starters.push(state);
     }
 
-    const operations = component.operations.map(invocation(locator, state, component.manifest.state.schema));
+    Object.entries(component.manifest.operations).forEach(([name, manifest]) => {
+        if (!component.operations.find(operation => operation.name === name))
+            component.operations.push({ name, manifest });
+    });
+
+    const operations = component.operations.map(invocation(locator, state, component.manifest.state));
     return new Runtime(locator, operations, starters);
 };
 

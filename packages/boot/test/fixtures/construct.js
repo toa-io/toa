@@ -38,7 +38,14 @@ const manifest = {
         object: {
             projection: ['a', 'b'],
         },
-
+    },
+    operations: {
+        get: {
+            template: {
+                module: '@kookaburra/templates',
+                operation: 'get',
+            },
+        },
     },
 };
 
@@ -68,4 +75,6 @@ const State = jest.fn(function () {
     this.instance = string();
 });
 
-module.exports = { path, operations, manifest, parsedManifest, load, Locator, Runtime, State };
+const invocation = jest.fn(() => string());
+
+module.exports = { path, operations, manifest, parsedManifest, load, Locator, Runtime, State, invocation };

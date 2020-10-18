@@ -3,7 +3,8 @@ const criteria = require('./criteria');
 module.exports = (query) => {
     const result = { options: {} };
 
-    result.criteria = criteria(query.criteria);
+    if (query.criteria)
+        result.criteria = criteria(query.criteria);
 
     result.options = {
          limit: query.select,

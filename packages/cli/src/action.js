@@ -21,7 +21,7 @@ module.exports = (command) => {
             return;
         }
 
-        console.log(io.output);
+        io.output && console.log(io.output);
     }
 
 };

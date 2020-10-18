@@ -15,7 +15,7 @@ jest.mock('../src/schema',
 jest.mock('../src/connector',
     () => jest.fn(() => Math.random()));
 jest.mock('../src/invocation',
-    () => jest.fn(() => jest.fn(() => Math.random())));
+    () => jest.fn(() => mock.invocation));
 
 const schema = require('../src/schema');
 const connector = require('../src/connector');
@@ -39,7 +39,7 @@ it('should return Runtime', () => {
 it('should create Runtime', () => {
     expect(mock.Runtime.mock.calls[0][0]).toEqual(mock.Locator.mock.instances[0]);
 
-    const invocations = invocation.mock.results.map(f => f.value.mock.results[0].value);
+    const invocations = invocation.mock.results[0].value.mock.results.map(f => f.value);
     expect(mock.Runtime.mock.calls[0][1]).toEqual(invocations);
 
     expect(mock.Runtime.mock.calls[0][2]).toEqual(mock.State.mock.instances);
@@ -60,8 +60,8 @@ it('should create State', () => {
         .toBeCalledWith(
             connector.mock.results[0].value,
             schema.mock.results[0].value,
-            options
-            );
+            options,
+        );
 });
 
 it('should call connector', () => {
@@ -71,4 +71,10 @@ it('should call connector', () => {
 
 it('should call schema', () => {
     expect(schema).toBeCalledWith(mock.manifest.state.schema);
+});
+
+it('should create operations from templates', () => {
+    expect(mock.invocation).toBeCalledTimes(2);
+    expect(mock.invocation.mock.calls[1][0])
+        .toMatchObject(expect.objectContaining({ manifest: mock.manifest.operations.get }));
 });
