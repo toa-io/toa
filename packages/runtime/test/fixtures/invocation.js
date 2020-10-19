@@ -1,6 +1,11 @@
+const string = () => Math.random().toString(36).substring(2);
+
 const operation = {
     invoke: jest.fn((a, b) => a + b),
-    endpoint: { name: Math.random().toString() },
+    endpoint: { name: string() },
+    type: string(),
+    access: string(),
+    http: { path: string() },
 };
 
 const schema = {

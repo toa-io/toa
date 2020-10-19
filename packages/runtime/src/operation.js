@@ -12,19 +12,24 @@ const ERROR_PERSISTENCE = {
 
 class Operation {
 
-    constructor(endpoint, algorithm, state) {
+    constructor(meta, endpoint, algorithm, state) {
         this.endpoint = endpoint;
 
         this._algorithm = algorithm;
         this._state = state;
-        this._arguments = parse(this._algorithm);
+
+        const { type, access } = parse(this._algorithm);
+
+        this.type = type;
+        this.access = access;
+        this.http = meta.http;
     }
 
     async invoke(io, query) {
         let instance = undefined;
 
-        if (this._arguments.state) {
-            const method = this._arguments.state;
+        if (this.access) {
+            const method = this.access;
 
             if (!this._state[method])
                 throw new Error(`State connector does not provide method '${method}'`);
@@ -36,21 +41,24 @@ class Operation {
                 return;
             }
 
+            if (this.type === 'observation' || this.access === 'collection')
+                Object.freeze(instance);
         }
 
         await this._algorithm(io, instance);
 
-        if (instance?._commit && !(await instance?._commit()))
+        if (this.type === 'transition' && instance?._commit && !(await instance?._commit()))
             Object.assign(io.error, ERROR_PERSISTENCE);
     }
 
 }
 
 const parse = (algorithm) => {
+    const ALLOWED_NAMES = ['transition', 'observation'];
     const ALLOWED_IO = ['input', 'output', 'error'];
     const ALLOWED_STATE = ['object', 'collection', 'cursor'];
 
-    const ERROR_FUNCTION = 'Algorithm must be a function';
+    const ERROR_FUNCTION = `Algorithm must be a named function declaration with [${ALLOWED_NAMES.join(', ')}] names allowed`;
     const ERROR_IO = `First argument must be a deconstruction with [${ALLOWED_IO.join(', ')}] properties allowed`;
     const ERROR_STATE = `Second argument must be one of [${ALLOWED_STATE.join(', ')}]`;
 
@@ -64,15 +72,15 @@ const parse = (algorithm) => {
         throw new Error(`Error parsing algorithm\n${e.message}`);
     }
 
-    const isFunctionExpression = statement.type === 'ExpressionStatement'
-        && ['ArrowFunctionExpression', 'FunctionExpression'].includes(statement.expression.type);
-
-    const isFunctionDeclaration = statement.type === 'FunctionDeclaration';
-
-    if (!isFunctionExpression && !isFunctionDeclaration)
+    if (statement.type !== 'FunctionDeclaration')
         throw new Error(ERROR_FUNCTION);
 
-    const [ioArgument, stateArgument] = isFunctionDeclaration ? statement.params : statement.expression.params;
+    const type = statement.id.name;
+
+    if (!ALLOWED_NAMES.includes(type))
+        throw new Error(ERROR_FUNCTION);
+
+    const [ioArgument, stateArgument] = statement.params;
 
     if (ioArgument.type !== 'ObjectPattern')
         throw new Error(ERROR_IO);
@@ -89,7 +97,7 @@ const parse = (algorithm) => {
         args.state = stateArgument.name;
     }
 
-    return args;
+    return { type, access: args.state };
 };
 
 module.exports = Operation;

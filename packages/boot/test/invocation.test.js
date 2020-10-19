@@ -49,7 +49,7 @@ it('should call schema', () => {
 it('should create Operation', () => {
     expect(mock.Operation).toBeCalledTimes(1);
     expect(mock.Operation)
-        .toBeCalledWith(mock.Endpoint.mock.instances[0], mock.descriptor.algorithm, mock.state);
+        .toBeCalledWith(mock.meta, mock.Endpoint.mock.instances[0], mock.descriptor.algorithm, mock.state);
 });
 
 it('should create Endpoint', () => {

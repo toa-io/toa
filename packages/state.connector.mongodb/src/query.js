@@ -7,7 +7,7 @@ module.exports = (query) => {
         result.criteria = criteria(query.criteria);
 
     result.options = {
-         limit: query.select,
+         limit: query.limit,
          skip: query.omit,
     };
 

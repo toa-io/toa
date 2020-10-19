@@ -67,7 +67,7 @@ const query = {
         },
     },
     omit: 100,
-    select: 10,
+    limit: 10,
     sort: [{ key: 'a', direction: 1 }, { key: 'b', direction: -1 }],
     projection: ['a', 'b'],
 };

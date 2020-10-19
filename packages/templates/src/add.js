@@ -1,14 +1,14 @@
 const schema = require('./schema');
 
-const algorithm = async ({ input, output }, object) => {
+async function transition({ input, output }, object) {
     Object.assign(object, input);
     await object._commit();
     output._id = object._id;
-};
+}
 
 module.exports = (state, descriptor) => {
     if (!descriptor.algorithm)
-        descriptor.algorithm = algorithm;
+        descriptor.algorithm = transition;
 
     if (!descriptor.manifest)
         descriptor.manifest = {};

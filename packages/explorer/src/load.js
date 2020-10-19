@@ -24,20 +24,22 @@ const loadManifest = (root) => {
 const loadOperations = (root, manifest) => {
     const operationsRoot = path.resolve(root, config.paths.operations);
 
-    return loadAlgorithms(operationsRoot).map(({ name, algorithm }) => ({ name, algorithm, manifest: manifest[name] }));
+    return listAlgorithms(operationsRoot)
+        .map(ent => loadAlgorithm(ent))
+        .map(({ name, algorithm }) => ({ name, algorithm, manifest: manifest[name] }));
 };
 
-const loadAlgorithms = (root) => {
-    // noinspection JSValidateTypes
+const listAlgorithms = (root) => {
     return fs
         .readdirSync(root, { withFileTypes: true })
         .filter(ent => ent.isFile())
-        .map(ent => {
-            const algorithm = require(path.resolve(root, ent.name))
-            const name = path.basename(ent.name, '.js');
+        .map(ent => path.resolve(root, ent.name));
+}
 
-            return { name, algorithm };
-        });
+const loadAlgorithm = (location, type = 'javascript') => {
+    const algorithm = require(`./algorithms/${type}`)(location);
+
+    return algorithm;
 };
 
 

@@ -7,31 +7,32 @@ beforeEach(() => {
 
 describe('algorithm parse', () => {
 
-    it('should not throw on function expression', () => {
-        expect(() => new Operation(mock.endpoint, ({ input }) => input)).not.toThrow();
+    it('should throw on function expression', () => {
+        expect(() => new Operation(mock.meta, mock.endpoint, ({ input }) => input)).toThrow();
     });
 
-    it('should not throw on function declaration', () => {
-        function algorithm({ input }) {
-        }
+    it('should throw on wrong function name', () => {
+        function algorithm({ input }) {}
 
-        expect(() => new Operation(mock.endpoint, algorithm)).not.toThrow();
+        expect(() => new Operation(mock.meta, mock.endpoint, algorithm)).toThrow();
     });
 
     it('should throw if algorithm is not function', () => {
-        expect(() => new Operation(mock.endpoint, 1)).toThrow('must be a function');
-        expect(() => new Operation(mock.endpoint, {})).toThrow();
+        expect(() => new Operation(mock.meta, mock.endpoint, 1)).toThrow('must be a named function');
+        expect(() => new Operation(mock.meta, mock.endpoint, {})).toThrow();
     });
 
     describe('first argument', () => {
 
         it('should throw if not a deconstruction', () => {
-            expect(() => new Operation(mock.endpoint, (a) => a))
+            function transition(a) {}
+            expect(() => new Operation(mock.meta, mock.endpoint, transition))
                 .toThrow('must be a deconstruction');
         });
 
         it('should throw if contains not allowed properties', () => {
-            expect(() => new Operation(mock.endpoint, ({ input, excess }) => ({ input, excess })))
+            function transition({ input, excess }) {}
+            expect(() => new Operation(mock.meta, mock.endpoint, transition))
                 .toThrow('must be a deconstruction');
         });
 
@@ -39,18 +40,9 @@ describe('algorithm parse', () => {
 
     describe('second argument', () => {
 
-        it('should not throw if argument name is allowed', () => {
-            expect(() => new Operation(mock.endpoint, ({ input }, object) => ({ input, object })))
-                .not.toThrow();
-            expect(() => new Operation(mock.endpoint, ({ input }, collection) => ({ input, collection })))
-                .not.toThrow();
-            expect(() => new Operation(mock.endpoint, ({ input }, cursor) => ({ input, cursor })))
-                .not.toThrow();
-        });
-
-        it('should throw if argument name is not allowed ', () => {
-            const algorithm = ({ input }, excess) => ({ input, excess });
-            expect(() => new Operation(mock.endpoint, algorithm)).toThrow('must be one of');
+        it('should throw if argument name is not allowed', () => {
+            function transition({}, database) {}
+            expect(() => new Operation(mock.meta, mock.endpoint, transition)).toThrow(/Second argument/);
         });
 
     });
@@ -64,9 +56,12 @@ describe('invoke', () => {
         // noinspection DuplicatedCode
         it('should pass object if argument is object', async () => {
             const mockFn = jest.fn(() => 1);
-            const algorithm = ({ input, output }, object) => mockFn({ input, output }, object);
 
-            const operation = new Operation(mock.endpoint, algorithm, mock.state, mock.options);
+            function observation({ input, output }, object) {
+                mockFn({ input, output }, object);
+            }
+
+            const operation = new Operation(mock.meta, mock.endpoint, observation, mock.state, mock.options);
 
             await operation.invoke(mock.io(), mock.query);
 
@@ -77,13 +72,28 @@ describe('invoke', () => {
             expect(mockFn.mock.calls[0][1]).toEqual(mock.state.object.mock.results[0].value);
         });
 
+        it('should pass readonly object to observation', async () => {
+            expect.assertions(1);
+
+            function observation({ input, output }, object) {
+                object.foo = 'bar';
+                expect(object.foo).not.toBeDefined();
+            }
+
+            const operation = new Operation(mock.meta, mock.endpoint, observation, mock.state, mock.options);
+            await operation.invoke(mock.io(), mock.query);
+        });
+
 
         // noinspection DuplicatedCode
         it('should pass collection if argument is object', async () => {
             const mockFn = jest.fn(() => 1);
-            const algorithm = ({ input, output }, collection) => mockFn({ input, output }, collection);
 
-            const operation = new Operation(mock.endpoint, algorithm, mock.state);
+            function observation({ input, output }, collection) {
+                mockFn({ input, output }, collection);
+            }
+
+            const operation = new Operation(mock.meta, mock.endpoint, observation, mock.state);
 
             await operation.invoke(mock.io(), mock.query);
 
@@ -96,9 +106,9 @@ describe('invoke', () => {
 
         // noinspection DuplicatedCode
         it('should not create neither object nor collection if no argument', async () => {
-            const algorithm = ({ }) => {};
+            function transition({}) {}
 
-            const operation = new Operation(mock.endpoint, algorithm);
+            const operation = new Operation(mock.meta, mock.endpoint, transition);
 
             await operation.invoke(mock.io(), mock.query, mock.state);
 
@@ -107,7 +117,7 @@ describe('invoke', () => {
         });
 
         it('should commit objects', async () => {
-            const operation = new Operation(mock.endpoint, mock.algorithm, mock.state);
+            const operation = new Operation(mock.meta, mock.endpoint, mock.algorithm, mock.state);
 
             await operation.invoke(mock.io(), mock.query);
 
@@ -115,7 +125,7 @@ describe('invoke', () => {
         });
 
         it('should write error if no object found', async () => {
-            const operation = new Operation(mock.endpoint, mock.algorithm, mock.state);
+            const operation = new Operation(mock.meta, mock.endpoint, mock.algorithm, mock.state);
             const io = mock.io();
 
             await operation.invoke(io, { notFound: true });
@@ -124,7 +134,7 @@ describe('invoke', () => {
         });
 
         it('should write error if state persistence error', async () => {
-            const operation = new Operation(mock.endpoint, mock.algorithm, mock.state);
+            const operation = new Operation(mock.meta, mock.endpoint, mock.algorithm, mock.state);
             const io = mock.io();
 
             await operation.invoke(io, { persistenceError: true });

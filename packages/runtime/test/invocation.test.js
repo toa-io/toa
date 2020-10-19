@@ -9,11 +9,22 @@ beforeEach(() => {
     invocation = new Invocation(mock.operation, mock.schema);
 });
 
-it('should provide endpoint', () => {
+it('should proxy public properties', () => {
+    ['endpoint', 'type', 'access', 'http'].forEach((prop) => {
+        expect(invocation[prop]).toBeDefined();
+        expect(invocation[prop]).toEqual(mock.operation[prop]);
+    });
+});
+
+it('should provide type', () => {
+    expect(invocation.type).toBeDefined();
+    expect(invocation.type).toEqual(mock.operation.type);
+});
+
+it('should provide access', () => {
     expect(invocation.endpoint).toBeDefined();
     expect(invocation.endpoint).toEqual(mock.operation.endpoint);
 });
-
 
 it('should invoke operation', () => {
     const io = mock.io();

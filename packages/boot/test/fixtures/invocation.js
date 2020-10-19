@@ -9,11 +9,16 @@ const descriptor = {
     algorithm: jest.fn(),
     manifest: {
         schema: string(),
+        http: [{
+            path: '/',
+        }],
     },
 };
 
-const Invocation = jest.fn(() => {});
-const Endpoint = jest.fn(() => {});
-const Operation = jest.fn(() => {});
+const Invocation = jest.fn(() => 1);
+const Endpoint = jest.fn(() => 1);
+const Operation = jest.fn(() => 1);
 
-module.exports = { locator, state, stateManifest, descriptor, Invocation, Endpoint, Operation };
+const meta = { http: descriptor.manifest.http };
+
+module.exports = { locator, meta, state, stateManifest, descriptor, Invocation, Endpoint, Operation };

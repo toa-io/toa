@@ -1,2 +1,6 @@
-module.exports = ({ input }, object) => {
-};
+function transition({ input }, object) {
+
+}
+
+module.exports = transition;
+

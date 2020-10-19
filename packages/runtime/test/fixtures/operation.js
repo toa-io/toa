@@ -16,6 +16,14 @@ const state = {
     collection: jest.fn(() => ([{ _id: Math.random().toString() }])),
 };
 
-const algorithm = ({ input, output }, object) => ({ input, output, object });
+async function transition({ input, output }, object) {
 
-module.exports = { endpoint, io, query, state, algorithm };
+}
+
+const meta = {
+    http: {
+        path: '/',
+    },
+};
+
+module.exports = { meta, endpoint, io, query, state, algorithm: transition };

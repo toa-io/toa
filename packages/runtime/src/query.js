@@ -33,13 +33,13 @@ module.exports = (query, properties, options) => {
         result.omit = omit;
     }
 
-    let select = +(query?.select || options.select?.default);
+    let limit = +(query?.limit || options.limit?.default);
 
-    if (select) {
-        if (options.select?.limit && select > options.select.limit)
-            select = options.select.limit;
+    if (limit) {
+        if (options.limit?.max && limit > options.limit.max)
+            limit = options.limit.max;
 
-        result.select = select;
+        result.limit = limit;
     }
 
     const projection = query?.projection || options?.projection;

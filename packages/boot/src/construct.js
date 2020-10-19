@@ -9,8 +9,9 @@ module.exports = async (path) => {
 
     const locator = new Locator(component.manifest.domain, component.manifest.name);
 
-    const starters = [];
     let state = undefined;
+
+    const connectors = [];
 
     if (component.manifest.state) {
         const options = {
@@ -24,10 +25,10 @@ module.exports = async (path) => {
         state = new State(
             connector(locator, component.manifest.state),
             schema(component.manifest.state.schema),
-            options
+            options,
         );
 
-        starters.push(state);
+        connectors.push(state);
     }
 
     Object.entries(component.manifest.operations).forEach(([name, manifest]) => {
@@ -36,15 +37,39 @@ module.exports = async (path) => {
     });
 
     const operations = component.operations.map(invocation(locator, state, component.manifest.state));
-    return new Runtime(locator, operations, starters);
+    return new Runtime(locator, operations, connectors);
 };
 
 const collection = (object) => {
-    if (object.select !== undefined && typeof object.select !== 'object')
-        object.select = { limit: object.select, default: object.select };
+    const DEFAULT_LIMIT_DEFAULT = 100;
+    const DEFAULT_LIMIT_MAX = 1000;
+    const DEFAULT_OMIT_MAX = 10000;
 
-    if (object.omit !== undefined && typeof object.omit !== 'object')
-        object.omit = { limit: object.select };
+    if (object.limit === undefined)
+        object.limit = {};
+
+    if (typeof object.limit !== 'object')
+        object.limit = {
+            default: object.limit,
+            max: object.limit,
+        };
+
+    if (!object?.limit.default)
+        object.limit.default = DEFAULT_LIMIT_DEFAULT;
+
+    if (!object.limit.max)
+        object.limit.max = DEFAULT_LIMIT_MAX;
+
+    if (object.omit === undefined)
+        object.omit = {};
+
+    if (typeof object.omit !== 'object')
+        object.omit = {
+            max: object.omit,
+        };
+
+    if (!object.omit.max)
+        object.omit.max = DEFAULT_OMIT_MAX;
 
     return object;
-}
+};

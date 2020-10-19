@@ -4,6 +4,9 @@ module.exports = class {
 
     constructor(operation, schema) {
         this.endpoint = operation.endpoint;
+        this.type = operation.type;
+        this.access = operation.access;
+        this.http = operation.http;
 
         this._operation = operation;
         this._schema = schema;

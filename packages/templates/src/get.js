@@ -1,8 +1,8 @@
-const algorithm = async ({ input, output }, object) => {
+async function observation({ input, output }, object) {
     Object.assign(output, object);
-};
+}
 
 module.exports = (state, descriptor) => {
     if (!descriptor.algorithm)
-        descriptor.algorithm = algorithm;
+        descriptor.algorithm = observation;
 };

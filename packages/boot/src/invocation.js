@@ -25,8 +25,22 @@ module.exports = (locator, state, stateManifest) => (descriptor) => {
         template(clone(stateManifest), descriptor);
     }
 
+    const meta = {};
+
+    if (descriptor.manifest.http !== undefined) {
+        if (typeof descriptor.manifest.http === 'string')
+            descriptor.manifest.http = [{ path: descriptor.manifest.http }];
+
+        meta.http = descriptor.manifest.http.map(binding => {
+            if (typeof binding === 'string')
+                return { path: binding };
+
+            return binding;
+        });
+    }
+
     const endpoint = new Endpoint(locator, descriptor.name);
-    const operation = new Operation(endpoint, descriptor.algorithm, state);
+    const operation = new Operation(meta, endpoint, descriptor.algorithm, state);
 
     return new Invocation(operation, schema(descriptor.manifest?.schema, stateManifest.schema));
 };

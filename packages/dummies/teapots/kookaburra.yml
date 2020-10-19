@@ -13,9 +13,9 @@ state:
         enum: [ glass, metal ]
     required: [ name, volume ]
   collection:
-    select:
+    limit:
       default: 10
-      limit: 100
+      max: 100
     omit: 1000
     sort: name:asc
     projection: [ name ]
@@ -31,10 +31,15 @@ operations:
         name: ~
   list:
     template: find
+    http:
+      - path: /
+      - /{test:name==test}
+      - /{not-test:name!=test}
   get:
     template:
       package: '@kookaburra/templates'
       operation: get
+    http: /{_id}
   boil:
     schema:
       properties:

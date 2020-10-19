@@ -1,0 +1,12 @@
+{
+  "name": "@kookaburra/http",
+  "version": "0.0.1",
+  "description": "Kookaburra http server",
+  "main": "./src/server.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

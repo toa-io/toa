@@ -32,7 +32,7 @@ const manifest = {
             },
         },
         collection: {
-            select: 1000,
+            limit: 1000,
             projection: ['a'],
         },
         object: {
@@ -51,9 +51,13 @@ const manifest = {
 
 const parsedManifest = clone(manifest);
 
-parsedManifest.state.collection.select = {
+parsedManifest.state.collection.limit = {
     default: 1000,
-    limit: 1000,
+    max: 1000,
+};
+
+parsedManifest.state.collection.omit = {
+    max: 10000,
 };
 
 parsedManifest.state.name = parsedManifest.domain;

@@ -8,7 +8,7 @@ const query = {
     criteria: string(),
     sort: 'a,b:desc,c:asc',
     omit: '100',
-    select: '10',
+    limit: '10',
     projection: ['a', 'b'],
 };
 
@@ -27,17 +27,17 @@ const properties = {
 const sort = [{key: 'a', direction: 1}, {key: 'b', direction: -1}, {key: 'c', direction: 1}];
 
 const omit = +query.omit;
-const select = +query.select;
+const limit = +query.limit;
 
 const options = {
     omit: {
         limit: 1000
     },
-    select: {
+    limit: {
         default: 100,
-        limit: 1000,
+        max: 1000,
     },
     projection: ['a'],
 };
 
-module.exports = { criteria, query, properties, sort, omit, select, options };
+module.exports = { criteria, query, properties, sort, omit, limit, options };

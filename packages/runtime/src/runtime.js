@@ -4,7 +4,23 @@ class Runtime {
         this.locator = locator;
         this.connectors = connectors;
 
-        this.operations = Object.fromEntries(operations.map(o => [o.endpoint.name, o]));
+        this.operations = {};
+        this.http = [];
+
+        operations.forEach((operation) => {
+            this.operations[operation.endpoint.name] = operation;
+
+            if (operation.http) {
+                const descriptor = {
+                    routes: operation.http,
+                    safe: operation.type === 'observation',
+                    state: operation.access,
+                    invoke: (...args) => this.invoke(operation, ...args),
+                }
+
+                this.http.push(descriptor)
+            }
+        });
     }
 
     async invoke(name, input, query) {
@@ -12,7 +28,7 @@ class Runtime {
 
         Object.freeze(io);
 
-        const operation = this.operations[name];
+        const operation = typeof name === 'string' ? this.operations[name] : name;
 
         if (!operation)
             throw new Error(`Operation '${name}' not found`);
