@@ -12,7 +12,7 @@ module.exports = (command) => {
             return;
         }
 
-        if (io.error) {
+        if (io?.error) {
             const type = io.error.type;
             const message = `${type ? `${type}: ` : ''}${io.error.message || 'An error occurred'}`;
 
@@ -21,7 +21,7 @@ module.exports = (command) => {
             return;
         }
 
-        io.output && console.log(io.output);
+        io?.output && console.log(io.output);
     }
 
 };

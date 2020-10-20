@@ -1,7 +1,14 @@
 const criteria = require('./query/criteria');
 
-module.exports = (query, properties, options) => {
+const QUERY_KEYWORDS = ['criteria', 'omit', 'limit', 'sort'];
+
+const parse = (query, properties, options) => {
     const result = {};
+
+    if (query)
+        for (const key of Object.keys(query))
+            if (!QUERY_KEYWORDS.includes(key))
+                throw new parse.QueryError(`Unknown query keyword '${key}' only (${QUERY_KEYWORDS.join(', ')}) are supported`);
 
     if (query?.criteria)
         result.criteria = criteria(query.criteria, properties);
@@ -33,7 +40,7 @@ module.exports = (query, properties, options) => {
         result.omit = omit;
     }
 
-    let limit = +(query?.limit || options.limit?.default);
+    let limit = +(query?.limit || options?.limit?.default);
 
     if (limit) {
         if (options.limit?.max && limit > options.limit.max)
@@ -53,5 +60,9 @@ module.exports = (query, properties, options) => {
         result.projection = projection;
     }
 
-    return result;
+    return Object.keys(result).length ? result : undefined;
 };
+
+parse.QueryError = class extends Error {}
+
+module.exports = parse;

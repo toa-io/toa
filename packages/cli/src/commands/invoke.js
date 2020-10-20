@@ -1,14 +1,14 @@
 const path = require('path');
 const rjson = require('relaxed-json');
 
-const { construct } = require('@kookaburra/boot');
+const { compose } = require('@kookaburra/boot');
 
 const invoke = async (component, operation, inputStr, queryStr) => {
     const dir = path.resolve(process.cwd(), component);
     const input = inputStr ? JSON.parse(rjson.transform(inputStr)) : undefined;
     const query = queryStr ? JSON.parse(rjson.transform(queryStr)) : undefined;
 
-    const runtime = await construct(dir);
+    const runtime = await compose(dir);
 
     await runtime.start();
 

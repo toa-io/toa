@@ -27,7 +27,7 @@ it('should bind', () => {
             const verb = mock.verb.mock.results[iteration].value;
             const path = mock.path.mock.results[iteration].value;
 
-            iteration++; // jest starts with 1
+            iteration++; // jest start Nth with 1
 
             expect(mock.path).toHaveBeenNthCalledWith(iteration, binding.path);
             expect(mock.verb).toHaveBeenNthCalledWith(iteration, operation, path.params);

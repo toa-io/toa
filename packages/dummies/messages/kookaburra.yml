@@ -1,0 +1,25 @@
+domain: messages
+
+state:
+  schema:
+    properties:
+      sender: string
+      recipient: string
+      text: string
+      sent:
+        type: boolean
+        default: false
+
+operations:
+  find:
+    template: ~
+  add: ~
+  send:
+    schema:
+      properties:
+        sender: ~
+        recipient: ~
+        text: ~
+
+remotes:
+  - ../credits.accounts

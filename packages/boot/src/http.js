@@ -1,9 +1,9 @@
 const http = require('@kookaburra/http');
-const construct = require('./construct');
+const compose = require('./compose');
 
 module.exports = async (path) => {
     const server = new http();
-    const runtime = await construct(path)
+    const runtime = await compose(path)
 
     server.bind(runtime.http);
 

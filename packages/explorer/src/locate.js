@@ -7,7 +7,7 @@ const locate = (current) => {
     const manifest = find.sync(config.paths.manifest, { cwd: current });
 
     if (!manifest)
-        throw new Error('Manifest file not found');
+        throw new Error(`No manifest file at ${current}`);
 
     return path.dirname(manifest);
 };

@@ -9,4 +9,10 @@ const generate = (name) => {
 module.exports = (state, descriptor) => {
     if (!descriptor.algorithm)
         descriptor.algorithm = generate(state.name);
+
+    if (!descriptor.manifest)
+        descriptor.manifest = {};
+
+    if (!descriptor.manifest.http)
+        descriptor.manifest.http = '/';
 };

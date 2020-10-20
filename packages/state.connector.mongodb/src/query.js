@@ -3,6 +3,9 @@ const criteria = require('./criteria');
 module.exports = (query) => {
     const result = { options: {} };
 
+    if (!query)
+        return result;
+
     if (query.criteria)
         result.criteria = criteria(query.criteria);
 

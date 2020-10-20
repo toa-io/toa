@@ -9,9 +9,9 @@
   "dependencies": {
     "@rsql/parser": "^1.0.2",
     "ajv": "^6.12.5",
+    "clone": "^2.1.2",
     "deep-equal": "^2.0.4",
     "deep-freeze": "^0.0.1",
-    "esprima": "^4.0.1",
-    "clone": "^2.1.2"
+    "esprima": "^4.0.1"
   }
 }

@@ -2,10 +2,10 @@ const TLD = 'facility';
 
 class Locator {
 
-    constructor(domain, name) {
-        this.domain = domain;
-        this.name = name;
-        this.label = `${domain}${name ? `.${name}` : ''}`;
+    constructor(manifest) {
+        this.domain = manifest.domain;
+        this.name = manifest.state?.name;
+        this.label = `${this.domain}${this.name ? `.${this.name}` : ''}`;
     }
 
     host(type) {

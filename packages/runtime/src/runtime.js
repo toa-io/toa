@@ -45,17 +45,33 @@ class Runtime {
     }
 
     async start() {
-        if (this.connectors)
-            await Promise.all(this.connectors.map((connector) => connector.connect()));
+        if (this._starting)
+            return;
 
-        console.log(`Runtime started`);
+        this._starting = true;
+
+        if (this.connectors)
+            await Promise.all(this.connectors.map((connector) => connector.connect && connector.connect()));
+
+        this._starting = false;
+
+        console.log(`Runtime ${this.locator.label} started`);
     }
 
     async stop() {
-        if (this.connectors)
-            await Promise.all(this.connectors.map((connector) => connector.disconnect()));
+        if (this._stopping)
+            return;
 
-        console.log(`Runtime stopped`);
+        this._stopping = true;
+
+        if (this.connectors)
+            await Promise.all(this.connectors.map(
+                (connector) => connector.__runtime ? connector.__runtime.stop() : connector.disconnect(),
+            ));
+
+        this._stopping = false;
+
+        console.log(`Runtime ${this.locator.label} stopped`);
     }
 
 }

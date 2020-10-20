@@ -3,6 +3,9 @@ module.exports = (query) => {
     const DEFAULT_LIMIT_MAX = 1000;
     const DEFAULT_OMIT_MAX = 10000;
 
+    if (!query)
+        return;
+
     if (query.limit === undefined)
         query.limit = {};
 

@@ -1,26 +1,28 @@
 const esprima = require('esprima');
 
-const ERROR_NOT_FOUND = {
+const ERROR_NOT_FOUND = (label, query) => ({
     status: 4,
-    message: 'No matching object found',
-};
+    message: `No matching object found (${label})`,
+    query,
+});
 
-const ERROR_QUERY = {
-    message: 'Query syntax error',
-};
+const ERROR_QUERY = (label, query) => ({
+    message: `Query syntax error ${label}`,
+    query,
+});
 
-const ERROR_PERSISTENCE = {
-    status: 0,
-    message: 'State persistence error',
-};
+const ERROR_PERSISTENCE = (label) => ({
+    message: `State persistence error ${label}`,
+});
 
 class Operation {
 
-    constructor(meta, endpoint, algorithm, state) {
+    constructor(meta, endpoint, algorithm, state, remotes) {
         this.endpoint = endpoint;
 
         this._algorithm = algorithm;
         this._state = state;
+        this._remotes = remotes;
 
         const { type, access } = parse(this._algorithm);
 
@@ -41,12 +43,12 @@ class Operation {
             instance = await this._state[method](query);
 
             if (instance === null) {
-                Object.assign(io.error, ERROR_NOT_FOUND);
+                Object.assign(io.error, ERROR_NOT_FOUND(this.endpoint.label, query));
                 return;
             }
 
             if (instance === undefined) {
-                Object.assign(io.error, ERROR_QUERY);
+                Object.assign(io.error, ERROR_QUERY(this.endpoint.label, query));
                 return;
             }
 
@@ -54,10 +56,14 @@ class Operation {
                 Object.freeze(instance);
         }
 
-        await this._algorithm(io, instance);
+        const runtime = {};
+
+        runtime.remote = this._remotes;
+
+        await this._algorithm(io, instance, runtime);
 
         if (this.type === 'transition' && instance?._commit && !(await instance?._commit()))
-            Object.assign(io.error, ERROR_PERSISTENCE);
+            Object.assign(io.error, ERROR_PERSISTENCE(this.endpoint.label));
     }
 
 }

@@ -1,5 +1,4 @@
-function transition({ input }, object) {
-
+async function transition({ input }, object) {
 }
 
 module.exports = transition;

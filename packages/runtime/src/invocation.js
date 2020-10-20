@@ -17,7 +17,7 @@ module.exports = class {
             const valid = this._schema.fit(io.input);
 
             if (!valid) {
-                io.error.type = 'InputValidationError';
+                io.error.type = `${this.endpoint.label} input validation`;
                 io.error.message = this._schema.error;
                 io.error.fields = this._schema.errors;
 

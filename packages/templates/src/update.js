@@ -13,4 +13,10 @@ module.exports = (state, descriptor) => {
 
     if (!descriptor.manifest.schema)
         descriptor.manifest.schema = schema(state);
+
+    if (!descriptor.manifest)
+        descriptor.manifest = {};
+
+    if (!descriptor.manifest.http)
+        descriptor.manifest.http = '/{_id}';
 };

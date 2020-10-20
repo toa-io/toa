@@ -30,6 +30,9 @@ const loadOperations = (root, manifest) => {
 };
 
 const listAlgorithms = (root) => {
+    if (!fs.existsSync(root))
+        return [];
+
     return fs
         .readdirSync(root, { withFileTypes: true })
         .filter(ent => ent.isFile())

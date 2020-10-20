@@ -24,7 +24,10 @@ module.exports = class {
 
         try {
             q = this._parse(query, 'object');
-        } catch {
+        } catch (e) {
+            if (e instanceof parse.QueryError)
+                throw e;
+
             return;
         }
 

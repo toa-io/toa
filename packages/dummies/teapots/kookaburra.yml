@@ -19,7 +19,7 @@ state:
         max: 100
       omit: 1000
       sort: name:asc
-    projection: [ name ]
+    projection: [ name, volume, material ]
   object:
     projection: [ name, volume, material ]
 

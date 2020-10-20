@@ -18,6 +18,6 @@ program
 program
     .command('http <component>')
     .description('start http server')
-    .action(http);
+    .action(action(http));
 
 program.parse(process.argv);
