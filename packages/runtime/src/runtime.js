@@ -11,14 +11,12 @@ class Runtime {
             this.operations[operation.endpoint.name] = operation;
 
             if (operation.http) {
-                const descriptor = {
-                    routes: operation.http,
+                this.http.push({
+                    bindings: operation.http,
                     safe: operation.type === 'observation',
                     state: operation.access,
                     invoke: (...args) => this.invoke(operation, ...args),
-                }
-
-                this.http.push(descriptor)
+                });
             }
         });
     }

@@ -1,38 +1,30 @@
 const express = require('express');
-const pth = require('./path');
-const vrb = require('./verb');
-const qry = require('./query');
+const favicon = require('serve-favicon');
+
+const path = require('./path');
+const verb = require('./verb');
+const bind = require('./bind');
 
 module.exports = class {
 
     constructor() {
         this._app = this._create();
-        this._port = process.env.KOO_HTTP_SERVER_PORT || 8080;
     }
 
-    bind(bindings) {
-        bindings.forEach((binding) => {
-            const verb = vrb(binding).toLowerCase();
+    bind(operations) {
 
-            binding.routes.forEach((route) => {
-                const { path, expressions } = pth(route.path);
-
-                this._app[verb](path, async (req, res) => {
-                    const input = req.body;
-                    const query = qry(binding, req, expressions);
-
-                    const result = await binding.invoke(input, query);
-
-                    res.json(result.output);
-                });
-            });
-
-        });
+        operations.forEach((operation) =>
+            operation.bindings.forEach((binding) => {
+                const { params, route } = path(binding.path);
+                bind(this._app, verb(operation, params), route, operation, binding);
+            }));
     }
 
     start() {
-        this._server = this._app.listen(this._port, () => {
-            console.log(`HTTP server listening at port ${this._port}`);
+        const port = process.env.KOO_HTTP_SERVER_PORT || 8080;
+
+        this._server = this._app.listen(port, () => {
+            console.log(`HTTP server listening at port ${port}`);
         });
     }
 
@@ -45,6 +37,7 @@ module.exports = class {
     _create() {
         const app = express();
         app.use(express.json());
+        app.use(favicon(`${__dirname}/../assets/favicon.png`));
         app.set('json spaces', 2);
 
         return app;

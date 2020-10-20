@@ -3,6 +3,7 @@ const { Locator, Runtime, State } = require('@kookaburra/runtime');
 const schema = require('./schema');
 const connector = require('./connector');
 const invocation = require('./invocation');
+const query = require('./query');
 
 module.exports = async (path) => {
     const component = await load(path);
@@ -15,7 +16,7 @@ module.exports = async (path) => {
 
     if (component.manifest.state) {
         const options = {
-            collection: collection(component.manifest.state.collection),
+            collection: query(component.manifest.state.collection),
             object: component.manifest.state.object,
         };
 
@@ -38,38 +39,4 @@ module.exports = async (path) => {
 
     const operations = component.operations.map(invocation(locator, state, component.manifest.state));
     return new Runtime(locator, operations, connectors);
-};
-
-const collection = (object) => {
-    const DEFAULT_LIMIT_DEFAULT = 100;
-    const DEFAULT_LIMIT_MAX = 1000;
-    const DEFAULT_OMIT_MAX = 10000;
-
-    if (object.limit === undefined)
-        object.limit = {};
-
-    if (typeof object.limit !== 'object')
-        object.limit = {
-            default: object.limit,
-            max: object.limit,
-        };
-
-    if (!object?.limit.default)
-        object.limit.default = DEFAULT_LIMIT_DEFAULT;
-
-    if (!object.limit.max)
-        object.limit.max = DEFAULT_LIMIT_MAX;
-
-    if (object.omit === undefined)
-        object.omit = {};
-
-    if (typeof object.omit !== 'object')
-        object.omit = {
-            max: object.omit,
-        };
-
-    if (!object.omit.max)
-        object.omit.max = DEFAULT_OMIT_MAX;
-
-    return object;
 };

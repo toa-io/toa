@@ -1,9 +1,12 @@
-module.exports = (binding) => {
+module.exports = (binding, params) => {
     if (binding.safe)
-        return 'GET';
+        return 'get';
 
     if (binding.state === 'collection')
-        throw new Error('Not implemented');
+        throw new Error('Collection transitions not supported yet');
 
-    return 'PUT'; // TODO
+    if (params.includes('_id'))
+        return 'put';
+
+    return 'post';
 };

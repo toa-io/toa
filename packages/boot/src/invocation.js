@@ -1,6 +1,7 @@
 const clone = require('clone');
 const { Invocation, Endpoint, Operation } = require('@kookaburra/runtime');
 const schema = require('./schema');
+const query = require('./query');
 
 module.exports = (locator, state, stateManifest) => (descriptor) => {
     if (typeof descriptor.manifest === 'string')
@@ -35,7 +36,7 @@ module.exports = (locator, state, stateManifest) => (descriptor) => {
             if (typeof binding === 'string')
                 return { path: binding };
 
-            return binding;
+            return query(binding);
         });
     }
 

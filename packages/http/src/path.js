@@ -1,13 +1,12 @@
-const SEARCH_RE = /{(?<param>[^:]+)(:(?<expression>[^:]+))?}/gm;
+const SEARCH_RE = /{(.+?)}/gm;
 
 module.exports = (input) => {
-    const expressions = [];
-    const path = input.replace(SEARCH_RE, (_, name, _2, expression) => {
-        if (expression)
-            expressions.push(expression);
+    const params = [];
 
-        return expression ? name : `:${name}`;
+    const route = input.replace(SEARCH_RE, (_, name) => {
+        params.push(name);
+        return `:${name}`;
     });
 
-    return { path, expressions };
+    return { params, route };
 };

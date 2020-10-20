@@ -1,26 +1,30 @@
-module.exports = (binding, req, expressions) => {
+module.exports = (operation, binding, req) => {
     const query = {};
     const criteria = [];
 
-    if (binding.state === 'collection') {
+    if (operation.state === 'collection') {
+
         ['omit', 'limit', 'sort'].forEach(prop => {
-            if (req.query[prop])
-                query[prop] = req.query[prop]
+            const sealed = binding.query?.[prop] !== undefined && binding.query?.sealed;
+            const value = (!sealed && !binding.query?.frozen && req.query[prop]) || binding.query?.[prop];
+
+            if (value)
+                query[prop] = value;
         });
 
-        if (req.query.criteria)
-            criteria.push(req.query.criteria);
     }
 
-    if (Object.keys(req.params).length) {
-        criteria.push(Object.entries(req.params).map(([name, value]) => `${name}==${value}`));
-    }
+    if (binding.query?.criteria !== undefined)
+        criteria.push(binding.query.criteria);
 
-    if (expressions?.length)
-        expressions.map(e => criteria.push(e));
+    if (!binding.query?.frozen && req.query.criteria && (binding.query?.criteria === undefined || !binding.query?.sealed))
+        criteria.push(req.query.criteria);
+
+    if (Object.keys(req.params).length)
+        Object.entries(req.params).map(([name, value]) => criteria.push(`${name}==${value}`));
 
     if (criteria)
-        query.criteria = criteria.join(';')
+        query.criteria = criteria.join(';');
 
     return query;
 };
