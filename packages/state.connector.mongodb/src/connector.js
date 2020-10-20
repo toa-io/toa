@@ -74,6 +74,9 @@ class Connector {
 }
 
 const format = (object) => {
+    if (object === null)
+        return;
+
     Object.defineProperty(object, '_id', {
         writable: false,
         configurable: false,

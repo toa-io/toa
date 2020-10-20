@@ -2,7 +2,11 @@ const esprima = require('esprima');
 
 const ERROR_NOT_FOUND = {
     status: 4,
-    message: 'No matching object(s) found',
+    message: 'No matching object found',
+};
+
+const ERROR_QUERY = {
+    message: 'Query syntax error',
 };
 
 const ERROR_PERSISTENCE = {
@@ -36,8 +40,13 @@ class Operation {
 
             instance = await this._state[method](query);
 
-            if (!instance) {
+            if (instance === null) {
                 Object.assign(io.error, ERROR_NOT_FOUND);
+                return;
+            }
+
+            if (instance === undefined) {
+                Object.assign(io.error, ERROR_QUERY);
                 return;
             }
 

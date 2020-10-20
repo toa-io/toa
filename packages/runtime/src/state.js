@@ -20,13 +20,21 @@ module.exports = class {
 
     async object(query) {
         let object = undefined;
+        let q = undefined;
 
-        const q = this._parse(query, 'object');
+        try {
+            q = this._parse(query, 'object');
+        } catch {
+            return;
+        }
 
         if (q)
             object = await this._connector.get(q);
         else
             object = {};
+
+        if (object === null)
+            return null;
 
         let current = clone(object);
 
@@ -51,7 +59,13 @@ module.exports = class {
     }
 
     async collection(query) {
-        const q = this._parse(query, 'collection');
+        let q = undefined;
+
+        try {
+            q = this._parse(query, 'collection');
+        } catch {
+            return;
+        }
 
         return this._connector.find(q);
     }
