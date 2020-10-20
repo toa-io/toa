@@ -13,6 +13,17 @@ describe('common', () => {
         expect(result.criteria).toEqual(`a==${params.a};b==${params.b}`);
     });
 
+    it('should resolve pointers', () => {
+        const result = query(
+            {},
+            { query: { criteria: 'a==*test' } },
+            { query: {}, params: { __test: 1 } },
+        );
+
+        expect(result.criteria).toEqual('a==1');
+    });
+
+
     it('should map request criteria to query criteria', () => {
         const criteria = string();
         const result = query({}, {}, { query: { criteria }, params: {} });

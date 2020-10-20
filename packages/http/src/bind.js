@@ -32,8 +32,7 @@ module.exports = (app, verb, route, operation, binding) => {
 
         res.status(status)
 
-        if (response)
-            res.json(response);
+        if (response) res.json(response);
         else res.end();
     });
 

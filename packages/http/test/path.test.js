@@ -12,3 +12,10 @@ it('should parse parameters', () => {
     expect(result.route).toEqual('/:_id');
     expect(result.params).toEqual(['_id']);
 });
+
+it('should parse pointers', () => {
+    const input = '/{*pointer}';
+    const result = path(input);
+    expect(result.route).toEqual('/:__pointer');
+    expect(result.params).toEqual(['__pointer']);
+});

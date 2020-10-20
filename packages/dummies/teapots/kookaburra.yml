@@ -47,6 +47,14 @@ operations:
           criteria: name!=test
           limit: 5
           frozen: 1
+      - path: /messages/{room}/{*perspective}
+        query:
+          criteria: (sender==*perspective;sent==1),(recipient==*perspective;received==1)
+        authorization:
+          schema: basic
+          rules:
+            allow:
+              - user: perspective
   get:
     template:
       package: '@kookaburra/templates'
