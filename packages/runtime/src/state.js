@@ -5,6 +5,8 @@ const parse = require('./query');
 module.exports = class {
 
     constructor(connector, schema, options) {
+        this.manifest = schema.manifest;
+
         this._connector = connector;
         this._schema = schema;
         this._options = options;

@@ -12,12 +12,13 @@ const ERROR_QUERY = (label, query) => ({
 });
 
 const ERROR_PERSISTENCE = (label) => ({
+    status: 0,
     message: `State persistence error ${label}`,
 });
 
 class Operation {
 
-    constructor(meta, endpoint, algorithm, state, remotes) {
+    constructor(endpoint, meta, algorithm, state, remotes) {
         this.endpoint = endpoint;
 
         this._algorithm = algorithm;

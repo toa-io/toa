@@ -47,7 +47,7 @@ it('should create Runtime', () => {
 
 it('should create Locator', () => {
     expect(mock.Locator)
-        .toBeCalledWith(mock.manifest.domain, mock.manifest.name);
+        .toBeCalledWith(mock.parsedManifest);
 });
 
 it('should create State', () => {
@@ -77,4 +77,29 @@ it('should create operations from templates', () => {
     expect(mock.invocation).toBeCalledTimes(2);
     expect(mock.invocation.mock.calls[1][0])
         .toMatchObject(expect.objectContaining({ manifest: mock.manifest.operations.get }));
+});
+
+it('should not load component if passed', async () => {
+    jest.clearAllMocks();
+    await construct(mock.component, mock.resolve);
+
+    expect(mock.load).toBeCalledTimes(0);
+});
+
+it('should resolve remotes', async () => {
+    jest.clearAllMocks();
+
+    await construct({
+        manifest: {
+            remotes: mock.remotes,
+        },
+    }, mock.resolve);
+
+    expect(mock.resolve).toBeCalledTimes(mock.remotes.length);
+
+    let i = 0;
+
+    for (const remote of mock.remotes)
+        expect(mock.resolve).toHaveBeenNthCalledWith(++i, remote);
+
 });

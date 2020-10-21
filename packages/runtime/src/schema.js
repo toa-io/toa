@@ -5,25 +5,23 @@ const OPTIONS = { useDefaults: true };
 
 module.exports = class {
 
-    constructor(schema = {}, parent) {
-        this.properties = schema.properties;
+    constructor(manifest = {}, parent) {
+        this.manifest = manifest;
+        this.properties = manifest.properties;
         this.error = undefined;
         this.errors = undefined;
 
-        schema.additionalProperties = false;
+        manifest.additionalProperties = false;
 
         const ajv = new Ajv(OPTIONS);
 
         if (parent) {
-            schema.$id = 'parent/child';
+            manifest.$id = 'parent/child';
             parent.$id = 'parent/';
             ajv.addSchema(parent);
         }
 
-        freeze(schema);
-
-        this._schema = schema;
-        this._validate = ajv.compile(schema);
+        this._validate = ajv.compile(manifest);
     }
 
     fit(object = {}) {

@@ -18,6 +18,8 @@ let connector = undefined;
 beforeEach(() => {
     jest.clearAllMocks();
 
+    delete process.env.KOO_STATE_CONNECTOR_MONGODB_URL;
+
     const loc = mock.location;
     connector = new Connector(loc.host, loc.db, loc.collection);
 });

@@ -7,9 +7,11 @@ const runtime = {
     stop: jest.fn(),
 };
 
-const mockConstruct = jest.fn(() => runtime);
+const mockCompose = jest.fn(() => runtime);
 
-jest.mock('@kookaburra/boot', () => ({ construct: mockConstruct }));
+jest.mock('@kookaburra/boot', () => ({
+    compose: mockCompose
+}));
 
 const invoke = require('../src/commands/invoke');
 
@@ -31,7 +33,7 @@ let result = undefined;
 
 beforeEach(async () => {
     runtime.invoke.mockClear();
-    mockConstruct.mockClear();
+    mockCompose.mockClear();
 
     result = await invoke(args.component, args.operation, args.input, args.query);
 });
@@ -39,8 +41,8 @@ beforeEach(async () => {
 it('should compose', () => {
     const dir = path.resolve(process.cwd(), args.component);
 
-    expect(mockConstruct).toBeCalledTimes(1);
-    expect(mockConstruct).toBeCalledWith(dir);
+    expect(mockCompose).toBeCalledTimes(1);
+    expect(mockCompose).toBeCalledWith(dir);
 });
 
 it('should invoke', () => {

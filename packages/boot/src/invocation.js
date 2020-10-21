@@ -3,7 +3,7 @@ const { Invocation, Endpoint, Operation } = require('@kookaburra/runtime');
 const schema = require('./schema');
 const query = require('./query');
 
-module.exports = (locator, state, remotes, stateManifest) => (descriptor) => {
+module.exports = (locator, state, remotes) => (descriptor) => {
     if (typeof descriptor.manifest === 'string')
         descriptor.manifest = { template: descriptor.manifest };
 
@@ -26,7 +26,7 @@ module.exports = (locator, state, remotes, stateManifest) => (descriptor) => {
 
         const template = require(module)[name];
 
-        template(clone(stateManifest), descriptor);
+        template(clone(state.manifest), descriptor);
     }
 
     const meta = {};
@@ -44,7 +44,7 @@ module.exports = (locator, state, remotes, stateManifest) => (descriptor) => {
     }
 
     const endpoint = new Endpoint(locator, descriptor.name);
-    const operation = new Operation(meta, endpoint, descriptor.algorithm, state, remotes);
+    const operation = new Operation(endpoint, meta, descriptor.algorithm, state, remotes);
 
-    return new Invocation(operation, schema(descriptor.manifest?.schema, stateManifest.schema));
+    return new Invocation(operation, schema(descriptor.manifest?.schema, state.manifest));
 };

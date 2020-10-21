@@ -1,6 +1,6 @@
 const criteria = require('./query/criteria');
 
-const QUERY_KEYWORDS = ['criteria', 'omit', 'limit', 'sort'];
+const QUERY_KEYWORDS = ['criteria', 'omit', 'limit', 'sort', 'projection'];
 
 const parse = (query, properties, options) => {
     const result = {};

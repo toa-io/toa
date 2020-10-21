@@ -19,5 +19,5 @@ it('should locate root from subdirectory',  () => {
 it('should throw if manifest not found', () => {
     const path = paths.join(DUMMY,'../..');
 
-    expect(() => locate(path)).toThrow('Manifest file not found');
+    expect(() => locate(path)).toThrow('No manifest file at');
 });

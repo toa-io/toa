@@ -81,4 +81,18 @@ const State = jest.fn(function () {
 
 const invocation = jest.fn(() => string());
 
-module.exports = { path, operations, manifest, parsedManifest, load, Locator, Runtime, State, invocation };
+const component = {
+    manifest: {
+        remotes: [string()],
+    },
+    operations: [string()],
+};
+
+const remotes = [string(), string()];
+
+const resolve = jest.fn(() => ({ name: string(), proxy: string() }));
+
+module.exports = {
+    path, operations, manifest, parsedManifest, load, Locator, Runtime, State,
+    invocation, component, remotes, resolve,
+};

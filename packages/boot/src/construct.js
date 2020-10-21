@@ -60,13 +60,17 @@ module.exports = async (component, resolve) => {
         }
     }
 
-    if (component.manifest.operations)
+    if (component.manifest.operations) {
+        if (!component.operations)
+            component.operations = [];
+
         Object.entries(component.manifest.operations).forEach(([name, manifest]) => {
             if (!component.operations.find(operation => operation.name === name))
                 component.operations.push({ name, manifest });
         });
+    }
 
-    const operations = component.operations.map(invocation(locator, state, remotes, component.manifest.state));
+    const operations = component.operations?.map(invocation(locator, state, remotes));
 
     return new Runtime(locator, operations, connectors);
 };

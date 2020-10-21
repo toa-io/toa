@@ -26,7 +26,7 @@ let result = undefined;
 beforeEach(() => {
     jest.resetAllMocks();
 
-    result = invocation(mock.locator, mock.state, mock.stateManifest)(mock.descriptor);
+    result = invocation(mock.locator, mock.state, mock.remotes)(mock.descriptor);
 });
 
 it('should return Invocation', () => {
@@ -43,13 +43,13 @@ it('should create Invocation', () => {
 
 it('should call schema', () => {
     expect(schema).toBeCalledTimes(1);
-    expect(schema).toBeCalledWith(mock.descriptor.manifest.schema, mock.state.schema);
+    expect(schema).toBeCalledWith(mock.descriptor.manifest.schema, mock.state.manifest);
 });
 
 it('should create Operation', () => {
     expect(mock.Operation).toBeCalledTimes(1);
     expect(mock.Operation)
-        .toBeCalledWith(mock.meta, mock.Endpoint.mock.instances[0], mock.descriptor.algorithm, mock.state);
+        .toBeCalledWith(mock.Endpoint.mock.instances[0], mock.meta, mock.descriptor.algorithm, mock.state, mock.remotes);
 });
 
 it('should create Endpoint', () => {
@@ -70,10 +70,10 @@ describe('template', () => {
             },
         };
 
-        invocation(mock.locator, mock.state, mock.stateManifest)(descriptor);
+        invocation(mock.locator, mock.state)(descriptor);
 
         expect(template).toBeCalledTimes(1);
-        expect(template).toBeCalledWith(mock.stateManifest, descriptor);
+        expect(template).toBeCalledWith(mock.state.manifest, descriptor);
     });
 
     it('should use @kookaburra/templates as default templates module', () => {
@@ -89,7 +89,7 @@ describe('template', () => {
         invocation(mock.locator, mock.state, mock.stateManifest)(descriptor);
 
         expect(template).toBeCalledTimes(1);
-        expect(template).toBeCalledWith(mock.stateManifest, descriptor);
+        expect(template).toBeCalledWith(mock.state.manifest, descriptor);
     });
 
     it('should parse shorthand', () => {
@@ -100,10 +100,10 @@ describe('template', () => {
             },
         };
 
-        invocation(mock.locator, mock.state, mock.stateManifest)(descriptor);
+        invocation(mock.locator, mock.state)(descriptor);
 
         expect(template).toBeCalledTimes(1);
-        expect(template).toBeCalledWith(mock.stateManifest, descriptor);
+        expect(template).toBeCalledWith(mock.state.manifest, descriptor);
     });
 
     it('should provide a copy of state manifest', () => {
@@ -114,9 +114,9 @@ describe('template', () => {
             },
         };
 
-        invocation(mock.locator, mock.state, mock.stateManifest)(descriptor);
+        invocation(mock.locator, mock.state)(descriptor);
 
-        expect(mock.stateManifest.foo).toBeUndefined();
+        expect(mock.state.manifest.foo).toBeUndefined();
     });
 
 });
