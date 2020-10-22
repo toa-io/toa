@@ -30,22 +30,12 @@ it('should shrink omit value', () => {
 
     result = query(q, mock.properties, mock.options);
 
-    expect(result.omit).toEqual(mock.options.omit.limit);
+    expect(result.omit).toEqual(mock.options.max.omit);
 });
 
 it('should parse limit', () => {
     expect(result.limit).toEqual(mock.limit);
 });
-
-it('should assign default limit value', () => {
-    const q = clone(mock.query);
-    delete q.limit;
-
-    result = query(q, mock.properties, mock.options);
-
-    expect(result.limit).toEqual(mock.options.limit.default);
-});
-
 
 it('should shrink limit value', () => {
     const q = clone(mock.query);
@@ -53,7 +43,7 @@ it('should shrink limit value', () => {
 
     result = query(q, mock.properties, mock.options);
 
-    expect(result.limit).toEqual(mock.options.limit.max);
+    expect(result.limit).toEqual(mock.options.max.limit);
 });
 
 it('should parse query projection', () => {

@@ -49,11 +49,9 @@ const parse = jest.fn((query) => {
 });
 
 const options = {
-    collection: {
-        prop: string(),
-    },
-    object: {
-        prop: string(),
+    max: {
+        limit: 10,
+        omit: 1000,
     },
 };
 

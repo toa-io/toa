@@ -27,7 +27,7 @@ describe('request handling', () => {
         });
 
         it('should create query', () => {
-            expect(mock.query).toBeCalledWith(mock.operation, mock.binding, mock.req);
+            expect(mock.query).toBeCalledWith(mock.operation.state, mock.binding, mock.req);
         });
 
         it('should invoke operation', () => {

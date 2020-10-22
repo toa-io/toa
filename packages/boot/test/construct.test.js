@@ -46,8 +46,7 @@ it('should create Runtime', () => {
 });
 
 it('should create Locator', () => {
-    expect(mock.Locator)
-        .toBeCalledWith(mock.parsedManifest);
+    expect(mock.Locator).toBeCalledTimes(1);
 });
 
 it('should create State', () => {
@@ -60,13 +59,13 @@ it('should create State', () => {
         .toBeCalledWith(
             connector.mock.results[0].value,
             schema.mock.results[0].value,
-            options,
+            { max: mock.parsedManifest.state.max }
         );
 });
 
 it('should call connector', () => {
-    expect(connector)
-        .toBeCalledWith(mock.Locator.mock.instances[0], mock.parsedManifest.state);
+    expect(connector.mock.calls[0][0])
+        .toEqual(mock.Locator.mock.instances[0]);
 });
 
 it('should call schema', () => {

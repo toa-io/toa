@@ -81,13 +81,13 @@ describe('collection state', () => {
         describe(argument, () => {
 
             it(`should map request argument to query`, () => {
-                const result = query(operation, {}, { query: { [argument]: value }, params: {} });
+                const result = query(operation.state, {}, { query: { [argument]: value }, params: {} });
 
                 expect(result[argument]).toEqual(value);
             });
 
             it(`should map binding argument to query`, () => {
-                const result = query(operation, { query: { [argument]: value } }, { query: {}, params: {} });
+                const result = query(operation.state, { query: { [argument]: value } }, { query: {}, params: {} });
 
                 expect(result[argument]).toEqual(value);
             });
@@ -97,7 +97,7 @@ describe('collection state', () => {
                 const rv = string();
 
                 const result = query(
-                    operation,
+                    operation.state,
                     { query: { [argument]: value } },
                     { query: { [ra]: rv }, params: {} },
                 );
@@ -108,7 +108,7 @@ describe('collection state', () => {
 
             it(`should override binding values by request values`, () => {
                 const rv = string();
-                const result = query(operation, { query: { [argument]: value } }, {
+                const result = query(operation.state, { query: { [argument]: value } }, {
                     query: { [argument]: rv },
                     params: {},
                 });
@@ -119,7 +119,7 @@ describe('collection state', () => {
             it(`should ignore request values sealed by binding`, () => {
                 const rv = string();
                 const result = query(
-                    operation,
+                    operation.state,
                     { query: { [argument]: value, sealed: 1 } },
                     { query: { [argument]: rv }, params: {} },
                 );
@@ -132,7 +132,7 @@ describe('collection state', () => {
                 const rv = string();
 
                 const result = query(
-                    operation,
+                    operation.state,
                     { query: { [argument]: value, frozen: 1 } },
                     { query: { [argument]: rv, [ra]: rv }, params: {} },
                 );

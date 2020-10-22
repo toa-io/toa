@@ -25,7 +25,7 @@ module.exports = class {
         let q = undefined;
 
         try {
-            q = this._parse(query, 'object');
+            q = this._parse(query);
         } catch (e) {
             if (e instanceof parse.QueryError)
                 throw e;
@@ -67,7 +67,7 @@ module.exports = class {
         let q = undefined;
 
         try {
-            q = this._parse(query, 'collection');
+            q = this._parse(query);
         } catch {
             return;
         }
@@ -87,8 +87,8 @@ module.exports = class {
             throw new Error(this._schema.error);
     }
 
-    _parse(query, type) {
-        return parse(query, this._schema.properties, this._options?.[type]);
+    _parse(query) {
+        return parse(query, this._schema.properties, this._options);
     }
 
 };

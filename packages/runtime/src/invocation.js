@@ -13,19 +13,17 @@ module.exports = class {
     }
 
     async invoke(io, ...args) {
-        if (io.input !== undefined) {
-            const valid = this._schema.fit(io.input);
+        const valid = this._schema.fit(io.input);
 
-            if (!valid) {
-                io.error.type = `${this.endpoint.label} input validation`;
-                io.error.message = this._schema.error;
-                io.error.fields = this._schema.errors;
+        if (!valid) {
+            io.error.type = `${this.endpoint.label} input validation`;
+            io.error.message = this._schema.error;
+            io.error.fields = this._schema.errors;
 
-                return;
-            }
-
-            freeze(io.input);
+            return;
         }
+
+        freeze(io.input);
 
         await this._operation.invoke(io, ...args);
     }

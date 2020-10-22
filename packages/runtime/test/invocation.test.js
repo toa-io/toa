@@ -42,15 +42,6 @@ it('should validate input', async () => {
     expect(mock.schema.fit).toBeCalledTimes(1);
 });
 
-it('should not validate undefined input', async () => {
-    const io = mock.io();
-    io.input = undefined;
-
-    await invocation.invoke(io);
-
-    expect(mock.schema.fit).toBeCalledTimes(0);
-});
-
 it('should write io.error if invalid input', () => {
     const io = mock.io();
     io.input.error = 1;

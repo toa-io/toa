@@ -1,0 +1,13 @@
+{
+  "name": "@kookaburra/transport.connector.rabbitmq",
+  "version": "0.0.1",
+  "description": "RabbitMQ transport connector for Kookaburra",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "amqplib": "^0.6.0",
+    "rascal": "^10.2.6"
+  }
+}

@@ -1,10 +1,9 @@
-module.exports = (query) => {
-    const DEFAULT_LIMIT_DEFAULT = 100;
-    const DEFAULT_LIMIT_MAX = 1000;
-    const DEFAULT_OMIT_MAX = 10000;
+module.exports = (query, defaults) => {
+    if (!query && !defaults)
+        return;
 
     if (!query)
-        return;
+        query = {};
 
     if (query.limit === undefined)
         query.limit = {};
@@ -16,10 +15,10 @@ module.exports = (query) => {
         };
 
     if (!query?.limit.default)
-        query.limit.default = DEFAULT_LIMIT_DEFAULT;
+        query.limit.default = defaults?.limit?.default;
 
     if (!query.limit.max)
-        query.limit.max = DEFAULT_LIMIT_MAX;
+        query.limit.max = defaults?.limit?.max;
 
     if (query.omit === undefined)
         query.omit = {};
@@ -30,7 +29,14 @@ module.exports = (query) => {
         };
 
     if (!query.omit.max)
-        query.omit.max = DEFAULT_OMIT_MAX;
+        query.omit.max = defaults?.omit?.max;
+
+    for (const keyword of ['criteria', 'sort', 'sealed', 'frozen', 'projection'])
+        if (!query[keyword] && defaults?.[keyword])
+            query[keyword] = defaults[keyword];
+
+    if (query.criteria && [',', ';'].includes(query.criteria[0]))
+        query.criteria = defaults.criteria + query.criteria;
 
     return query;
 };

@@ -1,19 +1,24 @@
 const POINTER_RE = /(?<!\\)\*(\w+)/gm;
 
-module.exports = (operation, binding, req) => {
+module.exports = (state, binding, req) => {
     const query = {};
     const criteria = [];
 
-    if (operation.state === 'collection') {
+    if (state === 'collection') {
 
         ['omit', 'limit', 'sort'].forEach(prop => {
             const sealed = binding.query?.[prop] !== undefined && binding.query?.sealed;
-            const value = (!sealed && !binding.query?.frozen && req.query[prop]) || binding.query?.[prop];
+            let value = (!sealed && !binding.query?.frozen && req.query[prop]) || binding.query?.[prop];
+
+            if (typeof value === 'object')
+                value = value.default;
 
             if (value)
                 query[prop] = value;
         });
 
+        if (binding.query?.projection)
+            query.projection = binding.query.projection;
     }
 
     if (binding.query?.criteria !== undefined)

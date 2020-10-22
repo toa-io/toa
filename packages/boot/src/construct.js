@@ -3,11 +3,13 @@ const { Locator, Runtime, State } = require('@kookaburra/runtime');
 const schema = require('./schema');
 const connector = require('./connector');
 const invocation = require('./invocation');
-const query = require('./query');
+const manifest = require('./manifest');
 
 module.exports = async (component, resolve) => {
     if (typeof component === 'string')
         component = await load(component);
+
+    manifest(component.manifest);
 
     const locator = new Locator(component.manifest);
 
@@ -18,12 +20,8 @@ module.exports = async (component, resolve) => {
 
     if (component.manifest.state) {
         const options = {
-            collection: query(component.manifest.state.collection),
-            object: component.manifest.state.object,
+            max: component.manifest.state.max,
         };
-
-        if (!component.manifest.state.name)
-            component.manifest.state.name = component.manifest.domain;
 
         state = new State(
             connector(locator, component.manifest.state),
@@ -37,9 +35,6 @@ module.exports = async (component, resolve) => {
     if (component.manifest.remotes) {
         if (typeof resolve !== 'function')
             throw new Error('Runtime with dependencies must be created via Composition (boot.compose)');
-
-        if (typeof component.manifest.remotes === 'string')
-            component.manifest.remotes = [component.manifest.remotes];
 
         for (const remote of component.manifest.remotes) {
             const { name, proxy } = await resolve(remote);
@@ -70,7 +65,7 @@ module.exports = async (component, resolve) => {
         });
     }
 
-    const operations = component.operations?.map(invocation(locator, state, remotes));
+    const operations = component.operations?.map(invocation(locator, state, remotes, component.manifest.state));
 
     return new Runtime(locator, operations, connectors);
 };

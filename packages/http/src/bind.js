@@ -4,7 +4,7 @@ module.exports = (app, verb, route, operation, binding) => {
 
     app[verb](route, async (req, res) => {
         const input = req.body;
-        const query = qry(operation, binding, req);
+        const query = qry(operation.state, binding, req);
 
         let response = undefined, status = 200;
 

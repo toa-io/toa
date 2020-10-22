@@ -5,24 +5,25 @@ const QUERY_KEYWORDS = ['criteria', 'omit', 'limit', 'sort', 'projection'];
 const parse = (query, properties, options) => {
     const result = {};
 
+    if (!query)
+        return;
+
     if (query)
         for (const key of Object.keys(query))
             if (!QUERY_KEYWORDS.includes(key))
                 throw new parse.QueryError(`Unknown query keyword '${key}' only (${QUERY_KEYWORDS.join(', ')}) are supported`);
 
-    if (query?.criteria)
+    if (query.criteria)
         result.criteria = criteria(query.criteria, properties);
 
-    const sort = query?.sort || options?.sort;
-
-    if (sort) {
+    if (query.sort) {
         const DEFAULT = 'asc';
         const SORT = {
             asc: 1,
             desc: -1,
         };
 
-        result.sort = sort.split(',').map((kv) => {
+        result.sort = query.sort.split(',').map((kv) => {
             let [key, direction] = kv.split(':');
 
             direction = SORT[direction || DEFAULT];
@@ -31,25 +32,17 @@ const parse = (query, properties, options) => {
         }, {});
     }
 
-    let omit = +(query?.omit);
+    const omit = +query.omit;
 
-    if (omit) {
-        if (options.omit?.limit && omit > options.omit.limit)
-            omit = options.omit.limit;
+    if (omit)
+        result.omit = Math.min(omit, options.max.omit);
 
-        result.omit = omit;
-    }
+    const limit = +query.limit || options.max.limit;
 
-    let limit = +(query?.limit || options?.limit?.default);
+    if (limit)
+        result.limit = Math.min(limit, options.max.limit);
 
-    if (limit) {
-        if (options.limit?.max && limit > options.limit.max)
-            limit = options.limit.max;
-
-        result.limit = limit;
-    }
-
-    const projection = query?.projection || options?.projection;
+    const projection = query.projection || options?.projection;
 
     if (projection) {
         projection.forEach((prop) => {

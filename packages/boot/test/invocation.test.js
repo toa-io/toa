@@ -26,7 +26,7 @@ let result = undefined;
 beforeEach(() => {
     jest.resetAllMocks();
 
-    result = invocation(mock.locator, mock.state, mock.remotes)(mock.descriptor);
+    result = invocation(mock.locator, mock.state, mock.remotes, mock.stateManifest)(mock.descriptor);
 });
 
 it('should return Invocation', () => {
@@ -64,59 +64,16 @@ describe('template', () => {
             name: 'get',
             manifest: {
                 template: {
-                    module: '@kookaburra/templates',
-                    operation: 'get',
+                    package: '@kookaburra/templates',
+                    name: 'get',
                 },
             },
         };
 
-        invocation(mock.locator, mock.state)(descriptor);
+        invocation(mock.locator, mock.state, [], mock.stateManifest)(descriptor);
 
         expect(template).toBeCalledTimes(1);
-        expect(template).toBeCalledWith(mock.state.manifest, descriptor);
-    });
-
-    it('should use @kookaburra/templates as default templates module', () => {
-        const descriptor = {
-            name: 'get',
-            manifest: {
-                template: {
-                    operation: 'get',
-                },
-            },
-        };
-
-        invocation(mock.locator, mock.state, mock.stateManifest)(descriptor);
-
-        expect(template).toBeCalledTimes(1);
-        expect(template).toBeCalledWith(mock.state.manifest, descriptor);
-    });
-
-    it('should parse shorthand', () => {
-        const descriptor = {
-            name: 'get',
-            manifest: {
-                template: 'get',
-            },
-        };
-
-        invocation(mock.locator, mock.state)(descriptor);
-
-        expect(template).toBeCalledTimes(1);
-        expect(template).toBeCalledWith(mock.state.manifest, descriptor);
-    });
-
-    it('should provide a copy of state manifest', () => {
-        const descriptor = {
-            name: 'get',
-            manifest: {
-                template: 'update',
-            },
-        };
-
-        invocation(mock.locator, mock.state)(descriptor);
-
-        expect(mock.state.manifest.foo).toBeUndefined();
+        expect(template).toBeCalledWith(mock.stateManifest, descriptor);
     });
 
 });

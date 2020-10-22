@@ -31,19 +31,12 @@ const manifest = {
                 },
             },
         },
-        collection: {
-            limit: 1000,
-            projection: ['a'],
-        },
-        object: {
-            projection: ['a', 'b'],
-        },
     },
     operations: {
         get: {
             template: {
-                module: '@kookaburra/templates',
-                operation: 'get',
+                package: '@kookaburra/templates',
+                name: 'get',
             },
         },
     },
@@ -51,13 +44,9 @@ const manifest = {
 
 const parsedManifest = clone(manifest);
 
-parsedManifest.state.collection.limit = {
-    default: 1000,
-    max: 1000,
-};
-
-parsedManifest.state.collection.omit = {
-    max: 10000,
+parsedManifest.state.max = {
+    limit: 100,
+    omit: 1000,
 };
 
 parsedManifest.state.name = parsedManifest.domain;

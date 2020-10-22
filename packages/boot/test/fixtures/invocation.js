@@ -1,7 +1,8 @@
 const string = () => Math.random().toString(36).substring(2);
 
 const locator = string();
-const state = { prop: string(), manifest: string() };
+const state = { prop: string() };
+const stateManifest = { prop: string() };
 
 const descriptor = {
     name: string(),
@@ -22,4 +23,4 @@ const meta = { http: descriptor.manifest.http };
 
 const remotes = [string(), string()];
 
-module.exports = { locator, meta, state, remotes, descriptor, Invocation, Endpoint, Operation };
+module.exports = { locator, meta, state, stateManifest, remotes, descriptor, Invocation, Endpoint, Operation };

@@ -30,14 +30,10 @@ const omit = +query.omit;
 const limit = +query.limit;
 
 const options = {
-    omit: {
-        limit: 1000
+    max: {
+        limit: 10,
+        omit: 1000,
     },
-    limit: {
-        default: 100,
-        max: 1000,
-    },
-    projection: ['a'],
 };
 
 module.exports = { criteria, query, properties, sort, omit, limit, options };

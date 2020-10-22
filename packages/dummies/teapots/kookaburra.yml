@@ -11,17 +11,12 @@ state:
       material:
         type: string
         enum: [ glass, metal ]
+      price: number
+      markup: number
     required: [ name, volume ]
-  collection:
-    query:
-      limit:
-        default: 10
-        max: 100
-      omit: 1000
-      sort: name:asc
-    projection: [ name, volume, material ]
-  object:
-    projection: [ name, volume, material ]
+  max:
+    limit: 100
+    omit: 1000
 
 operations:
   add:
@@ -35,16 +30,22 @@ operations:
     http: /{_id}
   list:
     template: find
+    query:
+      limit: 10
+      sort: name:asc
+      projection: [ name, volume, material ]
+      sealed: 1
     http:
       - /
-      - path: /test
+      - path: /metal
         query:
-          criteria: name==test
+          criteria: ;name==test
           limit: 5
-          sealed: 1
-      - path: /not-test
+          sealed: 0
+        representation: [ name ]
+      - path: /filter/{*name}
         query:
-          criteria: name!=test
+          criteria: name!=*name
           limit: 5
           frozen: 1
       - path: /messages/{room}/{*perspective}
@@ -58,7 +59,7 @@ operations:
   get:
     template:
       package: '@kookaburra/templates'
-      operation: get
+      name: get
     http: /{_id}
   boil:
     schema:
