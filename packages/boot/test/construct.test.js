@@ -8,18 +8,19 @@ jest.mock('@kookaburra/runtime', () => ({
     Locator: mock.Locator,
     Runtime: mock.Runtime,
     State: mock.State,
+    Schema: mock.Schema,
 }));
 
-jest.mock('../src/schema',
-    () => jest.fn(() => Math.random()));
 jest.mock('../src/connector',
     () => jest.fn(() => Math.random()));
 jest.mock('../src/invocation',
     () => jest.fn(() => mock.invocation));
+jest.mock('../src/transport',
+    () => jest.fn(() => mock.transport));
 
-const schema = require('../src/schema');
 const connector = require('../src/connector');
 const invocation = require('../src/invocation');
+const transport = require('../src/transport');
 
 const construct = require('../src/construct');
 
@@ -50,15 +51,10 @@ it('should create Locator', () => {
 });
 
 it('should create State', () => {
-    const options = {
-        collection: mock.parsedManifest.state.collection,
-        object: mock.parsedManifest.state.object,
-    };
-
     expect(mock.State)
         .toBeCalledWith(
             connector.mock.results[0].value,
-            schema.mock.results[0].value,
+            mock.Schema.mock.instances[0],
             { max: mock.parsedManifest.state.max }
         );
 });
@@ -66,10 +62,6 @@ it('should create State', () => {
 it('should call connector', () => {
     expect(connector.mock.calls[0][0])
         .toEqual(mock.Locator.mock.instances[0]);
-});
-
-it('should call schema', () => {
-    expect(schema).toBeCalledWith(mock.manifest.state.schema);
 });
 
 it('should create operations from templates', () => {
@@ -80,7 +72,7 @@ it('should create operations from templates', () => {
 
 it('should not load component if passed', async () => {
     jest.clearAllMocks();
-    await construct(mock.component, mock.resolve);
+    await construct(mock.component, undefined, mock.resolve);
 
     expect(mock.load).toBeCalledTimes(0);
 });
@@ -92,13 +84,13 @@ it('should resolve remotes', async () => {
         manifest: {
             remotes: mock.remotes,
         },
-    }, mock.resolve);
+    }, undefined, mock.resolve);
 
     expect(mock.resolve).toBeCalledTimes(mock.remotes.length);
 
     let i = 0;
 
     for (const remote of mock.remotes)
-        expect(mock.resolve).toHaveBeenNthCalledWith(++i, remote);
+        expect(mock.resolve).toHaveBeenNthCalledWith(++i, remote, mock.Locator.mock.instances[0]);
 
 });

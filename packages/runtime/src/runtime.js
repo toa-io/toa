@@ -55,7 +55,7 @@ class Runtime {
 
         this._starting = false;
 
-        console.log(`Runtime ${this.locator.label} started`);
+        console.log(`Runtime '${this.locator.label}' started`);
     }
 
     async stop() {
@@ -71,7 +71,7 @@ class Runtime {
 
         this._stopping = false;
 
-        console.log(`Runtime ${this.locator.label} stopped`);
+        console.log(`Runtime '${this.locator.label}' stopped`);
     }
 
 }

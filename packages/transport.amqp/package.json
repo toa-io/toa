@@ -1,0 +1,14 @@
+{
+  "name": "@kookaburra/transport.amqp",
+  "version": "0.0.1",
+  "description": "AMQP transport for Kookaburra",
+  "main": "./src/transport.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "amqplib": "^0.6.0",
+    "rascal": "^10.2.6",
+    "short-uuid": "^4.1.0"
+  }
+}

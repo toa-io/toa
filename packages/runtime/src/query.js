@@ -5,7 +5,7 @@ const QUERY_KEYWORDS = ['criteria', 'omit', 'limit', 'sort', 'projection'];
 const parse = (query, properties, options) => {
     const result = {};
 
-    if (!query)
+    if (!query || !Object.keys(query).length)
         return;
 
     if (query)

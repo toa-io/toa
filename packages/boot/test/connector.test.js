@@ -1,8 +1,8 @@
 const connector = require('../src/connector');
 const mock = require('./fixtures/connector');
 
-jest.mock('@kookaburra/state.connector.mongodb');
-const Connector = require('@kookaburra/state.connector.mongodb');
+jest.mock('@kookaburra/state.mongodb');
+const Connector = require('@kookaburra/state.mongodb');
 
 const mockConnector = jest.fn(() => {});
 
@@ -47,5 +47,5 @@ it('should throw on unrecognized connector', () => {
     const broken = Object.assign({}, mock.state);
 
     broken.connector = 'foo';
-    expect(() => connector(mock.locator, broken, mock.schema)).toThrow(/Unresolved state connector/);
+    expect(() => connector(mock.locator, broken, mock.schema)).toThrow(/Error loading/);
 });

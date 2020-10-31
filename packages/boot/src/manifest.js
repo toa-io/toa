@@ -1,10 +1,15 @@
-const query = require('./query');
+const query = require('./manifest/query');
+const schema = require('./manifest/schema');
 
 const DEFAULT_TEMPLATES_PACKAGE = '@kookaburra/templates';
 const DEFAULT_STATE_MAX_LIMIT = 100;
 const DEFAULT_STATE_MAX_OMIT = 1000;
+const DEFAULT_TRANSPORT = 'amqp';
 
 module.exports = (manifest) => {
+
+    if (!manifest.transport)
+        manifest.transport = DEFAULT_TRANSPORT;
 
     if (manifest.state) {
         if (!manifest.state.name)
@@ -18,6 +23,9 @@ module.exports = (manifest) => {
 
         if (!manifest.state.max.omit)
             manifest.state.max.omit = DEFAULT_STATE_MAX_OMIT;
+
+        if (manifest.state.schema)
+            schema(manifest.state.schema);
     }
 
     if (typeof manifest.remotes === 'string')
@@ -62,6 +70,9 @@ module.exports = (manifest) => {
                     return binding;
                 });
             }
+
+            if (om.schema)
+                schema(om.schema);
 
             manifest.operations[name] = om;
         }

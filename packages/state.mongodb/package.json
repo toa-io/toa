@@ -1,5 +1,5 @@
 {
-  "name": "@kookaburra/state.connector.mongodb",
+  "name": "@kookaburra/state.mongodb",
   "version": "0.0.1",
   "description": "MongoDB state connector for Kookaburra",
   "main": "./src/connector.js",

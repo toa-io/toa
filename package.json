@@ -6,6 +6,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "test": "jest"
+  },
   "devDependencies": {
     "jest": "^26.4.2"
   }

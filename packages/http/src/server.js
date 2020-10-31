@@ -12,7 +12,6 @@ module.exports = class {
     }
 
     bind(operations) {
-
         operations.forEach((operation) =>
             operation.bindings.forEach((binding) => {
                 const { params, route } = path(binding.path);
@@ -23,14 +22,20 @@ module.exports = class {
     start() {
         const port = process.env.KOO_HTTP_SERVER_PORT || 8080;
 
-        this._server = this._app.listen(port, () => {
-            console.log(`HTTP server listening at port ${port}`);
-        });
+        return new Promise((resolve) => {
+            this._server = this._app.listen(port, () => {
+                console.log(`HTTP server listening at port ${port}`);
+                resolve();
+            });
+        })
     }
 
     stop() {
-        this._server.close(() => {
-            console.log('HTTP server stopped');
+        return new Promise((resolve) => {
+            this._server.close(() => {
+                console.log('HTTP server stopped');
+                resolve();
+            });
         });
     }
 

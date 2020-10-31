@@ -1,10 +1,10 @@
 const path = require('path');
 
-const { http } = require('@kookaburra/boot');
+const { host } = require('@kookaburra/boot');
 
 const invoke = async (component) => {
     const location = path.resolve(process.cwd(), component);
-    await http(location);
+    await host(location);
 };
 
 module.exports = invoke;

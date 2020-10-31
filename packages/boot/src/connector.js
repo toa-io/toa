@@ -1,8 +1,10 @@
 const DEFAULT = 'mongodb';
 
 const MODULE = {
-    'mongodb': '@kookaburra/state.connector.mongodb',
+    'mongodb': '@kookaburra/state.mongodb',
 };
+
+// TODO: implement singleton
 
 module.exports = (locator, manifest) => {
     const type = manifest.connector || DEFAULT;
@@ -12,8 +14,8 @@ module.exports = (locator, manifest) => {
     try {
         const module = MODULE[type] || type;
         Connector = require(module);
-    } catch {
-        throw new Error(`Unresolved state connector '${type}'`);
+    } catch (e) {
+        throw new Error(`Error loading '${type}' state connector\n${e}`);
     }
 
     const host = locator.host(type);

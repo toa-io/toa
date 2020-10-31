@@ -1,32 +1,26 @@
 const mock = require('./fixtures/invocation');
 
-jest.mock('@kookaburra/templates', () => ({
-    get: jest.fn(),
-    update: (state) => {
-        state.foo = 'bar';
-    },
-}));
-
-const template = require('@kookaburra/templates').get;
+jest.mock('@kookaburra/templates', () => mock.Templates);
+const templates = require('@kookaburra/templates');
 
 jest.mock('@kookaburra/runtime', () => ({
     Invocation: mock.Invocation,
     Endpoint: mock.Endpoint,
     Operation: mock.Operation,
+    Schema: mock.Schema,
 }));
 
-jest.mock('../src/schema',
+jest.mock('../src/manifest/schema',
     () => jest.fn(() => 1));
-const schema = require('../src/schema');
 
 const invocation = require('../src/invocation');
 
 let result = undefined;
 
 beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
-    result = invocation(mock.locator, mock.state, mock.remotes, mock.stateManifest)(mock.descriptor);
+    result = invocation(mock.locator, mock.transporter, mock.state, mock.remotes, mock.stateManifest)(mock.descriptor);
 });
 
 it('should return Invocation', () => {
@@ -38,12 +32,7 @@ it('should create Invocation', () => {
     const operation = mock.Operation.mock.instances[0];
 
     expect(mock.Invocation).toBeCalledTimes(1);
-    expect(mock.Invocation).toBeCalledWith(operation, schema.mock.results[0].value);
-});
-
-it('should call schema', () => {
-    expect(schema).toBeCalledTimes(1);
-    expect(schema).toBeCalledWith(mock.descriptor.manifest.schema, mock.state.manifest);
+    expect(mock.Invocation).toBeCalledWith(operation, mock.Schema.mock.instances[0]);
 });
 
 it('should create Operation', () => {
@@ -70,10 +59,10 @@ describe('template', () => {
             },
         };
 
-        invocation(mock.locator, mock.state, [], mock.stateManifest)(descriptor);
+        invocation(mock.locator, mock.transporter, mock.state, [], mock.stateManifest)(descriptor);
 
-        expect(template).toBeCalledTimes(1);
-        expect(template).toBeCalledWith(mock.stateManifest, descriptor);
+        expect(templates.get).toBeCalledTimes(1);
+        expect(templates.get).toBeCalledWith(mock.stateManifest, descriptor);
     });
 
 });

@@ -1,3 +1,4 @@
-const load = require('./load');
-
-module.exports = { load };
+module.exports = {
+    load: require('./load'),
+    read: require('./read'),
+};

@@ -1,4 +1,4 @@
-const query = require('../src/query');
+const query = require('../src/manifest/query');
 
 it('should use defaults for limit', () => {
     expect(query({ limit: { default: 10 } }, { limit: { max: 100 } }))

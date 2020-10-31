@@ -1,19 +1,23 @@
-async function transition({ input, error }, object, runtime) {
-    object.sender = input.sender;
-    object.recipient = input.recipient;
-    object.text = input.text || Math.random().toString(36).substring(2);
+async function transition({ input, output, error }, object, runtime) {
+    Object.assign(object, input);
 
     await object._commit();
 
-    const io = await runtime.remote.credits.accounts.debit({ amount: 1 }, { criteria: `user==${input.sender}` });
+    const reply = await runtime.remote.credits.accounts.debit(
+        { amount: 1 },
+        { criteria: `user==${input.sender}` },
+    );
 
-    if (io.error) {
-        error.status = io.status;
-        error.message = io.error.message;
+    if (reply.error) {
+        Object.assign(error, reply.error);
         return;
     }
 
-    object.sent = true;
+    object.status = 'sent';
+
+    await object._commit();
+
+    output._id = object._id;
 }
 
 module.exports = transition;

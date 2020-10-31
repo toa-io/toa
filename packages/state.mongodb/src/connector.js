@@ -22,13 +22,13 @@ class Connector {
 
         this._collection = this._client.db(this._location.db).collection(this._location.collection);
 
-        console.log(`Opened connection to ${this._url} for ${this._location.db}.${this._location.collection}`);
+        console.log(`Connected to ${this._url} (${this._location.db}.${this._location.collection})`);
     }
 
     async disconnect() {
         await this._client.close();
 
-        console.log(`Closed connection to ${this._url} for ${this._location.db}.${this._location.collection}`);
+        console.log(`Disconnected form ${this._url} (${this._location.db}.${this._location.collection})`);
     }
 
     async get(query) {

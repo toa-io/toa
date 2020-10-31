@@ -23,7 +23,7 @@ module.exports = class {
             return;
         }
 
-        freeze(io.input);
+        io.input && freeze(io.input);
 
         await this._operation.invoke(io, ...args);
     }

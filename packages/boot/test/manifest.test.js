@@ -1,5 +1,5 @@
 const mockQuery = jest.fn(() => Math.random());
-jest.mock('../src/query', () => mockQuery);
+jest.mock('../src/manifest/query', () => mockQuery);
 
 const manifest = require('../src/manifest');
 

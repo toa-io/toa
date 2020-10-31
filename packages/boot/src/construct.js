@@ -1,11 +1,11 @@
 const { load } = require('@kookaburra/explorer');
-const { Locator, Runtime, State } = require('@kookaburra/runtime');
-const schema = require('./schema');
+const { Locator, Runtime, State, Schema } = require('@kookaburra/runtime');
 const connector = require('./connector');
 const invocation = require('./invocation');
 const manifest = require('./manifest');
+const transport = require('./transport');
 
-module.exports = async (component, resolve) => {
+module.exports = async (component, source, resolve) => {
     if (typeof component === 'string')
         component = await load(component);
 
@@ -13,19 +13,20 @@ module.exports = async (component, resolve) => {
 
     const locator = new Locator(component.manifest);
 
-    let state = undefined;
-
     const connectors = [];
     const remotes = {};
 
-    if (component.manifest.state) {
+    let state = undefined;
+    const local = component.operations?.filter((descriptor) => descriptor.algorithm || descriptor.manifest.template).length > 0;
+
+    if (local && component.manifest.state) {
         const options = {
             max: component.manifest.state.max,
         };
 
         state = new State(
             connector(locator, component.manifest.state),
-            schema(component.manifest.state.schema),
+            new Schema(component.manifest.state.schema),
             options,
         );
 
@@ -37,7 +38,7 @@ module.exports = async (component, resolve) => {
             throw new Error('Runtime with dependencies must be created via Composition (boot.compose)');
 
         for (const remote of component.manifest.remotes) {
-            const { name, proxy } = await resolve(remote);
+            const { name, proxy } = await resolve(remote, source ? undefined : locator);
 
             const segments = name.split('.');
             const last = segments.pop();
@@ -65,7 +66,21 @@ module.exports = async (component, resolve) => {
         });
     }
 
-    const operations = component.operations?.map(invocation(locator, state, remotes, component.manifest.state));
+    let transporter = undefined;
+    const remote = component.operations?.filter((descriptor) => !descriptor.algorithm && !descriptor.manifest.template).length > 0;
+
+    if (remote) {
+        transporter = transport(locator, source);
+        connectors.push(transporter);
+    }
+
+    const operations = component.operations?.map(invocation(
+        locator,
+        transporter,
+        state,
+        remotes,
+        component.manifest.state,
+    ));
 
     return new Runtime(locator, operations, connectors);
 };

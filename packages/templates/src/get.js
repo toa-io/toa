@@ -10,5 +10,5 @@ module.exports = (state, descriptor) => {
         descriptor.manifest = {};
 
     if (!descriptor.manifest.http)
-        descriptor.manifest.http = '/{_id}';
+        descriptor.manifest.http = [{ path: '/{_id}' }];
 };

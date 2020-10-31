@@ -26,6 +26,3 @@ operations:
           minimum: 0
       required: [ amount ]
   add: ~
-
-remotes:
-  - ../messages

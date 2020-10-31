@@ -3,7 +3,7 @@ const { program } = require('commander');
 const pack = require('../package');
 const action = require('./action');
 const invoke = require('./commands/invoke');
-const http = require('./commands/http');
+const host = require('./commands/host');
 
 program
     .name('koo')
@@ -16,8 +16,8 @@ program
     .action(action(invoke));
 
 program
-    .command('http <component>')
-    .description('start http server')
-    .action(action(http));
+    .command('host <component>')
+    .description('host component')
+    .action(action(host));
 
 program.parse(process.argv);

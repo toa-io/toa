@@ -6,6 +6,8 @@ function transition({ input, error }, object) {
     }
 
     object.balance -= input.amount;
+
+    console.log(`${input.amount} credits debited, ${object.balance} left`);
 }
 
 module.exports = transition;

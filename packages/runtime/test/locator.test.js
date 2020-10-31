@@ -29,13 +29,6 @@ it('should expose state name if no component name', () => {
     expect(locator.name).toEqual(man.state.name);
 });
 
-it('should throw if no name provided', () => {
-    const man = clone(manifest);
-    delete man.name;
-
-    expect(() => new Locator(man)).toThrow(/component name or state name/);
-});
-
 it('should provide host', () => {
     expect(locator.host('sql')).toEqual(`${manifest.domain}.sql.facility`);
 });

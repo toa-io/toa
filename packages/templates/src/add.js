@@ -17,5 +17,5 @@ module.exports = (state, descriptor) => {
         descriptor.manifest.schema = schema(state);
 
     if (!descriptor.manifest.http)
-        descriptor.manifest.http = '/';
+        descriptor.manifest.http = [{ path: '/' }];
 };

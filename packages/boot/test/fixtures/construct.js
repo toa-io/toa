@@ -58,6 +58,7 @@ const load = jest.fn(() => ({
 
 const Locator = jest.fn(function () {
     this.instance = string();
+    this.host = jest.fn();
 });
 
 const Runtime = jest.fn(function () {
@@ -68,13 +69,19 @@ const State = jest.fn(function () {
     this.instance = string();
 });
 
+const Schema = jest.fn(function () {
+    this.instance = string();
+});
+
 const invocation = jest.fn(() => string());
+
+const transport = jest.fn(() => string());
 
 const component = {
     manifest: {
         remotes: [string()],
     },
-    operations: [string()],
+    operations: [ { manifest: {} } ],
 };
 
 const remotes = [string(), string()];
@@ -82,6 +89,7 @@ const remotes = [string(), string()];
 const resolve = jest.fn(() => ({ name: string(), proxy: string() }));
 
 module.exports = {
-    path, operations, manifest, parsedManifest, load, Locator, Runtime, State,
+    path, operations, manifest, parsedManifest, load,
+    Locator, Runtime, State, Schema,
     invocation, component, remotes, resolve,
 };
