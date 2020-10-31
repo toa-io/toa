@@ -25,7 +25,7 @@ beforeEach(() => {
 });
 
 it('should create client', () => {
-    const url = `mongodb+srv://rw:${mock.location.host}`;
+    const url = `mongodb+srv://${mock.location.host}`;
 
     expect(mock.MongoClient).toBeCalledTimes(1);
     expect(mock.MongoClient.mock.calls[0][0]).toEqual(url);

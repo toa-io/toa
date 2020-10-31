@@ -6,7 +6,7 @@ const labels = require('./labels');
 class Transport {
 
     constructor(host, label) {
-        host = process.env.KOO_TRANSPORT_AMQP_HOST || host;
+        host = process.env.KOO_TRANSPORT_AMQP_HOST || (process.env.NODE_ENV === 'local' && 'localhost') || host;
         const port = process.env.KOO_TRANSPORT_AMQP_PORT || 5672;
         const user = process.env.KOO_TRANSPORT_AMQP_USER || 'guest';
         const secret = process.env.KOO_TRANSPORT_AMQP_SECRET || 'guest';

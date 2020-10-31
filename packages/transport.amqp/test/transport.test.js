@@ -24,6 +24,7 @@ beforeEach(() => {
 describe('connect', () => {
 
     beforeEach(async () => {
+        delete process.env.NODE_ENV;
         await transport.connect();
     });
 
@@ -71,8 +72,24 @@ describe('connect', () => {
             transport = new Transport(host, label);
             await transport.connect();
 
-            const url = mock.config.mock.calls[0][0];
-            expect(url).toEqual(`amqp://${user}:${secret}@${host}:${port}/`);
+            expect(mock.config.mock.calls[0][0]).toEqual(`amqp://${user}:${secret}@${host}:${port}/`);
+
+            delete process.env.KOO_TRANSPORT_AMQP_HOST;
+            delete process.env.KOO_TRANSPORT_AMQP_PORT;
+            delete process.env.KOO_TRANSPORT_AMQP_USER;
+            delete process.env.KOO_TRANSPORT_AMQP_SECRET;
+        });
+
+        it('should use localhost locally', async () => {
+            const node_env = process.env.NODE_ENV;
+            process.env.NODE_ENV = 'local';
+
+            transport = new Transport(host, label);
+            await transport.connect();
+
+            expect(mock.config.mock.calls[0][0]).toEqual(`amqp://guest:guest@localhost:5672/`);
+
+            process.env.NODE_ENV = node_env;
         });
 
     });

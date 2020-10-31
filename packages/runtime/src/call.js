@@ -3,6 +3,8 @@ module.exports = class Call {
     constructor(endpoint, transport) {
         this.endpoint = endpoint;
         this._transport = transport;
+
+        transporter.calls(endpoint.label, true);
     }
 
     async invoke(io, query) {

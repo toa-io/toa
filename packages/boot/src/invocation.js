@@ -18,13 +18,10 @@ module.exports = (locator, transporter, state, remotes, stateManifest) => (descr
 
     const endpoint = new Endpoint(locator, descriptor.name);
 
-    let operation = undefined;
 
-    if (!descriptor.algorithm) {
-        transporter.calls(endpoint.label, true);
-        operation = new Call(endpoint, transporter);
-    } else
-        operation = new Operation(endpoint, meta, descriptor.algorithm, state, remotes);
+    const operation = descriptor.algorithm
+        ? new Operation(endpoint, meta, descriptor.algorithm, state, remotes)
+        : new Call(endpoint, transporter);
 
     return new Invocation(operation, new Schema(descriptor.manifest?.schema, stateManifest.schema));
 };

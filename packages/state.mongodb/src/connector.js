@@ -11,9 +11,11 @@ class Connector {
 
     constructor(host, db, collection) {
         this._location = { host, db, collection };
-        this._url = process.env.KOO_STATE_CONNECTOR_MONGODB_URL || `mongodb+srv://rw:${this._location.host}`;
-        this._client = new MongoClient(this._url, OPTIONS);
+        this._url = process.env.KOO_STATE_CONNECTOR_MONGODB_URL
+            || (process.env.NODE_ENV === 'local' && 'mongodb://localhost')
+            || `mongodb+srv://${this._location.host}`;
 
+        this._client = new MongoClient(this._url, OPTIONS);
         this._collection = undefined;
     }
 
