@@ -45,6 +45,7 @@ class Transport {
         this._connecting = true;
         this._broker = await this._create();
         await this._handleRPC();
+        this._connecting = false;
 
         console.log(`Connected to ${this._logUrl}`);
     }
@@ -55,6 +56,8 @@ class Transport {
 
         this._disconnecting = true;
         await this._broker.shutdown();
+        this._broker = undefined;
+        this._disconnecting = false;
 
         console.log(`Disconnected from ${this._logUrl}`);
     }
@@ -108,7 +111,6 @@ class Transport {
             const reply = labels.reply(call.label, call.caller, call.suffix);
 
             subs.push(this.on(reply, (message, content, ackOrNack) => {
-                // TODO correlationId
                 const resolve = this._replies[message.properties.correlationId];
 
                 if (resolve)
