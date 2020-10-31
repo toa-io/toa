@@ -4,7 +4,7 @@ module.exports = class Call {
         this.endpoint = endpoint;
         this._transport = transport;
 
-        transporter.calls(endpoint.label, true);
+        transport.calls(endpoint.label, true);
     }
 
     async invoke(io, query) {

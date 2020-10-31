@@ -24,6 +24,8 @@ module.exports = (manifest) => {
         if (!manifest.state.max.omit)
             manifest.state.max.omit = DEFAULT_STATE_MAX_OMIT;
 
+        manifest.state.inserted = Boolean(manifest.state.inserted);
+
         if (manifest.state.schema)
             schema(manifest.state.schema);
     }

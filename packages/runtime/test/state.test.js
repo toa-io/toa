@@ -56,7 +56,7 @@ describe('object', () => {
         await object._commit();
 
         expect(mock.connector.update).toBeCalledTimes(1);
-        expect(mock.connector.update).toBeCalledWith(object);
+        expect(mock.connector.update).toBeCalledWith(object, expect.any(Object));
     });
 
     it('shouldn`t update unchanged object', async () => {

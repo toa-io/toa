@@ -5,7 +5,6 @@ module.exports = {
     Proxy: require('./proxy'),
     Invocation: require('./invocation'),
     Operation: require('./operation'),
-    Host: require('./host'),
     Call: require('./call'),
     State: require('./state'),
     Schema: require('./schema'),

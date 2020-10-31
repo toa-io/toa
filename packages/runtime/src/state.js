@@ -33,10 +33,18 @@ module.exports = class {
             return;
         }
 
-        if (q)
+        if (q?.query)
             object = await this._connector.get(q);
         else
             object = {};
+
+        if (object === null && this._options.inserted) {
+            object = {};
+            Object.assign(object, q.equalities);
+
+            if (!this._schema.fit(object))
+                throw parse.QueryError;
+        }
 
         if (object === null)
             return null;
@@ -50,7 +58,9 @@ module.exports = class {
             this._validate(object);
             current = clone(object);
 
-            return object._id ? this._connector.update(object) : this._connector.add(object);
+            const options = { upsert: this._options.inserted };
+
+            return object._id ? this._connector.update(object, options) : this._connector.add(object);
         };
 
         Object.defineProperty(object, '_commit', {

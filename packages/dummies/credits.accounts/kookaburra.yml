@@ -4,13 +4,17 @@ state:
   name: accounts
   schema:
     properties:
-      user: string
       balance:
         type: integer
         default: 0
-    required: [ user ]
-
+  inserted: true
 operations:
+  get:
+    template: ~
+    http: /{_id}
+  update:
+    template: ~
+    http: /{_id}
   debit:
     schema:
       properties:

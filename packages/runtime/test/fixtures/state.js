@@ -45,8 +45,12 @@ const parse = jest.fn((query) => {
     if (!query)
         return;
 
-    return query?.criteria ? { criteria: ast } : {};
+    return query?.criteria ? { query: { criteria: ast }, equalities } : {};
 });
+
+const equalities = {
+    _id: string(),
+};
 
 const options = {
     max: {
@@ -55,4 +59,4 @@ const options = {
     },
 };
 
-module.exports = { connector, query, parse, schema, options };
+module.exports = { connector, query, parse, schema, options, equalities };

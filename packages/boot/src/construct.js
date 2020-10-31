@@ -16,12 +16,29 @@ module.exports = async (component, source, resolve) => {
     const connectors = [];
     const remotes = {};
 
-    let state = undefined;
+    if (component.manifest.operations) {
+        if (!component.operations)
+            component.operations = [];
+
+        Object.entries(component.manifest.operations).forEach(([name, manifest]) => {
+            if (!component.operations.find(operation => operation.name === name))
+                component.operations.push({ name, manifest });
+        });
+    }
+
     const local = component.operations?.filter((descriptor) => descriptor.algorithm || descriptor.manifest.template).length > 0;
+
+    let host = undefined;
+
+    if (local)
+        host = transport(locator);
+
+    let state = undefined;
 
     if (local && component.manifest.state) {
         const options = {
             max: component.manifest.state.max,
+            inserted: component.manifest.state.inserted,
         };
 
         state = new State(
@@ -56,31 +73,21 @@ module.exports = async (component, source, resolve) => {
         }
     }
 
-    if (component.manifest.operations) {
-        if (!component.operations)
-            component.operations = [];
-
-        Object.entries(component.manifest.operations).forEach(([name, manifest]) => {
-            if (!component.operations.find(operation => operation.name === name))
-                component.operations.push({ name, manifest });
-        });
-    }
-
-    let transporter = undefined;
+    let client = undefined;
     const remote = component.operations?.filter((descriptor) => !descriptor.algorithm && !descriptor.manifest.template).length > 0;
 
     if (remote) {
-        transporter = transport(locator, source);
-        connectors.push(transporter);
+        client = transport(locator, source);
+        connectors.push(client);
     }
 
     const operations = component.operations?.map(invocation(
         locator,
-        transporter,
+        client,
         state,
         remotes,
         component.manifest.state,
     ));
 
-    return new Runtime(locator, operations, connectors);
+    return new Runtime(locator, host, operations, connectors);
 };

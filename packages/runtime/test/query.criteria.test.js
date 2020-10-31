@@ -18,7 +18,7 @@ it('should parse', () => {
 
     const result = parse(criteria, properties);
 
-    expect(result).toEqual(ast);
+    expect(result.ast).toEqual(ast);
 });
 
 it('should parse with type coercion', () => {
@@ -52,5 +52,5 @@ it('should parse with type coercion', () => {
 
     const result = parse(criteria, properties);
 
-    expect(result).toEqual(ast);
+    expect(result.ast).toEqual(ast);
 });

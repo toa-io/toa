@@ -41,9 +41,9 @@ it('should create Runtime', () => {
     expect(mock.Runtime.mock.calls[0][0]).toEqual(mock.Locator.mock.instances[0]);
 
     const invocations = invocation.mock.results[0].value.mock.results.map(f => f.value);
-    expect(mock.Runtime.mock.calls[0][1]).toEqual(invocations);
+    expect(mock.Runtime.mock.calls[0][2]).toEqual(invocations);
 
-    expect(mock.Runtime.mock.calls[0][2]).toEqual(mock.State.mock.instances);
+    expect(mock.Runtime.mock.calls[0][3]).toEqual(mock.State.mock.instances);
 });
 
 it('should create Locator', () => {
@@ -55,7 +55,10 @@ it('should create State', () => {
         .toBeCalledWith(
             connector.mock.results[0].value,
             mock.Schema.mock.instances[0],
-            { max: mock.parsedManifest.state.max }
+            {
+                max: mock.parsedManifest.state.max,
+                inserted: mock.parsedManifest.state.inserted,
+            },
         );
 });
 

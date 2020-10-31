@@ -64,11 +64,11 @@ class Connector {
         return result.ok;
     }
 
-    async update(object) {
+    async update(object, options) {
         const document = unformat(object);
 
         const filter = { _id: document._id };
-        const result = await this._collection.findOneAndReplace(filter, document);
+        const result = await this._collection.findOneAndReplace(filter, document, options);
 
         return result.ok;
     }

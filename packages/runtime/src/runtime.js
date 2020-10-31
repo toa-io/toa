@@ -1,24 +1,34 @@
 class Runtime {
 
-    constructor(locator, operations, connectors) {
+    constructor(locator, transport, operations, connectors) {
         this.locator = locator;
         this.connectors = connectors;
 
         this.operations = {};
         this.http = [];
 
-        operations.forEach((operation) => {
-            this.operations[operation.endpoint.name] = operation;
+        this._transport = transport;
 
-            if (operation.http) {
-                this.http.push({
-                    bindings: operation.http,
-                    safe: operation.type === 'observation',
-                    state: operation.access,
-                    invoke: (...args) => this.invoke(operation, ...args),
-                });
-            }
-        });
+        operations.forEach((operation) => this.configure(operation));
+    }
+
+    configure(operation) {
+        this.operations[operation.endpoint.name] = operation;
+
+        if (operation.http) {
+            this.http.push({
+                bindings: operation.http,
+                safe: operation.type === 'observation',
+                state: operation.access,
+                invoke: (...args) => this.invoke(operation, ...args),
+            });
+        }
+
+        this._transport.hosts(operation.endpoint.label,
+            async (request) => await this.invoke(operation, request.input, request.query),
+        );
+
+
     }
 
     async invoke(name, input, query) {
@@ -53,6 +63,8 @@ class Runtime {
         if (this.connectors)
             await Promise.all(this.connectors.map((connector) => connector.connect && connector.connect()));
 
+        await this._transport.connect();
+
         this._starting = false;
 
         console.log(`Runtime '${this.locator.label}' started`);
@@ -63,6 +75,8 @@ class Runtime {
             return;
 
         this._stopping = true;
+
+        await this._transport.disconnect();
 
         if (this.connectors)
             await Promise.all(this.connectors.map(

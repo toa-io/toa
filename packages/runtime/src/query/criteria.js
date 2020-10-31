@@ -5,7 +5,8 @@ const TYPES = {
     'boolean': Boolean,
 };
 
-let props;
+let props = undefined;
+let equalities = undefined;
 
 const transformations = {
     COMPARISON: (node) => {
@@ -15,6 +16,9 @@ const transformations = {
 
         if (type)
             node.right.value = type(value);
+
+        if (node.operator === '==' && node.left.type === 'SELECTOR' && node.right.type === 'VALUE')
+            equalities[node.left.selector] = node.right.value;
     }
 };
 
@@ -32,8 +36,9 @@ module.exports = (criteria, properties) => {
     const ast = rsql.parse(criteria);
 
     props = properties;
+    equalities = {};
 
     transform(ast);
 
-    return ast;
+    return { ast, equalities };
 };

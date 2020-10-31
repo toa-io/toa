@@ -7,6 +7,8 @@ const bind = require('../src/bind');
 beforeEach(() => {
     jest.clearAllMocks();
 
+    delete process.env.NODE_ENV;
+
     bind(mock.app, mock.verb, mock.route, mock.operation, mock.binding);
 });
 
@@ -21,6 +23,7 @@ describe('request handling', () => {
         let request = undefined;
 
         beforeEach(async () => {
+            request = mock.app.get.mock.calls[0][1];
             request = mock.app.get.mock.calls[0][1];
 
             await request(mock.req, mock.res);

@@ -18,6 +18,12 @@ const operation = () => ({
 const locator = { label: string() };
 const operations = [1, 2, 3].map(operation);
 
+const transport = {
+    hosts: jest.fn(),
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+};
+
 const connectors = [
     {
         connect: jest.fn().mockResolvedValue(1),
@@ -32,4 +38,4 @@ const connectors = [
 const input = { prop: string() };
 const query = { prop: string() };
 
-module.exports = { locator, operations, connectors, input, query, output, error };
+module.exports = { locator, transport, operations, connectors, input, query, output, error };

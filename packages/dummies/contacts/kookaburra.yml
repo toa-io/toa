@@ -1,0 +1,21 @@
+domain: contacts
+
+state:
+  schema:
+    properties:
+      contact: string
+      label: string
+    required: [ contact ]
+  inserted: true
+
+operations:
+  get:
+    template: ~
+    http: /{_id}/{contact}
+  update:
+    template: ~
+    schema:
+      properties:
+        label: ~
+    http: /{_id}/{contact}
+

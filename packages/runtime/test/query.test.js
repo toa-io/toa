@@ -12,16 +12,16 @@ beforeEach(() => {
 });
 
 it('should parse criteria', () => {
-    expect(result.criteria).toBeDefined();
-    expect(result.criteria).toEqual(mock.criteria.mock.results[0].value);
+    expect(result.query.criteria).toBeDefined();
+    expect(result.query.criteria).toEqual(mock.criteria.mock.results[0].value.ast);
 });
 
 it('should parse sort', () => {
-    expect(result.sort).toEqual(mock.sort);
+    expect(result.query.sort).toEqual(mock.sort);
 });
 
 it('should parse omit', () => {
-    expect(result.omit).toEqual(mock.omit);
+    expect(result.query.omit).toEqual(mock.omit);
 });
 
 it('should shrink omit value', () => {
@@ -30,11 +30,11 @@ it('should shrink omit value', () => {
 
     result = query(q, mock.properties, mock.options);
 
-    expect(result.omit).toEqual(mock.options.max.omit);
+    expect(result.query.omit).toEqual(mock.options.max.omit);
 });
 
 it('should parse limit', () => {
-    expect(result.limit).toEqual(mock.limit);
+    expect(result.query.limit).toEqual(mock.limit);
 });
 
 it('should shrink limit value', () => {
@@ -43,11 +43,11 @@ it('should shrink limit value', () => {
 
     result = query(q, mock.properties, mock.options);
 
-    expect(result.limit).toEqual(mock.options.max.limit);
+    expect(result.query.limit).toEqual(mock.options.max.limit);
 });
 
 it('should parse query projection', () => {
-    expect(result.projection).toEqual(mock.query.projection);
+    expect(result.query.projection).toEqual(mock.query.projection);
 });
 
 it('should parse state projection if no query projection', () => {
@@ -56,7 +56,7 @@ it('should parse state projection if no query projection', () => {
 
     result = query(q, mock.properties, mock.options);
 
-    expect(result.projection).toEqual(mock.options.projection);
+    expect(result.query.projection).toEqual(mock.options.projection);
 });
 
 it('should throw if schema missing projection property', () => {

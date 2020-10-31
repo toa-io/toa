@@ -1,7 +1,8 @@
 const string = () => Math.random().toString(36).substring(2);
 
 const criteria = jest.fn(() => ({
-    prop: string(),
+    ast: { prop: string() },
+    equalities: { prop: string() },
 }));
 
 const query = {
@@ -24,7 +25,7 @@ const properties = {
     },
 };
 
-const sort = [{key: 'a', direction: 1}, {key: 'b', direction: -1}, {key: 'c', direction: 1}];
+const sort = [{ key: 'a', direction: 1 }, { key: 'b', direction: -1 }, { key: 'c', direction: 1 }];
 
 const omit = +query.omit;
 const limit = +query.limit;

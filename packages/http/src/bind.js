@@ -21,7 +21,7 @@ module.exports = (app, verb, route, operation, binding) => {
             }
 
         } catch (e) {
-            status = 500 + (e.status < 100 ? e.status : 0);
+            status = 500;
 
             if (process.env.NODE_ENV === 'local')
                 response = {

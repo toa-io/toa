@@ -4,6 +4,7 @@ const QUERY_KEYWORDS = ['criteria', 'omit', 'limit', 'sort', 'projection'];
 
 const parse = (query, properties, options) => {
     const result = {};
+    const equalities = {};
 
     if (!query || !Object.keys(query).length)
         return;
@@ -13,8 +14,11 @@ const parse = (query, properties, options) => {
             if (!QUERY_KEYWORDS.includes(key))
                 throw new parse.QueryError(`Unknown query keyword '${key}' only (${QUERY_KEYWORDS.join(', ')}) are supported`);
 
-    if (query.criteria)
-        result.criteria = criteria(query.criteria, properties);
+    if (query.criteria) {
+        const parsed = criteria(query.criteria, properties);
+        result.criteria = parsed.ast;
+        Object.assign(equalities, parsed.equalities);
+    }
 
     if (query.sort) {
         const DEFAULT = 'asc';
@@ -53,7 +57,7 @@ const parse = (query, properties, options) => {
         result.projection = projection;
     }
 
-    return Object.keys(result).length ? result : undefined;
+    return { query: Object.keys(result).length ? result : undefined, equalities };
 };
 
 parse.QueryError = class extends Error {}

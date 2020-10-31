@@ -8,7 +8,21 @@ let runtime = undefined;
 beforeEach(() => {
     jest.clearAllMocks();
 
-    runtime = new Runtime(mock.locator, mock.operations, mock.connectors);
+    runtime = new Runtime(mock.locator, mock.transport, mock.operations, mock.connectors);
+});
+
+describe('transport', () => {
+
+    it('should declare operations', () => {
+        expect(mock.transport.hosts).toBeCalledTimes(mock.operations.length);
+
+        mock.operations.forEach((operation, index) => {
+            expect(mock.transport.hosts)
+                .toHaveBeenNthCalledWith(index + 1, operation.endpoint.label, expect.any(Function));
+        });
+
+    });
+
 });
 
 describe('invoke', () => {
@@ -58,7 +72,11 @@ describe('start', () => {
         await runtime.start();
     });
 
-    it('should connect', async () => {
+    it('should connect transport', () => {
+        expect(mock.transport.connect).toBeCalledTimes(1);
+    });
+
+    it('should connect connectors', async () => {
         mock.connectors.forEach(
             (connector) => expect(connector.connect).toBeCalledTimes(1));
     });
@@ -70,14 +88,18 @@ describe('start', () => {
 
 });
 
-describe('start', () => {
+describe('stop', () => {
 
     beforeEach(async () => {
         await runtime.start();
         await runtime.stop();
     });
 
-    it('should disconnect', async () => {
+    it('should disconnect transport', () => {
+        expect(mock.transport.disconnect).toBeCalledTimes(1);
+    });
+
+    it('should disconnect connectors', async () => {
         mock.connectors.forEach(
             (connector) => expect(connector.disconnect).toBeCalledTimes(1));
     });

@@ -49,6 +49,8 @@ parsedManifest.state.max = {
     omit: 1000,
 };
 
+parsedManifest.state.inserted = false;
+
 parsedManifest.state.name = parsedManifest.domain;
 
 const load = jest.fn(() => ({
