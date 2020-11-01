@@ -41,6 +41,7 @@ module.exports = class {
 
     _create() {
         const app = express();
+        app.disable('x-powered-by');
         app.use(express.json());
         app.use(favicon(`${__dirname}/../assets/favicon.png`));
         app.set('json spaces', 2);

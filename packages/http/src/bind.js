@@ -7,7 +7,7 @@ module.exports = (app, verb, route, operation, binding) => {
         const input = bdy(req, binding);
         const query = qry(operation.state, binding, req);
 
-        let response = undefined, status = 200;
+        let response = undefined, status = 204;
 
         try {
             const io = await operation.invoke(input, query);
@@ -17,7 +17,8 @@ module.exports = (app, verb, route, operation, binding) => {
                 delete io.error.status;
 
                 response = io.error;
-            } else {
+            } else if (io.output) {
+                status = 200;
                 response = io.output;
             }
 

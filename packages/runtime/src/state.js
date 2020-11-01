@@ -25,6 +25,9 @@ module.exports = class {
         let object = undefined;
         let q = undefined;
 
+        if (typeof query === 'string')
+            query = { criteria: query };
+
         try {
             q = this._parse(query);
         } catch (e) {
