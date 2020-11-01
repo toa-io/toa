@@ -9,8 +9,8 @@ const parse = (query, properties, options) => {
     if (!query || !Object.keys(query).length)
         return;
 
-    if (query.criteria)
-        for (const key of Object.keys(query.criteria))
+    if (query)
+        for (const key of Object.keys(query))
             if (!QUERY_KEYWORDS.includes(key))
                 throw new parse.QueryError(`Unknown query keyword '${key}' only (${QUERY_KEYWORDS.join(', ')}) are supported`);
 

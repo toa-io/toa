@@ -44,12 +44,12 @@ describe('host', () => {
     let vhost = undefined;
 
     beforeEach(() => {
-        vhost = config(string(), [label]).vhosts['/'];
+        vhost = config(string(), string(), string(), [], [], [label]).vhosts['/'];
     });
 
     it('should declare requests queue', () => {
         const request = labels.request(label);
-        testRequestsQueue(request, string(), [label]);
+        testRequestsQueue(request, string(), string(), string(), [], [], [label]);
     });
 
     it('should declare request subscription', () => {
@@ -57,7 +57,7 @@ describe('host', () => {
         const node_env = process.env.NODE_ENV;
 
         process.env.NODE_ENV = undefined;
-        let vhost = config(string(), [label]).vhosts['/'];
+        let vhost = config(string(), string(), string(), [], [], [label]).vhosts['/'];
 
         expect(vhost.subscriptions[request]).toEqual({
             queue: request,
@@ -66,7 +66,7 @@ describe('host', () => {
         });
 
         process.env.NODE_ENV = 'local';
-        vhost = config(string(), [label]).vhosts['/'];
+        vhost = config(string(), string(), string(), [], [], [label]).vhosts['/'];
 
         expect(vhost.subscriptions[request]).toMatchObject({ deferCloseChannel: 1 });
 
@@ -91,47 +91,47 @@ describe('call', () => {
 
     it('should declare requests queue', () => {
         const request = labels.request(label);
-        testRequestsQueue(request, string(), undefined, [{ label }]);
+        testRequestsQueue(request, string(), string(), string(), [], [], [], [{ label }]);
     });
 
     it('should declare request publication', () => {
         const request = labels.request(label);
-        const vhost = config(string(), undefined, [{ label }]).vhosts['/'];
+        const vhost = config(string(), string(), string(), [], [], [], [{ label }]).vhosts['/'];
 
         expect(vhost.publications[request]).toEqual({ queue: request });
     });
 
     it('should declare replies direct exchange', () => {
         const reply = labels.reply(label);
-        const vhost = config(string(), undefined, [{ label }]).vhosts['/'];
+        const vhost = config(string(), string(), string(), [], [], [], [{ label }]).vhosts['/'];
 
         expect(vhost.exchanges[reply]).toEqual({ type: 'direct' });
     });
 
     it('should declare replies queue', () => {
-        const caller = string();
-        const reply = labels.reply(label, caller);
-        const vhost = config(string(), undefined, [{ label, caller }]).vhosts['/'];
+        const source = string();
+        const reply = labels.reply(label, source);
+        const vhost = config(string(), string(), source, [], [], [], [{ label }]).vhosts['/'];
 
         expect(vhost.queues[reply]).toEqual({ options: { autoDelete: false } });
     });
 
-    it('should declare temporary replies queue for caller with suffix', () => {
-        const caller = string();
+    it('should declare temporary replies queue for source with suffix', () => {
+        const source = string();
         const suffix = string();
-        const reply = labels.reply(label, caller, suffix);
-        const vhost = config(string(), undefined, [{ label, caller, suffix }]).vhosts['/'];
+        const reply = labels.reply(label, source, suffix);
+        const vhost = config(string(), string(), source, [], [], [], [{ label, suffix }]).vhosts['/'];
 
         expect(vhost.queues[reply]).toEqual({ options: { autoDelete: true } });
     });
 
     it('should declare binding replies exchange to replies queue with routingKey', () => {
-        const caller = string();
+        const source = string();
         const suffix = string();
         const reply_e = labels.reply(label);
-        const reply_q = labels.reply(label, caller, suffix);
-        const key = labels.key(caller, suffix);
-        const vhost = config(string(), undefined, [{ label, caller, suffix }]).vhosts['/'];
+        const reply_q = labels.reply(label, source, suffix);
+        const key = labels.key(source, suffix);
+        const vhost = config(string(), string(), source, [], [], [], [{ label, suffix }]).vhosts['/'];
 
         expect(vhost.bindings[reply_q]).toEqual({
             source: reply_e,
@@ -141,14 +141,14 @@ describe('call', () => {
     });
 
     it('should declare subscription for replies', () => {
-        const caller = string();
+        const source = string();
         const suffix = string();
-        const reply_q = labels.reply(label, caller, suffix);
+        const reply_q = labels.reply(label, source, suffix);
 
         const node_env = process.env.NODE_ENV;
         process.env.NODE_ENV = undefined;
 
-        let vhost = config(string(), undefined, [{ label, caller, suffix }]).vhosts['/'];
+        let vhost = config(string(), string(), source, [], [], [], [{ label, suffix }]).vhosts['/'];
 
         expect(vhost.subscriptions[reply_q]).toEqual({
             queue: reply_q,
@@ -158,7 +158,7 @@ describe('call', () => {
 
         process.env.NODE_ENV = 'local';
 
-        vhost = config(string(), undefined, [{ label, caller, suffix }]).vhosts['/'];
+        vhost = config(string(), string(), source, [], [], [], [{ label, suffix }]).vhosts['/'];
 
         expect(vhost.subscriptions[reply_q]).toMatchObject({ deferCloseChannel: 1 });
 

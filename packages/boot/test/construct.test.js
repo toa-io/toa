@@ -43,7 +43,7 @@ it('should create Runtime', () => {
     const invocations = invocation.mock.results[0].value.mock.results.map(f => f.value);
     expect(mock.Runtime.mock.calls[0][2]).toEqual(invocations);
 
-    expect(mock.Runtime.mock.calls[0][3]).toEqual(mock.State.mock.instances);
+    expect(mock.Runtime.mock.calls[0][4]).toEqual(mock.State.mock.instances);
 });
 
 it('should create Locator', () => {
@@ -59,6 +59,7 @@ it('should create State', () => {
                 max: mock.parsedManifest.state.max,
                 inserted: mock.parsedManifest.state.inserted,
             },
+            []
         );
 });
 

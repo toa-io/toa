@@ -24,6 +24,8 @@ const transport = {
     disconnect: jest.fn(),
 };
 
+const subs = [];
+
 const connectors = [
     {
         connect: jest.fn().mockResolvedValue(1),
@@ -38,4 +40,4 @@ const connectors = [
 const input = { prop: string() };
 const query = { prop: string() };
 
-module.exports = { locator, transport, operations, connectors, input, query, output, error };
+module.exports = { locator, transport, operations, subs, connectors, input, query, output, error };

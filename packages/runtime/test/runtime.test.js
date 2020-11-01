@@ -8,7 +8,7 @@ let runtime = undefined;
 beforeEach(() => {
     jest.clearAllMocks();
 
-    runtime = new Runtime(mock.locator, mock.transport, mock.operations, mock.connectors);
+    runtime = new Runtime(mock.locator, mock.transport, mock.operations, mock.subs, mock.connectors);
 });
 
 describe('transport', () => {
