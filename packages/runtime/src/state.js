@@ -38,16 +38,14 @@ module.exports = class {
         }
 
         if (q?.query)
-            object = await this._connector.get(q);
+            object = await this._connector.get(q.query);
         else
             object = {};
 
         if (object === null && this._options.inserted) {
             object = {};
             Object.assign(object, q.equalities);
-
-            if (!this._schema.fit(object))
-                throw parse.QueryError;
+            this._validate(object);
         }
 
         if (object === null)
