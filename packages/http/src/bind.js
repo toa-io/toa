@@ -1,9 +1,10 @@
 const qry = require('./query');
+const bdy = require('./body');
 
 module.exports = (app, verb, route, operation, binding) => {
 
     app[verb](route, async (req, res) => {
-        const input = req.body;
+        const input = bdy(req, binding);
         const query = qry(operation.state, binding, req);
 
         let response = undefined, status = 200;

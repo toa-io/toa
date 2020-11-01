@@ -14,8 +14,8 @@ it('should parse parameters', () => {
 });
 
 it('should parse pointers', () => {
-    const input = '/{*pointer}';
+    const input = '/{*param}';
     const result = path(input);
-    expect(result.route).toEqual('/:__pointer');
-    expect(result.params).toEqual(['__pointer']);
+    expect(result.route).toEqual('/:__pointer_param');
+    expect(result.params).toEqual(['__pointer_param']);
 });

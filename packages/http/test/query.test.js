@@ -17,7 +17,7 @@ describe('common', () => {
         const result = query(
             {},
             { query: { criteria: 'a==*test' } },
-            { query: {}, params: { __test: 1 } },
+            { query: {}, params: { __pointer_test: 1 } },
         );
 
         expect(result.criteria).toEqual('a==1');

@@ -22,14 +22,14 @@ module.exports = (state, binding, req) => {
     }
 
     if (binding.query?.criteria !== undefined)
-        criteria.push(binding.query.criteria.replace(POINTER_RE, (_, name) => req.params[`__${name}`]));
+        criteria.push(binding.query.criteria.replace(POINTER_RE, (_, name) => req.params[`__pointer_${name}`]));
 
     if (!binding.query?.frozen && req.query.criteria && (binding.query?.criteria === undefined || !binding.query?.sealed))
         criteria.push(req.query.criteria);
 
     if (Object.keys(req.params).length)
-        Object.entries(req.params).map(
-            ([name, value]) => name.substring(0, 2) !== '__' && criteria.push(`${name}==${value}`)
+        Object.entries(req.params).forEach(
+            ([name, value]) => name.substring(0, 2) !== '__' && criteria.push(`${name}==${value}`),
         );
 
     if (criteria.length)

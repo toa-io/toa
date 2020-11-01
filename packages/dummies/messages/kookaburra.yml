@@ -16,7 +16,7 @@ operations:
   find:
     template: ~
   send:
-    http: /
+    http: /{.sender}/{.recipient}
     schema:
       properties:
         sender: ~
