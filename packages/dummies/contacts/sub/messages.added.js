@@ -3,7 +3,7 @@ const sender = (payload) => ({
     input: {
         label: payload.text,
     },
-    query: `_id==${payload.sender};contact==${payload.recipient}`,
+    query: `user==${payload.sender};contact==${payload.recipient}`,
 });
 
 const recipient = (payload) => ({
@@ -11,7 +11,7 @@ const recipient = (payload) => ({
     input: {
         label: payload.text,
     },
-    query: `_id==${payload.recipient};contact==${payload.sender}`,
+    query: `user==${payload.recipient};contact==${payload.sender}`,
 });
 
 module.exports = (payload) => {

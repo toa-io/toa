@@ -3,19 +3,18 @@ domain: contacts
 state:
   schema:
     properties:
+      user: string
       contact: string
       label: string
-    required: [ contact ]
+    required: [ user, contact ]
   inserted: true
 
 operations:
-  get:
+  find:
     template: ~
-    http: /{_id}/{contact}
+    http: /{user}
   update:
     template: ~
     schema:
       properties:
         label: ~
-    http: /{_id}/{contact}
-

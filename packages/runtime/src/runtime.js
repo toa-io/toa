@@ -35,18 +35,18 @@ class Runtime {
     }
 
     sub(sub) {
-        this._transport.subs(sub.name, (payload) => {
-            let invocations = sub.algorithm(payload);
+        this._transport.subs(sub.name, async (payload) => {
+            let descriptors = sub.algorithm(payload);
 
-            if (!(invocations instanceof Array))
-                invocations = [invocations];
+            if (!(descriptors instanceof Array))
+                descriptors = [descriptors];
 
-            for (const invocation of invocations) {
-                if (!invocation)
-                    return;
+            const invocations = descriptors.filter((d) => d)
+                .map((descriptor) => this.invoke(descriptor.operation, descriptor.input, descriptor.query))
 
-                this.invoke(invocation.operation, invocation.input, invocation.query);
-            }
+            for (const io of (await Promise.all(invocations)))
+                if (io.error)
+                    throw new Error(io.error.message);
         });
     }
 

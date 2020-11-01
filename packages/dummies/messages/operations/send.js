@@ -5,7 +5,7 @@ async function transition({ input, output, error }, object, runtime) {
 
     const reply = await runtime.remote.credits.accounts.debit(
         { amount: 1 },
-        { criteria: `user==${input.sender}` },
+        { criteria: `_id==${input.sender}` },
     );
 
     if (reply.error) {

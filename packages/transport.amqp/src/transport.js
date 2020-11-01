@@ -152,9 +152,8 @@ class Transport {
 
                     await this._publish(labels.reply(label), payload, { routingKey, options });
                 } catch (e) {
-                    consloe.error(e);
                     ackOrNack(e);
-                    return;
+                    throw e;
                 }
 
                 ackOrNack();
