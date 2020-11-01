@@ -25,9 +25,6 @@ module.exports = class {
         let object = undefined;
         let q = undefined;
 
-        if (typeof query === 'string')
-            query = { criteria: query };
-
         try {
             q = this._parse(query);
         } catch (e) {
@@ -85,11 +82,14 @@ module.exports = class {
 
         try {
             q = this._parse(query);
-        } catch {
+        } catch (e) {
+            if (e instanceof parse.QueryError)
+                throw e;
+
             return;
         }
 
-        return this._connector.find(q);
+        return this._connector.find(q.query);
     }
 
     _validate(object) {

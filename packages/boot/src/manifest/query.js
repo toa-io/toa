@@ -5,6 +5,9 @@ module.exports = (query, defaults) => {
     if (!query)
         query = {};
 
+    if (typeof query === 'string')
+        query = { criteria: query };
+
     if (query.limit === undefined)
         query.limit = {};
 

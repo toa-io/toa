@@ -7,13 +7,13 @@ const ERROR_NOT_FOUND = (label, query) => ({
 });
 
 const ERROR_QUERY = (label, query) => ({
-    message: `Query syntax error ${label}`,
+    message: `Query syntax error (${label})`,
     query,
 });
 
 const ERROR_PERSISTENCE = (label) => ({
     status: 0,
-    message: `State persistence error ${label}`,
+    message: `State persistence error (${label})`,
 });
 
 class Operation {

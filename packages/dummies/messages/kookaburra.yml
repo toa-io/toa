@@ -15,6 +15,9 @@ state:
 operations:
   find:
     template: ~
+    http:
+      - path: /{*user}/{*attendee}
+        query: (sender==*user;recipient==*attendee),(sender==*attendee;recipient==*user)
   send:
     http: /{.sender}/{.recipient}
     schema:

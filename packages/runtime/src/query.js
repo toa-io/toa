@@ -6,6 +6,10 @@ const parse = (query, properties, options) => {
     const result = {};
     const equalities = {};
 
+    if (typeof query === 'string')
+        query = { criteria: query };
+
+
     if (!query || !Object.keys(query).length)
         return;
 
