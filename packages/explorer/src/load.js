@@ -11,7 +11,10 @@ const load = (current, remote) => {
     const manifest = loadManifest(root);
     const operations = loadOperations(root, manifest.operations, remote);
 
-    return { manifest, operations };
+    const pubs = remote ? undefined : loadPubs(root);
+    const subs = remote ? undefined : loadSubs(root);
+
+    return { manifest, operations, pubs, subs };
 };
 
 const loadManifest = (root) => {
@@ -37,7 +40,7 @@ const listAlgorithms = (root) => {
         .readdirSync(root, { withFileTypes: true })
         .filter(ent => ent.isFile())
         .map(ent => path.resolve(root, ent.name));
-}
+};
 
 const loadAlgorithm = (location, remote, type = 'javascript') => {
     const algorithm = require(`./algorithms/${type}`)(location, remote);
@@ -45,5 +48,32 @@ const loadAlgorithm = (location, remote, type = 'javascript') => {
     return algorithm;
 };
 
+const loadPubs = (root) => {
+    const pubsRoot = path.resolve(root, config.paths.pubs);
+
+    if (!fs.existsSync(pubsRoot))
+        return;
+
+    return fs
+        .readdirSync(pubsRoot, { withFileTypes: true })
+        .filter(ent => ent.isFile())
+        .map(ent => path.resolve(pubsRoot, ent.name))
+        .map(location => loadAlgorithm(location));
+
+};
+
+const loadSubs = (root) => {
+    const subsRoot = path.resolve(root, config.paths.subs);
+
+    if (!fs.existsSync(subsRoot))
+        return;
+
+    return fs
+        .readdirSync(subsRoot, { withFileTypes: true })
+        .filter(ent => ent.isFile())
+        .map(ent => path.resolve(subsRoot, ent.name))
+        .map(location => loadAlgorithm(location));
+
+};
 
 module.exports = load;

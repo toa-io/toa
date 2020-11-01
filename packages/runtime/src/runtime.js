@@ -1,6 +1,6 @@
 class Runtime {
 
-    constructor(locator, transport, operations, connectors) {
+    constructor(locator, transport, operations, subs, connectors) {
         this.locator = locator;
         this.connectors = connectors;
 
@@ -10,6 +10,9 @@ class Runtime {
         this._transport = transport;
 
         operations.forEach((operation) => this.configure(operation));
+
+        if (subs)
+            subs.forEach((sub) => this.sub(sub));
     }
 
     configure(operation) {
@@ -24,11 +27,27 @@ class Runtime {
             });
         }
 
-        this._transport.hosts(operation.endpoint.label,
-            async (request) => await this.invoke(operation, request.input, request.query),
-        );
+        if (this._transport)
+            this._transport.hosts(operation.endpoint.label,
+                async (request) => await this.invoke(operation, request.input, request.query),
+            );
 
+    }
 
+    sub(sub) {
+        this._transport.subs(sub.name, (payload) => {
+            let invocations = sub.algorithm(payload);
+
+            if (!(invocations instanceof Array))
+                invocations = [invocations];
+
+            for (const invocation of invocations) {
+                if (!invocation)
+                    return;
+
+                this.invoke(invocation.operation, invocation.input, invocation.query);
+            }
+        });
     }
 
     async invoke(name, input, query) {
@@ -63,7 +82,8 @@ class Runtime {
         if (this.connectors)
             await Promise.all(this.connectors.map((connector) => connector.connect && connector.connect()));
 
-        await this._transport.connect();
+        if (this._transport)
+            await this._transport.connect();
 
         this._starting = false;
 
@@ -76,7 +96,8 @@ class Runtime {
 
         this._stopping = true;
 
-        await this._transport.disconnect();
+        if (this._transport)
+            await this._transport.disconnect();
 
         if (this.connectors)
             await Promise.all(this.connectors.map(

@@ -9,7 +9,7 @@ module.exports = (location, meta) => {
         algorithm = require(location);
 
         if (typeof algorithm !== 'function')
-            throw new Error(`Operation '${name}' must export function`);
+            throw new Error(`'${location}' must export function`);
     }
 
     return { name, algorithm };

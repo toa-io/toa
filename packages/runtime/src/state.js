@@ -4,12 +4,13 @@ const parse = require('./query');
 
 module.exports = class {
 
-    constructor(connector, schema, options) {
+    constructor(connector, schema, options, hooks = []) {
         this.manifest = schema.manifest;
 
         this._connector = connector;
         this._schema = schema;
         this._options = options;
+        this._hooks = hooks;
     }
 
     async connect() {
@@ -56,11 +57,16 @@ module.exports = class {
                 return 1;
 
             this._validate(object);
-            current = clone(object);
 
             const options = { upsert: this._options.inserted };
+            const result = object._id ? this._connector.update(object, options) : this._connector.add(object);
 
-            return object._id ? this._connector.update(object, options) : this._connector.add(object);
+            for (const hook of this._hooks)
+                hook.handle(current, object);
+
+            current = clone(object);
+
+            return result;
         };
 
         Object.defineProperty(object, '_commit', {

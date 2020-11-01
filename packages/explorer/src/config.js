@@ -2,7 +2,8 @@ module.exports = {
     paths: {
         manifest: 'kookaburra.yml',
         operations: './operations/',
-        descriptor: 'manifest.yml',
+        pubs: './pub/',
+        subs: './sub/',
         algorithm: 'algorithm',
     },
 };

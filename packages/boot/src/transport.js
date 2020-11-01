@@ -22,7 +22,7 @@ module.exports = (locator, source) => {
         instances[Transport.type] = {};
 
     if (!instances[Transport.type][host])
-        instances[Transport.type][host] = new Transport(host, source?.label);
+        instances[Transport.type][host] = new Transport(host, locator.label, source?.label);
 
     return instances[Transport.type][host];
 };

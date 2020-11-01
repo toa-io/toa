@@ -8,4 +8,5 @@ module.exports = {
     Call: require('./call'),
     State: require('./state'),
     Schema: require('./schema'),
+    Events: require('./events'),
 };

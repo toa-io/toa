@@ -1,5 +1,5 @@
 const { load } = require('@kookaburra/explorer');
-const { Locator, Runtime, State, Schema } = require('@kookaburra/runtime');
+const { Locator, Runtime, State, Schema, Events } = require('@kookaburra/runtime');
 const connector = require('./connector');
 const invocation = require('./invocation');
 const manifest = require('./manifest');
@@ -26,14 +26,16 @@ module.exports = async (component, source, resolve) => {
         });
     }
 
-    const local = component.operations?.filter((descriptor) => descriptor.algorithm || descriptor.manifest.template).length > 0;
+    const local = !source;
 
     let host = undefined;
 
     if (local)
         host = transport(locator);
 
+    const hooks = [];
     let state = undefined;
+    let pub = undefined;
 
     if (local && component.manifest.state) {
         const options = {
@@ -41,16 +43,22 @@ module.exports = async (component, source, resolve) => {
             inserted: component.manifest.state.inserted,
         };
 
+        if (component.pubs) {
+            pub = new Events(component.pubs, host);
+            hooks.push(pub);
+        }
+
         state = new State(
             connector(locator, component.manifest.state),
             new Schema(component.manifest.state.schema),
             options,
+            hooks
         );
 
         connectors.push(state);
     }
 
-    if (component.manifest.remotes) {
+    if (local && component.manifest.remotes) {
         if (typeof resolve !== 'function')
             throw new Error('Runtime with dependencies must be created via Composition (boot.compose)');
 
@@ -89,5 +97,5 @@ module.exports = async (component, source, resolve) => {
         component.manifest.state,
     ));
 
-    return new Runtime(locator, host, operations, connectors);
+    return new Runtime(locator, host, operations, component.subs, connectors);
 };
