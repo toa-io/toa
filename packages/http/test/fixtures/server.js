@@ -26,6 +26,7 @@ const express = jest.fn(() => ({
     use: jest.fn(),
     set: jest.fn(),
     listen: jest.fn(() => server),
+    disable: jest.fn(),
 }));
 
 express.json = jest.fn();

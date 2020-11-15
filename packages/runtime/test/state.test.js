@@ -32,7 +32,7 @@ describe('object', () => {
         expect(mock.connector.get).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties, mock.options);
-        expect(mock.connector.get).toBeCalledWith(mock.parse.mock.results[0].value);
+        expect(mock.connector.get).toBeCalledWith(mock.parse.mock.results[0].value.query);
         expect(object).toEqual(mock.connector.get.mock.results[0].value);
     });
 
@@ -86,7 +86,7 @@ describe('collection', () => {
         expect(mock.parse).toBeCalledTimes(1);
         expect(mock.parse).toBeCalledWith(mock.query, mock.schema.properties, mock.options);
 
-        expect(mock.connector.find).toBeCalledWith(mock.parse.mock.results[0].value);
+        expect(mock.connector.find).toBeCalledWith(mock.parse.mock.results[0].value.query);
         expect(collection).toEqual(mock.connector.find.mock.results[0].value);
     });
 

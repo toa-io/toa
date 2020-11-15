@@ -49,7 +49,7 @@ describe('request handling', () => {
             jest.clearAllMocks();
             await request({ body: { empty: 1 } }, mock.res);
 
-            expect(mock.res.status).toBeCalledWith(200);
+            expect(mock.res.status).toBeCalledWith(204);
             expect(mock.res.json).toBeCalledTimes(0);
             expect(mock.res.end).toBeCalledTimes(1);
         });
