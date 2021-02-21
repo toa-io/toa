@@ -1,9 +1,0 @@
-{
-  "name": "@kookaburra/dummies",
-  "version": "0.0.1",
-  "description": "Kookaburra dummy components",
-  "main": "package.json",
-  "dependencies": {
-    "@kookaburra/runtime": "^0.0.1"
-  }
-}

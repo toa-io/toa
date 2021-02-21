@@ -1,9 +1,0 @@
-{
-  "name": "@kookaburra/templates",
-  "version": "0.0.1",
-  "description": "Kookaburra operation templates",
-  "main": "./src/index.js",
-  "scripts": {
-    "test": "jest"
-  }
-}
