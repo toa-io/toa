@@ -12,7 +12,6 @@ beforeEach(() => {
 })
 
 describe('Algorithm', () => {
-
   it('should execute', async () => {
     await operation.execute()
 
@@ -24,6 +23,4 @@ describe('Algorithm', () => {
 
     expect(assets.algorithm).toBeCalledWith(assets.io)
   })
-
 })
-

@@ -15,10 +15,13 @@
     "standard": "16.0.3"
   },
   "scripts": {
-    "test": "standard --env jest --verbose --fix | snazzy && NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "standard --verbose --fix | snazzy && NODE_OPTIONS=--experimental-vm-modules jest",
     "prepare": "husky install"
   },
   "standard": {
-    "parser": "babel-eslint"
+    "parser": "babel-eslint",
+    "env": {
+      "jest": true
+    }
   }
 }
