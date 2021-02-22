@@ -11,11 +11,9 @@ export default class IO {
   }
 
   set error (error) {
-    if (!(error instanceof Error))
-      throw new Error('Error value must be an instance of Error type')
+    if (!(error instanceof Error)) { throw new Error('Error value must be an instance of Error type') }
 
-    if (this.#error)
-      throw new Error('Error value must be set only once')
+    if (this.#error) { throw new Error('Error value must be set only once') }
 
     this.#error = error
   }

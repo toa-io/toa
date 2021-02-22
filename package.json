@@ -15,7 +15,8 @@
     "standard": "16.0.3"
   },
   "scripts": {
-    "test": "standard --verbose --fix | snazzy && NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "standard --verbose | snazzy && NODE_OPTIONS=--experimental-vm-modules jest",
+    "lint": "standard --verbose --fix",
     "prepare": "husky install"
   },
   "standard": {

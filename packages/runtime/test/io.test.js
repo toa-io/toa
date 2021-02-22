@@ -31,7 +31,6 @@ describe('input/output', () => {
 })
 
 describe('error', () => {
-
   it('should allow error assignment', () => {
     io.error = new Error('ok')
     expect(io.error).toBeInstanceOf(Error)
@@ -49,5 +48,4 @@ describe('error', () => {
 
     expect(assign).toThrow(/only once/)
   })
-
 })
