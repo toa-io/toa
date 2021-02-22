@@ -13,9 +13,10 @@ export default class Schema {
    * @param schema {Object}
    */
   constructor (schema) {
-    // noinspection JSPotentiallyInvalidConstructorUsage
-    const ajv = new Ajv.default(Schema.OPTIONS) // eslint-disable-line new-cap
+    const Ctor = Ajv.default // avoid code style errors
+    const ajv = new Ctor(Schema.OPTIONS)
     const declaration = { ...Schema.DEFAULTS, ...schema }
+
     this.#validate = ajv.compile(declaration)
   }
 
