@@ -20,7 +20,7 @@ export default class Schema {
   }
 
   /**
-   * @param object
+   * @param object {Object}
    * @returns {boolean}
    */
   fit (object) {
