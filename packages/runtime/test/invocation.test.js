@@ -15,7 +15,7 @@ beforeEach(() => {
 it('should invoke operation', async () => {
   await invocation.invoke(assets.io.valid)
 
-  expect(assets.operation.invoke).toBeCalled()
+  expect(assets.operation.execute).toBeCalled()
 })
 
 it('should pass arguments', async () => {
@@ -24,7 +24,7 @@ it('should pass arguments', async () => {
 
   await invocation.invoke(assets.io.valid, foo, bar)
 
-  expect(assets.operation.invoke).toBeCalledWith(assets.io.valid, foo, bar)
+  expect(assets.operation.execute).toBeCalledWith(assets.io.valid, foo, bar)
 })
 
 it('should write error on invalid input', async () => {
@@ -33,7 +33,7 @@ it('should write error on invalid input', async () => {
   await invocation.invoke(io)
 
   expect(io.error).toBeInstanceOf(Error)
-  expect(assets.operation.invoke).not.toBeCalled()
+  expect(assets.operation.execute).not.toBeCalled()
 })
 
 it('should close input', async () => {

@@ -1,6 +1,3 @@
-/**
- * Operation invocation
- */
 export default class Invocation {
   #operation
   #schema
@@ -15,9 +12,8 @@ export default class Invocation {
   }
 
   /**
-   * Validate input then invoke operation
    * @param io {IO}
-   * @param args
+   * @param args {any}
    * @returns {Promise<void>}
    */
   async invoke (io, ...args) {
@@ -29,6 +25,6 @@ export default class Invocation {
     }
 
     io.close()
-    await this.#operation.invoke(io, ...args)
+    await this.#operation.execute(io, ...args)
   }
 }

@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 
 export const operation = {
-  invoke: jest.fn()
+  execute: jest.fn()
 }
 
 export const schema = {

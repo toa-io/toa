@@ -1,8 +1,5 @@
 import IO from './io'
 
-/**
- * Component lifecycle management, operations provisioning
- */
 export default class Runtime {
   #operations = {}
 
@@ -16,7 +13,7 @@ export default class Runtime {
   }
 
   /**
-   * Invoke operation
+   * @param name {string} - Operation name
    * @returns {Promise<IO>}
    */
   async invoke (name) {

@@ -1,11 +1,11 @@
 import IO from '../src/io'
 
-describe('Signals', () => {
-  const SIGNALS = ['input', 'output', 'error']
+let io
 
-  let io
+beforeEach(() => (io = new IO()))
 
-  beforeEach(() => (io = new IO()))
+describe('input/output', () => {
+  const SIGNALS = ['input', 'output']
 
   it('should provide signals', () => {
     SIGNALS.forEach(signal =>
@@ -28,4 +28,26 @@ describe('Signals', () => {
 
     expect(() => (io.input.foo = 1)).toThrow()
   })
+})
+
+describe('error', () => {
+
+  it('should allow error assignment', () => {
+    io.error = new Error('ok')
+    expect(io.error).toBeInstanceOf(Error)
+  })
+
+  it('should throw on non Error type', () => {
+    const assign = () => (io.error = {})
+
+    expect(assign).toThrow(/instance of Error/)
+  })
+
+  it('should throw on overwrite', () => {
+    io.error = new Error('1')
+    const assign = () => (io.error = new Error('2'))
+
+    expect(assign).toThrow(/only once/)
+  })
+
 })

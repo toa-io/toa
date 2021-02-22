@@ -1,8 +1,5 @@
 import Ajv from 'ajv'
 
-/**
- * JSON Schema validator for states and inputs
- */
 export default class Schema {
   static DEFAULTS = { type: 'object', additionalProperties: false }
   static OPTIONS = { useDefaults: true }
@@ -23,7 +20,6 @@ export default class Schema {
   }
 
   /**
-   * Validate object and modify with defaults
    * @param object {Object} - Input object
    * @returns {boolean} Validation result
    */
