@@ -1,6 +1,4 @@
-const assets = {}
-
-assets.schema = {
+export const schema = {
   properties: {
     foo: {
       type: 'string'
@@ -16,7 +14,7 @@ assets.schema = {
   required: ['foo']
 }
 
-assets.samples = {
+export const samples = {
   ok: {
     all: {
       foo: 'bar',
@@ -36,5 +34,3 @@ assets.samples = {
     }
   }
 }
-
-export default assets

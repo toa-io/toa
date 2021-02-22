@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 
 import Runtime from '../src/runtime'
-import assets from './runtime.assets'
+import * as assets from './runtime.assets'
 
 describe('Operations', () => {
   const operation = assets.operations[Math.floor(2 * Math.random())]
@@ -13,6 +13,7 @@ describe('Operations', () => {
 
   it('should invoke operation', async () => {
     await runtime.invoke(operation.name)
+
     expect(operation.invoke).toBeCalled()
   })
 
@@ -22,6 +23,7 @@ describe('Operations', () => {
 
   it('should return io', async () => {
     const io = await runtime.invoke(operation.name)
+
     expect(io.output.called).toBe(operation.name)
   })
 })

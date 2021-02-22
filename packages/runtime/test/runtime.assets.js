@@ -1,7 +1,5 @@
 import { jest } from '@jest/globals'
 
-const assets = {}
-
 const invocation = (name) => {
   return jest.fn((io) => new Promise(resolve => {
     io.output.called = name
@@ -9,7 +7,7 @@ const invocation = (name) => {
   }))
 }
 
-assets.operations = [
+export const operations = [
   {
     name: 'foo',
     invoke: invocation('foo')
@@ -19,5 +17,3 @@ assets.operations = [
     invoke: invocation('bar')
   }
 ]
-
-export default assets

@@ -23,5 +23,8 @@
   "dependencies": {
     "ajv": "7.1.1",
     "deep-freeze": "0.0.1"
+  },
+  "devDependencies": {
+    "clone-deep": "4.0.1"
   }
 }

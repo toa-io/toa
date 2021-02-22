@@ -25,6 +25,7 @@ describe('Signals', () => {
 
   it('should close input', () => {
     io.close()
+
     expect(() => (io.input.foo = 1)).toThrow()
   })
 })
