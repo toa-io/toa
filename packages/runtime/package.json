@@ -1,0 +1,27 @@
+{
+  "name": "@kookaburra/runtime",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Kookaburra Component Runtime",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantumducks/kookaburra.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/quantumducks/kookaburra/issues"
+  },
+  "dependencies": {
+    "ajv": "7.1.1",
+    "deep-freeze": "0.0.1"
+  }
+}
