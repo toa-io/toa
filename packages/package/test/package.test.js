@@ -7,14 +7,14 @@ const assets = require('./package.assets')
 
 let component
 let expectedManifest
-let expectedOperations
+let expectedAlgorithms
 
 beforeEach(async () => {
   const dir = path.resolve(assets.dummiesPath, 'simple')
 
   component = await Package.load(dir)
   expectedManifest = await assets.loadExpectedManifest()
-  expectedOperations = await assets.loadExpectedOperations()
+  expectedAlgorithms = await assets.loadExpectedAlgorithms()
 })
 
 describe('Load', () => {
@@ -23,6 +23,6 @@ describe('Load', () => {
   })
 
   it('should load operations', () => {
-    expect(component.operations).toEqual(expect.arrayContaining(expectedOperations))
+    expect(component.algorithms).toEqual(expect.arrayContaining(expectedAlgorithms))
   })
 })

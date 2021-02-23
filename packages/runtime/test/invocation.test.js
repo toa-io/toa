@@ -7,38 +7,48 @@ const assets = require('./invocation.assets')
 
 let invocation
 
-beforeEach(() => {
-  invocation = new Invocation(assets.operation, assets.schema)
+describe('invocation', () => {
+  beforeEach(() => {
+    invocation = new Invocation(assets.operation)
 
-  jest.clearAllMocks()
+    jest.clearAllMocks()
+  })
+
+  it('should invoke operation', async () => {
+    await invocation.invoke(assets.io.valid)
+
+    expect(assets.operation.execute).toBeCalled()
+  })
+
+  it('should pass arguments', async () => {
+    const foo = 'bar'
+    const bar = 'foo'
+
+    await invocation.invoke(assets.io.valid, foo, bar)
+
+    expect(assets.operation.execute).toBeCalledWith(assets.io.valid, foo, bar)
+  })
+
+  it('should close input', async () => {
+    await invocation.invoke(assets.io.valid)
+
+    expect(assets.io.valid.close).toBeCalled()
+  })
 })
 
-it('should invoke operation', async () => {
-  await invocation.invoke(assets.io.valid)
+describe('validation', () => {
+  beforeEach(() => {
+    invocation = new Invocation(assets.operation, assets.schema)
 
-  expect(assets.operation.execute).toBeCalled()
-})
+    jest.clearAllMocks()
+  })
 
-it('should pass arguments', async () => {
-  const foo = 'bar'
-  const bar = 'foo'
+  it('should write error on invalid input', async () => {
+    const io = clone(assets.io.invalid)
 
-  await invocation.invoke(assets.io.valid, foo, bar)
+    await invocation.invoke(io)
 
-  expect(assets.operation.execute).toBeCalledWith(assets.io.valid, foo, bar)
-})
-
-it('should write error on invalid input', async () => {
-  const io = clone(assets.io.invalid)
-
-  await invocation.invoke(io)
-
-  expect(io.error).toBeInstanceOf(Error)
-  expect(assets.operation.execute).not.toBeCalled()
-})
-
-it('should close input', async () => {
-  await invocation.invoke(assets.io.valid)
-
-  expect(assets.io.valid.close).toBeCalled()
+    expect(io.error).toBeInstanceOf(Error)
+    expect(assets.operation.execute).not.toBeCalled()
+  })
 })

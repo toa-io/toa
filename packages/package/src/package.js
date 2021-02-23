@@ -7,9 +7,9 @@ class Package {
   operations
 
   static async load (dir, options) {
-    const { manifest, operations } = await load(dir, options)
+    const { manifest, algorithms } = await load(dir, options)
 
-    return Object.assign(new Package(), { manifest, operations })
+    return Object.assign(new Package(), { manifest, algorithms })
   }
 }
 

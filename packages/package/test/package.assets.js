@@ -8,26 +8,26 @@ const dummiesPath = path.dirname(require.resolve('@kookaburra/dummies'))
 
 const loadExpectedManifest = async () => await yaml(path.resolve(__dirname, './expected.yaml'))
 
-const loadExpectedOperations = async () => {
-  const operations = []
+const loadExpectedAlgorithms = async () => {
+  const algorithms = []
 
-  operations.push({
-    algorithm: require(path.resolve(dummiesPath, './simple/operations/transit')),
+  algorithms.push({
+    func: require(path.resolve(dummiesPath, './simple/operations/transit')),
     name: 'transit',
     type: 'transition',
     state: 'collection'
   })
 
-  operations.push({
-    algorithm: require(path.resolve(dummiesPath, './simple/operations/observe')),
+  algorithms.push({
+    func: require(path.resolve(dummiesPath, './simple/operations/observe')),
     name: 'observe',
     type: 'observation',
     state: 'object'
   })
 
-  return operations
+  return algorithms
 }
 
 exports.dummiesPath = dummiesPath
 exports.loadExpectedManifest = loadExpectedManifest
-exports.loadExpectedOperations = loadExpectedOperations
+exports.loadExpectedAlgorithms = loadExpectedAlgorithms

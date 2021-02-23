@@ -4,19 +4,18 @@ const path = require('path')
 const glob = require('glob-promise')
 
 const { manifest } = require('./manifest')
-const { operations } = require('./operations')
+const { algorithms } = require('./algorithms')
 
 async function load (dir, options) {
   const opts = { ...DEFAULTS, ...options }
 
   const manifestPath = path.resolve(dir, opts.manifestFile)
-  const operationsGlob = path.resolve(dir, opts.operationsPath, '*')
-
-  const operationFiles = await glob(operationsGlob)
+  const algorithmsGlob = path.resolve(dir, opts.operationsPath, '*')
+  const algorithmFiles = await glob(algorithmsGlob)
 
   return {
     manifest: await manifest(manifestPath),
-    operations: operations(operationFiles)
+    algorithms: algorithms(algorithmFiles)
   }
 }
 
