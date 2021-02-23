@@ -1,0 +1,30 @@
+{
+  "name": "@kookaburra/cli",
+  "version": "0.0.0",
+  "description": "Kookaburra CLI",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantumducks/kookaburra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quantumducks/kookaburra/issues"
+  },
+  "main": "package.json",
+  "bin": {
+    "kookaburra": "bin/kookaburra"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@kookaburra/boot": "^0.0.0",
+    "chalk": "4.1.0",
+    "find-up": "5.0.0",
+    "yargs": "16.2.0"
+  }
+}
