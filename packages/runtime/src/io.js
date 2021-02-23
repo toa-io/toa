@@ -2,7 +2,7 @@
 
 const freeze = require('deep-freeze')
 
-module.exports = class IO {
+class IO {
   input = {}
   output = {}
   #error = undefined
@@ -28,3 +28,5 @@ module.exports = class IO {
     freeze(this.input)
   }
 }
+
+exports.IO = IO

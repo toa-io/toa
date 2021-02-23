@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = class Operation {
+class Operation {
   #algorithm
 
   constructor (algorithm) {
@@ -11,3 +11,5 @@ module.exports = class Operation {
     await this.#algorithm(io)
   }
 }
+
+exports.Operation = Operation

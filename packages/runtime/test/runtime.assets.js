@@ -7,7 +7,7 @@ const invocation = (name) => {
   }))
 }
 
-module.exports.operations = [
+const invocations = [
   {
     name: 'foo',
     invoke: invocation('foo')
@@ -17,3 +17,5 @@ module.exports.operations = [
     invoke: invocation('bar')
   }
 ]
+
+exports.invocations = invocations

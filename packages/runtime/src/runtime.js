@@ -1,23 +1,33 @@
 'use strict'
 
-const IO = require('./io')
+const { IO } = require('./io')
 
-module.exports = class Runtime {
-  #operations = {}
+class Runtime {
+  #invocations = {}
 
-  constructor (operations) {
-    for (const operation of operations) {
-      this.#operations[operation.name] = operation
+  constructor (invocations) {
+    for (const invocation of invocations) {
+      this.#invocations[invocation.name] = invocation
     }
   }
 
+  async start () {
+
+  }
+
+  async stop () {
+
+  }
+
   async invoke (name) {
-    if (!(name in this.#operations)) { throw new Error(`Operation '${name}' not found`) }
+    if (!(name in this.#invocations)) { throw new Error(`Operation '${name}' not found`) }
 
     const io = new IO()
 
-    await this.#operations[name].invoke(io)
+    await this.#invocations[name].invoke(io)
 
     return io
   }
 }
+
+exports.Runtime = Runtime

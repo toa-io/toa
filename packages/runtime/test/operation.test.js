@@ -1,6 +1,6 @@
 'use strict'
 
-const Operation = require('../src/operation')
+const { Operation } = require('../src/operation')
 const assets = require('./operation.assets')
 
 let operation

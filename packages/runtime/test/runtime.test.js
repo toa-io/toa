@@ -1,29 +1,29 @@
 'use strict'
 
-const Runtime = require('../src/runtime')
+const { Runtime } = require('../src/runtime')
 const assets = require('./runtime.assets')
 
-describe('Operations', () => {
-  const operation = assets.operations[Math.floor(2 * Math.random())]
-  const runtime = new Runtime(assets.operations)
+describe('Invocations', () => {
+  const invocation = assets.invocations[Math.floor(2 * Math.random())]
+  const runtime = new Runtime(assets.invocations)
 
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('should invoke operation', async () => {
-    await runtime.invoke(operation.name)
+  it('should invoke', async () => {
+    await runtime.invoke(invocation.name)
 
-    expect(operation.invoke).toBeCalled()
+    expect(invocation.invoke).toBeCalled()
   })
 
-  it('should throw on unknown operation', async () => {
+  it('should throw on unknown invocation name', async () => {
     await expect(() => runtime.invoke('baz')).rejects.toThrow(/not found/)
   })
 
   it('should return io', async () => {
-    const io = await runtime.invoke(operation.name)
+    const io = await runtime.invoke(invocation.name)
 
-    expect(io.output.called).toBe(operation.name)
+    expect(io.output.called).toBe(invocation.name)
   })
 })

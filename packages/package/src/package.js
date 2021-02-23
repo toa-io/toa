@@ -1,19 +1,16 @@
 'use strict'
 
-const load = require('./load')
+const { load } = require('./load')
 
-module.exports = class Package {
+class Package {
+  manifest
+  operations
+
   static async load (dir, options) {
     const { manifest, operations } = await load(dir, options)
 
-    const component = new Package()
-
-    component.manifest = manifest
-    component.operations = operations
-
-    return component
+    return Object.assign(new Package(), { manifest, operations })
   }
-
-  manifest
-  operations
 }
+
+exports.Package = Package

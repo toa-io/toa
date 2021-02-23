@@ -1,14 +1,14 @@
 'use strict'
 
-module.exports.operation = {
+const operation = {
   execute: jest.fn()
 }
 
-module.exports.schema = {
+const schema = {
   fit: jest.fn(input => input.valid)
 }
 
-module.exports.io = {
+const io = {
   valid: {
     input: {
       valid: true
@@ -22,3 +22,7 @@ module.exports.io = {
     error: {}
   }
 }
+
+exports.operation = operation
+exports.schema = schema
+exports.io = io

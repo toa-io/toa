@@ -1,7 +1,9 @@
 'use strict'
 
-const yaml = require('./yaml')
+const { yaml } = require('./yaml')
 
-module.exports = async path => {
+async function manifest (path) {
   return await yaml(path)
 }
+
+exports.manifest = manifest

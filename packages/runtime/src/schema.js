@@ -2,7 +2,7 @@
 
 const Ajv = require('ajv')
 
-module.exports = class Schema {
+class Schema {
   static DEFAULTS = { type: 'object', additionalProperties: false }
   static OPTIONS = { useDefaults: true }
 
@@ -24,3 +24,5 @@ module.exports = class Schema {
     return valid
   }
 }
+
+exports.Schema = Schema

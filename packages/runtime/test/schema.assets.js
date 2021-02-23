@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports.schema = {
+const schema = {
   properties: {
     foo: {
       type: 'string'
@@ -16,7 +16,7 @@ module.exports.schema = {
   required: ['foo']
 }
 
-module.exports.samples = {
+const samples = {
   ok: {
     all: {
       foo: 'bar',
@@ -36,3 +36,6 @@ module.exports.samples = {
     }
   }
 }
+
+exports.schema = schema
+exports.samples = samples

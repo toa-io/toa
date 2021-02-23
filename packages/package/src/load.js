@@ -3,10 +3,10 @@
 const path = require('path')
 const glob = require('glob-promise')
 
-const manifest = require('./manifest')
-const operations = require('./operations')
+const { manifest } = require('./manifest')
+const { operations } = require('./operations')
 
-module.exports = async (dir, options) => {
+async function load (dir, options) {
   const opts = { ...DEFAULTS, ...options }
 
   const manifestPath = path.resolve(dir, opts.manifestFile)
@@ -24,3 +24,5 @@ const DEFAULTS = {
   manifestFile: 'kookaburra.yaml',
   operationsPath: './operations'
 }
+
+exports.load = load

@@ -1,6 +1,6 @@
 'use strict'
 
-const IO = require('../src/io')
+const { IO } = require('../src/io')
 
 let io
 

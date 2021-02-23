@@ -1,4 +1,4 @@
-const Schema = require('../src/schema')
+const { Schema } = require('../src/schema')
 const assets = require('./schema.assets')
 
 const schema = new Schema(assets.schema)

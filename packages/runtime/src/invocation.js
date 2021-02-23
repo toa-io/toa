@@ -1,10 +1,13 @@
 'use strict'
 
-module.exports = class Invocation {
+class Invocation {
+  name
+
   #operation
   #schema
 
   constructor (operation, schema) {
+    this.name = operation.name
     this.#operation = operation
     this.#schema = schema
   }
@@ -21,3 +24,5 @@ module.exports = class Invocation {
     await this.#operation.execute(io, ...args)
   }
 }
+
+exports.Invocation = Invocation

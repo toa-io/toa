@@ -1,31 +1,33 @@
 'use strict'
 
+const path = require('path')
 const parser = require('@babel/parser')
 
-const NAMES = ['transition', 'observation']
+const TYPES = ['transition', 'observation']
 const STATES = ['object', 'collection']
 
 function operation (file) {
   const algorithm = require(file)
+  const name = path.parse(file).name
 
   const ast = parser.parse(algorithm.toString())
-  const { name, state } = node(ast.program.body[0])
+  const { type, state } = node(ast.program.body[0])
 
-  return { name, state, algorithm }
+  return { name, type, state, algorithm }
 }
 
 function node (node) {
   if (node.type !== 'FunctionDeclaration') { throw new Error('Algorithm must export named function declaration') }
 
-  return { name: name(node), state: state(node) }
+  return { type: type(node), state: state(node) }
 }
 
-function name (node) {
-  const name = node.id.name
+function type (node) {
+  const type = node.id.name
 
-  if (NAMES.indexOf(name) === -1) { throw new Error(`Algorithm name must be one of: ${NAMES.join(', ')}`) }
+  if (TYPES.indexOf(type) === -1) { throw new Error(`Algorithm name must be one of: ${TYPES.join(', ')}, ${type} given`) }
 
-  return name
+  return type
 }
 
 function state (node) {
@@ -38,4 +40,6 @@ function state (node) {
   return param
 }
 
-module.exports = files => files.map(operation)
+const operations = files => files.map(operation)
+
+exports.operations = operations

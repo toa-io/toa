@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 
-const Invocation = require('../src/invocation')
+const { Invocation } = require('../src/invocation')
 const assets = require('./invocation.assets')
 
 let invocation

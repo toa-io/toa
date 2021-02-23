@@ -1,10 +1,1 @@
-domain: tests
-name: loader
-
-state:
-  schema:
-    properties:
-      filename:
-        type: stirng
-      size:
-        type: number
+name: simple
