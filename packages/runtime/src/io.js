@@ -1,6 +1,8 @@
-import freeze from 'deep-freeze'
+'use strict'
 
-export default class IO {
+const freeze = require('deep-freeze')
+
+module.exports = class IO {
   input = {}
   output = {}
   #error = undefined

@@ -1,14 +1,12 @@
-import path from 'path'
-import glob from 'glob-promise'
+'use strict'
 
-import manifest from './manifest'
-import operations from './operations'
+const path = require('path')
+const glob = require('glob-promise')
 
-/**
- * @param dir {string} Package dir
- * @param options {Object}
- */
-export default async (dir, options) => {
+const manifest = require('./manifest')
+const operations = require('./operations')
+
+module.exports = async (dir, options) => {
   const opts = { ...DEFAULTS, ...options }
 
   const manifestPath = path.resolve(dir, opts.manifestFile)

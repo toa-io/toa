@@ -1,7 +1,9 @@
-import path from 'path'
+'use strict'
 
-import Package from '../src/package'
-import * as assets from './package.assets'
+const path = require('path')
+
+const Package = require('../src/package')
+const assets = require('./package.assets')
 
 let component
 let expectedManifest

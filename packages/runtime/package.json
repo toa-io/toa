@@ -11,8 +11,7 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "type": "module",
-  "main": "src/component.js",
+  "main": "src/index.js",
   "publishConfig": {
     "access": "public"
   },

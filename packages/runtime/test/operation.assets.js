@@ -1,5 +1,4 @@
-import { jest } from '@jest/globals'
+'use strict'
 
-export const algorithm = jest.fn()
-
-export const io = {}
+module.exports.algorithm = jest.fn()
+module.exports.io = {}

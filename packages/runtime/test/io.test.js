@@ -1,4 +1,6 @@
-import IO from '../src/io'
+'use strict'
+
+const IO = require('../src/io')
 
 let io
 
@@ -15,7 +17,10 @@ describe('input/output', () => {
 
   it('should forbid signals assignment', () => {
     SIGNALS.forEach(signal =>
-      expect(() => (io[signal] = {})).toThrow(/read only property/)
+      expect(() => {
+        io[signal] = { new: 1 }
+        console.log('a')
+      }).toThrow(/read only property/)
     )
   })
 

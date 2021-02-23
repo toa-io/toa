@@ -1,13 +1,8 @@
-import load from './load'
+'use strict'
 
-export default class Package {
-  /**
-   * @param dir {string} Component path
-   * @param [options] {Object} Options object
-   * @param [options.manifestFile=kookaburra.yaml] {string} Manifest file name
-   * @param [options.operationsPath='./operations'] {string} Operations dir
-   * @returns {Promise<Package>}
-   */
+const load = require('./load')
+
+module.exports = class Package {
   static async load (dir, options) {
     const { manifest, operations } = await load(dir, options)
 

@@ -1,14 +1,14 @@
-import { jest } from '@jest/globals'
+'use strict'
 
-export const operation = {
+module.exports.operation = {
   execute: jest.fn()
 }
 
-export const schema = {
+module.exports.schema = {
   fit: jest.fn(input => input.valid)
 }
 
-export const io = {
+module.exports.io = {
   valid: {
     input: {
       valid: true

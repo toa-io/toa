@@ -1,5 +1,5 @@
-import Schema from '../src/schema'
-import * as assets from './schema.assets'
+const Schema = require('../src/schema')
+const assets = require('./schema.assets')
 
 const schema = new Schema(assets.schema)
 

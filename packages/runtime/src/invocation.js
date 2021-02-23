@@ -1,21 +1,14 @@
-export default class Invocation {
+'use strict'
+
+module.exports = class Invocation {
   #operation
   #schema
 
-  /**
-   * @param operation {Operation | Call}
-   * @param schema {Schema}
-   */
   constructor (operation, schema) {
     this.#operation = operation
     this.#schema = schema
   }
 
-  /**
-   * @param io {IO}
-   * @param args {any}
-   * @returns {Promise<void>}
-   */
   async invoke (io, ...args) {
     const valid = this.#schema.fit(io.input)
 

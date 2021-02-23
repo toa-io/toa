@@ -1,8 +1,9 @@
-import { jest } from '@jest/globals'
-import clone from 'clone-deep'
+'use strict'
 
-import Invocation from '../src/invocation'
-import * as assets from './invocation.assets'
+const clone = require('clone-deep')
+
+const Invocation = require('../src/invocation')
+const assets = require('./invocation.assets')
 
 let invocation
 

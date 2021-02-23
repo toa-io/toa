@@ -1,12 +1,9 @@
-import { createRequire } from 'module'
-import * as parser from '@babel/parser'
+'use strict'
 
-const require = createRequire(import.meta.url)
+const parser = require('@babel/parser')
 
 const NAMES = ['transition', 'observation']
 const STATES = ['object', 'collection']
-
-export default files => files.map(operation)
 
 function operation (file) {
   const algorithm = require(file)
@@ -40,3 +37,5 @@ function state (node) {
 
   return param
 }
+
+module.exports = files => files.map(operation)

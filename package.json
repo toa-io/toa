@@ -14,12 +14,15 @@
     "standard": "16.0.3"
   },
   "scripts": {
-    "test": "standard --verbose | snazzy && NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
+    "test": "standard --verbose | snazzy && jest",
     "lint": "standard --verbose --fix | snazzy",
     "prepare": "husky install"
   },
   "standard": {
     "parser": "babel-eslint",
+    "rules": {
+      "strict": ["error"]
+    },
     "env": {
       "jest": true
     }

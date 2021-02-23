@@ -1,14 +1,13 @@
-import Ajv from 'ajv'
+'use strict'
 
-export default class Schema {
+const Ajv = require('ajv')
+
+module.exports = class Schema {
   static DEFAULTS = { type: 'object', additionalProperties: false }
   static OPTIONS = { useDefaults: true }
 
   #validate
 
-  /**
-   * @param schema {Object} - JSON Schema
-   */
   constructor (schema) {
     if (schema.type && schema.type !== 'object') { throw new Error('State/input schemas must be an object type') }
 
@@ -19,10 +18,6 @@ export default class Schema {
     this.#validate = ajv.compile(declaration)
   }
 
-  /**
-   * @param object {Object} - Input object
-   * @returns {boolean} Validation result
-   */
   fit (object) {
     const valid = this.#validate(object)
 

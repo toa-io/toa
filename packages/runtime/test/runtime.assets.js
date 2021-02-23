@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals'
+'use strict'
 
 const invocation = (name) => {
   return jest.fn((io) => new Promise(resolve => {
@@ -7,7 +7,7 @@ const invocation = (name) => {
   }))
 }
 
-export const operations = [
+module.exports.operations = [
   {
     name: 'foo',
     invoke: invocation('foo')

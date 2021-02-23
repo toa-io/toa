@@ -1,3 +1,5 @@
+'use strict'
+
 function transition ({ input, output }, collection) {
 }
 

@@ -1,18 +1,16 @@
-import path from 'path'
-import url from 'url'
+'use strict'
 
-import { createRequire } from 'module'
+const path = require('path')
 
-import yaml from '../src/yaml'
-const require = createRequire(import.meta.url)
+const yaml = require('../src/yaml')
 
-export const dummiesPath = path.dirname(require.resolve('@kookaburra/dummies'))
+const dummiesPath = path.dirname(require.resolve('@kookaburra/dummies'))
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
+module.exports.dummiesPath = dummiesPath
 
-export const loadExpectedManifest = async () => await yaml(path.resolve(__dirname, './expected.yaml'))
+module.exports.loadExpectedManifest = async () => await yaml(path.resolve(__dirname, './expected.yaml'))
 
-export const loadExpectedOperations = async () => {
+module.exports.loadExpectedOperations = async () => {
   const operations = []
 
   operations.push({

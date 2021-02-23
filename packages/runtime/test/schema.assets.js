@@ -1,4 +1,6 @@
-export const schema = {
+'use strict'
+
+module.exports.schema = {
   properties: {
     foo: {
       type: 'string'
@@ -14,7 +16,7 @@ export const schema = {
   required: ['foo']
 }
 
-export const samples = {
+module.exports.samples = {
   ok: {
     all: {
       foo: 'bar',

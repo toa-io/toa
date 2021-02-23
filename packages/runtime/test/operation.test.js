@@ -1,7 +1,7 @@
-import { jest } from '@jest/globals'
+'use strict'
 
-import Operation from '../src/operation'
-import * as assets from './operation.assets'
+const Operation = require('../src/operation')
+const assets = require('./operation.assets')
 
 let operation
 

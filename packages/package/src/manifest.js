@@ -1,5 +1,7 @@
-import yaml from './yaml'
+'use strict'
 
-export default async path => {
+const yaml = require('./yaml')
+
+module.exports = async path => {
   return await yaml(path)
 }

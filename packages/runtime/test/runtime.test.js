@@ -1,7 +1,7 @@
-import { jest } from '@jest/globals'
+'use strict'
 
-import Runtime from '../src/runtime'
-import * as assets from './runtime.assets'
+const Runtime = require('../src/runtime')
+const assets = require('./runtime.assets')
 
 describe('Operations', () => {
   const operation = assets.operations[Math.floor(2 * Math.random())]

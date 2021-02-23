@@ -1,13 +1,11 @@
-import fs from 'fs'
-import util from 'util'
+'use strict'
 
-import yaml from 'js-yaml'
+const fs = require('fs')
+const util = require('util')
 
-/**
- * @param path {string} YAML file path
- * @returns {Promise<void>}
- */
-export default async path => {
+const yaml = require('js-yaml')
+
+module.exports = async path => {
   const readFile = util.promisify(fs.readFile)
   const contents = await readFile(path, 'utf8')
   const doc = yaml.load(contents)
