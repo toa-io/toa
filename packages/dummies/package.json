@@ -1,7 +1,7 @@
 {
-  "name": "@kookaburra/package",
+  "name": "@kookaburra/dummies",
   "version": "0.0.0",
-  "description": "Kookaburra Component Package",
+  "description": "Kookaburra Dummies",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
   "repository": {
@@ -11,21 +11,14 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "type": "module",
-  "main": "src/package.js",
+  "main": "package.json",
+  "directories": {
+
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "dependencies": {
-    "@babel/parser": "7.13.0",
-    "glob": "7.1.6",
-    "glob-promise": "4.0.1",
-    "js-yaml": "4.0.0"
-  },
-  "devDependencies": {
-    "@kookaburra/dummies": "^0.0.0"
   }
 }

@@ -8,9 +8,9 @@ let expectedManifest
 let expectedOperations
 
 beforeEach(async () => {
-  const dir = path.resolve(assets.__dirname, './package.assets')
+  const dir = path.resolve(assets.dummiesPath, 'simple')
 
-  component = await Package.load(dir, assets.options)
+  component = await Package.load(dir)
   expectedManifest = await assets.loadExpectedManifest()
   expectedOperations = await assets.loadExpectedOperations()
 })
@@ -21,6 +21,6 @@ describe('Load', () => {
   })
 
   it('should load operations', () => {
-    expect(component.operations).toEqual(expectedOperations)
+    expect(component.operations).toEqual(expect.arrayContaining(expectedOperations))
   })
 })
