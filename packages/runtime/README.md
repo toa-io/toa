@@ -1,3 +1,3 @@
 # Kookaburra Runtime
 
-Component lifecycle management, operations provisioning
+Component lifecycle management

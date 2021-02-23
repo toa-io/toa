@@ -1,7 +1,7 @@
 {
-  "name": "@kookaburra/runtime",
+  "name": "@kookaburra/package",
   "version": "0.0.0",
-  "description": "Kookaburra Component Runtime",
+  "description": "Kookaburra Component Package",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
   "repository": {
@@ -12,7 +12,7 @@
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
   "type": "module",
-  "main": "src/component.js",
+  "main": "src/package.js",
   "publishConfig": {
     "access": "public"
   },
@@ -20,10 +20,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "ajv": "7.1.1",
-    "deep-freeze": "0.0.1"
+    "@babel/parser": "7.13.0",
+    "glob": "7.1.6",
+    "glob-promise": "4.0.1"
   },
   "devDependencies": {
-    "clone-deep": "4.0.1"
+    "js-yaml": "4.0.0"
   }
 }

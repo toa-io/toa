@@ -1,6 +1,5 @@
 {
   "name": "kookaburra",
-  "type": "module",
   "private": true,
   "workspaces": [
     "packages/*"
