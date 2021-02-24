@@ -1,7 +1,7 @@
 'use strict'
 
-const { root } = require('../util/root')
 const boot = require('@kookaburra/boot')
+const { root } = require('../util/root')
 
 async function handler ({ operation, input }) {
   const dir = root()
@@ -11,7 +11,7 @@ async function handler ({ operation, input }) {
   const io = await runtime.invoke(operation, input)
   await runtime.stop()
 
-  if (io.error) { console.error(io.error) } else if (Object.keys(io.output).length > 0) { console.log(io.output) }
+  if (io.error) { console.log('error', io.error) } else if (Object.keys(io.output).length > 0) { console.log(io.output) }
 }
 
 exports.handler = handler

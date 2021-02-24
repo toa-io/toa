@@ -2,9 +2,8 @@
 
 const yargs = require('yargs/yargs')
 
-require('./util/console')
-
 const { version } = require('../package.json')
+const { console } = require('./util/console')
 
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {

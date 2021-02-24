@@ -3,6 +3,8 @@
 const yaml = require('js-yaml')
 const fs = require('fs-extra')
 
+const { console } = require('../../util/console')
+
 async function manifest ({ name }) {
   if (await fs.pathExists(MANIFEST_FILE)) { throw new Error(`Manifest '${MANIFEST_FILE}' already exists`) }
 

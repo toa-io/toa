@@ -2,13 +2,18 @@
 
 const chalk = require('chalk')
 
-const _error = console.error
-const _info = console.info
+const console = new Proxy(global.console, {
+  get: (target, key) => {
+    if (key === 'error') {
+      return (...args) => global.console.error(chalk.red('error'), ...args)
+    }
 
-console.error = (...args) => {
-  _error.call(console, chalk.red('error'), ...args)
-}
+    if (key === 'info') {
+      return (...args) => global.console.info(chalk.blue('info'), ...args)
+    }
 
-console.info = (...args) => {
-  _info.call(console, chalk.blue('info'), ...args)
-}
+    return target[key]
+  }
+})
+
+exports.console = console
