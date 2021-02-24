@@ -3,11 +3,13 @@
 const freeze = require('deep-freeze')
 
 class IO {
-  input = {}
+  input
   output = {}
-  #error = undefined
+  #error
 
-  constructor () {
+  constructor (input) {
+    this.input = { ...input }
+
     Object.freeze(this)
     Object.seal(this)
   }

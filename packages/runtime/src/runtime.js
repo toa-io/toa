@@ -19,10 +19,10 @@ class Runtime {
 
   }
 
-  async invoke (name) {
+  async invoke (name, input) {
     if (!(name in this.#invocations)) { throw new Error(`Operation '${name}' not found`) }
 
-    const io = new IO()
+    const io = new IO(input)
 
     await this.#invocations[name].invoke(io)
 

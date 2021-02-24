@@ -33,6 +33,14 @@ describe('input/output', () => {
 
     expect(() => (io.input.foo = 1)).toThrow()
   })
+
+  it('should assign initial input', () => {
+    const input = { test: Math.random() }
+
+    io = new IO(input)
+
+    expect(io.input).toEqual(input)
+  })
 })
 
 describe('error', () => {

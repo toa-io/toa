@@ -4,5 +4,7 @@ const { handler } = require('../handlers/invoke')
 
 exports.command = 'invoke <operation>'
 exports.desc = 'Invoke operation'
-exports.aliases = ['i']
+exports.builder = {
+  input: {}
+}
 exports.handler = handler

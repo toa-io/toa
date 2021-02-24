@@ -21,6 +21,13 @@ describe('Invocations', () => {
     await expect(() => runtime.invoke('baz')).rejects.toThrow(/not found/)
   })
 
+  it('should invoke with input', async () => {
+    const input = { test: Math.random() }
+    await runtime.invoke(invocation.name, input)
+
+    expect(invocation.invoke).toBeCalledWith(expect.objectContaining({ input }))
+  })
+
   it('should return io', async () => {
     const io = await runtime.invoke(invocation.name)
 
