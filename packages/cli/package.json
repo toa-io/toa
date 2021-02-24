@@ -23,8 +23,11 @@
   },
   "dependencies": {
     "@kookaburra/boot": "^0.0.0",
+    "@kookaburra/package": "^0.0.0",
     "chalk": "4.1.0",
     "find-up": "5.0.0",
+    "fs-extra": "9.1.0",
+    "js-yaml": "4.0.0",
     "yargs": "16.2.0"
   }
 }
