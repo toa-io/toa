@@ -2,11 +2,13 @@
 
 const path = require('path')
 
-const { operation } = require('../../handlers/generate/operation')
+const { operation } = require('../../handlers/create/operation')
 
 function builder (yargs) {
   yargs
+    .usage('Usage: kookaburra create operation add --transition')
     .positional('name', {
+      alias: 'n',
       describe: 'Operation name',
       demandOption: true,
       type: 'string'
@@ -18,11 +20,9 @@ function builder (yargs) {
       default: false
     })
     .default('name', () => path.basename(path.resolve()))
-    .alias('n', 'name')
-    .usage('Usage: kookaburra generate operation add --transition')
 }
 
 exports.command = 'operation <name>'
-exports.desc = 'Generate operation'
+exports.desc = 'Create operation'
 exports.builder = builder
 exports.handler = operation

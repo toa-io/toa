@@ -2,7 +2,7 @@
 
 const path = require('path')
 
-const { manifest } = require('../../handlers/generate/manifest')
+const { manifest } = require('../../handlers/create/manifest')
 
 function builder (yargs) {
   yargs
@@ -12,10 +12,10 @@ function builder (yargs) {
     })
     .default('name', () => path.basename(path.resolve()))
     .alias('n', 'name')
-    .usage('Usage: kookaburra generate manifest --name dummy')
+    .usage('Usage: kookaburra create manifest --name dummy')
 }
 
 exports.command = 'manifest'
-exports.desc = 'Generate manifest'
+exports.desc = 'Create manifest'
 exports.builder = builder
 exports.handler = manifest
