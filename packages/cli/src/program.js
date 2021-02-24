@@ -5,16 +5,20 @@ const chalk = require('chalk')
 
 const { version } = require('../package.json')
 
-yargs(process.argv.slice(2))
+const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
     if (err) {
-      if (process.env.NODE_ENV === 'dev') { console.error(err) }
+      if (argv.verbose) { console.error(err) }
 
       message = err.message
     } else yargs.showHelp()
 
     console.error(chalk.red('error'), message)
     process.exit(1)
+  })
+  .option('verbose', {
+    type: 'boolean',
+    default: false
   })
   .strictCommands()
   .commandDir('./commands')
