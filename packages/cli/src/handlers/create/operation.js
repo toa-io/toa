@@ -19,11 +19,11 @@ async function operation ({ name, transition }) {
   const template = path.resolve(__dirname, `./templates/${type}.js`)
   const target = path.resolve(dir, `${name}.js`)
 
-  if (await fs.pathExists(target)) { throw new Error(`Operation ${name} already exists`) }
+  if (await fs.pathExists(target)) { throw new Error(`Operation '${name}' already exists`) }
 
-  await fs.copy(template, path.resolve(dir, `${name}.js`))
+  await fs.copy(template, target)
 
-  console.info(`${type} ${name} created`)
+  console.info(`Operation ${name} (${type}) created`)
 }
 
 const OPERATIONS_DIR = 'operations'

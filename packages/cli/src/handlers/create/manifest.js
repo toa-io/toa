@@ -3,18 +3,18 @@
 const yaml = require('js-yaml')
 const fs = require('fs-extra')
 
-const MANIFEST_FILE = 'kookaburra.yaml'
-const YAML_OPTIONS = { styles: { '!!null': 'canonical' } }
-
 async function manifest ({ name }) {
+  if (await fs.pathExists(MANIFEST_FILE)) { throw new Error(`Manifest '${MANIFEST_FILE}' already exists`) }
+
   const manifest = { name }
   const content = yaml.dump(manifest, YAML_OPTIONS)
 
-  if (await fs.pathExists(MANIFEST_FILE)) { throw new Error(`Manifest ${MANIFEST_FILE} already exists`) }
-
   // noinspection JSUnresolvedFunction
   await fs.writeFile(MANIFEST_FILE, content)
-  console.info(`${MANIFEST_FILE} created`)
+  console.info(`Manifest '${MANIFEST_FILE}' created`)
 }
+
+const MANIFEST_FILE = 'kookaburra.yaml'
+const YAML_OPTIONS = { styles: { '!!null': 'canonical' } }
 
 exports.manifest = manifest
