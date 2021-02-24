@@ -1,19 +1,20 @@
 'use strict'
 
 const yargs = require('yargs/yargs')
-const chalk = require('chalk')
+
+require('./util/console')
 
 const { version } = require('../package.json')
 
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
     if (err) {
-      if (argv.verbose) { console.error(err) }
+      if (argv.verbose) { console.log(err) }
 
       message = err.message
     } else yargs.showHelp()
 
-    console.error(chalk.red('error'), message)
+    console.error(message)
     process.exit(1)
   })
   .option('verbose', {
