@@ -5,7 +5,10 @@ const operation = {
 }
 
 const schema = {
-  fit: jest.fn(input => input.valid)
+  fit: jest.fn(input => ({
+    ok: input.valid,
+    errors: input.valid ? undefined : [{ error: 1 }]
+  }))
 }
 
 const io = {
@@ -13,13 +16,16 @@ const io = {
     input: {
       valid: true
     },
-    close: jest.fn()
+    close: jest.fn(),
+    freeze: jest.fn()
   },
   invalid: {
     input: {
       valid: false
     },
-    error: {}
+    error: {},
+    close: jest.fn(),
+    freeze: jest.fn()
   }
 }
 

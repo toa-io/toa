@@ -19,9 +19,13 @@ class Schema {
   }
 
   fit (object) {
-    const valid = this.#validate(object)
+    const ok = this.#validate(object)
 
-    return valid
+    return { ok, errors: Schema.errors(this.#validate.errors) }
+  }
+
+  static errors (errors) {
+    return errors
   }
 }
 

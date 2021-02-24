@@ -5,7 +5,7 @@ const freeze = require('deep-freeze')
 class IO {
   input
   output = {}
-  #error
+  #error = {}
 
   constructor (input) {
     this.input = { ...input }
@@ -14,20 +14,21 @@ class IO {
     Object.seal(this)
   }
 
-  set error (error) {
-    if (!(error instanceof Error)) { throw new Error('Error value must be an instance of Error type') }
+  close () {
+    freeze(this.input)
+  }
 
-    if (this.#error) { throw new Error('Error value must be set only once') }
-
-    this.#error = error
+  freeze () {
+    freeze(this.output)
+    freeze(this.#error)
   }
 
   get error () {
-    return this.#error
+    return Object.isFrozen(this.#error) && Object.keys(this.#error).length === 0 ? undefined : this.#error
   }
 
-  close () {
-    freeze(this.input)
+  set error (_) {
+    throw new Error('IO.error is a read only property')
   }
 }
 

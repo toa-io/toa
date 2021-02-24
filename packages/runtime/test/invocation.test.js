@@ -6,16 +6,18 @@ const { Invocation } = require('../src/invocation')
 const assets = require('./invocation.assets')
 
 let invocation
+let io
 
 describe('invocation', () => {
   beforeEach(() => {
     invocation = new Invocation(assets.operation)
+    io = clone(assets.io)
 
     jest.clearAllMocks()
   })
 
   it('should invoke operation', async () => {
-    await invocation.invoke(assets.io.valid)
+    await invocation.invoke(io.valid)
 
     expect(assets.operation.execute).toBeCalled()
   })
@@ -24,31 +26,38 @@ describe('invocation', () => {
     const foo = 'bar'
     const bar = 'foo'
 
-    await invocation.invoke(assets.io.valid, foo, bar)
+    await invocation.invoke(io.valid, foo, bar)
 
     expect(assets.operation.execute).toBeCalledWith(assets.io.valid, foo, bar)
   })
 
   it('should close input', async () => {
-    await invocation.invoke(assets.io.valid)
+    await invocation.invoke(io.valid)
 
     expect(assets.io.valid.close).toBeCalled()
+  })
+
+  it('should freeze io', async () => {
+    await invocation.invoke(io.valid)
+
+    expect(assets.io.valid.freeze).toBeCalled()
   })
 })
 
 describe('validation', () => {
   beforeEach(() => {
     invocation = new Invocation(assets.operation, assets.schema)
+    io = clone(assets.io)
 
     jest.clearAllMocks()
   })
 
   it('should write error on invalid input', async () => {
-    const io = clone(assets.io.invalid)
+    await invocation.invoke(io.invalid)
 
-    await invocation.invoke(io)
+    expect(io.invalid.error)
+      .toMatchObject(expect.objectContaining({ name: 'validation', errors: expect.any(Array) }))
 
-    expect(io.error).toBeInstanceOf(Error)
     expect(assets.operation.execute).not.toBeCalled()
   })
 })

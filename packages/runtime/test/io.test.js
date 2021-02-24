@@ -7,7 +7,7 @@ let io
 beforeEach(() => (io = new IO()))
 
 describe('input/output', () => {
-  const SIGNALS = ['input', 'output']
+  const SIGNALS = ['input', 'output', 'error']
 
   it('should provide signals', () => {
     SIGNALS.forEach(signal =>
@@ -15,11 +15,18 @@ describe('input/output', () => {
     )
   })
 
+  it('should assign initial input', () => {
+    const input = { test: Math.random() }
+
+    io = new IO(input)
+
+    expect(io.input).toEqual(input)
+  })
+
   it('should forbid signals assignment', () => {
     SIGNALS.forEach(signal =>
       expect(() => {
         io[signal] = { new: 1 }
-        console.log('a')
       }).toThrow(/read only property/)
     )
   })
@@ -31,34 +38,20 @@ describe('input/output', () => {
   it('should close input', () => {
     io.close()
 
-    expect(() => (io.input.foo = 1)).toThrow()
+    expect(() => (io.input.foo = 1)).toThrow(/not extensible/)
   })
 
-  it('should assign initial input', () => {
-    const input = { test: Math.random() }
+  it('should freeze', () => {
+    io.error.foo = 1
+    io.freeze()
 
-    io = new IO(input)
-
-    expect(io.input).toEqual(input)
-  })
-})
-
-describe('error', () => {
-  it('should allow error assignment', () => {
-    io.error = new Error('ok')
-    expect(io.error).toBeInstanceOf(Error)
+    expect(() => (io.output.foo = 1)).toThrow(/not extensible/)
+    expect(() => (io.error.bar = 1)).toThrow(/not extensible/)
   })
 
-  it('should throw on non Error type', () => {
-    const assign = () => (io.error = {})
+  it('should delete error on freeze if no properties assigned', () => {
+    io.freeze()
 
-    expect(assign).toThrow(/instance of Error/)
-  })
-
-  it('should throw on overwrite', () => {
-    io.error = new Error('1')
-    const assign = () => (io.error = new Error('2'))
-
-    expect(assign).toThrow(/only once/)
+    expect(io.error).toBeUndefined()
   })
 })
