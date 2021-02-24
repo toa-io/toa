@@ -1,30 +1,73 @@
 const { Schema } = require('../src/schema')
 const assets = require('./schema.assets')
 
-const schema = new Schema(assets.schema)
+let schema
 
-it('should validate', () => {
-  expect(schema.fit(assets.samples.ok.all).ok).toBeTruthy()
-  expect(schema.fit(assets.samples.invalid.type).ok).toBeFalsy()
-  expect(schema.fit(assets.samples.invalid.required).ok).toBeFalsy()
+beforeEach(() => {
+  schema = new Schema(assets.schema)
 })
 
-it('should set defaults', () => {
-  const sample = { ...assets.samples.ok.required }
+describe('validation', () => {
+  it('should validate', () => {
+    expect(schema.fit(assets.samples.ok.all).ok).toBeTruthy()
+    expect(schema.fit(assets.samples.invalid.type).ok).toBeFalsy()
+    expect(schema.fit(assets.samples.invalid.required).ok).toBeFalsy()
+  })
 
-  schema.fit(sample)
+  it('should set defaults', () => {
+    const sample = { ...assets.samples.ok.required }
 
-  expect(sample.baz).toBe(assets.schema.properties.baz.default)
+    schema.fit(sample)
+
+    expect(sample.baz).toBe(assets.schema.properties.baz.default)
+  })
+
+  it('should forbid additional properties', () => {
+    const sample = { extra: 'property', ...assets.samples.ok.all }
+
+    expect(schema.fit(sample).ok).toBeFalsy()
+  })
+
+  it('should throw on non-object type schema', () => {
+    const ctor = () => new Schema({ type: 'number' })
+
+    expect(ctor).toThrow(/must be an object type/)
+  })
 })
 
-it('should forbid additional properties', () => {
-  const sample = { extra: 'property', ...assets.samples.ok.all }
+describe('errors', () => {
+  it('should format type error', () => {
+    const sample = { ...assets.samples.invalid.type }
 
-  expect(schema.fit(sample).ok).toBeFalsy()
-})
+    const result = schema.fit(sample)
 
-it('should throw on non-object type schema', () => {
-  const ctor = () => new Schema({ type: 'number' })
+    expect(result.errors).toEqual([expect.objectContaining({
+      keyword: 'type',
+      property: 'foo',
+      message: 'should be string',
+      schemaPath: '#/properties/foo/type'
+    })])
+  })
 
-  expect(ctor).toThrow(/must be an object type/)
+  it('should format missing property error', () => {
+    const sample = { ...assets.samples.invalid.required }
+
+    const result = schema.fit(sample)
+
+    expect(result.errors).toEqual([expect.objectContaining({
+      keyword: 'required',
+      property: 'foo'
+    })])
+  })
+
+  it('should format extra property error', () => {
+    const sample = { useless: 'prop', ...assets.samples.ok.all }
+
+    const result = schema.fit(sample)
+
+    expect(result.errors).toEqual([expect.objectContaining({
+      keyword: 'additionalProperties',
+      property: 'useless'
+    })])
+  })
 })

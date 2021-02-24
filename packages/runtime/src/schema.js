@@ -21,11 +21,26 @@ class Schema {
   fit (object) {
     const ok = this.#validate(object)
 
-    return { ok, errors: Schema.errors(this.#validate.errors) }
+    return { ok, errors: this.#validate.errors?.map(Schema.error) }
   }
 
-  static errors (errors) {
-    return errors
+  static error (error) {
+    const result = {
+      keyword: error.keyword,
+      property: undefined,
+      message: error.message,
+      schemaPath: error.schemaPath
+    }
+
+    if (error.dataPath) {
+      result.property = error.dataPath.slice(1)
+    } else if (error.keyword === 'required') {
+      result.property = error.params.missingProperty
+    } else if (error.keyword === 'additionalProperties') {
+      result.property = error.params.additionalProperty
+    }
+
+    return result
   }
 }
 
