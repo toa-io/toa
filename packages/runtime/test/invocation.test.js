@@ -60,4 +60,10 @@ describe('validation', () => {
 
     expect(assets.operation.execute).not.toBeCalled()
   })
+
+  it('should freeze io on invalid input', async () => {
+    await invocation.invoke(io.invalid)
+
+    expect(assets.io.invalid.freeze).toBeCalled()
+  })
 })

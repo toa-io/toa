@@ -44,8 +44,7 @@ describe('errors', () => {
     expect(result.errors).toEqual([expect.objectContaining({
       keyword: 'type',
       property: 'foo',
-      message: 'should be string',
-      schemaPath: '#/properties/foo/type'
+      message: 'should be string'
     })])
   })
 

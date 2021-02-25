@@ -1,7 +1,9 @@
-const { Invocation } = require('@kookaburra/runtime')
+const { Invocation, Schema } = require('@kookaburra/runtime')
 
-const invocation = (operation) => {
-  return new Invocation(operation)
+const invocation = ({ operation, manifest }) => {
+  const schema = manifest.schema ? new Schema(manifest.schema) : undefined
+
+  return new Invocation(operation, schema)
 }
 
 exports.invocation = invocation

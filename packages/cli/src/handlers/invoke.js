@@ -2,6 +2,7 @@
 
 const boot = require('@kookaburra/boot')
 const { root } = require('../util/root')
+const { console } = require('../util/console')
 
 async function handler ({ operation, input }) {
   const dir = root()
@@ -11,7 +12,7 @@ async function handler ({ operation, input }) {
   const io = await runtime.invoke(operation, input)
   await runtime.stop()
 
-  if (io.error) { console.log('error', io.error) } else if (Object.keys(io.output).length > 0) { console.log(io.output) }
+  console.dir({ input: io.input, output: io.output, error: io.error })
 }
 
 exports.handler = handler

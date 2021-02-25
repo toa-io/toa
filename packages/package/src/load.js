@@ -13,10 +13,12 @@ async function load (dir, options) {
   const algorithmsGlob = path.resolve(dir, opts.operationsPath, '*')
   const algorithmFiles = await glob(algorithmsGlob)
 
-  return {
-    manifest: await manifest(manifestPath),
-    algorithms: algorithms(algorithmFiles)
-  }
+  const component = {}
+
+  component.manifest = await manifest(manifestPath)
+  component.algorithms = algorithms(algorithmFiles, component.manifest.operations)
+
+  return component
 }
 
 const DEFAULTS = {

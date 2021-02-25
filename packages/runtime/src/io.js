@@ -4,7 +4,7 @@ const freeze = require('deep-freeze')
 
 class IO {
   input
-  output = {}
+  #output = {}
   #error = {}
 
   constructor (input) {
@@ -19,16 +19,28 @@ class IO {
   }
 
   freeze () {
-    freeze(this.output)
+    freeze(this.#output)
     freeze(this.#error)
   }
 
+  get output () {
+    return IO.format(this.#output)
+  }
+
+  set output (_) {
+    throw new Error('IO.output is a read only property')
+  }
+
   get error () {
-    return Object.isFrozen(this.#error) && Object.keys(this.#error).length === 0 ? undefined : this.#error
+    return IO.format(this.#error)
   }
 
   set error (_) {
     throw new Error('IO.error is a read only property')
+  }
+
+  static format (value) {
+    return Object.isFrozen(value) && Object.keys(value).length === 0 ? undefined : value
   }
 }
 

@@ -6,14 +6,15 @@ const parser = require('@babel/parser')
 const TYPES = ['transition', 'observation']
 const STATES = ['object', 'collection']
 
-function algorithm (file) {
+const algorithm = (manifests) => (file) => {
   const func = require(file)
   const name = path.parse(file).name
 
   const ast = parser.parse(func.toString())
   const { type, state } = node(ast.program.body[0])
+  const manifest = manifests?.[name]
 
-  return { name, type, state, func }
+  return { name, type, state, manifest, func }
 }
 
 function node (node) {
@@ -40,6 +41,6 @@ function state (node) {
   return param
 }
 
-const algorithms = files => files.map(algorithm)
+const algorithms = (files, manifest) => files.map(algorithm(manifest))
 
 exports.algorithms = algorithms

@@ -20,9 +20,6 @@
   },
   "standard": {
     "parser": "babel-eslint",
-    "rules": {
-      "strict": ["error"]
-    },
     "env": {
       "jest": true
     }

@@ -3,17 +3,14 @@
 const Ajv = require('ajv')
 
 class Schema {
-  static DEFAULTS = { type: 'object', additionalProperties: false }
-  static OPTIONS = { useDefaults: true }
-
   #validate
 
   constructor (schema) {
     if (schema.type && schema.type !== 'object') { throw new Error('State/input schemas must be an object type') }
 
     const Ctor = Ajv.default // avoid code style errors
-    const ajv = new Ctor(Schema.OPTIONS)
-    const declaration = { ...Schema.DEFAULTS, ...schema }
+    const ajv = new Ctor(OPTIONS)
+    const declaration = { ...DEFAULTS, ...schema }
 
     this.#validate = ajv.compile(declaration)
   }
@@ -28,8 +25,7 @@ class Schema {
     const result = {
       keyword: error.keyword,
       property: undefined,
-      message: error.message,
-      schemaPath: error.schemaPath
+      message: error.message
     }
 
     if (error.dataPath) {
@@ -43,5 +39,8 @@ class Schema {
     return result
   }
 }
+
+const DEFAULTS = { type: 'object', additionalProperties: false }
+const OPTIONS = { useDefaults: true }
 
 exports.Schema = Schema

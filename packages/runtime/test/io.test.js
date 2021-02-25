@@ -45,13 +45,14 @@ describe('input/output', () => {
     io.error.foo = 1
     io.freeze()
 
-    expect(() => (io.output.foo = 1)).toThrow(/not extensible/)
+    expect(() => (io.output.foo = 1)).toThrow(/undefined/)
     expect(() => (io.error.bar = 1)).toThrow(/not extensible/)
   })
 
-  it('should delete error on freeze if no properties assigned', () => {
+  it('should delete output/error on freeze if no properties assigned', () => {
     io.freeze()
 
+    expect(io.output).toBeUndefined()
     expect(io.error).toBeUndefined()
   })
 })
