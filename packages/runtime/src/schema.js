@@ -10,9 +10,8 @@ class Schema {
 
     const Ctor = Ajv.default // avoid code style errors
     const ajv = new Ctor(OPTIONS)
-    const declaration = { ...DEFAULTS, ...schema }
 
-    this.#validate = ajv.compile(declaration)
+    this.#validate = ajv.compile({ ...DEFAULTS, ...schema })
   }
 
   fit (object) {
