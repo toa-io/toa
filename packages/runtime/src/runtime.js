@@ -1,20 +1,23 @@
 'use strict'
 
+const { Connector } = require('./connector')
 const { IO } = require('./io')
 
-class Runtime {
+class Runtime extends Connector {
+  locator
   #invocations = {}
 
   constructor (invocations) {
+    super()
     this.#invocations = invocations
   }
 
-  async start () {
-
+  connection () {
+    console.log('Runtime started')
   }
 
-  async stop () {
-
+  disconnection () {
+    console.log('Runtime stopped')
   }
 
   async invoke (name, input) {
