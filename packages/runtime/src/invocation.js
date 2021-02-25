@@ -1,13 +1,10 @@
 'use strict'
 
 class Invocation {
-  name
-
   #operation
   #schema
 
   constructor (operation, schema) {
-    this.name = operation.name
     this.#operation = operation
     this.#schema = schema
   }

@@ -2,14 +2,12 @@ const path = require('path')
 
 const dummiesPath = path.dirname(require.resolve('@kookaburra/dummies'))
 
-const manifest = { name: 'calculator' }
-const algorithms = []
-
-algorithms.push({
-  func: require(path.resolve(dummiesPath, './calculator/operations/sum')),
-  name: 'sum',
-  type: 'observation',
-  manifest: {
+const locator = { name: 'calculator' }
+const algorithms = {
+  sum: {
+    func: require(path.resolve(dummiesPath, './calculator/operations/sum')),
+    name: 'sum',
+    type: 'observation',
     schema: {
       properties: {
         a: {
@@ -21,14 +19,11 @@ algorithms.push({
       },
       required: ['a', 'b']
     }
-  }
-})
-
-algorithms.push({
-  func: require(path.resolve(dummiesPath, './calculator/operations/pow')),
-  name: 'pow',
-  type: 'observation',
-  manifest: {
+  },
+  pow: {
+    func: require(path.resolve(dummiesPath, './calculator/operations/pow')),
+    name: 'pow',
+    type: 'observation',
     schema: {
       properties: {
         a: {
@@ -40,14 +35,11 @@ algorithms.push({
       },
       required: ['a', 'b']
     }
-  }
-})
-
-algorithms.push({
-  func: require(path.resolve(dummiesPath, './calculator/operations/div')),
-  name: 'div',
-  type: 'observation',
-  manifest: {
+  },
+  div: {
+    func: require(path.resolve(dummiesPath, './calculator/operations/div')),
+    name: 'div',
+    type: 'observation',
     schema: {
       properties: {
         a: {
@@ -61,7 +53,8 @@ algorithms.push({
       required: ['a', 'b']
     }
   }
-})
 
-exports.manifest = manifest
+}
+
+exports.locator = locator
 exports.algorithms = algorithms

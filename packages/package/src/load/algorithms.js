@@ -1,20 +1,20 @@
 'use strict'
 
 const path = require('path')
+const glob = require('glob-promise')
 const parser = require('@babel/parser')
 
 const TYPES = ['transition', 'observation']
 const STATES = ['object', 'collection']
 
-const algorithm = (manifests) => (file) => {
+const algorithm = (file) => {
   const func = require(file)
   const name = path.parse(file).name
 
   const ast = parser.parse(func.toString())
   const { type, state } = node(ast.program.body[0])
-  const manifest = manifests?.[name]
 
-  return { name, type, state, manifest, func }
+  return { name, type, state, func }
 }
 
 function node (node) {
@@ -41,6 +41,9 @@ function state (node) {
   return param
 }
 
-const algorithms = (files, manifest) => files.map(algorithm(manifest))
+const algorithms = async (dir) => {
+  const files = await glob(path.resolve(dir, '*.js'))
+  return files.map(algorithm)
+}
 
 exports.algorithms = algorithms

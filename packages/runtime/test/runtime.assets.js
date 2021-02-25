@@ -7,15 +7,13 @@ const invocation = (name) => {
   }))
 }
 
-const invocations = [
-  {
-    name: 'foo',
+const invocations = {
+  foo: {
     invoke: invocation('foo')
   },
-  {
-    name: 'bar',
+  bar: {
     invoke: invocation('bar')
   }
-]
+}
 
 exports.invocations = invocations

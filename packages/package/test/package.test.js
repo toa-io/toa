@@ -5,21 +5,21 @@ const path = require('path')
 const { Package } = require('../src/package')
 const assets = require('./package.assets')
 
-let component
+let instance
 
 describe('Load', () => {
   beforeEach(async () => {
     const dir = path.resolve(assets.dummiesPath, 'simple')
 
-    component = await Package.load(dir)
+    instance = await Package.load(dir)
   })
 
   it('should load manifest', () => {
-    expect(component.manifest).toEqual(assets.simple.manifest)
+    expect(instance.locator).toEqual(assets.simple.locator)
   })
 
   it('should load operations', () => {
-    expect(component.algorithms).toEqual(expect.arrayContaining(assets.simple.algorithms))
+    expect(instance.algorithms).toMatchObject(assets.simple.algorithms)
   })
 })
 
@@ -27,10 +27,10 @@ describe('Operations', () => {
   beforeEach(async () => {
     const dir = path.resolve(assets.dummiesPath, 'calculator')
 
-    component = await Package.load(dir)
+    instance = await Package.load(dir)
   })
 
   it('should load operations manifest', () => {
-    expect(component.algorithms).toMatchObject(expect.arrayContaining(assets.calculator.algorithms))
+    expect(instance.algorithms).toMatchObject(assets.calculator.algorithms)
   })
 })

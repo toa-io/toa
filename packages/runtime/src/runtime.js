@@ -6,9 +6,7 @@ class Runtime {
   #invocations = {}
 
   constructor (invocations) {
-    for (const invocation of invocations) {
-      this.#invocations[invocation.name] = invocation
-    }
+    this.#invocations = invocations
   }
 
   async start () {

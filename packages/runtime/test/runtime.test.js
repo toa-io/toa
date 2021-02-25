@@ -4,7 +4,8 @@ const { Runtime } = require('../src/runtime')
 const assets = require('./runtime.assets')
 
 describe('Invocations', () => {
-  const invocation = assets.invocations[Math.floor(2 * Math.random())]
+  const name = ['foo', 'bar'][Math.floor(2 * Math.random())]
+  const invocation = assets.invocations[name]
   const runtime = new Runtime(assets.invocations)
 
   beforeEach(() => {
@@ -12,7 +13,7 @@ describe('Invocations', () => {
   })
 
   it('should invoke', async () => {
-    await runtime.invoke(invocation.name)
+    await runtime.invoke(name)
 
     expect(invocation.invoke).toBeCalled()
   })
@@ -23,14 +24,14 @@ describe('Invocations', () => {
 
   it('should invoke with input', async () => {
     const input = { test: Math.random() }
-    await runtime.invoke(invocation.name, input)
+    await runtime.invoke(name, input)
 
     expect(invocation.invoke).toBeCalledWith(expect.objectContaining({ input }))
   })
 
   it('should return io', async () => {
-    const io = await runtime.invoke(invocation.name)
+    const io = await runtime.invoke(name)
 
-    expect(io.output.called).toBe(invocation.name)
+    expect(io.output.called).toBe(name)
   })
 })
