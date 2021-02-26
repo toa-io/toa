@@ -11,7 +11,9 @@ const argv = yargs(process.argv.slice(2))
       if (argv.verbose) { console.dir(err) }
 
       message = err.message
-    } else yargs.showHelp()
+    } else {
+      yargs.showHelp()
+    }
 
     console.error(message)
     process.exit(1)
@@ -20,8 +22,8 @@ const argv = yargs(process.argv.slice(2))
     type: 'boolean',
     default: false
   })
-  .strictCommands()
   .commandDir('./commands')
+  .strictCommands()
   .demandCommand()
   .help()
   .version(version)

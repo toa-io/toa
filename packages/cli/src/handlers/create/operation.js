@@ -24,7 +24,7 @@ async function operation ({ name, transition }) {
 
   await fs.copy(template, target)
 
-  console.info(`Operation ${name} (${type}) created`)
+  console.info(`Operation '${name}' (${type}) created`)
 }
 
 const OPERATIONS_DIR = 'operations'

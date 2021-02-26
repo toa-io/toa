@@ -5,13 +5,20 @@ const findUp = require('find-up')
 
 const MANIFEST = 'kookaburra.yaml'
 
-function tryRoot () {
+function tryRoot (from = '.') {
+  const current = process.cwd()
+
+  process.chdir(from)
+
   const manifest = findUp.sync(MANIFEST)
+
+  process.chdir(current)
+
   return manifest && path.dirname(manifest)
 }
 
-function root () {
-  const dir = tryRoot()
+function root (from = '.') {
+  const dir = tryRoot(from)
 
   if (!dir) { throw new Error(`Component manifest (${MANIFEST}) not found`) }
 
