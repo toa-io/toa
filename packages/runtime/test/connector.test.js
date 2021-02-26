@@ -53,12 +53,12 @@ describe('dependencies', () => {
 
   it('should disconnect before dependencies', async () => {
     a.depends(b).depends(c)
-    a.depends(d)
+    /*      */b.depends(d)
 
     await a.disconnect()
 
     expect(sequence.indexOf('-a')).toBeLessThan(sequence.indexOf('-b'))
     expect(sequence.indexOf('-b')).toBeLessThan(sequence.indexOf('-c'))
-    expect(sequence.indexOf('-a')).toBeLessThan(sequence.indexOf('-d'))
+    expect(sequence.indexOf('-b')).toBeLessThan(sequence.indexOf('-d'))
   })
 })

@@ -19,6 +19,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@kookaburra/gears": "0.0.0",
     "ajv": "7.1.1",
     "deep-freeze": "0.0.1"
   },

@@ -1,5 +1,6 @@
 'use strict'
 
+const { console } = require('@kookaburra/gears')
 const { Connector } = require('./connector')
 const { IO } = require('./io')
 
@@ -13,11 +14,11 @@ class Runtime extends Connector {
   }
 
   connection () {
-    console.log('Runtime started')
+    console.info('Runtime started')
   }
 
   disconnection () {
-    console.log('Runtime stopped')
+    console.info('Runtime stopped')
   }
 
   async invoke (name, input) {
