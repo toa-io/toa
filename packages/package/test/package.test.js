@@ -15,7 +15,7 @@ describe('Load', () => {
   })
 
   it('should load operations', () => {
-    expect(instance.algorithms).toEqual(assets.simple.algorithms)
+    expect(instance.operations).toEqual(assets.simple.operations)
   })
 })
 
@@ -25,6 +25,6 @@ describe('Operations', () => {
   })
 
   it('should load operations manifest', () => {
-    expect(instance.algorithms).toMatchObject(assets.calculator.algorithms)
+    expect(instance.operations).toEqual(assets.calculator.operations)
   })
 })

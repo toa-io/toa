@@ -8,13 +8,13 @@ const TYPES = ['transition', 'observation']
 const STATES = ['object', 'collection']
 
 const algorithm = (file) => {
-  const func = require(file)
+  const algorithm = require(file)
   const name = path.parse(file).name
 
-  const ast = parser.parse(func.toString())
+  const ast = parser.parse(algorithm.toString())
   const { type, state } = node(ast.program.body[0])
 
-  return { name, type, state, func }
+  return { algorithm, name, type, state }
 }
 
 function node (node) {

@@ -3,9 +3,9 @@ const path = require('path')
 const root = path.dirname(require.resolve('@kookaburra/dummies'))
 
 const locator = { forename: 'calculator' }
-const algorithms = {
+const operations = {
   sum: {
-    func: require(path.resolve(root, './calculator/operations/sum')),
+    algorithm: require(path.resolve(root, './calculator/operations/sum')),
     name: 'sum',
     type: 'observation',
     schema: {
@@ -21,7 +21,7 @@ const algorithms = {
     }
   },
   pow: {
-    func: require(path.resolve(root, './calculator/operations/pow')),
+    algorithm: require(path.resolve(root, './calculator/operations/pow')),
     name: 'pow',
     type: 'observation',
     schema: {
@@ -37,7 +37,7 @@ const algorithms = {
     }
   },
   div: {
-    func: require(path.resolve(root, './calculator/operations/div')),
+    algorithm: require(path.resolve(root, './calculator/operations/div')),
     name: 'div',
     type: 'observation',
     schema: {
@@ -58,4 +58,4 @@ const algorithms = {
 
 exports.path = exports.path = path.resolve(root, 'calculator')
 exports.locator = locator
-exports.algorithms = algorithms
+exports.operations = operations
