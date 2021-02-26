@@ -10,7 +10,7 @@ async function runtime (component) {
   if (!(component instanceof Package)) { component = await Package.load(component) }
 
   const locator = Object.assign(new Locator(), component.locator)
-  const invocations = Object.entries(component.algorithms).map(operation).map(invocation).reduce(reduce, {})
+  const invocations = Object.entries(component.operations).map(operation).map(invocation).reduce(reduce, {})
 
   return new Runtime(locator, invocations)
 }
