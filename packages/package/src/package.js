@@ -12,7 +12,7 @@ class Package {
 
     const instance = new Package()
 
-    instance.locator = { name: manifest.name, domain: manifest.domain }
+    instance.locator = { forename: manifest.name, domain: manifest.domain }
     instance.state = manifest.state
     instance.algorithms = algorithms.reduce(reduce, manifest.operations || {})
 

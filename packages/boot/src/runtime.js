@@ -1,16 +1,18 @@
 'use strict'
 
 const { Package } = require('@kookaburra/package')
-const { Runtime } = require('@kookaburra/runtime')
+const { Locator, Runtime } = require('@kookaburra/runtime')
 
 const { operation } = require('./runtime/operation')
 const { invocation } = require('./runtime/invocation')
 
-async function runtime (dir) {
-  const component = await Package.load(dir)
+async function runtime (component) {
+  if (!(component instanceof Package)) { component = await Package.load(component) }
+
+  const locator = Object.assign(new Locator(), component.locator)
   const invocations = Object.entries(component.algorithms).map(operation).map(invocation).reduce(reduce, {})
 
-  return new Runtime(invocations)
+  return new Runtime(locator, invocations)
 }
 
 function reduce (map, [name, invocation]) {

@@ -6,7 +6,7 @@ const assets = require('./runtime.assets')
 describe('Invocations', () => {
   const name = ['foo', 'bar'][Math.floor(2 * Math.random())]
   const invocation = assets.invocations[name]
-  const runtime = new Runtime(assets.invocations)
+  const runtime = new Runtime(assets.locator, assets.invocations)
 
   beforeEach(() => {
     jest.clearAllMocks()

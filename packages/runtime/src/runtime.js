@@ -6,19 +6,22 @@ const { IO } = require('./io')
 
 class Runtime extends Connector {
   locator
+
   #invocations = {}
 
-  constructor (invocations) {
+  constructor (locator, invocations) {
     super()
+
+    this.locator = locator
     this.#invocations = invocations
   }
 
   connection () {
-    console.info('Runtime started')
+    console.info(`Runtime '${this.locator.name}' started`)
   }
 
   disconnection () {
-    console.info('Runtime stopped')
+    console.info(`Runtime '${this.locator.name}' stopped`)
   }
 
   async invoke (name, input) {

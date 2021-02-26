@@ -1,5 +1,7 @@
 'use strict'
 
+const { Locator } = require('../src/locator')
+
 const invocation = (name) => {
   return jest.fn((io) => new Promise(resolve => {
     io.output.called = name
@@ -16,4 +18,7 @@ const invocations = {
   }
 }
 
+const locator = Object.assign(new Locator(), { domain: 'foo', forename: 'bar' })
+
 exports.invocations = invocations
+exports.locator = locator

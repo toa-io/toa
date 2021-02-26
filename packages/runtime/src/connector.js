@@ -9,10 +9,12 @@ class Connector {
     let next
 
     if (Array.isArray(connector)) {
-      this.#connectors = this.#connectors.concat(connector)
       next = new Connector()
 
-      for (const item of connector) { item.depends(next) }
+      for (const item of connector) {
+        this.#connectors.push(item)
+        item.depends(next)
+      }
     } else {
       next = connector
     }
