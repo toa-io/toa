@@ -1,0 +1,21 @@
+{
+  "name": "@kookaburra/gears",
+  "version": "0.0.0",
+  "description": "Gears for Kookaburra",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantumducks/kookaburra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quantumducks/kookaburra/issues"
+  },
+  "main": "src/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
