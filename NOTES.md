@@ -5,9 +5,7 @@
 1. exports last
 2. no default exports
 3. exports.name instead of module.exports.name
-4. do not disable code style inspections
-5. `'use strict'`
-6. JSDoc for everything public
+4. `'use strict'`
 
 ## Module Structure
 ```javascript

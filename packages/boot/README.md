@@ -1,3 +1,3 @@
 # Kookaburra Boot
 
-All mess is here
+DI for Kookaburra abstractions

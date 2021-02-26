@@ -1,13 +1,5 @@
-# `@kookaburra/cli`
-
-> TODO: description
-
-## Usage
-
+# Kookaburra CLI
 ```
-npm -g i @kookaburra/cli
-
-cli --help
-
-// TODO: DEMONSTRATE API
+npm i @kookaburra/cli -g
+kookaburra --help
 ```
