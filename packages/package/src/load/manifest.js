@@ -2,8 +2,14 @@
 
 const { yaml } = require('@kookaburra/gears')
 
+const { check } = require('./manifest/check')
+
 async function manifest (path) {
-  return await yaml(path)
+  const manifest = await yaml(path)
+
+  check(manifest)
+
+  return manifest
 }
 
 exports.manifest = manifest

@@ -26,6 +26,7 @@
     "js-yaml": "4.0.0"
   },
   "devDependencies": {
-    "@kookaburra/dummies": "^0.0.0"
+    "@kookaburra/dummies": "^0.0.0",
+    "jest-mock-console": "^1.0.1"
   }
 }

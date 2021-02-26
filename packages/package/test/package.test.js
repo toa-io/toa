@@ -1,9 +1,17 @@
 'use strict'
 
+const mockConsole = require('jest-mock-console')
+
 const { Package } = require('../src/package')
 const assets = require('./package.assets')
 
+mockConsole()
+
 let instance
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
 
 describe('Load', () => {
   beforeEach(async () => {
@@ -11,11 +19,20 @@ describe('Load', () => {
   })
 
   it('should load manifest', () => {
-    expect(instance.locator).toEqual(expect.objectContaining(assets.simple.locator))
+    expect(instance.locator).toStrictEqual(expect.objectContaining(assets.simple.locator))
   })
 
   it('should load operations', () => {
-    expect(instance.operations).toEqual(assets.simple.operations)
+    expect(instance.operations).toStrictEqual(assets.simple.operations)
+  })
+
+  it('should warn if no domain provided', async () => {
+    await Package.load(assets.broken.noDomain.path)
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('warn'),
+      expect.stringContaining('check'),
+      expect.stringContaining('domain')
+    )
   })
 })
 
