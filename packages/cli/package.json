@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@kookaburra/boot": "^0.0.0",
+    "@kookaburra/gears": "0.0.0",
     "@kookaburra/package": "^0.0.0",
     "chalk": "4.1.0",
     "find-up": "5.0.0",

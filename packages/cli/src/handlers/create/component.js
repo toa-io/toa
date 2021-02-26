@@ -2,9 +2,8 @@
 
 const fs = require('fs-extra')
 
+const { console } = require('@kookaburra/gears')
 const { tryRoot } = require('../../util/root')
-const { console } = require('../../util/console')
-
 const { manifest } = require('./manifest')
 const { operation } = require('./operation')
 

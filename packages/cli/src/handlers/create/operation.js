@@ -3,8 +3,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 
+const { console } = require('@kookaburra/gears')
 const { root } = require('../../util/root')
-const { console } = require('../../util/console')
 
 async function operation ({ name, transition }) {
   let type = transition ? 'transition' : 'observation'

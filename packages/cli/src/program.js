@@ -2,13 +2,13 @@
 
 const yargs = require('yargs/yargs')
 
+const { console } = require('@kookaburra/gears')
 const { version } = require('../package.json')
-const { console } = require('./util/console')
 
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
     if (err) {
-      if (argv.verbose) { console.log(err) }
+      if (argv.verbose) { console.dir(err) }
 
       message = err.message
     } else yargs.showHelp()
