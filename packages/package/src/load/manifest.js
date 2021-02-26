@@ -1,6 +1,6 @@
 'use strict'
 
-const { yaml } = require('../yaml')
+const { yaml } = require('@kookaburra/gears')
 
 async function manifest (path) {
   return await yaml(path)
