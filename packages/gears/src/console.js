@@ -19,6 +19,10 @@ const console = new Proxy(global.console, {
       }
     }
 
+    if (key === 'warn') {
+      return (...args) => global.console.warn(chalk.yellow('warn'), ...args)
+    }
+
     return target[key]
   }
 })
