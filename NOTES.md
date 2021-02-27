@@ -24,6 +24,8 @@ class Declaration {
 
   constructor (arg) {}
 
+  #fix() {}
+  
   append() {}
   
   static create() {}
