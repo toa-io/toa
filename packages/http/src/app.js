@@ -8,7 +8,7 @@ function app () {
 
   app.disable('x-powered-by')
   app.use(express.json())
-  app.use(favicon(path.resolve(__dirname, '/../assets/favicon.png')))
+  app.use(favicon(path.resolve(__dirname, '../assets/favicon.png')))
   app.set('json spaces', 2)
 
   return app
