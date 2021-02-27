@@ -1,12 +1,11 @@
 'use strict'
 
-const path = require('path')
-
 const boot = require('@kookaburra/boot')
-const { root } = require('../util/root')
+const { tryRoot } = require('../util/root')
 
 async function handler (argv) {
-  const paths = argv.path.map(dir => path.resolve(dir)).map(root)
+  // resolve unique valid roots
+  const paths = [...new Set(argv.path.map(tryRoot).filter((path) => path))]
   const composition = await boot.composition(paths, { http: argv.http })
 
   await composition.connect()

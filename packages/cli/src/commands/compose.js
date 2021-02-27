@@ -16,7 +16,8 @@ const builder = (yargs) => {
       default: 3000
     })
     .example([
-      ['$0 compose ./first ./second', 'Start Composition with two Runtimes'],
+      ['$0 compose ./first ./second', 'Paths enumeration'],
+      ['$0 compose ./components/**/', 'Glob pattern'],
       ['$0 compose --http.port=80', 'Use port 80 for HTTP server']
     ])
     .group('http.port', 'HTTP server options')

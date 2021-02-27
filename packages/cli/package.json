@@ -28,6 +28,8 @@
     "chalk": "4.1.0",
     "find-up": "5.0.0",
     "fs-extra": "9.1.0",
+    "glob": "7.1.6",
+    "glob-promise": "4.0.1",
     "js-yaml": "4.0.0",
     "yargs": "16.2.0"
   }
