@@ -10,6 +10,12 @@ const builder = (yargs) => {
       desc: 'Path to component',
       default: '.'
     })
+    .option('http', {
+      describe: 'HTTP Server options'
+    })
+    .example([
+      ['$0 compose --http.port=80', 'Use port 80 for HTTP Server']
+    ])
     .array('path')
 }
 

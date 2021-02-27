@@ -5,9 +5,9 @@ const { Connector } = require('@kookaburra/runtime')
 const { Server: HTTPServer } = require('@kookaburra/http')
 const { runtime: createRuntime } = require('./runtime')
 
-async function composition (components) {
+async function composition (components, options) {
   const composition = new Connector()
-  const http = new HTTPServer()
+  const http = new HTTPServer(options?.http)
 
   for (let component of components) {
     if (!(component instanceof Package)) { component = await Package.load(component) }
