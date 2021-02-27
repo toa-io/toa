@@ -1,11 +1,7 @@
 'use strict'
 
-const mockConsole = require('jest-mock-console')
-
 const { Package } = require('../src/package')
 const assets = require('./package.assets')
-
-mockConsole()
 
 let instance
 
