@@ -1,11 +1,21 @@
-# `@kookaburra/gears`
+#Gears for Kookaburra
 
-> TODO: description
+## yaml
+Reads yaml file
+```javascript
+const { yaml } = require('@kookaburra/gears')
 
-## Usage
-
+const object = yaml('./file.yaml')
 ```
-const gears = require('@kookaburra/gears');
 
-// TODO: DEMONSTRATE API
+## console
+Console with levels
+```javascript
+const { console } = require('@kookaburra/gears')
+
+console.error('Something went wrong')
+console.info('Printing information')
+
+console.level('error')
+console.debug('Starting with configuration', config) // won't log anything
 ```
