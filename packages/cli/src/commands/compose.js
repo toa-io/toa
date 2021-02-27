@@ -19,13 +19,7 @@ const builder = (yargs) => {
       desc: 'Server port',
       default: 3000
     })
-    .option('http.keepalive', {
-      type: 'number',
-      desc: 'Keep-Alive timeout (seconds)',
-      default: 5000
-    })
     .group('http.port', 'HTTP server options')
-    .group('http.keepalive', 'HTTP server options')
     .option('watch', {
       type: 'boolean',
       desc: 'Restart on file changes',

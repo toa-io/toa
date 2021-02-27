@@ -12,9 +12,6 @@
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
   "main": "package.json",
-  "directories": {
-
-  },
   "publishConfig": {
     "access": "public"
   },

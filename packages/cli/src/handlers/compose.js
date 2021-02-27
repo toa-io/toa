@@ -10,7 +10,7 @@ const { watch } = require('../util/watch')
 let watcher
 
 async function handler (argv) {
-  argv.http.keepalive = argv.watch ? 0 : argv.http.keepalive * 1000
+  argv.http.tentative = argv.watch
 
   // resolve unique valid roots
   const paths = [...new Set(argv.path.map(tryRoot).filter((path) => path))]

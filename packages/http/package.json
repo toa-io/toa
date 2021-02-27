@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "main": "src/server.js",
+  "main": "src/index.js",
   "publishConfig": {
     "access": "public"
   },
@@ -23,5 +23,8 @@
     "@kookaburra/runtime": "0.0.0",
     "express": "4.17.1",
     "serve-favicon": "2.5.0"
+  },
+  "devDependencies": {
+    "server-destroy": "1.0.1"
   }
 }
