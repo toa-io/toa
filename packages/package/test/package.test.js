@@ -28,9 +28,9 @@ describe('Load', () => {
 
   it('should warn if no domain provided', async () => {
     await Package.load(assets.broken.noDomain.path)
+
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('warn'),
-      expect.stringContaining('check'),
       expect.stringContaining('domain')
     )
   })

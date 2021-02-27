@@ -8,7 +8,7 @@ const checks = glob.sync(path.resolve(__dirname, './checks/*.js')).map(require).
 function check (manifest) {
   for (const check of checks) {
     if (!check(manifest)) {
-      console.warn('Manifest check:', check.description.replace(/%(.+?)%/g, (_, name) => manifest[name]))
+      console.warn(check.description.replace(/%(.+?)%/g, (_, name) => manifest[name]))
     }
   }
 }
