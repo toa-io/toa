@@ -8,6 +8,8 @@ const TYPES = ['transition', 'observation']
 const STATES = ['object', 'collection']
 
 const algorithm = (file) => {
+  delete require.cache[require.resolve(file)]
+
   const algorithm = require(file)
   const name = path.parse(file).name
 

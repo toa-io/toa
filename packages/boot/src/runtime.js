@@ -2,7 +2,6 @@
 
 const { Package } = require('@kookaburra/package')
 const { Locator, Runtime } = require('@kookaburra/runtime')
-
 const { operation } = require('./runtime/operation')
 const { invocation } = require('./runtime/invocation')
 

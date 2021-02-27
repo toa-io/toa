@@ -1,4 +1,4 @@
 'use strict'
 
-exports.algorithm = { func: jest.fn() }
+exports.algorithm = { algorithm: jest.fn() }
 exports.io = {}

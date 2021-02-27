@@ -1,5 +1,6 @@
 'use strict'
 
+const { console } = require('@kookaburra/gears')
 const { load } = require('./load')
 
 class Package {
@@ -15,6 +16,8 @@ class Package {
     instance.locator = { forename: manifest.name, domain: manifest.domain }
     instance.state = manifest.state
     instance.operations = algorithms.reduce(reduce, manifest.operations || {})
+
+    console.debug(`Package '${(instance.locator.domain ? `${instance.locator.domain}.` : '')}${instance.locator.forename}' loaded`)
 
     return instance
   }

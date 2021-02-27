@@ -32,5 +32,8 @@
     "glob-promise": "4.0.1",
     "js-yaml": "4.0.0",
     "yargs": "16.2.0"
+  },
+  "devDependencies": {
+    "glob-watcher": "5.0.5"
   }
 }

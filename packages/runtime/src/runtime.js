@@ -17,15 +17,15 @@ class Runtime extends Connector {
   }
 
   connection () {
-    console.info(`Runtime '${this.locator.name}' started`)
+    console.info(`Runtime '${this.locator.name}' connected`)
   }
 
   disconnection () {
-    console.info(`Runtime '${this.locator.name}' stopped`)
+    console.info(`Runtime '${this.locator.name}' disconnected`)
   }
 
   async invoke (name, input) {
-    if (!(name in this.#invocations)) { throw new Error(`Operation '${name}' not found`) }
+    if (!(name in this.#invocations)) { throw new Error(`Operation '${name}' not found in '${this.locator.name}'`) }
 
     const io = new IO(input)
 

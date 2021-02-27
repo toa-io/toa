@@ -10,17 +10,34 @@ const builder = (yargs) => {
       default: '.'
     })
     .array('path')
+    .option('http', {
+      desc: 'HTTP Server options',
+      hidden: true
+    })
     .option('http.port', {
       type: 'number',
-      describe: 'Port',
+      desc: 'Server port',
       default: 3000
+    })
+    .option('http.keepalive', {
+      type: 'number',
+      desc: 'Keep-Alive timeout (seconds)',
+      default: 5000
+    })
+    .group('http.port', 'HTTP server options')
+    .group('http.keepalive', 'HTTP server options')
+    .option('watch', {
+      type: 'boolean',
+      desc: 'Restart on file changes',
+      default: process.env.NODE_ENV === 'dev'
     })
     .example([
       ['$0 compose ./first ./second', 'Paths enumeration'],
       ['$0 compose ./components/**/', 'Glob pattern'],
+      ['$0 compose ./a/**/ ./b/**/', 'Glob pattern enumeration'],
       ['$0 compose --http.port=80', 'Use port 80 for HTTP server']
     ])
-    .group('http.port', 'HTTP server options')
+    .strictCommands()
 }
 
 exports.command = 'compose [path...]'
