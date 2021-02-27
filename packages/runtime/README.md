@@ -2,27 +2,27 @@
 
 Kookaburra core abstractions
 
-##Connector
+## Connector
 Dependency chaining
 
-##Invocation
+## Invocation
 Validates Input then execute Operation
 
-##IO
+## IO
 Operation input/output
 
-##Locator
+## Locator
 Runtime addressing
 
-##Operation
+## Operation
 - Retrieves current state
 - Executes algorithm
 - Persists changed state
 
-##Runtime
+## Runtime
 Exposes named Invocations
 - Creates IO
 - Invokes Invocation
 
-##Schema
+## Schema
 Input and State validation
