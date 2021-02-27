@@ -4,19 +4,22 @@ const { handler } = require('../handlers/compose')
 
 const builder = (yargs) => {
   yargs
-    .usage('Usage: kookaburra compose --path /path/to/component')
     .positional('path', {
       type: 'string',
       desc: 'Path to component',
       default: '.'
     })
-    .option('http', {
-      describe: 'HTTP Server options'
+    .array('path')
+    .option('http.port', {
+      type: 'number',
+      describe: 'Port',
+      default: 3000
     })
     .example([
-      ['$0 compose --http.port=80', 'Use port 80 for HTTP Server']
+      ['$0 compose ./first ./second', 'Start Composition with two Runtimes'],
+      ['$0 compose --http.port=80', 'Use port 80 for HTTP server']
     ])
-    .array('path')
+    .group('http.port', 'HTTP server options')
 }
 
 exports.command = 'compose [path...]'

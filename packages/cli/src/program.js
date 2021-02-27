@@ -1,6 +1,6 @@
 'use strict'
 
-const yargs = require('yargs/yargs')
+const yargs = require('yargs')
 
 const { console } = require('@kookaburra/gears')
 const { version } = require('../package.json')
