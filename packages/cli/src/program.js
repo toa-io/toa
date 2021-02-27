@@ -30,3 +30,5 @@ const argv = yargs(process.argv.slice(2))
   .alias('h', 'help')
   .alias('v', 'version')
   .parse()
+
+console.level(argv.verbose ? 'debug' : 'info')
