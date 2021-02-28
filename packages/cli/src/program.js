@@ -8,7 +8,7 @@ const { version } = require('../package.json')
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
     if (err) {
-      if (argv.verbose) { console.dir(err) }
+      if (argv.debug) { console.dir(err) }
 
       message = err.message
     } else {
@@ -21,6 +21,12 @@ const argv = yargs(process.argv.slice(2))
   .option('verbose', {
     type: 'boolean',
     default: false
+  })
+  .option('' +
+    'debug', {
+    type: 'boolean',
+    default: false,
+    hidden: true
   })
   .commandDir('./commands')
   .demandCommand()
