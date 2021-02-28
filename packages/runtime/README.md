@@ -5,6 +5,9 @@ Kookaburra core abstractions
 ## Connector
 Dependency chaining
 
+## Endpoint
+Operation addressing
+
 ## Invocation
 Validates Input then execute Operation
 
@@ -15,6 +18,7 @@ Operation input/output
 Runtime addressing
 
 ## Operation
+Performs state operations
 - Retrieves current state
 - Executes algorithm
 - Persists changed state
@@ -22,7 +26,8 @@ Runtime addressing
 ## Runtime
 Exposes named Invocations
 - Creates IO
-- Invokes Invocation
 
 ## Schema
-Input and State validation
+Validates Input/State with JSON Schemas
+- Manage references
+- Provides validation errors

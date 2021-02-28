@@ -3,8 +3,8 @@
 class Operation {
   #algorithm
 
-  constructor ({ algorithm }) {
-    this.#algorithm = algorithm
+  constructor (algorithm) {
+    this.#algorithm = algorithm.algorithm
   }
 
   async execute (io) {
