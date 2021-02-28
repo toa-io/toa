@@ -7,7 +7,7 @@ const operations = [
   {
     algorithm: require(path.resolve(root, './calculator/operations/sum')),
     name: 'sum',
-    type: 'observation',
+    type: 'transition',
     schema: {
       properties: {
         a: {
@@ -18,12 +18,17 @@ const operations = [
         }
       },
       required: ['a', 'b']
-    }
+    },
+    http: [
+      {
+        path: '/sums'
+      }
+    ]
   },
   {
-    algorithm: require(path.resolve(root, './calculator/operations/pow')),
-    name: 'pow',
-    type: 'observation',
+    algorithm: require(path.resolve(root, './calculator/operations/multi')),
+    name: 'multi',
+    type: 'transition',
     schema: {
       properties: {
         a: {
@@ -34,12 +39,17 @@ const operations = [
         }
       },
       required: ['a', 'b']
-    }
+    },
+    http: [
+      {
+        path: '/multiplications'
+      }
+    ]
   },
   {
     algorithm: require(path.resolve(root, './calculator/operations/div')),
     name: 'div',
-    type: 'observation',
+    type: 'transition',
     schema: {
       properties: {
         a: {
@@ -51,7 +61,12 @@ const operations = [
         }
       },
       required: ['a', 'b']
-    }
+    },
+    http: [
+      {
+        path: '/divisions'
+      }
+    ]
   }
 ]
 

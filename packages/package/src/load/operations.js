@@ -4,16 +4,17 @@ const path = require('path')
 const glob = require('glob-promise')
 const parser = require('@babel/parser')
 
-const { yaml, console } = require('@kookaburra/gears')
+const { yaml } = require('@kookaburra/gears')
+const { dupes } = require('./validation')
 
-const operations = async (dir, manifests) => {
+const operations = async (dir) => {
   const files = await glob(path.resolve(dir, `*${EXT}`))
-  const operations = await Promise.all(files.map(operation(manifests)))
+  const operations = await Promise.all(files.map(operation))
 
   return operations
 }
 
-const operation = (operations) => async (file) => {
+const operation = async (file) => {
   const name = path.parse(file).name
 
   delete require.cache[require.resolve(file)]
@@ -24,18 +25,11 @@ const operation = (operations) => async (file) => {
   const declaration = { algorithm, name, type, state }
 
   const manifest = await yaml.try(`${path.resolve(path.dirname(file), path.basename(file, EXT))}.yaml`)
-
-  dupes(declaration, manifest)
-
   const operation = { ...manifest, ...declaration }
-  const existent = operations.find(operation => operation.name === name)
 
-  if (existent) {
-    dupes(declaration, existent)
-    Object.assign(existent, operation)
-  } else {
-    operations.push(operation)
-  }
+  dupes(declaration, manifest, 'Function declaration and operation manifest')
+
+  return operation
 }
 
 function node (node) {
@@ -56,28 +50,9 @@ function state (node) {
   const param = node.params[1]?.name
 
   if (!param) return
-
-  if (STATES.indexOf(param) === -1) {
-    throw new Error(`Algorithm state (second) argument name must be one of: ${STATES.join(', ')}`)
-  }
+  if (STATES.indexOf(param) === -1) throw new Error(`Algorithm state (second) argument name must be one of: ${STATES.join(', ')}`)
 
   return param
-}
-
-function dupes (a, b) {
-  if (!b) return
-
-  Object.keys(a).forEach(key => {
-    if (key === 'name') return
-
-    if (key in b) {
-      if (a[key] !== b[key]) {
-        throw new Error(`Conflicting multiple declaration of '${key}' for operation '${a.name}'`)
-      }
-
-      console.warn(`Multiple declaration of '${key}' for operation '${a.name}'`)
-    }
-  })
 }
 
 const TYPES = ['transition', 'observation']
