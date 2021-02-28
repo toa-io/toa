@@ -1,3 +1,5 @@
+'use strict'
+
 const { Operation } = require('@kookaburra/runtime')
 
 const operation = (algorithm) => {

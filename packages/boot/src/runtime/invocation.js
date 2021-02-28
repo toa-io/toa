@@ -1,3 +1,5 @@
+'use strict'
+
 const { Invocation, Schema } = require('@kookaburra/runtime')
 
 const invocation = ([algorithm, operation]) => {
