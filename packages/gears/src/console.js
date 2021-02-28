@@ -2,8 +2,6 @@
 
 const chalk = require('chalk')
 
-let level = 'trace'
-
 const console = new Proxy(global.console, {
   get: (target, key) => {
     if (key === 'level') {
@@ -13,38 +11,33 @@ const console = new Proxy(global.console, {
     if (key === 'dir') {
       return (obj) => {
         for (const prop in obj) if (obj[prop] === undefined) delete obj[prop]
+
         global.console.dir(obj, { depth: null })
       }
     }
 
-    if (key in LEVELS && LEVELS[key] < LEVELS[level]) {
-      return () => {}
-    }
+    if (key in LEVELS) {
+      if (LEVELS[key] < LEVELS[level]) { return () => {} }
 
-    if (key === 'error') {
-      return (...args) => global.console.error(chalk.red('error'), ...args)
-    }
-
-    if (key === 'info') {
-      return (...args) => global.console.info(chalk.blue('info'), ...args)
-    }
-
-    if (key === 'warn') {
-      return (...args) => global.console.warn(chalk.yellow('warn'), ...args)
-    }
-
-    if (key === 'debug') {
-      return (...args) => global.console.debug(chalk.cyan('debug'), ...args)
+      return wrapped[key]
     }
 
     return target[key]
   }
 })
 
-const LEVELS = ['trace', 'debug', 'info', 'warn', 'error'].reduce((acc, level, index) => {
-  acc[level] = index
+let level = 'trace'
 
-  return acc
-}, {})
+const colors = {
+  info: 'blue',
+  error: 'red',
+  warn: 'yellow',
+  debug: 'cyan'
+}
+
+const keys = ['trace', 'debug', 'info', 'warn', 'error']
+const LEVELS = Object.fromEntries(keys.map((level, index) => [level, index]))
+const wrap = (key) => (...args) => global.console[key](chalk[colors[key]](key), ...args)
+const wrapped = Object.fromEntries(keys.map(key => [key, wrap(key)]))
 
 exports.console = console
