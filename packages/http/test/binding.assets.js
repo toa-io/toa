@@ -2,6 +2,8 @@
 
 const string = require('randomstring')
 
+const conflict = require('./binding.conflict.assets')
+
 const server = {
   bind: jest.fn(),
   listen: jest.fn(),
@@ -10,7 +12,9 @@ const server = {
 
 const runtime = {
   locator: {
-    name: string.generate()
+    name: string.generate(),
+    path: string.generate(),
+    endpoint: () => string.generate()
   }
 }
 
@@ -23,6 +27,7 @@ const keys = Object.keys(matrix)
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())))
 const operation = values => ({
   name: string.generate(),
+  http: [{ path: string.generate() }],
   ...Object.fromEntries(values.map((value, i) => ([keys[i], values[i]])))
 })
 
@@ -36,3 +41,4 @@ exports.mock = {
 exports.server = server
 exports.runtime = runtime
 exports.operations = operations
+exports.conflict = conflict

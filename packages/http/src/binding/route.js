@@ -1,12 +1,13 @@
 'use strict'
 
-const { resolve } = require('path')
+function route (locator, operation, binding) {
+  const path = binding?.path || def(operation)
 
-function route (locator, path = '/') {
-  if (path.charAt(0) === '/') { path = `.${path}` }
-  if (path.charAt(path.length - 1) !== '/') { path = `${path}/` }
+  return `${locator.path}${(path || '')}`
+}
 
-  return resolve(`/${locator.name}/`, `${path}`)
+function def (operation) {
+  if (operation.state === 'object') return '/:_id'
 }
 
 exports.route = route

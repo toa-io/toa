@@ -8,6 +8,7 @@ const { route } = require('./binding/route')
 
 class Binding extends Connector {
   #server
+  #keys = {}
 
   constructor (server) {
     super()
@@ -15,14 +16,20 @@ class Binding extends Connector {
     this.#server = server
   }
 
-  #bind (runtime, operation) {
+  #bind (runtime, operation, binding) {
+    const path = route(runtime.locator, operation, binding)
     const method = verb(operation)
-    const path = route(runtime.locator)
+    const key = path + method
+
+    if (this.#keys[key]) {
+      throw new Error(`Binding '${runtime.locator.endpoint(operation.name)}' ` +
+        `conflicts with '${this.#keys[key].runtime.locator.endpoint(this.#keys[key].operation.name)}'`)
+    }
 
     this.#server.bind(method, path, this.#callback(runtime, operation))
+    this.#keys[key] = { runtime, operation }
 
-    console.debug(`Bind '${runtime.locator.name}' ${operation.state ? `${operation.state} ` : ''}` +
-      `${operation.type} '${operation.name}' -> ${method} ${path}`)
+    console.debug(`Bind '${runtime.locator.endpoint(operation.name)}' -> ${method} ${path}`)
   }
 
   #callback (runtime, operation) {
@@ -34,7 +41,8 @@ class Binding extends Connector {
   }
 
   bind (runtime, operations) {
-    operations.forEach(operation => this.#bind(runtime, operation))
+    operations.forEach(operation =>
+      operation.http.forEach(binding => this.#bind(runtime, operation, binding)))
   }
 
   async connection () {

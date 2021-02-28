@@ -1,3 +1,3 @@
 # Kookaburra Runtime HTTP Server
 
-Exposes Runtime invocations as HTTP API
+Exposes Runtimes as HTTP API
