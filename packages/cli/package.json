@@ -30,10 +30,8 @@
     "fs-extra": "9.1.0",
     "glob": "7.1.6",
     "glob-promise": "4.0.1",
+    "glob-watcher": "5.0.5",
     "js-yaml": "4.0.0",
     "yargs": "16.2.0"
-  },
-  "devDependencies": {
-    "glob-watcher": "5.0.5"
   }
 }
