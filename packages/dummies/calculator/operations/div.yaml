@@ -6,3 +6,6 @@ schema:
       type: number
       exclusiveMinimum: 0
   required: [a, b]
+
+http:
+  path: /divisions

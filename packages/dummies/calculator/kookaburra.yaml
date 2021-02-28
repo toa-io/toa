@@ -10,7 +10,9 @@ operations:
         b:
           type: number
       required: [a, b]
-  - name: pow
+    http:
+      - path: /sums
+  - name: multi
     schema:
       properties:
         a:
@@ -18,3 +20,5 @@ operations:
         b:
           type: number
       required: [a, b]
+    http:
+      path: /multiplications
