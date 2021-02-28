@@ -2,7 +2,7 @@ domain: math
 name: calculator
 
 operations:
-  sum:
+  - name: sum
     schema:
       properties:
         a:
@@ -10,20 +10,11 @@ operations:
         b:
           type: number
       required: [a, b]
-  pow:
+  - name: pow
     schema:
       properties:
         a:
           type: number
         b:
           type: number
-      required: [a, b]
-  div:
-    schema:
-      properties:
-        a:
-          type: number
-        b:
-          type: number
-          exclusiveMinimum: 0
       required: [a, b]

@@ -4,19 +4,29 @@ const path = require('path')
 const glob = require('glob-promise')
 const parser = require('@babel/parser')
 
+const { yaml } = require('@kookaburra/gears')
+
 const TYPES = ['transition', 'observation']
 const STATES = ['object', 'collection']
 
-const algorithm = (file) => {
+const operation = (operations) => async (file) => {
   delete require.cache[require.resolve(file)]
 
   const algorithm = require(file)
+  const manifest = await yaml.try(`${path.resolve(path.dirname(file), path.basename(file, EXT))}.yaml`)
   const name = path.parse(file).name
 
   const ast = parser.parse(algorithm.toString())
   const { type, state } = node(ast.program.body[0])
 
-  return { algorithm, name, type, state }
+  const operation = { algorithm, name, type, state, ...manifest }
+  const existent = operations.find(operation => operation.name === name)
+
+  if (existent) {
+    Object.assign(existent, operation)
+  } else {
+    operations.push(operation)
+  }
 }
 
 function node (node) {
@@ -43,9 +53,13 @@ function state (node) {
   return param
 }
 
-const algorithms = async (dir) => {
-  const files = await glob(path.resolve(dir, '*.js'))
-  return files.map(algorithm)
+const operations = async (dir, manifests) => {
+  const files = await glob(path.resolve(dir, `*${EXT}`))
+  const operations = await Promise.all(files.map(operation(manifests)))
+
+  return operations
 }
 
-exports.algorithms = algorithms
+const EXT = '.js'
+
+exports.operations = operations

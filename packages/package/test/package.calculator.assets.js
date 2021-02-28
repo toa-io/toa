@@ -3,8 +3,8 @@ const path = require('path')
 const root = path.dirname(require.resolve('@kookaburra/dummies'))
 
 const locator = { forename: 'calculator' }
-const operations = {
-  sum: {
+const operations = [
+  {
     algorithm: require(path.resolve(root, './calculator/operations/sum')),
     name: 'sum',
     type: 'observation',
@@ -20,7 +20,7 @@ const operations = {
       required: ['a', 'b']
     }
   },
-  pow: {
+  {
     algorithm: require(path.resolve(root, './calculator/operations/pow')),
     name: 'pow',
     type: 'observation',
@@ -36,7 +36,7 @@ const operations = {
       required: ['a', 'b']
     }
   },
-  div: {
+  {
     algorithm: require(path.resolve(root, './calculator/operations/div')),
     name: 'div',
     type: 'observation',
@@ -53,8 +53,7 @@ const operations = {
       required: ['a', 'b']
     }
   }
-
-}
+]
 
 exports.path = exports.path = path.resolve(root, 'calculator')
 exports.locator = locator

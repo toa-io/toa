@@ -1,0 +1,8 @@
+schema:
+  properties:
+    a:
+      type: number
+    b:
+      type: number
+      exclusiveMinimum: 0
+  required: [a, b]

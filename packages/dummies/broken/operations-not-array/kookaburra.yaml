@@ -1,0 +1,4 @@
+name: operations-not-array
+
+operations:
+  get: wrong!

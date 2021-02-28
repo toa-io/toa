@@ -6,7 +6,7 @@ class Schema {
   #validate
 
   constructor (schema) {
-    if (schema.type && schema.type !== 'object') { throw new Error('State/input schemas must be an object type') }
+    if (schema.type && schema.type !== 'object') { throw new Error('State/input schemas must be object type') }
 
     const Ctor = Ajv.default // avoid code style errors
     const ajv = new Ctor(OPTIONS)

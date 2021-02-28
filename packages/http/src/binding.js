@@ -34,7 +34,7 @@ class Binding extends Connector {
   }
 
   bind (runtime, operations) {
-    Object.entries(operations).forEach(([, operation]) => this.#bind(runtime, operation))
+    operations.forEach(operation => this.#bind(runtime, operation))
   }
 
   async connection () {

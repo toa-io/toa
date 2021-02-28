@@ -9,15 +9,10 @@ async function runtime (component) {
   if (!(component instanceof Package)) { component = await Package.load(component) }
 
   const locator = Object.assign(new Locator(), component.locator)
-  const invocations = Object.entries(component.operations).map(operation).map(invocation).reduce(reduce, {})
+  const invocations = component.operations.map(operation).map(invocation)
+    .reduce((map, [name, invocation]) => (map[name] = invocation) && map, {})
 
   return new Runtime(locator, invocations)
-}
-
-function reduce (map, [name, invocation]) {
-  map[name] = invocation
-
-  return map
 }
 
 exports.runtime = runtime

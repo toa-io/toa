@@ -31,7 +31,7 @@ describe('validation', () => {
   it('should throw on non-object type schema', () => {
     const ctor = () => new Schema({ type: 'number' })
 
-    expect(ctor).toThrow(/must be an object type/)
+    expect(ctor).toThrow(/must be object type/)
   })
 })
 

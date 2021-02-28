@@ -19,16 +19,7 @@ describe('Load', () => {
   })
 
   it('should load operations', () => {
-    expect(instance.operations).toStrictEqual(assets.simple.operations)
-  })
-
-  it('should warn if no domain provided', async () => {
-    await Package.load(assets.broken.noDomain.path)
-
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('warn'),
-      expect.stringContaining('domain')
-    )
+    expect(instance.operations).toStrictEqual(expect.arrayContaining(assets.simple.operations))
   })
 })
 
@@ -38,6 +29,23 @@ describe('Operations', () => {
   })
 
   it('should load operations manifest', () => {
-    expect(instance.operations).toEqual(assets.calculator.operations)
+    expect(instance.operations).toStrictEqual(expect.arrayContaining(assets.calculator.operations))
+  })
+})
+
+describe('Manifest checks', () => {
+  it('should warn if no domain provided', async () => {
+    await Package.load(assets.broken.paths.noDomain)
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('warn'),
+      expect.stringContaining('domain')
+    )
+  })
+
+  it('should throw if manifest .operations is defined and not array', async () => {
+    const load = async () => await Package.load(assets.broken.paths.operationsNotArray)
+
+    await expect(load).rejects.toThrow(/must be an array/)
   })
 })

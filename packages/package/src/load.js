@@ -2,16 +2,15 @@
 
 const path = require('path')
 
-const { manifest } = require('./load/manifest')
-const { algorithms } = require('./load/algorithms')
+const loaders = { ...require('./load/manifest'), ...require('./load/operations') }
 
 async function load (dir, options) {
   const opts = { ...DEFAULTS, ...options }
+  const manifest = await loaders.manifest(path.resolve(dir, opts.manifestPath))
 
-  return {
-    manifest: await manifest(path.resolve(dir, opts.manifestPath)),
-    algorithms: await algorithms(path.resolve(dir, opts.operationsPath))
-  }
+  await loaders.operations(path.resolve(dir, opts.operationsPath), manifest.operations)
+
+  return manifest
 }
 
 const DEFAULTS = {
