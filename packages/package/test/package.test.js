@@ -33,7 +33,7 @@ describe('Operations', () => {
   })
 })
 
-describe('Manifest checks', () => {
+describe('Errors', () => {
   it('should warn if no domain provided', async () => {
     await Package.load(assets.broken.paths.noDomain)
 
@@ -47,5 +47,20 @@ describe('Manifest checks', () => {
     const load = async () => await Package.load(assets.broken.paths.operationsNotArray)
 
     await expect(load).rejects.toThrow(/must be an array/)
+  })
+
+  it('should warn if multiple declaration', async () => {
+    await Package.load(assets.broken.paths.multipleDeclaration)
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('warn'),
+      expect.stringContaining('Multiple declaration')
+    )
+  })
+
+  it('should throw if manifest .operations is defined and not array', async () => {
+    const load = async () => await Package.load(assets.broken.paths.conflictingDeclaration)
+
+    await expect(load).rejects.toThrow(/Conflicting multiple declaration/)
   })
 })

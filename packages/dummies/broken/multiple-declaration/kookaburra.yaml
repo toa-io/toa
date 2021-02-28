@@ -1,0 +1,6 @@
+domain: broken
+name: multiple-declaration
+
+operations:
+  - name: find
+    state: collection
