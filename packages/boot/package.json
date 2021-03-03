@@ -22,8 +22,5 @@
     "@kookaburra/http": "^0.0.0",
     "@kookaburra/package": "^0.0.0",
     "@kookaburra/runtime": "^0.0.0"
-  },
-  "devDependencies": {
-    "@kookaburra/dummies": "^0.0.0"
   }
 }

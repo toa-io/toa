@@ -1,56 +1,53 @@
 'use strict'
 
-jest.mock('@kookaburra/runtime')
-jest.mock('@kookaburra/http')
-
-const { Runtime } = require('@kookaburra/runtime')
-const http = require('@kookaburra/http')
-const { composition } = require('../src/composition')
 const fixtures = require('./composition.fixtures')
+const mock = fixtures.mock
+
+jest.mock('@kookaburra/runtime', () => mock['@kookaburra/runtime'])
+jest.mock('@kookaburra/package', () => mock.package)
+jest.mock('../src/runtime', () => mock.runtime)
+jest.mock('../src/http', () => mock.http)
+
+const { composition } = require('../src/composition')
 
 let instance
-
-beforeAll(async () => {
-  fixtures.components = await fixtures.components
-})
 
 beforeEach(async () => {
   jest.clearAllMocks()
 
-  instance = await composition(fixtures.paths)
+  instance = await composition(fixtures.dirs, fixtures.options)
 })
 
-it('should create http binding', () => {
-  expect(http.Binding).toHaveBeenCalledTimes(1)
+it('should create http', () => {
+  expect(fixtures.mock.http.http).toHaveBeenCalledTimes(1)
 })
 
-it('should bind Runtimes ', () => {
-  const binding = http.Binding.mock.instances[0]
+it('should depend on http', () => {
+  expect(instance.depends).toHaveBeenCalledWith(fixtures.mock.http.http.mock.results[0].value)
+})
 
-  expect(binding.bind).toHaveBeenCalledTimes(fixtures.paths.length)
+describe('http', () => {
+  let http
 
-  binding.bind.mock.calls.forEach((args, index) => {
-    const operations = fixtures.components[index].operations
-
-    expect(args.length).toBe(2)
-    expect(args[0]).toStrictEqual(Runtime.mock.instances[index])
-    expect(args[1]).toStrictEqual(operations)
+  beforeEach(() => {
+    http = fixtures.mock.http.http.mock.results[0].value
   })
-})
 
-it('should set runtime as http dependency', () => {
-  const binding = http.Binding.mock.instances[0]
-
-  expect(binding.depends.mock.calls.length).toBe(fixtures.paths.length)
-
-  binding.depends.mock.calls.forEach((args, index) => {
-    expect(args.length).toBe(1)
-    expect(args[0]).toStrictEqual(Runtime.mock.instances[index])
+  it('should pass options', () => {
+    expect(fixtures.mock.http.http).toHaveBeenCalledWith(fixtures.options.http)
   })
-})
 
-it('should set http as composition dependency', () => {
-  const binding = http.Binding.mock.instances[0]
+  it('should depend on runtimes', () => {
+    for (const { value: runtime } of fixtures.mock.runtime.runtime.mock.results) {
+      expect(http.depends).toHaveBeenCalledWith(runtime)
+    }
+  })
 
-  expect(instance.depends).toHaveBeenCalledWith(binding)
+  it('should bind runtimes', () => {
+    expect.assertions(2)
+
+    for (const { value: runtime } of fixtures.mock.runtime.runtime.mock.results) {
+      expect(http.bind).toHaveBeenCalledWith(runtime, [])
+    }
+  })
 })

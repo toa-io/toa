@@ -1,17 +1,36 @@
 'use strict'
 
-const path = require('path')
+const connector = (name) => ({ name, bind: jest.fn(), depends: jest.fn() })
 
-const { Package } = require('@kookaburra/package')
+class Package {
+  static load (dir) {
+    return components.find(component => component.name === dir)
+  }
+}
 
-const dummies = path.dirname(require.resolve('@kookaburra/dummies'))
+const Connector = jest.fn().mockImplementation(() => ({ depends: jest.fn() }))
 
-const paths = [
-  path.resolve(dummies, 'simple'),
-  path.resolve(dummies, 'calculator')
-]
+const mock = {
+  package: {
+    Package
+  },
+  http: {
+    http: jest.fn(() => connector('http'))
+  },
+  runtime: {
+    runtime: jest.fn(name => connector(`runtime-${name}`))
+  },
+  '@kookaburra/runtime': {
+    Connector
+  }
+}
 
-const components = Promise.all(paths.map(path => Package.load(path)))
+const dirs = ['foo', 'bar']
+const components = dirs.map(dir => ({ name: dir, operations: [] }))
 
-exports.paths = paths
+const options = { http: { port: 8080 } }
+
+exports.dirs = dirs
 exports.components = components
+exports.mock = mock
+exports.options = options
