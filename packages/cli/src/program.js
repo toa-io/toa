@@ -22,8 +22,7 @@ const argv = yargs(process.argv.slice(2))
     type: 'boolean',
     default: false
   })
-  .option('' +
-    'debug', {
+  .option('debug', {
     type: 'boolean',
     default: false,
     hidden: true
