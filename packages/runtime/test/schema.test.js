@@ -1,29 +1,29 @@
 const { Schema } = require('../src/schema')
-const assets = require('./schema.assets')
+const fixtures = require('./schema.fixtures')
 
 let schema
 
 beforeEach(() => {
-  schema = new Schema(assets.schema)
+  schema = new Schema(fixtures.schema)
 })
 
 describe('validation', () => {
   it('should validate', () => {
-    expect(schema.fit(assets.samples.ok.all).ok).toBeTruthy()
-    expect(schema.fit(assets.samples.invalid.type).ok).toBeFalsy()
-    expect(schema.fit(assets.samples.invalid.required).ok).toBeFalsy()
+    expect(schema.fit(fixtures.samples.ok.all).ok).toBeTruthy()
+    expect(schema.fit(fixtures.samples.invalid.type).ok).toBeFalsy()
+    expect(schema.fit(fixtures.samples.invalid.required).ok).toBeFalsy()
   })
 
   it('should set defaults', () => {
-    const sample = { ...assets.samples.ok.required }
+    const sample = { ...fixtures.samples.ok.required }
 
     schema.fit(sample)
 
-    expect(sample.baz).toBe(assets.schema.properties.baz.default)
+    expect(sample.baz).toBe(fixtures.schema.properties.baz.default)
   })
 
   it('should forbid additional properties', () => {
-    const sample = { extra: 'property', ...assets.samples.ok.all }
+    const sample = { extra: 'property', ...fixtures.samples.ok.all }
 
     expect(schema.fit(sample).ok).toBeFalsy()
   })
@@ -37,7 +37,7 @@ describe('validation', () => {
 
 describe('errors', () => {
   it('should format type error', () => {
-    const sample = { ...assets.samples.invalid.type }
+    const sample = { ...fixtures.samples.invalid.type }
 
     const result = schema.fit(sample)
 
@@ -49,7 +49,7 @@ describe('errors', () => {
   })
 
   it('should format missing property error', () => {
-    const sample = { ...assets.samples.invalid.required }
+    const sample = { ...fixtures.samples.invalid.required }
 
     const result = schema.fit(sample)
 
@@ -60,7 +60,7 @@ describe('errors', () => {
   })
 
   it('should format extra property error', () => {
-    const sample = { useless: 'prop', ...assets.samples.ok.all }
+    const sample = { useless: 'prop', ...fixtures.samples.ok.all }
 
     const result = schema.fit(sample)
 

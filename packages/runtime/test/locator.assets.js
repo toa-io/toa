@@ -1,2 +1,0 @@
-exports.domain = ''
-exports.forename = ''

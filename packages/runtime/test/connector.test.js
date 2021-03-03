@@ -1,6 +1,6 @@
 'use strict'
 
-const assets = require('./connector.assets')
+const fixtures = require('./connector.fixtures')
 
 let sequence
 
@@ -12,7 +12,7 @@ describe('callbacks', () => {
   let a
 
   beforeEach(() => {
-    a = new assets.TestConnector('a', sequence)
+    a = new fixtures.TestConnector('a', sequence)
   })
 
   it('should call connection', async () => {
@@ -34,10 +34,10 @@ describe('dependencies', () => {
   let d
 
   beforeEach(() => {
-    a = new assets.TestConnector('a', sequence)
-    b = new assets.TestConnector('b', sequence)
-    c = new assets.TestConnector('c', sequence)
-    d = new assets.TestConnector('d', sequence)
+    a = new fixtures.TestConnector('a', sequence)
+    b = new fixtures.TestConnector('b', sequence)
+    c = new fixtures.TestConnector('c', sequence)
+    d = new fixtures.TestConnector('d', sequence)
   })
 
   it('should wait dependencies on connection', async () => {

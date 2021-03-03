@@ -1,12 +1,12 @@
 'use strict'
 
 const { Operation } = require('../src/operation')
-const assets = require('./operation.assets')
+const fixtures = require('./operation.fixtures')
 
 let operation
 
 beforeEach(() => {
-  operation = new Operation(assets.algorithm)
+  operation = new Operation(fixtures.algorithm)
 
   jest.clearAllMocks()
 })
@@ -15,12 +15,12 @@ describe('Algorithm', () => {
   it('should execute', async () => {
     await operation.execute()
 
-    expect(assets.algorithm.algorithm).toBeCalled()
+    expect(fixtures.algorithm.algorithm).toBeCalled()
   })
 
   it('should pass io', async () => {
-    await operation.execute(assets.io)
+    await operation.execute(fixtures.io)
 
-    expect(assets.algorithm.algorithm).toBeCalledWith(assets.io)
+    expect(fixtures.algorithm.algorithm).toBeCalledWith(fixtures.io)
   })
 })

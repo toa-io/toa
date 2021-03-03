@@ -1,3 +1,5 @@
+'use strict'
+
 const { console } = require('./console')
 const { yaml } = require('./yaml')
 

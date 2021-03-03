@@ -1,3 +1,5 @@
+'use strict'
+
 const { Connector } = require('../src/connector')
 
 class TestConnector extends Connector {

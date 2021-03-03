@@ -1,7 +1,7 @@
 'use strict'
 
 const { Package } = require('../src/package')
-const assets = require('./package.assets')
+const fixtures = require('./package.fixtures')
 
 let instance
 
@@ -11,31 +11,31 @@ beforeEach(() => {
 
 describe('Load', () => {
   beforeEach(async () => {
-    instance = await Package.load(assets.simple.path)
+    instance = await Package.load(fixtures.simple.path)
   })
 
   it('should load manifest', () => {
-    expect(instance.locator).toStrictEqual(expect.objectContaining(assets.simple.locator))
+    expect(instance.locator).toStrictEqual(expect.objectContaining(fixtures.simple.locator))
   })
 
   it('should load operations', () => {
-    expect(instance.operations).toStrictEqual(expect.arrayContaining(assets.simple.operations))
+    expect(instance.operations).toStrictEqual(expect.arrayContaining(fixtures.simple.operations))
   })
 })
 
 describe('Operations', () => {
   beforeEach(async () => {
-    instance = await Package.load(assets.calculator.path)
+    instance = await Package.load(fixtures.calculator.path)
   })
 
   it('should load operations manifest', () => {
-    expect(instance.operations).toStrictEqual(expect.arrayContaining(assets.calculator.operations))
+    expect(instance.operations).toStrictEqual(expect.arrayContaining(fixtures.calculator.operations))
   })
 })
 
 describe('Errors', () => {
   it('should warn if no domain provided', async () => {
-    await Package.load(assets.broken.paths.noDomain)
+    await Package.load(fixtures.broken.paths.noDomain)
 
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('warn'),
@@ -44,13 +44,13 @@ describe('Errors', () => {
   })
 
   it('should throw if manifest .operations is not array', async () => {
-    const load = async () => await Package.load(assets.broken.paths.operationsNotArray)
+    const load = async () => await Package.load(fixtures.broken.paths.operationsNotArray)
 
     await expect(load).rejects.toThrow(/must be an array/)
   })
 
   it('should throw if manifest .operations is defined and not array', async () => {
-    const load = async () => await Package.load(assets.broken.paths.conflictingDeclaration)
+    const load = async () => await Package.load(fixtures.broken.paths.conflictingDeclaration)
 
     await expect(load).rejects.toThrow(/conflicts on key/)
   })

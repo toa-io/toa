@@ -1,12 +1,12 @@
 'use strict'
 
 const { Runtime } = require('../src/runtime')
-const assets = require('./runtime.assets')
+const fixtures = require('./runtime.fixtures')
 
 describe('Invocations', () => {
   const name = ['foo', 'bar'][Math.floor(2 * Math.random())]
-  const invocation = assets.invocations[name]
-  const runtime = new Runtime(assets.locator, assets.invocations)
+  const invocation = fixtures.invocations[name]
+  const runtime = new Runtime(fixtures.locator, fixtures.invocations)
 
   beforeEach(() => {
     jest.clearAllMocks()

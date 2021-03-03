@@ -2,7 +2,7 @@
 
 const string = require('randomstring')
 
-const conflict = require('./binding.conflict.assets')
+const conflict = require('./binding.conflict.fixtures')
 
 const server = {
   bind: jest.fn(),
