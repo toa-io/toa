@@ -1,7 +1,7 @@
-const defined = (property, fatal = true) => {
+const defined = (property) => {
   const check = (manifest) => manifest[property] !== undefined
   check.message = `'${property}' must be defined`
-  check.fatal = fatal
+  check.fatal = true
 
   return check
 }
