@@ -17,10 +17,10 @@ class Schema {
   fit (object) {
     const ok = this.#validate(object)
 
-    return { ok, errors: this.#validate.errors?.map(Schema.error) }
+    return { ok, errors: this.#validate.errors?.map(Schema.#error) }
   }
 
-  static error (error) {
+  static #error (error) {
     const result = {
       keyword: error.keyword,
       property: undefined,
