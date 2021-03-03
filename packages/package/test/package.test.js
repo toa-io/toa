@@ -18,12 +18,16 @@ describe('Load', () => {
     instance = await Package.load(fixtures.path)
   })
 
-  it('should load manifest', () => {
+  it('should provide locator', () => {
     expect(instance.locator).toStrictEqual(expect.objectContaining(fixtures.locator))
   })
 
-  it('should load operations', () => {
+  it('should provide operations', () => {
     expect(instance.operations).toStrictEqual(expect.arrayContaining(fixtures.operations))
+  })
+
+  it('should provide state', () => {
+    expect(instance.state).toStrictEqual(fixtures.state)
   })
 })
 
