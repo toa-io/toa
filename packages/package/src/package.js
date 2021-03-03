@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('@kookaburra/gears')
+const { concat, console } = require('@kookaburra/gears')
 const { traverse } = require('./traversal')
 
 class Package {
@@ -17,8 +17,7 @@ class Package {
     instance.state = manifest.state
     instance.operations = manifest.operations
 
-    console.debug(`Package '${(instance.locator.domain ? `${instance.locator.domain}.` : '')}` +
-      `${instance.locator.forename}' loaded`)
+    console.debug(`Package '${concat(instance.locator.domain, '.')}` + `${instance.locator.forename}' loaded`)
 
     return instance
   }

@@ -3,7 +3,7 @@
 function route (locator, operation, binding) {
   const path = binding?.path || def(operation)
 
-  return `${locator.path}${(path || '')}`
+  return `${locator.path}${path || ''}`
 }
 
 function def (operation) {

@@ -1,15 +1,17 @@
 'use strict'
 
+const { concat } = require('@kookaburra/gears')
+
 class Locator {
   domain
   forename
 
   get name () {
-    return `${(this.domain ? `${this.domain}.` : '')}${this.forename}`
+    return `${concat(this.domain, '.')}${this.forename}`
   }
 
   get path () {
-    return `/${this.domain ? `${this.domain}/` : ''}${this.forename}`
+    return `/${concat(this.domain, '/')}${this.forename}`
   }
 
   endpoint (name) {
