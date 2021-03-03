@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@babel/parser": "7.13.0",
-    "@kookaburra/gears": "0.0.0",
+    "@kookaburra/gears": "^0.0.0",
     "glob": "7.1.6",
     "glob-promise": "4.0.1",
     "js-yaml": "4.0.0"
