@@ -19,13 +19,13 @@ const operations = [
     algorithm: require('./dummy/operations/observe'),
     name: 'observe',
     type: 'observation',
-    state: 'object'
+    target: 'object'
   },
   {
     algorithm: require('./dummy/operations/transit'),
     name: 'transit',
     type: 'transition',
-    state: 'collection'
+    target: 'collection'
   }
 ]
 

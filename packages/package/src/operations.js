@@ -21,8 +21,8 @@ const operation = async (file) => {
 
   const algorithm = require(file)
   const ast = parser.parse(algorithm.toString())
-  const { type, state } = node(ast.program.body[0])
-  const declaration = { algorithm, name, type, state }
+  const { type, target } = node(ast.program.body[0])
+  const declaration = { algorithm, name, type, target }
 
   const manifest = await yaml.try(`${path.resolve(path.dirname(file), path.basename(file, EXT))}.yaml`)
   const operation = { ...manifest, ...declaration }
@@ -35,7 +35,7 @@ const operation = async (file) => {
 function node (node) {
   if (node.type !== 'FunctionDeclaration') { throw new Error('Algorithm must export named function declaration') }
 
-  return { type: type(node), state: state(node) }
+  return { type: type(node), target: target(node) }
 }
 
 function type (node) {
@@ -46,17 +46,17 @@ function type (node) {
   return type
 }
 
-function state (node) {
+function target (node) {
   const param = node.params[1]?.name
 
   if (!param) return
-  if (STATES.indexOf(param) === -1) throw new Error(`Algorithm state (second) argument name must be one of: ${STATES.join(', ')}`)
+  if (TARGETS.indexOf(param) === -1) throw new Error(`Algorithm target (second) argument name must be one of: ${TARGETS.join(', ')}`)
 
   return param
 }
 
 const TYPES = ['transition', 'observation']
-const STATES = ['object', 'collection']
+const TARGETS = ['object', 'collection']
 
 const EXT = '.js'
 
