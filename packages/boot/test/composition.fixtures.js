@@ -8,20 +8,18 @@ class Package {
   }
 }
 
-const Connector = jest.fn().mockImplementation(() => ({ depends: jest.fn() }))
-
 const mock = {
-  package: {
+  '@kookaburra/package': {
     Package
+  },
+  '@kookaburra/runtime': {
+    Connector: jest.fn().mockImplementation(() => ({ depends: jest.fn() }))
   },
   http: {
     http: jest.fn(() => connector('http'))
   },
   runtime: {
     runtime: jest.fn(name => connector(`runtime-${name}`))
-  },
-  '@kookaburra/runtime': {
-    Connector
   }
 }
 
