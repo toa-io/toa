@@ -1,7 +1,11 @@
 'use strict'
 
+jest.mock('../src/validation')
+
 const { Package } = require('../src/package')
 const fixtures = require('./package.fixtures')
+
+const validate = require('../src/validation')
 
 let instance
 
@@ -11,47 +15,30 @@ beforeEach(() => {
 
 describe('Load', () => {
   beforeEach(async () => {
-    instance = await Package.load(fixtures.simple.path)
+    instance = await Package.load(fixtures.path)
   })
 
   it('should load manifest', () => {
-    expect(instance.locator).toStrictEqual(expect.objectContaining(fixtures.simple.locator))
+    expect(instance.locator).toStrictEqual(expect.objectContaining(fixtures.locator))
   })
 
   it('should load operations', () => {
-    expect(instance.operations).toStrictEqual(expect.arrayContaining(fixtures.simple.operations))
+    expect(instance.operations).toStrictEqual(expect.arrayContaining(fixtures.operations))
   })
 })
 
-describe('Operations', () => {
+describe('Validation', () => {
   beforeEach(async () => {
-    instance = await Package.load(fixtures.calculator.path)
+    instance = await Package.load(fixtures.path)
   })
 
-  it('should load operations manifest', () => {
-    expect(instance.operations).toStrictEqual(expect.arrayContaining(fixtures.calculator.operations))
-  })
-})
-
-describe('Errors', () => {
-  it('should warn if no domain provided', async () => {
-    await Package.load(fixtures.broken.paths.noDomain)
-
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('warn'),
-      expect.stringContaining('domain')
-    )
+  it('should validate manifest', async () => {
+    expect(validate.manifest).toHaveBeenCalledTimes(1)
   })
 
-  it('should throw if manifest .operations is not array', async () => {
-    const load = async () => await Package.load(fixtures.broken.paths.operationsNotArray)
-
-    await expect(load).rejects.toThrow(/must be an array/)
-  })
-
-  it('should throw if manifest .operations is defined and not array', async () => {
-    const load = async () => await Package.load(fixtures.broken.paths.conflictingDeclaration)
-
-    await expect(load).rejects.toThrow(/conflicts on key/)
+  it('should validate operations', async () => {
+    fixtures.operations.forEach((operation, index) => {
+      expect(validate.operation.mock.calls[index][0]).toStrictEqual(operation)
+    })
   })
 })
