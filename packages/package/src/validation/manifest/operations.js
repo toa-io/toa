@@ -10,7 +10,7 @@ array.message = 'manifest \'operations\' property must be an array'
 array.fatal = true
 
 const nonempty = (manifest) => manifest.operations.length > 0
-def.message = 'has no operations'
+nonempty.message = def.message
 nonempty.fatal = true
 
 exports.checks = [def, array, nonempty]

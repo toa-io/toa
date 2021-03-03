@@ -21,7 +21,7 @@ describe('manifest', () => {
       })
 
       it('should be defined', () => {
-        const wrong = manifest()
+        const wrong = manifest(undefined)
 
         if (property === 'name') { expect(() => validate.manifest(wrong)).toThrow(/must be defined/) }
 
@@ -59,10 +59,22 @@ describe('manifest', () => {
       expect(console.warn).toHaveBeenCalledTimes(0)
     })
 
+    it('should be defined', () => {
+      const wrong = manifest(undefined)
+
+      expect(() => validate.manifest(wrong)).toThrow(/has no operations/)
+    })
+
     it('should be array', () => {
       const wrongs = [{}, 'foo', 1].map(manifest)
 
       for (const wrong of wrongs) { expect(() => validate.manifest(wrong)).toThrow(/must be an array/) }
+    })
+
+    it('shout be non empty', () => {
+      const wrong = manifest([])
+
+      expect(() => validate.manifest(wrong)).toThrow(/has no operations/)
     })
   })
 })
