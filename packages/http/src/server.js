@@ -25,13 +25,15 @@ class Server {
   }
 
   async listen () {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       console.debug(`Starting ${this.#tentative && 'tentative '}HTTP server at ${this.#port}...`)
 
       this.#instance = this.#app.listen(this.#port, () => {
         console.info(`HTTP server started at ${this.#port}`)
         resolve()
       })
+
+      this.#instance.on('error', reject)
 
       if (this.#tentative) { destroyable(this.#instance) }
     })
