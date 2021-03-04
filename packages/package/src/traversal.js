@@ -12,9 +12,9 @@ async function traverse (dir, options) {
   const manifest = await yaml(path.resolve(dir, opts.manifestPath))
   const operations = await parse(path.resolve(dir, opts.operationsPath))
 
-  validate.manifest(manifest)
   manifest.operations = merge(operations, manifest.operations)
   manifest.operations.forEach(validate.operation)
+  validate.manifest(manifest)
 
   return manifest
 }
