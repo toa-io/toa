@@ -30,6 +30,7 @@ class Server {
 
       this.#instance = this.#app.listen(this.#port, () => {
         console.info(`HTTP server started at ${this.#port}`)
+        this.#instance.off('error', reject)
         resolve()
       })
 
@@ -40,17 +41,18 @@ class Server {
   }
 
   async close () {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       console.debug('Stopping http server...')
 
       this.#instance.close(() => {
         console.info('HTTP server stopped')
+        this.#instance.off('error', reject)
         resolve()
       })
 
-      if (this.#tentative) {
-        this.#instance.destroy()
-      }
+      this.#instance.on('error', reject)
+
+      if (this.#tentative) { this.#instance.destroy() }
     })
   }
 }
