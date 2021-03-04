@@ -17,7 +17,7 @@ const console = new Proxy(global.console, {
     }
 
     if (key in levels) {
-      if (levels[key] < levels[level]) { return () => {} }
+      if (levels[key] < levels[level]) { return noop }
 
       return wrapped[key]
     }
@@ -39,5 +39,6 @@ const keys = ['trace', 'debug', 'info', 'warn', 'error']
 const levels = Object.fromEntries(keys.map((level, index) => [level, index]))
 const wrap = (key) => (...args) => global.console[key](chalk[colors[key]](key), ...args)
 const wrapped = Object.fromEntries(keys.map(key => [key, wrap(key)]))
+const noop = () => {}
 
 exports.console = console
