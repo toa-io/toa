@@ -7,4 +7,7 @@ def.message = 'manifest missing \'domain\' property. If this is intended use nul
 def.fatal = false
 def.break = true
 
-exports.checks = [def, string('domain'), match('domain')]
+const str = string('domain')
+str.message = `manifest ${str.message}`
+
+exports.checks = [def, str, match('domain')]
