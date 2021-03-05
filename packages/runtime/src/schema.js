@@ -1,21 +1,20 @@
 'use strict'
 
-const Ajv = require('ajv')
+const Validator = require('ajv').default
 
 class Schema {
-  #ajv
+  #validator
   #validate
 
   constructor (schema) {
     if (schema.type && schema.type !== 'object') { throw new Error('Entity/Input schemas must be object type') }
 
-    const Ctor = Ajv.default // avoid code style errors
-    this.#ajv = new Ctor(OPTIONS)
-    this.#validate = this.#ajv.compile({ ...DEFAULTS, ...schema })
+    this.#validator = new Validator(OPTIONS)
+    this.#validate = this.#validator.compile({ ...DEFAULTS, ...schema })
   }
 
   get error () {
-    return this.#validate.errors && this.#ajv.errorsText(this.#validate.errors, { dataVar: 'object' })
+    return this.#validate.errors && this.#validator.errorsText(this.#validate.errors, { dataVar: 'object' })
   }
 
   get errors () {
@@ -32,12 +31,12 @@ class Schema {
         let valid
 
         try {
-          valid = this.#ajv.validate(`#/properties/${key}`, value)
+          valid = this.#validator.validate(`#/properties/${key}`, value)
         } catch (e) {
           throw new Error(`Entity schema does not contain property '${key}'`)
         }
 
-        if (!valid) { throw new Error(this.#ajv.errorsText(this.#ajv.errors, { dataVar: key })) }
+        if (!valid) { throw new Error(this.#validator.errorsText(this.#validator.errors, { dataVar: key })) }
 
         target[key] = value
 
