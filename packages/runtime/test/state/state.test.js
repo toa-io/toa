@@ -25,10 +25,10 @@ it('should provide collection', async () => {
   expect(collection).toStrictEqual(fixtures.storage.find.mock.results[0].value)
 })
 
-it('should persist', async () => {
+it('should commit', async () => {
   const entity = fixtures.entity.create({ foo: 'bar' })
 
-  await state.persist(entity)
+  await state.commit(entity)
 
   expect(fixtures.storage.upsert).toHaveBeenCalledWith(entity)
 })

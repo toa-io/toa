@@ -22,7 +22,7 @@ class State {
     return collection.map(object => this.#entity.create(object))
   }
 
-  async persist (entity) {
+  async commit (entity) {
     await this.#storage.upsert(entity)
   }
 }

@@ -20,7 +20,7 @@ class Operation {
 
     await this.#algorithm(io, state)
 
-    if (this.#type === 'transition') { await this.#target.persist(state) }
+    if (this.#type === 'transition') { await this.#target.commit(state) }
   }
 }
 

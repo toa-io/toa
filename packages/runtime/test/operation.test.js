@@ -32,10 +32,10 @@ it('should pass state', async () => {
     .toHaveBeenCalledWith(expect.anything(), fixtures.target.query.mock.results[0].value)
 })
 
-it('should persist state after transition', async () => {
+it('should commit state after transition', async () => {
   await operation.execute(fixtures.io, fixtures.query)
 
-  expect(fixtures.target.persist).toHaveBeenCalledWith(fixtures.target.query.mock.results[0].value)
+  expect(fixtures.target.commit).toHaveBeenCalledWith(fixtures.target.query.mock.results[0].value)
 })
 
 it('should pass frozen state to observation', async () => {
