@@ -10,7 +10,7 @@ async function composition (components, options) {
   const http = createHTTP(options?.http)
 
   for (let component of components) {
-    if (!(component instanceof Package)) { component = await Package.load(component) }
+    if (typeof component === 'string') { component = await Package.load(component) }
 
     const runtime = await createRuntime(component)
 

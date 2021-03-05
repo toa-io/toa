@@ -18,8 +18,18 @@ beforeEach(async () => {
   instance = await composition(fixtures.dirs, fixtures.options)
 })
 
+it('should create Connector', () => {
+  expect(instance).toStrictEqual(fixtures.mock['@kookaburra/runtime'].Connector.mock.results[0].value)
+})
+
+it('should load package', () => {
+  expect(fixtures.mock.runtime.runtime)
+    .toHaveBeenCalledWith(fixtures.mock['@kookaburra/package'].Package.load.mock.results[0].value)
+})
+
 it('should create http', () => {
   expect(fixtures.mock.http.http).toHaveBeenCalledTimes(1)
+  expect(fixtures.mock.http.http).toHaveBeenCalledWith(fixtures.options.http)
 })
 
 it('should depend on http', () => {
@@ -31,10 +41,6 @@ describe('http', () => {
 
   beforeEach(() => {
     http = fixtures.mock.http.http.mock.results[0].value
-  })
-
-  it('should pass options', () => {
-    expect(fixtures.mock.http.http).toHaveBeenCalledWith(fixtures.options.http)
   })
 
   it('should depend on runtimes', () => {

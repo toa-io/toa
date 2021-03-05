@@ -3,21 +3,47 @@
 const Ajv = require('ajv')
 
 class Schema {
+  #ajv
   #validate
 
   constructor (schema) {
-    if (schema.type && schema.type !== 'object') { throw new Error('State/input schemas must be object type') }
+    if (schema.type && schema.type !== 'object') { throw new Error('Entity/Input schemas must be object type') }
 
     const Ctor = Ajv.default // avoid code style errors
-    const ajv = new Ctor(OPTIONS)
+    this.#ajv = new Ctor(OPTIONS)
+    this.#validate = this.#ajv.compile({ ...DEFAULTS, ...schema })
+  }
 
-    this.#validate = ajv.compile({ ...DEFAULTS, ...schema })
+  get error () {
+    return this.#validate.errors && this.#ajv.errorsText(this.#validate.errors, { dataVar: 'object' })
+  }
+
+  get errors () {
+    return this.#validate.errors?.map(Schema.#error) ?? null
   }
 
   fit (object) {
-    const ok = this.#validate(object)
+    return this.#validate(object)
+  }
 
-    return { ok, errors: this.#validate.errors?.map(Schema.#error) }
+  proxy (object) {
+    return new Proxy(object, {
+      set: (target, key, value) => {
+        let valid
+
+        try {
+          valid = this.#ajv.validate(`#/properties/${key}`, value)
+        } catch (e) {
+          throw new Error(`Entity schema does not contain property '${key}'`)
+        }
+
+        if (!valid) { throw new Error(this.#ajv.errorsText(this.#ajv.errors, { dataVar: key })) }
+
+        target[key] = value
+
+        return true
+      }
+    })
   }
 
   static #error (error) {

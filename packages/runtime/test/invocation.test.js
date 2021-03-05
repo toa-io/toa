@@ -56,7 +56,7 @@ describe('validation', () => {
     await invocation.invoke(io.invalid)
 
     expect(io.invalid.error)
-      .toMatchObject(expect.objectContaining({ name: 'validation', errors: expect.any(Array) }))
+      .toMatchObject(expect.objectContaining({ message: 'Invalid input', errors: expect.any(Array) }))
 
     expect(fixtures.operation.execute).not.toBeCalled()
   })

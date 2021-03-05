@@ -5,10 +5,11 @@ const operation = {
 }
 
 const schema = {
-  fit: jest.fn(input => ({
-    ok: input.valid,
-    errors: input.valid ? undefined : [{ error: 1 }]
-  }))
+  fit: jest.fn(input => {
+    schema.errors = input.valid ? undefined : [{ error: 1 }]
+
+    return input.valid
+  })
 }
 
 const io = {

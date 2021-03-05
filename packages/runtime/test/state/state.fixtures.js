@@ -1,0 +1,20 @@
+'use strict'
+
+const randomstring = require('randomstring')
+
+const storage = {
+  name: 'dummy',
+  get: jest.fn(() => ({ _id: randomstring.generate() })),
+  find: jest.fn(() => ([{ _id: randomstring.generate() }])),
+  upsert: jest.fn(() => true)
+}
+
+const entity = {
+  create: jest.fn(value => value)
+}
+
+const query = randomstring.generate()
+
+exports.storage = storage
+exports.entity = entity
+exports.query = query

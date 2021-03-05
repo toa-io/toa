@@ -1,15 +1,18 @@
 const { Connector } = require('./connector')
+const entity = require('./entity')
 const { Invocation } = require('./invocation')
 const { Locator } = require('./locator')
 const { Operation } = require('./operation')
 const { Runtime } = require('./runtime')
 const { Schema } = require('./schema')
-const { State } = require('./state')
+const { Object } = require('./state/object')
+const { Collection } = require('./state/collection')
 
 exports.Connector = Connector
+exports.entity = { Factory: entity.Factory }
 exports.Invocation = Invocation
 exports.Locator = Locator
 exports.Operation = Operation
 exports.Runtime = Runtime
 exports.Schema = Schema
-exports.State = State
+exports.state = { Object, Collection }

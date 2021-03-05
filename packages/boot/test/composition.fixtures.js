@@ -2,18 +2,14 @@
 
 const connector = (name) => ({ name, bind: jest.fn(), depends: jest.fn() })
 
-class Package {
-  static load (dir) {
-    return components.find(component => component.name === dir)
-  }
-}
-
 const mock = {
   '@kookaburra/package': {
-    Package
+    Package: {
+      load: jest.fn((dir) => components.find(component => component.name === dir))
+    }
   },
   '@kookaburra/runtime': {
-    Connector: jest.fn().mockImplementation(() => ({ depends: jest.fn() }))
+    Connector: jest.fn().mockImplementation(() => connector('connector'))
   },
   http: {
     http: jest.fn(() => connector('http'))

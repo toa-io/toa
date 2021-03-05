@@ -10,15 +10,15 @@ class Invocation {
   }
 
   async invoke (io, ...args) {
-    const { ok, errors } = this.#schema?.fit(io.input) ?? { ok: true }
+    const valid = this.#schema?.fit(io.input) ?? true
 
     io.close()
 
-    if (ok) {
+    if (valid) {
       await this.#operation.execute(io, ...args)
     } else {
-      io.error.name = 'validation'
-      io.error.errors = errors
+      io.error.message = 'Invalid input'
+      io.error.errors = this.#schema.errors
     }
 
     io.freeze()
