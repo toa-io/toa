@@ -29,7 +29,7 @@ class Server {
       console.debug(`Starting ${this.#tentative && 'tentative '}HTTP server at ${this.#port}...`)
 
       this.#instance = this.#app.listen(this.#port, () => {
-        console.info(`HTTP server started at ${this.#port}`)
+        console.info(`HTTP server started at :${this.#port}`)
         this.#instance.off('error', reject)
         resolve()
       })
