@@ -1,28 +1,37 @@
 'use strict'
 
-const Validator = require('ajv').default
+const { Validator } = require('./schema/validator')
 
 class Schema {
   #validator
-  #validate
+  #schema
 
   constructor (schema) {
     if (schema.type && schema.type !== 'object') { throw new Error('Entity/Input schemas must be object type') }
 
-    this.#validator = new Validator(OPTIONS)
-    this.#validate = this.#validator.compile({ ...DEFAULTS, ...schema })
+    this.#schema = { ...DEFAULTS, ...schema }
+    this.#validator = new Validator(this.#schema)
   }
 
   get error () {
-    return this.#validate.errors && this.#validator.errorsText(this.#validate.errors, { dataVar: 'object' })
+    return this.#validator.error()
   }
 
   get errors () {
-    return this.#validate.errors?.map(Schema.#error) ?? null
+    return this.#validator.errors
   }
 
   fit (object) {
-    return this.#validate(object)
+    return this.#validator.validate(this.#schema, object)
+  }
+
+  defaults () {
+    const { required, ...schema } = this.#schema
+    const value = {}
+
+    this.#validator.validate(schema, value)
+
+    return value
   }
 
   proxy (object) {
@@ -30,13 +39,10 @@ class Schema {
       set: (target, key, value) => {
         let valid
 
-        try {
+        if (key in this.#schema.properties) {
           valid = this.#validator.validate(`#/properties/${key}`, value)
-        } catch (e) {
-          throw new Error(`Entity schema does not contain property '${key}'`)
+          if (!valid) { throw new Error(this.#validator.error(key)) }
         }
-
-        if (!valid) { throw new Error(this.#validator.errorsText(this.#validator.errors, { dataVar: key })) }
 
         target[key] = value
 
@@ -44,27 +50,8 @@ class Schema {
       }
     })
   }
-
-  static #error (error) {
-    const result = {
-      keyword: error.keyword,
-      property: undefined,
-      message: error.message
-    }
-
-    if (error.dataPath) {
-      result.property = error.dataPath.slice(1)
-    } else if (error.keyword === 'required') {
-      result.property = error.params.missingProperty
-    } else if (error.keyword === 'additionalProperties') {
-      result.property = error.params.additionalProperty
-    }
-
-    return result
-  }
 }
 
 const DEFAULTS = { type: 'object', additionalProperties: false }
-const OPTIONS = { useDefaults: true }
 
 exports.Schema = Schema

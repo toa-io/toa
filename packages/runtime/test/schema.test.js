@@ -86,6 +86,14 @@ describe('fit', () => {
   })
 })
 
+describe('defaults', () => {
+  it('should return defaults', () => {
+    const value = schema.defaults()
+
+    expect(value).toStrictEqual({ baz: fixtures.schema.properties.baz.default })
+  })
+})
+
 describe('proxy', () => {
   let proxy
 
