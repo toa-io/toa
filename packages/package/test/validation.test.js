@@ -1,4 +1,7 @@
-const validate = require('../src/validation')
+'use strict'
+
+const validate = require('../src/validate')
+const fixtures = require('./validation.fixtures')
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -13,20 +16,22 @@ describe('manifest', () => {
       const manifest = (value) => ({ ...defaults, [property]: value })
       const oks = ['a', 'foo-bar', 'a1', 'a-1'].map(manifest)
 
-      it('should be ok', () => {
+      it('should be ok', async () => {
         for (const ok of oks) {
-          expect(() => validate.manifest(ok)).not.toThrow()
+          await expect(validate.manifest(ok)).resolves.not.toThrow()
           expect(console.warn).toHaveBeenCalledTimes(0)
         }
       })
 
-      it('should be defined', () => {
+      it('should be defined', async () => {
         const wrong = manifest(undefined)
 
-        if (property === 'name') { expect(() => validate.manifest(wrong)).toThrow(/must be defined/) }
+        if (property === 'name') {
+          await expect(validate.manifest(wrong)).rejects.toThrow(/must be defined/)
+        }
 
         if (property === 'domain') {
-          validate.manifest(wrong)
+          await validate.manifest(wrong)
 
           expect(console.warn).toHaveBeenCalledWith(
             expect.stringContaining('warn'),
@@ -35,67 +40,118 @@ describe('manifest', () => {
         }
       })
 
-      it('should be a string', () => {
+      it('should be a string', async () => {
         const wrong = manifest(1)
 
-        expect(() => validate.manifest(wrong)).toThrow(/must be a string/)
+        await expect(() => validate.manifest(wrong)).rejects.toThrow(/must be a string/)
       })
 
-      it('should match', () => {
+      it('should match', async () => {
         const wrongs = ['-', '0', '0a', '!a', 'foo-', 'A'].map(manifest)
 
-        for (const wrong of wrongs) { expect(() => validate.manifest(wrong)).toThrow(/must match/) }
+        for (const wrong of wrongs) { await expect(validate.manifest(wrong)).rejects.toThrow(/must match/) }
       })
     })
   }
 
-  describe('operations', () => {
-    const manifest = (operations) => ({ domain: 'foo', name: 'bar', operations })
+  describe('state', () => {
+    const manifest = (state) => ({ domain: 'foo', name: 'bar', state, operations: fixtures.operations })
+    const properties = (properties, required) => manifest({ schema: { properties, required } })
 
-    it('should be ok', () => {
-      const ok = manifest([{}])
+    it('should be ok', async () => {
+      const ok = properties({ foo: { type: 'string' } })
 
-      expect(() => validate.manifest(ok)).not.toThrow()
+      await expect(validate.manifest(ok)).resolves.not.toThrow()
       expect(console.warn).toHaveBeenCalledTimes(0)
     })
 
-    it('should be defined', () => {
-      const wrong = manifest(undefined)
+    it('should be ok if undefined', async () => {
+      const ok = manifest(undefined)
 
-      expect(() => validate.manifest(wrong)).toThrow(/has no operations/)
+      await expect(validate.manifest(ok)).resolves.not.toThrow()
+      expect(console.warn).toHaveBeenCalledTimes(0)
     })
 
-    it('should be array', () => {
-      const wrongs = [{}, 'foo', 1].map(manifest)
+    describe('schema', () => {
+      it('should throw if no properties', () => {
+        const wrongs = [properties(undefined), properties({})]
 
-      for (const wrong of wrongs) { expect(() => validate.manifest(wrong)).toThrow(/must be an array/) }
-    })
+        wrongs.forEach(async wrong =>
+          await expect(validate.manifest(wrong)).rejects.toThrow(/properties must be defined/))
+      })
 
-    it('shout be non empty', () => {
-      const wrong = manifest([])
+      it('should throw on unmatched properties', async () => {
+        const wrong = properties({ _foo: { type: 'string' } })
 
-      expect(() => validate.manifest(wrong)).toThrow(/has no operations/)
+        await expect(validate.manifest(wrong)).rejects.toThrow(/does not match/)
+      })
+
+      it('should expand type', async () => {
+        const ok = properties({ foo: 'string' })
+
+        await validate.manifest(ok)
+
+        expect(ok.state.schema.properties.foo).toStrictEqual({ type: 'string' })
+      })
+
+      it('should add system properties', async () => {
+        const property = { foo: 'string' }
+        const ok = properties(property)
+
+        await validate.manifest(ok)
+
+        expect(ok.state.schema.properties).toStrictEqual({ ...fixtures.system.properties, ...property })
+      })
     })
   })
-})
 
-describe('operation', () => {
-  describe('http', () => {
-    it('should set default', () => {
-      const operation = {}
+  describe('operations', () => {
+    const manifest = (operations) => ({ domain: 'foo', name: 'bar', operations })
 
-      validate.operation(operation)
+    it('should be ok', async () => {
+      const ok = manifest([{}])
 
-      expect(operation.http).toStrictEqual([null])
+      await expect(validate.manifest(ok)).resolves.not.toThrow()
+      expect(console.warn).toHaveBeenCalledTimes(0)
     })
 
-    it('should convert to array', () => {
-      const http = { path: '/' }
-      const operation = { http }
+    it('should be defined', async () => {
+      const wrong = manifest(undefined)
 
-      validate.operation(operation)
+      await expect(validate.manifest(wrong)).rejects.toThrow(/has no operations/)
+    })
 
-      expect(operation.http).toStrictEqual([http])
+    it('should be array', async () => {
+      const wrongs = [{}, 'foo', 1].map(manifest)
+
+      for (const wrong of wrongs) { await expect(validate.manifest(wrong)).rejects.toThrow(/must be an array/) }
+    })
+
+    it('shout be non empty', async () => {
+      const wrong = manifest([])
+
+      await expect(validate.manifest(wrong)).rejects.toThrow(/has no operations/)
+    })
+
+    describe('http', () => {
+      it('should set default', async () => {
+        const operation = {}
+        const ok = manifest([operation])
+
+        await validate.manifest(ok)
+
+        expect(operation.http).toStrictEqual([null])
+      })
+
+      it('should convert to array', async () => {
+        const http = { path: '/' }
+        const operation = { http }
+        const ok = manifest([operation])
+
+        await validate.manifest(ok)
+
+        expect(operation.http).toStrictEqual([http])
+      })
     })
   })
 })

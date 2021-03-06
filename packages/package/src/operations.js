@@ -5,7 +5,7 @@ const glob = require('glob-promise')
 const parser = require('@babel/parser')
 
 const { yaml } = require('@kookaburra/gears')
-const { dupes } = require('./validation')
+const { dupes } = require('./validate')
 
 const parse = async (dir) => {
   const files = await glob(path.resolve(dir, `*${EXT}`))

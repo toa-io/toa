@@ -1,7 +1,7 @@
 'use strict'
 
 const { concat, console } = require('@kookaburra/gears')
-const { traverse } = require('./traversal')
+const { scan } = require('./scan')
 
 class Package {
   locator
@@ -9,7 +9,7 @@ class Package {
   operations
 
   static async load (dir, options) {
-    const manifest = await traverse(dir, options)
+    const manifest = await scan(dir, options)
 
     const instance = new Package()
 

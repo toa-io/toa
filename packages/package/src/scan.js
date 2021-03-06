@@ -4,17 +4,16 @@ const path = require('path')
 
 const { yaml } = require('@kookaburra/gears')
 const { parse } = require('./operations')
-const validate = require('./validation')
+const validate = require('./validate')
 
-async function traverse (dir, options) {
+async function scan (dir, options) {
   const opts = { ...DEFAULTS, ...options }
 
   const manifest = await yaml(path.resolve(dir, opts.manifestPath))
   const operations = await parse(path.resolve(dir, opts.operationsPath))
 
   manifest.operations = merge(operations, manifest.operations)
-  manifest.operations.forEach(validate.operation)
-  validate.manifest(manifest)
+  await validate.manifest(manifest)
 
   return manifest
 }
@@ -42,4 +41,4 @@ const DEFAULTS = {
   operationsPath: './operations'
 }
 
-exports.traverse = traverse
+exports.scan = scan

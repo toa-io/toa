@@ -1,11 +1,11 @@
 'use strict'
 
-jest.mock('../src/validation')
+jest.mock('../src/validate')
 
 const { Package } = require('../src/package')
 const fixtures = require('./package.fixtures')
 
-const validate = require('../src/validation')
+const validate = require('../src/validate')
 
 let instance
 
@@ -13,7 +13,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-describe('Load', () => {
+describe('load', () => {
   beforeEach(async () => {
     instance = await Package.load(fixtures.path)
   })
@@ -29,20 +29,8 @@ describe('Load', () => {
   it('should provide state', () => {
     expect(instance.state).toStrictEqual(fixtures.state)
   })
-})
-
-describe('Validation', () => {
-  beforeEach(async () => {
-    instance = await Package.load(fixtures.path)
-  })
 
   it('should validate manifest', async () => {
     expect(validate.manifest).toHaveBeenCalledTimes(1)
-  })
-
-  it('should validate operations', async () => {
-    fixtures.operations.forEach((operation, index) => {
-      expect(validate.operation.mock.calls[index][0]).toStrictEqual(operation)
-    })
   })
 })

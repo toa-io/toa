@@ -1,16 +1,25 @@
 'use strict'
 
-const { defined } = require('../commons')
+const path = require('path')
 
-const def = defined('operations')
-def.message = 'has no operations'
+const { validation } = require('../validation')
+
+const defined = (manifest) => manifest.operations !== undefined
+defined.message = 'has no operations'
+defined.fatal = true
 
 const array = (manifest) => Array.isArray(manifest.operations)
 array.message = 'manifest \'operations\' property must be an array'
 array.fatal = true
 
 const nonempty = (manifest) => manifest.operations.length > 0
-nonempty.message = def.message
+nonempty.message = defined.message
 nonempty.fatal = true
 
-exports.checks = [def, array, nonempty]
+const operations = async (manifest) => {
+  const checks = validation(path.resolve(__dirname, './operation'))
+
+  for (const operation of manifest.operations) { await checks(operation, manifest) }
+}
+
+exports.checks = [defined, array, nonempty, operations]
