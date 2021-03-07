@@ -1,4 +1,4 @@
-#Gears for Kookaburra
+# Gears for Kookaburra
 
 ## yaml
 Reads yaml file
@@ -9,7 +9,7 @@ const object = yaml('./file.yaml')
 ```
 
 ## console
-Console with levels
+Console with levels and colors
 ```javascript
 const { console } = require('@kookaburra/gears')
 
