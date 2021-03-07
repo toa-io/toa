@@ -69,7 +69,7 @@ const mock = {
       Object: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() })),
       Collection: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() }))
     },
-    schemes: {
+    schemas: {
       Schema: jest.fn().mockImplementation(id => ({ id })),
       Validator: jest.fn().mockImplementation(() => ({
         add: jest.fn()

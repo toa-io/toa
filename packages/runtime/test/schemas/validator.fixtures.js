@@ -2,7 +2,7 @@
 
 const schemas = {
   entity: {
-    $id: 'schemas://users/users/entity',
+    $id: 'schema://users/users/entity',
     properties: {
       foo: {
         type: 'string'
@@ -18,7 +18,7 @@ const schemas = {
     required: ['foo']
   },
   input: {
-    $id: 'schemas://users/users/add.input',
+    $id: 'schema://users/users/add.input',
     properties: {
       foo: { $ref: 'entity#/properties/foo' }
     }

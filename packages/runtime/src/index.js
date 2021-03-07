@@ -5,12 +5,12 @@ const { Invocation } = require('./invocation')
 const { Locator } = require('./locator')
 const { Operation } = require('./operation')
 const { Runtime } = require('./runtime')
-const { Schema } = require('./schemes/schema')
+const { Schema } = require('./schemas/schema')
 const { Object } = require('./state/object')
-const { Validator } = require('./schemes/validator')
+const { Validator } = require('./schemas/validator')
 
 exports.entities = { Factory: EntityFactory }
-exports.schemes = { Schema, Validator }
+exports.schemas = { Schema, Validator }
 exports.state = { Object, Collection }
 
 exports.Connector = Connector

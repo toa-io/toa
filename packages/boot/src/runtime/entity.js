@@ -1,16 +1,16 @@
 'use strict'
 
-const { entities, schemes, state: { Object, Collection }, Connector } = require('@kookaburra/runtime')
+const { entities, schemas, state: { Object, Collection }, Connector } = require('@kookaburra/runtime')
 
 const entity = (entity) => {
   if (entity === undefined) { return { connector: undefined, operations: (algorithm) => ({ algorithm }) } }
 
   const connector = storage(entity.storage)
-  const validator = new schemes.Validator()
+  const validator = new schemas.Validator()
 
   validator.add(entity.schema)
 
-  const schema = new schemes.Schema(entity.schema.$id, validator)
+  const schema = new schemas.Schema(entity.schema.$id, validator)
   const instance = new entities.Factory(schema)
 
   const operations = (algorithm) => {

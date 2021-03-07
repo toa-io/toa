@@ -1,6 +1,6 @@
 'use strict'
 
-const { Validator } = require('../../src/schemes/validator')
+const { Validator } = require('../../src/schemas/validator')
 const fixtures = require('./validator.fixtures')
 
 let validator

@@ -1,4 +1,4 @@
-const { Schema } = require('../../src/schemes/schema')
+const { Schema } = require('../../src/schemas/schema')
 const fixtures = require('./schema.fixtures')
 
 let schema
