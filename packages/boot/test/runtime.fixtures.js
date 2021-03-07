@@ -63,7 +63,7 @@ const mock = {
   '@kookaburra/runtime': {
     Locator: jest.fn().mockImplementation(() => ({})),
     Runtime: jest.fn().mockImplementation(() => connector(randomstring.generate())),
-    entity: {
+    entities: {
       Factory: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() }))
     },
     state: {

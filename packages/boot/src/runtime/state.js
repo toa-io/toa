@@ -1,13 +1,13 @@
 'use strict'
 
-const { entity: { Factory: EntityFactory }, state: { Object, Collection }, Connector, Schema } = require('@kookaburra/runtime')
+const { entities, state: { Object, Collection }, Connector, Schema } = require('@kookaburra/runtime')
 
 const state = (state) => {
   if (state === undefined) { return { connector: undefined, operations: (algorithm) => ({ algorithm }) } }
 
   const connector = storage(state.storage)
   const schema = state.schema && new Schema(state.schema)
-  const entity = new EntityFactory(schema)
+  const entity = new entities.Factory(schema)
 
   const operations = (algorithm) => {
     let target

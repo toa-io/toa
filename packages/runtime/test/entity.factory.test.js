@@ -5,9 +5,9 @@ const clone = require('clone-deep')
 const fixtures = require('./entity.factory.fixtures')
 const mock = fixtures.mock
 
-jest.mock('../src/entity', () => mock.entity)
+jest.mock('../src/entities/entity', () => mock.entity)
 
-const { Factory } = require('../src/entity/factory')
+const { Factory } = require('../src/entities/factory')
 
 let factory
 let entity

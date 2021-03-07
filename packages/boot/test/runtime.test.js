@@ -12,7 +12,7 @@ const { runtime } = require('../src/runtime')
 const {
   Locator, Operation, Runtime, Invocation, Connector,
   state: { Object, Collection }, Schema,
-  entity: { Factory: EntityFactory }
+  entities
 } = fixtures.mock['@kookaburra/runtime']
 
 let instance
@@ -53,7 +53,7 @@ it('should create invocations', () => {
     if (operation.target === 'object') {
       expect(Object).toHaveBeenNthCalledWith(obj + 1,
         expect.any(Connector),
-        EntityFactory.mock.results[0].value
+        entities.Factory.mock.results[0].value
       )
 
       target = Object.mock.results[obj].value
@@ -63,7 +63,7 @@ it('should create invocations', () => {
     if (operation.target === 'collection') {
       expect(Collection).toHaveBeenNthCalledWith(coll + 1,
         expect.any(Connector),
-        EntityFactory.mock.results[0].value
+        entities.Factory.mock.results[0].value
       )
 
       target = Collection.mock.results[coll].value

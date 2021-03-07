@@ -1,6 +1,6 @@
 'use strict'
 
-const { Entity } = require('../src/entity')
+const { Entity } = require('../src/entities/entity')
 const fixtures = require('./entity.fixtures')
 
 let entity

@@ -1,6 +1,6 @@
 'use strict'
 
-const { Entity } = require('../entity')
+const { Entity } = require('./entity')
 
 class Factory {
   #schema
