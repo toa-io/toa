@@ -14,9 +14,9 @@ function validation (dir) {
     for (const group of checks) {
       for (const check of group) {
         if (await check(object, manifest) === false) {
-          const message = `Component ${concat(manifest.domain, '.')}${manifest.name} ${check.message}`
+          const message = `Component '${concat(manifest.domain, '.')}${manifest.name}': ${check.message}`
 
-          if (check.fatal) { throw new Error(check.message) }
+          if (check.fatal) { throw new Error(message) }
 
           console.warn(message)
         }

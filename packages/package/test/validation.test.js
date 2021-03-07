@@ -54,53 +54,72 @@ describe('manifest', () => {
     })
   }
 
-  describe('state', () => {
+  describe('entity', () => {
     const manifest = (entity) => ({ domain: 'foo', name: 'bar', entity, operations: fixtures.operations })
-    const properties = (properties, required) => manifest({ schema: { properties, required } })
-
-    it('should be ok', async () => {
-      const ok = properties({ foo: { type: 'string' } })
-
-      await expect(validate.manifest(ok)).resolves.not.toThrow()
-      expect(console.warn).toHaveBeenCalledTimes(0)
-    })
-
-    it('should be ok if undefined', async () => {
-      const ok = manifest(undefined)
-
-      await expect(validate.manifest(ok)).resolves.not.toThrow()
-      expect(console.warn).toHaveBeenCalledTimes(0)
-    })
 
     describe('schema', () => {
-      it('should throw if no properties', () => {
-        const wrongs = [properties(undefined), properties({})]
+      const properties = (properties, required) => manifest({ schema: { properties, required } })
+      const property = { foo: { type: 'string' } }
 
-        wrongs.forEach(async wrong =>
-          await expect(validate.manifest(wrong)).rejects.toThrow(/properties must be defined/))
+      it('should be ok', async () => {
+        const ok = properties(property)
+
+        await expect(validate.manifest(ok)).resolves.not.toThrow()
+        expect(console.warn).toHaveBeenCalledTimes(0)
       })
 
-      it('should throw on unmatched properties', async () => {
-        const wrong = properties({ _foo: { type: 'string' } })
+      it('should be ok if undefined', async () => {
+        const ok = manifest(undefined)
 
-        await expect(validate.manifest(wrong)).rejects.toThrow(/does not match/)
+        await expect(validate.manifest(ok)).resolves.not.toThrow()
+        expect(console.warn).toHaveBeenCalledTimes(0)
       })
 
-      it('should expand type', async () => {
-        const ok = properties({ foo: 'string' })
+      it('should throw if no schema', async () => {
+        const warn = manifest({})
 
-        await validate.manifest(ok)
-
-        expect(ok.entity.schema.properties.foo).toStrictEqual({ type: 'string' })
+        await expect(validate.manifest(warn)).rejects.toThrow(/entity has no schema/)
       })
 
-      it('should add system properties', async () => {
-        const property = { foo: 'string' }
+      it('should set default $id', async () => {
         const ok = properties(property)
 
         await validate.manifest(ok)
 
-        expect(ok.entity.schema.properties).toStrictEqual({ ...fixtures.system.properties, ...property })
+        expect(ok.entity.schema.$id).toBe('schema://foo/bar/entity')
+      })
+
+      describe('properties', () => {
+        it('should throw if no properties', async () => {
+          const undef = properties(undefined)
+          const empty = properties({})
+
+          await expect(validate.manifest(undef)).rejects.toThrow(/must be an object/)
+          await expect(validate.manifest(empty)).rejects.toThrow(/has no properties/)
+        })
+
+        it('should throw on unmatched properties', async () => {
+          const wrong = properties({ _foo: { type: 'string' } })
+
+          await expect(validate.manifest(wrong)).rejects.toThrow(/does not match/)
+        })
+
+        it('should expand type', async () => {
+          const ok = properties({ foo: 'string' })
+
+          await validate.manifest(ok)
+
+          expect(ok.entity.schema.properties.foo).toStrictEqual({ type: 'string' })
+        })
+
+        it('should add system properties', async () => {
+          const property = { foo: 'string' }
+          const ok = properties(property)
+
+          await validate.manifest(ok)
+
+          expect(ok.entity.schema.properties).toStrictEqual({ ...fixtures.system.properties, ...property })
+        })
       })
     })
   })
