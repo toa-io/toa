@@ -1,12 +1,16 @@
 'use strict'
 
-const { entities, state: { Object, Collection }, Connector, Schema } = require('@kookaburra/runtime')
+const { entities, schemes, state: { Object, Collection }, Connector } = require('@kookaburra/runtime')
 
 const state = (state) => {
   if (state === undefined) { return { connector: undefined, operations: (algorithm) => ({ algorithm }) } }
 
   const connector = storage(state.storage)
-  const schema = state.schema && new Schema(state.schema)
+  const validator = new schemes.Validator()
+
+  validator.add(state.schema)
+
+  const schema = new schemes.Schema(state.schema.$id, validator)
   const entity = new entities.Factory(schema)
 
   const operations = (algorithm) => {
@@ -27,7 +31,7 @@ const storage = (name) => {
   if (!name) name = DEFAULT_STORAGE
 
   const path = ['@kookaburra/storage-', ''].reduce(prefix =>
-    require.resolve(`${prefix}${name}`, { paths: [__dirname, process.cwd()] }))
+    require.resolve(`${prefix}${name}`, REQUIRE_OPTIONS))
 
   if (!path) { throw new Error(`Unresolved storage connector '${name}'`) }
 
@@ -41,5 +45,7 @@ const storage = (name) => {
 
 const DEFAULT_STORAGE = 'mongodb'
 const REQUIRE_OPTIONS = { paths: [process.cwd()] }
+
+if (process.env.NODE_ENV === 'test') { REQUIRE_OPTIONS.paths.push(__dirname) }
 
 exports.state = state

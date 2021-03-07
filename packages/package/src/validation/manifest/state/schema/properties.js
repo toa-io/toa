@@ -19,7 +19,7 @@ nonempty.fatal = true
 const properties = async (schema, manifest) => {
   const checks = validation(path.resolve(__dirname, './property'))
 
-  for (const [key] of Object.entries(schema.properties)) {
+  for (const key of Object.keys(schema.properties)) {
     await checks({ properties: schema.properties, key }, manifest)
   }
 }

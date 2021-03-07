@@ -24,7 +24,3 @@ describe('Entity', () => {
     })
   })
 })
-
-describe('Factory', () => {
-
-})

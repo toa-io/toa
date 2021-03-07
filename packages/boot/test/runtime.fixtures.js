@@ -47,6 +47,7 @@ const components = {
     state: {
       storage: 'mongodb',
       schema: {
+        $id: randomstring.generate(),
         properties: {
           [randomstring.generate()]: {
             type: 'string'
@@ -61,8 +62,6 @@ class Storage extends Connector {}
 
 const mock = {
   '@kookaburra/runtime': {
-    Locator: jest.fn().mockImplementation(() => ({})),
-    Runtime: jest.fn().mockImplementation(() => connector(randomstring.generate())),
     entities: {
       Factory: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() }))
     },
@@ -70,9 +69,16 @@ const mock = {
       Object: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() })),
       Collection: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() }))
     },
+    schemes: {
+      Schema: jest.fn().mockImplementation(id => ({ id })),
+      Validator: jest.fn().mockImplementation(() => ({
+        add: jest.fn()
+      }))
+    },
+    Locator: jest.fn().mockImplementation(() => ({})),
+    Runtime: jest.fn().mockImplementation(() => connector(randomstring.generate())),
     Operation: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() })),
     Invocation: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() })),
-    Schema: jest.fn().mockImplementation((schema) => ({ schema })),
     Connector
   },
   '@kookaburra/package': {

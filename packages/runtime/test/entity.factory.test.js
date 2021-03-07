@@ -15,7 +15,7 @@ let entity
 beforeEach(() => {
   jest.clearAllMocks()
 
-  factory = new Factory(fixtures.schema, fixtures.identify)
+  factory = new Factory(fixtures.schema, fixtures.id)
 })
 
 describe('value', () => {
@@ -32,7 +32,7 @@ describe('new', () => {
   beforeEach(() => (entity = factory.create(null)))
 
   it('should identify', () => {
-    expect(entity._id).toBe(fixtures.identify.mock.results[0].value)
+    expect(entity._id).toBe(fixtures.id.mock.results[0].value)
   })
 
   it('should assign defaults', () => {

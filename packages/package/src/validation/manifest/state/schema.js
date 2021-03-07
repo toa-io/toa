@@ -15,8 +15,8 @@ const add = async (state) => {
   if (!system) { system = await yaml(path.resolve(__dirname, '../../schemas/system.yaml')) }
 
   state.schema = {
-    properties: { ...system.schema.properties, ...state.schema.properties },
-    required: system.schema.required.concat(state.schema.required || [])
+    properties: { ...system.properties, ...state.schema.properties },
+    required: system.required.concat(state.schema.required || [])
   }
 }
 

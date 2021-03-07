@@ -10,9 +10,8 @@ jest.mock('@kookaburra/storage-mongodb', () => mock['@kookaburra/storage-mongodb
 const { runtime } = require('../src/runtime')
 
 const {
-  Locator, Operation, Runtime, Invocation, Connector,
-  state: { Object, Collection }, Schema,
-  entities
+  state: { Object, Collection }, schemes, entities,
+  Locator, Operation, Runtime, Invocation, Connector
 } = fixtures.mock['@kookaburra/runtime']
 
 let instance
@@ -40,8 +39,17 @@ it('should create invocations', () => {
   let coll = 0
   let sch = 1 // entity schema
 
+  expect(entities.Factory).toHaveBeenCalledWith(schemes.Schema.mock.results[0].value)
+
+  expect(schemes.Schema).toHaveBeenCalledWith(
+    fixtures.components.stateful.state.schema.$id,
+    schemes.Validator.mock.results[0].value
+  )
+
+  expect(schemes.Validator.mock.results[0].value.add).toHaveBeenCalledWith(fixtures.components.stateful.state.schema)
+
   fixtures.components.default.operations.forEach((operation, index) => {
-    const schema = operation.input?.schema ? Schema.mock.results[sch++].value : undefined
+    const schema = operation.input?.schema ? schemes.Schema.mock.results[sch++].value : undefined
 
     expect(Invocation).toHaveBeenNthCalledWith(index + 1,
       Operation.mock.results[index].value,

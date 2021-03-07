@@ -8,7 +8,7 @@ const schema = {
   defaults: jest.fn(() => ({ foo: randomstring.generate() }))
 }
 
-const identify = jest.fn(() => randomstring.generate())
+const id = jest.fn(() => randomstring.generate())
 
 const value = {
   _id: randomstring.generate(),
@@ -25,7 +25,7 @@ const mock = {
 }
 
 exports.schema = schema
-exports.identify = identify
+exports.id = id
 exports.value = value
 exports.invalid = invalid
 exports.mock = mock

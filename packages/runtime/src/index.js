@@ -1,18 +1,20 @@
+const { Collection } = require('./state/collection')
 const { Connector } = require('./connector')
 const { Factory: EntityFactory } = require('./entities/factory')
 const { Invocation } = require('./invocation')
 const { Locator } = require('./locator')
 const { Operation } = require('./operation')
 const { Runtime } = require('./runtime')
-const { Schema } = require('./schema')
+const { Schema } = require('./schemes/schema')
 const { Object } = require('./state/object')
-const { Collection } = require('./state/collection')
+const { Validator } = require('./schemes/validator')
+
+exports.entities = { Factory: EntityFactory }
+exports.schemes = { Schema, Validator }
+exports.state = { Object, Collection }
 
 exports.Connector = Connector
-exports.entities = { Factory: EntityFactory }
 exports.Invocation = Invocation
 exports.Locator = Locator
 exports.Operation = Operation
 exports.Runtime = Runtime
-exports.Schema = Schema
-exports.state = { Object, Collection }

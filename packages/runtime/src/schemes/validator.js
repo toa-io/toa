@@ -5,13 +5,31 @@ const { default: Ajv } = require('ajv')
 class Validator {
   #instance
 
-  constructor (schema) {
+  constructor () {
     this.#instance = new Ajv(OPTIONS)
-    this.#instance.addSchema(schema) // compile?
   }
 
-  validate (schema, object) {
-    return this.#instance.validate(schema, object)
+  add (schema) {
+    if (schema.type && schema.type !== 'object') { throw new Error('Schemas must be an object type') }
+    if (!schema.$id) { throw new Error('Schemas must contain unique $id') }
+
+    this.#instance.addSchema({ ...DEFAULTS, ...schema })
+  }
+
+  validate (id, object) {
+    return this.#instance.validate(id, object)
+  }
+
+  defaults (id) {
+    const schema = this.#instance.getSchema(id)?.schema
+
+    if (!schema) { throw new Error(`Unknown schema '${id}'`) }
+
+    const value = Object.fromEntries(Object.keys(schema.properties).map(key => [key, undefined]))
+
+    this.#instance.validate(id, value)
+
+    return value
   }
 
   error (key = 'object') {
@@ -42,5 +60,6 @@ class Validator {
 }
 
 const OPTIONS = { useDefaults: true }
+const DEFAULTS = { type: 'object', additionalProperties: false }
 
 exports.Validator = Validator
