@@ -1,6 +1,6 @@
 'use strict'
 
-const { handler } = require('../handlers/invoke')
+const { invoke } = require('../handlers/invoke')
 
 const builder = (yargs) => {
   yargs
@@ -13,4 +13,4 @@ const builder = (yargs) => {
 exports.command = 'invoke <operation>'
 exports.desc = 'Invoke Operation'
 exports.builder = builder
-exports.handler = handler
+exports.handler = invoke

@@ -1,6 +1,6 @@
 'use strict'
 
-const { handler } = require('../handlers/compose')
+const { compose } = require('../handlers/compose')
 
 const builder = (yargs) => {
   yargs
@@ -37,4 +37,4 @@ const builder = (yargs) => {
 exports.command = 'compose [path...]'
 exports.desc = 'Start Runtime Composition'
 exports.builder = builder
-exports.handler = handler
+exports.handler = compose

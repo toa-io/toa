@@ -34,6 +34,14 @@ describe('validate', () => {
     expect(value.baz).toBe(fixtures.schemas.entity.properties.baz.default)
   })
 
+  it('should set defaults with refs', () => {
+    const value = { ...fixtures.samples.input.ok }
+
+    validator.validate(fixtures.schemas.entity.$id, value)
+
+    expect(value.baz).toBe(fixtures.schemas.entity.properties.baz.default)
+  })
+
   it('should forbid additional properties', () => {
     const value = { extra: 'property', ...fixtures.samples.entity.ok.all }
 

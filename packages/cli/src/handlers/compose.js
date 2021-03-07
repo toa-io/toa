@@ -9,7 +9,7 @@ const { watch } = require('../util/watch')
 
 let watcher
 
-async function handler (argv) {
+async function compose (argv) {
   argv.http.tentative = argv.watch
 
   // resolve unique valid roots
@@ -30,9 +30,9 @@ async function handler (argv) {
 
       await composition.disconnect()
 
-      handler(argv).then()
+      compose(argv).then()
     }
   }
 }
 
-exports.handler = handler
+exports.compose = compose

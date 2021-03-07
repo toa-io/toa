@@ -4,7 +4,7 @@ const boot = require('@kookaburra/boot')
 const { console } = require('@kookaburra/gears')
 const { root } = require('../util/root')
 
-async function handler ({ operation, input }) {
+async function invoke ({ operation, input }) {
   const dir = root()
   const runtime = await boot.runtime(dir)
 
@@ -15,4 +15,4 @@ async function handler ({ operation, input }) {
   console.dir({ input: io.input, output: io.output, error: io.error })
 }
 
-exports.handler = handler
+exports.invoke = invoke

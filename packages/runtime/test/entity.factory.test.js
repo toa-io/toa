@@ -42,7 +42,7 @@ describe('new', () => {
 
 describe('invalid', () => {
   it('should throw', () => {
-    const creation = () => (entity = factory.create(fixtures.invalid))
+    const creation = () => factory.create(fixtures.invalid)
 
     expect(creation).toThrow(/does not match entity schema/)
   })

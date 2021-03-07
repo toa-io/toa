@@ -44,13 +44,15 @@ describe('http', () => {
   })
 
   it('should depend on runtimes', () => {
+    expect.assertions(fixtures.components.length)
+
     for (const { value: runtime } of fixtures.mock.runtime.runtime.mock.results) {
       expect(http.depends).toHaveBeenCalledWith(runtime)
     }
   })
 
   it('should bind runtimes', () => {
-    expect.assertions(2)
+    expect.assertions(fixtures.components.length)
 
     for (const { value: runtime } of fixtures.mock.runtime.runtime.mock.results) {
       expect(http.bind).toHaveBeenCalledWith(runtime, [])

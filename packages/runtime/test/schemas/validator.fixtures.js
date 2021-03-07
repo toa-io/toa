@@ -20,7 +20,8 @@ const schemas = {
   input: {
     $id: 'schema://users/users/add.input',
     properties: {
-      foo: { $ref: 'entity#/properties/foo' }
+      foo: { $ref: 'entity#/properties/foo' },
+      baz: { $ref: 'entity#/properties/foo' }
     }
   }
 }
