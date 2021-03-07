@@ -23,7 +23,7 @@ it('should pass io', async () => {
   expect(fixtures.operations.transition.algorithm).toBeCalledWith(fixtures.io, expect.anything())
 })
 
-it('should pass state', async () => {
+it('should pass target', async () => {
   await operation.execute(fixtures.io, fixtures.query)
 
   expect(fixtures.target.query).toHaveBeenCalledWith(fixtures.query)
@@ -32,13 +32,13 @@ it('should pass state', async () => {
     .toHaveBeenCalledWith(expect.anything(), fixtures.target.query.mock.results[0].value)
 })
 
-it('should commit state after transition', async () => {
+it('should commit target after transition', async () => {
   await operation.execute(fixtures.io, fixtures.query)
 
   expect(fixtures.target.commit).toHaveBeenCalledWith(fixtures.target.query.mock.results[0].value)
 })
 
-it('should pass frozen state to observation', async () => {
+it('should pass frozen target to observation', async () => {
   const operation = new Operation(fixtures.operations.observation, fixtures.target)
 
   await operation.execute(fixtures.io, fixtures.query)

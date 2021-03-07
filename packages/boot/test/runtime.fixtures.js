@@ -44,7 +44,7 @@ const components = {
   },
   stateless: {},
   stateful: {
-    state: {
+    entity: {
       storage: 'mongodb',
       schema: {
         $id: randomstring.generate(),

@@ -2,22 +2,22 @@
 
 const { entities, schemes, state: { Object, Collection }, Connector } = require('@kookaburra/runtime')
 
-const state = (state) => {
-  if (state === undefined) { return { connector: undefined, operations: (algorithm) => ({ algorithm }) } }
+const entity = (entity) => {
+  if (entity === undefined) { return { connector: undefined, operations: (algorithm) => ({ algorithm }) } }
 
-  const connector = storage(state.storage)
+  const connector = storage(entity.storage)
   const validator = new schemes.Validator()
 
-  validator.add(state.schema)
+  validator.add(entity.schema)
 
-  const schema = new schemes.Schema(state.schema.$id, validator)
-  const entity = new entities.Factory(schema)
+  const schema = new schemes.Schema(entity.schema.$id, validator)
+  const instance = new entities.Factory(schema)
 
   const operations = (algorithm) => {
     let target
 
-    if (algorithm.target === 'object') { target = new Object(connector, entity) }
-    if (algorithm.target === 'collection') { target = new Collection(connector, entity) }
+    if (algorithm.target === 'object') { target = new Object(connector, instance) }
+    if (algorithm.target === 'collection') { target = new Collection(connector, instance) }
 
     if (!target) { throw new Error(`Unresolved target type '${algorithm.target}'`) }
 
@@ -48,4 +48,4 @@ const REQUIRE_OPTIONS = { paths: [process.cwd()] }
 
 if (process.env.NODE_ENV === 'test') { REQUIRE_OPTIONS.paths.push(__dirname) }
 
-exports.state = state
+exports.entity = entity

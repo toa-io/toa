@@ -5,7 +5,7 @@ const { scan } = require('./scan')
 
 class Package {
   locator
-  state
+  entity
   operations
 
   static async load (dir, options) {
@@ -14,7 +14,7 @@ class Package {
     const instance = new Package()
 
     instance.locator = { forename: manifest.name, domain: manifest.domain }
-    instance.state = manifest.state
+    instance.entity = manifest.entity
     instance.operations = manifest.operations
 
     console.debug(`Package '${concat(instance.locator.domain, '.')}` + `${instance.locator.forename}' loaded`)

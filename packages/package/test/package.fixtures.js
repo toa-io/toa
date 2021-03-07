@@ -4,7 +4,7 @@ const path = require('path')
 
 const locator = { forename: 'simple' }
 
-const state = {
+const entity = {
   schema: {
     properties: {
       a: {
@@ -31,5 +31,5 @@ const operations = [
 
 exports.path = path.resolve(__dirname, './dummy')
 exports.locator = locator
-exports.state = state
+exports.entity = entity
 exports.operations = operations

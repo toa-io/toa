@@ -26,8 +26,8 @@ describe('load', () => {
     expect(instance.operations).toStrictEqual(expect.arrayContaining(fixtures.operations))
   })
 
-  it('should provide state', () => {
-    expect(instance.state).toStrictEqual(fixtures.state)
+  it('should provide entity', () => {
+    expect(instance.entity).toStrictEqual(fixtures.entity)
   })
 
   it('should validate manifest', async () => {

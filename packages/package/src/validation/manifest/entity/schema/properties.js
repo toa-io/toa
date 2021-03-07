@@ -5,11 +5,11 @@ const path = require('path')
 const { validation } = require('../../../validation')
 
 const defined = (schema) => schema.properties !== undefined
-defined.message = 'state schema properties must be defined'
+defined.message = 'entity schema properties must be defined'
 defined.fatal = true
 
 const object = (schema) => typeof schema.properties === 'object'
-object.message = 'state schema properties must be an object'
+object.message = 'entity schema properties must be an object'
 object.fatal = true
 
 const nonempty = (schema) => Object.keys(schema.properties).length > 0

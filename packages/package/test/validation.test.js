@@ -55,7 +55,7 @@ describe('manifest', () => {
   }
 
   describe('state', () => {
-    const manifest = (state) => ({ domain: 'foo', name: 'bar', state, operations: fixtures.operations })
+    const manifest = (entity) => ({ domain: 'foo', name: 'bar', entity, operations: fixtures.operations })
     const properties = (properties, required) => manifest({ schema: { properties, required } })
 
     it('should be ok', async () => {
@@ -91,7 +91,7 @@ describe('manifest', () => {
 
         await validate.manifest(ok)
 
-        expect(ok.state.schema.properties.foo).toStrictEqual({ type: 'string' })
+        expect(ok.entity.schema.properties.foo).toStrictEqual({ type: 'string' })
       })
 
       it('should add system properties', async () => {
@@ -100,7 +100,7 @@ describe('manifest', () => {
 
         await validate.manifest(ok)
 
-        expect(ok.state.schema.properties).toStrictEqual({ ...fixtures.system.properties, ...property })
+        expect(ok.entity.schema.properties).toStrictEqual({ ...fixtures.system.properties, ...property })
       })
     })
   })
