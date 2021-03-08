@@ -52,4 +52,11 @@ describe('proxy', () => {
     const assign = () => (proxy.foo = 5)
     expect(assign).toThrow()
   })
+
+  it('should not throw on additional properties', () => {
+    const assign = () => (proxy.foo = 'additional')
+
+    expect(assign).not.toThrow()
+    expect(fixtures.validator.validate.mock.results[0].value).not.toBeDefined()
+  })
 })

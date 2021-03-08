@@ -12,10 +12,7 @@ class Entity {
     })
 
     Object.assign(this, rest)
-    // TODO: value must contain all unset entity properties with undefined value
-    // also true for new objects
-    // looks like it's schema.deafults() responsibility
-    // Object.seal(this)
+    Object.seal(this)
   }
 }
 

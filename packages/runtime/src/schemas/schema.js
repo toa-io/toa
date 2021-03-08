@@ -28,8 +28,8 @@ class Schema {
   proxy (object) {
     return new Proxy(object, {
       set: (target, key, value) => {
-        const valid = this.#validator.validate(`${this.#id}#/properties/${key}`, value)
-        if (!valid) { throw new Error(this.#validator.error(key)) }
+        const valid = this.#validator.validate(`${this.#id}#/properties/${key}`, value, false)
+        if (valid === false) { throw new Error(this.#validator.error(key)) }
 
         target[key] = value
 

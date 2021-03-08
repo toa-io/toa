@@ -22,7 +22,9 @@ class Validator {
     this.#instance.addSchema({ ...DEFAULTS, ...schema })
   }
 
-  validate (id, object) {
+  validate (id, object, strict = true) {
+    if (!strict && !this.#instance.getSchema(id)) { return }
+
     return this.#instance.validate(id, object)
   }
 

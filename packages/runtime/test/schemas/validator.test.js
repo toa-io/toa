@@ -53,6 +53,10 @@ describe('validate', () => {
     expect(() => validator.defaults('wrong')).toThrow(/Unknown schema/)
   })
 
+  it('should return undefined if not strict', () => {
+    expect(validator.validate('wrong', {}, false)).not.toBeDefined()
+  })
+
   it('should validate by reference', () => {
     const validate = (property, value) =>
       validator.validate(`${fixtures.schemas.entity.$id}#/properties/${property}`, value)
