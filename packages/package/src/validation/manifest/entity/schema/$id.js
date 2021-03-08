@@ -11,7 +11,7 @@ string.message = 'schema $id must be string'
 string.fatal = true
 
 const nonempty = (schema) => schema.$id.length > 0
-string.message = 'schema $id can\'t be empty string'
-string.fatal = true
+nonempty.message = 'schema $id can\'t be empty string'
+nonempty.fatal = true
 
 exports.checks = [def, string, nonempty]

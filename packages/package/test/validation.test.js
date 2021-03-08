@@ -81,12 +81,26 @@ describe('manifest', () => {
         await expect(validate.manifest(warn)).rejects.toThrow(/entity has no schema/)
       })
 
-      it('should set default $id', async () => {
-        const ok = properties(property)
+      describe('$id', () => {
+        it('should throw if not a string', async () => {
+          const wrong = manifest({ schema: { $id: 1, properties: property } })
 
-        await validate.manifest(ok)
+          await expect(() => validate.manifest(wrong)).rejects.toThrow(/must be string/)
+        })
 
-        expect(ok.entity.schema.$id).toBe('schema://foo/bar/entity')
+        it('should throw if empty string', async () => {
+          const wrong = manifest({ schema: { $id: '', properties: property } })
+
+          await expect(() => validate.manifest(wrong)).rejects.toThrow(/can't be empty/)
+        })
+
+        it('should set default', async () => {
+          const ok = properties(property)
+
+          await validate.manifest(ok)
+
+          expect(ok.entity.schema.$id).toBe('schema://foo/bar/entity')
+        })
       })
 
       describe('properties', () => {
