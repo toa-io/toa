@@ -1,7 +1,9 @@
 'use strict'
 
-const { runtime } = require('./runtime')
 const { composition } = require('./composition')
+const { runtime } = require('./runtime')
+const { storage } = require('./storage')
 
-exports.runtime = runtime
 exports.composition = composition
+exports.runtime = runtime
+exports.storage = storage
