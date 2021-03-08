@@ -1,14 +1,16 @@
 'use strict'
 
+const { performance } = require('perf_hooks')
+
 const { timeout } = require('../src/timeout')
 
 it('should wait', async () => {
-  const start = +new Date()
+  const start = performance.now()
   const ms = Math.floor(Math.random() * 10)
 
   await timeout(ms)
 
-  const end = +new Date()
+  const end = performance.now()
 
   expect(end - start).toBeGreaterThanOrEqual(ms)
 })
