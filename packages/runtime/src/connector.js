@@ -40,13 +40,13 @@ class Connector {
     }
   }
 
-  async disconnect (force) {
-    if (!force) { await this.#connecting }
+  async disconnect (interrupt) {
+    if (!interrupt) { await this.#connecting }
 
     if (this.#disconnecting) { return this.#disconnecting }
 
     this.#disconnecting = (async () => {
-      if (!force) { await this.disconnection() }
+      if (!interrupt) { await this.disconnection() }
       await Promise.all(this.#connectors.map(async connector => await connector.disconnect()))
     })()
 
