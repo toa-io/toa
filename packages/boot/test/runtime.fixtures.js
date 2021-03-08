@@ -11,6 +11,7 @@ const dirs = {
 
 const connector = (name) => {
   const c = Object.create(Connector.prototype)
+
   Object.assign(c, { name, bind: jest.fn(), depends: jest.fn() })
 
   return c
@@ -65,10 +66,6 @@ const mock = {
     entities: {
       Factory: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() }))
     },
-    state: {
-      Object: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() })),
-      Collection: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() }))
-    },
     schemas: {
       Schema: jest.fn().mockImplementation(id => ({ id })),
       Validator: jest.fn().mockImplementation(() => ({
@@ -77,6 +74,8 @@ const mock = {
     },
     Locator: jest.fn().mockImplementation(() => ({})),
     Runtime: jest.fn().mockImplementation(() => connector(randomstring.generate())),
+    State: jest.fn().mockImplementation(() =>
+      ({ object: () => randomstring.generate(), collection: () => randomstring.generate() })),
     Operation: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() })),
     Invocation: jest.fn().mockImplementation(() => ({ [randomstring.generate()]: randomstring.generate() })),
     Connector
@@ -87,7 +86,7 @@ const mock = {
     }
   },
   '@kookaburra/storage-mongodb': {
-    Storage
+    Connector: Storage
   }
 }
 

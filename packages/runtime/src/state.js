@@ -4,6 +4,15 @@ class State {
   #storage
   #entity
 
+  /**
+   * reference to .object() or .collection()
+   * assigned by boot depending on operation's target type
+   *
+   * @type function
+   * @return {Entity | Array<Entity>}
+   */
+  query
+
   constructor (storage, entity) {
     this.#storage = storage
     this.#entity = entity
@@ -22,8 +31,8 @@ class State {
     return collection.map(object => this.#entity.create(object))
   }
 
-  async commit (entity) {
-    await this.#storage.upsert(entity)
+  async commit (state) {
+    this.#storage.persist(state)
   }
 }
 

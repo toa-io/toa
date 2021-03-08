@@ -10,8 +10,8 @@ jest.mock('@kookaburra/storage-mongodb', () => mock['@kookaburra/storage-mongodb
 const { runtime } = require('../src/runtime')
 
 const {
-  state: { Object, Collection }, schemas, entities,
-  Locator, Operation, Runtime, Invocation, Connector
+  schemas, entities,
+  Connector, Invocation, Locator, Operation, Runtime, State
 } = fixtures.mock['@kookaburra/runtime']
 
 let instance
@@ -35,8 +35,6 @@ it('should create locator', () => {
 it('should create invocations', () => {
   const invocations = {}
 
-  let obj = 0
-  let coll = 0
   let sch = 1 // entity schema
 
   expect(entities.Factory).toHaveBeenCalledWith(schemas.Schema.mock.results[0].value)
@@ -56,31 +54,16 @@ it('should create invocations', () => {
       schema
     )
 
-    let target
+    expect(State).toHaveBeenNthCalledWith(index + 1,
+      expect.any(Connector),
+      entities.Factory.mock.results[0].value
+    )
 
-    if (operation.target === 'object') {
-      expect(Object).toHaveBeenNthCalledWith(obj + 1,
-        expect.any(Connector),
-        entities.Factory.mock.results[0].value
-      )
-
-      target = Object.mock.results[obj].value
-      obj++
-    }
-
-    if (operation.target === 'collection') {
-      expect(Collection).toHaveBeenNthCalledWith(coll + 1,
-        expect.any(Connector),
-        entities.Factory.mock.results[0].value
-      )
-
-      target = Collection.mock.results[coll].value
-      coll++
-    }
+    expect(State.mock.results[index].value.query).toEqual(State.mock.results[index].value[operation.target])
 
     expect(Operation).toHaveBeenNthCalledWith(index + 1,
       operation,
-      target
+      State.mock.results[index].value
     )
 
     invocations[operation.name] = Invocation.mock.results[index].value

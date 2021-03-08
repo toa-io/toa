@@ -10,12 +10,15 @@ const storage = (name) => {
 
   if (!path) { throw new Error(`Unresolved storage connector '${name}'`) }
 
-  const { Storage } = require(path, REQUIRE_OPTIONS)
+  const storage = require(path, REQUIRE_OPTIONS)
 
-  if (!Storage) { throw new Error(`Module '${path}' does not export Storage class`) }
-  if (!(Storage.prototype instanceof Connector)) { throw new Error(`Storage '${name}' is not instance of Connector`) }
+  if (!storage.Connector) { throw new Error(`Module '${path}' does not export Storage class`) }
 
-  return new Storage()
+  if (!(storage.Connector.prototype instanceof Connector)) {
+    throw new Error(`Storage '${name}' is not instance of Connector`)
+  }
+
+  return new storage.Connector()
 }
 
 const DEFAULT_STORAGE = 'mongodb'

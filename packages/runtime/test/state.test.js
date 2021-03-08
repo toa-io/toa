@@ -1,6 +1,6 @@
 'use strict'
 
-const { State } = require('../../src/state/state')
+const { State } = require('../src/state')
 const fixtures = require('./state.fixtures')
 
 let state
