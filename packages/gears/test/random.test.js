@@ -2,7 +2,7 @@
 
 const { random } = require('../src/random')
 
-it('should be less than ceil(max)', () => {
+it('should be less than or equal to ceil(max)', () => {
   const iterations = 100
 
   expect.assertions(iterations)
