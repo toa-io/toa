@@ -61,4 +61,32 @@ describe('dependencies', () => {
     expect(sequence.indexOf('-b')).toBeLessThan(sequence.indexOf('-c'))
     expect(sequence.indexOf('-b')).toBeLessThan(sequence.indexOf('-d'))
   })
+
+  describe('errors', () => {
+    let f
+
+    beforeEach(() => {
+      f = new fixtures.FailingConnector()
+    })
+
+    it('should disconnect on fail', async () => {
+      f.depends(b).depends(c)
+
+      await expect(f.connect()).rejects.toThrow('FailingConnector')
+      expect(sequence).toEqual(['+c', '+b', '-b', '-c'])
+    })
+
+    it('should interrupt connection chain', async () => {
+      a.depends(f).depends(c)
+      /*      */f.depends(d)
+
+      await expect(a.connect()).rejects.toThrow('FailingConnector')
+
+      expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('-c'))
+      expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('-d'))
+
+      expect(sequence.indexOf('+a')).toBe(-1)
+      expect(sequence.indexOf('-a')).toBe(-1)
+    })
+  })
 })

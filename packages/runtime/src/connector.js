@@ -32,17 +32,22 @@ class Connector {
       await this.connection()
     })()
 
-    await this.#connecting
+    try {
+      await this.#connecting
+    } catch (e) {
+      await this.disconnect(true)
+      throw e
+    }
   }
 
-  async disconnect () {
-    await this.#connecting
+  async disconnect (force) {
+    if (!force) { await this.#connecting }
 
     if (this.#disconnecting) { return this.#disconnecting }
 
     this.#disconnecting = (async () => {
-      await this.disconnection()
-      await Promise.all(this.#connectors?.map(async connector => await connector.disconnect()))
+      if (!force) { await this.disconnection() }
+      await Promise.all(this.#connectors.map(async connector => await connector.disconnect()))
     })()
 
     await this.#disconnecting

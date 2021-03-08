@@ -1,5 +1,6 @@
 'use strict'
 
+const { random, timeout } = require('@kookaburra/gears')
 const { Connector } = require('../src/connector')
 
 class TestConnector extends Connector {
@@ -14,18 +15,22 @@ class TestConnector extends Connector {
   }
 
   async connection () {
-    await timeout(Math.random() * 30)
+    await timeout(random(10))
     this.#seq.push(`+${this.#label}`)
   }
 
   async disconnection () {
-    await timeout(Math.random() * 30)
+    await timeout(random(10))
     this.#seq.push(`-${this.#label}`)
   }
 }
 
-function timeout (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+class FailingConnector extends Connector {
+  async connection () {
+    await timeout(random(10))
+    throw new Error('FailingConnector')
+  }
 }
 
 exports.TestConnector = TestConnector
+exports.FailingConnector = FailingConnector
