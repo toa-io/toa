@@ -42,12 +42,6 @@ describe('validate', () => {
     expect(value.baz).toBe(fixtures.schemas.entity.properties.baz.default)
   })
 
-  it('should forbid additional properties', () => {
-    const value = { extra: 'property', ...fixtures.samples.entity.ok.all }
-
-    expect(validator.validate(fixtures.schemas.entity.$id, value)).toBeFalsy()
-  })
-
   it('should throw on unknown schema', () => {
     expect(() => validator.validate('wrong', {})).toThrow(/no schema/)
     expect(() => validator.defaults('wrong')).toThrow(/Unknown schema/)
@@ -67,14 +61,6 @@ describe('validate', () => {
 })
 
 describe('add', () => {
-  it('should throw on non-object type schema', () => {
-    expect(() => validator.add({ type: 'number' })).toThrow(/must be an object type/)
-  })
-
-  it('should throw if no id', () => {
-    expect(() => validator.add({ type: 'object' })).toThrow(/must contain unique \$id/)
-  })
-
   it('should throw on duplicates', () => {
     expect(() => validator.add(fixtures.schemas.entity)).toThrow(/already exists/)
   })
@@ -128,18 +114,6 @@ describe('errors', () => {
       keyword: 'required',
       message: 'should have required property \'foo\'',
       property: 'foo'
-    }])
-  })
-
-  it('should format extra property error', () => {
-    const value = { extra: 'prop', ...fixtures.samples.entity.ok.all }
-
-    validator.validate(fixtures.schemas.entity.$id, value)
-
-    expect(validator.errors).toEqual([{
-      keyword: 'additionalProperties',
-      message: 'should NOT have additional properties',
-      property: 'extra'
     }])
   })
 })

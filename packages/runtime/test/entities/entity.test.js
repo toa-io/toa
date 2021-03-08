@@ -1,6 +1,6 @@
 'use strict'
 
-const { Entity } = require('../src/entities/entity')
+const { Entity } = require('../../src/entities/entity')
 const fixtures = require('./entity.fixtures')
 
 let entity
@@ -18,9 +18,10 @@ describe('Entity', () => {
     expect({ ...entity }).toStrictEqual(fixtures.value)
   })
 
-  describe('_deleted', () => {
-    it('should expose _deleted as boolean', () => {
-      expect(entity._deleted).toBeFalsy()
-    })
+  it('should throw on extension', () => {
+    const name = 'baz'
+
+    expect(name in fixtures.value).toBe(false)
+    expect(() => (entity[name] = 1)).toThrow(/object is not extensible/)
   })
 })

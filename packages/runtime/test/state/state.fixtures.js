@@ -6,7 +6,7 @@ const storage = {
   name: 'dummy',
   get: jest.fn(() => ({ _id: randomstring.generate() })),
   find: jest.fn(() => ([{ _id: randomstring.generate() }])),
-  upsert: jest.fn(() => true)
+  persist: jest.fn(() => true)
 }
 
 const entity = {

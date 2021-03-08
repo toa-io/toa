@@ -55,10 +55,11 @@ describe('manifest', () => {
   }
 
   describe('entity', () => {
-    const manifest = (entity) => ({ domain: 'foo', name: 'bar', entity, operations: fixtures.operations })
+    const manifest = entity => ({ domain: 'foo', name: 'bar', entity, operations: fixtures.operations })
 
     describe('schema', () => {
-      const properties = (properties, required) => manifest({ schema: { properties, required } })
+      const schema = schema => manifest({ schema })
+      const properties = (properties, required) => schema({ properties, required })
       const property = { foo: { type: 'string' } }
 
       it('should be ok', async () => {
@@ -100,6 +101,52 @@ describe('manifest', () => {
           await validate.manifest(ok)
 
           expect(ok.entity.schema.$id).toBe('schema://foo/bar/entity')
+        })
+      })
+
+      describe('type', () => {
+        it('should be ok', async () => {
+          const ok = schema({ type: 'object', properties: property })
+
+          await expect(validate.manifest(ok)).resolves.not.toThrow()
+          expect(console.warn).toHaveBeenCalledTimes(0)
+        })
+
+        it('should assign default value', async () => {
+          const ok = schema({ properties: property })
+
+          await validate.manifest(ok)
+
+          expect(ok.entity.schema.type).toBe('object')
+        })
+
+        it('should throw if not object', async () => {
+          const ok = schema({ type: 'number', properties: property })
+
+          await expect(validate.manifest(ok)).rejects.toThrow(/must be an object/)
+        })
+      })
+
+      describe('additionalProperties', () => {
+        it('should be ok', async () => {
+          const ok = schema({ additionalProperties: false, properties: property })
+
+          await expect(validate.manifest(ok)).resolves.not.toThrow()
+          expect(console.warn).toHaveBeenCalledTimes(0)
+        })
+
+        it('should assign default value', async () => {
+          const ok = schema({ properties: property })
+
+          await validate.manifest(ok)
+
+          expect(ok.entity.schema.additionalProperties).toBe(false)
+        })
+
+        it('should throw if true', async () => {
+          const ok = schema({ additionalProperties: true, properties: property })
+
+          await expect(validate.manifest(ok)).rejects.toThrow(/not allowed for entities/)
         })
       })
 

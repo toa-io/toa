@@ -16,10 +16,7 @@ class Validator {
   }
 
   add (schema) {
-    if (schema.type && schema.type !== 'object') { throw new Error('Schemas must be an object type') }
-    if (!schema.$id) { throw new Error('Schemas must contain unique $id') }
-
-    this.#instance.addSchema({ ...DEFAULTS, ...schema })
+    this.#instance.addSchema(schema)
   }
 
   validate (id, object, strict = true) {
@@ -68,6 +65,5 @@ class Validator {
 }
 
 const OPTIONS = { useDefaults: true }
-const DEFAULTS = { type: 'object', additionalProperties: false }
 
 exports.Validator = Validator
