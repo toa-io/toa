@@ -8,7 +8,8 @@ const schemas = {
         type: 'string'
       },
       bar: {
-        type: 'number'
+        type: 'number',
+        format: 'timestamp'
       },
       baz: {
         type: 'number',

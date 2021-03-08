@@ -2,11 +2,17 @@
 
 const { default: Ajv } = require('ajv')
 
+const { extensions } = require('./extensions')
+
 class Validator {
   #instance
 
   constructor () {
     this.#instance = new Ajv(OPTIONS)
+
+    for (const extension of extensions) {
+      if (extension.format) { this.#instance.addFormat(extension.name, extension.format) }
+    }
   }
 
   add (schema) {
