@@ -13,4 +13,4 @@ properties:
   _version:
     type: integer
     default: 0
-required: [_id, _created, _updated, _deleted]
+required: [_id, _created, _version]

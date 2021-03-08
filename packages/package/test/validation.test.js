@@ -133,6 +133,7 @@ describe('manifest', () => {
           await validate.manifest(ok)
 
           expect(ok.entity.schema.properties).toStrictEqual({ ...fixtures.system.properties, ...property })
+          expect(ok.entity.schema.required).toStrictEqual(fixtures.system.required)
         })
       })
     })

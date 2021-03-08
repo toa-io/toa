@@ -30,7 +30,7 @@ const system = {
       default: 0
     }
   },
-  required: ['_id', '_created', '_updated', '_version']
+  required: ['_id', '_created', '_version']
 }
 
 exports.operations = operations
