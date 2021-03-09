@@ -203,7 +203,7 @@ describe('manifest', () => {
   })
 
   describe('operations', () => {
-    const manifest = (operations) => ({ domain: 'foo', name: 'bar', operations })
+    const manifest = (operations, entity) => ({ domain: 'foo', name: 'bar', entity, operations })
 
     it('should be ok', async () => {
       const ok = manifest([{}])
@@ -219,7 +219,7 @@ describe('manifest', () => {
     })
 
     it('should be array', async () => {
-      const wrongs = [{}, 'foo', 1].map(manifest)
+      const wrongs = [{}, 'foo', 1].map(wrong => manifest(wrong))
 
       for (const wrong of wrongs) { await expect(validate.manifest(wrong)).rejects.toThrow(/must be an array/) }
     })
@@ -248,6 +248,29 @@ describe('manifest', () => {
         await validate.manifest(ok)
 
         expect(operation.http).toStrictEqual([http])
+      })
+    })
+
+    describe('query', () => {
+      const query = query => manifest([{ query }], { schema: { properties: { foo: 'string' } } })
+
+      it('should be ok', async () => {
+        const undef = manifest([{}], undefined)
+        const def = query({ foo: 'string' })
+
+        await expect(validate.manifest(undef)).resolves.not.toThrow()
+        await expect(validate.manifest(def)).resolves.not.toThrow()
+        expect(console.warn).toHaveBeenCalledTimes(0)
+      })
+
+      describe('criteria', () => {
+        it('should set defaults', async () => {
+          const ok = query(undefined)
+
+          await validate.manifest(ok)
+
+          expect(ok.operations[0].query.criteria).toMatchObject({ properties: { foo: { type: 'string' } } })
+        })
       })
     })
   })
