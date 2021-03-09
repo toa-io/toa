@@ -12,5 +12,5 @@ it('should wait', async () => {
 
   const end = performance.now()
 
-  expect(end - start).toBeGreaterThanOrEqual(ms)
+  expect(Math.round(end - start)).toBeGreaterThanOrEqual(ms)
 })
