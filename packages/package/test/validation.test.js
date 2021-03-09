@@ -57,6 +57,13 @@ describe('manifest', () => {
   describe('entity', () => {
     const manifest = entity => ({ domain: 'foo', name: 'bar', entity, operations: fixtures.operations })
 
+    it('should be ok if undefined', async () => {
+      const ok = manifest(undefined)
+
+      await expect(validate.manifest(ok)).resolves.not.toThrow()
+      expect(console.warn).toHaveBeenCalledTimes(0)
+    })
+
     describe('schema', () => {
       const schema = schema => manifest({ schema })
       const properties = (properties, required) => schema({ properties, required })
@@ -69,17 +76,13 @@ describe('manifest', () => {
         expect(console.warn).toHaveBeenCalledTimes(0)
       })
 
-      it('should be ok if undefined', async () => {
-        const ok = manifest(undefined)
-
-        await expect(validate.manifest(ok)).resolves.not.toThrow()
-        expect(console.warn).toHaveBeenCalledTimes(0)
-      })
-
       it('should throw if no schema', async () => {
-        const warn = manifest({})
+        const undef = manifest({})
+        const nullish = manifest({ schema: null })
 
-        await expect(validate.manifest(warn)).rejects.toThrow(/entity has no schema/)
+        await expect(validate.manifest(undef)).rejects.toThrow(/entity has no schema/)
+        await expect(validate.manifest(nullish)).rejects.toThrow(/entity has no schema/)
+        expect(console.warn).toHaveBeenCalledTimes(0)
       })
 
       describe('$id', () => {
@@ -151,12 +154,25 @@ describe('manifest', () => {
       })
 
       describe('properties', () => {
-        it('should throw if no properties', async () => {
+        it('should warn if no properties', async () => {
           const undef = properties(undefined)
           const empty = properties({})
 
-          await expect(validate.manifest(undef)).rejects.toThrow(/must be an object/)
-          await expect(validate.manifest(empty)).rejects.toThrow(/has no properties/)
+          await validate.manifest(undef)
+
+          expect(console.warn).toHaveBeenCalledWith(
+            expect.stringContaining('warn'),
+            expect.stringContaining('has no properties')
+          )
+
+          console.warn.mockClear()
+
+          await validate.manifest(empty)
+
+          expect(console.warn).toHaveBeenCalledWith(
+            expect.stringContaining('warn'),
+            expect.stringContaining('has no properties')
+          )
         })
 
         it('should throw on unmatched properties', async () => {

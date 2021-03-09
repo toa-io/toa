@@ -5,7 +5,7 @@ const path = require('path')
 const { yaml } = require('@kookaburra/gears')
 const { validation } = require('../../validation')
 
-const defined = (entity) => entity.schema !== undefined
+const defined = (entity) => entity.schema !== undefined && entity.schema !== null
 defined.message = 'entity has no schema'
 defined.fatal = true
 

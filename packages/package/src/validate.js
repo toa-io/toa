@@ -4,7 +4,7 @@ const path = require('path')
 
 const { validation } = require('./validation/validation')
 
-const manifest = validation(path.resolve(__dirname, './validation/manifest'))
+const manifest = validation(path.resolve(__dirname, './validation/rules'))
 
 function dupes (a, b, message) {
   if (!b) { return }

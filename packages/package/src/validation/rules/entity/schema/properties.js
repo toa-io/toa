@@ -4,13 +4,19 @@ const path = require('path')
 
 const { validation } = require('../../../validation')
 
-const object = (schema) => typeof schema.properties === 'object'
+const defined = schema => schema.properties !== undefined && schema.properties !== null
+defined.message = 'entity schema has no properties'
+defined.fatal = false
+defined.break = schema => !defined(schema)
+
+const object = schema => typeof schema.properties === 'object'
 object.message = 'entity schema properties must be an object'
 object.fatal = true
 
-const nonempty = (schema) => Object.keys(schema.properties).length > 0
+const nonempty = schema => Object.keys(schema.properties).length > 0
 nonempty.message = 'entity schema has no properties'
-nonempty.fatal = true
+nonempty.fatal = false
+nonempty.break = schema => !nonempty(schema)
 
 const properties = async (schema, manifest) => {
   const checks = validation(path.resolve(__dirname, './property'))
@@ -20,4 +26,4 @@ const properties = async (schema, manifest) => {
   }
 }
 
-exports.checks = [object, nonempty, properties]
+exports.checks = [defined, object, nonempty, properties]

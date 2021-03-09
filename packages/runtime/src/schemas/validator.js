@@ -37,6 +37,12 @@ class Validator {
     return value
   }
 
+  coerce (id, props) {
+    const schema = this.#instance.getSchema(`${id}`)
+
+    console.log(schema)
+  }
+
   error (key = 'object') {
     return this.#instance.errors && this.#instance.errorsText(this.#instance.errors, { dataVar: key })
   }

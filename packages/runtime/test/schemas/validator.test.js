@@ -116,4 +116,10 @@ describe('errors', () => {
       property: 'foo'
     }])
   })
+
+  it('?', () => {
+    const result = validator.validate(fixtures.schemas.entity.$id, undefined)
+
+    expect(result).toBe(true)
+  })
 })

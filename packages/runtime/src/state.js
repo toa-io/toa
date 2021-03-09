@@ -5,7 +5,7 @@ class State {
   #entity
 
   /**
-   * reference to .object() or .collection()
+   * reference to Query.adaptor for .object() or .collection()
    * assigned by boot depending on operation's target type
    *
    * @type function
