@@ -76,6 +76,79 @@ describe('defaults', () => {
   })
 })
 
+describe('constrained', () => {
+  const constraint = 'schema://users/users/query'
+
+  beforeEach(() => {
+    const schema = validator.constrained(fixtures.schemas.entity.$id, {
+      $id: constraint,
+      properties: {
+        baz: {
+          minimum: 50
+        }
+      }
+    })
+
+    validator.add(schema)
+  })
+
+  it('should be ok', () => {
+    const value = { baz: 50 }
+    const result = validator.validate(constraint, value)
+
+    console.log(validator.error())
+    expect(result).toBe(true)
+  })
+
+  it('should add constraints', async () => {
+    const value = { baz: 10 }
+    const result = validator.validate(constraint, value)
+
+    expect(result).toBe(false)
+    expect(validator.error('entity')).toBe('entity/baz should be >= 50')
+  })
+
+  it('should remove difference', () => {
+    const value = { bar: 10 }
+    const result = validator.validate(constraint, value)
+
+    expect(result).toBe(false)
+  })
+
+  it('should remove defaults', () => {
+    const value = { ...fixtures.samples.entity.ok.all }
+    delete value.baz
+
+    validator.validate(constraint, value)
+    expect('baz' in value).toBe(false)
+  })
+
+  it('should treat null as a copy', () => {
+    const constraint = {
+      $id: 'test',
+      properties: {
+        foo: null,
+        baz: null
+      }
+    }
+
+    const schema = validator.constrained(fixtures.schemas.entity.$id, constraint)
+
+    validator.add(schema)
+
+    const ok = { foo: 'value', baz: 10 }
+    const wrong = { foo: 'value', baz: 'not-a-number' }
+
+    expect(validator.validate('test', ok)).toBe(true)
+    expect(validator.validate('test', wrong)).toBe(false)
+
+    const def = { foo: 'value' }
+
+    validator.validate('test', def)
+    expect('baz' in def).toBe(false)
+  })
+})
+
 describe('errors', () => {
   it('should provide empty errors', () => {
     validator.validate(fixtures.schemas.entity.$id, fixtures.samples.entity.ok.all)
@@ -115,11 +188,5 @@ describe('errors', () => {
       message: 'should have required property \'foo\'',
       property: 'foo'
     }])
-  })
-
-  it('?', () => {
-    const result = validator.validate(fixtures.schemas.entity.$id, undefined)
-
-    expect(result).toBe(true)
   })
 })

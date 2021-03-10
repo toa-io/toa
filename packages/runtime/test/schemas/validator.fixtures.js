@@ -16,7 +16,8 @@ const schemas = {
         default: 100
       }
     },
-    required: ['foo']
+    required: ['foo'],
+    additionalProperties: false
   },
   input: {
     $id: 'schema://users/users/add.input',
