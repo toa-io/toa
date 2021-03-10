@@ -279,7 +279,16 @@ describe('manifest', () => {
           const collapsed = query({ criteria: { properties: ['foo', 'bar'] } })
 
           await validate.manifest(collapsed)
+
           expect(collapsed.operations[0].query.criteria.properties).toEqual({ foo: null, bar: null })
+        })
+
+        it('should add $id', async () => {
+          const ok = query({ criteria: ['foo'] })
+
+          await validate.manifest(ok)
+
+          expect(ok.operations[0].query.criteria.$id).toBe('schema://foo//bar/query.criteria')
         })
       })
     })
