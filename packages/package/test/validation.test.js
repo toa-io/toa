@@ -252,11 +252,15 @@ describe('manifest', () => {
     })
 
     describe('query', () => {
-      const query = query => manifest([{ query }], { schema: { properties: { foo: 'string' } } })
+      const query = query => manifest(
+        [{ query }],
+        { schema: { properties: { foo: 'string', bar: 'number' } } }
+      )
 
       it('should be ok', async () => {
+        const constraint = { criteria: { foo: { format: 'date' } } }
         const undef = manifest([{}], undefined)
-        const def = query({ foo: 'string' })
+        const def = query(constraint)
 
         await expect(validate.manifest(undef)).resolves.not.toThrow()
         await expect(validate.manifest(def)).resolves.not.toThrow()
@@ -264,12 +268,18 @@ describe('manifest', () => {
       })
 
       describe('criteria', () => {
-        it('should set defaults', async () => {
-          const ok = query(undefined)
+        it('should expand array', async () => {
+          const collapsed = query({ criteria: ['foo', 'bar'] })
 
-          await validate.manifest(ok)
+          await validate.manifest(collapsed)
+          expect(collapsed.operations[0].query.criteria.properties).toEqual({ foo: null, bar: null })
+        })
 
-          expect(ok.operations[0].query.criteria).toMatchObject({ properties: { foo: { type: 'string' } } })
+        it('should expand properties array', async () => {
+          const collapsed = query({ criteria: { properties: ['foo', 'bar'] } })
+
+          await validate.manifest(collapsed)
+          expect(collapsed.operations[0].query.criteria.properties).toEqual({ foo: null, bar: null })
         })
       })
     })

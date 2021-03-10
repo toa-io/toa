@@ -1,5 +1,9 @@
 'use strict'
 
+const path = require('path')
+
+const { validation } = require('../../validation')
+
 const def = (operation, manifest) => {
   if (operation.query === undefined && manifest.entity !== undefined) { operation.query = {} }
 }
@@ -11,10 +15,7 @@ entity.fatal = false
 const undef = () => true
 undef.break = (operation) => operation.query === undefined
 
-const criteria = (operation, manifest) => {
-  if (operation.query.criteria === undefined) {
-    operation.query.criteria = { properties: { ...manifest.entity.schema.properties } }
-  }
-}
+const criteria = async (operation, manifest) =>
+  await validation(path.resolve(__dirname, './query'))(operation.query, manifest)
 
 exports.checks = [def, entity, undef, criteria]
