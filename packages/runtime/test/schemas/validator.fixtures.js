@@ -5,7 +5,8 @@ const schemas = {
     $id: 'schema://users/users/entity',
     properties: {
       foo: {
-        type: 'string'
+        type: 'string',
+        minLength: 3
       },
       bar: {
         type: 'number',

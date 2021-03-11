@@ -77,12 +77,18 @@ class Validator {
     return this.#instance.validate(id, object)
   }
 
-  defaults (id) {
+  blank (id) {
     const schema = this.#instance.getSchema(id)?.schema
 
     if (!schema) { throw new Error(`Unknown schema '${id}'`) }
 
-    const value = Object.fromEntries(Object.keys(schema.properties).map(key => [key, undefined]))
+    const blank = Object.fromEntries(Object.keys(schema.properties).map(key => [key, undefined]))
+
+    return blank
+  }
+
+  defaults (id) {
+    const value = this.blank(id)
 
     this.#instance.validate(id, value)
 
@@ -91,7 +97,9 @@ class Validator {
 
   error (key = 'object') {
     const errors = this.#instance.errors?.filter(error => error.keyword !== '$patch')
-    return (errors && errors.length) ? this.#instance.errorsText(errors, { dataVar: key }) : null
+    const text = (errors && errors.length) ? this.#instance.errorsText(errors, { dataVar: key }) : null
+
+    return text
   }
 
   get errors () {

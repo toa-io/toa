@@ -55,7 +55,7 @@ describe('validate', () => {
     const validate = (property, value) =>
       validator.validate(`${fixtures.schemas.entity.$id}#/properties/${property}`, value)
 
-    expect(validate('foo', 'ok')).toBeTruthy()
+    expect(validate('foo', 'value')).toBeTruthy()
     expect(validate('foo', 1)).toBeFalsy()
   })
 })
@@ -63,6 +63,16 @@ describe('validate', () => {
 describe('add', () => {
   it('should throw on duplicates', () => {
     expect(() => validator.add(fixtures.schemas.entity)).toThrow(/already exists/)
+  })
+})
+
+describe('blank', () => {
+  it('should return blank', () => {
+    const blank = validator.blank(fixtures.schemas.entity.$id)
+
+    const expected = Object.fromEntries(Object.keys(fixtures.schemas.entity.properties).map(key => [key, undefined]))
+
+    expect(blank).toEqual(expected)
   })
 })
 
