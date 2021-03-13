@@ -10,14 +10,13 @@ const codes = {
   INTERNAL: 0,
   // user codes: 1-99
 
+  VALIDATION_ERROR: 100,
   INVALID_INPUT: 101,
   INVALID_QUERY: 102,
 
+  STATE_ERROR: 200,
   NOT_FOUND: 201,
-  DUPLICATE_KEY: 202,
-
-  INVALID_OUTPUT: 301,
-  INVALID_ERROR: 302
+  DUPLICATE_KEY: 202
 }
 
 const literal = Object.fromEntries(Object.entries(codes)

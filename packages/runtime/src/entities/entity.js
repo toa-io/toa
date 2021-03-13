@@ -12,13 +12,11 @@ class Entity {
   }
 
   #extend () {
-    const value = () => this.#construct()
-
     Object.defineProperty(this, '_construct', {
       configurable: false,
       writable: false,
       enumerable: false,
-      value
+      value: () => this.#construct()
     })
   }
 
@@ -33,10 +31,11 @@ class Entity {
   #construct () {
     const value = { ...this, ...this.#system }
 
-    const ok = this.#schema.fit(value)
+    const { ok, oh } = this.#schema.fit(value)
 
-    // TODO: errors
-    if (!ok) { return false } else { return value }
+    if (!ok) throw new Error(oh.message)
+
+    return value
   }
 }
 

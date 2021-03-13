@@ -49,14 +49,11 @@ describe('entity', () => {
       expect(create).toThrow(/does not match entity schema/)
     })
 
-    it('should return false on invalid value serialization', () => {
+    it('should throw on invalid value', () => {
       entity = factory.create(fixtures.value)
-
       entity.invalid = true
 
-      const result = entity._construct()
-
-      expect(result).toBe(false)
+      expect(() => entity._construct()).toThrow(/error/)
     })
   })
 })

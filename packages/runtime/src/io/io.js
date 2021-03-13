@@ -43,7 +43,7 @@ class IO {
 
     const { ok, oh } = this.#schemas.error.fit(this.error)
 
-    if (!ok) { throw new Error(oh.message) }
+    if (!ok) throw new Error(oh.message)
 
     freeze(this.error)
   }

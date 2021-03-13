@@ -13,11 +13,11 @@ class Factory {
 
   create (value) {
     if (value) {
-      const valid = this.#schema.fit(value)
+      const { ok, oh } = this.#schema.fit(value)
 
-      if (!valid) {
+      if (!ok) {
         throw new Error(`Storage object (#${value._id}) does not match entity schema. Probably data is corrupted.\n` +
-          `Schema errors: ${JSON.stringify(this.#schema.errors, null, 2)}`)
+          `Schema error: ${oh.message}`)
       }
     } else {
       value = { _id: this.#id(), ...this.#schema.defaults() }
