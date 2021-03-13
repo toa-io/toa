@@ -18,6 +18,20 @@ describe('load', () => {
   })
 })
 
+describe('sync', () => {
+  it('should return object', () => {
+    const object = yaml.sync(path.resolve(__dirname, './yaml.yaml'))
+
+    expect(object?.ok).toBeTruthy()
+  })
+
+  it('should throw on file read error', () => {
+    const attempt = () => yaml.sync(path.resolve(__dirname, './no-file.yaml'))
+
+    expect(attempt).toThrow(/ENOENT/)
+  })
+})
+
 describe('try', () => {
   it('should return object', async () => {
     const object = await yaml.try(path.resolve(__dirname, './yaml.yaml'))

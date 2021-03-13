@@ -13,6 +13,13 @@ const load = async path => {
   return object
 }
 
+load.sync = path => {
+  const contents = fs.readFileSync(path)
+  const object = yaml.load(contents)
+
+  return object
+}
+
 load.try = async path => {
   try {
     return await load(path)
