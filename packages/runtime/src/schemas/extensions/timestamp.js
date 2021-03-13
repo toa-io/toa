@@ -3,8 +3,7 @@
 const timestamp = {
   type: 'number',
   validate: () => true,
-  async: false,
-  compare: (a, b) => a - b && (a - b > 0 ? 1 : -1)
+  async: false
 }
 
 exports.name = 'timestamp'

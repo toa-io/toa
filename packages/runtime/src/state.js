@@ -32,6 +32,10 @@ class State {
   }
 
   async commit (state) {
+    if (!Array.isArray(state)) { state = [state] }
+
+    state = state.map(entity => entity._construct())
+
     this.#storage.persist(state)
   }
 }

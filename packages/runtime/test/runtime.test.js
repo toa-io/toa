@@ -22,16 +22,17 @@ describe('Invocations', () => {
     await expect(() => runtime.invoke('baz')).rejects.toThrow(/not found/)
   })
 
-  it('should invoke with input', async () => {
+  it('should invoke input and query', async () => {
     const input = { test: Math.random() }
-    await runtime.invoke(name, input)
+    const query = { test: Math.random() }
+    await runtime.invoke(name, input, query)
 
-    expect(invocation.invoke).toBeCalledWith(expect.objectContaining({ input }))
+    expect(invocation.invoke).toBeCalledWith(input, query)
   })
 
   it('should return io', async () => {
     const io = await runtime.invoke(name)
 
-    expect(io.output.called).toBe(name)
+    expect(io).toBe(fixtures.invocations[name].invoke.mock.results[0].value)
   })
 })

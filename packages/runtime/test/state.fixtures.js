@@ -10,7 +10,16 @@ const storage = {
 }
 
 const entity = {
-  create: jest.fn(value => value)
+  create: jest.fn(value => {
+    const construct = jest.fn(() => value)
+
+    Object.defineProperty(value, '_construct', {
+      enumerable: false,
+      value: construct
+    })
+
+    return value
+  })
 }
 
 const query = randomstring.generate()

@@ -1,6 +1,6 @@
 'use strict'
 
-const freeze = require('deep-freeze')
+const { freeze } = require('@kookaburra/gears')
 
 class Operation {
   #algorithm
@@ -13,14 +13,16 @@ class Operation {
     this.#target = target
   }
 
-  async execute (io, query) {
+  async invoke (io, query) {
     const state = await this.#target?.query(query)
 
     if (this.#type === 'observation') { freeze(state) }
 
     await this.#algorithm(io, state)
 
-    if (this.#type === 'transition') { await this.#target.commit(state) }
+    if (this.#type === 'transition') {
+      await this.#target.commit(state)
+    }
   }
 }
 

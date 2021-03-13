@@ -1,7 +1,5 @@
 'use strict'
 
-const { Schema } = require('./schema')
-const { Validator } = require('./validator')
+const { Schemas } = require('./schemas')
 
-exports.Schema = Schema
-exports.Validator = Validator
+exports.Schemas = Schemas

@@ -2,7 +2,6 @@
 
 const { console } = require('@kookaburra/gears')
 const { Connector } = require('./connector')
-const { IO } = require('./io')
 
 class Runtime extends Connector {
   locator
@@ -24,12 +23,10 @@ class Runtime extends Connector {
     console.info(`Runtime '${this.locator.name}' disconnected`)
   }
 
-  async invoke (name, input) {
+  async invoke (name, input, query) {
     if (!(name in this.#invocations)) { throw new Error(`Operation '${name}' not found in '${this.locator.name}'`) }
 
-    const io = new IO(input)
-
-    await this.#invocations[name].invoke(io)
+    const io = await this.#invocations[name].invoke(input, query)
 
     return io
   }

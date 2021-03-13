@@ -1,18 +1,42 @@
 'use strict'
 
 class Entity {
-  constructor (value) {
-    const { _id, _created, _updated, _deleted, _version, ...rest } = value
+  #system
+  #schema
 
-    Object.defineProperty(this, '_id', {
+  constructor (value, schema) {
+    Object.assign(this, this.#destruct(value))
+
+    this.#schema = schema
+    this.#extend()
+  }
+
+  #extend () {
+    const value = () => this.#construct()
+
+    Object.defineProperty(this, '_construct', {
       configurable: false,
       writable: false,
-      enumerable: true,
-      value: _id
+      enumerable: false,
+      value
     })
+  }
 
-    Object.assign(this, rest)
-    Object.seal(this)
+  #destruct (value) {
+    const { _created, _updated, _deleted, _version, ...rest } = value
+
+    this.#system = { _created, _updated, _deleted, _version }
+
+    return rest
+  }
+
+  #construct () {
+    const value = { ...this, ...this.#system }
+
+    const ok = this.#schema.fit(value)
+
+    // TODO: errors
+    if (!ok) { return false } else { return value }
   }
 }
 

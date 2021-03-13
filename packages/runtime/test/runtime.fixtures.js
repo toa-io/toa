@@ -1,13 +1,10 @@
 'use strict'
 
+const randomstring = require('randomstring')
+
 const { Locator } = require('../src/locator')
 
-const invocation = (name) => {
-  return jest.fn((io) => new Promise(resolve => {
-    io.output.called = name
-    resolve()
-  }))
-}
+const invocation = () => jest.fn(() => randomstring.generate())
 
 const invocations = {
   foo: {

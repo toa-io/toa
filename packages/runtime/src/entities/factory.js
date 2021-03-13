@@ -23,10 +23,7 @@ class Factory {
       value = { _id: this.#id(), ...this.#schema.defaults() }
     }
 
-    const entity = new Entity(value)
-    const proxy = this.#schema.proxy(entity)
-
-    return proxy
+    return new Entity(value, this.#schema)
   }
 }
 

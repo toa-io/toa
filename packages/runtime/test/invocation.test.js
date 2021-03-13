@@ -1,69 +1,53 @@
 'use strict'
 
-const clone = require('clone-deep')
+const { error } = require('../src/io')
 
 const { Invocation } = require('../src/invocation')
 const fixtures = require('./invocation.fixtures')
 
 let invocation
-let io
+
+beforeEach(() => {
+  jest.clearAllMocks()
+
+  invocation = new Invocation(fixtures.operation, fixtures.io, fixtures.query)
+})
 
 describe('invocation', () => {
-  beforeEach(() => {
-    invocation = new Invocation(fixtures.operation)
-    io = clone(fixtures.io)
-
-    jest.clearAllMocks()
-  })
-
   it('should invoke operation', async () => {
-    await invocation.invoke(io.valid)
+    await invocation.invoke()
 
-    expect(fixtures.operation.execute).toBeCalled()
+    expect(fixtures.operation.invoke).toHaveBeenCalled()
   })
 
-  it('should pass arguments', async () => {
-    const foo = 'bar'
-    const bar = 'foo'
+  it('should pass io and query', async () => {
+    const sample = fixtures.sample()
 
-    await invocation.invoke(io.valid, foo, bar)
+    await invocation.invoke(sample.input.ok, sample.query.ok)
 
-    expect(fixtures.operation.execute).toBeCalledWith(fixtures.io.valid, foo, bar)
-  })
-
-  it('should close input', async () => {
-    await invocation.invoke(io.valid)
-
-    expect(fixtures.io.valid.close).toBeCalled()
-  })
-
-  it('should freeze io', async () => {
-    await invocation.invoke(io.valid)
-
-    expect(fixtures.io.valid.freeze).toBeCalled()
+    expect(fixtures.operation.invoke).toHaveBeenCalledWith(
+      fixtures.io.create.mock.results[0].value.io,
+      fixtures.query.parse.mock.results[0].value.query
+    )
   })
 })
 
 describe('validation', () => {
-  beforeEach(() => {
-    invocation = new Invocation(fixtures.operation, fixtures.schema)
-    io = clone(fixtures.io)
+  it('should not invoke if input is invalid', async () => {
+    const sample = fixtures.sample()
 
-    jest.clearAllMocks()
+    const io = await invocation.invoke(sample.input.invalid)
+
+    expect(fixtures.operation.invoke).not.toHaveBeenCalled()
+    expect(io.error.code).toBe(error.codes.INVALID_INPUT)
   })
 
-  it('should write error on invalid input', async () => {
-    await invocation.invoke(io.invalid)
+  it('should not invoke if query is invalid', async () => {
+    const sample = fixtures.sample()
 
-    expect(io.invalid.error)
-      .toMatchObject(expect.objectContaining({ message: 'Invalid input', errors: expect.any(Array) }))
+    const io = await invocation.invoke(sample.input.ok, sample.query.invalid)
 
-    expect(fixtures.operation.execute).not.toBeCalled()
-  })
-
-  it('should freeze io on invalid input', async () => {
-    await invocation.invoke(io.invalid)
-
-    expect(fixtures.io.invalid.freeze).toBeCalled()
+    expect(fixtures.operation.invoke).not.toHaveBeenCalled()
+    expect(io.error.code).toBe(error.codes.INVALID_QUERY)
   })
 })

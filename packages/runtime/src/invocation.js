@@ -1,27 +1,54 @@
 'use strict'
 
+const { error } = require('./io')
+
 class Invocation {
   #operation
-  #schema
+  #io
+  #query
 
-  constructor (operation, schema) {
+  constructor (operation, io, query) {
     this.#operation = operation
-    this.#schema = schema
+    this.#io = io
+    this.#query = query
   }
 
-  async invoke (io, ...args) {
-    const valid = this.#schema?.fit(io.input) ?? true
+  async invoke (input = null, q = null) {
+    const { ok, oh, io, query } = this.#parse(input, q)
 
-    io.close()
-
-    if (valid) {
-      await this.#operation.execute(io, ...args)
+    if (ok) {
+      await this.#operation.invoke(io, query)
     } else {
-      io.error.message = 'Invalid input'
-      io.error.errors = this.#schema.errors
+      io.error = oh
     }
 
-    io.freeze()
+    io.fit()
+
+    return io
+  }
+
+  #parse (input, query) {
+    const result = this.#parseInput(input)
+
+    if (result.ok) { Object.assign(result, this.#parseQuery(query)) }
+
+    return result
+  }
+
+  #parseInput (value) {
+    const result = this.#io.create(value)
+
+    if (!result.ok) { result.oh.code = error.codes.INVALID_INPUT }
+
+    return result
+  }
+
+  #parseQuery (value) {
+    const result = this.#query.parse(value)
+
+    if (!result.ok) { result.oh.code = error.codes.INVALID_QUERY }
+
+    return result
   }
 }
 

@@ -1,35 +1,53 @@
 'use strict'
 
+const randomstring = require('randomstring')
+
 const operation = {
-  execute: jest.fn()
-}
-
-const schema = {
-  fit: jest.fn(input => {
-    schema.errors = input.valid ? undefined : [{ error: 1 }]
-
-    return input.valid
-  })
+  invoke: jest.fn()
 }
 
 const io = {
-  valid: {
-    input: {
-      valid: true
-    },
-    close: jest.fn(),
-    freeze: jest.fn()
-  },
-  invalid: {
-    input: {
-      valid: false
-    },
-    error: {},
-    close: jest.fn(),
-    freeze: jest.fn()
-  }
+  create: jest.fn((input) => {
+    let ok = true
+    let oh
+
+    const io = { input, output: {}, error: {}, fit: jest.fn() }
+
+    if (input?.invalid) {
+      ok = false
+      oh = { message: randomstring.generate() }
+    }
+
+    return { ok, oh, io }
+  })
 }
 
+const query = {
+  parse: jest.fn((query) => {
+    let ok = true
+    let oh
+
+    if (query === 'invalid') {
+      ok = false
+      oh = { message: 'invalid query' }
+    }
+
+    return { ok, oh, query: { [randomstring.generate()]: randomstring.generate() } }
+  })
+}
+
+const sample = () => ({
+  input: {
+    ok: { [randomstring.generate()]: randomstring.generate() },
+    invalid: { invalid: true }
+  },
+  query: {
+    ok: randomstring.generate(),
+    invalid: 'invalid'
+  }
+})
+
 exports.operation = operation
-exports.schema = schema
 exports.io = io
+exports.query = query
+exports.sample = sample
