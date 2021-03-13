@@ -1,7 +1,5 @@
 'use strict'
 
-const { error } = require('../src/io')
-
 const { Invocation } = require('../src/invocation')
 const fixtures = require('./invocation.fixtures')
 
@@ -39,7 +37,7 @@ describe('validation', () => {
     const io = await invocation.invoke(sample.input.invalid)
 
     expect(fixtures.operation.invoke).not.toHaveBeenCalled()
-    expect(io.error.code).toBe(error.codes.INVALID_INPUT)
+    expect(io.error).toEqual(fixtures.io.create.mock.results[0].value.oh)
   })
 
   it('should not invoke if query is invalid', async () => {
@@ -48,6 +46,6 @@ describe('validation', () => {
     const io = await invocation.invoke(sample.input.ok, sample.query.invalid)
 
     expect(fixtures.operation.invoke).not.toHaveBeenCalled()
-    expect(io.error.code).toBe(error.codes.INVALID_QUERY)
+    expect(io.error).toEqual(fixtures.query.parse.mock.results[0].value.oh)
   })
 })

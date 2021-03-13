@@ -30,7 +30,6 @@ class Entity {
 
   #construct () {
     const value = { ...this, ...this.#system }
-
     const { ok, oh } = this.#schema.fit(value)
 
     if (!ok) throw new Error(oh.message)

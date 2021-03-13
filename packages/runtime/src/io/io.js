@@ -48,9 +48,7 @@ class IO {
     freeze(this.error)
   }
 
-  static #nullify (value) {
-    return value && (Object.keys(value).length === 0 ? null : value)
-  }
+  static #nullify = (value) => value && (Object.keys(value).length === 0 ? null : value)
 }
 
 exports.IO = IO

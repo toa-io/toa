@@ -15,7 +15,7 @@ class Schema {
     let oh
     const ok = this.#validate(value)
 
-    if (!ok) { oh = this.#error() }
+    if (!ok) oh = this.#error()
 
     return { ok, oh }
   }
@@ -31,7 +31,7 @@ class Schema {
   #error () {
     // noinspection JSUnresolvedFunction
     const error = {
-      message: this.#validate.errorText(),
+      message: this.#validate.error(),
       payload: this.#validate.errors.map(Schema.#format)
     }
 
@@ -45,13 +45,9 @@ class Schema {
       message: error.message
     }
 
-    if (error.dataPath) {
-      result.property = error.dataPath.slice(1)
-    } else if (error.keyword === 'required') {
-      result.property = error.params.missingProperty
-    } else if (error.keyword === 'additionalProperties') {
-      result.property = error.params.additionalProperty
-    }
+    if (error.dataPath) result.property = error.dataPath.slice(1)
+    else if (error.keyword === 'required') result.property = error.params.missingProperty
+    else if (error.keyword === 'additionalProperties') result.property = error.params.additionalProperty
 
     return result
   }

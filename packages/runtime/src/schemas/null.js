@@ -2,18 +2,15 @@
 
 class Null {
   fit (value) {
-    const result = { ok: value === null }
+    let oh
+    const ok = value === null
 
-    if (!result.ok) { result.oh = { message: ERROR } }
+    if (!ok) oh = { message: 'Object must be null' }
 
-    return result
+    return { ok, oh }
   }
 
-  defaults () {
-    return null
-  }
+  defaults = () => null
 }
-
-const ERROR = 'Cannot set property of null'
 
 exports.Null = Null
