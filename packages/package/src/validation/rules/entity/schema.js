@@ -9,7 +9,8 @@ const defined = (entity) => entity.schema !== undefined && entity.schema !== nul
 defined.message = 'entity has no schema'
 defined.fatal = true
 
-const schema = async (entity, manifest) => await validation(path.resolve(__dirname, './schema'))(entity.schema, manifest)
+const schema = async (entity, manifest) =>
+  await validation(path.resolve(__dirname, '../../schema'))(entity.schema, manifest, 'entity')
 
 let system
 const add = async (entity) => {

@@ -5,7 +5,7 @@ const def = schema => {
 }
 
 const falsy = schema => schema.additionalProperties === false
-falsy.message = 'additional properties not allowed for entities'
+falsy.message = (schema, manifest, id) => `${id} schema additional properties is not allowed`
 falsy.fatal = true
 
 exports.checks = [def, falsy]

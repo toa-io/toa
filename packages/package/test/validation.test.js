@@ -9,7 +9,8 @@ beforeEach(() => {
 
 describe('manifest', () => {
   const properties = ['domain', 'name']
-  const defaults = Object.fromEntries(properties.map(value => [value, value]).concat([['operations', [{}]]]))
+  const defaults = Object.fromEntries(properties.map(value => [value, value])
+    .concat([['operations', [{ name: 'op' }]]]))
 
   for (const property of properties) {
     describe(property, () => {
@@ -86,24 +87,12 @@ describe('manifest', () => {
       })
 
       describe('$id', () => {
-        it('should throw if not a string', async () => {
-          const wrong = manifest({ schema: { $id: 1, properties: property } })
-
-          await expect(() => validate.manifest(wrong)).rejects.toThrow(/must be string/)
-        })
-
-        it('should throw if empty string', async () => {
-          const wrong = manifest({ schema: { $id: '', properties: property } })
-
-          await expect(() => validate.manifest(wrong)).rejects.toThrow(/can't be empty/)
-        })
-
         it('should set default', async () => {
           const ok = properties(property)
 
           await validate.manifest(ok)
 
-          expect(ok.entity.schema.$id).toBe('schema://foo/bar/entity')
+          expect(ok.entity.schema.$id).toBe('http://foo/bar/entity.schema.json')
         })
       })
 
@@ -149,7 +138,7 @@ describe('manifest', () => {
         it('should throw if true', async () => {
           const ok = schema({ additionalProperties: true, properties: property })
 
-          await expect(validate.manifest(ok)).rejects.toThrow(/not allowed for entities/)
+          await expect(validate.manifest(ok)).rejects.toThrow(/additional properties/)
         })
       })
 
@@ -206,7 +195,7 @@ describe('manifest', () => {
     const manifest = (operations, entity) => ({ domain: 'foo', name: 'bar', entity, operations })
 
     it('should be ok', async () => {
-      const ok = manifest([{}])
+      const ok = manifest([{ name: 'op' }])
 
       await expect(validate.manifest(ok)).resolves.not.toThrow()
       expect(console.warn).toHaveBeenCalledTimes(0)
@@ -230,36 +219,15 @@ describe('manifest', () => {
       await expect(validate.manifest(wrong)).rejects.toThrow(/has no operations/)
     })
 
-    describe('http', () => {
-      it('should set default', async () => {
-        const operation = {}
-        const ok = manifest([operation])
-
-        await validate.manifest(ok)
-
-        expect(operation.http).toStrictEqual([null])
-      })
-
-      it('should convert to array', async () => {
-        const http = { path: '/' }
-        const operation = { http }
-        const ok = manifest([operation])
-
-        await validate.manifest(ok)
-
-        expect(operation.http).toStrictEqual([http])
-      })
-    })
-
     describe('query', () => {
       const query = query => manifest(
-        [{ query }],
+        [{ name: 'op', query }],
         { schema: { properties: { foo: 'string', bar: 'number' } } }
       )
 
       it('should be ok', async () => {
         const constraint = { criteria: { foo: { format: 'date' } } }
-        const undef = manifest([{}], undefined)
+        const undef = manifest([{ name: 'op' }], undefined)
         const def = query(constraint)
 
         await expect(validate.manifest(undef)).resolves.not.toThrow()
@@ -290,6 +258,27 @@ describe('manifest', () => {
 
           expect(ok.operations[0].query.criteria.$id).toBe('schema://foo//bar/query.criteria')
         })
+      })
+    })
+
+    describe('http', () => {
+      it('should set default', async () => {
+        const operation = { name: 'op' }
+        const ok = manifest([operation])
+
+        await validate.manifest(ok)
+
+        expect(operation.http).toStrictEqual([null])
+      })
+
+      it('should convert to array', async () => {
+        const http = { path: '/' }
+        const operation = { name: 'op', http }
+        const ok = manifest([operation])
+
+        await validate.manifest(ok)
+
+        expect(operation.http).toStrictEqual([http])
       })
     })
   })

@@ -2,7 +2,7 @@
 
 const path = require('path')
 
-const { validation } = require('../../../validation')
+const { validation } = require('../validation')
 
 const defined = schema => schema.properties !== undefined && schema.properties !== null
 defined.message = 'entity schema has no properties'
