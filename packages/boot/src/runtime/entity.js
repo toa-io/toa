@@ -1,15 +1,11 @@
 'use strict'
 
-const { entities, schemas, State } = require('@kookaburra/runtime')
+const { entities, State } = require('@kookaburra/runtime')
 
-const entity = (entity, storage) => {
+const entity = (entity, storage, schemas) => {
   if (entity === undefined) { return (algorithm) => ({ algorithm }) }
 
-  const validator = new schemas.Validator()
-
-  validator.add(entity.schema)
-
-  const schema = new schemas.Schema(entity.schema.$id, validator)
+  const schema = schemas.add(entity.schema)
   const instance = new entities.Factory(schema)
 
   const operations = (algorithm) => {
@@ -19,7 +15,7 @@ const entity = (entity, storage) => {
 
     if (!target.query) { throw new Error(`Unresolved target type '${algorithm.target}'`) }
 
-    return { algorithm, target }
+    return { algorithm, target, schemas }
   }
 
   return operations
