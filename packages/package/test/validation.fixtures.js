@@ -4,7 +4,8 @@ const operations = [
   {
     algorithm: () => {},
     name: 'get',
-    type: 'observation'
+    type: 'observation',
+    query: { criteria: {} }
   }
 ]
 

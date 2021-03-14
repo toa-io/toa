@@ -13,7 +13,7 @@ async function scan (dir, options) {
   const operations = await parse(path.resolve(dir, opts.operationsPath))
 
   manifest.operations = merge(operations, manifest.operations)
-  await validate.manifest(manifest)
+  validate.manifest(manifest)
 
   return manifest
 }

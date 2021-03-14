@@ -1,26 +1,17 @@
 'use strict'
 
-const { concat } = require('@kookaburra/gears')
+const defined = (query) => query.criteria !== undefined
+defined.fatal = false
+defined.message = (query, operation) =>
+  `operation '${operation.name}' query.criteria is not defined. If this is intended use null as query value.`
+defined.break = (query) => !defined(query)
 
-const def = () => true
-def.break = query => query.criteria === undefined
-
-const array = query => {
-  if (Array.isArray(query.criteria)) {
-    query.criteria = { properties: Object.fromEntries(query.criteria.map(name => [name, null])) }
-  }
+const string = (query) => {
+  if (typeof query.criteria === 'string') query.criteria = { [query.criteria]: null }
 }
 
-const id = (query, manifest) => {
-  if (query.criteria.$id === undefined) {
-    query.criteria.$id = `schema://${concat(manifest.domain, '/')}/${manifest.name}/query.criteria`
-  }
+const array = (query) => {
+  if (Array.isArray(query.criteria)) query.criteria = Object.fromEntries(query.criteria.map(name => [name, null]))
 }
 
-const propertiesArray = query => {
-  if (Array.isArray(query.criteria.properties)) {
-    query.criteria.properties = Object.fromEntries(query.criteria.properties.map(name => [name, null]))
-  }
-}
-
-exports.checks = [def, array, id, propertiesArray]
+exports.checks = [defined, string, array]

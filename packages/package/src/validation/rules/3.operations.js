@@ -16,10 +16,10 @@ const nonempty = manifest => manifest.operations.length > 0
 nonempty.message = defined.message
 nonempty.fatal = true
 
-const operations = async manifest => {
+const operations = manifest => {
   const checks = validation(path.resolve(__dirname, './operation'))
 
-  for (const operation of manifest.operations) { await checks(operation, manifest) }
+  for (const operation of manifest.operations) checks(operation, manifest)
 }
 
 exports.checks = [defined, array, nonempty, operations]

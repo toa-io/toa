@@ -9,13 +9,11 @@ const defined = (entity) => entity.schema !== undefined && entity.schema !== nul
 defined.message = 'entity has no schema'
 defined.fatal = true
 
-const schema = async (entity, manifest) =>
-  await validation(path.resolve(__dirname, '../../schema'))(entity.schema, manifest, 'entity')
+const schema = (entity, manifest) =>
+  validation(path.resolve(__dirname, '../../schema'))(entity.schema, manifest, 'entity')
 
-let system
-const add = async (entity) => {
-  if (!system) { system = await yaml(path.resolve(__dirname, '../../schemas/system.yaml')) }
-
+const system = yaml.sync(path.resolve(__dirname, '../../schemas/system.yaml'))
+const add = (entity) => {
   entity.schema = {
     ...entity.schema,
     properties: { ...system.properties, ...entity.schema.properties },

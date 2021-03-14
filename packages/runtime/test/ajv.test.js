@@ -1,32 +1,56 @@
 'use strict'
 
 const { default: Ajv } = require('ajv')
+const formats = require('ajv-formats')
 
 let ajv
 
 beforeEach(() => {
   ajv = new Ajv({ useDefaults: true })
+  formats(ajv)
 
   const schema = {
-    $id: 'schema://error',
+    $id: 'schema://test',
     type: 'object',
     properties: {
       foo: {
-        type: 'string'
+        type: 'string',
+        format: 'email',
+        default: 'foo'
       },
       bar: {
-        type: 'string'
+        type: 'integer'
       }
     }
   }
 
-  ajv.addSchema(schema, 'error')
+  const dependant = {
+    $id: 'schema://dependant',
+    type: 'object',
+    properties: {
+      foo: {
+        $ref: 'schema://test#/properties/foo'
+      },
+      bar: {
+        $ref: 'schema://test#/properties/bar',
+        minimum: 10
+      }
+    }
+  }
+
+  ajv.addSchema(schema)
+  ajv.addSchema(dependant)
 })
 
 it('test single property', () => {
-  const key = ajv.getSchema('error')
-  const uri = ajv.getSchema('schema://error')
+  const validate = ajv.getSchema('schema://dependant')
 
-  console.log(key.schema)
-  console.log(uri.schema)
+  const v = { foo: 'asd@asd.com', bar: 11 }
+
+  const valid = validate(v)
+
+  if (!valid) console.log(validate.errors)
+
+  console.log(v)
+  expect(valid).toBe(true)
 })

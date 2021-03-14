@@ -1,0 +1,14 @@
+type: object
+properties:
+  criteria:
+    type: string
+  omit:
+    type: integer
+    default: 0
+    minimum: 0
+    maximum: 1000
+  limit:
+    type: integer
+    default: 10
+    minimum: 0
+    maximum: 100

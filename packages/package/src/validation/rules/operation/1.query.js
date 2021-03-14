@@ -1,21 +1,27 @@
 'use strict'
 
 const path = require('path')
-
 const { validation } = require('../../validation')
 
-const def = (operation, manifest) => {
-  if (operation.query === undefined && manifest.entity !== undefined) { operation.query = {} }
+const entityWithoutQuery = (operation, manifest) => operation.query !== undefined || manifest.entity === undefined
+entityWithoutQuery.fatal = false
+entityWithoutQuery.message = (operation) =>
+  `operation '${operation.name}' query is not defined. If this is intended use null as query value.`
+
+const queryWithoutEntity = (operation, manifest) => operation.query === undefined || manifest.entity !== undefined
+queryWithoutEntity.fatal = true
+queryWithoutEntity.message = (operation) => `operation '${operation.name}' query is defined while component has no entity`
+
+const exists = () => true
+exists.break = (operation) => operation.query === undefined || operation.query === null
+
+const expand = (operation) => {
+  if (typeof operation.query === 'string' || Array.isArray(operation.query)) {
+    operation.query = { criteria: operation.query }
+  }
 }
 
-const entity = (operation, manifest) => operation.query === undefined || manifest.entity !== undefined
-entity.message = 'operation query defined while component has no entity'
-entity.fatal = false
+const query = (operation, manifest) =>
+  validation(path.resolve(__dirname, './query'))(operation.query, operation, manifest)
 
-const undef = () => true
-undef.break = (operation) => operation.query === undefined
-
-const criteria = async (operation, manifest) =>
-  await validation(path.resolve(__dirname, './query'))(operation.query, manifest)
-
-exports.checks = [def, entity, undef, criteria]
+exports.checks = [entityWithoutQuery, queryWithoutEntity, exists, expand, query]

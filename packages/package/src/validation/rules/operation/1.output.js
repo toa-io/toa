@@ -10,7 +10,7 @@ const def = (operation) => {
 
 def.break = (operation) => operation.output === null
 
-const schema = async (operation, manifest) =>
-  await validation(path.resolve(__dirname, '../../schema'))(operation.output, manifest, `${operation.name}.output`)
+const schema = (operation, manifest) =>
+  validation(path.resolve(__dirname, '../../schema'))(operation.output, manifest, `${operation.name}.output`)
 
 exports.checks = [def, schema]

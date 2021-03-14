@@ -18,11 +18,11 @@ nonempty.message = 'entity schema has no properties'
 nonempty.fatal = false
 nonempty.break = schema => !nonempty(schema)
 
-const properties = async (schema, manifest) => {
+const properties = (schema, manifest) => {
   const checks = validation(path.resolve(__dirname, './property'))
 
   for (const key of Object.keys(schema.properties)) {
-    await checks({ properties: schema.properties, key }, manifest)
+    checks({ properties: schema.properties, key }, manifest)
   }
 }
 
