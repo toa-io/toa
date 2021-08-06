@@ -1,4 +1,4 @@
-# Kookaburra Runtime
+# Kookaburra Runtime System
 
 Kookaburra core abstractions
 

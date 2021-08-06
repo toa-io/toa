@@ -656,6 +656,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@kookaburra/storages.mongodb@^0.0.0":
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/@kookaburra/storages.mongodb/-/storages.mongodb-0.0.0.tgz#c8e77793a953bda2705bfca3e4843bb4b2f112a0"
+  integrity sha512-Ut+JipaK7tIYIY6FDJ1IAYTnKd2QeDbr7SvCnfLKQCBQnfvtSFaiZPWhHWVppPTutPAifS9AQcpa+Ph+X02Iaw==
+
 "@lerna/add@3.21.0":
   version "3.21.0"
   resolved "https://registry.yarnpkg.com/@lerna/add/-/add-3.21.0.tgz#27007bde71cc7b0a2969ab3c2f0ae41578b4577b"

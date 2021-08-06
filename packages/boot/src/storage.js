@@ -5,7 +5,7 @@ const { Connector } = require('@kookaburra/runtime')
 const storage = (name) => {
   if (!name) name = DEFAULT_STORAGE
 
-  const path = ['@kookaburra/storage-', ''].reduce(prefix =>
+  const path = ['@kookaburra/storages.', ''].reduce(prefix =>
     require.resolve(`${prefix}${name}`, REQUIRE_OPTIONS))
 
   if (!path) { throw new Error(`Unresolved storage connector '${name}'`) }
