@@ -1,0 +1,8 @@
+domain: messages
+name: messages
+
+entity:
+  schema:
+    properties:
+      text: string
+
