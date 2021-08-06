@@ -1,0 +1,22 @@
+{
+  "name": "@kookaburra/dummies",
+  "version": "0.0.0",
+  "description": "Dummy runtimes",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantumducks/kookaburra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quantumducks/kookaburra/issues"
+  },
+  "main": "package.json",
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@kookaburra/cli": "^0.0.0",
+    "@kookaburra/storages.mongodb": "^0.0.0"
+  }
+}
