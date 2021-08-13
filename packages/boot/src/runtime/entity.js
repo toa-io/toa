@@ -6,9 +6,10 @@ const entity = (entity, storage, schemas) => {
   if (entity === undefined) { return (algorithm) => ({ algorithm }) }
 
   const schema = schemas.add(entity.schema)
-  const instance = new entities.Factory(schema)
+  // noinspection JSUnresolvedVariable
+  const instance = new entities.Factory(schema, storage.constructor.id)
 
-  const operations = (algorithm) => {
+  return (algorithm) => {
     const target = new State(storage, instance)
 
     target.query = target[algorithm.target]
@@ -17,8 +18,6 @@ const entity = (entity, storage, schemas) => {
 
     return { algorithm, target, schemas }
   }
-
-  return operations
 }
 
 exports.entity = entity

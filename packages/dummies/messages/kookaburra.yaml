@@ -6,3 +6,11 @@ entity:
     properties:
       text: string
 
+operations:
+  - name: add
+    input:
+      type: object # TODO
+      properties:
+        text:
+          type: string
+      required: [text]

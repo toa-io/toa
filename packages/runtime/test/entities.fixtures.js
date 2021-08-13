@@ -2,12 +2,11 @@
 
 const randomstring = require('randomstring')
 
+// noinspection JSCheckFunctionSignatures
 const schema = {
   fit: jest.fn((value) => {
     const ok = !value.invalid
-    let oh
-
-    if (!ok) oh = { message: 'error' }
+    const oh = value.invalid && { message: 'error' }
 
     return { ok, oh }
   }),

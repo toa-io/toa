@@ -11,7 +11,7 @@ class Factory {
     this.#id = id
   }
 
-  create (value) {
+  async create (value) {
     if (value) {
       const { ok, oh } = this.#schema.fit(value)
 
@@ -20,7 +20,11 @@ class Factory {
           `Schema error: ${oh.message}`)
       }
     } else {
-      value = { _id: this.#id(), ...this.#schema.defaults() }
+      value = { _id: await this.#id() }
+
+      const { ok, oh } = this.#schema.fit(value)
+
+      if (!ok) throw new Error(oh.message)
     }
 
     return new Entity(value, this.#schema)

@@ -11,6 +11,7 @@ const argv = yargs(process.argv.slice(2))
       if (argv.debug) { console.dir(err) }
 
       message = err.message
+      if (err.code) { message = message.concat(` (Code: ${err.code})`) }
     } else {
       yargs.showHelp()
     }

@@ -6,7 +6,7 @@ class Query {
   #criteria
 
   constructor (query) {
-    this.#criteria = query.criteria
+    this.#criteria = query?.criteria
   }
 
   parse (query) {

@@ -16,14 +16,6 @@ describe('entity not defined', () => {
 
     expect(operation.query).toEqual(ok)
   })
-
-  it('should throw if query is defined', () => {
-    for (const sample of ['null', 'queryArray']) {
-      const { operation } = fixtures.sample(sample)
-
-      expect(() => validate(operation, {})).toThrow(/query is defined while component has no entity/)
-    }
-  })
 })
 
 describe('entity is defined', () => {
@@ -33,19 +25,6 @@ describe('entity is defined', () => {
 
       expect(() => validate(operation, fixtures.manifest)).not.toThrow()
     }
-  })
-
-  it('should warn if query is not defined', () => {
-    const { operation, ok } = fixtures.sample('undefined')
-
-    expect(() => validate(operation, fixtures.manifest)).not.toThrow()
-
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('warn'),
-      expect.stringContaining('query is not defined')
-    )
-
-    expect(operation.query).toEqual(ok)
   })
 
   it('should expand array', () => {

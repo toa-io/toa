@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/runtime')
+const { Storage } = require('@kookaburra/storage')
 
 const storage = (name) => {
   if (!name) name = DEFAULT_STORAGE
@@ -12,10 +12,10 @@ const storage = (name) => {
 
   const storage = require(path, REQUIRE_OPTIONS)
 
-  if (!storage.Connector) { throw new Error(`Module '${path}' does not export Storage class`) }
+  if (!storage.Connector) { throw new Error(`Module '${path}' does not export Connector class`) }
 
-  if (!(storage.Connector.prototype instanceof Connector)) {
-    throw new Error(`Storage '${name}' is not instance of Connector`)
+  if (!(storage.Connector.prototype instanceof Storage)) {
+    throw new Error(`Storage '${name}' Connector is not instance of Storage class from @kookaburra/storage`)
   }
 
   return new storage.Connector()

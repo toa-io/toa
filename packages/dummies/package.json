@@ -12,11 +12,15 @@
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
   "main": "package.json",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
     "@kookaburra/cli": "^0.0.0",
     "@kookaburra/storages.mongodb": "^0.0.0"
-  }
+  },
+  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
 }

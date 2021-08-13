@@ -20,7 +20,7 @@ function tryRoot (from = '.') {
 function root (from = '.') {
   const dir = tryRoot(from)
 
-  if (!dir) { throw new Error(`Component manifest (${MANIFEST}) not found`) }
+  if (!dir) { throw new Error(`Component manifest (${MANIFEST}) not found in ${from}`) }
 
   return dir
 }

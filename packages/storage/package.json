@@ -1,7 +1,7 @@
 {
-  "name": "@kookaburra/cli",
+  "name": "@kookaburra/storage",
   "version": "0.0.0",
-  "description": "Kookaburra CLI",
+  "description": "Kookaburra abstract storage",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
   "repository": {
@@ -11,10 +11,7 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "main": "package.json",
-  "bin": {
-    "kookaburra": "bin/kookaburra"
-  },
+  "main": "src/storage.js",
   "publishConfig": {
     "access": "public"
   },
@@ -22,16 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@kookaburra/boot": "^0.0.0",
-    "@kookaburra/gears": "^0.0.0",
-    "chalk": "4.1.0",
-    "find-up": "5.0.0",
-    "fs-extra": "9.1.0",
-    "glob": "7.1.6",
-    "glob-promise": "4.0.1",
-    "glob-watcher": "5.0.5",
-    "js-yaml": "4.0.0",
-    "yargs": "16.2.0"
-  },
-  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
+    "@kookaburra/runtime": "^0.0.0",
+    "nanoid": "^3.1.25",
+    "nanoid-dictionary": "^4.3.0"
+  }
 }

@@ -12,6 +12,7 @@ async function scan (dir, options) {
   const manifest = await yaml(path.resolve(dir, opts.manifestPath))
   const operations = await parse(path.resolve(dir, opts.operationsPath))
 
+  // TODO: problem if manifest.operations is not an Array
   manifest.operations = merge(operations, manifest.operations)
   validate.manifest(manifest)
 

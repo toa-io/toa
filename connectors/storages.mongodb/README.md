@@ -1,0 +1,2 @@
+# Kookaburra MongoDB Storage
+

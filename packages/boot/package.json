@@ -21,6 +21,8 @@
   "dependencies": {
     "@kookaburra/http": "^0.0.0",
     "@kookaburra/package": "^0.0.0",
-    "@kookaburra/runtime": "^0.0.0"
-  }
+    "@kookaburra/runtime": "^0.0.0",
+    "@kookaburra/storage": "^0.0.0"
+  },
+  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
 }
