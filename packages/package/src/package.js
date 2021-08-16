@@ -13,7 +13,7 @@ class Package {
 
     const instance = new Package()
 
-    instance.locator = { forename: manifest.name, domain: manifest.domain }
+    instance.locator = { name: manifest.name, domain: manifest.domain }
     instance.entity = manifest.entity
     instance.operations = manifest.operations
 

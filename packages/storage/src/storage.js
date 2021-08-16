@@ -10,6 +10,10 @@ class Storage extends Connector {
   static async id () {
     return id()
   }
+
+  static host (locator) {
+    return locator.host(this.name)
+  }
 }
 
 exports.Storage = Storage

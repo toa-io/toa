@@ -16,3 +16,8 @@ it('should provide default id implementation', async () => {
 
   expect(typeof id).toBe('string')
 })
+
+it('should provide host', () => {
+  const locator = { host: (type) => `${type.toLowerCase()}.local` }
+  expect(Storage.host(locator)).toBe('abstract.local')
+})

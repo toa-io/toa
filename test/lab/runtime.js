@@ -2,6 +2,9 @@
 
 const { cli } = require('./cli')
 
+// TODO: move to env setup
+process.env.KOO_DEV_MONGODB_URL = 'mongodb://localhost'
+
 class Runtime {
   #path
 

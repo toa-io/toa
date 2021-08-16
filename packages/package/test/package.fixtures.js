@@ -2,7 +2,7 @@
 
 const path = require('path')
 
-const locator = { forename: 'simple' }
+const locator = { domain: 'testing', name: 'simple' }
 
 const entity = {
   schema: {

@@ -3,20 +3,26 @@
 const { concat } = require('@kookaburra/gears')
 
 class Locator {
-  domain
-  forename
+  #domain
+  #entity
 
-  get name () {
-    return `${concat(this.domain, '.')}${this.forename}`
+  constructor (domain, entity = null) {
+    if (typeof domain !== 'string') { throw new Error('Domain must be defined') }
+
+    this.#domain = domain
+    this.#entity = entity
   }
 
-  get path () {
-    return `/${concat(this.domain, '/')}${this.forename}`
-  }
+  get domain () { return this.#domain }
+  get entity () { return this.#entity }
 
-  endpoint (name) {
-    return `${this.name}.${name}`
+  host (type) {
+    type = type.toLowerCase()
+
+    return `${concat(this.#entity, '.')}${this.#domain}.${type}.${TLD}`
   }
 }
+
+const TLD = 'local'
 
 exports.Locator = Locator

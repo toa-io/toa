@@ -14,8 +14,8 @@ async function runtime (component) {
 
   schemas.add(io.error.schema)
 
-  const locator = Object.assign(new Locator(), component.locator)
-  const storage = component.entity && createStorage(component.entity.storage)
+  const locator = new Locator(component.locator.domain, component.locator.name)
+  const storage = component.entity && createStorage(component.entity.storage, locator)
   const entity = createEntity(component.entity, storage, schemas)
 
   const invocations = component.operations

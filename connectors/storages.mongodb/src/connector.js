@@ -3,15 +3,25 @@
 const { Storage } = require('@kookaburra/storage')
 const { console } = require('@kookaburra/gears')
 
+const { Client } = require('./client')
+
 class Connector extends Storage {
   static name = 'MongoDB'
 
+  #client
+
+  constructor (locator) {
+    super()
+
+    this.#client = new Client(Connector.host(locator), locator.domain, locator.entity)
+  }
+
   async connection () {
-    console.info(`Storage '${Connector.name}' connected`)
+    await this.#client.connect()
   }
 
   async disconnection () {
-    console.info(`Storage '${Connector.name}' disconnected`)
+    await this.#client.disconnect()
   }
 
   async get () {

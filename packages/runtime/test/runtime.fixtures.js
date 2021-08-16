@@ -2,8 +2,6 @@
 
 const randomstring = require('randomstring')
 
-const { Locator } = require('../src/locator')
-
 const invocation = () => jest.fn(() => randomstring.generate())
 
 const invocations = {
@@ -15,7 +13,7 @@ const invocations = {
   }
 }
 
-const locator = Object.assign(new Locator(), { domain: 'foo', forename: 'bar' })
+const locator = {}
 
 exports.invocations = invocations
 exports.locator = locator

@@ -2,7 +2,7 @@
 
 const { Storage } = require('@kookaburra/storage')
 
-const storage = (name) => {
+const storage = (name, locator) => {
   if (!name) name = DEFAULT_STORAGE
 
   const path = ['@kookaburra/storages.', ''].reduce(prefix =>
@@ -18,7 +18,7 @@ const storage = (name) => {
     throw new Error(`Storage '${name}' Connector is not instance of Storage class from @kookaburra/storage`)
   }
 
-  return new storage.Connector()
+  return new storage.Connector(locator)
 }
 
 const DEFAULT_STORAGE = 'mongodb'
