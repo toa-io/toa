@@ -1,40 +1,30 @@
 'use strict'
 
 class Entity {
-  #system
   #schema
+  #state
 
-  constructor (value, schema) {
-    Object.assign(this, this.#destruct(value))
+  blank = false
 
+  constructor (schema, id) {
     this.#schema = schema
-    this.#extend()
+
+    if (id) {
+      this.blank = true
+      this.#state = { _id: id, ...this.#schema.defaults() }
+    }
   }
 
-  #extend () {
-    Object.defineProperty(this, '_construct', {
-      configurable: false,
-      writable: false,
-      enumerable: false,
-      value: () => this.#construct()
-    })
+  get state () {
+    return this.#state
   }
 
-  #destruct (value) {
-    const { _created, _updated, _deleted, _version, ...rest } = value
-
-    this.#system = { _created, _updated, _deleted, _version }
-
-    return rest
-  }
-
-  #construct () {
-    const value = { ...this, ...this.#system }
+  set state (value) {
     const { ok, oh } = this.#schema.fit(value)
 
-    if (!ok) throw new Error(oh.message)
+    if (!ok) throw new Error(`Value doesn't match entity schema (${oh.message})`)
 
-    return value
+    this.#state = value
   }
 }
 

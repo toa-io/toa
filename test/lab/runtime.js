@@ -2,9 +2,6 @@
 
 const { cli } = require('./cli')
 
-// TODO: move to env setup
-process.env.KOO_DEV_MONGODB_URL = 'mongodb://localhost'
-
 class Runtime {
   #path
 
@@ -12,7 +9,7 @@ class Runtime {
     this.#path = path
   }
 
-  invoke (cmd, input) {
+  async invoke (cmd, input) {
     const args = this.#input(input)
 
     return cli('invoke', this.#path, cmd, ...args)

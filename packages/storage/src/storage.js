@@ -7,7 +7,7 @@ const { id } = require('./id')
 class Storage extends Connector {
   static name = 'Abstract'
 
-  static async id () {
+  static id () {
     return id()
   }
 

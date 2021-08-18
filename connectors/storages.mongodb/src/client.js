@@ -3,30 +3,36 @@
 const { MongoClient } = require('mongodb')
 
 class Client {
-  #locator
+  #connection
 
   #client
   #collection
 
   constructor (host, db, collection) {
-    this.#locator = { host, db, collection }
-    // noinspection JSCheckFunctionSignatures
-    this.#client = new MongoClient(this.#url, OPTIONS)
+    this.#connection = { host, db, collection }
+    this.#client = new MongoClient(this.#uri, OPTIONS)
   }
 
-  get #url () {
-    return process.env.KOO_DEV_MONGODB_URL || `mongodb+srv://${this.#locator.host}`
+  get #uri () {
+    return process.env.KOO_DEV_MONGODB_URL || `mongodb+srv://${this.#connection.host}`
   }
 
   async connect () {
     await this.#client.connect()
+
     this.#collection = this.#client
-      .db(this.#locator.db)
-      .collection(this.#locator.collection)
+      .db(this.#connection.db)
+      .collection(this.#connection.collection)
   }
 
   async disconnect () {
     await this.#client.close()
+  }
+
+  async add (object) {
+    const { acknowledged } = await this.#collection.insertOne(object)
+
+    return { ok: acknowledged }
   }
 }
 

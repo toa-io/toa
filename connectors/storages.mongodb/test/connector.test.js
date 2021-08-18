@@ -42,3 +42,10 @@ it('should disconnect', async () => {
 
   expect(client.disconnect).toHaveBeenCalled()
 })
+
+it('should add', async () => {
+  const result = await connector.add(fixtures.object)
+
+  expect(client.add).toHaveBeenCalledWith(fixtures.object)
+  expect(result).toBe(client.add.mock.results[0].value)
+})

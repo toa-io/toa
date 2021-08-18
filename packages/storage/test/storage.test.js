@@ -11,8 +11,8 @@ it('should provide name', () => {
   expect(Storage.name).toBe('Abstract')
 })
 
-it('should provide default id implementation', async () => {
-  const id = await Storage.id()
+it('should provide default id implementation', () => {
+  const id = Storage.id()
 
   expect(typeof id).toBe('string')
 })

@@ -12,24 +12,17 @@ class State {
   }
 
   async object (query) {
-    const object = query && (await this.#storage.get(query))
+    if (!query) { return this.#entity.blank() }
 
-    return this.#entity.create(object)
+    const value = await this.#storage.get(query)
+
+    return this.#entity.create(value)
   }
 
-  async collection (query) {
-    const collection = await this.#storage.find(query)
+  async commit (object) {
+    const method = object.blank ? 'add' : 'update'
 
-    // noinspection JSUnresolvedFunction
-    return collection.map(object => this.#entity.create(object))
-  }
-
-  async commit (state) {
-    if (!Array.isArray(state)) { state = [state] }
-
-    state = state.map(entity => entity._construct())
-
-    this.#storage.persist(state)
+    await this.#storage[method](object.state)
   }
 }
 

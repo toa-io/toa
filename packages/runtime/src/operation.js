@@ -1,7 +1,5 @@
 'use strict'
 
-const { freeze } = require('@kookaburra/gears')
-
 class Operation {
   #algorithm
   #type
@@ -14,14 +12,16 @@ class Operation {
   }
 
   async invoke (io, query) {
-    const state = await this.#target?.query(query)
-
-    if (this.#type === 'observation') { freeze(state) }
+    const object = await this.#target?.query(query)
+    // TODO: collection?
+    // TODO: add move cloning/serialization to Bridge
+    const state = { ...object.state }
 
     await this.#algorithm(io, state)
 
     if (this.#type === 'transition') {
-      await this.#target.commit(state)
+      object.state = state
+      await this.#target.commit(object)
     }
   }
 }

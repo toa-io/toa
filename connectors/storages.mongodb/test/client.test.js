@@ -7,7 +7,7 @@ jest.mock('mongodb', () => ({ MongoClient: mock.MongoClient }))
 
 const { Client } = require('../src/client')
 
-let instance, client
+let instance, client, collection
 
 beforeEach(async () => {
   jest.clearAllMocks()
@@ -16,6 +16,10 @@ beforeEach(async () => {
   await instance.connect()
 
   client = fixtures.mock.MongoClient.mock.instances[0]
+
+  collection = fixtures.mock.MongoClient.mock.instances[0]
+    .db.mock.results[0].value
+    .collection.mock.results[0].value
 })
 
 it('should create client', () => {
@@ -54,4 +58,11 @@ it('should disconnect', async () => {
 
   expect(client.connect).toHaveBeenCalled()
   expect(client.close).toHaveBeenCalled()
+})
+
+it('should add', async () => {
+  const { ok } = await instance.add(fixtures.object)
+
+  expect(collection.insertOne).toHaveBeenCalledWith(fixtures.object)
+  expect(ok).toBe(collection.insertOne.mock.results[0].value.acknowledged)
 })

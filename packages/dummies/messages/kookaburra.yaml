@@ -9,8 +9,10 @@ entity:
 operations:
   - name: add
     input:
-      type: object # TODO
       properties:
-        text:
-          type: string
+        text: string
       required: [text]
+    output:
+      properties:
+        id: string
+      required: [id]

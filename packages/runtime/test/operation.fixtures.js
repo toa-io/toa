@@ -14,7 +14,7 @@ const operations = {
 }
 
 const target = {
-  query: jest.fn(() => ({ foo: randomstring.generate() })),
+  query: jest.fn(() => ({ state: { foo: randomstring.generate() } })),
   commit: jest.fn()
 }
 

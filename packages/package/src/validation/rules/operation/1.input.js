@@ -11,6 +11,6 @@ const def = (operation) => {
 def.break = (operation) => operation.input === null
 
 const schema = (operation, manifest) =>
-  validation(path.resolve(__dirname, '../../../schema'))(operation.input, manifest, `${operation.name}.input`)
+  validation(path.resolve(__dirname, '../../schema'))(operation.input, manifest, `${operation.name}.input`)
 
 exports.checks = [def, schema]

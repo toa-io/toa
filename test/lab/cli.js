@@ -7,7 +7,15 @@ const execa = require('execa')
 const cli = async (...args) => {
   args.push('--debug')
 
-  return execa.node(BIN, args)
+  let ok, oh
+
+  try {
+    ok = await execa.node(BIN, args)
+  } catch (error) {
+    oh = error
+  }
+
+  return { ok, oh }
 }
 
 const BIN = path.join(path.dirname(require.resolve('@kookaburra/cli')), './bin/kookaburra')

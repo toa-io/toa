@@ -6,8 +6,7 @@ const entity = (entity, storage, schemas) => {
   if (entity === undefined) { return (algorithm) => ({ algorithm }) }
 
   const schema = schemas.add(entity.schema)
-  // noinspection JSUnresolvedVariable
-  const instance = new entities.Factory(schema, storage.constructor.id)
+  const instance = new entities.Factory(schema, storage.constructor)
 
   return (algorithm) => {
     const target = new State(storage, instance)

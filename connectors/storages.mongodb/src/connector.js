@@ -1,7 +1,6 @@
 'use strict'
 
 const { Storage } = require('@kookaburra/storage')
-const { console } = require('@kookaburra/gears')
 
 const { Client } = require('./client')
 
@@ -24,17 +23,8 @@ class Connector extends Storage {
     await this.#client.disconnect()
   }
 
-  async get () {
-    return { _id: '123', _created: 1, _updated: 1, _deleted: 1, _version: 0, name: 'test' }
-  }
-
-  async find () {
-    return [{ _id: '123', _created: 1, _updated: 1, _deleted: 1, _version: 0, name: 'test' }]
-  }
-
-  async persist (document) {
-    console.log('persist', document)
-    return true
+  async add (object) {
+    return await this.#client.add(object)
   }
 }
 

@@ -1,7 +1,8 @@
 'use strict'
 
 async function transition ({ input, output }, object) {
-  console.log('transition called with', object)
+  Object.assign(object, input)
+  output.id = object._id
 }
 
 module.exports = transition

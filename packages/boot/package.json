@@ -4,6 +4,7 @@
   "description": "Kookaburra Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quantumducks/kookaburra.git"
@@ -11,7 +12,6 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "main": "src/index.js",
   "publishConfig": {
     "access": "public"
   },

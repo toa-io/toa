@@ -4,30 +4,23 @@ const { Entity } = require('./entity')
 
 class Factory {
   #schema
-  #id
+  #storage
 
-  constructor (schema, id) {
+  constructor (schema, storage) {
     this.#schema = schema
-    this.#id = id
+    this.#storage = storage
   }
 
-  async create (value) {
-    if (value) {
-      const { ok, oh } = this.#schema.fit(value)
+  blank () {
+    return new Entity(this.#schema, this.#storage.id())
+  }
 
-      if (!ok) {
-        throw new Error(`Storage object (#${value._id}) does not match entity schema. Probably data is corrupted.\n` +
-          `Schema error: ${oh.message}`)
-      }
-    } else {
-      value = { _id: await this.#id() }
+  create (object) {
+    const entity = new Entity(this.#schema)
 
-      const { ok, oh } = this.#schema.fit(value)
+    entity.state = object
 
-      if (!ok) throw new Error(oh.message)
-    }
-
-    return new Entity(value, this.#schema)
+    return entity
   }
 }
 

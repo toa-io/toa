@@ -15,6 +15,7 @@ class Locator {
 
   get domain () { return this.#domain }
   get entity () { return this.#entity }
+  get name () { return `${this.#domain}${concat('.', this.#entity)}` }
 
   host (type) {
     type = type.toLowerCase()

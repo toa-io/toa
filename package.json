@@ -14,6 +14,8 @@
     "husky": "5.0.9",
     "jest": "26.6.3",
     "lerna": "3.22.1",
+    "mongodb": "4.1.0",
+    "mongodb-memory-server": "7.3.6",
     "randomstring": "1.1.5",
     "snazzy": "9.0.0",
     "standard": "16.0.3"
@@ -30,8 +32,6 @@
     }
   },
   "jest": {
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest.setup.js"
-    ]
+    "setupFilesAfterEnv": ["<rootDir>/test/setup.js"]
   }
 }

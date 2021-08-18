@@ -11,7 +11,7 @@ beforeEach(() => {
   query = new Query({ criteria: fixtures.samples.types.schema })
 })
 
-it('.', () => {
+it('TODO', () => {
   expect(query).toBeDefined()
 })
 

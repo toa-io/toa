@@ -14,10 +14,10 @@ class Invocation {
   async invoke (input = null, q = null) {
     const { ok, oh, io, query } = this.#parse(input, q)
 
-    if (ok) await this.#operation.invoke(io, query)
-    else io.error = oh
-
-    io.fit()
+    if (ok) {
+      await this.#operation.invoke(io, query)
+      io.fit()
+    } else io.error = oh
 
     return io
   }
