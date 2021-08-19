@@ -31,6 +31,7 @@
     "glob-promise": "4.0.1",
     "glob-watcher": "5.0.5",
     "js-yaml": "4.0.0",
+    "relaxed-json": "^1.0.3",
     "yargs": "16.2.0"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"

@@ -61,8 +61,23 @@ it('should disconnect', async () => {
 })
 
 it('should add', async () => {
-  const { ok } = await instance.add(fixtures.object)
+  const ok = await instance.add(fixtures.object)
 
   expect(collection.insertOne).toHaveBeenCalledWith(fixtures.object)
   expect(ok).toBe(collection.insertOne.mock.results[0].value.acknowledged)
+})
+
+it('should get', async () => {
+  const entry = await instance.get(fixtures.get.query.criteria, fixtures.get.query.options)
+
+  expect(entry).toBe(collection.findOne.mock.results[0].value)
+  expect(collection.findOne).toHaveBeenCalledWith(fixtures.get.query.criteria, fixtures.get.query.options)
+})
+
+it('should update', async () => {
+  const update = { ...fixtures.object, foo: 'foo' }
+  const result = await instance.update(fixtures.get.query.criteria, update, fixtures.get.query.options)
+
+  expect(result).toBe(collection.findOneAndReplace.mock.results[0].value.ok)
+  expect(collection.findOneAndReplace).toHaveBeenCalledWith(fixtures.get.query.criteria, update, fixtures.get.query.options)
 })

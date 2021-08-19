@@ -9,20 +9,18 @@ class Runtime {
     this.#path = path
   }
 
-  async invoke (cmd, input) {
-    const args = this.#input(input)
+  async invoke (cmd, input, query = null, silent = false) {
+    const args = []
 
-    return cli('invoke', this.#path, cmd, ...args)
-  }
+    args.push(JSON.stringify(input))
 
-  #input (input) {
-    return Object.entries(input).map(([key, value]) => `--input.${key}=${Runtime.#value(value)}`)
-  }
+    if (query) args.push(JSON.stringify(query))
 
-  static #value (value) {
-    value = value.toString()
+    args.push(`--path=${this.#path}`)
 
-    return value.indexOf(' ') > -1 ? `'${value}'` : value
+    cli.silent = silent
+
+    return cli('invoke', cmd, ...args)
   }
 }
 

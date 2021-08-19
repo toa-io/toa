@@ -29,10 +29,20 @@ class Client {
     await this.#client.close()
   }
 
-  async add (object) {
-    const { acknowledged } = await this.#collection.insertOne(object)
+  async add (entry) {
+    const { acknowledged } = await this.#collection.insertOne(entry)
 
-    return { ok: acknowledged }
+    return acknowledged
+  }
+
+  async get (query, options) {
+    return await this.#collection.findOne(query, options)
+  }
+
+  async update (query, entry, options) {
+    const { ok } = await this.#collection.findOneAndReplace(query, entry, options)
+
+    return ok
   }
 }
 

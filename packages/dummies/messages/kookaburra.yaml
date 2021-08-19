@@ -5,6 +5,7 @@ entity:
   schema:
     properties:
       text: string
+    required: [text]
 
 operations:
   - name: add
@@ -16,3 +17,14 @@ operations:
       properties:
         id: string
       required: [id]
+  - name: get
+    output:
+      properties:
+        id: string
+        text: string
+      required: [id, text]
+  - name: update
+    input:
+      properties:
+        text: string
+      required: [text]

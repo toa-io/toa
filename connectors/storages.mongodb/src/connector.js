@@ -3,6 +3,7 @@
 const { Storage } = require('@kookaburra/storage')
 
 const { Client } = require('./client')
+const { translate } = require('./query')
 
 class Connector extends Storage {
   static name = 'MongoDB'
@@ -23,8 +24,20 @@ class Connector extends Storage {
     await this.#client.disconnect()
   }
 
-  async add (object) {
-    return await this.#client.add(object)
+  async add (entry) {
+    return await this.#client.add(entry)
+  }
+
+  async get (query) {
+    const { criteria, options } = translate(query)
+
+    return await this.#client.get(criteria, options)
+  }
+
+  async update (entry) {
+    const criteria = { _id: entry._id }
+
+    return await this.#client.update(criteria, entry)
   }
 }
 

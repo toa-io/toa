@@ -9,12 +9,15 @@ class Query {
     this.#criteria = query?.criteria
   }
 
-  parse (query) {
-    if (query === null) { return { ok: true, query: null } }
+  parse (q) {
+    if (q === null) { return { ok: true, query: null } }
 
-    query.criteria = criteria(query.criteria, this.#criteria)
+    // TODO: query schema
+    const query = {}
 
-    return query
+    query.criteria = criteria(q.criteria, this.#criteria)
+
+    return { query }
   }
 }
 

@@ -1,5 +1,6 @@
 {
   "name": "@kookaburra/dummies",
+  "private": true,
   "version": "0.0.0",
   "description": "Dummy runtimes",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -12,9 +13,6 @@
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
   "main": "package.json",
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
