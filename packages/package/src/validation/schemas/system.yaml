@@ -1,5 +1,5 @@
 properties:
-  _id:
+  id:
     type: string
   _created:
     type: integer
@@ -13,4 +13,4 @@ properties:
   _version:
     type: integer
     default: 0
-required: [_id, _version]
+required: [id, _version]

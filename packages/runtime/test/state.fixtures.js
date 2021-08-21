@@ -4,8 +4,8 @@ const randomstring = require('randomstring')
 
 const storage = {
   name: 'dummy',
-  get: jest.fn(() => ({ _id: randomstring.generate() })),
-  find: jest.fn(() => ([{ _id: randomstring.generate() }])),
+  get: jest.fn(() => ({ id: randomstring.generate() })),
+  find: jest.fn(() => ([{ id: randomstring.generate() }])),
   persist: jest.fn(() => true)
 }
 

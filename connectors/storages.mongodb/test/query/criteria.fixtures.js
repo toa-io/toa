@@ -14,7 +14,7 @@ const ast = {
 }
 
 const criteria = {
-  id: { $eq: 100500 }
+  _id: { $eq: 100500 }
 }
 
 exports.ast = ast

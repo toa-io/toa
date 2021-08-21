@@ -7,7 +7,7 @@ function route (locator, operation, binding) {
 }
 
 function def (operation) {
-  if (operation.state === 'object') return '/:_id'
+  if (operation.state === 'object') return '/:id'
 }
 
 exports.route = route

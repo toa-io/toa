@@ -7,7 +7,7 @@ const schema = {
 }
 
 const object = {
-  _id: randomstring.generate(),
+  id: randomstring.generate(),
   foo: randomstring.generate(),
   _created: randomstring.generate(),
   _updated: randomstring.generate(),

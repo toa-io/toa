@@ -11,7 +11,7 @@ class Entity {
 
     if (id) {
       this.blank = true
-      this.#state = { _id: id, ...this.#schema.defaults() }
+      this.#state = { id: id, ...this.#schema.defaults() }
     }
   }
 

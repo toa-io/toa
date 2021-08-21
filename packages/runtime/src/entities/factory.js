@@ -15,10 +15,10 @@ class Factory {
     return new Entity(this.#schema, this.#storage.id())
   }
 
-  create (object) {
+  create (entry) {
     const entity = new Entity(this.#schema)
 
-    entity.state = object
+    entity.state = entry
 
     return entity
   }

@@ -12,6 +12,10 @@ defined.fatal = true
 const schema = (entity, manifest) =>
   validation(path.resolve(__dirname, '../../schema'))(entity.schema, manifest, 'entity')
 
+const id = (entity) => entity.schema.properties?.id === undefined
+id.message = 'property \'id\' is predefined'
+id.fatal = true
+
 const system = yaml.sync(path.resolve(__dirname, '../../schemas/system.yaml'))
 const add = (entity) => {
   entity.schema = {
@@ -21,4 +25,4 @@ const add = (entity) => {
   }
 }
 
-exports.checks = [defined, schema, add]
+exports.checks = [defined, schema, id, add]

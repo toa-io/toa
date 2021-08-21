@@ -48,13 +48,13 @@ it('should get message', async () => {
   const message = { text: randomstring.generate() }
   const { ok: { output: { output: created } } } = await runtime.invoke('add', message)
 
-  const { ok: { output: { output } } } = await runtime.invoke('get', null, `{criteria:'_id==${created.id}'}`)
+  const { ok: { output: { output } } } = await runtime.invoke('get', null, `{criteria:'id==${created.id}'}`)
 
   expect(output.id).toBe(created.id)
 })
 
 it('should throw when input is not null', async () => {
-  const { ok, oh } = await runtime.invoke('get', { not: 'null' }, '{criteria:\'_id==1\'}', true)
+  const { ok, oh } = await runtime.invoke('get', { not: 'null' }, '{criteria:id==1}', true)
 
   expect(ok).not.toBeDefined()
   expect(oh).toBeDefined()
@@ -65,9 +65,9 @@ it('should update message', async () => {
   const { ok: { output: { output: created } } } = await runtime.invoke('add', message)
 
   const update = { text: randomstring.generate() }
-  await runtime.invoke('update', update, `{criteria:'_id==${created.id}'}`)
+  await runtime.invoke('update', update, `{criteria:'id==${created.id}'}`)
 
-  const { ok: { output: { output } } } = await runtime.invoke('get', null, `{criteria:'_id==${created.id}'}`)
+  const { ok: { output: { output } } } = await runtime.invoke('get', null, `{criteria:'id==${created.id}'}`)
 
   expect(output.id).toBe(created.id)
   expect(output.text).toBe(update.text)

@@ -11,7 +11,7 @@ const operations = [
 
 const system = {
   properties: {
-    _id: {
+    id: {
       type: 'string'
     },
     _created: {
@@ -31,7 +31,7 @@ const system = {
       default: 0
     }
   },
-  required: ['_id', '_version']
+  required: ['id', '_version']
 }
 
 exports.operations = operations

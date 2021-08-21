@@ -14,9 +14,9 @@ class State {
   async object (query) {
     if (!query) { return this.#entity.blank() }
 
-    const value = await this.#storage.get(query)
+    const entry = await this.#storage.get(query)
 
-    return this.#entity.create(value)
+    return this.#entity.create(entry)
   }
 
   async commit (object) {

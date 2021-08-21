@@ -12,16 +12,16 @@ class Operation {
   }
 
   async invoke (io, query) {
-    const object = await this.#target?.query(query)
+    const entry = await this.#target?.query(query)
     // TODO: collection?
     // TODO: add move cloning/serialization to Bridge
-    const state = { ...object.state }
+    const state = { ...entry.state }
 
     await this.#algorithm(io, state)
 
     if (this.#type === 'transition') {
-      object.state = state
-      await this.#target.commit(object)
+      entry.state = state
+      await this.#target.commit(entry)
     }
   }
 }

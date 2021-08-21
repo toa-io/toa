@@ -1,30 +1,49 @@
 'use strict'
 
-const { LOGIC, COMPARISON } = require('./map')
-
 const criteria = (ast) => {
-  if (!OPERATORS[ast.type]) { throw new Error('AST parse error') }
+  if (!TYPES[ast.type]) { throw new Error('Query criteria AST parse error') }
 
-  return OPERATORS[ast.type](ast)
+  return TYPES[ast.type](ast)
 }
 
-const OPERATORS = {}
+const OPERATORS = {
+  LOGIC: {
+    and: '$and',
+    ';': '$and',
+    or: '$or',
+    ',': '$or'
+  },
+  COMPARISON: {
+    '==': '$eq',
+    '>': '$gt',
+    '>=': '$gte',
+    '=in=': '$in',
+    '<': '$lt',
+    '<=': '$lte',
+    '!=': '$ne',
+    '=out=': '$nin'
+  }
+}
 
-OPERATORS.LOGIC = (expression) => {
+const TYPES = {}
+
+TYPES.LOGIC = (expression) => {
   const left = criteria(expression.left)
   const right = criteria(expression.right)
 
-  return { [LOGIC[expression.operator]]: [left, right] }
+  return { [OPERATORS.LOGIC[expression.operator]]: [left, right] }
 }
 
-OPERATORS.COMPARISON = (expression) => {
+TYPES.COMPARISON = (expression) => {
   const left = criteria(expression.left)
   const right = criteria(expression.right)
 
-  return { [left]: { [COMPARISON[expression.operator]]: right } }
+  return { [left]: { [OPERATORS.COMPARISON[expression.operator]]: right } }
 }
 
-OPERATORS.SELECTOR = (expression) => expression.selector
-OPERATORS.VALUE = (expression) => expression.value
+TYPES.SELECTOR = (expression) => RENAME[expression.selector] || expression.selector
+TYPES.VALUE = (expression) => expression.value
+
+const RENAME = { id: '_id' }
 
 exports.criteria = criteria
