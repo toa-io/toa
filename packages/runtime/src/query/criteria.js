@@ -2,34 +2,30 @@
 
 const { parse } = require('@rsql/parser')
 
-const criteria = (criteria, schema) => {
+const criteria = (criteria, properties) => {
   const ast = parse(criteria)
 
-  if (schema) { coerce(ast, schema) }
+  coerce(ast, properties)
 
   return ast
 }
 
-const coerce = (ast, schema) => {
-  const values = traverse(ast)
-  const value = values.reduce((acc, value) => (acc[value.name] = value.right.value) && acc, {})
+const coerce = (node, properties) => {
+  if (node.type === 'COMPARISON' && node.left?.type === 'SELECTOR' && node.right?.type === 'VALUE') {
+    const property = properties[node.left.selector]
 
-  schema.fit(value)
+    if (!property) throw new Error(`Unrecognized selector ${node.left.selector}`)
 
-  for (const { name, right } of values) {
-    right.value = value[name]
+    if (COERCE[property.type]) { node.right.value = COERCE[property.type](node.right.value) }
+  } else {
+    if (node.left) coerce(node.left, properties)
+    if (node.right) coerce(node.right, properties)
   }
 }
 
-const traverse = (node, kv = []) => {
-  if (node.type === 'COMPARISON') { kv.push({ name: node.left.selector, right: node.right }) }
-
-  if (node.left) {
-    traverse(node.left, kv)
-    traverse(node.right, kv)
-  }
-
-  return kv
+const COERCE = {
+  number: Number,
+  boolean: Boolean
 }
 
 exports.criteria = criteria

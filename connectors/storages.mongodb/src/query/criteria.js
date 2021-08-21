@@ -1,9 +1,9 @@
 'use strict'
 
-const criteria = (ast) => {
-  if (!TYPES[ast.type]) { throw new Error('Query criteria AST parse error') }
+const criteria = (node) => {
+  if (!TYPES[node.type]) { throw new Error('Query criteria AST parse error') }
 
-  return TYPES[ast.type](ast)
+  return TYPES[node.type](node)
 }
 
 const OPERATORS = {

@@ -25,7 +25,7 @@ describe('invocation', () => {
 
     expect(fixtures.operation.invoke).toHaveBeenCalledWith(
       fixtures.io.create.mock.results[0].value.io,
-      fixtures.query.parse.mock.results[0].value.query
+      fixtures.query.parse.mock.results[0].value
     )
   })
 })
@@ -46,6 +46,6 @@ describe('validation', () => {
     const io = await invocation.invoke(sample.input.ok, sample.query.invalid)
 
     expect(fixtures.operation.invoke).not.toHaveBeenCalled()
-    expect(io.error).toEqual(fixtures.query.parse.mock.results[0].value.oh)
+    expect(io.error).toMatchObject({ message: 'query parse test exception' })
   })
 })

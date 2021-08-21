@@ -16,7 +16,9 @@ const results = {
 }
 
 const Collection = jest.fn().mockImplementation(function () {
-  this.find = jest.fn()
+  this.find = jest.fn(() => ({
+    toArray: jest.fn(() => ({ id: 1, foo: 'bar' }))
+  }))
   this.findOne = jest.fn(() => ({ id: 1, foo: 'bar' }))
   this.insertOne = jest.fn(() => results.insertOne)
   this.findOneAndReplace = jest.fn(() => ({ ok: 1 }))
@@ -28,11 +30,12 @@ const OPTIONS = {
   ignoreUndefined: true
 }
 
-const get = {}
-
-get.query = {
+const query = {
   criteria: {
     id: 1
+  },
+  options: {
+    limit: 1
   }
 }
 
@@ -40,4 +43,4 @@ exports.mock = { MongoClient }
 exports.OPTIONS = OPTIONS
 exports.locator = { host: 'bar.foo', db: 'foo', collection: 'bar' }
 exports.object = { id: '1', foo: 'bar' }
-exports.get = get
+exports.query = query

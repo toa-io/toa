@@ -3,36 +3,55 @@
 const { Entity } = require('../../src/entities/entity')
 const fixtures = require('./entity.fixtures')
 
-let entity
-
 beforeEach(() => {
   jest.clearAllMocks()
-
-  entity = new Entity(fixtures.schema)
 })
 
-it('should fail on schema error', () => {
-  const object = { ...fixtures.object, fail: true }
+describe('new', () => {
+  let entry
 
-  expect(() => { entity.state = object }).toThrow(/doesn't match entity schema/)
+  beforeEach(() => {
+    entry = new Entity(fixtures.schema)
+  })
+
+  it('should fail on schema error', () => {
+    const object = { ...fixtures.entry, fail: true }
+
+    expect(() => { entry.state = object }).toThrow(/doesn't match entity schema/)
+  })
+
+  it('should provide state', () => {
+    entry.state = fixtures.entry
+
+    expect(entry.state).toEqual(fixtures.entry)
+  })
+
+  it('should update state', () => {
+    entry.state = fixtures.entry
+
+    const state = { ...entry.state }
+
+    state.foo = 1
+    entry.state = state
+
+    const { foo, ...rest } = fixtures.entry
+
+    expect(entry.state).not.toEqual(fixtures.entry)
+    expect(entry.state).toEqual({ foo: 1, ...rest })
+  })
 })
 
-it('should provide state', () => {
-  entity.state = fixtures.object
+it('should provide blank', () => {
+  const entry = new Entity(fixtures.schema, fixtures.id())
 
-  expect(entity.state).toEqual(fixtures.object)
+  expect(entry.state).toStrictEqual({
+    id: fixtures.id.mock.results[0].value,
+    ...fixtures.schema.defaults.mock.results[0].value
+  })
 })
 
-it('should update state', () => {
-  entity.state = fixtures.object
+it('should set initial state', () => {
+  const entry = new Entity(fixtures.schema, fixtures.entry)
 
-  const state = { ...entity.state }
-
-  state.foo = 1
-  entity.state = state
-
-  const { foo, ...rest } = fixtures.object
-
-  expect(entity.state).not.toEqual(fixtures.object)
-  expect(entity.state).toEqual({ foo: 1, ...rest })
+  expect(entry.state).toStrictEqual(fixtures.entry)
 })

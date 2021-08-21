@@ -6,13 +6,15 @@ class Entity {
 
   blank = false
 
-  constructor (schema, id) {
+  constructor (schema, argument) {
     this.#schema = schema
 
-    if (id) {
+    if (typeof argument === 'string') {
       this.blank = true
-      this.#state = { id: id, ...this.#schema.defaults() }
+      this.#state = { id: argument, ...this.#schema.defaults() }
     }
+
+    if (typeof argument === 'object') this.state = argument
   }
 
   get state () {

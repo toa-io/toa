@@ -3,21 +3,24 @@
 const { criteria } = require('./query/criteria')
 
 class Query {
+  #properties
   #criteria
 
-  constructor (query) {
+  constructor (query, properties) {
     this.#criteria = query?.criteria
+    this.#properties = properties
   }
 
   parse (q) {
-    if (q === null) { return { ok: true, query: null } }
+    if (q === null) { return null }
 
     // TODO: query schema
     const query = {}
 
-    query.criteria = criteria(q.criteria, this.#criteria)
+    // TODO: attach #criteria
+    query.criteria = criteria(q.criteria, this.#properties)
 
-    return { query }
+    return query
   }
 }
 

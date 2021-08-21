@@ -24,15 +24,9 @@ const io = {
 
 const query = {
   parse: jest.fn((query) => {
-    let ok = true
-    let oh
+    if (query?.invalid) throw new Error('query parse test exception')
 
-    if (query === 'invalid') {
-      ok = false
-      oh = { message: 'invalid query' }
-    }
-
-    return { ok, oh, query: { [randomstring.generate()]: randomstring.generate() } }
+    return { [randomstring.generate()]: randomstring.generate() }
   })
 }
 
@@ -43,7 +37,7 @@ const sample = () => ({
   },
   query: {
     ok: randomstring.generate(),
-    invalid: 'invalid'
+    invalid: { invalid: true }
   }
 })
 

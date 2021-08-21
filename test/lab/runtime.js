@@ -9,7 +9,7 @@ class Runtime {
     this.#path = path
   }
 
-  async invoke (cmd, input, query = null, silent = false) {
+  async invoke (cmd, input = null, query = null, silent = false) {
     const args = []
 
     args.push(JSON.stringify(input))

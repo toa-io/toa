@@ -3,10 +3,11 @@
 const randomstring = require('randomstring')
 
 const schema = {
-  fit: jest.fn((object) => ({ ok: !object.fail, oh: object.fail && { message: 'oops' } }))
+  fit: jest.fn((object) => ({ ok: !object.fail, oh: object.fail && { message: 'oops' } })),
+  defaults: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
 }
 
-const object = {
+const entry = {
   id: randomstring.generate(),
   foo: randomstring.generate(),
   _created: randomstring.generate(),
@@ -16,5 +17,5 @@ const object = {
 }
 
 exports.schema = schema
-exports.object = object
-exports.id = randomstring.generate()
+exports.entry = entry
+exports.id = jest.fn(() => randomstring.generate())

@@ -72,3 +72,41 @@ it('should update message', async () => {
   expect(output.id).toBe(created.id)
   expect(output.text).toBe(update.text)
 })
+
+describe('find', () => {
+  let messages
+
+  beforeEach(async () => {
+    messages = Array.from(Array(5))
+      .map((_, index) => ({ _id: `id${index}`, text: randomstring.generate() }))
+
+    const { acknowledged } = await collection.insertMany(messages)
+
+    expect(acknowledged).toBeTruthy()
+  })
+
+  it('should find messages', async () => {
+    const { ok: { output: { output } } } = await runtime.invoke('find')
+
+    const expected = messages.map((message) => {
+      const { _id, ...rest } = message
+      return { id: _id, ...rest }
+    })
+
+    expect(Array.isArray(output.messages)).toBeTruthy()
+    expect(output.messages).toMatchObject(expected)
+  })
+
+  it('should find with criteria', async () => {
+    const { ok: { output: { output } } } = await runtime.invoke('find', null, '{criteria:\'id==id1,id==id2\'}')
+    const expected = messages
+      .filter((message) => message._id === 'id1' || message._id === 'id2')
+      .map((message) => {
+        const { _id, ...rest } = message
+        return { id: _id, ...rest }
+      })
+
+    expect(Array.isArray(output.messages)).toBeTruthy()
+    expect(output.messages).toMatchObject(expected)
+  })
+})

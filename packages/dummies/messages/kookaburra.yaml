@@ -28,3 +28,7 @@ operations:
       properties:
         text: string
       required: [text]
+  - name: find
+    output:
+      properties:
+        messages: array

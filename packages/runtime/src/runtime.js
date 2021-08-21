@@ -26,9 +26,7 @@ class Runtime extends Connector {
   async invoke (name, input, query) {
     if (!(name in this.#invocations)) { throw new Error(`Operation '${name}' not found in '${this.locator.name}'`) }
 
-    const io = await this.#invocations[name].invoke(input, query)
-
-    return io
+    return await this.#invocations[name].invoke(input, query)
   }
 }
 

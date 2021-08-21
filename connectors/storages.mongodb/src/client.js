@@ -44,6 +44,12 @@ class Client {
 
     return ok
   }
+
+  async find (query, options) {
+    const cursor = await this.#collection.find(query, options)
+
+    return cursor.toArray()
+  }
 }
 
 const OPTIONS = {

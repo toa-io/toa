@@ -12,18 +12,20 @@ beforeEach(() => {
 })
 
 it('should provide object', async () => {
-  const object = await state.object(fixtures.query)
+  const entry = await state.object(fixtures.query)
 
   expect(fixtures.storage.get).toHaveBeenCalledWith(fixtures.query)
-  expect(object).toStrictEqual(fixtures.storage.get.mock.results[0].value)
+  expect(entry).toStrictEqual(fixtures.entity.create.mock.results[0].value)
+  expect(fixtures.entity.create).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
 })
 
-// it('should provide collection', async () => {
-//   const collection = await state.collection(fixtures.query)
-//
-//   expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
-//   expect(collection).toStrictEqual(fixtures.storage.find.mock.results[0].value)
-// })
+it('should provide collection', async () => {
+  const collection = await state.collection(fixtures.query)
+
+  expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
+  expect(collection).toStrictEqual(fixtures.entity.set.mock.results[0].value)
+  expect(fixtures.entity.set).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
+})
 //
 // it('should persist object', async () => {
 //   const entity = fixtures.entity.create({ foo: 'bar' })

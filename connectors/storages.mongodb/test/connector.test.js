@@ -15,22 +15,22 @@ beforeAll(() => {
   connector = new Connector(fixtures.locator)
 
   client = fixtures.mock.Client.mock.instances[0]
-})
 
-it('should define name', () => {
-  expect(Connector.name).toBe('MongoDB')
-})
-
-it('should create client', () => {
   expect(client).toBeDefined()
-})
 
-it('should pass connection args', () => {
   expect(fixtures.mock.Client).toHaveBeenCalledWith(
     Connector.host(fixtures.locator),
     fixtures.locator.domain,
     fixtures.locator.entity
   )
+})
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
+it('should define name', () => {
+  expect(Connector.name).toBe('MongoDB')
 })
 
 it('should connect', async () => {
@@ -54,9 +54,9 @@ it('should add', async () => {
 })
 
 it('should get', async () => {
-  const result = await connector.get(fixtures.query)
+  const entry = await connector.get(fixtures.query)
 
-  expect(result).toBe(mock.from.mock.results[0].value)
+  expect(entry).toBe(mock.from.mock.results[0].value)
   expect(mock.from).toHaveBeenCalledWith(client.get.mock.results[0].value)
 
   const { criteria, options } = mock.translate.mock.results[0].value
@@ -74,4 +74,17 @@ it('should update', async () => {
 
   expect(client.update).toHaveBeenCalledWith(criteria, mock.to.mock.results[0].value)
   expect(mock.to).toHaveBeenCalledWith(fixtures.entry)
+})
+
+it('should find', async () => {
+  const entries = await connector.find(fixtures.query)
+  const found = client.find.mock.results[0].value
+
+  const expected = found.map((result, index) => {
+    expect(mock.from).toHaveBeenNthCalledWith(index + 1, result, index, found)
+
+    return mock.from.mock.results[index].value
+  })
+
+  expect(entries).toStrictEqual(expected)
 })

@@ -13,8 +13,13 @@ const samples = {
         right: { type: 'VALUE', value: 'Eddie' }
       }
     },
-    schema: {
-      fit: jest.fn(() => true)
+    options: {
+
+    },
+    properties: {
+      name: {
+        type: 'string'
+      }
     }
   },
 
@@ -40,11 +45,16 @@ const samples = {
         }
       }
     },
-    schema: {
-      fit: jest.fn((value) => {
-        value.flag = value.flag === 'true'
-        value.volume = Number(value.volume)
-      })
+    options: {
+
+    },
+    properties: {
+      flag: {
+        type: 'boolean'
+      },
+      volume: {
+        type: 'number'
+      }
     }
   }
 }

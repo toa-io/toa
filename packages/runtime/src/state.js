@@ -19,6 +19,12 @@ class State {
     return this.#entity.create(entry)
   }
 
+  async collection (query) {
+    const entries = await this.#storage.find(query)
+
+    return this.#entity.set(entries)
+  }
+
   async commit (object) {
     const method = object.blank ? 'add' : 'update'
 

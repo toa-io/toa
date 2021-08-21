@@ -12,6 +12,8 @@ let instance, client, collection
 beforeEach(async () => {
   jest.clearAllMocks()
 
+  delete process.env.KOO_DEV_MONGODB_URL
+
   instance = new Client(fixtures.locator.host, fixtures.locator.db, fixtures.locator.collection)
   await instance.connect()
 
@@ -68,16 +70,23 @@ it('should add', async () => {
 })
 
 it('should get', async () => {
-  const entry = await instance.get(fixtures.get.query.criteria, fixtures.get.query.options)
+  const entry = await instance.get(fixtures.query.criteria, fixtures.query.options)
 
   expect(entry).toBe(collection.findOne.mock.results[0].value)
-  expect(collection.findOne).toHaveBeenCalledWith(fixtures.get.query.criteria, fixtures.get.query.options)
+  expect(collection.findOne).toHaveBeenCalledWith(fixtures.query.criteria, fixtures.query.options)
 })
 
 it('should update', async () => {
   const update = { ...fixtures.object, foo: 'foo' }
-  const result = await instance.update(fixtures.get.query.criteria, update, fixtures.get.query.options)
+  const result = await instance.update(fixtures.query.criteria, update, fixtures.query.options)
 
   expect(result).toBe(collection.findOneAndReplace.mock.results[0].value.ok)
-  expect(collection.findOneAndReplace).toHaveBeenCalledWith(fixtures.get.query.criteria, update, fixtures.get.query.options)
+  expect(collection.findOneAndReplace).toHaveBeenCalledWith(fixtures.query.criteria, update, fixtures.query.options)
+})
+
+it('should find', async () => {
+  const entries = await instance.find(fixtures.query.criteria, fixtures.query.options)
+
+  expect(entries).toStrictEqual(collection.find.mock.results[0].value.toArray.mock.results[0].value)
+  expect(collection.find).toHaveBeenCalledWith(fixtures.query.criteria, fixtures.query.options)
 })

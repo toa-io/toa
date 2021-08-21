@@ -15,7 +15,7 @@ const entity = (entity, storage, schemas) => {
 
     if (!target.query) { throw new Error(`Unresolved target type '${algorithm.target}'`) }
 
-    return { algorithm, target, schemas }
+    return { algorithm, target, schemas, entity }
   }
 }
 
