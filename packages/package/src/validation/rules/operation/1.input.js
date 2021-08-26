@@ -5,7 +5,9 @@ const path = require('path')
 const { validation } = require('../../validation')
 
 const def = (operation) => {
-  if (operation.input === undefined) { operation.input = null }
+  if (operation.input === undefined || operation.input === null) {
+    operation.input = { type: 'null' }
+  }
 }
 
 def.break = (operation) => operation.input === null

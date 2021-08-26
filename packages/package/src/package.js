@@ -3,8 +3,8 @@
 const { manifest } = require('./manifest')
 
 class Package {
-  static async load (dir, options) {
-    return manifest(dir, options)
+  static async load (root, options) {
+    return manifest(root, options)
   }
 }
 

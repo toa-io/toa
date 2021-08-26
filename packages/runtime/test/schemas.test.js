@@ -35,26 +35,3 @@ it('should object with defaults', () => {
 
   expect(value).toEqual({ name: fixtures.schemas.dependant.properties.name.default })
 })
-
-describe('null', () => {
-  let nul
-
-  beforeEach(() => {
-    nul = schemas.add(null)
-  })
-
-  it('should fit null', () => {
-    const { ok } = nul.fit(null)
-    expect(ok).toBe(true)
-  })
-
-  it('should not fit not null', () => {
-    expect(nul.fit(1).ok).toBe(false)
-    expect(nul.fit('s').ok).toBe(false)
-    expect(nul.fit({ o: 1 }).ok).toBe(false)
-  })
-
-  it('should return null as default', () => {
-    expect(nul.defaults()).toBeNull()
-  })
-})

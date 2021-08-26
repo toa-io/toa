@@ -12,7 +12,7 @@ defined.fatal = true
 const schema = (entity, manifest) =>
   validation(path.resolve(__dirname, '../../schema'))(entity.schema, manifest, 'entity')
 
-const id = (entity) => entity.schema.properties?.id === undefined
+const id = (entity) => entity.schema.properties.id === undefined
 id.message = 'property \'id\' is predefined'
 id.fatal = true
 

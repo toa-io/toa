@@ -67,7 +67,7 @@ describe('manifest', () => {
 
     describe('schema', () => {
       const schema = schema => manifest({ schema })
-      const properties = (properties, required) => schema({ properties, required })
+      const properties = (properties, required) => schema({ type: 'object', properties, required })
       const property = { foo: { type: 'string' } }
 
       it('should be ok', () => {
@@ -111,12 +111,6 @@ describe('manifest', () => {
 
           expect(ok.entity.schema.type).toBe('object')
         })
-
-        it('should throw if not object', () => {
-          const ok = schema({ type: 'number', properties: property })
-
-          expect(() => validate(ok)).toThrow(/must be an object/)
-        })
       })
 
       describe('additionalProperties', () => {
@@ -143,27 +137,6 @@ describe('manifest', () => {
       })
 
       describe('properties', () => {
-        it('should warn if no properties', () => {
-          const undef = properties(undefined)
-          const empty = properties({})
-
-          validate(undef)
-
-          expect(console.warn).toHaveBeenCalledWith(
-            expect.stringContaining('warn'),
-            expect.stringContaining('has no properties')
-          )
-
-          console.warn.mockClear()
-
-          validate(empty)
-
-          expect(console.warn).toHaveBeenCalledWith(
-            expect.stringContaining('warn'),
-            expect.stringContaining('has no properties')
-          )
-        })
-
         it('should throw on unmatched properties', () => {
           const wrong = properties({ _foo: { type: 'string' } })
 

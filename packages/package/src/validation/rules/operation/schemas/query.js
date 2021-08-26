@@ -7,7 +7,7 @@ const { yaml } = require('@kookaburra/gears')
 const { validation } = require('../../../validation')
 
 const template = yaml.sync(path.resolve(__dirname, '../../../schemas/query.yaml'))
-const $id = validation(path.resolve(__dirname, '../../../schema/'), '$id.js')
+const $id = validation(path.resolve(__dirname, '../../../schema/'), '0.$id.js')
 
 const def = (operation, manifest) => {
   operation.schemas.query = clone(template)

@@ -4,7 +4,7 @@ const path = require('path')
 
 const { validation } = require('../../../validation')
 
-const $id = validation(path.resolve(__dirname, '../../../schema/'), '$id.js')
+const $id = validation(path.resolve(__dirname, '../../../schema/'), '0.$id.js')
 
 const defined = () => true
 defined.break = (operation) => operation.schemas.criteria !== undefined

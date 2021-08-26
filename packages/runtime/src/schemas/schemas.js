@@ -6,7 +6,6 @@ const { default: Ajv } = require('ajv')
 
 const { extensions } = require('./extensions')
 const { Schema } = require('./schema')
-const { Null } = require('./null')
 
 class Schemas {
   #instance
@@ -19,8 +18,6 @@ class Schemas {
   }
 
   add (schema, key) {
-    if (schema === null) return new Null()
-
     const instance = new Schema()
 
     this.#instance.addSchema(schema, key)

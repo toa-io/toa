@@ -4,6 +4,9 @@ const path = require('path')
 
 const { validation } = require('../validation')
 
+const notnull = () => true
+notnull.break = schema => schema.type !== 'object'
+
 const defined = schema => schema.properties !== undefined && schema.properties !== null
 defined.message = 'entity schema has no properties'
 defined.fatal = false
@@ -26,4 +29,4 @@ const properties = (schema, manifest) => {
   }
 }
 
-exports.checks = [defined, object, nonempty, properties]
+exports.checks = [notnull, defined, object, nonempty, properties]
