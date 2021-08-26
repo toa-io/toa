@@ -7,6 +7,8 @@ const { random } = require('./random')
 const { timeout } = require('./timeout')
 const { yaml } = require('./yaml')
 
+exports.sets = require('./sets')
+
 exports.concat = concat
 exports.console = console
 exports.freeze = freeze

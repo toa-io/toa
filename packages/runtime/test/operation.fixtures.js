@@ -2,13 +2,13 @@
 
 const randomstring = require('randomstring')
 
-const operations = {
+const bridges = {
   transition: {
-    algorithm: jest.fn(),
+    run: jest.fn(),
     type: 'transition'
   },
   observation: {
-    algorithm: jest.fn(),
+    run: jest.fn(),
     type: 'observation'
   }
 }
@@ -20,7 +20,7 @@ const target = {
 
 const query = randomstring.generate()
 
-exports.operations = operations
+exports.bridges = bridges
 exports.target = target
 exports.query = query
 exports.io = {}

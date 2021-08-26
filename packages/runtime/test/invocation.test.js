@@ -24,28 +24,8 @@ describe('invocation', () => {
     await invocation.invoke(sample.input.ok, sample.query.ok)
 
     expect(fixtures.operation.invoke).toHaveBeenCalledWith(
-      fixtures.io.create.mock.results[0].value.io,
+      fixtures.io.create.mock.results[0].value,
       fixtures.query.parse.mock.results[0].value
     )
-  })
-})
-
-describe('validation', () => {
-  it('should not invoke if input is invalid', async () => {
-    const sample = fixtures.sample()
-
-    const io = await invocation.invoke(sample.input.invalid)
-
-    expect(fixtures.operation.invoke).not.toHaveBeenCalled()
-    expect(io.error).toEqual(fixtures.io.create.mock.results[0].value.oh)
-  })
-
-  it('should not invoke if query is invalid', async () => {
-    const sample = fixtures.sample()
-
-    const io = await invocation.invoke(sample.input.ok, sample.query.invalid)
-
-    expect(fixtures.operation.invoke).not.toHaveBeenCalled()
-    expect(io.error).toMatchObject({ message: 'query parse test exception' })
   })
 })

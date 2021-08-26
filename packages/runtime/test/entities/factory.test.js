@@ -13,7 +13,7 @@ let factory
 beforeEach(async () => {
   jest.clearAllMocks()
 
-  factory = new Factory(fixtures.schema, fixtures.storage)
+  factory = new Factory(fixtures.schema, () => fixtures.storage.id())
 })
 
 it('should create blank', () => {

@@ -1,9 +1,10 @@
 {
-  "name": "@kookaburra/package",
+  "name": "@kookaburra/bridges.javascript.native",
   "version": "0.0.0",
-  "description": "Kookaburra Component Package",
+  "description": "Native (inproc) javascript Bridge",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "main": "src/bridge.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quantumducks/kookaburra.git"
@@ -11,18 +12,20 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "main": "src/package.js",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@kookaburra/gears": "^0.0.0",
-    "glob": "7.1.6",
-    "glob-promise": "4.0.1",
-    "js-yaml": "4.0.0"
+    "@kookaburra/runtime": "^0.0.0"
   },
-  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
+  "dependencies": {
+    "@babel/parser": "^7.15.3"
+  },
+  "devDependencies": {
+    "clone-deep": "^4.0.1"
+  }
 }

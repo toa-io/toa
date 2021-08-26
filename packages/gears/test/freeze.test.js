@@ -24,3 +24,10 @@ it('should not throw on null or undefined', () => {
   expect(() => freeze(null)).not.toThrow()
   expect(() => freeze(undefined)).not.toThrow()
 })
+
+it('should return frozen object', () => {
+  const object = { foo: 'bar' }
+  const result = freeze(object)
+
+  expect(result).toBe(object)
+})

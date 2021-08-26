@@ -17,6 +17,7 @@ id.message = 'property \'id\' is predefined'
 id.fatal = true
 
 const system = yaml.sync(path.resolve(__dirname, '../../schemas/system.yaml'))
+
 const add = (entity) => {
   entity.schema = {
     ...entity.schema,

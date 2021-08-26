@@ -11,7 +11,7 @@ class State {
     this.#entity = entity
   }
 
-  async object (query) {
+  async entry (query) {
     if (!query) { return this.#entity.blank() }
 
     const entry = await this.#storage.get(query)
@@ -19,7 +19,7 @@ class State {
     return this.#entity.create(entry)
   }
 
-  async collection (query) {
+  async set (query) {
     const entries = await this.#storage.find(query)
 
     return this.#entity.set(entries)

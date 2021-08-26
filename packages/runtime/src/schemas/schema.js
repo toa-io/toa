@@ -29,13 +29,12 @@ class Schema {
   }
 
   #error () {
-    // noinspection JSUnresolvedFunction
-    const error = {
+    // noinspection JSUnresolvedFunction,JSUnresolvedVariable
+    return {
+      code: 100,
       message: this.#validate.error(),
       payload: this.#validate.errors.map(Schema.#format)
     }
-
-    return error
   }
 
   static #format (error) {

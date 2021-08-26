@@ -1,13 +1,11 @@
 'use strict'
 
 class Operation {
-  #algorithm
-  #type
+  #bridge
   #target
 
-  constructor (operation, target) {
-    this.#algorithm = operation.algorithm
-    this.#type = operation.type
+  constructor (bridge, target) {
+    this.#bridge = bridge
     this.#target = target
   }
 
@@ -17,9 +15,9 @@ class Operation {
     // TODO: add move cloning/serialization to Bridge
     const state = target.state
 
-    await this.#algorithm(io, state)
+    await this.#bridge.run(io, state)
 
-    if (this.#type === 'transition') {
+    if (this.#bridge.type === 'transition') {
       target.state = state
       await this.#target.commit(target)
     }

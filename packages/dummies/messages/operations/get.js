@@ -1,8 +1,7 @@
 'use strict'
 
-async function observation ({ output }, object) {
-  output.id = object.id
-  output.text = object.text
+async function observation (_, entry) {
+  return entry
 }
 
 module.exports = observation

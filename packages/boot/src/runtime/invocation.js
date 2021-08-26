@@ -2,16 +2,17 @@
 
 const { io, Invocation, Query } = require('@kookaburra/runtime')
 
-const invocation = ({ algorithm, operation, schemas, entity }) => {
-  const input = schemas.add(algorithm.input)
-  const output = schemas.add(algorithm.output)
+const invocation = (invocations, { manifest, operation, schemas, entity }) => {
+  const input = schemas.add(manifest.input)
+  const output = schemas.add(manifest.output)
   const error = schemas.get(io.error.schema.$id)
 
   const channels = new io.Factory({ input, output, error })
-  const query = new Query(algorithm.query, entity?.schema?.properties)
-  const invocation = new Invocation(operation, channels, query)
+  const query = new Query(manifest.query, entity?.schema?.properties)
 
-  return [algorithm.name, invocation]
+  invocations[manifest.name] = new Invocation(operation, channels, query)
+
+  return invocations
 }
 
 exports.invocation = invocation

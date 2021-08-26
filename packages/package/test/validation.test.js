@@ -1,6 +1,6 @@
 'use strict'
 
-const validate = require('../src/validate')
+const { validate } = require('../src/validate')
 const fixtures = require('./validation.fixtures')
 
 beforeEach(() => {
@@ -19,7 +19,7 @@ describe('manifest', () => {
 
       it('should be ok', () => {
         for (const ok of oks) {
-          expect(() => validate.manifest(ok)).not.toThrow()
+          expect(() => validate(ok)).not.toThrow()
           expect(console.warn).toHaveBeenCalledTimes(0)
         }
       })
@@ -28,11 +28,11 @@ describe('manifest', () => {
         const wrong = manifest(undefined)
 
         if (property === 'name') {
-          expect(() => validate.manifest(wrong)).toThrow(/must be defined/)
+          expect(() => validate(wrong)).toThrow(/must be defined/)
         }
 
         if (property === 'domain') {
-          validate.manifest(wrong)
+          validate(wrong)
 
           expect(console.warn).toHaveBeenCalledWith(
             expect.stringContaining('warn'),
@@ -44,13 +44,13 @@ describe('manifest', () => {
       it('should be a string', () => {
         const wrong = manifest(1)
 
-        expect(() => validate.manifest(wrong)).toThrow(/must be a string/)
+        expect(() => validate(wrong)).toThrow(/must be a string/)
       })
 
       it('should match', () => {
         const wrongs = ['-', '0', '0a', '!a', 'foo-', 'A'].map(manifest)
 
-        for (const wrong of wrongs) expect(() => validate.manifest(wrong)).toThrow(/must match/)
+        for (const wrong of wrongs) expect(() => validate(wrong)).toThrow(/must match/)
       })
     })
   }
@@ -61,7 +61,7 @@ describe('manifest', () => {
     // it('should be ok if undefined', () => {
     //   const ok = manifest(undefined)
     //
-    //   expect(() => validate.manifest(ok)).not.toThrow()
+    //   expect(() => validate(ok)).not.toThrow()
     //   expect(console.warn).toHaveBeenCalledTimes(0)
     // })
 
@@ -73,7 +73,7 @@ describe('manifest', () => {
       it('should be ok', () => {
         const ok = properties(property)
 
-        expect(() => validate.manifest(ok)).not.toThrow()
+        expect(() => validate(ok)).not.toThrow()
         expect(console.warn).toHaveBeenCalledTimes(0)
       })
 
@@ -81,8 +81,8 @@ describe('manifest', () => {
         const undef = manifest({})
         const nullish = manifest({ schema: null })
 
-        expect(() => validate.manifest(undef)).toThrow(/entity has no schema/)
-        expect(() => validate.manifest(nullish)).toThrow(/entity has no schema/)
+        expect(() => validate(undef)).toThrow(/entity has no schema/)
+        expect(() => validate(nullish)).toThrow(/entity has no schema/)
         expect(console.warn).toHaveBeenCalledTimes(0)
       })
 
@@ -90,7 +90,7 @@ describe('manifest', () => {
         it('should set default', () => {
           const ok = properties(property)
 
-          validate.manifest(ok)
+          validate(ok)
 
           expect(ok.entity.schema.$id).toBe('http://foo/bar/entity')
         })
@@ -100,14 +100,14 @@ describe('manifest', () => {
         it('should be ok', () => {
           const ok = schema({ type: 'object', properties: property })
 
-          expect(() => validate.manifest(ok)).not.toThrow()
+          expect(() => validate(ok)).not.toThrow()
           expect(console.warn).toHaveBeenCalledTimes(0)
         })
 
         it('should assign default value', () => {
           const ok = schema({ properties: property })
 
-          validate.manifest(ok)
+          validate(ok)
 
           expect(ok.entity.schema.type).toBe('object')
         })
@@ -115,7 +115,7 @@ describe('manifest', () => {
         it('should throw if not object', () => {
           const ok = schema({ type: 'number', properties: property })
 
-          expect(() => validate.manifest(ok)).toThrow(/must be an object/)
+          expect(() => validate(ok)).toThrow(/must be an object/)
         })
       })
 
@@ -123,14 +123,14 @@ describe('manifest', () => {
         it('should be ok', () => {
           const ok = schema({ additionalProperties: false, properties: property })
 
-          expect(() => validate.manifest(ok)).not.toThrow()
+          expect(() => validate(ok)).not.toThrow()
           expect(console.warn).toHaveBeenCalledTimes(0)
         })
 
         it('should assign default value', () => {
           const ok = schema({ properties: property })
 
-          validate.manifest(ok)
+          validate(ok)
 
           expect(ok.entity.schema.additionalProperties).toBe(false)
         })
@@ -138,7 +138,7 @@ describe('manifest', () => {
         it('should throw if true', () => {
           const ok = schema({ additionalProperties: true, properties: property })
 
-          expect(() => validate.manifest(ok)).toThrow(/additional properties/)
+          expect(() => validate(ok)).toThrow(/additional properties/)
         })
       })
 
@@ -147,7 +147,7 @@ describe('manifest', () => {
           const undef = properties(undefined)
           const empty = properties({})
 
-          validate.manifest(undef)
+          validate(undef)
 
           expect(console.warn).toHaveBeenCalledWith(
             expect.stringContaining('warn'),
@@ -156,7 +156,7 @@ describe('manifest', () => {
 
           console.warn.mockClear()
 
-          validate.manifest(empty)
+          validate(empty)
 
           expect(console.warn).toHaveBeenCalledWith(
             expect.stringContaining('warn'),
@@ -167,13 +167,13 @@ describe('manifest', () => {
         it('should throw on unmatched properties', () => {
           const wrong = properties({ _foo: { type: 'string' } })
 
-          expect(() => validate.manifest(wrong)).toThrow(/does not match/)
+          expect(() => validate(wrong)).toThrow(/does not match/)
         })
 
         it('should expand type', () => {
           const ok = properties({ foo: 'string' })
 
-          validate.manifest(ok)
+          validate(ok)
 
           expect(ok.entity.schema.properties.foo).toStrictEqual({ type: 'string' })
         })
@@ -182,7 +182,7 @@ describe('manifest', () => {
           const property = { foo: 'string' }
           const ok = properties(property)
 
-          validate.manifest(ok)
+          validate(ok)
 
           expect(ok.entity.schema.properties).toStrictEqual({ ...fixtures.system.properties, ...property })
           expect(ok.entity.schema.required).toStrictEqual(fixtures.system.required)
@@ -197,47 +197,26 @@ describe('manifest', () => {
     it('should be ok', () => {
       const ok = manifest([{ name: 'op' }])
 
-      expect(() => validate.manifest(ok)).not.toThrow()
+      expect(() => validate(ok)).not.toThrow()
       expect(console.warn).toHaveBeenCalledTimes(0)
     })
 
     it('should be defined', () => {
       const wrong = manifest(undefined)
 
-      expect(() => validate.manifest(wrong)).toThrow(/has no operations/)
+      expect(() => validate(wrong)).toThrow(/has no operations/)
     })
 
     it('should be array', () => {
       const wrongs = [{}, 'foo', 1].map(wrong => manifest(wrong))
 
-      for (const wrong of wrongs) expect(() => validate.manifest(wrong)).toThrow(/must be an array/)
+      for (const wrong of wrongs) expect(() => validate(wrong)).toThrow(/must be an array/)
     })
 
     it('shout be non empty', () => {
       const wrong = manifest([])
 
-      expect(() => validate.manifest(wrong)).toThrow(/has no operations/)
-    })
-
-    describe('http', () => {
-      it('should set default', () => {
-        const operation = { name: 'op' }
-        const ok = manifest([operation])
-
-        validate.manifest(ok)
-
-        expect(operation.http).toStrictEqual([null])
-      })
-
-      it('should convert to array', () => {
-        const http = { path: '/' }
-        const operation = { name: 'op', http }
-        const ok = manifest([operation])
-
-        validate.manifest(ok)
-
-        expect(operation.http).toStrictEqual([http])
-      })
+      expect(() => validate(wrong)).toThrow(/has no operations/)
     })
   })
 })

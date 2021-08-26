@@ -5,15 +5,15 @@ const { Set } = require('./set')
 
 class Factory {
   #schema
-  #storage
+  #id
 
-  constructor (schema, storage) {
+  constructor (schema, id) {
     this.#schema = schema
-    this.#storage = storage
+    this.#id = id
   }
 
   blank () {
-    return new Entity(this.#schema, this.#storage.id())
+    return new Entity(this.#schema, this.#id())
   }
 
   create (entry) {

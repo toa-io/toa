@@ -12,7 +12,7 @@ beforeEach(() => {
 })
 
 it('should provide object', async () => {
-  const entry = await state.object(fixtures.query)
+  const entry = await state.entry(fixtures.query)
 
   expect(fixtures.storage.get).toHaveBeenCalledWith(fixtures.query)
   expect(entry).toStrictEqual(fixtures.entity.create.mock.results[0].value)
@@ -20,7 +20,7 @@ it('should provide object', async () => {
 })
 
 it('should provide collection', async () => {
-  const collection = await state.collection(fixtures.query)
+  const collection = await state.set(fixtures.query)
 
   expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
   expect(collection).toStrictEqual(fixtures.entity.set.mock.results[0].value)

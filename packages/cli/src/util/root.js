@@ -3,7 +3,7 @@
 const path = require('path')
 const findUp = require('find-up')
 
-const MANIFEST = 'kookaburra.yaml'
+const MANIFEST = 'manifest.yaml'
 
 function tryRoot (from = '.') {
   const current = process.cwd()

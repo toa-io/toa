@@ -49,7 +49,7 @@ class Schemas {
 
   #extend () {
     for (const extension of extensions) {
-      if (extension.format) this.#instance.addFormat(extension.name, extension.format)
+      if (extension.format) { this.#instance.addFormat(extension.name, extension.format) }
     }
   }
 }
