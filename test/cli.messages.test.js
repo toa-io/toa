@@ -99,6 +99,7 @@ describe('find', () => {
 
   it('should find with criteria', async () => {
     const { ok: { output: { output } } } = await runtime.invoke('find', null, '{criteria:\'id==id1,id==id2\'}')
+
     const expected = messages
       .filter((message) => message._id === 'id1' || message._id === 'id2')
       .map((message) => {

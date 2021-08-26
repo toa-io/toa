@@ -8,7 +8,7 @@ it('should inherit runtime.Connector', () => {
 })
 
 it('should provide name', () => {
-  expect(Storage.name).toBe('Abstract')
+  expect(Storage.name).toBe('ABSTRACT')
 })
 
 it('should provide default id implementation', () => {

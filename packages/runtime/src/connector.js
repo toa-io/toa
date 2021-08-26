@@ -28,7 +28,7 @@ class Connector {
     if (this.#connecting) { return this.#connecting }
 
     this.#connecting = (async () => {
-      await Promise.all(this.#connectors.map(async connector => await connector.connect()))
+      await Promise.all(this.#connectors.map(connector => connector.connect()))
       await this.connection()
     })()
 
@@ -47,7 +47,7 @@ class Connector {
 
     this.#disconnecting = (async () => {
       if (!interrupt) { await this.disconnection() }
-      await Promise.all(this.#connectors.map(async connector => await connector.disconnect()))
+      await Promise.all(this.#connectors.map(connector => connector.disconnect()))
     })()
 
     await this.#disconnecting

@@ -2,25 +2,26 @@
 
 const { Package } = require('@kookaburra/package')
 const { io, Locator, Runtime, Schemas } = require('@kookaburra/runtime')
-const { operation } = require('./runtime/operation')
-const { invocation } = require('./runtime/invocation')
+const { endpoints } = require('./runtime/endpoints')
 const { entity: createEntity } = require('./runtime/entity')
 const { storage: createStorage } = require('./storage')
+const { bridge } = require('./runtime/bridge')
+const { operation } = require('./runtime/operation')
+const { invocation } = require('./runtime/invocation')
 
-async function runtime (component) {
-  if (typeof component === 'string') { component = await Package.load(component) }
+const runtime = async (path) => {
+  const manifest = await Package.load(path)
 
   const schemas = new Schemas()
 
   schemas.add(io.error.schema)
 
-  const locator = new Locator(component.locator.domain, component.locator.name)
-  const storage = component.entity && createStorage(component.entity.storage, locator)
-  const entity = createEntity(component.entity, storage, schemas)
+  const locator = new Locator(manifest.domain, manifest.name, endpoints(manifest.operations))
+  const storage = manifest.entity && createStorage(manifest.entity.storage, locator)
+  const entity = createEntity(manifest.entity, storage, schemas)
 
-  const invocations = component.operations
-    .map(entity).map(operation).map(invocation)
-    .reduce((map, [name, invocation]) => (map[name] = invocation) && map, {})
+  const invocations = manifest.operations
+    .map(entity).map(bridge).map(operation).reduce(invocation, {})
 
   schemas.compile()
 

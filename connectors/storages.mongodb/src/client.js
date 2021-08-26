@@ -1,6 +1,7 @@
 'use strict'
 
 const { MongoClient } = require('mongodb')
+const { console } = require('@kookaburra/gears')
 
 class Client {
   #connection
@@ -10,11 +11,7 @@ class Client {
 
   constructor (host, db, collection) {
     this.#connection = { host, db, collection }
-    this.#client = new MongoClient(this.#uri, OPTIONS)
-  }
-
-  get #uri () {
-    return process.env.KOO_DEV_MONGODB_URL || `mongodb+srv://${this.#connection.host}`
+    this.#client = new MongoClient(this.#url, OPTIONS)
   }
 
   async connect () {
@@ -23,10 +20,16 @@ class Client {
     this.#collection = this.#client
       .db(this.#connection.db)
       .collection(this.#connection.collection)
+
+    console.debug('Storage MongoDB connected to ' +
+      `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }
 
   async disconnect () {
     await this.#client.close()
+
+    console.debug('Storage MongoDB disconnected from ' +
+      `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }
 
   async add (entry) {
@@ -49,6 +52,10 @@ class Client {
     const cursor = await this.#collection.find(query, options)
 
     return cursor.toArray()
+  }
+
+  get #url () {
+    return process.env.KOO_DEV_MONGODB_URL || `mongodb+srv://${this.#connection.host}`
   }
 }
 

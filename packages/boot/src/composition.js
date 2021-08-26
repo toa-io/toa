@@ -1,24 +1,15 @@
 'use strict'
 
-const { Package } = require('@kookaburra/package')
 const { Connector } = require('@kookaburra/runtime')
-const { http: createHTTP } = require('./http')
-const { runtime: createRuntime } = require('./runtime')
+const { runtime } = require('./runtime')
+const { server } = require('./bindings')
 
-async function composition (components, options) {
+async function composition (components) {
   const composition = new Connector()
-  const http = createHTTP(options?.http)
+  const runtimes = await Promise.all(components.map(async (component) => runtime(component)))
+  const bindings = server(runtimes, ['http'])
 
-  for (let component of components) {
-    if (typeof component === 'string') { component = await Package.load(component) }
-
-    const runtime = await createRuntime(component)
-
-    http.bind(runtime, component.operations)
-    http.depends(runtime)
-  }
-
-  composition.depends(http)
+  composition.depends(bindings)
 
   return composition
 }

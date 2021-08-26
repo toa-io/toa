@@ -1,9 +1,10 @@
 {
-  "name": "@kookaburra/cli",
+  "name": "@kookaburra/bindings.http",
   "version": "0.0.0",
-  "description": "Kookaburra CLI",
+  "description": "HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quantumducks/kookaburra.git"
@@ -11,24 +12,17 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "main": "package.json",
-  "bin": {
-    "kookaburra": "bin/kookaburra"
-  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {
-    "@kookaburra/boot": "^0.0.0",
-    "@kookaburra/gears": "^0.0.0",
-    "find-up": "5.0.0",
-    "fs-extra": "9.1.0",
-    "js-yaml": "4.0.0",
-    "relaxed-json": "^1.0.3",
-    "yargs": "16.2.0"
+  "peerDependencies": {
+    "@kookaburra/runtime": "^0.0.0",
+    "@kookaburra/gears": "^0.0.0"
   },
-  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }

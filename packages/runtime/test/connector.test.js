@@ -51,9 +51,46 @@ describe('dependencies', () => {
     expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('+a'))
   })
 
+  it('should wait array of connectors', async () => {
+    a.depends([b, d])
+    b.depends(c)
+    d.depends(c)
+
+    await a.connect()
+
+    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+b'))
+    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+d'))
+    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
+    expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('+a'))
+  })
+
+  it('should wait array(1) of connectors', async () => {
+    a.depends([b])
+    b.depends(c)
+
+    await a.connect()
+
+    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+b'))
+    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
+  })
+
+  it('should await 2-way dependencies', async () => {
+    a.depends([b, c, d])
+    d.depends([b, c])
+
+    await a.connect()
+
+    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
+    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+a'))
+    expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('+a'))
+
+    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+d'))
+    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+d'))
+  })
+
   it('should disconnect before dependencies', async () => {
     a.depends(b).depends(c)
-    /*      */b.depends(d)
+    b.depends(d)
 
     await a.disconnect()
 
@@ -78,7 +115,8 @@ describe('dependencies', () => {
 
     it('should interrupt connection chain', async () => {
       a.depends(f).depends(c)
-      /*      */f.depends(d)
+      /*      */
+      f.depends(d)
 
       await expect(a.connect()).rejects.toThrow('FailingConnector')
 

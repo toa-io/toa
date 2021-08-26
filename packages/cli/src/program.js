@@ -11,7 +11,7 @@ const { version } = require('../package.json')
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
     if (err) {
-      if (argv.debug) { console.dir(err) }
+      if (argv.stacktrace) { console.dir(err) }
 
       message = err.message
     } else {
@@ -25,11 +25,11 @@ const argv = yargs(process.argv.slice(2))
   .option('log', {
     type: 'string',
     describe: 'Logging level',
-    default: 'error'
+    default: process.env.NODE_ENV === 'local' ? 'info' : 'error'
   })
-  .option('debug', {
+  .option('stacktrace', {
     type: 'boolean',
-    describe: 'Debugging errors',
+    describe: 'Print stack trace on errors',
     default: false
   })
   .option('ugly', {

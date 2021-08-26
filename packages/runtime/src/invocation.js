@@ -12,24 +12,19 @@ class Invocation {
   }
 
   async invoke (input = null, q = null) {
-    // TODO: try/catch?
-    const { ok, oh, io } = this.#io.create(input)
+    const io = this.#io.create()
 
-    if (!ok) {
-      io.error = oh
+    try {
+      io.input = input
 
-      return io
-    }
+      const query = this.#query.parse(q)
 
-    let query
-
-    try { query = this.#query.parse(q) } catch (oh) { io.error = oh }
-
-    if (query !== undefined) {
       await this.#operation.invoke(io, query)
-    }
+    } catch (e) {
+      if (e instanceof Error) { throw e }
 
-    io.fit()
+      io.error = e
+    }
 
     return io
   }

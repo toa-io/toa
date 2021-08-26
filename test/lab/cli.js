@@ -4,8 +4,9 @@ const path = require('path')
 const execa = require('execa')
 
 const cli = async (...args) => {
+  args.push('--log=error')
   args.push('--ugly')
-  args.push('--debug')
+  args.push('--stacktrace')
 
   let ok, oh
 
@@ -16,7 +17,7 @@ const cli = async (...args) => {
   } catch (error) {
     oh = error
 
-    if (!cli.silent) console.error(error)
+    if (!cli.silent) throw error
     else cli.silent = false
   }
 

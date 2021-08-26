@@ -5,14 +5,14 @@ const { Connector } = require('@kookaburra/runtime')
 const { id } = require('./id')
 
 class Storage extends Connector {
-  static name = 'Abstract'
+  static name = 'ABSTRACT'
 
   static id () {
     return id()
   }
 
   static host (locator) {
-    return locator.host(this.name)
+    return locator.host(Storage.name)
   }
 }
 
