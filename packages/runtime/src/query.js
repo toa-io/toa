@@ -1,6 +1,7 @@
 'use strict'
 
 const { criteria } = require('./query/criteria')
+const { options } = require('./query/options')
 
 class Query {
   #properties
@@ -11,16 +12,18 @@ class Query {
     this.#properties = properties
   }
 
-  parse (q) {
-    if (q === null) { return null }
-
+  parse (query) {
     // TODO: query schema
-    const query = {}
+    const result = { options: Query.#options(query) }
 
-    // TODO: attach #criteria
-    query.criteria = criteria(q.criteria, this.#properties)
+    // TODO: constraints
+    if (query.criteria) { result.criteria = criteria(query.criteria, this.#properties) } else { query.criteria = null }
 
-    return query
+    return result
+  }
+
+  static #options ({ omit, limit, sort, projection }) {
+    if (omit || limit || sort || projection) { return options({ omit, limit, sort, projection }) } else { return null }
   }
 }
 

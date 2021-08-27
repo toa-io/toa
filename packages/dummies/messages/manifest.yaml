@@ -3,9 +3,11 @@ name: messages
 
 entity:
   schema:
+    dynamicDefaults:
+      timestamp: timestamp
     properties:
       text: string
-    required: [text]
+      timestamp: integer
 
 operations:
   - name: add
@@ -23,6 +25,7 @@ operations:
       properties:
         id: string
         text: string
+        timestamp: integer
       required: [id, text]
   - name: update
     input:

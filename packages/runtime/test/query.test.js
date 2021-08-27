@@ -8,13 +8,6 @@ beforeEach(() => {
 })
 
 describe('criteria', () => {
-  it('should return null if query is null', () => {
-    const instance = new Query(fixtures.samples.simple.options, fixtures.samples.simple.properties)
-    const query = instance.parse(null)
-
-    expect(query).toBeNull()
-  })
-
   it('should parse criteria', () => {
     const instance = new Query(fixtures.samples.simple.options, fixtures.samples.simple.properties)
     const query = instance.parse(fixtures.samples.simple.query)

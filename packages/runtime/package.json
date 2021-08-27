@@ -22,7 +22,7 @@
     "@kookaburra/gears": "^0.0.0",
     "@rsql/parser": "1.0.3",
     "ajv": "7.1.1",
-    "ajv-formats": "1.5.1"
+    "ajv-keywords": "^5.0.0"
   },
   "devDependencies": {
     "clone-deep": "4.0.1"

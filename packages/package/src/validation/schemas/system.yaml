@@ -3,13 +3,10 @@ properties:
     type: string
   _created:
     type: integer
-    format: timestamp
   _updated:
     type: integer
-    format: timestamp
   _deleted:
     type: integer
-    format: timestamp
   _version:
     type: integer
     default: 0

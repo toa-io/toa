@@ -3,8 +3,8 @@
 const path = require('path')
 
 const { default: Ajv } = require('ajv')
+const keywords = require('ajv-keywords')
 
-const { extensions } = require('./extensions')
 const { Schema } = require('./schema')
 
 class Schemas {
@@ -45,9 +45,7 @@ class Schemas {
   }
 
   #extend () {
-    for (const extension of extensions) {
-      if (extension.format) { this.#instance.addFormat(extension.name, extension.format) }
-    }
+    keywords(this.#instance)
   }
 }
 

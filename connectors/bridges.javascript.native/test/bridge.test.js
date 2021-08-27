@@ -74,7 +74,7 @@ it('should pass frozen state to observation', async () => {
   expect(Object.isFrozen(argument)).toBeTruthy()
 })
 
-it('should pass state with non enumerable system properties', async () => {
+it('should pass entry with non enumerable system properties', async () => {
   const manifest = {
     '.bridge': { path: require.resolve('./operations/pong') }
   }
@@ -93,6 +93,27 @@ it('should pass state with non enumerable system properties', async () => {
   delete state._version
 
   expect(argument).toStrictEqual(state)
+})
+
+it('should pass set with non enumerable system properties', async () => {
+  const manifest = {
+    '.bridge': { path: require.resolve('./operations/pong') }
+  }
+
+  const io = { input: 1 }
+  const state = [{ a: 1, _version: 2 }]
+  const bridge = new Bridge(manifest)
+
+  await bridge.run(io, clone(state))
+
+  const argument = operations.pong.mock.calls[0][1]
+
+  expect(argument).not.toStrictEqual(state)
+  expect(argument[0]._version).toBe(state[0]._version)
+
+  const expected = state.map(({ _version, ...rest }) => rest)
+
+  expect(argument).toStrictEqual(expected)
 })
 
 it('should return output', async () => {

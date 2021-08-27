@@ -15,16 +15,13 @@ const system = {
       type: 'string'
     },
     _created: {
-      type: 'integer',
-      format: 'timestamp'
+      type: 'integer'
     },
     _updated: {
-      type: 'integer',
-      format: 'timestamp'
+      type: 'integer'
     },
     _deleted: {
-      type: 'integer',
-      format: 'timestamp'
+      type: 'integer'
     },
     _version: {
       type: 'integer',

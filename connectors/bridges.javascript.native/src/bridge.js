@@ -18,7 +18,7 @@ class Bridge extends Connector {
   }
 
   async run (io, state) {
-    if (state) { this.#protect(state) }
+    if (state) { state = this.#state(state) }
 
     try {
       const output = await this.#algorithm(io.input, state)
@@ -35,7 +35,9 @@ class Bridge extends Connector {
     return this.#manifest.type
   }
 
-  #protect (state) {
+  #state (state) {
+    if (state instanceof Array) { return state.map((state) => this.#state(state)) }
+
     for (const key of Object.keys(state)) {
       if (key[0] === '_') { Object.defineProperty(state, key, { enumerable: false }) }
     }

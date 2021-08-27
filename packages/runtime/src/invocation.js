@@ -11,13 +11,13 @@ class Invocation {
     this.#query = query
   }
 
-  async invoke (input = null, q = null) {
+  async invoke (input = null, query = null) {
     const io = this.#io.create()
 
     try {
       io.input = input
 
-      const query = this.#query.parse(q)
+      if (query) { query = this.#query.parse(query) }
 
       await this.#operation.invoke(io, query)
     } catch (e) {

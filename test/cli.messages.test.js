@@ -76,9 +76,14 @@ it('should update message', async () => {
 describe('find', () => {
   let messages
 
+  const translate = (message) => {
+    const { _id: id, ...rest } = message
+    return { id, ...rest }
+  }
+
   beforeEach(async () => {
     messages = Array.from(Array(5))
-      .map((_, index) => ({ _id: `id${index}`, text: randomstring.generate() }))
+      .map((_, index) => ({ _id: `id${index}`, text: randomstring.generate(), timestamp: index }))
 
     const { acknowledged } = await collection.insertMany(messages)
 
@@ -88,10 +93,7 @@ describe('find', () => {
   it('should find messages', async () => {
     const { ok: { output: { output } } } = await runtime.invoke('find')
 
-    const expected = messages.map((message) => {
-      const { _id, ...rest } = message
-      return { id: _id, ...rest }
-    })
+    const expected = messages.map(translate)
 
     expect(Array.isArray(output.messages)).toBeTruthy()
     expect(output.messages).toMatchObject(expected)
@@ -102,12 +104,32 @@ describe('find', () => {
 
     const expected = messages
       .filter((message) => message._id === 'id1' || message._id === 'id2')
-      .map((message) => {
-        const { _id, ...rest } = message
-        return { id: _id, ...rest }
-      })
+      .map(translate)
 
     expect(Array.isArray(output.messages)).toBeTruthy()
     expect(output.messages).toMatchObject(expected)
+  })
+
+  it('should find with sort', async () => {
+    const { ok: { output: { output } } } = await runtime.invoke('find', null, '{sort:\'timestamp:desc\'}')
+
+    expect(output.messages).toStrictEqual(messages.reverse().map(translate))
+  })
+
+  it('should find with omit, limit', async () => {
+    const { ok: { output: { output } } } = await runtime.invoke('find', null, '{omit:2,limit:2,sort:\'timestamp:asc\'}')
+
+    const expected = messages.slice(2, 4).map(translate)
+
+    expect(output.messages.length).toBe(2)
+    expect(output.messages).toStrictEqual(expected)
+  })
+
+  it('should use projection', async () => {
+    const { ok: { output: { output } } } = await runtime.invoke('find', null, '{projection:\'timestamp\'}')
+
+    const expected = messages.map(({ _id, timestamp }) => ({ id: _id, timestamp }))
+
+    expect(output.messages).toStrictEqual(expected)
   })
 })
