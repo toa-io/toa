@@ -15,9 +15,9 @@ describe('new', () => {
   })
 
   it('should fail on schema error', () => {
-    const object = { ...fixtures.entry, fail: true }
+    const state = { ...fixtures.entry, fail: true }
 
-    expect(() => { entry.state = object }).toThrow(/doesn't match entity schema/)
+    expect(() => { entry.state = state }).toThrow(/doesn't match entity schema/)
   })
 
   it('should provide state', () => {
@@ -41,17 +41,26 @@ describe('new', () => {
   })
 })
 
-it('should provide blank', () => {
-  const entry = new Entity(fixtures.schema, fixtures.id())
+describe('argument', () => {
+  it('should provide blank', () => {
+    const entry = new Entity(fixtures.schema, fixtures.id())
 
-  expect(entry.state).toStrictEqual({
-    id: fixtures.id.mock.results[0].value,
-    ...fixtures.schema.defaults.mock.results[0].value
+    expect(entry.state).toStrictEqual({
+      id: fixtures.id.mock.results[0].value,
+      ...fixtures.schema.defaults.mock.results[0].value
+    })
   })
-})
 
-it('should set initial state', () => {
-  const entry = new Entity(fixtures.schema, fixtures.entry)
+  it('should set initial state', () => {
+    const entry = new Entity(fixtures.schema, fixtures.entry)
 
-  expect(entry.state).toStrictEqual(fixtures.entry)
+    expect(entry.state).toStrictEqual(fixtures.entry)
+  })
+
+  it('should not validate initial state', () => {
+    const state = { ...fixtures.entry, fail: true }
+    const entry = new Entity(fixtures.schema, state)
+
+    expect(entry.state).toStrictEqual(state)
+  })
 })

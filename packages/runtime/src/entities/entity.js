@@ -14,7 +14,7 @@ class Entity {
       this.#state = { id: argument, ...this.#schema.defaults() }
     }
 
-    if (typeof argument === 'object') this.state = argument
+    if (typeof argument === 'object') { this.#state = argument }
   }
 
   get state () {
@@ -24,7 +24,7 @@ class Entity {
   set state (value) {
     const { ok, oh } = this.#schema.fit(value)
 
-    if (!ok) throw new Error(`Value doesn't match entity schema (${oh.message})`)
+    if (!ok) { throw new Error(`Value doesn't match entity schema (${oh.message})`) }
 
     this.#state = value
   }
