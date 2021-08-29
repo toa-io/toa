@@ -3,7 +3,7 @@
 const { Storage } = require('@kookaburra/storage')
 
 const { Client } = require('./client')
-const { translate } = require('./query')
+const { translate } = require('./translate')
 const { to, from } = require('./entry')
 
 class Connector extends Storage {
@@ -30,7 +30,7 @@ class Connector extends Storage {
   }
 
   async get (query) {
-    const { criteria, options } = translate(query)
+    const { criteria, options } = Connector.#translate(query)
 
     const entry = await this.#client.get(criteria, options)
 
@@ -44,11 +44,15 @@ class Connector extends Storage {
   }
 
   async find (query) {
-    const { criteria, options } = translate(query)
+    const { criteria, options } = Connector.#translate(query)
 
     const entries = await this.#client.find(criteria, options)
 
     return entries.map(from)
+  }
+
+  static #translate (query) {
+    return query ? translate(query) : {}
   }
 }
 

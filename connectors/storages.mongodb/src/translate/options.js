@@ -1,5 +1,7 @@
 'use strict'
 
+const { rename } = require('./rename')
+
 const options = (options) => {
   const result = {}
 
@@ -12,13 +14,13 @@ const options = (options) => {
 }
 
 const sort = (sort) => {
-  return sort.map(([property, direction]) => [property, DIRECTIONS[direction]])
+  return sort.map(([property, direction]) => [rename(property), DIRECTIONS[direction]])
 }
 
 const projection = (projection) => {
   const result = {}
 
-  for (const property of projection) { result[property] = 1 }
+  for (const property of projection) { result[rename(property)] = 1 }
 
   return result
 }

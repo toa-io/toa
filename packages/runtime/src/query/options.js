@@ -8,7 +8,6 @@ const options = (options, properties) => {
 }
 
 const sort = (sort, properties) => {
-  // eslint-disable-next-line no-throw-literal
   if (!sort.match(SORT_RX)) { throw new Error('sort parse error') }
 
   const result = []
@@ -25,7 +24,6 @@ const sort = (sort, properties) => {
 }
 
 const projection = (projection, properties) => {
-  // eslint-disable-next-line no-throw-literal
   if (!projection.match(PROJECTION_RX)) { throw new Error('projection parse error') }
 
   const result = projection.split(',')

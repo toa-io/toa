@@ -1,5 +1,7 @@
 'use strict'
 
+const { rename } = require('./rename')
+
 const criteria = (node) => {
   if (!TYPES[node.type]) { throw new Error('Query criteria AST parse error') }
 
@@ -41,9 +43,7 @@ TYPES.COMPARISON = (expression) => {
   return { [left]: { [OPERATORS.COMPARISON[expression.operator]]: right } }
 }
 
-TYPES.SELECTOR = (expression) => RENAME[expression.selector] || expression.selector
+TYPES.SELECTOR = (expression) => rename(expression.selector)
 TYPES.VALUE = (expression) => expression.value
-
-const RENAME = { id: '_id' }
 
 exports.criteria = criteria

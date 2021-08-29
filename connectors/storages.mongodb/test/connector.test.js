@@ -4,7 +4,7 @@ const fixtures = require('./connector.fixtures')
 const mock = fixtures.mock
 
 jest.mock('../src/client', () => ({ Client: mock.Client }))
-jest.mock('../src/query', () => ({ translate: mock.translate }))
+jest.mock('../src/translate', () => ({ translate: mock.translate }))
 jest.mock('../src/entry', () => ({ to: mock.to, from: mock.from }))
 
 const { Connector } = require('../src/connector')
