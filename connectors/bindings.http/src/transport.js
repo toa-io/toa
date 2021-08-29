@@ -21,8 +21,7 @@ class Transport extends Connector {
   }
 
   reply (verb, route, invocation) {
-    console.debug(`Binding ${verb} ${route}`)
-    this.#app[verb.toLowerCase()](route, async (req, res) => res.json(await invocation(req.body.input, req.body.query)))
+    this.#app[verb.toLowerCase()](route, async (req, res) => res.json(await invocation(req.body, req.query)))
   }
 
   async connection () {
