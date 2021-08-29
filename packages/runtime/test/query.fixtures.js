@@ -13,9 +13,6 @@ const samples = {
         right: { type: 'VALUE', value: 'Eddie' }
       }
     },
-    options: {
-
-    },
     properties: {
       name: {
         type: 'string'
@@ -23,7 +20,7 @@ const samples = {
     }
   },
 
-  types: {
+  extended: {
     query: {
       criteria: 'flag==true;volume>2.1'
     },
@@ -45,15 +42,26 @@ const samples = {
         }
       }
     },
-    options: {
-
-    },
     properties: {
       flag: {
         type: 'boolean'
       },
       volume: {
         type: 'number'
+      }
+    }
+  },
+
+  abc: {
+    properties: {
+      a: {
+        type: 'string'
+      },
+      b: {
+        type: 'string'
+      },
+      c: {
+        type: 'string'
       }
     }
   }

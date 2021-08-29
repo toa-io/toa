@@ -8,7 +8,7 @@ const invocation = (invocations, { manifest, operation, schemas, entity }) => {
   const error = schemas.get(io.error.schema.$id)
 
   const channels = new io.Factory({ input, output, error })
-  const query = new Query(manifest.query, entity?.schema?.properties)
+  const query = new Query(entity?.schema?.properties)
 
   invocations[manifest.name] = new Invocation(operation, channels, query)
 

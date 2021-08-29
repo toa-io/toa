@@ -1,29 +1,34 @@
 'use strict'
 
-const { criteria } = require('./query/criteria')
-const { options } = require('./query/options')
+const parse = { ...require('./query/criteria'), ...require('./query/options') }
 
 class Query {
   #properties
-  #criteria
 
-  constructor (query, properties) {
-    this.#criteria = query?.criteria
+  constructor (properties) {
     this.#properties = properties
   }
 
+  // TODO: query schema
+  // TODO: constraints
   parse (query) {
-    // TODO: query schema
-    const result = { options: Query.#options(query) }
+    const result = {}
+    const { criteria, ...rest } = query
+    const options = this.#options(rest)
 
-    // TODO: constraints
-    if (query.criteria) { result.criteria = criteria(query.criteria, this.#properties) } else { query.criteria = null }
+    if (criteria) { result.criteria = parse.criteria(criteria, this.#properties) }
+    if (options) { result.options = options }
 
     return result
   }
 
-  static #options ({ omit, limit, sort, projection }) {
-    if (omit || limit || sort || projection) { return options({ omit, limit, sort, projection }) } else { return null }
+  #options (options) {
+    const defined = Object.keys(options)
+      .reduce((defined, option) => defined || options[option] !== undefined, false)
+
+    if (!defined) { return }
+
+    return parse.options(options, this.#properties)
   }
 }
 

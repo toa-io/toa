@@ -14,7 +14,7 @@ const coerce = (node, properties) => {
   if (node.type === 'COMPARISON' && node.left?.type === 'SELECTOR' && node.right?.type === 'VALUE') {
     const property = properties[node.left.selector]
 
-    if (!property) throw new Error(`Unrecognized selector ${node.left.selector}`)
+    if (!property) throw new Error(`criteria selector '${node.left.selector}' is not allowed`)
 
     if (COERCE[property.type]) { node.right.value = COERCE[property.type](node.right.value) }
   } else {
