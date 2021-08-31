@@ -7,8 +7,8 @@ const { console } = require('@kookaburra/gears')
 
 class Transport extends Connector {
   #app
+  #port
   #server
-  #options = {}
 
   constructor () {
     super()
@@ -16,20 +16,24 @@ class Transport extends Connector {
     this.#app = express()
     this.#app.disable('x-powered-by')
     this.#app.use(express.json())
+    this.#app.get('/', Transport.#ready)
 
-    this.#options.port = 3000
+    this.#port = process.env.KOO_ENV === 'dev' ? 0 : 3000
   }
 
   reply (verb, route, invocation) {
-    this.#app[verb.toLowerCase()](route, async (req, res) => res.json(await invocation(req.body, req.query)))
+    this.#app[verb.toLowerCase()](route, async (req, res) =>
+      res.json(await invocation(req.body, Object.keys(req.query).length ? req.query : null)))
   }
 
   async connection () {
     return new Promise((resolve, reject) => {
-      console.debug(`Starting HTTP server at ${this.#options.port}`)
+      console.debug(`Starting HTTP server at ${this.#port}`)
 
-      this.#server = this.#app.listen(this.#options.port, () => {
-        console.info(`HTTP server started at :${this.#options.port}`)
+      this.#server = this.#app.listen(this.#port, () => {
+        this.#port = this.#server.address().port
+
+        console.info(`HTTP server started at :${this.#port}`)
 
         this.#server.off('error', reject)
         resolve()
@@ -52,6 +56,10 @@ class Transport extends Connector {
 
       this.#server.on('error', reject)
     })
+  }
+
+  static #ready (_, res) {
+    res.send()
   }
 }
 

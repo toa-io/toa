@@ -55,7 +55,7 @@ class Client {
   }
 
   get #url () {
-    return process.env.KOO_DEV_MONGODB_URL || `mongodb+srv://${this.#connection.host}`
+    return process.env.KOO_MONGODB_URL || `mongodb+srv://${this.#connection.host}`
   }
 }
 

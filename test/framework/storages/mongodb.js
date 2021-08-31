@@ -7,10 +7,8 @@ class Storage {
   #server
   #db
   #collection
-  #KOO_DEV_MONGODB_URL
 
   client
-  collection
 
   constructor (db, collection) {
     this.#db = db
@@ -18,25 +16,23 @@ class Storage {
   }
 
   async setup () {
-    this.#KOO_DEV_MONGODB_URL = process.env.KOO_DEV_MONGODB_URL
-
     this.#server = await MongoMemoryServer.create()
 
     const uri = this.#server.getUri()
 
-    process.env.KOO_DEV_MONGODB_URL = uri
+    process.env.KOO_MONGODB_URL = uri
 
     this.client = new MongoClient(uri, OPTIONS)
     await this.client.connect()
+  }
 
-    this.collection = this.client.db(this.#db).collection(this.#collection)
+  collection (db, collection) {
+    return this.client.db(db).collection(collection)
   }
 
   async teardown () {
     this.client.close()
     this.#server.stop()
-
-    process.env.KOO_DEV_MONGODB_URL = this.#KOO_DEV_MONGODB_URL
   }
 }
 

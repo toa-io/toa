@@ -3,13 +3,15 @@
 const path = require('path')
 const execa = require('execa')
 
+const { locate } = require('./dummies')
+
 class CLI {
   silent = false
 
   #path
 
-  constructor (path) {
-    this.#path = path
+  constructor (dummy) {
+    this.#path = locate(dummy)
   }
 
   async invoke (cmd, input = null, query = null) {

@@ -25,7 +25,7 @@ const argv = yargs(process.argv.slice(2))
   .option('log', {
     type: 'string',
     describe: 'Logging level',
-    default: process.env.NODE_ENV === 'local' ? 'info' : 'error'
+    default: process.env.KOO_ENV === 'dev' ? 'info' : 'error'
   })
   .option('stacktrace', {
     type: 'boolean',

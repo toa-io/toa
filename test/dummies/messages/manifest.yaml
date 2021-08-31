@@ -21,7 +21,6 @@ operations:
       required: [id]
   - name: get
     output:
-      type: object
       properties:
         id: string
         text: string

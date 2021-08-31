@@ -1,37 +1,52 @@
 'use strict'
 
-const { yaml } = require('../../packages/gears/src/yaml')
+const request = require('superagent')
 
+const { composition } = require('../../packages/boot/src/composition')
 const { locate } = require('./dummies')
-const { CLI } = require('./cli')
 
 class Context {
-  cli
   storage
 
-  #manifest
+  #components
+  #composition
+  #port
 
   constructor (options) {
-    const path = locate(options.dummy)
+    this.#components = options.composition
 
-    this.#manifest = yaml.sync(`${path}/manifest.yaml`)
-    this.cli = new CLI(path)
+    if (options.storage) { this.storage = Context.#storage(options.storage) }
+  }
 
-    if (options.storage) { this.storage = this.#storage(options.storage) }
+  request () {
+    return ['get', 'post'].reduce((map, method) => {
+      map[method] = (path, ...args) =>
+        request[method](new URL(path, `http://localhost:${this.#port}`).href, ...args)
+
+      return map
+    }, {})
   }
 
   async setup () {
     if (this.storage) { await this.storage.setup() }
+
+    if (this.#components) {
+      this.#composition = await composition(this.#components.map(locate))
+      await this.#composition.connect()
+
+      this.#port = +console.info.mock.calls.pop()[1].match(/HTTP server started at :(\d+)$/)[1]
+    }
   }
 
   async teardown () {
+    if (this.#composition) { await this.#composition.disconnect() }
     if (this.storage) { await this.storage.teardown() }
   }
 
-  #storage (storage) {
+  static #storage (storage) {
     const { Storage } = require(`./storages/${storage}`)
 
-    return new Storage(this.#manifest.domain, this.#manifest.name)
+    return new Storage()
   }
 }
 

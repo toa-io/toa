@@ -20,7 +20,11 @@ class Server extends Connector {
   #bind (runtime, endpoint) {
     const path = Server.#path(runtime.locator, endpoint)
 
-    this.#transport.reply('POST', path, (input, query) => runtime.invoke(endpoint.name, input, query))
+    this.#transport.reply('POST', path, async (input, query) => {
+      const { output, error } = await runtime.invoke(endpoint.name, input, query)
+
+      return { output, error }
+    })
   }
 
   static #path (locator, endpoint) {

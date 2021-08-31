@@ -12,7 +12,7 @@ let instance, client, collection
 beforeEach(async () => {
   jest.clearAllMocks()
 
-  delete process.env.KOO_DEV_MONGODB_URL
+  delete process.env.KOO_MONGODB_URL
 
   instance = new Client(fixtures.locator.host, fixtures.locator.db, fixtures.locator.collection)
   await instance.connect()
@@ -33,17 +33,17 @@ it('should create client', () => {
 })
 
 it('should use env url', async () => {
-  process.env.KOO_DEV_MONGODB_URL = 'some://url'
+  process.env.KOO_MONGODB_URL = 'some://url'
 
   instance = new Client(fixtures.locator.host, fixtures.locator.db, fixtures.locator.collection)
   await instance.connect()
 
   expect(fixtures.mock.MongoClient).toHaveBeenCalledWith(
-    process.env.KOO_DEV_MONGODB_URL,
+    process.env.KOO_MONGODB_URL,
     fixtures.OPTIONS
   )
 
-  delete process.env.KOO_DEV_MONGODB_URL
+  delete process.env.KOO_MONGODB_URL
 })
 
 it('should connect', async () => {
