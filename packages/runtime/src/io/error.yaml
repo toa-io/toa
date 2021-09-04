@@ -1,11 +1,9 @@
-$id: http://schemas.kookaburra.dev/runtime/io/error.schema.json
-type: object
 properties:
   code:
     type: integer
-#    minimum: 1
-#    maximum: 99
+    minimum: 0
+    maximum: 999
+    default: 0
   message:
     type: string
-additionalProperties: true
 required: [code]

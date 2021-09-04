@@ -16,10 +16,11 @@ class Query {
     const { criteria, ...rest } = query
     const options = this.#options(rest)
 
+    // TODO: handle parse error
     if (criteria) { result.criteria = parse.criteria(criteria, this.#properties) }
     if (options) { result.options = options }
 
-    return result
+    return [result]
   }
 
   #options (options) {

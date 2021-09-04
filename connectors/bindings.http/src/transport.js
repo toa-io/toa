@@ -5,6 +5,8 @@ const express = require('express')
 const { Connector } = require('@kookaburra/runtime')
 const { console } = require('@kookaburra/gears')
 
+const { response } = require('./response')
+
 class Transport extends Connector {
   #app
   #port
@@ -22,14 +24,22 @@ class Transport extends Connector {
   }
 
   reply (verb, route, invocation) {
-    this.#app[verb.toLowerCase()](route, async (req, res) =>
-      res.json(await invocation(req.body, Object.keys(req.query).length ? req.query : null)))
+    this.#app[verb.toLowerCase()](route, async (req, res) => {
+      let output, error, exception
+
+      try {
+        [output, error] = await invocation(req.body.input, req.body.query)
+      } catch (e) {
+        exception = e
+      }
+
+      response(output, error, exception, res)
+      res.end()
+    })
   }
 
   async connection () {
     return new Promise((resolve, reject) => {
-      console.debug(`Starting HTTP server at ${this.#port}`)
-
       this.#server = this.#app.listen(this.#port, () => {
         this.#port = this.#server.address().port
 
@@ -45,10 +55,8 @@ class Transport extends Connector {
 
   async disconnection () {
     return new Promise((resolve, reject) => {
-      console.debug('Stopping http server...')
-
       this.#server.close(() => {
-        console.info('HTTP server stopped')
+        console.info(`HTTP server at :${this.#port} stopped`)
 
         this.#server.off('error', reject)
         resolve()

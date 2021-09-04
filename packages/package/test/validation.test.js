@@ -86,16 +86,6 @@ describe('manifest', () => {
         expect(console.warn).toHaveBeenCalledTimes(0)
       })
 
-      describe('$id', () => {
-        it('should set default', () => {
-          const ok = properties(property)
-
-          validate(ok)
-
-          expect(ok.entity.schema.$id).toBe('http://foo/bar/entity')
-        })
-      })
-
       describe('type', () => {
         it('should be ok', () => {
           const ok = schema({ type: 'object', properties: property })

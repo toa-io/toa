@@ -2,8 +2,8 @@
 
 const randomstring = require('randomstring')
 
-const operation = {
-  invoke: jest.fn()
+const call = {
+  invoke: jest.fn(() => [{ [randomstring.generate()]: randomstring.generate() }, null])
 }
 
 const io = {
@@ -24,9 +24,8 @@ const io = {
 
 const query = {
   parse: jest.fn((query) => {
-    if (query?.invalid) throw new Error('query parse test exception')
-
-    return { [randomstring.generate()]: randomstring.generate() }
+    if (query?.invalid) return [null, { [randomstring.generate()]: randomstring.generate() }]
+    else return [{ [randomstring.generate()]: randomstring.generate() }]
   })
 }
 
@@ -41,7 +40,7 @@ const sample = () => ({
   }
 })
 
-exports.operation = operation
+exports.call = call
 exports.io = io
 exports.query = query
 exports.sample = sample

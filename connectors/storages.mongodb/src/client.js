@@ -21,14 +21,14 @@ class Client {
       .db(this.#connection.db)
       .collection(this.#connection.collection)
 
-    console.debug('Storage MongoDB connected to ' +
+    console.info('Storage MongoDB connected to ' +
       `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }
 
   async disconnect () {
     await this.#client.close()
 
-    console.debug('Storage MongoDB disconnected from ' +
+    console.info('Storage MongoDB disconnected from ' +
       `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }
 
@@ -55,7 +55,10 @@ class Client {
   }
 
   get #url () {
-    return process.env.KOO_MONGODB_URL || `mongodb+srv://${this.#connection.host}`
+    if (process.env.KOO_MONGODB_URL) return process.env.KOO_MONGODB_URL
+    if (process.env.KOO_ENV === 'dev') return 'mongodb://localhost'
+
+    return `mongodb+srv://${this.#connection.host}`
   }
 }
 

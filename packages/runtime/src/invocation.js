@@ -1,12 +1,12 @@
 'use strict'
 
 class Invocation {
-  #operation
+  #call
   #io
   #query
 
-  constructor (operation, io, query) {
-    this.#operation = operation
+  constructor (call, io, query) {
+    this.#call = call
     this.#io = io
     this.#query = query
   }
@@ -14,19 +14,32 @@ class Invocation {
   async invoke (input = null, query = null) {
     const io = this.#io.create()
 
-    try {
-      io.input = input
+    io.input = input
 
-      if (query) { query = this.#query.parse(query) }
+    if (io.error) return [null, io.error]
 
-      await this.#operation.invoke(io, query)
-    } catch (e) {
-      if (e instanceof Error) { throw e }
+    if (query) {
+      const [parsed, error] = this.#query.parse(query)
 
-      io.error = e
+      if (error) {
+        io.error = error
+
+        return [null, io.error]
+      } else {
+        query = parsed
+      }
     }
 
-    return io
+    const [output, error] = await this.#call.invoke(io.input, query)
+
+    if (error) io.error = error
+    else if (output) {
+      io.output = output
+
+      if (io.error) throw io.error
+    }
+
+    return [io.output, io.error]
   }
 }
 

@@ -16,7 +16,7 @@ class State {
 
     const entry = await this.#storage.get(query)
 
-    return this.#entity.create(entry)
+    return this.#entity.entry(entry)
   }
 
   async set (query) {
@@ -25,10 +25,10 @@ class State {
     return this.#entity.set(entries)
   }
 
-  async commit (object) {
-    const method = object.blank ? 'add' : 'update'
+  async commit (target) {
+    const method = target.blank ? 'add' : 'update'
 
-    await this.#storage[method](object.state)
+    await this.#storage[method](target.get())
   }
 }
 

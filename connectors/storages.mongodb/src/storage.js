@@ -1,12 +1,12 @@
 'use strict'
 
-const { Storage } = require('@kookaburra/storage')
+const { Connector } = require('@kookaburra/runtime')
 
 const { Client } = require('./client')
 const { translate } = require('./translate')
 const { to, from } = require('./entry')
 
-class Connector extends Storage {
+class Storage extends Connector {
   static name = 'MongoDB'
 
   #client
@@ -14,7 +14,7 @@ class Connector extends Storage {
   constructor (locator) {
     super()
 
-    this.#client = new Client(Connector.host(locator), locator.domain, locator.entity)
+    this.#client = new Client(locator.host(Storage.name), locator.domain, locator.entity)
   }
 
   async connection () {
@@ -30,7 +30,7 @@ class Connector extends Storage {
   }
 
   async get (query) {
-    const { criteria, options } = Connector.#translate(query)
+    const { criteria, options } = Storage.#translate(query)
 
     const entry = await this.#client.get(criteria, options)
 
@@ -44,7 +44,7 @@ class Connector extends Storage {
   }
 
   async find (query) {
-    const { criteria, options } = Connector.#translate(query)
+    const { criteria, options } = Storage.#translate(query)
 
     const entries = await this.#client.find(criteria, options)
 
@@ -56,4 +56,4 @@ class Connector extends Storage {
   }
 }
 
-exports.Connector = Connector
+exports.Storage = Storage

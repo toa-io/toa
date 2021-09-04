@@ -12,10 +12,15 @@ let instance, client, collection
 beforeEach(async () => {
   jest.clearAllMocks()
 
+  const env = process.env.KOO_ENV
+
   delete process.env.KOO_MONGODB_URL
+  delete process.env.KOO_ENV
 
   instance = new Client(fixtures.locator.host, fixtures.locator.db, fixtures.locator.collection)
   await instance.connect()
+
+  process.env.KOO_ENV = env
 
   client = fixtures.mock.MongoClient.mock.instances[0]
 

@@ -8,24 +8,26 @@ let invocation
 beforeEach(() => {
   jest.clearAllMocks()
 
-  invocation = new Invocation(fixtures.operation, fixtures.io, fixtures.query)
+  invocation = new Invocation(fixtures.call, fixtures.io, fixtures.query)
 })
 
+// TODO: unfinished
+
 describe('invocation', () => {
-  it('should invoke operation', async () => {
+  it('should invoke call', async () => {
     await invocation.invoke()
 
-    expect(fixtures.operation.invoke).toHaveBeenCalled()
+    expect(fixtures.call.invoke).toHaveBeenCalled()
   })
 
-  it('should pass io and query', async () => {
+  it('should pass input and query', async () => {
     const sample = fixtures.sample()
 
     await invocation.invoke(sample.input.ok, sample.query.ok)
 
-    expect(fixtures.operation.invoke).toHaveBeenCalledWith(
-      fixtures.io.create.mock.results[0].value,
-      fixtures.query.parse.mock.results[0].value
+    expect(fixtures.call.invoke).toHaveBeenCalledWith(
+      fixtures.io.create.mock.results[0].value.input,
+      fixtures.query.parse.mock.results[0].value[0]
     )
   })
 })

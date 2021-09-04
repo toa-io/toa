@@ -1,16 +1,16 @@
 'use strict'
 
 const { Transport } = require('./transport')
-const { Server } = require('./server')
+const { Producer } = require('./producer')
 
 class Factory {
-  server (runtimes) {
+  producer (runtimes) {
     const transport = new Transport()
-    const server = new Server(transport)
+    const producer = new Producer(transport)
 
-    runtimes.forEach((runtime) => server.bind(runtime))
+    runtimes.forEach((runtime) => producer.bind(runtime))
 
-    return server
+    return producer
   }
 }
 

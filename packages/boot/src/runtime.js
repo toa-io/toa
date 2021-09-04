@@ -1,31 +1,29 @@
 'use strict'
 
 const { Package } = require('@kookaburra/package')
-const { io, Locator, Runtime, Schemas } = require('@kookaburra/runtime')
-const { endpoints } = require('./runtime/endpoints')
-const { entity: createEntity } = require('./runtime/entity')
-const { storage: createStorage } = require('./storage')
-const { bridge } = require('./runtime/bridge')
-const { operation } = require('./runtime/operation')
-const { invocation } = require('./runtime/invocation')
+const { Runtime } = require('@kookaburra/runtime')
+const factories = require('./factories')
 
-const runtime = async (path) => {
+const runtime = async (path, options) => {
   const manifest = await Package.load(path)
+  const locator = factories.locator(manifest)
+  const storage = factories.storage(manifest.entity.storage, locator)
 
-  const schemas = new Schemas()
+  const operations = Object.fromEntries(manifest.operations.map((descriptor) => {
+    let operation
 
-  schemas.add(io.error.schema)
+    if (options?.proxy) {
+      operation = factories.invocation(descriptor, manifest.entity)
+    } else {
+      operation = factories.operation(manifest, locator, descriptor, storage)
 
-  const locator = new Locator(manifest.domain, manifest.name, endpoints(manifest.operations))
-  const storage = manifest.entity && createStorage(manifest.entity.storage, locator)
-  const entity = createEntity(manifest.entity, storage, schemas)
+      if (options?.mono) operation = factories.invocation(descriptor, manifest.entity, operation)
+    }
 
-  const invocations = manifest.operations
-    .map(entity).map(bridge).map(operation).reduce(invocation, {})
+    return [descriptor.name, operation]
+  }))
 
-  schemas.compile()
-
-  const runtime = new Runtime(locator, invocations)
+  const runtime = new Runtime(locator, operations)
 
   if (storage) { runtime.depends(storage) }
 

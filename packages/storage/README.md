@@ -1,2 +1,0 @@
-# Kookaburra Abstract Storage
-

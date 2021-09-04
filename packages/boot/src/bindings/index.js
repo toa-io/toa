@@ -1,5 +1,5 @@
 'use strict'
 
-const { server } = require('./server')
+const { producer } = require('./producer')
 
-exports.server = server
+exports.producer = producer

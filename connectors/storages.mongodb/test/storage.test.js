@@ -1,25 +1,25 @@
 'use strict'
 
-const fixtures = require('./connector.fixtures')
+const fixtures = require('./storage.fixtures')
 const mock = fixtures.mock
 
 jest.mock('../src/client', () => ({ Client: mock.Client }))
 jest.mock('../src/translate', () => ({ translate: mock.translate }))
 jest.mock('../src/entry', () => ({ to: mock.to, from: mock.from }))
 
-const { Connector } = require('../src/connector')
+const { Storage } = require('../src/storage')
 
 let connector, client
 
 beforeAll(() => {
-  connector = new Connector(fixtures.locator)
+  connector = new Storage(fixtures.locator)
 
   client = fixtures.mock.Client.mock.instances[0]
 
   expect(client).toBeDefined()
 
   expect(fixtures.mock.Client).toHaveBeenCalledWith(
-    Connector.host(fixtures.locator),
+    fixtures.locator.host.mock.results[0].value,
     fixtures.locator.domain,
     fixtures.locator.entity
   )
@@ -27,10 +27,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   jest.clearAllMocks()
-})
-
-it('should define name', () => {
-  expect(Connector.name).toBe('MongoDB')
 })
 
 it('should connect', async () => {

@@ -15,8 +15,8 @@ it('should provide object', async () => {
   const entry = await state.entry(fixtures.query)
 
   expect(fixtures.storage.get).toHaveBeenCalledWith(fixtures.query)
-  expect(entry).toStrictEqual(fixtures.entity.create.mock.results[0].value)
-  expect(fixtures.entity.create).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
+  expect(entry).toStrictEqual(fixtures.entity.entry.mock.results[0].value)
+  expect(fixtures.entity.entry).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
 })
 
 it('should provide collection', async () => {
@@ -26,11 +26,15 @@ it('should provide collection', async () => {
   expect(collection).toStrictEqual(fixtures.entity.set.mock.results[0].value)
   expect(fixtures.entity.set).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
 })
-//
-// it('should persist object', async () => {
-//   const entity = fixtures.entity.create({ foo: 'bar' })
-//
-//   await state.commit(entity)
-//
-//   expect(fixtures.storage.persist).toHaveBeenCalledWith([entity._construct.mock.results[0].value])
-// })
+
+it('should add blank entry', async () => {
+  await state.commit(fixtures.blank)
+
+  expect(fixtures.storage.add).toHaveBeenCalledWith(fixtures.blank.get.mock.results[0].value)
+})
+
+it('should update entry', async () => {
+  await state.commit(fixtures.entry)
+
+  expect(fixtures.storage.update).toHaveBeenCalledWith(fixtures.entry.get.mock.results[0].value)
+})

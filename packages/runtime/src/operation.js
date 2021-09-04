@@ -9,18 +9,31 @@ class Operation {
     this.#target = target
   }
 
-  async invoke (io, query) {
-    const target = await this.#target?.query(query)
+  async invoke (input, query) {
+    let output
+    let error
 
-    // TODO: add move cloning/serialization to Bridge
-    const state = target.state
+    const target = await this.#target.query(query)
+    const state = target.get()
 
-    await this.#bridge.run(io, state)
+    const response = await this.#bridge.run(input, state)
 
-    if (this.#bridge.type === 'transition') {
-      target.state = state
-      await this.#target.commit(target)
+    if (response instanceof Array) [output, error] = response
+    else output = response
+
+    if (!error && this.#bridge.type === 'transition') {
+      error = target.set(state)
+
+      if (!error) {
+        // TODO: handle persistence errors
+        await this.#target.commit(target)
+      }
     }
+
+    if (error) output = null
+    else error = null
+
+    return [output, error]
   }
 }
 

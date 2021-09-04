@@ -2,9 +2,9 @@
 
 const { console } = require('@kookaburra/gears')
 
-const output = (object, argv) => {
+const print = (object, argv) => {
   if (argv.ugly) console.log(JSON.stringify(object))
   else console.dir(object)
 }
 
-exports.output = output
+exports.print = print

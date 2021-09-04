@@ -7,8 +7,8 @@ class Set {
     this.#set = set
   }
 
-  get state () {
-    return this.#set.map((entry) => entry.state)
+  get () {
+    return this.#set.map((entry) => entry.get())
   }
 }
 

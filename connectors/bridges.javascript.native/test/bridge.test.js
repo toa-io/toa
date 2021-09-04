@@ -15,7 +15,7 @@ const { Bridge } = require('../src/bridge')
 const operations = {
   pong: require('./operations/pong'),
   errors: {
-    object: require('./operations/error-object')
+    object: require('./operations/error')
   },
   exception: require('./operations/exception')
 }
@@ -121,30 +121,29 @@ it('should return output', async () => {
     '.bridge': { path: require.resolve('./operations/pong') }
   }
 
-  const io = { input: { a: 1 } }
+  const input = { a: 1 }
   const state = { a: 1 }
   const bridge = new Bridge(manifest)
 
-  await bridge.run(io, state)
-
+  const output = await bridge.run(input, state)
   const result = await operations.pong.mock.results[0].value
 
-  expect(result).toBeDefined()
-  expect(io.output).toStrictEqual(result)
+  expect(output).toBeDefined()
+  expect(output).toStrictEqual(result)
 })
 
-it('should return thrown objects as io.error', async () => {
+it('should return [output, error]', async () => {
   const manifest = {
-    '.bridge': { path: require.resolve('./operations/error-object') }
+    '.bridge': { path: require.resolve('./operations/error') }
   }
 
-  const io = { input: 1, error: null }
+  const input = { a: 1 }
   const bridge = new Bridge(manifest)
 
-  await bridge.run(io)
+  const [output, error] = await bridge.run(input)
 
-  expect(io.error).toBeDefined()
-  expect(io.error).toStrictEqual({ code: 1, message: 'oops' })
+  expect(error).toStrictEqual({ code: 1, message: 'oops' })
+  expect(output).toBeNull()
 })
 
 it('should throw on exceptions', async () => {

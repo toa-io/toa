@@ -1,5 +1,7 @@
 'use strict'
 
+const { id } = require('./id')
+
 class Entity {
   #schema
   #state
@@ -9,22 +11,22 @@ class Entity {
   constructor (schema, argument) {
     this.#schema = schema
 
-    if (typeof argument === 'string') {
+    if (argument) {
+      this.#state = argument
+    } else {
       this.blank = true
-      this.#state = { id: argument, ...this.#schema.defaults() }
+      this.#state = { id: id(), ...this.#schema.defaults() }
     }
-
-    if (typeof argument === 'object') { this.#state = argument }
   }
 
-  get state () {
+  get () {
     return this.#state
   }
 
-  set state (value) {
-    const { ok, oh } = this.#schema.fit(value)
+  set (value) {
+    const error = this.#schema.fit(value)
 
-    if (!ok) { throw new Error(`Value doesn't match entity schema (${oh.message})`) }
+    if (error) return error
 
     this.#state = value
   }

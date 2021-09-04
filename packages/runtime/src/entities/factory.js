@@ -5,23 +5,21 @@ const { Set } = require('./set')
 
 class Factory {
   #schema
-  #id
 
-  constructor (schema, id) {
+  constructor (schema) {
     this.#schema = schema
-    this.#id = id
   }
 
   blank () {
-    return new Entity(this.#schema, this.#id())
+    return new Entity(this.#schema)
   }
 
-  create (entry) {
+  entry (entry) {
     return new Entity(this.#schema, entry)
   }
 
   set (entries) {
-    const set = entries.map((entry) => this.create(entry))
+    const set = entries.map((entry) => this.entry(entry))
 
     return new Set(set)
   }

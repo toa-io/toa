@@ -6,16 +6,28 @@ const storage = {
   name: 'dummy',
   get: jest.fn(() => ({ id: randomstring.generate() })),
   find: jest.fn(() => ([{ id: randomstring.generate() }])),
-  persist: jest.fn(() => true)
+  add: jest.fn(() => true),
+  update: jest.fn(() => true)
 }
 
 const entity = {
-  create: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() })),
+  entry: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() })),
   set: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
 }
 
 const query = randomstring.generate()
 
+const entry = {
+  get: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
+}
+
+const blank = {
+  blank: true,
+  ...entry
+}
+
 exports.storage = storage
 exports.entity = entity
 exports.query = query
+exports.entry = entry
+exports.blank = blank

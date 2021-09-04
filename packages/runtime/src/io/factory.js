@@ -1,6 +1,6 @@
 'use strict'
 
-const { Typed } = require('./typed')
+const { IO } = require('./io')
 
 class Factory {
   #schemas
@@ -10,7 +10,7 @@ class Factory {
   }
 
   create () {
-    return new Typed(this.#schemas)
+    return new IO(this.#schemas)
   }
 }
 

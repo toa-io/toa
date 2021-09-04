@@ -1,3 +1,3 @@
-const { Connector } = require('./connector')
+const { Storage } = require('./storage')
 
-exports.Connector = Connector
+exports.Storage = Storage

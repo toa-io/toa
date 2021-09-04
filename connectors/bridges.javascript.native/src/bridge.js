@@ -17,18 +17,11 @@ class Bridge extends Connector {
     this.#algorithm = require(manifest['.bridge'].path)
   }
 
-  async run (io, state) {
-    if (state) { state = this.#state(state) }
+  async run (input, state) {
+    if (state) state = this.#state(state)
+    if (input) input = freeze(input)
 
-    try {
-      const output = await this.#algorithm(io.input, state)
-
-      if (output !== undefined) { io.output = output }
-    } catch (e) {
-      if (e instanceof Error) { throw e }
-
-      io.error = e
-    }
+    return this.#algorithm(input, state)
   }
 
   get type () {
@@ -36,13 +29,11 @@ class Bridge extends Connector {
   }
 
   #state (state) {
-    if (state instanceof Array) { return state.map((state) => this.#state(state)) }
+    if (state instanceof Array) return state.map((state) => this.#state(state))
 
-    for (const key of Object.keys(state)) {
-      if (key[0] === '_') { Object.defineProperty(state, key, { enumerable: false }) }
-    }
+    for (const key of Object.keys(state)) { if (key[0] === '_') Object.defineProperty(state, key, { enumerable: false }) }
 
-    if (this.#manifest.type === 'observation') { freeze(state) }
+    if (this.#manifest.type === 'observation') freeze(state)
 
     return state
   }
@@ -53,9 +44,7 @@ class Bridge extends Connector {
 
     let manifest
 
-    try {
-      manifest = parse(algorithm)
-    } catch (e) {
+    try { manifest = parse(algorithm) } catch (e) {
       e.message = `Operation '${name}': ${e.message}`
       throw e
     }

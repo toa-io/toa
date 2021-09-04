@@ -20,11 +20,11 @@ it('should create blank', () => {
   const blank = factory.blank()
 
   expect(blank).toBeInstanceOf(mock.Entity)
-  expect(blank.constructor).toHaveBeenCalledWith(fixtures.schema, fixtures.storage.id.mock.results[0].value)
+  expect(blank.constructor).toHaveBeenCalledWith(fixtures.schema)
 })
 
 it('should create instance', () => {
-  const entry = factory.create(fixtures.entry)
+  const entry = factory.entry(fixtures.entry)
 
   expect(entry).toBeInstanceOf(mock.Entity)
   expect(entry.constructor).toHaveBeenCalledWith(fixtures.schema, fixtures.entry)

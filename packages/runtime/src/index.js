@@ -4,7 +4,7 @@ const { Locator } = require('./locator')
 const { Operation } = require('./operation')
 const { Query } = require('./query')
 const { Runtime } = require('./runtime')
-const { Schemas } = require('./schemas')
+const { Schema } = require('./schema')
 const { State } = require('./state')
 
 exports.entities = require('./entities')
@@ -16,5 +16,5 @@ exports.Locator = Locator
 exports.Operation = Operation
 exports.Query = Query
 exports.Runtime = Runtime
-exports.Schemas = Schemas
+exports.Schema = Schema
 exports.State = State

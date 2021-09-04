@@ -21,7 +21,7 @@ class Context {
   request () {
     return ['get', 'post'].reduce((map, method) => {
       map[method] = (path, ...args) =>
-        request[method](new URL(path, `http://localhost:${this.#port}`).href, ...args)
+        request[method](new URL(path, `http://localhost:${this.#port}`).href, ...args).ok(() => true)
 
       return map
     }, {})

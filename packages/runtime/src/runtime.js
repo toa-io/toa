@@ -6,13 +6,13 @@ const { Connector } = require('./connector')
 class Runtime extends Connector {
   locator
 
-  #invocations = {}
+  #operations
 
-  constructor (locator, invocations) {
+  constructor (locator, operations) {
     super()
 
     this.locator = locator
-    this.#invocations = invocations
+    this.#operations = operations
   }
 
   connection () {
@@ -24,9 +24,9 @@ class Runtime extends Connector {
   }
 
   async invoke (name, input, query) {
-    if (!(name in this.#invocations)) { throw new Error(`Operation '${name}' not found in '${this.locator.name}'`) }
+    if (!(name in this.#operations)) { throw new Error(`Operation '${name}' not found in '${this.locator.name}'`) }
 
-    return await this.#invocations[name].invoke(input, query)
+    return this.#operations[name].invoke(input, query)
   }
 }
 
