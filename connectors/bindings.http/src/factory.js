@@ -1,16 +1,28 @@
 'use strict'
 
-const { Transport } = require('./transport')
+const { Client } = require('./client')
+const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
+const { Server } = require('./server')
 
 class Factory {
-  producer (runtimes) {
-    const transport = new Transport()
-    const producer = new Producer(transport)
+  #server
+  #clients
 
-    runtimes.forEach((runtime) => producer.bind(runtime))
+  constructor () {
+    this.#server = new Server()
+  }
 
-    return producer
+  producer (runtime) {
+    return new Producer(this.#server, runtime)
+  }
+
+  consumer (locator) {
+    const name = locator.name
+
+    if (!this.#clients[name]) this.#clients[name] = new Client(locator)
+
+    return new Consumer(this.#clients[name])
   }
 }
 

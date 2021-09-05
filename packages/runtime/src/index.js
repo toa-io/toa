@@ -6,6 +6,7 @@ const { Query } = require('./query')
 const { Runtime } = require('./runtime')
 const { Schema } = require('./schema')
 const { State } = require('./state')
+const { id } = require('./id')
 
 exports.entities = require('./entities')
 exports.io = require('./io')
@@ -18,3 +19,4 @@ exports.Query = Query
 exports.Runtime = Runtime
 exports.Schema = Schema
 exports.State = State
+exports.id = id

@@ -10,7 +10,8 @@ let context, collection, request, parser
 beforeAll(async () => {
   context = new Context({
     composition: ['messages'],
-    storage: 'mongodb'
+    storage: 'mongodb',
+    bindings: ['http']
   })
 
   await context.setup()
@@ -27,12 +28,6 @@ afterAll(async () => {
 
 afterEach(async () => {
   await collection.deleteMany()
-})
-
-it('should be ready', async () => {
-  const response = await request.get('/')
-
-  expect(response.status).toBe(200)
 })
 
 it('should add message', async () => {

@@ -8,6 +8,7 @@ const { locate } = require('./dummies')
 class Context {
   storage
 
+  #bindings
   #components
   #composition
   #port
@@ -15,7 +16,8 @@ class Context {
   constructor (options) {
     this.#components = options.composition
 
-    if (options.storage) { this.storage = Context.#storage(options.storage) }
+    if (options.storage) this.storage = Context.#storage(options.storage)
+    if (options.bindings) this.#bindings = options.bindings.map((binding) => '@kookaburra/bindings.' + binding)
   }
 
   request () {
@@ -31,10 +33,16 @@ class Context {
     if (this.storage) { await this.storage.setup() }
 
     if (this.#components) {
-      this.#composition = await composition(this.#components.map(locate))
+      this.#composition = await composition(this.#components.map(locate), { bindings: this.#bindings })
       await this.#composition.connect()
 
-      this.#port = +console.info.mock.calls.pop()[1].match(/HTTP server started at :(\d+)$/)[1]
+      console.info.mock.calls.find((call) => {
+        const match = call[1].match(/HTTP server started at :(\d+)$/)
+
+        if (match) this.#port = match[1]
+
+        return match
+      })
     }
   }
 

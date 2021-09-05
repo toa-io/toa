@@ -1,6 +1,6 @@
 'use strict'
 
-const { id } = require('./id')
+const { id } = require('../id')
 
 class Entity {
   #schema

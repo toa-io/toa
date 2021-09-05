@@ -7,7 +7,7 @@ const { console } = require('@kookaburra/gears')
 
 const { response } = require('./response')
 
-class Transport extends Connector {
+class Server extends Connector {
   #app
   #port
   #server
@@ -18,7 +18,6 @@ class Transport extends Connector {
     this.#app = express()
     this.#app.disable('x-powered-by')
     this.#app.use(express.json())
-    this.#app.get('/', Transport.#ready)
 
     this.#port = process.env.KOO_ENV === 'dev' ? 0 : 3000
   }
@@ -65,10 +64,6 @@ class Transport extends Connector {
       this.#server.on('error', reject)
     })
   }
-
-  static #ready (_, res) {
-    res.send()
-  }
 }
 
-exports.Transport = Transport
+exports.Server = Server

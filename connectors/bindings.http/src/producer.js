@@ -3,24 +3,26 @@
 const { Connector } = require('@kookaburra/runtime')
 
 class Producer extends Connector {
-  #transport
+  #server
 
-  constructor (transport) {
+  constructor (server, runtime) {
     super()
 
-    this.#transport = transport
-    this.depends(transport)
+    this.#server = server
+    this.depends(server)
+    this.#bind(runtime)
+
+    server.depends(runtime)
   }
 
-  bind (runtime) {
-    runtime.locator.endpoints.map((endpoint) => this.#bind(runtime, endpoint))
-    this.#transport.depends(runtime)
+  #bind (runtime) {
+    runtime.locator.endpoints.map((endpoint) => this.#endpoint(runtime, endpoint))
   }
 
-  #bind (runtime, endpoint) {
+  #endpoint (runtime, endpoint) {
     const path = Producer.#path(runtime.locator, endpoint)
 
-    this.#transport.reply('POST', path, async (input, query) => runtime.invoke(endpoint.name, input, query))
+    this.#server.reply('POST', path, async (input, query) => runtime.invoke(endpoint.name, input, query))
   }
 
   static #path (locator, endpoint) {

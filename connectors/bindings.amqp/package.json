@@ -1,7 +1,7 @@
 {
-  "name": "@kookaburra/boot",
+  "name": "@kookaburra/bindings.amqp",
   "version": "0.0.0",
-  "description": "Kookaburra Boot",
+  "description": "AMQP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
   "main": "src/index.js",
@@ -18,10 +18,11 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {
-    "@kookaburra/http": "^0.0.0",
-    "@kookaburra/package": "^0.0.0",
-    "@kookaburra/runtime": "^0.0.0"
+  "peerDependencies": {
+    "@kookaburra/runtime": "^0.0.0",
+    "@kookaburra/gears": "^0.0.0"
   },
-  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
+  "dependencies": {
+    "amqplib": "^0.8.0"
+  }
 }
