@@ -1,14 +1,14 @@
 'use strict'
 
-const boot = require('@kookaburra/boot')
-const { console } = require('@kookaburra/gears')
+const { load } = require('@kookaburra/package')
+const { console, yaml } = require('@kookaburra/gears')
 
 const { root } = require('../util/root')
 
 async function print (argv) {
-  const manifest = await boot.manifest(root(argv.path))
+  const manifest = await load(root(argv.path))
 
-  console.dir(manifest)
+  console.log(yaml.dump(manifest))
 }
 
 exports.manifest = print

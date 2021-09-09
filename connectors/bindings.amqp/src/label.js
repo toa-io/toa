@@ -1,7 +1,7 @@
 'use strict'
 
 const label = (locator, endpoint) => {
-  return `${locator.name}.${endpoint.name}`
+  return `${locator.fqn}.${endpoint}`
 }
 
 exports.label = label

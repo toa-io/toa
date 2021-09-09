@@ -26,7 +26,7 @@ class Producer extends Connector {
   }
 
   static #path (locator, endpoint) {
-    return `/${locator.name}/${endpoint.name}`
+    return `/${locator.fqn}/${endpoint.name}`
   }
 }
 

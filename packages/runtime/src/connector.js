@@ -1,5 +1,7 @@
 'use strict'
 
+const { console } = require('@kookaburra/gears')
+
 class Connector {
   #connectors = []
   #connecting
@@ -25,7 +27,9 @@ class Connector {
   }
 
   async connect () {
-    if (this.#connecting) { return this.#connecting }
+    if (this.#connecting) return this.#connecting
+
+    this.#disconnecting = undefined
 
     this.#connecting = (async () => {
       await Promise.all(this.#connectors.map(connector => connector.connect()))
@@ -38,19 +42,26 @@ class Connector {
       await this.disconnect(true)
       throw e
     }
+
+    console.debug(`Connector '${this.constructor.name}' connected`)
   }
 
   async disconnect (interrupt) {
-    if (!interrupt) { await this.#connecting }
+    if (!interrupt) await this.#connecting
 
-    if (this.#disconnecting) { return this.#disconnecting }
+    if (this.#disconnecting) return this.#disconnecting
+
+    this.#connecting = undefined
 
     this.#disconnecting = (async () => {
-      if (!interrupt) { await this.disconnection() }
+      if (!interrupt) await this.disconnection()
+
       await Promise.all(this.#connectors.map(connector => connector.disconnect()))
     })()
 
     await this.#disconnecting
+
+    console.debug(`Connector '${this.constructor.name}' disconnected`)
   }
 
   async connection () {}

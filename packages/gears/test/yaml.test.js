@@ -45,3 +45,9 @@ describe('try', () => {
     expect(object).toBeNull()
   })
 })
+
+describe('dump', () => {
+  it('should dump object', () => {
+    expect(yaml.dump({ ok: 1 })).toBe('ok: 1\n')
+  })
+})

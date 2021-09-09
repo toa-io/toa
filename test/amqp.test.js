@@ -1,7 +1,6 @@
 'use strict'
 
 const randomstring = require('randomstring')
-
 const { Context } = require('./framework')
 
 const amqp = require('../connectors/bindings.amqp/src/factory')
@@ -24,11 +23,14 @@ beforeAll(async () => {
   await consumer.connect()
 })
 
-it('should add message', async () => {
-  jest.setTimeout(30000)
+afterAll(async () => {
+  await consumer.disconnect()
+  await context.teardown()
+})
 
+it('should add message', async () => {
   const message = { text: randomstring.generate() }
-  const [output] = await consumer.request({ name: 'add' }, message)
+  const [output] = await consumer.request('add', message)
 
   expect(output.id).toBeDefined()
 

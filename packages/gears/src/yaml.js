@@ -8,16 +8,14 @@ const yaml = require('js-yaml')
 const load = async path => {
   const readFile = util.promisify(fs.readFile)
   const contents = await readFile(path, 'utf8')
-  const object = yaml.load(contents)
 
-  return object
+  return yaml.load(contents)
 }
 
 load.sync = path => {
   const contents = fs.readFileSync(path)
-  const object = yaml.load(contents)
 
-  return object
+  return yaml.load(contents)
 }
 
 load.try = async path => {
@@ -26,6 +24,10 @@ load.try = async path => {
   } catch (e) {
     return null
   }
+}
+
+load.dump = (object) => {
+  return yaml.dump(object, { noRefs: true })
 }
 
 exports.yaml = load

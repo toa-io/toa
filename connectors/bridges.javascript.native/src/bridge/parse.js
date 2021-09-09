@@ -3,6 +3,8 @@
 const parser = require('@babel/parser')
 
 const parse = (algorithm) => {
+  if (typeof algorithm !== 'function') throw new Error('Algorithm must export function')
+
   const ast = parser.parse(algorithm.toString())
 
   const { type, target } = node(ast.program.body[0])

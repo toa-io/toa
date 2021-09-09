@@ -26,10 +26,6 @@ afterAll(async () => {
   await context.teardown()
 })
 
-afterEach(async () => {
-  await collection.deleteMany()
-})
-
 it('should add message', async () => {
   const message = { text: randomstring.generate() }
   const response = await request.post('/messages.messages/add').send({ input: message })

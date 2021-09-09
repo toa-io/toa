@@ -20,11 +20,12 @@ class Factory {
   }
 
   #channel (locator) {
-    const name = locator.name
+    const host = locator.host('amqp')
+    const id = host + '/' + locator.fqn
 
-    if (!this.#channels[name]) this.#channels[name] = new Channel(locator.host('amqp'), locator.name)
+    if (!this.#channels[id]) this.#channels[id] = new Channel(host)
 
-    return this.#channels[name]
+    return this.#channels[id]
   }
 }
 

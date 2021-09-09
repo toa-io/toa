@@ -9,19 +9,23 @@ const { parse } = require('./bridge/parse')
 class Bridge extends Connector {
   #manifest
   #algorithm
+  #context
 
-  constructor (manifest) {
+  constructor (manifest, context) {
     super()
 
     this.#manifest = manifest
     this.#algorithm = require(manifest['.bridge'].path)
+    this.#context = context
+
+    this.depends(context)
   }
 
   async run (input, state) {
-    if (state) state = this.#state(state)
     if (input) input = freeze(input)
+    if (state) state = this.#state(state)
 
-    return this.#algorithm(input, state)
+    return this.#algorithm(input, state, this.#context)
   }
 
   get type () {
@@ -31,7 +35,13 @@ class Bridge extends Connector {
   #state (state) {
     if (state instanceof Array) return state.map((state) => this.#state(state))
 
-    for (const key of Object.keys(state)) { if (key[0] === '_') Object.defineProperty(state, key, { enumerable: false }) }
+    const id = state.id
+
+    Object.defineProperty(state, 'id', { get: () => id })
+
+    for (const key of Object.keys(state)) {
+      if (key[0] === '_') Object.defineProperty(state, key, { enumerable: false })
+    }
 
     if (this.#manifest.type === 'observation') freeze(state)
 

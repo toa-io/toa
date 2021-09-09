@@ -16,7 +16,7 @@ async function invoke (argv) {
   const [output, error] = await runtime.invoke(argv.operation, input, query)
   await runtime.disconnect()
 
-  if (error) { throw error }
+  if (error) throw error
 
   print(output, argv)
 }

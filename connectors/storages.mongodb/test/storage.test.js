@@ -21,7 +21,7 @@ beforeAll(() => {
   expect(fixtures.mock.Client).toHaveBeenCalledWith(
     fixtures.locator.host.mock.results[0].value,
     fixtures.locator.domain,
-    fixtures.locator.entity
+    fixtures.locator.name
   )
 })
 

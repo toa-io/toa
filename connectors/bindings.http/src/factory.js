@@ -18,7 +18,7 @@ class Factory {
   }
 
   consumer (locator) {
-    const name = locator.name
+    const name = locator.fqn
 
     if (!this.#clients[name]) this.#clients[name] = new Client(locator)
 

@@ -9,7 +9,7 @@ const { pack, unpack } = require('./message')
 
 class Channel extends Connector {
   #id
-  #address
+  #locator
   #connection
   #channel
 
@@ -20,14 +20,14 @@ class Channel extends Connector {
     super()
 
     this.#id = id()
-    this.#address = Channel.#url(host)
+    this.#locator = Channel.#url(host)
   }
 
   async connection () {
-    this.#connection = await amqp.connect(this.#address)
+    this.#connection = await amqp.connect(this.#locator)
     this.#channel = await this.#connection.createChannel()
 
-    console.info(`AMQP Binding connected to ${this.#address}`)
+    console.info(`AMQP Binding connected to ${this.#locator}`)
   }
 
   async disconnection () {
@@ -35,7 +35,7 @@ class Channel extends Connector {
     // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
     await this.#connection.close()
 
-    console.info(`AMQP Binding disconnected from ${this.#address}`)
+    console.info(`AMQP Binding disconnected from ${this.#locator}`)
   }
 
   async request (label, content) {
@@ -55,14 +55,14 @@ class Channel extends Connector {
     return unpack(received.content)
   }
 
-  reply (label, invocation) {
+  async reply (label, invocation) {
     const queue = 'request.' + label
     const exchange = 'reply.' + label
 
-    this.#channel.assertQueue(queue, QUEUE)
-    this.#channel.assertExchange(exchange, 'direct', EXCHANGE)
+    await this.#channel.assertQueue(queue, QUEUE)
+    await this.#channel.assertExchange(exchange, 'direct', EXCHANGE)
 
-    this.#channel.consume(queue, async (received) => {
+    await this.#channel.consume(queue, async (received) => {
       const content = unpack(received.content)
       const response = await invocation(content)
 

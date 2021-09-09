@@ -74,6 +74,23 @@ it('should pass frozen state to observation', async () => {
   expect(Object.isFrozen(argument)).toBeTruthy()
 })
 
+it('should pass id as getter', async () => {
+  const manifest = {
+    type: 'transition',
+    '.bridge': { path: require.resolve('./operations/pong') }
+  }
+
+  const io = { input: 1 }
+  const state = { a: 1 }
+  const bridge = new Bridge(manifest)
+
+  await bridge.run(io, state)
+
+  const argument = operations.pong.mock.calls[0][1]
+
+  expect(() => (argument.id = 'foo')).toThrow(/has only a getter/)
+})
+
 it('should pass entry with non enumerable system properties', async () => {
   const manifest = {
     '.bridge': { path: require.resolve('./operations/pong') }

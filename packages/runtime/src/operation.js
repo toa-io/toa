@@ -1,12 +1,18 @@
 'use strict'
 
-class Operation {
+const { Connector } = require('./connector')
+
+class Operation extends Connector {
   #bridge
   #target
 
   constructor (bridge, target) {
+    super()
+
     this.#bridge = bridge
     this.#target = target
+
+    this.depends(bridge)
   }
 
   async invoke (input, query) {

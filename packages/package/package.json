@@ -1,7 +1,7 @@
 {
   "name": "@kookaburra/package",
   "version": "0.0.0",
-  "description": "Kookaburra Component Package",
+  "description": "Kookaburra Package",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
   "repository": {
@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "main": "src/package.js",
+  "main": "src/index.js",
   "publishConfig": {
     "access": "public"
   },
@@ -20,9 +20,7 @@
   },
   "dependencies": {
     "@kookaburra/gears": "^0.0.0",
-    "glob": "7.1.6",
-    "glob-promise": "4.0.1",
-    "js-yaml": "4.0.0"
+    "@kookaburra/schema": "^0.0.0"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
 }

@@ -1,8 +1,0 @@
-domain: testing
-name: simple
-
-entity:
-  schema:
-    properties:
-      a:
-        type: string

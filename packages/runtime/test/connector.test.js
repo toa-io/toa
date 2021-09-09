@@ -25,6 +25,16 @@ describe('callbacks', () => {
     await a.disconnect()
     expect(sequence).toEqual(['+a', '-a'])
   })
+
+  it('should reconnect', async () => {
+    await a.connect()
+    await a.disconnect()
+    await a.connect()
+    await a.disconnect()
+    await a.connect()
+
+    expect(sequence).toEqual(['+a', '-a', '+a', '-a', '+a'])
+  })
 })
 
 describe('dependencies', () => {
@@ -115,7 +125,6 @@ describe('dependencies', () => {
 
     it('should interrupt connection chain', async () => {
       a.depends(f).depends(c)
-      /*      */
       f.depends(d)
 
       await expect(a.connect()).rejects.toThrow('FailingConnector')

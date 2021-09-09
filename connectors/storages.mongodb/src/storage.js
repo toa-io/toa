@@ -7,14 +7,12 @@ const { translate } = require('./translate')
 const { to, from } = require('./entry')
 
 class Storage extends Connector {
-  static name = 'MongoDB'
-
   #client
 
   constructor (locator) {
     super()
 
-    this.#client = new Client(locator.host(Storage.name), locator.domain, locator.entity)
+    this.#client = new Client(locator.host(Storage.name), locator.domain, locator.name)
   }
 
   async connection () {
@@ -26,7 +24,7 @@ class Storage extends Connector {
   }
 
   async add (entry) {
-    return await this.#client.add(to(entry))
+    return this.#client.add(to(entry))
   }
 
   async get (query) {
@@ -40,7 +38,7 @@ class Storage extends Connector {
   async update (entry) {
     const criteria = { _id: entry.id }
 
-    return await this.#client.update(criteria, to(entry))
+    return this.#client.update(criteria, to(entry))
   }
 
   async find (query) {

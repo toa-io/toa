@@ -1,9 +1,14 @@
 'use strict'
 
 const path = require('path')
+const { yaml } = require('@kookaburra/gears')
+const { Schema } = require('@kookaburra/schema')
 
-const { validation } = require('./validation/validation')
+const object = yaml.sync(path.resolve(__dirname, 'schema.yaml'))
+const schema = new Schema(object)
 
-const validate = validation(path.resolve(__dirname, './validation/rules'))
+const validate = (object) => {
+  return schema.fit(object)
+}
 
 exports.validate = validate

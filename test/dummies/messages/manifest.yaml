@@ -9,11 +9,13 @@ entity:
       text: string
       timestamp: integer
 
+#remotes: [credits.balance]
+
 operations:
   - name: add
     input:
       properties:
-        text: string
+        text: ~
       required: [text]
     output:
       properties:
@@ -23,13 +25,13 @@ operations:
     output:
       properties:
         id: string
-        text: string
-        timestamp: integer
+        text: ~
+        timestamp: ~
       required: [id, text]
   - name: update
     input:
       properties:
-        text: string
+        text: ~
       required: [text]
   - name: find
     output:

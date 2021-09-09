@@ -1,0 +1,19 @@
+domain: credits
+name: balance
+
+entity:
+  schema:
+    properties:
+      user: string
+      balance: integer
+
+operations:
+  - name: deduce
+    input:
+      properties:
+        user: string
+        amount: integer
+      required: [user, amount]
+    output:
+      properties:
+        balance: integer

@@ -1,63 +1,42 @@
 'use strict'
 
-const path = require('path')
-const glob = require('glob-promise')
-const parser = require('@babel/parser')
+const operations = async (root, manifest) => {
+  if (!(manifest.operations instanceof Array)) return
 
-const { yaml } = require('@kookaburra/gears')
-const { dupes } = require('./validate')
+  manifest.operations = await Promise.all(manifest.operations.map(async (operation) => {
+    if (!operation.name) return operation
 
-const parse = async (dir) => {
-  const files = await glob(path.resolve(dir, `*${EXT}`))
-  const operations = await Promise.all(files.map(operation))
+    const { Bridge } = require(operation.bridge || '@kookaburra/bridges.javascript.native')
+    const manifest = await Bridge.manifest(root, operation.name)
 
-  return operations
+    return merge(operation, manifest)
+  }))
 }
 
-const operation = async (file) => {
-  const name = path.parse(file).name
+const merge = (target, source) => {
+  if (!source) return target
 
-  delete require.cache[require.resolve(file)]
+  Object.keys(source).forEach((key) => {
+    if (typeof source[key] === 'object') {
+      if (target[key] === undefined) { target[key] = {} }
 
-  const algorithm = require(file)
-  const ast = parser.parse(algorithm.toString())
-  const { type, target } = node(ast.program.body[0])
-  const declaration = { algorithm, name, type, target }
+      if (typeof target[key] !== 'object') {
+        throw new Error(`Manifest conflict with Bridge on key '${key}' ` +
+          `(${typeof target[key]}, ${typeof source[key]})`)
+      }
 
-  const manifest = await yaml.try(`${path.resolve(path.dirname(file), path.basename(file, EXT))}.yaml`)
-  const operation = { ...manifest, ...declaration }
+      target[key] = merge(target[key], source[key])
+    } else {
+      if (target[key] !== undefined && target[key] !== source[key]) {
+        throw new Error(`Manifest conflict with Bridge on key '${key}' ` +
+          `(${target[key]}, ${source[key]})`)
+      }
 
-  dupes(declaration, manifest, 'Function declaration and operation manifest')
+      target[key] = source[key]
+    }
+  })
 
-  return operation
+  return target
 }
 
-function node (node) {
-  if (node.type !== 'FunctionDeclaration') { throw new Error('Algorithm must export named function declaration') }
-
-  return { type: type(node), target: target(node) }
-}
-
-function type (node) {
-  const type = node.id.name
-
-  if (TYPES.indexOf(type) === -1) { throw new Error(`Algorithm name must be one of: ${TYPES.join(', ')}, ${type} given`) }
-
-  return type
-}
-
-function target (node) {
-  const param = node.params[1]?.name
-
-  if (!param) return
-  if (TARGETS.indexOf(param) === -1) throw new Error(`Algorithm target (second) argument name must be one of: ${TARGETS.join(', ')}`)
-
-  return param
-}
-
-const TYPES = ['transition', 'observation']
-const TARGETS = ['object', 'collection']
-
-const EXT = '.js'
-
-exports.parse = parse
+exports.operations = operations

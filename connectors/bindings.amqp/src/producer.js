@@ -19,25 +19,27 @@ class Producer extends Connector {
   }
 
   async connection () {
-    await Promise.all(this.#runtime.locator.endpoints.map((endpoint) => this.#endpoint(endpoint)))
+    await Promise.all(this.#runtime.locator.endpoints.map((endpoint) => this.#operation(endpoint.name)))
   }
 
-  async #endpoint (endpoint) {
-    const queue = label(this.#runtime.locator, endpoint)
+  async #operation (operation) {
+    const queue = label(this.#runtime.locator, operation)
 
-    this.#channel.reply(queue, async ({ input, query }) => {
-      let output, error, exception
+    await this.#channel.reply(queue, async ({ input, query }) => this.#invoke(operation, input, query))
+  }
 
-      try {
-        [output, error] = await this.#runtime.invoke(endpoint.name, input, query)
-      } catch ({ code, message, stack }) {
-        exception = { code, message }
+  async #invoke (operation, input, query) {
+    let output, error, exception
 
-        if (process.env.KOO_ENV === 'dev') exception.stack = stack
-      }
+    try {
+      [output, error] = await this.#runtime.invoke(operation, input, query)
+    } catch ({ code, message, stack }) {
+      exception = { code, message }
 
-      return [output, error, exception]
-    })
+      if (process.env.KOO_ENV === 'dev') exception.stack = stack
+    }
+
+    return [output, error, exception]
   }
 }
 

@@ -1,5 +1,3 @@
-// noinspection JSUnresolvedVariable
-
 'use strict'
 
 const yargs = require('yargs')
@@ -25,7 +23,7 @@ const argv = yargs(process.argv.slice(2))
   .option('log', {
     type: 'string',
     describe: 'Logging level',
-    default: process.env.KOO_ENV === 'dev' ? 'info' : 'error'
+    default: process.env.KOO_ENV === 'dev' ? 'info' : 'warn'
   })
   .option('stacktrace', {
     type: 'boolean',

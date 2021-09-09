@@ -13,18 +13,20 @@ class Runtime extends Connector {
 
     this.locator = locator
     this.#operations = operations
+
+    Object.entries(operations).forEach(([_, operation]) => this.depends(operation))
   }
 
   connection () {
-    console.info(`Runtime '${this.locator.name}' connected`)
+    console.info(`${this.constructor.name} '${this.locator.fqn}' connected`)
   }
 
   disconnection () {
-    console.info(`Runtime '${this.locator.name}' disconnected`)
+    console.info(`${this.constructor.name} '${this.locator.fqn}' disconnected`)
   }
 
   async invoke (name, input, query) {
-    if (!(name in this.#operations)) { throw new Error(`Operation '${name}' not found in '${this.locator.name}'`) }
+    if (!(name in this.#operations)) { throw new Error(`Operation '${name}' not found in '${this.locator.fqn}'`) }
 
     return this.#operations[name].invoke(input, query)
   }

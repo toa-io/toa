@@ -47,8 +47,8 @@ class Context {
   }
 
   async teardown () {
-    if (this.#composition) { await this.#composition.disconnect() }
-    if (this.storage) { await this.storage.teardown() }
+    if (this.#composition) await this.#composition.disconnect()
+    if (this.storage) await this.storage.teardown()
   }
 
   static #storage (storage) {
