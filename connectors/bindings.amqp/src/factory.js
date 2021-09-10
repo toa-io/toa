@@ -1,32 +1,54 @@
 'use strict'
 
+const { Locator } = require('@kookaburra/runtime')
+
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
 
 class Factory {
   #channels = {}
+  #system
 
-  producer (runtime) {
-    const channel = this.#channel(runtime.locator)
+  constructor () {
+    this.#system = this.#channel(Locator.host('system', null, TYPE))
+  }
 
-    return new Producer(channel, runtime)
+  producer (runtime, endpoints) {
+    const channel = this.#channel(runtime.locator.host(TYPE))
+
+    return Factory.#producer(channel, runtime, endpoints)
   }
 
   consumer (locator) {
-    const channel = this.#channel(locator)
+    const channel = this.#channel(locator.host(TYPE))
 
+    return Factory.#consumer(channel, locator)
+  }
+
+  exposition (runtime, endpoints) {
+    return Factory.#producer(this.#system, runtime, endpoints)
+  }
+
+  discovery (locator) {
+    return Factory.#consumer(this.#system, locator)
+  }
+
+  static #producer (channel, runtime, endpoints) {
+    return new Producer(channel, runtime, endpoints)
+  }
+
+  static #consumer (channel, locator) {
     return new Consumer(channel, locator)
   }
 
-  #channel (locator) {
-    const host = locator.host('amqp')
-    const id = host + '/' + locator.fqn
+  #channel (host) {
+    if (!this.#channels[host]) this.#channels[host] = new Channel(host)
 
-    if (!this.#channels[id]) this.#channels[id] = new Channel(host)
-
-    return this.#channels[id]
+    return this.#channels[host]
   }
 }
+
+const TYPE = 'amqp'
 
 exports.Factory = Factory

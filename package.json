@@ -2,7 +2,7 @@
   "name": "kookaburra",
   "private": true,
   "workspaces": [
-    "packages/*",
+    "core/*",
     "connectors/*"
   ],
   "devDependencies": {
