@@ -1,0 +1,32 @@
+const { Call } = require('./call')
+const { Composition } = require('./composition')
+const { Connector } = require('./connector')
+const { Context } = require('./context')
+const { Discovery } = require('./discovery')
+const { Exposition } = require('./exposition')
+const { Locator } = require('./locator')
+const { Operation } = require('./Operation')
+const { Query } = require('./query')
+const { Remote } = require('./remote')
+const { Runtime } = require('./runtime')
+const { State } = require('./state')
+const { Transmission } = require('./transmission')
+const { id } = require('./id')
+
+exports.entities = require('./entities')
+exports.io = require('./io')
+
+exports.Call = Call
+exports.Composition = Composition
+exports.Connector = Connector
+exports.Context = Context
+exports.Discovery = Discovery
+exports.Exposition = Exposition
+exports.Locator = Locator
+exports.Operation = Operation
+exports.Query = Query
+exports.Remote = Remote
+exports.Runtime = Runtime
+exports.State = State
+exports.Transmission = Transmission
+exports.id = id

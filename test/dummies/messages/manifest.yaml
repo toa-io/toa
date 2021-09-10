@@ -9,7 +9,8 @@ entity:
       text: string
       timestamp: integer
 
-#remotes: [credits.balance]
+remotes: [credits.balance]
+bindings: ['@kookaburra/bindings.amqp']
 
 operations:
   - name: add

@@ -16,7 +16,7 @@ class Producer extends Connector {
   }
 
   #bind (runtime) {
-    runtime.locator.endpoints.map((endpoint) => this.#endpoint(runtime, endpoint))
+    runtime.locator.operations.map((endpoint) => this.#endpoint(runtime, endpoint))
   }
 
   #endpoint (runtime, endpoint) {

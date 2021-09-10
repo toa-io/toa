@@ -7,32 +7,34 @@ const { label } = require('./label')
 class Producer extends Connector {
   #channel
   #runtime
+  #endpoints
 
-  constructor (channel, runtime) {
+  constructor (channel, runtime, endpoints) {
     super()
 
     this.#channel = channel
     this.#runtime = runtime
+    this.#endpoints = endpoints
 
     this.depends(channel)
     this.depends(runtime)
   }
 
   async connection () {
-    await Promise.all(this.#runtime.locator.endpoints.map((endpoint) => this.#operation(endpoint.name)))
+    await Promise.all(this.#endpoints.map((endpoint) => this.#operation(endpoint)))
   }
 
-  async #operation (operation) {
-    const queue = label(this.#runtime.locator, operation)
+  async #operation (endpoint) {
+    const queue = label(this.#runtime.locator, endpoint)
 
-    await this.#channel.reply(queue, async ({ input, query }) => this.#invoke(operation, input, query))
+    await this.#channel.reply(queue, async ({ input, query }) => this.#invoke(endpoint, input, query))
   }
 
-  async #invoke (operation, input, query) {
+  async #invoke (endpoint, input, query) {
     let output, error, exception
 
     try {
-      [output, error] = await this.#runtime.invoke(operation, input, query)
+      [output, error] = await this.#runtime.invoke(endpoint, input, query)
     } catch ({ code, message, stack }) {
       exception = { code, message }
 

@@ -2,7 +2,7 @@
 
 const request = require('superagent')
 
-const { composition } = require('../../packages/boot/src/composition')
+const { composition } = require('../../core/boot/src/composition')
 const { locate } = require('./dummies')
 
 class Context {
