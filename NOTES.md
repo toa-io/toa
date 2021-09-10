@@ -35,14 +35,3 @@ const CONSTANT = 'value'
 
 exports.Declaration = Declaration
 ```
-# Ok Oh Convention
-Throw-catch must not be used for control flow. 
-Functions optionally returning an error must follow the pattern:  
-```javascript
-const { ok, oh } = func()
-```
-```javascript
-const { ok, oh, myValue, otherValue } = func()
-```
-In case of `ok === false` `oh.message` is expected to be defined as string.
-This message text may be provided to end users.
