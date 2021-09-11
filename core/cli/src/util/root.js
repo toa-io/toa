@@ -3,8 +3,6 @@
 const path = require('path')
 const findUp = require('find-up')
 
-const MANIFEST = 'manifest.yaml'
-
 function tryRoot (from = '.') {
   const current = process.cwd()
 
@@ -24,6 +22,8 @@ function root (from = '.') {
 
   return dir
 }
+
+const MANIFEST = 'manifest.yaml'
 
 exports.root = root
 exports.tryRoot = tryRoot
