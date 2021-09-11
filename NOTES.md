@@ -1,11 +1,21 @@
 # Notes
 
+## Setup dev environment
+`yarn dev`
+
+###Debug Integration Tests
+Path `/integration` is not included in jest `roots` by default. To run them with your debugger, 
+you should pass `--roots core connectors integration` option to jest cli. 
+
+For example, if you're using WebStorm, set CLI Options in Jest Template as `--roots core connectors integration`
+
 ## Code Style Requirements
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 1. exports last
 2. no default exports
 3. exports.name instead of module.exports.name
 4. `'use strict'`
+5. single quotes
 
 ### Module Structure
 ```javascript
@@ -13,8 +23,8 @@
 
 const lib1 = require('node-libs')
 const lib2 = require('third-party-libs')
-
 const { tool } = require('@kookaburra/libs')
+
 const { local } = require('./local/module')
 
 class Declaration {
@@ -24,16 +34,14 @@ class Declaration {
 
   constructor (arg) {}
 
-  #fix() {}
+  do() {}
+
+  #do() {}
   
-  append() {}
-  
-  static create() {}
+  static do() {}
 }
 
 const CONSTANT = 'value'
 
 exports.Declaration = Declaration
 ```
-##Debug Integration Tests
-Update CLI Options in Jest Template with `--roots core connectors integration`
