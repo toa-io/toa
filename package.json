@@ -22,7 +22,8 @@
     "superagent": "6.1.0"
   },
   "scripts": {
-    "test": "standard --verbose | snazzy && jest",
+    "test": "jest",
+    "integration": "jest --roots=./integration",
     "lint": "standard --verbose --fix | snazzy",
     "prepare": "husky install"
   },
@@ -33,8 +34,10 @@
     }
   },
   "jest": {
+    "roots": ["<rootDir>/core", "<rootDir>/connectors"],
+    "testMatch": ["**/?(*.)+(test).js"],
     "setupFilesAfterEnv": [
-      "<rootDir>/test/setup.js"
+      "<rootDir>/jest.setup.js"
     ]
   }
 }
