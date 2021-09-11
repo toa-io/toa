@@ -2,7 +2,7 @@
 
 const { default: Ajv } = require('ajv')
 const keywords = require('ajv-keywords')
-const validator = new Ajv({ useDefaults: true })
+const validator = new Ajv({ useDefaults: true, strictTypes: false })
 
 keywords(validator)
 
