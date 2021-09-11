@@ -1,15 +1,16 @@
 'use strict'
 
-const { Locator, Discovery } = require('@kookaburra/runtime')
+const { Locator, Discovery, Transmission } = require('@kookaburra/runtime')
 
 const boot = require('./index')
 
 const discovery = (fqn) => {
   const manifest = { ...Locator.split(fqn) }
   const locator = new Locator(manifest)
-  const consumer = boot.bindings.discover(locator)
+  const consumers = boot.bindings.discover(locator)
+  const transmission = new Transmission({ name: 'discover' }, consumers)
 
-  return new Discovery(consumer)
+  return new Discovery(transmission)
 }
 
 exports.discovery = discovery

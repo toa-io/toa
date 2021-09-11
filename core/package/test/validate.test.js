@@ -144,6 +144,30 @@ describe('entity', () => {
   })
 })
 
+describe('bindings', () => {
+  it('should have default value', () => {
+    delete manifest.bindings
+    expect(validate(manifest)).toBe(null)
+    expect(manifest.bindings).toStrictEqual(['@kookaburra/bindings.http', '@kookaburra/bindings.amqp'])
+  })
+
+  it('should be array of unique strings', () => {
+    manifest.bindings = 'oops'
+    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+
+    manifest.bindings = ['oops', 'oops']
+    expect(validate(manifest)).toMatchObject({ keyword: 'uniqueItems' })
+
+    manifest.bindings = ['oops', 1]
+    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+  })
+
+  it('should forbid explicit loop', () => {
+    manifest.bindings = ['@kookaburra/bindings.loop']
+    expect(validate(manifest)).toMatchObject({ keyword: 'not' })
+  })
+})
+
 describe('remotes', () => {
   it('should be optional', () => {
     delete manifest.remotes
@@ -218,6 +242,11 @@ describe('operations', () => {
       delete manifest.operations[0].bridge
       expect(validate(manifest)).toBe(null)
       expect(manifest.operations[0].bridge).toBe('@kookaburra/bridges.javascript.native')
+    })
+
+    it('should forbid explicit loop', () => {
+      manifest.operations[0].bindings = ['@kookaburra/bindings.loop']
+      expect(validate(manifest)).toMatchObject({ keyword: 'not' })
     })
 
     describe('input, output', () => {

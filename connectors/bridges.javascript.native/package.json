@@ -1,7 +1,7 @@
 {
   "name": "@kookaburra/bridges.javascript.native",
   "version": "0.0.0",
-  "description": "Native (inproc) javascript Bridge",
+  "description": "Kookaburra Native (inproc) javascript Bridge",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
   "main": "src/bridge.js",

@@ -1,10 +1,10 @@
 {
   "name": "@kookaburra/bindings.http",
   "version": "0.0.0",
-  "description": "HTTP Binding",
+  "description": "Kookaburra HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
-  "main": "src/index.js",
+  "main": "src/factory.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quantumducks/kookaburra.git"

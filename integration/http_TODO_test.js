@@ -9,7 +9,7 @@ let context, collection, request, parser
 
 beforeAll(async () => {
   context = new Context({
-    composition: ['messages'],
+    composition: ['messages', 'credits'],
     storage: 'mongodb',
     bindings: ['http']
   })

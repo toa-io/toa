@@ -7,7 +7,7 @@
 3. exports.name instead of module.exports.name
 4. `'use strict'`
 
-## Module Structure
+### Module Structure
 ```javascript
 'use strict'
 
@@ -35,3 +35,5 @@ const CONSTANT = 'value'
 
 exports.Declaration = Declaration
 ```
+##Debug Integration Tests
+Update CLI Options in Jest Template with `--roots core connectors integration`

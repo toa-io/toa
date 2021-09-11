@@ -53,6 +53,8 @@ properties:
     minItems: 1
     items:
       type: string
+      not:
+        const: '@kookaburra/bindings.loop' #loop is for system use only
     default: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp']
 
   remotes:

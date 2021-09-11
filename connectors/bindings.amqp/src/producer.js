@@ -35,8 +35,8 @@ class Producer extends Connector {
 
     try {
       [output, error] = await this.#runtime.invoke(endpoint, input, query)
-    } catch ({ code, message, stack }) {
-      exception = { code, message }
+    } catch ({ message, stack }) {
+      exception = { message }
 
       if (process.env.KOO_ENV === 'dev') exception.stack = stack
     }

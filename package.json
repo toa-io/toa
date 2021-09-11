@@ -22,8 +22,9 @@
     "superagent": "6.1.0"
   },
   "scripts": {
+    "dev": "export KOO_ENV=dev && docker compose up -d",
     "test": "jest",
-    "integration": "jest --roots=./integration",
+    "integration": "jest --roots integration",
     "lint": "standard --verbose --fix | snazzy",
     "prepare": "husky install"
   },

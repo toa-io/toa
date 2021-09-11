@@ -1,10 +1,10 @@
 {
-  "name": "@kookaburra/boot",
+  "name": "@kookaburra/bindings.loop",
   "version": "0.0.0",
-  "description": "Kookaburra Boot",
+  "description": "Kookaburra Loop Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
-  "main": "src/index.js",
+  "main": "src/factory.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quantumducks/kookaburra.git"
@@ -18,11 +18,7 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {
-    "@kookaburra/bindings.loop": "^0.0.0",
-    "@kookaburra/package": "^0.0.0",
-    "@kookaburra/runtime": "^0.0.0",
-    "@kookaburra/schema": "^0.0.0"
-  },
-  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
+  "peerDependencies": {
+    "@kookaburra/runtime": "^0.0.0"
+  }
 }

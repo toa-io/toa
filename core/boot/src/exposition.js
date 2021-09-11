@@ -6,11 +6,11 @@ const boot = require('./index')
 
 const exposition = async (runtime) => {
   const exposition = new Exposition(runtime)
-  const producer = boot.bindings.expose(exposition)
+  const producers = boot.bindings.expose(exposition)
 
-  await producer.connect()
+  await Promise.all(producers.map((producer) => producer.connect()))
 
-  return producer
+  return producers
 }
 
 exports.exposition = exposition

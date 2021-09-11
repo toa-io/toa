@@ -10,7 +10,7 @@ let context, collection, consumer
 
 beforeAll(async () => {
   context = new Context({
-    composition: ['messages'],
+    composition: ['messages', 'credits'],
     storage: 'mongodb',
     bindings: ['amqp']
   })
