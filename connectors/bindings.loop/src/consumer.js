@@ -3,20 +3,26 @@
 const { Connector } = require('@kookaburra/runtime')
 
 class Consumer extends Connector {
-  #binding
+  #bindings
   #locator
 
   constructor (bindings, locator) {
     super()
 
-    this.#binding = bindings[locator.fqn]
+    this.#bindings = bindings
     this.#locator = locator
   }
 
   async request (endpoint, input, query) {
-    if (!this.#binding?.[endpoint]) return false
+    const invoke = this.#endpoint(endpoint)
 
-    return this.#binding[endpoint](input, query)
+    if (!invoke) return false
+
+    return invoke(input, query)
+  }
+
+  #endpoint(endpoint) {
+    return this.#bindings[this.#locator.fqn]?.[endpoint]
   }
 }
 

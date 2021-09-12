@@ -1,5 +1,7 @@
 'use strict'
 
+const clone = require('clone-deep')
+
 const { Factory } = require('../src/factory')
 const fixtures = require('./fixtures')
 
@@ -28,8 +30,8 @@ it('should bind', async () => {
   expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(1, 'add', 1, 2)
   expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(2, 'get', 3, 4)
 
-  expect(await fixtures.runtime.invoke.mock.results[0].value).toBe(r1)
-  expect(await fixtures.runtime.invoke.mock.results[1].value).toBe(r2)
+  expect(r1).toBe(await fixtures.runtime.invoke.mock.results[0].value)
+  expect(r2).toBe(await fixtures.runtime.invoke.mock.results[1].value)
 })
 
 it('should return false if no operation bound', async () => {
@@ -39,9 +41,25 @@ it('should return false if no operation bound', async () => {
 })
 
 it('should return false if no binding', async () => {
-  const result = await consumer.request('oops')
+  const consumer = factory.consumer({ fqn: 'not.existent' })
+  const result = await consumer.request('get')
 
   expect(result).toBe(false)
+})
+
+it('should not depend on initialization order', async () => {
+  const runtime = clone(fixtures.runtime)
+  runtime.locator.fqn = 'other.name'
+
+  const consumer = factory.consumer(runtime.locator)
+  await consumer.connect()
+
+  expect(await consumer.request('get')).toBe(false)
+
+  const producer = factory.producer(runtime, fixtures.endpoints)
+  await producer.connect()
+
+  expect(await consumer.request('get')).toBe(await runtime.invoke.mock.results[0].value)
 })
 
 it('should share bindings among instances', async () => {
