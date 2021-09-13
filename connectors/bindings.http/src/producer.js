@@ -1,32 +1,51 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
+
+const resource = require('./resource')
 
 class Producer extends Connector {
   #server
+  #runtime
 
-  constructor (server, runtime) {
+  constructor (server, runtime, endpoints) {
     super()
 
     this.#server = server
-    this.depends(server)
-    this.#bind(runtime)
+    this.#runtime = runtime
 
+    this.#bind(runtime, endpoints)
+
+    this.depends(server)
     server.depends(runtime)
   }
 
-  #bind (runtime) {
-    runtime.locator.operations.map((endpoint) => this.#endpoint(runtime, endpoint))
+  #bind (runtime, endpoints) {
+    endpoints.map((endpoint) => this.#endpoint(runtime, endpoint))
   }
 
   #endpoint (runtime, endpoint) {
-    const path = Producer.#path(runtime.locator, endpoint)
+    const method = resource.method
+    const path = resource.path(runtime.locator, endpoint)
 
-    this.#server.reply('POST', path, async (input, query) => runtime.invoke(endpoint.name, input, query))
+    this.#server.reply(method, path, async (input, query) => this.#invoke(endpoint, input, query))
   }
 
-  static #path (locator, endpoint) {
-    return `/${locator.fqn}/${endpoint.name}`
+  async #invoke (endpoint, input, query) {
+    let output, error, exception
+
+    try {
+      const response = await this.#runtime.invoke(endpoint, input, query)
+
+      output = response[0]
+      error = response[1]
+    } catch ({ message, stack }) {
+      exception = { message }
+
+      if (process.env.KOO_ENV === 'dev') exception.stack = stack
+    }
+
+    return [output, error, exception]
   }
 }
 

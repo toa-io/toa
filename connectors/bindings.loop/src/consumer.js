@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
 
 class Consumer extends Connector {
   #bindings
@@ -21,7 +21,7 @@ class Consumer extends Connector {
     return invoke(input, query)
   }
 
-  #endpoint(endpoint) {
+  #endpoint (endpoint) {
     return this.#bindings[this.#locator.fqn]?.[endpoint]
   }
 }

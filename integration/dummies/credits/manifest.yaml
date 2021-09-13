@@ -7,8 +7,6 @@ entity:
       user: string
       balance: integer
 
-bindings: ['@kookaburra/bindings.amqp']
-
 operations:
   - name: deduce
     input:

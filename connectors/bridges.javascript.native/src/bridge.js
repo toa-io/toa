@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
 const { freeze } = require('@kookaburra/gears')
 
 const { resolve } = require('path')

@@ -1,7 +1,7 @@
 {
-  "name": "@kookaburra/runtime",
+  "name": "@kookaburra/http",
   "version": "0.0.0",
-  "description": "Kookaburra core abstractions",
+  "description": "HTTP Server for Kookaburra Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
   "repository": {
@@ -20,14 +20,10 @@
   },
   "dependencies": {
     "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/schema": "^0.0.0",
-    "@rsql/parser": "1.0.3",
-    "ajv": "8.6.2",
-    "ajv-keywords": "5.0.0",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "clone-deep": "4.0.1"
+    "@kookaburra/core": "^0.0.0",
+    "express": "4.17.1",
+    "serve-favicon": "2.5.0",
+    "server-destroy": "1.0.1"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
 }

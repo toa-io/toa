@@ -1,10 +1,10 @@
 'use strict'
 
-const { Remote, Locator } = require('@kookaburra/runtime')
+const { Remote, Locator } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const remote = async (fqn) => {
+const remote = async (fqn, bindings) => {
   const discovery = boot.discovery(fqn)
   await discovery.connect()
 
@@ -12,7 +12,7 @@ const remote = async (fqn) => {
   const locator = new Locator(manifest)
 
   const calls = Object.fromEntries(
-    locator.operations.map((operation) => [operation.name, boot.call(locator, operation)]))
+    locator.operations.map((operation) => [operation.name, boot.call(locator, operation, bindings)]))
 
   return new Remote(locator, calls)
 }

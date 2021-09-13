@@ -1,6 +1,6 @@
 'use strict'
 
-const { Locator, Discovery, Transmission } = require('@kookaburra/runtime')
+const { Locator, Discovery, Transmission } = require('@kookaburra/core')
 
 const boot = require('./index')
 

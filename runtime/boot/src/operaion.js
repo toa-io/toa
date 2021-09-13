@@ -1,6 +1,6 @@
 'use strict'
 
-const { Operation, State, entities } = require('@kookaburra/runtime')
+const { Operation, State, entities } = require('@kookaburra/core')
 const { Schema } = require('@kookaburra/schema')
 
 const operation = (manifest, locator, descriptor, storage, context) => {

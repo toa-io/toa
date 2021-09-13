@@ -1,5 +1,12 @@
 'use strict'
 
+/*
+ Simultaneous creation of multiple compositions with common remotes may cause resolution conflicts.
+
+ In fact, it can happen only within integration tests, so let's just avoid the problem by creating compositions
+ successively.
+*/
+
 const promises = {}
 const resolutions = {}
 

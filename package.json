@@ -2,7 +2,7 @@
   "name": "kookaburra",
   "private": true,
   "workspaces": [
-    "core/*",
+    "runtime/*",
     "connectors/*"
   ],
   "devDependencies": {
@@ -14,17 +14,14 @@
     "husky": "5.0.9",
     "jest": "26.6.3",
     "lerna": "3.22.1",
-    "mongodb": "4.1.0",
-    "mongodb-memory-server": "7.3.6",
     "randomstring": "1.1.5",
     "snazzy": "9.0.0",
     "standard": "16.0.3",
     "superagent": "6.1.0"
   },
   "scripts": {
-    "dev": "export KOO_ENV=dev && docker compose up -d",
+    "dev": "docker compose up -d",
     "test": "jest",
-    "integration": "jest --roots integration",
     "lint": "standard --verbose --fix | snazzy",
     "prepare": "husky install"
   },
@@ -35,7 +32,7 @@
     }
   },
   "jest": {
-    "roots": ["<rootDir>/core", "<rootDir>/connectors"],
+    "roots": ["<rootDir>/runtime", "<rootDir>/connectors", "<rootDir>/integration"],
     "testMatch": ["**/?(*.)+(test).js"],
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"

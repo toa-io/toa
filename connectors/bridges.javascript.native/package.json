@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/runtime": "^0.0.0"
+    "@kookaburra/core": "^0.0.0"
   },
   "dependencies": {
     "@babel/parser": "^7.15.3"

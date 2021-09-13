@@ -1,20 +1,24 @@
 'use strict'
 
-const { Exposition } = require('@kookaburra/runtime')
+const { Exposition } = require('@kookaburra/core')
 
-const produce = (runtime) => each(runtime.locator, (factory, endpoints) => factory.producer(runtime, endpoints))
-const consume = (locator) => each(locator, (factory, endpoints) => factory.consumer(locator, endpoints))
+const produce = (runtime, bindings) =>
+  each(runtime.locator.operations, bindings, (factory, endpoints) => factory.producer(runtime, endpoints))
+
+const consume = (locator, bindings) =>
+  each(locator.operations, bindings, (factory, endpoints) => factory.consumer(locator, endpoints))
 
 const expose = (exposition) => SYSTEM_BINDINGS.map((binding) =>
   factory(binding).exposition(exposition, Exposition.endpoints()))
 
-const discover = (locator) => SYSTEM_BINDINGS.map((binding) =>
-  factory(binding).discovery(locator))
+const discover = (locator) => SYSTEM_BINDINGS.map((binding) => factory(binding).discovery(locator))
 
-const each = (locator, callback) => {
+const each = (operations, bindings, callback) => {
   const map = {}
 
-  for (const operation of locator.operations) {
+  for (const operation of operations) {
+    if (bindings) operation.bindings = bindings
+
     operation.bindings.unshift(LOOP)
 
     for (const binding of operation.bindings) {
@@ -35,7 +39,6 @@ const factory = (binding) => {
   return factories[binding]
 }
 
-// TODO: loop
 const LOOP = '@kookaburra/bindings.loop'
 const SYSTEM_BINDINGS = [LOOP, '@kookaburra/bindings.amqp']
 

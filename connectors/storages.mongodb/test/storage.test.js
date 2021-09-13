@@ -29,18 +29,6 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-it('should connect', async () => {
-  await connector.connection()
-
-  expect(client.connect).toHaveBeenCalled()
-})
-
-it('should disconnect', async () => {
-  await connector.disconnection()
-
-  expect(client.disconnect).toHaveBeenCalled()
-})
-
 it('should add', async () => {
   const result = await connector.add(fixtures.entry)
 

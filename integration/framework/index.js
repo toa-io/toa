@@ -1,7 +1,9 @@
 'use strict'
 
-const { CLI } = require('./cli')
-const { Context } = require('./context')
+const { compose } = require('./compose')
+const { consume } = require('./consume')
 
-exports.CLI = CLI
-exports.Context = Context
+exports.mongodb = require('./mongodb')
+
+exports.compose = compose
+exports.consume = consume

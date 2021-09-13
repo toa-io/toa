@@ -2,10 +2,8 @@
 
 const express = require('express')
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
 const { console } = require('@kookaburra/gears')
-
-const { response } = require('./response')
 
 class Server extends Connector {
   #app
@@ -24,16 +22,9 @@ class Server extends Connector {
 
   reply (verb, route, invocation) {
     this.#app[verb.toLowerCase()](route, async (req, res) => {
-      let output, error, exception
+      const response = await invocation(req.body.input, req.body.query)
 
-      try {
-        [output, error] = await invocation(req.body.input, req.body.query)
-      } catch (e) {
-        exception = e
-      }
-
-      response(output, error, exception, res)
-      res.end()
+      res.json(response)
     })
   }
 
@@ -41,6 +32,8 @@ class Server extends Connector {
     return new Promise((resolve, reject) => {
       this.#server = this.#app.listen(this.#port, () => {
         this.#port = this.#server.address().port
+
+        process.env.__INTEGRATION_HTTP_SERVER_PORT = this.#port
 
         console.info(`HTTP server started at :${this.#port}`)
 

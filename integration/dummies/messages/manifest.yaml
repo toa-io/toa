@@ -10,7 +10,6 @@ entity:
       timestamp: integer
 
 remotes: [credits.balance]
-bindings: ['@kookaburra/bindings.amqp']
 
 operations:
   - name: add

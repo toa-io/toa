@@ -1,20 +1,22 @@
 'use strict'
 
 const { MongoClient } = require('mongodb')
+const { Connector } = require('@kookaburra/core')
 const { console } = require('@kookaburra/gears')
 
-class Client {
+class Client extends Connector {
   #connection
 
   #client
   #collection
 
   constructor (host, db, collection) {
+    super()
     this.#connection = { host, db, collection }
     this.#client = new MongoClient(this.#url, OPTIONS)
   }
 
-  async connect () {
+  async connection () {
     await this.#client.connect()
 
     this.#collection = this.#client
@@ -25,7 +27,7 @@ class Client {
       `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }
 
-  async disconnect () {
+  async disconnection () {
     await this.#client.close()
 
     console.info('Storage MongoDB disconnected from ' +
@@ -55,7 +57,6 @@ class Client {
   }
 
   get #url () {
-    if (process.env.KOO_MONGODB_URL) return process.env.KOO_MONGODB_URL
     if (process.env.KOO_ENV === 'dev') return 'mongodb://localhost'
 
     return `mongodb+srv://${this.#connection.host}`

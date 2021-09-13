@@ -6,7 +6,7 @@ async function transition (input, entry) {
   // entry.balance = entry.balance - input.amount
   //
   // return [entry.balance]
-  return [1]
+  return [Math.round(Math.random() * 100)]
 }
 
 module.exports = transition

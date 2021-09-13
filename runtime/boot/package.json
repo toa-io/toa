@@ -1,9 +1,10 @@
 {
-  "name": "@kookaburra/http",
+  "name": "@kookaburra/boot",
   "version": "0.0.0",
-  "description": "HTTP Server for Kookaburra Runtime",
+  "description": "Kookaburra Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quantumducks/kookaburra.git"
@@ -11,7 +12,6 @@
   "bugs": {
     "url": "https://github.com/quantumducks/kookaburra/issues"
   },
-  "main": "src/index.js",
   "publishConfig": {
     "access": "public"
   },
@@ -19,11 +19,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/runtime": "^0.0.0",
-    "express": "4.17.1",
-    "serve-favicon": "2.5.0",
-    "server-destroy": "1.0.1"
+    "@kookaburra/bindings.loop": "^0.0.0",
+    "@kookaburra/package": "^0.0.0",
+    "@kookaburra/core": "^0.0.0",
+    "@kookaburra/schema": "^0.0.0"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
 }

@@ -1,29 +1,32 @@
 'use strict'
 
-const { Client } = require('./client')
+const Agent = require('agentkeepalive')
+
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
 const { Server } = require('./server')
 
 class Factory {
   #server
-  #clients
+  #agents = {}
 
   constructor () {
     this.#server = new Server()
   }
 
-  producer (runtime) {
-    return new Producer(this.#server, runtime)
+  producer (runtime, endpoints) {
+    return new Producer(this.#server, runtime, endpoints)
   }
 
   consumer (locator) {
     const name = locator.fqn
 
-    if (!this.#clients[name]) this.#clients[name] = new Client(locator)
+    if (!this.#agents[name]) this.#agents[name] = new Agent(AGENT_OPTIONS)
 
-    return new Consumer(this.#clients[name])
+    return new Consumer(this.#agents[name], locator)
   }
 }
+
+const AGENT_OPTIONS = { keepAlive: process.env.KOO_ENV !== 'dev' && process.env.KOO_ENV !== 'test' }
 
 exports.Factory = Factory

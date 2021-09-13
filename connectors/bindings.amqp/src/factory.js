@@ -1,6 +1,6 @@
 'use strict'
 
-const { Locator } = require('@kookaburra/runtime')
+const { Locator } = require('@kookaburra/core')
 
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
@@ -8,10 +8,9 @@ const { Producer } = require('./producer')
 
 class Factory {
   #channels = {}
-  #system
 
   constructor () {
-    this.#system = this.#channel(Locator.host('system', null, TYPE))
+    this.#channels.system = this.#channel(Locator.host('system', null, TYPE))
   }
 
   producer (runtime, endpoints) {
@@ -27,11 +26,11 @@ class Factory {
   }
 
   exposition (runtime, endpoints) {
-    return Factory.#producer(this.#system, runtime, endpoints)
+    return Factory.#producer(this.#channels.system, runtime, endpoints)
   }
 
   discovery (locator) {
-    return Factory.#consumer(this.#system, locator)
+    return Factory.#consumer(this.#channels.system, locator)
   }
 
   static #producer (channel, runtime, endpoints) {

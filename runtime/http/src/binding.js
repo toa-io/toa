@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
 const { console } = require('@kookaburra/gears')
 
 const { verb } = require('./binding/verb')

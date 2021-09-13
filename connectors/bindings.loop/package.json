@@ -19,6 +19,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@kookaburra/runtime": "^0.0.0"
+    "@kookaburra/core": "^0.0.0"
   }
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
 
 const { Client } = require('./client')
 const { translate } = require('./translate')
@@ -12,15 +12,9 @@ class Storage extends Connector {
   constructor (locator) {
     super()
 
+    // TODO: create Factory
     this.#client = new Client(locator.host(Storage.name), locator.domain, locator.name)
-  }
-
-  async connection () {
-    await this.#client.connect()
-  }
-
-  async disconnection () {
-    await this.#client.disconnect()
+    this.depends(this.#client)
   }
 
   async add (entry) {

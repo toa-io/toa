@@ -1,6 +1,6 @@
 'use strict'
 
-const { Context } = require('@kookaburra/runtime')
+const { Context } = require('@kookaburra/core')
 
 const boot = require('./index')
 

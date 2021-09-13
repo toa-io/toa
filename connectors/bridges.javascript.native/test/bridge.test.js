@@ -3,7 +3,7 @@
 const path = require('path')
 const clone = require('clone-deep')
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
 
 const fixtures = require('./bridge.fixtures')
 const mock = fixtures.mock

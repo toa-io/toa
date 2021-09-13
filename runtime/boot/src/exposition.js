@@ -1,6 +1,6 @@
 'use strict'
 
-const { Exposition } = require('@kookaburra/runtime')
+const { Exposition } = require('@kookaburra/core')
 
 const boot = require('./index')
 

@@ -1,14 +1,14 @@
 'use strict'
 
 const { load } = require('@kookaburra/package')
-const { Runtime, Locator } = require('@kookaburra/runtime')
+const { Runtime, Locator } = require('@kookaburra/core')
 
 const boot = require('./index')
 
 const runtime = async (path) => {
   const manifest = await load(path)
   const locator = new Locator(manifest)
-  const storage = boot.storage(manifest.entity.storage, locator)
+  const storage = boot.storage(locator, manifest.entity.storage.connector)
   const context = boot.context(manifest)
 
   const operations = Object.fromEntries(manifest.operations.map((descriptor) => {

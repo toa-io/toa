@@ -3,7 +3,7 @@
 const { Binding } = require('../src/binding')
 const fixtures = require('./binding.fixtures')
 
-const { Connector } = require('@kookaburra/runtime')
+const { Connector } = require('@kookaburra/core')
 
 let binding
 
