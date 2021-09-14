@@ -34,8 +34,10 @@ properties:
               id:
                 default:
                   type: string
+                  pattern: ^[a-fA-F0-9]+$ #hex
                 const:
                   type: string
+                  pattern: ^[a-fA-F0-9]+$
       storage:
         type: object
         default:

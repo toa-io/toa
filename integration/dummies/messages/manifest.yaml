@@ -21,12 +21,12 @@ operations:
       required: [sender, text]
     output:
       properties:
-        id: string
+        id: ~
       required: [id]
   - name: get
     output:
       properties:
-        id: string
+        id: ~
         text: ~
         timestamp: ~
       required: [id, text]

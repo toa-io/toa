@@ -116,9 +116,19 @@ describe('entity', () => {
       expect(validate(manifest)).toMatchObject({ keyword: 'pattern' })
     })
 
+    it('should allow default id', () => {
+      manifest.entity.schema.properties.id = { type: 'string', pattern: '^[a-fA-F0-9]+$' }
+      expect(validate(manifest)).toBe(null)
+    })
+
+    it('should forbid non-default id', () => {
+      manifest.entity.schema.properties.id = { type: 'integer' }
+      expect(validate(manifest)).toMatchObject({ keyword: 'const' })
+    })
+
     it('should provide default property id', () => {
       validate(manifest)
-      expect(manifest.entity.schema.properties.id).toStrictEqual({ type: 'string' })
+      expect(manifest.entity.schema.properties.id).toStrictEqual({ type: 'string', pattern: '^[a-fA-F0-9]+$' })
     })
   })
 

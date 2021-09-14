@@ -30,6 +30,7 @@ const source = {
       },
       output: {
         properties: {
+          id: null,
           bar: '~foo'
         }
       }
@@ -77,6 +78,10 @@ const target = {
       },
       output: {
         properties: {
+          id: {
+            type: 'string',
+            pattern: '^[a-fA-F0-9]+$'
+          },
           bar: {
             type: 'string'
           }

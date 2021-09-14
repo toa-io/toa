@@ -26,13 +26,23 @@ const schema = (schema) => {
 const dereference = (entity, schema) => {
   if (!entity || !schema?.properties) return
 
+  const properties = { ...entity.properties, id }
+
+  const property = (name) => {
+    if (properties[name] === undefined) throw new Error(`Referenced property '${name}' is not defined`)
+
+    return properties[name]
+  }
+
   for (const [name, value] of Object.entries(schema.properties)) {
-    if (value === null) schema.properties[name] = entity.properties[name]
+    if (value === null) schema.properties[name] = property(name)
 
     if (typeof value === 'string' && value[0] === '~') {
-      schema.properties[name] = entity.properties[value.substr(1)]
+      schema.properties[name] = property(value.substr(1))
     }
   }
 }
+
+const id = { type: 'string', pattern: '^[a-fA-F0-9]+$' }
 
 exports.expand = expand
