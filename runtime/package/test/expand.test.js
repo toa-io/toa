@@ -15,3 +15,11 @@ it('should expand', () => {
   expand(source)
   expect(source).toStrictEqual(fixtures.target)
 })
+
+it('should throw on invalid reference', () => {
+  source.operations[0].output.properties.bar = null
+  expect(() => expand(source)).toThrow(/is not defined/)
+
+  source.operations[0].output.properties.bar = '~bar'
+  expect(() => expand(source)).toThrow(/is not defined/)
+})
