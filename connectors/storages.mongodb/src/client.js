@@ -19,9 +19,7 @@ class Client extends Connector {
   async connection () {
     await this.#client.connect()
 
-    this.#collection = this.#client
-      .db(this.#connection.db)
-      .collection(this.#connection.collection)
+    this.#collection = this.#client.db(this.#connection.db).collection(this.#connection.collection)
 
     console.info('Storage MongoDB connected to ' +
       `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
@@ -54,6 +52,12 @@ class Client extends Connector {
     const cursor = await this.#collection.find(query, options)
 
     return cursor.toArray()
+  }
+
+  async clear () {
+    const { acknowledged } = await this.#collection.deleteMany()
+
+    return acknowledged
   }
 
   get #url () {

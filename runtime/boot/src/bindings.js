@@ -17,11 +17,12 @@ const each = (operations, bindings, callback) => {
   const map = {}
 
   for (const operation of operations) {
-    if (bindings) operation.bindings = bindings
+    if (!bindings) {
+      bindings = operation.bindings
+      bindings.unshift(LOOP)
+    }
 
-    operation.bindings.unshift(LOOP)
-
-    for (const binding of operation.bindings) {
+    for (const binding of bindings) {
       if (!map[binding]) map[binding] = []
 
       map[binding].push(operation.name)

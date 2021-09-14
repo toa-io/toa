@@ -23,6 +23,8 @@ beforeAll(() => {
     fixtures.locator.domain,
     fixtures.locator.name
   )
+
+  expect(fixtures.locator.host.mock.calls[0][0].toLowerCase()).toBe('mongodb')
 })
 
 beforeEach(() => {

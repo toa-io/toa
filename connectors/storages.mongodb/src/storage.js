@@ -12,8 +12,8 @@ class Storage extends Connector {
   constructor (locator) {
     super()
 
-    // TODO: create Factory
-    this.#client = new Client(locator.host(Storage.name), locator.domain, locator.name)
+    // TODO: create Factory, add test for host
+    this.#client = new Client(locator.host('mongodb'), locator.domain, locator.name)
     this.depends(this.#client)
   }
 
@@ -22,7 +22,7 @@ class Storage extends Connector {
   }
 
   async get (query) {
-    const { criteria, options } = Storage.#translate(query)
+    const { criteria, options } = translate(query)
 
     const entry = await this.#client.get(criteria, options)
 
@@ -36,15 +36,15 @@ class Storage extends Connector {
   }
 
   async find (query) {
-    const { criteria, options } = Storage.#translate(query)
+    const { criteria, options } = translate(query)
 
     const entries = await this.#client.find(criteria, options)
 
     return entries.map(from)
   }
 
-  static #translate (query) {
-    return query ? translate(query) : {}
+  async clear () {
+    return this.#client.clear()
   }
 }
 

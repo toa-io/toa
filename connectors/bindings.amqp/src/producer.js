@@ -21,10 +21,10 @@ class Producer extends Connector {
   }
 
   async connection () {
-    await Promise.all(this.#endpoints.map((endpoint) => this.#operation(endpoint)))
+    await Promise.all(this.#endpoints.map((endpoint) => this.#endpoint(endpoint)))
   }
 
-  async #operation (endpoint) {
+  async #endpoint (endpoint) {
     const queue = label(this.#runtime.locator, endpoint)
 
     await this.#channel.reply(queue, async ({ input, query }) => this.#invoke(endpoint, input, query))

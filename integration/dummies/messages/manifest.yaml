@@ -6,6 +6,7 @@ entity:
     dynamicDefaults:
       timestamp: timestamp
     properties:
+      sender: string
       text: string
       timestamp: integer
 
@@ -15,8 +16,9 @@ operations:
   - name: add
     input:
       properties:
+        sender: ~
         text: ~
-      required: [text]
+      required: [sender, text]
     output:
       properties:
         id: string

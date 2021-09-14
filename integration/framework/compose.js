@@ -5,8 +5,7 @@ const { locate } = require('./dummies')
 
 const compose = async (options) => {
   const components = options.dummies.map(locate)
-  const bindings = options.bindings?.map((binding) => '@kookaburra/bindings.' + binding)
-  const composition = await boot.composition(components, { bindings })
+  const composition = await boot.composition(components, options)
   await composition.connect()
 
   return composition

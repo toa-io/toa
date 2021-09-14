@@ -35,10 +35,7 @@ class Producer extends Connector {
     let output, error, exception
 
     try {
-      const response = await this.#runtime.invoke(endpoint, input, query)
-
-      output = response[0]
-      error = response[1]
+      [output, error] = await this.#runtime.invoke(endpoint, input, query)
     } catch ({ message, stack }) {
       exception = { message }
 

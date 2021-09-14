@@ -29,7 +29,7 @@ class Consumer extends Connector {
 
     const [output, error, exception] = await response.json()
 
-    if (exception) throw exception
+    if (exception) throw new Error(exception.message)
 
     return [output, error]
   }

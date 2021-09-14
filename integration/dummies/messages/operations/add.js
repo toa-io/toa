@@ -5,9 +5,7 @@ async function transition (input, entry, context) {
 
   if (input.text === 'throw exception') throw new Error('exception')
 
-  const response = await context.remotes[0].invoke('deduce')
-
-  console.log(response)
+  await context.remotes[0].invoke('deduce')
 
   return { id: entry.id }
 }

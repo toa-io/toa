@@ -22,7 +22,7 @@ class Consumer extends Connector {
 
     const [output, error, exception] = await this.#channel.request(queue, { input, query })
 
-    if (exception) throw exception
+    if (exception) throw new Error(exception.message)
 
     return [output, error]
   }
