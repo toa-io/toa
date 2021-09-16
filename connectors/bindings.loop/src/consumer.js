@@ -13,12 +13,12 @@ class Consumer extends Connector {
     this.#locator = locator
   }
 
-  async request (endpoint, input, query) {
+  async request (endpoint, request) {
     const invoke = this.#endpoint(endpoint)
 
     if (!invoke) return false
 
-    return invoke(input, query)
+    return invoke(request)
   }
 
   #endpoint (endpoint) {

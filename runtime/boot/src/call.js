@@ -1,22 +1,15 @@
 'use strict'
 
-const { io, Call, Query, Transmission } = require('@kookaburra/core')
-const { Schema } = require('@kookaburra/schema')
+const { Call, Transmission } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const call = (locator, operation, bindings) => {
-  const input = new Schema(operation.input)
-  const output = new Schema(operation.output)
-  const error = new Schema(io.error.schema)
-
-  const channels = new io.Factory({ input, output, error })
-  const query = new Query(locator.entity?.properties)
-
+const call = (locator, descriptor, bindings) => {
   const consumers = boot.bindings.consume(locator, bindings)
-  const transmission = new Transmission(operation, consumers)
+  const transmission = new Transmission(descriptor, consumers)
+  const contract = boot.contract.request(locator.entity, descriptor)
 
-  return new Call(transmission, channels, query)
+  return new Call(transmission, contract)
 }
 
 exports.call = call

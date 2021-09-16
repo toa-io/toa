@@ -14,7 +14,7 @@ class Discovery extends Connector {
   }
 
   async discover () {
-    const [output] = await this.#transmission.request()
+    const { output } = await this.#transmission.request()
 
     return output
   }

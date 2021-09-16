@@ -3,7 +3,7 @@
 async function transition (input, entry, context) {
   Object.assign(entry, input)
 
-  if (input.text === 'throw exception') throw new Error('exception')
+  if (input.text === 'throw exception') throw new Error('user space exception')
 
   await context.remotes[0].invoke('deduce')
 

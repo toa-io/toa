@@ -5,13 +5,14 @@ const { composition } = require('./composition')
 const { context } = require('./context')
 const { discovery } = require('./discovery')
 const { exposition } = require('./exposition')
-const { operation } = require('./operaion')
+const { operation } = require('./operation')
 const { remote } = require('./remote')
 const { runtime } = require('./runtime')
 const { storage } = require('./storage')
 
 exports.promise = require('./promise')
 exports.bindings = require('./bindings')
+exports.contract = require('./contract')
 
 exports.call = call
 exports.composition = composition

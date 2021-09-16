@@ -22,9 +22,9 @@ class Server extends Connector {
 
   reply (verb, route, invocation) {
     this.#app[verb.toLowerCase()](route, async (req, res) => {
-      const response = await invocation(req.body.input, req.body.query)
+      const reply = await invocation(req.body)
 
-      res.json(response)
+      res.json(reply)
     })
   }
 

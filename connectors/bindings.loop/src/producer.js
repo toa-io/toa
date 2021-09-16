@@ -24,7 +24,7 @@ class Producer extends Connector {
   }
 
   #operation (endpoint) {
-    this.#binding[endpoint] = async (input, query) => this.#runtime.invoke(endpoint, input, query)
+    this.#binding[endpoint] = async (request) => this.#runtime.invoke(endpoint, request)
   }
 }
 

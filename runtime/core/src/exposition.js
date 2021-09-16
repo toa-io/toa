@@ -19,7 +19,7 @@ class Exposition extends Connector {
   }
 
   async invoke (name, input) {
-    return [this[name](input)]
+    return { output: this[name](input) }
   }
 
   static endpoints () {

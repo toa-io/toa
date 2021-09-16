@@ -28,21 +28,7 @@ class Producer extends Connector {
     const method = resource.method
     const path = resource.path(runtime.locator, endpoint)
 
-    this.#server.reply(method, path, async (input, query) => this.#invoke(endpoint, input, query))
-  }
-
-  async #invoke (endpoint, input, query) {
-    let output, error, exception
-
-    try {
-      [output, error] = await this.#runtime.invoke(endpoint, input, query)
-    } catch ({ message, stack }) {
-      exception = { message }
-
-      if (process.env.KOO_ENV === 'dev') exception.stack = stack
-    }
-
-    return [output, error, exception]
+    this.#server.reply(method, path, async (request) => this.#runtime.invoke(endpoint, request))
   }
 }
 

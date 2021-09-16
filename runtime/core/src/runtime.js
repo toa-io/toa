@@ -25,10 +25,10 @@ class Runtime extends Connector {
     console.info(`Runtime '${this.locator.fqn}' disconnected`)
   }
 
-  async invoke (name, input, query) {
+  async invoke (name, request) {
     if (!(name in this.#operations)) { throw new Error(`Operation '${name}' not found in '${this.locator.fqn}'`) }
 
-    return this.#operations[name].invoke(input, query)
+    return this.#operations[name].invoke(request)
   }
 }
 

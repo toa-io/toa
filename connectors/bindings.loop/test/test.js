@@ -23,12 +23,12 @@ beforeEach(() => {
 })
 
 it('should bind', async () => {
-  const r1 = await consumer.request('add', 1, 2)
-  const r2 = await consumer.request('get', 3, 4)
+  const r1 = await consumer.request('add', 1)
+  const r2 = await consumer.request('get', 2)
 
   expect(fixtures.runtime.invoke).toHaveBeenCalledTimes(2)
-  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(1, 'add', 1, 2)
-  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(2, 'get', 3, 4)
+  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(1, 'add', 1)
+  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(2, 'get', 2)
 
   expect(r1).toBe(await fixtures.runtime.invoke.mock.results[0].value)
   expect(r2).toBe(await fixtures.runtime.invoke.mock.results[1].value)
@@ -68,10 +68,10 @@ it('should share bindings among instances', async () => {
 
   await consumer.connect()
 
-  const result = await consumer.request('get', 1, 2)
+  const result = await consumer.request('get', 1)
 
   expect(fixtures.runtime.invoke).toHaveBeenCalledTimes(1)
-  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(1, 'get', 1, 2)
+  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(1, 'get', 1)
   expect(await fixtures.runtime.invoke.mock.results[0].value).toBe(result)
 })
 

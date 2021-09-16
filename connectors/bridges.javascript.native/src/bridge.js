@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@kookaburra/core')
-const { freeze } = require('@kookaburra/gears')
+const { freeze, defined } = require('@kookaburra/gears')
 
 const { resolve } = require('path')
 const { parse } = require('./bridge/parse')
@@ -25,7 +25,14 @@ class Bridge extends Connector {
     if (input) input = freeze(input)
     if (state) state = this.#state(state)
 
-    return this.#algorithm(input, state, this.#context)
+    let output, error
+
+    output = await this.#algorithm(input, state, this.#context)
+
+    if (output instanceof Array) [output, error] = output
+    if (output === null) output = undefined
+
+    return defined({ output, error })
   }
 
   get type () {

@@ -12,7 +12,7 @@ class State {
   }
 
   async entry (query) {
-    if (!query) { return this.#entity.blank() }
+    if (!query) return this.#entity.blank()
 
     const entry = await this.#storage.get(query)
 

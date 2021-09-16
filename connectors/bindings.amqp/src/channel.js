@@ -38,21 +38,23 @@ class Channel extends Connector {
     console.info(`AMQP Binding disconnected from ${this.#locator}`)
   }
 
-  async request (label, content) {
+  async request (label, request) {
+    if (request === undefined) request = {}
+
     const queue = 'request.' + label
     const correlation = id()
 
     await this.#channel.assertQueue(queue, QUEUE)
     await this.#bind(label)
 
-    const message = pack(content)
+    const message = pack(request)
     const properties = { replyTo: this.#id, correlationId: correlation }
 
     this.#channel.sendToQueue(queue, message, properties)
 
-    const received = await this.#response(label, correlation)
+    const reply = await this.#reply(label, correlation)
 
-    return unpack(received.content)
+    return unpack(reply.content)
   }
 
   async reply (label, invocation) {
@@ -64,9 +66,9 @@ class Channel extends Connector {
 
     await this.#channel.consume(queue, async (received) => {
       const content = unpack(received.content)
-      const response = await invocation(content)
+      const reply = await invocation(content)
 
-      const message = pack(response)
+      const message = pack(reply)
       const properties = { correlationId: received.properties.correlationId }
 
       this.#channel.publish(exchange, received.properties.replyTo, message, properties)
@@ -88,7 +90,7 @@ class Channel extends Connector {
     this.#bound[queue] = true
   }
 
-  #response (label, correlation) {
+  #reply (label, correlation) {
     return new Promise((resolve) => (this.#expected[correlation] = resolve))
   }
 

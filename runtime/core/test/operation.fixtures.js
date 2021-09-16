@@ -1,33 +1,35 @@
 'use strict'
 
-const randomstring = require('randomstring')
+const { generate } = require('randomstring')
 
 const bridges = {
   transition: {
-    run: jest.fn(() => ([{ [randomstring.generate()]: randomstring.generate() }, null])),
+    run: jest.fn(() => ({ output: generate() })),
     type: 'transition'
   },
   observation: {
-    run: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() })),
+    run: jest.fn(() => ({ output: generate() })),
     type: 'observation'
   },
   error: {
-    run: jest.fn(() => [{}, { [randomstring.generate()]: randomstring.generate() }]),
+    run: jest.fn(() => ({ error: generate() })),
     type: 'transition'
   }
 }
 
 const target = {
   query: jest.fn(() => ({
-    get: jest.fn(() => ({ foo: randomstring.generate() })),
+    get: jest.fn(() => ({ foo: generate() })),
     set: jest.fn()
   })),
   commit: jest.fn()
 }
 
-const query = randomstring.generate()
+const contract = {
+  fit: jest.fn((input) => input.invalid ? { [generate()]: generate() } : undefined)
+}
 
 exports.bridges = bridges
 exports.target = target
-exports.query = query
-exports.input = { foo: 'bar' }
+exports.contract = contract
+exports.request = { input: generate(), query: generate() }

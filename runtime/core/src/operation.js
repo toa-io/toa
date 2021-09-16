@@ -1,45 +1,57 @@
 'use strict'
 
 const { Connector } = require('./connector')
+const { Exception } = require('./contract')
 
 class Operation extends Connector {
+  #contract
   #bridge
   #target
 
-  constructor (bridge, target) {
+  constructor (bridge, target, contract) {
     super()
 
     this.#bridge = bridge
     this.#target = target
+    this.#contract = contract
 
     this.depends(bridge)
   }
 
-  async invoke (input, query) {
-    let output
-    let error
+  async invoke (request) {
+    try {
+      return await this.#invoke(request)
+    } catch (e) {
+      let exception
 
-    const target = await this.#target.query(query)
-    const state = target.get()
+      if (e instanceof Error) exception = new Exception(e)
+      else exception = e
 
-    const response = await this.#bridge.run(input, state)
+      return { exception }
+    }
+  }
 
-    if (response instanceof Array) [output, error] = response
-    else output = response
+  async #invoke (request) {
+    let target, state
 
-    if (!error && this.#bridge.type === 'transition') {
-      error = target.set(state)
+    if (request?.query || this.#bridge.type === 'transition') {
+      // TODO: initial state
+      target = await this.#target.query(request?.query)
+      state = target.get()
 
-      if (!error) {
-        // TODO: handle persistence errors
-        await this.#target.commit(target)
-      }
+      if (state === null) return { output: null }
     }
 
-    if (error) output = null
-    else error = null
+    const reply = await this.#bridge.run(request?.input, state)
 
-    return [output, error]
+    this.#contract.fit(reply)
+
+    if (state && this.#bridge.type === 'transition' && !reply.error) {
+      target.set(state)
+      await this.#target.commit(target)
+    }
+
+    return reply
   }
 }
 

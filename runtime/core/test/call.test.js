@@ -3,31 +3,56 @@
 const { Call } = require('../src/call')
 const fixtures = require('./call.fixtures')
 
+jest.mock('../src/contract/exception')
+jest.mock('../src/connector')
+
+const { Exception } = require('../src/contract/exception')
+const { Connector } = require('../src/connector')
+
 let call
 
 beforeEach(() => {
   jest.clearAllMocks()
 
-  call = new Call(fixtures.transmission, fixtures.io, fixtures.query)
+  call = new Call(fixtures.transmission, fixtures.contract)
 })
 
-// TODO: unfinished
+it('should be instance of Connector', () => {
+  expect(call).toBeInstanceOf(Connector)
+  expect(call).toBe(Connector.mock.instances[0])
+})
 
-describe('invocation', () => {
-  it('should invoke call', async () => {
-    await call.invoke()
+it('should depend on transmission', () => {
+  expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.transmission)
+})
 
-    expect(fixtures.transmission.request).toHaveBeenCalled()
-  })
+it('should call transmission', async () => {
+  const request = fixtures.request().ok
 
-  it('should pass input and query', async () => {
-    const sample = fixtures.sample()
+  await call.invoke(request)
 
-    await call.invoke(sample.input.ok, sample.query.ok)
+  expect(fixtures.transmission.request).toHaveBeenCalledWith(request)
+})
 
-    expect(fixtures.transmission.request).toHaveBeenCalledWith(
-      fixtures.io.create.mock.results[0].value.input,
-      fixtures.query.parse.mock.results[0].value[0]
-    )
-  })
+it('should fit request', async () => {
+  const request = fixtures.request().ok
+
+  await call.invoke(request)
+
+  expect(fixtures.contract.fit).toHaveBeenLastCalledWith(request)
+})
+
+it('should return reply', async () => {
+  const request = fixtures.request().ok
+
+  const reply = await call.invoke(request)
+
+  expect(reply).toStrictEqual(fixtures.transmission.request.mock.results[0].value)
+})
+
+it('should throw received exceptions', async () => {
+  const request = fixtures.request().bad
+
+  await expect(call.invoke(request)).rejects.toBeInstanceOf(Exception)
+  expect(Exception).toHaveBeenLastCalledWith(fixtures.transmission.request.mock.results[0].value.exception)
 })

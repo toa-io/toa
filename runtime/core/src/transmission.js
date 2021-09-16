@@ -15,8 +15,8 @@ class Transmission extends Connector {
     this.depends(bindings)
   }
 
-  async request (input, query) {
-    return this.#pick().request(this.#operation.name, input, query)
+  async request (request) {
+    return this.#pick().request(this.#operation.name, request)
   }
 
   #pick () {

@@ -17,14 +17,10 @@ class Consumer extends Connector {
     this.depends(channel)
   }
 
-  async request (endpoint, input, query) {
+  async request (endpoint, request) {
     const queue = label(this.#locator, endpoint)
 
-    const [output, error, exception] = await this.#channel.request(queue, { input, query })
-
-    if (exception) throw new Error(exception.message)
-
-    return [output, error]
+    return this.#channel.request(queue, request)
   }
 }
 

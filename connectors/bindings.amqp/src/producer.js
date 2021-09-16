@@ -27,21 +27,7 @@ class Producer extends Connector {
   async #endpoint (endpoint) {
     const queue = label(this.#runtime.locator, endpoint)
 
-    await this.#channel.reply(queue, async ({ input, query }) => this.#invoke(endpoint, input, query))
-  }
-
-  async #invoke (endpoint, input, query) {
-    let output, error, exception
-
-    try {
-      [output, error] = await this.#runtime.invoke(endpoint, input, query)
-    } catch ({ message, stack }) {
-      exception = { message }
-
-      if (process.env.KOO_ENV === 'dev') exception.stack = stack
-    }
-
-    return [output, error, exception]
+    await this.#channel.reply(queue, async (request) => this.#runtime.invoke(endpoint, request))
   }
 }
 

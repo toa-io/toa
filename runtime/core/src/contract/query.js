@@ -1,5 +1,8 @@
 'use strict'
 
+const { resolve } = require('path')
+const { yaml } = require('@kookaburra/gears')
+
 const parse = { ...require('./query/criteria'), ...require('./query/options') }
 
 class Query {
@@ -9,18 +12,16 @@ class Query {
     this.#properties = properties
   }
 
-  // TODO: query schema
   // TODO: constraints
   parse (query) {
     const result = {}
     const { criteria, ...rest } = query
     const options = this.#options(rest)
 
-    // TODO: handle parse error
-    if (criteria) { result.criteria = parse.criteria(criteria, this.#properties) }
-    if (options) { result.options = options }
+    if (criteria) result.criteria = parse.criteria(criteria, this.#properties)
+    if (options) result.options = options
 
-    return [result]
+    return result
   }
 
   #options (options) {
@@ -31,6 +32,8 @@ class Query {
 
     return parse.options(options, this.#properties)
   }
+
+  static schema = yaml.sync(resolve(__dirname, './query.yaml'))
 }
 
 exports.Query = Query

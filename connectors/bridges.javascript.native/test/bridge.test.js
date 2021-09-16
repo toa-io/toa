@@ -146,10 +146,10 @@ it('should return output', async () => {
   const result = await operations.pong.mock.results[0].value
 
   expect(output).toBeDefined()
-  expect(output).toStrictEqual(result)
+  expect(output).toStrictEqual({ output: result })
 })
 
-it('should return [output, error]', async () => {
+it('should return { output, error }', async () => {
   const manifest = {
     '.bridge': { path: require.resolve('./operations/error') }
   }
@@ -157,10 +157,10 @@ it('should return [output, error]', async () => {
   const input = { a: 1 }
   const bridge = new Bridge(manifest)
 
-  const [output, error] = await bridge.run(input)
+  const { output, error } = await bridge.run(input)
 
   expect(error).toStrictEqual({ code: 1, message: 'oops' })
-  expect(output).toBeNull()
+  expect(output).toBeUndefined()
 })
 
 it('should throw on exceptions', async () => {

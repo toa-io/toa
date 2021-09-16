@@ -1,16 +1,12 @@
 'use strict'
 
-const seal = (object) => {
-  if (object === null) return
+const seal = (value) => {
+  if ((typeof value === 'object' && value !== null) || typeof value === 'function') {
+    Object.seal(value)
+    Object.getOwnPropertyNames(value).forEach(key => seal(value[key]))
+  }
 
-  const type = typeof object
-
-  if (type !== 'object' && type !== 'function') return
-
-  Object.seal(object)
-  Object.getOwnPropertyNames(object).forEach(key => seal(object[key]))
-
-  return object
+  return value
 }
 
 exports.seal = seal

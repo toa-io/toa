@@ -1,6 +1,6 @@
 'use strict'
 
-const { Query } = require('../src/query')
+const { Query } = require('../../src/contract/query')
 const fixtures = require('./query.fixtures')
 
 beforeEach(() => {
@@ -17,14 +17,14 @@ describe('criteria', () => {
 
   it('should parse criteria', () => {
     const instance = new Query(fixtures.samples.simple.properties)
-    const [query] = instance.parse(fixtures.samples.simple.query)
+    const query = instance.parse(fixtures.samples.simple.query)
 
     expect(query.criteria).toEqual(fixtures.samples.simple.parsed.criteria)
   })
 
   it('should parse criteria with type coercion', () => {
     const instance = new Query(fixtures.samples.extended.properties)
-    const [query] = instance.parse(fixtures.samples.extended.query)
+    const query = instance.parse(fixtures.samples.extended.query)
 
     expect(query.criteria).toEqual(fixtures.samples.extended.parsed.criteria)
   })
@@ -48,7 +48,7 @@ describe('options', () => {
   describe('omit, limit', () => {
     it('should pass', () => {
       const input = { omit: 1, limit: 1 }
-      const [query] = instance.parse(input)
+      const query = instance.parse(input)
 
       expect(query.options).toStrictEqual(input)
     })
@@ -63,14 +63,14 @@ describe('options', () => {
 
     it('should return an array', () => {
       const sort = 'a:asc,b:desc'
-      const [query] = instance.parse({ sort })
+      const query = instance.parse({ sort })
 
       expect(query.options.sort).toStrictEqual([['a', 'asc'], ['b', 'desc']])
     })
 
     it('should set default values', () => {
       const sort = 'a,b:desc,c'
-      const [query] = instance.parse({ sort })
+      const query = instance.parse({ sort })
 
       expect(query.options.sort).toStrictEqual([['a', 'asc'], ['b', 'desc'], ['c', 'asc']])
     })
@@ -91,7 +91,7 @@ describe('options', () => {
 
     it('should return an array', () => {
       const projection = 'a,b,c'
-      const [query] = instance.parse({ projection })
+      const query = instance.parse({ projection })
 
       expect(query.options.projection).toStrictEqual(['a', 'b', 'c'])
     })

@@ -8,15 +8,8 @@ const { version } = require('../package.json')
 // noinspection JSValidateTypes
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
-    if (err) {
-      if (argv.stacktrace) { console.dir(err) }
-
-      message = err.message
-    } else {
-      yargs.showHelp()
-    }
-
-    console.error(message)
+    if (err) console.error(err)
+    else yargs.showHelp()
 
     process.exit(1)
   })
@@ -24,11 +17,6 @@ const argv = yargs(process.argv.slice(2))
     type: 'string',
     describe: 'Logging level',
     default: process.env.KOO_ENV === 'dev' ? 'info' : 'warn'
-  })
-  .option('stacktrace', {
-    type: 'boolean',
-    describe: 'Print stack trace on errors',
-    default: false
   })
   .option('ugly', {
     type: 'boolean',

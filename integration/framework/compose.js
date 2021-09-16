@@ -6,6 +6,7 @@ const { locate } = require('./dummies')
 const compose = async (options) => {
   const components = options.dummies.map(locate)
   const composition = await boot.composition(components, options)
+
   await composition.connect()
 
   return composition

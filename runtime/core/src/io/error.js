@@ -9,7 +9,7 @@ const { yaml } = require('@kookaburra/gears')
 const schema = yaml.sync(path.resolve(__dirname, './error.yaml'))
 
 const codes = {
-  INTERNAL: 0,
+  SYSTEM: 0,
   // user codes: 1-99
 
   VALIDATION_ERROR: 100,

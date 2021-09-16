@@ -1,46 +1,25 @@
 'use strict'
 
-const randomstring = require('randomstring')
+const { generate } = require('randomstring')
 
 const transmission = {
-  request: jest.fn(() => [{ [randomstring.generate()]: randomstring.generate() }, null])
+  request: jest.fn((request) => ({ [request.invalid ? 'exception' : generate()]: generate() }))
 }
 
-const io = {
-  create: jest.fn((input) => {
-    let ok = true
-    let oh
-
-    const io = { input, output: {}, error: {}, fit: jest.fn() }
-
-    if (input?.invalid) {
-      ok = false
-      oh = { message: randomstring.generate() }
-    }
-
-    return { ok, oh, io }
-  })
+const contract = {
+  fit: jest.fn(() => null)
 }
 
-const query = {
-  parse: jest.fn((query) => {
-    if (query?.invalid) return [null, { [randomstring.generate()]: randomstring.generate() }]
-    else return [{ [randomstring.generate()]: randomstring.generate() }]
-  })
-}
-
-const sample = () => ({
-  input: {
-    ok: { [randomstring.generate()]: randomstring.generate() },
-    invalid: { invalid: true }
+const request = () => ({
+  ok: {
+    input: { [generate()]: generate() },
+    query: { [generate()]: generate() }
   },
-  query: {
-    ok: randomstring.generate(),
-    invalid: { invalid: true }
+  bad: {
+    invalid: true
   }
 })
 
 exports.transmission = transmission
-exports.io = io
-exports.query = query
-exports.sample = sample
+exports.contract = contract
+exports.request = request

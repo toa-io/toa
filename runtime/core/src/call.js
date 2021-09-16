@@ -1,51 +1,29 @@
 'use strict'
 
 const { Connector } = require('./connector')
+const { Exception } = require('./contract')
 
 class Call extends Connector {
   #transmission
-  #io
-  #query
+  #contract
 
-  constructor (transmission, io, query) {
+  constructor (transmission, contract) {
     super()
 
     this.#transmission = transmission
-    this.#io = io
-    this.#query = query
+    this.#contract = contract
 
     this.depends(transmission)
   }
 
-  async invoke (input = null, query = null) {
-    const io = this.#io.create()
+  async invoke (request) {
+    if (request) this.#contract.fit(request)
 
-    io.input = input
+    const { exception, ...reply } = await this.#transmission.request(request)
 
-    if (io.error) return [null, io.error]
+    if (exception) throw new Exception(exception)
 
-    if (query) {
-      const [parsed, error] = this.#query.parse(query)
-
-      if (error) {
-        io.error = error
-
-        return [null, io.error]
-      } else {
-        query = parsed
-      }
-    }
-
-    const [output, error] = await this.#transmission.request(io.input, query)
-
-    if (error) io.error = error
-    else if (output) {
-      io.output = output
-
-      if (io.error) throw io.error
-    }
-
-    return [io.output, io.error]
+    return reply
   }
 }
 

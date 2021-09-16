@@ -16,22 +16,18 @@ class Consumer extends Connector {
     this.#locator = locator
   }
 
-  async request (endpoint, input, query) {
+  async request (endpoint, request) {
     const method = resource.method
     const url = this.#url(endpoint)
 
-    const response = await fetch(url, {
+    const reply = await fetch(url, {
       method,
-      body: JSON.stringify({ input, query }),
+      body: JSON.stringify(request),
       headers: { 'Content-Type': 'application/json' },
       agent: this.#agent
     })
 
-    const [output, error, exception] = await response.json()
-
-    if (exception) throw new Error(exception.message)
-
-    return [output, error]
+    return reply.json()
   }
 
   #url (endpoint) {

@@ -25,9 +25,9 @@ describe('Invocations', () => {
   it('should invoke input and query', async () => {
     const input = { test: Math.random() }
     const query = { test: Math.random() }
-    await runtime.invoke(name, input, query)
+    await runtime.invoke(name, { input, query })
 
-    expect(invocation.invoke).toBeCalledWith(input, query)
+    expect(invocation.invoke).toBeCalledWith({ input, query })
   })
 
   it('should return io', async () => {

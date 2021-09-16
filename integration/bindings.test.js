@@ -39,7 +39,8 @@ BINDINGS.forEach((binding) => {
     describe('consumer', () => {
       it('should add message', async () => {
         const message = { sender: generate(), text: generate() }
-        const [output] = await consumer.request('add', message)
+        const reply = await consumer.request('add', { input: message })
+        const output = reply.output
 
         expect(output.id).toBeDefined()
 
@@ -48,23 +49,25 @@ BINDINGS.forEach((binding) => {
         expect(created).toMatchObject(message)
       })
 
-      it('should throw exception / TBD', async () => {
+      it('should return user space exception', async () => {
         const message = { sender: generate(), text: 'throw exception' }
-        await expect(consumer.request('add', message)).rejects.toThrow()
+        const reply = await consumer.request('add', { input: message })
+
+        expect(reply.exception).toMatchObject({ code: 0, message: 'user space exception' })
       })
     })
 
     describe('remote', () => {
       it('should get message', async () => {
         const message = { sender: generate(), text: generate() }
-        const [created] = await remote.invoke('add', message)
+        const created = await remote.invoke('add', { input: message })
 
-        expect(created.id).toBeDefined()
+        expect(created.output.id).toBeDefined()
 
-        const [output] = await remote.invoke('get', null, { criteria: `id==${created.id}` })
+        const reply = await remote.invoke('get', { query: { criteria: `id==${created.output.id}` } })
 
-        expect(output).toBeDefined()
-        expect(output.id).toBe(created.id)
+        expect(reply.output).toBeDefined()
+        expect(reply.output.id).toBe(created.output.id)
       })
 
       it('should find messages', async () => {
@@ -72,21 +75,25 @@ BINDINGS.forEach((binding) => {
         const messages = Array.from(Array(5)).map((_, index) =>
           ({ sender, text: generate(), timestamp: index }))
 
-        await Promise.all(messages.map((message) => remote.invoke('add', message)))
+        await Promise.all(messages.map((message) => remote.invoke('add', { input: message })))
 
-        const [output] = await remote.invoke('find', null, {
-          criteria: `sender==${sender}`,
-          sort: 'timestamp:desc',
-          projection: 'sender,text'
+        const reply = await remote.invoke('find', {
+          query: {
+            criteria: `sender==${sender}`,
+            sort: 'timestamp:desc',
+            projection: 'sender,text'
+          }
         })
 
         const projection = messages
           .sort((a, b) => b.timestamp - a.timestamp)
           .map(({ sender, text }) => ({ id: expect.any(String), sender, text }))
 
-        expect(output.messages).toBeDefined()
-        expect(projection).toStrictEqual(output.messages)
+        expect(reply.output.messages).toBeDefined()
+        expect(projection).toStrictEqual(reply.output.messages)
       })
+
+      // it('should validate')
     })
   })
 })
