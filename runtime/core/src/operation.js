@@ -4,13 +4,15 @@ const { Connector } = require('./connector')
 const { Exception } = require('./contract')
 
 class Operation extends Connector {
+  #declaration
   #contract
   #bridge
   #target
 
-  constructor (bridge, target, contract) {
+  constructor (declaration, bridge, target, contract) {
     super()
 
+    this.#declaration = declaration
     this.#bridge = bridge
     this.#target = target
     this.#contract = contract
@@ -37,8 +39,8 @@ class Operation extends Connector {
     if (request?.query) {
       target = await this.#target.query(request?.query)
 
-      if (target === null) return { output: null }
-    } else if (this.#bridge.type === 'transition') {
+      if (target === null) return { output: NULL[this.#declaration.target] }
+    } else if (this.#declaration.type === 'transition') {
       target = this.#target.init()
     }
 
@@ -48,13 +50,18 @@ class Operation extends Connector {
 
     this.#contract.fit(reply)
 
-    if (state && this.#bridge.type === 'transition' && !reply.error) {
+    if (state && this.#declaration.type === 'transition' && !reply.error) {
       target.set(state)
       await this.#target.commit(target)
     }
 
     return reply
   }
+}
+
+const NULL = {
+  entry: null,
+  set: []
 }
 
 exports.Operation = Operation

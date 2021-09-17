@@ -7,7 +7,7 @@ const operations = async (root, manifest) => {
     if (!operation.name) return operation
 
     const { Bridge } = require(operation.bridge || '@kookaburra/bridges.javascript.native')
-    const descriptor = await Bridge.manifest(root, operation.name)
+    const descriptor = await Bridge.declaration(root, operation.name)
 
     return merge(operation, descriptor)
   }))

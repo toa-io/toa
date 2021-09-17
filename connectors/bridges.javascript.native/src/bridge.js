@@ -7,15 +7,15 @@ const { resolve } = require('path')
 const { parse } = require('./bridge/parse')
 
 class Bridge extends Connector {
-  #manifest
+  #declaration
   #algorithm
   #context
 
-  constructor (manifest, context) {
+  constructor (declaration, context) {
     super()
 
-    this.#manifest = manifest
-    this.#algorithm = require(manifest['.bridge'].path)
+    this.#declaration = declaration
+    this.#algorithm = require(declaration['.bridge'].path)
     this.#context = context
 
     this.depends(context)
@@ -35,10 +35,6 @@ class Bridge extends Connector {
     return defined({ output, error })
   }
 
-  get type () {
-    return this.#manifest.type
-  }
-
   #state (state) {
     if (state instanceof Array) return state.map((state) => this.#state(state))
 
@@ -50,25 +46,25 @@ class Bridge extends Connector {
       if (key[0] === '_') Object.defineProperty(state, key, { enumerable: false })
     }
 
-    if (this.#manifest.type === 'observation') freeze(state)
+    if (this.#declaration.type === 'observation') freeze(state)
 
     return state
   }
 
-  static async manifest (root, name) {
+  static async declaration (root, name) {
     const path = resolve(root, 'operations', name + '.js')
     const algorithm = require(path)
 
-    let manifest
+    let declaration
 
-    try { manifest = parse(algorithm) } catch (e) {
+    try { declaration = parse(algorithm) } catch (e) {
       e.message = `Operation '${name}': ${e.message}`
       throw e
     }
 
-    manifest['.bridge'] = { path }
+    declaration['.bridge'] = { path }
 
-    return manifest
+    return declaration
   }
 }
 

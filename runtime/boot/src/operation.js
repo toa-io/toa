@@ -5,19 +5,19 @@ const { Schema } = require('@kookaburra/schema')
 
 const boot = require('./index')
 
-const operation = (manifest, locator, descriptor, storage, context) => {
-  const { Bridge } = require(descriptor.bridge)
+const operation = (manifest, locator, declaration, storage, context) => {
+  const { Bridge } = require(declaration.bridge)
 
-  const bridge = new Bridge(descriptor, context)
+  const bridge = new Bridge(declaration, context)
   const schema = new Schema(manifest.entity.schema)
   const entity = new entities.Factory(schema)
   const target = new State(storage, entity)
-  const contract = boot.contract.reply(descriptor.output, descriptor.error)
+  const contract = boot.contract.reply(declaration.output, declaration.error)
 
-  if (descriptor.target in target) target.query = target[descriptor.target]
-  else throw new Error(`Unresolved target type '${descriptor.target}'`)
+  if (declaration.target in target) target.query = target[declaration.target]
+  else throw new Error(`Unresolved target type '${declaration.target}'`)
 
-  return new Operation(bridge, target, contract)
+  return new Operation(declaration, bridge, target, contract)
 }
 
 exports.operation = operation

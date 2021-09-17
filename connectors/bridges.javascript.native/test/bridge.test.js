@@ -173,10 +173,10 @@ it('should throw on exceptions', async () => {
   await expect(() => bridge.run({ input: 1 })).rejects.toThrow(/oops/)
 })
 
-it('should provide manifest', async () => {
+it('should provide declaration', async () => {
   const module = require.resolve('./operations/pong')
   const root = path.resolve(path.dirname(module), '..')
-  const manifest = await Bridge.manifest(root, 'pong')
+  const manifest = await Bridge.declaration(root, 'pong')
 
   expect(mock.parse).toHaveBeenCalledWith(operations.pong)
   expect(manifest).toStrictEqual(mock.parse.mock.results[0].value)
