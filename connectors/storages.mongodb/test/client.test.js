@@ -14,7 +14,6 @@ beforeEach(async () => {
 
   const env = process.env.KOO_ENV
 
-  delete process.env.KOO_MONGODB_URL
   delete process.env.KOO_ENV
 
   instance = new Client(fixtures.locator.host, fixtures.locator.db, fixtures.locator.collection)

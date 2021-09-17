@@ -1,6 +1,7 @@
 'use strict'
 
 const { id } = require('../id')
+const { Exception } = require('../contract/exception')
 
 class Entity {
   #schema
@@ -26,7 +27,7 @@ class Entity {
   set (value) {
     const error = this.#schema.fit(value)
 
-    if (error) return error
+    if (error) throw new Exception(error)
 
     this.#state = value
   }

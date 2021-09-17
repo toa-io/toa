@@ -1,5 +1,6 @@
 'use strict'
 
+const { Exception } = require('../../src/contract/exception')
 const { Entity } = require('../../src/entities/entity')
 const fixtures = require('./entity.fixtures')
 
@@ -14,12 +15,10 @@ describe('new', () => {
     entry = new Entity(fixtures.schema)
   })
 
-  it('should fail on schema error', () => {
+  it('should throw on schema error', () => {
     const state = { ...fixtures.entry, fail: true }
 
-    const error = entry.set(state)
-
-    expect(error).toBeDefined()
+    expect(() => entry.set(state)).toThrow(expect.any(Exception))
   })
 
   it('should provide state', () => {
