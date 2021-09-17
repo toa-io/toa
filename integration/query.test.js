@@ -65,6 +65,7 @@ describe('not found', () => {
     const ids = (await Promise.all([1, 2, 3, 4, 5].map((i) =>
       remote.invoke('add', { input: { sender: 's' + i, text: 't' + i } })))).map((reply) => reply.output.id)
 
+    // there is a deterministic unit test for core/contact/query class
     const id = ids[Math.round(ids.length * Math.random() * 0.9)]
 
     const reply = await remote.invoke('get', { query: { id } })
