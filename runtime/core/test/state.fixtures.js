@@ -1,24 +1,24 @@
 'use strict'
 
-const randomstring = require('randomstring')
+const { generate } = require('randomstring')
 
 const storage = {
   name: 'dummy',
-  get: jest.fn(() => ({ id: randomstring.generate() })),
-  find: jest.fn(() => ([{ id: randomstring.generate() }])),
+  get: jest.fn(() => ({ id: generate() })),
+  find: jest.fn(() => ([{ id: generate() }])),
   add: jest.fn(() => true),
   update: jest.fn(() => true)
 }
 
 const entity = {
-  entry: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() })),
-  set: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
+  entry: jest.fn(() => ({ [generate()]: generate() })),
+  entries: jest.fn(() => ({ [generate()]: generate() }))
 }
 
-const query = randomstring.generate()
+const query = generate()
 
 const entry = {
-  get: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
+  get: jest.fn(() => ({ [generate()]: generate() }))
 }
 
 const initial = {

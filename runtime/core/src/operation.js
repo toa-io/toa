@@ -61,7 +61,7 @@ class Operation extends Connector {
 
 const NULL = {
   entry: null,
-  set: []
+  entries: []
 }
 
 exports.Operation = Operation

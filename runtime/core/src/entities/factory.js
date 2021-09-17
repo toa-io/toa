@@ -1,7 +1,7 @@
 'use strict'
 
 const { Entity } = require('./entity')
-const { Set } = require('./set')
+const { Entries } = require('./entries')
 
 class Factory {
   #schema
@@ -18,10 +18,10 @@ class Factory {
     return new Entity(this.#schema, entry)
   }
 
-  set (entries) {
-    const set = entries.map((entry) => this.entry(entry))
+  entries (entries) {
+    entries = entries.map((entry) => this.entry(entry))
 
-    return new Set(set)
+    return new Entries(entries)
   }
 }
 

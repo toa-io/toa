@@ -11,7 +11,7 @@ beforeEach(() => {
   state = new State(fixtures.storage, fixtures.entity)
 })
 
-it('should provide object', async () => {
+it('should provide entry', async () => {
   const entry = await state.entry(fixtures.query)
 
   expect(fixtures.storage.get).toHaveBeenCalledWith(fixtures.query)
@@ -19,12 +19,12 @@ it('should provide object', async () => {
   expect(fixtures.entity.entry).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
 })
 
-it('should provide collection', async () => {
-  const collection = await state.set(fixtures.query)
+it('should provide entries', async () => {
+  const entries = await state.entries(fixtures.query)
 
   expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
-  expect(collection).toStrictEqual(fixtures.entity.set.mock.results[0].value)
-  expect(fixtures.entity.set).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
+  expect(entries).toStrictEqual(fixtures.entity.entries.mock.results[0].value)
+  expect(fixtures.entity.entries).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
 })
 
 it('should add blank entry', async () => {

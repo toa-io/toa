@@ -16,13 +16,13 @@ afterAll(async () => {
 })
 
 describe('not found', () => {
-  it('should return null if target is entry', async () => {
+  it('should return null if target is an entry', async () => {
     const reply = await remote.invoke('get', { query: { criteria: 'id==1' } })
 
     expect(reply).toStrictEqual({ output: null })
   })
 
-  it('should return null if target is entry', async () => {
+  it('should return null if target is a set', async () => {
     const reply = await remote.invoke('find', { query: { criteria: 'id==1' } })
 
     expect(reply).toStrictEqual({ output: [] })

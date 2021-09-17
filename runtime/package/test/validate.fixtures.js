@@ -23,7 +23,7 @@ const ok = {
     {
       name: 'get',
       type: 'observation',
-      target: 'set',
+      target: 'entries',
       bridge: 'whatever',
       bindings: ['@kookaburra/bindings.http']
     },

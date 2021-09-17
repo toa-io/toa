@@ -21,10 +21,10 @@ class State {
     return entry ? this.#entity.entry(entry) : null
   }
 
-  async set (query) {
+  async entries (query) {
     const entries = await this.#storage.find(query)
 
-    return entries.length ? this.#entity.set(entries) : null
+    return entries.length ? this.#entity.entries(entries) : null
   }
 
   async commit (target) {

@@ -9,10 +9,10 @@ const entries = Array.from(Array(5))
   .map((_, index) => ({ id: index, [randomstring.generate()]: randomstring.generate() }))
 
 const Entity = jest.fn().mockImplementation(function () { this.id = randomstring.generate() })
-const Set = jest.fn().mockImplementation(function () {})
+const Entries = jest.fn().mockImplementation(function () {})
 
 exports.schema = schema
 exports.storage = storage
 exports.entry = entry
 exports.entries = entries
-exports.mock = { Entity, Set }
+exports.mock = { Entity, Entries }

@@ -26,12 +26,6 @@ describe('type', () => {
 
     expect(() => parse(observation)).toThrow(/must export async function/)
   })
-
-  it('should throw on unknown type', () => {
-    async function random () {}
-
-    expect(() => parse(random)).toThrow(/Unknown operation type/)
-  })
 })
 
 describe('target', () => {
@@ -45,11 +39,5 @@ describe('target', () => {
 
     expect(o.target).toBe('entry')
     expect(d.target).toBe('set')
-  })
-
-  it('should throw on unknown target', () => {
-    async function observation (input, wrong) {}
-
-    expect(() => parse(observation)).toThrow(/Unknown target type/)
   })
 })

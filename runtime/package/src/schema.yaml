@@ -72,7 +72,7 @@ properties:
         type:
           enum: [transition, observation]
         target:
-          enum: [entry, set]
+          enum: [entry, entries]
         bridge:
           type: string
           default: '@kookaburra/bridges.javascript.native'

@@ -1,7 +1,7 @@
 'use strict'
 
-async function observation (_, set) {
-  return { messages: set }
+async function observation (_, entries) {
+  return { messages: entries }
 }
 
 module.exports = observation
