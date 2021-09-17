@@ -27,10 +27,14 @@ const bridges = {
 }
 
 const target = {
-  query: jest.fn(() => ({
-    get: jest.fn(() => ({ foo: generate() })),
-    set: jest.fn()
-  })),
+  query: jest.fn((query) => {
+    if (query?.mock === null) return null
+
+    return {
+      get: jest.fn(() => ({ foo: generate() })),
+      set: jest.fn()
+    }
+  }),
   init: jest.fn(() => ({
     get: jest.fn(() => ({ foo: generate() })),
     set: jest.fn()

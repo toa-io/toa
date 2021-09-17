@@ -32,6 +32,13 @@ it('should pass target', async () => {
     .toHaveBeenCalledWith(expect.anything(), fixtures.target.query.mock.results[0].value.get.mock.results[0].value)
 })
 
+it('should return { output: null } if target is null', async () => {
+  const result = await operation.invoke({ query: { mock: null } })
+
+  expect(result).toStrictEqual({ output: null })
+  expect(fixtures.bridges.transition.run).not.toHaveBeenCalled()
+})
+
 it('should commit target after transition', async () => {
   await operation.invoke(fixtures.request)
 

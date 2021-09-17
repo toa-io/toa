@@ -39,7 +39,7 @@ class Operation extends Connector {
     if (request?.query) {
       target = await this.#target.query(request?.query)
 
-      if (target === null) return { output: NULL[this.#declaration.target] }
+      if (target === null) return { output: null }
     } else if (this.#declaration.type === 'transition') {
       target = this.#target.init()
     }
@@ -57,11 +57,6 @@ class Operation extends Connector {
 
     return reply
   }
-}
-
-const NULL = {
-  entry: null,
-  entries: []
 }
 
 exports.Operation = Operation
