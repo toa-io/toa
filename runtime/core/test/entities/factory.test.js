@@ -16,11 +16,11 @@ beforeEach(async () => {
   factory = new Factory(fixtures.schema, () => fixtures.storage.id())
 })
 
-it('should create blank', () => {
-  const blank = factory.blank()
+it('should create initial', () => {
+  const initial = factory.init()
 
-  expect(blank).toBeInstanceOf(mock.Entity)
-  expect(blank.constructor).toHaveBeenCalledWith(fixtures.schema)
+  expect(initial).toBeInstanceOf(mock.Entity)
+  expect(initial.constructor).toHaveBeenCalledWith(fixtures.schema)
 })
 
 it('should create instance', () => {

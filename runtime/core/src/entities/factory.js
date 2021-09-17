@@ -10,7 +10,7 @@ class Factory {
     this.#schema = schema
   }
 
-  blank () {
+  init () {
     return new Entity(this.#schema)
   }
 

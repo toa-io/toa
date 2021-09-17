@@ -57,3 +57,13 @@ it('should format error', () => {
     property: 'a'
   })
 })
+
+it('should have definitions', () => {
+  const schema = new Schema({
+    properties: {
+      id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/token' }
+    }
+  })
+
+  expect(schema.fit({ id: 'a2b3c' })).toBe(null)
+})

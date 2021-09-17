@@ -4,7 +4,7 @@ const { contract: { Request, Reply, Query } } = require('@kookaburra/core')
 const { Schema } = require('@kookaburra/schema')
 
 const request = (entity, descriptor) => {
-  const request = Request.schema(descriptor.input)
+  const request = Request.schema(descriptor)
   const schema = new Schema(request)
   const query = new Query(entity?.properties)
 

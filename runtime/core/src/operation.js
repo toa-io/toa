@@ -34,13 +34,15 @@ class Operation extends Connector {
   async #invoke (request) {
     let target, state
 
-    if (request?.query || this.#bridge.type === 'transition') {
-      // TODO: initial state
+    if (request?.query) {
       target = await this.#target.query(request?.query)
-      state = target.get()
 
-      if (state === null) return { output: null }
+      if (target === null) return { output: null }
+    } else if (this.#bridge.type === 'transition') {
+      target = this.#target.init()
     }
+
+    if (target) state = target.get()
 
     const reply = await this.#bridge.run(request?.input, state)
 

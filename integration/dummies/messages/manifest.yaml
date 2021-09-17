@@ -10,7 +10,7 @@ entity:
       text: string
       timestamp: integer
 
-remotes: [credits.balance]
+remotes: [ credits.balance ]
 
 operations:
   - name: add
@@ -18,24 +18,36 @@ operations:
       properties:
         sender: ~
         text: ~
-      required: [sender, text]
+      required: [ sender, text ]
     output:
       properties:
         id: ~
-      required: [id]
+      required: [ id ]
+    query: false
   - name: get
     output:
       properties:
         id: ~
         text: ~
         timestamp: ~
-      required: [id, text]
+      required: [ id, text ]
   - name: update
     input:
       properties:
         text: ~
-      required: [text]
+      required: [ text ]
   - name: find
     output:
       properties:
         messages: array
+    query: true
+  - name: transit
+    input:
+      properties:
+        sender: ~
+        text: ~
+      required: [ sender, text ]
+    output:
+      properties:
+        id: ~
+      required: [ id ]

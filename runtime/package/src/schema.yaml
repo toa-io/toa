@@ -1,17 +1,12 @@
 $schema: http://json-schema.org/draft-07/schema
 $id: https://schemas.kookaburra.dev/0.0.0/manifest
 
-definitions:
-  token:
-    type: string
-    pattern: ^[a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?$
-
 type: object
 properties:
   domain:
-    $ref: '#/definitions/token'
+    $ref: 'definitions#/definitions/token'
   name:
-    $ref: '#/definitions/token'
+    $ref: 'definitions#/definitions/token'
 
   entity:
     type: object
@@ -29,7 +24,7 @@ properties:
           properties:
             type: object
             propertyNames:
-              $ref: '#/definitions/token'
+              $ref: 'definitions#/definitions/token'
             properties:
               id:
                 default:
@@ -73,7 +68,7 @@ properties:
       type: object
       properties:
         name:
-          $ref: '#/definitions/token'
+          $ref: 'definitions#/definitions/token'
         type:
           enum: [transition, observation]
         target:
@@ -85,12 +80,10 @@ properties:
           $ref: '#/properties/bindings'
         input:
           $ref: http://json-schema.org/draft-07/schema
-          default:
-            type: 'null'
         output:
           $ref: http://json-schema.org/draft-07/schema
-          default:
-            type: 'null'
+        query:
+          type: boolean
         .bridge:
           type: object
       required: [name, type, target, bridge]

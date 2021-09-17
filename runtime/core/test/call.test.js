@@ -17,12 +17,9 @@ beforeEach(() => {
   call = new Call(fixtures.transmission, fixtures.contract)
 })
 
-it('should be instance of Connector', () => {
+it('should depend on transmission', () => {
   expect(call).toBeInstanceOf(Connector)
   expect(call).toBe(Connector.mock.instances[0])
-})
-
-it('should depend on transmission', () => {
   expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.transmission)
 })
 

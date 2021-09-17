@@ -22,6 +22,10 @@ const target = {
     get: jest.fn(() => ({ foo: generate() })),
     set: jest.fn()
   })),
+  init: jest.fn(() => ({
+    get: jest.fn(() => ({ foo: generate() })),
+    set: jest.fn()
+  })),
   commit: jest.fn()
 }
 

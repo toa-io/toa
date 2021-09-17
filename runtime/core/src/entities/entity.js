@@ -6,7 +6,7 @@ class Entity {
   #schema
   #state
 
-  blank = false
+  initial = false
 
   constructor (schema, argument) {
     this.#schema = schema
@@ -14,7 +14,7 @@ class Entity {
     if (argument) {
       this.#state = argument
     } else {
-      this.blank = true
+      this.initial = true
       this.#state = { id: id(), ...this.#schema.defaults() }
     }
   }

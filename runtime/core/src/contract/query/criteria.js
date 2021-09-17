@@ -5,7 +5,7 @@ const { parse } = require('@rsql/parser')
 const criteria = (criteria, properties) => {
   const ast = parse(criteria)
 
-  coerce(ast, properties)
+  if (properties) coerce(ast, properties)
 
   return ast
 }

@@ -2,9 +2,12 @@
 
 const { default: Ajv } = require('ajv')
 const keywords = require('ajv-keywords')
+const definitions = require('./definitions')
+
 const validator = new Ajv({ useDefaults: true, strictTypes: false })
 
 keywords(validator)
+definitions(validator)
 
 class Schema {
   #validate
@@ -46,7 +49,7 @@ class Schema {
 
       if (error.keyword === 'additionalProperties') {
         result.property = error.params.additionalProperty
-        result.message += ` '(${result.property}')`
+        result.message = result.message.replace('properties', 'property') + ` '${result.property}'`
       }
     }
 

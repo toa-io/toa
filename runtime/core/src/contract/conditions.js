@@ -1,7 +1,6 @@
 'use strict'
 
 const { Exception } = require('./exception')
-const { defined } = require('@kookaburra/gears')
 
 class Conditions {
   #schema
@@ -17,8 +16,6 @@ class Conditions {
   }
 
   static EXCEPTION = Exception.SYSTEM
-
-  static schema = (properties) => ({ properties: defined(properties) })
 }
 
 exports.Conditions = Conditions

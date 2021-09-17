@@ -11,12 +11,6 @@ beforeEach(() => {
   conditions = new Conditions(fixtures.schema)
 })
 
-it('should provide schema', () => {
-  const props = { input: 1, output: undefined }
-
-  expect(Conditions.schema(props)).toStrictEqual({ properties: { input: 1 } })
-})
-
 it('should fit value', () => {
   const value = { foo: generate() }
 

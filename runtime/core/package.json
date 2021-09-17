@@ -22,11 +22,7 @@
     "@kookaburra/gears": "^0.0.0",
     "@kookaburra/schema": "^0.0.0",
     "@rsql/parser": "1.0.3",
-    "ajv": "8.6.2",
-    "ajv-keywords": "5.0.0",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
+    "uuid": "8.3.2",
     "clone-deep": "4.0.1"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"

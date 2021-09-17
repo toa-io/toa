@@ -3,22 +3,22 @@
 const { Exposition } = require('@kookaburra/core')
 
 const produce = (runtime, bindings) =>
-  each(runtime.locator.operations, bindings, (factory, endpoints) => factory.producer(runtime, endpoints))
+  each(runtime.locator, bindings, (factory, endpoints) => factory.producer(runtime, endpoints))
 
 const consume = (locator, bindings) =>
-  each(locator.operations, bindings, (factory, endpoints) => factory.consumer(locator, endpoints))
+  each(locator, bindings, (factory, endpoints) => factory.consumer(locator, endpoints))
 
 const expose = (exposition) => SYSTEM_BINDINGS.map((binding) =>
   factory(binding).exposition(exposition, Exposition.endpoints()))
 
 const discover = (locator) => SYSTEM_BINDINGS.map((binding) => factory(binding).discovery(locator))
 
-const each = (operations, bindings, callback) => {
+const each = (locator, bindings, callback) => {
   const map = {}
 
-  for (const operation of operations) {
+  for (const operation of locator.operations) {
     if (!bindings) {
-      bindings = operation.bindings
+      bindings = locator.bindings(operation.name)
       bindings.unshift(LOOP)
     }
 

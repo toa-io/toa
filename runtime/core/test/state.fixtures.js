@@ -21,8 +21,8 @@ const entry = {
   get: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
 }
 
-const blank = {
-  blank: true,
+const initial = {
+  initial: true,
   ...entry
 }
 
@@ -30,4 +30,4 @@ exports.storage = storage
 exports.entity = entity
 exports.query = query
 exports.entry = entry
-exports.blank = blank
+exports.initial = initial

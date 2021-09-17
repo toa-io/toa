@@ -34,6 +34,13 @@ describe('criteria', () => {
 
     expect(() => instance.parse({ criteria: 'lastname==Johnson' })).toThrow(/not allowed/)
   })
+
+  it('should parse id', () => {
+    const instance = new Query()
+    const query = instance.parse({ ...fixtures.samples.id.query })
+
+    expect(query).toStrictEqual(fixtures.samples.id.parsed)
+  })
 })
 
 describe('options', () => {

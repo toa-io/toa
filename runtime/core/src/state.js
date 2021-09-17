@@ -11,22 +11,24 @@ class State {
     this.#entity = entity
   }
 
-  async entry (query) {
-    if (!query) return this.#entity.blank()
+  init () {
+    return this.#entity.init()
+  }
 
+  async entry (query) {
     const entry = await this.#storage.get(query)
 
-    return this.#entity.entry(entry)
+    return entry ? this.#entity.entry(entry) : null
   }
 
   async set (query) {
     const entries = await this.#storage.find(query)
 
-    return this.#entity.set(entries)
+    return entries.length ? this.#entity.set(entries) : null
   }
 
   async commit (target) {
-    const method = target.blank ? 'add' : 'update'
+    const method = target.initial ? 'add' : 'update'
 
     await this.#storage[method](target.get())
   }

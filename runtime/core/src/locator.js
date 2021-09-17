@@ -1,5 +1,6 @@
 'use strict'
 
+const clone = require('clone-deep')
 const { concat } = require('@kookaburra/gears')
 
 class Locator {
@@ -50,7 +51,7 @@ class Locator {
 
     const operation = this.#operations.find((operation) => operation.name === endpoint)
 
-    return operation.bindings || this.#bindings
+    return clone(operation.bindings || this.#bindings)
   }
 
   export () {

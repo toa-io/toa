@@ -64,6 +64,43 @@ const samples = {
         type: 'string'
       }
     }
+  },
+
+  id: {
+    query: {
+      id: '123',
+      criteria: 'name==Eddie'
+    },
+    parsed: {
+      criteria: {
+        type: 'LOGIC',
+        left: {
+          type: 'COMPARISON',
+          left: {
+            type: 'SELECTOR',
+            selector: 'id'
+          },
+          operator: '==',
+          right: {
+            type: 'VALUE',
+            value: '123'
+          }
+        },
+        operator: ';',
+        right: {
+          type: 'COMPARISON',
+          left: {
+            type: 'SELECTOR',
+            selector: 'name'
+          },
+          operator: '==',
+          right: {
+            type: 'VALUE',
+            value: 'Eddie'
+          }
+        }
+      }
+    }
   }
 }
 

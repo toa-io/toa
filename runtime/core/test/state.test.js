@@ -28,9 +28,9 @@ it('should provide collection', async () => {
 })
 
 it('should add blank entry', async () => {
-  await state.commit(fixtures.blank)
+  await state.commit(fixtures.initial)
 
-  expect(fixtures.storage.add).toHaveBeenCalledWith(fixtures.blank.get.mock.results[0].value)
+  expect(fixtures.storage.add).toHaveBeenCalledWith(fixtures.initial.get.mock.results[0].value)
 })
 
 it('should update entry', async () => {

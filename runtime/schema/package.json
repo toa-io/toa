@@ -13,6 +13,7 @@
   },
   "main": "src/schema.js",
   "dependencies": {
+    "@kookaburra/gears": "^0.0.0",
     "ajv": "8.6.2",
     "ajv-keywords": "5.0.0"
   },

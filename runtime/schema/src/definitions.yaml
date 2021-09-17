@@ -1,0 +1,7 @@
+$schema: http://json-schema.org/draft-07/schema
+$id: https://schemas.kookaburra.dev/0.0.0/definitions
+
+definitions:
+  token:
+    type: string
+    pattern: ^[a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?$

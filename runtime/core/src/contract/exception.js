@@ -3,7 +3,6 @@
 class Exception {
   code
   message
-  stack
 
   constructor (code = Exception.SYSTEM, error) {
     if (code instanceof Error) {
@@ -13,10 +12,13 @@ class Exception {
       code = Exception.SYSTEM
     }
 
-    this.code = code
+    if (typeof code === 'object') Object.assign(this, code)
+    else {
+      this.code = code
 
-    if (typeof error === 'object' && error !== null) Object.assign(this, error)
-    else this.message = error
+      if (typeof error === 'object' && error !== null) Object.assign(this, error)
+      else this.message = error
+    }
   }
 
   static SYSTEM = 0

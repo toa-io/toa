@@ -18,10 +18,6 @@ afterAll(async () => {
   await collection.disconnect()
 })
 
-beforeEach(async () => {
-  collection.clear()
-})
-
 BINDINGS.forEach((binding) => {
   describe(binding, () => {
     let consumer, remote
@@ -93,7 +89,10 @@ BINDINGS.forEach((binding) => {
         expect(projection).toStrictEqual(reply.output.messages)
       })
 
-      // it('should validate')
+      it('should throw on invalid input', async () => {
+        await expect(remote.invoke('add')).rejects.toMatchObject({ code: 0 })
+        await expect(remote.invoke('add', {})).rejects.toMatchObject({ code: 10, keyword: 'required' })
+      })
     })
   })
 })

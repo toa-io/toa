@@ -18,11 +18,7 @@ it('should be ok', () => {
 it('should provide error', () => {
   manifest.foo = 'bar'
 
-  expect(validate(manifest)).toMatchObject({
-    keyword: 'additionalProperties',
-    property: 'foo',
-    message: expect.stringMatching(/must NOT have additional properties/)
-  })
+  expect(validate(manifest)).toMatchObject({ keyword: 'additionalProperties', property: 'foo' })
 })
 
 it('should not have additional properties', () => {
@@ -260,15 +256,6 @@ describe('operations', () => {
     })
 
     describe('input, output', () => {
-      it('should be null by default', () => {
-        delete manifest.operations[0].input
-        delete manifest.operations[0].output
-
-        expect(validate(manifest)).toBe(null)
-        expect(manifest.operations[0].input).toStrictEqual({ type: 'null' })
-        expect(manifest.operations[0].output).toStrictEqual({ type: 'null' })
-      })
-
       it('should be schema', () => {
         manifest.operations[0].input = { properties: { foo: 1 } }
         expect(validate(manifest)).toMatchObject({ keyword: 'type' })
