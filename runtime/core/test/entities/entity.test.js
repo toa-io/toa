@@ -1,6 +1,6 @@
 'use strict'
 
-const { Exception } = require('../../src/contract/exception')
+const { Exception } = require('../../src/exception')
 const { Entity } = require('../../src/entities/entity')
 const fixtures = require('./entity.fixtures')
 

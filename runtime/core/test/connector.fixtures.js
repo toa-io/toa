@@ -23,6 +23,10 @@ class TestConnector extends Connector {
     await timeout(random(10))
     this.#seq.push(`-${this.#label}`)
   }
+
+  disconnected () {
+    this.#seq.push(`*${this.#label}`)
+  }
 }
 
 class FailingConnector extends Connector {

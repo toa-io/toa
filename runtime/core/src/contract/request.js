@@ -2,8 +2,8 @@
 
 const clone = require('clone-deep')
 
+const { Exception } = require('../exception')
 const { Conditions } = require('./conditions')
-const { Exception } = require('./exception')
 const schemas = require('./schemas')
 
 class Request extends Conditions {

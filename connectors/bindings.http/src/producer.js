@@ -17,7 +17,6 @@ class Producer extends Connector {
     this.#bind(runtime, endpoints)
 
     this.depends(server)
-    server.depends(runtime)
   }
 
   #bind (runtime, endpoints) {

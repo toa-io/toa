@@ -1,6 +1,6 @@
 'use strict'
 
-const { Exception } = require('./exception')
+const { Exception } = require('../exception')
 
 class Conditions {
   #schema

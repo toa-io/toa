@@ -9,7 +9,7 @@ class Composition extends Connector {
     console.info('Composition complete')
   }
 
-  async disconnection () {
+  async disconnected () {
     console.info('Composition shutdown complete')
   }
 }

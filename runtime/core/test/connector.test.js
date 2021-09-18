@@ -23,7 +23,8 @@ describe('callbacks', () => {
   it('should call disconnection', async () => {
     await a.connect()
     await a.disconnect()
-    expect(sequence).toEqual(['+a', '-a'])
+
+    expect(sequence.indexOf('+a')).toBeLessThan(sequence.indexOf('-a'))
   })
 
   it('should reconnect', async () => {
@@ -33,7 +34,7 @@ describe('callbacks', () => {
     await a.disconnect()
     await a.connect()
 
-    expect(sequence).toEqual(['+a', '-a', '+a', '-a', '+a'])
+    expect(sequence).toEqual(['+a', '-a', '*a', '+a', '-a', '*a', '+a'])
   })
 })
 
@@ -109,6 +110,18 @@ describe('dependencies', () => {
     expect(sequence.indexOf('-b')).toBeLessThan(sequence.indexOf('-d'))
   })
 
+  it('should call disconnected', async () => {
+    a.depends(b).depends(c)
+    b.depends(d)
+
+    await a.disconnect()
+
+    expect(sequence.indexOf('*c')).toBeLessThan(sequence.indexOf('*b'))
+    expect(sequence.indexOf('*b')).toBeLessThan(sequence.indexOf('*a'))
+    expect(sequence.indexOf('*d')).toBeLessThan(sequence.indexOf('*b'))
+    expect(sequence.indexOf('*a')).toBe(sequence.length - 1)
+  })
+
   describe('errors', () => {
     let f
 
@@ -120,7 +133,7 @@ describe('dependencies', () => {
       f.depends(b).depends(c)
 
       await expect(f.connect()).rejects.toThrow('FailingConnector')
-      expect(sequence).toEqual(['+c', '+b', '-b', '-c'])
+      expect(sequence).toEqual(['+c', '+b', '-b', '-c', '*c', '*b'])
     })
 
     it('should interrupt connection chain', async () => {

@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 
 const framework = require('./framework')
 
-const BINDINGS = ['http', 'amqp'].map((binding) => '@kookaburra/bindings.' + binding)
+const BINDINGS = ['amqp'].map((binding) => '@kookaburra/bindings.' + binding)
 
 let composition, collection
 

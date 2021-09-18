@@ -2,7 +2,6 @@
 
 const fs = require('fs')
 const util = require('util')
-
 const yaml = require('js-yaml')
 
 const load = async path => {
@@ -26,8 +25,7 @@ load.try = async path => {
   }
 }
 
-load.dump = (object) => {
-  return yaml.dump(object, { noRefs: true })
-}
+load.dump = (object) => yaml.dump(object, { noRefs: true })
+load.parse = (string) => yaml.load(string)
 
 exports.yaml = load

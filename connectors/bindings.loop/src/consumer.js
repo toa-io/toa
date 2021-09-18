@@ -16,9 +16,8 @@ class Consumer extends Connector {
   async request (endpoint, request) {
     const invoke = this.#endpoint(endpoint)
 
-    if (!invoke) return false
-
-    return invoke(request)
+    if (invoke === undefined) return false
+    else return invoke(request)
   }
 
   #endpoint (endpoint) {

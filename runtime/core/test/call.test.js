@@ -3,10 +3,10 @@
 const { Call } = require('../src/call')
 const fixtures = require('./call.fixtures')
 
-jest.mock('../src/contract/exception')
+jest.mock('../src/exception')
 jest.mock('../src/connector')
 
-const { Exception } = require('../src/contract/exception')
+const { Exception } = require('../src/exception')
 const { Connector } = require('../src/connector')
 
 let call

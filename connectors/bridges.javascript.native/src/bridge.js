@@ -17,8 +17,6 @@ class Bridge extends Connector {
     this.#declaration = declaration
     this.#algorithm = require(declaration['.bridge'].path)
     this.#context = context
-
-    this.depends(context)
   }
 
   async run (input, state) {

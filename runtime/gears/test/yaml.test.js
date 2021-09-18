@@ -51,3 +51,9 @@ describe('dump', () => {
     expect(yaml.dump({ ok: 1 })).toBe('ok: 1\n')
   })
 })
+
+describe('parse', () => {
+  it('should parse', () => {
+    expect(yaml.parse('{ok: {foo: 1}}')).toStrictEqual({ ok: { foo: 1 } })
+  })
+})

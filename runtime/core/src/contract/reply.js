@@ -1,7 +1,7 @@
 'use strict'
 
 const { Conditions } = require('./conditions')
-const { Exception } = require('./exception')
+const { Exception } = require('../exception')
 
 class Reply extends Conditions {
   static EXCEPTION = Exception.POSTCONDITION

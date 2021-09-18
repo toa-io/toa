@@ -5,7 +5,7 @@ const { Remote, Locator } = require('@kookaburra/core')
 const boot = require('./index')
 
 const remote = async (fqn, bindings) => {
-  const discovery = boot.discovery(fqn)
+  const discovery = boot.discovery(fqn, bindings)
   await discovery.connect()
 
   const manifest = await discovery.discover()

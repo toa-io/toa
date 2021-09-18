@@ -1,27 +1,36 @@
 'use strict'
 
 const { Connector } = require('./connector')
+const { Exception } = require('./exception')
 
 class Transmission extends Connector {
-  #operation
+  #declaration
   #bindings
 
-  constructor (operation, bindings) {
+  constructor (declaration, bindings) {
     super()
 
-    this.#operation = operation
+    this.#declaration = declaration
     this.#bindings = bindings
 
     this.depends(bindings)
   }
 
   async request (request) {
-    return this.#pick().request(this.#operation.name, request)
-  }
+    let reply = false
+    let i = 0
 
-  #pick () {
-    // TODO: implement strategies
-    return this.#bindings[0]
+    while (reply === false && i < this.#bindings.length) {
+      reply = await this.#bindings[i].request(this.#declaration.name, request)
+      i++
+    }
+
+    if (reply === false) {
+      throw new Exception(Exception.TRANSMISSION,
+      `Transmission failed. All (${this.#bindings.length}) bindings rejected.`)
+    }
+
+    return reply
   }
 }
 

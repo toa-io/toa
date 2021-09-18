@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('./connector')
-const { Exception } = require('./contract')
+const { Exception } = require('./exception')
 
 class Call extends Connector {
   #transmission

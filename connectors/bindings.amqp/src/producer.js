@@ -17,7 +17,6 @@ class Producer extends Connector {
     this.#endpoints = endpoints
 
     this.depends(channel)
-    this.depends(runtime)
   }
 
   async connection () {

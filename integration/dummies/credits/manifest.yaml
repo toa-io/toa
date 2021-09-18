@@ -11,9 +11,8 @@ operations:
   - name: deduce
     input:
       properties:
-        user: string
         amount: integer
-      required: [user, amount]
+      required: [amount]
     output:
       properties:
         balance: integer

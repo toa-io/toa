@@ -1,11 +1,18 @@
 'use strict'
 
 const { console } = require('@kookaburra/gears')
+const { id } = require('./id')
 
 class Connector {
   #connectors = []
   #connecting
   #disconnecting
+
+  id
+
+  constructor () {
+    this.id = this.constructor.name + '#' + id().substring(0, 8)
+  }
 
   depends (connector) {
     let next
@@ -17,8 +24,13 @@ class Connector {
         this.#connectors.push(item)
         item.depends(next)
       }
+
+      console.debug(`${this.id} depends on ` +
+        `[${connector.map((connector) => connector.id).join(', ')}]`)
     } else {
       next = connector
+
+      console.debug(`${this.id} depends on ${next.id}`)
     }
 
     this.#connectors.push(next)
@@ -43,7 +55,7 @@ class Connector {
       throw e
     }
 
-    console.debug(`Connector '${this.constructor.name}' connected`)
+    console.debug(`Connector '${this.id}' connected`)
   }
 
   async disconnect (interrupt) {
@@ -57,15 +69,18 @@ class Connector {
       if (!interrupt) await this.disconnection()
 
       await Promise.all(this.#connectors.map(connector => connector.disconnect()))
+      this.disconnected()
     })()
 
     await this.#disconnecting
 
-    console.debug(`Connector '${this.constructor.name}' disconnected`)
+    console.debug(`Connector '${this.id}' disconnected`)
   }
 
   async connection () {}
   async disconnection () {}
+
+  disconnected () {}
 }
 
 exports.Connector = Connector

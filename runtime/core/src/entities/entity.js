@@ -1,7 +1,7 @@
 'use strict'
 
 const { id } = require('../id')
-const { Exception } = require('../contract/exception')
+const { Exception } = require('../exception')
 
 class Entity {
   #schema
