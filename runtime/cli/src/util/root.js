@@ -3,27 +3,17 @@
 const path = require('path')
 const findUp = require('find-up')
 
-function tryRoot (from = '.') {
-  const current = process.cwd()
+const manifest = (from = '.') => {
+  const manifest = findUp.sync(MANIFEST, { cwd: path.resolve(process.cwd(), from) })
 
-  process.chdir(from)
+  if (!manifest) throw new Error(`File ${MANIFEST} not found in ${from}`)
 
-  const manifest = findUp.sync(MANIFEST)
-
-  process.chdir(current)
-
-  return manifest && path.dirname(manifest)
+  return manifest
 }
 
-function root (from = '.') {
-  const dir = tryRoot(from)
-
-  if (!dir) { throw new Error(`Component manifest (${MANIFEST}) not found in ${from}`) }
-
-  return dir
-}
+const root = (from = '.') => path.dirname(manifest(from))
 
 const MANIFEST = 'manifest.yaml'
 
 exports.root = root
-exports.tryRoot = tryRoot
+exports.manifest = manifest

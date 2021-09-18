@@ -1,24 +1,29 @@
 'use strict'
 
 const boot = require('@kookaburra/boot')
-const rjosn = require('relaxed-json')
+const { yaml } = require('@kookaburra/gears')
+const { Locator } = require('@kookaburra/core')
+const { load } = require('@kookaburra/package')
 
 const { root } = require('../util/root')
-const { print } = require('../util/print')
 
 async function invoke (argv) {
-  const runtime = await boot.runtime(root(argv.path), { mono: true })
+  const manifest = await load(root(argv.path))
+  const request = yaml.parse(argv.request)
 
-  const input = argv.input ? JSON.parse(rjosn.transform(argv.input)) : null
-  const query = argv.query ? JSON.parse(rjosn.transform(argv.query)) : null
+  const composition = await boot.composition([root(argv.path)], { bindings: null })
+  await composition.connect()
 
-  await runtime.connect()
-  const [output, error] = await runtime.invoke(argv.operation, input, query)
-  await runtime.disconnect()
+  const locator = new Locator(manifest)
+  const remote = await boot.remote(locator.fqn, [])
+  await remote.connect()
 
-  if (error) throw error
+  const reply = await remote.invoke(argv.operation, request)
 
-  print(output, argv)
+  await remote.disconnect()
+  await composition.disconnect()
+
+  console.dir(reply)
 }
 
 exports.invoke = invoke

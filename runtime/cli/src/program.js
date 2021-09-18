@@ -8,25 +8,17 @@ const { version } = require('../package.json')
 // noinspection JSValidateTypes
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
-    if (err) console.error(err)
+    if (err) message = err
     else yargs.showHelp()
 
-    process.exit(1)
+    console.error(message)
+
+    process.exit(err ? 1 : 0)
   })
   .option('log', {
     type: 'string',
     describe: 'Logging level',
     default: process.env.KOO_ENV === 'dev' ? 'info' : 'warn'
-  })
-  .option('ugly', {
-    type: 'boolean',
-    describe: 'Ugly output',
-    default: false
-  })
-  .option('path', {
-    type: 'string',
-    desc: 'Working directory',
-    default: '.'
   })
   .commandDir('./commands')
   .demandCommand()

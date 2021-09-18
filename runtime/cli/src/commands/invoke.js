@@ -4,25 +4,23 @@ const { invoke } = require('../handlers/invoke')
 
 const builder = (yargs) => {
   yargs
-    .usage('Usage: kookaburra invoke update "{ foo: \'bar\' }" id=1')
     .positional('operation', {
       type: 'string',
       desc: 'Operation name'
     })
-    .positional('query', {
+    .positional('request', {
       type: 'string',
-      describe: 'RSQL Query',
-      default: null
+      desc: 'Request YAML'
     })
-    .positional('input', {
+    .option('path', {
+      group: 'Command options:',
       type: 'string',
-      describe: 'JSON input',
-      default: null
+      describe: 'Path to component',
+      default: '.'
     })
 }
 
-// noinspection RequiredAttributes
-exports.command = 'invoke <operation> [input] [query]'
+exports.command = 'invoke <operation> [request]'
 exports.desc = 'Invoke Operation'
 exports.builder = builder
 exports.handler = invoke

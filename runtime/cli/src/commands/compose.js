@@ -10,6 +10,12 @@ const builder = (yargs) => {
       default: '.'
     })
     .array('paths')
+    .option('bindings', {
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Bindings'
+    })
+    .array('bindings')
     .example([
       ['$0 compose ./component', 'Path to component package'],
       ['$0 compose ./first ./second', 'Paths enumeration'],
@@ -20,6 +26,6 @@ const builder = (yargs) => {
 }
 
 exports.command = 'compose [paths...]'
-exports.desc = 'Start Runtime Composition'
+exports.desc = 'Start Composition'
 exports.builder = builder
 exports.handler = compose
