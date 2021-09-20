@@ -2,32 +2,34 @@
 
 // schemas playground
 
-const { default: Ajv } = require('ajv')
+const { default: Ajv } = require('ajv/dist/2019')
 const ajv = new Ajv({ useDefaults: true, strictTypes: false })
 
-const schema1 = {
-  $id: 'operation:///foo',
+const schema = {
   properties: {
     foo: {
       type: 'string'
-    }
-  }
-}
-
-const schema2 = {
-  $id: 'operation:///bar',
-  properties: {
+    },
     bar: {
-      $ref: 'operation:///foo#/properties/foo'
+      type: 'string'
+    }
+  },
+  dependentSchemas: {
+    foo: {
+      properties: {
+        bar: false
+      }
+    },
+    bar: {
+      properties: {
+        foo: false
+      }
     }
   }
 }
-
-ajv.addSchema(schema1)
-ajv.addSchema(schema2)
 
 it('should validate', () => {
-  const validate = ajv.getSchema(schema2.$id)
+  const validate = ajv.compile(schema)
 
   const result = validate({ bar: 'ok' })
 

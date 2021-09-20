@@ -1,0 +1,11 @@
+prototype: ../a
+
+domain: dummies
+name: b
+
+entity:
+  schema:
+    properties:
+      length:
+        maximum: 10
+      description: string

@@ -1,8 +1,23 @@
-$schema: http://json-schema.org/draft-07/schema
+$schema: https://json-schema.org/draft/2019-09/schema
 $id: https://schemas.kookaburra.dev/0.0.0/manifest
 
 type: object
 properties:
+  prototype:
+    properties:
+      prototype:
+        $ref: '#/properties/prototype'
+      path:
+        type: string
+      operations:
+        type: array
+        items:
+          properties:
+            name:
+              $ref: '#/properties/operations/items/properties/name'
+            bridge:
+              $ref: '#/properties/bridge'
+
   domain:
     $ref: 'definitions#/definitions/token'
   name:
@@ -11,8 +26,11 @@ properties:
   entity:
     type: object
     properties:
+      storage:
+        type: string
+        default: '@kookaburra/storages.mongodb'
       schema:
-        $ref: http://json-schema.org/draft-07/schema
+        $ref: 'definitions#/definitions/schema'
         type: object
         properties:
           type:
@@ -25,22 +43,6 @@ properties:
             type: object
             propertyNames:
               $ref: 'definitions#/definitions/token'
-            properties:
-              id:
-                default:
-                  type: string
-                  pattern: ^[a-fA-F0-9]+$ #hex
-                const:
-                  type: string
-                  pattern: ^[a-fA-F0-9]+$
-      storage:
-        type: object
-        default:
-          connector: '@kookaburra/storages.mongodb'
-        properties:
-          connector:
-            default: '@kookaburra/storages.mongodb'
-            type: string
     required: [schema]
     additionalProperties: false
 
@@ -53,6 +55,9 @@ properties:
       not:
         const: '@kookaburra/bindings.loop' #loop is for system use only
     default: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp']
+
+  bridge:
+    type: string
 
   remotes:
     type: array
@@ -75,19 +80,15 @@ properties:
           enum: [entry, entries]
         bridge:
           type: string
-          default: '@kookaburra/bridges.javascript.native'
         bindings:
           $ref: '#/properties/bindings'
         input:
-          $ref: http://json-schema.org/draft-07/schema
+          $ref: 'definitions#/definitions/schema'
         output:
-          $ref: http://json-schema.org/draft-07/schema
+          $ref: 'definitions#/definitions/schema'
         query:
           type: boolean
-        .bridge:
-          type: object
-      required: [name, type, target, bridge]
+      required: [name, type, target]
       additionalProperties: false
 
-required: [domain, operations]
 additionalProperties: false

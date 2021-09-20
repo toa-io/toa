@@ -12,86 +12,80 @@ beforeEach(() => {
 })
 
 it('should be ok', () => {
-  expect(validate(manifest)).toBe(null)
+  expect(() => validate(manifest)).not.toThrow()
 })
 
 it('should provide error', () => {
   manifest.foo = 'bar'
 
-  expect(validate(manifest)).toMatchObject({ keyword: 'additionalProperties', property: 'foo' })
+  expect(() => validate(manifest)).toThrow(/must NOT have additional property/)
 })
 
 it('should not have additional properties', () => {
   manifest.foo = 'bar'
 
-  expect(validate(manifest)).toMatchObject({ keyword: 'additionalProperties' })
+  expect(() => validate(manifest)).toThrow(/must NOT have additional property/)
 })
 
 describe('domain', () => {
-  it('should be required', () => {
-    delete manifest.domain
-
-    expect(validate(manifest)).toMatchObject({ keyword: 'required' })
-  })
-
   it('should match token pattern', () => {
     manifest.domain = '1'
-    expect(validate(manifest)).toMatchObject({ keyword: 'pattern' })
+    expect(() => validate(manifest)).toThrow(/must match pattern/)
 
     manifest.domain = 'foo_'
-    expect(validate(manifest)).toMatchObject({ keyword: 'pattern' })
+    expect(() => validate(manifest)).toThrow(/must match pattern/)
 
     manifest.domain = 'foo-'
-    expect(validate(manifest)).toMatchObject({ keyword: 'pattern' })
+    expect(() => validate(manifest)).toThrow(/must match pattern/)
 
     manifest.domain = 'foo-BAR'
-    expect(validate(manifest)).toBe(null)
+    expect(() => validate(manifest)).not.toThrow()
 
     manifest.domain = 'foo_bar'
-    expect(validate(manifest)).toBe(null)
+    expect(() => validate(manifest)).not.toThrow()
 
     manifest.domain = 'FooBar12'
-    expect(validate(manifest)).toBe(null)
+    expect(() => validate(manifest)).not.toThrow()
   })
 })
 
 describe('name', () => {
   it('should be optional', () => {
     delete manifest.name
-    expect(validate(manifest)).toBe(null)
+    expect(() => validate(manifest)).not.toThrow()
   })
 })
 
 describe('entity', () => {
   it('should be optional', () => {
     delete manifest.entity
-    expect(validate(manifest)).toBe(null)
+    expect(() => validate(manifest)).not.toThrow()
   })
 
   it('should be object', () => {
     manifest.entity = 'foo'
-    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+    expect(() => validate(manifest)).toThrow(/must be object/)
   })
 
   it('should not have additional properties', () => {
     manifest.entity.foo = 'bar'
-    expect(validate(manifest)).toMatchObject({ keyword: 'additionalProperties' })
+    expect(() => validate(manifest)).toThrow(/must NOT have additional properties/)
   })
 
   describe('schema', () => {
     it('should be required', () => {
       delete manifest.entity.schema
-      expect(validate(manifest)).toMatchObject({ keyword: 'required' })
+      expect(() => validate(manifest)).toThrow(/must have required property/)
     })
 
     it('should be JSON schema object', () => {
       manifest.entity.schema = { properties: { foo: 1 } }
-      expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+      expect(() => validate(manifest)).toThrow()
     })
 
     it('should be JSON schema object of type object', () => {
       manifest.entity.schema = { type: 'integer' }
-      expect(validate(manifest)).toMatchObject({ keyword: 'const' })
+      expect(() => validate(manifest)).toThrow(/must be equal to constant 'object'/)
 
       manifest.entity.schema = {}
       validate(manifest)
@@ -100,7 +94,7 @@ describe('entity', () => {
 
     it('should forbid additional properties', () => {
       manifest.entity.schema = { additionalProperties: true }
-      expect(validate(manifest)).toMatchObject({ keyword: 'const' })
+      expect(() => validate(manifest)).toThrow(/must be equal to constant 'false'/)
 
       manifest.entity.schema = {}
       validate(manifest)
@@ -109,43 +103,20 @@ describe('entity', () => {
 
     it('should have property names matching token pattern', () => {
       manifest.entity.schema.properties._foo = { type: 'string' }
-      expect(validate(manifest)).toMatchObject({ keyword: 'pattern' })
+      expect(() => validate(manifest)).toThrow(/pattern/)
     })
 
     it('should allow default id', () => {
       manifest.entity.schema.properties.id = { type: 'string', pattern: '^[a-fA-F0-9]+$' }
-      expect(validate(manifest)).toBe(null)
-    })
-
-    it('should forbid non-default id', () => {
-      manifest.entity.schema.properties.id = { type: 'integer' }
-      expect(validate(manifest)).toMatchObject({ keyword: 'const' })
-    })
-
-    it('should provide default property id', () => {
-      validate(manifest)
-      expect(manifest.entity.schema.properties.id).toStrictEqual({ type: 'string', pattern: '^[a-fA-F0-9]+$' })
+      expect(() => validate(manifest)).not.toThrow()
     })
   })
 
   describe('storage', () => {
-    it('should be object', () => {
-      manifest.entity.storage = 'foo'
-      expect(validate(manifest)).toMatchObject({ keyword: 'type' })
-    })
-
     it('should provide default', () => {
       delete manifest.entity.storage
-      expect(validate(manifest)).toBe(null)
-      expect(manifest.entity.storage).toStrictEqual({ connector: '@kookaburra/storages.mongodb' })
-    })
-
-    describe('connector', () => {
-      it('should provide default', () => {
-        delete manifest.entity.storage.connector
-        expect(validate(manifest)).toBe(null)
-        expect(manifest.entity.storage.connector).toStrictEqual('@kookaburra/storages.mongodb')
-      })
+      expect(() => validate(manifest)).not.toThrow()
+      expect(manifest.entity.storage).toStrictEqual('@kookaburra/storages.mongodb')
     })
   })
 })
@@ -153,116 +124,105 @@ describe('entity', () => {
 describe('bindings', () => {
   it('should have default value', () => {
     delete manifest.bindings
-    expect(validate(manifest)).toBe(null)
+    expect(() => validate(manifest)).not.toThrow()
     expect(manifest.bindings).toStrictEqual(['@kookaburra/bindings.http', '@kookaburra/bindings.amqp'])
   })
 
   it('should be array of unique strings', () => {
     manifest.bindings = 'oops'
-    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+    expect(() => validate(manifest)).toThrow(/must be array/)
 
     manifest.bindings = ['oops', 'oops']
-    expect(validate(manifest)).toMatchObject({ keyword: 'uniqueItems' })
+    expect(() => validate(manifest)).toThrow(/duplicate items/)
 
     manifest.bindings = ['oops', 1]
-    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+    expect(() => validate(manifest)).toThrow(/must be string/)
   })
 
   it('should forbid explicit loop', () => {
     manifest.bindings = ['@kookaburra/bindings.loop']
-    expect(validate(manifest)).toMatchObject({ keyword: 'not' })
+    expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 })
 
 describe('remotes', () => {
   it('should be optional', () => {
     delete manifest.remotes
-    expect(validate(manifest)).toBe(null)
+    expect(() => validate(manifest)).not.toThrow()
   })
 
   it('should be unique non-empty array of strings', () => {
     manifest.remotes = 1
-    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+    expect(() => validate(manifest)).toThrow(/must be array/)
 
     manifest.remotes = ['a', {}]
-    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+    expect(() => validate(manifest)).toThrow(/must be string/)
 
     manifest.remotes = ['a', 'a']
-    expect(validate(manifest)).toMatchObject({ keyword: 'uniqueItems' })
+    expect(() => validate(manifest)).toThrow(/duplicate items/)
 
     manifest.remotes = []
-    expect(validate(manifest)).toMatchObject({ keyword: 'minItems' })
+    expect(() => validate(manifest)).toThrow(/fewer than 1 items/)
   })
 })
 
 describe('operations', () => {
-  it('should be required', () => {
-    delete manifest.operations
-    expect(validate(manifest)).toMatchObject({ keyword: 'required' })
-  })
-
   it('should be non-empty array of objects', () => {
     manifest.operations = 1
-    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+    expect(() => validate(manifest)).toThrow(/must be array/)
 
     manifest.operations = []
-    expect(validate(manifest)).toMatchObject({ keyword: 'minItems' })
+    expect(() => validate(manifest)).toThrow(/fewer than 1 items/)
 
     manifest.operations = ['a', {}]
-    expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+    expect(() => validate(manifest)).toThrow(/must be object/)
   })
 
   describe('operation', () => {
     it('should be object', () => {
       manifest.operations[0] = 'bar'
-      expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+      expect(() => validate(manifest)).toThrow(/must be object/)
     })
 
     it('should not have additional properties', () => {
       manifest.operations[0].foo = 'bar'
-      expect(validate(manifest)).toMatchObject({ keyword: 'additionalProperties' })
+      expect(() => validate(manifest)).toThrow(/additional properties/)
     })
 
     it('should have name', () => {
       delete manifest.operations[0].name
-      expect(validate(manifest)).toMatchObject({ keyword: 'required' })
+      expect(() => validate(manifest)).toThrow(/required property/)
     })
 
     it('should have type (transition or observation)', () => {
       delete manifest.operations[0].type
-      expect(validate(manifest)).toMatchObject({ keyword: 'required' })
+      expect(() => validate(manifest)).toThrow(/required property/)
 
       manifest.operations[0].type = 'foo'
-      expect(validate(manifest)).toMatchObject({ keyword: 'enum' })
+      expect(() => validate(manifest)).toThrow(/one of the allowed values/)
     })
 
     it('should have type (entity or set)', () => {
       delete manifest.operations[0].target
-      expect(validate(manifest)).toMatchObject({ keyword: 'required' })
+      expect(() => validate(manifest)).toThrow(/required property/)
 
       manifest.operations[0].target = 'foo'
-      expect(validate(manifest)).toMatchObject({ keyword: 'enum' })
-    })
-
-    it('should have default bridge', () => {
-      delete manifest.operations[0].bridge
-      expect(validate(manifest)).toBe(null)
-      expect(manifest.operations[0].bridge).toBe('@kookaburra/bridges.javascript.native')
+      expect(() => validate(manifest)).toThrow(/one of the allowed values/)
     })
 
     it('should forbid explicit loop', () => {
       manifest.operations[0].bindings = ['@kookaburra/bindings.loop']
-      expect(validate(manifest)).toMatchObject({ keyword: 'not' })
+      expect(() => validate(manifest)).toThrow(/must NOT be valid/)
     })
 
     describe('input, output', () => {
       it('should be schema', () => {
         manifest.operations[0].input = { properties: { foo: 1 } }
-        expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+        expect(() => validate(manifest)).toThrow()
 
         delete manifest.operations[0].input
         manifest.operations[0].output = { properties: { foo: 1 } }
-        expect(validate(manifest)).toMatchObject({ keyword: 'type' })
+        expect(() => validate(manifest)).toThrow()
       })
     })
   })

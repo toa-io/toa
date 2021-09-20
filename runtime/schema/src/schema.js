@@ -1,6 +1,6 @@
 'use strict'
 
-const { default: Ajv } = require('ajv')
+const { default: Ajv } = require('ajv/dist/2019')
 const keywords = require('ajv-keywords')
 const definitions = require('./definitions')
 

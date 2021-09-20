@@ -1,7 +1,6 @@
 'use strict'
 
 const path = require('path')
-const clone = require('clone-deep')
 
 const { Connector } = require('@kookaburra/core')
 
@@ -29,146 +28,55 @@ it('should inherit runtime.Connector', () => {
 })
 
 it('should run algorithm', async () => {
-  const manifest = {
-    '.bridge': { path: require.resolve('./operations/pong') }
-  }
-
-  const bridge = new Bridge(manifest)
+  const bridge = new Bridge({ name: 'pong' }, __dirname)
 
   await bridge.run({ input: 1 })
 
   expect(operations.pong).toHaveBeenCalled()
 })
 
-it('should pass state', async () => {
-  const manifest = {
-    '.bridge': { path: require.resolve('./operations/pong') }
-  }
+it('should pass input, state, context', async () => {
+  const input = { a: 1 }
+  const state = { b: 2 }
+  const bridge = new Bridge({ name: 'pong' }, __dirname, fixtures.context)
 
-  const io = { input: 1 }
-  const state = { a: 1 }
-  const bridge = new Bridge(manifest)
+  await bridge.run(input, state)
 
-  await bridge.run(io, state)
-
-  const argument = operations.pong.mock.calls[0][1]
-
-  expect(argument).toStrictEqual(state)
-  expect(Object.isFrozen(argument)).toBeFalsy()
+  expect(operations.pong).toHaveBeenCalledWith(input, state, fixtures.context)
+  expect(Object.isFrozen(operations.pong.mock.calls[0][1])).toBeFalsy()
 })
 
 it('should pass frozen state to observation', async () => {
-  const manifest = {
-    type: 'observation',
-    '.bridge': { path: require.resolve('./operations/pong') }
-  }
+  const input = { a: 1 }
+  const state = { b: 2 }
+  const bridge = new Bridge({ name: 'pong', type: 'observation' }, __dirname, fixtures.context)
 
-  const io = { input: 1 }
-  const state = { a: 1 }
-  const bridge = new Bridge(manifest)
+  await bridge.run(input, state)
 
-  await bridge.run(io, state)
-
-  const argument = operations.pong.mock.calls[0][1]
-
-  expect(Object.isFrozen(argument)).toBeTruthy()
-})
-
-it('should pass id as getter', async () => {
-  const manifest = {
-    type: 'transition',
-    '.bridge': { path: require.resolve('./operations/pong') }
-  }
-
-  const io = { input: 1 }
-  const state = { a: 1 }
-  const bridge = new Bridge(manifest)
-
-  await bridge.run(io, state)
-
-  const argument = operations.pong.mock.calls[0][1]
-
-  expect(() => (argument.id = 'foo')).toThrow(/has only a getter/)
-})
-
-it('should pass entry with non enumerable system properties', async () => {
-  const manifest = {
-    '.bridge': { path: require.resolve('./operations/pong') }
-  }
-
-  const io = { input: 1 }
-  const state = { a: 1, _version: 2 }
-  const bridge = new Bridge(manifest)
-
-  await bridge.run(io, clone(state))
-
-  const argument = operations.pong.mock.calls[0][1]
-
-  expect(argument).not.toStrictEqual(state)
-  expect(argument._version).toBe(state._version)
-
-  delete state._version
-
-  expect(argument).toStrictEqual(state)
-})
-
-it('should pass set with non enumerable system properties', async () => {
-  const manifest = {
-    '.bridge': { path: require.resolve('./operations/pong') }
-  }
-
-  const io = { input: 1 }
-  const state = [{ a: 1, _version: 2 }]
-  const bridge = new Bridge(manifest)
-
-  await bridge.run(io, clone(state))
-
-  const argument = operations.pong.mock.calls[0][1]
-
-  expect(argument).not.toStrictEqual(state)
-  expect(argument[0]._version).toBe(state[0]._version)
-
-  const expected = state.map(({ _version, ...rest }) => rest)
-
-  expect(argument).toStrictEqual(expected)
+  expect(Object.isFrozen(operations.pong.mock.calls[0][1])).toBeTruthy()
 })
 
 it('should return output', async () => {
-  const manifest = {
-    '.bridge': { path: require.resolve('./operations/pong') }
-  }
+  const bridge = new Bridge({ name: 'pong' }, __dirname, fixtures.context)
 
-  const input = { a: 1 }
-  const state = { a: 1 }
-  const bridge = new Bridge(manifest)
-
-  const output = await bridge.run(input, state)
+  const reply = await bridge.run()
   const result = await operations.pong.mock.results[0].value
 
-  expect(output).toBeDefined()
-  expect(output).toStrictEqual({ output: result })
+  expect(reply).toBeDefined()
+  expect(reply.output).toStrictEqual(result)
 })
 
 it('should return { output, error }', async () => {
-  const manifest = {
-    '.bridge': { path: require.resolve('./operations/error') }
-  }
+  const bridge = new Bridge({ name: 'error' }, __dirname, fixtures.context)
 
-  const input = { a: 1 }
-  const bridge = new Bridge(manifest)
-
-  const { output, error } = await bridge.run(input)
+  const { output, error } = await bridge.run()
 
   expect(error).toStrictEqual({ code: 1, message: 'oops' })
   expect(output).toBeUndefined()
 })
 
 it('should throw on exceptions', async () => {
-  const manifest = {
-    '.bridge': { path: require.resolve('./operations/exception') }
-  }
-
-  const bridge = new Bridge(manifest)
+  const bridge = new Bridge({ name: 'exception' }, __dirname, fixtures.context)
 
   await expect(() => bridge.run({ input: 1 })).rejects.toThrow(/oops/)
 })
@@ -180,5 +88,4 @@ it('should provide declaration', async () => {
 
   expect(mock.parse).toHaveBeenCalledWith(operations.pong)
   expect(manifest).toStrictEqual(mock.parse.mock.results[0].value)
-  expect(manifest['.bridge']).toStrictEqual({ path: module })
 })

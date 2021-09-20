@@ -4,12 +4,14 @@ const operations = async (root, manifest) => {
   if (!(manifest.operations instanceof Array)) return
 
   manifest.operations = await Promise.all(manifest.operations.map(async (operation) => {
-    if (!operation.name) return operation
+    if (!operation.name) throw new Error('Operation must have a name')
 
-    const { Bridge } = require(operation.bridge || '@kookaburra/bridges.javascript.native')
-    const descriptor = await Bridge.declaration(root, operation.name)
+    if (!operation.bridge) operation.bridge = manifest.bridge || '@kookaburra/bridges.javascript.native'
 
-    return merge(operation, descriptor)
+    const { Bridge } = require(operation.bridge)
+    const declaration = await Bridge.declaration(root, operation.name)
+
+    return merge(operation, declaration)
   }))
 }
 

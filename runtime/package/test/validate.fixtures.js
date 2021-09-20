@@ -4,9 +4,7 @@ const ok = {
   domain: 'foo',
   name: 'bar',
   entity: {
-    storage: {
-      connector: 'whatever'
-    },
+    storage: 'whatever',
     schema: {
       properties: {
         name: {

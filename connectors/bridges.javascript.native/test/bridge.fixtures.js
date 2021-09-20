@@ -1,7 +1,9 @@
 'use strict'
 
-const randomstring = require('randomstring')
+const { generate } = require('randomstring')
 
-const parse = jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
+const parse = jest.fn(() => ({ [generate()]: generate() }))
+const context = { [generate()]: generate() }
 
 exports.mock = { parse }
+exports.context = context

@@ -61,7 +61,8 @@ it('should format error', () => {
 it('should have definitions', () => {
   const schema = new Schema({
     properties: {
-      id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/token' }
+      id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/token' },
+      schema: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/schema' }
     }
   })
 

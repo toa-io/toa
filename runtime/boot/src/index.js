@@ -1,6 +1,8 @@
 'use strict'
 
+const { bridge } = require('./bridge')
 const { call } = require('./call')
+const { cascade } = require('./cascade')
 const { composition } = require('./composition')
 const { context } = require('./context')
 const { discovery } = require('./discovery')
@@ -14,7 +16,9 @@ exports.promise = require('./promise')
 exports.bindings = require('./bindings')
 exports.contract = require('./contract')
 
+exports.bridge = bridge
 exports.call = call
+exports.cascade = cascade
 exports.composition = composition
 exports.context = context
 exports.discovery = discovery

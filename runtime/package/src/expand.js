@@ -1,48 +1,29 @@
 'use strict'
 
-const expand = (manifest) => {
-  schema(manifest.entity?.schema)
+const traverse = (manifest) => {
+  expand(manifest.entity.schema)
 
-  if (typeof manifest.entity?.storage === 'string') manifest.entity.storage = { connector: manifest.entity.storage }
+  if (manifest.operations === undefined) return
 
-  if (manifest.operations instanceof Array) {
-    for (const operation of manifest.operations) {
-      dereference(manifest.entity?.schema, operation?.input)
-      dereference(manifest.entity?.schema, operation?.output)
-      schema(operation?.input)
-      schema(operation?.output)
+  for (const operation of manifest.operations) {
+    if (operation.input) operation.input = expand(operation.input)
+    if (operation.output) operation.output = expand(operation.output)
+  }
+}
+
+const expand = (object) => {
+  if (object === undefined || object === null) return object
+  if (typeof object === 'string' && object[0] !== '~') return { type: object }
+
+  if (object.type === 'array') {
+    object.items = expand(object.items)
+  } else if (object.properties !== undefined) {
+    for (const [name, value] of Object.entries(object.properties)) {
+      object.properties[name] = expand(value)
     }
   }
+
+  return object
 }
 
-const schema = (schema) => {
-  if (!schema) return
-
-  for (const [name, value] of Object.entries(schema.properties)) {
-    if (typeof value === 'string') schema.properties[name] = { type: value }
-  }
-}
-
-const dereference = (entity, schema) => {
-  if (!entity || !schema?.properties) return
-
-  const properties = { ...entity.properties, id }
-
-  const property = (name) => {
-    if (properties[name] === undefined) throw new Error(`Referenced property '${name}' is not defined`)
-
-    return properties[name]
-  }
-
-  for (const [name, value] of Object.entries(schema.properties)) {
-    if (value === null) schema.properties[name] = property(name)
-
-    if (typeof value === 'string' && value[0] === '~') {
-      schema.properties[name] = property(value.substr(1))
-    }
-  }
-}
-
-const id = { type: 'string', pattern: '^[a-fA-F0-9]+$' }
-
-exports.expand = expand
+exports.expand = traverse

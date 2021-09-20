@@ -6,18 +6,18 @@ const { Exception } = require('./exception')
 class Operation extends Connector {
   #declaration
   #contract
-  #bridge
+  #cascade
   #target
 
-  constructor (declaration, bridge, target, contract) {
+  constructor (declaration, cascade, target, contract) {
     super()
 
     this.#declaration = declaration
-    this.#bridge = bridge
+    this.#cascade = cascade
     this.#target = target
     this.#contract = contract
 
-    this.depends(bridge)
+    this.depends(cascade)
   }
 
   async invoke (request) {
@@ -46,7 +46,7 @@ class Operation extends Connector {
 
     if (target) state = target.get()
 
-    const reply = await this.#bridge.run(request?.input, state)
+    const reply = await this.#cascade.run(request?.input, state)
 
     this.#contract.fit(reply)
 

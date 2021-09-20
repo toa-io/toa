@@ -1,4 +1,5 @@
 const { Call } = require('./call')
+const { Cascade } = require('./cascade')
 const { Composition } = require('./composition')
 const { Connector } = require('./connector')
 const { Context } = require('./context')
@@ -17,6 +18,7 @@ exports.entities = require('./entities')
 exports.contract = require('./contract')
 
 exports.Call = Call
+exports.Cascade = Cascade
 exports.Composition = Composition
 exports.Connector = Connector
 exports.Context = Context

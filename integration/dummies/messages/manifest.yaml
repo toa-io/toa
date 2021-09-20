@@ -49,5 +49,5 @@ operations:
       required: [ sender, text ]
     output:
       properties:
-        id: ~
+        ok: string
       required: [ id ]

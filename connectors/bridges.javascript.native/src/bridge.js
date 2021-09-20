@@ -11,12 +11,12 @@ class Bridge extends Connector {
   #algorithm
   #context
 
-  constructor (declaration, context) {
+  constructor (declaration, root, context) {
     super()
 
     this.#declaration = declaration
-    this.#algorithm = require(declaration['.bridge'].path)
     this.#context = context
+    this.#algorithm = Bridge.#require(root, declaration.name)
   }
 
   async run (input, state) {
@@ -50,19 +50,24 @@ class Bridge extends Connector {
   }
 
   static async declaration (root, name) {
-    const path = resolve(root, 'operations', name + '.js')
-    const algorithm = require(path)
+    const algorithm = this.#require(root, name)
 
     let declaration
 
-    try { declaration = parse(algorithm) } catch (e) {
+    try {
+      declaration = parse(algorithm)
+    } catch (e) {
       e.message = `Operation '${name}': ${e.message}`
       throw e
     }
 
-    declaration['.bridge'] = { path }
-
     return declaration
+  }
+
+  static #require (root, name) {
+    const path = resolve(root, 'operations', name + '.js')
+
+    return require(path)
   }
 }
 

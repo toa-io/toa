@@ -8,19 +8,18 @@ const boot = require('./index')
 const runtime = async (path) => {
   const manifest = await load(path)
   const locator = new Locator(manifest)
-  const storage = boot.storage(locator, manifest.entity.storage.connector)
-  const context = boot.context(manifest)
+  const storage = boot.storage(locator, manifest.entity.storage)
 
-  const operations = Object.fromEntries(manifest.operations.map((descriptor) => {
-    const operation = boot.operation(manifest, locator, descriptor, storage, context)
+  const operations = Object.fromEntries(manifest.operations.map((declaration) => {
+    // TODO: move mapping to Runtime
+    const operation = boot.operation(manifest, locator, declaration, storage, path)
 
-    return [descriptor.name, operation]
+    return [declaration.name, operation]
   }))
 
   const runtime = new Runtime(locator, operations)
 
   if (storage) runtime.depends(storage)
-  if (context) runtime.depends(context)
 
   return runtime
 }

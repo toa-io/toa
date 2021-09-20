@@ -16,8 +16,7 @@
     "lerna": "3.22.1",
     "randomstring": "1.1.5",
     "snazzy": "9.0.0",
-    "standard": "16.0.3",
-    "superagent": "6.1.0"
+    "standard": "16.0.3"
   },
   "scripts": {
     "dev": "docker compose up -d",

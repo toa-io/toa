@@ -1,0 +1,25 @@
+prototype: null
+
+entity:
+  schema:
+    properties:
+      id:
+        type: string
+        pattern: ^[a-fA-F0-9]+$
+
+operations:
+  - name: observe
+    output:
+      properties:
+        id: ~
+  - name: transit
+    input: object
+    output:
+      properties:
+        id: ~
+#  - name: explore
+#    output:
+#      type: array
+#      items:
+#        properties:
+#          id: ~
