@@ -3,6 +3,7 @@
 const { concat } = require('./concat')
 const { console } = require('./console')
 const { defined } = require('./defined')
+const { difference } = require('./difference')
 const { empty } = require('./empty')
 const { freeze } = require('./freeze')
 const { merge } = require('./merge')
@@ -14,6 +15,7 @@ const { yaml } = require('./yaml')
 exports.concat = concat
 exports.console = console
 exports.defined = defined
+exports.difference = difference
 exports.empty = empty
 exports.freeze = freeze
 exports.merge = merge
