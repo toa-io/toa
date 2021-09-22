@@ -42,10 +42,6 @@ class Storage extends Connector {
 
     return entries.map(from)
   }
-
-  async clear () {
-    return this.#client.clear()
-  }
 }
 
 exports.Storage = Storage

@@ -27,7 +27,9 @@ class Client extends Connector {
 
   async disconnection () {
     await this.#client.close()
+  }
 
+  disconnected () {
     console.info('Storage MongoDB disconnected from ' +
       `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }
@@ -52,12 +54,6 @@ class Client extends Connector {
     const cursor = await this.#collection.find(query, options)
 
     return cursor.toArray()
-  }
-
-  async clear () {
-    const { acknowledged } = await this.#collection.deleteMany()
-
-    return acknowledged
   }
 
   get #url () {
