@@ -20,6 +20,15 @@ it('should merge properties', () => {
   expect(target).toStrictEqual({ a: 1, foo: { a: 1, b: ['foo', 'bar', 'baz'], c: 3 }, d: 4 })
 })
 
+it('should return target', () => {
+  const target = { a: 1, foo: { a: 1, b: ['foo', 'bar'] } }
+  const source = { a: 1, foo: { b: ['baz'], c: 3 }, d: 4 }
+
+  const result = merge(target, source)
+
+  expect(result).toBe(target)
+})
+
 it('should throw TypeError on non-objects', () => {
   expect(() => merge(1, 2)).toThrow(TypeError)
   expect(() => merge({}, 2)).toThrow(TypeError)
@@ -36,4 +45,9 @@ it('should throw TypeError on non-objects', () => {
 
 it('should throw on conflict', () => {
   expect(() => merge({ a: 1 }, { a: 2 })).toThrow(/conflict/)
+})
+
+it('should throw with conflict path', () => {
+  expect(() => merge({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } }))
+    .toThrow(/\/a\/b\/c/)
 })

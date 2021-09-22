@@ -74,7 +74,6 @@ const operations = {
   },
   prototype: {
     prototype: null,
-    remotes: ['remote1', 'remote2'],
     operations: [
       {
         name: 'add',
@@ -95,7 +94,6 @@ const operations = {
     prototype: {
       prototype: null,
       path: expect.any(String),
-      remotes: ['remote1', 'remote2'],
       operations: [
         {
           name: 'add',
@@ -133,7 +131,20 @@ const operations = {
   }
 }
 
-const find = jest.fn(() => generate())
+const remotes = {
+  manifest: {
+    remotes: ['a', 'b']
+  },
+  prototype: {
+    remotes: ['c', 'd']
+  },
+  result: {
+    remotes: ['a', 'b', 'c', 'd']
+  }
+}
 
-exports.samples = { entity, operations }
-exports.mock = { find }
+const find = jest.fn(() => generate())
+const lookup = jest.fn(() => generate())
+
+exports.samples = { entity, operations, remotes }
+exports.mock = { find, lookup }

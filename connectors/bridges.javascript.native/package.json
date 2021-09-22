@@ -4,7 +4,7 @@
   "description": "Kookaburra Native (inproc) javascript Bridge",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/kookaburra#readme",
-  "main": "src/bridge.js",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quantumducks/kookaburra.git"
@@ -19,11 +19,12 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/core": "^0.0.0"
+    "@kookaburra/core": "^0.0.0",
+    "@kookaburra/gears": "^0.0.0"
   },
   "dependencies": {
-    "@babel/parser": "^7.15.3"
+    "@babel/parser": "7.15.3",
+    "fast-glob": "3.2.7"
   },
   "devDependencies": {
     "clone-deep": "^4.0.1"

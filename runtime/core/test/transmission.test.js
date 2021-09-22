@@ -11,7 +11,7 @@ let transmission
 beforeEach(() => {
   jest.clearAllMocks()
 
-  transmission = new Transmission(fixtures.declaration, fixtures.bindings)
+  transmission = new Transmission(fixtures.endpoint, fixtures.bindings)
 })
 
 it('should be instance of Connector depending on bindings', () => {
@@ -23,7 +23,7 @@ it('should pass arguments and return value', async () => {
   const request = { foo: 'bar' }
   const result = await transmission.request(request)
 
-  expect(fixtures.bindings[0].request).toHaveBeenCalledWith(fixtures.declaration.name, request)
+  expect(fixtures.bindings[0].request).toHaveBeenCalledWith(fixtures.endpoint, request)
   expect(result).toBe(await fixtures.bindings[0].request.mock.results[0].value)
 })
 

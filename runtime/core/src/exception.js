@@ -1,5 +1,7 @@
 'use strict'
 
+// TODO: redesign exceptions handling
+
 class Exception {
   code
   message
@@ -29,6 +31,7 @@ class Exception {
   static STORAGE = 30
   static INDEX = 31
   static TRANSMISSION = 40
+  static EMISSION = 41
 
   // static name (code) {
   //   if (!this.name.names) {

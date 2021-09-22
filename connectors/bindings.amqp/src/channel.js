@@ -57,6 +57,18 @@ class Channel extends Connector {
     return unpack(reply.content)
   }
 
+  async event (label, payload) {
+    if (payload === undefined) payload = {}
+
+    const queue = 'event.' + label
+
+    await this.#channel.assertQueue(queue, QUEUE)
+
+    const message = pack(payload)
+
+    this.#channel.sendToQueue(queue, message)
+  }
+
   async reply (label, invocation) {
     const queue = 'request.' + label
     const exchange = 'reply.' + label

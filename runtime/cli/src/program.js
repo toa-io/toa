@@ -30,3 +30,8 @@ const argv = yargs(process.argv.slice(2))
   .parse()
 
 console.level(argv.log)
+
+process.on('unhandledRejection', (e) => {
+  console.error(e)
+  process.exit(1)
+})

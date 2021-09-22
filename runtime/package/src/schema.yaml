@@ -91,4 +91,25 @@ properties:
       required: [name, type, target]
       additionalProperties: false
 
+  events:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      properties:
+        label:
+          $ref: 'definitions#/definitions/token'
+        bridge:
+          type: string
+        path:
+          type: string
+        conditional:
+          type: boolean
+          default: false
+        subjective:
+          type: boolean
+          default: false
+      required: [label, bridge, path]
+      additionalProperties: false
+
 additionalProperties: false

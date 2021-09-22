@@ -6,7 +6,7 @@ const boot = require('./index')
 
 const call = (locator, descriptor, bindings) => {
   const consumers = boot.bindings.consume(locator, bindings)
-  const transmission = new Transmission(descriptor, consumers)
+  const transmission = new Transmission(descriptor.name, consumers)
   const contract = boot.contract.request(locator.entity, descriptor)
 
   return new Call(transmission, contract)

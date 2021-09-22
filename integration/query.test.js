@@ -11,8 +11,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await composition.disconnect()
-  await messages.disconnect()
+  if (composition) await composition.disconnect()
+  if (messages) await messages.disconnect()
 })
 
 describe('not found', () => {

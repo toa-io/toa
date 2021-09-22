@@ -1,13 +1,13 @@
 'use strict'
 
 const traverse = (manifest) => {
-  expand(manifest.entity.schema)
+  if (manifest.entity?.schema) expand(manifest.entity.schema)
 
-  if (manifest.operations === undefined) return
-
-  for (const operation of manifest.operations) {
-    if (operation.input) operation.input = expand(operation.input)
-    if (operation.output) operation.output = expand(operation.output)
+  if (manifest.operations !== undefined) {
+    for (const operation of manifest.operations) {
+      if (operation.input) operation.input = expand(operation.input)
+      if (operation.output) operation.output = expand(operation.output)
+    }
   }
 }
 

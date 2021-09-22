@@ -1,16 +1,25 @@
 'use strict'
 
-const boot = require('./index')
+const operation = (path, declaration, context) => {
+  const operation = resolve(declaration.bridge).operation(path, declaration, context)
 
-const bridge = (declaration, path, remotes) => {
-  const { Bridge } = require(declaration.bridge)
-  const context = boot.context(remotes)
+  operation.depends(context)
 
-  const bridge = new Bridge(declaration, path, context)
-
-  bridge.depends(context)
-
-  return bridge
+  return operation
 }
 
-exports.bridge = bridge
+const event = (path, declaration) => resolve(declaration.bridge).event(path, declaration)
+
+const factories = {}
+
+const resolve = (bridge) => {
+  if (factories[bridge] === undefined) {
+    const { Factory } = require(bridge)
+    factories[bridge] = new Factory()
+  }
+
+  return factories[bridge]
+}
+
+exports.operation = operation
+exports.event = event

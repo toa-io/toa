@@ -1,22 +1,26 @@
 'use strict'
 
-const randomstring = require('randomstring')
+const { generate } = require('randomstring')
+const clone = require('clone-deep')
 
 const schema = {
   fit: jest.fn((object) =>
-    (object.fail ? { [randomstring.generate()]: randomstring.generate() } : undefined)),
+    (object.fail ? { [generate()]: generate() } : undefined)),
 
-  defaults: jest.fn(() => ({ [randomstring.generate()]: randomstring.generate() }))
+  defaults: jest.fn(() => ({ [generate()]: generate() }))
 }
 
-const entry = {
-  id: randomstring.generate(),
-  foo: randomstring.generate(),
-  _created: randomstring.generate(),
-  _updated: randomstring.generate(),
-  _deleted: randomstring.generate(),
-  _version: randomstring.generate()
-}
+const state = () => clone({
+  id: generate(),
+  foo: generate(),
+  _created: generate(),
+  _updated: generate(),
+  _deleted: generate(),
+  _version: generate()
+})
+
+const failed = () => clone({ ...state(), fail: true })
 
 exports.schema = schema
-exports.entry = entry
+exports.state = state
+exports.failed = failed

@@ -2,15 +2,6 @@
 
 const { generate } = require('randomstring')
 
-const declaration = {
-  transition: {
-    type: 'transition'
-  },
-  observation: {
-    type: 'observation'
-  }
-}
-
 const bridges = {
   transition: {
     run: jest.fn(() => ({ output: generate() })),
@@ -46,7 +37,6 @@ const contract = {
   fit: jest.fn((input) => input.invalid ? { [generate()]: generate() } : undefined)
 }
 
-exports.declaration = declaration
 exports.bridges = bridges
 exports.target = target
 exports.contract = contract

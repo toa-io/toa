@@ -14,10 +14,12 @@ const merge = (target, source, path = []) => {
 
         merge(target[name], value, path)
       } else if (target[name] !== value) throw new Error(`Merge conflict at ${string(path)}`)
+
+      path.pop()
     }
   } else throw new TypeError(`Merge arguments must be object type at ${string(path)}`)
 
-  path.pop()
+  return target
 }
 
 const string = (path) => '/' + path.join('/')

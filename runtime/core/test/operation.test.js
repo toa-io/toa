@@ -6,7 +6,7 @@ const fixtures = require('./operation.fixtures')
 let operation
 
 beforeEach(() => {
-  operation = new Operation(fixtures.declaration.transition, fixtures.bridges.transition, fixtures.target, fixtures.contract)
+  operation = new Operation('transition', fixtures.bridges.transition, fixtures.target, fixtures.contract)
 
   jest.clearAllMocks()
 })
@@ -46,13 +46,13 @@ it('should commit target after transition', async () => {
 })
 
 it('should not commit target after observation', async () => {
-  await new Operation(fixtures.declaration.observation, fixtures.bridges.observation, fixtures.target).invoke(fixtures.request)
+  await new Operation('observation', fixtures.bridges.observation, fixtures.target).invoke(fixtures.request)
 
   expect(fixtures.target.commit).not.toHaveBeenCalled()
 })
 
 it('should not commit target after error', async () => {
-  await new Operation(fixtures.declaration.transition, fixtures.bridges.error, fixtures.target).invoke(fixtures.request)
+  await new Operation('transition', fixtures.bridges.error, fixtures.target).invoke(fixtures.request)
 
   expect(fixtures.target.commit).not.toHaveBeenCalled()
 })

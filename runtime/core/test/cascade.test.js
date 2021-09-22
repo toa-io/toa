@@ -3,8 +3,9 @@
 jest.mock('../src/connector')
 
 const clone = require('clone-deep')
-const { Cascade } = require('../src/cascade')
+
 const { Connector } = require('../src/connector')
+const { Cascade } = require('../src/cascade')
 const fixtures = require('./cascade.fixtures')
 
 let cascade
@@ -15,7 +16,7 @@ beforeEach(() => {
   cascade = new Cascade(clone(fixtures.bridges))
 })
 
-it('should be instance of Connector depending on bridges', () => {
+it('should depend on bridges', () => {
   expect(cascade).toBeInstanceOf(Connector)
   expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.bridges)
 })

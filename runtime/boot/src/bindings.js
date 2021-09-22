@@ -2,14 +2,22 @@
 
 const { Exposition } = require('@kookaburra/core')
 
-const produce = (runtime, bindings) =>
-  each(runtime.locator, bindings, (factory, endpoints) => {
-    const producer = factory.producer(runtime, endpoints)
+const produce = (runtime, bindings) => {
+  // set of bindings is constant
+  if (!produce.memo[runtime.locator.fqn]) {
+    produce.memo[runtime.locator.fqn] = each(runtime.locator, bindings, (factory, endpoints) => {
+      const producer = factory.producer(runtime, endpoints)
 
-    producer.depends(runtime)
+      producer.depends(runtime)
 
-    return producer
-  })
+      return producer
+    })
+  }
+
+  return produce.memo[runtime.locator.fqn]
+}
+
+produce.memo = {}
 
 const consume = (locator, bindings) =>
   each(locator, bindings, (factory, endpoints) => factory.consumer(locator, endpoints))
@@ -43,13 +51,13 @@ const each = (locator, bindings, callback) => {
   return Object.entries(map).map(([binding, endpoints]) => callback(factory(binding), endpoints))
 }
 
-const factories = {}
-
 const factory = (binding) => {
-  if (!factories[binding]) factories[binding] = new (require(binding).Factory)()
+  if (!factory.memo[binding]) factory.memo[binding] = new (require(binding).Factory)()
 
-  return factories[binding]
+  return factory.memo[binding]
 }
+
+factory.memo = {}
 
 const LOOP = '@kookaburra/bindings.loop'
 const SYSTEM_BINDINGS = ['@kookaburra/bindings.amqp']

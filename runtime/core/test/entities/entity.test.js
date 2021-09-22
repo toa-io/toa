@@ -9,27 +9,24 @@ beforeEach(() => {
 })
 
 describe('new', () => {
-  let entry
-
-  beforeEach(() => {
-    entry = new Entity(fixtures.schema)
-  })
-
   it('should throw on schema error', () => {
-    const state = { ...fixtures.entry, fail: true }
+    const entry = new Entity(fixtures.schema)
 
-    expect(() => entry.set(state)).toThrow(expect.any(Exception))
+    expect(() => entry.set(fixtures.failed())).toThrow(expect.any(Exception))
   })
 
   it('should provide state', () => {
-    entry.set(fixtures.entry)
+    const entry = new Entity(fixtures.schema)
+    const state = fixtures.state()
 
-    expect(entry.get()).toEqual(fixtures.entry)
+    entry.set(state)
+
+    expect(entry.get()).toEqual(state)
   })
 })
 
 describe('argument', () => {
-  it('should provide blank', () => {
+  it('should provide initial state if no argument passed', () => {
     const entry = new Entity(fixtures.schema)
 
     expect(entry.get()).toStrictEqual({
@@ -38,16 +35,34 @@ describe('argument', () => {
     })
   })
 
-  it('should set initial state', () => {
-    const entry = new Entity(fixtures.schema, fixtures.entry)
-
-    expect(entry.get()).toStrictEqual(fixtures.entry)
-  })
-
-  it('should not validate initial state', () => {
-    const state = { ...fixtures.entry, fail: true }
+  it('should set provide origin state', () => {
+    const state = fixtures.state()
     const entry = new Entity(fixtures.schema, state)
 
     expect(entry.get()).toStrictEqual(state)
+  })
+
+  it('should not validate origin state', () => {
+    const state = fixtures.failed()
+    const entry = new Entity(fixtures.schema, state)
+
+    expect(entry.get()).toStrictEqual(state)
+  })
+})
+
+it('should provide event', () => {
+  const origin = fixtures.state()
+  const entry = new Entity(fixtures.schema, origin)
+  const state = entry.get()
+
+  state.foo = 'new value'
+  entry.set(state)
+
+  const event = entry.event()
+
+  expect(event).toStrictEqual({
+    state,
+    origin: origin,
+    changeset: { foo: 'new value' }
   })
 })

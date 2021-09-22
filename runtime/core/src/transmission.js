@@ -4,13 +4,13 @@ const { Connector } = require('./connector')
 const { Exception } = require('./exception')
 
 class Transmission extends Connector {
-  #declaration
+  #endpoint
   #bindings
 
-  constructor (declaration, bindings) {
+  constructor (endpoint, bindings) {
     super()
 
-    this.#declaration = declaration
+    this.#endpoint = endpoint
     this.#bindings = bindings
 
     this.depends(bindings)
@@ -21,13 +21,13 @@ class Transmission extends Connector {
     let i = 0
 
     while (reply === false && i < this.#bindings.length) {
-      reply = await this.#bindings[i].request(this.#declaration.name, request)
+      reply = await this.#bindings[i].request(this.#endpoint, request)
       i++
     }
 
     if (reply === false) {
       throw new Exception(Exception.TRANSMISSION,
-      `Transmission failed. All (${this.#bindings.length}) bindings rejected.`)
+      `Transmission '${this.#endpoint}' failed. All (${this.#bindings.length}) bindings rejected.`)
     }
 
     return reply

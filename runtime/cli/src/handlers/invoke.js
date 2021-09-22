@@ -5,13 +5,14 @@ const { yaml } = require('@kookaburra/gears')
 const { Locator } = require('@kookaburra/core')
 const { load } = require('@kookaburra/package')
 
-const { root } = require('../util/root')
+const { root, args } = require('../util')
 
 async function invoke (argv) {
   const manifest = await load(root(argv.path))
   const request = yaml.parse(argv.request)
 
-  const composition = await boot.composition([root(argv.path)], { bindings: null })
+  const bindings = args.bindings(argv)
+  const composition = await boot.composition([root(argv.path)], { bindings })
   await composition.connect()
 
   const locator = new Locator(manifest)

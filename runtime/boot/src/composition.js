@@ -4,22 +4,33 @@ const { Composition } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-async function composition (components, options) {
+// this is a mess. again
+async function composition (paths, options) {
   normalize(options)
 
-  const runtimes = await Promise.all(components.map(boot.runtime))
+  const runtimes = await Promise.all(paths.map((path) => boot.runtime(path, options?.bindings)))
+  const bindings = runtimes.map((runtime) => boot.bindings.produce(runtime, options?.bindings))
 
+  // start exposition strictly before promised remotes resolution
+  // this solves circular dependencies among compositions
   const expositions = (await Promise.all(runtimes.map((runtime) =>
-    boot.exposition(runtime, options?.bindings)))).flat()
+    boot.exposition(runtime, options?.bindings))))
 
-  const bindings = runtimes.map((runtime) => boot.bindings.produce(runtime, options?.bindings)).flat()
+  // resolve promised remotes strictly after bindings has been created
+  // binding.loop is required for circular dependencies resolution within the composition
+  await boot.promise.resolve('remote', async (name, resolve) =>
+    resolve(await boot.remote(name, options?.bindings)))
+
+  await boot.promise.resolve('producers', (fqn, resolve) => {
+    const i = runtimes.findIndex((runtime) => runtime.locator.fqn === fqn)
+
+    resolve(bindings[i])
+  })
+
   const composition = new Composition()
 
-  await Promise.all(boot.promise.resolve(async (name, resolve) =>
-    resolve(await boot.remote(name, options?.bindings))))
-
-  composition.depends(expositions)
-  composition.depends(bindings)
+  composition.depends(expositions.flat())
+  composition.depends(bindings.flat())
 
   return composition
 }

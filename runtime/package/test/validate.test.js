@@ -227,3 +227,10 @@ describe('operations', () => {
     })
   })
 })
+
+describe('events', () => {
+  it('should throw on duplicate events', () => {
+    manifest.events.push({ label: 'created', path: '/somewhere', bridge: 'bridge' })
+    expect(() => validate(manifest)).toThrow(/Duplicate event/)
+  })
+})

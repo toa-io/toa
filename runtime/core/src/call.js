@@ -4,22 +4,22 @@ const { Connector } = require('./connector')
 const { Exception } = require('./exception')
 
 class Call extends Connector {
-  #transmission
+  #transmitter
   #contract
 
-  constructor (transmission, contract) {
+  constructor (transmitter, contract) {
     super()
 
-    this.#transmission = transmission
+    this.#transmitter = transmitter
     this.#contract = contract
 
-    this.depends(transmission)
+    this.depends(transmitter)
   }
 
   async invoke (request) {
     if (request) this.#contract.fit(request)
 
-    const { exception, ...reply } = await this.#transmission.request(request)
+    const { exception, ...reply } = await this.#transmitter.request(request)
 
     if (exception) throw new Exception(exception)
 

@@ -1,10 +1,9 @@
 'use strict'
 
-const { merge } = require('@kookaburra/gears')
-const { find } = require('./find')
+const { lookup, merge } = require('@kookaburra/gears')
 
 const collapse = (manifest, prototype, root) => {
-  const path = find(manifest.prototype, root)
+  const path = lookup(manifest.prototype, root)
 
   delete prototype.domain
   delete prototype.name
@@ -14,8 +13,6 @@ const collapse = (manifest, prototype, root) => {
 
   if (prototype.operations) {
     manifest.prototype = { prototype: prototype.prototype, path, operations: [] }
-
-    if (prototype.remotes) manifest.prototype.remotes = prototype.remotes
 
     if (!manifest.operations) manifest.operations = []
 
@@ -37,7 +34,6 @@ const collapse = (manifest, prototype, root) => {
     delete prototype.operations
   }
 
-  delete prototype.remotes
   delete prototype.prototype
 
   merge(manifest, prototype)

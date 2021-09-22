@@ -4,15 +4,15 @@ const { Connector } = require('./connector')
 const { Exception } = require('./exception')
 
 class Operation extends Connector {
-  #declaration
+  #type
   #contract
   #cascade
   #target
 
-  constructor (declaration, cascade, target, contract) {
+  constructor (type, cascade, target, contract) {
     super()
 
-    this.#declaration = declaration
+    this.#type = type
     this.#cascade = cascade
     this.#target = target
     this.#contract = contract
@@ -40,7 +40,7 @@ class Operation extends Connector {
       target = await this.#target.query(request?.query)
 
       if (target === null) return { output: null }
-    } else if (this.#declaration.type === 'transition') {
+    } else if (this.#type === 'transition') {
       target = this.#target.init()
     }
 
@@ -50,7 +50,7 @@ class Operation extends Connector {
 
     this.#contract.fit(reply)
 
-    if (state && this.#declaration.type === 'transition' && !reply.error) {
+    if (state && this.#type === 'transition' && !reply.error) {
       target.set(state)
       await this.#target.commit(target)
     }

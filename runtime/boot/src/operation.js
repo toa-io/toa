@@ -5,18 +5,18 @@ const { Schema } = require('@kookaburra/schema')
 
 const boot = require('./index')
 
-const operation = (manifest, locator, declaration, storage, path) => {
-  const cascade = boot.cascade(manifest, declaration, path)
+const operation = (manifest, declaration, context, storage, emission) => {
+  const cascade = boot.cascade(manifest, declaration, context)
   const contract = boot.contract.reply(declaration.output, declaration.error)
 
   const schema = new Schema(manifest.entity.schema)
   const entity = new entities.Factory(schema)
-  const target = new State(storage, entity)
+  const target = new State(storage, entity, emission)
 
-  if (declaration.target in target) target.query = target[declaration.target]
+  if (target[declaration.target] !== undefined) target.query = target[declaration.target]
   else throw new Error(`Unresolved target type '${declaration.target}'`)
 
-  return new Operation(declaration, cascade, target, contract)
+  return new Operation(declaration.type, cascade, target, contract)
 }
 
 exports.operation = operation

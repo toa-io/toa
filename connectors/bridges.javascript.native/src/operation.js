@@ -2,21 +2,19 @@
 
 const { Connector } = require('@kookaburra/core')
 const { freeze, defined } = require('@kookaburra/gears')
+const load = require('./load')
 
-const { resolve } = require('path')
-const { parse } = require('./bridge/parse')
-
-class Bridge extends Connector {
+class Operation extends Connector {
   #declaration
   #algorithm
   #context
 
-  constructor (declaration, root, context) {
+  constructor (root, declaration, context) {
     super()
 
     this.#declaration = declaration
     this.#context = context
-    this.#algorithm = Bridge.#require(root, declaration.name)
+    this.#algorithm = load.operation(root, declaration.name)
   }
 
   async run (input, state) {
@@ -48,27 +46,6 @@ class Bridge extends Connector {
 
     return state
   }
-
-  static async declaration (root, name) {
-    const algorithm = this.#require(root, name)
-
-    let declaration
-
-    try {
-      declaration = parse(algorithm)
-    } catch (e) {
-      e.message = `Operation '${name}': ${e.message}`
-      throw e
-    }
-
-    return declaration
-  }
-
-  static #require (root, name) {
-    const path = resolve(root, 'operations', name + '.js')
-
-    return require(path)
-  }
 }
 
-exports.Bridge = Bridge
+exports.Operation = Operation

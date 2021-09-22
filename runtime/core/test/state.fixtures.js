@@ -18,7 +18,8 @@ const entity = {
 const query = generate()
 
 const entry = {
-  get: jest.fn(() => ({ [generate()]: generate() }))
+  get: jest.fn(() => ({ [generate()]: generate() })),
+  event: jest.fn(() => ({ state: { [generate()]: generate() }, changeset: { [generate()]: generate() } }))
 }
 
 const initial = {
@@ -26,8 +27,19 @@ const initial = {
   ...entry
 }
 
+const unchanged = {
+  ...entry,
+  event: jest.fn(() => ({ state: { [generate()]: generate() }, changeset: {} }))
+}
+
+const emitter = {
+  emit: jest.fn()
+}
+
 exports.storage = storage
 exports.entity = entity
+exports.emitter = emitter
 exports.query = query
 exports.entry = entry
 exports.initial = initial
+exports.unchanged = unchanged

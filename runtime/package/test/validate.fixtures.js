@@ -31,6 +31,15 @@ const ok = {
       target: 'entry',
       bridge: 'whatever'
     }
+  ],
+  events: [
+    {
+      label: 'created',
+      bridge: 'whatever',
+      path: '/somewhere',
+      conditional: true,
+      subjective: false
+    }
   ]
 }
 

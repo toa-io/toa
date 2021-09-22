@@ -1,14 +1,18 @@
 'use strict'
 
+const { empty } = require('@kookaburra/gears')
+
 class State {
   #storage
   #entity
+  #emitter
 
   query
 
-  constructor (storage, entity) {
+  constructor (storage, entity, emitter) {
     this.#storage = storage
     this.#entity = entity
+    this.#emitter = emitter
   }
 
   init () {
@@ -29,8 +33,14 @@ class State {
 
   async commit (target) {
     const method = target.initial ? 'add' : 'update'
+    const event = target.event()
 
-    await this.#storage[method](target.get())
+    if (!empty(event.changeset)) {
+      await this.#storage[method](target.get())
+
+      // TODO: do not wait because outbox will handle failures
+      await this.#emitter.emit(event)
+    }
   }
 }
 

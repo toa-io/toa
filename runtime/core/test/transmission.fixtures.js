@@ -2,8 +2,6 @@
 
 const { generate } = require('randomstring')
 
-const declaration = { name: generate() }
-
 const binding = (index) => ({
   request: jest.fn(async (name, request) => {
     if (request?.pick !== undefined && request.pick !== index) return false
@@ -14,5 +12,5 @@ const binding = (index) => ({
 
 const bindings = [0, 1, 2, 3, 4].map(binding)
 
-exports.declaration = declaration
+exports.endpoint = generate()
 exports.bindings = bindings

@@ -8,7 +8,7 @@ let state
 beforeEach(() => {
   jest.clearAllMocks()
 
-  state = new State(fixtures.storage, fixtures.entity)
+  state = new State(fixtures.storage, fixtures.entity, fixtures.emitter)
 })
 
 it('should provide entry', async () => {
@@ -37,4 +37,16 @@ it('should update entry', async () => {
   await state.commit(fixtures.entry)
 
   expect(fixtures.storage.update).toHaveBeenCalledWith(fixtures.entry.get.mock.results[0].value)
+})
+
+it('should emit', async () => {
+  await state.commit(fixtures.entry)
+
+  expect(fixtures.emitter.emit).toHaveBeenCalledWith(fixtures.entry.event.mock.results[0].value)
+})
+
+it('should not emit if state has not been changed', async () => {
+  await state.commit(fixtures.unchanged)
+
+  expect(fixtures.emitter.emit).not.toHaveBeenCalled()
 })

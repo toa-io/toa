@@ -2,10 +2,13 @@
 
 const clone = require('clone-deep')
 
+const gears = jest.requireActual('@kookaburra/gears')
 const fixtures = require('./collapse.fixtures')
 const mock = fixtures.mock
 
-jest.mock('../src/find', () => ({ find: mock.find }))
+mock.merge = gears.merge
+
+jest.mock('@kookaburra/gears', () => ({ find: mock.find, lookup: mock.lookup, merge: mock.merge }))
 
 const { collapse } = require('../src/collapse')
 
@@ -72,6 +75,14 @@ it('should merge operations', () => {
   const manifest = clone(samples.operations.manifest)
   const prototype = clone(samples.operations.prototype)
 
-  collapse(manifest, prototype, '/manifest/root')
+  collapse(manifest, prototype, '/somewhere')
   expect(manifest).toStrictEqual(samples.operations.result)
+})
+
+it('should merge remotes', () => {
+  const manifest = clone(samples.remotes.manifest)
+  const prototype = clone(samples.remotes.prototype)
+
+  collapse(manifest, prototype, '/somewhere')
+  expect(manifest).toStrictEqual(samples.remotes.result)
 })
