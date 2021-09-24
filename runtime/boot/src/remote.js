@@ -11,8 +11,8 @@ const remote = async (fqn, bindings) => {
   const manifest = await discovery.discover()
   const locator = new Locator(manifest)
 
-  const calls = Object.fromEntries(
-    locator.operations.map((operation) => [operation.name, boot.call(locator, operation, bindings)]))
+  const calls = Object.fromEntries(Object.entries(locator.operations)
+    .map(([endpoint, definition]) => [endpoint, boot.call(locator, endpoint, definition, bindings)]))
 
   return new Remote(locator, calls)
 }

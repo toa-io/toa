@@ -1,12 +1,14 @@
 'use strict'
 
+const { Connector } = require('@kookaburra/core')
 const load = require('./load')
 
-class Event {
+class Event extends Connector {
   #event
 
-  constructor (declaration) {
-    this.#event = load.event(declaration.path, declaration.label)
+  constructor (root, label) {
+    super()
+    this.#event = load.event(root, label)
   }
 
   condition = async (...args) => this.#event.condition(...args)

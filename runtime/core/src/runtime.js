@@ -14,7 +14,7 @@ class Runtime extends Connector {
     this.locator = locator
     this.#operations = operations
 
-    Object.entries(operations).forEach(([_, operation]) => this.depends(operation))
+    Object.values(operations).forEach((operation) => this.depends(operation))
   }
 
   connection () {
@@ -25,10 +25,10 @@ class Runtime extends Connector {
     console.info(`Runtime '${this.locator.fqn}' disconnected`)
   }
 
-  async invoke (name, request) {
-    if (!(name in this.#operations)) { throw new Error(`Operation '${name}' not found in '${this.locator.fqn}'`) }
+  async invoke (endpoint, request) {
+    if (!(endpoint in this.#operations)) { throw new Error(`Operation '${endpoint}' not found in '${this.locator.fqn}'`) }
 
-    return this.#operations[name].invoke(request)
+    return this.#operations[endpoint].invoke(request)
   }
 }
 

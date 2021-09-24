@@ -2,15 +2,13 @@
 
 const { generate } = require('randomstring')
 
-const producers = [0, 1, 2].map((index) => ({
-  emitter: true,
-  emit: jest.fn(async (label, payload) =>
-    payload.emissionFail === undefined || index >= payload.emissionFail)
-}))
+const binding = {
+  emit: jest.fn(async () => null)
+}
 
 const events = [0, 1, 2].map((index) => ({
   label: 'event' + index,
-  conditional: true,
+  conditioned: true,
   subjective: true,
   condition: jest.fn(async (origin, changeset) => changeset.conditionFail !== index),
   payload: jest.fn(async (state) => ({ ...state, event: index }))
@@ -22,6 +20,6 @@ const event = {
   changeset: { [generate()]: generate() }
 }
 
-exports.producers = producers
+exports.binding = binding
 exports.events = events
 exports.event = event

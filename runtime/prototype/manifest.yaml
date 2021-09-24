@@ -8,18 +8,12 @@ entity:
         pattern: ^[a-fA-F0-9]+$
 
 operations:
-  - name: observe
+  observe:
     output:
       properties:
         id: ~
-  - name: transit
+  transit:
     input: object
     output:
       properties:
         id: ~
-#  - name: explore
-#    output:
-#      type: array
-#      items:
-#        properties:
-#          id: ~

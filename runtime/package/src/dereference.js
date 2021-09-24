@@ -3,7 +3,7 @@
 const traverse = (manifest) => {
   const property = resolve(manifest.entity.schema.properties)
 
-  for (const operation of manifest.operations) {
+  for (const operation of Object.values(manifest.operations)) {
     dereference(operation.input, property)
     dereference(operation.output, property)
   }

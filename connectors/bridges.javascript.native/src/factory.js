@@ -1,14 +1,15 @@
 'use strict'
 
 const { Operation } = require('./operation')
+const { Event } = require('./event')
 
 class Factory {
-  operation (root, declaration, context) {
-    return new Operation(root, declaration, context)
+  operation (root, name, type, context) {
+    return new Operation(root, name, type, context)
   }
 
-  event () {
-
+  event (root, label) {
+    return new Event(root, label)
   }
 }
 

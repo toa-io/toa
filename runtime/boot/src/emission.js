@@ -7,15 +7,17 @@ const boot = require('./index')
 const emission = (manifest, locator) => {
   if (manifest.events === undefined) return
 
-  const promises = boot.promise.promise('producers', locator.fqn)
+  const transmitter = boot.bindings.transmit(locator)
 
-  const events = manifest.events.map((declaration) => {
-    const bridge = boot.bridge.event(manifest.path, declaration)
+  const events = []
 
-    return new Event(declaration, bridge)
-  })
+  for (const [label, definition] of Object.entries(manifest.events)) {
+    const bridge = boot.bridge.event(label, definition)
 
-  return new Emission(promises, events)
+    events.push(new Event(label, definition, bridge))
+  }
+
+  return new Emission(transmitter, events)
 }
 
 exports.emission = emission

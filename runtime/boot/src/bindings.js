@@ -1,23 +1,16 @@
 'use strict'
 
+const clone = require('clone-deep')
+
 const { Exposition } = require('@kookaburra/core')
 
-const produce = (runtime, bindings) => {
-  // set of bindings is constant
-  if (!produce.memo[runtime.locator.fqn]) {
-    produce.memo[runtime.locator.fqn] = each(runtime.locator, bindings, (factory, endpoints) => {
-      const producer = factory.producer(runtime, endpoints)
+const produce = (runtime, bindings) => each(runtime.locator, bindings, (factory, endpoints) => {
+  const producer = factory.producer(runtime, endpoints)
 
-      producer.depends(runtime)
+  producer.depends(runtime)
 
-      return producer
-    })
-  }
-
-  return produce.memo[runtime.locator.fqn]
-}
-
-produce.memo = {}
+  return producer
+})
 
 const consume = (locator, bindings) =>
   each(locator, bindings, (factory, endpoints) => factory.consumer(locator, endpoints))
@@ -33,18 +26,30 @@ const expose = (exposition, bindings) => [LOOP].concat(bindings || SYSTEM_BINDIN
 const discover = (locator, bindings) => [LOOP].concat(bindings || SYSTEM_BINDINGS).map((binding) =>
   factory(binding).discovery(locator))
 
+const transmit = (locator, bindings) => {
+  for (const binding of bindings || locator.bindings()) {
+    if (factory(binding).transmitter !== undefined) {
+      return factory(binding).transmitter(locator)
+    }
+  }
+}
+
+const receive = () => {
+
+}
+
 const each = (locator, bindings, callback) => {
   const map = {}
 
-  for (const operation of locator.operations) {
-    const binds = bindings ? [...bindings] : locator.bindings(operation.name)
+  for (const endpoint of Object.keys(locator.operations)) {
+    const binds = clone(bindings ? [...bindings] : locator.bindings(endpoint))
 
     binds.unshift(LOOP)
 
     for (const binding of binds) {
       if (!map[binding]) map[binding] = []
 
-      map[binding].push(operation.name)
+      map[binding].push(endpoint)
     }
   }
 
@@ -66,3 +71,5 @@ exports.produce = produce
 exports.consume = consume
 exports.expose = expose
 exports.discover = discover
+exports.transmit = transmit
+exports.receive = receive

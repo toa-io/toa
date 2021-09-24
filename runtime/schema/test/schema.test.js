@@ -62,9 +62,38 @@ it('should have definitions', () => {
   const schema = new Schema({
     properties: {
       id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/token' },
+      remote: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/locator' },
       schema: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/schema' }
     }
   })
 
   expect(schema.fit({ id: 'a2b3c' })).toBe(null)
+})
+
+it('should define locator', () => {
+  const schema = new Schema({
+    properties: {
+      event: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/locator' }
+    }
+  })
+
+  expect(schema.fit({ event: 'a.b' })).toBe(null)
+  expect(schema.fit({ event: 'a.b.c' })).toBe(null)
+  expect(schema.fit({ event: 'a.b.c.d' })).toBe(null)
+  expect(schema.fit({ event: 'a.1' })).not.toBe(null)
+  expect(schema.fit({ event: 'a' })).not.toBe(null)
+})
+
+it('should define fqn', () => {
+  const schema = new Schema({
+    properties: {
+      remote: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/fqn' }
+    }
+  })
+
+  expect(schema.fit({ remote: 'a.b' })).toBe(null)
+  expect(schema.fit({ remote: 'a.b.c' })).not.toBe(null)
+  expect(schema.fit({ remote: 'a.b.c.d' })).not.toBe(null)
+  expect(schema.fit({ remote: 'a.1' })).not.toBe(null)
+  expect(schema.fit({ remote: 'a' })).not.toBe(null)
 })

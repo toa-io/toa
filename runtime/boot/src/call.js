@@ -4,10 +4,10 @@ const { Call, Transmission } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const call = (locator, descriptor, bindings) => {
+const call = (locator, endpoint, definition, bindings) => {
   const consumers = boot.bindings.consume(locator, bindings)
-  const transmission = new Transmission(descriptor.name, consumers)
-  const contract = boot.contract.request(locator.entity, descriptor)
+  const transmission = new Transmission(endpoint, consumers)
+  const contract = boot.contract.request(locator.entity, definition)
 
   return new Call(transmission, contract)
 }

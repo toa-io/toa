@@ -6,7 +6,7 @@ const manifest = {
   domain: 'foo',
   name: 'bar',
   entity: { schema: { foo: 'bar' } },
-  operations: [{ name: 'add' }, { name: 'get' }]
+  operations: { add: { query: false }, get: { output: null } }
 }
 
 const nameless = {
@@ -25,11 +25,6 @@ it('should provide host', () => {
   expect(new Locator(nameless).host('DB')).toBe('foo.db.local')
 })
 
-it('should format endpoint', () => {
-  expect(new Locator(manifest).endpoint('do')).toBe('foo.bar.do')
-  expect(new Locator(nameless).endpoint('do')).toBe('foo.do')
-})
-
 it('should provide operations', () => {
   expect(new Locator(manifest).operations).toMatchObject(manifest.operations)
 })
@@ -41,6 +36,9 @@ it('should export', () => {
 it('should split', () => {
   expect(Locator.split('foo.bar.do')).toStrictEqual({ domain: 'foo', name: 'bar', endpoint: 'do' })
   expect(Locator.split('foo.bar')).toStrictEqual({ domain: 'foo', name: 'bar', endpoint: undefined })
+
+  expect(Locator.split('foo.bar.do.something.bad'))
+    .toStrictEqual({ domain: 'foo', name: 'bar', endpoint: 'do.something.bad' })
 })
 
 it('should provide host (static)', () => {

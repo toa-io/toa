@@ -11,14 +11,14 @@ let event
 beforeEach(() => jest.clearAllMocks())
 
 it('should provide label', () => {
-  event = new Event(fixtures.declaration)
+  event = new Event(fixtures.label, fixtures.definition)
 
-  expect(event.label).toBe(fixtures.declaration.label)
+  expect(event.label).toBe(fixtures.label)
 })
 
-describe('conditional', () => {
+describe('conditioned', () => {
   beforeEach(() => {
-    event = new Event(fixtures.declaration, fixtures.bridge)
+    event = new Event(fixtures.label, fixtures.definition, fixtures.bridge)
   })
 
   it('should depend on bridge', () => {
@@ -41,9 +41,9 @@ describe('conditional', () => {
   })
 })
 
-describe('unconditional', () => {
+describe('unconditioned', () => {
   beforeEach(() => {
-    event = new Event(fixtures.declaration)
+    event = new Event(fixtures.label, fixtures.definition)
   })
 
   it('should not call depends', () => {

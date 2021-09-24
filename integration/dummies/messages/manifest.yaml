@@ -13,7 +13,7 @@ entity:
 remotes: [ credits.balance ]
 
 operations:
-  - name: add
+  add:
     input:
       properties:
         sender: ~
@@ -24,24 +24,24 @@ operations:
         id: ~
       required: [ id ]
     query: false
-  - name: get
+  get:
     output:
       properties:
         id: ~
         text: ~
         timestamp: ~
       required: [ id, text ]
-  - name: update
+  update:
     input:
       properties:
         text: ~
       required: [ text ]
-  - name: find
+  find:
     output:
       properties:
         messages: array
     query: true
-  - name: transit
+  transit:
     input:
       properties:
         sender: ~
@@ -51,3 +51,7 @@ operations:
       properties:
         ok: string
       required: [ id ]
+
+receivers:
+  credits.balance.empty:
+    transition: add

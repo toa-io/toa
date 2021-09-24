@@ -20,9 +20,10 @@
   },
   "dependencies": {
     "@kookaburra/bindings.loop": "^0.0.0",
-    "@kookaburra/package": "^0.0.0",
     "@kookaburra/core": "^0.0.0",
-    "@kookaburra/schema": "^0.0.0"
+    "@kookaburra/package": "^0.0.0",
+    "@kookaburra/schema": "^0.0.0",
+    "clone-deep": "4.0.1"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
 }

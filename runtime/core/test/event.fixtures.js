@@ -13,10 +13,11 @@ const event = {
   changeset: { [generate()]: generate() }
 }
 
-const declaration = {
-  label: generate()
+const definition = {
+  conditioned: false
 }
 
 exports.bridge = bridge
-exports.declaration = declaration
+exports.label = generate()
+exports.definition = definition
 exports.event = event

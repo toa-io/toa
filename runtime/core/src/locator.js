@@ -1,6 +1,5 @@
 'use strict'
 
-const clone = require('clone-deep')
 const { concat } = require('@kookaburra/gears')
 
 class Locator {
@@ -9,13 +8,15 @@ class Locator {
   #entity
   #bindings
   #operations
+  #events
 
   constructor (manifest) {
     this.#domain = manifest.domain
     this.#name = manifest.name
-    this.#entity = manifest.entity
+    this.#entity = manifest.entity?.schema
     this.#bindings = manifest.bindings
     this.#operations = manifest.operations
+    this.#events = manifest.events
   }
 
   get domain () {
@@ -27,7 +28,7 @@ class Locator {
   }
 
   get entity () {
-    return this.#entity?.schema
+    return this.#entity
   }
 
   get fqn () {
@@ -35,39 +36,34 @@ class Locator {
   }
 
   get operations () {
-    return this.#operations.map((operation) => ({ ...operation, bindings: operation.bindings || this.#bindings }))
+    return this.#operations
   }
 
   host (type) {
     return Locator.host(this.#domain, this.#name, type)
   }
 
-  endpoint (endpoint) {
-    return this.fqn + '.' + endpoint
-  }
-
   bindings (endpoint) {
     if (!endpoint) return this.#bindings
 
-    const operation = this.#operations.find((operation) => operation.name === endpoint)
-
-    return clone(operation.bindings || this.#bindings)
+    return this.#operations[endpoint].bindings || this.#bindings
   }
 
   export () {
     return {
       domain: this.#domain,
       name: this.#name,
-      entity: this.#entity,
+      entity: { schema: this.#entity },
       bindings: this.#bindings,
-      operations: this.#operations
+      operations: this.#operations,
+      events: this.#events
     }
   }
 
-  static split (fqn) {
-    const [domain, name, endpoint] = fqn.split('.')
+  static split (locator) {
+    const [domain, name, ...rest] = locator.split('.')
 
-    return { domain, name, endpoint }
+    return { domain, name, endpoint: rest.length > 0 ? rest.join('.') : undefined }
   }
 
   static host (domain, name, type) {

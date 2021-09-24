@@ -59,7 +59,7 @@ class Channel extends Connector {
     return unpack(reply.content)
   }
 
-  async event (label, payload) {
+  async transmit (label, payload) {
     if (payload === undefined) payload = {}
 
     const queue = 'event.' + label

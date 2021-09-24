@@ -8,7 +8,7 @@ entity:
       balance: integer
 
 operations:
-  - name: deduce
+  deduce:
     input:
       properties:
         amount: integer
@@ -16,3 +16,7 @@ operations:
     output:
       properties:
         balance: integer
+
+events:
+  empty:
+    binding: '@amqp'

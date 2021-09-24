@@ -7,3 +7,10 @@ definitions:
   token:
     type: string
     pattern: ^[a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?$
+  locator:
+    type: string
+    pattern: ^([a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?)){1,}$
+  fqn:
+    type: string
+    pattern: ^([a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?))$
+

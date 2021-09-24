@@ -122,12 +122,6 @@ describe('entity', () => {
 })
 
 describe('bindings', () => {
-  it('should have default value', () => {
-    delete manifest.bindings
-    expect(() => validate(manifest)).not.toThrow()
-    expect(manifest.bindings).toStrictEqual(['@kookaburra/bindings.http', '@kookaburra/bindings.amqp'])
-  })
-
   it('should be array of unique strings', () => {
     manifest.bindings = 'oops'
     expect(() => validate(manifest)).toThrow(/must be array/)
@@ -151,14 +145,17 @@ describe('remotes', () => {
     expect(() => validate(manifest)).not.toThrow()
   })
 
-  it('should be unique non-empty array of strings', () => {
+  it('should be unique non-empty array of locators', () => {
     manifest.remotes = 1
     expect(() => validate(manifest)).toThrow(/must be array/)
 
-    manifest.remotes = ['a', {}]
+    manifest.remotes = ['a']
+    expect(() => validate(manifest)).toThrow(/must match pattern/)
+
+    manifest.remotes = ['a.b', {}]
     expect(() => validate(manifest)).toThrow(/must be string/)
 
-    manifest.remotes = ['a', 'a']
+    manifest.remotes = ['a.b', 'a.b']
     expect(() => validate(manifest)).toThrow(/duplicate items/)
 
     manifest.remotes = []
@@ -167,70 +164,61 @@ describe('remotes', () => {
 })
 
 describe('operations', () => {
-  it('should be non-empty array of objects', () => {
-    manifest.operations = 1
-    expect(() => validate(manifest)).toThrow(/must be array/)
-
-    manifest.operations = []
-    expect(() => validate(manifest)).toThrow(/fewer than 1 items/)
-
-    manifest.operations = ['a', {}]
-    expect(() => validate(manifest)).toThrow(/must be object/)
-  })
-
   describe('operation', () => {
     it('should be object', () => {
-      manifest.operations[0] = 'bar'
+      manifest.operations.get = 'bar'
       expect(() => validate(manifest)).toThrow(/must be object/)
     })
 
     it('should not have additional properties', () => {
-      manifest.operations[0].foo = 'bar'
+      manifest.operations.get.foo = 'bar'
       expect(() => validate(manifest)).toThrow(/additional properties/)
     })
 
-    it('should have name', () => {
-      delete manifest.operations[0].name
-      expect(() => validate(manifest)).toThrow(/required property/)
-    })
-
     it('should have type (transition or observation)', () => {
-      delete manifest.operations[0].type
+      delete manifest.operations.get.type
       expect(() => validate(manifest)).toThrow(/required property/)
 
-      manifest.operations[0].type = 'foo'
+      manifest.operations.get.type = 'foo'
       expect(() => validate(manifest)).toThrow(/one of the allowed values/)
     })
 
     it('should have type (entity or set)', () => {
-      delete manifest.operations[0].target
+      delete manifest.operations.get.target
       expect(() => validate(manifest)).toThrow(/required property/)
 
-      manifest.operations[0].target = 'foo'
+      manifest.operations.get.target = 'foo'
       expect(() => validate(manifest)).toThrow(/one of the allowed values/)
     })
 
     it('should forbid explicit loop', () => {
-      manifest.operations[0].bindings = ['@kookaburra/bindings.loop']
+      manifest.operations.get.bindings = ['@kookaburra/bindings.loop']
       expect(() => validate(manifest)).toThrow(/must NOT be valid/)
     })
 
     describe('input, output', () => {
       it('should be schema', () => {
-        manifest.operations[0].input = { properties: { foo: 1 } }
+        manifest.operations.get.input = { properties: { foo: 1 } }
         expect(() => validate(manifest)).toThrow()
 
-        delete manifest.operations[0].input
-        manifest.operations[0].output = { properties: { foo: 1 } }
+        delete manifest.operations.get.input
+        manifest.operations.get.output = { properties: { foo: 1 } }
         expect(() => validate(manifest)).toThrow()
       })
     })
   })
 })
 
-describe('events', () => {
-  it('should throw on duplicate events', () => {
-    manifest.events.push({ label: 'created', path: '/somewhere', bridge: 'bridge' })
-    expect(() => validate(manifest)).toThrow(/Duplicate event/)
+describe('receivers', () => {
+  it('should throw if transition points to undefined transition', () => {
+    manifest.receivers['foo.bar.happened'].transition = 'not-exists'
+
+    expect(() => validate(manifest)).toThrow(/refers to undefined transition/)
+  })
+
+  it('should throw if transition points to non transition', () => {
+    manifest.receivers['foo.bar.happened'].transition = 'get'
+
+    expect(() => validate(manifest)).toThrow(/refers to non-transition/)
   })
 })

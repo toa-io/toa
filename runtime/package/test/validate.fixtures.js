@@ -16,31 +16,35 @@ const ok = {
     }
   },
   bindings: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp'],
-  remotes: ['one', 'two'],
-  operations: [
-    {
-      name: 'get',
+  remotes: ['one.foo', 'two.bar'],
+  operations: {
+    get: {
       type: 'observation',
       target: 'entries',
       bridge: 'whatever',
       bindings: ['@kookaburra/bindings.http']
     },
-    {
-      name: 'add',
+    add: {
       type: 'transition',
       target: 'entry',
       bridge: 'whatever'
     }
-  ],
-  events: [
-    {
-      label: 'created',
+  },
+  events: {
+    created: {
       bridge: 'whatever',
       path: '/somewhere',
-      conditional: true,
+      conditioned: true,
       subjective: false
     }
-  ]
+  },
+  receivers: {
+    'foo.bar.happened': {
+      transition: 'add',
+      bridge: 'whatever',
+      path: '/somewhere'
+    }
+  }
 }
 
 exports.ok = ok

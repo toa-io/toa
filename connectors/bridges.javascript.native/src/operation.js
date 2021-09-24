@@ -5,16 +5,18 @@ const { freeze, defined } = require('@kookaburra/gears')
 const load = require('./load')
 
 class Operation extends Connector {
-  #declaration
+  #name
+  #type
   #algorithm
   #context
 
-  constructor (root, declaration, context) {
+  constructor (root, name, type, context) {
     super()
 
-    this.#declaration = declaration
+    this.#name = name
+    this.#type = type
     this.#context = context
-    this.#algorithm = load.operation(root, declaration.name)
+    this.#algorithm = load.operation(root, name)
   }
 
   async run (input, state) {
@@ -42,7 +44,7 @@ class Operation extends Connector {
       if (key[0] === '_') Object.defineProperty(state, key, { enumerable: false })
     }
 
-    if (this.#declaration.type === 'observation') freeze(state)
+    if (this.#type === 'observation') freeze(state)
 
     return state
   }

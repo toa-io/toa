@@ -1,10 +1,9 @@
 'use strict'
 
 const { Connector } = require('@kookaburra/core')
-
 const { name } = require('./name')
 
-class Consumer extends Connector {
+class Transmitter extends Connector {
   #channel
   #locator
 
@@ -13,15 +12,13 @@ class Consumer extends Connector {
 
     this.#channel = channel
     this.#locator = locator
-
-    this.depends(channel)
   }
 
-  async request (endpoint, request) {
-    const queue = name(this.#locator, endpoint)
+  async emit (label, payload) {
+    const queue = name(this.#locator, label)
 
-    return this.#channel.request(queue, request)
+    await this.#channel.transmit(queue, payload)
   }
 }
 
-exports.Consumer = Consumer
+exports.Transmitter = Transmitter

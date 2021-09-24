@@ -1,22 +1,32 @@
 $schema: https://json-schema.org/draft/2019-09/schema
 $id: https://schemas.kookaburra.dev/0.0.0/manifest
 
+definitions:
+  binding:
+    type: string
+    not:
+      const: '@kookaburra/bindings.loop' #loop is for system use only
+
 type: object
 properties:
   prototype:
+    type: object
+    nullable: true
     properties:
       prototype:
         $ref: '#/properties/prototype'
       path:
         type: string
       operations:
-        type: array
-        items:
-          properties:
-            name:
-              $ref: '#/properties/operations/items/properties/name'
-            bridge:
-              $ref: '#/properties/bridge'
+        type: object
+        propertyNames:
+          $ref: 'definitions#/definitions/token'
+        patternProperties:
+          '.*':
+            type: object
+            properties:
+              bridge:
+                $ref: '#/properties/bridge'
 
   domain:
     $ref: 'definitions#/definitions/token'
@@ -43,7 +53,7 @@ properties:
             type: object
             propertyNames:
               $ref: 'definitions#/definitions/token'
-    required: [schema]
+    required: [ schema ]
     additionalProperties: false
 
   bindings:
@@ -51,10 +61,7 @@ properties:
     uniqueItems: true
     minItems: 1
     items:
-      type: string
-      not:
-        const: '@kookaburra/bindings.loop' #loop is for system use only
-    default: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp']
+      $ref: '#/definitions/binding'
 
   bridge:
     type: string
@@ -64,52 +71,72 @@ properties:
     uniqueItems: true
     minItems: 1
     items:
-      type: string
+      $ref: 'definitions#/definitions/fqn'
 
   operations:
-    type: array
-    minItems: 1
-    items:
-      type: object
-      properties:
-        name:
-          $ref: 'definitions#/definitions/token'
-        type:
-          enum: [transition, observation]
-        target:
-          enum: [entry, entries]
-        bridge:
-          type: string
-        bindings:
-          $ref: '#/properties/bindings'
-        input:
-          $ref: 'definitions#/definitions/schema'
-        output:
-          $ref: 'definitions#/definitions/schema'
-        query:
-          type: boolean
-      required: [name, type, target]
-      additionalProperties: false
+    type: object
+    propertyNames:
+      $ref: 'definitions#/definitions/token'
+    patternProperties:
+      '.*':
+        type: object
+        properties:
+          type:
+            enum: [ transition, observation ]
+          target:
+            enum: [ entry, entries ]
+          bridge:
+            type: string
+          bindings:
+            $ref: '#/properties/bindings'
+          input:
+            $ref: 'definitions#/definitions/schema'
+          output:
+            $ref: 'definitions#/definitions/schema'
+          query:
+            type: boolean
+        required: [ type, target ]
+        additionalProperties: false
+    additionalProperties: false
 
   events:
-    type: array
-    minItems: 1
-    items:
-      type: object
-      properties:
-        label:
-          $ref: 'definitions#/definitions/token'
-        bridge:
-          type: string
-        path:
-          type: string
-        conditional:
-          type: boolean
-          default: false
-        subjective:
-          type: boolean
-          default: false
-      required: [label, bridge, path]
-      additionalProperties: false
+    type: object
+    propertyNames:
+      $ref: 'definitions#/definitions/token'
+    patternProperties:
+      '.*':
+        type: object
+        properties:
+          bridge:
+            type: string
+          path:
+            type: string
+          binding:
+            $ref: '#/definitions/binding'
+          conditioned:
+            type: boolean
+            default: false
+          subjective:
+            type: boolean
+            default: false
+        required: [ bridge, path ]
+        additionalProperties: false
+
+  receivers:
+    type: object
+    propertyNames:
+      $ref: 'definitions#/definitions/locator'
+    patternProperties:
+      '.*':
+        type: object
+        properties:
+          transition:
+            $ref: 'definitions#/definitions/token'
+          bridge:
+            type: string
+          path:
+            type: string
+        required: [ transition, bridge, path ]
+        additionalProperties: false
 
 additionalProperties: false

@@ -25,6 +25,6 @@ it('should throw transmission exception on failed discovery', async () => {
     await messages('invoke', 'add', { input: { sender: '1', text: 'foo' } }, '--bindings=null')
   } catch (error) {
     expect(error.exitCode).toBe(1)
-    expect(error.stderr).toMatch(/Transmission 'discover' failed/)
+    expect(error.stderr).toMatch(/Transmission 'lookup' failed/)
   }
 })

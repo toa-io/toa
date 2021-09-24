@@ -5,7 +5,7 @@ const { Connector } = require('@kookaburra/core')
 const fixtures = require('./operation.fixtures')
 const mock = fixtures.mock
 
-jest.mock('../src/declare/algorithm', () => ({ parse: mock.parse }))
+jest.mock('../src/define/algorithm', () => ({ parse: mock.parse }))
 
 const { Operation } = require('../src/operation')
 
@@ -26,7 +26,7 @@ it('should inherit runtime.Connector', () => {
 })
 
 it('should run algorithm', async () => {
-  const operation = new Operation(__dirname, { name: 'pong' })
+  const operation = new Operation(__dirname, 'pong', 'observation')
 
   await operation.run({ input: 1 })
 
@@ -36,7 +36,7 @@ it('should run algorithm', async () => {
 it('should pass input, state, context', async () => {
   const input = { a: 1 }
   const state = { b: 2 }
-  const operation = new Operation(__dirname, { name: 'pong' }, fixtures.context)
+  const operation = new Operation(__dirname, 'pong', 'transition', fixtures.context)
 
   await operation.run(input, state)
 
@@ -47,7 +47,7 @@ it('should pass input, state, context', async () => {
 it('should pass frozen state to observation', async () => {
   const input = { a: 1 }
   const state = { b: 2 }
-  const operation = new Operation(__dirname, { name: 'pong', type: 'observation' }, fixtures.context)
+  const operation = new Operation(__dirname, 'pong', 'observation', fixtures.context)
 
   await operation.run(input, state)
 
@@ -55,7 +55,7 @@ it('should pass frozen state to observation', async () => {
 })
 
 it('should return output', async () => {
-  const operation = new Operation(__dirname, { name: 'pong' }, fixtures.context)
+  const operation = new Operation(__dirname, 'pong', 'observation', fixtures.context)
 
   const reply = await operation.run()
   const result = await operations.pong.mock.results[0].value
@@ -65,7 +65,7 @@ it('should return output', async () => {
 })
 
 it('should return { output, error }', async () => {
-  const operation = new Operation(__dirname, { name: 'error' }, fixtures.context)
+  const operation = new Operation(__dirname, 'error', 'observation', fixtures.context)
 
   const { output, error } = await operation.run()
 
@@ -74,7 +74,7 @@ it('should return { output, error }', async () => {
 })
 
 it('should throw on exceptions', async () => {
-  const operation = new Operation(__dirname, { name: 'exception' }, fixtures.context)
+  const operation = new Operation(__dirname, 'exception', 'observation', fixtures.context)
 
   await expect(() => operation.run({ input: 1 })).rejects.toThrow(/oops/)
 })

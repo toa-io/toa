@@ -34,13 +34,13 @@ it('should throw TypeError on non-objects', () => {
   expect(() => merge({}, 2)).toThrow(TypeError)
 
   expect(() => merge({ a: { b: null } }, { a: { b: 'test' } }))
-    .toThrow(new TypeError('Merge conflict at /a/b'))
+    .toThrow(new TypeError('gears/merge: conflict at /a/b'))
 
   expect(() => merge({ a: { b: null } }, 1))
-    .toThrow(new TypeError('Merge arguments must be object type at /'))
+    .toThrow(new TypeError('gears/merge: arguments must be object type at /'))
 
   expect(() => merge({ a: { b: 'a' } }, { a: { b: 1 } }))
-    .toThrow(new TypeError('Merge conflict at /a/b'))
+    .toThrow(new TypeError('gears/merge: conflict at /a/b'))
 })
 
 it('should throw on conflict', () => {

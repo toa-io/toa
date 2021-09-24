@@ -5,6 +5,8 @@ const { Locator } = require('@kookaburra/core')
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
+const { Transmitter } = require('./transmitter')
+const { Receiver } = require('./receiver')
 
 class Factory {
   #channels = {}
@@ -23,6 +25,18 @@ class Factory {
     const channel = this.#channel(locator.host(TYPE))
 
     return Factory.#consumer(channel, locator)
+  }
+
+  transmitter (locator) {
+    const channel = this.#channel(locator.host(TYPE))
+
+    return new Transmitter(channel, locator)
+  }
+
+  receiver (runtime, endpoints) {
+    const channel = this.#channel(runtime.locator.host(TYPE))
+
+    return new Receiver(channel, runtime, endpoints)
   }
 
   exposition (runtime, endpoints) {

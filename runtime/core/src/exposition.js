@@ -14,7 +14,7 @@ class Exposition extends Connector {
     this.#runtime = runtime
   }
 
-  discover () {
+  lookup () {
     return this.#runtime.locator.export()
   }
 

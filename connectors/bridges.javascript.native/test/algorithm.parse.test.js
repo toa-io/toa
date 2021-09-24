@@ -1,6 +1,6 @@
 'use strict'
 
-const { parse } = require('../src/declare/algorithm')
+const { parse } = require('../src/define/algorithm')
 
 describe('type', () => {
   it('should provide type', () => {

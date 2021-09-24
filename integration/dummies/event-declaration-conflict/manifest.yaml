@@ -4,5 +4,5 @@ domain: dummies
 name: duplicate-event
 
 events:
-  - label: conditional
+  - label: conditioned
     subjective: false

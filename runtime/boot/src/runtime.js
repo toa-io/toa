@@ -14,12 +14,11 @@ const runtime = async (path) => {
 
   manifest.path = path
 
-  const operations = Object.fromEntries(manifest.operations.map((declaration) => {
-    // TODO: move mapping to Runtime
-    const operation = boot.operation(manifest, declaration, context, storage, emission)
+  const operations = {}
 
-    return [declaration.name, operation]
-  }))
+  for (const [endpoint, definition] of Object.entries(manifest.operations)) {
+    operations[endpoint] = boot.operation(manifest, endpoint, definition, context, storage, emission)
+  }
 
   const runtime = new Runtime(locator, operations)
 

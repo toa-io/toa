@@ -2,6 +2,6 @@
 
 const { Factory } = require('./factory')
 
-exports.declare = require('./declare')
+exports.define = require('./define')
 
 exports.Factory = Factory

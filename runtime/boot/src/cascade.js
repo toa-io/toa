@@ -4,19 +4,24 @@ const { Cascade } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const cascade = (manifest, declaration, context) => {
+const cascade = (manifest, endpoint, definition, context) => {
   const bridges = []
 
-  if (declaration.bridge) { bridges.unshift(boot.bridge.operation(manifest.path, declaration, context)) }
+  if (definition.bridge) { bridges.unshift(boot.bridge.operation(manifest.path, endpoint, definition, context)) }
 
   let prototype = manifest
 
   while ((prototype = prototype.prototype) !== null) {
-    const operation = prototype?.operations.find((operation) => operation.name === declaration.name)
+    const operation = prototype.operations[endpoint]
 
     if (operation === undefined) continue
 
-    const bridge = boot.bridge.operation(prototype.path, { ...declaration, bridge: operation.bridge }, context)
+    const bridge = boot.bridge.operation(
+      prototype.path,
+      endpoint,
+      { ...definition, bridge: operation.bridge },
+      context
+    )
 
     bridges.unshift(bridge)
   }

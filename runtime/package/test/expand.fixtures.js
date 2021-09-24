@@ -8,8 +8,8 @@ const source = {
       }
     }
   },
-  operations: [
-    {
+  operations: {
+    add: {
       input: {
         properties: {
           foo: 'integer',
@@ -47,7 +47,10 @@ const source = {
         id: null
       }
     }
-  ]
+  },
+  receivers: {
+    event: 'transit'
+  }
 }
 
 const target = {
@@ -60,8 +63,8 @@ const target = {
       }
     }
   },
-  operations: [
-    {
+  operations: {
+    add: {
       input: {
         properties: {
           foo: {
@@ -107,7 +110,12 @@ const target = {
         id: null
       }
     }
-  ]
+  },
+  receivers: {
+    event: {
+      transition: 'transit'
+    }
+  }
 }
 
 exports.source = source

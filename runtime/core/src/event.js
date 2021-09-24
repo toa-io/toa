@@ -6,15 +6,16 @@ class Event extends Connector {
   #bridge
 
   label
-  conditional
+  conditioned
   subjective
 
-  constructor (declaration, bridge = undefined) {
+  constructor (label, definition, bridge = undefined) {
     super()
 
-    this.label = declaration.label
-    this.conditional = declaration.conditional
-    this.subjective = declaration.subjective
+    this.label = label
+    this.conditioned = definition.conditioned
+    this.subjective = definition.subjective
+
     this.#bridge = bridge
 
     if (bridge !== undefined) this.depends(bridge)

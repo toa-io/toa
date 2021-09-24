@@ -56,78 +56,65 @@ const entity = {
 
 const operations = {
   manifest: {
-    operations: [
-      {
-        name: 'add',
+    operations: {
+      add: {
         bridge: 'b',
         query: false
       },
-      {
-        name: 'get',
+      get: {
         bridge: 'b'
       },
-      {
-        name: 'find',
+      find: {
         bridge: 'b'
       }
-    ]
+    }
   },
   prototype: {
     prototype: null,
-    operations: [
-      {
-        name: 'add',
+    operations: {
+      add: {
         bridge: 'a'
       },
-      {
-        name: 'find',
+      find: {
         bridge: 'a'
       },
-      {
-        name: 'observe',
+      observe: {
         bridge: 'a',
         input: 'object'
       }
-    ]
+    }
   },
   result: {
     prototype: {
       prototype: null,
       path: expect.any(String),
-      operations: [
-        {
-          name: 'add',
+      operations: {
+        add: {
           bridge: 'a'
         },
-        {
-          name: 'find',
+        find: {
           bridge: 'a'
         },
-        {
-          name: 'observe',
+        observe: {
           bridge: 'a'
         }
-      ]
+      }
     },
-    operations: [
-      {
-        name: 'add',
+    operations: {
+      add: {
         bridge: 'b',
         query: false
       },
-      {
-        name: 'get',
+      get: {
         bridge: 'b'
       },
-      {
-        name: 'find',
+      find: {
         bridge: 'b'
       },
-      {
-        name: 'observe',
+      observe: {
         input: 'object'
       }
-    ]
+    }
   }
 }
 
@@ -145,6 +132,8 @@ const remotes = {
 
 const find = jest.fn(() => generate())
 const lookup = jest.fn(() => generate())
+
+lookup.directory = jest.fn(() => generate())
 
 exports.samples = { entity, operations, remotes }
 exports.mock = { find, lookup }
