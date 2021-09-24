@@ -1,5 +1,7 @@
 'use strict'
 
+const clone = require('clone-deep')
+
 jest.mock('../src/connector')
 
 const { Connector } = require('../src/connector')
@@ -8,30 +10,33 @@ const fixtures = require('./event.fixtures')
 
 let event
 
-beforeEach(() => jest.clearAllMocks())
+beforeEach(() => {
+  jest.clearAllMocks()
 
-it('should provide label', () => {
-  event = new Event(fixtures.label, fixtures.definition)
-
-  expect(event.label).toBe(fixtures.label)
+  event = new Event(fixtures.definition, fixtures.binding, fixtures.bridge)
 })
 
-describe('conditioned', () => {
-  beforeEach(() => {
-    event = new Event(fixtures.label, fixtures.definition, fixtures.bridge)
+it('should depend on binding', () => {
+  expect(event).toBeInstanceOf(Connector)
+  expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.binding)
+})
+
+it('should depend on bridge if provided', () => {
+  expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.bridge)
+
+  event = new Event(fixtures.definition, fixtures.binding)
+  expect(Connector.mock.instances[1].depends).not.toHaveBeenCalledWith(fixtures.bridge)
+})
+
+describe('condition', () => {
+  describe('conditioned', () => {
+    it('should call condition', async () => {
+      await event.emit(fixtures.event.origin, fixtures.event.changeset, fixtures.event.state)
+
+      expect(fixtures.bridge.condition).toHaveBeenCalledWith(fixtures.event.origin, fixtures.event.changeset)
+    })
   })
 
-  it('should depend on bridge', () => {
-    expect(event).toBeInstanceOf(Connector)
-    expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.bridge)
-  })
-
-  it('should call condition', async () => {
-    const result = await event.condition(fixtures.event.origin, fixtures.event.changeset)
-
-    expect(fixtures.bridge.condition).toHaveBeenCalledWith(fixtures.event.origin, fixtures.event.changeset)
-    expect(result).toBe(await fixtures.bridge.condition.mock.results[0].value)
-  })
 
   it('should call payload', async () => {
     const result = await event.payload(fixtures.event.state)
@@ -42,8 +47,12 @@ describe('conditioned', () => {
 })
 
 describe('unconditioned', () => {
+  const definition = clone(fixtures.definition)
+
+  definition.conditioned = false
+
   beforeEach(() => {
-    event = new Event(fixtures.label, fixtures.definition)
+    event = new Event(fixtures.label, definition)
   })
 
   it('should not call depends', () => {
@@ -52,6 +61,22 @@ describe('unconditioned', () => {
 
   it('should fulfil condition', async () => {
     await expect(event.condition()).resolves.toBe(true)
+  })
+})
+
+describe('objective', () => {
+  const definition = clone(fixtures.definition)
+
+  definition.subjective = false
+
+  beforeEach(() => {
+    event = new Event(fixtures.label, definition)
+  })
+
+  it('should not call payload', async () => {
+    await event.payload()
+
+    expect(fixtures.bridge.payload).not.toHaveBeenCalled()
   })
 
   it('should return state as payload', async () => {

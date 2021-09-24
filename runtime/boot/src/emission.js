@@ -9,13 +9,11 @@ const emission = (manifest, locator) => {
 
   const transmitter = boot.bindings.transmit(locator)
 
-  const events = []
-
-  for (const [label, definition] of Object.entries(manifest.events)) {
+  const events = Object.entries(manifest.events).map(([label, definition]) => {
     const bridge = boot.bridge.event(label, definition)
 
-    events.push(new Event(label, definition, bridge))
-  }
+    return new Event(label, definition, bridge)
+  })
 
   return new Emission(transmitter, events)
 }

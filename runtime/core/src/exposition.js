@@ -4,27 +4,20 @@ const { Connector } = require('./connector')
 
 class Exposition extends Connector {
   locator
+  endpoints = ['lookup']
 
-  #runtime
-
-  constructor (runtime) {
+  constructor (locator) {
     super()
 
-    this.locator = runtime.locator
-    this.#runtime = runtime
+    this.locator = locator
   }
 
   lookup () {
-    return this.#runtime.locator.export()
+    return this.locator.export()
   }
 
   async invoke (name, input) {
     return { output: this[name](input) }
-  }
-
-  static endpoints () {
-    return Object.getOwnPropertyNames(this.prototype)
-      .filter((name) => name !== 'constructor' && name !== 'invoke')
   }
 }
 

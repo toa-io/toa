@@ -16,7 +16,7 @@ const consume = (locator, bindings) =>
   each(locator, bindings, (factory, endpoints) => factory.consumer(locator, endpoints))
 
 const expose = (exposition, bindings) => [LOOP].concat(bindings || SYSTEM_BINDINGS).map((binding) => {
-  const producer = factory(binding).exposition(exposition, Exposition.endpoints())
+  const producer = factory(binding).exposition(exposition, exposition.endpoints)
 
   producer.depends(exposition)
 
@@ -27,6 +27,7 @@ const discover = (locator, bindings) => [LOOP].concat(bindings || SYSTEM_BINDING
   factory(binding).discovery(locator))
 
 const transmit = (locator, bindings) => {
+  // first transmitting binding
   for (const binding of bindings || locator.bindings()) {
     if (factory(binding).transmitter !== undefined) {
       return factory(binding).transmitter(locator)
