@@ -5,8 +5,8 @@ const framework = require('./framework')
 let composition, discovery
 
 beforeAll(async () => {
-  composition = await framework.compose({ dummies: ['credits'] })
-  discovery = await framework.discover('@kookaburra/bindings.amqp', 'credits.balance')
+  composition = await framework.compose(['credits'])
+  discovery = await framework.discover()
 })
 
 afterAll(async () => {
@@ -15,9 +15,9 @@ afterAll(async () => {
 })
 
 it('should lookup', async () => {
-  const { output: locator } = await discovery.request('lookup')
+  const reply = await discovery.lookup('credits.balance')
 
-  expect(locator.entity.schema.properties.id).toBeDefined()
-  expect(locator.operations).toBeDefined()
-  expect(locator.events).toBeDefined()
+  expect(reply.entity.properties.id).toBeDefined()
+  expect(reply.operations).toBeDefined()
+  expect(reply.events).toBeDefined()
 })

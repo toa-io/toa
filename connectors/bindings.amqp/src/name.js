@@ -1,7 +1,7 @@
 'use strict'
 
-const name = (locator, endpoint) => {
-  return `${locator.fqn}.${endpoint}`
-}
+const { concat } = require('@kookaburra/gears')
+
+const name = (locator, endpoint) => locator.domain + '.' + concat(locator.name, '.') + endpoint
 
 exports.name = name

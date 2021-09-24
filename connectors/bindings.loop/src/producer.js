@@ -4,19 +4,17 @@ const { Connector } = require('@kookaburra/core')
 
 class Producer extends Connector {
   #binding
-  #runtime
   #endpoints
+  #producer
 
-  constructor (bindings, runtime, endpoints) {
+  constructor (bindings, locator, endpoints, producer) {
     super()
 
-    if (bindings[runtime.locator.fqn]) throw new Error(`Loop binding producer '${runtime.locator.fqn}' already exists`)
+    if (bindings[locator.fqn] === undefined) bindings[locator.fqn] = {}
 
-    bindings[runtime.locator.fqn] = {}
-
-    this.#binding = bindings[runtime.locator.fqn]
-    this.#runtime = runtime
+    this.#binding = bindings[locator.fqn]
     this.#endpoints = endpoints
+    this.#producer = producer
   }
 
   async connection () {
@@ -24,7 +22,9 @@ class Producer extends Connector {
   }
 
   #operation (endpoint) {
-    this.#binding[endpoint] = async (request) => this.#runtime.invoke(endpoint, request)
+    if (this.#binding[endpoint] !== undefined) throw new Error(`Loop binding endpoint '${endpoint}' already exists`)
+
+    this.#binding[endpoint] = async (request) => this.#producer.invoke(endpoint, request)
   }
 }
 

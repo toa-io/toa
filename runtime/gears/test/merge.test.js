@@ -51,3 +51,12 @@ it('should throw with conflict path', () => {
   expect(() => merge({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } }))
     .toThrow(/\/a\/b\/c/)
 })
+
+it('should ignore undefined source', () => {
+  const target = { a: 1 }
+  const source = { a: undefined }
+
+  merge(target, source)
+
+  expect(target).toStrictEqual({ a: 1 })
+})

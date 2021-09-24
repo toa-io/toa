@@ -26,7 +26,7 @@ class Runtime extends Connector {
   }
 
   async invoke (endpoint, request) {
-    if (!(endpoint in this.#operations)) { throw new Error(`Operation '${endpoint}' not found in '${this.locator.fqn}'`) }
+    if (!(endpoint in this.#operations)) { throw new Error(`Endpoint '${endpoint}' not found in '${this.locator.fqn}'`) }
 
     return this.#operations[endpoint].invoke(request)
   }

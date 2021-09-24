@@ -8,6 +8,8 @@ const merge = (target, source, path = []) => {
     for (const [name, value] of Object.entries(source)) {
       path.push(name)
 
+      if (source[name] === undefined) continue
+
       if (target[name] === undefined) target[name] = value
       else if (typeof value === 'object') {
         if (target[name] === undefined) target[name] = {}

@@ -2,10 +2,8 @@
 
 const clone = require('clone-deep')
 
-const { Exposition } = require('@kookaburra/core')
-
 const produce = (runtime, bindings) => each(runtime.locator, bindings, (factory, endpoints) => {
-  const producer = factory.producer(runtime, endpoints)
+  const producer = factory.producer(runtime.locator, endpoints, runtime)
 
   producer.depends(runtime)
 
@@ -15,24 +13,13 @@ const produce = (runtime, bindings) => each(runtime.locator, bindings, (factory,
 const consume = (locator, bindings) =>
   each(locator, bindings, (factory, endpoints) => factory.consumer(locator, endpoints))
 
-const expose = (exposition, bindings) => [LOOP].concat(bindings || SYSTEM_BINDINGS).map((binding) => {
-  const producer = factory(binding).exposition(exposition, Exposition.endpoints())
-
-  producer.depends(exposition)
-
-  return producer
-})
+const expose = (exposition, bindings) => [LOOP].concat(bindings || SYSTEM_BINDINGS).map((binding) =>
+  factory(binding).producer(exposition.locator, exposition.endpoints, exposition))
 
 const discover = (locator, bindings) => [LOOP].concat(bindings || SYSTEM_BINDINGS).map((binding) =>
-  factory(binding).discovery(locator))
+  factory(binding).consumer(locator))
 
-const transmit = (locator, bindings) => {
-  for (const binding of bindings || locator.bindings()) {
-    if (factory(binding).transmitter !== undefined) {
-      return factory(binding).transmitter(locator)
-    }
-  }
-}
+const emit = (binding, locator, label) => factory(binding).emitter(locator, label)
 
 const receive = () => {
 
@@ -71,5 +58,5 @@ exports.produce = produce
 exports.consume = consume
 exports.expose = expose
 exports.discover = discover
-exports.transmit = transmit
+exports.emit = emit
 exports.receive = receive

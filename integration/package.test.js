@@ -35,6 +35,7 @@ describe('prototype', () => {
       conditioned: true,
       subjective: false,
       bridge: expect.any(String),
+      binding: expect.any(String),
       path: expect.stringMatching(/runtime\/prototype$/)
     })
   })
@@ -42,6 +43,14 @@ describe('prototype', () => {
   it('should throw on declaration conflict', async () => {
     await expect(load('./dummies/event-declaration-conflict', __dirname))
       .rejects.toThrow(/merge: conflict/)
+  })
+})
+
+describe('events', () => {
+  it('should provide binding', async () => {
+    const manifest = await load('./dummies/a', __dirname)
+
+    expect(manifest.events.dummy.binding).toBe('@kookaburra/bindings.amqp')
   })
 })
 

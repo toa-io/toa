@@ -3,18 +3,12 @@
 const { Connector } = require('./connector')
 
 class Context extends Connector {
-  #promises
   #remotes
 
-  constructor (promises) {
+  constructor (remotes) {
     super()
 
-    this.#promises = promises
-  }
-
-  async connection () {
-    // circular dependencies are being resolved via promises
-    if (this.#promises) this.#remotes = await Promise.all(this.#promises)
+    this.#remotes = remotes
   }
 
   get remotes () {

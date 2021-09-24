@@ -10,7 +10,7 @@ class Locator {
   #operations
   #events
 
-  constructor (manifest) {
+  constructor (manifest = { domain: 'system' }) {
     this.#domain = manifest.domain
     this.#name = manifest.name
     this.#entity = manifest.entity?.schema
@@ -67,7 +67,7 @@ class Locator {
   }
 
   static host (domain, name, type) {
-    return `${concat(name, '.')}${domain}.${concat(type && type.toLowerCase(), '.')}${TLD}`
+    return `${concat(name, '.')}${domain}.${type === undefined ? '' : concat(type.toLowerCase(), '.')}${TLD}`
   }
 }
 

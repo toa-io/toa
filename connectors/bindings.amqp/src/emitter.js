@@ -3,22 +3,24 @@
 const { Connector } = require('@kookaburra/core')
 const { name } = require('./name')
 
-class Transmitter extends Connector {
+class Emitter extends Connector {
   #channel
   #locator
+  #label
 
-  constructor (channel, locator) {
+  constructor (channel, locator, label) {
     super()
 
     this.#channel = channel
     this.#locator = locator
+    this.#label = label
   }
 
-  async emit (label, payload) {
-    const queue = name(this.#locator, label)
+  async emit (payload) {
+    const queue = name(this.#locator, this.#label)
 
     await this.#channel.transmit(queue, payload)
   }
 }
 
-exports.Transmitter = Transmitter
+exports.Emitter = Emitter

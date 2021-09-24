@@ -34,9 +34,7 @@ class Channel extends Connector {
     // TODO: handle current operations
     // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
     await this.#connection.close()
-  }
 
-  disconnected () {
     console.info(`AMQP Binding disconnected from ${this.#locator}`)
   }
 

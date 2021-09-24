@@ -4,13 +4,20 @@ const { Locator, Discovery, Transmission } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const discovery = (fqn, bindings) => {
-  const manifest = { ...Locator.split(fqn) }
-  const locator = new Locator(manifest)
-  const consumers = boot.bindings.discover(locator, bindings)
-  const transmission = new Transmission('lookup', consumers)
+let instance
 
-  return new Discovery(transmission)
+const discovery = async () => {
+  if (instance === undefined) {
+    const locator = new Locator()
+    const consumers = boot.bindings.discover(locator)
+    const transmission = new Transmission.Dynamic(consumers)
+
+    instance = new Discovery(transmission)
+
+    await instance.connect()
+  }
+
+  return instance
 }
 
 exports.discovery = discovery

@@ -15,7 +15,7 @@ const sort = (sort, properties) => {
   for (const sorting of sort.split(',')) {
     const [property, direction] = sorting.split(':')
 
-    if (!properties[property]) { throw new Error(`sort property ${property} is not allowed`) }
+    if (properties[property] === undefined) { throw new Error(`sort property ${property} is not allowed`) }
 
     result.push([property, direction || 'asc'])
   }

@@ -71,6 +71,7 @@ const operations = {
   },
   prototype: {
     prototype: null,
+    path: generate(),
     operations: {
       add: {
         bridge: 'a'

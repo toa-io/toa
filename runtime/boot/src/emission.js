@@ -4,20 +4,17 @@ const { Emission, Event } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const emission = (manifest, locator) => {
-  if (manifest.events === undefined) return
+const emission = (definitions, locator) => {
+  if (definitions === undefined) return
 
-  const transmitter = boot.bindings.transmit(locator)
-
-  const events = []
-
-  for (const [label, definition] of Object.entries(manifest.events)) {
+  const events = Object.entries(definitions).map(([label, definition]) => {
+    const transmitter = boot.bindings.emit(definition.binding, locator, label)
     const bridge = boot.bridge.event(label, definition)
 
-    events.push(new Event(label, definition, bridge))
-  }
+    return new Event(definition, transmitter, bridge)
+  })
 
-  return new Emission(transmitter, events)
+  return new Emission(events)
 }
 
 exports.emission = emission

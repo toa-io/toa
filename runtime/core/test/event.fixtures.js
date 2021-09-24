@@ -2,9 +2,18 @@
 
 const { generate } = require('randomstring')
 
+const definition = {
+  conditioned: true,
+  subjective: true
+}
+
 const bridge = {
-  condition: jest.fn(async () => true),
-  payload: jest.fn(async (state) => state)
+  condition: jest.fn(async (origin) => !origin.falsy),
+  payload: jest.fn(async () => ({ [generate()]: generate() }))
+}
+
+const binding = {
+  emit: jest.fn()
 }
 
 const event = {
@@ -13,11 +22,7 @@ const event = {
   changeset: { [generate()]: generate() }
 }
 
-const definition = {
-  conditioned: false
-}
-
 exports.bridge = bridge
-exports.label = generate()
+exports.binding = binding
 exports.definition = definition
 exports.event = event

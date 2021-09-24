@@ -9,7 +9,7 @@ const BINDINGS = ['amqp'].map((binding) => '@kookaburra/bindings.' + binding)
 let composition, collection
 
 beforeAll(async () => {
-  composition = await framework.compose({ dummies: ['messages', 'credits'], bindings: BINDINGS })
+  composition = await framework.compose(['messages', 'credits'], { bindings: BINDINGS })
   collection = await framework.mongodb.connect('messages.messages')
 })
 

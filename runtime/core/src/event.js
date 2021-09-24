@@ -3,32 +3,30 @@
 const { Connector } = require('./connector')
 
 class Event extends Connector {
+  #binding
   #bridge
+  #conditioned
+  #subjective
 
-  label
-  conditioned
-  subjective
-
-  constructor (label, definition, bridge = undefined) {
+  constructor (definition, binding, bridge = undefined) {
     super()
 
-    this.label = label
-    this.conditioned = definition.conditioned
-    this.subjective = definition.subjective
-
+    this.#conditioned = definition.conditioned
+    this.#subjective = definition.subjective
+    this.#binding = binding
     this.#bridge = bridge
+
+    this.depends(binding)
 
     if (bridge !== undefined) this.depends(bridge)
   }
 
-  async condition (...args) {
-    if (this.#bridge !== undefined) return this.#bridge.condition(...args)
-    else return true
-  }
+  async emit (origin, changeset, state) {
+    if (this.#conditioned === false || await this.#bridge.condition(origin, changeset) === true) {
+      const payload = this.#subjective ? await this.#bridge.payload(state) : state
 
-  async payload (state) {
-    if (this.#bridge !== undefined) return this.#bridge.payload(state)
-    else return state
+      await this.#binding.emit(payload)
+    }
   }
 }
 

@@ -1,61 +1,41 @@
 'use strict'
 
-const { Locator } = require('@kookaburra/core')
-
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
-const { Transmitter } = require('./transmitter')
+const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
 
 class Factory {
   #channels = {}
 
-  constructor () {
-    this.#channels.system = this.#channel(Locator.host('system', null, TYPE))
-  }
+  producer (locator, endpoints, producer) {
+    const channel = this.#channel(locator)
 
-  producer (runtime, endpoints) {
-    const channel = this.#channel(runtime.locator.host(TYPE))
-
-    return Factory.#producer(channel, runtime, endpoints)
+    return new Producer(channel, locator, endpoints, producer)
   }
 
   consumer (locator) {
-    const channel = this.#channel(locator.host(TYPE))
+    const channel = this.#channel(locator)
 
-    return Factory.#consumer(channel, locator)
-  }
-
-  transmitter (locator) {
-    const channel = this.#channel(locator.host(TYPE))
-
-    return new Transmitter(channel, locator)
-  }
-
-  receiver (runtime, endpoints) {
-    const channel = this.#channel(runtime.locator.host(TYPE))
-
-    return new Receiver(channel, runtime, endpoints)
-  }
-
-  exposition (runtime, endpoints) {
-    return Factory.#producer(this.#channels.system, runtime, endpoints)
-  }
-
-  discovery (locator) {
-    return Factory.#consumer(this.#channels.system, locator)
-  }
-
-  static #producer (channel, runtime, endpoints) {
-    return new Producer(channel, runtime, endpoints)
-  }
-
-  static #consumer (channel, locator) {
     return new Consumer(channel, locator)
   }
 
-  #channel (host) {
+  emitter (locator, label) {
+    const channel = this.#channel(locator)
+
+    return new Emitter(channel, locator, label)
+  }
+
+  receiver (locator, label) {
+    const channel = this.#channel(locator)
+
+    return new Receiver(channel, locator, label)
+  }
+
+  #channel (locator) {
+    const host = locator.host(TYPE)
+
     if (!this.#channels[host]) this.#channels[host] = new Channel(host)
 
     return this.#channels[host]

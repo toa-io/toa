@@ -6,15 +6,17 @@ const { name } = require('./name')
 
 class Producer extends Connector {
   #channel
-  #runtime
+  #locator
+  #target
   #endpoints
 
-  constructor (channel, runtime, endpoints) {
+  constructor (channel, locator, endpoints, target) {
     super()
 
     this.#channel = channel
-    this.#runtime = runtime
+    this.#locator = locator
     this.#endpoints = endpoints
+    this.#target = target
 
     this.depends(channel)
   }
@@ -24,9 +26,9 @@ class Producer extends Connector {
   }
 
   async #endpoint (endpoint) {
-    const queue = name(this.#runtime.locator, endpoint)
+    const queue = name(this.#locator, endpoint)
 
-    await this.#channel.reply(queue, async (request) => this.#runtime.invoke(endpoint, request))
+    await this.#channel.reply(queue, async (request) => this.#target.invoke(endpoint, request))
   }
 }
 

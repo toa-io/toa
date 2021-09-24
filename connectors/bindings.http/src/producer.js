@@ -6,28 +6,32 @@ const resource = require('./resource')
 
 class Producer extends Connector {
   #server
-  #runtime
+  #locator
+  #endpoints
+  #target
 
-  constructor (server, runtime, endpoints) {
+  constructor (server, locator, endpoints, target) {
     super()
 
     this.#server = server
-    this.#runtime = runtime
+    this.#locator = locator
+    this.#endpoints = endpoints
+    this.#target = target
 
-    this.#bind(runtime, endpoints)
+    this.#bind()
 
     this.depends(server)
   }
 
-  #bind (runtime, endpoints) {
-    endpoints.map((endpoint) => this.#endpoint(runtime, endpoint))
+  #bind () {
+    this.#endpoints.map((endpoint) => this.#endpoint(endpoint))
   }
 
-  #endpoint (runtime, endpoint) {
+  #endpoint (endpoint) {
     const method = resource.method
-    const path = resource.path(runtime.locator, endpoint)
+    const path = resource.path(this.#locator, endpoint)
 
-    this.#server.reply(method, path, async (request) => this.#runtime.invoke(endpoint, request))
+    this.#server.reply(method, path, async (request) => this.#target.invoke(endpoint, request))
   }
 }
 

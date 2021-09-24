@@ -6,29 +6,27 @@ const { name } = require('./name')
 
 class Receiver extends Connector {
   #channel
-  #runtime
-  #labels
+  #locator
+  #label
+  #receiver
 
-  constructor (channel, runtime, labels) {
+  constructor (channel, locator, label, receiver) {
     super()
 
     this.#channel = channel
-    this.#runtime = runtime
-    this.#labels = labels
+    this.#locator = locator
+    this.#label = label
+    this.#receiver = receiver
 
     this.depends(channel)
   }
 
   async connection () {
-    return Promise.all(this.#labels.map((label) => this.#receive(label)))
-  }
-
-  async #receive (label) {
-    const queue = name(this.#runtime.locator, label)
+    const queue = name(this.#locator, this.#label)
 
     console.log(queue)
 
-    // this.#channel.consume(queue, (payload) => this.#runtime.invoke(endpoint, payload))
+    // this.#channel.consume(queue, (payload) => this.#receiver.receive(payload))
   }
 }
 

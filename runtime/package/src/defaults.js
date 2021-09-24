@@ -1,7 +1,6 @@
 'use strict'
 
 // these defaults are required before validation
-
 const defaults = (manifest) => {
   if (manifest.prototype === undefined) manifest.prototype = '@kookaburra/prototype'
   if (manifest.bridge === undefined) manifest.bridge = '@kookaburra/bridges.javascript.native'

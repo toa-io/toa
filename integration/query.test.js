@@ -5,7 +5,7 @@ const framework = require('./framework')
 let composition, remote, messages
 
 beforeAll(async () => {
-  composition = await framework.compose({ dummies: ['messages', 'credits'] })
+  composition = await framework.compose(['messages', 'credits'])
   remote = await framework.remote('messages.messages')
   messages = await framework.mongodb.connect('messages.messages')
 })

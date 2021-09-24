@@ -2,7 +2,8 @@
 
 const { cli } = require('./cli')
 const { compose } = require('./compose')
-const { consume, discover } = require('./consume')
+const { consume } = require('./consume')
+const { discover } = require('./discover')
 const { remote } = require('./remote')
 
 exports.mongodb = require('./mongodb')

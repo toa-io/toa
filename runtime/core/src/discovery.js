@@ -3,18 +3,18 @@
 const { Connector } = require('./connector')
 
 class Discovery extends Connector {
-  #transmission
+  #transmitter
 
-  constructor (transmission) {
+  constructor (transmitter) {
     super()
 
-    this.#transmission = transmission
+    this.#transmitter = transmitter
 
-    this.depends(transmission)
+    this.depends(transmitter)
   }
 
-  async discover () {
-    const { output } = await this.#transmission.request()
+  async lookup (fqn) {
+    const { output } = await this.#transmitter.request(fqn + '.lookup')
 
     return output
   }

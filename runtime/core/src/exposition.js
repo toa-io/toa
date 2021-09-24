@@ -1,31 +1,35 @@
 'use strict'
 
-const { Connector } = require('./connector')
-
-class Exposition extends Connector {
+class Exposition {
   locator
+  endpoints
 
-  #runtime
+  #manifest
 
-  constructor (runtime) {
-    super()
+  constructor (locator, manifest) {
+    this.locator = locator
 
-    this.locator = runtime.locator
-    this.#runtime = runtime
+    this.endpoints = Exposition.endpoints.map((endpoint) =>
+      manifest.domain + '.' + manifest.name + '.' + endpoint)
+
+    this.#manifest = Exposition.#expose(manifest)
   }
 
   lookup () {
-    return this.#runtime.locator.export()
+    return this.#manifest
   }
 
-  async invoke (name, input) {
-    return { output: this[name](input) }
+  async invoke (endpoint, input) {
+    const method = endpoint.split('.')[2]
+    return { output: this[method](input) }
   }
 
-  static endpoints () {
-    return Object.getOwnPropertyNames(this.prototype)
-      .filter((name) => name !== 'constructor' && name !== 'invoke')
+  static #expose (manifest) {
+    const { domain, name, entity, bindings, operations, events } = manifest
+    return { domain, name, entity: entity.schema, bindings, operations, events }
   }
+
+  static endpoints = ['lookup']
 }
 
 exports.Exposition = Exposition

@@ -14,8 +14,8 @@ class Factory {
     this.#server = new Server()
   }
 
-  producer (runtime, endpoints) {
-    return new Producer(this.#server, runtime, endpoints)
+  producer (locator, endpoints, target) {
+    return new Producer(this.#server, locator, endpoints, target)
   }
 
   consumer (locator) {

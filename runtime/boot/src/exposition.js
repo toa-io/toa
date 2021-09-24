@@ -1,12 +1,13 @@
 'use strict'
 
-const { Exposition } = require('@kookaburra/core')
+const { Exposition, Locator } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const exposition = async (runtime, bindings) => {
-  const exposition = new Exposition(runtime)
-  const producers = boot.bindings.expose(exposition, bindings)
+const exposition = async (manifest) => {
+  const locator = new Locator()
+  const exposition = new Exposition(locator, manifest)
+  const producers = boot.bindings.expose(exposition)
 
   await Promise.all(producers.map((producer) => producer.connect()))
 

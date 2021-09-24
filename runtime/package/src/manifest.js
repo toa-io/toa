@@ -24,8 +24,10 @@ const load = async (reference, base) => {
 
   const manifest = await yaml(path)
 
-  defaults(manifest)
+  manifest.path = root
+
   expand(manifest)
+  defaults(manifest)
 
   await merge(root, manifest)
 

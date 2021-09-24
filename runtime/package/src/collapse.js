@@ -1,14 +1,12 @@
 'use strict'
 
-const { lookup, merge } = require('@kookaburra/gears')
+const { merge } = require('@kookaburra/gears')
 
-const collapse = (manifest, prototype, root) => {
-  const path = lookup.directory(manifest.prototype, root)
-
+const collapse = (manifest, prototype) => {
   delete manifest.prototype
 
   if (prototype.operations) {
-    manifest.prototype = { prototype: prototype.prototype }
+    manifest.prototype = { prototype: prototype.prototype, path: prototype.path }
 
     const operations = Object.entries(prototype.operations)
 
@@ -23,26 +21,19 @@ const collapse = (manifest, prototype, root) => {
         merge(manifest.operations[endpoint], declaration)
 
         if (bridge !== undefined) {
-          if (manifest.prototype.operations === undefined) {
-            manifest.prototype.operations = {}
-            manifest.prototype.path = path
-          }
+          if (manifest.prototype.operations === undefined) manifest.prototype.operations = {}
 
           manifest.prototype.operations[endpoint] = { bridge }
         }
       }
     }
-
-    delete prototype.operations
   }
 
-  delete prototype.domain
-  delete prototype.name
-  delete prototype.bindings
   delete prototype.entity?.storage
-  delete prototype.prototype
 
-  merge(manifest, prototype)
+  const { entity, remotes, events } = prototype
+
+  merge(manifest, { entity, remotes, events })
 }
 
 exports.collapse = collapse

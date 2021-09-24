@@ -34,7 +34,7 @@ class Entity {
 
     if (error) throw new Exception(error)
 
-    this.#state = value
+    this.#state = { ...value }
   }
 
   event () {

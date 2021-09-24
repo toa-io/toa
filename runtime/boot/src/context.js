@@ -4,13 +4,12 @@ const { Context } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const context = (remotes) => {
-  const promises = remotes?.map((remote) => boot.promise.promise('remote', remote))
-  const context = new Context(promises)
+const context = async (manifest, discovery) => {
+  let remotes = manifest.remotes?.map((remote) => boot.remote(remote, discovery))
 
-  if (promises) Promise.all(promises).then((remotes) => context.depends(remotes))
+  if (remotes) remotes = await Promise.all(remotes)
 
-  return context
+  return new Context(remotes)
 }
 
 exports.context = context

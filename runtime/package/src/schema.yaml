@@ -28,6 +28,9 @@ properties:
               bridge:
                 $ref: '#/properties/bridge'
 
+  path:
+    type: string
+
   domain:
     $ref: 'definitions#/definitions/token'
   name:

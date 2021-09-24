@@ -4,15 +4,13 @@ const { Remote, Locator } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const remote = async (fqn, bindings) => {
-  const discovery = boot.discovery(fqn, bindings)
-  await discovery.connect()
-
-  const manifest = await discovery.discover()
+const remote = async (fqn) => {
+  const discovery = await boot.discovery()
+  const manifest = await discovery.lookup(fqn)
   const locator = new Locator(manifest)
 
-  const calls = Object.fromEntries(Object.entries(locator.operations)
-    .map(([endpoint, definition]) => [endpoint, boot.call(locator, endpoint, definition, bindings)]))
+  const calls = Object.fromEntries(Object.entries(manifest.operations)
+    .map(([endpoint, definition]) => [endpoint, boot.call(locator, manifest, endpoint, definition)]))
 
   return new Remote(locator, calls)
 }

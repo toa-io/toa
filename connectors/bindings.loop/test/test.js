@@ -6,16 +6,17 @@ const { Factory } = require('../src/factory')
 const fixtures = require('./fixtures')
 
 const factory = new Factory()
-const producer = factory.producer(fixtures.runtime, fixtures.endpoints)
+const producer = factory.producer(fixtures.runtime.locator, fixtures.endpoints, fixtures.runtime)
 const consumer = factory.consumer(fixtures.runtime.locator)
-const exposition = factory.exposition(fixtures.exposition, ['discover'])
-const discovery = factory.discovery(fixtures.exposition.locator)
 
 beforeAll(async () => {
   await producer.connect()
   await consumer.connect()
-  await exposition.connect()
-  await discovery.connect()
+})
+
+afterAll(async () => {
+  await producer.disconnect()
+  await consumer.disconnect()
 })
 
 beforeEach(() => {
@@ -56,33 +57,8 @@ it('should not depend on initialization order', async () => {
 
   expect(await consumer.request('get')).toBe(false)
 
-  const producer = factory.producer(runtime, fixtures.endpoints)
+  const producer = factory.producer(runtime.locator, fixtures.endpoints, runtime)
   await producer.connect()
 
   expect(await consumer.request('get')).toBe(await runtime.invoke.mock.results[0].value)
-})
-
-it('should share bindings among instances', async () => {
-  const factory = new Factory()
-  const consumer = factory.consumer(fixtures.runtime.locator)
-
-  await consumer.connect()
-
-  const result = await consumer.request('get', 1)
-
-  expect(fixtures.runtime.invoke).toHaveBeenCalledTimes(1)
-  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(1, 'get', 1)
-  expect(await fixtures.runtime.invoke.mock.results[0].value).toBe(result)
-})
-
-it('should expose', async () => {
-  const result = await discovery.request('discover')
-
-  expect(result).toBe(await fixtures.exposition.invoke.mock.results[0].value)
-})
-
-it('should not intersect with operations', async () => {
-  await discovery.request('discover')
-
-  expect(fixtures.runtime.invoke).not.toHaveBeenCalled()
 })
