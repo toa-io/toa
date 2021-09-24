@@ -1,19 +1,17 @@
 'use strict'
 
 const to = (entry) => {
-  entry._id = entry.id
-  delete entry.id
+  const { id, ...rest } = entry
 
-  return entry
+  return { _id: id, ...rest }
 }
 
 const from = (entry) => {
-  if (!entry) return
+  if (entry === undefined) return
 
-  entry.id = entry._id
-  delete entry._id
+  const { _id, ...rest } = entry
 
-  return entry
+  return { id: _id, ...rest }
 }
 
 exports.to = to
