@@ -1,3 +1,3 @@
 'use strict'
 
-exports.condition = (state) => state === null
+exports.condition = (origin) => origin === null
