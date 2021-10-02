@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 
 const runtime = {
   locator: {
-    fqn: 'foo.bar',
+    id: 'foo.bar',
     operations: [
       {
         name: 'get'
@@ -24,7 +24,7 @@ const endpoints = ['get', 'add', 'discover']
 
 const exposition = {
   locator: {
-    fqn: 'foo.bar'
+    id: 'foo.bar'
   },
   invoke: jest.fn(async () => generate())
 }

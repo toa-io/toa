@@ -6,11 +6,11 @@ const { Runtime } = require('./runtime')
 
 class Remote extends Runtime {
   async connection () {
-    console.info(`Remote '${this.locator.fqn}' connected`)
+    console.info(`Remote '${this.locator.id}' connected`)
   }
 
   async disconnection () {
-    console.info(`Remote '${this.locator.fqn}' disconnected`)
+    console.info(`Remote '${this.locator.id}' disconnected`)
   }
 }
 

@@ -15,7 +15,7 @@ async function invoke (argv) {
   await composition.connect()
 
   const locator = new Locator(manifest)
-  const remote = await boot.remote(locator.fqn, [])
+  const remote = await boot.remote(locator.id, [])
   await remote.connect()
 
   const reply = await remote.invoke(argv.operation, request)

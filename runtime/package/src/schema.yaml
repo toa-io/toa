@@ -74,7 +74,7 @@ properties:
     uniqueItems: true
     minItems: 1
     items:
-      $ref: 'definitions#/definitions/fqn'
+      $ref: 'definitions#/definitions/locator'
 
   operations:
     type: object
@@ -128,7 +128,7 @@ properties:
   receivers:
     type: object
     propertyNames:
-      $ref: 'definitions#/definitions/locator'
+      $ref: 'definitions#/definitions/endpoint'
     patternProperties:
       '.*':
         type: object

@@ -70,10 +70,10 @@ it('should have definitions', () => {
   expect(schema.fit({ id: 'a2b3c' })).toBe(null)
 })
 
-it('should define locator', () => {
+it('should define endpoint', () => {
   const schema = new Schema({
     properties: {
-      event: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/locator' }
+      event: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/endpoint' }
     }
   })
 
@@ -84,10 +84,10 @@ it('should define locator', () => {
   expect(schema.fit({ event: 'a' })).not.toBe(null)
 })
 
-it('should define fqn', () => {
+it('should define locator', () => {
   const schema = new Schema({
     properties: {
-      remote: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/fqn' }
+      remote: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/locator' }
     }
   })
 
