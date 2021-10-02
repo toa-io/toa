@@ -3,7 +3,7 @@
 ## Setup dev environment
 `yarn dev`
 
-###Debug Integration Tests
+### Debug Integration Tests
 Path `/integration` is not included in jest `roots` by default. To run them with your debugger, 
 you should pass `--roots core connectors integration` option to jest cli. 
 
