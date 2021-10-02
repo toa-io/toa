@@ -21,6 +21,7 @@
   "scripts": {
     "dev": "docker compose up -d",
     "test": "jest",
+    "integration": "jest --roots=./integration --runInBand",
     "lint": "standard --verbose --fix | snazzy",
     "install": "./node_modules/.bin/lerna bootstrap --ignore-scripts",
     "prepare": "husky install"
@@ -34,8 +35,7 @@
   "jest": {
     "roots": [
       "<rootDir>/runtime",
-      "<rootDir>/connectors",
-      "<rootDir>/integration"
+      "<rootDir>/connectors"
     ],
     "testMatch": [
       "**/?(*.)+(test).js"
