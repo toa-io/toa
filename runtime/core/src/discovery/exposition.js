@@ -1,5 +1,7 @@
 'use strict'
 
+const { endpoints } = require('./interface')
+
 class Exposition {
   locator
   endpoints
@@ -8,9 +10,7 @@ class Exposition {
 
   constructor (locator, manifest) {
     this.locator = locator
-
-    this.endpoints = Exposition.endpoints.map((endpoint) =>
-      manifest.domain + '.' + manifest.name + '.' + endpoint)
+    this.endpoints = endpoints(manifest.domain, manifest.name)
 
     this.#manifest = Exposition.#expose(manifest)
   }
@@ -28,8 +28,6 @@ class Exposition {
     const { domain, name, entity, operations, events } = manifest
     return { domain, name, entity: entity.schema, operations, events }
   }
-
-  static endpoints = ['lookup']
 }
 
 exports.Exposition = Exposition
