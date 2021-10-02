@@ -1,7 +1,7 @@
 'use strict'
 
-const boot = require('../../runtime/boot/src/discovery')
+const discovery = require('../../runtime/boot/src/discovery')
 
-const discover = async () => boot.discovery()
+const discover = async (id) => discovery.explore(id)
 
 exports.discover = discover

@@ -35,6 +35,10 @@ class Locator {
     return `${this.#domain}${concat('.', this.#name)}`
   }
 
+  get id () {
+    return `${this.#domain}${concat('.', this.#name)}`
+  }
+
   get operations () {
     return this.#operations
   }

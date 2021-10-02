@@ -10,15 +10,21 @@ class Producer extends Connector {
   constructor (bindings, locator, endpoints, producer) {
     super()
 
-    if (bindings[locator.fqn] === undefined) bindings[locator.fqn] = {}
+    if (bindings[locator.id] === undefined) bindings[locator.id] = {}
 
-    this.#binding = bindings[locator.fqn]
+    this.#binding = bindings[locator.id]
     this.#endpoints = endpoints
     this.#producer = producer
+
+    this.depends(producer)
   }
 
   async connection () {
     this.#endpoints.forEach((endpoint) => this.#operation(endpoint))
+  }
+
+  async disconnection () {
+    this.#endpoints.forEach((endpoint) => delete this.#binding[endpoint])
   }
 
   #operation (endpoint) {

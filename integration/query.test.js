@@ -5,7 +5,10 @@ const framework = require('./framework')
 let composition, remote, messages
 
 beforeAll(async () => {
-  composition = await framework.compose(['messages', 'credits'])
+  // avoid port conflicts
+  const options = { bindings: '@kookaburra/bindings.amqp' }
+
+  composition = await framework.compose(['messages', 'credits'], options)
   remote = await framework.remote('messages.messages')
   messages = await framework.mongodb.connect('messages.messages')
 })

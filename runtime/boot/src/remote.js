@@ -4,9 +4,9 @@ const { Remote, Locator } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-const remote = async (fqn) => {
-  const discovery = await boot.discovery()
-  const manifest = await discovery.lookup(fqn)
+const remote = async (id) => {
+  const explorer = await boot.discovery.explore(id)
+  const manifest = await explorer.lookup()
   const locator = new Locator(manifest)
 
   const calls = Object.fromEntries(Object.entries(manifest.operations)

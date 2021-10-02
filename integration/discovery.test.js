@@ -6,7 +6,7 @@ let composition, discovery
 
 beforeAll(async () => {
   composition = await framework.compose(['credits'])
-  discovery = await framework.discover()
+  discovery = await framework.discover('credits.balance')
 })
 
 afterAll(async () => {
@@ -15,7 +15,7 @@ afterAll(async () => {
 })
 
 it('should lookup', async () => {
-  const reply = await discovery.lookup('credits.balance')
+  const reply = await discovery.lookup()
 
   expect(reply.entity.properties.id).toBeDefined()
   expect(reply.operations).toBeDefined()

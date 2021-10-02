@@ -1,23 +1,35 @@
 'use strict'
 
-const { Locator, Discovery, Transmission } = require('@kookaburra/core')
+const { discovery, Locator, Transmission } = require('@kookaburra/core')
 
 const boot = require('./index')
 
-let instance
+const explore = async (id) => {
+  const locator = new Locator()
+  const transmitters = {}
 
-const discovery = async () => {
-  if (instance === undefined) {
-    const locator = new Locator()
-    const consumers = boot.bindings.discover(locator)
-    const transmission = new Transmission.Dynamic(consumers)
+  for (const method of discovery.interface.methods) {
+    const endpoint = discovery.interface.endpoint(id, method)
+    const consumers = boot.bindings.consume(locator, endpoint)
 
-    instance = new Discovery(transmission)
-
-    await instance.connect()
+    transmitters[method] = new Transmission(consumers)
   }
 
-  return instance
+  const explorer = new discovery.Explorer(transmitters)
+  await explorer.connect()
+
+  return explorer
 }
 
-exports.discovery = discovery
+const expose = async (manifest) => {
+  const locator = new Locator()
+  const exposition = new discovery.Exposition(locator, manifest)
+  const producers = boot.bindings.expose(exposition)
+
+  await Promise.all(producers.map((producer) => producer.connect()))
+
+  return producers
+}
+
+exports.explore = explore
+exports.expose = expose

@@ -6,21 +6,19 @@ const { name } = require('./name')
 
 class Consumer extends Connector {
   #channel
-  #locator
+  #queue
 
-  constructor (channel, locator) {
+  constructor (channel, locator, endpoint) {
     super()
 
     this.#channel = channel
-    this.#locator = locator
+    this.#queue = name(locator, endpoint)
 
     this.depends(channel)
   }
 
-  async request (endpoint, request) {
-    const queue = name(this.#locator, endpoint)
-
-    return this.#channel.request(queue, request)
+  async request (request) {
+    return this.#channel.request(this.#queue, request)
   }
 }
 

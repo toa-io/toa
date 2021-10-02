@@ -15,7 +15,6 @@ const ok = {
       }
     }
   },
-  bindings: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp'],
   remotes: ['one.foo', 'two.bar'],
   operations: {
     get: {
@@ -27,7 +26,8 @@ const ok = {
     add: {
       type: 'transition',
       target: 'entry',
-      bridge: 'whatever'
+      bridge: 'whatever',
+      bindings: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp']
     }
   },
   events: {
@@ -35,7 +35,8 @@ const ok = {
       bridge: 'whatever',
       path: '/somewhere',
       conditioned: true,
-      subjective: false
+      subjective: false,
+      binding: '@kookaburra/bindings.amqp'
     }
   },
   receivers: {

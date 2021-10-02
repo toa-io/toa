@@ -64,10 +64,4 @@ describe('receivers', () => {
       path: expect.stringMatching(/dummies\/b$/)
     })
   })
-
-  it('should add missing remotes', async () => {
-    const manifest = await load('./dummies/b', __dirname)
-
-    expect(manifest.remotes).toStrictEqual(['a.b', 'd.e', 'dummies.a'])
-  })
 })

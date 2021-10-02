@@ -122,6 +122,15 @@ describe('dependencies', () => {
     expect(sequence.indexOf('*a')).toBe(sequence.length - 1)
   })
 
+  it('should not throw if depends not on Connector', async () => {
+    a.depends({})
+
+    await expect((async () => {
+      await a.connect()
+      await a.disconnect()
+    })()).resolves.not.toThrow()
+  })
+
   describe('errors', () => {
     let f
 

@@ -15,10 +15,10 @@ class Factory {
     return new Producer(channel, locator, endpoints, producer)
   }
 
-  consumer (locator) {
+  consumer (locator, endpoint) {
     const channel = this.#channel(locator)
 
-    return new Consumer(channel, locator)
+    return new Consumer(channel, locator, endpoint)
   }
 
   emitter (locator, label) {
@@ -36,7 +36,7 @@ class Factory {
   #channel (locator) {
     const host = locator.host(TYPE)
 
-    if (!this.#channels[host]) this.#channels[host] = new Channel(host)
+    if (this.#channels[host] === undefined) this.#channels[host] = new Channel(host)
 
     return this.#channels[host]
   }

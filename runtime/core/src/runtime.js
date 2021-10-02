@@ -18,15 +18,17 @@ class Runtime extends Connector {
   }
 
   connection () {
-    console.info(`Runtime '${this.locator.fqn}' connected`)
+    console.info(`Runtime '${this.locator.id}' connected`)
   }
 
   disconnection () {
-    console.info(`Runtime '${this.locator.fqn}' disconnected`)
+    console.info(`Runtime '${this.locator.id}' disconnected`)
   }
 
   async invoke (endpoint, request) {
-    if (!(endpoint in this.#operations)) { throw new Error(`Endpoint '${endpoint}' not found in '${this.locator.fqn}'`) }
+    if (!(endpoint in this.#operations)) {
+      throw new Error(`Endpoint '${endpoint}' not found in '${this.locator.id}'`)
+    }
 
     return this.#operations[endpoint].invoke(request)
   }

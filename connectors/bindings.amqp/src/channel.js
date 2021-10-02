@@ -9,7 +9,7 @@ const { pack, unpack } = require('./message')
 
 class Channel extends Connector {
   #id
-  #locator
+  #url
   #connection
   #channel
 
@@ -20,14 +20,14 @@ class Channel extends Connector {
     super()
 
     this.#id = id()
-    this.#locator = Channel.#url(host)
+    this.#url = Channel.#locate(host)
   }
 
   async connection () {
-    this.#connection = await amqp.connect(this.#locator)
+    this.#connection = await amqp.connect(this.#url)
     this.#channel = await this.#connection.createChannel()
 
-    console.info(`AMQP Binding connected to ${this.#locator}`)
+    console.info(`AMQP Binding connected to ${this.#url}`)
   }
 
   async disconnection () {
@@ -35,7 +35,7 @@ class Channel extends Connector {
     // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
     await this.#connection.close()
 
-    console.info(`AMQP Binding disconnected from ${this.#locator}`)
+    console.info(`AMQP Binding disconnected from ${this.#url}`)
   }
 
   async request (label, request) {
@@ -121,7 +121,7 @@ class Channel extends Connector {
     this.#channel.ack(message)
   }
 
-  static #url (host) {
+  static #locate (host) {
     if (process.env.KOO_ENV === 'dev') return 'amqp://guest:guest@localhost/'
 
     return 'amqp://' + host

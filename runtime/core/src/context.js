@@ -9,6 +9,8 @@ class Context extends Connector {
     super()
 
     this.#remotes = remotes
+
+    if (remotes !== undefined) this.depends(remotes)
   }
 
   get remotes () {

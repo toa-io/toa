@@ -98,7 +98,7 @@ properties:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
-        required: [ type, target ]
+        required: [ type, target, bindings ]
         additionalProperties: false
     additionalProperties: false
 

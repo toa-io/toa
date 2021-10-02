@@ -10,8 +10,8 @@ class Factory {
     return new Producer(this.#bindings, locator, endpoints, producer)
   }
 
-  consumer (locator) {
-    return new Consumer(this.#bindings, locator)
+  consumer (locator, endpoint) {
+    return new Consumer(this.#bindings, locator, endpoint)
   }
 }
 

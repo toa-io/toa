@@ -9,10 +9,12 @@ const { validate } = require('./validate')
 const { collapse } = require('./collapse')
 const { dereference } = require('./dereference')
 const { defaults } = require('./defaults')
+const { normalize } = require('./normalize')
 
 const manifest = async (reference, base = process.cwd()) => {
   const manifest = await load(reference, base)
 
+  normalize(manifest)
   validate(manifest)
 
   return manifest

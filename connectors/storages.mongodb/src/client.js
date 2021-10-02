@@ -27,9 +27,7 @@ class Client extends Connector {
 
   async disconnection () {
     await this.#client.close()
-  }
 
-  disconnected () {
     console.info('Storage MongoDB disconnected from ' +
       `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }

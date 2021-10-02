@@ -12,11 +12,6 @@ const builder = (yargs) => {
       type: 'string',
       desc: 'Request YAML'
     })
-    .option('bindings', {
-      group: 'Command options:',
-      type: 'string',
-      desc: 'Bindings'
-    })
     .option('path', {
       group: 'Command options:',
       type: 'string',

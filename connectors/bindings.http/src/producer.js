@@ -8,19 +8,20 @@ class Producer extends Connector {
   #server
   #locator
   #endpoints
-  #target
+  #producer
 
-  constructor (server, locator, endpoints, target) {
+  constructor (server, locator, endpoints, producer) {
     super()
 
     this.#server = server
     this.#locator = locator
     this.#endpoints = endpoints
-    this.#target = target
+    this.#producer = producer
 
     this.#bind()
 
     this.depends(server)
+    this.depends(producer)
   }
 
   #bind () {
@@ -31,7 +32,7 @@ class Producer extends Connector {
     const method = resource.method
     const path = resource.path(this.#locator, endpoint)
 
-    this.#server.reply(method, path, async (request) => this.#target.invoke(endpoint, request))
+    this.#server.reply(method, path, async (request) => this.#producer.invoke(endpoint, request))
   }
 }
 

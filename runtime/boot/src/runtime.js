@@ -11,9 +11,6 @@ const runtime = async (manifest) => {
   const emission = boot.emission(manifest.events, locator)
   const context = await boot.context(manifest)
 
-  // const receivers = await Promise.all(remap(manifest.receivers, (definition, label) =>
-  //   boot.receiver(label, definition, discovery, context.local)))
-
   const operations = remap(manifest.operations, (definition, endpoint) =>
     boot.operation(manifest, endpoint, definition, context, storage, emission))
 

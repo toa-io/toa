@@ -6,7 +6,7 @@ const findUp = require('find-up')
 const manifest = (from = '.') => {
   const manifest = findUp.sync(MANIFEST, { cwd: path.resolve(process.cwd(), from) })
 
-  if (!manifest) throw new Error(`File ${MANIFEST} not found in ${from}`)
+  if (manifest === undefined) throw new Error(`File ${MANIFEST} not found in ${from}`)
 
   return manifest
 }

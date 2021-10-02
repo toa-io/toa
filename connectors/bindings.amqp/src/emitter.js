@@ -14,6 +14,8 @@ class Emitter extends Connector {
     this.#channel = channel
     this.#locator = locator
     this.#label = label
+
+    this.depends(channel)
   }
 
   async emit (payload) {

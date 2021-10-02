@@ -18,12 +18,12 @@ class Factory {
     return new Producer(this.#server, locator, endpoints, target)
   }
 
-  consumer (locator) {
-    const name = locator.fqn
+  consumer (locator, endpoint) {
+    const id = locator.id
 
-    if (!this.#agents[name]) this.#agents[name] = new Agent(AGENT_OPTIONS)
+    if (!this.#agents[id]) this.#agents[id] = new Agent(AGENT_OPTIONS)
 
-    return new Consumer(this.#agents[name], locator)
+    return new Consumer(this.#agents[id], locator, endpoint)
   }
 }
 
