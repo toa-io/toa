@@ -7,6 +7,9 @@ definitions:
   token:
     type: string
     pattern: ^[a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?$
+  id:
+    type: string
+    pattern: ^[a-fA-F0-9]{32}$
   endpoint:
     type: string
     pattern: ^([a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?)){1,}$

@@ -6,9 +6,13 @@ const source = {
   entity: {
     schema: {
       properties: {
+        id: {
+          type: 'id'
+        },
         foo: {
           type: 'string'
-        }
+        },
+        bar: '~foo'
       }
     }
   },
@@ -41,7 +45,13 @@ const target = {
   entity: {
     schema: {
       properties: {
+        id: {
+          $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id'
+        },
         foo: {
+          type: 'string'
+        },
+        bar: {
           type: 'string'
         }
       }

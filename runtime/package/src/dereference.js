@@ -3,6 +3,8 @@
 const dereference = (manifest) => {
   const property = resolve(manifest.entity.schema.properties)
 
+  schema(manifest.entity.schema, property)
+
   for (const operation of Object.values(manifest.operations)) {
     schema(operation.input, property)
     schema(operation.output, property)
@@ -20,6 +22,7 @@ const resolve = (schema) => (property) => {
 const schema = (object, resolve) => {
   if (object === undefined) return
   if (typeof object === 'string' && object[0] === '~') return resolve(object.substr(1))
+  if (object.type in types) return types[object.type]
 
   if (object.type === 'array') {
     object.items = schema(object.items, resolve)
@@ -31,6 +34,10 @@ const schema = (object, resolve) => {
   }
 
   return object
+}
+
+const types = {
+  id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id' }
 }
 
 exports.dereference = dereference

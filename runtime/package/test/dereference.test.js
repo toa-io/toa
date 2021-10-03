@@ -18,9 +18,9 @@ it('should dereference', () => {
 })
 
 it('should throw on invalid reference', () => {
-  source.operations[0].output.properties.bar = null
+  source.operations[0].output.properties.baz = null
   expect(() => dereference(source)).toThrow(/is not defined/)
 
-  source.operations[0].output.properties.bar = '~bar'
+  source.operations[0].output.properties.baz = '~baz'
   expect(() => dereference(source)).toThrow(/is not defined/)
 })

@@ -3,9 +3,7 @@ prototype: null
 entity:
   schema:
     properties:
-      id:
-        type: string
-        pattern: ^[a-fA-F0-9]+$
+      id: id
 
 operations:
   observe:

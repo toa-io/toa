@@ -11,13 +11,13 @@ describe('prototype', () => {
   it('should use origin prototype as default', async () => {
     const manifest = await load('./dummies/a', __dirname)
 
-    expect(manifest.entity.schema.properties.id).toMatchObject({ type: 'string' })
+    expect(manifest.entity.schema.properties.id)
+      .toMatchObject({ $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id' })
   })
 
   it('should merge entity', async () => {
     const manifest = await load('./dummies/b', __dirname)
 
-    expect(manifest.entity.schema.properties.id).toMatchObject({ type: 'string' })
     expect(manifest.entity.schema.properties.length).toMatchObject({ type: 'integer', maximum: 10 })
     expect(manifest.entity.schema.properties.description).toMatchObject({ type: 'string' })
   })
