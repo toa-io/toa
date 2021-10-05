@@ -1,14 +1,13 @@
 'use strict'
 
-const { contract: { Request, Reply, Query } } = require('@kookaburra/core')
+const { contract: { Request, Reply } } = require('@kookaburra/core')
 const { Schema } = require('@kookaburra/schema')
 
-const request = (entity, descriptor) => {
-  const request = Request.schema(descriptor)
+const request = (entity, definition) => {
+  const request = Request.schema(definition)
   const schema = new Schema(request)
-  const query = new Query(entity?.properties)
 
-  return new Request(schema, query, descriptor)
+  return new Request(schema, definition)
 }
 
 const reply = (output, error) => {

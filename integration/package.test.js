@@ -8,7 +8,7 @@ it('should load', async () => {
 })
 
 describe('prototype', () => {
-  it('should use origin prototype as default', async () => {
+  it('should use generic prototype as default', async () => {
     const manifest = await load('./dummies/a', __dirname)
 
     expect(manifest.entity.schema.properties.id)

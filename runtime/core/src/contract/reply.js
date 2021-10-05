@@ -9,8 +9,8 @@ class Reply extends Conditions {
   static schema (output, error) {
     const schema = { properties: {} }
 
-    if (output) schema.properties.output = output
-    if (error) schema.properties.error = error
+    if (output !== undefined) schema.properties.output = output
+    if (error !== undefined) schema.properties.error = error
 
     return schema
   }

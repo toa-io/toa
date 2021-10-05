@@ -28,7 +28,7 @@ describe('type', () => {
   })
 })
 
-describe('target', () => {
+describe('subject', () => {
   it('should provide target', () => {
     async function observation (input, entry) {}
 
@@ -37,7 +37,7 @@ describe('target', () => {
     const o = parse(observation)
     const d = parse(transition)
 
-    expect(o.target).toBe('entry')
-    expect(d.target).toBe('set')
+    expect(o.subject).toBe('entry')
+    expect(d.subject).toBe('set')
   })
 })

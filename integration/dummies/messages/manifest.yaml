@@ -51,7 +51,3 @@ operations:
       properties:
         ok: string
       required: [ id ]
-
-receivers:
-  credits.balance.empty:
-    transition: add

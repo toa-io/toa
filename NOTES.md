@@ -4,10 +4,10 @@
 `yarn dev`
 
 ### Debug Integration Tests
-Path `/integration` is not included in jest `roots` by default. To run them with your debugger, 
-you should pass `--roots core connectors integration` option to jest cli. 
+Path `integration` is not included in jest `roots` by default. To run them with your debugger, 
+you should pass `--roots runtime connectors integration` option to jest cli. 
 
-For example, if you're using WebStorm, set CLI Options in Jest Template as `--roots core connectors integration`
+For example, if you're using WebStorm, set CLI Options for Jest Template as `--roots core connectors integration`
 
 ## Code Style Requirements
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)

@@ -7,8 +7,6 @@ class State {
   #entity
   #emitter
 
-  query
-
   constructor (storage, entity, emitter) {
     this.#storage = storage
     this.#entity = entity
@@ -31,12 +29,12 @@ class State {
     return entries.length ? this.#entity.entries(entries) : null
   }
 
-  async commit (target) {
-    const method = target.initial ? 'add' : 'update'
-    const event = target.event()
+  async commit (subject) {
+    const method = subject.initial ? 'add' : 'update'
+    const event = subject.event()
 
     if (!empty(event.changeset)) {
-      await this.#storage[method](target.get())
+      await this.#storage[method](subject.get())
 
       // TODO: do not wait because outbox will handle failures
       await this.#emitter.emit(event)

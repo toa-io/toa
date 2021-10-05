@@ -1,5 +1,7 @@
 'use strict'
 
+const { id } = require('../runtime/core/src/id')
+
 const framework = require('./framework')
 
 let composition, remote, messages
@@ -66,13 +68,13 @@ describe('not found', () => {
 
   it('should find by id', async () => {
     const ids = (await Promise.all([1, 2, 3, 4, 5].map((i) =>
-      remote.invoke('add', { input: { sender: 's' + i, text: 't' + i } })))).map((reply) => reply.output.id)
+      remote.invoke('add', { input: { sender: id(), text: 't' + i } })))).map((reply) => reply.output.id)
 
-    // there is a deterministic unit test for core/contact/query class
-    const id = ids[Math.round(ids.length * Math.random() * 0.9)]
+    // there is a deterministic unit test for core/query class
+    const one = ids[Math.round(ids.length * Math.random() * 0.9)]
 
-    const reply = await remote.invoke('get', { query: { id } })
+    const reply = await remote.invoke('get', { query: { id: one } })
 
-    expect(reply.output.id).toBe(id)
+    expect(reply.output.id).toBe(one)
   })
 })

@@ -1,6 +1,6 @@
 'use strict'
 
-const { Query } = require('../../src/contract/query')
+const { Query } = require('../src/query')
 const fixtures = require('./query.fixtures')
 
 beforeEach(() => {
@@ -32,7 +32,7 @@ describe('criteria', () => {
   it('should throw on unknown properties', () => {
     const instance = new Query(fixtures.samples.simple.properties)
 
-    expect(() => instance.parse({ criteria: 'lastname==Johnson' })).toThrow(/not allowed/)
+    expect(() => instance.parse({ criteria: 'lastname==Johnson' })).toThrow(/not defined/)
   })
 
   it('should parse id', () => {

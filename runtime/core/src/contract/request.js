@@ -2,29 +2,11 @@
 
 const clone = require('clone-deep')
 
+const schemas = require('./schemas')
 const { Exception } = require('../exception')
 const { Conditions } = require('./conditions')
-const schemas = require('./schemas')
 
 class Request extends Conditions {
-  #query
-  #operation
-
-  constructor (schema, query, operation) {
-    super(schema)
-
-    this.#query = query
-    this.#operation = operation
-  }
-
-  fit (request) {
-    super.fit(request)
-
-    if (request.query) request.query = this.#query.parse(request.query)
-
-    // no projection for transitions
-  }
-
   static schema (declaration) {
     const schema = clone(schemas.request)
     const required = []
@@ -38,6 +20,9 @@ class Request extends Conditions {
     if (declaration?.query === true) required.push('query')
 
     if (required.length > 0) schema.required = required
+
+    // TODO: operation type's specific. not sure if it's schema's responsibility
+    //  - no projection for transitions
 
     return schema
   }

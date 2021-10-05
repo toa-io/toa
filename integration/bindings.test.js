@@ -1,6 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
+const { id } = require('../runtime/core/src/id')
 
 const framework = require('./framework')
 
@@ -35,7 +36,7 @@ BINDINGS.forEach((binding) => {
     })
 
     it('should get message', async () => {
-      const message = { sender: generate(), text: generate() }
+      const message = { sender: id(), text: generate() }
       const created = await remote.invoke('add', { input: message })
 
       expect(created.output.id).toBeDefined()
@@ -47,7 +48,7 @@ BINDINGS.forEach((binding) => {
     })
 
     it('should find messages', async () => {
-      const sender = generate()
+      const sender = id()
       const messages = Array.from(Array(5)).map((_, index) =>
         ({ sender, text: generate(), timestamp: index }))
 

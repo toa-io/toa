@@ -11,7 +11,7 @@ it('should print help', async () => {
 })
 
 it('should invoke', async () => {
-  const request = { input: { amount: 1 } }
+  const request = { input: 1 }
   const { stdout } = await credits('invoke', 'deduce', request)
 
   expect(stdout).toMatch(/{ output: \d+ }$/)

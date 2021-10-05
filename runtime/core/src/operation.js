@@ -4,59 +4,58 @@ const { Connector } = require('./connector')
 const { Exception } = require('./exception')
 
 class Operation extends Connector {
-  #type
-  #contract
   #cascade
-  #target
+  #subject
+  #contract
+  #query
 
-  constructor (type, cascade, target, contract) {
+  constructor (cascade, subject, contract, query) {
     super()
 
-    this.#type = type
     this.#cascade = cascade
-    this.#target = target
+    this.#subject = subject
     this.#contract = contract
+    this.#query = query
 
     this.depends(cascade)
   }
 
   async invoke (request) {
     try {
-      return await this.#invoke(request)
-    } catch (e) {
-      let exception
+      const context = await this.preprocess(request)
+      const reply = await this.process(context)
 
-      if (e instanceof Error) exception = new Exception(e)
-      else exception = e
+      await this.postprocess(context, reply)
+
+      return reply
+    } catch (e) {
+      const exception = e instanceof Error ? new Exception(e) : e
 
       return { exception }
     }
   }
 
-  async #invoke (request) {
-    let target, state
+  async preprocess (request) {
+    if (request?.query === undefined) return { request }
 
-    if (request?.query) {
-      target = await this.#target.query(request?.query)
+    const query = this.#query.parse(request.query)
+    const subject = await this.#subject.query(query)
+    const state = subject === null ? null : subject.get()
 
-      if (target === null) return { output: null }
-    } else if (this.#type === 'transition') {
-      target = this.#target.init()
-    }
+    return { request, subject, state }
+  }
 
-    if (target) state = target.get()
+  async process ({ request, state }) {
+    if (request?.query !== undefined && state === null) return { output: null } // not found
 
     const reply = await this.#cascade.run(request?.input, state)
 
     this.#contract.fit(reply)
 
-    if (state && this.#type === 'transition' && !reply.error) {
-      target.set(state)
-      await this.#target.commit(target)
-    }
-
     return reply
   }
+
+  postprocess (context, reply) {}
 }
 
 exports.Operation = Operation

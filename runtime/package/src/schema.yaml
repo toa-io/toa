@@ -56,6 +56,9 @@ properties:
             type: object
             propertyNames:
               $ref: 'definitions#/definitions/token'
+      initialized:
+        type: boolean
+        default: false
     required: [ schema ]
     additionalProperties: false
 
@@ -86,7 +89,7 @@ properties:
         properties:
           type:
             enum: [ transition, observation ]
-          target:
+          subject:
             enum: [ entry, entries ]
           bridge:
             type: string
@@ -98,7 +101,7 @@ properties:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
-        required: [ type, target, bindings ]
+        required: [ type, subject, bindings ]
         additionalProperties: false
     additionalProperties: false
 

@@ -2,22 +2,11 @@
 
 const { generate } = require('randomstring')
 
-const bridges = {
-  transition: {
-    run: jest.fn(() => ({ output: generate() })),
-    type: 'transition'
-  },
-  observation: {
-    run: jest.fn(() => ({ output: generate() })),
-    type: 'observation'
-  },
-  error: {
-    run: jest.fn(() => ({ error: generate() })),
-    type: 'transition'
-  }
+const cascade = {
+  run: jest.fn(() => ({ output: generate() }))
 }
 
-const target = {
+const subject = {
   query: jest.fn((query) => {
     if (query?.mock === null) return null
 
@@ -37,7 +26,23 @@ const contract = {
   fit: jest.fn((input) => input.invalid ? { [generate()]: generate() } : undefined)
 }
 
-exports.bridges = bridges
-exports.target = target
+const query = {
+  parse: jest.fn((query) => query)
+}
+
+const mock = class {
+  preprocess (request) {
+    return {
+      request,
+      subject: { [generate()]: generate() },
+      state: { [generate()]: generate() }
+    }
+  }
+}
+
+exports.cascade = cascade
+exports.subject = subject
 exports.contract = contract
+exports.query = query
+exports.mock = mock
 exports.request = { input: generate(), query: generate() }

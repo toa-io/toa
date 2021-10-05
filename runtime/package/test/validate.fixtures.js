@@ -19,13 +19,13 @@ const ok = {
   operations: {
     get: {
       type: 'observation',
-      target: 'entries',
+      subject: 'entries',
       bridge: 'whatever',
       bindings: ['@kookaburra/bindings.http']
     },
     add: {
       type: 'transition',
-      target: 'entry',
+      subject: 'entry',
       bridge: 'whatever',
       bindings: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp']
     }

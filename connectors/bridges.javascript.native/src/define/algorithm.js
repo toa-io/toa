@@ -7,15 +7,14 @@ const parse = (algorithm) => {
 
   const ast = parser.parse(algorithm.toString())
 
-  const { type, target } = node(ast.program.body[0])
-  return { type, target }
+  return node(ast.program.body[0])
 }
 
 function node (node) {
   if (node.type !== 'FunctionDeclaration') { throw new Error('Operation module must export named function declaration') }
   if (node.async !== true) { throw new Error('Operation module must export async function') }
 
-  return { type: node.id.name, target: node.params[1]?.name }
+  return { type: node.id.name, subject: node.params[1]?.name }
 }
 
 exports.parse = parse

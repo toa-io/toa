@@ -4,19 +4,12 @@ name: balance
 entity:
   schema:
     properties:
-      user: string
-      balance: integer
+      balance:
+        type: integer
+        default: 10
+  initialized: true
 
 operations:
   deduce:
-    input:
-      properties:
-        amount: integer
-      required: [amount]
-    output:
-      properties:
-        balance: integer
-
-events:
-  empty:
-    binding: '@amqp'
+    input: integer
+    output: integer

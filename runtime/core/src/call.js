@@ -17,7 +17,7 @@ class Call extends Connector {
   }
 
   async invoke (request) {
-    if (request) this.#contract.fit(request)
+    if (request !== undefined) this.#contract.fit(request)
 
     const { exception, ...reply } = await this.#transmitter.request(request)
 

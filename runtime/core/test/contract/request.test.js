@@ -1,7 +1,7 @@
 'use strict'
 
-const { generate } = require('randomstring')
 const clone = require('clone-deep')
+const { generate } = require('randomstring')
 
 jest.mock('../../src/contract/conditions')
 
@@ -14,7 +14,7 @@ let contract
 beforeEach(() => {
   jest.clearAllMocks()
 
-  contract = new Request(fixtures.schema, fixtures.query, fixtures.declaration)
+  contract = new Request(fixtures.schema)
 })
 
 it('should extend Conditions', () => {
@@ -30,13 +30,13 @@ it('should fit request', () => {
   expect(Conditions.mock.instances[0].fit).toHaveBeenCalledWith(request)
 })
 
-it('should parse query', () => {
-  const request = { query: { [generate()]: generate() } }
-
-  contract.fit(request)
-
-  expect(request.query).toStrictEqual(fixtures.query.parse.mock.results[0].value)
-})
+// it('should parse query', () => {
+//   const request = { query: { [generate()]: generate() } }
+//
+//   contract.fit(request)
+//
+//   expect(request.query).toStrictEqual(fixtures.query.parse.mock.results[0].value)
+// })
 
 describe('schema', () => {
   let schema

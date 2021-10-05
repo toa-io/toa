@@ -1,0 +1,11 @@
+domain: stats
+name: stats
+
+entity:
+  schema:
+    properties:
+      user: id
+      messages: integer
+
+receivers:
+  messages.messages.created: transit

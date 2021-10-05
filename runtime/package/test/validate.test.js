@@ -119,6 +119,13 @@ describe('entity', () => {
       expect(manifest.entity.storage).toStrictEqual('@kookaburra/storages.mongodb')
     })
   })
+
+  describe('initialized', () => {
+    it('should provide default', () => {
+      expect(() => validate(manifest)).not.toThrow()
+      expect(manifest.entity.initialized).toBe(false)
+    })
+  })
 })
 
 describe('bindings', () => {
@@ -183,11 +190,11 @@ describe('operations', () => {
       expect(() => validate(manifest)).toThrow(/one of the allowed values/)
     })
 
-    it('should have type (entity or set)', () => {
-      delete manifest.operations.get.target
+    it('should have subject (entity or set)', () => {
+      delete manifest.operations.get.subject
       expect(() => validate(manifest)).toThrow(/required property/)
 
-      manifest.operations.get.target = 'foo'
+      manifest.operations.get.subject = 'foo'
       expect(() => validate(manifest)).toThrow(/one of the allowed values/)
     })
 

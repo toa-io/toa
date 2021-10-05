@@ -6,65 +6,47 @@ const fixtures = require('./operation.fixtures')
 let operation
 
 beforeEach(() => {
-  operation = new Operation('transition', fixtures.bridges.transition, fixtures.target, fixtures.contract)
-
   jest.clearAllMocks()
+  operation = new Operation(fixtures.cascade, fixtures.subject, fixtures.contract, fixtures.query)
 })
 
 it('should invoke', async () => {
   await operation.invoke({})
 
-  expect(fixtures.bridges.transition.run).toBeCalled()
+  expect(fixtures.cascade.run).toBeCalled()
 })
 
-it('should pass request', async () => {
+it('should pass input', async () => {
   await operation.invoke(fixtures.request)
 
-  expect(fixtures.bridges.transition.run).toBeCalledWith(fixtures.request.input, expect.anything())
+  expect(fixtures.cascade.run).toBeCalledWith(fixtures.request.input, expect.anything())
 })
 
-it('should pass target', async () => {
+it('should pass state', async () => {
   await operation.invoke(fixtures.request)
 
-  expect(fixtures.target.query).toHaveBeenCalledWith(fixtures.request.query)
+  expect(fixtures.query.parse).toHaveBeenCalledWith(fixtures.request.query)
+  expect(fixtures.subject.query).toHaveBeenCalledWith(fixtures.query.parse.mock.results[0].value)
 
-  expect(fixtures.bridges.transition.run)
-    .toHaveBeenCalledWith(expect.anything(), fixtures.target.query.mock.results[0].value.get.mock.results[0].value)
+  expect(fixtures.cascade.run)
+    .toHaveBeenCalledWith(expect.anything(), fixtures.subject.query.mock.results[0].value.get.mock.results[0].value)
 })
 
 it('should return { output: null } if target is null', async () => {
   const result = await operation.invoke({ query: { mock: null } })
 
   expect(result).toStrictEqual({ output: null })
-  expect(fixtures.bridges.transition.run).not.toHaveBeenCalled()
+  expect(fixtures.cascade.run).not.toHaveBeenCalled()
 })
 
-it('should commit target after transition', async () => {
-  await operation.invoke(fixtures.request)
-
-  expect(fixtures.target.commit).toHaveBeenCalledWith(fixtures.target.query.mock.results[0].value)
-})
-
-it('should not commit target after observation', async () => {
-  await new Operation('observation', fixtures.bridges.observation, fixtures.target).invoke(fixtures.request)
-
-  expect(fixtures.target.commit).not.toHaveBeenCalled()
-})
-
-it('should not commit target after error', async () => {
-  await new Operation('transition', fixtures.bridges.error, fixtures.target).invoke(fixtures.request)
-
-  expect(fixtures.target.commit).not.toHaveBeenCalled()
-})
-
-it('should pass reply', async () => {
+it('should return reply', async () => {
   const reply = await operation.invoke(fixtures.request)
 
-  expect(reply).toStrictEqual(fixtures.bridges.transition.run.mock.results[0].value)
+  expect(reply).toStrictEqual(fixtures.cascade.run.mock.results[0].value)
 })
 
 it('should fit reply', async () => {
   await operation.invoke(fixtures.request)
 
-  expect(fixtures.contract.fit).toHaveBeenCalledWith(fixtures.bridges.transition.run.mock.results[0].value)
+  expect(fixtures.contract.fit).toHaveBeenCalledWith(fixtures.cascade.run.mock.results[0].value)
 })
