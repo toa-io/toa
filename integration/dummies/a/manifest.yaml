@@ -6,3 +6,4 @@ entity:
     properties:
       title: string
       length: integer
+    required: [ title ]

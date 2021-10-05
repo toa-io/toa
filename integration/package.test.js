@@ -22,6 +22,11 @@ describe('prototype', () => {
     expect(manifest.entity.schema.properties.description).toMatchObject({ type: 'string' })
   })
 
+  it('should merge entity`s required properties', async () => {
+    const manifest = await load('./dummies/b', __dirname)
+    expect(manifest.entity.schema.required).toStrictEqual(['length', 'title', 'id'])
+  })
+
   it('should merge operations', async () => {
     const manifest = await load('./dummies/a', __dirname)
 

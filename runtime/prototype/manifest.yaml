@@ -4,6 +4,7 @@ entity:
   schema:
     properties:
       id: id
+    required: [ id ]
 
 operations:
   observe:

@@ -9,8 +9,9 @@ entity:
       length:
         maximum: 10
       description: string
+    required: [ length ]
 
-remotes: ['a.b', 'd.e']
+remotes: [ 'a.b', 'd.e' ]
 
 receivers:
   dummies.a.happened: transit
