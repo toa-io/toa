@@ -23,6 +23,6 @@
     "@kookaburra/gears": "^0.0.0"
   },
   "dependencies": {
-    "amqplib": "^0.8.0"
+    "amqplib": "0.8.0"
   }
 }

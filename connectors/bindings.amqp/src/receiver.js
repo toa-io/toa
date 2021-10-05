@@ -2,31 +2,27 @@
 
 const { Connector } = require('@kookaburra/core')
 
-const { name } = require('./name')
+const { name } = require('./queue')
 
 class Receiver extends Connector {
   #channel
-  #locator
-  #label
   #receiver
+  #queue
 
   constructor (channel, locator, label, receiver) {
     super()
 
     this.#channel = channel
-    this.#locator = locator
-    this.#label = label
     this.#receiver = receiver
+    this.#queue = name(locator, label)
 
     this.depends(channel)
   }
 
   async connection () {
-    const queue = name(this.#locator, this.#label)
+    console.log(this.#queue)
 
-    console.log(queue)
-
-    // this.#channel.consume(queue, (payload) => this.#receiver.receive(payload))
+    // this.#channel.consume(this.#queue, (payload) => this.#receiver.receive(payload))
   }
 }
 

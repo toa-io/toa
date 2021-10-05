@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@kookaburra/core')
-const { name } = require('./name')
+const { name } = require('./queue')
 
 class Emitter extends Connector {
   #channel
