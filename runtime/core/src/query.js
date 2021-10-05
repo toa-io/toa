@@ -16,7 +16,10 @@ class Query {
     let { id, criteria, ...rest } = query
     const options = this.#options(rest)
 
-    if (id) criteria = 'id==' + id + concat(';', criteria)
+    if (id) {
+      criteria = 'id==' + id + concat(';', criteria)
+      result.id = id
+    }
 
     if (criteria) result.criteria = parse.criteria(criteria, this.#properties)
     if (options) result.options = options
@@ -28,7 +31,7 @@ class Query {
     const defined = Object.keys(options)
       .reduce((defined, option) => defined || options[option] !== undefined, false)
 
-    if (!defined) { return }
+    if (defined === false) { return }
 
     return parse.options(options, this.#properties)
   }

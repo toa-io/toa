@@ -13,3 +13,4 @@ operations:
   deduce:
     input: integer
     output: integer
+    query: true

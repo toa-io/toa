@@ -8,8 +8,6 @@ const framework = require('./framework')
 const BINDINGS = ['http', 'amqp'].map((binding) => '@kookaburra/bindings.' + binding)
 
 global.KOO_BINDINGS_LOOP_DISABLED = 1
-// global.KOO_BINDINGS_HTTP_PORT_messages_messages = 3001
-// global.KOO_BINDINGS_HTTP_PORT_credits_balance = 3002
 
 let collection
 
@@ -52,7 +50,9 @@ BINDINGS.forEach((binding) => {
       const messages = Array.from(Array(5)).map((_, index) =>
         ({ sender, text: generate(), timestamp: index }))
 
-      await Promise.all(messages.map((message) => remote.invoke('add', { input: message })))
+      for (const message of messages) {
+        await remote.invoke('add', { input: message })
+      }
 
       const reply = await remote.invoke('find', {
         query: {

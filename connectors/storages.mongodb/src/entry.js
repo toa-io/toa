@@ -7,7 +7,7 @@ const to = (entry) => {
 }
 
 const from = (entry) => {
-  if (entry === undefined) return
+  if (entry === undefined) return null
 
   const { _id, ...rest } = entry
 

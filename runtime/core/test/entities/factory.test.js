@@ -1,5 +1,7 @@
 'use strict'
 
+const { generate } = require('randomstring')
+
 const fixtures = require('./factory.fixtures')
 const mock = fixtures.mock
 
@@ -17,10 +19,11 @@ beforeEach(async () => {
 })
 
 it('should create initial', () => {
-  const initial = factory.init()
+  const id = generate()
+  const initial = factory.init(id)
 
   expect(initial).toBeInstanceOf(mock.Entity)
-  expect(initial.constructor).toHaveBeenCalledWith(fixtures.schema)
+  expect(initial.constructor).toHaveBeenCalledWith(fixtures.schema, id)
 })
 
 it('should create instance', () => {

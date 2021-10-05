@@ -16,12 +16,14 @@ class Entity {
   constructor (schema, argument) {
     this.#schema = schema
 
-    if (argument) {
+    if (typeof argument === 'object') {
       this.#state = clone(argument)
       this.#origin = argument
     } else {
+      const i = typeof argument === 'string' ? argument : id()
+
       this.initial = true
-      this.#state = this.#initial(id())
+      this.#state = this.#initial(i)
     }
   }
 

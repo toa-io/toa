@@ -6,21 +6,25 @@ class State {
   #storage
   #entity
   #emitter
+  #initialized
 
-  constructor (storage, entity, emitter) {
+  constructor (storage, entity, emitter, initialized) {
     this.#storage = storage
     this.#entity = entity
     this.#emitter = emitter
+    this.#initialized = initialized
   }
 
-  init () {
-    return this.#entity.init()
+  init (id) {
+    return this.#entity.init(id)
   }
 
   async entry (query) {
     const entry = await this.#storage.get(query)
 
-    return entry ? this.#entity.entry(entry) : null
+    if (entry === null && query.id !== undefined && this.#initialized) return this.init(query.id)
+
+    return entry === null ? null : this.#entity.entry(entry)
   }
 
   async entries (query) {

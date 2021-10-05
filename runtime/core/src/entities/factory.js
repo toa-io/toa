@@ -10,8 +10,8 @@ class Factory {
     this.#schema = schema
   }
 
-  init () {
-    return new Entity(this.#schema)
+  init (id) {
+    return new Entity(this.#schema, id)
   }
 
   entry (entry) {

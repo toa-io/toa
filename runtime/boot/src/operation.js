@@ -11,7 +11,7 @@ const operation = (manifest, endpoint, definition, context, storage, emission) =
 
   const schema = new Schema(manifest.entity.schema)
   const entity = new entities.Factory(schema)
-  const subject = new State(storage, entity, emission)
+  const subject = new State(storage, entity, emission, manifest.entity.initialized)
   const query = new Query(manifest.entity.schema.properties)
 
   if (subject[definition.subject] !== undefined) subject.query = subject[definition.subject]

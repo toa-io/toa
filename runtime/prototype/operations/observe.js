@@ -1,9 +1,7 @@
 'use strict'
 
-async function transition (input, entry) {
-  Object.assign(entry, input)
-
-  return { id: entry.id }
+async function observation (input, entry) {
+  return entry
 }
 
-module.exports = transition
+module.exports = observation

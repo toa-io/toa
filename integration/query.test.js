@@ -7,10 +7,7 @@ const framework = require('./framework')
 let composition, remote, messages
 
 beforeAll(async () => {
-  // avoid port conflicts
-  const options = { bindings: '@kookaburra/bindings.amqp' }
-
-  composition = await framework.compose(['messages', 'credits'], options)
+  composition = await framework.compose(['messages', 'credits'])
   remote = await framework.remote('messages.messages')
   messages = await framework.mongodb.connect('messages.messages')
 })
@@ -34,7 +31,7 @@ describe('not found', () => {
   })
 
   it('should init state if no query', async () => {
-    const reply = await remote.invoke('add', { input: { sender: '1', text: '123' } })
+    const reply = await remote.invoke('add', { input: { sender: id(), text: '123' } })
 
     expect(reply).toStrictEqual({ output: { id: expect.any(String) } })
   })

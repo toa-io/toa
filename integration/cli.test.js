@@ -1,5 +1,6 @@
 'use strict'
 
+const { id } = require('../runtime/core/src/id')
 const framework = require('./framework')
 
 const credits = framework.cli('credits')
@@ -11,8 +12,8 @@ it('should print help', async () => {
 })
 
 it('should invoke', async () => {
-  const request = { input: 1 }
-  const { stdout } = await credits('invoke', 'deduce', request)
+  const request = { query: { id: id() } }
+  const { stdout } = await credits('invoke', 'observe', request)
 
-  expect(stdout).toMatch(/{ output: \d+ }$/)
+  expect(stdout).toMatch(/balance: \d+/)
 })

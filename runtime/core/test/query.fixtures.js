@@ -72,6 +72,7 @@ const samples = {
       criteria: 'name==Eddie'
     },
     parsed: {
+      id: '123',
       criteria: {
         type: 'LOGIC',
         left: {
