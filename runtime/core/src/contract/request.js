@@ -1,23 +1,21 @@
 'use strict'
 
-const clone = require('clone-deep')
-
 const schemas = require('./schemas')
 const { Exception } = require('../exception')
 const { Conditions } = require('./conditions')
 
 class Request extends Conditions {
-  static schema (declaration) {
-    const schema = clone(schemas.request)
+  static schema (definition) {
+    const schema = { properties: {}, additionalProperties: false }
     const required = []
 
-    if (declaration?.input) {
-      schema.properties.input = declaration.input
+    if (definition?.input) {
+      schema.properties.input = definition.input
       required.push('input')
     }
 
-    if (declaration?.query === false) delete schema.properties.query
-    if (declaration?.query === true) required.push('query')
+    if (definition?.query !== false) schema.properties.query = schemas.query
+    if (definition?.query === true) required.push('query')
 
     if (required.length > 0) schema.required = required
 

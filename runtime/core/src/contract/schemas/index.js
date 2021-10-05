@@ -3,4 +3,5 @@
 const { resolve } = require('path')
 const { yaml, freeze } = require('@kookaburra/gears')
 
-exports.request = freeze(yaml.sync(resolve(__dirname, './request.yaml')))
+exports.query = freeze(yaml.sync(resolve(__dirname, './query.yaml')))
+exports.error = freeze(yaml.sync(resolve(__dirname, './error.yaml')))

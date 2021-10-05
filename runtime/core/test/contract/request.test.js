@@ -30,14 +30,6 @@ it('should fit request', () => {
   expect(Conditions.mock.instances[0].fit).toHaveBeenCalledWith(request)
 })
 
-// it('should parse query', () => {
-//   const request = { query: { [generate()]: generate() } }
-//
-//   contract.fit(request)
-//
-//   expect(request.query).toStrictEqual(fixtures.query.parse.mock.results[0].value)
-// })
-
 describe('schema', () => {
   let schema
 
@@ -58,7 +50,11 @@ describe('schema', () => {
     expect(Request.schema({ input })).toStrictEqual(schema)
   })
 
-  it('should exclude query if declaration.query is false', () => {
+  it('should contain query if declaration.query is not defined', () => {
+    expect(Request.schema({})).toStrictEqual(schema)
+  })
+
+  it('should not contain query if declaration.query is false', () => {
     delete schema.properties.query
     expect(Request.schema({ query: false })).toStrictEqual(schema)
   })

@@ -74,4 +74,49 @@ describe('not found', () => {
 
     expect(reply.output.id).toBe(one)
   })
+
+  describe('validation', () => {
+    it('should throw if id does not match pattern', async () => {
+      await expect(remote.invoke('get', { query: { id: 1 } }))
+        .rejects.toMatchObject({ keyword: 'type', property: 'query/id' })
+
+      await expect(remote.invoke('get', { query: { id: 'a0' } }))
+        .rejects.toMatchObject({ keyword: 'pattern', property: 'query/id' })
+    })
+
+    it('should throw if sort does not match pattern', async () => {
+      await expect(remote.invoke('get', { query: { sort: 'asd!' } }))
+        .rejects.toMatchObject({ keyword: 'pattern', property: 'query/sort' })
+
+      await expect(remote.invoke('get', { query: { sort: 'asd:5' } }))
+        .rejects.toMatchObject({ keyword: 'pattern', property: 'query/sort' })
+    })
+
+    it('should throw if projection does not match pattern', async () => {
+      await expect(remote.invoke('get', { query: { projection: 'asd!' } }))
+        .rejects.toMatchObject({ keyword: 'pattern', property: 'query/projection' })
+    })
+
+    it('should throw if omit is not positive integer', async () => {
+      await expect(remote.invoke('get', { query: { omit: '1' } }))
+        .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
+
+      await expect(remote.invoke('get', { query: { omit: -1 } }))
+        .rejects.toMatchObject({ keyword: 'minimum', property: 'query/omit' })
+
+      await expect(remote.invoke('get', { query: { omit: 0.5 } }))
+        .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
+    })
+
+    it('should throw if limit is not positive integer', async () => {
+      await expect(remote.invoke('get', { query: { limit: '1' } }))
+        .rejects.toMatchObject({ keyword: 'type', property: 'query/limit' })
+
+      await expect(remote.invoke('get', { query: { limit: -1 } }))
+        .rejects.toMatchObject({ keyword: 'minimum', property: 'query/limit' })
+
+      await expect(remote.invoke('get', { query: { limit: 0.5 } }))
+        .rejects.toMatchObject({ keyword: 'type', property: 'query/limit' })
+    })
+  })
 })
