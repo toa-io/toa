@@ -1,1 +1,0 @@
-# Native (inproc) javascript Bridge
