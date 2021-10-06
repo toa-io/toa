@@ -5,11 +5,12 @@ const { console } = require('@kookaburra/gears')
 const { Connector } = require('./connector')
 
 class Composition extends Connector {
-  constructor (expositions, bindings) {
+  constructor (expositions, producers, receivers) {
     super()
 
     this.depends(expositions)
-    this.depends(bindings)
+    this.depends(producers)
+    this.depends(receivers)
   }
 
   async connection () {

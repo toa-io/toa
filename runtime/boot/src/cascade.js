@@ -7,7 +7,7 @@ const boot = require('./index')
 const cascade = (manifest, endpoint, definition, context) => {
   const bridges = []
 
-  if (definition.bridge) { bridges.unshift(boot.bridge.operation(manifest.path, endpoint, definition, context)) }
+  if (definition.bridge) { bridges.unshift(boot.bridge.operation(definition.bridge, manifest.path, endpoint, context)) }
 
   let prototype = manifest
 
@@ -16,12 +16,7 @@ const cascade = (manifest, endpoint, definition, context) => {
 
     if (operation === undefined) continue
 
-    const bridge = boot.bridge.operation(
-      prototype.path,
-      endpoint,
-      { ...definition, bridge: operation.bridge },
-      context
-    )
+    const bridge = boot.bridge.operation(operation.bridge, prototype.path, endpoint, context)
 
     bridges.unshift(bridge)
   }

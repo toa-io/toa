@@ -12,7 +12,10 @@ const receivers = async (root) => {
   return Object.fromEntries(modules.map(([name, module]) => [name, definition(module)]))
 }
 
-const definition = () => ({})
+const definition = (module) => ({
+  conditioned: module.condition !== undefined,
+  adaptive: module.request !== undefined
+})
 
 exports.receiver = receiver
 exports.receivers = receivers

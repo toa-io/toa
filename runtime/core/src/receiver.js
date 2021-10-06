@@ -1,28 +1,32 @@
 'use strict'
 
-class Receiver {
+const { Connector } = require('./connector')
+
+class Receiver extends Connector {
   #conditioned
   #adaptive
+  #apply
   #bridge
-  #call
 
-  constructor (definition, call, bridge) {
-    this.#bridge = bridge
-    this.#call = call
+  constructor (definition, apply, bridge) {
+    super()
 
     this.#conditioned = definition.conditioned
     this.#adaptive = definition.adaptive
 
+    this.#apply = apply
+    this.#bridge = bridge
+
+    this.depends(apply)
     this.depends(bridge)
-    this.depends(call)
   }
 
   async receive (payload) {
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
-    const request = this.#adaptive ? this.#bridge.request(payload) : payload
+    const request = this.#adaptive ? await this.#bridge.request(payload) : payload
 
-    await this.#call.invoke(request)
+    this.#apply.apply(request)
   }
 }
 

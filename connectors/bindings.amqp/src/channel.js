@@ -57,18 +57,6 @@ class Channel extends Connector {
     return unpack(reply.content)
   }
 
-  async transmit (label, payload) {
-    if (payload === undefined) payload = {}
-
-    const queue = 'event.' + label
-
-    await this.#channel.assertQueue(queue, QUEUE)
-
-    const message = pack(payload)
-
-    this.#channel.sendToQueue(queue, message)
-  }
-
   async reply (label, invocation) {
     const queue = 'request.' + label
     const exchange = 'reply.' + label
@@ -85,6 +73,31 @@ class Channel extends Connector {
 
       this.#channel.publish(exchange, received.properties.replyTo, message, properties)
       this.#channel.ack(received)
+    })
+  }
+
+  async publish (label, payload) {
+    const exchange = 'event.' + label
+
+    await this.#channel.assertExchange(exchange, 'fanout', EXCHANGE)
+
+    const message = pack(payload)
+
+    await this.#channel.publish(exchange, '', message)
+  }
+
+  async subscribe (label, id, callback) {
+    const exchange = 'event.' + label
+    const queue = exchange + '..' + id
+
+    await this.#channel.assertExchange(exchange, 'fanout', EXCHANGE)
+    await this.#channel.assertQueue(queue, QUEUE)
+    await this.#channel.bindQueue(queue, exchange, '')
+
+    await this.#channel.consume(queue, async (received) => {
+      const content = unpack(received.content)
+      await callback(content)
+      await this.#channel.ack(received)
     })
   }
 

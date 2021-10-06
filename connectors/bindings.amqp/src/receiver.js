@@ -7,22 +7,22 @@ const { name } = require('./queue')
 class Receiver extends Connector {
   #channel
   #receiver
-  #queue
+  #label
+  #id
 
-  constructor (channel, locator, label, receiver) {
+  constructor (channel, locator, label, id, receiver) {
     super()
 
     this.#channel = channel
     this.#receiver = receiver
-    this.#queue = name(locator, label)
+    this.#label = name(locator, label)
+    this.#id = id
 
     this.depends(channel)
   }
 
   async connection () {
-    console.log(this.#queue)
-
-    // this.#channel.consume(this.#queue, (payload) => this.#receiver.receive(payload))
+    await this.#channel.subscribe(this.#label, this.#id, (payload) => this.#receiver.receive(payload))
   }
 }
 

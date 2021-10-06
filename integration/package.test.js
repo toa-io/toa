@@ -65,6 +65,8 @@ describe('receivers', () => {
 
     expect(manifest.receivers['dummies.a.happened']).toStrictEqual({
       transition: 'transit',
+      adaptive: false,
+      conditioned: false,
       bridge: expect.any(String),
       path: expect.stringMatching(/dummies\/b$/)
     })

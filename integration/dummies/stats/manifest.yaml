@@ -2,10 +2,18 @@ domain: stats
 name: stats
 
 entity:
+  initialized: true
   schema:
     properties:
-      user: id
-      messages: integer
+      messages:
+        type: integer
+        default: 0
+
+operations:
+  update:
+    input:
+      properties:
+        messages: boolean
 
 receivers:
-  messages.messages.created: transit
+  messages.messages.created: update

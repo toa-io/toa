@@ -1,14 +1,15 @@
 'use strict'
 
-const operation = (path, endpoint, definition, context) => {
-  const operation = resolve(definition.bridge).operation(path, endpoint, definition, context)
+const operation = (bridge, path, endpoint, context) => {
+  const operation = resolve(bridge).operation(path, endpoint, context)
 
   operation.depends(context)
 
   return operation
 }
 
-const event = (label, definition) => resolve(definition.bridge).event(definition.path, label)
+const event = (bridge, path, label) => resolve(bridge).event(path, label)
+const receiver = (bridge, path, label) => resolve(bridge).receiver(path, label)
 
 const factories = {}
 
@@ -24,3 +25,4 @@ const resolve = (bridge) => {
 
 exports.operation = operation
 exports.event = event
+exports.receiver = receiver

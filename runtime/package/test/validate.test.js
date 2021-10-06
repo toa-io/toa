@@ -69,7 +69,7 @@ describe('entity', () => {
 
   it('should not have additional properties', () => {
     manifest.entity.foo = 'bar'
-    expect(() => validate(manifest)).toThrow(/must NOT have additional properties/)
+    expect(() => validate(manifest)).toThrow(/must NOT have additional property/)
   })
 
   describe('schema', () => {
@@ -179,7 +179,7 @@ describe('operations', () => {
 
     it('should not have additional properties', () => {
       manifest.operations.get.foo = 'bar'
-      expect(() => validate(manifest)).toThrow(/additional properties/)
+      expect(() => validate(manifest)).toThrow(/additional property/)
     })
 
     it('should have type (transition or observation)', () => {

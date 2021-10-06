@@ -1,8 +1,6 @@
 'use strict'
 
-const request = (payload) => ({
+exports.request = (payload) => ({
   input: { messages: true },
   query: { id: payload.sender }
 })
-
-exports.request = request

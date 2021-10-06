@@ -1,31 +1,25 @@
 'use strict'
 
+const { defined } = require('@kookaburra/gears')
 const { Connector } = require('@kookaburra/core')
-const { freeze, defined } = require('@kookaburra/gears')
-const load = require('./load')
 
 class Operation extends Connector {
-  #name
-  #type
-  #algorithm
+  #operation
   #context
 
-  constructor (root, name, type, context) {
+  constructor (operation, context) {
     super()
 
-    this.#name = name
-    this.#type = type
+    this.#operation = operation
     this.#context = context
-    this.#algorithm = load.operation(root, name)
   }
 
   async run (input, state) {
-    if (input) input = freeze(input)
     if (state) state = this.#state(state)
 
     let output, error
 
-    output = await this.#algorithm(input, state, this.#context)
+    output = await this.#operation(input, state, this.#context)
 
     if (output instanceof Array) [output, error] = output
     if (output === null) output = undefined
@@ -43,8 +37,6 @@ class Operation extends Connector {
     for (const key of Object.keys(state)) {
       if (key[0] === '_') Object.defineProperty(state, key, { enumerable: false })
     }
-
-    if (this.#type === 'observation') freeze(state)
 
     return state
   }

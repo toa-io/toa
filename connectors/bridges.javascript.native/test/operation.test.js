@@ -2,79 +2,38 @@
 
 const { Connector } = require('@kookaburra/core')
 
-const fixtures = require('./operation.fixtures')
-const mock = fixtures.mock
-
-jest.mock('../src/define/algorithm', () => ({ parse: mock.parse }))
-
 const { Operation } = require('../src/operation')
+const fixtures = require('./operation.fixtures')
 
-const operations = {
-  pong: require('./operations/pong'),
-  errors: {
-    object: require('./operations/error')
-  },
-  exception: require('./operations/exception')
-}
+let operation
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  operation = new Operation(fixtures.operation, fixtures.context)
 })
 
-it('should inherit runtime.Connector', () => {
+it('should extend Connector', () => {
   expect(Operation.prototype).toBeInstanceOf(Connector)
 })
 
 it('should run algorithm', async () => {
-  const operation = new Operation(__dirname, 'pong', 'observation')
-
   await operation.run({ input: 1 })
 
-  expect(operations.pong).toHaveBeenCalled()
+  expect(fixtures.operation).toHaveBeenCalled()
 })
 
 it('should pass input, state, context', async () => {
   const input = { a: 1 }
   const state = { b: 2 }
-  const operation = new Operation(__dirname, 'pong', 'transition', fixtures.context)
 
   await operation.run(input, state)
 
-  expect(operations.pong).toHaveBeenCalledWith(input, state, fixtures.context)
-  expect(Object.isFrozen(operations.pong.mock.calls[0][1])).toBeFalsy()
-})
-
-it('should pass frozen state to observation', async () => {
-  const input = { a: 1 }
-  const state = { b: 2 }
-  const operation = new Operation(__dirname, 'pong', 'observation', fixtures.context)
-
-  await operation.run(input, state)
-
-  expect(Object.isFrozen(operations.pong.mock.calls[0][1])).toBeTruthy()
+  expect(fixtures.operation).toHaveBeenCalledWith(input, state, fixtures.context)
 })
 
 it('should return output', async () => {
-  const operation = new Operation(__dirname, 'pong', 'observation', fixtures.context)
-
   const reply = await operation.run()
-  const result = await operations.pong.mock.results[0].value
+  const result = await fixtures.operation.mock.results[0].value
 
   expect(reply).toBeDefined()
   expect(reply.output).toStrictEqual(result)
-})
-
-it('should return { output, error }', async () => {
-  const operation = new Operation(__dirname, 'error', 'observation', fixtures.context)
-
-  const { output, error } = await operation.run()
-
-  expect(error).toStrictEqual({ code: 1, message: 'oops' })
-  expect(output).toBeUndefined()
-})
-
-it('should throw on exceptions', async () => {
-  const operation = new Operation(__dirname, 'exception', 'observation', fixtures.context)
-
-  await expect(() => operation.run({ input: 1 })).rejects.toThrow(/oops/)
 })

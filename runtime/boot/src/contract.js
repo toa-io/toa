@@ -3,11 +3,11 @@
 const { contract: { Request, Reply } } = require('@kookaburra/core')
 const { Schema } = require('@kookaburra/schema')
 
-const request = (entity, definition) => {
+const request = (definition) => {
   const request = Request.schema(definition)
   const schema = new Schema(request)
 
-  return new Request(schema, definition)
+  return new Request(schema)
 }
 
 const reply = (output, error) => {

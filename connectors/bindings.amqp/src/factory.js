@@ -27,10 +27,10 @@ class Factory {
     return new Emitter(channel, locator, label)
   }
 
-  receiver (locator, label) {
+  receiver (locator, label, id, receiver) {
     const channel = this.#channel(locator)
 
-    return new Receiver(channel, locator, label)
+    return new Receiver(channel, locator, label, id, receiver)
   }
 
   #channel (locator) {

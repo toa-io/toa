@@ -48,18 +48,20 @@ describe('not found', () => {
 
   describe('no query declaration', () => {
     it('should add or update based on query', async () => {
-      const created = await remote.invoke('transit', { input: { sender: '1', text: '1' } })
+      const id1 = id()
+      const created = await remote.invoke('transit', { input: { sender: id1, text: '1' } })
 
       expect(created.output.id).toBeDefined()
 
+      const id2 = id()
       const updated = await remote.invoke('transit',
-        { input: { sender: '2', text: '2' }, query: { criteria: 'id==' + created.output.id } })
+        { input: { sender: id2, text: '2' }, query: { criteria: 'id==' + created.output.id } })
 
       expect(updated.output.id).toBe(created.output.id)
 
       const reply = await remote.invoke('get', { query: { criteria: 'id==' + created.output.id } })
 
-      expect(reply.output).toMatchObject({ sender: '2', text: '2' })
+      expect(reply.output).toMatchObject({ sender: id2, text: '2' })
     })
   })
 

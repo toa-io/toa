@@ -62,12 +62,6 @@ describe('options', () => {
   })
 
   describe('sort', () => {
-    it('should throw on format error', () => {
-      const sorts = ['a,', ',a', 'a:asc,', 'a!:asc', 'a:any', 'a=desc', 'a:asc;b:desc']
-
-      for (const sort of sorts) { expect(() => instance.parse({ sort })).toThrow(/sort parse error/) }
-    })
-
     it('should return an array', () => {
       const sort = 'a:asc,b:desc'
       const query = instance.parse({ sort })
@@ -90,12 +84,6 @@ describe('options', () => {
   })
 
   describe('projection', () => {
-    it('should throw on format error', () => {
-      const projections = ['a,', ',a', 'a,b!,c', 'a,5']
-
-      for (const projection of projections) { expect(() => instance.parse({ projection })).toThrow(/projection parse error/) }
-    })
-
     it('should return an array', () => {
       const projection = 'a,b,c'
       const query = instance.parse({ projection })

@@ -3,10 +3,10 @@ name: messages
 
 entity:
   schema:
-    dynamicDefaults:
+    dynamicDefaults:        # TODO: drop support for extra keywords
       timestamp: timestamp
     properties:
-      sender: string
+      sender: id
       text: string
       timestamp: integer
 

@@ -39,18 +39,17 @@ class Schema {
       keyword: error.keyword
     }
 
-    if (error.instancePath) {
+    if (error.keyword === 'additionalProperties') {
+      result.property = error.params.additionalProperty
+      result.message = error.instancePath.substr(1) + ' ' +
+        result.message.replace('properties', 'property') + ` '${result.property}'`
+    } else if (error.instancePath) {
       result.property = error.instancePath.substr(1)
       result.message = result.property + ' ' + result.message
 
       if (error.keyword === 'const') result.message += ` '${error.params.allowedValue}'`
     } else {
       if (error.keyword === 'required') result.property = error.params.missingProperty
-
-      if (error.keyword === 'additionalProperties') {
-        result.property = error.params.additionalProperty
-        result.message = result.message.replace('properties', 'property') + ` '${result.property}'`
-      }
     }
 
     return result

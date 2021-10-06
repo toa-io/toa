@@ -9,7 +9,7 @@ const emission = (definitions, locator) => {
 
   const events = Object.entries(definitions).map(([label, definition]) => {
     const transmitter = boot.bindings.emit(definition.binding, locator, label)
-    const bridge = boot.bridge.event(label, definition)
+    const bridge = boot.bridge.event(definition.bridge, definition.path, label)
 
     return new Event(definition, transmitter, bridge)
   })

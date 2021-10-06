@@ -42,6 +42,7 @@
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"
-    ]
+    ],
+    "clearMocks": true
   }
 }

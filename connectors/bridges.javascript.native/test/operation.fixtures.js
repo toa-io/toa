@@ -2,8 +2,8 @@
 
 const { generate } = require('randomstring')
 
-const parse = jest.fn(() => ({ [generate()]: generate() }))
+const operation = jest.fn(async () => generate())
 const context = { [generate()]: generate() }
 
-exports.mock = { parse }
+exports.operation = operation
 exports.context = context

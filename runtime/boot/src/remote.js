@@ -10,7 +10,7 @@ const remote = async (id) => {
   const locator = new Locator(manifest)
 
   const calls = Object.fromEntries(Object.entries(manifest.operations)
-    .map(([endpoint, definition]) => [endpoint, boot.call(locator, manifest, endpoint, definition)]))
+    .map(([endpoint, definition]) => [endpoint, boot.call(locator, endpoint, definition)]))
 
   return new Remote(locator, calls)
 }

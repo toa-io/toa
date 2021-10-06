@@ -19,9 +19,9 @@ class Emitter extends Connector {
   }
 
   async emit (payload) {
-    const queue = name(this.#locator, this.#label)
+    const label = name(this.#locator, this.#label)
 
-    await this.#channel.transmit(queue, payload)
+    await this.#channel.publish(label, payload)
   }
 }
 

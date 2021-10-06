@@ -85,6 +85,14 @@ describe('dependencies', () => {
     expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
   })
 
+  it('should not throw on empty array', async () => {
+    a.depends([])
+
+    await a.connect()
+
+    expect(sequence).toStrictEqual(['+a'])
+  })
+
   it('should await 2-way dependencies', async () => {
     a.depends([b, c, d])
     d.depends([b, c])
