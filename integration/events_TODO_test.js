@@ -20,12 +20,12 @@ afterAll(async () => {
   if (stats) await stats.disconnect()
 })
 
-it('should increment messages counter', async () => {
-  const times = random(10)
+it('should count messages', async () => {
+  const times = 5 + random(15)
   const sender = id()
 
   for (let i = 0; i < times; i++) {
-    await messages.invoke('add', { input: { sender, text: generate() } })
+    await messages.invoke('add', { input: { sender, text: generate(), free: true } })
   }
 
   await timeout(50) // event processing

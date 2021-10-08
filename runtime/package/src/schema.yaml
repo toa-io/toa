@@ -5,7 +5,7 @@ definitions:
   binding:
     type: string
     not:
-      const: '@kookaburra/bindings.loop' #loop is for system use only
+      const: '@kookaburra/bindings.loop' # loop is for system use only
 
 type: object
 properties:
@@ -91,6 +91,8 @@ properties:
             enum: [ transition, observation ]
           subject:
             enum: [ entry, entries ]
+          forward:
+            $ref: 'definitions#/definitions/token'
           bridge:
             type: string
           bindings:

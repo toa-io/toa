@@ -17,10 +17,15 @@ it('should dereference', () => {
   expect(source).toStrictEqual(fixtures.target)
 })
 
-it('should throw on invalid reference', () => {
-  source.operations[0].output.properties.baz = null
+it('should throw on invalid schema reference', () => {
+  source.operations.transit.output.properties.baz = null
   expect(() => dereference(source)).toThrow(/is not defined/)
 
-  source.operations[0].output.properties.baz = '~baz'
+  source.operations.transit.output.properties.baz = '~baz'
+  expect(() => dereference(source)).toThrow(/is not defined/)
+})
+
+it('should throw on invalid forwarding', () => {
+  source.operations.create.forward = 'foo'
   expect(() => dereference(source)).toThrow(/is not defined/)
 })

@@ -14,3 +14,8 @@ operations:
     input: integer
     output: integer
     query: true
+  transfer:
+    input: id   # source balance
+    query: true # target balance
+  nullify:
+    output: integer

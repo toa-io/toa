@@ -1,13 +1,24 @@
 'use strict'
 
+const { merge } = require('@kookaburra/gears')
 const dereference = (manifest) => {
+  // schemas
   const property = resolve(manifest.entity.schema.properties)
 
   schema(manifest.entity.schema, property)
 
   for (const operation of Object.values(manifest.operations)) {
-    schema(operation.input, property)
-    schema(operation.output, property)
+    if (operation.input !== undefined) operation.input = schema(operation.input, property)
+    if (operation.output !== undefined) operation.output = schema(operation.output, property)
+  }
+
+  // forwarding
+  for (const operation of Object.values(manifest.operations)) {
+    if (operation.forward !== undefined) forward(operation, manifest.operations)
+  }
+
+  for (const operation of Object.values(manifest.operations)) {
+    delete operation.forwarded
   }
 }
 
@@ -38,6 +49,22 @@ const schema = (object, resolve) => {
 
 const types = {
   id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id' }
+}
+
+const forward = (operation, operations) => {
+  const target = operations[operation.forward]
+
+  if (target === undefined) throw new Error(`Referenced operation '${operation.forward}' is not defined`)
+
+  if (target.forward !== undefined) {
+    if (target.forwarded !== true) forward(target, operations)
+
+    operation.forward = target.forward
+  }
+
+  operation.forwarded = true
+
+  merge(operation, target)
 }
 
 exports.dereference = dereference

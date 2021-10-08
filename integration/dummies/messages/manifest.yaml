@@ -32,10 +32,12 @@ operations:
         timestamp: ~
       required: [ id, text ]
   update:
+    forward: transit
     input:
       properties:
         text: ~
-      required: [ text ]
+  change:
+    forward: update
   find:
     output:
       properties:
@@ -50,4 +52,4 @@ operations:
     output:
       properties:
         ok: string
-      required: [ id ]
+      required: [ id, ok ]

@@ -1,7 +1,5 @@
 'use strict'
 
-const clone = require('clone-deep')
-
 const source = {
   entity: {
     schema: {
@@ -16,8 +14,8 @@ const source = {
       }
     }
   },
-  operations: [
-    {
+  operations: {
+    transit: {
       input: {
         properties: {
           foo: null,
@@ -36,9 +34,18 @@ const source = {
             }
           }
         }
+      },
+      output: {
+        properties: {
+          bar: '~foo'
+        }
       }
+    },
+    create: {
+      forward: 'transit',
+      query: false
     }
-  ]
+  }
 }
 
 const target = {
@@ -57,8 +64,8 @@ const target = {
       }
     }
   },
-  operations: [
-    {
+  operations: {
+    transit: {
       input: {
         properties: {
           foo: {
@@ -87,13 +94,57 @@ const target = {
             }
           }
         }
+      },
+      output: {
+        properties: {
+          bar: {
+            type: 'string'
+          }
+        }
+      }
+    },
+    create: {
+      forward: 'transit',
+      query: false,
+      input: {
+        properties: {
+          foo: {
+            type: 'string'
+          },
+          bar: {
+            type: 'string'
+          },
+          baz1: {
+            type: 'array',
+            items: {
+              type: 'string'
+            }
+          },
+          baz2: {
+            type: 'array',
+            items: {
+              properties: {
+                foo: {
+                  type: 'string'
+                },
+                bar: {
+                  type: 'string'
+                }
+              }
+            }
+          }
+        }
+      },
+      output: {
+        properties: {
+          bar: {
+            type: 'string'
+          }
+        }
       }
     }
-  ]
+  }
 }
-
-source.operations[0].output = clone(source.operations[0].input)
-target.operations[0].output = clone(target.operations[0].input)
 
 exports.source = source
 exports.target = target

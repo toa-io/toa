@@ -1,13 +1,16 @@
 'use strict'
 
 async function transition (input, entry, context) {
-  Object.assign(entry, input)
+  entry.sender = input.sender
+  entry.text = input.text
 
   if (input.text === 'throw exception') throw new Error('User space exception')
 
-  const reply = await context.remotes[0].invoke('deduce', { input: 1, query: { id: input.sender } })
+  if (input.free !== true) {
+    const reply = await context.remotes[0].invoke('deduce', { input: 1, query: { id: input.sender } })
 
-  if (reply.error !== undefined) return [null, reply.error]
+    if (reply.error !== undefined) return [null, reply.error]
+  }
 
   return { id: entry.id }
 }

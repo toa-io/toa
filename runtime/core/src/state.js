@@ -41,6 +41,7 @@ class State {
       await this.#storage[method](subject.get())
 
       // TODO: do not wait because outbox will handle failures
+      // TODO: handle slow emissions (too many concurrent emissions)
       await this.#emitter.emit(event)
     }
   }
