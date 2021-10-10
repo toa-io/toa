@@ -3,6 +3,7 @@
 async function transition (input, entry, context) {
   entry.sender = input.sender
   entry.text = input.text
+  entry.timestamp = input.timestamp
 
   if (input.text === 'throw exception') throw new Error('User space exception')
 

@@ -1,8 +1,9 @@
 'use strict'
 
 const { default: Ajv } = require('ajv/dist/2019')
-const keywords = require('ajv-keywords')
-const definitions = require('./definitions')
+
+const { definitions } = require('./definitions')
+const { keywords } = require('./keywrods')
 
 const validator = new Ajv({ useDefaults: true, strictTypes: false })
 
@@ -10,9 +11,11 @@ keywords(validator)
 definitions(validator)
 
 class Schema {
+  #schema
   #validate
 
   constructor (schema) {
+    this.#schema = schema
     this.#validate = validator.compile(schema)
   }
 

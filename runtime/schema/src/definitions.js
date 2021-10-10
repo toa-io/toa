@@ -3,8 +3,10 @@
 const { resolve } = require('path')
 const { yaml } = require('@kookaburra/gears')
 
-const definitions = yaml.sync(resolve(__dirname, './definitions.yaml'))
+const definitions = (validator) => {
+  const definitions = yaml.sync(resolve(__dirname, './definitions.yaml'))
 
-module.exports = (validator) => {
   validator.addSchema(definitions)
 }
+
+exports.definitions = definitions

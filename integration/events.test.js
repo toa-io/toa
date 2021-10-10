@@ -26,7 +26,7 @@ it('should count messages', async () => {
 
   for (let i = 0; i < times; i++) {
     await messages.invoke('add', { input: { sender, text: generate(), free: true } })
-    await timeout(50) // avoid concurrency
+    await timeout(100) // avoid concurrency
   }
 
   const updated = await stats.invoke('observe', { query: { id: sender } })

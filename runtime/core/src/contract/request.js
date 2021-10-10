@@ -10,6 +10,7 @@ class Request extends Conditions {
     const required = []
 
     if (definition?.input) {
+      definition.input.additionalProperties = false
       schema.properties.input = definition.input
       required.push('input')
     }

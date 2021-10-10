@@ -47,6 +47,7 @@ BINDINGS.forEach((binding) => {
 
     it('should find messages', async () => {
       const sender = id()
+
       const messages = Array.from(Array(5)).map((_, index) =>
         ({ sender, text: generate(), timestamp: index }))
 

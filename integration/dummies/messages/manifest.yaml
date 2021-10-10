@@ -3,8 +3,6 @@ name: messages
 
 entity:
   schema:
-    dynamicDefaults:        # TODO: drop support for extra keywords
-      timestamp: timestamp
     properties:
       sender: id
       text: string
@@ -18,6 +16,8 @@ operations:
       properties:
         sender: ~
         text: ~
+        timestamp: ~
+        free: boolean
       required: [ sender, text ]
     output:
       properties:

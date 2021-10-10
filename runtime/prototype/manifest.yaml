@@ -3,7 +3,9 @@ prototype: null
 entity:
   schema:
     properties:
-      id: id
+      id:
+        type: id
+        system: true
     required: [ id ]
 
 operations:

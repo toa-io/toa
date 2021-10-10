@@ -99,6 +99,11 @@ properties:
             $ref: '#/properties/bindings'
           input:
             $ref: 'definitions#/definitions/schema'
+            not:
+              properties:
+                additionalProperties:
+                  const: true
+              required: [additionalProperties]
           output:
             $ref: 'definitions#/definitions/schema'
           query:
