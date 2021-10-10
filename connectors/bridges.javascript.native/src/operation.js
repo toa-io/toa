@@ -10,7 +10,7 @@ class Operation extends Connector {
   constructor (operation, context) {
     super()
 
-    this.#operation = operation
+    this.#operation = operation.observation || operation.transition
     this.#context = context
   }
 

@@ -21,14 +21,13 @@ afterAll(async () => {
 })
 
 it('should count messages', async () => {
-  const times = 5 + random(15)
+  const times = 5 + random(5)
   const sender = id()
 
   for (let i = 0; i < times; i++) {
     await messages.invoke('add', { input: { sender, text: generate(), free: true } })
+    await timeout(50) // avoid concurrency
   }
-
-  await timeout(50) // event processing
 
   const updated = await stats.invoke('observe', { query: { id: sender } })
 

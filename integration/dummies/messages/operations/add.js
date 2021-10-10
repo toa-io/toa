@@ -15,4 +15,4 @@ async function transition (input, entry, context) {
   return { id: entry.id }
 }
 
-module.exports = transition
+exports.transition = transition

@@ -1,7 +1,7 @@
 'use strict'
 
-async function observation (input, entry) {
+async function observe (input, entry) {
   return entry
 }
 
-module.exports = observation
+exports.observation = observe

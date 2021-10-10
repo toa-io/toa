@@ -4,4 +4,4 @@ async function transition () {
   return { ok: 'ok' }
 }
 
-module.exports = transition
+exports.transition = transition

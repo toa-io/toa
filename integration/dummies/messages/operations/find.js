@@ -4,4 +4,4 @@ async function observation (_, entries) {
   return { messages: entries }
 }
 
-module.exports = observation
+exports.observation = observation

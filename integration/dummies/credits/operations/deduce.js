@@ -8,4 +8,4 @@ async function transition (input, entry) {
   return entry.balance
 }
 
-module.exports = transition
+exports.transition = transition

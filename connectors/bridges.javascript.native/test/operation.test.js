@@ -18,7 +18,7 @@ it('should extend Connector', () => {
 it('should run algorithm', async () => {
   await operation.run({ input: 1 })
 
-  expect(fixtures.operation).toHaveBeenCalled()
+  expect(fixtures.operation.observation).toHaveBeenCalled()
 })
 
 it('should pass input, state, context', async () => {
@@ -27,12 +27,12 @@ it('should pass input, state, context', async () => {
 
   await operation.run(input, state)
 
-  expect(fixtures.operation).toHaveBeenCalledWith(input, state, fixtures.context)
+  expect(fixtures.operation.observation).toHaveBeenCalledWith(input, state, fixtures.context)
 })
 
 it('should return output', async () => {
   const reply = await operation.run()
-  const result = await fixtures.operation.mock.results[0].value
+  const result = await fixtures.operation.observation.mock.results[0].value
 
   expect(reply).toBeDefined()
   expect(reply.output).toStrictEqual(result)
