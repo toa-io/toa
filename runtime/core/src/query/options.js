@@ -1,8 +1,8 @@
 'use strict'
 
-const options = (options, properties) => {
+const options = (options, properties, system) => {
   if (options.sort !== undefined) options.sort = sort(options.sort, properties)
-  if (options.projection !== undefined) options.projection = projection(options.projection, properties)
+  if (options.projection !== undefined) options.projection = projection(options.projection, properties, system)
 
   return options
 }
@@ -21,8 +21,8 @@ const sort = (sort, properties) => {
   return result
 }
 
-const projection = (projection, properties) => {
-  const result = projection.split(',')
+const projection = (projection, properties, system) => {
+  const result = [...new Set(system.concat(projection.split(',')))]
 
   for (const property of result) {
     if (!properties[property]) { throw new Error(`Projection property '${property}' is not allowed`) }

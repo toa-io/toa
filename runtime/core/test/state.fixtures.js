@@ -7,7 +7,7 @@ const storage = {
   get: jest.fn(() => ({ id: generate() })),
   find: jest.fn(() => ([{ id: generate() }])),
   add: jest.fn(() => true),
-  update: jest.fn(() => true)
+  set: jest.fn(() => true)
 }
 
 const entity = {

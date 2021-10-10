@@ -3,6 +3,7 @@
 const { id } = require('../runtime/core/src/id')
 
 const framework = require('./framework')
+const { generate } = require('randomstring')
 
 let composition, remote, messages
 
@@ -13,8 +14,9 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  if (composition) await composition.disconnect()
   if (messages) await messages.disconnect()
+  if (remote) await remote.disconnect()
+  if (composition) await composition.disconnect()
 })
 
 describe('not found', () => {
@@ -36,6 +38,23 @@ describe('not found', () => {
     expect(reply).toStrictEqual({ output: { id: expect.any(String) } })
   })
 
+  it('should return matching query', async () => {
+    const sender = id()
+    const text = generate()
+    await remote.invoke('add', { input: { sender, text } })
+    const { output } = await remote.invoke('observe', { query: { criteria: 'sender==' + sender } })
+
+    expect(output.text).toBe(text)
+  })
+
+  it('should return projection', async () => {
+    const text = generate()
+    const { output: created } = await remote.invoke('add', { input: { sender: id(), text } })
+    const reply = await remote.invoke('observe', { query: { id: created.id, projection: 'text' } })
+
+    expect(reply.output).toStrictEqual({ id: created.id, text, _version: 1 })
+  })
+
   it('should throw if query passed when declaration.query = false', async () => {
     await expect(remote.invoke('add', { input: { sender: '1', text: '123' }, query: { criteria: 'id==1' } }))
       .rejects.toMatchObject({ code: 10, keyword: 'additionalProperties', property: 'query' })
@@ -46,23 +65,21 @@ describe('not found', () => {
       .rejects.toMatchObject({ code: 10, keyword: 'required', property: 'query' })
   })
 
-  describe('no query declaration', () => {
-    it('should add or update based on query', async () => {
-      const id1 = id()
-      const created = await remote.invoke('transit', { input: { sender: id1, text: '1' } })
+  it('should add or update based on query', async () => {
+    const id1 = id()
+    const created = await remote.invoke('transit', { input: { sender: id1, text: '1' } })
 
-      expect(created.output.id).toBeDefined()
+    expect(created.output.id).toBeDefined()
 
-      const id2 = id()
-      const updated = await remote.invoke('transit',
-        { input: { sender: id2, text: '2' }, query: { criteria: 'id==' + created.output.id } })
+    const id2 = id()
+    const updated = await remote.invoke('transit',
+      { input: { sender: id2, text: '2' }, query: { criteria: 'id==' + created.output.id } })
 
-      expect(updated.output.id).toBe(created.output.id)
+    expect(updated.output.id).toBe(created.output.id)
 
-      const reply = await remote.invoke('get', { query: { criteria: 'id==' + created.output.id } })
+    const reply = await remote.invoke('get', { query: { criteria: 'id==' + created.output.id } })
 
-      expect(reply.output).toMatchObject({ sender: id2, text: '2' })
-    })
+    expect(reply.output).toMatchObject({ sender: id2, text: '2' })
   })
 
   it('should find by id', async () => {

@@ -15,8 +15,6 @@ class Operation extends Connector {
   }
 
   async run (input, state) {
-    if (state) state = this.#state(state)
-
     let output, error
 
     output = await this.#operation(input, state, this.#context)
@@ -25,20 +23,6 @@ class Operation extends Connector {
     if (output === null) output = undefined
 
     return defined({ output, error })
-  }
-
-  #state (state) {
-    if (state instanceof Array) return state.map((state) => this.#state(state))
-
-    const id = state.id
-
-    Object.defineProperty(state, 'id', { get: () => id })
-
-    for (const key of Object.keys(state)) {
-      if (key[0] === '_') Object.defineProperty(state, key, { enumerable: false })
-    }
-
-    return state
   }
 }
 

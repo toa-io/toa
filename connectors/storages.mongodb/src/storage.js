@@ -17,10 +17,6 @@ class Storage extends Connector {
     this.depends(this.#client)
   }
 
-  async add (entry) {
-    return this.#client.add(to(entry))
-  }
-
   async get (query) {
     const { criteria, options } = translate(query)
 
@@ -29,8 +25,12 @@ class Storage extends Connector {
     return from(entry)
   }
 
-  async update (entry) {
-    const criteria = { _id: entry.id }
+  async add (entry) {
+    return this.#client.add(to(entry))
+  }
+
+  async set (entry) {
+    const criteria = { _id: entry.id, _version: entry._version }
 
     return this.#client.update(criteria, to(entry))
   }

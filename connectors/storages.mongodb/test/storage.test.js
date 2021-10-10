@@ -51,8 +51,8 @@ it('should get', async () => {
   expect(mock.translate).toHaveBeenCalledWith(fixtures.query)
 })
 
-it('should update', async () => {
-  const ok = await connector.update(fixtures.entry)
+it('should set', async () => {
+  const ok = await connector.set(fixtures.entry)
 
   expect(ok).toBe(client.update.mock.results[0].value)
 

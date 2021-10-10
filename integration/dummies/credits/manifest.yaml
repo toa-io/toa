@@ -10,6 +10,10 @@ entity:
   initialized: true
 
 operations:
+  transit:
+    input:
+      properties:
+        balance: ~
   deduce:
     input: integer
     output: integer

@@ -67,6 +67,14 @@ const samples = {
   },
 
   id: {
+    properties: {
+      id: {
+        type: 'string'
+      },
+      name: {
+        type: 'string'
+      }
+    },
     query: {
       id: '123',
       criteria: 'name==Eddie'

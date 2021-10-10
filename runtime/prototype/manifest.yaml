@@ -6,6 +6,10 @@ entity:
       id:
         type: id
         system: true
+      _version:
+        type: integer
+        default: 0
+        system: true
     required: [ id ]
 
 operations:

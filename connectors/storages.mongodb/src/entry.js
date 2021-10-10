@@ -1,9 +1,9 @@
 'use strict'
 
 const to = (entry) => {
-  const { id, ...rest } = entry
+  const { id, _version, ...rest } = entry
 
-  return { _id: id, ...rest }
+  return { _id: id, _version: _version + 1, ...rest }
 }
 
 const from = (entry) => {

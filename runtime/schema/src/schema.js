@@ -13,10 +13,19 @@ definitions(validator)
 class Schema {
   #schema
   #validate
+  #defaults
 
   constructor (schema) {
     this.#schema = schema
     this.#validate = validator.compile(schema)
+
+    if (schema.properties !== undefined) {
+      const { required, $id, ...defaults } = schema
+
+      if ($id !== undefined) defaults.$id = $id + '-defaults'
+
+      this.#defaults = validator.compile(defaults)
+    }
   }
 
   fit (value) {
@@ -26,12 +35,10 @@ class Schema {
     else return this.#error()
   }
 
-  defaults () {
-    const defaults = {}
+  defaults (value = {}) {
+    this.#defaults(value)
 
-    this.#validate(defaults)
-
-    return defaults
+    return value
   }
 
   #error () {

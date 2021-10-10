@@ -68,7 +68,7 @@ BINDINGS.forEach((binding) => {
         .map(({ sender, text }) => ({ id: expect.any(String), sender, text }))
 
       expect(reply.output.messages).toBeDefined()
-      expect(projection).toStrictEqual(reply.output.messages)
+      expect(reply.output.messages).toMatchObject(projection)
     })
 
     it('should throw on invalid input', async () => {

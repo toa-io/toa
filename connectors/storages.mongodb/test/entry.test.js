@@ -1,13 +1,14 @@
 'use strict'
 
 const { to, from } = require('../src/entry')
+const { random } = require('@kookaburra/gears')
 
 describe('to', () => {
   it('should rename id to _id', () => {
     const entry = { id: 1 }
     const result = to(entry)
 
-    expect(result).toStrictEqual({ _id: 1 })
+    expect(result).toMatchObject({ _id: 1 })
   })
 
   it('should not modify argument', () => {
@@ -16,6 +17,13 @@ describe('to', () => {
     to(entry)
 
     expect(entry).toStrictEqual({ id: 1 })
+  })
+
+  it('should increment _version', () => {
+    const entry = { _version: random() }
+    const result = to(entry)
+
+    expect(result).toMatchObject({ _version: entry._version + 1 })
   })
 })
 

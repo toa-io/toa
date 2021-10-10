@@ -34,7 +34,7 @@ class State {
   }
 
   async commit (subject) {
-    const method = subject.initial ? 'add' : 'update'
+    const method = subject.initial ? 'add' : 'set'
     const event = subject.event()
 
     if (!empty(event.changeset)) {

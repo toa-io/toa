@@ -36,7 +36,7 @@ describe('criteria', () => {
   })
 
   it('should parse id', () => {
-    const instance = new Query()
+    const instance = new Query(fixtures.samples.id.properties)
     const query = instance.parse({ ...fixtures.samples.id.query })
 
     expect(query).toStrictEqual(fixtures.samples.id.parsed)

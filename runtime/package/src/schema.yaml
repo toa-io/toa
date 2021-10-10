@@ -55,7 +55,9 @@ properties:
           properties:
             type: object
             propertyNames:
-              $ref: 'definitions#/definitions/token'
+              oneOf:
+                - $ref: 'definitions#/definitions/token'
+                - enum: [_version]
       initialized:
         type: boolean
         default: false

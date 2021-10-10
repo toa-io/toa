@@ -36,7 +36,7 @@ it('should add blank entry', async () => {
 it('should update entry', async () => {
   await state.commit(fixtures.entry)
 
-  expect(fixtures.storage.update).toHaveBeenCalledWith(fixtures.entry.get.mock.results[0].value)
+  expect(fixtures.storage.set).toHaveBeenCalledWith(fixtures.entry.get.mock.results[0].value)
 })
 
 it('should emit', async () => {

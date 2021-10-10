@@ -1,13 +1,15 @@
 'use strict'
 
-const { concat } = require('@kookaburra/gears')
+const { concat, empty } = require('@kookaburra/gears')
 const parse = { ...require('./query/criteria'), ...require('./query/options') }
 
 class Query {
   #properties
+  #system
 
   constructor (properties) {
     this.#properties = properties
+    this.#system = Object.keys(properties).filter((key) => properties[key].system === true)
   }
 
   // TODO: constraints
@@ -28,12 +30,9 @@ class Query {
   }
 
   #options (options) {
-    const defined = Object.keys(options)
-      .reduce((defined, option) => defined || options[option] !== undefined, false)
+    if (empty(options)) return
 
-    if (defined === false) { return }
-
-    return parse.options(options, this.#properties)
+    return parse.options(options, this.#properties, this.#system)
   }
 }
 
