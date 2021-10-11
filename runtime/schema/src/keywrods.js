@@ -1,24 +1,31 @@
 'use strict'
 
 const keywords = (validator) => {
-  validator.addKeyword({
-    keyword: 'system',
-    schemaType: 'boolean',
-    modifying: true,
-    errors: false,
-    validate: (value, data, metadata, context) => {
-      if (value === false) return true
-      if (context.parentData === undefined || typeof context.parentData !== 'object') return true
+  validator.addKeyword(system)
+}
 
-      const propertyValue = context.parentData[context.parentDataProperty]
+/*
+System properties are:
+- readonly
+- always included in projection
+ */
+const system = {
+  keyword: 'system',
+  schemaType: 'boolean',
+  modifying: true,
+  errors: false,
+  validate: (value, data, metadata, context) => {
+    if (value === false) return true
+    if (context.parentData === undefined || typeof context.parentData !== 'object') return true
 
-      Object.defineProperty(context.parentData, context.parentDataProperty, {
-        get: () => propertyValue
-      })
+    const propertyValue = context.parentData[context.parentDataProperty]
 
-      return true
-    }
-  })
+    Object.defineProperty(context.parentData, context.parentDataProperty, {
+      get: () => propertyValue
+    })
+
+    return true
+  }
 }
 
 exports.keywords = keywords
