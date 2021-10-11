@@ -79,7 +79,7 @@ describe('options', () => {
     const options = { override: true }
 
     it('should override on conflicts', () => {
-      const a = { a: 1, b: 1}
+      const a = { a: 1, b: 1 }
       const b = { a: 2, c: 1 }
 
       merge(a, b, options)

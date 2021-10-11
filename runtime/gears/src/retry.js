@@ -32,7 +32,7 @@ const DEFAULTS = {
   factor: 1.5,
   base: 1000,
   max: 30000,
-  dispersion: .1,
+  dispersion: 0.1,
   _: true
 }
 
