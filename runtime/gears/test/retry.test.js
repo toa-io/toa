@@ -2,6 +2,7 @@
 
 const { retry } = require('../src/retry')
 const { timeout } = require('../src/timeout')
+const { random } = require('../src/random')
 
 let options
 
@@ -46,8 +47,8 @@ it('should retry async', async () => {
 })
 
 it('should throw on failed retries', async () => {
-  options.retries = 10
+  options.retries = random(10)
 
   await expect(() => retry((retry) => retry(), options))
-    .rejects.toThrow(/Retry failed after 10 attempts/)
+    .rejects.toThrow(new RegExp(`Retry failed after ${options.retries} attempts`))
 })
