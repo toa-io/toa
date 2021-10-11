@@ -37,7 +37,7 @@ it('should throw TypeError on non-objects', () => {
     .toThrow(new TypeError('gears/merge: conflict at /a/b'))
 
   expect(() => merge({ a: { b: null } }, 1))
-    .toThrow(new TypeError('gears/merge: arguments must be object type at /'))
+    .toThrow(new TypeError('gears/merge: arguments must be objects or arrays at /'))
 
   expect(() => merge({ a: { b: 'a' } }, { a: { b: 1 } }))
     .toThrow(new TypeError('gears/merge: conflict at /a/b'))
@@ -59,4 +59,32 @@ it('should ignore undefined source', () => {
   merge(target, source)
 
   expect(target).toStrictEqual({ a: 1 })
+})
+
+describe('options', () => {
+  describe('ignore', () => {
+    const options = { ignore: true }
+
+    it('should ignore conflicts', () => {
+      const a = { a: 1 }
+      const b = { a: 2, b: 1 }
+
+      merge(a, b, options)
+
+      expect(a).toStrictEqual({ a: 1, b: 1 })
+    })
+  })
+
+  describe('override', () => {
+    const options = { override: true }
+
+    it('should override on conflicts', () => {
+      const a = { a: 1, b: 1}
+      const b = { a: 2, c: 1 }
+
+      merge(a, b, options)
+
+      expect(a).toStrictEqual({ a: 2, b: 1, c: 1 })
+    })
+  })
 })
