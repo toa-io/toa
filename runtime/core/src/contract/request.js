@@ -22,6 +22,8 @@ class Request extends Conditions {
 
     // TODO: operation type's specific. not sure if it's schema's responsibility
     //  - no projection for transitions
+    //  - no version for observations
+    //  - no id and criteria at the same time ??
 
     return schema
   }

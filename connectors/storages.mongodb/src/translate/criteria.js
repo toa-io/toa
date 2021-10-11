@@ -1,7 +1,6 @@
 'use strict'
 
 const { rename } = require('./rename')
-
 const criteria = (node) => {
   if (!TYPES[node.type]) { throw new Error('Query criteria AST parse error') }
 

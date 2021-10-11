@@ -3,7 +3,7 @@
 const clone = require('clone-deep')
 const { difference } = require('@kookaburra/gears')
 
-const { id } = require('../id')
+const { id: newid } = require('../id')
 const { Exception } = require('../exception')
 
 class Entity {
@@ -20,10 +20,10 @@ class Entity {
       this.#state = clone(argument)
       this.#origin = argument
     } else {
-      const i = typeof argument === 'string' ? argument : id()
+      const id = typeof argument === 'string' ? argument : newid()
 
       this.initial = true
-      this.#state = this.#initial(i)
+      this.#state = this.#initial(id)
     }
   }
 

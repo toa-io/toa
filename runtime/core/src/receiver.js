@@ -26,6 +26,7 @@ class Receiver extends Connector {
 
     const request = this.#adaptive ? await this.#bridge.request(payload) : payload
 
+    // TODO: handle exceptions
     this.#apply.apply(request)
   }
 }

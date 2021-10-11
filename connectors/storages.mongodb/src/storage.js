@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/core')
+const { Connector, Exception } = require('@kookaburra/core')
 
 const { Client } = require('./client')
 const { translate } = require('./translate')
@@ -22,6 +22,8 @@ class Storage extends Connector {
 
     const entry = await this.#client.get(criteria, options)
 
+    if (entry === undefined && query.version !== undefined) throw new Exception(Exception.STORAGE_PRECONDITION)
+
     return from(entry)
   }
 
@@ -31,13 +33,14 @@ class Storage extends Connector {
 
   async set (entry) {
     const criteria = { _id: entry.id, _version: entry._version }
+    const result = await this.#client.update(criteria, to(entry))
 
-    return this.#client.update(criteria, to(entry))
+    if (result.ok !== 1) throw new Exception(Exception.STORAGE)
+    if (result.value === null) throw new Exception(Exception.STORAGE_POSTCONDITION)
   }
 
   async find (query) {
     const { criteria, options } = translate(query)
-
     const entries = await this.#client.find(criteria, options)
 
     return entries.map(from)

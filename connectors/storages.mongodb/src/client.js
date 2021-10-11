@@ -43,9 +43,7 @@ class Client extends Connector {
   }
 
   async update (query, entry, options) {
-    const { ok } = await this.#collection.findOneAndReplace(query, entry, options)
-
-    return ok
+    return this.#collection.findOneAndReplace(query, entry, options)
   }
 
   async find (query, options) {

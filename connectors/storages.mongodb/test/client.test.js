@@ -68,9 +68,8 @@ it('should get', async () => {
 
 it('should update', async () => {
   const update = { ...fixtures.object, foo: 'foo' }
-  const result = await instance.update(fixtures.query.criteria, update, fixtures.query.options)
+  await instance.update(fixtures.query.criteria, update, fixtures.query.options)
 
-  expect(result).toBe(collection.findOneAndReplace.mock.results[0].value.ok)
   expect(collection.findOneAndReplace).toHaveBeenCalledWith(fixtures.query.criteria, update, fixtures.query.options)
 })
 

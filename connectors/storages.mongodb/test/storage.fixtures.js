@@ -5,7 +5,7 @@ const Client = jest.fn().mockImplementation(function () {
   this.disconnect = jest.fn()
   this.add = jest.fn(() => true)
   this.get = jest.fn(() => ({ foo: 'bar' }))
-  this.update = jest.fn(() => true)
+  this.update = jest.fn(() => ({ ok: 1 }))
   this.find = jest.fn(() => [{ foo: 'bar' }, { bar: 'foo' }])
 })
 

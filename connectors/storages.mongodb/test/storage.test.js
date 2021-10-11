@@ -52,10 +52,7 @@ it('should get', async () => {
 })
 
 it('should set', async () => {
-  const ok = await connector.set(fixtures.entry)
-
-  expect(ok).toBe(client.update.mock.results[0].value)
-
+  await connector.set(fixtures.entry)
   const criteria = { _id: fixtures.entry.id }
 
   expect(client.update).toHaveBeenCalledWith(criteria, mock.to.mock.results[0].value)

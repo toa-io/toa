@@ -1,6 +1,9 @@
 properties:
   id:
     $ref: https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id
+  version:
+    type: integer
+    minimum: 0
   criteria:
     type: string
   omit:

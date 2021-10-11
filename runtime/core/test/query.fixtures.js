@@ -82,31 +82,15 @@ const samples = {
     parsed: {
       id: '123',
       criteria: {
-        type: 'LOGIC',
+        type: 'COMPARISON',
         left: {
-          type: 'COMPARISON',
-          left: {
-            type: 'SELECTOR',
-            selector: 'id'
-          },
-          operator: '==',
-          right: {
-            type: 'VALUE',
-            value: '123'
-          }
+          type: 'SELECTOR',
+          selector: 'name'
         },
-        operator: ';',
+        operator: '==',
         right: {
-          type: 'COMPARISON',
-          left: {
-            type: 'SELECTOR',
-            selector: 'name'
-          },
-          operator: '==',
-          right: {
-            type: 'VALUE',
-            value: 'Eddie'
-          }
+          type: 'VALUE',
+          value: 'Eddie'
         }
       }
     }

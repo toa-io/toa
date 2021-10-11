@@ -1,6 +1,6 @@
 'use strict'
 
-const { id } = require('../runtime/core/src/id')
+const { id: newid } = require('../runtime/core/src/id')
 
 const framework = require('./framework')
 const { generate } = require('randomstring')
@@ -33,13 +33,13 @@ describe('not found', () => {
   })
 
   it('should init state if no query', async () => {
-    const reply = await remote.invoke('add', { input: { sender: id(), text: '123' } })
+    const reply = await remote.invoke('add', { input: { sender: newid(), text: '123' } })
 
     expect(reply).toStrictEqual({ output: { id: expect.any(String) } })
   })
 
   it('should return matching query', async () => {
-    const sender = id()
+    const sender = newid()
     const text = generate()
     await remote.invoke('add', { input: { sender, text } })
     const { output } = await remote.invoke('observe', { query: { criteria: 'sender==' + sender } })
@@ -49,7 +49,7 @@ describe('not found', () => {
 
   it('should return projection', async () => {
     const text = generate()
-    const { output: created } = await remote.invoke('add', { input: { sender: id(), text } })
+    const { output: created } = await remote.invoke('add', { input: { sender: newid(), text } })
     const reply = await remote.invoke('observe', { query: { id: created.id, projection: 'text' } })
 
     expect(reply.output).toStrictEqual({ id: created.id, text, _version: 1 })
@@ -66,12 +66,12 @@ describe('not found', () => {
   })
 
   it('should add or update based on query', async () => {
-    const id1 = id()
+    const id1 = newid()
     const created = await remote.invoke('transit', { input: { sender: id1, text: '1' } })
 
     expect(created.output.id).toBeDefined()
 
-    const id2 = id()
+    const id2 = newid()
     const updated = await remote.invoke('transit',
       { input: { sender: id2, text: '2' }, query: { criteria: 'id==' + created.output.id } })
 
@@ -84,7 +84,7 @@ describe('not found', () => {
 
   it('should find by id', async () => {
     const ids = (await Promise.all([1, 2, 3, 4, 5].map((i) =>
-      remote.invoke('add', { input: { sender: id(), text: 't' + i } })))).map((reply) => reply.output.id)
+      remote.invoke('add', { input: { sender: newid(), text: 't' + i } })))).map((reply) => reply.output.id)
 
     // there is a deterministic unit test for core/query class
     const one = ids[Math.round(ids.length * Math.random() * 0.9)]

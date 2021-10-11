@@ -29,7 +29,9 @@ class Exception {
   static QUERY = 11
   static POSTCONDITION = 20
   static STORAGE = 30
-  static INDEX = 31
+  static STORAGE_MISSED = 32
+  static STORAGE_PRECONDITION = 32
+  static STORAGE_POSTCONDITION = 33
   static TRANSMISSION = 40
   static EMISSION = 41
 

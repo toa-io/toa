@@ -1,6 +1,6 @@
 'use strict'
 
-const { concat, empty } = require('@kookaburra/gears')
+const { empty } = require('@kookaburra/gears')
 const parse = { ...require('./query/criteria'), ...require('./query/options') }
 
 class Query {
@@ -15,16 +15,14 @@ class Query {
   // TODO: constraints
   parse (query) {
     const result = {}
-    let { id, criteria, ...rest } = query
+    const { id, version, criteria, ...rest } = query
+
     const options = this.#options(rest)
 
-    if (id) {
-      criteria = 'id==' + id + concat(';', criteria)
-      result.id = id
-    }
-
-    if (criteria) result.criteria = parse.criteria(criteria, this.#properties)
-    if (options) result.options = options
+    if (id !== undefined) result.id = id
+    if (version !== undefined) result.version = version
+    if (criteria !== undefined) result.criteria = parse.criteria(criteria, this.#properties)
+    if (options !== undefined) result.options = options
 
     return result
   }
