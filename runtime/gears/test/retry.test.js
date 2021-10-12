@@ -1,6 +1,6 @@
 'use strict'
 
-const { retry } = require('../src/retry')
+const { retry } = require('../src/')
 const { timeout } = require('../src/timeout')
 const { random } = require('../src/random')
 
