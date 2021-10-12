@@ -17,6 +17,7 @@ const system = {
   validate: (value, data, metadata, context) => {
     if (value === false) return true
     if (context.parentData === undefined || typeof context.parentData !== 'object') return true
+    if (Object.isFrozen(context.parentData)) return true
 
     const propertyValue = context.parentData[context.parentDataProperty]
 

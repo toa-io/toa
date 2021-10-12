@@ -22,12 +22,9 @@ class Operation extends Connector {
 
   async invoke (request) {
     try {
-      const context = await this.preprocess(request)
-      const reply = await this.process(context)
+      if (request?.query) request.query = this.#query.parse(request.query)
 
-      await this.postprocess(context, reply)
-
-      return reply
+      return await this.process(request)
     } catch (e) {
       const exception = e instanceof Error ? new Exception(e) : e
 
@@ -35,17 +32,7 @@ class Operation extends Connector {
     }
   }
 
-  async preprocess (request) {
-    if (request?.query === undefined) return { request }
-
-    const query = this.#query.parse(request.query)
-    const subject = await this.#subject.query(query)
-    const state = subject === null ? null : subject.get()
-
-    return { request, subject, state }
-  }
-
-  async process ({ request, state }) {
+  async run (request, state) {
     if (request?.query !== undefined && state === null) return { output: null } // not found
 
     const reply = await this.#cascade.run(request?.input, state)
@@ -55,7 +42,7 @@ class Operation extends Connector {
     return reply
   }
 
-  postprocess (context, reply) {}
+  async process () {}
 }
 
 exports.Operation = Operation

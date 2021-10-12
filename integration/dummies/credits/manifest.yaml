@@ -18,6 +18,9 @@ operations:
     input: integer
     output: integer
     query: true
+  debit:
+    forward: deduce
+    concurrency: retry
   transfer:
     input: id   # source balance
     query: true # target balance

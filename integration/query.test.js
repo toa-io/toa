@@ -21,9 +21,7 @@ afterAll(async () => {
 
 describe('not found', () => {
   it('should return null if target is an entry', async () => {
-    const reply = await remote.invoke('get', { query: { criteria: 'id==1' } })
-
-    expect(reply).toStrictEqual({ output: null })
+    await expect(remote.invoke('get', { query: { criteria: 'id==1' } })).rejects.toMatchObject({ code: 32 })
   })
 
   it('should return null if target is a set', async () => {

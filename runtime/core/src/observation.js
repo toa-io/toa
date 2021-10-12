@@ -5,12 +5,27 @@ const { freeze } = require('@kookaburra/gears')
 const { Operation } = require('./operation')
 
 class Observation extends Operation {
-  async preprocess (request) {
-    const context = super.preprocess(request)
+  #subject
 
-    freeze(context.state)
+  constructor (cascade, subject, contract, query) {
+    super(cascade, subject, contract, query)
 
-    return context
+    this.#subject = subject
+  }
+
+  async process (request) {
+    let subject, state
+
+    if (request.query) {
+      subject = await this.#subject.query(request.query)
+
+      if (subject !== null) {
+        state = subject.get()
+        freeze(state)
+      } else state = null
+    }
+
+    return this.run(request, state)
   }
 }
 

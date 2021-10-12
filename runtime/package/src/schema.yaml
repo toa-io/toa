@@ -110,6 +110,8 @@ properties:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
+          concurrency:
+            enum: [retry]
         required: [ type, subject, bindings ]
         additionalProperties: false
     additionalProperties: false

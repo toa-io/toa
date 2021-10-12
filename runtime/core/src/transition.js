@@ -1,31 +1,42 @@
 'use strict'
 
+const { retry } = require('@kookaburra/gears')
+
 const { Operation } = require('./operation')
+const { Exception } = require('./exception')
 
 class Transition extends Operation {
   #subject
+  #concurrency
 
-  constructor (cascade, subject, contract, query) {
+  constructor (cascade, subject, contract, query, definition) {
     super(cascade, subject, contract, query)
 
     this.#subject = subject
+    this.#concurrency = definition.concurrency
   }
 
-  async preprocess (request) {
-    if (request?.query !== undefined) return super.preprocess(request)
+  async process (request = {}) {
+    return retry((retry) => this.#process(request, retry), { base: 0 })
+  }
 
-    const subject = this.#subject.init()
+  async #process (request, retry) {
+    const subject = request.query ? await this.#subject.query(request.query) : this.#subject.init()
     const state = subject.get()
+    const reply = await this.run(request, state)
 
-    return { request, subject, state }
-  }
+    if (reply.error === undefined) {
+      subject.set(state)
 
-  async postprocess ({ subject, state }, reply) {
-    if (state === null || reply.error !== undefined) return
+      const ok = await this.#subject.commit(subject)
 
-    subject.set(state)
+      if (ok !== true) {
+        if (this.#concurrency === 'retry') retry()
+        else throw new Exception(Exception.STORAGE_POSTCONDITION)
+      }
+    }
 
-    await this.#subject.commit(subject)
+    return reply
   }
 }
 

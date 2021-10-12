@@ -11,6 +11,7 @@ entity:
 
 operations:
   update:
+    concurrency: retry
     input:
       properties:
         messages: boolean

@@ -21,7 +21,7 @@ const operation = (manifest, endpoint, definition, context, storage, emission) =
 
   const Type = TYPES[definition.type]
 
-  return new Type(cascade, subject, contract, query)
+  return new Type(cascade, subject, contract, query, definition)
 }
 
 const TYPES = {

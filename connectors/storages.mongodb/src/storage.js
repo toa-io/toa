@@ -22,13 +22,20 @@ class Storage extends Connector {
 
     const entry = await this.#client.get(criteria, options)
 
-    if (entry === undefined && query.version !== undefined) throw new Exception(Exception.STORAGE_PRECONDITION)
-
     return from(entry)
   }
 
   async add (entry) {
-    return this.#client.add(to(entry))
+    let result
+
+    try {
+      result = await this.#client.add(to(entry))
+    } catch (e) {
+      if (e.code === 11000) result = false
+      else throw e
+    }
+
+    return result
   }
 
   async set (entry) {
@@ -36,7 +43,9 @@ class Storage extends Connector {
     const result = await this.#client.update(criteria, to(entry))
 
     if (result.ok !== 1) throw new Exception(Exception.STORAGE)
-    if (result.value === null) throw new Exception(Exception.STORAGE_POSTCONDITION)
+    // if (result.value === null) throw new Exception(Exception.STORAGE_POSTCONDITION)
+
+    return result.value !== null
   }
 
   async find (query) {

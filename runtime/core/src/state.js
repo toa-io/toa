@@ -1,6 +1,7 @@
 'use strict'
 
 const { empty } = require('@kookaburra/gears')
+const { Exception } = require('./exception')
 
 class State {
   #storage
@@ -22,9 +23,12 @@ class State {
   async entry (query) {
     const entry = await this.#storage.get(query)
 
-    if (entry === null && query.id !== undefined && this.#initialized) return this.init(query.id)
+    if (entry === null) {
+      if (this.#initialized && query.id !== undefined && query.version === undefined) return this.init(query.id)
+      else throw new Exception(Exception.STORAGE_MISSED)
+    }
 
-    return entry === null ? null : this.#entity.entry(entry)
+    return this.#entity.entry(entry)
   }
 
   async entries (query) {
@@ -37,13 +41,17 @@ class State {
     const method = subject.initial ? 'add' : 'set'
     const event = subject.event()
 
+    let ok = true
+
     if (!empty(event.changeset)) {
-      await this.#storage[method](subject.get())
+      ok = await this.#storage[method](subject.get())
 
       // TODO: do not wait because outbox will handle failures
       // TODO: handle slow emissions (too many concurrent emissions)
       await this.#emitter.emit(event)
     }
+
+    return ok
   }
 }
 

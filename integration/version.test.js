@@ -53,7 +53,7 @@ it('should throw on update conflict', async () => {
     .rejects.toMatchObject({ code: 33 })
 })
 
-it('should throw on implicit version conflict', async () => {
+it('should throw on version conflict', async () => {
   const id = newid()
   await remote.invoke('transit', { input: { balance: 1 }, query: { id } }) // init
 
