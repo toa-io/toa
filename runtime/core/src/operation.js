@@ -33,9 +33,7 @@ class Operation extends Connector {
   }
 
   async run (request, state) {
-    if (request?.query !== undefined && state === null) return { output: null } // not found
-
-    const reply = await this.#cascade.run(request?.input, state)
+    const reply = await this.#cascade.run(request?.input, state) || {}
 
     this.#contract.fit(reply)
 

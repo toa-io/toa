@@ -34,7 +34,7 @@ class State {
   async entries (query) {
     const entries = await this.#storage.find(query)
 
-    return entries.length ? this.#entity.entries(entries) : null
+    return this.#entity.entries(entries)
   }
 
   async commit (subject) {

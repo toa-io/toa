@@ -24,10 +24,10 @@ describe('not found', () => {
     await expect(remote.invoke('get', { query: { criteria: 'id==1' } })).rejects.toMatchObject({ code: 32 })
   })
 
-  it('should return null if target is a set', async () => {
-    const reply = await remote.invoke('find', { query: { criteria: 'id==1' } })
+  it('should return empty array if target is a set', async () => {
+    const { output } = await remote.invoke('find', { query: { criteria: 'id==1' } })
 
-    expect(reply).toStrictEqual({ output: null })
+    expect(output).toStrictEqual([])
   })
 
   it('should init state if no query', async () => {

@@ -1,6 +1,5 @@
 'use strict'
 
-const { defined } = require('@kookaburra/gears')
 const { Connector } = require('@kookaburra/core')
 
 class Operation extends Connector {
@@ -15,14 +14,7 @@ class Operation extends Connector {
   }
 
   async run (input, state) {
-    let output, error
-
-    output = await this.#operation(input, state, this.#context)
-
-    if (output instanceof Array) [output, error] = output
-    if (output === null) output = undefined
-
-    return defined({ output, error })
+    return this.#operation(input, state, this.#context)
   }
 }
 

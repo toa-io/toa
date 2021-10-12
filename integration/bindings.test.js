@@ -67,8 +67,8 @@ BINDINGS.forEach((binding) => {
         .sort((a, b) => b.timestamp - a.timestamp)
         .map(({ sender, text }) => ({ id: expect.any(String), sender, text }))
 
-      expect(reply.output.messages).toBeDefined()
-      expect(reply.output.messages).toMatchObject(projection)
+      expect(reply.output).toBeDefined()
+      expect(reply.output).toMatchObject(projection)
     })
 
     it('should throw on invalid input', async () => {

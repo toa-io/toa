@@ -12,7 +12,7 @@ class Conditions {
   fit (value) {
     const error = this.#schema.fit(value)
 
-    if (error) throw new Exception(this.constructor.EXCEPTION, error)
+    if (error !== null) throw new Exception(this.constructor.EXCEPTION, error)
   }
 
   static EXCEPTION = Exception.SYSTEM

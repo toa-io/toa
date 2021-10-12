@@ -1,7 +1,7 @@
 'use strict'
 
 async function transition () {
-  return { ok: 'ok' }
+  return { output: { ok: 'ok' } }
 }
 
 exports.transition = transition

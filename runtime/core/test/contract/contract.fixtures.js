@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 
 const schema = {
-  fit: jest.fn((input) => input.invalid ? { message: generate() } : undefined)
+  fit: jest.fn((input) => input.invalid ? { message: generate() } : null)
 }
 
 const query = {

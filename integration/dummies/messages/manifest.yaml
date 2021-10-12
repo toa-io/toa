@@ -39,9 +39,7 @@ operations:
   change:
     forward: update
   find:
-    output:
-      properties:
-        messages: array
+    output: array
     query: true
   transit:
     input:

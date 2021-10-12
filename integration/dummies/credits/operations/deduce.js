@@ -5,7 +5,7 @@ async function transition (input, entry) {
 
   entry.balance -= input
 
-  return entry.balance
+  return { output: entry.balance }
 }
 
 exports.transition = transition

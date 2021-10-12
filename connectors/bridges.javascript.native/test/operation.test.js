@@ -35,5 +35,5 @@ it('should return output', async () => {
   const result = await fixtures.operation.observation.mock.results[0].value
 
   expect(reply).toBeDefined()
-  expect(reply.output).toStrictEqual(result)
+  expect(reply).toStrictEqual(result)
 })

@@ -10,10 +10,10 @@ async function transition (input, entry, context) {
   if (input.free !== true) {
     const reply = await context.remotes[0].invoke('deduce', { input: 1, query: { id: input.sender } })
 
-    if (reply.error !== undefined) return [null, reply.error]
+    if (reply.error !== undefined) return { error: reply.error }
   }
 
-  return { id: entry.id }
+  return { output: { id: entry.id } }
 }
 
 exports.transition = transition
