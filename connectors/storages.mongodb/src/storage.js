@@ -31,8 +31,8 @@ class Storage extends Connector {
     try {
       result = await this.#client.add(to(entry))
     } catch (e) {
-      if (e.code === 11000) result = false
-      else throw e
+      if (e.code === 11000) result = false // duplicate id
+      else throw new Exception(Exception.STORAGE)
     }
 
     return result
@@ -43,9 +43,12 @@ class Storage extends Connector {
     const result = await this.#client.update(criteria, to(entry))
 
     if (result.ok !== 1) throw new Exception(Exception.STORAGE)
-    // if (result.value === null) throw new Exception(Exception.STORAGE_POSTCONDITION)
 
     return result.value !== null
+  }
+
+  async store (entry) {
+    return entry._version === 0 ? this.add(entry) : this.set(entry)
   }
 
   async find (query) {

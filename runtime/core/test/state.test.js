@@ -27,16 +27,10 @@ it('should provide entries', async () => {
   expect(fixtures.entity.entries).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
 })
 
-it('should add blank entry', async () => {
+it('should store entry', async () => {
   await state.commit(fixtures.initial)
 
-  expect(fixtures.storage.add).toHaveBeenCalledWith(fixtures.initial.get.mock.results[0].value)
-})
-
-it('should update entry', async () => {
-  await state.commit(fixtures.entry)
-
-  expect(fixtures.storage.set).toHaveBeenCalledWith(fixtures.entry.get.mock.results[0].value)
+  expect(fixtures.storage.store).toHaveBeenCalledWith(fixtures.initial.get.mock.results[0].value)
 })
 
 it('should emit', async () => {

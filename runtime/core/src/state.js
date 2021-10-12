@@ -38,13 +38,12 @@ class State {
   }
 
   async commit (subject) {
-    const method = subject.initial ? 'add' : 'set'
     const event = subject.event()
 
     let ok = true
 
     if (!empty(event.changeset)) {
-      ok = await this.#storage[method](subject.get())
+      ok = await this.#storage.store(subject.get())
 
       // TODO: do not wait because outbox will handle failures
       // TODO: handle slow emissions (too many concurrent emissions)

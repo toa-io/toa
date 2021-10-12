@@ -11,8 +11,6 @@ class Entity {
   #origin = null
   #state
 
-  initial = false
-
   constructor (schema, argument) {
     this.#schema = schema
 
@@ -21,8 +19,6 @@ class Entity {
       this.#origin = argument
     } else {
       const id = typeof argument === 'string' ? argument : newid()
-
-      this.initial = true
       this.#state = this.#initial(id)
     }
   }
