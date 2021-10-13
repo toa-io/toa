@@ -1,10 +1,13 @@
 'use strict'
 
+const { concat } = require('@kookaburra/gears')
+
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
 const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
+const { Broadcast } = require('./broadcast')
 
 class Factory {
   #channels = {}
@@ -33,12 +36,22 @@ class Factory {
     return new Receiver(channel, locator, label, id, receiver)
   }
 
-  #channel (locator) {
-    const host = locator.host(TYPE)
+  broadcast (prefix) {
+    const channel = this.#channel({ domain: 'system', name: 'broadcast' })
+
+    return new Broadcast(channel, prefix)
+  }
+
+  #channel ({ domain, name }) {
+    const host = Factory.host(domain, name)
 
     if (this.#channels[host] === undefined) this.#channels[host] = new Channel(host)
 
     return this.#channels[host]
+  }
+
+  static host (domain, name) {
+    return domain + concat('.', name) + '.' + TYPE + '.local'
   }
 }
 

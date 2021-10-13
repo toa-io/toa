@@ -1,11 +1,11 @@
 'use strict'
 
 async function transition (input, entry, context) {
+  if (input.text === 'throw exception') throw new Error('User space exception')
+
   entry.sender = input.sender
   entry.text = input.text
   entry.timestamp = input.timestamp
-
-  if (input.text === 'throw exception') throw new Error('User space exception')
 
   if (input.free !== true) {
     const reply = await context.remotes[0].invoke('deduce', { input: 1, query: { id: input.sender } })
