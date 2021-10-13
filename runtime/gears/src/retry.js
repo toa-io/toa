@@ -4,7 +4,7 @@ const { timeout } = require('./timeout')
 const { merge } = require('./merge')
 
 const retry = async (func, options = {}, attempt = 0) => {
-  if (options._ === undefined) merge(options, DEFAULTS, { ignore: true })
+  if (attempt === 0) merge(options, DEFAULTS, { ignore: true })
 
   let inner
 
@@ -28,8 +28,7 @@ const DEFAULTS = {
   factor: 1.5,
   base: 1000,
   max: 30000,
-  dispersion: 0.1,
-  _: true
+  dispersion: 0.1
 }
 
 exports.retry = retry

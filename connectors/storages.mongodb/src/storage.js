@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector, Exception } = require('@kookaburra/core')
+const { Connector } = require('@kookaburra/core')
 
 const { Client } = require('./client')
 const { translate } = require('./translate')
@@ -32,7 +32,7 @@ class Storage extends Connector {
       result = await this.#client.add(to(entry))
     } catch (e) {
       if (e.code === 11000) result = false // duplicate id
-      else throw new Exception(Exception.STORAGE)
+      else throw e
     }
 
     return result
@@ -41,8 +41,6 @@ class Storage extends Connector {
   async set (entry) {
     const criteria = { _id: entry.id, _version: entry._version }
     const result = await this.#client.update(criteria, to(entry))
-
-    if (result.ok !== 1) throw new Exception(Exception.STORAGE)
 
     return result.value !== null
   }
