@@ -48,6 +48,6 @@ it('should receive', async () => {
     receivedB()
   })
 
-  await b.emit(label, message)
+  await b.send(label, message)
   await receiving
 })

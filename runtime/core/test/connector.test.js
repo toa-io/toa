@@ -137,6 +137,18 @@ describe('dependencies', () => {
       await a.connect()
       await a.disconnect()
     })()).resolves.not.toThrow()
+
+    b.depends([undefined, c, {}])
+
+    await expect((async () => {
+      await b.connect()
+      await b.disconnect()
+    })()).resolves.not.toThrow()
+
+    expect(sequence).toStrictEqual([
+      '+a', '-a', '*a',
+      '+c', '+b', '-b', '-c', '*c', '*b'
+    ])
   })
 
   describe('errors', () => {

@@ -5,7 +5,7 @@
 
 ### Debug Integration Tests
 Path `integration` is not included in jest `roots` by default. To run them with your debugger, 
-you should pass `--roots runtime connectors integration` option to jest cli. 
+you should pass `--roots runtime connectors systems integration` option to jest cli. 
 
 For example, if you're using WebStorm, set CLI Options for Jest Template as `--roots core connectors integration`
 

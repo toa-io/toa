@@ -1,6 +1,7 @@
 'use strict'
 
 const { load } = require('@kookaburra/package')
+const { Locator } = require('@kookaburra/core')
 
 const manifest = async (path, options) => {
   const manifest = await load(path)
@@ -10,6 +11,8 @@ const manifest = async (path, options) => {
       operation.bindings = options.bindings
     }
   }
+
+  manifest.locator = new Locator(manifest)
 
   return manifest
 }

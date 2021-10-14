@@ -162,4 +162,7 @@ properties:
         required: [ transition, bridge, path ]
         additionalProperties: false
 
+  extensions:
+    type: object
+
 additionalProperties: false

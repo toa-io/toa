@@ -3,14 +3,14 @@
 const { id, Connector } = require('@kookaburra/core')
 
 class Broadcast extends Connector {
-  #id
+  #group
   #channel
   #prefix
 
-  constructor (channel, prefix) {
+  constructor (channel, prefix, group) {
     super()
 
-    this.#id = id()
+    this.#group = group === undefined ? id() : group
 
     this.#channel = channel
     this.#prefix = prefix + '.'
@@ -18,12 +18,12 @@ class Broadcast extends Connector {
     this.depends(channel)
   }
 
-  async emit (label, payload) {
+  async send (label, payload) {
     await this.#channel.publish(this.#prefix + label, payload)
   }
 
   async receive (label, callback) {
-    await this.#channel.subscribe(this.#prefix + label, this.#id, callback)
+    await this.#channel.subscribe(this.#prefix + label, this.#group, callback)
   }
 }
 

@@ -2,7 +2,7 @@
 
 const path = require('path')
 
-const { yaml } = require('@kookaburra/gears')
+const { yaml, lookup } = require('@kookaburra/gears')
 const { Schema } = require('@kookaburra/schema')
 
 const object = yaml.sync(path.resolve(__dirname, 'schema.yaml'))
@@ -13,8 +13,9 @@ const validate = (manifest) => {
 
   if (error) throw new Error(error.message)
 
-  if (manifest.events) events(manifest)
-  if (manifest.receivers) receivers(manifest)
+  if (manifest.events !== undefined) events(manifest)
+  if (manifest.receivers !== undefined) receivers(manifest)
+  if (manifest.extensions !== undefined) extensions(manifest)
 }
 
 const events = (manifest) => {
@@ -34,6 +35,15 @@ const receivers = (manifest) => {
     if (manifest.operations[receiver.transition].type !== 'transition') {
       throw new Error(`Receiver '${locator}' refers to non-transition '${receiver.transition}'`)
     }
+  }
+}
+
+const extensions = (manifest) => {
+  for (const [key, value] of Object.entries(manifest.extensions)) {
+    const path = lookup(key, manifest.path)
+    const extension = require(path)
+
+    if (extension.manifest?.validate) extension.manifest.validate(value)
   }
 }
 

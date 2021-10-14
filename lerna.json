@@ -3,7 +3,8 @@
   "useWorkspaces": true,
   "packages": [
     "runtime/*",
-    "connectors/*"
+    "connectors/*",
+    "extensions/*"
   ],
   "version": "0.0.0"
 }

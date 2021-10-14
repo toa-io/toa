@@ -36,10 +36,10 @@ class Factory {
     return new Receiver(channel, locator, label, id, receiver)
   }
 
-  broadcast (prefix) {
-    const channel = this.#channel({ domain: 'system', name: 'broadcast' })
+  broadcast (name, group) {
+    const channel = this.#channel({ domain: 'system', name })
 
-    return new Broadcast(channel, prefix)
+    return new Broadcast(channel, name, group)
   }
 
   #channel ({ domain, name }) {

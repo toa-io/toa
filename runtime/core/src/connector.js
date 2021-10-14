@@ -18,22 +18,29 @@ class Connector {
     let next
 
     if (connector instanceof Array) {
-      next = new Connector()
+      connector = connector.filter((item) => item instanceof Connector)
 
-      for (const item of connector) {
-        this.#connectors.push(item)
-        item.depends(next)
+      if (connector.length > 0) {
+        next = new Connector()
+
+        for (const item of connector) {
+          this.#connectors.push(item)
+          item.depends(next)
+        }
+
+        console.debug(`${this.id} depends on ` +
+          `[${connector.map((connector) => connector.id).join(', ')}]`)
       }
-
-      console.debug(`${this.id} depends on ` +
-        `[${connector.map((connector) => connector.id).join(', ')}]`)
     } else {
-      next = connector
+      if (connector instanceof Connector) {
+        next = connector
 
-      console.debug(`${this.id} depends on ${next.id || next.constructor.name}`)
+        console.debug(`${this.id} depends on ${next.id || next.constructor.name}`)
+      }
     }
 
-    this.#connectors.push(next)
+    if (next !== undefined) this.#connectors.push(next)
+    else return this
 
     return next
   }
@@ -44,7 +51,7 @@ class Connector {
     this.#disconnecting = undefined
 
     this.#connecting = (async () => {
-      await Promise.all(this.#connectors.map(connector => connector instanceof Connector && connector.connect()))
+      await Promise.all(this.#connectors.map(connector => connector.connect()))
       await this.connection()
     })()
 
@@ -68,7 +75,7 @@ class Connector {
     this.#disconnecting = (async () => {
       if (!interrupt) await this.disconnection()
 
-      await Promise.all(this.#connectors.map(connector => connector instanceof Connector && connector.disconnect()))
+      await Promise.all(this.#connectors.map(connector => connector.disconnect()))
       this.disconnected()
     })()
 
@@ -90,6 +97,7 @@ class Connector {
   }
 
   async connection () {}
+
   async disconnection () {}
 
   disconnected () {}

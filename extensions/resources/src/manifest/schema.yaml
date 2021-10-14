@@ -1,0 +1,27 @@
+$schema: https://json-schema.org/draft/2019-09/schema
+
+definitions:
+  resource:
+    patternProperties:
+      ^(\/([^/#\?]+?))+\/?$:
+        $ref: '#/definitions/resource'
+    properties:
+      operations:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          type: object
+          properties:
+            operation:
+              $ref: https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/token
+            type:
+              enum: [observation, transition]
+            subject:
+              enum: [entry, subset]
+          additionalProperties: false
+    additionalProperties: false
+
+$ref: '#/definitions/resource'
+not:
+  required: [operations]

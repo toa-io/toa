@@ -1,8 +1,11 @@
 'use strict'
 
+const { lookup } = require('@kookaburra/gears')
+
 const normalize = (manifest) => {
-  if (manifest.operations) operations(manifest)
-  if (manifest.events) events(manifest)
+  if (manifest.operations !== undefined) operations(manifest)
+  if (manifest.events !== undefined) events(manifest)
+  if (manifest.extensions !== undefined) extensions(manifest)
 }
 
 const operations = (manifest) => {
@@ -16,6 +19,15 @@ const events = (manifest) => {
 
   for (const event of Object.values(manifest.events)) {
     if (event.binding === undefined) event.binding = binding
+  }
+}
+
+const extensions = (manifest) => {
+  for (const [key, value] of Object.entries(manifest.extensions)) {
+    const path = lookup(key, manifest.path)
+    const extension = require(path)
+
+    if (extension.manifest?.normalize) manifest.extensions[key] = extension.manifest.normalize(value, manifest)
   }
 }
 

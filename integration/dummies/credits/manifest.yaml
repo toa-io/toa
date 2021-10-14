@@ -26,3 +26,8 @@ operations:
     query: true # target balance
   nullify:
     output: integer
+
+extensions:
+  resources:
+    /:id:
+      operations: [observe]

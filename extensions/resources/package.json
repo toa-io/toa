@@ -1,0 +1,33 @@
+{
+  "name": "@kookaburra/extensions.resources",
+  "version": "0.0.0",
+  "description": "Kookaburra Resources Extension",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantumducks/kookaburra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quantumducks/kookaburra/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "process": "node ./src/process.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "peerDependencies": {
+    "@kookaburra/boot": "^0.0.0",
+    "@kookaburra/core": "^0.0.0",
+    "@kookaburra/gears": "^0.0.0",
+    "@kookaburra/bindings.amqp": "^0.0.0",
+    "@kookaburra/schema": "^0.0.0"
+  },
+  "dependencies": {
+    "express": "4.17.1",
+    "path-to-regexp": "6.2.0"
+  }
+}
