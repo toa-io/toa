@@ -5,7 +5,7 @@ const { id } = require('../runtime/core/src/id')
 
 const framework = require('./framework')
 
-const BINDINGS = ['http', 'amqp'].map((binding) => '@kookaburra/bindings.' + binding)
+const BINDINGS = ['http', 'amqp'].map((binding) => '@toa.io/bindings.' + binding)
 
 global.KOO_BINDINGS_LOOP_DISABLED = 1
 

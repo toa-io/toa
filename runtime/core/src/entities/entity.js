@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { difference } = require('@kookaburra/gears')
+const { difference } = require('@toa.io/gears')
 
 const { id: newid } = require('../id')
 const { Exception } = require('../exception')

@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 const { id } = require('../runtime/core/src/id')
 
 const framework = require('./framework')
-const { timeout, random } = require('@kookaburra/gears')
+const { timeout, random } = require('@toa.io/gears')
 
 let composition, messages, stats
 

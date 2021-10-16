@@ -1,6 +1,6 @@
 'use strict'
 
-const { lookup, merge } = require('@kookaburra/gears')
+const { lookup, merge } = require('@toa.io/gears')
 
 const bridge = async (root, manifest) => {
   await Promise.all([

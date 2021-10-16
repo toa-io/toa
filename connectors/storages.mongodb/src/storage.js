@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/core')
+const { Connector } = require('@toa.io/core')
 
 const { Client } = require('./client')
 const { translate } = require('./translate')

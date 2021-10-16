@@ -1,6 +1,6 @@
 'use strict'
 
-const { Emission, Event } = require('@kookaburra/core')
+const { Emission, Event } = require('@toa.io/core')
 
 const boot = require('./index')
 

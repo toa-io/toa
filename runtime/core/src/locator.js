@@ -1,6 +1,6 @@
 'use strict'
 
-const { concat } = require('@kookaburra/gears')
+const { concat } = require('@toa.io/gears')
 
 class Locator {
   domain = 'system'

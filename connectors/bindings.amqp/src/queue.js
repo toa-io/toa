@@ -1,6 +1,6 @@
 'use strict'
 
-const { concat } = require('@kookaburra/gears')
+const { concat } = require('@toa.io/gears')
 
 const name = (locator, endpoint) => locator.domain + '.' + concat(locator.name, '.') + endpoint
 

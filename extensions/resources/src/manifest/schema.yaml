@@ -14,7 +14,7 @@ definitions:
           type: object
           properties:
             operation:
-              $ref: https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/token
+              $ref: https://schemas.toa.io/0.0.0/definitions#/definitions/token
             type:
               enum: [observation, transition]
             subject:

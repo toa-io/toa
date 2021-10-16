@@ -1,16 +1,16 @@
 {
-  "name": "@kookaburra/extensions.resources",
+  "name": "@toa.io/extensions.resources",
   "version": "0.0.0",
   "description": "Kookaburra Resources Extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -20,11 +20,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@kookaburra/boot": "^0.0.0",
-    "@kookaburra/core": "^0.0.0",
-    "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/bindings.amqp": "^0.0.0",
-    "@kookaburra/schema": "^0.0.0"
+    "@toa.io/boot": "^0.0.0",
+    "@toa.io/core": "^0.0.0",
+    "@toa.io/gears": "^0.0.0",
+    "@toa.io/bindings.amqp": "^0.0.0",
+    "@toa.io/schema": "^0.0.0"
   },
   "dependencies": {
     "express": "4.17.1",

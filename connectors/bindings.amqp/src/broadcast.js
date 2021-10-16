@@ -1,6 +1,6 @@
 'use strict'
 
-const { id, Connector } = require('@kookaburra/core')
+const { id, Connector } = require('@toa.io/core')
 
 class Broadcast extends Connector {
   #group

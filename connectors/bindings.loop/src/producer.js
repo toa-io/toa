@@ -1,6 +1,6 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/core')
+const { Connector } = require('@toa.io/core')
 
 class Producer extends Connector {
   #binding

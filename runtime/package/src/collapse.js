@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge } = require('@kookaburra/gears')
+const { merge } = require('@toa.io/gears')
 
 const collapse = (manifest, prototype) => {
   delete manifest.prototype

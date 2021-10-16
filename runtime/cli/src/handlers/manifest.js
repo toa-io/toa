@@ -1,7 +1,7 @@
 'use strict'
 
-const { load } = require('@kookaburra/package')
-const { console, yaml } = require('@kookaburra/gears')
+const { load } = require('@toa.io/package')
+const { console, yaml } = require('@toa.io/gears')
 
 const { root } = require('../util/root')
 

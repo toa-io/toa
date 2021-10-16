@@ -1,8 +1,8 @@
 'use strict'
 
 const { MongoClient } = require('mongodb')
-const { Connector } = require('@kookaburra/core')
-const { console } = require('@kookaburra/gears')
+const { Connector } = require('@toa.io/core')
+const { console } = require('@toa.io/gears')
 
 class Client extends Connector {
   #connection

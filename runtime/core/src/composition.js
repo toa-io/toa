@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('@kookaburra/gears')
+const { console } = require('@toa.io/gears')
 
 const { Connector } = require('./connector')
 

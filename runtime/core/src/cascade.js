@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge } = require('@kookaburra/gears')
+const { merge } = require('@toa.io/gears')
 const { Connector } = require('./connector')
 
 class Cascade extends Connector {

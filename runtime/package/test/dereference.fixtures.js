@@ -53,7 +53,7 @@ const target = {
     schema: {
       properties: {
         id: {
-          $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id'
+          $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id'
         },
         foo: {
           type: 'string'

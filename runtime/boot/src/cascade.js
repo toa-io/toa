@@ -1,6 +1,6 @@
 'use strict'
 
-const { Cascade } = require('@kookaburra/core')
+const { Cascade } = require('@toa.io/core')
 
 const boot = require('./index')
 

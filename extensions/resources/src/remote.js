@@ -1,7 +1,7 @@
 'use strict'
 
-const { Connector } = require('@kookaburra/core')
-const { empty } = require('@kookaburra/gears')
+const { Connector } = require('@toa.io/core')
+const { empty } = require('@toa.io/gears')
 
 class Remote extends Connector {
   #remote

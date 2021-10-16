@@ -1,6 +1,6 @@
 'use strict'
 
-const { freeze } = require('@kookaburra/gears')
+const { freeze } = require('@toa.io/gears')
 
 const { Operation } = require('./operation')
 

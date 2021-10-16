@@ -1,6 +1,6 @@
 'use strict'
 
-const { random, timeout } = require('@kookaburra/gears')
+const { random, timeout } = require('@toa.io/gears')
 const { Connector } = require('../src/connector')
 
 class TestConnector extends Connector {

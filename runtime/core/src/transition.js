@@ -1,6 +1,6 @@
 'use strict'
 
-const { retry } = require('@kookaburra/gears')
+const { retry } = require('@toa.io/gears')
 
 const { Operation } = require('./operation')
 const { Exception } = require('./exception')

@@ -1,15 +1,15 @@
 {
-  "name": "@kookaburra/core",
+  "name": "@toa.io/core",
   "version": "0.0.0",
   "description": "Kookaburra core abstractions",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "main": "src/index.js",
   "publishConfig": {
@@ -19,8 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/schema": "^0.0.0",
+    "@toa.io/gears": "^0.0.0",
+    "@toa.io/schema": "^0.0.0",
     "@rsql/parser": "1.0.3",
     "uuid": "8.3.2",
     "clone-deep": "4.0.1"

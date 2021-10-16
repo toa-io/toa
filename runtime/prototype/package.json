@@ -1,15 +1,15 @@
 {
-  "name": "@kookaburra/prototype",
+  "name": "@toa.io/prototype",
   "version": "0.0.0",
   "description": "Kookaburra Generic Prototype",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "main": "package.json",
   "publishConfig": {

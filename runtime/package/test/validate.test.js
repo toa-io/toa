@@ -116,7 +116,7 @@ describe('entity', () => {
     it('should provide default', () => {
       delete manifest.entity.storage
       expect(() => validate(manifest)).not.toThrow()
-      expect(manifest.entity.storage).toStrictEqual('@kookaburra/storages.mongodb')
+      expect(manifest.entity.storage).toStrictEqual('@toa.io/storages.mongodb')
     })
   })
 
@@ -141,7 +141,7 @@ describe('bindings', () => {
   })
 
   it('should forbid explicit loop', () => {
-    manifest.bindings = ['@kookaburra/bindings.loop']
+    manifest.bindings = ['@toa.io/bindings.loop']
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 })
@@ -199,7 +199,7 @@ describe('operations', () => {
     })
 
     it('should forbid explicit loop', () => {
-      manifest.operations.get.bindings = ['@kookaburra/bindings.loop']
+      manifest.operations.get.bindings = ['@toa.io/bindings.loop']
       expect(() => validate(manifest)).toThrow(/must NOT be valid/)
     })
 

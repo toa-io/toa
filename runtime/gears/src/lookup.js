@@ -16,9 +16,9 @@ const lookup = (reference, base, directory = false) => {
 lookup.directory = (reference, base) => lookup(reference, base, true)
 
 const KNOWN = {
-  '@http': '@kookaburra/bindings.http',
-  '@amqp': '@kookaburra/bindings.amqp',
-  resources: '@kookaburra/extensions.resources'
+  '@http': '@toa.io/bindings.http',
+  '@amqp': '@toa.io/bindings.amqp',
+  resources: '@toa.io/extensions.resources'
 }
 
 exports.lookup = lookup

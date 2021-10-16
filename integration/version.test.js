@@ -3,7 +3,7 @@
 const { id: newid } = require('../runtime/core/src/id')
 
 const framework = require('./framework')
-const { random, repeat } = require('@kookaburra/gears')
+const { random, repeat } = require('@toa.io/gears')
 
 let composition, remote
 

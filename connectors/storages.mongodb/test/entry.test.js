@@ -1,7 +1,7 @@
 'use strict'
 
 const { to, from } = require('../src/entry')
-const { random } = require('@kookaburra/gears')
+const { random } = require('@toa.io/gears')
 
 describe('to', () => {
   it('should rename id to _id', () => {

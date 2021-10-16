@@ -1,4 +1,4 @@
 'use strict'
 
-exports.LOOP = '@kookaburra/bindings.loop'
-exports.SYSTEM_BINDINGS = ['@kookaburra/bindings.amqp']
+exports.LOOP = '@toa.io/bindings.loop'
+exports.SYSTEM_BINDINGS = ['@toa.io/bindings.amqp']

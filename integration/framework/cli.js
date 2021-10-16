@@ -16,6 +16,6 @@ const stringify = (value) => {
   else return value.toString()
 }
 
-const BIN = path.join(path.dirname(require.resolve('@kookaburra/cli')), './bin/kookaburra')
+const BIN = path.join(path.dirname(require.resolve('@toa.io/cli')), './bin/toa')
 
 exports.cli = cli

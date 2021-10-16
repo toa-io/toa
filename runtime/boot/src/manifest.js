@@ -1,7 +1,7 @@
 'use strict'
 
-const { load } = require('@kookaburra/package')
-const { Locator } = require('@kookaburra/core')
+const { load } = require('@toa.io/package')
+const { Locator } = require('@toa.io/core')
 
 const manifest = async (path, options) => {
   const manifest = await load(path)

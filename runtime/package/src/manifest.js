@@ -1,7 +1,7 @@
 'use strict'
 
 const { resolve } = require('path')
-const { lookup, yaml } = require('@kookaburra/gears')
+const { lookup, yaml } = require('@toa.io/gears')
 
 const { expand } = require('./expand')
 const { merge } = require('./merge')

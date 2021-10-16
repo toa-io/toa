@@ -1,6 +1,6 @@
 'use strict'
 
-const { Context } = require('@kookaburra/core')
+const { Context } = require('@toa.io/core')
 
 const boot = require('./index')
 

@@ -1,9 +1,9 @@
 'use strict'
 
-const boot = require('@kookaburra/boot')
-const { yaml } = require('@kookaburra/gears')
-const { Locator } = require('@kookaburra/core')
-const { load } = require('@kookaburra/package')
+const boot = require('@toa.io/boot')
+const { yaml } = require('@toa.io/gears')
+const { Locator } = require('@toa.io/core')
+const { load } = require('@toa.io/package')
 
 const { root } = require('../util')
 

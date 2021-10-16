@@ -1,7 +1,7 @@
 'use strict'
 
 const parser = require('@babel/parser')
-const { merge } = require('@kookaburra/gears')
+const { merge } = require('@toa.io/gears')
 
 const definition = (module) => {
   const definition = {}

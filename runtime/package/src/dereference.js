@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge } = require('@kookaburra/gears')
+const { merge } = require('@toa.io/gears')
 const dereference = (manifest) => {
   // schemas
   const property = resolve(manifest.entity.schema.properties)
@@ -53,7 +53,7 @@ const schema = (object, resolve) => {
 }
 
 const types = {
-  id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id' }
+  id: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id' }
 }
 
 const forward = (operation, operations) => {

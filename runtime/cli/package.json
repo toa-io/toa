@@ -1,19 +1,19 @@
 {
-  "name": "@kookaburra/cli",
+  "name": "@toa.io/cli",
   "version": "0.0.0",
   "description": "Kookaburra CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "main": "package.json",
   "bin": {
-    "kookaburra": "bin/kookaburra"
+    "toa": "bin/toa"
   },
   "publishConfig": {
     "access": "public"
@@ -22,10 +22,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@kookaburra/boot": "^0.0.0",
-    "@kookaburra/core": "^0.0.0",
-    "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/package": "^0.0.0"
+    "@toa.io/boot": "^0.0.0",
+    "@toa.io/core": "^0.0.0",
+    "@toa.io/gears": "^0.0.0",
+    "@toa.io/package": "^0.0.0"
   },
   "dependencies": {
     "find-up": "5.0.0",

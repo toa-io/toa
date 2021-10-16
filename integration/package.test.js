@@ -1,6 +1,6 @@
 'use strict'
 
-const { load } = require('@kookaburra/package')
+const { load } = require('@toa.io/package')
 
 it('should load', async () => {
   await expect(load('./dummies/a', __dirname)).resolves.not.toThrow()
@@ -12,7 +12,7 @@ describe('prototype', () => {
     const manifest = await load('./dummies/a', __dirname)
 
     expect(manifest.entity.schema.properties.id)
-      .toMatchObject({ $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/id' })
+      .toMatchObject({ $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id' })
   })
 
   it('should merge entity', async () => {
@@ -55,7 +55,7 @@ describe('events', () => {
   it('should provide binding', async () => {
     const manifest = await load('./dummies/a', __dirname)
 
-    expect(manifest.events.dummy.binding).toBe('@kookaburra/bindings.amqp')
+    expect(manifest.events.dummy.binding).toBe('@toa.io/bindings.amqp')
   })
 })
 

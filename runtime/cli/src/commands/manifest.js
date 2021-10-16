@@ -9,7 +9,7 @@ const builder = (yargs) => {
       desc: 'Path to component',
       default: '.'
     })
-    .usage('Usage: kookaburra manifest /path/to/component')
+    .usage('Usage: toa manifest /path/to/component')
 }
 
 exports.command = 'manifest [path]'

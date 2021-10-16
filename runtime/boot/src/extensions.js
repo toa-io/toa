@@ -1,6 +1,6 @@
 'use strict'
 
-const { lookup } = require('@kookaburra/gears')
+const { lookup } = require('@toa.io/gears')
 
 const extensions = (manifest) => {
   if (manifest.extensions === undefined) return

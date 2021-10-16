@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { sample } = require('@kookaburra/gears')
+const { sample } = require('@toa.io/gears')
 
 const { Factory } = require('../src/factory')
 const fixtures = require('./fixtures')

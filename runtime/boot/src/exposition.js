@@ -1,6 +1,6 @@
 'use strict'
 
-const { Exposition, Locator } = require('@kookaburra/core')
+const { Exposition, Locator } = require('@toa.io/core')
 
 const boot = require('./index')
 

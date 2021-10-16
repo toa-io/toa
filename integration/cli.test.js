@@ -8,7 +8,7 @@ const credits = framework.cli('credits')
 it('should print help', async () => {
   const result = await credits()
 
-  expect(result.stderr).toMatch(/^kookaburra <command>/)
+  expect(result.stderr).toMatch(/^toa <command>/)
 })
 
 it('should invoke', async () => {

@@ -1,8 +1,8 @@
 'use strict'
 
 const fetch = require('node-fetch')
-const { timeout } = require('@kookaburra/gears')
-const { id: newid } = require('@kookaburra/core')
+const { timeout } = require('@toa.io/gears')
+const { id: newid } = require('@toa.io/core')
 const extension = require('../extensions/resources')
 const framework = require('./framework')
 

@@ -24,7 +24,7 @@ For example, if you're using WebStorm, set CLI Options for Jest Template as `--r
 
 const lib1 = require('node-libs')
 const lib2 = require('third-party-libs')
-const { tool } = require('@kookaburra/libs')
+const { tool } = require('@toa.io/libs')
 
 const { local } = require('./local/module')
 

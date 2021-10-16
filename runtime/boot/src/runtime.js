@@ -1,7 +1,7 @@
 'use strict'
 
-const { remap } = require('@kookaburra/gears')
-const { Runtime, Locator } = require('@kookaburra/core')
+const { remap } = require('@toa.io/gears')
+const { Runtime, Locator } = require('@toa.io/core')
 
 const boot = require('./index')
 

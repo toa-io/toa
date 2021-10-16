@@ -1,16 +1,16 @@
 {
-  "name": "@kookaburra/bridges.javascript.native",
+  "name": "@toa.io/bridges.javascript.native",
   "version": "0.0.0",
   "description": "Kookaburra Native (inproc) javascript Bridge",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -19,8 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@kookaburra/core": "^0.0.0",
-    "@kookaburra/gears": "^0.0.0"
+    "@toa.io/core": "^0.0.0",
+    "@toa.io/gears": "^0.0.0"
   },
   "dependencies": {
     "@babel/parser": "7.15.3",

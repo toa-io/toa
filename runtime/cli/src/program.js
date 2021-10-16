@@ -2,7 +2,7 @@
 
 const yargs = require('yargs')
 
-const { console } = require('@kookaburra/gears')
+const { console } = require('@toa.io/gears')
 const { version } = require('../package.json')
 
 // noinspection JSValidateTypes

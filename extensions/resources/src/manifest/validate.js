@@ -2,8 +2,8 @@
 
 const path = require('path')
 
-const { Schema } = require('@kookaburra/schema')
-const { yaml } = require('@kookaburra/gears')
+const { Schema } = require('@toa.io/schema')
+const { yaml } = require('@toa.io/gears')
 
 const schema = yaml.sync(path.resolve(__dirname, 'schema.yaml'))
 const validator = new Schema(schema)

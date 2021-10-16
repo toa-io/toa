@@ -1,5 +1,5 @@
 {
-  "name": "kookaburra",
+  "name": "toa",
   "private": true,
   "workspaces": [
     "runtime/*",

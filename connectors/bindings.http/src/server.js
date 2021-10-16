@@ -2,8 +2,8 @@
 
 const express = require('express')
 
-const { Connector } = require('@kookaburra/core')
-const { console } = require('@kookaburra/gears')
+const { Connector } = require('@toa.io/core')
+const { console } = require('@toa.io/gears')
 
 class Server extends Connector {
   #app

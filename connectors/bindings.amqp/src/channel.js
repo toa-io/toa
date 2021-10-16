@@ -2,8 +2,8 @@
 
 const amqp = require('amqplib')
 
-const { Connector, id } = require('@kookaburra/core')
-const { console } = require('@kookaburra/gears')
+const { Connector, id } = require('@toa.io/core')
+const { console } = require('@toa.io/gears')
 
 const { pack, unpack } = require('./message')
 

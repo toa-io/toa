@@ -1,15 +1,15 @@
 {
-  "name": "@kookaburra/gears",
+  "name": "@toa.io/gears",
   "version": "0.0.0",
   "description": "Gears for Kookaburra",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "main": "src/index.js",
   "publishConfig": {

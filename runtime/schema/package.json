@@ -1,19 +1,19 @@
 {
-  "name": "@kookaburra/schema",
+  "name": "@toa.io/schema",
   "version": "0.0.0",
   "description": "Kookaburra schema validator",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "main": "src/schema.js",
   "dependencies": {
-    "@kookaburra/gears": "^0.0.0",
+    "@toa.io/gears": "^0.0.0",
     "ajv": "8.6.2"
   },
   "publishConfig": {

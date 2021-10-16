@@ -1,7 +1,7 @@
 'use strict'
 
 const fetch = require('node-fetch')
-const { Connector } = require('@kookaburra/core')
+const { Connector } = require('@toa.io/core')
 
 const resource = require('./resource')
 

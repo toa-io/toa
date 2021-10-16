@@ -1,6 +1,6 @@
 'use strict'
 
-const { Composition } = require('@kookaburra/core')
+const { Composition } = require('@toa.io/core')
 
 const boot = require('./index')
 

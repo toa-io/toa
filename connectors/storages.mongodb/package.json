@@ -1,16 +1,16 @@
 {
-  "name": "@kookaburra/storages.mongodb",
+  "name": "@toa.io/storages.mongodb",
   "version": "0.0.0",
   "description": "Kookaburra MongoDB Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/kookaburra#readme",
+  "homepage": "https://github.com/quantumducks/toa#readme",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/kookaburra.git"
+    "url": "git+https://github.com/quantumducks/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/kookaburra/issues"
+    "url": "https://github.com/quantumducks/toa/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -22,8 +22,8 @@
     "mongodb": "^4.1.0"
   },
   "peerDependencies": {
-    "@kookaburra/gears": "^0.0.0",
-    "@kookaburra/core": "^0.0.0"
+    "@toa.io/gears": "^0.0.0",
+    "@toa.io/core": "^0.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.13.8",

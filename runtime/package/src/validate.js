@@ -2,8 +2,8 @@
 
 const path = require('path')
 
-const { yaml, lookup } = require('@kookaburra/gears')
-const { Schema } = require('@kookaburra/schema')
+const { yaml, lookup } = require('@toa.io/gears')
+const { Schema } = require('@toa.io/schema')
 
 const object = yaml.sync(path.resolve(__dirname, 'schema.yaml'))
 const schema = new Schema(object)

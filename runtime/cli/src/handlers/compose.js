@@ -1,6 +1,6 @@
 'use strict'
 
-const boot = require('@kookaburra/boot')
+const boot = require('@toa.io/boot')
 const { root } = require('../util/root')
 
 async function compose (argv) {
@@ -18,7 +18,7 @@ const parse = (argv) => {
   if (argv.bindings) {
     options.bindings = argv.bindings.map((binding) => {
       if (binding[0] === '@' && binding.indexOf('/') === -1) {
-        binding = '@kookaburra/bindings.' + binding.substr(1)
+        binding = '@toa.io/bindings.' + binding.substr(1)
       }
 
       return binding

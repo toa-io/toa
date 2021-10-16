@@ -62,9 +62,9 @@ describe('definitions', () => {
   it('should have definitions', () => {
     const schema = new Schema({
       properties: {
-        id: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/token' },
-        remote: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/locator' },
-        schema: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/schema' }
+        id: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/token' },
+        remote: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/locator' },
+        schema: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/schema' }
       }
     })
 
@@ -74,7 +74,7 @@ describe('definitions', () => {
   it('should define endpoint', () => {
     const schema = new Schema({
       properties: {
-        event: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/endpoint' }
+        event: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/endpoint' }
       }
     })
 
@@ -88,7 +88,7 @@ describe('definitions', () => {
   it('should define locator', () => {
     const schema = new Schema({
       properties: {
-        remote: { $ref: 'https://schemas.kookaburra.dev/0.0.0/definitions#/definitions/locator' }
+        remote: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/locator' }
       }
     })
 

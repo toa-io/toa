@@ -1,6 +1,6 @@
 'use strict'
 
-const { Call, Transmission } = require('@kookaburra/core')
+const { Call, Transmission } = require('@toa.io/core')
 
 const boot = require('./index')
 

@@ -1,7 +1,7 @@
 'use strict'
 
-const { Observation, Transition, State, Query, entities } = require('@kookaburra/core')
-const { Schema } = require('@kookaburra/schema')
+const { Observation, Transition, State, Query, entities } = require('@toa.io/core')
+const { Schema } = require('@toa.io/schema')
 
 const boot = require('./index')
 

@@ -1,8 +1,8 @@
 'use strict'
 
-const binding = require('@kookaburra/bindings.amqp')
-const boot = require('@kookaburra/boot')
-const { Locator } = require('@kookaburra/core')
+const binding = require('@toa.io/bindings.amqp')
+const boot = require('@toa.io/boot')
+const { Locator } = require('@toa.io/core')
 
 const { Connector } = require('./connector')
 const { Resources } = require('./resources')

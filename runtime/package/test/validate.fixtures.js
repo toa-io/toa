@@ -21,13 +21,13 @@ const ok = {
       type: 'observation',
       subject: 'entries',
       bridge: 'whatever',
-      bindings: ['@kookaburra/bindings.http']
+      bindings: ['@toa.io/bindings.http']
     },
     add: {
       type: 'transition',
       subject: 'entry',
       bridge: 'whatever',
-      bindings: ['@kookaburra/bindings.http', '@kookaburra/bindings.amqp']
+      bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
     }
   },
   events: {
@@ -36,7 +36,7 @@ const ok = {
       path: '/somewhere',
       conditioned: true,
       subjective: false,
-      binding: '@kookaburra/bindings.amqp'
+      binding: '@toa.io/bindings.amqp'
     }
   },
   receivers: {
