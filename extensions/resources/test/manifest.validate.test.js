@@ -8,15 +8,14 @@ it('should validate', () => {
       operations: [
         {
           operation: 'foo',
-          type: 'observation',
-          subject: 'entry'
+          type: 'observation'
         }
       ],
       '/deeper/': {
         operations: [{
           operation: 'bar',
           type: 'transition',
-          subject: 'entry'
+          query: false
         }]
       }
     }

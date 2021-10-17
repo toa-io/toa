@@ -50,6 +50,7 @@ class EntityContractException extends ContractException {
 
 const codes = {
   System: 0,
+  NotImplemented: 10,
 
   Contract: 200,
   RequestContract: 201,

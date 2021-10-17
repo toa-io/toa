@@ -2,6 +2,7 @@
 
 const { console } = require('@toa.io/gears')
 const { Connector } = require('./connector')
+const { NotImplementedException } = require('./exceptions')
 
 class Runtime extends Connector {
   locator
@@ -27,7 +28,7 @@ class Runtime extends Connector {
 
   async invoke (endpoint, request) {
     if (!(endpoint in this.#operations)) {
-      throw new Error(`Endpoint '${endpoint}' not found in '${this.locator.id}'`)
+      throw new NotImplementedException(`Endpoint '${endpoint}' not found in '${this.locator.id}'`)
     }
 
     return this.#operations[endpoint].invoke(request)

@@ -4,7 +4,7 @@ $id: https://schemas.toa.io/0.0.0/rtd
 definitions:
   resource:
     patternProperties:
-      ^(\/([^/#\?]+?))+\/?$:
+      ^(\/([^\/#\?]+)?)+\/?$:
         $ref: '#/definitions/resource'
     properties:
       operations:
@@ -18,8 +18,8 @@ definitions:
               $ref: definitions#/definitions/token
             type:
               enum: [transition, observation, assignment]
-            subject:
-              enum: [entry, subset]
+            query:
+              type: boolean
           additionalProperties: false
     additionalProperties: false
 

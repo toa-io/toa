@@ -2,11 +2,7 @@
 
 const { exceptions: { codes } } = require('@toa.io/core')
 
-const translate = (reply, response) => {
-  if (reply.exception === undefined) return ok(reply, response)
-}
-
-const ok = (reply, response) => {
+const ok = (reply, response, request) => {
   if (reply.output?._version !== undefined) {
     const { _version, ...output } = reply.output
 
@@ -14,19 +10,30 @@ const ok = (reply, response) => {
     reply.output = output
   }
 
-  response.status(200)
+  response.status(request.method === 'POST' ? 201 : 200)
   response.send(reply)
 }
 
-translate.mismatch = (response) => {
-  response.status(404)
-}
+const missed = (response) => response.status(404)
 
-translate.exception = (exception, response) => {
-  if (exception.code === codes.RequestContract) response.status(400)
-  else response.status(500)
+const exception = (exception, response) => {
+  switch (exception.code) {
+    case codes.RequestContract:
+      response.status(400)
+      break
+    case codes.StateNotFound:
+      missed(response)
+      break
+    case codes.NotImplemented:
+      response.status(405)
+      break
+    default:
+      response.status(500)
+  }
 
   response.send(exception)
 }
 
-exports.translate = translate
+exports.ok = ok
+exports.missed = missed
+exports.exception = exception

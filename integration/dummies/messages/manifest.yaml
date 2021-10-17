@@ -51,3 +51,10 @@ operations:
       properties:
         ok: string
       required: [ id, ok ]
+
+extensions:
+  resources:
+    /:
+      operations: [add]
+    /:id:
+      operations: [get, update]

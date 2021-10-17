@@ -1,9 +1,9 @@
 'use strict'
 
-const { Connector } = require('@toa.io/core')
+const { Connector, exceptions: { NotImplementedException } } = require('@toa.io/core')
 const { empty } = require('@toa.io/gears')
 
-const { translate } = require('./translate')
+const translate = require('./translate')
 
 class Remote extends Connector {
   #remote
@@ -32,12 +32,12 @@ class Remote extends Connector {
     if (match !== undefined) {
       try {
         const reply = await this.#call(match, req)
-        translate(reply, res)
+        translate.ok(reply, res, req)
       } catch (e) {
         translate.exception(e, res)
       }
     } else {
-      translate.mismatch(res)
+      translate.missed(res)
     }
 
     res.end()
@@ -46,12 +46,14 @@ class Remote extends Connector {
   #call (match, req) {
     const operation = match.node.operations[req.method]
 
+    if (operation === undefined) throw new NotImplementedException()
+
     const request = {}
 
     if (!empty(req.body)) request.input = req.body
     if (!empty(req.query)) request.query = req.query
 
-    if (match.params) {
+    if (!empty(match.params)) {
       if (request.query === undefined) request.query = {}
 
       for (const [key, value] of Object.entries(match.params)) {

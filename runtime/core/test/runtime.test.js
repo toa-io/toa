@@ -1,6 +1,7 @@
 'use strict'
 
 const { Runtime } = require('../src/runtime')
+const { codes } = require('../src/exceptions')
 const fixtures = require('./runtime.fixtures')
 
 describe('Invocations', () => {
@@ -19,7 +20,8 @@ describe('Invocations', () => {
   })
 
   it('should throw on unknown invocation name', async () => {
-    await expect(() => runtime.invoke('baz')).rejects.toThrow(/not found/)
+    await expect(() => runtime.invoke('baz'))
+      .rejects.toMatchObject({ code: codes.NotImplemented })
   })
 
   it('should invoke input and query', async () => {
