@@ -46,7 +46,7 @@ class Schema {
 
     const result = {
       message: error.message,
-      keyword: error.keyword,
+      keyword: error.keyword
     }
 
     if (error.schemaPath) result.schema = error.schemaPath
