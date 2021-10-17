@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/extensions.resources",
   "version": "0.0.0",
-  "description": "Kookaburra Resources Extension",
+  "description": "Toa Resources Extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/toa#readme",
   "main": "src/index.js",

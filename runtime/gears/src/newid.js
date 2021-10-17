@@ -2,7 +2,7 @@
 
 const uuid = require('uuid').v4
 
-const id = () => {
+const newid = () => {
   const buffer = Buffer.allocUnsafe(16)
 
   uuid({}, buffer)
@@ -10,4 +10,4 @@ const id = () => {
   return buffer.toString('hex')
 }
 
-exports.id = id
+exports.newid = newid

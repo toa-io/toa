@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/schema",
   "version": "0.0.0",
-  "description": "Kookaburra schema validator",
+  "description": "Toa schema validator",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {

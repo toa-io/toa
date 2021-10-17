@@ -1,6 +1,6 @@
 'use strict'
 
-const { id } = require('../runtime/core/src/id')
+const { newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 
@@ -16,6 +16,6 @@ afterAll(async () => {
 })
 
 it('should merge reply', async () => {
-  const reply = await remote.invoke('transit', { input: { sender: id(), text: '2' } })
+  const reply = await remote.invoke('transit', { input: { sender: newid(), text: '2' } })
   expect(reply).toMatchObject({ output: { id: expect.any(String), ok: 'ok' } })
 })

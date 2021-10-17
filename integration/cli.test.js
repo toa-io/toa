@@ -1,6 +1,6 @@
 'use strict'
 
-const { id } = require('../runtime/core/src/id')
+const { newid } = require('@toa.io/gears')
 const framework = require('./framework')
 
 const credits = framework.cli('credits')
@@ -12,7 +12,7 @@ it('should print help', async () => {
 })
 
 it('should invoke', async () => {
-  const request = { query: { id: id() } }
+  const request = { query: { id: newid() } }
   const { stdout } = await credits('invoke', 'observe', request)
 
   expect(stdout).toMatch(/balance: \d+/)

@@ -1,7 +1,7 @@
 'use strict'
 
 const { console } = require('@toa.io/gears')
-const { id } = require('./id')
+const { newid } = require('@toa.io/gears')
 
 class Connector {
   #connectors = []
@@ -11,7 +11,7 @@ class Connector {
   id
 
   constructor () {
-    this.id = this.constructor.name + '#' + id().substring(0, 8)
+    this.id = this.constructor.name + '#' + newid().substring(0, 8)
   }
 
   depends (connector) {

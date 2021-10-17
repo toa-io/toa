@@ -1,6 +1,6 @@
 'use strict'
 
-const { Exception } = require('../exception')
+const { SystemException } = require('../exceptions')
 
 class Conditions {
   #schema
@@ -12,10 +12,10 @@ class Conditions {
   fit (value) {
     const error = this.#schema.fit(value)
 
-    if (error !== null) throw new Exception(this.constructor.EXCEPTION, error)
+    if (error !== null) throw new this.constructor.Exception(error)
   }
 
-  static EXCEPTION = Exception.SYSTEM
+  static Exception = SystemException
 }
 
 exports.Conditions = Conditions

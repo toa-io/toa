@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('./connector')
-const { Exception } = require('./exception')
+const { SystemException } = require('./exceptions')
 
 class Operation extends Connector {
   #cascade
@@ -26,7 +26,7 @@ class Operation extends Connector {
 
       return await this.process(request)
     } catch (e) {
-      const exception = e instanceof Error ? new Exception(e) : e
+      const exception = e instanceof Error ? new SystemException(e) : e
 
       return { exception }
     }

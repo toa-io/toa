@@ -26,7 +26,7 @@ const console = new Proxy(global.console, {
   }
 })
 
-let level = process.env.KOO_LOG_LEVEL || 'warn'
+let level = 'warn'
 
 const colors = {
   info: 'blue',

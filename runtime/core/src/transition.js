@@ -3,7 +3,7 @@
 const { retry } = require('@toa.io/gears')
 
 const { Operation } = require('./operation')
-const { Exception } = require('./exception')
+const { StateConcurrencyException } = require('./exceptions')
 
 class Transition extends Operation {
   #subject
@@ -32,7 +32,7 @@ class Transition extends Operation {
 
       if (ok !== true) {
         if (this.#concurrency === 'retry') retry()
-        else throw new Exception(Exception.STORAGE_POSTCONDITION)
+        else throw new StateConcurrencyException()
       }
     }
 

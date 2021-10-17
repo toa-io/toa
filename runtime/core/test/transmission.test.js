@@ -4,6 +4,7 @@ jest.mock('../src/connector')
 
 const { Connector } = require('../src/connector')
 const { Transmission } = require('../src/transmission')
+const { codes } = require('../src/exceptions')
 const fixtures = require('./transmission.fixtures')
 
 let transmission
@@ -38,7 +39,7 @@ it('should pick bindings sequentially', async () => {
 })
 
 it('should throw exception if none succeeded', async () => {
-  await expect(transmission.request({ pick: 5 })).rejects.toMatchObject({ code: 40 })
+  await expect(transmission.request({ pick: 5 })).rejects.toMatchObject({ code: codes.Transmission })
 
   fixtures.bindings.forEach((binding) =>
     expect(binding.request).toHaveBeenCalled())

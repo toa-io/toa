@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('./connector')
-const { Exception } = require('./exception')
+const { TransmissionException } = require('./exceptions')
 
 class Transmission extends Connector {
   #bindings
@@ -23,8 +23,7 @@ class Transmission extends Connector {
     }
 
     if (reply === false) {
-      throw new Exception(Exception.TRANSMISSION,
-        `Transmission failed. All (${this.#bindings.length}) bindings rejected.`)
+      throw new TransmissionException(`All (${this.#bindings.length}) bindings rejected.`)
     }
 
     return reply

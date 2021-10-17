@@ -1,10 +1,12 @@
 'use strict'
 
 const schemas = require('./schemas')
-const { Exception } = require('../exception')
+const { RequestContractException } = require('../exceptions')
 const { Conditions } = require('./conditions')
 
 class Request extends Conditions {
+  static Exception = RequestContractException
+
   static schema (definition) {
     const schema = { properties: {}, additionalProperties: false }
     const required = []
@@ -27,8 +29,6 @@ class Request extends Conditions {
 
     return schema
   }
-
-  static EXCEPTION = Exception.PRECONDITION
 }
 
 exports.Request = Request

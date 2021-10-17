@@ -1,6 +1,7 @@
 'use strict'
 
-const { id, Connector } = require('@toa.io/core')
+const { Connector } = require('@toa.io/core')
+const { newid } = require('@toa.io/gears')
 
 class Broadcast extends Connector {
   #group
@@ -10,7 +11,7 @@ class Broadcast extends Connector {
   constructor (channel, prefix, group) {
     super()
 
-    this.#group = group === undefined ? id() : group
+    this.#group = group === undefined ? newid() : group
 
     this.#channel = channel
     this.#prefix = prefix + '.'

@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/gears",
   "version": "0.0.0",
-  "description": "Gears for Kookaburra",
+  "description": "Toa Gears",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {
@@ -20,6 +20,8 @@
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9",
   "dependencies": {
-    "js-yaml": "^4.1.0"
+    "chalk": "4.1.2",
+    "js-yaml": "^4.1.0",
+    "uuid": "8.3.2"
   }
 }

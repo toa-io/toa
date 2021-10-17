@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { id } = require('../runtime/core/src/id')
+const { newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 
@@ -34,7 +34,7 @@ BINDINGS.forEach((binding) => {
     })
 
     it('should get message', async () => {
-      const message = { sender: id(), text: generate() }
+      const message = { sender: newid(), text: generate() }
       const created = await remote.invoke('add', { input: message })
 
       expect(created.output.id).toBeDefined()
@@ -46,7 +46,7 @@ BINDINGS.forEach((binding) => {
     })
 
     it('should find messages', async () => {
-      const sender = id()
+      const sender = newid()
 
       const messages = Array.from(Array(5)).map((_, index) =>
         ({ sender, text: generate(), timestamp: index }))
@@ -73,7 +73,7 @@ BINDINGS.forEach((binding) => {
 
     it('should throw on invalid input', async () => {
       await expect(remote.invoke('add')).rejects.toMatchObject({ code: 0 })
-      await expect(remote.invoke('add', {})).rejects.toMatchObject({ code: 10, keyword: 'required' })
+      await expect(remote.invoke('add', {})).rejects.toMatchObject({ code: 201, keyword: 'required' })
     })
   })
 })

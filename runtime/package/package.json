@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/package",
   "version": "0.0.0",
-  "description": "Kookaburra Package",
+  "description": "Toa Package",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {

@@ -1,10 +1,9 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { difference } = require('@toa.io/gears')
+const { difference, newid } = require('@toa.io/gears')
 
-const { id: newid } = require('../id')
-const { Exception } = require('../exception')
+const { EntityContractException } = require('../exceptions')
 
 class Entity {
   #schema
@@ -30,7 +29,7 @@ class Entity {
   set (value) {
     const error = this.#schema.fit(value)
 
-    if (error) throw new Exception(error)
+    if (error) throw new EntityContractException(error)
 
     this.#state = { ...value }
   }

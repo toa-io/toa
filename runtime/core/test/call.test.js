@@ -3,10 +3,8 @@
 const { Call } = require('../src/call')
 const fixtures = require('./call.fixtures')
 
-jest.mock('../src/exception')
 jest.mock('../src/connector')
 
-const { Exception } = require('../src/exception')
 const { Connector } = require('../src/connector')
 
 let call
@@ -50,6 +48,5 @@ it('should return reply', async () => {
 it('should throw received exceptions', async () => {
   const request = fixtures.request().bad
 
-  await expect(call.invoke(request)).rejects.toBeInstanceOf(Exception)
-  expect(Exception).toHaveBeenLastCalledWith(fixtures.transmission.request.mock.results[0].value.exception)
+  await expect(call.invoke(request)).rejects.toBeDefined()
 })

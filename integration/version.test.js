@@ -1,9 +1,9 @@
 'use strict'
 
-const { id: newid } = require('../runtime/core/src/id')
+const { random, repeat, newid } = require('@toa.io/gears')
+const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')
-const { random, repeat } = require('@toa.io/gears')
 
 let composition, remote
 
@@ -50,7 +50,7 @@ it('should throw on update conflict', async () => {
   await remote.invoke('transit', { input: { balance: 30 }, query: { id } })
 
   await expect(repeat(() => remote.invoke('deduce', { input: 1, query: { id } }), times))
-    .rejects.toMatchObject({ code: 33 })
+    .rejects.toMatchObject({ code: codes.StateConcurrency })
 })
 
 it('should throw on version conflict', async () => {
@@ -63,5 +63,5 @@ it('should throw on version conflict', async () => {
   await remote.invoke('transit', { input: { balance: 2 }, query: { id } })
 
   await expect(remote.invoke('transit', { input: { balance: 2 }, query: { id, version: output._version } }))
-    .rejects.toMatchObject({ code: 32 })
+    .rejects.toMatchObject({ code: codes.StatePrecondition })
 })

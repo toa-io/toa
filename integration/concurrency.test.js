@@ -1,8 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { timeout, random, repeat } = require('@toa.io/gears')
-const { id: newid } = require('../runtime/core/src/id')
+const { timeout, random, repeat, newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 

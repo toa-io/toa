@@ -1,4 +1,6 @@
-const { id } = require('../runtime/core/src/id')
+'use strict'
+
+const { newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 
@@ -15,14 +17,14 @@ afterAll(async () => {
 })
 
 it('should provide default', async () => {
-  const request = { query: { id: id() } }
+  const request = { query: { id: newid() } }
   const reply = await remote.invoke('observe', request)
 
   expect(reply.output?.balance).toBe(10)
 })
 
 it('should transit', async () => {
-  const request = { input: 1, query: { id: id() } }
+  const request = { input: 1, query: { id: newid() } }
   const reply = await remote.invoke('deduce', request)
 
   expect(reply.output).toBe(9)

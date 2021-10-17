@@ -1,7 +1,7 @@
 'use strict'
 
 const { empty } = require('@toa.io/gears')
-const { Exception } = require('./exception')
+const { StatePreconditionException, StateNotFoundException } = require('./exceptions')
 
 class State {
   #storage
@@ -25,7 +25,8 @@ class State {
 
     if (entry === null) {
       if (this.#initialized && query.id !== undefined && query.version === undefined) return this.init(query.id)
-      else throw new Exception(Exception.STORAGE_MISSED)
+      else if (query.version !== undefined) throw new StatePreconditionException()
+      else throw new StateNotFoundException()
     }
 
     return this.#entity.entry(entry)

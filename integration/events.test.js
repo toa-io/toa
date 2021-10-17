@@ -1,10 +1,9 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { id } = require('../runtime/core/src/id')
+const { timeout, random, newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
-const { timeout, random } = require('@toa.io/gears')
 
 let composition, messages, stats
 
@@ -22,7 +21,7 @@ afterAll(async () => {
 
 it('should count messages', async () => {
   const times = 5 + random(5)
-  const sender = id()
+  const sender = newid()
 
   for (let i = 0; i < times; i++) {
     await messages.invoke('add', { input: { sender, text: generate(), free: true } })

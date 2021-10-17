@@ -2,8 +2,8 @@
 
 const amqp = require('amqplib')
 
-const { Connector, id } = require('@toa.io/core')
-const { console } = require('@toa.io/gears')
+const { Connector } = require('@toa.io/core')
+const { console, newid } = require('@toa.io/gears')
 
 const { pack, unpack } = require('./message')
 
@@ -19,7 +19,7 @@ class Channel extends Connector {
   constructor (host) {
     super()
 
-    this.#id = id()
+    this.#id = newid()
     this.#url = Channel.#locate(host)
   }
 
@@ -42,7 +42,7 @@ class Channel extends Connector {
     if (request === undefined) request = {}
 
     const queue = 'request.' + label
-    const correlation = id()
+    const correlation = newid()
 
     await this.#channel.assertQueue(queue, QUEUE)
     await this.#bind(label)

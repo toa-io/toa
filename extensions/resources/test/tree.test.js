@@ -10,6 +10,11 @@ beforeEach(() => {
 })
 
 it('should find node', () => {
-  const node = tree.node('/12/')
-  expect(node).toBeDefined()
+  expect(tree.match('/12/')).toBeDefined()
+  expect(tree.match('/12/segment/')).toBeDefined()
+})
+
+it('should return undefined on mismatch', () => {
+  expect(tree.match('/12')).not.toBeDefined()
+  expect(tree.match('/non/existent/')).not.toBeDefined()
 })

@@ -1,9 +1,10 @@
 'use strict'
 
-const { id: newid } = require('../runtime/core/src/id')
+const { generate } = require('randomstring')
+const { newid } = require('@toa.io/gears')
+const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')
-const { generate } = require('randomstring')
 
 let composition, remote, messages
 
@@ -20,8 +21,9 @@ afterAll(async () => {
 })
 
 describe('not found', () => {
-  it('should return null if target is an entry', async () => {
-    await expect(remote.invoke('get', { query: { criteria: 'id==1' } })).rejects.toMatchObject({ code: 32 })
+  it('should throw if target is an entry', async () => {
+    await expect(remote.invoke('get', { query: { criteria: 'id==1' } }))
+      .rejects.toMatchObject({ code: codes.StateNotFound })
   })
 
   it('should return empty array if target is a set', async () => {
@@ -55,12 +57,12 @@ describe('not found', () => {
 
   it('should throw if query passed when declaration.query = false', async () => {
     await expect(remote.invoke('add', { input: { sender: '1', text: '123' }, query: { criteria: 'id==1' } }))
-      .rejects.toMatchObject({ code: 10, keyword: 'additionalProperties', property: 'query' })
+      .rejects.toMatchObject({ code: 201, keyword: 'additionalProperties', property: 'query' })
   })
 
   it('should throw if no query passed when declaration.query = true', async () => {
     await expect(remote.invoke('find', {}))
-      .rejects.toMatchObject({ code: 10, keyword: 'required', property: 'query' })
+      .rejects.toMatchObject({ code: 201, keyword: 'required', property: 'query' })
   })
 
   it('should add or update based on query', async () => {

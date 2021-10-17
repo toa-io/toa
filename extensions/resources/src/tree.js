@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const { pathToRegexp: toRx, match } = require('path-to-regexp')
+const { match } = require('path-to-regexp')
 
 class Tree {
   #nodes = []
@@ -10,15 +10,18 @@ class Tree {
     this.#traverse(tree)
   }
 
-  node (path) {
-    return this.#nodes.find((node) => node.rx.test(path))
+  match (path) {
+    let match
+
+    const node = this.#nodes.find((node) => (match = node.match(path)))
+
+    return node === undefined ? undefined : { node, params: match.params }
   }
 
   #traverse (node, route = '/') {
     const current = {}
 
     route = trail(route)
-    current.rx = toRx(route, [], toRx.options)
     current.match = match(route)
 
     if (node.operations) {
@@ -35,11 +38,6 @@ class Tree {
 
     this.#nodes.push(current)
   }
-}
-
-toRx.options = {
-  sensitive: true,
-  strict: true
 }
 
 const trail = (path) => path[path.length - 1] === '/' ? path : path + '/'

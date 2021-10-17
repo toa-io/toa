@@ -1,6 +1,5 @@
 'use strict'
 
-const { Exception } = require('../../src/exception')
 const { Entity } = require('../../src/entities/entity')
 const fixtures = require('./entity.fixtures')
 
@@ -12,7 +11,7 @@ describe('new', () => {
   it('should throw on schema error', () => {
     const entry = new Entity(fixtures.schema)
 
-    expect(() => entry.set(fixtures.failed())).toThrow(expect.any(Exception))
+    expect(() => entry.set(fixtures.failed())).toThrow()
   })
 
   it('should provide state', () => {

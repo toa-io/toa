@@ -1,7 +1,6 @@
 'use strict'
 
 const { Connector } = require('./connector')
-const { Exception } = require('./exception')
 
 class Call extends Connector {
   #transmitter
@@ -21,7 +20,7 @@ class Call extends Connector {
 
     const { exception, ...reply } = await this.#transmitter.request(request)
 
-    if (exception) throw new Exception(exception)
+    if (exception) throw exception
 
     return reply
   }

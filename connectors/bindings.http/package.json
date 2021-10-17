@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/bindings.http",
   "version": "0.0.0",
-  "description": "Kookaburra HTTP Binding",
+  "description": "Toa HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/toa#readme",
   "main": "src/index.js",

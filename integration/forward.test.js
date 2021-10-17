@@ -1,4 +1,6 @@
-const { id } = require('../runtime/core/src/id')
+'use strict'
+
+const { newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 
@@ -14,11 +16,11 @@ afterAll(async () => {
 })
 
 it('should forward', async () => {
-  const reply = await remote.invoke('update', { input: { sender: id(), text: '2' } })
+  const reply = await remote.invoke('update', { input: { sender: newid(), text: '2' } })
   expect(reply).toMatchObject({ output: { id: expect.any(String), ok: 'ok' } })
 })
 
 it('should forward recursive', async () => {
-  const reply = await remote.invoke('change', { input: { sender: id(), text: '2' } })
+  const reply = await remote.invoke('change', { input: { sender: newid(), text: '2' } })
   expect(reply).toMatchObject({ output: { id: expect.any(String), ok: 'ok' } })
 })

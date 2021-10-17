@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/core",
   "version": "0.0.0",
-  "description": "Kookaburra core abstractions",
+  "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/quantumducks/toa#readme",
   "repository": {
@@ -22,7 +22,6 @@
     "@toa.io/gears": "^0.0.0",
     "@toa.io/schema": "^0.0.0",
     "@rsql/parser": "1.0.3",
-    "uuid": "8.3.2",
     "clone-deep": "4.0.1"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
