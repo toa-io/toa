@@ -1,5 +1,7 @@
 'use strict'
 
+const { exceptions: { codes } } = require('@toa.io/core')
+
 const translate = (reply, response) => {
   if (reply.exception === undefined) return ok(reply, response)
 }
@@ -18,6 +20,13 @@ const ok = (reply, response) => {
 
 translate.mismatch = (response) => {
   response.status(404)
+}
+
+translate.exception = (exception, response) => {
+  if (exception.code === codes.RequestContract) response.status(400)
+  else response.status(500)
+
+  response.send(exception)
 }
 
 exports.translate = translate

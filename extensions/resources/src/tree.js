@@ -18,6 +18,12 @@ class Tree {
     return node === undefined ? undefined : { node, params: match.params }
   }
 
+  update (tree) {
+    // TODO: add test
+    this.#nodes = []
+    this.#traverse(tree)
+  }
+
   #traverse (node, route = '/') {
     const current = {}
 

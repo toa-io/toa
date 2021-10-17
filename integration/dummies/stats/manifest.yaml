@@ -18,3 +18,8 @@ operations:
 
 receivers:
   messages.messages.created: update
+
+extensions:
+  resources:
+    /:id:
+      operations: [observe, update]

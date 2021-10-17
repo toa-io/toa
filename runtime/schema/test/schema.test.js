@@ -46,7 +46,9 @@ it('should format error', () => {
   expect(error).toStrictEqual({
     message: 'a must be integer',
     keyword: 'type',
-    property: 'a'
+    property: 'a',
+    path: '/a',
+    schema: '#/properties/a/type'
   })
 
   error = schema.fit({ b: true })
@@ -54,7 +56,8 @@ it('should format error', () => {
   expect(error).toStrictEqual({
     message: 'must have required property \'a\'',
     keyword: 'required',
-    property: 'a'
+    property: 'a',
+    schema: '#/required'
   })
 })
 

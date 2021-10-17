@@ -2,16 +2,28 @@
 
 const fetch = require('node-fetch')
 const { timeout, newid } = require('@toa.io/gears')
+const { exceptions: { codes } } = require('@toa.io/core')
 const extension = require('../extensions/resources')
 
 const framework = require('./framework')
 
-let composition, resources
+let resources, credits, stats
 
 const path = (path) => 'http://localhost:8000' + path
 
+const composeStats = async () => {
+  if (stats === undefined) {
+    stats = await framework.compose(['stats', 'messages'])
+
+    await stats.connect()
+    await timeout(10) // resource exposition
+  }
+
+  return stats
+}
+
 beforeAll(async () => {
-  composition = await framework.compose(['credits'])
+  credits = await framework.compose(['credits'])
   resources = await (new extension.Factory()).process()
 
   await resources.connect()
@@ -19,21 +31,36 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  if (composition) await composition.disconnect()
   if (resources) await resources.disconnect()
-})
-
-it('should get', async () => {
-  const id = newid()
-  const url = path('/credits/balance/' + id + '/')
-  const response = await fetch(url)
-  const json = await response.json()
-
-  expect(response.status).toBe(200)
-  expect(json).toStrictEqual({ output: { id, balance: 10 } })
+  if (credits) await credits.disconnect()
+  if (stats) await stats.disconnect()
 })
 
 describe('routing', () => {
+  it('should expose routes', async () => {
+    const id = newid()
+    const url = path('/credits/balance/' + id + '/')
+    const response = await fetch(url)
+    const json = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(json).toStrictEqual({ output: { id, balance: 10 } })
+  })
+
+  it('should expose routes dynamically', async () => {
+    const id = newid()
+    const url = path('/stats/stats/' + id + '/')
+    const before = await fetch(url)
+
+    expect(before.status).toBe(404)
+
+    stats = await composeStats()
+
+    const after = await fetch(url)
+
+    expect(after.status).toBe(200)
+  })
+
   it('should return 404 on route mismatch', async () => {
     const url = path('/no/route/matches')
     const response = await fetch(url)
@@ -46,6 +73,51 @@ describe('routing', () => {
     const response = await fetch(url)
 
     expect(response.status).toBe(404)
+  })
+})
+
+describe('request', () => {
+  it('should return 400 on invalid query', async () => {
+    const url = path('/credits/balance/' + newid() + '/?foo=bar')
+    const response = await fetch(url)
+    const reply = await response.json()
+
+    expect(response.status).toBe(400)
+
+    expect(reply).toStrictEqual({
+      code: codes.RequestContract,
+      keyword: 'additionalProperties',
+      property: 'foo',
+      path: '/query',
+      schema: '#/properties/query/additionalProperties',
+      message: expect.any(String)
+    })
+  })
+
+  it('should return 400 on invalid body', async () => {
+    const id = newid()
+    const url = path('/stats/stats/' + id + '/')
+
+    stats = await composeStats()
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify({ foo: 'bar' }),
+      headers: { 'content-type': 'application/json' }
+    })
+
+    const reply = await response.json()
+
+    expect(response.status).toBe(400)
+
+    expect(reply).toStrictEqual({
+      code: codes.RequestContract,
+      keyword: 'additionalProperties',
+      property: 'foo',
+      path: '/input',
+      schema: '#/properties/input/additionalProperties',
+      message: expect.any(String)
+    })
   })
 })
 

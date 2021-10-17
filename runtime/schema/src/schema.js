@@ -46,8 +46,11 @@ class Schema {
 
     const result = {
       message: error.message,
-      keyword: error.keyword
+      keyword: error.keyword,
     }
+
+    if (error.schemaPath) result.schema = error.schemaPath
+    if (error.instancePath) result.path = error.instancePath
 
     if (error.keyword === 'additionalProperties') {
       result.property = error.params.additionalProperty

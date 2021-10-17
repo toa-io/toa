@@ -76,14 +76,14 @@ class Channel extends Connector {
     })
   }
 
-  async publish (label, payload) {
+  async publish (label, payload, options) {
     const exchange = 'event.' + label
 
     await this.#channel.assertExchange(exchange, 'fanout', EXCHANGE)
 
     const message = pack(payload)
 
-    await this.#channel.publish(exchange, '', message)
+    await this.#channel.publish(exchange, '', message, options)
   }
 
   async subscribe (label, id, callback) {

@@ -1,4 +1,4 @@
 'use strict'
 
 process.env.KOO_ENV = 'dev'
-jest.setTimeout(30000)
+jest.setTimeout(60000)

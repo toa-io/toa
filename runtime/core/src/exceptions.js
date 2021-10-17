@@ -11,6 +11,8 @@ class Exception {
 }
 
 class SystemException extends Exception {
+  stack
+
   constructor (error) {
     super(codes.System, error.message)
 
@@ -19,11 +21,18 @@ class SystemException extends Exception {
 }
 
 class ContractException extends Exception {
+  keyword
+  property
+  schema
+  path
+
   constructor (code, error) {
     super(code || codes.Contract, error.message)
 
     this.keyword = error.keyword
     this.property = error.property
+    this.schema = error.schema
+    this.path = error.path
   }
 }
 
@@ -57,7 +66,11 @@ const codes = {
 }
 
 /// region exports
-const names = {}
+exports.Exception = Exception
+exports.SystemException = SystemException
+exports.RequestContractException = RequestContractException
+exports.ResponseContractException = ResponseContractException
+exports.EntityContractException = EntityContractException
 
 for (const [name, code] of Object.entries(codes)) {
   const classname = name + 'Exception'
@@ -65,16 +78,7 @@ for (const [name, code] of Object.entries(codes)) {
   if (exports[classname] === undefined) {
     exports[classname] = class extends Exception {constructor (message) { super(code, message) }}
   }
-
-  names[code] = name
 }
 
-exports.Exception = Exception
-exports.SystemException = SystemException
-exports.RequestContractException = RequestContractException
-exports.ResponseContractException = ResponseContractException
-exports.EntityContractException = EntityContractException
-
 exports.codes = codes
-exports.names = names
 /// endregion

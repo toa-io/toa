@@ -22,12 +22,20 @@ class Remote extends Connector {
     this.depends(remote)
   }
 
+  update (definition) {
+    this.#tree.update(definition)
+  }
+
   async #reply (req, res) {
     const match = this.#tree.match(req.params[0])
 
     if (match !== undefined) {
-      const reply = await this.#call(match, req)
-      translate(reply, res)
+      try {
+        const reply = await this.#call(match, req)
+        translate(reply, res)
+      } catch (e) {
+        translate.exception(e, res)
+      }
     } else {
       translate.mismatch(res)
     }

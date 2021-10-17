@@ -20,7 +20,7 @@ class Broadcast extends Connector {
   }
 
   async send (label, payload) {
-    await this.#channel.publish(this.#prefix + label, payload)
+    await this.#channel.publish(this.#prefix + label, payload, { expiration: 10, persistent: false })
   }
 
   async receive (label, callback) {

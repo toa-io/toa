@@ -35,7 +35,7 @@ class Resources extends Connector {
 
         return remote
       })()
-    } else (await this.#remotes[domain][name]).expose(resources)
+    } else (await this.#remotes[domain][name]).update(resources)
   }
 }
 

@@ -1,4 +1,5 @@
 $schema: https://json-schema.org/draft/2019-09/schema
+$id: https://schemas.toa.io/0.0.0/rtd
 
 definitions:
   resource:
@@ -14,9 +15,9 @@ definitions:
           type: object
           properties:
             operation:
-              $ref: https://schemas.toa.io/0.0.0/definitions#/definitions/token
+              $ref: definitions#/definitions/token
             type:
-              enum: [observation, transition]
+              enum: [transition, observation, assignment]
             subject:
               enum: [entry, subset]
           additionalProperties: false
