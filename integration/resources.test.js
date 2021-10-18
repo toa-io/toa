@@ -1,7 +1,7 @@
 'use strict'
 
 const fetch = require('node-fetch')
-const { timeout, newid } = require('@toa.io/gears')
+const { timeout, newid, random, repeat } = require('@toa.io/gears')
 const { exceptions: { codes } } = require('@toa.io/core')
 const extension = require('../extensions/resources')
 
@@ -130,12 +130,12 @@ describe('request', () => {
 
   describe('if-match', () => {
     const sender = newid()
-    const urls = { messages: locator('/messages/') }
+    const urls = { messages: locator('/messages/' + sender + '/') }
 
     beforeAll(async () => {
       const created = await fetch(urls.messages, {
         method: 'POST',
-        body: JSON.stringify({ sender, text: 'foo' }),
+        body: JSON.stringify({ text: 'foo' }),
         headers: { 'content-type': 'application/json' }
       })
 
@@ -143,13 +143,13 @@ describe('request', () => {
 
       const { output } = await created.json()
 
-      urls.message = locator('/messages/' + output.id + '/')
+      urls.message = locator('/messages/' + sender + '/' + output.id + '/')
     })
 
     it('should return 400 if if-match is invalid', async () => {
       const response = await fetch(urls.message, {
         method: 'PUT',
-        body: JSON.stringify({ sender, text: 'bar' }),
+        body: JSON.stringify({ text: 'bar' }),
         headers: {
           'content-type': 'application/json',
           'if-match': 'foo'
@@ -169,7 +169,7 @@ describe('request', () => {
     it('should return 400 if if-match is not a number', async () => {
       const response = await fetch(urls.message, {
         method: 'PUT',
-        body: JSON.stringify({ sender, text: 'bar' }),
+        body: JSON.stringify({ text: 'bar' }),
         headers: {
           'content-type': 'application/json',
           'if-match': '"foo"'
@@ -193,7 +193,7 @@ describe('request', () => {
     it('should allow wildcard', async () => {
       const wildcard = await fetch(urls.message, {
         method: 'PUT',
-        body: JSON.stringify({ sender, text: 'baz' }),
+        body: JSON.stringify({ text: 'baz' }),
         headers: {
           'content-type': 'application/json',
           'if-match': '*'
@@ -203,12 +203,62 @@ describe('request', () => {
       expect(wildcard.status).toBe(200)
     })
   })
+
+  describe('path params', () => {
+    const times = 5 + random(5)
+    const sender = newid()
+    const url = locator('/messages/' + sender + '/')
+
+    it('should use path params as query criteria for safe methods', async () => {
+      const send = async () => {
+        const response = await fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({ text: 'foo' }),
+          headers: { 'content-type': 'application/json' }
+        })
+
+        expect(response.status).toBe(201)
+      }
+
+      await repeat(send, times)
+
+      const response = await fetch(url)
+      const { output } = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(output.length).toBe(times)
+
+      for (const message of output) {
+        expect(message.sender).toBe(sender)
+      }
+    })
+
+    it('should return 403 on input conflict', async () => {
+      const fake = newid()
+
+      const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ sender: fake, text: 'foo' }),
+        headers: { 'content-type': 'application/json' }
+      })
+
+      const output = await response.json()
+
+      expect(response.status).toBe(403)
+
+      expect(output).toStrictEqual({
+        code: codes.RequestConflict,
+        message: 'Input property \'sender\' conflicts with path parameter'
+      })
+    })
+  })
 })
 
 describe('response', () => {
   it('should return 404 on StateNotFound', async () => {
+    const sender = newid()
     const id = newid()
-    const url = locator('/messages/' + id + '/')
+    const url = locator('/messages/' + sender + '/' + id + '/')
     const response = await fetch(url)
 
     expect(response.status).toBe(404)
@@ -216,11 +266,11 @@ describe('response', () => {
 
   it('should return 201 on transition without query', async () => {
     const sender = newid()
-    const url = locator('/messages/')
+    const url = locator('/messages/' + sender + '/')
 
     const response = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify({ sender, text: 'foo' }),
+      body: JSON.stringify({ text: 'foo' }),
       headers: { 'content-type': 'application/json' }
     })
 
@@ -232,11 +282,11 @@ describe('response', () => {
 
   it('should return 500 on user space exception', async () => {
     const sender = newid()
-    const url = locator('/messages/')
+    const url = locator('/messages/' + sender + '/')
 
     const response = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify({ sender, text: 'throw exception' }),
+      body: JSON.stringify({ text: 'throw exception' }),
       headers: { 'content-type': 'application/json' }
     })
 
@@ -253,11 +303,11 @@ describe('response', () => {
 
   it('should return 412 on version mismatch', async () => {
     const sender = newid()
-    const url = locator('/messages/')
+    const url = locator('/messages/' + sender + '/')
 
     const created = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify({ sender, text: 'foo' }),
+      body: JSON.stringify({ text: 'foo' }),
       headers: { 'content-type': 'application/json' }
     })
 
@@ -267,7 +317,7 @@ describe('response', () => {
 
     const failed = await fetch(url + output.id + '/', {
       method: 'PUT',
-      body: JSON.stringify({ sender, text: 'bar' }),
+      body: JSON.stringify({ text: 'bar' }),
       headers: {
         'content-type': 'application/json',
         'if-match': '"3"'

@@ -55,6 +55,7 @@ const codes = {
   Contract: 200,
   RequestFormat: 201,
   RequestContract: 202,
+  RequestConflict: 203,
   ResponseContract: 211,
   EntityContract: 212,
 

@@ -26,6 +26,7 @@ const exception = (exception, response) => {
 const STATUSES = {
   [codes.RequestContract]: 400,
   [codes.RequestFormat]: 400,
+  [codes.RequestConflict]: 403,
   [codes.StateNotFound]: 404,
   [codes.NotImplemented]: 405,
   [codes.StatePrecondition]: 412

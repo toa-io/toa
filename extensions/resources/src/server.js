@@ -20,6 +20,12 @@ class Server extends Connector {
     this.#app.enable('strict routing')
     this.#app.disable('etag')
     this.#app.use(express.json())
+
+    this.#app.use((req, res, next) => {
+      req.safe = SAFE[req.method] !== undefined
+      next()
+    })
+
     this.#port = PORT
   }
 
@@ -55,5 +61,6 @@ class Server extends Connector {
 }
 
 const PORT = 8000
+const SAFE = { GET: 1, HEAD: 1, OPTIONS: 1 }
 
 exports.Server = Server

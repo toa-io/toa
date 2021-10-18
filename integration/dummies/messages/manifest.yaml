@@ -55,6 +55,8 @@ operations:
 extensions:
   resources:
     /:
-      operations: [add]
-    /:id:
-      operations: [get, update]
+      operations: [find]
+    /:sender:
+      operations: [add, find]
+      /:id:
+        operations: [get, update]
