@@ -127,6 +127,63 @@ describe('request', () => {
 
     expect(response.status).toBe(405)
   })
+
+  it('should return 412 on version mismatch', async () => {
+    const sender = newid()
+    const url = locator('/messages/messages/')
+
+    const created = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ sender, text: 'foo' }),
+      headers: { 'content-type': 'application/json' }
+    })
+
+    expect(created.status).toBe(201)
+
+    const { output: { id } } = await created.json()
+
+    const messageURL = locator('/messages/messages/' + id + '/')
+    const observed = await fetch(messageURL)
+
+    expect(observed.status).toBe(200)
+
+    const etag = observed.headers.get('etag')
+
+    expect(etag).toStrictEqual('"1"')
+
+    const format = await fetch(messageURL, {
+      method: 'PUT',
+      body: JSON.stringify({ sender, text: 'bar' }),
+      headers: {
+        'content-type': 'application/json',
+        'if-match': '"mismatching-value"'
+      }
+    })
+
+    expect(format.status).toBe(400)
+
+    const precondition = await fetch(messageURL, {
+      method: 'PUT',
+      body: JSON.stringify({ sender, text: 'baz' }),
+      headers: {
+        'content-type': 'application/json',
+        'if-match': '"3"'
+      }
+    })
+
+    expect(precondition.status).toBe(412)
+
+    const wildcard = await fetch(messageURL, {
+      method: 'PUT',
+      body: JSON.stringify({ sender, text: 'baz' }),
+      headers: {
+        'content-type': 'application/json',
+        'if-match': '"*"'
+      }
+    })
+
+    expect(wildcard.status).toBe(200)
+  })
 })
 
 describe('response', () => {

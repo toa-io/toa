@@ -2,6 +2,7 @@
 
 const { generate } = require('randomstring')
 const { newid } = require('@toa.io/gears')
+const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')
 
@@ -72,8 +73,10 @@ BINDINGS.forEach((binding) => {
     })
 
     it('should throw on invalid input', async () => {
-      await expect(remote.invoke('add')).rejects.toMatchObject({ code: 0 })
-      await expect(remote.invoke('add', {})).rejects.toMatchObject({ code: 201, keyword: 'required' })
+      await expect(remote.invoke('add')).rejects.toMatchObject({ code: codes.System })
+
+      await expect(remote.invoke('add', {}))
+        .rejects.toMatchObject({ code: codes.RequestContract, keyword: 'required' })
     })
   })
 })

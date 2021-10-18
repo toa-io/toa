@@ -17,21 +17,17 @@ const ok = (reply, response, request) => {
 const missed = (response) => response.status(404)
 
 const exception = (exception, response) => {
-  switch (exception.code) {
-    case codes.RequestContract:
-      response.status(400)
-      break
-    case codes.StateNotFound:
-      missed(response)
-      break
-    case codes.NotImplemented:
-      response.status(405)
-      break
-    default:
-      response.status(500)
-  }
+  const status = STATUSES[exception.code] || 500
 
+  response.status(status)
   response.send(exception)
+}
+
+const STATUSES = {
+  [codes.RequestContract]: 400,
+  [codes.StateNotFound]: 404,
+  [codes.NotImplemented]: 405,
+  [codes.StatePrecondition]: 412
 }
 
 exports.ok = ok

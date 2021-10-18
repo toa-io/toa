@@ -53,9 +53,10 @@ const codes = {
   NotImplemented: 10,
 
   Contract: 200,
-  RequestContract: 201,
-  ResponseContract: 202,
-  EntityContract: 203,
+  RequestFormat: 201,
+  RequestContract: 202,
+  ResponseContract: 211,
+  EntityContract: 212,
 
   State: 300,
   StateNotFound: 302,

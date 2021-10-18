@@ -18,6 +18,7 @@ class Server extends Connector {
     this.#app.disable('x-powered-by')
     this.#app.enable('case sensitive routing')
     this.#app.enable('strict routing')
+    this.#app.disable('etag')
     this.#app.use(express.json())
     this.#port = PORT
   }

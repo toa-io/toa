@@ -1,7 +1,6 @@
 'use strict'
 
 const { Connector, exceptions: { NotImplementedException } } = require('@toa.io/core')
-const { empty } = require('@toa.io/gears')
 
 const translate = require('./translate')
 
@@ -31,35 +30,24 @@ class Remote extends Connector {
 
     if (match !== undefined) {
       try {
-        const reply = await this.#call(match, req)
-        translate.ok(reply, res, req)
+        const reply = await this.#call(req, match)
+        translate.response.ok(reply, res, req)
       } catch (e) {
-        translate.exception(e, res)
+        translate.response.exception(e, res)
       }
     } else {
-      translate.missed(res)
+      translate.response.missed(res)
     }
 
     res.end()
   }
 
-  #call (match, req) {
+  #call (req, match) {
     const operation = match.node.operations[req.method]
 
     if (operation === undefined) throw new NotImplementedException()
 
-    const request = {}
-
-    if (!empty(req.body)) request.input = req.body
-    if (!empty(req.query)) request.query = req.query
-
-    if (!empty(match.params)) {
-      if (request.query === undefined) request.query = {}
-
-      for (const [key, value] of Object.entries(match.params)) {
-        if (key === 'id') request.query.id = value
-      }
-    }
+    const request = translate.request(req, match)
 
     return this.#remote.invoke(operation, request)
   }
