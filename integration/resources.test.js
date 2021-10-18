@@ -169,7 +169,7 @@ describe('request', () => {
     it('should return 400 if if-match is not a number', async () => {
       const response = await fetch(urls.message, {
         method: 'PUT',
-        body: JSON.stringify({ text: 'bar' }),
+        body: JSON.stringify({ sender, text: 'bar' }),
         headers: {
           'content-type': 'application/json',
           'if-match': '"foo"'
@@ -193,7 +193,7 @@ describe('request', () => {
     it('should allow wildcard', async () => {
       const wildcard = await fetch(urls.message, {
         method: 'PUT',
-        body: JSON.stringify({ text: 'baz' }),
+        body: JSON.stringify({ sender, text: 'baz' }),
         headers: {
           'content-type': 'application/json',
           'if-match': '*'
@@ -251,6 +251,11 @@ describe('request', () => {
         message: 'Input property \'sender\' conflicts with path parameter'
       })
     })
+  })
+
+  it('should return 501 on unsupported method', async () => {
+    const response = await fetch(locator('/'), { method: 'PROPPATCH' })
+    expect(response.status).toBe(501)
   })
 })
 
@@ -317,7 +322,7 @@ describe('response', () => {
 
     const failed = await fetch(url + output.id + '/', {
       method: 'PUT',
-      body: JSON.stringify({ text: 'bar' }),
+      body: JSON.stringify({ sender, text: 'bar' }),
       headers: {
         'content-type': 'application/json',
         'if-match': '"3"'

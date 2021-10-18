@@ -49,7 +49,7 @@ class Remote extends Connector {
 
     if (operation === undefined) throw new NotImplementedException()
 
-    const request = translate.request(req, match)
+    const request = translate.request(req, match.params)
 
     return this.#remote.invoke(operation, request)
   }
