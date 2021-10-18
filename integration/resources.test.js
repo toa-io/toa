@@ -16,7 +16,7 @@ beforeAll(async () => {
   resources = await (new extension.Factory()).process()
 
   await resources.connect()
-  await timeout(100) // resources discovery
+  await timeout(200) // resources discovery
 })
 
 afterAll(async () => {
@@ -128,6 +128,11 @@ describe('request', () => {
     expect(response.status).toBe(405)
   })
 
+  it('should return 501 on unsupported method', async () => {
+    const response = await fetch(locator('/'), { method: 'PROPPATCH' })
+    expect(response.status).toBe(501)
+  })
+
   describe('if-match', () => {
     const sender = newid()
     const urls = { messages: locator('/messages/' + sender + '/') }
@@ -204,6 +209,28 @@ describe('request', () => {
     })
   })
 
+  describe('if-none-match', () => {
+    it('should return 304 with no body', async () => {
+      const id = newid()
+      const url = locator('/credits/balance/' + id + '/')
+      const response = await fetch(url)
+      const body = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(response.headers.get('etag')).toBe('"0"')
+      expect(body).toStrictEqual({ output: { id, balance: 10 } })
+
+      const conditional = await fetch(url, {
+        headers: { 'if-none-match': '"0"' }
+      })
+
+      const text = await conditional.text()
+
+      expect(conditional.status).toBe(304)
+      expect(text).toBe('')
+    })
+  })
+
   describe('path params', () => {
     const times = 5 + random(5)
     const sender = newid()
@@ -251,11 +278,6 @@ describe('request', () => {
         message: 'Input property \'sender\' conflicts with path parameter'
       })
     })
-  })
-
-  it('should return 501 on unsupported method', async () => {
-    const response = await fetch(locator('/'), { method: 'PROPPATCH' })
-    expect(response.status).toBe(501)
   })
 })
 

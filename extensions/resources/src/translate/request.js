@@ -3,6 +3,8 @@
 const { exceptions: { RequestFormatException, RequestConflictException } } = require('@toa.io/core')
 const { empty } = require('@toa.io/gears')
 
+const etag = require('./etag')
+
 const request = (req, params) => {
   const request = {}
 
@@ -36,13 +38,12 @@ const request = (req, params) => {
     }
   }
 
-  const etag = req.get('if-match')
+  const condition = req.get('if-match')
 
-  if (etag !== undefined && etag !== '*') {
-    const match = etag.match(ETAG)
-    const value = match?.[1]
+  if (condition !== undefined && condition !== '*') {
+    const value = etag.get(condition)
 
-    if (match === null) throw new RequestFormatException('ETag value must match ' + ETAG)
+    if (value === null) throw new RequestFormatException('ETag value must match ' + etag.rx)
     if (request.query === undefined) request.query = {}
 
     request.query.version = +value
@@ -50,7 +51,5 @@ const request = (req, params) => {
 
   return request
 }
-
-const ETAG = /^"([^"]+)"$/
 
 exports.request = request

@@ -22,6 +22,8 @@ class Server extends Connector {
     this.#app.use(express.json())
 
     this.#app.use((req, res, next) => {
+      req.safe = req.method in SAFE
+
       if (req.method in METHODS) next()
       else res.status(501).end()
     })
@@ -62,5 +64,6 @@ class Server extends Connector {
 
 const PORT = 8000
 const METHODS = { HEAD: 1, GET: 1, POST: 1, PUT: 1 }
+const SAFE = { HEAD: 1, GET: 1 }
 
 exports.Server = Server

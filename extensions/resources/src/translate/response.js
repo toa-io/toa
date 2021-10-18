@@ -2,16 +2,29 @@
 
 const { exceptions: { codes } } = require('@toa.io/core')
 
-const ok = (reply, response, request) => {
+const etag = require('./etag')
+
+const ok = (reply, res, req) => {
   if (reply.output?._version !== undefined) {
     const { _version, ...output } = reply.output
 
-    response.set('etag', '"' + _version + '"')
+    res.set('etag', etag.set(_version))
     reply.output = output
+
+    const condition = req.get('if-none-match')
+
+    if (condition !== undefined && req.safe) {
+      const value = etag.get(condition)
+
+      if (value === _version) {
+        res.status(304).end()
+        return
+      }
+    }
   }
 
-  response.status(request.method === 'POST' ? 201 : 200)
-  response.send(reply)
+  res.status(req.method === 'POST' ? 201 : 200)
+  res.send(reply)
 }
 
 const missed = (response) => response.status(404)
