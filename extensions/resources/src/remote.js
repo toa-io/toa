@@ -45,7 +45,8 @@ class Remote extends Connector {
   }
 
   #call (req, match) {
-    const operation = match.node.operations[req.method]
+    const method = req.method === 'HEAD' ? 'GET' : req.method
+    const operation = match.node.operations[method]
 
     if (operation === undefined) throw new NotImplementedException()
 

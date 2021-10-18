@@ -133,6 +133,17 @@ describe('request', () => {
     expect(response.status).toBe(501)
   })
 
+  it('should not return body on head', async () => {
+    const id = newid()
+    const url = locator('/credits/balance/' + id + '/')
+    const response = await fetch(url, { method: 'HEAD' })
+    const text = await response.text()
+
+    expect(response.status).toBe(200)
+    expect(text).toBe('')
+    expect(response.headers.get('content-length')).toBe('65')
+  })
+
   describe('if-match', () => {
     const sender = newid()
     const urls = { messages: locator('/messages/' + sender + '/') }
