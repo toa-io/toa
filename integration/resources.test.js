@@ -128,61 +128,80 @@ describe('request', () => {
     expect(response.status).toBe(405)
   })
 
-  it('should return 412 on version mismatch', async () => {
+  describe('if-match', () => {
     const sender = newid()
-    const url = locator('/messages/messages/')
+    const urls = { messages: locator('/messages/messages/') }
 
-    const created = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ sender, text: 'foo' }),
-      headers: { 'content-type': 'application/json' }
+    beforeAll(async () => {
+      const created = await fetch(urls.messages, {
+        method: 'POST',
+        body: JSON.stringify({ sender, text: 'foo' }),
+        headers: { 'content-type': 'application/json' }
+      })
+
+      expect(created.status).toBe(201)
+
+      const { output } = await created.json()
+
+      urls.message = locator('/messages/messages/' + output.id + '/')
     })
 
-    expect(created.status).toBe(201)
+    it('should return 400 if if-match is invalid', async () => {
+      const response = await fetch(urls.message, {
+        method: 'PUT',
+        body: JSON.stringify({ sender, text: 'bar' }),
+        headers: {
+          'content-type': 'application/json',
+          'if-match': 'foo'
+        }
+      })
 
-    const { output: { id } } = await created.json()
+      const body = await response.json()
 
-    const messageURL = locator('/messages/messages/' + id + '/')
-    const observed = await fetch(messageURL)
+      expect(response.status).toBe(400)
 
-    expect(observed.status).toBe(200)
-
-    const etag = observed.headers.get('etag')
-
-    expect(etag).toStrictEqual('"1"')
-
-    const format = await fetch(messageURL, {
-      method: 'PUT',
-      body: JSON.stringify({ sender, text: 'bar' }),
-      headers: {
-        'content-type': 'application/json',
-        'if-match': '"mismatching-value"'
-      }
+      expect(body).toStrictEqual({
+        code: codes.RequestFormat,
+        message: 'ETag value must match /^"([^"]+)"$/'
+      })
     })
 
-    expect(format.status).toBe(400)
+    it('should return 400 if if-match is not a number', async () => {
+      const response = await fetch(urls.message, {
+        method: 'PUT',
+        body: JSON.stringify({ sender, text: 'bar' }),
+        headers: {
+          'content-type': 'application/json',
+          'if-match': '"foo"'
+        }
+      })
 
-    const precondition = await fetch(messageURL, {
-      method: 'PUT',
-      body: JSON.stringify({ sender, text: 'baz' }),
-      headers: {
-        'content-type': 'application/json',
-        'if-match': '"3"'
-      }
+      const body = await response.json()
+
+      expect(response.status).toBe(400)
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'type',
+        property: 'query/version',
+        path: '/query/version',
+        schema: '#/properties/query/properties/version/type',
+        message: expect.any(String)
+      })
     })
 
-    expect(precondition.status).toBe(412)
+    it('should allow wildcard', async () => {
+      const wildcard = await fetch(urls.message, {
+        method: 'PUT',
+        body: JSON.stringify({ sender, text: 'baz' }),
+        headers: {
+          'content-type': 'application/json',
+          'if-match': '*'
+        }
+      })
 
-    const wildcard = await fetch(messageURL, {
-      method: 'PUT',
-      body: JSON.stringify({ sender, text: 'baz' }),
-      headers: {
-        'content-type': 'application/json',
-        'if-match': '"*"'
-      }
+      expect(wildcard.status).toBe(200)
     })
-
-    expect(wildcard.status).toBe(200)
   })
 })
 
@@ -230,6 +249,32 @@ describe('response', () => {
       message: 'User space exception',
       stack: expect.any(String)
     })
+  })
+
+  it('should return 412 on version mismatch', async () => {
+    const sender = newid()
+    const url = locator('/messages/messages/')
+
+    const created = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ sender, text: 'foo' }),
+      headers: { 'content-type': 'application/json' }
+    })
+
+    expect(created.status).toBe(201)
+
+    const { output } = await created.json()
+
+    const failed = await fetch(url + output.id + '/', {
+      method: 'PUT',
+      body: JSON.stringify({ sender, text: 'bar' }),
+      headers: {
+        'content-type': 'application/json',
+        'if-match': '"3"'
+      }
+    })
+
+    expect(failed.status).toBe(412)
   })
 })
 

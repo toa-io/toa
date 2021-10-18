@@ -9,12 +9,13 @@ const request = (req, match) => {
 
   let id, version
 
-  if (etag !== undefined) {
+  if (etag !== undefined && etag !== '*') {
     const match = etag.match(ETAG)
     const value = match?.[1]
 
-    if (match === null) throw new RequestFormatException(`ETag header value must match '${ETAG}'`)
-    if (value !== '*') version = +value
+    if (match === null) throw new RequestFormatException(`ETag value must match ${ETAG}`)
+
+    version = +value
   }
 
   if (!empty(req.body)) request.input = req.body
