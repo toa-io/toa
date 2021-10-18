@@ -93,7 +93,7 @@ describe('request', () => {
 
   it('should return 400 on invalid body', async () => {
     const id = newid()
-    const url = locator('/stats/stats/' + id + '/')
+    const url = locator('/stats/' + id + '/')
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -117,7 +117,7 @@ describe('request', () => {
 
   it('should return 405 if no method matched', async () => {
     const id = newid()
-    const url = locator('/stats/stats/' + id + '/')
+    const url = locator('/stats/' + id + '/')
 
     const response = await fetch(url, {
       method: 'POST',
@@ -130,7 +130,7 @@ describe('request', () => {
 
   describe('if-match', () => {
     const sender = newid()
-    const urls = { messages: locator('/messages/messages/') }
+    const urls = { messages: locator('/messages/') }
 
     beforeAll(async () => {
       const created = await fetch(urls.messages, {
@@ -143,7 +143,7 @@ describe('request', () => {
 
       const { output } = await created.json()
 
-      urls.message = locator('/messages/messages/' + output.id + '/')
+      urls.message = locator('/messages/' + output.id + '/')
     })
 
     it('should return 400 if if-match is invalid', async () => {
@@ -208,7 +208,7 @@ describe('request', () => {
 describe('response', () => {
   it('should return 404 on StateNotFound', async () => {
     const id = newid()
-    const url = locator('/messages/messages/' + id + '/')
+    const url = locator('/messages/' + id + '/')
     const response = await fetch(url)
 
     expect(response.status).toBe(404)
@@ -216,7 +216,7 @@ describe('response', () => {
 
   it('should return 201 on transition without query', async () => {
     const sender = newid()
-    const url = locator('/messages/messages/')
+    const url = locator('/messages/')
 
     const response = await fetch(url, {
       method: 'POST',
@@ -232,7 +232,7 @@ describe('response', () => {
 
   it('should return 500 on user space exception', async () => {
     const sender = newid()
-    const url = locator('/messages/messages/')
+    const url = locator('/messages/')
 
     const response = await fetch(url, {
       method: 'POST',
@@ -253,7 +253,7 @@ describe('response', () => {
 
   it('should return 412 on version mismatch', async () => {
     const sender = newid()
-    const url = locator('/messages/messages/')
+    const url = locator('/messages/')
 
     const created = await fetch(url, {
       method: 'POST',

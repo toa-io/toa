@@ -11,8 +11,10 @@ class Remote extends Connector {
   constructor (server, remote, tree) {
     super()
 
-    server.route(`/${remote.locator.domain}/${remote.locator.name}*`,
-      (req, res) => this.#reply(req, res))
+    const { domain, name } = remote.locator
+    const route = '/' + (domain === name ? domain : domain + '/' + name) + '*'
+
+    server.route(route, (req, res) => this.#reply(req, res))
 
     this.#remote = remote
     this.#tree = tree
