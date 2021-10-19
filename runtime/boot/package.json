@@ -3,14 +3,14 @@
   "version": "0.0.0",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/quantumducks/toa#readme",
+  "homepage": "https://github.com/toa-io/toa#readme",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quantumducks/toa.git"
+    "url": "git+https://github.com/toa-io/toa.git"
   },
   "bugs": {
-    "url": "https://github.com/quantumducks/toa/issues"
+    "url": "https://github.com/toa-io/toa/issues"
   },
   "publishConfig": {
     "access": "public"
