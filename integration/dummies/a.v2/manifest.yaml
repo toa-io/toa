@@ -1,0 +1,29 @@
+domain: dummies
+name: a
+
+entity:
+  schema:
+    properties:
+      title: string
+      length: integer
+    required: [title]
+  initialized: true
+
+operations:
+  create:
+    forward: transit
+    query: false
+    input:
+      properties:
+        title: ~
+        length: ~
+
+extensions:
+  resources:
+    /:
+      operations: [create]
+      /:id:
+        operations: [observe]
+      /v2/:id:
+        operations: [observe]
+

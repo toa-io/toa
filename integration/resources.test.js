@@ -58,6 +58,34 @@ describe('routing', () => {
     expect(after.status).toBe(201)
   })
 
+  it('should update routes', async () => {
+    const id = newid()
+    const url = locator('/dummies/a/v2/' + id + '/')
+
+    if (a === undefined) {
+      a = await framework.compose(['a'])
+
+      await a.connect()
+      await timeout(50) // expose resources
+    }
+
+    const before = await fetch(url)
+
+    expect(before.status).toBe(404)
+
+    await a.disconnect()
+
+    const v2 = await framework.compose(['a.v2'])
+    await v2.connect()
+    await timeout(50) // expose v2
+
+    const after = await fetch(url)
+
+    expect(after.status).toBe(200)
+
+    await v2.disconnect()
+  })
+
   it('should return 404 on route mismatch', async () => {
     const url = locator('/no/route/matches')
     const response = await fetch(url)
@@ -420,7 +448,6 @@ describe('response', () => {
       let previous
 
       for (const message of output) {
-
         if (previous !== undefined) {
           // noinspection JSUnusedAssignment
           expect(message.timestamp < previous.timestamp).toBe(true)

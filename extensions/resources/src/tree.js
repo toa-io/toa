@@ -4,22 +4,21 @@ const path = require('path')
 const { match } = require('path-to-regexp')
 
 class Tree {
-  #nodes = []
+  #nodes
 
   constructor (tree) {
-    this.#traverse(tree)
+    this.update(tree)
   }
 
   match (path) {
     let match
 
-    const node = this.#nodes.find((node) => (match = node.match(path)))
+    const node = this.#nodes.find((node) => (match = node.match(path)) !== false)
 
     return node === undefined ? undefined : { node, params: match.params }
   }
 
   update (tree) {
-    // TODO: add test
     this.#nodes = []
     this.#traverse(tree)
   }
