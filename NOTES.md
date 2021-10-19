@@ -13,7 +13,7 @@ For example, if you're using WebStorm, set CLI Options for Jest Template as `--r
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 1. requirements may have reasonable exceptions
 2. `exports` last
-3. no `exports default`
+3. no default exports
 4. `exports.name` instead of `module.exports.name`
 5. `'use strict'`
 6. single quotes
@@ -46,3 +46,7 @@ const CONSTANT = 'value'
 
 exports.Declaration = Declaration
 ```
+
+## Commits
+
+1. [Conventional commits](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional)
