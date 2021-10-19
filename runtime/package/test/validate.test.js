@@ -79,7 +79,7 @@ describe('entity', () => {
     })
 
     it('should be JSON schema object', () => {
-      manifest.entity.schema = { properties: { foo: 1 } }
+      manifest.entity.schema = { properties: { foo: 'bar' } }
       expect(() => validate(manifest)).toThrow()
     })
 
@@ -136,7 +136,7 @@ describe('bindings', () => {
     manifest.bindings = ['oops', 'oops']
     expect(() => validate(manifest)).toThrow(/duplicate items/)
 
-    manifest.bindings = ['oops', 1]
+    manifest.bindings = ['oops', {}]
     expect(() => validate(manifest)).toThrow(/must be string/)
   })
 
@@ -205,11 +205,11 @@ describe('operations', () => {
 
     describe('input, output', () => {
       it('should be schema', () => {
-        manifest.operations.get.input = { properties: { foo: 1 } }
+        manifest.operations.get.input = { properties: { foo: 'bar' } }
         expect(() => validate(manifest)).toThrow()
 
         delete manifest.operations.get.input
-        manifest.operations.get.output = { properties: { foo: 1 } }
+        manifest.operations.get.output = { properties: { foo: 'bar' } }
         expect(() => validate(manifest)).toThrow()
       })
     })

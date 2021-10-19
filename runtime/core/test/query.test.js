@@ -79,7 +79,7 @@ describe('options', () => {
     it('should throw on unknown properties', () => {
       const sort = 'd:asc'
 
-      expect(() => instance.parse({ sort })).toThrow(/not allowed/)
+      expect(() => instance.parse({ sort })).toThrow(/not defined/)
     })
   })
 
@@ -94,7 +94,7 @@ describe('options', () => {
     it('should throw on unknown properties', () => {
       const projection = 'a,b,c,d'
 
-      expect(() => instance.parse({ projection })).toThrow(/not allowed/)
+      expect(() => instance.parse({ projection })).toThrow(/not defined/)
     })
   })
 })

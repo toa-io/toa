@@ -177,7 +177,7 @@ describe('request', () => {
       expect(response.status).toBe(400)
 
       expect(body).toStrictEqual({
-        code: codes.RequestFormat,
+        code: codes.RequestSyntax,
         message: 'ETag value must match /^"([^"]+)"$/'
       })
     })
@@ -364,9 +364,7 @@ describe('response', () => {
 
     expect(failed.status).toBe(412)
   })
-})
 
-describe('etag', () => {
   it('should create etag from _version', async () => {
     const url = locator('/credits/balance/' + newid() + '/')
     const response = await fetch(url)
@@ -374,14 +372,212 @@ describe('etag', () => {
     expect(response.headers.get('etag')).toBe('"0"')
   })
 
-  // it('should use etag as query.version', async () => {
-  //   const url = 'http://localhost:8000/credits/balance/' + newid() + '/'
-  //   const response = await fetch(url, {
-  //     headers: {
-  //       'if-match': '"1"'
-  //     }
-  //   })
-  //
-  //   expect(response.status).toBe(412)
-  // })
+  describe('query', () => {
+    const times = 5 + random(5)
+    const sender = newid()
+    const url = locator('/messages/' + sender + '/')
+
+    beforeAll(async () => {
+      let index = 0
+
+      const send = async () => {
+        const response = await fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({ text: 'foo', timestamp: index++ }),
+          headers: { 'content-type': 'application/json' }
+        })
+
+        expect(response.status).toBe(201)
+      }
+
+      await repeat(send, times)
+    })
+
+    it('should return projection', async () => {
+      const response = await fetch(url + '?projection=timestamp')
+
+      expect(response.status).toBe(200)
+
+      const { output } = await response.json()
+
+      expect(output.length).toBe(times)
+
+      for (const message of output) {
+        expect(message.text).toBeUndefined()
+        expect(message.timestamp).toStrictEqual(expect.any(Number))
+      }
+    })
+
+    it('should return sorted', async () => {
+      const response = await fetch(url + '?sort=timestamp:desc')
+
+      expect(response.status).toBe(200)
+
+      const { output } = await response.json()
+
+      expect(output.length).toBe(times)
+
+      let previous
+
+      for (const message of output) {
+
+        if (previous !== undefined) {
+          // noinspection JSUnusedAssignment
+          expect(message.timestamp < previous.timestamp).toBe(true)
+        }
+
+        previous = message
+      }
+    })
+
+    it('should select with omit, limit', async () => {
+      // omit + limit must be less then times in context of this test
+      const omit = random(2)
+      const limit = 1 + random(2)
+      const response = await fetch(`${url}?sort=timestamp:desc&omit=${omit}&limit=${limit}`)
+
+      expect(response.status).toBe(200)
+
+      const { output } = await response.json()
+
+      expect(output.length).toBe(limit)
+
+      let count = 0
+
+      for (const message of output) {
+        count++
+        expect(message.timestamp).toBe(times - omit - count)
+      }
+    })
+
+    it('should select with criteria', async () => {
+      const response = await fetch(`${url}?criteria=timestamp<4`)
+
+      expect(response.status).toBe(200)
+
+      const { output } = await response.json()
+
+      expect(output.length).toBe(4)
+    })
+
+    it('should return 400 on malformed criteria', async () => {
+      const response = await fetch(`${url}?criteria=foo!`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: expect.stringContaining('Unexpected character \'!\'')
+      })
+    })
+
+    it('should return 400 on undefined criteria selector', async () => {
+      const response = await fetch(`${url}?criteria=foo==1`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: expect.stringContaining('Criteria selector \'foo\'')
+      })
+    })
+
+    it('should return 400 on malformed omit', async () => {
+      const response = await fetch(`${url}?omit=foo`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'type',
+        property: 'query/omit',
+        path: '/query/omit',
+        schema: '#/properties/query/properties/omit/type',
+        message: 'query/omit must be integer'
+      })
+    })
+
+    it('should return 400 on malformed limit', async () => {
+      const response = await fetch(`${url}?limit=foo`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'type',
+        property: 'query/limit',
+        path: '/query/limit',
+        schema: '#/properties/query/properties/limit/type',
+        message: 'query/limit must be integer'
+      })
+    })
+
+    it('should return 400 on malformed projection', async () => {
+      const response = await fetch(`${url}?projection=100`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'pattern',
+        property: 'query/projection',
+        path: '/query/projection',
+        schema: '#/properties/query/properties/projection/pattern',
+        message: expect.stringContaining('query/projection must match pattern')
+      })
+    })
+
+    it('should return 400 on undefined projection property', async () => {
+      const response = await fetch(`${url}?projection=foo`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: 'Projection property \'foo\' is not defined'
+      })
+    })
+
+    it('should return 400 on malformed sort', async () => {
+      const response = await fetch(`${url}?sort=100`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'pattern',
+        property: 'query/sort',
+        path: '/query/sort',
+        schema: '#/properties/query/properties/sort/pattern',
+        message: expect.stringContaining('query/sort must match pattern')
+      })
+    })
+
+    it('should return 400 on undefined sort property', async () => {
+      const response = await fetch(`${url}?sort=foo:desc`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: 'Sort property \'foo\' is not defined'
+      })
+    })
+  })
 })

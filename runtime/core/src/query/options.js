@@ -1,5 +1,7 @@
 'use strict'
 
+const { QuerySyntaxException } = require('../exceptions')
+
 const options = (options, properties, system) => {
   if (options.sort !== undefined) options.sort = sort(options.sort, properties)
   if (options.projection !== undefined) options.projection = projection(options.projection, properties, system)
@@ -13,7 +15,9 @@ const sort = (sort, properties) => {
   for (const sorting of sort.split(',')) {
     const [property, direction] = sorting.split(':')
 
-    if (properties[property] === undefined) { throw new Error(`Sort property '${property}' is not allowed`) }
+    if (properties[property] === undefined) {
+      throw new QuerySyntaxException(`Sort property '${property}' is not defined`)
+    }
 
     result.push([property, direction || 'asc'])
   }
@@ -25,7 +29,9 @@ const projection = (projection, properties, system) => {
   const result = [...new Set(system.concat(projection.split(',')))]
 
   for (const property of result) {
-    if (!properties[property]) { throw new Error(`Projection property '${property}' is not allowed`) }
+    if (properties[property] === undefined) {
+      throw new QuerySyntaxException(`Projection property '${property}' is not defined`)
+    }
   }
 
   return result

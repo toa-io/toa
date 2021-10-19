@@ -1,9 +1,16 @@
 'use strict'
 
 const { parse } = require('@rsql/parser')
+const { QuerySyntaxException } = require('../exceptions')
 
 const criteria = (criteria, properties) => {
-  const ast = parse(criteria)
+  let ast
+
+  try {
+    ast = parse(criteria)
+  } catch (e) {
+    throw new QuerySyntaxException(e.message)
+  }
 
   if (properties !== undefined) coerce(ast, properties)
 
@@ -14,7 +21,9 @@ const coerce = (node, properties) => {
   if (node.type === 'COMPARISON' && node.left?.type === 'SELECTOR' && node.right?.type === 'VALUE') {
     const property = properties[node.left.selector]
 
-    if (property === undefined) throw new Error(`Criteria selector '${node.left.selector}' is not defined`)
+    if (property === undefined) {
+      throw new QuerySyntaxException(`Criteria selector '${node.left.selector}' is not defined`)
+    }
 
     if (COERCE[property.type] !== undefined) { node.right.value = COERCE[property.type](node.right.value) }
   } else {
@@ -25,6 +34,7 @@ const coerce = (node, properties) => {
 
 const COERCE = {
   number: Number,
+  integer: parseInt,
   boolean: Boolean
 }
 

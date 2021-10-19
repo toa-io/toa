@@ -53,11 +53,12 @@ const codes = {
   NotImplemented: 10,
 
   Contract: 200,
-  RequestFormat: 201,
+  RequestSyntax: 201,
   RequestContract: 202,
   RequestConflict: 203,
   ResponseContract: 211,
   EntityContract: 212,
+  QuerySyntax: 221,
 
   State: 300,
   StateNotFound: 302,
@@ -69,7 +70,6 @@ const codes = {
 }
 
 /// region exports
-exports.Exception = Exception
 exports.SystemException = SystemException
 exports.RequestContractException = RequestContractException
 exports.ResponseContractException = ResponseContractException

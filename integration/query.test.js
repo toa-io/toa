@@ -97,7 +97,7 @@ describe('not found', () => {
   describe('validation', () => {
     it('should throw if id does not match pattern', async () => {
       await expect(remote.invoke('get', { query: { id: 1 } }))
-        .rejects.toMatchObject({ keyword: 'type', property: 'query/id' })
+        .rejects.toMatchObject({ keyword: 'pattern', property: 'query/id' })
 
       await expect(remote.invoke('get', { query: { id: 'a0' } }))
         .rejects.toMatchObject({ keyword: 'pattern', property: 'query/id' })
@@ -117,7 +117,7 @@ describe('not found', () => {
     })
 
     it('should throw if omit is not positive integer', async () => {
-      await expect(remote.invoke('get', { query: { omit: '1' } }))
+      await expect(remote.invoke('get', { query: { omit: 'foo' } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
 
       await expect(remote.invoke('get', { query: { omit: -1 } }))
@@ -128,7 +128,7 @@ describe('not found', () => {
     })
 
     it('should throw if limit is not positive integer', async () => {
-      await expect(remote.invoke('get', { query: { limit: '1' } }))
+      await expect(remote.invoke('get', { query: { limit: 'foo' } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/limit' })
 
       await expect(remote.invoke('get', { query: { limit: -1 } }))

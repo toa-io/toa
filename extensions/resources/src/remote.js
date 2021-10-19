@@ -44,7 +44,7 @@ class Remote extends Connector {
     res.end()
   }
 
-  #call (req, match) {
+  async #call (req, match) {
     const method = req.method === 'HEAD' ? 'GET' : req.method
     const operation = match.node.operations[method]
 

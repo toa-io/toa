@@ -5,7 +5,7 @@ const { default: Ajv } = require('ajv/dist/2019')
 const { definitions } = require('./definitions')
 const { keywords } = require('./keywrods')
 
-const validator = new Ajv({ useDefaults: true, strictTypes: false })
+const validator = new Ajv({ useDefaults: true, strictTypes: false, coerceTypes: true })
 
 keywords(validator)
 definitions(validator)
@@ -22,7 +22,7 @@ class Schema {
     if (schema.properties !== undefined) {
       const { required, $id, ...defaults } = schema
 
-      if ($id !== undefined) defaults.$id = $id + '-defaults'
+      if ($id !== undefined) defaults.$id = $id + ':defaults'
 
       this.#defaults = validator.compile(defaults)
     }

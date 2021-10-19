@@ -1,6 +1,6 @@
 'use strict'
 
-const { exceptions: { RequestFormatException, RequestConflictException } } = require('@toa.io/core')
+const { exceptions: { RequestSyntaxException, RequestConflictException } } = require('@toa.io/core')
 const { empty } = require('@toa.io/gears')
 
 const etag = require('./etag')
@@ -43,7 +43,7 @@ const request = (req, params) => {
   if (condition !== undefined && condition !== '*') {
     const value = etag.get(condition)
 
-    if (value === null) throw new RequestFormatException('ETag value must match ' + etag.rx)
+    if (value === null) throw new RequestSyntaxException('ETag value must match ' + etag.rx)
     if (request.query === undefined) request.query = {}
 
     request.query.version = +value
