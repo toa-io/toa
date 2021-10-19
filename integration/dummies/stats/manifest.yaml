@@ -4,17 +4,15 @@ name: stats
 entity:
   initialized: true
   schema:
-    properties:
-      messages:
-        type: integer
-        default: 0
+    messages:
+      type: integer
+      default: 0
 
 operations:
   update:
     concurrency: retry
     input:
-      properties:
-        messages: boolean
+      messages: boolean
 
 receivers:
   messages.messages.created: update

@@ -3,7 +3,7 @@
 const { lookup } = require('@toa.io/gears')
 
 const expand = (manifest) => {
-  if (manifest.entity?.schema) schema(manifest.entity.schema)
+  if (manifest.entity?.schema) manifest.entity.schema = schema(manifest.entity.schema, true)
 
   if (manifest.bindings !== undefined) {
     manifest.bindings = manifest.bindings.map((binding) => lookup(binding))
@@ -11,8 +11,8 @@ const expand = (manifest) => {
 
   if (manifest.operations !== undefined) {
     for (const operation of Object.values(manifest.operations)) {
-      if (operation.input) operation.input = schema(operation.input)
-      if (operation.output) operation.output = schema(operation.output)
+      if (operation.input) operation.input = schema(operation.input, true)
+      if (operation.output) operation.output = schema(operation.output, true)
     }
   }
 
@@ -39,16 +39,17 @@ const expand = (manifest) => {
   }
 }
 
-const schema = (object) => {
+const schema = (object, root) => {
   if (object === undefined || object === null) return object
   if (typeof object === 'string' && object[0] !== '~') return { type: object }
 
-  if (object.type === 'array') {
-    object.items = schema(object.items)
-  } else if (object.properties !== undefined) {
-    for (const [name, value] of Object.entries(object.properties)) {
-      object.properties[name] = schema(value)
-    }
+  if (object.type === 'array') object.items = schema(object.items)
+  else if (typeof object === 'object') {
+    if (object.properties !== undefined) {
+      for (const [name, value] of Object.entries(object.properties)) {
+        object.properties[name] = schema(value)
+      }
+    } else if (object.type === undefined && root === true) return schema({ properties: object })
   }
 
   return object
