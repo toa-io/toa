@@ -27,6 +27,16 @@ const expand = (manifest) => {
       if (typeof receiver === 'string') manifest.receivers[locator] = { transition: receiver }
     }
   }
+
+  // well-known extensions
+  for (const extension of EXTENSIONS) {
+    if (manifest[extension] !== undefined) {
+      if (manifest.extensions === undefined) manifest.extensions = {}
+
+      manifest.extensions[extension] = manifest[extension]
+      delete manifest[extension]
+    }
+  }
 }
 
 const schema = (object) => {
@@ -43,5 +53,7 @@ const schema = (object) => {
 
   return object
 }
+
+const EXTENSIONS = ['resources']
 
 exports.expand = expand
