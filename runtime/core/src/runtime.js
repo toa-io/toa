@@ -22,7 +22,7 @@ class Runtime extends Connector {
     console.info(`Runtime '${this.locator.id}' connected`)
   }
 
-  disconnection () {
+  disconnected () {
     console.info(`Runtime '${this.locator.id}' disconnected`)
   }
 
