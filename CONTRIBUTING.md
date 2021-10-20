@@ -32,7 +32,7 @@ $ yarn test
 Commit & Push your changes, then create a Pull Request. 
 
 ## Commit Messages
-Please follow [conventional commits](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional).
+Please follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ## Code Style Requirements [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
