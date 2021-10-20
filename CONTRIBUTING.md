@@ -1,6 +1,6 @@
 # Contributing
 
-> Please note that this project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md).
+> Please note that this project is released with a [Contributor Code of Conduct](./CONDUCT.md).
 > By participating in this project you agree to abide by its terms.
 
 ## What You'll Need
@@ -19,7 +19,7 @@ To get started fork the project.
 $ git clone git@github.com:toa-io/toa.git
 $ cd toa
 
-# install 
+# install dependencies
 $ yarn install
 
 # setup dev environment
@@ -31,8 +31,8 @@ $ yarn test
 
 Commit & Push your changes, then create a Pull Request. 
 
-## Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-green.svg)](https://conventionalcommits.org)
-Please follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+## Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg)](https://conventionalcommits.org)
+Please use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ## Code Style Requirements [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -40,6 +40,7 @@ This project follows [JavaScript Standard Style](https://standardjs.com).
 ```shell
 $ yarn lint
 ```
+
 ### Code Structure Requirements
 These requirements may have reasonable exceptions. 
 The point is to create as uniform code as possible and prevent some typical mistakes.
