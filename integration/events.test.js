@@ -5,30 +5,36 @@ const { timeout, random, newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 
-let composition, messages, stats
+let composition, messages, stats, a
 
 beforeAll(async () => {
-  composition = await framework.compose(['messages', 'credits', 'stats'])
+  composition = await framework.compose(['messages', 'credits', 'stats', 'a'])
   messages = await framework.remote('messages.messages')
   stats = await framework.remote('stats.stats')
+  a = await framework.remote('dummies.a')
 })
 
 afterAll(async () => {
   if (composition) await composition.disconnect()
   if (messages) await messages.disconnect()
   if (stats) await stats.disconnect()
+  if (a) await a.disconnect()
 })
 
-it('should count messages', async () => {
+it('should receive', async () => {
   const times = 5 + random(5)
   const sender = newid()
+  const text = generate()
 
   for (let i = 0; i < times; i++) {
-    await messages.invoke('add', { input: { sender, text: generate(), free: true } })
-    await timeout(100) // avoid concurrency
+    await messages.invoke('add', { input: { sender, text, free: true } })
   }
 
-  const updated = await stats.invoke('observe', { query: { id: sender } })
+  await timeout(50) // process events
 
-  expect(updated.output.messages).toBe(times)
+  const counted = await stats.invoke('observe', { query: { id: sender } })
+  const updated = await a.invoke('observe', { query: { id: sender } })
+
+  expect(counted.output.messages).toBe(times)
+  expect(updated.output.title).toBe(text)
 })

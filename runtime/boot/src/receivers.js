@@ -24,6 +24,9 @@ const receivers = async (manifest, runtime) => {
       const explorer = await boot.discovery.explore(locator.id)
       const { events } = await explorer.lookup()
 
+      // TODO: refactor discovery
+      await explorer.disconnect()
+
       transport = events[endpoint].binding
     }
 

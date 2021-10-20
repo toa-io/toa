@@ -50,6 +50,7 @@
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"
     ],
-    "clearMocks": true
+    "clearMocks": true,
+    "bail": true
   }
 }

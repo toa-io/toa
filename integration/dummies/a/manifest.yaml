@@ -10,6 +10,9 @@ entity:
   initialized: true
 
 operations:
+  transit:
+    input:
+      title: ~
   create:
     forward: transit
     query: false
@@ -17,6 +20,9 @@ operations:
       properties:
         title: ~
         length: ~
+
+receivers:
+  messages.messages.created: transit
 
 extensions:
   resources:

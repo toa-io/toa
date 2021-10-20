@@ -14,6 +14,7 @@ beforeAll(async () => {
 afterAll(async () => {
   if (composition) await composition.disconnect()
   if (messages) await messages.disconnect()
+  if (remote) await remote.disconnect()
 })
 
 it('should provide default', async () => {

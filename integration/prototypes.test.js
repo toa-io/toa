@@ -13,6 +13,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (composition) await composition.disconnect()
+  if (remote) await remote.disconnect()
 })
 
 it('should merge reply', async () => {

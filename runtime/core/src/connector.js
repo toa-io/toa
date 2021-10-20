@@ -88,7 +88,7 @@ class Connector {
     if (this.#connectors.length === 0) {
       node[this.id] = null
     } else {
-      node[this.id] = {}
+      node[this.id] = { connected: this.#connecting !== undefined }
 
       for (const connector of this.#connectors) connector.debug?.(node[this.id])
     }
