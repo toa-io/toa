@@ -31,7 +31,7 @@ $ yarn test
 
 Commit & Push your changes, then create a Pull Request. 
 
-## Commit Messages
+## Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-green.svg)](https://conventionalcommits.org)
 Please follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ## Code Style Requirements [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
