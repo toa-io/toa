@@ -7,7 +7,8 @@ it('should return object difference', () => {
     foo: 'old',
     bar: {
       baz: 1,
-      ok: 1
+      ok: 1,
+      a: 1
     }
   }
 
@@ -15,7 +16,8 @@ it('should return object difference', () => {
     foo: 'new',
     bar: {
       baz: 2,
-      ok: 1
+      ok: 1,
+      b: 2
     }
   }
 
@@ -24,7 +26,9 @@ it('should return object difference', () => {
   expect(diff).toStrictEqual({
     foo: 'new',
     bar: {
-      baz: 2
+      baz: 2,
+      a: undefined,
+      b: 2
     }
   })
 })
