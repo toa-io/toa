@@ -1,3 +1,3 @@
 'use strict'
 
-exports.condition = (origin) => origin !== null
+exports.condition = (event) => event.origin !== null

@@ -14,7 +14,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 
   event = new Event(fixtures.definition, fixtures.binding, fixtures.bridge)
-  emit = () => event.emit(fixtures.event.origin, fixtures.event.changeset, fixtures.event.state)
+  emit = () => event.emit(fixtures.event)
 })
 
 it('should depend on binding', () => {
@@ -34,7 +34,7 @@ describe('condition', () => {
     it('should call condition', async () => {
       await emit()
 
-      expect(fixtures.bridge.condition).toHaveBeenCalledWith(fixtures.event.origin, fixtures.event.changeset)
+      expect(fixtures.bridge.condition).toHaveBeenCalledWith(fixtures.event)
     })
 
     it('should emit if condition returns true', async () => {
@@ -88,7 +88,7 @@ describe('payload', () => {
       definition.subjective = false
 
       event = new Event(definition, fixtures.binding, fixtures.bridge)
-      emit = () => event.emit(fixtures.event.origin, fixtures.event.changeset, fixtures.event.state)
+      emit = () => event.emit(fixtures.event)
     })
 
     it('should not call payload', async () => {

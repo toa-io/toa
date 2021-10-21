@@ -9,11 +9,12 @@ class Emission extends Connector {
     super()
 
     this.#events = events
+
     this.depends(events)
   }
 
-  async emit ({ origin, changeset, state }) {
-    const emission = this.#events.map((event) => event.emit(origin, changeset, state))
+  async emit (event) {
+    const emission = this.#events.map((e) => e.emit(event))
 
     await Promise.all(emission)
   }

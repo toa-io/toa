@@ -21,9 +21,9 @@ class Event extends Connector {
     if (bridge !== undefined) this.depends(bridge)
   }
 
-  async emit (origin, changeset, state) {
-    if (this.#conditioned === false || await this.#bridge.condition(origin, changeset) === true) {
-      const payload = this.#subjective ? await this.#bridge.payload(state) : state
+  async emit (event) {
+    if (this.#conditioned === false || await this.#bridge.condition(event) === true) {
+      const payload = this.#subjective ? await this.#bridge.payload(event) : event.state
 
       await this.#binding.emit(payload)
     }

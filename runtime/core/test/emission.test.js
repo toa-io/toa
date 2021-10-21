@@ -30,37 +30,6 @@ it('should emit events', async () => {
   await emission.emit(event)
 
   for (const evt of fixtures.events) {
-    expect(evt.emit).toHaveBeenCalledWith(event.origin, event.changeset, event.state)
+    expect(evt.emit).toHaveBeenCalledWith(event)
   }
 })
-//
-// it('should test conditions with origin, changeset', async () => {
-//   await emission.emit(event)
-//
-//   for (let i = 0; i < fixtures.events.length; i++) {
-//     expect(fixtures.events[i].condition).toHaveBeenCalledWith(event.origin, event.changeset)
-//   }
-// })
-//
-// it('should not emit on failed condition', async () => {
-//   expect.assertions(fixtures.events.length)
-//
-//   event.changeset.conditionFail = 1
-//   await emission.emit(event)
-//
-//   expect(fixtures.binding.emit.mock.calls.length).toBe(fixtures.events.length - 1)
-//
-//   let e = 0
-//
-//   for (let i = 0; i < fixtures.events.length; i++) {
-//     if (i === event.changeset.conditionFail) continue
-//
-//     e++
-//
-//     expect(fixtures.binding.emit).toHaveBeenNthCalledWith(
-//       e,
-//       fixtures.events[i].label,
-//       await fixtures.events[i].payload.mock.results[0].value
-//     )
-//   }
-// })
