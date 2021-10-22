@@ -17,7 +17,6 @@ afterAll(async () => {
 it('should lookup', async () => {
   const reply = await discovery.lookup('credits.balance')
 
-  expect(reply.entity.properties.id).toBeDefined()
   expect(reply.operations).toBeDefined()
   expect(reply.events).toBeDefined()
 })

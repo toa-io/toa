@@ -16,8 +16,8 @@ class Exposition {
   }
 
   static #expose (manifest) {
-    const { domain, name, entity, operations, events } = manifest
-    return { domain, name, entity: entity.schema, operations, events }
+    const { domain, name, operations, events } = manifest
+    return { domain, name, operations, events }
   }
 }
 
