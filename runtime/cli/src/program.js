@@ -18,7 +18,7 @@ const argv = yargs(process.argv.slice(2))
   .option('log', {
     type: 'string',
     describe: 'Logging level',
-    default: process.env.KOO_ENV === 'dev' ? 'info' : 'warn'
+    default: process.env.TOA_ENV === 'dev' ? 'info' : 'warn'
   })
   .commandDir('./commands')
   .demandCommand()

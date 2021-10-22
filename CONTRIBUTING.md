@@ -7,7 +7,7 @@
 1. [Node LTS](https://nodejs.org/)
 2. [Yarn 1](https://yarnpkg.com/getting-started/install)
 3. [Docker Desktop](https://www.docker.com/get-started)
-4. Confirmed [Bug or Feature](https://github.com/toa-io/toa/issues)
+4. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
 
 ## Flow
 > This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/).

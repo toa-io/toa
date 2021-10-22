@@ -27,6 +27,6 @@ class Factory {
   }
 }
 
-const AGENT_OPTIONS = { keepAlive: process.env.KOO_ENV !== 'dev' && process.env.KOO_ENV !== 'test' }
+const AGENT_OPTIONS = { keepAlive: process.env.TOA_ENV !== 'dev' && process.env.TOA_ENV !== 'test' }
 
 exports.Factory = Factory

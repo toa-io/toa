@@ -5,9 +5,10 @@ const { console } = require('@toa.io/gears')
 const { Connector } = require('./connector')
 
 class Composition extends Connector {
-  constructor (expositions, producers, receivers, extensions) {
+  constructor (discovery, expositions, producers, receivers, extensions) {
     super()
 
+    this.depends(discovery)
     this.depends(expositions)
     this.depends(producers)
     this.depends(receivers)

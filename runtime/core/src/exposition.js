@@ -1,27 +1,18 @@
 'use strict'
 
-const { endpoints } = require('./interface')
-
 class Exposition {
   locator
-  endpoints
 
   #manifest
 
   constructor (locator, manifest) {
     this.locator = locator
-    this.endpoints = endpoints(manifest.domain, manifest.name)
 
     this.#manifest = Exposition.#expose(manifest)
   }
 
-  lookup () {
-    return this.#manifest
-  }
-
-  async invoke (endpoint, input) {
-    const method = endpoint.split('.')[2]
-    return { output: this[method](input) }
+  async invoke () {
+    return { output: this.#manifest }
   }
 
   static #expose (manifest) {

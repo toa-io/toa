@@ -1,4 +1,4 @@
 'use strict'
 
-process.env.KOO_ENV = 'dev'
+process.env.TOA_ENV = 'dev'
 jest.setTimeout(60000)

@@ -53,7 +53,7 @@ class Client extends Connector {
   }
 
   get #url () {
-    if (process.env.KOO_ENV === 'dev') return 'mongodb://localhost'
+    if (process.env.TOA_ENV === 'dev') return 'mongodb://localhost'
 
     return `mongodb+srv://${this.#connection.host}`
   }

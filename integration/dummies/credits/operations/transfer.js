@@ -2,10 +2,10 @@
 
 // .transfer({ input: source, query: { id: target } })
 
-async function transition (source, entry, context) {
+async function transfer (source, entry, context) {
   const balance = await context.local.nullify({ query: { id: source } })
 
   entry.balance += balance
 }
 
-exports.transition = transition
+exports.transition = transfer

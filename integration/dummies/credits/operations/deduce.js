@@ -1,6 +1,6 @@
 'use strict'
 
-async function transition (input, entry) {
+async function deduce (input, entry) {
   if (entry.balance < input) return [null, { code: 1, message: 'not enough credits' }]
 
   entry.balance -= input
@@ -8,4 +8,4 @@ async function transition (input, entry) {
   return { output: entry.balance }
 }
 
-exports.transition = transition
+exports.transition = deduce

@@ -34,6 +34,7 @@ class Channel extends Connector {
     // TODO: handle current operations
     // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
     await this.#connection.close()
+    this.#bound = {}
 
     console.info(`AMQP Binding disconnected from ${this.#url}`)
   }
@@ -135,13 +136,13 @@ class Channel extends Connector {
   }
 
   static #locate (host) {
-    if (process.env.KOO_ENV === 'dev') return 'amqp://guest:guest@localhost/'
+    if (process.env.TOA_ENV === 'dev') return 'amqp://guest:guest@localhost/'
 
     return 'amqp://' + host
   }
 }
 
-const QUEUE = { durable: process.env.KOO_ENV !== 'dev' }
-const EXCHANGE = { durable: process.env.KOO_ENV !== 'dev' }
+const QUEUE = { durable: process.env.TOA_ENV !== 'dev' }
+const EXCHANGE = { durable: process.env.TOA_ENV !== 'dev' }
 
 exports.Channel = Channel

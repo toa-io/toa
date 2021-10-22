@@ -1,35 +1,49 @@
 'use strict'
 
-const { discovery, Locator, Transmission } = require('@toa.io/core')
+const { Discovery, Exposition, Locator } = require('@toa.io/core')
 
 const boot = require('./index')
 
-const explore = async (id) => {
-  const locator = new Locator()
-  const transmitters = {}
+const discovery = async (reconnect) => {
+  if (discovery.instance !== undefined) {
+    const instance = await discovery.instance
 
-  for (const method of discovery.interface.methods) {
-    const endpoint = discovery.interface.endpoint(id, method)
-    const consumers = boot.bindings.consume(locator, endpoint)
+    if (reconnect) await instance.connect()
 
-    transmitters[method] = new Transmission(consumers)
+    return instance
   }
 
-  const explorer = new discovery.Explorer(transmitters)
-  await explorer.connect()
+  const create = async (id) => {
+    const locator = new Locator(id)
+    const call = boot.call(locator, ENDPOINT, { bindings: BINDINGS })
 
-  return explorer
+    await call.connect()
+
+    return call
+  }
+
+  const instance = new Discovery(create)
+
+  discovery.instance = (async () => {
+    await instance.connect()
+    return instance
+  })()
+
+  return discovery.instance
 }
 
 const expose = async (manifest) => {
-  const locator = new Locator()
-  const exposition = new discovery.Exposition(locator, manifest)
-  const producers = boot.bindings.expose(exposition)
+  const exposition = new Exposition(manifest.locator, manifest)
+  const operations = { [ENDPOINT]: { bindings: BINDINGS } }
+  const producers = boot.bindings.produce(exposition, operations)
 
   await Promise.all(producers.map((producer) => producer.connect()))
 
   return producers
 }
 
-exports.explore = explore
+const BINDINGS = ['@toa.io/bindings.amqp']
+const ENDPOINT = '.lookup'
+
+exports.discovery = discovery
 exports.expose = expose

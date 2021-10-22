@@ -1,6 +1,6 @@
 'use strict'
 
-async function transition (_, entry) {
+async function nullify (_, entry) {
   const balance = entry.balance
 
   entry.balance = 0
@@ -8,4 +8,4 @@ async function transition (_, entry) {
   return { output: balance }
 }
 
-exports.transition = transition
+exports.transition = nullify

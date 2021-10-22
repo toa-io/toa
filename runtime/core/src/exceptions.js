@@ -16,7 +16,7 @@ class SystemException extends Exception {
   constructor (error) {
     super(codes.System, error.message)
 
-    if (error.stack !== undefined && process.env.KOO_ENV === 'dev') this.stack = error.stack
+    if (error.stack !== undefined && process.env.TOA_ENV === 'dev') this.stack = error.stack
   }
 }
 

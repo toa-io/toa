@@ -37,7 +37,7 @@ class Consumer extends Connector {
   }
 
   static #locate (locator, endpoint) {
-    const host = process.env.KOO_ENV === 'dev' ? 'localhost' : locator.host()
+    const host = process.env.TOA_ENV === 'dev' ? 'localhost' : locator.host()
     const path = resource.path(locator, endpoint)
 
     return 'http://' + host + ':' + PORT + path
