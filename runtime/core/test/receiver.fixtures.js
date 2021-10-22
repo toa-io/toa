@@ -3,12 +3,13 @@
 const { generate } = require('randomstring')
 
 const definition = {
+  transition: generate(),
   conditioned: false,
   adaptive: false
 }
 
-const apply = {
-  apply: jest.fn()
+const local = {
+  invoke: jest.fn()
 }
 
 const bridge = {
@@ -17,5 +18,5 @@ const bridge = {
 }
 
 exports.definition = definition
-exports.apply = apply
+exports.local = local
 exports.bridge = bridge

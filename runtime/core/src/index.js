@@ -1,4 +1,3 @@
-const { Apply } = require('./apply')
 const { Call } = require('./call')
 const { Cascade } = require('./cascade')
 const { Composition } = require('./composition')
@@ -22,7 +21,6 @@ exports.entities = require('./entities')
 exports.exceptions = require('./exceptions')
 exports.contract = require('./contract')
 
-exports.Apply = Apply
 exports.Call = Call
 exports.Cascade = Cascade
 exports.Composition = Composition

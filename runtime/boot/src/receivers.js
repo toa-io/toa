@@ -1,20 +1,18 @@
 'use strict'
 
-const { Apply, Receiver, Locator } = require('@toa.io/core')
+const { Receiver, Locator } = require('@toa.io/core')
 
 const boot = require('./index')
 
-const receivers = async (manifest, runtime) => {
+const receivers = async (manifest) => {
   if (manifest.receivers === undefined) return []
 
   const receivers = []
 
   for (const [label, definition] of Object.entries(manifest.receivers)) {
-    const transition = manifest.operations[definition.transition]
-    const contract = boot.contract.request(transition)
-    const apply = new Apply(runtime, definition.transition, contract)
+    const local = await boot.remote(manifest.locator.id)
     const bridge = boot.bridge.receiver(definition.bridge, manifest.path, label)
-    const receiver = new Receiver(definition, apply, bridge)
+    const receiver = new Receiver(definition, local, bridge)
 
     let transport = definition.binding
     const locator = new Locator(label)

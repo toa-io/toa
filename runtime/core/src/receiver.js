@@ -1,23 +1,28 @@
 'use strict'
 
+const { console } = require('@toa.io/gears')
+
 const { Connector } = require('./connector')
 
 class Receiver extends Connector {
   #conditioned
   #adaptive
-  #apply
+  #transition
+
+  #local
   #bridge
 
-  constructor (definition, apply, bridge) {
+  constructor (definition, local, bridge) {
     super()
 
     this.#conditioned = definition.conditioned
     this.#adaptive = definition.adaptive
+    this.#transition = definition.transition
 
-    this.#apply = apply
+    this.#local = local
     this.#bridge = bridge
 
-    this.depends(apply)
+    this.depends(local)
     this.depends(bridge)
   }
 
@@ -26,8 +31,11 @@ class Receiver extends Connector {
 
     const request = this.#adaptive ? await this.#bridge.request(payload) : payload
 
-    // TODO: handle exceptions
-    this.#apply.apply(request)
+    try {
+      await this.#local.invoke(this.#transition, request)
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 
