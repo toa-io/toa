@@ -18,6 +18,7 @@ operations:
       properties:
         id: ~
   transit:
+    virtual: true
     input: object
     output:
       properties:

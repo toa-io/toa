@@ -32,6 +32,7 @@ operations:
         timestamp: ~
       required: [ id, text ]
   update:
+    concurrency: none
     forward: transit
     input:
       properties:
@@ -42,6 +43,7 @@ operations:
     output: array
     query: true
   transit:
+    concurrency: none
     input:
       properties:
         sender: ~

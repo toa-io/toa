@@ -11,20 +11,26 @@ entity:
 
 operations:
   transit:
+    concurrency: none
     input:
       properties:
         balance: ~
   deduce:
+    concurrency: none
     input: integer
     output: integer
     query: true
   debit:
-    forward: deduce
     concurrency: retry
+    input: integer
+    output: integer
+    query: true
   transfer:
+    concurrency: none
     input: id   # source balance
     query: true # target balance
   nullify:
+    concurrency: retry
     output: integer
 
 extensions:

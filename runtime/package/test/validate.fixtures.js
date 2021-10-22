@@ -25,6 +25,7 @@ const ok = {
     },
     add: {
       type: 'transition',
+      concurrency: 'none',
       subject: 'entry',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']

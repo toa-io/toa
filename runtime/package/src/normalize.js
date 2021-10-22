@@ -9,8 +9,9 @@ const normalize = (manifest) => {
 }
 
 const operations = (manifest) => {
-  for (const operation of Object.values(manifest.operations)) {
+  for (const [endpoint, operation] of Object.entries(manifest.operations)) {
     if (operation.bindings === undefined) operation.bindings = manifest.bindings
+    if (operation.virtual === true) delete manifest.operations[endpoint]
   }
 }
 

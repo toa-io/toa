@@ -13,8 +13,13 @@ const collapse = (manifest, prototype) => {
     if (operations.length > 0) {
       if (manifest.operations === undefined) manifest.operations = {}
 
-      for (const [endpoint, operation] of operations) {
+      for (let [endpoint, operation] of operations) {
         if (manifest.operations[endpoint] === undefined) manifest.operations[endpoint] = {}
+        else {
+          const { virtual, ...real } = operation
+
+          operation = real
+        }
 
         const { bridge, binding, ...declaration } = operation
 

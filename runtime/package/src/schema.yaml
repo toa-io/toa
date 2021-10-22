@@ -90,7 +90,7 @@ properties:
         type: object
         properties:
           type:
-            enum: [ transition, observation ]
+            enum: [ transition, observation, assignment ]
           subject:
             enum: [ entry, entries ]
           forward:
@@ -111,8 +111,29 @@ properties:
           query:
             type: boolean
           concurrency:
-            enum: [retry]
+            enum: [ none, retry ]
         required: [ type, subject, bindings ]
+        allOf:
+          - if:
+              not:
+                properties:
+                  type:
+                    const: transition
+            then:
+              properties:
+                concurrency:
+                  const: ~
+          - if:
+              properties:
+                type:
+                  const: transition
+              not:
+                properties:
+                  query:
+                    const: false
+                required: [query]
+            then:
+              required: [ concurrency ]
         additionalProperties: false
     additionalProperties: false
 

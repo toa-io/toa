@@ -69,7 +69,9 @@ const forward = (operation, operations) => {
 
   operation.forwarded = true
 
-  merge(operation, target)
+  const { virtual, ...real } = target
+
+  merge(operation, real)
 }
 
 exports.dereference = dereference

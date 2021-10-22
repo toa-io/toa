@@ -11,6 +11,7 @@ entity:
 
 operations:
   transit:
+    concurrency: retry
     input:
       title: ~
   create:
