@@ -15,6 +15,7 @@ const { retry } = require('./retry')
 const { sample } = require('./sample')
 const { seal } = require('./seal')
 const { timeout } = require('./timeout')
+const { underlay } = require('./underlay')
 const { yaml } = require('./yaml')
 
 exports.concat = concat
@@ -32,4 +33,5 @@ exports.retry = retry
 exports.sample = sample
 exports.seal = seal
 exports.timeout = timeout
+exports.underlay = underlay
 exports.yaml = yaml
