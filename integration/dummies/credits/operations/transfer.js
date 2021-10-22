@@ -1,11 +1,11 @@
 'use strict'
 
-// .transfer({ input: source, query: { id: target } })
-
 async function transfer (source, entry, context) {
-  const balance = await context.local.nullify({ query: { id: source } })
+  const reply = await context.local.nullify({ query: { id: source } })
 
-  entry.balance += balance
+  entry.balance += reply.output
+
+  return { output: entry.balance }
 }
 
 exports.transition = transfer

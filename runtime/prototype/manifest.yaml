@@ -15,11 +15,9 @@ entity:
 operations:
   observe:
     output:
-      properties:
-        id: ~
+      id: ~
   transit:
     virtual: true
     input: object
     output:
-      properties:
-        id: ~
+      id: ~

@@ -28,6 +28,7 @@ operations:
   transfer:
     concurrency: none
     input: id   # source balance
+    output: integer
     query: true # target balance
   nullify:
     concurrency: retry

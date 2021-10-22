@@ -11,6 +11,8 @@ class Operation extends Connector {
 
     this.#operation = operation.observation || operation.transition
     this.#context = context
+
+    this.depends(context)
   }
 
   async run (input, state) {

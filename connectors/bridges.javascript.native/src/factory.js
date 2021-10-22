@@ -4,11 +4,14 @@ const load = require('./load')
 const { Operation } = require('./operation')
 const { Event } = require('./event')
 const { Receiver } = require('./receiver')
+const { Context } = require('./context')
 
 class Factory {
   operation (root, name, context) {
     const operation = load.operation(root, name)
-    return new Operation(operation, context)
+    const ctx = new Context(context)
+
+    return new Operation(operation, ctx)
   }
 
   event (root, label) {

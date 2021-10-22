@@ -3,18 +3,38 @@
 const { Connector } = require('./connector')
 
 class Context extends Connector {
-  #remotes
+  #local
+  #connect
+  #remotes = {}
 
-  constructor (remotes) {
+  constructor (local, connect) {
     super()
 
-    this.#remotes = remotes
+    this.#local = local
+    this.#connect = connect
 
-    if (remotes !== undefined) this.depends(remotes)
+    this.depends(local)
   }
 
-  get remotes () {
-    return this.#remotes
+  async apply (endpoint, request) {
+    return this.#local.invoke(endpoint, request)
+  }
+
+  async call (domain, name, endpoint, request) {
+    const remote = await this.#remote(domain, name)
+
+    return remote.invoke(endpoint, request)
+  }
+
+  async #remote (domain, name) {
+    if (this.#remotes[domain] === undefined) this.#remotes[domain] = {}
+
+    if (this.#remotes[domain][name] === undefined) {
+      this.#remotes[domain][name] = await this.#connect(domain, name)
+      this.depends(this.#remotes[domain][name])
+    }
+
+    return this.#remotes[domain][name]
   }
 }
 

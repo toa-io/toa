@@ -8,7 +8,7 @@ async function transition (input, entry, context) {
   entry.timestamp = input.timestamp
 
   if (input.free !== true) {
-    const reply = await context.remotes[0].invoke('debit', { input: 1, query: { id: input.sender } })
+    const reply = await context.remote.credits.balance.debit({ input: 1, query: { id: input.sender } })
 
     if (reply.error !== undefined) return { error: reply.error }
   }

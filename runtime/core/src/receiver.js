@@ -1,7 +1,5 @@
 'use strict'
 
-const { console } = require('@toa.io/gears')
-
 const { Connector } = require('./connector')
 
 class Receiver extends Connector {
@@ -31,11 +29,7 @@ class Receiver extends Connector {
 
     const request = this.#adaptive ? await this.#bridge.request(payload) : payload
 
-    try {
-      await this.#local.invoke(this.#transition, request)
-    } catch (e) {
-      console.error(e)
-    }
+    await this.#local.invoke(this.#transition, request)
   }
 }
 

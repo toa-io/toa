@@ -1,17 +1,22 @@
 'use strict'
 
-const { Context } = require('@toa.io/core')
+const { Context, Locator } = require('@toa.io/core')
 
 const boot = require('./index')
 
 const context = async (manifest) => {
-  let remotes
+  const local = await boot.remote(manifest.locator)
 
-  if (manifest.remotes) {
-    remotes = await Promise.all(manifest.remotes.map((id) => boot.remote(id)))
+  const connect = async (domain, name) => {
+    const locator = new Locator({ domain, name })
+    const remote = await boot.remote(locator.id)
+
+    await remote.connect()
+
+    return remote
   }
 
-  return new Context(remotes)
+  return new Context(local, connect)
 }
 
 exports.context = context
