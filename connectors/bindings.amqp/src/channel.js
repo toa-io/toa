@@ -40,8 +40,6 @@ class Channel extends Connector {
   }
 
   async request (label, request) {
-    if (request === undefined) request = {}
-
     const queue = 'request.' + label
     const correlation = newid()
 

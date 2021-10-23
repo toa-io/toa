@@ -15,8 +15,8 @@ class Call extends Connector {
     this.depends(transmitter)
   }
 
-  async invoke (request) {
-    if (request !== undefined) this.#contract.fit(request)
+  async invoke (request = {}) {
+    this.#contract.fit(request)
 
     const { exception, ...reply } = await this.#transmitter.request(request)
 

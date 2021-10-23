@@ -13,19 +13,14 @@ class Observation extends Operation {
     this.#subject = subject
   }
 
-  async process (request) {
-    let subject, state
+  async acquire (scope) {
+    const subject = await this.#subject.query(scope.request.query)
+    const state = subject.get()
 
-    if (request.query) {
-      subject = await this.#subject.query(request.query)
+    freeze(state)
 
-      if (subject !== null) {
-        state = subject.get()
-        freeze(state)
-      } else state = null
-    }
-
-    return this.run(request, state)
+    scope.subject = subject
+    scope.state = state
   }
 }
 

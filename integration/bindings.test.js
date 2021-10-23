@@ -73,7 +73,8 @@ BINDINGS.forEach((binding) => {
     })
 
     it('should throw on invalid input', async () => {
-      await expect(remote.invoke('add')).rejects.toMatchObject({ code: codes.System })
+      await expect(remote.invoke('add'))
+        .rejects.toMatchObject({ code: codes.RequestContract, keyword: 'required' })
 
       await expect(remote.invoke('add', {}))
         .rejects.toMatchObject({ code: codes.RequestContract, keyword: 'required' })

@@ -22,9 +22,11 @@ class Operation extends Connector {
 
   async invoke (request) {
     try {
-      if (request?.query) request.query = this.#query.parse(request.query)
+      if (request.query) request.query = this.#query.parse(request.query)
 
-      return await this.process(request)
+      const scope = { request }
+
+      return await this.process(scope)
     } catch (e) {
       const exception = e instanceof Error ? new SystemException(e) : e
 
@@ -32,15 +34,26 @@ class Operation extends Connector {
     }
   }
 
-  async run (request, state) {
-    const reply = await this.#cascade.run(request?.input, state) || {}
+  async process (scope) {
+    await this.acquire(scope)
+    await this.run(scope)
+    await this.commit(scope)
+
+    return scope.reply
+  }
+
+  async acquire () {}
+
+  async run (scope) {
+    const { request, state } = scope
+    const reply = await this.#cascade.run(request.input, state) || {}
 
     this.#contract.fit(reply)
 
-    return reply
+    scope.reply = reply
   }
 
-  async process () {}
+  async commit () {}
 }
 
 exports.Operation = Operation
