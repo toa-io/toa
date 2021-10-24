@@ -85,7 +85,9 @@ properties:
           type:
             enum: [ transition, observation, assignment ]
           subject:
-            enum: [ entry, entries, changeset ] # TODO: link with type
+            enum: [ entry, entries, changeset ]
+          concurrency:
+            enum: [ none, retry ]
           forward:
             $ref: 'definitions#/definitions/token'
           bridge:
@@ -103,11 +105,25 @@ properties:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
-          concurrency:
-            enum: [ none, retry ]
         required: [ type, subject, bindings ]
         allOf:
-          - if:
+          - if: # transition
+              properties:
+                type:
+                  const: transition
+            then:
+              properties:
+                subject:
+                  enum: [ entry ]
+              if: # transition query: false
+                not:
+                  properties:
+                    query:
+                      const: false
+                  required: [query]
+              then:
+                required: [ concurrency ]
+          - if: # not transition
               not:
                 properties:
                   type:
@@ -115,18 +131,23 @@ properties:
             then:
               properties:
                 concurrency:
-                  const: ~
-          - if:
+                  const: ~ # never pass
+          - if: # observation
               properties:
                 type:
-                  const: transition
-              not:
-                properties:
-                  query:
-                    const: false
-                required: [query]
+                  const: observation
             then:
-              required: [ concurrency ]
+              properties:
+                subject:
+                  enum: [ entry, entries ]
+          - if: # assignment
+              properties:
+                type:
+                  const: assignment
+            then:
+              properties:
+                subject:
+                  enum: [ changeset ]
         additionalProperties: false
     additionalProperties: false
 

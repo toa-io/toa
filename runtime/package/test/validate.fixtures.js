@@ -28,6 +28,12 @@ const ok = {
       subject: 'entry',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
+    },
+    set: {
+      type: 'assignment',
+      subject: 'changeset',
+      bridge: 'whatever',
+      bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
     }
   },
   events: {
