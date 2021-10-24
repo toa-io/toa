@@ -38,20 +38,17 @@ describe('schema', () => {
   })
 
   it('should provide schema', () => {
-    expect(Request.schema()).toStrictEqual(schema)
+    expect(Request.schema({})).toBeDefined()
   })
 
   it('should add required input', () => {
     const input = { type: 'number' }
 
-    schema.properties.input = input
-    schema.required = ['input']
-
-    expect(Request.schema({ input })).toStrictEqual(schema)
+    expect(Request.schema({ input }).properties.input).toStrictEqual(input)
   })
 
   it('should contain query if declaration.query is not defined', () => {
-    expect(Request.schema({})).toStrictEqual(schema)
+    expect(Request.schema({}).properties.query).toBeDefined()
   })
 
   it('should not contain query if declaration.query is false', () => {
@@ -61,6 +58,42 @@ describe('schema', () => {
 
   it('should require query if declaration.query is true', () => {
     schema.required = ['query']
-    expect(Request.schema({ query: true })).toStrictEqual(schema)
+    expect(Request.schema({ query: true }).required).toStrictEqual(expect.arrayContaining(['query']))
+  })
+
+  it('should forbid projection for non observations', () => {
+    expect(Request.schema({ type: 'transition' }).properties.query.properties.projection)
+      .toBe(undefined)
+
+    expect(Request.schema({ type: 'assignment' }).properties.query.properties.projection)
+      .toBe(undefined)
+
+    expect(Request.schema({ type: 'observation' }).properties.query.properties.projection)
+      .toBeDefined()
+  })
+
+  it('should forbid version for observations', () => {
+    expect(Request.schema({ type: 'transition' }).properties.query.properties.version)
+      .toBeDefined()
+
+    expect(Request.schema({ type: 'observation' }).properties.query.properties.version)
+      .toBe(undefined)
+  })
+
+  it('should allow omit, limit only for entries observations', () => {
+    const transition = Request.schema({ type: 'transition' }).properties.query.properties
+
+    expect(transition.omit).toBeUndefined()
+    expect(transition.limit).toBeUndefined()
+
+    const entry = Request.schema({ type: 'observation', subject: 'entry' }).properties.query.properties
+
+    expect(entry.omit).toBeUndefined()
+    expect(entry.limit).toBeUndefined()
+
+    const entries = Request.schema({ type: 'observation', subject: 'entries' }).properties.query.properties
+
+    expect(entries.omit).toBeDefined()
+    expect(entries.limit).toBeDefined()
   })
 })

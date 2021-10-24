@@ -1,9 +1,11 @@
 'use strict'
 
 const { generate } = require('randomstring')
+const { yaml } = require('@toa.io/gears')
+const { resolve } = require('path')
 
 const schema = {
-  fit: jest.fn((input) => input.invalid ? { message: generate() } : null)
+  fit: jest.fn((input) => (input.invalid ? { message: generate() } : null))
 }
 
 const query = {
@@ -13,7 +15,10 @@ const query = {
 const declaration = {}
 
 const schemas = {
-  request: { properties: { query: expect.any(Object) }, additionalProperties: false }
+  request: {
+    properties: { query: yaml.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml')) },
+    additionalProperties: false
+  }
 }
 
 exports.schema = schema

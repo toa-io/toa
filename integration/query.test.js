@@ -119,24 +119,24 @@ describe('not found', () => {
     })
 
     it('should throw if omit is not positive integer', async () => {
-      await expect(remote.invoke('get', { query: { omit: 'foo' } }))
+      await expect(remote.invoke('find', { query: { omit: 'foo' } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
 
-      await expect(remote.invoke('get', { query: { omit: -1 } }))
+      await expect(remote.invoke('find', { query: { omit: -1 } }))
         .rejects.toMatchObject({ keyword: 'minimum', property: 'query/omit' })
 
-      await expect(remote.invoke('get', { query: { omit: 0.5 } }))
+      await expect(remote.invoke('find', { query: { omit: 0.5 } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
     })
 
     it('should throw if limit is not positive integer', async () => {
-      await expect(remote.invoke('get', { query: { limit: 'foo' } }))
+      await expect(remote.invoke('find', { query: { limit: 'foo' } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/limit' })
 
-      await expect(remote.invoke('get', { query: { limit: -1 } }))
+      await expect(remote.invoke('find', { query: { limit: -1 } }))
         .rejects.toMatchObject({ keyword: 'minimum', property: 'query/limit' })
 
-      await expect(remote.invoke('get', { query: { limit: 0.5 } }))
+      await expect(remote.invoke('find', { query: { limit: 0.5 } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/limit' })
     })
   })

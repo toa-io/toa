@@ -12,7 +12,6 @@ class Query {
     this.#system = Object.keys(properties).filter((key) => properties[key].system === true)
   }
 
-  // TODO: constraints
   parse (query) {
     const result = {}
     const { id, version, criteria, ...rest } = query
