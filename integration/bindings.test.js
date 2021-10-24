@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { newid } = require('@toa.io/gears')
+const { newid, timeout } = require('@toa.io/gears')
 const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')
@@ -17,6 +17,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  await timeout(500) // process all events
+
   await collection.disconnect()
 })
 

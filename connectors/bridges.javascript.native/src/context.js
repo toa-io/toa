@@ -1,7 +1,7 @@
 'use strict'
 
-const { Connector } = require('@toa.io/core')
 const { underlay } = require('@toa.io/gears')
+const { Connector } = require('@toa.io/core')
 
 class Context extends Connector {
   local
@@ -14,9 +14,9 @@ class Context extends Connector {
 
     this.#context = context
 
-    this.local = underlay(async (endpoint, [request]) => this.#context.apply(endpoint, request))
+    this.local = underlay(async (endpoint, request) => this.#context.apply(endpoint, request))
 
-    this.remote = underlay(async (domain, name, endpoint, [request]) =>
+    this.remote = underlay(async (domain, name, endpoint, request) =>
       this.#context.call(domain, name, endpoint, request))
 
     this.depends(context)

@@ -16,6 +16,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  await timeout(500) // process all events
+
   if (messages) await messages.disconnect()
   if (credits) await credits.disconnect()
   if (stats) await stats.disconnect()

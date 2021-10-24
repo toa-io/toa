@@ -20,6 +20,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  await timeout(500) // process all events
+
   if (resources) await resources.disconnect()
   if (composition) await composition.disconnect()
   if (a) await a.disconnect()

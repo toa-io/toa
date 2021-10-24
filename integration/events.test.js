@@ -16,6 +16,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  await timeout(500) // process all events
+
   if (composition) await composition.disconnect()
   if (messages) await messages.disconnect()
   if (credits) await credits.disconnect()
