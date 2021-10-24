@@ -11,7 +11,5 @@ entity:
       description: string
     required: [ length ]
 
-remotes: [ 'a.b', 'd.e' ]
-
 receivers:
   dummies.a.happened: transit

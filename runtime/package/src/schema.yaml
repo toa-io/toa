@@ -74,13 +74,6 @@ properties:
   bridge:
     type: string
 
-  remotes:
-    type: array
-    uniqueItems: true
-    minItems: 1
-    items:
-      $ref: 'definitions#/definitions/locator'
-
   operations:
     type: object
     propertyNames:

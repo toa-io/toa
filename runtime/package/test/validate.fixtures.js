@@ -15,7 +15,6 @@ const ok = {
       }
     }
   },
-  remotes: ['one.foo', 'two.bar'],
   operations: {
     get: {
       type: 'observation',

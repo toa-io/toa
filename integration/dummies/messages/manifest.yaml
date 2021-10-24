@@ -8,8 +8,6 @@ entity:
       text: string
       timestamp: integer
 
-remotes: [ credits.balance ]
-
 operations:
   add:
     input:

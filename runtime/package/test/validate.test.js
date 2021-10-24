@@ -146,30 +146,6 @@ describe('bindings', () => {
   })
 })
 
-describe('remotes', () => {
-  it('should be optional', () => {
-    delete manifest.remotes
-    expect(() => validate(manifest)).not.toThrow()
-  })
-
-  it('should be unique non-empty array of locators', () => {
-    manifest.remotes = 1
-    expect(() => validate(manifest)).toThrow(/must be array/)
-
-    manifest.remotes = ['a']
-    expect(() => validate(manifest)).toThrow(/must match pattern/)
-
-    manifest.remotes = ['a.b', {}]
-    expect(() => validate(manifest)).toThrow(/must be string/)
-
-    manifest.remotes = ['a.b', 'a.b']
-    expect(() => validate(manifest)).toThrow(/duplicate items/)
-
-    manifest.remotes = []
-    expect(() => validate(manifest)).toThrow(/fewer than 1 items/)
-  })
-})
-
 describe('operations', () => {
   describe('operation', () => {
     it('should be object', () => {

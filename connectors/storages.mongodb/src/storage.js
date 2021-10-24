@@ -59,6 +59,8 @@ class Storage extends Connector {
       options.upsert = true
 
       if (criteria._id !== undefined) insert._id = criteria._id
+      else return null // this shouldn't ever happen
+
       if (Object.keys(insert) > 0) update.$setOnInsert = insert
     }
 
