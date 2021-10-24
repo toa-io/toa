@@ -40,6 +40,7 @@ describe('routing', () => {
 
   it('should expose routes dynamically', async () => {
     const url = locator('/dummies/a/')
+
     const request = {
       method: 'POST',
       body: JSON.stringify({ title: 'foo', length: 1 }),

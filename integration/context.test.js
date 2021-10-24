@@ -18,7 +18,7 @@ afterAll(async () => {
   if (composition) await composition.disconnect()
 })
 
-it('should transfer', async () => {
+it('should provide local', async () => {
   const from = newid()
   const to = newid()
 
