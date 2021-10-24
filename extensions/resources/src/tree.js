@@ -48,10 +48,13 @@ class Tree {
 const trail = (path) => path[path.length - 1] === '/' ? path : path + '/'
 
 const method = (operation) => {
-  if (operation.type === 'observation') return 'GET'
+  if (operation.type === 'transition') {
+    if (operation.query === false) return 'POST'
+    else return 'PUT'
+  }
 
-  if (operation.query === false) return 'POST'
-  else return 'PUT'
+  if (operation.type === 'observation') return 'GET'
+  if (operation.type === 'assignment') return 'PATCH'
 }
 
 exports.Tree = Tree

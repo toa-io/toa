@@ -101,6 +101,19 @@ describe('routing', () => {
 
     expect(response.status).toBe(404)
   })
+
+  it('should map assignment as PATCH', async () => {
+    const id = newid()
+    const url = locator('/credits/balance/' + id + '/')
+
+    const response = await fetch(url, {
+      method: 'PATCH',
+      body: JSON.stringify({ balance: 30 }),
+      headers: { 'content-type': 'application/json' }
+    })
+
+    expect(response.status).toBe(200)
+  })
 })
 
 describe('request', () => {
