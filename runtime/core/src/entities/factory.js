@@ -2,6 +2,7 @@
 
 const { Entity } = require('./entity')
 const { Entries } = require('./entries')
+const { Changeset } = require('./changeset')
 
 class Factory {
   #schema
@@ -22,6 +23,10 @@ class Factory {
     entries = entries.map((entry) => this.entry(entry))
 
     return new Entries(entries)
+  }
+
+  changeset (query) {
+    return new Changeset(this.#schema, query)
   }
 }
 

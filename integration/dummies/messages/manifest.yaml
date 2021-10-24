@@ -53,6 +53,9 @@ operations:
       properties:
         ok: string
       required: [ id, ok ]
+  assign:
+    input:
+      text: ~
 
 extensions:
   resources:

@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { difference, newid, freeze } = require('@toa.io/gears')
+const { difference, newid } = require('@toa.io/gears')
 
 const { EntityContractException } = require('../exceptions')
 
@@ -31,15 +31,15 @@ class Entity {
 
     if (error) throw new EntityContractException(error)
 
-    this.#state = { ...value }
+    this.#state = value
   }
 
   event () {
-    return freeze({
+    return {
       origin: this.#origin,
       state: this.#state,
       changeset: this.#origin === null ? this.#state : difference(this.#origin, this.#state)
-    })
+    }
   }
 
   #initial = (id) => this.#schema.defaults({ id })

@@ -13,6 +13,15 @@ it('should underlay', () => {
     endpoint: 'transit',
     args: [1]
   })
+
+  const repeat = instance.foo.bar.assign(2)
+
+  expect(repeat).toStrictEqual({
+    domain: 'foo',
+    name: 'bar',
+    endpoint: 'assign',
+    args: [2]
+  })
 })
 
 it('should underlay async', async () => {

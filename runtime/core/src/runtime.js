@@ -26,7 +26,7 @@ class Runtime extends Connector {
     console.info(`Runtime '${this.locator.id}' disconnected`)
   }
 
-  async invoke (endpoint, request = {}) {
+  async invoke (endpoint, request) {
     if (!(endpoint in this.#operations)) {
       throw new NotImplementedException(`Endpoint '${endpoint}' not found in '${this.locator.id}'`)
     }

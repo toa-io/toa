@@ -8,8 +8,11 @@ const definition = (module) => {
 
   if (typeof module.transition === 'function') definition.type = 'transition'
   if (typeof module.observation === 'function') definition.type = 'observation'
+  if (typeof module.assignment === 'function') definition.type = 'assignment'
 
-  if (definition.type === undefined) throw new Error('Operation must export either transition or observation function')
+  if (definition.type === undefined) {
+    throw new Error('Operation must export either transition, observation or assignment function')
+  }
 
   const func = module[definition.type]
   const meta = parse(func)
@@ -29,11 +32,7 @@ function node (node) {
 
   const result = {}
 
-  if (node.params.length > 1) {
-    const subject = node.params[1]?.name && SUBJECT[node.params[1].name]
-
-    if (subject !== undefined) result.subject = subject
-  }
+  if (node.params.length > 1) result.subject = node.params[1]?.name && SUBJECT[node.params[1].name]
 
   return result
 }
@@ -43,7 +42,8 @@ const SUBJECT = {
   item: 'entry',
   entries: 'entries',
   items: 'entries',
-  set: 'entries'
+  set: 'entries',
+  changeset: 'changeset'
 }
 
 exports.definition = definition

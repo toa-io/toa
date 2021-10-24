@@ -6,13 +6,11 @@ const { Operation } = require('./operation')
 const { StateConcurrencyException } = require('./exceptions')
 
 class Transition extends Operation {
-  #subject
   #concurrency
 
   constructor (cascade, subject, contract, query, definition) {
     super(cascade, subject, contract, query)
 
-    this.#subject = subject
     this.#concurrency = definition.concurrency
   }
 
@@ -23,7 +21,7 @@ class Transition extends Operation {
   async acquire (scope) {
     const { request } = scope
 
-    scope.subject = request.query ? await this.#subject.query(request.query) : this.#subject.init()
+    scope.subject = request.query ? await this.subject.query(request.query) : this.subject.init()
     scope.state = scope.subject.get()
   }
 
@@ -34,7 +32,7 @@ class Transition extends Operation {
 
     subject.set(state)
 
-    const ok = await this.#subject.commit(subject)
+    const ok = await this.subject.commit(subject)
 
     if (ok !== true) {
       if (this.#concurrency === 'retry') retry()

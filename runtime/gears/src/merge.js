@@ -15,7 +15,9 @@ const merge = (target, source, options = {}, path = []) => {
         merge(target[name], value, options, path)
       } else if (target[name] !== value) {
         if (options.override === true) target[name] = value
-        else if (options.ignore !== true) throw new Error(`gears/merge: conflict at ${string(path)}`)
+        else if (options.ignore !== true) {
+          throw new Error(`gears/merge: conflict at ${string(path)} ('${value}', '${target[name]}')`)
+        }
       }
 
       path.pop()

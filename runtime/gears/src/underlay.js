@@ -2,18 +2,20 @@
 
 const underlay = (fn) => proxy(fn, fn.length)
 
-const proxy = (fn, depth, path = []) => {
+const proxy = (fn, depth, path) => {
   return new Proxy({}, {
     get: (_, key) => {
-      path.push(key)
+      const cursor = path === undefined ? [] : path
+
+      cursor.push(key)
 
       if (depth === 2) {
         return (...args) => {
-          path.push(args)
+          cursor.push(args)
 
-          return fn.apply(null, path)
+          return fn.apply(null, cursor)
         }
-      } else return proxy(fn, depth - 1, path)
+      } else return proxy(fn, depth - 1, cursor)
     }
   })
 }

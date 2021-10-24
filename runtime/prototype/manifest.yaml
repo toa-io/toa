@@ -21,3 +21,5 @@ operations:
     input: object
     output:
       id: ~
+  assign:
+    input: object

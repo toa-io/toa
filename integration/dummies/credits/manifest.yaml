@@ -33,6 +33,10 @@ operations:
   nullify:
     concurrency: retry
     output: integer
+  set:
+    input:
+      balance: ~
+    forward: assign
 
 extensions:
   resources:

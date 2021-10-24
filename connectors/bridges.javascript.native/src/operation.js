@@ -9,7 +9,7 @@ class Operation extends Connector {
   constructor (operation, context) {
     super()
 
-    this.#operation = operation.observation || operation.transition
+    this.#operation = operation.transition || operation.observation || operation.assignment
     this.#context = context
 
     this.depends(context)

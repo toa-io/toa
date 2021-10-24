@@ -119,7 +119,7 @@ describe('keywords', () => {
       const result = schema.fit(value)
 
       expect(result).toBe(null)
-      expect(() => (value.foo = 'not ok')).toThrow(/Cannot set property/)
+      expect(() => (value.foo = 'not ok')).toThrow(/Cannot assign to read only property/)
       expect(value.foo).toBe('ok')
       expect(Object.keys(value)).toStrictEqual(['foo'])
     })

@@ -22,7 +22,9 @@ describe('type', () => {
   })
 
   it('should throw on incorrect export', () => {
-    expect(() => definition({ _: async () => null })).toThrow(/transition or observation/)
+    expect(() => definition({ _: async () => null }))
+      .toThrow(/transition, observation or assignment/)
+
     expect(() => definition({ observation: 1 })).toThrow(/function/)
   })
 })

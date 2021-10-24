@@ -4,16 +4,18 @@ const { Connector } = require('./connector')
 const { SystemException } = require('./exceptions')
 
 class Operation extends Connector {
+  subject
+
   #cascade
-  #subject
   #contract
   #query
 
   constructor (cascade, subject, contract, query) {
     super()
 
+    this.subject = subject
+
     this.#cascade = cascade
-    this.#subject = subject
     this.#contract = contract
     this.#query = query
 

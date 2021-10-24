@@ -22,7 +22,8 @@ const system = {
     const propertyValue = context.parentData[context.parentDataProperty]
 
     Object.defineProperty(context.parentData, context.parentDataProperty, {
-      get: () => propertyValue
+      writable: false,
+      value: propertyValue
     })
 
     return true

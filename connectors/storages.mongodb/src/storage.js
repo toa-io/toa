@@ -40,13 +40,33 @@ class Storage extends Connector {
 
   async set (entry) {
     const criteria = { _id: entry.id, _version: entry._version }
-    const result = await this.#client.update(criteria, to(entry))
+    const result = await this.#client.replace(criteria, to(entry))
 
     return result.value !== null
   }
 
   async store (entry) {
     return entry._version === 0 ? this.add(entry) : this.set(entry)
+  }
+
+  async upsert (query, value, insert) {
+    const { criteria, options } = translate(query)
+    const update = { $set: { ...value }, $inc: { _version: 1 } }
+
+    if (insert !== undefined) {
+      delete insert._version
+
+      options.upsert = true
+
+      if (criteria._id !== undefined) insert._id = criteria._id
+      if (Object.keys(insert) > 0) update.$setOnInsert = insert
+    }
+
+    options.returnDocument = 'after'
+
+    const result = await this.#client.update(criteria, update, options)
+
+    return from(result.value)
   }
 
   async find (query) {

@@ -92,7 +92,7 @@ properties:
           type:
             enum: [ transition, observation, assignment ]
           subject:
-            enum: [ entry, entries ]
+            enum: [ entry, entries, changeset ] # TODO: link with type
           forward:
             $ref: 'definitions#/definitions/token'
           bridge:

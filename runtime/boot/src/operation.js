@@ -1,6 +1,6 @@
 'use strict'
 
-const { Observation, Transition, State, Query, entities } = require('@toa.io/core')
+const { Transition, Observation, Assignment, State, Query, entities } = require('@toa.io/core')
 const { Schema } = require('@toa.io/schema')
 
 const boot = require('./index')
@@ -14,10 +14,7 @@ const operation = (manifest, endpoint, definition, context, storage, emission) =
   const subject = new State(storage, entity, emission, manifest.entity.initialized)
   const query = new Query(manifest.entity.schema.properties)
 
-  if (subject[definition.subject] !== undefined) subject.query = subject[definition.subject]
-  else throw new Error(`Unresolved subject type '${definition.subject}'`)
-
-  if (TYPES[definition.type] === undefined) throw new Error(`Unresolved operation type '${definition.type}'`)
+  subject.query = subject[definition.subject]
 
   const Type = TYPES[definition.type]
 
@@ -26,7 +23,8 @@ const operation = (manifest, endpoint, definition, context, storage, emission) =
 
 const TYPES = {
   transition: Transition,
-  observation: Observation
+  observation: Observation,
+  assignment: Assignment
 }
 
 exports.operation = operation

@@ -38,6 +38,10 @@ class State {
     return this.#entity.entries(entries)
   }
 
+  changeset (query) {
+    return this.#entity.changeset(query)
+  }
+
   async commit (subject) {
     const event = subject.event()
 
@@ -52,6 +56,29 @@ class State {
     }
 
     return ok
+  }
+
+  async apply (subject) {
+    const { changeset, defaults } = subject.export()
+    let insert
+
+    if (this.#initialized && subject.query.id !== undefined && subject.query.version === undefined) {
+      for (const key of Object.keys(defaults)) {
+        if (changeset[key] !== undefined) delete defaults[key]
+      }
+
+      insert = defaults
+    }
+
+    const state = await this.#storage.upsert(subject.query, changeset, insert)
+
+    if (state === null) {
+      if (subject.query.version !== undefined) throw new StatePreconditionException()
+      else throw new StateNotFoundException()
+    }
+
+    // TODO: same as above
+    await this.#emitter.emit({ changeset, state })
   }
 }
 
