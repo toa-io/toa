@@ -10,7 +10,20 @@ class Tree {
     this.update(tree)
   }
 
+  /** @hot */
   match (path) {
+    // region dev only check
+    if (process.env.TOA_ENV === 'dev') {
+      const nodes = this.#nodes.filter((node) => node.match(path) !== false)
+
+      if (nodes.length > 1) {
+        const routes = nodes.map((node) => node.route)
+
+        throw new Error('Ambiguous routes ' + routes.join(', '))
+      }
+    }
+    // endregion
+
     let match
 
     const node = this.#nodes.find((node) => (match = node.match(path)) !== false)
@@ -27,21 +40,20 @@ class Tree {
     const current = {}
 
     route = trail(route)
-    current.match = match(route)
 
     if (node.operations) {
+      current.route = route
+      current.match = match(route)
       current.operations = {}
 
-      for (const operation of node.operations) {
-        current.operations[method(operation)] = operation.operation
-      }
+      for (const operation of node.operations) current.operations[method(operation)] = operation.operation
+
+      this.#nodes.push(current)
     }
 
     for (const [key, value] of Object.entries(node)) {
       if (key.substr(0, 1) === '/') this.#traverse(value, path.posix.resolve(route, '.' + key))
     }
-
-    this.#nodes.push(current)
   }
 }
 
