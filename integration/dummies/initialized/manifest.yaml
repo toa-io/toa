@@ -1,0 +1,18 @@
+domain: dummies
+name: initialized
+
+entity:
+  initialized: true
+  schema:
+    properties:
+      a:
+        type: integer
+        default: 10
+      b: string
+    required: [a, b]
+
+operations:
+  assign:
+    input:
+      a: ~
+      b: ~

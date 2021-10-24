@@ -1,5 +1,6 @@
 'use strict'
 
+const { merge, newid } = require('@toa.io/gears')
 const { EntityContractException } = require('../exceptions')
 
 class Changeset {
@@ -22,16 +23,23 @@ class Changeset {
   set (value) {
     const error = this.#schema.match(value)
 
-    if (error) throw new EntityContractException(error)
+    if (error !== null) throw new EntityContractException(error)
 
     this.#state = value
   }
 
   export () {
-    return {
-      changeset: this.#state,
-      defaults: this.#schema.defaults()
+    const changeset = this.#state
+    const result = { changeset }
+    const insert = merge({ id: newid() }, changeset)
+    const error = this.#schema.fit(insert)
+
+    if (error === null) {
+      delete insert.id
+      result.insert = merge(insert, changeset, { override: true })
     }
+
+    return result
   }
 }
 
