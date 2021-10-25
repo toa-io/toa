@@ -73,9 +73,9 @@ class Storage extends Connector {
 
   async find (query) {
     const { criteria, options } = translate(query)
-    const entries = await this.#client.find(criteria, options)
+    const list = await this.#client.find(criteria, options)
 
-    return entries.map(from)
+    return list.map(from)
   }
 }
 

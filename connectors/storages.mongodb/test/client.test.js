@@ -74,8 +74,8 @@ it('should replace', async () => {
 })
 
 it('should find', async () => {
-  const entries = await instance.find(fixtures.query.criteria, fixtures.query.options)
+  const list = await instance.find(fixtures.query.criteria, fixtures.query.options)
 
-  expect(entries).toStrictEqual(collection.find.mock.results[0].value.toArray.mock.results[0].value)
+  expect(list).toStrictEqual(collection.find.mock.results[0].value.toArray.mock.results[0].value)
   expect(collection.find).toHaveBeenCalledWith(fixtures.query.criteria, fixtures.query.options)
 })

@@ -27,12 +27,12 @@ it('should provide entry', async () => {
   expect(fixtures.entity.entry).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
 })
 
-it('should provide entries', async () => {
-  const entries = await state.entries(fixtures.query)
+it('should provide list', async () => {
+  const list = await state.list(fixtures.query)
 
   expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
-  expect(entries).toStrictEqual(fixtures.entity.entries.mock.results[0].value)
-  expect(fixtures.entity.entries).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
+  expect(list).toStrictEqual(fixtures.entity.list.mock.results[0].value)
+  expect(fixtures.entity.list).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
 })
 
 it('should store entry', async () => {

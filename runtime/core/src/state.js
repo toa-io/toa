@@ -41,10 +41,10 @@ class State {
     return this.#entity.entry(entry)
   }
 
-  async entries (query) {
+  async list (query) {
     const entries = await this.#storage.find(query)
 
-    return this.#entity.entries(entries)
+    return this.#entity.list(entries)
   }
 
   changeset (query) {

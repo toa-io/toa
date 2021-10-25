@@ -57,7 +57,7 @@ properties:
             propertyNames:
               oneOf:
                 - $ref: 'definitions#/definitions/token'
-                - enum: [_version]
+                - enum: [ _version ]
       initialized:
         type: boolean
         default: false
@@ -85,7 +85,7 @@ properties:
           type:
             enum: [ transition, observation, assignment ]
           subject:
-            enum: [ entry, entries, changeset ]
+            enum: [ entry, list, changeset ]
           concurrency:
             enum: [ none, retry ]
           forward:
@@ -100,7 +100,7 @@ properties:
               properties:
                 additionalProperties:
                   const: true
-              required: [additionalProperties]
+              required: [ additionalProperties ]
           output:
             $ref: 'definitions#/definitions/schema'
           query:
@@ -120,7 +120,7 @@ properties:
                   properties:
                     query:
                       const: false
-                  required: [query]
+                  required: [ query ]
               then:
                 required: [ concurrency ]
           - if: # not transition
@@ -139,7 +139,7 @@ properties:
             then:
               properties:
                 subject:
-                  enum: [ entry, entries ]
+                  enum: [ entry, list ]
           - if: # assignment
               properties:
                 type:

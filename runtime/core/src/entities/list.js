@@ -1,6 +1,6 @@
 'use strict'
 
-class Entries {
+class List {
   #set
 
   constructor (set) {
@@ -12,4 +12,4 @@ class Entries {
   }
 }
 
-exports.Entries = Entries
+exports.List = List

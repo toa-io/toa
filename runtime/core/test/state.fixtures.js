@@ -13,7 +13,7 @@ const storage = {
 
 const entity = {
   entry: jest.fn(() => ({ [generate()]: generate() })),
-  entries: jest.fn(() => ({ [generate()]: generate() }))
+  list: jest.fn(() => ({ [generate()]: generate() }))
 }
 
 const query = generate()

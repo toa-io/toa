@@ -32,18 +32,9 @@ function node (node) {
 
   const result = {}
 
-  if (node.params.length > 1) result.subject = node.params[1]?.name && SUBJECT[node.params[1].name]
+  if (node.params.length > 1) result.subject = node.params[1]?.name
 
   return result
-}
-
-const SUBJECT = {
-  entry: 'entry',
-  item: 'entry',
-  entries: 'entries',
-  items: 'entries',
-  set: 'entries',
-  changeset: 'changeset'
 }
 
 exports.definition = definition

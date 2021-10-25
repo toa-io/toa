@@ -60,7 +60,7 @@ it('should set', async () => {
 })
 
 it('should find', async () => {
-  const entries = await connector.find(fixtures.query)
+  const list = await connector.find(fixtures.query)
   const found = client.find.mock.results[0].value
 
   const expected = found.map((result, index) => {
@@ -69,5 +69,5 @@ it('should find', async () => {
     return mock.from.mock.results[index].value
   })
 
-  expect(entries).toStrictEqual(expected)
+  expect(list).toStrictEqual(expected)
 })

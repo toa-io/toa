@@ -32,20 +32,9 @@ describe('type', () => {
 describe('subject', () => {
   it('should return subject', () => {
     const entry = { observation: async (input, entry) => Object.assign(entry, input) }
-    const item = { observation: async (input, item) => Object.assign(item, input) }
-    const entries = { observation: async (input, entries) => Object.assign(entries, input) }
-    const items = { observation: async (input, items) => Object.assign(items, input) }
-    const set = { observation: async (input, set) => Object.assign(set, input) }
+    const list = { observation: async (input, list) => Object.assign(list, input) }
 
     expect(definition(entry)).toMatchObject({ subject: 'entry' })
-    expect(definition(item)).toMatchObject({ subject: 'entry' })
-    expect(definition(entries)).toMatchObject({ subject: 'entries' })
-    expect(definition(items)).toMatchObject({ subject: 'entries' })
-    expect(definition(set)).toMatchObject({ subject: 'entries' })
-  })
-
-  it('should not return unknown subject', () => {
-    const result = definition({ transition: async (input, message) => Object.assign(message, input) })
-    expect(result.subject).toBe(undefined)
+    expect(definition(list)).toMatchObject({ subject: 'list' })
   })
 })

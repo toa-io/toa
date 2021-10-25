@@ -18,7 +18,7 @@ const ok = {
   operations: {
     get: {
       type: 'observation',
-      subject: 'entries',
+      subject: 'list',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http']
     },

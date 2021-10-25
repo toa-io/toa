@@ -6,7 +6,7 @@ const fixtures = require('./factory.fixtures')
 const mock = fixtures.mock
 
 jest.mock('../../src/entities/entity', () => ({ Entity: mock.Entity }))
-jest.mock('../../src/entities/entries', () => ({ Entries: mock.Entries }))
+jest.mock('../../src/entities/list', () => ({ List: mock.List }))
 
 const { Factory } = require('../../src/entities/factory')
 
@@ -33,16 +33,16 @@ it('should create instance', () => {
   expect(entry.constructor).toHaveBeenCalledWith(fixtures.schema, fixtures.entry)
 })
 
-it('should create entries', () => {
-  const entries = factory.entries(fixtures.entries)
+it('should create list', () => {
+  const list = factory.list(fixtures.list)
 
-  expect(entries).toBeInstanceOf(mock.Entries)
+  expect(list).toBeInstanceOf(mock.List)
 
-  const instances = fixtures.entries.map((entry, index) => {
+  const instances = fixtures.list.map((entry, index) => {
     expect(mock.Entity).toHaveBeenNthCalledWith(index + 1, fixtures.schema, entry)
 
     return mock.Entity.mock.instances[index]
   })
 
-  expect(entries.constructor).toHaveBeenCalledWith(instances)
+  expect(list.constructor).toHaveBeenCalledWith(instances)
 })
