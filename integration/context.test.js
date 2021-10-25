@@ -1,6 +1,6 @@
 'use strict'
 
-const { newid, timeout } = require('@toa.io/gears')
+const { newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 
@@ -12,8 +12,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await timeout(500) // process all events
-
   if (credits) await credits.disconnect()
   if (composition) await composition.disconnect()
 })

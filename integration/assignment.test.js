@@ -10,14 +10,15 @@ let composition, credits, messages, stats
 
 beforeAll(async () => {
   composition = await framework.compose(['messages', 'credits', 'stats'])
+
+  // const debug = composition.debug()
+
   messages = await framework.remote('messages.messages')
   credits = await framework.remote('credits.balance')
   stats = await framework.remote('stats.stats')
 })
 
 afterAll(async () => {
-  await timeout(500) // process all events
-
   if (messages) await messages.disconnect()
   if (credits) await credits.disconnect()
   if (stats) await stats.disconnect()
@@ -49,6 +50,8 @@ it('should assign', async () => {
 })
 
 it('should emit events', async () => {
+  delete global.TOA_INTEGRATION_OMIT_EMISSION
+
   const sender = newid()
   const text = generate()
   const created = await messages.invoke('add', { input: { sender, text } })
@@ -69,6 +72,8 @@ it('should emit events', async () => {
   const stat = await stats.invoke('observe', { query: { id: sender } })
 
   expect(stat.output.bankrupt).toBe(true)
+
+  global.TOA_INTEGRATION_OMIT_EMISSION = true
 })
 
 it('should throw StateNotFound', async () => {

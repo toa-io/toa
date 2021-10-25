@@ -2,7 +2,6 @@
 
 const { Factory } = require('../connectors/bindings.amqp')
 const { generate } = require('randomstring')
-const { timeout } = require('@toa.io/gears')
 
 let factory, a, b, c
 
@@ -21,8 +20,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await timeout(500) // process all events
-
   if (a) await a.disconnect()
   if (b) await b.disconnect()
   if (c) await c.disconnect()

@@ -29,6 +29,7 @@ class Receiver extends Connector {
 
     const request = this.#adaptive ? await this.#bridge.request(payload) : payload
 
+    console.info('received', payload)
     await this.#local.invoke(this.#transition, request)
   }
 }

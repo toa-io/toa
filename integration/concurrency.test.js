@@ -15,8 +15,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await timeout(500) // process all events
-
   if (messages) await messages.disconnect()
   if (credits) await credits.disconnect()
   if (stats) await stats.disconnect()
@@ -38,6 +36,8 @@ it('should not throw on concurrency conflict', async () => {
 })
 
 it('should count messages', async () => {
+  delete global.TOA_INTEGRATION_OMIT_EMISSION
+
   const times = 5 + random(5)
   const sender = newid()
 
@@ -48,4 +48,6 @@ it('should count messages', async () => {
   const updated = await stats.invoke('observe', { query: { id: sender } })
 
   expect(updated.output.messages).toBe(times)
+
+  global.TOA_INTEGRATION_OMIT_EMISSION = true
 })

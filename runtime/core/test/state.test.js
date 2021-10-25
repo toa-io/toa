@@ -5,6 +5,14 @@ const fixtures = require('./state.fixtures')
 
 let state
 
+beforeAll(() => {
+  delete global.TOA_INTEGRATION_OMIT_EMISSION
+})
+
+afterAll(() => {
+  global.TOA_INTEGRATION_OMIT_EMISSION = true
+})
+
 beforeEach(() => {
   jest.clearAllMocks()
 

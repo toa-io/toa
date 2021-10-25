@@ -20,10 +20,8 @@ operations:
 
 extensions:
   resources:
-    /:
-      operations: [create]
-      /:id:
-        operations: [observe]
-      /v2/:id:
-        operations: [observe]
+    /:id:
+      operations: [observe]
+    /v2/:id:
+      operations: [observe]
 

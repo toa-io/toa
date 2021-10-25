@@ -1,7 +1,12 @@
 'use strict'
 
 const { empty } = require('@toa.io/gears')
-const { StatePreconditionException, StateNotFoundException } = require('./exceptions')
+
+const {
+  StatePreconditionException,
+  StateNotFoundException,
+  StateInitializationException
+} = require('./exceptions')
 
 class State {
   #storage
@@ -17,6 +22,10 @@ class State {
   }
 
   init (id) {
+    if (this.#initialized === true && id === undefined) {
+      throw new StateInitializationException('Entity is initialized')
+    }
+
     return this.#entity.init(id)
   }
 
@@ -52,7 +61,9 @@ class State {
 
       // TODO: do not wait because outbox will handle failures
       // TODO: handle slow emissions (too many concurrent emissions)
-      await this.#emitter.emit(event)
+      if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
+        await this.#emitter.emit(event)
+      }
     }
 
     return ok
@@ -75,7 +86,9 @@ class State {
     }
 
     // TODO: same as above
-    await this.#emitter.emit({ changeset, state })
+    if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
+      await this.#emitter.emit({ changeset, state })
+    }
   }
 }
 

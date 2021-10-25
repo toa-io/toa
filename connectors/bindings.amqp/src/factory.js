@@ -1,7 +1,5 @@
 'use strict'
 
-const { concat } = require('@toa.io/gears')
-
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
@@ -48,7 +46,7 @@ class Factory {
   }
 
   static host (domain, name) {
-    return domain + concat('.', name) + '.' + TYPE + '.local'
+    return domain + '.' + name + '.' + TYPE + '.local'
   }
 }
 

@@ -20,11 +20,9 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await timeout(500) // process all events
-
   if (resources) await resources.disconnect()
-  if (composition) await composition.disconnect()
   if (a) await a.disconnect()
+  if (composition) await composition.disconnect()
 })
 
 describe('routing', () => {
@@ -39,15 +37,10 @@ describe('routing', () => {
   })
 
   it('should expose routes dynamically', async () => {
-    const url = locator('/dummies/a/')
+    const id = newid()
+    const url = locator('/dummies/a/' + id + '/')
 
-    const request = {
-      method: 'POST',
-      body: JSON.stringify({ title: 'foo', length: 1 }),
-      headers: { 'content-type': 'application/json' }
-    }
-
-    const before = await fetch(url, request)
+    const before = await fetch(url)
 
     expect(before.status).toBe(404)
 
@@ -56,9 +49,9 @@ describe('routing', () => {
     await a.connect()
     await timeout(50) // expose resources
 
-    const after = await fetch(url, request)
+    const after = await fetch(url)
 
-    expect(after.status).toBe(201)
+    expect(after.status).toBe(200)
   })
 
   it('should update routes', async () => {

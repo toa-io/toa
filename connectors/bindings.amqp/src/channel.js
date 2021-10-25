@@ -33,10 +33,11 @@ class Channel extends Connector {
   async disconnection () {
     // TODO: handle current operations
     // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
+    await this.#channel.close()
     await this.#connection.close()
     this.#bound = {}
 
-    console.info(`AMQP Binding disconnected from ${this.#url}`)
+    console.info(`AMQP Binding disconnected from ${this.#url} (pending: ${this.#channel?.pending?.length}, reply: ${this.#channel.reply === null})`)
   }
 
   async request (label, request) {
@@ -49,7 +50,7 @@ class Channel extends Connector {
     const message = pack(request)
     const properties = { replyTo: this.#id, correlationId: correlation }
 
-    this.#channel.sendToQueue(queue, message, properties)
+    await this.#channel.sendToQueue(queue, message, properties)
 
     const reply = await this.#reply(label, correlation)
 
@@ -70,8 +71,8 @@ class Channel extends Connector {
       const message = pack(reply)
       const properties = { correlationId: received.properties.correlationId }
 
-      this.#channel.publish(exchange, received.properties.replyTo, message, properties)
-      this.#channel.ack(received)
+      await this.#channel.publish(exchange, received.properties.replyTo, message, properties)
+      await this.#channel.ack(received)
     })
   }
 
@@ -118,7 +119,7 @@ class Channel extends Connector {
     return new Promise((resolve) => (this.#expected[correlation] = resolve))
   }
 
-  #replies (message) {
+  async #replies (message) {
     const correlation = message.properties.correlationId
     const resolve = this.#expected[correlation]
 
@@ -130,7 +131,7 @@ class Channel extends Connector {
     resolve(message)
 
     delete this.#expected[correlation]
-    this.#channel.ack(message)
+    await this.#channel.ack(message)
   }
 
   static #locate (host) {

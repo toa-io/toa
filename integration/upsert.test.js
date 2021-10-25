@@ -1,6 +1,6 @@
 'use strict'
 
-const { timeout, newid } = require('@toa.io/gears')
+const { newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
 const { codes } = require('@toa.io/core/src/exceptions')
@@ -13,8 +13,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await timeout(500) // process all events
-
   if (remote) await remote.disconnect()
   if (composition) await composition.disconnect()
 })

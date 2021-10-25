@@ -26,7 +26,7 @@ const console = new Proxy(global.console, {
   }
 })
 
-let level = 'warn'
+let level = process.env.TOA_LOG_LEVEL || 'warn'
 
 const colors = {
   info: 'blue',

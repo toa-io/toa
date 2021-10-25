@@ -1,8 +1,9 @@
 'use strict'
 
-const { newid, timeout } = require('@toa.io/gears')
+const { newid } = require('@toa.io/gears')
 
 const framework = require('./framework')
+const { codes } = require('@toa.io/core/src/exceptions')
 
 let composition, remote, messages
 
@@ -12,8 +13,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await timeout(500) // process all events
-
   if (composition) await composition.disconnect()
   if (messages) await messages.disconnect()
   if (remote) await remote.disconnect()
@@ -34,4 +33,9 @@ it('should transit', async () => {
 
   const { output } = await remote.invoke('observe', { query: request.query })
   expect(output.balance).toBe(9)
+})
+
+it('should throw on query: false', async () => {
+  await expect(remote.invoke('add', { input: { balance: 20 } }))
+    .rejects.toMatchObject({ code: codes.StateInitialization })
 })

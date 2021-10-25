@@ -64,6 +64,7 @@ const codes = {
   StateNotFound: 302,
   StatePrecondition: 303,
   StateConcurrency: 304,
+  StateInitialization: 305,
 
   Communication: 400,
   Transmission: 401

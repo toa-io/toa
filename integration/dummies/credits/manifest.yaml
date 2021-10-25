@@ -37,8 +37,15 @@ operations:
     input:
       balance: ~
     forward: assign
+  add:
+    input:
+      balance: ~
+    query: false
+    forward: transit
 
 extensions:
   resources:
+    /:
+      operations: [add]
     /:id:
       operations: [observe, set]
