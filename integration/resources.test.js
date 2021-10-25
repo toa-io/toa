@@ -297,7 +297,7 @@ describe('request', () => {
 
       await repeat(send, times)
 
-      const response = await fetch(url)
+      const response = await fetch(url + '?limit=10')
       const { output } = await response.json()
 
       expect(response.status).toBe(200)
@@ -431,7 +431,7 @@ describe('response', () => {
     })
 
     it('should return projection', async () => {
-      const response = await fetch(url + '?projection=timestamp')
+      const response = await fetch(url + '?limit=10&projection=timestamp')
 
       expect(response.status).toBe(200)
 
@@ -446,7 +446,7 @@ describe('response', () => {
     })
 
     it('should return sorted', async () => {
-      const response = await fetch(url + '?sort=timestamp:desc')
+      const response = await fetch(url + '?limit=10&sort=timestamp:desc')
 
       expect(response.status).toBe(200)
 
@@ -487,7 +487,7 @@ describe('response', () => {
     })
 
     it('should select with criteria', async () => {
-      const response = await fetch(`${url}?criteria=timestamp<4`)
+      const response = await fetch(`${url}?limit=10&criteria=timestamp<4`)
 
       expect(response.status).toBe(200)
 
@@ -497,7 +497,7 @@ describe('response', () => {
     })
 
     it('should return 400 on malformed criteria', async () => {
-      const response = await fetch(`${url}?criteria=foo!`)
+      const response = await fetch(`${url}?limit=10&criteria=foo!`)
 
       expect(response.status).toBe(400)
 
@@ -510,7 +510,7 @@ describe('response', () => {
     })
 
     it('should return 400 on undefined criteria selector', async () => {
-      const response = await fetch(`${url}?criteria=foo==1`)
+      const response = await fetch(url + '?limit=10&criteria=foo==1')
 
       expect(response.status).toBe(400)
 
@@ -523,7 +523,7 @@ describe('response', () => {
     })
 
     it('should return 400 on malformed omit', async () => {
-      const response = await fetch(`${url}?omit=foo`)
+      const response = await fetch(url + '?limit=10&omit=foo')
 
       expect(response.status).toBe(400)
 
@@ -540,7 +540,7 @@ describe('response', () => {
     })
 
     it('should return 400 on malformed limit', async () => {
-      const response = await fetch(`${url}?limit=foo`)
+      const response = await fetch(url + '?limit=foo')
 
       expect(response.status).toBe(400)
 
@@ -557,7 +557,7 @@ describe('response', () => {
     })
 
     it('should return 400 on malformed projection', async () => {
-      const response = await fetch(`${url}?projection=100`)
+      const response = await fetch(url + '?limit=10&projection=100')
 
       expect(response.status).toBe(400)
 
@@ -574,7 +574,7 @@ describe('response', () => {
     })
 
     it('should return 400 on undefined projection property', async () => {
-      const response = await fetch(`${url}?projection=foo`)
+      const response = await fetch(url + '?limit=10&projection=foo')
 
       expect(response.status).toBe(400)
 
@@ -587,7 +587,7 @@ describe('response', () => {
     })
 
     it('should return 400 on malformed sort', async () => {
-      const response = await fetch(`${url}?sort=100`)
+      const response = await fetch(url + '?limit=10&sort=100')
 
       expect(response.status).toBe(400)
 
@@ -604,7 +604,7 @@ describe('response', () => {
     })
 
     it('should return 400 on undefined sort property', async () => {
-      const response = await fetch(`${url}?sort=foo:desc`)
+      const response = await fetch(url + '?limit=10&sort=foo:desc')
 
       expect(response.status).toBe(400)
 

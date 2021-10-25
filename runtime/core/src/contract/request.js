@@ -32,6 +32,9 @@ class Request extends Conditions {
       if (definition.type !== 'observation' || definition.subject !== 'list') {
         delete query.properties.omit
         delete query.properties.limit
+      } else {
+        if (query.required === undefined) query.required = ['limit']
+        else query.required.push('limit')
       }
 
       schema.properties.query = query

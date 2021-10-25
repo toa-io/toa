@@ -27,7 +27,7 @@ describe('not found', () => {
   })
 
   it('should return empty array if target is a set', async () => {
-    const { output } = await remote.invoke('find', { query: { criteria: 'id==1' } })
+    const { output } = await remote.invoke('find', { query: { criteria: 'id==1', limit: 10 } })
 
     expect(output).toStrictEqual([])
   })
@@ -116,17 +116,6 @@ describe('not found', () => {
         .rejects.toMatchObject({ keyword: 'pattern', property: 'query/projection' })
     })
 
-    it('should throw if omit is not positive integer', async () => {
-      await expect(remote.invoke('find', { query: { omit: 'foo' } }))
-        .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
-
-      await expect(remote.invoke('find', { query: { omit: -1 } }))
-        .rejects.toMatchObject({ keyword: 'minimum', property: 'query/omit' })
-
-      await expect(remote.invoke('find', { query: { omit: 0.5 } }))
-        .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
-    })
-
     it('should throw if limit is not positive integer', async () => {
       await expect(remote.invoke('find', { query: { limit: 'foo' } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/limit' })
@@ -136,6 +125,22 @@ describe('not found', () => {
 
       await expect(remote.invoke('find', { query: { limit: 0.5 } }))
         .rejects.toMatchObject({ keyword: 'type', property: 'query/limit' })
+    })
+
+    it('should throw if limit is omitted', async () => {
+      await expect(remote.invoke('find', { query: { omit: 10 } }))
+        .rejects.toMatchObject({ keyword: 'required' })
+    })
+
+    it('should throw if omit is not positive integer', async () => {
+      await expect(remote.invoke('find', { query: { omit: 'foo', limit: 10 } }))
+        .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
+
+      await expect(remote.invoke('find', { query: { omit: -1, limit: 10 } }))
+        .rejects.toMatchObject({ keyword: 'minimum', property: 'query/omit' })
+
+      await expect(remote.invoke('find', { query: { omit: 0.5, limit: 10 } }))
+        .rejects.toMatchObject({ keyword: 'type', property: 'query/omit' })
     })
   })
 })

@@ -60,6 +60,7 @@ BINDINGS.forEach((binding) => {
         query: {
           criteria: `sender==${sender}`,
           sort: 'timestamp:desc',
+          limit: 10,
           projection: 'sender,text'
         }
       })
