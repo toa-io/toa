@@ -59,9 +59,9 @@ BINDINGS.forEach((binding) => {
       const reply = await remote.invoke('find', {
         query: {
           criteria: `sender==${sender}`,
-          sort: 'timestamp:desc',
+          sort: ['timestamp:desc'],
           limit: 10,
-          projection: 'sender,text'
+          projection: ['sender', 'text']
         }
       })
 

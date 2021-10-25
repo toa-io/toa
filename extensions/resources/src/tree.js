@@ -5,8 +5,11 @@ const { match } = require('path-to-regexp')
 
 class Tree {
   #nodes
+  #query
 
-  constructor (tree) {
+  constructor (tree, query) {
+    this.#query = query
+
     this.update(tree)
   }
 
@@ -36,23 +39,27 @@ class Tree {
     this.#traverse(tree)
   }
 
-  #traverse (node, route = '/') {
+  #traverse (node, route, parent) {
     const current = {}
 
-    route = trail(route)
+    if (route === undefined) route = '/'
+    else route = trail(route)
+
+    if (parent !== undefined) node.parent = parent
 
     if (node.operations) {
       current.route = route
       current.match = match(route)
+      current.query = this.#query(node)
       current.operations = {}
 
-      for (const operation of node.operations) current.operations[method(operation)] = operation.operation
+      for (const operation of node.operations) current.operations[method(operation)] = operation
 
       this.#nodes.push(current)
     }
 
     for (const [key, value] of Object.entries(node)) {
-      if (key.substr(0, 1) === '/') this.#traverse(value, path.posix.resolve(route, '.' + key))
+      if (key.substr(0, 1) === '/') this.#traverse(value, path.posix.resolve(route, '.' + key), node)
     }
   }
 }

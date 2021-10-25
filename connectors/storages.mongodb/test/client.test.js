@@ -60,9 +60,9 @@ it('should add', async () => {
 })
 
 it('should get', async () => {
-  const entry = await instance.get(fixtures.query.criteria, fixtures.query.options)
+  const entity = await instance.get(fixtures.query.criteria, fixtures.query.options)
 
-  expect(entry).toBe(collection.findOne.mock.results[0].value)
+  expect(entity).toBe(collection.findOne.mock.results[0].value)
   expect(collection.findOne).toHaveBeenCalledWith(fixtures.query.criteria, fixtures.query.options)
 })
 
@@ -74,8 +74,8 @@ it('should replace', async () => {
 })
 
 it('should find', async () => {
-  const list = await instance.find(fixtures.query.criteria, fixtures.query.options)
+  const set = await instance.find(fixtures.query.criteria, fixtures.query.options)
 
-  expect(list).toStrictEqual(collection.find.mock.results[0].value.toArray.mock.results[0].value)
+  expect(set).toStrictEqual(collection.find.mock.results[0].value.toArray.mock.results[0].value)
   expect(collection.find).toHaveBeenCalledWith(fixtures.query.criteria, fixtures.query.options)
 })

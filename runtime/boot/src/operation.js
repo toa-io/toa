@@ -8,7 +8,6 @@ const boot = require('./index')
 const operation = (manifest, endpoint, definition, context, storage, emission) => {
   const cascade = boot.cascade(manifest, endpoint, definition, context)
   const contract = boot.contract.reply(definition.output, definition.error)
-
   const schema = new Schema(manifest.entity.schema)
   const entity = new entities.Factory(schema)
   const subject = new State(storage, entity, emission, manifest.entity.initialized)

@@ -7,6 +7,7 @@ entity:
       sender: id
       text: string
       timestamp: integer
+      deleted: boolean
 
 operations:
   add:
@@ -16,6 +17,7 @@ operations:
         text: ~
         timestamp: ~
         free: boolean
+        deleted: ~
       required: [ sender, text ]
     output:
       properties:
@@ -58,8 +60,38 @@ operations:
 extensions:
   resources:
     /:
-      operations: [find]
-    /:sender:
-      operations: [add, find]
-      /:id:
-        operations: [get, update]
+      query:
+        criteria: deleted!=true;
+        sort: timestamp:desc
+      #        projection:
+      #          value: [ text, sender ]
+      #          allow: [ timestamp ]
+
+      operations: [ find ]
+
+      /:sender:
+        query:
+          omit:
+            range: [ 1, 10 ]
+          limit:
+            range: [ 1, 20 ]
+          sort: timestamp:desc,
+        operations: [ add, find ]
+        /:id:
+          operations: [ get, update ]
+    /bad/queries/:sender:
+      query:
+        criteria: deleted!=true
+      operations: [ add, find ]
+    /query/left/open:
+      query:
+        sort: ',timestamp:desc'
+      operations: [ find ]
+    /query/criteria/closed:
+      query:
+        criteria: ~
+      operations: [ find ]
+    /query/unsorted/list:
+      operations: [ find ]
+
+

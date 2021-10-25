@@ -1,45 +1,45 @@
 'use strict'
 
-const { to, from } = require('../src/entry')
+const { to, from } = require('../src/record')
 const { random } = require('@toa.io/gears')
 
 describe('to', () => {
   it('should rename id to _id', () => {
-    const entry = { id: 1 }
-    const result = to(entry)
+    const entity = { id: 1 }
+    const record = to(entity)
 
-    expect(result).toMatchObject({ _id: 1 })
+    expect(record).toMatchObject({ _id: 1 })
   })
 
   it('should not modify argument', () => {
-    const entry = { id: 1 }
+    const entity = { id: 1 }
 
-    to(entry)
+    to(entity)
 
-    expect(entry).toStrictEqual({ id: 1 })
+    expect(entity).toStrictEqual({ id: 1 })
   })
 
   it('should increment _version', () => {
-    const entry = { _version: random() }
-    const result = to(entry)
+    const entity = { _version: random() }
+    const record = to(entity)
 
-    expect(result).toMatchObject({ _version: entry._version + 1 })
+    expect(record).toMatchObject({ _version: entity._version + 1 })
   })
 })
 
 describe('from', () => {
   it('should rename _id to id', () => {
-    const entry = { _id: 1 }
-    const result = from(entry)
+    const record = { _id: 1 }
+    const entity = from(record)
 
-    expect(result).toStrictEqual({ id: 1 })
+    expect(entity).toStrictEqual({ id: 1 })
   })
 
   it('should not modify argument', () => {
-    const entry = { _id: 1 }
+    const record = { _id: 1 }
 
-    from(entry)
+    from(record)
 
-    expect(entry).toStrictEqual({ _id: 1 })
+    expect(record).toStrictEqual({ _id: 1 })
   })
 })

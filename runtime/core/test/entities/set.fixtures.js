@@ -2,10 +2,10 @@
 
 const { generate } = require('randomstring')
 
-const entries = [
+const set = [
   { get: jest.fn(() => ({ [generate()]: generate() })) },
   { get: jest.fn(() => ({ [generate()]: generate() })) },
   { get: jest.fn(() => ({ [generate()]: generate() })) }
 ]
 
-exports.entries = entries
+exports.set = set

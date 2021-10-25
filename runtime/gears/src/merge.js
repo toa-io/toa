@@ -1,8 +1,12 @@
 'use strict'
 
 const merge = (target, source, options = {}, path = []) => {
-  if (source instanceof Array && target instanceof Array) target.push(...source)
-  else if (typeof source === 'object' && typeof target === 'object') {
+  if (source instanceof Array && target instanceof Array) {
+    if (options.override === true) {
+      target.length = 0
+      target.push(...source)
+    } else if (options.ignore !== true) target.push(...source)
+  } else if (typeof source === 'object' && typeof target === 'object') {
     for (const [name, value] of Object.entries(source)) {
       path.push(name)
 

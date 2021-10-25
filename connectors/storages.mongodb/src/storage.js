@@ -4,7 +4,7 @@ const { Connector } = require('@toa.io/core')
 
 const { Client } = require('./client')
 const { translate } = require('./translate')
-const { to, from } = require('./entry')
+const { to, from } = require('./record')
 
 class Storage extends Connector {
   #client
@@ -20,16 +20,16 @@ class Storage extends Connector {
   async get (query) {
     const { criteria, options } = translate(query)
 
-    const entry = await this.#client.get(criteria, options)
+    const record = await this.#client.get(criteria, options)
 
-    return from(entry)
+    return from(record)
   }
 
-  async add (entry) {
+  async add (entity) {
     let result
 
     try {
-      result = await this.#client.add(to(entry))
+      result = await this.#client.add(to(entity))
     } catch (e) {
       if (e.code === 11000) result = false // duplicate id
       else throw e
@@ -38,20 +38,20 @@ class Storage extends Connector {
     return result
   }
 
-  async set (entry) {
-    const criteria = { _id: entry.id, _version: entry._version }
-    const result = await this.#client.replace(criteria, to(entry))
+  async set (entity) {
+    const criteria = { _id: entity.id, _version: entity._version }
+    const result = await this.#client.replace(criteria, to(entity))
 
     return result.value !== null
   }
 
-  async store (entry) {
-    return entry._version === 0 ? this.add(entry) : this.set(entry)
+  async store (entity) {
+    return entity._version === 0 ? this.add(entity) : this.set(entity)
   }
 
-  async upsert (query, value, insert) {
+  async upsert (query, changeset, insert) {
     const { criteria, options } = translate(query)
-    const update = { $set: { ...value }, $inc: { _version: 1 } }
+    const update = { $set: { ...changeset }, $inc: { _version: 1 } }
 
     if (insert !== undefined) {
       delete insert._version
@@ -73,9 +73,9 @@ class Storage extends Connector {
 
   async find (query) {
     const { criteria, options } = translate(query)
-    const list = await this.#client.find(criteria, options)
+    const recordset = await this.#client.find(criteria, options)
 
-    return list.map(from)
+    return recordset.map(from)
   }
 }
 

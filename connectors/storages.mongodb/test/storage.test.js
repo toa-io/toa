@@ -5,7 +5,7 @@ const mock = fixtures.mock
 
 jest.mock('../src/client', () => ({ Client: mock.Client }))
 jest.mock('../src/translate', () => ({ translate: mock.translate }))
-jest.mock('../src/entry', () => ({ to: mock.to, from: mock.from }))
+jest.mock('../src/record', () => ({ to: mock.to, from: mock.from }))
 
 const { Storage } = require('../src/storage')
 
@@ -32,17 +32,17 @@ beforeEach(() => {
 })
 
 it('should add', async () => {
-  const result = await connector.add(fixtures.entry)
+  const result = await connector.add(fixtures.entity)
 
   expect(client.add).toHaveBeenCalledWith(mock.to.mock.results[0].value)
-  expect(mock.to).toHaveBeenCalledWith(fixtures.entry)
+  expect(mock.to).toHaveBeenCalledWith(fixtures.entity)
   expect(result).toBe(client.add.mock.results[0].value)
 })
 
 it('should get', async () => {
-  const entry = await connector.get(fixtures.query)
+  const entity = await connector.get(fixtures.query)
 
-  expect(entry).toBe(mock.from.mock.results[0].value)
+  expect(entity).toBe(mock.from.mock.results[0].value)
   expect(mock.from).toHaveBeenCalledWith(client.get.mock.results[0].value)
 
   const { criteria, options } = mock.translate.mock.results[0].value
@@ -52,15 +52,15 @@ it('should get', async () => {
 })
 
 it('should set', async () => {
-  await connector.set(fixtures.entry)
-  const criteria = { _id: fixtures.entry.id }
+  await connector.set(fixtures.entity)
+  const criteria = { _id: fixtures.entity.id }
 
   expect(client.replace).toHaveBeenCalledWith(criteria, mock.to.mock.results[0].value)
-  expect(mock.to).toHaveBeenCalledWith(fixtures.entry)
+  expect(mock.to).toHaveBeenCalledWith(fixtures.entity)
 })
 
 it('should find', async () => {
-  const list = await connector.find(fixtures.query)
+  const set = await connector.find(fixtures.query)
   const found = client.find.mock.results[0].value
 
   const expected = found.map((result, index) => {
@@ -69,5 +69,5 @@ it('should find', async () => {
     return mock.from.mock.results[index].value
   })
 
-  expect(list).toStrictEqual(expected)
+  expect(set).toStrictEqual(expected)
 })

@@ -4,13 +4,16 @@ const manifest = {
   operations: {
     one: {
       type: 'transition',
+      subject: 'entity',
       query: false
     },
     two: {
-      type: 'observation'
+      type: 'observation',
+      subject: 'set'
     },
     three: {
-      type: 'observation'
+      type: 'observation',
+      subject: 'set'
     }
   }
 }

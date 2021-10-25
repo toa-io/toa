@@ -13,9 +13,19 @@ properties:
     type: integer
     minimum: 0
   sort:
-    type: string
-    pattern: ^([a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(:(asc|desc))?)(,([a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(:(asc|desc))?))*$
+    type: array
+    uniqueItems: true
+    minItems: 1
+    items:
+      type: string
+      pattern: ^[a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(:(asc|desc))?$
   projection:
-    type: string
-    pattern: ^([a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?)(,([a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$
+    type: array
+    uniqueItems: true
+    minItems: 1
+    items:
+      type: string
+      pattern: ^([a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?)$
+      not:
+        const: id
 additionalProperties: false

@@ -29,22 +29,22 @@ class State {
     return this.#entity.init(id)
   }
 
-  async entry (query) {
-    const entry = await this.#storage.get(query)
+  async entity (query) {
+    const record = await this.#storage.get(query)
 
-    if (entry === null) {
+    if (record === null) {
       if (this.#initialized && query.id !== undefined && query.version === undefined) return this.init(query.id)
       else if (query.version !== undefined) throw new StatePreconditionException()
       else throw new StateNotFoundException()
     }
 
-    return this.#entity.entry(entry)
+    return this.#entity.entity(record)
   }
 
-  async list (query) {
-    const entries = await this.#storage.find(query)
+  async set (query) {
+    const recordset = await this.#storage.find(query)
 
-    return this.#entity.list(entries)
+    return this.#entity.set(recordset)
   }
 
   changeset (query) {

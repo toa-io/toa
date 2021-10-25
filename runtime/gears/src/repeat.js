@@ -4,8 +4,8 @@ const repeat = (fn, times) => {
   const results = []
   let promise = false
 
-  for (let i = times; i > 0; i--) {
-    const result = fn()
+  for (let i = 0; i < times; i++) {
+    const result = fn(i)
 
     if (result instanceof Promise) promise = true
 

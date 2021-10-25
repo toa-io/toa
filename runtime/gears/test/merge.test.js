@@ -66,12 +66,12 @@ describe('options', () => {
     const options = { ignore: true }
 
     it('should ignore conflicts', () => {
-      const a = { a: 1 }
-      const b = { a: 2, b: 1 }
+      const a = { a: 1, c: [1, 2] }
+      const b = { a: 2, b: 1, c: [3, 4] }
 
       merge(a, b, options)
 
-      expect(a).toStrictEqual({ a: 1, b: 1 })
+      expect(a).toStrictEqual({ a: 1, b: 1, c: [1, 2] })
     })
   })
 
@@ -79,12 +79,12 @@ describe('options', () => {
     const options = { override: true }
 
     it('should override on conflicts', () => {
-      const a = { a: 1, b: 1 }
-      const b = { a: 2, c: 1 }
+      const a = { a: 1, b: 1, d: [1, 2] }
+      const b = { a: 2, c: 1, d: [3, 4] }
 
       merge(a, b, options)
 
-      expect(a).toStrictEqual({ a: 2, b: 1, c: 1 })
+      expect(a).toStrictEqual({ a: 2, b: 1, c: 1, d: [3, 4] })
     })
   })
 })

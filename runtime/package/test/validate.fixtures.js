@@ -18,14 +18,14 @@ const ok = {
   operations: {
     get: {
       type: 'observation',
-      subject: 'list',
+      subject: 'set',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http']
     },
     add: {
       type: 'transition',
       concurrency: 'none',
-      subject: 'entry',
+      subject: 'entity',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
     },

@@ -1,7 +1,7 @@
 'use strict'
 
 const { Entity } = require('./entity')
-const { List } = require('./list')
+const { EntitySet } = require('./set')
 const { Changeset } = require('./changeset')
 
 class Factory {
@@ -15,14 +15,14 @@ class Factory {
     return new Entity(this.#schema, id)
   }
 
-  entry (entry) {
-    return new Entity(this.#schema, entry)
+  entity (record) {
+    return new Entity(this.#schema, record)
   }
 
-  list (entries) {
-    entries = entries.map((entry) => this.entry(entry))
+  set (recordset) {
+    const set = recordset.map((record) => this.entity(record))
 
-    return new List(entries)
+    return new EntitySet(set)
   }
 
   changeset (query) {

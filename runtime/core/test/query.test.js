@@ -62,37 +62,23 @@ describe('options', () => {
   })
 
   describe('sort', () => {
-    it('should return an array', () => {
-      const sort = 'a:asc,b:desc'
-      const query = instance.parse({ sort })
-
-      expect(query.options.sort).toStrictEqual([['a', 'asc'], ['b', 'desc']])
-    })
-
     it('should set default values', () => {
-      const sort = 'a,b:desc,c'
+      const sort = ['a', 'b:desc', 'c']
       const query = instance.parse({ sort })
 
       expect(query.options.sort).toStrictEqual([['a', 'asc'], ['b', 'desc'], ['c', 'asc']])
     })
 
     it('should throw on unknown properties', () => {
-      const sort = 'd:asc'
+      const sort = ['d:asc']
 
       expect(() => instance.parse({ sort })).toThrow(/not defined/)
     })
   })
 
   describe('projection', () => {
-    it('should return an array', () => {
-      const projection = 'a,b,c'
-      const query = instance.parse({ projection })
-
-      expect(query.options.projection).toStrictEqual(['a', 'b', 'c'])
-    })
-
     it('should throw on unknown properties', () => {
-      const projection = 'a,b,c,d'
+      const projection = ['a', 'b', 'c', 'd']
 
       expect(() => instance.parse({ projection })).toThrow(/not defined/)
     })

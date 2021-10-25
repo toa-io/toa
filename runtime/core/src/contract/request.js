@@ -29,7 +29,7 @@ class Request extends Conditions {
         delete query.properties.projection
       }
 
-      if (definition.type !== 'observation' || definition.subject !== 'list') {
+      if (definition.type !== 'observation' || definition.subject !== 'set') {
         delete query.properties.omit
         delete query.properties.limit
       } else {

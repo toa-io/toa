@@ -1,9 +1,9 @@
 'use strict'
 
-async function nullify (_, entry) {
-  const balance = entry.balance
+async function nullify (_, entity) {
+  const balance = entity.balance
 
-  entry.balance = 0
+  entity.balance = 0
 
   return { output: balance }
 }

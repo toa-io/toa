@@ -28,7 +28,7 @@ it('should return', async () => {
 it('should return with projection', async () => {
   const id = newid()
 
-  const { output } = await remote.invoke('observe', { query: { id, projection: 'balance' } })
+  const { output } = await remote.invoke('observe', { query: { id, projection: ['balance'] } })
 
   expect(output._version).toBe(0)
 })

@@ -80,20 +80,20 @@ describe('schema', () => {
       .toBe(undefined)
   })
 
-  it('should allow omit, limit only for list observations', () => {
+  it('should allow omit, limit only for set observations', () => {
     const transition = Request.schema({ type: 'transition' }).properties.query.properties
 
     expect(transition.omit).toBeUndefined()
     expect(transition.limit).toBeUndefined()
 
-    const entry = Request.schema({ type: 'observation', subject: 'entry' }).properties.query.properties
+    const entity = Request.schema({ type: 'observation', subject: 'entity' }).properties.query.properties
 
-    expect(entry.omit).toBeUndefined()
-    expect(entry.limit).toBeUndefined()
+    expect(entity.omit).toBeUndefined()
+    expect(entity.limit).toBeUndefined()
 
-    const list = Request.schema({ type: 'observation', subject: 'list' }).properties.query.properties
+    const set = Request.schema({ type: 'observation', subject: 'set' }).properties.query.properties
 
-    expect(list.omit).toBeDefined()
-    expect(list.limit).toBeDefined()
+    expect(set.omit).toBeDefined()
+    expect(set.limit).toBeDefined()
   })
 })

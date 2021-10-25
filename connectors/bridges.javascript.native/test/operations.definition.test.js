@@ -31,10 +31,10 @@ describe('type', () => {
 
 describe('subject', () => {
   it('should return subject', () => {
-    const entry = { observation: async (input, entry) => Object.assign(entry, input) }
-    const list = { observation: async (input, list) => Object.assign(list, input) }
+    const entity = { observation: async (input, entity) => Object.assign(entity, input) }
+    const set = { observation: async (input, set) => Object.assign(set, input) }
 
-    expect(definition(entry)).toMatchObject({ subject: 'entry' })
-    expect(definition(list)).toMatchObject({ subject: 'list' })
+    expect(definition(entity)).toMatchObject({ subject: 'entity' })
+    expect(definition(set)).toMatchObject({ subject: 'set' })
   })
 })

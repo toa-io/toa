@@ -12,7 +12,7 @@ const options = (options, properties, system) => {
 const sort = (sort, properties) => {
   const result = []
 
-  for (const sorting of sort.split(',')) {
+  for (const sorting of sort) {
     const [property, direction] = sorting.split(':')
 
     if (properties[property] === undefined) {
@@ -26,15 +26,15 @@ const sort = (sort, properties) => {
 }
 
 const projection = (projection, properties, system) => {
-  const result = [...new Set(system.concat(projection.split(',')))]
+  const set = [...new Set(system.concat(projection))]
 
-  for (const property of result) {
+  for (const property of set) {
     if (properties[property] === undefined) {
       throw new QuerySyntaxException(`Projection property '${property}' is not defined`)
     }
   }
 
-  return result
+  return set
 }
 
 exports.options = options

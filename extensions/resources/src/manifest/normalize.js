@@ -9,8 +9,8 @@ const normalize = (node, manifest) => {
         throw new Error(`Resource references undefined operation '${operation}'`)
       }
 
-      const { type, query } = manifest.operations[operation]
-      const normal = { operation, type }
+      const { type, subject, query } = manifest.operations[operation]
+      const normal = { operation, type, subject }
 
       if (query !== undefined) normal.query = query
 

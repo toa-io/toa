@@ -6,7 +6,7 @@ const fixtures = require('./tree.fixtures')
 let tree
 
 beforeEach(() => {
-  tree = new Tree(fixtures.definition)
+  tree = new Tree(fixtures.definition, () => null)
 })
 
 it('should find node', () => {
@@ -29,7 +29,7 @@ it('should throw on resource conflicts if dev env', () => {
     }
   }
 
-  tree = new Tree(definition)
+  tree = new Tree(definition, () => null)
 
   expect(() => tree.match('/ok/')).toThrow(/Ambiguous routes/)
 })

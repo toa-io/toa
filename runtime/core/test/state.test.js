@@ -16,35 +16,35 @@ afterAll(() => {
 beforeEach(() => {
   jest.clearAllMocks()
 
-  state = new State(fixtures.storage, fixtures.entity, fixtures.emitter)
+  state = new State(fixtures.storage, fixtures.factory, fixtures.emitter)
 })
 
-it('should provide entry', async () => {
-  const entry = await state.entry(fixtures.query)
+it('should provide entity', async () => {
+  const entity = await state.entity(fixtures.query)
 
   expect(fixtures.storage.get).toHaveBeenCalledWith(fixtures.query)
-  expect(entry).toStrictEqual(fixtures.entity.entry.mock.results[0].value)
-  expect(fixtures.entity.entry).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
+  expect(entity).toStrictEqual(fixtures.factory.entity.mock.results[0].value)
+  expect(fixtures.factory.entity).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
 })
 
-it('should provide list', async () => {
-  const list = await state.list(fixtures.query)
+it('should provide set', async () => {
+  const set = await state.set(fixtures.query)
 
   expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
-  expect(list).toStrictEqual(fixtures.entity.list.mock.results[0].value)
-  expect(fixtures.entity.list).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
+  expect(set).toStrictEqual(fixtures.factory.set.mock.results[0].value)
+  expect(fixtures.factory.set).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
 })
 
-it('should store entry', async () => {
+it('should store entity', async () => {
   await state.commit(fixtures.initial)
 
   expect(fixtures.storage.store).toHaveBeenCalledWith(fixtures.initial.get.mock.results[0].value)
 })
 
 it('should emit', async () => {
-  await state.commit(fixtures.entry)
+  await state.commit(fixtures.entity)
 
-  expect(fixtures.emitter.emit).toHaveBeenCalledWith(fixtures.entry.event.mock.results[0].value)
+  expect(fixtures.emitter.emit).toHaveBeenCalledWith(fixtures.entity.event.mock.results[0].value)
 })
 
 it('should not emit if state has not been changed', async () => {

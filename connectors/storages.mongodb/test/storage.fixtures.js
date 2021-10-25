@@ -16,10 +16,10 @@ const query = {
 
 const translate = jest.fn(() => ({ criteria: 'foo', options: 'bar' }))
 
-const to = jest.fn((entry) => entry)
-const from = jest.fn((entry) => entry)
+const to = jest.fn((entity) => entity)
+const from = jest.fn((record) => record)
 
 exports.mock = { Client, translate, to, from }
 exports.locator = { host: jest.fn(() => 'bar.foo.local'), domain: 'foo', name: 'bar' }
-exports.entry = { id: '1', foo: 'bar' }
+exports.entity = { id: '1', foo: 'bar' }
 exports.query = query

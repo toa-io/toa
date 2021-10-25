@@ -32,8 +32,8 @@ class Client extends Connector {
       `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
   }
 
-  async add (entry) {
-    const { acknowledged } = await this.#collection.insertOne(entry)
+  async add (record) {
+    const { acknowledged } = await this.#collection.insertOne(record)
 
     return acknowledged
   }
@@ -42,8 +42,8 @@ class Client extends Connector {
     return await this.#collection.findOne(query, options)
   }
 
-  async replace (query, entry, options) {
-    return this.#collection.findOneAndReplace(query, entry, options)
+  async replace (query, record, options) {
+    return this.#collection.findOneAndReplace(query, record, options)
   }
 
   async update (query, update, options) {

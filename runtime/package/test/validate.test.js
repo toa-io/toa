@@ -177,16 +177,16 @@ describe('operations', () => {
         expect(() => validate(manifest)).toThrow(/required property/)
       })
 
-      it('should allow only entry or list for observations', () => {
+      it('should allow only entity or set for observations', () => {
         manifest.operations.get.subject = 'changeset'
         expect(() => validate(manifest)).toThrow(/allowed values/)
       })
 
-      it('should allow only entry for transitions', () => {
+      it('should allow only entity for transitions', () => {
         manifest.operations.add.subject = 'changeset'
         expect(() => validate(manifest)).toThrow(/allowed values/)
 
-        manifest.operations.add.subject = 'list'
+        manifest.operations.add.subject = 'set'
         expect(() => validate(manifest)).toThrow(/allowed values/)
       })
 
@@ -194,7 +194,7 @@ describe('operations', () => {
         manifest.operations.set.subject = 'changeset'
         expect(() => validate(manifest)).not.toThrow()
 
-        manifest.operations.set.subject = 'list'
+        manifest.operations.set.subject = 'set'
         expect(() => validate(manifest)).toThrow(/allowed values/)
       })
     })

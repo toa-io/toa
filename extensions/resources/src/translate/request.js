@@ -9,7 +9,13 @@ const request = (req, params) => {
   const request = {}
 
   if (!empty(req.body)) request.input = req.body
-  if (!empty(req.query)) request.query = req.query
+
+  if (!empty(req.query)) {
+    request.query = req.query
+
+    if (request.query.projection !== undefined) request.query.projection = request.query.projection.split(',')
+    if (request.query.sort !== undefined) request.query.sort = request.query.sort.split(',')
+  }
 
   if (!empty(params)) {
     if (req.method === 'POST') {

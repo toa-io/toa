@@ -7,6 +7,20 @@ definitions:
       ^(\/([^\/#\?]+)?)+\/?$:
         $ref: '#/definitions/resource'
     properties:
+      query:
+        type: object
+        properties:
+          criteria:
+            nullable: true
+            type: string
+          sort:
+            nullable: true
+            type: string
+          omit:
+            $ref: '#/definitions/range'
+          limit:
+            $ref: '#/definitions/range'
+        additionalProperties: false
       operations:
         type: array
         uniqueItems: true
@@ -17,12 +31,27 @@ definitions:
             operation:
               $ref: definitions#/definitions/token
             type:
-              enum: [transition, observation, assignment]
+              enum: [ transition, observation, assignment ]
+            subject:
+              type: string
+              enum: [ entity, set, changeset ]
             query:
               type: boolean
           additionalProperties: false
     additionalProperties: false
+  range:
+    type: object
+    properties:
+      value:
+        type: string
+      range:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          type: integer
+          minimum: 0
 
 $ref: '#/definitions/resource'
 not:
-  required: [operations]
+  required: [ operations ]
