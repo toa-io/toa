@@ -2,7 +2,7 @@
 
 const { exceptions: { RequestConflictException } } = require('@toa.io/core')
 
-class OmitLimit {
+class Range {
   #value
   #min = 0
   #max = 1000
@@ -27,4 +27,4 @@ class OmitLimit {
   }
 }
 
-exports.OmitLimit = OmitLimit
+exports.Range = Range

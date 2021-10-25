@@ -2,7 +2,7 @@
 
 const { exceptions: { RequestConflictException } } = require('@toa.io/core')
 
-class OpenClose {
+class Concat {
   #value
   #open
   #right
@@ -52,4 +52,4 @@ class OpenClose {
   }
 }
 
-exports.OpenClose = OpenClose
+exports.Concat = Concat

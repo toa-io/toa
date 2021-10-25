@@ -1,14 +1,14 @@
 'use strict'
 
 const { Query } = require('./query')
-const { OmitLimit } = require('./omitlimit')
-const { OpenClose } = require('./openclose')
+const { Range } = require('./range')
+const { Concat } = require('./concat')
 
 exports.Query = Query
 
 exports.constraints = {
-  criteria: OpenClose,
-  sort: OpenClose,
-  omit: OmitLimit,
-  limit: OmitLimit
+  criteria: Concat,
+  sort: Concat,
+  omit: Range,
+  limit: Range
 }
