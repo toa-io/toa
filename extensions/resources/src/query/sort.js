@@ -7,6 +7,7 @@ class Sort {
     this.#value = value
   }
 
+  /** @hot */
   parse (value, operation) {
     if (operation.query === false) return value
 

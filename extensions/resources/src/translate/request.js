@@ -5,6 +5,7 @@ const { empty } = require('@toa.io/gears')
 
 const etag = require('./etag')
 
+/** @hot */
 const request = (req, params) => {
   const request = {}
 

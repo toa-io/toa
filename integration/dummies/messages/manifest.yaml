@@ -90,6 +90,10 @@ extensions:
         query:
           projection: [ text, sender, timestamp ]
         operations: [ add, find ]
+      /fixed/list:
+        query:
+          omit: 10
+          limit: 20
 
 
 

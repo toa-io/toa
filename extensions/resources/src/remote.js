@@ -27,6 +27,7 @@ class Remote extends Connector {
     this.#tree.update(definition)
   }
 
+  /** @hot */
   async #reply (req, res) {
     const match = this.#tree.match(req.params[0])
 
@@ -44,6 +45,7 @@ class Remote extends Connector {
     res.end()
   }
 
+  /** @hot */
   async #call (req, match) {
     const method = req.method === 'HEAD' ? 'GET' : req.method
     const operation = match.node.operations[method]

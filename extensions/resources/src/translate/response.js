@@ -4,6 +4,7 @@ const { exceptions: { codes } } = require('@toa.io/core')
 
 const etag = require('./etag')
 
+/** @hot */
 const ok = (reply, res, req) => {
   if (reply.output?._version !== undefined) {
     const { _version, ...output } = reply.output
