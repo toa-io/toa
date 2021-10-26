@@ -140,6 +140,9 @@ properties:
               properties:
                 subject:
                   enum: [ entity, set ]
+                query:
+                  not:
+                    const: false
           - if: # assignment
               properties:
                 type:

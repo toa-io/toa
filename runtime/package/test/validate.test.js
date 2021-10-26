@@ -147,83 +147,86 @@ describe('bindings', () => {
 })
 
 describe('operations', () => {
-  describe('operation', () => {
-    it('should be object', () => {
-      manifest.operations.get = 'bar'
-      expect(() => validate(manifest)).toThrow(/must be object/)
+  it('should be object', () => {
+    manifest.operations.get = 'bar'
+    expect(() => validate(manifest)).toThrow(/must be object/)
+  })
+
+  it('should not have additional properties', () => {
+    manifest.operations.get.foo = 'bar'
+    expect(() => validate(manifest)).toThrow(/additional property/)
+  })
+
+  it('should have type (transition or observation)', () => {
+    delete manifest.operations.get.type
+    expect(() => validate(manifest)).toThrow()
+
+    manifest.operations.get.type = 'foo'
+    expect(() => validate(manifest)).toThrow(/one of the allowed values/)
+  })
+
+  it('should forbid explicit loop', () => {
+    manifest.operations.get.bindings = ['@toa.io/bindings.loop']
+    expect(() => validate(manifest)).toThrow(/must NOT be valid/)
+  })
+
+  it('should forbid query: false for observations', () => {
+    manifest.operations.get.query = false
+    expect(() => validate(manifest)).toThrow(/must NOT be valid/)
+  })
+
+  describe('subject', () => {
+    it('should have subject', () => {
+      delete manifest.operations.get.subject
+      expect(() => validate(manifest)).toThrow(/required property/)
     })
 
-    it('should not have additional properties', () => {
-      manifest.operations.get.foo = 'bar'
-      expect(() => validate(manifest)).toThrow(/additional property/)
+    it('should allow only entity or set for observations', () => {
+      manifest.operations.get.subject = 'changeset'
+      expect(() => validate(manifest)).toThrow(/allowed values/)
     })
 
-    it('should have type (transition or observation)', () => {
-      delete manifest.operations.get.type
+    it('should allow only entity for transitions', () => {
+      manifest.operations.add.subject = 'changeset'
+      expect(() => validate(manifest)).toThrow(/allowed values/)
+
+      manifest.operations.add.subject = 'set'
+      expect(() => validate(manifest)).toThrow(/allowed values/)
+    })
+
+    it('should allow only changeset for assignments', () => {
+      manifest.operations.set.subject = 'changeset'
+      expect(() => validate(manifest)).not.toThrow()
+
+      manifest.operations.set.subject = 'set'
+      expect(() => validate(manifest)).toThrow(/allowed values/)
+    })
+  })
+
+  describe('concurrency', () => {
+    it('should be required for transitions', () => {
+      delete manifest.operations.add.concurrency
+      expect(() => validate(manifest)).toThrow(/required property/)
+    })
+
+    it('should throw for observations, assignments', () => {
+      manifest.operations.get.concurrency = 'none'
+      expect(() => validate(manifest)).toThrow()
+      delete manifest.operations.get.concurrency
+
+      manifest.operations.set.concurrency = 'none'
+      expect(() => validate(manifest)).toThrow()
+    })
+  })
+
+  describe('input, output', () => {
+    it('should be schema', () => {
+      manifest.operations.get.input = { properties: { foo: 'bar' } }
       expect(() => validate(manifest)).toThrow()
 
-      manifest.operations.get.type = 'foo'
-      expect(() => validate(manifest)).toThrow(/one of the allowed values/)
-    })
-
-    it('should forbid explicit loop', () => {
-      manifest.operations.get.bindings = ['@toa.io/bindings.loop']
-      expect(() => validate(manifest)).toThrow(/must NOT be valid/)
-    })
-
-    describe('subject', () => {
-      it('should have subject', () => {
-        delete manifest.operations.get.subject
-        expect(() => validate(manifest)).toThrow(/required property/)
-      })
-
-      it('should allow only entity or set for observations', () => {
-        manifest.operations.get.subject = 'changeset'
-        expect(() => validate(manifest)).toThrow(/allowed values/)
-      })
-
-      it('should allow only entity for transitions', () => {
-        manifest.operations.add.subject = 'changeset'
-        expect(() => validate(manifest)).toThrow(/allowed values/)
-
-        manifest.operations.add.subject = 'set'
-        expect(() => validate(manifest)).toThrow(/allowed values/)
-      })
-
-      it('should allow only changeset for assignments', () => {
-        manifest.operations.set.subject = 'changeset'
-        expect(() => validate(manifest)).not.toThrow()
-
-        manifest.operations.set.subject = 'set'
-        expect(() => validate(manifest)).toThrow(/allowed values/)
-      })
-    })
-
-    describe('concurrency', () => {
-      it('should be required for transitions', () => {
-        delete manifest.operations.add.concurrency
-        expect(() => validate(manifest)).toThrow(/required property/)
-      })
-
-      it('should throw for observations, assignments', () => {
-        manifest.operations.get.concurrency = 'none'
-        expect(() => validate(manifest)).toThrow()
-        delete manifest.operations.get.concurrency
-
-        manifest.operations.set.concurrency = 'none'
-        expect(() => validate(manifest)).toThrow()
-      })
-    })
-
-    describe('input, output', () => {
-      it('should be schema', () => {
-        manifest.operations.get.input = { properties: { foo: 'bar' } }
-        expect(() => validate(manifest)).toThrow()
-
-        delete manifest.operations.get.input
-        manifest.operations.get.output = { properties: { foo: 'bar' } }
-        expect(() => validate(manifest)).toThrow()
-      })
+      delete manifest.operations.get.input
+      manifest.operations.get.output = { properties: { foo: 'bar' } }
+      expect(() => validate(manifest)).toThrow()
     })
   })
 })
