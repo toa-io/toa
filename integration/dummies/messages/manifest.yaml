@@ -62,20 +62,16 @@ extensions:
     /:
       query:
         criteria: deleted!=true;
-        sort: timestamp:desc
-      #        projection:
-      #          value: [ text, sender ]
-      #          allow: [ timestamp ]
+        sort: [ timestamp:desc ]
 
       operations: [ find ]
 
       /:sender:
         query:
           omit:
-            range: [ 1, 10 ]
+            range: [ 0, 10 ]
           limit:
             range: [ 1, 20 ]
-          sort: timestamp:desc,
         operations: [ add, find ]
         /:id:
           operations: [ get, update ]
@@ -83,15 +79,17 @@ extensions:
       query:
         criteria: deleted!=true
       operations: [ add, find ]
-    /query/left/open:
-      query:
-        sort: ',timestamp:desc'
-      operations: [ find ]
-    /query/criteria/closed:
-      query:
-        criteria: ~
-      operations: [ find ]
-    /query/unsorted/list:
-      operations: [ find ]
+    /query:
+      /criteria/closed:
+        query:
+          criteria: ~
+        operations: [ find ]
+      /unsorted/list:
+        operations: [ find ]
+      /projection/restricted:
+        query:
+          projection: [ text, sender, timestamp ]
+        operations: [ add, find ]
+
 
 

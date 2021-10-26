@@ -50,9 +50,11 @@ class Remote extends Connector {
 
     if (operation === undefined) throw new NotImplementedException()
 
-    req.query = match.node.query.parse(req.query, operation)
-
     const request = translate.request(req, match.params)
+
+    const query = match.node.query.parse(request.query, operation)
+
+    if (query !== undefined) request.query = query
 
     return this.#remote.invoke(operation.operation, request)
   }

@@ -2,7 +2,7 @@
 
 const { exceptions: { RequestConflictException } } = require('@toa.io/core')
 
-class Concat {
+class Criteria {
   #value
   #open
   #right
@@ -44,7 +44,7 @@ class Concat {
         if (this.#right) value = this.#value + this.#logic + value
         else value = value + this.#logic + this.#value
       } else {
-        throw new RequestConflictException('Query criteria/sort is defined as closed')
+        throw new RequestConflictException('Query criteria is defined as closed')
       }
     } else value = this.#value
 
@@ -52,4 +52,4 @@ class Concat {
   }
 }
 
-exports.Concat = Concat
+exports.Criteria = Criteria

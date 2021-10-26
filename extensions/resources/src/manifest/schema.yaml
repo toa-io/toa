@@ -14,8 +14,17 @@ definitions:
             nullable: true
             type: string
           sort:
-            nullable: true
-            type: string
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+          projection:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
           omit:
             $ref: '#/definitions/range'
           limit:

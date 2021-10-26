@@ -12,9 +12,13 @@ class Query {
   /** @hot */
   parse (query, method) {
     for (const [key, constraint] of this.#constraints) {
-      const value = constraint.parse(query[key], method)
+      const value = constraint.parse(query?.[key], method)
 
-      if (value !== undefined) query[key] = value
+      if (value !== undefined) {
+        if (query === undefined) query = {}
+
+        query[key] = value
+      }
     }
 
     return query

@@ -2,13 +2,16 @@
 
 const { Query } = require('./query')
 const { Range } = require('./range')
-const { Concat } = require('./concat')
+const { Criteria } = require('./criteria')
+const { Enum } = require('./enum')
+const { Sort } = require('./sort')
 
 exports.Query = Query
 
 exports.constraints = {
-  criteria: Concat,
-  sort: Concat,
+  criteria: Criteria,
+  sort: Sort,
   omit: Range,
-  limit: Range
+  limit: Range,
+  projection: Enum
 }

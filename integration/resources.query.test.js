@@ -105,17 +105,12 @@ describe('omit, limit', () => {
     await expect(fetch(url + '?limit=21')).resolves.toMatchObject({ status: 403 })
     await expect(fetch(url + '?limit=0')).resolves.toMatchObject({ status: 403 })
     await expect(fetch(url + '?omit=11')).resolves.toMatchObject({ status: 403 })
-    await expect(fetch(url + '?omit=0')).resolves.toMatchObject({ status: 403 })
+    await expect(fetch(url + '?omit=-1')).resolves.toMatchObject({ status: 403 })
   })
 })
 
 describe('sort', () => {
-  it('should throw if closed', async () => {
-    const url = locator('/messages/')
-    await expect(fetch(url + '?sort=id')).resolves.toMatchObject({ status: 403 })
-  })
-
-  it('should append of right-open', async () => {
+  it('should append of open', async () => {
     const sender = newid()
     const times = 10
     const url = locator('/messages/' + sender + '/')
@@ -147,37 +142,62 @@ describe('sort', () => {
       expect(message.text < previous.text).toBe(true)
     }
   })
+})
 
-  it('should prepend if left-open', async () => {
+describe('projection', () => {
+  it('should apply', async () => {
     const sender = newid()
-    const times = 10
     const url = locator('/messages/' + sender + '/')
 
-    await repeat(async (i) => {
-      const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({ text: times - i, timestamp: i }),
-        headers: { 'content-type': 'application/json' }
-      })
+    const created = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ text: generate() }),
+      headers: { 'content-type': 'application/json' }
+    })
 
-      expect(response.status).toBe(201)
-    }, times)
+    expect(created.status).toBe(201)
 
-    const response = await fetch(locator(`/messages/query/left/open/?criteria=sender==${sender}&sort=text:desc`))
+    const response = await fetch(url + '?projection=sender,text')
+    const json = await response.json()
+
+    expect(new Set(Object.keys(json.output[0])))
+      .toStrictEqual(new Set(['id', '_version', 'sender', 'text']))
+  })
+
+  it('should apply defined projection', async () => {
+    const sender = newid()
+    const created = await fetch(locator('/messages/' + sender + '/'), {
+      method: 'POST',
+      body: JSON.stringify({ text: generate(), timestamp: 1, deleted: false }),
+      headers: { 'content-type': 'application/json' }
+    })
+
+    expect(created.status).toBe(201)
+
+    const response = await fetch(locator('/messages/query/projection/restricted/?criteria=sender==' + sender))
 
     expect(response.status).toBe(200)
 
     const json = await response.json()
 
-    let previous
+    expect(new Set(Object.keys(json.output[0])))
+      .toStrictEqual(new Set(['id', '_version', 'text', 'sender', 'timestamp']))
+  })
 
-    for (const message of json.output) {
-      if (previous === undefined) {
-        previous = message
-        continue
-      }
+  it('should throw if not allowed key passed', async () => {
+    const sender = newid()
+    const created = await fetch(locator('/messages/' + sender + '/'), {
+      method: 'POST',
+      body: JSON.stringify({ text: generate(), timestamp: 1, deleted: false }),
+      headers: { 'content-type': 'application/json' }
+    })
 
-      expect(message.text < previous.text).toBe(true)
-    }
+    expect(created.status).toBe(201)
+
+    const url = locator('/messages/query/projection/restricted/?criteria=sender==' +
+      sender + '&projection=deleted')
+
+    const response = await fetch(url)
+    expect(response.status).toBe(403)
   })
 })
