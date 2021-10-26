@@ -24,8 +24,14 @@ const ok = (reply, res, req) => {
     }
   }
 
-  res.status(req.method === 'POST' ? 201 : 200)
-  res.send(reply)
+  let status
+
+  if (req.method === 'POST') status = 201
+  else if (reply.output !== undefined || reply.error !== undefined) status = 200
+  else status = 204
+
+  res.status(status)
+  if (status !== 204) res.send(reply)
 }
 
 const missed = (response) => response.status(404)

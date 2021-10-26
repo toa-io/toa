@@ -106,7 +106,7 @@ describe('routing', () => {
       headers: { 'content-type': 'application/json' }
     })
 
-    expect(response.status).toBe(200)
+    expect(response.status).toBe(204)
   })
 })
 
@@ -353,6 +353,18 @@ describe('response', () => {
 
     expect(response.status).toBe(201)
     expect(reply.output.id).toStrictEqual(expect.any(String))
+  })
+
+  it('should return 204 on empty response', async () => {
+    const url = locator('/credits/balance/' + newid() + '/')
+
+    const response = await fetch(url, {
+      method: 'PATCH',
+      body: JSON.stringify({ balance: 5 }),
+      headers: { 'content-type': 'application/json' }
+    })
+
+    expect(response.status).toBe(204)
   })
 
   it('should return 500 on user space exception', async () => {
