@@ -13,6 +13,7 @@ definitions:
           criteria:
             nullable: true
             type: string
+            minLength: 1
           sort:
             type: array
             uniqueItems: true

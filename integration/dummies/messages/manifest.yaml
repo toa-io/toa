@@ -95,3 +95,7 @@ extensions:
           omit: 10
           limit: 20
         operations: [ find ]
+      /non/deleted:
+        query:
+          criteria: deleted!=true;
+        operations: [ add, find ]

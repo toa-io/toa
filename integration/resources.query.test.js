@@ -29,19 +29,21 @@ describe('criteria', () => {
   it('should apply', async () => {
     const sender = newid()
     const times = 10
-    const url = locator('/messages/' + sender + '/')
+    const url = locator('/messages/query/non/deleted/')
+
+    expect.assertions(times + 2)
 
     await repeat(async (i) => {
       const response = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify({ text: generate(), deleted: i % 2 === 0 }),
+        body: JSON.stringify({ sender, text: generate(), deleted: i % 2 === 0 }),
         headers: { 'content-type': 'application/json' }
       })
 
       expect(response.status).toBe(201)
     }, times)
 
-    const response = await fetch(url)
+    const response = await fetch(url + '?criteria=sender==' + sender)
 
     expect(response.status).toBe(200)
 
@@ -110,7 +112,7 @@ describe('omit, limit', () => {
 })
 
 describe('sort', () => {
-  it('should append of open', async () => {
+  it('should append if open', async () => {
     const sender = newid()
     const times = 10
     const url = locator('/messages/' + sender + '/')

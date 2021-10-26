@@ -5,6 +5,7 @@ const { exceptions: { RequestConflictException } } = require('@toa.io/core')
 class Criteria {
   #value
   #open
+  #logic
   #right
 
   constructor (value) {
@@ -15,12 +16,20 @@ class Criteria {
     if (last === ',' || last === ';') {
       this.#open = true
       this.#right = true
+      this.#logic = last
+
+      value = value.substr(0, value.length - 1)
     } else {
       const first = value.substr(0, 1)
 
       this.#open = first === ',' || first === ';'
 
-      if (this.#open === true) this.#right = false
+      if (this.#open === true) {
+        this.#right = false
+        this.#logic = first
+
+        value = value.substr(1)
+      }
     }
 
     this.#value = value
@@ -32,8 +41,8 @@ class Criteria {
 
     if (value !== undefined) {
       if (this.#open === true) {
-        if (this.#right) value = this.#value + value
-        else value = value + this.#value
+        if (this.#right) value = this.#value + this.#logic + value
+        else value = value + this.#logic + this.#value
       } else {
         throw new RequestConflictException('Query criteria is defined as closed')
       }
