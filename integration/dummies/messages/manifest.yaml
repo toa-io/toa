@@ -84,16 +84,14 @@ extensions:
         query:
           criteria: ~
         operations: [ find ]
-      /unsorted/list:
+      /unsorted/set:
         operations: [ find ]
       /projection/restricted:
         query:
           projection: [ text, sender, timestamp ]
         operations: [ add, find ]
-      /fixed/list:
+      /fixed/set:
         query:
           omit: 10
           limit: 20
-
-
-
+        operations: [ find ]

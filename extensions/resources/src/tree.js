@@ -58,8 +58,17 @@ class Tree {
       this.#nodes.push(current)
     }
 
+    let paths = 0
+
     for (const [key, value] of Object.entries(node)) {
-      if (key.substr(0, 1) === '/') this.#traverse(value, path.posix.resolve(route, '.' + key), node)
+      if (key.substr(0, 1) === '/') {
+        paths++
+        this.#traverse(value, path.posix.resolve(route, '.' + key), node)
+      }
+    }
+
+    if (paths === 0 && node.operations === undefined) {
+      console.warn(`Resource tree leaf '${route}' has no operations`)
     }
   }
 }

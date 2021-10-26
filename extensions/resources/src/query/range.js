@@ -4,19 +4,14 @@ const { exceptions: { RequestConflictException } } = require('@toa.io/core')
 
 class Range {
   #value
-  #min = 0
-  #max = 1000
+  #min
+  #max
 
   constructor (constraint) {
     this.#value = constraint.value
 
-    if (constraint.range === undefined) {
-      this.#min = this.#value
-      this.#max = this.#value
-    } else {
-      this.#min = constraint.range[0]
-      this.#max = constraint.range[1]
-    }
+    this.#min = constraint.range[0] === undefined ? this.#value : constraint.range[0]
+    this.#max = constraint.range[1] === undefined ? this.#value : constraint.range[1]
   }
 
   /** @hot */

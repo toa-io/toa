@@ -327,6 +327,141 @@ describe('request', () => {
       })
     })
   })
+
+  describe('query', () => {
+    const sender = newid()
+    const url = locator('/messages/' + sender + '/')
+
+    it('should return 400 on malformed criteria', async () => {
+      const response = await fetch(`${url}?criteria=foo!`)
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: expect.stringContaining('Unexpected character \'!\'')
+      })
+    })
+
+    it('should return 400 on undefined criteria selector', async () => {
+      const response = await fetch(url + '?criteria=foo==1')
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: expect.stringContaining('Criteria selector \'foo\'')
+      })
+    })
+
+    it('should return 400 on malformed omit', async () => {
+      const response = await fetch(url + '?omit=foo')
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'type',
+        property: 'query/omit',
+        path: '/query/omit',
+        schema: '#/properties/query/properties/omit/type',
+        message: 'query/omit must be integer'
+      })
+    })
+
+    it('should return 400 on malformed limit', async () => {
+      const response = await fetch(url + '?limit=foo')
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'type',
+        property: 'query/limit',
+        path: '/query/limit',
+        schema: '#/properties/query/properties/limit/type',
+        message: 'query/limit must be integer'
+      })
+    })
+
+    describe('exact omit, limit', () => {
+      const url = locator('/messages/query/fixed/set/')
+
+      it('should return 403 on exact limit violation', async () => {
+        const response = await fetch(url + '?limit=19')
+
+        expect(response.status).toBe(403)
+      })
+    })
+
+    it('should return 400 on malformed projection', async () => {
+      const response = await fetch(url + '?projection=100')
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'pattern',
+        property: 'query/projection/0',
+        path: '/query/projection/0',
+        schema: '#/properties/query/properties/projection/items/pattern',
+        message: expect.stringContaining('query/projection/0 must match pattern')
+      })
+    })
+
+    it('should return 400 on undefined projection property', async () => {
+      const response = await fetch(url + '?projection=foo')
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: 'Projection property \'foo\' is not defined'
+      })
+    })
+
+    it('should return 400 on malformed sort', async () => {
+      const response = await fetch(url + '?sort=100')
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.RequestContract,
+        keyword: 'pattern',
+        property: 'query/sort/1',
+        path: '/query/sort/1',
+        schema: '#/properties/query/properties/sort/items/pattern',
+        message: expect.stringContaining('query/sort/1 must match pattern')
+      })
+    })
+
+    it('should return 400 on undefined sort property', async () => {
+      const response = await fetch(url + '?sort=foo:desc')
+
+      expect(response.status).toBe(400)
+
+      const body = await response.json()
+
+      expect(body).toStrictEqual({
+        code: codes.QuerySyntax,
+        message: 'Sort property \'foo\' is not defined'
+      })
+    })
+  })
 })
 
 describe('response', () => {
@@ -458,7 +593,7 @@ describe('response', () => {
     })
 
     it('should return sorted', async () => {
-      const url = locator(`/messages/query/unsorted/list/?criteria=sender==${sender}&sort=timestamp:desc`)
+      const url = locator(`/messages/query/unsorted/set/?criteria=sender==${sender}&sort=timestamp:desc`)
       const response = await fetch(url)
 
       expect(response.status).toBe(200)
@@ -506,126 +641,6 @@ describe('response', () => {
       const { output } = await response.json()
 
       expect(output.length).toBe(4)
-    })
-
-    it('should return 400 on malformed criteria', async () => {
-      const response = await fetch(`${url}?criteria=foo!`)
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.QuerySyntax,
-        message: expect.stringContaining('Unexpected character \'!\'')
-      })
-    })
-
-    it('should return 400 on undefined criteria selector', async () => {
-      const response = await fetch(url + '?criteria=foo==1')
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.QuerySyntax,
-        message: expect.stringContaining('Criteria selector \'foo\'')
-      })
-    })
-
-    it('should return 400 on malformed omit', async () => {
-      const response = await fetch(url + '?omit=foo')
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.RequestContract,
-        keyword: 'type',
-        property: 'query/omit',
-        path: '/query/omit',
-        schema: '#/properties/query/properties/omit/type',
-        message: 'query/omit must be integer'
-      })
-    })
-
-    it('should return 400 on malformed limit', async () => {
-      const response = await fetch(url + '?limit=foo')
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.RequestContract,
-        keyword: 'type',
-        property: 'query/limit',
-        path: '/query/limit',
-        schema: '#/properties/query/properties/limit/type',
-        message: 'query/limit must be integer'
-      })
-    })
-
-    it('should return 400 on malformed projection', async () => {
-      const response = await fetch(url + '?projection=100')
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.RequestContract,
-        keyword: 'pattern',
-        property: 'query/projection/0',
-        path: '/query/projection/0',
-        schema: '#/properties/query/properties/projection/items/pattern',
-        message: expect.stringContaining('query/projection/0 must match pattern')
-      })
-    })
-
-    it('should return 400 on undefined projection property', async () => {
-      const response = await fetch(url + '?projection=foo')
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.QuerySyntax,
-        message: 'Projection property \'foo\' is not defined'
-      })
-    })
-
-    it('should return 400 on malformed sort', async () => {
-      const response = await fetch(url + '?sort=100')
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.RequestContract,
-        keyword: 'pattern',
-        property: 'query/sort/1',
-        path: '/query/sort/1',
-        schema: '#/properties/query/properties/sort/items/pattern',
-        message: expect.stringContaining('query/sort/1 must match pattern')
-      })
-    })
-
-    it('should return 400 on undefined sort property', async () => {
-      const response = await fetch(url + '?sort=foo:desc')
-
-      expect(response.status).toBe(400)
-
-      const body = await response.json()
-
-      expect(body).toStrictEqual({
-        code: codes.QuerySyntax,
-        message: 'Sort property \'foo\' is not defined'
-      })
     })
   })
 })

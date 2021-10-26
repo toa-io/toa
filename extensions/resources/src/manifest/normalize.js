@@ -20,11 +20,11 @@ const normalize = (node, manifest) => {
 
   if (node.query !== undefined) {
     if (node.query.omit !== undefined && typeof node.query.omit !== 'object') {
-      node.query.omit = { value: node.query.omit }
+      node.query.omit = { value: node.query.omit, range: [] }
     }
 
     if (node.query.limit !== undefined && typeof node.query.limit !== 'object') {
-      node.query.limit = { value: node.query.limit }
+      node.query.limit = { value: node.query.limit, range: [] }
     }
   }
 

@@ -52,15 +52,15 @@ definitions:
     type: object
     properties:
       value:
-        type: string
+        type: integer
+        minimum: 0
       range:
         type: array
         uniqueItems: true
-        minItems: 1
+        minItems: 0
         items:
-          type: integer
-          minimum: 0
+          $ref: '#/definitions/range/properties/value'
 
 $ref: '#/definitions/resource'
 not:
-  required: [ operations ]
+  required: [ operations ] # root doesn't have path
