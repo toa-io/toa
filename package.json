@@ -1,11 +1,26 @@
 {
   "name": "toa",
+  "version": "0.0.0",
+  "description": "microservice operations distributed runtime",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "license": "MIT",
+  "homepage": "https://toa.io",
+  "author": {
+    "name": "Artem Gurtovoi",
+    "url": "https://github.com/temich"
+  },
   "workspaces": [
     "runtime/*",
     "connectors/*",
     "extensions/*"
   ],
+  "engines": {
+    "node": ">= 12.0.0"
+  },
   "devDependencies": {
     "@babel/eslint-parser": "7.13.8",
     "@babel/plugin-proposal-class-properties": "7.13.0",
