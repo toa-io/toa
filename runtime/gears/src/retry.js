@@ -8,7 +8,7 @@ const retry = async (func, options = {}, attempt = 0) => {
   let inner
 
   const outer = await func(async () => {
-    if (attempt === options.retries) throw new Error(`Retry failed after ${attempt} attempts`)
+    if (attempt === options.retries) throw new retry.Error(`Retry failed after ${attempt} attempts`)
 
     inner = (async () => {
       const interval = Math.min(options.base * Math.pow(options.factor, attempt), options.max)
@@ -21,6 +21,8 @@ const retry = async (func, options = {}, attempt = 0) => {
 
   return inner === undefined ? outer : await inner
 }
+
+retry.Error = class extends Error {}
 
 const DEFAULTS = {
   retries: Infinity,
