@@ -3,9 +3,7 @@
 const operations = {
   bindings: ['foo', 'bar'],
   operations: {
-    add: {
-
-    }
+    add: {}
   }
 }
 

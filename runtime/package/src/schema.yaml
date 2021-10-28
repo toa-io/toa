@@ -57,11 +57,11 @@ properties:
             propertyNames:
               oneOf:
                 - $ref: 'definitions#/definitions/token'
-                - enum: [ _version ]
+                - enum: [_version]
       initialized:
         type: boolean
         default: false
-    required: [ schema ]
+    required: [schema]
     additionalProperties: false
 
   bindings:
@@ -83,11 +83,11 @@ properties:
         type: object
         properties:
           type:
-            enum: [ transition, observation, assignment ]
+            enum: [transition, observation, assignment]
           subject:
-            enum: [ entity, set, changeset ]
+            enum: [entity, set, changeset]
           concurrency:
-            enum: [ none, retry ]
+            enum: [none, retry]
           forward:
             $ref: 'definitions#/definitions/token'
           bridge:
@@ -100,12 +100,12 @@ properties:
               properties:
                 additionalProperties:
                   const: true
-              required: [ additionalProperties ]
+              required: [additionalProperties]
           output:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
-        required: [ type, subject, bindings ]
+        required: [type, subject, bindings]
         allOf:
           - if: # transition
               properties:
@@ -114,15 +114,15 @@ properties:
             then:
               properties:
                 subject:
-                  enum: [ entity ]
+                  enum: [entity]
               if: # transition query: false
                 not:
                   properties:
                     query:
                       const: false
-                  required: [ query ]
+                  required: [query]
               then:
-                required: [ concurrency ]
+                required: [concurrency]
           - if: # not transition
               not:
                 properties:
@@ -139,7 +139,7 @@ properties:
             then:
               properties:
                 subject:
-                  enum: [ entity, set ]
+                  enum: [entity, set]
                 query:
                   not:
                     const: false
@@ -150,7 +150,7 @@ properties:
             then:
               properties:
                 subject:
-                  enum: [ changeset ]
+                  enum: [changeset]
         additionalProperties: false
     additionalProperties: false
 
@@ -174,7 +174,7 @@ properties:
           subjective:
             type: boolean
             default: false
-        required: [ bridge, path ]
+        required: [bridge, path]
         additionalProperties: false
 
   receivers:
@@ -197,7 +197,7 @@ properties:
           adaptive:
             type: boolean
             default: false
-        required: [ transition, bridge, path ]
+        required: [transition, bridge, path]
         additionalProperties: false
 
   extensions:

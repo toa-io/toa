@@ -4,4 +4,4 @@ properties:
     minimum: 0
   message:
     type: string
-required: [ code, message ]
+required: [code, message]

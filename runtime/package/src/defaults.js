@@ -6,7 +6,7 @@ const defaults = (manifest) => {
   if (manifest.bindings === undefined) manifest.bindings = ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
 
   if (manifest.bridge === undefined && manifest.forward === undefined) {
-    manifest.bridge = '@toa.io/bridges.javascript.native'
+    manifest.bridge = '@toa.io/bridges.node'
   }
 }
 

@@ -9,7 +9,7 @@ entity:
       length:
         maximum: 10
       description: string
-    required: [ length ]
+    required: [length]
 
 receivers:
   dummies.a.happened: transit

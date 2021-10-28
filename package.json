@@ -3,15 +3,18 @@
   "version": "0.0.0",
   "description": "microservice operations distributed runtime",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/toa-io/toa.git"
-  },
-  "license": "MIT",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
     "url": "https://github.com/temich"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
   },
   "workspaces": [
     "runtime/*",

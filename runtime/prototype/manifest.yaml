@@ -10,7 +10,7 @@ entity:
         type: integer
         default: 0
         system: true
-    required: [ id ]
+    required: [id]
 
 operations:
   observe:

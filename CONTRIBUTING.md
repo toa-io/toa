@@ -4,15 +4,17 @@
 > By participating in this project you agree to abide by its terms.
 
 ## What You'll Need
+
 1. [Node LTS](https://nodejs.org/)
 2. [Yarn 1](https://yarnpkg.com/getting-started/install)
 3. [Docker Desktop](https://www.docker.com/get-started)
 4. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
 
 ## Flow
+
 > This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/).
 
-To get started fork the project. 
+To get started fork the project.
 
 ```shell
 # replace with your fork's URL
@@ -29,49 +31,60 @@ $ yarn dev
 $ yarn test
 ```
 
-Commit & Push your changes, then create a Pull Request. 
+Commit & Push your changes, then create a Pull Request.
 
 ## Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg)](https://conventionalcommits.org)
+
 Please use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-Commit subject line should complete the sentence: 
->If applied, this commit will `[add your subject line here]`
+Commit subject line should complete the sentence:
+> If applied, this commit will `[add your subject line here]`
 
 ## Code Style Requirements [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 This project follows [JavaScript Standard Style](https://standardjs.com).
+
 ```shell
 $ yarn lint
 ```
 
 ### Code Structure Requirements
-These requirements may have reasonable exceptions. 
-The point is to create as uniform code as possible and prevent some typical mistakes.
+
+These requirements may have reasonable exceptions. The point is to create as uniform code as possible and prevent some
+typical mistakes.
 
 #### Strict mode
+
 All modules must be in [strict mode](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode).
 
 #### Single quotes
+
 `'like this'` not `"like that"`
 
 `` `this is also ${ok} if neccecary`  ``
 
 #### One class per file
+
 Put a class into a module with the same name in lowercase.
 
 #### Helper directories
+
 Put 'subclasses' into a folder with the same name as your main class.
 
 #### `exports` last
+
 Put all exports at the end of a module.
 
 #### No default exports
+
 Use only named export.
 
 #### No 'module.exports'
+
 Use `exports.name` instead of `module.exports.name`
 
 #### Module Structure
+
 ```javascript
 'use strict'
 

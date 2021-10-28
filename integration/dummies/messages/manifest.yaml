@@ -18,11 +18,11 @@ operations:
         timestamp: ~
         free: boolean
         deleted: ~
-      required: [ sender, text ]
+      required: [sender, text]
     output:
       properties:
         id: ~
-      required: [ id ]
+      required: [id]
     query: false
   get:
     output:
@@ -30,7 +30,7 @@ operations:
         id: ~
         text: ~
         timestamp: ~
-      required: [ id, text ]
+      required: [id, text]
   update:
     concurrency: none
     forward: transit
@@ -48,11 +48,11 @@ operations:
       properties:
         sender: ~
         text: ~
-      required: [ sender, text ]
+      required: [sender, text]
     output:
       properties:
         ok: string
-      required: [ id, ok ]
+      required: [id, ok]
   assign:
     input:
       text: ~
@@ -62,40 +62,40 @@ extensions:
     /:
       query:
         criteria: deleted!=true;
-        sort: [ timestamp:desc ]
+        sort: [timestamp:desc]
 
-      operations: [ find ]
+      operations: [find]
 
       /:sender:
         query:
           omit:
-            range: [ 0, 10 ]
+            range: [0, 10]
           limit:
-            range: [ 1, 20 ]
-        operations: [ add, find ]
+            range: [1, 20]
+        operations: [add, find]
         /:id:
-          operations: [ get, update ]
+          operations: [get, update]
     /bad/queries/:sender:
       query:
         criteria: deleted!=true
-      operations: [ add, find ]
+      operations: [add, find]
     /query:
       /criteria/closed:
         query:
           criteria: ~
-        operations: [ find ]
+        operations: [find]
       /unsorted/set:
-        operations: [ find ]
+        operations: [find]
       /projection/restricted:
         query:
-          projection: [ text, sender, timestamp ]
-        operations: [ add, find ]
+          projection: [text, sender, timestamp]
+        operations: [add, find]
       /fixed/set:
         query:
           omit: 10
           limit: 20
-        operations: [ find ]
+        operations: [find]
       /non/deleted:
         query:
           criteria: deleted!=true;
-        operations: [ add, find ]
+        operations: [add, find]
