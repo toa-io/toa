@@ -52,3 +52,18 @@ it('should throw on failed retries', async () => {
   await expect(() => retry((retry) => retry(), options))
     .rejects.toThrow(new RegExp(`Retry failed after ${options.retries} attempts`))
 })
+
+it('should delay attempts', async () => {
+  const start = +new Date()
+
+  const fn = (retry, attempt) => {
+    if (attempt < 3) retry()
+  }
+
+  await retry(fn, { base: 100, dispersion: 0 })
+
+  const end = +new Date()
+
+  expect(end - start > 470).toBe(true)
+  expect(end - start < 500).toBe(true)
+})
