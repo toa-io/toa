@@ -5,7 +5,7 @@ definitions:
   resource:
     patternProperties:
       ^(\/([^\/#\?]+)?)+\/?$:
-        $ref: '#/definitions/resource'
+        $ref: "#/definitions/resource"
     properties:
       query:
         type: object
@@ -27,9 +27,9 @@ definitions:
             items:
               type: string
           omit:
-            $ref: '#/definitions/range'
+            $ref: "#/definitions/range"
           limit:
-            $ref: '#/definitions/range'
+            $ref: "#/definitions/range"
         additionalProperties: false
       operations:
         type: array
@@ -41,10 +41,10 @@ definitions:
             operation:
               $ref: definitions#/definitions/token
             type:
-              enum: [ transition, observation, assignment ]
+              enum: [transition, observation, assignment]
             subject:
               type: string
-              enum: [ entity, set, changeset ]
+              enum: [entity, set, changeset]
             query:
               type: boolean
           additionalProperties: false
@@ -60,8 +60,10 @@ definitions:
         uniqueItems: true
         minItems: 0
         items:
-          $ref: '#/definitions/range/properties/value'
+          $ref: "#/definitions/range/properties/value"
+      additionalProperties: false
+    required: [range]
 
-$ref: '#/definitions/resource'
+$ref: "#/definitions/resource"
 not:
-  required: [ operations ] # root doesn't have path
+  required: [operations] # root doesn't have path
