@@ -1,10 +1,9 @@
 'use strict'
 
 const { timeout } = require('./timeout')
-const { merge } = require('./merge')
 
 const retry = async (func, options = {}, attempt = 0) => {
-  if (attempt === 0) merge(options, DEFAULTS, { ignore: true })
+  if (attempt === 0) options = Object.assign({}, DEFAULTS, options)
 
   let inner
 
