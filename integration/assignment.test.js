@@ -67,7 +67,7 @@ it('should emit events', async () => {
   })
 
   await credits.invoke('set', { input: { balance: 0 }, query: { id: sender } })
-  await timeout(10)
+  await timeout(20)
 
   const stat = await stats.invoke('observe', { query: { id: sender } })
 

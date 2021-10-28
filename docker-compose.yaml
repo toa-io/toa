@@ -7,3 +7,5 @@ services:
       - '15672:15672'
   mongodb:
     image: mongo:5.0.2
+    ports:
+      - '27017:27017'
