@@ -1,8 +1,6 @@
 'use strict'
 
-const { retry } = require('../src/')
-const { timeout } = require('../src/timeout')
-const { random } = require('../src/random')
+const { retry, timeout, random } = require('../src/')
 
 let options
 
@@ -66,4 +64,13 @@ it('should delay attempts', async () => {
 
   expect(end - start > 470).toBe(true)
   expect(end - start < 500).toBe(true)
+})
+
+it('should retry given times', async () => {
+  const retries = random(10)
+
+  const fn = jest.fn((retry) => retry())
+
+  await expect(retry(fn, { retries, base: 0 })).rejects.toThrow(retry.Error)
+  expect(fn).toHaveBeenCalledTimes(retries + 1)
 })
