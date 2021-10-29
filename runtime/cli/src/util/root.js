@@ -13,7 +13,7 @@ const manifest = (from = '.') => {
 
 const root = (from = '.') => path.dirname(manifest(from))
 
-const MANIFEST = 'manifest.yaml'
+const MANIFEST = 'manifest.toa.yaml'
 
 exports.root = root
 exports.manifest = manifest

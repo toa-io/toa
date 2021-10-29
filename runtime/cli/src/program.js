@@ -5,7 +5,6 @@ const yargs = require('yargs')
 const { console } = require('@toa.io/gears')
 const { version } = require('../package.json')
 
-// noinspection JSValidateTypes
 const argv = yargs(process.argv.slice(2))
   .fail((message, err, yargs) => {
     if (err) message = err

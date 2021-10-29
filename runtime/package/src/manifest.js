@@ -44,6 +44,6 @@ const load = async (reference, base) => {
   return manifest
 }
 
-const MANIFEST = 'manifest.yaml'
+const MANIFEST = 'manifest.toa.yaml'
 
 exports.load = manifest
