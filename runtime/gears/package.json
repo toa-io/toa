@@ -21,7 +21,7 @@
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9",
   "dependencies": {
     "chalk": "4.1.2",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "4.1.0",
     "uuid": "8.3.2"
   }
 }

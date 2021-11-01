@@ -47,7 +47,7 @@ const define = async (root, manifest, property) => {
 }
 
 const scan = async (bridge, root, property) => {
-  const module = lookup(bridge)
+  const module = lookup(bridge, root)
   const { define } = require(module)
 
   return define[property](root)

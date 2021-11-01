@@ -1,8 +1,8 @@
 {
   "name": "toa",
   "version": "0.0.0",
-  "description": "microservice operations distributed runtime",
   "private": true,
+  "description": "Microservice operations distributed runtime",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
@@ -25,28 +25,28 @@
     "node": ">= 12.0.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.13.8",
-    "@babel/plugin-proposal-class-properties": "7.13.0",
-    "@babel/plugin-proposal-private-methods": "7.13.0",
-    "@commitlint/cli": "13.2.1",
-    "@commitlint/config-conventional": "13.2.0",
+    "@babel/eslint-parser": "7.16.0",
+    "@babel/plugin-proposal-class-properties": "7.16.0",
+    "@babel/plugin-proposal-private-methods": "7.16.0",
+    "@commitlint/cli": "14.1.0",
+    "@commitlint/config-conventional": "14.1.0",
+    "@types/jest": "27.0.2",
     "clone-deep": "4.0.1",
     "execa": "5.1.1",
-    "husky": "5.0.9",
-    "jest": "26.6.3",
-    "lerna": "3.22.1",
-    "node-fetch": "2.6.2",
-    "randomstring": "1.1.5",
+    "husky": "7.0.4",
+    "jest": "27.3.1",
+    "lerna": "4.0.0",
+    "node-fetch": "2.6.6",
+    "randomstring": "1.2.1",
     "snazzy": "9.0.0",
-    "standard": "16.0.3"
+    "standard": "16.0.4"
   },
   "scripts": {
     "dev": "docker compose up -d",
-    "test": "standard --verbose | snazzy && yarn test:unit && yarn test:integration",
+    "test": "standard --verbose | snazzy && npm run test:unit && npm run test:integration",
     "test:unit": "jest --roots runtime connectors extensions",
     "test:integration": "jest --roots integration --runInBand",
     "lint": "standard --verbose --fix | snazzy",
-    "install": "./node_modules/.bin/lerna bootstrap --ignore-scripts",
     "prepare": "husky install"
   },
   "standard": {

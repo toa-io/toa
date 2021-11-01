@@ -1,5 +1,27 @@
 'use strict'
 
+const codes = {
+  System: 0,
+  NotImplemented: 10,
+
+  Contract: 200,
+  RequestSyntax: 201,
+  RequestContract: 202,
+  RequestConflict: 203,
+  ResponseContract: 211,
+  EntityContract: 212,
+  QuerySyntax: 221,
+
+  State: 300,
+  StateNotFound: 302,
+  StatePrecondition: 303,
+  StateConcurrency: 304,
+  StateInitialization: 305,
+
+  Communication: 400,
+  Transmission: 401
+}
+
 class Exception {
   code
   message
@@ -48,29 +70,7 @@ class EntityContractException extends ContractException {
   constructor (error) { super(codes.EntityContract, error) }
 }
 
-const codes = {
-  System: 0,
-  NotImplemented: 10,
-
-  Contract: 200,
-  RequestSyntax: 201,
-  RequestContract: 202,
-  RequestConflict: 203,
-  ResponseContract: 211,
-  EntityContract: 212,
-  QuerySyntax: 221,
-
-  State: 300,
-  StateNotFound: 302,
-  StatePrecondition: 303,
-  StateConcurrency: 304,
-  StateInitialization: 305,
-
-  Communication: 400,
-  Transmission: 401
-}
-
-/// region exports
+// #region exports
 exports.SystemException = SystemException
 exports.RequestContractException = RequestContractException
 exports.ResponseContractException = ResponseContractException
@@ -85,4 +85,4 @@ for (const [name, code] of Object.entries(codes)) {
 }
 
 exports.codes = codes
-/// endregion
+// #endregion

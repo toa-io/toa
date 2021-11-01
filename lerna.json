@@ -1,10 +1,4 @@
 {
-  "npmClient": "yarn",
   "useWorkspaces": true,
-  "packages": [
-    "runtime/*",
-    "connectors/*",
-    "extensions/*"
-  ],
   "version": "0.0.0"
 }

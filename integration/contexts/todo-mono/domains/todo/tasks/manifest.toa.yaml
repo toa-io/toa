@@ -1,0 +1,19 @@
+domain: todo
+name: tasks
+
+entity:
+  schema:
+    assignee: id
+    title: string
+    description: string
+
+operations:
+  create:
+    forward: transit
+    query: false
+
+resources:
+  /:
+    operations: [create, observe]
+    /:id:
+      operations: [observe]

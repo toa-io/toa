@@ -1,0 +1,6 @@
+name: todo-mono
+runtime: 0.0.0
+components: domains/*/*
+
+compositions:
+  - todo.tasks

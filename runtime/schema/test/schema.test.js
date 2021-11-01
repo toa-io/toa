@@ -104,7 +104,7 @@ describe('definitions', () => {
 })
 
 describe('keywords', () => {
-  describe('readOnly', () => {
+  describe('system', () => {
     it('should modify property to readonly', () => {
       const schema = new Schema({
         properties: {

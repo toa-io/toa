@@ -21,9 +21,8 @@ const manifest = async (reference, base = process.cwd()) => {
 }
 
 const load = async (reference, base) => {
-  const root = lookup.directory(reference, base)
+  const root = lookup(reference, base)
   const path = resolve(root, MANIFEST)
-
   const manifest = await yaml(path)
 
   manifest.path = root

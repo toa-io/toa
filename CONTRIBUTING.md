@@ -6,9 +6,8 @@
 ## What You'll Need
 
 1. [Node LTS](https://nodejs.org/)
-2. [Yarn 1](https://yarnpkg.com/getting-started/install)
-3. [Docker Desktop](https://www.docker.com/get-started)
-4. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
+2. [Docker Desktop](https://www.docker.com/get-started)
+3. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
 
 ## Flow
 
@@ -22,13 +21,13 @@ $ git clone git@github.com:toa-io/toa.git
 $ cd toa
 
 # install dependencies
-$ yarn install
+$ npm install
 
 # setup dev environment
-$ yarn dev
+$ npm run dev
 
 # make sure everything is ok
-$ yarn test
+$ npm test
 ```
 
 Commit & Push your changes, then create a Pull Request.
@@ -45,7 +44,7 @@ Commit subject line should complete the sentence:
 This project follows [JavaScript Standard Style](https://standardjs.com).
 
 ```shell
-$ yarn lint
+$ npm run lint
 ```
 
 ### Code Structure Requirements
@@ -53,37 +52,48 @@ $ yarn lint
 These requirements may have reasonable exceptions. The point is to create as uniform code as possible and prevent some
 typical mistakes.
 
-#### Strict mode
-
-All modules must be in [strict mode](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode).
-
-#### Single quotes
+<table>
+  <tr>
+    <td valign=top>Strict mode</td>
+    <td>
+All modules must be in <a href=https://developer.mozilla.org/en-US/docs/Web/>strict mode</a>
+    </td>
+  </tr>
+  <tr>
+    <td valign=top>Single quotes</td>
+    <td>
 
 `'like this'` not `"like that"`
 
-`` `this is also ${ok} if neccecary`  ``
+`` `this is also ${ok} if necessary`  ``
+   </td>
+  </tr>
+  <tr>
+    <td valign=top>One class per file</td>
+    <td>Put a class into a module with the same name in lowercase.</td>
+  </tr>
+  <tr>
+    <td valign=top>Helper directories</td>
+    <td>Put 'subclasses' into a folder with the same name as your main class.</td>
+  </tr>
+  <tr>
+    <td valign=top>
 
-#### One class per file
+`exports` last
+    </td>
+    <td>Put all exports at the end of a module.</td>
+  </tr>
+  <tr>
+    <td valign=top>No default exports</td>
+    <td>Use only named export.</td>
+  </tr>
+  <tr>
+    <td valign=top>No 'module.exports'</td>
+    <td>Use `exports.name` instead of `module.exports.name`</td>
+  </tr>
+</table>
 
-Put a class into a module with the same name in lowercase.
-
-#### Helper directories
-
-Put 'subclasses' into a folder with the same name as your main class.
-
-#### `exports` last
-
-Put all exports at the end of a module.
-
-#### No default exports
-
-Use only named export.
-
-#### No 'module.exports'
-
-Use `exports.name` instead of `module.exports.name`
-
-#### Module Structure
+### Module Structure
 
 ```javascript
 'use strict'

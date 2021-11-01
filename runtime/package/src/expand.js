@@ -6,7 +6,7 @@ const expand = (manifest) => {
   if (manifest.entity?.schema) manifest.entity.schema = schema(manifest.entity.schema, true)
 
   if (manifest.bindings !== undefined) {
-    manifest.bindings = manifest.bindings.map((binding) => lookup(binding))
+    manifest.bindings = manifest.bindings.map((binding) => lookup(binding, manifest.path))
   }
 
   if (manifest.operations !== undefined) {
@@ -18,7 +18,7 @@ const expand = (manifest) => {
 
   if (manifest.events !== undefined) {
     for (const event of Object.values(manifest.events)) {
-      if (event.binding) event.binding = lookup(event.binding)
+      if (event.binding) event.binding = lookup(event.binding, manifest.path)
     }
   }
 

@@ -30,10 +30,10 @@
     "@toa.io/gears": "^0.0.0"
   },
   "dependencies": {
-    "@babel/parser": "7.15.3",
+    "@babel/parser": "7.16.0",
     "fast-glob": "3.2.7"
   },
   "devDependencies": {
-    "clone-deep": "^4.0.1"
+    "clone-deep": "4.0.1"
   }
 }

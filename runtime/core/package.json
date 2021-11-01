@@ -21,7 +21,7 @@
   "dependencies": {
     "@toa.io/gears": "^0.0.0",
     "@toa.io/schema": "^0.0.0",
-    "@rsql/parser": "1.0.3",
+    "@rsql/parser": "1.2.4",
     "clone-deep": "4.0.1"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"

@@ -1,23 +1,28 @@
 'use strict'
 
-const { dirname, resolve } = require('path')
+const { dirname, resolve, join } = require('node:path')
+const { accessSync } = require('node:fs')
 
-const lookup = (reference, base, directory = false) => {
+const lookup = (reference, base) => {
   if (KNOWN[reference]) reference = KNOWN[reference]
 
   try {
-    const path = require.resolve(reference, { paths: base ? [base] : undefined })
-    return directory ? dirname(path) : path
+    require.resolve(reference, { paths: [base, __dirname] }) // will throw if not exists
+
+    const path = require.resolve(join(reference, './package.json'), { paths: [base, __dirname] })
+    return dirname(path)
   } catch (e) {
-    return resolve(base, reference)
+    const path = resolve(base, reference)
+
+    accessSync(path) // will throw if not exists
+
+    return path
   }
 }
 
-lookup.directory = (reference, base) => lookup(reference, base, true)
-
 const KNOWN = {
-  '@http': '@toa.io/bindings.http',
-  '@amqp': '@toa.io/bindings.amqp',
+  http: '@toa.io/bindings.http',
+  amqp: '@toa.io/bindings.amqp',
   resources: '@toa.io/extensions.resources'
 }
 
