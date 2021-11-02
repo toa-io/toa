@@ -15,4 +15,5 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - ..:/workspace:delegated
+    working_dir: /workspace
     command: /bin/sh -c "while sleep 1000; do :; done"
