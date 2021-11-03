@@ -33,7 +33,7 @@ it('should assign', async () => {
 
   const reply = await messages.invoke('assign', { input: { text: generate() }, query })
 
-  await timeout(10)
+  await timeout(50)
 
   expect(reply).toStrictEqual({})
 
@@ -65,7 +65,7 @@ it('should emit events', async () => {
   })
 
   await credits.invoke('set', { input: { balance: 0 }, query: { id: sender } })
-  await timeout(20)
+  await timeout(50)
 
   const stat = await stats.invoke('observe', { query: { id: sender } })
 

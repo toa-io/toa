@@ -135,8 +135,6 @@ class Channel extends Connector {
   }
 
   static #locate (host) {
-    if (process.env.TOA_ENV === 'dev') return 'amqp://guest:guest@localhost/'
-
     return 'amqp://' + host
   }
 }

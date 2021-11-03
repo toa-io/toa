@@ -20,8 +20,18 @@ class Locator {
     this.id = `${this.domain}${concat('.', this.name)}`
   }
 
-  host (type) {
-    return `${concat(this.name, '.')}${this.domain}.${type === undefined ? '' : concat(type.toLowerCase(), '.')}${TLD}`
+  host (type, level = 0) {
+    if (process.env.TOA_ENV === 'dev') return 'localhost'
+
+    let host = ''
+
+    const segments = LEVELS.slice(0, level + 1)
+
+    for (const segment of segments) {
+      host += concat(segment(this), SEPARATOR)
+    }
+
+    return host + type.toLowerCase()
   }
 
   static parse (label) {
@@ -31,6 +41,11 @@ class Locator {
   }
 }
 
-const TLD = 'local'
+const SEPARATOR = '-'
+
+const LEVELS = [
+  (locator) => locator.domain,
+  (locator) => locator.name
+]
 
 exports.Locator = Locator

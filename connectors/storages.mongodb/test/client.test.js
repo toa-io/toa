@@ -31,7 +31,7 @@ beforeEach(async () => {
 it('should create client', () => {
   expect(client).toBeDefined()
   expect(fixtures.mock.MongoClient).toHaveBeenCalledWith(
-    `mongodb+srv://${fixtures.locator.host}`,
+    `mongodb://${fixtures.locator.host}`,
     fixtures.OPTIONS
   )
 })

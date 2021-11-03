@@ -12,8 +12,10 @@ class Storage extends Connector {
   constructor (locator) {
     super()
 
+    const host = locator.host('mongodb')
+
     // TODO: create Factory, add test for host
-    this.#client = new Client(locator.host('mongodb'), locator.domain, locator.name)
+    this.#client = new Client(host, locator.domain, locator.name)
     this.depends(this.#client)
   }
 

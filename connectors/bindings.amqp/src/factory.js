@@ -1,5 +1,7 @@
 'use strict'
 
+const { Locator } = require('@toa.io/core')
+
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
@@ -33,23 +35,18 @@ class Factory {
   }
 
   broadcast (name, group) {
-    const channel = Factory.#channel({ domain: 'system', name })
+    const locator = new Locator()
+    const channel = Factory.#channel(locator)
 
     return new Broadcast(channel, name, group)
   }
 
-  static #channel ({ domain, name }) {
-    const host = Factory.host(domain, name)
+  static #channel (locator) {
+    const host = locator.host('rabbitmq')
 
     // TODO: one connection (pool) per host
     return new Channel(host)
   }
-
-  static host (domain, name) {
-    return domain + '.' + name + '.' + TYPE + '.local'
-  }
 }
-
-const TYPE = 'amqp'
 
 exports.Factory = Factory

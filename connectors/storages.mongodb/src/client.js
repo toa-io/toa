@@ -12,8 +12,11 @@ class Client extends Connector {
 
   constructor (host, db, collection) {
     super()
+
     this.#connection = { host, db, collection }
-    this.#client = new MongoClient(this.#url, OPTIONS)
+
+    const url = this.#url()
+    this.#client = new MongoClient(url, OPTIONS)
   }
 
   async connection () {
@@ -56,10 +59,8 @@ class Client extends Connector {
     return cursor.toArray()
   }
 
-  get #url () {
-    if (process.env.TOA_ENV === 'dev') return 'mongodb://localhost'
-
-    return `mongodb+srv://${this.#connection.host}`
+  #url () {
+    return `mongodb://${this.#connection.host}`
   }
 }
 

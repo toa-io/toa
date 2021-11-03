@@ -22,7 +22,6 @@
     "waderyan.nodejs-extension-pack",
     "ionutvmi.path-autocomplete",
     "humao.rest-client",
-    "visualstudioexptteam.vscodeintellicode",
-    "standard.vscode-standard"
+    "visualstudioexptteam.vscodeintellicode"
   ]
 }

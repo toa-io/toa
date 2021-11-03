@@ -5,10 +5,25 @@ services:
     ports:
       - '5672:5672'
       - '15672:15672'
+    networks:
+      default:
+        aliases:
+          - system-rabbitmq
+          - messages-rabbitmq
+          - stats-rabbitmq
+          - credits-rabbitmq
+          - dummies-rabbitmq
   mongodb:
     image: mongo:5.0.2
     ports:
       - '27017:27017'
+    networks:
+      default:
+        aliases:
+          - messages-mongodb
+          - stats-mongodb
+          - credits-mongodb
+          - dummies-mongodb
   toa:
     build:
       context: ..

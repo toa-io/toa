@@ -1,6 +1,3 @@
+// have no idea how to make standardjs work without this file
 {
-  "plugins": [
-    "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-proposal-private-methods"
-  ]
 }
