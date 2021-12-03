@@ -2,20 +2,17 @@
 
 const boot = require('@toa.io/boot')
 const { yaml } = require('@toa.io/gears')
-const { Locator } = require('@toa.io/core')
-const { load } = require('@toa.io/package')
-
-const { root } = require('../util')
+const { manifest: find } = require('../util/find')
 
 async function invoke (argv) {
-  const manifest = await load(root(argv.path))
+  const path = find(argv.path)
   const request = yaml.parse(argv.request)
 
-  const composition = await boot.composition([root(argv.path)], { bindings: null })
+  const composition = await boot.composition([path], { bindings: null })
   await composition.connect()
 
-  const locator = new Locator(manifest)
-  const remote = await boot.remote(locator.id, [])
+  const manifest = await boot.manifest(path)
+  const remote = await boot.remote(manifest.locator, manifest)
   await remote.connect()
 
   const reply = await remote.invoke(argv.operation, request)

@@ -4,14 +4,14 @@ const { Connector } = require('./connector')
 
 class Context extends Connector {
   #local
-  #connect
+  #discover
   #remotes = {}
 
-  constructor (local, connect) {
+  constructor (local, discover) {
     super()
 
     this.#local = local
-    this.#connect = connect
+    this.#discover = discover
 
     this.depends(local)
   }
@@ -30,8 +30,10 @@ class Context extends Connector {
     if (this.#remotes[domain] === undefined) this.#remotes[domain] = {}
 
     if (this.#remotes[domain][name] === undefined) {
-      this.#remotes[domain][name] = await this.#connect(domain, name)
-      this.depends(this.#remotes[domain][name])
+      const remote = await this.#discover(domain, name)
+
+      this.depends(remote)
+      this.#remotes[domain][name] = remote
     }
 
     return this.#remotes[domain][name]

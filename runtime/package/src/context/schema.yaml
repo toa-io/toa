@@ -1,0 +1,27 @@
+$schema: https://json-schema.org/draft/2019-09/schema
+$id: https://schemas.toa.io/0.0.0/context
+
+type: object
+properties:
+  runtime:
+    type: string
+    pattern: ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+  version:
+    type: string
+    pattern: ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+  name:
+    $ref: 'definitions#/definitions/token'
+  description:
+    type: string
+  packages:
+    type: string
+  compositions:
+    type: array
+    minItems: 1
+    items:
+      type: array
+      minItems: 1
+      items:
+        type: string
+required: [runtime, name, packages]
+additionalProperties: false

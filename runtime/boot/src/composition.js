@@ -10,7 +10,6 @@ async function composition (paths, options) {
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
   const extensions = await Promise.all(manifests.map(boot.extensions))
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
-  const discovery = await boot.discovery.discovery(true)
   const runtimes = await Promise.all(manifests.map(boot.runtime))
 
   const producers = runtimes.map((runtime, index) =>
@@ -19,12 +18,11 @@ async function composition (paths, options) {
   const receivers = await Promise.all(runtimes.map((runtime, index) =>
     boot.receivers(manifests[index], runtime)))
 
-  return new Composition(discovery, expositions.flat(), producers.flat(), receivers.flat(), extensions.flat())
+  return new Composition(expositions.flat(), producers.flat(), receivers.flat(), extensions.flat())
 }
 
 const normalize = (options) => {
   if (options === undefined) return
-
   if (options.bindings === null) options.bindings = []
 }
 

@@ -19,7 +19,6 @@ afterAll(async () => {
 it('should provide local', async () => {
   const from = newid()
   const to = newid()
-
   const reply = await credits.invoke('transfer', { input: from, query: { id: to } })
 
   expect(reply.output).toStrictEqual(20)

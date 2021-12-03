@@ -1,6 +1,6 @@
 'use strict'
 
-const { load } = require('@toa.io/package')
+const { manifest: load } = require('@toa.io/package')
 const { Locator } = require('@toa.io/core')
 
 const manifest = async (path, options) => {

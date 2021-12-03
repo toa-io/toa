@@ -3,17 +3,23 @@
 const { newid } = require('@toa.io/gears')
 const framework = require('./framework')
 
-const credits = framework.cli('credits')
+const cli = framework.cli('./dummies/credits')
 
 it('should print help', async () => {
-  const result = await credits()
+  const result = await cli('--help')
 
-  expect(result.stderr).toMatch(/^toa <command>/)
+  expect(result.stdout).toMatch(/^toa <command>/)
+})
+
+it('should print manifest', async () => {
+  const result = await cli('manifest')
+
+  expect(result.stdout).toMatch(/^domain: credits/)
 })
 
 it('should invoke', async () => {
   const request = { query: { id: newid() } }
-  const { stdout } = await credits('invoke', 'observe', request)
+  const { stdout } = await cli('invoke', 'observe', request)
 
   expect(stdout).toMatch(/balance: \d+/)
 })

@@ -1,17 +1,19 @@
 'use strict'
 
 const { resolve } = require('path')
-const { lookup, yaml } = require('@toa.io/gears')
+const glob = require('fast-glob')
+const { yaml } = require('@toa.io/gears')
 
-const { expand } = require('./expand')
-const { merge } = require('./merge')
-const { validate } = require('./validate')
-const { collapse } = require('./collapse')
-const { dereference } = require('./dereference')
-const { defaults } = require('./defaults')
-const { normalize } = require('./normalize')
+const { expand } = require('./manifest/expand')
+const { merge } = require('./manifest/merge')
+const { validate } = require('./manifest/validate')
+const { collapse } = require('./manifest/collapse')
+const { dereference } = require('./manifest/dereference')
+const { defaults } = require('./manifest/defaults')
+const { normalize } = require('./manifest/normalize')
+const { lookup } = require('./manifest/lookup')
 
-const manifest = async (reference, base = process.cwd()) => {
+const manifest = async (reference, base) => {
   const manifest = await load(reference, base)
 
   normalize(manifest)
@@ -27,8 +29,8 @@ const load = async (reference, base) => {
 
   manifest.path = root
 
-  expand(manifest)
   defaults(manifest)
+  expand(manifest)
 
   await merge(root, manifest)
 
@@ -43,6 +45,13 @@ const load = async (reference, base) => {
   return manifest
 }
 
+const find = async (pattern) => {
+  const paths = await glob(pattern, { onlyDirectories: true, absolute: true })
+
+  return await Promise.all(paths.map(manifest))
+}
+
 const MANIFEST = 'manifest.toa.yaml'
 
-exports.load = manifest
+exports.manifest = manifest
+exports.find = find

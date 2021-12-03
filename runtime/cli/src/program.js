@@ -1,34 +1,36 @@
 'use strict'
 
-const yargs = require('yargs')
+const yargs = require('yargs/yargs')
 
 const { console } = require('@toa.io/gears')
 const { version } = require('../package.json')
 
-const argv = yargs(process.argv.slice(2))
-  .fail((message, err, yargs) => {
-    if (err) message = err
-    else yargs.showHelp()
+yargs(process.argv.slice(2))
+  .middleware((argv) => {
+    if (process.env.TOA_ENV === 'dev' && argv.log === undefined) argv.log = 'info'
 
-    console.error(message)
+    console.level(argv.log)
+  })
+  .fail((msg, err) => {
+    const actual = err || new Error(msg)
 
-    process.exit(err ? 1 : 0)
+    if (process.env.TOA_ENV === 'dev') console.log(actual)
+    else console.error(actual.message)
+
+    process.exit(actual.exitCode > 0 ? actual.exitCode : 1)
   })
   .option('log', {
     type: 'string',
-    describe: 'Logging level',
-    default: process.env.TOA_ENV === 'dev' ? 'info' : 'warn'
+    describe: 'Log level'
   })
   .commandDir('./commands')
-  .demandCommand()
+  .demandCommand(1, 'A command is required. Pass --help to see all available commands and options.')
   .strict()
   .help()
   .version(version)
   .alias('h', 'help')
   .alias('v', 'version')
   .parse()
-
-console.level(argv.log)
 
 process.on('unhandledRejection', (e) => {
   console.error(e)

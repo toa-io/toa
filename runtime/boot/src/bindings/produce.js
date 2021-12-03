@@ -10,7 +10,9 @@ const group = (operations, callback) => {
   const map = {}
 
   for (const [endpoint, operation] of Object.entries(operations)) {
-    const bindings = global.TOA_BINDINGS_LOOP_DISABLED ? operation.bindings : [LOOP].concat(operation.bindings)
+    const bindings = global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
+      ? operation.bindings
+      : [LOOP].concat(operation.bindings)
 
     for (const binding of bindings) {
       if (!map[binding]) map[binding] = []

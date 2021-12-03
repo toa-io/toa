@@ -1,9 +1,12 @@
 'use strict'
 
-const boot = require('../../runtime/boot/src/remote')
+const { Locator } = require('@toa.io/core')
 
-const remote = async (id, binding) => {
-  const remote = await boot.remote(id, binding && [binding])
+const boot = require('../../runtime/boot/src')
+
+const remote = async (id) => {
+  const locator = new Locator(id)
+  const remote = await boot.remote(locator)
   await remote.connect()
 
   return remote

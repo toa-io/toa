@@ -24,8 +24,7 @@ class Client extends Connector {
 
     this.#collection = this.#client.db(this.#connection.db).collection(this.#connection.collection)
 
-    console.info('Storage MongoDB connected to ' +
-      `${this.#url}/${this.#connection.db}/${this.#connection.collection}`)
+    console.info(`Storage MongoDB connected to ${this.#url()}`)
   }
 
   async disconnection () {
@@ -60,7 +59,11 @@ class Client extends Connector {
   }
 
   #url () {
-    return `mongodb://${this.#connection.host}`
+    // TODO: see ./deployment.js
+    const user = 'user'
+    const password = 'password'
+
+    return `mongodb://${user}:${password}@${this.#connection.host}:27017/?authSource=${this.#connection.db}&readPreference=primary&appname=svc&ssl=false`
   }
 }
 

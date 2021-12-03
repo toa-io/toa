@@ -1,5 +1,7 @@
 'use strict'
 
+const { Locator } = require('@toa.io/core')
+
 const framework = require('./framework')
 
 let composition, discovery
@@ -15,7 +17,8 @@ afterAll(async () => {
 })
 
 it('should lookup', async () => {
-  const reply = await discovery.lookup('credits.balance')
+  const locator = new Locator('credits.balance')
+  const reply = await discovery.lookup(locator)
 
   expect(reply.operations).toBeDefined()
   expect(reply.events).toBeDefined()

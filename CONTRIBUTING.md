@@ -24,7 +24,7 @@ $ cd toa
 $ npm install
 
 # setup dev environment
-$ npm run dev
+$ echo TODO
 
 # make sure everything is ok
 $ npm test
@@ -52,6 +52,7 @@ $ npm run lint
 These requirements may have reasonable exceptions. The point is to create as uniform code as possible and prevent some
 typical mistakes.
 
+<!--suppress ALL -->
 <table>
   <tr>
     <td valign=top>Strict mode</td>
@@ -65,7 +66,7 @@ All modules must be in <a href=https://developer.mozilla.org/en-US/docs/Web/>str
 
 `'like this'` not `"like that"`
 
-`` `this is also ${ok} if necessary`  ``
+`` `this is also ok if ${necessary}`  ``
    </td>
   </tr>
   <tr>

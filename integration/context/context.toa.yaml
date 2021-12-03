@@ -1,0 +1,5 @@
+runtime: 0.0.0
+name: dummies
+description: Integration tests context
+version: 0.0.0
+packages: '*'

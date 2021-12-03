@@ -1,31 +1,14 @@
 'use strict'
 
 const boot = require('@toa.io/boot')
-const { root } = require('../util/root')
+
+const { manifest: find } = require('../util/find')
 
 async function compose (argv) {
-  const options = parse(argv)
-
-  const paths = [...new Set(argv.paths.map(root))]
-  const composition = await boot.composition(paths, options)
+  const paths = [...new Set(argv.paths.map(find))]
+  const composition = await boot.composition(paths, argv)
 
   await composition.connect()
-}
-
-const parse = (argv) => {
-  const options = {}
-
-  if (argv.bindings) {
-    options.bindings = argv.bindings.map((binding) => {
-      if (binding[0] === '@' && binding.indexOf('/') === -1) {
-        binding = '@toa.io/bindings.' + binding.substr(1)
-      }
-
-      return binding
-    })
-  }
-
-  return options
 }
 
 exports.compose = compose

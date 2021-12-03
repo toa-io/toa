@@ -1,35 +1,24 @@
 'use strict'
 
-const { Discovery, Exposition, Locator } = require('@toa.io/core')
+const { Discovery, Exposition } = require('@toa.io/core')
 
 const boot = require('./index')
 
-const discovery = async (reconnect) => {
-  if (discovery.instance !== undefined) {
-    const instance = await discovery.instance
+const discovery = async () => {
+  if (discovery.instance === undefined) {
+    discovery.instance = new Discovery(lookup)
 
-    if (reconnect) await instance.connect()
-
-    return instance
+    await discovery.instance.connect()
   }
-
-  const create = async (id) => {
-    const locator = new Locator(id)
-    const call = boot.call(locator, ENDPOINT, { bindings: BINDINGS })
-
-    await call.connect()
-
-    return call
-  }
-
-  const instance = new Discovery(create)
-
-  discovery.instance = (async () => {
-    await instance.connect()
-    return instance
-  })()
 
   return discovery.instance
+}
+
+const lookup = async (locator) => {
+  const call = boot.call(locator, ENDPOINT, { bindings: BINDINGS })
+  await call.connect()
+
+  return call
 }
 
 const expose = async (manifest) => {

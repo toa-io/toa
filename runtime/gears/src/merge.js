@@ -10,17 +10,17 @@ const merge = (target, source, options = {}, path = []) => {
     for (const [name, value] of Object.entries(source)) {
       path.push(name)
 
-      if (source[name] === undefined) continue
+      if (source[name] !== undefined) {
+        if (target[name] === undefined) target[name] = value
+        else if (typeof value === 'object' && value !== null) {
+          if (target[name] === undefined) target[name] = {}
 
-      if (target[name] === undefined) target[name] = value
-      else if (typeof value === 'object' && value !== null) {
-        if (target[name] === undefined) target[name] = {}
-
-        merge(target[name], value, options, path)
-      } else if (target[name] !== value) {
-        if (options.override === true) target[name] = value
-        else if (options.ignore !== true) {
-          throw new Error(`gears/merge: conflict at ${string(path)} ('${value}', '${target[name]}')`)
+          merge(target[name], value, options, path)
+        } else if (target[name] !== value) {
+          if (options.override === true) target[name] = value
+          else if (options.ignore !== true) {
+            throw new Error(`gears/merge: conflict at ${string(path)} ('${value}', '${target[name]}')`)
+          }
         }
       }
 

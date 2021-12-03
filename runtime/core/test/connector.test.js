@@ -130,6 +130,24 @@ describe('dependencies', () => {
     expect(sequence.indexOf('*a')).toBe(sequence.length - 1)
   })
 
+  it('should disconnect if no parents left', async () => {
+    a.depends(c)
+    b.depends(c)
+
+    await a.connect()
+    await b.connect()
+
+    expect(sequence).toEqual(['+c', '+a', '+b'])
+
+    await a.disconnect()
+
+    expect(sequence).toEqual(['+c', '+a', '+b', '-a', '*a'])
+
+    await b.disconnect()
+
+    expect(sequence).toEqual(['+c', '+a', '+b', '-a', '*a', '-b', '-c', '*c', '*b'])
+  })
+
   it('should not throw if depends not on Connector', async () => {
     a.depends({})
 

@@ -37,7 +37,7 @@ it('should receive', async () => {
     await messages.invoke('add', { input: { sender, text, free: true } })
   }
 
-  await timeout(50) // events processing
+  await timeout(200) // events processing
 
   const counted = await stats.invoke('observe', { query: { id: sender } })
   const updated = await a.invoke('observe', { query: { id: sender } })
@@ -54,7 +54,7 @@ it('should receive conditionally', async () => {
     await messages.invoke('add', { input: { sender, text: generate() } })
   }
 
-  await timeout(50)
+  await timeout(200)
 
   const before = await stats.invoke('observe', { query: { id: sender } })
 

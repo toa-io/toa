@@ -3,7 +3,7 @@
 const to = (entity) => {
   const { id, _version, ...rest } = entity
 
-  return { _id: id, _version: _version + 1, ...rest }
+  return { _id: id, _version: _version === undefined ? 1 : _version + 1, ...rest }
 }
 
 const from = (record) => {

@@ -1,7 +1,7 @@
 'use strict'
 
-const { underlay } = require('@toa.io/gears')
 const { Connector } = require('@toa.io/core')
+const { underlay } = require('@toa.io/gears')
 
 class Context extends Connector {
   #context

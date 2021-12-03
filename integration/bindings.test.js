@@ -8,7 +8,7 @@ const framework = require('./framework')
 
 const BINDINGS = ['http', 'amqp'].map((binding) => '@toa.io/bindings.' + binding)
 
-global.TOA_BINDINGS_LOOP_DISABLED = 1
+global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = 1
 
 let collection
 
@@ -26,7 +26,7 @@ BINDINGS.forEach((binding) => {
 
     beforeAll(async () => {
       composition = await framework.compose(['messages', 'credits'], { bindings: [binding] })
-      remote = await framework.remote('messages.messages', binding)
+      remote = await framework.remote('messages.messages')
     })
 
     afterAll(async () => {

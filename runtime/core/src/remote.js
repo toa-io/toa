@@ -9,7 +9,7 @@ class Remote extends Runtime {
     console.info(`Remote '${this.locator.id}' connected`)
   }
 
-  async disconnection () {
+  async disconnected () {
     console.info(`Remote '${this.locator.id}' disconnected`)
   }
 }

@@ -20,6 +20,7 @@ afterAll(async () => {
   if (messages) await messages.disconnect()
   if (credits) await credits.disconnect()
   if (stats) await stats.disconnect()
+
   if (composition) await composition.disconnect()
 })
 
@@ -33,7 +34,7 @@ it('should assign', async () => {
 
   const reply = await messages.invoke('assign', { input: { text: generate() }, query })
 
-  await timeout(50)
+  await timeout(200)
 
   expect(reply).toStrictEqual({})
 
@@ -65,7 +66,7 @@ it('should emit events', async () => {
   })
 
   await credits.invoke('set', { input: { balance: 0 }, query: { id: sender } })
-  await timeout(50)
+  await timeout(200)
 
   const stat = await stats.invoke('observe', { query: { id: sender } })
 

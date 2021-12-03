@@ -1,7 +1,5 @@
 'use strict'
 
-const { lookup } = require('@toa.io/gears')
-
 const extensions = (manifest) => {
   if (manifest.extensions === undefined) return
 
@@ -16,9 +14,7 @@ const extensions = (manifest) => {
 
 const extension = (name, definition, manifest) => {
   if (factories[name] === undefined) {
-    const module = lookup(name, manifest.path)
-
-    factories[name] = new (require(module).Factory)()
+    factories[name] = new (require(name).Factory)()
   }
 
   return factories[name].connector(manifest.locator, definition)

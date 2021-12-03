@@ -21,6 +21,6 @@ const builder = (yargs) => {
 }
 
 exports.command = 'invoke <operation> [request]'
-exports.desc = 'Invoke Operation'
+exports.desc = 'Invoke operation'
 exports.builder = builder
 exports.handler = invoke

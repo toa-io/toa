@@ -31,7 +31,8 @@ class Factory {
 
     return new Resources(server, broadcast, async (domain, name, definition) => {
       const locator = new Locator({ domain, name })
-      const remote = await boot.remote(locator.id)
+      const remote = await boot.remote(locator)
+
       const tree = new Tree(definition, (node) => {
         const query = Query.merge(node)
         const properties = remap(query, (value, key) => new constraints[key](value))

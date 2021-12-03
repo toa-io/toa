@@ -26,6 +26,6 @@ const builder = (yargs) => {
 }
 
 exports.command = 'compose [paths...]'
-exports.desc = 'Start Composition'
+exports.desc = 'Start composition'
 exports.builder = builder
 exports.handler = compose

@@ -1,5 +1,7 @@
 'use strict'
 
-const { load } = require('./manifest')
+const { context } = require('./context')
+const { manifest } = require('./manifest')
 
-exports.load = load
+exports.context = context
+exports.manifest = manifest

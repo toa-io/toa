@@ -1,7 +1,5 @@
 'use strict'
 
-const amqp = require('amqplib')
-
 const { Connector } = require('@toa.io/core')
 const { console, newid } = require('@toa.io/gears')
 
@@ -9,35 +7,23 @@ const { pack, unpack } = require('./message')
 
 class Channel extends Connector {
   #id
-  #url
   #connection
   #channel
 
   #bound = {}
   #expected = {}
 
-  constructor (host) {
+  constructor (connection) {
     super()
 
     this.#id = newid()
-    this.#url = Channel.#locate(host)
+    this.#connection = connection
+
+    this.depends(connection)
   }
 
   async connection () {
-    this.#connection = await amqp.connect(this.#url)
-    this.#channel = await this.#connection.createChannel()
-
-    console.info(`AMQP Binding connected to ${this.#url}`)
-  }
-
-  async disconnection () {
-    // TODO: handle current operations
-    // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
-    await this.#channel.close()
-    await this.#connection.close()
-    this.#bound = {}
-
-    console.info(`AMQP Binding disconnected from ${this.#url} (pending: ${this.#channel?.pending?.length}, reply: ${this.#channel.reply === null})`)
+    this.#channel = await this.#connection.channel()
   }
 
   async request (label, request) {
@@ -132,10 +118,6 @@ class Channel extends Connector {
 
     delete this.#expected[correlation]
     await this.#channel.ack(message)
-  }
-
-  static #locate (host) {
-    return 'amqp://' + host
   }
 }
 

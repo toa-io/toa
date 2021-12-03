@@ -13,12 +13,12 @@ entity:
     required: [id]
 
 operations:
-  observe:
-    output:
-      id: ~
   transit:
     virtual: true
     input: object
+    output:
+      id: ~
+  observe:
     output:
       id: ~
   assign:

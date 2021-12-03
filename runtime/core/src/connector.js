@@ -5,10 +5,12 @@ const { newid } = require('@toa.io/gears')
 
 class Connector {
   #connectors = []
+  #linked = []
   #connecting
   #disconnecting
 
   id
+  connected = false
 
   constructor () {
     this.id = this.constructor.name + '#' + newid().substring(0, 8)
@@ -27,22 +29,23 @@ class Connector {
           this.#connectors.push(item)
           item.depends(next)
         }
-
-        console.debug(`${this.id} depends on ` +
-          `[${connector.map((connector) => connector.id).join(', ')}]`)
       }
     } else {
       if (connector instanceof Connector) {
         next = connector
-
-        console.debug(`${this.id} depends on ${next.id || next.constructor.name}`)
       }
     }
 
-    if (next !== undefined) this.#connectors.push(next)
-    else return this
+    if (next !== undefined) {
+      this.#connectors.push(next)
+      next.link(this)
 
-    return next
+      return next
+    } else return this
+  }
+
+  link (connector) {
+    this.#linked.push(connector)
   }
 
   async connect () {
@@ -57,6 +60,7 @@ class Connector {
 
     try {
       await this.#connecting
+      this.connected = true
     } catch (e) {
       await this.disconnect(true)
       throw e
@@ -66,14 +70,28 @@ class Connector {
   }
 
   async disconnect (interrupt) {
-    if (!interrupt) await this.#connecting
+    if (interrupt !== true) await this.#connecting
 
     if (this.#disconnecting) return this.#disconnecting
 
+    const linked = this.#linked.reduce((acc, parent) => acc || parent.connected, false)
+
+    if (linked && interrupt !== true) return
+
+    this.connected = false
     this.#connecting = undefined
 
     this.#disconnecting = (async () => {
-      if (!interrupt) await this.disconnection()
+      const start = +new Date()
+      const interval = setInterval(() => {
+        const delay = +new Date() - start
+
+        if (delay > DELAY) console.warn(`Connector ${this.id} still disconnecting (${delay})`)
+      }, DELAY)
+
+      if (interrupt !== true) await this.disconnection()
+
+      clearInterval(interval)
 
       await Promise.all(this.#connectors.map(connector => connector.disconnect()))
       this.disconnected()
@@ -85,13 +103,9 @@ class Connector {
   }
 
   debug (node = {}) {
-    if (this.#connectors.length === 0) {
-      node[this.id] = null
-    } else {
-      node[this.id] = { connected: this.#connecting !== undefined }
+    node[this.id] = { connected: this.connected }
 
-      for (const connector of this.#connectors) connector.debug?.(node[this.id])
-    }
+    if (this.#connectors.length > 0) for (const connector of this.#connectors) connector.debug?.(node[this.id])
 
     return node
   }
@@ -102,5 +116,7 @@ class Connector {
 
   disconnected () {}
 }
+
+const DELAY = 5000
 
 exports.Connector = Connector

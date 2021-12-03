@@ -3,24 +3,30 @@
 const { Connector } = require('./connector')
 
 class Discovery extends Connector {
-  #create
-  #lookups = {}
+  #lookup
+  #lookups
 
-  constructor (create) {
+  constructor (lookup) {
     super()
 
-    this.#create = create
+    this.#lookup = lookup
   }
 
-  async lookup (id) {
+  async connection () {
+    this.#lookups = {}
+  }
+
+  async lookup (locator) {
+    const id = locator.id
+
     if (this.#lookups[id] === undefined) {
-      this.#lookups[id] = await this.#create(id)
+      this.#lookups[id] = await this.#lookup(locator)
       this.depends(this.#lookups[id])
     }
 
-    const reply = await this.#lookups[id].invoke()
+    const { output } = await this.#lookups[id].invoke()
 
-    return reply.output
+    return output
   }
 }
 

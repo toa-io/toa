@@ -40,7 +40,7 @@
   },
   "scripts": {
     "dev": "docker compose up -d",
-    "test": "standard --verbose | snazzy && npm run test:unit && npm run test:integration",
+    "test": "standard --verbose | snazzy && npm run test:unit",
     "test:unit": "jest --roots runtime connectors extensions",
     "test:integration": "jest --roots integration --runInBand",
     "lint": "standard --verbose --fix | snazzy",

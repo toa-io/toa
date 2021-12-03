@@ -19,7 +19,6 @@ afterAll(async () => {
 
 it('should return', async () => {
   const id = newid()
-
   const { output } = await remote.invoke('observe', { query: { id } })
 
   expect(output._version).toBe(0)

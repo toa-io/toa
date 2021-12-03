@@ -30,9 +30,10 @@ describe('routing', () => {
     const id = newid()
     const url = locator('/credits/balance/' + id + '/')
     const response = await fetch(url)
-    const json = await response.json()
 
     expect(response.status).toBe(200)
+
+    const json = await response.json()
     expect(json).toStrictEqual({ output: { id, balance: 10 } })
   })
 
@@ -47,7 +48,7 @@ describe('routing', () => {
     a = await framework.compose(['a'])
 
     await a.connect()
-    await timeout(50) // expose resources
+    await timeout(200) // expose resources
 
     const after = await fetch(url)
 
@@ -62,7 +63,7 @@ describe('routing', () => {
       a = await framework.compose(['a'])
 
       await a.connect()
-      await timeout(50) // expose resources
+      await timeout(200) // expose resources
     }
 
     const before = await fetch(url)
@@ -73,7 +74,7 @@ describe('routing', () => {
 
     const v2 = await framework.compose(['a.v2'])
     await v2.connect()
-    await timeout(50) // expose v2
+    await timeout(200) // expose v2
 
     const after = await fetch(url)
 

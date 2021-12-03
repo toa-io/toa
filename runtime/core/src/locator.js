@@ -21,8 +21,6 @@ class Locator {
   }
 
   host (type, level = 0) {
-    if (process.env.TOA_ENV === 'dev') return 'localhost'
-
     let host = ''
 
     const segments = LEVELS.slice(0, level + 1)
