@@ -8,8 +8,7 @@ on:
 #      - dev
   push:
     branches:
-      - main
-      - dev
+      - workflow
 
 jobs:
   publish:
@@ -41,8 +40,8 @@ jobs:
           git config user.email "${{ github.actor}}@users.noreply.github.com"
           npm whoami
           
-          if [ ${{ github.base_ref }} = dev ]; then
-            npx lerna publish --conventional-prerelease --preid dev --yes
-          else
+          if [ ${{ github.base_ref }} = main ]; then
             npx lerna publish --conventional-graduate --yes
+          else
+            npx lerna publish --conventional-prerelease --preid dev --yes
           fi
