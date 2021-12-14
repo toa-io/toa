@@ -1,7 +1,10 @@
 {
   "command": {
     "version": {
-      "allowBranch": ["main", "dev"],
+      "allowBranch": [
+        "main",
+        "dev"
+      ],
       "conventionalCommits": true,
       "exact": true,
       "message": "chore(release): %s",
@@ -9,5 +12,5 @@
     }
   },
   "useWorkspaces": true,
-  "version": "0.1.0-dev.0"
+  "version": "0.1.0"
 }
