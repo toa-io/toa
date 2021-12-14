@@ -4,7 +4,7 @@
       "allowBranch": [
         "main",
         "dev",
-        "fix/workflow"
+        "fix/workflow-dev"
       ],
       "conventionalCommits": true,
       "exact": true,
