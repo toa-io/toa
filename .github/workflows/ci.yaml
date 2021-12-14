@@ -8,7 +8,7 @@ on:
 #      - dev
   push:
     branches:
-      - workflow
+      - fix/workflow
 
 jobs:
   publish:
