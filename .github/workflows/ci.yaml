@@ -4,8 +4,12 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - dev
       - main
+      - dev
+  push:
+    branches:
+      - main
+      - dev
 
 jobs:
   publish:
@@ -24,7 +28,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install
-        run: npm ci --production
+        run: npm ci
 
       - name: Test
         run: npm test
