@@ -19,13 +19,6 @@
     "process": "node ./src/process.js",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/bindings.amqp": "^0.0.0",
-    "@toa.io/boot": "^0.0.0",
-    "@toa.io/core": "^0.0.0",
-    "@toa.io/gears": "^0.0.0",
-    "@toa.io/schema": "^0.0.0"
-  },
   "dependencies": {
     "express": "4.17.1",
     "path-to-regexp": "6.2.0"
