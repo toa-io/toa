@@ -6,8 +6,10 @@ const source = {
       properties: {
         foo: 'string'
       }
-    }
+    },
+    storage: '@toa.io/storages.mongodb'
   },
+  bridge: '@toa.io/bridges.node',
   operations: {
     add: {
       input: {
@@ -61,8 +63,10 @@ const target = {
           type: 'string'
         }
       }
-    }
+    },
+    storage: expect.stringMatching(/storages\.mongodb$/)
   },
+  bridge: expect.stringMatching(/bridges\.node$/),
   operations: {
     add: {
       input: {

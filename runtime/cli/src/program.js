@@ -7,7 +7,10 @@ const { version } = require('../package.json')
 
 yargs(process.argv.slice(2))
   .middleware((argv) => {
-    if (process.env.TOA_ENV === 'dev' && argv.log === undefined) argv.log = 'info'
+    if (argv.log === undefined) {
+      if (process.env.TOA_ENV === 'dev') argv.log = 'info'
+      else argv.log = 'warn'
+    }
 
     console.level(argv.log)
   })
