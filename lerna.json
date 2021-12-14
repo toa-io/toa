@@ -4,7 +4,8 @@
       "allowBranch": ["main", "dev"],
       "conventionalCommits": true,
       "exact": true,
-      "message": "chore(release): %s"
+      "message": "chore(release): %s",
+      "ignoreScripts": true
     }
   },
   "useWorkspaces": true,
