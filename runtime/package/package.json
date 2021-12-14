@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/package",
-  "version": "0.1.0",
+  "version": "0.1.1-dev.0",
   "description": "Toa Package",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,9 +19,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/gears": "0.1.0",
-    "@toa.io/prototype": "0.1.0",
-    "@toa.io/schema": "0.1.0",
+    "@toa.io/gears": "0.1.1-dev.0",
+    "@toa.io/prototype": "0.1.1-dev.0",
+    "@toa.io/schema": "0.1.1-dev.0",
     "fast-glob": "3.2.7"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
