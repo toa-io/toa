@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "0.1.1-dev.3",
+  "version": "0.2.0-dev.0",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,15 +22,15 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/bindings.amqp": "0.1.1-dev.3",
-    "@toa.io/bindings.http": "0.1.1-dev.3",
-    "@toa.io/boot": "0.1.1-dev.3",
-    "@toa.io/bridges.node": "0.1.1-dev.3",
-    "@toa.io/cli": "0.1.1-dev.3",
-    "@toa.io/core": "0.1.1-dev.3",
-    "@toa.io/extensions.resources": "0.1.1-dev.3",
-    "@toa.io/operations": "0.1.1-dev.3",
-    "@toa.io/package": "0.1.1-dev.3",
-    "@toa.io/storages.mongodb": "0.1.1-dev.3"
+    "@toa.io/bindings.amqp": "0.2.0-dev.0",
+    "@toa.io/bindings.http": "0.2.0-dev.0",
+    "@toa.io/boot": "0.2.0-dev.0",
+    "@toa.io/bridges.node": "0.2.0-dev.0",
+    "@toa.io/cli": "0.2.0-dev.0",
+    "@toa.io/core": "0.2.0-dev.0",
+    "@toa.io/extensions.resources": "0.2.0-dev.0",
+    "@toa.io/operations": "0.2.0-dev.0",
+    "@toa.io/package": "0.2.0-dev.0",
+    "@toa.io/storages.mongodb": "0.2.0-dev.0"
   }
 }
