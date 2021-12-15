@@ -6,7 +6,6 @@ on:
     branches:
       - main
       - dev
-      - fix/workflow
 
 jobs:
   publish:
@@ -24,6 +23,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-          
+
       - name: Install
         run: npm ci
 
@@ -36,7 +43,6 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
-          npm whoami
           
           if [ ${{ github.base_ref }} = main ]; then
             npx lerna publish --no-verify-access --conventional-graduate --yes

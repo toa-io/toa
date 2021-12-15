@@ -3,8 +3,7 @@
     "version": {
       "allowBranch": [
         "main",
-        "dev",
-        "fix/workflow"
+        "dev"
       ],
       "conventionalCommits": true,
       "exact": true,
