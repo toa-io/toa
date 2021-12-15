@@ -11,10 +11,7 @@
   "bugs": {
     "url": "https://github.com/toa-io/toa/issues"
   },
-  "main": "package.json",
-  "bin": {
-    "toa": "bin/toa"
-  },
+  "main": "src/program.js",
   "publishConfig": {
     "access": "public"
   },

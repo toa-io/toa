@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 'use strict'
 
-require('../src/program')
+require('@toa.io/cli')
