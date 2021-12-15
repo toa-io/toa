@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/schema",
-  "version": "0.1.1-dev.1",
+  "version": "0.1.1-dev.2",
   "description": "Toa schema validator",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -13,7 +13,7 @@
   },
   "main": "src/schema.js",
   "dependencies": {
-    "@toa.io/gears": "0.1.1-dev.1",
+    "@toa.io/gears": "0.1.1-dev.2",
     "ajv": "8.6.3"
   },
   "publishConfig": {
