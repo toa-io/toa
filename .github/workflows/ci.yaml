@@ -1,19 +1,15 @@
 name: Publish
 
 on:
-#  pull_request:
-#    types: [closed]
-#    branches:
-#      - main
-#      - dev
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - main
       - dev
 
 jobs:
   publish:
-#    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +23,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-          
+
       - name: Install
         run: npm ci
 
@@ -34,12 +38,14 @@ jobs:
         run: npm test
 
       - name: Publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
-  
-          if [ ${{ github.base_ref }} = dev ]; then
-            npx lerna publish --conventional-prerelease --preid dev --yes
+          
+          if [ ${{ github.base_ref }} = main ]; then
+            npx lerna publish --no-verify-access --conventional-graduate --yes
           else
-            npx lerna publish --conventional-graduate --yes
+            npx lerna publish --no-verify-access --conventional-prerelease --preid dev --no-changelog --yes
           fi
