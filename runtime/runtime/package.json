@@ -1,0 +1,36 @@
+{
+  "name": "@toa.io/runtime",
+  "version": "0.1.1-dev.3",
+  "description": "Toa Runtime",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "main": "package.json",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "toa": "bin/cli"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@toa.io/bindings.amqp": "0.1.1-dev.3",
+    "@toa.io/bindings.http": "0.1.1-dev.3",
+    "@toa.io/boot": "0.1.1-dev.3",
+    "@toa.io/bridges.node": "0.1.1-dev.3",
+    "@toa.io/cli": "0.1.1-dev.3",
+    "@toa.io/core": "0.1.1-dev.3",
+    "@toa.io/extensions.resources": "0.1.1-dev.3",
+    "@toa.io/operations": "0.1.1-dev.3",
+    "@toa.io/package": "0.1.1-dev.3",
+    "@toa.io/storages.mongodb": "0.1.1-dev.3"
+  }
+}

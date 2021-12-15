@@ -1,10 +1,9 @@
 {
   "command": {
+    "add": {
+      "exact": true
+    },
     "version": {
-      "allowBranch": [
-        "main",
-        "dev"
-      ],
       "conventionalCommits": true,
       "exact": true,
       "message": "chore(release): %s",
