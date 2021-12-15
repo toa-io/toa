@@ -1,5 +1,8 @@
 {
   "command": {
+    "add": {
+      "exact": true
+    },
     "version": {
       "allowBranch": [
         "main",
