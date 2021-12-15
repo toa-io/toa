@@ -47,5 +47,5 @@ jobs:
           if [ ${{ github.base_ref }} = main ]; then
             npx lerna publish --no-verify-access --conventional-graduate --yes
           else
-            npx lerna publish --no-verify-access --conventional-prerelease --preid dev --no-changelog --yes
+            npx lerna publish --no-verify-access --conventional-prerelease --preid dev --dist-tag dev --no-changelog --yes
           fi
