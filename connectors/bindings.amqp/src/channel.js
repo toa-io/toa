@@ -121,7 +121,7 @@ class Channel extends Connector {
   }
 }
 
-const QUEUE = { durable: process.env.TOA_ENV !== 'dev' }
-const EXCHANGE = { durable: process.env.TOA_ENV !== 'dev' }
+const QUEUE = { durable: true }
+const EXCHANGE = { durable: true }
 
 exports.Channel = Channel

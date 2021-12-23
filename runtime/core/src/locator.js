@@ -29,7 +29,9 @@ class Locator {
       host += concat(segment(this), SEPARATOR)
     }
 
-    return host + type.toLowerCase()
+    if (type) host += type.toLowerCase()
+
+    return host
   }
 
   static parse (label) {
