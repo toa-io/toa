@@ -16,4 +16,4 @@ spec:
     spec:
       containers:
         - name: credits-balance
-          image: localhost:5000/credits-balance:0.0.1
+          image: localhost:5000/credits-balance:0.0.2
