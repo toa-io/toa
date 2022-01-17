@@ -31,11 +31,14 @@ class Deployment {
     return path
   }
 
-  async install () {
+  async install (wait) {
     const path = await this.export()
+    const args = []
+
+    if (wait === true) args.push('--wait')
 
     await execa('helm', ['dependency', 'update', path])
-    await execa('helm', ['upgrade', this.#context.name, '-i', path])
+    await execa('helm', ['upgrade', this.#context.name, '-i', ...args, path])
     await fs.rm(path, { recursive: true })
   }
 
