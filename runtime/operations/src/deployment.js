@@ -5,10 +5,10 @@ const execa = require('execa')
 const { join } = require('node:path')
 const { yaml } = require('@toa.io/gears')
 
+const { dependencies } = require('./deployment/dependencies')
 const { directory } = require('./deployment/directory')
 const { chart } = require('./deployment/chart')
 const { values } = require('./deployment/values')
-const { dependencies } = require('./deployment/dependencies')
 
 class Deployment {
   #context
