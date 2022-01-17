@@ -37,8 +37,16 @@ class Deployment {
 
     if (wait === true) args.push('--wait')
 
-    await execa('helm', ['dependency', 'update', path])
-    await execa('helm', ['upgrade', this.#context.name, '-i', ...args, path])
+    const update = execa('helm', ['dependency', 'update', path])
+
+    update.stdout.pipe(process.stdout)
+    await update
+
+    const upgrade = execa('helm', ['upgrade', this.#context.name, '-i', ...args, path])
+
+    upgrade.stdout.pipe(process.stdout)
+    await upgrade
+
     await fs.rm(path, { recursive: true })
   }
 
