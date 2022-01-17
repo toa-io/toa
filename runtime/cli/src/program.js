@@ -7,18 +7,14 @@ const { version } = require('../package.json')
 
 yargs(process.argv.slice(2))
   .middleware((argv) => {
-    if (argv.log === undefined) {
-      if (process.env.TOA_ENV === 'dev') argv.log = 'info'
-      else argv.log = 'warn'
-    }
+    if (argv.log === undefined) argv.log = 'info'
 
     console.level(argv.log)
   })
   .fail((msg, err) => {
     const actual = err || new Error(msg)
 
-    if (process.env.TOA_ENV === 'dev') console.log(actual)
-    else console.error(actual.message)
+    console.error(actual)
 
     process.exit(actual.exitCode > 0 ? actual.exitCode : 1)
   })

@@ -15,7 +15,7 @@ class Tree {
 
   /** @hot */
   match (path) {
-    // region dev only check
+    // dev only check
     if (process.env.TOA_ENV === 'dev') {
       const nodes = this.#nodes.filter((node) => node.match(path) !== false)
 
@@ -25,7 +25,6 @@ class Tree {
         throw new Error('Ambiguous routes ' + routes.join(', '))
       }
     }
-    // endregion
 
     let match
 

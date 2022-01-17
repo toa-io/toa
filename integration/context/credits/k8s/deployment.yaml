@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credits-balance
+  labels:
+    app: credits-balance
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: credits-balance
+  template:
+    metadata:
+      labels:
+        app: credits-balance
+    spec:
+      containers:
+        - name: credits-balance
+          image: localhost:5000/credits-balance:0.0.2

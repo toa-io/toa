@@ -29,7 +29,13 @@ it('should throw on resource conflicts if dev env', () => {
     }
   }
 
+  const env = process.env.TOA_ENV
+
+  process.env.TOA_ENV = 'dev'
+
   tree = new Tree(definition, () => null)
 
   expect(() => tree.match('/ok/')).toThrow(/Ambiguous routes/)
+
+  process.env.TOA_ENV = env
 })
