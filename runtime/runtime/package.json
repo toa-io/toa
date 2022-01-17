@@ -16,7 +16,7 @@
     "access": "public"
   },
   "bin": {
-    "toa": "bin/cli"
+    "toa": "bin/toa"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"

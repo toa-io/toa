@@ -14,6 +14,6 @@ const stringify = (value) => {
   else return value.toString()
 }
 
-const BIN = join(dirname(require.resolve('@toa.io/cli')), 'bin/toa')
+const BIN = join(dirname(require.resolve('@toa.io/runtime')), 'bin/toa')
 
 exports.cli = cli

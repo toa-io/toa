@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# create kind cluster with local container registry
+# https://kind.sigs.k8s.io/docs/user/local-registry/
+
 set -o errexit
 
 # create registry container unless it already exists
