@@ -9,9 +9,8 @@ const builder = (yargs) => {
       desc: 'Path to context',
       default: '.'
     })
-    .option('wait', {
-      boolean: true,
-      default: true
+    .option('no-wait', {
+      boolean: true
     })
     .usage('Usage: toa deploy /path/to/context')
     .commandDir('./deploy')

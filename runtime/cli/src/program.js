@@ -6,6 +6,9 @@ const { console } = require('@toa.io/gears')
 const { version } = require('../package.json')
 
 yargs(process.argv.slice(2))
+  .parserConfiguration({
+    'boolean-negation': false
+  })
   .middleware((argv) => {
     if (argv.log === undefined) argv.log = 'info'
 

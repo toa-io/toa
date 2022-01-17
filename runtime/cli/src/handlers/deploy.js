@@ -8,7 +8,7 @@ const deploy = async (argv) => {
   const context = find(argv.path)
   const deployment = await boot.deployment(context)
 
-  await deployment.install(argv.wait)
+  await deployment.install(argv['no-wait'] !== true)
 }
 
 exports.deploy = deploy
