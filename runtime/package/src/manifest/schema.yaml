@@ -38,6 +38,9 @@ properties:
   name:
     $ref: 'definitions#/definitions/token'
 
+  version:
+    $ref: 'definitions#/definitions/version'
+
   entity:
     type: object
     properties:

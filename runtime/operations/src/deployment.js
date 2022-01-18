@@ -5,10 +5,10 @@ const execa = require('execa')
 const { join } = require('node:path')
 const { yaml } = require('@toa.io/gears')
 
+const { dependencies } = require('./deployment/dependencies')
 const { directory } = require('./deployment/directory')
 const { chart } = require('./deployment/chart')
 const { values } = require('./deployment/values')
-const { dependencies } = require('./deployment/dependencies')
 
 class Deployment {
   #context
@@ -31,11 +31,22 @@ class Deployment {
     return path
   }
 
-  async install () {
+  async install (wait) {
     const path = await this.export()
+    const args = []
 
-    await execa('helm', ['dependency', 'update', path])
-    await execa('helm', ['upgrade', this.#context.name, '-i', path])
+    if (wait === true) args.push('--wait')
+
+    const update = execa('helm', ['dependency', 'update', path])
+
+    update.stdout.pipe(process.stdout)
+    await update
+
+    const upgrade = execa('helm', ['upgrade', this.#context.name, '-i', ...args, path])
+
+    upgrade.stdout.pipe(process.stdout)
+    await upgrade
+
     await fs.rm(path, { recursive: true })
   }
 

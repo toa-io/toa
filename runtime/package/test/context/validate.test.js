@@ -23,6 +23,11 @@ it('should require runtime version as semver', () => {
   expect(() => validate(context)).toThrow(/pattern/)
 })
 
+it('should allow local runtime version', () => {
+  context.runtime = '.'
+  expect(() => validate(context)).not.toThrow()
+})
+
 it('should require name as token', () => {
   delete context.name
   expect(() => validate(context)).toThrow(/required/)
@@ -33,5 +38,10 @@ it('should require name as token', () => {
 
 it('should require packages location', () => {
   delete context.packages
+  expect(() => validate(context)).toThrow(/required/)
+})
+
+it('should require registry url', () => {
+  delete context.registry
   expect(() => validate(context)).toThrow(/required/)
 })

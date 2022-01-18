@@ -7,13 +7,13 @@ const { tmpdir } = require('node:os')
 const execa = require('execa')
 const { newid, yaml } = require('@toa.io/gears')
 const boot = require('@toa.io/boot')
-const fixtures = require('./deploy.fixtures')
+const fixtures = require('./deployment.fixtures')
 
 const path = join(__dirname, './context')
 
 let deployment
 
-beforeAll(async () => {
+beforeEach(async () => {
   deployment = await boot.deployment(path)
 })
 
