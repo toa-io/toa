@@ -9,6 +9,9 @@ const defaults = (manifest) => {
   if (manifest.entity !== undefined && manifest.entity.storage === undefined) {
     manifest.entity.storage = '@toa.io/storages.mongodb'
   }
+
+  // TODO: bridge.version()
+  if (manifest.version === undefined) manifest.version = '0.0.0'
 }
 
 exports.defaults = defaults

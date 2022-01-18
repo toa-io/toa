@@ -101,6 +101,18 @@ describe('definitions', () => {
     expect(schema.fit({ remote: 'a.1' })).not.toBe(null)
     expect(schema.fit({ remote: 'a' })).not.toBe(null)
   })
+
+  it('should define version', () => {
+    const schema = new Schema({
+      properties: {
+        version: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/version' }
+      }
+    })
+
+    expect(schema.fit({ version: '1.0.0' })).toBe(null)
+    expect(schema.fit({ version: '1.0' })).not.toBe(null)
+    expect(schema.fit({ version: 'wrong' })).not.toBe(null)
+  })
 })
 
 describe('keywords', () => {

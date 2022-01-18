@@ -6,6 +6,7 @@ const { discovery } = require('./discovery')
 const { remote } = require('./remote')
 
 exports.mongodb = require('./mongodb')
+exports.docker = require('./docker')
 
 exports.cli = cli
 exports.compose = compose

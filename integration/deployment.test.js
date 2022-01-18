@@ -13,7 +13,7 @@ const path = join(__dirname, './context')
 
 let deployment
 
-beforeAll(async () => {
+beforeEach(async () => {
   deployment = await boot.deployment(path)
 })
 

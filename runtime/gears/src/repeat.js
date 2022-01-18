@@ -2,6 +2,7 @@
 
 const repeat = (fn, times) => {
   const results = []
+
   let promise = false
 
   for (let i = 0; i < times; i++) {
