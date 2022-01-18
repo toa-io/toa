@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "0.2.0-dev.1",
+  "version": "0.2.0-dev.2",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
   "author": {
@@ -26,7 +26,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/gears": "0.2.0-dev.0",
+    "@toa.io/gears": "0.2.0-dev.2",
     "execa": "5.1.1"
   }
 }
