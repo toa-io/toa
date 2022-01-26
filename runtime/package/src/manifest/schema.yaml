@@ -31,6 +31,14 @@ properties:
   path:
     type: string
 
+  locator:
+    type: object
+    properties:
+      id:
+        $ref: 'definitions#/definitions/locator'
+      label:
+        $ref: 'definitions#/definitions/label'
+
   domain:
     $ref: 'definitions#/definitions/token'
     not:

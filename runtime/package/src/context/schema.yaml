@@ -4,9 +4,7 @@ $id: https://schemas.toa.io/0.0.0/context
 type: object
 properties:
   runtime:
-    oneOf:
-      - $ref: 'definitions#/definitions/version'
-      - const: .
+    $ref: 'definitions#/definitions/version'
   version:
     $ref: 'definitions#/definitions/version'
   name:
@@ -21,9 +19,15 @@ properties:
     type: array
     minItems: 1
     items:
-      type: array
-      minItems: 1
-      items:
-        type: string
+      type: object
+      properties:
+        name:
+          $ref: 'definitions#/definitions/token'
+        components:
+          type: array
+          minItems: 1
+          items:
+            $ref: 'definitions#/definitions/locator'
+      required: [name, components]
 required: [runtime, name, packages, registry]
 additionalProperties: false

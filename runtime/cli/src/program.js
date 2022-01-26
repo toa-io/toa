@@ -17,7 +17,7 @@ yargs(process.argv.slice(2))
   .fail((msg, err) => {
     const actual = err || new Error(msg)
 
-    console.error(actual)
+    console.error(process.env.TOA_ENV === 'local' ? actual : actual.message)
 
     process.exit(actual.exitCode > 0 ? actual.exitCode : 1)
   })

@@ -4,3 +4,9 @@ version: 0.0.0
 runtime: .
 packages: '*'
 registry: localhost:5000
+
+compositions:
+  - name: messages
+    components:
+      - messages.messages
+      - stats.stats

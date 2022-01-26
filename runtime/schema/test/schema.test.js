@@ -85,6 +85,7 @@ describe('definitions', () => {
     expect(schema.fit({ event: 'a.b.c' })).toBe(null)
     expect(schema.fit({ event: 'a.b.c.d' })).toBe(null)
     expect(schema.fit({ event: 'a.1' })).not.toBe(null)
+    expect(schema.fit({ event: 'a-b.c' })).not.toBe(null)
     expect(schema.fit({ event: 'a' })).not.toBe(null)
   })
 
@@ -97,9 +98,23 @@ describe('definitions', () => {
 
     expect(schema.fit({ remote: 'a.b' })).toBe(null)
     expect(schema.fit({ remote: 'a.b.c' })).not.toBe(null)
-    expect(schema.fit({ remote: 'a.b.c.d' })).not.toBe(null)
     expect(schema.fit({ remote: 'a.1' })).not.toBe(null)
+    expect(schema.fit({ remote: 'a-b.c' })).not.toBe(null)
     expect(schema.fit({ remote: 'a' })).not.toBe(null)
+  })
+
+  it('should define label', () => {
+    const schema = new Schema({
+      properties: {
+        foo: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/label' }
+      }
+    })
+
+    expect(schema.fit({ foo: 'a-b' })).toBe(null)
+    expect(schema.fit({ foo: 'a-b-c' })).not.toBe(null)
+    expect(schema.fit({ foo: 'a-1' })).not.toBe(null)
+    expect(schema.fit({ foo: 'a.b' })).not.toBe(null)
+    expect(schema.fit({ foo: 'a' })).not.toBe(null)
   })
 
   it('should define version', () => {

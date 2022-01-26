@@ -3,6 +3,7 @@
 const { resolve } = require('path')
 const glob = require('fast-glob')
 const { yaml } = require('@toa.io/gears')
+const { Locator } = require('@toa.io/core')
 
 const { expand } = require('./manifest/expand')
 const { merge } = require('./manifest/merge')
@@ -28,6 +29,7 @@ const load = async (reference, base) => {
   const manifest = await yaml(path)
 
   manifest.path = root
+  manifest.locator = new Locator(manifest)
 
   defaults(manifest)
   expand(manifest)

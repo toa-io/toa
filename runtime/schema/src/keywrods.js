@@ -19,12 +19,7 @@ const system = {
     if (context.parentData === undefined || typeof context.parentData !== 'object') return true
     if (Object.isFrozen(context.parentData)) return true
 
-    const propertyValue = context.parentData[context.parentDataProperty]
-
-    Object.defineProperty(context.parentData, context.parentDataProperty, {
-      writable: false,
-      value: propertyValue
-    })
+    Object.defineProperty(context.parentData, context.parentDataProperty, { writable: false })
 
     return true
   }

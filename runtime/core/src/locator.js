@@ -6,6 +6,7 @@ class Locator {
   domain = 'system'
   name
   id
+  label
 
   constructor (manifest) {
     if (manifest !== undefined) {
@@ -18,6 +19,7 @@ class Locator {
     }
 
     this.id = `${this.domain}${concat('.', this.name)}`
+    this.label = `${this.domain}${concat('-', this.name)}`
   }
 
   host (type, level = 0) {
@@ -26,7 +28,7 @@ class Locator {
     const segments = LEVELS.slice(0, level + 1)
 
     for (const segment of segments) {
-      host += concat(segment(this), SEPARATOR)
+      host += concat(segment(this), '-')
     }
 
     if (type) host += type.toLowerCase()
@@ -40,8 +42,6 @@ class Locator {
     return { domain, name, endpoint: rest.join('.') }
   }
 }
-
-const SEPARATOR = '-'
 
 const LEVELS = [
   (locator) => locator.domain,

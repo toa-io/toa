@@ -42,11 +42,11 @@
     "standard": "16.0.4"
   },
   "scripts": {
-    "test": "standard --verbose | snazzy && npm run test:unit",
-    "test:unit": "jest --roots runtime connectors extensions",
-    "test:integration": "jest --roots integration --runInBand",
-    "lint": "standard --verbose --fix | snazzy",
-    "prepare": "husky install",
+    "test": "npx standard --verbose | npx snazzy && npm run test:unit",
+    "test:unit": "npx jest --roots runtime connectors extensions",
+    "test:integration": "npx jest --roots integration --runInBand",
+    "lint": "npx standard --verbose --fix | npx snazzy",
+    "prepare": "npx husky install",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "setup": "npm run cluster && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",

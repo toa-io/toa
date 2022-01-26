@@ -13,16 +13,16 @@ const path = join(__dirname, './context')
 
 let deployment
 
-beforeEach(async () => {
+beforeAll(async () => {
   deployment = await boot.deployment(path)
 })
 
 describe('export', () => {
   it('should export', async () => {
     const tmp = await deployment.export()
-    const files = await fs.readdir(tmp)
+    const entries = await fs.readdir(tmp)
 
-    expect(files).toEqual(['Chart.yaml', 'values.yaml'])
+    expect(new Set(entries)).toStrictEqual(new Set(['Chart.yaml', 'values.yaml', 'templates']))
 
     const chart = await yaml(join(tmp, 'Chart.yaml'))
     const values = await yaml(join(tmp, 'values.yaml'))
@@ -48,6 +48,45 @@ describe('export', () => {
 
     await fs.mkdir(tmp, { recursive: true })
     await expect(deployment.export(tmp)).resolves.not.toThrow()
+  })
+
+  it('should use temp dir', () => {
+    expect(deployment.export()).toBeDefined()
+  })
+})
+
+describe('dry install', () => {
+  let resources
+
+  beforeAll(async () => {
+    const { stdout } = await deployment.install({ dry: true })
+
+    resources = stdout.split('---\n').slice(1).map(yaml.parse)
+  })
+
+  it('should declare deployments', () => {
+    for (const composition of fixtures.values.compositions) {
+      const deployment = resources.find(
+        (resource) => resource.kind === 'Deployment' && resource.metadata.name === 'composition-' + composition.name
+      )
+
+      const labels = deployment.spec.template.metadata.labels
+      expect(labels['toa.io/composition']).toEqual(composition.name)
+
+      for (const component of composition.components) {
+        expect(labels[component]).toEqual('1')
+      }
+    }
+  })
+
+  it('should declare services', () => {
+    for (const component of fixtures.values.components) {
+      const service = resources.find(
+        (resource) => resource.kind === 'Service' && resource.metadata.name === component
+      )
+
+      expect(service.spec.selector[component]).toEqual('1')
+    }
   })
 })
 

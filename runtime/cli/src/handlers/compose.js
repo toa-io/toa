@@ -5,7 +5,10 @@ const boot = require('@toa.io/boot')
 const { manifest: find } = require('../util/find')
 
 async function compose (argv) {
-  const paths = [...new Set(argv.paths.map(find))]
+  const paths = find(argv.paths)
+
+  if (paths === undefined) throw new Error(`No components found in ${argv.paths}`)
+
   const composition = await boot.composition(paths, argv)
 
   await composition.connect()

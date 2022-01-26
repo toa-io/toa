@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@toa.io/gears": "0.2.0-dev.0",
+    "@toa.io/runtime": "0.2.0-dev.0",
     "@toa.io/prototype": "0.2.0-dev.0",
     "@toa.io/schema": "0.2.0-dev.0",
     "fast-glob": "3.2.7"
