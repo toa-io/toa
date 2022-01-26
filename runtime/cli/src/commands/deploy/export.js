@@ -9,10 +9,14 @@ const builder = (yargs) => {
       desc: 'Path to context',
       default: '.'
     })
-    .usage('Usage: toa deploy export /path/to/context')
+    .positional('target', {
+      type: 'string',
+      desc: 'Export target path'
+    })
+    .usage('Usage: toa deploy export /path/to/context /export/path')
 }
 
-exports.command = 'export [path]'
-exports.desc = 'Export context deployment'
+exports.command = 'export [path] [target]'
+exports.desc = 'Export context deployment chart'
 exports.builder = builder
 exports.handler = dump

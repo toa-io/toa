@@ -41,6 +41,29 @@ const chart = {
 }
 
 const values = {
+  components: [
+    'dummies-a',
+    'credits-balance',
+    'messages-messages',
+    'stats-stats'
+  ],
+  compositions: [
+    {
+      name: 'messages',
+      components: ['messages-messages', 'stats-stats'],
+      image: 'localhost:5000/messages:8af99d3e'
+    },
+    {
+      name: 'dummies-a',
+      components: ['dummies-a'],
+      image: 'localhost:5000/dummies-a:6e7462a4'
+    },
+    {
+      name: 'credits-balance',
+      components: ['credits-balance'],
+      image: 'localhost:5000/credits-balance:df14f633'
+    }
+  ],
   'messages-mongodb': {
     architecture: 'standalone',
     fullnameOverride: 'messages-mongodb',

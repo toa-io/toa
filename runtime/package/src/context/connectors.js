@@ -5,25 +5,25 @@ const { describe } = require('./describe')
 const connectors = (context) => {
   const connectors = {}
 
-  for (const manifest of context.manifests) {
-    if (connectors[manifest.entity.storage] === undefined) {
-      connectors[manifest.entity.storage] = []
+  for (const component of context.components) {
+    if (connectors[component.entity.storage] === undefined) {
+      connectors[component.entity.storage] = []
     }
 
-    connectors[manifest.entity.storage].push(
-      describe(manifest, manifest.entity.storage, { entity: manifest.entity })
+    connectors[component.entity.storage].push(
+      describe(component, component.entity.storage, { entity: component.entity })
     )
 
     const bindings = new Set()
 
-    if (manifest.operations !== undefined) {
-      for (const operation of Object.values(manifest.operations)) {
+    if (component.operations !== undefined) {
+      for (const operation of Object.values(component.operations)) {
         operation.bindings.forEach((binding) => bindings.add(binding))
       }
     }
 
-    if (manifest.events !== undefined) {
-      for (const event of Object.values(manifest.events)) {
+    if (component.events !== undefined) {
+      for (const event of Object.values(component.events)) {
         bindings.add(event.binding)
       }
     }
@@ -33,7 +33,7 @@ const connectors = (context) => {
         connectors[binding] = []
       }
 
-      connectors[binding].push(describe(manifest, binding))
+      connectors[binding].push(describe(component, binding))
     }
   }
 

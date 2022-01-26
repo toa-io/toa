@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/package",
-  "version": "0.2.0-dev.2",
+  "version": "0.2.0-dev.0",
   "description": "Toa Package",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@toa.io/gears": "0.2.0-dev.2",
+    "@toa.io/runtime": "0.2.0-dev.2",
     "@toa.io/prototype": "0.2.0-dev.0",
     "@toa.io/schema": "0.2.0-dev.2",
     "fast-glob": "3.2.7"

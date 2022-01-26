@@ -7,7 +7,16 @@ const context = {
   version: '0.0.0',
   packages: 'domains/**/*',
   registry: 'localhost:5000',
-  compositions: [['foo'], ['bar']]
+  compositions: [
+    {
+      name: 'foo',
+      components: ['a.b', 'b.a']
+    },
+    {
+      name: 'bar',
+      components: ['d.c', 'a.b']
+    }
+  ]
 }
 
 exports.context = context

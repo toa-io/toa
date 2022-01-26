@@ -3,7 +3,7 @@
 const clone = require('clone-deep')
 
 const { validate } = require('../../src/context/validate')
-const fixtures = require('./validate.fixtures')
+const fixtures = require('./fixtures')
 
 let context
 
@@ -19,13 +19,8 @@ it('should require runtime version as semver', () => {
   delete context.runtime
   expect(() => validate(context)).toThrow(/required/)
 
-  context.runtime = 'foo'
-  expect(() => validate(context)).toThrow(/pattern/)
-})
-
-it('should allow local runtime version', () => {
   context.runtime = '.'
-  expect(() => validate(context)).not.toThrow()
+  expect(() => validate(context)).toThrow(/pattern/)
 })
 
 it('should require name as token', () => {

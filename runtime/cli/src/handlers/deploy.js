@@ -7,10 +7,13 @@ const { context: find } = require('../util/find')
 const deploy = async (argv) => {
   const path = find(argv.path)
   const deployment = await boot.deployment(path)
-  const images = await boot.images(path)
 
-  await images.push()
-  await deployment.install(argv['no-wait'] !== true)
+  const options = {
+    wait: argv['no-wait'] !== true,
+    dry: argv.dry === true
+  }
+
+  await deployment.install(options)
 }
 
 exports.deploy = deploy
