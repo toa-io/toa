@@ -52,7 +52,7 @@
     "setup": "npm run registry && npm run cluster && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
     "dev": "npm run setup && npm run connect",
-    "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --no-changelog --yes"
+    "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --no-changelog --registry http://localhost:4873 --yes"
   },
   "standard": {
     "parser": "@babel/eslint-parser",
