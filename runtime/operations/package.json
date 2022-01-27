@@ -26,7 +26,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/gears": "0.2.0-dev.3",
     "execa": "5.1.1"
   }
 }

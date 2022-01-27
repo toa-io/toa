@@ -20,8 +20,6 @@
   },
   "dependencies": {
     "@rsql/parser": "1.2.4",
-    "@toa.io/gears": "0.2.0-dev.3",
-    "@toa.io/schema": "0.2.0-dev.3",
     "clone-deep": "4.0.1"
   },
   "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
