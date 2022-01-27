@@ -1,7 +1,9 @@
 'use strict'
 
 const context = {
-  runtime: '0.0.0',
+  runtime: {
+    version: '0.0.0'
+  },
   name: 'test',
   description: 'context fixture',
   version: '0.0.0',

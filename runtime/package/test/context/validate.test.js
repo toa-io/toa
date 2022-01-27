@@ -15,12 +15,27 @@ beforeEach(() => {
   context = clone(fixtures.context)
 })
 
-it('should require runtime version as semver', () => {
-  delete context.runtime
-  expect(() => validate(context)).toThrow(/required/)
+describe('runtime', () => {
+  it('should require', () => {
+    delete context.runtime
+    expect(() => validate(context)).toThrow(/required/)
+  })
 
-  context.runtime = '.'
-  expect(() => validate(context)).toThrow(/pattern/)
+  it('should require version as semver', () => {
+    delete context.runtime.version
+    expect(() => validate(context)).toThrow(/required/)
+
+    context.runtime.version = '.'
+    expect(() => validate(context)).toThrow(/pattern/)
+  })
+
+  it('should require registry to match uri format', () => {
+    context.runtime.registry = 'not-a-uri'
+    expect(() => validate(context)).toThrow(/must match format/)
+
+    context.runtime.registry = 'http://localhost'
+    expect(() => validate(context)).not.toThrow()
+  })
 })
 
 it('should require name as token', () => {

@@ -4,7 +4,13 @@ $id: https://schemas.toa.io/0.0.0/context
 type: object
 properties:
   runtime:
-    $ref: 'definitions#/definitions/version'
+    properties:
+      version:
+        $ref: 'definitions#/definitions/version'
+      registry:
+        type: string
+        format: uri
+    required: [version]
   version:
     $ref: 'definitions#/definitions/version'
   name:
