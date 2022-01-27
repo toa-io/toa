@@ -34,5 +34,6 @@
     "@toa.io/package": "0.2.0-dev.6",
     "@toa.io/schema": "0.2.0-dev.6",
     "@toa.io/storages.mongodb": "0.2.0-dev.1"
-  }
+  },
+  "gitHead": "1140ea7939b934fca546c02c1ceb74c332c0f6cf"
 }
