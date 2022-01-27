@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "0.2.0-dev.5",
+  "version": "0.2.0-dev.6",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -31,8 +31,8 @@
     "@toa.io/core": "0.2.0-dev.5",
     "@toa.io/extensions.resources": "0.2.0-dev.1",
     "@toa.io/operations": "0.2.0-dev.5",
-    "@toa.io/package": "0.2.0-dev.5",
-    "@toa.io/schema": "0.2.0-dev.5",
+    "@toa.io/package": "0.2.0-dev.6",
+    "@toa.io/schema": "0.2.0-dev.6",
     "@toa.io/storages.mongodb": "0.2.0-dev.1"
   }
 }
