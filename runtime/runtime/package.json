@@ -30,8 +30,10 @@
     "@toa.io/cli": "0.2.0-dev.12",
     "@toa.io/core": "0.2.0-dev.12",
     "@toa.io/extensions.resources": "0.2.0-dev.12",
+    "@toa.io/gears": "0.2.0-dev.12",
     "@toa.io/operations": "0.2.0-dev.12",
     "@toa.io/package": "0.2.0-dev.12",
+    "@toa.io/prototype": "0.2.0-dev.12",
     "@toa.io/schema": "0.2.0-dev.12",
     "@toa.io/storages.mongodb": "0.2.0-dev.12"
   },
