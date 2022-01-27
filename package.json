@@ -42,17 +42,17 @@
     "standard": "16.0.4"
   },
   "scripts": {
+    "prepare": "npx husky install",
     "test": "npx standard --verbose | npx snazzy && npm run test:unit",
     "test:unit": "npx jest --roots runtime connectors extensions",
     "test:integration": "npx jest --roots integration --runInBand",
     "lint": "npx standard --verbose --fix | npx snazzy",
-    "prepare": "npx husky install",
+    "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --no-changelog --registry http://localhost:4873 --yes",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "registry": "docker run --name verdaccio -p 4873:4873 -d verdaccio/verdaccio",
     "setup": "npm run registry && npm run cluster && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
-    "dev": "npm run setup && npm run connect",
-    "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --no-changelog --registry http://localhost:4873 --yes"
+    "dev": "npm run setup && npm run connect"
   },
   "standard": {
     "parser": "@babel/eslint-parser",
