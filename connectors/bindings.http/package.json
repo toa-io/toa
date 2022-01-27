@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.http",
-  "version": "0.2.0-dev.11",
+  "version": "0.2.0-dev.12",
   "description": "Toa HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -25,5 +25,6 @@
   },
   "devDependencies": {
     "@babel/parser": "^7.16.2"
-  }
+  },
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }

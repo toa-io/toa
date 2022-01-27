@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "0.2.0-dev.11",
+  "version": "0.2.0-dev.12",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,5 +22,5 @@
     "find-up": "5.0.0",
     "yargs": "17.2.1"
   },
-  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }

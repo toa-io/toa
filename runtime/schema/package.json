@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/schema",
-  "version": "0.2.0-dev.11",
+  "version": "0.2.0-dev.12",
   "description": "Toa schema validator",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,5 +22,5 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "gitHead": "f3614f28a8246de7b93b0d840388149c9ff9b0b2"
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/package",
-  "version": "0.2.0-dev.11",
+  "version": "0.2.0-dev.12",
   "description": "Toa Package",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,5 +21,5 @@
   "dependencies": {
     "fast-glob": "3.2.7"
   },
-  "gitHead": "abd5e90b9e7d1b7cf01f2154ef233c94de9b57f6"
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }
