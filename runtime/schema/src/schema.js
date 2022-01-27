@@ -1,12 +1,15 @@
 'use strict'
 
 const { default: Ajv } = require('ajv/dist/2019')
+const formats = require('ajv-formats')
 
 const { definitions } = require('./definitions')
 const { keywords } = require('./keywrods')
 
 const validator = new Ajv({ useDefaults: true, strictTypes: false, coerceTypes: true })
 
+// noinspection JSValidateTypes
+formats(validator)
 keywords(validator)
 definitions(validator)
 

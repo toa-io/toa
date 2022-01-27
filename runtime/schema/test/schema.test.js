@@ -61,6 +61,23 @@ it('should format error', () => {
   })
 })
 
+describe('formats', () => {
+  it('should support ajv-formats', () => {
+    const schema = new Schema({
+      properties: {
+        url: {
+          type: 'string',
+          format: 'uri'
+        }
+      }
+    })
+
+    expect(schema.fit({ url: 'localhost:5050' })).toBe(null)
+    expect(schema.fit({ url: 'https://github.com/a/b' })).toBe(null)
+    expect(schema.fit({ url: 'not-a-uri' })).not.toBe(null)
+  })
+})
+
 describe('definitions', () => {
   it('should have definitions', () => {
     const schema = new Schema({
