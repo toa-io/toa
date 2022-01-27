@@ -44,7 +44,9 @@ class Image {
 
   async #context () {
     const path = await directory.temp('composition')
-    const dockerfile = (await read(DOCKERFILE, 'utf-8')).replace('{{version}}', this.#runtime)
+
+    const dockerfile = (await read(DOCKERFILE, 'utf-8'))
+      .replace(/{{(\w+)}}/g, (_, key) => this.#runtime[key])
 
     for (const component of this.#composition.components) {
       await copy(component.path, join(path, component.locator.id))

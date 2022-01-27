@@ -2,7 +2,7 @@
 
 FROM node:alpine
 
-RUN npm i -g @toa.io/runtime@{{version}}
+RUN NPM_CONFIG_REGISTRY={{registry}} npm i -g @toa.io/runtime@{{version}}
 
 WORKDIR /composition
 ADD . .
