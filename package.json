@@ -48,9 +48,11 @@
     "lint": "npx standard --verbose --fix | npx snazzy",
     "prepare": "npx husky install",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
-    "setup": "npm run cluster && toa deploy ./integration/context",
+    "registry": "docker run --name verdaccio -p 4873:4873 -d verdaccio/verdaccio",
+    "setup": "npm run registry && npm run cluster && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
-    "dev": "npm run setup && npm run connect"
+    "dev": "npm run setup && npm run connect",
+    "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --no-changelog --yes"
   },
   "standard": {
     "parser": "@babel/eslint-parser",
