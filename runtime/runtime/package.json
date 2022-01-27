@@ -35,5 +35,5 @@
     "@toa.io/schema": "0.2.0-dev.8",
     "@toa.io/storages.mongodb": "0.2.0-dev.8"
   },
-  "gitHead": "f3614f28a8246de7b93b0d840388149c9ff9b0b2"
+  "gitHead": "abd5e90b9e7d1b7cf01f2154ef233c94de9b57f6"
 }

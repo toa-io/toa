@@ -27,5 +27,6 @@
   },
   "dependencies": {
     "execa": "5.1.1"
-  }
+  },
+  "gitHead": "abd5e90b9e7d1b7cf01f2154ef233c94de9b57f6"
 }
