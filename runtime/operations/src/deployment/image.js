@@ -20,7 +20,7 @@ class Image {
     this.#registry = context.registry
     this.#runtime = context.runtime
 
-    this.tag = context.registry + '/' + composition.name + ':' + Image.#tag(composition)
+    this.tag = context.registry + '/' + composition.name + ':' + this.#tag(composition)
   }
 
   async build () {
@@ -57,10 +57,13 @@ class Image {
     return path
   }
 
-  static #tag (composition) {
-    const components = composition.components.map((component) => component.locator.id).join(';')
+  #tag (composition) {
+    const components = composition.components.map(
+      (component) => component.locator.id + ':' + component.version).join(';')
 
-    return hash(components)
+    const tag = this.#runtime.version + ';' + components
+
+    return hash(tag)
   }
 }
 

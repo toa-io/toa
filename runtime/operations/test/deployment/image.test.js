@@ -15,8 +15,11 @@ beforeEach(() => {
 })
 
 it('should provide tag', () => {
-  const tag = fixtures.context.registry + '/' + fixtures.composition.name + ':' +
-    hash(fixtures.composition.components.map((component) => component.locator.id).join(';'))
+  const tag = fixtures.composition.components.map(
+    (component) => component.locator.id + ':' + component.version).join(';')
 
-  expect(image.tag).toEqual(tag)
+  const uri = fixtures.context.registry + '/' + fixtures.composition.name + ':' +
+    hash(fixtures.context.runtime.version + ';' + tag)
+
+  expect(image.tag).toEqual(uri)
 })
