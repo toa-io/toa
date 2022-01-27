@@ -18,5 +18,4 @@ it('should resolve local version', () => {
 
   expect(context.runtime).not.toEqual('.')
   expect(context.runtime.version).toEqual(require('@toa.io/runtime').version)
-  expect(context.runtime.registry).toEqual('http://localhost:4873')
 })
