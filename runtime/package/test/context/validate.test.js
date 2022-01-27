@@ -29,17 +29,19 @@ describe('runtime', () => {
     expect(() => validate(context)).toThrow(/pattern/)
   })
 
-  it('should have default registry', () => {
-    delete context.runtime.registry
-    expect(() => validate(context)).not.toThrow()
-    expect(context.runtime.registry).toEqual('https://registry.npmjs.org')
-  })
-
   it('should require registry to match uri format', () => {
     context.runtime.registry = 'not-a-uri'
     expect(() => validate(context)).toThrow(/must match format/)
 
     context.runtime.registry = 'http://localhost'
+    expect(() => validate(context)).not.toThrow()
+  })
+
+  it('should require proxy to match uri format', () => {
+    context.runtime.proxy = 'not-a-uri'
+    expect(() => validate(context)).toThrow(/must match format/)
+
+    context.runtime.proxy = 'http://localhost'
     expect(() => validate(context)).not.toThrow()
   })
 })

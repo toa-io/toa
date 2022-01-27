@@ -2,7 +2,9 @@
 
 FROM node:alpine
 
-RUN NPM_CONFIG_REGISTRY={{registry}} npm i -g @toa.io/runtime@{{version}}
+RUN npm set registry {{registry}}
+RUN npm set proxy {{proxy}}
+RUN npm i -g @toa.io/runtime@{{version}} --production --ignore-scripts
 
 WORKDIR /composition
 ADD . .

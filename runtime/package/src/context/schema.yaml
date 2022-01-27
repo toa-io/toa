@@ -10,7 +10,9 @@ properties:
       registry:
         type: string
         format: uri
-        default: 'https://registry.npmjs.org'
+      proxy:
+        type: string
+        format: uri
     required: [version]
   version:
     $ref: 'definitions#/definitions/version'

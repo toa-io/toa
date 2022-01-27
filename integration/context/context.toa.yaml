@@ -1,7 +1,10 @@
 name: dummies
 description: Integration tests context
 version: 0.0.0
-runtime: .
+runtime:
+  version: .
+  registry: http://host.docker.internal:4873
+  proxy: http://host.docker.internal:4873
 packages: '*'
 registry: localhost:5000
 
