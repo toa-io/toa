@@ -11,11 +11,11 @@ beforeEach(() => {
   context = clone(fixtures.context)
 })
 
-it('should resolve version', () => {
+it('should resolve local version', () => {
   context.runtime = '.'
 
   normalize(context)
 
   expect(context.runtime).not.toEqual('.')
-  expect(context.runtime).toEqual(require('@toa.io/runtime').version)
+  expect(context.runtime.version).toEqual(require('@toa.io/runtime').version)
 })

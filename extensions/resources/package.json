@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.resources",
-  "version": "0.2.0-dev.1",
+  "version": "0.2.0-dev.12",
   "description": "Toa Resources Extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,5 +22,6 @@
   "dependencies": {
     "express": "4.17.1",
     "path-to-regexp": "6.2.0"
-  }
+  },
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }

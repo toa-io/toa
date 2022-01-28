@@ -3,7 +3,7 @@
 const yargs = require('yargs/yargs')
 
 const { console } = require('@toa.io/gears')
-const { version } = require('../package.json')
+const { version } = require('@toa.io/runtime')
 
 yargs(process.argv.slice(2))
   .parserConfiguration({

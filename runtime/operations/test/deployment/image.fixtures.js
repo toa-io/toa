@@ -10,12 +10,14 @@ const mock = {
 
 const composition = {
   name: generate(),
-  components: repeat(() => ({ locator: { id: newid() } }), random(5) + 5)
+  components: repeat(() => ({ locator: { id: newid() }, version: generate() }), random(5) + 5)
 }
 
 const context = {
   registry: `registry-${newid()}:${random(999) + 5000}`,
-  runtime: `${random(9)}.${random(9)}.${random(20)}`
+  runtime: {
+    version: `${random(9)}.${random(9)}.${random(20)}`
+  }
 }
 
 const DOCKERFILE = join(__dirname, '../src/images/Dockerfile')

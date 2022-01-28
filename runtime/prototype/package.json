@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/prototype",
-  "version": "0.2.0-dev.0",
+  "version": "0.2.0-dev.12",
   "description": "Toa Generic Prototype",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,5 +17,6 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
-  }
+  },
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }

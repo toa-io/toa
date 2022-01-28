@@ -20,7 +20,7 @@ class Image {
     this.#registry = context.registry
     this.#runtime = context.runtime
 
-    this.tag = context.registry + '/' + composition.name + ':' + Image.#tag(composition)
+    this.tag = context.registry + '/' + composition.name + ':' + this.#tag(composition)
   }
 
   async build () {
@@ -44,7 +44,9 @@ class Image {
 
   async #context () {
     const path = await directory.temp('composition')
-    const dockerfile = (await read(DOCKERFILE, 'utf-8')).replace('{{version}}', this.#runtime)
+
+    const dockerfile = (await read(DOCKERFILE, 'utf-8'))
+      .replace(/{{(\w+)}}/g, (_, key) => this.#runtime[key])
 
     for (const component of this.#composition.components) {
       await copy(component.path, join(path, component.locator.id))
@@ -55,10 +57,13 @@ class Image {
     return path
   }
 
-  static #tag (composition) {
-    const components = composition.components.map((component) => component.locator.id).join(';')
+  #tag (composition) {
+    const components = composition.components.map(
+      (component) => component.locator.id + ':' + component.version).join(';')
 
-    return hash(components)
+    const tag = this.#runtime.version + ';' + components
+
+    return hash(tag)
   }
 }
 

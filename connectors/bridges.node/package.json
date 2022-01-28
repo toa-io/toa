@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.node",
-  "version": "0.2.0-dev.0",
+  "version": "0.2.0-dev.12",
   "description": "Toa Node Bridge (inproc)",
   "homepage": "https://toa.io",
   "author": {
@@ -31,5 +31,6 @@
   },
   "devDependencies": {
     "clone-deep": "4.0.1"
-  }
+  },
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }

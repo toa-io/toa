@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.amqp",
-  "version": "0.2.0-dev.1",
+  "version": "0.2.0-dev.12",
   "description": "Toa AMQP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,5 +21,6 @@
   "dependencies": {
     "amqplib": "0.8.0",
     "execa": "5.1.1"
-  }
+  },
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }

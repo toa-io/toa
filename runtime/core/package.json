@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/core",
-  "version": "0.2.0-dev.3",
+  "version": "0.2.0-dev.12",
   "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,9 +20,7 @@
   },
   "dependencies": {
     "@rsql/parser": "1.2.4",
-    "@toa.io/gears": "0.2.0-dev.3",
-    "@toa.io/schema": "0.2.0-dev.3",
     "clone-deep": "4.0.1"
   },
-  "gitHead": "453937d5174bac66b3152cda8ed0cf1ed4fab5f9"
+  "gitHead": "2069ab4d758d7009c42645b243c69e135311c41b"
 }
