@@ -6,8 +6,9 @@ const { tmpdir } = require('node:os')
 
 const execa = require('execa')
 const { newid, yaml } = require('@toa.io/gears')
-const boot = require('@toa.io/boot')
+
 const fixtures = require('./deployment.fixtures')
+const boot = require('@toa.io/boot')
 
 const path = join(__dirname, './context')
 
@@ -18,40 +19,85 @@ beforeAll(async () => {
 })
 
 describe('export', () => {
-  it('should export', async () => {
-    const tmp = await deployment.export()
-    const entries = await fs.readdir(tmp)
+  let root
 
-    expect(new Set(entries)).toStrictEqual(new Set(['Chart.yaml', 'values.yaml', 'templates']))
-
-    const chart = await yaml(join(tmp, 'Chart.yaml'))
-    const values = await yaml(join(tmp, 'values.yaml'))
-
-    expect(chart).toStrictEqual({ ...fixtures.chart, dependencies: expect.any(Array) })
-    fixtures.chart.dependencies.forEach((dependency) => expect(chart.dependencies).toContainEqual(dependency))
-
-    expect(values).toStrictEqual(fixtures.values)
+  beforeAll(async () => {
+    root = await deployment.export()
   })
 
-  it('should throw on non-empty directory', async () => {
-    await expect(deployment.export(__dirname)).rejects.toThrow(/must be empty/)
+  describe('directory', () => {
+    it('should create temp dir', () => {
+      expect(root).toBeDefined()
+    })
+
+    it('should throw on non-empty directory', async () => {
+      await expect(deployment.export(__dirname)).rejects.toThrow(/must be empty/)
+    })
+
+    it('should create new dir', async () => {
+      const tmp = join(tmpdir(), 'toa-integration-' + newid())
+
+      await expect(deployment.export(tmp)).resolves.not.toThrow()
+    })
+
+    it('should use existent empty dir', async () => {
+      const tmp = join(tmpdir(), 'toa-integration-' + newid())
+
+      await fs.mkdir(tmp, { recursive: true })
+      await expect(deployment.export(tmp)).resolves.not.toThrow()
+    })
   })
 
-  it('should create new dir', async () => {
-    const tmp = join(tmpdir(), 'toa-integration-' + newid())
+  describe('chart', () => {
+    let path, chart, values
 
-    await expect(deployment.export(tmp)).resolves.not.toThrow()
+    beforeAll(async () => {
+      path = join(root, 'chart')
+      chart = await yaml(join(path, 'Chart.yaml'))
+      values = await yaml(join(path, 'values.yaml'))
+    })
+
+    it('should export declaration', () => {
+      expect(chart).toStrictEqual({ ...fixtures.chart, dependencies: expect.any(Array) })
+    })
+
+    it('should declare dependencies', () => {
+      fixtures.chart.dependencies.forEach((dependency) => expect(chart.dependencies).toContainEqual(dependency))
+    })
+
+    it('should export values', () => {
+      values.compositions = values.compositions.sort((a, b) => a.name > b.name ? 1 : -1)
+
+      expect(values).toEqual(fixtures.values)
+    })
   })
 
-  it('should use existent empty dir', async () => {
-    const tmp = join(tmpdir(), 'toa-integration-' + newid())
+  describe('images', () => {
+    let images
 
-    await fs.mkdir(tmp, { recursive: true })
-    await expect(deployment.export(tmp)).resolves.not.toThrow()
-  })
+    beforeAll(async () => {
+      const entries = await fs.readdir(root)
 
-  it('should use temp dir', () => {
-    expect(deployment.export()).toBeDefined()
+      images = entries.filter((entry) => entry !== 'chart')
+    })
+
+    it('should export image contexts', () => {
+      const compositions = fixtures.values.compositions.map((composition) => composition.name)
+
+      expect(images.sort()).toEqual(compositions.sort())
+    })
+
+    describe('context', () => {
+      it('should export context', async () => {
+        for (const image of images) {
+          const path = join(root, image)
+          const entries = await fs.readdir(path)
+          const composition = fixtures.values.compositions.find((composition) => composition.name === image)
+
+          expect(entries.sort()).toEqual(['Dockerfile', ...composition.components].sort())
+        }
+      })
+    })
   })
 })
 

@@ -49,19 +49,19 @@ const values = {
   ],
   compositions: [
     {
-      name: 'messages',
-      components: ['messages-messages', 'stats-stats'],
-      image: 'localhost:5000/messages:8af99d3e'
+      name: 'credits-balance',
+      components: ['credits-balance'],
+      image: expect.stringMatching(/^localhost:5000\/credits-balance:[a-z0-9]+/)
     },
     {
       name: 'dummies-a',
       components: ['dummies-a'],
-      image: 'localhost:5000/dummies-a:6e7462a4'
+      image: expect.stringMatching(/^localhost:5000\/dummies-a:[a-z0-9]+/)
     },
     {
-      name: 'credits-balance',
-      components: ['credits-balance'],
-      image: 'localhost:5000/credits-balance:df14f633'
+      name: 'messages',
+      components: ['messages-messages', 'stats-stats'],
+      image: expect.stringMatching(/^localhost:5000\/messages:[a-z0-9]+/)
     }
   ],
   'messages-mongodb': {

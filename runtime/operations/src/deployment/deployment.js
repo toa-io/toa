@@ -17,13 +17,13 @@ class Deployment {
     this.#images = images
   }
 
-  async export (path) {
-    if (path === undefined) path = await directory.temp('deployment')
-    else await directory(path)
+  async export (root) {
+    if (root === undefined) root = await directory.temp('deployment')
+    else root = await directory(root)
 
-    await this.#dump(path)
+    await this.#dump(root)
 
-    return path
+    return root
   }
 
   async install (options = {}) {
@@ -31,16 +31,20 @@ class Deployment {
     return await this.#upgrade(options)
   }
 
-  async #dump (path) {
+  async #dump (root) {
+    const path = join(root, 'chart')
     const chart = yaml.dump(this.#chart.declaration)
     const values = yaml.dump(this.#chart.values)
 
+    await directory(path)
     await copy(join(__dirname, 'assets/chart/templates'), join(path, 'templates'))
 
     await Promise.all([
       write(join(path, 'Chart.yaml'), chart),
       write(join(path, 'values.yaml'), values)
     ])
+
+    await Promise.all(this.#images.map((image) => image.export(root)))
   }
 
   async #push () {
