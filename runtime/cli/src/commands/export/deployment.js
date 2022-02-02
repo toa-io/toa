@@ -1,6 +1,6 @@
 'use strict'
 
-const { dump } = require('../../handlers/deploy/export')
+const { dump } = require('../../handlers/export/deployment')
 
 const builder = (yargs) => {
   yargs
@@ -13,10 +13,10 @@ const builder = (yargs) => {
       type: 'string',
       desc: 'Export target path'
     })
-    .usage('Usage: toa deploy export /path/to/context /export/path')
+    .usage('Usage: toa export deployment /path/to/context /export/path')
 }
 
-exports.command = 'export [path] [target]'
-exports.desc = 'Export context deployment chart'
+exports.command = 'deployment [path] [target]'
+exports.desc = 'Export context deployment'
 exports.builder = builder
 exports.handler = dump

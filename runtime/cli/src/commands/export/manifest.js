@@ -1,6 +1,6 @@
 'use strict'
 
-const { manifest } = require('../handlers/manifest')
+const { manifest } = require('../../handlers/export/manifest')
 
 const builder = (yargs) => {
   yargs

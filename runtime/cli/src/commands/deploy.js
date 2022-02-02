@@ -24,7 +24,6 @@ const builder = (yargs) => {
       boolean: true,
       desc: 'Print log to stdout'
     })
-    .commandDir('./deploy')
 }
 
 exports.command = 'deploy [path]'
