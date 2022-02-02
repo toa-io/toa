@@ -1,12 +1,11 @@
 'use strict'
 
 const { join } = require('node:path')
-const { readFile: read, writeFile: write, rm: remove } = require('node:fs/promises')
-const execa = require('execa')
+const { readFile: read, writeFile: write } = require('node:fs/promises')
 
 const { hash } = require('@toa.io/gears')
-const { copy } = require('./copy')
-const { directory } = require('./directory')
+const { copy } = require('../util/copy')
+const { directory } = require('../util/directory')
 
 class Image {
   tag
@@ -15,23 +14,17 @@ class Image {
   #registry
   #runtime
 
-  constructor (composition, context) {
+  #context
+  #process
+
+  constructor (composition, context, process) {
     this.#composition = composition
     this.#registry = context.registry
     this.#runtime = context.runtime
 
     this.tag = context.registry + '/' + composition.name + ':' + this.#tag(composition)
-  }
 
-  async build (root) {
-    const path = await this.export(root)
-    const build = execa('docker', ['build', path, '-t', this.tag])
-
-    build.stdout.pipe(process.stdout)
-
-    await build
-
-    await remove(path, { recursive: true })
+    this.#process = process
   }
 
   async export (root) {
@@ -48,15 +41,17 @@ class Image {
 
     await write(join(path, 'Dockerfile'), dockerfile)
 
-    return path
+    this.#context = path
+  }
+
+  async build () {
+    if (this.#context === undefined) throw new Error('Image context hasn\'t been exported')
+
+    await this.#process.execute('docker', ['build', this.#context, '-t', this.tag])
   }
 
   async push () {
-    const push = execa('docker', ['push', this.tag])
-
-    push.stdout.pipe(process.stdout)
-
-    await push
+    await this.#process.execute('docker', ['push', this.tag])
   }
 
   #tag (composition) {

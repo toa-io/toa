@@ -10,14 +10,20 @@ const builder = (yargs) => {
       default: '.'
     })
     .option('dry', {
+      group: 'Command options:',
       boolean: true,
       desc: 'Dry run'
     })
     .option('no-wait', {
+      group: 'Command options:',
       boolean: true,
       desc: 'Disable waiting for deployment ready state'
     })
-    .usage('Usage: toa deploy /path/to/context')
+    .option('output', {
+      group: 'Command options:',
+      boolean: true,
+      desc: 'Print log to stdout'
+    })
     .commandDir('./deploy')
 }
 

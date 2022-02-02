@@ -105,9 +105,17 @@ describe('dry install', () => {
   let resources
 
   beforeAll(async () => {
-    const { stdout } = await deployment.install({ dry: true })
+    deployment = await boot.deployment(path, { log: true })
+
+    const write = jest.spyOn(process.stdout, 'write')
+
+    await deployment.install({ dry: true })
+
+    const stdout = write.mock.calls.reduce((out, [chunk]) => (out += chunk.toString()), '')
 
     resources = stdout.split('---\n').slice(1).map(yaml.parse)
+
+    write.mockRestore()
   })
 
   it('should declare deployments', () => {

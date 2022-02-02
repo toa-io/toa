@@ -5,20 +5,26 @@ const { Compositions } = require('./compositions')
 const { Image } = require('./image')
 const { Deployment } = require('./deployment')
 const { Chart } = require('./chart')
+const { Process } = require('../process')
+const { Console } = require('../console')
 
 class Factory {
   #context
+  #process
+  #console
 
-  constructor (context) {
+  constructor (context, options = {}) {
     this.#context = context
+    this.#process = new Process(options.log)
+    this.#console = new Console(options.log === false)
   }
 
   deployment () {
     const compositions = this.#compositions()
     const images = Array.from(compositions).map((composition) => composition.image)
-    const chart = new Chart(this.#context, compositions)
+    const chart = new Chart(this.#context, compositions, this.#process)
 
-    return new Deployment(chart, images)
+    return new Deployment(chart, images, this.#console)
   }
 
   #compositions () {
@@ -31,7 +37,7 @@ class Factory {
     return new Composition(composition, image)
   }
 
-  #image = (composition) => new Image(composition, this.#context)
+  #image = (composition) => new Image(composition, this.#context, this.#process)
 }
 
 exports.Factory = Factory

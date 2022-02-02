@@ -1,79 +1,48 @@
 'use strict'
 
-const { writeFile: write, rm: remove } = require('node:fs/promises')
-const execa = require('execa')
-const { join } = require('node:path')
-const { yaml } = require('@toa.io/gears')
-
-const { directory } = require('./directory')
-const { copy } = require('./copy')
+const { directory } = require('../util/directory')
 
 class Deployment {
   #chart
   #images
+  #console
 
-  constructor (chart, images) {
+  constructor (chart, images, console) {
     this.#chart = chart
     this.#images = images
+    this.#console = console
   }
 
-  async export (root) {
-    if (root === undefined) root = await directory.temp('deployment')
-    else root = await directory(root)
+  async export (path) {
+    path = await this.#export(path)
 
-    await this.#dump(root)
-
-    return root
+    return path
   }
 
   async install (options = {}) {
-    await this.#push()
-    return await this.#upgrade(options)
-  }
+    const { dry, wait } = options
 
-  async #dump (root) {
-    const path = join(root, 'chart')
-    const chart = yaml.dump(this.#chart.declaration)
-    const values = yaml.dump(this.#chart.values)
+    const path = await this.#console.task('Compose deployment', () => this.#export())
 
-    await directory(path)
-    await copy(join(__dirname, 'assets/chart/templates'), join(path, 'templates'))
-
-    await Promise.all([
-      write(join(path, 'Chart.yaml'), chart),
-      write(join(path, 'values.yaml'), values)
-    ])
-
-    await Promise.all(this.#images.map((image) => image.export(root)))
-  }
-
-  async #push () {
-    for (const image of this.#images) {
+    await this.#console.sequence('Build images', this.#images.map((image) => async () => {
       await image.build()
       await image.push()
-    }
+    }))
+
+    await this.#console.task('Download dependencies', () => this.#chart.update())
+    await this.#console.task('Install deployment', () => this.#chart.upgrade({ dry, wait }))
+    await this.#console.task('Cleanup', () => directory.clear(path))
   }
 
-  async #upgrade (options) {
-    const path = await this.export()
-    const args = []
+  async #export (path) {
+    if (path === undefined) path = await directory.temp('deployment')
+    else path = await directory(path)
 
-    if (options.wait === true) args.push('--wait')
-    if (options.dry === true) args.push('--dry-run')
+    await this.#chart.export(path)
 
-    const update = execa('helm', ['dependency', 'update', path])
+    for (const image of this.#images) await image.export(path)
 
-    update.stdout.pipe(process.stdout)
-    await update
-
-    const upgrade = execa('helm', ['upgrade', this.#chart.name, '-i', ...args, path])
-
-    upgrade.stdout.pipe(process.stdout)
-    const output = await upgrade
-
-    await remove(path, { recursive: true })
-
-    return output
+    return path
   }
 }
 
