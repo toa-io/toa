@@ -12,7 +12,7 @@ it('should print help', async () => {
 })
 
 it('should print manifest', async () => {
-  const result = await cli('manifest')
+  const result = await cli('export', 'manifest')
 
   expect(result.stdout).toMatch(/^domain: credits/)
 })
