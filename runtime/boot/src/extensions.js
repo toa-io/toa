@@ -1,5 +1,7 @@
 'use strict'
 
+const boot = require('./index')
+
 const extensions = (manifest) => {
   if (manifest.extensions === undefined) return
 
@@ -14,7 +16,7 @@ const extensions = (manifest) => {
 
 const extension = (name, definition, manifest) => {
   if (factories[name] === undefined) {
-    factories[name] = new (require(name).Factory)()
+    factories[name] = new (require(name).Factory)(boot)
   }
 
   return factories[name].connector(manifest.locator, definition)

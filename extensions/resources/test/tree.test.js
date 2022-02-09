@@ -19,7 +19,7 @@ it('should return undefined on mismatch', () => {
   expect(tree.match('/non/existent/')).not.toBeDefined()
 })
 
-it('should throw on resource conflicts if dev env', () => {
+it('should throw on resource conflicts on local dev env', () => {
   const definition = {
     '/:id': {
       operations: ['observe']
@@ -31,7 +31,7 @@ it('should throw on resource conflicts if dev env', () => {
 
   const env = process.env.TOA_ENV
 
-  process.env.TOA_ENV = 'dev'
+  process.env.TOA_ENV = 'local'
 
   tree = new Tree(definition, () => null)
 
