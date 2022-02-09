@@ -4,6 +4,10 @@ const { Locator } = require('@toa.io/core')
 const { Storage } = require('@toa.io/storages.mongodb')
 const { newid } = require('@toa.io/gears')
 
+const framework = require('./framework')
+
+framework.env('local')
+
 const locator = new Locator({ domain: 'credits', name: 'balance' })
 const storage = new Storage(locator)
 
@@ -13,6 +17,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await storage.disconnect()
+
+  framework.env()
 })
 
 it('should perform operations', async () => {

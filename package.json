@@ -50,7 +50,9 @@
     "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --no-changelog --registry http://localhost:4873 --yes",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "registry": "docker run --name verdaccio -p 4873:4873 -d --rm verdaccio/verdaccio && sleep 3 && npm adduser --registry http://localhost:4873",
-    "setup": "npm run registry && npm run cluster && toa deploy ./integration/context",
+    "setup:cluster": "npm run registry && npm run cluster && toa deploy ./integration/context",
+    "setup:local": "docker run --name mongo -d -p 27017:27017 mongo:5.0.6 && docker run --name rabbitmq -d -p 5672:5672 -p 15672:15672 rabbitmq:3.9.13-management",
+    "setup": "npm run setup:cluster && npm run setup:local",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
     "dev": "npm run setup && npm run connect"
   },

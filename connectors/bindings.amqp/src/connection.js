@@ -36,7 +36,8 @@ class Connection extends Connector {
     const user = 'user'
     const password = 'password'
 
-    return `amqp://${user}:${password}@${host}`
+    if (process.env.TOA_ENV === 'local') return 'amqp://localhost'
+    else return `amqp://${user}:${password}@${host}`
   }
 }
 

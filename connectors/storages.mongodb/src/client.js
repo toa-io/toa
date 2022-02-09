@@ -63,7 +63,8 @@ class Client extends Connector {
     const user = 'user'
     const password = 'password'
 
-    return `mongodb://${user}:${password}@${this.#connection.host}:27017/?authSource=${this.#connection.db}&readPreference=primary&appname=svc&ssl=false`
+    if (process.env.TOA_ENV === 'local') return 'mongodb://localhost'
+    else return `mongodb://${user}:${password}@${this.#connection.host}:27017/?authSource=${this.#connection.db}&readPreference=primary&appname=svc&ssl=false`
   }
 }
 

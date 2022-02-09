@@ -12,6 +12,8 @@ let resources, composition, a
 const locator = (path) => 'http://localhost:8000' + path
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['messages', 'stats', 'credits'])
   resources = await (new extension.Factory()).process()
 
@@ -23,6 +25,8 @@ afterAll(async () => {
   if (resources) await resources.disconnect()
   if (a) await a.disconnect()
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 describe('routing', () => {
