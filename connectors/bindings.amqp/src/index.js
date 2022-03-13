@@ -1,8 +1,8 @@
 'use strict'
 
 const { Factory } = require('./factory')
-const { deployments } = require('./deployments')
+const { deployment } = require('./deployment')
 
 exports.Factory = Factory
 exports.properties = { async: true }
-exports.deployments = deployments
+exports.deployment = deployment

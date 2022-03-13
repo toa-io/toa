@@ -12,7 +12,7 @@ class Process {
   async execute (cmd, args) {
     const result = execa(cmd, args)
 
-    if (this.#log) result.stdout.pipe(process.stdout)
+    if (this.#log === true) result.stdout.pipe(process.stdout)
 
     return result
   }

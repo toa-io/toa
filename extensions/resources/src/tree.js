@@ -60,7 +60,7 @@ class Tree {
     let paths = 0
 
     for (const [key, value] of Object.entries(node)) {
-      if (key.substr(0, 1) === '/') {
+      if (key.substring(0, 1) === '/') {
         paths++
         this.#traverse(value, path.posix.resolve(route, '.' + key), node)
       }

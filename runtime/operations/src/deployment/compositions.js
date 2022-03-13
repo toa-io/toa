@@ -38,15 +38,15 @@ class Compositions {
 
   static #complete (context) {
     const composed = new Set(context.compositions.map((composition) =>
-      composition.components.map((component) => component.locator.id)
+      composition.components.map((component) => component.locator.label)
     ).flat())
 
     const names = new Set(context.compositions.map((composition) => composition.name))
 
     for (const component of context.components) {
-      const { id, label } = component.locator
+      const { label } = component.locator
 
-      if (composed.has(id)) continue
+      if (composed.has(label)) continue
       if (names.has(label)) throw new Error(`Duplicate composition name '${label}'`)
 
       context.compositions.push({

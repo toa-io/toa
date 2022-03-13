@@ -1,12 +1,14 @@
 'use strict'
 
-const deployments = (values) => {
+const deployment = (values) => {
   const domains = new Set(values.map((value) => value.domain))
 
-  return [...domains].map(deployment)
+  const charts = [...domains].map(chart)
+
+  return { charts }
 }
 
-const deployment = (domain) => {
+const chart = (domain) => {
   const alias = domain + '-mongodb'
 
   // TODO: credentials management
@@ -15,7 +17,7 @@ const deployment = (domain) => {
   const databases = [domain]
 
   return {
-    chart: {
+    declaration: {
       name: 'mongodb',
       version: '10.29.2',
       repository: 'https://charts.bitnami.com/bitnami',
@@ -33,4 +35,4 @@ const deployment = (domain) => {
   }
 }
 
-exports.deployments = deployments
+exports.deployment = deployment

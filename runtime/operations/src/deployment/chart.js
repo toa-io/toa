@@ -29,8 +29,8 @@ class Chart {
 
   async export (root) {
     const path = join(root, 'chart')
-    const chart = yaml.dump(this.#declaration)
-    const values = yaml.dump(this.#values)
+    const chart = yaml.dump(this.#declaration())
+    const values = yaml.dump(this.#values())
 
     await directory(path)
     await copy(join(__dirname, 'assets/chart/templates'), join(path, 'templates'))
@@ -61,9 +61,9 @@ class Chart {
     await this.#process.execute('helm', ['upgrade', this.name, '-i', ...args, this.#path])
   }
 
-  get #declaration () {
+  #declaration () {
     const { name, description, version } = this.#context
-    const dependencies = this.#dependencies.map((dependency) => dependency.chart)
+    const dependencies = this.#dependencies.map((dependency) => dependency.declaration)
 
     return {
       apiVersion: 'v2',
@@ -76,13 +76,15 @@ class Chart {
     }
   }
 
-  get #values () {
+  #values () {
     const result = {}
 
     result.compositions = this.#deployments
-    result.components = this.#context.components.map((component) => component.domain + '-' + component.name)
+    result.components = this.#context.components.map((component) => component.locator.label)
 
-    for (const { chart, values } of this.#dependencies) result[chart.alias || chart.name] = values
+    for (const { declaration, values } of this.#dependencies) {
+      result[declaration.alias || declaration.name] = values
+    }
 
     return result
   }
@@ -107,7 +109,11 @@ class Chart {
       for (const [key, values] of Object.entries(map)) {
         const dependency = require(key)
 
-        if (dependency.deployments !== undefined) list.push(...dependency.deployments(values))
+        if (dependency.deployment !== undefined) {
+          const { charts } = dependency.deployment(values)
+
+          if (charts !== undefined) list.push(...charts)
+        }
       }
 
       return list

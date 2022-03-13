@@ -1,6 +1,6 @@
 'use strict'
 
-const deployments = () => {
+const deployment = () => {
   const fullname = 'rabbitmq'
 
   // TODO: provide passwords as secrets for component containers
@@ -8,8 +8,8 @@ const deployments = () => {
   const password = 'password'
   const erlangCookie = 'cookie'
 
-  return [{
-    chart: {
+  const charts = [{
+    declaration: {
       name: 'rabbitmq',
       version: '8.24.3',
       repository: 'https://charts.bitnami.com/bitnami'
@@ -23,6 +23,8 @@ const deployments = () => {
       }
     }
   }]
+
+  return { charts }
 }
 
-exports.deployments = deployments
+exports.deployment = deployment

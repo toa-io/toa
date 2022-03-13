@@ -1,16 +1,17 @@
 'use strict'
 
-class Composition {
+const { Service } = require('./service')
+
+class Composition extends Service {
   name
   components
-  replicas
-  image
 
-  constructor (composition, image) {
+  constructor (image, composition) {
+    super(image)
+
     this.name = composition.name
     this.components = composition.components
     this.replicas = composition.replicas
-    this.image = image
   }
 }
 

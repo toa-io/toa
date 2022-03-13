@@ -1,5 +1,5 @@
 const { Storage } = require('./storage')
-const { deployments } = require('./deployments')
+const { deployment } = require('./deployment')
 
 exports.Storage = Storage
-exports.deployments = deployments
+exports.deployment = deployment

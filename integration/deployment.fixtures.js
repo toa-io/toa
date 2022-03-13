@@ -36,6 +36,11 @@ const chart = {
       name: 'rabbitmq',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '8.24.3'
+    },
+    {
+      name: 'nginx-ingress-controller',
+      repository: 'https://charts.bitnami.com/bitnami',
+      version: '9.1.5'
     }
   ]
 }

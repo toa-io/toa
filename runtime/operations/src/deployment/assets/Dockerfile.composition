@@ -1,5 +1,3 @@
-# TODO: bridge specifics
-
 FROM node:alpine
 
 RUN npm set registry {{registry}}

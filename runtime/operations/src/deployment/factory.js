@@ -2,11 +2,12 @@
 
 const { Composition } = require('./composition')
 const { Compositions } = require('./compositions')
-const { Image } = require('./image')
+const { Services } = require('./services')
 const { Deployment } = require('./deployment')
 const { Chart } = require('./chart')
 const { Process } = require('../process')
 const { Console } = require('../console')
+const images = require('./images')
 
 class Factory {
   #context
@@ -32,12 +33,20 @@ class Factory {
   }
 
   #composition (composition) {
-    const image = this.#image(composition)
+    const image = new images.Composition(this.#context, this.#process, composition)
 
     return new Composition(composition, image)
   }
 
-  #image = (composition) => new Image(composition, this.#context, this.#process)
+  #services () {
+    return new Services(this.#context, (service) => this.#service(service))
+  }
+
+  #service (service) {
+    const image = new images.Service(this.#context, this.#process, service)
+
+    return new Service
+  }
 }
 
 exports.Factory = Factory
