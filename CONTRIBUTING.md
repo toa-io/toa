@@ -7,7 +7,16 @@
 
 1. [Node LTS](https://nodejs.org/)
 2. [Docker Desktop](https://www.docker.com/get-started)
-3. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
+3. [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-with-a-package-manager)
+4. [Telepresence](https://www.telepresence.io/docs/latest/install/)
+5. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
+
+## Setup
+
+```shell
+$ npm run dev
+$ npm i
+```
 
 ## Flow
 
