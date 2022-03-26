@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.resources",
-  "version": "0.2.0-dev.12",
+  "version": "0.2.0-dev.16",
   "description": "Toa Resources Extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,9 +20,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "0.2.0-dev.12",
-    "@toa.io/gears": "0.2.0-dev.12",
-    "@toa.io/schema": "0.2.0-dev.12",
+    "@toa.io/core": "0.2.0-dev.16",
+    "@toa.io/gears": "0.2.0-dev.16",
+    "@toa.io/schema": "0.2.0-dev.16",
     "express": "4.17.1",
     "path-to-regexp": "6.2.0"
   },
