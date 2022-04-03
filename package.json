@@ -52,7 +52,7 @@
     "registry": "docker run --name verdaccio -p 4873:4873 -d --rm verdaccio/verdaccio && sleep 5 && npm adduser --registry http://localhost:4873",
     "setup": "npm run registry && npm run cluster && npm run publish:local && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
-    "dev": "npm run setup && npm run connect"
+    "env": "npm run setup && npm run connect"
   },
   "standard": {
     "parser": "@babel/eslint-parser",

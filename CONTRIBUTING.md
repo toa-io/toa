@@ -15,7 +15,7 @@
 ## Setup
 
 ```shell
-$ npm run dev
+$ npm run env
 $ npm i
 ```
 
