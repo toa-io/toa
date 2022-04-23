@@ -20,26 +20,7 @@ $ npm i
 
 ## Flow
 
-> This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/).
-
-To get started fork the project.
-
-```shell
-# replace with your fork's URL
-$ git clone git@github.com:toa-io/toa.git
-$ cd toa
-
-# install dependencies
-$ npm install
-
-# setup dev environment
-$ echo TODO
-
-# make sure everything is ok
-$ npm test
-```
-
-Commit & Push your changes, then create a Pull Request.
+This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/).
 
 ## Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg)](https://conventionalcommits.org)
 
