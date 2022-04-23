@@ -6,5 +6,4 @@ const deployment = () => {
   return { service }
 }
 
-
 exports.deployment = deployment

@@ -49,7 +49,7 @@ class Factory {
    * @param declaration {toa.package.Dependency}
    * @returns {Dependency}
    */
-  static #dependency(declaration) {
+  static #dependency (declaration) {
     // TODO: collapse charts?
     const charts = {}
 

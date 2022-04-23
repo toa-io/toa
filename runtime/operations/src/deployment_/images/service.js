@@ -13,7 +13,6 @@ class Service extends Image {
 
     this.#service = service
   }
-
 }
 
 exports.Service = Service

@@ -7,7 +7,6 @@ class Service {
   constructor (image) {
     this.image = image
   }
-
 }
 
 exports.Service = Service

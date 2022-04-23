@@ -45,7 +45,7 @@ class Factory {
   #service (service) {
     const image = new images.Service(this.#context, this.#process, service)
 
-    return new Service
+    return new Service()
   }
 }
 
