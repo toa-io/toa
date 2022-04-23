@@ -1,51 +1,59 @@
 'use strict'
 
-const { Composition } = require('./composition')
-const { Compositions } = require('./compositions')
-const { Services } = require('./services')
-const { Deployment } = require('./deployment')
-const { Chart } = require('./chart')
-const { Process } = require('../process')
-const { Console } = require('../console')
-const images = require('./images')
+const { Dependency } = require('./dependency')
 
 class Factory {
+  /** @type toa.package.Context */
   #context
-  #process
-  #console
 
-  constructor (context, options = {}) {
+  /**
+   * @param context {toa.package.Context}
+   */
+  constructor (context) {
     this.#context = context
-    this.#process = new Process(options.log)
-    this.#console = new Console(options.log === false)
   }
 
-  deployment () {
-    const compositions = this.#compositions()
-    const images = Array.from(compositions).map((composition) => composition.image)
-    const chart = new Chart(this.#context, compositions, this.#process)
+  /**
+   * @returns {Array<Dependency>}
+   */
+  dependencies () {
+    const declarations = []
 
-    return new Deployment(chart, images, this.#console)
+    /**
+     * @param map {toa.package.DependencyMap}
+     * @returns {Array<toa.operations.deployment.dependencies.charts.Chart>}
+     */
+    const map = (map) => {
+      const list = []
+
+      for (const [key, values] of Object.entries(map)) {
+        const dependency = require(key)
+
+        if (dependency.deployment !== undefined) {
+          const deployment = dependency.deployment(values)
+
+          list.push(deployment)
+        }
+      }
+
+      return list
+    }
+
+    if (this.#context.connectors !== undefined) declarations.push(...map(this.#context.connectors))
+    if (this.#context.extensions !== undefined) declarations.push(...map(this.#context.connectors))
+
+    return declarations.map((declaration) => Factory.#dependency(declaration))
   }
 
-  #compositions () {
-    return new Compositions(this.#context, (composition) => this.#composition(composition))
-  }
+  /**
+   * @param declaration {toa.package.Dependency}
+   * @returns {Dependency}
+   */
+  static #dependency(declaration) {
+    // TODO: collapse charts?
+    const charts = {}
 
-  #composition (composition) {
-    const image = new images.Composition(this.#context, this.#process, composition)
-
-    return new Composition(composition, image)
-  }
-
-  #services () {
-    return new Services(this.#context, (service) => this.#service(service))
-  }
-
-  #service (service) {
-    const image = new images.Service(this.#context, this.#process, service)
-
-    return new Service
+    return new Dependency(charts)
   }
 }
 

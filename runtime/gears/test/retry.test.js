@@ -2,6 +2,7 @@
 
 const { retry, timeout, random } = require('../src/')
 
+/** @type toa.gears.RetryOptions */
 let options
 
 beforeEach(() => {
@@ -69,6 +70,7 @@ it('should delay attempts', async () => {
 it('should retry given times', async () => {
   const retries = random(10)
 
+  // noinspection JSCheckFunctionSignatures
   const fn = jest.fn((retry) => retry())
 
   await expect(retry(fn, { retries, base: 0 })).rejects.toThrow(retry.Error)
