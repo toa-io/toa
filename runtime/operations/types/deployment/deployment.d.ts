@@ -20,12 +20,17 @@ declare namespace toa.operations.deployment {
         components: Array<string>
     }
 
+    interface DeploymentInstallationOptions {
+        dry?: boolean
+        wait?: boolean
+    }
+
     interface Deployment {
         export(target: string): Promise<void>
 
-        install(): Promise<void>
+        install(options: DeploymentInstallationOptions): Promise<void>
     }
 
 }
 
-
+export type DeploymentInstallationOptions = toa.operations.deployment.DeploymentInstallationOptions

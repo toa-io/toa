@@ -1,8 +1,10 @@
+// noinspection ES6UnusedImports
+
+import type { DeploymentInstallationOptions } from './deployment'
+
 declare namespace toa.operations.deployment {
 
-    interface InstallationOptions {
-        dry: boolean
-        wait: boolean
+    interface OperatorInstallationOptions extends DeploymentInstallationOptions {
     }
 
     interface Operator {
@@ -12,7 +14,7 @@ declare namespace toa.operations.deployment {
 
         build(): Promise<void>
 
-        install(options: InstallationOptions): Promise<void>
+        install(options?: OperatorInstallationOptions): Promise<void>
     }
 
 }

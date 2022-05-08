@@ -46,11 +46,16 @@ class Deployment {
     this.#target = target
   }
 
-  async install () {
+  async install (options) {
     if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
 
+    const args = []
+
+    if (options.wait === true) args.push('--wait')
+    if (options.dry === true) args.push('--dry-run')
+
     await this.#process.execute('helm', ['dependency', 'update', this.#target])
-    await this.#process.execute('helm', ['upgrade', this.#declaration.name, '-i', this.#target])
+    await this.#process.execute('helm', ['upgrade', this.#declaration.name, '-i', ...args, this.#target])
   }
 
   /**

@@ -8,10 +8,10 @@ const deploy = async (argv) => {
   const path = find(argv.path)
   const operator = await boot.deployment(path)
 
-  const options = {
-    wait: argv['no-wait'] !== true,
-    dry: argv.dry === true
-  }
+  const options = {}
+
+  if (argv.wait === true) options.wait = true
+  if (argv.dry === true) options.dry = true
 
   await operator.install(options)
 }

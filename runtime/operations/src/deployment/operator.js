@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory, merge } = require('@toa.io/gears')
+const { directory } = require('@toa.io/gears')
 
 /**
  * @implements {toa.operations.deployment.Operator}
@@ -42,18 +42,25 @@ class Operator {
     await this.#registry.prepare(target)
     await this.#registry.push()
 
-    // TODO: cleanup
+    await directory.remove(target)
   }
 
   async install (options = {}) {
-    merge(options, OPTIONS, { ignore: true })
+    options = Object.assign({}, OPTIONS, options)
 
-    // const [source] =
-    await Promise.all([this.export(), this.build()])
+    // noinspection ES6MissingAwait
+    const tasks = [this.export()]
 
-    await this.#deployment.install()
+    if (options.dry !== true) {
+      // noinspection JSCheckFunctionSignatures
+      tasks.push(this.build())
+    }
 
-    // TODO: cleanup
+    const [source] = await Promise.all(tasks)
+
+    await this.#deployment.install(options)
+
+    await directory.remove(source)
   }
 
   /**
@@ -69,10 +76,10 @@ class Operator {
   }
 }
 
-/** @type {toa.operations.deployment.InstallationOptions} */
+/** @type {toa.operations.deployment.OperatorInstallationOptions} */
 const OPTIONS = {
   dry: false,
-  wait: true
+  wait: false
 }
 
 exports.Operator = Operator

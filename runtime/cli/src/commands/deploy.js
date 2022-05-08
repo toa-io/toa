@@ -14,10 +14,10 @@ const builder = (yargs) => {
       boolean: true,
       desc: 'Dry run'
     })
-    .option('no-wait', {
+    .option('wait', {
       group: 'Command options:',
       boolean: true,
-      desc: 'Disable waiting for deployment ready state'
+      desc: 'Wait for deployment ready state'
     })
 }
 
