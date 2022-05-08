@@ -7,7 +7,7 @@
  * @param input {string}
  * @returns {string}
  */
-exports.hash = (input) => {
+const hash = (input) => {
   let hash = 5381
   let index = input.length
 
@@ -16,3 +16,5 @@ exports.hash = (input) => {
   // unsigned hex
   return (hash >>> 0).toString(16)
 }
+
+exports.hash = hash

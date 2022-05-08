@@ -18,6 +18,8 @@ const { timeout } = require('./timeout')
 const { underlay } = require('./underlay')
 const { yaml } = require('./yaml')
 
+exports.directory = require('./directory')
+
 exports.concat = concat
 exports.console = console
 exports.difference = difference

@@ -2,7 +2,6 @@
 
 const { timeout } = require('./timeout')
 
-/** @type toa.gears.retry */
 const retry = async (func, options = {}, attempt = 0) => {
   if (attempt === 0) options = Object.assign({}, DEFAULTS, options)
 

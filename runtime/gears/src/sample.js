@@ -5,4 +5,6 @@
  * @param array {Array<T>}
  * @returns {T}
  */
-exports.sample = (array) => array[Math.floor(Math.random() * array.length)]
+const sample = (array) => array[Math.floor(Math.random() * array.length)]
+
+exports.sample = sample
