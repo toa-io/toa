@@ -25,6 +25,9 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
+  "peerDependencies": {
+    "@toa.io/gears": "*"
+  },
   "dependencies": {
     "execa": "5.1.1",
     "ora": "5.4.1"

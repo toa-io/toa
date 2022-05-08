@@ -1,7 +1,6 @@
 'use strict'
 
-const { directory } = require('../util/directory')
-const { merge } = require('@toa.io/gears')
+const { directory, merge } = require('@toa.io/gears')
 
 /**
  * @implements {toa.operations.deployment.Operator}
@@ -63,8 +62,8 @@ class Operator {
    * @returns {Promise<string>}
    */
   static async #target (type, path) {
-    if (path === undefined) path = await directory.temp(type)
-    else path = await directory(path)
+    if (path === undefined) path = await directory.temp('toa-' + type)
+    else path = await directory.ensure(path)
 
     return path
   }

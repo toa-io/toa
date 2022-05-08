@@ -3,7 +3,7 @@
 const { join } = require('node:path')
 const { readFile: read, writeFile: write } = require('node:fs/promises')
 
-const { directory } = require('../../util/directory')
+const { directory } = require('@toa.io/gears')
 
 /**
  * @implements {toa.operations.deployment.images.Image}
@@ -53,7 +53,7 @@ class Image {
 
     const path = join(root, this.name)
 
-    await directory(path)
+    await directory.ensure(path)
 
     const dockerfile = (await read(this.dockerfile, 'utf-8'))
       .replace(/{{(\w+)}}/g, (_, key) => this.#runtime[key])

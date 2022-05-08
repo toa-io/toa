@@ -6,10 +6,8 @@ const { hash } = require('@toa.io/gears')
 const { copy } = require('../../util/copy')
 const { Image } = require('./image')
 
-const DOCKERFILE = join(__dirname, 'composition.Dockerfile')
-
 class Composition extends Image {
-  dockerfile = DOCKERFILE
+  dockerfile = join(__dirname, 'composition.Dockerfile')
 
   /** @type {toa.formation.context.Runtime} */
   #runtime
