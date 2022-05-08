@@ -1,18 +1,21 @@
 'use strict'
 
-const fs = require('fs')
-const util = require('util')
+const { readFile } = require('node:fs/promises')
+const { readFileSync } = require('node:fs')
 const yaml = require('js-yaml')
 
+/**
+ * @param path {string}
+ * @returns {Promise<Object>}
+ */
 const load = async path => {
-  const readFile = util.promisify(fs.readFile)
   const contents = await readFile(path, 'utf8')
 
   return yaml.load(contents)
 }
 
 load.sync = path => {
-  const contents = fs.readFileSync(path)
+  const contents = readFileSync(path, 'utf8')
 
   return yaml.load(contents)
 }

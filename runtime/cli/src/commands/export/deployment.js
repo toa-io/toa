@@ -13,7 +13,6 @@ const builder = (yargs) => {
       type: 'string',
       desc: 'Export target path'
     })
-    .usage('Usage: toa export deployment /path/to/context /export/path')
 }
 
 exports.command = 'deployment [path] [target]'

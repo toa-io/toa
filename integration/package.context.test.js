@@ -1,7 +1,7 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { context: load } = require('@toa.io/package')
+const { context: load } = require('@toa.io/formation')
 
 const path = resolve(__dirname, './context/')
 

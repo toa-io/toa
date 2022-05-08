@@ -7,7 +7,7 @@ const boot = require('./index')
 async function composition (paths, options) {
   normalize(options)
 
-  const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
+  const manifests = await Promise.all(paths.map((path) => boot.component(path, options)))
   const extensions = await Promise.all(manifests.map(boot.extensions))
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
   const runtimes = await Promise.all(manifests.map(boot.runtime))

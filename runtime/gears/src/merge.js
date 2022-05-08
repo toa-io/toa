@@ -1,5 +1,14 @@
 'use strict'
 
+/**
+ * Merge source to target.
+ * Modifies target.
+ * @param target {Object}
+ * @param source {Object}
+ * @param options {{ override?: boolean, ignore?: boolean }}
+ * @param path {Array<string>} internal property
+ * @return {Object}
+ */
 const merge = (target, source, options = {}, path = []) => {
   if (source instanceof Array && target instanceof Array) {
     if (options.override === true) {

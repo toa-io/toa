@@ -1,3 +1,3 @@
 'use strict'
 
-exports.deployment = require('./deployment_')
+exports.deployment = require('./deployment')

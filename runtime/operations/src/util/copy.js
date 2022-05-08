@@ -2,6 +2,11 @@
 
 const execa = require('execa')
 
-const copy = async (source, target) => await execa('cp', ['-r', source, target])
+/**
+ * @param source {string}
+ * @param target {string}
+ * @returns {Promise<void>}
+ */
+const copy = (source, target) => execa('cp', ['-r', source, target])
 
 exports.copy = copy

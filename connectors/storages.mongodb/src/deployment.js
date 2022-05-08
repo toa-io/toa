@@ -1,13 +1,21 @@
 'use strict'
 
+/**
+ * @param values
+ * @returns {toa.operations.deployment.Dependency}
+ */
 const deployment = (values) => {
   const domains = new Set(values.map((value) => value.domain))
 
-  const charts = [...domains].map(chart)
+  const references = [...domains].map(chart)
 
-  return { charts }
+  return { references }
 }
 
+/**
+ * @param domain
+ * @returns {toa.operations.deployment.Reference}
+ */
 const chart = (domain) => {
   const alias = domain + '-mongodb'
 
@@ -17,12 +25,10 @@ const chart = (domain) => {
   const databases = [domain]
 
   return {
-    declaration: {
-      name: 'mongodb',
-      version: '10.29.2',
-      repository: 'https://charts.bitnami.com/bitnami',
-      alias
-    },
+    name: 'mongodb',
+    version: '12.0.0',
+    repository: 'https://charts.bitnami.com/bitnami',
+    alias,
     values: {
       architecture: 'standalone',
       fullnameOverride: alias,

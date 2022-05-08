@@ -7,8 +7,8 @@ const { context: find } = require('../../util/find')
 
 const dump = async (argv) => {
   const context = find(argv.path)
-  const deployment = await boot.deployment(context)
-  const path = await deployment.export(argv.target)
+  const operator = await boot.deployment(context)
+  const path = await operator.export(argv.target)
 
   console.log(path)
 }

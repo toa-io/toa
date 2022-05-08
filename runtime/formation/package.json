@@ -1,0 +1,28 @@
+{
+  "name": "@toa.io/formation",
+  "version": "0.2.0-dev.30",
+  "description": "Toa Formation",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "main": "src/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "peerDependencies": {
+    "@toa.io/runtime": "*"
+  },
+  "dependencies": {
+    "fast-glob": "3.2.7"
+  },
+  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+}

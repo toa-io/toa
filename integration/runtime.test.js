@@ -10,7 +10,7 @@ const path = join(__dirname, './dummies/credits')
 let runtime
 
 beforeAll(async () => {
-  const manifest = await boot.manifest(path)
+  const manifest = await boot.component(path)
 
   runtime = await boot.runtime(manifest)
 

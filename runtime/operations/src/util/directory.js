@@ -1,11 +1,12 @@
 'use strict'
 
 const fs = require('node:fs/promises')
-const { join } = require('node:path')
+const { join, resolve } = require('node:path')
 const { tmpdir } = require('node:os')
 const { rm: remove } = require('node:fs/promises')
 
 const directory = async (path) => {
+  path = resolve(path)
   await fs.mkdir(path, { recursive: true })
 
   const entries = await fs.readdir(path)

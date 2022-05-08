@@ -1,30 +1,31 @@
 'use strict'
 
+/**
+ * @returns {toa.operations.deployment.Dependency}
+ */
 const deployment = () => {
   const fullname = 'rabbitmq'
 
   // TODO: provide passwords as secrets for component containers
-  const user = 'user'
+  const username = 'user'
   const password = 'password'
   const erlangCookie = 'cookie'
 
-  const charts = [{
-    declaration: {
-      name: 'rabbitmq',
-      version: '8.24.3',
-      repository: 'https://charts.bitnami.com/bitnami'
-    },
+  const reference = {
+    name: 'rabbitmq',
+    version: '9.0.0',
+    repository: 'https://charts.bitnami.com/bitnami',
     values: {
       fullnameOverride: fullname,
       auth: {
-        user,
+        username,
         password,
         erlangCookie
       }
     }
-  }]
+  }
 
-  return { charts }
+  return { references: [reference] }
 }
 
 exports.deployment = deployment

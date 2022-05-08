@@ -1,59 +1,77 @@
 'use strict'
 
-const { Dependency } = require('./dependency')
+const { Process } = require('../process')
+const { Operator } = require('./operator')
+const { Registry } = require('./images')
+const { Deployment } = require('./deployment')
+const { Composition } = require('./composition')
 
+/**
+ * @implements {toa.operations.deployment.Factory}
+ */
 class Factory {
-  /** @type toa.package.Context */
+  /** @type {toa.formation.context.Context} */
   #context
+  /** @type {toa.operations.deployment.images.Registry} */
+  #registry
+  /** @type {toa.operations.Process} */
+  #process
 
   /**
-   * @param context {toa.package.Context}
+   * @param context {toa.formation.context.Context}
    */
   constructor (context) {
     this.#context = context
+    this.#process = new Process()
+    this.#registry = new Registry(this.#context, this.#process)
+  }
+
+  operator () {
+    const compositions = this.#context.compositions.map((composition) => this.#composition(composition))
+    const dependencies = Factory.#dependencies({ ...this.#context.connectors, ...this.#context.extensions })
+    const deployment = new Deployment(this.#context, compositions, dependencies, this.#process)
+
+    return new Operator(deployment, this.#registry)
   }
 
   /**
-   * @returns {Array<Dependency>}
+   * @param composition {toa.formation.context.Composition}
+   * @returns {toa.operations.deployment.Composition}
    */
-  dependencies () {
-    const declarations = []
+  #composition (composition) {
+    const image = this.#registry.composition(composition)
 
-    /**
-     * @param map {toa.package.DependencyMap}
-     * @returns {Array<toa.operations.deployment.dependencies.charts.Chart>}
-     */
-    const map = (map) => {
-      const list = []
+    return new Composition(composition, image)
+  }
 
-      for (const [key, values] of Object.entries(map)) {
-        const dependency = require(key)
+  /**
+   * @param map {toa.formation.context.Dependencies}
+   * @returns {Array<toa.operations.deployment.Dependency>}
+   */
+  static #dependencies (map) {
+    /** @type {Array<toa.operations.deployment.Dependency>} */
+    const dependencies = []
 
-        if (dependency.deployment !== undefined) {
-          const deployment = dependency.deployment(values)
+    for (const [location, instances] of Object.entries(map)) {
+      const dependency = Factory.#dependency(location, instances)
 
-          list.push(deployment)
-        }
-      }
-
-      return list
+      if (dependency !== undefined) dependencies.push(dependency)
     }
 
-    if (this.#context.connectors !== undefined) declarations.push(...map(this.#context.connectors))
-    if (this.#context.extensions !== undefined) declarations.push(...map(this.#context.connectors))
-
-    return declarations.map((declaration) => Factory.#dependency(declaration))
+    return dependencies
   }
 
   /**
-   * @param declaration {toa.package.Dependency}
-   * @returns {Dependency}
+   * @param location {string} path to dependency package
+   * @param instances {Array<toa.formation.context.Dependency>}
+   * @returns {toa.operations.deployment.Dependency | undefined}
    */
-  static #dependency (declaration) {
-    // TODO: collapse charts?
-    const charts = {}
+  static #dependency (location, instances) {
+    const dependency = require(location)
 
-    return new Dependency(charts)
+    if (dependency.deployment === undefined) return
+
+    return dependency.deployment(instances)
   }
 }
 

@@ -19,11 +19,6 @@ const builder = (yargs) => {
       boolean: true,
       desc: 'Disable waiting for deployment ready state'
     })
-    .option('output', {
-      group: 'Command options:',
-      boolean: true,
-      desc: 'Print log to stdout'
-    })
 }
 
 exports.command = 'deploy [path]'
