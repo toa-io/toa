@@ -8,6 +8,11 @@ declare namespace toa.formation.context {
         proxy?: string
     }
 
+    interface Registry {
+        base: string
+        platforms?: Array<string>
+    }
+
     interface Composition {
         name: string,
         components: Array<string | Component>
@@ -22,17 +27,22 @@ declare namespace toa.formation.context {
         [path: string]: Array<Dependency>
     }
 
-    interface Context {
+    interface Declaration {
         name: string
         description: string
         version: string
-        runtime: string | Runtime
-        registry: string
+        runtime: Runtime | string
+        registry: Registry | string
         packages: string
         compositions: Array<Composition>
         components: Array<Component>
         connectors?: Dependencies
         extensions?: Dependencies
+    }
+
+    interface Context extends Declaration {
+        runtime: Runtime
+        registry: Registry
     }
 
 }

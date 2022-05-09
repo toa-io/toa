@@ -1,6 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
+const { generate } = require('randomstring')
 
 const fixtures = require('./normalize.fixtures')
 const { normalize } = require('../../src/context/normalize')
@@ -18,4 +19,15 @@ it('should resolve local version', () => {
 
   expect(context.runtime).not.toEqual('.')
   expect(context.runtime.version).toEqual(require('@toa.io/runtime').version)
+})
+
+it('should expand registry', () => {
+  const base = generate()
+  context.registry = base
+
+  normalize(context)
+
+  expect(context.registry).toEqual({
+    base
+  })
 })

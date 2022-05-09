@@ -46,6 +46,29 @@ describe('runtime', () => {
   })
 })
 
+describe('registry', () => {
+  it('should require', () => {
+    delete context.registry
+
+    expect(() => validate(context)).toThrow(/required property 'registry'/)
+  })
+
+  it('should require base', () => {
+    delete context.registry.base
+
+    expect(() => validate(context)).toThrow(/required property 'base'/)
+  })
+
+  it('should set default platforms', () => {
+    delete context.registry.platforms
+
+    validate(context)
+
+    expect(context.registry.platforms).toBeInstanceOf(Array)
+    expect(context.registry.platforms.length).toBeGreaterThan(0)
+  })
+})
+
 it('should require name as token', () => {
   delete context.name
   expect(() => validate(context)).toThrow(/required/)
