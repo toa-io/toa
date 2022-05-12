@@ -19,7 +19,7 @@ class Composition {
   constructor (composition, image) {
     this.name = composition.name
     this.components = composition.components.map((component) => component.locator.label)
-    this.image = image.url
+    this.image = image.reference
   }
 }
 

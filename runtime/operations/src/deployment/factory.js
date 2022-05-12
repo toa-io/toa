@@ -2,7 +2,7 @@
 
 const { Process } = require('../process')
 const { Operator } = require('./operator')
-const { Registry } = require('./images')
+const { Factory: Images, Registry } = require('./images')
 const { Deployment } = require('./deployment')
 const { Composition } = require('./composition')
 
@@ -23,7 +23,9 @@ class Factory {
   constructor (context) {
     this.#context = context
     this.#process = new Process()
-    this.#registry = new Registry(this.#context, this.#process)
+
+    const images = new Images(context.name, context.runtime)
+    this.#registry = new Registry(context.registry, images, this.#process)
   }
 
   operator () {

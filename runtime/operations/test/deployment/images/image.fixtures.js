@@ -6,6 +6,9 @@ const { generate } = require('randomstring')
 const key = generate()
 const name = generate()
 
+/**
+ * @implements {toa.operations.deployment.images.Image}
+ */
 class Class extends Image {
   get name () {
     return name
@@ -17,8 +20,8 @@ class Class extends Image {
 }
 
 const runtime = {}
-const process = {}
 
+exports.scope = generate()
 exports.name = name
 exports.key = key
 exports.Class = Class

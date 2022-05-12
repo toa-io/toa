@@ -7,7 +7,7 @@ const { generate } = require('randomstring')
 let instance
 
 beforeEach(() => {
-  instance = new fixtures.Class(fixtures.runtime, fixtures.process)
+  instance = new fixtures.Class(fixtures.scope, fixtures.runtime)
 })
 
 it('should assign url', () => {
@@ -15,17 +15,11 @@ it('should assign url', () => {
 
   instance.tag(registry)
 
-  expect(instance.url).toEqual(`${registry}/${fixtures.name}:${fixtures.key}`)
+  expect(instance.reference).toEqual(`${registry}/${fixtures.scope}/${fixtures.name}:${fixtures.key}`)
 })
 
 describe('prepare', () => {
   it('should throw error if no dockerfile specified', async () => {
-    await expect(instance.prepare()).rejects.toThrow(/Dockerfile isn't specified/)
-  })
-})
-
-describe('build', () => {
-  it('should throw if not tagged', async () => {
-    await expect(instance.build()).rejects.toThrow(/hasn't been tagged/)
+    await expect(instance.prepare(generate())).rejects.toThrow(/Dockerfile isn't specified/)
   })
 })

@@ -48,11 +48,10 @@ class Operator {
   async install (options = {}) {
     options = Object.assign({}, OPTIONS, options)
 
-    // noinspection ES6MissingAwait
+    /** @type {Array<Promise<any>>} */
     const tasks = [this.export()]
 
     if (options.dry !== true) {
-      // noinspection JSCheckFunctionSignatures
       tasks.push(this.build())
     }
 

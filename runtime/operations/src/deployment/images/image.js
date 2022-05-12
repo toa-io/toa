@@ -1,16 +1,18 @@
 'use strict'
 
-const { join } = require('node:path')
+const { join, posix } = require('node:path')
 const { readFile: read, writeFile: write } = require('node:fs/promises')
 
 const { directory } = require('@toa.io/gears')
 
+// noinspection JSClosureCompilerSyntax
 /**
  * @implements {toa.operations.deployment.images.Image}
  * @abstract
  */
 class Image {
-  url
+  context
+  reference
 
   /**
    * @protected
@@ -18,20 +20,18 @@ class Image {
    */
   dockerfile
 
+  /** @type {string} */
+  #scope
   /** @type {toa.formation.context.Runtime} */
   #runtime
-  /** @type {toa.operations.Process} */
-  #process
-  /** @type {string} */
-  #context
 
   /**
+   * @param scope {string}
    * @param runtime {toa.formation.context.Runtime}
-   * @param process {toa.operations.Process}
    */
-  constructor (runtime, process) {
+  constructor (scope, runtime) {
+    this.#scope = scope
     this.#runtime = runtime
-    this.#process = process
   }
 
   /**
@@ -48,6 +48,10 @@ class Image {
    */
   get key () {}
 
+  tag (base) {
+    this.reference = posix.join(base, `${this.#scope}/${this.name}:${this.key}`)
+  }
+
   async prepare (root) {
     if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')
 
@@ -60,24 +64,9 @@ class Image {
 
     await write(join(path, 'Dockerfile'), dockerfile)
 
-    this.#context = path
+    this.context = path
 
     return path
-  }
-
-  tag (registry) {
-    this.url = registry + '/' + this.name + ':' + this.key
-  }
-
-  async build () {
-    if (this.url === undefined) throw new Error('Image hasn\'t been tagged')
-    if (this.#context === undefined) throw new Error('Image hasn\'t been built')
-
-    await this.#process.execute('docker', ['build', this.#context, '-t', this.url])
-  }
-
-  async push () {
-    await this.#process.execute('docker', ['push', this.url])
   }
 }
 

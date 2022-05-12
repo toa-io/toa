@@ -11,24 +11,21 @@ class Composition extends Image {
 
   /** @type {toa.formation.context.Runtime} */
   #runtime
-  /** @type {toa.operations.Process} */
-  #process
   /** @type {string} */
   #name
   /** @type {Array<toa.formation.component.Component>} */
   #components
 
   /**
+   * @param scope {string}
    * @param runtime {toa.formation.context.Runtime}
-   * @param process {toa.operations.Process}
    * @param composition {toa.formation.context.Composition}
    */
-  constructor (runtime, process, composition) {
-    super(runtime, process)
+  constructor (scope, runtime, composition) {
+    super(scope, runtime)
 
-    this.#runtime = runtime
-    this.#process = process
     this.#name = composition.name
+    this.#runtime = runtime
     this.#components = composition.components
   }
 

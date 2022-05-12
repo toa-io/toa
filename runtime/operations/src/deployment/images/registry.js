@@ -1,32 +1,35 @@
 'use strict'
 
-const { Composition } = require('./composition')
+const { directory: { remove } } = require('@toa.io/gears')
 
 /**
  * @implements {toa.operations.deployment.images.Registry}
  */
 class Registry {
-  /** @type {toa.formation.context.Context} */
-  #context
+  /** @type {toa.formation.context.Registry} */
+  #registry
+  /** @type {toa.operations.deployment.images.Factory} */
+  #factory
   /** @type {toa.operations.Process} */
   #process
   /** @type {Array<toa.operations.deployment.images.Image>} */
   #images = []
 
   /**
-   * @param context {toa.formation.context.Context}
+   * @param registry {toa.formation.context.Registry}
+   * @param factory {toa.operations.deployment.images.Factory}
    * @param process {toa.operations.Process}
    */
-  constructor (context, process) {
-    this.#context = context
+  constructor (registry, factory, process) {
+    this.#registry = registry
+    this.#factory = factory
     this.#process = process
   }
 
   composition (composition) {
-    /** @type {import('./image').Image} */
-    const image = new Composition(this.#context.runtime, this.#process, composition)
+    const image = this.#factory.composition(composition)
 
-    image.tag(this.#context.registry)
+    image.tag(this.#registry.base)
     this.#images.push(image)
 
     return image
@@ -37,7 +40,21 @@ class Registry {
   }
 
   async push () {
-    await Promise.all(this.#images.map((image) => image.build().then(() => image.push())))
+    for (const image of this.#images) {
+      await this.#push(image)
+      await remove(image.context)
+    }
+  }
+
+  /**
+   * @param image {toa.operations.deployment.images.Image}
+   * @returns {Promise<void>}
+   */
+  async #push (image) {
+    const platform = this.#registry.platforms.join(',')
+
+    await this.#process.execute('docker',
+      ['buildx', 'build', '--push', '--tag', image.reference, '--platform', platform, image.context])
   }
 }
 

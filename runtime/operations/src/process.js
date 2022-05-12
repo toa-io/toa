@@ -10,6 +10,7 @@ class Process {
     const result = execa(cmd, args)
 
     result.stdout.pipe(process.stdout)
+    result.stderr.pipe(process.stderr)
 
     return result
   }
