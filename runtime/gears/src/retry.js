@@ -2,13 +2,16 @@
 
 const { timeout } = require('./timeout')
 
+/**
+ * @type {toa.gears.retry.Retry}
+ */
 const retry = async (func, options = {}, attempt = 0) => {
   if (attempt === 0) options = Object.assign({}, DEFAULTS, options)
 
   let inner
 
   const outer = await func(async () => {
-    if (attempt === options.retries) throw new retry.Error(`Retry failed after ${attempt} attempts`)
+    if (attempt === options.retries) throw new RetryError(`Retry failed after ${attempt} attempts`)
 
     inner = (async () => {
       const interval = Math.min(options.base * Math.pow(options.factor, attempt), options.max)
@@ -22,8 +25,9 @@ const retry = async (func, options = {}, attempt = 0) => {
   return inner === undefined ? outer : await inner
 }
 
-retry.Error = class extends Error {}
+class RetryError extends Error {}
 
+/** @type {toa.gears.retry.Options} */
 const DEFAULTS = {
   retries: Infinity,
   factor: 1.5,
@@ -33,3 +37,5 @@ const DEFAULTS = {
 }
 
 exports.retry = retry
+exports.retry.Error = RetryError
+exports.RetryError = RetryError
