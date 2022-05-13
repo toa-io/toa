@@ -9,14 +9,14 @@ declare namespace toa.gears {
             retries?: number
 
             /**
-             * Exponential factor
-             */
-            factor?: number
-
-            /**
              * Base delay between retries
              */
             base?: number
+
+            /**
+             * Delay exponential factor
+             */
+            factor?: number
 
             /**
              * Maximum delay between retries
