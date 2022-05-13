@@ -4,7 +4,7 @@ const { stat } = require('node:fs/promises')
 
 /**
  * @param path {string}
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
 const is = async (path) => {
   const entry = await stat(path)

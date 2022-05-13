@@ -7,7 +7,7 @@ const { generate } = require('randomstring')
 
 const { newid } = require('../src/newid')
 
-const { ensure, is, remove, temp } = require('../src/directory')
+const { copy, ensure, is, remove, temp } = require('../src/directory')
 
 describe('ensure', () => {
   it('should create directory', async () => {
@@ -81,5 +81,24 @@ describe('temp', () => {
     expect(path.substring(0, tmp.length)).toStrictEqual(tmp)
 
     await remove(path)
+  })
+})
+
+describe('copy', () => {
+  it('should copy recursive', async () => {
+    const root = await temp()
+    const source = join(root, newid())
+    const target = join(root, newid())
+    const nested = newid()
+
+    expect(source).not.toStrictEqual(target)
+
+    await ensure(join(source, nested))
+    await copy(source, target)
+
+    await expect(is(join(target, nested))).resolves.toStrictEqual(true)
+
+    await remove(source)
+    await remove(target)
   })
 })
