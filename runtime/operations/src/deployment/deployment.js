@@ -2,9 +2,7 @@
 
 const { join } = require('node:path')
 const { writeFile: write } = require('node:fs/promises')
-const { yaml } = require('@toa.io/gears')
-
-const { copy } = require('../util/copy')
+const { yaml, directory: { copy } } = require('@toa.io/gears')
 
 /**
  * @implements {toa.operations.deployment.Deployment}

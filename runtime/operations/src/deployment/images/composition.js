@@ -1,9 +1,8 @@
 'use strict'
 
 const { join } = require('node:path')
-const { hash } = require('@toa.io/gears')
+const { hash, directory: { copy } } = require('@toa.io/gears')
 
-const { copy } = require('../../util/copy')
 const { Image } = require('./image')
 
 class Composition extends Image {

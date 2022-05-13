@@ -51,17 +51,17 @@ const values = {
     {
       name: 'credits-balance',
       components: ['credits-balance'],
-      image: expect.stringMatching(/^localhost:5000\/credits-balance:[a-z\d]+/)
+      image: expect.stringMatching(/^[^/]+\/dummies\/credits-balance:[a-z\d]+/)
     },
     {
       name: 'dummies-a',
       components: ['dummies-a'],
-      image: expect.stringMatching(/^localhost:5000\/dummies-a:[a-z\d]+/)
+      image: expect.stringMatching(/^[^/]+\/dummies\/dummies-a:[a-z\d]+/)
     },
     {
       name: 'messages',
       components: ['messages-messages', 'stats-stats'],
-      image: expect.stringMatching(/^localhost:5000\/messages:[a-z\d]+/)
+      image: expect.stringMatching(/^[^/]+\/dummies\/messages:[a-z\d]+/)
     }
   ]),
   'messages-mongodb': {
