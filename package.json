@@ -50,8 +50,9 @@
     "lint": "npx standard --verbose --fix | npx snazzy",
     "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --force-publish --no-git-tag-version --no-push --no-changelog --registry http://localhost:4873 --yes",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
+    "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "registry": "docker run --name verdaccio -p 4873:4873 -d --rm verdaccio/verdaccio && sleep 5 && npm adduser --registry http://localhost:4873",
-    "setup": "npm run registry && npm run cluster && npm run publish:local && npm ci && toa deploy ./integration/context",
+    "setup": "npm run registry && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
     "env": "npm run setup && npm run connect"
   },
