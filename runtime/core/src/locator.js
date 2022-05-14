@@ -2,6 +2,9 @@
 
 const { concat } = require('@toa.io/gears')
 
+/**
+ * @implements {toa.core.Locator}
+ */
 class Locator {
   domain = 'system'
   name
@@ -31,7 +34,7 @@ class Locator {
       host += concat(segment(this), '-')
     }
 
-    if (type) host += type.toLowerCase()
+    if (type !== undefined) host += type.toLowerCase()
 
     return host
   }

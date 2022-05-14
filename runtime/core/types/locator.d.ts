@@ -5,6 +5,8 @@ declare namespace toa.core {
         name: string
         id: string
         label: string
+
+        host(type?: string, level?: number): string
     }
 
 }
