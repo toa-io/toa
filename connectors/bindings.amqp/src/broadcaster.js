@@ -3,7 +3,10 @@
 const { Connector } = require('@toa.io/core')
 const { newid } = require('@toa.io/gears')
 
-class Broadcast extends Connector {
+/**
+ * @implements {toa.core.connectors.bindings.Broadcaster}
+ */
+class Broadcaster extends Connector {
   #group
   #channel
   #prefix
@@ -28,4 +31,4 @@ class Broadcast extends Connector {
   }
 }
 
-exports.Broadcast = Broadcast
+exports.Broadcaster = Broadcaster

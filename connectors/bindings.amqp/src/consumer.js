@@ -4,6 +4,9 @@ const { Connector } = require('@toa.io/core')
 
 const { name } = require('./queue')
 
+/**
+ * @implements {toa.core.connectors.bindings.Consumer}
+ */
 class Consumer extends Connector {
   #channel
   #queue

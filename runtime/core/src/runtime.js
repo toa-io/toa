@@ -18,7 +18,7 @@ class Runtime extends Connector {
     Object.values(operations).forEach((operation) => this.depends(operation))
   }
 
-  connection () {
+  async connection () {
     console.info(`Runtime '${this.locator.id}' connected`)
   }
 

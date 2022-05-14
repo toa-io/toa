@@ -7,9 +7,12 @@ const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
 const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
-const { Broadcast } = require('./broadcast')
+const { Broadcaster } = require('./broadcaster')
 const { Connection } = require('./connection')
 
+/**
+ * @implements {toa.core.connectors.bindings.Factory}
+ */
 class Factory {
   #connections = {}
 
@@ -37,11 +40,11 @@ class Factory {
     return new Receiver(channel, locator, label, id, receiver)
   }
 
-  broadcast (name, group) {
+  broadcaster (name, group) {
     const locator = new Locator()
     const channel = this.#channel(locator)
 
-    return new Broadcast(channel, name, group)
+    return new Broadcaster(channel, name, group)
   }
 
   #channel () {
