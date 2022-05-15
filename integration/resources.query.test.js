@@ -2,6 +2,7 @@
 
 const fetch = require('node-fetch')
 const { newid, repeat, timeout } = require('@toa.io/gears')
+const boot = require('@toa.io/boot')
 
 const framework = require('./framework')
 const extension = require('../extensions/resources')
@@ -14,7 +15,7 @@ const locator = (path) => 'http://localhost:8000' + path
 
 beforeAll(async () => {
   composition = await framework.compose(['messages', 'stats', 'credits'])
-  resources = await (new extension.Factory()).process()
+  resources = await (new extension.Factory(boot)).process()
 
   await resources.connect()
   await timeout(200) // resources discovery
@@ -133,10 +134,10 @@ describe('sort', () => {
 
     const json = await response.json()
 
-    let previous
+    let previous = null
 
     for (const message of json.output) {
-      if (previous === undefined) {
+      if (previous === null) {
         previous = message
         continue
       }

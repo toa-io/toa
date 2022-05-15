@@ -2,7 +2,7 @@
 
 const { join } = require('node:path')
 
-const { manifest: load } = require('@toa.io/formation')
+const { component: load } = require('@toa.io/formation')
 
 it('should load', async () => {
   await expect(load(join(__dirname, 'dummies/a'))).resolves.not.toThrow()

@@ -16,7 +16,7 @@ class Client extends Connector {
     this.#connection = { host, db, collection }
 
     const url = this.#url()
-    this.#client = new MongoClient(url, OPTIONS)
+    this.#client = new MongoClient(url.href, OPTIONS)
   }
 
   async connection () {
@@ -59,12 +59,23 @@ class Client extends Connector {
   }
 
   #url () {
-    // TODO: see ./deployment.js
-    const user = 'user'
-    const password = 'password'
+    const url = new URL('mongodb://')
 
-    if (process.env.TOA_ENV === 'local') return 'mongodb://localhost'
-    else return `mongodb://${user}:${password}@${this.#connection.host}:27017/?authSource=${this.#connection.db}&readPreference=primary&appname=svc&ssl=false`
+    if (process.env.TOA_ENV === 'local') {
+      url.hostname = 'localhost'
+    } else {
+      url.username = 'user'
+      url.password = 'password'
+
+      const query = url.searchParams
+
+      query.append('authSource', this.#connection.db)
+      query.append('readPreference', 'primary')
+      query.append('appname', 'svc')
+      query.append('ssl', 'false')
+    }
+
+    return url
   }
 }
 

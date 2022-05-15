@@ -48,13 +48,21 @@ class Factory {
   }
 
   #channel () {
-    const host = 'rabbitmq' // locator.host('rabbitmq')
+    const url = new URL('amqp://')
 
-    if (this.#connections[host] === undefined) {
-      this.#connections[host] = new Connection(host)
+    if (process.env.TOA_ENV === 'local') {
+      url.hostname = 'localhost'
+    } else {
+      url.hostname = 'rabbitmq'
+      url.username = 'user'
+      url.password = 'password'
     }
 
-    return new Channel(this.#connections[host])
+    const href = url.href
+
+    if (this.#connections[href] === undefined) this.#connections[href] = new Connection(url)
+
+    return new Channel(this.#connections[href])
   }
 }
 

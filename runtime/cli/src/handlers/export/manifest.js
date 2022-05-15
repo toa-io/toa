@@ -1,6 +1,6 @@
 'use strict'
 
-const { manifest: load } = require('@toa.io/formation')
+const { component: load } = require('@toa.io/formation')
 const { console, yaml } = require('@toa.io/gears')
 
 const { manifest: find } = require('../../util/find')

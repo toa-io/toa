@@ -10,9 +10,9 @@ beforeAll(async () => {
 
   const prefix = 'test-prefix'
 
-  a = factory.broadcast(prefix)
-  b = factory.broadcast(prefix)
-  c = factory.broadcast(prefix)
+  a = factory.broadcaster(prefix)
+  b = factory.broadcaster(prefix)
+  c = factory.broadcaster(prefix)
 
   await a.connect()
   await b.connect()
