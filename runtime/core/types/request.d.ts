@@ -11,12 +11,12 @@ declare namespace toa.core {
             projection?: Array<string>
             version?: number
         }
-        
+
     }
 
     interface Request {
-        input: Object | undefined
-        query: request.Query
+        input?: Object
+        query?: request.Query
     }
 
 }

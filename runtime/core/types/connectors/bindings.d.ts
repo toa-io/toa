@@ -1,6 +1,6 @@
 // noinspection ES6UnusedImports
 
-import { Connector, Locator, Receiver, Reply, Request, Runtime } from '../'
+import { Connector, Locator, Receiver, Reply, Request, Runtime } from '..'
 
 declare namespace toa.core.connectors.bindings {
 

@@ -4,6 +4,9 @@ const { console } = require('@toa.io/gears')
 const { Connector } = require('./connector')
 const { NotImplementedException } = require('./exceptions')
 
+/**
+ * @implements {toa.core.Runtime}
+ */
 class Runtime extends Connector {
   locator
 
