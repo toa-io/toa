@@ -10,6 +10,9 @@ const { Remote } = require('./remote')
 const { Tree } = require('./tree')
 const { Query, constraints } = require('./query')
 
+/**
+ * @implements {toa.core.extensions.Factory}
+ */
 class Factory {
   #boot
 
@@ -23,11 +26,15 @@ class Factory {
     return new Connector(broadcast, locator, definition)
   }
 
-  process () {
+  service (name) {
+    if (name === 'gateway') return this.#gateway()
+  }
+
+  #gateway () {
     const server = new Server()
     const broadcast = this.#boot.bindings.broadcast(BINDING, 'resources')
 
-    return new Resources(server, broadcast, async (domain, name, definition) => {
+    const remote = async (domain, name, definition) => {
       const locator = new Locator({ domain, name })
       const remote = await this.#boot.remote(locator)
 
@@ -39,7 +46,9 @@ class Factory {
       })
 
       return new Remote(server, remote, tree)
-    })
+    }
+
+    return new Resources(server, broadcast, remote)
   }
 }
 

@@ -4,14 +4,20 @@ const { serve } = require('../handlers/serve')
 
 const builder = (yargs) => {
   yargs
-    .positional('path', {
+    .positional('name', {
       type: 'string',
-      desc: 'Path to source',
+      desc: 'Service name'
+    })
+    .option('path', {
+      alias: 'p',
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Path to package',
       default: '.'
     })
 }
 
-exports.command = 'serve [path]'
-exports.desc = 'Serve process'
+exports.command = 'serve [name]'
+exports.desc = 'Run service'
 exports.builder = builder
 exports.handler = serve

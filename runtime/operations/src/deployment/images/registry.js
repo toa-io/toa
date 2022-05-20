@@ -27,12 +27,11 @@ class Registry {
   }
 
   composition (composition) {
-    const image = this.#factory.composition(composition)
+    return this.#create('composition', composition)
+  }
 
-    image.tag(this.#registry.base)
-    this.#images.push(image)
-
-    return image
+  service (path, service) {
+    return this.#create('service', path, service)
   }
 
   async prepare (target) {
@@ -44,6 +43,20 @@ class Registry {
       await this.#push(image)
       await remove(image.context)
     }
+  }
+
+  /**
+   * @param type {"composition" | "service"}
+   * @param args {...any}
+   * @returns {toa.operations.deployment.images.Image}
+   */
+  #create (type, ...args) {
+    const image = this.#factory[type](...args)
+
+    image.tag(this.#registry.base)
+    this.#images.push(image)
+
+    return image
   }
 
   /**

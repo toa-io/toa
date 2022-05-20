@@ -2,19 +2,17 @@
 
 const { join } = require('node:path')
 const { tmpdir } = require('node:os')
-const { access, rm, mkdir } = require('node:fs/promises')
 
 const boot = require('@toa.io/boot')
-const { newid, yaml } = require('@toa.io/gears')
+const { newid, yaml, directory: { remove, ensure, is } } = require('@toa.io/gears')
 
 const fixtures = require('./deployment.export.fixtures')
 
-const remove = (path) => rm(path, { recursive: true })
-const create = (path) => mkdir(path, { recursive: true })
-
 const source = join(__dirname, './context')
 
+/** @type {toa.operations.deployment.Operator} */
 let operator
+/** @type {string} */
 let target
 
 beforeAll(async () => {
@@ -28,7 +26,7 @@ afterAll(async () => {
 
 describe('directory', () => {
   it('should create temporary target directory', async () => {
-    await expect(access(target)).resolves.not.toThrow()
+    await expect(is(target)).resolves.toEqual(true)
   })
 
   it('should throw on non-empty target directory', async () => {
@@ -39,14 +37,14 @@ describe('directory', () => {
     const tmp = join(tmpdir(), 'toa-integration-' + newid())
     const dir = await operator.export(tmp)
 
-    await expect(access(dir)).resolves.not.toThrow()
+    await expect(is(dir)).resolves.toEqual(true)
     await remove(dir)
   })
 
   it('should use existent empty target directory', async () => {
     const tmp = join(tmpdir(), 'toa-integration-' + newid())
 
-    await create(tmp)
+    await ensure(tmp)
     await expect(operator.export(tmp)).resolves.not.toThrow()
     await remove(tmp)
   })
@@ -74,7 +72,14 @@ describe('chart', () => {
   })
 
   it('should export dependency references', () => {
-    expect(chart).toEqual(fixtures.chart)
-    expect(values).toEqual(fixtures.values)
+    expect(chart.dependencies).toEqual(fixtures.chart.dependencies)
+
+    for (const name of Object.keys(fixtures.chart.dependencies)) {
+      expect(values[name]).toEqual(fixtures.values[name])
+    }
+  })
+
+  it('should export dependency services', () => {
+    expect(values.services).toEqual(fixtures.values.services)
   })
 })

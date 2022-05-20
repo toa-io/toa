@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @returns {toa.operations.deployment.Dependency}
+ * @returns {toa.operations.deployment.dependency.Declaration}
  */
 const deployment = () => {
   const fullname = 'rabbitmq'

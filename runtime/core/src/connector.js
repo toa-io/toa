@@ -75,7 +75,7 @@ class Connector {
   }
 
   /**
-   * Connects dependant Connectors then self
+   * Connects dependants then self
    *
    * In case of exception disconnects with current connection interruption
    *
@@ -89,7 +89,7 @@ class Connector {
     this.#disconnecting = undefined
 
     this.#connecting = (async () => {
-      await Promise.all(this.#dependencies.map(connector => connector.connect()))
+      await Promise.all(this.#dependencies.map((connector) => connector.connect()))
       await this.connection()
     })()
 
@@ -172,7 +172,7 @@ class Connector {
   async disconnection () {}
 
   /**
-   * Called after disconnecting self and dependants is complete
+   * Called after self and dependants disconnection is complete
    *
    * @returns {void}
    */

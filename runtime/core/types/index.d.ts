@@ -1,3 +1,6 @@
+export * as connectors from './connectors'
+export * as extensions from './extensions'
+
 export { Connector } from './connector'
 export { Exception } from './exception'
 export { Locator } from './locator'

@@ -1,13 +1,13 @@
 # This file helps with IDE autocompletion
 compositions:
   - name: todos
-    image: localhost:5000/todos:0.0.0
+    image: localhost:5000/composition-todos:0.0.0
     replicas: 2
     components:
       - todos-tasks
       - todos-stats
   - name: messages
-    image: localhost:5000/messages:0.0.0
+    image: localhost:5000/composition-messages:0.0.0
     replicas: 2
     components:
       - users-users
@@ -16,3 +16,7 @@ components:
   - todos-tasks
   - todos-stats
   - users-users
+services:
+  - name: resources-gateway
+    image: localhost:5000/resources-gateway:0.0.0
+    port: 8000

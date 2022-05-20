@@ -1,4 +1,4 @@
-// noinspection ES6UnusedImports
+// noinspection ES6UnusedImports,JSUnusedGlobalSymbols
 
 import { Connector, Locator, Receiver, Reply, Request, Runtime } from '..'
 
@@ -31,3 +31,8 @@ declare namespace toa.core.connectors.bindings {
     }
 
 }
+
+export type Consumer = toa.core.connectors.bindings.Consumer
+export type Emitter = toa.core.connectors.bindings.Emitter
+export type Broadcaster = toa.core.connectors.bindings.Broadcaster
+export type Factory = toa.core.connectors.bindings.Factory

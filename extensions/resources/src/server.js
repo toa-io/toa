@@ -5,6 +5,8 @@ const express = require('express')
 const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/gears')
 
+const { PORT } = require('./constants')
+
 class Server extends Connector {
   #app
   #server
@@ -62,7 +64,6 @@ class Server extends Connector {
   }
 }
 
-const PORT = 8000
 const METHODS = { HEAD: 1, GET: 1, POST: 1, PUT: 1, PATCH: 1 }
 const SAFE = { HEAD: 1, GET: 1 }
 

@@ -1,0 +1,34 @@
+{{- range .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-{{ required "deployment name is required" .name }}
+spec:
+  replicas: {{ .replicas | default 2 }}
+  selector:
+    matchLabels:
+      toa.io/service: {{ .name }}
+  template:
+    metadata:
+      labels:
+        toa.io/service: {{ .name }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: {{ .image }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-{{ .name }}
+spec:
+  type: ClusterIP
+  selector:
+    toa.io/service: {{ .name }}
+  ports:
+    - name: port-{{ .port }}
+      protocol: TCP
+      port: {{ .port }}
+      targetPort: {{ .port }}
+---
+{{- end }}

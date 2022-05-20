@@ -10,9 +10,10 @@ const builder = (yargs) => {
     })
     .positional('request', {
       type: 'string',
-      desc: 'Request YAML'
+      desc: 'Request object (yaml)'
     })
     .option('path', {
+      alias: 'p',
       group: 'Command options:',
       type: 'string',
       describe: 'Path to component',

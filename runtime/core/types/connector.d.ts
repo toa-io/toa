@@ -1,6 +1,9 @@
 declare namespace toa.core {
 
     interface Connector {
+        id: string
+        connected: boolean
+        
         depends(connector: Connector): Connector
 
         link(connector: Connector): void

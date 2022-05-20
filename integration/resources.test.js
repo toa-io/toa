@@ -16,7 +16,7 @@ beforeAll(async () => {
   framework.env('local')
 
   composition = await framework.compose(['messages', 'stats', 'credits'])
-  resources = (new extension.Factory(boot)).process()
+  resources = (new extension.Factory(boot)).service()
 
   await resources.connect()
   await timeout(200) // resources discovery
@@ -612,7 +612,7 @@ describe('response', () => {
 
       for (const message of output) {
         if (previous !== undefined) {
-          expect(message.timestamp < previous.timestamp).toBe(true)
+          expect(message.timestamp < previous?.timestamp).toBe(true)
         }
 
         previous = message
@@ -620,7 +620,7 @@ describe('response', () => {
     })
 
     it('should select with omit, limit', async () => {
-      // omit + limit must be less then times in context of this test
+      // omit + limit must be less than times in context of this test
       const omit = random(2)
       const limit = 1 + random(2)
       const response = await fetch(`${url}?omit=${omit}&limit=${limit}`)

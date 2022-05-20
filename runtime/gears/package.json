@@ -12,7 +12,6 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "main": "src/index.js",
-  "types": "types/index.d.ts",
   "publishConfig": {
     "access": "public"
   },

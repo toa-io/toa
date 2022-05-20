@@ -48,18 +48,21 @@ class Operator {
   async install (options = {}) {
     options = Object.assign({}, OPTIONS, options)
 
-    /** @type {Array<Promise<any>>} */
-    const tasks = [this.export()]
-
-    if (options.dry !== true) {
-      tasks.push(this.build())
-    }
-
-    const [source] = await Promise.all(tasks)
+    const [source] = await Promise.all([this.export(), this.build()])
 
     await this.#deployment.install(options)
 
     await directory.remove(source)
+  }
+
+  async template () {
+    const source = await this.export()
+
+    const output = await this.#deployment.template()
+
+    await directory.remove(source)
+
+    return output
   }
 
   /**
@@ -75,9 +78,8 @@ class Operator {
   }
 }
 
-/** @type {toa.operations.deployment.OperatorInstallationOptions} */
+/** @type {toa.operations.deployment.installation.Options} */
 const OPTIONS = {
-  dry: false,
   wait: false
 }
 

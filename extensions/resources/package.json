@@ -19,10 +19,10 @@
     "process": "node ./src/process.js",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
+  "peerDependencies": {
+    "@toa.io/runtime": "*"
+  },
   "dependencies": {
-    "@toa.io/core": "0.2.0-dev.36",
-    "@toa.io/gears": "0.2.0-dev.36",
-    "@toa.io/schema": "0.2.0-dev.36",
     "express": "4.17.1",
     "path-to-regexp": "6.2.0"
   },

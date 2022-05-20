@@ -15,7 +15,7 @@ it('should assign url', () => {
 
   instance.tag(registry)
 
-  expect(instance.reference).toEqual(`${registry}/${fixtures.scope}/${fixtures.name}:${fixtures.key}`)
+  expect(instance.reference).toEqual(`${registry}/${fixtures.scope}/class-${fixtures.name}:${fixtures.version}`)
 })
 
 describe('prepare', () => {

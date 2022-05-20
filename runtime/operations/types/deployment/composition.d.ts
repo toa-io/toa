@@ -1,9 +1,11 @@
+// noinspection ES6UnusedImports
+
+import type { Deployable } from './deployment'
+
 declare namespace toa.operations.deployment {
 
-    interface Composition {
-        name: string
+    interface Composition extends Deployable {
         components: Array<string>
-        image: string
     }
 
 }

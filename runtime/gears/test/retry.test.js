@@ -10,8 +10,10 @@ beforeEach(() => {
 })
 
 it('should return', async () => {
-  const result = await retry(() => 1)
-  expect(result).toBe(1)
+  const value = random()
+  const result = await retry(() => value)
+
+  expect(result).toBe(value)
 })
 
 it('should retry', async () => {
@@ -55,6 +57,7 @@ it('should throw on failed retries', async () => {
 it('should delay attempts', async () => {
   const start = +new Date()
 
+  /** @type {toa.gears.retry.Task} */
   const fn = (retry, attempt) => {
     if (attempt < 3) retry()
   }

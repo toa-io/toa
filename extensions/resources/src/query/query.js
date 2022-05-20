@@ -34,13 +34,13 @@ class Query {
       current = current.parent
     } while (current !== undefined)
 
-    merge(query, DEFAULT, { ignore: true })
+    merge(query, DEFAULTS, { ignore: true })
 
     return query
   }
 }
 
-const DEFAULT = {
+const DEFAULTS = {
   omit: {
     range: [0, 1000]
   },

@@ -8,10 +8,10 @@ const exec = promisify(execSync)
 /**
  * @param source {string}
  * @param target {string}
- * @returns {void}
+ * @returns {Promise<void>}
  */
 const copy = async (source, target) => {
-  await exec(`cp -r "${source}" "${target}"`)
+  await exec(`cp -r "${source}/" "${target}"`)
 }
 
 exports.copy = copy

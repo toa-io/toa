@@ -5,12 +5,10 @@
  * @implements {toa.operations.deployment.Composition}
  */
 class Composition {
-  /** @type {string} */
   name
+  image
   /** @type {Array<string>} */
   components
-  /** @type {string} */
-  image
 
   /**
    * @param composition {toa.formation.context.Composition}
@@ -18,8 +16,8 @@ class Composition {
    */
   constructor (composition, image) {
     this.name = composition.name
-    this.components = composition.components.map((component) => component.locator.label)
     this.image = image.reference
+    this.components = composition.components.map((component) => component.locator.label)
   }
 }
 

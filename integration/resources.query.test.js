@@ -15,7 +15,7 @@ const locator = (path) => 'http://localhost:8000' + path
 
 beforeAll(async () => {
   composition = await framework.compose(['messages', 'stats', 'credits'])
-  resources = await (new extension.Factory(boot)).process()
+  resources = await (new extension.Factory(boot)).service()
 
   await resources.connect()
   await timeout(200) // resources discovery

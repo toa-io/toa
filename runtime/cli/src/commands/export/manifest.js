@@ -4,15 +4,16 @@ const { manifest } = require('../../handlers/export/manifest')
 
 const builder = (yargs) => {
   yargs
-    .positional('path', {
+    .option('path', {
+      alias: 'p',
+      group: 'Command options:',
       type: 'string',
       desc: 'Path to component',
       default: '.'
     })
-    .usage('Usage: toa manifest /path/to/component')
 }
 
-exports.command = 'manifest [path]'
+exports.command = 'manifest'
 exports.desc = 'Print manifest'
 exports.builder = builder
 exports.handler = manifest

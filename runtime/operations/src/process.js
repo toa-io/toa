@@ -6,13 +6,19 @@ const execa = require('execa')
  * @implements {toa.operations.Process}
  */
 class Process {
-  async execute (cmd, args) {
-    const result = execa(cmd, args)
+  async execute (cmd, args, options = {}) {
+    /** @type {execa.ExecaReturnValue<import('stream').Stream>} */
+    const command = execa(cmd, args)
 
-    result.stdout.pipe(process.stdout)
-    result.stderr.pipe(process.stderr)
+    if (options.silently !== true) {
+      command.stdout.pipe(process.stdout)
+      command.stderr.pipe(process.stderr)
+    }
 
-    return result
+    /** @type {execa.ExecaReturnValue<string>} */
+    const result = await command
+
+    return result.stdout
   }
 }
 

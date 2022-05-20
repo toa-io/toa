@@ -1,7 +1,8 @@
-// noinspection ES6UnusedImports
+// noinspection ES6UnusedImports,JSUnusedGlobalSymbols
 
-import type { Composition } from "./composition"
-import type { Reference } from './dependency'
+import type { Composition } from './composition'
+import type { Service } from './service'
+import type { dependency } from './dependency'
 
 declare namespace toa.operations.deployment {
 
@@ -12,25 +13,40 @@ declare namespace toa.operations.deployment {
         description?: string
         version: string
         appVersion: string
-        dependencies: Array<Reference>
+        dependencies: Array<dependency.Reference>
     }
 
-    interface Contents extends Object {
+    interface Contents {
         compositions: Array<Composition>
         components: Array<string>
+        services?: Array<Service>
     }
 
-    interface DeploymentInstallationOptions {
-        dry?: boolean
-        wait?: boolean
+    namespace installation {
+
+        interface Options {
+            wait?: boolean
+        }
+
+    }
+
+    interface Deployable {
+        name: string
+        image: string
     }
 
     interface Deployment {
         export(target: string): Promise<void>
 
-        install(options: DeploymentInstallationOptions): Promise<void>
+        install(options: installation.Options): Promise<void>
+
+        template(): Promise<string>
     }
 
 }
 
-export type DeploymentInstallationOptions = toa.operations.deployment.DeploymentInstallationOptions
+export namespace installation {
+    export type Options = toa.operations.deployment.installation.Options
+}
+
+export type Deployable = toa.operations.deployment.Deployable

@@ -2,8 +2,9 @@
 
 const { Image } = require('../../../src/deployment/images/image')
 const { generate } = require('randomstring')
+const { hash } = require('@toa.io/gears')
 
-const key = generate()
+const version = generate()
 const name = generate()
 
 /**
@@ -14,16 +15,18 @@ class Class extends Image {
     return name
   }
 
-  get key () {
-    return key
+  get version () {
+    return version
   }
 }
 
-const runtime = {}
+const runtime = {
+  version: generate()
+}
 
 exports.scope = generate()
 exports.name = name
-exports.key = key
+exports.version = hash(runtime.version + ';' + version)
 exports.Class = Class
 exports.runtime = runtime
 exports.process = process

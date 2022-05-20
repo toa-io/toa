@@ -3,9 +3,8 @@
 const { join, posix } = require('node:path')
 const { readFile: read, writeFile: write } = require('node:fs/promises')
 
-const { directory } = require('@toa.io/gears')
+const { directory, hash } = require('@toa.io/gears')
 
-// noinspection JSClosureCompilerSyntax
 /**
  * @implements {toa.operations.deployment.images.Image}
  * @abstract
@@ -24,6 +23,8 @@ class Image {
   #scope
   /** @type {toa.formation.context.Runtime} */
   #runtime
+  /** @type {string} */
+  #type
 
   /**
    * @param scope {string}
@@ -32,6 +33,7 @@ class Image {
   constructor (scope, runtime) {
     this.#scope = scope
     this.#runtime = runtime
+    this.#type = this.constructor.name.toLowerCase()
   }
 
   /**
@@ -46,27 +48,40 @@ class Image {
    * @protected
    * @type {string}
    */
-  get key () {}
+  get version () {}
 
   tag (base) {
-    this.reference = posix.join(base, `${this.#scope}/${this.name}:${this.key}`)
+    const tag = hash(this.#runtime.version + ';' + this.version)
+
+    this.reference = posix.join(base, `${this.#scope}/${this.#type}-${this.name}:${tag}`)
   }
 
   async prepare (root) {
     if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')
 
-    const path = join(root, this.name)
+    const path = join(root, `${this.#type}-${this.name}.${this.version}`)
 
     await directory.ensure(path)
 
-    const dockerfile = (await read(this.dockerfile, 'utf-8'))
-      .replace(/{{(\w+)}}/g, (_, key) => this.#runtime[key])
+    const template = await read(this.dockerfile, 'utf-8')
+    const contents = template.replace(/{{(\.?\w+)}}/g, (_, key) => this.#value(key))
 
-    await write(join(path, 'Dockerfile'), dockerfile)
+    await write(join(path, 'Dockerfile'), contents)
 
     this.context = path
 
     return path
+  }
+
+  /**
+   * @param key {string}
+   * @returns {string}
+   */
+  #value (key) {
+    const [, property] = key.split('.')
+
+    if (property !== undefined) return this[property]
+    else return this.#runtime[key]
   }
 }
 

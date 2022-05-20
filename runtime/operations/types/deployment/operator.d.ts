@@ -1,11 +1,8 @@
 // noinspection ES6UnusedImports
 
-import type { DeploymentInstallationOptions } from './deployment'
+import { installation } from './deployment'
 
 declare namespace toa.operations.deployment {
-
-    interface OperatorInstallationOptions extends DeploymentInstallationOptions {
-    }
 
     interface Operator {
         export(path?: string): Promise<string>
@@ -14,7 +11,9 @@ declare namespace toa.operations.deployment {
 
         build(): Promise<void>
 
-        install(options?: OperatorInstallationOptions): Promise<void>
+        install(options?: installation.Options): Promise<void>
+
+        template(): Promise<string>
     }
 
 }

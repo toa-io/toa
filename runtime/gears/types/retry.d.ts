@@ -29,12 +29,9 @@ declare namespace toa.gears {
             dispersion?: number
         }
 
-        type Task<T> = (...args: any[]) => Promise<T>
+        type Next = () => void
+        type Task = (retry: Next, attempt: number) => Promise<any>
     }
 
-    type Retry<T> = (func: retry.Task<T>, options?: retry.Options, attempt?: number) => Promise<T>
+    type Retry = (func: retry.Task, options?: retry.Options, attempt?: number) => Promise<any>
 }
-
-export type RetryOptions = toa.gears.retry.Options
-export type RetryTask<T> = toa.gears.retry.Task<T>
-export type Retry<T> = toa.gears.Retry<T>

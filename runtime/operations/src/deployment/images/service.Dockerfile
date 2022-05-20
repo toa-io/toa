@@ -5,7 +5,8 @@ RUN npm set registry {{registry}}
 RUN npm set proxy {{proxy}}
 RUN npm i -g @toa.io/runtime@{{version}}
 
-WORKDIR /composition
+WORKDIR /service
 ADD . .
+RUN npm i
 
-CMD toa compose *
+CMD toa serve {{.service}}

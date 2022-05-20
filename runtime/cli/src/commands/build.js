@@ -4,19 +4,16 @@ const { build } = require('../handlers/build')
 
 const builder = (yargs) => {
   yargs
-    .positional('path', {
+    .option('path', {
+      alias: 'p',
+      group: 'Command options:',
       type: 'string',
       desc: 'Path to context',
       default: '.'
     })
-    .option('output', {
-      group: 'Command options:',
-      boolean: true,
-      desc: 'Print log to stdout'
-    })
 }
 
-exports.command = 'build [path]'
-exports.desc = 'Build and push Context Docker images'
+exports.command = 'build'
+exports.desc = 'Build and push docker images'
 exports.builder = builder
 exports.handler = build

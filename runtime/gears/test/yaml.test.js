@@ -8,7 +8,13 @@ describe('load', () => {
   it('should return object', async () => {
     const object = await yaml(path.resolve(__dirname, './yaml.yaml'))
 
-    expect(object?.ok).toBeTruthy()
+    expect(object.foo).toEqual('bar')
+  })
+
+  it('should return array', async () => {
+    const objects = await yaml.all(path.resolve(__dirname, './yaml.multi.yaml'))
+
+    expect(objects).toStrictEqual([{ foo: 'bar' }, { baz: 1 }])
   })
 
   it('should throw on file read error', async () => {
@@ -22,7 +28,7 @@ describe('sync', () => {
   it('should return object', () => {
     const object = yaml.sync(path.resolve(__dirname, './yaml.yaml'))
 
-    expect(object?.ok).toBeTruthy()
+    expect(object.foo).toEqual('bar')
   })
 
   it('should throw on file read error', () => {
@@ -36,7 +42,7 @@ describe('try', () => {
   it('should return object', async () => {
     const object = await yaml.try(path.resolve(__dirname, './yaml.yaml'))
 
-    expect(object?.ok).toBeTruthy()
+    expect(object?.foo).toEqual('bar')
   })
 
   it('should return null on file read error', async () => {
@@ -46,14 +52,10 @@ describe('try', () => {
   })
 })
 
-describe('dump', () => {
-  it('should dump object', () => {
-    expect(yaml.dump({ ok: 1 })).toBe('ok: 1\n')
-  })
+it('should dump', () => {
+  expect(yaml.dump({ ok: 1 })).toBe('ok: 1\n')
 })
 
-describe('parse', () => {
-  it('should parse', () => {
-    expect(yaml.parse('{ok: {foo: 1}}')).toStrictEqual({ ok: { foo: 1 } })
-  })
+it('should parse ', () => {
+  expect(yaml.parse('{ok: {foo: 1}}')).toStrictEqual({ ok: { foo: 1 } })
 })

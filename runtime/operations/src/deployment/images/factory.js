@@ -1,6 +1,7 @@
 'use strict'
 
 const { Composition } = require('./composition')
+const { Service } = require('./service')
 
 /**
  * @implements {toa.operations.deployment.images.Factory}
@@ -20,8 +21,18 @@ class Factory {
     this.#runtime = runtime
   }
 
+  /**
+   * @returns {Composition}
+   */
   composition (composition) {
     return new Composition(this.#scope, this.#runtime, composition)
+  }
+
+  /**
+   * @returns {Service}
+   */
+  service (path, service) {
+    return new Service(this.#scope, this.#runtime, path, service)
   }
 }
 

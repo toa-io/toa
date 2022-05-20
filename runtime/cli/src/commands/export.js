@@ -2,6 +2,6 @@
 
 const builder = (yargs) => yargs.commandDir('./export')
 
-exports.command = 'export <command>'
-exports.desc = ''
+exports.command = 'export <artifact>'
+exports.desc = 'Export internal artifacts'
 exports.builder = builder

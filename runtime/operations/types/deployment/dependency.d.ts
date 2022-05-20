@@ -1,18 +1,43 @@
+// noinspection JSUnusedGlobalSymbols,ES6UnusedImports
+
+import { Service } from './service'
+
 declare namespace toa.operations.deployment {
 
-    interface Reference {
-        name: string
-        version: string
-        repository?: string
-        alias?: string
-        values?: Object
+    namespace dependency {
+
+        interface Reference {
+            name: string
+            version: string
+            repository?: string
+            alias?: string
+            values?: Object
+        }
+
+        interface Service {
+            group: string
+            name: string
+            version: string
+            port: number
+        }
+
+        interface Declaration {
+            references?: Array<Reference>
+            services?: Array<Service> // dependency.Service
+        }
+
     }
 
     interface Dependency {
-        references: Array<Reference>
+        references?: dependency.Reference[]
+        services?: Service[] // deployment.Service
     }
 
 }
 
-export type Reference = toa.operations.deployment.Reference
+export namespace dependency {
+    export type Reference = toa.operations.deployment.dependency.Reference
+    export type Service = toa.operations.deployment.dependency.Service
+}
+
 export type Dependency = toa.operations.deployment.Dependency

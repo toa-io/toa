@@ -24,10 +24,10 @@ class Deployment {
    * @param process {toa.operations.Process}
    */
   constructor (context, compositions, dependencies, process) {
-    const { references } = Deployment.#sort(dependencies)
+    const dependency = Deployment.#merge(dependencies)
 
-    this.#declaration = Deployment.#declare(context, references)
-    this.#contents = Deployment.#describe(compositions, references)
+    this.#declaration = Deployment.#declare(context, dependency)
+    this.#contents = Deployment.#describe(compositions, dependency)
     this.#process = process
   }
 
@@ -50,35 +50,45 @@ class Deployment {
     const args = []
 
     if (options.wait === true) args.push('--wait')
-    if (options.dry === true) args.push('--dry-run')
 
     await this.#process.execute('helm', ['dependency', 'update', this.#target])
     await this.#process.execute('helm', ['upgrade', this.#declaration.name, '-i', ...args, this.#target])
   }
 
+  async template () {
+    if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
+
+    await this.#process.execute('helm', ['dependency', 'update', this.#target], { silently: true })
+
+    return await this.#process.execute('helm',
+      ['template', this.#declaration.name, this.#target],
+      { silently: true })
+  }
+
   /**
    * @param dependencies {Array<toa.operations.deployment.Dependency>}
-   * @returns {{ references: Array<toa.operations.deployment.Reference> }}
+   * @returns {toa.operations.deployment.Dependency}
    */
-  static #sort (dependencies) {
+  static #merge (dependencies) {
     /** @type {Array<toa.operations.deployment.Reference>} */
     const references = []
+    /** @type {Array<toa.operations.deployment.Service>} */
+    const services = []
 
     for (const dependency of dependencies) {
-      if (dependency.references === undefined) continue
-
-      references.push(...dependency.references)
+      if (dependency.references !== undefined) references.push(...dependency.references)
+      if (dependency.services !== undefined) services.push(...dependency.services)
     }
 
-    return { references }
+    return { references, services }
   }
 
   /**
    * @param context {toa.formation.context.Context}
-   * @param references {Array<toa.operations.deployment.Reference>}
+   * @param dependency {toa.operations.deployment.Dependency}
    * @returns {toa.operations.deployment.Declaration}
    */
-  static #declare (context, references) {
+  static #declare (context, { references }) {
     const { name, description, version } = context
 
     const dependencies = references.map(({ values, ...rest }) => rest)
@@ -95,10 +105,10 @@ class Deployment {
 
   /**
    * @param compositions {Array<toa.operations.deployment.Composition>}
-   * @param references {Array<toa.operations.deployment.Reference>}
+   * @param dependency {toa.operations.deployment.Dependency}
    * @returns {toa.operations.deployment.Contents}
    */
-  static #describe (compositions, references) {
+  static #describe (compositions, { references, services }) {
     /** @type {Set<string>} */
     const components = new Set()
 
@@ -108,7 +118,7 @@ class Deployment {
       }
     }
 
-    const dependencies = references.reduce((map, reference) => {
+    const dependencies = references?.reduce((map, reference) => {
       const { name, alias, values } = reference
 
       map[alias || name] = values
@@ -119,6 +129,7 @@ class Deployment {
     return {
       compositions,
       components: Array.from(components),
+      services,
       ...dependencies
     }
   }

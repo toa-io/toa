@@ -8,8 +8,6 @@ const { Image } = require('./image')
 class Composition extends Image {
   dockerfile = join(__dirname, 'composition.Dockerfile')
 
-  /** @type {toa.formation.context.Runtime} */
-  #runtime
   /** @type {string} */
   #name
   /** @type {Array<toa.formation.component.Component>} */
@@ -24,27 +22,17 @@ class Composition extends Image {
     super(scope, runtime)
 
     this.#name = composition.name
-    this.#runtime = runtime
     this.#components = composition.components
   }
 
-  /**
-   * @protected
-   * @returns {string}
-   */
-  get key () {
-    const components = this.#components.map((component) => component.locator.id + ':' + component.version)
-    const tag = [this.#runtime.version, ...components].join(';')
-
-    return hash(tag)
-  }
-
-  /**
-   * @protected
-   * @returns {string}
-   */
   get name () {
     return this.#name
+  }
+
+  get version () {
+    const tags = this.#components.map((component) => component.locator.id + ':' + component.version)
+
+    return hash(tags.join(';'))
   }
 
   async prepare (root) {

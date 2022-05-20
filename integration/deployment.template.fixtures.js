@@ -1,5 +1,7 @@
 'use strict'
 
+const scope = 'dummies'
+
 const compositions = [
   {
     name: 'credits-balance',
@@ -15,11 +17,16 @@ const compositions = [
   }
 ]
 
+const components = ['credits-balance', 'dummies-a', 'messages-messages', 'stats-stats']
+
 const services = [
   {
-    name: 'resources-gateway'
+    name: 'resources-gateway',
+    port: 8000
   }
 ]
 
+exports.scope = scope
 exports.compositions = compositions
+exports.components = components
 exports.services = services
