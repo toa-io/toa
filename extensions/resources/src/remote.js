@@ -34,6 +34,7 @@ class Remote extends Connector {
     if (match !== undefined) {
       try {
         const reply = await this.#call(req, match)
+
         translate.response.ok(reply, res, req)
       } catch (e) {
         translate.response.exception(e, res)

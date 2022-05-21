@@ -16,7 +16,7 @@ beforeAll(async () => {
   framework.env('local')
 
   composition = await framework.compose(['messages', 'stats', 'credits'])
-  resources = (new extension.Factory(boot)).service()
+  resources = (new extension.Factory(boot)).service('gateway')
 
   await resources.connect()
   await timeout(200) // resources discovery
@@ -208,7 +208,7 @@ describe('request', () => {
     it('should return 400 if if-match is invalid', async () => {
       const response = await fetch(urls.message, {
         method: 'PUT',
-        body: JSON.stringify({ text: 'bar' }),
+        body: JSON.stringify({ sender, text: 'bar' }),
         headers: {
           'content-type': 'application/json',
           'if-match': 'foo'
@@ -235,9 +235,9 @@ describe('request', () => {
         }
       })
 
-      const body = await response.json()
-
       expect(response.status).toBe(400)
+
+      const body = await response.json()
 
       expect(body).toStrictEqual({
         code: codes.RequestContract,
@@ -250,7 +250,7 @@ describe('request', () => {
     })
 
     it('should allow wildcard', async () => {
-      const wildcard = await fetch(urls.message, {
+      const response = await fetch(urls.message, {
         method: 'PUT',
         body: JSON.stringify({ sender, text: 'baz' }),
         headers: {
@@ -259,7 +259,7 @@ describe('request', () => {
         }
       })
 
-      expect(wildcard.status).toBe(200)
+      expect(response.status).toBe(200)
     })
   })
 

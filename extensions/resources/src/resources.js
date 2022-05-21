@@ -19,10 +19,12 @@ class Resources extends Connector {
 
   async connection () {
     await this.#broadcast.receive('expose', (definition) => this.#expose(definition))
-    await this.#broadcast.send('ping', {})
+    this.#broadcast.send('ping', {})
   }
 
-  async #expose ({ domain, name, resources }) {
+  async #expose (definition) {
+    const { domain, name, resources } = definition
+
     if (this.#remotes[domain] === undefined) this.#remotes[domain] = {}
 
     if (this.#remotes[domain][name] === undefined) {

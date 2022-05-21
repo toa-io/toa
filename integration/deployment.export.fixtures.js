@@ -67,7 +67,8 @@ const values = {
   services: expect.arrayContaining([
     {
       name: 'resources-gateway',
-      image: expect.stringMatching(/^[^/]+\/dummies\/service-resources-gateway:[a-z\d]+/)
+      image: expect.stringMatching(/^[^/]+\/dummies\/service-resources-gateway:[a-z\d]+/),
+      port: 8000
     }
   ]),
   'messages-mongodb': {

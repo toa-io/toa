@@ -4,14 +4,15 @@ const { exceptions: { codes } } = require('@toa.io/core')
 
 const etag = require('./etag')
 
-/** @hot */
+/**
+ * @param {toa.core.Reply} reply
+ * @param res
+ * @param req
+ * @hot
+ */
 const ok = (reply, res, req) => {
   if (reply.output?._version !== undefined) {
     const { _version, ...output } = reply.output
-
-    res.set('etag', etag.set(_version))
-    reply.output = output
-
     const condition = req.get('if-none-match')
 
     if (condition !== undefined && req.safe) {
@@ -22,6 +23,9 @@ const ok = (reply, res, req) => {
         return
       }
     }
+
+    res.set('etag', etag.set(_version))
+    reply.output = output
   }
 
   let status

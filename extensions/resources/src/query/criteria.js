@@ -11,7 +11,7 @@ class Criteria {
   constructor (value) {
     if (value === null) return
 
-    const last = value.substring(-1)
+    const last = value.slice(-1)
 
     if (last === ',' || last === ';') {
       this.#open = true
