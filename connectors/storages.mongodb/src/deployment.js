@@ -7,17 +7,18 @@
 const deployment = (values) => {
   const domains = new Set(values.map((value) => value.domain))
 
-  const references = [...domains].map(chart)
+  const references = [...domains].map((domain) => chart(domain))
 
   return { references }
 }
 
 /**
- * @param domain
+ * @param {string} domain
  * @returns {toa.operations.deployment.Reference}
  */
 const chart = (domain) => {
-  const alias = domain + '-mongodb'
+  // TODO: use locator.host('mongo')
+  const alias = domain + '-mongo'
 
   // TODO: credentials management
   const usernames = ['user']

@@ -12,25 +12,25 @@ const chart = {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'messages-mongodb'
+      alias: 'messages-mongo'
     },
     {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'stats-mongodb'
+      alias: 'stats-mongo'
     },
     {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'credits-mongodb'
+      alias: 'credits-mongo'
     },
     {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'dummies-mongodb'
+      alias: 'dummies-mongo'
     },
     {
       name: 'rabbitmq',
@@ -71,36 +71,36 @@ const values = {
       port: 8000
     }
   ]),
-  'messages-mongodb': {
+  'messages-mongo': {
     architecture: 'standalone',
-    fullnameOverride: 'messages-mongodb',
+    fullnameOverride: 'messages-mongo',
     auth: {
       usernames: ['user'],
       passwords: ['password'],
       databases: ['messages']
     }
   },
-  'stats-mongodb': {
+  'stats-mongo': {
     architecture: 'standalone',
-    fullnameOverride: 'stats-mongodb',
+    fullnameOverride: 'stats-mongo',
     auth: {
       usernames: ['user'],
       passwords: ['password'],
       databases: ['stats']
     }
   },
-  'credits-mongodb': {
+  'credits-mongo': {
     architecture: 'standalone',
-    fullnameOverride: 'credits-mongodb',
+    fullnameOverride: 'credits-mongo',
     auth: {
       usernames: ['user'],
       passwords: ['password'],
       databases: ['credits']
     }
   },
-  'dummies-mongodb': {
+  'dummies-mongo': {
     architecture: 'standalone',
-    fullnameOverride: 'dummies-mongodb',
+    fullnameOverride: 'dummies-mongo',
     auth: {
       usernames: ['user'],
       passwords: ['password'],

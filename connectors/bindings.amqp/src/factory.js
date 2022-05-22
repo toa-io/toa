@@ -11,7 +11,7 @@ const { Broadcaster } = require('./broadcaster')
 const { Connection } = require('./connection')
 
 /**
- * @implements {toa.core.connectors.bindings.Factory}
+ * @implements {toa.core.bindings.Factory}
  */
 class Factory {
   #connections = {}

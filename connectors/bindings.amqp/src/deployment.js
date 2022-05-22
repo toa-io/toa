@@ -11,7 +11,7 @@ const deployment = () => {
   const password = 'password'
   const erlangCookie = 'cookie'
 
-  const reference = {
+  const rabbitmq = {
     name: 'rabbitmq',
     version: '9.0.0',
     repository: 'https://charts.bitnami.com/bitnami',
@@ -25,7 +25,7 @@ const deployment = () => {
     }
   }
 
-  return { references: [reference] }
+  return { references: [rabbitmq] }
 }
 
 exports.deployment = deployment

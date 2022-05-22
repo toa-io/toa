@@ -1,5 +1,6 @@
-export * as connectors from './connectors'
+export * as bindings from './bindings'
 export * as extensions from './extensions'
+export * as storages from './storages'
 
 export { Connector } from './connector'
 export { Exception } from './exception'

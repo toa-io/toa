@@ -21,5 +21,5 @@ it('should invoke', async () => {
   const request = { query: { id: newid() } }
   const { stdout } = await cli('invoke', 'observe', request)
 
-  expect(stdout).toMatch(/balance: \d+/)
+  expect(stdout).toMatch(/balance: 10/)
 })

@@ -5,7 +5,7 @@ const boot = require('@toa.io/boot')
 const { context: find } = require('../util/find')
 
 /**
- * @param argv {{ wait: boolean, dry: boolean, path: string }}
+ * @param {{ wait: boolean, dry: boolean, path: string }} argv
  * @returns {Promise<void>}
  */
 const deploy = async (argv) => {
