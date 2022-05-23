@@ -34,7 +34,7 @@ class Connection extends Connector {
   }
 
   async channel () {
-    return this.#connection.createChannel()
+    return await this.#connection.createChannel()
   }
 }
 

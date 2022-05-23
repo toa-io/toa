@@ -8,10 +8,14 @@ async function composition (paths, options) {
   normalize(options)
 
   const manifests = await Promise.all(paths.map((path) => boot.component(path, options)))
-  const extensions = await Promise.all(manifests.map(boot.extensions))
+
+  const extensions = (await Promise.all(manifests.map(boot.extensions)))
+    .filter((extension) => extension !== undefined)
+
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
   const runtimes = await Promise.all(manifests.map(boot.runtime))
 
+  // noinspection JSUnresolvedVariable
   const producers = runtimes.map((runtime, index) =>
     boot.bindings.produce(runtime, manifests[index].operations))
 

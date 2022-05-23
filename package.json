@@ -52,10 +52,9 @@
     "publish:local": "npm publish --workspaces",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
-    "registry": "docker run --name verdaccio -p 4873:4873 -d --rm verdaccio/verdaccio && sleep 5 && npm adduser --registry http://localhost:4873",
     "setup": "npm run registry && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
-    "env": "npm run setup && npm run connect"
+    "env": "docker compose up -d && sleep 3000 && npm adduser --registry http://localhost:4873"
   },
   "standard": {
     "parser": "@babel/eslint-parser",

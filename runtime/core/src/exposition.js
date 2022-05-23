@@ -1,11 +1,15 @@
 'use strict'
 
-class Exposition {
+const { Connector } = require('./connector')
+
+class Exposition extends Connector {
   locator
 
   #manifest
 
   constructor (locator, manifest) {
+    super()
+
     this.locator = locator
 
     this.#manifest = Exposition.#expose(manifest)

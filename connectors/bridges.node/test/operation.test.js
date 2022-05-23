@@ -8,6 +8,7 @@ const fixtures = require('./operation.fixtures')
 let operation
 
 beforeEach(() => {
+  jest.clearAllMocks()
   operation = new Operation(fixtures.operation, fixtures.context)
 })
 

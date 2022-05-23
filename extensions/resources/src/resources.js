@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { console } = require('@toa.io/gears')
 
 class Resources extends Connector {
   #broadcast
@@ -20,6 +21,8 @@ class Resources extends Connector {
   async connection () {
     await this.#broadcast.receive('expose', (definition) => this.#expose(definition))
     this.#broadcast.send('ping', {})
+
+    console.info('Gateway started')
   }
 
   async #expose (definition) {

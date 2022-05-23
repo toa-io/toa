@@ -38,28 +38,22 @@ class Connector {
     let next
 
     if (connector instanceof Array) {
-      connector = connector.filter((item) => item instanceof Connector)
+      if (connector.length === 0) throw new Error('Connectors array must not be empty')
 
-      if (connector.length > 0) {
+      if (connector.length > 1) {
         next = new Connector()
 
         for (const item of connector) {
           this.#dependencies.push(item)
           item.depends(next)
         }
-      }
-    } else {
-      if (connector instanceof Connector) {
-        next = connector
-      }
-    }
+      } else next = connector[0]
+    } else next = connector
 
-    if (next !== undefined) {
-      this.#dependencies.push(next)
-      next.link(this)
+    this.#dependencies.push(next)
+    next.link(this)
 
-      return next
-    } else return this
+    return next
   }
 
   /**
@@ -87,6 +81,8 @@ class Connector {
     if (this.#connecting) return this.#connecting
 
     this.#disconnecting = undefined
+
+    console.debug(`Connecting '${this.id}' with ${this.#dependencies.length} dependencies...`)
 
     this.#connecting = (async () => {
       await Promise.all(this.#dependencies.map((connector) => connector.connect()))

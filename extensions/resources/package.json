@@ -20,7 +20,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/runtime": "*"
+    "@toa.io/bindings.amqp": "*",
+    "@toa.io/core": "*",
+    "@toa.io/gears": "*",
+    "@toa.io/schema": "*"
   },
   "dependencies": {
     "express": "4.17.1",
