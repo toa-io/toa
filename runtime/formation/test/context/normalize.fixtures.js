@@ -1,6 +1,5 @@
 'use strict'
 
-/** @type {toa.formation.context.Context} */
 const context = {
   runtime: {
     version: '0.0.0'

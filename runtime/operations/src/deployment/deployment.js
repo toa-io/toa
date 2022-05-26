@@ -18,7 +18,7 @@ class Deployment {
   #target
 
   /**
-   * @param context {toa.formation.context.Context}
+   * @param context {toa.formation.Context}
    * @param compositions {Array<toa.operations.deployment.Composition>}
    * @param dependencies {Array<toa.operations.deployment.Dependency>}
    * @param process {toa.operations.Process}
@@ -84,7 +84,7 @@ class Deployment {
   }
 
   /**
-   * @param context {toa.formation.context.Context}
+   * @param context {toa.formation.Context}
    * @param dependency {toa.operations.deployment.Dependency}
    * @returns {toa.operations.deployment.Declaration}
    */

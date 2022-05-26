@@ -2,7 +2,7 @@
 
 /**
  * Resolves component IDs within compositions with Component objects
- * @param context {toa.formation.context.Context}
+ * @param {toa.formation.Context} context
  * @returns {void}
  */
 const dereference = (context) => {
@@ -14,7 +14,7 @@ const dereference = (context) => {
 }
 
 /**
- * @param components {Array<toa.formation.component.Component>}
+ * @param {Array<toa.formation.Component>} components
  * @returns {toa.formation.component.Map}
  */
 const map = (components) => {

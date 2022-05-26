@@ -11,7 +11,7 @@ const { Service } = require('./service')
  * @implements {toa.operations.deployment.Factory}
  */
 class Factory {
-  /** @type {toa.formation.context.Context} */
+  /** @type {toa.formation.Context} */
   #context
   /** @type {toa.operations.deployment.images.Registry} */
   #registry
@@ -19,7 +19,7 @@ class Factory {
   #process
 
   /**
-   * @param context {toa.formation.context.Context}
+   * @param context {toa.formation.Context}
    */
   constructor (context) {
     this.#context = context
@@ -31,6 +31,7 @@ class Factory {
 
   operator () {
     const compositions = this.#context.compositions.map((composition) => this.#composition(composition))
+    // noinspection JSCheckFunctionSignatures
     const dependencies = this.#dependencies({ ...this.#context.connectors, ...this.#context.extensions })
     const deployment = new Deployment(this.#context, compositions, dependencies, this.#process)
 

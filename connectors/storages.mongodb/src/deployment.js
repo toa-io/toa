@@ -1,29 +1,29 @@
 'use strict'
 
 /**
- * @param values
+ * @param {toa.formation.component.Brief[]} components
  * @returns {toa.operations.deployment.Dependency}
  */
-const deployment = (values) => {
-  const domains = new Set(values.map((value) => value.domain))
+const deployment = (components) => {
+  const domains = new Set()
+  const references = []
 
-  const references = [...domains].map((domain) => chart(domain))
+  for (const component of components) {
+    if (domains.has(component.locator.domain)) continue
+
+    references.push(chart(component))
+    domains.add(component.locator.domain)
+  }
 
   return { references }
 }
 
 /**
- * @param {string} domain
+ * @param {toa.formation.component.Brief} component
  * @returns {toa.operations.deployment.Reference}
  */
-const chart = (domain) => {
-  // TODO: use locator.host('mongo')
-  const alias = domain + '-mongo'
-
-  // TODO: credentials management
-  const usernames = ['user']
-  const passwords = ['password']
-  const databases = [domain]
+const chart = (component) => {
+  const alias = component.locator.host('storage', 0)
 
   return {
     name: 'mongodb',
@@ -34,9 +34,7 @@ const chart = (domain) => {
       architecture: 'standalone',
       fullnameOverride: alias,
       auth: {
-        usernames,
-        passwords,
-        databases
+        enabled: false
       }
     }
   }

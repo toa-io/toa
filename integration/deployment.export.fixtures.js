@@ -12,25 +12,25 @@ const chart = {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'messages-mongo'
+      alias: 'storage-messages'
     },
     {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'stats-mongo'
+      alias: 'storage-stats'
     },
     {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'credits-mongo'
+      alias: 'storage-credits'
     },
     {
       name: 'mongodb',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '12.0.0',
-      alias: 'dummies-mongo'
+      alias: 'storage-dummies'
     },
     {
       name: 'rabbitmq',
@@ -71,36 +71,36 @@ const values = {
       port: 8000
     }
   ]),
-  'messages-mongo': {
+  'storage-messages': {
     architecture: 'standalone',
-    fullnameOverride: 'messages-mongo',
+    fullnameOverride: 'storage-messages',
     auth: {
       usernames: ['user'],
       passwords: ['password'],
       databases: ['messages']
     }
   },
-  'stats-mongo': {
+  'storage-stats': {
     architecture: 'standalone',
-    fullnameOverride: 'stats-mongo',
+    fullnameOverride: 'storage-stats',
     auth: {
       usernames: ['user'],
       passwords: ['password'],
       databases: ['stats']
     }
   },
-  'credits-mongo': {
+  'storage-credits': {
     architecture: 'standalone',
-    fullnameOverride: 'credits-mongo',
+    fullnameOverride: 'storage-credits',
     auth: {
       usernames: ['user'],
       passwords: ['password'],
       databases: ['credits']
     }
   },
-  'dummies-mongo': {
+  'storage-dummies': {
     architecture: 'standalone',
-    fullnameOverride: 'dummies-mongo',
+    fullnameOverride: 'stoarage-dummies',
     auth: {
       usernames: ['user'],
       passwords: ['password'],

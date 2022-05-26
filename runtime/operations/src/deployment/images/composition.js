@@ -10,7 +10,7 @@ class Composition extends Image {
 
   /** @type {string} */
   #name
-  /** @type {Array<toa.formation.component.Component>} */
+  /** @type {Array<toa.formation.Component>} */
   #components
 
   /**

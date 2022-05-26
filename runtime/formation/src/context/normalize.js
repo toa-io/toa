@@ -1,8 +1,8 @@
 'use strict'
 
 /**
- * @param context {toa.formation.context.Declaration}
- * @returns {toa.formation.context.Context}
+ * @param {toa.formation.context.Declaration} context
+ * @returns {toa.formation.Context}
  */
 const normalize = (context) => {
   if (typeof context.runtime === 'string') context.runtime = { version: context.runtime }

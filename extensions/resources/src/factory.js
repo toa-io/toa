@@ -48,7 +48,11 @@ class Factory {
       return new Remote(server, remote, tree)
     }
 
-    return new Resources(server, broadcast, remote)
+    const gateway = new Resources(broadcast, remote)
+
+    gateway.depends(server)
+
+    return gateway
   }
 }
 

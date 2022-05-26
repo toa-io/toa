@@ -5,7 +5,7 @@ const clone = require('clone-deep')
 const { complete } = require('../../src/context/complete')
 const fixtures = require('./complete.fixtures')
 
-/** @type {toa.formation.context.Context} */
+/** @type {toa.formation.Context} */
 let context
 
 beforeEach(() => {

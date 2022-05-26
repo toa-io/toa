@@ -1,9 +1,5 @@
 'use strict'
 
-/**
- * @param id {string}
- * @return {toa.formation.component.Component}
- */
 const component = (id) => {
   const [domain, name] = id.split('.')
 
@@ -20,7 +16,6 @@ const component = (id) => {
   }
 }
 
-/** @type {toa.formation.context.Context} */
 const context = {
   runtime: '0.0.0',
   name: 'test',

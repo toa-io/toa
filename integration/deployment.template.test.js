@@ -27,9 +27,8 @@ beforeAll(async () => {
   operator = await boot.deployment(source)
 
   const output = await operator.template()
-  resources = yaml.split(output)
 
-  // resources = await yaml.all(join(__dirname, 'deployment.template.temp.yaml'))
+  resources = yaml.split(output)
 })
 
 it('should define', () => {

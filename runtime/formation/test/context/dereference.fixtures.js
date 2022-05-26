@@ -4,7 +4,7 @@ const clone = require('clone-deep')
 
 /**
  * @param id {string}
- * @return {toa.formation.component.Component}
+ * @return {toa.formation.component.Declaration}
  */
 const component = (id) => {
   const [domain, name] = id.split('.')
@@ -18,11 +18,11 @@ const component = (id) => {
       name,
       id,
       label: `${domain}-${name}`
-    }
+    },
+    entity: null
   }
 }
 
-/** @type {toa.formation.context.Context} */
 const context = {
   name: 'test',
   description: 'context fixture',
@@ -43,7 +43,6 @@ const context = {
   ]
 }
 
-/** @type {toa.formation.context.Context} */
 const expected = clone(context)
 
 expected.compositions = [

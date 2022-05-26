@@ -5,7 +5,7 @@ const clone = require('clone-deep')
 const { dereference } = require('../../src/context/dereference')
 const fixtures = require('./dereference.fixtures')
 
-/** @type {toa.formation.context.Context} */
+/** @type {toa.formation.Context} */
 let context
 
 beforeAll(() => {

@@ -51,8 +51,9 @@
     "version:dev": "npx lerna version --conventional-prerelease --preid dev --force-publish --no-git-tag-version --no-push --no-changelog --yes",
     "publish:local": "npm publish --workspaces",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
+    "registry:login": "aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 153896708942.dkr.ecr.eu-west-1.amazonaws.com",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
-    "setup": "npm run registry && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
+    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
     "env": "docker compose up -d && sleep 3000 && npm adduser --registry http://localhost:4873"
   },

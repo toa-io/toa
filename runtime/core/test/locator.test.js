@@ -1,24 +1,46 @@
 'use strict'
 
+const { generate } = require('randomstring')
 const { Locator } = require('../src/locator')
 
-const manifest = {
-  domain: 'foo',
-  name: 'bar',
-  entity: { schema: { foo: 'bar' } },
-  operations: { add: { query: false }, get: { output: null } }
+const regular = {
+  domain: generate(),
+  name: generate()
 }
 
 const nameless = {
-  domain: 'foo',
-  entity: { schema: { foo: 'bar' } },
-  operations: [{ name: 'add' }, { name: 'get' }]
+  domain: generate()
 }
 
-it('should provide host', () => {
-  expect(new Locator(manifest).host('db')).toBe('foo-db')
-  expect(new Locator(nameless).host('db')).toBe('foo-db')
-  expect(new Locator(nameless).host('DB')).toBe('foo-db')
-  expect(new Locator(manifest).host('db', 1)).toBe('foo-bar-db')
-  expect(new Locator(nameless).host('db', 1)).toBe('foo-db')
+describe('regular', () => {
+  const locator = new Locator(regular)
+  const host = regular.domain + '-' + regular.name
+  const type = generate()
+
+  it('should provide host', () => {
+    expect(locator.host()).toStrictEqual(host)
+  })
+
+  it('should prepend type', () => {
+    expect(locator.host(type)).toStrictEqual(type + '-' + host)
+  })
+
+  it('should contain only domain if level 0', () => {
+    expect(locator.host(undefined, 0)).toEqual(regular.domain)
+    expect(locator.host(type, 0)).toEqual(type + '-' + regular.domain)
+  })
+})
+
+describe('nameless', () => {
+  const locator = new Locator(nameless)
+  const host = nameless.domain
+  const type = generate()
+
+  it('should provide host', () => {
+    expect(locator.host()).toStrictEqual(host)
+  })
+
+  it('should prepend type', () => {
+    expect(locator.host(type)).toStrictEqual(type + '-' + host)
+  })
 })

@@ -8,13 +8,12 @@ class Resources extends Connector {
   #create
   #remotes = {}
 
-  constructor (server, broadcast, create) {
+  constructor (broadcast, create) {
     super()
 
     this.#broadcast = broadcast
     this.#create = create
 
-    this.depends(server)
     this.depends(broadcast)
   }
 

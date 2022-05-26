@@ -13,12 +13,11 @@ const { dereference } = require('./context/dereference')
 
 /**
  * @param root {string}
- * @return {Promise<toa.formation.context.Context>}
+ * @return {Promise<toa.formation.Context>}
  */
 const context = async (root) => {
   const path = resolve(root, CONTEXT)
-  /** @type {toa.formation.context.Context} */
-  const context = await yaml(path)
+  const context = /** @type {toa.formation.Context} */ await yaml(path)
   const roots = resolve(root, context.packages)
 
   normalize(context)

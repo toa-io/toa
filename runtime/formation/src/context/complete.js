@@ -2,7 +2,7 @@
 
 /**
  * Completes missing compositions with unused components
- * @param context {toa.formation.context.Context}
+ * @param {toa.formation.Context} context
  * @returns {void}
  */
 const complete = (context) => {

@@ -17,7 +17,7 @@ class Locator extends URL {
     if (process.env.TOA_ENV === 'local') {
       this.hostname = 'localhost'
     } else {
-      this.hostname = locator.host('mongo')
+      this.hostname = locator.host('storage', 0)
     }
 
     this.db = locator.domain

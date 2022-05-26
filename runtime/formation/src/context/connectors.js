@@ -2,6 +2,10 @@
 
 const { describe } = require('./describe')
 
+/**
+ * @param {toa.formation.Context} context
+ * @returns {Object}
+ */
 const connectors = (context) => {
   const connectors = {}
 
