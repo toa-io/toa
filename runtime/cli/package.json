@@ -18,6 +18,9 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
+  "peerDependencies": {
+    "@toa.io/gears": "*"
+  },
   "dependencies": {
     "find-up": "5.0.0",
     "yargs": "17.2.1"
