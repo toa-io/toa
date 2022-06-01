@@ -3,5 +3,5 @@
 const { id } = require('../handlers/id')
 
 exports.command = 'id'
-exports.desc = 'Generate new ID'
+exports.desc = false
 exports.handler = id
