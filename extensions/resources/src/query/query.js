@@ -2,6 +2,9 @@
 
 const { merge } = require('@toa.io/gears')
 
+/**
+ * @implements {toa.extensions.resources.Query}
+ */
 class Query {
   #constraints
 
@@ -10,9 +13,9 @@ class Query {
   }
 
   /** @hot */
-  parse (query, method) {
+  parse (query, operation) {
     for (const [key, constraint] of this.#constraints) {
-      const value = constraint.parse(query?.[key], method)
+      const value = constraint.parse(query?.[key], operation)
 
       if (value !== undefined) {
         if (query === undefined) query = {}
@@ -24,6 +27,10 @@ class Query {
     return query
   }
 
+  /**
+   * @param {toa.extensions.resources.definitions.Node} node
+   * @returns {toa.extensions.resources.definitions.Query}
+   */
   static merge (node) {
     const query = {}
     let current = node

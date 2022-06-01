@@ -22,3 +22,4 @@ declare namespace toa.core {
 }
 
 export type Request = toa.core.Request
+export type Query = toa.core.request.Query

@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/extensions.resources",
   "version": "0.2.0-dev.38",
-  "description": "Toa Resources Extension",
+  "description": "Toa Resources Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "src/index.js",

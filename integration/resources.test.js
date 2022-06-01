@@ -16,7 +16,7 @@ beforeAll(async () => {
   framework.env('local')
 
   composition = await framework.compose(['messages', 'stats', 'credits'])
-  resources = (new extension.Factory(boot)).service('gateway')
+  resources = (new extension.Factory(boot)).service('exposition')
 
   await resources.connect()
   await timeout(200) // resources discovery

@@ -12,7 +12,7 @@ class Sort {
     if (operation.query === false) return value
 
     if (value === undefined) return this.#value
-    return this.#value.concat(value)
+    else return this.#value.concat(value)
   }
 }
 

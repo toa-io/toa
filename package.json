@@ -43,7 +43,8 @@
   },
   "scripts": {
     "prepare": "npx husky install",
-    "test": "npx standard --verbose | npx snazzy && npm run test:unit",
+    "test": "npm run test:lint && npm run test:unit",
+    "test:lint": "npx standard --verbose | npx snazzy",
     "test:unit": "npx jest --roots runtime connectors extensions",
     "test:integration": "npx jest --roots integration --runInBand",
     "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",

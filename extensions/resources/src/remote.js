@@ -4,6 +4,9 @@ const { Connector, exceptions: { NotImplementedException } } = require('@toa.io/
 
 const translate = require('./translate')
 
+/**
+ * @implements {toa.extensions.resources.Remote}
+ */
 class Remote extends Connector {
   #remote
   #tree
@@ -54,7 +57,6 @@ class Remote extends Connector {
     if (operation === undefined) throw new NotImplementedException()
 
     const request = translate.request(req, match.params)
-
     const query = match.node.query.parse(request.query, operation)
 
     if (query !== undefined) request.query = query

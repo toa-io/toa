@@ -4,7 +4,7 @@ const { Locator } = require('@toa.io/core')
 const { remap } = require('@toa.io/gears')
 
 const { Connector } = require('./connector')
-const { Resources } = require('./resources')
+const { Exposition } = require('./exposition')
 const { Server } = require('./server')
 const { Remote } = require('./remote')
 const { Tree } = require('./tree')
@@ -27,32 +27,41 @@ class Factory {
   }
 
   service (name) {
-    if (name === 'gateway') return this.#gateway()
+    if (name === 'exposition') return this.#expose()
   }
 
-  #gateway () {
+  #expose () {
     const server = new Server()
     const broadcast = this.#boot.bindings.broadcast(BINDING, 'resources')
 
-    const remote = async (domain, name, definition) => {
+    const connect = this.#connect(server)
+    const exposition = new Exposition(broadcast, connect)
+
+    exposition.depends(server)
+
+    return exposition
+  }
+
+  #connect (server) {
+    return async (domain, name, definition) => {
       const locator = new Locator({ domain, name })
       const remote = await this.#boot.remote(locator)
-
-      const tree = new Tree(definition, (node) => {
-        const query = Query.merge(node)
-        const properties = remap(query, (value, key) => new constraints[key](value))
-
-        return new Query(properties)
-      })
+      const query = (node) => this.#query(node)
+      const tree = new Tree(definition, query)
 
       return new Remote(server, remote, tree)
     }
+  }
 
-    const gateway = new Resources(broadcast, remote)
+  /**
+   * @param {toa.extensions.resources.definitions.Node} node
+   * @returns {toa.extensions.resources.Query}
+   */
+  #query (node) {
+    const query = Query.merge(node)
+    const properties = remap(query, (value, key) => new constraints[key](value))
 
-    gateway.depends(server)
-
-    return gateway
+    return new Query(properties)
   }
 }
 

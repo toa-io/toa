@@ -8,9 +8,10 @@ const { console } = require('@toa.io/gears')
 const { PORT } = require('./constants')
 
 class Server extends Connector {
+  /** @type {import('express').Application} */
   #app
+  /** @type {import('http').Server} */
   #server
-  #port
 
   constructor () {
     super()
@@ -29,8 +30,6 @@ class Server extends Connector {
       if (req.method in METHODS) next()
       else res.status(501).end()
     })
-
-    this.#port = PORT
   }
 
   route (route, callback) {
@@ -39,8 +38,9 @@ class Server extends Connector {
 
   async connection () {
     return new Promise((resolve, reject) => {
-      this.#server = this.#app.listen(this.#port, () => {
-        console.info(`HTTP server started at :${this.#port}`)
+      // noinspection JSCheckFunctionSignatures
+      this.#server = this.#app.listen(PORT, () => {
+        console.info(`HTTP server started at :${PORT}`)
 
         this.#server.off('error', reject)
         resolve()
@@ -53,7 +53,7 @@ class Server extends Connector {
   async disconnection () {
     return new Promise((resolve, reject) => {
       this.#server.close(() => {
-        console.info(`HTTP server at :${this.#port} stopped`)
+        console.info(`HTTP server at :${PORT} stopped`)
 
         this.#server.off('error', reject)
         resolve()
