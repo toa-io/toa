@@ -35,7 +35,8 @@
     "@toa.io/operations": "0.2.0-dev.38",
     "@toa.io/prototype": "0.2.0-dev.38",
     "@toa.io/schema": "0.2.0-dev.38",
-    "@toa.io/storages.mongodb": "0.2.0-dev.38"
+    "@toa.io/storages.mongodb": "0.2.0-dev.38",
+    "@toa.io/storages.null": "0.2.0-dev.38"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }

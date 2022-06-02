@@ -23,7 +23,7 @@ class State {
 
   init (id) {
     if (this.#initialized === true && id === undefined) {
-      throw new StateInitializationException('Entity is initialized')
+      throw new StateInitializationException('Cannot initialize entity which is initialized. Use request.query.id to access.')
     }
 
     return this.#entity.init(id)
@@ -61,6 +61,7 @@ class State {
 
       // TODO: do not wait because outbox will handle failures
       // TODO: handle slow emissions (too many concurrent emissions)
+      // noinspection JSUnresolvedVariable
       if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
         await this.#emitter.emit(event)
       }
@@ -86,6 +87,7 @@ class State {
     }
 
     // TODO: same as above
+    // noinspection JSUnresolvedVariable
     if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
       await this.#emitter.emit({ changeset, state })
     }

@@ -1,8 +1,7 @@
 'use strict'
 
 /**
- * Merge source to target.
- * Modifies target.
+ * Modifies target
  * @param target {Object}
  * @param source {Object}
  * @param options {{ override?: boolean, ignore?: boolean }}
