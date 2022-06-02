@@ -12,7 +12,7 @@ const { collapse } = require('./component/collapse')
 const { dereference } = require('./component/dereference')
 const { defaults } = require('./component/defaults')
 const { normalize } = require('./component/normalize')
-const { lookup } = require('./component/lookup')
+const { lookup } = require('./lookup')
 
 const component = async (reference, base) => {
   const manifest = await load(reference, base)

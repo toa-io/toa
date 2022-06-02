@@ -6,6 +6,8 @@ declare namespace toa.operations.deployment {
 
     namespace dependency {
 
+        type Constructor = (declarations: object[], annotations: object) => Declaration
+
         interface Reference {
             name: string
             version: string
@@ -19,6 +21,11 @@ declare namespace toa.operations.deployment {
             name: string
             version: string
             port: number
+            ingress?: {
+                host: string
+                class: string
+                annotations?: object
+            }
         }
 
         interface Declaration {

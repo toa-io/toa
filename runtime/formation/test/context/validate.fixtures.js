@@ -21,7 +21,18 @@ const context = {
       name: 'bar',
       components: ['d.c', 'a.b']
     }
-  ]
+  ],
+  annotations: {
+    '@toa.io/extensions.resources': {
+      host: 'dummies.toa.io',
+      class: 'alb',
+      annotations: {
+        'alb.ingress.kubernetes.io/scheme': 'internet-facing',
+        'alb.ingress.kubernetes.io/target-type': 'ip',
+        'alb.ingress.kubernetes.io/listen-ports': '[{"HTTPS": 443}]'
+      }
+    }
+  }
 }
 
 exports.context = context

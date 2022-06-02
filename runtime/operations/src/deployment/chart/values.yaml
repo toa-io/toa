@@ -20,3 +20,12 @@ services:
   - name: resources-gateway
     image: localhost:5000/resources-gateway:0.0.0
     port: 8000
+    replicas: 2
+    ingress:
+      host: dummies.toa.io
+      class: alb
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+

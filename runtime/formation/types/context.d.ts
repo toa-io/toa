@@ -38,15 +38,16 @@ declare namespace toa.formation {
             registry: Registry | string
             packages: string
             compositions?: Composition[]
-            components: Component[]
-            connectors?: Dependencies
-            extensions?: Dependencies
+            annotations?: Record<string, object>
         }
     }
 
     interface Context extends context.Declaration {
         runtime: context.Runtime
         registry: context.Registry
+        components: Component[]
+        connectors?: context.Dependencies
+        extensions?: context.Dependencies
     }
 
 }

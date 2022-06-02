@@ -51,5 +51,7 @@ properties:
           items:
             $ref: 'definitions#/definitions/locator'
       required: [ name, components ]
+  annotations:
+    type: object
 required: [ runtime, name, packages, registry ]
 additionalProperties: false

@@ -4,7 +4,7 @@ const chart = {
   apiVersion: 'v2',
   type: 'application',
   name: 'dummies',
-  description: 'Integration tests context',
+  description: 'Integration tests dummies context',
   version: '0.0.0',
   appVersion: '0.0.0',
   dependencies: expect.arrayContaining([
@@ -66,9 +66,14 @@ const values = {
   ]),
   services: expect.arrayContaining([
     {
-      name: 'resources-gateway',
-      image: expect.stringMatching(/^[^/]+\/dummies\/service-resources-gateway:[a-z\d]+/),
-      port: 8000
+      name: 'resources-exposition',
+      image: expect.stringMatching(/^[^/]+\/dummies\/service-resources-exposition:[a-z\d]+/),
+      port: 8000,
+      ingress: {
+        host: expect.any(String),
+        class: expect.any(String),
+        annotations: expect.any(Object)
+      }
     }
   ]),
   'storage-messages': {

@@ -1,14 +1,20 @@
 name: dummies
-description: Integration tests context
+description: Integration tests dummies context
 version: 0.0.0
 runtime:
   registry: http://host.docker.internal:4873
   proxy: http://host.docker.internal:4873
 packages: '*'
 registry: 153896708942.dkr.ecr.eu-west-1.amazonaws.com
-
 compositions:
   - name: messages
     components:
       - messages.messages
       - stats.stats
+resources:
+  host: dummies.getonce.dev
+  class: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'

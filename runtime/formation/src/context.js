@@ -10,6 +10,7 @@ const { extensions } = require('./context/extensions')
 const { normalize } = require('./context/normalize')
 const { complete } = require('./context/complete')
 const { dereference } = require('./context/dereference')
+const { expand } = require('./context/expand')
 
 /**
  * @param root {string}
@@ -20,6 +21,7 @@ const context = async (root) => {
   const context = /** @type {toa.formation.Context} */ await yaml(path)
   const roots = resolve(root, context.packages)
 
+  expand(context)
   normalize(context)
   validate(context)
 

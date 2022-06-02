@@ -1,6 +1,6 @@
 'use strict'
 
-const { lookup } = require('./lookup')
+const { lookup, recognize } = require('../lookup')
 
 const expand = (manifest) => {
   if (manifest.entity !== undefined) {
@@ -36,14 +36,7 @@ const expand = (manifest) => {
   }
 
   // well-known extensions
-  for (const extension of EXTENSIONS) {
-    if (manifest[extension] !== undefined) {
-      if (manifest.extensions === undefined) manifest.extensions = {}
-
-      manifest.extensions[extension] = manifest[extension]
-      delete manifest[extension]
-    }
-  }
+  recognize(manifest, 'extensions')
 
   if (manifest.extensions !== undefined) {
     for (const [key, value] of Object.entries(manifest.extensions)) {
@@ -70,7 +63,5 @@ const schema = (object, root) => {
 
   return object
 }
-
-const EXTENSIONS = ['resources']
 
 exports.expand = expand

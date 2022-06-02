@@ -31,8 +31,7 @@ class Factory {
 
   operator () {
     const compositions = this.#context.compositions.map((composition) => this.#composition(composition))
-    // noinspection JSCheckFunctionSignatures
-    const dependencies = this.#dependencies({ ...this.#context.connectors, ...this.#context.extensions })
+    const dependencies = this.#dependencies()
     const deployment = new Deployment(this.#context, compositions, dependencies, this.#process)
 
     return new Operator(deployment, this.#registry)
@@ -49,10 +48,11 @@ class Factory {
   }
 
   /**
-   * @param map {toa.formation.context.Dependencies}
    * @returns {Array<toa.operations.deployment.Dependency>}
    */
-  #dependencies (map) {
+  #dependencies () {
+    /** @type {toa.formation.context.Dependencies} */
+    const map = { ...this.#context.connectors, ...this.#context.extensions }
     /** @type {Array<toa.operations.deployment.Dependency>} */
     const dependencies = []
 
@@ -66,17 +66,18 @@ class Factory {
   }
 
   /**
-   * @param path {string} path to dependency package
-   * @param definitions {Array<toa.formation.context.Dependency>}
+   * @param {string} path
+   * @param {toa.formation.context.Dependency[]} declarations
    * @returns {toa.operations.deployment.Dependency | undefined}
    */
-  #dependency (path, definitions) {
+  #dependency (path, declarations) {
     const module = require(path)
 
     if (module.deployment === undefined) return
 
+    const annotations = this.#context.annotations?.[module.id]
     /** @type {toa.operations.deployment.dependency.Declaration} */
-    const dependency = module.deployment(definitions)
+    const dependency = module.deployment(declarations, annotations)
 
     /** @type {toa.operations.deployment.Service[]} */
     const services = dependency.services?.map((service) => this.#service(path, service))

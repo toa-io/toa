@@ -2,7 +2,6 @@
 
 /**
  * @param {toa.formation.context.Declaration} context
- * @returns {toa.formation.Context}
  */
 const normalize = (context) => {
   if (typeof context.runtime === 'string') context.runtime = { version: context.runtime }
@@ -13,9 +12,7 @@ const normalize = (context) => {
     context.runtime.version = runtime.version
   }
 
-  if (typeof context.registry === 'string') {
-    context.registry = { base: context.registry }
-  }
+  if (typeof context.registry === 'string') context.registry = { base: context.registry }
 }
 
 exports.normalize = normalize

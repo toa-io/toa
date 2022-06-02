@@ -17,7 +17,7 @@ const compositions = [
 
 const services = [
   {
-    name: 'resources-gateway'
+    name: 'resources-exposition'
   }
 ]
 

@@ -31,4 +31,27 @@ spec:
       port: {{ .port }}
       targetPort: {{ .port }}
 ---
+{{- if .ingress }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .name }}
+  {{- if .ingress.annotations }}
+  annotations:
+{{ toYaml .ingress.annotations | indent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ required "ingress.class is required" .ingress.class }}
+  rules:
+    - host: {{ required "ingress.host is required" .ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service-{{ .name }}
+                port:
+                  number: 8000
+{{- end }}
 {{- end }}

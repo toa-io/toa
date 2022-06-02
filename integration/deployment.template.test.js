@@ -93,18 +93,42 @@ describe('services', () => {
   })
 
   it('should define services', () => {
+    expect(fixtures.services.length > 0).toStrictEqual(true)
+
     for (const instance of fixtures.services) {
       const name = 'service-' + instance.name
       const service = find('Service', name)
 
       expect(service).toBeDefined()
-      expect(service.spec.selector['toa.io/service']).toStrictEqual('resources-gateway')
+      expect(service.spec.selector['toa.io/service']).toStrictEqual('resources-exposition')
 
       const port = service.spec.ports[0]
 
       expect(port.name).toStrictEqual('port-' + instance.port)
       expect(port.port).toStrictEqual(instance.port)
       expect(port.targetPort).toStrictEqual(instance.port)
+    }
+  })
+
+  it('should define ingress', () => {
+    const services = fixtures.services.filter((service) => service.ingress !== undefined)
+
+    expect(services.length > 0).toStrictEqual(true)
+
+    for (const service of services) {
+      const ingress = find('Ingress', service.name)
+
+      expect(ingress).toBeDefined()
+
+      expect(ingress.metadata.annotations).toStrictEqual(service.ingress.annotations)
+      expect(ingress.spec.ingressClassName).toStrictEqual(service.ingress.class)
+
+      const rule = ingress.spec.rules[0]
+      const backend = rule.http.paths[0].backend.service
+
+      expect(rule.host).toStrictEqual(service.ingress.host)
+      expect(backend.name).toStrictEqual('service-' + service.name)
+      expect(backend.port.number).toStrictEqual(service.port)
     }
   })
 })
