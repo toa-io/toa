@@ -4,13 +4,13 @@ const { Connector: Base } = require('@toa.io/core')
 
 class Connector extends Base {
   #binding
-  #definition
+  #declaration
 
   constructor (binding, { domain, name }, resources) {
     super()
 
     this.#binding = binding
-    this.#definition = { domain, name, resources }
+    this.#declaration = { domain, name, resources }
 
     this.depends(binding)
   }
@@ -21,7 +21,7 @@ class Connector extends Base {
   }
 
   async #expose () {
-    await this.#binding.send('expose', this.#definition)
+    await this.#binding.send('expose', this.#declaration)
   }
 }
 

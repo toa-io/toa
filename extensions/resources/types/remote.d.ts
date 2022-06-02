@@ -1,6 +1,6 @@
 // noinspection ES6UnusedImports
 
-import type * as definitions from './definitions'
+import type * as declarations from './declarations'
 
 declare namespace toa.extensions.resources {
 
@@ -9,7 +9,7 @@ declare namespace toa.extensions.resources {
     }
 
     interface Remote {
-        update(definition: definitions.Node): void
+        update(declaration: declarations.Node): void
     }
 
 }

@@ -49,9 +49,9 @@ class Tree {
   }
 
   /**
-   * @param {toa.extensions.resources.definitions.Node} node
+   * @param {toa.extensions.resources.declarations.Node} node
    * @param {string} route
-   * @param {toa.extensions.resources.definitions.Node} parent
+   * @param {toa.extensions.resources.declarations.Node} parent
    */
   #traverse (node, route = undefined, parent = undefined) {
     const current = {}

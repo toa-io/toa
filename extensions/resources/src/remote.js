@@ -34,8 +34,8 @@ class Remote extends Connector {
     this.depends(remote)
   }
 
-  update (definition) {
-    this.#tree.update(definition)
+  update (declaration) {
+    this.#tree.update(declaration)
   }
 
   /**

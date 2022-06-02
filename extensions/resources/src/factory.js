@@ -24,10 +24,10 @@ class Factory {
     this.#server = new Server()
   }
 
-  connector (locator, definition) {
+  connector (locator, declaration) {
     const broadcast = this.#boot.bindings.broadcast(BINDING, 'resources', locator.id)
 
-    return new Connector(broadcast, locator, definition)
+    return new Connector(broadcast, locator, declaration)
   }
 
   service (name) {
@@ -58,7 +58,7 @@ class Factory {
   }
 
   /**
-   * @param {toa.extensions.resources.definitions.Node} node
+   * @param {toa.extensions.resources.declarations.Node} node
    * @returns {toa.extensions.resources.Query}
    */
   #query (node) {

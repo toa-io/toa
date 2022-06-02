@@ -25,20 +25,18 @@ class Exposition extends Connector {
   }
 
   async connection () {
-    const receive = (definition) => this.#expose(definition)
-
-    await this.#broadcast.receive('expose', receive)
+    await this.#broadcast.receive('expose', (declaration) => this.#expose(declaration))
     this.#broadcast.send('ping', {})
 
     console.info(this.constructor.name + ' started')
   }
 
   /**
-   * @param {toa.extensions.resources.definitions.Exposition} definition
+   * @param {toa.extensions.resources.declarations.Exposition | object} declaration
    * @return {Promise<void>}
    */
-  async #expose (definition) {
-    const { domain, name, resources } = definition
+  async #expose (declaration) {
+    const { domain, name, resources } = declaration
     const key = domain + '/' + name
 
     if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(domain, name)

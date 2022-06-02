@@ -7,7 +7,7 @@ let tree
 
 beforeEach(() => {
   tree = new Tree(() => null)
-  tree.update(fixtures.definition)
+  tree.update(fixtures.declaration)
 })
 
 it('should find node', () => {
@@ -21,7 +21,7 @@ it('should return undefined on mismatch', () => {
 })
 
 it('should throw on resource conflicts on local dev env', () => {
-  const definition = {
+  const declaration = {
     '/:id': {
       operations: ['observe']
     },
@@ -36,7 +36,7 @@ it('should throw on resource conflicts on local dev env', () => {
 
   tree = new Tree(() => null)
 
-  tree.update(definition)
+  tree.update(declaration)
 
   expect(() => tree.match('/ok/')).toThrow(/Ambiguous routes/)
 

@@ -1,6 +1,6 @@
 'use strict'
 
-const definition = {
+const declaration = {
   '/': {
     operations: ['find'],
     '/:id': {
@@ -18,4 +18,4 @@ const definition = {
   }
 }
 
-exports.definition = definition
+exports.declaration = declaration

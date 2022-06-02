@@ -28,8 +28,8 @@ class Query {
   }
 
   /**
-   * @param {toa.extensions.resources.definitions.Node} node
-   * @returns {toa.extensions.resources.definitions.Query}
+   * @param {toa.extensions.resources.declarations.Node} node
+   * @returns {toa.extensions.resources.declarations.Query}
    */
   static merge (node) {
     const query = {}

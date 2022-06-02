@@ -1,4 +1,4 @@
-declare namespace toa.extensions.resources.definitions {
+declare namespace toa.extensions.resources.declarations {
 
     interface Operation {
         type: 'transition' | 'observation' | 'assignment'
@@ -25,5 +25,5 @@ declare namespace toa.extensions.resources.definitions {
     }
 }
 
-export type Node = toa.extensions.resources.definitions.Node
-export type Operation = toa.extensions.resources.definitions.Operation
+export type Node = toa.extensions.resources.declarations.Node
+export type Operation = toa.extensions.resources.declarations.Operation

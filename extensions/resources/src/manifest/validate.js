@@ -8,8 +8,8 @@ const { yaml } = require('@toa.io/gears')
 const schema = yaml.sync(path.resolve(__dirname, 'schema.yaml'))
 const validator = new Schema(schema)
 
-const validate = (definition) => {
-  const error = validator.fit(definition)
+const validate = (declaration) => {
+  const error = validator.fit(declaration)
 
   if (error) throw new Error(error.message)
 }

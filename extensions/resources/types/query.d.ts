@@ -1,5 +1,5 @@
 import type { Query as RequestQuery } from '@toa.io/core/types/request'
-import type { Node, Operation } from './definitions'
+import type { Node, Operation } from './declarations'
 
 declare namespace toa.extensions.resources {
 
