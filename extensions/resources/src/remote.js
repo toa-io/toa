@@ -8,9 +8,17 @@ const translate = require('./translate')
  * @implements {toa.extensions.resources.Remote}
  */
 class Remote extends Connector {
+  /** @type {toa.core.Runtime} */
   #remote
+
+  /** @type {toa.extensions.resources.Tree} */
   #tree
 
+  /**
+   * @param {toa.extensions.resources.Server} server
+   * @param {toa.core.Runtime} remote
+   * @param {toa.extensions.resources.Tree} tree
+   */
   constructor (server, remote, tree) {
     super()
 
@@ -30,7 +38,12 @@ class Remote extends Connector {
     this.#tree.update(definition)
   }
 
-  /** @hot */
+  /**
+   * @hot
+   * @param {toa.extensions.resources.http.Request} req
+   * @param {toa.extensions.resources.http.Response} res
+   * @return {Promise<void>}
+   */
   async #reply (req, res) {
     const match = this.#tree.match(req.params[0])
 
@@ -49,7 +62,11 @@ class Remote extends Connector {
     res.end()
   }
 
-  /** @hot */
+  /**
+   * @param {toa.extensions.resources.http.Request} req
+   * @param {toa.extensions.resources.tree.Match} match
+   * @return {Promise<toa.core.Reply>}
+   */
   async #call (req, match) {
     const method = req.method === 'HEAD' ? 'GET' : req.method
     const operation = match.node.operations[method]

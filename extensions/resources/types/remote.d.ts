@@ -1,15 +1,15 @@
 // noinspection ES6UnusedImports
 
-import type { Node } from './definitions'
+import type * as definitions from './definitions'
 
 declare namespace toa.extensions.resources {
 
     namespace remote {
-        type Constructor = (domain: string, name: string, definition: Node) => Remote
+        type Constructor = (domain: string, name: string, definition: definitions.Node) => Remote
     }
 
     interface Remote {
-        update(definition: Object): void
+        update(definition: definitions.Node): void
     }
 
 }

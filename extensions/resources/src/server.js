@@ -7,6 +7,10 @@ const { console } = require('@toa.io/gears')
 
 const { PORT } = require('./constants')
 
+// noinspection JSClosureCompilerSyntax
+/**
+ * @implements {toa.extensions.resources.Server}
+ */
 class Server extends Connector {
   /** @type {import('express').Application} */
   #app

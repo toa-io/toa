@@ -5,6 +5,9 @@ const { match } = require('path-to-regexp')
 
 const { console } = require('@toa.io/gears')
 
+/**
+ * @implements {toa.extensions.resources.Tree}
+ */
 class Tree {
   /** @type {toa.extensions.resources.tree.Node[]} */
   #nodes
@@ -43,9 +46,6 @@ class Tree {
     return node === undefined ? undefined : { node, params: match.params }
   }
 
-  /**
-   * @param {toa.extensions.resources.definitions.Node} tree
-   */
   update (tree) {
     this.#nodes = []
     this.#traverse(tree)

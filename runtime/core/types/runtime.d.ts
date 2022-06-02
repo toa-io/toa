@@ -1,11 +1,11 @@
-// noinspection ES6UnusedImports
-
-import { Connector, Reply, Request } from '.'
+import type * as types from '.'
 
 declare namespace toa.core {
 
-    interface Runtime extends Connector {
-        invoke(endpoint: string, request: Request): Promise<Reply>
+    interface Runtime extends types.Connector {
+        locator: types.Locator
+
+        invoke(endpoint: string, request: types.Request): Promise<types.Reply>
     }
 
 }
