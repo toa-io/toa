@@ -17,6 +17,12 @@ declare namespace toa.extensions.resources.definitions {
     } & {
         [key: string]: Node
     }
+
+    interface Exposition {
+        domain: string
+        name: string
+        resources: Node
+    }
 }
 
 export type Node = toa.extensions.resources.definitions.Node

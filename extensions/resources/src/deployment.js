@@ -12,9 +12,9 @@ const deployment = () => {
   const version = require('../package.json').version
 
   /** @type {toa.operations.deployment.dependency.Service} */
-  const gateway = { group, name: 'exposition', version, port: PORT }
+  const exposition = { group, name: 'exposition', version, port: PORT }
 
-  return { services: [gateway] }
+  return { services: [exposition] }
 }
 
 exports.deployment = deployment

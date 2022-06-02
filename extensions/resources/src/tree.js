@@ -14,13 +14,10 @@ class Tree {
   #query
 
   /**
-   * @param {toa.extensions.resources.definitions.Node} tree
    * @param {Function} query
    */
-  constructor (tree, query) {
+  constructor (query) {
     this.#query = query
-
-    this.update(tree)
   }
 
   /** @hot */

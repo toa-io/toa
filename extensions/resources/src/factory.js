@@ -16,8 +16,12 @@ const { Query, constraints } = require('./query')
 class Factory {
   #boot
 
+  /** @type {toa.extensions.resources.Server} */
+  #server
+
   constructor (boot) {
     this.#boot = boot
+    this.#server = new Server()
   }
 
   connector (locator, definition) {
@@ -31,26 +35,26 @@ class Factory {
   }
 
   #expose () {
-    const server = new Server()
     const broadcast = this.#boot.bindings.broadcast(BINDING, 'resources')
 
-    const connect = this.#connect(server)
+    const connect = (domain, name) => this.#connect(domain, name)
     const exposition = new Exposition(broadcast, connect)
 
-    exposition.depends(server)
+    exposition.depends(this.#server)
 
     return exposition
   }
 
-  #connect (server) {
-    return async (domain, name, definition) => {
-      const locator = new Locator({ domain, name })
-      const remote = await this.#boot.remote(locator)
-      const query = (node) => this.#query(node)
-      const tree = new Tree(definition, query)
+  /**
+   * @type {toa.extensions.resources.remote.Constructor}
+   */
+  async #connect (domain, name) {
+    const locator = new Locator({ domain, name })
+    const remote = await this.#boot.remote(locator)
+    const query = (node) => this.#query(node)
+    const tree = new Tree(query)
 
-      return new Remote(server, remote, tree)
-    }
+    return new Remote(this.#server, remote, tree)
   }
 
   /**

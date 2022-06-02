@@ -5,7 +5,7 @@ import type * as definitions from './definitions'
 declare namespace toa.extensions.resources {
 
     namespace remote {
-        type Constructor = (domain: string, name: string, definition: definitions.Node) => Remote
+        type Constructor = ((domain: string, name: string) => Promise<Remote>) | Function
     }
 
     interface Remote {

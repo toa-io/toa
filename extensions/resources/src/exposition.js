@@ -13,7 +13,7 @@ class Exposition extends Connector {
 
   /**
    * @param {toa.core.bindings.Broadcaster} broadcast
-   * @param {Function} connect
+   * @param {toa.extensions.resources.remote.Constructor} connect
    */
   constructor (broadcast, connect) {
     super()
@@ -25,27 +25,36 @@ class Exposition extends Connector {
   }
 
   async connection () {
-    await this.#broadcast.receive('expose', (definition) => this.#expose(definition))
+    const receive = (definition) => this.#expose(definition)
+
+    await this.#broadcast.receive('expose', receive)
     this.#broadcast.send('ping', {})
 
     console.info(this.constructor.name + ' started')
   }
 
+  /**
+   * @param {toa.extensions.resources.definitions.Exposition} definition
+   * @return {Promise<void>}
+   */
   async #expose (definition) {
     const { domain, name, resources } = definition
     const key = domain + '/' + name
 
-    if (this.#remotes[key] === undefined) {
-      this.#remotes[key] = this.#connect(domain, name, resources)
-    } else {
-      const remote = await this.#remotes[key]
+    if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(domain, name)
 
-      remote.update(resources)
-    }
+    const remote = await this.#remotes[key]
+
+    remote.update(resources)
   }
 
-  async #connect (domain, name, resources) {
-    const remote = await this.#remote(domain, name, resources)
+  /**
+   * @param {string} domain
+   * @param {string} name
+   * @return {Promise<Remote>}
+   */
+  async #connect (domain, name) {
+    const remote = await this.#remote(domain, name)
 
     await remote.connect()
 
