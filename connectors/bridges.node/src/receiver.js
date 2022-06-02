@@ -1,9 +1,13 @@
 'use strict'
 
-class Receiver {
+const { Connector } = require('@toa.io/core')
+
+class Receiver extends Connector {
   #receiver
 
   constructor (receiver) {
+    super()
+
     this.#receiver = receiver
   }
 

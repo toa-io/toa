@@ -11,16 +11,16 @@ class Criteria {
   constructor (value) {
     if (value === null) return
 
-    const last = value.substr(-1)
+    const last = value.slice(-1)
 
     if (last === ',' || last === ';') {
       this.#open = true
       this.#right = true
       this.#logic = last
 
-      value = value.substr(0, value.length - 1)
+      value = value.substring(0, value.length - 1)
     } else {
-      const first = value.substr(0, 1)
+      const first = value.substring(0, 1)
 
       this.#open = first === ',' || first === ';'
 
@@ -28,7 +28,7 @@ class Criteria {
         this.#right = false
         this.#logic = first
 
-        value = value.substr(1)
+        value = value.substring(1)
       }
     }
 

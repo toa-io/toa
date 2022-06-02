@@ -4,24 +4,28 @@ const { deploy } = require('../handlers/deploy')
 
 const builder = (yargs) => {
   yargs
-    .positional('path', {
+    .option('path', {
+      alias: 'p',
+      group: 'Command options:',
       type: 'string',
       desc: 'Path to context',
       default: '.'
     })
     .option('dry', {
+      alias: 'd',
+      group: 'Command options:',
       boolean: true,
       desc: 'Dry run'
     })
-    .option('no-wait', {
+    .option('wait', {
+      alias: 'w',
+      group: 'Command options:',
       boolean: true,
-      desc: 'Disable waiting for deployment ready state'
+      desc: 'Wait for deployment ready state'
     })
-    .usage('Usage: toa deploy /path/to/context')
-    .commandDir('./deploy')
 }
 
-exports.command = 'deploy [path]'
+exports.command = 'deploy'
 exports.desc = 'Deploy context'
 exports.builder = builder
 exports.handler = deploy

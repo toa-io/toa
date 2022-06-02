@@ -6,10 +6,12 @@ const invocation = () => jest.fn(() => randomstring.generate())
 
 const invocations = {
   foo: {
-    invoke: invocation('foo')
+    invoke: invocation('foo'),
+    link: () => null
   },
   bar: {
-    invoke: invocation('bar')
+    invoke: invocation('bar'),
+    link: () => null
   }
 }
 

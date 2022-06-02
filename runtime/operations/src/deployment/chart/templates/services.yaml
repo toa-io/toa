@@ -1,0 +1,57 @@
+{{- range .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-{{ required "deployment name is required" .name }}
+spec:
+  replicas: {{ .replicas | default 2 }}
+  selector:
+    matchLabels:
+      toa.io/service: {{ .name }}
+  template:
+    metadata:
+      labels:
+        toa.io/service: {{ .name }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: {{ .image }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-{{ .name }}
+spec:
+  type: ClusterIP
+  selector:
+    toa.io/service: {{ .name }}
+  ports:
+    - name: port-{{ .port }}
+      protocol: TCP
+      port: {{ .port }}
+      targetPort: {{ .port }}
+---
+{{- if .ingress }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .name }}
+  {{- if .ingress.annotations }}
+  annotations:
+{{ toYaml .ingress.annotations | indent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ required "ingress.class is required" .ingress.class }}
+  rules:
+    - host: {{ required "ingress.host is required" .ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service-{{ .name }}
+                port:
+                  number: 8000
+{{- end }}
+{{- end }}

@@ -1,6 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
+
 const schemas = require('./schemas')
 const { RequestContractException } = require('../exceptions')
 const { Conditions } = require('./conditions')

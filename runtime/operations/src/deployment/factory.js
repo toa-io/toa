@@ -1,37 +1,100 @@
 'use strict'
 
-const { Composition } = require('./composition')
-const { Compositions } = require('./compositions')
-const { Image } = require('./image')
+const { Process } = require('../process')
+const { Operator } = require('./operator')
+const { Factory: Images, Registry } = require('./images')
 const { Deployment } = require('./deployment')
-const { Chart } = require('./chart')
+const { Composition } = require('./composition')
+const { Service } = require('./service')
 
+/**
+ * @implements {toa.operations.deployment.Factory}
+ */
 class Factory {
+  /** @type {toa.formation.Context} */
   #context
+  /** @type {toa.operations.deployment.images.Registry} */
+  #registry
+  /** @type {toa.operations.Process} */
+  #process
 
+  /**
+   * @param context {toa.formation.Context}
+   */
   constructor (context) {
     this.#context = context
+    this.#process = new Process()
+
+    const images = new Images(context.name, context.runtime)
+    this.#registry = new Registry(context.registry, images, this.#process)
   }
 
-  deployment () {
-    const compositions = this.#compositions()
-    const images = Array.from(compositions).map((composition) => composition.image)
-    const chart = new Chart(this.#context, compositions)
+  operator () {
+    const compositions = this.#context.compositions.map((composition) => this.#composition(composition))
+    const dependencies = this.#dependencies()
+    const deployment = new Deployment(this.#context, compositions, dependencies, this.#process)
 
-    return new Deployment(chart, images)
+    return new Operator(deployment, this.#registry)
   }
 
-  #compositions () {
-    return new Compositions(this.#context, (composition) => this.#composition(composition))
-  }
-
+  /**
+   * @param composition {toa.formation.context.Composition}
+   * @returns {Composition}
+   */
   #composition (composition) {
-    const image = this.#image(composition)
+    const image = this.#registry.composition(composition)
 
     return new Composition(composition, image)
   }
 
-  #image = (composition) => new Image(composition, this.#context)
+  /**
+   * @returns {Array<toa.operations.deployment.Dependency>}
+   */
+  #dependencies () {
+    /** @type {toa.formation.context.Dependencies} */
+    const map = { ...this.#context.connectors, ...this.#context.extensions }
+    /** @type {Array<toa.operations.deployment.Dependency>} */
+    const dependencies = []
+
+    for (const [location, instances] of Object.entries(map)) {
+      const dependency = this.#dependency(location, instances)
+
+      if (dependency !== undefined) dependencies.push(dependency)
+    }
+
+    return dependencies
+  }
+
+  /**
+   * @param {string} path
+   * @param {toa.formation.context.Dependency[]} declarations
+   * @returns {toa.operations.deployment.Dependency | undefined}
+   */
+  #dependency (path, declarations) {
+    const module = require(path)
+
+    if (module.deployment === undefined) return
+
+    const annotations = this.#context.annotations?.[module.id]
+    /** @type {toa.operations.deployment.dependency.Declaration} */
+    const dependency = module.deployment(declarations, annotations)
+
+    /** @type {toa.operations.deployment.Service[]} */
+    const services = dependency.services?.map((service) => this.#service(path, service))
+
+    return { references: dependency.references, services }
+  }
+
+  /**
+   * @param path {string}
+   * @param service {toa.operations.deployment.dependency.Service}
+   * @returns {Service}
+   */
+  #service (path, service) {
+    const image = this.#registry.service(path, service)
+
+    return new Service(service, image)
+  }
 }
 
 exports.Factory = Factory

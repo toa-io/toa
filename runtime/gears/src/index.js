@@ -11,12 +11,14 @@ const { newid } = require('./newid')
 const { random } = require('./random')
 const { remap } = require('./remap')
 const { repeat } = require('./repeat')
-const { retry } = require('./retry')
+const { retry, RetryError } = require('./retry')
 const { sample } = require('./sample')
 const { seal } = require('./seal')
 const { timeout } = require('./timeout')
 const { underlay } = require('./underlay')
 const { yaml } = require('./yaml')
+
+exports.directory = require('./directory')
 
 exports.concat = concat
 exports.console = console
@@ -30,6 +32,7 @@ exports.random = random
 exports.remap = remap
 exports.repeat = repeat
 exports.retry = retry
+exports.RetryError = RetryError
 exports.sample = sample
 exports.seal = seal
 exports.timeout = timeout

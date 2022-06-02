@@ -4,6 +4,9 @@ const { console } = require('@toa.io/gears')
 const { Connector } = require('./connector')
 const { NotImplementedException } = require('./exceptions')
 
+/**
+ * @implements {toa.core.Runtime}
+ */
 class Runtime extends Connector {
   locator
 
@@ -18,7 +21,7 @@ class Runtime extends Connector {
     Object.values(operations).forEach((operation) => this.depends(operation))
   }
 
-  connection () {
+  async connection () {
     console.info(`Runtime '${this.locator.id}' connected`)
   }
 

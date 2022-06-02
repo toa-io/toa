@@ -2,36 +2,33 @@
 
 const { concat } = require('@toa.io/gears')
 
+// noinspection JSClosureCompilerSyntax
+/**
+ * @implements {toa.core.Locator}
+ */
 class Locator {
   domain = 'system'
   name
   id
   label
 
-  constructor (manifest) {
-    if (manifest !== undefined) {
-      if (typeof manifest === 'string') {
-        manifest = Locator.parse(manifest)
-      }
+  constructor (component) {
+    if (component !== undefined) {
+      if (typeof component === 'string') component = Locator.parse(component)
 
-      this.domain = manifest.domain
-      this.name = manifest.name
+      this.domain = component.domain
+      this.name = component.name
     }
 
     this.id = `${this.domain}${concat('.', this.name)}`
     this.label = `${this.domain}${concat('-', this.name)}`
   }
 
-  host (type, level = 0) {
-    let host = ''
+  host (type, level = 1) {
+    let host = this.domain
 
-    const segments = LEVELS.slice(0, level + 1)
-
-    for (const segment of segments) {
-      host += concat(segment(this), '-')
-    }
-
-    if (type) host += type.toLowerCase()
+    if (type !== undefined) host = type + '-' + host
+    if (level === 1 && this.name !== undefined) host += '-' + this.name
 
     return host
   }
@@ -42,10 +39,5 @@ class Locator {
     return { domain, name, endpoint: rest.join('.') }
   }
 }
-
-const LEVELS = [
-  (locator) => locator.domain,
-  (locator) => locator.name
-]
 
 exports.Locator = Locator

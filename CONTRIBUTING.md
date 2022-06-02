@@ -8,14 +8,19 @@
 1. [Node LTS](https://nodejs.org/)
 2. [Docker Desktop](https://www.docker.com/get-started)
 3. [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-with-a-package-manager)
-4. [Telepresence](https://www.telepresence.io/docs/latest/install/)
-5. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
+4. [Helm](https://helm.sh/docs/intro/install/#from-homebrew-macos)
+5. [Telepresence](https://www.telepresence.io/docs/latest/install/)
+6. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
 
 ## Setup
 
 ```shell
-$ npm run dev
+$ npm run env
 $ npm i
+```
+
+```shell
+$ export TOA_ENV=local
 ```
 
 ## Flow
@@ -60,19 +65,11 @@ All modules must be in <a href=https://developer.mozilla.org/en-US/docs/Web/>str
    </td>
   </tr>
   <tr>
-    <td valign=top>One class per file</td>
-    <td>Put a class into a module with the same name in lowercase.</td>
-  </tr>
-  <tr>
-    <td valign=top>Helper directories</td>
-    <td>Put 'subclasses' into a folder with the same name as your main class.</td>
-  </tr>
-  <tr>
     <td valign=top>
 
 `exports` last
-    </td>
-    <td>Put all exports at the end of a module.</td>
+</td>
+<td>Put all exports at the end of a module.</td>
   </tr>
   <tr>
     <td valign=top>No default exports</td>
@@ -81,6 +78,30 @@ All modules must be in <a href=https://developer.mozilla.org/en-US/docs/Web/>str
   <tr>
     <td valign=top>No 'module.exports'</td>
     <td>Use `exports.name` instead of `module.exports.name`</td>
+  </tr>
+  <tr>
+    <td valign=top>One class per file</td>
+    <td>Put a class into a module with the same name in lowercase.</td>
+  </tr>
+  <tr>
+    <td valign=top>Namespace directories</td>
+    <td>
+        Use directories as namespaces. Put <code>index.js</code> file into these directories to export public classes.
+    </td>
+  </tr>
+  <tr>
+    <td valign=top>Helper directories</td>
+    <td>Put 'subclasses' into a folder with the same name as your main class.</td>
+  </tr>
+  <tr>
+    <td valign=top>Type definitions</td>
+    <td>
+        Define types with <a href="https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-d-ts.html">.d.ts</a> in <code>types</code> directory on the same level as <code>src</code>. <code>src</code> and <code>types</code> should have same structure.
+        <br/>
+        Export types within appropriate namespaces (ex: <code>toa.runtime.core</code>).
+        <br/>
+        Use <a href="https://jsdoc.app">JSDoc comments</a> for all public stuff.
+    </td>
   </tr>
 </table>
 
@@ -101,20 +122,20 @@ const { local } = require('./local/module')
 class Declaration {
   // public first
   pub
-  
+
   // private last
   #priv
 
   constructor (arg) {}
 
   // public first
-  method() {}
+  method () {}
 
   // private last
-  #method() {}
+  #method () {}
 
   // static properties and methods should be last event if they're public
-  static method() {}
+  static method () {}
 }
 
 // private last

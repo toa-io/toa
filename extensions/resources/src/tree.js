@@ -3,20 +3,27 @@
 const path = require('path')
 const { match } = require('path-to-regexp')
 
+const { console } = require('@toa.io/gears')
+
+/**
+ * @implements {toa.extensions.resources.Tree}
+ */
 class Tree {
+  /** @type {toa.extensions.resources.tree.Node[]} */
   #nodes
   #query
 
-  constructor (tree, query) {
+  /**
+   * @param {Function} query
+   */
+  constructor (query) {
     this.#query = query
-
-    this.update(tree)
   }
 
   /** @hot */
   match (path) {
     // dev only check
-    if (process.env.TOA_ENV === 'dev') {
+    if (process.env.TOA_ENV === 'local') {
       const nodes = this.#nodes.filter((node) => node.match(path) !== false)
 
       if (nodes.length > 1) {
@@ -28,7 +35,10 @@ class Tree {
 
     let match
 
-    const node = this.#nodes.find((node) => (match = node.match(path)) !== false)
+    const node = this.#nodes.find((node) => {
+      match = node.match(path)
+      return match !== false
+    })
 
     return node === undefined ? undefined : { node, params: match.params }
   }
@@ -38,7 +48,12 @@ class Tree {
     this.#traverse(tree)
   }
 
-  #traverse (node, route, parent) {
+  /**
+   * @param {toa.extensions.resources.declarations.Node} node
+   * @param {string} route
+   * @param {toa.extensions.resources.declarations.Node} parent
+   */
+  #traverse (node, route = undefined, parent = undefined) {
     const current = {}
 
     if (route === undefined) route = '/'
@@ -60,9 +75,12 @@ class Tree {
     let paths = 0
 
     for (const [key, value] of Object.entries(node)) {
-      if (key.substr(0, 1) === '/') {
+      if (key[0] === '/') {
         paths++
-        this.#traverse(value, path.posix.resolve(route, '.' + key), node)
+
+        const branch = path.posix.resolve(route, '.' + key)
+
+        this.#traverse(value, branch, node)
       }
     }
 

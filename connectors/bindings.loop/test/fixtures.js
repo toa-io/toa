@@ -17,7 +17,10 @@ const runtime = {
       }
     ]
   },
-  invoke: jest.fn(async () => generate())
+  invoke: jest.fn(async () => generate()),
+  link: () => null,
+  connect: () => null,
+  disconnect: () => null
 }
 
 const endpoints = ['get', 'add', 'discover']

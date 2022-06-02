@@ -5,7 +5,13 @@ const { empty } = require('@toa.io/gears')
 
 const etag = require('./etag')
 
-/** @hot */
+/**
+ * @hot
+ *
+ * @param {import('express').Request} req
+ * @param {{[key: string]: string}} params
+ * @returns {toa.core.Request}
+ */
 const request = (req, params) => {
   const request = {}
 

@@ -1,9 +1,13 @@
 'use strict'
 
-class Event {
+const { Connector } = require('@toa.io/core')
+
+class Event extends Connector {
   #event
 
   constructor (event) {
+    super()
+
     this.#event = event
   }
 

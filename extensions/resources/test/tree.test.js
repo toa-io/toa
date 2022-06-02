@@ -6,7 +6,8 @@ const fixtures = require('./tree.fixtures')
 let tree
 
 beforeEach(() => {
-  tree = new Tree(fixtures.definition, () => null)
+  tree = new Tree(() => null)
+  tree.update(fixtures.declaration)
 })
 
 it('should find node', () => {
@@ -19,8 +20,8 @@ it('should return undefined on mismatch', () => {
   expect(tree.match('/non/existent/')).not.toBeDefined()
 })
 
-it('should throw on resource conflicts if dev env', () => {
-  const definition = {
+it('should throw on resource conflicts on local dev env', () => {
+  const declaration = {
     '/:id': {
       operations: ['observe']
     },
@@ -31,9 +32,11 @@ it('should throw on resource conflicts if dev env', () => {
 
   const env = process.env.TOA_ENV
 
-  process.env.TOA_ENV = 'dev'
+  process.env.TOA_ENV = 'local'
 
-  tree = new Tree(definition, () => null)
+  tree = new Tree(() => null)
+
+  tree.update(declaration)
 
   expect(() => tree.match('/ok/')).toThrow(/Ambiguous routes/)
 

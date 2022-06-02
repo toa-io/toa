@@ -14,7 +14,3 @@ it('should hash', () => {
   expect(hash1).toEqual(hash2)
   expect(hash1).not.toEqual(hash3)
 })
-
-it('should throw on type mismatch', () => {
-  expect(() => hash({})).toThrow(/must be a string/)
-})

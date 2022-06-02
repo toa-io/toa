@@ -1,7 +1,0 @@
-# This file just helps with IDE autocompletion and helm debugging. Actually dynamically replaced by ../chart.js.
-apiVersion: v2
-name: toa-application
-description: Toa Application Chart
-type: application
-version: 0.0.0
-appVersion: "0.0.0"

@@ -23,6 +23,7 @@ it('should underlay', () => {
 })
 
 it('should underlay async', async () => {
+  /** @type {toa.gears.Underlay} */
   const instance = underlay(async (domain, name, endpoint, input, query) =>
     ({ domain, name, endpoint, input, query }))
 

@@ -7,9 +7,12 @@ const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
 const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
-const { Broadcast } = require('./broadcast')
+const { Broadcaster } = require('./broadcaster')
 const { Connection } = require('./connection')
 
+/**
+ * @implements {toa.core.bindings.Factory}
+ */
 class Factory {
   #connections = {}
 
@@ -37,21 +40,29 @@ class Factory {
     return new Receiver(channel, locator, label, id, receiver)
   }
 
-  broadcast (name, group) {
+  broadcaster (name, group) {
     const locator = new Locator()
     const channel = this.#channel(locator)
 
-    return new Broadcast(channel, name, group)
+    return new Broadcaster(channel, name, group)
   }
 
   #channel () {
-    const host = 'rabbitmq' // locator.host('rabbitmq')
+    const url = new URL('amqp://')
 
-    if (this.#connections[host] === undefined) {
-      this.#connections[host] = new Connection(host)
+    if (process.env.TOA_ENV === 'local') {
+      url.hostname = 'localhost'
+    } else {
+      url.hostname = 'rabbitmq'
+      url.username = 'user'
+      url.password = 'password'
     }
 
-    return new Channel(this.#connections[host])
+    const href = url.href
+
+    if (this.#connections[href] === undefined) this.#connections[href] = new Connection(url)
+
+    return new Channel(this.#connections[href])
   }
 }
 

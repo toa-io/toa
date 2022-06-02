@@ -1,15 +1,15 @@
 'use strict'
 
+const boot = require('@toa.io/boot')
 const { Locator } = require('@toa.io/core')
-const { Client } = require('../../connectors/storages.mongodb/src/client')
 
 const connect = async (id) => {
   const locator = new Locator(id)
-  const client = new Client(locator.host('mongodb'), locator.domain, locator.name)
+  const storage = boot.storage(locator, '@toa.io/storages.mongodb')
 
-  await client.connect()
+  await storage.connect()
 
-  return client
+  return storage
 }
 
 exports.connect = connect

@@ -4,6 +4,7 @@ const { generate } = require('randomstring')
 const { exceptions: { codes } } = require('@toa.io/core')
 const { newid, timeout } = require('@toa.io/gears')
 
+// noinspection DuplicatedCode
 const framework = require('./framework')
 
 let composition, credits, messages, stats

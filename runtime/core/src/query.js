@@ -12,7 +12,12 @@ class Query {
     this.#system = Object.keys(properties).filter((key) => properties[key].system === true)
   }
 
+  /**
+   * @param {toa.core.request.Query} query
+   * @returns {toa.core.storages.Query}
+   */
   parse (query) {
+    /** @type {toa.core.storages.Query} */
     const result = {}
     const { id, version, criteria, ...rest } = query
 

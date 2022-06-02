@@ -85,12 +85,8 @@ describe('dependencies', () => {
     expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
   })
 
-  it('should not throw on empty array', async () => {
-    a.depends([])
-
-    await a.connect()
-
-    expect(sequence).toStrictEqual(['+a'])
+  it('should throw on empty array', async () => {
+    expect(() => a.depends([])).toThrow(/must not be empty/)
   })
 
   it('should await 2-way dependencies', async () => {
@@ -148,25 +144,8 @@ describe('dependencies', () => {
     expect(sequence).toEqual(['+c', '+a', '+b', '-a', '*a', '-b', '-c', '*c', '*b'])
   })
 
-  it('should not throw if depends not on Connector', async () => {
-    a.depends({})
-
-    await expect((async () => {
-      await a.connect()
-      await a.disconnect()
-    })()).resolves.not.toThrow()
-
-    b.depends([undefined, c, {}])
-
-    await expect((async () => {
-      await b.connect()
-      await b.disconnect()
-    })()).resolves.not.toThrow()
-
-    expect(sequence).toStrictEqual([
-      '+a', '-a', '*a',
-      '+c', '+b', '-b', '-c', '*c', '*b'
-    ])
+  it('should throw if depends not on Connector', async () => {
+    expect(() => a.depends({})).toThrow()
   })
 
   describe('errors', () => {

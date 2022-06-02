@@ -1,7 +1,8 @@
 'use strict'
 
-const { retry, timeout, random } = require('../src/')
+const { retry, RetryError, timeout, random } = require('../src/')
 
+/** @type {toa.gears.retry.Options} */
 let options
 
 beforeEach(() => {
@@ -9,8 +10,10 @@ beforeEach(() => {
 })
 
 it('should return', async () => {
-  const result = await retry(() => 1)
-  expect(result).toBe(1)
+  const value = random()
+  const result = await retry(() => value)
+
+  expect(result).toBe(value)
 })
 
 it('should retry', async () => {
@@ -54,6 +57,7 @@ it('should throw on failed retries', async () => {
 it('should delay attempts', async () => {
   const start = +new Date()
 
+  /** @type {toa.gears.retry.Task} */
   const fn = (retry, attempt) => {
     if (attempt < 3) retry()
   }
@@ -69,8 +73,9 @@ it('should delay attempts', async () => {
 it('should retry given times', async () => {
   const retries = random(10)
 
+  // noinspection JSCheckFunctionSignatures
   const fn = jest.fn((retry) => retry())
 
-  await expect(retry(fn, { retries, base: 0 })).rejects.toThrow(retry.Error)
+  await expect(retry(fn, { retries, base: 0 })).rejects.toThrow(RetryError)
   expect(fn).toHaveBeenCalledTimes(retries + 1)
 })

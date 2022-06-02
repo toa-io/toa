@@ -8,10 +8,10 @@ class Composition extends Connector {
   constructor (expositions, producers, receivers, extensions) {
     super()
 
-    this.depends(expositions)
-    this.depends(producers)
-    this.depends(receivers)
-    this.depends(extensions)
+    if (expositions.length > 0) this.depends(expositions)
+    if (producers.length > 0) this.depends(producers)
+    if (receivers.length > 0) this.depends(receivers)
+    if (extensions.length > 0) this.depends(extensions)
   }
 
   async connection () {

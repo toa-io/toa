@@ -1,8 +1,13 @@
 'use strict'
 
 const { rename } = require('./rename')
+
+/**
+ * @param {toa.core.storages.ast.Node} node
+ * @returns {import('mongodb').Filter}
+ */
 const criteria = (node) => {
-  if (!TYPES[node.type]) { throw new Error('Query criteria AST parse error') }
+  if (TYPES[node.type] === undefined) throw new Error(`AST parse error: unknown node type '${node.type}'`)
 
   return TYPES[node.type](node)
 }
@@ -38,8 +43,11 @@ TYPES.LOGIC = (expression) => {
 TYPES.COMPARISON = (expression) => {
   const left = criteria(expression.left)
   const right = criteria(expression.right)
+  const operator = OPERATORS.COMPARISON[expression.operator]
 
-  return { [left]: { [OPERATORS.COMPARISON[expression.operator]]: right } }
+  if (operator === undefined) throw new Error(`AST parse error: unknown operator '${expression.operator}'`)
+
+  return { [left]: { [operator]: right } }
 }
 
 TYPES.SELECTOR = (expression) => rename(expression.selector)

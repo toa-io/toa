@@ -1,16 +1,23 @@
 'use strict'
 
+// noinspection JSClosureCompilerSyntax
+/**
+ * @implements {toa.operations.deployment.Composition}
+ */
 class Composition {
   name
-  components
-  replicas
   image
+  /** @type {Array<string>} */
+  components
 
+  /**
+   * @param composition {toa.formation.context.Composition}
+   * @param image {toa.operations.deployment.images.Image}
+   */
   constructor (composition, image) {
     this.name = composition.name
-    this.components = composition.components
-    this.replicas = composition.replicas
-    this.image = image
+    this.image = image.reference
+    this.components = composition.components.map((component) => component.locator.label)
   }
 }
 

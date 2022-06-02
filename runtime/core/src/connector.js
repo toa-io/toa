@@ -3,58 +3,89 @@
 const { console } = require('@toa.io/gears')
 const { newid } = require('@toa.io/gears')
 
+/**
+ * Abstract connections hierarchy element
+ */
 class Connector {
-  #connectors = []
-  #linked = []
+  /** @type {Array<Connector>} */
+  #dependencies = []
+  /** @type {Array<Connector>} */
+  #links = []
+  /** @type {Promise} */
   #connecting
+  /** @type {Promise} */
   #disconnecting
 
+  /** @type {string} */
   id
+  /** @type {boolean} */
   connected = false
 
   constructor () {
     this.id = this.constructor.name + '#' + newid().substring(0, 8)
   }
 
+  /**
+   * Creates a dependency and backlink with another Connector or a set of Connectors
+   *
+   * See .connect() and .disconnect()
+   *
+   * @param connector {Connector | any | Array<Connector | any>}
+   * @returns {Connector}
+   */
   depends (connector) {
+    /** @type {Connector} */
     let next
 
     if (connector instanceof Array) {
-      connector = connector.filter((item) => item instanceof Connector)
+      if (connector.length === 0) throw new Error('Connectors array must not be empty')
 
-      if (connector.length > 0) {
+      if (connector.length > 1) {
         next = new Connector()
 
         for (const item of connector) {
-          this.#connectors.push(item)
+          this.#dependencies.push(item)
           item.depends(next)
         }
-      }
-    } else {
-      if (connector instanceof Connector) {
-        next = connector
-      }
-    }
+      } else next = connector[0]
+    } else next = connector
 
-    if (next !== undefined) {
-      this.#connectors.push(next)
-      next.link(this)
+    this.#dependencies.push(next)
+    next.link(this)
 
-      return next
-    } else return this
+    return next
   }
 
+  /**
+   * Creates a backlink to another Connector
+   *
+   * See .connect() and .disconnect()
+   *
+   * @param connector {Connector}
+   * @returns {void}
+   */
   link (connector) {
-    this.#linked.push(connector)
+    this.#links.push(connector)
   }
 
+  /**
+   * Connects dependants then self
+   *
+   * In case of exception disconnects with current connection interruption
+   *
+   * Method is idempotent
+   *
+   * @returns {Promise<void>}
+   */
   async connect () {
     if (this.#connecting) return this.#connecting
 
     this.#disconnecting = undefined
 
+    console.debug(`Connecting '${this.id}' with ${this.#dependencies.length} dependencies...`)
+
     this.#connecting = (async () => {
-      await Promise.all(this.#connectors.map(connector => connector.connect()))
+      await Promise.all(this.#dependencies.map((connector) => connector.connect()))
       await this.connection()
     })()
 
@@ -69,12 +100,22 @@ class Connector {
     console.debug(`Connector '${this.id}' connected`)
   }
 
+  /**
+   * Disconnects self then dependants
+   *
+   * Does nothing if there are connected linked Connectors
+   *
+   * Method is idempotent
+   *
+   * @param [interrupt] {boolean}
+   * @returns {Promise<void>}
+   */
   async disconnect (interrupt) {
     if (interrupt !== true) await this.#connecting
 
     if (this.#disconnecting) return this.#disconnecting
 
-    const linked = this.#linked.reduce((acc, parent) => acc || parent.connected, false)
+    const linked = this.#links.reduce((acc, parent) => acc || parent.connected, false)
 
     if (linked && interrupt !== true) return
 
@@ -83,6 +124,7 @@ class Connector {
 
     this.#disconnecting = (async () => {
       const start = +new Date()
+
       const interval = setInterval(() => {
         const delay = +new Date() - start
 
@@ -93,7 +135,8 @@ class Connector {
 
       clearInterval(interval)
 
-      await Promise.all(this.#connectors.map(connector => connector.disconnect()))
+      await Promise.all(this.#dependencies.map(connector => connector.disconnect()))
+
       this.disconnected()
     })()
 
@@ -105,15 +148,30 @@ class Connector {
   debug (node = {}) {
     node[this.id] = { connected: this.connected }
 
-    if (this.#connectors.length > 0) for (const connector of this.#connectors) connector.debug?.(node[this.id])
+    if (this.#dependencies.length > 0) for (const connector of this.#dependencies) connector.debug?.(node[this.id])
 
     return node
   }
 
+  /**
+   * Called on connection
+   *
+   * @returns {Promise<void>}
+   */
   async connection () {}
 
+  /**
+   * Called on disconnection
+   *
+   * @returns {Promise<void>}
+   */
   async disconnection () {}
 
+  /**
+   * Called after self and dependants disconnection is complete
+   *
+   * @returns {void}
+   */
   disconnected () {}
 }
 

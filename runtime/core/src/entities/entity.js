@@ -29,7 +29,7 @@ class Entity {
   set (value) {
     const error = this.#schema.fit(value)
 
-    if (error) throw new EntityContractException(error)
+    if (error !== null) throw new EntityContractException(error)
 
     this.#state = value
   }

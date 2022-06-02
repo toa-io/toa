@@ -1,76 +1,145 @@
 'use strict'
 
-const { writeFile: write, rm: remove } = require('node:fs/promises')
-const execa = require('execa')
 const { join } = require('node:path')
-const { yaml } = require('@toa.io/gears')
+const { writeFile: write } = require('node:fs/promises')
+const { yaml, directory: { copy } } = require('@toa.io/gears')
 
-const { directory } = require('./directory')
-const { copy } = require('./copy')
-
+/**
+ * @implements {toa.operations.deployment.Deployment}
+ */
 class Deployment {
-  #chart
-  #images
+  /** @type {toa.operations.deployment.Declaration} */
+  #declaration
+  /** @type {toa.operations.deployment.Contents} */
+  #contents
+  /** @type {toa.operations.Process} */
+  #process
+  /** @type {string} */
+  #target
 
-  constructor (chart, images) {
-    this.#chart = chart
-    this.#images = images
+  /**
+   * @param context {toa.formation.Context}
+   * @param compositions {Array<toa.operations.deployment.Composition>}
+   * @param dependencies {Array<toa.operations.deployment.Dependency>}
+   * @param process {toa.operations.Process}
+   */
+  constructor (context, compositions, dependencies, process) {
+    const dependency = Deployment.#merge(dependencies)
+
+    this.#declaration = Deployment.#declare(context, dependency)
+    this.#contents = Deployment.#describe(compositions, dependency)
+    this.#process = process
   }
 
-  async export (path) {
-    if (path === undefined) path = await directory.temp('deployment')
-    else await directory(path)
-
-    await this.#dump(path)
-
-    return path
-  }
-
-  async install (options = {}) {
-    await this.#push()
-    return await this.#upgrade(options)
-  }
-
-  async #dump (path) {
-    const chart = yaml.dump(this.#chart.declaration)
-    const values = yaml.dump(this.#chart.values)
-
-    await copy(join(__dirname, 'assets/chart/templates'), join(path, 'templates'))
+  async export (target) {
+    const chart = yaml.dump(this.#declaration)
+    const values = yaml.dump(this.#contents)
 
     await Promise.all([
-      write(join(path, 'Chart.yaml'), chart),
-      write(join(path, 'values.yaml'), values)
+      write(join(target, 'Chart.yaml'), chart),
+      write(join(target, 'values.yaml'), values),
+      copy(TEMPLATES, join(target, 'templates'))
     ])
+
+    this.#target = target
   }
 
-  async #push () {
-    for (const image of this.#images) {
-      await image.build()
-      await image.push()
-    }
-  }
+  async install (options) {
+    if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
 
-  async #upgrade (options) {
-    const path = await this.export()
     const args = []
 
     if (options.wait === true) args.push('--wait')
-    if (options.dry === true) args.push('--dry-run')
 
-    const update = execa('helm', ['dependency', 'update', path])
+    await this.#process.execute('helm', ['dependency', 'update', this.#target])
+    await this.#process.execute('helm', ['upgrade', this.#declaration.name, '-i', ...args, this.#target])
+  }
 
-    update.stdout.pipe(process.stdout)
-    await update
+  async template () {
+    if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
 
-    const upgrade = execa('helm', ['upgrade', this.#chart.name, '-i', ...args, path])
+    await this.#process.execute('helm', ['dependency', 'update', this.#target], { silently: true })
 
-    upgrade.stdout.pipe(process.stdout)
-    const output = await upgrade
+    return await this.#process.execute('helm',
+      ['template', this.#declaration.name, this.#target],
+      { silently: true })
+  }
 
-    await remove(path, { recursive: true })
+  /**
+   * @param dependencies {Array<toa.operations.deployment.Dependency>}
+   * @returns {toa.operations.deployment.Dependency}
+   */
+  static #merge (dependencies) {
+    /** @type {Array<toa.operations.deployment.Reference>} */
+    const references = []
+    /** @type {Array<toa.operations.deployment.Service>} */
+    const services = []
 
-    return output
+    for (const dependency of dependencies) {
+      if (dependency.references !== undefined) references.push(...dependency.references)
+      if (dependency.services !== undefined) services.push(...dependency.services)
+    }
+
+    return { references, services }
+  }
+
+  /**
+   * @param context {toa.formation.Context}
+   * @param dependency {toa.operations.deployment.Dependency}
+   * @returns {toa.operations.deployment.Declaration}
+   */
+  static #declare (context, { references }) {
+    const { name, description, version } = context
+
+    const dependencies = references.map(({ values, ...rest }) => rest)
+
+    return {
+      ...DECLARATION,
+      name,
+      description,
+      version,
+      appVersion: version,
+      dependencies
+    }
+  }
+
+  /**
+   * @param compositions {Array<toa.operations.deployment.Composition>}
+   * @param dependency {toa.operations.deployment.Dependency}
+   * @returns {toa.operations.deployment.Contents}
+   */
+  static #describe (compositions, { references, services }) {
+    /** @type {Set<string>} */
+    const components = new Set()
+
+    for (const composition of compositions) {
+      for (const component of composition.components) {
+        components.add(component)
+      }
+    }
+
+    const dependencies = references?.reduce((map, reference) => {
+      const { name, alias, values } = reference
+
+      map[alias || name] = values
+
+      return map
+    }, {})
+
+    return {
+      compositions,
+      components: Array.from(components),
+      services,
+      ...dependencies
+    }
   }
 }
+
+const DECLARATION = {
+  apiVersion: 'v2',
+  type: 'application'
+}
+
+const TEMPLATES = join(__dirname, 'chart/templates')
 
 exports.Deployment = Deployment

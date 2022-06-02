@@ -22,6 +22,9 @@ const codes = {
   Transmission: 401
 }
 
+/**
+ * @implements {toa.core.Exception}
+ */
 class Exception {
   code
   message

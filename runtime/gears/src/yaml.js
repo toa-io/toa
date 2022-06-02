@@ -1,23 +1,45 @@
 'use strict'
 
-const fs = require('fs')
-const util = require('util')
+const { readFile } = require('node:fs/promises')
+const { readFileSync } = require('node:fs')
+
 const yaml = require('js-yaml')
 
-const load = async path => {
-  const readFile = util.promisify(fs.readFile)
+/**
+ * @param {string} path
+ * @returns {Promise<Object>}
+ */
+const load = async (path) => {
   const contents = await readFile(path, 'utf8')
 
   return yaml.load(contents)
 }
 
-load.sync = path => {
-  const contents = fs.readFileSync(path)
+/**
+ * @param {string} path
+ * @returns {Promise<Object[]>}
+ */
+load.all = async (path) => {
+  const contents = await readFile(path, 'utf8')
+
+  return yaml.loadAll(contents)
+}
+
+/**
+ * @param {string} path
+ * @returns {Object}
+ */
+load.sync = (path) => {
+  const contents = readFileSync(path, 'utf8')
 
   return yaml.load(contents)
 }
 
-load.try = async path => {
+/**
+ * @param {string} path
+ * @returns {Promise<Object | null>}
+ */
+load.try = async (path) => {
   try {
     return await load(path)
   } catch (e) {
@@ -25,7 +47,22 @@ load.try = async path => {
   }
 }
 
-load.dump = (object) => yaml.dump(object, { noRefs: true })
+/**
+ * @param {Object} object
+ * @returns {string}
+ */
+load.dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
+
+/**
+ * @param {string} string
+ * @returns {Object}
+ */
 load.parse = (string) => yaml.load(string)
+
+/**
+ * @param {string} string
+ * @returns {Object[]}
+ */
+load.split = (string) => yaml.loadAll(string)
 
 exports.yaml = load

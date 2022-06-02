@@ -1,8 +1,7 @@
 'use strict'
 
+const boot = require('@toa.io/boot')
 const { Locator } = require('@toa.io/core')
-
-const boot = require('../../runtime/boot/src')
 
 const remote = async (id) => {
   const locator = new Locator(id)

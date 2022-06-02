@@ -1,9 +1,17 @@
 'use strict'
 
+/**
+ * @param {toa.core.Locator} locator
+ * @param {string} storage
+ * @returns {toa.core.storages.Storage}
+ */
 const storage = (locator, storage) => {
-  const { Storage } = require(storage)
+  const { Factory } = require(storage)
 
-  return new Storage(locator)
+  /** @type {toa.core.storages.Factory} */
+  const factory = new Factory()
+
+  return factory.storage(locator)
 }
 
 exports.storage = storage

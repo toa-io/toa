@@ -3,9 +3,10 @@
 const { generate } = require('randomstring')
 const clone = require('clone-deep')
 
+// noinspection JSCheckFunctionSignatures
 const schema = {
   fit: jest.fn((object) =>
-    (object.fail ? { [generate()]: generate() } : undefined)),
+    (object.fail ? { [generate()]: generate() } : null)),
 
   defaults: jest.fn(() => ({ [generate()]: generate() }))
 }

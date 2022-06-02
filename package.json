@@ -43,16 +43,20 @@
   },
   "scripts": {
     "prepare": "npx husky install",
-    "test": "npx standard --verbose | npx snazzy && npm run test:unit",
+    "test": "npm run test:lint && npm run test:unit",
+    "test:lint": "npx standard --verbose | npx snazzy",
     "test:unit": "npx jest --roots runtime connectors extensions",
     "test:integration": "npx jest --roots integration --runInBand",
+    "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",
     "lint": "npx standard --verbose --fix | npx snazzy",
-    "publish:local": "npx lerna publish --conventional-prerelease --preid dev --dist-tag dev --no-changelog --registry http://localhost:4873 --yes",
+    "version:dev": "npx lerna version --conventional-prerelease --preid dev --force-publish --no-git-tag-version --no-push --no-changelog --yes",
+    "publish:local": "npm publish --workspaces",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
-    "registry": "docker run --name verdaccio -p 4873:4873 -d --rm verdaccio/verdaccio && sleep 5 && npm adduser --registry http://localhost:4873",
-    "setup": "npm run registry && npm run cluster && npm run publish:local && toa deploy ./integration/context",
+    "registry:login": "aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 153896708942.dkr.ecr.eu-west-1.amazonaws.com",
+    "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
+    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
-    "dev": "npm run setup && npm run connect"
+    "env": "docker compose up -d && sleep 3000 && npm adduser --registry http://localhost:4873"
   },
   "standard": {
     "parser": "@babel/eslint-parser",

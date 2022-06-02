@@ -6,7 +6,7 @@ const builder = (yargs) => {
   yargs
     .positional('paths', {
       type: 'string',
-      desc: 'Path to package',
+      desc: 'Paths to packages',
       default: '.'
     })
     .array('paths')
@@ -26,6 +26,6 @@ const builder = (yargs) => {
 }
 
 exports.command = 'compose [paths...]'
-exports.desc = 'Start composition'
+exports.desc = 'Run composition'
 exports.builder = builder
 exports.handler = compose

@@ -3,6 +3,9 @@
 const { Connector } = require('@toa.io/core')
 const { name } = require('./queue')
 
+/**
+ * @implements {toa.core.connectors.bindings.Emitter}
+ */
 class Emitter extends Connector {
   #channel
   #locator

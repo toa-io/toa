@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  rabbitmq:
+    image: rabbitmq:3.10.0-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+  mongodb:
+    image: mongo:5.0.8
+    ports:
+      - '27017:27017'
+  verdaccio:
+    image: verdaccio/verdaccio:5.10.2
+    ports:
+      - '4873:4873'
