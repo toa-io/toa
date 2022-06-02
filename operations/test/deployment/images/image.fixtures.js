@@ -20,6 +20,7 @@ class Class extends Image {
   }
 }
 
+/** @type {toa.formation.context.Runtime} */
 const runtime = {
   version: generate()
 }

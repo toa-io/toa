@@ -33,7 +33,7 @@ declare namespace toa.core.storages {
     }
 
     interface Storage extends Connector {
-        get?(query: Query): Promise<Entity>
+        get?(query: Query): Promise<Entity | null>
 
         find?(query: Query): Promise<Entity[]>
 
