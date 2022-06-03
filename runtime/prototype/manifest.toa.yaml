@@ -16,10 +16,8 @@ operations:
   transit:
     virtual: true
     input: object
-    output:
-      id: ~
+    output: object
   observe:
-    output:
-      id: ~
+    output: object
   assign:
     input: object
