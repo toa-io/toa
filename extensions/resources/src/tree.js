@@ -72,11 +72,11 @@ class Tree {
       this.#nodes.push(current)
     }
 
-    let paths = 0
+    let branches = 0
 
     for (const [key, value] of Object.entries(node)) {
       if (key[0] === '/') {
-        paths++
+        branches++
 
         const branch = path.posix.resolve(route, '.' + key)
 
@@ -84,7 +84,7 @@ class Tree {
       }
     }
 
-    if (paths === 0 && node.operations === undefined) {
+    if (branches === 0 && node.operations === undefined) {
       console.warn(`Resource tree leaf '${route}' has no operations`)
     }
   }

@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector, exceptions: { NotImplementedException } } = require('@toa.io/core')
+const { console } = require('@toa.io/gears')
 
 const translate = require('./translate')
 
@@ -35,6 +36,8 @@ class Remote extends Connector {
   }
 
   update (declaration) {
+    console.info(`Updating tree '${this.#remote.locator.id}'`)
+
     this.#tree.update(declaration)
   }
 
