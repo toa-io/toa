@@ -9,6 +9,8 @@ const complete = (context) => {
   /** @type {Set<string>} */
   const composed = new Set()
 
+  if (context.compositions === undefined) context.compositions = []
+
   for (const composition of context.compositions) {
     for (const component of composition.components) {
       composed.add(component.locator.id)

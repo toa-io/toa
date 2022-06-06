@@ -16,3 +16,9 @@ beforeAll(() => {
 it('should dereference', () => {
   expect(context).toEqual(expect.objectContaining(fixtures.expected))
 })
+
+it('should not throw on empty compositions', () => {
+  context.compositions = undefined
+
+  expect(() => dereference(context)).not.toThrow()
+})

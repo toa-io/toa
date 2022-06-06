@@ -8,8 +8,10 @@
 const dereference = (context) => {
   const components = map(context.components)
 
-  for (const composition of context.compositions) {
-    composition.components = composition.components.map((id) => components[id])
+  if (context.compositions !== undefined) {
+    for (const composition of context.compositions) {
+      composition.components = composition.components.map((id) => components[id])
+    }
   }
 }
 
