@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:18.2.0-alpine3.15
 
 ENV NODE_ENV=production
 RUN npm set registry {{registry}}
