@@ -4,6 +4,12 @@
  * @param {Object} object
  * @param {string} [dimension]
  * @returns {Object}
+ * @example
+ * // returns { foo: 'bar' }
+ * convolve({ foo: 'bar', 'foo@staging': 'baz' })
+ *
+ * // returns { foo: 'baz' }
+ * convolve({ foo: 'bar', 'foo@staging': 'baz' }, 'staging')
  */
 const convolve = (object, dimension) => {
   if (typeof object !== 'object') return object
@@ -11,8 +17,8 @@ const convolve = (object, dimension) => {
   for (let [key, value] of Object.entries(object)) {
     value = convolve(value, dimension)
 
-    if (key.includes('@')) {
-      const [name, tag] = key.split('@')
+    if (key.includes(MARKER)) {
+      const [name, tag] = key.split(MARKER)
 
       if (tag === dimension) object[name] = value
 
@@ -22,5 +28,7 @@ const convolve = (object, dimension) => {
 
   return object
 }
+
+const MARKER = '@'
 
 exports.convolve = convolve
