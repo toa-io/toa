@@ -1,8 +1,10 @@
 declare namespace toa.extensions.resources.declarations {
 
     interface Operation {
+        operation: string
         type: 'transition' | 'observation' | 'assignment'
-        query: boolean
+        subject: 'entity' | 'set'
+        query?: boolean
     }
 
     interface Query {

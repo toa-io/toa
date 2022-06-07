@@ -21,5 +21,4 @@ receivers:
   credits.balance.updated: update
 
 resources:
-  /:id:
-    operations: [observe, update]
+  /:id: [observe, update]

@@ -19,6 +19,7 @@ const manifest = {
 }
 
 const resources = {
+  '/': ['one', 'two'],
   '/top': {
     operations: ['one'],
     '/nested': {

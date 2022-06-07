@@ -45,7 +45,5 @@ operations:
 
 extensions:
   '@toa.io/extensions.resources':
-    /:
-      operations: [add]
-    /:id:
-      operations: [observe, set]
+    /: [add]
+    /:id: [observe, set]

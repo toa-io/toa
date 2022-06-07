@@ -18,6 +18,13 @@ describe('normalize', () => {
     resources = clone(fixtures.resources)
   })
 
+  it('should expand array', () => {
+    normalize(resources, manifest)
+
+    expect(resources['/'].operations)
+      .toStrictEqual(fixtures.resources['/'].map(map))
+  })
+
   it('should expand operations', () => {
     normalize(resources, manifest)
 
