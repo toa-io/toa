@@ -31,3 +31,28 @@ it('should expand registry', () => {
     base
   })
 })
+
+describe('environments', () => {
+  it('should filter annotations with tags', () => {
+    normalize(context)
+
+    expect(context.annotations.test.target).toStrictEqual(fixtures.context.annotations.test.target)
+    expect(context.annotations.test['target@staging']).toBeUndefined()
+  })
+
+  it('should not filter values outside of annotations', () => {
+    context['name@staging'] = 'foo'
+
+    normalize(context)
+
+    expect(context['name@staging']).toStrictEqual('foo')
+  })
+
+  it('should convolve if environment is given', () => {
+    const target = context.annotations.test['target@staging']
+
+    normalize(context, 'staging')
+
+    expect(context.annotations.test.target).toStrictEqual(target)
+  })
+})

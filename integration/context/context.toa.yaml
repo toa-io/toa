@@ -12,7 +12,8 @@ compositions:
       - messages.messages
       - stats.stats
 resources:
-  host: dummies.getonce.dev
+  host: dummies.toa.dev
+  host@staging: dummies.stage.toa.dev
   class: alb
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing

@@ -5,12 +5,12 @@ const boot = require('@toa.io/boot')
 const { context: find } = require('../util/find')
 
 /**
- * @param {{ wait: boolean, dry: boolean, path: string }} argv
+ * @param {{ wait: boolean, dry: boolean, path: string, environment?: string }} argv
  * @returns {Promise<void>}
  */
 const deploy = async (argv) => {
   const path = find(argv.path)
-  const operator = await boot.deployment(path)
+  const operator = await boot.deployment(path, argv.environment)
 
   if (argv.dry === true) {
     const output = await operator.template()

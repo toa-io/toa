@@ -13,16 +13,17 @@ const { dereference } = require('./context/dereference')
 const { expand } = require('./context/expand')
 
 /**
- * @param root {string}
+ * @param {string} root
+ * @param {string} [environment]
  * @return {Promise<toa.formation.Context>}
  */
-const context = async (root) => {
+const context = async (root, environment) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.formation.Context} */ await yaml(path)
   const roots = resolve(root, context.packages)
 
   expand(context)
-  normalize(context)
+  normalize(context, environment)
   validate(context)
 
   context.components = await find(roots)

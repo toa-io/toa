@@ -8,6 +8,10 @@ const builder = (yargs) => {
       type: 'string',
       desc: 'Export target path'
     })
+    .positional('environment', {
+      type: 'string',
+      desc: 'Deployment environment'
+    })
     .option('path', {
       alias: 'p',
       group: 'Command options:',
@@ -17,7 +21,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'deployment [target]'
+exports.command = 'deployment <target> [environment]'
 exports.desc = 'Export context deployment'
 exports.builder = builder
 exports.handler = dump

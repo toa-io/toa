@@ -20,6 +20,7 @@ const convolve = (object, dimension) => {
     if (key.includes(MARKER)) {
       const [name, tag] = key.split(MARKER)
 
+      if (name.length === 0) continue
       if (tag === dimension) object[name] = value
 
       delete object[key]
