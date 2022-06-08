@@ -80,3 +80,13 @@ it('should modify argument', () => {
   expect(source['foo@' + dimension]).toBeUndefined()
   expect(source.foo).toStrictEqual(fixtures.origin.foo)
 })
+
+it('should not affect properties staring with @', () => {
+  const value = generate()
+
+  source['@property'] = value
+
+  convolve(source)
+
+  expect(source['@property']).toStrictEqual(value)
+})
