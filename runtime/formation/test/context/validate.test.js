@@ -65,7 +65,7 @@ describe('registry', () => {
     validate(context)
 
     expect(context.registry.platforms).toBeInstanceOf(Array)
-    expect(context.registry.platforms.length).toBeGreaterThan(0)
+    expect(context.registry.platforms).toStrictEqual(['linux/amd64', 'linux/arm/v7', 'linux/arm64'])
   })
 })
 

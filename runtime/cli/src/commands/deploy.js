@@ -4,6 +4,10 @@ const { deploy } = require('../handlers/deploy')
 
 const builder = (yargs) => {
   yargs
+    .positional('environment', {
+      type: 'string',
+      desc: 'Deployment environment'
+    })
     .option('path', {
       alias: 'p',
       group: 'Command options:',
@@ -25,7 +29,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'deploy'
+exports.command = 'deploy [environment]'
 exports.desc = 'Deploy context'
 exports.builder = builder
 exports.handler = deploy
