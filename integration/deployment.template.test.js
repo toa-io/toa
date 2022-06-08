@@ -1,6 +1,9 @@
+// noinspection JSUnresolvedVariable
+
 'use strict'
 
 const { join } = require('node:path')
+const { generate } = require('randomstring')
 
 const boot = require('@toa.io/boot')
 const { yaml } = require('@toa.io/gears')
@@ -9,24 +12,19 @@ const fixtures = require('./deployment.template.fixtures')
 
 const source = join(__dirname, './context')
 
-/** @type {toa.operations.deployment.Operator} */
 let operator
-/** @type {Object[]} */
 let resources
+let options
 
-/**
- * @param {string} kind
- * @param {string} name
- * @returns {toa.gears.Object}
- */
 const find = (kind, name) => {
   return resources.find((resource) => resource.kind === kind && resource.metadata.name === name)
 }
 
 beforeAll(async () => {
   operator = await boot.deployment(source)
+  options = { namespace: generate() }
 
-  const output = await operator.template()
+  const output = await operator.template(options)
 
   resources = yaml.split(output)
 })
@@ -130,5 +128,13 @@ describe('services', () => {
       expect(backend.name).toStrictEqual('service-' + service.name)
       expect(backend.port.number).toStrictEqual(service.port)
     }
+  })
+})
+
+describe('namespace', () => {
+  it('should define resources in a given namespace', async () => {
+    const sa = find('ServiceAccount', 'rabbitmq')
+
+    expect(sa.metadata.namespace).toStrictEqual(options.namespace)
   })
 })

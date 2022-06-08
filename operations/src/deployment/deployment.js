@@ -45,23 +45,29 @@ class Deployment {
   }
 
   async install (options) {
+    if (options.target) this.#target = options.target
     if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
 
     const args = []
 
+    if (options.namespace !== undefined) args.push('-n', options.namespace)
     if (options.wait === true) args.push('--wait')
 
     await this.#process.execute('helm', ['dependency', 'update', this.#target])
     await this.#process.execute('helm', ['upgrade', this.#declaration.name, '-i', ...args, this.#target])
   }
 
-  async template () {
+  async template (options) {
     if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
 
     await this.#process.execute('helm', ['dependency', 'update', this.#target], { silently: true })
 
+    const args = []
+
+    if (options.namespace !== undefined) args.push('-n', options.namespace)
+
     return await this.#process.execute('helm',
-      ['template', this.#declaration.name, this.#target],
+      ['template', this.#declaration.name, ...args, this.#target],
       { silently: true })
   }
 

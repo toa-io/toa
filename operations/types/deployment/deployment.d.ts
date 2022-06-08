@@ -26,8 +26,16 @@ declare namespace toa.operations.deployment {
 
         interface Options {
             wait?: boolean
+            target?: string
+            namespace?: string
         }
 
+    }
+
+    namespace template {
+        interface Options {
+            namespace: string
+        }
     }
 
     interface Deployable {
@@ -40,13 +48,17 @@ declare namespace toa.operations.deployment {
 
         install(options: installation.Options): Promise<void>
 
-        template(): Promise<string>
+        template(options: template.Options): Promise<string>
     }
 
 }
 
 export namespace installation {
     export type Options = toa.operations.deployment.installation.Options
+}
+
+export namespace template {
+    export type Options = toa.operations.deployment.template.Options
 }
 
 export type Deployable = toa.operations.deployment.Deployable
