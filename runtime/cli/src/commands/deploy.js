@@ -21,6 +21,12 @@ const builder = (yargs) => {
       boolean: true,
       desc: 'Dry run'
     })
+    .option('namespace', {
+      alias: 'n',
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Target namespace'
+    })
     .option('wait', {
       alias: 'w',
       group: 'Command options:',

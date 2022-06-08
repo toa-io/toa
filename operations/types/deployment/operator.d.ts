@@ -1,6 +1,6 @@
 // noinspection ES6UnusedImports
 
-import { installation } from './deployment'
+import { installation, template } from './deployment'
 
 declare namespace toa.operations.deployment {
 
@@ -13,7 +13,7 @@ declare namespace toa.operations.deployment {
 
         install(options?: installation.Options): Promise<void>
 
-        template(): Promise<string>
+        template(options?: template.Options): Promise<string>
     }
 
 }

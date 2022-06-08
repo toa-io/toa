@@ -55,10 +55,9 @@ class Operator {
     await directory.remove(source)
   }
 
-  async template () {
+  async template (options = {}) {
     const source = await this.export()
-
-    const output = await this.#deployment.template()
+    const output = await this.#deployment.template(options)
 
     await directory.remove(source)
 

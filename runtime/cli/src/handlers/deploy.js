@@ -5,7 +5,7 @@ const boot = require('@toa.io/boot')
 const { context: find } = require('../util/find')
 
 /**
- * @param {{ wait: boolean, dry: boolean, path: string, environment?: string }} argv
+ * @param {toa.cli.deploy.Arguments} argv
  * @returns {Promise<void>}
  */
 const deploy = async (argv) => {
@@ -13,12 +13,17 @@ const deploy = async (argv) => {
   const operator = await boot.deployment(path, argv.environment)
 
   if (argv.dry === true) {
-    const output = await operator.template()
+    const options = {}
+
+    if (argv.namespace !== undefined) options.namespace = argv.namespace
+
+    const output = await operator.template(options)
 
     console.log(output)
   } else {
     const options = {}
 
+    if (argv.namespace !== undefined) options.namespace = argv.namespace
     if (argv.wait === true) options.wait = true
 
     await operator.install(options)
