@@ -20,6 +20,7 @@ it('should keep original properties', () => {
 
 it('should remove tagged values if no dimension is given', () => {
   const dimension = generate()
+
   source['foo@' + dimension] = generate()
 
   source = convolve(source)
@@ -71,6 +72,7 @@ it('should determine nested tagged values', () => {
 
 it('should modify argument', () => {
   const dimension = generate()
+
   source['foo@' + dimension] = generate()
 
   convolve(source)
