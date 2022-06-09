@@ -1,6 +1,7 @@
 'use strict'
 
 const express = require('express')
+const cors = require('cors')
 
 const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/gears')
@@ -27,6 +28,7 @@ class Server extends Connector {
     this.#app.enable('strict routing')
     this.#app.disable('etag')
     this.#app.use(express.json())
+    this.#app.use(cors({ allowedHeaders: ['content-type'] }))
 
     this.#app.use((req, res, next) => {
       req.safe = req.method in SAFE
