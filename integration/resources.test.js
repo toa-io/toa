@@ -667,6 +667,7 @@ describe('response', () => {
       expect(response.headers.get('access-control-allow-origin')).toStrictEqual('*')
       expect(response.headers.get('access-control-allow-methods')).toStrictEqual('GET,HEAD,PUT,PATCH,POST,DELETE')
       expect(response.headers.get('access-control-allow-headers')).toStrictEqual('content-type')
+      expect(response.headers.get('vary')).toStrictEqual(null)
     })
 
     it('should allow actual requests', async () => {
