@@ -12,7 +12,7 @@
  * convolve({ foo: 'bar', 'foo@staging': 'baz' }, 'staging')
  */
 const convolve = (object, dimension) => {
-  if (typeof object !== 'object') return object
+  if (typeof object !== 'object' || object === null) return object
 
   for (let [key, value] of Object.entries(object)) {
     value = convolve(value, dimension)
