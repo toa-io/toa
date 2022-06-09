@@ -74,9 +74,26 @@ class Registry {
 
       args.push('--platform', platform)
       args.push('--builder', BUILDER)
+
+      await this.#builder()
     }
 
     await this.#process.execute('docker', args)
+  }
+
+  async #builder () {
+    const ls = 'buildx ls'.split(' ')
+    const output = await this.#process.execute('docker', ls, { silently: true })
+
+    const exists = output.split('\n').find((line) => line.startsWith('toa '))
+
+    if (exists === undefined) {
+      const create = `buildx create --name ${BUILDER} --use`.split(' ')
+      const bootstrap = 'buildx inspect --bootstrap'.split(' ')
+
+      await this.#process.execute('docker', create)
+      await this.#process.execute('docker', bootstrap)
+    }
   }
 }
 
