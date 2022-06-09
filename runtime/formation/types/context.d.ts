@@ -13,7 +13,7 @@ declare namespace toa.formation {
 
         interface Registry {
             base: string
-            platforms?: string[]
+            platforms?: string[] | null
         }
 
         interface Composition {
