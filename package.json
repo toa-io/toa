@@ -57,7 +57,7 @@
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
-    "env": "docker compose up -d && sleep 3000 && npm adduser --registry http://localhost:4873"
+    "env": "docker compose up -d && npm run cluster && npm adduser --registry http://localhost:4873"
   },
   "standard": {
     "parser": "@babel/eslint-parser",

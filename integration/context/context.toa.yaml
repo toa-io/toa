@@ -17,10 +17,10 @@ compositions:
 resources:
   host: dummies.toa.dev
   host@staging: dummies.stage.toa.dev
-  host@dev: ~
+  host@dev: local.kind
 
   class: alb
-  class@dev: ~
+  class@dev: nginx
 
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
