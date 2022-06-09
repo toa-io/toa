@@ -29,7 +29,7 @@ beforeAll(async () => {
   resources = yaml.split(output)
 })
 
-it('should define', () => {
+it('should define resources', () => {
   expect(resources).toBeDefined()
 })
 

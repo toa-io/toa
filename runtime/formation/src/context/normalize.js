@@ -7,7 +7,7 @@ const { convolve } = require('@toa.io/gears')
  * @param {string} [environment]
  */
 const normalize = (context, environment) => {
-  convolve(context.annotations, environment)
+  convolve(context, environment)
 
   if (typeof context.runtime === 'string') context.runtime = { version: context.runtime }
 

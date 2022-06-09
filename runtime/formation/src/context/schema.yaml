@@ -21,7 +21,7 @@ properties:
       proxy:
         type: string
         format: uri
-    required: [ version ]
+    required: [version]
   registry:
     type: object
     properties:
@@ -29,6 +29,7 @@ properties:
         type: string
       platforms:
         type: array
+        nullable: true
         minItems: 1
         items:
           type: string
@@ -36,7 +37,7 @@ properties:
           - linux/amd64
           - linux/arm/v7
           - linux/arm64
-    required: [ base, platforms ]
+    required: [base, platforms]
   compositions:
     type: array
     minItems: 1
@@ -50,8 +51,8 @@ properties:
           minItems: 1
           items:
             $ref: 'definitions#/definitions/locator'
-      required: [ name, components ]
+      required: [name, components]
   annotations:
     type: object
-required: [ runtime, name, packages, registry ]
+required: [runtime, name, packages, registry]
 additionalProperties: false
