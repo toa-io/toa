@@ -562,22 +562,6 @@ describe('response', () => {
     expect(response.headers.get('etag')).toBe('"0"')
   })
 
-  it('should implement CORS', async () => {
-    const url = locator('/credits/balance/' + newid() + '/')
-    const response = await fetch(url, {
-      method: 'OPTIONS',
-      headers: {
-        origin: 'https://origin',
-        'access-control-request-headers': 'content-type',
-        'access-control-request-method': 'POST'
-      }
-    })
-
-    expect(response.headers.get('access-control-allow-origin')).toStrictEqual('*')
-    expect(response.headers.get('access-control-allow-methods')).toStrictEqual('GET,HEAD,PUT,PATCH,POST,DELETE')
-    expect(response.headers.get('access-control-allow-headers')).toStrictEqual('content-type')
-  })
-
   describe('query', () => {
     const times = 5 + random(5)
     const sender = newid()
@@ -663,6 +647,42 @@ describe('response', () => {
       const { output } = await response.json()
 
       expect(output.length).toBe(4)
+    })
+  })
+
+  describe('cors', () => {
+    it('should implement preflight', async () => {
+      const url = locator('/credits/balance/' + newid() + '/')
+
+      const response = await fetch(url, {
+        method: 'OPTIONS',
+        headers: {
+          origin: 'https://origin',
+          'access-control-request-headers': 'content-type',
+          'access-control-request-method': 'PUT'
+        }
+      })
+
+      expect(response.status).toStrictEqual(204)
+      expect(response.headers.get('access-control-allow-origin')).toStrictEqual('*')
+      expect(response.headers.get('access-control-allow-methods')).toStrictEqual('GET,HEAD,PUT,PATCH,POST,DELETE')
+      expect(response.headers.get('access-control-allow-headers')).toStrictEqual('content-type')
+    })
+
+    it('should allow actual requests', async () => {
+      const url = locator('/credits/balance/' + newid() + '/')
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'content-type': 'application/json',
+          origin: 'https://origin'
+        },
+        body: JSON.stringify({ input: { balance: 20 } })
+      })
+
+      expect(response.status).toStrictEqual(405)
+      expect(response.headers.get('access-control-allow-origin')).toStrictEqual('*')
     })
   })
 })
