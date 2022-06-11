@@ -2,18 +2,26 @@
 
 const { Connector } = require('./connector')
 
+/**
+ * @implements {toa.core.Context}
+ */
 class Context extends Connector {
+  extensions
+
   #local
   #discover
   #remotes = {}
 
-  constructor (local, discover) {
+  constructor (local, discover, extensions = []) {
     super()
+
+    this.extensions = extensions
 
     this.#local = local
     this.#discover = discover
 
     this.depends(local)
+    if (extensions.length > 0) this.depends(extensions)
   }
 
   async apply (endpoint, request) {
@@ -27,16 +35,19 @@ class Context extends Connector {
   }
 
   async #remote (domain, name) {
-    if (this.#remotes[domain] === undefined) this.#remotes[domain] = {}
+    const key = domain + '.' + name
 
-    if (this.#remotes[domain][name] === undefined) {
-      const remote = await this.#discover(domain, name)
+    if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(domain, name)
 
-      this.depends(remote)
-      this.#remotes[domain][name] = remote
-    }
+    return this.#remotes[key]
+  }
 
-    return this.#remotes[domain][name]
+  async #connect (domain, name) {
+    const remote = await this.#discover(domain, name)
+
+    this.depends(remote)
+
+    return remote
   }
 }
 

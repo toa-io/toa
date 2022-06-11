@@ -3,6 +3,7 @@ export * as extensions from './extensions'
 export * as storages from './storages'
 
 export { Connector } from './connector'
+export { Context } from './context'
 export { Exception } from './exception'
 export { Locator } from './locator'
 export { Receiver } from './receiver'

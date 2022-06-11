@@ -12,3 +12,5 @@ declare namespace toa.gears {
     }
 
 }
+
+export type Underlay = toa.gears.Underlay
