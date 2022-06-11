@@ -1,37 +1,29 @@
 'use strict'
 
 /**
- * @param {Function} func
- * @returns {toa.gears.Underlay}
+ * @type {toa.gears.underlay.Constructor}
  */
 const underlay = (func) => proxy(func)
 
 /**
- * @param {Function} func
- * @param {string[]} [path]
+ * @param {toa.gears.underlay.Callback} func
+ * @param {string[]} [segments]
  * @returns {toa.gears.Underlay}
  */
-const proxy = (func, path) => {
+const proxy = (func, segments) => {
   const callable = (...args) => {
-    const cursor = path === undefined ? [] : path
+    const segs = segments === undefined ? [] : segments
 
-    if (args.length > 0) cursor.push(...args)
-
-    if (func.length > 0 && func.length !== cursor.length) {
-      throw new Error(`gears/underlay: arguments length mismatch (${func.length} expected, ${cursor.length} given)`)
-    }
-
-    return func.apply(null, cursor)
+    return func(segs, args)
   }
 
-  // noinspection JSValidateTypes
-  return new Proxy(callable, {
+  return /** @type {toa.gears.Underlay} */ new Proxy(callable, {
     get: (_, key) => {
-      const cursor = path === undefined ? [] : path
+      const segs = segments === undefined ? [] : segments
 
-      cursor.push(key)
+      segs.push(key)
 
-      return proxy(func, cursor)
+      return proxy(func, segs)
     }
   })
 }
