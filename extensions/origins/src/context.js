@@ -30,8 +30,6 @@ class Context extends Connector {
    * @returns {Promise}
    */
   invoke (name, path, request, substitutions) {
-    if (path === undefined) throw new Error('Origins.invoke: path must be defined')
-
     let origin = this.#origins[name]
 
     if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
@@ -39,10 +37,13 @@ class Context extends Connector {
     if (substitutions !== undefined) origin = this.#substitute(origin, substitutions)
 
     const url = new URL(origin)
-    const [pathname, search] = path.split('?')
 
-    url.pathname = pathname
-    if (search !== undefined) url.search = search
+    if (path !== undefined) {
+      const [pathname, search] = path.split('?')
+
+      url.pathname = pathname
+      if (search !== undefined) url.search = search
+    }
 
     return fetch(url.href, request)
   }
