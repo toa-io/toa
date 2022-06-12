@@ -27,3 +27,5 @@ resources:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
   annotations@dev: ~
+origins:
+  local: localhost:80

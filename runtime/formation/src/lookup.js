@@ -52,7 +52,8 @@ const recognize = (object, group) => {
 const KNOWN = {
   http: '@toa.io/bindings.http',
   amqp: '@toa.io/bindings.amqp',
-  resources: '@toa.io/extensions.resources'
+  resources: '@toa.io/extensions.resources',
+  origins: '@toa.io/extensions.origins'
 }
 
 exports.lookup = lookup
