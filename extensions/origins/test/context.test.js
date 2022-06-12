@@ -66,13 +66,25 @@ describe('invoke', () => {
   it('should substitute wildcards', async () => {
     jest.clearAllMocks()
 
-    const substitutions = ['foo', 'bar']
+    const substitutions = ['foo', 'bar', 443]
 
     await context.invoke('amazon', path, clone(request), substitutions)
 
     const url = mock.fetch.mock.calls[0][0]
 
     expect(url).toStrictEqual('https://foo.bar.amazon.com' + path)
+  })
+
+  it('should keep not lose query string', async () => {
+    jest.clearAllMocks()
+
+    const path = generate() + '?foo=' + generate()
+
+    await context.invoke(name, path)
+
+    const url = mock.fetch.mock.calls[0][0]
+
+    expect(url).toStrictEqual(fixtures.declaration.origins.foo + '/' + path)
   })
 
   describe('fetch', () => {

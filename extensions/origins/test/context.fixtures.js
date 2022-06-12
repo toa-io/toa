@@ -5,7 +5,7 @@ const { generate } = require('randomstring')
 const declaration = {
   origins: {
     foo: 'https://' + generate().toLowerCase(),
-    amazon: 'https://*.*.amazon.com'
+    amazon: 'https://*.*.amazon.com:*'
   }
 }
 

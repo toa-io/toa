@@ -23,27 +23,32 @@ class Context extends Connector {
   }
 
   /**
-   * @param {string} name - Origin name
+   * @param {string} name - Origin's name
    * @param {string} path
    * @param {Object} [request] - node-fetch options
    * @param {string[]} [substitutions]
    * @returns {Promise}
    */
   invoke (name, path, request, substitutions) {
-    const template = this.#origins[name]
+    let origin = this.#origins[name]
 
-    if (template === undefined) throw new Error(`Origin '${name}' is not defined`)
+    if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
 
-    const origin = template.replace(/\*\./g, (match) => {
-      if (substitutions?.length > 0) return substitutions.shift() + '.'
-      else return match
-    })
+    if (substitutions !== undefined) origin = this.#substitute(origin, substitutions)
 
     const url = new URL(origin)
+    const [pathname, search] = path.split('?')
 
-    url.pathname = path
+    url.pathname = pathname
+    if (search !== undefined) url.search = search
 
     return fetch(url.href, request)
+  }
+
+  #substitute (origin, substitutions) {
+    const replace = () => substitutions.shift()
+
+    return origin.replace(/\*/g, replace)
   }
 }
 
