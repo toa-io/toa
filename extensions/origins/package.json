@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/extensions.resources",
+  "name": "@toa.io/extensions.origins",
   "version": "0.2.0-dev.40",
-  "description": "Toa Resources Exposition",
+  "description": "Toa operations context HTTP client",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "src/index.js",
@@ -19,18 +19,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/bindings.amqp": "*",
-    "@toa.io/core": "*",
     "@toa.io/gears": "*",
-    "@toa.io/schema": "*"
+    "@toa.io/schema": "*",
+    "@toa.io/core": "*"
   },
   "dependencies": {
-    "cors": "2.8.5",
-    "express": "4.17.1",
-    "path-to-regexp": "6.2.0"
-  },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24",
-  "devDependencies": {
-    "@types/express": "4.17.13"
+    "node-fetch": "2.6.7"
   }
 }

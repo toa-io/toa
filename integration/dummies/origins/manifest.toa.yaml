@@ -1,0 +1,27 @@
+domain: dummies
+name: origins
+
+entity:
+  storage: ~
+  schema:
+    foo:
+      type: string
+      default: 0
+    bar: string
+
+operations:
+  read:
+    concurrency: retry
+    input:
+      delay: number
+    output:
+      status: number
+      text: string
+  fetch:
+    concurrency: retry
+    output:
+      status: number
+      text: string
+
+origins:
+  local: http://localhost:3000

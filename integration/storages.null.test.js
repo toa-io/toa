@@ -11,7 +11,7 @@ let remote
 
 beforeAll(async () => {
   composition = await framework.compose(['nulls'])
-  remote = await framework.remote('nulls.nulls')
+  remote = await framework.remote('dummies.nulls')
 })
 
 afterAll(async () => {

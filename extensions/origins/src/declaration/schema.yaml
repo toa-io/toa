@@ -1,0 +1,12 @@
+$schema: https://json-schema.org/draft/2019-09/schema
+$id: https://schemas.toa.io/0.0.0/extensions/origins/declaration
+
+type: object
+properties:
+  origins:
+    type: object
+    minProperties: 1
+    patternProperties:
+      '.*':
+        type: string
+required: [origins]
