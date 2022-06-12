@@ -87,6 +87,12 @@ describe('invoke', () => {
     expect(url).toStrictEqual(fixtures.declaration.origins.foo + '/' + path)
   })
 
+  it('should throw if path is not defined', async () => {
+    jest.clearAllMocks()
+
+    expect(() => context.invoke(name)).toThrow(/path must be defined/)
+  })
+
   describe('fetch', () => {
     it('should fetch', async () => {
       expect(mock.fetch).toHaveBeenCalledTimes(1)

@@ -30,6 +30,8 @@ class Context extends Connector {
    * @returns {Promise}
    */
   invoke (name, path, request, substitutions) {
+    if (path === undefined) throw new Error('Origins.invoke: path must be defined')
+
     let origin = this.#origins[name]
 
     if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
