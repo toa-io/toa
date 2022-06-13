@@ -57,8 +57,27 @@ it('should ignore undefined source', () => {
   const source = { a: undefined }
 
   merge(target, source)
-
   expect(target).toStrictEqual({ a: 1 })
+
+  merge(target, undefined)
+  expect(target).toStrictEqual({ a: 1 })
+})
+
+it('should ignore undefined target', () => {
+  const target = { a: undefined }
+  const source = { a: 1 }
+
+  merge(target, source)
+  expect(target).toStrictEqual({ a: 1 })
+
+  const result = merge(undefined, source)
+  expect(result).toStrictEqual({ a: 1 })
+})
+
+it('should ignore undefined arguments', () => {
+  const result = merge(undefined, undefined)
+
+  expect(result).toStrictEqual({})
 })
 
 describe('options', () => {

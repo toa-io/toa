@@ -9,6 +9,9 @@
  * @return {Object}
  */
 const merge = (target, source, options = {}, path = []) => {
+  if (target === undefined) target = {}
+  if (source === undefined) source = {}
+
   if (source instanceof Array && target instanceof Array) {
     if (options.override === true) {
       target.length = 0
