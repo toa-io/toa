@@ -10,9 +10,15 @@ declare namespace toa.core.extensions {
 
         service?(name: string): Connector | undefined
 
-        contexts?(declaration: Object): context.Extension[]
+        contexts?(declaration: Object): Context[]
+    }
+
+    interface Context {
+        name: string
+        invoke: Function
     }
 
 }
 
 export type Factory = toa.core.extensions.Factory
+export type Context = toa.core.extensions.Context

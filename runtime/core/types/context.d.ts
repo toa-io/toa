@@ -2,18 +2,12 @@
 
 import { Request } from './request'
 import { Reply } from './reply'
+import * as extensions from './extensions'
 
 declare namespace toa.core {
 
-    namespace context {
-        interface Extension {
-            name: string
-            invoke: Function
-        }
-    }
-
     interface Context {
-        extensions: context.Extension[]
+        extensions: extensions.Context[]
 
         /**
          * Calls local endpoint
@@ -29,4 +23,3 @@ declare namespace toa.core {
 }
 
 export type Context = toa.core.Context
-export type Extension = toa.core.context.Extension

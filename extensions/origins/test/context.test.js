@@ -75,7 +75,7 @@ describe('invoke', () => {
     expect(url).toStrictEqual('https://foo.bar.amazon.com' + path)
   })
 
-  it('should keep not lose query string', async () => {
+  it('should not lose query string', async () => {
     jest.clearAllMocks()
 
     const path = generate() + '?foo=' + generate()
