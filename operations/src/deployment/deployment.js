@@ -31,7 +31,7 @@ class Deployment {
     const dependency = merge(dependencies)
 
     this.#declaration = declare(context, dependency)
-    this.#contents = describe(compositions, dependency)
+    this.#contents = describe(context, compositions, dependency)
     this.#process = process
   }
 

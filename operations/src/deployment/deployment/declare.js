@@ -1,8 +1,8 @@
 'use strict'
 
 /**
- * @param context {toa.formation.Context}
- * @param dependency {toa.operations.deployment.Dependency}
+ * @param {toa.formation.Context} context
+ * @param {toa.operations.deployment.Dependency} dependency
  * @returns {toa.operations.deployment.Declaration}
  */
 const declare = (context, { references }) => {

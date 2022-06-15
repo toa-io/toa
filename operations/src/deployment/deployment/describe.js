@@ -1,11 +1,12 @@
 'use strict'
 
 /**
- * @param compositions {Array<toa.operations.deployment.Composition>}
- * @param dependency {toa.operations.deployment.Dependency}
+ * @param {toa.formation.Context} context
+ * @param {toa.operations.deployment.Composition[]} compositions
+ * @param {toa.operations.deployment.Dependency} dependency
  * @returns {toa.operations.deployment.Contents}
  */
-const describe = (compositions, { references, services }) => {
+const describe = ({ environment }, compositions, { references, services }) => {
   /** @type {Set<string>} */
   const components = new Set()
 
@@ -27,6 +28,7 @@ const describe = (compositions, { references, services }) => {
     compositions,
     components: Array.from(components),
     services,
+    environment,
     ...dependencies
   }
 }

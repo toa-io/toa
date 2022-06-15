@@ -84,10 +84,13 @@ describe('chart', () => {
   })
 
   it('should export for a given environment', async () => {
-    operator = await boot.deployment(source, 'staging')
+    const environment = 'staging'
+
+    operator = await boot.deployment(source, environment)
     target = await operator.export()
     values = /** @type {toa.operations.deployment.Contents} */ await yaml(join(target, 'values.yaml'))
 
+    expect(values.environment).toStrictEqual(environment)
     expect(values.services[0].ingress.host).toStrictEqual('dummies.stage.toa.dev')
   })
 })

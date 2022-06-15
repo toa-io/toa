@@ -1,13 +1,13 @@
 'use strict'
 
 /**
- * @param dependencies {Array<toa.operations.deployment.Dependency>}
- * @returns {toa.operations.deployment.Dependency}
+ * @param {toa.operations.deployment.Dependency[]} dependencies
+ * @returns {toa.operations.deployment.Dependency | Object}
  */
 const merge = (dependencies) => {
-  /** @type {Array<toa.operations.deployment.Reference>} */
+  /** @type {toa.operations.deployment.Reference[]} */
   const references = []
-  /** @type {Array<toa.operations.deployment.Service>} */
+  /** @type {toa.operations.deployment.Service[]} */
   const services = []
 
   for (const dependency of dependencies) {

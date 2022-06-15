@@ -6,7 +6,7 @@ const { join } = require('node:path')
 const { generate } = require('randomstring')
 
 const boot = require('@toa.io/boot')
-const { yaml } = require('@toa.io/gears')
+const { yaml, sample } = require('@toa.io/gears')
 
 const fixtures = require('./deployment.template.fixtures')
 
@@ -15,13 +15,15 @@ const source = join(__dirname, './context')
 let operator
 let resources
 let options
+let environment
 
 const find = (kind, name) => {
   return resources.find((resource) => resource.kind === kind && resource.metadata.name === name)
 }
 
 beforeAll(async () => {
-  operator = await boot.deployment(source)
+  environment = generate()
+  operator = await boot.deployment(source, environment)
   options = { namespace: generate() }
 
   const output = await operator.template(options)
@@ -57,6 +59,16 @@ describe('compositions', () => {
       expect(container.name).toStrictEqual(composition.name)
       expect(container.image).toMatch(new RegExp(`/${fixtures.scope}/composition-${composition.name}:[a-z\\d]+$`))
     }
+  })
+
+  it('should set environment value', () => {
+    const composition = sample(fixtures.compositions)
+    const name = 'composition-' + composition.name
+    const deployment = find('Deployment', name)
+
+    const container = deployment.spec.template.spec.containers[0]
+
+    expect(container.env).toStrictEqual(expect.arrayContaining([{ name: 'TOA_ENV', value: environment }]))
   })
 })
 
