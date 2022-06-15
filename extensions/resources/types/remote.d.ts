@@ -4,8 +4,10 @@ import type * as declarations from './declarations'
 
 declare namespace toa.extensions.resources {
 
-    namespace remote {
-        type Constructor = ((domain: string, name: string) => Promise<Remote>) | Function
+    namespace remotes {
+
+        type Factory = (domain: string, name: string) => Promise<Remote>
+
     }
 
     interface Remote {

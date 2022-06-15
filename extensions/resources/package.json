@@ -29,8 +29,8 @@
     "express": "4.17.1",
     "path-to-regexp": "6.2.0"
   },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24",
   "devDependencies": {
     "@types/express": "4.17.13"
-  }
+  },
+  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }
