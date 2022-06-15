@@ -1,0 +1,14 @@
+domain: dummies
+name: env
+
+entity:
+  schema:
+    properties:
+      length:
+        maximum: 10
+      description: string
+    required: [length]
+
+origins:
+  foo: production
+  foo@integration: test
