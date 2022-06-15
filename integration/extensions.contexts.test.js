@@ -3,7 +3,6 @@
 const framework = require('./framework')
 
 let composition
-/** @type {toa.core.Runtime} */
 let remote
 
 beforeAll(async () => {

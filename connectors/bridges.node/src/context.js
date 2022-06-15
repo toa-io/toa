@@ -54,9 +54,12 @@ class Context extends Connector {
    */
   #origins (extension) {
     this.origins = underlay(async (segs, args) => {
+      if (segs.length < 2) throw new Error(`Origins call requires at least 2 arguments, ${segs.length} given`)
+
       const name = segs.shift()
+      const method = segs.pop().toUpperCase()
       const path = segs.join('/')
-      const request = args[0]
+      const request = { method, ...args[0] }
 
       return await extension.invoke(name, path, request)
     })
