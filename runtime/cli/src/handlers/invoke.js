@@ -15,14 +15,16 @@ async function invoke (argv) {
   const remote = await boot.remote(manifest.locator, manifest)
   await remote.connect()
 
-  try {
-    const reply = await remote.invoke(argv.operation, request)
+  let reply
 
-    console.dir(reply)
+  try {
+    reply = await remote.invoke(argv.operation, request)
   } finally {
     await remote.disconnect()
     await composition.disconnect()
   }
+
+  if (reply !== undefined) console.log(reply)
 }
 
 exports.invoke = invoke
