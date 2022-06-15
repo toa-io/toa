@@ -19,5 +19,8 @@ spec:
       containers:
         - name: {{ .name }}
           image: {{ .image }}
+          env:
+            - name: TOA_ENV
+              value: {{ $.Values.environment }}
 ---
 {{- end }}

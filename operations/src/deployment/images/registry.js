@@ -16,9 +16,9 @@ class Registry {
   #images = []
 
   /**
-   * @param registry {toa.formation.context.Registry}
-   * @param factory {toa.operations.deployment.images.Factory}
-   * @param process {toa.operations.Process}
+   * @param {toa.formation.context.Registry} registry
+   * @param {toa.operations.deployment.images.Factory} factory
+   * @param {toa.operations.Process} process
    */
   constructor (registry, factory, process) {
     this.#registry = registry
@@ -46,8 +46,8 @@ class Registry {
   }
 
   /**
-   * @param type {"composition" | "service"}
-   * @param args {...any}
+   * @param {"composition" | "service"} type
+   * @param {...any} args
    * @returns {toa.operations.deployment.images.Image}
    */
   #create (type, ...args) {
@@ -60,15 +60,43 @@ class Registry {
   }
 
   /**
-   * @param image {toa.operations.deployment.images.Image}
+   * @param {toa.operations.deployment.images.Image} image
    * @returns {Promise<void>}
    */
   async #push (image) {
-    const platform = this.#registry.platforms.join(',')
+    const args = ['buildx', 'build', '--push', '--tag', image.reference, image.context]
+    const local = this.#registry.platforms === null
 
-    await this.#process.execute('docker',
-      ['buildx', 'build', '--push', '--tag', image.reference, '--platform', platform, image.context])
+    if (local) {
+      args.push('--builder', 'default')
+    } else {
+      const platform = this.#registry.platforms.join(',')
+
+      args.push('--platform', platform)
+      args.push('--builder', BUILDER)
+
+      await this.#builder()
+    }
+
+    await this.#process.execute('docker', args)
+  }
+
+  async #builder () {
+    const ls = 'buildx ls'.split(' ')
+    const output = await this.#process.execute('docker', ls, { silently: true })
+
+    const exists = output.split('\n').find((line) => line.startsWith('toa '))
+
+    if (exists === undefined) {
+      const create = `buildx create --name ${BUILDER} --use`.split(' ')
+      const bootstrap = 'buildx inspect --bootstrap'.split(' ')
+
+      await this.#process.execute('docker', create)
+      await this.#process.execute('docker', bootstrap)
+    }
   }
 }
+
+const BUILDER = 'toa'
 
 exports.Registry = Registry

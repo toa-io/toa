@@ -1,6 +1,10 @@
 'use strict'
 
-const normalize = (component) => {
+const { convolve } = require('@toa.io/gears')
+
+const normalize = (component, environment) => {
+  convolve(component, environment)
+
   if (component.operations !== undefined) operations(component)
   if (component.events !== undefined) events(component)
   if (component.extensions !== undefined) extensions(component)

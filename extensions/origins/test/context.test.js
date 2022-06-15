@@ -75,7 +75,7 @@ describe('invoke', () => {
     expect(url).toStrictEqual('https://foo.bar.amazon.com' + path)
   })
 
-  it('should keep not lose query string', async () => {
+  it('should not lose query string', async () => {
     jest.clearAllMocks()
 
     const path = generate() + '?foo=' + generate()
@@ -87,10 +87,10 @@ describe('invoke', () => {
     expect(url).toStrictEqual(fixtures.declaration.origins.foo + '/' + path)
   })
 
-  it('should throw if path is not defined', async () => {
+  it('should not throw if path is not defined', async () => {
     jest.clearAllMocks()
 
-    expect(() => context.invoke(name)).toThrow(/path must be defined/)
+    expect(() => context.invoke(name)).not.toThrow()
   })
 
   describe('fetch', () => {

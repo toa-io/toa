@@ -6,7 +6,26 @@ const { component: load } = require('@toa.io/formation')
 
 it('should load', async () => {
   await expect(load(join(__dirname, 'dummies/a'))).resolves.not.toThrow()
-  await expect(load(join(__dirname, 'dummies/a'))).resolves.not.toThrow()
+  await expect(load(join(__dirname, 'dummies/b'))).resolves.not.toThrow()
+})
+
+it('should convolve with TOA_ENV', async () => {
+  const env = process.env.TOA_ENV
+
+  const original = await load(join(__dirname, 'dummies/env'))
+
+  expect(Object.entries(original.extensions)[0][1]).toStrictEqual({ foo: 'production' })
+
+  process.env.TOA_ENV = 'integration'
+
+  const component = await load(join(__dirname, 'dummies/env'))
+
+  const entries = Object.entries(component.extensions)
+  const origins = entries[0][1]
+
+  expect(origins).toStrictEqual({ foo: 'test' })
+
+  process.env.TOA_ENV = env
 })
 
 describe('prototype', () => {

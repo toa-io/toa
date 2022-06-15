@@ -23,6 +23,7 @@ it('should resolve local version', () => {
 
 it('should expand registry', () => {
   const base = generate()
+
   context.registry = base
 
   normalize(context)
@@ -40,12 +41,19 @@ describe('environments', () => {
     expect(context.annotations.test['target@staging']).toBeUndefined()
   })
 
-  it('should not filter values outside of annotations', () => {
-    context['name@staging'] = 'foo'
+  it('should filter values outside of annotations', () => {
+    const key = generate()
+    const untagged = generate()
+    const tagged = generate()
+    const environment = generate()
 
-    normalize(context)
+    context[key] = untagged
+    context[key + '@' + environment] = tagged
 
-    expect(context['name@staging']).toStrictEqual('foo')
+    normalize(context, environment)
+
+    expect(context[key]).toStrictEqual(tagged)
+    expect(context[key + '@' + environment]).toBeUndefined()
   })
 
   it('should convolve if environment is given', () => {
@@ -54,5 +62,13 @@ describe('environments', () => {
     normalize(context, 'staging')
 
     expect(context.annotations.test.target).toStrictEqual(target)
+  })
+
+  it('should add environment to context', () => {
+    const environment = generate()
+
+    normalize(context, environment)
+
+    expect(context.environment).toStrictEqual(environment)
   })
 })

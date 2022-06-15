@@ -11,10 +11,12 @@ const { console } = require('@toa.io/gears')
 class Tree {
   /** @type {toa.extensions.resources.tree.Node[]} */
   #nodes
+
+  /** @type {toa.extensions.resources.query.Factory} */
   #query
 
   /**
-   * @param {Function} query
+   * @param {toa.extensions.resources.query.Factory} query
    */
   constructor (query) {
     this.#query = query
@@ -49,7 +51,7 @@ class Tree {
   }
 
   /**
-   * @param {toa.extensions.resources.declarations.Node} node
+   * @param {toa.extensions.resources.declarations.Node | any} node
    * @param {string} route
    * @param {toa.extensions.resources.declarations.Node} parent
    */

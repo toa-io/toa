@@ -17,7 +17,7 @@ const { lookup } = require('./lookup')
 const component = async (reference, base) => {
   const manifest = await load(reference, base)
 
-  normalize(manifest)
+  normalize(manifest, process.env.TOA_ENV)
   validate(manifest)
 
   return manifest

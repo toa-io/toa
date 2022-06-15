@@ -6,14 +6,16 @@ const { console } = require('@toa.io/gears')
 class Exposition extends Connector {
   /** @type {toa.core.bindings.Broadcaster} */
   #broadcast
-  /** @type {toa.extensions.resources.remote.Constructor} */
+
+  /** @type {toa.extensions.resources.remotes.Factory} */
   #remote
+
   /** @type {toa.extensions.resources.exposition.Remotes} */
   #remotes = {}
 
   /**
    * @param {toa.core.bindings.Broadcaster} broadcast
-   * @param {toa.extensions.resources.remote.Constructor} connect
+   * @param {toa.extensions.resources.remotes.Factory} connect
    */
   constructor (broadcast, connect) {
     super()
@@ -24,16 +26,17 @@ class Exposition extends Connector {
     this.depends(broadcast)
   }
 
+  /** @override */
   async connection () {
-    await this.#broadcast.receive('expose', (declaration) => this.#expose(declaration))
+    await this.#broadcast.receive('expose', this.#expose.bind(this))
     this.#broadcast.send('ping', {})
 
     console.info(this.constructor.name + ' started')
   }
 
   /**
-   * @param {toa.extensions.resources.declarations.Exposition | object} declaration
-   * @return {Promise<void>}
+   * @param {toa.extensions.resources.declarations.Exposition} declaration
+   * @returns {Promise<void>}
    */
   async #expose (declaration) {
     const { domain, name, resources } = declaration
@@ -49,7 +52,7 @@ class Exposition extends Connector {
   /**
    * @param {string} domain
    * @param {string} name
-   * @return {Promise<Remote>}
+   * @returns {Promise<Remote>}
    */
   async #connect (domain, name) {
     const remote = await this.#remote(domain, name)

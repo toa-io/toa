@@ -36,8 +36,7 @@ class Factory {
 
   #expose () {
     const broadcast = this.#boot.bindings.broadcast(BINDING, 'resources')
-
-    const connect = (domain, name) => this.#connect(domain, name)
+    const connect = this.#connect.bind(this)
     const exposition = new Exposition(broadcast, connect)
 
     exposition.depends(this.#server)
@@ -46,19 +45,21 @@ class Factory {
   }
 
   /**
-   * @type {toa.extensions.resources.remote.Constructor}
+   * @param {string} domain
+   * @param {string} name
+   * @returns {Promise<toa.extensions.resources.Remote>}
    */
   async #connect (domain, name) {
     const locator = new Locator({ domain, name })
     const remote = await this.#boot.remote(locator)
-    const query = (node) => this.#query(node)
+    const query = this.#query.bind(this)
     const tree = new Tree(query)
 
     return new Remote(this.#server, remote, tree)
   }
 
   /**
-   * @param {toa.extensions.resources.declarations.Node} node
+   * @param {toa.extensions.resources.declarations.Node | any} node
    * @returns {toa.extensions.resources.Query}
    */
   #query (node) {

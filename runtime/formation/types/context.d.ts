@@ -13,7 +13,7 @@ declare namespace toa.formation {
 
         interface Registry {
             base: string
-            platforms?: string[]
+            platforms?: string[] | null
         }
 
         interface Composition {
@@ -44,6 +44,7 @@ declare namespace toa.formation {
 
     interface Context extends context.Declaration {
         runtime: context.Runtime
+        environment?: string
         registry: context.Registry
         components: Component[]
         connectors?: context.Dependencies

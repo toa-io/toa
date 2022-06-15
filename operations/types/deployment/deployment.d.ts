@@ -20,6 +20,7 @@ declare namespace toa.operations.deployment {
         compositions: Array<Composition>
         components: Array<string>
         services?: Array<Service>
+        environment?: string
     }
 
     namespace installation {

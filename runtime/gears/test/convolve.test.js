@@ -90,3 +90,11 @@ it('should not affect properties staring with @', () => {
 
   expect(source['@property']).toStrictEqual(value)
 })
+
+it('should not throw on nulls', () => {
+  const property = generate()
+
+  source[property] = null
+
+  expect(() => convolve(source)).not.toThrow()
+})

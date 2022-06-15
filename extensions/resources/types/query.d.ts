@@ -4,7 +4,7 @@ import type { Node, Operation } from './declarations'
 declare namespace toa.extensions.resources {
 
     namespace query {
-        type Constructor = (node: Node) => Query
+        type Factory = (node: Node) => Query
     }
 
     interface Query {

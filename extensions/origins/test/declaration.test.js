@@ -51,4 +51,12 @@ describe('validate', () => {
 
     expect(exec).toThrow(/must be string/)
   })
+
+  describe('origin', () => {
+    it('should require origin values as web origins', () => {
+      declaration.origins.foo = 'http://origin/with/path'
+
+      expect(exec).toThrow(/must match pattern/)
+    })
+  })
 })

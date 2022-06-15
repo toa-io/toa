@@ -5,7 +5,7 @@ const fetch = require('node-fetch')
 const { Connector } = require('@toa.io/core')
 
 /**
- * @implements {toa.core.context.Extension}
+ * @implements {toa.core.extensions.Context}
  */
 class Context extends Connector {
   name = 'origins'
@@ -30,28 +30,43 @@ class Context extends Connector {
    * @returns {Promise}
    */
   invoke (name, path, request, substitutions) {
-    if (path === undefined) throw new Error('Origins.invoke: path must be defined')
-
     let origin = this.#origins[name]
 
     if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
 
-    if (substitutions !== undefined) origin = this.#substitute(origin, substitutions)
+    if (substitutions !== undefined) origin = substitute(origin, substitutions)
 
     const url = new URL(origin)
-    const [pathname, search] = path.split('?')
 
-    url.pathname = pathname
-    if (search !== undefined) url.search = search
+    if (path !== undefined) append(url, path)
 
     return fetch(url.href, request)
   }
-
-  #substitute (origin, substitutions) {
-    const replace = () => substitutions.shift()
-
-    return origin.replace(/\*/g, replace)
-  }
 }
+
+/**
+ * @param {string} origin
+ * @param {string[]} substitutions
+ * @returns {string}
+ */
+const substitute = (origin, substitutions) => {
+  const replace = () => substitutions.shift()
+
+  return origin.replace(PLACEHOLDER, replace)
+}
+
+/**
+ * @param {URL} url
+ * @param {string} path
+ */
+const append = (url, path) => {
+  const [pathname, search] = path.split('?')
+
+  url.pathname = pathname
+
+  if (search !== undefined) url.search = search
+}
+
+const PLACEHOLDER = /\*/g
 
 exports.Context = Context
