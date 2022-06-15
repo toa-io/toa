@@ -44,6 +44,7 @@ declare namespace toa.formation {
 
     interface Context extends context.Declaration {
         runtime: context.Runtime
+        environment?: string
         registry: context.Registry
         components: Component[]
         connectors?: context.Dependencies

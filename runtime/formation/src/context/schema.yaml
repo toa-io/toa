@@ -22,6 +22,8 @@ properties:
         type: string
         format: uri
     required: [version]
+  environment:
+    type: string
   registry:
     type: object
     properties:

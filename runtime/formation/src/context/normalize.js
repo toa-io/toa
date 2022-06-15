@@ -3,11 +3,13 @@
 const { convolve } = require('@toa.io/gears')
 
 /**
- * @param {toa.formation.context.Declaration} context
+ * @param {toa.formation.context.Declaration | Object} context
  * @param {string} [environment]
  */
 const normalize = (context, environment) => {
   convolve(context, environment)
+
+  context.environment = environment
 
   if (typeof context.runtime === 'string') context.runtime = { version: context.runtime }
 

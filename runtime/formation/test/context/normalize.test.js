@@ -63,4 +63,12 @@ describe('environments', () => {
 
     expect(context.annotations.test.target).toStrictEqual(target)
   })
+
+  it('should add environment to context', () => {
+    const environment = generate()
+
+    normalize(context, environment)
+
+    expect(context.environment).toStrictEqual(environment)
+  })
 })
