@@ -43,3 +43,19 @@ describe('arguments', () => {
     expect(args).toStrictEqual([])
   })
 })
+
+it('should not mix segments between calls', () => {
+  const instance = underlay((segs, args) => ({ segs, args }))
+
+  const ref1 = instance.foo.bar
+  const ref2 = ref1.baz
+
+  const res1 = ref1.put(1)
+  const res2 = ref2.post(2)
+
+  expect(res1.args).toStrictEqual([1])
+  expect(res1.segs).toStrictEqual(['foo', 'bar', 'put'])
+
+  expect(res2.args).toStrictEqual([2])
+  expect(res2.segs).toStrictEqual(['foo', 'bar', 'baz', 'post'])
+})

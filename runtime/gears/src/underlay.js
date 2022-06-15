@@ -6,7 +6,7 @@
 const underlay = (func) => proxy(func)
 
 /**
- * @param {toa.gears.underlay.Callback} func
+ * @param {toa.gears.underlay.Callback | Function} func
  * @param {string[]} [segments]
  * @returns {toa.gears.Underlay}
  */
@@ -19,7 +19,7 @@ const proxy = (func, segments) => {
 
   return /** @type {toa.gears.Underlay} */ new Proxy(callable, {
     get: (_, key) => {
-      const segs = segments === undefined ? [] : segments
+      const segs = segments === undefined ? [] : [...segments]
 
       segs.push(key)
 
