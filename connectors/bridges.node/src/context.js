@@ -31,7 +31,7 @@ class Context extends Connector {
   })
 
   /**
-   * @param {toa.core.context.Extension[]} extensions
+   * @param {toa.core.extensions.Context[]} extensions
    * @returns {{ [key: string]: Function}}
    */
   #extensions (extensions) {
@@ -40,7 +40,7 @@ class Context extends Connector {
     for (const extension of extensions) {
       if (map[extension.name] !== undefined) throw new Error(`Context extensions conflict on '${extension.name}'`)
 
-      map[extension.name] = (...args) => extension.invoke(...args)
+      map[extension.name] = extension.invoke.bind(extension)
 
       // known extensions
       if (extension.name === 'origins') this.#origins(extension)
@@ -50,7 +50,7 @@ class Context extends Connector {
   }
 
   /**
-   * @param {toa.core.context.Extension} extension
+   * @param {toa.core.extensions.Context} extension
    */
   #origins (extension) {
     this.origins = underlay(async (segs, args) => {
