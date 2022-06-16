@@ -29,3 +29,13 @@ it('should pass -n argument if options.namespace is set', async () => {
   expect(index).not.toStrictEqual(-1)
   expect(namespace).toStrictEqual(fixtures.options.namespace)
 })
+
+it('should forbid local deployment environment', () => {
+  const context = clone(fixtures.context)
+
+  context.environment = 'local'
+
+  const create = () => new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+
+  expect(create).toThrow(/name 'local' is not allowed/)
+})

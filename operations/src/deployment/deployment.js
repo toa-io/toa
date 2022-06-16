@@ -30,6 +30,8 @@ class Deployment {
   constructor (context, compositions, dependencies, process) {
     const dependency = merge(dependencies)
 
+    if (context.environment === 'local') throw new Error('Deployment environment name \'local\' is not allowed.')
+
     this.#declaration = declare(context, dependency)
     this.#contents = describe(context, compositions, dependency)
     this.#process = process
