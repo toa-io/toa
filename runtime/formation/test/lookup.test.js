@@ -52,6 +52,14 @@ it('should not overwrite group', () => {
   expect(object[group]).toStrictEqual(expect.objectContaining(existing))
 })
 
+it('should not create empty group', () => {
+  const group = generate()
+
+  recognize(object, group)
+
+  expect(object[group]).toBeUndefined()
+})
+
 const append = () => {
   const known = {}
 
