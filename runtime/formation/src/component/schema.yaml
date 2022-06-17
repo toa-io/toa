@@ -42,7 +42,9 @@ properties:
   domain:
     $ref: 'definitions#/definitions/token'
     not:
-      const: 'system'
+      oneOf:
+        - const: 'system'
+        - const: 'default'
   name:
     $ref: 'definitions#/definitions/token'
 
