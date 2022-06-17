@@ -23,12 +23,8 @@ export namespace toa.formation {
             [key: string]: Event
         }
 
-        interface Extension {
-
-        }
-
         interface Extensions {
-            [key: string]: Extension
+            [key: string]: Object
         }
 
         interface Brief {
