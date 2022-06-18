@@ -52,6 +52,7 @@ declare namespace toa.operations.deployment {
 export namespace dependency {
     export type Reference = toa.operations.deployment.dependency.Reference
     export type Service = toa.operations.deployment.dependency.Service
+    export type Proxy = toa.operations.deployment.dependency.Proxy
 }
 
 export type Dependency = toa.operations.deployment.Dependency

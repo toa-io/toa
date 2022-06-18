@@ -20,7 +20,7 @@ declare namespace toa.operations.deployment {
         compositions: Composition[]
         components: string[]
         services?: Service[]
-        proxies?: string[]
+        proxies?: dependency.Proxy[]
         environment?: string
     }
 

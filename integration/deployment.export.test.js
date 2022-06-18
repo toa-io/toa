@@ -16,7 +16,7 @@ let operator
 let target
 
 beforeAll(async () => {
-  operator = await boot.deployment(source, 'dev')
+  operator = await boot.deployment(source)
   target = await operator.export()
 })
 
