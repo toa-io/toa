@@ -44,7 +44,7 @@ it('should export composition contents', async () => {
 
     const contents = await readdir(join(target, dir))
 
-    expect(contents).toEqual(['Dockerfile', ...composition.components])
+    expect(contents).toEqual(['.dockerignore', 'Dockerfile', ...composition.components])
   }
 })
 
