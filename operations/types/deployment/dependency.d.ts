@@ -28,9 +28,15 @@ declare namespace toa.operations.deployment {
             }
         }
 
+        interface Proxy {
+            name: string
+            target: string
+        }
+
         interface Declaration {
-            references?: Array<Reference>
-            services?: Array<Service> // dependency.Service
+            references?: Reference[]
+            services?: Service[] // dependency.Service
+            proxies?: Proxy[]
         }
 
     }
@@ -38,6 +44,7 @@ declare namespace toa.operations.deployment {
     interface Dependency {
         references?: dependency.Reference[]
         services?: Service[] // deployment.Service
+        proxies?: dependency.Proxy[]
     }
 
 }

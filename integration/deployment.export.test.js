@@ -16,7 +16,7 @@ let operator
 let target
 
 beforeAll(async () => {
-  operator = await boot.deployment(source)
+  operator = await boot.deployment(source, 'dev')
   target = await operator.export()
 })
 
@@ -72,10 +72,10 @@ describe('chart', () => {
   })
 
   it('should export dependency references', () => {
-    expect(chart.dependencies).toEqual(fixtures.chart.dependencies)
+    expect(chart.dependencies).toStrictEqual(fixtures.chart.dependencies)
 
     for (const name of Object.keys(fixtures.chart.dependencies)) {
-      expect(values[name]).toEqual(fixtures.values[name])
+      expect(values[name]).toStrictEqual(fixtures.values[name])
     }
   })
 
@@ -92,5 +92,10 @@ describe('chart', () => {
 
     expect(values.environment).toStrictEqual(environment)
     expect(values.services[0].ingress.host).toStrictEqual('dummies.stage.toa.dev')
+  })
+
+  it('should export proxies', () => {
+    expect(values.proxies).toBeDefined()
+    expect(values.proxies).toStrictEqual(fixtures.values.proxies)
   })
 })

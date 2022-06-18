@@ -29,3 +29,4 @@ resources:
   annotations@dev: ~
 origins:
   local: localhost:80
+mongodb: host.docker.internal

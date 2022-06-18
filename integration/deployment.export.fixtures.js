@@ -7,37 +7,13 @@ const chart = {
   description: 'Integration tests dummies context',
   version: '0.0.0',
   appVersion: '0.0.0',
-  dependencies: expect.arrayContaining([
-    {
-      name: 'mongodb',
-      repository: 'https://charts.bitnami.com/bitnami',
-      version: '12.0.0',
-      alias: 'storage-messages'
-    },
-    {
-      name: 'mongodb',
-      repository: 'https://charts.bitnami.com/bitnami',
-      version: '12.0.0',
-      alias: 'storage-stats'
-    },
-    {
-      name: 'mongodb',
-      repository: 'https://charts.bitnami.com/bitnami',
-      version: '12.0.0',
-      alias: 'storage-credits'
-    },
-    {
-      name: 'mongodb',
-      repository: 'https://charts.bitnami.com/bitnami',
-      version: '12.0.0',
-      alias: 'storage-dummies'
-    },
+  dependencies: [
     {
       name: 'rabbitmq',
       repository: 'https://charts.bitnami.com/bitnami',
       version: '9.0.0'
     }
-  ])
+  ]
 }
 
 const values = {
@@ -76,42 +52,24 @@ const values = {
       }
     }
   ]),
-  'storage-messages': {
-    architecture: 'standalone',
-    fullnameOverride: 'storage-messages',
-    auth: {
-      usernames: ['user'],
-      passwords: ['password'],
-      databases: ['messages']
+  proxies: [
+    {
+      name: 'storages-mongodb-dummies-a',
+      target: 'mongodb://host.docker.internal'
+    },
+    {
+      name: 'storages-mongodb-credits-balance',
+      target: 'mongodb://host.docker.internal'
+    },
+    {
+      name: 'storages-mongodb-messages-messages',
+      target: 'mongodb://host.docker.internal'
+    },
+    {
+      name: 'storages-mongodb-stats-stats',
+      target: 'mongodb://host.docker.internal'
     }
-  },
-  'storage-stats': {
-    architecture: 'standalone',
-    fullnameOverride: 'storage-stats',
-    auth: {
-      usernames: ['user'],
-      passwords: ['password'],
-      databases: ['stats']
-    }
-  },
-  'storage-credits': {
-    architecture: 'standalone',
-    fullnameOverride: 'storage-credits',
-    auth: {
-      usernames: ['user'],
-      passwords: ['password'],
-      databases: ['credits']
-    }
-  },
-  'storage-dummies': {
-    architecture: 'standalone',
-    fullnameOverride: 'stoarage-dummies',
-    auth: {
-      usernames: ['user'],
-      passwords: ['password'],
-      databases: ['dummies']
-    }
-  },
+  ],
   rabbitmq: {
     fullnameOverride: 'rabbitmq',
     auth: {

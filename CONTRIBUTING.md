@@ -91,7 +91,9 @@ All modules must be in <a href=https://developer.mozilla.org/en-US/docs/Web/>str
   </tr>
   <tr>
     <td valign=top>Helper directories</td>
-    <td>Put 'subclasses' into a folder with the same name as your main class.</td>
+    <td>
+        Put 'subclasses' or helper functions into a folder with the same name as your main module prefixed with the dot.
+    </td>
   </tr>
   <tr>
     <td valign=top>Type definitions</td>

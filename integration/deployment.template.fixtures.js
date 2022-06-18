@@ -31,7 +31,15 @@ const services = [
   }
 ]
 
+const proxies = [
+  {
+    name: 'storages-mongodb-dummies-a',
+    target: 'mongodb://host.docker.internal'
+  }
+]
+
 exports.scope = scope
 exports.compositions = compositions
 exports.components = components
 exports.services = services
+exports.proxies = proxies

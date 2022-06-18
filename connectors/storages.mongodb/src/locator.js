@@ -14,12 +14,7 @@ class Locator extends URL {
   constructor (locator) {
     super('mongodb://')
 
-    if (process.env.TOA_ENV === 'local') {
-      this.hostname = 'localhost'
-    } else {
-      this.hostname = locator.host('storage', 0)
-    }
-
+    this.hostname = process.env.TOA_ENV === 'local' ? 'localhost' : locator.host('storages-mongodb')
     this.db = locator.domain
     this.collection = locator.name
   }

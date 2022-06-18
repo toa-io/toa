@@ -2,42 +2,48 @@
 
 /**
  * @param {toa.formation.component.Brief[]} components
- * @returns {toa.operations.deployment.Dependency | Object}
+ * @param {toa.storages.mongo.Annotations} annotations
+ * @returns {toa.operations.deployment.dependency.Declaration}
  */
-const deployment = (components) => {
-  const domains = new Set()
-  const references = []
+const deployment = (components, annotations) => {
+  if (annotations === undefined) throw new Error('storages.mongodb annotation is required')
 
-  for (const component of components) {
-    if (domains.has(component.locator.domain)) continue
+  const proxies = components.map((component) => proxy(component, annotations))
 
-    references.push(chart(component))
-    domains.add(component.locator.domain)
-  }
-
-  return { references }
+  return { proxies }
 }
 
 /**
  * @param {toa.formation.component.Brief} component
- * @returns {toa.operations.deployment.Reference}
+ * @param {toa.storages.mongo.Annotations} annotations
+ * @returns {toa.operations.deployment.dependency.Proxy}
  */
-const chart = (component) => {
-  const alias = component.locator.host('storage', 0)
+const proxy = (component, annotations) => {
+  const name = PREFIX + component.locator.label
+  const target = extract(annotations, [component.locator.domain, component.locator.name])
 
-  return {
-    name: 'mongodb',
-    version: '12.0.0',
-    repository: 'https://charts.bitnami.com/bitnami',
-    alias,
-    values: {
-      architecture: 'standalone',
-      fullnameOverride: alias,
-      auth: {
-        enabled: false
-      }
-    }
-  }
+  return { name, target }
 }
+
+/**
+ * @param {toa.storages.mongo.Annotations} annotations
+ * @param {string[]} segments
+ * @returns {string}
+ */
+const extract = (annotations, segments) => {
+  const name = segments.join('.')
+
+  let value
+  let cursor = annotations
+
+  while ((cursor = cursor[segments.shift()]) !== undefined) value = cursor
+
+  if (value === undefined) value = annotations.default
+  if (value === undefined) throw new Error(`MongoDB annotation for '${name}' hasn't been found`)
+
+  return value
+}
+
+const PREFIX = 'storages-mongodb-'
 
 exports.deployment = deployment

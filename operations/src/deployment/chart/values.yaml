@@ -28,4 +28,7 @@ services:
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+proxies:
+  - name: storage-proxy
+    target: host.docker.internal
 environment: development

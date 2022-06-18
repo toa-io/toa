@@ -14,7 +14,7 @@ declare namespace toa.operations.deployment {
         port: number
         ingress?: Ingress
     }
-
+    
 }
 
 export type Service = toa.operations.deployment.Service

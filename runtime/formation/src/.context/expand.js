@@ -8,6 +8,7 @@ const { recognize } = require('../lookup')
 const expand = (context) => {
   recognize(context, 'annotations')
   recognize(context.annotations)
+
 }
 
 exports.expand = expand

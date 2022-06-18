@@ -1,16 +1,9 @@
 'use strict'
 
-const { convolve } = require('@toa.io/gears')
-
 /**
  * @param {toa.formation.context.Declaration | Object} context
- * @param {string} [environment]
  */
-const normalize = (context, environment) => {
-  convolve(context, environment)
-
-  context.environment = environment
-
+const normalize = (context) => {
   if (typeof context.runtime === 'string') context.runtime = { version: context.runtime }
 
   if (context.runtime.version === undefined || context.runtime.version === '.') {

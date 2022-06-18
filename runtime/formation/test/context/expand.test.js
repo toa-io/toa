@@ -3,7 +3,7 @@
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
-const { expand } = require('../../src/context/expand')
+const { expand } = require('../../src/.context')
 const fixtures = require('./expand.fixtures')
 
 /** @type {toa.formation.context.Declaration | object} */
