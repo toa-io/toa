@@ -4,7 +4,7 @@
 
 const clone = require('clone-deep')
 
-const { validate } = require('../../src/component/validate')
+const { validate } = require('../../src/.component')
 const fixtures = require('./validate.fixtures')
 
 let manifest

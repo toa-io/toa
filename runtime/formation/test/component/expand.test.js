@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 
-const { expand } = require('../../src/component/expand')
+const { expand } = require('../../src/.component')
 const fixtures = require('./expand.fixtures')
 
 let source

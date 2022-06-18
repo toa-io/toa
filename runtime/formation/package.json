@@ -21,7 +21,8 @@
   },
   "peerDependencies": {
     "@toa.io/gears": "*",
-    "@toa.io/runtime": "*"
+    "@toa.io/schema": "*",
+    "@toa.io/core": "*"
   },
   "dependencies": {
     "fast-glob": "3.2.7"

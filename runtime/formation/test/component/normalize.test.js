@@ -3,7 +3,7 @@
 const { dirname, resolve } = require('node:path')
 const clone = require('clone-deep')
 
-const { normalize } = require('../../src/component/normalize')
+const { normalize } = require('../../src/.component')
 const fixtures = require('./normalize.fixtures')
 
 let manifest

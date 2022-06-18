@@ -6,13 +6,7 @@ const glob = require('fast-glob')
 const { yaml } = require('@toa.io/gears')
 const { Locator } = require('@toa.io/core')
 
-const { expand } = require('./component/expand')
-const { merge } = require('./component/merge')
-const { validate } = require('./component/validate')
-const { collapse } = require('./component/collapse')
-const { dereference } = require('./component/dereference')
-const { defaults } = require('./component/defaults')
-const { normalize } = require('./component/normalize')
+const { expand, merge, validate, collapse, dereference, defaults, normalize } = require('./.component')
 const { resolve } = require('./lookup')
 
 const component = async (reference) => {

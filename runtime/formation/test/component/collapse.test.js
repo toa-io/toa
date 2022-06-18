@@ -2,15 +2,8 @@
 
 const clone = require('clone-deep')
 
-const gears = jest.requireActual('@toa.io/gears')
 const fixtures = require('./collapse.fixtures')
-const mock = fixtures.mock
-
-mock.merge = gears.merge
-
-jest.mock('@toa.io/gears', () => ({ find: mock.find, lookup: mock.lookup, merge: mock.merge }))
-
-const { collapse } = require('../../src/component/collapse')
+const { collapse } = require('../../src/.component')
 
 let samples
 

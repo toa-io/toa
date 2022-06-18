@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 
-const { dereference } = require('../../src/component/dereference')
+const { dereference } = require('../../src/.component')
 const fixtures = require('./dereference.fixtures')
 
 let source
