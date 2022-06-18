@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "0.2.0-dev.48",
+  "version": "0.2.0-dev.50",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
