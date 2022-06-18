@@ -48,8 +48,6 @@ const keys = (node) => {
  * @returns {string}
  */
 const value = (value) => {
-  if (!value.includes('://')) return 'mongodb://' + value
-
   return value
 }
 

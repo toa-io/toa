@@ -34,7 +34,19 @@ const services = [
 const proxies = [
   {
     name: 'storages-mongodb-dummies-a',
-    target: 'mongodb://host.docker.internal'
+    target: 'is-not-defined'
+  },
+  {
+    name: 'storages-mongodb-credits-balance',
+    target: 'is-not-defined'
+  },
+  {
+    name: 'storages-mongodb-messages-messages',
+    target: 'is-not-defined'
+  },
+  {
+    name: 'storages-mongodb-stats-stats',
+    target: 'is-not-defined'
   }
 ]
 

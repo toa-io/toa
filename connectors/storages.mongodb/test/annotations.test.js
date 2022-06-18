@@ -6,6 +6,8 @@ const { generate } = require('randomstring')
 const fixtures = require('./annotations.fixtures')
 const { annotations } = require('../')
 
+const gen = () => generate().toLowerCase()
+
 let declaration
 
 beforeEach(() => {
@@ -19,31 +21,14 @@ it('should must be a function', () => {
 
 describe('normalize', () => {
   it('should treat string value as default', () => {
-    const declaration = 'mongodb://' + generate()
+    const declaration = gen()
     const result = annotations(declaration)
 
     expect(result).toStrictEqual({ default: declaration })
   })
 
-  it('should add schema to default', () => {
-    const declaration = generate()
-    const result = annotations(declaration)
-
-    expect(result.default).toStrictEqual('mongodb://' + declaration)
-  })
-
-  it('should add schema to values', () => {
-    const host = generate()
-
-    declaration.credits.operations = host
-
-    const result = /** @type {Object} */ annotations(declaration)
-
-    expect(result.credits.operations).toStrictEqual('mongodb://' + host)
-  })
-
   it('should split dot notation', () => {
-    const url = 'mongodb://' + generate()
+    const url = gen()
 
     declaration['foo.bar'] = url
 
@@ -53,7 +38,7 @@ describe('normalize', () => {
   })
 
   it('should not overwrite with dot notation', () => {
-    const url = 'mongodb://' + generate()
+    const url = gen()
 
     declaration.foo = { bar: url }
     declaration['foo.baz'] = url
@@ -71,8 +56,8 @@ describe('validate', () => {
     expect(() => annotations(null)).toThrow(TypeError)
   })
 
-  it('should throw if property is not string', () => {
-    declaration.foo = 1
+  it('should throw if property is not url', () => {
+    declaration.foo = '[]'
 
     expect(() => annotations(declaration)).toThrow(TypeError)
   })

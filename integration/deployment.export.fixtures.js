@@ -55,19 +55,19 @@ const values = {
   proxies: [
     {
       name: 'storages-mongodb-dummies-a',
-      target: 'mongodb://host.docker.internal'
+      target: 'is-not-defined'
     },
     {
       name: 'storages-mongodb-credits-balance',
-      target: 'mongodb://host.docker.internal'
+      target: 'is-not-defined'
     },
     {
       name: 'storages-mongodb-messages-messages',
-      target: 'mongodb://host.docker.internal'
+      target: 'is-not-defined'
     },
     {
       name: 'storages-mongodb-stats-stats',
-      target: 'mongodb://host.docker.internal'
+      target: 'is-not-defined'
     }
   ],
   rabbitmq: {

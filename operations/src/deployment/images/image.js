@@ -65,8 +65,10 @@ class Image {
 
     const template = await read(this.dockerfile, 'utf-8')
     const contents = template.replace(/{{(\.?\w+)}}/g, (_, key) => this.#value(key))
+    const ignore = 'Dockerfile'
 
     await write(join(path, 'Dockerfile'), contents)
+    await write(join(path, '.dockerignore'), ignore)
 
     this.context = path
 

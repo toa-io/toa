@@ -29,4 +29,5 @@ resources:
   annotations@dev: ~
 origins:
   local: localhost:80
-mongodb: host.docker.internal
+mongodb: is-not-defined
+mongodb@dev: host.docker.internal

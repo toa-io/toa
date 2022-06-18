@@ -3,7 +3,7 @@
 const annotations = {
   default: 'host.docker.internal',
   credits: {
-    balance: 'mongodb://host.docker.internal'
+    balance: 'host.docker.internal'
   }
 }
 
