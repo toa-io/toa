@@ -1,28 +1,22 @@
 'use strict'
 
-const { dirname, resolve, join } = require('node:path')
+const { dirname } = require('node:path')
 const { empty, merge } = require('@toa.io/gears')
 
 /**
+ * Resolves package reference to absolute path
+ *
  * @param {string} reference
- * @param {string} base
- * @return {string}
+ * @param {string} [base]
+ * @param {string} [indicator]
+ * @returns {string}
  */
-const lookup = (reference, base) => {
-  if (KNOWN[reference]) reference = KNOWN[reference]
+const resolve = (reference, base, indicator = 'package.json') => {
+  const paths = [RUNTIME]
 
-  try {
-    const paths = [__dirname] // this will find toa packages installed globally
+  if (base !== undefined) paths.push(base)
 
-    if (base !== undefined) paths.push(base)
-
-    const root = join(reference, 'package.json')
-    const path = require.resolve(root, base !== undefined ? { paths } : undefined)
-
-    return dirname(path)
-  } catch {
-    return base === undefined ? reference : resolve(base, reference)
-  }
+  return dirname(require.resolve(reference + '/' + indicator, { paths }))
 }
 
 /**
@@ -57,5 +51,7 @@ const KNOWN = {
   origins: '@toa.io/extensions.origins'
 }
 
-exports.lookup = lookup
+const RUNTIME = dirname(require.resolve('@toa.io/runtime/package.json'))
+
 exports.recognize = recognize
+exports.resolve = resolve

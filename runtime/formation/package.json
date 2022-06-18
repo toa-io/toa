@@ -20,6 +20,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
+    "@toa.io/gears": "*",
     "@toa.io/runtime": "*"
   },
   "dependencies": {

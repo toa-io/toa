@@ -1,13 +1,13 @@
 'use strict'
 
-const boot = require('../')
+const boot = require('../..')
 
 /**
  * @param {string} path
  * @returns {toa.core.extensions.Factory}
  */
 const resolve = (path) => {
-  if (instances[path] === undefined) instances[path] = load(path)
+  if (instances[path] === undefined) instances[path] = create(path)
 
   return instances[path]
 }
@@ -16,7 +16,7 @@ const resolve = (path) => {
  * @param {string} path
  * @returns {toa.core.extensions.Factory}
  */
-const load = (path) => {
+const create = (path) => {
   const { Factory } = require(path)
 
   return new Factory(boot)

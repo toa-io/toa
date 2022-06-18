@@ -17,7 +17,7 @@ it('should expand', () => {
 })
 
 it('should expand operation arguments', () => {
-  const source = { entity: { schema: {} }, operations: [{ input: 'object', output: 'string' }] }
+  source.operations = [{ input: 'object', output: 'string' }]
 
   expand(source)
   expect(source.operations).toStrictEqual([{ input: { type: 'object' }, output: { type: 'string' } }])

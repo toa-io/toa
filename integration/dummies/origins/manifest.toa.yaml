@@ -10,14 +10,14 @@ entity:
     bar: string
 
 operations:
-  read:
+  foo:
     concurrency: retry
     input:
       delay: number
     output:
       status: number
       text: string
-  fetch:
+  bar:
     concurrency: retry
     output:
       status: number

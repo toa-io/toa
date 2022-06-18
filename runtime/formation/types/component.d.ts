@@ -36,6 +36,7 @@ export namespace toa.formation {
             name: string
             version: string
             entity: Object
+            extensions?: component.Extensions
         }
     }
 
@@ -44,7 +45,6 @@ export namespace toa.formation {
         path: string
         operations?: component.Operations
         events?: component.Events
-        extensions?: component.Extensions
     }
 }
 

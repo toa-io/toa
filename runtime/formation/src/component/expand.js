@@ -1,6 +1,6 @@
 'use strict'
 
-const { entity, bridge, bindings, operations, events, receivers, extensions } = require('./expand/')
+const { entity, bridge, bindings, operations, events, receivers, extensions } = require('./.expand')
 
 const expand = (manifest) => {
   entity(manifest)

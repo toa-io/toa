@@ -2,7 +2,7 @@
 
 /**
  * @param {toa.formation.component.Brief[]} components
- * @returns {toa.operations.deployment.Dependency}
+ * @returns {toa.operations.deployment.Dependency | Object}
  */
 const deployment = (components) => {
   const domains = new Set()

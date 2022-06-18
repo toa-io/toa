@@ -15,15 +15,15 @@ afterAll(async () => {
   if (composition) await composition.disconnect()
 })
 
-it('should be available thru context.extensions.origins', async () => {
-  const reply = await remote.invoke('read', { input: {} })
+it('should be available as context.extensions.origins', async () => {
+  const reply = await remote.invoke('foo', { input: {} })
 
   expect(reply).toBeDefined()
   expect(reply.output).toStrictEqual({ status: 404 })
 })
 
-it('should be available thru context.origins', async () => {
-  const reply = await remote.invoke('fetch', {})
+it('should be available as context.origins', async () => {
+  const reply = await remote.invoke('bar', {})
 
   expect(reply).toBeDefined()
   expect(reply.output).toStrictEqual({ status: 404 })

@@ -1,0 +1,10 @@
+domain: dummies
+name: extended
+
+entity:
+  storage: ~
+  schema:
+    foo: string
+
+extensions:
+  ./extension: ok

@@ -1,7 +1,7 @@
 'use strict'
 
 const { convolve } = require('@toa.io/gears')
-const { events, operations, extensions } = require('./normalize/')
+const { events, operations, extensions } = require('./.normalize')
 
 const normalize = (component, environment) => {
   convolve(component, environment)
