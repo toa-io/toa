@@ -1,16 +1,15 @@
 // noinspection ES6UnusedImports
 
-import { Connector, Locator } from '.'
-import * as context from './context'
+import { Connector, Locator } from './index'
 
 declare namespace toa.core.extensions {
 
     interface Factory {
         connector?(locator: Locator, declaration: Object): Connector | undefined
 
-        service?(name: string): Connector | undefined
-
         contexts?(declaration: Object): Context[]
+
+        service?(name: string): Connector | undefined
     }
 
     interface Context {

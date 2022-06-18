@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/storages.mongodb",
-  "version": "0.2.0-dev.42",
+  "version": "0.2.0-dev.48",
   "description": "Toa MongoDB Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,6 +17,10 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "peerDependencies": {
+    "@toa.io/gears": "*",
+    "@toa.io/schema": "*"
   },
   "dependencies": {
     "mongodb": "4.1.4"

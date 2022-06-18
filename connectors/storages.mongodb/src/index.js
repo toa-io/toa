@@ -1,5 +1,7 @@
-const { Factory } = require('./factory')
+const { annotations } = require('./annotations')
 const { deployment } = require('./deployment')
+const { Factory } = require('./factory')
 
-exports.Factory = Factory
+exports.annotations = annotations
 exports.deployment = deployment
+exports.Factory = Factory

@@ -1,43 +1,34 @@
 'use strict'
 
-const { dirname, resolve, join } = require('node:path')
+const { dirname } = require('node:path')
+const { empty, merge } = require('@toa.io/gears')
 
 /**
+ * Resolves package reference to absolute path
+ *
  * @param {string} reference
- * @param {string} base
- * @return {string}
+ * @param {string} [base]
+ * @param {string} [indicator]
+ * @returns {string}
  */
-const lookup = (reference, base) => {
-  if (KNOWN[reference]) reference = KNOWN[reference]
+const resolve = (reference, base, indicator = 'package.json') => {
+  const paths = [RUNTIME]
 
-  try {
-    const paths = [__dirname] // this will find toa packages installed globally
+  if (base !== undefined) paths.push(base)
 
-    if (base !== undefined) paths.push(base)
-
-    const root = join(reference, 'package.json')
-    const path = require.resolve(root, base !== undefined ? { paths } : undefined)
-
-    return dirname(path)
-  } catch {
-    return base === undefined ? reference : resolve(base, reference)
-  }
+  return dirname(require.resolve(reference + '/' + indicator, { paths }))
 }
 
 /**
  * Finds object keys with known names, resolves and groups them to a given group key
- * @param {object} object
+ *
+ * @param {Object} object
  * @param {string} [group]
  */
 const recognize = (object, group) => {
-  let target
+  if (object === undefined) return
 
-  if (group === undefined) target = object
-  else {
-    if (object[group] === undefined) object[group] = {}
-
-    target = object[group]
-  }
+  const target = group === undefined ? object : {}
 
   for (const [alias, name] of Object.entries(KNOWN)) {
     const value = object[alias]
@@ -45,16 +36,22 @@ const recognize = (object, group) => {
     if (value === undefined) continue
 
     delete object[alias]
+
     target[name] = value
   }
+
+  if (group !== undefined && !empty(target)) object[group] = merge(object[group], target)
 }
 
 const KNOWN = {
   http: '@toa.io/bindings.http',
   amqp: '@toa.io/bindings.amqp',
+  mongodb: '@toa.io/storages.mongodb',
   resources: '@toa.io/extensions.resources',
   origins: '@toa.io/extensions.origins'
 }
 
-exports.lookup = lookup
+const RUNTIME = dirname(require.resolve('@toa.io/runtime/package.json'))
+
 exports.recognize = recognize
+exports.resolve = resolve

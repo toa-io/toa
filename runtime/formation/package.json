@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/formation",
-  "version": "0.2.0-dev.42",
+  "version": "0.2.0-dev.48",
   "description": "Toa Formation",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,7 +20,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/runtime": "*"
+    "@toa.io/gears": "*",
+    "@toa.io/schema": "*",
+    "@toa.io/core": "*"
   },
   "dependencies": {
     "fast-glob": "3.2.7"

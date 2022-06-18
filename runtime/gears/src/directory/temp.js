@@ -6,6 +6,7 @@ const { tmpdir } = require('node:os')
 
 /**
  * Creates temporary directory
+ *
  * @param [prefix] {string}
  * @return {Promise<string>}
  */

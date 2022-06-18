@@ -119,8 +119,7 @@ const target = {
     event: {
       transition: 'transit'
     }
-  },
-  extensions: {}
+  }
 }
 
 exports.source = source

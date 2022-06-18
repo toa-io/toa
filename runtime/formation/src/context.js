@@ -1,16 +1,19 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { yaml } = require('@toa.io/gears')
+const { yaml, convolve } = require('@toa.io/gears')
 
 const { find } = require('./component')
-const { validate } = require('./context/validate')
-const { connectors } = require('./context/connectors')
-const { extensions } = require('./context/extensions')
-const { normalize } = require('./context/normalize')
-const { complete } = require('./context/complete')
-const { dereference } = require('./context/dereference')
-const { expand } = require('./context/expand')
+
+const {
+  connectors,
+  extensions,
+  normalize,
+  complete,
+  dereference,
+  expand,
+  validate
+} = require('./.context')
 
 /**
  * @param {string} root
@@ -22,8 +25,11 @@ const context = async (root, environment) => {
   const context = /** @type {toa.formation.Context} */ await yaml(path)
   const roots = resolve(root, context.packages)
 
+  context.environment = environment
+
+  convolve(context, environment)
   expand(context)
-  normalize(context, environment)
+  normalize(context)
   validate(context)
 
   context.components = await find(roots)

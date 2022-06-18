@@ -15,7 +15,6 @@ const validate = (manifest) => {
 
   if (manifest.events !== undefined) events(manifest)
   if (manifest.receivers !== undefined) receivers(manifest)
-  if (manifest.extensions !== undefined) extensions(manifest)
 }
 
 const events = (manifest) => {
@@ -35,14 +34,6 @@ const receivers = (manifest) => {
     if (manifest.operations[receiver.transition].type !== 'transition') {
       throw new Error(`Receiver '${locator}' refers to non-transition '${receiver.transition}'`)
     }
-  }
-}
-
-const extensions = (manifest) => {
-  for (const [key, value] of Object.entries(manifest.extensions)) {
-    const extension = require(key)
-
-    if (extension.manifest?.validate !== undefined) extension.manifest.validate(value)
   }
 }
 

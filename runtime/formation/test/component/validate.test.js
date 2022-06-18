@@ -1,8 +1,10 @@
+// noinspection JSUnresolvedVariable
+
 'use strict'
 
 const clone = require('clone-deep')
 
-const { validate } = require('../../src/component/validate')
+const { validate } = require('../../src/.component')
 const fixtures = require('./validate.fixtures')
 
 let manifest
@@ -48,8 +50,13 @@ describe('domain', () => {
     expect(() => validate(manifest)).not.toThrow()
   })
 
-  it('should forbid system domain', () => {
+  it('should forbid \'system\' domain', () => {
     manifest.domain = 'system'
+    expect(() => validate(manifest)).toThrow(/must NOT be valid/)
+  })
+
+  it('should forbid \'default\' domain', () => {
+    manifest.domain = 'default'
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 })

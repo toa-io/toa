@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 
-const { validate } = require('../../src/context/validate')
+const { validate } = require('../../src/.context')
 const fixtures = require('./validate.fixtures')
 
 let context

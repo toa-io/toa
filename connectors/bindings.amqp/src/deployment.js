@@ -1,9 +1,19 @@
 'use strict'
 
 /**
+ * @param {toa.formation.component.Brief[]} components
+ * @param {string} annotations
  * @returns {toa.operations.deployment.dependency.Declaration}
  */
-const deployment = () => {
+const deployment = (components, annotations) => {
+  if (annotations !== undefined) return proxy(annotations)
+  else return reference()
+}
+
+/**
+ * @returns {toa.operations.deployment.dependency.Declaration}
+ */
+const reference = () => {
   const fullname = 'rabbitmq'
 
   // TODO: provide passwords as secrets for component containers
@@ -26,6 +36,14 @@ const deployment = () => {
   }
 
   return { references: [rabbitmq] }
+}
+
+/**
+ * @param {string} target
+ * @returns {toa.operations.deployment.dependency.Declaration}
+ */
+const proxy = (target) => {
+  return { proxies: [{ name: 'rabbitmq', target }] }
 }
 
 exports.deployment = deployment

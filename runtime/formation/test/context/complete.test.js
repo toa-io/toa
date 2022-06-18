@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 
-const { complete } = require('../../src/context/complete')
+const { complete } = require('../../src/.context')
 const fixtures = require('./complete.fixtures')
 
 /** @type {toa.formation.Context} */

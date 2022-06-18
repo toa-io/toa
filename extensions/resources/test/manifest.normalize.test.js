@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 
-const { normalize } = require('../src/manifest/normalize')
+const { normalize } = require('../src/.manifest')
 const fixtures = require('./manifest.normalize.fixtures')
 
 describe('normalize', () => {

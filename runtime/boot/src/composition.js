@@ -8,7 +8,10 @@ async function composition (paths, options) {
   normalize(options)
 
   const manifests = await Promise.all(paths.map((path) => boot.component(path, options)))
-  const extensions = await Promise.all(manifests.map(boot.extensions.connectors))
+
+  const extensions = (await Promise.all(manifests.map(boot.extensions.connectors)))
+    .filter((ext) => ext !== undefined)
+
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
   const runtimes = await Promise.all(manifests.map(boot.runtime))
 

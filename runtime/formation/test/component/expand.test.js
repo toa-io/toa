@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 
-const { expand } = require('../../src/component/expand')
+const { expand } = require('../../src/.component')
 const fixtures = require('./expand.fixtures')
 
 let source
@@ -17,7 +17,7 @@ it('should expand', () => {
 })
 
 it('should expand operation arguments', () => {
-  const source = { entity: { schema: {} }, operations: [{ input: 'object', output: 'string' }] }
+  source.operations = [{ input: 'object', output: 'string' }]
 
   expand(source)
   expect(source.operations).toStrictEqual([{ input: { type: 'object' }, output: { type: 'string' } }])

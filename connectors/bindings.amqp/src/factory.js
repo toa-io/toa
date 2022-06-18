@@ -50,13 +50,9 @@ class Factory {
   #channel () {
     const url = new URL('amqp://')
 
-    if (process.env.TOA_ENV === 'local') {
-      url.hostname = 'localhost'
-    } else {
-      url.hostname = 'rabbitmq'
-      url.username = 'user'
-      url.password = 'password'
-    }
+    url.hostname = process.env.TOA_ENV === 'local' ? 'localhost' : 'rabbitmq'
+    url.username = 'user'
+    url.password = 'password'
 
     const href = url.href
 

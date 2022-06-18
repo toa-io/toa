@@ -31,7 +31,27 @@ const services = [
   }
 ]
 
+const proxies = [
+  {
+    name: 'storages-mongodb-dummies-a',
+    target: 'is-not-defined'
+  },
+  {
+    name: 'storages-mongodb-credits-balance',
+    target: 'is-not-defined'
+  },
+  {
+    name: 'storages-mongodb-messages-messages',
+    target: 'is-not-defined'
+  },
+  {
+    name: 'storages-mongodb-stats-stats',
+    target: 'is-not-defined'
+  }
+]
+
 exports.scope = scope
 exports.compositions = compositions
 exports.components = components
 exports.services = services
+exports.proxies = proxies

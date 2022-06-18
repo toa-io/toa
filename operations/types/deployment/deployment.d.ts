@@ -13,13 +13,14 @@ declare namespace toa.operations.deployment {
         description?: string
         version: string
         appVersion: string
-        dependencies: Array<dependency.Reference>
+        dependencies: dependency.Reference[]
     }
 
     interface Contents {
-        compositions: Array<Composition>
-        components: Array<string>
-        services?: Array<Service>
+        compositions: Composition[]
+        components: string[]
+        services?: Service[]
+        proxies?: dependency.Proxy[]
         environment?: string
     }
 

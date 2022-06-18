@@ -131,10 +131,4 @@ const remotes = {
   }
 }
 
-const find = jest.fn(() => generate())
-const lookup = jest.fn(() => generate())
-
-lookup.directory = jest.fn(() => generate())
-
 exports.samples = { entity, operations, remotes }
-exports.mock = { find, lookup }

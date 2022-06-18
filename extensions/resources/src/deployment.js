@@ -3,11 +3,11 @@
 const { PORT } = require('./constants')
 
 /**
- * @type {toa.operations.deployment.dependency.Constructor}
- * @param {object[]} declarations
+ * @param {toa.formation.component.Brief[]} components
  * @param {toa.extensions.resources.Annotations} annotations
+ * @returns {toa.operations.deployment.dependency.Declaration}
  */
-const deployment = (declarations, annotations) => {
+const deployment = (components, annotations) => {
   const group = 'resources'
   const name = 'exposition'
   const version = require('../package.json').version

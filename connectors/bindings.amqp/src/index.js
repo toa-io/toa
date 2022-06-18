@@ -2,7 +2,9 @@
 
 const { Factory } = require('./factory')
 const { deployment } = require('./deployment')
+const { annotations } = require('./annotations')
 
-exports.Factory = Factory
 exports.properties = { async: true }
 exports.deployment = deployment
+exports.annotations = annotations
+exports.Factory = Factory

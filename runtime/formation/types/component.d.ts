@@ -23,12 +23,8 @@ export namespace toa.formation {
             [key: string]: Event
         }
 
-        interface Extension {
-
-        }
-
         interface Extensions {
-            [key: string]: Extension
+            [key: string]: Object
         }
 
         interface Brief {
@@ -40,6 +36,7 @@ export namespace toa.formation {
             name: string
             version: string
             entity: Object
+            extensions?: component.Extensions
         }
     }
 
@@ -48,7 +45,6 @@ export namespace toa.formation {
         path: string
         operations?: component.Operations
         events?: component.Events
-        extensions?: component.Extensions
     }
 }
 

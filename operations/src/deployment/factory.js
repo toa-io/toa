@@ -72,17 +72,18 @@ class Factory {
    */
   #dependency (path, declarations) {
     const module = require(path)
+    const pkg = require(path + '/package.json')
 
     if (module.deployment === undefined) return
 
-    const annotations = this.#context.annotations?.[module.id]
+    const annotations = this.#context.annotations?.[pkg.name]
     /** @type {toa.operations.deployment.dependency.Declaration} */
     const dependency = module.deployment(declarations, annotations)
 
     /** @type {toa.operations.deployment.Service[]} */
     const services = dependency.services?.map((service) => this.#service(path, service))
 
-    return { references: dependency.references, services }
+    return { references: dependency.references, services, proxies: dependency.proxies }
   }
 
   /**

@@ -13,7 +13,7 @@ it('should set locator.host', () => {
   const original = new core.Locator({ domain: generate(), name: generate() })
   const locator = new Locator(original)
 
-  expect(locator.hostname).toStrictEqual(original.host('storage', 0))
+  expect(locator.hostname).toStrictEqual(original.host('storages-mongodb'))
 
   process.env.TOA_ENV = env
 })

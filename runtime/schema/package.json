@@ -1,9 +1,10 @@
 {
   "name": "@toa.io/schema",
-  "version": "0.2.0-dev.42",
+  "version": "0.2.0-dev.48",
   "description": "Toa schema validator",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "src/schema.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -11,16 +12,18 @@
   "bugs": {
     "url": "https://github.com/toa-io/toa/issues"
   },
-  "main": "src/schema.js",
-  "dependencies": {
-    "ajv": "8.6.3",
-    "ajv-formats": "2.1.1"
-  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "peerDependencies": {
+    "@toa.io/gears": "*"
+  },
+  "dependencies": {
+    "ajv": "8.6.3",
+    "ajv-formats": "2.1.1"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }

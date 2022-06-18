@@ -29,3 +29,6 @@ resources:
   annotations@dev: ~
 origins:
   local: localhost:80
+mongodb: is-not-defined
+mongodb@dev: host.docker.internal
+amqp@dev: host.docker.internal

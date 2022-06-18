@@ -1,8 +1,9 @@
 'use strict'
 
 const clone = require('clone-deep')
+const { generate } = require('randomstring')
 
-const { expand } = require('../../src/context/expand')
+const { expand } = require('../../src/.context')
 const fixtures = require('./expand.fixtures')
 
 /** @type {toa.formation.context.Declaration | object} */
@@ -12,12 +13,28 @@ beforeEach(() => {
   context = clone(fixtures.context)
 })
 
-it('should expand known annotations', () => {
-  const resources = context.annotations['@toa.io/extensions.resources']
-  delete context.annotations
-  context.resources = resources
+describe('annotations', () => {
+  it('should not throw without annotations', () => {
+    delete context.annotations
 
-  expand(context)
+    expect(() => expand(context)).not.toThrow()
+  })
 
-  expect(context.annotations).toStrictEqual(fixtures.context.annotations)
+  it('should expand known annotations', () => {
+    const resources = context.annotations['@toa.io/extensions.resources']
+    delete context.annotations
+    context.resources = resources
+
+    expand(context)
+
+    expect(context.annotations).toStrictEqual(fixtures.context.annotations)
+  })
+
+  it('should recognize annotations', () => {
+    context.annotations.mongodb = generate()
+
+    expand(context)
+
+    expect(context.annotations['@toa.io/storages.mongodb']).toBeDefined()
+  })
 })

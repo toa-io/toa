@@ -3,10 +3,12 @@
 /**
  * @param {toa.formation.Context} context
  * @param {toa.operations.deployment.Composition[]} compositions
- * @param {toa.operations.deployment.Dependency} dependency
- * @returns {toa.operations.deployment.Contents}
+ * @param {toa.operations.deployment.Dependency} declaration
+ * @returns {toa.operations.deployment.Contents | Object}
  */
-const describe = ({ environment }, compositions, { references, services }) => {
+const describe = ({ environment }, compositions, declaration) => {
+  const { references, services, proxies } = declaration
+
   /** @type {Set<string>} */
   const components = new Set()
 
@@ -28,6 +30,7 @@ const describe = ({ environment }, compositions, { references, services }) => {
     compositions,
     components: Array.from(components),
     services,
+    proxies,
     environment,
     ...dependencies
   }

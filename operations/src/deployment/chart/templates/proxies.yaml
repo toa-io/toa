@@ -1,0 +1,10 @@
+{{- range .Values.proxies }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+spec:
+  type: ExternalName
+  externalName: {{ .target }}
+---
+{{- end }}
