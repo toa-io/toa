@@ -18,7 +18,7 @@ it('should convolve with TOA_ENV', async () => {
 
   const original = await load('dummies/env')
 
-  expect(Object.entries(original.extensions)[0][1]).toStrictEqual({ foo: 'production' })
+  expect(Object.entries(original.extensions)[0][1]).toStrictEqual({ origins: { foo: 'https://production' } })
 
   process.env.TOA_ENV = 'integration'
 
@@ -27,7 +27,7 @@ it('should convolve with TOA_ENV', async () => {
   const entries = Object.entries(component.extensions)
   const origins = entries[0][1]
 
-  expect(origins).toStrictEqual({ foo: 'test' })
+  expect(origins).toStrictEqual({ origins: { foo: 'http://test' } })
 
   process.env.TOA_ENV = env
 })

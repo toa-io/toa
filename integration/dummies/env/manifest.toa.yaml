@@ -10,5 +10,5 @@ entity:
     required: [length]
 
 origins:
-  foo: production
-  foo@integration: test
+  foo: https://production
+  foo@integration: http://test
