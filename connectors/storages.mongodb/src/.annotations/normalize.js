@@ -22,7 +22,7 @@ const normalize = (declaration) => {
  */
 const values = (node) => {
   for (const [key, val] of Object.entries(node)) {
-    if (typeof val === 'string') node[key] = value(val)
+    if (typeof val === 'string') node[key] = val
     else values(val)
   }
 }
@@ -41,14 +41,6 @@ const keys = (node) => {
       node[left] = merge(node[left], { [right]: value })
     }
   }
-}
-
-/**
- * @param {string} value
- * @returns {string}
- */
-const value = (value) => {
-  return value
 }
 
 exports.normalize = normalize
