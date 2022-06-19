@@ -5,7 +5,7 @@ import type { Method } from './http'
 import type { Query } from './query'
 import type { Match as PathMatch } from 'path-to-regexp'
 
-declare namespace toa.extensions.resources {
+declare namespace toa.extensions.exposition {
 
     namespace tree {
 

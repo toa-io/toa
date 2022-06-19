@@ -6,19 +6,19 @@ const { console } = require('@toa.io/gears')
 const translate = require('./translate')
 
 /**
- * @implements {toa.extensions.resources.Remote}
+ * @implements {toa.extensions.exposition.Remote}
  */
 class Remote extends Connector {
   /** @type {toa.core.Runtime} */
   #remote
 
-  /** @type {toa.extensions.resources.Tree} */
+  /** @type {toa.extensions.exposition.Tree} */
   #tree
 
   /**
-   * @param {toa.extensions.resources.Server} server
+   * @param {toa.extensions.exposition.Server} server
    * @param {toa.core.Runtime} remote
-   * @param {toa.extensions.resources.Tree} tree
+   * @param {toa.extensions.exposition.Tree} tree
    */
   constructor (server, remote, tree) {
     super()
@@ -43,8 +43,8 @@ class Remote extends Connector {
 
   /**
    * @hot
-   * @param {toa.extensions.resources.http.Request} req
-   * @param {toa.extensions.resources.http.Response} res
+   * @param {toa.extensions.exposition.http.Request} req
+   * @param {toa.extensions.exposition.http.Response} res
    * @return {Promise<void>}
    */
   async #reply (req, res) {
@@ -66,8 +66,8 @@ class Remote extends Connector {
   }
 
   /**
-   * @param {toa.extensions.resources.http.Request} req
-   * @param {toa.extensions.resources.tree.Match} match
+   * @param {toa.extensions.exposition.http.Request} req
+   * @param {toa.extensions.exposition.tree.Match} match
    * @return {Promise<toa.core.Reply>}
    */
   async #call (req, match) {

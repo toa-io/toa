@@ -3,7 +3,7 @@
 const { merge } = require('@toa.io/gears')
 
 /**
- * @implements {toa.extensions.resources.Query}
+ * @implements {toa.extensions.exposition.Query}
  */
 class Query {
   #constraints
@@ -28,8 +28,8 @@ class Query {
   }
 
   /**
-   * @param {toa.extensions.resources.declarations.Node} node
-   * @returns {toa.extensions.resources.declarations.Query}
+   * @param {toa.extensions.exposition.declarations.Node} node
+   * @returns {toa.extensions.exposition.declarations.Query}
    */
   static merge (node) {
     const query = {}

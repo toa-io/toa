@@ -44,7 +44,7 @@ operations:
     forward: transit
 
 extensions:
-  resources:
+  exposition:
     /:
       operations: [add]
     /:id:

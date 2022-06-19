@@ -44,6 +44,6 @@ operations:
     forward: transit
 
 extensions:
-  '@toa.io/extensions.resources':
+  '@toa.io/extensions.exposition':
     /: [add]
     /:id: [observe, set]

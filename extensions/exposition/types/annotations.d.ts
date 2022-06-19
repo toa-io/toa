@@ -1,4 +1,4 @@
-declare namespace toa.extensions.resources {
+declare namespace toa.extensions.exposition {
 
     interface Annotations {
         host: string

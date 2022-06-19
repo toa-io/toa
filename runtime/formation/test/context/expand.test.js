@@ -21,9 +21,10 @@ describe('annotations', () => {
   })
 
   it('should expand known annotations', () => {
-    const resources = context.annotations['@toa.io/extensions.resources']
+    const exposition = context.annotations['@toa.io/extensions.exposition']
+
     delete context.annotations
-    context.resources = resources
+    context.exposition = exposition
 
     expand(context)
 

@@ -26,7 +26,7 @@ receivers:
   messages.messages.created: transit
 
 extensions:
-  resources:
+  exposition:
     /:
       operations: [create]
     /:id:

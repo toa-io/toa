@@ -10,7 +10,7 @@ const { PORT } = require('./constants')
 
 // noinspection JSClosureCompilerSyntax
 /**
- * @implements {toa.extensions.resources.Server}
+ * @implements {toa.extensions.exposition.Server}
  */
 class Server extends Connector {
   /** @type {import('express').Application} */

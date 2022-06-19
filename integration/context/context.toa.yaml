@@ -14,7 +14,7 @@ compositions:
     components:
       - messages.messages
       - stats.stats
-resources:
+exposition:
   host: dummies.toa.dev
   host@staging: dummies.stage.toa.dev
   host@dev: local.kind

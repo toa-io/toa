@@ -58,7 +58,7 @@ operations:
       text: ~
 
 extensions:
-  '@toa.io/extensions.resources':
+  '@toa.io/extensions.exposition':
     /:
       query:
         criteria: deleted!=true;

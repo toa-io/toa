@@ -20,6 +20,6 @@ receivers:
   messages.messages.created: update
   credits.balance.updated: update
 
-resources:
+exposition:
   /:id:
     operations: [observe, update]

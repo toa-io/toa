@@ -2,7 +2,7 @@
 
 import type { Remote } from './remote'
 
-declare namespace toa.extensions.resources {
+declare namespace toa.extensions.exposition {
 
     namespace exposition {
 

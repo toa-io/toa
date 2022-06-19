@@ -4,7 +4,7 @@ const { PORT } = require('./constants')
 
 /**
  * @param {toa.formation.component.Brief[]} components
- * @param {toa.extensions.resources.Annotations} annotations
+ * @param {toa.extensions.exposition.Annotations} annotations
  * @returns {toa.operations.deployment.dependency.Declaration}
  */
 const deployment = (components, annotations) => {

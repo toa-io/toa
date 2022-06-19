@@ -19,7 +19,7 @@ operations:
         length: ~
 
 extensions:
-  resources:
+  exposition:
     /:id:
       operations: [observe]
     /v2/:id:

@@ -23,7 +23,7 @@ const context = {
     }
   ],
   annotations: {
-    '@toa.io/extensions.resources': {
+    '@toa.io/extensions.exposition': {
       host: 'dummies.toa.io',
       class: 'alb',
       annotations: {

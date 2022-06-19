@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const { timeout, newid, random, repeat } = require('@toa.io/gears')
 const { exceptions: { codes } } = require('@toa.io/core')
 const boot = require('@toa.io/boot')
-const extension = require('../extensions/resources')
+const extension = require('../extensions/exposition')
 
 const framework = require('./framework')
 

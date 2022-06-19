@@ -2,7 +2,7 @@
 
 import type * as declarations from './declarations'
 
-declare namespace toa.extensions.resources {
+declare namespace toa.extensions.exposition {
 
     namespace remotes {
 
@@ -16,4 +16,4 @@ declare namespace toa.extensions.resources {
 
 }
 
-export type Remote = toa.extensions.resources.Remote
+export type Remote = toa.extensions.exposition.Remote

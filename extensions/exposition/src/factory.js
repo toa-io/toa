@@ -16,7 +16,7 @@ const { Query, constraints } = require('./query')
 class Factory {
   #boot
 
-  /** @type {toa.extensions.resources.Server} */
+  /** @type {toa.extensions.exposition.Server} */
   #server
 
   constructor (boot) {
@@ -47,7 +47,7 @@ class Factory {
   /**
    * @param {string} domain
    * @param {string} name
-   * @returns {Promise<toa.extensions.resources.Remote>}
+   * @returns {Promise<toa.extensions.exposition.Remote>}
    */
   async #connect (domain, name) {
     const locator = new Locator({ domain, name })
@@ -59,8 +59,8 @@ class Factory {
   }
 
   /**
-   * @param {toa.extensions.resources.declarations.Node | any} node
-   * @returns {toa.extensions.resources.Query}
+   * @param {toa.extensions.exposition.declarations.Node | any} node
+   * @returns {toa.extensions.exposition.Query}
    */
   #query (node) {
     const query = Query.merge(node)

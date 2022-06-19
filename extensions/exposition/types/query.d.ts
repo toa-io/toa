@@ -1,7 +1,7 @@
 import type { Query as RequestQuery } from '@toa.io/core/types/request'
 import type { Node, Operation } from './declarations'
 
-declare namespace toa.extensions.resources {
+declare namespace toa.extensions.exposition {
 
     namespace query {
         type Factory = (node: Node) => Query
@@ -13,4 +13,4 @@ declare namespace toa.extensions.resources {
 
 }
 
-export type Query = toa.extensions.resources.Query
+export type Query = toa.extensions.exposition.Query

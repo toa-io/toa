@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @returns {toa.extensions.resources.declarations.Node}
+ * @returns {toa.extensions.exposition.declarations.Node}
  */
 const normalize = (node, manifest) => {
   if (node instanceof Array) node = { operations: node }
@@ -17,7 +17,7 @@ const normalize = (node, manifest) => {
 }
 
 /**
- * @returns {toa.extensions.resources.declarations.Operation[] | undefined}
+ * @returns {toa.extensions.exposition.declarations.Operation[] | undefined}
  */
 const operations = (operations, manifest) => {
   if (operations === undefined) return
@@ -39,7 +39,7 @@ const operations = (operations, manifest) => {
 }
 
 /**
- * @returns {toa.extensions.resources.declarations.Query | undefined}
+ * @returns {toa.extensions.exposition.declarations.Query | undefined}
  */
 const query = (query) => {
   if (query === undefined) return

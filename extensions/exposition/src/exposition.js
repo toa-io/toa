@@ -7,15 +7,15 @@ class Exposition extends Connector {
   /** @type {toa.core.bindings.Broadcaster} */
   #broadcast
 
-  /** @type {toa.extensions.resources.remotes.Factory} */
+  /** @type {toa.extensions.exposition.remotes.Factory} */
   #remote
 
-  /** @type {toa.extensions.resources.exposition.Remotes} */
+  /** @type {toa.extensions.exposition.exposition.Remotes} */
   #remotes = {}
 
   /**
    * @param {toa.core.bindings.Broadcaster} broadcast
-   * @param {toa.extensions.resources.remotes.Factory} connect
+   * @param {toa.extensions.exposition.remotes.Factory} connect
    */
   constructor (broadcast, connect) {
     super()
@@ -35,7 +35,7 @@ class Exposition extends Connector {
   }
 
   /**
-   * @param {toa.extensions.resources.declarations.Exposition} declaration
+   * @param {toa.extensions.exposition.declarations.Exposition} declaration
    * @returns {Promise<void>}
    */
   async #expose (declaration) {

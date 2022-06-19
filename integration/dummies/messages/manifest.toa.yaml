@@ -58,7 +58,7 @@ operations:
       text: ~
 
 extensions:
-  resources:
+  exposition:
     /:
       query:
         criteria: deleted!=true;

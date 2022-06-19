@@ -1,4 +1,4 @@
-declare namespace toa.extensions.resources.declarations {
+declare namespace toa.extensions.exposition.declarations {
 
     interface Operation {
         operation: string
@@ -27,5 +27,5 @@ declare namespace toa.extensions.resources.declarations {
     }
 }
 
-export type Node = toa.extensions.resources.declarations.Node
-export type Operation = toa.extensions.resources.declarations.Operation
+export type Node = toa.extensions.exposition.declarations.Node
+export type Operation = toa.extensions.exposition.declarations.Operation

@@ -5,7 +5,7 @@ const { newid, repeat, timeout } = require('@toa.io/gears')
 const boot = require('@toa.io/boot')
 
 const framework = require('./framework')
-const extension = require('../extensions/resources')
+const extension = require('../extensions/exposition')
 const { generate } = require('randomstring')
 const { codes } = require('@toa.io/core/src/exceptions')
 

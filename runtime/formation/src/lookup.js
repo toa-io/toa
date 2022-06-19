@@ -47,7 +47,7 @@ const KNOWN = {
   http: '@toa.io/bindings.http',
   amqp: '@toa.io/bindings.amqp',
   mongodb: '@toa.io/storages.mongodb',
-  resources: '@toa.io/extensions.resources',
+  exposition: '@toa.io/extensions.exposition',
   origins: '@toa.io/extensions.origins'
 }
 

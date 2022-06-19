@@ -1,5 +1,5 @@
 {
-  "name": "@toa.io/extensions.resources",
+  "name": "@toa.io/extensions.exposition",
   "version": "0.2.0-dev.52",
   "description": "Toa Resources Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",

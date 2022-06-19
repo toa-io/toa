@@ -6,17 +6,17 @@ const { match } = require('path-to-regexp')
 const { console } = require('@toa.io/gears')
 
 /**
- * @implements {toa.extensions.resources.Tree}
+ * @implements {toa.extensions.exposition.Tree}
  */
 class Tree {
-  /** @type {toa.extensions.resources.tree.Node[]} */
+  /** @type {toa.extensions.exposition.tree.Node[]} */
   #nodes
 
-  /** @type {toa.extensions.resources.query.Factory} */
+  /** @type {toa.extensions.exposition.query.Factory} */
   #query
 
   /**
-   * @param {toa.extensions.resources.query.Factory} query
+   * @param {toa.extensions.exposition.query.Factory} query
    */
   constructor (query) {
     this.#query = query
@@ -51,9 +51,9 @@ class Tree {
   }
 
   /**
-   * @param {toa.extensions.resources.declarations.Node | any} node
+   * @param {toa.extensions.exposition.declarations.Node | any} node
    * @param {string} route
-   * @param {toa.extensions.resources.declarations.Node} parent
+   * @param {toa.extensions.exposition.declarations.Node} parent
    */
   #traverse (node, route = undefined, parent = undefined) {
     const current = {}

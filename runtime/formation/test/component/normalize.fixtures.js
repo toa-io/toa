@@ -10,7 +10,7 @@ const operations = {
     add: {}
   },
   extensions: {
-    '@toa.io/extensions.resources': {
+    '@toa.io/extensions.exposition': {
       ['/' + generate()]: ['add']
     },
     './dummies/extension': {
