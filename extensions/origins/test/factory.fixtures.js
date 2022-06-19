@@ -1,5 +1,5 @@
 'use strict'
 
-const { declaration } = require('./declaration.fixtures')
+const { declaration } = require('./manifest.fixtures')
 
 exports.declaration = declaration

@@ -11,7 +11,7 @@ const validator = new Schema(schema)
 const validate = (declaration) => {
   const error = validator.fit(declaration)
 
-  if (error) throw new Error(error.message)
+  if (error) throw new TypeError(error.message)
 }
 
 exports.validate = validate

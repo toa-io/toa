@@ -4,17 +4,14 @@
  * @returns {toa.extensions.origins.Declaration}
  */
 const normalize = (declaration) => {
-  origins(declaration)
+  declaration = origins(declaration)
 
   return declaration
 }
 
 const origins = (declaration) => {
-  if (declaration.origins === undefined) {
-    declaration.origins = { ...declaration }
-
-    for (const key of Object.keys(declaration.origins)) delete declaration[key]
-  }
+  if (declaration.origins !== undefined) return declaration
+  else return { origins: { ...declaration } }
 }
 
 exports.normalize = normalize
