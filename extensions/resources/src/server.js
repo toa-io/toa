@@ -43,29 +43,36 @@ class Server extends Connector {
   }
 
   async connection () {
+    console.info(`Starting HTTP server at :${PORT} ...`)
+
     return new Promise((resolve, reject) => {
+      const error = () => reject(new Error(`Error starting HTTP server at :${PORT}`))
       // noinspection JSCheckFunctionSignatures
       this.#server = this.#app.listen(PORT, () => {
-        console.info(`HTTP server started at :${PORT}`)
+        console.info(`HTTP server at :${PORT} started`)
 
-        this.#server.off('error', reject)
+        this.#server.off('error', error)
         resolve()
       })
 
-      this.#server.on('error', reject)
+      this.#server.on('error', error)
     })
   }
 
   async disconnection () {
+    console.info(`Stopping HTTP server at :${PORT} ...`)
+
     return new Promise((resolve, reject) => {
+      const error = () => reject(new Error(`Error stopping HTTP server at :${PORT}`))
+
       this.#server.close(() => {
         console.info(`HTTP server at :${PORT} stopped`)
 
-        this.#server.off('error', reject)
+        this.#server.off('error', error)
         resolve()
       })
 
-      this.#server.on('error', reject)
+      this.#server.on('error', error)
     })
   }
 }
