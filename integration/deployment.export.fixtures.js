@@ -42,8 +42,8 @@ const values = {
   ]),
   services: expect.arrayContaining([
     {
-      name: 'resources-exposition',
-      image: expect.stringMatching(/^[^/]+\/dummies\/service-resources-exposition:[a-z\d]+/),
+      name: 'exposition-resources',
+      image: expect.stringMatching(/^[^/]+\/dummies\/service-exposition-resources:[a-z\d]+/),
       port: 8000,
       ingress: {
         host: expect.any(String),

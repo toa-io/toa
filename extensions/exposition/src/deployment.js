@@ -8,8 +8,8 @@ const { PORT } = require('./constants')
  * @returns {toa.operations.deployment.dependency.Declaration}
  */
 const deployment = (components, annotations) => {
-  const group = 'resources'
-  const name = 'exposition'
+  const group = 'exposition'
+  const name = 'resources'
   const version = require('../package.json').version
   const port = PORT
   const ingress = annotations

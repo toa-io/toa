@@ -21,7 +21,7 @@ const components = ['credits-balance', 'dummies-a', 'messages-messages', 'stats-
 
 const services = [
   {
-    name: 'resources-exposition',
+    name: 'exposition-resources',
     port: 8000,
     ingress: {
       host: expect.any(String),

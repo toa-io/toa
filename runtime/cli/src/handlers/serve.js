@@ -1,9 +1,10 @@
 'use strict'
 
 const boot = require('@toa.io/boot')
+const { resolve } = require('@toa.io/formation')
 
 const serve = async (argv) => {
-  const module = require.resolve(argv.path, { paths: [process.cwd()] })
+  const module = resolve(argv.path, process.cwd())
 
   const { Factory } = require(module)
 

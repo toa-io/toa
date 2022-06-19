@@ -25,17 +25,17 @@ class Factory {
   }
 
   connector (locator, declaration) {
-    const broadcast = this.#boot.bindings.broadcast(BINDING, 'resources', locator.id)
+    const broadcast = this.#boot.bindings.broadcast(BINDING, GROUP, locator.id)
 
     return new Connector(broadcast, locator, declaration)
   }
 
   service (name) {
-    if (name === 'exposition') return this.#expose()
+    if (name === undefined || name === 'default' || name === 'resources') return this.#expose()
   }
 
   #expose () {
-    const broadcast = this.#boot.bindings.broadcast(BINDING, 'resources')
+    const broadcast = this.#boot.bindings.broadcast(BINDING, GROUP)
     const connect = this.#connect.bind(this)
     const exposition = new Exposition(broadcast, connect)
 
@@ -71,5 +71,6 @@ class Factory {
 }
 
 const BINDING = '@toa.io/bindings.amqp'
+const GROUP = 'exposition'
 
 exports.Factory = Factory

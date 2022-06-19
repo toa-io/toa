@@ -9,7 +9,7 @@ declare namespace toa.core.extensions {
 
         contexts?(declaration: Object): Context[]
 
-        service?(name: string): Connector | undefined
+        service?(name?: string): Connector | undefined
     }
 
     interface Context {

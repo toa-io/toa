@@ -110,7 +110,7 @@ describe('services', () => {
       const service = find('Service', name)
 
       expect(service).toBeDefined()
-      expect(service.spec.selector['toa.io/service']).toStrictEqual('resources-exposition')
+      expect(service.spec.selector['toa.io/service']).toStrictEqual('exposition-resources')
 
       const port = service.spec.ports[0]
 
