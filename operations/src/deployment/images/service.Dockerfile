@@ -9,4 +9,4 @@ WORKDIR /service
 ADD . .
 RUN npm i
 
-CMD toa serve {{.service}}
+CMD toa serve . {{.name}}

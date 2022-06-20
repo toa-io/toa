@@ -27,8 +27,6 @@ exposition:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
   annotations@dev: ~
-origins:
-  local: localhost:80
 mongodb: is-not-defined
 mongodb@dev: host.docker.internal
 amqp@dev: host.docker.internal

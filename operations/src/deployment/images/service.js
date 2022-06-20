@@ -8,13 +8,16 @@ const { directory: { copy } } = require('@toa.io/gears')
 class Service extends Image {
   dockerfile = join(__dirname, 'service.Dockerfile')
 
-  /** @type {string} */
-  service
+  /**
+   * Used by Dockerfile
+   *
+   * @readonly
+   * @type {string}
+   * */
+  name
 
   /** @type {string} */
   #group
-  /** @type {string} */
-  #name
   /** @type {string} */
   #path
   /** @type {string} */
@@ -29,16 +32,15 @@ class Service extends Image {
   constructor (scope, runtime, path, service) {
     super(scope, runtime)
 
-    this.service = service.name
+    this.name = service.name
 
     this.#group = service.group
-    this.#name = service.name
     this.#path = path
     this.#version = service.version
   }
 
   get name () {
-    return this.#group + '-' + this.#name
+    return this.#group + '-' + this.name
   }
 
   get version () {
