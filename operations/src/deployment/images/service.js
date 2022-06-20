@@ -14,10 +14,12 @@ class Service extends Image {
    * @readonly
    * @type {string}
    * */
-  name
+  service
 
   /** @type {string} */
   #group
+  /** @type {string} */
+  #name
   /** @type {string} */
   #path
   /** @type {string} */
@@ -32,15 +34,16 @@ class Service extends Image {
   constructor (scope, runtime, path, service) {
     super(scope, runtime)
 
-    this.name = service.name
+    this.service = service.name
 
     this.#group = service.group
+    this.#name = service.name
     this.#path = path
     this.#version = service.version
   }
 
   get name () {
-    return this.#group + '-' + this.name
+    return this.#group + '-' + this.#name
   }
 
   get version () {
