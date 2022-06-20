@@ -14,8 +14,10 @@ const { empty, merge } = require('@toa.io/gears')
 const resolve = (reference, base, indicator = 'package.json') => {
   if (KNOWN[reference] !== undefined) reference = KNOWN[reference]
 
-  const paths = [RUNTIME]
+  const paths = []
+  const relative = reference[0] === '.'
 
+  if (!relative) paths.push(RUNTIME)
   if (base !== undefined) paths.push(base)
 
   return dirname(require.resolve(reference + '/' + indicator, { paths }))

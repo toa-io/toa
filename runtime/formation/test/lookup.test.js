@@ -25,13 +25,27 @@ describe('resolve', () => {
     expect(() => resolve(generate())).toThrow(/Cannot resolve module/)
   })
 
-  it('should resolve relative references', () => {
+  it('should resolve relative path', () => {
     const root = path.resolve(__dirname, '../')
     const ref = '../core'
     const target = path.resolve(root, ref)
     const result = resolve(ref, root)
 
     expect(result).toStrictEqual(target)
+  })
+
+  it('should not resolve relative path as runtime package', () => {
+    const root = path.resolve(__dirname, '../')
+    const result = resolve('.', root)
+
+    expect(result).toStrictEqual(root)
+  })
+
+  it('should not resolve absolute path as runtime package', () => {
+    const root = path.resolve(__dirname, '../')
+    const result = resolve(root)
+
+    expect(result).toStrictEqual(root)
   })
 
   it('should resolve with custom indicators', () => {
