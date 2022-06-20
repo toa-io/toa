@@ -19,11 +19,11 @@ const find = (from, filename) => {
   return dirname(path)
 }
 
-const manifest = (from) => find(from, MANIFEST)
+const component = (from) => find(from, MANIFEST)
 const context = (from) => find(from, CONTEXT)
 
 const MANIFEST = 'manifest.toa.yaml'
 const CONTEXT = 'context.toa.yaml'
 
-exports.manifest = manifest
+exports.component = component
 exports.context = context

@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedVariable
+
 'use strict'
 
 const yargs = require('yargs/yargs')

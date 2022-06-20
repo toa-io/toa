@@ -17,7 +17,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'images [target]'
+exports.command = ['images [target]', 'imgs']
 exports.desc = 'Export docker image sources'
 exports.builder = builder
 exports.handler = prepare

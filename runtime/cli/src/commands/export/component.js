@@ -1,6 +1,6 @@
 'use strict'
 
-const { manifest } = require('../../handlers/export/manifest')
+const { component } = require('../../handlers/export/component')
 
 const builder = (yargs) => {
   yargs
@@ -13,7 +13,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'manifest'
+exports.command = ['component', 'com']
 exports.desc = 'Print manifest'
 exports.builder = builder
-exports.handler = manifest
+exports.handler = component

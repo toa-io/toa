@@ -20,7 +20,8 @@
   },
   "peerDependencies": {
     "@toa.io/formation": "*",
-    "@toa.io/gears": "*"
+    "@toa.io/gears": "*",
+    "@toa.io/runtime": "*"
   },
   "dependencies": {
     "find-up": "5.0.0",

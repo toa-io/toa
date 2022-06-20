@@ -21,7 +21,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'deployment <target> [environment]'
+exports.command = ['deployment <target> [environment]', 'dep']
 exports.desc = 'Export context deployment'
 exports.builder = builder
 exports.handler = dump
