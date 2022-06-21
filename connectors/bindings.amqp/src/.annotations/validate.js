@@ -3,9 +3,9 @@
 const path = require('path')
 
 const { Schema } = require('@toa.io/schema')
-const { yaml } = require('@toa.io/gears')
+const { load } = require('@toa.io/libraries.yaml')
 
-const schema = yaml.sync(path.resolve(__dirname, 'schema.yaml'))
+const schema = load.sync(path.resolve(__dirname, 'schema.yaml'))
 const validator = new Schema(schema)
 
 const validate = (declaration) => {

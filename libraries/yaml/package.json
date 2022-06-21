@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/operations",
+  "name": "@toa.io/libraries.yaml",
   "version": "0.2.0-dev.55",
-  "description": "Toa Deployment",
+  "description": "Toa YAML Library",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
@@ -25,12 +25,10 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/gears": "*",
-    "@toa.io/libraries.yaml": "*"
+  "devDependencies": {
+    "@types/js-yaml": "4.0.5"
   },
   "dependencies": {
-    "execa": "5.1.1"
-  },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+    "js-yaml": "4.1.0"
+  }
 }

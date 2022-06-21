@@ -1,7 +1,8 @@
 'use strict'
 
 const { component } = require('@toa.io/formation')
-const { console, yaml } = require('@toa.io/gears')
+const { dump } = require('@toa.io/libraries.yaml')
+const { console } = require('@toa.io/gears')
 
 const { component: find } = require('../../util/find')
 
@@ -12,7 +13,7 @@ const print = async (argv) => {
 
   const manifest = await component(path)
 
-  console.log(yaml.dump(manifest))
+  console.log(dump(manifest))
 }
 
 exports.component = print

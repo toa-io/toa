@@ -51,18 +51,21 @@ load.try = async (path) => {
  * @param {Object} object
  * @returns {string}
  */
-load.dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
+const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
 
 /**
  * @param {string} string
  * @returns {Object}
  */
-load.parse = (string) => yaml.load(string)
+const parse = (string) => yaml.load(string)
 
 /**
  * @param {string} string
  * @returns {Object[]}
  */
-load.split = (string) => yaml.loadAll(string)
+const split = (string) => yaml.loadAll(string)
 
-exports.yaml = load
+exports.load = load
+exports.dump = dump
+exports.parse = parse
+exports.split = split

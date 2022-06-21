@@ -21,7 +21,8 @@
   "peerDependencies": {
     "@toa.io/formation": "*",
     "@toa.io/gears": "*",
-    "@toa.io/runtime": "*"
+    "@toa.io/runtime": "*",
+    "@toa.io/libraries.yaml": "*"
   },
   "dependencies": {
     "find-up": "5.0.0",

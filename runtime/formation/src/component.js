@@ -3,7 +3,7 @@
 const path = require('node:path')
 const glob = require('fast-glob')
 
-const { yaml } = require('@toa.io/gears')
+const { load: yaml } = require('@toa.io/libraries.yaml')
 const { Locator } = require('@toa.io/core')
 
 const { expand, merge, validate, collapse, dereference, defaults, normalize } = require('./.component')
