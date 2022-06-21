@@ -1,7 +1,6 @@
 'use strict'
 
 const { concat } = require('./concat')
-const { console } = require('./console')
 const { convolve } = require('./convolve')
 const { difference } = require('./difference')
 const { empty } = require('./empty')
@@ -21,7 +20,6 @@ const { underlay } = require('./underlay')
 exports.directory = require('./directory')
 
 exports.concat = concat
-exports.console = console
 exports.convolve = convolve
 exports.difference = difference
 exports.empty = empty

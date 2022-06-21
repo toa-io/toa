@@ -2,7 +2,7 @@
 
 const { component } = require('@toa.io/formation')
 const { dump } = require('@toa.io/libraries.yaml')
-const { console } = require('@toa.io/gears')
+const { console } = require('@toa.io/libraries.console')
 
 const { component: find } = require('../../util/find')
 

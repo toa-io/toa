@@ -18,7 +18,12 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
+  "peerDependencies": {
+    "@toa.io/core": "*",
+    "@toa.io/gears": "*"
+  },
   "dependencies": {
+    "@toa.io/libraries.console": "0.2.0-dev.55",
     "amqplib": "0.8.0",
     "execa": "5.1.1"
   },

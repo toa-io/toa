@@ -21,10 +21,11 @@
   "peerDependencies": {
     "@toa.io/formation": "*",
     "@toa.io/gears": "*",
-    "@toa.io/runtime": "*",
-    "@toa.io/libraries.yaml": "*"
+    "@toa.io/runtime": "*"
   },
   "dependencies": {
+    "@toa.io/libraries.yaml": "0.2.0-dev.55",
+    "@toa.io/libraries.console": "0.2.0-dev.55",
     "find-up": "5.0.0",
     "yargs": "17.2.1"
   },

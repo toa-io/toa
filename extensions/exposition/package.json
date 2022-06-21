@@ -25,6 +25,7 @@
     "@toa.io/schema": "*"
   },
   "dependencies": {
+    "@toa.io/libraries.console": "0.2.0-dev.55",
     "cors": "2.8.5",
     "express": "4.18.1",
     "path-to-regexp": "6.2.0"

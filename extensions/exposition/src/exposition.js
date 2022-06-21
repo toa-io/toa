@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/gears')
+const { console } = require('@toa.io/libraries.console')
 
 class Exposition extends Connector {
   /** @type {toa.core.bindings.Broadcaster} */

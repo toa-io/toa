@@ -26,10 +26,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/gears": "*",
-    "@toa.io/libraries.yaml": "*"
+    "@toa.io/gears": "*"
   },
   "dependencies": {
+    "@toa.io/libraries.yaml": "0.2.0-dev.55",
     "execa": "5.1.1"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"

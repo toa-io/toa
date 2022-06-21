@@ -19,10 +19,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/gears": "*",
-    "@toa.io/libraries.yaml": "*"
+    "@toa.io/gears": "*"
   },
   "dependencies": {
+    "@toa.io/libraries.yaml": "0.2.0-dev.55",
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1"
   },
