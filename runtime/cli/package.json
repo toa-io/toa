@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "0.2.0-dev.55",
+  "version": "0.2.0-dev.57",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -24,8 +24,8 @@
     "@toa.io/runtime": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.yaml": "0.2.0-dev.55",
-    "@toa.io/libraries.console": "0.2.0-dev.55",
+    "@toa.io/libraries.console": "0.2.0-dev.57",
+    "@toa.io/libraries.yaml": "0.2.0-dev.57",
     "find-up": "5.0.0",
     "yargs": "17.2.1"
   },

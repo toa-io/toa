@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.origins",
-  "version": "0.2.0-dev.55",
+  "version": "0.2.0-dev.57",
   "description": "Toa operations context HTTP client",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,8 +22,8 @@
     "@toa.io/core": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.generic": "0.2.0-dev.55",
-    "@toa.io/libraries.schema": "0.2.0-dev.55",
+    "@toa.io/libraries.generic": "0.2.0-dev.57",
+    "@toa.io/libraries.schema": "0.2.0-dev.57",
     "node-fetch": "2.6.7"
   }
 }

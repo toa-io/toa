@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/formation",
-  "version": "0.2.0-dev.55",
+  "version": "0.2.0-dev.57",
   "description": "Toa Formation",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,9 +23,9 @@
     "@toa.io/core": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.generic": "0.2.0-dev.55",
-    "@toa.io/libraries.yaml": "0.2.0-dev.55",
-    "@toa.io/libraries.schema": "0.2.0-dev.55",
+    "@toa.io/libraries.generic": "0.2.0-dev.57",
+    "@toa.io/libraries.schema": "0.2.0-dev.57",
+    "@toa.io/libraries.yaml": "0.2.0-dev.57",
     "fast-glob": "3.2.7"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
