@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/schema",
+  "name": "@toa.io/libraries.schema",
   "version": "0.2.0-dev.55",
-  "description": "Toa schema validator",
+  "description": "Toa Schema Library",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "src/schema.js",
@@ -25,6 +25,5 @@
     "@toa.io/libraries.yaml": "0.2.0-dev.55",
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1"
-  },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+  }
 }

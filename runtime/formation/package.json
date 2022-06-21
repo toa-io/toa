@@ -20,12 +20,12 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/libraries.generic": "*",
-    "@toa.io/schema": "*"
+    "@toa.io/core": "*"
   },
   "dependencies": {
+    "@toa.io/libraries.generic": "0.2.0-dev.55",
     "@toa.io/libraries.yaml": "0.2.0-dev.55",
+    "@toa.io/libraries.schema": "0.2.0-dev.55",
     "fast-glob": "3.2.7"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"

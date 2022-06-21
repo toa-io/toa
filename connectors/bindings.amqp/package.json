@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@toa.io/libraries.console": "0.2.0-dev.55",
+    "@toa.io/libraries.schema": "0.2.0-dev.55",
     "amqplib": "0.8.0",
     "execa": "5.1.1"
   },

@@ -1,6 +1,6 @@
 'use strict'
 
-const { Schema } = require('../src/schema')
+const { Schema } = require('../')
 
 it('should fit', () => {
   const schema = new Schema({ type: 'integer' })

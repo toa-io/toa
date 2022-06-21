@@ -1,7 +1,7 @@
 'use strict'
 
 const { Transition, Observation, Assignment, State, Query, entities } = require('@toa.io/core')
-const { Schema } = require('@toa.io/schema')
+const { Schema } = require('@toa.io/libraries.schema')
 
 const boot = require('./index')
 
@@ -10,6 +10,7 @@ const operation = (manifest, endpoint, definition, context, storage, emission) =
   const contract = boot.contract.reply(definition.output, definition.error)
   const schema = new Schema(manifest.entity.schema)
   const entity = new entities.Factory(schema)
+  // noinspection JSUnresolvedVariable
   const subject = new State(storage, entity, emission, manifest.entity.initialized)
   const query = new Query(manifest.entity.schema.properties)
 
