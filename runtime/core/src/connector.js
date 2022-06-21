@@ -1,7 +1,7 @@
 'use strict'
 
 const { console } = require('@toa.io/libraries.console')
-const { newid } = require('@toa.io/gears')
+const { newid } = require('@toa.io/libraries.generic')
 
 /**
  * Abstract connections hierarchy element

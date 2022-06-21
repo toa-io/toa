@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { exceptions: { codes } } = require('@toa.io/core')
-const { newid, timeout } = require('@toa.io/gears')
+const { newid, timeout } = require('@toa.io/libraries.generic')
 
 // noinspection DuplicatedCode
 const framework = require('./framework')
@@ -50,6 +50,7 @@ it('should assign', async () => {
 })
 
 it('should emit events', async () => {
+  // noinspection JSUnresolvedVariable
   delete global.TOA_INTEGRATION_OMIT_EMISSION
 
   const sender = newid()

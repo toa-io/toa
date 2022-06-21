@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "@toa.io/core": "*",
-    "@toa.io/gears": "*"
+    "@toa.io/libraries.generic": "*"
   },
   "dependencies": {
     "@toa.io/libraries.console": "0.2.0-dev.55",

@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { timeout, random, repeat, newid } = require('@toa.io/gears')
+const { timeout, random, repeat, newid } = require('@toa.io/libraries.generic')
 
 const framework = require('./framework')
 
@@ -36,6 +36,7 @@ it('should not throw on concurrency conflict', async () => {
 })
 
 it('should count messages', async () => {
+  // noinspection JSUnresolvedVariable
   delete global.TOA_INTEGRATION_OMIT_EMISSION
 
   const times = 5 + random(5)

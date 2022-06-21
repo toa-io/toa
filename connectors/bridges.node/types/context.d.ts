@@ -1,4 +1,4 @@
-import { Underlay } from '@toa.io/gears/types'
+import { Underlay } from '@toa.io/libraries.generic/types'
 
 declare namespace toa.bindings.node {
 

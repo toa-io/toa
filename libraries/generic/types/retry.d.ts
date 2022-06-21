@@ -1,4 +1,4 @@
-declare namespace toa.gears {
+declare namespace toa.libraries.generic {
 
     namespace retry {
 

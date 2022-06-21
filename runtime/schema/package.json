@@ -19,7 +19,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/gears": "*"
+    "@toa.io/libraries.generic": "*"
   },
   "dependencies": {
     "@toa.io/libraries.yaml": "0.2.0-dev.55",

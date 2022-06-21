@@ -1,7 +1,7 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { convolve } = require('@toa.io/gears')
+const { convolve } = require('@toa.io/libraries.generic')
 const { load } = require('@toa.io/libraries.yaml')
 
 const { find } = require('./component')

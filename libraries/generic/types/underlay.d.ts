@@ -1,4 +1,4 @@
-declare namespace toa.gears {
+declare namespace toa.libraries.generic {
 
     namespace underlay {
         type Callback = (segments: string[], arguments?: string) => any
@@ -13,4 +13,4 @@ declare namespace toa.gears {
 
 }
 
-export type Underlay = toa.gears.Underlay
+export type Underlay = toa.libraries.generic.Underlay

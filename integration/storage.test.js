@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 
 const boot = require('@toa.io/boot')
 const { Locator } = require('@toa.io/core')
-const { newid } = require('@toa.io/gears')
+const { newid } = require('@toa.io/libraries.generic')
 
 const framework = require('./framework')
 

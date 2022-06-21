@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge } = require('@toa.io/gears')
+const { merge } = require('@toa.io/libraries.generic')
 
 /**
  * @param {toa.storages.mongo.Annotations | string} declaration

@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge, newid } = require('@toa.io/gears')
+const { merge, newid } = require('@toa.io/libraries.generic')
 const { EntityContractException } = require('../exceptions')
 
 class Changeset {

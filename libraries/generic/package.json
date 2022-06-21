@@ -1,9 +1,13 @@
 {
-  "name": "@toa.io/gears",
+  "name": "@toa.io/libraries.generic",
   "version": "0.2.0-dev.55",
-  "description": "Toa Gears",
-  "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/toa-io/toa#readme",
+  "description": "Toa Generic Library",
+  "homepage": "https://toa.io",
+  "author": {
+    "name": "Artem Gurtovoi",
+    "url": "https://github.com/temich"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -11,14 +15,16 @@
   "bugs": {
     "url": "https://github.com/toa-io/toa/issues"
   },
-  "main": "src/index.js",
+  "engines": {
+    "node": ">= 12.0.0"
+  },
   "publishConfig": {
     "access": "public"
   },
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24",
   "dependencies": {
     "uuid": "8.3.2"
   }

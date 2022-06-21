@@ -1,6 +1,6 @@
 'use strict'
 
-const { concat } = require('@toa.io/gears')
+const { concat } = require('@toa.io/libraries.generic')
 
 // noinspection JSClosureCompilerSyntax
 /**
