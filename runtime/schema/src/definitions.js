@@ -1,10 +1,10 @@
 'use strict'
 
 const { resolve } = require('path')
-const { yaml } = require('@toa.io/gears')
+const { load } = require('@toa.io/libraries.yaml')
 
 const definitions = (validator) => {
-  const definitions = yaml.sync(resolve(__dirname, './definitions.yaml'))
+  const definitions = load.sync(resolve(__dirname, './definitions.yaml'))
 
   validator.addSchema(definitions)
 }

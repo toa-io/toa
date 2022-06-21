@@ -6,7 +6,8 @@ const { join } = require('node:path')
 const { generate } = require('randomstring')
 
 const boot = require('@toa.io/boot')
-const { yaml, sample } = require('@toa.io/gears')
+const { sample } = require('@toa.io/libraries.generic')
+const { split } = require('@toa.io/libraries.yaml')
 
 const fixtures = require('./deployment.template.fixtures')
 
@@ -28,7 +29,7 @@ beforeAll(async () => {
 
   const output = await operator.template(options)
 
-  resources = yaml.split(output)
+  resources = split(output)
 })
 
 it('should define resources', () => {

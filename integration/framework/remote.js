@@ -3,6 +3,10 @@
 const boot = require('@toa.io/boot')
 const { Locator } = require('@toa.io/core')
 
+/**
+ * @param {string} id
+ * @returns {toa.core.Runtime}
+ */
 const remote = async (id) => {
   const locator = new Locator(id)
   const remote = await boot.remote(locator)

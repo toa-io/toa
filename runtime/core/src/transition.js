@@ -1,6 +1,6 @@
 'use strict'
 
-const { retry } = require('@toa.io/gears')
+const { retry } = require('@toa.io/libraries.generic')
 
 const { Operation } = require('./operation')
 const { StateConcurrencyException } = require('./exceptions')

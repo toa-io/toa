@@ -1,14 +1,14 @@
 'use strict'
 
 /**
- * @type {toa.gears.underlay.Constructor}
+ * @type {toa.libraries.generic.underlay.Constructor}
  */
 const underlay = (func) => proxy(func)
 
 /**
- * @param {toa.gears.underlay.Callback | Function} func
+ * @param {toa.libraries.generic.underlay.Callback} func
  * @param {string[]} [segments]
- * @returns {toa.gears.Underlay}
+ * @returns {toa.libraries.generic.Underlay}
  */
 const proxy = (func, segments) => {
   const callable = (...args) => {
@@ -17,7 +17,7 @@ const proxy = (func, segments) => {
     return func(segs, args)
   }
 
-  return /** @type {toa.gears.Underlay} */ new Proxy(callable, {
+  return /** @type {toa.libraries.generic.Underlay} */ new Proxy(callable, {
     get: (_, key) => {
       const segs = segments === undefined ? [] : [...segments]
 

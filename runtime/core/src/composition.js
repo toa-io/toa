@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('@toa.io/gears')
+const { console } = require('@toa.io/libraries.console')
 
 const { Connector } = require('./connector')
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { newid, random, repeat } = require('@toa.io/gears')
+const { newid, random, repeat } = require('@toa.io/libraries.generic')
 const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')
@@ -69,7 +69,7 @@ it('should sort', async () => {
       continue
     }
 
-    expect(message.timestamp <= previous.timestamp).toBe(true)
+    expect(message.timestamp <= previous?.timestamp).toBe(true)
   }
 })
 

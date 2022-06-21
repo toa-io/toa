@@ -4,7 +4,7 @@ const express = require('express')
 const cors = require('cors')
 
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/gears')
+const { console } = require('@toa.io/libraries.console')
 
 const { PORT } = require('./constants')
 

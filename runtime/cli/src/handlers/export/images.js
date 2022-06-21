@@ -1,7 +1,7 @@
 'use strict'
 
 const boot = require('@toa.io/boot')
-const { console } = require('@toa.io/gears')
+const { console } = require('@toa.io/libraries.console')
 
 const { context: find } = require('../../util/find')
 

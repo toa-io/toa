@@ -1,7 +1,8 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { yaml, convolve } = require('@toa.io/gears')
+const { convolve } = require('@toa.io/libraries.generic')
+const { load } = require('@toa.io/libraries.yaml')
 
 const { find } = require('./component')
 
@@ -22,7 +23,7 @@ const {
  */
 const context = async (root, environment) => {
   const path = resolve(root, CONTEXT)
-  const context = /** @type {toa.formation.Context} */ await yaml(path)
+  const context = /** @type {toa.formation.Context} */ await load(path)
   const roots = resolve(root, context.packages)
 
   context.environment = environment

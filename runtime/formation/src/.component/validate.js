@@ -2,10 +2,10 @@
 
 const path = require('node:path')
 
-const { yaml } = require('@toa.io/gears')
+const { load } = require('@toa.io/libraries.yaml')
 const { Schema } = require('@toa.io/schema')
 
-const object = yaml.sync(path.resolve(__dirname, 'schema.yaml'))
+const object = load.sync(path.resolve(__dirname, 'schema.yaml'))
 const schema = new Schema(object)
 
 const validate = (manifest) => {

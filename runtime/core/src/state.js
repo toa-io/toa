@@ -1,6 +1,6 @@
 'use strict'
 
-const { empty } = require('@toa.io/gears')
+const { empty } = require('@toa.io/libraries.generic')
 
 const {
   StatePreconditionException,

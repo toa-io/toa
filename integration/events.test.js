@@ -1,13 +1,14 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { timeout, random, newid } = require('@toa.io/gears')
+const { timeout, random, newid } = require('@toa.io/libraries.generic')
 
 const framework = require('./framework')
 
 let composition, messages, credits, stats, a
 
 beforeAll(async () => {
+  // noinspection JSUnresolvedVariable
   delete global.TOA_INTEGRATION_OMIT_EMISSION
 
   composition = await framework.compose(['messages', 'credits', 'stats', 'a'])

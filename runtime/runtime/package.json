@@ -32,7 +32,7 @@
     "@toa.io/extensions.exposition": "0.2.0-dev.55",
     "@toa.io/extensions.origins": "0.2.0-dev.55",
     "@toa.io/formation": "0.2.0-dev.55",
-    "@toa.io/gears": "0.2.0-dev.55",
+    "@toa.io/libraries.generic": "0.2.0-dev.55",
     "@toa.io/operations": "0.2.0-dev.55",
     "@toa.io/prototype": "0.2.0-dev.55",
     "@toa.io/schema": "0.2.0-dev.55",

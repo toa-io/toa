@@ -1,6 +1,6 @@
 'use strict'
 
-const { remap } = require('@toa.io/gears')
+const { remap } = require('@toa.io/libraries.generic')
 const { Runtime, Locator } = require('@toa.io/core')
 
 const boot = require('./index')

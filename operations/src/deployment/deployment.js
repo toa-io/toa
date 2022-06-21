@@ -2,7 +2,8 @@
 
 const { join } = require('node:path')
 const { writeFile: write } = require('node:fs/promises')
-const { yaml, directory: { copy } } = require('@toa.io/gears')
+const { directory: { copy } } = require('@toa.io/libraries.generic')
+const { dump } = require('@toa.io/libraries.yaml')
 
 const { merge, declare, describe } = require('./.deployment')
 
@@ -36,8 +37,8 @@ class Deployment {
   }
 
   async export (target) {
-    const chart = yaml.dump(this.#declaration)
-    const values = yaml.dump(this.#contents)
+    const chart = dump(this.#declaration)
+    const values = dump(this.#contents)
 
     await Promise.all([
       write(join(target, 'Chart.yaml'), chart),

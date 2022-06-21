@@ -1,9 +1,10 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { yaml } = require('@toa.io/gears')
+const { load } = require('@toa.io/libraries.yaml')
 const { resolve } = require('path')
 
+// noinspection JSCheckFunctionSignatures
 const schema = {
   fit: jest.fn((input) => (input.invalid ? { message: generate() } : null))
 }
@@ -16,7 +17,7 @@ const declaration = {}
 
 const schemas = {
   request: {
-    properties: { query: yaml.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml')) },
+    properties: { query: load.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml')) },
     additionalProperties: false
   }
 }

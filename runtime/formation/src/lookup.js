@@ -1,7 +1,7 @@
 'use strict'
 
 const { dirname } = require('node:path')
-const { empty, merge } = require('@toa.io/gears')
+const { empty, merge } = require('@toa.io/libraries.generic')
 
 /**
  * Resolves package reference to absolute path

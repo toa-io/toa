@@ -1,8 +1,8 @@
 'use strict'
 
-const { retry, RetryError, timeout, random } = require('../src/')
+const { retry, RetryError, timeout, random } = require('../src')
 
-/** @type {toa.gears.retry.Options} */
+/** @type {toa.libraries.generic.retry.Options} */
 let options
 
 beforeEach(() => {
@@ -57,7 +57,7 @@ it('should throw on failed retries', async () => {
 it('should delay attempts', async () => {
   const start = +new Date()
 
-  /** @type {toa.gears.retry.Task} */
+  /** @type {toa.libraries.generic.retry.Task} */
   const fn = (retry, attempt) => {
     if (attempt < 3) retry()
   }

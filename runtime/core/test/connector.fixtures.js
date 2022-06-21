@@ -1,6 +1,6 @@
 'use strict'
 
-const { random, timeout } = require('@toa.io/gears')
+const { random, timeout } = require('@toa.io/libraries.generic')
 const { Connector } = require('../src/connector')
 
 class TestConnector extends Connector {

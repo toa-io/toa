@@ -3,7 +3,7 @@
 const amqp = require('amqplib')
 
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/gears')
+const { console } = require('@toa.io/libraries.console')
 
 class Connection extends Connector {
   /** @type {URL} */

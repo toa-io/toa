@@ -20,6 +20,7 @@
     "runtime/*",
     "connectors/*",
     "extensions/*",
+    "libraries/*",
     "operations"
   ],
   "engines": {
@@ -45,7 +46,7 @@
     "prepare": "npx husky install",
     "test": "npm run test:lint && npm run test:unit",
     "test:lint": "npx standard --verbose | npx snazzy",
-    "test:unit": "npx jest --roots runtime connectors extensions",
+    "test:unit": "npx jest --roots runtime connectors extensions operations libraries",
     "test:integration": "npx jest --roots integration --runInBand",
     "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",
     "lint": "npx standard --verbose --fix | npx snazzy",
@@ -68,6 +69,8 @@
       "<rootDir>/runtime",
       "<rootDir>/connectors",
       "<rootDir>/extensions",
+      "<rootDir>/operations",
+      "<rootDir>/libraries",
       "<rootDir>/integration"
     ],
     "testMatch": [

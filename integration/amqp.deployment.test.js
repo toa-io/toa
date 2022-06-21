@@ -3,7 +3,8 @@
 const { join } = require('node:path')
 
 const boot = require('@toa.io/boot')
-const { yaml, directory: { remove } } = require('@toa.io/gears')
+const { directory: { remove } } = require('@toa.io/libraries.generic')
+const { load } = require('@toa.io/libraries.yaml')
 
 const source = join(__dirname, './context')
 
@@ -20,7 +21,7 @@ beforeAll(async () => {
 })
 
 beforeAll(async () => {
-  const results = await Promise.all([yaml(join(target, 'Chart.yaml')), yaml(join(target, 'values.yaml'))])
+  const results = await Promise.all([load(join(target, 'Chart.yaml')), load(join(target, 'values.yaml'))])
 
   values = results[1]
 })
