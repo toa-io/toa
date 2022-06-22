@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/libraries.annotations",
-  "version": "0.2.0-dev.57",
+  "version": "0.2.0-dev.58",
   "description": "Toa Context Annotations Library",
   "homepage": "https://toa.io",
   "author": {
@@ -26,8 +26,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/libraries.generic": "0.2.0-dev.57",
-    "@toa.io/libraries.schema": "0.2.0-dev.57",
-    "@toa.io/libraries.yaml": "0.2.0-dev.57"
+    "@toa.io/libraries.generic": "0.2.0-dev.58",
+    "@toa.io/libraries.schema": "0.2.0-dev.58",
+    "@toa.io/libraries.yaml": "0.2.0-dev.58"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.http",
-  "version": "0.2.0-dev.57",
+  "version": "0.2.0-dev.58",
   "description": "Toa HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,7 +22,7 @@
     "@toa.io/core": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.console": "0.2.0-dev.57",
+    "@toa.io/libraries.console": "0.2.0-dev.58",
     "agentkeepalive": "4.2.1",
     "express": "4.18.1",
     "node-fetch": "2.6.7"
