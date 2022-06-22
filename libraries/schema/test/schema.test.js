@@ -2,62 +2,97 @@
 
 const { Schema } = require('../')
 
-it('should fit', () => {
-  const schema = new Schema({ type: 'integer' })
-  const error = schema.fit(5)
+describe('fit', () => {
+  it('should fit', () => {
+    const schema = new Schema({ type: 'integer' })
+    const error = schema.fit(5)
 
-  expect(error).toBeNull()
-})
-
-it('should set defaults', () => {
-  const schema = new Schema({ properties: { a: { type: 'string', default: 'not set' } } })
-  const value = {}
-
-  schema.fit(value)
-
-  expect(value.a).toBe('not set')
-})
-
-it('should provide defaults', () => {
-  const schema = new Schema({ properties: { a: { type: 'string', default: 'not set' } } })
-  const defaults = schema.defaults()
-
-  expect(defaults).toStrictEqual({ a: 'not set' })
-})
-
-it('should return error', () => {
-  const schema = new Schema({ type: 'integer' })
-  const error = schema.fit('a')
-
-  expect(error).not.toBeNull()
-})
-
-it('should format error', () => {
-  const schema = new Schema({
-    properties: {
-      a: { type: 'integer' },
-      b: { type: 'boolean' }
-    },
-    required: ['a']
+    expect(error).toBeNull()
   })
 
-  let error = schema.fit({ a: 'wrong' })
+  it('should set defaults', () => {
+    const schema = new Schema({ properties: { a: { type: 'string', default: 'not set' } } })
+    const value = {}
 
-  expect(error).toStrictEqual({
-    message: 'a must be integer',
-    keyword: 'type',
-    property: 'a',
-    path: '/a',
-    schema: '#/properties/a/type'
+    schema.fit(value)
+
+    expect(value.a).toBe('not set')
   })
 
-  error = schema.fit({ b: true })
+  it('should provide defaults', () => {
+    const schema = new Schema({ properties: { a: { type: 'string', default: 'not set' } } })
+    const defaults = schema.defaults()
 
-  expect(error).toStrictEqual({
-    message: 'must have required property \'a\'',
-    keyword: 'required',
-    property: 'a',
-    schema: '#/required'
+    expect(defaults).toStrictEqual({ a: 'not set' })
+  })
+
+  it('should return error', () => {
+    const schema = new Schema({ type: 'integer' })
+    const error = schema.fit('a')
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should format error', () => {
+    const schema = new Schema({
+      properties: {
+        a: { type: 'integer' },
+        b: { type: 'boolean' }
+      },
+      required: ['a']
+    })
+
+    let error = schema.fit({ a: 'wrong' })
+
+    expect(error).toStrictEqual({
+      message: 'a must be integer',
+      keyword: 'type',
+      property: 'a',
+      path: '/a',
+      schema: '#/properties/a/type'
+    })
+
+    error = schema.fit({ b: true })
+
+    expect(error).toStrictEqual({
+      message: 'must have required property \'a\'',
+      keyword: 'required',
+      property: 'a',
+      schema: '#/required'
+    })
+  })
+})
+
+describe('validate', () => {
+  it('should fit', () => {
+    const schema = new Schema({
+      type: 'object',
+      properties: {
+        foo: {
+          type: 'integer'
+        }
+      }
+    })
+
+    const value = { foo: '5' }
+
+    expect(() => schema.validate(value)).not.toThrow()
+    expect(value.foo).toStrictEqual(5)
+  })
+
+  it('should throw validation errors', () => {
+    const schema = new Schema({
+      type: 'object',
+      properties: {
+        foo: {
+          type: 'integer'
+        }
+      }
+    })
+
+    const value = { foo: 'not-an-integer' }
+
+    expect(() => schema.validate(value)).toThrow(TypeError)
   })
 })
 
