@@ -23,7 +23,7 @@ describe('extensions.origins', () => {
     await context.origins[name].baz.quu.get(arg)
 
     expect(origins.invoke).toHaveBeenCalled()
-    expect(origins.invoke).toHaveBeenCalledWith(name, 'baz/quu', expect.objectContaining(arg))
+    expect(origins.invoke).toHaveBeenCalledWith(name, 'baz/quu', expect.objectContaining(arg), undefined)
   })
 
   it('should define request method', async () => {
@@ -32,11 +32,18 @@ describe('extensions.origins', () => {
     await context.origins.foo.post(arg)
     await context.origins.bar.baz.put()
 
-    expect(origins.invoke).toHaveBeenNthCalledWith(1, 'foo', '', { method: 'POST', ...arg })
-    expect(origins.invoke).toHaveBeenNthCalledWith(2, 'bar', 'baz', { method: 'PUT' })
+    expect(origins.invoke).toHaveBeenNthCalledWith(1, 'foo', '', { method: 'POST', ...arg }, undefined)
+    expect(origins.invoke).toHaveBeenNthCalledWith(2, 'bar', 'baz', { method: 'PUT' }, undefined)
   })
 
   it('should throw if no origin name specified', async () => {
     await expect(context.origins.get()).rejects.toThrow(/at least 2 arguments/)
+  })
+
+  it('should pass options', async () => {
+    const options = { [generate()]: generate() }
+    await context.origins.foo.post({}, options)
+
+    expect(origins.invoke.mock.calls[0][3]).toStrictEqual(options)
   })
 })

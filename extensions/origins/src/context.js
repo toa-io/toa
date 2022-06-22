@@ -5,9 +5,10 @@ const fetch = require('node-fetch')
 const { Connector } = require('@toa.io/core')
 
 /**
- * @implements {toa.core.extensions.Context}
+ * @implements {toa.extensions.origins.Context}
  */
 class Context extends Connector {
+  /** @readonly */
   name = 'origins'
 
   /** @type {toa.extensions.origins.Origins} */
@@ -22,19 +23,12 @@ class Context extends Connector {
     this.#origins = declaration.origins
   }
 
-  /**
-   * @param {string} name - Origin's name
-   * @param {string} path
-   * @param {Object} [request] - node-fetch options
-   * @param {string[]} [substitutions]
-   * @returns {Promise}
-   */
-  invoke (name, path, request, substitutions) {
+  invoke (name, path, request, options) {
     let origin = this.#origins[name]
 
     if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
 
-    if (substitutions !== undefined) origin = substitute(origin, substitutions)
+    if (options?.substitutions !== undefined) origin = substitute(origin, options.substitutions)
 
     const url = new URL(origin)
 

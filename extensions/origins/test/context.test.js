@@ -68,7 +68,7 @@ describe('invoke', () => {
 
     const substitutions = ['foo', 'bar', 443]
 
-    await context.invoke('amazon', path, clone(request), substitutions)
+    await context.invoke('amazon', path, clone(request), { substitutions })
 
     const url = mock.fetch.mock.calls[0][0]
 

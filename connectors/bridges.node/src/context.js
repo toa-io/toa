@@ -15,7 +15,7 @@ class Context extends Connector {
   constructor (context) {
     super()
 
-    this.extensions = this.#extensions(context.extensions)
+    this.extensions = this.#extensions(/** @type {toa.core.extensions.Context[]} */ context.extensions)
 
     this.#context = context
 
@@ -60,8 +60,9 @@ class Context extends Connector {
       const method = segs.pop().toUpperCase()
       const path = segs.join('/')
       const request = { method, ...args[0] }
+      const options = args[1]
 
-      return await extension.invoke(name, path, request)
+      return await extension.invoke(name, path, request, options)
     })
   }
 }
