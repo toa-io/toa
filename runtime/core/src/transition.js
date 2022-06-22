@@ -15,7 +15,7 @@ class Transition extends Operation {
   }
 
   async process (scope) {
-    return retry((retry) => this.#retry(scope, retry), { base: 0 })
+    return retry((retry) => this.#retry(scope, retry), RETRY)
   }
 
   async acquire (scope) {
@@ -45,6 +45,14 @@ class Transition extends Operation {
 
     return super.process(scope)
   }
+}
+
+/** @type {toa.libraries.generic.retry.Options} */
+const RETRY = {
+  base: 10,
+  dispersion: 1,
+  max: 5000,
+  retries: 10
 }
 
 exports.Transition = Transition
