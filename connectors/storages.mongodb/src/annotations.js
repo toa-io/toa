@@ -1,17 +1,5 @@
 'use strict'
 
-const { normalize, validate } = require('./.annotations')
+const { proxy } = require('@toa.io/libraries.annotations')
 
-/**
- * @param {toa.storages.mongo.Annotations | string} declaration
- * @returns {toa.storages.mongo.Annotations}
- */
-const annotations = (declaration) => {
-  declaration = normalize(declaration)
-
-  validate(declaration)
-
-  return declaration
-}
-
-exports.annotations = annotations
+exports.annotations = proxy

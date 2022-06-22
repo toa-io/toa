@@ -3,8 +3,8 @@
 const { merge } = require('@toa.io/libraries.generic')
 
 /**
- * @param {toa.storages.mongo.Annotations | string} declaration
- * @returns {toa.storages.mongo.Annotations}
+ * @param {toa.libraries.annotations.Proxy | string} declaration
+ * @returns {toa.libraries.annotations.Proxy}
  */
 const normalize = (declaration) => {
   if (typeof declaration === 'string') declaration = { default: declaration }

@@ -1,3 +1,5 @@
+'use strict'
+
 const { annotations } = require('./annotations')
 const { deployment } = require('./deployment')
 const { Factory } = require('./factory')
