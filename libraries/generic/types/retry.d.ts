@@ -35,3 +35,9 @@ declare namespace toa.libraries.generic {
 
     type Retry = (func: retry.Task, options?: retry.Options, attempt?: number) => Promise<any>
 }
+
+export type Retry = toa.libraries.generic.Retry
+
+export namespace retry {
+    type Options = toa.libraries.generic.retry.Options
+}

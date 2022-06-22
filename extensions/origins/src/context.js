@@ -3,6 +3,7 @@
 const fetch = require('node-fetch')
 
 const { Connector } = require('@toa.io/core')
+const { retry } = require('@toa.io/libraries.generic')
 
 /**
  * @implements {toa.extensions.origins.Context}
@@ -23,7 +24,7 @@ class Context extends Connector {
     this.#origins = declaration.origins
   }
 
-  invoke (name, path, request, options) {
+  async invoke (name, path, request, options) {
     let origin = this.#origins[name]
 
     if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
@@ -34,7 +35,35 @@ class Context extends Connector {
 
     if (path !== undefined) append(url, path)
 
-    return fetch(url.href, request)
+    return this.#request(url.href, request, options?.retry)
+  }
+
+  /**
+   * @param {string} url
+   * @param {import('node-fetch').Request} request
+   * @param {toa.libraries.generic.retry.Options} [options]
+   * @return {Promise<import('node-fetch').Response>}
+   */
+  async #request (url, request, options) {
+    const call = () => fetch(url, request)
+
+    if (options === undefined) return call()
+    else return this.#retry(call, options)
+  }
+
+  /**
+   * @param {Function} call
+   * @param {toa.libraries.generic.retry.Options} options
+   * @return {any}
+   */
+  #retry (call, options) {
+    return retry(async (retry) => {
+      const response = await call()
+
+      if (Math.floor(response.status / 100) !== 2) return retry()
+
+      return response
+    }, options)
   }
 }
 

@@ -9,9 +9,26 @@ const declaration = {
   }
 }
 
+const responses = []
+
 const fetch = jest.fn(async () => {
-  return generate()
+  const response = responses.shift()
+
+  if (response === undefined) throw new Error('Response is not mocked')
+
+  return {
+    status: response.status,
+    json: () => response.body
+  }
 })
+
+fetch.respond = (status, body) => {
+  responses.push({ status, body })
+}
+
+fetch.reset = () => {
+  responses.length = 0
+}
 
 exports.declaration = declaration
 exports.mock = { fetch }

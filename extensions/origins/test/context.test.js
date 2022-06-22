@@ -2,6 +2,7 @@
 
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
+const { random } = require('@toa.io/libraries.generic')
 
 const { Connector } = require('@toa.io/core')
 
@@ -36,25 +37,29 @@ describe('invoke', () => {
   /** @type {toa.extensions.origins.Request} */
   const request = { method: 'PATCH', headers, body }
   const name = 'foo'
+  const response = { [generate()]: generate() }
 
-  let response
   let call
   let args
+  let result
 
   beforeEach(async () => {
     jest.clearAllMocks()
 
-    response = await context.invoke(name, path, clone(request))
+    mock.fetch.respond(200, response)
+
+    result = await context.invoke(name, path, clone(request))
     call = mock.fetch.mock.calls[0]
     args = call?.[1]
   })
 
   it('should throw on unknown origin', async () => {
-    expect(() => context.invoke('bar', path, request)).toThrow(/is not defined/)
+    await expect(() => context.invoke('bar', path, request)).rejects.toThrow(/is not defined/)
   })
 
   it('should not resolve absolute urls', async () => {
     jest.clearAllMocks()
+    mock.fetch.respond(200, response)
 
     const path = 'https://toa.io'
 
@@ -65,6 +70,7 @@ describe('invoke', () => {
 
   it('should substitute wildcards', async () => {
     jest.clearAllMocks()
+    mock.fetch.respond(200, response)
 
     const substitutions = ['foo', 'bar', 443]
 
@@ -77,6 +83,7 @@ describe('invoke', () => {
 
   it('should not lose query string', async () => {
     jest.clearAllMocks()
+    mock.fetch.respond(200, response)
 
     const path = generate() + '?foo=' + generate()
 
@@ -89,6 +96,7 @@ describe('invoke', () => {
 
   it('should not throw if path is not defined', async () => {
     jest.clearAllMocks()
+    mock.fetch.respond(200, response)
 
     expect(() => context.invoke(name)).not.toThrow()
   })
@@ -107,9 +115,30 @@ describe('invoke', () => {
     })
 
     it('should return response', async () => {
-      const expected = await mock.fetch.mock.results[0].value
+      const body = await result.json()
 
-      expect(response).toStrictEqual(expected)
+      expect(body).toStrictEqual(response)
+    })
+  })
+
+  describe('retry', () => {
+    it('should retry', async () => {
+      jest.clearAllMocks()
+
+      const attempts = random(5) + 1
+
+      for (let i = 1; i < attempts; i++) mock.fetch.respond(500)
+
+      mock.fetch.respond(200, response)
+
+      /** @type {toa.extensions.origins.invocation.Options} */
+      const options = {
+        retry: { base: 0, retries: attempts }
+      }
+
+      await context.invoke(name, path, clone(request), options)
+
+      expect(mock.fetch).toHaveBeenCalledTimes(attempts)
     })
   })
 })

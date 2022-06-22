@@ -29,7 +29,7 @@ class RetryError extends Error {}
 
 /** @type {toa.libraries.generic.retry.Options} */
 const DEFAULTS = {
-  retries: Infinity,
+  retries: 5,
   base: 1000,
   factor: 1.5,
   max: 30000,

@@ -12,16 +12,14 @@ entity:
 operations:
   foo:
     concurrency: retry
-    input:
-      delay: number
     output:
       status: number
-      text: string
   bar:
     concurrency: retry
+    input:
+      retries: number
     output:
       status: number
-      text: string
 
 origins:
-  local: http://localhost:3000
+  local: http://localhost:8000
