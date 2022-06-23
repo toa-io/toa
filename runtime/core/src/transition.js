@@ -52,7 +52,7 @@ const RETRY = {
   base: 10,
   dispersion: 1,
   max: 5000,
-  retries: 10
+  retries: Infinity
 }
 
 exports.Transition = Transition
