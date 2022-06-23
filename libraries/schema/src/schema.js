@@ -1,7 +1,7 @@
 'use strict'
 
 const { default: Ajv } = require('ajv/dist/2019')
-const formats = require('ajv-formats')
+const formats = /** @type {(Ajv) => void} */ require('ajv-formats')
 
 const { definitions } = require('./definitions')
 const { keywords } = require('./keywrods')
