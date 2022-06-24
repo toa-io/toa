@@ -15,6 +15,7 @@ const { retry, RetryError } = require('./retry')
 const { sample } = require('./sample')
 const { seal } = require('./seal')
 const { timeout } = require('./timeout')
+const { traverse } = require('./traverse')
 const { underlay } = require('./underlay')
 
 exports.directory = require('./directory')
@@ -35,4 +36,5 @@ exports.RetryError = RetryError
 exports.sample = sample
 exports.seal = seal
 exports.timeout = timeout
+exports.traverse = traverse
 exports.underlay = underlay

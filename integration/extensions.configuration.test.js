@@ -22,3 +22,16 @@ it('should connect', () => {
 it('should validate manifest', async () => {
   await expect(framework.compose(['configured-badly'])).rejects.toThrow(/must be equal to one of the allowed values/)
 })
+
+it('should provide context extension', async () => {
+  const reply = await remote.invoke('transit', { input: {} })
+
+  expect(reply.output.foo).toStrictEqual('Hello')
+})
+
+it('should provide context shortcut', async () => {
+  const reply = await remote.invoke('underlay')
+
+  expect(reply.output.foo).toStrictEqual('Hello')
+  expect(reply.output.sum).toStrictEqual(3)
+})

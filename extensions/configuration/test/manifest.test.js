@@ -19,3 +19,10 @@ it('should throw if not a valid schema', () => {
 
   expect(call).toThrow(/one of the allowed values/)
 })
+
+it('should throw if schema is not an object type', () => {
+  const schema = { type: 'number' }
+  const call = () => manifest(schema)
+
+  expect(call).toThrow(/equal to constant 'object'/)
+})

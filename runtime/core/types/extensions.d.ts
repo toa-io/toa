@@ -7,7 +7,7 @@ declare namespace toa.core.extensions {
     interface Factory {
         connector?(locator: Locator, declaration: Object): Connector | undefined
 
-        contexts?(declaration: Object): Context[]
+        context?(declaration: Object): Context
 
         service?(name?: string): Connector | undefined
     }

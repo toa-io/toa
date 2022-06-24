@@ -16,7 +16,12 @@ definitions(validator)
  * @implements {toa.libraries.schema.Schema}
  */
 class Schema {
-  #schema
+  /**
+   * @type {toa.libraries.schema.JSON}
+   * @readonly
+   */
+  schema
+
   #validate
   #defaults
   #match
@@ -26,7 +31,7 @@ class Schema {
    * @param {toa.libraries.schema.JSON} schema
    */
   constructor (schema) {
-    this.#schema = schema
+    this.schema = schema
     this.#validate = validator.compile(schema)
 
     if (schema.properties !== undefined) this.#recompile(schema)

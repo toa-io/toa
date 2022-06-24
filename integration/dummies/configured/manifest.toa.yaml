@@ -9,6 +9,17 @@ entity:
       default: 0
     bar: string
 
+operations:
+  transit:
+    concurrency: retry
+    output:
+      foo: string
+  underlay:
+    concurrency: retry
+    output:
+      foo: string
+      sum: number
+
 configuration:
   properties:
     foo:
