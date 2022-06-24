@@ -14,11 +14,15 @@ Set of static[^1] parameters for all algorithms within a given system.
 
 ### Component Configuration
 
-Subset of Configuration for algorithms within a component.
+Schema defining component's algorithms parameters (optionally with default values).
+
+### Configuration Object
+
+Value valid against Component Configuration.
 
 ### Context Configuration
 
-Set of values that overrides default values for configuration of components added to a given context.
+Map of Configuration Objects for components added to a given context.
 
 ## Responsibility Segregation
 
@@ -30,7 +34,7 @@ defined by Context Configuration.
 Component Configuration is declared as a component extension using JSONSchema `object` type.
 
 > Yet there is no way to provide configuration values without a deployment, it is recommended to have default values
-> for all required parameters to be able to run operations locally.
+> for required parameters to be able to run operations locally.
 >
 > [#130](https://github.com/toa-io/toa/issues/130)
 
@@ -55,9 +59,9 @@ configuration:
 
 ### Concise Declaration
 
-As it is known that configuration is a JSONSchema `object` type, any configuration declaration without
-defined `properties` considered as concise. Properties of concise declaration are treated as required configuration
-properties with the same type as its value.
+As it is known that Component Configuration is declared with a JSONSchema `object` type, any configuration declaration
+without defined `properties` considered as concise. Properties of concise declaration are treated as required
+configuration properties with the same type as its value type.
 
 Next two declarations are equivalent.
 
@@ -85,8 +89,10 @@ configuration:
 
 ## Context Configuration
 
-Context Configuration is declared as a context extension. Configuration keys may
-be defined with [deployment environment discriminators](#).
+Context Configuration is declared as a context extension. Its keys must be component identifiers and its values must be
+Configuration Objects for those components.
+
+Context Configuration keys and Configuration Object keys may be defined with [deployment environment discriminators](#).
 
 ### Example
 
