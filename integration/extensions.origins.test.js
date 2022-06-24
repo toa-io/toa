@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random } = require('@toa.io/libraries.generic')
+const { random } = require('@toa.io/libraries/generic')
 
 const fixtures = require('./extensions.origins.fixtures')
 const framework = require('./framework')

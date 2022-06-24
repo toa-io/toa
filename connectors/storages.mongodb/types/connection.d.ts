@@ -21,7 +21,7 @@ declare namespace toa.storages.mongo {
 
         add(record: Record): Promise<boolean>
 
-        replace(query: Filter<Record>, record: Record, options?: FindOneAndReplaceOptions): Promise<any>
+        replace(query: Filter<Record>, record: Document, options?: FindOneAndReplaceOptions): Promise<any>
 
         update(query: Filter<Record>, update: UpdateFilter<Record>, options?: FindOneAndUpdateOptions): Promise<any>
     }

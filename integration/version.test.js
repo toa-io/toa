@@ -1,6 +1,6 @@
 'use strict'
 
-const { random, repeat, newid } = require('@toa.io/libraries.generic')
+const { random, repeat, newid } = require('@toa.io/libraries/generic')
 const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')

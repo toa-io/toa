@@ -19,10 +19,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/core": "*"
+    "@toa.io/core": "*",
+    "@toa.io/libraries": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.console": "0.2.0-dev.58",
     "agentkeepalive": "4.2.1",
     "express": "4.18.1",
     "node-fetch": "2.6.7"

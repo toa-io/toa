@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/operations",
+  "name": "@toa.io/libraries",
   "version": "0.2.0-dev.58",
-  "description": "Toa Deployment",
+  "description": "Toa Libraries",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
@@ -21,15 +21,15 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "peerDependencies": {
-    "@toa.io/libraries": "*"
+  "main": "package.json",
+  "devDependencies": {
+    "@types/js-yaml": "4.0.5"
   },
   "dependencies": {
-    "execa": "5.1.1"
-  },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+    "ajv": "8.6.3",
+    "ajv-formats": "2.1.1",
+    "chalk": "4.1.2",
+    "js-yaml": "4.1.0",
+    "uuid": "8.3.2"
+  }
 }

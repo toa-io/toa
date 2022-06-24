@@ -3,7 +3,7 @@
 const { join } = require('node:path')
 
 const { Image } = require('./image')
-const { directory: { copy } } = require('@toa.io/libraries.generic')
+const { directory: { copy } } = require('@toa.io/libraries/generic')
 
 class Service extends Image {
   dockerfile = join(__dirname, 'service.Dockerfile')

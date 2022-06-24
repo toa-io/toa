@@ -1,19 +1,24 @@
 'use strict'
 
-const { merge } = require('@toa.io/libraries.generic')
+const { merge } = require('@toa.io/libraries/generic')
 
 /**
  * @param {toa.libraries.annotations.Proxy | string} declaration
  * @returns {toa.libraries.annotations.Proxy}
  */
 const normalize = (declaration) => {
-  if (typeof declaration === 'string') declaration = { default: declaration }
-  if (typeof declaration !== 'object' || declaration === null) throw new TypeError('Wrong format of storages.mongodb annotations')
+  /** @type {toa.libraries.annotations.Proxy} */
+  let annotation
 
-  keys(declaration)
-  values(declaration)
+  if (typeof declaration === 'string') annotation = { default: declaration }
+  else annotation = declaration
 
-  return declaration
+  if (typeof annotation !== 'object' || annotation === null) throw new TypeError('Wrong format of storages.mongodb annotations')
+
+  keys(annotation)
+  values(annotation)
+
+  return annotation
 }
 
 /**

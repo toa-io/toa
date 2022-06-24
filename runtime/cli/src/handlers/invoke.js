@@ -1,7 +1,7 @@
 'use strict'
 
 const boot = require('@toa.io/boot')
-const yaml = require('@toa.io/libraries.yaml')
+const yaml = require('@toa.io/libraries/yaml')
 const { component: find } = require('../util/find')
 
 async function invoke (argv) {

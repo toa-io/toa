@@ -1,10 +1,11 @@
 'use strict'
 
 const { to, from } = require('../src/record')
-const { random } = require('@toa.io/libraries.generic')
+const { random } = require('@toa.io/libraries/generic')
 
 describe('to', () => {
   it('should rename id to _id', () => {
+    /** @type {toa.core.storages.Entity} */
     const entity = { id: '1', _version: 0 }
     const record = to(entity)
 
@@ -12,6 +13,7 @@ describe('to', () => {
   })
 
   it('should not modify argument', () => {
+    /** @type {toa.core.storages.Entity} */
     const entity = { id: '1', _version: 0 }
 
     to(entity)
@@ -20,6 +22,7 @@ describe('to', () => {
   })
 
   it('should increment _version', () => {
+    /** @type {toa.core.storages.Entity} */
     const entity = { id: '1', _version: random() }
     const record = to(entity)
 
@@ -29,6 +32,7 @@ describe('to', () => {
 
 describe('from', () => {
   it('should rename _id to id', () => {
+    /** @type {toa.storages.mongo.Record} */
     const record = { _id: '1', _version: 0 }
     const entity = from(record)
 
@@ -36,6 +40,7 @@ describe('from', () => {
   })
 
   it('should not modify argument', () => {
+    /** @type {toa.storages.mongo.Record} */
     const record = { _id: '1', _version: 0 }
 
     from(record)

@@ -3,7 +3,7 @@
 const fetch = require('node-fetch')
 
 const { Connector } = require('@toa.io/core')
-const { retry } = require('@toa.io/libraries.generic')
+const { retry } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {toa.extensions.origins.Context}

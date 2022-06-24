@@ -1,7 +1,7 @@
 'use strict'
 
 const { Locator } = require('@toa.io/core')
-const { remap } = require('@toa.io/libraries.generic')
+const { remap } = require('@toa.io/libraries/generic')
 
 const { Connector } = require('./connector')
 const { Exposition } = require('./exposition')

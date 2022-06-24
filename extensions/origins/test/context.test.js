@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
-const { random } = require('@toa.io/libraries.generic')
+const { random } = require('@toa.io/libraries/generic')
 
 const { Connector } = require('@toa.io/core')
 

@@ -3,7 +3,7 @@
 const { join } = require('node:path')
 
 const boot = require('@toa.io/boot')
-const { newid } = require('@toa.io/libraries.generic')
+const { newid } = require('@toa.io/libraries/generic')
 
 const path = join(__dirname, './dummies/credits')
 

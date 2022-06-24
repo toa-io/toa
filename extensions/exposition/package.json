@@ -23,12 +23,10 @@
   },
   "peerDependencies": {
     "@toa.io/bindings.amqp": "*",
-    "@toa.io/core": "*"
+    "@toa.io/core": "*",
+    "@toa.io/libraries": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.console": "0.2.0-dev.58",
-    "@toa.io/libraries.generic": "0.2.0-dev.58",
-    "@toa.io/libraries.schema": "0.2.0-dev.58",
     "cors": "2.8.5",
     "express": "4.18.1",
     "path-to-regexp": "6.2.0"

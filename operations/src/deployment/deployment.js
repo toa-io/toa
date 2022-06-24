@@ -2,8 +2,8 @@
 
 const { join } = require('node:path')
 const { writeFile: write } = require('node:fs/promises')
-const { directory: { copy } } = require('@toa.io/libraries.generic')
-const { dump } = require('@toa.io/libraries.yaml')
+const { directory: { copy } } = require('@toa.io/libraries/generic')
+const { dump } = require('@toa.io/libraries/yaml')
 
 const { merge, declare, describe } = require('./.deployment')
 

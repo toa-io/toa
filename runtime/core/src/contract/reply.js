@@ -7,6 +7,9 @@ const { ResponseContractException } = require('../exceptions')
 class Reply extends Conditions {
   static Exception = ResponseContractException
 
+  /**
+   * @returns {toa.libraries.schema.JSON}
+   */
   static schema (output, error) {
     const schema = { properties: {}, additionalProperties: false }
 

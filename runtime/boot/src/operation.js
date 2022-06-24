@@ -1,7 +1,7 @@
 'use strict'
 
 const { Transition, Observation, Assignment, State, Query, entities } = require('@toa.io/core')
-const { Schema } = require('@toa.io/libraries.schema')
+const { Schema } = require('@toa.io/libraries/schema')
 
 const boot = require('./index')
 

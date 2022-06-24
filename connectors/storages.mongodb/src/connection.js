@@ -4,7 +4,7 @@
 
 const { MongoClient } = require('mongodb')
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/libraries.console')
+const { console } = require('@toa.io/libraries/console')
 
 /**
  * @implements {toa.storages.mongo.Connection}
@@ -43,7 +43,7 @@ class Connection extends Connector {
 
   /** @hot */
   async get (query, options) {
-    return this.#collection.findOne(query, options)
+    return /** @type {toa.storages.mongo.Record} */ this.#collection.findOne(query, options)
   }
 
   /** @hot */

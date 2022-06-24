@@ -1,8 +1,8 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { newid } = require('@toa.io/libraries.generic')
-const { console } = require('@toa.io/libraries.console')
+const { newid } = require('@toa.io/libraries/generic')
+const { console } = require('@toa.io/libraries/console')
 
 const { pack, unpack } = require('./message')
 

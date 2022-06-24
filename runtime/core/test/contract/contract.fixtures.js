@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { load } = require('@toa.io/libraries.yaml')
+const { load } = require('@toa.io/libraries/yaml')
 const { resolve } = require('path')
 
 // noinspection JSCheckFunctionSignatures

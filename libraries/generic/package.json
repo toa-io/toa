@@ -1,31 +1,4 @@
 {
-  "name": "@toa.io/libraries.generic",
-  "version": "0.2.0-dev.58",
-  "description": "Toa Generic Library",
-  "homepage": "https://toa.io",
-  "author": {
-    "name": "Artem Gurtovoi",
-    "url": "https://github.com/temich"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/toa-io/toa.git"
-  },
-  "bugs": {
-    "url": "https://github.com/toa-io/toa/issues"
-  },
-  "engines": {
-    "node": ">= 12.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "dependencies": {
-    "uuid": "8.3.2"
-  }
+  "private": true,
+  "main": "src/index.js"
 }

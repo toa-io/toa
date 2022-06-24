@@ -20,11 +20,9 @@
   },
   "peerDependencies": {
     "@toa.io/core": "*",
-    "@toa.io/libraries.generic": "*"
+    "@toa.io/libraries": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.console": "0.2.0-dev.58",
-    "@toa.io/libraries.schema": "0.2.0-dev.58",
     "amqplib": "0.8.0",
     "execa": "5.1.1"
   },

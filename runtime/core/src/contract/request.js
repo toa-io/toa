@@ -9,6 +9,9 @@ const { Conditions } = require('./conditions')
 class Request extends Conditions {
   static Exception = RequestContractException
 
+  /**
+   * @returns {toa.libraries.schema.JSON}
+   */
   static schema (definition) {
     const schema = { properties: {}, additionalProperties: false }
     const required = []

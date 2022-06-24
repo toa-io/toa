@@ -1,7 +1,7 @@
 'use strict'
 
 const fetch = require('node-fetch')
-const { timeout, newid, random, repeat } = require('@toa.io/libraries.generic')
+const { timeout, newid, random, repeat } = require('@toa.io/libraries/generic')
 const { exceptions: { codes } } = require('@toa.io/core')
 const boot = require('@toa.io/boot')
 const extension = require('../extensions/exposition')

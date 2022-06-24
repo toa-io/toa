@@ -4,8 +4,8 @@ const { join } = require('node:path')
 const { tmpdir } = require('node:os')
 
 const boot = require('@toa.io/boot')
-const { newid, directory: { remove, ensure, is } } = require('@toa.io/libraries.generic')
-const { load } = require('@toa.io/libraries.yaml')
+const { newid, directory: { remove, ensure, is } } = require('@toa.io/libraries/generic')
+const { load } = require('@toa.io/libraries/yaml')
 
 const fixtures = require('./deployment.export.fixtures')
 

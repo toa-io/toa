@@ -1,29 +1,4 @@
 {
-  "name": "@toa.io/libraries.schema",
-  "version": "0.2.0-dev.58",
-  "description": "Toa Schema Library",
-  "author": "temich <tema.gurtovoy@gmail.com>",
-  "homepage": "https://github.com/toa-io/toa#readme",
-  "main": "src/schema.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/toa-io/toa.git"
-  },
-  "bugs": {
-    "url": "https://github.com/toa-io/toa/issues"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "peerDependencies": {
-    "@toa.io/libraries.generic": "*"
-  },
-  "dependencies": {
-    "@toa.io/libraries.yaml": "0.2.0-dev.58",
-    "ajv": "8.6.3",
-    "ajv-formats": "2.1.1"
-  }
+  "private": true,
+  "main": "src/schema.js"
 }

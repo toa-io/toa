@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { newid } = require('@toa.io/libraries.generic')
+const { newid } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {toa.core.connectors.bindings.Broadcaster}

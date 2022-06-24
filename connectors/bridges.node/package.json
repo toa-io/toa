@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "@toa.io/core": "*",
-    "@toa.io/libraries.generic": "*"
+    "@toa.io/libraries": "*"
   },
   "dependencies": {
     "@babel/parser": "7.16.2",

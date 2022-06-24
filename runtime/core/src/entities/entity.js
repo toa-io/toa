@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { difference, newid } = require('@toa.io/libraries.generic')
+const { difference, newid } = require('@toa.io/libraries/generic')
 
 const { EntityContractException } = require('../exceptions')
 

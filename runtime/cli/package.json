@@ -20,12 +20,10 @@
   },
   "peerDependencies": {
     "@toa.io/formation": "*",
-    "@toa.io/libraries.generic": "*",
+    "@toa.io/libraries": "*",
     "@toa.io/runtime": "*"
   },
   "dependencies": {
-    "@toa.io/libraries.console": "0.2.0-dev.58",
-    "@toa.io/libraries.yaml": "0.2.0-dev.58",
     "find-up": "5.0.0",
     "yargs": "17.2.1"
   },

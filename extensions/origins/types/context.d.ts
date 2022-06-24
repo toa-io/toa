@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 
 import * as core from '@toa.io/core/types'
-import * as generic from '@toa.io/libraries.generic/types'
+import * as generic from '@toa.io/libraries/generic/types'
 import * as fetch from 'node-fetch'
 
 declare namespace toa.extensions.origins {
