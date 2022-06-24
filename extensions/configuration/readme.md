@@ -29,7 +29,8 @@ function transition (input, entity, context) {
 # context.toa.yaml
 configuration:
   dummies.dummy:
-    foo: quu
+    foo: qux
+    foo@staging: quux # use deployment environment discriminator
     baz: $BAZ_VALUE   # use secrets
 ```
 
@@ -43,9 +44,8 @@ $ toa conceal
 
 ## Problem Definition
 
-- It should be possible to reuse a component operations in different contexts and deployment environments, that is in
-  different configurations.
-- It should be possible to deploy algorithm parameters secretly.
+- Components must be reusable in different contexts and deployment environments, that is in different configurations.
+- Some algorithm parameters must be deployed secretly.
 
 ## Definitions
 
