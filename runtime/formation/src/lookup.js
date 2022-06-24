@@ -52,7 +52,8 @@ const KNOWN = {
   amqp: '@toa.io/bindings.amqp',
   mongodb: '@toa.io/storages.mongodb',
   exposition: '@toa.io/extensions.exposition',
-  origins: '@toa.io/extensions.origins'
+  origins: '@toa.io/extensions.origins',
+  configuration: '@toa.io/extensions.configuration'
 }
 
 const RUNTIME = dirname(require.resolve('@toa.io/runtime/package.json'))
