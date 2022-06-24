@@ -39,6 +39,8 @@ configuration:
 $ toa conceal
 ```
 
+---
+
 ## Problem Definition
 
 - It should be possible to reuse a component operations in different contexts and deployment environments, that is in
