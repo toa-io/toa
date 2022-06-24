@@ -10,6 +10,11 @@
     - component
     - context
 - feat(node): add well-known context extension 'configuration'
+- feat(configuration): add concise declarations
+- feat(operations): add configuration deployment
+- feat(configuration): add secrets
+- feat(operations): add secrets deployment
+- feat(cli): add 'toa conceal'
 
 ## Statements
 

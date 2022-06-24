@@ -53,6 +53,36 @@ configuration:
   required: [foo]
 ```
 
+### Concise Declaration
+
+As it is known that configuration is a JSONSchema `object` type, any configuration declaration without
+defined `properties` considered as concise. Properties of concise declaration are treated as required configuration
+properties with the same type as its value.
+
+Next two declarations are equivalent.
+
+```yaml
+# component.toa.yaml
+
+configuration:
+  foo: 'baz'
+  bar: 1
+```
+
+```yaml
+# component.toa.yaml
+
+configuration:
+  properties:
+    foo:
+      type: string
+      default: 'baz'
+    bar:
+      type: number
+      default: 1
+  required: [foo, bar]
+```
+
 ## Context Configuration
 
 Context Configuration is declared as a context extension. Configuration keys may
