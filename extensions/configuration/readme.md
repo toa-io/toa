@@ -8,14 +8,17 @@
 
 ## Definitions
 
-<dl>
-<dt>Configuration (Distributed System Configuration)</dt>
-<dd>Set of static[^1] parameters for all algorithms within a given system.</dd>
-<dt>Component Configuration</dt>
-<dd>Subset of Configuration for algorithms within a component.</dd>
-<dt>Context Configuration</dt>
-<dd>Set of values that overrides default values for configuration of components added to a given context.</dd>
-</dl>
+### Configuration (Distributed System Configuration)
+
+Set of static[^1] parameters for all algorithms within a given system.
+
+### Component Configuration
+
+Subset of Configuration for algorithms within a component.
+
+### Context Configuration
+
+Set of values that overrides default values for configuration of components added to a given context.
 
 ## Responsibility Segregation
 
