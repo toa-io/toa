@@ -1,0 +1,13 @@
+domain: dummies
+name: configured
+
+entity:
+  storage: ~
+  schema:
+    foo:
+      type: string
+      default: 0
+    bar: string
+
+configuration:
+  type: not-a-type

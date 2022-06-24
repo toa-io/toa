@@ -18,3 +18,7 @@ afterAll(async () => {
 it('should connect', () => {
   expect(1).toBe(1)
 })
+
+it('should validate manifest', async () => {
+  await expect(framework.compose(['configured-badly'])).rejects.toThrow(/must be equal to one of the allowed values/)
+})
