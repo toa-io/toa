@@ -45,6 +45,6 @@ will be made to implement this solution with a certain constraints [#147](https:
 
 The only *real* solution for the defined problem is to stick to forward- and backward-compatibility.
 
-[^1] Since it looks like there is no reasonable way to provide this kind of guarantee without significant performance
+[^1]: Since it looks like there is no reasonable way to provide this kind of guarantee without significant performance
 and/or availability impact, it may be implemented as a mechanism with read retries and with a timeout considered as
 “enough for the most of fail-over scenarios”.
