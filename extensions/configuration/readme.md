@@ -67,20 +67,18 @@ Next two declarations are equivalent.
 
 ```yaml
 # component.toa.yaml
-
 configuration:
-  foo: 'baz'
+  foo: baz
   bar: 1
 ```
 
 ```yaml
 # component.toa.yaml
-
 configuration:
   properties:
     foo:
       type: string
-      default: 'baz'
+      default: baz
     bar:
       type: number
       default: 1
