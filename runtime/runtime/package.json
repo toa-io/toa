@@ -30,6 +30,7 @@
     "@toa.io/cli": "0.2.0-dev.58",
     "@toa.io/core": "0.2.0-dev.58",
     "@toa.io/extensions.exposition": "0.2.0-dev.58",
+    "@toa.io/extensions.configuration": "0.2.0-dev.58",
     "@toa.io/extensions.origins": "0.2.0-dev.58",
     "@toa.io/formation": "0.2.0-dev.58",
     "@toa.io/operations": "0.2.0-dev.58",
