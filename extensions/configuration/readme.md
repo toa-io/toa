@@ -6,15 +6,16 @@
   different configurations.
 - It should be possible to deploy algorithm parameters secretly.
 
-## Terms
+## Definitions
 
-Distributed System Configuration (**Configuration**) is a set of static[^1] parameters for all algorithms within a given
-system.
-
-**Context Configuration** is a set of values that overrides default values for configuration of components added to a
-given context.
-
-**Component Configuration** is a subset of Configuration for algorithms within a component.
+<dl>
+<dt>Configuration (Distributed System Configuration)</dt>
+<dd>Set of static[^1] parameters for all algorithms within a given system.</dd>
+<dt>Component Configuration</dt>
+<dd>Subset of Configuration for algorithms within a component.</dd>
+<dt>Context Configuration</dt>
+<dd>Set of values that overrides default values for configuration of components added to a given context.</dd>
+</dl>
 
 ## Responsibility Segregation
 
@@ -91,7 +92,7 @@ deploys those keys with provided values.
 
 <code>--reset</code> don't skip deployed secrets</dd>
 
-<dt><code>$ toa conceal key value</code></dt>
+<dt><code>$ toa conceal &lt;key&gt; &lt;value&gt;</code></dt>
 <dd>Checks if a given <code>key</code> is a declared secret and deploys it with a given <code>value</code></dd>
 
 </dl>
@@ -110,8 +111,7 @@ context.configiuration.foo
 context.extensions.configuration('foo')
 ```
 
-> ![Warning](https://img.shields.io/badge/Warning-yellow)
->
+> ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
 > It is strongly **not** recommended to have local references to configuration value type values, thus it
 > prevents component to benefit from [hot updates](#).
 >
