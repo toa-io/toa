@@ -1,5 +1,44 @@
 # Toa Configuration Extension
 
+## TL;DR
+
+### Define
+
+```yaml
+# component.toa.yaml
+domain: dummies
+name: dummy
+configuration:
+  foo: bar
+  baz: 1
+```
+
+### Use
+
+```javascript
+function transition (input, entity, context) {
+  const { foo, baz } = context.configuration
+
+  // ...
+}
+```
+
+### Override
+
+```yaml
+# context.toa.yaml
+configuration:
+  dummies.dummy:
+    foo: quu
+    baz: $BAZ_VALUE   # use secrets
+```
+
+### Deploy secrets
+
+```shell
+$ toa conceal
+```
+
 ## Problem Definition
 
 - It should be possible to reuse a component operations in different contexts and deployment environments, that is in
@@ -34,7 +73,7 @@ defined by Context Configuration.
 Component Configuration is declared as a component extension using JSONSchema `object` type.
 
 > Yet there is no way to provide configuration values without a deployment, it is recommended to have default values
-> for required parameters to be able to run operations locally.
+> for required parameters to be able to run operations on local environment.
 >
 > [#130](https://github.com/toa-io/toa/issues/130)
 
@@ -129,8 +168,8 @@ deploys those keys with provided values.
 
 <code>--reset</code> don't skip deployed secrets</dd>
 
-<dt><code>$ toa conceal &lt;key&gt; &lt;value&gt;</code></dt>
-<dd>Checks if a given <code>key</code> is a declared secret and deploys it with a given <code>value</code></dd>
+<dt><code>$ toa conceal &lt;component&gt; &lt;key&gt; &lt;value&gt;</code></dt>
+<dd>Checks if a given <code>key</code> is a declared secret and deploys it with a given <code>value</code>, overwrites if exists.</dd>
 
 </dl>
 
