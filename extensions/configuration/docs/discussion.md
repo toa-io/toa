@@ -46,4 +46,7 @@ As a kubernetes secrets mapped as environment variables.
 
 As a kubernetes secrets mapped as environment variables.
 
+## References
 
+- [#125](https://github.com/toa-io/toa/issues/125)
+- [#132](https://github.com/toa-io/toa/issues/132)

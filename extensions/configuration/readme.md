@@ -1,4 +1,4 @@
-# Configuration
+# Toa Configuration Extension
 
 ## Problem Definition
 
@@ -100,18 +100,28 @@ deploys those keys with provided values.
 
 Component configuration values are available as an operation context extension.
 
-### Usage
+### Usage: node
 
 ```javascript
 // underlay
 context.configiuration.foo
+
 // invoke
-context.configuration('foo')
+context.extensions.configuration('foo')
 ```
+
+> ![Warning](https://img.shields.io/badge/Warning-yellow)
+>
+> It is strongly **not** recommended to have local references to configuration value type values, thus it
+> prevents component to benefit from [hot updates](#).
+>
+> ```javascript
+> // NOT RECOMMENDED
+> const foo = context.configuration.foo
+> ```
 
 ## Appendix
 
-- [#125](https://github.com/toa-io/toa/issues/125)
 - [Discussion](./docs/discussion.md)
 - [Configuration consistency](./docs/consistency.md) has yet to be implemented.
 
