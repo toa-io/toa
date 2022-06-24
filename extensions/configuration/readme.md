@@ -112,13 +112,18 @@ context.extensions.configuration('foo')
 ```
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
-> It is strongly **not** recommended to have local references to configuration value type values, thus it
-> prevents component to benefit from [hot updates](#).
+> It is strongly **not** recommended to store a copy of value type configuration values outside of operation scope, thus
+> it prevents operation to benefit from [hot updates](#).
 >
 > ```javascript
-> // NOT RECOMMENDED
-> const foo = context.configuration.foo
+> // THIS IS WEIRD, BAD AND NOT RECOMMENDED
+> let foo
+> 
+> function transition (input, entity, context) {
+>   if (foo === undefined) foo = context.configuration.foo
+> }
 > ```
+> See [genuine operations](#).
 
 ## Appendix
 
