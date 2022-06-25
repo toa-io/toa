@@ -74,11 +74,6 @@ defined by Context Configuration.
 
 Component Configuration is declared as a component extension using JSONSchema `object` type.
 
-> Yet there is no way to provide configuration values without a deployment, it is recommended to have default values
-> for required parameters to be able to run operations on a local environment.
->
-> [#130](https://github.com/toa-io/toa/issues/130)
-
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
 > By introducing non-backward compatible changes to a Component Configuration the compatibility with existent contexts
 > and deployment environments will be broken. That is, Component Configuration changes are subjects of component
@@ -131,6 +126,22 @@ configuration:
   required: [foo, bar]
 ```
 
+### Local environment
+
+Local environment configuration values may be created by `toa configure` command, which will prompt values for Component
+Configuration.
+
+<dl>
+<dt><code>toa configure &lt;component&gt;</code></dt>
+<dd>Upsert local environment configuration values (prompts for each).
+
+<code>--reset</code> clear local configuration values<br/>
+<code>--export</code> print local configuration values
+</dd>
+<dt><code>toa configure &lt;component&gt; &lt;key&gt; &lt;value&gt;</code></dt>
+<dd>Upsert local environment configuration value</dd>
+</dl>
+
 ## Context Configuration
 
 Context Configuration is declared as a context extension. Its keys must be component identifiers and its values must be
@@ -149,7 +160,7 @@ configuration:
     bar@staging: 2
 ```
 
-## Secrets
+## Configuration Secrets
 
 Context Configuration values which are uppercase strings prefixed with `$` considered as Secrets.
 
@@ -164,8 +175,8 @@ configuration:
 
 ### Secrets Deployment
 
-Secrets are not being deployed with context deployment ([`toa deploy`](#)), thus must be deployed separately once for
-each deployment environment manually ([`toa conceal`](#)).
+Secrets are not being deployed with context deployment ([`toa deploy`](#)), thus must be deployed
+separately once for each deployment environment manually ([`toa conceal`](#)).
 
 <dl>
 

@@ -2,19 +2,23 @@
 
 ## Change Requests
 
-- feat(configuration): add configuration extension
+- [x] feat(configuration): add configuration extension
     - manifest (schema) validation
-    - annotations (values) validation
     - context extension
-- feat(formation): add well-known extension 'configuration'
+- [x] feat(formation): add well-known extension 'configuration'
     - component
     - context
-- feat(node): add well-known context extension 'configuration'
-- feat(configuration): add concise declarations
-- feat(operations): add configuration deployment
-- feat(configuration): add secrets
-- feat(operations): add secrets deployment
-- feat(cli): add 'toa conceal'
+- [x] feat(node): add well-known context extension 'configuration'
+- [x] feat(configuration): add concise declarations
+- [ ] feat(configuration): add runtime configuration resolution
+- [ ] feat(operations): add configuration deployment
+    - annotations (values) validation
+- [ ] feat(configuration): add secrets resolution
+- [ ] feat(operations): add secrets deployment
+- [ ] feat(cli): add `toa conceal`
+    - validate type
+- [ ] feat(cli): add `toa configure`
+    - use JSONSchema title
 
 ## Statements
 
@@ -50,6 +54,39 @@ As a kubernetes secrets mapped as environment variables.
 ### Where are secrets being stored and how do they resolve to value?
 
 As a kubernetes secrets mapped as environment variables.
+
+### Is configuration a single environment variable or a set (one per component)?
+
+#### Context Configuration
+
+In later versions, context extension will resolve configuration values by component locator. Given that it is yet
+unknown when this will happen, a certain context might have appeared which configuration is big enough to not fit the
+environment variable limitations.
+
+That is, Context Configuration must be mapped as a set of environment variables (one per component).
+
+> This will also allow to configure local environment per component.
+
+#### Secrets
+
+Secrets are mapped per secret as they are not bound to components.
+
+### Is configuration a single kubernetes secret or a set (one per component)?
+
+#### Configuration
+
+Single secret with a set of values per component.
+
+#### Secrets
+
+Once kubernetes secret per configuration secret.
+
+### Is there an option to configure local environment?
+
+<dl>
+<dt><code>toa configure &lt;component&gt;</code></dt>
+<dd>Create local environment configuration values</dd>
+</dl>
 
 ## References
 
