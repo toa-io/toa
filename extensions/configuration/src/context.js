@@ -1,7 +1,6 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { traverse } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {toa.extensions.configuration.Context}
@@ -10,33 +9,27 @@ class Context extends Connector {
   /** @readonly */
   name = 'configuration'
 
-  #values
+  /** @type {toa.core.Reflection} */
+  #refection
 
-  constructor (schema) {
+  /**
+   * @param {toa.core.Reflection} reflection
+   */
+  constructor (reflection) {
     super()
 
-    this.#values = this.#define(schema.schema)
+    this.#refection = reflection
+
+    this.depends(reflection)
   }
 
   invoke (path) {
-    let cursor = this.#values
+    /** @type {any} */
+    let cursor = this.#refection.value
 
-    if (path !== undefined) {
-      for (const segment of path) cursor = cursor[segment]
-    }
+    if (path !== undefined) for (const segment of path) cursor = cursor[segment]
 
     return cursor
-  }
-
-  #define (schema) {
-    const defaults = (node) => {
-      if (node.properties !== undefined) return { ...node.properties }
-      if (node.default !== undefined) return node.default
-
-      return null
-    }
-
-    return traverse(schema, defaults)
   }
 }
 

@@ -10,7 +10,7 @@
     - context
 - [x] feat(node): add well-known context extension 'configuration'
 - [x] feat(configuration): add concise declarations
-- [ ] feat(configuration): add runtime configuration resolution
+- [x] feat(configuration): add runtime configuration resolution
 - [ ] feat(operations): add configuration deployment
     - annotations (values) validation
 - [ ] feat(configuration): add secrets resolution
@@ -63,7 +63,8 @@ In later versions, context extension will resolve configuration values by compon
 unknown when this will happen, a certain context might have appeared which configuration is big enough to not fit the
 environment variable limitations.
 
-That is, Context Configuration must be mapped as a set of environment variables (one per component).
+That is, Context Configuration must be mapped as a set of environment variables (one per component). Values are
+serialized Configuration Objects.
 
 > This will also allow to configure local environment per component.
 

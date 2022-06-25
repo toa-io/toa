@@ -1,36 +1,74 @@
 'use strict'
 
+const { Locator } = require('@toa.io/core')
+
 const fixtures = require('./context.fixtures')
 const { Factory } = require('../')
+const { generate } = require('randomstring')
 
 const factory = new Factory()
 
+/** @type {toa.extensions.configuration.Context} */
 let context
 
-beforeEach(() => {
-  context = factory.context(fixtures.schema)
+/** @type {toa.core.Locator} */
+let locator
+
+describe('defaults', () => {
+  beforeEach(async () => {
+    const domain = generate()
+    const name = generate()
+
+    locator = new Locator({ domain, name })
+
+    context = factory.context(locator, fixtures.schema)
+    await context.connect()
+  })
+
+  it('should return schema defaults', () => {
+    const foo = context.invoke(['foo'])
+
+    expect(foo).toStrictEqual(fixtures.schema.properties.foo.default)
+  })
+
+  it('should return nested values', () => {
+    const baz = context.invoke(['bar', 'baz'])
+
+    expect(baz).toStrictEqual(fixtures.schema.properties.bar.properties.baz.default)
+  })
+
+  it('should expose configuration tree', () => {
+    const configuration = context.invoke()
+
+    expect(configuration).toStrictEqual({
+      foo: fixtures.schema.properties.foo.default,
+      bar: {
+        baz: fixtures.schema.properties.bar.properties.baz.default
+      },
+      quu: 0
+    })
+  })
 })
 
-it('should return schema defaults', () => {
-  const foo = context.invoke(['foo'])
+describe('resolution', () => {
+  let object
+  let varname
 
-  expect(foo).toStrictEqual(fixtures.schema.properties.foo.default)
-})
+  beforeEach(() => {
+    object = { foo: generate() }
 
-it('should return nested values', () => {
-  const baz = context.invoke(['bar', 'baz'])
+    varname = 'TOA_CONFIGURATION_' + locator.uppercase
+  })
 
-  expect(baz).toStrictEqual(fixtures.schema.properties.bar.properties.baz.default)
-})
+  it('should resolve configuration object from environment variable', async () => {
+    process.env[varname] = JSON.stringify(object)
 
-it('should expose configuration tree', () => {
-  const configuration = context.invoke()
+    context = factory.context(locator, fixtures.schema)
+    await context.connect()
 
-  expect(configuration).toStrictEqual({
-    foo: fixtures.schema.properties.foo.default,
-    bar: {
-      baz: fixtures.schema.properties.bar.properties.baz.default
-    },
-    quu: null
+    const configuration = context.invoke()
+
+    expect(configuration.foo).toStrictEqual(object.foo)
+    expect(configuration.bar.baz).toStrictEqual(fixtures.schema.properties.bar.properties.baz.default)
   })
 })
