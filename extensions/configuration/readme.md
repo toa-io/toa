@@ -75,9 +75,14 @@ defined by Context Configuration.
 Component Configuration is declared as a component extension using JSONSchema `object` type.
 
 > Yet there is no way to provide configuration values without a deployment, it is recommended to have default values
-> for required parameters to be able to run operations on local environment.
+> for required parameters to be able to run operations on a local environment.
 >
 > [#130](https://github.com/toa-io/toa/issues/130)
+
+> ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
+> By introducing non-backward compatible changes to a Component Configuration the compatibility with existent contexts
+> and deployment environments will be broken. That is, Component Configuration changes are subjects of component
+> versioning.
 
 ### Example
 
@@ -175,18 +180,14 @@ deploys those keys with provided values.
 
 </dl>
 
-## Context
+## Operation Context
 
-Component configuration values are available as an operation context extension.
+Component Configuration values are available as a well-known operation context extension `configuration`.
 
 ### Usage: node
 
 ```javascript
-// underlay
 context.configiuration.foo
-
-// invoke
-context.extensions.configuration('foo')
 ```
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
@@ -199,6 +200,8 @@ context.extensions.configuration('foo')
 > 
 > function transition (input, entity, context) {
 >   if (foo === undefined) foo = context.configuration.foo
+> 
+>   // use foo
 > }
 > ```
 > See [genuine operations](#).
