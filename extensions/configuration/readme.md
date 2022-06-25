@@ -133,7 +133,7 @@ Component Configuration.
 
 <dl>
 <dt><code>toa configure &lt;component&gt;</code></dt>
-<dd>Upsert local environment configuration object.
+<dd>Upsert local environment Сonfiguration Object.
 
 <code>--reset</code> clear local Configuration Object<br/>
 <code>--export</code> print Configuration Object
