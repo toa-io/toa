@@ -6,7 +6,7 @@
  * @returns {Object}
  */
 const traverse = (object, visit) => {
-  if (typeof object !== 'object' || object === null) return object
+  if (typeof object !== 'object' || object === null || Array.isArray(object)) return object
 
   const visited = visit(object)
 

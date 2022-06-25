@@ -59,3 +59,19 @@ it('should mutate structure', () => {
 
   expect(mutated).toStrictEqual({ a: { c: origin.a.b.c } })
 })
+
+it('should not visit arrays', () => {
+  let count = 0
+
+  object.a.d = [1, 2, 3]
+
+  const visit = (node) => {
+    count++
+
+    return node
+  }
+
+  traverse(object, visit)
+
+  expect(count).toStrictEqual(3)
+})
