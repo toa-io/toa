@@ -1,18 +1,18 @@
 'use strict'
 
 const { Reflection } = require('@toa.io/core')
-const { source } = require('./.configuration/source')
 
 /**
  * @implements {toa.core.Reflection}
  */
 class Configuration extends Reflection {
   /**
-   * @param {toa.core.Locator} locator
-   * @param {toa.libraries.schema.Schema} schema
+   * @param {toa.extensions.configuration.Provider} provider
    */
-  constructor (locator, schema) {
-    super(source(locator, schema))
+  constructor (provider) {
+    super(provider.source)
+
+    this.depends(provider)
   }
 }
 

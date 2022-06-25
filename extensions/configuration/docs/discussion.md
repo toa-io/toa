@@ -11,14 +11,15 @@
 - [x] feat(node): add well-known context extension 'configuration'
 - [x] feat(configuration): add concise declarations
 - [x] feat(configuration): add runtime configuration resolution
+- [ ] feat(cli): add `toa configure`
+    - use JSONSchema title
+    - validate type
 - [ ] feat(operations): add configuration deployment
     - annotations (values) validation
 - [ ] feat(configuration): add secrets resolution
 - [ ] feat(operations): add secrets deployment
 - [ ] feat(cli): add `toa conceal`
     - validate type
-- [ ] feat(cli): add `toa configure`
-    - use JSONSchema title
 
 ## Statements
 

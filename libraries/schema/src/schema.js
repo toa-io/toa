@@ -16,10 +16,7 @@ definitions(validator)
  * @implements {toa.libraries.schema.Schema}
  */
 class Schema {
-  /**
-   * @type {toa.libraries.schema.JSON}
-   * @readonly
-   */
+  /** @type {toa.libraries.schema.JSON} */
   schema
 
   #validate
@@ -28,7 +25,7 @@ class Schema {
   #system
 
   /**
-   * @param {toa.libraries.schema.JSON} schema
+   * @param {toa.libraries.schema.JSON | Object} schema
    */
   constructor (schema) {
     this.schema = schema

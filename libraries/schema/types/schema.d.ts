@@ -13,7 +13,7 @@ declare namespace toa.libraries.schema {
     }
 
     interface Schema {
-        schema: JSON
+        readonly schema: JSON
 
         fit(value: any): Error | null
 

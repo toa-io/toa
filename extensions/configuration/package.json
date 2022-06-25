@@ -18,5 +18,8 @@
   "peerDependencies": {
     "@toa.io/core": "*",
     "@toa.io/libraries": "*"
+  },
+  "dependencies": {
+    "clone-deep": "4.0.1"
   }
 }

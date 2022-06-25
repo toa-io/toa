@@ -5,11 +5,14 @@ import { Connector } from './connector'
 declare namespace toa.core {
 
     namespace reflection {
-        type Source<T> = () => Promise<T>
+        type Source = () => Promise<any>
     }
 
-    interface Reflection<T> extends Connector {
-        value: T
+    interface Reflection extends Connector {
+        value: any
     }
 
 }
+
+export type Reflection = toa.core.Reflection
+export type Source = toa.core.reflection.Source
