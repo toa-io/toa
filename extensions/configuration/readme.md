@@ -133,7 +133,7 @@ Component Configuration.
 
 <dl>
 <dt><code>toa configure &lt;component&gt;</code></dt>
-<dd>Upsert local environment configuration object.
+<dd>Upsert local environment Сonfiguration Object.
 
 <code>--reset</code> clear local Configuration Object<br/>
 <code>--export</code> print Configuration Object
@@ -198,7 +198,11 @@ Component Configuration values are available as a well-known operation context e
 ### Usage: node
 
 ```javascript
-context.configiuration.foo
+function transition (input, entity, context) {
+  const foo = context.configiuration.foo
+  
+  // ...
+}
 ```
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
@@ -212,7 +216,7 @@ context.configiuration.foo
 > function transition (input, entity, context) {
 >   if (foo === undefined) foo = context.configuration.foo
 > 
->   // use foo
+>   // ...
 > }
 > ```
 > See [genuine operations](#).
