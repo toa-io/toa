@@ -128,18 +128,18 @@ configuration:
 
 ### Local environment
 
-Local environment configuration values may be created by `toa configure` command, which will prompt values for Component
-Configuration.
+Configuration Objects for local environment may be created by `toa configure` command, which will prompt values for
+Component Configuration.
 
 <dl>
 <dt><code>toa configure &lt;component&gt;</code></dt>
-<dd>Upsert local environment configuration values (prompts for each).
+<dd>Upsert local environment configuration object.
 
-<code>--reset</code> clear local configuration values<br/>
-<code>--export</code> print local configuration values
+<code>--reset</code> clear local Configuration Object<br/>
+<code>--export</code> print Configuration Object
 </dd>
 <dt><code>toa configure &lt;component&gt; &lt;key&gt; &lt;value&gt;</code></dt>
-<dd>Upsert local environment configuration value</dd>
+<dd>Upsert local environment Configuration Object key</dd>
 </dl>
 
 ## Context Configuration
@@ -186,8 +186,8 @@ deploys those keys with provided values.
 
 <code>--reset</code> don't skip deployed secrets</dd>
 
-<dt><code>$ toa conceal &lt;component&gt; &lt;key&gt; &lt;value&gt;</code></dt>
-<dd>Checks if a given <code>key</code> is a declared secret and deploys it with a given <code>value</code>, overwrites if exists.</dd>
+<dt><code>$ toa conceal &lt;key&gt; &lt;value&gt;</code></dt>
+<dd>Checks if a given <code>key</code> is a declared secret and deploys it with a given <code>value</code>.</dd>
 
 </dl>
 
