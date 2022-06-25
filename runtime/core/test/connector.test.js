@@ -29,10 +29,8 @@ describe('callbacks', () => {
 
   it('should reconnect', async () => {
     await a.connect()
-    await a.disconnect()
-    await a.connect()
-    await a.disconnect()
-    await a.connect()
+    await a.reconnect()
+    await a.reconnect()
 
     expect(sequence).toEqual(['+a', '-a', '*a', '+a', '-a', '*a', '+a'])
   })

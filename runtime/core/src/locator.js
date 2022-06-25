@@ -23,7 +23,7 @@ class Locator {
 
     this.id = `${this.domain}${concat('.', this.name)}`
     this.label = `${this.domain}${concat('-', this.name)}`
-    this.uppercase = this.domain.toUpperCase() + (this.name === undefined ? '' : '_' + this.name.toUpperCase())
+    this.uppercase = this.domain?.toUpperCase() + (this.name === undefined ? '' : '_' + this.name.toUpperCase())
   }
 
   host (type, level = 1) {
