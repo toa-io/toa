@@ -29,6 +29,12 @@ describe('regular', () => {
     expect(locator.host(undefined, 0)).toEqual(regular.domain)
     expect(locator.host(type, 0)).toEqual(type + '-' + regular.domain)
   })
+
+  it('should expose uppercase', () => {
+    const expected = regular.domain.toUpperCase() + '_' + regular.name.toUpperCase()
+
+    expect(locator.uppercase).toStrictEqual(expected)
+  })
 })
 
 describe('nameless', () => {
