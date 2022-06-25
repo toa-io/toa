@@ -9,10 +9,12 @@ const origins = fixtures.context.extensions[0]
 
 let context
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks()
 
   context = new Context(/** @type {toa.core.Context} */ fixtures.context)
+
+  await context.connect()
 })
 
 it('should expose extension', async () => {

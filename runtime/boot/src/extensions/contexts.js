@@ -16,10 +16,16 @@ const contexts = (manifest) => {
   return contexts
 }
 
-const instantiate = (path, declaration) => {
+/**
+ * @param {string} path
+ * @param {any} declaration
+ * @param {toa.formation.Context} manifest
+ * @return {Context}
+ */
+const instantiate = (path, declaration, manifest) => {
   const factory = resolve(path)
 
-  if (factory.context !== undefined) return factory.context(declaration)
+  if (factory.context !== undefined) return factory.context(manifest.locator, declaration)
 }
 
 exports.contexts = contexts

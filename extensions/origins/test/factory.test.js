@@ -1,6 +1,7 @@
 'use strict'
 
 const { Context } = require('../src/context')
+const { Locator } = require('@toa.io/core')
 
 const fixtures = require('./factory.fixtures')
 const { Factory } = require('../src')
@@ -13,7 +14,7 @@ beforeEach(() => {
 })
 
 it('should create context extension', () => {
-  const extension = factory.context(fixtures.declaration)
+  const extension = factory.context(new Locator(), fixtures.declaration)
 
   expect(extension).toBeInstanceOf(Context)
 })

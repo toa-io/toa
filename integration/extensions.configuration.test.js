@@ -35,3 +35,14 @@ it('should provide context shortcut', async () => {
   expect(reply.output.foo).toStrictEqual('Hello')
   expect(reply.output.sum).toStrictEqual(3)
 })
+
+it('should resolve configuration object', async () => {
+  const configuration = { foo: 'Bye', bar: { b: 3 } }
+  process.env.TOA_CONFIGURATION_DUMMIES_CONFIGURED = JSON.stringify(configuration)
+
+  await composition.reconnect()
+
+  const reply = await remote.invoke('underlay')
+
+  expect(reply.output).toStrictEqual({ foo: configuration.foo, sum: 4 })
+})

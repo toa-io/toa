@@ -16,11 +16,13 @@ class Context extends Connector {
   constructor (context) {
     super()
 
-    this.extensions = this.#extensions(/** @type {toa.core.extensions.Context[]} */ context.extensions)
-
     this.#context = context
 
     this.depends(context)
+  }
+
+  async connection () {
+    this.extensions = this.#extensions(/** @type {toa.core.extensions.Context[]} */ this.#context.extensions)
   }
 
   local = underlay(async ([endpoint], [request]) => {

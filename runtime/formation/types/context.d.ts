@@ -1,6 +1,7 @@
 // noinspection ES6UnusedImports
 
 import { Component } from './component'
+import { Locator } from '@toa.io/core/types'
 
 declare namespace toa.formation {
 
@@ -43,6 +44,7 @@ declare namespace toa.formation {
     }
 
     interface Context extends context.Declaration {
+        locator: Locator
         runtime: context.Runtime
         environment?: string
         registry: context.Registry

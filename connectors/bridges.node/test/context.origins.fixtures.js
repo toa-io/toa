@@ -9,7 +9,8 @@ const context = {
       invoke: jest.fn()
     }
   ],
-  link: jest.fn()
+  link: jest.fn(),
+  connect: jest.fn()
 }
 
 exports.context = context
