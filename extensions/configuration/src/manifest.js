@@ -1,8 +1,10 @@
 'use strict'
 
-const { validate } = require('./.manifest')
+const { normalize, validate } = require('./.manifest')
 
-const manifest = (declaration) => {
+const manifest = (manifest) => {
+  const declaration = normalize(manifest)
+
   validate(declaration)
 
   return declaration

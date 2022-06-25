@@ -21,15 +21,7 @@ operations:
       sum: number
 
 configuration:
-  properties:
-    foo:
-      type: string
-      default: Hello
-    bar:
-      properties:
-        a:
-          type: number
-          default: 1
-        b:
-          type: number
-          default: 2
+  foo: Hello
+  bar:
+    a: 1
+    b: 2

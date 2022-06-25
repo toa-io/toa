@@ -22,4 +22,12 @@ const schema = {
   }
 }
 
+const concise = {
+  foo: schema.properties.foo.default,
+  bar: {
+    baz: schema.properties.bar.properties.baz.default
+  }
+}
+
 exports.schema = schema
+exports.concise = concise
