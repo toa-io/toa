@@ -1,12 +1,14 @@
 'use strict'
 
+const { resolve } = require('node:path')
+
 const { Schema } = require('@toa.io/libraries/schema')
 const { Context } = require('./context')
 const { Configuration } = require('./configuration')
 const { Provider } = require('./provider')
 
 /**
- * @implements {toa.core.extensions.Factory}
+ * @implements {toa.extensions.configuration.Factory}
  */
 class Factory {
   /**
@@ -22,8 +24,15 @@ class Factory {
     return new Context(configuration)
   }
 
-  configuration () {
+  provider (component) {
+    const locator = component.locator
+    const path = resolve(__dirname, '../')
+    const declaration = component.extensions?.[path]
 
+    if (declaration === undefined) throw new Error(`Configuration extension not found in '${locator.id}'`)
+    const schema = new Schema(declaration)
+
+    return new Provider(locator, schema)
   }
 }
 

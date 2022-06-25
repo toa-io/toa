@@ -1,4 +1,4 @@
-import type { Locator } from '@toa.io/core'
+import type { Locator } from '@toa.io/core/types'
 
 export namespace toa.formation {
 

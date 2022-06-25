@@ -44,7 +44,8 @@ $ toa conceal
 
 ## Problem Definition
 
-- Components must be reusable in different contexts and deployment environments, that is in different configurations.
+- Components must be reusable in different contexts and deployment environments,
+  that is in different configurations.
 - Some algorithm parameters must be deployed secretly.
 
 ## Definitions
@@ -55,7 +56,8 @@ Set of static[^1] parameters for all algorithms within a given system.
 
 ### Component Configuration
 
-Schema defining component's algorithms parameters (optionally with default values).
+Schema defining component's algorithms parameters (optionally with default
+values).
 
 ### Configuration Object
 
@@ -67,16 +69,18 @@ Map of Configuration Objects for components added to a given context.
 
 ## Responsibility Segregation
 
-Component Configuration is a schema defining the *form* of configuration. Specific *values* for this schema are
-defined by Context Configuration.
+Component Configuration is a schema defining the *form* of configuration.
+Specific *values* for this schema are defined by Context Configuration.
 
 ## Component Configuration
 
-Component Configuration is declared as a component extension using JSONSchema `object` type.
+Component Configuration is declared as a component extension using
+JSONSchema `object` type.
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
-> By introducing non-backward compatible changes to a Component Configuration the compatibility with existent contexts
-> and deployment environments will be broken. That is, Component Configuration changes are subjects of component
+> By introducing non-backward compatible changes to a Component Configuration
+> the compatibility with existent contexts and deployment environments will
+> be broken. That is, Component Configuration changes are subjects of component
 > versioning.
 
 ### Example
@@ -100,9 +104,11 @@ configuration:
 
 ### Concise Declaration
 
-As it is known that Component Configuration is declared with a JSONSchema `object` type, any configuration declaration
-without defined `properties` considered as concise. Properties of concise declaration are treated as required
-configuration properties with the same type as its value type.
+As it is known that Component Configuration is declared with a
+JSONSchema `object` type, any configuration declaration without
+defined `properties` considered as concise. Properties of concise declaration
+are treated as required configuration properties with the same type as its value
+type.
 
 Next two declarations are equivalent.
 
@@ -128,26 +134,18 @@ configuration:
 
 ### Local environment
 
-Configuration Objects for local environment may be created by `toa configure` command, which will prompt values for
-Component Configuration.
-
-<dl>
-<dt><code>toa configure &lt;component&gt;</code></dt>
-<dd>Upsert local environment Сonfiguration Object.
-
-<code>--reset</code> clear local Configuration Object<br/>
-<code>--export</code> print Configuration Object
-</dd>
-<dt><code>toa configure &lt;component&gt; &lt;key&gt; &lt;value&gt;</code></dt>
-<dd>Upsert local environment Configuration Object key</dd>
-</dl>
+Configuration Objects for local environment may be created by [`toa
+configure`](../../runtime/cli/readme.md#configure) command, which will
+prompt values for Component Configuration.
 
 ## Context Configuration
 
-Context Configuration is declared as a context extension. Its keys must be component identifiers and its values must be
-Configuration Objects for those components.
+Context Configuration is declared as a context extension. Its keys must be
+component identifiers and its values must be Configuration Objects for those
+components.
 
-Context Configuration keys and Configuration Object keys may be defined with [deployment environment discriminators](#).
+Context Configuration keys and Configuration Object keys may be defined
+with [deployment environment discriminators](#).
 
 ### Example
 
@@ -162,7 +160,8 @@ configuration:
 
 ## Configuration Secrets
 
-Context Configuration values which are uppercase strings prefixed with `$` considered as Secrets.
+Context Configuration values which are uppercase strings prefixed with `$`
+considered as Secrets.
 
 ### Example
 
@@ -175,39 +174,30 @@ configuration:
 
 ### Secrets Deployment
 
-Secrets are not being deployed with context deployment ([`toa deploy`](#)), thus must be deployed
-separately once for each deployment environment manually ([`toa conceal`](#)).
-
-<dl>
-
-<dt><code>$ toa conceal</code></dt>
-<dd>Finds all secrets declared in a context, prompts values for those which hasn't been deployed yet and 
-deploys those keys with provided values.
-
-<code>--reset</code> don't skip deployed secrets</dd>
-
-<dt><code>$ toa conceal &lt;key&gt; &lt;value&gt;</code></dt>
-<dd>Checks if a given <code>key</code> is a declared secret and deploys it with a given <code>value</code>.</dd>
-
-</dl>
+Secrets are not being deployed with context
+deployment ([`toa deploy`](../../runtime/cli/readme.md#deploy)),
+thus must be deployed separately once for each deployment environment
+manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
 
 ## Operation Context
 
-Component Configuration values are available as a well-known operation context extension `configuration`.
+Component Configuration values are available as a well-known operation context
+extension `configuration`.
 
 ### Usage: node
 
 ```javascript
 function transition (input, entity, context) {
   const foo = context.configiuration.foo
-  
+
   // ...
 }
 ```
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
-> It is strongly **not** recommended to store a copy of value type configuration values outside of operation scope, thus
-> it prevents operation to benefit from [hot updates](#).
+> It is strongly **not** recommended to store a copy of value type configuration
+> values outside of operation scope, thus it prevents operation to benefit
+> from [hot updates](#).
 >
 > ```javascript
 > // THIS IS WEIRD, BAD AND NOT RECOMMENDED
@@ -226,5 +216,6 @@ function transition (input, entity, context) {
 - [Discussion](./docs/discussion.md)
 - [Configuration consistency](./docs/consistency.md) has yet to be implemented.
 
-[^1]: That is can’t be changed without a deployment. This is because new values considered to be a subject of
+[^1]: That is can’t be changed without a deployment. This is because new values
+considered to be a subject of
 testing. [#146](https://github.com/toa-io/toa/issues/146)
