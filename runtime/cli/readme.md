@@ -11,8 +11,8 @@
 
 ### configure
 
-Outputs shell commands to manipulate local environment variables, thus in must be
-piped with `source /dev/stdin`.
+Outputs shell commands to manipulate local environment variables, thus must be piped
+with `source /dev/stdin`.
 
 <dl>
 <dt><code>toa configure &lt;key&gt; [value]</code></dt>
@@ -42,7 +42,7 @@ $ toa configure foo.bar --reset | source /dev/stdin
 
 ### conceal
 
-![NotImplemented](https://img.shields.io/badge/NotImplemented-red)
+![Not Implemented](https://img.shields.io/badge/Not_Implemented-red)
 <dl>
 <dt><code>toa conceal</code></dt>
 <dd>Deploy new declared secrets.

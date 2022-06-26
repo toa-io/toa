@@ -224,7 +224,7 @@ function transition (input, entity, context) {
 ## Appendix
 
 - [Discussion](./docs/discussion.md)
-- [Configuration consistency](./docs/consistency.md) has yet to be implemented.
+- [Configuration consistency](./docs/consistency.md)
 
 [^1]: That is can’t be changed without a deployment. This is because new values
 considered to be a subject of
