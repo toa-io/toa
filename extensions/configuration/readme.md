@@ -187,7 +187,7 @@ configuration:
 
 Secrets are not being deployed with context
 deployment ([`toa deploy`](../../runtime/cli/readme.md#deploy)),
-thus must be deployed separately once for each deployment environment
+thus must be deployed separately at least once for each deployment environment
 manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
 
 ## Operation Context
