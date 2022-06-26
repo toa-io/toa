@@ -27,11 +27,12 @@ const builder = (yargs) => {
     .example([
       ['$0 configure myKey \'new value\' | source /dev/stdin'],
       ['$0 configure myObject.myKey --reset | source /dev/stdin'],
-      ['$0 configure reset | source /dev/stdin']
+      ['$0 configure reset | source /dev/stdin'],
+      ['$0 configure print']
     ])
 }
 
-exports.command = 'configure <key> [value]'
+exports.command = 'configure [key] [value]'
 exports.desc = 'Output shell command to update local environment Configuration Object'
 exports.builder = builder
 exports.handler = configure

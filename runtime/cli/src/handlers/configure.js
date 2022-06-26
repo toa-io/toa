@@ -1,6 +1,8 @@
 'use strict'
 
 const boot = require('@toa.io/boot')
+const { dump } = require('@toa.io/libraries/yaml')
+
 const { Factory, PREFIX } = require('@toa.io/extensions.configuration')
 
 const { component: find } = require('../util/find')
@@ -12,8 +14,8 @@ async function configure (argv) {
   const provider = factory.provider(component)
   const KEY = PREFIX + component.locator.uppercase
 
-  if (argv.key === 'reset' && argv.value === undefined) {
-    console.log(`unset ${KEY}`)
+  if (argv.value === undefined && subcommands[argv.key] !== undefined) {
+    await subcommands[argv.key](provider)
 
     return
   }
@@ -31,6 +33,10 @@ async function configure (argv) {
       if (argv.reset !== true) throw new Error('Key value expected')
       else provider.unset(key)
     } else provider.set(key, value)
+  } else {
+    if (provider.object !== undefined) console.log(dump(provider.object))
+
+    return
   }
 
   let command
@@ -40,6 +46,15 @@ async function configure (argv) {
   else command = `export ${KEY}=` + exported
 
   console.log(command)
+}
+
+const subcommands = {
+  reset: (provider) => console.log('unset ' + provider.key),
+  print: async (provider) => {
+    await provider.connect()
+
+    console.log(dump(provider.object))
+  }
 }
 
 exports.configure = configure

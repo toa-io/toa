@@ -11,18 +11,18 @@
 
 ### configure
 
-`toa configure` outputs shell commands to manipulate environment variables, thus in must be
+`toa configure` outputs shell commands to manipulate local environment variables, thus in must be
 piped with `source /dev/stdin`.
 
 <dl>
 <dt><code>toa configure &lt;key&gt; [value]</code></dt>
 <dd>
-Set local environment Configuration Object key. Nested keys are addressed with dot notation.
+Set Configuration Object key. Nested keys are addressed with dot notation.
 
 <code>--path</code> path to component (default <code>.</code>)<br/>
 <code>--reset</code> clear <code>key</code><br/>
 
-Exmaples:
+Examples:
 
 ```shell
 $ toa configure foo.bar 'new-value' | source /dev/stdin
@@ -35,13 +35,15 @@ $ toa configure foo.bar --reset | source /dev/stdin
 
 </dd>
 <dt><code>toa configure reset</code></dt>
-<dd>Remove Configuration Object from local environment</dd>
+<dd>Remove Configuration Object</dd>
+<dt><code>toa configure print</code></dt>
+<dd>Print Configuration Object</dd>
 </dl>
 
 ### conceal
 
+![NotImplemented](https://img.shields.io/badge/NotImplemented-red)
 <dl>
-
 <dt><code>toa conceal</code></dt>
 <dd>Deploy new declared secrets.
 

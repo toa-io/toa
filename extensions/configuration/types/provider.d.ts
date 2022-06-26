@@ -6,6 +6,7 @@ declare namespace toa.extensions.configuration {
     interface Provider extends Connector {
         source: Source
         object: Object
+        key: string
 
         set(key: string, value: any): void
 

@@ -1,6 +1,7 @@
 'use strict'
 
 const { encode, decode } = require('@toa.io/libraries/generic')
+const { parse } = require('@toa.io/libraries/yaml')
 
 const framework = require('./framework')
 
@@ -95,4 +96,17 @@ it('should reset', async () => {
   const result = await cli('configure reset')
 
   expect(result.stdout).toStrictEqual('unset ' + VARNAME)
+})
+
+it('should print', async () => {
+  const object = { foo: 'test' }
+
+  process.env[VARNAME] = encode(object)
+
+  const result = await cli('configure print')
+  const string = result.stdout.toString()
+
+  const output = parse(string)
+
+  expect(output).toStrictEqual(object)
 })

@@ -14,8 +14,6 @@ class Provider extends Connector {
   /** @type {toa.libraries.schema.Schema} */
   #schema
 
-  /** @type {string} */
-  #key
   /** @type {Object} */
   #form
   /** @type {Object} */
@@ -23,6 +21,7 @@ class Provider extends Connector {
 
   source
   object
+  key
 
   /**
    * @param {toa.core.Locator} locator
@@ -33,7 +32,7 @@ class Provider extends Connector {
 
     this.source = this.#source.bind(this)
 
-    this.#key = PREFIX + locator.uppercase
+    this.key = PREFIX + locator.uppercase
     this.#schema = schema
 
     // form is required to enable nested defaults
@@ -80,7 +79,7 @@ class Provider extends Connector {
   }
 
   async #retrieve () {
-    const string = process.env[this.#key]
+    const string = process.env[this.key]
     const object = string === undefined ? {} : decode(string)
 
     this.#set(object)
