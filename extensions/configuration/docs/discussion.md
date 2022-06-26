@@ -13,14 +13,15 @@
 - [x] feat(configuration): add runtime configuration resolution
 - [x] feat(cli): add `toa configure <key> <value> --reset`
     - validate type
-- [ ] feat(cli): add `toa configure`
-    - use JSON Schema title for prompts
 - [ ] feat(operations): add configuration deployment
     - annotations (values) validation
 - [ ] feat(configuration): add secrets resolution
 - [ ] feat(operations): add secrets deployment
 - [ ] feat(cli): add `toa conceal`
     - validate type
+- [ ] feat(cli): add `toa configure`
+    - prompt required values
+    - use JSON Schema title
 
 ## Statements
 

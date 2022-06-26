@@ -11,7 +11,7 @@
 
 ### configure
 
-`toa configure` outputs shell commands to manipulate local environment variables, thus in must be
+Outputs shell commands to manipulate local environment variables, thus in must be
 piped with `source /dev/stdin`.
 
 <dl>

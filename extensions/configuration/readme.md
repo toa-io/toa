@@ -111,14 +111,14 @@ extensions:
      required: [foo]
 ```
 
-Well-known shortcut `configuration` is available.
-
 ### Concise Declaration
 
 As it is known that Configuration Schema is declared with a JSON Schema `object` type, any
 configuration declaration without defined `properties` considered as concise. Properties of concise
 declaration are treated as required configuration properties with the same type as its value
 type and no additional properties allowed.
+
+Also note that a well-known shortcut `configuration` is available.
 
 Next two declarations are equivalent.
 
@@ -131,16 +131,17 @@ configuration:
 
 ```yaml
 # component.toa.yaml
-configuration:
-  properties:
-    foo:
-      type: string
-      default: baz
-    bar:
-      type: number
-      default: 1
-  additionalProperties: false
-  required: [foo, bar]
+extensions:
+  @toa.io/extensions.configuration:
+     properties:
+       foo:
+         type: string
+         default: baz
+       bar:
+         type: number
+         default: 1
+     additionalProperties: false
+     required: [foo, bar]
 ```
 
 ## Context Configuration
