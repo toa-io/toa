@@ -7,7 +7,7 @@
 class Composition {
   name
   image
-  /** @type {Array<string>} */
+  /** @type {string[]} */
   components
 
   /**
@@ -17,8 +17,14 @@ class Composition {
   constructor (composition, image) {
     this.name = composition.name
     this.image = image.reference
-    this.components = composition.components.map((component) => component.locator.label)
+    this.components = composition.components.map(component)
   }
 }
+
+/**
+ * @param {toa.formation.Component} component
+ * @returns {string}
+ */
+const component = (component) => component.locator.label
 
 exports.Composition = Composition

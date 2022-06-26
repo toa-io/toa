@@ -4,7 +4,6 @@ const clone = require('clone-deep')
 const { decode, encode, empty, merge } = require('@toa.io/libraries/generic')
 
 const { Connector } = require('@toa.io/core')
-const { PREFIX } = require('./prefix')
 const { form } = require('./.provider/form')
 
 /**
@@ -109,5 +108,7 @@ class Provider extends Connector {
     this.#value = value
   }
 }
+
+const PREFIX = 'TOA_CONFIGURATION_'
 
 exports.Provider = Provider

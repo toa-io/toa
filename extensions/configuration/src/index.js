@@ -1,9 +1,11 @@
 'use strict'
 
 const { manifest } = require('./manifest')
+const { deployment } = require('./deployment')
+
 const { Factory } = require('./factory')
-const { PREFIX } = require('./prefix')
 
 exports.manifest = manifest
+exports.deployment = deployment
+
 exports.Factory = Factory
-exports.PREFIX = PREFIX

@@ -83,7 +83,7 @@ class Factory {
     /** @type {toa.operations.deployment.Service[]} */
     const services = dependency.services?.map((service) => this.#service(path, service))
 
-    return { references: dependency.references, services, proxies: dependency.proxies }
+    return { ...dependency, services }
   }
 
   /**

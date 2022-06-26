@@ -2,7 +2,7 @@
 
 const boot = require('@toa.io/boot')
 
-const { Factory, PREFIX } = require('@toa.io/extensions.configuration')
+const { Factory } = require('@toa.io/extensions.configuration')
 
 const { subcommands } = require('./.configure/subcommands')
 const { component: find } = require('../util/find')
@@ -12,7 +12,6 @@ async function configure (argv) {
   const component = await boot.component(path)
   const factory = new Factory()
   const provider = factory.provider(component)
-  const KEY = PREFIX + component.locator.uppercase
 
   if (argv.value === undefined && subcommands[argv.key] !== undefined) {
     await subcommands[argv.key](provider, argv)
@@ -38,8 +37,8 @@ async function configure (argv) {
   let command
   const exported = provider.export()
 
-  if (exported === undefined) command = `unset ${KEY}`
-  else command = `export ${KEY}=` + exported
+  if (exported === undefined) command = `unset ${provider.key}`
+  else command = `export ${provider.key}=` + exported
 
   console.log(command)
 }

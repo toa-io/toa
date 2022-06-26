@@ -7,7 +7,7 @@
  * @returns {toa.operations.deployment.Contents | Object}
  */
 const describe = ({ environment }, compositions, declaration) => {
-  const { references, services, proxies } = declaration
+  const { references, services, proxies, variables } = declaration
 
   /** @type {Set<string>} */
   const components = new Set()
@@ -32,6 +32,7 @@ const describe = ({ environment }, compositions, declaration) => {
     services,
     proxies,
     environment,
+    variables,
     ...dependencies
   }
 }

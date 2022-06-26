@@ -12,7 +12,8 @@ const find = (from, filename) => {
     return found.size > 0 ? [...found] : undefined
   }
 
-  const path = findUp.sync(filename, { cwd: resolve(process.cwd(), from) })
+  const cwd = resolve(process.cwd(), from)
+  const path = findUp.sync(filename, { cwd })
 
   if (path === undefined) throw new Error(`Cannot find '${filename}' from '${from}'`)
 

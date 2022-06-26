@@ -22,3 +22,6 @@ receivers:
 
 exposition:
   /:id: [observe, update]
+
+configuration:
+  foo: 1

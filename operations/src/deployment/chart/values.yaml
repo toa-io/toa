@@ -6,16 +6,25 @@ compositions:
     components:
       - todos-tasks
       - todos-stats
-  - name: messages
-    image: localhost:5000/composition-messages:0.0.0
-    replicas: 2
+  - name: users
+    image: localhost:5000/composition-users:0.0.0
+    replicas: 3
     components:
       - users-users
-# TODO: create services only if sync binding is being used by a component
+# TODO: create component services only if sync binding is being used
 components:
   - todos-tasks
   - todos-stats
   - users-users
+variables:
+  todos-tasks:
+    - name: TOA_CONFIGURATION_TODOS_TASKS
+      value: Y29uZmlndXJhdGlvbi12YWx1ZQo=
+  users-users:
+    - name: USERS_1
+      value: 2
+    - name: USERS_2
+      value: 2
 services:
   - name: resources-gateway
     image: localhost:5000/resources-gateway:0.0.0

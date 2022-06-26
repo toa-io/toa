@@ -62,14 +62,31 @@ describe('compositions', () => {
     }
   })
 
-  it('should set environment value', () => {
+  it('should set environment', () => {
     const composition = sample(fixtures.compositions)
     const name = 'composition-' + composition.name
     const deployment = find('Deployment', name)
 
     const container = deployment.spec.template.spec.containers[0]
 
-    expect(container.env).toStrictEqual(expect.arrayContaining([{ name: 'TOA_ENV', value: environment }]))
+    expect(container.env).toStrictEqual(expect.arrayContaining([{
+      name: 'TOA_ENV',
+      value: environment
+    }]))
+  })
+
+  it('should set configuration', () => {
+    const name = 'composition-messages'
+    const deployment = find('Deployment', name)
+
+    expect(deployment).toBeDefined()
+
+    const container = deployment.spec.template.spec.containers[0]
+
+    expect(container.env).toStrictEqual(expect.arrayContaining([{
+      name: 'TOA_CONFIGURATION_STATS_STATS',
+      value: expect.any(String)
+    }]))
   })
 })
 

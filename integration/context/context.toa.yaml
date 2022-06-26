@@ -36,3 +36,7 @@ mongodb: is-not-defined # this is not deployable, value must present to pass val
 mongodb@dev: host.docker.internal
 
 amqp@dev: host.docker.internal
+
+configuration:
+  stats.stats:
+    foo: 2

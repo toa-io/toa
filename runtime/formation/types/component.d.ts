@@ -49,3 +49,4 @@ export namespace toa.formation {
 }
 
 export type Component = toa.formation.Component
+export type Brief = toa.formation.component.Brief

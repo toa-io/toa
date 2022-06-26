@@ -22,5 +22,17 @@ spec:
           env:
             - name: TOA_ENV
               value: {{ $.Values.environment }}
+              {{- if $.Values.variables }}
+                {{- range $component := .components }}
+                  {{- range $key, $vars := $.Values.variables }}
+                    {{- if eq $component $key }}
+                      {{- range $vars }}
+            - name: {{ .name }}
+              value: {{ .value }}
+                      {{- end }}
+                    {{- end }}
+                  {{- end }}
+                {{- end }}
+              {{- end }}
 ---
 {{- end }}

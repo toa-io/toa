@@ -22,8 +22,8 @@ class Deployment {
 
   /**
    * @param context {toa.formation.Context}
-   * @param compositions {Array<toa.operations.deployment.Composition>}
-   * @param dependencies {Array<toa.operations.deployment.Dependency>}
+   * @param compositions {toa.operations.deployment.Composition[]}
+   * @param dependencies {toa.operations.deployment.Dependency[]}
    * @param process {toa.operations.Process}
    */
   constructor (context, compositions, dependencies, process) {

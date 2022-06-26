@@ -1,12 +1,13 @@
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 
 import { Service } from './service'
+import { Brief } from '@toa.io/formation/types/component'
 
 declare namespace toa.operations.deployment {
 
     namespace dependency {
 
-        type Constructor = (declarations: object[], annotations: object) => Declaration
+        type Constructor = (declarations: Brief[], annotations: object) => Declaration
 
         interface Reference {
             name: string
@@ -33,10 +34,20 @@ declare namespace toa.operations.deployment {
             target: string
         }
 
+        interface Variable {
+            name: string
+            value: string
+        }
+
+        interface Variables {
+            [key: string]: Variable[]
+        }
+
         interface Declaration {
             references?: Reference[]
             services?: Service[] // dependency.Service
             proxies?: Proxy[]
+            variables?: Variables
         }
 
     }
@@ -45,6 +56,7 @@ declare namespace toa.operations.deployment {
         references?: dependency.Reference[]
         services?: Service[] // deployment.Service
         proxies?: dependency.Proxy[]
+        variables?: dependency.Variables
     }
 
 }
@@ -53,6 +65,7 @@ export namespace dependency {
     export type Reference = toa.operations.deployment.dependency.Reference
     export type Service = toa.operations.deployment.dependency.Service
     export type Proxy = toa.operations.deployment.dependency.Proxy
+    export type Variables = toa.operations.deployment.dependency.Variables
 }
 
 export type Dependency = toa.operations.deployment.Dependency

@@ -6,12 +6,12 @@ const { compose } = require('../handlers/compose')
 
 const builder = (yargs) => {
   yargs
-    .positional('components', {
+    .positional('paths', {
       type: 'string',
       desc: 'Paths to components',
       default: '.'
     })
-    .array('components')
+    .array('paths')
     .option('bindings', {
       group: 'Command options:',
       type: 'string',
@@ -27,7 +27,7 @@ const builder = (yargs) => {
     .strictCommands()
 }
 
-exports.command = 'compose [components...]'
+exports.command = 'compose [paths...]'
 exports.desc = 'Run composition'
 exports.builder = builder
 exports.handler = compose
