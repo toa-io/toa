@@ -115,7 +115,7 @@ extensions:
 
 As it is known that Configuration Schema is declared with a JSON Schema `object` type, any
 configuration declaration without defined `properties` considered as concise. Properties of concise
-declaration are treated as required configuration properties with the same type as its value
+declaration are treated as required Configuration Schema properties with the same type as its value
 type and no additional properties allowed.
 
 Also note that a well-known shortcut `configuration` is available.
