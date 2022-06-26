@@ -24,11 +24,16 @@ const builder = (yargs) => {
       type: 'boolean',
       desc: 'Remove Configuration Object key'
     })
+    .option('json', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Print as JSON'
+    })
     .example([
       ['$0 configure myKey \'new value\' | source /dev/stdin'],
       ['$0 configure myObject.myKey --reset | source /dev/stdin'],
       ['$0 configure reset | source /dev/stdin'],
-      ['$0 configure print']
+      ['$0 configure print --json']
     ])
 }
 

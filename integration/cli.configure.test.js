@@ -110,3 +110,16 @@ it('should print', async () => {
 
   expect(output).toStrictEqual(object)
 })
+
+it('should print json', async () => {
+  const object = { foo: 'test' }
+
+  process.env[VARNAME] = encode(object)
+
+  const result = await cli('configure print --json')
+  const string = result.stdout.toString()
+
+  const output = JSON.parse(string)
+
+  expect(output).toStrictEqual(object)
+})

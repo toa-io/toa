@@ -25,19 +25,23 @@ Set Configuration Object key. Nested keys are addressed with dot notation.
 Examples:
 
 ```shell
-$ toa configure foo.bar 'new-value' | source /dev/stdin
+# set new value
+$ toa configure foo.bar 'new value' | source /dev/stdin
 ```
 
 ```shell
-# remove key 'foo.bar' from Configuration Object
+# clear key
 $ toa configure foo.bar --reset | source /dev/stdin
 ```
 
 </dd>
 <dt><code>toa configure reset</code></dt>
-<dd>Remove Configuration Object</dd>
+<dd>Remove Configuration Object.</dd>
 <dt><code>toa configure print</code></dt>
-<dd>Print Configuration Object</dd>
+<dd>Output Configuration Object as YAML.
+
+<code>--json</code> as JSON
+</dd>
 </dl>
 
 ### conceal
