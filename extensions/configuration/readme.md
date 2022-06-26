@@ -115,7 +115,7 @@ extensions:
 
 As it is known that Configuration Schema is declared with a JSON Schema `object` type, any
 configuration declaration without defined `properties` considered as concise. Properties of concise
-declaration are treated as required configuration properties with the same type as its value
+declaration are treated as required Configuration Schema properties with the same type as its value
 type and no additional properties allowed.
 
 Also note that a well-known shortcut `configuration` is available.
@@ -164,6 +164,11 @@ configuration:
     bar@staging: 2
 ```
 
+### Local environment
+
+Configuration Objects for local environment may be created
+by [`toa configure`](../../runtime/cli/readme.md#configure) command.
+
 ## Configuration Secrets
 
 Context Configuration values which are uppercase strings prefixed with `$`
@@ -178,16 +183,11 @@ configuration:
     api-key: $STRIPE_API_KEY
 ```
 
-### Local environment
-
-Configuration Objects for local environment may be created
-by [`toa configure`](../../runtime/cli/readme.md#configure) command.
-
 ### Secrets Deployment
 
 Secrets are not being deployed with context
 deployment ([`toa deploy`](../../runtime/cli/readme.md#deploy)),
-thus must be deployed separately once for each deployment environment
+thus must be deployed separately at least once for each deployment environment
 manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
 
 ## Operation Context
