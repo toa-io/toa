@@ -2,6 +2,9 @@
 
 const { default: Ajv } = require('ajv/dist/2019')
 const formats = /** @type {(Ajv) => void} */ require('ajv-formats')
+const clone = require('clone-deep')
+
+const { traverse } = require('@toa.io/libraries/generic')
 
 const { definitions } = require('./definitions')
 const { keywords } = require('./keywrods')
@@ -22,6 +25,7 @@ class Schema {
   #validate
   #defaults
   #match
+  #adapt
   #system
 
   /**
@@ -51,7 +55,14 @@ class Schema {
     const valid = this.#match(value)
 
     if (valid) return null
-    else return this.#error()
+    else return this.#error(this.#match.errors)
+  }
+
+  adapt (value) {
+    const valid = this.#adapt(value)
+
+    if (valid) return null
+    else return this.#error(this.#adapt.errors)
   }
 
   defaults (value = {}) {
@@ -74,12 +85,10 @@ class Schema {
   #recompile (schema) {
     const { required, $id, ...defaults } = schema
     const system = { ...defaults, properties: {} }
-    const match = { ...defaults, properties: {} }
 
     if ($id !== undefined) {
       defaults.$id = $id + '_defaults'
       system.$id = $id + '_system'
-      match.$id = $id + '_match'
     }
 
     this.#defaults = validator.compile(defaults)
@@ -90,19 +99,53 @@ class Schema {
       delete copy.default
 
       if (value.system === true) system.properties[key] = copy
-
-      match.properties[key] = copy
     }
 
     this.#system = validator.compile(system)
+
+    // match
+    const match = clone(schema)
+
+    if (match.properties !== undefined) properties(match.properties)
+
+    if ($id !== undefined) match.$id = $id + '_match'
+
+    traverse(match, (node) => {
+      const isMeta = typeof node.type === 'object'
+
+      if (node.properties !== undefined && node[PROPERTY] === 1 && !isMeta) properties(node.properties)
+
+      if (node.default !== undefined && node[PROPERTIES] !== 1) delete node.default
+    })
+
     this.#match = validator.compile(match)
+
+    // adapt
+    const adaptive = clone(schema)
+
+    if (adaptive.properties !== undefined) properties(adaptive.properties)
+
+    if ($id !== undefined) adaptive.$id = $id + '_similar'
+
+    traverse(adaptive, (node) => {
+      const isMeta = typeof node.type === 'object'
+
+      if (node.properties !== undefined && node[PROPERTY] !== 1 && !isMeta) properties(node.properties)
+
+      if (node.required && node[PROPERTIES] !== 1) delete node.required
+      if (node.default !== undefined && node[PROPERTIES] !== 1) delete node.default
+    })
+
+    this.#adapt = validator.compile(adaptive)
   }
 
   /**
    * @returns {toa.libraries.schema.Error}
    */
-  #error () {
-    const error = this.#validate.errors[0]
+  #error (errors = undefined) {
+    if (errors === undefined) errors = this.#validate.errors
+
+    const error = errors[0]
 
     const result = {
       message: error.message,
@@ -138,5 +181,14 @@ class Schema {
     throw new TypeError(error.message)
   }
 }
+
+const properties = (node) => {
+  node[PROPERTIES] = 1
+
+  for (const key of Object.keys(node)) node[key][PROPERTY] = 1
+}
+
+const PROPERTIES = Symbol('Properties marker')
+const PROPERTY = Symbol('Property marker')
 
 exports.Schema = Schema

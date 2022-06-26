@@ -1,5 +1,7 @@
 'use strict'
 
+const { encode } = require('@toa.io/libraries/generic')
+
 const framework = require('./framework')
 
 let composition
@@ -38,7 +40,7 @@ it('should provide context shortcut', async () => {
 
 it('should resolve configuration object', async () => {
   const configuration = { foo: 'Bye', bar: { b: 3 } }
-  process.env.TOA_CONFIGURATION_DUMMIES_CONFIGURED = JSON.stringify(configuration)
+  process.env.TOA_CONFIGURATION_DUMMIES_CONFIGURED = encode(configuration)
 
   await composition.reconnect()
 

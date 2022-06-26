@@ -21,6 +21,8 @@ declare namespace toa.libraries.schema {
 
         match(value: any): Error | null
 
+        adapt(value: any): Error | null
+
         defaults(value?: any): Object
 
         system(): Object

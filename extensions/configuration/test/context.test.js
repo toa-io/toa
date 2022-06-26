@@ -1,6 +1,7 @@
 'use strict'
 
 const { Locator } = require('@toa.io/core')
+const { encode } = require('@toa.io/libraries/generic')
 
 const fixtures = require('./context.fixtures')
 const { Factory } = require('../')
@@ -61,7 +62,7 @@ describe('resolution', () => {
   })
 
   it('should resolve configuration object from environment variable', async () => {
-    process.env[varname] = JSON.stringify(object)
+    process.env[varname] = encode(object)
 
     context = factory.context(locator, fixtures.schema)
     await context.connect()

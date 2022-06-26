@@ -19,12 +19,11 @@ yargs(process.argv.slice(2))
   .fail((msg, err) => {
     const actual = err || new Error(msg)
 
-    console.error(actual)
+    console.error(process.env.TOA_DEBUG ? actual : actual.message)
 
     process.exit(actual.exitCode > 0 ? actual.exitCode : 1)
   })
   .option('log', {
-    type: 'string',
     describe: 'Log level'
   })
   .commandDir('./commands')

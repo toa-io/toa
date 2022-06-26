@@ -5,8 +5,15 @@ declare namespace toa.extensions.configuration {
 
     interface Provider extends Connector {
         source: Source
+        object: Object
 
-        set(key: string, value: any): Promise<void>
+        set(key: string, value: any): void
+
+        unset(key: string): void
+
+        reset(): void
+
+        export(): string
     }
 
 }

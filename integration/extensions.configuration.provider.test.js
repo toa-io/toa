@@ -4,7 +4,7 @@ const { resolve } = require('node:path')
 const { generate } = require('randomstring')
 
 const boot = require('@toa.io/boot')
-const { random } = require('@toa.io/libraries/generic')
+const { encode, random } = require('@toa.io/libraries/generic')
 
 const { Factory } = require('@toa.io/extensions.configuration')
 
@@ -14,10 +14,7 @@ const KEY = 'TOA_CONFIGURATION_DUMMIES_CONFIGURED'
 /**
  * @param {Object} [value]
  */
-const env = (value) => {
-  if (value === undefined) return process.env[KEY] && JSON.parse(process.env[KEY])
-  else process.env[KEY] = JSON.stringify(value)
-}
+const env = (value) => (process.env[KEY] = encode(value))
 
 /** @type {toa.extensions.configuration.Factory} */
 const factory = new Factory()
@@ -38,16 +35,14 @@ it('should start', () => {
 })
 
 describe('set', () => {
-  it('should update env', async () => {
+  it('should update value', async () => {
     await provider.connect()
 
     const foo = generate()
 
     await provider.set('foo', foo)
 
-    const object = env()
-
-    expect(object).toStrictEqual({ foo })
+    expect(provider.object.foo).toStrictEqual(foo)
   })
 
   it('should keep old keys', async () => {
@@ -58,9 +53,7 @@ describe('set', () => {
     await provider.connect()
     await provider.set('foo', generate())
 
-    const after = env()
-
-    expect(after).toMatchObject(before)
+    expect(provider.object).toMatchObject(before)
   })
 
   it('should set nested with dot notation', async () => {
@@ -69,14 +62,12 @@ describe('set', () => {
     await provider.connect()
     await provider.set('bar.a', a)
 
-    const object = env()
-
-    expect(object).toStrictEqual({ bar: { a } })
+    expect(provider.object.bar.a).toStrictEqual(a)
   })
 
   it('should validate type', async () => {
     await provider.connect()
 
-    await expect(() => provider.set('bar.a', generate())).rejects.toThrow(TypeError)
+    expect(() => provider.set('bar.a', generate())).toThrow(TypeError)
   })
 })

@@ -96,6 +96,112 @@ describe('validate', () => {
   })
 })
 
+describe('match', () => {
+  const schema = new Schema({
+    properties: {
+      a: { type: 'integer' },
+      b: { type: 'boolean', default: false },
+      c: {
+        properties: {
+          d: {
+            type: 'number',
+            default: 1
+          },
+          default: { type: 'string' }
+        }
+      },
+      required: { type: 'string' },
+      default: { type: 'string' }
+    },
+    additionalProperties: false,
+    required: ['a']
+  })
+
+  it('should match', () => {
+    expect(schema.match({ a: 1 })).toStrictEqual(null)
+
+    expect(schema.match({ a: 'not-a-number' })).toMatchObject({
+      property: 'a',
+      schema: '#/properties/a/type'
+    })
+
+    expect(schema.match({})).toMatchObject({
+      property: 'a',
+      schema: '#/required'
+    })
+  })
+
+  it('should not set defaults', () => {
+    const value = { a: 1 }
+
+    schema.match(value)
+
+    expect(value).toStrictEqual({ a: 1 })
+  })
+
+  it('should not set nested defaults', () => {
+    const value = { a: 1, c: {} }
+
+    schema.match(value)
+
+    expect(value).toStrictEqual({ a: 1, c: {} })
+  })
+
+  it('should not delete properties with name \'required\'', () => {
+    const value = { a: 1, required: 'foo' }
+
+    expect(schema.match(value)).toStrictEqual(null)
+  })
+
+  it('should not delete properties with name \'default\'', () => {
+    const value = { a: 1, default: 'foo' }
+
+    expect(schema.match(value)).toStrictEqual(null)
+  })
+})
+
+describe('adapt', () => {
+  const schema = new Schema({
+    properties: {
+      a: { type: 'integer' },
+      b: { type: 'boolean', default: false },
+      required: { type: 'string' },
+      default: { type: 'string' }
+    },
+    additionalProperties: false,
+    required: ['a']
+  })
+
+  it('should match', () => {
+    expect(schema.adapt({ a: 1 })).toStrictEqual(null)
+
+    expect(schema.adapt({ a: 'not-a-number' })).toMatchObject({
+      property: 'a',
+      schema: '#/properties/a/type'
+    })
+  })
+
+  it('should not set defaults', () => {
+    const value = { a: 1 }
+
+    schema.adapt(value)
+
+    expect(value.b).toStrictEqual(undefined)
+  })
+
+  it('should not delete properties with name \'required\'', () => {
+    const value = { a: 1, required: 'foo' }
+
+    expect(schema.adapt(value)).toStrictEqual(null)
+  })
+
+  it('should not delete properties with name \'default\'', () => {
+    const value = { a: 1, default: 'foo' }
+
+    expect(schema.adapt(value)).toStrictEqual(null)
+  })
+})
+
 describe('formats', () => {
   it('should support ajv-formats', () => {
     const schema = new Schema({

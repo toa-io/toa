@@ -54,14 +54,18 @@ $ toa conceal
 
 Set of static[^1] parameters for all algorithms within a given system.
 
-### Component Configuration
+### Configuration Schema
 
 Schema defining component's algorithms parameters (optionally with default
 values).
 
 ### Configuration Object
 
-Value valid against Component Configuration.
+Value valid against Configuration Schema.
+
+### Configuration Value
+
+Merge result of Configuration Schema's defaults and Configuration Object.
 
 ### Context Configuration
 
@@ -69,46 +73,52 @@ Map of Configuration Objects for components added to a given context.
 
 ## Responsibility Segregation
 
-Component Configuration is a schema defining the *form* of configuration.
-Specific *values* for this schema are defined by Context Configuration.
+Configuration Schema is a *form* of configuration defined by component. Specific *values* for
+specific contexts and deployment environments are defined by Context Configuration according to the
+Schema.
 
-## Component Configuration
+See [Reusable Components](#).
 
-Component Configuration is declared as a component extension using
-JSONSchema `object` type.
+## Configuration Schema
+
+Configuration Schema is declared as a component extension
+using [JSON Schema](https://json-schema.org) `object` type.
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
-> By introducing non-backward compatible changes to a Component Configuration
-> the compatibility with existent contexts and deployment environments will
-> be broken. That is, Component Configuration changes are subjects of component
-> versioning.
+> By introducing non-backward compatible changes to a Configuration Schema the compatibility
+> with existent contexts and deployment environments will be broken. That is, Configuration
+> Schema changes are subjects of component versioning.
+
+> ![Recommendation](https://img.shields.io/badge/Recommendation-green)<br/>
+> Having default values for all required parameters will allow components to be runnable
+> without configuration (i.e. on local environment).
 
 ### Example
-
-> Well-known shortcut `configuration` is available.
 
 ```yaml
 # component.toa.yaml
 domain: dummies
 name: dummy
 
-configuration:
-  properties:
-    foo:
-      type: string
-      default: 'baz'
-    bar:
-      type: number
-  required: [foo]
+extensions:
+  @toa.io/extensions.configuration:
+     properties:
+       foo:
+         type: string
+         default: 'baz'
+       bar:
+         type: number
+     required: [foo]
 ```
+
+Well-known shortcut `configuration` is available.
 
 ### Concise Declaration
 
-As it is known that Component Configuration is declared with a
-JSONSchema `object` type, any configuration declaration without
-defined `properties` considered as concise. Properties of concise declaration
-are treated as required configuration properties with the same type as its value
-type.
+As it is known that Configuration Schema is declared with a JSON Schema `object` type, any
+configuration declaration without defined `properties` considered as concise. Properties of concise
+declaration are treated as required configuration properties with the same type as its value
+type and no additional properties allowed.
 
 Next two declarations are equivalent.
 
@@ -129,14 +139,9 @@ configuration:
     bar:
       type: number
       default: 1
+  additionalProperties: false
   required: [foo, bar]
 ```
-
-### Local environment
-
-Configuration Objects for local environment may be created by [`toa
-configure`](../../runtime/cli/readme.md#configure) command, which will
-prompt values for Component Configuration.
 
 ## Context Configuration
 
@@ -172,6 +177,11 @@ configuration:
     api-key: $STRIPE_API_KEY
 ```
 
+### Local environment
+
+Configuration Objects for local environment may be created
+by [`toa configure`](../../runtime/cli/readme.md#configure) command.
+
 ### Secrets Deployment
 
 Secrets are not being deployed with context
@@ -181,8 +191,7 @@ manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
 
 ## Operation Context
 
-Component Configuration values are available as a well-known operation context
-extension `configuration`.
+Configuration Value is available as a well-known operation context extension `configuration`.
 
 ### Usage: node
 
@@ -209,7 +218,7 @@ function transition (input, entity, context) {
 >   // ...
 > }
 > ```
-> See [genuine operations](#).
+> See [Genuine operations](#).
 
 ## Appendix
 

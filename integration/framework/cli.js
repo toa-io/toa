@@ -2,16 +2,12 @@
 
 const { resolve, join, dirname } = require('node:path')
 const execa = require('execa')
+const { split } = require('@toa.io/libraries/generic')
 
 const cli = (path) => {
   const cwd = resolve(__dirname, '..', path)
 
-  return async (...args) => execa.node(BIN, args.map(stringify), { cwd })
-}
-
-const stringify = (value) => {
-  if (typeof value === 'object') return `"${JSON.stringify(value)}"`
-  else return value.toString()
+  return async (args) => execa.node(BIN, split(args), { cwd })
 }
 
 const BIN = join(dirname(require.resolve('@toa.io/runtime')), 'bin/toa')

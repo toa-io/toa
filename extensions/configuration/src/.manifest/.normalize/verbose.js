@@ -17,7 +17,7 @@ const convert = (node) => {
 
   properties[SYM] = 1
 
-  return { type: 'object', properties }
+  return { type: 'object', properties, additionalProperties: false }
 }
 
 function property (node) {

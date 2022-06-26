@@ -21,7 +21,7 @@ class Changeset {
   }
 
   set (value) {
-    const error = this.#schema.match(value)
+    const error = this.#schema.adapt(value)
 
     if (error !== null) throw new EntityContractException(error)
 

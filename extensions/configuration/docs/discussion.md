@@ -11,9 +11,10 @@
 - [x] feat(node): add well-known context extension 'configuration'
 - [x] feat(configuration): add concise declarations
 - [x] feat(configuration): add runtime configuration resolution
-- [ ] feat(cli): add `toa configure`
-    - use JSONSchema title
+- [x] feat(cli): add `toa configure <key> <value> --reset`
     - validate type
+- [ ] feat(cli): add `toa configure`
+    - use JSON Schema title for prompts
 - [ ] feat(operations): add configuration deployment
     - annotations (values) validation
 - [ ] feat(configuration): add secrets resolution
@@ -60,11 +61,14 @@ As a kubernetes secrets mapped as environment variables.
 
 #### Context Configuration
 
-In later versions, context extension will resolve configuration values by component locator. Given that it is yet
-unknown when this will happen, a certain context might have appeared which configuration is big enough to not fit the
+In later versions, context extension will resolve configuration values by component locator. Given
+that it is yet
+unknown when this will happen, a certain context might have appeared which configuration is big
+enough to not fit the
 environment variable limitations.
 
-That is, Context Configuration must be mapped as a set of environment variables (one per component). Values are
+That is, Context Configuration must be mapped as a set of environment variables (one per component).
+Values are
 serialized Configuration Objects.
 
 > This will also allow to configure local environment per component.

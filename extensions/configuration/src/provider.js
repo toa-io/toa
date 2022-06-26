@@ -1,9 +1,10 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { merge } = require('@toa.io/libraries/generic')
+const { decode, encode, empty, merge } = require('@toa.io/libraries/generic')
 
 const { Connector } = require('@toa.io/core')
+const { PREFIX } = require('./prefix')
 const { form } = require('./.provider/form')
 
 /**
@@ -16,13 +17,12 @@ class Provider extends Connector {
   /** @type {string} */
   #key
   /** @type {Object} */
-  #object
-  /** @type {Object} */
   #form
   /** @type {Object} */
   #value
 
   source
+  object
 
   /**
    * @param {toa.core.Locator} locator
@@ -35,6 +35,8 @@ class Provider extends Connector {
 
     this.#key = PREFIX + locator.uppercase
     this.#schema = schema
+
+    // form is required to enable nested defaults
     this.#form = form(schema.schema)
   }
 
@@ -42,52 +44,71 @@ class Provider extends Connector {
     await this.#retrieve()
   }
 
-  #source = () => {
-    return this.#object
+  async #source () {
+    return this.#value
   }
 
-  async set (key, value) {
-    const object = clone(this.#object)
+  set (key, value) {
+    const object = this.object === undefined ? {} : clone(this.object)
     const properties = key.split('.')
     const property = properties.pop()
 
     let cursor = object
-    let target = this.#value
 
     for (const name of properties) {
       if (cursor[name] === undefined) cursor[name] = {}
-      if (target[name] === undefined) target[name] = {}
 
       cursor = cursor[name]
-      target = target[name]
     }
 
-    cursor[property] = value
+    if (value === undefined) delete cursor[property]
+    else cursor[property] = value
 
-    this.#schema.validate(object)
+    this.#set(object)
+  }
 
-    target[property] = value
+  unset (key) {
+    this.set(key, undefined)
+  }
 
-    await this.#store()
+  reset () {
+    this.object = undefined
+  }
+
+  export () {
+    return this.object === undefined ? undefined : encode(this.object)
   }
 
   async #retrieve () {
-    const form = clone(this.#form)
     const string = process.env[this.#key]
-    const value = string === undefined ? {} : JSON.parse(string)
-    const object = merge(form, value, { override: true })
+    const object = string === undefined ? {} : decode(string)
 
-    this.#schema.validate(object)
+    this.#set(object)
+  }
+
+  #set (object) {
+    this.#validate(object)
+    this.#merge(object)
+
+    this.object = empty(object) ? undefined : object
+  }
+
+  #validate (object) {
+    const error = this.#schema.match(object)
+
+    if (error !== null) throw new TypeError(error.message)
+  }
+
+  #merge (object) {
+    object = clone(object)
+
+    const form = clone(this.#form)
+    const value = merge(form, object, { override: true })
+
+    this.#schema.validate(value)
 
     this.#value = value
-    this.#object = object
-  }
-
-  async #store () {
-    process.env[this.#key] = JSON.stringify(this.#value)
   }
 }
-
-const PREFIX = 'TOA_CONFIGURATION_'
 
 exports.Provider = Provider
