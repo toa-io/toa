@@ -164,6 +164,11 @@ configuration:
     bar@staging: 2
 ```
 
+### Local environment
+
+Configuration Objects for local environment may be created
+by [`toa configure`](../../runtime/cli/readme.md#configure) command.
+
 ## Configuration Secrets
 
 Context Configuration values which are uppercase strings prefixed with `$`
@@ -177,11 +182,6 @@ configuration:
   payments.gateway:
     api-key: $STRIPE_API_KEY
 ```
-
-### Local environment
-
-Configuration Objects for local environment may be created
-by [`toa configure`](../../runtime/cli/readme.md#configure) command.
 
 ### Secrets Deployment
 
