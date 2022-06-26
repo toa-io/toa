@@ -30,8 +30,6 @@ it('should mutate all object type properties', () => {
     node.seen = 1
 
     if (node.c !== undefined) node.c = c
-
-    return node
   }
 
   traverse(object, mutate)
