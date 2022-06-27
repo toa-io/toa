@@ -239,9 +239,9 @@ describe('definitions', () => {
       }
     })
 
-    expect(schema.fit({ event: 'a.b' })).toBe(null)
     expect(schema.fit({ event: 'a.b.c' })).toBe(null)
-    expect(schema.fit({ event: 'a.b.c.d' })).toBe(null)
+    expect(schema.fit({ event: 'a.b' })).not.toBe(null)
+    expect(schema.fit({ event: 'a.b.c.d' })).not.toBe(null)
     expect(schema.fit({ event: 'a.1' })).not.toBe(null)
     expect(schema.fit({ event: 'a-b.c' })).not.toBe(null)
     expect(schema.fit({ event: 'a' })).not.toBe(null)
