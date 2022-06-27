@@ -1,0 +1,16 @@
+# Configuration
+
+# deployed messages price is 2
+
+POST http://localhost:8000/messages/5fb631032b2e40f79674b7ad2b1a0807/
+Content-Type: application/json
+
+{
+  "text": "test"
+}
+
+###
+
+# should have 8 credits
+
+GET http://localhost:8000/credits/balance/5fb631032b2e40f79674b7ad2b1a0807/
