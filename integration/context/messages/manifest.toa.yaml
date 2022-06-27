@@ -99,3 +99,6 @@ extensions:
         query:
           criteria: deleted!=true;
         operations: [add, find]
+
+configuration:
+  price: 1

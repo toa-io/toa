@@ -8,7 +8,9 @@ async function transition (input, entity, context) {
   Object.assign(entity, message)
 
   if (free !== true) {
-    const reply = await context.remote.credits.balance.debit({ input: 1, query: { id: input.sender } })
+    const price = context.configuration.price
+    const request = { input: price, query: { id: input.sender } }
+    const reply = await context.remote.credits.balance.debit(request)
 
     if (reply.error !== undefined) return { error: reply.error }
   }

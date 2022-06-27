@@ -38,5 +38,5 @@ mongodb@dev: host.docker.internal
 amqp@dev: host.docker.internal
 
 configuration:
-  stats.stats:
-    foo: 2
+  messages.messages:
+    price: 2
