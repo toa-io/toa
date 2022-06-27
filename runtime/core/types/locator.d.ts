@@ -1,7 +1,7 @@
 declare namespace toa.core {
 
     interface Locator {
-        domain: string
+        namespace: string
         name: string
         id: string
         label: string

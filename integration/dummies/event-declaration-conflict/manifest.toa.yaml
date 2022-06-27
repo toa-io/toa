@@ -1,6 +1,6 @@
 prototype: ../a
 
-domain: dummies
+namespace: dummies
 name: duplicate-event
 
 events:

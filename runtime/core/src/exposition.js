@@ -20,8 +20,8 @@ class Exposition extends Connector {
   }
 
   static #expose (manifest) {
-    const { domain, name, operations, events } = manifest
-    return { domain, name, operations, events }
+    const { namespace, name, operations, events } = manifest
+    return { namespace, name, operations, events }
   }
 }
 

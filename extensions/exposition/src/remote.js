@@ -23,8 +23,8 @@ class Remote extends Connector {
   constructor (server, remote, tree) {
     super()
 
-    const { domain, name } = remote.locator
-    const route = '/' + (domain === name ? domain : domain + '/' + name) + '*'
+    const { namespace, name } = remote.locator
+    const route = '/' + (namespace === name ? namespace : namespace + '/' + name) + '*'
 
     server.route(route, (req, res) => this.#reply(req, res))
 

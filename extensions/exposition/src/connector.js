@@ -6,11 +6,11 @@ class Connector extends Base {
   #binding
   #declaration
 
-  constructor (binding, { domain, name }, resources) {
+  constructor (binding, { namespace, name }, resources) {
     super()
 
     this.#binding = binding
-    this.#declaration = { domain, name, resources }
+    this.#declaration = { namespace, name, resources }
 
     this.depends(binding)
   }

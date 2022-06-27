@@ -17,10 +17,10 @@ let locator
 
 describe('defaults', () => {
   beforeEach(async () => {
-    const domain = generate()
+    const namespace = generate()
     const name = generate()
 
-    locator = new Locator({ domain, name })
+    locator = new Locator({ namespace, name })
 
     context = factory.context(locator, fixtures.schema)
     await context.connect()

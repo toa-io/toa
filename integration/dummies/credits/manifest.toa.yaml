@@ -1,4 +1,4 @@
-domain: credits
+namespace: credits
 name: balance
 
 entity:

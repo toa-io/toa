@@ -29,8 +29,8 @@ class Context extends Connector {
     return this.#context.apply(endpoint, request)
   })
 
-  remote = underlay(async ([domain, name, endpoint], [request]) => {
-    return this.#context.call(domain, name, endpoint, request)
+  remote = underlay(async ([namespace, name, endpoint], [request]) => {
+    return this.#context.call(namespace, name, endpoint, request)
   })
 
   /**

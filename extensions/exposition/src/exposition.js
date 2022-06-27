@@ -39,10 +39,10 @@ class Exposition extends Connector {
    * @returns {Promise<void>}
    */
   async #expose (declaration) {
-    const { domain, name, resources } = declaration
-    const key = domain + '/' + name
+    const { namespace, name, resources } = declaration
+    const key = namespace + '/' + name
 
-    if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(domain, name)
+    if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(namespace, name)
 
     const remote = await this.#remotes[key]
 
@@ -50,12 +50,12 @@ class Exposition extends Connector {
   }
 
   /**
-   * @param {string} domain
+   * @param {string} namespace
    * @param {string} name
    * @returns {Promise<Remote>}
    */
-  async #connect (domain, name) {
-    const remote = await this.#remote(domain, name)
+  async #connect (namespace, name) {
+    const remote = await this.#remote(namespace, name)
 
     await remote.connect()
 

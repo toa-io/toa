@@ -28,22 +28,22 @@ class Context extends Connector {
     return this.#local.invoke(endpoint, request)
   }
 
-  async call (domain, name, endpoint, request) {
-    const remote = await this.#remote(domain, name)
+  async call (namespace, name, endpoint, request) {
+    const remote = await this.#remote(namespace, name)
 
     return remote.invoke(endpoint, request)
   }
 
-  async #remote (domain, name) {
-    const key = domain + '.' + name
+  async #remote (namespace, name) {
+    const key = namespace + '.' + name
 
-    if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(domain, name)
+    if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(namespace, name)
 
     return this.#remotes[key]
   }
 
-  async #connect (domain, name) {
-    const remote = await this.#discover(domain, name)
+  async #connect (namespace, name) {
+    const remote = await this.#discover(namespace, name)
 
     this.depends(remote)
 

@@ -32,7 +32,7 @@ export namespace toa.formation {
         }
 
         interface Declaration {
-            domain: string
+            namespace: string
             name: string
             version: string
             entity: Object

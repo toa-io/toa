@@ -17,7 +17,7 @@ declare namespace toa.core {
         /**
          * Calls remote endpoint
          */
-        call(domain: string, name: string, endpoint: string, request: Request): Promise<Reply>
+        call(namespace: string, name: string, endpoint: string, request: Request): Promise<Reply>
     }
 
 }

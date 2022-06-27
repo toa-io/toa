@@ -6,7 +6,7 @@ declare namespace toa.extensions.exposition {
 
     namespace remotes {
 
-        type Factory = (domain: string, name: string) => Promise<Remote>
+        type Factory = (namespace: string, name: string) => Promise<Remote>
 
     }
 

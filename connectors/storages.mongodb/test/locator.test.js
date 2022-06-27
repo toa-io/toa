@@ -10,7 +10,7 @@ it('should set locator.host', () => {
 
   delete process.env.TOA_ENV
 
-  const original = new core.Locator({ domain: generate(), name: generate() })
+  const original = new core.Locator({ namespace: generate(), name: generate() })
   const locator = new Locator(original)
 
   expect(locator.hostname).toStrictEqual(original.host('storages-mongodb'))
@@ -23,7 +23,7 @@ it('should set localhost if env=local', () => {
 
   process.env.TOA_ENV = 'local'
 
-  const original = new core.Locator({ domain: generate(), name: generate() })
+  const original = new core.Locator({ namespace: generate(), name: generate() })
   const locator = new Locator(original)
 
   expect(locator.hostname).toStrictEqual('localhost')

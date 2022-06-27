@@ -1,7 +1,7 @@
 'use strict'
 
 const ok = {
-  domain: 'foo',
+  namespace: 'foo',
   name: 'bar',
   entity: {
     storage: 'whatever',

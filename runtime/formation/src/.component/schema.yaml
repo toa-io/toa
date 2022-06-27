@@ -39,7 +39,7 @@ properties:
       label:
         $ref: 'definitions#/definitions/label'
 
-  domain:
+  namespace:
     $ref: 'definitions#/definitions/token'
     not:
       oneOf:

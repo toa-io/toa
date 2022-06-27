@@ -23,7 +23,7 @@ declare namespace toa.formation {
         }
 
         interface Dependency {
-            domain: string
+            namespace: string
             name: string
         }
 

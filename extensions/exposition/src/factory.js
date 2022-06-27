@@ -45,12 +45,12 @@ class Factory {
   }
 
   /**
-   * @param {string} domain
+   * @param {string} namespace
    * @param {string} name
    * @returns {Promise<toa.extensions.exposition.Remote>}
    */
-  async #connect (domain, name) {
-    const locator = new Locator({ domain, name })
+  async #connect (namespace, name) {
+    const locator = new Locator({ namespace, name })
     const remote = await this.#boot.remote(locator)
     const query = this.#query.bind(this)
     const tree = new Tree(query)

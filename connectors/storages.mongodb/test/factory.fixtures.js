@@ -6,7 +6,7 @@ const Connection = jest.fn().mockImplementation(function () {})
 const Storage = jest.fn().mockImplementation(function () {})
 
 const locator = {
-  domain: generate(),
+  namespace: generate(),
   name: generate(),
   id: generate(),
   label: generate(),

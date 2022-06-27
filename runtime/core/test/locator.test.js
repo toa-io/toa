@@ -4,17 +4,17 @@ const { generate } = require('randomstring')
 const { Locator } = require('../src/locator')
 
 const regular = {
-  domain: generate(),
+  namespace: generate(),
   name: generate()
 }
 
 const nameless = {
-  domain: generate()
+  namespace: generate()
 }
 
 describe('regular', () => {
   const locator = new Locator(regular)
-  const host = regular.domain + '-' + regular.name
+  const host = regular.namespace + '-' + regular.name
   const type = generate()
 
   it('should provide host', () => {
@@ -25,13 +25,13 @@ describe('regular', () => {
     expect(locator.host(type)).toStrictEqual(type + '-' + host)
   })
 
-  it('should contain only domain if level 0', () => {
-    expect(locator.host(undefined, 0)).toEqual(regular.domain)
-    expect(locator.host(type, 0)).toEqual(type + '-' + regular.domain)
+  it('should contain only namespace if level 0', () => {
+    expect(locator.host(undefined, 0)).toEqual(regular.namespace)
+    expect(locator.host(type, 0)).toEqual(type + '-' + regular.namespace)
   })
 
   it('should expose uppercase', () => {
-    const expected = regular.domain.toUpperCase() + '_' + regular.name.toUpperCase()
+    const expected = regular.namespace.toUpperCase() + '_' + regular.name.toUpperCase()
 
     expect(locator.uppercase).toStrictEqual(expected)
   })
@@ -39,7 +39,7 @@ describe('regular', () => {
 
 describe('nameless', () => {
   const locator = new Locator(nameless)
-  const host = nameless.domain
+  const host = nameless.namespace
   const type = generate()
 
   it('should provide host', () => {

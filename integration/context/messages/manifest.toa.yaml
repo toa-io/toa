@@ -1,4 +1,4 @@
-domain: messages
+namespace: messages
 name: messages
 
 entity:

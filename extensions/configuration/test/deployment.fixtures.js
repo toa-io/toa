@@ -6,10 +6,10 @@ const { Locator } = require('@toa.io/core')
 const { random } = require('@toa.io/libraries/generic')
 
 const component = () => {
-  const domain = generate()
+  const namespace = generate()
   const name = generate()
 
-  return { locator: new Locator({ domain, name }) }
+  return { locator: new Locator({ namespace, name }) }
 }
 
 /** @type {toa.formation.component.Brief[]} */

@@ -6,7 +6,7 @@
 
 ```yaml
 # component.toa.yaml
-domain: dummies
+namespace: dummies
 name: dummy
 configuration:
   foo: bar
@@ -97,7 +97,7 @@ using [JSON Schema](https://json-schema.org) `object` type.
 
 ```yaml
 # component.toa.yaml
-domain: dummies
+namespace: dummies
 name: dummy
 
 extensions:

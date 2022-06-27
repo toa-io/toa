@@ -9,7 +9,7 @@ const { newid } = require('@toa.io/libraries/generic')
 const framework = require('./framework')
 
 const connector = '@toa.io/storages.mongodb'
-const locator = new Locator({ domain: 'credits', name: 'balance' })
+const locator = new Locator({ namespace: 'credits', name: 'balance' })
 const storage = boot.storage(locator, connector)
 
 beforeAll(async () => {

@@ -7,17 +7,17 @@ const clone = require('clone-deep')
  * @return {toa.formation.component.Declaration}
  */
 const component = (id) => {
-  const [domain, name] = id.split('.')
+  const [namespace, name] = id.split('.')
 
   return {
-    domain,
+    namespace,
     name,
     version: '0.0.0',
     locator: {
-      domain,
+      namespace,
       name,
       id,
-      label: `${domain}-${name}`
+      label: `${namespace}-${name}`
     },
     entity: null
   }
@@ -28,7 +28,7 @@ const context = {
   description: 'context fixture',
   version: '0.0.0',
   runtime: '0.0.0',
-  packages: 'domains/**/*',
+  packages: 'namespaces/**/*',
   registry: 'localhost:5000',
   components: [component('a.b'), component('b.a'), component('d.c')],
   compositions: [

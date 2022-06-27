@@ -14,7 +14,7 @@ it('should print help', async () => {
 it('should print manifest', async () => {
   const result = await cli('export component')
 
-  expect(result.stdout).toMatch(/^domain: credits/)
+  expect(result.stdout).toMatch(/^namespace: credits/)
 })
 
 it('should invoke', async () => {
