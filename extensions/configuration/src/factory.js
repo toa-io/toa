@@ -13,7 +13,7 @@ const { Provider } = require('./provider')
 class Factory {
   /**
    * @param {toa.core.Locator} locator
-   * @param {toa.libraries.schema.JSON | Object} declaration
+   * @param {toa.schema.JSON | Object} declaration
    * @return {toa.extensions.configuration.Context}
    */
   context (locator, declaration) {

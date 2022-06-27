@@ -16,10 +16,10 @@ keywords(validator)
 definitions(validator)
 
 /**
- * @implements {toa.libraries.schema.Schema}
+ * @implements {toa.schema.Schema}
  */
 class Schema {
-  /** @type {toa.libraries.schema.JSON} */
+  /** @type {toa.schema.JSON} */
   schema
 
   #validate
@@ -29,7 +29,7 @@ class Schema {
   #system
 
   /**
-   * @param {toa.libraries.schema.JSON | Object} schema
+   * @param {toa.schema.JSON | Object} schema
    */
   constructor (schema) {
     this.schema = schema
@@ -80,7 +80,7 @@ class Schema {
   }
 
   /**
-   * @param {toa.libraries.schema.JSON} schema
+   * @param {toa.schema.JSON} schema
    */
   #recompile (schema) {
     const { required, $id, ...defaults } = schema
@@ -140,7 +140,7 @@ class Schema {
   }
 
   /**
-   * @returns {toa.libraries.schema.Error}
+   * @returns {toa.schema.Error}
    */
   #error (errors = undefined) {
     if (errors === undefined) errors = this.#validate.errors

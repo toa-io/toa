@@ -3,7 +3,7 @@
 const { timeout } = require('./timeout')
 
 /**
- * @type {toa.libraries.generic.Retry}
+ * @type {toa.generic.Retry}
  */
 const retry = async (func, options = {}, attempt = 0) => {
   if (attempt === 0) options = Object.assign({}, DEFAULTS, options)
@@ -27,7 +27,7 @@ const retry = async (func, options = {}, attempt = 0) => {
 
 class RetryError extends Error {}
 
-/** @type {toa.libraries.generic.retry.Options} */
+/** @type {toa.generic.retry.Options} */
 const DEFAULTS = {
   retries: 5,
   base: 1000,

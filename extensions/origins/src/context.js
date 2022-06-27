@@ -41,7 +41,7 @@ class Context extends Connector {
   /**
    * @param {string} url
    * @param {import('node-fetch').Request} request
-   * @param {toa.libraries.generic.retry.Options} [options]
+   * @param {toa.generic.retry.Options} [options]
    * @return {Promise<import('node-fetch').Response>}
    */
   async #request (url, request, options) {
@@ -53,7 +53,7 @@ class Context extends Connector {
 
   /**
    * @param {Function} call
-   * @param {toa.libraries.generic.retry.Options} options
+   * @param {toa.generic.retry.Options} options
    * @return {any}
    */
   #retry (call, options) {

@@ -2,7 +2,7 @@
 
 import type { Error } from './error'
 
-declare namespace toa.libraries.schema {
+declare namespace toa.schema {
 
     type JSON = {
         $id?: string

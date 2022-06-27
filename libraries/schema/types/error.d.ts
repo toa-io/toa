@@ -1,4 +1,4 @@
-declare namespace toa.libraries.schema {
+declare namespace toa.schema {
 
     type Error = {
         message: string
@@ -10,4 +10,4 @@ declare namespace toa.libraries.schema {
 
 }
 
-export type Error = toa.libraries.schema.Error
+export type Error = toa.schema.Error

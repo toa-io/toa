@@ -10,7 +10,7 @@ const { form } = require('./.provider/form')
  * @implements {toa.extensions.configuration.Provider}
  */
 class Provider extends Connector {
-  /** @type {toa.libraries.schema.Schema} */
+  /** @type {toa.schema.Schema} */
   #schema
 
   /** @type {Object} */
@@ -24,7 +24,7 @@ class Provider extends Connector {
 
   /**
    * @param {toa.core.Locator} locator
-   * @param {toa.libraries.schema.Schema} schema
+   * @param {toa.schema.Schema} schema
    */
   constructor (locator, schema) {
     super()

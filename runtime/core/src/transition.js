@@ -47,7 +47,7 @@ class Transition extends Operation {
   }
 }
 
-/** @type {toa.libraries.generic.retry.Options} */
+/** @type {toa.generic.retry.Options} */
 const RETRY = {
   base: 10,
   dispersion: 1,

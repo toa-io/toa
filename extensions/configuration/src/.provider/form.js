@@ -3,7 +3,7 @@
 const { traverse } = require('@toa.io/libraries/generic')
 
 /**
- * @param {toa.libraries.schema.JSON | Object} schema
+ * @param {toa.schema.JSON | Object} schema
  * @return {Object}
  */
 const form = (schema) => {

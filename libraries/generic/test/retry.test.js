@@ -2,7 +2,7 @@
 
 const { retry, RetryError, timeout, random } = require('../src')
 
-/** @type {toa.libraries.generic.retry.Options} */
+/** @type {toa.generic.retry.Options} */
 let options
 
 beforeEach(() => {
@@ -57,7 +57,7 @@ it('should throw on failed retries', async () => {
 it('should delay attempts', async () => {
   const start = +new Date()
 
-  /** @type {toa.libraries.generic.retry.Task} */
+  /** @type {toa.generic.retry.Task} */
   const fn = (retry, attempt) => {
     if (attempt < 3) retry()
   }
