@@ -20,7 +20,7 @@ describe('defaults', () => {
     const namespace = generate()
     const name = generate()
 
-    locator = new Locator({ namespace, name })
+    locator = new Locator(name, namespace)
 
     context = factory.context(locator, fixtures.schema)
     await context.connect()

@@ -3,50 +3,52 @@
 const { generate } = require('randomstring')
 const { Locator } = require('../src/locator')
 
-const regular = {
-  namespace: generate(),
-  name: generate()
-}
+/** @type {string} */
+let name
 
-const nameless = {
-  namespace: generate()
-}
+/** @type {string} */
+let namespace
 
-describe('regular', () => {
-  const locator = new Locator(regular)
-  const host = regular.namespace + '-' + regular.name
-  const type = generate()
+/** @type {toa.core.Locator} */
+let locator
 
-  it('should provide host', () => {
-    expect(locator.host()).toStrictEqual(host)
-  })
+beforeEach(() => {
+  name = generate()
+  namespace = generate()
 
-  it('should prepend type', () => {
-    expect(locator.host(type)).toStrictEqual(type + '-' + host)
-  })
-
-  it('should contain only namespace if level 0', () => {
-    expect(locator.host(undefined, 0)).toEqual(regular.namespace)
-    expect(locator.host(type, 0)).toEqual(type + '-' + regular.namespace)
-  })
-
-  it('should expose uppercase', () => {
-    const expected = regular.namespace.toUpperCase() + '_' + regular.name.toUpperCase()
-
-    expect(locator.uppercase).toStrictEqual(expected)
-  })
+  locator = new Locator(name, namespace)
 })
 
-describe('nameless', () => {
-  const locator = new Locator(nameless)
-  const host = nameless.namespace
-  const type = generate()
+it('should expose name and namespace', () => {
+  expect(locator.name).toStrictEqual(name)
+  expect(locator.namespace).toStrictEqual(namespace)
+})
 
-  it('should provide host', () => {
-    expect(locator.host()).toStrictEqual(host)
-  })
+it('should expose id, label', () => {
+  expect(locator.id).toStrictEqual(locator.namespace + '.' + locator.name)
+  expect(locator.label).toStrictEqual(locator.namespace + '-' + locator.name)
+})
 
-  it('should prepend type', () => {
-    expect(locator.host(type)).toStrictEqual(type + '-' + host)
-  })
+it('should expose uppercase', () => {
+  expect(locator.uppercase).toStrictEqual((locator.namespace + '_' + locator.name).toUpperCase())
+})
+
+it('should throw if name or namespace is undefined', () => {
+  expect(() => new Locator(undefined, namespace)).toThrow(TypeError)
+
+  // noinspection JSCheckFunctionSignatures
+  expect(() => new Locator(name)).toThrow(TypeError)
+
+  // noinspection JSCheckFunctionSignatures
+  expect(() => new Locator()).toThrow(TypeError)
+})
+
+it('should expose host', () => {
+  expect(locator.hostname()).toStrictEqual(namespace + '-' + name)
+})
+
+it('should expose host with given prefix', () => {
+  const prefix = generate()
+
+  expect(locator.hostname(prefix)).toStrictEqual(prefix + '-' + namespace + '-' + name)
 })

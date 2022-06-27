@@ -12,17 +12,17 @@ class Exposition extends Connector {
 
     this.locator = locator
 
-    this.#manifest = Exposition.#expose(manifest)
+    this.#manifest = expose(manifest)
   }
 
   async invoke () {
     return { output: this.#manifest }
   }
+}
 
-  static #expose (manifest) {
-    const { namespace, name, operations, events } = manifest
-    return { namespace, name, operations, events }
-  }
+const expose = (manifest) => {
+  const { namespace, name, operations, events } = manifest
+  return { namespace, name, operations, events }
 }
 
 exports.Exposition = Exposition

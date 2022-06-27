@@ -6,7 +6,15 @@ const glob = require('fast-glob')
 const { load: yaml } = require('@toa.io/libraries/yaml')
 const { Locator } = require('@toa.io/core')
 
-const { expand, merge, validate, collapse, dereference, defaults, normalize } = require('./.component')
+const {
+  expand,
+  merge,
+  validate,
+  collapse,
+  dereference,
+  defaults,
+  normalize
+} = require('./.component')
 const { resolve } = require('./lookup')
 
 const component = async (reference) => {
@@ -25,7 +33,6 @@ const load = async (root) => {
   const manifest = await yaml(file)
 
   manifest.path = root
-  manifest.locator = new Locator(manifest)
 
   defaults(manifest)
   expand(manifest)
@@ -33,6 +40,8 @@ const load = async (root) => {
   await merge(root, manifest)
 
   if (manifest.prototype !== null) {
+    manifest.locator = new Locator(manifest.name, manifest.namespace)
+
     const path = resolve(manifest.prototype, root, MANIFEST)
     const prototype = await load(path)
 

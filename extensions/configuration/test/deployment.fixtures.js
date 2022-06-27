@@ -9,7 +9,7 @@ const component = () => {
   const namespace = generate()
   const name = generate()
 
-  return { locator: new Locator({ namespace, name }) }
+  return { locator: new Locator(name, namespace) }
 }
 
 /** @type {toa.formation.component.Brief[]} */

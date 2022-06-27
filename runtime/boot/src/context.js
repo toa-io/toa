@@ -9,7 +9,7 @@ const context = async (manifest) => {
   const extensions = boot.extensions.contexts(manifest)
 
   const lookup = async (namespace, name) => {
-    const locator = new Locator({ namespace, name })
+    const locator = new Locator(name, namespace)
     const remote = await boot.remote(locator)
 
     await remote.connect()

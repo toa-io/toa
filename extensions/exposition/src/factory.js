@@ -50,7 +50,7 @@ class Factory {
    * @returns {Promise<toa.extensions.exposition.Remote>}
    */
   async #connect (namespace, name) {
-    const locator = new Locator({ namespace, name })
+    const locator = new Locator(name, namespace)
     const remote = await this.#boot.remote(locator)
     const query = this.#query.bind(this)
     const tree = new Tree(query)

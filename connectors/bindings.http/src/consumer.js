@@ -37,7 +37,7 @@ class Consumer extends Connector {
   }
 
   static #locate (locator, endpoint) {
-    const host = locator.host()
+    const host = locator.hostname()
     const path = resource.path(locator, endpoint)
 
     return `http://${host}:${PORT}${path}`

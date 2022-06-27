@@ -17,7 +17,7 @@ afterAll(async () => {
 })
 
 it('should lookup', async () => {
-  const locator = new Locator('credits.balance')
+  const locator = new Locator('balance', 'credits')
   const reply = await discovery.lookup(locator)
 
   expect(reply.operations).toBeDefined()

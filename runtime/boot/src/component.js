@@ -17,7 +17,7 @@ const component = async (path, options) => {
     }
   }
 
-  manifest.locator = new Locator(manifest)
+  manifest.locator = new Locator(manifest.name, manifest.namespace)
 
   return manifest
 }
