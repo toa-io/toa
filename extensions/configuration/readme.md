@@ -6,8 +6,9 @@
 
 ```yaml
 # component.toa.yaml
-namespace: dummies
 name: dummy
+namespace: dummies
+
 configuration:
   foo: bar
   baz: 1
@@ -97,8 +98,8 @@ using [JSON Schema](https://json-schema.org) `object` type.
 
 ```yaml
 # component.toa.yaml
-namespace: dummies
 name: dummy
+namespace: dummies
 
 extensions:
   @toa.io/extensions.configuration:
