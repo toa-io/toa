@@ -1,12 +1,11 @@
 'use strict'
 
-const { describe } = require('./describe')
-
 /**
  * @param {toa.formation.Context} context
- * @returns {Object}
+ * @returns {toa.formation.context.dependencies.References}
  */
 const connectors = (context) => {
+  /** @type {toa.formation.context.dependencies.References} */
   const connectors = {}
 
   for (const component of context.components) {
@@ -14,9 +13,7 @@ const connectors = (context) => {
       connectors[component.entity.storage] = []
     }
 
-    connectors[component.entity.storage].push(
-      describe(component)
-    )
+    connectors[component.entity.storage].push(component)
 
     const bindings = new Set()
 
@@ -37,7 +34,7 @@ const connectors = (context) => {
         connectors[binding] = []
       }
 
-      connectors[binding].push(describe(component))
+      connectors[binding].push(component)
     }
   }
 

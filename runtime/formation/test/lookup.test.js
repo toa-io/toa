@@ -16,13 +16,13 @@ beforeEach(() => {
 describe('resolve', () => {
   it('should resolve runtime package references', () => {
     const target = path.dirname(require.resolve('@toa.io/formation/package.json'))
-    const result = resolve('@toa.io/formation')
+    const result = resolve('@toa.io/formation', generate())
 
     expect(result).toStrictEqual(target)
   })
 
   it('should throw on unknown packages', () => {
-    expect(() => resolve(generate())).toThrow(/Cannot resolve module/)
+    expect(() => resolve(generate(), generate())).toThrow(/Cannot resolve module/)
   })
 
   it('should resolve relative path', () => {
@@ -43,17 +43,9 @@ describe('resolve', () => {
 
   it('should not resolve absolute path as runtime package', () => {
     const root = path.resolve(__dirname, '../')
-    const result = resolve(root)
+    const result = resolve(root, generate())
 
     expect(result).toStrictEqual(root)
-  })
-
-  it('should resolve with custom indicators', () => {
-    const ref = './component/dummies/dummy'
-    const target = path.resolve(__dirname, ref)
-    const result = resolve(ref, __dirname, 'readme.txt')
-
-    expect(result).toStrictEqual(target)
   })
 })
 

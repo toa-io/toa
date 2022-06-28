@@ -95,6 +95,14 @@ Once kubernetes secret per configuration secret.
 <dd>Create local environment configuration values</dd>
 </dl>
 
+### Whose responsibility is to call annotations?
+
+- formation
+- deployment
+
+`toa export context` should throw errors if context has invalid annotations, and it's not a part of
+the deployment.
+
 ## References
 
 - [#125](https://github.com/toa-io/toa/issues/125)

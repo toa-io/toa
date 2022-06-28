@@ -268,11 +268,11 @@ describe('definitions', () => {
       }
     })
 
+    expect(schema.fit({ foo: 'a' })).toBe(null)
     expect(schema.fit({ foo: 'a-b' })).toBe(null)
-    expect(schema.fit({ foo: 'a-b-c' })).not.toBe(null)
+    expect(schema.fit({ foo: 'a-b-c' })).toBe(null)
     expect(schema.fit({ foo: 'a-1' })).not.toBe(null)
     expect(schema.fit({ foo: 'a.b' })).not.toBe(null)
-    expect(schema.fit({ foo: 'a' })).not.toBe(null)
   })
 
   it('should define version', () => {

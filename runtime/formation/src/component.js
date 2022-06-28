@@ -53,6 +53,10 @@ const load = async (root) => {
   return manifest
 }
 
+/**
+ * @param {string} pattern
+ * @returns {Promise<toa.formation.Component[]>}
+ */
 const find = async (pattern) => {
   const paths = await glob(pattern, { onlyDirectories: true, absolute: true })
 

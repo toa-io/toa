@@ -7,8 +7,7 @@ const { load } = require('@toa.io/libraries/yaml')
 const { find } = require('./component')
 
 const {
-  connectors,
-  extensions,
+  dependencies,
   normalize,
   complete,
   dereference,
@@ -31,11 +30,11 @@ const context = async (root, environment) => {
   convolve(context, environment)
   expand(context)
   normalize(context)
+
   validate(context)
 
   context.components = await find(roots)
-  context.connectors = connectors(context)
-  context.extensions = extensions(context)
+  context.dependencies = dependencies(context)
 
   dereference(context)
   complete(context)

@@ -1,30 +1,27 @@
 'use strict'
 
-const { dirname } = require('node:path')
+const { dirname, join } = require('node:path')
 const { empty, merge } = require('@toa.io/libraries/generic')
 
 /**
  * Resolves package reference to absolute path
  *
  * @param {string} reference
- * @param {string} [base]
+ * @param {string} base
  * @param {string} [indicator]
  * @returns {string}
  */
 const resolve = (reference, base, indicator = 'package.json') => {
-  if (KNOWN[reference] !== undefined) reference = KNOWN[reference]
+  if (reference in SHORTCUTS) return SHORTCUTS[reference]
+  if (KNOWN.includes(reference)) return reference
 
-  const paths = []
-  const relative = reference[0] === '.'
+  const paths = base ? [base] : undefined
 
-  if (!relative) paths.push(RUNTIME)
-  if (base !== undefined) paths.push(base)
-
-  return dirname(require.resolve(reference + '/' + indicator, { paths }))
+  return dirname(require.resolve(join(reference, indicator), { paths }))
 }
 
 /**
- * Finds object keys with known names, resolves and groups them to a given group key
+ * Finds object keys with known shortcuts, resolves and groups them to a given group key if provided
  *
  * @param {Object} object
  * @param {string} [group]
@@ -34,7 +31,7 @@ const recognize = (object, group) => {
 
   const target = group === undefined ? object : {}
 
-  for (const [alias, name] of Object.entries(KNOWN)) {
+  for (const [alias, name] of Object.entries(SHORTCUTS)) {
     const value = object[alias]
 
     if (value === undefined) continue
@@ -47,16 +44,19 @@ const recognize = (object, group) => {
   if (group !== undefined && !empty(target)) object[group] = merge(object[group], target)
 }
 
-const KNOWN = {
+const SHORTCUTS = {
   http: '@toa.io/bindings.http',
   amqp: '@toa.io/bindings.amqp',
+  node: '@toa.io/bridges.node',
   mongodb: '@toa.io/storages.mongodb',
   exposition: '@toa.io/extensions.exposition',
   origins: '@toa.io/extensions.origins',
   configuration: '@toa.io/extensions.configuration'
 }
 
-const RUNTIME = dirname(require.resolve('@toa.io/runtime/package.json'))
+const KNOWN = Object.values(SHORTCUTS)
+
+KNOWN.push('@toa.io/storages.null')
 
 exports.recognize = recognize
 exports.resolve = resolve

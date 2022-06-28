@@ -6,6 +6,7 @@ import { Locator } from '@toa.io/core/types'
 declare namespace toa.formation {
 
     namespace context {
+
         interface Runtime {
             version: string
             registry?: string
@@ -22,13 +23,21 @@ declare namespace toa.formation {
             components: string[] | Component[]
         }
 
-        interface Dependency {
-            namespace: string
-            name: string
+        namespace dependencies {
+
+            type Instance = {
+                locator: Locator
+                manifest?: Object
+            }
+
+            type References = {
+                [reference: string]: Component[]
+            }
+
         }
 
         interface Dependencies {
-            [path: string]: Dependency[]
+            [reference: string]: dependencies.Instance[]
         }
 
         interface Declaration {
@@ -49,8 +58,7 @@ declare namespace toa.formation {
         environment?: string
         registry: context.Registry
         components: Component[]
-        connectors?: context.Dependencies
-        extensions?: context.Dependencies
+        dependencies?: context.Dependencies
     }
 
 }

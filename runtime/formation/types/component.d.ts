@@ -27,10 +27,6 @@ export namespace toa.formation {
             [key: string]: Object
         }
 
-        interface Brief {
-            locator: Locator
-        }
-
         interface Declaration {
             namespace: string
             name: string
@@ -49,4 +45,3 @@ export namespace toa.formation {
 }
 
 export type Component = toa.formation.Component
-export type Brief = toa.formation.component.Brief

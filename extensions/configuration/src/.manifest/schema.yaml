@@ -1,7 +1,7 @@
 $schema: https://json-schema.org/draft/2019-09/schema
 $id: https://schemas.toa.io/0.0.0/extensions/configuration/manifest
 
-$ref: '../../definitions#/definitions/schema'
+$ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/schema'
 properties:
   type:
     const: object

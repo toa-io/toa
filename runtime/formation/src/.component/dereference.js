@@ -1,6 +1,7 @@
 'use strict'
 
 const { merge } = require('@toa.io/libraries/generic')
+
 const dereference = (manifest) => {
   // schemas
   const property = resolve(manifest.entity.schema.properties)

@@ -48,6 +48,11 @@ describe('routing', () => {
 
     const before = await fetch(url)
 
+    if (before.status === 500) {
+      console.error('Shutdown Kind deployment')
+      process.exit(1)
+    }
+
     expect(before.status).toBe(404)
 
     a = await framework.compose(['a'])

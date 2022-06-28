@@ -84,7 +84,7 @@ describe('compositions', () => {
     const container = deployment.spec.template.spec.containers[0]
 
     expect(container.env).toStrictEqual(expect.arrayContaining([{
-      name: 'TOA_CONFIGURATION_STATS_STATS',
+      name: 'TOA_CONFIGURATION_MESSAGES_MESSAGES',
       value: expect.any(String)
     }]))
   })

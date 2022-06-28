@@ -20,8 +20,10 @@ const extensions = (manifest) => {
       if (declaration === undefined) throw new Error(`Extension '${reference}' didn't return manifest`)
     }
 
-    delete extensions[reference]
     extensions[path] = declaration
+
+    // relative references
+    if (reference !== path) delete extensions[reference]
   }
 }
 

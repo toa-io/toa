@@ -1,7 +1,5 @@
 'use strict'
 
-const { resolve } = require('node:path')
-
 const { Schema } = require('@toa.io/libraries/schema')
 const { Context } = require('./context')
 const { Configuration } = require('./configuration')
@@ -26,14 +24,16 @@ class Factory {
 
   provider (component) {
     const locator = component.locator
-    const path = resolve(__dirname, '../')
-    const declaration = component.extensions?.[path]
+    const declaration = component.extensions?.[ID]
 
     if (declaration === undefined) throw new Error(`Configuration extension not found in '${locator.id}'`)
+
     const schema = new Schema(declaration)
 
     return new Provider(locator, schema)
   }
 }
+
+const ID = require('../package.json').name
 
 exports.Factory = Factory

@@ -48,16 +48,14 @@ class Factory {
   }
 
   /**
-   * @returns {Array<toa.operations.deployment.Dependency>}
+   * @returns {toa.operations.deployment.Dependency[]}
    */
   #dependencies () {
-    /** @type {toa.formation.context.Dependencies} */
-    const map = { ...this.#context.connectors, ...this.#context.extensions }
-    /** @type {Array<toa.operations.deployment.Dependency>} */
+    /** @type {toa.operations.deployment.Dependency[]} */
     const dependencies = []
 
-    for (const [location, instances] of Object.entries(map)) {
-      const dependency = this.#dependency(location, instances)
+    for (const [reference, instances] of Object.entries(this.#context.dependencies)) {
+      const dependency = this.#dependency(reference, instances)
 
       if (dependency !== undefined) dependencies.push(dependency)
     }
@@ -67,18 +65,19 @@ class Factory {
 
   /**
    * @param {string} path
-   * @param {toa.formation.context.Dependency[]} declarations
+   * @param {toa.formation.context.dependencies.Instance[]} instances
    * @returns {toa.operations.deployment.Dependency | undefined}
    */
-  #dependency (path, declarations) {
+  #dependency (path, instances) {
     const module = require(path)
     const pkg = require(path + '/package.json')
 
     if (module.deployment === undefined) return
 
     const annotations = this.#context.annotations?.[pkg.name]
+
     /** @type {toa.operations.deployment.dependency.Declaration} */
-    const dependency = module.deployment(declarations, annotations)
+    const dependency = module.deployment(instances, annotations)
 
     /** @type {toa.operations.deployment.Service[]} */
     const services = dependency.services?.map((service) => this.#service(path, service))

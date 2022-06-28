@@ -1,15 +1,15 @@
 'use strict'
 
-const { validate } = require('./.annotations')
+const { validate } = require('./.annotation')
 
 /**
  * @param {string} declaration
  * @returns {string}
  */
-const annotations = (declaration) => {
+const annotation = (declaration) => {
   validate(declaration)
 
   return declaration
 }
 
-exports.annotations = annotations
+exports.annotation = annotation

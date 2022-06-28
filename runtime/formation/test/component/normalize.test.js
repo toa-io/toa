@@ -1,6 +1,6 @@
 'use strict'
 
-const { dirname, resolve } = require('node:path')
+const { dirname } = require('node:path')
 const clone = require('clone-deep')
 
 const { normalize } = require('../../src/.component')
@@ -35,17 +35,6 @@ describe('extensions', () => {
     normalize(manifest)
 
     expect(manifest.extensions[path]).toStrictEqual(origins)
-  })
-
-  it('should resolve relative references', () => {
-    const ref = './dummies/extension'
-    const declaration = manifest.extensions[ref]
-    const path = resolve(__dirname, ref)
-
-    normalize(manifest)
-
-    expect(declaration).toBeDefined()
-    expect(manifest.extensions[path]).toStrictEqual(declaration)
   })
 
   it('should throw if manifest is undefined', () => {
