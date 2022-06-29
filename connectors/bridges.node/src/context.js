@@ -5,6 +5,7 @@ const { underlay } = require('@toa.io/libraries/generic')
 
 class Context extends Connector {
   extensions
+  configuration
   origins
 
   #context
@@ -15,19 +16,21 @@ class Context extends Connector {
   constructor (context) {
     super()
 
-    this.extensions = this.#extensions(/** @type {toa.core.extensions.Context[]} */ context.extensions)
-
     this.#context = context
 
     this.depends(context)
+  }
+
+  async connection () {
+    this.extensions = this.#extensions(/** @type {toa.core.extensions.Context[]} */ this.#context.extensions)
   }
 
   local = underlay(async ([endpoint], [request]) => {
     return this.#context.apply(endpoint, request)
   })
 
-  remote = underlay(async ([domain, name, endpoint], [request]) => {
-    return this.#context.call(domain, name, endpoint, request)
+  remote = underlay(async ([namespace, name, endpoint], [request]) => {
+    return this.#context.call(namespace, name, endpoint, request)
   })
 
   /**
@@ -42,8 +45,9 @@ class Context extends Connector {
 
       map[extension.name] = extension.invoke.bind(extension)
 
-      // known extensions
-      if (extension.name === 'origins') this.#origins(extension)
+      // well-known extensions
+      if (extension.name === 'configuration') this.configuration = extension.invoke()
+      if (extension.name === 'origins') this.origins = this.#origins(extension)
     }
 
     return map
@@ -53,7 +57,7 @@ class Context extends Connector {
    * @param {toa.core.extensions.Context} extension
    */
   #origins (extension) {
-    this.origins = underlay(async (segs, args) => {
+    return underlay(async (segs, args) => {
       if (segs.length < 2) throw new Error(`Origins call requires at least 2 arguments, ${segs.length} given`)
 
       const name = segs.shift()

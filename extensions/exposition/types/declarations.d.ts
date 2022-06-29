@@ -21,7 +21,7 @@ declare namespace toa.extensions.exposition.declarations {
     }
 
     interface Exposition {
-        domain: string
+        namespace: string
         name: string
         resources: Node
     }

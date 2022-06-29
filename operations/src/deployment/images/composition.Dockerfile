@@ -9,6 +9,6 @@ WORKDIR /composition
 ADD . .
 
 # run 'npm i' in each component
-RUN find . -maxdepth 1 -type d \( ! -name . \) -exec /bin/sh -c "cd '{}' && npm i" \;
+RUN find . -maxdepth 1 -type d \( ! -name . \) -exec /bin/sh -c "cd '{}' && if [ -f package.json ]; then npm i; fi" \;
 
 CMD toa compose *

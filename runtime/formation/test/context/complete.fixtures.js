@@ -1,17 +1,17 @@
 'use strict'
 
 const component = (id) => {
-  const [domain, name] = id.split('.')
+  const [namespace, name] = id.split('.')
 
   return {
-    domain,
+    namespace,
     name,
     version: '0.0.0',
     locator: {
-      domain,
+      namespace,
       name,
       id,
-      label: `${domain}-${name}`
+      label: `${namespace}-${name}`
     }
   }
 }
@@ -21,7 +21,7 @@ const context = {
   name: 'test',
   description: 'context fixture',
   version: '0.0.0',
-  packages: 'domains/**/*',
+  packages: 'namespaces/**/*',
   registry: 'localhost:5000',
   components: [
     component('a.b'),

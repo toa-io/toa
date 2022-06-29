@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/libraries",
-  "version": "0.2.0-dev.58",
+  "version": "0.2.0-dev.62",
   "description": "Toa Libraries",
   "homepage": "https://toa.io",
   "author": {
@@ -29,6 +29,8 @@
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1",
     "chalk": "4.1.2",
+    "clone-deep": "4.0.1",
+    "fast-glob": "3.2.11",
     "js-yaml": "4.1.0",
     "uuid": "8.3.2"
   }

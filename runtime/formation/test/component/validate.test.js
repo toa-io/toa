@@ -29,34 +29,34 @@ it('should not have additional properties', () => {
   expect(() => validate(manifest)).toThrow(/must NOT have additional property/)
 })
 
-describe('domain', () => {
+describe('namespace', () => {
   it('should match token pattern', () => {
-    manifest.domain = '1'
+    manifest.namespace = '1'
     expect(() => validate(manifest)).toThrow(/must match pattern/)
 
-    manifest.domain = 'foo_'
+    manifest.namespace = 'foo_'
     expect(() => validate(manifest)).toThrow(/must match pattern/)
 
-    manifest.domain = 'foo-'
+    manifest.namespace = 'foo-'
     expect(() => validate(manifest)).toThrow(/must match pattern/)
 
-    manifest.domain = 'foo-BAR'
+    manifest.namespace = 'foo-BAR'
     expect(() => validate(manifest)).not.toThrow()
 
-    manifest.domain = 'foo_bar'
+    manifest.namespace = 'foo_bar'
     expect(() => validate(manifest)).not.toThrow()
 
-    manifest.domain = 'FooBar12'
+    manifest.namespace = 'FooBar12'
     expect(() => validate(manifest)).not.toThrow()
   })
 
-  it('should forbid \'system\' domain', () => {
-    manifest.domain = 'system'
+  it('should forbid \'system\' namespace', () => {
+    manifest.namespace = 'system'
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 
-  it('should forbid \'default\' domain', () => {
-    manifest.domain = 'default'
+  it('should forbid \'default\' namespace', () => {
+    manifest.namespace = 'default'
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 })

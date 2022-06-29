@@ -8,7 +8,8 @@ const { Locator } = require('@toa.io/core')
  * @returns {toa.core.Runtime}
  */
 const remote = async (id) => {
-  const locator = new Locator(id)
+  const [namespace, name] = id.split('.')
+  const locator = new Locator(name, namespace)
   const remote = await boot.remote(locator)
   await remote.connect()
 

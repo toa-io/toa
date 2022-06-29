@@ -3,6 +3,11 @@
 const { component: load } = require('@toa.io/formation')
 const { Locator } = require('@toa.io/core')
 
+/**
+ * @param {string} path
+ * @param {Object} [options]
+ * @return {Promise<toa.formation.Component>}
+ */
 const component = async (path, options) => {
   const manifest = await load(path)
 
@@ -12,7 +17,7 @@ const component = async (path, options) => {
     }
   }
 
-  manifest.locator = new Locator(manifest)
+  manifest.locator = new Locator(manifest.name, manifest.namespace)
 
   return manifest
 }

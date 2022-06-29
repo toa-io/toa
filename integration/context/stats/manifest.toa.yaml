@@ -1,4 +1,4 @@
-domain: stats
+namespace: stats
 name: stats
 
 entity:

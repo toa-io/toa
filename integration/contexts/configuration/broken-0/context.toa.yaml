@@ -1,0 +1,10 @@
+name: broken-configuration
+description: Integration tests for configuration extension
+version: 0.0.0
+packages: '*'
+runtime: .
+registry: localhost:5000
+
+configuration:
+  non-existent:
+    foo: bar

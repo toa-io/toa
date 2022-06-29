@@ -7,11 +7,12 @@ const source = {
         foo: 'string'
       }
     },
-    storage: '@toa.io/storages.mongodb'
+    storage: 'mongodb'
   },
-  bridge: '@toa.io/bridges.node',
+  bridge: 'node',
   operations: {
     add: {
+      bridge: 'node',
       input: {
         properties: {
           foo: 'integer',
@@ -50,6 +51,12 @@ const source = {
       }
     }
   },
+  events: {
+    happened: {
+      bridge: 'node',
+      binding: 'amqp'
+    }
+  },
   receivers: {
     event: 'transit'
   }
@@ -64,11 +71,12 @@ const target = {
         }
       }
     },
-    storage: expect.stringMatching(/storages\.mongodb$/)
+    storage: '@toa.io/storages.mongodb'
   },
-  bridge: expect.stringMatching(/bridges\.node$/),
+  bridge: '@toa.io/bridges.node',
   operations: {
     add: {
+      bridge: '@toa.io/bridges.node',
       input: {
         properties: {
           foo: {
@@ -113,6 +121,12 @@ const target = {
         },
         id: null
       }
+    }
+  },
+  events: {
+    happened: {
+      bridge: '@toa.io/bridges.node',
+      binding: '@toa.io/bindings.amqp'
     }
   },
   receivers: {

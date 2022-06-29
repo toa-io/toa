@@ -1,7 +1,5 @@
 'use strict'
 
-const { Locator } = require('@toa.io/core')
-
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
@@ -41,8 +39,7 @@ class Factory {
   }
 
   broadcaster (name, group) {
-    const locator = new Locator()
-    const channel = this.#channel(locator)
+    const channel = this.#channel()
 
     return new Broadcaster(channel, name, group)
   }

@@ -1,6 +1,7 @@
 'use strict'
 
-const { resolve } = require('../../lookup')
+const { directory: { find } } = require('@toa.io/libraries/generic')
+const { resolve } = require('../../shortcuts')
 
 /**
  * @param {toa.formation.Component} manifest
@@ -11,8 +12,12 @@ const extensions = (manifest) => {
   const extensions = manifest.extensions
 
   for (let [reference, declaration] of Object.entries(extensions)) {
-    const path = resolve(reference, manifest.path)
-    const extension = require(path)
+    let key = resolve(reference)
+
+    // relative path
+    if (key[0] === '.') key = find(key, manifest.path)
+
+    const extension = require(key)
 
     if (extension.manifest !== undefined) {
       declaration = extension.manifest(declaration, manifest)
@@ -20,8 +25,10 @@ const extensions = (manifest) => {
       if (declaration === undefined) throw new Error(`Extension '${reference}' didn't return manifest`)
     }
 
-    delete extensions[reference]
-    extensions[path] = declaration
+    extensions[key] = declaration
+
+    // shortcut was used
+    if (reference !== key) delete extensions[reference]
   }
 }
 

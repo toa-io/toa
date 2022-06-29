@@ -1,6 +1,6 @@
 'use strict'
 
-const { join } = require('node:path')
+const { join, dirname } = require('node:path')
 
 const { Image } = require('./image')
 const { directory: { copy } } = require('@toa.io/libraries/generic')
@@ -26,19 +26,19 @@ class Service extends Image {
   #version
 
   /**
-   * @param scope {string}
-   * @param runtime {toa.formation.context.Runtime}
-   * @param path {string}
-   * @param service {toa.operations.deployment.dependency.Service}
+   * @param {string} scope
+   * @param {toa.formation.context.Runtime} runtime
+   * @param {string} reference
+   * @param {toa.operations.deployment.dependency.Service} service
    */
-  constructor (scope, runtime, path, service) {
+  constructor (scope, runtime, reference, service) {
     super(scope, runtime)
 
     this.service = service.name
 
     this.#group = service.group
     this.#name = service.name
-    this.#path = path
+    this.#path = find(reference)
     this.#version = service.version
   }
 
@@ -57,6 +57,14 @@ class Service extends Image {
 
     return context
   }
+}
+
+/**
+ * @param {string} reference
+ * @returns {string}
+ */
+const find = (reference) => {
+  return dirname(require.resolve(join(reference, 'package.json')))
 }
 
 exports.Service = Service

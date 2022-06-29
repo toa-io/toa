@@ -8,18 +8,24 @@ const contexts = (manifest) => {
   const contexts = []
 
   for (const [name, declaration] of Object.entries(manifest.extensions)) {
-    const instances = instantiate(name, declaration, manifest)
+    const extension = instantiate(name, declaration, manifest)
 
-    if (instances !== undefined) contexts.push(...instances)
+    if (extension !== undefined) contexts.push(extension)
   }
 
   return contexts
 }
 
-const instantiate = (path, declaration) => {
-  const factory = resolve(path)
+/**
+ * @param {string} path
+ * @param {any} declaration
+ * @param {toa.formation.Context} manifest
+ * @return {Context}
+ */
+const instantiate = (path, declaration, manifest) => {
+  const factory = resolve(path, '.')
 
-  if (factory.contexts !== undefined) return factory.contexts(declaration)
+  if (factory.context !== undefined) return factory.context(manifest.locator, declaration)
 }
 
 exports.contexts = contexts

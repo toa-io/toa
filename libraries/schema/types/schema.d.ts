@@ -2,7 +2,7 @@
 
 import type { Error } from './error'
 
-declare namespace toa.libraries.schema {
+declare namespace toa.schema {
 
     type JSON = {
         $id?: string
@@ -13,11 +13,15 @@ declare namespace toa.libraries.schema {
     }
 
     interface Schema {
+        readonly schema: JSON
+
         fit(value: any): Error | null
 
         validate(value: any): void
 
         match(value: any): Error | null
+
+        adapt(value: any): Error | null
 
         defaults(value?: any): Object
 

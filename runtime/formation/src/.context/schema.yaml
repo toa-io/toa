@@ -6,7 +6,7 @@ properties:
   version:
     $ref: 'definitions#/definitions/version'
   name:
-    $ref: 'definitions#/definitions/token'
+    $ref: 'definitions#/definitions/label'
   description:
     type: string
   packages:

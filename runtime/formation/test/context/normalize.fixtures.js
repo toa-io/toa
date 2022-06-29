@@ -9,7 +9,7 @@ const context = {
   name: 'test',
   description: 'context fixture',
   version: '0.0.0',
-  packages: 'domains/**/*',
+  packages: 'namespaces/**/*',
   registry: 'localhost:5000',
   compositions: [
     {

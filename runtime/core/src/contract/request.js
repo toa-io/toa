@@ -10,7 +10,7 @@ class Request extends Conditions {
   static Exception = RequestContractException
 
   /**
-   * @returns {toa.libraries.schema.JSON}
+   * @returns {toa.schema.JSON}
    */
   static schema (definition) {
     const schema = { properties: {}, additionalProperties: false }

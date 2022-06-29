@@ -1,4 +1,4 @@
-declare namespace toa.libraries.annotations {
+declare namespace toa.annotations {
 
     namespace proxy {
         type Node = {

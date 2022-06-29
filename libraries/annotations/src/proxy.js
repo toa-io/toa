@@ -3,8 +3,8 @@
 const { normalize, validate } = require('./.proxy')
 
 /**
- * @param {toa.libraries.annotations.proxy.Proxy | string} declaration
- * @return {toa.libraries.annotations.Proxy}
+ * @param {toa.annotations.proxy.Proxy | string} declaration
+ * @return {toa.annotations.Proxy}
  */
 const proxy = (declaration) => {
   const normalized = normalize(declaration)

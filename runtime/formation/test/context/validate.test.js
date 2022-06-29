@@ -69,12 +69,15 @@ describe('registry', () => {
   })
 })
 
-it('should require name as token', () => {
+it('should require name as label', () => {
   delete context.name
   expect(() => validate(context)).toThrow(/required/)
 
   context.name = 'foo bar'
   expect(() => validate(context)).toThrow(/pattern/)
+
+  context.name = 'foo-bar'
+  expect(() => validate(context)).not.toThrow(/pattern/)
 })
 
 it('should require packages location', () => {

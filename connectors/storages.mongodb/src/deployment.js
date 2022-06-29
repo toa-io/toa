@@ -20,7 +20,7 @@ const deployment = (components, annotations) => {
  */
 const proxy = (component, annotations) => {
   const name = PREFIX + component.locator.label
-  const target = extract(annotations, [component.locator.domain, component.locator.name])
+  const target = extract(annotations, [component.locator.namespace, component.locator.name])
 
   return { name, target }
 }

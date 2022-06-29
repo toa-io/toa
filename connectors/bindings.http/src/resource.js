@@ -1,6 +1,6 @@
 'use strict'
 
-const path = (locator, endpoint) => ['', locator.domain, locator.name, endpoint].join('/')
+const path = (locator, endpoint) => ['', locator.namespace, locator.name, endpoint].join('/')
 const method = 'POST'
 
 exports.path = path

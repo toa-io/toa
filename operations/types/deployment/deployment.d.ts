@@ -22,6 +22,7 @@ declare namespace toa.operations.deployment {
         services?: Service[]
         proxies?: dependency.Proxy[]
         environment?: string
+        variables?: dependency.Variables
     }
 
     namespace installation {

@@ -5,14 +5,14 @@ const { Runtime, Locator } = require('@toa.io/core')
 
 const boot = require('./index')
 
-const runtime = async (manifest) => {
-  const locator = new Locator(manifest)
-  const storage = boot.storage(locator, manifest.entity.storage)
-  const context = await boot.context(manifest)
-  const emission = boot.emission(manifest.events, locator)
+const runtime = async (component) => {
+  const locator = new Locator(component.name, component.namespace)
+  const storage = boot.storage(locator, component.entity.storage)
+  const context = await boot.context(component)
+  const emission = boot.emission(component.events, locator)
 
-  const operations = remap(manifest.operations, (definition, endpoint) =>
-    boot.operation(manifest, endpoint, definition, context, storage, emission))
+  const operations = remap(component.operations, (definition, endpoint) =>
+    boot.operation(component, endpoint, definition, context, storage, emission))
 
   const runtime = new Runtime(locator, operations)
 

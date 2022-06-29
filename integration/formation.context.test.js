@@ -15,8 +15,7 @@ beforeAll(async () => {
 it('should load', async () => {
   expect(context).toBeDefined()
   expect(context.components.length).toBeGreaterThan(0)
-  expect(Object.keys(context.connectors).length).toBeGreaterThan(0)
-  expect(Object.keys(context.extensions).length).toBeGreaterThan(0)
+  expect(Object.keys(context.dependencies).length).toBeGreaterThan(0)
 })
 
 it('should convolve with given environment', () => {

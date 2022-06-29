@@ -1,12 +1,14 @@
 declare namespace toa.core {
 
     interface Locator {
-        domain: string
         name: string
+        namespace: string
+
         id: string
         label: string
+        uppercase: string
 
-        host(type?: string, level?: number): string
+        hostname(type?: string): string
     }
 
 }

@@ -13,7 +13,7 @@ beforeEach(() => {
 
 it('should ignore locator', () => {
   const source = {}
-  const prototype = { domain: 'foo1', name: 'bar1' }
+  const prototype = { namespace: 'foo1', name: 'bar1' }
   const manifest = clone(source)
 
   collapse(manifest, prototype)

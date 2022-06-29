@@ -15,18 +15,19 @@ const receivers = async (manifest, runtime) => {
     const receiver = new Receiver(definition, local, bridge)
 
     let transport = definition.binding
-    const locator = new Locator(label)
-    const { endpoint } = Locator.parse(label)
+
+    const [namespace, name, endpoint] = label.split('.')
+    const remote = new Locator(name, namespace)
 
     if (transport === undefined) {
       const discovery = await boot.discovery.discovery()
-      const { events } = await discovery.lookup(locator)
+      const { events } = await discovery.lookup(remote)
 
       transport = events[endpoint].binding
     }
 
-    const { id } = new Locator(manifest)
-    const binding = boot.bindings.receive(transport, locator, endpoint, id, receiver)
+    const { id } = new Locator(manifest.name, manifest.namespace)
+    const binding = boot.bindings.receive(transport, remote, endpoint, id, receiver)
 
     binding.depends(runtime)
     receivers.push(binding)

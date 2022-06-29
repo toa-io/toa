@@ -10,14 +10,9 @@ const builder = (yargs) => {
       desc: 'Path to package',
       default: '.'
     })
-    .positional('name', {
-      type: 'string',
-      desc: 'Service name',
-      default: 'default'
-    })
 }
 
-exports.command = 'serve [path] [name]'
+exports.command = 'serve [path]'
 exports.desc = 'Run service'
 exports.builder = builder
 exports.handler = serve

@@ -1,4 +1,4 @@
-import type { Locator } from '@toa.io/core'
+import type { Locator } from '@toa.io/core/types'
 
 export namespace toa.formation {
 
@@ -27,12 +27,8 @@ export namespace toa.formation {
             [key: string]: Object
         }
 
-        interface Brief {
-            locator: Locator
-        }
-
         interface Declaration {
-            domain: string
+            namespace: string
             name: string
             version: string
             entity: Object

@@ -4,7 +4,7 @@ const { console } = require('@toa.io/libraries/console')
 const { newid } = require('@toa.io/libraries/generic')
 
 /**
- * Abstract connections hierarchy element
+ * Abstract connections hierarchy
  */
 class Connector {
   /** @type {Array<Connector>} */
@@ -143,6 +143,11 @@ class Connector {
     await this.#disconnecting
 
     console.debug(`Connector '${this.id}' disconnected`)
+  }
+
+  async reconnect () {
+    await this.disconnect()
+    await this.connect()
   }
 
   debug (node = {}) {
