@@ -1,10 +1,10 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { convolve } = require('@toa.io/libraries/generic')
+const { convolve, directory: { glob } } = require('@toa.io/libraries/generic')
 const { load } = require('@toa.io/libraries/yaml')
 
-const { find } = require('./component')
+const { component } = require('./component')
 
 const {
   dependencies,
@@ -23,7 +23,7 @@ const {
 const context = async (root, environment) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.formation.Context} */ await load(path)
-  const roots = resolve(root, context.packages)
+  const pattern = resolve(root, context.packages)
 
   context.environment = environment
 
@@ -33,7 +33,9 @@ const context = async (root, environment) => {
 
   validate(context)
 
-  context.components = await find(roots)
+  const paths = await glob(pattern)
+
+  context.components = await Promise.all(paths.map(component))
   context.dependencies = dependencies(context)
 
   dereference(context)

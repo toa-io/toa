@@ -1,6 +1,6 @@
 'use strict'
 
-const { resolve } = require('../../lookup')
+const { resolve } = require('../../shortcuts')
 const { schema } = require('./schema')
 
 function operations (manifest) {
@@ -9,7 +9,7 @@ function operations (manifest) {
   for (const operation of Object.values(manifest.operations)) {
     if (operation.input !== undefined) operation.input = schema(operation.input, true)
     if (operation.output !== undefined) operation.output = schema(operation.output, true)
-    if (operation.bridge !== undefined) operation.bridge = resolve(operation.bridge, manifest.path)
+    if (operation.bridge !== undefined) operation.bridge = resolve(operation.bridge)
   }
 }
 

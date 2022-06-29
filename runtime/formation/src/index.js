@@ -2,8 +2,8 @@
 
 const { context } = require('./context')
 const { component } = require('./component')
-const { resolve } = require('./lookup')
 
-exports.resolve = resolve
+exports.shortcuts = require('./shortcuts') // used by cli
+
 exports.context = context
 exports.component = component

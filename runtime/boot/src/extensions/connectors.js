@@ -17,7 +17,7 @@ const connectors = (manifest) => {
 }
 
 const connector = (name, declaration, manifest) => {
-  const factory = resolve(name)
+  const factory = resolve(name, manifest.path)
 
   if (factory.connector !== undefined) return factory.connector(manifest.locator, declaration)
 }

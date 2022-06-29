@@ -1,27 +1,18 @@
 'use strict'
 
+const { directory: { find } } = require('@toa.io/libraries/generic')
 const boot = require('../..')
 
 /**
- * @param {string} path
+ * @param {string} reference
+ * @param {string} base
  * @returns {toa.core.extensions.Factory}
  */
-const resolve = (path) => {
-  if (instances[path] === undefined) instances[path] = create(path)
-
-  return instances[path]
-}
-
-/**
- * @param {string} path
- * @returns {toa.core.extensions.Factory}
- */
-const create = (path) => {
+const resolve = (reference, base) => {
+  const path = find(reference, base)
   const { Factory } = require(path)
 
   return new Factory(boot)
 }
-
-const instances = {}
 
 exports.resolve = resolve

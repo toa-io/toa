@@ -1,6 +1,6 @@
 'use strict'
 
-const { recognize } = require('../../lookup')
+const { recognize } = require('../../shortcuts')
 
 function extensions (manifest) {
   recognize(manifest, 'extensions')

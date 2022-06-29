@@ -1,9 +1,9 @@
 'use strict'
 
-const path = require('node:path')
-const glob = require('fast-glob')
+const { join } = require('node:path')
 
 const { load: yaml } = require('@toa.io/libraries/yaml')
+const { directory: { find } } = require('@toa.io/libraries/generic')
 const { Locator } = require('@toa.io/core')
 
 const {
@@ -15,10 +15,9 @@ const {
   defaults,
   normalize
 } = require('./.component')
-const { resolve } = require('./lookup')
 
-const component = async (reference) => {
-  const manifest = await load(reference)
+const component = async (path) => {
+  const manifest = await load(path)
 
   normalize(manifest, process.env.TOA_ENV)
   validate(manifest)
@@ -26,24 +25,23 @@ const component = async (reference) => {
   return manifest
 }
 
-const load = async (root) => {
-  root = resolve(root, undefined, MANIFEST)
+const load = async (path, base) => {
+  if (base !== undefined) path = find(path, base, MANIFEST)
 
-  const file = path.resolve(root, MANIFEST)
+  const file = join(path, MANIFEST)
   const manifest = await yaml(file)
 
-  manifest.path = root
+  manifest.path = path
 
   defaults(manifest)
   expand(manifest)
 
-  await merge(root, manifest)
+  await merge(path, manifest)
 
   if (manifest.prototype !== null) {
     manifest.locator = new Locator(manifest.name, manifest.namespace)
 
-    const path = resolve(manifest.prototype, root, MANIFEST)
-    const prototype = await load(path)
+    const prototype = await load(manifest.prototype, path)
 
     collapse(manifest, prototype)
   }
@@ -53,17 +51,16 @@ const load = async (root) => {
   return manifest
 }
 
-/**
- * @param {string} pattern
- * @returns {Promise<toa.formation.Component[]>}
- */
-const find = async (pattern) => {
-  const paths = await glob(pattern, { onlyDirectories: true, absolute: true })
-
-  return await Promise.all(paths.map(component))
-}
+// /**
+//  * @param {string} pattern
+//  * @returns {Promise<toa.formation.Component[]>}
+//  */
+// const find = async (pattern) => {
+//   const paths = await glob(pattern, { onlyDirectories: true, absolute: true })
+//
+//   return await Promise.all(paths.map(component))
+// }
 
 const MANIFEST = 'manifest.toa.yaml'
 
 exports.component = component
-exports.find = find

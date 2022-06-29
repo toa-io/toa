@@ -1,13 +1,13 @@
 'use strict'
 
 const { access, writeFile: write } = require('node:fs/promises')
-const { join } = require('node:path')
+const { join, resolve } = require('node:path')
 const { tmpdir } = require('node:os')
 const { generate } = require('randomstring')
 
 const { newid } = require('../src/newid')
 
-const { copy, ensure, is, remove, temp } = require('../src/directory')
+const { copy, ensure, is, remove, temp, find, glob } = require('../src/directory')
 
 describe('ensure', () => {
   it('should create directory', async () => {
@@ -100,5 +100,54 @@ describe('copy', () => {
 
     await remove(source)
     await remove(target)
+  })
+})
+
+describe('find', () => {
+  const THIS = resolve(__dirname, '../')
+
+  it('should exist', () => {
+    expect(find).toBeDefined()
+  })
+
+  it('should find by package name', () => {
+    const path = find('@toa.io/libraries', __dirname)
+
+    expect(path).toStrictEqual(resolve(__dirname, '../../'))
+  })
+
+  it('should find by package name with directory', () => {
+    const path = find('@toa.io/libraries/generic', __dirname)
+
+    expect(path).toStrictEqual(THIS)
+  })
+
+  it('should resolve package by relative path', () => {
+    const path = find('../', __dirname)
+
+    expect(path).toStrictEqual(THIS)
+  })
+
+  it('should resolve package by relative starts with ./', () => {
+    const ref = 'extensions/exposition'
+    const root = resolve(__dirname, '../../../')
+
+    const path = find(ref, root)
+
+    expect(path).toStrictEqual(resolve(root, ref))
+  })
+})
+
+describe('glob', () => {
+  it('should exist', () => {
+    expect(glob).toBeDefined()
+  })
+
+  it('should find by pattern', async () => {
+    const expected = ['src', 'test', 'types'].map((dir) => resolve(__dirname, '../', dir))
+
+    const found = await glob(resolve(__dirname, '../*'))
+
+    expect(found).toStrictEqual(expected)
   })
 })

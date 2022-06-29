@@ -23,7 +23,7 @@ const contexts = (manifest) => {
  * @return {Context}
  */
 const instantiate = (path, declaration, manifest) => {
-  const factory = resolve(path)
+  const factory = resolve(path, '.')
 
   if (factory.context !== undefined) return factory.context(manifest.locator, declaration)
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-const { recognize } = require('../lookup')
+const { recognize } = require('../shortcuts')
 
 /**
  * @param {toa.formation.context.Declaration | object} context

@@ -1,23 +1,16 @@
 'use strict'
 
-const { dirname, join } = require('node:path')
 const { empty, merge } = require('@toa.io/libraries/generic')
 
 /**
- * Resolves package reference to absolute path
+ * Resolves shortcuts
  *
- * @param {string} reference
- * @param {string} base
- * @param {string} [indicator]
+ * @param {string} token
  * @returns {string}
  */
-const resolve = (reference, base, indicator = 'package.json') => {
-  if (reference in SHORTCUTS) return SHORTCUTS[reference]
-  if (KNOWN.includes(reference)) return reference
-
-  const paths = base ? [base] : undefined
-
-  return dirname(require.resolve(join(reference, indicator), { paths }))
+const resolve = (token) => {
+  if (token in SHORTCUTS) return SHORTCUTS[token]
+  else return token
 }
 
 /**
@@ -53,10 +46,6 @@ const SHORTCUTS = {
   origins: '@toa.io/extensions.origins',
   configuration: '@toa.io/extensions.configuration'
 }
-
-const KNOWN = Object.values(SHORTCUTS)
-
-KNOWN.push('@toa.io/storages.null')
 
 exports.recognize = recognize
 exports.resolve = resolve

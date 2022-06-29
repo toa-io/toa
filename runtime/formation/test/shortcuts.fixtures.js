@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const { random } = require('@toa.io/libraries/generic')
 
-const KNOWN = {
+const SHORTCUTS = {
   http: '@toa.io/bindings.http',
   amqp: '@toa.io/bindings.amqp',
   mongodb: '@toa.io/storages.mongodb',
@@ -14,4 +14,4 @@ const KNOWN = {
 const object = { foo: random(), bar: { baz: generate() } }
 
 exports.object = object
-exports.KNOWN = KNOWN
+exports.SHORTCUTS = SHORTCUTS

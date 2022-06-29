@@ -13,6 +13,7 @@ async function composition (paths, options) {
     .filter((ext) => ext !== undefined)
 
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
+
   const runtimes = await Promise.all(manifests.map(boot.runtime))
 
   // noinspection JSUnresolvedVariable
