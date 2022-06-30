@@ -12,6 +12,12 @@ Feature: toa serve
     """
 
   Scenario Outline: Run service
+
+  Service may be addressed by:
+  - relative path
+  - package name
+  - shortcut
+
     Given my working directory is ./
     When I run `toa serve <reference>`
     And I wait 0.5 seconds
@@ -24,4 +30,3 @@ Feature: toa serve
       | extensions/exposition         |
       | @toa.io/extensions.exposition |
       | exposition                    |
-

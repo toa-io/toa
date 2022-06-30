@@ -19,8 +19,8 @@ Feature: toa compose
   Scenario Outline: Run compositions
     Given my working directory is <working directory>
     When I run <command>
-    And I wait <delay> second
-    Then abort
+    And I wait <delay> seconds
+    And abort
     Then stderr should be empty
     And stdout should contain lines:
     """

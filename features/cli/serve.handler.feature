@@ -2,8 +2,8 @@ Feature: Serve a service
 
   Scenario Outline: Reference by path
 
-  This reproduces the problem with `directory.find` from @toa.libraries/generic.
-  See source code for details.
+  This reproduces the problem with `directory.find` from @toa.io/libraries/generic.
+  See [source code](../../libraries/generic/src/directory/find.js) for details.
 
     Given my working directory is ./
     When I call serve
