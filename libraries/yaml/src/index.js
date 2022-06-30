@@ -1,6 +1,6 @@
 'use strict'
 
-const { readFile } = require('node:fs/promises')
+const { readFile, writeFile } = require('node:fs/promises')
 const { readFileSync } = require('node:fs')
 
 const yaml = require('js-yaml')
@@ -33,6 +33,17 @@ load.sync = (path) => {
   const contents = readFileSync(path, 'utf8')
 
   return yaml.load(contents)
+}
+
+/**
+ * @param {Object} object
+ * @param {string} path
+ * @returns {Promise<void>}
+ */
+const save = async (object, path) => {
+  const contents = dump(object)
+
+  await writeFile(path, contents, 'utf8')
 }
 
 /**
@@ -69,3 +80,4 @@ exports.load = load
 exports.dump = dump
 exports.parse = parse
 exports.split = split
+exports.save = save

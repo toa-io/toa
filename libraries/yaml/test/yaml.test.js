@@ -1,9 +1,11 @@
 'use strict'
 
 const path = require('path')
-
-const { load, dump, parse, split } = require('../')
+const { directory } = require('@toa.io/libraries/generic')
 const { readFile } = require('node:fs/promises')
+const { generate } = require('randomstring')
+
+const { save, load, dump, parse, split } = require('../')
 
 describe('load', () => {
   it('should return object', async () => {
@@ -22,6 +24,25 @@ describe('load', () => {
     const attempt = async () => await load(path.resolve(__dirname, './no-file.yaml'))
 
     await expect(attempt).rejects.toThrow(/ENOENT/)
+  })
+})
+
+describe('save', () => {
+  it('should exist', () => {
+    expect(save).toBeDefined()
+  })
+
+  it('should save to file', async () => {
+    const temp = await directory.temp()
+    const location = path.join(temp, 'test.yaml')
+
+    const object = { [generate()]: generate() }
+
+    await save(object, location)
+
+    const loaded = await load(location)
+
+    expect(loaded).toStrictEqual(object)
   })
 })
 

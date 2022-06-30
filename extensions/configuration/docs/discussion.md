@@ -13,7 +13,7 @@
 - [x] feat(configuration): add runtime configuration resolution
 - [x] feat(cli): add `toa configure <key> <value> --reset`
     - validate type
-- [ ] feat(operations): add configuration deployment
+- [x] feat(operations): add configuration deployment
     - annotations (values) validation
 - [ ] feat(configuration): add secrets resolution
 - [ ] feat(operations): add secrets deployment

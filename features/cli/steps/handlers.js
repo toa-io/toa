@@ -4,7 +4,7 @@ const { load } = require('./.handlers/load')
 
 const { When, Then } = require('@cucumber/cucumber')
 
-When('I call {word}',
+When('I debug {word}',
   /**
    * @param {string} name
    * @param {import('@cucumber/cucumber').DataTable} inputs

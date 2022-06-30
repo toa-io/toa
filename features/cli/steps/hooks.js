@@ -1,5 +1,8 @@
 'use strict'
 
+const assert = require('assert')
+const { resolve } = require('node:path')
+
 const { BeforeAll, Before } = require('@cucumber/cucumber')
 
 BeforeAll(() => {
@@ -8,5 +11,11 @@ BeforeAll(() => {
 })
 
 Before(function () {
+  process.chdir(ROOT)
+
+  assert.equal(process.cwd(), ROOT)
+
   delete this.cwd
 })
+
+const ROOT = resolve(__dirname, '../../../')

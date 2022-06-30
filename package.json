@@ -48,7 +48,7 @@
     "prepare": "npx husky install",
     "test": "npm run test:lint && npm run test:unit",
     "test:lint": "npx standard --verbose | npx snazzy",
-    "test:unit": "npx jest --roots runtime connectors extensions operations libraries",
+    "test:unit": "npx jest --roots runtime connectors extensions operations libraries features",
     "test:integration": "npx jest --roots integration --runInBand",
     "test:features": "npx cucumber-js",
     "test:all": "npm run test && npm run test:integration && npm run test:features",
@@ -78,7 +78,8 @@
       "<rootDir>/extensions",
       "<rootDir>/operations",
       "<rootDir>/libraries",
-      "<rootDir>/integration"
+      "<rootDir>/integration",
+      "<rootDir>/features"
     ],
     "testMatch": [
       "**/?(*.)+(test).js"

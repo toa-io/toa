@@ -227,6 +227,5 @@ function transition (input, entity, context) {
 - [Discussion](./docs/discussion.md)
 - [Configuration consistency](./docs/consistency.md)
 
-[^1]: That is can’t be changed without a deployment. This is because new values
-considered to be a subject of
+[^1]: Cannot be changed without a deployment. New values are considered to be a subject of
 testing. [#146](https://github.com/toa-io/toa/issues/146)

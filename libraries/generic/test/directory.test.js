@@ -111,13 +111,13 @@ describe('find', () => {
   })
 
   it('should find by package name', () => {
-    const path = find('@toa.io/libraries', __dirname)
+    const path = find('@toa.io/libraries', '/')
 
     expect(path).toStrictEqual(resolve(__dirname, '../../'))
   })
 
   it('should find by package name with directory', () => {
-    const path = find('@toa.io/libraries/generic', __dirname)
+    const path = find('@toa.io/libraries/generic', '/')
 
     expect(path).toStrictEqual(THIS)
   })

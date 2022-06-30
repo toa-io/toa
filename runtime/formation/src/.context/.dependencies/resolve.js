@@ -21,7 +21,7 @@ const resolve = (references, annotations) => {
 
     dependencies[dependency] = instances
 
-    const annotation = annotations[id]
+    const annotation = annotations?.[id]
     const module = require(dependency)
 
     if (annotation !== undefined && module.annotation !== undefined) {

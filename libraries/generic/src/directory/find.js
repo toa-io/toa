@@ -3,14 +3,14 @@
 const { dirname, join } = require('node:path')
 
 /**
- * Finds directory with indicator file
+ * Finds directory by id or path with indicator file
  *
  * @param {string} reference
  * @param {string} base
  * @param {string} [indicator]
  */
 const find = (reference, base, indicator = 'package.json') => {
-  const paths = [base]
+  const paths = [RUNTIME, base]
 
   let request = join(reference, indicator)
 
@@ -28,5 +28,7 @@ const find = (reference, base, indicator = 'package.json') => {
     return dirname(require.resolve(request, { paths }))
   }
 }
+
+const RUNTIME = dirname(require.resolve('@toa.io/runtime'))
 
 exports.find = find
