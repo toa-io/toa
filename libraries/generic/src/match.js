@@ -18,9 +18,11 @@ const match = (reference, candidate) => {
     if (candidate === null) return reference === null
     else if (reference === null) return false
 
-    return Object.entries(candidate).reduce((cur, [key, value]) => {
-      return cur && match(reference[key], value)
-    }, true)
+    for (const [key, value] of Object.entries(candidate)) {
+      if (match(reference[key], value) === false) return false
+    }
+
+    return true
   }
 
   return reference === candidate

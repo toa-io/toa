@@ -1,6 +1,6 @@
 'use strict'
 
-const assert = require('assert')
+const assert = require('node:assert')
 const { Then } = require('@cucumber/cucumber')
 
 Then('{word} line {int} should contain version', function (channel, line) {

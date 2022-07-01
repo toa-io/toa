@@ -2,6 +2,7 @@
 
 const { join } = require('node:path')
 const { generate } = require('randomstring')
+const { AssertionError } = require('node:assert')
 
 const { directory, transpose } = require('@toa.io/libraries/generic')
 const { load } = require('@toa.io/libraries/yaml')
@@ -9,7 +10,6 @@ const mock = require('@toa.io/libraries/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../deployment')
-const { AssertionError } = require('assert')
 
 const gherkin = mock.gherkin
 

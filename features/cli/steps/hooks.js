@@ -1,6 +1,6 @@
 'use strict'
 
-const assert = require('assert')
+const assert = require('node:assert')
 const { resolve } = require('node:path')
 
 const { BeforeAll, Before } = require('@cucumber/cucumber')

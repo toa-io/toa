@@ -1,6 +1,6 @@
 'use strict'
 
-const assert = require('assert')
+const assert = require('node:assert')
 const { join } = require('node:path')
 
 const { load, parse } = require('@toa.io/libraries/yaml')

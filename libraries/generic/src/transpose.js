@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @param {any[]} array
+ * @param {any[][] | any[]} array
  * @returns {ary[][]}
  */
 const transpose = (array) => {
