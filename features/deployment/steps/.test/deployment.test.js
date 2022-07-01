@@ -4,7 +4,8 @@ const { join } = require('node:path')
 const { generate } = require('randomstring')
 const { AssertionError } = require('node:assert')
 
-const { directory, transpose } = require('@toa.io/libraries/generic')
+const { transpose } = require('@toa.io/libraries/generic')
+const { directory } = require('@toa.io/libraries/filesystem')
 const { load } = require('@toa.io/libraries/yaml')
 const mock = require('@toa.io/libraries/mock')
 

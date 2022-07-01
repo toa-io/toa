@@ -2,13 +2,6 @@
 
 const { dirname, join } = require('node:path')
 
-/**
- * Finds directory by id or path with indicator file
- *
- * @param {string} reference
- * @param {string} base
- * @param {string} [indicator]
- */
 const find = (reference, base, indicator = 'package.json') => {
   const paths = [RUNTIME, base]
 

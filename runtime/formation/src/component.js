@@ -3,7 +3,7 @@
 const { join } = require('node:path')
 
 const { load: yaml } = require('@toa.io/libraries/yaml')
-const { directory: { find } } = require('@toa.io/libraries/generic')
+const { directory: { find } } = require('@toa.io/libraries/filesystem')
 const { Locator } = require('@toa.io/core')
 
 const {

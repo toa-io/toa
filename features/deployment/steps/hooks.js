@@ -1,7 +1,7 @@
 'use strict'
 
 const { join } = require('node:path')
-const { directory } = require('@toa.io/libraries/generic')
+const { directory } = require('@toa.io/libraries/filesystem')
 const { Before, After } = require('@cucumber/cucumber')
 
 Before(async function () {

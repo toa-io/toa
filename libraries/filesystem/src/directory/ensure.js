@@ -3,11 +3,6 @@
 const { resolve } = require('node:path')
 const fs = require('node:fs/promises')
 
-/**
- * Ensures empty target directory exists
- * @param path {string}
- * @returns {Promise<string>}
- */
 const ensure = async (path) => {
   path = resolve(path)
 

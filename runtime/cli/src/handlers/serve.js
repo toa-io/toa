@@ -2,7 +2,7 @@
 
 const boot = require('@toa.io/boot')
 const { shortcuts } = require('@toa.io/formation')
-const { directory: { find } } = require('@toa.io/libraries/generic')
+const { directory: { find } } = require('@toa.io/libraries/filesystem')
 
 const serve = async (argv) => {
   argv.path = shortcuts.resolve(argv.path)

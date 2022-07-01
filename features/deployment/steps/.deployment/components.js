@@ -1,7 +1,7 @@
 'use strict'
 
 const { resolve, join } = require('node:path')
-const { directory } = require('@toa.io/libraries/generic')
+const { directory } = require('@toa.io/libraries/filesystem')
 
 /**
  * @param {string[]} list

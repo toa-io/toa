@@ -23,8 +23,6 @@ const { transpose } = require('./transpose')
 const { traverse } = require('./traverse')
 const { underlay } = require('./underlay')
 
-exports.directory = require('./directory')
-
 exports.concat = concat
 exports.convolve = convolve
 exports.decode = decode

@@ -4,10 +4,9 @@ const { access, writeFile: write } = require('node:fs/promises')
 const { join, resolve } = require('node:path')
 const { tmpdir } = require('node:os')
 const { generate } = require('randomstring')
+const { newid } = require('@toa.io/libraries/generic')
 
-const { newid } = require('../src/newid')
-
-const { copy, ensure, is, remove, temp, find, glob } = require('../src/directory')
+const { directory: { copy, ensure, is, remove, temp, find, glob } } = require('../')
 
 describe('ensure', () => {
   it('should create directory', async () => {
@@ -117,7 +116,7 @@ describe('find', () => {
   })
 
   it('should find by package name with directory', () => {
-    const path = find('@toa.io/libraries/generic', '/')
+    const path = find('@toa.io/libraries/filesystem', '/')
 
     expect(path).toStrictEqual(THIS)
   })

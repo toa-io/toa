@@ -4,7 +4,8 @@ const { join } = require('node:path')
 const { tmpdir } = require('node:os')
 
 const boot = require('@toa.io/boot')
-const { newid, directory: { remove, ensure, is } } = require('@toa.io/libraries/generic')
+const { newid } = require('@toa.io/libraries/generic')
+const { directory: { remove, ensure, is } } = require('@toa.io/libraries/filesystem')
 const { load } = require('@toa.io/libraries/yaml')
 
 const fixtures = require('./deployment.export.fixtures')
@@ -13,6 +14,7 @@ const source = join(__dirname, './context')
 
 /** @type {toa.operations.deployment.Operator} */
 let operator
+
 /** @type {string} */
 let target
 

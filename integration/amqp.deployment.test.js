@@ -3,7 +3,7 @@
 const { join } = require('node:path')
 
 const boot = require('@toa.io/boot')
-const { directory: { remove } } = require('@toa.io/libraries/generic')
+const { directory: { remove } } = require('@toa.io/libraries/filesystem')
 const { load } = require('@toa.io/libraries/yaml')
 
 const source = join(__dirname, './context')

@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory: { find } } = require('@toa.io/libraries/generic')
+const { directory: { find } } = require('@toa.io/libraries/filesystem')
 const { resolve } = require('../../shortcuts')
 
 /**
