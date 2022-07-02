@@ -93,6 +93,22 @@ as a complete set of scenarios, using first-person narrative.
 > ![Not Implemented](https://img.shields.io/badge/Warning-yellow)<br/>
 > Ensure completeness of the set of scenarios as it is an iteration completion criteria.
 
+At this point behaviour tests either failing or not executable due to missing implementation of new
+steps.
+
+> Failing or not executable behaviour tests are not a reason not to commit. Actually, failing tests
+> is a permanent state of any feature branch until the iteration is completed.
+
+[Example](https://github.com/toa-io/toa/commit/64b955559308e17a64bbd4382c922d3c40b71f42#diff-9b3bedc44de1bf5e2a1f16c3625b4df88a4fe99c42c8025e28a60900ef738cf7R12)
+
+#### Implement Steps
+
+Add missing step implementations until all new behaviour tests are executable and failing.
+
+> ![Important](https://img.shields.io/badge/Important-red)<br/>
+> Behaviour steps are programs, thus must be composed
+> of [developer's units of work](development.md#unit-of-work).
+
 ---
 
 ## Temporary Drafts
@@ -108,11 +124,6 @@ Example: `feat(cli): add option -e to toa export command`
 
 ### Structure of this document
 
-- Documentation
-    - Scenarios
-        - Test
-        - Steps
-    - User manual, not development instruction
 - Decomposition
     - Change Requests are future commits
 - Development
