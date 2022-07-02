@@ -2,13 +2,12 @@
 
 ## TL;DR
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="4d-dark.jpg">
-  <source media="(prefers-color-scheme: light)" srcset="4d-light.jpg">
-  <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14">
-    <img width="400" height="455" alt="4D" src="4d-light.jpg">
-  </a>
-</picture>
+<a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="4d-dark.jpg">
+    <img alt="4D" src="4d-light.jpg">
+  </picture>
+</a>
 
 - **Discussion**
     - Problem
