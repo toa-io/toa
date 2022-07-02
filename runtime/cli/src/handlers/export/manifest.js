@@ -16,4 +16,4 @@ const print = async (argv) => {
   console.log(dump(manifest))
 }
 
-exports.component = print
+exports.manifest = print

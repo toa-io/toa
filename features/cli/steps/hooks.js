@@ -15,7 +15,7 @@ Before(function () {
 
   assert.equal(process.cwd(), ROOT)
 
-  delete this.cwd
+  this.cwd = ROOT
 })
 
 const ROOT = resolve(__dirname, '../../../')

@@ -1,12 +1,17 @@
 'use strict'
 
-const { resolve } = require('node:path')
 const { defineParameterType } = require('@cucumber/cucumber')
 
 defineParameterType({
   name: 'path',
   regexp: /\.\/[^'\s]*/,
-  transformer: (path) => resolve(__dirname, '../../../', path)
+  transformer: (path) => path
+})
+
+defineParameterType({
+  name: 'component',
+  regexp: /\w+.\w+/,
+  transformer: (name) => name
 })
 
 defineParameterType({

@@ -1,0 +1,17 @@
+name: one
+namespace: dummies
+
+entity:
+  storage: ~
+  schema:
+    foo:
+      type: integer
+      default: 0
+    bar: string
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      foo: ~
+      bar: ~
