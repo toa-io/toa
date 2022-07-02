@@ -147,7 +147,7 @@ extensions:
 
 ## Context Configuration
 
-Context Configuration is declared as a context extension. Its keys must be
+Context Configuration is declared as a context annotaion. Its keys must be
 component identifiers and its values must be Configuration Objects for those
 components.
 
