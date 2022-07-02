@@ -66,7 +66,7 @@ List of <b>what is unknown</b>. At this step many of questions may don't have an
 Create the description from **end-user perspective**. Documentation must describe **how to use** the
 feature yet to be implemented, not **how to implement** it.
 
-Documentation step consists of two sequential processes: writing User Manual and Scenarios.
+Documentation step consists of two sequential processes: writing the user manual and scenarios.
 
 ### User Manual
 
