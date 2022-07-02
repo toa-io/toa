@@ -16,6 +16,12 @@
 - **Documentation**
     - Manual
     - Scenarios
+- **Decomposition**
+    - Solution
+    - Change Requests
+- **Development**
+    - Steps
+    - Code
 
 ## Definition
 
