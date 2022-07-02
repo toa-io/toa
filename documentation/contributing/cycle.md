@@ -11,7 +11,6 @@
 
 - **Discussion**
     - Problem
-    - Solution
     - Complexity
 - **Documentation**
     - Manual
