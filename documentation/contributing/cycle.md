@@ -2,6 +2,8 @@
 
 ## TL;DR
 
+[![4D](4d.jpg)](https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14)
+
 - **Discussion**
     - Problem
     - Solution
