@@ -36,7 +36,7 @@ Analyse the input to transform it into *correct*[^2], *consistent*[^3], *complet
 *realizable*[^5] form, that is *strict* problem definition, and then find and estimate the solution
 for that problem.
 
-It is recommended for the discussion document to have sections:
+Discussion document should have the following sections:
 
 <dl>
 <dt>Abstract</dt>
@@ -51,13 +51,10 @@ It is recommended for the discussion document to have sections:
 <dd>List of <b>what is known</b>.</dd>
 <dt>Questions</dt>
 <dd>
-List of <b>what is unknown</b>.
-
-By the end of the discussion, all questions must be answered, and some answers should have become
-statements.
+List of <b>what is unknown</b>. At this step many of questions may don't have an answer.
 </dd>
 <dt>Options</dt>
-<dd>List of considered options, starting with selected one, description of selection criteria.</dd>
+<dd><i>Empty at this step.</i></dd>
 </dl>
 
 > While given sequence of sections ensures comfortable reading later, it will be most likely hard or
@@ -90,14 +87,15 @@ Using the manual, describe expected software behaviour in
 a [semi-formal format](https://en.wikipedia.org/wiki/Behavior-driven_development#Behavioral_specifications)
 as a complete set of scenarios, using first-person narrative.
 
-> ![Not Implemented](https://img.shields.io/badge/Warning-yellow)<br/>
-> Ensure completeness of the set of scenarios as it is an iteration completion criteria.
+> ![!](https://img.shields.io/badge/!-red)<br/>
+> Ensure completeness of the set of scenarios as it is the iteration completion criteria.
 
 At this point behaviour tests either failing or not executable due to missing implementation of new
 steps.
 
-> Failing or not executable behaviour tests are not a reason not to commit. Actually, failing tests
-> is a permanent state of any feature branch until the iteration is completed.
+> Failing or not executable behaviour tests are not the reason not to
+> [commit](development.md#commits). Actually, failing behaviour tests is a permanent state of any
+> feature branch until the iteration is completed.
 
 [Example](https://github.com/toa-io/toa/commit/64b955559308e17a64bbd4382c922d3c40b71f42#diff-9b3bedc44de1bf5e2a1f16c3625b4df88a4fe99c42c8025e28a60900ef738cf7R12)
 
@@ -105,32 +103,37 @@ steps.
 
 Add missing step implementations until all new behaviour tests are executable and failing.
 
-> ![Important](https://img.shields.io/badge/Important-red)<br/>
+> ![!](https://img.shields.io/badge/!-red)<br/>
 > Behaviour steps are programs, thus must be composed
 > of [developer's units of work](development.md#unit-of-work).
+
+[Example](https://github.com/toa-io/toa/commit/e6dfc107beee0d1c7fc64372b7726cbb9c0ea019)
+
+## Decomposition
+
+Find and describe the solution of the problem. As the result of decomposition discussion document
+must be updated with:
+
+- answers to all **questions**, and some answers should have become statements
+- a list of considered **options**, starting with selected one and containing description of the
+  selection criteria
+- a list of **change requests**
+
+### Change Requests
+
+List of changes to be made at the most top-level available in the software being developed. Each
+item basically should be the message for the future commit or pull request conforming the existent
+commit message convention.
+
+Example: `feat(cli): add option -e to toa export command`
 
 ---
 
 ## Temporary Drafts
 
-### Change Requests
-
-List of changes to be made at the most top level available in the software being developed.
-
-Each item basically should be the message for the future commit or pull request, following the
-existent commit message guidelines.
-
-Example: `feat(cli): add option -e to toa export command`
-
 ### Structure of this document
 
-- Decomposition
-    - Change Requests are future commits
 - Development
     - Interface
     - Test
     - Code
-
-- Granular Commits
-    - What have you done?
-    - Unfinished features 
