@@ -9,6 +9,7 @@
 <dd>Deploy context.
 
 <code>--path</code> path to component (default <code>.</code>)<br/>
+<code>--error</code> print errors only<br/>
 </dd>
 </dl>
 

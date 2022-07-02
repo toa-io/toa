@@ -50,7 +50,7 @@ It is recommended for the discussion document to have sections:
 <dd>
 List of <b>what is unknown</b>.
 
-By the end of the discussion, all questions should be answered, and some answers should have become
+By the end of the discussion, all questions must be answered, and some answers should have become
 statements.
 </dd>
 <dt>Options</dt>
@@ -67,7 +67,15 @@ statements.
 
 ## Documentation
 
-Documentation is a process of creating the description from end-user perspective.
+Documentation is a process of creating the description from **end-user perspective**. It must
+describe **how to use** the feature yet to be implemented, not **how to implement** it.
+
+Documentation step consists of two parallel processes: writing User Manual and Scenarios.
+
+### User Manual
+
+Form of this documentation depends on type of software being developed. In can be end-user manual,
+public API reference, interface of the library, etc.
 
 ---
 
@@ -75,7 +83,7 @@ Documentation is a process of creating the description from end-user perspective
 
 ### Change Requests
 
-List of changes to be made at the most top level available in the product.
+List of changes to be made at the most top level available in the software being developed.
 
 Each item basically should be the message for the future commit or pull request, following the
 existent commit message guidelines.
