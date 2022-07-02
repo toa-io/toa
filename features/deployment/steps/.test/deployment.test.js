@@ -38,7 +38,7 @@ describe('Given I have components:', () => {
 
     expect(context.directory).toBeDefined()
 
-    const components = table.rows()[0]
+    const components = table.transpose().raw()[0]
 
     for (const component of components) {
       const path = join(context.directory, 'context/components', component)
@@ -55,8 +55,8 @@ describe('Given I have components:', () => {
   })
 })
 
-describe('Given I have the context with:', () => {
-  const step = gherkin.steps.Given('I have the context with:')
+describe('Given I have context with:', () => {
+  const step = gherkin.steps.Given('I have context with:')
 
   let path
 
@@ -83,8 +83,24 @@ describe('Given I have the context with:', () => {
   })
 })
 
-describe('When I have exported the deployment', () => {
-  const step = gherkin.steps.When('I have exported the deployment')
+describe('Given I have context', () => {
+  const step = gherkin.steps.Given('I have context')
+
+  let path
+
+  beforeEach(async () => {
+    path = join(context.directory, 'context/context.toa.yaml')
+  })
+
+  it('should create context yaml file', async () => {
+    await step.call(context)
+
+    await expect(load(path)).resolves.not.toThrow()
+  })
+})
+
+describe('When I export deployment', () => {
+  const step = gherkin.steps.When('I export deployment')
   const components = ['dummies.one', 'dummies.two']
 
   let path
@@ -92,7 +108,7 @@ describe('When I have exported the deployment', () => {
   beforeEach(async () => {
     path = join(context.directory, 'deployment')
 
-    const ctx = gherkin.steps.Given('I have the context with:')
+    const ctx = gherkin.steps.Given('I have context with:')
     const copy = gherkin.steps.Given('I have components:')
     const columns = transpose(components)
     const table = gherkin.table(columns)

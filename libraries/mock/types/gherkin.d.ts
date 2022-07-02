@@ -14,6 +14,8 @@ declare namespace toa.mock.gherkin {
         rows(): any[][]
 
         raw(): any[][]
+
+        transpose(): Table
     }
 
 }

@@ -9,5 +9,5 @@ binding, that is being used by the runtime.
 
 ## External Brokers
 
-AMQP deployment may be annotated with [external names annotation](#).
+AMQP deployment may be annotated with [proxies annotation](#).
 

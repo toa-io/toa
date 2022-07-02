@@ -1,15 +1,5 @@
 'use strict'
 
-const { validate } = require('./.annotation')
+const { proxy } = require('@toa.io/libraries/annotations')
 
-/**
- * @param {string} declaration
- * @returns {string}
- */
-const annotation = (declaration) => {
-  validate(declaration)
-
-  return declaration
-}
-
-exports.annotation = annotation
+exports.annotation = proxy

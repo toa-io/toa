@@ -1,5 +1,7 @@
 'use strict'
 
+const { transpose } = require('@toa.io/libraries/generic')
+
 /**
  * @implements {toa.mock.gherkin.Table}
  */
@@ -15,11 +17,19 @@ class Table {
   }
 
   rows () {
-    return this.#data
+    const [_, ...rest] = this.#data
+
+    return rest
   }
 
   raw () {
     return this.#data
+  }
+
+  transpose () {
+    this.#data = transpose(this.#data)
+
+    return this
   }
 }
 

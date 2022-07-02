@@ -1,13 +1,13 @@
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 
 import { Service } from './service'
-import { Brief } from '@toa.io/formation/types/component'
+import { dependencies } from '@toa.io/formation/types/context'
 
 declare namespace toa.operations.deployment {
 
     namespace dependency {
 
-        type Constructor = (declarations: Brief[], annotations: object) => Declaration
+        type Constructor = (declarations: dependencies.Instance[], annotations: any) => Declaration
 
         interface Reference {
             name: string

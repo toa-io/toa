@@ -17,12 +17,17 @@ Given('I have components:',
    * @param {import('@cucumber/cucumber').DataTable} table
    */
   async function (table) {
-    const components = table.rows().map((row) => row[0])
+    const components = table.transpose().raw()[0]
 
     await copy(components, this.directory)
   })
 
-Given('I have the context with:',
+Given('I have context',
+  async function () {
+    await template(this.directory)
+  })
+
+Given('I have context with:',
   /**
    * @param {string} [additions]
    * @returns {Promise<void>}
@@ -31,7 +36,7 @@ Given('I have the context with:',
     await template(this.directory, additions)
   })
 
-When('I have exported the deployment',
+When('I export deployment',
   async function () {
     const context = join(this.directory, 'context')
     const target = join(this.directory, 'deployment')
@@ -41,11 +46,16 @@ When('I have exported the deployment',
   })
 
 Then('exported {helm-artifact} should contain:',
+  /**
+   * @param {string} artifact
+   * @param {string} text
+   * @return {Promise<void>}
+   */
   async function (artifact, text) {
     const filename = artifact + '.yaml'
     const path = join(this.directory, 'deployment', filename)
     const contents = await load(path)
     const expected = parse(text)
 
-    assert.equal(match(contents, expected), true, `${artifact} doesn't contain:\n${text}`)
+    assert.equal(match(contents, expected), true, `'${filename}' doesn't contain:\n${text}`)
   })

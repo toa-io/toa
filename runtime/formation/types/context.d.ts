@@ -66,3 +66,6 @@ declare namespace toa.formation {
 export type Composition = toa.formation.context.Composition
 export type Context = toa.formation.Context
 
+export namespace dependencies {
+    export type Instance = toa.formation.context.dependencies.Instance
+}
