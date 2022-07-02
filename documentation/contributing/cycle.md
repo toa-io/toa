@@ -30,8 +30,7 @@ provided in arbitrary form.
 ## Discussion
 
 Analyse the input to transform it into *correct*[^2], *consistent*[^3], *complete*[^4] and
-*realizable*[^5] form, that is *strict* problem definition, and then find and estimate the solution
-for that problem.
+*realizable*[^5] form, that is *strict* problem definition.
 
 Discussion document should have the following sections:
 
