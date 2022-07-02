@@ -23,28 +23,10 @@ $ npm i
 $ export TOA_ENV=local
 ```
 
-## Flow
-
-This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/).
-
-## Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg)](https://conventionalcommits.org)
-
-Please use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-
-Commit subject line should complete the sentence:
-> If applied, this commit will `[add your subject line here]`
-
-## Code Style Requirements [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
-This project follows [JavaScript Standard Style](https://standardjs.com).
-
-```shell
-$ npm run lint
-```
-
 ### Code Structure Requirements
 
-These requirements may have reasonable exceptions. The point is to create as uniform code as possible and prevent some
+These requirements may have reasonable exceptions. The point is to create as uniform code as
+possible and prevent some
 typical mistakes.
 
 <!--suppress ALL -->

@@ -4,6 +4,12 @@ const { manifest } = require('../../handlers/export/manifest')
 
 const builder = (yargs) => {
   yargs
+    .option('error', {
+      alias: 'e',
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Print errors only'
+    })
     .option('path', {
       alias: 'p',
       group: 'Command options:',

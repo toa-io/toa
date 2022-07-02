@@ -25,9 +25,6 @@ documentation, decomposition, development.
 Each iteration of the cycle starts with the *input*, which is a description of the customer needs,
 provided in arbitrary form.
 
-> This document is created by the example, which has
-> an [#155](https://github.com/toa-io/toa/issues/155) as the input.
-
 [^1]: Neither step may be skipped when going forward. Going backward is arbitrary.
 
 ## Discussion
@@ -77,8 +74,6 @@ Documentation step consists of two sequential processes: writing User Manual and
 Create or update User Manual. Form of this documentation part depends on type of software being
 developed. In can be end-user manual, public API reference, interface of the library, etc.
 
-[Example](https://github.com/toa-io/toa/commit/5fdfa1f8c96d1df41057d6c432960fbfe24df6bb#diff-cba52c2f062640672207887b2bf2c0ea3adbd0cb40dfb9497a42f401ccf4a76eR12)
-
 ### Scenarios
 
 #### Write
@@ -96,18 +91,6 @@ steps.
 > Failing or not executable behaviour tests are not the reason not to
 > [commit](development.md#commits). Actually, failing behaviour tests is a permanent state of any
 > feature branch until the iteration is completed.
-
-[Example](https://github.com/toa-io/toa/commit/64b955559308e17a64bbd4382c922d3c40b71f42#diff-9b3bedc44de1bf5e2a1f16c3625b4df88a4fe99c42c8025e28a60900ef738cf7R12)
-
-#### Implement Steps
-
-Add missing step implementations until all new behaviour tests are executable and failing.
-
-> ![!](https://img.shields.io/badge/!-red)<br/>
-> Behaviour steps are programs, thus must be composed
-> of [developer's units of work](development.md#unit-of-work).
-
-[Example](https://github.com/toa-io/toa/commit/e6dfc107beee0d1c7fc64372b7726cbb9c0ea019)
 
 ## Decomposition
 
@@ -127,13 +110,20 @@ commit message convention.
 
 Example: `feat(cli): add option -e to toa export command`
 
----
+## Development
 
-## Temporary Drafts
+### Implement Steps
 
-### Structure of this document
+Add missing step implementations until all new behaviour tests are executable and failing.
 
-- Development
-    - Interface
-    - Test
-    - Code
+> ![!](https://img.shields.io/badge/!-red)<br/>
+> Behaviour steps are programs, thus must be composed
+> of [developer's units of work](development.md#unit-of-work).
+
+### Write the Code
+
+Add the implementation of the solution in compliance with the solution described in the discussion
+document until all behaviour tests are *green* and the feature branch is closed according to
+existent flow.
+
+See [development requirements](development.md).
