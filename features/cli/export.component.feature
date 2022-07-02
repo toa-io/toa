@@ -9,6 +9,8 @@ Feature: Print manifest
       """
       toa export manifest
       Print manifest
+        -e, --error
+        -p, --path
       """
 
   Scenario Outline: Print manifest from component directory
@@ -37,3 +39,27 @@ Feature: Print manifest
       name: two
       namespace: dummies
       """
+
+  Scenario Outline: Validate valid manifest
+    Given I have a component dummies.two
+    # which is valid
+    And my working directory is ./dummies.two
+    When I run `toa export manifest <flag>`
+    Then program should exit
+    And stdout should be empty
+    Examples:
+      | flag    |
+      | --error |
+      | -e      |
+
+  Scenario: Validate invalid manifest
+    Given I have a component dummies.invalid
+    # which is invalid
+    And my working directory is ./dummies.invalid
+    When I run `toa export manifest -e`
+    Then program should exit
+    And stderr should contain lines:
+      """
+      error Locator name and namespace must be defined
+      """
+    And stderr should contain 1 line

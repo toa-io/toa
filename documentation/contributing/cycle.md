@@ -13,6 +13,9 @@
     - Problem
     - Solution
     - Complexity
+- **Documentation**
+    - Manual
+    - Scenarios
 
 ## Definition
 
@@ -29,9 +32,9 @@ provided in arbitrary form.
 
 ## Discussion
 
-Discussion is a process of the input analysis to transform it into *correct*[^2], *consistent*[^3],
-*complete*[^4] and *realizable*[^5] form, that is *strict* problem definition, and then find and
-estimate the solution for that problem.
+Analyse the input to transform it into *correct*[^2], *consistent*[^3], *complete*[^4] and
+*realizable*[^5] form, that is *strict* problem definition, and then find and estimate the solution
+for that problem.
 
 It is recommended for the discussion document to have sections:
 
@@ -67,15 +70,28 @@ statements.
 
 ## Documentation
 
-Documentation is a process of creating the description from **end-user perspective**. It must
-describe **how to use** the feature yet to be implemented, not **how to implement** it.
+Create the description from **end-user perspective**. Documentation must describe **how to use** the
+feature yet to be implemented, not **how to implement** it.
 
-Documentation step consists of two parallel processes: writing User Manual and Scenarios.
+Documentation step consists of two sequential processes: writing User Manual and Scenarios.
 
 ### User Manual
 
-Form of this documentation depends on type of software being developed. In can be end-user manual,
-public API reference, interface of the library, etc.
+Create or update User Manual. Form of this documentation part depends on type of software being
+developed. In can be end-user manual, public API reference, interface of the library, etc.
+
+[Example](https://github.com/toa-io/toa/commit/5fdfa1f8c96d1df41057d6c432960fbfe24df6bb#diff-cba52c2f062640672207887b2bf2c0ea3adbd0cb40dfb9497a42f401ccf4a76eR12)
+
+### Scenarios
+
+#### Write
+
+Using the manual, describe expected software behaviour in
+a [semi-formal format](https://en.wikipedia.org/wiki/Behavior-driven_development#Behavioral_specifications)
+as a complete set of scenarios, using first-person narrative.
+
+> ![Not Implemented](https://img.shields.io/badge/Warning-yellow)<br/>
+> Ensure completeness of the set of scenarios as it is an iteration completion criteria.
 
 ---
 
