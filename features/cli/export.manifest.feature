@@ -1,8 +1,6 @@
 Feature: Print manifest
 
   Scenario: Show help
-    Given I have a component dummies.one
-    And my working directory is ./dummies.one
     When I run `toa export manifest --help`
     Then program should exit
     And stdout should contain lines:
@@ -42,7 +40,7 @@ Feature: Print manifest
 
   Scenario Outline: Validate valid manifest
     Given I have a component dummies.two
-    # which is valid
+    # which has valid manifest
     And my working directory is ./dummies.two
     When I run `toa export manifest <flag>`
     Then program should exit
@@ -54,7 +52,7 @@ Feature: Print manifest
 
   Scenario: Validate invalid manifest
     Given I have a component dummies.invalid
-    # which is invalid
+    # which has invalid manifest
     And my working directory is ./dummies.invalid
     When I run `toa export manifest -e`
     Then program should exit
