@@ -21,12 +21,12 @@ Then('program should exit', async function () {
   await this.process
 })
 
-Then('{word} should contain lines:', function (channel, output) {
-  const lines = output.split('\n')
+Then('{word} should contain lines:', function (channel, lines) {
+  const queries = lines.split('\n').map((line) => line.trim())
 
-  for (const line of lines) {
-    const found = this[channel + 'Lines'].find((output) => output === line)
+  for (const query of queries) {
+    const found = this[channel + 'Lines'].find((actual) => actual.trim().substring(0, query.length) === query)
 
-    assert.notEqual(found, undefined, 'Line not found: ' + line)
+    assert.notEqual(found, undefined, 'Line not found: ' + query)
   }
 })

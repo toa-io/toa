@@ -8,10 +8,9 @@ const exec = util.promisify(require('child_process').exec)
 /**
  * @param {string} command
  * @param {import('child_process').ExecOptions} [options]
+ * @this {toa.features.cli.Context}
  */
 async function execute (command, options = {}) {
-  if (this.cwd !== undefined) options.cwd = this.cwd
-
   this.controller = new AbortController()
 
   options.signal = this.controller.signal
@@ -26,12 +25,16 @@ async function execute (command, options = {}) {
     this.aborted = true
   }
 
-  this.stdout = result.stdout
-  this.stderr = result.stderr
-  this.stdoutLines = lines(result.stdout)
-  this.stderrLines = lines(result.stderr)
+  this.stdout = /** @type {string} */ result.stdout
+  this.stderr = /** @type {string} */ result.stderr
+  this.stdoutLines = lines(this.stdout)
+  this.stderrLines = lines(this.stderr)
 }
 
+/**
+ * @param {string} string
+ * @return {string[]}
+ */
 const lines = (string) => {
   const lines = string.split('\n')
 
