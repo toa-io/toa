@@ -1,4 +1,4 @@
-# Iteration Lifecycle
+# Iteration Cycle
 
 - Discussion
     - Statements
@@ -7,14 +7,13 @@
     - Change Requests are future commits
 - Documentation
     - User manual, not development instruction
-- Development
     - Scenarios
-    - Test
-    - Steps
-    - Interface
-    - Implementation
         - Test
-        - Code
+        - Steps
+- Development
+    - Interface
+    - Test
+    - Code
 
 - Granular Commits
     - What have you done?
