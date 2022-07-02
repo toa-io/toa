@@ -1,6 +1,18 @@
 # Toa Command Line
 
-## Commands
+## Exporting
+
+### export component
+
+<dl>
+<dt><code>toa export component</code></dt>
+<dd>Deploy context.
+
+<code>--path</code> path to component (default <code>.</code>)<br/>
+</dd>
+</dl>
+
+## Deployment
 
 ### deploy
 
