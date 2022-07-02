@@ -1,9 +1,15 @@
 'use strict'
 
-const { component } = require('../../handlers/export/component')
+const { manifest } = require('../../handlers/export/manifest')
 
 const builder = (yargs) => {
   yargs
+    .option('error', {
+      alias: 'e',
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Print errors only'
+    })
     .option('path', {
       alias: 'p',
       group: 'Command options:',
@@ -13,7 +19,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = ['component', 'com']
+exports.command = ['manifest', 'man']
 exports.desc = 'Print manifest'
 exports.builder = builder
-exports.handler = component
+exports.handler = manifest

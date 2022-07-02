@@ -13,7 +13,7 @@ const print = async (argv) => {
 
   const manifest = await component(path)
 
-  console.log(dump(manifest))
+  if (argv.error !== true) console.log(dump(manifest))
 }
 
-exports.component = print
+exports.manifest = print

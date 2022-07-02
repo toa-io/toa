@@ -7,7 +7,6 @@ const { BeforeAll, Before } = require('@cucumber/cucumber')
 
 BeforeAll(() => {
   process.env.TOA_ENV = 'local'
-  process.env.TOA_DEBUG = '1'
 })
 
 Before(function () {
@@ -15,7 +14,7 @@ Before(function () {
 
   assert.equal(process.cwd(), ROOT)
 
-  delete this.cwd
+  this.cwd = ROOT
 })
 
 const ROOT = resolve(__dirname, '../../../')
