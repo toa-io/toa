@@ -127,8 +127,7 @@ Add missing step implementations until all new behaviour tests are executable an
 
 ### Write the Code
 
-Add the implementation of the solution in compliance with the solution described in the discussion
-document until all behaviour tests are *green* and the feature branch is closed according to
-existent flow.
+Add the implementation in compliance with the solution described in the discussion document until
+behaviour tests are *green* and the feature branch is closed according to existent flow.
 
 See [development requirements](development.md).
