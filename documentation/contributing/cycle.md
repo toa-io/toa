@@ -2,7 +2,8 @@
 
 ## TL;DR
 
-[![4D](4d.jpg)](https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14)
+[![4D](4d-light.jpg#gh-light-mode-only)](https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14)
+[![4D](4d-dark.jpg#gh-dark-mode-only)](https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14)
 
 - **Discussion**
     - Problem
@@ -25,8 +26,8 @@ provided in arbitrary form.
 ## Discussion
 
 Discussion is a process of the input analysis to transform it into *correct*[^2], *consistent*[^3],
-*complete*[^4] and *realizable*[^5] form, that is *strict* problem definition and find the solution
-for that problem.
+*complete*[^4] and *realizable*[^5] form, that is *strict* problem definition, and then find and
+estimate the solution for that problem.
 
 It is recommended for the discussion document to have sections:
 
@@ -35,6 +36,8 @@ It is recommended for the discussion document to have sections:
 <dd>
 <i>Strict</i> abstract definition of <b>what</b> problem to be solved, and <b>how</b> it should be solved.
 </dd>
+<dt>Change Requests</dt>
+<dd><i>Empty at this step.</i></dd>
 <dt>Complexity</dt>
 <dd>A number, which is abstract <a href="https://www.atlassian.com/agile/project-management/estimation">points estimation</a>.</dd>
 <dt>Statements</dt>
@@ -51,7 +54,7 @@ statements.
 </dl>
 
 > While given sequence of sections ensures comfortable reading later, it will be most likely hard or
-> impossible to be created in such order.
+> impossible to create the document in such order.
 
 [^2]: Does not conflict with the input.
 [^3]: Does not conflict with itself.
@@ -59,6 +62,8 @@ statements.
 [^5]: Able to be implemented.
 
 ## Documentation
+
+Documentation is a process of creating the description from end-user perspective.
 
 ---
 
