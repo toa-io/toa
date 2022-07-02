@@ -26,9 +26,8 @@ $ npm run lint
 Small commits are [better](https://gitforteams.com/resources/commit-granularity.html) than big ones.
 
 If you find yourself confused when you should commit changes, imagine you have a permanent question
-from your boss: **What have you done?**
-
-Then, each time you have a reasonable answer to it, you should commit. And that answer should be
+from your boss: **What have you done?** Then, each time you have a reasonable answer to it, you
+should commit. And that answer should be
 your commit message (in the form conforming to commit message convention).
 
 ### Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg)](https://conventionalcommits.org)
