@@ -11,7 +11,6 @@
 
 - **Discussion**
     - Problem
-    - Solution
     - Complexity
 - **Documentation**
     - Manual
@@ -26,7 +25,7 @@
 ## Definition
 
 Cycle of making changes consists of four mandatory straight forward steps[^1]: discussion,
-documentation, decomposition, development.
+documentation, decomposition and development.
 
 Each iteration of the cycle starts with the *input*, which is a description of the customer needs,
 provided in arbitrary form.
@@ -127,8 +126,7 @@ Add missing step implementations until all new behaviour tests are executable an
 
 ### Write the Code
 
-Add the implementation of the solution in compliance with the solution described in the discussion
-document until all behaviour tests are *green* and the feature branch is closed according to
-existent flow.
+Add the implementation in compliance with the solution described in the discussion document until
+behaviour tests are *green* and the feature branch is closed according to existent flow.
 
 See [development requirements](development.md).

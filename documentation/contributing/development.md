@@ -2,8 +2,8 @@
 
 ## Unit of Work
 
-[TDD](https://en.wikipedia.org/wiki/Test-driven_development) is considered to be the only known way
-(but not guarantee) to create *non-broken software*. Minimal developer's unit of work is one
+[TDD](https://en.wikipedia.org/wiki/Test-driven_development) is considered to be the way (but
+not guarantee) to create *non-broken software*. Minimal developer's unit of work is one 
 iteration of TDD cycle.
 
 ## Flow
