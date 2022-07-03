@@ -24,18 +24,23 @@
 
 ## Definition
 
-Cycle of making changes consists of four mandatory straight forward steps[^1]: discussion,
-documentation, decomposition and devйelopment.
+> The goal of the Cycle is to help teams producing *simple[^1] non-broken[^2] software* in a fast
+> and predictable way.
+
+Cycle of making changes consists of four mandatory straight forward steps[^3]: discussion,
+documentation, decomposition and development.
 
 Each iteration of the cycle starts with the *input*, which is a description of the customer needs,
 provided in arbitrary form.
 
-[^1]: Neither step may be skipped when going forward. Going backward is arbitrary.
+[^1]: Meeting a common sense expectations.
+[^2]: Meeting the requirements.
+[^3]: Neither step may be skipped when going forward. Going backward is arbitrary.
 
 ## Discussion
 
-Analyse the input to transform it into *correct*[^2], *consistent*[^3], *complete*[^4] and
-*realizable*[^5] form, that is *strict* problem definition.
+Analyse the input to transform it into *correct*[^4], *consistent*[^5], *complete*[^6] and
+*realizable*[^7] form, that is *strict* problem definition.
 
 Discussion document should have the following sections:
 
@@ -61,10 +66,10 @@ List of <b>what is unknown</b>. At this step many questions may don't have an an
 > While given sequence of sections ensures comfortable reading later, it will be most likely hard or
 > impossible to create the document in such order.
 
-[^2]: Does not conflict with the input.
-[^3]: Does not conflict with itself.
-[^4]: Contains enough information for next steps of the cycle.
-[^5]: Able to be implemented.
+[^4]: Does not conflict with the input.
+[^5]: Does not conflict with itself.
+[^6]: Contains enough information for next steps of the cycle.
+[^7]: Able to be implemented.
 
 ## Documentation
 
@@ -77,6 +82,14 @@ Documentation step consists of two sequential processes: writing the user manual
 
 Create or update User Manual. Form of this documentation part depends on type of software being
 developed. In can be end-user manual, public API reference, interface of the library, etc.
+
+The creation of the user manual is a crucial part of the Cycle. Note that at this point a concrete
+solution is yet to be found, thus an author of the manual **is not bound to the upcoming
+implementation complexity**.
+
+Designing an end-user application interface without regard to the complexity of the implementation
+is a key to producing *simple software*. Thus, the end goal of writing user manual is to produce
+a software that doesn't need a manual.
 
 ### Scenarios
 
