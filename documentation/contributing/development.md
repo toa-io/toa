@@ -3,8 +3,17 @@
 ## Unit of Work
 
 [TDD](https://en.wikipedia.org/wiki/Test-driven_development) is considered to be the way (but
-not guarantee) to create *non-broken software*. Minimal developer's unit of work is one 
+not guarantee) to create *non-broken software*. Minimal developer's unit of work is one
 iteration of TDD cycle.
+
+Considering this project
+uses [JavaScript with DTS](https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-d-ts.html)
+contributor's unit of work is:
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="unit-dark.png">
+<img alt="4D" src="unit-light.png" width="400" height="374">
+</picture>
 
 ## Flow
 
