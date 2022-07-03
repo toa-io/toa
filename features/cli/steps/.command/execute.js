@@ -15,7 +15,7 @@ async function execute (command, options = {}) {
 
   options.signal = this.controller.signal
 
-  /** @type {import('child_process').ChildProcess} */
+  /** @type {any} */
   let result
 
   try {
@@ -25,8 +25,8 @@ async function execute (command, options = {}) {
     this.aborted = true
   }
 
-  this.stdout = /** @type {string} */ result.stdout
-  this.stderr = /** @type {string} */ result.stderr
+  this.stdout = result.stdout.trim()
+  this.stderr = result.stderr.trim()
   this.stdoutLines = lines(this.stdout)
   this.stderrLines = lines(this.stderr)
 }

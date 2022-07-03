@@ -3,11 +3,16 @@
 const assert = require('node:assert')
 const { Then } = require('@cucumber/cucumber')
 
-Then('{word} line {int} should contain version', function (channel, line) {
-  const { version } = require('@toa.io/runtime')
+Then('{word} should be version',
+  /**
+   * @param {string} channel
+   * @this {toa.features.cli.Context}
+   */
+  function (channel) {
+    const { version } = require('@toa.io/runtime')
 
-  assert.equal(this[channel + 'Lines'][line - 1], version)
-})
+    assert.equal(this[channel], version)
+  })
 
 Then('{word} should contain {int} line(s)', function (channel, lines) {
   assert.equal(this[channel + 'Lines'].length, lines, `${channel} contains ${this[channel].length} lines, ${lines} expected`)
