@@ -47,3 +47,28 @@ describe('{word} should contain lines:', () => {
   })
 })
 
+describe('{word} should be: {string}', () => {
+  const step = gherkin.steps.Then('{word} should be: {string}')
+
+  it('should be', () => undefined)
+
+  it('should pass if equals', () => {
+    context.stdout = 'a message'
+
+    expect(() => step.call(context, 'stdout', 'a message')).not.toThrow()
+    expect(() => step.call(context, 'stdout', 'wrong')).toThrow(AssertionError)
+  })
+
+  it('should pass if starts with', () => {
+    context.stdout = 'a message'
+
+    expect(() => step.call(context, 'stdout', 'a mess')).not.toThrow()
+  })
+
+  it('should trim', () => {
+    context.stdout = '  a message'
+
+    expect(() => step.call(context, 'stdout', 'a message')).not.toThrow()
+    expect(() => step.call(context, 'stdout', 'a message  ')).not.toThrow()
+  })
+})

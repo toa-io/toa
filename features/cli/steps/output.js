@@ -21,12 +21,33 @@ Then('program should exit', async function () {
   await this.process
 })
 
-Then('{word} should contain lines:', function (channel, lines) {
-  const queries = lines.split('\n').map((line) => line.trim())
+Then('{word} should contain lines:',
+  function (channel, lines) {
+    const queries = lines.split('\n').map((line) => line.trim())
 
-  for (const query of queries) {
-    const found = this[channel + 'Lines'].find((actual) => actual.trim().substring(0, query.length) === query)
+    for (const query of queries) {
+      const found = this[channel + 'Lines'].find((actual) => compare(actual, query))
 
-    assert.notEqual(found, undefined, 'Line not found: ' + query)
-  }
-})
+      assert.notEqual(found, undefined, 'Line not found: ' + query)
+    }
+  })
+
+Then('{word} should be: {string}',
+  function (channel, line) {
+    const actual = this[channel]
+    const equal = compare(actual, line)
+
+    assert.equal(equal, true)
+  })
+
+/**
+ * @param {string} reference
+ * @param {string} line
+ * @returns {boolean}
+ */
+const compare = (reference, line) => {
+  const request = line.trim()
+  const actual = reference.trim().substring(0, request.length)
+
+  return actual === request
+}

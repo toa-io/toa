@@ -56,8 +56,4 @@ Feature: Print manifest
     And my working directory is ./dummies.invalid
     When I run `toa export manifest -e`
     Then program should exit
-    And stderr should contain lines:
-      """
-      error Locator name and namespace must be defined
-      """
-    And stderr should contain 1 line
+    And stderr should be: "error Locator name and namespace must be defined"
