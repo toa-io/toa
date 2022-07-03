@@ -25,7 +25,7 @@
 ## Definition
 
 Cycle of making changes consists of four mandatory straight forward steps[^1]: discussion,
-documentation, decomposition and development.
+documentation, decomposition and devйelopment.
 
 Each iteration of the cycle starts with the *input*, which is a description of the customer needs,
 provided in arbitrary form.
@@ -52,7 +52,7 @@ Discussion document should have the following sections:
 <dd>List of <b>what is known</b>.</dd>
 <dt>Questions</dt>
 <dd>
-List of <b>what is unknown</b>. At this step many of questions may don't have an answer.
+List of <b>what is unknown</b>. At this step many questions may don't have an answer.
 </dd>
 <dt>Options</dt>
 <dd><i>Empty at this step.</i></dd>
