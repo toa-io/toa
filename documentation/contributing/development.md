@@ -46,3 +46,9 @@ Please use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/
 Commit subject line should complete the sentence:
 > If applied, this commit will `[add your subject line here]`
 
+### Clean Commits
+
+A subject of a commit is a set of units of work, that is a set of **finished** TDD cycles, thus all
+existent unit tests must pass and changed files must not contain TODOs.
+
+> This project has a git [pre-commit hook](/../../.husky/pre-commit) to help following this rule.

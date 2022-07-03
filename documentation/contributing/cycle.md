@@ -28,10 +28,8 @@
 > and predictable way.
 
 Cycle of making changes consists of four mandatory straight forward steps[^3]: discussion,
-documentation, decomposition and development.
-
-Each iteration of the cycle starts with the *input*, which is a description of the customer needs,
-provided in arbitrary form.
+documentation, decomposition and development. Each iteration of the Cycle starts with the *input*,
+which is a description of the customer needs, provided in arbitrary form.
 
 [^1]: Meeting a common sense expectations.
 [^2]: Meeting the requirements.
@@ -42,7 +40,7 @@ provided in arbitrary form.
 Analyse the input to transform it into *correct*[^4], *consistent*[^5], *complete*[^6] and
 *realizable*[^7] form, that is *strict* problem definition.
 
-Discussion document should have the following sections:
+Discussion should have an artifact which is a document that should have the following sections:
 
 <dl>
 <dt>Abstract</dt>
@@ -68,7 +66,7 @@ List of <b>what is unknown</b>. At this step many questions may don't have an an
 
 [^4]: Does not conflict with the input.
 [^5]: Does not conflict with itself.
-[^6]: Contains enough information for next steps of the cycle.
+[^6]: Contains enough information for next steps of the Cycle.
 [^7]: Able to be implemented.
 
 ## Documentation
@@ -88,19 +86,17 @@ solution is yet to be found, thus an author of the manual **is not bound to the 
 implementation complexity**.
 
 Designing an end-user application interface without regard to the complexity of the implementation
-is a key to producing *simple software*. Thus, the end goal of writing user manual is to produce
+is a key to producing a *simple software*. Thus, the end goal of writing user manual is to produce
 a software that doesn't need a manual.
 
 ### Scenarios
-
-#### Write
 
 Using the manual, describe expected software behaviour in
 a [semi-formal format](https://en.wikipedia.org/wiki/Behavior-driven_development#Behavioral_specifications)
 as a complete set of scenarios, using first-person narrative.
 
-> ![!](https://img.shields.io/badge/!-red)<br/>
-> Ensure completeness of the set of scenarios as it is the iteration completion criteria.
+> ![Important](https://img.shields.io/badge/Important-red)<br/>
+> Ensure the completeness of the set of scenarios as it is the iteration completion criteria.
 
 At this point behaviour tests either failing or not executable due to missing implementation of new
 steps.
@@ -133,13 +129,26 @@ Example: `feat(cli): add option -e to toa export command`
 
 Add missing step implementations until all new behaviour tests are executable and failing.
 
-> ![!](https://img.shields.io/badge/!-red)<br/>
+> ![Important](https://img.shields.io/badge/Important-red)<br/>
 > Behaviour steps are programs, thus must be composed
 > of [developer's units of work](development.md#unit-of-work).
 
 ### Write the Code
 
-Add the implementation in compliance with the solution described in the discussion document until
-behaviour tests are *green* and the feature branch is closed according to existent flow.
+Add the implementation in compliance with the solution and according to the set of change
+requests until scenarios are *green* and the feature branch is closed according to existent flow.
 
 See [development requirements](development.md).
+
+## Perfect Result
+
+```gherkin
+Feature: Confident Delivery
+Given I am automatic workflow
+  When changes have been pushed to a feature branch
+  And all scenarios are green
+  And there are no conflicts with default branch
+  Then merge it to default branch
+  And delete it
+  And deploy default branch to production
+```
