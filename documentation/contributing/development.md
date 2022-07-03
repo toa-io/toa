@@ -3,7 +3,7 @@
 ## Unit of Work
 
 [TDD](https://en.wikipedia.org/wiki/Test-driven_development) is considered to be the way (but
-not guarantee) to create *non-broken software*. Minimal developer's unit of work is one
+not guarantee) to produce a *non-broken software*. Developer's unit of work is one completed
 iteration of TDD cycle.
 
 Considering this project
@@ -11,8 +11,8 @@ uses [JavaScript with DTS](https://www.typescriptlang.org/docs/handbook/declarat
 contributor's unit of work is:
 
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="unit-dark.png">
-<img alt="4D" src="unit-light.png" width="400" height="374">
+<source media="(prefers-color-scheme: dark)" srcset="unit-dark.jpg">
+<img alt="4D" src="unit-light.jpg" width="400" height="375">
 </picture>
 
 ## Flow
@@ -36,8 +36,8 @@ Small commits are [better](https://gitforteams.com/resources/commit-granularity.
 
 If you find yourself confused when you should commit changes, imagine you have a permanent question
 from your boss: **What have you done?** Then, each time you have a reasonable answer to it, you
-should commit. And that answer should be
-your commit message (in the form conforming to commit message convention).
+should commit. And that answer should be your commit message (in the form conforming to the commit
+message convention).
 
 ### Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg)](https://conventionalcommits.org)
 
