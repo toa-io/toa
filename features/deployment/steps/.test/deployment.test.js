@@ -29,7 +29,7 @@ afterEach(async () => {
 })
 
 describe('Given I have components:', () => {
-  const step = gherkin.steps.Given('I have components:')
+  const step = gherkin.steps.Gi('I have components:')
 
   it('should copy components', async () => {
     const table = gherkin.table([['dummies.one'], ['dummies.two']])
@@ -56,7 +56,7 @@ describe('Given I have components:', () => {
 })
 
 describe('Given I have context with:', () => {
-  const step = gherkin.steps.Given('I have context with:')
+  const step = gherkin.steps.Gi('I have context with:')
 
   let path
 
@@ -84,7 +84,7 @@ describe('Given I have context with:', () => {
 })
 
 describe('Given I have context', () => {
-  const step = gherkin.steps.Given('I have context')
+  const step = gherkin.steps.Gi('I have context')
 
   let path
 
@@ -108,8 +108,8 @@ describe('When I export deployment', () => {
   beforeEach(async () => {
     path = join(context.directory, 'deployment')
 
-    const ctx = gherkin.steps.Given('I have context with:')
-    const copy = gherkin.steps.Given('I have components:')
+    const ctx = gherkin.steps.Gi('I have context with:')
+    const copy = gherkin.steps.Gi('I have components:')
     const columns = transpose(components)
     const table = gherkin.table(columns)
 
@@ -145,7 +145,7 @@ describe('When I export deployment', () => {
 })
 
 describe('Then exported {helm-artifact} should contain:', () => {
-  const step = gherkin.steps.Then('exported {helm-artifact} should contain:')
+  const step = gherkin.steps.Th('exported {helm-artifact} should contain:')
 
   let original
 

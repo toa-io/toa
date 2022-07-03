@@ -18,7 +18,7 @@ beforeEach(() => {
 })
 
 describe('Given my working directory is {path}:', () => {
-  const step = gherkin.steps.Given('my working directory is {path}')
+  const step = gherkin.steps.Gi('my working directory is {path}')
 
   const check = (path) => {
     expect(context.cwd).toStrictEqual(path)

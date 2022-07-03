@@ -16,8 +16,8 @@ beforeEach(async () => {
   context = { stdoutLines: [] }
 })
 
-describe('{word} should contain lines:', () => {
-  const step = gherkin.steps.Then('{word} should contain lines:')
+describe('Then {word} should contain lines:', () => {
+  const step = gherkin.steps.Th('{word} should contain lines:')
 
   it('should be', () => undefined)
 
@@ -47,8 +47,8 @@ describe('{word} should contain lines:', () => {
   })
 })
 
-describe('{word} should be: {string}', () => {
-  const step = gherkin.steps.Then('{word} should be: {string}')
+describe('Then {word} should be: {string}', () => {
+  const step = gherkin.steps.Th('{word} should be: {string}')
 
   it('should be', () => undefined)
 

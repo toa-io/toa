@@ -10,7 +10,7 @@ const gherkin = mock.gherkin
 const root = resolve(__dirname, '../../../../')
 
 describe('Before', () => {
-  const step = gherkin.steps.Before(0)[0]
+  const step = gherkin.steps.Be(0)[0]
   let context
 
   beforeEach(async () => {

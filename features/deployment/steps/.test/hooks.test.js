@@ -20,7 +20,7 @@ afterEach(async () => {
 })
 
 describe('Before', () => {
-  const step = gherkin.steps.Before(0)[0]
+  const step = gherkin.steps.Be(0)[0]
 
   it('should create directory', async () => {
     delete context.directory
@@ -41,7 +41,7 @@ describe('Before', () => {
 })
 
 describe('After', () => {
-  const step = gherkin.steps.After(0)[0]
+  const step = gherkin.steps.Af(0)[0]
 
   it('should remove directory', async () => {
     const before = context.directory

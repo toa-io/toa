@@ -21,7 +21,7 @@ beforeEach(() => {
 })
 
 describe('Given I have a component {component}', () => {
-  const step = gherkin.steps.Given('I have a component {component}')
+  const step = gherkin.steps.Gi('I have a component {component}')
 
   it('should be', () => undefined)
 
