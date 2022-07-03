@@ -1,5 +1,6 @@
 'use strict'
 
+const { acronyms } = require('@toa.io/libraries/generic')
 const { table } = require('./.gherkin/table')
 
 const KEYWORDS = ['Given', 'When', 'Then', 'Before', 'BeforeAll', 'After', 'AfterAll']
@@ -26,6 +27,9 @@ for (const KEYWORD of KEYWORDS) {
 
     return step
   }
+
+  const acronym = acronyms.camelcase(KEYWORD)
+  exports.steps[acronym] = exports.steps[KEYWORD]
 }
 
 exports.table = table

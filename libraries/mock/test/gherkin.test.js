@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { transpose } = require('@toa.io/libraries/generic')
+const { transpose, acronyms } = require('@toa.io/libraries/generic')
 
 const { gherkin } = require('../')
 
@@ -79,6 +79,12 @@ describe('steps', () => {
 
         expect(result1).toStrictEqual(implementation1)
         expect(result2).toStrictEqual(implementation2)
+      })
+
+      it('should have acronym', () => {
+        const acronym = acronyms.camelcase(KEYWORD)
+
+        expect(gherkin.steps[KEYWORD]).toStrictEqual(gherkin.steps[acronym])
       })
     })
   }

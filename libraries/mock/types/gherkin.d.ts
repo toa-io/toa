@@ -1,6 +1,16 @@
 declare namespace toa.mock.gherkin {
 
-    type Keyword = 'Given' | 'When' | 'Then' | 'Before' | 'After' | 'BeforeAll' | 'AfterAll'
+    type Acronym = 'Gi' | 'Wh' | 'Th' | 'Be' | 'Af' | 'BeAl' | 'AfAl'
+
+    type Keyword =
+        'Given'
+        | 'When'
+        | 'Then'
+        | 'Before'
+        | 'After'
+        | 'BeforeAll'
+        | 'AfterAll'
+        | Acronym
 
     type Expression = (sentence?: string | number) => Function
 
