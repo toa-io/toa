@@ -23,6 +23,8 @@ const { transpose } = require('./transpose')
 const { traverse } = require('./traverse')
 const { underlay } = require('./underlay')
 
+exports.acronyms = require('./acronyms')
+
 exports.concat = concat
 exports.convolve = convolve
 exports.decode = decode
