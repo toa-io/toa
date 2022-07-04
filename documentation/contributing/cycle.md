@@ -149,11 +149,14 @@ must continue **sequentially from that step**.
 
 ```gherkin
 Feature: Confident Delivery
-Given I am automatic workflow
+
+  Automatically deliver changes once scenarios are green.
+
+  Given I am automatic workflow
   When changes have been pushed to a feature branch
   And all scenarios are green
   And there are no conflicts with default branch
-  Then merge it to default branch
-  And delete it
+  Then merge feature branch to default branch
+  And delete feature branch
   And deploy default branch to production
 ```
