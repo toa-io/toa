@@ -1,6 +1,6 @@
 'use strict'
 
-const { load } = require('./.handlers/load')
+const { load } = require('./.debug/load')
 
 const { When, Then } = require('@cucumber/cucumber')
 

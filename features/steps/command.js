@@ -10,7 +10,7 @@ When('I run {command}', function (command) {
   this.process = execute.call(this, command)
 })
 
-When('abort', async function () {
+When('I abort execution', async function () {
   this.controller.abort()
 
   await this.process

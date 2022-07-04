@@ -23,7 +23,7 @@ Feature: toa compose
     And my working directory is <working directory>
     When I run <command>
     And I wait <delay> seconds
-    And abort
+    And I abort execution
     Then stderr should be empty
     And stdout should contain lines:
     """
