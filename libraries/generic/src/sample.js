@@ -2,7 +2,7 @@
 
 /**
  * @template T
- * @param array {Array<T>}
+ * @param array {T[]}
  * @returns {T}
  */
 const sample = (array) => array[Math.floor(Math.random() * array.length)]

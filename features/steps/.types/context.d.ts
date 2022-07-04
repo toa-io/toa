@@ -1,4 +1,4 @@
-declare namespace toa.features.cli {
+declare namespace toa.features {
     type Context = {
         cwd?: string
         stdout?: string

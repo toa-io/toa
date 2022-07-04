@@ -32,7 +32,7 @@ it('should create url', () => {
   expect(locator.protocol).toStrictEqual('mongodb:')
 
   if (process.env.TOA_ENV !== 'local') {
-    expect(fixtures.locator.host).toHaveBeenLastCalledWith('mongo')
-    expect(locator.hostname).toStrictEqual(fixtures.locator.host.mock.results[0].value)
+    expect(fixtures.locator.hostname).toHaveBeenLastCalledWith('storages-mongodb')
+    expect(locator.hostname).toStrictEqual(fixtures.locator.hostname.mock.results[0].value)
   }
 })

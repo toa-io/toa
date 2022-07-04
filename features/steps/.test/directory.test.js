@@ -7,7 +7,7 @@ jest.mock('@cucumber/cucumber', () => mock.gherkin)
 const { set } = require('../directory')
 
 const gherkin = mock.gherkin
-const ROOT = resolve(__dirname, '../../../../')
+const ROOT = resolve(__dirname, '../../../')
 
 let context
 
@@ -42,6 +42,18 @@ describe('Given my working directory is {path}:', () => {
     step.call(context, relative)
 
     check(path)
+  })
+
+  it('should recognize toa root', () => {
+    const path = resolve(ROOT, './features/steps')
+
+    set(context, path)
+
+    expect(context.cwd).toStrictEqual(path)
+
+    step.call(context, '/toa')
+
+    expect(context.cwd).toStrictEqual(ROOT)
   })
 })
 

@@ -7,7 +7,7 @@ Feature: AMQP deployment
     Given I have components:
       | dummies.one |
       | dummies.two |
-    And I have context with:
+    And I have a context with:
       """
       amqp: host.docker.internal
       """

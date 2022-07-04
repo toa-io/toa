@@ -5,7 +5,7 @@ Feature: Serve a service
   This reproduces the problem with `directory.find` from `@toa.io/libraries/generic`.
   See [source code](../../libraries/generic/src/directory/find.js) for details.
 
-    Given my working directory is ./
+    Given my working directory is /toa
     When I debug serve
       | path | <reference> |
     And I wait 0.5 seconds

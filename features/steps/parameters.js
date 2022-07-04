@@ -4,7 +4,7 @@ const { defineParameterType } = require('@cucumber/cucumber')
 
 defineParameterType({
   name: 'path',
-  regexp: /\.\/[^'\s]*/,
+  regexp: /\.\/[^'\s]*|\/toa/,
   transformer: (path) => path
 })
 
@@ -16,12 +16,12 @@ defineParameterType({
 
 defineParameterType({
   name: 'command',
-  regexp: /`toa (.+)`/,
-  transformer: (cmd) => 'toa ' + cmd
+  regexp: /`(.+)`/,
+  transformer: (cmd) => cmd
 })
 
 defineParameterType({
-  name: 'arguments',
-  regexp: /./,
-  transformer: (string) => string
+  name: 'helm-artifact',
+  regexp: /Chart|values/,
+  transformer: (artifact) => artifact
 })

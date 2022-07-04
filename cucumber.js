@@ -1,5 +1,6 @@
 module.exports = {
   default: {
-    publishQuiet: true
+    publishQuiet: true,
+    require: ['features/**/*.js']
   }
 }

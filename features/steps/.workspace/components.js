@@ -11,7 +11,7 @@ const { directory } = require('@toa.io/libraries/filesystem')
 const copy = async (list, to) => {
   for (const component of list) {
     const source = join(COMPONENTS, component)
-    const target = join(to, 'context/components', component)
+    const target = join(to, 'components', component)
 
     await directory.is(source)
 

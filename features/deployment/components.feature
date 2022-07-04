@@ -4,7 +4,7 @@ Feature: Component deployment
     Given I have components:
       | dummies.one |
       | dummies.two |
-    And I have context
+    And I have a context
     When I export deployment
     Then exported values should contain:
     """

@@ -10,12 +10,12 @@ const { save, load, parse } = require('@toa.io/libraries/yaml')
  * @param {string} [additions]
  */
 const template = async (directory, additions) => {
-  const path = join(directory, 'context', FILENAME)
+  const path = join(directory, FILENAME)
   const template = clone(TEMPLATE)
 
   if (additions !== undefined) {
     const patch = parse(additions)
-    
+
     merge(template, patch)
   }
 

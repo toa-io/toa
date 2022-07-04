@@ -1,3 +1,6 @@
-export * from './retry'
 export * as acronyms from './acronyms'
-export { Underlay } from './underlay'
+export { retry } from './retry'
+export { sample } from './sample'
+export { underlay } from './underlay'
+
+export type { Underlay } from './underlay'

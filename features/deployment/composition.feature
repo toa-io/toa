@@ -1,11 +1,10 @@
 Feature: Deploy compositions
 
-  Scenario: Default compositions
-
+  Scenario: Deploy two components without explicit compositions
     Given I have components:
       | dummies.one |
       | dummies.two |
-    And I have context
+    And I have a context
     When I export deployment
     Then exported values should contain:
     """
