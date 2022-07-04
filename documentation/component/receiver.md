@@ -52,13 +52,13 @@ name by the binding.
 <dt>binding</dt>
 <dd>
 <code>string</code> Binding name to consume events. <code>undefined</code> by default, that is being 
-<a href="#">discovered</a>.<br/>
+<a href="#">discovered</a>.
 </dd>
 </dl>
 
 ### Concise Declaration
 
-As `operation` is the only declaration property without a default, if the receiver declaration is
+As `operation` is the declaration property without a default, if the receiver declaration is
 a `string`, then it is considered as the value for `operation` property.
 
 ```yaml
@@ -69,3 +69,10 @@ receivers:
 
 Values for other properties may be specified by using bridge implementation conventions.
 See [Bridges](#).
+
+## Foreign Messages
+
+*Foreign messages* are produced outside the context and thus may not conform
+to [UCP](/../../documentation/communication/ucp.dm). As sources of foreign messages may not be
+discovered, components consuming foreign messages must explicitly define receiver's `binding`
+property to prevent discovery attempts.

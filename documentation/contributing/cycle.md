@@ -22,6 +22,8 @@
     - Steps
     - Code
 
+---
+
 ## Definition
 
 > The goal of the Cycle is to help teams producing *simple[^1] non-broken[^2] software* in a fast

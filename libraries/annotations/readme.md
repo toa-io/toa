@@ -30,4 +30,5 @@ something:
 
 ### Custom extensions
 
-Packages using Proxy Set Annotation may declare custom extensions for the declaration.
+Packages using Proxy Set Annotation may declare custom extensions as an additional properties for
+the declaration schema.

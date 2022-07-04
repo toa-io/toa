@@ -12,8 +12,7 @@ Given('I have a component {component}',
     const temp = await directory.temp()
 
     await directory.ensure(temp)
+    await copy(component, temp)
 
     set(this, temp)
-
-    await copy(component, temp)
   })

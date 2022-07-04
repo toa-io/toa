@@ -12,7 +12,7 @@ contributor's unit of work is:
 
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="unit-dark.jpg">
-<img alt="4D" src="unit-light.jpg" width="400" height="375">
+<img alt="Unit of Work" src="unit-light.jpg" width="400" height="375">
 </picture>
 
 ## Flow
@@ -49,6 +49,11 @@ Commit subject line should complete the sentence:
 ### Clean Commits
 
 A subject of a commit is a set of units of work, that is a set of **finished** TDD cycles, thus all
-existent unit tests must pass and changed files must not contain TODOs.
+existent unit tests must pass and changed files must not contain TODOs (if you're not going to do it
+now, create an issue).
 
 > This project has a git [pre-commit hook](/../../.husky/pre-commit) to help following this rule.
+
+## See Also
+
+- [Productivity Notes](productivity.md)
