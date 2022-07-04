@@ -81,7 +81,8 @@ Documentation step consists of two sequential processes: writing the user manual
 ### User Manual
 
 Create or update User Manual. Form of this documentation part depends on type of software being
-developed. In can be end-user manual, public API reference, interface of the library, etc.
+developed. It can be end-user manual, public or private API reference, interface of the library or
+microservice, etc.
 
 The creation of the user manual is a crucial part of the Cycle. Note that at this point a concrete
 solution is yet to be found, thus an author of the manual **is not bound to the upcoming
@@ -100,12 +101,11 @@ as a complete set of scenarios, using first-person narrative.
 > ![Important](https://img.shields.io/badge/Important-red)<br/>
 > Ensure the completeness of the set of scenarios as it is the iteration completion criteria.
 
-At this point behaviour tests either failing or not executable due to missing implementation of new
-steps.
+At this point scenarios either failing or not executable due to missing implementation of new steps.
 
-> Failing or not executable behaviour tests are not the reason not to
-> [commit](development.md#commits). Actually, failing behaviour tests is a permanent state of any
-> feature branch until the iteration is completed.
+> Failing or not executable scenarios are not the reason not to
+> [commit](development.md#commits). Actually, failing scenarios is a permanent state of any feature
+> branch until the iteration is completed.
 
 ## Decomposition
 
@@ -129,7 +129,7 @@ Example: `feat(cli): add option -e to toa export command`
 
 ### Implement Steps
 
-Add missing step implementations until all new behaviour tests are executable and failing.
+Add missing step implementations until all scenarios are executable and failing.
 
 > ![Important](https://img.shields.io/badge/Important-red)<br/>
 > Behaviour steps are programs, thus must be composed
@@ -139,14 +139,17 @@ Add missing step implementations until all new behaviour tests are executable an
 
 Add the implementation in compliance with the solution and according to the set of change
 requests until scenarios are *green* and the feature branch is closed according to existent flow.
-
 See [development requirements](development.md).
+
+At this point, it is likely that reasons will be found to update the solution, change requests,
+manual or scenarios. If so, the update must be performed at the appropriate step and the Cycle
+must continue **sequentially from that step**.
 
 ## Perfect Result
 
 ```gherkin
 Feature: Confident Delivery
-  Given I am automatic workflow
+Given I am automatic workflow
   When changes have been pushed to a feature branch
   And all scenarios are green
   And there are no conflicts with default branch
