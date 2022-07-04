@@ -146,7 +146,7 @@ See [development requirements](development.md).
 
 ```gherkin
 Feature: Confident Delivery
-Given I am automatic workflow
+  Given I am automatic workflow
   When changes have been pushed to a feature branch
   And all scenarios are green
   And there are no conflicts with default branch
