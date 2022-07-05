@@ -3,7 +3,7 @@
 const { dirname, join } = require('node:path')
 
 const find = (reference, base, indicator = 'package.json') => {
-  const paths = [RUNTIME, base]
+  const paths = [base, RUNTIME]
 
   let request = join(reference, indicator)
 
