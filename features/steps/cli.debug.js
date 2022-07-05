@@ -1,10 +1,10 @@
 'use strict'
 
-const { load } = require('./.debug/load')
+const { load } = require('./.cli.debug/load')
 
 const { When, Then } = require('@cucumber/cucumber')
 
-When('I debug {word}',
+When('I debug command {word}',
   /**
    * @param {string} name
    * @param {import('@cucumber/cucumber').DataTable} inputs

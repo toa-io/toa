@@ -2,7 +2,7 @@
 
 const assert = require('node:assert')
 const { resolve } = require('node:path')
-const { file } = require('@toa.io/libraries/filesystem')
+const { directory, file } = require('@toa.io/libraries/filesystem')
 const { Given, Then } = require('@cucumber/cucumber')
 
 Given('my working directory is {path}',
@@ -10,8 +10,11 @@ Given('my working directory is {path}',
    * @param {string} path
    * @this {toa.features.Context}
    */
-  function (path) {
-    const target = path === '/toa' ? ROOT : resolve(this.cwd, path)
+  async function (path) {
+    let target
+
+    if (path.substring(0, 4) === '/toa') target = toa(path)
+    else target = await pattern(this.cwd, path)
 
     process.chdir(target)
 
@@ -28,8 +31,7 @@ Then('the file {path} should contain exact line {string}',
     const pattern = resolve(this.cwd, relative)
     const paths = await file.glob(pattern)
 
-    assert.equal(paths.length > 1, false, `Ambiguous file pattern '${relative}'`)
-    assert.equal(paths.length === 0, false, 'File not found')
+    check(paths)
 
     const path = paths[0]
     const lines = await file.lines(path)
@@ -37,5 +39,37 @@ Then('the file {path} should contain exact line {string}',
 
     assert.equal(found, true, `Line '${line}' not found in '${relative}'`)
   })
+
+/**
+ * @param {string} cwd
+ * @param {string} path
+ * @return {Promise<string>}
+ */
+async function pattern (cwd, path) {
+  const pattern = resolve(cwd, path)
+  const paths = await directory.glob(pattern)
+
+  check(paths)
+
+  return paths[0]
+}
+
+/**
+ * @param {string[]} paths
+ */
+const check = (paths) => {
+  assert.equal(paths.length > 1, false, 'Ambiguous pattern')
+  assert.equal(paths.length === 0, false, 'File not found')
+}
+
+/**
+ * @param {string} path
+ * @returns {string}
+ */
+const toa = (path) => {
+  const relative = path.substring(5)
+
+  return resolve(ROOT, relative)
+}
 
 const ROOT = resolve(__dirname, '../../')

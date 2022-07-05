@@ -4,7 +4,7 @@ const { defineParameterType } = require('@cucumber/cucumber')
 
 defineParameterType({
   name: 'path',
-  regexp: /\.\/[^'\s]*|\/toa/,
+  regexp: /\.\/[^'\s]*|\/toa(?:\/\w+)*\/?/,
   transformer: (path) => path
 })
 

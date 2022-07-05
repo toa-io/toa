@@ -12,7 +12,7 @@ const find = (reference, base, indicator = 'package.json') => {
   } catch {
     /*
     I've failed to reproduce the problem with unit tests. I think jest might break the default behaviour
-    of the require.resolve. It's been reproduced with `features/cli/serve.handler.feature`.
+    of the require.resolve. It's been reproduced with `features/cli/serve.debug.feature`.
      */
 
     // try as relative reference

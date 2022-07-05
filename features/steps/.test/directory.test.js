@@ -27,33 +27,66 @@ describe('Given my working directory is {path}:', () => {
 
   it('should be', () => undefined)
 
-  it('should set working directory by absolute path', () => {
+  it('should set working directory by absolute path', async () => {
     const path = resolve(__dirname)
 
-    step.call(context, path)
+    await step.call(context, path)
 
     check(path)
   })
 
-  it('should set working directory by relative path', () => {
+  it('should set working directory by relative path', async () => {
     const relative = './features'
     const path = resolve(ROOT, relative)
 
-    step.call(context, relative)
+    await step.call(context, relative)
 
     check(path)
   })
 
-  it('should recognize toa root', () => {
+  it('should recognize toa root', async () => {
     const path = resolve(ROOT, './features/steps')
 
     context.cwd = path
     process.chdir(path)
 
-    step.call(context, '/toa')
+    await step.call(context, '/toa')
 
     expect(context.cwd).toStrictEqual(ROOT)
     expect(process.cwd()).toStrictEqual(ROOT)
+  })
+
+  it('should recognize toa paths', async () => {
+    const expected = resolve(ROOT, 'features/steps')
+
+    await step.call(context, '/toa/features/steps')
+
+    expect(context.cwd).toStrictEqual(expected)
+    expect(process.cwd()).toStrictEqual(expected)
+  })
+
+  it('should handle glob', async () => {
+    const path = resolve(__dirname)
+    const expected = resolve(path, 'assets/directory')
+
+    context.cwd = path
+    process.chdir(path)
+
+    await step.call(context, './assets/dir*')
+
+    expect(context.cwd).toStrictEqual(expected)
+    expect(process.cwd()).toStrictEqual(expected)
+  })
+
+  it('should throw on ambiguous pattern', async () => {
+    const path = resolve(__dirname)
+
+    context.cwd = path
+    process.chdir(path)
+
+    const call = step.call(context, './assets/*')
+
+    await expect(call).rejects.toThrow(/Ambiguous pattern/)
   })
 })
 
@@ -61,8 +94,8 @@ describe('Then the file {path} should contain exact line {string}', () => {
   const step = gherkin.steps.Th('the file {path} should contain exact line {string}')
   const chdir = (path) => gherkin.steps.Gi('my working directory is {path}').call(context, path)
 
-  beforeEach(() => {
-    chdir(__dirname)
+  beforeEach(async () => {
+    await chdir(__dirname)
   })
 
   it('should be', () => undefined)
@@ -99,6 +132,6 @@ describe('Then the file {path} should contain exact line {string}', () => {
   it('should throw on ambiguous pattern', async () => {
     const call = step.call(context, './assets/directory/file*', 'whatever')
 
-    await expect(call).rejects.toThrow(/Ambiguous file pattern/)
+    await expect(call).rejects.toThrow(/Ambiguous pattern/)
   })
 })
