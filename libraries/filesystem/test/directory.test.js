@@ -6,7 +6,7 @@ const { tmpdir } = require('node:os')
 const { generate } = require('randomstring')
 const { newid } = require('@toa.io/libraries/generic')
 
-const { directory: { copy, ensure, is, remove, temp, find, glob } } = require('../')
+const { directory: { copy, ensure, is, remove, temp, glob } } = require('../')
 
 describe('ensure', () => {
   it('should create directory', async () => {
@@ -96,44 +96,6 @@ describe('copy', () => {
     await copy(source, target)
 
     await expect(is(join(target, nested))).resolves.toStrictEqual(true)
-
-    await remove(source)
-    await remove(target)
-  })
-})
-
-describe('find', () => {
-  const THIS = resolve(__dirname, '../')
-
-  it('should exist', () => {
-    expect(find).toBeDefined()
-  })
-
-  it('should find by package name', () => {
-    const path = find('@toa.io/libraries', '/')
-
-    expect(path).toStrictEqual(resolve(__dirname, '../../'))
-  })
-
-  it('should find by package name with directory', () => {
-    const path = find('@toa.io/libraries/filesystem', '/')
-
-    expect(path).toStrictEqual(THIS)
-  })
-
-  it('should resolve package by relative path', () => {
-    const path = find('../', __dirname)
-
-    expect(path).toStrictEqual(THIS)
-  })
-
-  it('should resolve package by relative starts with ./', () => {
-    const ref = 'extensions/exposition'
-    const root = resolve(__dirname, '../../../')
-
-    const path = find(ref, root)
-
-    expect(path).toStrictEqual(resolve(root, ref))
   })
 })
 

@@ -14,3 +14,4 @@ declare namespace toa.generic {
 }
 
 export type Underlay = toa.generic.Underlay
+export const underlay: toa.generic.underlay.Constructor

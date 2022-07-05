@@ -18,10 +18,10 @@ Feature: toa serve
   - package name
   - shortcut
 
-    Given my working directory is ./
+    Given my working directory is /toa
     When I run `toa serve <reference>`
     And I wait 0.5 seconds
-    And abort
+    And I abort execution
     Then stderr should be empty
 
     Examples:

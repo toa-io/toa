@@ -17,10 +17,13 @@ Feature: toa compose
     """
 
   Scenario Outline: Run compositions
-    Given my working directory is <working directory>
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And my working directory is <working directory>
     When I run <command>
     And I wait <delay> seconds
-    And abort
+    And I abort execution
     Then stderr should be empty
     And stdout should contain lines:
     """
@@ -28,8 +31,8 @@ Feature: toa compose
     """
 
     Examples:
-      | command                                            | working directory           | delay |
-      | `toa compose`                                      | ./integration/dummies/nulls | 1     |
-      | `toa compose ./dummies/nulls`                      | ./integration               | 1     |
-      | `toa compose ./dummies/nulls ./dummies/configured` | ./integration               | 1     |
-      | `toa compose ./context/*/**`                       | ./integration               | 2     |
+      | command                                | working directory        | delay |
+      | `toa compose`                          | ./components/dummies.one | 0.5   |
+      | `toa compose ./components/dummies.two` | ./                       | 0.5   |
+      | `toa compose dummies.one dummies.two`  | ./components             | 0.5   |
+      | `toa compose ./**/*`                   | ./                       | 1     |

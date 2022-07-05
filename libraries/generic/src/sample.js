@@ -1,10 +1,6 @@
 'use strict'
 
-/**
- * @template T
- * @param array {Array<T>}
- * @returns {T}
- */
+/** @type {toa.generic.Sample} */
 const sample = (array) => array[Math.floor(Math.random() * array.length)]
 
 exports.sample = sample

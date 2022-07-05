@@ -13,7 +13,7 @@ Feature: Print manifest
 
   Scenario Outline: Print manifest from component directory
     Given I have a component dummies.one
-    And my working directory is ./dummies.one
+    And my working directory is ./components/dummies.one
     When I run `toa export <artifact>`
     Then program should exit
     And stdout should contain lines:
@@ -30,7 +30,7 @@ Feature: Print manifest
   Scenario: Print manifest located by path
     Given I have a component dummies.two
     And my working directory is ./
-    When I run `toa export manifest -p ./dummies.two`
+    When I run `toa export manifest -p ./components/dummies.two`
     Then program should exit
     And stdout should contain lines:
       """
@@ -41,7 +41,7 @@ Feature: Print manifest
   Scenario Outline: Validate valid manifest
     Given I have a component dummies.two
     # which has valid manifest
-    And my working directory is ./dummies.two
+    And my working directory is ./components/dummies.two
     When I run `toa export manifest <flag>`
     Then program should exit
     And stdout should be empty
@@ -53,7 +53,7 @@ Feature: Print manifest
   Scenario: Validate invalid manifest
     Given I have a component dummies.invalid
     # which has invalid manifest
-    And my working directory is ./dummies.invalid
+    And my working directory is ./components/dummies.invalid
     When I run `toa export manifest -e`
     Then program should exit
     And stderr should be: "error Locator name and namespace must be defined"

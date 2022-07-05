@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.node",
-  "version": "0.2.0-dev.66",
+  "version": "0.2.0-dev.71",
   "description": "Toa Node Bridge (inproc)",
   "homepage": "https://toa.io",
   "author": {
