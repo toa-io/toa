@@ -8,9 +8,11 @@ const exec = util.promisify(require('child_process').exec)
 /**
  * @param {string} command
  * @param {import('child_process').ExecOptions} [options]
- * @this {toa.features.cli.Context}
+ * @this {toa.features.Context}
  */
 async function execute (command, options = {}) {
+  options.cwd = this.cwd
+
   this.controller = new AbortController()
 
   options.signal = this.controller.signal
@@ -22,7 +24,9 @@ async function execute (command, options = {}) {
     result = await exec(command, options)
   } catch (e) {
     result = e
-    this.aborted = true
+    this.aborted = e.code === 'ABORT_ERR'
+
+    if (!this.aborted) throw e
   }
 
   this.stdout = result.stdout.trim()

@@ -4,7 +4,7 @@ const { resolve } = require('node:path')
 const mock = require('@toa.io/libraries/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-const { set } = require('../directory')
+require('../directory')
 
 const gherkin = mock.gherkin
 const ROOT = resolve(__dirname, '../../../')
@@ -47,28 +47,58 @@ describe('Given my working directory is {path}:', () => {
   it('should recognize toa root', () => {
     const path = resolve(ROOT, './features/steps')
 
-    set(context, path)
-
-    expect(context.cwd).toStrictEqual(path)
+    context.cwd = path
+    process.chdir(path)
 
     step.call(context, '/toa')
 
     expect(context.cwd).toStrictEqual(ROOT)
+    expect(process.cwd()).toStrictEqual(ROOT)
   })
 })
 
-describe('set', () => {
-  it('should be', () => {
-    expect(set).toBeInstanceOf(Function)
+describe('Then the file {path} should contain exact line {string}', () => {
+  const step = gherkin.steps.Th('the file {path} should contain exact line {string}')
+  const chdir = (path) => gherkin.steps.Gi('my working directory is {path}').call(context, path)
+
+  beforeEach(() => {
+    chdir(__dirname)
   })
 
-  it('should set cwd', () => {
-    const path = resolve(ROOT, './features')
-    const context = {}
+  it('should be', () => undefined)
 
-    set(context, path)
+  it('should fail if line not found', async () => {
+    const file = './assets/directory/file1'
+    const line = 'Non-existent line'
 
-    expect(context.cwd).toStrictEqual(path)
-    expect(process.cwd()).toStrictEqual(path)
+    const call = step.call(context, file, line)
+
+    await expect(call).rejects.toThrow('Line')
+  })
+
+  it('should throw if file not found', async () => {
+    const file = './assets/directory/non-existent'
+    const line = 'whatever'
+
+    const call = step.call(context, file, line)
+
+    await expect(call).rejects.toThrow('File not found')
+  })
+
+  it('it should pass if true', async () => {
+    const call = step.call(context, './assets/directory/file1', 'Bar')
+    await expect(call).resolves.not.toThrow()
+  })
+
+  it('should handle globs', async () => {
+    const call = step.call(context, './assets/dir*/file1', 'Foo')
+
+    await expect(call).resolves.not.toThrow()
+  })
+
+  it('should throw on ambiguous pattern', async () => {
+    const call = step.call(context, './assets/directory/file*', 'whatever')
+
+    await expect(call).rejects.toThrow(/Ambiguous file pattern/)
   })
 })

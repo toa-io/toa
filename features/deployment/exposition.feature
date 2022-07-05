@@ -1,9 +1,9 @@
 Feature: Exposition Deployment
 
-  Scenario: Deploy a context with exposition
-    Given I have components:
-      | dummies.three |
+  Scenario: Dockerfile has correct command
+    Given I have a component dummies.three
+    # which declares exposition
     And I have a context
-    And my working directory is ./
-    When I run `toa export images ./images -p ./components/dummies/three`
-    Then exported exposition's Dockerfile should contain exactly: 'toa serve .'
+    When I run `toa export images ./images`
+    Then program should exit
+    And the file ./images/*exposition*/Dockerfile should contain exact line 'CMD toa serve .'

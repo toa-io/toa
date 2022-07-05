@@ -96,9 +96,6 @@ describe('copy', () => {
     await copy(source, target)
 
     await expect(is(join(target, nested))).resolves.toStrictEqual(true)
-
-    await remove(source)
-    await remove(target)
   })
 })
 

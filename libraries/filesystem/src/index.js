@@ -1,5 +1,4 @@
 'use strict'
 
-const directory = require('./directory')
-
-exports.directory = directory
+exports.directory = require('./directory')
+exports.file = require('./file')
