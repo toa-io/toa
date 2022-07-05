@@ -1,5 +1,6 @@
 'use strict'
 
+/** @type {toa.generic.acronyms.Camelcase} */
 const camelcase = (string, length = 2) => {
   const parts = string.split(/(?=[A-Z])/).map((word) => shrink(word, length))
 
