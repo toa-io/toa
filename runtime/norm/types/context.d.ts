@@ -50,6 +50,8 @@ declare namespace toa.norm {
             compositions?: Composition[]
             annotations?: Record<string, object>
         }
+
+        type Constructor = (path: string, environment?: string) => Promise<Context>
     }
 
     interface Context extends context.Declaration {
@@ -69,3 +71,5 @@ export type Context = toa.norm.Context
 export namespace dependencies {
     export type Instance = toa.norm.context.dependencies.Instance
 }
+
+export const context: toa.norm.context.Constructor

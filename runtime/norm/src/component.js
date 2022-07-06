@@ -16,6 +16,9 @@ const {
   normalize
 } = require('./.component')
 
+/**
+ * @type {toa.norm.component.Constructor}
+ */
 const component = async (path) => {
   const manifest = await load(path)
 

@@ -16,7 +16,7 @@ afterAll(async () => {
   if (composition) await composition.disconnect()
 })
 
-it('should provide local', async () => {
+it('should provide local operations', async () => {
   const from = newid()
   const to = newid()
   const reply = await credits.invoke('transfer', { input: from, query: { id: to } })
