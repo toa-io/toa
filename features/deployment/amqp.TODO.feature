@@ -23,7 +23,7 @@ Feature: AMQP deployment
 
   Scenario: Multiple external brokers
 
-  Deploy context with individual broker for each component within same namespace.
+  Deploy context with individual broker for each component within the same namespace.
 
     Given I have components:
       | dummies.one |
