@@ -10,5 +10,7 @@
 7. **Don't work overtime.** You'll pay double the next day.
 8. **Listen to what bearded or gray-haired people say.**
 9. **Be happy.** Meet your friends and family.
+10. **Test deletion restricted**. Your tests shouldn't have privileges to delete your working tree,
+    otherwise [they will](https://en.wikipedia.org/wiki/Murphy%27s_law).
 
 [^1]: Pair programming is an exception.
