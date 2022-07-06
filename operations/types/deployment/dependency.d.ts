@@ -1,7 +1,7 @@
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 
 import { Service } from './service'
-import { dependencies } from '@toa.io/formation/types/context'
+import { dependencies } from '@toa.io/norm/types/context'
 
 declare namespace toa.operations.deployment {
 

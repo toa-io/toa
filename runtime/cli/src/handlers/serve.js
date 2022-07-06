@@ -1,7 +1,7 @@
 'use strict'
 
 const boot = require('@toa.io/boot')
-const { shortcuts } = require('@toa.io/formation')
+const { shortcuts } = require('@toa.io/norm')
 const { directory: { find } } = require('@toa.io/libraries/filesystem')
 
 const serve = async (argv) => {

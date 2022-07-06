@@ -35,7 +35,7 @@ const reference = () => {
 }
 
 /**
- * @param {toa.formation.context.dependencies.Instance[]} instances
+ * @param {toa.norm.context.dependencies.Instance[]} instances
  * @param {toa.annotations.proxy.Declaration | string} annotation
  * @returns {toa.operations.deployment.dependency.Declaration}
  */

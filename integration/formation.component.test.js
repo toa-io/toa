@@ -4,7 +4,7 @@
 
 const { join } = require('node:path')
 
-const { component } = require('@toa.io/formation')
+const { component } = require('@toa.io/norm')
 
 const load = (ref) => component(join(__dirname, ref))
 

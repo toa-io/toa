@@ -4,11 +4,11 @@ const { generate } = require('randomstring')
 const { random } = require('@toa.io/libraries/generic')
 const { Locator } = require('@toa.io/core')
 
-/** @type {toa.formation.context.dependencies.Instance[]} */
+/** @type {toa.norm.context.dependencies.Instance[]} */
 const instances = []
 
 /**
- * @returns {toa.formation.context.dependencies.Instance}
+ * @returns {toa.norm.context.dependencies.Instance}
  */
 const instance = () => {
   const domain = generate()

@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @param {toa.formation.Context} context
+ * @param {toa.norm.Context} context
  * @param {toa.operations.deployment.Dependency} dependency
  * @returns {toa.operations.deployment.Declaration}
  */

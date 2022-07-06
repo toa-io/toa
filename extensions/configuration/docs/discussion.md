@@ -97,7 +97,7 @@ Once kubernetes secret per configuration secret.
 
 ### Whose responsibility is to call annotations?
 
-- formation
+- norm
 - deployment
 
 `toa export context` should throw errors if context has invalid annotations, and it's not a part of

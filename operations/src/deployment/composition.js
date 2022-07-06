@@ -11,7 +11,7 @@ class Composition {
   components
 
   /**
-   * @param composition {toa.formation.context.Composition}
+   * @param composition {toa.norm.context.Composition}
    * @param image {toa.operations.deployment.images.Image}
    */
   constructor (composition, image) {
@@ -22,7 +22,7 @@ class Composition {
 }
 
 /**
- * @param {toa.formation.Component} component
+ * @param {toa.norm.Component} component
  * @returns {string}
  */
 const component = (component) => component.locator.label

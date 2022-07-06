@@ -12,7 +12,7 @@ const component = () => {
   return { locator: new Locator(name, namespace) }
 }
 
-/** @type {toa.formation.component.Brief[]} */
+/** @type {toa.norm.context.dependencies.Instance[]} */
 const components = []
 const annotations = {}
 
@@ -27,7 +27,7 @@ for (let i = 0; i < components.length; i++) if (i % 2 === 0) annotate(components
 
 /**
  * @param {string} id
- * @returns {toa.formation.component.Brief}
+ * @returns {toa.norm.context.dependencies.Instance}
  */
 const find = (id) => {
   return components.find((component) => component.locator.id === id)

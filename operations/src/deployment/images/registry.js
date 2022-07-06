@@ -6,7 +6,7 @@ const { directory: { remove } } = require('@toa.io/libraries/filesystem')
  * @implements {toa.operations.deployment.images.Registry}
  */
 class Registry {
-  /** @type {toa.formation.context.Registry} */
+  /** @type {toa.norm.context.Registry} */
   #registry
   /** @type {toa.operations.deployment.images.Factory} */
   #factory
@@ -16,7 +16,7 @@ class Registry {
   #images = []
 
   /**
-   * @param {toa.formation.context.Registry} registry
+   * @param {toa.norm.context.Registry} registry
    * @param {toa.operations.deployment.images.Factory} factory
    * @param {toa.operations.Process} process
    */

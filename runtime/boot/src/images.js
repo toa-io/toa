@@ -1,7 +1,7 @@
 'use strict'
 
 const { Images } = require('@toa.io/operations')
-const { context: load } = require('@toa.io/formation')
+const { context: load } = require('@toa.io/norm')
 
 const images = async (path) => {
   const context = await load(path)

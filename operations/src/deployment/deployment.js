@@ -21,7 +21,7 @@ class Deployment {
   #target
 
   /**
-   * @param context {toa.formation.Context}
+   * @param context {toa.norm.Context}
    * @param compositions {toa.operations.deployment.Composition[]}
    * @param dependencies {toa.operations.deployment.Dependency[]}
    * @param process {toa.operations.Process}

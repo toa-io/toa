@@ -8,7 +8,7 @@ const fixtures = require('./annotations.fixtures')
 const { annotation } = require('../')
 
 let input
-/** @type {toa.formation.context.dependencies.Instance[]} */ let instances
+/** @type {toa.norm.context.dependencies.Instance[]} */ let instances
 
 const call = () => annotation(input, instances)
 

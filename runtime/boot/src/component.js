@@ -1,12 +1,12 @@
 'use strict'
 
-const { component: load } = require('@toa.io/formation')
+const { component: load } = require('@toa.io/norm')
 const { Locator } = require('@toa.io/core')
 
 /**
  * @param {string} path
  * @param {Object} [options]
- * @return {Promise<toa.formation.Component>}
+ * @return {Promise<toa.norm.Component>}
  */
 const component = async (path, options) => {
   const manifest = await load(path)

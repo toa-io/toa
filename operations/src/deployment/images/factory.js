@@ -9,12 +9,12 @@ const { Service } = require('./service')
 class Factory {
   /** @type {string} */
   #scope
-  /** @type {toa.formation.context.Runtime} */
+  /** @type {toa.norm.context.Runtime} */
   #runtime
 
   /**
    * @param scope {string}
-   * @param runtime {toa.formation.context.Runtime}
+   * @param runtime {toa.norm.context.Runtime}
    */
   constructor (scope, runtime) {
     this.#scope = scope

@@ -6,7 +6,7 @@ const { generate } = require('randomstring')
 const fixtures = require('./deployment.fixtures')
 const { deployment } = require('../')
 
-/** @type {toa.formation.context.dependencies.Instance[]} */
+/** @type {toa.norm.context.dependencies.Instance[]} */
 let instances
 
 beforeEach(() => {

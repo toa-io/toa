@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const context = /** @type {toa.formation.Context} */ { name: generate() }
+const context = /** @type {toa.norm.Context} */ { name: generate() }
 const compositions = []
 const dependencies = []
 const process = /** @type {toa.operations.Process} */ { execute: jest.fn() }

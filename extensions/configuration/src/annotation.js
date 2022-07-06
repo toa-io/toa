@@ -4,7 +4,7 @@ const { Schema } = require('@toa.io/libraries/schema')
 
 /**
  * @param {Object} annotation
- * @param {toa.formation.context.dependencies.Instance[]} instances
+ * @param {toa.norm.context.dependencies.Instance[]} instances
  */
 const annotation = (annotation, instances) => {
   const keys = Object.keys(annotation)
@@ -23,7 +23,7 @@ const annotation = (annotation, instances) => {
 
 /**
  * @param {string[]} keys
- * @param {toa.formation.context.dependencies.Instance[]} instances
+ * @param {toa.norm.context.dependencies.Instance[]} instances
  */
 const check = (keys, instances) => {
   const ids = instances.map((instance) => instance.locator.id)

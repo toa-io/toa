@@ -11,7 +11,7 @@ const { Service } = require('./service')
  * @implements {toa.operations.deployment.Factory}
  */
 class Factory {
-  /** @type {toa.formation.Context} */
+  /** @type {toa.norm.Context} */
   #context
   /** @type {toa.operations.deployment.images.Registry} */
   #registry
@@ -19,7 +19,7 @@ class Factory {
   #process
 
   /**
-   * @param context {toa.formation.Context}
+   * @param context {toa.norm.Context}
    */
   constructor (context) {
     this.#context = context
@@ -38,7 +38,7 @@ class Factory {
   }
 
   /**
-   * @param composition {toa.formation.context.Composition}
+   * @param composition {toa.norm.context.Composition}
    * @returns {Composition}
    */
   #composition (composition) {
@@ -65,7 +65,7 @@ class Factory {
 
   /**
    * @param {string} path
-   * @param {toa.formation.context.dependencies.Instance[]} instances
+   * @param {toa.norm.context.dependencies.Instance[]} instances
    * @returns {toa.operations.deployment.Dependency | undefined}
    */
   #dependency (path, instances) {

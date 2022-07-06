@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 
 import { Factory } from '@toa.io/core/types/extensions'
-import { Component } from '@toa.io/formation'
+import { Component } from '@toa.io/norm'
 import { Provider } from './provider'
 
 type Extension = Factory

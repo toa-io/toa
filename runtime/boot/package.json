@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "@toa.io/core": "*",
-    "@toa.io/formation": "*",
+    "@toa.io/norm": "*",
     "@toa.io/libraries": "*"
   },
   "dependencies": {

@@ -19,7 +19,7 @@ const contexts = (manifest) => {
 /**
  * @param {string} path
  * @param {any} declaration
- * @param {toa.formation.Context} manifest
+ * @param {toa.norm.Context} manifest
  * @return {Context}
  */
 const instantiate = (path, declaration, manifest) => {

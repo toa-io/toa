@@ -1,6 +1,6 @@
 // noinspection ES6UnusedImports
 
-import type { Composition } from '@toa.io/formation'
+import type { Composition } from '@toa.io/norm'
 import type { Image } from './image'
 import type { dependency } from '../dependency'
 

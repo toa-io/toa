@@ -1,6 +1,6 @@
 'use strict'
 
-const { component } = require('@toa.io/formation')
+const { component } = require('@toa.io/norm')
 const { dump } = require('@toa.io/libraries/yaml')
 const { console } = require('@toa.io/libraries/console')
 

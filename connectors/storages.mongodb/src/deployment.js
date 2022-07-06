@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @param {toa.formation.component.Brief[]} components
+ * @param {toa.norm.context.dependencies.Instance[]} components
  * @param {toa.storages.mongo.Annotations} annotations
  * @returns {toa.operations.deployment.dependency.Declaration}
  */
@@ -14,7 +14,7 @@ const deployment = (components, annotations) => {
 }
 
 /**
- * @param {toa.formation.component.Brief} component
+ * @param {toa.norm.context.dependencies.Instance} component
  * @param {toa.storages.mongo.Annotations} annotations
  * @returns {toa.operations.deployment.dependency.Proxy}
  */

@@ -1,7 +1,7 @@
 'use strict'
 
 const { deployment: { Factory } } = require('@toa.io/operations')
-const { context: load } = require('@toa.io/formation')
+const { context: load } = require('@toa.io/norm')
 
 /**
  * @param {string} path

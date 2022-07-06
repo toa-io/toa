@@ -21,7 +21,7 @@ const instance = () => {
   return { locator, manifest }
 }
 
-/** @type {toa.formation.context.dependencies.Instance[]} */
+/** @type {toa.norm.context.dependencies.Instance[]} */
 const instances = []
 
 for (let i = 0; i < random(5) + 5; i++) instances.push(instance())
