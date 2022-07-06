@@ -4,7 +4,6 @@ Feature: toa compose
 
   Scenario: Show help
     When I run `toa compose --help`
-    Then program should exit
     And stdout should contain lines:
     """
     toa compose [paths...]

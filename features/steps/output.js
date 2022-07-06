@@ -22,10 +22,6 @@ Then('{word} should be empty', function (channel) {
   assert.equal(this[channel], '')
 })
 
-Then('program should exit', async function () {
-  await this.process
-})
-
 Then('{word} should contain lines:',
   function (channel, lines) {
     const queries = lines.split('\n').map((line) => line.trim())
