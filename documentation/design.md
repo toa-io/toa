@@ -19,7 +19,8 @@ algorithm is an entry point for an application developer.
 
 ### Types
 
-Operations have three phases: *retrieve* - get current state using *query*, *run* - execute algorithm, and
+Operations have three phases: *retrieve* - get current state using *query*, *run* - execute
+algorithm, and
 *commit* - store new state.
 
 Retrieve or commit phases may be optional depending on operation's type.
@@ -86,12 +87,13 @@ async function transition (input, entity, context) {
    running 1 operation instance N times.
 2. **Deterministic**. Gives the same response when it has the same arguments.
 3. **Autonomous.** Doesn't impose requirements on the execution environment (i.e. network access).
-4. **Pure.** Doesn't produce side effects, that is the only effect of the operation must be updated
-   state.
+4. **Pure.** Doesn't produce side effects, therefore the only effect of the operation must be an
+   updated state.
 5. **Non-exceptional**. Doesn't use exceptions for control flow.
 
 > ![Important](https://img.shields.io/badge/Important-red)<br/>
-> Writing non-genuine operations is **strongly not recommended**, as they may result in exceptions or
+> Writing non-genuine operations is **strongly not recommended**, as they may result in exceptions
+> or
 > system logical problems.
 
 ## Component
