@@ -47,7 +47,7 @@ class Factory {
   #channel () {
     const url = new URL('amqp://')
 
-    url.hostname = process.env.TOA_ENV === 'local' ? 'localhost' : 'rabbitmq'
+    url.hostname = process.env.TOA_ENV === 'local' ? 'localhost' : 'bindings-amqp-system'
     url.username = 'user'
     url.password = 'password'
 

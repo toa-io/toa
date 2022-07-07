@@ -22,12 +22,12 @@ it('should create default proxies', () => {
 
   /** @returns {toa.operations.deployment.dependency.Proxy[]} */
   const proxies = instances.map((instance) => ({
-    name: instance.locator.label, target: annotation.default
+    name: PREFIX + instance.locator.label, target: annotation.default
   }))
 
   const output = deployment(instances, annotation)
 
-  expect(output.proxies).toMatchObject(proxies)
+  expect(output.proxies).toStrictEqual(expect.arrayContaining(proxies))
 })
 
 it('should create proxies with given values', () => {
@@ -38,10 +38,12 @@ it('should create proxies with given values', () => {
     const target = generate()
 
     annotation[instance.locator.id] = target
-    proxies.push({ name: instance.locator.label, target })
+    proxies.push({ name: PREFIX + instance.locator.label, target })
   }
 
   const output = deployment(instances, annotation)
 
   expect(output.proxies).toMatchObject(proxies)
 })
+
+const PREFIX = 'bindings-amqp-'

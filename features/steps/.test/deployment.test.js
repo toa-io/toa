@@ -21,10 +21,6 @@ beforeEach(async () => {
   context = { cwd: await directory.temp() }
 })
 
-afterEach(async () => {
-  if (context.cwd !== undefined) await directory.remove(context.cwd)
-})
-
 describe('When I export deployment', () => {
   const step = gherkin.steps.Wh('I export deployment')
   const components = ['dummies.one', 'dummies.two']
@@ -73,15 +69,8 @@ describe('When I export deployment', () => {
 describe('Then exported {helm-artifact} should contain:', () => {
   const step = gherkin.steps.Th('exported {helm-artifact} should contain:')
 
-  let original
-
   beforeEach(() => {
-    original = context.cwd
     context.cwd = join(__dirname, 'assets')
-  })
-
-  afterEach(() => {
-    context.cwd = original
   })
 
   describe('chart', () => {
@@ -97,6 +86,34 @@ describe('Then exported {helm-artifact} should contain:', () => {
 
     it('should fail if not contain', async () => {
       await expect(step.call(context, 'Chart', 'name: dummies\nversion: 1.1.1')).rejects.toThrow(AssertionError)
+    })
+  })
+})
+
+describe('Then exported {helm-artifact} should not contain:', () => {
+  const step = gherkin.steps.Th('exported {helm-artifact} should not contain:')
+
+  beforeEach(() => {
+    context.cwd = join(__dirname, 'assets')
+  })
+
+  it('should be', () => undefined)
+
+  describe('chart', () => {
+    it('should fail if contain', async () => {
+      await expect(step.call(context, 'Chart', 'name: dummies')).rejects.toThrow(AssertionError)
+    })
+
+    it('should fail if contain multiline', async () => {
+      const text = 'apiVersion: v1\nversion: 0.0.0'
+
+      await expect(step.call(context, 'Chart', text)).rejects.toThrow(AssertionError)
+    })
+
+    it('should pass if not contain', async () => {
+      const call = step.call(context, 'Chart', 'name: dummies\nversion: 1.1.1')
+
+      await expect(call).resolves.not.toThrow(AssertionError)
     })
   })
 })

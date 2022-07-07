@@ -15,10 +15,18 @@ Feature: AMQP deployment
     Then exported values should contain:
       """
       proxies:
+        - name: bindings-amqp-system
+          target: host.docker.internal
         - name: bindings-amqp-dummies-one
           target: host.docker.internal
         - name: bindings-amqp-dummies-two
           target: host.docker.internal
+      """
+    And exported Chart should not contain:
+      """
+      dependencies:
+      - name: bindings-amqp-system
+        repository: https://charts.bitnami.com/bitnami
       """
 
   Scenario: Multiple external brokers
@@ -28,7 +36,7 @@ Feature: AMQP deployment
     Given I have components:
       | dummies.one |
       | dummies.two |
-    And I have context with:
+    And I have a context with:
       """
       amqp:
         dummies.one: host1
@@ -42,4 +50,11 @@ Feature: AMQP deployment
           target: host1
         - name: bindings-amqp-dummies-two
           target: host2
+      """
+    And exported Chart should contain:
+      """
+      dependencies:
+      - name: rabbitmq
+        repository: https://charts.bitnami.com/bitnami
+        alias: bindings-amqp-system
       """

@@ -7,7 +7,7 @@ declare namespace toa.operations.deployment {
 
     namespace dependency {
 
-        type Constructor = (declarations: dependencies.Instance[], annotations: any) => Declaration
+        type Constructor = (declarations: dependencies.Instance[], annotations: any) => Dependency
 
         interface Reference {
             name: string

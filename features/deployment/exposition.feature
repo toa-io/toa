@@ -13,4 +13,4 @@ Feature: Exposition Deployment
 #    Given my working directory is ./images/*exposition*
 #    When I run `toa serve`
 #    And I wait 0.5 seconds
-#    Then I disconnect
+#    Then I abort execution

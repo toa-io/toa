@@ -4,12 +4,33 @@
  * @type {toa.operations.deployment.dependency.Constructor}
  */
 const deployment = (instances, annotations) => {
-  if (annotations !== undefined) return proxies(instances, annotations)
-  else return reference()
+  /** @type {toa.operations.deployment.Dependency} */
+  const deployment = {}
+
+  let ref = false
+
+  if (annotations !== undefined) {
+    deployment.proxies = proxies(instances, annotations)
+
+    if (annotations.system || annotations.default) {
+      const annotation = annotations.system || annotations.default
+      const system = proxy('system', annotation)
+
+      deployment.proxies.push(system)
+    } else ref = true
+  } else ref = true
+
+  if (ref) {
+    const broker = reference()
+
+    deployment.references = [broker]
+  }
+
+  return deployment
 }
 
 /**
- * @returns {toa.operations.deployment.dependency.Declaration}
+ * @returns {toa.operations.deployment.dependency.Reference}
  */
 const reference = () => {
   const fullname = 'rabbitmq'
@@ -18,8 +39,9 @@ const reference = () => {
   const username = 'user'
   const password = 'password'
   const erlangCookie = 'cookie'
+  const alias = PREFIX + 'system'
 
-  const rabbitmq = {
+  return {
     name: 'rabbitmq',
     version: '9.0.0',
     repository: 'https://charts.bitnami.com/bitnami',
@@ -28,24 +50,32 @@ const reference = () => {
       auth: {
         username, password, erlangCookie
       }
-    }
+    },
+    alias
   }
-
-  return { references: [rabbitmq] }
 }
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
- * @param {toa.annotations.proxy.Declaration | string} annotation
- * @returns {toa.operations.deployment.dependency.Declaration}
+ * @param {toa.annotations.proxy.Declaration} annotations
+ * @returns {toa.operations.deployment.dependency.Proxy[]}
  */
-const proxies = (instances, annotation) => {
-  const proxies = instances.map((instance) => ({
-    name: instance.locator.label,
-    target: annotation[instance.locator.id] || annotation.default
-  }))
+const proxies = (instances, annotations) => {
+  return instances.map((instance) => {
+    const { id, label } = instance.locator
+    const annotation = annotations[id] || annotations.default
 
-  return { proxies }
+    return proxy(label, annotation)
+  })
 }
+
+const proxy = (label, annotation) => {
+  return {
+    name: PREFIX + label,
+    target: annotation
+  }
+}
+
+const PREFIX = 'bindings-amqp-'
 
 exports.deployment = deployment

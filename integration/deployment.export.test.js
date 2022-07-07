@@ -74,14 +74,6 @@ describe('chart', () => {
     expect(values.components).toEqual(fixtures.values.components)
   })
 
-  it('should export dependency references', () => {
-    expect(chart.dependencies).toStrictEqual(fixtures.chart.dependencies)
-
-    for (const name of Object.keys(fixtures.chart.dependencies)) {
-      expect(values[name]).toStrictEqual(fixtures.values[name])
-    }
-  })
-
   it('should export dependency services', () => {
     expect(values.services).toEqual(fixtures.values.services)
   })
