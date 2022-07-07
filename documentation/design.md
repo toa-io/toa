@@ -85,7 +85,7 @@ async function transition (input, entity, context) {
 1. **Stateless.** Results of running N operation instances 1 time each must be the same as result of
    running 1 operation instance N times.
 2. **Deterministic**. Gives the same response when it has the same arguments.
-3. **Autonomous.** Doesn't have any requirements to the execution environment (i.e. internet access).
+3. **Autonomous.** Doesn't impose requirements on the execution environment (i.e. network access).
 4. **Pure.** Doesn't produce side effects, that is the only effect of the operation must be updated
    state.
 5. **Non-exceptional**. Doesn't use exceptions for control flow.
