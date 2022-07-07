@@ -1,5 +1,5 @@
 'use strict'
 
-const { proxy } = require('@toa.io/libraries/annotations')
+const { hostmap } = require('@toa.io/libraries/annotations')
 
-exports.annotation = proxy
+exports.annotation = hostmap

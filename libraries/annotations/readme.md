@@ -1,6 +1,6 @@
 # Common Context Annotations
 
-## Proxy Set Annotation
+## Host Map Annotation
 
 Declaration of a set of hosts, matching exact components, namespaces with a default value for
 non-matched ones.
@@ -13,7 +13,7 @@ something:
   namespace2.component2: host4
 ```
 
-See the [schema](src/.proxy/schema.yaml).
+See the [schema](src/.hostmap/schema.yaml).
 
 ### Concise Declaration
 
@@ -30,5 +30,5 @@ something:
 
 ### Custom extensions
 
-Packages using Proxy Set Annotation may declare custom extensions as an additional properties for
-the declaration schema.
+Packages using Host Map Annotation may use or require any additional properties for the declaration
+schema.

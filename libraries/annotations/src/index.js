@@ -1,5 +1,5 @@
 'use strict'
 
-const { proxy } = require('./proxy')
+const { hostmap } = require('./hostmap')
 
-exports.proxy = proxy
+exports.hostmap = hostmap

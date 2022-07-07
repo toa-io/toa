@@ -11,7 +11,7 @@ definitions:
             $ref: '#/definitions/node'
   locator:
     type: string
-    pattern: '^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$'
+    format: uri
 
 type: object
 patternProperties:

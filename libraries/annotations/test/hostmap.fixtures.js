@@ -1,9 +1,9 @@
 'use strict'
 
 const annotations = {
-  default: 'host.docker.internal',
+  default: 'http://host.docker.internal/',
   credits: {
-    balance: 'host.docker.internal'
+    balance: 'amqp://host.docker.internal'
   }
 }
 

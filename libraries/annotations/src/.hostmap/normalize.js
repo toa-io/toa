@@ -3,11 +3,11 @@
 const { merge } = require('@toa.io/libraries/generic')
 
 /**
- * @param {toa.annotations.Proxy | string} declaration
- * @returns {toa.annotations.Proxy}
+ * @param {toa.annotations.Hostmap | string} declaration
+ * @returns {toa.annotations.Hostmap}
  */
 const normalize = (declaration) => {
-  /** @type {toa.annotations.Proxy} */
+  /** @type {toa.annotations.Hostmap} */
   let annotation
 
   if (typeof declaration === 'string') annotation = { default: declaration }
