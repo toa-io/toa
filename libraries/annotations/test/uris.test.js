@@ -137,4 +137,16 @@ describe('resolve', () => {
 
     expect(url.href).toStrictEqual(annotation.default)
   })
+
+  it('should resolve global locators', () => {
+    const name = generate()
+    const locator = new Locator(name)
+    const uri = gen()
+
+    annotation = { [name]: uri }
+
+    const url = resolve(annotation, locator)
+
+    expect(url.href).toStrictEqual(uri)
+  })
 })

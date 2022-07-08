@@ -6,6 +6,7 @@ const resolve = (uris, locator) => {
 
   let uri = uris[locator.namespace]?.[locator.name]
 
+  if (uri === undefined && locator.namespace === undefined) uri = uris[locator.name]
   if (uri === undefined && typeof uris[locator.namespace] === 'string') uri = uris[locator.namespace]
   if (uri === undefined) uri = uris.default
   if (uri === undefined) throw new Error(`URI annotation for '${locator.id}' not found`)
