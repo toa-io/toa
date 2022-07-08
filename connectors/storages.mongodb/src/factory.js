@@ -1,6 +1,6 @@
 'use strict'
 
-const { Locator } = require('./locator')
+const { Pointer } = require('./pointer')
 const { Connection } = require('./connection')
 const { Storage } = require('./storage')
 
@@ -9,8 +9,8 @@ const { Storage } = require('./storage')
  */
 class Factory {
   storage (locator) {
-    const url = new Locator(locator)
-    const connection = new Connection(url)
+    const pointer = new Pointer(locator)
+    const connection = new Connection(pointer)
 
     return new Storage(connection)
   }

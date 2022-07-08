@@ -12,7 +12,7 @@ import type {
 import type { Connector } from '@toa.io/core'
 import type { Record } from './record'
 
-declare namespace toa.storages.mongo {
+declare namespace toa.mongodb {
 
     interface Connection extends Connector {
         get(query: Filter<Record>, options?: FindOptions<Record>): Promise<Record>

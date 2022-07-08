@@ -1,4 +1,4 @@
-declare namespace toa.storages.mongo {
+declare namespace toa.mongodb {
 
     interface Record {
         _id: string | any
@@ -7,4 +7,4 @@ declare namespace toa.storages.mongo {
 
 }
 
-export type Record = toa.storages.mongo.Record
+export type Record = toa.mongodb.Record
