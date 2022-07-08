@@ -91,6 +91,6 @@ describe('chart', () => {
 
   it('should export proxies', () => {
     expect(values.proxies).toBeDefined()
-    expect(values.proxies).toStrictEqual(fixtures.values.proxies)
+    expect(values.proxies).toStrictEqual(expect.arrayContaining(fixtures.values.proxies))
   })
 })
