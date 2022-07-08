@@ -4,8 +4,8 @@
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="4d-dark.png">
-    <img alt="4D" width="400" height="455" src="4d-light.jpg">
+    <source media="(prefers-color-scheme: dark)" srcset="./.cycle/4d-dark.png">
+    <img alt="4D" width="400" height="455" src="./.cycle/4d-light.jpg">
   </picture>
 </a>
 

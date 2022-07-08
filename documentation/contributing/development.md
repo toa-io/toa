@@ -11,9 +11,24 @@ uses [JavaScript with DTS](https://www.typescriptlang.org/docs/handbook/declarat
 contributor's unit of work is:
 
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="unit-dark.jpg">
-<img alt="Unit of Work" src="unit-light.jpg" width="400" height="375">
+  <source media="(prefers-color-scheme: dark)" srcset="unit-dark.jpg">
+  <img alt="Unit of Work" src="unit-light.jpg" width="400" height="375">
 </picture>
+
+### Integration
+
+Implementation of features may require making changes to a set of applications
+(i.e. microservices), which are bound together. Sometimes it may happen that despite the fact that
+the changes of each of them corresponded to the intentions, the combinations of those changes are
+still incorrect. Therefore, any changes, that require making changes to a set of applications, must
+be developed using the **outer TDD cycle**, that is the sequence of a broken integration test,
+followed by internal TDD cycles until it got fixed.
+
+> As [scenarios](cycle.md#scenarios) produced in the Cycle are not bound to the implementation
+> complexity, making them *green* or even runnable may take a lot of effort and time, so they are not
+> always suitable for integration testing.
+> 
+> It is possible to create nested more granular scenarios for this purpose.
 
 ## Flow
 
@@ -36,7 +51,7 @@ Small commits are [better](https://gitforteams.com/resources/commit-granularity.
 
 If you find yourself confused when you should commit changes, imagine you have a permanent question
 from your boss: **What have you done?** Then, each time you have a reasonable answer to it, you
-should commit. And that answer should be your commit message (conforming to the commit message 
+should commit. And that answer should be your commit message (conforming to the commit message
 convention).
 
 ### Commit Messages [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg)](https://conventionalcommits.org)
@@ -52,7 +67,7 @@ A subject of a commit is a set of units of work, that is a set of **finished** T
 existent unit tests must pass and changed files must not contain TODOs (if you're not going to do it
 now, create an issue).
 
-> This project has a git [pre-commit hook](/../../.husky/pre-commit) to help following this rule.
+> This project has a git [pre-commit hook](#) to help following this rule.
 
 ## See Also
 
