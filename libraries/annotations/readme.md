@@ -1,6 +1,6 @@
 # Common Context Annotations
 
-## Host Map Annotation
+## URI Set Annotation
 
 Declaration of a set of hosts, matching exact components, namespaces with a default value for
 non-matched ones.
@@ -13,7 +13,7 @@ something:
   namespace2.component2: host4
 ```
 
-See the [schema](src/.hostmap/schema.yaml).
+See the [schema](src/uris/.construct/schema.yaml).
 
 ### Concise Declaration
 
@@ -30,5 +30,4 @@ something:
 
 ### Custom extensions
 
-Packages using Host Map Annotation may use or require any additional properties for the declaration
-schema.
+Packages using Host Map Annotation may use or require additional properties.

@@ -32,25 +32,21 @@ describe('construct', () => {
       expect(result).toStrictEqual({ default: declaration })
     })
 
-    it('should split dot notation', () => {
+    it('should allow dot notation', () => {
       const url = gen()
 
       annotations['foo.bar'] = url
 
       construct(annotations)
 
-      expect(annotations.foo?.bar).toStrictEqual(url)
+      expect(annotations['foo.bar']).toStrictEqual(url)
     })
 
-    it('should not overwrite with dot notation', () => {
-      const url = gen()
+    it('should allow dot notation with namespace value', () => {
+      annotations.foo = gen()
+      annotations['foo.bar'] = gen()
 
-      annotations.foo = { bar: url }
-      annotations['foo.baz'] = url
-
-      construct(annotations)
-
-      expect(annotations.foo).toStrictEqual({ bar: url, baz: url })
+      expect(() => construct(annotations)).not.toThrow()
     })
   })
 
@@ -88,9 +84,7 @@ describe('resolve', () => {
     uri = gen()
 
     annotation = {
-      [namespace]: {
-        [name]: uri
-      }
+      [namespace + '.' + name]: uri
     }
 
     locator = new Locator(name, namespace)
@@ -122,12 +116,6 @@ describe('resolve', () => {
     const url = resolve(annotation, locator)
 
     expect(url.href).toStrictEqual(uri)
-  })
-
-  it('should throw if not found by name within existing namespace', () => {
-    delete annotation[namespace][name]
-
-    expect(() => resolve(annotation, locator)).toThrow(`URI annotation for '${locator.id}' not found`)
   })
 
   it('should resolve default', () => {

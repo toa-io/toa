@@ -5,7 +5,7 @@ declare namespace toa.annotations {
   namespace uris {
 
     type Node = {
-      [key: string]: string
+      [key: string]: string | Node
     }
 
     type Constructor = (declaration: URIs | string) => URIs
