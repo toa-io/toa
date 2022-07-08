@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const mock = { hostmap: generate() }
+const mock = { uris: { construct: () => generate() } }
 
 jest.mock('@toa.io/libraries/annotations', () => mock)
 const { annotation } = require('../')
@@ -11,5 +11,5 @@ it('should export annotations', () => {
 })
 
 it('should export libraries.annotations.proxy', () => {
-  expect(annotation).toStrictEqual(mock.hostmap)
+  expect(annotation).toStrictEqual(mock.uris.construct)
 })
