@@ -1,49 +1,33 @@
 'use strict'
 
+const { uris } = require('@toa.io/libraries/annotations')
+
 /**
- * @param {toa.norm.context.dependencies.Instance[]} components
- * @param {toa.storages.mongo.Annotations} annotations
+ * @param {toa.norm.context.dependencies.Instance[]} instances
+ * @param {toa.annotations.URIs} annotation
  * @returns {toa.operations.deployment.dependency.Declaration}
  */
-const deployment = (components, annotations) => {
-  if (annotations === undefined) throw new Error('storages.mongodb annotation is required')
+const deployment = (instances, annotation) => {
+  if (annotation === undefined) throw new Error('MongoDB URI annotation is required')
 
-  const proxies = components.map((component) => proxy(component, annotations))
+  const proxies = instances.map((instance) => proxy(instance, annotation))
 
   return { proxies }
 }
 
 /**
  * @param {toa.norm.context.dependencies.Instance} component
- * @param {toa.storages.mongo.Annotations} annotations
+ * @param {toa.annotations.URIs} annotation
  * @returns {toa.operations.deployment.dependency.Proxy}
  */
-const proxy = (component, annotations) => {
-  const name = PREFIX + component.locator.label
-  const target = extract(annotations, [component.locator.namespace, component.locator.name])
+const proxy = (component, annotation) => {
+  const name = component.locator.hostname(PREFIX)
+  const url = uris.resolve(annotation, component.locator)
+  const target = url.hostname
 
   return { name, target }
 }
 
-/**
- * @param {toa.storages.mongo.Annotations} annotations
- * @param {string[]} segments
- * @returns {string}
- */
-const extract = (annotations, segments) => {
-  const name = segments.join('.')
-
-  let value
-  let cursor = annotations
-
-  while ((cursor = cursor[segments.shift()]) !== undefined) value = cursor
-
-  if (value === undefined) value = annotations.default
-  if (value === undefined) throw new Error(`MongoDB annotation for '${name}' hasn't been found`)
-
-  return value
-}
-
-const PREFIX = 'storages-mongodb-'
+const PREFIX = 'storages-mongodb'
 
 exports.deployment = deployment
