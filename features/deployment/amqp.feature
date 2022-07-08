@@ -1,6 +1,6 @@
 Feature: AMQP deployment
 
-  Scenario: Single external broker
+  Scenario: Single external AMQP broker
 
   Deploy context with one broker for all.
 
@@ -23,7 +23,7 @@ Feature: AMQP deployment
           target: host.docker.internal
       """
 
-  Scenario: Multiple external brokers
+  Scenario: Multiple external AMQP brokers
 
   Deploy context with individual broker for each component within the same namespace.
 
