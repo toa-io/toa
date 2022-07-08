@@ -172,11 +172,3 @@ describe('proxies', () => {
     }
   })
 })
-
-describe('namespace', () => {
-  it('should define resources in a given namespace', async () => {
-    const sa = find('ServiceAccount', 'rabbitmq')
-
-    expect(sa.metadata.namespace).toStrictEqual(options.namespace)
-  })
-})

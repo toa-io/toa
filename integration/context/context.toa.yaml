@@ -32,10 +32,10 @@ exposition:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
   annotations@dev: ~
 
-mongodb: is-not-defined # this is not deployable, value must present to pass validation
-mongodb@dev: host.docker.internal
+mongodb: mongodb://is-not-defined # this is not deployable, value must present to pass validation
+mongodb@dev: mongodb://host.docker.internal
 
-amqp@dev: host.docker.internal
+amqp: amqp://host.docker.internal
 
 configuration:
   messages.messages:
