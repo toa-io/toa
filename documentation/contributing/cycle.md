@@ -145,6 +145,9 @@ At this point, it is likely that reasons will be found to update the solution, c
 manual or scenarios. If so, the update must be performed at the appropriate step and the Cycle
 must continue **sequentially from that step**.
 
+> At any moment of this step it should be clear *what to do now* and *what to do next*. Otherwise,
+> it is necessary to return to one of the previous steps.
+
 ## Perfect Result
 
 ```gherkin
