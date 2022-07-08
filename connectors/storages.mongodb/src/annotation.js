@@ -1,5 +1,5 @@
 'use strict'
 
-const { hostmap } = require('@toa.io/libraries/annotations')
+const { uris } = require('@toa.io/libraries/annotations')
 
-exports.annotation = hostmap
+exports.annotation = uris.construct
