@@ -1,1 +1,1 @@
-export { hostmap } from './hostmap'
+export * as uris from './uris'

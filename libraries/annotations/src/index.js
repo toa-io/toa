@@ -1,5 +1,3 @@
 'use strict'
 
-const { hostmap } = require('./hostmap')
-
-exports.hostmap = hostmap
+exports.uris = require('./uris')
