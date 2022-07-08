@@ -1,5 +1,5 @@
 'use strict'
 
-const { uris } = require('@toa.io/libraries/annotations')
+const { uris } = require('@toa.io/libraries/connectors')
 
 exports.annotation = uris.construct

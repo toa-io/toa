@@ -1,7 +1,7 @@
 'use strict'
 
 const { Locator } = require('@toa.io/core')
-const { uris } = require('@toa.io/libraries/annotations')
+const { uris } = require('@toa.io/libraries/connectors')
 
 /**
  * @type {toa.operations.deployment.dependency.Constructor}
@@ -18,7 +18,7 @@ const deployment = (instances, annotations) => {
 }
 
 /**
- * @param {toa.annotations.URIs} annotation
+ * @param {toa.connectors.URIs} annotation
  * @returns {toa.operations.deployment.dependency.Proxy}
  */
 function system (annotation) {
@@ -36,7 +36,7 @@ function system (annotation) {
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
- * @param {toa.annotations.URIs} annotation
+ * @param {toa.connectors.URIs} annotation
  * @returns {toa.operations.deployment.dependency.Proxy[]}
  */
 const proxies = (instances, annotation) => {

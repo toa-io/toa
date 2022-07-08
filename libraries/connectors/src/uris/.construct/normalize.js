@@ -1,11 +1,11 @@
 'use strict'
 
 /**
- * @param {toa.annotations.URIs | string} declaration
- * @returns {toa.annotations.URIs}
+ * @param {toa.connectors.URIs | string} declaration
+ * @returns {toa.connectors.URIs}
  */
 const normalize = (declaration) => {
-  /** @type {toa.annotations.URIs} */
+  /** @type {toa.connectors.URIs} */
   let annotation
 
   if (typeof declaration === 'string') annotation = { default: declaration }

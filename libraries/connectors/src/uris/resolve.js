@@ -1,6 +1,6 @@
 'use strict'
 
-/** @type {toa.annotations.uris.Resolver} */
+/** @type {toa.connectors.uris.Resolver} */
 const resolve = (uris, locator) => {
   /** @type {string} */
 

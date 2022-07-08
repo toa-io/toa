@@ -23,7 +23,7 @@ describe('proxies', () => {
   /** @type {toa.norm.context.dependencies.Instance[]} */
   let instances
 
-  /** @type {toa.annotations.URIs} */
+  /** @type {toa.connectors.URIs} */
   let annotation
 
   /** @type {URL} */

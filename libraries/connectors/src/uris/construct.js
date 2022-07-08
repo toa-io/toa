@@ -2,7 +2,7 @@
 
 const { normalize, validate } = require('./.construct')
 
-/** @type {toa.annotations.uris.Constructor} */
+/** @type {toa.connectors.uris.Constructor} */
 const construct = (declaration) => {
   const normalized = normalize(declaration)
 

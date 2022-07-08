@@ -1,10 +1,10 @@
 'use strict'
 
-const { uris } = require('@toa.io/libraries/annotations')
+const { uris } = require('@toa.io/libraries/connectors')
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
- * @param {toa.annotations.URIs} annotation
+ * @param {toa.connectors.URIs} annotation
  * @returns {toa.operations.deployment.dependency.Declaration}
  */
 const deployment = (instances, annotation) => {
@@ -17,7 +17,7 @@ const deployment = (instances, annotation) => {
 
 /**
  * @param {toa.norm.context.dependencies.Instance} component
- * @param {toa.annotations.URIs} annotation
+ * @param {toa.connectors.URIs} annotation
  * @returns {toa.operations.deployment.dependency.Proxy}
  */
 const proxy = (component, annotation) => {

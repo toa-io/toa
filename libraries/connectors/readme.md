@@ -1,6 +1,6 @@
-# Common Context Annotations
+# Common Connectors Solutions 
 
-## URI Set Annotation
+## URI Set Context Annotation
 
 Declaration of a set of hosts, matching exact components, namespaces with a default value for
 non-matched ones.
@@ -27,7 +27,18 @@ something: host1
 something:
   default: host1
 ```
+### Usage
+
+```javascript
+const { uris } = require('@toa.io/libraries/connectors')
+
+const annotation = uris.construct(declaration)
+const url = resolve(annotation, locator)
+```
+
+See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
 
 ### Custom extensions
 
 Packages using Host Map Annotation may use or require additional properties.
+
