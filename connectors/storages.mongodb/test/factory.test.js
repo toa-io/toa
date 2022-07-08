@@ -27,9 +27,6 @@ it('should create url', () => {
   expect(mock.Storage).toHaveBeenLastCalledWith(instance)
 
   expect(locator).toBeDefined()
-  expect(locator).toBeInstanceOf(URL)
-
-  expect(locator.protocol).toStrictEqual('mongodb:')
 
   if (process.env.TOA_ENV !== 'local') {
     expect(fixtures.locator.hostname).toHaveBeenLastCalledWith('storages-mongodb')
