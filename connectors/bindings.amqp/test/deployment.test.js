@@ -1,10 +1,9 @@
 'use strict'
 
-const clone = require('clone-deep')
 const { generate } = require('randomstring')
 const { random } = require('@toa.io/libraries/generic')
+const mock = require('@toa.io/libraries/mock')
 
-const fixtures = require('./deployment.fixtures')
 const { deployment } = require('../')
 
 /** @type {toa.norm.context.dependencies.Instance[]} */
@@ -14,7 +13,7 @@ let instances
 const gen = () => new URL('amqp://host-' + generate() + ':' + (random(1000) + 1000))
 
 beforeEach(() => {
-  instances = clone(fixtures.instances)
+  instances = mock.dependencies.instances()
 })
 
 it('should exist', () => {
@@ -43,10 +42,8 @@ it('should create proxies with given values', () => {
   for (const instance of instances) {
     const url = gen()
     const target = url.hostname
-    const value = url.href
-    const { name, namespace } = instance.locator
 
-    annotation[namespace] = { [name]: value }
+    annotation[instance.locator.id] = url.href
     proxies.push({ name: instance.locator.hostname(PREFIX), target })
   }
 

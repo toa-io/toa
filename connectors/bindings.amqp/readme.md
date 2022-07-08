@@ -10,10 +10,9 @@ so at least one `system` or `default` broker must be provisioned.
 
 ### Declaration
 
-AMQP deployment must be declared
-by [proxy set annotation](/../../blob/dev/libraries/annotations/readme.md) with a `system`
-extension, which value must be the host of the broker to be used by the runtime. Either `system`
-or `default` hosts must be defined.
+AMQP deployment must be declared by [URI Set annotation](#) with a `system` extension, which value
+must be the host of the broker to be used by the runtime. Either `system` or `default` hosts must be
+defined.
 
 ```yaml
 # context.toa.yaml
