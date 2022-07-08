@@ -1,81 +1,55 @@
 'use strict'
 
+const { Locator } = require('@toa.io/core')
+const { uris } = require('@toa.io/libraries/annotations')
+
 /**
  * @type {toa.operations.deployment.dependency.Constructor}
  */
 const deployment = (instances, annotations) => {
   /** @type {toa.operations.deployment.Dependency} */
   const deployment = {}
+  const sys = system(annotations)
 
-  let ref = false
-
-  if (annotations !== undefined) {
-    deployment.proxies = proxies(instances, annotations)
-
-    if (annotations.system || annotations.default) {
-      const annotation = annotations.system || annotations.default
-      const system = proxy('system', annotation)
-
-      deployment.proxies.push(system)
-    } else ref = true
-  } else ref = true
-
-  if (ref) {
-    const broker = reference()
-
-    deployment.references = [broker]
-  }
+  deployment.proxies = proxies(instances, annotations)
+  deployment.proxies.push(sys)
 
   return deployment
 }
 
 /**
- * @returns {toa.operations.deployment.dependency.Reference}
+ * @param {toa.annotations.URIs} annotation
+ * @returns {toa.operations.deployment.dependency.Proxy}
  */
-const reference = () => {
-  const fullname = 'rabbitmq'
+function system (annotation) {
+  if (annotation === undefined) throw new Error('AMQP deployment requires either \'system\' or \'default\' URI annotation')
 
-  // TODO: provide passwords as secrets for component containers
-  const username = 'user'
-  const password = 'password'
-  const erlangCookie = 'cookie'
-  const alias = PREFIX + 'system'
+  const locator = new Locator(SYSTEM)
+  const name = locator.hostname(PREFIX)
+  const url = uris.resolve(annotation, locator)
+  const target = url.hostname
 
-  return {
-    name: 'rabbitmq',
-    version: '9.0.0',
-    repository: 'https://charts.bitnami.com/bitnami',
-    values: {
-      fullnameOverride: fullname,
-      auth: {
-        username, password, erlangCookie
-      }
-    },
-    alias
-  }
+  if (target === undefined) throw new Error('AMQP \'system\' URI annotation is mandatory')
+
+  return { name, target }
 }
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
- * @param {toa.annotations.proxy.Declaration} annotations
+ * @param {toa.annotations.URIs} annotation
  * @returns {toa.operations.deployment.dependency.Proxy[]}
  */
-const proxies = (instances, annotations) => {
+const proxies = (instances, annotation) => {
   return instances.map((instance) => {
-    const { id, label } = instance.locator
-    const annotation = annotations[id] || annotations.default
+    const url = uris.resolve(annotation, instance.locator)
+    const target = url.hostname
+    const name = instance.locator.hostname(PREFIX)
 
-    return proxy(label, annotation)
+    return { name, target }
   })
 }
 
-const proxy = (label, annotation) => {
-  return {
-    name: PREFIX + label,
-    target: annotation
-  }
-}
-
-const PREFIX = 'bindings-amqp-'
+const PREFIX = 'bindings-amqp'
+const SYSTEM = 'system'
 
 exports.deployment = deployment

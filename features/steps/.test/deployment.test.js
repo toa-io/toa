@@ -36,7 +36,7 @@ describe('When I export deployment', () => {
     const table = gherkin.table(rows)
 
     await copy.call(context, table)
-    await ctx.call(context)
+    await ctx.call(context, 'amqp: amqp://default')
   })
 
   it('should create directory', async () => {
