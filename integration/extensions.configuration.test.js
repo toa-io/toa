@@ -8,6 +8,8 @@ let composition
 let remote
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['configured'])
   remote = await framework.remote('dummies.configured')
 })
@@ -15,6 +17,8 @@ beforeAll(async () => {
 afterAll(async () => {
   if (remote) await remote.disconnect()
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 it('should connect', () => {

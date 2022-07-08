@@ -7,6 +7,8 @@ const framework = require('./framework')
 let composition, credits
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['credits'])
   credits = await framework.remote('credits.balance')
 })
@@ -14,6 +16,8 @@ beforeAll(async () => {
 afterAll(async () => {
   if (credits) await credits.disconnect()
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 it('should provide local operations', async () => {

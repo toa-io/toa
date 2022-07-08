@@ -12,6 +12,8 @@ let composition
 let remote
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['origins'])
   remote = await framework.remote('dummies.origins')
   await fixtures.server.start()
@@ -21,6 +23,8 @@ afterAll(async () => {
   await fixtures.server.stop()
   if (remote) await remote.disconnect()
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 it('should be available as context.extensions.origins', async () => {

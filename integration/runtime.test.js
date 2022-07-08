@@ -4,12 +4,15 @@ const { join } = require('node:path')
 
 const boot = require('@toa.io/boot')
 const { newid } = require('@toa.io/libraries/generic')
+const framework = require('./framework')
 
 const path = join(__dirname, './dummies/credits')
 
 let runtime
 
 beforeAll(async () => {
+  framework.env('local')
+
   const manifest = await boot.component(path)
 
   runtime = await boot.runtime(manifest)
@@ -19,6 +22,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (runtime !== undefined) await runtime.disconnect()
+
+  framework.env()
 })
 
 it('should preform operations', async () => {

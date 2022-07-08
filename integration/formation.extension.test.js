@@ -2,6 +2,14 @@
 
 const framework = require('./framework')
 
+beforeAll(() => {
+  framework.env('local')
+})
+
+afterAll(() => {
+  framework.env()
+})
+
 it('should resolve relative extension', async () => {
   const compose = async () => {
     const composition = await framework.compose(['extended'])

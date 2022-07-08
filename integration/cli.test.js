@@ -5,6 +5,14 @@ const framework = require('./framework')
 
 const cli = framework.cli('./dummies/credits')
 
+beforeAll(() => {
+  framework.env('local')
+})
+
+afterAll(() => {
+  framework.env()
+})
+
 it('should invoke', async () => {
   const request = JSON.stringify({ query: { id: newid() } })
   const { stdout } = await cli(`invoke observe '${request}'`)

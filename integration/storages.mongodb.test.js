@@ -10,10 +10,13 @@ const framework = require('./framework')
 
 const connector = '@toa.io/storages.mongodb'
 const locator = new Locator('balance', 'credits')
-const storage = boot.storage(locator, connector)
+
+let storage
 
 beforeAll(async () => {
   framework.env('local')
+
+  storage = boot.storage(locator, connector)
 
   await expect(storage.connect()).resolves.not.toThrow()
 })
@@ -25,8 +28,6 @@ afterAll(async () => {
 })
 
 describe('add', () => {
-  if (storage.add === undefined) return
-
   const entity = { id: newid(), _version: 0, foo: generate() }
 
   beforeAll(async () => {
@@ -47,8 +48,6 @@ describe('add', () => {
 })
 
 describe('find', () => {
-  if (storage.find === undefined) return
-
   const tag = generate()
 
   const entities = [{ id: newid(), _version: 0, foo: generate(), tag }, {
@@ -90,8 +89,6 @@ describe('find', () => {
 })
 
 describe('set', () => {
-  if (storage.set === undefined) return
-
   const entity = { id: newid(), _version: 0, foo: generate() }
 
   beforeAll(async () => {
@@ -115,8 +112,6 @@ describe('set', () => {
 })
 
 describe('store', () => {
-  if (storage.store === undefined) return
-
   const entity = { id: newid(), _version: 0, foo: generate() }
 
   beforeAll(async () => {
@@ -153,8 +148,6 @@ describe('store', () => {
 })
 
 describe('upsert', () => {
-  if (storage.upsert === undefined) return
-
   const entity = { id: newid(), _version: 0, foo: generate() }
   const blank = { id: newid(), _version: 0 }
 

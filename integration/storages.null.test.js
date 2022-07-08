@@ -10,6 +10,8 @@ let composition
 let remote
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['nulls'])
   remote = await framework.remote('dummies.nulls')
 })
@@ -17,6 +19,8 @@ beforeAll(async () => {
 afterAll(async () => {
   if (remote) await remote.disconnect()
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 it('should transit', async () => {

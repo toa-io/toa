@@ -8,6 +8,8 @@ const framework = require('./framework')
 let composition, messages, credits, stats
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['messages', 'credits', 'stats'])
   messages = await framework.remote('messages.messages')
   credits = await framework.remote('credits.balance')
@@ -19,6 +21,8 @@ afterAll(async () => {
   if (credits) await credits.disconnect()
   if (stats) await stats.disconnect()
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 it('should not throw on concurrency conflict', async () => {

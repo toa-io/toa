@@ -10,6 +10,8 @@ const framework = require('./framework')
 let composition, credits, messages, stats
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['messages', 'credits', 'stats'])
 
   messages = await framework.remote('messages.messages')
@@ -23,6 +25,8 @@ afterAll(async () => {
   if (stats) await stats.disconnect()
 
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 it('should assign', async () => {
