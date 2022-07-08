@@ -16,23 +16,21 @@ class Locator {
 
   /**
    * @param {string} name
-   * @param {string} namespace
+   * @param {string} [namespace]
    */
   constructor (name, namespace) {
-    if (name === undefined || namespace === undefined) {
-      throw new TypeError('Locator name and namespace must be defined')
-    }
+    if (name === undefined) throw new TypeError('Locator name must be defined')
 
     this.name = name
     this.namespace = namespace
 
-    this.id = namespace + '.' + name
-    this.label = namespace + '-' + name
-    this.uppercase = (namespace + '_' + name).toUpperCase()
+    this.id = concat(namespace, '.') + name
+    this.label = concat(namespace, '-') + name
+    this.uppercase = (concat(namespace, '_') + name).toUpperCase()
   }
 
-  hostname (type) {
-    return concat(type, '-') + this.label
+  hostname (prefix) {
+    return concat(prefix, '-') + this.label
   }
 }
 
