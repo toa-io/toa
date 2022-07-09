@@ -1,17 +1,14 @@
 'use strict'
 
-/**
- * Modifies target
- *
- * @param target {Object}
- * @param source {Object}
- * @param options {{ override?: boolean, ignore?: boolean }}
- * @param path {Array<string>} internal property
- * @return {Object}
- */
+/** @type {toa.generic.Merge} */
 const merge = (target, source, options = {}, path = []) => {
   if (target === undefined) target = {}
   if (source === undefined) source = {}
+
+  if (typeof target !== typeof source) {
+    if (options.override) return source
+    else throw new TypeError(`gears/merge: arguments must be of the same type at ${string(path)}`)
+  }
 
   if (source instanceof Array && target instanceof Array) {
     if (options.override === true) {
@@ -27,7 +24,7 @@ const merge = (target, source, options = {}, path = []) => {
         else if (typeof value === 'object' && value !== null) {
           if (target[name] === undefined) target[name] = {}
 
-          merge(target[name], value, options, path)
+          target[name] = merge(target[name], value, options, path)
         } else if (target[name] !== value) {
           if (options.override === true) target[name] = value
           else if (options.ignore !== true) {
