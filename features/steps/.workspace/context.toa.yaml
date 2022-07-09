@@ -9,3 +9,5 @@ runtime:
 registry:
   base: localhost:5000
   platforms: ~
+
+amqp: amqp://host.docker.internal
