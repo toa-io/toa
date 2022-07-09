@@ -1,10 +1,8 @@
-// noinspection ES6UnusedImports
-
-import type * as connectors from '@toa.io/libraries/connectors/types'
+import type { Pointer as Base } from '@toa.io/libraries/connectors/types'
 
 declare namespace toa.mongodb {
 
-    interface Pointer extends connectors.Pointer {
+    interface Pointer extends Base {
         db: string
         collection: string
     }

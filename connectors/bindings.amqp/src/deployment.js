@@ -3,6 +3,8 @@
 const { Locator } = require('@toa.io/core')
 const { uris } = require('@toa.io/libraries/connectors')
 
+const { PREFIX, SYSTEM } = require('./constants')
+
 /**
  * @type {toa.operations.deployment.dependency.Constructor}
  */
@@ -48,8 +50,5 @@ const proxies = (instances, annotation) => {
     return { name, target }
   })
 }
-
-const PREFIX = 'bindings-amqp'
-const SYSTEM = 'system'
 
 exports.deployment = deployment

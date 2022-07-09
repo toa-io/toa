@@ -6,23 +6,23 @@ const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/libraries/console')
 
 class Connection extends Connector {
-  /** @type {URL} */
-  #url
+  /** @type {toa.amqp.Pointer} */
+  #pointer
   #connection
 
   /**
-   * @param url {URL}
+   * @param {toa.amqp.Pointer} pointer
    */
-  constructor (url) {
+  constructor (pointer) {
     super()
 
-    this.#url = url
+    this.#pointer = pointer
   }
 
   async connection () {
-    this.#connection = await amqp.connect(this.#url.href)
+    this.#connection = await amqp.connect(this.#pointer.reference)
 
-    console.info(`AMQP Binding connected to ${this.#url.host}`)
+    console.info(`AMQP Binding connected to ${this.#pointer.label}`)
   }
 
   async disconnection () {
@@ -30,7 +30,7 @@ class Connection extends Connector {
     // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
     await this.#connection.close()
 
-    console.info(`AMQP Binding disconnected from ${this.#url.host}`)
+    console.info(`AMQP Binding disconnected from ${this.#pointer.label}`)
   }
 
   async channel () {

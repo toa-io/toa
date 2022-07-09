@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const mock = { uris: { construct: () => generate() } }
+const mock = { uris: { construct: () => generate() }, Pointer: class {} }
 
 jest.mock('@toa.io/libraries/connectors', () => mock)
 const { annotation } = require('../')

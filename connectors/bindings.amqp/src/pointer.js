@@ -2,26 +2,25 @@
 
 const { Pointer: Base } = require('@toa.io/libraries/connectors')
 
+const { PREFIX } = require('./constants')
+
 // noinspection JSClosureCompilerSyntax
 /**
- * @implements {toa.mongodb.Pointer}
+ * @implements {toa.amqp.Pointer}
  */
 class Pointer extends Base {
-  db
-  collection
-
   /**
    * @param {toa.core.Locator} locator
    */
   constructor (locator) {
-    super(locator, 'mongodb:', OPTIONS)
-
-    this.db = locator.namespace
-    this.collection = locator.name
+    super(locator, 'amqp:', OPTIONS)
   }
 }
 
 /** @type {toa.connectors.pointer.Options} */
-const OPTIONS = { prefix: 'storages-mongodb' }
+const OPTIONS = {
+  path: '/',
+  prefix: PREFIX
+}
 
 exports.Pointer = Pointer
