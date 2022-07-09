@@ -1,4 +1,4 @@
-# Common Connectors Solutions 
+# Common Connectors Solutions
 
 ## URI Set Context Annotation
 
@@ -27,6 +27,7 @@ something: host1
 something:
   default: host1
 ```
+
 ### Usage
 
 ```javascript
@@ -38,7 +39,41 @@ const url = resolve(annotation, locator)
 
 See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
 
-### Custom extensions
+### Custom Extensions
 
-Packages using Host Map Annotation may use or require additional properties.
+Packages using URI Set Annotation may use or require additional properties.
 
+## Pointer
+
+Pointer builds URL for a given locator, protocol and a package prefix. Prefix must be unique value
+for a given package conforming [label format](#) (ex.: `bindings-ampq`).
+
+See [types](types/pointer.d.ts) and [tests](test/pointer.test.js) for details.
+
+### Deployment Environment
+
+Maps environment variables to URL properties using
+convention `TOA_PACKAGE_PREFIX_NAMESPACE_NAME_VARIABLE`, where `VARIABLE` can be:
+`USERNAME`, `PASSWORD`, `PROTOCOL` or `PORT`.
+
+See [Deployment](#deployment) for details.
+
+### Local Environment
+
+If `TOA_ENV` is `local` then these values are used:
+
+| Property | Value       |
+|----------|-------------|
+| hostname | `localhost` |
+| username | `developer` |
+| password | `secret`    |
+
+> In the local environment there is no way to provide non-default values for `protocol` or `port`.
+
+## Deployment
+
+Deployment function builds a set of proxies and variables corresponding to the given set of context
+dependency instances, the [URI Set](#uri-set-context-annotation) and
+the [package prefix](#pointer).
+
+See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.

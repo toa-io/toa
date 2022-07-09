@@ -21,5 +21,7 @@ declare namespace toa.connectors {
 
 }
 
+export type URIs = toa.connectors.URIs
+
 export const construct: toa.connectors.uris.Constructor
 export const resolve: toa.connectors.uris.Resolver

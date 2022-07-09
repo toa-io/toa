@@ -14,7 +14,7 @@ declare namespace toa.connectors {
     hostname
     path
     reference
-    label
+    label       // safe for logging
   }
 
 }
