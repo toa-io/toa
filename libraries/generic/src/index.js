@@ -25,6 +25,7 @@ const { traverse } = require('./traverse')
 const { underlay } = require('./underlay')
 
 exports.acronyms = require('./acronyms')
+exports.letters = require('./letters')
 
 exports.concat = concat
 exports.convolve = convolve

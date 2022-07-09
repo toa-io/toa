@@ -1,4 +1,6 @@
 export * as acronyms from './acronyms'
+export * as letters from './letters'
+
 export { match } from './match'
 export { merge } from './merge'
 export { patch } from './patch'
