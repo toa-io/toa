@@ -2,7 +2,7 @@
 
 import type { Deployable } from './deployment'
 
-declare namespace toa.operations.deployment {
+declare namespace toa.deployment {
 
     interface Ingress {
         host: string
@@ -17,4 +17,4 @@ declare namespace toa.operations.deployment {
     
 }
 
-export type Service = toa.operations.deployment.Service
+export type Service = toa.deployment.Service

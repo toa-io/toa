@@ -8,12 +8,12 @@ const { Composition } = require('./composition')
 const { Service } = require('./service')
 
 /**
- * @implements {toa.operations.deployment.Factory}
+ * @implements {toa.deployment.Factory}
  */
 class Factory {
   /** @type {toa.norm.Context} */
   #context
-  /** @type {toa.operations.deployment.images.Registry} */
+  /** @type {toa.deployment.images.Registry} */
   #registry
   /** @type {toa.operations.Process} */
   #process
@@ -48,10 +48,10 @@ class Factory {
   }
 
   /**
-   * @returns {toa.operations.deployment.Dependency[]}
+   * @returns {toa.deployment.Dependency[]}
    */
   #dependencies () {
-    /** @type {toa.operations.deployment.Dependency[]} */
+    /** @type {toa.deployment.Dependency[]} */
     const dependencies = []
 
     for (const [reference, instances] of Object.entries(this.#context.dependencies)) {
@@ -66,7 +66,7 @@ class Factory {
   /**
    * @param {string} path
    * @param {toa.norm.context.dependencies.Instance[]} instances
-   * @returns {toa.operations.deployment.Dependency | undefined}
+   * @returns {toa.deployment.Dependency | undefined}
    */
   #dependency (path, instances) {
     const module = require(path)
@@ -76,10 +76,10 @@ class Factory {
 
     const annotations = this.#context.annotations?.[pkg.name]
 
-    /** @type {toa.operations.deployment.dependency.Declaration} */
+    /** @type {toa.deployment.dependency.Declaration} */
     const dependency = module.deployment(instances, annotations)
 
-    /** @type {toa.operations.deployment.Service[]} */
+    /** @type {toa.deployment.Service[]} */
     const services = dependency.services?.map((service) => this.#service(path, service))
 
     return { ...dependency, services }
@@ -87,7 +87,7 @@ class Factory {
 
   /**
    * @param path {string}
-   * @param service {toa.operations.deployment.dependency.Service}
+   * @param service {toa.deployment.dependency.Service}
    * @returns {Service}
    */
   #service (path, service) {

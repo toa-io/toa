@@ -1,20 +1,20 @@
 'use strict'
 
 /**
- * @param {toa.operations.deployment.Dependency[]} dependencies
- * @returns {toa.operations.deployment.Dependency | Object}
+ * @param {toa.deployment.Dependency[]} dependencies
+ * @returns {toa.deployment.Dependency | Object}
  */
 const merge = (dependencies) => {
-  /** @type {toa.operations.deployment.dependency.Reference[]} */
+  /** @type {toa.deployment.dependency.Reference[]} */
   const references = []
 
-  /** @type {toa.operations.deployment.Service[]} */
+  /** @type {toa.deployment.Service[]} */
   const services = []
 
-  /** @type {toa.operations.deployment.dependency.Proxy[]} */
+  /** @type {toa.deployment.dependency.Proxy[]} */
   const proxies = []
 
-  /** @type {toa.operations.deployment.dependency.Variables} */
+  /** @type {toa.deployment.dependency.Variables} */
   const variables = {}
 
   for (const dependency of dependencies) {
@@ -28,8 +28,8 @@ const merge = (dependencies) => {
 }
 
 /**
- * @param {toa.operations.deployment.dependency.Variables} merged
- * @param {toa.operations.deployment.dependency.Variables} variables
+ * @param {toa.deployment.dependency.Variables} merged
+ * @param {toa.deployment.dependency.Variables} variables
  */
 const append = (merged, variables) => {
   for (const [component, vars] of Object.entries(variables)) {

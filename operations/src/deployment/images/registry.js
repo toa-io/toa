@@ -3,21 +3,21 @@
 const { directory: { remove } } = require('@toa.io/libraries/filesystem')
 
 /**
- * @implements {toa.operations.deployment.images.Registry}
+ * @implements {toa.deployment.images.Registry}
  */
 class Registry {
   /** @type {toa.norm.context.Registry} */
   #registry
-  /** @type {toa.operations.deployment.images.Factory} */
+  /** @type {toa.deployment.images.Factory} */
   #factory
   /** @type {toa.operations.Process} */
   #process
-  /** @type {Array<toa.operations.deployment.images.Image>} */
+  /** @type {Array<toa.deployment.images.Image>} */
   #images = []
 
   /**
    * @param {toa.norm.context.Registry} registry
-   * @param {toa.operations.deployment.images.Factory} factory
+   * @param {toa.deployment.images.Factory} factory
    * @param {toa.operations.Process} process
    */
   constructor (registry, factory, process) {
@@ -48,7 +48,7 @@ class Registry {
   /**
    * @param {"composition" | "service"} type
    * @param {...any} args
-   * @returns {toa.operations.deployment.images.Image}
+   * @returns {toa.deployment.images.Image}
    */
   #create (type, ...args) {
     const image = this.#factory[type](...args)
@@ -60,7 +60,7 @@ class Registry {
   }
 
   /**
-   * @param {toa.operations.deployment.images.Image} image
+   * @param {toa.deployment.images.Image} image
    * @returns {Promise<void>}
    */
   async #push (image) {

@@ -2,7 +2,7 @@
 
 import type { Deployable } from './deployment'
 
-declare namespace toa.operations.deployment {
+declare namespace toa.deployment {
 
     interface Composition extends Deployable {
         components: Array<string>
@@ -10,4 +10,4 @@ declare namespace toa.operations.deployment {
 
 }
 
-export type Composition = toa.operations.deployment.Composition
+export type Composition = toa.deployment.Composition

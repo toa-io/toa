@@ -2,7 +2,7 @@
 
 // noinspection JSClosureCompilerSyntax
 /**
- * @implements {toa.operations.deployment.Service}
+ * @implements {toa.deployment.Service}
  */
 class Service {
   name
@@ -11,8 +11,8 @@ class Service {
   ingress
 
   /**
-   * @param service {toa.operations.deployment.dependency.Service}
-   * @param image {toa.operations.deployment.images.Image}
+   * @param service {toa.deployment.dependency.Service}
+   * @param image {toa.deployment.images.Image}
    */
   constructor (service, image) {
     this.name = service.group + '-' + service.name

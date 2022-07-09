@@ -1,4 +1,4 @@
-declare namespace toa.operations.deployment.images {
+declare namespace toa.deployment.images {
 
     export interface Image {
         readonly reference: string
@@ -11,4 +11,4 @@ declare namespace toa.operations.deployment.images {
 
 }
 
-export type Image = toa.operations.deployment.images.Image
+export type Image = toa.deployment.images.Image

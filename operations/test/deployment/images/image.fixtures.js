@@ -8,7 +8,7 @@ const version = generate()
 const name = generate()
 
 /**
- * @implements {toa.operations.deployment.images.Image}
+ * @implements {toa.deployment.images.Image}
  */
 class Class extends Image {
   get name () {

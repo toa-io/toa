@@ -4,7 +4,7 @@ import type { Composition } from './composition'
 import type { Service } from './service'
 import type { dependency } from './dependency'
 
-declare namespace toa.operations.deployment {
+declare namespace toa.deployment {
 
     interface Declaration {
         apiVersion: string
@@ -57,11 +57,11 @@ declare namespace toa.operations.deployment {
 }
 
 export namespace installation {
-    export type Options = toa.operations.deployment.installation.Options
+    export type Options = toa.deployment.installation.Options
 }
 
 export namespace template {
-    export type Options = toa.operations.deployment.template.Options
+    export type Options = toa.deployment.template.Options
 }
 
-export type Deployable = toa.operations.deployment.Deployable
+export type Deployable = toa.deployment.Deployable

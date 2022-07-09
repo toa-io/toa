@@ -2,7 +2,7 @@
 
 import { installation, template } from './deployment'
 
-declare namespace toa.operations.deployment {
+declare namespace toa.deployment {
 
     interface Operator {
         export(path?: string): Promise<string>
@@ -18,4 +18,4 @@ declare namespace toa.operations.deployment {
 
 }
 
-export type Operator = toa.operations.deployment.Operator
+export type Operator = toa.deployment.Operator

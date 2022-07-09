@@ -5,9 +5,9 @@ const clone = require('clone-deep')
 const fixtures = require('./deployment.fixtures')
 const { Deployment } = require('../../src/deployment/deployment')
 
-/** @type {toa.operations.deployment.Deployment} */
+/** @type {toa.deployment.Deployment} */
 let deployment
-/** @type {toa.operations.deployment.installation.Options} */
+/** @type {toa.deployment.installation.Options} */
 let options
 
 beforeEach(() => {

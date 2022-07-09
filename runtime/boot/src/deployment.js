@@ -6,7 +6,7 @@ const { context: load } = require('@toa.io/norm')
 /**
  * @param {string} path
  * @param {string} [environment]
- * @returns {Promise<toa.operations.deployment.Operator>}
+ * @returns {Promise<toa.deployment.Operator>}
  */
 const deployment = async (path, environment) => {
   const context = await load(path, environment)

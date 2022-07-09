@@ -8,7 +8,7 @@ const { PREFIX, SYSTEM } = require('./constants')
 const { resolve } = connectors.uris
 
 /**
- * @type {toa.operations.deployment.dependency.Constructor}
+ * @type {toa.deployment.dependency.Constructor}
  */
 const deployment = (instances, annotation) => {
   if (annotation === undefined) {
@@ -25,7 +25,7 @@ const deployment = (instances, annotation) => {
 
 /**
  * @param {toa.connectors.URIs} annotation
- * @returns {toa.operations.deployment.dependency.Proxy}
+ * @returns {toa.deployment.dependency.Proxy}
  */
 function system (annotation) {
   const locator = new Locator(SYSTEM)

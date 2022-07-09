@@ -3,7 +3,7 @@
 const { encode } = require('@toa.io/libraries/generic')
 
 /**
- * @type {toa.operations.deployment.dependency.Constructor}
+ * @type {toa.deployment.dependency.Constructor}
  */
 const deployment = (components, annotations) => {
   const variables = {}

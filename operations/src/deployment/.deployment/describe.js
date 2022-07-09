@@ -2,9 +2,9 @@
 
 /**
  * @param {toa.norm.Context} context
- * @param {toa.operations.deployment.Composition[]} compositions
- * @param {toa.operations.deployment.Dependency} declaration
- * @returns {toa.operations.deployment.Contents | Object}
+ * @param {toa.deployment.Composition[]} compositions
+ * @param {toa.deployment.Dependency} declaration
+ * @returns {toa.deployment.Contents | Object}
  */
 const describe = ({ environment }, compositions, declaration) => {
   const { references, services, proxies, variables } = declaration

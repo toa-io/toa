@@ -27,7 +27,7 @@ describe('proxies', () => {
     const url = gen()
     const annotation = { default: url.href }
 
-    /** @returns {toa.operations.deployment.dependency.Proxy[]} */
+    /** @returns {toa.deployment.dependency.Proxy[]} */
     const expected = instances.map((instance) => ({
       name: instance.locator.hostname(PREFIX), target: url.hostname
     }))

@@ -5,7 +5,7 @@ const { uris } = require('@toa.io/libraries/connectors')
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
  * @param {toa.connectors.URIs} annotation
- * @returns {toa.operations.deployment.dependency.Declaration}
+ * @returns {toa.deployment.dependency.Declaration}
  */
 const deployment = (instances, annotation) => {
   if (annotation === undefined) throw new Error('MongoDB URI annotation is required')
@@ -18,7 +18,7 @@ const deployment = (instances, annotation) => {
 /**
  * @param {toa.norm.context.dependencies.Instance} component
  * @param {toa.connectors.URIs} annotation
- * @returns {toa.operations.deployment.dependency.Proxy}
+ * @returns {toa.deployment.dependency.Proxy}
  */
 const proxy = (component, annotation) => {
   const name = component.locator.hostname(PREFIX)

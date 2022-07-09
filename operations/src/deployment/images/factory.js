@@ -4,7 +4,7 @@ const { Composition } = require('./composition')
 const { Service } = require('./service')
 
 /**
- * @implements {toa.operations.deployment.images.Factory}
+ * @implements {toa.deployment.images.Factory}
  */
 class Factory {
   /** @type {string} */

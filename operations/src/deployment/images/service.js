@@ -29,7 +29,7 @@ class Service extends Image {
    * @param {string} scope
    * @param {toa.norm.context.Runtime} runtime
    * @param {string} reference
-   * @param {toa.operations.deployment.dependency.Service} service
+   * @param {toa.deployment.dependency.Service} service
    */
   constructor (scope, runtime, reference, service) {
     super(scope, runtime)

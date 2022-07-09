@@ -12,7 +12,7 @@ const fixtures = require('./deployment.export.fixtures')
 
 const source = join(__dirname, './context')
 
-/** @type {toa.operations.deployment.Operator} */
+/** @type {toa.deployment.Operator} */
 let operator
 
 /** @type {string} */
@@ -54,9 +54,9 @@ describe('directory', () => {
 })
 
 describe('chart', () => {
-  /** @type {toa.operations.deployment.Declaration} */
+  /** @type {toa.deployment.Declaration} */
   let chart
-  /** @type {toa.operations.deployment.Contents} */
+  /** @type {toa.deployment.Contents} */
   let values
 
   beforeAll(async () => {
@@ -83,7 +83,7 @@ describe('chart', () => {
 
     operator = await boot.deployment(source, environment)
     target = await operator.export()
-    values = /** @type {toa.operations.deployment.Contents} */ await load(join(target, 'values.yaml'))
+    values = /** @type {toa.deployment.Contents} */ await load(join(target, 'values.yaml'))
 
     expect(values.environment).toStrictEqual(environment)
     expect(values.services[0].ingress.host).toStrictEqual('dummies.stage.toa.dev')

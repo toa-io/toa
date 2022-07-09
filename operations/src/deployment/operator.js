@@ -3,17 +3,17 @@
 const { directory } = require('@toa.io/libraries/filesystem')
 
 /**
- * @implements {toa.operations.deployment.Operator}
+ * @implements {toa.deployment.Operator}
  */
 class Operator {
-  /** @type {toa.operations.deployment.Deployment} */
+  /** @type {toa.deployment.Deployment} */
   #deployment
-  /** @type {toa.operations.deployment.images.Registry} */
+  /** @type {toa.deployment.images.Registry} */
   #registry
 
   /**
-   * @param deployment {toa.operations.deployment.Deployment}
-   * @param registry {toa.operations.deployment.images.Registry}
+   * @param deployment {toa.deployment.Deployment}
+   * @param registry {toa.deployment.images.Registry}
    */
   constructor (deployment, registry) {
     this.#deployment = deployment
@@ -77,7 +77,7 @@ class Operator {
   }
 }
 
-/** @type {toa.operations.deployment.installation.Options} */
+/** @type {toa.deployment.installation.Options} */
 const OPTIONS = {
   wait: false
 }

@@ -8,12 +8,12 @@ const { dump } = require('@toa.io/libraries/yaml')
 const { merge, declare, describe } = require('./.deployment')
 
 /**
- * @implements {toa.operations.deployment.Deployment}
+ * @implements {toa.deployment.Deployment}
  */
 class Deployment {
-  /** @type {toa.operations.deployment.Declaration} */
+  /** @type {toa.deployment.Declaration} */
   #declaration
-  /** @type {toa.operations.deployment.Contents} */
+  /** @type {toa.deployment.Contents} */
   #contents
   /** @type {toa.operations.Process} */
   #process
@@ -22,8 +22,8 @@ class Deployment {
 
   /**
    * @param context {toa.norm.Context}
-   * @param compositions {toa.operations.deployment.Composition[]}
-   * @param dependencies {toa.operations.deployment.Dependency[]}
+   * @param compositions {toa.deployment.Composition[]}
+   * @param dependencies {toa.deployment.Dependency[]}
    * @param process {toa.operations.Process}
    */
   constructor (context, compositions, dependencies, process) {
