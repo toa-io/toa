@@ -1,5 +1,7 @@
 export * as acronyms from './acronyms'
 export { match } from './match'
+export { merge } from './merge'
+export { patch } from './patch'
 export { random } from './random'
 export { retry } from './retry'
 export { sample } from './sample'
