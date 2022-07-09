@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { random, letters: { up } } = require('@toa.io/libraries/generic')
+const { letters: { up } } = require('@toa.io/libraries/generic')
 
 const { Pointer } = require('../')
 
@@ -27,7 +27,7 @@ beforeEach(() => {
   const name = generate()
   const namespace = generate()
 
-  options = { port: random(1000) + 1000, prefix }
+  options = { prefix }
 
   locator = new Locator(name, namespace)
   pointer = new Pointer(locator, protocol, options)
@@ -66,18 +66,14 @@ it('should use default credentials on local environment', () => {
 
   delete process.env.TOA_ENV
 
-  expect(pointer.reference).toStrictEqual(`${protocol}//developer:secret@localhost:${options.port}`)
-  expect(pointer.label).toStrictEqual(`${protocol}//developer@localhost:${options.port}`)
-})
-
-it('should expose port', () => {
-  expect(pointer.port).toStrictEqual(options.port.toString())
+  expect(pointer.reference).toStrictEqual(`${protocol}//developer:secret@localhost`)
+  expect(pointer.label).toStrictEqual(`${protocol}//developer@localhost`)
 })
 
 it('should expose reference', () => {
   const hostname = locator.hostname(prefix)
 
-  expect(pointer.reference).toStrictEqual(`${protocol}//${hostname}:${options.port}`)
+  expect(pointer.reference).toStrictEqual(`${protocol}//${hostname}`)
 })
 
 it('should not throw on undefined port', () => {
@@ -91,7 +87,7 @@ it('should support options.path', () => {
 
   pointer = new Pointer(locator, protocol, options)
 
-  const reference = `${protocol}//${locator.hostname(prefix)}:${options.port}${options.path}`
+  const reference = `${protocol}//${locator.hostname(prefix)}${options.path}`
 
   expect(pointer.path).toStrictEqual(options.path)
   expect(pointer.reference).toStrictEqual(reference)
@@ -101,14 +97,23 @@ describe('environment variables', () => {
   const username = generate()
   const password = generate()
 
+  let set
+  let unset
+
   beforeEach(() => {
     const type = up(prefix)
     const env = `TOA_${type}_${locator.uppercase}`
 
-    const set = (name, value) => {
+    set = (name, value) => {
       const key = env + '_' + up(name)
 
       process.env[key] = value
+    }
+
+    unset = (name) => {
+      const key = env + '_' + up(name)
+
+      delete process.env[key]
     }
 
     set('username', username)
@@ -118,23 +123,36 @@ describe('environment variables', () => {
   })
 
   afterEach(() => {
-    const type = up(prefix)
-    const env = `TOA_${type}_${locator.uppercase}`
-
-    const unset = (name) => {
-      const key = env + '_' + up(name)
-
-      delete process.env[key]
-    }
-
     unset('username')
     unset('password')
   })
 
-  it('should use env variables', () => {
+  it('should use env variables for credentials', () => {
     const hostname = locator.hostname(prefix)
 
-    expect(pointer.reference).toStrictEqual(`${protocol}//${username}:${password}@${hostname}:${options.port}`)
-    expect(pointer.label).toStrictEqual(`${protocol}//${username}@${hostname}:${options.port}`)
+    expect(pointer.reference).toStrictEqual(`${protocol}//${username}:${password}@${hostname}`)
+    expect(pointer.label).toStrictEqual(`${protocol}//${username}@${hostname}`)
+  })
+
+  it('should use env variable for protocol', () => {
+    set('protocol', 'secure:')
+
+    pointer = new Pointer(locator, protocol, options)
+
+    unset('protocol')
+
+    expect(pointer.protocol).toStrictEqual('secure:')
+  })
+
+  it('should use env variable for port', () => {
+    const hostname = locator.hostname(prefix)
+    set('port', '3000')
+
+    pointer = new Pointer(locator, protocol, options)
+
+    unset('port')
+
+    expect(pointer.port).toStrictEqual('3000')
+    expect(pointer.reference).toStrictEqual(`${protocol}//${username}:${password}@${hostname}:3000`)
   })
 })

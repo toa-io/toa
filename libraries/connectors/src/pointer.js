@@ -3,7 +3,6 @@
 const { letters: { up } } = require('@toa.io/libraries/generic')
 
 // noinspection JSClosureCompilerSyntax
-
 /**
  * @implements {toa.connectors.Pointer}
  */
@@ -31,14 +30,12 @@ class Pointer {
       url.hostname = locator.hostname(options.prefix)
 
       if (options.prefix) {
-        const { username, password } = credentials(options, locator)
+        const variables = ['username', 'password', 'protocol', 'port']
+        const values = env(options.prefix, locator, variables)
 
-        if (username !== undefined) url.username = username
-        if (password !== undefined) url.password = password
+        for (const variable of variables) if (values[variable] !== undefined) url[variable] = values[variable]
       }
     }
-
-    url.port = options.port?.toString()
 
     if (options.path !== undefined) url.pathname = options.path
 
@@ -65,25 +62,23 @@ const label = (url) => {
 }
 
 /**
- *
- * @param options
- * @param locator
- * @returns {{ username?: string, password?: string }}
+ * @param {string} scope
+ * @param {toa.core.Locator} locator
+ * @param {string[]} variables
+ * @returns {{ [key: string]: string }}
  */
-function credentials (options, locator) {
-  const suffix = options.prefix ? up(options.prefix) + '_' : ''
-  const prefix = `TOA_${suffix}${locator.uppercase}_`
-  const username = env(prefix, 'USERNAME')
-  const password = env(prefix, 'PASSWORD')
+const env = (scope, locator, variables) => {
+  const values = {}
+  const suffix = up(scope)
+  const prefix = `TOA_${suffix}_${locator.uppercase}_`
 
-  return { username, password }
+  for (const variable of variables) {
+    const key = prefix + up(variable)
+
+    values[variable] = process.env[key]
+  }
+
+  return values
 }
-
-/**
- * @param {string} prefix
- * @param {string} name
- * @returns {string}
- */
-const env = (prefix, name) => process.env[prefix + name]
 
 exports.Pointer = Pointer
