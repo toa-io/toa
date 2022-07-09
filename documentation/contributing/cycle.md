@@ -4,8 +4,8 @@
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528657645700&cot=14">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="4d-dark.png">
-    <img alt="4D" width="400" height="455" src="4d-light.jpg">
+    <source media="(prefers-color-scheme: dark)" srcset="./.cycle/4d-dark.png">
+    <img alt="4D" width="400" height="455" src="./.cycle/4d-light.jpg">
   </picture>
 </a>
 
@@ -144,6 +144,9 @@ See [development requirements](development.md).
 At this point, it is likely that reasons will be found to update the solution, change requests,
 manual or scenarios. If so, the update must be performed at the appropriate step and the Cycle
 must continue **sequentially from that step**.
+
+> At any moment of this step it should be clear *what to do now* and *what to do next*. Otherwise,
+> it is necessary to return to one of the previous steps.
 
 ## Perfect Result
 
