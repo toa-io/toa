@@ -4,6 +4,7 @@ declare namespace toa.connectors {
     type Options = {
       port?: number
       prefix?: string
+      path?: string
     }
   }
 
@@ -12,7 +13,9 @@ declare namespace toa.connectors {
     host
     port
     hostname
+    path
     reference
+    label
   }
 
 }

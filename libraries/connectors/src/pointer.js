@@ -1,6 +1,9 @@
 'use strict'
 
+const { letters: { up } } = require('@toa.io/libraries/generic')
+
 // noinspection JSClosureCompilerSyntax
+
 /**
  * @implements {toa.connectors.Pointer}
  */
@@ -9,6 +12,7 @@ class Pointer {
   host
   port
   hostname
+  path
   reference
 
   /**
@@ -16,18 +20,70 @@ class Pointer {
    * @param {string} protocol
    * @param {toa.connectors.pointer.Options} [options]
    */
-  constructor (locator, protocol, options) {
-    const hostname = process.env.TOA_ENV === 'local' ? 'localhost' : locator.hostname(options?.prefix)
+  constructor (locator, protocol, options = {}) {
     const url = new URL(protocol + '//')
 
-    url.host = hostname
-    url.port = options?.port.toString()
+    if (process.env.TOA_ENV === 'local') {
+      url.hostname = 'localhost'
+      url.username = 'developer'
+      url.password = 'secret'
+    } else {
+      url.hostname = locator.hostname(options.prefix)
 
-    this.hostname = url.hostname
+      if (options.prefix) {
+        const { username, password } = credentials(options, locator)
+
+        if (username !== undefined) url.username = username
+        if (password !== undefined) url.password = password
+      }
+    }
+
+    url.port = options.port?.toString()
+
+    if (options.path !== undefined) url.pathname = options.path
+
     this.protocol = url.protocol
+    this.hostname = url.hostname
     this.port = url.port
+    this.path = url.pathname
     this.reference = url.href
+
+    this.label = label(url)
   }
 }
+
+/**
+ * @param {URL} url
+ * @returns {string}
+ */
+const label = (url) => {
+  const safe = new URL(url.href)
+
+  safe.password = ''
+
+  return safe.href
+}
+
+/**
+ *
+ * @param options
+ * @param locator
+ * @returns {{ username?: string, password?: string }}
+ */
+function credentials (options, locator) {
+  const suffix = options.prefix ? up(options.prefix) + '_' : ''
+  const prefix = `TOA_${suffix}${locator.uppercase}_`
+  const username = env(prefix, 'USERNAME')
+  const password = env(prefix, 'PASSWORD')
+
+  return { username, password }
+}
+
+/**
+ * @param {string} prefix
+ * @param {string} name
+ * @returns {string}
+ */
+const env = (prefix, name) => process.env[prefix + name]
 
 exports.Pointer = Pointer
