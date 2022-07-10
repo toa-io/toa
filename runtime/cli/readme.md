@@ -2,11 +2,11 @@
 
 ## Exporting
 
-### export component
+### export manifest
 
 <dl>
-<dt><code>toa export component</code></dt>
-<dd>Deploy context.
+<dt><code>toa export manifest</code></dt>
+<dd>Print normalized manifest.
 
 <code>--path</code> path to component (default <code>.</code>)<br/>
 <code>--error</code> print errors only<br/>
