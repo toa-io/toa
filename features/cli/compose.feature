@@ -31,7 +31,7 @@ Feature: toa compose
 
     Examples:
       | command                                | working directory        | delay |
-      | `toa compose`                          | ./components/dummies.one | 0.5   |
-      | `toa compose ./components/dummies.two` | ./                       | 0.5   |
-      | `toa compose dummies.one dummies.two`  | ./components             | 0.5   |
+      | `toa compose`                          | ./components/dummies.one | 0     |
+      | `toa compose ./components/dummies.two` | ./                       | 0     |
+      | `toa compose dummies.one dummies.two`  | ./components             | 0     |
       | `toa compose ./**/*`                   | ./                       | 1     |

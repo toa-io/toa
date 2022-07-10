@@ -57,7 +57,7 @@ Feature: AMQP deployment
     And I have a context with:
       """
       amqp:
-        system: amqps://system-host:5761
+        system: amqp://whatever
         dummies.one: amqps://host1
         dummies.two: amqp://host2:5762
       """
@@ -66,17 +66,29 @@ Feature: AMQP deployment
       """
       variables:
         dummies-one:
-          - name: TOA_BINDINGS_AMQP_SYSTEM_PROTOCOL
-            value: amqps
-          - name: TOA_BINDINGS_AMQP_SYSTEM_PORT
-            value: 5761
           - name: TOA_BINDINGS_AMQP_DUMMIES_ONE_PROTOCOL
-            value: amqps
+            value: 'amqps:'
         dummies-two:
-          - name: TOA_BINDINGS_AMQP_SYSTEM_PROTOCOL
-            value: amqps
-          - name: TOA_BINDINGS_AMQP_SYSTEM_PORT
-            value: 5761
           - name: TOA_BINDINGS_AMQP_DUMMIES_TWO_PORT
             value: 5762
+      """
+
+  Scenario: Custom protocol and port for system broker
+
+    Given I have a component dummies.one
+    And I have a context with:
+      """
+      amqp:
+        system: amqps://host0:5672
+        dummies.one: amqp://whatever
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        dummies-one:
+          - name: TOA_BINDINGS_AMQP_SYSTEM_PROTOCOL
+            value: 'amqps:'
+          - name: TOA_BINDINGS_AMQP_SYSTEM_PORT
+            value: 5672
       """

@@ -8,7 +8,7 @@ const resolve = (uris, locator) => {
 
   if (uri === undefined && typeof uris[locator.namespace] === 'string') uri = uris[locator.namespace]
   if (uri === undefined) uri = uris.default
-  if (uri === undefined) throw new Error(`URI annotation for '${locator.id}' not found`)
+  if (uri === undefined) throw new Error(`URI annotation for '${locator.id}' is not found`)
 
   return new URL(uri)
 }

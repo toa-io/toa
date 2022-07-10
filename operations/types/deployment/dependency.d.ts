@@ -9,7 +9,7 @@ declare namespace toa.deployment {
 
     type Constructor = (instances: dependencies.Instance[], annotation: any) => Declaration
 
-    interface Reference {
+    type Reference = {
       name: string
       version: string
       repository?: string
@@ -17,7 +17,7 @@ declare namespace toa.deployment {
       values?: Object
     }
 
-    interface Service {
+    type Service = {
       group: string
       name: string
       version: string
@@ -29,21 +29,21 @@ declare namespace toa.deployment {
       }
     }
 
-    interface Proxy {
+    type Proxy = {
       name: string
       target: string
     }
 
-    interface Variable {
+    type Variable = {
       name: string
-      value: string
+      value: string | number
     }
 
-    interface Variables {
+    type Variables = {
       [key: string]: Variable[]
     }
 
-    interface Declaration {
+    type Declaration = {
       references?: Reference[]
       services?: Service[] // dependency.Service
       proxies?: Proxy[]
@@ -52,7 +52,7 @@ declare namespace toa.deployment {
 
   }
 
-  interface Dependency {
+  type Dependency = {
     references?: dependency.Reference[]
     services?: Service[] // deployment.Service
     proxies?: dependency.Proxy[]
@@ -67,6 +67,7 @@ export namespace dependency {
   export type Service = toa.deployment.dependency.Service
   export type Proxy = toa.deployment.dependency.Proxy
   export type Variables = toa.deployment.dependency.Variables
+  export type Variable = toa.deployment.dependency.Variable
 }
 
 export type Dependency = toa.deployment.Dependency

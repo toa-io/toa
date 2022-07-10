@@ -1,4 +1,4 @@
-# Cycle of Change
+# The Cycle of Change
 
 ## TL;DR
 

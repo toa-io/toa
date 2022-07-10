@@ -28,7 +28,7 @@ spec:
                     {{- if eq $component $key }}
                       {{- range $vars }}
             - name: {{ .name }}
-              value: {{ .value }}
+              value: {{ .value | quote }}
                       {{- end }}
                     {{- end }}
                   {{- end }}

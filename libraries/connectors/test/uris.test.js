@@ -107,7 +107,7 @@ describe('resolve', () => {
     const namespace = generate()
     const locator = new Locator(name, namespace)
 
-    expect(() => resolve(annotation, locator)).toThrow(`URI annotation for '${locator.id}' not found`)
+    expect(() => resolve(annotation, locator)).toThrow(`URI annotation for '${locator.id}' is not found`)
   })
 
   it('should resolve by namespace', () => {

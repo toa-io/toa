@@ -26,7 +26,6 @@ async function execute (command, options = {}) {
     result = e
 
     if (e.code === 'ABORT_ERR') this.aborted = true
-    else throw e
   }
 
   this.stdout = result.stdout.trim()

@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random } = require('@toa.io/libraries/generic')
+const { random, letters: { up } } = require('@toa.io/libraries/generic')
 const mock = require('@toa.io/libraries/mock')
 
 const { deployment } = require('../')
@@ -27,6 +27,16 @@ it('should throw if annotation is not defined', () => {
     .toThrow('AMQP deployment requires either \'system\' or \'default\' URI annotation')
 })
 
+it('should throw if \'system\' is not defined', () => {
+  const url = gen()
+  const annotation = {}
+
+  for (const instance of instances) annotation[instance.locator.id] = url.href
+
+  expect(() => deployment(instances, annotation))
+    .toThrow('URI annotation for \'system\' is not found')
+})
+
 describe('proxies', () => {
   it('should create system proxy', () => {
     const url = gen()
@@ -46,5 +56,43 @@ describe('proxies', () => {
     const instances = []
 
     expect(() => deployment(instances, annotation)).toThrow('not found')
+  })
+})
+
+describe('variables', () => {
+  const prefix = `TOA_${up(PREFIX)}_SYSTEM_`
+
+  it('should create protocol variable', () => {
+    const url = gen()
+
+    url.port = ''
+
+    const annotation = { default: url.href }
+    const output = deployment(instances, annotation)
+
+    for (const instance of instances) {
+      const variables = output.variables[instance.locator.label]
+
+      expect(variables).toStrictEqual(expect.arrayContaining([{
+        name: prefix + 'PROTOCOL',
+        value: url.protocol
+      }]))
+    }
+  })
+
+  it('should create port variable', () => {
+    const url = gen()
+    const annotation = { default: url.href }
+
+    const output = deployment(instances, annotation)
+
+    for (const instance of instances) {
+      const variables = output.variables[instance.locator.label]
+
+      expect(variables).toStrictEqual(expect.arrayContaining([{
+        name: prefix + 'PORT',
+        value: Number(url.port)
+      }]))
+    }
   })
 })
