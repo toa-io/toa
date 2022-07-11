@@ -8,8 +8,10 @@ const { get } = require('./get')
 /** @type {toa.kubernetes.secrets.Store} */
 const store = async (name, values) => {
   const command = 'kubectl apply -f -'
-  const declaration = (await get(name)) ?? BLANK
   const data = remap(values, encode)
+
+  /** @type {toa.kubernetes.secrets.Declaration} */
+  const declaration = (await get(name)) ?? BLANK
 
   declaration.metadata.name = name
 
@@ -23,7 +25,7 @@ const store = async (name, values) => {
 const BLANK = {
   apiVersion: 'v1',
   kind: 'Secret',
-  metadata: {},
+  metadata: { name: '' },
   data: {},
   type: 'Opaque'
 }

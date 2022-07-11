@@ -7,6 +7,9 @@ declare namespace toa.kubernetes {
   namespace secrets {
 
     type Declaration = {
+      metadata: {
+        name: string
+      }
       data: Secret
     }
 
