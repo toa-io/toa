@@ -140,3 +140,4 @@ Feature: AMQP deployment
               name: toa-bindings-amqp-system
               key: password
       """
+

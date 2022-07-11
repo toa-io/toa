@@ -28,7 +28,16 @@ spec:
                     {{- if eq $component $key }}
                       {{- range $vars }}
             - name: {{ .name }}
+                {{- if .value }}
               value: {{ .value | quote }}
+                {{- end }}
+                {{- if .secret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secret.name }}
+                  key: {{ .secret.key }}
+                  optional: false
+                {{- end }}
                       {{- end }}
                     {{- end }}
                   {{- end }}

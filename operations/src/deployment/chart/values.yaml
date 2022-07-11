@@ -19,12 +19,10 @@ components:
 variables:
   todos-tasks:
     - name: TOA_CONFIGURATION_TODOS_TASKS
-      value: Y29uZmlndXJhdGlvbi12YWx1ZQo=
-  users-users:
-    - name: USERS_1
-      value: 2
-    - name: USERS_2
-      value: 2
+      value: foo
+      secret:
+        name: secret-name
+        key: secret-key
 services:
   - name: resources-gateway
     image: localhost:5000/resources-gateway:0.0.0
