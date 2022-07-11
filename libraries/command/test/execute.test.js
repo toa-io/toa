@@ -24,3 +24,12 @@ it('should not throw on error', async () => {
   expect(process.exitCode).toStrictEqual(127)
   expect(process.error).toContain('command not found')
 })
+
+it('should pass stdin', async () => {
+  const command = 'read test; echo $test'
+  const input = generate()
+
+  const process = await execute(command, input)
+
+  expect(process.output).toStrictEqual(input)
+})

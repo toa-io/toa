@@ -7,7 +7,7 @@ declare namespace toa.command {
     error?: string
   } & ChildProcess
 
-  type Execute = (command: string) => Promise<Result>
+  type Execute = (command: string, input?: string) => Promise<Result>
 
 }
 
