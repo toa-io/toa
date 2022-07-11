@@ -25,12 +25,12 @@ class Locator {
     this.namespace = namespace
 
     this.id = concat(namespace, '.') + name
-    this.label = concat(namespace, '-') + name
+    this.label = (concat(namespace, '-') + name).toLowerCase()
     this.uppercase = (concat(namespace, '_') + name).toUpperCase()
   }
 
   hostname (prefix) {
-    return concat(prefix, '-') + this.label
+    return concat(prefix?.toLowerCase(), '-') + this.label
   }
 }
 
