@@ -73,22 +73,29 @@ describe('variables', () => {
       const variables = output.variables[instance.locator.label]
 
       const suffix = up(PREFIX) + '_' + instance.locator.uppercase
+      const name = `TOA_${suffix}_PORT`
 
-      expect(variables.length).toStrictEqual(1)
+      const found = variables.find((variable) => variable.name === name)
 
-      expect(variables[0]).toStrictEqual({
-        name: `TOA_${suffix}_PROTOCOL`,
-        value: 'amqps:'
-      })
+      expect(found).toStrictEqual(undefined)
     }
+  })
+
+  it('should export USERNAME and PASSWORD', () => {
+    const { annotation, variables } = declare('amqps:', random(1000) + 1000, true)
+
+    const output = deployment(instances, annotation, PREFIX)
+
+    expect(output.variables).toStrictEqual(variables)
   })
 
   /**
    * @param {string} protocol
    * @param {number} [port]
-   * @returns {{ annotation: Object, variables: toa.deployment.dependency.Variables}}
+   * @param {boolean} [secrets]
+   * @returns {{ annotation: Object, variables: toa.deployment.dependency.Variables }}
    */
-  const declare = (protocol, port) => {
+  const declare = (protocol, port = undefined, secrets = false) => {
     /** @type {toa.deployment.dependency.Variables} */
     const variables = {}
 
@@ -98,6 +105,7 @@ describe('variables', () => {
       const { id, label } = instance.locator
       const url = gen()
       const suffix = up(PREFIX) + '_' + instance.locator.uppercase
+      const sfx = PREFIX + '-' + instance.locator.label
 
       url.port = port === undefined ? '' : String(port)
       url.protocol = protocol === undefined ? '' : protocol
@@ -116,6 +124,24 @@ describe('variables', () => {
         expected.push({
           name: `TOA_${suffix}_PROTOCOL`,
           value: url.protocol
+        })
+      }
+
+      if (secrets) {
+        expected.push({
+          name: `TOA_${suffix}_USERNAME`,
+          secret: {
+            name: `toa-${sfx}`,
+            key: 'username'
+          }
+        })
+
+        expected.push({
+          name: `TOA_${suffix}_PASSWORD`,
+          secret: {
+            name: `toa-${sfx}`,
+            key: 'password'
+          }
         })
       }
 

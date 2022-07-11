@@ -9,16 +9,31 @@ const { letters: { up } } = require('@toa.io/libraries/generic')
  */
 const variables = (instance, url, suffix) => {
   const prefix = `TOA_${up(suffix)}_${instance.locator.uppercase}_`
+  const scope = `toa-${suffix}-${instance.locator.label}`
 
-  return PROPERTIES
-    .filter(([property]) => {
-      return url[property] !== ''
-    }).map(([property, coercion]) => ({
+  const variables = PROPERTIES
+    .filter(([property]) => url[property] !== '')
+    .map(([property, coercion]) => ({
       name: prefix + up(property),
       value: coercion(url[property])
     }))
+
+  const secrets = SECRETS
+    .map((property) => ({
+      name: prefix + up(property),
+      secret: {
+        name: scope,
+        key: property
+      }
+    }))
+
+
+  variables.push(...secrets)
+
+  return variables
 }
 
-const PROPERTIES = [['port', Number], ['protocol', String]]
+const PROPERTIES = [['protocol', String], ['port', Number]]
+const SECRETS = ['username', 'password']
 
 exports.variables = variables

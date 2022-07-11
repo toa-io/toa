@@ -77,3 +77,21 @@ dependency instances, the [URI Set](#uri-set-context-annotation) and
 the [package prefix](#pointer).
 
 See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
+
+### Secrets
+
+Values for `PROTOCOL` and `PORT` variables are being extracted from URI Set and deployed,
+while `USERNAME` and `PASSWORD` must have corresponding secrets deployed. Secret names are following
+the convention: `toa-package-prefix-namespace-name` and `key` names match corresponding URL
+properties (`username` and `password`).
+
+> Secrets defined by packages are required (non-optional).
+
+#### Example
+
+```shell
+$ toa conceal bindings-amqp-default username admin
+$ toa conceal bindings-amqp-default password iluvtests
+```
+
+See [`toa conceal`](../../runtime/cli/readme.md#conceal).
