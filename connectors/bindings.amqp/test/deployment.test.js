@@ -62,7 +62,7 @@ describe('proxies', () => {
 describe('variables', () => {
   const prefix = `TOA_${up(PREFIX)}_SYSTEM_`
 
-  it('should create protocol variable', () => {
+  it('should create system protocol variable', () => {
     const url = gen()
 
     url.port = ''
@@ -70,29 +70,21 @@ describe('variables', () => {
     const annotation = { default: url.href }
     const output = deployment(instances, annotation)
 
-    for (const instance of instances) {
-      const variables = output.variables[instance.locator.label]
-
-      expect(variables).toStrictEqual(expect.arrayContaining([{
-        name: prefix + 'PROTOCOL',
-        value: url.protocol
-      }]))
-    }
+    expect(output.variables.system).toStrictEqual(expect.arrayContaining([{
+      name: prefix + 'PROTOCOL',
+      value: url.protocol
+    }]))
   })
 
-  it('should create port variable', () => {
+  it('should create system port variable', () => {
     const url = gen()
     const annotation = { default: url.href }
 
     const output = deployment(instances, annotation)
 
-    for (const instance of instances) {
-      const variables = output.variables[instance.locator.label]
-
-      expect(variables).toStrictEqual(expect.arrayContaining([{
-        name: prefix + 'PORT',
-        value: Number(url.port)
-      }]))
-    }
+    expect(output.variables.system).toStrictEqual(expect.arrayContaining([{
+      name: prefix + 'PORT',
+      value: Number(url.port)
+    }]))
   })
 })
