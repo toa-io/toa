@@ -1,4 +1,4 @@
-# Common Connectors Solutions
+# Common Connector Solutions
 
 ## URI Set Context Annotation
 
