@@ -13,9 +13,9 @@ const variables = (instance, url, suffix) => {
   return PROPERTIES
     .filter(([property]) => {
       return url[property] !== ''
-    }).map(([property, cercion]) => ({
+    }).map(([property, coercion]) => ({
       name: prefix + up(property),
-      value: cercion(url[property])
+      value: coercion(url[property])
     }))
 }
 
