@@ -3,8 +3,7 @@
 const { generate } = require('randomstring')
 const { remap, encode } = require('@toa.io/libraries/generic')
 
-const fixtures = require('./secrets.fixtures')
-const mock = fixtures.mock
+const mock = require('./command.mock')
 
 jest.mock('@toa.io/libraries/command', () => mock.command)
 const { secrets } = require('../')
@@ -13,7 +12,7 @@ it('should be', () => {
   expect(secrets).toBeDefined()
 })
 
-describe('upsert', () => {
+describe('store', () => {
   const store = secrets.store
 
   it('should be', () => {
@@ -28,6 +27,7 @@ describe('upsert', () => {
     const command = 'kubectl apply -f -'
 
     mock.command.execute.mockResolvedValueOnce({ exitCode: 1 }) // no such secret
+    mock.command.execute.mockResolvedValueOnce({ exitCode: 0 })
 
     await store(name, values)
 
@@ -50,6 +50,7 @@ describe('upsert', () => {
     const result = { exitCode: 0, output: JSON.stringify(declaration) }
 
     mock.command.execute.mockResolvedValueOnce(result) // result for get()
+    mock.command.execute.mockResolvedValueOnce({ exitCode: 0 })
 
     await store(name, values)
 
@@ -64,6 +65,16 @@ describe('upsert', () => {
     const input = JSON.parse(args[1])
 
     expect(input).toMatchObject(declaration)
+  })
+
+  it('should throw on error', async () => {
+    const get = { exitCode: 1 }
+    const result = { exitCode: 1, error: generate() }
+
+    mock.command.execute.mockResolvedValueOnce(get)
+    mock.command.execute.mockResolvedValueOnce(result)
+
+    await expect(store(generate(), { foo: generate() })).rejects.toThrow(result.error)
   })
 })
 

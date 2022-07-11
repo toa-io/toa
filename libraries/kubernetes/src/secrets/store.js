@@ -19,7 +19,9 @@ const store = async (name, values) => {
 
   const input = JSON.stringify(declaration)
 
-  await execute(command, input)
+  const process = await execute(command, input)
+
+  if (process.exitCode !== 0) throw new Error(process.error)
 }
 
 const BLANK = {

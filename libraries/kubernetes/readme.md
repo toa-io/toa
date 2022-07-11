@@ -1,6 +1,6 @@
 # Kubernetes
 
-Wrapper for `kubectl` working in current context.
+Wrapper for `kubectl` working in current context, and `kubectx`.
 
 ## Secrets
 
@@ -8,20 +8,17 @@ Wrapper for `kubectl` working in current context.
 
 Get kubernetes secret's declaration.
 
-#### Arguments
 <dl>
 <dt><code>name</code></dt>
 <dd><code>string</code> name of the secret</dd>
 </dl>
 
-#### Returns
-[`toa.kubernetes.secrets.Declaration`](types/secrets.d.ts) | `null`
+Returns [`toa.kubernetes.secrets.Declaration`](types/secrets.d.ts) | `null`
 
 ### `async store(name, values)`
 
-Creates or updates a secret. Doesn't delete existing keys.
+Create or update a secret. Don't delete existing keys.
 
-#### Arguments
 <dl>
 <dt><code>name</code></dt>
 <dd><code>string</code> name of the secret</dd>
@@ -29,5 +26,28 @@ Creates or updates a secret. Doesn't delete existing keys.
 <dd><a href="types/secrets.d.ts"><code>toa.kubernetes.Secret</code></a> secret values</dd>
 </dl>
 
-#### Returns
-`void`
+Returns `void`
+
+## Context
+
+### `async get(name)`
+
+Get current context.
+
+<dl>
+<dt><code>name</code></dt>
+<dd><code>string</code> name of the context</dd>
+</dl>
+
+Returns `string` | `null`
+
+### `async set(name)`
+
+Set current context.
+
+<dl>
+<dt><code>name</code></dt>
+<dd><code>string</code> name of the context</dd>
+</dl>
+
+Returns `void`
