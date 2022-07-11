@@ -48,9 +48,11 @@ $ toa configure foo.bar --reset | source /dev/stdin
 
 ### conceal
 
-![Not Implemented](https://img.shields.io/badge/Not_Implemented-red)
 <dl>
-<dt><code>toa conceal</code></dt>
+<dt>
+<code>toa conceal</code>
+<img src="https://img.shields.io/badge/Not_Implemented-red" alt="Not Implemented"/>
+</dt>
 <dd>Deploy new declared secrets.
 
 <code>--reset</code> don't skip already deployed</dd>
