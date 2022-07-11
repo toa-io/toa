@@ -36,7 +36,11 @@ declare namespace toa.deployment {
 
     type Variable = {
       name: string
-      value: string | number
+      value?: string | number
+      secret?: {
+        name: string,
+        key: string
+      }
     }
 
     type Variables = {
