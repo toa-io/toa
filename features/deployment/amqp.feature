@@ -92,3 +92,27 @@ Feature: AMQP deployment
           - name: TOA_BINDINGS_AMQP_SYSTEM_PORT
             value: 5672
       """
+
+  Scenario: Secrets for usernames and password
+
+    Given I have a component dummies.one
+    And I have a context with:
+      """
+      amqp:
+        system: amqps://host0:5672
+        dummies.one: amqp://whatever
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        dummies-one:
+          - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
+            secret:
+              name: toa-bindings-amqp-system
+              key: username
+          - name: TOA_BINDINGS_AMQP_SYSTEM_PASSWORD
+            secret:
+              name: toa-bindings-amqp-system
+              key: password
+      """
