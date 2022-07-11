@@ -86,7 +86,7 @@ Feature: AMQP deployment
     Then exported values should contain:
       """
       variables:
-        dummies-one:
+        system:
           - name: TOA_BINDINGS_AMQP_SYSTEM_PROTOCOL
             value: 'amqps:'
           - name: TOA_BINDINGS_AMQP_SYSTEM_PORT
@@ -117,7 +117,7 @@ Feature: AMQP deployment
               key: password
       """
 
-  Scenario: Secrets for usernames and password for system
+  Scenario: Secrets for usernames and password for system binding
 
     Given I have a component dummies.one
     And I have a context with:
@@ -130,7 +130,7 @@ Feature: AMQP deployment
     Then exported values should contain:
       """
       variables:
-        dummies-one:
+        system:
           - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
             secret:
               name: toa-bindings-amqp-system
