@@ -10,10 +10,10 @@ describe('up', () => {
   })
 
   it('should uppercase', () => {
-    const lower = 'foo-bar'
+    const lower = 'foo-bar-baz'
     const upper = up(lower)
 
-    expect(upper).toStrictEqual('FOO_BAR')
+    expect(upper).toStrictEqual('FOO_BAR_BAZ')
   })
 })
 
@@ -25,9 +25,9 @@ describe('down', () => {
   })
 
   it('should uppercase', () => {
-    const upper = 'FOO_BAR'
+    const upper = 'FOO_BAR_BAZ'
     const lower = down(upper)
 
-    expect(lower).toStrictEqual('foo-bar')
+    expect(lower).toStrictEqual('foo-bar-baz')
   })
 })
