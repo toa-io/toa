@@ -42,6 +42,7 @@ See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
 ### Custom Extensions
 
 Packages using URI Set Annotation may use or require additional properties.
+See [Custom Extensions Deployment](#custom-extensions-deployment) below.
 
 ## Pointer
 
@@ -81,11 +82,9 @@ See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for deta
 ### Secrets
 
 Values for `PROTOCOL` and `PORT` variables are being extracted from URI Set and deployed,
-while `USERNAME` and `PASSWORD` must have corresponding secrets deployed. Secret names are following
-the convention: `toa-package-prefix-namespace-name` and `key` names match corresponding URL
-properties (`username` and `password`).
-
-> Secrets defined by packages are required (non-optional).
+while `USERNAME` and `PASSWORD` requires corresponding secrets to be deployed. Secret names are
+following the convention: `toa-package-prefix-namespace-name` and `key` names match corresponding
+URL properties (`username` and `password`).
 
 #### Example
 
@@ -93,5 +92,19 @@ properties (`username` and `password`).
 $ toa conceal bindings-amqp-default username admin
 $ toa conceal bindings-amqp-default password iluvtests
 ```
+
+### Custom Extensions Deployment
+
+For each extension additional proxy will be declared and [system variables](#) will be mapped.
+
+#### Example
+
+AMQP binding is a systematic binding used by the runtime. That is a system proxy must be deployed
+and compositions require variables to establish connection through that proxy.
+
+Therefore, AMQP binding declares a `system` extension and `deployment` function of this package
+declares additional proxy `bindings-amqp-system` and a set of system
+variables: `TOA_BINDINGS_AMQP_SYSTEM_PROTOCOL`, `TOA_BINDINGS_AMQP_SYSTEM_PORT`,
+`TOA_BINDINGS_AMQP_SYSTEM_USERNAME` and `TOA_BINDINGS_AMQP_SYSTEM_PASSWORD`.
 
 See [`toa conceal`](../../runtime/cli/readme.md#conceal).

@@ -27,7 +27,6 @@ const variables = (instance, url, suffix) => {
       }
     }))
 
-
   variables.push(...secrets)
 
   return variables

@@ -32,7 +32,7 @@ describe('proxies', () => {
       name: instance.locator.hostname(PREFIX), target: url.hostname
     }))
 
-    const output = deployment(instances, annotation, PREFIX)
+    const output = deployment(PREFIX, instances, annotation)
 
     expect(output.proxies).toStrictEqual(expect.arrayContaining(expected))
   })
@@ -49,9 +49,32 @@ describe('proxies', () => {
       expected.push({ name: instance.locator.hostname(PREFIX), target })
     }
 
-    const output = deployment(instances, annotation, PREFIX)
+    const output = deployment(PREFIX, instances, annotation)
 
     expect(output.proxies).toStrictEqual(expect.arrayContaining(expected))
+  })
+
+  it('should define proxies for extensions', () => {
+    const instances = []
+    const annotation = {}
+    const extensions = ['system', 'else']
+    const expected = []
+
+    for (const extension of extensions) {
+      const url = gen()
+      const target = url.hostname
+
+      annotation[extension] = url.href
+
+      expected.push({
+        name: `${PREFIX}-${extension}`,
+        target
+      })
+    }
+
+    const output = deployment(PREFIX, instances, annotation, extensions)
+
+    expect(output.proxies).toStrictEqual(expected)
   })
 })
 
@@ -59,7 +82,7 @@ describe('variables', () => {
   it('should export PORT and PROTOCOL', () => {
     const { annotation, variables } = declare('amqps:', random(1000) + 1000)
 
-    const output = deployment(instances, annotation, PREFIX)
+    const output = deployment(PREFIX, instances, annotation)
 
     expect(output.variables).toStrictEqual(variables)
   })
@@ -67,7 +90,7 @@ describe('variables', () => {
   it('should not export PORT if it is not defined', () => {
     const { annotation } = declare('amqps:')
 
-    const output = deployment(instances, annotation, PREFIX)
+    const output = deployment(PREFIX, instances, annotation)
 
     for (const instance of instances) {
       const variables = output.variables[instance.locator.label]
@@ -84,9 +107,44 @@ describe('variables', () => {
   it('should export USERNAME and PASSWORD', () => {
     const { annotation, variables } = declare('amqps:', random(1000) + 1000, true)
 
-    const output = deployment(instances, annotation, PREFIX)
+    const output = deployment(PREFIX, instances, annotation)
 
     expect(output.variables).toStrictEqual(variables)
+  })
+
+  it('should declare system variables for extensions', () => {
+    const instances = []
+    const annotation = {}
+
+    const extensions = ['system', 'else']
+    const expected = []
+
+    for (const extension of extensions) {
+      const url = gen()
+
+      annotation[extension] = url.href
+
+      for (const [property, coercion] of [['protocol', String], ['port', Number]]) {
+        expected.push({
+          name: up(`TOA_${PREFIX}_${extension}_${property}`),
+          value: coercion(url[property])
+        })
+      }
+
+      for (const secret of ['username', 'password']) {
+        expected.push({
+          name: up(`TOA_${PREFIX}_${extension}_${secret}`),
+          secret: {
+            name: `toa-${PREFIX}-${extension}`,
+            key: secret
+          }
+        })
+      }
+    }
+
+    const output = deployment(PREFIX, instances, annotation, extensions)
+
+    expect(output.variables.system).toStrictEqual(expected)
   })
 
   /**

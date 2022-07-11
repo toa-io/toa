@@ -6,8 +6,12 @@ import { URIs } from './uris'
 
 declare namespace toa.connectors {
 
-  type Deployment = (instances: dependencies.Instance[], uris: URIs, prefix: string) => dependency.Declaration
+  type Deployment = (prefix: string,
+                     instances: dependencies.Instance[],
+                     uris: URIs,
+                     extensions?: string[])
+    => dependency.Declaration
 
 }
 
-export const deployment : toa.connectors.Deployment
+export const deployment: toa.connectors.Deployment
