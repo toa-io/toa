@@ -1,6 +1,6 @@
 Feature: Deploy secrets for AMQP binding
 
-  Scenario: Secrets for component
+  Scenario: Secrets for component and system bindings
     Given I have a component dummies.one
     And I have a context with:
       """
@@ -23,5 +23,16 @@ Feature: Deploy secrets for AMQP binding
             name: toa-bindings-amqp-dummies-one
             key: password
             optional: false
+      - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: toa-bindings-amqp-system
+            key: username
+            optional: false
+      - name: TOA_BINDINGS_AMQP_SYSTEM_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: toa-bindings-amqp-system
+            key: password
+            optional: false
       """
-

@@ -17,6 +17,12 @@ components:
   - todos-stats
   - users-users
 variables:
+  system:
+    - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
+      value: foo
+      secret:
+        name: secret-name
+        key: secret-key
   todos-tasks:
     - name: TOA_CONFIGURATION_TODOS_TASKS
       value: foo
