@@ -93,7 +93,31 @@ Feature: AMQP deployment
             value: 5672
       """
 
-  Scenario: Secrets for usernames and password
+  Scenario: Secrets for usernames and password for component
+
+    Given I have a component dummies.one
+    And I have a context with:
+      """
+      amqp:
+        system: amqps://host0:5672
+        dummies.one: amqp://whatever
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        dummies-one:
+          - name: TOA_BINDINGS_AMQP_DUMMIES_ONE_USERNAME
+            secret:
+              name: toa-bindings-amqp-dummies-one
+              key: username
+          - name: TOA_BINDINGS_AMQP_DUMMIES_ONE_PASSWORD
+            secret:
+              name: toa-bindings-amqp-dummies-one
+              key: password
+      """
+
+  Scenario: Secrets for usernames and password for system
 
     Given I have a component dummies.one
     And I have a context with:
