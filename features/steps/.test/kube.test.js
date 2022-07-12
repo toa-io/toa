@@ -13,7 +13,7 @@ const gherkin = mock.gherkin
 
 it('should be', () => undefined)
 
-describe('context', () => {
+describe('Given I have a kube context {word}', () => {
   const step = gherkin.steps.Gi('I have a kube context {word}')
 
   it('should be', () => undefined)

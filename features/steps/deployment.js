@@ -5,17 +5,19 @@ const { join } = require('node:path')
 
 const { load, parse } = require('@toa.io/libraries/yaml')
 const { match } = require('@toa.io/libraries/generic')
-const boot = require('@toa.io/boot')
 
 const { When, Then } = require('@cucumber/cucumber')
 
-When('I export deployment',
-  async function () {
-    const context = this.cwd
-    const target = join(this.cwd, 'deployment')
-    const operator = await boot.deployment(context)
+const deployment = require('./.deployment')
 
-    await operator.export(target)
+When('I export deployment',
+  function () {
+    return deployment.export.call(this)
+  })
+
+When('I export deployment for {word}',
+  function (env) {
+    return deployment.export.call(this, env)
   })
 
 Then('exported {helm-artifact} should contain:',
