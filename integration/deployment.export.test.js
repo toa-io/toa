@@ -78,17 +78,6 @@ describe('chart', () => {
     expect(values.services).toEqual(fixtures.values.services)
   })
 
-  it('should export for a given environment', async () => {
-    const environment = 'staging'
-
-    operator = await boot.deployment(source, environment)
-    target = await operator.export()
-    values = /** @type {toa.deployment.Contents} */ await load(join(target, 'values.yaml'))
-
-    expect(values.environment).toStrictEqual(environment)
-    expect(values.services[0].ingress.host).toStrictEqual('dummies.stage.toa.dev')
-  })
-
   it('should export proxies', () => {
     expect(values.proxies).toBeDefined()
     expect(values.proxies).toStrictEqual(expect.arrayContaining(fixtures.values.proxies))
