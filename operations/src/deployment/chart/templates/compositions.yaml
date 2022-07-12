@@ -19,42 +19,20 @@ spec:
       containers:
         - name: {{ .name }}
           image: {{ .image }}
+          {{- if $.Values.variables }}
           env:
-            - name: TOA_ENV
-              value: {{ $.Values.environment }}
-              {{- if $.Values.variables }}
-                {{- range $component := .components }}
-                  {{- range $key, $vars := $.Values.variables }}
-                    {{- if eq $component $key }}
-                      {{- range $vars }}
-            - name: {{ .name }}
-                {{- if .value }}
-              value: {{ .value | quote }}
-                {{- end }}
-                {{- if .secret }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .secret.name }}
-                  key: {{ .secret.key }}
-                  optional: false
-                {{- end }}
-                      {{- end }}
-                    {{- end }}
+            {{- range $component := .components }}
+              {{- range $key, $vars := $.Values.variables }}
+                {{- if eq $component $key }}
+                  {{- range $vars }}
+                  {{- include "env.var" . | indent 12 }}
                   {{- end }}
                 {{- end }}
-                {{- range $.Values.variables.system }}
-            - name: {{ .name }}
-                {{- if .value }}
-              value: {{ .value | quote }}
-                {{- end }}
-                {{- if .secret }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .secret.name }}
-                  key: {{ .secret.key }}
-                  optional: false
-                {{- end }}
-                {{- end }}
               {{- end }}
+            {{- end }}
+            {{- range $.Values.variables.system }}
+            {{- include "env.var" . | indent 12 }}
+            {{- end }}
+          {{- end }}
 ---
 {{- end }}

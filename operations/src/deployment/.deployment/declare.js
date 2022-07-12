@@ -5,7 +5,8 @@
  * @param {toa.deployment.Dependency} dependency
  * @returns {toa.deployment.Declaration}
  */
-const declare = (context, { references }) => {
+const declare = (context, dependency) => {
+  const { references } = dependency
   const { name, description, version } = context
 
   const dependencies = references.map(({ values, ...rest }) => rest)

@@ -2,7 +2,7 @@
 
 /**
  * @param {toa.deployment.Dependency[]} dependencies
- * @returns {toa.deployment.Dependency | Object}
+ * @returns {toa.deployment.Dependency}
  */
 const merge = (dependencies) => {
   /** @type {toa.deployment.dependency.Reference[]} */

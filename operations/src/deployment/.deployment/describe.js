@@ -1,37 +1,25 @@
 'use strict'
 
+const get = require('./.describe')
+
 /**
  * @param {toa.norm.Context} context
  * @param {toa.deployment.Composition[]} compositions
- * @param {toa.deployment.Dependency} declaration
- * @returns {toa.deployment.Contents | Object}
+ * @param {toa.deployment.Dependency} dependency
+ * @returns {toa.deployment.Contents}
  */
-const describe = ({ environment }, compositions, declaration) => {
-  const { references, services, proxies, variables } = declaration
+const describe = (context, compositions, dependency) => {
+  const { references, services, proxies } = dependency
 
-  /** @type {Set<string>} */
-  const components = new Set()
-
-  for (const composition of compositions) {
-    for (const component of composition.components) {
-      components.add(component)
-    }
-  }
-
-  const dependencies = references?.reduce((map, reference) => {
-    const { name, alias, values } = reference
-
-    map[alias || name] = values
-
-    return map
-  }, {})
+  const components = get.components(compositions)
+  const dependencies = get.dependencies(references)
+  const variables = get.variables(context, dependency.variables)
 
   return {
     compositions,
-    components: Array.from(components),
+    components,
     services,
     proxies,
-    environment,
     variables,
     ...dependencies
   }

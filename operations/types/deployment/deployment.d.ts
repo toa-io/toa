@@ -17,12 +17,12 @@ declare namespace toa.deployment {
     }
 
     interface Contents {
-        compositions: Composition[]
-        components: string[]
+        compositions?: Composition[]
+        components?: string[]
         services?: Service[]
         proxies?: dependency.Proxy[]
-        environment?: string
         variables?: dependency.Variables
+        [key: string]: Object
     }
 
     namespace installation {

@@ -9,18 +9,14 @@ Feature: Service Deployment
     And service-exposition-resources Deployment container spec should contain:
       """
       env:
-        - name: TOA_ENV
-          value: dev
         - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
           valueFrom:
             secretKeyRef:
               name: toa-bindings-amqp-system
               key: username
-              optional: false
         - name: TOA_BINDINGS_AMQP_SYSTEM_PASSWORD
           valueFrom:
             secretKeyRef:
               name: toa-bindings-amqp-system
               key: password
-              optional: false
       """
