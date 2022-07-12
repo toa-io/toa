@@ -15,7 +15,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'conceal [secret] [key] [value]'
+exports.command = 'conceal <secret> <key> <value>'
 exports.desc = 'Deploy a key with a value to a secret'
 exports.builder = builder
 exports.handler = conceal

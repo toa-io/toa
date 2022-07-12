@@ -57,10 +57,21 @@ $ toa configure foo.bar --reset | source /dev/stdin
 
 <code>--reset</code> don't skip already deployed</dd>
 
-<dt><code>toa conceal &lt;secret&gt;</code></dt>
-<dd>List keys of a given secret.</dd>
 <dt><code>toa conceal &lt;secret&gt; &lt;key&gt; &lt;value&gt;</code></dt>
 <dd>Deploy a <code>key</code> with a <code>value</code> to a <code>secret</code>.</dd>
+</dl>
+
+### reveal
+
+<dl>
+<dt>
+<code>toa reveal</code>
+</dt>
+<dd>List deployed secrets.</dd>
+<dt>
+<code>toa reveal &lt;secret&gt;</code>
+</dt>
+<dd>Print keys and values of a secret.</dd>
 </dl>
 
 ## Exporting
@@ -75,4 +86,3 @@ $ toa configure foo.bar --reset | source /dev/stdin
 <code>--error</code> print errors only<br/>
 </dd>
 </dl>
-
