@@ -65,10 +65,6 @@ $ toa configure foo.bar --reset | source /dev/stdin
 
 <dl>
 <dt>
-<code>toa reveal</code>
-</dt>
-<dd>List deployed secrets.</dd>
-<dt>
 <code>toa reveal &lt;secret&gt;</code>
 </dt>
 <dd>Print keys and values of a secret.</dd>

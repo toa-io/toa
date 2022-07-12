@@ -9,16 +9,6 @@ Feature: Reveal Secrets
     And I run `toa conceal network address 1.1.1.1`
     And program should exit
 
-
-  Scenario: List deployed secrets
-    When I run `toa reveal`
-    Then program should exit
-    And stdout should contain lines:
-      """
-      database
-      network
-      """
-
   Scenario: Reveal a secret
     When I run `toa reveal database`
     Then program should exit
