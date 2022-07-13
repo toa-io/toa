@@ -1,6 +1,7 @@
 'use strict'
 
 const { decode, letters: { up } } = require('@toa.io/libraries/generic')
+const { console } = require('@toa.io/libraries/console')
 
 const { resolve } = require('../uris')
 
@@ -25,6 +26,7 @@ const env = (prefix, locator) => {
     const value = process.env[env + up(property)]
 
     if (value !== undefined) url[property] = value
+    else console.warn(`${property} for ${url.href} is not set`)
   }
 
   return url
