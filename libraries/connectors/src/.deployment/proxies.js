@@ -15,7 +15,7 @@ const proxies = (prefix, instances, uris, extensions) => {
   const proxies = []
 
   for (const instance of instances) {
-    const url = resolve(instance.locator, uris)
+    const { url } = resolve(instance.locator, uris)
     const proxy = declare(prefix, instance, url)
 
     proxies.push(proxy)
@@ -36,7 +36,7 @@ const extend = (proxies, extensions, uris, prefix) => {
   for (const extension of extensions) {
     const locator = new Locator(extension)
     const instance = { locator }
-    const url = resolve(locator, uris)
+    const { url } = resolve(locator, uris)
     const proxy = declare(prefix, instance, url)
 
     proxies.push(proxy)

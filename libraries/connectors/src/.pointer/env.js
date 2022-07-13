@@ -1,6 +1,6 @@
 'use strict'
 
-const { decode, letters: { up } } = require('@toa.io/libraries/generic')
+const { concat, decode, letters: { up } } = require('@toa.io/libraries/generic')
 const { console } = require('@toa.io/libraries/console')
 
 const { resolve } = require('../uris')
@@ -16,11 +16,12 @@ const env = (prefix, locator) => {
   if (value === undefined) throw new Error(`Environment variable ${key} is not set`)
 
   const uris = decode(value)
-  const url = resolve(locator, uris)
+  const { url, entry } = resolve(locator, uris)
 
   url.host = locator.hostname(prefix)
 
-  const env = `TOA_${up(prefix)}_${locator.uppercase}_`
+  const suffix = convert(entry)
+  const env = `TOA_${up(prefix)}_${suffix}_`
 
   for (const property of ['username', 'password']) {
     const value = process.env[env + up(property)]
@@ -30,6 +31,16 @@ const env = (prefix, locator) => {
   }
 
   return url
+}
+
+/**
+ * @param {string} entry
+ * @returns {string}
+ */
+const convert = (entry) => {
+  const [namespace, name] = entry.toUpperCase().split('.')
+
+  return namespace + concat('-', name)
 }
 
 exports.env = env

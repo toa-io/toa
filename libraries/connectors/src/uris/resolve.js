@@ -2,15 +2,27 @@
 
 /** @type {toa.connectors.uris.Resolver} */
 const resolve = (locator, uris) => {
+  let entry
+
   /** @type {string} */
+  let uri
 
-  let uri = uris[locator.id]
+  const entries = [locator.id, locator.namespace, 'default']
 
-  if (uri === undefined && typeof uris[locator.namespace] === 'string') uri = uris[locator.namespace]
-  if (uri === undefined) uri = uris.default
+  for (const key of entries) {
+    if (typeof uris[key] === 'string') {
+      uri = uris[key]
+      entry = key
+
+      break
+    }
+  }
+
   if (uri === undefined) throw new Error(`URI annotation for '${locator.id}' is not found`)
 
-  return new URL(uri)
+  const url = new URL(uri)
+
+  return { url, entry }
 }
 
 exports.resolve = resolve

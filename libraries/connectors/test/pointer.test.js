@@ -101,8 +101,10 @@ describe('environment variables', () => {
   let unset
 
   beforeEach(() => {
+    jest.clearAllMocks()
+
     const type = up(prefix)
-    const env = `TOA_${type}_${locator.uppercase}`
+    const env = `TOA_${type}_DEFAULT`
 
     set = (name, value) => {
       const key = env + '_' + up(name)
