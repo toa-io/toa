@@ -1,6 +1,6 @@
 'use strict'
 
-const { uris } = require('@toa.io/libraries/connectors')
+const connectors = require('@toa.io/libraries/connectors')
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
@@ -10,22 +10,7 @@ const { uris } = require('@toa.io/libraries/connectors')
 const deployment = (instances, annotation) => {
   if (annotation === undefined) throw new Error('MongoDB URI annotation is required')
 
-  const proxies = instances.map((instance) => proxy(instance, annotation))
-
-  return { proxies }
-}
-
-/**
- * @param {toa.norm.context.dependencies.Instance} component
- * @param {toa.connectors.URIs} annotation
- * @returns {toa.deployment.dependency.Proxy}
- */
-const proxy = (component, annotation) => {
-  const name = component.locator.hostname(PREFIX)
-  const { url } = uris.resolve(component.locator, annotation)
-  const target = url.hostname
-
-  return { name, target }
+  return connectors.deployment(PREFIX, instances, annotation)
 }
 
 const PREFIX = 'storages-mongodb'

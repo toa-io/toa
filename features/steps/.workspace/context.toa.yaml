@@ -11,3 +11,4 @@ registry:
   platforms: ~
 
 amqp: amqp://host.docker.internal
+mongodb: mongodb://host.docker.internal
