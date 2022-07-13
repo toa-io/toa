@@ -22,7 +22,13 @@ class Connection extends Connector {
   }
 
   async connection () {
-    this.#connection = await amqp.connect(this.#pointer.reference)
+    try {
+      this.#connection = await amqp.connect(this.#pointer.reference)
+    } catch (e) {
+      console.error(`Connection to ${this.#pointer.label} has failed`)
+
+      throw e
+    }
 
     console.info(`AMQP Binding connected to ${this.#pointer.label}`)
   }
