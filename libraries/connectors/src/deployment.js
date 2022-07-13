@@ -22,10 +22,10 @@ const deployment = (prefix, instances, uris, extensions = undefined) => {
   }
 
   if (extensions !== undefined) {
-    const { proxies: extended, variables: system } = extend(extensions, uris, prefix)
+    const { proxies: extended, variables: global } = extend(extensions, uris, prefix)
 
     proxies.push(...extended)
-    variables.system = system.system
+    variables.global = global.global
   }
 
   return { proxies, variables }
@@ -39,17 +39,17 @@ const deployment = (prefix, instances, uris, extensions = undefined) => {
  */
 const extend = (extensions, uris, prefix) => {
   const proxies = []
-  const variables = { system: [] }
+  const variables = { global: [] }
 
   for (const extension of extensions) {
     const locator = new Locator(extension)
     const instance = { locator }
     const url = resolve(uris, locator)
     const proxy = declare.proxy(instance, url, prefix)
-    const system = declare.variables(instance, url, prefix)
+    const global = declare.variables(instance, url, prefix)
 
     proxies.push(proxy)
-    variables.system.push(...system)
+    variables.global.push(...global)
   }
 
   return { proxies, variables }

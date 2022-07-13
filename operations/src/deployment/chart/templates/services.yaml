@@ -18,7 +18,7 @@ spec:
           image: {{ .image }}
           {{- if $.Values.variables }}
           env:
-            {{- range $.Values.variables.system }}
+            {{- range $.Values.variables.global }}
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}

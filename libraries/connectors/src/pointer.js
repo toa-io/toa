@@ -13,6 +13,7 @@ class Pointer {
   hostname
   path
   reference
+  label
 
   /**
    * @param {toa.core.Locator} locator

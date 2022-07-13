@@ -6,12 +6,12 @@
  * @returns {toa.deployment.dependency.Variables}
  */
 const variables = (context, variables) => {
-  if (variables.system === undefined) variables.system = []
+  if (variables.global === undefined) variables.global = []
 
   if (context.environment !== undefined) {
     const variable = format('TOA_ENV', context.environment)
 
-    variables.system.push(variable)
+    variables.global.push(variable)
   }
 
   return variables

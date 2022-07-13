@@ -17,7 +17,7 @@ components:
   - todos-stats
   - users-users
 variables:
-  system:
+  global:
     - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
       value: foo
       secret:

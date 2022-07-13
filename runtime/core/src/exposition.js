@@ -5,18 +5,17 @@ const { Connector } = require('./connector')
 class Exposition extends Connector {
   locator
 
-  #manifest
+  #exposition
 
   constructor (locator, manifest) {
     super()
 
     this.locator = locator
-
-    this.#manifest = expose(manifest)
+    this.#exposition = expose(manifest)
   }
 
   async invoke () {
-    return { output: this.#manifest }
+    return { output: this.#exposition }
   }
 }
 

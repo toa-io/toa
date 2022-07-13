@@ -70,7 +70,7 @@ describe('variables', () => {
     const annotation = { default: url.href }
     const output = deployment(instances, annotation)
 
-    expect(output.variables.system).toStrictEqual(expect.arrayContaining([{
+    expect(output.variables.global).toStrictEqual(expect.arrayContaining([{
       name: prefix + 'PROTOCOL',
       value: url.protocol
     }]))
@@ -82,7 +82,7 @@ describe('variables', () => {
 
     const output = deployment(instances, annotation)
 
-    expect(output.variables.system).toStrictEqual(expect.arrayContaining([{
+    expect(output.variables.global).toStrictEqual(expect.arrayContaining([{
       name: prefix + 'PORT',
       value: Number(url.port)
     }]))

@@ -118,8 +118,6 @@ describe('environment variables', () => {
 
     set('username', username)
     set('password', password)
-
-    pointer = new Pointer(locator, protocol, options)
   })
 
   afterEach(() => {
@@ -129,6 +127,8 @@ describe('environment variables', () => {
 
   it('should use env variables for credentials', () => {
     const hostname = locator.hostname(prefix)
+
+    pointer = new Pointer(locator, protocol, options)
 
     expect(pointer.reference).toStrictEqual(`${protocol}//${username}:${password}@${hostname}`)
     expect(pointer.label).toStrictEqual(`${protocol}//${username}@${hostname}`)

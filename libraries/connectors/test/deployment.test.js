@@ -144,7 +144,7 @@ describe('variables', () => {
 
     const output = deployment(PREFIX, instances, annotation, extensions)
 
-    expect(output.variables.system).toStrictEqual(expected)
+    expect(output.variables.global).toStrictEqual(expected)
   })
 
   /**

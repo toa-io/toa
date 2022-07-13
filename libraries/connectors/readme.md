@@ -51,14 +51,6 @@ for a given package conforming [label format](#) (ex.: `bindings-ampq`).
 
 See [types](types/pointer.d.ts) and [tests](test/pointer.test.js) for details.
 
-### Deployment Environment
-
-Maps environment variables to URL properties using
-convention `TOA_PACKAGE_PREFIX_NAMESPACE_NAME_VARIABLE`, where `VARIABLE` can be:
-`USERNAME`, `PASSWORD`, `PROTOCOL` or `PORT`.
-
-See [Deployment](#deployment) for details.
-
 ### Local Environment
 
 If `TOA_ENV` is `local` then these values are used:
@@ -73,16 +65,16 @@ If `TOA_ENV` is `local` then these values are used:
 
 ## Deployment
 
-Deployment function builds a set of proxies and variables corresponding to the given set of context
-dependency instances, the [URI Set](#uri-set-context-annotation) and
-the [package prefix](#pointer).
+Deployment function builds a set of proxies corresponding the [URI Set](#uri-set-context-annotation)
+and the [package prefix](#pointer), and a global[^1] variable containing URI Set.
 
 See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
 
+[^1:] [#174](https://github.com/toa-io/toa/issues/174)
+
 ### Secrets
 
-Values for `PROTOCOL` and `PORT` variables are being extracted from URI Set and deployed,
-while `USERNAME` and `PASSWORD` requires corresponding secrets to be deployed. Secret names are
+Values for `username` and `password` requires corresponding secrets to be deployed. Secret names are
 following the convention: `toa-package-prefix-namespace-name` and `key` names match corresponding
 URL properties (`username` and `password`).
 
@@ -95,16 +87,14 @@ $ toa conceal bindings-amqp-default password iluvtests
 
 ### Custom Extensions Deployment
 
-For each extension additional proxy will be declared and [system variables](#) will be mapped.
+For each custom extension additional proxy will be deployed.
 
 #### Example
 
 AMQP binding is a systematic binding used by the runtime. That is a system proxy must be deployed
 and compositions require variables to establish connection through that proxy.
 
-Therefore, AMQP binding declares a `system` extension and `deployment` function of this package
-declares additional proxy `bindings-amqp-system` and a set of system
-variables: `TOA_BINDINGS_AMQP_SYSTEM_PROTOCOL`, `TOA_BINDINGS_AMQP_SYSTEM_PORT`,
-`TOA_BINDINGS_AMQP_SYSTEM_USERNAME` and `TOA_BINDINGS_AMQP_SYSTEM_PASSWORD`.
+Therefore, AMQP binding declares a `system` extension and deployment function declares additional
+proxy `bindings-amqp-system`.
 
 See [`toa conceal`](../../runtime/cli/readme.md#conceal).

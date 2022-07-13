@@ -30,7 +30,7 @@ spec:
                 {{- end }}
               {{- end }}
             {{- end }}
-            {{- range $.Values.variables.system }}
+            {{- range $.Values.variables.global }}
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}
