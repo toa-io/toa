@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "0.2.0-dev.78",
+  "version": "0.2.0-dev.80",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,22 +22,22 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/bindings.amqp": "0.2.0-dev.78",
-    "@toa.io/bindings.http": "0.2.0-dev.78",
-    "@toa.io/bindings.loop": "0.2.0-dev.78",
-    "@toa.io/boot": "0.2.0-dev.78",
-    "@toa.io/bridges.node": "0.2.0-dev.78",
-    "@toa.io/cli": "0.2.0-dev.78",
-    "@toa.io/core": "0.2.0-dev.78",
-    "@toa.io/extensions.configuration": "0.2.0-dev.78",
-    "@toa.io/extensions.exposition": "0.2.0-dev.78",
-    "@toa.io/extensions.origins": "0.2.0-dev.78",
-    "@toa.io/libraries": "0.2.0-dev.78",
-    "@toa.io/norm": "0.2.0-dev.78",
-    "@toa.io/operations": "0.2.0-dev.78",
-    "@toa.io/prototype": "0.2.0-dev.78",
-    "@toa.io/storages.mongodb": "0.2.0-dev.78",
-    "@toa.io/storages.null": "0.2.0-dev.78"
+    "@toa.io/bindings.amqp": "0.2.0-dev.80",
+    "@toa.io/bindings.http": "0.2.0-dev.80",
+    "@toa.io/bindings.loop": "0.2.0-dev.80",
+    "@toa.io/boot": "0.2.0-dev.80",
+    "@toa.io/bridges.node": "0.2.0-dev.80",
+    "@toa.io/cli": "0.2.0-dev.80",
+    "@toa.io/core": "0.2.0-dev.80",
+    "@toa.io/extensions.configuration": "0.2.0-dev.80",
+    "@toa.io/extensions.exposition": "0.2.0-dev.80",
+    "@toa.io/extensions.origins": "0.2.0-dev.80",
+    "@toa.io/libraries": "0.2.0-dev.80",
+    "@toa.io/norm": "0.2.0-dev.80",
+    "@toa.io/operations": "0.2.0-dev.80",
+    "@toa.io/prototype": "0.2.0-dev.80",
+    "@toa.io/storages.mongodb": "0.2.0-dev.80",
+    "@toa.io/storages.null": "0.2.0-dev.80"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }
