@@ -15,12 +15,13 @@ let pointer
 
 const protocol = 'amqp:'
 
-const url = new URL('amqps://whatever:5672')
+let url
 
 beforeEach(() => {
+  url = url = new URL('amqps://whatever:5672')
+
   const name = generate()
   const namespace = generate()
-
   const uris = { default: url.href }
   const value = encode(uris)
   const key = `TOA_${up(PREFIX)}_POINTER`
@@ -34,6 +35,7 @@ beforeEach(() => {
 it('should be', () => undefined)
 
 it('should expose reference', () => {
+  url.hostname = locator.hostname(PREFIX)
   expect(pointer.reference).toStrictEqual(url.href)
 })
 

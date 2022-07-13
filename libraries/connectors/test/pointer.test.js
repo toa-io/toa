@@ -47,20 +47,22 @@ it('should throw if env not set', () => {
   expect(() => new Pointer(prefix, locator)).toThrow(`Environment variable ${name} is not set`)
 })
 
-it('should expose protocol', () => {
+it('should use declared protocol', () => {
   pointer = new Pointer(prefix, locator)
 
   expect(pointer.protocol).toStrictEqual(url.protocol)
 })
 
-it('should expose hostname', () => {
+it('should point to proxy', () => {
   pointer = new Pointer(prefix, locator)
 
-  expect(pointer.hostname).toStrictEqual(url.hostname)
+  expect(pointer.hostname).toStrictEqual(locator.hostname(prefix))
 })
 
 it('should expose reference', () => {
   pointer = new Pointer(prefix, locator)
+
+  url.hostname = locator.hostname(prefix)
 
   expect(pointer.reference).toStrictEqual(url.href)
 })
@@ -76,7 +78,7 @@ it('should use localhost and given protocol on local environment', () => {
   expect(pointer.protocol).toStrictEqual(protocol)
 })
 
-it('should use default credentials on local environment', () => {
+it('should use default protocol and credentials on local environment', () => {
   process.env.TOA_ENV = 'local'
 
   pointer = new Pointer(prefix, locator, protocol)
@@ -123,6 +125,8 @@ describe('environment variables', () => {
 
   it('should use env variables for credentials', () => {
     pointer = new Pointer(prefix, locator)
+
+    url.hostname = locator.hostname(prefix)
 
     expect(pointer.reference).toStrictEqual(url.href)
 

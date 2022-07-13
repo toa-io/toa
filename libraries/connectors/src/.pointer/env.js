@@ -17,6 +17,8 @@ const env = (prefix, locator) => {
   const uris = decode(value)
   const url = resolve(locator, uris)
 
+  url.host = locator.hostname(prefix)
+
   const env = `TOA_${up(prefix)}_${locator.uppercase}_`
 
   for (const property of ['username', 'password']) {
