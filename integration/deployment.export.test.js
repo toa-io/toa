@@ -12,7 +12,7 @@ const fixtures = require('./deployment.export.fixtures')
 
 const source = join(__dirname, './context')
 
-/** @type {toa.operations.deployment.Operator} */
+/** @type {toa.deployment.Operator} */
 let operator
 
 /** @type {string} */
@@ -54,9 +54,9 @@ describe('directory', () => {
 })
 
 describe('chart', () => {
-  /** @type {toa.operations.deployment.Declaration} */
+  /** @type {toa.deployment.Declaration} */
   let chart
-  /** @type {toa.operations.deployment.Contents} */
+  /** @type {toa.deployment.Contents} */
   let values
 
   beforeAll(async () => {
@@ -74,31 +74,12 @@ describe('chart', () => {
     expect(values.components).toEqual(fixtures.values.components)
   })
 
-  it('should export dependency references', () => {
-    expect(chart.dependencies).toStrictEqual(fixtures.chart.dependencies)
-
-    for (const name of Object.keys(fixtures.chart.dependencies)) {
-      expect(values[name]).toStrictEqual(fixtures.values[name])
-    }
-  })
-
   it('should export dependency services', () => {
     expect(values.services).toEqual(fixtures.values.services)
   })
 
-  it('should export for a given environment', async () => {
-    const environment = 'staging'
-
-    operator = await boot.deployment(source, environment)
-    target = await operator.export()
-    values = /** @type {toa.operations.deployment.Contents} */ await load(join(target, 'values.yaml'))
-
-    expect(values.environment).toStrictEqual(environment)
-    expect(values.services[0].ingress.host).toStrictEqual('dummies.stage.toa.dev')
-  })
-
   it('should export proxies', () => {
     expect(values.proxies).toBeDefined()
-    expect(values.proxies).toStrictEqual(fixtures.values.proxies)
+    expect(values.proxies).toStrictEqual(expect.arrayContaining(fixtures.values.proxies))
   })
 })

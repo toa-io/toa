@@ -1,6 +1,16 @@
 export * as acronyms from './acronyms'
+export * as letters from './letters'
+
+export { concat } from './concat'
+export { encode, decode } from './encode'
+export { match } from './match'
+export { merge } from './merge'
+export { patch } from './patch'
+export { random } from './random'
+export { remap } from './remap'
 export { retry } from './retry'
 export { sample } from './sample'
+export { timeout } from './timeout'
 export { underlay } from './underlay'
 
 export type { Underlay } from './underlay'

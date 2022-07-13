@@ -3,7 +3,7 @@
 const fixtures = require('./image.fixtures')
 const { generate } = require('randomstring')
 
-/** @type {toa.operations.deployment.images.Image} */
+/** @type {toa.deployment.images.Image} */
 let instance
 
 beforeEach(() => {

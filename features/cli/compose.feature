@@ -4,7 +4,6 @@ Feature: toa compose
 
   Scenario: Show help
     When I run `toa compose --help`
-    Then program should exit
     And stdout should contain lines:
     """
     toa compose [paths...]
@@ -32,7 +31,7 @@ Feature: toa compose
 
     Examples:
       | command                                | working directory        | delay |
-      | `toa compose`                          | ./components/dummies.one | 0.5   |
-      | `toa compose ./components/dummies.two` | ./                       | 0.5   |
-      | `toa compose dummies.one dummies.two`  | ./components             | 0.5   |
+      | `toa compose`                          | ./components/dummies.one | 0     |
+      | `toa compose ./components/dummies.two` | ./                       | 0     |
+      | `toa compose dummies.one dummies.two`  | ./components             | 0     |
       | `toa compose ./**/*`                   | ./                       | 1     |

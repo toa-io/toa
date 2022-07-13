@@ -37,7 +37,7 @@ it('should throw TypeError on non-objects', () => {
     .toThrow(new TypeError('gears/merge: conflict at /a/b (\'test\', \'null\')'))
 
   expect(() => merge({ a: { b: null } }, 1))
-    .toThrow(new TypeError('gears/merge: arguments must be objects or arrays at /'))
+    .toThrow(new TypeError('gears/merge: arguments must be of the same type at /'))
 
   expect(() => merge({ a: { b: 'a' } }, { a: { b: 1 } }))
     .toThrow(new TypeError('gears/merge: conflict at /a/b (\'1\', \'a\')'))
@@ -104,6 +104,24 @@ describe('options', () => {
       merge(a, b, options)
 
       expect(a).toStrictEqual({ a: 2, b: 1, c: 1, d: [3, 4] })
+    })
+
+    it('should override primitive with object', () => {
+      const a = { a: 1 }
+      const b = { a: { c: 1 } }
+
+      merge(a, b, options)
+
+      expect(a.a).toStrictEqual(b.a)
+    })
+
+    it('should override primitive with array', () => {
+      const a = { a: 1 }
+      const b = { a: [1, 2] }
+
+      merge(a, b, options)
+
+      expect(a.a).toStrictEqual(b.a)
     })
   })
 })

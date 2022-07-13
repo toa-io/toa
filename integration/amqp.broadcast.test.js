@@ -2,10 +2,13 @@
 
 const { Factory } = require('../connectors/bindings.amqp')
 const { generate } = require('randomstring')
+const framework = require('./framework')
 
 let factory, a, b, c
 
 beforeAll(async () => {
+  framework.env('local')
+
   factory = new Factory()
 
   const prefix = 'test-prefix'
@@ -23,6 +26,8 @@ afterAll(async () => {
   if (a) await a.disconnect()
   if (b) await b.disconnect()
   if (c) await c.disconnect()
+
+  framework.env()
 })
 
 it('should receive', async () => {

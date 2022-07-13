@@ -7,6 +7,8 @@ const framework = require('./framework')
 let composition, discovery
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['credits'])
   discovery = await framework.discovery()
 })
@@ -14,6 +16,8 @@ beforeAll(async () => {
 afterAll(async () => {
   if (composition) await composition.disconnect()
   if (discovery) await discovery.disconnect()
+
+  framework.env()
 })
 
 it('should lookup', async () => {

@@ -2,7 +2,6 @@ Feature: Print manifest
 
   Scenario: Show help
     When I run `toa export manifest --help`
-    Then program should exit
     And stdout should contain lines:
       """
       toa export manifest
@@ -15,7 +14,6 @@ Feature: Print manifest
     Given I have a component dummies.one
     And my working directory is ./components/dummies.one
     When I run `toa export <artifact>`
-    Then program should exit
     And stdout should contain lines:
       """
       name: one
@@ -31,7 +29,6 @@ Feature: Print manifest
     Given I have a component dummies.two
     And my working directory is ./
     When I run `toa export manifest -p ./components/dummies.two`
-    Then program should exit
     And stdout should contain lines:
       """
       name: two
@@ -43,8 +40,9 @@ Feature: Print manifest
     # which has valid manifest
     And my working directory is ./components/dummies.two
     When I run `toa export manifest <flag>`
-    Then program should exit
+    Then stderr should be empty
     And stdout should be empty
+
     Examples:
       | flag    |
       | --error |
@@ -55,5 +53,5 @@ Feature: Print manifest
     # which has invalid manifest
     And my working directory is ./components/dummies.invalid
     When I run `toa export manifest -e`
-    Then program should exit
-    And stderr should be: "error Locator name and namespace must be defined"
+    Then stderr should be: "error locator/id must match pattern"
+    Then stdout should be empty

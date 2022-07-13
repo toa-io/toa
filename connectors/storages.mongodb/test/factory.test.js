@@ -1,5 +1,7 @@
 'use strict'
 
+const { encode } = require('@toa.io/libraries/generic')
+
 const fixtures = require('./factory.fixtures')
 const mock = fixtures.mock
 
@@ -11,6 +13,11 @@ const { Factory } = require('../src/')
 /** @type {toa.core.storages.Factory} */
 let factory
 
+const uris = { default: 'mongodb://whatever' }
+const value = encode(uris)
+
+process.env.TOA_STORAGES_MONGODB_POINTER = value
+
 beforeEach(() => {
   factory = new Factory()
 })
@@ -21,18 +28,10 @@ it('should create url', () => {
   expect(mock.Connection).toHaveBeenCalled()
 
   const instance = mock.Connection.mock.instances[0]
-  /** @type {toa.storages.mongo.Locator} */
-  const locator = mock.Connection.mock.calls[0][0]
+  /** @type {toa.mongodb.Pointer} */
+  const pointer = mock.Connection.mock.calls[0][0]
 
   expect(mock.Storage).toHaveBeenLastCalledWith(instance)
 
-  expect(locator).toBeDefined()
-  expect(locator).toBeInstanceOf(URL)
-
-  expect(locator.protocol).toStrictEqual('mongodb:')
-
-  if (process.env.TOA_ENV !== 'local') {
-    expect(fixtures.locator.hostname).toHaveBeenLastCalledWith('storages-mongodb')
-    expect(locator.hostname).toStrictEqual(fixtures.locator.hostname.mock.results[0].value)
-  }
+  expect(pointer).toBeDefined()
 })

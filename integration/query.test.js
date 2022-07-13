@@ -9,6 +9,8 @@ const framework = require('./framework')
 let composition, remote, messages
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['messages', 'credits'])
   remote = await framework.remote('messages.messages')
   messages = await framework.mongodb.connect('messages.messages')
@@ -18,6 +20,8 @@ afterAll(async () => {
   if (messages) await messages.disconnect()
   if (remote) await remote.disconnect()
   if (composition) await composition.disconnect()
+
+  framework.env()
 })
 
 it('should init state if no query', async () => {

@@ -1,5 +1,7 @@
 'use strict'
 
+const { Locator } = require('@toa.io/core')
+
 const { Channel } = require('./channel')
 const { Consumer } = require('./consumer')
 const { Producer } = require('./producer')
@@ -7,6 +9,8 @@ const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
 const { Broadcaster } = require('./broadcaster')
 const { Connection } = require('./connection')
+const { Pointer } = require('./pointer')
+const { SYSTEM } = require('./constants')
 
 /**
  * @implements {toa.core.bindings.Factory}
@@ -44,18 +48,21 @@ class Factory {
     return new Broadcaster(channel, name, group)
   }
 
-  #channel () {
-    const url = new URL('amqp://')
+  /**
+   * @param {toa.core.Locator} [locator]
+   * @returns {Channel}
+   */
+  #channel (locator) {
+    if (locator === undefined) locator = new Locator(SYSTEM)
 
-    url.hostname = process.env.TOA_ENV === 'local' ? 'localhost' : 'rabbitmq'
-    url.username = 'user'
-    url.password = 'password'
+    const pointer = new Pointer(locator)
+    const key = pointer.reference
 
-    const href = url.href
+    if (this.#connections[key] === undefined) {
+      this.#connections[key] = new Connection(pointer)
+    }
 
-    if (this.#connections[href] === undefined) this.#connections[href] = new Connection(url)
-
-    return new Channel(this.#connections[href])
+    return new Channel(this.#connections[key])
   }
 }
 

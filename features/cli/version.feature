@@ -4,5 +4,4 @@ Feature: toa -v
 
   Scenario: Output version
     When I run `toa -v`
-    Then program should exit
     And stdout should be version

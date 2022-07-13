@@ -4,7 +4,7 @@ import type { Composition } from '@toa.io/norm'
 import type { dependency } from '../dependency'
 import type { Image } from "./image"
 
-declare namespace toa.operations.deployment.images {
+declare namespace toa.deployment.images {
 
     interface Registry {
         composition(composition: Composition): Image

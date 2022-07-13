@@ -1,18 +1,5 @@
 # Toa Command Line
 
-## Exporting
-
-### export component
-
-<dl>
-<dt><code>toa export component</code></dt>
-<dd>Deploy context.
-
-<code>--path</code> path to component (default <code>.</code>)<br/>
-<code>--error</code> print errors only<br/>
-</dd>
-</dl>
-
 ## Deployment
 
 ### deploy
@@ -35,7 +22,9 @@ Set Configuration Object key. Nested keys are addressed with dot notation.
 <code>--path</code> path to component (default <code>.</code>)<br/>
 <code>--reset</code> clear <code>key</code><br/>
 
-Examples:
+#### Examples
+
+It is assumed you are in the component's directory, use `--path` otherwise.
 
 ```shell
 # set new value
@@ -59,17 +48,37 @@ $ toa configure foo.bar --reset | source /dev/stdin
 
 ### conceal
 
-![Not Implemented](https://img.shields.io/badge/Not_Implemented-red)
 <dl>
-<dt><code>toa conceal</code></dt>
+<dt>
+<code>toa conceal</code>
+<img src="https://img.shields.io/badge/Not_Implemented-red" alt="Not Implemented"/>
+</dt>
 <dd>Deploy new declared secrets.
 
 <code>--reset</code> don't skip already deployed</dd>
 
-<dt><code>toa conceal &lt;key&gt; &lt;value&gt;</code></dt>
-<dd>Deploy a declared secret named <code>key</code> with a given 
-<code>value</code>.</dd>
-
+<dt><code>toa conceal &lt;secret&gt; &lt;key&gt; &lt;value&gt;</code></dt>
+<dd>Deploy a <code>key</code> with a <code>value</code> to a <code>secret</code>.</dd>
 </dl>
 
+### reveal
 
+<dl>
+<dt>
+<code>toa reveal &lt;secret&gt;</code>
+</dt>
+<dd>Print keys and values of a secret.</dd>
+</dl>
+
+## Exporting
+
+### export manifest
+
+<dl>
+<dt><code>toa export manifest</code></dt>
+<dd>Print normalized manifest.
+
+<code>--path</code> path to component (default <code>.</code>)<br/>
+<code>--error</code> print errors only<br/>
+</dd>
+</dl>

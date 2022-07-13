@@ -7,7 +7,7 @@ const { hash } = require('@toa.io/libraries/generic')
 const { directory } = require('@toa.io/libraries/filesystem')
 
 /**
- * @implements {toa.operations.deployment.images.Image}
+ * @implements {toa.deployment.images.Image}
  * @abstract
  */
 class Image {

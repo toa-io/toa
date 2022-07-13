@@ -11,6 +11,8 @@ beforeAll(async () => {
   // noinspection JSUnresolvedVariable
   delete global.TOA_INTEGRATION_OMIT_EMISSION
 
+  framework.env('local')
+
   composition = await framework.compose(['messages', 'credits', 'stats', 'a'])
   messages = await framework.remote('messages.messages')
   credits = await framework.remote('credits.balance')
@@ -27,6 +29,8 @@ afterAll(async () => {
   if (credits) await credits.disconnect()
   if (stats) await stats.disconnect()
   if (a) await a.disconnect()
+
+  framework.env()
 })
 
 it('should receive', async () => {

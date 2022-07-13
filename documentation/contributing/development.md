@@ -6,29 +6,14 @@
 not guarantee) to produce a *non-broken software*. Developer's unit of work is one completed
 iteration of TDD cycle.
 
-Considering this project
-uses [JavaScript with DTS](https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-d-ts.html)
-contributor's unit of work is:
+> *tl;dr-version*
+> 1. If your tests are failing you must write code.
+> 2. If your tests are passing you must write test, unless you're refactoring or done.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="unit-dark.jpg">
-  <img alt="Unit of Work" src="unit-light.jpg" width="400" height="375">
-</picture>
-
-### Integration
-
-Implementation of features may require making changes to a set of applications
-(i.e. microservices), which are bound together. Sometimes it may happen that despite the fact that
-the changes of each of them corresponded to the intentions, the combinations of those changes are
-still incorrect. Therefore, any changes, that require making changes to a set of applications, must
-be developed using the **outer TDD cycle**, that is the sequence of a broken integration test,
-followed by internal TDD cycles until it got fixed.
-
-> As [scenarios](cycle.md#scenarios) produced in the Cycle are not bound to the implementation
-> complexity, making them *green* or even runnable may take a lot of effort and time, so they are not
-> always suitable for integration testing.
-> 
-> It is possible to create nested more granular scenarios for this purpose.
+<a href="https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html">
+<img src="https://marcabraham.files.wordpress.com/2012/04/06_red_green_refactor.jpg" width="400" height="237" alt="Unit of Work">
+</a>
+&copy; <a href="https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html">Bob</a>
 
 ## Flow
 

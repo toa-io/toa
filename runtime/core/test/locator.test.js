@@ -25,30 +25,57 @@ it('should expose name and namespace', () => {
 })
 
 it('should expose id, label', () => {
-  expect(locator.id).toStrictEqual(locator.namespace + '.' + locator.name)
-  expect(locator.label).toStrictEqual(locator.namespace + '-' + locator.name)
+  const id = locator.namespace + '.' + locator.name
+  const label = locator.namespace.toLowerCase() + '-' + locator.name.toLowerCase()
+
+  expect(locator.id).toStrictEqual(id)
+  expect(locator.label).toStrictEqual(label)
 })
 
 it('should expose uppercase', () => {
   expect(locator.uppercase).toStrictEqual((locator.namespace + '_' + locator.name).toUpperCase())
 })
 
-it('should throw if name or namespace is undefined', () => {
+it('should throw if name is undefined', () => {
   expect(() => new Locator(undefined, namespace)).toThrow(TypeError)
-
-  // noinspection JSCheckFunctionSignatures
-  expect(() => new Locator(name)).toThrow(TypeError)
 
   // noinspection JSCheckFunctionSignatures
   expect(() => new Locator()).toThrow(TypeError)
 })
 
 it('should expose host', () => {
-  expect(locator.hostname()).toStrictEqual(namespace + '-' + name)
+  expect(locator.hostname()).toStrictEqual((namespace + '-' + name).toLowerCase())
 })
 
 it('should expose host with given prefix', () => {
   const prefix = generate()
 
-  expect(locator.hostname(prefix)).toStrictEqual(prefix + '-' + namespace + '-' + name)
+  expect(locator.hostname(prefix)).toStrictEqual((prefix + '-' + namespace + '-' + name).toLowerCase())
+})
+
+describe('global', () => {
+  beforeEach(() => {
+    locator = new Locator(name)
+  })
+
+  it('should not throw', () => undefined)
+
+  it('should expose id', () => {
+    expect(locator.id).toStrictEqual(name)
+  })
+
+  it('should expose label', () => {
+    expect(locator.label).toStrictEqual(name.toLowerCase())
+  })
+
+  it('should expose uppercase', () => {
+    expect(locator.uppercase).toStrictEqual(name.toUpperCase())
+  })
+
+  it('should expose hostname', () => {
+    const type = generate()
+
+    expect(locator.hostname(type)).toStrictEqual((type + '-' + name).toLowerCase())
+    expect(locator.hostname()).toStrictEqual(name.toLowerCase())
+  })
 })

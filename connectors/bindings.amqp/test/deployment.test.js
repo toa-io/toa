@@ -1,47 +1,60 @@
 'use strict'
 
-const clone = require('clone-deep')
 const { generate } = require('randomstring')
+const { random } = require('@toa.io/libraries/generic')
+const mock = require('@toa.io/libraries/mock')
 
-const fixtures = require('./deployment.fixtures')
 const { deployment } = require('../')
+
+const PREFIX = 'bindings-amqp'
 
 /** @type {toa.norm.context.dependencies.Instance[]} */
 let instances
 
+/** @returns {URL} */
+const gen = () => new URL('amqp://host-' + generate() + ':' + (random(1000) + 1000))
+
 beforeEach(() => {
-  instances = clone(fixtures.instances)
+  instances = mock.dependencies.instances()
 })
 
 it('should exist', () => {
   expect(deployment).toBeDefined()
 })
 
-it('should create default proxies', () => {
-  const annotation = { default: generate() }
-
-  /** @returns {toa.operations.deployment.dependency.Proxy[]} */
-  const proxies = instances.map((instance) => ({
-    name: instance.locator.label, target: annotation.default
-  }))
-
-  const output = deployment(instances, annotation)
-
-  expect(output.proxies).toMatchObject(proxies)
+it('should throw if annotation is not defined', () => {
+  expect(() => deployment(instances, undefined))
+    .toThrow('AMQP deployment requires either \'system\' or \'default\' URI annotation')
 })
 
-it('should create proxies with given values', () => {
+it('should throw if \'system\' is not defined', () => {
+  const url = gen()
   const annotation = {}
-  const proxies = []
 
-  for (const instance of instances) {
-    const target = generate()
+  for (const instance of instances) annotation[instance.locator.id] = url.href
 
-    annotation[instance.locator.id] = target
-    proxies.push({ name: instance.locator.label, target })
-  }
+  expect(() => deployment(instances, annotation))
+    .toThrow('URI annotation for \'system\' is not found')
+})
 
-  const output = deployment(instances, annotation)
+describe('proxies', () => {
+  it('should create system proxy', () => {
+    const url = gen()
+    const annotation = { default: url.href }
+    const instances = []
 
-  expect(output.proxies).toMatchObject(proxies)
+    const output = deployment(instances, annotation)
+
+    expect(output.proxies).toStrictEqual([{
+      name: PREFIX + '-system',
+      target: url.hostname
+    }])
+  })
+
+  it('should throw if system is not defined', () => {
+    const annotation = {}
+    const instances = []
+
+    expect(() => deployment(instances, annotation)).toThrow('not found')
+  })
 })

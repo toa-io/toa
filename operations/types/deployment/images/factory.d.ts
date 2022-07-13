@@ -1,10 +1,10 @@
 // noinspection ES6UnusedImports
 
-import type { Composition } from '@toa.io/norm'
+import type { Composition } from '@toa.io/norm/types'
 import type { Image } from './image'
 import type { dependency } from '../dependency'
 
-declare namespace toa.operations.deployment.images {
+declare namespace toa.deployment.images {
 
     interface Factory {
         composition(composition: Composition): Image
@@ -14,4 +14,4 @@ declare namespace toa.operations.deployment.images {
 
 }
 
-export type Factory = toa.operations.deployment.images.Factory
+export type Factory = toa.deployment.images.Factory

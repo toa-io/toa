@@ -34,6 +34,8 @@ export namespace toa.norm {
             entity: Object
             extensions?: component.Extensions
         }
+
+        type Constructor = (path: string) => Promise<Component>
     }
 
     interface Component extends component.Declaration {
@@ -45,3 +47,4 @@ export namespace toa.norm {
 }
 
 export type Component = toa.norm.Component
+export const component: toa.norm.component.Constructor

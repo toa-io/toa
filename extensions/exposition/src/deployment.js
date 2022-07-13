@@ -5,7 +5,7 @@ const { PORT } = require('./constants')
 /**
  * @param {toa.norm.context.dependencies.Instance[]} components
  * @param {toa.extensions.exposition.Annotations} annotations
- * @type {toa.operations.deployment.dependency.Constructor}
+ * @type {toa.deployment.dependency.Constructor}
  */
 const deployment = (components, annotations) => {
   const group = 'exposition'
@@ -14,7 +14,7 @@ const deployment = (components, annotations) => {
   const port = PORT
   const ingress = annotations
 
-  /** @type {toa.operations.deployment.dependency.Service} */
+  /** @type {toa.deployment.dependency.Service} */
   const exposition = { group, name, version, port, ingress }
 
   return { services: [exposition] }

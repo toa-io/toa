@@ -5,7 +5,7 @@ const { encode } = require('@toa.io/libraries/generic')
 const fixtures = require('./deployment.fixtures')
 const { deployment } = require('../')
 
-/** @type {toa.operations.deployment.dependency.Declaration} */
+/** @type {toa.deployment.dependency.Declaration} */
 let declaration
 
 beforeAll(() => {

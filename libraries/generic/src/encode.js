@@ -1,24 +1,27 @@
 'use strict'
 
-/**
- * @param {Object} object
- * @returns {string}
- */
-const encode = (object) => {
-  const json = JSON.stringify(object)
-  const buff = Buffer.from(json)
+/** @type {toa.generic.Encode} */
+const encode = (input) => {
+  let value
 
-  return buff.toString(ENCODING)
+  if (typeof input !== 'string') value = JSON.stringify(input)
+  else value = input
+
+  const buffer = Buffer.from(value)
+
+  return buffer.toString(ENCODING)
 }
 
-/**
- * @param {string} string
- * @returns Object
- */
-const decode = (string) => {
-  const buff = Buffer.from(string, ENCODING)
+/** @type {toa.generic.Decode} */
+const decode = (input) => {
+  const buffer = Buffer.from(input, ENCODING)
+  const string = buffer.toString()
 
-  return JSON.parse(buff.toString())
+  try {
+    return JSON.parse(string)
+  } catch {
+    return string
+  }
 }
 
 const ENCODING = 'base64'

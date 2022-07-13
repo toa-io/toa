@@ -1,0 +1,12 @@
+{{- define "env.var" }}
+- name: {{ .name }}
+  {{- if .value }}
+  value: {{ .value | quote }}
+  {{- end }}
+  {{- if .secret }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .secret.name }}
+      key: {{ .secret.key }}
+  {{- end }}
+{{- end }}

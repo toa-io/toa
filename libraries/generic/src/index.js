@@ -10,6 +10,7 @@ const { hash } = require('./hash')
 const { match } = require('./match')
 const { merge } = require('./merge')
 const { newid } = require('./newid')
+const { patch } = require('./patch')
 const { random } = require('./random')
 const { remap } = require('./remap')
 const { repeat } = require('./repeat')
@@ -24,6 +25,7 @@ const { traverse } = require('./traverse')
 const { underlay } = require('./underlay')
 
 exports.acronyms = require('./acronyms')
+exports.letters = require('./letters')
 
 exports.concat = concat
 exports.convolve = convolve
@@ -36,6 +38,7 @@ exports.hash = hash
 exports.match = match
 exports.merge = merge
 exports.newid = newid
+exports.patch = patch
 exports.random = random
 exports.remap = remap
 exports.repeat = repeat

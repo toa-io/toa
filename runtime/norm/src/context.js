@@ -17,9 +17,7 @@ const {
 } = require('./.context')
 
 /**
- * @param {string} root
- * @param {string} [environment]
- * @return {Promise<toa.norm.Context>}
+ * @type {toa.norm.context.Constructor}
  */
 const context = async (root, environment) => {
   const path = resolve(root, CONTEXT)

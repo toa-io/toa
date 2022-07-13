@@ -9,7 +9,7 @@ require('../output')
 
 const gherkin = mock.gherkin
 
-/** @type {toa.features.cli.Context} */
+/** @type {toa.features.Context} */
 let context
 
 beforeEach(async () => {

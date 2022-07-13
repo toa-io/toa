@@ -7,6 +7,8 @@ const framework = require('./framework')
 let composition, remote
 
 beforeAll(async () => {
+  framework.env('local')
+
   composition = await framework.compose(['messages', 'credits'])
   remote = await framework.remote('messages.messages')
 })
@@ -14,6 +16,8 @@ beforeAll(async () => {
 afterAll(async () => {
   if (composition) await composition.disconnect()
   if (remote) await remote.disconnect()
+
+  framework.env()
 })
 
 it('should forward', async () => {

@@ -1,4 +1,4 @@
-# Cycle of Change
+# The Cycle of Change
 
 ## TL;DR
 
@@ -65,6 +65,8 @@ List of <b>what is unknown</b>. At this step many questions may don't have an an
 
 > While given sequence of sections ensures comfortable reading later, it will be most likely hard or
 > impossible to create the document in such order.
+
+[Example](https://github.com/toa-io/toa/issues/159)
 
 [^4]: Does not conflict with the input.
 [^5]: Does not conflict with itself.

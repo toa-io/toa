@@ -2,7 +2,7 @@
 
 // noinspection JSClosureCompilerSyntax
 /**
- * @implements {toa.operations.deployment.Composition}
+ * @implements {toa.deployment.Composition}
  */
 class Composition {
   name
@@ -12,7 +12,7 @@ class Composition {
 
   /**
    * @param composition {toa.norm.context.Composition}
-   * @param image {toa.operations.deployment.images.Image}
+   * @param image {toa.deployment.images.Image}
    */
   constructor (composition, image) {
     this.name = composition.name

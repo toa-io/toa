@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "0.2.0-dev.71",
+  "version": "0.2.0-dev.82",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,8 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/norm": "*",
     "@toa.io/libraries": "*",
+    "@toa.io/norm": "*",
     "@toa.io/runtime": "*"
   },
   "dependencies": {

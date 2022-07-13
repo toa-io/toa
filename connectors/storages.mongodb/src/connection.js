@@ -7,43 +7,43 @@ const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/libraries/console')
 
 /**
- * @implements {toa.storages.mongo.Connection}
+ * @implements {toa.mongodb.Connection}
  */
 class Connection extends Connector {
-  /** @type {toa.storages.mongo.Locator} */
-  #locator
+  /** @type {toa.mongodb.Pointer} */
+  #pointer
   /** @type {import('mongodb').MongoClient} */
   #client
   /** @type {import('mongodb').Collection} */
   #collection
 
   /**
-   * @param {toa.storages.mongo.Locator} locator
+   * @param {toa.mongodb.Pointer} pointer
    */
-  constructor (locator) {
+  constructor (pointer) {
     super()
 
-    this.#locator = locator
-    this.#client = new MongoClient(locator.href, OPTIONS)
+    this.#pointer = pointer
+    this.#client = new MongoClient(pointer.reference, OPTIONS)
   }
 
   async connection () {
     await this.#client.connect()
 
-    this.#collection = this.#client.db(this.#locator.db).collection(this.#locator.collection)
+    this.#collection = this.#client.db(this.#pointer.db).collection(this.#pointer.collection)
 
-    console.info(`Storage Mongo connected to ${this.#locator.hostname}/${this.#locator.db}/${this.#locator.collection}`)
+    console.info(`Storage Mongo connected to ${this.#pointer.label}/${this.#pointer.db}/${this.#pointer.collection}`)
   }
 
   async disconnection () {
     await this.#client.close()
 
-    console.info(`Storage Mongo disconnected from ${this.#locator.hostname}/${this.#locator.db}/${this.#locator.collection}`)
+    console.info(`Storage Mongo disconnected from ${this.#pointer.label}/${this.#pointer.db}/${this.#pointer.collection}`)
   }
 
   /** @hot */
   async get (query, options) {
-    return /** @type {toa.storages.mongo.Record} */ this.#collection.findOne(query, options)
+    return /** @type {toa.mongodb.Record} */ this.#collection.findOne(query, options)
   }
 
   /** @hot */

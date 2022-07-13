@@ -1,10 +1,6 @@
 'use strict'
 
-/**
- * @param {any} reference
- * @param {any} candidate
- * @returns {boolean}
- */
+/** @type {toa.generic.Match} */
 const match = (reference, candidate) => {
   if (typeof candidate !== typeof reference) return false
 

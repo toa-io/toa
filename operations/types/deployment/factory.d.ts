@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import type { Operator } from './operator'
 
-declare namespace toa.operations.deployment {
+declare namespace toa.deployment {
 
     interface Factory {
         operator(): Operator
@@ -9,4 +9,4 @@ declare namespace toa.operations.deployment {
 
 }
 
-export type Factory = toa.operations.deployment.Factory
+export type Factory = toa.deployment.Factory

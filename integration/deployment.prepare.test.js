@@ -10,7 +10,7 @@ const fixtures = require('./deployment.prepare.fixtures')
 const remove = (path) => rm(path, { recursive: true })
 const source = join(__dirname, './context')
 
-/** @type {toa.operations.deployment.Operator} */
+/** @type {toa.deployment.Operator} */
 let operator
 /** @type {string} */
 let target
