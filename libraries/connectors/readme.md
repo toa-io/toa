@@ -65,9 +65,9 @@ If `TOA_ENV` is `local` then these values are used:
 
 ## Deployment
 
-Deployment function builds a set of proxies corresponding the [URI Set](#uri-set-context-annotation)
-and the [package prefix](#pointer), and a global[^1] variables: containing URI Set and a set of
-variables for pointer credentials.
+Deployment function builds a set of proxies corresponding to
+the [URI Set](#uri-set-context-annotation) and the [package prefix](#pointer), and a global[^1]
+variables: containing URI Set and a set of variables for pointer credentials.
 
 See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
 
@@ -113,4 +113,4 @@ proxy `bindings-amqp-system`.
 
 See [`toa conceal`](../../runtime/cli/readme.md#conceal).
 
-[^1:] [#174](https://github.com/toa-io/toa/issues/174)
+[^1]: [#174](https://github.com/toa-io/toa/issues/174)
