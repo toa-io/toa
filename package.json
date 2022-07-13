@@ -55,7 +55,7 @@
     "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",
     "lint": "npx standard --verbose --fix | npx snazzy",
     "npm:login:local": "npm adduser --registry http://localhost:4873",
-    "version:dev": "npx --yes lerna version --conventional-prerelease --preid dev --force-publish --no-git-tag-version --no-push --no-changelog --yes",
+    "version:dev": "npx --yes lerna version --conventional-prerelease --preid dev --force-publish --no-git-tag-version --no-push --no-changelog --yes && npm i",
     "publish:local": "npm publish --workspaces",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
