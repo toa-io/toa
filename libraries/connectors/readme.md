@@ -101,7 +101,7 @@ See [`toa conceal`](../../runtime/cli/readme.md#conceal).
 
 ### Custom Extensions Deployment
 
-For each custom extension additional proxy will be deployed.
+For each custom extension additional proxy is being deployed.
 
 #### Example
 
@@ -110,7 +110,5 @@ and compositions require variables to establish connection through that proxy.
 
 Therefore, AMQP binding declares a `system` extension and deployment function declares additional
 proxy `bindings-amqp-system`.
-
-See [`toa conceal`](../../runtime/cli/readme.md#conceal).
 
 [^1]: [#174](https://github.com/toa-io/toa/issues/174)
