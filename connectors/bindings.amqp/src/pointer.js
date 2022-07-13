@@ -13,14 +13,8 @@ class Pointer extends Base {
    * @param {toa.core.Locator} locator
    */
   constructor (locator) {
-    super(locator, 'amqp:', OPTIONS)
+    super(PREFIX, locator, 'amqp:')
   }
-}
-
-/** @type {toa.connectors.pointer.Options} */
-const OPTIONS = {
-  path: '/',
-  prefix: PREFIX
 }
 
 exports.Pointer = Pointer

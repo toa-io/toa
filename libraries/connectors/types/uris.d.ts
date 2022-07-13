@@ -10,7 +10,7 @@ declare namespace toa.connectors {
 
     type Constructor = (declaration: URIs | string) => URIs
 
-    type Resolver = (uris: URIs, locator: Locator) => URL
+    type Resolver = (locator: Locator, uris: URIs) => URL
 
   }
 

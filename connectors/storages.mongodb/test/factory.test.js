@@ -1,5 +1,7 @@
 'use strict'
 
+const { encode } = require('@toa.io/libraries/generic')
+
 const fixtures = require('./factory.fixtures')
 const mock = fixtures.mock
 
@@ -10,6 +12,11 @@ const { Factory } = require('../src/')
 
 /** @type {toa.core.storages.Factory} */
 let factory
+
+const uris = { default: 'mongodb://whatever' }
+const value = encode(uris)
+
+process.env.TOA_STORAGES_MONGODB_POINTER = value
 
 beforeEach(() => {
   factory = new Factory()

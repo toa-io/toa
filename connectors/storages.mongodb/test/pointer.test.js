@@ -2,6 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
+const { encode } = require('@toa.io/libraries/generic')
 
 const { Pointer } = require('../src/pointer')
 
@@ -12,6 +13,11 @@ let locator
 
 /** @type {toa..Pointer} */
 let pointer
+
+const uris = { default: 'mongodb://whatever' }
+const value = encode(uris)
+
+process.env.TOA_STORAGES_MONGODB_POINTER = value
 
 beforeEach(() => {
   const name = generate()

@@ -96,7 +96,7 @@ describe('resolve', () => {
   })
 
   it('should resolve by id', () => {
-    const url = resolve(annotation, locator)
+    const url = resolve(locator, annotation)
 
     expect(url).toBeInstanceOf(URL)
     expect(url.href).toStrictEqual(uri)
@@ -107,13 +107,13 @@ describe('resolve', () => {
     const namespace = generate()
     const locator = new Locator(name, namespace)
 
-    expect(() => resolve(annotation, locator)).toThrow(`URI annotation for '${locator.id}' is not found`)
+    expect(() => resolve(locator, annotation)).toThrow(`URI annotation for '${locator.id}' is not found`)
   })
 
   it('should resolve by namespace', () => {
     annotation[namespace] = uri
 
-    const url = resolve(annotation, locator)
+    const url = resolve(locator, annotation)
 
     expect(url.href).toStrictEqual(uri)
   })
@@ -121,7 +121,7 @@ describe('resolve', () => {
   it('should resolve default', () => {
     annotation = { default: gen() }
 
-    const url = resolve(annotation, locator)
+    const url = resolve(locator, annotation)
 
     expect(url.href).toStrictEqual(annotation.default)
   })
@@ -133,7 +133,7 @@ describe('resolve', () => {
 
     annotation = { [name]: uri }
 
-    const url = resolve(annotation, locator)
+    const url = resolve(locator, annotation)
 
     expect(url.href).toStrictEqual(uri)
   })

@@ -8,6 +8,8 @@ const { console } = require('@toa.io/libraries/console')
 class Connection extends Connector {
   /** @type {toa.amqp.Pointer} */
   #pointer
+
+  /** @type {import('amqplib').Connection} */
   #connection
 
   /**

@@ -1,7 +1,7 @@
 'use strict'
 
 /** @type {toa.connectors.uris.Resolver} */
-const resolve = (uris, locator) => {
+const resolve = (locator, uris) => {
   /** @type {string} */
 
   let uri = uris[locator.id]

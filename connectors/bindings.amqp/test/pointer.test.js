@@ -2,6 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
+const { encode, letters: { up } } = require('@toa.io/libraries/generic')
 
 const { Pointer } = require('../src/pointer')
 const { PREFIX } = require('../src/constants')
@@ -12,34 +13,36 @@ let locator
 /** @type {toa.amqp.Pointer} */
 let pointer
 
-let hostname
-
 const protocol = 'amqp:'
+
+const url = new URL('amqps://whatever:5672')
 
 beforeEach(() => {
   const name = generate()
   const namespace = generate()
 
+  const uris = { default: url.href }
+  const value = encode(uris)
+  const key = `TOA_${up(PREFIX)}_POINTER`
+
+  process.env[key] = value
+
   locator = new Locator(name, namespace)
   pointer = new Pointer(locator)
-
-  hostname = locator.hostname(PREFIX)
 })
 
 it('should be', () => undefined)
 
-it('should expose hostname', () => {
-  expect(pointer.hostname).toStrictEqual(hostname)
-})
-
-it('should expose vhost', () => {
-  expect(pointer.path).toStrictEqual('/')
-})
-
-it('should expose protocol', () => {
-  expect(pointer.protocol).toStrictEqual(protocol)
-})
-
 it('should expose reference', () => {
-  expect(pointer.reference).toStrictEqual(`${protocol}//${hostname}/`)
+  expect(pointer.reference).toStrictEqual(url.href)
+})
+
+it('should set amqp: protocol on localhost', () => {
+  process.env.TOA_ENV = 'local'
+
+  pointer = new Pointer(locator)
+
+  expect(pointer.protocol).toStrictEqual(protocol)
+
+  delete process.env.TOA_ENV
 })

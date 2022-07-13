@@ -1,13 +1,6 @@
 declare namespace toa.connectors {
 
-  namespace pointer {
-    type Options = {
-      prefix?: string
-      path?: string
-    }
-  }
-
-  interface Pointer {
+  class Pointer {
     protocol
     host
     port

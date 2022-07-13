@@ -14,14 +14,13 @@ class Pointer extends Base {
    * @param {toa.core.Locator} locator
    */
   constructor (locator) {
-    super(locator, 'mongodb:', OPTIONS)
+    super(PREFIX, locator, 'mongodb:')
 
     this.db = locator.namespace
     this.collection = locator.name
   }
 }
 
-/** @type {toa.connectors.pointer.Options} */
-const OPTIONS = { prefix: 'storages-mongodb' }
+const PREFIX = 'storages-mongodb'
 
 exports.Pointer = Pointer

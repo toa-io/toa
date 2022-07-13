@@ -22,7 +22,7 @@ const deployment = (instances, annotation) => {
  */
 const proxy = (component, annotation) => {
   const name = component.locator.hostname(PREFIX)
-  const url = uris.resolve(annotation, component.locator)
+  const url = uris.resolve(component.locator, annotation)
   const target = url.hostname
 
   return { name, target }

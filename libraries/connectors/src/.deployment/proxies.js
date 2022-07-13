@@ -9,13 +9,13 @@ const { proxy: declare } = require('./proxy')
  * @param {toa.norm.context.dependencies.Instance[]} instances
  * @param {toa.connectors.URIs} uris
  * @param {string[]} extensions
- * @returns {*[]}
+ * @returns {toa.deployment.dependency.Proxy[]}
  */
 const proxies = (prefix, instances, uris, extensions) => {
   const proxies = []
 
   for (const instance of instances) {
-    const url = resolve(uris, instance.locator)
+    const url = resolve(instance.locator, uris)
     const proxy = declare(prefix, instance, url)
 
     proxies.push(proxy)
@@ -36,7 +36,7 @@ const extend = (proxies, extensions, uris, prefix) => {
   for (const extension of extensions) {
     const locator = new Locator(extension)
     const instance = { locator }
-    const url = resolve(uris, locator)
+    const url = resolve(locator, uris)
     const proxy = declare(prefix, instance, url)
 
     proxies.push(proxy)
