@@ -1,6 +1,7 @@
 export * as acronyms from './acronyms'
 export * as letters from './letters'
 
+export { concat } from './concat'
 export { encode, decode } from './encode'
 export { match } from './match'
 export { merge } from './merge'

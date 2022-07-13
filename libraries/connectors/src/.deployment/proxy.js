@@ -1,12 +1,12 @@
 'use strict'
 
 /**
+ * @param {string} prefix
  * @param {toa.norm.context.dependencies.Instance} instance
  * @param {URL} url
- * @param {string} prefix
  * @returns {toa.deployment.dependency.Proxy}
  */
-const proxy = (instance, url, prefix) => {
+const proxy = (prefix, instance, url) => {
   const target = url.hostname
   const name = instance.locator.hostname(prefix)
 

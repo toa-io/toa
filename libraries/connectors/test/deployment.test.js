@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random, letters: { up } } = require('@toa.io/libraries/generic')
+const { random, letters: { up, down }, encode } = require('@toa.io/libraries/generic')
 const mock = require('@toa.io/libraries/mock')
 
 const { deployment } = require('../')
@@ -79,134 +79,47 @@ describe('proxies', () => {
 })
 
 describe('variables', () => {
-  it('should export PORT and PROTOCOL', () => {
-    const { annotation, variables } = declare('amqps:', random(1000) + 1000)
-
+  it('should export POINTER variable', () => {
+    const annotation = { default: 'amqps://host0' }
+    const json = JSON.stringify(annotation)
+    const value = encode(json)
     const output = deployment(PREFIX, instances, annotation)
 
-    expect(output.variables).toStrictEqual(variables)
+    expect(output.variables.global).toStrictEqual(expect.arrayContaining([{
+      name: `TOA_${up(PREFIX)}_POINTER`,
+      value
+    }]))
   })
 
-  it('should not export PORT if it is not defined', () => {
-    const { annotation } = declare('amqps:')
-
-    const output = deployment(PREFIX, instances, annotation)
-
-    for (const instance of instances) {
-      const variables = output.variables[instance.locator.label]
-
-      const suffix = up(PREFIX) + '_' + instance.locator.uppercase
-      const name = `TOA_${suffix}_PORT`
-
-      const found = variables.find((variable) => variable.name === name)
-
-      expect(found).toStrictEqual(undefined)
+  it('should export USERNAME and PASSWORD for each entry of URI Set', () => {
+    const annotation = {
+      default: 'amqps://host0',
+      system: 'amqps://host2',
+      dummies: 'amqps://host3',
+      'dummies.one': 'amqps://host4'
     }
-  })
 
-  it('should export USERNAME and PASSWORD', () => {
-    const { annotation, variables } = declare('amqps:', random(1000) + 1000, true)
-
-    const output = deployment(PREFIX, instances, annotation)
-
-    expect(output.variables).toStrictEqual(variables)
-  })
-
-  it('should declare system variables for extensions', () => {
-    const instances = []
-    const annotation = {}
-
-    const extensions = ['system', 'else']
     const expected = []
 
-    for (const extension of extensions) {
-      const url = gen()
+    const env = `TOA_${up(PREFIX)}_`
+    const sec = `toa-${down(PREFIX)}-`
 
-      annotation[extension] = url.href
+    for (const key of Object.keys(annotation)) {
+      const label = key.replaceAll('.', '-').toLowerCase()
 
-      for (const [property, coercion] of [['protocol', String], ['port', Number]]) {
+      for (const property of ['username', 'password']) {
         expected.push({
-          name: up(`TOA_${PREFIX}_${extension}_${property}`),
-          value: coercion(url[property])
-        })
-      }
-
-      for (const secret of ['username', 'password']) {
-        expected.push({
-          name: up(`TOA_${PREFIX}_${extension}_${secret}`),
+          name: `${env}${up(label)}_${up(property)}`,
           secret: {
-            name: `toa-${PREFIX}-${extension}`,
-            key: secret
+            name: `${sec}${down(label)}`,
+            key: property
           }
         })
       }
     }
 
-    const output = deployment(PREFIX, instances, annotation, extensions)
+    const output = deployment(PREFIX, instances, annotation)
 
-    expect(output.variables.global).toStrictEqual(expected)
+    expect(output.variables.global).toStrictEqual(expect.arrayContaining(expected))
   })
-
-  /**
-   * @param {string} protocol
-   * @param {number} [port]
-   * @param {boolean} [secrets]
-   * @returns {{ annotation: Object, variables: toa.deployment.dependency.Variables }}
-   */
-  const declare = (protocol, port = undefined, secrets = false) => {
-    /** @type {toa.deployment.dependency.Variables} */
-    const variables = {}
-
-    const annotation = {}
-
-    for (const instance of instances) {
-      const { id, label } = instance.locator
-      const url = gen()
-      const suffix = up(PREFIX) + '_' + instance.locator.uppercase
-      const sfx = PREFIX + '-' + instance.locator.label
-
-      url.port = port === undefined ? '' : String(port)
-      url.protocol = protocol === undefined ? '' : protocol
-
-      /** @type {toa.deployment.dependency.Variable[]} */
-      const expected = []
-
-      if (port !== undefined) {
-        expected.push({
-          name: `TOA_${suffix}_PORT`,
-          value: +url.port
-        })
-      }
-
-      if (protocol !== undefined) {
-        expected.push({
-          name: `TOA_${suffix}_PROTOCOL`,
-          value: url.protocol
-        })
-      }
-
-      if (secrets) {
-        expected.push({
-          name: `TOA_${suffix}_USERNAME`,
-          secret: {
-            name: `toa-${sfx}`,
-            key: 'username'
-          }
-        })
-
-        expected.push({
-          name: `TOA_${suffix}_PASSWORD`,
-          secret: {
-            name: `toa-${sfx}`,
-            key: 'password'
-          }
-        })
-      }
-
-      annotation[id] = url.href
-      variables[label] = expect.arrayContaining(expected)
-    }
-
-    return { annotation, variables }
-  }
 })

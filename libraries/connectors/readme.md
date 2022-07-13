@@ -66,24 +66,38 @@ If `TOA_ENV` is `local` then these values are used:
 ## Deployment
 
 Deployment function builds a set of proxies corresponding the [URI Set](#uri-set-context-annotation)
-and the [package prefix](#pointer), and a global[^1] variable containing URI Set.
+and the [package prefix](#pointer), and a global[^1] variables: containing URI Set and a set of
+variables for pointer credentials.
 
 See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
 
-[^1:] [#174](https://github.com/toa-io/toa/issues/174)
+### Credentials
 
-### Secrets
+Each entry of the URI Set requires values for `username` and `password`. These values are being
+deployed as global[^1] secret variables. Secret names are following the
+convention: `toa-package-prefix-entry-label` and `key` names match corresponding URL
+properties (`username` and `password`).
 
-Values for `username` and `password` requires corresponding secrets to be deployed. Secret names are
-following the convention: `toa-package-prefix-namespace-name` and `key` names match corresponding
-URL properties (`username` and `password`).
+> Note that declaration is made of `Locator.id` while secret names contain `Locator.label`.
+> See [Locator](#).
 
 #### Example
 
+```yaml
+# context.toa.yaml
+amqp:
+  default: amqp://host0
+  dummies.dummy: amqps://host1:5671
+```
+
 ```shell
 $ toa conceal bindings-amqp-default username admin
-$ toa conceal bindings-amqp-default password iluvtests
+$ toa conceal bindings-amqp-default password ibreakthings
+$ toa conceal bindings-amqp-dummies-dummy username developer
+$ toa conceal bindings-amqp-dummies-dummy password iluvtests
 ```
+
+See [`toa conceal`](../../runtime/cli/readme.md#conceal).
 
 ### Custom Extensions Deployment
 
@@ -98,3 +112,5 @@ Therefore, AMQP binding declares a `system` extension and deployment function de
 proxy `bindings-amqp-system`.
 
 See [`toa conceal`](../../runtime/cli/readme.md#conceal).
+
+[^1:] [#174](https://github.com/toa-io/toa/issues/174)

@@ -1,38 +1,22 @@
 'use strict'
 
-const { letters: { up } } = require('@toa.io/libraries/generic')
+const declare = require('./.variables')
 
 /**
- * @param {toa.norm.context.dependencies.Instance} instance
- * @param {URL} url
- * @param {string} suffix
+ * @param {string} prefix
+ * @param {toa.connectors.URIs} uris
+ * @returns {toa.deployment.dependency.Variable[]}
  */
-const variables = (instance, url, suffix) => {
-  const prefix = `TOA_${up(suffix)}_${instance.locator.uppercase}_`
-  const scope = `toa-${suffix}-${instance.locator.label}`
+const variables = (prefix, uris) => {
+  /** @type {toa.deployment.dependency.Variable[]} */
+  const variables = []
+  const pointer = declare.pointer(prefix, uris)
+  const credentials = declare.credentials(prefix, uris)
 
-  const variables = PROPERTIES
-    .filter(([property]) => url[property] !== '')
-    .map(([property, coercion]) => ({
-      name: prefix + up(property),
-      value: coercion(url[property])
-    }))
-
-  const secrets = SECRETS
-    .map((property) => ({
-      name: prefix + up(property),
-      secret: {
-        name: scope,
-        key: property
-      }
-    }))
-
-  variables.push(...secrets)
+  variables.push(pointer)
+  variables.push(...credentials)
 
   return variables
 }
-
-const PROPERTIES = [['protocol', String], ['port', Number]]
-const SECRETS = ['username', 'password']
 
 exports.variables = variables

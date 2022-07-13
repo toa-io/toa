@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random, letters: { up } } = require('@toa.io/libraries/generic')
+const { random } = require('@toa.io/libraries/generic')
 const mock = require('@toa.io/libraries/mock')
 
 const { deployment } = require('../')
@@ -56,35 +56,5 @@ describe('proxies', () => {
     const instances = []
 
     expect(() => deployment(instances, annotation)).toThrow('not found')
-  })
-})
-
-describe('variables', () => {
-  const prefix = `TOA_${up(PREFIX)}_SYSTEM_`
-
-  it('should create system protocol variable', () => {
-    const url = gen()
-
-    url.port = ''
-
-    const annotation = { default: url.href }
-    const output = deployment(instances, annotation)
-
-    expect(output.variables.global).toStrictEqual(expect.arrayContaining([{
-      name: prefix + 'PROTOCOL',
-      value: url.protocol
-    }]))
-  })
-
-  it('should create system port variable', () => {
-    const url = gen()
-    const annotation = { default: url.href }
-
-    const output = deployment(instances, annotation)
-
-    expect(output.variables.global).toStrictEqual(expect.arrayContaining([{
-      name: prefix + 'PORT',
-      value: Number(url.port)
-    }]))
   })
 })
