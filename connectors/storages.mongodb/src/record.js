@@ -2,24 +2,24 @@
 
 /**
  * @param {toa.core.storages.Entity} entity
- * @returns {toa.storages.mongo.Record}
+ * @returns {toa.mongodb.Record}
  */
 const to = (entity) => {
   const { id, _version, ...rest } = entity
 
-  return { _id: id, _version: _version + 1, ...rest }
+  return /** @type {toa.mongodb.Record} */ { _id: id, _version: _version + 1, ...rest }
 }
 
 /**
- * @param {toa.storages.mongo.Record} record
+ * @param {toa.mongodb.Record} record
  * @returns {toa.core.storages.Entity}
  */
 const from = (record) => {
   if (record === undefined || record === null) return null
 
-  const { _id, ...rest } = record
+  const { _id, _version, ...rest } = record
 
-  return { id: _id, ...rest }
+  return { id: _id, _version, ...rest }
 }
 
 exports.to = to

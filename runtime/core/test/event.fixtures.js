@@ -7,6 +7,7 @@ const definition = {
   subjective: true
 }
 
+// noinspection JSCheckFunctionSignatures
 const bridge = {
   condition: jest.fn(async (origin) => !origin.falsy),
   payload: jest.fn(async () => ({ [generate()]: generate() }))

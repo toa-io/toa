@@ -21,8 +21,8 @@ describe('call', () => {
   it('should discover once', async () => {
     const request = {}
 
-    context.call('a', 'b', 'c', request)
-    context.call('a', 'b', 'c', request)
+    await context.call('a', 'b', 'c', request)
+    await context.call('a', 'b', 'c', request)
 
     expect(fixtures.discover).toHaveBeenCalledTimes(1)
   })

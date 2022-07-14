@@ -33,7 +33,7 @@ const resolve = (schema) => (property) => {
 
 const schema = (object, resolve) => {
   if (object === undefined) return
-  if (typeof object === 'string' && object[0] === '~') return resolve(object.substr(1))
+  if (typeof object === 'string' && object[0] === '~') return resolve(object.substring(1))
 
   if (object.type in types) {
     const type = types[object.type]

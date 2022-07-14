@@ -9,11 +9,11 @@ const { to, from } = require('./record')
  * @implements {toa.core.storages.Storage}
  */
 class Storage extends Connector {
-  /** @type {toa.storages.mongo.Connection} */
+  /** @type {toa.mongodb.Connection} */
   #connection
 
   /**
-   * @param {toa.storages.mongo.Connection} connection
+   * @param {toa.mongodb.Connection} connection
    */
   constructor (connection) {
     super()

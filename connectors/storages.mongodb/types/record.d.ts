@@ -1,8 +1,10 @@
 declare namespace toa.mongodb {
 
     interface Record {
-        _id: string | any
+        _id: string
         _version: number
+
+        [key: string]: any
     }
 
 }

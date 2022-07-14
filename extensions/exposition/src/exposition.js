@@ -29,7 +29,7 @@ class Exposition extends Connector {
   /** @override */
   async connection () {
     await this.#broadcast.receive('expose', this.#expose.bind(this))
-    this.#broadcast.send('ping', {})
+    this.#broadcast.send('ping', {}).then()
 
     console.info(this.constructor.name + ' started')
   }

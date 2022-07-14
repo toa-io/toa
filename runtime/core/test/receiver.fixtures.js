@@ -12,6 +12,7 @@ const local = {
   invoke: jest.fn()
 }
 
+// noinspection JSCheckFunctionSignatures
 const bridge = {
   condition: jest.fn((payload) => !(payload.reject === true)),
   request: jest.fn(() => generate())

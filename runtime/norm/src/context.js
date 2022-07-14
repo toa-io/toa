@@ -19,7 +19,7 @@ const {
 /**
  * @type {toa.norm.context.Constructor}
  */
-const context = async (root, environment) => {
+const context = async (root, environment = undefined) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await load(path)
   const pattern = resolve(root, context.packages)

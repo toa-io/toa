@@ -1,4 +1,4 @@
-// noinspection JSClosureCompilerSyntax
+// noinspection JSCheckFunctionSignatures
 
 'use strict'
 
@@ -14,7 +14,7 @@ class Connection extends Connector {
   #pointer
   /** @type {import('mongodb').MongoClient} */
   #client
-  /** @type {import('mongodb').Collection} */
+  /** @type {import('mongodb').Collection<toa.mongodb.Record>} */
   #collection
 
   /**

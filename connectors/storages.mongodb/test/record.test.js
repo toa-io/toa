@@ -32,7 +32,7 @@ describe('to', () => {
 
 describe('from', () => {
   it('should rename _id to id', () => {
-    /** @type {toa.storages.mongo.Record} */
+    /** @type {toa.mongodb.Record} */
     const record = { _id: '1', _version: 0 }
     const entity = from(record)
 
@@ -40,7 +40,7 @@ describe('from', () => {
   })
 
   it('should not modify argument', () => {
-    /** @type {toa.storages.mongo.Record} */
+    /** @type {toa.mongodb.Record} */
     const record = { _id: '1', _version: 0 }
 
     from(record)
