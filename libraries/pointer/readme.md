@@ -7,7 +7,16 @@ Library to declare, deploy and resolve URL to connect to at the runtime. Used by
 Pointer builds URL for a given locator, protocol and a package prefix. Prefix must be unique value
 for a given package conforming [label format](#) (ex.: `bindings-ampq`).
 
-See [types](types/pointer.d.ts) and [tests](test/pointer.test.js) for details.
+### Constructor signature
+
+<dl>
+<dt><code>prefix</code></dt>
+<dd><code>string</code> unique for each package</dd>
+<dt><code>locator</code></dt>
+<dd><code>toa.core.Locator</code> component for which Pointer is intended</dd>
+<dt><code>options</code></dt>
+<dd><code><a href="./types/pointer.d.ts">toa.pointer.Options</a></code> Pointer options</dd>
+</dl>
 
 ### Local Environment
 
@@ -20,6 +29,8 @@ If `TOA_ENV` is `local` then these values are used:
 | password | `secret`    |
 
 > In the local environment there is no way to provide values for `protocol` or `port`.
+
+See [types](types/pointer.d.ts) and [tests](test/pointer.test.js) for details.
 
 ## Annotation
 

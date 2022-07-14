@@ -4,7 +4,7 @@ Implemented with [Knex](https://knexjs.org), therefore supports the same set of 
 
 ## Annotation
 
-Uses [URI Set Annotation](/libraries/connectors/readme.md#uri-set-context-annotation). 
+Uses [Pointer Annotation](/libraries/pointer/readme.md#annotation). 
 
 ### Drivers
 

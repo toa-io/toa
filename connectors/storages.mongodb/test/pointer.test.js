@@ -38,3 +38,13 @@ it('should expose db', () => {
 it('should expose collection', () => {
   expect(pointer.collection).toStrictEqual(locator.name)
 })
+
+it('should define schema on local environment', () => {
+  process.env.TOA_ENV = 'local'
+
+  expect(() => (pointer = new Pointer(locator))).not.toThrow()
+
+  expect(pointer.protocol).toStrictEqual('mongodb:')
+
+  delete process.env.TOA_ENV
+})

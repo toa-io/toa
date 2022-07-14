@@ -18,11 +18,11 @@ class Pointer {
   /**
    * @param {string} prefix
    * @param {toa.core.Locator} locator
-   * @param {string} [protocol]
+   * @param {toa.pointer.Options} options
    */
-  constructor (prefix, locator, protocol) {
+  constructor (prefix, locator, options) {
     const local = process.env.TOA_ENV === 'local'
-    const url = local ? get.local(protocol) : get.env(prefix, locator)
+    const url = local ? get.local(options.protocol) : get.env(prefix, locator)
 
     this.protocol = url.protocol
     this.hostname = url.hostname

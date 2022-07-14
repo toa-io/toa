@@ -16,10 +16,12 @@ it('should be', () => {
 })
 
 const prefix = 'bindings-amqp'
-const protocol = 'schema:'
 
 /** @type {toa.core.Locator} */
 let locator
+
+/** @type {toa.pointer.Options} */
+const options = { protocol: 'protocol:' }
 
 /** @type {toa.pointer.Pointer} */
 let pointer
@@ -48,23 +50,23 @@ it('should throw if env not set', () => {
   const name = `TOA_${up(prefix)}_POINTER`
   delete process.env[name]
 
-  expect(() => new Pointer(prefix, locator)).toThrow(`Environment variable ${name} is not set`)
+  expect(() => new Pointer(prefix, locator, options)).toThrow(`Environment variable ${name} is not set`)
 })
 
 it('should use declared protocol', () => {
-  pointer = new Pointer(prefix, locator)
+  pointer = new Pointer(prefix, locator, options)
 
   expect(pointer.protocol).toStrictEqual(url.protocol)
 })
 
 it('should point to proxy', () => {
-  pointer = new Pointer(prefix, locator)
+  pointer = new Pointer(prefix, locator, options)
 
   expect(pointer.hostname).toStrictEqual(locator.hostname(prefix))
 })
 
 it('should expose reference', () => {
-  pointer = new Pointer(prefix, locator)
+  pointer = new Pointer(prefix, locator, options)
 
   url.hostname = locator.hostname(prefix)
 
@@ -74,23 +76,23 @@ it('should expose reference', () => {
 it('should use localhost and given protocol on local environment', () => {
   process.env.TOA_ENV = 'local'
 
-  pointer = new Pointer(prefix, locator, protocol)
+  pointer = new Pointer(prefix, locator, options)
 
   delete process.env.TOA_ENV
 
   expect(pointer.hostname).toStrictEqual('localhost')
-  expect(pointer.protocol).toStrictEqual(protocol)
+  expect(pointer.protocol).toStrictEqual(options.protocol)
 })
 
 it('should use default protocol and credentials on local environment', () => {
   process.env.TOA_ENV = 'local'
 
-  pointer = new Pointer(prefix, locator, protocol)
+  pointer = new Pointer(prefix, locator, options)
 
   delete process.env.TOA_ENV
 
-  expect(pointer.reference).toStrictEqual(`${protocol}//developer:secret@localhost`)
-  expect(pointer.label).toStrictEqual(`${protocol}//developer@localhost`)
+  expect(pointer.reference).toStrictEqual(`${options.protocol}//developer:secret@localhost`)
+  expect(pointer.label).toStrictEqual(`${options.protocol}//developer@localhost`)
 })
 
 describe('environment variables', () => {
@@ -130,7 +132,7 @@ describe('environment variables', () => {
   })
 
   it('should use env variables for credentials', () => {
-    pointer = new Pointer(prefix, locator)
+    pointer = new Pointer(prefix, locator, options)
 
     url.hostname = locator.hostname(prefix)
 
@@ -147,7 +149,7 @@ describe('environment variables', () => {
     unset('username')
     url.password = ''
 
-    const pointer = new Pointer(prefix, locator)
+    const pointer = new Pointer(prefix, locator, options)
 
     expect(pointer).toBeDefined()
     expect(mock.console.warn).toHaveBeenCalledWith(`username for ${url.href} is not set`)
@@ -158,7 +160,7 @@ describe('environment variables', () => {
 
     unset('password')
 
-    const pointer = new Pointer(prefix, locator)
+    const pointer = new Pointer(prefix, locator, options)
 
     expect(pointer).toBeDefined()
     expect(mock.console.warn).toHaveBeenCalledWith(`password for ${url.href} is not set`)
