@@ -10,17 +10,17 @@
 </a>
 
 - **Discussion**
-    - Problem
-    - Complexity
+  - Problem
+  - Complexity
 - **Documentation**
-    - Manual
-    - Scenarios
+  - Manual
+  - Scenarios
 - **Decomposition**
-    - Solution
-    - Change Requests
+  - Solution
+  - Change Requests
 - **Development**
-    - Steps
-    - Code
+  - Steps
+  - Code
 
 ---
 
@@ -125,7 +125,13 @@ List of changes to be made at the most top-level available in the software being
 item basically should be the message for the future commit or pull request conforming the existent
 commit message convention.
 
-Example: `feat(cli): add option -e to toa export command`
+In case a commit message is not enough to fully describe the request, then it should become an
+independent iteration of the Cycle without blocking current. Thereby, problem decomposition will
+continue until it compose a decision tree with elementary leafs described with a commit message.
+
+#### Example
+
+`feat(cli): add option -e to toa export command`
 
 ## Development
 
