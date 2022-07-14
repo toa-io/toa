@@ -72,7 +72,7 @@ describe('resolve', () => {
   let namespace
   let uri
 
-  /** @type {toa.connectors.URIs} */
+  /** @type {toa.pointer.URIs} */
   let annotation
 
   /** @type {toa.core.Locator} */

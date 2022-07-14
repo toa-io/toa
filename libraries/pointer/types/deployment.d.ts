@@ -4,7 +4,7 @@ import { dependency } from '@toa.io/operations/types/deployment'
 import { dependencies } from '@toa.io/norm/types'
 import { URIs } from './uris'
 
-declare namespace toa.connectors {
+declare namespace toa.pointer {
 
   type Deployment = (prefix: string,
                      instances: dependencies.Instance[],
@@ -14,4 +14,4 @@ declare namespace toa.connectors {
 
 }
 
-export const deployment: toa.connectors.Deployment
+export const deployment: toa.pointer.Deployment

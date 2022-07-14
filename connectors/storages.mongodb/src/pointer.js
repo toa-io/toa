@@ -1,6 +1,6 @@
 'use strict'
 
-const { Pointer: Base } = require('@toa.io/libraries/connectors')
+const { Pointer: Base } = require('@toa.io/libraries/pointer')
 
 // noinspection JSClosureCompilerSyntax
 /**

@@ -2,7 +2,7 @@
 
 const { letters: { up } } = require('@toa.io/libraries/generic')
 
-/** @type {toa.connectors.Variable} */
+/** @type {toa.pointer.Variable} */
 const variable = (scope, locator, label, value) => {
   const name = `TOA_${up(scope)}_${locator.uppercase}_${up(label)}`
 

@@ -1,6 +1,8 @@
-# Common Connector Solutions
+# Pointer
 
-## URI Set Context Annotation
+Library to declare, deploy and resolve URI to connect to. Used by connectors.
+
+## Annotation
 
 Declaration of a set of hosts, matching exact components, namespaces with a default value for
 non-matched ones.
@@ -31,7 +33,7 @@ something:
 ### Usage
 
 ```javascript
-const { uris } = require('@toa.io/libraries/connectors')
+const { uris } = require('@toa.io/libraries/pointer')
 
 const annotation = uris.construct(declaration)
 const url = resolve(annotation, locator)
@@ -41,10 +43,10 @@ See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
 
 ### Custom Extensions
 
-Packages using URI Set Annotation may use or require additional properties.
+Packages using Pointer Annotation may use or require additional properties.
 See [Custom Extensions Deployment](#custom-extensions-deployment) below.
 
-## Pointer
+## Pointer class
 
 Pointer builds URL for a given locator, protocol and a package prefix. Prefix must be unique value
 for a given package conforming [label format](#) (ex.: `bindings-ampq`).
@@ -66,14 +68,14 @@ If `TOA_ENV` is `local` then these values are used:
 ## Deployment
 
 Deployment function builds a set of proxies corresponding to
-the [URI Set](#uri-set-context-annotation) and the [package prefix](#pointer), and a global[^1]
-variables: containing URI Set and a set of variables for pointer credentials.
+the [Annotation](#annotation) and the [package prefix](#pointer-class), and a global[^1]
+variables: containing Annotation and a set of variables for pointer credentials.
 
 See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
 
 ### Credentials
 
-Each entry of the URI Set requires values for `username` and `password`. These values are being
+Each entry of the Annotation requires values for `username` and `password`. These values are being
 deployed as global[^1] secret variables. Secret names are following the
 convention: `toa-package-prefix-entry-label` and `key` names match corresponding URL
 properties (`username` and `password`).

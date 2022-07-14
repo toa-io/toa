@@ -1,6 +1,6 @@
 'use strict'
 
-/** @type {toa.connectors.uris.Resolver} */
+/** @type {toa.pointer.uris.Resolver} */
 const resolve = (locator, uris) => {
   let entry
 

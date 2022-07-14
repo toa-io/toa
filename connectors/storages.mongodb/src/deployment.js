@@ -1,6 +1,6 @@
 'use strict'
 
-const connectors = require('@toa.io/libraries/connectors')
+const connectors = require('@toa.io/libraries/pointer')
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances

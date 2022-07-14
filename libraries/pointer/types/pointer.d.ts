@@ -1,4 +1,4 @@
-declare namespace toa.connectors {
+declare namespace toa.pointer {
 
   class Pointer {
     protocol
@@ -12,4 +12,4 @@ declare namespace toa.connectors {
 
 }
 
-export type Pointer = toa.connectors.Pointer
+export type Pointer = toa.pointer.Pointer

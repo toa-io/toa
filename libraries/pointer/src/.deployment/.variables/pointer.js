@@ -4,7 +4,7 @@ const { encode, letters: { up } } = require('@toa.io/libraries/generic')
 
 /**
  * @param {string} prefix
- * @param {toa.connectors.URIs} uris
+ * @param {toa.pointer.URIs} uris
  * @returns {toa.deployment.dependency.Variable}
  */
 const pointer = (prefix, uris) => {

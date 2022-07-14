@@ -1,6 +1,6 @@
 import { Locator } from '@toa.io/core/types'
 
-declare namespace toa.connectors {
+declare namespace toa.pointer {
 
   namespace uris {
 
@@ -26,7 +26,7 @@ declare namespace toa.connectors {
 
 }
 
-export type URIs = toa.connectors.URIs
+export type URIs = toa.pointer.URIs
 
-export const construct: toa.connectors.uris.Constructor
-export const resolve: toa.connectors.uris.Resolver
+export const construct: toa.pointer.uris.Constructor
+export const resolve: toa.pointer.uris.Resolver

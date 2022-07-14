@@ -21,7 +21,7 @@ const protocol = 'schema:'
 /** @type {toa.core.Locator} */
 let locator
 
-/** @type {toa.connectors.Pointer} */
+/** @type {toa.pointer.Pointer} */
 let pointer
 
 /** @type {URL} */

@@ -4,7 +4,7 @@ const get = require('./.pointer')
 
 // noinspection JSClosureCompilerSyntax
 /**
- * @implements {toa.connectors.Pointer}
+ * @implements {toa.pointer.Pointer}
  */
 class Pointer {
   protocol

@@ -4,7 +4,7 @@ const declare = require('./.variables')
 
 /**
  * @param {string} prefix
- * @param {toa.connectors.URIs} uris
+ * @param {toa.pointer.URIs} uris
  * @returns {toa.deployment.dependency.Variable[]}
  */
 const variables = (prefix, uris) => {

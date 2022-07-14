@@ -7,7 +7,7 @@ const { proxy: declare } = require('./proxy')
 /**
  * @param {string} prefix
  * @param {toa.norm.context.dependencies.Instance[]} instances
- * @param {toa.connectors.URIs} uris
+ * @param {toa.pointer.URIs} uris
  * @param {string[]} extensions
  * @returns {toa.deployment.dependency.Proxy[]}
  */
@@ -29,7 +29,7 @@ const proxies = (prefix, instances, uris, extensions) => {
 /**
  * @param {toa.deployment.dependency.Proxy[]} proxies
  * @param {string[]} extensions
- * @param {toa.connectors.URIs} uris
+ * @param {toa.pointer.URIs} uris
  * @param {string} prefix
  */
 const extend = (proxies, extensions, uris, prefix) => {
