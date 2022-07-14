@@ -5,7 +5,7 @@ const { dirname, join } = require('node:path')
 /**
  * @param {string} name
  */
-const load = (name) => {
+const cli = (name) => {
   const path = join(ROOT, name)
   const module = require(path)
 
@@ -14,4 +14,4 @@ const load = (name) => {
 
 const ROOT = join(dirname(require.resolve('@toa.io/cli')), 'handlers')
 
-exports.load = load
+exports.cli = cli

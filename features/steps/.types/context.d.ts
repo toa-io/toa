@@ -1,4 +1,7 @@
+import type { Connector } from '@toa.io/core/types'
+
 declare namespace toa.features {
+
     type Context = {
         cwd?: string
         stdout?: string
@@ -6,5 +9,7 @@ declare namespace toa.features {
         stdoutLines?: string[]
         stderrLines?: string[]
         aborted?: boolean
+        connector: Connector
     }
+
 }

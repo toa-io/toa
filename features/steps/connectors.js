@@ -1,6 +1,6 @@
 'use strict'
 
-const { load } = require('./.cli.debug/load')
+const { cli } = require('./.connectors/cli')
 
 const { When, Then } = require('@cucumber/cucumber')
 
@@ -8,15 +8,16 @@ When('I debug command {word}',
   /**
    * @param {string} name
    * @param {import('@cucumber/cucumber').DataTable} inputs
+   * @this {toa.features.Context}
    */
   async function (name, inputs) {
-    const handler = load(name)
+    const handler = cli(name)
     const argv = Object.fromEntries(inputs.raw())
 
-    this.handler = await handler(argv)
+    this.connector = await handler(argv)
   })
 
 Then('I disconnect',
   async function () {
-    await this.handler.disconnect()
+    await this.connector.disconnect()
   })
