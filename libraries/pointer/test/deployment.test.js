@@ -22,6 +22,18 @@ it('should be', () => {
   expect(deployment).toBeInstanceOf(Function)
 })
 
+it('should throw if protocol is omitted', () => {
+  const annotation = { default: 'no-protocol' }
+
+  expect(() => deployment(PREFIX, instances, annotation)).toThrow('Invalid URL')
+})
+
+it('should throw if hostname is omitted', () => {
+  const annotation = { default: 'amqps:///' }
+
+  expect(() => deployment(PREFIX, instances, annotation)).toThrow('must contain hostname')
+})
+
 describe('proxies', () => {
   it('should create default proxies', () => {
     const url = gen()
