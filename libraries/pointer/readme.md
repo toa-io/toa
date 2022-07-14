@@ -1,6 +1,25 @@
 # Pointer
 
-Library to declare, deploy and resolve URI to connect to. Used by connectors.
+Library to declare, deploy and resolve URL to connect to at the runtime. Used by connectors.
+
+## Pointer class
+
+Pointer builds URL for a given locator, protocol and a package prefix. Prefix must be unique value
+for a given package conforming [label format](#) (ex.: `bindings-ampq`).
+
+See [types](types/pointer.d.ts) and [tests](test/pointer.test.js) for details.
+
+### Local Environment
+
+If `TOA_ENV` is `local` then these values are used:
+
+| Property | Value       |
+|----------|-------------|
+| hostname | `localhost` |
+| username | `developer` |
+| password | `secret`    |
+
+> In the local environment there is no way to provide values for `protocol` or `port`.
 
 ## Annotation
 
@@ -9,10 +28,10 @@ non-matched ones.
 
 ```yaml
 something:
-  default: host1
-  namespace1: host2
-  namespace1.component1: host3
-  namespace2.component2: host4
+  default: protocol://host1
+  namespace1: protocol://host2
+  namespace1.component1: protocol://host3
+  namespace2.component2: protocol://host4
 ```
 
 See the [schema](src/uris/.construct/schema.yaml).
@@ -36,7 +55,7 @@ something:
 const { uris } = require('@toa.io/libraries/pointer')
 
 const annotation = uris.construct(declaration)
-const url = resolve(annotation, locator)
+const url = uris.resolve(annotation, locator)
 ```
 
 See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
@@ -45,25 +64,6 @@ See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
 
 Packages using Pointer Annotation may use or require additional properties.
 See [Custom Extensions Deployment](#custom-extensions-deployment) below.
-
-## Pointer class
-
-Pointer builds URL for a given locator, protocol and a package prefix. Prefix must be unique value
-for a given package conforming [label format](#) (ex.: `bindings-ampq`).
-
-See [types](types/pointer.d.ts) and [tests](test/pointer.test.js) for details.
-
-### Local Environment
-
-If `TOA_ENV` is `local` then these values are used:
-
-| Property | Value       |
-|----------|-------------|
-| hostname | `localhost` |
-| username | `developer` |
-| password | `secret`    |
-
-> In the local environment there is no way to provide non-default values for `protocol` or `port`.
 
 ## Deployment
 
