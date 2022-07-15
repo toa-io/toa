@@ -42,6 +42,7 @@ const SHORTCUTS = {
   amqp: '@toa.io/bindings.amqp',
   node: '@toa.io/bridges.node',
   mongodb: '@toa.io/storages.mongodb',
+  sql: '@toa.io/storages.sql',
   exposition: '@toa.io/extensions.exposition',
   origins: '@toa.io/extensions.origins',
   configuration: '@toa.io/extensions.configuration'

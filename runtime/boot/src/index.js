@@ -23,13 +23,13 @@ exports.extensions = require('./extensions')
 
 exports.call = call
 exports.cascade = cascade
+exports.component = component
 exports.composition = composition
 exports.context = context
 exports.deployment = deployment
 exports.emission = emission
 exports.exposition = exposition
 exports.images = images
-exports.component = component
 exports.operation = operation
 exports.receivers = receivers
 exports.remote = remote
