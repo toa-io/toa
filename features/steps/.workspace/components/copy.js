@@ -1,7 +1,9 @@
 'use strict'
 
-const { resolve, join } = require('node:path')
+const { join } = require('node:path')
 const { directory } = require('@toa.io/libraries/filesystem')
+
+const { COLLECTION } = require('./constants')
 
 /**
  * @param {string[]} list
@@ -10,7 +12,7 @@ const { directory } = require('@toa.io/libraries/filesystem')
  */
 const copy = async (list, to) => {
   for (const component of list) {
-    const source = join(COMPONENTS, component)
+    const source = join(COLLECTION, component)
     const target = join(to, 'components', component)
 
     await directory.is(source)
@@ -19,7 +21,5 @@ const copy = async (list, to) => {
     await directory.copy(source, target)
   }
 }
-
-const COMPONENTS = resolve(__dirname, './.components')
 
 exports.copy = copy

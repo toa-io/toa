@@ -9,7 +9,7 @@ declare namespace toa.features {
         stdoutLines?: string[]
         stderrLines?: string[]
         aborted?: boolean
-        connector: Connector
+        connector?: Connector
     }
 
 }
