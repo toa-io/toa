@@ -1,6 +1,6 @@
 'use strict'
 
-const { concat, decode, letters: { up } } = require('@toa.io/libraries/generic')
+const { concat, decode, letters: { up, capitalize } } = require('@toa.io/libraries/generic')
 const { console } = require('@toa.io/libraries/console')
 
 const { resolve } = require('../uris')
@@ -21,13 +21,13 @@ const env = (prefix, locator) => {
   url.host = locator.hostname(prefix)
 
   const suffix = convert(entry)
-  const env = `TOA_${up(prefix)}_${suffix}_`
+  const env = `TOA_${up(prefix)}_${suffix}`
 
   for (const property of ['username', 'password']) {
-    const value = process.env[env + up(property)]
+    const value = process.env[env + '_' + up(property)]
 
     if (value !== undefined) url[property] = value
-    else console.warn(`${property} for ${url.href} is not set`)
+    else console.warn(`${capitalize(property)} for ${env} is not set`)
   }
 
   return url

@@ -122,14 +122,14 @@ describe('environment variables', () => {
   const username = generate()
   const password = generate()
 
+  const type = up(prefix)
+  const env = `TOA_${type}_DEFAULT`
+
   let set
   let unset
 
   beforeEach(() => {
     jest.clearAllMocks()
-
-    const type = up(prefix)
-    const env = `TOA_${type}_DEFAULT`
 
     set = (name, value) => {
       const key = env + '_' + up(name)
@@ -175,7 +175,7 @@ describe('environment variables', () => {
     const pointer = new Pointer(prefix, locator, options)
 
     expect(pointer).toBeDefined()
-    expect(mock.console.warn).toHaveBeenCalledWith(`username for ${url.href} is not set`)
+    expect(mock.console.warn).toHaveBeenCalledWith(`Username for ${env} is not set`)
   })
 
   it('should warn if password is not set', () => {
@@ -186,7 +186,7 @@ describe('environment variables', () => {
     const pointer = new Pointer(prefix, locator, options)
 
     expect(pointer).toBeDefined()
-    expect(mock.console.warn).toHaveBeenCalledWith(`password for ${url.href} is not set`)
+    expect(mock.console.warn).toHaveBeenCalledWith(`Password for ${env} is not set`)
   })
 })
 
