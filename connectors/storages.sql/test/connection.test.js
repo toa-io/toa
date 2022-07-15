@@ -74,4 +74,10 @@ describe('connection', () => {
     expect(connection.password).toStrictEqual(password)
     expect(connection.database).toStrictEqual(database)
   })
+
+  it('should run connection query', () => {
+    const query = knex.mock.results[0].value
+
+    expect(query.select).toHaveBeenCalledWith('1')
+  })
 })

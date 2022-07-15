@@ -1,5 +1,10 @@
 'use strict'
 
-const knex = jest.fn(() => ({ withSchema: jest.fn() }))
+const client = {
+  withSchema: jest.fn(() => client),
+  select: jest.fn(() => client)
+}
+
+const knex = jest.fn(() => client)
 
 exports.mock = { knex }

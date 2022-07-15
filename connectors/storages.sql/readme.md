@@ -1,6 +1,9 @@
 # SQL Connector
 
-Implemented with [Knex](https://knexjs.org), therefore supports the same set of databases:
+> ![Important](https://img.shields.io/badge/Important-red)<br/>
+> Integrations only with MySQL, PostgreSQL and Amazon Redshift are tested.
+
+Implemented with [Knex](https://knexjs.org), therefore supports the same set of databases.
 
 ## Annotation
 
@@ -18,7 +21,7 @@ URI values must contain protocol identifying the driver to access the database.
 
 See [Knex documentation](https://knexjs.org/guide/) for details.
 
-> `pg` driver is pre-installed.
+> `pg` and `mysql` drivers are pre-installed.
 
 ### Database
 
