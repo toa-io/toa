@@ -41,7 +41,7 @@ beforeEach(() => {
 
   locator = new Locator(name, namespace)
 
-  url = new URL('amqp://whatever')
+  url = new URL('amqp://whatever:3000')
 
   uris({ default: url.href })
 })
@@ -63,6 +63,29 @@ it('should point to proxy', () => {
   pointer = new Pointer(prefix, locator, options)
 
   expect(pointer.hostname).toStrictEqual(locator.hostname(prefix))
+})
+
+it('should expose credentials', () => {
+  const env = `TOA_${up(prefix)}_DEFAULT_`
+  const username = generate()
+  const password = generate()
+
+  process.env[env + 'USERNAME'] = username
+  process.env[env + 'PASSWORD'] = password
+
+  pointer = new Pointer(prefix, locator, options)
+
+  delete process.env[env + 'USERNAME']
+  delete process.env[env + 'PASSWORD']
+
+  expect(pointer.username).toStrictEqual(username)
+  expect(pointer.password).toStrictEqual(password)
+})
+
+it('should expose port as number', () => {
+  pointer = new Pointer(prefix, locator, options)
+
+  expect(pointer.port).toStrictEqual(Number(url.port))
 })
 
 it('should expose reference', () => {

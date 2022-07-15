@@ -8,13 +8,15 @@ declare namespace toa.pointer {
   }
 
   class Pointer {
-    protocol
-    host
-    port
-    hostname
-    path
-    reference
-    label     // safe for logging
+    protocol: string
+    host: string
+    port: number
+    hostname: string
+    path: string
+    username: string
+    password: string
+    reference: string
+    label: string     // safe for logging
   }
 
 }

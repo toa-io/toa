@@ -28,8 +28,10 @@ class Pointer {
 
     this.protocol = url.protocol
     this.hostname = url.hostname
-    this.port = url.port
+    this.port = Number(url.port)
     this.path = url.pathname
+    this.username = url.username
+    this.password = url.password
     this.reference = url.href
     this.label = label(url)
   }
