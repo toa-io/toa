@@ -31,3 +31,19 @@ describe('down', () => {
     expect(lower).toStrictEqual('foo-bar-baz')
   })
 })
+
+describe('capitalize', () => {
+  const capitalize = letters.capitalize
+
+  it('should be', () => {
+    expect(capitalize).toBeDefined()
+  })
+
+  it('should capitalize', () => {
+    const input = 'user name'
+    const capitalized = 'User name'
+    const output = capitalize(input)
+
+    expect(output).toStrictEqual(capitalized)
+  })
+})
