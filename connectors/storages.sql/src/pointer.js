@@ -12,6 +12,12 @@ class Pointer extends Base {
    */
   constructor (locator) {
     super(PREFIX, locator, OPTIONS)
+
+    const [, database, schema, table] = this.path.split('/')
+
+    this.database = database
+    this.schema = schema || locator.namespace
+    this.table = table || locator.name
   }
 }
 
