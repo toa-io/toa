@@ -38,7 +38,8 @@ Pointer annotation URIs must contain path following convention `/database/schema
 and schema are optional. Default values for `schema` and `table` are component's namespace and name
 respectively.
 
-> Namespace-wide or `default` values must not contain table name.
+> Namespace-wide or `default` values must not contain table name and `default` value must not
+> contain schema.
 
 ### Examples
 

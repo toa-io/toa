@@ -2,15 +2,15 @@
 
 const pointer = require('@toa.io/libraries/pointer')
 
+const { validate } = require('./.deployment/validate')
+
 /** @type {toa.deployment.dependency.Constructor} */
 const deployment = (instances, annotation) => {
-  if (annotation === undefined) throw new Error('SQL pointer annotation is required')
+  validate(annotation)
 
-  const options = { prefix }
-
-  return pointer.deployment(instances, annotation, options)
+  return pointer.deployment(instances, annotation, OPTIONS)
 }
 
-const prefix = 'storages-sql'
+const OPTIONS = { prefix: 'storages-sql' }
 
 exports.deployment = deployment
