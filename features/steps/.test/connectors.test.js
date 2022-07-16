@@ -17,7 +17,7 @@ describe('component', () => {
 
   it('should be', () => undefined)
 
-  it('should boot component', async () => {
+  it('should connect component', async () => {
     const COLLECTION = resolve(__dirname, '../.workspace/components/collection')
 
     /** @type {toa.features.Context} */
