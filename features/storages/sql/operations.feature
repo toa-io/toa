@@ -1,7 +1,7 @@
 Feature: SQL Storage Operations
 
   Background:
-    Given I have a SQL database developer
+    Given I have a PostgreSQL database developer
 
   Scenario: Create a new record in the PostgreSQL database
     Given the database has a structure for the sql.postgres component

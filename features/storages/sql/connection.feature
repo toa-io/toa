@@ -4,6 +4,5 @@ Feature: SQL Storage Connection
     Given I have a PostgreSQL database developer
 
   Scenario: Connect to PostgreSQL without exceptions
-    Given the database has a structure for the sql.postgres component
     When I boot sql.postgres component
     Then I disconnect

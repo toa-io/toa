@@ -1,7 +1,7 @@
 'use strict'
 
 const { cli } = require('./.connectors/cli')
-const { boot } = require('./.workspace/components')
+const { connect } = require('./.workspace/components')
 
 const { When, Then } = require('@cucumber/cucumber')
 
@@ -24,9 +24,7 @@ When('I boot {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await boot(reference)
-
-    await this.connector.connect()
+    this.connector = await connect(reference)
   })
 
 Then('I disconnect',

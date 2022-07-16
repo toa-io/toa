@@ -1,7 +1,9 @@
 'use strict'
 
-const { boot } = require('./boot')
+const { connect } = require('./connect')
 const { copy } = require('./copy')
+const { load } = require('./load')
 
-exports.boot = boot
+exports.connect = connect
 exports.copy = copy
+exports.load = load
