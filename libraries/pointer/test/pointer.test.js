@@ -63,21 +63,34 @@ it('should point to proxy', () => {
   expect(pointer.hostname).toStrictEqual(locator.hostname(prefix))
 })
 
-it('should expose credentials', () => {
-  const env = `TOA_${up(prefix)}_DEFAULT_`
-  const username = generate()
-  const password = generate()
+it('should resolve credentials', () => {
+  const check = (entry) => {
+    const env = `TOA_${up(prefix)}_${up(entry)}_`
+    const username = generate()
+    const password = generate()
 
-  process.env[env + 'USERNAME'] = username
-  process.env[env + 'PASSWORD'] = password
+    process.env[env + 'USERNAME'] = username
+    process.env[env + 'PASSWORD'] = password
 
-  pointer = new Pointer(prefix, locator, options)
+    pointer = new Pointer(prefix, locator, options)
 
-  delete process.env[env + 'USERNAME']
-  delete process.env[env + 'PASSWORD']
+    delete process.env[env + 'USERNAME']
+    delete process.env[env + 'PASSWORD']
 
-  expect(pointer.username).toStrictEqual(username)
-  expect(pointer.password).toStrictEqual(password)
+    expect(pointer.username).toStrictEqual(username)
+    expect(pointer.password).toStrictEqual(password)
+  }
+
+  // default resolution
+  check('default')
+
+  // namespace resolution
+  uris({ [locator.namespace]: 'pg://host0/db' })
+  check(locator.namespace)
+
+  // id resolution
+  uris({ [locator.id]: 'pg://host0/db' })
+  check(locator.label)
 })
 
 it('should expose port as number', () => {
