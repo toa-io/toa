@@ -4,6 +4,7 @@ const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
 
 const { Storage } = require('../src/storage')
+const { Migration } = require('../src/migration')
 const { Factory } = require('../src')
 
 /** @type {toa.sql.Factory} */
@@ -31,4 +32,10 @@ it('should create storage', () => {
 
   expect(storage).toBeDefined()
   expect(storage).toBeInstanceOf(Storage)
+})
+
+it('should create migration', () => {
+  const migration = factory.migration()
+
+  expect(migration).toBeInstanceOf(Migration)
 })
