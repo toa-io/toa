@@ -2,9 +2,10 @@
 
 const client = {
   withSchema: jest.fn(() => client),
-  select: jest.fn(() => client)
+  select: jest.fn(() => client),
+  insert: jest.fn(() => client)
 }
 
 const knex = jest.fn(() => client)
 
-exports.mock = { knex }
+exports.knex = knex

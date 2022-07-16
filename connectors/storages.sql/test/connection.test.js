@@ -5,9 +5,8 @@ const { Locator } = require('@toa.io/core')
 const { encode } = require('@toa.io/libraries/generic')
 const { Pointer } = require('../src/pointer')
 
-const fixtures = require('./connection.fixtures')
-const mock = fixtures.mock
-const knex = mock.knex
+const { knex } = require('./knex.mock')
+const mock = { knex }
 
 jest.mock('knex', () => mock.knex)
 
@@ -33,17 +32,30 @@ let pointer
 /** @type {toa.sql.Connection} */
 let connection
 
-beforeEach(() => {
-  const name = generate()
-  const namespace = generate()
+/** @type {import('knex').Knex} */
+let client
 
+beforeAll(async () => {
   process.env.TOA_STORAGES_SQL_POINTER = encode(annotation)
   process.env.TOA_STORAGES_SQL_DEFAULT_USERNAME = username
   process.env.TOA_STORAGES_SQL_DEFAULT_PASSWORD = password
+})
+
+beforeEach(async () => {
+  jest.clearAllMocks()
+
+  const name = generate()
+  const namespace = generate()
 
   locator = new Locator(name, namespace)
   pointer = new Pointer(locator)
   connection = new Connection(pointer)
+
+  await connection.connect()
+
+  expect(knex).toHaveBeenCalled()
+
+  client = knex.mock.results[0].value
 })
 
 it('should be', () => {
@@ -51,13 +63,7 @@ it('should be', () => {
 })
 
 describe('connection', () => {
-  beforeEach(async () => {
-    await connection.connect()
-  })
-
   it('should configure', () => {
-    expect(knex).toHaveBeenCalled()
-
     /** @type {import('knex').Knex.Config} */
     const config = knex.mock.calls[0][0]
 
@@ -66,9 +72,10 @@ describe('connection', () => {
 
     // connection
     const connection = /** @type {import('knex').Knex.PgConnectionConfig} */ config.connection
+    const hostname = locator.hostname(prefix)
 
     expect(connection).toBeDefined()
-    expect(connection.host).toStrictEqual(locator.hostname(prefix))
+    expect(connection.host).toStrictEqual(hostname)
     expect(connection.port).toStrictEqual(Number(url.port))
     expect(connection.user).toStrictEqual(username)
     expect(connection.password).toStrictEqual(password)
@@ -79,5 +86,19 @@ describe('connection', () => {
     const query = knex.mock.results[0].value
 
     expect(query.select).toHaveBeenCalledWith('1')
+  })
+})
+
+describe('insert', () => {
+  it('should be', () => {
+    expect(connection.insert).toBeDefined()
+  })
+
+  it('should call knex insert', async () => {
+    const entity = generate()
+
+    await connection.insert(entity)
+
+    expect(client.insert).toHaveBeenCalled()
   })
 })

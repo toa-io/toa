@@ -9,7 +9,11 @@ const { Connector } = require('@toa.io/core')
 class Connection extends Connector {
   /** @type {toa.sql.Pointer} */
   #pointer
+
+  /** @type {string} */
   #driver
+
+  /** @type {import('knex').Knex} */
   #client
 
   /**
@@ -29,6 +33,12 @@ class Connection extends Connector {
 
     // https://github.com/knex/knex/issues/1886
     await this.#client.select('1')
+  }
+
+  async insert (entity) {
+    await this.#client.insert(entity)
+
+    return true
   }
 
   #configure () {
