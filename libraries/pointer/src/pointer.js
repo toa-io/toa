@@ -24,8 +24,6 @@ class Pointer {
     const local = process.env.TOA_ENV === 'local'
     const url = local ? get.local(options.protocol) : get.env(prefix, locator)
 
-    if (options.validate !== undefined) options.validate(url)
-
     this.protocol = url.protocol
     this.hostname = url.hostname
     this.port = Number(url.port)

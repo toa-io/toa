@@ -8,12 +8,9 @@ declare namespace toa.pointer {
 
   namespace deployment {
 
-    type Validator = (uris: URIs) => void
-
     type Options = {
       prefix: string
       extensions?: string[]
-      validator?: Validator
     }
 
   }

@@ -189,25 +189,3 @@ describe('environment variables', () => {
     expect(mock.console.warn).toHaveBeenCalledWith(`Password for ${env} is not set`)
   })
 })
-
-describe('validate', () => {
-  it('should validate call validator', () => {
-    const message = generate()
-    const validate = jest.fn(() => { throw new Error(message) })
-
-    options.validate = validate
-
-    expect(() => new Pointer(prefix, locator, options)).toThrow(message)
-    expect(validate).toHaveBeenCalled()
-  })
-
-  it('should pass url to update', () => {
-    const path = '/' + generate()
-
-    options.validate = (url) => (url.pathname = path)
-
-    const pointer = new Pointer(prefix, locator, options)
-
-    expect(pointer.path).toStrictEqual(path)
-  })
-})
