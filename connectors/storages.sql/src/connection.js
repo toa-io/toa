@@ -32,7 +32,7 @@ class Connection extends Connector {
     this.#client = knex(config)
 
     // https://github.com/knex/knex/issues/1886
-    await this.#client.select('1')
+    await this.#client.raw('select 1')
   }
 
   async insert (entity) {
@@ -43,16 +43,15 @@ class Connection extends Connector {
 
   #configure () {
     const pointer = this.#pointer
-    const [, database] = pointer.path.split('/')
 
     return {
       client: this.#driver,
       connection: {
         host: pointer.hostname,
-        port: Number(pointer.port),
+        port: pointer.port,
         user: pointer.username,
         password: pointer.password,
-        database
+        database: pointer.database
       }
     }
   }

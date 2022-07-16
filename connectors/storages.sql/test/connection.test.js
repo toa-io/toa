@@ -85,7 +85,7 @@ describe('connection', () => {
   it('should run connection query', () => {
     const query = knex.mock.results[0].value
 
-    expect(query.select).toHaveBeenCalledWith('1')
+    expect(query.raw).toHaveBeenCalledWith('select 1')
   })
 })
 
