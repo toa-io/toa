@@ -19,7 +19,6 @@ class Storage extends Connector {
 
     this.#connection = connection
 
-    console.log('DEPENDS', connection)
     this.depends(connection)
   }
 
