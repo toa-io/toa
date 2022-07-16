@@ -12,6 +12,10 @@ it('should be', () => {
   expect(secrets).toBeDefined()
 })
 
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
 describe('store', () => {
   const store = secrets.store
 

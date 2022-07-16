@@ -12,6 +12,7 @@ const fixtures = require('./receiver.fixtures')
 let receiver, definition
 
 beforeEach(() => {
+  jest.clearAllMocks()
   definition = clone(fixtures.definition)
   receiver = new Receiver(fixtures.definition, fixtures.local, fixtures.bridge)
 })
