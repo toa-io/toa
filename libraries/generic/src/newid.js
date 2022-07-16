@@ -2,6 +2,7 @@
 
 const uuid = require('uuid').v4
 
+/** @type {toa.generic.Identify} */
 const newid = () => {
   const buffer = Buffer.allocUnsafe(16)
 
