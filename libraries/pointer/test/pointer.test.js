@@ -29,13 +29,11 @@ let pointer
 /** @type {URL} */
 let url
 
-const uris = (uris) => {
-  const json = JSON.stringify(uris)
-
-  process.env[`TOA_${up(prefix)}_POINTER`] = encode(json)
-}
+const uris = (uris) => (process.env[`TOA_${up(prefix)}_POINTER`] = encode(uris))
 
 beforeEach(() => {
+  jest.clearAllMocks()
+
   const name = generate()
   const namespace = generate()
 
@@ -122,8 +120,7 @@ describe('environment variables', () => {
   const username = generate()
   const password = generate()
 
-  const type = up(prefix)
-  const env = `TOA_${type}_DEFAULT`
+  const env = `TOA_${up(prefix)}_DEFAULT`
 
   let set
   let unset
@@ -131,15 +128,15 @@ describe('environment variables', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    set = (name, value) => {
-      const key = env + '_' + up(name)
+    set = (name, value, prefix = env) => {
+      const key = prefix + '_' + up(name)
 
       process.env[key] = value
       url[name] = value
     }
 
-    unset = (name) => {
-      const key = env + '_' + up(name)
+    unset = (name, prefix = env) => {
+      const key = prefix + '_' + up(name)
 
       delete process.env[key]
       url[name] = ''
@@ -187,5 +184,21 @@ describe('environment variables', () => {
 
     expect(pointer).toBeDefined()
     expect(mock.console.warn).toHaveBeenCalledWith(`Password for ${env} is not set`)
+  })
+
+  it('should not warn it credentials are set', () => {
+    uris({ [locator.id]: 'amqp://host0' })
+
+    const username = generate()
+    const password = generate()
+    const env = `TOA_${up(prefix)}_${locator.uppercase}`
+
+    set('username', username, env)
+    set('password', password, env)
+
+    const pointer = new Pointer(prefix, locator, options)
+
+    expect(pointer).toBeDefined()
+    expect(mock.console.warn).not.toHaveBeenCalled()
   })
 })

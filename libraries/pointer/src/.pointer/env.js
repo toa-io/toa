@@ -40,7 +40,7 @@ const env = (prefix, locator) => {
 const convert = (entry) => {
   const [namespace, name] = entry.toUpperCase().split('.')
 
-  return namespace + concat('-', name)
+  return namespace + concat('_', name)
 }
 
 exports.env = env
