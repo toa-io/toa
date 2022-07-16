@@ -54,7 +54,7 @@ declare namespace toa.core.storages {
 
     database(name: string): Promise<void>
 
-    table(name: string, locator: Locator, schema: Object): Promise<void>
+    table(database: string, locator: Locator, schema: Object): Promise<void>
 
   }
 
@@ -62,7 +62,7 @@ declare namespace toa.core.storages {
 
     storage(locator: Locator): Storage
 
-    migration(): Migration
+    migration(driver?: string): Migration
 
   }
 
@@ -72,3 +72,4 @@ export type Entity = toa.core.storages.Entity
 export type Factory = toa.core.storages.Factory
 export type Storage = toa.core.storages.Storage
 export type Query = toa.core.storages.Query
+export type Migration = toa.core.storages.Migration
