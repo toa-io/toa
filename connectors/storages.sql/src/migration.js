@@ -22,6 +22,10 @@ class Migration {
     this.#driver = client
   }
 
+  async disconnect () {
+    await this.#client.destroy()
+  }
+
   async database (database) {
     try {
       await this.#client.raw(`create database ${database}`)

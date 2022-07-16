@@ -12,6 +12,10 @@ jest.mock('knex', () => mock.knex)
 
 const { Connection } = require('../src/connection')
 
+it('should be', () => {
+  expect(Connection).toBeDefined()
+})
+
 const prefix = 'storages-sql'
 const username = generate()
 const password = generate()
@@ -58,10 +62,6 @@ beforeEach(async () => {
   client = knex.mock.results[0].value
 })
 
-it('should be', () => {
-  expect(Connection).toBeDefined()
-})
-
 describe('connection', () => {
   it('should configure', () => {
     /** @type {import('knex').Knex.Config} */
@@ -83,9 +83,13 @@ describe('connection', () => {
   })
 
   it('should run connection query', () => {
-    const query = knex.mock.results[0].value
+    expect(client.raw).toHaveBeenCalledWith('select 1')
+  })
 
-    expect(query.raw).toHaveBeenCalledWith('select 1')
+  it('should disconnect', async () => {
+    await connection.disconnect()
+
+    expect(client.destroy).toHaveBeenCalled()
   })
 })
 

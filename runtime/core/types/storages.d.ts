@@ -52,6 +52,8 @@ declare namespace toa.core.storages {
 
   interface Migration {
 
+    disconnect(): Promise<void>
+
     database(name: string): Promise<void>
 
     table(database: string, locator: Locator, schema: Object): Promise<void>

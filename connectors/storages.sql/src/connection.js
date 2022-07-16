@@ -35,6 +35,10 @@ class Connection extends Connector {
     await this.#client.raw('select 1')
   }
 
+  async disconnection () {
+    await this.#client.destroy()
+  }
+
   async insert (entity) {
     await this.#client.insert(entity)
 
