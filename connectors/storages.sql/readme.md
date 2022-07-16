@@ -7,10 +7,14 @@ sql: pg://host0.example.com/production
 ```
 
 ---
-> ![Important](https://img.shields.io/badge/Important-red)<br/>
-> Integrations only with PostgreSQL and Amazon Redshift are tested.
 
-Implemented using [Knex](https://knexjs.org), therefore supports the same set of databases.
+## Supported Databases
+
+Implemented using [Knex](https://knexjs.org), therefore could support same databases.
+
+> ![Important](https://img.shields.io/badge/Important-red)<br/>
+> Integrations only with PostgreSQL and Amazon Redshift are tested and `pg` is the only driver
+> installed.
 
 ## Annotation
 
@@ -27,8 +31,6 @@ Pointer annotation URIs must contain protocol identifying the driver to access t
 | `tedious:`   | MSSQL                                       |
 
 See [Knex documentation](https://knexjs.org/guide/) for details.
-
-> `pg` and `mysql` drivers are pre-installed.
 
 ### Database, Schema, Table
 
