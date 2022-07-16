@@ -13,7 +13,7 @@ jest.mock('@toa.io/boot', () => mock.boot)
 require('../connectors')
 
 describe('component', () => {
-  const step = gherkin.steps.Wh('I boot component {component}')
+  const step = gherkin.steps.Wh('I boot {component} component')
 
   it('should be', () => undefined)
 

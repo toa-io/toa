@@ -18,7 +18,7 @@ When('I debug command {word}',
     this.connector = await handler(argv)
   })
 
-When('I boot component {component}',
+When('I boot {component} component',
   /**
    * @param {string} reference
    * @this {toa.features.Context}

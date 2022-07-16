@@ -1,8 +1,9 @@
 Feature: SQL Storage Connection
 
-  Scenario: Connect to Postgres
+  Background:
+    Given I have a PostgreSQL database developer
 
-    Component boot should not throw exceptions
-
-    When I boot component sql.postgres
+  Scenario: Connect to PostgreSQL without exceptions
+    Given the database has a structure for the sql.postgres component
+    When I boot sql.postgres component
     Then I disconnect
