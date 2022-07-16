@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random, letters: { up, down }, encode } = require('@toa.io/libraries/generic')
+const { encode, random, letters: { up, down } } = require('@toa.io/libraries/generic')
 const mock = require('@toa.io/libraries/mock')
 
 const { deployment } = require('../')
@@ -36,6 +36,17 @@ it('should throw if hostname is omitted', () => {
   const annotation = { default: 'amqps:///' }
 
   expect(() => deployment(instances, annotation, options)).toThrow('must contain hostname')
+})
+
+it('should consider string annotation as default', () => {
+  const annotation = 'pg://host0'
+
+  const output = deployment(instances, annotation, options)
+
+  const name = `TOA_${up(prefix)}_POINTER`
+  const value = encode({ default: annotation })
+
+  expect(output.variables.global).toStrictEqual(expect.arrayContaining([{ name, value }]))
 })
 
 describe('proxies', () => {
