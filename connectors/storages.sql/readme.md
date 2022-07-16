@@ -41,6 +41,16 @@ respectively.
 > Namespace-wide or `default` values must not contain table name and `default` value must not
 > contain schema.
 
+#### Local Environment
+
+On local environment protocol is `pg:`. Database name can be set by `TOA_STORAGES_SQL_DATABASE`
+environment variable. Also see
+Pointer's [local environment](/libraries/pointer/readme.md#local-environment).
+
+> PostgreSQL is using `username`'s value as default name for the database and Pointer is
+> using `developer` as default username on local environment. That is, default database name on
+> local environment is `developer`.
+
 ### Examples
 
 ```yaml

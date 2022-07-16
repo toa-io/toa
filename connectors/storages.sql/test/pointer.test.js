@@ -88,6 +88,20 @@ describe('resolve', () => {
     expect(pointer.table).toStrictEqual(locator.name)
   })
 
+  it('should use TOA_STORAGES_SQL_DATABASE as default database name', () => {
+    const database = generate()
+
+    process.env.TOA_ENV = 'local'
+    process.env.TOA_STORAGES_SQL_DATABASE = database
+
+    const pointer = new Pointer(locator)
+
+    delete process.env.TOA_ENV
+    delete process.env.TOA_STORAGES_SQL_DATABASE
+
+    expect(pointer.database).toStrictEqual(database)
+  })
+
   const key = 'TOA_STORAGES_SQL_POINTER'
 
   const annotate = (entry, value) => {

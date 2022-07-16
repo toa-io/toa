@@ -15,7 +15,7 @@ class Pointer extends Base {
 
     const [, database, schema, table] = this.path.split('/')
 
-    this.database = database
+    this.database = database || process.env.TOA_STORAGES_SQL_DATABASE
     this.schema = schema || locator.namespace
     this.table = table || locator.name
   }
