@@ -50,8 +50,20 @@ declare namespace toa.core.storages {
     upsert?(query: Query, changeset: Object, insert: Entity): Promise<Entity>
   }
 
+  interface Migration {
+
+    database(name: string): Promise<void>
+
+    table(name: string, locator: Locator, schema: Object): Promise<void>
+
+  }
+
   interface Factory {
+
     storage(locator: Locator): Storage
+
+    migration(): Migration
+
   }
 
 }
