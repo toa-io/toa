@@ -16,8 +16,8 @@ class Factory {
     return new Storage(connection)
   }
 
-  migration () {
-    return new Migration()
+  migration (driver) {
+    return new Migration(driver)
   }
 }
 

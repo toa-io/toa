@@ -16,7 +16,7 @@ let migration
 
 let sql
 
-const client = 'pg'
+const driver = generate()
 const database = generate()
 
 const connection = {
@@ -26,8 +26,8 @@ const connection = {
 }
 
 beforeEach(() => {
-  migration = new Migration()
-  expect(knex).toHaveBeenCalledWith({ client, connection })
+  migration = new Migration(driver)
+  expect(knex).toHaveBeenCalledWith({ client: driver, connection })
 
   sql = knex.mock.results[0].value
   expect(sql).toBeDefined()

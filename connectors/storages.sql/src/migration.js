@@ -9,7 +9,10 @@ class Migration {
   /** @type {import('knex').Knex} */
   #client
 
-  constructor () {
+  /**
+   * @param {string} client
+   */
+  constructor (client) {
     this.#client = knex({ client, connection })
   }
 
@@ -26,8 +29,6 @@ class Migration {
   async table (name, locator, schema) {
   }
 }
-
-const client = 'pg'
 
 const connection = {
   user: 'developer',

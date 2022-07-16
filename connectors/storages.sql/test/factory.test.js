@@ -35,7 +35,7 @@ it('should create storage', () => {
 })
 
 it('should create migration', () => {
-  const migration = factory.migration()
+  const migration = factory.migration('pg')
 
   expect(migration).toBeInstanceOf(Migration)
 })
