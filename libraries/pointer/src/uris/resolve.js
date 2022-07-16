@@ -22,7 +22,7 @@ const resolve = (locator, uris) => {
 
   const url = new URL(uri)
 
-  if (url.hostname === '') throw new Error(`URI for '${locator.id}' must contain hostname`)
+  if (url.hostname === '') throw new Error(`URI annotation for '${locator.id}' must contain hostname`)
 
   return { url, entry }
 }
