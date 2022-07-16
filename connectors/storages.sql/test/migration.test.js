@@ -1,11 +1,15 @@
 'use strict'
 
+const { generate } = require('randomstring')
+const { Locator } = require('@toa.io/core')
+
 const { knex } = require('./knex.mock')
 const mock = { knex }
 
 jest.mock('knex', () => mock.knex)
+
+const fixtures = require('./migration.fixtures')
 const { Migration } = require('../src/migration')
-const { generate } = require('randomstring')
 
 it('should be', () => {
   expect(Migration).toBeDefined()
@@ -26,6 +30,8 @@ const connection = {
 }
 
 beforeEach(() => {
+  jest.clearAllMocks()
+
   migration = new Migration(driver)
   expect(knex).toHaveBeenCalledWith({ client: driver, connection })
 
@@ -44,15 +50,88 @@ describe('database', () => {
     expect(sql.raw).toHaveBeenCalledWith(`create database ${database}`)
   })
 
+  it('should reconnect to created database', async () => {
+    jest.clearAllMocks()
+
+    await migration.database(database)
+
+    const reconnect = { ...connection, database }
+
+    expect(sql.destroy).toHaveBeenCalled()
+    expect(knex).toHaveBeenCalledWith({ client: driver, connection: reconnect })
+  })
+
   it('should not throw if already exists', async () => {
     sql.raw.mockImplementationOnce(() => {
-      const e = new Error(`create database ${database} - database "${database}" already exists`)
+      const e = new Error()
 
+      // https://www.postgresql.org/docs/current/errcodes-appendix.html
       e.code = '42P04'
 
       throw e
     })
 
     await expect(migration.database(database)).resolves.not.toThrow()
+  })
+})
+
+describe('table', () => {
+  it('should be', () => {
+    expect(migration.table).toBeDefined()
+  })
+
+  /** @type {toa.core.Locator} */
+  let locator
+
+  const call = () => migration.table(database, locator, fixtures.schema)
+
+  beforeEach(() => {
+    const name = generate()
+    const namespace = generate()
+
+    locator = new Locator(name, namespace)
+  })
+
+  it('should create table', async () => {
+    await call()
+
+    const pieces = [
+      `create table "${locator.namespace}"."${locator.name}"`,
+      'id char(32) primary key',
+      '_version integer',
+      'foo integer',
+      'bar varchar'
+    ]
+
+    expect(sql.raw).toHaveBeenCalledWith(`create schema "${locator.namespace}"`)
+
+    for (const piece of pieces) {
+      expect(sql.raw).toHaveBeenCalledWith(expect.stringContaining(piece))
+    }
+  })
+
+  it('should not throw if schema exists', async () => {
+    sql.raw.mockImplementationOnce(() => {
+      const error = new Error()
+
+      error.code = '42P06'
+
+      throw error
+    })
+
+    await expect(call()).resolves.not.toThrow()
+  })
+
+  it('should not throw if table exists', async () => {
+    sql.raw.mockImplementationOnce(() => null)
+    sql.raw.mockImplementationOnce(() => {
+      const error = new Error()
+
+      error.code = '42P07'
+
+      throw error
+    })
+
+    await expect(call()).resolves.not.toThrow()
   })
 })
