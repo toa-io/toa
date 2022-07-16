@@ -22,7 +22,7 @@ declare namespace toa.pointer {
   type URIs = {
     default?: string
     [key: string]: string | uris.Node
-  }
+  } | string
 
 }
 
