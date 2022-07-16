@@ -6,6 +6,7 @@ Feature: SQL Storage Operations
   Scenario: Create a new record in the PostgreSQL database
     Given the database has a structure for the sql.postgres component
     When I boot sql.postgres component
+    And I disconnect
     And invoke command transit with:
       """
       input:

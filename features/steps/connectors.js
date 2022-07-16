@@ -28,6 +28,11 @@ When('I boot {component} component',
   })
 
 Then('I disconnect',
+  /**
+   * @this {toa.features.Context}
+   */
   async function () {
     await this.connector.disconnect()
+
+    if (this.migration) await this.migration.disconnect()
   })
