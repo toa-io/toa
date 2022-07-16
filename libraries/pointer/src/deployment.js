@@ -3,9 +3,9 @@
 const declare = require('./.deployment')
 
 /** @type {toa.pointer.Deployment} */
-const deployment = (prefix, instances, uris, extensions = undefined) => {
-  const proxies = declare.proxies(prefix, instances, uris, extensions)
-  const global = declare.variables(prefix, uris)
+const deployment = (instances, uris, options) => {
+  const proxies = declare.proxies(instances, uris, options)
+  const global = declare.variables(uris, options.prefix)
   const variables = { global }
 
   return { proxies, variables }

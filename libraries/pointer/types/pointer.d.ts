@@ -1,10 +1,7 @@
 declare namespace toa.pointer {
 
-  type Validator = (url: URL) => void
-
   type Options = {
     protocol: string    // for local environment
-    validate?: Validator
   }
 
   class Pointer {

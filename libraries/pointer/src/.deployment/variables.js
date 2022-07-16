@@ -3,11 +3,11 @@
 const declare = require('./.variables')
 
 /**
- * @param {string} prefix
  * @param {toa.pointer.URIs} uris
+ * @param {string} prefix
  * @returns {toa.deployment.dependency.Variable[]}
  */
-const variables = (prefix, uris) => {
+const variables = (uris, prefix) => {
   /** @type {toa.deployment.dependency.Variable[]} */
   const variables = []
   const pointer = declare.pointer(prefix, uris)

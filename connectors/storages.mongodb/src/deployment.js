@@ -10,9 +10,10 @@ const connectors = require('@toa.io/libraries/pointer')
 const deployment = (instances, annotation) => {
   if (annotation === undefined) throw new Error('MongoDB URI annotation is required')
 
-  return connectors.deployment(PREFIX, instances, annotation)
+  return connectors.deployment(instances, annotation, OPTIONS)
 }
 
-const PREFIX = 'storages-mongodb'
+/** @type {toa.pointer.deployment.Options} */
+const OPTIONS = { prefix: 'storages-mongodb' }
 
 exports.deployment = deployment

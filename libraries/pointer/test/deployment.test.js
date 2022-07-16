@@ -6,16 +6,20 @@ const mock = require('@toa.io/libraries/mock')
 
 const { deployment } = require('../')
 
-const PREFIX = 'foo-bar'
+const prefix = 'foo-bar'
 
 /** @type {toa.norm.context.dependencies.Instance[]} */
 let instances
+
+/** @type {toa.pointer.deployment.Options} */
+let options
 
 /** @returns {URL} */
 const gen = () => new URL('protocol://host-' + generate() + ':' + (random(1000) + 1000))
 
 beforeEach(() => {
   instances = mock.dependencies.instances()
+  options = { prefix }
 })
 
 it('should be', () => {
@@ -25,13 +29,13 @@ it('should be', () => {
 it('should throw if protocol is omitted', () => {
   const annotation = { default: 'no-protocol' }
 
-  expect(() => deployment(PREFIX, instances, annotation)).toThrow('Invalid URL')
+  expect(() => deployment(instances, annotation, options)).toThrow('Invalid URL')
 })
 
 it('should throw if hostname is omitted', () => {
   const annotation = { default: 'amqps:///' }
 
-  expect(() => deployment(PREFIX, instances, annotation)).toThrow('must contain hostname')
+  expect(() => deployment(instances, annotation, options)).toThrow('must contain hostname')
 })
 
 describe('proxies', () => {
@@ -41,10 +45,10 @@ describe('proxies', () => {
 
     /** @returns {toa.deployment.dependency.Proxy[]} */
     const expected = instances.map((instance) => ({
-      name: instance.locator.hostname(PREFIX), target: url.hostname
+      name: instance.locator.hostname(prefix), target: url.hostname
     }))
 
-    const output = deployment(PREFIX, instances, annotation)
+    const output = deployment(instances, annotation, options)
 
     expect(output.proxies).toStrictEqual(expect.arrayContaining(expected))
   })
@@ -58,10 +62,10 @@ describe('proxies', () => {
       const target = url.hostname
 
       annotation[instance.locator.id] = url.href
-      expected.push({ name: instance.locator.hostname(PREFIX), target })
+      expected.push({ name: instance.locator.hostname(prefix), target })
     }
 
-    const output = deployment(PREFIX, instances, annotation)
+    const output = deployment(instances, annotation, options)
 
     expect(output.proxies).toStrictEqual(expect.arrayContaining(expected))
   })
@@ -79,12 +83,14 @@ describe('proxies', () => {
       annotation[extension] = url.href
 
       expected.push({
-        name: `${PREFIX}-${extension}`,
+        name: `${prefix}-${extension}`,
         target
       })
     }
 
-    const output = deployment(PREFIX, instances, annotation, extensions)
+    options.extensions = extensions
+
+    const output = deployment(instances, annotation, options)
 
     expect(output.proxies).toStrictEqual(expected)
   })
@@ -95,10 +101,10 @@ describe('variables', () => {
     const annotation = { default: 'amqps://host0' }
     const json = JSON.stringify(annotation)
     const value = encode(json)
-    const output = deployment(PREFIX, instances, annotation)
+    const output = deployment(instances, annotation, options)
 
     expect(output.variables.global).toStrictEqual(expect.arrayContaining([{
-      name: `TOA_${up(PREFIX)}_POINTER`,
+      name: `TOA_${up(prefix)}_POINTER`,
       value
     }]))
   })
@@ -113,8 +119,8 @@ describe('variables', () => {
 
     const expected = []
 
-    const env = `TOA_${up(PREFIX)}_`
-    const sec = `toa-${down(PREFIX)}-`
+    const env = `TOA_${up(prefix)}_`
+    const sec = `toa-${down(prefix)}-`
 
     for (const key of Object.keys(annotation)) {
       const label = key.replaceAll('.', '-').toLowerCase()
@@ -130,7 +136,7 @@ describe('variables', () => {
       }
     }
 
-    const output = deployment(PREFIX, instances, annotation)
+    const output = deployment(instances, annotation, options)
 
     expect(output.variables.global).toStrictEqual(expect.arrayContaining(expected))
   })

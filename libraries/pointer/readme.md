@@ -74,13 +74,13 @@ See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
 ### Custom Extensions
 
 Packages using Pointer Annotation may use or require additional properties.
-See [Custom Extensions Deployment](#custom-extensions-deployment) below.
+See [Deployment Extensions](#extensions) below.
 
 ## Deployment
 
-Deployment function builds a set of proxies corresponding to
-the [Annotation](#annotation) and the [package prefix](#pointer-class), and a global[^1]
-variables: containing Annotation and a set of variables for pointer credentials.
+Deployment function builds a set of proxies corresponding to the [Annotation](#annotation) and
+context components utilizing the package , and a global[^1] variables: containing Annotation and a
+set of variables for pointer credentials.
 
 See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
 
@@ -112,7 +112,7 @@ $ toa conceal bindings-amqp-dummies-dummy password iluvtests
 
 See [`toa conceal`](../../runtime/cli/readme.md#conceal).
 
-### Custom Extensions Deployment
+### Extensions
 
 For each custom extension additional proxy is being deployed.
 

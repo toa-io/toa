@@ -5,34 +5,36 @@ const { resolve } = require('../uris')
 const { proxy: declare } = require('./proxy')
 
 /**
- * @param {string} prefix
  * @param {toa.norm.context.dependencies.Instance[]} instances
  * @param {toa.pointer.URIs} uris
- * @param {string[]} extensions
+ * @param {toa.pointer.deployment.Options} options
  * @returns {toa.deployment.dependency.Proxy[]}
  */
-const proxies = (prefix, instances, uris, extensions) => {
+const proxies = (instances, uris, options) => {
   const proxies = []
 
   for (const instance of instances) {
     const { url } = resolve(instance.locator, uris)
-    const proxy = declare(prefix, instance, url)
+    const proxy = declare(options.prefix, instance, url)
 
     proxies.push(proxy)
   }
 
-  if (extensions !== undefined) extend(proxies, extensions, uris, prefix)
+  extend(proxies, uris, options)
 
   return proxies
 }
 
 /**
  * @param {toa.deployment.dependency.Proxy[]} proxies
- * @param {string[]} extensions
  * @param {toa.pointer.URIs} uris
- * @param {string} prefix
+ * @param {toa.pointer.deployment.Options} options
  */
-const extend = (proxies, extensions, uris, prefix) => {
+const extend = (proxies, uris, options) => {
+  const { prefix, extensions } = options
+
+  if (extensions === undefined) return
+
   for (const extension of extensions) {
     const locator = new Locator(extension)
     const instance = { locator }

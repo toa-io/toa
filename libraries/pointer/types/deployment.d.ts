@@ -6,10 +6,19 @@ import { URIs } from './uris'
 
 declare namespace toa.pointer {
 
-  type Deployment = (prefix: string,
-                     instances: dependencies.Instance[],
-                     uris: URIs,
-                     extensions?: string[])
+  namespace deployment {
+
+    type Validator = (uris: URIs) => void
+
+    type Options = {
+      prefix: string
+      extensions?: string[]
+      validator?: Validator
+    }
+
+  }
+
+  type Deployment = (instances: dependencies.Instance[], uris: URIs, options: deployment.Options)
     => dependency.Declaration
 
 }
