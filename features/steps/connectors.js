@@ -36,7 +36,7 @@ Then('I disconnect',
   async function () {
     await this.connector.disconnect()
 
-    if (this.migration) await this.migration.disconnect()
+    if (this.storage.migration) await this.storage.migration.disconnect()
   })
 
 When('I invoke {word} with:',
@@ -49,5 +49,11 @@ When('I invoke {word} with:',
     const runtime = /** @type {toa.core.Runtime} */ this.connector
     const request = parse(yaml)
 
-    await runtime.invoke(endpoint, request)
+    const { exception } = await runtime.invoke(endpoint, request)
+
+    if (exception !== undefined) {
+      console.error(exception)
+
+      throw new Error(exception.message)
+    }
   })

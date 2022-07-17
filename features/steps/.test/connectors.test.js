@@ -48,12 +48,14 @@ describe('When I invoke {word} with:', () => {
   /** @type {toa.features.Context} */
   let context
 
+  let connector
+
   beforeEach(() => {
-    const connector = /** @type {toa.core.Runtime} */ {
-      invoke: jest.fn(() => generate())
+    connector = {
+      invoke: jest.fn(() => ({ output: generate() }))
     }
 
-    context = { connector }
+    context = { connector: /** @type {toa.core.Runtime} */ connector }
   })
 
   it('should invoke', async () => {
@@ -63,8 +65,14 @@ describe('When I invoke {word} with:', () => {
 
     await step.call(context, endpoint, yaml)
 
-    const connector = /** @type {toa.core.Runtime} */ context.connector
-
     expect(connector.invoke).toHaveBeenCalledWith(endpoint, request)
+  })
+
+  it('should throw if exception', async () => {
+    const exception = { message: generate() }
+
+    connector.invoke.mockImplementationOnce(() => ({ exception }))
+
+    await expect(step.call(context, 'any', {})).rejects.toThrow(exception.message)
   })
 })

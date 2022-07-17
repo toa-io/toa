@@ -80,21 +80,25 @@ describe('Given the database has a structure for the {component} component', () 
     disconnect: jest.fn()
   }
 
+  let component
+
+  beforeAll(async () => {
+    component = await load('sql.postgres')
+  })
+
   beforeEach(() => {
     context.storage = { driver: generate(), database, migration }
   })
 
   it('should create table', async () => {
-    const component = await load('sql.postgres')
-
     await step.call(context, component.locator.id)
 
-    expect(context.storage.migration.table)
-      .toHaveBeenCalledWith(context.storage.database, component.locator, component.entity.schema)
+    expect(context.storage.migration.table).toHaveBeenCalledWith(
+      context.storage.database, component.locator, component.entity.schema, true
+    )
   })
 
   it('should update set table in context', async () => {
-    const component = await load('sql.postgres')
     const locator = component.locator
 
     await step.call(context, locator.id)
@@ -129,6 +133,7 @@ describe('Then the table must contain rows:', () => {
 
   it('should find rows', async () => {
     knex.result([{}])
+
     await step.call(context, data)
 
     const rows = data.rows()
@@ -149,6 +154,7 @@ describe('Then the table must contain rows:', () => {
     expect(sql.from).toHaveBeenCalledWith(context.storage.table)
     expect(sql.from).toHaveBeenCalledTimes(rows.length)
     expect(sql.select).toHaveBeenCalledTimes(rows.length)
+    expect(sql.destroy).toHaveBeenCalled()
 
     for (const row of rows) {
       expect(sql.where).toHaveBeenCalledWith({ foo: row[0], bar: row[1] })

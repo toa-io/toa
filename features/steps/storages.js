@@ -44,7 +44,7 @@ Given('the database has a structure for the {component} component',
     const component = await load(reference)
 
     this.storage.table = await this.storage.migration.table(
-      this.storage.database, component.locator, component.entity.schema
+      this.storage.database, component.locator, component.entity.schema, true
     )
   })
 
@@ -81,5 +81,5 @@ Then('the table must contain rows:',
       assert.equal(records.length, 1, `multiple rows found ${row}`)
     }
 
-    // sql.destroy()
+    await sql.destroy()
   })
