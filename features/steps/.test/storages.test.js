@@ -1,15 +1,20 @@
 'use strict'
 
+const { AssertionError } = require('assert')
 const { generate } = require('randomstring')
 const { load } = require('../.workspace/components')
 
+const { knex } = require('@toa.io/storages.sql/test/knex.mock')
 const { gherkin } = require('@toa.io/libraries/mock')
 const fixtures = require('./storages.fixtures')
-const mock = { gherkin, sql: fixtures.mock.sql }
+const mock = { gherkin, sql: fixtures.mock.sql, knex }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/storages.sql', () => mock.sql)
+jest.mock('knex', () => mock.knex)
+
 require('../storages.js')
+const { random } = require('../../../libraries/generic')
 
 it('should be', () => undefined)
 
@@ -54,50 +59,138 @@ describe('Given I have a {storage} database {word}', () => {
 
     const migration = used()
 
-    expect(context.database).toStrictEqual(database)
-    expect(context.migration).toStrictEqual(migration)
+    expect(context.storage.driver).toStrictEqual('pg')
+    expect(context.storage.database).toStrictEqual(database)
+    expect(context.storage.migration).toStrictEqual(migration)
   })
 
-  describe('Given the database has a structure for the {component} component', () => {
-    const step = gherkin.steps.Gi('the database has a structure for the {component} component')
-
-    it('should be', () => undefined)
-
-    const database = generate()
-
-    beforeEach(() => {
-      context.database = database
-      context.migration = { table: jest.fn(), database: jest.fn() }
-    })
-
-    it('should create table', async () => {
-      const component = await load('sql.postgres')
-
-      await step.call(context, component.locator.id)
-
-      expect(context.migration.table)
-        .toHaveBeenCalledWith(context.database, component.locator, component.entity.schema)
-    })
-  })
-
-  /**
-   * @param {string} [driver]
-   * @returns {toa.core.storages.Migration}
-   */
-  const used = (driver = undefined) => {
-    expect(mock.sql.Factory).toHaveBeenCalledWith()
-
-    const factory = mock.sql.Factory.mock.results[0].value
-
-    expect(factory).toBeDefined()
-    expect(factory.migration).toHaveBeenCalled()
-
-    if (driver !== undefined) expect(factory.migration).toHaveBeenCalledWith(driver)
-
-    const migration = factory.migration.mock.results[0].value
-
-    expect(migration).toBeDefined()
-
-    return migration
-  }
 })
+
+describe('Given the database has a structure for the {component} component', () => {
+  const step = gherkin.steps.Gi('the database has a structure for the {component} component')
+
+  it('should be', () => undefined)
+
+  const database = generate()
+  const table = generate()
+
+  const migration = /** @type {toa.core.storages.Migration} */ {
+    table: jest.fn(() => table),
+    database: jest.fn(),
+    disconnect: jest.fn()
+  }
+
+  beforeEach(() => {
+    context.storage = { driver: generate(), database, migration }
+  })
+
+  it('should create table', async () => {
+    const component = await load('sql.postgres')
+
+    await step.call(context, component.locator.id)
+
+    expect(context.storage.migration.table)
+      .toHaveBeenCalledWith(context.storage.database, component.locator, component.entity.schema)
+  })
+
+  it('should update set table in context', async () => {
+    const component = await load('sql.postgres')
+    const locator = component.locator
+
+    await step.call(context, locator.id)
+
+    expect(context.storage.table).toStrictEqual(table)
+  })
+})
+
+describe('Then the table must contain rows:', () => {
+  const step = gherkin.steps.Th('the table must contain rows:')
+
+  it('should be', () => undefined)
+
+  /** @type {toa.mock.gherkin.Table} */
+  let data
+
+  /** @type {toa.features.Context} */
+  let context
+
+  beforeEach(() => {
+    const rows = [['foo', 'bar']]
+
+    for (let i = 0; i < random(3) + 1; i++) rows.push([generate(), generate()])
+
+    data = gherkin.table(rows)
+
+    /** @type {toa.features.context.Storage} */
+    const storage = { driver: generate(), database: generate(), table: generate() }
+
+    context = { storage }
+  })
+
+  it('should find rows', async () => {
+    knex.result([{}])
+    await step.call(context, data)
+
+    const rows = data.rows()
+    const client = context.storage.driver
+    const connection = {
+      user: 'developer',
+      password: 'secret',
+      database: context.storage.database
+    }
+
+    const config = { client, connection }
+
+    expect(knex).toHaveBeenCalledWith(config)
+
+    const sql = knex.mock.results[0].value
+
+    expect(rows.length > 0).toStrictEqual(true)
+    expect(sql.from).toHaveBeenCalledWith(context.storage.table)
+    expect(sql.from).toHaveBeenCalledTimes(rows.length)
+    expect(sql.select).toHaveBeenCalledTimes(rows.length)
+
+    for (const row of rows) {
+      expect(sql.where).toHaveBeenCalledWith({ foo: row[0], bar: row[1] })
+    }
+  })
+
+  it('should pass if found', async () => {
+    knex.result([{}])
+
+    await step.call(context, data)
+  })
+
+  it('should fail if not found', async () => {
+    knex.result([])
+
+    await expect(step.call(context, data)).rejects.toThrow(AssertionError)
+  })
+
+  it('should fail if multiple found', async () => {
+    knex.result([{}, {}])
+
+    await expect(step.call(context, data)).rejects.toThrow(AssertionError)
+  })
+})
+
+/**
+ * @param {string} [driver]
+ * @returns {toa.core.storages.Migration}
+ */
+const used = (driver = undefined) => {
+  expect(mock.sql.Factory).toHaveBeenCalledWith()
+
+  const factory = mock.sql.Factory.mock.results[0].value
+
+  expect(factory).toBeDefined()
+  expect(factory.migration).toHaveBeenCalled()
+
+  if (driver !== undefined) expect(factory.migration).toHaveBeenCalledWith(driver)
+
+  const migration = factory.migration.mock.results[0].value
+
+  expect(migration).toBeDefined()
+
+  return migration
+}

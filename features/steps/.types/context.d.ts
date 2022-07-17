@@ -3,6 +3,17 @@ import type { Migration } from '@toa.io/core/types/storages'
 
 declare namespace toa.features {
 
+  namespace context {
+
+    type Storage = {
+      driver: string
+      database?: string
+      table?: string
+      migration?: Migration
+    }
+
+  }
+
   type Context = {
     cwd?: string
     stdout?: string
@@ -11,8 +22,7 @@ declare namespace toa.features {
     stderrLines?: string[]
     aborted?: boolean
     connector?: Connector
-    database?: string
-    migration?: Migration
+    storage?: context.Storage
   }
 
 }

@@ -1,5 +1,7 @@
 'use strict'
 
+const { parse } = require('@toa.io/libraries/yaml')
+
 const { cli } = require('./.connectors/cli')
 const { connect } = require('./.workspace/components')
 
@@ -35,4 +37,17 @@ Then('I disconnect',
     await this.connector.disconnect()
 
     if (this.migration) await this.migration.disconnect()
+  })
+
+When('I invoke {word} with:',
+  /**
+   * @param {string} endpoint
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, yaml) {
+    const runtime = /** @type {toa.core.Runtime} */ this.connector
+    const request = parse(yaml)
+
+    await runtime.invoke(endpoint, request)
   })
