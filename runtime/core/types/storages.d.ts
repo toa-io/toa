@@ -56,7 +56,7 @@ declare namespace toa.core.storages {
 
     database(name: string): Promise<void>
 
-    table(database: string, locator: Locator, schema: Object): Promise<string>
+    table(database: string, locator: Locator, schema: Object, reset?: boolean): Promise<string>
 
   }
 
