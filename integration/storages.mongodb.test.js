@@ -40,6 +40,11 @@ describe('add', () => {
     expect(record).toStrictEqual(expect.objectContaining({ id: entity.id, foo: entity.foo }))
   })
 
+  it('should handle on duplicate id', async () => {
+    const result = await storage.add(entity)
+    expect(result).toStrictEqual(false)
+  })
+
   it('should increment version', async () => {
     const record = await storage.get({ id: entity.id })
 
