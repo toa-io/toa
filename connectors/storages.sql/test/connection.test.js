@@ -98,11 +98,18 @@ describe('insert', () => {
     expect(connection.insert).toBeDefined()
   })
 
-  it('should call knex insert', async () => {
+  it('should insert', async () => {
     const entity = generate()
 
     await connection.insert(entity)
 
-    expect(client.insert).toHaveBeenCalled()
+    expect(client.insert).toHaveBeenCalledWith(entity)
+    expect(client.into).toHaveBeenCalledWith(pointer.table)
+  })
+
+  it('should return true', async () => {
+    const output = await connection.insert({ id: generate(), _version: 0 })
+
+    expect(output).toStrictEqual(true)
   })
 })

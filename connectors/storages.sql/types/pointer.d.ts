@@ -4,7 +4,6 @@ declare namespace toa.sql {
 
   interface Pointer extends Base {
     database: string
-    schema: string
     table: string
   }
 

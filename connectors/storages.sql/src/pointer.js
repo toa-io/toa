@@ -13,11 +13,13 @@ class Pointer extends Base {
   constructor (locator) {
     super(PREFIX, locator, OPTIONS)
 
-    const [, database, schema, table] = this.path.split('/')
+    let [, database, schema, table] = this.path.split('/')
+
+    if (schema === undefined) schema = locator.namespace
+    if (table === undefined) table = locator.name
 
     this.database = database || process.env.TOA_STORAGES_SQL_DATABASE
-    this.schema = schema || locator.namespace
-    this.table = table || locator.name
+    this.table = `${schema}.${table}`
   }
 }
 

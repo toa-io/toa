@@ -62,8 +62,7 @@ describe('resolve', () => {
     const pointer = new Pointer(locator)
 
     expect(pointer.database).toStrictEqual(database)
-    expect(pointer.schema).toStrictEqual(schema)
-    expect(pointer.table).toStrictEqual(table)
+    expect(pointer.table).toStrictEqual(`${schema}.${table}`)
   })
 
   it('should use locator.name as default table name', () => {
@@ -74,7 +73,7 @@ describe('resolve', () => {
 
     const pointer = new Pointer(locator)
 
-    expect(pointer.table).toStrictEqual(locator.name)
+    expect(pointer.table).toStrictEqual(`${schema}.${locator.name}`)
   })
 
   it('should use locator.namespace as default schema name', () => {
@@ -84,8 +83,7 @@ describe('resolve', () => {
 
     const pointer = new Pointer(locator)
 
-    expect(pointer.schema).toStrictEqual(locator.namespace)
-    expect(pointer.table).toStrictEqual(locator.name)
+    expect(pointer.table).toStrictEqual(`${locator.namespace}.${locator.name}`)
   })
 
   it('should use TOA_STORAGES_SQL_DATABASE as default database name', () => {

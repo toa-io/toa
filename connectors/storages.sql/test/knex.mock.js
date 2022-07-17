@@ -10,6 +10,7 @@ const client = {
   from: jest.fn(chain),
   where: jest.fn(chain),
   insert: jest.fn(chain),
+  into: jest.fn(),
   raw: jest.fn(chain),
   destroy: jest.fn(chain)
 }

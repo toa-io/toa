@@ -40,7 +40,9 @@ class Connection extends Connector {
   }
 
   async insert (entity) {
-    await this.#client.insert(entity)
+    const table = this.#pointer.table
+
+    await this.#client.insert(entity).into(table)
 
     return true
   }

@@ -83,7 +83,7 @@ describe('table', () => {
   /** @type {toa.core.Locator} */
   let locator
 
-  const call = () => migration.table(database, locator, fixtures.schema)
+  const call = (reset) => migration.table(database, locator, fixtures.schema, reset)
 
   beforeEach(() => {
     const name = generate()
@@ -126,6 +126,10 @@ describe('table', () => {
     })
 
     await expect(call()).resolves.not.toThrow()
+
+    expect(sql.raw).toHaveBeenCalledWith(
+      expect.stringContaining(`create table ${locator.namespace}.${locator.name}`)
+    )
   })
 
   it('should not throw if table exists', async () => {
@@ -139,5 +143,23 @@ describe('table', () => {
     })
 
     await expect(call()).resolves.not.toThrow()
+  })
+
+  it('should reset table', async () => {
+    await call(true)
+
+    expect(sql.raw).toHaveBeenCalledWith(`drop table ${locator.namespace}.${locator.name}`)
+  })
+
+  it('should not throw if reset while table not exists', async () => {
+    sql.raw.mockImplementationOnce(() => {
+      const error = new Error()
+
+      error.code = '42P01'
+
+      throw error
+    })
+
+    await expect(call(true)).resolves.not.toThrow()
   })
 })
