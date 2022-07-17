@@ -55,9 +55,19 @@ class Connection extends Connector {
 
   /** @hot */
   async add (record) {
-    const result = await this.#collection.insertOne(record)
+    /** @type {boolean} */
+    let result
 
-    return result.acknowledged
+    try {
+      const response = await this.#collection.insertOne(record)
+
+      result = response.acknowledged
+    } catch (e) {
+      if (e.code === 11000) result = false // duplicate id
+      else throw e
+    }
+
+    return result
   }
 
   /** @hot */

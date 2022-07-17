@@ -3,8 +3,10 @@
 const { console } = require('@toa.io/libraries/console')
 const { newid } = require('@toa.io/libraries/generic')
 
+// noinspection JSClosureCompilerSyntax
 /**
  * Abstract connections hierarchy
+ * @implements {toa.core.Connector}
  */
 class Connector {
   /** @type {Array<Connector>} */

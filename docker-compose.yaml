@@ -1,5 +1,9 @@
 version: "3.9"
 services:
+  verdaccio:
+    image: verdaccio/verdaccio:5.10.2
+    ports:
+      - '4873:4873'
   rabbitmq:
     image: rabbitmq:3.10.0-management
     ports:
@@ -17,7 +21,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
-  verdaccio:
-    image: verdaccio/verdaccio:5.10.2
+  postgres:
+    image: postgres:14.4
     ports:
-      - '4873:4873'
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: test

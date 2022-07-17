@@ -5,51 +5,73 @@ import { Connector } from './connector'
 
 declare namespace toa.core.storages {
 
-    namespace ast {
+  namespace ast {
 
-        interface Node {
-            type: 'LOGIC' | 'COMPARISON' | 'SELECTOR' | 'VALUE'
-            left?: Node
-            right?: Node
-            operator?: string
-            selector?: string
-            value?: string
-        }
-
+    interface Node {
+      type: 'LOGIC' | 'COMPARISON' | 'SELECTOR' | 'VALUE'
+      left?: Node
+      right?: Node
+      operator?: string
+      selector?: string
+      value?: string
     }
 
-    interface Entity {
-        id: string
-        _version: number
+  }
 
-        [key: string]: any
-    }
+  interface Entity {
+    id: string
+    _version: number
 
-    interface Query {
-        id?: string
-        version?: number
-        criteria?: ast.Node
-        options?: Object
-    }
+    [key: string]: any
+  }
 
-    interface Storage extends Connector {
-        get?(query: Query): Promise<Entity | null>
+  interface Query {
+    id?: string
+    version?: number
+    criteria?: ast.Node
+    options?: Object
+  }
 
-        find?(query: Query): Promise<Entity[]>
+  interface Storage extends Connector {
+    // entity observation
+    get?(query: Query): Promise<Entity | null>
 
-        add?(entity: Entity): Promise<boolean>
+    // set observation
+    find?(query: Query): Promise<Entity[]>
 
-        set?(entity: Entity): Promise<boolean>
+    add?(entity: Entity): Promise<boolean>
 
-        store?(entity: Entity): Promise<boolean>
+    set?(entity: Entity): Promise<boolean>
 
-        upsert?(query: Query, changeset: Object, insert: Entity): Promise<Entity>
-    }
+    // commit
+    store?(entity: Entity): Promise<boolean>
 
-    interface Factory {
-        storage(locator: Locator): Storage
-    }
+    // assignment
+    upsert?(query: Query, changeset: Object, insert: Entity): Promise<Entity>
+  }
+
+  interface Migration {
+
+    disconnect(): Promise<void>
+
+    database(name: string): Promise<void>
+
+    table(database: string, locator: Locator, schema: Object, reset?: boolean): Promise<string>
+
+  }
+
+  interface Factory {
+
+    storage(locator: Locator): Storage
+
+    migration(driver?: string): Migration
+
+  }
 
 }
 
+export type Entity = toa.core.storages.Entity
+export type Factory = toa.core.storages.Factory
+export type Storage = toa.core.storages.Storage
 export type Query = toa.core.storages.Query
+export type Migration = toa.core.storages.Migration

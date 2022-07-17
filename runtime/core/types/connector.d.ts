@@ -1,17 +1,21 @@
 declare namespace toa.core {
 
-    interface Connector {
-        id: string
-        connected: boolean
-        
-        depends(connector: Connector): Connector
+  interface Connector {
+    id: string
+    connected: boolean
 
-        link(connector: Connector): void
+    depends(connector: Connector): Connector
 
-        connect(): Promise<void>
+    link(connector: Connector): void
 
-        disconnect(): Promise<void>
-    }
+    connect(): Promise<void>
+
+    disconnect(interrupt?: boolean): Promise<void>
+
+    connection(): Promise<void>
+
+    disconnection(): Promise<void>
+  }
 
 }
 

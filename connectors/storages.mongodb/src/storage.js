@@ -39,16 +39,9 @@ class Storage extends Connector {
   }
 
   async add (entity) {
-    let result
+    const record = to(entity)
 
-    try {
-      result = await this.#connection.add(to(entity))
-    } catch (e) {
-      if (e.code === 11000) result = false // duplicate id
-      else throw e
-    }
-
-    return result
+    return await this.#connection.add(record)
   }
 
   async set (entity) {

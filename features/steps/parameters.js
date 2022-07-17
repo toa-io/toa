@@ -25,3 +25,9 @@ defineParameterType({
   regexp: /Chart|values/,
   transformer: (artifact) => artifact
 })
+
+defineParameterType({
+  name: 'storage',
+  regexp: /PostgreSQL/,
+  transformer: (name) => name
+})

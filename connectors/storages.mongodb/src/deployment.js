@@ -1,18 +1,15 @@
 'use strict'
 
-const connectors = require('@toa.io/libraries/connectors')
+const pointer = require('@toa.io/libraries/pointer')
 
-/**
- * @param {toa.norm.context.dependencies.Instance[]} instances
- * @param {toa.connectors.URIs} annotation
- * @returns {toa.deployment.dependency.Declaration}
- */
+/** @type {toa.deployment.dependency.Constructor} */
 const deployment = (instances, annotation) => {
-  if (annotation === undefined) throw new Error('MongoDB URI annotation is required')
+  if (annotation === undefined) throw new Error('MongoDB pointer annotation is required')
 
-  return connectors.deployment(PREFIX, instances, annotation)
+  return pointer.deployment(instances, annotation, OPTIONS)
 }
 
-const PREFIX = 'storages-mongodb'
+/** @type {toa.pointer.deployment.Options} */
+const OPTIONS = { prefix: 'storages-mongodb' }
 
 exports.deployment = deployment
