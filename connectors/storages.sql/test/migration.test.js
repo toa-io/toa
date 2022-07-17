@@ -96,18 +96,24 @@ describe('table', () => {
     await call()
 
     const pieces = [
-      `create table "${locator.namespace}"."${locator.name}"`,
+      `create table ${locator.namespace}.${locator.name}`,
       'id char(32) primary key',
       '_version integer',
       'foo integer',
       'bar varchar'
     ]
 
-    expect(sql.raw).toHaveBeenCalledWith(`create schema "${locator.namespace}"`)
+    expect(sql.raw).toHaveBeenCalledWith(`create schema ${locator.namespace}`)
 
     for (const piece of pieces) {
       expect(sql.raw).toHaveBeenCalledWith(expect.stringContaining(piece))
     }
+  })
+
+  it('should return table name', async () => {
+    const output = await call()
+
+    expect(output).toStrictEqual(`${locator.namespace}.${locator.name}`)
   })
 
   it('should not throw if schema exists', async () => {

@@ -58,3 +58,9 @@ sql:
   default: pg://host0.example.com:5432/production
   dummies.dummy: mysql://host1.example.com/marketing/stats/dummies
 ```
+
+## Migration
+
+> Migration only supports local environments and is used for development and testing purposes.
+
+See [tests](test/migration.test.js) for details.

@@ -40,8 +40,9 @@ class Migration {
 
   async table (database, locator, object) {
     const properties = translate(object)
-    const schema = `create schema "${locator.namespace}"`
-    const table = `create table "${locator.namespace}"."${locator.name}" (${properties})`
+    const name = `${locator.namespace}.${locator.name}`
+    const schema = `create schema ${locator.namespace}`
+    const table = `create table ${name} (${properties})`
 
     try {
       await this.#client.raw(schema)
@@ -51,6 +52,8 @@ class Migration {
 
       if (!duplicate) throw e
     }
+
+    return name
   }
 
   /**
