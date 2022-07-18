@@ -3,7 +3,9 @@ Feature: External event receiver
   Scenario: Consume external events to SQL
     Given I have a PostgreSQL database developer
     And the database has a structure for the external.consumer component
-    When I boot external.consumer component
+    When I compose external.consumer component
+    And I wait 0.5 seconds
+    And I disconnect
     And I publish to event.external.something.happened queue a message:
       """
       time: 16581425448

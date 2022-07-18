@@ -49,7 +49,7 @@ describe('routing', () => {
     const before = await fetch(url)
 
     if (before.status === 500) {
-      console.error('Shutdown Kind deployment')
+      // shutdown Kind deployment and run `docker compose restart`
       process.exit(1)
     }
 

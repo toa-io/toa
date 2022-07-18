@@ -3,7 +3,7 @@
 const { parse } = require('@toa.io/libraries/yaml')
 
 const { cli } = require('./.connectors/cli')
-const { connect } = require('./.workspace/components')
+const { runtime, composition } = require('./.workspace/components')
 
 const { When, Then } = require('@cucumber/cucumber')
 
@@ -26,7 +26,16 @@ When('I boot {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await connect(reference)
+    this.connector = await runtime(reference)
+  })
+
+When('I compose {component} component',
+  /**
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  async function (reference) {
+    this.connector = await composition(reference)
   })
 
 Then('I disconnect',
@@ -34,9 +43,8 @@ Then('I disconnect',
    * @this {toa.features.Context}
    */
   async function () {
-    await this.connector.disconnect()
-
-    if (this.storage.migration) await this.storage.migration.disconnect()
+    if (this.connector) await this.connector.disconnect()
+    if (this.storage?.migration) await this.storage.migration.disconnect()
   })
 
 When('I invoke {word} with:',
@@ -52,8 +60,6 @@ When('I invoke {word} with:',
     const { exception } = await runtime.invoke(endpoint, request)
 
     if (exception !== undefined) {
-      console.error(exception)
-
       throw new Error(exception.message)
     }
   })

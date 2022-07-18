@@ -7,8 +7,9 @@ const connector = () => {
 }
 
 const boot = {
-  component: jest.fn(() => generate()),
-  runtime: jest.fn(() => connector())
+  component: jest.fn(() => connector()),
+  runtime: jest.fn(() => connector()),
+  composition: jest.fn(() => connector())
 }
 
 exports.mock = { boot }
