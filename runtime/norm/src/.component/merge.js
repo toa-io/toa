@@ -34,6 +34,8 @@ const define = async (root, manifest, property) => {
     if (manifest[property] === undefined) manifest[property] = {}
 
     for (const [endpoint, item] of items) {
+      if (property !== 'operations') item.path = root
+
       item.bridge = manifest.bridge
 
       const declared = manifest[property][endpoint]

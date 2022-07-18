@@ -188,7 +188,7 @@ properties:
           subjective:
             type: boolean
             default: false
-        required: [bridge]
+        required: [bridge, path]
         additionalProperties: false
 
   receivers:
@@ -203,7 +203,7 @@ properties:
             $ref: 'definitions#/definitions/token'
           bridge:
             type: string
-          binding:
+          path:
             type: string
           conditioned:
             type: boolean
@@ -211,7 +211,7 @@ properties:
           adaptive:
             type: boolean
             default: false
-        required: [bridge, transition]
+        required: [transition, bridge, path]
         additionalProperties: false
 
   extensions:
