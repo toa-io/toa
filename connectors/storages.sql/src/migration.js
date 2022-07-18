@@ -73,7 +73,7 @@ class Migration {
       await this.#client.raw(query)
     } catch (e) {
       // https://www.postgresql.org/docs/current/errcodes-appendix.html
-      const ignore = ['42P01', '42P06', '42P07'].includes(e.code)
+      const ignore = ['42P01', '42P06', '42P07', '3F000'].includes(e.code)
 
       if (!ignore) throw e
     }

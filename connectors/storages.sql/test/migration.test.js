@@ -151,15 +151,20 @@ describe('table', () => {
     expect(sql.raw).toHaveBeenCalledWith(`drop table ${locator.namespace}.${locator.name}`)
   })
 
-  it('should not throw if reset while table not exists', async () => {
-    sql.raw.mockImplementationOnce(() => {
-      const error = new Error()
+  it('should not throw if reset while table or schema not exists', async () => {
+    const check = async (code) => {
+      sql.raw.mockImplementationOnce(() => {
+        const error = new Error()
 
-      error.code = '42P01'
+        error.code = code
 
-      throw error
-    })
+        throw error
+      })
 
-    await expect(call(true)).resolves.not.toThrow()
+      await expect(call(true)).resolves.not.toThrow()
+    }
+
+    await check('42P01')
+    await check('3F000')
   })
 })
