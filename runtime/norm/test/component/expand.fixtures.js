@@ -58,7 +58,12 @@ const source = {
     }
   },
   receivers: {
-    event: 'transit'
+    one: 'transit',
+    two: {
+      binding: 'amqp',
+      bridge: 'node',
+      transition: 'transit'
+    }
   }
 }
 
@@ -130,7 +135,12 @@ const target = {
     }
   },
   receivers: {
-    event: {
+    one: {
+      transition: 'transit'
+    },
+    two: {
+      bridge: '@toa.io/bridges.node',
+      binding: '@toa.io/bindings.amqp',
       transition: 'transit'
     }
   }

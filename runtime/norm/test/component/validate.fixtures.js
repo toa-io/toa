@@ -49,6 +49,7 @@ const ok = {
     'foo.bar.happened': {
       transition: 'add',
       bridge: 'whatever',
+      binding: 'amqp',
       path: '/somewhere'
     }
   }
