@@ -39,7 +39,6 @@ const ok = {
   events: {
     created: {
       bridge: 'whatever',
-      path: '/somewhere',
       conditioned: true,
       subjective: false,
       binding: '@toa.io/bindings.amqp'
@@ -48,8 +47,7 @@ const ok = {
   receivers: {
     'foo.bar.happened': {
       transition: 'add',
-      bridge: 'whatever',
-      path: '/somewhere'
+      bridge: 'whatever'
     }
   }
 }
