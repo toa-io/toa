@@ -12,3 +12,4 @@ registry:
 
 amqp: amqp://host.docker.internal
 mongodb: mongodb://host.docker.internal
+sql: pg://host.docker.internal/integration
