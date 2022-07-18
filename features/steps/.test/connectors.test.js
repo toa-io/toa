@@ -19,8 +19,6 @@ describe('When I boot {component} component', () => {
   it('should be', () => undefined)
 
   it('should connect component', async () => {
-    const COLLECTION = resolve(__dirname, '../.workspace/components/collection')
-
     /** @type {toa.features.Context} */
     const context = { cwd: generate() }
     const reference = generate()
@@ -37,6 +35,29 @@ describe('When I boot {component} component', () => {
     const runtime = mock.boot.runtime.mock.results[0].value
 
     expect(context.connector).toStrictEqual(runtime)
+  })
+})
+
+describe('When I compose {word} component', () => {
+  const step = gherkin.steps.Wh('I compose {component} component')
+
+  it('should be', () => undefined)
+
+  it('should create composition', async () => {
+    /** @type {toa.features.Context} */
+    const context = {}
+    const reference = generate()
+    const path = resolve(COLLECTION, reference)
+
+    await step.call(context, reference)
+
+    expect(mock.boot.composition).toHaveBeenCalledWith([path])
+
+    const composition = mock.boot.composition.mock.results[0].value
+
+    expect(composition.connect).toHaveBeenCalled()
+
+    expect(context.connector).toStrictEqual(composition)
   })
 })
 
@@ -76,3 +97,5 @@ describe('When I invoke {word} with:', () => {
     await expect(step.call(context, 'any', {})).rejects.toThrow(exception.message)
   })
 })
+
+const COLLECTION = resolve(__dirname, '../.workspace/components/collection')

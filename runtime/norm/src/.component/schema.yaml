@@ -203,6 +203,8 @@ properties:
             $ref: 'definitions#/definitions/token'
           bridge:
             type: string
+          binding:
+            type: string
           path:
             type: string
           conditioned:

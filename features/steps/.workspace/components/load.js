@@ -1,6 +1,6 @@
 'use strict'
 
-const { resolve } = require('node:path')
+const path = require('node:path')
 const boot = require('@toa.io/boot')
 
 const { COLLECTION } = require('./constants')
@@ -10,9 +10,18 @@ const { COLLECTION } = require('./constants')
  * @returns {toa.norm.Component}
  */
 const load = async (reference) => {
-  const path = resolve(COLLECTION, reference)
+  const path = resolve(reference)
 
   return await boot.component(path)
 }
 
+/**
+ * @param {string} reference
+ * @returns {string}
+ */
+const resolve = (reference) => {
+  return path.resolve(COLLECTION, reference)
+}
+
 exports.load = load
+exports.resolve = resolve

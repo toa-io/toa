@@ -1,9 +1,11 @@
 'use strict'
 
-const { connect } = require('./connect')
+const { runtime } = require('./runtime')
+const { composition } = require('./composition')
 const { copy } = require('./copy')
 const { load } = require('./load')
 
-exports.connect = connect
+exports.runtime = runtime
+exports.composition = composition
 exports.copy = copy
 exports.load = load
