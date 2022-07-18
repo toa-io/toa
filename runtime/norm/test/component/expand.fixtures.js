@@ -13,6 +13,7 @@ const source = {
   operations: {
     add: {
       bridge: 'node',
+      bindings: ['amqp'],
       input: {
         properties: {
           foo: 'integer',
@@ -82,6 +83,7 @@ const target = {
   operations: {
     add: {
       bridge: '@toa.io/bridges.node',
+      bindings: ['@toa.io/bindings.amqp'],
       input: {
         properties: {
           foo: {

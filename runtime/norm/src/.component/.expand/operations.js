@@ -10,6 +10,7 @@ function operations (manifest) {
     if (operation.input !== undefined) operation.input = schema(operation.input, true)
     if (operation.output !== undefined) operation.output = schema(operation.output, true)
     if (operation.bridge !== undefined) operation.bridge = resolve(operation.bridge)
+    if (operation.bindings !== undefined) operation.bindings = operation.bindings.map(resolve)
   }
 }
 
