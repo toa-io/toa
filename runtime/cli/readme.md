@@ -1,18 +1,11 @@
 # Toa Command Line
 
-## Deployment
-
-### deploy
-
-<dl>
-<dt><code>toa deploy [environment]</code></dt>
-<dd>Deploy context.</dd>
-</dl>
+## Development
 
 ### configure
 
 Outputs shell commands to manipulate local environment variables, thus must be piped
-with `source /dev/stdin`.
+with `source /dev/stdin` to apply.
 
 <dl>
 <dt><code>toa configure &lt;key&gt; [value]</code></dt>
@@ -28,12 +21,12 @@ It is assumed you are in the component's directory, use `--path` otherwise.
 
 ```shell
 # set new value
-$ toa configure foo.bar 'new value' | source /dev/stdin
+$ toa configure foo 'new value' | source /dev/stdin
 ```
 
 ```shell
 # clear key
-$ toa configure foo.bar --reset | source /dev/stdin
+$ toa configure bar.baz --reset | source /dev/stdin
 ```
 
 </dd>
@@ -44,6 +37,30 @@ $ toa configure foo.bar --reset | source /dev/stdin
 
 <code>--json</code> as JSON
 </dd>
+</dl>
+
+## Exporting
+
+### export manifest
+
+<dl>
+<dt><code>toa export manifest</code></dt>
+<dd>Print normalized manifest.
+
+<code>--path</code> path to component (default <code>.</code>)<br/>
+<code>--error</code> print errors only<br/>
+</dd>
+</dl>
+
+## Deployment
+
+> Deployment commands use current `kubectl` context.
+
+### deploy
+
+<dl>
+<dt><code>toa deploy [environment]</code></dt>
+<dd>Deploy context.</dd>
 </dl>
 
 ### conceal
@@ -68,17 +85,4 @@ $ toa configure foo.bar --reset | source /dev/stdin
 <code>toa reveal &lt;secret&gt;</code>
 </dt>
 <dd>Print keys and values of a secret.</dd>
-</dl>
-
-## Exporting
-
-### export manifest
-
-<dl>
-<dt><code>toa export manifest</code></dt>
-<dd>Print normalized manifest.
-
-<code>--path</code> path to component (default <code>.</code>)<br/>
-<code>--error</code> print errors only<br/>
-</dd>
 </dl>
