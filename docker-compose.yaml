@@ -28,4 +28,4 @@ services:
     environment:
       POSTGRES_USER: developer
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: test
+      POSTGRES_DB: integration
