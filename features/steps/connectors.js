@@ -45,6 +45,11 @@ Then('I disconnect',
   async function () {
     if (this.connector) await this.connector.disconnect()
     if (this.storage?.migration) await this.storage.migration.disconnect()
+
+    if (this.amqp) {
+      await this.amqp.channel.close()
+      await this.amqp.connection.close()
+    }
   })
 
 When('I invoke {word} with:',
