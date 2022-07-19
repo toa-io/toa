@@ -2,6 +2,7 @@
 
 const knex = require('knex')
 const { Connector } = require('@toa.io/core')
+const { console } = require('@toa.io/libraries/console')
 
 /**
  * @implements {toa.sql.Connection}
@@ -33,10 +34,14 @@ class Connection extends Connector {
 
     // https://github.com/knex/knex/issues/1886
     await this.#client.raw('select 1')
+
+    console.info(`SQL storage connected to ${this.#pointer.label}`)
   }
 
   async disconnection () {
     await this.#client.destroy()
+
+    console.info(`SQL storage disconnected from ${this.#pointer.label}`)
   }
 
   async insert (entity) {
