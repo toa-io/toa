@@ -57,10 +57,10 @@ it('should use declared protocol', () => {
   expect(pointer.protocol).toStrictEqual(url.protocol)
 })
 
-it('should point to proxy', () => {
+it('should point to host', () => {
   pointer = new Pointer(prefix, locator, options)
 
-  expect(pointer.hostname).toStrictEqual(locator.hostname(prefix))
+  expect(pointer.hostname).toStrictEqual(url.hostname)
 })
 
 it('should resolve credentials', () => {
@@ -101,8 +101,6 @@ it('should expose port as number', () => {
 
 it('should expose reference', () => {
   pointer = new Pointer(prefix, locator, options)
-
-  url.hostname = locator.hostname(prefix)
 
   expect(pointer.reference).toStrictEqual(url.href)
 })
@@ -166,8 +164,6 @@ describe('environment variables', () => {
 
   it('should use env variables for credentials', () => {
     pointer = new Pointer(prefix, locator, options)
-
-    url.hostname = locator.hostname(prefix)
 
     expect(pointer.reference).toStrictEqual(url.href)
 

@@ -18,8 +18,6 @@ const env = (prefix, locator) => {
   const uris = decode(value)
   const { url, entry } = resolve(locator, uris)
 
-  // url.host = locator.hostname(prefix)
-
   const suffix = convert(entry)
   const env = `TOA_${up(prefix)}_${suffix}`
 
