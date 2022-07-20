@@ -78,9 +78,8 @@ See [Deployment Extensions](#extensions) below.
 
 ## Deployment
 
-Deployment function builds a set of proxies corresponding to the [Annotation](#annotation) and
-context components utilizing the package , and a global[^1] variables: containing Annotation and a
-set of variables for pointer credentials.
+Deployment function builds global[^1] variables: containing Annotation and a set of variables for
+pointer credentials.
 
 See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
 

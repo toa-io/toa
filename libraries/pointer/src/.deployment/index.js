@@ -1,8 +1,8 @@
 'use strict'
 
-const { proxies } = require('./proxies')
+const { validate } = require('./validate')
 const { variables } = require('./variables')
 
-exports.proxies = proxies
+exports.validate = validate
 exports.variables = variables
 

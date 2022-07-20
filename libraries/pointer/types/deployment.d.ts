@@ -10,7 +10,6 @@ declare namespace toa.pointer {
 
     type Options = {
       prefix: string
-      extensions?: string[]
     }
 
   }
