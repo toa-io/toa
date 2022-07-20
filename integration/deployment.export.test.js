@@ -77,9 +77,4 @@ describe('chart', () => {
   it('should export dependency services', () => {
     expect(values.services).toEqual(fixtures.values.services)
   })
-
-  it('should export proxies', () => {
-    expect(values.proxies).toBeDefined()
-    expect(values.proxies).toStrictEqual(expect.arrayContaining(fixtures.values.proxies))
-  })
 })

@@ -160,15 +160,3 @@ describe('services', () => {
     }
   })
 })
-
-describe('proxies', () => {
-  it('should define external services', () => {
-    for (const proxy of fixtures.proxies) {
-      const service = find('Service', proxy.name)
-
-      expect(service).toBeDefined()
-      expect(service.spec.type).toStrictEqual('ExternalName')
-      expect(service.spec.externalName).toStrictEqual(proxy.target)
-    }
-  })
-})
