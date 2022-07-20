@@ -80,7 +80,7 @@ describe('connection', () => {
     expect(connection.database).toStrictEqual(database)
 
     // https://github.com/knex/knex/issues/3523
-    // expect(config.pool.min).toStrictEqual(0)
+    expect(config.pool.min).toStrictEqual(0)
   })
 
   it('should run connection query', () => {

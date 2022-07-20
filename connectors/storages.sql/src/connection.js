@@ -63,6 +63,9 @@ class Connection extends Connector {
         user: pointer.username,
         password: pointer.password,
         database: pointer.database
+      },
+      pool: {
+        min: 0
       }
     }
   }
