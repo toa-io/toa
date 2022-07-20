@@ -6,8 +6,6 @@ const mock = require('@toa.io/libraries/mock')
 
 const { deployment } = require('../')
 
-const PREFIX = 'bindings-amqp'
-
 /** @type {toa.norm.context.dependencies.Instance[]} */
 let instances
 
@@ -24,7 +22,7 @@ it('should exist', () => {
 
 it('should throw if annotation is not defined', () => {
   expect(() => deployment(instances, undefined))
-    .toThrow('AMQP deployment requires either \'system\' or \'default\' URI annotation')
+    .toThrow('AMQP deployment requires either \'system\' or \'default\' pointer annotation')
 })
 
 it('should throw if \'system\' is not defined', () => {
@@ -34,27 +32,5 @@ it('should throw if \'system\' is not defined', () => {
   for (const instance of instances) annotation[instance.locator.id] = url.href
 
   expect(() => deployment(instances, annotation))
-    .toThrow('URI annotation for \'system\' is not found')
-})
-
-describe('proxies', () => {
-  it('should create system proxy', () => {
-    const url = gen()
-    const annotation = { default: url.href }
-    const instances = []
-
-    const output = deployment(instances, annotation)
-
-    expect(output.proxies).toStrictEqual([{
-      name: PREFIX + '-system',
-      target: url.hostname
-    }])
-  })
-
-  it('should throw if system is not defined', () => {
-    const annotation = {}
-    const instances = []
-
-    expect(() => deployment(instances, annotation)).toThrow('not found')
-  })
+    .toThrow('AMQP deployment requires either \'system\' or \'default\' pointer annotation')
 })
