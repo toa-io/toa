@@ -17,9 +17,20 @@ const protocol = 'amqp:'
 
 let url
 
-beforeEach(() => {
-  url = url = new URL('amqps://whatever:5672')
+beforeAll(() => {
+  const username = generate()
+  const password = generate()
 
+  url = new URL('amqps://whatever:5672')
+
+  url.username = username
+  url.password = password
+
+  process.env.TOA_BINDINGS_AMQP_DEFAULT_USERNAME = username
+  process.env.TOA_BINDINGS_AMQP_DEFAULT_PASSWORD = password
+})
+
+beforeEach(() => {
   const name = generate()
   const namespace = generate()
   const uris = { default: url.href }
@@ -35,7 +46,6 @@ beforeEach(() => {
 it('should be', () => undefined)
 
 it('should expose reference', () => {
-  url.hostname = locator.hostname(PREFIX)
   expect(pointer.reference).toStrictEqual(url.href)
 })
 
