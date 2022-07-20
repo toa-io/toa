@@ -16,7 +16,6 @@ it('should be', () => {
   expect(Connection).toBeDefined()
 })
 
-const prefix = 'storages-sql'
 const username = generate()
 const password = generate()
 const database = generate()
@@ -72,14 +71,16 @@ describe('connection', () => {
 
     // connection
     const connection = /** @type {import('knex').Knex.PgConnectionConfig} */ config.connection
-    const hostname = locator.hostname(prefix)
 
     expect(connection).toBeDefined()
-    expect(connection.host).toStrictEqual(hostname)
+    expect(connection.host).toStrictEqual(pointer.hostname)
     expect(connection.port).toStrictEqual(Number(url.port))
     expect(connection.user).toStrictEqual(username)
     expect(connection.password).toStrictEqual(password)
     expect(connection.database).toStrictEqual(database)
+
+    // https://github.com/knex/knex/issues/3523
+    // expect(config.pool.min).toStrictEqual(0)
   })
 
   it('should run connection query', () => {
