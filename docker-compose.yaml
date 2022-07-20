@@ -10,8 +10,6 @@ services:
       - '5672:5672'
       - '15672:15672'
     environment:
-      # Only connections from localhost are allowed without credentials.
-      # Kind deployment is using this service as external broker which is not a local connection.
       RABBITMQ_DEFAULT_USER: developer
       RABBITMQ_DEFAULT_PASS: secret
   mongodb:
