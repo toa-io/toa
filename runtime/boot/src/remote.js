@@ -5,7 +5,12 @@ const { remap } = require('@toa.io/libraries/generic')
 
 const boot = require('./index')
 
-const remote = async (locator, manifest) => {
+/**
+ * @param {toa.core.Locator} locator
+ * @param {toa.norm.Component} manifest
+ * @returns {Promise<Remote>}
+ */
+const remote = async (locator, manifest = undefined) => {
   const discovery = await boot.discovery.discovery()
 
   if (manifest === undefined) manifest = await discovery.lookup(locator)
