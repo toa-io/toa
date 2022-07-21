@@ -8,6 +8,8 @@ const { console } = require('@toa.io/libraries/console')
  * @implements {toa.sql.Connection}
  */
 class Connection extends Connector {
+  static #connections = {}
+
   /** @type {toa.sql.Pointer} */
   #pointer
 
@@ -25,13 +27,11 @@ class Connection extends Connector {
 
     this.#pointer = pointer
     this.#driver = pointer.protocol.slice(0, -1)
+
+    this.#client = this.#configure()
   }
 
   async connection () {
-    const config = this.#configure()
-
-    this.#client = knex(config)
-
     // https://github.com/knex/knex/issues/1886
     await this.#client.raw('select 1')
 
@@ -39,6 +39,9 @@ class Connection extends Connector {
   }
 
   async disconnection () {
+    const key = this.#pointer.reference
+
+    delete Connection.#connections[key]
     await this.#client.destroy()
 
     console.info(`SQL storage disconnected from ${this.#pointer.label}`)
@@ -54,8 +57,9 @@ class Connection extends Connector {
 
   #configure () {
     const pointer = this.#pointer
+    const key = pointer.reference
 
-    return {
+    const config = {
       client: this.#driver,
       connection: {
         host: pointer.hostname,
@@ -68,6 +72,10 @@ class Connection extends Connector {
         min: 0
       }
     }
+
+    if (Connection.#connections[key] === undefined) Connection.#connections[key] = knex(config)
+
+    return Connection.#connections[key]
   }
 }
 

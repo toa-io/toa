@@ -61,6 +61,10 @@ beforeEach(async () => {
   client = knex.mock.results[0].value
 })
 
+afterEach(async () => {
+  await connection.disconnect()
+})
+
 describe('connection', () => {
   it('should configure', () => {
     /** @type {import('knex').Knex.Config} */
@@ -91,6 +95,16 @@ describe('connection', () => {
     await connection.disconnect()
 
     expect(client.destroy).toHaveBeenCalled()
+  })
+
+  it('should share connection', async () => {
+    expect(knex).toHaveBeenCalledTimes(1)
+
+    const instance = new Connection(pointer)
+
+    await instance.connect()
+
+    expect(knex).toHaveBeenCalledTimes(1)
   })
 })
 
