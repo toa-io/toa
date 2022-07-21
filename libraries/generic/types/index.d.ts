@@ -12,6 +12,7 @@ export { remap } from './remap'
 export { retry } from './retry'
 export { sample } from './sample'
 export { timeout } from './timeout'
+export { transpose } from './transpose'
 export { underlay } from './underlay'
 
 export type { Underlay } from './underlay'

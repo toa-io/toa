@@ -1,9 +1,6 @@
 'use strict'
 
-/**
- * @param {any[][] | any[]} array
- * @returns {ary[][]}
- */
+/** @type {toa.generic.Transpose} */
 const transpose = (array) => {
   if (!Array.isArray(array[0])) array = [array]
 
