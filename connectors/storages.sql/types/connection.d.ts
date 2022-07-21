@@ -5,10 +5,10 @@ declare namespace toa.sql {
 
   interface Connection extends Connector {
 
-    insert(object: Entity): Promise<boolean>
+    insert(table: string, object: Entity): Promise<boolean>
 
-    update(criteria: Object, object: Entity): Promise<boolean>
-    
+    update(table: string, criteria: Object, object: Entity): Promise<boolean>
+
   }
 
 }

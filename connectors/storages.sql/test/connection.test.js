@@ -154,12 +154,13 @@ describe('insert', () => {
   })
 
   it('should insert', async () => {
+    const table = generate()
     const entity = generate()
 
-    await connection.insert(entity)
+    await connection.insert(table, entity)
 
     expect(client.insert).toHaveBeenCalledWith(entity)
-    expect(client.into).toHaveBeenCalledWith(pointer.table)
+    expect(client.into).toHaveBeenCalledWith(table)
   })
 
   it('should return true', async () => {

@@ -11,21 +11,21 @@ it('should be', () => {
   expect(Storage).toBeDefined()
 })
 
-/** @type {toa.sql.Connection} */
-let connection
+/** @type {toa.sql.Client} */
+let client
 
 /** @type {toa.sql.Storage} */
 let storage
 
 beforeEach(async () => {
-  connection = new fixtures.Connection()
-  storage = new Storage(connection)
+  client = new fixtures.Client()
+  storage = new Storage(client)
 
   await storage.connect()
 })
 
 it('should depend on connection', () => {
-  expect(connection.link).toHaveBeenCalledWith(storage)
+  expect(client.link).toHaveBeenCalledWith(storage)
 })
 
 describe('store', () => {
@@ -37,7 +37,7 @@ describe('store', () => {
 
     const argument = { ...entity, _version: 1 }
 
-    expect(connection.insert).toHaveBeenCalledWith(argument)
+    expect(client.insert).toHaveBeenCalledWith(argument)
     expect(result).toStrictEqual(true)
   })
 
@@ -50,7 +50,7 @@ describe('store', () => {
     const criteria = { id: entity.id, _version: entity._version }
     const object = { ...entity, _version: 2 }
 
-    expect(connection.update).toHaveBeenCalledWith(criteria, object)
+    expect(client.update).toHaveBeenCalledWith(criteria, object)
     expect(result).toStrictEqual(false)
   })
 })
