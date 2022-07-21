@@ -4,8 +4,8 @@ Feature: SQL Storage Operations
     Given I have a PostgreSQL database developer
 
   Scenario: Create a new record in the PostgreSQL database
-    Given the database has a structure for the sql.postgres component
-    When I boot sql.postgres component
+    Given the database has a structure for the sql.one component
+    When I boot sql.one component
     And I invoke transit with:
       """
       input:

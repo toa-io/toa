@@ -7,11 +7,11 @@ Feature: SQL Storage Connection
     When I boot sql.one component
     Then I disconnect
 
-  Scenario: Shared connection
+  Scenario: Shared connection compose
     Given I have components:
       | sql.one |
       | sql.two |
-    And I run `toa compose components/*`
+    When I run `toa compose components/*`
     And I abort execution
     Then stdout should contain line once:
       """
