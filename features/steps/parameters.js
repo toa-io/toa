@@ -15,6 +15,12 @@ defineParameterType({
 })
 
 defineParameterType({
+  name: 'endpoint',
+  regexp: /\w+.\w+.\w+/,
+  transformer: (name) => name
+})
+
+defineParameterType({
   name: 'command',
   regexp: /`(.+)`/,
   transformer: (cmd) => cmd

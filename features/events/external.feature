@@ -10,7 +10,7 @@ Feature: External event receiver
       description: 'something happened'
       """
     And I wait 0.1 seconds
-    Then the table must contain rows:
+    Then the table of external.consumer must contain rows:
       | time       | description        |
       | 1658142544 | something happened |
     And I disconnect

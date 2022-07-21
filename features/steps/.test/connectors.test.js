@@ -125,4 +125,30 @@ describe('When I invoke {word} with:', () => {
   })
 })
 
+describe('When I call {endpoint} with:', () => {
+  const step = gherkin.steps.Wh('I call {endpoint} with:')
+
+  it('should be', () => undefined)
+
+  it('should call remote', async () => {
+    const namespace = generate()
+    const name = generate()
+    const operation = generate()
+    const endpoint = `${namespace}.${name}.${operation}`
+    const request = { [generate()]: generate() }
+    const yaml = dump(request)
+    const context = {}
+
+    await step.call(context, endpoint, yaml)
+
+    expect(mock.boot.remote).toHaveBeenCalled()
+
+    const remote = mock.boot.remote.mock.results[0].value
+
+    expect(remote.invoke).toHaveBeenCalledWith(operation, request)
+
+    expect(remote.disconnect).toHaveBeenCalled()
+  })
+})
+
 const COLLECTION = resolve(__dirname, '../.workspace/components/collection')

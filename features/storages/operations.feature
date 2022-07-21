@@ -36,4 +36,3 @@ Feature: SQL Storage Operations
       | sql.one |
       | sql.two |
 
-
