@@ -8,10 +8,11 @@ Feature: SQL Storage Connection
     Then I disconnect
 
   Scenario: Shared connection
-    When I compose components:
+    Given I have components:
       | sql.one |
       | sql.two |
-    And I disconnect
+    And I run `toa compose components/*`
+    And I abort execution
     Then stdout should contain line once:
       """
       info SQL storage connected to pg://developer@localhost

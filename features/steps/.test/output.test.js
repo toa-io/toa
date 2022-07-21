@@ -16,8 +16,8 @@ beforeEach(async () => {
   context = { stdoutLines: [] }
 })
 
-describe('Then {word} should contain lines:', () => {
-  const step = gherkin.steps.Th('{word} should contain lines:')
+describe('Then {word} should contain line(s):', () => {
+  const step = gherkin.steps.Th('{word} should contain line(s):')
 
   it('should be', () => undefined)
 
@@ -44,6 +44,24 @@ describe('Then {word} should contain lines:', () => {
     context.stdoutLines = ['first second third']
 
     expect(() => step.call(context, 'stdout', 'first second')).not.toThrow()
+  })
+})
+
+describe('Then {word} should contain line(s) once:', () => {
+  const step = gherkin.steps.Th('{word} should contain line(s) once:')
+
+  it('should be', () => undefined)
+
+  it('should throw if not contains', () => {
+    context.stdoutLines = []
+
+    expect(() => step.call(context, 'stdout', 'second')).toThrow(AssertionError)
+  })
+
+  it('should throw if contains more than once', () => {
+    context.stderrLines = ['one', 'one']
+
+    expect(() => step.call(context, 'stderr', 'one')).toThrow(AssertionError)
   })
 })
 

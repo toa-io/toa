@@ -22,15 +22,14 @@ Then('{word} should be empty', function (channel) {
   assert.equal(this[channel], '')
 })
 
-Then('{word} should contain lines:',
+Then('{word} should contain line(s):',
   function (channel, lines) {
-    const queries = lines.split('\n').map((line) => line.trim())
+    find(this, channel, lines)
+  })
 
-    for (const query of queries) {
-      const found = this[channel + 'Lines'].find((actual) => compare(actual, query))
-
-      assert.notEqual(found, undefined, 'Line not found: ' + query)
-    }
+Then('{word} should contain line(s) once:',
+  function (channel, lines) {
+    find(this, channel, lines, 1)
   })
 
 Then('{word} should be: {string}',
@@ -40,6 +39,41 @@ Then('{word} should be: {string}',
 
     assert.equal(equal, true)
   })
+
+/**
+ * @param {toa.features.Context} context
+ * @param {string} channel
+ * @param {string} lines
+ * @param {number} [exact]
+ * @returns {number[]}
+ */
+const find = (context, channel, lines, exact = undefined) => {
+  const queries = lines.split('\n').map((line) => line.trim())
+
+  /** @type {number[]} */
+  const count = []
+
+  for (const query of queries) {
+    const output = context[channel + 'Lines']
+    let matches = 0
+
+    for (const line of output) {
+      const similar = compare(line, query)
+
+      if (similar) matches++
+    }
+
+    count.push(matches)
+
+    assert.notEqual(matches, 0, 'Line not found: ' + query)
+
+    if (exact !== undefined) {
+      assert.equal(matches, exact, 'Line found multiple times: ' + query)
+    }
+  }
+
+  return count
+}
 
 /**
  * @param {string} reference
