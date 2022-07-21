@@ -10,7 +10,7 @@ declare namespace toa.features {
     type Storage = {
       driver: string
       database?: string
-      table?: string
+      tables?: Record<string, string>
       migration?: Migration
     }
 

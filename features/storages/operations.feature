@@ -11,7 +11,29 @@ Feature: SQL Storage Operations
       input:
         bar: test
       """
-    Then the table must contain rows:
+    Then the table of sql.one must contain rows:
       | foo | bar  | _version |
       | 0   | test | 1        |
     And I disconnect
+
+  Scenario Outline: Composition with shared connection
+    Given the database has a structure for the sql.one component
+    And the database has a structure for the sql.two component
+    When I compose components:
+      | sql.one |
+      | sql.two |
+    And I call <callee>.transit with:
+      """
+      input:
+        bar: test
+      """
+    Then the table of <callee> must contain rows:
+      | foo | bar  | _version |
+      | 0   | test | 1        |
+    And I disconnect
+    Examples:
+      | callee  |
+      | sql.one |
+      | sql.two |
+
+
