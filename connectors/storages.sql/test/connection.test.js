@@ -100,11 +100,51 @@ describe('connection', () => {
   it('should share connection', async () => {
     expect(knex).toHaveBeenCalledTimes(1)
 
+    // new Locator leads to different schema and table within
+    // the same database connection
+    const name = generate()
+    const namespace = generate()
+    const locator = new Locator(name, namespace)
+    const pointer = new Pointer(locator)
     const instance = new Connection(pointer)
 
     await instance.connect()
 
     expect(knex).toHaveBeenCalledTimes(1)
+  })
+
+  it('should share connection with specific annotations', async () => {
+    jest.clearAllMocks()
+
+    const annotation = {
+      'dummies.one': 'pg://host0/db/sch1/tbl1',
+      'dummies.two': 'pg://host0/db/sch2/tbl2'
+    }
+
+    const env = process.env.TOA_STORAGES_SQL_POINTER
+
+    process.env.TOA_STORAGES_SQL_POINTER = encode(annotation)
+    process.env.TOA_STORAGES_SQL_DUMMIES_ONE_USERNAME = username
+    process.env.TOA_STORAGES_SQL_DUMMIES_TWO_USERNAME = username
+    process.env.TOA_STORAGES_SQL_DUMMIES_ONE_PASSWORD = password
+    process.env.TOA_STORAGES_SQL_DUMMIES_TWO_PASSWORD = username
+
+    const connect = async (name, namespace) => {
+      const locator = new Locator(name, namespace)
+      const pointer = new Pointer(locator)
+      const connection = new Connection(pointer)
+
+      await connection.connect()
+
+      return connection
+    }
+
+    connect('one', 'dummies').then()
+    connect('two', 'dummies').then()
+
+    expect(knex).toHaveBeenCalledTimes(1)
+
+    process.env.TOA_STORAGES_SQL_POINTER = env
   })
 })
 

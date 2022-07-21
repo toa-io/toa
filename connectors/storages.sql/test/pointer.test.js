@@ -54,7 +54,7 @@ it('should define protocol for local environment', () => {
   delete process.env.TOA_ENV
 })
 
-it('should resolve database, schema and table', () => {
+it('should resolve database, schema, table and key', () => {
   const database = generate()
   const schema = generate()
   const table = generate()
@@ -65,6 +65,7 @@ it('should resolve database, schema and table', () => {
 
   expect(pointer.database).toStrictEqual(database)
   expect(pointer.table).toStrictEqual(`${schema}.${table}`)
+  expect(pointer.key).toStrictEqual(`pg://${username}@host0/${database}`)
 })
 
 it('should use locator.name as default table name', () => {

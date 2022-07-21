@@ -20,12 +20,24 @@ class Pointer extends Base {
 
     this.database = database || process.env.TOA_STORAGES_SQL_DATABASE
     this.table = `${schema}.${table}`
+    this.key = key(this.label)
   }
 }
 
-const PREFIX = 'storages-sql'
+/**
+ * @param {string} reference
+ * @returns {string}
+ */
+const key = (reference) => {
+  const url = new URL(reference)
+  const [, database] = url.pathname.split('/')
 
-/** @type {toa.pointer.Options} */
+  url.pathname = '/' + database
+
+  return url.href
+}
+
+const PREFIX = 'storages-sql'
 const OPTIONS = { protocol: 'pg:' }
 
 exports.Pointer = Pointer

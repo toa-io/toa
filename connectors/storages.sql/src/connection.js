@@ -25,9 +25,14 @@ class Connection extends Connector {
   constructor (pointer) {
     super()
 
+    const key = pointer.key
+    const connections = Connection.#connections
+
+    if (connections[key] !== undefined) return connections[key]
+    else connections[key] = this
+
     this.#pointer = pointer
     this.#driver = pointer.protocol.slice(0, -1)
-
     this.#client = this.#configure()
   }
 
@@ -39,9 +44,7 @@ class Connection extends Connector {
   }
 
   async disconnection () {
-    const key = this.#pointer.reference
-
-    delete Connection.#connections[key]
+    delete Connection.#connections[this.#pointer.key]
     await this.#client.destroy()
 
     console.info(`SQL storage disconnected from ${this.#pointer.label}`)
@@ -57,7 +60,6 @@ class Connection extends Connector {
 
   #configure () {
     const pointer = this.#pointer
-    const key = pointer.reference
 
     const config = {
       client: this.#driver,
@@ -73,9 +75,7 @@ class Connection extends Connector {
       }
     }
 
-    if (Connection.#connections[key] === undefined) Connection.#connections[key] = knex(config)
-
-    return Connection.#connections[key]
+    return knex(config)
   }
 }
 
