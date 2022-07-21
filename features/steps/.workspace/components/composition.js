@@ -4,13 +4,13 @@ const boot = require('@toa.io/boot')
 const { resolve } = require('./load')
 
 /**
- * @param {string} reference
+ * @param {string[]} references
  * @returns {Promise<toa.core.Connector>}
  **/
-const composition = async (reference) => {
-  const path = resolve(reference)
+const composition = async (references) => {
+  const paths = references.map(resolve)
   const composition =
-    /** @type {toa.core.Connector} */ await boot.composition([path])
+    /** @type {toa.core.Connector} */ await boot.composition(paths)
 
   await composition.connect()
 

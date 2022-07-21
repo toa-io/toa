@@ -1,5 +1,6 @@
 'use strict'
 
+const { transpose } = require('@toa.io/libraries/generic')
 const { parse } = require('@toa.io/libraries/yaml')
 
 const { cli } = require('./.connectors/cli')
@@ -26,7 +27,7 @@ When('I boot {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await runtime(reference)
+    this.connector = /** @type {toa.core.Connector} */ await runtime(reference)
   })
 
 When('I compose {component} component',
@@ -35,7 +36,20 @@ When('I compose {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await composition(reference)
+    this.connector = await composition([reference])
+  })
+
+When('I compose components:',
+  /**
+   * @param {import('@cucumber/cucumber').DataTable} data
+   * @this {toa.features.Context}
+   */
+  async function (data) {
+    const cells = data.raw()
+    const rows = transpose(cells)
+    const references = rows[0]
+
+    this.connector = await composition(references)
   })
 
 Then('I disconnect',

@@ -1,4 +1,4 @@
-name: postgres
+name: two
 namespace: sql
 
 entity:

@@ -83,7 +83,7 @@ describe('Given the database has a structure for the {component} component', () 
   let component
 
   beforeAll(async () => {
-    component = await load('sql.postgres')
+    component = await load('sql.one')
   })
 
   beforeEach(() => {
