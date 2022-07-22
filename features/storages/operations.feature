@@ -19,6 +19,9 @@ Feature: SQL Storage Operations
 
   Scenario Outline: Composition with shared connection
 
+  This reproduces an awful problem with mixed up tables for shared connections. Connections
+  are shared among components within composition.
+
     Given the database has a structure for the sql.one component
     And the database has a structure for the sql.two component
     When I compose components:
