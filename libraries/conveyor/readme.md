@@ -38,3 +38,10 @@ Units are batched while all lines are *busy*, that is awaiting processor's respo
 ## Processor
 
 Amount of results must match amount of given units. `ProcessorException` will be thrown otherwise.
+
+## Scaling Notice
+
+> ![Important](https://img.shields.io/badge/Important-red)<br/>
+> If Conveyor is used for batch insert into database, scaling up instances of the corresponding
+> component may result in **lower** overall request processing rate due to higher amount of
+> database commits. 
