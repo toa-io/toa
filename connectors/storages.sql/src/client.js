@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { Conveyor } = require('@toa.io/libraries/conveyor')
 
 /**
  * @implements {toa.sql.Client}
@@ -12,6 +13,9 @@ class Client extends Connector {
   /** @type {toa.sql.Connection} */
   #connection
 
+  /** @type {toa.conveyor.Conveyor<toa.core.storages.Entity, boolean>} */
+  #conveyor
+
   /**
    * @param {toa.sql.Connection} connection
    * @param {toa.sql.Pointer} pointer
@@ -22,11 +26,14 @@ class Client extends Connector {
     this.#connection = connection
     this.#table = pointer.table
 
+    const insert = (objects) => connection.insert(this.#table, objects)
+    this.#conveyor = new Conveyor(insert)
+
     this.depends(connection)
   }
 
   async insert (object) {
-    return this.#connection.insert(this.#table, object)
+    return this.#conveyor.process(object)
   }
 
   update (criteria, object) {

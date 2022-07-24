@@ -30,7 +30,7 @@ class Storage extends Connector {
   async #add (entity) {
     const object = to(entity)
 
-    return await this.#client.insert(object)
+    return this.#client.insert(object)
   }
 
   async #update (entity) {

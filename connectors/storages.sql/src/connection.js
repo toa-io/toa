@@ -50,8 +50,8 @@ class Connection extends Connector {
     console.info(`SQL storage disconnected from ${this.#pointer.label}`)
   }
 
-  async insert (table, entity) {
-    await this.#client.insert(entity).into(table)
+  async insert (table, objects) {
+    await this.#client.insert(objects).into(table)
 
     return true
   }
