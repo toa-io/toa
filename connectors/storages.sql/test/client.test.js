@@ -36,7 +36,27 @@ it('should insert', async () => {
 
   await client.insert(object)
 
-  expect(connection.insert).toHaveBeenCalledWith(pointer.table, object)
+  expect(connection.insert).toHaveBeenCalledWith(pointer.table, [object])
+})
+
+it('should batch insert', async () => {
+  const a = generate()
+  const b = generate()
+  const c = generate()
+
+  connection.insert.mockImplementationOnce(() => new Promise(
+    (resolve) => setImmediate(() => resolve(true))
+  ))
+
+  await Promise.all([
+    client.insert(a),
+    client.insert(b),
+    client.insert(c)
+  ])
+
+  expect(connection.insert).toHaveBeenCalledTimes(2)
+  expect(connection.insert).toHaveBeenNthCalledWith(1, pointer.table, [a])
+  expect(connection.insert).toHaveBeenNthCalledWith(2, pointer.table, [b, c])
 })
 
 it('should update', async () => {
