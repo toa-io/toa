@@ -1,7 +1,5 @@
 # Conveyor
 
-Concurrently precesses batched units with the best possible throughput.
-
 ## TL;DR
 
 ```javascript
@@ -13,35 +11,34 @@ See [types](types/conveyor.d.ts).
 
 ---
 
+## Responsibility
+
+Batches and sequentially processes units.
+
 ## Options
 
 <dl>
-<dt><code>lines</code></dt>
-<dd><code>number</code> of concurrent processor calls, default <code>2</code>
-
-It is assumed that a common use case of Conveyor is to handle remote processing, i.e. database
-calls. In the worst case of having single synchronization point (commit queue), two lines allows
-to avoid RTT delays. This parameter may become adaptive in future versions.
-</dd>
 <dt><code>capacity</code></dt>
 <dd><code>number</code> maximum amount of batched units, default <code>1000</code>
 
 `CapacityException` will be thrown if `capacity` is exceeded, thus must be prevented by other
-mechanisms. See [operation concurrency limit](#).
+mechanism. See [operation concurrency limit](#).
 </dd>
 </dl>
 
 ## Batching
 
-Units are batched while all lines are *busy*, that is awaiting processor's response.
+Units are batched while processor's response is awaited.
 
 ## Processor
 
-Amount of results must match amount of given units. `ProcessorException` will be thrown otherwise.
+If processor returns an array of results `R[]`, then amount of results must match amount of given
+units otherwise `ProcessorException` will be thrown. If processor returns `R` then it is returned
+as a result for all processed units.
 
 ## Scaling Notice
 
 > ![Important](https://img.shields.io/badge/Important-red)<br/>
-> If Conveyor is used for batch insert into database, scaling up instances of the corresponding
+> If Conveyor is used for batch insert into a database, scaling up instances of the corresponding
 > component may result in **lower** overall request processing rate due to higher amount of
 > database commits. 
