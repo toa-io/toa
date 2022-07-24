@@ -3,7 +3,7 @@
 ## TL;DR
 
 ```javascript
-const conveyor = new Conveyor(processor, options)
+const conveyor = new Conveyor(processor)
 const response = await conveyor.process(unit)
 ```
 
@@ -13,22 +13,7 @@ See [types](types/conveyor.d.ts).
 
 ## Responsibility
 
-Batches and sequentially processes units.
-
-## Options
-
-<dl>
-<dt><code>capacity</code></dt>
-<dd><code>number</code> maximum amount of batched units, default <code>1000</code>
-
-`CapacityException` will be thrown if `capacity` is exceeded, thus must be prevented by other
-mechanism. See [operation concurrency limit](#).
-</dd>
-</dl>
-
-## Batching
-
-Units are batched while processor's response is awaited.
+Batches and sequentially processes units. Units are batched while processor's response is awaited.
 
 ## Processor
 

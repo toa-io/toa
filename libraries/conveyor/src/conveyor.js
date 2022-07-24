@@ -1,6 +1,6 @@
 'use strict'
 
-const { CapacityException, ProcessorException } = require('./exceptions')
+const { ProcessorException } = require('./exceptions')
 
 /**
  * @implements {toa.conveyor.Conveyor}
@@ -13,16 +13,12 @@ class Conveyor {
   #batch = []
 
   #busy = false
-  #capacity = 1000
 
   /**
    * @param {toa.conveyor.Processor} processor
-   * @param {toa.conveyor.Options} [options]
    */
-  constructor (processor, options = {}) {
+  constructor (processor) {
     this.#processor = processor
-
-    if (options?.capacity !== undefined) this.#capacity = options.capacity
   }
 
   async process (unit) {
@@ -52,8 +48,6 @@ class Conveyor {
   }
 
   #promise (unit) {
-    if (this.#batch.length === this.#capacity) throw new CapacityException()
-
     const completion = {}
 
     const promise = new Promise((resolve, reject) => {

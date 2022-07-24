@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const { random } = require('@toa.io/libraries/generic')
 
-const { CapacityException, ProcessorException } = require('../src/exceptions')
+const { ProcessorException } = require('../src/exceptions')
 const { Conveyor } = require('../src')
 
 it('should be', () => {
@@ -75,24 +75,6 @@ it('should buffer units while processing', async () => {
 
     expect(value).toStrictEqual(result)
   }
-})
-
-it('should throw if capacity exceeded', async () => {
-  const capacity = 1000
-
-  for (let i = 0; i < capacity + 1; i++) conveyor.process(random()).then()
-
-  await expect(conveyor.process(random())).rejects.toThrow(CapacityException)
-})
-
-it('should throw if options.capacity exceeded', async () => {
-  const options = { capacity: random(5) + 5 }
-
-  conveyor = new Conveyor(processor, options)
-
-  for (let i = 0; i < options.capacity + 1; i++) conveyor.process(random()).then()
-
-  await expect(conveyor.process(random())).rejects.toThrow(CapacityException)
 })
 
 it('should throw if amount of results doesn\'t match amount of units', async () => {
