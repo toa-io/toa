@@ -8,9 +8,20 @@ it('should be', () => {
   expect(define).toBeDefined()
 })
 
+/** @type {toa.node.define.operations.Definition} */
+let definition
+
 it('should throw if function does not match conventions', () => {
   const append = () => null
   const module = { append }
+
+  expect(() => define(module)).toThrow('does not match conventions')
+})
+
+it('should throw if class does not match conventions', () => {
+  class Foo {}
+
+  const module = { Foo }
 
   expect(() => define(module)).toThrow('does not match conventions')
 })
@@ -65,9 +76,6 @@ describe('class', () => {
 
   const module = { Transition }
 
-  /** @type {toa.node.define.operations.Definition} */
-  let definition
-
   beforeAll(() => {
     definition = define(module)
   })
@@ -107,5 +115,25 @@ describe('class', () => {
     const module = { Transition }
 
     expect(() => define(module)).toThrow('does not match conventions')
+  })
+})
+
+describe('factory', () => {
+  class ObjectTransitionFactory {
+    create () {}
+  }
+
+  const module = { ObjectTransitionFactory }
+
+  beforeAll(() => {
+    definition = define(module)
+  })
+
+  it('should define type', () => {
+    expect(definition.type).toStrictEqual('transition')
+  })
+
+  it('should define subject', () => {
+    expect(definition.subject).toStrictEqual('object')
   })
 })

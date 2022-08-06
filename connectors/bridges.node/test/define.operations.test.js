@@ -30,3 +30,7 @@ it('should find function operations', () => {
 it('should find class operations', () => {
   expect(operations.cls).toBeDefined()
 })
+
+it('should find factory operations', () => {
+  expect(operations.fct).toBeDefined()
+})

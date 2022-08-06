@@ -4,7 +4,8 @@ const { extract } = require('./extract')
 
 const definitions = [
   require('./function').define,
-  require('./class').define
+  require('./class').define,
+  require('./factory').define
 ]
 
 /**
