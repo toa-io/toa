@@ -71,7 +71,7 @@ describe('function', () => {
 
 describe('class', () => {
   class Transition {
-    execute (input, object) {}
+    run (input, object) {}
   }
 
   const module = { Transition }
@@ -88,11 +88,11 @@ describe('class', () => {
     expect(definition.subject).toStrictEqual('object')
   })
 
-  it('should find execute method', () => {
+  it('should find run method', () => {
     class Assignment {
-      run (input, objects) {}
+      execute (input, objects) {}
 
-      execute (input, object) {}
+      run (input, object) {}
     }
 
     const module = { Assignment }
@@ -101,12 +101,12 @@ describe('class', () => {
     expect(definition).toMatchObject({ type: 'assignment', subject: 'object' })
   })
 
-  it('should throw if no execute method found', () => {
+  it('should throw if no run method found', () => {
     class Observation {}
 
     const module = { Observation }
 
-    expect(() => define(module)).toThrow('Method \'execute\' not found')
+    expect(() => define(module)).toThrow('Method \'run\' not found')
   })
 
   it('should throw if function is not a class', () => {

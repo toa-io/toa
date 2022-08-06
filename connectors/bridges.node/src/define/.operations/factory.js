@@ -2,11 +2,9 @@
 
 /** @type {toa.node.define.operations.Define} */
 const define = (statement, name) => {
-  if (statement.type !== 'ClassDeclaration') return null
+  if (!test(statement, name)) return null
 
   const match = name.match(pattern)
-
-  if (match === null) return null
 
   /** @type {toa.node.define.operations.Definition} */
   const definition = {}
@@ -17,6 +15,15 @@ const define = (statement, name) => {
   return definition
 }
 
+/** @type {toa.node.define.operations.Test} */
+const test = (statement, name) => {
+  const declaration = statement.type === 'ClassDeclaration'
+  const match = name.match(pattern) !== null
+
+  return declaration && match
+}
+
 const pattern = new RegExp('^(Objects?|Changeset)(Transition|Observation|Assignment)Factory$')
 
 exports.define = define
+exports.test = test

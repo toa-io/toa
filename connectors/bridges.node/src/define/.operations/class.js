@@ -6,13 +6,20 @@ const func = require('./function')
 
 /** @type {toa.node.define.operations.Define} */
 const define = (statement, name) => {
-  if (statement.type !== 'ClassDeclaration') return null
-  if (!names.includes(name)) return null
+  if (!test(statement, name)) return null
 
   const type = name.toLowerCase()
-  const execute = method(/** @type {import('@babel/types').ClassDeclaration} */ statement, 'execute')
+  const run = method(/** @type {import('@babel/types').ClassDeclaration} */ statement, 'run')
 
-  return func.define(execute, type)
+  return func.define(run, type)
+}
+
+/** @type {toa.node.define.operations.Test} */
+const test = (statement, name) => {
+  const declaration = statement.type === 'ClassDeclaration'
+  const known = names.includes(name)
+
+  return declaration && known
 }
 
 /**
@@ -31,3 +38,4 @@ const method = (statement, name) => {
 const names = types.map((type) => capitalize(type))
 
 exports.define = define
+exports.test = test

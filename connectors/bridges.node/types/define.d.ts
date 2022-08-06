@@ -9,6 +9,8 @@ declare namespace toa.node.define {
     type List = Record<string, Definition>
 
     type Define = (node: Node, type: string) => Definition
+
+    type Test = (node: Node, type: string) => boolean
   }
 
   type Operations = (root: string) => Promise<operations.List>

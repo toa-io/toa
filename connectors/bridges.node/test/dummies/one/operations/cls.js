@@ -6,7 +6,7 @@
 class Transition {
   constructor (context) {} // eslint-disable-line
 
-  execute (input, object) {}
+  run (input, object) {}
 }
 
 exports.Transition = Transition
