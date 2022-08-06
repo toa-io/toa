@@ -99,7 +99,7 @@ properties:
           type:
             enum: [transition, observation, assignment]
           subject:
-            enum: [entity, set, changeset]
+            enum: [object, objects, changeset]
           concurrency:
             enum: [none, retry]
           forward:
@@ -128,7 +128,7 @@ properties:
             then:
               properties:
                 subject:
-                  enum: [entity]
+                  enum: [object]
               if: # transition query: false
                 not:
                   properties:
@@ -153,7 +153,7 @@ properties:
             then:
               properties:
                 subject:
-                  enum: [entity, set]
+                  enum: [object, objects]
                 query:
                   not:
                     const: false

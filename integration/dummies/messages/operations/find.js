@@ -1,7 +1,7 @@
 'use strict'
 
-async function observation (_, set) {
-  return { output: set }
+async function observation (_, objects) {
+  return { output: objects }
 }
 
 exports.observation = observation

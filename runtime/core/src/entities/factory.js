@@ -15,12 +15,12 @@ class Factory {
     return new Entity(this.#schema, id)
   }
 
-  entity (record) {
+  object (record) {
     return new Entity(this.#schema, record)
   }
 
-  set (recordset) {
-    const set = recordset.map((record) => this.entity(record))
+  objects (recordset) {
+    const set = recordset.map((record) => this.object(record))
 
     return new EntitySet(set)
   }

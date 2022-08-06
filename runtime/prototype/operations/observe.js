@@ -1,7 +1,7 @@
 'use strict'
 
-async function observe (input, entity) {
-  return { output: entity }
+async function observe (input, object) {
+  return { output: object }
 }
 
 exports.observation = observe

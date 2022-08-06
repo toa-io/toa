@@ -36,9 +36,9 @@ return { output: { ok: 1 } }
 
 Exported function's name defines operation `type` property, thus must be one of:
 `transition`, `observation`, or `assignment`. Second (state) argument name must be `object`,
-or `objects`, as it defines operation's `target` property.
+`objects`, or `changeset` as it defines operation's `subject` property.
 
-Following function signature defines operation of `observation` type targeted to a set of `objects`.
+Following function signature defines operation of `observation` type with `objects` subject.
 
 ```javascript
 // operations/set.js
@@ -58,7 +58,7 @@ See [Operation properties](#).
 class Transition {
   constructor (context) {}
 
-  execute (input, state) {
+  execute (input, object) {
     // ...
 
     return { output: { foo: 'bar' } }

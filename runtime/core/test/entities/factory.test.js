@@ -27,14 +27,14 @@ it('should create initial', () => {
 })
 
 it('should create instance', () => {
-  const entity = factory.entity(fixtures.entity)
+  const entity = factory.object(fixtures.entity)
 
   expect(entity).toBeInstanceOf(mock.Entity)
   expect(entity.constructor).toHaveBeenCalledWith(fixtures.schema, fixtures.entity)
 })
 
 it('should create set', () => {
-  const set = factory.set(fixtures.set)
+  const set = factory.objects(fixtures.set)
 
   expect(set).toBeInstanceOf(mock.EntitySet)
 

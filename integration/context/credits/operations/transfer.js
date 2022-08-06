@@ -1,11 +1,11 @@
 'use strict'
 
-async function transfer (source, entity, context) {
+async function transfer (source, object, context) {
   const reply = await context.local.nullify({ query: { id: source } })
 
-  entity.balance += reply.output
+  object.balance += reply.output
 
-  return { output: entity.balance }
+  return { output: object.balance }
 }
 
 exports.transition = transfer

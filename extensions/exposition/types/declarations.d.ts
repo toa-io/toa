@@ -1,30 +1,30 @@
 declare namespace toa.extensions.exposition.declarations {
 
-    interface Operation {
-        operation: string
-        type: 'transition' | 'observation' | 'assignment'
-        subject: 'entity' | 'set'
-        query?: boolean
-    }
+  interface Operation {
+    operation: string
+    type: 'transition' | 'observation' | 'assignment'
+    subject: 'object' | 'objects' | 'changeset'
+    query?: boolean
+  }
 
-    interface Query {
-        criteria?: string
-        sort?: string[]
-        projection?: string[]
-    }
+  interface Query {
+    criteria?: string
+    sort?: string[]
+    projection?: string[]
+  }
 
-    type Node = {
-        query?: Query
-        operations?: Operation[]
-    } & {
-        [key: string]: Node
-    }
+  type Node = {
+    query?: Query
+    operations?: Operation[]
+  } & {
+    [key: string]: Node
+  }
 
-    interface Exposition {
-        namespace: string
-        name: string
-        resources: Node
-    }
+  interface Exposition {
+    namespace: string
+    name: string
+    resources: Node
+  }
 }
 
 export type Node = toa.extensions.exposition.declarations.Node
