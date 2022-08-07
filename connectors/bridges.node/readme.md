@@ -78,7 +78,7 @@ exports.ObjectTransitionFactory = ObjectTransitionFactory
 
 Exported class name must follow the pattern: `{Subject}{Type}Factory`, where `Subject` and `Type`
 defines operation's `subject` and `type` respectively. Class must
-implement [Algorithm Factory interface](types/operations.d.ts).
+implement [Algorithm Factory interface](#).
 
 > Factory class name examples: `ObjectTransitionFactory`, `ObjectsObservationFactory`,
 > `ChangesetAssignmentFactory`.

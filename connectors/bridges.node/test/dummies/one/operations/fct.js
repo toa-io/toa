@@ -2,6 +2,9 @@
 
 const { Transition } = require('./cls')
 
+/**
+ * @implements {toa.node.algorithms.Factory}
+ */
 class ObjectTransitionFactory {
   #context
 
