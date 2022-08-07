@@ -1,11 +1,11 @@
 'use strict'
 
-async function transition (input, entity, context) {
+async function transition (input, object, context) {
   if (input.text === 'throw exception') throw new Error('User space exception')
 
   const { free, ...message } = input
 
-  Object.assign(entity, message)
+  Object.assign(object, message)
 
   if (free !== true) {
     const price = context.configuration.price
@@ -15,7 +15,7 @@ async function transition (input, entity, context) {
     if (reply.error !== undefined) return { error: reply.error }
   }
 
-  return { output: { id: entity.id } }
+  return { output: { id: object.id } }
 }
 
 exports.transition = transition

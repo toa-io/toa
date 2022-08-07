@@ -1,11 +1,11 @@
 'use strict'
 
-const operation = (bridge, path, endpoint, context) => {
-  const operation = resolve(bridge).operation(path, endpoint, context)
+const algorithm = (bridge, path, endpoint, context) => {
+  const algorithm = resolve(bridge).algorithm(path, endpoint, context)
 
-  operation.depends(context)
+  algorithm.depends(context)
 
-  return operation
+  return algorithm
 }
 
 const event = (bridge, path, label) => resolve(bridge).event(path, label)
@@ -23,6 +23,6 @@ const resolve = (bridge) => {
   return factories[bridge]
 }
 
-exports.operation = operation
+exports.algorithm = algorithm
 exports.event = event
 exports.receiver = receiver

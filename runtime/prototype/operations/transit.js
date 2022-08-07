@@ -1,9 +1,9 @@
 'use strict'
 
-async function transit (input, entity) {
-  Object.assign(entity, input)
+async function transit (input, object) {
+  Object.assign(object, input)
 
-  return { output: { id: entity.id } }
+  return { output: { id: object.id } }
 }
 
 exports.transition = transit

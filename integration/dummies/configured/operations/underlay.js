@@ -1,6 +1,6 @@
 'use strict'
 
-async function transition (input, entity, context) {
+async function transition (input, object, context) {
   const output = {}
   const { a, b } = context.configuration.bar
 

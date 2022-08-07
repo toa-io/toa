@@ -3,6 +3,9 @@
 const { Connector } = require('@toa.io/core')
 const { underlay } = require('@toa.io/libraries/generic')
 
+/**
+ * @implements {toa.node.Context}
+ */
 class Context extends Connector {
   extensions
   configuration

@@ -8,6 +8,8 @@ export namespace toa.norm {
     }
 
     interface Operation {
+      type: 'transition' | 'observation' | 'assignment'
+      subject: 'object' | 'objects'
       bindings: string[]
     }
 
@@ -53,4 +55,6 @@ export namespace toa.norm {
 }
 
 export type Component = toa.norm.Component
+export type Operation = toa.norm.component.Operation
+
 export const component: toa.norm.component.Constructor

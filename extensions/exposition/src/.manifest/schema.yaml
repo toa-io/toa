@@ -44,7 +44,7 @@ definitions:
               enum: [transition, observation, assignment]
             subject:
               type: string
-              enum: [entity, set, changeset]
+              enum: [object, objects, changeset]
             query:
               type: boolean
           additionalProperties: false

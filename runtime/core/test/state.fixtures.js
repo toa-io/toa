@@ -12,20 +12,21 @@ const storage = {
 }
 
 const factory = {
-  entity: jest.fn(() => ({ [generate()]: generate() })),
-  set: jest.fn(() => ({ [generate()]: generate() }))
+  object: jest.fn(() => ({ [generate()]: generate() })),
+  objects: jest.fn(() => ({ [generate()]: generate() }))
 }
 
 const query = generate()
 
 const entity = {
   get: jest.fn(() => ({ [generate()]: generate() })),
-  event: jest.fn(() => ({ state: { [generate()]: generate() }, changeset: { [generate()]: generate() } }))
+  event: jest.fn(() => ({
+    state: { [generate()]: generate() }, changeset: { [generate()]: generate() }
+  }))
 }
 
 const initial = {
-  initial: true,
-  ...entity
+  initial: true, ...entity
 }
 
 const unchanged = {

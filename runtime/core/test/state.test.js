@@ -19,20 +19,20 @@ beforeEach(() => {
   state = new State(fixtures.storage, fixtures.factory, fixtures.emitter)
 })
 
-it('should provide entity', async () => {
-  const entity = await state.entity(fixtures.query)
+it('should provide object', async () => {
+  const entity = await state.object(fixtures.query)
 
   expect(fixtures.storage.get).toHaveBeenCalledWith(fixtures.query)
-  expect(entity).toStrictEqual(fixtures.factory.entity.mock.results[0].value)
-  expect(fixtures.factory.entity).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
+  expect(entity).toStrictEqual(fixtures.factory.object.mock.results[0].value)
+  expect(fixtures.factory.object).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
 })
 
-it('should provide set', async () => {
-  const set = await state.set(fixtures.query)
+it('should provide objects', async () => {
+  const set = await state.objects(fixtures.query)
 
   expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
-  expect(set).toStrictEqual(fixtures.factory.set.mock.results[0].value)
-  expect(fixtures.factory.set).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
+  expect(set).toStrictEqual(fixtures.factory.objects.mock.results[0].value)
+  expect(fixtures.factory.objects).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
 })
 
 it('should store entity', async () => {

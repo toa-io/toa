@@ -1,11 +1,11 @@
 'use strict'
 
-async function deduce (input, entity) {
-  if (entity.balance < input) return { error: { code: 1, message: 'not enough credits' } }
+async function deduce (input, object) {
+  if (object.balance < input) return { error: { code: 1, message: 'not enough credits' } }
 
-  entity.balance -= input
+  object.balance -= input
 
-  return { output: entity.balance }
+  return { output: object.balance }
 }
 
 exports.transition = deduce

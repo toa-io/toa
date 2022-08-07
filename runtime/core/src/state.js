@@ -29,7 +29,7 @@ class State {
     return this.#entity.init(id)
   }
 
-  async entity (query) {
+  async object (query) {
     const record = await this.#storage.get(query)
 
     if (record === null) {
@@ -38,13 +38,13 @@ class State {
       else throw new StateNotFoundException()
     }
 
-    return this.#entity.entity(record)
+    return this.#entity.object(record)
   }
 
-  async set (query) {
+  async objects (query) {
     const recordset = await this.#storage.find(query)
 
-    return this.#entity.set(recordset)
+    return this.#entity.objects(recordset)
   }
 
   changeset (query) {

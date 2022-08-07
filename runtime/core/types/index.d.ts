@@ -1,6 +1,7 @@
 export * as bindings from './bindings'
 export * as extensions from './extensions'
 export * as storages from './storages'
+export * as bridges from './bridges'
 
 export { Connector } from './connector'
 export { Context } from './context'

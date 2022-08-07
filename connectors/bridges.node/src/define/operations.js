@@ -1,12 +1,21 @@
 'use strict'
 
-const { definition } = require('./operations/definition')
 const load = require('../load')
+const algorithm = require('./.operations')
 
+/** @type {toa.node.define.Algorithms} */
 const operations = async (root) => {
   const modules = await load.operations(root)
 
-  return Object.fromEntries(modules.map(([name, module]) => [name, definition(module)]))
+  /** @type {toa.node.define.algorithms.List} */
+  const algorithms = {}
+
+  for (const [name, module] of modules) algorithms[name] = algorithm.define(module)
+
+  return algorithms
 }
 
+const extract = (module) => algorithm.extract(module)
+
 exports.operations = operations
+exports.extract = extract
