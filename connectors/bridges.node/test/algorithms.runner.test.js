@@ -23,3 +23,12 @@ it('should return as output', async () => {
     expect(reply.output).toStrictEqual(value)
   }
 })
+
+it('should not return undefined output', async () => {
+  const run = () => undefined
+  const instance = /** @type {toa.core.bridges.Algorithm} */ { run }
+  const runner = new Runner(instance, context)
+  const reply = await runner.run()
+
+  expect(reply).toStrictEqual(undefined)
+})

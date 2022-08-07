@@ -24,14 +24,20 @@ class Runner extends Connector {
   async run (input, state) {
     let reply = await this.#instance.run(input, state)
 
-    const object = typeof reply === 'object'
-    const output = object && reply.output !== undefined
-    const error = object && reply.error !== undefined
-
-    if (!output && !error) reply = { output: reply }
+    if (reply !== undefined) reply = normalize(reply)
 
     return reply
   }
+}
+
+function normalize (reply) {
+  const object = typeof reply === 'object'
+  const output = object && reply.output !== undefined
+  const error = object && reply.error !== undefined
+
+  if (!output && !error) reply = { output: reply }
+
+  return reply
 }
 
 exports.Runner = Runner
