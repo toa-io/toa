@@ -15,12 +15,7 @@ class Factory {
     const module = load.operation(root, name)
     const ctx = new Context(context)
 
-    const descriptor = extract(module)
-    const func = module[descriptor.name]
-    const factory = require('./algorithms/' + descriptor.syntax)
-    const instance = factory.create(func, ctx)
-
-    return new Runner(instance, ctx)
+    return runner(module, ctx)
   }
 
   event (root, label) {
@@ -34,6 +29,20 @@ class Factory {
 
     return new Receiver(receiver)
   }
+}
+
+/**
+ * @param {Object} module
+ * @param {toa.node.Context} context
+ * @returns {Runner}
+ */
+function runner (module, context) {
+  const descriptor = extract(module)
+  const func = module[descriptor.name]
+  const factory = require('./algorithms/' + descriptor.syntax)
+  const instance = factory.create(func, context)
+
+  return new Runner(instance, context)
 }
 
 exports.Factory = Factory
