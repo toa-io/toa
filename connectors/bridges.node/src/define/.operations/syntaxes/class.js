@@ -5,13 +5,13 @@ const { types } = require('./constants')
 const func = require('./function')
 
 /** @type {toa.node.define.operations.Define} */
-const define = (statement, name) => {
-  if (!test(statement, name)) return null
+const define = (descriptor) => {
+  const declaration = /** @type {import('@babel/types').ClassDeclaration} */ descriptor.statement
 
-  const type = name.toLowerCase()
-  const run = method(/** @type {import('@babel/types').ClassDeclaration} */ statement, 'run')
+  descriptor.name = descriptor.name.toLowerCase()
+  descriptor.statement = method(declaration, 'run')
 
-  return func.define(run, type)
+  return func.define(descriptor)
 }
 
 /** @type {toa.node.define.operations.Test} */
@@ -25,6 +25,7 @@ const test = (statement, name) => {
 /**
  * @param {import('@babel/types').ClassDeclaration} statement
  * @param {string} name
+ * @returns {import('@babel/types').Statement}
  */
 const method = (statement, name) => {
   const methods = statement.body.body
@@ -32,7 +33,7 @@ const method = (statement, name) => {
 
   if (method === undefined) throw new Error(`Method '${name}' not found`)
 
-  return method
+  return /** @type {import('@babel/types').Statement} */ method
 }
 
 const names = types.map((type) => capitalize(type))

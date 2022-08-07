@@ -12,7 +12,7 @@ const find = (component) => resolve(DUMMIES, component)
 
 const root = find('one')
 
-/** @type {toa.node.define.operations.List} */
+/** @type {toa.node.define.algorithms.List} */
 let operations
 
 beforeAll(async () => {

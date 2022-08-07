@@ -1,4 +1,5 @@
 import { Underlay } from '@toa.io/libraries/generic/types'
+import { Connector } from "@toa.io/core/types";
 
 declare namespace toa.node {
 
@@ -6,7 +7,7 @@ declare namespace toa.node {
     [key: string]: Function
   }
 
-  type Context = {
+  interface Context extends Connector {
     local: Underlay
     remote: Underlay
     extensions: Extensions
@@ -16,3 +17,5 @@ declare namespace toa.node {
   }
 
 }
+
+export type Context = toa.node.Context

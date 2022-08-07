@@ -1,16 +1,26 @@
 'use strict'
 
 const parser = require('@babel/parser')
+const syntaxes = require('./syntaxes')
 
 /**
  * @param {Object} module
- * @returns {[string, import('@babel/types').Statement]}
+ * @returns {toa.node.define.algorithms.Descriptor}
  */
 const extract = (module) => {
   const [name, func] = find(module)
-  const ast = parse(func)
+  const statement = parse(func)
 
-  return [name, ast]
+  /** @type {toa.node.define.algorithms.Descriptor} */
+  const descriptor = { name, statement, syntax: undefined }
+
+  for (const [syntax, { test }] of Object.entries(syntaxes)) {
+    if (test(statement, name)) descriptor.syntax = /** @type {toa.node.define.algorithms.Syntax} */ syntax
+  }
+
+  if (descriptor.syntax === undefined) throw new Error('Exported function does not match conventions')
+
+  return descriptor
 }
 
 /**

@@ -3,15 +3,14 @@
 const { types, subjects } = require('./constants')
 
 /** @type {toa.node.define.operations.Define} */
-const define = (statement, type) => {
-  if (!test(statement, type)) return null
-
+const define = (descriptor) => {
+  const { statement, name } = descriptor
   const node = statement.type === 'ExpressionStatement' ? statement.expression : statement
 
   /** @type {toa.node.define.operations.Definition} */
   const definition = {}
 
-  definition.type = /** @type {typeof toa.norm.component.Operation.type} */ type
+  definition.type = /** @type {typeof toa.norm.component.Operation.type} */ name
 
   if (node.params.length > 1) definition.subject = subject(node.params[1].name)
 

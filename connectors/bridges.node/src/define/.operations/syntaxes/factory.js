@@ -1,10 +1,8 @@
 'use strict'
 
 /** @type {toa.node.define.operations.Define} */
-const define = (statement, name) => {
-  if (!test(statement, name)) return null
-
-  const match = name.match(pattern)
+const define = (descriptor) => {
+  const match = descriptor.name.match(pattern)
 
   /** @type {toa.node.define.operations.Definition} */
   const definition = {}

@@ -1,6 +1,6 @@
 'use strict'
 
-const { Transition } = require('./cls')
+const { Transition } = require('./o-cls')
 
 class ObjectTransitionFactory {
   #context
