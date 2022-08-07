@@ -23,17 +23,6 @@ function transition (input, object, context) {
 exports.transition = transition
 ```
 
-Return value must match [UCP Response](#). If return value is an object without neither `output`
-nor `error` properties, then it is considered as the value of `output`.
-
-Next two return values are equivalent.
-
-```javascript
-return { ok: 1 }
-
-return { output: { ok: 1 } } 
-```
-
 Exported function's name defines operation `type` property, thus must be one of:
 `transition`, `observation`, or `assignment`. Second (state) argument name must be `object`,
 `objects`, or `changeset` as it defines operation's `subject`.
@@ -93,6 +82,20 @@ implement [Algorithm Factory interface](types/operations.d.ts).
 
 > Factory class name examples: `ObjectTransitionFactory`, `ObjectsObservationFactory`,
 > `ChangesetAssignmentFactory`.
+
+### Return value
+
+Algorithm's return value must match [UCP Response](#), that is, to be an object with either `output`
+or `error` properties. If return value is a primitive or an object without neither `output`
+nor `error` properties, then it is considered as the value of `output`.
+
+Next two return values are equivalent.
+
+```javascript
+return { ok: 1 }
+
+return { output: { ok: 1 } } 
+```
 
 ### Storing Context
 
