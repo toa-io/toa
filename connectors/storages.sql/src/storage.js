@@ -8,18 +8,18 @@ const { to } = require('./.storage/translate')
  * @implements {toa.sql.Storage}
  */
 class Storage extends Connector {
-  /** @type {toa.sql.Connection} */
-  #connection
+  /** @type {toa.sql.Client} */
+  #client
 
   /**
-   * @param {toa.sql.Connection} connection
+   * @param {toa.sql.Client} client
    */
-  constructor (connection) {
+  constructor (client) {
     super()
 
-    this.#connection = connection
+    this.#client = client
 
-    this.depends(connection)
+    this.depends(client)
   }
 
   async store (entity) {
@@ -30,7 +30,7 @@ class Storage extends Connector {
   async #add (entity) {
     const object = to(entity)
 
-    return await this.#connection.insert(object)
+    return this.#client.insert(object)
   }
 
   async #update (entity) {
@@ -38,7 +38,7 @@ class Storage extends Connector {
     const criteria = { id, _version }
     const object = to(entity)
 
-    return this.#connection.update(criteria, object)
+    return this.#client.update(criteria, object)
   }
 }
 

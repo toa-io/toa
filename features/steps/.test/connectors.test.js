@@ -2,6 +2,7 @@
 
 const { resolve } = require('node:path')
 const { generate } = require('randomstring')
+const { transpose } = require('@toa.io/libraries/generic')
 const { dump } = require('@toa.io/libraries/yaml')
 
 const { gherkin } = require('@toa.io/libraries/mock')
@@ -12,6 +13,10 @@ const mock = { gherkin, boot: fixtures.mock.boot }
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/boot', () => mock.boot)
 require('../connectors')
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
 
 describe('When I boot {component} component', () => {
   const step = gherkin.steps.Wh('I boot {component} component')
@@ -56,7 +61,29 @@ describe('When I compose {word} component', () => {
     const composition = mock.boot.composition.mock.results[0].value
 
     expect(composition.connect).toHaveBeenCalled()
+    expect(context.connector).toStrictEqual(composition)
+  })
+})
 
+describe('When I compose components:', () => {
+  const step = gherkin.steps.Wh('I compose components:')
+
+  it('should be', () => undefined)
+
+  it('should create composition', async () => {
+    const context = {}
+    const references = ['dummies.one', 'dummies.two']
+    const cells = transpose(references)
+    const data = gherkin.table(cells)
+    const paths = references.map((reference) => resolve(COLLECTION, reference))
+
+    await step.call(context, data)
+
+    expect(mock.boot.composition).toHaveBeenCalledWith(paths)
+
+    const composition = mock.boot.composition.mock.results[0].value
+
+    expect(composition.connect).toHaveBeenCalled()
     expect(context.connector).toStrictEqual(composition)
   })
 })
@@ -95,6 +122,32 @@ describe('When I invoke {word} with:', () => {
     connector.invoke.mockImplementationOnce(() => ({ exception }))
 
     await expect(step.call(context, 'any', {})).rejects.toThrow(exception.message)
+  })
+})
+
+describe('When I call {endpoint} with:', () => {
+  const step = gherkin.steps.Wh('I call {endpoint} with:')
+
+  it('should be', () => undefined)
+
+  it('should call remote', async () => {
+    const namespace = generate()
+    const name = generate()
+    const operation = generate()
+    const endpoint = `${namespace}.${name}.${operation}`
+    const request = { [generate()]: generate() }
+    const yaml = dump(request)
+    const context = {}
+
+    await step.call(context, endpoint, yaml)
+
+    expect(mock.boot.remote).toHaveBeenCalled()
+
+    const remote = mock.boot.remote.mock.results[0].value
+
+    expect(remote.invoke).toHaveBeenCalledWith(operation, request)
+
+    expect(remote.disconnect).toHaveBeenCalled()
   })
 })
 

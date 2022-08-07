@@ -1,6 +1,6 @@
 'use strict'
 
-const Connection = jest.fn().mockImplementation(() => ({
+const Client = jest.fn().mockImplementation(() => ({
   connection: jest.fn(),
   link: jest.fn(),
   connect: jest.fn(),
@@ -10,4 +10,4 @@ const Connection = jest.fn().mockImplementation(() => ({
   update: jest.fn(() => false)
 }))
 
-exports.Connection = Connection
+exports.Client = Client

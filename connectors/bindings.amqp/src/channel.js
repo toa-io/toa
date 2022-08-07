@@ -25,6 +25,7 @@ class Channel extends Connector {
 
   async connection () {
     this.#channel = await this.#connection.channel()
+    this.#channel.prefetch(100)
   }
 
   async request (label, request) {

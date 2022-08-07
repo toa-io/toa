@@ -1,9 +1,10 @@
 'use strict'
 
+const { transpose } = require('@toa.io/libraries/generic')
 const { parse } = require('@toa.io/libraries/yaml')
 
 const { cli } = require('./.connectors/cli')
-const { runtime, composition } = require('./.workspace/components')
+const get = require('./.workspace/components')
 
 const { When, Then } = require('@cucumber/cucumber')
 
@@ -26,7 +27,7 @@ When('I boot {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await runtime(reference)
+    this.connector = /** @type {toa.core.Connector} */ await get.runtime(reference)
   })
 
 When('I compose {component} component',
@@ -35,7 +36,20 @@ When('I compose {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await composition(reference)
+    this.connector = await get.composition([reference])
+  })
+
+When('I compose components:',
+  /**
+   * @param {import('@cucumber/cucumber').DataTable} data
+   * @this {toa.features.Context}
+   */
+  async function (data) {
+    const cells = data.raw()
+    const rows = transpose(cells)
+    const references = rows[0]
+
+    this.connector = await get.composition(references)
   })
 
 Then('I disconnect',
@@ -49,6 +63,10 @@ Then('I disconnect',
     if (this.amqp) {
       await this.amqp.channel.close()
       await this.amqp.connection.close()
+    }
+
+    if (this.remotes) {
+      for (const remote of Object.values(this.remotes)) await remote.disconnect()
     }
   })
 
@@ -67,4 +85,19 @@ When('I invoke {word} with:',
     if (exception !== undefined) {
       throw new Error(exception.message)
     }
+  })
+
+When('I call {endpoint} with:',
+  /**
+   * @param {string} endpoint
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, yaml) {
+    const [namespace, name, operation] = endpoint.split('.')
+    const remote = await get.remote(namespace, name)
+    const request = parse(yaml)
+
+    await remote.invoke(operation, request)
+    await remote.disconnect()
   })

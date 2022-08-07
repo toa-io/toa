@@ -62,6 +62,7 @@ describe('Given I have a {storage} database {word}', () => {
     expect(context.storage.driver).toStrictEqual('pg')
     expect(context.storage.database).toStrictEqual(database)
     expect(context.storage.migration).toStrictEqual(migration)
+    expect(context.storage.tables).toStrictEqual({})
   })
 
 })
@@ -83,11 +84,11 @@ describe('Given the database has a structure for the {component} component', () 
   let component
 
   beforeAll(async () => {
-    component = await load('sql.postgres')
+    component = await load('sql.one')
   })
 
   beforeEach(() => {
-    context.storage = { driver: generate(), database, migration }
+    context.storage = { driver: generate(), database, migration, tables: {} }
   })
 
   it('should create table', async () => {
@@ -103,12 +104,12 @@ describe('Given the database has a structure for the {component} component', () 
 
     await step.call(context, locator.id)
 
-    expect(context.storage.table).toStrictEqual(table)
+    expect(context.storage.tables[locator.id]).toStrictEqual(table)
   })
 })
 
-describe('Then the table must contain rows:', () => {
-  const step = gherkin.steps.Th('the table must contain rows:')
+describe('Then the table of {component} must contain rows:', () => {
+  const step = gherkin.steps.Th('the table of {component} must contain rows:')
 
   it('should be', () => undefined)
 
@@ -118,6 +119,9 @@ describe('Then the table must contain rows:', () => {
   /** @type {toa.features.Context} */
   let context
 
+  const reference = generate()
+  const table = generate()
+
   beforeEach(() => {
     const rows = [['foo', 'bar']]
 
@@ -125,8 +129,10 @@ describe('Then the table must contain rows:', () => {
 
     data = gherkin.table(rows)
 
+    const tables = { [reference]: table }
+
     /** @type {toa.features.context.Storage} */
-    const storage = { driver: generate(), database: generate(), table: generate() }
+    const storage = { driver: generate(), database: generate(), tables }
 
     context = { storage }
   })
@@ -134,7 +140,7 @@ describe('Then the table must contain rows:', () => {
   it('should find rows', async () => {
     knex.result([{}])
 
-    await step.call(context, data)
+    await step.call(context, reference, data)
 
     const rows = data.rows()
     const client = context.storage.driver
@@ -151,7 +157,7 @@ describe('Then the table must contain rows:', () => {
     const sql = knex.mock.results[0].value
 
     expect(rows.length > 0).toStrictEqual(true)
-    expect(sql.from).toHaveBeenCalledWith(context.storage.table)
+    expect(sql.from).toHaveBeenCalledWith(table)
     expect(sql.from).toHaveBeenCalledTimes(rows.length)
     expect(sql.select).toHaveBeenCalledTimes(rows.length)
     expect(sql.destroy).toHaveBeenCalled()
@@ -164,19 +170,19 @@ describe('Then the table must contain rows:', () => {
   it('should pass if found', async () => {
     knex.result([{}])
 
-    await step.call(context, data)
+    await step.call(context, reference, data)
   })
 
   it('should fail if not found', async () => {
     knex.result([])
 
-    await expect(step.call(context, data)).rejects.toThrow(AssertionError)
+    await expect(step.call(context, reference, data)).rejects.toThrow(AssertionError)
   })
 
   it('should fail if multiple found', async () => {
     knex.result([{}, {}])
 
-    await expect(step.call(context, data)).rejects.toThrow(AssertionError)
+    await expect(step.call(context, reference, data)).rejects.toThrow(AssertionError)
   })
 })
 

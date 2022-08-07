@@ -32,7 +32,7 @@ Given('I have a {storage} database {word}',
 
     await migration.database(database)
 
-    this.storage = { database, migration, driver: module.driver }
+    this.storage = { database, migration, driver: module.driver, tables: {} }
   })
 
 Given('the database has a structure for the {component} component',
@@ -43,19 +43,21 @@ Given('the database has a structure for the {component} component',
   async function (reference) {
     const component = await load(reference)
 
-    this.storage.table = await this.storage.migration.table(
+    this.storage.tables[reference] = await this.storage.migration.table(
       this.storage.database, component.locator, component.entity.schema, true
     )
   })
 
-Then('the table must contain rows:',
+Then('the table of {component} must contain rows:',
   /**
+   * @param {string} reference
    * @param {import('@cucumber/cucumber').DataTable} data
    * @this {toa.features.Context}
    */
-  async function (data) {
+  async function (reference, data) {
     const properties = data.raw()[0]
     const client = this.storage.driver
+    const table = this.storage.tables[reference]
 
     const connection = {
       user: 'developer',
@@ -75,7 +77,7 @@ Then('the table must contain rows:',
         i++
       }
 
-      const records = await sql.from(this.storage.table).where(criteria).select('*')
+      const records = await sql.from(table).where(criteria).select('*')
 
       assert.equal(records.length > 0, true, `row not found ${row}`)
       assert.equal(records.length, 1, `multiple rows found ${row}`)
