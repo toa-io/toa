@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { newid } = require('@toa.io/libraries/generic')
+const { newid, timeout } = require('@toa.io/libraries/generic')
 const { console } = require('@toa.io/libraries/console')
 
 const { pack, unpack } = require('./message')
@@ -26,6 +26,11 @@ class Channel extends Connector {
   async connection () {
     this.#channel = await this.#connection.channel()
     this.#channel.prefetch(100)
+  }
+
+  async disconnection () {
+    // Channel ended, no reply will be forthcoming
+    await timeout(10)
   }
 
   async request (label, request) {
