@@ -21,7 +21,7 @@ it('should be', () => {
   expect(factory.algorithm).toBeDefined()
 })
 
-for (const sample of ['fn', 'o-fn', 'cls', 'o-cls', 'fct', 'o-fct']) {
+for (const sample of ['fn', 'cls', 'fct']) {
   it(`should create '${sample}' operation`, async () => {
     const algorithm = factory.algorithm(root, sample, context)
 
