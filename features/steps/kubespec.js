@@ -19,8 +19,9 @@ Then('{word} {word} {word} spec should contain:',
     const spec = specs.find((spec) => spec.kind === kind && spec.metadata.name === name)
     const object = extract(spec, node)
     const candidate = parse(yaml)
+    const matches = match(object, candidate)
 
-    assert.equal(match(object, candidate), true)
+    assert.equal(matches, true)
   })
 
 const extract = (spec, node) => {

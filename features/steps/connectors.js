@@ -1,6 +1,7 @@
 'use strict'
 
-const { transpose } = require('@toa.io/libraries/generic')
+const assert = require('node:assert')
+const { transpose, match } = require('@toa.io/libraries/generic')
 const { parse } = require('@toa.io/libraries/yaml')
 
 const { cli } = require('./.connectors/cli')
@@ -65,9 +66,18 @@ Then('I disconnect',
       await this.amqp.connection.close()
     }
 
-    if (this.remotes) {
-      for (const remote of Object.values(this.remotes)) await remote.disconnect()
-    }
+    // if (this.remotes) {
+    //   for (const remote of Object.values(this.remotes)) await remote.disconnect()
+    // }
+  })
+
+When('I invoke {word}',
+  /**
+   * @param {string} endpoint
+   * @this {toa.features.Context}
+   */
+  async function (endpoint) {
+    await invoke.call(this, endpoint)
   })
 
 When('I invoke {word} with:',
@@ -77,14 +87,9 @@ When('I invoke {word} with:',
    * @this {toa.features.Context}
    */
   async function (endpoint, yaml) {
-    const runtime = /** @type {toa.core.Runtime} */ this.connector
     const request = parse(yaml)
 
-    const { exception } = await runtime.invoke(endpoint, request)
-
-    if (exception !== undefined) {
-      throw new Error(exception.message)
-    }
+    await invoke.call(this, endpoint, request)
   })
 
 When('I call {endpoint} with:',
@@ -101,3 +106,32 @@ When('I call {endpoint} with:',
     await remote.invoke(operation, request)
     await remote.disconnect()
   })
+
+Then('the reply should match:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  function (yaml) {
+    const object = parse(yaml)
+    const matches = match(this.reply, object)
+
+    assert.equal(matches, true, 'Reply does not match')
+  })
+
+/**
+ * @param {string} endpoint
+ * @param {toa.core.Request} request
+ * @returns {Promise<void>}
+ */
+async function invoke (endpoint, request = {}) {
+  const runtime = /** @type {toa.core.Runtime} */ this.connector
+
+  const { output, error, exception } = await runtime.invoke(endpoint, request)
+
+  if (exception !== undefined) {
+    throw new Error(exception.message)
+  }
+
+  this.reply = { output, error }
+}

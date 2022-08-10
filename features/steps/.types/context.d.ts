@@ -1,6 +1,6 @@
 import * as amqp from 'amqplib'
 
-import type { Connector } from '@toa.io/core/types'
+import type { Connector, Reply } from '@toa.io/core/types'
 import type { Migration } from '@toa.io/core/types/storages'
 
 declare namespace toa.features {
@@ -31,6 +31,7 @@ declare namespace toa.features {
     connector?: Connector
     storage?: context.Storage
     amqp?: context.AMQP
+    reply?: Reply
   }
 
 }

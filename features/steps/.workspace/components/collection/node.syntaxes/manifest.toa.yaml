@@ -1,0 +1,22 @@
+name: syntaxes
+namespace: node
+
+entity:
+  storage: null
+
+operations:
+  function:
+    concurrency: none
+    output:
+      foo: string
+  class:
+    concurrency: none
+    output:
+      foo: string
+  factory:
+    concurrency: none
+    output:
+      foo: string
+
+configuration:
+  foo: 'bar'

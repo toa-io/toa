@@ -4,6 +4,7 @@ const { resolve } = require('node:path')
 const { generate } = require('randomstring')
 const { transpose } = require('@toa.io/libraries/generic')
 const { dump } = require('@toa.io/libraries/yaml')
+const { AssertionError } = require('node:assert')
 
 const { gherkin } = require('@toa.io/libraries/mock')
 
@@ -88,6 +89,43 @@ describe('When I compose components:', () => {
   })
 })
 
+describe('When I invoke {word}', () => {
+  const step = gherkin.steps.Wh('I invoke {word}')
+
+  it('should be', () => undefined)
+
+  /** @type {toa.features.Context} */
+  let context
+
+  let connector
+  let endpoint
+  let output
+
+  beforeEach(() => {
+    output = generate()
+
+    connector = {
+      invoke: jest.fn(() => ({ output }))
+    }
+
+    context = { connector: /** @type {toa.core.Runtime} */ connector }
+
+    endpoint = generate()
+  })
+
+  it('should invoke', async () => {
+    await step.call(context, endpoint)
+
+    expect(connector.invoke).toHaveBeenCalledWith(endpoint, {})
+  })
+
+  it('should set reply ', async () => {
+    await step.call(context, endpoint)
+
+    expect(context.reply).toMatchObject({ output })
+  })
+})
+
 describe('When I invoke {word} with:', () => {
   const step = gherkin.steps.Wh('I invoke {word} with:')
 
@@ -148,6 +186,27 @@ describe('When I call {endpoint} with:', () => {
     expect(remote.invoke).toHaveBeenCalledWith(operation, request)
 
     expect(remote.disconnect).toHaveBeenCalled()
+  })
+})
+
+describe('Then the reply should match:', () => {
+  const step = gherkin.steps.Th('the reply should match:')
+
+  it('should be', () => undefined)
+
+  it('should throw if does not match', () => {
+    const context = { reply: generate() }
+    const object = generate()
+    const yaml = dump(object)
+
+    expect(() => step.call(context, yaml)).toThrow(AssertionError)
+  })
+
+  it('should not throw if match', () => {
+    const context = { reply: generate() }
+    const yaml = dump(context.reply)
+
+    expect(() => step.call(context, yaml)).not.toThrow()
   })
 })
 
