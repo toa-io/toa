@@ -40,9 +40,9 @@ function runner (module, context) {
   const descriptor = extract(module)
   const func = module[descriptor.name]
   const factory = require('./algorithms/' + descriptor.syntax)
-  const instance = factory.create(func, context)
+  const ctor = () => factory.create(func, context)
 
-  return new Runner(instance, context)
+  return new Runner(ctor, context)
 }
 
 exports.Factory = Factory

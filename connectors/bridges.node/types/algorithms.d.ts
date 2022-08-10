@@ -4,8 +4,10 @@ declare namespace toa.node {
 
   namespace algorithms {
 
+    type Constructor = () => bridges.Algorithm
+
     interface Factory {
-      create(): bridges.Algorithm
+      create: Constructor
     }
 
   }

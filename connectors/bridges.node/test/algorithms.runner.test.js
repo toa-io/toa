@@ -16,8 +16,11 @@ it('should return as output', async () => {
 
   for (const value of values) {
     const run = () => value
-    const instance = /** @type {toa.core.bridges.Algorithm} */ { run }
-    const runner = new Runner(instance, context)
+    const ctor = () => ({ run })
+    const runner = new Runner(ctor, context)
+
+    await runner.connect()
+
     const reply = await runner.run()
 
     expect(reply.output).toStrictEqual(value)
@@ -26,8 +29,11 @@ it('should return as output', async () => {
 
 it('should not return undefined output', async () => {
   const run = () => undefined
-  const instance = /** @type {toa.core.bridges.Algorithm} */ { run }
-  const runner = new Runner(instance, context)
+  const ctor = () => ({ run })
+  const runner = new Runner(ctor, context)
+
+  await runner.connect()
+
   const reply = await runner.run()
 
   expect(reply).toStrictEqual(undefined)

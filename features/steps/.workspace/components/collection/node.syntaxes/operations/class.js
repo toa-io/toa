@@ -1,14 +1,14 @@
 'use strict'
 
 class Transition {
-  #context
+  #foo
 
   constructor (context) {
-    this.#context = context
+    this.#foo = context.configuration.foo
   }
 
   async run (input, object) {
-    const foo = this.#context.configuration.foo
+    const foo = this.#foo
 
     return { foo }
   }
