@@ -23,8 +23,8 @@ beforeEach(() => {
   context = {}
 })
 
-describe('Given I have a schema:', () => {
-  const step = gherkin.steps.Gi('I have a schema:')
+describe('When I write schema:', () => {
+  const step = gherkin.steps.Wh('I write schema:')
 
   it('should be', () => undefined)
 
@@ -38,8 +38,8 @@ describe('Given I have a schema:', () => {
   })
 })
 
-describe('Given that schema is equivalent to:', () => {
-  const step = gherkin.steps.Gi('that schema is equivalent to:')
+describe('Then that is the same as if I would have written:', () => {
+  const step = gherkin.steps.Th('that is the same as if I would have written:')
 
   it('should be', () => undefined)
 

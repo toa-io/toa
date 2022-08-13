@@ -2,11 +2,11 @@ Feature: Concise JSON Schema syntax
 
   Scenario Outline: <type>
 
-    Given I have a schema:
+    When I write schema:
       """
       <type>
       """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
       """
       type: "<type>"
       """
@@ -23,12 +23,12 @@ Feature: Concise JSON Schema syntax
 
   Scenario: Object properties
 
-    Given I have a schema:
+    When I write schema:
       """
       foo:
         type: string
       """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
       """
       type: object
       properties:
@@ -38,12 +38,12 @@ Feature: Concise JSON Schema syntax
 
   Scenario: Concise object properties
 
-    Given I have a schema:
+    When I write schema:
       """
       foo: string
       bar: boolean
       """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
       """
       type: object
       properties:
@@ -55,11 +55,11 @@ Feature: Concise JSON Schema syntax
 
   Scenario Outline: <type> default
 
-    Given I have a schema:
+    When I write schema:
       """
       foo: <value>
       """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
       """
       type: object
       properties:
@@ -77,12 +77,12 @@ Feature: Concise JSON Schema syntax
 
   Scenario: Required properties
 
-    Given I have a schema:
+    When I write schema:
       """
       foo*: 1
       bar: string
       """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
       """
       type: object
       properties:
@@ -96,11 +96,11 @@ Feature: Concise JSON Schema syntax
 
   Scenario: One of listed number constants
 
-    Given I have a schema:
+    When I write schema:
       """
       foo: [1, 2, 3]
       """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
       """
       type: object
       properties:
@@ -114,11 +114,11 @@ Feature: Concise JSON Schema syntax
 
   Scenario: One of listed string constants
 
-    Given I have a schema:
+    When I write schema:
       """
       foo: [bar, baz]
       """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
       """
       type: object
       properties:
@@ -131,11 +131,11 @@ Feature: Concise JSON Schema syntax
 
   Scenario Outline: Array of <type>s
 
-    Given I have a schema:
+    When I write schema:
         """
         foo: [<type>]
         """
-    And that schema is equivalent to:
+    Then that is the same as if I would have written:
         """
         type: object
         properties:

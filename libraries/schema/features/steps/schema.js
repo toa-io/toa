@@ -4,9 +4,9 @@ const assert = require('node:assert')
 const { parse } = require('@toa.io/libraries/yaml')
 
 const { Schema } = require('../../src/schema')
-const { Given } = require('@cucumber/cucumber')
+const { When, Then } = require('@cucumber/cucumber')
 
-Given('I have a schema:',
+When('I write schema:',
   /**
    * @param {string} yaml
    * @this {toa.schema.features.Context}
@@ -17,7 +17,7 @@ Given('I have a schema:',
     this.schema = new Schema(schema)
   })
 
-Given('that schema is equivalent to:',
+Then('that is the same as if I would have written:',
   /**
    * @param {string} yaml
    * @this {toa.schema.features.Context}
