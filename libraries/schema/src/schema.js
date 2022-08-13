@@ -6,6 +6,7 @@ const clone = require('clone-deep')
 
 const { traverse } = require('@toa.io/libraries/generic')
 
+const { expand } = require('./expand')
 const { definitions } = require('./definitions')
 const { keywords } = require('./keywrods')
 
@@ -29,13 +30,13 @@ class Schema {
   #system
 
   /**
-   * @param {toa.schema.JSON | Object} schema
+   * @param {any} schema
    */
   constructor (schema) {
-    this.schema = schema
-    this.#validate = validator.compile(schema)
+    this.schema = expand(schema)
+    this.#validate = validator.compile(this.schema)
 
-    if (schema.properties !== undefined) this.#recompile(schema)
+    if (this.schema.properties !== undefined) this.#recompile(this.schema)
   }
 
   fit (value) {

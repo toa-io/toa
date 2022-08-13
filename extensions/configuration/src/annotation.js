@@ -12,7 +12,7 @@ const annotation = (annotation, instances) => {
   check(keys, instances)
 
   for (const instance of instances) {
-    const object = annotation[instance.locator.id]
+    const object = annotation[instance.locator.id] ?? {}
     const schema = new Schema(instance.manifest)
 
     schema.validate(object)
