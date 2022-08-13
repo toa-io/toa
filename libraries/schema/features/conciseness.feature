@@ -6,7 +6,7 @@ Feature: Concise JSON Schema syntax
       """
       <type>
       """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
       """
       type: "<type>"
       """
@@ -28,7 +28,7 @@ Feature: Concise JSON Schema syntax
       foo:
         type: string
       """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
       """
       type: object
       properties:
@@ -43,7 +43,7 @@ Feature: Concise JSON Schema syntax
       foo: string
       bar: boolean
       """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
       """
       type: object
       properties:
@@ -59,7 +59,7 @@ Feature: Concise JSON Schema syntax
       """
       foo: <value>
       """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
       """
       type: object
       properties:
@@ -82,7 +82,7 @@ Feature: Concise JSON Schema syntax
       foo*: 1
       bar: string
       """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
       """
       type: object
       properties:
@@ -100,7 +100,7 @@ Feature: Concise JSON Schema syntax
       """
       foo: [1, 2, 3]
       """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
       """
       type: object
       properties:
@@ -118,7 +118,7 @@ Feature: Concise JSON Schema syntax
       """
       foo: [bar, baz]
       """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
       """
       type: object
       properties:
@@ -135,7 +135,7 @@ Feature: Concise JSON Schema syntax
         """
         foo: [<type>]
         """
-    Then that is the same as if I would have written:
+    Then it is equivalent to:
         """
         type: object
         properties:

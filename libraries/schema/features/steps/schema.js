@@ -17,7 +17,7 @@ When('I write schema:',
     this.schema = new Schema(schema)
   })
 
-Then('that is the same as if I would have written:',
+Then('it is equivalent to:',
   /**
    * @param {string} yaml
    * @this {toa.schema.features.Context}

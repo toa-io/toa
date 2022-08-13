@@ -38,8 +38,8 @@ describe('When I write schema:', () => {
   })
 })
 
-describe('Then that is the same as if I would have written:', () => {
-  const step = gherkin.steps.Th('that is the same as if I would have written:')
+describe('Then it is equivalent to:', () => {
+  const step = gherkin.steps.Th('it is equivalent to:')
 
   it('should be', () => undefined)
 
