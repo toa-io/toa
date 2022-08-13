@@ -1,4 +1,4 @@
-Feature: Concise JSON Schema
+Feature: Concise JSON Schema syntax
 
   Scenario Outline: <type>
 
