@@ -1,7 +1,5 @@
 'use strict'
 
-const { generate } = require('randomstring')
-
 const { expand } = require('../src/expand')
 
 it('should be', () => {
@@ -20,8 +18,8 @@ it('should throw if array property items are not of the same type', () => {
   expect(() => expand(schema)).toThrow('Array property items must be of the same type')
 })
 
-it('should not expand object containing $ref', () => {
-  const schema = { $ref: generate() }
+it('should not expand valid schema', () => {
+  const schema = { type: 'number' }
   const output = expand(schema)
 
   expect(output).toStrictEqual(schema)

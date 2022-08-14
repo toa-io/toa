@@ -6,11 +6,11 @@ const clone = require('clone-deep')
 
 const { traverse } = require('@toa.io/libraries/generic')
 
-const { expand } = require('./expand')
+const { options } = require('./options')
 const { definitions } = require('./definitions')
 const { keywords } = require('./keywrods')
 
-const validator = new Ajv({ useDefaults: true, strictTypes: false, coerceTypes: true })
+const validator = new Ajv(options)
 
 formats(validator)
 keywords(validator)
@@ -33,10 +33,11 @@ class Schema {
    * @param {any} schema
    */
   constructor (schema) {
-    this.schema = expand(schema)
-    this.#validate = validator.compile(this.schema)
+    this.#validate = validator.compile(schema)
 
-    if (this.schema.properties !== undefined) this.#recompile(this.schema)
+    if (schema.properties !== undefined) this.#recompile(schema)
+
+    this.schema = schema
   }
 
   fit (value) {

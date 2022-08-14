@@ -2,16 +2,14 @@
 
 const { remap } = require('@toa.io/libraries/generic')
 
+const { valid } = require('./valid')
+
 /**
  * @param {any} schema
  * @returns {toa.schema.JSON}
  */
 const expand = (schema) => {
-  if (typeof schema !== 'object') schema = primitive(schema)
-  if (schema === null) schema = { type: 'null' }
-  if (schema.type === undefined) schema = object(schema)
-
-  return schema
+  return typeof schema === 'object' ? object(schema) : primitive(schema)
 }
 
 /**
@@ -31,18 +29,22 @@ const primitive = (value) => {
  * @returns {toa.schema.JSON}
  */
 const object = (schema) => {
-  if ('$ref' in schema) return schema
-  if (Array.isArray(schema)) return array(schema)
+  if (schema === null) return { type: 'null' }
+  if (valid(schema)) return schema
+  if (Array.isArray(schema)) return array(/** @type {any[]} */ schema)
 
-  if (schema.properties === undefined) {
-    const properties = remap(schema, (value) => expand(value))
+  if (schema.type === 'array') {
+    schema.items = expand(schema.items)
 
-    schema = { properties }
+    return schema
   }
 
-  required(schema)
+  if (schema.properties === undefined) schema = { properties: schema }
 
   schema.type = 'object'
+  schema.properties = remap(schema.properties, (value) => expand(value))
+
+  required(schema)
 
   return schema
 }

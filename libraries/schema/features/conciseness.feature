@@ -152,3 +152,26 @@ Feature: Concise JSON Schema syntax
       | integer |
       | boolean |
       | object  |
+
+  Scenario: Array of concise objects
+
+    When I write schema:
+      """
+      foo:
+        type: array
+        items:
+          bar: string
+      """
+
+    Then it is equivalent to:
+      """
+      type: object
+      properties:
+        foo:
+          type: array
+          items:
+            type: object
+            properties:
+              bar:
+                type: string
+      """

@@ -7,10 +7,10 @@ const { gherkin } = require('@toa.io/libraries/mock')
 const { mock: schema } = require('./schema.fixtures')
 const mock = { gherkin, schema }
 
-const Schema = schema.Schema
+// const Schema = schema.Schema
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-jest.mock('../../../src/schema', () => mock.schema)
+jest.mock('../../../src/expand', () => mock.schema)
 
 require('../schema')
 
@@ -34,7 +34,8 @@ describe('When I write schema:', () => {
 
     step.call(context, yaml)
 
-    expect(context.schema.schema).toStrictEqual(schema)
+    expect(mock.schema.expand).toHaveBeenCalledWith(schema)
+    expect(context.schema).toStrictEqual(schema)
   })
 })
 
@@ -52,17 +53,17 @@ describe('Then it is equivalent to:', () => {
     const reference = { type: 'number' }
     const yaml = dump(reference)
 
-    context.schema = new Schema(schema)
+    context.schema = schema
 
     expect(() => step.call(context, yaml)).toThrow(AssertionError)
   })
 
   it('should pass if schemas match', () => {
-    const schema = 'number'
+    const schema = { type: 'number' }
     const reference = { type: 'number' }
     const yaml = dump(reference)
 
-    context.schema = new Schema(schema)
+    context.schema = schema
 
     expect(() => step.call(context, yaml)).not.toThrow(AssertionError)
   })

@@ -1,14 +1,7 @@
+// noinspection JSCheckFunctionSignatures
+
 'use strict'
 
-/**
- * @implements {toa.schema.Schema}
- */
-class Schema {
-  schema
+const expand = jest.fn((schema) => schema)
 
-  constructor (schema) {
-    this.schema = typeof schema === 'object' ? schema : { type: schema }
-  }
-}
-
-exports.mock = { Schema }
+exports.mock = { expand }

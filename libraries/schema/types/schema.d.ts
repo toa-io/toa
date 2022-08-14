@@ -15,7 +15,7 @@ declare namespace toa.schema {
     system?: boolean
     default?: Value
     oneOf?: object[]
-    items?: { type: Type }
+    items?: JSON
   }
 
   interface Schema {
@@ -37,3 +37,4 @@ declare namespace toa.schema {
 }
 
 export type Schema = toa.schema.Schema
+export type JSON = toa.schema.JSON
