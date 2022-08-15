@@ -82,7 +82,7 @@ const array = (array) => {
   const type = /** @type {toa.schema.Type} */ typeof array[0]
 
   // array of a given type
-  if (TYPES.includes(type) && array.length === 1) {
+  if (array.length === 1 && TYPES.includes(array[0])) {
     const type = /** @type {toa.schema.Type} */ array[0]
 
     return {

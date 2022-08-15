@@ -129,6 +129,22 @@ Feature: Concise JSON Schema syntax
             - const: baz
       """
 
+  Scenario: One of listed string constants with one element
+
+    When I write schema:
+      """
+      foo: [bar]
+      """
+    Then it is equivalent to:
+      """
+      type: object
+      properties:
+        foo:
+          type: string
+          oneOf:
+            - const: bar
+      """
+
   Scenario Outline: Array of <type>s
 
     When I write schema:
