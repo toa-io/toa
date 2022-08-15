@@ -32,20 +32,14 @@ const resolve = (schema) => (property) => {
 }
 
 const schema = (object, resolve) => {
-  if (object === undefined) return
-  if (typeof object === 'string' && object[0] === '~') return resolve(object.substring(1))
-
-  if (object.type in types) {
-    const type = types[object.type]
-    delete object.type
-    Object.assign(object, type)
-  }
+  if (object === undefined || typeof object !== 'object') return
+  if (object.type === 'string' && object.default?.[0] === '.') return resolve(object.default.substring(1))
 
   if (object.type === 'array') {
     object.items = schema(object.items, resolve)
   } else if (object.properties !== undefined) {
     for (const [name, value] of Object.entries(object.properties)) {
-      if (value === null) object.properties[name] = resolve(name)
+      if (value?.type === 'string' && value.default === '.') object.properties[name] = resolve(name)
       else object.properties[name] = schema(value, resolve)
     }
   }

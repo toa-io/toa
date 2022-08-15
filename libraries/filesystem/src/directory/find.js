@@ -1,11 +1,12 @@
 'use strict'
 
-const { dirname, join } = require('node:path')
+const { dirname, join, basename } = require('node:path')
 
 const find = (reference, base, indicator = 'package.json') => {
   const paths = [base, RUNTIME]
+  const filename = basename(reference)
 
-  let request = join(reference, indicator)
+  let request = filename === indicator ? reference : join(reference, indicator)
 
   try {
     return dirname(require.resolve(request, { paths }))

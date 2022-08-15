@@ -18,6 +18,7 @@ const expand = (schema) => {
  */
 const primitive = (value) => {
   if (TYPES.includes(value)) return { type: value }
+  if (value in SHORTCUTS) return SHORTCUTS[value]
 
   const type = /** @type {toa.schema.Type} */ typeof value
 
@@ -30,7 +31,7 @@ const primitive = (value) => {
  */
 const object = (schema) => {
   if (schema === null) return { type: 'null' }
-  if (valid(schema)) return schema
+  if (schema.type !== undefined && valid(schema)) return schema
   if (Array.isArray(schema)) return array(/** @type {any[]} */ schema)
 
   if (schema.type === 'array') {
@@ -106,6 +107,12 @@ const array = (array) => {
   return { type, oneOf }
 }
 
-const TYPES = ['string', 'number', 'integer', 'boolean', 'object', 'array']
+const TYPES = ['string', 'number', 'integer', 'boolean', 'object', 'array', 'null']
+
+const SHORTCUTS = {
+  id: {
+    $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id'
+  }
+}
 
 exports.expand = expand

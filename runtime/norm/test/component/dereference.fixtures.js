@@ -4,13 +4,13 @@ const source = {
   entity: {
     schema: {
       properties: {
-        id: {
-          type: 'id'
-        },
         foo: {
           type: 'string'
         },
-        bar: '~foo'
+        bar: {
+          type: 'string',
+          default: '.foo'
+        }
       }
     }
   },
@@ -18,18 +18,33 @@ const source = {
     transit: {
       input: {
         properties: {
-          foo: null,
-          bar: '~foo',
+          foo: {
+            type: 'string',
+            default: '.'
+          },
+          bar: {
+            type: 'string',
+            default: '.foo'
+          },
           baz1: {
             type: 'array',
-            items: '~foo'
+            items: {
+              type: 'string',
+              default: '.foo'
+            }
           },
           baz2: {
             type: 'array',
             items: {
               properties: {
-                foo: null,
-                bar: '~foo'
+                foo: {
+                  type: 'string',
+                  default: '.'
+                },
+                bar: {
+                  type: 'string',
+                  default: '.foo'
+                }
               }
             }
           }
@@ -37,7 +52,10 @@ const source = {
       },
       output: {
         properties: {
-          bar: '~foo'
+          bar: {
+            type: 'string',
+            default: '.foo'
+          }
         }
       }
     },
@@ -52,9 +70,6 @@ const target = {
   entity: {
     schema: {
       properties: {
-        id: {
-          $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id'
-        },
         foo: {
           type: 'string'
         },

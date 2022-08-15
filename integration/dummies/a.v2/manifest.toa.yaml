@@ -14,9 +14,8 @@ operations:
     forward: transit
     query: false
     input:
-      properties:
-        title: ~
-        length: ~
+      title: .
+      length: .
 
 extensions:
   exposition:

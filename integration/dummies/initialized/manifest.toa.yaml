@@ -14,5 +14,5 @@ entity:
 operations:
   assign:
     input:
-      a: ~
-      b: ~
+      a: .
+      b: .

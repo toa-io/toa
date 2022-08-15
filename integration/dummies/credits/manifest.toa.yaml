@@ -14,7 +14,7 @@ operations:
     concurrency: none
     input:
       properties:
-        balance: ~
+        balance: .
   deduce:
     concurrency: none
     input: integer
@@ -35,11 +35,11 @@ operations:
     output: integer
   set:
     input:
-      balance: ~
+      balance: .
     forward: assign
   add:
     input:
-      balance: ~
+      balance: .
     query: false
     forward: transit
 

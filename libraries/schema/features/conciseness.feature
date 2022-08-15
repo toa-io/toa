@@ -175,3 +175,31 @@ Feature: Concise JSON Schema syntax
               bar:
                 type: string
       """
+
+  Scenario: Custom `id` shortcut
+
+    When I write schema:
+      """
+      foo: id
+      """
+    Then it is equivalent to:
+      """
+      type: object
+      properties:
+        foo:
+          $ref: https://schemas.toa.io/0.0.0/definitions#/definitions/id
+      """
+
+  Scenario: Property as known keyword
+
+    When I write schema:
+      """
+      title: string
+      """
+    Then it is equivalent to:
+      """
+      type: object
+      properties:
+        title:
+          type: string
+      """

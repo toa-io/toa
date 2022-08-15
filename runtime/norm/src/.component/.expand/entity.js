@@ -1,12 +1,13 @@
 'use strict'
 
+const { expand } = require('@toa.io/libraries/schema')
+
 const { resolve } = require('../../shortcuts')
-const { schema } = require('./schema')
 
 function entity (manifest) {
   if (manifest.entity === undefined) return
 
-  manifest.entity.schema = schema(manifest.entity.schema, true)
+  manifest.entity.schema = expand(manifest.entity.schema)
   manifest.entity.storage = resolve(manifest.entity.storage)
 }
 

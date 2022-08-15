@@ -12,6 +12,7 @@ describe('load', () => {
     const object = await load(path.resolve(__dirname, './yaml.yaml'))
 
     expect(object.foo).toEqual('bar')
+    expect(object.baz).toStrictEqual('.')
   })
 
   it('should return array', async () => {

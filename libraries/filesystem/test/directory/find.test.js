@@ -1,6 +1,6 @@
 'use strict'
 
-const { resolve } = require('node:path')
+const { resolve, dirname } = require('node:path')
 
 const { directory: { find } } = require('../../')
 
@@ -43,5 +43,15 @@ describe('find', () => {
     const path = find('.', THIS)
 
     expect(path).toStrictEqual(THIS)
+  })
+
+  it('should resolve if path contain indicator', () => {
+    const ref = 'extensions/exposition/package.json'
+    const root = resolve(__dirname, '../../../../')
+    const directory = dirname(resolve(root, ref))
+
+    const path = find(ref, root)
+
+    expect(path).toStrictEqual(directory)
   })
 })

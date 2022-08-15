@@ -3,14 +3,24 @@ import type { Locator } from '@toa.io/core/types'
 export namespace toa.norm {
 
   namespace component {
+    namespace operations {
+
+      type Type = 'transition' | 'observation' | 'assignment'
+      type Subject = 'object' | 'objects' | 'changeset'
+
+    }
+
     interface Map {
       [id: string]: Component
     }
 
     interface Operation {
-      type: 'transition' | 'observation' | 'assignment'
-      subject: 'object' | 'objects'
-      bindings: string[]
+      type?: operations.Type
+      subject?: operations.Subject
+      bindings?: string[]
+      input?: any
+      output?: any
+      error?: any
     }
 
     interface Operations {
@@ -30,8 +40,8 @@ export namespace toa.norm {
     }
 
     type Entity = {
-      storage: string
       schema: Object
+      storage?: string
       initialized?: boolean
     }
 
@@ -40,6 +50,8 @@ export namespace toa.norm {
       name: string
       version: string
       entity: Entity
+      operations?: component.Operations
+      events?: component.Events
       extensions?: component.Extensions
     }
 
@@ -49,12 +61,11 @@ export namespace toa.norm {
   interface Component extends component.Declaration {
     locator: Locator
     path: string
-    operations?: component.Operations
-    events?: component.Events
   }
 }
 
 export type Component = toa.norm.Component
 export type Operation = toa.norm.component.Operation
+export type Declaration = toa.norm.component.Declaration
 
 export const component: toa.norm.component.Constructor

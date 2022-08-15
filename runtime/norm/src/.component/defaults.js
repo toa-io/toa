@@ -15,6 +15,7 @@ const defaults = (manifest) => {
   if (manifest.bridge === undefined) manifest.bridge = '@toa.io/bridges.node'
 
   if (manifest.entity !== undefined) {
+    if (manifest.entity === null) manifest.entity = { storage: null }
     if (manifest.entity.storage === undefined) manifest.entity.storage = '@toa.io/storages.mongodb'
     if (manifest.entity.storage === null) manifest.entity.storage = '@toa.io/storages.null'
   }
