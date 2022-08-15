@@ -1,15 +1,17 @@
-Feature: Operations Invocation
+Feature: Node algorithm implementation syntaxes
 
-  Scenario Outline: Output configuration value with <endpoint>
+  Scenario Outline: Run operation with <endpoint> syntax
+
+  Algorithm outputs configuration value.
 
     Given I boot node.syntaxes component
     When I invoke <endpoint>
+    And I disconnect
     Then the reply should match:
       """
       output:
         foo: bar
       """
-    And I disconnect
     Examples:
       | endpoint |
       | function |
