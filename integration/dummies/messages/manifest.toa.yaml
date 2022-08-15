@@ -13,30 +13,30 @@ operations:
   add:
     input:
       properties:
-        sender: ~
-        text: ~
-        timestamp: ~
+        sender: .
+        text: .
+        timestamp: .
         free: boolean
-        deleted: ~
+        deleted: .
       required: [sender, text]
     output:
       properties:
-        id: ~
+        id: .
       required: [id]
     query: false
   get:
     output:
       properties:
-        id: ~
-        text: ~
-        timestamp: ~
+        id: .
+        text: .
+        timestamp: .
       required: [id, text]
   update:
     concurrency: none
     forward: transit
     input:
       properties:
-        text: ~
+        text: .
   change:
     forward: update
   find:
@@ -46,8 +46,8 @@ operations:
     concurrency: none
     input:
       properties:
-        sender: ~
-        text: ~
+        sender: .
+        text: .
       required: [sender, text]
     output:
       properties:
@@ -55,7 +55,7 @@ operations:
       required: [id, ok]
   assign:
     input:
-      text: ~
+      text: .
 
 extensions:
   exposition:

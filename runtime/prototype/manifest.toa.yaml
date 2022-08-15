@@ -3,9 +3,7 @@ prototype: null
 entity:
   schema:
     properties:
-      id:
-        type: id
-        system: true
+      id: id
       _version:
         type: integer
         default: 0

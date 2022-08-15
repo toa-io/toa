@@ -13,8 +13,8 @@ operations:
   transit:
     concurrency: retry
     input:
-      foo: ~
-      bar: ~
+      foo: .
+      bar: .
 
 exposition:
   /: [transit]

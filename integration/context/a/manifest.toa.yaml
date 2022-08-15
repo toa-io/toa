@@ -13,14 +13,14 @@ operations:
   transit:
     concurrency: retry
     input:
-      title: ~
+      title: .
   create:
     forward: transit
     query: false
     input:
       properties:
-        title: ~
-        length: ~
+        title: .
+        length: .
 
 receivers:
   messages.messages.created: transit

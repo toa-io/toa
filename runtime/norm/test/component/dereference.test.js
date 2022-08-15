@@ -18,10 +18,10 @@ it('should dereference', () => {
 })
 
 it('should throw on invalid schema reference', () => {
-  source.operations.transit.output.properties.baz = null
+  source.operations.transit.output.properties.baz = { type: 'string', default: '.' }
   expect(() => dereference(source)).toThrow(/is not defined/)
 
-  source.operations.transit.output.properties.baz = '~baz'
+  source.operations.transit.output.properties.baz = { type: 'string', default: '.baz' }
   expect(() => dereference(source)).toThrow(/is not defined/)
 })
 

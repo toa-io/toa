@@ -11,8 +11,8 @@ operations:
   transit:
     concurrency: none
     input:
-      time: ~
-      description: ~
+      time: .
+      description: .
     query: false
 
 receivers:

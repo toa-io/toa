@@ -1,4 +1,4 @@
 {
   "private": true,
-  "main": "src/schema.js"
+  "main": "src/index.js"
 }

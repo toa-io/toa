@@ -24,13 +24,8 @@ const source = {
                 baz: 'string'
               }
             }
-          },
-          baz: {
-            type: 'array',
-            items: '~foo'
           }
-        },
-        id: null
+        }
       },
       output: {
         properties: {
@@ -42,13 +37,8 @@ const source = {
                 baz: 'string'
               }
             }
-          },
-          baz: {
-            type: 'array',
-            items: '~foo'
           }
-        },
-        id: null
+        }
       }
     }
   },
@@ -71,6 +61,7 @@ const source = {
 const target = {
   entity: {
     schema: {
+      type: 'object',
       properties: {
         foo: {
           type: 'string'
@@ -85,6 +76,7 @@ const target = {
       bridge: '@toa.io/bridges.node',
       bindings: ['@toa.io/bindings.amqp'],
       input: {
+        type: 'object',
         properties: {
           foo: {
             type: 'integer'
@@ -92,21 +84,18 @@ const target = {
           bar: {
             type: 'array',
             items: {
+              type: 'object',
               properties: {
                 baz: {
                   type: 'string'
                 }
               }
             }
-          },
-          baz: {
-            type: 'array',
-            items: '~foo'
           }
-        },
-        id: null
+        }
       },
       output: {
+        type: 'object',
         properties: {
           foo: {
             type: 'integer'
@@ -114,19 +103,15 @@ const target = {
           bar: {
             type: 'array',
             items: {
+              type: 'object',
               properties: {
                 baz: {
                   type: 'string'
                 }
               }
             }
-          },
-          baz: {
-            type: 'array',
-            items: '~foo'
           }
-        },
-        id: null
+        }
       }
     }
   },

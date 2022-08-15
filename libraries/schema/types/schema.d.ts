@@ -4,28 +4,37 @@ import type { Error } from './error'
 
 declare namespace toa.schema {
 
-    type JSON = {
-        $id?: string
-        type?: string
-        properties?: Object
-        required?: string[]
-        system?: boolean
-    }
+  type Type = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
+  type Value = string | number | boolean
 
-    interface Schema {
-        readonly schema: JSON
+  type JSON = {
+    $id?: string
+    type?: Type
+    properties?: Object
+    required?: string[]
+    system?: boolean
+    default?: Value
+    oneOf?: object[]
+    items?: JSON
+  }
 
-        fit(value: any): Error | null
+  interface Schema {
+    readonly schema: JSON
 
-        validate(value: any): void
+    fit(value: any): Error | null
 
-        match(value: any): Error | null
+    validate(value: any): void
 
-        adapt(value: any): Error | null
+    match(value: any): Error | null
 
-        defaults(value?: any): Object
+    adapt(value: any): Error | null
 
-        system(): Object
-    }
+    defaults(value?: any): Object
+
+    system(): Object
+  }
 
 }
+
+export type Schema = toa.schema.Schema
+export type JSON = toa.schema.JSON
