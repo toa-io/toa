@@ -6,7 +6,7 @@ const { Operation } = require('./operation')
 
 class Observation extends Operation {
   async acquire (scope) {
-    const subject = await this.subject.query(scope.request.query)
+    const subject = await this.query(scope.request.query)
     const state = subject.get()
 
     freeze(state)

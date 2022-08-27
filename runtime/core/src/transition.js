@@ -9,7 +9,7 @@ class Transition extends Operation {
   #concurrency
 
   constructor (cascade, subject, contract, query, definition) {
-    super(cascade, subject, contract, query)
+    super(cascade, subject, contract, query, definition)
 
     this.#concurrency = definition.concurrency
   }
@@ -21,7 +21,7 @@ class Transition extends Operation {
   async acquire (scope) {
     const { request } = scope
 
-    scope.subject = request.query ? await this.subject.query(request.query) : this.subject.init()
+    scope.subject = request.query ? await this.query(request.query) : this.subject.init()
     scope.state = scope.subject.get()
   }
 

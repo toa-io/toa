@@ -10,14 +10,16 @@ class Operation extends Connector {
   #contract
   #query
 
-  constructor (cascade, subject, contract, query) {
+  #sub
+
+  constructor (cascade, subject, contract, query, definition) {
     super()
 
     this.subject = subject
-
     this.#cascade = cascade
     this.#contract = contract
     this.#query = query
+    this.#sub = definition.subject
 
     this.depends(cascade)
   }
@@ -56,6 +58,10 @@ class Operation extends Connector {
   }
 
   async commit () {}
+
+  async query (query) {
+    return this.subject[this.#sub](query)
+  }
 }
 
 exports.Operation = Operation
