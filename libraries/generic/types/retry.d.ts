@@ -41,3 +41,5 @@ export type Retry = toa.generic.Retry
 export namespace retry {
     type Options = toa.generic.retry.Options
 }
+
+export const retry: toa.generic.Retry
