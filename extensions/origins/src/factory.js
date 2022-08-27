@@ -1,13 +1,13 @@
 'use strict'
 
-const { Context } = require('./context')
+const { Annex } = require('./annex')
 
 /**
  * @implements {toa.core.extensions.Factory}
  */
 class Factory {
-  context (locator, declaration) {
-    return new Context(declaration)
+  annex (locator, declaration) {
+    return new Annex(declaration)
   }
 }
 

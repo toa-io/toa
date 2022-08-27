@@ -1,7 +1,7 @@
 'use strict'
 
-const { connectors } = require('./connectors')
-const { contexts } = require('./contexts')
+const { annexes } = require('./annexes')
+const { tenants } = require('./tenants')
 
-exports.connectors = connectors
-exports.contexts = contexts
+exports.annexes = annexes
+exports.tenants = tenants

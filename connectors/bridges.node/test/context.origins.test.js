@@ -5,20 +5,20 @@ const { generate } = require('randomstring')
 const fixtures = require('./context.origins.fixtures')
 const { Context } = require('../src/context')
 
-const origins = fixtures.context.extensions[0]
+const origins = fixtures.context.annexes[0]
 
 let context
 
 beforeEach(async () => {
   jest.clearAllMocks()
 
-  context = new Context(/** @type {toa.core.Context} */ fixtures.context)
+  context = new Context(fixtures.context)
 
   await context.connect()
 })
 
-it('should expose extension', async () => {
-  expect(context.extensions.origins).toBeDefined()
+it('should expose annex', async () => {
+  expect(context.annexes.origins).toBeDefined()
 })
 
 it('should invoke', async () => {

@@ -7,7 +7,7 @@ const { underlay } = require('@toa.io/libraries/generic')
  * @implements {toa.node.Context}
  */
 class Context extends Connector {
-  extensions
+  annexes
   configuration
   origins
 
@@ -25,7 +25,7 @@ class Context extends Connector {
   }
 
   async connection () {
-    this.extensions = this.#extensions(/** @type {toa.core.extensions.Context[]} */ this.#context.extensions)
+    this.annexes = this.#annexes(/** @type {toa.core.extensions.Annex[]} */ this.#context.annexes)
   }
 
   local = underlay(async ([endpoint], [request]) => {
@@ -37,29 +37,29 @@ class Context extends Connector {
   })
 
   /**
-   * @param {toa.core.extensions.Context[]} extensions
+   * @param {toa.core.extensions.Annex[]} annexes
    * @returns {{ [key: string]: Function}}
    */
-  #extensions (extensions) {
+  #annexes (annexes) {
     const map = {}
 
-    for (const extension of extensions) {
-      if (map[extension.name] !== undefined) throw new Error(`Context extensions conflict on '${extension.name}'`)
+    for (const annex of annexes) {
+      if (map[annex.name] !== undefined) throw new Error(`Annex conflict on '${annex.name}'`)
 
-      map[extension.name] = extension.invoke.bind(extension)
+      map[annex.name] = annex.invoke.bind(annex)
 
-      // well-known extensions
-      if (extension.name === 'configuration') this.configuration = extension.invoke()
-      if (extension.name === 'origins') this.origins = this.#origins(extension)
+      // well-known annexes
+      if (annex.name === 'configuration') this.configuration = annex.invoke()
+      if (annex.name === 'origins') this.origins = this.#origins(annex)
     }
 
     return map
   }
 
   /**
-   * @param {toa.core.extensions.Context} extension
+   * @param {toa.core.extensions.Annex} annex
    */
-  #origins (extension) {
+  #origins (annex) {
     return underlay(async (segs, args) => {
       if (segs.length < 2) throw new Error(`Origins call requires at least 2 arguments, ${segs.length} given`)
 
@@ -69,7 +69,7 @@ class Context extends Connector {
       const request = { method, ...args[0] }
       const options = args[1]
 
-      return await extension.invoke(name, path, request, options)
+      return await annex.invoke(name, path, request, options)
     })
   }
 }

@@ -1,8 +1,8 @@
 'use strict'
 
-const { Connector: Base } = require('@toa.io/core')
+const { Connector } = require('@toa.io/core')
 
-class Connector extends Base {
+class Tenant extends Connector {
   #binding
   #declaration
 
@@ -25,4 +25,4 @@ class Connector extends Base {
   }
 }
 
-exports.Connector = Connector
+exports.Tenant = Tenant

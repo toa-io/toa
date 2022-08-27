@@ -2,30 +2,30 @@
 
 const { resolve } = require('./resolve')
 
-const contexts = (manifest) => {
+const annexes = (manifest) => {
   if (manifest.extensions === undefined) return
 
-  const contexts = []
+  const annexes = []
 
   for (const [name, declaration] of Object.entries(manifest.extensions)) {
-    const extension = instantiate(name, declaration, manifest)
+    const annex = instantiate(name, declaration, manifest)
 
-    if (extension !== undefined) contexts.push(extension)
+    if (annex !== undefined) annexes.push(annex)
   }
 
-  return contexts
+  return annexes
 }
 
 /**
  * @param {string} path
  * @param {any} declaration
  * @param {toa.norm.Context} manifest
- * @return {Context}
+ * @returns {toa.core.extensions.Annex}
  */
 const instantiate = (path, declaration, manifest) => {
   const factory = resolve(path, '.')
 
-  if (factory.context !== undefined) return factory.context(manifest.locator, declaration)
+  if (factory.annex !== undefined) return factory.annex(manifest.locator, declaration)
 }
 
-exports.contexts = contexts
+exports.annexes = annexes

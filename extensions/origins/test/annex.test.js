@@ -6,27 +6,27 @@ const { random } = require('@toa.io/libraries/generic')
 
 const { Connector } = require('@toa.io/core')
 
-const fixtures = require('./context.fixtures')
+const fixtures = require('./annex.fixtures')
 const mock = fixtures.mock
 
 jest.mock('node-fetch', () => mock.fetch)
 
-const { Context } = require('../src/context')
+const { Annex } = require('../src/annex')
 
-let context
+/** @type {toa.extensions.origins.Annex} */ let annex
 
 beforeEach(() => {
   jest.clearAllMocks()
 
-  context = new Context(fixtures.declaration)
+  annex = new Annex(fixtures.declaration)
 })
 
 it('should be instance of core.Connector', () => {
-  expect(context).toBeInstanceOf(Connector)
+  expect(annex).toBeInstanceOf(Connector)
 })
 
 it('should have name \'origins\'', () => {
-  expect(context.name).toStrictEqual('origins')
+  expect(annex.name).toStrictEqual('origins')
 })
 
 describe('invoke', () => {
@@ -34,7 +34,7 @@ describe('invoke', () => {
   const headers = { [generate().toLowerCase()]: generate() }
   const body = generate()
 
-  /** @type {toa.extensions.origins.Request} */
+  /** @type {import('node-fetch').RequestInit} */
   const request = { method: 'PATCH', headers, body }
   const name = 'foo'
   const response = { [generate()]: generate() }
@@ -48,13 +48,13 @@ describe('invoke', () => {
 
     mock.fetch.respond(200, response)
 
-    result = await context.invoke(name, path, clone(request))
+    result = await annex.invoke(name, path, clone(request))
     call = mock.fetch.mock.calls[0]
     args = call?.[1]
   })
 
   it('should throw on unknown origin', async () => {
-    await expect(() => context.invoke('bar', path, request)).rejects.toThrow(/is not defined/)
+    await expect(() => annex.invoke('bar', path, request)).rejects.toThrow(/is not defined/)
   })
 
   it('should not resolve absolute urls', async () => {
@@ -63,7 +63,7 @@ describe('invoke', () => {
 
     const path = 'https://toa.io'
 
-    await context.invoke(name, path, clone(request))
+    await annex.invoke(name, path, clone(request))
 
     expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.declaration.origins.foo + '/' + path)
   })
@@ -74,7 +74,7 @@ describe('invoke', () => {
 
     const substitutions = ['foo', 'bar', 443]
 
-    await context.invoke('amazon', path, clone(request), { substitutions })
+    await annex.invoke('amazon', path, clone(request), { substitutions })
 
     const url = mock.fetch.mock.calls[0][0]
 
@@ -87,7 +87,7 @@ describe('invoke', () => {
 
     const path = generate() + '?foo=' + generate()
 
-    await context.invoke(name, path)
+    await annex.invoke(name, path)
 
     const url = mock.fetch.mock.calls[0][0]
 
@@ -98,7 +98,7 @@ describe('invoke', () => {
     jest.clearAllMocks()
     mock.fetch.respond(200, response)
 
-    expect(() => context.invoke(name)).not.toThrow()
+    expect(() => annex.invoke(name)).not.toThrow()
   })
 
   describe('fetch', () => {
@@ -136,7 +136,7 @@ describe('invoke', () => {
         retry: { base: 0, retries: attempts }
       }
 
-      await context.invoke(name, path, clone(request), options)
+      await annex.invoke(name, path, clone(request), options)
 
       expect(mock.fetch).toHaveBeenCalledTimes(attempts)
     })

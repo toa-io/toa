@@ -10,8 +10,8 @@ async function composition (paths, options) {
   /** @type {toa.norm.Component[]} */
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
 
-  const extensions = (await Promise.all(manifests.map(boot.extensions.connectors)))
-    .filter((extension) => extension !== undefined)
+  const tenants = (await Promise.all(manifests.map(boot.extensions.tenants)))
+    .filter((tenant) => tenant !== undefined)
 
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
 
@@ -24,7 +24,7 @@ async function composition (paths, options) {
   const receivers = await Promise.all(components.map((runtime, index) =>
     boot.receivers(manifests[index], runtime)))
 
-  return new Composition(expositions.flat(), producers.flat(), receivers.flat(), extensions.flat())
+  return new Composition(expositions.flat(), producers.flat(), receivers.flat(), tenants.flat())
 }
 
 const normalize = (options) => {

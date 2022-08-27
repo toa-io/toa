@@ -3,9 +3,9 @@
 const { Connector } = require('@toa.io/core')
 
 /**
- * @implements {toa.extensions.configuration.Context}
+ * @implements {toa.extensions.configuration.Annex}
  */
-class Context extends Connector {
+class Annex extends Connector {
   /** @readonly */
   name = 'configuration'
 
@@ -33,4 +33,4 @@ class Context extends Connector {
   }
 }
 
-exports.Context = Context
+exports.Annex = Annex

@@ -1,15 +1,12 @@
-// noinspection ES6UnusedImports
+import { Component } from '@toa.io/norm/types'
 
-import { Factory } from '@toa.io/core/types/extensions'
-import { Component } from '@toa.io/norm'
-import { Provider } from './provider'
-
-type Extension = Factory
+import * as _extensions from '@toa.io/core/types/extensions'
+import * as _provider from './provider'
 
 declare namespace toa.extensions.configuration {
 
-    interface Factory extends Extension {
-        provider(component: Component): Provider
-    }
+  interface Factory extends _extensions.Factory {
+    provider(component: Component): _provider.Provider
+  }
 
 }

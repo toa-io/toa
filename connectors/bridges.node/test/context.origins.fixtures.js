@@ -1,9 +1,9 @@
 'use strict'
 
-const context = {
+const context = /** @type {toa.core.Context} */ {
   apply: jest.fn(),
   call: jest.fn(),
-  extensions: [
+  annexes: [
     {
       name: 'origins',
       invoke: jest.fn()
