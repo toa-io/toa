@@ -7,16 +7,17 @@ const boot = require('./index')
 async function composition (paths, options) {
   normalize(options)
 
+  /** @type {toa.norm.Component[]} */
   const manifests = await Promise.all(paths.map((path) => boot.component(path, options)))
 
   const extensions = (await Promise.all(manifests.map(boot.extensions.connectors)))
-    .filter((ext) => ext !== undefined)
+    .filter((extension) => extension !== undefined)
 
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
 
+  /** @type {toa.core.Runtime[]} */
   const runtimes = await Promise.all(manifests.map(boot.runtime))
 
-  // noinspection JSUnresolvedVariable
   const producers = runtimes.map((runtime, index) =>
     boot.bindings.produce(runtime, manifests[index].operations))
 
