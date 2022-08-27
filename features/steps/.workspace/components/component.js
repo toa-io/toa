@@ -5,15 +5,15 @@ const { load } = require('./load')
 
 /**
  * @param {string} reference
- * @returns {Promise<toa.core.Runtime>}
+ * @returns {Promise<toa.core.Component>}
  **/
-const runtime = async (reference) => {
+const component = async (reference) => {
   const manifest = await load(reference)
-  const component = /** @type {toa.core.Runtime} */ await boot.runtime(manifest)
+  const component = await boot.component(manifest)
 
   await component.connect()
 
   return component
 }
 
-exports.runtime = runtime
+exports.component = component

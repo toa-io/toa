@@ -5,7 +5,7 @@ import * as rep from './reply'
 
 declare namespace toa.core {
 
-  interface Runtime extends connector.Connector {
+  interface Component extends connector.Connector {
     locator: locator.Locator
 
     invoke(endpoint: string, request: req.Request): Promise<rep.Reply>
@@ -13,4 +13,4 @@ declare namespace toa.core {
 
 }
 
-export type Runtime = toa.core.Runtime
+export type Component = toa.core.Component

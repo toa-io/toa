@@ -2,9 +2,9 @@
 
 const { console } = require('@toa.io/libraries/console')
 
-const { Runtime } = require('./runtime')
+const { Component } = require('./component')
 
-class Remote extends Runtime {
+class Remote extends Component {
   async connection () {
     console.info(`Remote '${this.locator.id}' connected`)
   }

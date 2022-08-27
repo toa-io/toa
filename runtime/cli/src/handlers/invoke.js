@@ -11,7 +11,7 @@ async function invoke (argv) {
   const composition = await boot.composition([path], { bindings: null })
   await composition.connect()
 
-  const manifest = await boot.component(path)
+  const manifest = await boot.manifest(path)
   const remote = await boot.remote(manifest.locator, manifest)
   await remote.connect()
 

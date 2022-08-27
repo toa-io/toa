@@ -28,7 +28,7 @@ When('I boot {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = /** @type {toa.core.Connector} */ await get.runtime(reference)
+    this.connector = /** @type {toa.core.Connector} */ await get.component(reference)
   })
 
 When('I compose {component} component',
@@ -65,10 +65,6 @@ Then('I disconnect',
       await this.amqp.channel.close()
       await this.amqp.connection.close()
     }
-
-    // if (this.remotes) {
-    //   for (const remote of Object.values(this.remotes)) await remote.disconnect()
-    // }
   })
 
 When('I invoke {word}',
@@ -125,9 +121,9 @@ Then('the reply should match:',
  * @returns {Promise<void>}
  */
 async function invoke (endpoint, request = {}) {
-  const runtime = /** @type {toa.core.Runtime} */ this.connector
+  const component = /** @type {toa.core.Component} */ this.connector
 
-  const { output, error, exception } = await runtime.invoke(endpoint, request)
+  const { output, error, exception } = await component.invoke(endpoint, request)
 
   if (exception !== undefined) {
     throw new Error(exception.message)

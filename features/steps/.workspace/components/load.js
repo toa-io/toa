@@ -12,7 +12,7 @@ const { COLLECTION } = require('./constants')
 const load = async (reference) => {
   const path = resolve(reference)
 
-  return await boot.component(path)
+  return await boot.manifest(path)
 }
 
 /**

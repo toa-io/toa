@@ -5,9 +5,9 @@ const { Connector } = require('./connector')
 const { NotImplementedException } = require('./exceptions')
 
 /**
- * @implements {toa.core.Runtime}
+ * @implements {toa.core.Component}
  */
-class Runtime extends Connector {
+class Component extends Connector {
   locator
 
   #operations
@@ -38,4 +38,4 @@ class Runtime extends Connector {
   }
 }
 
-exports.Runtime = Runtime
+exports.Component = Component

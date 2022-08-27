@@ -3,13 +3,14 @@
 const { LOOP } = require('./constants')
 const { factory } = require('./factory')
 
-const produce = (runtime, operations) => group(operations, (factory, endpoints) =>
-  factory.producer(runtime.locator, endpoints, runtime))
+const produce = (component, operations) => group(operations, (factory, endpoints) =>
+  factory.producer(component.locator, endpoints, component))
 
 const group = (operations, callback) => {
   const map = {}
 
   for (const [endpoint, operation] of Object.entries(operations)) {
+    // noinspection JSUnresolvedVariable
     const bindings = global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
       ? operation.bindings
       : [LOOP].concat(operation.bindings)

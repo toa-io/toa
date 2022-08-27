@@ -32,15 +32,15 @@ describe('When I boot {component} component', () => {
 
     await step.call(context, reference)
 
-    expect(mock.boot.component).toHaveBeenCalledWith(path)
+    expect(mock.boot.manifest).toHaveBeenCalledWith(path)
 
-    const manifest = mock.boot.component.mock.results[0].value
+    const manifest = mock.boot.manifest.mock.results[0].value
 
-    expect(mock.boot.runtime).toHaveBeenCalledWith(manifest)
+    expect(mock.boot.component).toHaveBeenCalledWith(manifest)
 
-    const runtime = mock.boot.runtime.mock.results[0].value
+    const component = mock.boot.component.mock.results[0].value
 
-    expect(context.connector).toStrictEqual(runtime)
+    expect(context.connector).toStrictEqual(component)
   })
 })
 
