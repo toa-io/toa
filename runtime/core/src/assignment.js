@@ -3,19 +3,19 @@
 const { Operation } = require('./operation')
 
 class Assignment extends Operation {
-  async acquire (scope) {
-    scope.subject = this.subject.changeset(scope.request.query)
-    scope.state = scope.subject.get()
+  async acquire (store) {
+    store.scope = this.scope.changeset(store.request.query)
+    store.state = store.scope.get()
   }
 
-  async commit (scope) {
-    const { subject, state, reply } = scope
+  async commit (store) {
+    const { scope, state, reply } = store
 
     if (reply.error !== undefined) return
 
-    subject.set(state)
+    scope.set(state)
 
-    await this.subject.apply(subject)
+    await this.scope.apply(scope)
   }
 }
 

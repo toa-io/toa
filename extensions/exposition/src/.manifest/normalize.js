@@ -29,8 +29,8 @@ const operations = (operations, manifest) => {
       throw new Error(`Resource references undefined operation '${operation}'`)
     }
 
-    const { type, subject, query } = manifest.operations[operation]
-    const normal = { operation, type, subject }
+    const { type, scope, query } = manifest.operations[operation]
+    const normal = { operation, type, scope }
 
     if (query !== undefined) normal.query = query
 

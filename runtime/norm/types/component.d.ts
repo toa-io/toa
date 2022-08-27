@@ -6,7 +6,7 @@ export namespace toa.norm {
     namespace operations {
 
       type Type = 'transition' | 'observation' | 'assignment'
-      type Subject = 'object' | 'objects' | 'changeset'
+      type Scope = 'object' | 'objects' | 'changeset'
 
     }
 
@@ -16,7 +16,7 @@ export namespace toa.norm {
 
     interface Operation {
       type?: operations.Type
-      subject?: operations.Subject
+      scope?: operations.Scope
       bindings?: string[]
       input?: any
       output?: any

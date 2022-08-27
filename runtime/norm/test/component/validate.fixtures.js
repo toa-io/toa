@@ -18,20 +18,20 @@ const ok = {
   operations: {
     get: {
       type: 'observation',
-      subject: 'objects',
+      scope: 'objects',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http']
     },
     add: {
       type: 'transition',
       concurrency: 'none',
-      subject: 'object',
+      scope: 'object',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
     },
     set: {
       type: 'assignment',
-      subject: 'changeset',
+      scope: 'changeset',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
     }

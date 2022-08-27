@@ -17,10 +17,10 @@ const runtime = async (component) => {
   const emission = boot.emission(component.events, locator)
   const schema = new Schema(component.entity.schema)
   const entity = new entities.Factory(schema)
-  const subject = new State(storage, entity, emission, component.entity.initialized)
+  const state = new State(storage, entity, emission, component.entity.initialized)
 
   const operations = remap(component.operations, (definition, endpoint) =>
-    boot.operation(component, endpoint, definition, context, subject))
+    boot.operation(component, endpoint, definition, context, state))
 
   const runtime = new Runtime(locator, operations)
 

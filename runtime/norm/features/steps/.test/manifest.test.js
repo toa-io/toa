@@ -47,13 +47,13 @@ describe('When I declare {operation} with:', () => {
 
   it('should declare operation', () => {
     const type = 'assignment'
-    const subject = 'changeset'
+    const scope = 'changeset'
     const input = {}
     const yaml = dump(input)
 
     step.call(context, type, yaml)
 
-    expect(context.manifest.operations[type]).toStrictEqual({ type, subject })
+    expect(context.manifest.operations[type]).toStrictEqual({ type, scope })
   })
 })
 
@@ -69,7 +69,7 @@ describe('Then normalized {operation} declaration must contain:', () => {
       [type]: {
         type,
         input: { bar: 'number' },
-        subject: 'changeset'
+        scope: 'changeset'
       }
     }
 
@@ -92,7 +92,7 @@ describe('Then normalized {operation} declaration must contain:', () => {
       [type]: {
         type,
         input: { bar: 'number' },
-        subject: 'changeset'
+        scope: 'changeset'
       }
     }
 

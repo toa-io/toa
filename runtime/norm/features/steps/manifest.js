@@ -32,7 +32,7 @@ When('I declare {operation} with:',
     const declaration = parse(yaml)
 
     declaration.type = type
-    declaration.subject = subject(type)
+    declaration.scope = scope(type)
 
     this.manifest.operations = { [type]: declaration }
   })
@@ -59,8 +59,8 @@ Then('normalized {operation} declaration must contain:',
 
 /**
  * @param {toa.norm.component.operations.Type} type
- * @returns {toa.norm.component.operations.Subject}
+ * @returns {toa.norm.component.operations.Scope}
  */
-const subject = (type) => {
+const scope = (type) => {
   return type === 'assignment' ? 'changeset' : 'object'
 }

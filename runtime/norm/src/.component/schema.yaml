@@ -98,7 +98,7 @@ properties:
         properties:
           type:
             enum: [transition, observation, assignment]
-          subject:
+          scope:
             enum: [object, objects, changeset]
           concurrency:
             enum: [none, retry]
@@ -119,7 +119,7 @@ properties:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
-        required: [type, subject, bindings]
+        required: [type, scope, bindings]
         allOf:
           - if: # transition
               properties:
@@ -127,7 +127,7 @@ properties:
                   const: transition
             then:
               properties:
-                subject:
+                scope:
                   enum: [object]
               if: # transition query: false
                 not:
@@ -152,7 +152,7 @@ properties:
                   const: observation
             then:
               properties:
-                subject:
+                scope:
                   enum: [object, objects]
                 query:
                   not:
@@ -163,7 +163,7 @@ properties:
                   const: assignment
             then:
               properties:
-                subject:
+                scope:
                   enum: [changeset]
         additionalProperties: false
     additionalProperties: false

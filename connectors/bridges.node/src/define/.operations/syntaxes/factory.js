@@ -7,8 +7,8 @@ const define = (descriptor) => {
   /** @type {toa.node.define.operations.Definition} */
   const definition = {}
 
-  definition.type = /** @type {typeof toa.norm.component.Operation.subject} */ match[2].toLowerCase()
-  definition.subject = /** @type {typeof toa.norm.component.Operation.type} */ match[1].toLowerCase()
+  definition.type = /** @type {typeof toa.norm.component.Operation.scope} */ match[2].toLowerCase()
+  definition.scope = /** @type {typeof toa.norm.component.Operation.type} */ match[1].toLowerCase()
 
   return definition
 }

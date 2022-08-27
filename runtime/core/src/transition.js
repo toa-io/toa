@@ -8,31 +8,31 @@ const { StateConcurrencyException } = require('./exceptions')
 class Transition extends Operation {
   #concurrency
 
-  constructor (cascade, subject, contract, query, definition) {
-    super(cascade, subject, contract, query, definition)
+  constructor (cascade, scope, contract, query, definition) {
+    super(cascade, scope, contract, query, definition)
 
     this.#concurrency = definition.concurrency
   }
 
-  async process (scope) {
-    return retry((retry) => this.#retry(scope, retry), RETRY)
+  async process (store) {
+    return retry((retry) => this.#retry(store, retry), RETRY)
   }
 
-  async acquire (scope) {
-    const { request } = scope
+  async acquire (store) {
+    const { request } = store
 
-    scope.subject = request.query ? await this.query(request.query) : this.subject.init()
-    scope.state = scope.subject.get()
+    store.scope = request.query ? await this.query(request.query) : this.scope.init()
+    store.state = store.scope.get()
   }
 
-  async commit (scope) {
-    const { subject, state, reply, retry } = scope
+  async commit (store) {
+    const { scope, state, reply, retry } = store
 
     if (reply.error !== undefined) return
 
-    subject.set(state)
+    scope.set(state)
 
-    const ok = await this.subject.commit(subject)
+    const ok = await this.scope.commit(scope)
 
     if (ok !== true) {
       if (this.#concurrency === 'retry') retry()
@@ -40,10 +40,10 @@ class Transition extends Operation {
     }
   }
 
-  async #retry (scope, retry) {
-    scope.retry = retry
+  async #retry (store, retry) {
+    store.retry = retry
 
-    return super.process(scope)
+    return super.process(store)
   }
 }
 

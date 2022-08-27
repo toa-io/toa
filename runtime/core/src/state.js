@@ -51,13 +51,13 @@ class State {
     return this.#entity.changeset(query)
   }
 
-  async commit (subject) {
-    const event = subject.event()
+  async commit (state) {
+    const event = state.event()
 
     let ok = true
 
     if (!empty(event.changeset)) {
-      const values = subject.get()
+      const values = state.get()
       ok = await this.#storage.store(values)
 
       // TODO: do not wait because outbox will handle failures
@@ -71,26 +71,26 @@ class State {
     return ok
   }
 
-  async apply (subject) {
-    const { changeset, insert } = subject.export()
+  async apply (state) {
+    const { changeset, insert } = state.export()
 
     let upsert
 
-    if (this.#initialized && subject.query.id !== undefined && subject.query.version === undefined) {
+    if (this.#initialized && state.query.id !== undefined && state.query.version === undefined) {
       upsert = insert
     }
 
-    const state = await this.#storage.upsert(subject.query, changeset, upsert)
+    const result = await this.#storage.upsert(state.query, changeset, upsert)
 
-    if (state === null) {
-      if (subject.query.version !== undefined) throw new StatePreconditionException()
+    if (result === null) {
+      if (state.query.version !== undefined) throw new StatePreconditionException()
       else throw new StateNotFoundException()
     }
 
     // TODO: same as above
     // noinspection JSUnresolvedVariable
     if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
-      await this.#emitter.emit({ changeset, state })
+      await this.#emitter.emit({ changeset, state: result })
     }
   }
 }

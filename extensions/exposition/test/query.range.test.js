@@ -4,7 +4,7 @@ const { Range } = require('../src/query/range')
 
 let range
 
-const operation = { type: 'observation', subject: 'objects' }
+const operation = { type: 'observation', scope: 'objects' }
 
 describe('exact', () => {
   beforeAll(() => {

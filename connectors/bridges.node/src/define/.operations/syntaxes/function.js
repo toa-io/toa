@@ -1,6 +1,6 @@
 'use strict'
 
-const { types, subjects } = require('./constants')
+const { types, scopes } = require('./constants')
 
 /** @type {toa.node.define.operations.Define} */
 const define = (descriptor) => {
@@ -12,7 +12,7 @@ const define = (descriptor) => {
 
   definition.type = /** @type {typeof toa.norm.component.Operation.type} */ name
 
-  if (node.params.length > 1) definition.subject = subject(node.params[1].name)
+  if (node.params.length > 1) definition.scope = scope(node.params[1].name)
 
   return definition
 }
@@ -28,9 +28,9 @@ const test = (statement, type) => {
 
 /**
  * @param {string} name
- * @returns {typeof toa.norm.component.Operation.subject}
+ * @returns {typeof toa.norm.component.Operation.scope}
  */
-const subject = (name) => subjects.includes(name) ? name : undefined
+const scope = (name) => scopes.includes(name) ? name : undefined
 
 const nodes = ['FunctionDeclaration', 'ArrowFunctionExpression', 'ClassMethod']
 

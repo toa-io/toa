@@ -88,7 +88,7 @@ describe('schema', () => {
 
     const entity = Request.schema({
       type: 'observation',
-      subject: 'object'
+      scope: 'object'
     }).properties.query.properties
 
     expect(entity.omit).toBeUndefined()
@@ -96,7 +96,7 @@ describe('schema', () => {
 
     const set = Request.schema({
       type: 'observation',
-      subject: 'objects'
+      scope: 'objects'
     }).properties.query.properties
 
     expect(set.omit).toBeDefined()
