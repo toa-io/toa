@@ -25,9 +25,9 @@ exports.transition = transition
 
 Exported function's name defines operation `type` property, thus must be one of:
 `transition`, `observation`, or `assignment`. Second (state) argument name must be `object`,
-`objects`, or `changeset` as it defines operation's `subject`.
+`objects`, or `changeset` as it defines operation's `scope`.
 
-Following function signature defines operation of `observation` type with `objects` subject.
+Following function signature defines operation of `observation` type with `objects` scope.
 
 ```javascript
 // operations/set.js
@@ -60,7 +60,7 @@ exports.Transition = Transition
 Exported class name must be one of: `Transition`, `Observation`, or `Assignment`, as it defines
 operation's `type`. Class must implement [Algorithm interface](./types/operations.d.ts).
 Second (state) argument name of the `execute` method must be `object`, `objects`, or `changeset` as
-it defines operation's `subject`.
+it defines operation's `scope`.
 
 ### Factory
 
@@ -77,7 +77,7 @@ exports.ObjectTransitionFactory = ObjectTransitionFactory
 ```
 
 Exported class name must follow the pattern: `{Subject}{Type}Factory`, where `Subject` and `Type`
-defines operation's `subject` and `type` respectively. Class must
+defines operation's `scope` and `type` respectively. Class must
 implement [Algorithm Factory interface](#).
 
 > Factory class name examples: `ObjectTransitionFactory`, `ObjectsObservationFactory`,

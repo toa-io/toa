@@ -40,7 +40,7 @@ describe('function', () => {
     const module = { transition }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'transition', subject: 'object' })
+    expect(definition).toMatchObject({ type: 'transition', scope: 'object' })
   })
 
   it('should parse expression', () => {
@@ -48,24 +48,24 @@ describe('function', () => {
     const module = { observation }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'observation', subject: 'objects' })
+    expect(definition).toMatchObject({ type: 'observation', scope: 'objects' })
   })
 
-  it('should parse subject changeset', () => {
+  it('should parse scope changeset', () => {
     const assignment = (input, changeset) => null
     const module = { assignment }
     const definition = define(module)
 
-    expect(definition.subject).toStrictEqual('changeset')
+    expect(definition.scope).toStrictEqual('changeset')
   })
 
-  it('should not define unknown subject', () => {
+  it('should not define unknown scope', () => {
     const assignment = (input, message) => null
     const module = { assignment }
 
     const definition = define(module)
 
-    expect(definition.subject).toStrictEqual(undefined)
+    expect(definition.scope).toStrictEqual(undefined)
   })
 })
 
@@ -84,8 +84,8 @@ describe('class', () => {
     expect(definition.type).toStrictEqual('transition')
   })
 
-  it('should define subject', () => {
-    expect(definition.subject).toStrictEqual('object')
+  it('should define scope', () => {
+    expect(definition.scope).toStrictEqual('object')
   })
 
   it('should find run method', () => {
@@ -98,7 +98,7 @@ describe('class', () => {
     const module = { Assignment }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'assignment', subject: 'object' })
+    expect(definition).toMatchObject({ type: 'assignment', scope: 'object' })
   })
 
   it('should throw if no run method found', () => {
@@ -133,7 +133,7 @@ describe('factory', () => {
     expect(definition.type).toStrictEqual('transition')
   })
 
-  it('should define subject', () => {
-    expect(definition.subject).toStrictEqual('object')
+  it('should define scope', () => {
+    expect(definition.scope).toStrictEqual('object')
   })
 })

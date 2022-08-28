@@ -3,7 +3,7 @@
 async function transition (input, object, context) {
   const output = {}
 
-  output.foo = context.extensions.configuration(['foo'])
+  output.foo = context.annexes.configuration(['foo'])
 
   return { output }
 }

@@ -1,25 +1,33 @@
 'use strict'
 
-const { component: load } = require('@toa.io/norm')
-const { Locator } = require('@toa.io/core')
+const { remap } = require('@toa.io/libraries/generic')
+const { Component, Locator, State, entities } = require('@toa.io/core')
+const { Schema } = require('@toa.io/libraries/schema')
+
+const boot = require('./index')
 
 /**
- * @param {string} path
- * @param {Object} [options]
- * @return {Promise<toa.norm.Component>}
+ * @param {toa.norm.Component} manifest
+ * @returns {Promise<toa.core.Component>}
  */
-const component = async (path, options) => {
-  const manifest = await load(path)
+const component = async (manifest) => {
+  const locator = new Locator(manifest.name, manifest.namespace)
+  const storage = boot.storage(locator, manifest.entity.storage)
+  const context = await boot.context(manifest)
+  const emission = boot.emission(manifest.events, locator)
+  const schema = new Schema(manifest.entity.schema)
+  const entity = new entities.Factory(schema)
+  const state = new State(storage, entity, emission, manifest.entity.initialized)
 
-  if (options?.bindings !== undefined) {
-    for (const operation of Object.values(manifest.operations)) {
-      operation.bindings = options.bindings
-    }
-  }
+  const operations = remap(manifest.operations, (definition, endpoint) =>
+    boot.operation(manifest, endpoint, definition, context, state))
 
-  manifest.locator = new Locator(manifest.name, manifest.namespace)
+  const component = new Component(locator, operations)
 
-  return manifest
+  if (storage) component.depends(storage)
+  if (emission) component.depends(emission)
+
+  return component
 }
 
 exports.component = component

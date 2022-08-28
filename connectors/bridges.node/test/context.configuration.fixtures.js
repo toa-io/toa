@@ -4,10 +4,10 @@ const { generate } = require('randomstring')
 
 const configuration = { foo: { bar: generate() } }
 
-const context = {
+const context = /** @type {toa.core.Context} */ {
   apply: jest.fn(),
   call: jest.fn(),
-  extensions: [
+  annexes: [
     {
       name: 'configuration',
       invoke: jest.fn(() => configuration)

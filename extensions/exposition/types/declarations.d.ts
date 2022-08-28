@@ -3,7 +3,7 @@ declare namespace toa.extensions.exposition.declarations {
   interface Operation {
     operation: string
     type: 'transition' | 'observation' | 'assignment'
-    subject: 'object' | 'objects' | 'changeset'
+    scope: 'object' | 'objects' | 'changeset'
     query?: boolean
   }
 

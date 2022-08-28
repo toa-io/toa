@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const { Context } = require('../src/context')
+const { Annex } = require('../src/annex')
 const { Locator } = require('@toa.io/core')
 
 const fixtures = require('./factory.fixtures')
@@ -16,7 +16,7 @@ beforeEach(() => {
 })
 
 it('should create context extension', () => {
-  const extension = factory.context(new Locator(generate(), generate()), fixtures.declaration)
+  const extension = factory.annex(new Locator(generate(), generate()), fixtures.declaration)
 
-  expect(extension).toBeInstanceOf(Context)
+  expect(extension).toBeInstanceOf(Annex)
 })

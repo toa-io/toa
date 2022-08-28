@@ -8,13 +8,13 @@ let context
 beforeEach(async () => {
   jest.clearAllMocks()
 
-  context = new Context(/** @type {toa.core.Context} */ fixtures.context)
+  context = new Context(fixtures.context)
 
   await context.connect()
 })
 
-it('should expose extension', async () => {
-  expect(context.extensions.configuration).toBeDefined()
+it('should expose annex', async () => {
+  expect(context.annexes.configuration).toBeDefined()
 })
 
 it('should expose values', () => {

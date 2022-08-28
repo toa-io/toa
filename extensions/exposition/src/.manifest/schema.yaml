@@ -42,7 +42,7 @@ definitions:
               $ref: definitions#/definitions/token
             type:
               enum: [transition, observation, assignment]
-            subject:
+            scope:
               type: string
               enum: [object, objects, changeset]
             query:

@@ -3,14 +3,14 @@
 const { Locator } = require('@toa.io/core')
 const { encode } = require('@toa.io/libraries/generic')
 
-const fixtures = require('./context.fixtures')
+const fixtures = require('./annex.fixtures')
 const { Factory } = require('../')
 const { generate } = require('randomstring')
 
 const factory = new Factory()
 
-/** @type {toa.extensions.configuration.Context} */
-let context
+/** @type {toa.extensions.configuration.Annex} */
+let annex
 
 /** @type {toa.core.Locator} */
 let locator
@@ -22,24 +22,25 @@ describe('defaults', () => {
 
     locator = new Locator(name, namespace)
 
-    context = factory.context(locator, fixtures.schema)
-    await context.connect()
+    annex = factory.annex(locator, fixtures.schema)
+
+    await annex.connect()
   })
 
   it('should return schema defaults', () => {
-    const foo = context.invoke(['foo'])
+    const foo = annex.invoke(['foo'])
 
     expect(foo).toStrictEqual(fixtures.schema.properties.foo.default)
   })
 
   it('should return nested values', () => {
-    const baz = context.invoke(['bar', 'baz'])
+    const baz = annex.invoke(['bar', 'baz'])
 
     expect(baz).toStrictEqual(fixtures.schema.properties.bar.properties.baz.default)
   })
 
   it('should expose configuration tree', () => {
-    const configuration = context.invoke()
+    const configuration = annex.invoke()
 
     expect(configuration).toStrictEqual({
       foo: fixtures.schema.properties.foo.default,
@@ -64,10 +65,11 @@ describe('resolution', () => {
   it('should resolve configuration object from environment variable', async () => {
     process.env[varname] = encode(object)
 
-    context = factory.context(locator, fixtures.schema)
-    await context.connect()
+    annex = factory.annex(locator, fixtures.schema)
 
-    const configuration = context.invoke()
+    await annex.connect()
+
+    const configuration = annex.invoke()
 
     expect(configuration.foo).toStrictEqual(object.foo)
     expect(configuration.bar.baz).toStrictEqual(fixtures.schema.properties.bar.properties.baz.default)

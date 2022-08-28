@@ -125,9 +125,10 @@ describe('request', () => {
   it('should return 400 on invalid query', async () => {
     const url = locator('/credits/balance/' + newid() + '/?foo=bar')
     const response = await fetch(url)
-    const reply = await response.json()
 
     expect(response.status).toBe(400)
+
+    const reply = await response.json()
 
     expect(reply).toStrictEqual({
       code: codes.RequestContract,

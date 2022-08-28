@@ -25,9 +25,9 @@ let provider
 beforeEach(async () => {
   delete process.env[KEY]
 
-  const component = await boot.component(PATH)
+  const manifest = await boot.manifest(PATH)
 
-  provider = factory.provider(component)
+  provider = factory.provider(manifest)
 })
 
 it('should start', () => {

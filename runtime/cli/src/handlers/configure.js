@@ -9,9 +9,9 @@ const { component: find } = require('../util/find')
 
 async function configure (argv) {
   const path = find(argv.path)
-  const component = await boot.component(path)
+  const manifest = await boot.manifest(path)
   const factory = new Factory()
-  const provider = factory.provider(component)
+  const provider = factory.provider(manifest)
 
   if (argv.value === undefined && subcommands[argv.key] !== undefined) {
     await subcommands[argv.key](provider, argv)

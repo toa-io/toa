@@ -1,7 +1,7 @@
 'use strict'
 
 const { Schema } = require('@toa.io/libraries/schema')
-const { Context } = require('./context')
+const { Annex } = require('./annex')
 const { Configuration } = require('./configuration')
 const { Provider } = require('./provider')
 
@@ -12,14 +12,14 @@ class Factory {
   /**
    * @param {toa.core.Locator} locator
    * @param {toa.schema.JSON | Object} declaration
-   * @return {toa.extensions.configuration.Context}
+   * @return {toa.extensions.configuration.Annex}
    */
-  context (locator, declaration) {
+  annex (locator, declaration) {
     const schema = new Schema(declaration)
     const provider = new Provider(locator, schema)
     const configuration = new Configuration(provider)
 
-    return new Context(configuration)
+    return new Annex(configuration)
   }
 
   provider (component) {

@@ -7,23 +7,25 @@ const boot = require('./index')
 async function composition (paths, options) {
   normalize(options)
 
-  const manifests = await Promise.all(paths.map((path) => boot.component(path, options)))
+  /** @type {toa.norm.Component[]} */
+  const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
 
-  const extensions = (await Promise.all(manifests.map(boot.extensions.connectors)))
-    .filter((ext) => ext !== undefined)
+  /** @type {toa.core.Connector[]} */
+  const tenants = (await Promise.all(manifests.map(boot.extensions.tenants)))
+    .filter((tenant) => tenant !== null)
 
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
 
-  const runtimes = await Promise.all(manifests.map(boot.runtime))
+  /** @type {toa.core.Component[]} */
+  const components = await Promise.all(manifests.map(boot.component))
 
-  // noinspection JSUnresolvedVariable
-  const producers = runtimes.map((runtime, index) =>
+  const producers = components.map((runtime, index) =>
     boot.bindings.produce(runtime, manifests[index].operations))
 
-  const receivers = await Promise.all(runtimes.map((runtime, index) =>
+  const receivers = await Promise.all(components.map((runtime, index) =>
     boot.receivers(manifests[index], runtime)))
 
-  return new Composition(expositions.flat(), producers.flat(), receivers.flat(), extensions.flat())
+  return new Composition(expositions.flat(), producers.flat(), receivers.flat(), tenants.flat())
 }
 
 const normalize = (options) => {

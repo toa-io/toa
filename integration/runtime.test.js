@@ -8,20 +8,20 @@ const framework = require('./framework')
 
 const path = join(__dirname, './dummies/credits')
 
-let runtime
+let component
 
 beforeAll(async () => {
   framework.env('local')
 
-  const manifest = await boot.component(path)
+  const manifest = await boot.manifest(path)
 
-  runtime = await boot.runtime(manifest)
+  component = await boot.component(manifest)
 
-  await runtime.connect()
+  await component.connect()
 })
 
 afterAll(async () => {
-  if (runtime !== undefined) await runtime.disconnect()
+  if (component !== undefined) await component.disconnect()
 
   framework.env()
 })
@@ -29,8 +29,8 @@ afterAll(async () => {
 it('should preform operations', async () => {
   const id = newid()
 
-  await runtime.invoke('debit', { input: 1, query: { id } })
-  const reply = await runtime.invoke('observe', { query: { id } })
+  await component.invoke('debit', { input: 1, query: { id } })
+  const reply = await component.invoke('observe', { query: { id } })
 
   expect(reply.output).toStrictEqual({ id, balance: 9, _version: 1 })
 })

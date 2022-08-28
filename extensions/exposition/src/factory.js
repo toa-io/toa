@@ -3,7 +3,7 @@
 const { Locator } = require('@toa.io/core')
 const { remap } = require('@toa.io/libraries/generic')
 
-const { Connector } = require('./connector')
+const { Tenant } = require('./tenant')
 const { Exposition } = require('./exposition')
 const { Server } = require('./server')
 const { Remote } = require('./remote')
@@ -24,10 +24,10 @@ class Factory {
     this.#server = new Server()
   }
 
-  connector (locator, declaration) {
+  tenant (locator, declaration) {
     const broadcast = this.#boot.bindings.broadcast(BINDING, GROUP, locator.id)
 
-    return new Connector(broadcast, locator, declaration)
+    return new Tenant(broadcast, locator, declaration)
   }
 
   service (name) {

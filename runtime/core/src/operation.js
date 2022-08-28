@@ -4,20 +4,23 @@ const { Connector } = require('./connector')
 const { SystemException } = require('./exceptions')
 
 class Operation extends Connector {
-  subject
+  scope
 
   #cascade
   #contract
   #query
 
-  constructor (cascade, subject, contract, query) {
+  #scope
+
+  constructor (cascade, scope, contract, query, definition) {
     super()
 
-    this.subject = subject
+    this.scope = scope
 
     this.#cascade = cascade
     this.#contract = contract
     this.#query = query
+    this.#scope = definition.scope
 
     this.depends(cascade)
   }
@@ -26,9 +29,9 @@ class Operation extends Connector {
     try {
       if (request.query) request.query = this.#query.parse(request.query)
 
-      const scope = { request }
+      const store = { request }
 
-      return await this.process(scope)
+      return await this.process(store)
     } catch (e) {
       const exception = e instanceof Error ? new SystemException(e) : e
 
@@ -36,26 +39,30 @@ class Operation extends Connector {
     }
   }
 
-  async process (scope) {
-    await this.acquire(scope)
-    await this.run(scope)
-    await this.commit(scope)
+  async process (store) {
+    await this.acquire(store)
+    await this.run(store)
+    await this.commit(store)
 
-    return scope.reply
+    return store.reply
   }
 
   async acquire () {}
 
-  async run (scope) {
-    const { request, state } = scope
+  async run (store) {
+    const { request, state } = store
     const reply = await this.#cascade.run(request.input, state) || {}
 
     this.#contract.fit(reply)
 
-    scope.reply = reply
+    store.reply = reply
   }
 
   async commit () {}
+
+  async query (query) {
+    return this.scope[this.#scope](query)
+  }
 }
 
 exports.Operation = Operation

@@ -7,7 +7,7 @@ const { Factory } = require('../src/factory')
 const fixtures = require('./fixtures')
 
 const factory = new Factory()
-const producer = factory.producer(fixtures.runtime.locator, fixtures.endpoints, fixtures.runtime)
+const producer = factory.producer(fixtures.component.locator, fixtures.endpoints, fixtures.component)
 
 let consumer, endpoint
 
@@ -23,7 +23,7 @@ beforeEach(async () => {
   jest.clearAllMocks()
 
   endpoint = sample(fixtures.endpoints)
-  consumer = factory.consumer(fixtures.runtime.locator, endpoint)
+  consumer = factory.consumer(fixtures.component.locator, endpoint)
 
   await consumer.connect()
 })
@@ -36,12 +36,12 @@ it('should bind', async () => {
   const r1 = await consumer.request(1)
   const r2 = await consumer.request(2)
 
-  expect(fixtures.runtime.invoke).toHaveBeenCalledTimes(2)
-  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(1, endpoint, 1)
-  expect(fixtures.runtime.invoke).toHaveBeenNthCalledWith(2, endpoint, 2)
+  expect(fixtures.component.invoke).toHaveBeenCalledTimes(2)
+  expect(fixtures.component.invoke).toHaveBeenNthCalledWith(1, endpoint, 1)
+  expect(fixtures.component.invoke).toHaveBeenNthCalledWith(2, endpoint, 2)
 
-  expect(r1).toBe(await fixtures.runtime.invoke.mock.results[0].value)
-  expect(r2).toBe(await fixtures.runtime.invoke.mock.results[1].value)
+  expect(r1).toBe(await fixtures.component.invoke.mock.results[0].value)
+  expect(r2).toBe(await fixtures.component.invoke.mock.results[1].value)
 })
 
 it('should return false if no binding', async () => {
@@ -52,16 +52,17 @@ it('should return false if no binding', async () => {
 })
 
 it('should not depend on initialization order', async () => {
-  const runtime = clone(fixtures.runtime)
-  runtime.locator.id = 'other.name'
+  const component = clone(fixtures.component)
 
-  const consumer = factory.consumer(runtime.locator, endpoint)
+  component.locator.id = 'other.name'
+
+  const consumer = factory.consumer(component.locator, endpoint)
   await consumer.connect()
 
   expect(await consumer.request()).toBe(false)
 
-  const producer = factory.producer(runtime.locator, fixtures.endpoints, runtime)
+  const producer = factory.producer(component.locator, fixtures.endpoints, component)
   await producer.connect()
 
-  expect(await consumer.request()).toBe(await runtime.invoke.mock.results[0].value)
+  expect(await consumer.request()).toBe(await component.invoke.mock.results[0].value)
 })

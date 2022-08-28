@@ -6,7 +6,7 @@ const boot = require('./index')
 
 const context = async (manifest) => {
   const local = await boot.remote(manifest.locator, manifest)
-  const extensions = boot.extensions.contexts(manifest)
+  const extensions = boot.extensions.annexes(manifest)
 
   const lookup = async (namespace, name) => {
     const locator = new Locator(name, namespace)

@@ -179,30 +179,30 @@ describe('operations', () => {
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 
-  describe('subject', () => {
-    it('should have subject', () => {
-      delete manifest.operations.get.subject
+  describe('scope', () => {
+    it('should have scope', () => {
+      delete manifest.operations.get.scope
       expect(() => validate(manifest)).toThrow(/required property/)
     })
 
     it('should allow only entity or set for observations', () => {
-      manifest.operations.get.subject = 'changeset'
+      manifest.operations.get.scope = 'changeset'
       expect(() => validate(manifest)).toThrow(/allowed values/)
     })
 
     it('should allow only entity for transitions', () => {
-      manifest.operations.add.subject = 'changeset'
+      manifest.operations.add.scope = 'changeset'
       expect(() => validate(manifest)).toThrow(/allowed values/)
 
-      manifest.operations.add.subject = 'set'
+      manifest.operations.add.scope = 'set'
       expect(() => validate(manifest)).toThrow(/allowed values/)
     })
 
     it('should allow only changeset for assignments', () => {
-      manifest.operations.set.subject = 'changeset'
+      manifest.operations.set.scope = 'changeset'
       expect(() => validate(manifest)).not.toThrow()
 
-      manifest.operations.set.subject = 'set'
+      manifest.operations.set.scope = 'set'
       expect(() => validate(manifest)).toThrow(/allowed values/)
     })
   })

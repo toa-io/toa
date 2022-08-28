@@ -16,7 +16,7 @@ class Range {
 
   /** @hot */
   parse (value, operation) {
-    if (operation.type !== 'observation' || operation.subject !== 'objects') return value
+    if (operation.type !== 'observation' || operation.scope !== 'objects') return value
     if (value === undefined) return this.#value
 
     if (value > this.#max || value < this.#min) {

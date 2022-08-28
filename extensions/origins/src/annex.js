@@ -6,9 +6,9 @@ const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/libraries/generic')
 
 /**
- * @implements {toa.extensions.origins.Context}
+ * @implements {toa.extensions.origins.Annex}
  */
-class Context extends Connector {
+class Annex extends Connector {
   /** @readonly */
   name = 'origins'
 
@@ -40,7 +40,7 @@ class Context extends Connector {
 
   /**
    * @param {string} url
-   * @param {import('node-fetch').Request} request
+   * @param {import('node-fetch').RequestInit} request
    * @param {toa.generic.retry.Options} [options]
    * @return {Promise<import('node-fetch').Response>}
    */
@@ -92,4 +92,4 @@ const append = (url, path) => {
 
 const PLACEHOLDER = /\*/g
 
-exports.Context = Context
+exports.Annex = Annex

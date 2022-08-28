@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const runtime = {
+const component = {
   locator: {
     id: 'foo.bar',
     operations: [
@@ -32,6 +32,6 @@ const exposition = {
   invoke: jest.fn(async () => generate())
 }
 
-exports.runtime = runtime
+exports.component = component
 exports.endpoints = endpoints
 exports.exposition = exposition
