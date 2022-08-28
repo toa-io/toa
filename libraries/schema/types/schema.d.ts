@@ -16,6 +16,7 @@ declare namespace toa.schema {
     default?: Value
     oneOf?: object[]
     items?: JSON
+    additionalProperties?: boolean
   }
 
   interface Schema {

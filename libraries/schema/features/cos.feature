@@ -1,42 +1,6 @@
-Feature: Concise JSON Schema syntax
+Feature: Concise Object Schema
 
-  Scenario Outline: <type>
-
-    When I write schema:
-      """
-      <type>
-      """
-    Then it is equivalent to:
-      """
-      type: "<type>"
-      """
-
-    Examples:
-      | type    |
-      | string  |
-      | number  |
-      | integer |
-      | boolean |
-      | object  |
-      | array   |
-      | null    |
-
-  Scenario: Object properties
-
-    When I write schema:
-      """
-      foo:
-        type: string
-      """
-    Then it is equivalent to:
-      """
-      type: object
-      properties:
-        foo:
-          type: string
-      """
-
-  Scenario: Concise object properties
+  Scenario: Concise object declaration
 
     When I write schema:
       """
@@ -51,31 +15,10 @@ Feature: Concise JSON Schema syntax
           type: string
         bar:
           type: boolean
+      additionalProperties: false
       """
 
-  Scenario Outline: <type> default
-
-    When I write schema:
-      """
-      foo: <value>
-      """
-    Then it is equivalent to:
-      """
-      type: object
-      properties:
-        foo:
-          type: <type>
-          default: <value>
-      """
-
-    Examples:
-      | value     | type    |
-      | something | string  |
-      | 1         | number  |
-      | 1.0       | number  |
-      | true      | boolean |
-
-  Scenario: Required properties
+  Scenario: Required object properties
 
     When I write schema:
       """
@@ -92,9 +35,78 @@ Feature: Concise JSON Schema syntax
         bar:
           type: string
       required: [foo]
+      additionalProperties: false
       """
 
-  Scenario: One of listed number constants
+  Scenario: Additional properties
+
+  Additional properties are false by default
+
+    When I write schema:
+      """
+      foo: string
+      ...: ~
+      """
+    Then it is equivalent to:
+      """
+      type: object
+      properties:
+        foo:
+          type: string
+      additionalProperties: true
+      """
+
+  Scenario Outline: Primitive <type> type
+
+    When I write schema:
+      """
+      <type>
+      """
+    Then it is equivalent to:
+      """
+      type: "<type>"
+      """
+
+    Examples:
+      | type    |
+      | string  |
+      | number  |
+      | integer |
+      | boolean |
+      | array   |
+      | object  |
+
+  Scenario: No schema
+
+    When I write schema:
+      """
+      null
+      """
+    Then it is equivalent to:
+      """
+      {}
+      """
+
+  Scenario Outline: Default value of <type> type
+
+    When I write schema:
+      """
+      <value>
+      """
+    Then it is equivalent to:
+      """
+      type: <type>
+      default: <value>
+      """
+
+    Examples:
+      | value     | type    |
+      | something | string  |
+      | 1         | number  |
+      | 1.0       | number  |
+      | true      | boolean |
+
+  Scenario: One of number constants
 
     When I write schema:
       """
@@ -110,9 +122,10 @@ Feature: Concise JSON Schema syntax
             - const: 1
             - const: 2
             - const: 3
+      additionalProperties: false
       """
 
-  Scenario: One of listed string constants
+  Scenario: One of string constants
 
     When I write schema:
       """
@@ -127,9 +140,10 @@ Feature: Concise JSON Schema syntax
           oneOf:
             - const: bar
             - const: baz
+      additionalProperties: false
       """
 
-  Scenario: One of listed string constants with one element
+  Scenario: String constant
 
     When I write schema:
       """
@@ -143,9 +157,10 @@ Feature: Concise JSON Schema syntax
           type: string
           oneOf:
             - const: bar
+      additionalProperties: false
       """
 
-  Scenario Outline: Array of <type>s
+  Scenario Outline: Array of <type> primitives
 
     When I write schema:
         """
@@ -159,6 +174,7 @@ Feature: Concise JSON Schema syntax
             type: array
             items:
               type: <type>
+      additionalProperties: false
         """
 
     Examples:
@@ -167,7 +183,6 @@ Feature: Concise JSON Schema syntax
       | number  |
       | integer |
       | boolean |
-      | object  |
 
   Scenario: Array of concise objects
 
@@ -190,6 +205,8 @@ Feature: Concise JSON Schema syntax
             properties:
               bar:
                 type: string
+            additionalProperties: false
+      additionalProperties: false
       """
 
   Scenario: Custom `id` shortcut
@@ -204,6 +221,7 @@ Feature: Concise JSON Schema syntax
       properties:
         foo:
           $ref: https://schemas.toa.io/0.0.0/definitions#/definitions/id
+      additionalProperties: false
       """
 
   Scenario: Property as known keyword
@@ -218,4 +236,5 @@ Feature: Concise JSON Schema syntax
       properties:
         title:
           type: string
+      additionalProperties: false
       """

@@ -17,12 +17,12 @@ const expand = (schema) => {
  * @returns {toa.schema.JSON}
  */
 const primitive = (value) => {
-  if (TYPES.includes(value)) return { type: value }
+  if (PRIMITIVES.includes(value)) return { type: value }
   if (value in SHORTCUTS) return SHORTCUTS[value]
 
   const type = /** @type {toa.schema.Type} */ typeof value
 
-  if (TYPES.includes(type)) return { type, default: value }
+  if (PRIMITIVES.includes(type)) return { type, default: value }
 }
 
 /**
@@ -30,7 +30,7 @@ const primitive = (value) => {
  * @returns {toa.schema.JSON}
  */
 const object = (schema) => {
-  if (schema === null) return { type: 'null' }
+  if (schema === null) return {}
   if (schema.type !== undefined && valid(schema)) return schema
   if (Array.isArray(schema)) return array(/** @type {any[]} */ schema)
 
@@ -40,10 +40,14 @@ const object = (schema) => {
     return schema
   }
 
+  // object type
   if (schema.properties === undefined) schema = { properties: schema }
 
   schema.type = 'object'
   schema.properties = remap(schema.properties, (value) => expand(value))
+  schema.additionalProperties = schema.properties['...'] !== undefined
+
+  delete schema.properties['...']
 
   required(schema)
 
@@ -82,7 +86,7 @@ const array = (array) => {
   const type = /** @type {toa.schema.Type} */ typeof array[0]
 
   // array of a given type
-  if (array.length === 1 && TYPES.includes(array[0])) {
+  if (array.length === 1 && PRIMITIVES.includes(array[0])) {
     const type = /** @type {toa.schema.Type} */ array[0]
 
     return {
@@ -107,7 +111,7 @@ const array = (array) => {
   return { type, oneOf }
 }
 
-const TYPES = ['string', 'number', 'integer', 'boolean', 'object', 'array', 'null']
+const PRIMITIVES = ['string', 'number', 'integer', 'boolean', 'object', 'array']
 
 const SHORTCUTS = {
   id: {

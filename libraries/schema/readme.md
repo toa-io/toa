@@ -1,7 +1,9 @@
-# Concise JSON Schema validator
+# Concise Object Schema
 
-Uses [Ajv](https://ajv.js.org).
+Concise Object Schema (COS) is a human-friendly object schema description format.
 
-## Features
+See [features](./features/cos.feature).
 
-- [Concise syntax](./features/conciseness.feature)
+## References
+
+- Implementation uses [Ajv](https://ajv.js.org).

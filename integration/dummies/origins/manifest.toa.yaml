@@ -14,12 +14,14 @@ operations:
     concurrency: retry
     output:
       status: number
+      body: object
   bar:
     concurrency: retry
     input:
       retries: number
     output:
       status: number
+      body: object
 
 origins:
   local: http://localhost:8000

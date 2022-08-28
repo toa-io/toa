@@ -28,6 +28,7 @@ operations:
     output:
       properties:
         id: .
+        sender: .
         text: .
         timestamp: .
       required: [id, text]
@@ -51,6 +52,7 @@ operations:
       required: [sender, text]
     output:
       properties:
+        id: .
         ok: string
       required: [id, ok]
   assign:
