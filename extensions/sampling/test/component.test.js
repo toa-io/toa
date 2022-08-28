@@ -31,6 +31,7 @@ it('should be', () => {
   expect(component).toBeInstanceOf(Component)
   expect(component).toBeInstanceOf(Connector)
   expect(component.invoke).toBeDefined()
+  expect(component.locator).toStrictEqual(fixtures.component.locator)
 })
 
 it('should depend on origin', () => {
