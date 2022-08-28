@@ -27,7 +27,7 @@ const component = async (manifest) => {
   if (storage) component.depends(storage)
   if (emission) component.depends(emission)
 
-  return component
+  return boot.extensions.component(component)
 }
 
 exports.component = component
