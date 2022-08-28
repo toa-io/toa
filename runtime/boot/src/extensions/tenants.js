@@ -2,24 +2,26 @@
 
 const { resolve } = require('./resolve')
 
+/**
+ * @param {toa.norm.Component} manifest
+ * @returns {toa.core.Connector[]}
+ */
 const tenants = (manifest) => {
-  if (manifest.extensions === undefined) return
+  const tenants = []
 
-  const connectors = []
+  if (manifest.extensions === undefined) return tenants
 
   for (const [name, declaration] of Object.entries(manifest.extensions)) {
-    const instance = tenant(name, declaration, manifest)
+    const factory = resolve(name, manifest.path)
 
-    if (instance !== undefined) connectors.push(instance)
+    if (factory.tenant === undefined) continue
+
+    const tenant = factory.tenant(manifest.locator, declaration)
+
+    tenants.push(tenant)
   }
 
-  return connectors
-}
-
-const tenant = (name, declaration, manifest) => {
-  const factory = resolve(name, manifest.path)
-
-  if (factory.tenant !== undefined) return factory.tenant(manifest.locator, declaration)
+  return tenants
 }
 
 exports.tenants = tenants

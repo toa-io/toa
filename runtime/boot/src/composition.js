@@ -10,8 +10,9 @@ async function composition (paths, options) {
   /** @type {toa.norm.Component[]} */
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
 
+  /** @type {toa.core.Connector[]} */
   const tenants = (await Promise.all(manifests.map(boot.extensions.tenants)))
-    .filter((tenant) => tenant !== undefined)
+    .filter((tenant) => tenant !== null)
 
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
 

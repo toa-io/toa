@@ -3,7 +3,7 @@ import * as index from './index'
 declare namespace toa.core.extensions {
 
   interface Factory {
-    tenant?(locator: index.Locator, declaration: Object): index.Connector | undefined
+    tenant?(locator: index.Locator, declaration: Object): index.Connector
 
     annex?(locator: index.Locator, declaration: Object): Annex
 
