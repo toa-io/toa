@@ -7,9 +7,6 @@ const { validate, verify } = require('./schema')
  * @implements {toa.core.Component}
  */
 class Component extends Connector {
-  /** @type {toa.core.Locator} */
-  locator
-
   /** @type {toa.core.Component} */
   #component
 
@@ -19,7 +16,6 @@ class Component extends Connector {
   constructor (component) {
     super()
 
-    this.locator = component.locator
     this.#component = component
 
     this.depends(component)
