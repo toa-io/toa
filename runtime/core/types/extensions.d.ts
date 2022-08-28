@@ -1,4 +1,5 @@
 import * as index from './index'
+import * as _component from './component'
 
 declare namespace toa.core.extensions {
 
@@ -7,7 +8,9 @@ declare namespace toa.core.extensions {
 
     annex?(locator: index.Locator, declaration: Object): Annex
 
-    service?(name?: string): index.Connector | undefined
+    service?(name?: string): index.Connector
+
+    component?(component: _component.Component): _component.Component
   }
 
   interface Annex extends index.Connector {
