@@ -10,6 +10,8 @@ async function composition (paths, options) {
   /** @type {toa.norm.Component[]} */
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
 
+  // boot.extensions.preload(options.extensions)
+
   /** @type {toa.core.Connector[]} */
   const tenants = await Promise.all(manifests.map(boot.extensions.tenants))
 
@@ -31,5 +33,9 @@ const normalize = (options) => {
   if (options === undefined) return
   if (options.bindings === null) options.bindings = []
 }
+
+// const DEFAULTS = {
+//   extensions: ['@toa.io/extensions.sampling']
+// }
 
 exports.composition = composition

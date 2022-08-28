@@ -23,7 +23,7 @@ it('should not throw on type mismatch', () => {
   expect(match(1, [1, 2])).toStrictEqual(false)
 })
 
-it('should compare objects', () => {
+it('should match objects', () => {
   const reference = {
     foo: 'bar',
     baz: 1,
@@ -35,8 +35,10 @@ it('should compare objects', () => {
 
   expect(match(reference, { foo: 'bar' })).toStrictEqual(true)
   expect(match(reference, { qux: { val: 'text' } })).toStrictEqual(true)
+  expect(match(reference, { qux: { val: 'whatever' } })).toStrictEqual(false)
   expect(match(reference, { qux: { arr: [2] } })).toStrictEqual(true)
   expect(match(reference, { qux: { arr: [2, 5] } })).toStrictEqual(false)
+  expect(match(reference, { foo: 'bar', bar: 1 })).toStrictEqual(false)
 })
 
 it('should not throw on nulls', () => {

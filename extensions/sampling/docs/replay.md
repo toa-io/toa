@@ -21,7 +21,8 @@ sample, an exception will be thrown.
 
 ## UI extension
 
-Sampling extends UI with `sample` property which is an object confirming the [schema](#).
+Sampling extends UI Request with `sample` property which is an object confirming
+the [schema](../src/sample.cons.yaml).
 
 ## Core Decorators
 
