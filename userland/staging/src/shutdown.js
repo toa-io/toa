@@ -4,10 +4,7 @@ const { stage } = require('./stage')
 
 /** @type {toa.userland.staging.Shutdown} */
 const shutdown = async () => {
-  const components = stage.components.map((component) => component.disconnect())
-  const compositions = stage.compositions.map((composition) => composition.disconnect())
-  const remotes = stage.remotes.map((remote) => remote.disconnect())
-  const disconnections = [...components, ...compositions, ...remotes]
+  const disconnections = stage.components.map((component) => component.disconnect())
 
   await Promise.all(disconnections)
 

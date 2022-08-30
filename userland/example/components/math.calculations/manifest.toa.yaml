@@ -1,0 +1,13 @@
+name: calculations
+namespace: math
+
+entity: null
+
+operations:
+  sum:
+    scope: object
+    concurrency: none
+    input:
+      a: number
+      b: number
+    output: number

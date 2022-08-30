@@ -2,17 +2,14 @@
 
 const { generate } = require('randomstring')
 
-const connector = () => ({
+const manifest = jest.fn(() => generate())
+
+const component = jest.fn(() => ({
   connect: jest.fn(),
   disconnect: jest.fn(),
   link: jest.fn()
-})
+}))
 
-const manifest = jest.fn(async () => generate())
-const component = jest.fn(async () => connector())
-const composition = jest.fn(async () => connector())
-const remote = jest.fn(async () => connector())
-
-const boot = { manifest, component, composition, remote }
+const boot = { manifest, component }
 
 exports.mock = { boot }

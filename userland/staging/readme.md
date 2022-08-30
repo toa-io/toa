@@ -19,25 +19,10 @@ Staging is a Node.js framework. See [example](../example/test).
 
 `async component(path: string): toa.core.Component`
 
-Boot Component.
-
-> Components consuming events must be able to discover event sources, that is, either they must be
-> booted after event sources are composed or within the same composition.
-
-## Composition
-
-`async composition(paths: string[]): void`
-
-Boot Composition.
-
-## Remote
-
-`async component(paths: string[]): toa.core.Component`
-
-Connect Remote.
+Create an instance of [Component](/runtime/core/types/component.ts).
 
 ## Shutdown
 
 `async sutdown(): void`
 
-Shutdown all components, compositions and services.
+Shutdown all created components, compositions and services.
