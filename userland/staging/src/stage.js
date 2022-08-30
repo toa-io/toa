@@ -5,7 +5,9 @@ const stage = {}
 const reset = () => {
   Object.assign(stage, {
     reset: reset,
-    components: []
+    components: [],
+    compositions: [],
+    remotes: []
   })
 }
 
