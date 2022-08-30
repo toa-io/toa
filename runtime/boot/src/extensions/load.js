@@ -16,6 +16,8 @@ const load = (manifests, defaults) => {
  */
 const scan = (manifests) => {
   for (const manifest of manifests) {
+    if (manifest.extensions === undefined) continue
+
     for (const name of Object.keys(manifest.extensions)) {
       resolve(name, manifest.path)
     }

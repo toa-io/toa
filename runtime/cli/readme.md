@@ -39,6 +39,25 @@ $ toa configure bar.baz --reset | source /dev/stdin
 </dd>
 </dl>
 
+### replay
+
+[Replay](/extensions/sampling/docs/replay.md) samples.
+
+Samples must be declared as [multi-document YAML files](https://yaml.org/spec/1.2.2/#22-structures)
+located under the `samples` directory in the component root. Sample file names must follow
+the convention: `operation[.suffix].yaml`, where `operation` is the name of the operation samples to
+be applied to, and the optional `suffix` is arbitrary.
+
+See features.
+
+<dl>
+<dt><code>toa replay</code></dt>
+<dd>Replay samples.
+
+<code>--path</code> path to samples (default <code>./samples</code>)<br/>
+</dd>
+</dl>
+
 ## Exporting
 
 ### export manifest

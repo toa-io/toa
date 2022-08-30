@@ -21,7 +21,8 @@
     "connectors/*",
     "extensions/*",
     "libraries",
-    "operations"
+    "operations",
+    "userland"
   ],
   "engines": {
     "node": ">= 12.0.0"
@@ -50,7 +51,7 @@
     "prepare": "npx husky install",
     "test": "npm run test:lint && npm run test:unit && npm run test:features:unit",
     "test:lint": "npx standard --verbose | npx snazzy",
-    "test:unit": "npx jest --roots runtime connectors extensions operations libraries features",
+    "test:unit": "npx jest --roots runtime connectors extensions operations libraries features userland",
     "test:integration": "npx jest --roots integration --runInBand",
     "test:features": "npx cucumber-js",
     "test:features:unit": "npx cucumber-js -p schema && npx cucumber-js -p norm",
@@ -83,7 +84,8 @@
       "<rootDir>/operations",
       "<rootDir>/libraries",
       "<rootDir>/integration",
-      "<rootDir>/features"
+      "<rootDir>/features",
+      "<rootDir>/userland"
     ],
     "testMatch": [
       "**/?(*.)+(test).js"

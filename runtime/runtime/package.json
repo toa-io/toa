@@ -39,7 +39,8 @@
     "@toa.io/prototype": "0.2.0-dev.103",
     "@toa.io/storages.mongodb": "0.2.0-dev.103",
     "@toa.io/storages.null": "0.2.0-dev.103",
-    "@toa.io/storages.sql": "0.2.0-dev.103"
+    "@toa.io/storages.sql": "0.2.0-dev.103",
+    "@toa.io/userland": "0.2.0-dev.103"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }
