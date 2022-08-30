@@ -6,17 +6,22 @@ it('should be', () => {
   expect(stage).toBeDefined()
 })
 
-it('should reset components', () => {
-  const dummy = /** @type {toa.core.Component} */ { foo: 'bar' }
+it('should reset', () => {
+  const component = /** @type {toa.core.Component} */ 1
+  const composition = /** @type {toa.core.Connector} */ 2
+  const remote = /** @type {toa.core.Component} */ 3
 
   expect(stage.components.length).toStrictEqual(0)
+  expect(stage.compositions.length).toStrictEqual(0)
+  expect(stage.remotes.length).toStrictEqual(0)
 
-  stage.components.push(dummy)
-
-  expect(stage.components.length).toStrictEqual(1)
-  expect(stage.components[0]).toStrictEqual(dummy)
+  stage.components.push(component)
+  stage.compositions.push(composition)
+  stage.remotes.push(remote)
 
   stage.reset()
 
   expect(stage.components.length).toStrictEqual(0)
+  expect(stage.compositions.length).toStrictEqual(0)
+  expect(stage.remotes.length).toStrictEqual(0)
 })

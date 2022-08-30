@@ -9,7 +9,7 @@ const root = resolve(__dirname, '../components')
 let component
 
 beforeAll(async () => {
-  const path = resolve(root, 'math.calculations')
+  const path = resolve(root, 'math/calculations')
 
   component = await stage.component(path)
 })
@@ -18,8 +18,11 @@ afterAll(async () => {
   await stage.shutdown()
 })
 
-it('should ok', async () => {
-  const result = await component.invoke('sum', { input: { a: 1, b: 2 } })
+it('should invoke', async () => {
+  const a = Math.random()
+  const b = Math.random()
 
-  expect(result.output).toStrictEqual(3)
+  const reply = await component.invoke('sum', { input: { a, b } })
+
+  expect(reply.output).toStrictEqual(a + b)
 })
