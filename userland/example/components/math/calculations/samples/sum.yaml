@@ -1,0 +1,11 @@
+title: Should sum numbers
+input:
+  a: 1
+  b: 2
+output: 3
+---
+title: Should sum negative numbers
+input:
+  a: -1
+  b: -2
+output: -3
