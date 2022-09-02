@@ -1,6 +1,6 @@
 Feature: Component samples
 
-  Components used in scenarios below are in the `userland/example/components` directory.
+  Components used in scenarios below are located under the `userland/example/components` directory.
 
   Scenario: Correct IO sample is passing
     Given I have a sample of `sum` for `math.calculations`:
