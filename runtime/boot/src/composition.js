@@ -5,12 +5,12 @@ const { Composition } = require('@toa.io/core')
 const boot = require('./index')
 
 async function composition (paths, options) {
-  normalize(options)
+  options = Object.assign({}, options, DEFAULTS)
 
   /** @type {toa.norm.Component[]} */
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
 
-  // boot.extensions.preload(options.extensions)
+  boot.extensions.load(manifests, options.extensions)
 
   /** @type {toa.core.Connector[]} */
   const tenants = await Promise.all(manifests.map(boot.extensions.tenants))
@@ -20,8 +20,8 @@ async function composition (paths, options) {
   /** @type {toa.core.Component[]} */
   const components = await Promise.all(manifests.map(boot.component))
 
-  const producers = components.map((runtime, index) =>
-    boot.bindings.produce(runtime, manifests[index].operations))
+  const producers = components.map((component, index) =>
+    boot.bindings.produce(component, manifests[index].operations))
 
   const receivers = await Promise.all(components.map((runtime, index) =>
     boot.receivers(manifests[index], runtime)))
@@ -29,13 +29,8 @@ async function composition (paths, options) {
   return new Composition(expositions.flat(), producers.flat(), receivers.flat(), tenants.flat())
 }
 
-const normalize = (options) => {
-  if (options === undefined) return
-  if (options.bindings === null) options.bindings = []
+const DEFAULTS = {
+  extensions: ['@toa.io/extensions.sampling']
 }
-
-// const DEFAULTS = {
-//   extensions: ['@toa.io/extensions.sampling']
-// }
 
 exports.composition = composition

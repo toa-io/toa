@@ -13,7 +13,7 @@ class Request extends Conditions {
    * @returns {toa.schema.JSON}
    */
   static schema (definition) {
-    const schema = { properties: {}, additionalProperties: false }
+    const schema = { properties: {}, additionalProperties: true }
     const required = []
 
     if (definition.input) {

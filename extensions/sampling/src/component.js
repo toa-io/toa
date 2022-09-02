@@ -7,6 +7,9 @@ const { validate, verify } = require('./schema')
  * @implements {toa.core.Component}
  */
 class Component extends Connector {
+  /** @type {toa.core.Locator} */
+  locator
+
   /** @type {toa.core.Component} */
   #component
 
@@ -16,6 +19,7 @@ class Component extends Connector {
   constructor (component) {
     super()
 
+    this.locator = component.locator
     this.#component = component
 
     this.depends(component)
@@ -25,16 +29,15 @@ class Component extends Connector {
     if (request.sample === undefined) return this.#component.invoke(endpoint, request)
 
     const { sample, ...rest } = request
-
     const invalid = validate(sample)
 
     if (invalid !== undefined) return { exception: invalid }
 
-    const reply = this.#component.invoke(endpoint, rest)
+    const reply = await this.#component.invoke(endpoint, rest)
 
     const mismatch = verify(sample, reply)
 
-    if (mismatch !== undefined) return { exception: mismatch }
+    if (mismatch !== null) return { exception: mismatch }
 
     return reply
   }

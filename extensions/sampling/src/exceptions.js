@@ -1,14 +1,12 @@
 'use strict'
 
-const { exceptions: { SystemException } } = require('@toa.io/core')
+const { exceptions: { Exception } } = require('@toa.io/core')
 
-class SamplingException extends SystemException {
+class SamplingException extends Exception {
   constructor (code, message) {
     message = 'Sampling: ' + message
 
-    const error = { code, message }
-
-    super(error)
+    super(code, message)
   }
 }
 

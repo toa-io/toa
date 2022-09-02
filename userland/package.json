@@ -26,6 +26,10 @@
   "peerDependencies": {
     "@toa.io/boot": "*",
     "@toa.io/core": "*",
-    "@toa.io/libraries": "*"
+    "@toa.io/libraries": "*",
+    "@toa.io/norm": "*"
+  },
+  "dependencies": {
+    "tap": "16.3.0"
   }
 }

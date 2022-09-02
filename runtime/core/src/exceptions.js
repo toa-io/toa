@@ -74,6 +74,7 @@ class EntityContractException extends ContractException {
 }
 
 // #region exports
+exports.Exception = Exception
 exports.SystemException = SystemException
 exports.RequestContractException = RequestContractException
 exports.ResponseContractException = ResponseContractException

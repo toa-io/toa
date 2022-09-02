@@ -31,6 +31,7 @@ it('should be', () => {
   expect(component).toBeInstanceOf(Component)
   expect(component).toBeInstanceOf(Connector)
   expect(component.invoke).toBeDefined()
+  expect(component.locator).toStrictEqual(fixtures.component.locator)
 })
 
 it('should depend on origin', () => {
@@ -63,8 +64,8 @@ describe('invocation', () => {
     expect(fixtures.component.invoke).toHaveBeenCalledWith(endpoint, request)
   })
 
-  it('should return reply', () => {
-    expect(reply).toStrictEqual(fixtures.component.invoke.mock.results[0].value)
+  it('should return reply', async () => {
+    expect(reply).toStrictEqual(await fixtures.component.invoke.mock.results[0].value)
   })
 })
 
@@ -79,7 +80,7 @@ describe('verification', () => {
 
   it('should not throw if reply exactly matches', async () => {
     request.sample = { reply: { output: generate() } }
-    fixtures.component.invoke.mockImplementationOnce(() => request.sample.reply)
+    fixtures.component.invoke.mockImplementationOnce(async () => request.sample.reply)
 
     const reply = await component.invoke(endpoint, request)
 
@@ -91,7 +92,7 @@ describe('verification', () => {
 
     const mocked = { ...request.sample.reply, extra: 1 }
 
-    fixtures.component.invoke.mockImplementationOnce(() => mocked)
+    fixtures.component.invoke.mockImplementationOnce(async () => mocked)
 
     const reply = await component.invoke(endpoint, request)
 

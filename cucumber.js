@@ -15,5 +15,10 @@ module.exports = {
     ...common,
     paths: ['runtime/norm/features'],
     require: ['runtime/norm/features/**/*.js']
+  },
+  samples: {
+    ...common,
+    paths: ['userland/samples/features'],
+    require: ['userland/samples/features/**/*.js']
   }
 }

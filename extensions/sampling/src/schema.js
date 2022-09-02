@@ -5,7 +5,7 @@ const { load } = require('@toa.io/libraries/schema')
 const { match } = require('@toa.io/libraries/generic')
 const { SampleException, ReplyException } = require('./exceptions')
 
-const path = resolve(__dirname, 'sample.cons.yaml')
+const path = resolve(__dirname, 'sample.cos.yaml')
 const schema = load(path)
 
 /**
@@ -22,11 +22,13 @@ const validate = (sample) => {
 /**
  * @param {toa.sampling.Sample} sample
  * @param {toa.core.Reply} reply
+ * @returns {ReplyException | null}
  */
 const verify = (sample, reply) => {
   const matches = match(reply, sample.reply)
 
   if (matches === false) return new ReplyException('reply mismatch')
+  else return null
 }
 
 exports.validate = validate
