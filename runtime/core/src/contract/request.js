@@ -24,6 +24,10 @@ class Request extends Conditions {
 
     if (definition.query === true) required.push('query')
 
+    if (definition.query === false) {
+      schema.not = { required: ['query'] }
+    }
+
     if (definition.query !== false) {
       const query = clone(schemas.query)
 

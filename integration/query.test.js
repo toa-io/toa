@@ -53,7 +53,13 @@ it('should sort', async () => {
 
   expect.assertions(times)
 
-  await repeat((i) => remote.invoke('add', { input: { sender, text: generate(), timestamp: i } }), times)
+  await repeat((i) => remote.invoke('add', {
+    input: {
+      sender,
+      text: generate(),
+      timestamp: i
+    }
+  }), times)
 
   const reply = await remote.invoke('find', {
     query: {
@@ -78,8 +84,15 @@ it('should sort', async () => {
 })
 
 it('should throw if query passed when declaration.query = false', async () => {
-  await expect(remote.invoke('add', { input: { sender: '1', text: '123' }, query: { criteria: 'id==1' } }))
-    .rejects.toMatchObject({ code: codes.RequestContract, keyword: 'additionalProperties', property: 'query' })
+  const request = {
+    input: { sender: newid(), text: '123' },
+    query: { criteria: 'id==1' }
+  }
+
+  await expect(remote.invoke('add', request)).rejects.toMatchObject({
+    code: codes.RequestContract,
+    keyword: 'not'
+  })
 })
 
 it('should throw if no query passed when declaration.query = true', async () => {
@@ -106,7 +119,12 @@ it('should add or update based on query', async () => {
 
 it('should find by id', async () => {
   const ids = (await Promise.all([1, 2, 3, 4, 5].map((i) =>
-    remote.invoke('add', { input: { sender: newid(), text: 't' + i } })))).map((reply) => reply.output.id)
+    remote.invoke('add', {
+      input: {
+        sender: newid(),
+        text: 't' + i
+      }
+    })))).map((reply) => reply.output.id)
 
   // there is a deterministic unit test for core/query class
   const one = ids[Math.round(ids.length * Math.random() * 0.9)]
