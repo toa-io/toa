@@ -1,12 +1,11 @@
 'use strict'
 
 const { readFile } = require('node:fs/promises')
+const { readFileSync } = require('node:fs')
 
-/**
- * @param {string} file
- * @returns {Promise<string>}
- */
-const read = (file) => readFile(file, OPTIONS)
+const read = async (file) => await readFile(file, OPTIONS)
+
+read.sync = (file) => readFileSync(file, OPTIONS)
 
 const OPTIONS = { encoding: 'utf8' }
 

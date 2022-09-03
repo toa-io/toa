@@ -17,6 +17,12 @@ it('should read', async () => {
   expect(content).toStrictEqual('This is a file.\n')
 })
 
+it('should read sync', () => {
+  const content = read.sync(FILE)
+
+  expect(content).toStrictEqual('This is a file.\n')
+})
+
 it('should throw if path not exists', async () => {
   const file = generate()
 

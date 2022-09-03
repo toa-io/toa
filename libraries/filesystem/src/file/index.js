@@ -1,9 +1,11 @@
 'use strict'
 
 const { glob } = require('./glob')
-const { read } = require('./read')
 const { lines } = require('./lines')
+const { read } = require('./read')
+const { write } = require('./write')
 
 exports.glob = glob
-exports.read = read
 exports.lines = lines
+exports.read = read
+exports.write = write
