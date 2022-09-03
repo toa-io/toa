@@ -1,0 +1,7 @@
+reply: &reply
+  input: ~
+  output: ~
+context:
+  local:
+    do:
+      reply: *reply

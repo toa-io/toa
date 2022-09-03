@@ -1,7 +1,6 @@
 'use strict'
 
-const { readFile, writeFile } = require('node:fs/promises')
-const { readFileSync } = require('node:fs')
+const { file: { read, write } } = require('@toa.io/libraries/filesystem')
 
 const yaml = require('js-yaml')
 
@@ -10,9 +9,9 @@ const yaml = require('js-yaml')
  * @returns {Promise<Object>}
  */
 const load = async (path) => {
-  const contents = await readFile(path, 'utf8')
+  const contents = await read(path)
 
-  return yaml.load(contents)
+  return parse(contents)
 }
 
 /**
@@ -20,9 +19,9 @@ const load = async (path) => {
  * @returns {Promise<Object[]>}
  */
 load.all = async (path) => {
-  const contents = await readFile(path, 'utf8')
+  const contents = await read(path)
 
-  return yaml.loadAll(contents)
+  return split(contents)
 }
 
 /**
@@ -30,9 +29,9 @@ load.all = async (path) => {
  * @returns {Object}
  */
 load.sync = (path) => {
-  const contents = readFileSync(path, 'utf8')
+  const contents = read.sync(path)
 
-  return yaml.load(contents)
+  return parse(contents)
 }
 
 /**
@@ -43,7 +42,7 @@ load.sync = (path) => {
 const save = async (object, path) => {
   const contents = dump(object)
 
-  await writeFile(path, contents, 'utf8')
+  await write(path, contents)
 }
 
 /**
@@ -68,7 +67,12 @@ const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
  * @param {string} string
  * @returns {Object}
  */
-const parse = (string) => yaml.load(string)
+const parse = (string) => {
+  const object = yaml.load(string)
+  const plain = dump(object) // resolve references into duplicate objects
+
+  return yaml.load(plain)
+}
 
 /**
  * @param {string} string
