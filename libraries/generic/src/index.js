@@ -1,6 +1,7 @@
 'use strict'
 
 const { concat } = require('./concat')
+const { context } = require('./context')
 const { convolve } = require('./convolve')
 const { defined } = require('./defined')
 const { difference } = require('./difference')
@@ -29,6 +30,7 @@ exports.acronyms = require('./acronyms')
 exports.letters = require('./letters')
 
 exports.concat = concat
+exports.context = context
 exports.convolve = convolve
 exports.defined = defined
 exports.decode = decode

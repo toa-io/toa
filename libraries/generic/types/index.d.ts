@@ -2,6 +2,7 @@ export * as acronyms from './acronyms'
 export * as letters from './letters'
 
 export { concat } from './concat'
+export { context } from './context'
 export { defined } from './defined'
 export { empty } from './empty'
 export { encode, decode } from './encode'
