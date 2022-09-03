@@ -2,12 +2,12 @@ Feature: Concise Object Schema
 
   Scenario: Concise object declaration
     When I write schema:
-      """
+      """yaml
       foo: string
       bar: boolean
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -19,12 +19,12 @@ Feature: Concise Object Schema
 
   Scenario: Required object properties
     When I write schema:
-      """
+      """yaml
       foo*: 1
       bar: string
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -41,12 +41,12 @@ Feature: Concise Object Schema
   Additional properties are false by default
 
     When I write schema:
-      """
+      """yaml
       foo: string
       ...: ~
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -56,11 +56,11 @@ Feature: Concise Object Schema
 
   Scenario Outline: Primitive <type> type
     When I write schema:
-      """
+      """yaml
       <type>
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: "<type>"
       """
     Examples:
@@ -88,21 +88,21 @@ Feature: Concise Object Schema
 
   Scenario: No schema
     When I write schema:
-      """
+      """yaml
       null
       """
     Then it is equivalent to:
-      """
+      """yaml
       {}
       """
 
   Scenario Outline: Default value of <type> type
     When I write schema:
-      """
+      """yaml
       <value>
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: <type>
       default: <value>
       """
@@ -115,11 +115,11 @@ Feature: Concise Object Schema
 
   Scenario: One of number constants
     When I write schema:
-      """
+      """yaml
       foo: [1, 2, 3]
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -133,11 +133,11 @@ Feature: Concise Object Schema
 
   Scenario: One of string constants
     When I write schema:
-      """
+      """yaml
       foo: [bar, baz]
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -150,11 +150,11 @@ Feature: Concise Object Schema
 
   Scenario: String constant
     When I write schema:
-      """
+      """yaml
       foo: [bar]
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -166,11 +166,11 @@ Feature: Concise Object Schema
 
   Scenario Outline: Array of <type> primitives
     When I write schema:
-        """
+        """yaml
         foo: [<type>]
         """
     Then it is equivalent to:
-        """
+        """yaml
         type: object
         properties:
           foo:
@@ -188,14 +188,14 @@ Feature: Concise Object Schema
 
   Scenario: Array of concise objects
     When I write schema:
-      """
+      """yaml
       foo:
         type: array
         items:
           bar: string
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -211,11 +211,11 @@ Feature: Concise Object Schema
 
   Scenario: Custom `id` shortcut
     When I write schema:
-      """
+      """yaml
       foo: id
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         foo:
@@ -225,11 +225,11 @@ Feature: Concise Object Schema
 
   Scenario: Property as known keyword
     When I write schema:
-      """
+      """yaml
       title: string
       """
     Then it is equivalent to:
-      """
+      """yaml
       type: object
       properties:
         title:

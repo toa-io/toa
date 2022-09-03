@@ -1,8 +1,8 @@
 # Concise Object Schema
 
-Concise Object Schema (COS) is a human-friendly object schema description format.
+Concise Object Schema (COS) is a human-friendly object schema description language.
 
-See [features](./features/cos.feature).
+See [features](./features/cos.feature) for details.
 
 ## References
 
