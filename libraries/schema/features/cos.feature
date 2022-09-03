@@ -1,7 +1,6 @@
 Feature: Concise Object Schema
 
   Scenario: Concise object declaration
-
     When I write schema:
       """
       foo: string
@@ -19,7 +18,6 @@ Feature: Concise Object Schema
       """
 
   Scenario: Required object properties
-
     When I write schema:
       """
       foo*: 1
@@ -57,7 +55,6 @@ Feature: Concise Object Schema
       """
 
   Scenario Outline: Primitive <type> type
-
     When I write schema:
       """
       <type>
@@ -66,7 +63,6 @@ Feature: Concise Object Schema
       """
       type: "<type>"
       """
-
     Examples:
       | type    |
       | string  |
@@ -76,8 +72,21 @@ Feature: Concise Object Schema
       | array   |
       | object  |
 
-  Scenario: No schema
+  Scenario: Pattern properties
+    When I write schema:
+      """yaml
+      /^str_*+$/: string
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      patternProperties:
+        "^str_*+$":
+          type: string
+      additionalProperties: false
+      """
 
+  Scenario: No schema
     When I write schema:
       """
       null
@@ -88,7 +97,6 @@ Feature: Concise Object Schema
       """
 
   Scenario Outline: Default value of <type> type
-
     When I write schema:
       """
       <value>
@@ -98,7 +106,6 @@ Feature: Concise Object Schema
       type: <type>
       default: <value>
       """
-
     Examples:
       | value     | type    |
       | something | string  |
@@ -107,7 +114,6 @@ Feature: Concise Object Schema
       | true      | boolean |
 
   Scenario: One of number constants
-
     When I write schema:
       """
       foo: [1, 2, 3]
@@ -126,7 +132,6 @@ Feature: Concise Object Schema
       """
 
   Scenario: One of string constants
-
     When I write schema:
       """
       foo: [bar, baz]
@@ -144,7 +149,6 @@ Feature: Concise Object Schema
       """
 
   Scenario: String constant
-
     When I write schema:
       """
       foo: [bar]
@@ -161,7 +165,6 @@ Feature: Concise Object Schema
       """
 
   Scenario Outline: Array of <type> primitives
-
     When I write schema:
         """
         foo: [<type>]
@@ -176,7 +179,6 @@ Feature: Concise Object Schema
               type: <type>
       additionalProperties: false
         """
-
     Examples:
       | type    |
       | string  |
@@ -185,7 +187,6 @@ Feature: Concise Object Schema
       | boolean |
 
   Scenario: Array of concise objects
-
     When I write schema:
       """
       foo:
@@ -193,7 +194,6 @@ Feature: Concise Object Schema
         items:
           bar: string
       """
-
     Then it is equivalent to:
       """
       type: object
@@ -210,7 +210,6 @@ Feature: Concise Object Schema
       """
 
   Scenario: Custom `id` shortcut
-
     When I write schema:
       """
       foo: id
@@ -225,7 +224,6 @@ Feature: Concise Object Schema
       """
 
   Scenario: Property as known keyword
-
     When I write schema:
       """
       title: string

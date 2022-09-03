@@ -1,7 +1,8 @@
 'use strict'
 
-const { remap } = require('@toa.io/libraries/generic')
+const { empty, remap } = require('@toa.io/libraries/generic')
 
+const { array, patterns, required, constants: { PRIMITIVES, SHORTCUTS } } = require('./.expand')
 const { valid } = require('./valid')
 
 /**
@@ -44,6 +45,10 @@ const object = (schema) => {
   if (schema.properties === undefined) schema = { properties: schema }
 
   schema.type = 'object'
+
+  const patternProperties = patterns(schema.properties)
+
+  schema.patternProperties = remap(patternProperties, (value) => expand(value))
   schema.properties = remap(schema.properties, (value) => expand(value))
   schema.additionalProperties = schema.properties['...'] !== undefined
 
@@ -51,72 +56,10 @@ const object = (schema) => {
 
   required(schema)
 
+  if (empty(schema.properties)) delete schema.properties
+  if (empty(schema.patternProperties)) delete schema.patternProperties
+
   return schema
-}
-
-/**
- * @param {toa.schema.JSON} schema
- */
-function required (schema) {
-  const required = []
-
-  for (const key of Object.keys(schema.properties)) {
-    const last = key.slice(-1)
-
-    if (last === '*') {
-      const name = key.slice(0, -1)
-
-      schema.properties[name] = schema.properties[key]
-      required.push(name)
-
-      delete schema.properties[key]
-    }
-  }
-
-  if (required.length > 0) schema.required = required
-}
-
-/**
- * @param {any[]} array
- * @returns {toa.schema.JSON}
- */
-const array = (array) => {
-  if (array.length === 0) throw new Error('Array property declaration must be non-empty')
-
-  const type = /** @type {toa.schema.Type} */ typeof array[0]
-
-  // array of a given type
-  if (array.length === 1 && PRIMITIVES.includes(array[0])) {
-    const type = /** @type {toa.schema.Type} */ array[0]
-
-    return {
-      type: 'array',
-      items: { type }
-    }
-  }
-
-  // one of given constants
-  const oneOf = []
-
-  for (const value of array) {
-    if (typeof value !== type) { // eslint-disable-line
-      throw new Error('Array property items must be of the same type')
-    }
-
-    const option = { const: value }
-
-    oneOf.push(option)
-  }
-
-  return { type, oneOf }
-}
-
-const PRIMITIVES = ['string', 'number', 'integer', 'boolean', 'object', 'array']
-
-const SHORTCUTS = {
-  id: {
-    $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id'
-  }
 }
 
 exports.expand = expand

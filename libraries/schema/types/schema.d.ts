@@ -11,6 +11,7 @@ declare namespace toa.schema {
     $id?: string
     type?: Type
     properties?: Object
+    patternProperties?: Object
     required?: string[]
     system?: boolean
     default?: Value
