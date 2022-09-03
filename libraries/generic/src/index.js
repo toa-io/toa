@@ -2,6 +2,7 @@
 
 const { concat } = require('./concat')
 const { convolve } = require('./convolve')
+const { defined } = require('./defined')
 const { difference } = require('./difference')
 const { empty } = require('./empty')
 const { encode, decode } = require('./encode')
@@ -29,6 +30,7 @@ exports.letters = require('./letters')
 
 exports.concat = concat
 exports.convolve = convolve
+exports.defined = defined
 exports.decode = decode
 exports.difference = difference
 exports.empty = empty
