@@ -30,7 +30,6 @@
     "@toa.io/libraries": "*"
   },
   "dependencies": {
-    "@babel/parser": "7.16.2",
     "fast-glob": "3.2.7"
   },
   "devDependencies": {
