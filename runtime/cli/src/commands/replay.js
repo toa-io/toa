@@ -1,6 +1,6 @@
 'use strict'
 
-const { serve } = require('../handlers/serve')
+const { replay } = require('../handlers/replay')
 
 const builder = (yargs) => {
   yargs
@@ -8,12 +8,12 @@ const builder = (yargs) => {
       alias: 'p',
       group: 'Command options:',
       type: 'string',
-      desc: 'Path to package',
+      desc: 'Path to component or context',
       default: '.'
     })
 }
 
-exports.command = 'serve [path]'
-exports.desc = 'Run service'
+exports.command = 'replay'
+exports.desc = 'Replay samples'
 exports.builder = builder
-exports.handler = serve
+exports.handler = replay

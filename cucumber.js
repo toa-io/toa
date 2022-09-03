@@ -3,7 +3,6 @@ const common = { publishQuiet: true }
 module.exports = {
   default: {
     ...common,
-    paths: ['./features'],
     require: ['./features/**/*.js']
   },
   schema: {

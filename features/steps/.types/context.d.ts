@@ -23,6 +23,7 @@ declare namespace toa.features {
 
   type Context = {
     cwd?: string
+    exitCode: number
     stdout?: string
     stderr?: string
     stdoutLines?: string[]

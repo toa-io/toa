@@ -1,6 +1,6 @@
 'use strict'
 
-const assert = require('node:assert')
+const assert = require('node:assert/strict')
 const { timeout } = require('@toa.io/libraries/generic')
 
 const { execute } = require('./.command/execute')
@@ -30,4 +30,9 @@ When('I abort execution', async function () {
 
 Then('program should exit', async function () {
   await this.process
+})
+
+Then('program should exit with code {int}', async function (code) {
+  await this.process
+  assert.equal(this.exitCode, code, 'Program exit code is not ' + code)
 })

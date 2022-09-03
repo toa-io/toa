@@ -5,15 +5,15 @@ Feature: toa compose
   Scenario: Show help
     When I run `toa compose --help`
     And stdout should contain lines:
-    """
-    toa compose [paths...]
-    Run composition
-    Examples:
-      toa compose ./component
-      toa compose ./first ./second
-      toa compose ./components/**/
-      toa compose ./a/**/ ./b/**/
-    """
+      """
+      toa compose [paths...]
+      Run composition
+      Examples:
+        toa compose ./component
+        toa compose ./first ./second
+        toa compose ./components/**/
+        toa compose ./a/**/ ./b/**/
+      """
 
   Scenario Outline: Run compositions
     Given I have components:
@@ -25,10 +25,9 @@ Feature: toa compose
     And I abort execution
     Then stderr should be empty
     And stdout should contain lines:
-    """
-    info Composition complete
-    """
-
+      """
+      info Composition complete
+      """
     Examples:
       | command                                | working directory        | delay |
       | `toa compose`                          | ./components/dummies.one | 0     |
