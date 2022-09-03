@@ -1,5 +1,7 @@
 'use strict'
 
+const { EXPRESSION } = require('./constants')
+
 /**
  * @param {Object} properties
  * @returns {Object}
@@ -7,19 +9,37 @@
 const patterns = (properties) => {
   const patterns = {}
 
-  for (const [key, value] of Object.entries(properties)) {
-    const match = key.match(RX)
+  for (const [property, schema] of Object.entries(properties)) {
+    for (const test of tests) {
+      const result = test(property, schema)
 
-    if (match === null) continue
+      if (result === undefined) continue
 
-    patterns[match.groups.expression] = value
+      const [key, value] = result
 
-    delete properties[key]
+      patterns[key] = value
+
+      delete properties[property]
+    }
   }
 
   return patterns
 }
 
-const RX = /^\/(?<expression>.+)\/$/
+const expression = (key, value) => {
+  const match = key.match(EXPRESSION)
+
+  if (match === null) return
+
+  return [match.groups.expression, value]
+}
+
+const wildcard = (key, value) => {
+  if (key !== 'null') return
+
+  return ['^.*$', value]
+}
+
+const tests = [expression, wildcard]
 
 exports.patterns = patterns

@@ -8,5 +8,8 @@ const SHORTCUTS = {
   }
 }
 
+const EXPRESSION = /^\/(?<expression>.+)\/$/
+
+exports.EXPRESSION = EXPRESSION
 exports.PRIMITIVES = PRIMITIVES
 exports.SHORTCUTS = SHORTCUTS

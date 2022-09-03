@@ -38,7 +38,7 @@ Feature: Concise Object Schema
 
   Scenario: Additional properties
 
-  Additional properties are false by default
+  Additional properties are not allowed by default
 
     When I write schema:
       """yaml
@@ -54,24 +54,6 @@ Feature: Concise Object Schema
       additionalProperties: true
       """
 
-  Scenario Outline: Primitive <type> type
-    When I write schema:
-      """yaml
-      <type>
-      """
-    Then it is equivalent to:
-      """yaml
-      type: "<type>"
-      """
-    Examples:
-      | type    |
-      | string  |
-      | number  |
-      | integer |
-      | boolean |
-      | array   |
-      | object  |
-
   Scenario: Pattern properties
     When I write schema:
       """yaml
@@ -83,6 +65,35 @@ Feature: Concise Object Schema
       patternProperties:
         "^str_*+$":
           type: string
+      additionalProperties: false
+      """
+
+  Scenario: Wildcard property
+    When I write schema:
+      """yaml
+      ~: number
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      patternProperties:
+        "^.*$":
+          type: number
+      additionalProperties: false
+      """
+
+  Scenario: String pattern
+    When I write schema:
+      """yaml
+      foo: /^foo_/
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo:
+          type: string
+          pattern: "^foo_"
       additionalProperties: false
       """
 
@@ -147,6 +158,24 @@ Feature: Concise Object Schema
             - const: baz
       additionalProperties: false
       """
+
+  Scenario Outline: Primitive <type> type
+    When I write schema:
+      """yaml
+      <type>
+      """
+    Then it is equivalent to:
+      """yaml
+      type: "<type>"
+      """
+    Examples:
+      | type    |
+      | string  |
+      | number  |
+      | integer |
+      | boolean |
+      | array   |
+      | object  |
 
   Scenario: String constant
     When I write schema:

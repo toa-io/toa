@@ -2,7 +2,14 @@
 
 const { empty, remap } = require('@toa.io/libraries/generic')
 
-const { array, patterns, required, constants: { PRIMITIVES, SHORTCUTS } } = require('./.expand')
+const {
+  array,
+  patterns,
+  required,
+  values,
+  constants: { PRIMITIVES, SHORTCUTS }
+} = require('./.expand')
+
 const { valid } = require('./valid')
 
 /**
@@ -18,11 +25,13 @@ const expand = (schema) => {
  * @returns {toa.schema.JSON}
  */
 const primitive = (value) => {
+  const type = /** @type {toa.schema.Type} */ typeof value
+  const schema = values(value)
+
+  if (schema !== undefined) return schema
+
   if (PRIMITIVES.includes(value)) return { type: value }
   if (value in SHORTCUTS) return SHORTCUTS[value]
-
-  const type = /** @type {toa.schema.Type} */ typeof value
-
   if (PRIMITIVES.includes(type)) return { type, default: value }
 }
 
