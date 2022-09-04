@@ -13,5 +13,10 @@ Decorators use sample from common shared [async storage](#), that is, a *samplin
 
 ### Component Decorator
 
-If invocation request contains `sample` extension, Sampling Component Decoration setups sampling
+If invocation request contains `sample` extension, Sampling Component Decoration creates sampling
 context, invokes operation and validates its reply.
+
+### Context Decorator
+
+Context decorator validates context interactions inputs and substitutes outputs using sampling
+context.

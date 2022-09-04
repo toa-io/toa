@@ -36,24 +36,6 @@ Feature: Concise Object Schema
       additionalProperties: false
       """
 
-  Scenario: Additional properties
-
-  Additional properties are not allowed by default
-
-    When I write schema:
-      """yaml
-      foo: string
-      ...: ~
-      """
-    Then it is equivalent to:
-      """yaml
-      type: object
-      properties:
-        foo:
-          type: string
-      additionalProperties: true
-      """
-
   Scenario: Pattern properties
     When I write schema:
       """yaml

@@ -1,3 +1,9 @@
-reply:
+reply: &reply
   output: null
   error: null
+context:
+  local: &call
+    ~:
+      input: null
+      reply: *reply
+  remote: *call

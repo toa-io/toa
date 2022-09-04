@@ -59,9 +59,7 @@ const object = (schema) => {
 
   schema.patternProperties = remap(patternProperties, (value) => expand(value))
   schema.properties = remap(schema.properties, (value) => expand(value))
-  schema.additionalProperties = schema.properties['...'] !== undefined
-
-  delete schema.properties['...']
+  schema.additionalProperties = false
 
   required(schema)
 
