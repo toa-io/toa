@@ -1,3 +1,7 @@
+import { Subtract } from './subtract'
+
+export const subtract: Subtract
+
 export * as acronyms from './acronyms'
 export * as letters from './letters'
 
