@@ -1,6 +1,6 @@
 Feature: Concise Object Schema
 
-  Scenario: Concise object declaration
+  Scenario: Properties declaration
     When I write schema:
       """yaml
       foo: string
@@ -17,11 +17,37 @@ Feature: Concise Object Schema
       additionalProperties: false
       """
 
-  Scenario: Required object properties
+  Scenario: Required properties
+
+  By default all object properties are optional.
+
     When I write schema:
       """yaml
       foo*: 1
       bar: string
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo:
+          type: number
+          default: 1
+        bar:
+          type: string
+      required: [foo]
+      additionalProperties: false
+      """
+
+  Scenario: Optional properties
+
+  If at least one of the properties is explicitly marked as optional, then non-marked
+  properties are considered to be required.
+
+    When I write schema:
+      """yaml
+      foo: 1
+      bar?: string
       """
     Then it is equivalent to:
       """yaml
