@@ -1,5 +1,7 @@
 import { Subtract } from './subtract'
+import { Retry } from './retry'
 
+export const retry: Retry
 export const subtract: Subtract
 
 export * as acronyms from './acronyms'
@@ -16,7 +18,6 @@ export { newid } from './newid'
 export { patch } from './patch'
 export { random } from './random'
 export { remap } from './remap'
-export { retry } from './retry'
 export { sample } from './sample'
 export { timeout } from './timeout'
 export { transpose } from './transpose'
