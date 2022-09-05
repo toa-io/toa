@@ -37,18 +37,12 @@ function required (schema) {
  * @returns {{ type: number, name: string }}
  */
 const parse = (key) => {
-  let type
-
-  const last = key.slice(-1)
-
-  if (last === MARKS.required) type = TYPES.required
-  if (last === MARKS.optional) type = TYPES.optional
+  const mark = key.slice(-1)
+  const name = key.slice(0, -1)
+  const type = MARKS[mark]
 
   if (type === undefined) return { type: TYPES.plain, name: key }
-
-  const name = key.slice(0, -1)
-
-  return { type, name }
+  else return { type, name }
 }
 
 const TYPES = {
@@ -58,8 +52,8 @@ const TYPES = {
 }
 
 const MARKS = {
-  required: '*',
-  optional: '?'
+  '*': TYPES.required,
+  '?': TYPES.optional
 }
 
 exports.required = required

@@ -19,11 +19,11 @@ Feature: Concise Object Schema
 
   Scenario: Required properties
 
-  By default all object properties are optional.
+  By default all object properties are optional, unless they are marked as required.
 
     When I write schema:
       """yaml
-      foo*: 1
+      foo*: number
       bar: string
       """
     Then it is equivalent to:
@@ -32,7 +32,6 @@ Feature: Concise Object Schema
       properties:
         foo:
           type: number
-          default: 1
         bar:
           type: string
       required: [foo]
