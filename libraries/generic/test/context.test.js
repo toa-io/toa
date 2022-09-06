@@ -1,5 +1,8 @@
 'use strict'
 
+const { generate } = require('randomstring')
+
+const fixtures = require('./context.fixtures')
 const { context, timeout } = require('../')
 
 it('should be', () => {
@@ -7,26 +10,19 @@ it('should be', () => {
 })
 
 it('should track context', async () => {
-  const c1 = context('one')
-  const c2 = context('two')
+  const id = generate()
+  const ctx = context(id)
   const v1 = { n: 0 }
   const v2 = { n: 0 }
 
-  const increment = (id) => {
-    const storage = context(id)
-    const value = storage.get()
-
-    value.n++
-  }
-
-  const p1 = c1.apply(v1, async () => {
+  const p1 = ctx.apply(v1, async () => {
     await timeout(1)
-    increment('one')
+    await fixtures.increment(id)
   })
 
-  const p2 = c2.apply(v2, async () => {
+  const p2 = ctx.apply(v2, async () => {
     await timeout(1)
-    increment('two')
+    await fixtures.increment(id)
   })
 
   await Promise.all([p1, p2])
