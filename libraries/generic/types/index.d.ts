@@ -6,7 +6,6 @@ export const retry: Retry
 export const subtract: Subtract
 export const context: Context
 
-
 export * as acronyms from './acronyms'
 export * as letters from './letters'
 

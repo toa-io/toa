@@ -1,14 +1,14 @@
 import * as fetch from 'node-fetch'
 
 import * as _extensions from '@toa.io/core/types/extensions'
-import * as _generic from '@toa.io/libraries/generic/types'
+import * as _retry from '@toa.io/libraries/generic/types/retry'
 
 declare namespace toa.extensions.origins {
 
   namespace invocation {
     type Options = {
       substitutions?: string[]
-      retry?: _generic.retry.Options
+      retry?: _retry.Options
     }
   }
 
