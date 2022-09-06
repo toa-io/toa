@@ -11,4 +11,4 @@ declare namespace toa.generic {
   type Context = (id: string) => context.Storage
 }
 
-export const context: toa.generic.Context
+export type Context = toa.generic.Context

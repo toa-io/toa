@@ -1,14 +1,16 @@
 import { Subtract } from './subtract'
 import { Retry } from './retry'
+import { Context } from './context'
 
 export const retry: Retry
 export const subtract: Subtract
+export const context: Context
+
 
 export * as acronyms from './acronyms'
 export * as letters from './letters'
 
 export { concat } from './concat'
-export { context } from './context'
 export { defined } from './defined'
 export { empty } from './empty'
 export { encode, decode } from './encode'
