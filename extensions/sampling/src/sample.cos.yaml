@@ -1,9 +1,9 @@
 reply: &reply
-  output: null
-  error: null
+  output: ~
+  error: ~
 context:
   local: &call
     ~:
-      input: null
+      input: ~
       reply: *reply
   remote: *call

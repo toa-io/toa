@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { context } = require('@toa.io/libraries/generic')
 const { validate, verify } = require('./schema')
 
 /**
@@ -29,18 +30,23 @@ class Component extends Connector {
     if (request.sample === undefined) return this.#component.invoke(endpoint, request)
 
     const { sample, ...rest } = request
-    const invalid = validate(sample)
 
-    if (invalid !== undefined) return { exception: invalid }
+    validate(sample)
 
-    const reply = await this.#component.invoke(endpoint, rest)
+    let reply
 
-    const mismatch = verify(sample, reply)
+    const storage = context(CONTEXT)
 
-    if (mismatch !== null) return { exception: mismatch }
+    await storage.apply(sample.context, async () => {
+      reply = await this.#component.invoke(endpoint, rest)
+    })
+
+    verify(sample, reply)
 
     return reply
   }
 }
+
+const CONTEXT = 'sampling'
 
 exports.Component = Component

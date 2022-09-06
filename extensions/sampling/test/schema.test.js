@@ -1,5 +1,6 @@
 'use strict'
 
+const { SampleException } = require('../src/exceptions')
 const { validate } = require('../src/schema')
 
 it('should be', () => {
@@ -14,18 +15,15 @@ beforeEach(() => {
 })
 
 it('should not throw on undefined', () => {
-  const exception = validate(undefined)
-
-  expect(exception).toBeUndefined()
+  expect(() => validate(undefined)).not.toThrow()
 })
 
 describe('reply', () => {
   it('should throw on additional property', () => {
-    const sample = { reply: { ok: 1 } }
-    // noinspection JSCheckFunctionSignatures
-    const exception = validate(sample)
+    const sample = { reply: { wrong: 1 } }
 
-    expect(exception).toBeDefined()
+    // noinspection JSCheckFunctionSignatures
+    expect(() => validate(sample)).toThrow(SampleException)
   })
 })
 

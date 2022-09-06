@@ -16,19 +16,19 @@ const validate = (sample) => {
 
   const error = schema.fit(sample)
 
-  if (error !== null) return new SampleException(error)
+  if (error !== null) throw new SampleException(error)
 }
 
 /**
  * @param {toa.sampling.Sample} sample
  * @param {toa.core.Reply} reply
- * @returns {ReplyException | null}
  */
 const verify = (sample, reply) => {
+  if (sample.reply === undefined) return
+
   const matches = match(reply, sample.reply)
 
-  if (matches === false) return new ReplyException('reply mismatch')
-  else return null
+  if (matches === false) reply.exception = new ReplyException('reply mismatch')
 }
 
 exports.validate = validate

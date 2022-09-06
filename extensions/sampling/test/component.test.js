@@ -2,6 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
+const { context } = require('@toa.io/libraries/generic')
 const { SampleException, ReplyException } = require('../src/exceptions')
 
 const fixtures = require('./component.fixtures')
@@ -14,14 +15,15 @@ const factory = new Factory()
 let component
 
 const endpoint = generate()
-const input = { foo: generate() }
-const query = { id: generate() }
 
 /** @type {toa.core.Request} */
 let request
 
 beforeEach(() => {
   jest.clearAllMocks()
+
+  const input = { foo: generate() }
+  const query = { id: generate() }
 
   component = factory.component(fixtures.component)
   request = { input, query }
@@ -39,16 +41,20 @@ it('should depend on origin', () => {
 })
 
 describe('validation', () => {
-  it('should return exception if sample is invalid', async () => {
+  it('should throw if sample is invalid', async () => {
     request.sample = { foo: generate() }
 
-    const reply = await component.invoke(endpoint, request)
-
-    expect(reply.exception).toBeInstanceOf(SampleException)
+    await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(SampleException)
   })
 
   it('should not throw if sample is not defined', async () => {
     await expect(component.invoke(endpoint, request)).resolves.not.toThrow()
+  })
+
+  it('should throw if sample context is invalid', async () => {
+    request.sample = { context: 'not-an-object' }
+
+    await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(SampleException)
   })
 })
 
@@ -67,6 +73,37 @@ describe('invocation', () => {
   it('should return reply', async () => {
     expect(reply).toStrictEqual(await fixtures.component.invoke.mock.results[0].value)
   })
+
+  it('should set sampling context', async () => {
+    expect.assertions(2)
+
+    request.sample = {
+      context: {
+        local: {
+          undo: {
+            reply: {
+              output: generate()
+            }
+          }
+        }
+      }
+    }
+
+    let undo
+
+    fixtures.component.invoke.mockImplementationOnce(async () => {
+      const storage = context('sampling')
+      const sample = storage.get()
+
+      expect(sample).toBeDefined()
+
+      undo = sample.local.undo
+    })
+
+    await component.invoke(endpoint, request)
+
+    expect(undo).toStrictEqual(request.sample.context.local.undo)
+  })
 })
 
 describe('verification', () => {
@@ -78,7 +115,7 @@ describe('verification', () => {
     expect(reply.exception).toBeInstanceOf(ReplyException)
   })
 
-  it('should not throw if reply exactly matches', async () => {
+  it('should not add exception if reply exactly matches', async () => {
     request.sample = { reply: { output: generate() } }
     fixtures.component.invoke.mockImplementationOnce(async () => request.sample.reply)
 
@@ -87,7 +124,7 @@ describe('verification', () => {
     expect(reply.exception).toBeUndefined()
   })
 
-  it('should not throw if reply matches', async () => {
+  it('should not add exception if reply matches', async () => {
     request.sample = { reply: { output: generate() } }
 
     const mocked = { ...request.sample.reply, extra: 1 }
