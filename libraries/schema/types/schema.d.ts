@@ -15,7 +15,7 @@ declare namespace toa.schema {
     system?: boolean
     default?: any
     oneOf?: any[]
-    enum: any[]
+    enum?: any[]
     items?: JSON
     additionalProperties?: boolean
   }
