@@ -27,10 +27,11 @@ class Context extends Connector {
 
     if (calls !== undefined && calls.length > 0) {
       const call = calls.shift()
-      const matches = match(request, call.request)
 
-      if (matches === false) {
-        throw new ReplayException(`Local '${endpoint}' call mismatch`)
+      if (call.request !== undefined) {
+        const matches = match(request, call.request)
+
+        if (matches === false) throw new ReplayException(`Local '${endpoint}' call mismatch`)
       }
 
       if (call.reply !== undefined) return call.reply

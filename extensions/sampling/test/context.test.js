@@ -86,6 +86,21 @@ describe('apply', () => {
     })
   })
 
+  it('should not throw if request sample missing', async () => {
+    expect.assertions(1)
+
+    delete sample.local.do[0].request
+
+    const reply = sample.local.do[0].reply
+    const storage = generic.context('sampling')
+
+    await storage.apply(sample, async () => {
+      const output = await context.apply(endpoint, request)
+
+      expect(output).toStrictEqual(reply)
+    })
+  })
+
   it('should return sampled reply', async () => {
     expect.assertions(3)
 
