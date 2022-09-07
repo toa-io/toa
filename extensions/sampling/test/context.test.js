@@ -55,6 +55,8 @@ it('should be', () => {
   expect(context).toBeDefined()
   expect(context).toBeInstanceOf(Context)
   expect(context).toBeInstanceOf(Connector)
+  expect(context.apply).toBeDefined()
+  expect(context.call).toBeDefined()
 })
 
 it('should depends on original context', () => {
@@ -122,4 +124,18 @@ describe('apply', () => {
     expect(fixtures.context.apply).toHaveBeenCalledWith(endpoint, request)
     expect(reply).toStrictEqual(await fixtures.context.apply.mock.results[0].value)
   }
+})
+
+describe('call', () => {
+  it('should call original context', async () => {
+    const namespace = generate()
+    const name = generate()
+    const endpoint = generate()
+    const request = {}
+
+    const reply = await context.call(namespace, name, endpoint, request)
+
+    expect(fixtures.context.call).toHaveBeenCalledWith(namespace, name, endpoint, request)
+    expect(reply).toStrictEqual(await fixtures.context.call.mock.results[0].value)
+  })
 })

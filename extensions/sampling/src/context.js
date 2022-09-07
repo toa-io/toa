@@ -30,9 +30,6 @@ class Context extends Connector {
       const matches = match(request, call.request)
 
       if (matches === false) {
-        console.error('Request', request)
-        console.error('Sample', call.request)
-
         throw new ReplayException(`Local '${endpoint}' call mismatch`)
       }
 
@@ -40,6 +37,10 @@ class Context extends Connector {
     }
 
     return this.#context.apply(endpoint, request)
+  }
+
+  async call (namespace, name, endpoint, request) {
+    return await this.#context.call(namespace, name, endpoint, request)
   }
 }
 
