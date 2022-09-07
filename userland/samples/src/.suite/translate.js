@@ -65,11 +65,14 @@ const calls = (calls) => {
  */
 const call = (call) => {
   const { input, output } = call
+  const request = input === undefined ? undefined : { input }
+  const reply = output === undefined ? undefined : { output }
+  const sample = {}
 
-  return {
-    request: { input },
-    reply: { output }
-  }
+  if (request !== undefined) sample.request = request
+  if (reply !== undefined) sample.reply = reply
+
+  return sample
 }
 
 exports.translate = translate

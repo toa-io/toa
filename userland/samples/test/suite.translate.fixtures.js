@@ -15,22 +15,36 @@ context.declaration = {
     do: {
       input: generate(),
       output: generate()
+    },
+    undo: {
+      input: generate()
+    },
+    add: {
+      output: generate()
     }
   }
 }
 
 context.sample = {
   local: {
-    do: [
-      {
-        request: {
-          input: context.declaration.local.do.input
-        },
-        reply: {
-          output: context.declaration.local.do.output
-        }
+    do: [{
+      request: {
+        input: context.declaration.local.do.input
+      },
+      reply: {
+        output: context.declaration.local.do.output
       }
-    ]
+    }],
+    undo: [{
+      request: {
+        input: context.declaration.local.undo.input
+      }
+    }],
+    add: [{
+      reply: {
+        output: context.declaration.local.add.output
+      }
+    }]
   }
 }
 
