@@ -11,7 +11,7 @@ class Reply extends Conditions {
    * @returns {toa.schema.JSON}
    */
   static schema (output, error) {
-    const schema = { properties: {}, additionalProperties: false }
+    const schema = { type: 'object', properties: {}, additionalProperties: false }
 
     if (output !== undefined) schema.properties.output = output
 
