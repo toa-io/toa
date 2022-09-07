@@ -4,8 +4,10 @@ const { load } = require('./load')
 const { annexes } = require('./annexes')
 const { tenants } = require('./tenants')
 const { component } = require('./component')
+const { context } = require('./context')
 
-exports.load = load
 exports.annexes = annexes
-exports.tenants = tenants
 exports.component = component
+exports.context = context
+exports.load = load
+exports.tenants = tenants

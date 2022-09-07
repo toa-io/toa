@@ -17,7 +17,9 @@ const context = async (manifest) => {
     return remote
   }
 
-  return new Context(local, lookup, annexes)
+  const context = new Context(local, lookup, annexes)
+
+  return boot.extensions.context(context)
 }
 
 exports.context = context
