@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
 const { context } = require('@toa.io/libraries/generic')
-const { SampleException, ReplyException } = require('../src/exceptions')
+const { SampleException, ReplayException } = require('../src/exceptions')
 
 const fixtures = require('./component.fixtures')
 const { Factory } = require('../')
@@ -80,11 +80,11 @@ describe('invocation', () => {
     request.sample = {
       context: {
         local: {
-          undo: {
+          undo: [{
             reply: {
               output: generate()
             }
-          }
+          }]
         }
       }
     }
@@ -112,7 +112,7 @@ describe('verification', () => {
 
     const reply = await component.invoke(endpoint, request)
 
-    expect(reply.exception).toBeInstanceOf(ReplyException)
+    expect(reply.exception).toBeInstanceOf(ReplayException)
   })
 
   it('should not add exception if reply exactly matches', async () => {

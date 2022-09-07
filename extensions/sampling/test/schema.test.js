@@ -31,27 +31,36 @@ describe('context', () => {
   let local
 
   beforeEach(() => {
+    /** @type {toa.sampling.sample.Calls} */
     local = {
-      do: {
-        input: 1,
-        reply: {
-          output: 2
+      do: [
+        {
+          request: {
+            input: 1
+          },
+          reply: {
+            output: 2
+          }
         }
-      }
+      ]
     }
 
     sample.context = { local }
   })
 
   it('should not throw on local calls', () => {
-    const exception = validate(sample)
-    expect(exception).toBeUndefined()
+    expect(() => validate(sample)).not.toThrow()
   })
 
   it('should not throw on remote calls', () => {
     sample.context.remote = local
 
-    const exception = validate(sample)
-    expect(exception).toBeUndefined()
+    expect(() => validate(sample)).not.toThrow()
+  })
+
+  it('should throw on invalid context sample', () => {
+    sample.context.foo = 1
+
+    expect(() => validate(sample)).toThrow(SampleException)
   })
 })

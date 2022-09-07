@@ -16,7 +16,7 @@ class SampleException extends SamplingException {
   }
 }
 
-class ReplyException extends SamplingException {
+class ReplayException extends SamplingException {
   constructor (message) {
     super(RANGE + 2, message)
   }
@@ -25,4 +25,4 @@ class ReplyException extends SamplingException {
 const RANGE = 1000
 
 exports.SampleException = SampleException
-exports.ReplyException = ReplyException
+exports.ReplayException = ReplayException

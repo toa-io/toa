@@ -1,6 +1,7 @@
 'use strict'
 
 const { Component } = require('./component')
+const { Context } = require('./context')
 
 /**
  * @implements {toa.core.extensions.Factory}
@@ -8,6 +9,10 @@ const { Component } = require('./component')
 class Factory {
   component (component) {
     return new Component(component)
+  }
+
+  context (context) {
+    return new Context(context)
   }
 }
 

@@ -1,8 +1,10 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { context } = require('@toa.io/libraries/generic')
-const { validate, verify } = require('./schema')
+const { match } = require('@toa.io/libraries/generic')
+const { validate } = require('./schema')
+const { ReplayException } = require('./exceptions')
+const { storage } = require('./storage')
 
 /**
  * @implements {toa.core.Component}
@@ -35,18 +37,27 @@ class Component extends Connector {
 
     let reply
 
-    const storage = context(CONTEXT)
-
     await storage.apply(sample.context, async () => {
       reply = await this.#component.invoke(endpoint, rest)
     })
 
-    verify(sample, reply)
+    verify(sample, reply, endpoint)
 
     return reply
   }
 }
 
-const CONTEXT = 'sampling'
+/**
+ * @param {toa.sampling.Sample} sample
+ * @param {toa.core.Reply} reply
+ * @param {string} endpoint
+ */
+const verify = (sample, reply, endpoint) => {
+  if (sample.reply === undefined) return
+
+  const matches = match(reply, sample.reply)
+
+  if (matches === false) reply.exception = new ReplayException(`Operation '${endpoint}' reply mismatch`)
+}
 
 exports.Component = Component

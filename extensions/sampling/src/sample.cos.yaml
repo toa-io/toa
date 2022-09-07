@@ -2,8 +2,10 @@ reply: &reply
   output: ~
   error: ~
 context:
-  local: &call
+  local: &calls
     ~:
-      input: ~
-      reply: *reply
-  remote: *call
+      - request:
+          input: ~
+          query: string
+        reply: *reply
+  remote: *calls
