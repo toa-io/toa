@@ -4,10 +4,15 @@ namespace: math
 entity: null
 
 operations:
-  sum:
+  add:
     scope: object
     concurrency: none
     input:
       a: number
       b: number
+    output: number
+  increment:
+    scope: object
+    concurrency: none
+    input: number
     output: number

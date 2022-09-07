@@ -1,18 +1,14 @@
 'use strict'
 
+const clone = require('clone-deep')
 const { generate } = require('randomstring')
+
+const fixtures = require('./suite.translate.fixtures')
 const { translate } = require('../src/.suite/translate')
 
 it('should be', () => {
   expect(translate).toBeDefined()
 })
-
-const title = generate()
-const input = generate()
-const output = generate()
-const request = { input }
-const reply = { output }
-const expected = { title, request, reply }
 
 /** @type {toa.samples.Declaration} */
 let declaration
@@ -20,9 +16,13 @@ let declaration
 /** @type {toa.samples.Sample} */
 let sample
 
+/** @type {toa.samples.Suite} */
+let expected
+
 beforeEach(() => {
-  declaration = { title, input, output }
-  sample = translate(declaration)
+  declaration = clone(fixtures.declaration)
+  expected = clone(fixtures.expected)
+  sample = translate(fixtures.declaration)
 })
 
 it('should translate input', () => {

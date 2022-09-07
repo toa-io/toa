@@ -22,7 +22,7 @@ it('should invoke', async () => {
   const a = Math.random()
   const b = Math.random()
 
-  const reply = await component.invoke('sum', { input: { a, b } })
+  const reply = await component.invoke('add', { input: { a, b } })
 
   expect(reply.output).toStrictEqual(a + b)
 })

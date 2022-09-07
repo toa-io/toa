@@ -1,9 +1,7 @@
-Feature: Component samples
-
-  Components used in scenarios below are located under the `userland/example/components` directory.
+Feature: Component IO samples
 
   Scenario: Correct IO sample is passing
-    Given I have a sample of `sum` for `math.calculations`:
+    Given I have a sample of `add` for `math.calculations`:
       """yaml
       title: Sum 1 and 2
       input:
@@ -14,8 +12,8 @@ Feature: Component samples
     When I replay it
     Then it passes
 
-  Scenario: Correct IO multiple samples are passing
-    Given I have samples of `sum` for `math.calculations`:
+  Scenario: Correct multiple IO samples are passing
+    Given I have samples of `add` for `math.calculations`:
       """
       input:
         a: 1
@@ -31,7 +29,7 @@ Feature: Component samples
     Then it passes
 
   Scenario: Incorrect IO sample is failing
-    Given I have a sample of `sum` for `math.calculations`:
+    Given I have a sample of `add` for `math.calculations`:
       """yaml
       input:
         a: 1

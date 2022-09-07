@@ -16,6 +16,9 @@ const samples = () => {
       },
       reply: {
         output: generate()
+      },
+      context: {
+        local: generate()
       }
     })
   }

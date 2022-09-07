@@ -1,0 +1,7 @@
+title: Delegate first
+output: 2
+context:
+  local:
+    do:
+      input: 1
+      output: 2

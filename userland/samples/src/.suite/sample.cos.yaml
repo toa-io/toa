@@ -1,3 +1,8 @@
 title: string
+context:
+  local:
+    ~:
+      input: ~
+      output: ~
 input: ~
 output*: ~

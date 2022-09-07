@@ -1,5 +1,7 @@
 'use strict'
 
+const clone = require('clone-deep')
+
 const { stage } = require('./stage.mock')
 const mock = { stage }
 
@@ -14,8 +16,14 @@ it('should be', () => {
 
 let ok
 
-beforeAll(async () => {
-  ok = await replay(fixtures.suite)
+/** @type {toa.samples.Suite} */
+let suite
+
+beforeEach(async () => {
+  jest.clearAllMocks()
+
+  suite = clone(fixtures.suite)
+  ok = await replay(suite)
 })
 
 it('should connect remotes', () => {
@@ -39,9 +47,9 @@ it('should replay samples', async () => {
 
     for (const [operation, samples] of Object.entries(set)) {
       for (const sample of samples) {
-        const { request, reply } = sample
+        const { request, reply, context } = sample
 
-        request.sample = { reply }
+        request.sample = { reply, context }
 
         expect(remote.invoke).toHaveBeenCalledWith(operation, request)
       }

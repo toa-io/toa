@@ -25,7 +25,7 @@ it('should call endpoint', async () => {
   const a = Math.random()
   const b = Math.random()
 
-  const reply = await remote.invoke('sum', { input: { a, b } })
+  const reply = await remote.invoke('add', { input: { a, b } })
 
   expect(reply.output).toStrictEqual(a + b)
 })
@@ -34,6 +34,6 @@ it('should throw on invalid input', async () => {
   const a = 'not a number'
   const b = 'neither'
 
-  await expect(remote.invoke('sum', { input: { a, b } }))
+  await expect(remote.invoke('add', { input: { a, b } }))
     .rejects.toBeInstanceOf(RequestContractException)
 })

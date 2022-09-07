@@ -33,7 +33,7 @@ describe('component samples', () => {
 
     const set = suite[component]
 
-    expect(Object.keys(set)).toStrictEqual(['do', 'undo'])
+    expect(Object.keys(set)).toStrictEqual(['delegate', 'do', 'undo'])
 
     expect(set.do).toStrictEqual(expected.do)
     expect(set.undo).toStrictEqual(expected.undo)
