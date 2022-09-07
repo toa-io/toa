@@ -142,10 +142,10 @@ Feature: Concise Object Schema
       properties:
         foo:
           type: number
-          oneOf:
-            - const: 1
-            - const: 2
-            - const: 3
+          enum:
+            - 1
+            - 2
+            - 3
       additionalProperties: false
       """
 
@@ -160,43 +160,9 @@ Feature: Concise Object Schema
       properties:
         foo:
           type: string
-          oneOf:
-            - const: bar
-            - const: baz
-      additionalProperties: false
-      """
-
-  Scenario Outline: Primitive <type> type
-    When I write schema:
-      """yaml
-      <type>
-      """
-    Then it is equivalent to:
-      """yaml
-      type: "<type>"
-      """
-    Examples:
-      | type    |
-      | string  |
-      | number  |
-      | integer |
-      | boolean |
-      | array   |
-      | object  |
-
-  Scenario: String constant
-    When I write schema:
-      """yaml
-      foo: [bar]
-      """
-    Then it is equivalent to:
-      """yaml
-      type: object
-      properties:
-        foo:
-          type: string
-          oneOf:
-            - const: bar
+          enum:
+            - bar
+            - baz
       additionalProperties: false
       """
 
@@ -226,8 +192,7 @@ Feature: Concise Object Schema
     When I write schema:
       """yaml
       foo:
-        type: array
-        items:
+        - foo: number
           bar: string
       """
     Then it is equivalent to:
@@ -239,11 +204,31 @@ Feature: Concise Object Schema
           items:
             type: object
             properties:
+              foo:
+                type: number
               bar:
                 type: string
             additionalProperties: false
       additionalProperties: false
       """
+
+  Scenario Outline: Primitive <type> type
+    When I write schema:
+      """yaml
+      <type>
+      """
+    Then it is equivalent to:
+      """yaml
+      type: "<type>"
+      """
+    Examples:
+      | type    |
+      | string  |
+      | number  |
+      | integer |
+      | boolean |
+      | array   |
+      | object  |
 
   Scenario: Custom `id` shortcut
     When I write schema:

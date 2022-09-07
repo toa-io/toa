@@ -4,6 +4,7 @@ const { EXPRESSION } = require('./constants')
 
 /**
  * @param {string} value
+ * @returns {toa.schema.JSON | undefined}
  */
 const values = (value) => {
   if (typeof value !== 'string') return
