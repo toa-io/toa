@@ -104,6 +104,15 @@ describe('invocation', () => {
 
     expect(undo).toStrictEqual(request.sample.context.local.undo)
   })
+
+  it('should re-throw exceptions', async () => {
+    const message = generate()
+
+    request.sample = { reply: { output: generate() } }
+    fixtures.component.invoke.mockImplementationOnce(async () => ({ exception: new Error(message) }))
+
+    await expect(component.invoke(endpoint, request)).rejects.toThrow(message)
+  })
 })
 
 describe('verification', () => {

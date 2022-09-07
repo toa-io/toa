@@ -1,8 +1,9 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { ReplayException } = require('../src/exceptions')
+const { Connector } = require('@toa.io/core')
 const generic = require('@toa.io/libraries/generic')
+const { ReplayException } = require('../src/exceptions')
 
 const fixtures = require('./context.fixtures')
 const { Context } = require('../src/context')
@@ -53,15 +54,22 @@ beforeEach(() => {
 it('should be', () => {
   expect(context).toBeDefined()
   expect(context).toBeInstanceOf(Context)
+  expect(context).toBeInstanceOf(Connector)
+})
+
+it('should depends on original context', () => {
+  expect(fixtures.context.link).toHaveBeenCalledWith(context)
+})
+
+it('should expose annexes', () => {
+  expect(context.annexes).toStrictEqual(fixtures.context.annexes)
 })
 
 describe('apply', () => {
   it('should call origin if no sampling context', async () => {
     const reply = await context.apply(endpoint, request)
 
-    expect(fixtures.context.apply).toHaveBeenCalled()
-    expect(fixtures.context.apply).toHaveBeenCalledWith(endpoint, request)
-    expect(reply).toStrictEqual(await fixtures.context.apply.mock.results[0].value)
+    await check(reply)
   })
 
   it('should throw on input mismatch', async () => {
@@ -77,7 +85,7 @@ describe('apply', () => {
   })
 
   it('should return sampled reply', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
 
     const input = sample.local.do[0].request.input
     const output = sample.local.do[0].reply.output
@@ -87,10 +95,31 @@ describe('apply', () => {
     await storage.apply(sample, async () => {
       const reply = await context.apply(endpoint, request)
 
+      expect(fixtures.context.apply).not.toHaveBeenCalled()
       expect(reply.output).toStrictEqual(output)
     })
 
     // used sample is removed
     expect(sample.local.do.length).toStrictEqual(0)
   })
+
+  it('should call context if no sampled reply', async () => {
+    expect.assertions(3)
+
+    delete sample.local.do[0].reply
+
+    const storage = generic.context('sampling')
+
+    await storage.apply(sample, async () => {
+      const reply = await context.apply(endpoint, request)
+
+      await check(reply)
+    })
+  })
+
+  const check = async (reply) => {
+    expect(fixtures.context.apply).toHaveBeenCalled()
+    expect(fixtures.context.apply).toHaveBeenCalledWith(endpoint, request)
+    expect(reply).toStrictEqual(await fixtures.context.apply.mock.results[0].value)
+  }
 })

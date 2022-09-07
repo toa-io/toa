@@ -55,6 +55,10 @@ class Component extends Connector {
 const verify = (sample, reply, endpoint) => {
   if (sample.reply === undefined) return
 
+  if (reply.exception !== undefined) {
+    throw new Error(`Operation '${endpoint}' has thrown an exception ` + `(${reply.exception.code}) ${reply.exception.message}`)
+  }
+
   const matches = match(reply, sample.reply)
 
   if (matches === false) reply.exception = new ReplayException(`Operation '${endpoint}' reply mismatch`)
