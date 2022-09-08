@@ -1,8 +1,9 @@
 'use strict'
 
-const { empty, remap } = require('@toa.io/libraries/generic')
+const { empty, defined, remap } = require('@toa.io/libraries/generic')
 const { valid } = require('../valid')
 const { array } = require('./array')
+const { oom } = require('./oom')
 const { patterns } = require('./patterns')
 const { required } = require('./required')
 
@@ -13,7 +14,7 @@ const { required } = require('./required')
  */
 const object = (schema, expand) => {
   if (schema === null) return {}
-  if (schema.type !== undefined && valid(schema)) return schema
+  if ((schema.type !== undefined || schema.oneOf !== undefined) && valid(schema)) return schema
   if (Array.isArray(schema)) return array(/** @type {any[]} */ schema, expand)
 
   if (schema.type === 'array') {
@@ -26,15 +27,17 @@ const object = (schema, expand) => {
   if (schema.properties === undefined) schema = { properties: schema }
 
   schema.type = 'object'
+  schema.additionalProperties = false
+  schema.properties = remap(schema.properties, (value) => expand(value))
+
+  oom(schema.properties)
 
   const patternProperties = patterns(schema.properties)
-
   schema.patternProperties = remap(patternProperties, (value) => expand(value))
-  schema.properties = remap(schema.properties, (value) => expand(value))
-  schema.additionalProperties = false
 
   required(schema)
 
+  // cleanup
   if (empty(schema.properties)) delete schema.properties
   if (empty(schema.patternProperties)) delete schema.patternProperties
 
