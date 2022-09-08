@@ -17,6 +17,7 @@ declare namespace toa.samples {
 
     type Context = {
       local?: declaration.context.Calls
+      remote?: declaration.context.Calls
     }
 
   }
@@ -52,6 +53,7 @@ declare namespace toa.samples {
 
   type Context = {
     local?: context.Calls
+    remote?: context.Calls
   }
 
   type Sample = {

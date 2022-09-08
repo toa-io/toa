@@ -17,12 +17,15 @@ const translate = (declaration) => {
   const request = { input }
   const reply = { output }
 
-  let ctx
+  /** @type {toa.samples.Context} */
+  let ctx = {}
 
   if (context !== undefined) {
     const local = calls(context.local)
+    const remote = calls(context.remote)
 
-    if (local !== undefined) ctx = { local }
+    if (local !== undefined) ctx.local = local
+    if (remote !== undefined) ctx.remote = remote
   }
 
   /** @type {toa.samples.Sample} */

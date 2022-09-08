@@ -1,8 +1,9 @@
 title: string
 context:
-  local:
+  local: &calls
     ~[]:
       input: ~
       output: ~
+  remote: *calls
 input: ~
 output*: ~
