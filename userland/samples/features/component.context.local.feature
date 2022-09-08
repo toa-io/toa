@@ -51,8 +51,7 @@ Feature: Local call samples
 
   Scenario: Sample with actual local call passes
 
-  If the local call sample does not contain `output` after input is verified an actual
-  call will be performed.
+  If the local call sample does not contain `output` an actual call will be performed.
 
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
