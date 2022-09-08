@@ -20,10 +20,6 @@ let sample
 /** @type {toa.core.Request} */
 let request
 
-const endpoint = 'do'
-
-let input
-
 it('should have factory', () => {
   expect(factory.context).toBeDefined()
 })
@@ -31,24 +27,9 @@ it('should have factory', () => {
 beforeEach(() => {
   jest.clearAllMocks()
 
+  sample = fixtures.sample()
+  request = fixtures.request()
   context = factory.context(fixtures.context)
-  input = generate()
-  request = { input }
-
-  sample = {
-    local: {
-      do: [
-        {
-          request: {
-            input
-          },
-          reply: {
-            output: generate()
-          }
-        }
-      ]
-    }
-  }
 })
 
 it('should be', () => {
@@ -67,90 +48,82 @@ it('should expose annexes', () => {
   expect(context.annexes).toStrictEqual(fixtures.context.annexes)
 })
 
-describe('apply', () => {
-  it('should call origin if no sampling context', async () => {
-    const reply = await context.apply(endpoint, request)
+;['apply', 'call'].forEach((method) => {
+  describe(method, () => {
+    const group = method === 'apply' ? 'local' : 'remote'
+    const endpoint = method === 'apply' ? 'do' : 'dummies.dummy.do'
+    const segments = method === 'apply' ? [endpoint] : ['dummies', 'dummy', 'do']
 
-    await check(reply)
-  })
-
-  it('should throw on input mismatch', async () => {
-    expect.assertions(1)
-
-    const input = generate()
-    const request = { input }
-    const storage = generic.context('sampling')
-
-    await storage.apply(sample, async () => {
-      await expect(context.apply(endpoint, request)).rejects.toBeInstanceOf(ReplayException)
-    })
-  })
-
-  it('should not throw if request sample missing', async () => {
-    expect.assertions(1)
-
-    delete sample.local.do[0].request
-
-    const reply = sample.local.do[0].reply
-    const storage = generic.context('sampling')
-
-    await storage.apply(sample, async () => {
-      const output = await context.apply(endpoint, request)
-
-      expect(output).toStrictEqual(reply)
-    })
-  })
-
-  it('should return sampled reply', async () => {
-    expect.assertions(3)
-
-    const input = sample.local.do[0].request.input
-    const output = sample.local.do[0].reply.output
-    const request = { input }
-    const storage = generic.context('sampling')
-
-    await storage.apply(sample, async () => {
-      const reply = await context.apply(endpoint, request)
-
-      expect(fixtures.context.apply).not.toHaveBeenCalled()
-      expect(reply.output).toStrictEqual(output)
-    })
-
-    // used sample is removed
-    expect(sample.local.do.length).toStrictEqual(0)
-  })
-
-  it('should call context if no sampled reply', async () => {
-    expect.assertions(3)
-
-    delete sample.local.do[0].reply
-
-    const storage = generic.context('sampling')
-
-    await storage.apply(sample, async () => {
-      const reply = await context.apply(endpoint, request)
+    it(`should ${method} origin if no sampling context`, async () => {
+      const reply = await context[method](...segments, request)
 
       await check(reply)
     })
-  })
 
-  const check = async (reply) => {
-    expect(fixtures.context.apply).toHaveBeenCalled()
-    expect(fixtures.context.apply).toHaveBeenCalledWith(endpoint, request)
-    expect(reply).toStrictEqual(await fixtures.context.apply.mock.results[0].value)
-  }
-})
+    it('should throw on input mismatch', async () => {
+      expect.assertions(1)
 
-describe('call', () => {
-  it('should call original context', async () => {
-    const namespace = generate()
-    const name = generate()
-    const endpoint = generate()
-    const request = {}
+      const input = generate()
+      const request = { input }
+      const storage = generic.context('sampling')
 
-    const reply = await context.call(namespace, name, endpoint, request)
+      await storage.apply(sample, async () => {
+        await expect(context[method](...segments, request)).rejects.toBeInstanceOf(ReplayException)
+      })
+    })
 
-    expect(fixtures.context.call).toHaveBeenCalledWith(namespace, name, endpoint, request)
-    expect(reply).toStrictEqual(await fixtures.context.call.mock.results[0].value)
+    it('should not throw if request sample is missing', async () => {
+      expect.assertions(1)
+
+      delete sample[group][endpoint][0].request
+
+      const reply = sample[group][endpoint][0].reply
+      const storage = generic.context('sampling')
+
+      await storage.apply(sample, async () => {
+        const output = await context[method](...segments, request)
+
+        expect(output).toStrictEqual(reply)
+      })
+    })
+
+    it('should return sampled reply', async () => {
+      expect.assertions(3)
+
+      const input = sample[group][endpoint][0].request.input
+      const output = sample[group][endpoint][0].reply.output
+      const request = { input }
+      const storage = generic.context('sampling')
+
+      await storage.apply(sample, async () => {
+        const reply = await context[method](...segments, request)
+
+        expect(fixtures.context[method]).not.toHaveBeenCalled()
+        expect(reply.output).toStrictEqual(output)
+      })
+
+      // used sample is removed
+      expect(sample[group][endpoint].length).toStrictEqual(0)
+    })
+
+    it(`should ${method} origin if no sampled reply`, async () => {
+      expect.assertions(3)
+
+      delete sample[group][endpoint][0].reply
+
+      const storage = generic.context('sampling')
+
+      await storage.apply(sample, async () => {
+        const reply = await context[method](...segments, request)
+
+        await check(reply)
+      })
+    })
+
+    const check = async (reply, args) => {
+      expect(fixtures.context[method]).toHaveBeenCalled()
+      expect(fixtures.context[method]).toHaveBeenCalledWith(...segments, request)
+      expect(reply).toStrictEqual(await fixtures.context[method].mock.results[0].value)
+    }
   })
 })
