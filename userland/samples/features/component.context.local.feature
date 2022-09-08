@@ -23,6 +23,9 @@ Feature: Component local calls samples
       | 1 | 3   |
 
   Scenario: Sample with actual local call passes
+
+  If context local call does not contain output, when input will be verified, the actual call will be performed.
+
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
       title: Increment by 1

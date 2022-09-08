@@ -13,9 +13,9 @@ See [features](./features).
 
 ## Sample
 
-Sample is an object containing values of operation inputs (i.e.: context outputs and initial state)
-to be replaced and outcomes (reply and transient state) to be verified. See
-its [schema](./src/.suite/sample.cos.yaml).
+Sample is an object containing values of operation inputs (i.e.: request, context outputs and
+current state) to be substituted and outcomes (reply, context calls and next state) to be verified.
+See its [schema](./src/.suite/sample.cos.yaml).
 
 > Note that although input and output are declared as arbitrary values, they must conform to the
 > corresponding operation schemas.
@@ -36,8 +36,9 @@ Context-level samples may be *incomplete*. Context interactions with non-declare
 actually performed. Replaying these samples will boot the composition of all components of the
 context (so as required extensions). See [examples](../example/samples).
 
-## Execution
+## Relay
 
 Samples may be *replayed* using [`toa replay`](/runtime/cli/readme.md#replay) command.
 
 > Replaying samples requires local deployment environment (e.g. RabbitMQ, databases, etc.).
+
