@@ -1,5 +1,6 @@
 title: Should increment number
-input: 1
+input:
+  value: 1
 output: 2
 context:
   local:
@@ -10,5 +11,22 @@ context:
       output: 2
 ---
 title: Should increment with actual call
-input: 2
+input:
+  value: 2
 output: 3
+---
+title: Should increment twice (with second actual call)
+input:
+  value: 0
+  times: 2
+output: 2
+context:
+  local:
+    add:
+      - input:
+          a: 0
+          b: 1
+        output: 1
+      - input:
+          a: 1
+          b: 1
