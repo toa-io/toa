@@ -1,4 +1,4 @@
-name: calculations
+name: proxy
 namespace: math
 
 entity: null
@@ -10,11 +10,4 @@ operations:
     input:
       a: number
       b: number
-    output: number
-  increment:
-    scope: object
-    concurrency: none
-    input:
-      value: number
-      times: 1
     output: number
