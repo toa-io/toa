@@ -1,0 +1,15 @@
+name: pots
+namespace: tea
+
+entity:
+  storage: mongodb
+  schema:
+    material*: [glass, ceramic, steel]
+    volume: number
+
+operations:
+  transit:
+    concurrency: none
+    input:
+      material*: .
+      volume: .

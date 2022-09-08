@@ -1,0 +1,17 @@
+title: Should create pot
+input:
+  material: glass
+  volume: 1.5
+next:
+  material: glass
+  volume: 1.5
+---
+title: Should update pot
+input:
+  material: steel
+current:
+  material: glass
+  volume: 1.5
+next:
+  material: steel
+  volume: 1.5
