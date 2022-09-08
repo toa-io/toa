@@ -4,6 +4,9 @@ Feature: Local call samples
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
       title: Increment by 1
+      input:
+        value: <a>
+      output: <sum>
       context:
         local:
           add:
@@ -11,9 +14,6 @@ Feature: Local call samples
               a: <a>
               b: 1
             output: <sum>
-      input:
-        value: <a>
-      output: <sum>
       """
     When I replay it
     Then it passes
@@ -29,7 +29,11 @@ Feature: Local call samples
 
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
-      title: Increment by 1
+      title: Increment by 1 twice
+      input:
+        value: 2
+        times: 2
+      output: 4
       context:
         local:
           add:
@@ -41,10 +45,6 @@ Feature: Local call samples
                 a: 3
                 b: 1
               output: 4
-      input:
-        value: 2
-        times: 2
-      output: 4
       """
     When I replay it
     Then it passes
@@ -56,15 +56,15 @@ Feature: Local call samples
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
       title: Increment by 1
+      input:
+        value: 1
+      output: 2
       context:
         local:
           add:
             input:
               a: 1
               b: 1
-      input:
-        value: 1
-      output: 2
       """
     When I replay it
     Then it passes
@@ -73,13 +73,13 @@ Feature: Local call samples
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
       title: Increment by 1
+      input:
+        value: 1
+      output: 2
       context:
         local:
           add:
             output: 2
-      input:
-        value: 1
-      output: 2
       """
     When I replay it
     Then it passes
@@ -88,15 +88,15 @@ Feature: Local call samples
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
       title: Increment by 1
+      input:
+        value: 2
+      output: 2
       context:
         local:
           add:
             input:
               a: 1
               b: 2
-      input:
-        value: 2
-      output: 2
       """
     When I replay it
     Then it fails
@@ -105,13 +105,13 @@ Feature: Local call samples
     Given I have a sample of `increment` for `math.calculations`:
       """yaml
       title: Increment by 1
+      input:
+        value: 2
+      output: 2
       context:
         local:
           add:
             output: 1
-      input:
-        value: 2
-      output: 2
       """
     When I replay it
     Then it fails
