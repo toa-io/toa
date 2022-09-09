@@ -8,8 +8,13 @@ const {
   StateInitializationException
 } = require('./exceptions')
 
+/**
+ * @implements {toa.core.State}
+ */
 class State {
   #storage
+
+  /** @type {toa.core.entity.Factory} */
   #entity
   #emitter
   #initialized
