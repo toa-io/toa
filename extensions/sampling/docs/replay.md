@@ -7,7 +7,7 @@ the [schema](../src/sample.cos.yaml).
 
 ## Core Decorators
 
-Sampling provides a set of [core decorators](#) to replace operation inputs and verify outputs.
+Sampling provides a set of [core decorators](#) to substitute operation inputs and verify outputs.
 
 Decorators use sample from shared [async storage](https://nodejs.org/api/async_context.html), that
 is, a *sampling context*.
