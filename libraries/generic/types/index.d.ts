@@ -1,10 +1,12 @@
 import { Subtract } from './subtract'
 import { Retry } from './retry'
 import { Context } from './context'
+import { Flip } from './flip'
 
+export const context: Context
+export const flip: Flip
 export const retry: Retry
 export const subtract: Subtract
-export const context: Context
 
 export * as acronyms from './acronyms'
 export * as letters from './letters'
