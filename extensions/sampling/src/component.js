@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { match } = require('@toa.io/libraries/generic')
+const { match, newid } = require('@toa.io/libraries/generic')
 const { validate } = require('./schema')
 const { ReplayException } = require('./exceptions')
 const { context } = require('./sample')
@@ -35,11 +35,10 @@ class Component extends Connector {
 
     validate(sample)
 
-    let reply
+    // make sure State will request Storage
+    if (sample.storage?.current !== undefined && rest.query === undefined) rest.query = { id: newid() }
 
-    await context.apply(sample, async () => {
-      reply = await this.#component.invoke(endpoint, rest)
-    })
+    const reply = await context.apply(sample, () => this.#component.invoke(endpoint, rest))
 
     verify(sample, reply, endpoint)
 

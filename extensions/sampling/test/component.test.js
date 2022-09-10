@@ -23,7 +23,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 
   const input = { foo: generate() }
-  const query = { id: generate() }
+  const query = { criteria: generate() }
 
   component = factory.component(fixtures.component)
   request = { input, query }
@@ -112,6 +112,21 @@ describe('invocation', () => {
     fixtures.component.invoke.mockImplementationOnce(async () => ({ exception: new Error(message) }))
 
     await expect(component.invoke(endpoint, request)).rejects.toThrow(message)
+  })
+
+  it('should add request.query if current state is provided', async () => {
+    jest.clearAllMocks()
+
+    const storage = { current: { foo: generate() } }
+
+    delete request.query
+    request.sample = { storage }
+
+    await expect(component.invoke(endpoint, request))
+
+    const argument = await fixtures.component.invoke.mock.calls[0][1]
+
+    expect(argument.query?.id).toBeDefined()
   })
 })
 

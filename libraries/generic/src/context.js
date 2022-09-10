@@ -22,7 +22,7 @@ class Storage {
   }
 
   async apply (value, func) {
-    await this.#storage.run(value, func)
+    return this.#storage.run(value, func)
   }
 
   get () {

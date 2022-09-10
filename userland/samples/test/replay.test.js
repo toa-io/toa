@@ -47,9 +47,9 @@ it('should replay samples', async () => {
 
     for (const [operation, samples] of Object.entries(set)) {
       for (const sample of samples) {
-        const { request, reply, context } = sample
+        const { request, ...rest } = sample
 
-        request.sample = { reply, context }
+        request.sample = rest
 
         expect(remote.invoke).toHaveBeenCalledWith(operation, request)
       }

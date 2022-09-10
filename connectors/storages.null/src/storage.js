@@ -3,7 +3,7 @@
 const { Connector } = require('@toa.io/core')
 
 /**
- * @implements {toa.core.storages.Storage}
+ * @implements {toa.core.Storage}
  */
 class Storage extends Connector {
   async get (_) {

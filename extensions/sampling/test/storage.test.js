@@ -2,6 +2,7 @@
 
 const { generate } = require('randomstring')
 const { context } = require('@toa.io/libraries/generic')
+const { Connector } = require('@toa.io/core')
 const { SampleException, ReplayException } = require('../src/exceptions')
 
 const fixtures = require('./storage.fixtures')
@@ -35,6 +36,11 @@ it('should be storage', () => {
   expect(storage).toBeInstanceOf(Storage)
 })
 
+it('should depend on original storage', async () => {
+  expect(storage).toBeInstanceOf(Connector)
+  expect(fixtures.storage.link).toHaveBeenCalledWith(storage)
+})
+
 describe('get', () => {
   it('should call original if no sampling context', async () => {
     const query = { id: generate() }
@@ -52,7 +58,10 @@ describe('get', () => {
     await ctx.apply(sample, async () => {
       const output = await storage.get({})
 
-      expect(output).toStrictEqual(sample.storage.current)
+      expect(output).toStrictEqual({
+        id: expect.any(String), ...sample.storage.current
+      })
+
       expect(fixtures.storage.get).not.toHaveBeenCalled()
     })
   })
@@ -87,8 +96,13 @@ describe('find', () => {
 
     await ctx.apply(sample, async () => {
       const output = await storage.find({})
+      const expected = []
 
-      expect(output).toStrictEqual(sample.storage.current)
+      for (const current of sample.storage.current) {
+        expected.push({ id: expect.any(String), ...current })
+      }
+
+      expect(output).toStrictEqual(expected)
       expect(fixtures.storage.find).not.toHaveBeenCalled()
     })
   })

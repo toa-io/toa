@@ -1,6 +1,7 @@
 'use strict'
 
-const { match } = require('@toa.io/libraries/generic')
+const { match, newid } = require('@toa.io/libraries/generic')
+const { Connector } = require('@toa.io/core')
 
 const { context } = require('./sample')
 const { SampleException, ReplayException } = require('./exceptions')
@@ -8,12 +9,16 @@ const { SampleException, ReplayException } = require('./exceptions')
 /**
  * @implements {toa.core.Storage}
  */
-class Storage {
+class Storage extends Connector {
   /** @type {toa.core.Storage} */
   #storage
 
   constructor (storage) {
+    super()
+
     this.#storage = storage
+
+    this.depends(storage)
   }
 
   async get (query) {
@@ -23,7 +28,7 @@ class Storage {
     if (current !== undefined) {
       if (Array.isArray(current)) throw new SampleException('current must be object')
 
-      return current
+      return normalize(current)
     }
 
     return this.#storage.get(query)
@@ -36,7 +41,7 @@ class Storage {
     if (current !== undefined) {
       if (!Array.isArray(current)) throw new SampleException('current must be array')
 
-      return current
+      return current.map(normalize)
     }
 
     return this.#storage.find(query)
@@ -59,5 +64,7 @@ class Storage {
     return this.#storage.upsert(query, changeset, insert)
   }
 }
+
+const normalize = (object) => ({ id: newid(), ...object })
 
 exports.Storage = Storage

@@ -6,7 +6,7 @@ const { translate } = require('./translate')
 const { to, from } = require('./record')
 
 /**
- * @implements {toa.core.storages.Storage}
+ * @implements {toa.core.Storage}
  */
 class Storage extends Connector {
   /** @type {toa.mongodb.Connection} */

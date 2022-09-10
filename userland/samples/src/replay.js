@@ -17,9 +17,9 @@ const replay = async (suite) => {
         for (const sample of samples) {
           n++
 
-          const { title, request, reply, context } = sample
+          const { title, request, ...rest } = sample
 
-          request.sample = { reply, context }
+          request.sample = rest
 
           await test.test(title ?? 'Sample ' + n, async (test) => {
             let exception

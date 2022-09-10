@@ -2,7 +2,7 @@ declare namespace toa.generic {
 
   namespace context {
     interface Storage {
-      apply(value: any, func: Function): Promise<void>
+      apply(value: any, func: Function): Promise<any>
 
       get(): any
     }

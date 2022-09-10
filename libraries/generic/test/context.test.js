@@ -18,15 +18,22 @@ it('should track context', async () => {
   const p1 = ctx.apply(v1, async () => {
     await timeout(1)
     await fixtures.increment(id)
+
+    return 1
   })
 
   const p2 = ctx.apply(v2, async () => {
     await timeout(1)
     await fixtures.increment(id)
+
+    return 2
   })
 
-  await Promise.all([p1, p2])
+  const [r1, r2] = await Promise.all([p1, p2])
 
   expect(v1).toStrictEqual({ n: 1 })
   expect(v2).toStrictEqual({ n: 1 })
+
+  expect(r1).toStrictEqual(1)
+  expect(r2).toStrictEqual(2)
 })

@@ -7,6 +7,7 @@ const { random } = require('@toa.io/libraries/generic')
 const suite = {}
 
 const samples = () => {
+  /** @type {toa.samples.Sample[]} */
   const samples = []
 
   for (let i = 0; i < random(3) + 1; i++) {
@@ -19,6 +20,10 @@ const samples = () => {
       },
       context: {
         local: generate()
+      },
+      storage: {
+        current: generate(),
+        next: generate()
       }
     })
   }

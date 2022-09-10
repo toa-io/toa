@@ -5,7 +5,7 @@ const { random } = require('@toa.io/libraries/generic')
 
 describe('to', () => {
   it('should rename id to _id', () => {
-    /** @type {toa.core.storages.Entity} */
+    /** @type {toa.core.storages.Record} */
     const entity = { id: '1', _version: 0 }
     const record = to(entity)
 
@@ -13,7 +13,7 @@ describe('to', () => {
   })
 
   it('should not modify argument', () => {
-    /** @type {toa.core.storages.Entity} */
+    /** @type {toa.core.storages.Record} */
     const entity = { id: '1', _version: 0 }
 
     to(entity)
@@ -22,7 +22,7 @@ describe('to', () => {
   })
 
   it('should increment _version', () => {
-    /** @type {toa.core.storages.Entity} */
+    /** @type {toa.core.storages.Record} */
     const entity = { id: '1', _version: random() }
     const record = to(entity)
 
