@@ -39,7 +39,7 @@ function required (schema) {
 const parse = (key) => {
   const mark = key.slice(-1)
   const name = key.slice(0, -1)
-  const type = MARKS[mark]
+  const type = INDICATORS[mark]
 
   if (type === undefined) return { type: TYPES.plain, name: key }
   else return { type, name }
@@ -51,7 +51,7 @@ const TYPES = {
   optional: 2
 }
 
-const MARKS = {
+const INDICATORS = {
   '*': TYPES.required,
   '?': TYPES.optional
 }

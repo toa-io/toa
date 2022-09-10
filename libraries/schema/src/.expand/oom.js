@@ -10,7 +10,7 @@ const oom = (properties) => {
   for (const [property, value] of Object.entries(properties)) {
     if (!marked(property)) continue
 
-    let name = property.slice(0, -MARKER.length)
+    let name = property.slice(0, -INDICATOR.length)
 
     if (name === '~') name = 'null'
 
@@ -34,8 +34,8 @@ const oom = (properties) => {
  * @param {string }name
  * @returns {boolean}
  */
-const marked = (name) => name.slice(-MARKER.length) === MARKER
+const marked = (name) => name.slice(-INDICATOR.length) === INDICATOR
 
-const MARKER = '[]'
+const INDICATOR = '+'
 
 exports.oom = oom

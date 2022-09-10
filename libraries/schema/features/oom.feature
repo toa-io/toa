@@ -3,7 +3,7 @@ Feature: One or many
   Scenario: One or many of primitive type
     When I write schema:
       """yaml
-      foo[]: string
+      foo+: string
       """
     Then it is equivalent to:
       """yaml
@@ -21,7 +21,7 @@ Feature: One or many
   Scenario: One or many of object type
     When I write schema:
       """yaml
-      foo[]:
+      foo+:
         foo: string
         bar?: number
       """
@@ -55,7 +55,7 @@ Feature: One or many
   Scenario: One or many as pattern property
     When I write schema:
       """yaml
-      ~[]: string
+      ~+: string
       """
     Then it is equivalent to:
       """yaml
@@ -69,4 +69,3 @@ Feature: One or many
                 type: string
       additionalProperties: false
       """
-
