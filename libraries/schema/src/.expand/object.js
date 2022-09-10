@@ -14,7 +14,7 @@ const { required } = require('./required')
  */
 const object = (schema, expand) => {
   if (schema === null) return {}
-  if ((schema.type !== undefined || schema.oneOf !== undefined) && valid(schema)) return schema
+  if (skip(schema)) return schema
   if (Array.isArray(schema)) return array(/** @type {any[]} */ schema, expand)
 
   if (schema.type === 'array') {
@@ -43,5 +43,17 @@ const object = (schema, expand) => {
 
   return schema
 }
+
+/**
+ * @param {toa.schema.JSON} schema
+ * @returns {boolean}
+ */
+const skip = (schema) => {
+  const found = KEYWORDS.find((key) => schema[key] !== undefined)
+
+  return found && valid(schema)
+}
+
+const KEYWORDS = ['type', 'oneOf', '$ref']
 
 exports.object = object

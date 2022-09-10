@@ -1,0 +1,11 @@
+name: caller
+namespace: errors
+
+entity:
+  storage: null
+  schema:
+    foo: string
+
+operations:
+  setid:
+    concurrency: none

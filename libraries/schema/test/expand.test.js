@@ -24,3 +24,10 @@ it('should not expand valid schema', () => {
 
   expect(output).toStrictEqual(schema)
 })
+
+it('should not expand $ref', async () => {
+  const schema = { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id' }
+  const output = expand(schema)
+
+  expect(output).toStrictEqual(schema)
+})

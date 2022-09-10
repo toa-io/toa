@@ -6,7 +6,7 @@ const boot = require('@toa.io/boot')
 /**
  * @param {string} namespace
  * @param {string} name
- * @returns {Promise<toa.core.Runtime>}
+ * @returns {Promise<toa.core.Component>}
  */
 const remote = async (namespace, name) => {
   const locator = new Locator(name, namespace)
