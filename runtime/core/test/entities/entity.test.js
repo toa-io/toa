@@ -37,13 +37,6 @@ describe('argument', () => {
 
     expect(entity.get()).toStrictEqual(state)
   })
-
-  it('should not validate origin state', () => {
-    const state = fixtures.failed()
-    const entity = new Entity(fixtures.schema, state)
-
-    expect(entity.get()).toStrictEqual(state)
-  })
 })
 
 it('should provide event', () => {

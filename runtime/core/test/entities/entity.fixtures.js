@@ -1,7 +1,6 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const clone = require('clone-deep')
 
 // noinspection JSCheckFunctionSignatures
 const schema = {
@@ -11,7 +10,7 @@ const schema = {
   defaults: jest.fn(() => ({ [generate()]: generate() }))
 }
 
-const state = () => clone({
+const state = () => ({
   id: generate(),
   foo: generate(),
   _created: generate(),
@@ -20,7 +19,7 @@ const state = () => clone({
   _version: generate()
 })
 
-const failed = () => clone({ ...state(), fail: true })
+const failed = () => ({ ...state(), fail: true })
 
 exports.schema = schema
 exports.state = state

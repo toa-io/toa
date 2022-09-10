@@ -14,7 +14,8 @@ class Entity {
     this.#schema = schema
 
     if (typeof argument === 'object') {
-      this.#state = clone(argument)
+      const object = clone(argument)
+      this.set(object)
       this.#origin = argument
     } else {
       const id = typeof argument === 'string' ? argument : newid()
