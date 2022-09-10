@@ -97,7 +97,7 @@ describe('invocation', () => {
 
       expect(sample).toBeDefined()
 
-      undo = sample.local.undo
+      undo = sample.context.local.undo
     })
 
     await component.invoke(endpoint, request)

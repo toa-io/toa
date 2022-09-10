@@ -2,6 +2,7 @@
 
 const { SampleException } = require('../src/exceptions')
 const { validate } = require('../src/schema')
+const { generate } = require('randomstring')
 
 it('should be', () => {
   expect(validate).toBeDefined()
@@ -62,5 +63,47 @@ describe('context', () => {
     sample.context.foo = 1
 
     expect(() => validate(sample)).toThrow(SampleException)
+  })
+})
+
+describe('storage', () => {
+  beforeEach(() => {
+    sample.storage = {}
+  })
+
+  describe('current', () => {
+    it('should not throw on object', async () => {
+      sample.storage.current = { foo: generate() }
+
+      expect(() => validate(sample)).not.toThrow()
+    })
+
+    it('should not throw on array', async () => {
+      sample.storage.current = [{ foo: generate() }]
+
+      expect(() => validate(sample)).not.toThrow()
+    })
+
+    it('should throw on invalid type', async () => {
+      sample.storage.current = 1
+
+      expect(() => validate(sample)).toThrow('must be object')
+    })
+  })
+
+  describe('next', () => {
+    it('should not throw on object', async () => {
+      sample.storage.next = { foo: generate() }
+
+      expect(() => validate(sample)).not.toThrow()
+    })
+
+    it('should throw on invalid type', async () => {
+      sample.storage.next = [{ foo: generate() }]
+      expect(() => validate(sample)).toThrow('must be object')
+
+      sample.storage.next = 1
+      expect(() => validate(sample)).toThrow('must be object')
+    })
   })
 })

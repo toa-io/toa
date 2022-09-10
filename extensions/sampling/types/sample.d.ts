@@ -17,12 +17,18 @@ declare namespace toa.sampling {
       local?: Calls
       remote?: Calls
     }
+
+    type Storage = {
+      current?: _core.storages.Record
+      next?: _core.storages.Record
+    }
   }
 
   type Sample = {
     input?: any
     reply?: _core.Reply
     context?: sample.Context
+    storage?: sample.Storage
   }
 
 }

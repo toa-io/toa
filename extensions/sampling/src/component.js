@@ -4,7 +4,7 @@ const { Connector } = require('@toa.io/core')
 const { match } = require('@toa.io/libraries/generic')
 const { validate } = require('./schema')
 const { ReplayException } = require('./exceptions')
-const { storage } = require('./storage')
+const { context } = require('./sample')
 
 /**
  * @implements {toa.core.Component}
@@ -37,7 +37,7 @@ class Component extends Connector {
 
     let reply
 
-    await storage.apply(sample.context, async () => {
+    await context.apply(sample, async () => {
       reply = await this.#component.invoke(endpoint, rest)
     })
 

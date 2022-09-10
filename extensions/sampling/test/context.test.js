@@ -14,7 +14,7 @@ const factory = new Factory()
 /** @type {toa.core.Context} */
 let context
 
-/** @type {toa.sampling.sample.Context} */
+/** @type {toa.sampling.Sample} */
 let sample
 
 /** @type {toa.core.Request} */
@@ -75,9 +75,9 @@ it('should expose annexes', () => {
     it('should not throw if request sample is missing', async () => {
       expect.assertions(1)
 
-      delete sample[group][endpoint][0].request
+      delete sample.context[group][endpoint][0].request
 
-      const reply = sample[group][endpoint][0].reply
+      const reply = sample.context[group][endpoint][0].reply
       const storage = generic.context('sampling')
 
       await storage.apply(sample, async () => {
@@ -90,8 +90,8 @@ it('should expose annexes', () => {
     it('should return sampled reply', async () => {
       expect.assertions(3)
 
-      const input = sample[group][endpoint][0].request.input
-      const output = sample[group][endpoint][0].reply.output
+      const input = sample.context[group][endpoint][0].request.input
+      const output = sample.context[group][endpoint][0].reply.output
       const request = { input }
       const storage = generic.context('sampling')
 
@@ -103,13 +103,13 @@ it('should expose annexes', () => {
       })
 
       // used sample is removed
-      expect(sample[group][endpoint].length).toStrictEqual(0)
+      expect(sample.context[group][endpoint].length).toStrictEqual(0)
     })
 
     it(`should ${method} origin if no sampled reply`, async () => {
       expect.assertions(3)
 
-      delete sample[group][endpoint][0].reply
+      delete sample.context[group][endpoint][0].reply
 
       const storage = generic.context('sampling')
 

@@ -2,6 +2,7 @@
 
 const { Component } = require('./component')
 const { Context } = require('./context')
+const { Storage } = require('./storage')
 
 /**
  * @implements {toa.core.extensions.Factory}
@@ -13,6 +14,10 @@ class Factory {
 
   context (context) {
     return new Context(context)
+  }
+
+  storage (storage) {
+    return new Storage(storage)
   }
 }
 

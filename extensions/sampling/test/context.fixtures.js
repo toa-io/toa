@@ -13,29 +13,31 @@ const input = generate()
 const request = () => ({ input })
 
 const sample = () => ({
-  local: {
-    do: [
-      {
-        request: {
-          input
-        },
-        reply: {
-          output: generate()
+  context: {
+    local: {
+      do: [
+        {
+          request: {
+            input
+          },
+          reply: {
+            output: generate()
+          }
         }
-      }
-    ]
-  },
-  remote: {
-    'dummies.dummy.do': [
-      {
-        request: {
-          input
-        },
-        reply: {
-          output: generate()
+      ]
+    },
+    remote: {
+      'dummies.dummy.do': [
+        {
+          request: {
+            input
+          },
+          reply: {
+            output: generate()
+          }
         }
-      }
-    ]
+      ]
+    }
   }
 })
 

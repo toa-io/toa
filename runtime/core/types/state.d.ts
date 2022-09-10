@@ -14,3 +14,5 @@ declare namespace toa.core {
   }
 
 }
+
+export type State = toa.core.State

@@ -62,8 +62,9 @@ class State {
     let ok = true
 
     if (!empty(event.changeset)) {
-      const values = state.get()
-      ok = await this.#storage.store(values)
+      const object = state.get()
+
+      ok = await this.#storage.store(object)
 
       // TODO: do not wait because outbox will handle failures
       // TODO: handle slow emissions (too many concurrent emissions)

@@ -9,3 +9,6 @@ context:
           query: string
         reply: *reply
   remote: *calls
+storage:
+  current[]: object
+  next: object

@@ -2,7 +2,7 @@
 
 const { Connector } = require('@toa.io/core')
 const { match } = require('@toa.io/libraries/generic')
-const { storage } = require('./storage')
+const { context } = require('./sample')
 const { ReplayException } = require('./exceptions')
 
 /**
@@ -22,17 +22,17 @@ class Context extends Connector {
   }
 
   async apply (endpoint, request) {
-    const sample = /** @type {toa.sampling.sample.Context} */ storage.get()
-    const calls = sample?.local?.[endpoint]
+    const sample = /** @type {toa.sampling.Sample} */ context.get()
+    const calls = sample?.context?.local?.[endpoint]
 
     if (calls === undefined) return this.#context.apply(endpoint, request)
     else return this.#replay('apply', calls, [endpoint], request)
   }
 
   async call (namespace, name, endpoint, request) {
-    const sample = /** @type {toa.sampling.sample.Context} */ storage.get()
+    const sample = /** @type {toa.sampling.Sample} */ context.get()
     const key = namespace + dot + name + dot + endpoint
-    const calls = sample?.remote?.[key]
+    const calls = sample?.context?.remote?.[key]
 
     if (calls === undefined) return this.#context.call(namespace, name, endpoint, request)
     else return this.#replay('call', calls, [namespace, name, endpoint], request)

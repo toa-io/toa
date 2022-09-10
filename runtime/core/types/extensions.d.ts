@@ -1,6 +1,7 @@
 import * as index from './index'
 import * as _component from './component'
 import * as _context from './context'
+import * as _storages from './storages'
 
 declare namespace toa.core.extensions {
 
@@ -14,6 +15,8 @@ declare namespace toa.core.extensions {
     component?(component: _component.Component): _component.Component
 
     context?(context: _context.Context): _context.Context
+
+    storage?(storage: _storages.Storage): _storages.Storage
   }
 
   interface Annex extends index.Connector {

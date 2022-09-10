@@ -6,12 +6,17 @@ it('should be', () => {
   expect(Factory).toBeDefined()
 })
 
-let factory
-
-beforeEach(() => {
-  factory = new Factory()
-})
+/** @type {toa.core.extensions.Factory} */
+const factory = new Factory()
 
 it('should implement component', () => {
   expect(factory.component).toBeDefined()
+})
+
+it('should implement context', () => {
+  expect(factory.context).toBeDefined()
+})
+
+it('should implement storage', () => {
+  expect(factory.storage).toBeDefined()
 })
