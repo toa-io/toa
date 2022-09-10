@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { context } = require('@toa.io/libraries/generic')
-const { SampleException } = require('../src/exceptions')
+const { SampleException, ReplayException } = require('../src/exceptions')
 
 const fixtures = require('./storage.fixtures')
 const { Factory } = require('../')
@@ -100,5 +100,60 @@ describe('find', () => {
     await ctx.apply(sample, async () => {
       await expect(storage.find({})).rejects.toBeInstanceOf(SampleException)
     })
+  })
+})
+
+describe('store', () => {
+  it('should be', async () => {
+    expect(storage.store).toBeDefined()
+  })
+
+  it('should call original if no sampling context', async () => {
+    const object = { id: generate(), _version: 0 }
+    const output = await storage.store(object)
+
+    expect(fixtures.storage.store).toHaveBeenCalledWith(object)
+    expect(output).toStrictEqual(await fixtures.storage.store.mock.results[0].value)
+  })
+
+  it('should throw if sample not matches', async () => {
+    expect.assertions(1)
+
+    sample.storage.next = { foo: generate() }
+
+    const object = { id: generate(), _version: 0, bar: generate() }
+
+    await ctx.apply(sample, async () => {
+      await expect(storage.store(object)).rejects.toBeInstanceOf(ReplayException)
+    })
+  })
+
+  it('should not throw if sample matches', async () => {
+    expect.assertions(1)
+
+    sample.storage.next = { foo: generate() }
+
+    const object = { id: generate(), _version: 0, ...sample.storage.next }
+
+    await ctx.apply(sample, async () => {
+      await expect(storage.store(object)).resolves.not.toBeInstanceOf(ReplayException)
+    })
+  })
+})
+
+describe('upsert', () => {
+  it('should be', async () => {
+    expect(storage.upsert).toBeDefined()
+  })
+
+  it('should call original', async () => {
+    const query = { id: generate() }
+    const changeset = { foo: generate() }
+    const insert = { id: generate(), _version: 0 }
+
+    const output = await storage.upsert(query, changeset, insert)
+
+    expect(fixtures.storage.upsert).toHaveBeenCalledWith(query, changeset, insert)
+    expect(output).toStrictEqual(await fixtures.storage.upsert.mock.results[0].value)
   })
 })

@@ -56,7 +56,7 @@ declare namespace toa.core {
     find?(query: Query): Promise<storages.Record[]>
 
     // commit
-    store?(entity: storages.Record): Promise<boolean>
+    store?(record: storages.Record): Promise<boolean>
 
     // assignment
     upsert?(query: Query, changeset: Object, insert: storages.Record): Promise<storages.Record>
