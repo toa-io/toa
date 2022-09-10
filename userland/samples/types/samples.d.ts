@@ -14,19 +14,16 @@ declare namespace toa.samples {
       }
 
     }
-
-    type Context = {
-      local?: declaration.context.Calls
-      remote?: declaration.context.Calls
-    }
-
   }
 
   type Declaration = {
     title?: string
     input: any
     output: any
-    context?: declaration.Context
+    local?: declaration.context.Calls
+    remote?: declaration.context.Calls
+    current?: Object | Object[]
+    next?: Object
   }
 
   type Request = {
@@ -56,11 +53,17 @@ declare namespace toa.samples {
     remote?: context.Calls
   }
 
+  type Storage = {
+    current?: Object | Object[]
+    next?: Object
+  }
+
   type Sample = {
     title?: string
     request: Request
     reply: Reply
     context?: Context
+    storage?: Storage
   }
 
   type Set = {

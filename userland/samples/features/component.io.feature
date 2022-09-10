@@ -38,3 +38,13 @@ Feature: Component IO samples
       """
     When I replay it
     Then it fails
+
+  Scenario: No output validation
+    Given I have a samples of `add` for `math.calculations`:
+        """yaml
+        input:
+          a: 1
+          b: 2
+        """
+    When I replay it
+    Then it passes

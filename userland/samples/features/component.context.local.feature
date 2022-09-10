@@ -7,13 +7,12 @@ Feature: Local call samples
       input:
         value: <a>
       output: <sum>
-      context:
-        local:
-          add:
-            input:
-              a: <a>
-              b: 1
-            output: <sum>
+      local:
+        add:
+          input:
+            a: <a>
+            b: 1
+          output: <sum>
       """
     When I replay it
     Then it passes
@@ -34,17 +33,16 @@ Feature: Local call samples
         value: 2
         times: 2
       output: 4
-      context:
-        local:
-          add:
-            - input:
-                a: 2
-                b: 1
-              output: 3
-            - input:
-                a: 3
-                b: 1
-              output: 4
+      local:
+        add:
+          - input:
+              a: 2
+              b: 1
+            output: 3
+          - input:
+              a: 3
+              b: 1
+            output: 4
       """
     When I replay it
     Then it passes
@@ -59,12 +57,11 @@ Feature: Local call samples
       input:
         value: 1
       output: 2
-      context:
-        local:
-          add:
-            input:
-              a: 1
-              b: 1
+      local:
+        add:
+          input:
+            a: 1
+            b: 1
       """
     When I replay it
     Then it passes
@@ -76,10 +73,9 @@ Feature: Local call samples
       input:
         value: 1
       output: 2
-      context:
-        local:
-          add:
-            output: 2
+      local:
+        add:
+          output: 2
       """
     When I replay it
     Then it passes
@@ -91,12 +87,11 @@ Feature: Local call samples
       input:
         value: 2
       output: 2
-      context:
-        local:
-          add:
-            input:
-              a: 1
-              b: 2
+      local:
+        add:
+          input:
+            a: 1
+            b: 2
       """
     When I replay it
     Then it fails
@@ -108,10 +103,9 @@ Feature: Local call samples
       input:
         value: 2
       output: 2
-      context:
-        local:
-          add:
-            output: 1
+      local:
+        add:
+          output: 1
       """
     When I replay it
     Then it fails

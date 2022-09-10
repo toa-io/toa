@@ -1,6 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
+const { flip } = require('@toa.io/libraries/generic')
 
 const title = generate()
 const input = generate()
@@ -54,11 +55,23 @@ context.sample = {
   }
 }
 
+const storage = {}
+
+storage.declaration = {
+  current: flip() ? { foo: generate() } : [{ foo: generate() }], // object or array
+  next: { foo: generate() }
+}
+
+storage.sample = {
+  current: storage.declaration.current,
+  next: storage.declaration.next
+}
+
 /** @type {toa.samples.Declaration} */
-const declaration = { title, input, output, context: context.declaration }
+const declaration = { title, input, output, ...context.declaration, ...storage.declaration }
 
 /** @type {toa.samples.Sample} */
-const expected = { title, request, reply, context: context.sample }
+const expected = { title, request, reply, context: context.sample, storage: storage.sample }
 
 exports.declaration = declaration
 exports.expected = expected

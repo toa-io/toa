@@ -15,11 +15,3 @@ current:
 next:
   material: steel
   volume: 1.5
----
-title: Should observe pot
-current:
-  material: steel
-  volume: 1.5
-output:
-  material: steel
-  volume: 1.5

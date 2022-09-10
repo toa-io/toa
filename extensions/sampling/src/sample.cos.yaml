@@ -10,5 +10,5 @@ context:
         reply: *reply
   remote: *calls
 storage:
-  current[]: object
+  current+: object
   next: object

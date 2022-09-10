@@ -11,13 +11,12 @@ Feature: Remote call samples
         a: 1
         b: 2
       output: 3
-      context:
-        remote:
-          math.calculations.add:
-            input:
-              a: 1
-              b: 2
-            output: 3
+      remote:
+        math.calculations.add:
+          input:
+            a: 1
+            b: 2
+          output: 3
       """
     When I replay it
     Then it passes

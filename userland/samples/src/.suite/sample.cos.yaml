@@ -1,9 +1,10 @@
 title: string
-context:
-  local: &calls
-    ~[]:
-      input: ~
-      output: ~
-  remote: *calls
 input: ~
-output*: ~
+output: ~
+local: &calls
+  ~+:
+    input: ~
+    output: ~
+remote: *calls
+current+: object
+next: object

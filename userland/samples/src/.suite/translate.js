@@ -1,6 +1,7 @@
 'use strict'
 
 const { resolve } = require('node:path')
+const { defined, empty } = require('@toa.io/libraries/generic')
 const { load } = require('@toa.io/libraries/schema')
 
 const path = resolve(__dirname, 'sample.cos.yaml')
@@ -13,36 +14,30 @@ const schema = load(path)
 const translate = (declaration) => {
   schema.validate(declaration)
 
-  const { title, input, output, context } = declaration
+  const { title, input, output, local, remote, current, next } = declaration
   const request = { input }
   const reply = { output }
+  const storage = { current, next }
 
   /** @type {toa.samples.Context} */
-  let ctx = {}
+  let context = {}
 
-  if (context !== undefined) {
-    const local = calls(context.local)
-    const remote = calls(context.remote)
-
-    if (local !== undefined) ctx.local = local
-    if (remote !== undefined) ctx.remote = remote
-  }
+  if (local !== undefined) context.local = calls(local)
+  if (remote !== undefined) context.remote = calls(remote)
 
   /** @type {toa.samples.Sample} */
-  const sample = { title, request, reply }
+  const sample = { title, request, reply, context, storage }
 
-  if (ctx) sample.context = ctx
+  cleanup(sample)
 
   return sample
 }
 
 /**
  * @param {toa.samples.declaration.context.Calls} calls
- * @returns {toa.samples.context.Calls | undefined}
+ * @returns {toa.samples.context.Calls}
  */
 const calls = (calls) => {
-  if (calls === undefined) return
-
   const output = {}
 
   for (let [endpoint, samples] of Object.entries(calls)) {
@@ -76,6 +71,15 @@ const call = (call) => {
   if (reply !== undefined) sample.reply = reply
 
   return sample
+}
+
+/**
+ * @param {toa.samples.Sample} sample
+ */
+const cleanup = (sample) => {
+  for (const [key, value] of Object.entries(sample)) {
+    if (value === undefined || empty(defined(value))) delete sample[key]
+  }
 }
 
 exports.translate = translate

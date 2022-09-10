@@ -35,10 +35,4 @@ describe('validation', () => {
 
     expect(() => translate(declaration)).toThrow('additional property \'foo\'')
   })
-
-  it('should require output', () => {
-    delete declaration.output
-
-    expect(() => translate(declaration)).toThrow('required property \'output\'')
-  })
 })
