@@ -4,6 +4,7 @@ const { merge, newid } = require('@toa.io/libraries/generic')
 const { EntityContractException } = require('../exceptions')
 
 class Changeset {
+  /** @type {toa.core.Query} */
   query
 
   #schema

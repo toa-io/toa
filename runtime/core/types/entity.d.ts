@@ -1,5 +1,5 @@
 import * as _event from './event'
-import * as _query from './query'
+import * as _storages from './storages'
 
 declare namespace toa.core {
 
@@ -12,15 +12,15 @@ declare namespace toa.core {
 
       objects(recordset: Object[]): Entity[]
 
-      changeset(query: _query.Query): Changeset
+      changeset(query: _storages.Query): Changeset
     }
-    
+
   }
 
   interface Entity {
-    get(): Object
+    get(): _storages.Record
 
-    set(value: Object): void
+    set(value: _storages.Record): void
 
     event(): _event.Event
   }
@@ -31,6 +31,8 @@ declare namespace toa.core {
   }
 
   interface Changeset {
+    query: _storages.Query
+
     get(): Object
 
     set(value: Object): void

@@ -50,16 +50,16 @@ declare namespace toa.core {
 
   interface Storage extends Connector {
     // object observation
-    get?(query: Query): Promise<storages.Record | null>
+    get?(query: storages.Query): Promise<storages.Record | null>
 
     // objects observation
-    find?(query: Query): Promise<storages.Record[]>
+    find?(query: storages.Query): Promise<storages.Record[]>
 
     // commit
     store?(record: storages.Record): Promise<boolean>
 
     // assignment
-    upsert?(query: Query, changeset: Object, insert: storages.Record): Promise<storages.Record>
+    upsert?(query: storages.Query, changeset: Object, insert: storages.Record): Promise<storages.Record>
   }
 
 }

@@ -6,7 +6,7 @@ export namespace toa.norm {
     namespace operations {
 
       type Type = 'transition' | 'observation' | 'assignment'
-      type Scope = 'object' | 'objects' | 'changeset'
+      type Scope = 'object' | 'objects' | 'changeset' | 'none'
 
     }
 

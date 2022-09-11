@@ -13,6 +13,9 @@ const define = (descriptor) => {
   definition.type = /** @type {typeof toa.norm.component.Operation.type} */ name
 
   if (node.params.length > 1) definition.scope = scope(node.params[1].name)
+  else definition.scope = 'none'
+
+  if (node.params.length === 0) definition.input = null
 
   return definition
 }

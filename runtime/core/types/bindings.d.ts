@@ -1,34 +1,34 @@
 // noinspection ES6UnusedImports,JSUnusedGlobalSymbols
 
-import { Connector, Locator, Receiver, Reply, Request, Runtime } from './index'
+import { Connector, Locator, Receiver, Reply, Request, Component } from './index'
 
 declare namespace toa.core.bindings {
 
-    interface Consumer extends Connector {
-        request(request: Request): Promise<Reply>
-    }
+  interface Consumer extends Connector {
+    request(request: Request): Promise<Reply>
+  }
 
-    interface Emitter extends Connector {
-        emit(payload: object): Promise<void>
-    }
+  interface Emitter extends Connector {
+    emit(payload: object): Promise<void>
+  }
 
-    interface Broadcaster extends Connector {
-        send(label: string, payload: Object): Promise<void>
+  interface Broadcaster extends Connector {
+    send(label: string, payload: Object): Promise<void>
 
-        receive(label: string, callback: (payload: object) => Promise<void>): Promise<void>
-    }
+    receive(label: string, callback: (payload: object) => Promise<void>): Promise<void>
+  }
 
-    interface Factory {
-        producer?(locator: Locator, endpoints: Array<string>, producer: Runtime): Connector
+  interface Factory {
+    producer?(locator: Locator, endpoints: Array<string>, producer: Component): Connector
 
-        consumer?(locator: Locator, endpoint: string): Consumer
+    consumer?(locator: Locator, endpoint: string): Consumer
 
-        emitter?(locator: Locator, label: string): Emitter
+    emitter?(locator: Locator, label: string): Emitter
 
-        receiver?(locator: Locator, label: string, id: string, receiver: Receiver): Connector
+    receiver?(locator: Locator, label: string, id: string, receiver: Receiver): Connector
 
-        broadcaster?(name: string, group?: string): Broadcaster
-    }
+    broadcaster?(name: string, group?: string): Broadcaster
+  }
 
 }
 

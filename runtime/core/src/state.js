@@ -12,6 +12,7 @@ const {
  * @implements {toa.core.State}
  */
 class State {
+  /** @type {toa.core.Storage} */
   #storage
 
   /** @type {toa.core.entity.Factory} */
@@ -54,6 +55,10 @@ class State {
 
   changeset (query) {
     return this.#entity.changeset(query)
+  }
+
+  none () {
+    return null
   }
 
   async commit (state) {
