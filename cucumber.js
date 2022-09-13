@@ -1,4 +1,4 @@
-const common = { publishQuiet: true }
+const common = { publishQuiet: true, failFast: true }
 
 module.exports = {
   default: {
