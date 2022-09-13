@@ -13,7 +13,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'replay'
+exports.command = 'replay [path]'
 exports.desc = 'Replay samples'
 exports.builder = builder
 exports.handler = replay

@@ -41,4 +41,3 @@ context (so as required extensions). See [examples](../example/samples).
 Samples may be *replayed* using [`toa replay`](/runtime/cli/readme.md#replay) command.
 
 > Replaying samples requires local deployment environment (e.g. RabbitMQ, databases, etc.).
-
