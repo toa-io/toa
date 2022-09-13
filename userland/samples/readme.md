@@ -36,7 +36,7 @@ Context-level samples may be *incomplete*. Context interactions with non-declare
 actually performed. Replaying these samples will boot the composition of all components of the
 context (so as required extensions). See [examples](../example/samples).
 
-## Relay
+## Replay
 
 Samples may be *replayed* using [`toa replay`](/runtime/cli/readme.md#replay) command.
 
