@@ -6,7 +6,7 @@ const { component: find } = require('../util/find')
 
 async function invoke (argv) {
   const path = find(argv.path)
-  const request = yaml.parse(argv.request)
+  const request = argv.request ? yaml.parse(argv.request) : {}
 
   const composition = await boot.composition([path])
   await composition.connect()

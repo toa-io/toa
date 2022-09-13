@@ -9,9 +9,7 @@ async function replay (argv) {
   const ok = await component(path)
   const message = ok ? GREEN + 'PASSED' : RED + 'FAILED'
 
-  process.on('beforeExit', () => {
-    console.log(message + RESET)
-  })
+  process.on('beforeExit', () => console.log(message + RESET))
 }
 
 const GREEN = '\x1b[32m'

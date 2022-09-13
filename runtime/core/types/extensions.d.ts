@@ -21,7 +21,8 @@ declare namespace toa.core.extensions {
 
   interface Annex extends index.Connector {
     name: string
-    invoke: Function
+
+    invoke(...args: any[]): Promise<any>
   }
 
 }

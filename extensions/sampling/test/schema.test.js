@@ -32,7 +32,7 @@ describe('context', () => {
   let local
 
   beforeEach(() => {
-    /** @type {toa.sampling.sample.Calls} */
+    /** @type {toa.sampling.sample.Requests} */
     local = {
       do: [
         {
@@ -105,5 +105,28 @@ describe('storage', () => {
       sample.storage.next = 1
       expect(() => validate(sample)).toThrow('must be object')
     })
+  })
+})
+
+describe('extensions', () => {
+  it('should should not throw on extensions', async () => {
+    sample.extensions = {
+      [generate()]: [
+        { arguments: [generate()], result: generate() },
+        { arguments: [generate()], result: generate() }
+      ]
+    }
+
+    expect(() => validate(sample)).not.toThrow()
+  })
+
+  it('should not throw on permanent extension call sample', async () => {
+    sample.extensions = {
+      [generate()]: [
+        { arguments: [generate()], result: generate(), permanent: true }
+      ]
+    }
+
+    expect(() => validate(sample)).not.toThrow()
   })
 })

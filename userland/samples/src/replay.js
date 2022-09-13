@@ -7,34 +7,42 @@ const stage = require('@toa.io/userland/stage')
 const replay = async (suite) => {
   const remotes = await connect(suite)
 
-  const results = await tap.test('Replay', async (test) => {
+  const results = await tap.test('Replay suite', async (test) => {
     for (const [component, set] of Object.entries(suite)) {
-      const remote = remotes[component]
+      await test.test(component, async (test) => {
+        const remote = remotes[component]
 
-      for (const [operation, samples] of Object.entries(set)) {
-        let n = 0
+        for (const [operation, samples] of Object.entries(set)) {
+          test.test(operation, async (test) => {
+            let n = 0
 
-        for (const sample of samples) {
-          n++
+            for (const sample of samples) {
+              n++
 
-          const { title, request, ...rest } = sample
+              const { title, request, ...rest } = sample
 
-          request.sample = rest
+              request.sample = rest
 
-          await test.test(title ?? 'Sample ' + n, async (test) => {
-            let exception
+              await test.test(title ?? 'Sample ' + n, async (test) => {
+                let exception
 
-            try {
-              await remote.invoke(operation, request)
-            } catch (e) {
-              exception = e
+                try {
+                  await remote.invoke(operation, request)
+                } catch (e) {
+                  exception = e
+                }
+
+                test.equal(exception, undefined, exception?.message, EXTRA)
+                test.end()
+              })
             }
 
-            test.equal(exception, undefined, exception?.message, EXTRA)
             test.end()
           })
         }
-      }
+
+        test.end()
+      })
     }
 
     test.end()

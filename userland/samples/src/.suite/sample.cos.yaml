@@ -8,3 +8,8 @@ local: &calls
 remote: *calls
 current+: object
 next: object
+extensions:
+  ~:
+    - arguments: [~]
+      result: ~
+      permanent: boolean

@@ -1,6 +1,6 @@
 'use strict'
 
-async function transition (input, _, context) {
+async function observation (input, none, context) {
   let value = input.value
 
   for (let i = 0; i < input.times; i++) {
@@ -12,4 +12,4 @@ async function transition (input, _, context) {
   return value
 }
 
-exports.transition = transition
+exports.observation = observation

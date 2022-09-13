@@ -12,35 +12,38 @@ class Context extends Connector {
   /** @type {toa.core.Context} */
   #context
 
-  constructor (context) {
+  /**
+   * @param {toa.core.Context} context
+   * @param {toa.core.extensions.Annex[]} annexes
+   */
+  constructor (context, annexes) {
     super()
 
+    this.annexes = annexes
     this.#context = context
-
-    this.annexes = context.annexes
     this.depends(context)
   }
 
   async apply (endpoint, request) {
     const sample = /** @type {toa.sampling.Sample} */ context.get()
-    const calls = sample?.context?.local?.[endpoint]
+    const requests = sample?.context?.local?.[endpoint]
 
-    if (calls === undefined) return this.#context.apply(endpoint, request)
-    else return this.#replay('apply', calls, [endpoint], request)
+    if (requests === undefined) return this.#context.apply(endpoint, request)
+    else return this.#replay('apply', requests, [endpoint], request)
   }
 
   async call (namespace, name, endpoint, request) {
     const sample = /** @type {toa.sampling.Sample} */ context.get()
     const key = namespace + dot + name + dot + endpoint
-    const calls = sample?.context?.remote?.[key]
+    const requests = sample?.context?.remote?.[key]
 
-    if (calls === undefined) return this.#context.call(namespace, name, endpoint, request)
-    else return this.#replay('call', calls, [namespace, name, endpoint], request)
+    if (requests === undefined) return this.#context.call(namespace, name, endpoint, request)
+    else return this.#replay('call', requests, [namespace, name, endpoint], request)
   }
 
   /**
    * @param {'apply' | 'call'} method
-   * @param {toa.sampling.sample.Call[]} samples
+   * @param {toa.sampling.sample.Request[]} samples
    * @param {string[]} segments
    * @param {toa.core.Request} request
    * @returns {Promise<toa.core.Reply>}

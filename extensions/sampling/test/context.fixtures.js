@@ -2,8 +2,13 @@
 
 const { generate } = require('randomstring')
 
+const annex = () => ({
+  name: generate(),
+  invoke: jest.fn(async () => generate())
+})
+
 const context = /** @type {jest.MockedObject<Partial<toa.core.Context>>} */ {
-  annexes: [generate(), generate()],
+  annexes: [annex(), annex()],
   apply: jest.fn(async () => generate()),
   call: jest.fn(async () => generate()),
   link: jest.fn()

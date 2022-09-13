@@ -19,10 +19,13 @@ context, invokes operation and validates its reply if `output` is declared.
 
 ### Context Decorator
 
-Context decorator validates context interactions[^1] inputs and substitutes outputs using sampling
-context. If no output is provided, then an actual call is performed.
+Context decorator validates inputs and substitutes outputs of context calls (local and remote) using
+sampling context. If no output is provided, then an actual call is performed.
 
-[^1]: local, remote or annexes calls
+### Context Extension Decorator
+
+Context extension (annex) decorator validates annex invocation arguments and substitutes its
+returned value.
 
 ### State Decorator
 

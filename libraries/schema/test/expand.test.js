@@ -31,3 +31,24 @@ it('should not expand $ref', async () => {
 
   expect(output).toStrictEqual(schema)
 })
+
+it('should expand pattern property oom with empty schema', async () => {
+  const schema = { '~+': null }
+  const output = expand(schema)
+
+  expect(output).toStrictEqual({
+    type: 'object',
+    patternProperties: {
+      '^.*$': {
+        oneOf: [
+          {},
+          {
+            type: 'array',
+            items: {}
+          }
+        ]
+      }
+    },
+    additionalProperties: false
+  })
+})

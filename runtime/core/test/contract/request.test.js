@@ -41,10 +41,14 @@ describe('schema', () => {
     expect(Request.schema({})).toBeDefined()
   })
 
-  it('should add required input', () => {
+  it('should add required input if defined', () => {
     const input = { type: 'number' }
 
     expect(Request.schema({ input }).properties.input).toStrictEqual(input)
+  })
+
+  it('should set input as null if undefined', async () => {
+    expect(Request.schema({}).properties.input).toStrictEqual({ type: 'null' })
   })
 
   it('should contain query if declaration.query is not defined', () => {

@@ -49,7 +49,7 @@ class Context extends Connector {
       map[annex.name] = annex.invoke.bind(annex)
 
       // well-known annexes
-      if (annex.name === 'configuration') this.configuration = annex.invoke()
+      if (annex.name === 'configuration') this.#configuration(annex)
       if (annex.name === 'origins') this.origins = this.#origins(annex)
     }
 
@@ -70,6 +70,15 @@ class Context extends Connector {
       const options = args[1]
 
       return await annex.invoke(name, path, request, options)
+    })
+  }
+
+  /**
+   * @param {toa.core.extensions.Annex} annex
+   */
+  #configuration (annex) {
+    Object.defineProperty(this, 'configuration', {
+      get: () => annex.invoke()
     })
   }
 }

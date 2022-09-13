@@ -5,15 +5,11 @@ entity: null
 
 operations:
   add:
-    scope: object
-    concurrency: none
     input:
       a: number
       b: number
     output: number
   increment:
-    scope: object
-    concurrency: none
     input:
       value: number
       times: 1

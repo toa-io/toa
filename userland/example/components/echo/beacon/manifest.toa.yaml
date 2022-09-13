@@ -1,0 +1,9 @@
+name: beacon
+namespace: echo
+
+operations:
+  signal:
+    output: string
+
+configuration:
+  signal: quack

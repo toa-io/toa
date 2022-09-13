@@ -24,5 +24,6 @@ it('should invoke', async () => {
 
   const reply = await component.invoke('add', { input: { a, b } })
 
+  expect(reply.exception).toBeUndefined()
   expect(reply.output).toStrictEqual(a + b)
 })

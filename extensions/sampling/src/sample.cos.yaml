@@ -12,3 +12,8 @@ context:
 storage:
   current+: object
   next: object
+extensions:
+  ~:
+    - arguments: [~]
+      result: ~
+      permanent: boolean

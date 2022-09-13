@@ -18,7 +18,10 @@ const declaration = {}
 const schemas = {
   request: {
     type: 'object',
-    properties: { query: load.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml')) },
+    properties: {
+      input: { type: 'null' },
+      query: load.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml'))
+    },
     additionalProperties: true
   }
 }

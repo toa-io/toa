@@ -22,11 +22,19 @@ let expected
 beforeEach(() => {
   declaration = clone(fixtures.declaration)
   expected = clone(fixtures.expected)
-  sample = translate(fixtures.declaration)
+  sample = translate(declaration)
 })
 
 it('should translate input', () => {
   expect(sample).toStrictEqual(expected)
+})
+
+it('should create empty request', async () => {
+  delete declaration.input
+
+  sample = translate(declaration)
+
+  expect(sample.request).toStrictEqual({})
 })
 
 describe('validation', () => {
@@ -34,5 +42,33 @@ describe('validation', () => {
     declaration.foo = generate()
 
     expect(() => translate(declaration)).toThrow('additional property \'foo\'')
+  })
+})
+
+describe('specials', () => {
+  it('should transform configuration', async () => {
+    const configuration = { foo: generate() }
+    const declaration = { configuration }
+    const sample = translate(declaration)
+
+    expect(sample.extensions.configuration).toStrictEqual([{
+      result: configuration,
+      permanent: true
+    }])
+  })
+
+  it('should throw if configuration provided twice', async () => {
+    const configuration = { foo: generate() }
+
+    const declaration = {
+      configuration,
+      extensions: {
+        configuration: [{
+          result: configuration
+        }]
+      }
+    }
+
+    expect(() => translate(declaration)).toThrow('ambiguous')
   })
 })

@@ -28,6 +28,7 @@ const object = (schema, expand) => {
 
   schema.type = 'object'
   schema.additionalProperties = false
+
   schema.properties = remap(schema.properties, (value) => expand(value))
 
   oom(schema.properties)

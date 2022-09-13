@@ -16,14 +16,27 @@ declare namespace toa.samples {
     }
   }
 
+  type Extension = [{
+    arguments?: any[]
+    result?: any
+    permanent?: boolean
+  }]
+
+  type Extensions = {
+    [key: string]: Extension
+  }
+
   type Declaration = {
     title?: string
-    input: any
-    output: any
+    input?: any
+    output?: any
     local?: declaration.context.Calls
     remote?: declaration.context.Calls
     current?: Object | Object[]
     next?: Object
+    extensions?: Extensions
+
+    [key: string]: any
   }
 
   type Request = {
@@ -64,6 +77,7 @@ declare namespace toa.samples {
     reply: Reply
     context?: Context
     storage?: Storage
+    extensions?: Extensions
   }
 
   type Set = {

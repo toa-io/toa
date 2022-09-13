@@ -13,3 +13,8 @@ operations:
     input:
       material*: .
       volume: .
+  extend:
+    concurrency: none
+
+configuration:
+  step: 0.5

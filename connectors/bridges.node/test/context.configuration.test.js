@@ -19,4 +19,5 @@ it('should expose annex', async () => {
 
 it('should expose values', () => {
   expect(context.configuration).toStrictEqual(fixtures.configuration)
+  expect(context.configuration.foo).toStrictEqual(fixtures.configuration.foo)
 })

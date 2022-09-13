@@ -67,11 +67,30 @@ storage.sample = {
   next: storage.declaration.next
 }
 
+const extension = () => ([{ permanent: flip() }])
+
+/** @type {toa.samples.Extensions} */
+const extensions = { [generate()]: extension() }
+
 /** @type {toa.samples.Declaration} */
-const declaration = { title, input, output, ...context.declaration, ...storage.declaration }
+const declaration = {
+  title,
+  input,
+  output,
+  ...context.declaration,
+  ...storage.declaration,
+  extensions
+}
 
 /** @type {toa.samples.Sample} */
-const expected = { title, request, reply, context: context.sample, storage: storage.sample }
+const expected = {
+  title,
+  request,
+  reply,
+  context: context.sample,
+  storage: storage.sample,
+  extensions
+}
 
 exports.declaration = declaration
 exports.expected = expected

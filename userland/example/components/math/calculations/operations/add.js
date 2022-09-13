@@ -1,7 +1,7 @@
 'use strict'
 
-async function transition (input) {
+async function observation (input) {
   return input.a + input.b
 }
 
-exports.transition = transition
+exports.observation = observation

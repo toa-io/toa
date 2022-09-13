@@ -16,10 +16,12 @@ class Request extends Conditions {
     const schema = { type: 'object', properties: {}, additionalProperties: true }
     const required = []
 
-    if (definition.input) {
+    if (definition.input !== undefined) {
       definition.input.additionalProperties = false
       schema.properties.input = definition.input
       required.push('input')
+    } else {
+      schema.properties.input = { type: 'null' }
     }
 
     if (definition.query === true) required.push('query')
