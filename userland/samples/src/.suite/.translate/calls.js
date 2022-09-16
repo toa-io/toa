@@ -1,5 +1,7 @@
 'use strict'
 
+const { defined } = require('@toa.io/libraries/generic')
+
 /**
  * @param {toa.samples.declaration.context.Calls} calls
  * @returns {toa.samples.context.Calls}
@@ -29,11 +31,14 @@ const calls = (calls) => {
  * @returns {toa.samples.Call}
  */
 const call = (call) => {
-  const { input, output } = call
-  const request = input === undefined ? undefined : { input }
-  const reply = output === undefined ? undefined : { output }
-  const sample = {}
+  let request
+  let reply
 
+  const sample = {}
+  const { input, query, output } = call
+
+  if (input !== undefined || query !== undefined) request = defined({ input, query })
+  if (output !== undefined) reply = { output }
   if (request !== undefined) sample.request = request
   if (reply !== undefined) sample.reply = reply
 

@@ -4,6 +4,11 @@ output: ~
 local: &calls
   ~+:
     input: ~
+    query:
+      id: string
+      criteria: string
+      omit: number
+      limit: number
     output: ~
 remote: *calls
 current+: object

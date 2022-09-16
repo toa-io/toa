@@ -13,8 +13,9 @@ operations:
     input:
       material*: .
       volume: .
-  extend:
-    concurrency: none
+  same:
+    input: .material
+    output: array
 
 configuration:
   step: 0.5

@@ -1,9 +1,0 @@
-title: Should extend
-current:
-  id: test-id
-  volume: 0.5
-local:
-  transit:
-    input:
-      volume: 1.0
-    output: ~

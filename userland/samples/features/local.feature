@@ -109,3 +109,31 @@ Feature: Local call samples
       """
     When I replay it
     Then it fails
+
+  Scenario: Sample with local call query passes
+    Given I have a sample of `same` for `tea.pots`:
+      """yaml
+      title: Return pots of steel
+      input: steel
+      local:
+        enumerate:
+          query:
+            criteria: 'material==steel'
+            limit: 10
+      """
+    When I replay it
+    Then it passes
+
+  Scenario: Sample with local call query fails on mismatch
+    Given I have a sample of `same` for `tea.pots`:
+      """yaml
+      title: Return pots of steel
+      input: steel
+      local:
+        enumerate:
+          query:
+            criteria: 'material==glass'
+            limit: 10
+      """
+    When I replay it
+    Then it fails
