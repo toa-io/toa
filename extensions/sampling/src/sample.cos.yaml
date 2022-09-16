@@ -6,7 +6,11 @@ context:
     ~:
       - request:
           input: ~
-          query: string
+          query:
+            id: string
+            criteria: string
+            omit: number
+            limit: number
         reply: *reply
   remote: *calls
 storage:
