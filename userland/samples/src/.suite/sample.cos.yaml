@@ -1,3 +1,4 @@
+autonomous: boolean
 title: string
 input: ~
 output: ~

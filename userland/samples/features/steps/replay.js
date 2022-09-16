@@ -17,6 +17,7 @@ When('I replay it',
     const samples = this.samples.map(translate)
 
     const suite = {
+      autonomous: true,
       [this.component]: {
         [this.operation]: samples
       }

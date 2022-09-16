@@ -14,6 +14,7 @@ declare namespace toa.samples {
       }
 
     }
+
   }
 
   type Extension = [{
@@ -72,6 +73,7 @@ declare namespace toa.samples {
   }
 
   type Sample = {
+    autonomous?: boolean
     title?: string
     request: Request
     reply: Reply
@@ -84,9 +86,13 @@ declare namespace toa.samples {
     [operation: string]: Sample[]
   }
 
-  type Suite = {
+  type Sets = {
     [component: string]: Set
   }
+
+  type Suite = {
+    autonomous: boolean
+  } & Sets
 
 }
 

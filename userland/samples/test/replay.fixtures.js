@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 const { random } = require('@toa.io/libraries/generic')
 
 /** @type {toa.samples.Suite} */
-const suite = {}
+const suite = { autonomous: true }
 
 const samples = () => {
   /** @type {toa.samples.Sample[]} */

@@ -10,14 +10,26 @@ it('should be', () => {
   expect(load).toBeDefined()
 })
 
+const root = resolve(__dirname, 'context/components')
+const path = resolve(root, 'ok')
+const component = 'dummies.dummy'
+
+/** @type {toa.samples.Suite} */
+let suite
+
+it('should define context-level suite as non-autonomous', async () => {
+  suite = await load(path)
+
+  expect(suite.autonomous).toStrictEqual(false)
+})
+
+it('should define component-level suite as autonomous', async () => {
+  suite = await load(path, component)
+
+  expect(suite.autonomous).toStrictEqual(true)
+})
+
 describe('component samples', () => {
-  const root = resolve(__dirname, 'context/components')
-  const path = resolve(root, 'ok')
-  const component = 'dummies.dummy'
-
-  /** @type {toa.samples.Suite} */
-  let suite
-
   beforeAll(async () => {
     suite = await load(path, component)
   })
@@ -28,8 +40,9 @@ describe('component samples', () => {
 
   it('should load component samples', async () => {
     const expected = await actual()
+    const { autonomous, ...operations } = suite
 
-    expect(Object.keys(suite)).toStrictEqual([component])
+    expect(Object.keys(operations)).toStrictEqual([component])
 
     const set = suite[component]
 

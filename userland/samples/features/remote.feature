@@ -20,3 +20,20 @@ Feature: Remote call samples
       """
     When I replay it
     Then it passes
+
+  Scenario: Component-level sample with no remote output declaration fails
+    Given I have a sample of `add` for `math.proxy`:
+      """yaml
+      title: Should add numbers (actually not)
+      input:
+        a: 1
+        b: 2
+      output: 3
+      remote:
+        math.calculations.add:
+          input:
+            a: 1
+            b: 2
+      """
+    When I replay it
+    Then it fails

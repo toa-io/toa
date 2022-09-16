@@ -27,7 +27,8 @@ beforeEach(async () => {
 })
 
 it('should connect remotes', () => {
-  const components = Object.keys(fixtures.suite)
+  const { autonomous, ...sets } = suite
+  const components = Object.keys(sets)
 
   expect(components.length).toBeGreaterThan(0)
   expect(stage.remote).toHaveBeenCalledTimes(components.length)
@@ -42,14 +43,17 @@ it('should connect remotes', () => {
 })
 
 it('should replay samples', async () => {
-  for (const [component, set] of Object.entries(fixtures.suite)) {
+  const { autonomous, ...sets } = fixtures.suite
+
+  for (const [component, set] of Object.entries(sets)) {
     const remote = await find(component)
 
     for (const [operation, samples] of Object.entries(set)) {
       for (const sample of samples) {
         const { request, ...rest } = sample
 
-        request.sample = rest
+        request.sample = clone(rest)
+        request.sample.autonomous = autonomous
 
         expect(remote.invoke).toHaveBeenCalledWith(operation, request)
       }

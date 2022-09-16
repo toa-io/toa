@@ -7,9 +7,11 @@ const yaml = require('@toa.io/libraries/yaml')
 const tools = require('./.suite')
 
 /** @type {toa.samples.replay.Suite} */
-const load = async (path, id) => {
+const load = async (path, id = undefined) => {
+  const autonomous = id !== undefined
+
   /** @type {toa.samples.Suite} */
-  const suite = {}
+  const suite = { autonomous }
 
   const pattern = join(path, 'samples', PATTERN)
   const files = await glob(pattern)
@@ -20,7 +22,7 @@ const load = async (path, id) => {
     const declarations = await yaml.load.all(file)
     const samples = declarations.map(tools.translate)
 
-    if (component !== undefined && component !== id) {
+    if (id !== undefined && component !== undefined && component !== id) {
       throw new Error(`Component id mismatch: '${id}' expected, '${component}' given`)
     }
 

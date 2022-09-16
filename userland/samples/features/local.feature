@@ -120,6 +120,7 @@ Feature: Local call samples
           query:
             criteria: 'material==steel'
             limit: 10
+          output: []
       """
     When I replay it
     Then it passes

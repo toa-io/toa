@@ -5,10 +5,11 @@ const stage = require('@toa.io/userland/stage')
 
 /** @type {toa.samples.replay.Replay} */
 const replay = async (suite) => {
-  const remotes = await connect(suite)
+  const { autonomous, ...components } = suite
+  const remotes = await connect(components)
 
   const results = await tap.test('Replay suite', async (test) => {
-    for (const [component, set] of Object.entries(suite)) {
+    for (const [component, set] of Object.entries(components)) {
       await test.test(component, async (test) => {
         const remote = remotes[component]
 
@@ -22,6 +23,7 @@ const replay = async (suite) => {
               const { title, request, ...rest } = sample
 
               request.sample = rest
+              request.sample.autonomous = autonomous
 
               await test.test(title ?? 'Sample ' + n, async (test) => {
                 let exception
@@ -52,17 +54,15 @@ const replay = async (suite) => {
 }
 
 /**
- * @param {toa.samples.Suite} suite
+ * @param {toa.samples.Sets} components
  * @return {Promise<void>}
  */
-const connect = async (suite) => {
+const connect = async (components) => {
   const remotes = {}
-  const promises = Object.keys(suite).map((id) => stage.remote(id))
+  const promises = Object.keys(components).map((id) => stage.remote(id))
   const list = await Promise.all(promises)
 
-  for (const remote of list) {
-    remotes[remote.locator.id] = remote
-  }
+  for (const remote of list) remotes[remote.locator.id] = remote
 
   return remotes
 }

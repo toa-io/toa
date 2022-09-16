@@ -28,13 +28,14 @@ follow the convention: `namespace.name.operation.yaml`, that is, be an endpoint 
 operation samples to be applied to. For component-level sample files `namespace` and `name` must
 match corresponding component, therefore are optional.
 
-Component-level samples must be *complete*, namely, contain declaration of all context interaction
-outputs that an operation is expected to preform. Replaying these samples will boot only
-corresponding component. See [examples](../example/components/math/calculations/samples).
+Component-level samples must be *autonomous*, namely, does not assume actual remote calls as
+replaying of component-level samples will boot only that component. Remote call attempt not declared
+within sample will cause an exception.
+See [examples](../example/components/math/calculations/samples).
 
-Context-level samples may be *incomplete*. Context interactions with non-declared outputs will be
-actually performed. Replaying these samples will boot the composition of all components of the
-context (so as required extensions). See [examples](../example/samples).
+As for context-level samples, remote calls with non-declared outputs will be actually performed.
+Replaying these samples will boot the composition of all components of the context (so as required
+extensions). See [examples](../example/samples).
 
 ## Replay
 
