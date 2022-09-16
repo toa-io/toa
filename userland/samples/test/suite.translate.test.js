@@ -46,7 +46,7 @@ describe('validation', () => {
 })
 
 describe('specials', () => {
-  it('should transform configuration', async () => {
+  it('should transform configuration object to permanent sample', async () => {
     const configuration = { foo: generate() }
     const declaration = { configuration }
     const sample = translate(declaration)
