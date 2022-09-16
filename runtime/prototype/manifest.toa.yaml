@@ -21,3 +21,5 @@ operations:
     output: object
   assign:
     input: object
+  enumerate:
+    output: array
