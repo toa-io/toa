@@ -11,8 +11,8 @@ class SamplingException extends Exception {
 }
 
 class SampleException extends SamplingException {
-  constructor (error) {
-    super(RANGE + 1, error.message)
+  constructor (message) {
+    super(RANGE + 1, message)
   }
 }
 

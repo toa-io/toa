@@ -6,7 +6,7 @@ const generic = require('@toa.io/libraries/generic')
 
 const { Context } = require('../src/context')
 const { Annex } = require('../src/annex')
-const { ReplayException } = require('../src/exceptions')
+const { ReplayException, SampleException } = require('../src/exceptions')
 
 const fixtures = require('./context.fixtures')
 const { Factory } = require('../')
@@ -117,6 +117,24 @@ it('should depends on original context', () => {
         await check(reply)
       })
     })
+
+    if (method === 'call') {
+      it('should throw on missing remote call within autonomous sample', async () => {
+        const sample = { autonomous: true }
+        const storage = generic.context('sampling')
+
+        await expect(storage.apply(sample, () => context[method](...segments, request)))
+          .rejects.toBeInstanceOf(SampleException)
+      })
+    } else {
+      it('should not throw on missing local call within autonomous sample', async () => {
+        const sample = { autonomous: true }
+        const storage = generic.context('sampling')
+
+        await expect(storage.apply(sample, () => context[method](...segments, request)))
+          .resolves.not.toThrow()
+      })
+    }
 
     const check = async (reply, args) => {
       expect(fixtures.context[method]).toHaveBeenCalled()

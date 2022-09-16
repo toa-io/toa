@@ -35,6 +35,7 @@ declare namespace toa.sampling {
   }
 
   type Sample = {
+    autonomous?: boolean
     input?: any
     reply?: _core.Reply
     context?: sample.Context

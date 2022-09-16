@@ -3,7 +3,7 @@
 const { Connector } = require('@toa.io/core')
 const { match } = require('@toa.io/libraries/generic')
 const { context } = require('./sample')
-const { ReplayException } = require('./exceptions')
+const { ReplayException, SampleException } = require('./exceptions')
 
 /**
  * @implements {toa.core.Context}
@@ -27,37 +27,40 @@ class Context extends Connector {
   async apply (endpoint, request) {
     const sample = /** @type {toa.sampling.Sample} */ context.get()
     const requests = sample?.context?.local?.[endpoint]
+    const call = requests?.shift()
 
-    if (requests === undefined) return this.#context.apply(endpoint, request)
-    else return this.#replay('apply', requests, [endpoint], request)
+    return this.#replay('apply', call, [endpoint], request)
   }
 
   async call (namespace, name, endpoint, request) {
     const sample = /** @type {toa.sampling.Sample} */ context.get()
     const key = namespace + dot + name + dot + endpoint
     const requests = sample?.context?.remote?.[key]
+    const call = requests?.shift()
+    const segments = [namespace, name, endpoint]
 
-    if (requests === undefined) return this.#context.call(namespace, name, endpoint, request)
-    else return this.#replay('call', requests, [namespace, name, endpoint], request)
+    if (call?.reply === undefined && sample?.autonomous) {
+      throw new SampleException(`Autonomous sample is missing '${segments.join(dot)}' reply`)
+    }
+
+    return this.#replay('call', call, segments, request)
   }
 
   /**
    * @param {'apply' | 'call'} method
-   * @param {toa.sampling.sample.Request[]} samples
+   * @param {toa.sampling.sample.Request | undefined} sample
    * @param {string[]} segments
    * @param {toa.core.Request} request
    * @returns {Promise<toa.core.Reply>}
    */
-  async #replay (method, samples, segments, request) {
-    const sample = samples.shift()
-
-    if (sample.request !== undefined) {
+  async #replay (method, sample, segments, request) {
+    if (sample?.request !== undefined) {
       const matches = match(request, sample.request)
 
       if (matches === false) throw new ReplayException(`Call '${segments.join(dot)}' request mismatch`)
     }
 
-    if (sample.reply !== undefined) return sample.reply
+    if (sample?.reply !== undefined) return sample.reply
     else return this.#context[method](...segments, request)
   }
 }

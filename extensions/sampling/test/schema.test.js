@@ -1,5 +1,7 @@
 'use strict'
 
+const { flip } = require('@toa.io/libraries/generic')
+
 const { SampleException } = require('../src/exceptions')
 const { validate } = require('../src/schema')
 const { generate } = require('randomstring')
@@ -12,7 +14,7 @@ it('should be', () => {
 let sample
 
 beforeEach(() => {
-  sample = {}
+  sample = { autonomous: flip() }
 })
 
 it('should not throw on undefined', () => {

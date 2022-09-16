@@ -15,7 +15,7 @@ const validate = (sample) => {
 
   const error = schema.fit(sample)
 
-  if (error !== null) throw new SampleException(error)
+  if (error !== null) throw new SampleException(error.message)
 }
 
 exports.validate = validate

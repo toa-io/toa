@@ -1,3 +1,4 @@
+autonomous: boolean
 reply: &reply
   output: ~
   error: ~
