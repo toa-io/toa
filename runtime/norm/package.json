@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/norm",
-  "version": "0.2.0-dev.104",
+  "version": "0.2.0-dev.106",
   "description": "Toa declarations normalization and validation",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",

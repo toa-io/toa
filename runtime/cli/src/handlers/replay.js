@@ -1,9 +1,10 @@
 'use strict'
 
-const { component } = require('@toa.io/userland/samples')
 const find = require('../util/find')
 
 async function replay (argv) {
+  // prevent loading userland which is intended for local use only
+  const { component } = require('@toa.io/userland/samples')
   const path = find.component(argv.path)
 
   const ok = await component(path)
