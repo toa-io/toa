@@ -13,6 +13,7 @@ export * as letters from './letters'
 
 export { concat } from './concat'
 export { defined } from './defined'
+export { difference } from './difference'
 export { empty } from './empty'
 export { encode, decode } from './encode'
 export { match } from './match'
