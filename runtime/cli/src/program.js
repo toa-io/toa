@@ -12,7 +12,7 @@ yargs(process.argv.slice(2))
     'boolean-negation': false
   })
   .middleware((argv) => {
-    if (argv.log === undefined) argv.log = 'info'
+    if (argv.log === undefined) argv.log = process.env.TOA_DEBUG === '1' ? 'debug' : 'info'
 
     console.level(argv.log)
   })
