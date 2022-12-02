@@ -1,6 +1,6 @@
 'use strict'
 
-const { match } = require('@toa.io/libraries/generic')
+const { difference, match } = require('@toa.io/libraries/generic')
 const { context } = require('./sample')
 const { ReplayException } = require('./exceptions')
 
@@ -41,7 +41,13 @@ class Annex {
     if (sample.arguments !== undefined) {
       const matches = match(args, sample.arguments)
 
-      if (!matches) throw new ReplayException(`Context extension '${this.name}' call arguments mismatch`)
+      if (!matches) {
+        const diff = difference(sample.arguments, args)
+
+        console.error(diff)
+
+        throw new ReplayException(`Context extension '${this.name}' call arguments mismatch`)
+      }
     }
 
     if (sample.result !== undefined) return sample.result
