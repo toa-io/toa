@@ -20,3 +20,7 @@ it('should implement context', () => {
 it('should implement storage', () => {
   expect(factory.storage).toBeDefined()
 })
+
+it('should implement emitter', async () => {
+  expect(factory.emitter).toBeDefined()
+})

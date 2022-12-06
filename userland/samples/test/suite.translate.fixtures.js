@@ -67,6 +67,11 @@ storage.sample = {
   next: storage.declaration.next
 }
 
+const events = {}
+const label = generate()
+
+events[label] = { [generate()]: generate() }
+
 const extension = () => ([{ permanent: flip() }])
 
 /** @type {toa.samples.Extensions} */
@@ -79,6 +84,7 @@ const declaration = {
   output,
   ...context.declaration,
   ...storage.declaration,
+  events,
   extensions
 }
 
@@ -89,6 +95,7 @@ const expected = {
   reply,
   context: context.sample,
   storage: storage.sample,
+  events,
   extensions
 }
 

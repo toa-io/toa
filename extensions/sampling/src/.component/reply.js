@@ -13,7 +13,7 @@ const verify = (sample, reply, endpoint) => {
 
   const matches = match(reply, sample.reply)
 
-  if (!matches) throw new ReplayException(`Operation '${endpoint}' reply mismatch`)
+  if (!matches) throw new ReplayException(`operation '${endpoint}' reply mismatch`)
 }
 
 exports.verify = verify

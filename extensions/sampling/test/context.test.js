@@ -2,11 +2,12 @@
 
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
-const generic = require('@toa.io/libraries/generic')
+const { random } = require('@toa.io/libraries/generic')
 
 const { Context } = require('../src/context')
 const { Annex } = require('../src/annex')
 const { ReplayException, SampleException } = require('../src/exceptions')
+const { context: storage } = require('../src/sample')
 
 const fixtures = require('./context.fixtures')
 const { Factory } = require('../')
@@ -63,7 +64,6 @@ it('should depends on original context', () => {
 
       const input = generate()
       const request = { input }
-      const storage = generic.context('sampling')
 
       await storage.apply(sample, async () => {
         await expect(context[method](...segments, request)).rejects.toBeInstanceOf(ReplayException)
@@ -76,7 +76,6 @@ it('should depends on original context', () => {
       delete sample.context[group][endpoint][0].request
 
       const reply = sample.context[group][endpoint][0].reply
-      const storage = generic.context('sampling')
 
       await storage.apply(sample, async () => {
         const output = await context[method](...segments, request)
@@ -91,7 +90,6 @@ it('should depends on original context', () => {
       const input = sample.context[group][endpoint][0].request.input
       const output = sample.context[group][endpoint][0].reply.output
       const request = { input }
-      const storage = generic.context('sampling')
 
       await storage.apply(sample, async () => {
         const reply = await context[method](...segments, request)
@@ -109,8 +107,6 @@ it('should depends on original context', () => {
 
       delete sample.context[group][endpoint][0].reply
 
-      const storage = generic.context('sampling')
-
       await storage.apply(sample, async () => {
         const reply = await context[method](...segments, request)
 
@@ -121,7 +117,6 @@ it('should depends on original context', () => {
     if (method === 'call') {
       it('should throw on missing remote call within autonomous sample', async () => {
         const sample = { autonomous: true }
-        const storage = generic.context('sampling')
 
         await expect(storage.apply(sample, () => context[method](...segments, request)))
           .rejects.toBeInstanceOf(SampleException)
@@ -129,14 +124,13 @@ it('should depends on original context', () => {
     } else {
       it('should not throw on missing local call within autonomous sample', async () => {
         const sample = { autonomous: true }
-        const storage = generic.context('sampling')
 
         await expect(storage.apply(sample, () => context[method](...segments, request)))
           .resolves.not.toThrow()
       })
     }
 
-    const check = async (reply, args) => {
+    const check = async (reply) => {
       expect(fixtures.context[method]).toHaveBeenCalled()
       expect(fixtures.context[method]).toHaveBeenCalledWith(...segments, request)
       expect(reply).toStrictEqual(await fixtures.context[method].mock.results[0].value)
@@ -148,7 +142,7 @@ describe('annexes', () => {
   it('should expose annexes', () => {
     expect(context.annexes.length).toStrictEqual(fixtures.context.annexes.length)
 
-    context.annexes.forEach((annex, i) => {
+    context.annexes.forEach((annex) => {
       expect(annex).toBeInstanceOf(Annex)
     })
   })
@@ -160,7 +154,7 @@ describe('annexes', () => {
   let fixture
 
   beforeEach(() => {
-    const i = generic.random(fixtures.context.annexes.length)
+    const i = random(fixtures.context.annexes.length)
 
     annex = context.annexes[i]
     fixture = /** @type {jest.MockedObject<toa.core.extensions.Annex>} */ fixtures.context.annexes[i]
@@ -191,8 +185,6 @@ describe('annexes', () => {
       }
     }
 
-    const storage = generic.context('sampling')
-
     await storage.apply(sample, async () => {
       const nope = [generate()]
       expect(() => annex.invoke(...nope)).toThrow(ReplayException)
@@ -208,8 +200,6 @@ describe('annexes', () => {
         [annex.name]: [{ arguments: args }]
       }
     }
-
-    const storage = generic.context('sampling')
 
     const output = await storage.apply(sample, async () => {
       const yep = [...args, generate()]
@@ -229,7 +219,6 @@ describe('annexes', () => {
       }
     }
 
-    const storage = generic.context('sampling')
     const output = await storage.apply(sample, () => annex.invoke())
 
     expect(output).toStrictEqual(result)
@@ -241,8 +230,6 @@ describe('annexes', () => {
         [annex.name]: [{ result: generate() }]
       }
     }
-
-    const storage = generic.context('sampling')
 
     await storage.apply(sample, () => annex.invoke())
 
@@ -260,8 +247,6 @@ describe('annexes', () => {
         ]
       }
     }
-
-    const storage = generic.context('sampling')
 
     await storage.apply(sample, () => annex.invoke())
 

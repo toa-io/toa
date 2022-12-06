@@ -4,6 +4,7 @@ const { Annex } = require('./annex')
 const { Component } = require('./component')
 const { Context } = require('./context')
 const { Storage } = require('./storage')
+const { Emitter } = require('./emitter')
 
 /**
  * @implements {toa.core.extensions.Factory}
@@ -22,6 +23,10 @@ class Factory {
 
   storage (storage) {
     return new Storage(storage)
+  }
+
+  emitter (label, emitter) {
+    return new Emitter(label, emitter)
   }
 }
 

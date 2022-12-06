@@ -11,5 +11,6 @@ Feature: Event samples
         created:
           material: glass
           volume: 1.5
-          _version: 1
       """
+    When I replay it
+    Then it passes

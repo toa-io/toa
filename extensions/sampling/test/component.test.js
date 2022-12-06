@@ -2,12 +2,12 @@
 
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
-const { context } = require('@toa.io/libraries/generic')
 const { SampleException, ReplayException } = require('../src/exceptions')
 
 const fixtures = require('./component.fixtures')
 const { Factory } = require('../')
 const { Component } = require('../src/component')
+const { context } = require('../src/sample')
 
 const factory = new Factory()
 
@@ -92,8 +92,7 @@ describe('invocation', () => {
     let undo
 
     fixtures.component.invoke.mockImplementationOnce(async () => {
-      const storage = context('sampling')
-      const sample = storage.get()
+      const sample = context.get()
 
       expect(sample).toBeDefined()
 

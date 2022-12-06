@@ -14,7 +14,7 @@ class Emission extends Connector {
   }
 
   async emit (event) {
-    const emission = this.#events.map((emitter) => emitter.emit(event))
+    const emission = this.#events.map((e) => e.emit(event))
 
     await Promise.all(emission)
   }

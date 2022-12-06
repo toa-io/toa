@@ -1,13 +1,14 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { context } = require('@toa.io/libraries/generic')
 const { Connector } = require('@toa.io/core')
 const { SampleException, ReplayException } = require('../src/exceptions')
 
 const fixtures = require('./storage.fixtures')
 const { Factory } = require('../')
 const { Storage } = require('../src/storage')
+
+const { context } = require('../src/sample')
 
 /** @type {toa.core.extensions.Factory} */
 const factory = new Factory()
@@ -17,8 +18,6 @@ let storage
 
 /** @type {toa.sampling.Sample} */
 let sample
-
-const ctx = context('sampling')
 
 it('should be', () => {
   expect(Storage).toBeDefined()
@@ -36,7 +35,7 @@ it('should be storage', () => {
   expect(storage).toBeInstanceOf(Storage)
 })
 
-it('should depend on original storage', async () => {
+it('should depend on decorated storage', async () => {
   expect(storage).toBeInstanceOf(Connector)
   expect(fixtures.storage.link).toHaveBeenCalledWith(storage)
 })
@@ -55,7 +54,7 @@ describe('get', () => {
 
     sample.storage.current = { foo: generate() }
 
-    await ctx.apply(sample, async () => {
+    await context.apply(sample, async () => {
       const output = await storage.get({})
 
       expect(output).toStrictEqual({
@@ -70,7 +69,7 @@ describe('get', () => {
     expect.assertions(1)
     sample.storage.current = [{ foo: generate() }]
 
-    await ctx.apply(sample, async () => {
+    await context.apply(sample, async () => {
       await expect(storage.get({})).rejects.toBeInstanceOf(SampleException)
     })
   })
@@ -94,7 +93,7 @@ describe('find', () => {
 
     sample.storage.current = [{ foo: generate() }]
 
-    await ctx.apply(sample, async () => {
+    await context.apply(sample, async () => {
       const output = await storage.find({})
       const expected = []
 
@@ -111,7 +110,7 @@ describe('find', () => {
     expect.assertions(1)
     sample.storage.current = { foo: generate() }
 
-    await ctx.apply(sample, async () => {
+    await context.apply(sample, async () => {
       await expect(storage.find({})).rejects.toBeInstanceOf(SampleException)
     })
   })
@@ -137,7 +136,7 @@ describe('store', () => {
 
     const object = { id: generate(), _version: 0, bar: generate() }
 
-    await ctx.apply(sample, async () => {
+    await context.apply(sample, async () => {
       await expect(storage.store(object)).rejects.toBeInstanceOf(ReplayException)
     })
   })
@@ -149,7 +148,7 @@ describe('store', () => {
 
     const object = { id: generate(), _version: 0, ...sample.storage.next }
 
-    await ctx.apply(sample, async () => {
+    await context.apply(sample, async () => {
       await expect(storage.store(object)).resolves.not.toBeInstanceOf(ReplayException)
     })
   })

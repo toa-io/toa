@@ -19,7 +19,7 @@ const verify = (sample) => {
  */
 const exception = (sample) => {
   const keys = Object.keys(sample.events)
-  const message = `Event${keys.length > 1 ? 's have' : ' has'} not been published: ${keys.join()}`
+  const message = `event${keys.length > 1 ? 's have' : ' has'} not been published: ${keys.join()}`
 
   return new ReplayException(message)
 }

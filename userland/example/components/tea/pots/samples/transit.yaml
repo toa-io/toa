@@ -16,7 +16,7 @@ next:
   material: steel
   volume: 1.5
 ---
-title: Should emit event
+title: Should emit `created` event
 input:
   material: glass
   volume: 1.5
@@ -24,4 +24,17 @@ events:
   created:
     material: glass
     volume: 1.5
-    _version: 1
+---
+title: Should emit `updated` event
+input:
+  material: steel
+current:
+  material: glass
+  volume: 1.5
+next:
+  material: steel
+  volume: 1.5
+events:
+  updated:
+    material: steel
+    volume: 1.5

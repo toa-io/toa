@@ -8,7 +8,7 @@ declare namespace toa.generic {
     }
   }
 
-  type Context = (id: string) => context.Storage
+  type Context = (id: symbol) => context.Storage
 }
 
 export type Context = toa.generic.Context
