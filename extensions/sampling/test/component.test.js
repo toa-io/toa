@@ -105,15 +105,6 @@ describe('invocation', () => {
     expect(undo).toStrictEqual(request.sample.context.local.undo)
   })
 
-  it('should re-throw exceptions', async () => {
-    const message = generate()
-
-    request.sample = { reply: { output: generate() } }
-    fixtures.component.invoke.mockImplementationOnce(async () => ({ exception: new Error(message) }))
-
-    await expect(component.invoke(endpoint, request)).rejects.toThrow(message)
-  })
-
   it('should add request.query if current state is provided', async () => {
     jest.clearAllMocks()
 
@@ -131,32 +122,36 @@ describe('invocation', () => {
 })
 
 describe('verification', () => {
-  it('should add exception on reply mismatch', async () => {
-    request.sample = { reply: { output: generate() } }
+  describe('reply', () => {
+    it('should throw exception on reply mismatch', async () => {
+      request.sample = { reply: { output: generate() } }
 
-    const reply = await component.invoke(endpoint, request)
+      await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(ReplayException)
+    })
 
-    expect(reply.exception).toBeInstanceOf(ReplayException)
+    it('should not throw exception if reply exactly matches', async () => {
+      request.sample = { reply: { output: generate() } }
+      fixtures.component.invoke.mockImplementationOnce(async () => request.sample.reply)
+
+      await expect(component.invoke(endpoint, request)).resolves.toBeDefined()
+    })
+
+    it('should not throw exception if reply matches', async () => {
+      request.sample = { reply: { output: generate() } }
+
+      const mocked = { ...request.sample.reply, extra: 1 }
+
+      fixtures.component.invoke.mockImplementationOnce(async () => mocked)
+
+      await expect(component.invoke(endpoint, request)).resolves.toBeDefined()
+    })
   })
 
-  it('should not add exception if reply exactly matches', async () => {
-    request.sample = { reply: { output: generate() } }
-    fixtures.component.invoke.mockImplementationOnce(async () => request.sample.reply)
+  describe('events', () => {
+    it('should throw exception if sample.events is not empty', async () => {
+      request.sample = { events: { created: {} } }
 
-    const reply = await component.invoke(endpoint, request)
-
-    expect(reply.exception).toBeUndefined()
-  })
-
-  it('should not add exception if reply matches', async () => {
-    request.sample = { reply: { output: generate() } }
-
-    const mocked = { ...request.sample.reply, extra: 1 }
-
-    fixtures.component.invoke.mockImplementationOnce(async () => mocked)
-
-    const reply = await component.invoke(endpoint, request)
-
-    expect(reply.exception).toBeUndefined()
+      await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(ReplayException)
+    })
   })
 })

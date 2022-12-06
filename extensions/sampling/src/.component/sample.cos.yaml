@@ -17,6 +17,8 @@ context:
 storage:
   current+: object
   next: object
+events:
+  ~: object
 extensions:
   ~:
     - arguments: [~]

@@ -3,7 +3,7 @@
 const { flip } = require('@toa.io/libraries/generic')
 
 const { SampleException } = require('../src/exceptions')
-const { validate } = require('../src/schema')
+const { validate } = require('../src/.component/validate')
 const { generate } = require('randomstring')
 
 it('should be', () => {
@@ -107,6 +107,20 @@ describe('storage', () => {
       sample.storage.next = 1
       expect(() => validate(sample)).toThrow('must be object')
     })
+  })
+})
+
+describe('events', () => {
+  it('should not throw on object', async () => {
+    sample.events = { [generate()]: {} }
+
+    expect(() => validate(sample)).not.toThrow()
+  })
+
+  it('should throw on invalid type', async () => {
+    sample.events = { [generate()]: 'not an object' }
+
+    expect(() => validate(sample)).toThrow('must be object')
   })
 })
 

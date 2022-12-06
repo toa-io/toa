@@ -29,6 +29,10 @@ declare namespace toa.sampling {
       permanent?: boolean
     }
 
+    type Events = {
+      [key: string]: Object
+    }
+
     type Extensions = {
       [key: string]: Call[]
     }
@@ -40,9 +44,9 @@ declare namespace toa.sampling {
     reply?: _core.Reply
     context?: sample.Context
     storage?: sample.Storage
+    events?: sample.Events
     extensions?: sample.Extensions
   }
-
 }
 
 export type Sample = toa.sampling.Sample

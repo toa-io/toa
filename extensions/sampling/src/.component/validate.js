@@ -2,7 +2,7 @@
 
 const { resolve } = require('node:path')
 const { load } = require('@toa.io/libraries/schema')
-const { SampleException } = require('./exceptions')
+const { SampleException } = require('../exceptions')
 
 const path = resolve(__dirname, 'sample.cos.yaml')
 const schema = load(path)
