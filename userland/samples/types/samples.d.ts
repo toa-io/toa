@@ -17,6 +17,10 @@ declare namespace toa.samples {
 
   }
 
+  type Events = {
+    [key: string]: Object
+  }
+
   type Extension = [{
     arguments?: any[]
     result?: any
@@ -35,6 +39,7 @@ declare namespace toa.samples {
     remote?: declaration.context.Calls
     current?: Object | Object[]
     next?: Object
+    events?: Events
     extensions?: Extensions
 
     [key: string]: any
@@ -53,6 +58,7 @@ declare namespace toa.samples {
     request: Request
     reply?: Reply
   }
+
 
   namespace context {
 
@@ -79,6 +85,7 @@ declare namespace toa.samples {
     reply: Reply
     context?: Context
     storage?: Storage
+    events?: Events
     extensions?: Extensions
   }
 

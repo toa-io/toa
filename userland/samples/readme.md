@@ -14,8 +14,8 @@ See [features](./features).
 ## Sample
 
 Sample is an object containing values of operation inputs (i.e.: request, context outputs and
-current state) to be substituted and outcomes (reply, context calls and next state) to be verified.
-See its [schema](./src/.suite/sample.cos.yaml).
+current state) to be substituted and outcomes (reply, context calls, next state and events emission)
+to be verified. See its [schema](./src/.suite/sample.cos.yaml).
 
 > Note that although input and output are declared as arbitrary values, they must conform to the
 > corresponding operation schemas.

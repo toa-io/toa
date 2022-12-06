@@ -15,7 +15,7 @@ const translate = (declaration) => {
   norm.prepare(declaration)
   schema.validate(declaration)
 
-  const { title, input, output, local, remote, current, next, extensions } = declaration
+  const { title, input, output, local, remote, current, next, events, extensions } = declaration
   const request = { input }
   const reply = { output }
   const storage = { current, next }
@@ -27,7 +27,7 @@ const translate = (declaration) => {
   if (remote !== undefined) context.remote = norm.calls(remote)
 
   /** @type {toa.samples.Sample} */
-  const sample = { title, request, reply, context, storage, extensions }
+  const sample = { title, request, reply, context, storage, events, extensions }
 
   norm.cleanup(sample)
 

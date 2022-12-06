@@ -11,4 +11,5 @@ const parse = (name) => {
 
   return [id, operation]
 }
+
 exports.parse = parse
