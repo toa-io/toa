@@ -3,20 +3,20 @@
 const { Connector } = require('./connector')
 
 class Event extends Connector {
-  #binding
+  #emitter
   #bridge
   #conditioned
   #subjective
 
-  constructor (definition, binding, bridge = undefined) {
+  constructor (definition, emitter, bridge = undefined) {
     super()
 
     this.#conditioned = definition.conditioned
     this.#subjective = definition.subjective
-    this.#binding = binding
+    this.#emitter = emitter
     this.#bridge = bridge
 
-    this.depends(binding)
+    this.depends(emitter)
 
     if (bridge !== undefined) this.depends(bridge)
   }
@@ -25,7 +25,7 @@ class Event extends Connector {
     if (this.#conditioned === false || await this.#bridge.condition(event) === true) {
       const payload = this.#subjective ? await this.#bridge.payload(event) : event.state
 
-      await this.#binding.emit(payload)
+      await this.#emitter.emit(payload)
     }
   }
 }

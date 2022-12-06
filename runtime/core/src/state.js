@@ -71,10 +71,10 @@ class State {
 
       ok = await this.#storage.store(object)
 
-      // TODO: do not wait because outbox will handle failures
       // TODO: handle slow emissions (too many concurrent emissions)
       // noinspection JSUnresolvedVariable
       if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
+        // TODO: do not wait because outbox will handle failures
         await this.#emitter.emit(event)
       }
     }
