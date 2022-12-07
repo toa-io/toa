@@ -48,6 +48,10 @@ format.
 <dt><code>toa replay</code></dt>
 <dd>
 <code>--path</code> path to component or context (default <code>.</code>)<br/>
+
+If path is a context directory (containing `context.toa.yaml` file), command will find samples for
+all components within the context and replay them sequentially.
+
 </dd>
 </dl>
 
