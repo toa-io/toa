@@ -1,0 +1,3 @@
+title: Should output 'bar'
+output:
+  foo: bar
