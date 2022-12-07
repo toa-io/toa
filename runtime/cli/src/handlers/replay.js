@@ -4,10 +4,10 @@ const find = require('../util/find')
 
 async function replay (argv) {
   // prevent loading userland which is intended for local use only
-  const { component } = require('@toa.io/userland/samples')
+  const { components } = require('@toa.io/userland/samples')
 
-  const path = find.component(argv.path)
-  const ok = await component(path)
+  const paths = find.component(argv.paths)
+  const ok = await components(paths)
   const label = ok ? GREEN + 'PASSED' : RED + 'FAILED'
   const message = label + RESET
 

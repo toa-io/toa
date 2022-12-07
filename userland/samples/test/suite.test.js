@@ -4,45 +4,38 @@ const { resolve } = require('node:path')
 const yaml = require('@toa.io/libraries/yaml')
 
 const { translate } = require('../src/.suite/translate')
-const { load } = require('../src/suite')
+const { components } = require('../src/suite')
 
 it('should be', () => {
-  expect(load).toBeDefined()
+  expect(components).toBeDefined()
 })
 
 const root = resolve(__dirname, 'context/components')
 const path = resolve(root, 'ok')
+const paths = [path]
 const component = 'dummies.dummy'
 
 /** @type {toa.samples.Suite} */
 let suite
 
-it('should define context-level suite as non-autonomous', async () => {
-  suite = await load(path)
-
-  expect(suite.autonomous).toStrictEqual(false)
-})
-
-it('should define component-level suite as autonomous', async () => {
-  suite = await load(path, component)
-
-  expect(suite.autonomous).toStrictEqual(true)
-})
-
-describe('component samples', () => {
+describe('components', () => {
   beforeAll(async () => {
-    suite = await load(path, component)
+    suite = await components(paths)
   })
 
   it('should be', () => {
     expect(suite).toBeDefined()
   })
 
+  it('should define suite as autonomous', async () => {
+    expect(suite.autonomous).toStrictEqual(true)
+  })
+
   it('should load component samples', async () => {
     const expected = await actual()
-    const { autonomous, ...operations } = suite
+    const { autonomous, ...components } = suite
 
-    expect(Object.keys(operations)).toStrictEqual([component])
+    expect(Object.keys(components)).toStrictEqual([component])
 
     const set = suite[component]
 
@@ -50,10 +43,6 @@ describe('component samples', () => {
 
     expect(set.do).toStrictEqual(expected.do)
     expect(set.undo).toStrictEqual(expected.undo)
-  })
-
-  it('should throw on component id mismatch', async () => {
-    await expect(() => load(path, 'not.correct')).rejects.toThrow('Component id mismatch')
   })
 
   const actual = async () => {

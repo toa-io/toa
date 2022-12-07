@@ -9,8 +9,11 @@ Feature: Replay samples
       """
       # Subtest: math.calculations
         # Subtest: Replay
-          # Subtest: Should add numbers
-          # Subtest: Should add negative numbers
+          # Subtest: multi
+            # Subtest: Should add numbers
+          # Subtest: sum
+            # Subtest: Should add numbers
+            # Subtest: Should add negative numbers
       """
 
   Scenario: Replay component samples using implicit path
@@ -19,7 +22,7 @@ Feature: Replay samples
     When I run `toa replay ./components/math.calculations`
     Then program should exit with code 0
 
-  Scenario Outline: Replay multiple component sample sets
+  Scenario Outline: Replay multiple component sample sets found with <type>
     Given I have components:
       | math.calculations |
       | node.syntaxes     |
@@ -32,6 +35,6 @@ Feature: Replay samples
       # Subtest: node.syntaxes
       """
     Examples:
-      | argument                                                  |
-      | ./components/math.calculations ./components/node.syntaxes |
-      | ./components/*                                            |
+      | argument                            | type    |
+      | ./math.calculations ./node.syntaxes | list    |
+      | ./*                                 | pattern |

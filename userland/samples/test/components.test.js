@@ -7,16 +7,17 @@ const mock = { stage }
 
 jest.mock('@toa.io/userland/stage', () => mock.stage)
 
-const { component } = require('../')
+const { components } = require('../')
 
 const path = resolve(__dirname, '../../example/components/math/calculations')
+const paths = [path]
 
 it('should be', () => {
-  expect(component).toBeDefined()
+  expect(components).toBeDefined()
 })
 
 beforeAll(async () => {
-  await component(path)
+  await components(paths)
 })
 
 it('should boot composition', () => {

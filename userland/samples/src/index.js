@@ -1,7 +1,7 @@
 'use strict'
 
-const { component } = require('./component')
+const { components } = require('./components')
 const { replay } = require('./replay')
 
-exports.component = component
+exports.components = components
 exports.replay = replay

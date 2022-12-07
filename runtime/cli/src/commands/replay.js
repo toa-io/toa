@@ -1,19 +1,19 @@
+// noinspection JSCheckFunctionSignatures
+
 'use strict'
 
 const { replay } = require('../handlers/replay')
 
 const builder = (yargs) => {
   yargs
-    .positional('path', {
-      alias: 'p',
-      group: 'Command options:',
+    .positional('paths', {
       type: 'string',
-      desc: 'Path to component or context',
+      desc: 'Paths to components or context',
       default: '.'
     })
 }
 
-exports.command = 'replay [path]'
+exports.command = 'replay [paths...]'
 exports.desc = 'Replay samples'
 exports.builder = builder
 exports.handler = replay

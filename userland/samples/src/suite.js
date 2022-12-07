@@ -1,40 +1,21 @@
 'use strict'
 
-const { join, basename } = require('node:path')
-const { file: { glob } } = require('@toa.io/libraries/filesystem')
 const { merge } = require('@toa.io/libraries/generic')
-const yaml = require('@toa.io/libraries/yaml')
-const tools = require('./.suite')
 
-/** @type {toa.samples.replay.Suite} */
-const load = async (path, id = undefined) => {
-  const autonomous = id !== undefined
+const { component } = require('./.suite')
 
+/** @type {toa.samples.replay.suite.Components} */
+const components = async (paths) => {
   /** @type {toa.samples.Suite} */
-  const suite = { autonomous }
+  const suite = { autonomous: true }
 
-  const pattern = join(path, 'samples', PATTERN)
-  const files = await glob(pattern)
+  for (const path of paths) {
+    const samples = await component(path)
 
-  for (const file of files) {
-    const name = basename(file, EXTENSION)
-    const [component, operation] = tools.parse(name)
-    const declarations = await yaml.load.all(file)
-    const samples = declarations.map(tools.translate)
-
-    if (id !== undefined && component !== undefined && component !== id) {
-      throw new Error(`Component id mismatch: '${id}' expected, '${component}' given`)
-    }
-
-    const slice = { [id]: { [operation]: samples } }
-
-    merge(suite, slice)
+    merge(suite, samples)
   }
 
   return suite
 }
 
-const EXTENSION = '.yaml'
-const PATTERN = '*' + EXTENSION
-
-exports.load = load
+exports.components = components

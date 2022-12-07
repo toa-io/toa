@@ -1,7 +1,5 @@
 'use strict'
 
-const { parse } = require('./parse')
-const { translate } = require('./translate')
+const { component } = require('./component')
 
-exports.parse = parse
-exports.translate = translate
+exports.component = component
