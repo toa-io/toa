@@ -32,7 +32,12 @@ Then('program should exit', async function () {
   await this.process
 })
 
-Then('program should exit with code {int}', async function (code) {
-  await this.process
-  assert.equal(this.exitCode, code, 'Program exit code is not ' + code)
-})
+Then('program should exit with code {int}',
+  /**
+   * @param {number} code
+   * @this {toa.features.Context}
+   */
+  async function (code) {
+    await this.process
+    assert.equal(this.exitCode, code, `Program exit code is not ${code}\n${this.stderr}`)
+  })

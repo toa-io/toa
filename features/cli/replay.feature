@@ -37,4 +37,17 @@ Feature: Replay samples
     Examples:
       | argument                            | type    |
       | ./math.calculations ./node.syntaxes | list    |
-      | ./*                                 | pattern |
+      | *                                   | pattern |
+
+  Scenario: Replay sample sets of all components within a context
+    Given I have components:
+      | math.calculations |
+      | node.syntaxes     |
+    And I have a context
+    When I run `toa replay`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: math.calculations
+      # Subtest: node.syntaxes
+      """

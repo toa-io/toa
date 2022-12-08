@@ -45,12 +45,22 @@ $ toa configure bar.baz --reset | source /dev/stdin
 format.
 
 <dl>
-<dt><code>toa replay</code></dt>
+<dt><code>toa replay [paths...]</code></dt>
 <dd>
-<code>--path</code> path to component or context (default <code>.</code>)<br/>
+<code>paths</code> path(s) to component(s) or a context (default <code>.</code>)<br/>
 
-If path is a context directory (containing `context.toa.yaml` file), command will find samples for
-all components within the context and replay them sequentially.
+#### Examples
+
+```shell
+$ toa replay
+$ toa replay ./path/to/component
+$ toa replay ./components/a ./components/b
+$ toa replay ./components/*
+$ toa replay ./path/to/context
+```
+
+If path is a context directory (containing `context.toa.yaml` file), samples for components within
+the context will be found and replayed sequentially.
 
 </dd>
 </dl>
