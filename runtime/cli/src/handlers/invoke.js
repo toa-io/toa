@@ -2,7 +2,7 @@
 
 const boot = require('@toa.io/boot')
 const yaml = require('@toa.io/libraries/yaml')
-const { component: find } = require('../util/find')
+const { components: find } = require('../util/find')
 
 async function invoke (argv) {
   const path = find(argv.path)

@@ -1,15 +1,7 @@
-name: dummies
+name: collection
 version: 0.0.0
 packages: 'components/*'
-
-runtime:
-  registry: http://host.docker.internal:4873
-  proxy: http://host.docker.internal:4873
-
-registry:
-  base: localhost:5000
-  platforms: ~
-
+registry: collection
 amqp: amqp://host.docker.internal
 mongodb: mongodb://host.docker.internal
 sql: pg://host.docker.internal/integration

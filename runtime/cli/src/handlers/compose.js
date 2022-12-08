@@ -2,7 +2,7 @@
 
 const boot = require('@toa.io/boot')
 
-const { component: find } = require('../util/find')
+const { components: find } = require('../util/find')
 
 async function compose (argv) {
   const paths = find(argv.paths)

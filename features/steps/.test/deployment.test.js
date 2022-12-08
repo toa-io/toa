@@ -51,7 +51,7 @@ describe('When I export deployment', () => {
     const file = join(path, 'Chart.yaml')
     const chart = await load(file)
 
-    expect(chart).toMatchObject({ name: 'dummies', type: 'application' })
+    expect(chart).toMatchObject({ name: 'collection', type: 'application' })
   })
 
   it('should create values', async () => {

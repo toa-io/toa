@@ -39,7 +39,7 @@ const find = (from, filename, test) => {
  * @param {boolean} test
  * @return {string | string[] | null}
  */
-const component = (from, test = false) => find(from, MANIFEST, test)
+const components = (from, test = false) => find(from, MANIFEST, test)
 
 /**
  * @param {string | string[]} from
@@ -51,5 +51,5 @@ const context = (from, test = false) => find(from, CONTEXT, test)
 const MANIFEST = 'manifest.toa.yaml'
 const CONTEXT = 'context.toa.yaml'
 
-exports.component = component
+exports.components = components
 exports.context = context

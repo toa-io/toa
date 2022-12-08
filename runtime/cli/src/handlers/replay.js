@@ -4,12 +4,25 @@ const find = require('../util/find')
 
 async function replay (argv) {
   // prevent loading userland which is intended for local use only
-  const { components } = require('@toa.io/userland/samples')
+  const { context, components } = require('@toa.io/userland/samples')
 
-  const paths = find.component(argv.paths)
-  const ok = await components(paths)
-  const label = ok ? GREEN + 'PASSED' : RED + 'FAILED'
-  const message = label + RESET
+  /** @type {boolean} */
+  let ok
+
+  const paths = find.components(argv.paths, true)
+
+  if (paths !== null) {
+    ok = await components(paths)
+  } else {
+    // no components found, checking context
+    const path = find.context(argv.paths[0], true)
+
+    if (path === null) throw new Error('Neither components nor context found in ' + argv.paths.join(','))
+
+    ok = await context(path)
+  }
+
+  const message = (ok ? GREEN + 'PASSED' : RED + 'FAILED') + RESET
 
   process.on('beforeExit', () => console.log(message))
 }

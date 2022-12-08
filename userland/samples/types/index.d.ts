@@ -9,6 +9,7 @@ declare namespace toa.samples {
     }
 
     type Components = (paths: string[]) => Promise<boolean>
+    type Context = (path: string) => Promise<boolean>
     type Replay = (suite: _samples.Suite) => Promise<boolean>
   }
 
@@ -16,5 +17,6 @@ declare namespace toa.samples {
 
 export * from './samples'
 
+export const context: toa.samples.replay.Context
 export const components: toa.samples.replay.Components
 export const replay: toa.samples.replay.Replay

@@ -1,0 +1,3 @@
+name: examples
+packages: components/*/*
+registry: example
