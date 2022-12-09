@@ -3,7 +3,7 @@
 const specials = require('./.prepare')
 
 /**
- * @param {toa.samples.Declaration} declaration
+ * @param {toa.samples.operations.Declaration} declaration
  */
 const prepare = (declaration) => {
   for (const [keyword, prepare] of Object.entries(specials)) {

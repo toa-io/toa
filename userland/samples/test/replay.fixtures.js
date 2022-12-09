@@ -4,14 +4,15 @@ const { generate } = require('randomstring')
 const { random } = require('@toa.io/libraries/generic')
 
 /** @type {toa.samples.Suite} */
-const suite = { autonomous: true }
+const suite = { autonomous: true, components: {} }
 
-const samples = () => {
-  /** @type {toa.samples.Sample[]} */
+const ops = () => {
+  /** @type {toa.samples.operations.Sample[]} */
   const samples = []
 
   for (let i = 0; i < random(3) + 1; i++) {
-    samples.push({
+    /** @type {toa.samples.operations.Sample} */
+    const sample = {
       request: {
         input: generate()
       },
@@ -25,7 +26,9 @@ const samples = () => {
         current: generate(),
         next: generate()
       }
-    })
+    }
+
+    samples.push(sample)
   }
 
   return samples
@@ -33,18 +36,17 @@ const samples = () => {
 
 // components
 for (let i = 0; i < random(3) + 1; i++) {
-  const id = generate() + '.' + generate()
+  const operations = {}
 
-  suite[id] = {}
-
-  const set = suite[id]
-
-  // operations
   for (let j = 0; j < random(3) + 1; j++) {
     const operation = generate()
 
-    set[operation] = samples()
+    operations[operation] = ops()
   }
+
+  const id = generate() + '.' + generate()
+
+  suite.components[id] = { operations }
 }
 
 exports.suite = suite

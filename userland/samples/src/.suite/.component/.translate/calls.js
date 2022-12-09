@@ -3,8 +3,8 @@
 const { defined } = require('@toa.io/libraries/generic')
 
 /**
- * @param {toa.samples.declaration.context.Calls} calls
- * @returns {toa.samples.context.Calls}
+ * @param {toa.samples.operations.declaration.context.Calls} calls
+ * @returns {toa.samples.operations.context.Calls}
  */
 const calls = (calls) => {
   const output = {}

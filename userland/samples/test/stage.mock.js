@@ -1,3 +1,5 @@
+// noinspection JSCheckFunctionSignatures
+
 'use strict'
 
 const { generate } = require('randomstring')
@@ -11,14 +13,12 @@ const locator = () => {
 }
 
 // stage
-const manifest = jest.fn(async () => ({ locator: locator() }))
+const manifest = jest.fn(async (path) => ({ path, locator: locator() }))
 const composition = jest.fn()
 const shutdown = jest.fn()
 
-// noinspection JSCheckFunctionSignatures
 const invoke = jest.fn(async (operation, request) => request.reply)
 
-// noinspection JSCheckFunctionSignatures
 const remote = jest.fn(async (id) => {
   const [namespace, name] = id.split('.')
   const locator = new Locator(name, namespace)

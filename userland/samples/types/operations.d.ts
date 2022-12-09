@@ -1,4 +1,6 @@
-declare namespace toa.samples {
+import type * as _core from '@toa.io/core'
+
+declare namespace toa.samples.operations {
 
   namespace declaration {
 
@@ -42,11 +44,7 @@ declare namespace toa.samples {
     events?: Events
     extensions?: Extensions
 
-    [key: string]: any
-  }
-
-  type Request = {
-    input: any
+    [key: string]: any // concise declarations
   }
 
   type Reply = {
@@ -55,10 +53,9 @@ declare namespace toa.samples {
 
   type Call = {
     title?: any
-    request: Request
+    request: _core.Request
     reply?: Reply
   }
-
 
   namespace context {
 
@@ -79,9 +76,8 @@ declare namespace toa.samples {
   }
 
   type Sample = {
-    autonomous?: boolean
     title?: string
-    request: Request
+    request: _core.Request
     reply: Reply
     context?: Context
     storage?: Storage
@@ -93,16 +89,7 @@ declare namespace toa.samples {
     [operation: string]: Sample[]
   }
 
-  type Sets = {
-    [component: string]: Set
-  }
-
-  type Suite = {
-    autonomous: boolean
-  } & Sets
-
 }
 
-export type Declaration = toa.samples.Declaration
-export type Sample = toa.samples.Sample
-export type Suite = toa.samples.Suite
+export type Declaration = toa.samples.operations.Declaration
+export type Operations = toa.samples.operations.Set

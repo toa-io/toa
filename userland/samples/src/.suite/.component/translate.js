@@ -8,7 +8,7 @@ const path = resolve(__dirname, 'sample.cos.yaml')
 const schema = load(path)
 
 /**
- * @param {toa.samples.Declaration} declaration
+ * @param {toa.samples.operations.Declaration} declaration
  * @returns {toa.samples.Sample}
  */
 const translate = (declaration) => {
@@ -20,7 +20,7 @@ const translate = (declaration) => {
   const reply = { output }
   const storage = { current, next }
 
-  /** @type {toa.samples.Context} */
+  /** @type {toa.samples.operations.Context} */
   let context = {}
 
   if (local !== undefined) context.local = norm.calls(local)

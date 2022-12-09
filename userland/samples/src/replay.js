@@ -5,15 +5,15 @@ const stage = require('@toa.io/userland/stage')
 
 /** @type {toa.samples.replay.Replay} */
 const replay = async (suite) => {
-  const { autonomous, ...components } = suite
+  const { autonomous, components } = suite
   const remotes = await connect(components)
 
   const results = await tap.test('Replay suite', async (test) => {
-    for (const [component, set] of Object.entries(components)) {
-      await test.test(component, async (test) => {
-        const remote = remotes[component]
+    for (const [id, component] of Object.entries(components)) {
+      await test.test(id, async (test) => {
+        const remote = remotes[id]
 
-        for (const [operation, samples] of Object.entries(set)) {
+        for (const [operation, samples] of Object.entries(component.operations)) {
           test.test(operation, async (test) => {
             let n = 0
 
@@ -54,7 +54,7 @@ const replay = async (suite) => {
 }
 
 /**
- * @param {toa.samples.Sets} components
+ * @param {toa.samples.Components} components
  * @return {Promise<void>}
  */
 const connect = async (components) => {

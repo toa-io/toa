@@ -27,28 +27,28 @@ beforeEach(async () => {
 })
 
 it('should connect remotes', () => {
-  const { autonomous, ...sets } = suite
-  const components = Object.keys(sets)
+  const { components } = suite
+  const ids = Object.keys(components)
 
-  expect(components.length).toBeGreaterThan(0)
-  expect(stage.remote).toHaveBeenCalledTimes(components.length)
+  expect(ids.length).toBeGreaterThan(0)
+  expect(stage.remote).toHaveBeenCalledTimes(ids.length)
 
   let n = 0
 
-  for (const component of components) {
+  for (const id of ids) {
     n++
 
-    expect(stage.remote).toHaveBeenNthCalledWith(n, component)
+    expect(stage.remote).toHaveBeenNthCalledWith(n, id)
   }
 })
 
 it('should replay samples', async () => {
-  const { autonomous, ...sets } = fixtures.suite
+  const { autonomous, components } = fixtures.suite
 
-  for (const [component, set] of Object.entries(sets)) {
-    const remote = await find(component)
+  for (const [id, component] of Object.entries(components)) {
+    const remote = await find(id)
 
-    for (const [operation, samples] of Object.entries(set)) {
+    for (const [operation, samples] of Object.entries(component.operations)) {
       for (const sample of samples) {
         const { request, ...rest } = sample
 

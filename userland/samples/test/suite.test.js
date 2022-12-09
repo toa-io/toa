@@ -3,7 +3,7 @@
 const { resolve } = require('node:path')
 const yaml = require('@toa.io/libraries/yaml')
 
-const { translate } = require('../src/.suite/translate')
+const { translate } = require('../src/.suite/.component/translate')
 const { components } = require('../src/suite')
 
 it('should be', () => {
@@ -33,11 +33,11 @@ describe('components', () => {
 
   it('should load component samples', async () => {
     const expected = await actual()
-    const { autonomous, ...components } = suite
+    const { components } = suite
 
     expect(Object.keys(components)).toStrictEqual([component])
 
-    const set = suite[component]
+    const set = components[component].operations
 
     expect(Object.keys(set)).toStrictEqual(['do', 'undo'])
 

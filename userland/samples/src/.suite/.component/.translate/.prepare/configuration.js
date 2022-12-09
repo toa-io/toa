@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @param {toa.samples.Declaration} declaration
+ * @param {toa.samples.operations.Declaration} declaration
  */
 const configuration = (declaration) => {
   const configuration = declaration.configuration

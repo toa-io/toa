@@ -4,7 +4,7 @@ const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
 const fixtures = require('./suite.translate.fixtures')
-const { translate } = require('../src/.suite/translate')
+const { translate } = require('../src/.suite/.component/translate')
 
 it('should be', () => {
   expect(translate).toBeDefined()

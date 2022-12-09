@@ -1,19 +1,20 @@
 'use strict'
 
-const { merge } = require('@toa.io/libraries/generic')
-
 const { component } = require('./.suite')
 
 /** @type {toa.samples.replay.suite.Components} */
 const components = async (paths) => {
-  /** @type {toa.samples.Suite} */
-  const suite = { autonomous: true }
+  /** @type {toa.samples.Components} */
+  const components = {}
 
   for (const path of paths) {
-    const samples = await component(path)
+    const [id, samples] = await component(path)
 
-    merge(suite, samples)
+    components[id] = samples
   }
+
+  /** @type {toa.samples.Suite} */
+  const suite = { autonomous: true, components }
 
   return suite
 }

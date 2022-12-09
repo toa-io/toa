@@ -2,15 +2,14 @@
 
 const { resolve } = require('node:path')
 const { replay } = require('../../')
-const { translate } = require('../../src/.suite/translate')
+const { translate } = require('../../src/.suite/.component/translate')
 const stage = require('@toa.io/userland/stage')
 
 const { When } = require('@cucumber/cucumber')
 
-When('I replay it',
-  /**
-   * @this {toa.samples.features.Context}
-   */
+When('I replay it', /**
+ * @this {toa.samples.features.Context}
+ */
   async function () {
     const [namespace, name] = this.component.split('.')
     const path = resolve(COMPONENTS, namespace, name)
@@ -18,8 +17,12 @@ When('I replay it',
 
     const suite = {
       autonomous: true,
-      [this.component]: {
-        [this.operation]: samples
+      components: {
+        [this.component]: {
+          operations: {
+            [this.operation]: samples
+          }
+        }
       }
     }
 
