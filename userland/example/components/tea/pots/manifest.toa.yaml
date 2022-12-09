@@ -6,6 +6,7 @@ entity:
   schema:
     material*: [glass, ceramic, steel]
     volume: number
+    booked: false
 
 operations:
   transit:
@@ -16,6 +17,11 @@ operations:
   same:
     input: .material
     output: array
+
+receivers:
+  store.orders.created:
+    transition: transit
+    binding: amqp # avoid discovery
 
 configuration:
   step: 0.5

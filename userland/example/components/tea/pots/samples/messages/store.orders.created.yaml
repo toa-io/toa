@@ -1,0 +1,7 @@
+title: Should book a pot
+payload:
+  pot: 1
+input:
+  booked: true
+query:
+  id: 1
