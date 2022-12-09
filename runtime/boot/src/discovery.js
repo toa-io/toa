@@ -16,6 +16,7 @@ const discovery = async () => {
 
 const lookup = async (locator) => {
   const call = boot.call(locator, ENDPOINT, { bindings: BINDINGS })
+
   await call.connect()
 
   return call

@@ -13,9 +13,11 @@ class Receiver extends Connector {
   constructor (definition, local, bridge) {
     super()
 
-    this.#conditioned = definition.conditioned
-    this.#adaptive = definition.adaptive
-    this.#transition = definition.transition
+    const { conditioned, adaptive, transition } = definition
+
+    this.#conditioned = conditioned
+    this.#adaptive = adaptive
+    this.#transition = transition
 
     this.#local = local
     this.#bridge = bridge
