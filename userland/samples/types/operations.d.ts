@@ -92,4 +92,5 @@ declare namespace toa.samples.operations {
 }
 
 export type Declaration = toa.samples.operations.Declaration
+export type Sample = toa.samples.operations.Sample
 export type Operations = toa.samples.operations.Set

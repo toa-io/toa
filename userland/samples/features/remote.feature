@@ -21,7 +21,7 @@ Feature: Remote call samples
     When I replay it
     Then it passes
 
-  Scenario: Component-level sample with no remote output declaration fails
+  Scenario: Autonomous sample with no remote output declaration fails
     Given I have a sample for `add` operation of `math.proxy`:
       """yaml
       title: Should add numbers (actually not)
