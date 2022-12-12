@@ -5,7 +5,7 @@ Feature: Context annexes samples
   for all calls. See schema (src/.suite/sample.cos.yaml).
 
   Scenario: Configuration sample
-    Given I have a sample of `signal` for `echo.beacon`:
+    Given I have a sample for `signal` operation of `echo.beacon`:
       """yaml
       title: Should woof
       output: woof
@@ -23,7 +23,7 @@ Feature: Context annexes samples
   Configuration being well-known extension may be declared as a top-level property. Also,
   if configuration property is declared as an object, then it is considered to be a permanent sample.
 
-    Given I have a sample of `signal` for `echo.beacon`:
+    Given I have a sample for `signal` operation of `echo.beacon`:
       """yaml
       title: Should croak
       output: croak

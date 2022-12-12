@@ -1,10 +1,10 @@
 Feature: Remote call samples
 
   Remote call samples are defined and replayed in the same way as local. See
-  `component.context.local` features for details.
+  local call samples feature (local.feature) for details.
 
   Scenario: Sample with remote call passes
-    Given I have a sample of `add` for `math.proxy`:
+    Given I have a sample for `add` operation of `math.proxy`:
       """yaml
       title: Should add numbers
       input:
@@ -22,7 +22,7 @@ Feature: Remote call samples
     Then it passes
 
   Scenario: Component-level sample with no remote output declaration fails
-    Given I have a sample of `add` for `math.proxy`:
+    Given I have a sample for `add` operation of `math.proxy`:
       """yaml
       title: Should add numbers (actually not)
       input:

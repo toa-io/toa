@@ -1,7 +1,7 @@
 Feature: Event samples
 
   Scenario: `Created` event sample is passing
-    Given I have a sample of `transit` for `tea.pots`:
+    Given I have a sample for `transit` operation of `tea.pots`:
       """yaml
       title: Should emit event
       input:

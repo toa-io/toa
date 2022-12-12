@@ -3,7 +3,7 @@
 const { split } = require('@toa.io/libraries/yaml')
 const { Given } = require('@cucumber/cucumber')
 
-Given('I have (a )sample(s) of {operation} for {component}:',
+Given('I have (a )sample(s) for {operation} operation of {component}:',
   /**
    * @param {string} operation
    * @param {string} component
