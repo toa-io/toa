@@ -7,7 +7,7 @@ declare namespace toa.core.bindings {
   }
 
   interface Emitter extends _core.Connector {
-    emit(payload: object): Promise<void>
+    emit(message: _core.Message): Promise<void>
   }
 
   interface Broadcaster extends _core.Connector {

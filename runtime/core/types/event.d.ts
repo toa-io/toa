@@ -1,9 +1,9 @@
+import * as _state from './state'
+
 declare namespace toa.core {
 
-  type Event = {
-    origin: Object
-    state: Object
-    changeset: Object
+  interface Event {
+    emit(event: _state.Event): Promise<void>
   }
 
 }

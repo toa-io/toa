@@ -40,7 +40,9 @@ describe('condition', () => {
     it('should emit if condition returns true', async () => {
       await emit()
 
-      expect(fixtures.binding.emit).toHaveBeenCalledWith(await fixtures.bridge.payload.mock.results[0].value)
+      const payload = await fixtures.bridge.payload.mock.results[0].value
+      const message = { payload }
+      expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })
 
     it('should not emit if condition returns false', async () => {
@@ -67,7 +69,11 @@ describe('condition', () => {
       await event.emit(fixtures.event.origin, fixtures.event.changeset, fixtures.event.state)
 
       expect(fixtures.bridge.condition).not.toHaveBeenCalledWith()
-      expect(fixtures.binding.emit).toHaveBeenCalledWith(await fixtures.bridge.payload.mock.results[0].value)
+
+      const payload = await fixtures.bridge.payload.mock.results[0].value
+      const message = { payload }
+
+      expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })
   })
 })
@@ -77,7 +83,10 @@ describe('payload', () => {
     it('should emit payload', async () => {
       await emit()
 
-      expect(fixtures.binding.emit).toHaveBeenCalledWith(await fixtures.bridge.payload.mock.results[0].value)
+      const payload = await fixtures.bridge.payload.mock.results[0].value
+      const message = { payload }
+
+      expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })
   })
 
@@ -100,7 +109,10 @@ describe('payload', () => {
     it('should return state as payload', async () => {
       await emit()
 
-      expect(fixtures.binding.emit).toHaveBeenCalledWith(fixtures.event.state)
+      const payload = fixtures.event.state
+      const message = { payload }
+
+      expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })
   })
 })

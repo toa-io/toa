@@ -4,7 +4,7 @@ const { Connector } = require('@toa.io/core')
 const { newid } = require('@toa.io/libraries/generic')
 
 /**
- * @implements {toa.core.connectors.bindings.Broadcaster}
+ * @implements {toa.core.bindings.Broadcaster}
  */
 class Broadcaster extends Connector {
   #group
@@ -23,7 +23,10 @@ class Broadcaster extends Connector {
   }
 
   async send (label, payload) {
-    await this.#channel.publish(this.#prefix + label, payload, { expiration: 10, persistent: false })
+    await this.#channel.publish(this.#prefix + label, payload, {
+      expiration: 10,
+      persistent: false
+    })
   }
 
   async receive (label, callback) {
