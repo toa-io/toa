@@ -1,8 +1,10 @@
+import * as _message from './message'
+
 declare namespace toa.core {
 
-    interface Receiver {
-        receive(payload: Object): Promise<void>
-    }
+  interface Receiver {
+    receive(message: _message.Message): Promise<void>
+  }
 
 }
 

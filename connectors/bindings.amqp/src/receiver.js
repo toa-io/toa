@@ -25,7 +25,7 @@ class Receiver extends Connector {
   }
 
   async connection () {
-    await this.#channel.subscribe(this.#label, this.#id, (payload) => this.#receiver.receive(payload))
+    await this.#channel.subscribe(this.#label, this.#id, (message) => this.#receiver.receive(message))
   }
 }
 

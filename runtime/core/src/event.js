@@ -2,7 +2,11 @@
 
 const { Connector } = require('./connector')
 
+/**
+ * @implements {toa.core.Event}
+ */
 class Event extends Connector {
+  /** @type {toa.core.bindings.Emitter} */
   #emitter
   #bridge
   #conditioned
@@ -25,7 +29,10 @@ class Event extends Connector {
     if (this.#conditioned === false || await this.#bridge.condition(event) === true) {
       const payload = this.#subjective ? await this.#bridge.payload(event) : event.state
 
-      await this.#emitter.emit(payload)
+      /** @type {toa.core.Message} */
+      const message = { payload }
+
+      await this.#emitter.emit(message)
     }
   }
 }

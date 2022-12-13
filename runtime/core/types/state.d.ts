@@ -3,6 +3,16 @@ import * as _storages from './storages'
 
 declare namespace toa.core {
 
+  namespace transition {
+
+    type Event = {
+      origin: Object
+      state: Object
+      changeset: Object
+    }
+
+  }
+
   interface State {
     init(id: string): _entity.Entity
 
@@ -22,3 +32,4 @@ declare namespace toa.core {
 }
 
 export type State = toa.core.State
+export type Event = toa.core.transition.Event

@@ -9,7 +9,9 @@ const { Connector } = require('../src/connector')
 const { Receiver } = require('../src/receiver')
 const fixtures = require('./receiver.fixtures')
 
-let receiver, definition
+/** @type {toa.core.Receiver} */
+let receiver
+let definition
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -24,7 +26,8 @@ it('should depend on local, bridge', () => {
 
 it('should apply', async () => {
   const payload = { foo: 'bar' }
-  await receiver.receive(payload)
+
+  await receiver.receive({ payload })
 
   expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, payload)
 })
@@ -37,7 +40,7 @@ describe('conditioned', () => {
 
   it('should test condition', async () => {
     const payload = { foo: 'bar' }
-    await receiver.receive(payload)
+    await receiver.receive({ payload })
 
     expect(fixtures.bridge.condition).toHaveBeenCalledWith(payload)
     expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, payload)
@@ -45,7 +48,7 @@ describe('conditioned', () => {
 
   it('should not apply if condition is false', async () => {
     const payload = { reject: true }
-    await receiver.receive(payload)
+    await receiver.receive({ payload })
 
     expect(fixtures.local.invoke).not.toHaveBeenCalled()
   })
@@ -59,7 +62,7 @@ describe('adaptive', () => {
 
   it('should apply', async () => {
     const payload = { reject: true }
-    await receiver.receive(payload)
+    await receiver.receive({ payload })
 
     expect(fixtures.local.invoke)
       .toHaveBeenCalledWith(definition.transition, fixtures.bridge.request.mock.results[0].value)

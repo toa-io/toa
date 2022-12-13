@@ -2,6 +2,9 @@
 
 const { Connector } = require('./connector')
 
+/**
+ * @implements {toa.core.Receiver}
+ */
 class Receiver extends Connector {
   #conditioned
   #adaptive
@@ -26,7 +29,9 @@ class Receiver extends Connector {
     this.depends(bridge)
   }
 
-  async receive (payload) {
+  async receive (message) {
+    const payload = message.payload
+
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
     const request = this.#adaptive ? await this.#bridge.request(payload) : payload
