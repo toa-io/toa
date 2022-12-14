@@ -2,13 +2,13 @@
 
 const { generate } = require('randomstring')
 
-const definition = {
+const definition = /** @type {toa.norm.component.Receiver} */ {
   transition: generate(),
   conditioned: false,
   adaptive: false
 }
 
-const local = {
+const local = /** @type {toa.core.Component} */ {
   invoke: jest.fn()
 }
 

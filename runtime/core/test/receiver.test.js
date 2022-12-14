@@ -4,10 +4,11 @@ const clone = require('clone-deep')
 
 jest.mock('../src/connector')
 
-const { Connector } = require('../src/connector')
+const { Connector } = /** @type {{ Connector: jest.Mock<toa.core.Connector>}} */ require('../src/connector')
 
 const { Receiver } = require('../src/receiver')
 const fixtures = require('./receiver.fixtures')
+const { generate } = require('randomstring')
 
 /** @type {toa.core.Receiver} */
 let receiver
@@ -15,6 +16,7 @@ let definition
 
 beforeEach(() => {
   jest.clearAllMocks()
+
   definition = clone(fixtures.definition)
   receiver = new Receiver(fixtures.definition, fixtures.local, fixtures.bridge)
 })
@@ -30,6 +32,15 @@ it('should apply', async () => {
   await receiver.receive({ payload })
 
   expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, payload)
+})
+
+it('should apply foreign messages', async () => {
+  // Foreign messages may not conform toa.core.Message type
+  const message = { [generate()]: generate() }
+
+  await receiver.receive(message)
+
+  expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, message)
 })
 
 describe('conditioned', () => {

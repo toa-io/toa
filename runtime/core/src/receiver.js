@@ -8,11 +8,20 @@ const { Connector } = require('./connector')
 class Receiver extends Connector {
   #conditioned
   #adaptive
-  #transition
+  #endpoint
 
+  /** @type {toa.core.Component} */
   #local
+
+  /** @type {toa.core.bridges.Event} */
   #bridge
 
+  /**
+   *
+   * @param {toa.norm.component.Receiver} definition
+   * @param {toa.core.Component} local
+   * @param {toa.core.bridges.Event} bridge
+   */
   constructor (definition, local, bridge) {
     super()
 
@@ -20,7 +29,7 @@ class Receiver extends Connector {
 
     this.#conditioned = conditioned
     this.#adaptive = adaptive
-    this.#transition = transition
+    this.#endpoint = transition
 
     this.#local = local
     this.#bridge = bridge
@@ -29,14 +38,16 @@ class Receiver extends Connector {
     this.depends(bridge)
   }
 
+  /** @hot */
   async receive (message) {
-    const payload = message.payload
+    const domestic = typeof message.payload === 'object'
+    const payload = domestic ? message.payload : message
 
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
     const request = this.#adaptive ? await this.#bridge.request(payload) : payload
 
-    await this.#local.invoke(this.#transition, request)
+    await this.#local.invoke(this.#endpoint, request)
   }
 }
 

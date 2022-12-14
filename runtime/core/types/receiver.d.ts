@@ -3,7 +3,7 @@ import * as _message from './message'
 declare namespace toa.core {
 
   interface Receiver {
-    receive(message: _message.Message): Promise<void>
+    receive(message: _message.Message | Object): Promise<void>
   }
 
 }

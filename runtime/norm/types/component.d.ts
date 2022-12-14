@@ -35,6 +35,15 @@ export namespace toa.norm {
       [key: string]: Event
     }
 
+    interface Receiver {
+      transition: string
+      adaptive: boolean
+      conditioned: boolean
+      bridge: string
+      binding: string
+      path: string
+    }
+
     interface Extensions {
       [key: string]: Object
     }
