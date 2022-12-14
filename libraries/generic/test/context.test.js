@@ -1,5 +1,7 @@
 'use strict'
 
+const { generate } = require('randomstring')
+
 const fixtures = require('./context.fixtures')
 const { context, timeout } = require('../')
 
@@ -7,8 +9,21 @@ it('should be', () => {
   expect(context).toBeDefined()
 })
 
+/** @type {symbol} */
+let id
+
+beforeEach(() => {
+  id = Symbol(generate())
+})
+
+it('should return undefined on empty context', async () => {
+  const storage = context(id)
+  const value = storage.get()
+
+  expect(value).toBeUndefined()
+})
+
 it('should track context', async () => {
-  const id = Symbol('test')
   const storage = context(id)
   const v1 = { n: 0 }
   const v2 = { n: 0 }
@@ -34,4 +49,28 @@ it('should track context', async () => {
 
   expect(r1).toStrictEqual(1)
   expect(r2).toStrictEqual(2)
+})
+
+it('should track nested context', async () => {
+  expect.assertions(2)
+
+  const storage = context(id)
+
+  const outer = { a: generate() }
+
+  await storage.apply(outer, async () => {
+    const storage = context(id)
+    const value = storage.get()
+
+    const inner = { b: generate() }
+
+    await storage.apply(inner, async () => {
+      const storage = context(id)
+      const value = storage.get()
+
+      expect(value).toStrictEqual(inner)
+    })
+
+    expect(value).toStrictEqual(outer)
+  })
 })
