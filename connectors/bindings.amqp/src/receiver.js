@@ -6,12 +6,9 @@ const { name } = require('./queue')
 
 class Receiver extends Connector {
   #channel
-  /** @type {toa.core.Receiver} */
-  #receiver
-  /** @type {string} */
-  #label
-  /** @type {string} */
-  #id
+  /** @type {toa.core.Receiver} */ #receiver
+  /** @type {string} */ #label
+  /** @type {string} */ #id
 
   constructor (channel, locator, label, id, receiver) {
     super()
