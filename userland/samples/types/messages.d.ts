@@ -1,20 +1,19 @@
-import type * as _core from '@toa.io/core/types'
 import type * as _operations from './operations'
 
 declare namespace toa.samples.messages {
 
   type Declaration = {
     component?: string
+    message?: object
     payload?: object
     input?: object
     query?: object
-    invocation?: _operations.Declaration | null
+    request?: _operations.Sample | null
   }
 
   type Sample = {
     payload?: object
-    request?: _core.Request
-    invocation?: _operations.Sample | null
+    request?: _operations.Sample | null
   }
 
   type Set = {
@@ -24,4 +23,3 @@ declare namespace toa.samples.messages {
 }
 
 export type Messages = toa.samples.messages.Set
-

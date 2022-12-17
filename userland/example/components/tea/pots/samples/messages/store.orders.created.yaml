@@ -6,7 +6,7 @@ input:
 query:
   id: 1
 ---
-title: Should book a pot (without invocation)
+title: Should book a pot (without request)
 component: tea.pots
 payload:
   pot: 1
@@ -14,16 +14,16 @@ input:
   booked: true
 query:
   id: 1
-invocation: ~
+request: ~
 ---
-title: Should book a pot (with invocation sample)
+title: Should book a pot (with request sample)
 payload:
   pot: 1
 input:
   booked: true
 query:
   id: 1
-invocation:
+request:
   current:
     id: 1
     booked: false
@@ -34,7 +34,7 @@ invocation:
 title: Should book a pot (without receiver output verification)
 payload:
   pot: 1
-invocation:
+request:
   current:
     id: 1
     booked: false

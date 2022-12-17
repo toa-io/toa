@@ -10,7 +10,7 @@ it('should be', () => {
   expect(translate).toBeDefined()
 })
 
-/** @type {toa.samples.Declaration} */
+/** @type {toa.samples.operations.Declaration} */
 let declaration
 
 /** @type {toa.samples.Sample} */

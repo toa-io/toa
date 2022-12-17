@@ -28,7 +28,7 @@ Feature: Receiver samples
     When I replay it
     Then it passes
 
-  Scenario: Simple wrong sample fails
+  Scenario: Sample fails
     Given I have a message sample `store.orders.created` for `tea.pots`:
       """yaml
       title: Should not work
@@ -38,12 +38,12 @@ Feature: Receiver samples
         booked: false
       """
     When I replay it
-    Then it passes
+    Then it fails
 
-  Scenario: Sample with blocked invocation passes
+  Scenario: Sample with blocked request passes
     Given I have a message sample `store.orders.created` for `tea.post`:
       """yaml
-      title: Should book a pot (without invocation)
+      title: Should book a pot (without request)
       component: tea.pots
       payload:
         pot: 1
@@ -51,22 +51,22 @@ Feature: Receiver samples
         booked: true
       query:
         id: 1
-      invocation: ~
+      request: ~
       """
     When I replay it
     Then it passes
 
-  Scenario: Message sample with invocation sample
+  Scenario: Sample with request sample passes
     Given I have a message sample `store.order.created` for `tea.pots`:
       """yaml
-      title: Should book a pot (with invocation sample)
+      title: Should book a pot (with request sample)
       payload:
         pot: 1
       input:
         booked: true
       query:
         id: 1
-      invocation:
+      request:
         current:
           id: 1
           booked: false
@@ -77,30 +77,13 @@ Feature: Receiver samples
     When I replay it
     Then it passes
 
-  Scenario: Message sample with invocation input fails
+  Scenario: Message without output but with request passes
     Given I have a message sample `store.orders.created` for `tea.pots`:
       """yaml
       title: Should book a pot
       payload:
         pot: 1
-      input:
-        booked: true
-      query:
-        id: 1
-      invocation:
-        input:
-          booked: true
-      """
-    When I replay it
-    Then it fails
-
-  Scenario: Message without output and with invocation passes
-    Given I have a message sample `store.orders.created` for `tea.pots`:
-      """yaml
-      title: Should book a pot
-      payload:
-        pot: 1
-      invocation:
+      request:
         current:
           id: 1
           booked: false
@@ -111,7 +94,7 @@ Feature: Receiver samples
     When I replay it
     Then it passes
 
-  Scenario: Message without output and invocation is incorrect
+  Scenario: Message without output and request is incorrect
     Given I have a message sample `store.orders.created` for `tea.pots`:
       """yaml
       title: Should book a pot
@@ -121,12 +104,11 @@ Feature: Receiver samples
     When I replay it
     Then it fails
 
-  Scenario: Sample with incorrect component's name fails
+  Scenario: Sample with foreign message passes
     Given I have a message sample `store.orders.created` for `tea.pots`:
       """yaml
       title: Should book a pot
-      component: tea.glasses
-      payload:
+      message:
         pot: 1
       input:
         booked: true
