@@ -4,18 +4,22 @@ declare namespace toa.sampling {
 
   namespace sample {
 
-    type Request = {
-      request?: _core.Request
-      reply?: _core.Reply
-    }
+    namespace context {
 
-    type Requests = {
-      [key: string]: Request[]
+      type Request = {
+        request?: _core.Request
+        reply?: _core.Reply
+      }
+
+      type Requests = {
+        [key: string]: Request[]
+      }
+
     }
 
     type Context = {
-      local?: Requests
-      remote?: Requests
+      local?: context.Requests
+      remote?: context.Requests
     }
 
     type Storage = {
@@ -23,18 +27,22 @@ declare namespace toa.sampling {
       next?: _core.storages.Record
     }
 
-    type Call = {
-      arguments?: any[]
-      result?: any
-      permanent?: boolean
-    }
+    namespace extensions {
 
-    type Events = {
-      [key: string]: Object
+      type Call = {
+        arguments?: any[]
+        result?: any
+        permanent?: boolean
+      }
+
     }
 
     type Extensions = {
-      [key: string]: Call[]
+      [key: string]: extensions.Call[]
+    }
+
+    type Events = {
+      [key: string]: _core.Message
     }
   }
 

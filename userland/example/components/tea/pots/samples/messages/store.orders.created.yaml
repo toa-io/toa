@@ -6,7 +6,7 @@ input:
 query:
   id: 1
 ---
-title: Should book a pot (without request)
+title: Should book a pot (without performing request)
 component: tea.pots
 payload:
   pot: 1

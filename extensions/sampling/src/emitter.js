@@ -36,7 +36,7 @@ class Emitter extends Connector {
     const reference = sample?.events?.[this.#label]
 
     if (reference !== undefined) {
-      const matches = match(message.payload, reference)
+      const matches = match(message.payload, reference.payload)
 
       if (!matches) throw new ReplayException(`event '${this.#label}' payload mismatch`)
       else delete sample.events[this.#label]

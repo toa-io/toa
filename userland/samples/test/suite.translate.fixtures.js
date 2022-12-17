@@ -67,10 +67,11 @@ storage.sample = {
   next: storage.declaration.next
 }
 
-const events = {}
+const events = { declaration: {}, sample: {} }
 const label = generate()
 
-events[label] = { [generate()]: generate() }
+events.declaration[label] = { [generate()]: generate() }
+events.sample[label] = { payload: events.declaration[label] }
 
 const extension = () => ([{ permanent: flip() }])
 
@@ -84,7 +85,7 @@ const declaration = {
   output,
   ...context.declaration,
   ...storage.declaration,
-  events,
+  events: events.declaration,
   extensions
 }
 
@@ -95,7 +96,7 @@ const expected = {
   reply,
   context: context.sample,
   storage: storage.sample,
-  events,
+  events: events.sample,
   extensions
 }
 

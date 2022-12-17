@@ -43,7 +43,7 @@ beforeEach(() => {
 
   sample = {
     events: {
-      [label]: clone(payload)
+      [label]: { payload: clone(payload) }
     }
   }
 
@@ -75,7 +75,7 @@ it('should not emit if sample is autonomous', async () => {
 })
 
 it('should throw if sample does not match', async () => {
-  sample.events = { [label]: { [generate()]: generate() } }
+  sample.events = { [label]: { payload: { [generate()]: generate() } } }
 
   await expect(apply()).rejects.toBeInstanceOf(ReplayException)
 })
@@ -85,11 +85,11 @@ it('should not throw if sample exactly matches', async () => {
 })
 
 it('should not throw if sample partially matches', async () => {
-  const event = sample.events[label]
-  const keys = Object.keys(event)
+  const payload = sample.events[label].payload
+  const keys = Object.keys(payload)
   const key = pick(keys)
 
-  delete event[key]
+  delete payload[key]
 
   await expect(apply()).resolves.not.toThrow()
 })

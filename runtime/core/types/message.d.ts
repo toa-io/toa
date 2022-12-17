@@ -2,8 +2,6 @@ declare namespace toa.core {
 
   type Message = {
     payload: Object
-
-    [key: string]: any // extensions
   }
 
 }
