@@ -6,15 +6,12 @@ const { Connector } = require('./connector')
  * @implements {toa.core.Receiver}
  */
 class Receiver extends Connector {
-  #conditioned
-  #adaptive
-  #endpoint
+  /** @type {boolean} */ #conditioned
+  /** @type {boolean} */ #adaptive
+  /** @type {string} */ #endpoint
 
-  /** @type {toa.core.Component} */
-  #local
-
-  /** @type {toa.core.bridges.Event} */
-  #bridge
+  /** @type {toa.core.Component} */ #local
+  /** @type {toa.core.bridges.Event} */ #bridge
 
   /**
    *
