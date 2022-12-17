@@ -40,13 +40,13 @@ declare namespace toa.sampling {
 
   type Sample = {
     autonomous?: boolean
-    input?: any
     reply?: _core.Reply
     context?: sample.Context
     storage?: sample.Storage
     events?: sample.Events
     extensions?: sample.Extensions
   }
+
 }
 
 export type Sample = toa.sampling.Sample

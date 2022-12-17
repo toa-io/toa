@@ -23,8 +23,8 @@ let label
 /** @type {toa.sampling.Sample} */
 let sample
 
-/** @type {Object} */
-let payload
+/** @type {toa.core.Message} */
+let message
 
 it('should be', async () => {
   expect(Emitter).toBeDefined()
@@ -35,9 +35,11 @@ beforeEach(() => {
 
   label = generate()
 
-  payload = {
+  const payload = {
     [generate()]: generate(), [generate()]: generate()
   }
+
+  message = { payload }
 
   sample = {
     events: {
@@ -58,10 +60,10 @@ it('should depend on decorated emitter', async () => {
 })
 
 it('should emit event', async () => {
-  await emitter.emit(payload)
+  await emitter.emit(message)
 
   expect(fixtures.emitter.emit).toHaveBeenCalled()
-  expect(fixtures.emitter.emit).toHaveBeenCalledWith(payload)
+  expect(fixtures.emitter.emit).toHaveBeenCalledWith(message)
 })
 
 it('should not emit if sample is autonomous', async () => {
@@ -100,6 +102,6 @@ it('should remove matched event sample', async () => {
 
 const apply = async () => {
   await context.apply(sample, async () => {
-    await emitter.emit(payload)
+    await emitter.emit(message)
   })
 }

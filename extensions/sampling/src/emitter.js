@@ -29,21 +29,21 @@ class Emitter extends Connector {
     this.depends(emitter)
   }
 
-  async emit (payload) {
+  async emit (message) {
     /** @type {toa.sampling.Sample} */
     const sample = context.get()
 
     const reference = sample?.events?.[this.#label]
 
     if (reference !== undefined) {
-      const matches = match(payload, reference)
+      const matches = match(message.payload, reference)
 
       if (!matches) throw new ReplayException(`event '${this.#label}' payload mismatch`)
       else delete sample.events[this.#label]
     }
 
     if (sample?.autonomous !== true) {
-      await this.#emitter.emit(payload)
+      await this.#emitter.emit(message)
     }
   }
 }
