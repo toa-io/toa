@@ -11,7 +11,7 @@ const { flip } = require('./flip')
 const { freeze } = require('./freeze')
 const { hash } = require('./hash')
 const { match } = require('./match')
-const { merge, overwrite } = require('./merge')
+const { merge, overwrite, add } = require('./merge')
 const { newid } = require('./newid')
 const { patch } = require('./patch')
 const { random } = require('./random')
@@ -31,6 +31,7 @@ const { underlay } = require('./underlay')
 exports.acronyms = require('./acronyms')
 exports.letters = require('./letters')
 
+exports.add = add
 exports.concat = concat
 exports.context = context
 exports.convolve = convolve
