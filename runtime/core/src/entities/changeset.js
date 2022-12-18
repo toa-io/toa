@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge, newid } = require('@toa.io/libraries/generic')
+const { merge, overwrite, newid } = require('@toa.io/libraries/generic')
 const { EntityContractException } = require('../exceptions')
 
 class Changeset {
@@ -37,7 +37,7 @@ class Changeset {
 
     if (error === null) {
       delete insert.id
-      result.insert = merge(insert, changeset, { override: true })
+      result.insert = overwrite(insert, changeset)
     }
 
     return result

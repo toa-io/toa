@@ -7,4 +7,4 @@ declare namespace toa.generic {
   type Subtract = (a: subtract.ArrayOrSet, b: subtract.ArrayOrSet) => subtract.ArrayOrSet
 }
 
-export type Subtract = toa.generic.Subtract
+export const subtract: toa.generic.Subtract

@@ -1,4 +1,3 @@
-import { Subtract } from './subtract'
 import { Retry } from './retry'
 import { Context } from './context'
 import { Flip } from './flip'
@@ -6,7 +5,6 @@ import { Flip } from './flip'
 export const context: Context
 export const flip: Flip
 export const retry: Retry
-export const subtract: Subtract
 
 export * as acronyms from './acronyms'
 export * as letters from './letters'
@@ -19,10 +17,10 @@ export { encode, decode } from './encode'
 export { match } from './match'
 export { merge, overwrite, add } from './merge'
 export { newid } from './newid'
-export { patch } from './patch'
 export { random } from './random'
 export { remap } from './remap'
 export { sample } from './sample'
+export { subtract } from './subtract'
 export { timeout } from './timeout'
 export { transpose } from './transpose'
 export { underlay } from './underlay'

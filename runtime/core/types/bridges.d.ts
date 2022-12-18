@@ -12,7 +12,7 @@ declare namespace toa.core.bridges {
   interface Event {
     condition(object): Promise<boolean>
 
-    request(object): _core.Request
+    request(object): Promise<_core.Request>
   }
 
   interface Factory {
