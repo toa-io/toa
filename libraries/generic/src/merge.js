@@ -6,12 +6,12 @@ const merge = (target, source, options = {}, path = []) => {
   if (source === undefined) source = {}
 
   if (typeof target !== typeof source) {
-    if (options.override) return source
+    if (options.overwrite) return source
     else throw new TypeError(`gears/merge: arguments must be of the same type at ${string(path)}`)
   }
 
   if (source instanceof Array && target instanceof Array) {
-    if (options.override === true) {
+    if (options.overwrite === true) {
       target.length = 0
       target.push(...source)
     } else if (options.ignore !== true) target.push(...source)
@@ -26,7 +26,7 @@ const merge = (target, source, options = {}, path = []) => {
 
           target[name] = merge(target[name], value, options, path)
         } else if (target[name] !== value) {
-          if (options.override === true) target[name] = value
+          if (options.overwrite === true) target[name] = value
           else if (options.ignore !== true) {
             throw new Error(`gears/merge: conflict at ${string(path)} ('${value}', '${target[name]}')`)
           }
@@ -40,6 +40,12 @@ const merge = (target, source, options = {}, path = []) => {
   return target
 }
 
+/** @type {toa.generic.Overwrite} */
+const overwrite = (target, source) => {
+  return merge(target, source, { overwrite: true })
+}
+
 const string = (path) => '/' + path.join('/')
 
 exports.merge = merge
+exports.overwrite = overwrite
