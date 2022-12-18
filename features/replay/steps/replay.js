@@ -1,15 +1,16 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { replay } = require('../../')
-const { translate } = require('../../src/.suite/.component/translate')
+const { replay } = require('@toa.io/userland/samples')
+const { translate } = require('../../../userland/samples/src/.suite/.component/translate')
 const stage = require('@toa.io/userland/stage')
 
 const { When } = require('@cucumber/cucumber')
 
-When('I replay it', /**
- * @this {toa.samples.features.Context}
- */
+When('I replay it',
+  /**
+   * @this {toa.samples.features.Context}
+   */
   async function () {
     const [namespace, name] = this.component.split('.')
     const path = resolve(COMPONENTS, namespace, name)
@@ -33,4 +34,4 @@ When('I replay it', /**
     await stage.shutdown()
   })
 
-const COMPONENTS = resolve(__dirname, '../../../example/components')
+const COMPONENTS = resolve(__dirname, '../../../userland/example/components')

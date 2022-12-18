@@ -1,7 +1,7 @@
 Feature: Component storage samples
 
   Scenario: Update state
-    Given I have a sample for `transit` operation of `tea.pots`:
+    Given I have a sample for transit operation of tea.pots:
       """yaml
       input:
         material: steel
@@ -16,7 +16,7 @@ Feature: Component storage samples
     Then it passes
 
   Scenario: Create new object
-    Given I have a sample for `transit` operation of `tea.pots`:
+    Given I have a sample for transit operation of tea.pots:
       """yaml
       input:
         material: steel
@@ -30,7 +30,7 @@ Feature: Component storage samples
     Then it passes
 
   Scenario: Partial match is passing
-    Given I have a sample for `transit` operation of `tea.pots`:
+    Given I have a sample for transit operation of tea.pots:
       """yaml
       input:
         material: ceramic
@@ -44,7 +44,7 @@ Feature: Component storage samples
     Then it passes
 
   Scenario: Incorrect next state is failing
-    Given I have a sample for `transit` operation of `tea.pots`:
+    Given I have a sample for transit operation of tea.pots:
       """yaml
       input:
         material: steel
@@ -59,7 +59,7 @@ Feature: Component storage samples
     Then it fails
 
   Scenario: Incorrect current state is failing
-    Given I have a sample for `transit` operation of `tea.pots`:
+    Given I have a sample for transit operation of tea.pots:
       """yaml
       input:
         material: steel

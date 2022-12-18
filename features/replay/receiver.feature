@@ -1,7 +1,7 @@
 Feature: Receiver samples
 
   Scenario: Sample passes
-    Given I have a message sample `store.orders.created` for `tea.pots`:
+    Given I have a message sample store.orders.created for tea.pots:
       """yaml
       title: Should book a pot
       payload:
@@ -16,7 +16,7 @@ Feature: Receiver samples
 
   Scenario: Partial sample passes
 
-    Given I have a message sample `store.orders.created` for `tea.pots`:
+    Given I have a message sample store.orders.created for tea.pots:
       """yaml
       title: Should book a pot
       component: tea.pots # autonomous sample may contain component's name
@@ -29,7 +29,7 @@ Feature: Receiver samples
     Then it passes
 
   Scenario: Sample fails
-    Given I have a message sample `store.orders.created` for `tea.pots`:
+    Given I have a message sample store.orders.created for tea.pots:
       """yaml
       title: Should not work
       payload:
@@ -41,7 +41,7 @@ Feature: Receiver samples
     Then it fails
 
   Scenario: Sample with blocked request passes
-    Given I have a message sample `store.orders.created` for `tea.post`:
+    Given I have a message sample store.orders.created for tea.post:
       """yaml
       title: Should book a pot (without request)
       component: tea.pots
@@ -57,7 +57,7 @@ Feature: Receiver samples
     Then it passes
 
   Scenario: Sample with request sample passes
-    Given I have a message sample `store.order.created` for `tea.pots`:
+    Given I have a message sample store.order.created for tea.pots:
       """yaml
       title: Should book a pot (with request sample)
       payload:
@@ -78,7 +78,7 @@ Feature: Receiver samples
     Then it passes
 
   Scenario: Message without output but with request passes
-    Given I have a message sample `store.orders.created` for `tea.pots`:
+    Given I have a message sample store.orders.created for tea.pots:
       """yaml
       title: Should book a pot
       payload:
@@ -95,7 +95,7 @@ Feature: Receiver samples
     Then it passes
 
   Scenario: Message without output and request is incorrect
-    Given I have a message sample `store.orders.created` for `tea.pots`:
+    Given I have a message sample store.orders.created for tea.pots:
       """yaml
       title: Should book a pot
       payload:
@@ -105,7 +105,7 @@ Feature: Receiver samples
     Then it fails
 
   Scenario: Sample with foreign message passes
-    Given I have a message sample `store.orders.created` for `tea.pots`:
+    Given I have a message sample store.orders.created for tea.pots:
       """yaml
       title: Should book a pot
       message:

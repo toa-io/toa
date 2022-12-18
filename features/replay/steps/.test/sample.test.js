@@ -17,8 +17,8 @@ beforeEach(() => {
   context = {}
 })
 
-describe('Given I have (a )sample(s) for {operation} operation of {component}:', () => {
-  const step = gherkin.steps.Gi('I have (a )sample(s) for {operation} operation of {component}:')
+describe('Given I have (a )sample(s) for {word} operation of {component}:', () => {
+  const step = gherkin.steps.Gi('I have (a )sample(s) for {word} operation of {component}:')
 
   it('should be', () => undefined)
 

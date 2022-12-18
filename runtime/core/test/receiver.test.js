@@ -10,7 +10,6 @@ const { Connector } = /** @type {{ Connector: jest.Mock<toa.core.Connector>}} */
 
 const { Receiver } = require('../src/receiver')
 const fixtures = require('./receiver.fixtures')
-const { ex } = require('../../../features/steps/.deployment/ex')
 
 /** @type {toa.core.Receiver} */
 let receiver
