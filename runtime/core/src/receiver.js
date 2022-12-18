@@ -1,5 +1,6 @@
 'use strict'
 
+const { add } = require('@toa.io/libraries/generic')
 const { Connector } = require('./connector')
 
 /**
@@ -42,9 +43,26 @@ class Receiver extends Connector {
 
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
-    const request = this.#adaptive ? await this.#bridge.request(payload) : payload
+    const request = await this.#request(payload, domestic ? message : undefined)
 
     await this.#local.invoke(this.#endpoint, request)
+  }
+
+  /**
+   * @param {toa.core.Request} request
+   * @param {Object} [message]
+   * @returns {Promise<toa.core.Request>}
+   */
+  async #request (request, message) {
+    if (this.#adaptive) request = await this.#bridge.request(request)
+
+    if (message !== undefined) {
+      const { payload, ...extensions } = message
+
+      request = add(request, extensions)
+    }
+
+    return request
   }
 }
 

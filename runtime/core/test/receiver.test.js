@@ -1,6 +1,8 @@
 'use strict'
 
 const clone = require('clone-deep')
+const { generate } = require('randomstring')
+const { merge } = require('@toa.io/libraries/generic')
 
 jest.mock('../src/connector')
 
@@ -8,10 +10,12 @@ const { Connector } = /** @type {{ Connector: jest.Mock<toa.core.Connector>}} */
 
 const { Receiver } = require('../src/receiver')
 const fixtures = require('./receiver.fixtures')
-const { generate } = require('randomstring')
+const { ex } = require('../../../features/steps/.deployment/ex')
 
 /** @type {toa.core.Receiver} */
 let receiver
+
+/** @type {toa.norm.component.Receiver} */
 let definition
 
 beforeEach(() => {
@@ -41,6 +45,26 @@ it('should apply foreign messages', async () => {
   await receiver.receive(message)
 
   expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, message)
+})
+
+it.each([[false], [true]])('should pass UI extensions (adaptive: %s)', async (adaptive) => {
+  jest.clearAllMocks()
+
+  definition.adaptive = adaptive
+  receiver = new Receiver(definition, fixtures.local, fixtures.bridge)
+
+  const payload = { foo: generate() }
+  const extension = { [generate()]: generate() }
+  const message = { payload, ...extension }
+
+  await receiver.receive(message)
+
+  const request = adaptive ? await fixtures.bridge.request.mock.results[0].value : payload
+  const expected = merge(clone(request), extension)
+
+  const argument = fixtures.local.invoke.mock.calls[0][1]
+
+  expect(argument).toStrictEqual(expected)
 })
 
 describe('conditioned', () => {
@@ -76,6 +100,6 @@ describe('adaptive', () => {
     await receiver.receive({ payload })
 
     expect(fixtures.local.invoke)
-      .toHaveBeenCalledWith(definition.transition, fixtures.bridge.request.mock.results[0].value)
+      .toHaveBeenCalledWith(definition.transition, await fixtures.bridge.request.mock.results[0].value)
   })
 })

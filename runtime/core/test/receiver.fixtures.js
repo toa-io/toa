@@ -13,9 +13,9 @@ const local = /** @type {toa.core.Component} */ {
 }
 
 // noinspection JSCheckFunctionSignatures
-const bridge = {
-  condition: jest.fn((payload) => !(payload.reject === true)),
-  request: jest.fn(() => generate())
+const bridge = /** @type {toa.core.bridges.Event} */ {
+  condition: jest.fn(async (payload) => !(payload.reject === true)),
+  request: jest.fn(async () => ({ input: generate() }))
 }
 
 exports.definition = definition
