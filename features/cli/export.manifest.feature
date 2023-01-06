@@ -10,7 +10,7 @@ Feature: Print manifest
         -p, --path
       """
 
-  Scenario Outline: Print manifest from component directory
+  Scenario Outline: Print manifest from component directory using `toa export <artifact>`
     Given I have a component dummies.one
     And my working directory is ./components/dummies.one
     When I run `toa export <artifact>`
