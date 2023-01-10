@@ -53,9 +53,10 @@
     "test": "npm run test:lint && npm run test:unit && npm run test:features:unit",
     "test:lint": "npx standard --verbose | npx snazzy",
     "test:unit": "npx jest --roots runtime connectors extensions operations libraries features userland",
-    "test:integration": "npx jest --roots integration --runInBand",
+    "test:integration": "npx jest --roots integration --runInBand && npm run test:userland:example",
     "test:features": "npx cucumber-js",
     "test:features:unit": "npx cucumber-js -p schema && npx cucumber-js -p norm",
+    "test:userland:example": "npx jest --roots userland/example --testMatch '**/(*.)+(test).js'",
     "test:all": "npm run test && npm run test:integration && npm run test:features",
     "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",
     "lint": "npx standard --verbose --fix | npx snazzy",
@@ -89,7 +90,8 @@
       "<rootDir>/userland"
     ],
     "testMatch": [
-      "**/?(*.)+(test).js"
+      "**/(*.)+(test).js",
+      "!**/userland/example/**/(*.)+test.js"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"

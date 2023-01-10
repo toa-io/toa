@@ -11,7 +11,7 @@ await stage.shutdown()
 
 ## Introduction
 
-Stage is a Node.js framework. See [example](../example/tests).
+Stage is a Node.js framework. See [examples](../example/stage).
 
 > Stage requires environment, that is, local RabbitMQ and used databases instances.
 
