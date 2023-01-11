@@ -7,18 +7,18 @@ const { ReplayException } = require('../exceptions')
  * Published events matching the sample are being removed from the sample, therefore if there are any keys
  * remaining in the sample.events object, then it is a sample mismatch, that is, an exception.
  *
- * @param {toa.sampling.Sample} sample
+ * @param {toa.sampling.request.Events} samples
  */
-const verify = (sample) => {
-  if (sample.events !== undefined && !empty(sample.events)) throw exception(sample)
+const verify = (samples) => {
+  if (samples !== undefined && !empty(samples)) throw exception(samples)
 }
 
 /**
- * @param {toa.sampling.Sample} sample
+ * @param {toa.sampling.request.Events} samples
  * @return {ReplayException}
  */
-const exception = (sample) => {
-  const keys = Object.keys(sample.events)
+const exception = (samples) => {
+  const keys = Object.keys(samples)
   const message = `event${keys.length > 1 ? 's have' : ' has'} not been published: ${keys.join()}`
 
   return new ReplayException(message)

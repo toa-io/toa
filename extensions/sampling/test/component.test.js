@@ -16,7 +16,7 @@ let component
 
 const endpoint = generate()
 
-/** @type {toa.core.Request} */
+/** @type {toa.sampling.Request} */
 let request
 
 beforeEach(() => {
@@ -40,8 +40,9 @@ it('should depend on origin', () => {
   expect(fixtures.component.link).toHaveBeenCalledWith(component)
 })
 
-describe('validation', () => {
+describe('verification', () => {
   it('should throw if sample is invalid', async () => {
+    // noinspection JSValidateTypes
     request.sample = { foo: generate() }
 
     await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(SampleException)
@@ -49,12 +50,6 @@ describe('validation', () => {
 
   it('should not throw if sample is not defined', async () => {
     await expect(component.invoke(endpoint, request)).resolves.not.toThrow()
-  })
-
-  it('should throw if sample context is invalid', async () => {
-    request.sample = { context: 'not-an-object' }
-
-    await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(SampleException)
   })
 })
 
@@ -121,6 +116,12 @@ describe('invocation', () => {
 })
 
 describe('verification', () => {
+  describe('request', () => {
+    it('should throw on request mismatch', async () => {
+      request.sample = { request }
+    })
+  })
+
   describe('reply', () => {
     it('should throw exception on reply mismatch', async () => {
       request.sample = { reply: { output: generate() } }
@@ -148,7 +149,7 @@ describe('verification', () => {
 
   describe('events', () => {
     it('should throw exception if sample.events is not empty', async () => {
-      request.sample = { events: { created: {} } }
+      request.sample = { events: { created: { payload: {} } } }
 
       await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(ReplayException)
     })

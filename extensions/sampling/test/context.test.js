@@ -17,7 +17,7 @@ const factory = new Factory()
 /** @type {toa.core.Context} */
 let context
 
-/** @type {toa.sampling.Sample} */
+/** @type {toa.sampling.Request} */
 let sample
 
 /** @type {toa.core.Request} */
@@ -178,7 +178,7 @@ describe('annexes', () => {
 
     const args = [generate(), generate()]
 
-    /** @type {toa.sampling.Sample} */
+    /** @type {toa.sampling.Request} */
     const sample = {
       extensions: {
         [annex.name]: [{ arguments: args }]
@@ -194,7 +194,7 @@ describe('annexes', () => {
   it('should not throw on arguments match', async () => {
     const args = [generate(), generate()]
 
-    /** @type {toa.sampling.Sample} */
+    /** @type {toa.sampling.Request} */
     const sample = {
       extensions: {
         [annex.name]: [{ arguments: args }]
@@ -212,7 +212,7 @@ describe('annexes', () => {
   it('should return sampled result', async () => {
     const result = generate()
 
-    /** @type {toa.sampling.Sample} */
+    /** @type {toa.sampling.Request} */
     const sample = {
       extensions: {
         [annex.name]: [{ result }]

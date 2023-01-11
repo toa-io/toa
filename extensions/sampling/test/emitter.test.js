@@ -20,7 +20,7 @@ let emitter
 /** @type {string} */
 let label
 
-/** @type {toa.sampling.Sample} */
+/** @type {toa.sampling.Request} */
 let sample
 
 /** @type {toa.core.Message} */

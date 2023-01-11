@@ -10,7 +10,7 @@ it('should be', () => {
   expect(validate).toBeDefined()
 })
 
-/** @type {toa.sampling.Sample} */
+/** @type {toa.sampling.Request} */
 let sample
 
 beforeEach(() => {
@@ -34,7 +34,7 @@ describe('context', () => {
   let local
 
   beforeEach(() => {
-    /** @type {toa.sampling.sample.Requests} */
+    /** @type {toa.sampling.request.context.Requests} */
     local = {
       do: [
         {

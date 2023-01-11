@@ -3,14 +3,14 @@
 ## UI extension
 
 Sampling extends UI Request with `sample` property which is an object confirming
-the [schema](../src/sample.cos.yaml).
+the [schema](../src/.component/sample.cos.yaml).
 
 ## Core Decorators
 
 Sampling provides a set of [core decorators](#) to substitute operation inputs and verify outputs.
 
 Decorators use sample from shared [async storage](https://nodejs.org/api/async_context.html), that
-is, a *sampling context*.
+is, the *sampling context*.
 
 ### Component Decorator
 
@@ -19,6 +19,9 @@ context, invokes operation and verifies:
 
 - reply, if `output` is declared;
 - events published, if `events` are declared.
+
+On invocation start, if sampling context is defined (that is, request sample is given), then it will
+be verified against the request. See [receiver decorator](#receiver-decorator).
 
 ### Context Decorator
 

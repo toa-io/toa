@@ -23,7 +23,7 @@ class Annex {
   }
 
   invoke (...args) {
-    const sample = /** @type {toa.sampling.Sample} */ context.get()
+    const sample = /** @type {toa.sampling.Request} */ context.get()
     const calls = sample?.extensions?.[this.name]
 
     if (calls === undefined) return this.#annex.invoke(...args)
@@ -31,7 +31,7 @@ class Annex {
   }
 
   /**
-   * @param {toa.sampling.sample.Call[]} calls
+   * @param {toa.sampling.request.extensions.Call[]} calls
    * @param {any[]} args
    */
   #replay (calls, args) {

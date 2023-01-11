@@ -8,7 +8,7 @@ const path = resolve(__dirname, 'sample.cos.yaml')
 const schema = load(path)
 
 /**
- * @param {toa.sampling.Sample} sample
+ * @param {toa.sampling.Request} sample
  */
 const validate = (sample) => {
   if (sample === undefined) return

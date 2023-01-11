@@ -4,16 +4,15 @@ const { match } = require('@toa.io/libraries/generic')
 const { ReplayException } = require('../exceptions')
 
 /**
- * @param {toa.sampling.Sample} sample
+ * @param {toa.core.Reply} sample
  * @param {toa.core.Reply} reply
- * @param {string} endpoint
  */
-const verify = (sample, reply, endpoint) => {
-  if (sample.reply === undefined) return
+const verify = (sample, reply) => {
+  if (sample === undefined) return
 
-  const matches = match(reply, sample.reply)
+  const matches = match(reply, sample)
 
-  if (!matches) throw new ReplayException(`operation '${endpoint}' reply mismatch`)
+  if (!matches) throw new ReplayException(`operation reply mismatch`)
 }
 
 exports.verify = verify

@@ -53,8 +53,8 @@ class Component extends Connector {
     /** @type {toa.core.Reply} */
     const reply = await context.apply(sample, () => this.#component.invoke(endpoint, rest))
 
-    verify.reply(sample, reply, endpoint)
-    verify.events(sample)
+    verify.reply(sample.reply, reply)
+    verify.events(sample.events)
 
     return reply
   }
@@ -71,6 +71,8 @@ class Component extends Connector {
     // const sample = context.get()
 
     // if (sample?.request === undefined) return
+
+    // verify.request(sample.request, request)
   }
 }
 

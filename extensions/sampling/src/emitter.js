@@ -30,7 +30,7 @@ class Emitter extends Connector {
   }
 
   async emit (message) {
-    /** @type {toa.sampling.Sample} */
+    /** @type {toa.sampling.Request} */
     const sample = context.get()
 
     const reference = sample?.events?.[this.#label]

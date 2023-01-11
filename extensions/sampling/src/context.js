@@ -25,7 +25,7 @@ class Context extends Connector {
   }
 
   async apply (endpoint, request) {
-    const sample = /** @type {toa.sampling.Sample} */ context.get()
+    const sample = /** @type {toa.sampling.Request} */ context.get()
     const requests = sample?.context?.local?.[endpoint]
     const call = requests?.shift()
 
@@ -33,7 +33,7 @@ class Context extends Connector {
   }
 
   async call (namespace, name, endpoint, request) {
-    const sample = /** @type {toa.sampling.Sample} */ context.get()
+    const sample = /** @type {toa.sampling.Request} */ context.get()
     const key = namespace + dot + name + dot + endpoint
     const requests = sample?.context?.remote?.[key]
     const call = requests?.shift()
@@ -48,7 +48,7 @@ class Context extends Connector {
 
   /**
    * @param {'apply' | 'call'} method
-   * @param {toa.sampling.sample.Request | undefined} sample
+   * @param {toa.sampling.Request} sample
    * @param {string[]} segments
    * @param {toa.core.Request} request
    * @returns {Promise<toa.core.Reply>}

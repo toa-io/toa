@@ -16,7 +16,7 @@ const factory = new Factory()
 /** @type {toa.core.Storage} */
 let storage
 
-/** @type {toa.sampling.Sample} */
+/** @type {toa.sampling.Request} */
 let sample
 
 it('should be', () => {
