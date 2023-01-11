@@ -1,17 +1,18 @@
 autonomous: boolean
+request: &request
+  input: ~
+  query:
+    id: string
+    criteria: string
+    omit: number
+    limit: number
 reply: &reply
   output: ~
   error: ~
 context:
   local: &calls
     ~:
-      - request:
-          input: ~
-          query:
-            id: string
-            criteria: string
-            omit: number
-            limit: number
+      - request: *request
         reply: *reply
   remote: *calls
 storage:

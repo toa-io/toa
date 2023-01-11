@@ -31,8 +31,6 @@ class Component extends Connector {
 
   /** @hot */
   async invoke (endpoint, request) {
-    this.#resolve(request)
-
     if (request.sample === undefined) return this.#component.invoke(endpoint, request)
     else return this.#apply(endpoint, request)
   }
@@ -47,6 +45,8 @@ class Component extends Connector {
 
     validate(sample)
 
+    verify.request(sample.request, request)
+
     // make sure current state will be requested from the storage
     if (sample.storage?.current !== undefined && rest.query === undefined) rest.query = { id: newid() }
 
@@ -57,22 +57,6 @@ class Component extends Connector {
     verify.events(sample.events)
 
     return reply
-  }
-
-  /**
-   * Context may contain a message sample if an operation is invoked by the receiver
-   *
-   * @param {toa.core.Request} request
-   *
-   * @hot
-   */
-  #resolve (request) {
-    /** @type {toa.sampling.Message} */
-    // const sample = context.get()
-
-    // if (sample?.request === undefined) return
-
-    // verify.request(sample.request, request)
   }
 }
 

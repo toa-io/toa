@@ -117,8 +117,26 @@ describe('invocation', () => {
 
 describe('verification', () => {
   describe('request', () => {
-    it('should throw on request mismatch', async () => {
-      request.sample = { request }
+    it('should throw on mismatch', async () => {
+      const input = generate()
+
+      request.sample = { request: { input } }
+
+      await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(ReplayException)
+    })
+
+    it('should not throw if matches', async () => {
+      const { sample, ...rest } = request
+
+      request.sample = { request: rest }
+
+      await expect(component.invoke(endpoint, request)).resolves.toBeDefined()
+    })
+
+    it('should not throw if partially matches', async () => {
+      request.sample = { request: { input: request.input } }
+
+      await expect(component.invoke(endpoint, request)).resolves.toBeDefined()
     })
   })
 
