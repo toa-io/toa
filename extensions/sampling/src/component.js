@@ -37,7 +37,7 @@ class Component extends Connector {
 
   /**
    * @param {string} endpoint
-   * @param {toa.core.Request} request
+   * @param {toa.sampling.Request} request
    * @returns {Promise<toa.core.Reply>}
    */
   async #apply (endpoint, request) {
