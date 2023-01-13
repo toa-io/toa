@@ -37,15 +37,6 @@ it('should apply', async () => {
   expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, payload)
 })
 
-it('should apply foreign messages', async () => {
-  // Foreign messages may not conform toa.core.Message type
-  const message = { [generate()]: generate() }
-
-  await receiver.receive(message)
-
-  expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, message)
-})
-
 it.each([[false], [true]])('should pass UI extensions (adaptive: %s)', async (adaptive) => {
   jest.clearAllMocks()
 

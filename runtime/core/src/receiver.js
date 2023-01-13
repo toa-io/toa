@@ -7,12 +7,20 @@ const { Connector } = require('./connector')
  * @implements {toa.core.Receiver}
  */
 class Receiver extends Connector {
-  /** @type {boolean} */ #conditioned
-  /** @type {boolean} */ #adaptive
-  /** @type {string} */ #endpoint
+  /** @type {boolean} */
+  #conditioned
 
-  /** @type {toa.core.Component} */ #local
-  /** @type {toa.core.bridges.Event} */ #bridge
+  /** @type {boolean} */
+  #adaptive
+
+  /** @type {string} */
+  #endpoint
+
+  /** @type {toa.core.Component} */
+  #local
+
+  /** @type {toa.core.bridges.Event} */
+  #bridge
 
   /**
    *
@@ -38,31 +46,15 @@ class Receiver extends Connector {
 
   /** @hot */
   async receive (message) {
-    const domestic = typeof message.payload === 'object'
-    const payload = domestic ? message.payload : message
+    const { payload, ...extensions } = message
 
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
-    const request = await this.#request(payload, domestic ? message : undefined)
+    const request = this.#adaptive ? await this.#bridge.request(payload) : payload
+
+    if (extensions) add(request, extensions)
 
     await this.#local.invoke(this.#endpoint, request)
-  }
-
-  /**
-   * @param {toa.core.Request} request
-   * @param {Object} [message]
-   * @returns {Promise<toa.core.Request>}
-   */
-  async #request (request, message) {
-    if (this.#adaptive) request = await this.#bridge.request(request)
-
-    if (message !== undefined) {
-      const { payload, ...extensions } = message
-
-      request = add(request, extensions)
-    }
-
-    return request
   }
 }
 

@@ -103,15 +103,3 @@ Feature: Message samples
       """
     When I replay it
     Then it fails
-
-  Scenario: Sample with foreign message passes
-    Given I have a message sample labeled store.orders.created for tea.pots:
-      """yaml
-      title: Should book a pot
-      message:
-        pot: 1
-      input:
-        booked: true
-      """
-    When I replay it
-    Then it fails
