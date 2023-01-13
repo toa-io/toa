@@ -17,10 +17,10 @@ class Emitter extends Connector {
   #emitter
 
   /**
-   * @param {string} label
    * @param {toa.core.bindings.Emitter} emitter
+   * @param {string} label
    */
-  constructor (label, emitter) {
+  constructor (emitter, label) {
     super()
 
     this.#label = label

@@ -50,11 +50,15 @@ class Receiver extends Connector {
 
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
-    const request = this.#adaptive ? await this.#bridge.request(payload) : payload
+    const request = await this.#request(payload)
 
     if (extensions) add(request, extensions)
 
     await this.#local.invoke(this.#endpoint, request)
+  }
+
+  async #request (payload) {
+    return this.#adaptive ? await this.#bridge.request(payload) : payload
   }
 }
 

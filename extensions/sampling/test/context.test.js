@@ -43,7 +43,7 @@ it('should be', () => {
   expect(context.call).toBeDefined()
 })
 
-it('should depends on original context', () => {
+it('should depend on original context', () => {
   expect(fixtures.context.link).toHaveBeenCalledWith(context)
 })
 

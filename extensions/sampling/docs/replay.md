@@ -44,7 +44,4 @@ of `assignments` may declare an `update` to validate an assignment changeset.
 Emitter decorator records events published after operation invocation to a sampling context, which
 is then used by Component decorator for verification.
 
-> Autonomous samples replay does not emit events to binding.
-
-### Receiver Decorator
-
+> Autonomous samples replay doesn't emit events to a binding.

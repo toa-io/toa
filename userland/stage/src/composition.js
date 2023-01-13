@@ -8,6 +8,7 @@ const composition = async (paths) => {
   const composition = await boot.composition(paths)
 
   await composition.connect()
+
   state.compositions.push(composition)
 }
 

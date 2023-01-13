@@ -19,7 +19,7 @@ declare namespace toa.core.extensions {
 
     storage?(storage: _storages.Storage): _storages.Storage
 
-    emitter?(label: string, emitter: _bindings.Emitter): _bindings.Emitter
+    emitter?(emitter: _bindings.Emitter, label: string): _bindings.Emitter
   }
 
   interface Aspect extends _core.Connector {

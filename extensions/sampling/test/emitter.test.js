@@ -47,7 +47,7 @@ beforeEach(() => {
     }
   }
 
-  emitter = factory.emitter(label, fixtures.emitter)
+  emitter = factory.emitter(fixtures.emitter, label)
 })
 
 it('should be Emitter', async () => {

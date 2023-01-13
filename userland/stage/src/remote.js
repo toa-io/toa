@@ -13,6 +13,7 @@ const remote = async (id) => {
   const remote = await boot.remote(locator)
 
   await remote.connect()
+
   state.remotes.push(remote)
 
   return remote

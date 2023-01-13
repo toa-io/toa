@@ -3,19 +3,10 @@ import type * as _request from './request'
 
 declare namespace toa.sampling {
 
-  namespace messages {
-
-    type Sample = {
-      autonomous?: boolean
-      input: object
-      query: _core.Query
-      request?: _request.Request
-    }
-
-  }
-
   type Message = _core.Message & {
-    sample: messages.Sample
+    sample: _request.Sample
   }
 
 }
+
+export type Message = toa.sampling.Message

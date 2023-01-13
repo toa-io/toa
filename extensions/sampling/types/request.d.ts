@@ -37,13 +37,8 @@ declare namespace toa.sampling {
       next?: _core.storages.Record
     }
 
-    type Extensions = {
-      [key: string]: extensions.Call[]
-    }
-
-    type Events = {
-      [key: string]: _core.Message
-    }
+    type Extensions = Record<string, extensions.Call>
+    type Events = Record<string, _core.Message>
 
     type Sample = {
       autonomous?: boolean
@@ -64,3 +59,4 @@ declare namespace toa.sampling {
 }
 
 export type Request = toa.sampling.Request
+export type Sample = toa.sampling.request.Sample

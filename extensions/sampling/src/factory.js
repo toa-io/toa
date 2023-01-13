@@ -25,8 +25,8 @@ class Factory {
     return new Storage(storage)
   }
 
-  emitter (label, emitter) {
-    return new Emitter(label, emitter)
+  emitter (emitter, label) {
+    return new Emitter(emitter, label)
   }
 }
 
@@ -34,8 +34,6 @@ class Factory {
  * @param {toa.core.extensions.Aspect} aspect
  * @returns {toa.core.extensions.Aspect}
  */
-const aspect = (aspect) => {
-  return new Aspect(aspect)
-}
+const aspect = (aspect) => new Aspect(aspect)
 
 exports.Factory = Factory

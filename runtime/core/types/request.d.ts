@@ -17,8 +17,6 @@ declare namespace toa.core {
   interface Request {
     input?: any
     query?: request.Query
-
-    [key: string]: any // extensions
   }
 
 }
