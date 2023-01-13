@@ -7,7 +7,7 @@ const { underlay } = require('@toa.io/libraries/generic')
  * @implements {toa.node.Context}
  */
 class Context extends Connector {
-  annexes
+  aspects
   configuration
   origins
 
@@ -25,7 +25,7 @@ class Context extends Connector {
   }
 
   async connection () {
-    this.annexes = this.#annexes(/** @type {toa.core.extensions.Annex[]} */ this.#context.annexes)
+    this.aspects = this.#aspects(/** @type {toa.core.extensions.Aspect[]} */ this.#context.aspects)
   }
 
   local = underlay(async ([endpoint], [request]) => {
@@ -37,29 +37,29 @@ class Context extends Connector {
   })
 
   /**
-   * @param {toa.core.extensions.Annex[]} annexes
+   * @param {toa.core.extensions.Aspect[]} aspects
    * @returns {{ [key: string]: Function}}
    */
-  #annexes (annexes) {
+  #aspects (aspects) {
     const map = {}
 
-    for (const annex of annexes) {
-      if (map[annex.name] !== undefined) throw new Error(`Annex conflict on '${annex.name}'`)
+    for (const aspect of aspects) {
+      if (map[aspect.name] !== undefined) throw new Error(`Aspect conflict on '${aspect.name}'`)
 
-      map[annex.name] = annex.invoke.bind(annex)
+      map[aspect.name] = aspect.invoke.bind(aspect)
 
-      // well-known annexes
-      if (annex.name === 'configuration') this.#configuration(annex)
-      if (annex.name === 'origins') this.origins = this.#origins(annex)
+      // well-known aspects
+      if (aspect.name === 'configuration') this.#configuration(aspect)
+      if (aspect.name === 'origins') this.origins = this.#origins(aspect)
     }
 
     return map
   }
 
   /**
-   * @param {toa.core.extensions.Annex} annex
+   * @param {toa.core.extensions.Aspect} aspect
    */
-  #origins (annex) {
+  #origins (aspect) {
     return underlay(async (segs, args) => {
       if (segs.length < 2) throw new Error(`Origins call requires at least 2 arguments, ${segs.length} given`)
 
@@ -69,16 +69,16 @@ class Context extends Connector {
       const request = { method, ...args[0] }
       const options = args[1]
 
-      return await annex.invoke(name, path, request, options)
+      return await aspect.invoke(name, path, request, options)
     })
   }
 
   /**
-   * @param {toa.core.extensions.Annex} annex
+   * @param {toa.core.extensions.Aspect} aspect
    */
-  #configuration (annex) {
+  #configuration (aspect) {
     Object.defineProperty(this, 'configuration', {
-      get: () => annex.invoke()
+      get: () => aspect.invoke()
     })
   }
 }

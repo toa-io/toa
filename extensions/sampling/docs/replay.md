@@ -30,7 +30,7 @@ sampling context. If no output is provided, then an actual call is performed.
 
 ### Context Extension Decorator
 
-Context extension (annex) decorator validates annex invocation arguments and substitutes its
+Context extension (aspect) decorator validates aspect invocation arguments and substitutes its
 returned value.
 
 ### Storage Decorator

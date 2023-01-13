@@ -5,28 +5,28 @@ const { context } = require('./sample')
 const { ReplayException } = require('./exceptions')
 
 /**
- * @implements {toa.core.extensions.Annex}
+ * @implements {toa.core.extensions.Aspect}
  */
-class Annex {
+class Aspect {
   name
 
-  /** @type {toa.core.extensions.Annex} */
-  #annex
+  /** @type {toa.core.extensions.Aspect} */
+  #aspect
 
   /**
-   * @param {toa.core.extensions.Annex} annex
+   * @param {toa.core.extensions.Aspect} aspect
    */
-  constructor (annex) {
-    this.name = annex.name
+  constructor (aspect) {
+    this.name = aspect.name
 
-    this.#annex = annex
+    this.#aspect = aspect
   }
 
   invoke (...args) {
     const sample = /** @type {toa.sampling.Request} */ context.get()
     const calls = sample?.extensions?.[this.name]
 
-    if (calls === undefined) return this.#annex.invoke(...args)
+    if (calls === undefined) return this.#aspect.invoke(...args)
     else return this.#replay(calls, args)
   }
 
@@ -51,8 +51,8 @@ class Annex {
     }
 
     if (sample.result !== undefined) return sample.result
-    else return this.#annex.invoke(...args)
+    else return this.#aspect.invoke(...args)
   }
 }
 
-exports.Annex = Annex
+exports.Aspect = Aspect

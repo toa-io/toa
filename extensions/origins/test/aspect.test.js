@@ -6,27 +6,27 @@ const { random } = require('@toa.io/libraries/generic')
 
 const { Connector } = require('@toa.io/core')
 
-const fixtures = require('./annex.fixtures')
+const fixtures = require('./aspect.fixtures')
 const mock = fixtures.mock
 
 jest.mock('node-fetch', () => mock.fetch)
 
-const { Annex } = require('../src/annex')
+const { Aspect } = require('../src/aspect')
 
-/** @type {toa.extensions.origins.Annex} */ let annex
+/** @type {toa.extensions.origins.Aspect} */ let aspect
 
 beforeEach(() => {
   jest.clearAllMocks()
 
-  annex = new Annex(fixtures.declaration)
+  aspect = new Aspect(fixtures.declaration)
 })
 
 it('should be instance of core.Connector', () => {
-  expect(annex).toBeInstanceOf(Connector)
+  expect(aspect).toBeInstanceOf(Connector)
 })
 
 it('should have name \'origins\'', () => {
-  expect(annex.name).toStrictEqual('origins')
+  expect(aspect.name).toStrictEqual('origins')
 })
 
 describe('invoke', () => {
@@ -48,13 +48,13 @@ describe('invoke', () => {
 
     mock.fetch.respond(200, response)
 
-    result = await annex.invoke(name, path, clone(request))
+    result = await aspect.invoke(name, path, clone(request))
     call = mock.fetch.mock.calls[0]
     args = call?.[1]
   })
 
   it('should throw on unknown origin', async () => {
-    await expect(() => annex.invoke('bar', path, request)).rejects.toThrow(/is not defined/)
+    await expect(() => aspect.invoke('bar', path, request)).rejects.toThrow(/is not defined/)
   })
 
   it('should not resolve absolute urls', async () => {
@@ -63,7 +63,7 @@ describe('invoke', () => {
 
     const path = 'https://toa.io'
 
-    await annex.invoke(name, path, clone(request))
+    await aspect.invoke(name, path, clone(request))
 
     expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.declaration.origins.foo + '/' + path)
   })
@@ -74,7 +74,7 @@ describe('invoke', () => {
 
     const substitutions = ['foo', 'bar', 443]
 
-    await annex.invoke('amazon', path, clone(request), { substitutions })
+    await aspect.invoke('amazon', path, clone(request), { substitutions })
 
     const url = mock.fetch.mock.calls[0][0]
 
@@ -87,7 +87,7 @@ describe('invoke', () => {
 
     const path = generate() + '?foo=' + generate()
 
-    await annex.invoke(name, path)
+    await aspect.invoke(name, path)
 
     const url = mock.fetch.mock.calls[0][0]
 
@@ -98,7 +98,7 @@ describe('invoke', () => {
     jest.clearAllMocks()
     mock.fetch.respond(200, response)
 
-    expect(() => annex.invoke(name)).not.toThrow()
+    expect(() => aspect.invoke(name)).not.toThrow()
   })
 
   describe('fetch', () => {
@@ -136,7 +136,7 @@ describe('invoke', () => {
         retry: { base: 0, retries: attempts }
       }
 
-      await annex.invoke(name, path, clone(request), options)
+      await aspect.invoke(name, path, clone(request), options)
 
       expect(mock.fetch).toHaveBeenCalledTimes(attempts)
     })

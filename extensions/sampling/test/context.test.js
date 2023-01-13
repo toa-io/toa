@@ -5,7 +5,7 @@ const { Connector } = require('@toa.io/core')
 const { random } = require('@toa.io/libraries/generic')
 
 const { Context } = require('../src/context')
-const { Annex } = require('../src/annex')
+const { Aspect } = require('../src/aspect')
 const { ReplayException, SampleException } = require('../src/exceptions')
 const { context: storage } = require('../src/sample')
 
@@ -138,36 +138,36 @@ it('should depends on original context', () => {
   })
 })
 
-describe('annexes', () => {
-  it('should expose annexes', () => {
-    expect(context.annexes.length).toStrictEqual(fixtures.context.annexes.length)
+describe('aspects', () => {
+  it('should expose aspects', () => {
+    expect(context.aspects.length).toStrictEqual(fixtures.context.aspects.length)
 
-    context.annexes.forEach((annex) => {
-      expect(annex).toBeInstanceOf(Annex)
+    context.aspects.forEach((aspect) => {
+      expect(aspect).toBeInstanceOf(Aspect)
     })
   })
 
-  /** @type {toa.core.extensions.Annex} */
-  let annex
+  /** @type {toa.core.extensions.Aspect} */
+  let aspect
 
-  /** @type {jest.MockedObject<toa.core.extensions.Annex>} */
+  /** @type {jest.MockedObject<toa.core.extensions.Aspect>} */
   let fixture
 
   beforeEach(() => {
-    const i = random(fixtures.context.annexes.length)
+    const i = random(fixtures.context.aspects.length)
 
-    annex = context.annexes[i]
-    fixture = /** @type {jest.MockedObject<toa.core.extensions.Annex>} */ fixtures.context.annexes[i]
+    aspect = context.aspects[i]
+    fixture = /** @type {jest.MockedObject<toa.core.extensions.Aspect>} */ fixtures.context.aspects[i]
   })
 
   it('should expose name', async () => {
-    expect(annex.name).toStrictEqual(fixture.name)
+    expect(aspect.name).toStrictEqual(fixture.name)
   })
 
   it('should invoke if no sampling context', async () => {
     const args = [generate(), generate()]
 
-    const output = await annex.invoke(...args)
+    const output = await aspect.invoke(...args)
 
     expect(fixture.invoke).toHaveBeenCalledWith(...args)
     expect(output).toStrictEqual(await fixture.invoke.mock.results[0].value)
@@ -181,13 +181,13 @@ describe('annexes', () => {
     /** @type {toa.sampling.Request} */
     const sample = {
       extensions: {
-        [annex.name]: [{ arguments: args }]
+        [aspect.name]: [{ arguments: args }]
       }
     }
 
     await storage.apply(sample, async () => {
       const nope = [generate()]
-      expect(() => annex.invoke(...nope)).toThrow(ReplayException)
+      expect(() => aspect.invoke(...nope)).toThrow(ReplayException)
     })
   })
 
@@ -197,13 +197,13 @@ describe('annexes', () => {
     /** @type {toa.sampling.Request} */
     const sample = {
       extensions: {
-        [annex.name]: [{ arguments: args }]
+        [aspect.name]: [{ arguments: args }]
       }
     }
 
     const output = await storage.apply(sample, async () => {
       const yep = [...args, generate()]
-      return annex.invoke(...yep)
+      return aspect.invoke(...yep)
     })
 
     expect(output).toStrictEqual(await fixture.invoke.mock.results[0].value)
@@ -215,11 +215,11 @@ describe('annexes', () => {
     /** @type {toa.sampling.Request} */
     const sample = {
       extensions: {
-        [annex.name]: [{ result }]
+        [aspect.name]: [{ result }]
       }
     }
 
-    const output = await storage.apply(sample, () => annex.invoke())
+    const output = await storage.apply(sample, () => aspect.invoke())
 
     expect(output).toStrictEqual(result)
   })
@@ -227,19 +227,19 @@ describe('annexes', () => {
   it('should remove used sample', async () => {
     const sample = {
       extensions: {
-        [annex.name]: [{ result: generate() }]
+        [aspect.name]: [{ result: generate() }]
       }
     }
 
-    await storage.apply(sample, () => annex.invoke())
+    await storage.apply(sample, () => aspect.invoke())
 
-    expect(sample.extensions[annex.name].length).toStrictEqual(0)
+    expect(sample.extensions[aspect.name].length).toStrictEqual(0)
   })
 
   it('should not use permanent sample', async () => {
     const sample = {
       extensions: {
-        [annex.name]: [
+        [aspect.name]: [
           {
             result: generate(),
             permanent: true
@@ -248,8 +248,8 @@ describe('annexes', () => {
       }
     }
 
-    await storage.apply(sample, () => annex.invoke())
+    await storage.apply(sample, () => aspect.invoke())
 
-    expect(sample.extensions[annex.name].length).toStrictEqual(1)
+    expect(sample.extensions[aspect.name].length).toStrictEqual(1)
   })
 })

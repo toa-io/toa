@@ -7,7 +7,7 @@ const configuration = { foo: { bar: generate() } }
 const context = /** @type {toa.core.Context} */ {
   apply: jest.fn(),
   call: jest.fn(),
-  annexes: [
+  aspects: [
     {
       name: 'configuration',
       invoke: jest.fn(() => configuration)

@@ -9,12 +9,12 @@ let context
 beforeEach(() => {
   jest.clearAllMocks()
 
-  context = new Context(fixtures.local, fixtures.discover, fixtures.annexes)
+  context = new Context(fixtures.local, fixtures.discover, fixtures.aspects)
 })
 
-it('should expose annexes', () => {
-  expect(context.annexes).toBeDefined()
-  expect(context.annexes).toStrictEqual(fixtures.annexes)
+it('should expose aspects', () => {
+  expect(context.aspects).toBeDefined()
+  expect(context.aspects).toStrictEqual(fixtures.aspects)
 })
 
 describe('call', () => {

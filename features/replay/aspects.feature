@@ -1,7 +1,7 @@
-Feature: Context annexes samples
+Feature: Context aspects samples
 
-  Context extensions samples are declared as an array of annex call samples. A sample from that array is used
-  once on each annex call, unless sample is declared as permanent. Permanent sample will be used constantly
+  Context extensions samples are declared as an array of aspect call samples. A sample from that array is used
+  once on each aspect call, unless sample is declared as permanent. Permanent sample will be used constantly
   for all calls. See schema (src/.suite/sample.cos.yaml).
 
   Scenario: Configuration sample

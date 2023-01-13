@@ -9,7 +9,7 @@ declare namespace toa.core.extensions {
   interface Factory {
     tenant?(locator: _core.Locator, declaration: Object): _core.Connector
 
-    annex?(locator: _core.Locator, declaration: Object): Annex
+    aspect?(locator: _core.Locator, declaration: Object): Aspect
 
     service?(name?: string): _core.Connector
 
@@ -22,7 +22,7 @@ declare namespace toa.core.extensions {
     emitter?(label: string, emitter: _bindings.Emitter): _bindings.Emitter
   }
 
-  interface Annex extends _core.Connector {
+  interface Aspect extends _core.Connector {
     name: string
 
     invoke(...args: any[]): Promise<any>
@@ -31,4 +31,4 @@ declare namespace toa.core.extensions {
 }
 
 export type Factory = toa.core.extensions.Factory
-export type Annex = toa.core.extensions.Annex
+export type Aspect = toa.core.extensions.Aspect

@@ -1,6 +1,6 @@
 'use strict'
 
-const { Annex } = require('./annex')
+const { Aspect } = require('./aspect')
 const { Component } = require('./component')
 const { Context } = require('./context')
 const { Storage } = require('./storage')
@@ -15,10 +15,10 @@ class Factory {
   }
 
   context (context) {
-    /** @type {toa.core.extensions.Annex[]} */
-    const annexes = context.annexes.map(annex)
+    /** @type {toa.core.extensions.Aspect[]} */
+    const aspects = context.aspects.map(aspect)
 
-    return new Context(context, annexes)
+    return new Context(context, aspects)
   }
 
   storage (storage) {
@@ -31,11 +31,11 @@ class Factory {
 }
 
 /**
- * @param {toa.core.extensions.Annex} annex
- * @returns {toa.core.extensions.Annex}
+ * @param {toa.core.extensions.Aspect} aspect
+ * @returns {toa.core.extensions.Aspect}
  */
-const annex = (annex) => {
-  return new Annex(annex)
+const aspect = (aspect) => {
+  return new Aspect(aspect)
 }
 
 exports.Factory = Factory

@@ -6,7 +6,7 @@ import * as _connector from './connector'
 declare namespace toa.core {
 
   interface Context extends _connector.Connector {
-    annexes: _extensions.Annex[]
+    aspects: _extensions.Aspect[]
 
     /**
      * Calls local endpoint

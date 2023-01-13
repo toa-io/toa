@@ -14,7 +14,7 @@ const context = new Connector()
 const input = generate()
 const state = generate()
 
-context.annexes = []
+context.aspects = []
 
 beforeAll(() => {
   factory = new Factory()

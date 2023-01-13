@@ -6,9 +6,9 @@ const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/libraries/generic')
 
 /**
- * @implements {toa.extensions.origins.Annex}
+ * @implements {toa.extensions.origins.Aspect}
  */
-class Annex extends Connector {
+class Aspect extends Connector {
   /** @readonly */
   name = 'origins'
 
@@ -92,4 +92,4 @@ const append = (url, path) => {
 
 const PLACEHOLDER = /\*/g
 
-exports.Annex = Annex
+exports.Aspect = Aspect

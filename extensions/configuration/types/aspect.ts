@@ -4,7 +4,7 @@ import * as core from '@toa.io/core/types/extensions'
 
 declare namespace toa.extensions.configuration {
 
-  interface Annex extends core.Annex {
+  interface Aspect extends core.Aspect {
     invoke(path?: string[]): any
   }
 

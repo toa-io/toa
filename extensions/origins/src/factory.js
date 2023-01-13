@@ -1,13 +1,13 @@
 'use strict'
 
-const { Annex } = require('./annex')
+const { Aspect } = require('./aspect')
 
 /**
  * @implements {toa.core.extensions.Factory}
  */
 class Factory {
-  annex (locator, declaration) {
-    return new Annex(declaration)
+  aspect (locator, declaration) {
+    return new Aspect(declaration)
   }
 }
 

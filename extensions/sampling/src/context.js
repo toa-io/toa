@@ -14,12 +14,12 @@ class Context extends Connector {
 
   /**
    * @param {toa.core.Context} context
-   * @param {toa.core.extensions.Annex[]} annexes
+   * @param {toa.core.extensions.Aspect[]} aspects
    */
-  constructor (context, annexes) {
+  constructor (context, aspects) {
     super()
 
-    this.annexes = annexes
+    this.aspects = aspects
     this.#context = context
     this.depends(context)
   }
