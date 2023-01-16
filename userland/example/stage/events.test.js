@@ -1,7 +1,6 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { newid } = require('@toa.io/libraries/generic')
 const stage = require('@toa.io/userland/stage')
 
 const binding = stage.binding.binding
@@ -18,12 +17,15 @@ beforeAll(async () => {
   remote = await stage.remote('tea.pots')
 })
 
-afterEach(async () => {
+afterAll(async () => {
   await stage.shutdown()
 })
 
 it('should book a pot', async () => {
-  const payload = { id: newid() }
+  const created = await remote.invoke('transit', { input: { material: 'glass' } })
+  const id = created.output.id
+
+  const payload = { id }
   const message = { payload }
   const request = { query: payload }
 
@@ -32,4 +34,16 @@ it('should book a pot', async () => {
   const reply = await remote.invoke('observe', request)
 
   expect(reply.output.booked).toStrictEqual(true)
+})
+
+it('should emit event', async () => {
+  expect.assertions(1)
+
+  const material = 'steel'
+
+  await binding.subscribe('tea.pots.created', (pot) => {
+    expect(pot.payload.material).toStrictEqual(material)
+  })
+
+  await remote.invoke('transit', { input: { material } })
 })
