@@ -4,16 +4,18 @@ namespace: tea
 entity:
   storage: mongodb
   schema:
-    material*: [glass, ceramic, steel]
+    material: [glass, ceramic, steel]
     volume: number
     booked: false
+  initialized: true
 
 operations:
   transit:
     concurrency: none
     input:
-      material*: .
+      material: .
       volume: .
+      booked: .
   same:
     input: .material
     output: array
