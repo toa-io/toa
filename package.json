@@ -90,8 +90,7 @@
       "<rootDir>/userland"
     ],
     "testMatch": [
-      "**/(*.)+(test).js",
-      "!**/userland/example/**/(*.)+test.js"
+      "**/(*.)+(test).js"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"

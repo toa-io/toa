@@ -44,10 +44,6 @@ export namespace toa.norm {
       path: string
     }
 
-    interface Extensions {
-      [key: string]: Object
-    }
-
     type Entity = {
       schema: Object
       storage?: string
@@ -60,9 +56,10 @@ export namespace toa.norm {
       version: string
       entity: Entity
       bindings: string[]
-      operations?: component.Operations
-      events?: component.Events
-      extensions?: component.Extensions
+      operations?: Operations
+      events?: Events
+      receivers: Record<string, Receiver>
+      extensions?: Record<string, Object>
     }
 
     type Constructor = (path: string) => Promise<Component>
