@@ -2,6 +2,10 @@ import * as _core from './index'
 
 declare namespace toa.core.bindings {
 
+  type Properties = {
+    async?: boolean
+  }
+
   interface Consumer extends _core.Connector {
     request(request: Request): Promise<_core.Reply>
   }
@@ -30,7 +34,6 @@ declare namespace toa.core.bindings {
 
 }
 
-export type Consumer = toa.core.bindings.Consumer
 export type Emitter = toa.core.bindings.Emitter
-export type Broadcaster = toa.core.bindings.Broadcaster
 export type Factory = toa.core.bindings.Factory
+export type Properties = toa.core.bindings.Properties

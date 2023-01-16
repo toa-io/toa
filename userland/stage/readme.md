@@ -3,23 +3,21 @@
 ## TL;DR
 
 ```javascript
+const stage = require('@toa.io/userland/stage')
 
 const component = await stage.component('dummies.dummy')
+const reply = await component.invoke('do', { input: 'foo' })
 
 await stage.shutdown()
 ```
 
-## Introduction
-
-Stage is a Node.js framework. See [examples](../example/stage).
-
-> Stage requires environment, that is, local RabbitMQ and used databases instances.
+See [examples](../example/stage).
 
 ## Component
 
 `async component(path: string): toa.core.Component`
 
-Boot Component.
+Boot the component.
 
 > Components consuming events must be able to discover event sources, that is, either they must be
 > booted after event sources are composed or within the same composition.
@@ -28,13 +26,13 @@ Boot Component.
 
 `async composition(paths: string[]): void`
 
-Boot Composition.
+Boot the composition.
 
 ## Remote
 
 `async component(paths: string[]): toa.core.Component`
 
-Connect Remote.
+Connect the remote.
 
 ## Shutdown
 

@@ -7,18 +7,29 @@ jest.mock('@toa.io/boot', () => mock.boot)
 
 const stage = require('../')
 
+const paths = [generate(), generate()]
+
 it('should be', () => {
   expect(stage.composition).toBeDefined()
 })
 
 it('should boot composition', async () => {
-  const paths = [generate(), generate()]
-
   await stage.composition(paths)
 
-  expect(mock.boot.composition).toHaveBeenCalledWith(paths)
+  expect(mock.boot.composition.mock.calls[0][0]).toStrictEqual(paths)
 
   const composition = await mock.boot.composition.mock.results[0].value
 
   expect(composition.connect).toHaveBeenCalled()
+})
+
+it('should override bindings', async () => {
+  await stage.composition(paths)
+
+  const path = require.resolve('../src/binding')
+
+  /** @type {toa.boot.composition.Options} */
+  const options = { bindings: [path] }
+
+  expect(mock.boot.composition.mock.calls[0][1]).toStrictEqual(options)
 })

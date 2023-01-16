@@ -24,3 +24,5 @@ export const component: toa.stage.Component
 export const composition: toa.stage.Composition
 export const remote: toa.stage.Remote
 export const shutdown: toa.stage.Shutdown
+
+export * as binding from './binding'

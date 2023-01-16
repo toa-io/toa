@@ -59,6 +59,7 @@ export namespace toa.norm {
       name: string
       version: string
       entity: Entity
+      bindings: string[]
       operations?: component.Operations
       events?: component.Events
       extensions?: component.Extensions
