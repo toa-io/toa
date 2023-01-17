@@ -22,7 +22,7 @@
     "@toa.io/libraries": "*"
   },
   "dependencies": {
-    "knex": "2.3.0",
+    "knex": "2.4.0",
     "pg": "8.7.3"
   }
 }
