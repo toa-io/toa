@@ -64,9 +64,7 @@
     "publish:local": "npm publish --workspaces",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
-    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
-    "connect": "telepresence quit && telepresence connect && telepresence intercept -l dev",
-    "psql": "docker exec -it toa-postgres-1 psql -U developer -d test"
+    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context"
   },
   "standard": {
     "parser": "@babel/eslint-parser",
