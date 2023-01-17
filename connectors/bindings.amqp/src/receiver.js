@@ -24,10 +24,15 @@ class Receiver extends Connector {
     this.#id = id
 
     this.depends(channel)
+    this.depends(receiver)
   }
 
   async connection () {
     await this.#channel.subscribe(this.#label, this.#id, (message) => this.#receiver.receive(message))
+  }
+
+  async disconnection () {
+    await this.#channel.unsubscribe(this.#id)
   }
 }
 

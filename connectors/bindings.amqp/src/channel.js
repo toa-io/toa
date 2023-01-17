@@ -83,6 +83,7 @@ class Channel extends Connector {
   async subscribe (label, id, callback) {
     const exchange = 'event.' + label
     const queue = exchange + '..' + id
+    const options = { consumerTag: id }
 
     await this.#channel.assertExchange(exchange, 'fanout', EXCHANGE)
     await this.#channel.assertQueue(queue, QUEUE)
@@ -92,7 +93,11 @@ class Channel extends Connector {
       const content = unpack(message.content)
       await callback(content)
       await this.#channel.ack(message)
-    })
+    }, options)
+  }
+
+  async unsubscribe (id) {
+    await this.#channel.cancel(id)
   }
 
   async #bind (label) {
