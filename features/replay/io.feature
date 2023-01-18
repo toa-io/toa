@@ -1,7 +1,7 @@
 Feature: Component IO samples
 
   Scenario: Correct IO sample is passing
-    Given I have a sample for add operation of math.calculations:
+    Given I have an operation sample for `add` of `math.calculations`:
       """yaml
       title: Sum 1 and 2
       input:
@@ -13,7 +13,7 @@ Feature: Component IO samples
     Then it passes
 
   Scenario: Correct multiple IO samples are passing
-    Given I have samples for add operation of math.calculations:
+    Given I have an operation sample for `add` of `math.calculations`:
       """
       input:
         a: 1
@@ -29,7 +29,7 @@ Feature: Component IO samples
     Then it passes
 
   Scenario: Incorrect IO sample is failing
-    Given I have a sample for add operation of math.calculations:
+    Given I have an operation sample for `add` of `math.calculations`:
       """yaml
       input:
         a: 1
@@ -40,7 +40,7 @@ Feature: Component IO samples
     Then it fails
 
   Scenario: No output validation
-    Given I have a sample for add operation of math.calculations:
+    Given I have an operation sample for `add` of `math.calculations`:
         """yaml
         input:
           a: 1

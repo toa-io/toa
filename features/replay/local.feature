@@ -1,7 +1,7 @@
 Feature: Local call samples
 
   Scenario Outline: Sample with local call passes
-    Given I have a sample for increment operation of math.calculations:
+    Given I have an operation sample for `increment` of `math.calculations`:
       """yaml
       title: Increment by 1
       input:
@@ -26,7 +26,7 @@ Feature: Local call samples
 
   Because of times: 2 argument increment calls add twice.
 
-    Given I have a sample for increment operation of math.calculations:
+    Given I have an operation sample for `increment` of `math.calculations`:
       """yaml
       title: Increment by 1 twice
       input:
@@ -51,7 +51,7 @@ Feature: Local call samples
 
   If the local call sample does not contain output an actual call will be performed.
 
-    Given I have a sample for increment operation of math.calculations:
+    Given I have an operation sample for `increment` of `math.calculations`:
       """yaml
       title: Increment by 1
       input:
@@ -67,7 +67,7 @@ Feature: Local call samples
     Then it passes
 
   Scenario: Sample with no call input validation passes
-    Given I have a sample for increment operation of math.calculations:
+    Given I have an operation sample for `increment` of `math.calculations`:
       """yaml
       title: Increment by 1
       input:
@@ -81,7 +81,7 @@ Feature: Local call samples
     Then it passes
 
   Scenario: Sample with local call fails on call mismatch
-    Given I have a sample for increment operation of math.calculations:
+    Given I have an operation sample for `increment` of `math.calculations`:
       """yaml
       title: Increment by 1
       input:
@@ -97,7 +97,7 @@ Feature: Local call samples
     Then it fails
 
   Scenario: Sample with local call fails on reply mismatch
-    Given I have a sample for increment operation of math.calculations:
+    Given I have an operation sample for `increment` of `math.calculations`:
       """yaml
       title: Increment by 1
       input:
@@ -111,7 +111,7 @@ Feature: Local call samples
     Then it fails
 
   Scenario: Sample with local call query passes
-    Given I have a sample for same operation of tea.pots:
+    Given I have an operation sample for `same` of `tea.pots`:
       """yaml
       title: Return pots of steel
       input: steel
@@ -126,7 +126,7 @@ Feature: Local call samples
     Then it passes
 
   Scenario: Sample with local call query fails on mismatch
-    Given I have a sample for same operation of tea.pots:
+    Given I have an operation sample for `same` of `math.calculations`:
       """yaml
       title: Return pots of steel
       input: steel

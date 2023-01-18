@@ -29,22 +29,12 @@ const operation = (samples, autonomous, remote, endpoint) =>
       n++
 
       const { title, request, ...rest } = sample
+      const name = title ?? 'Sample ' + n
 
       request.sample = rest
       request.sample.autonomous = autonomous
 
-      await test.test(title ?? 'Sample ' + n, async (test) => {
-        let exception
-
-        try {
-          await remote.invoke(endpoint, request)
-        } catch (e) {
-          exception = e
-        }
-
-        test.equal(exception, undefined, exception?.message, constants.EXTRA)
-        test.end()
-      })
+      await test.test(name, async () => remote.invoke(endpoint, request))
     }
 
     test.end()

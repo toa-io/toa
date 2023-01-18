@@ -10,19 +10,19 @@ defineParameterType({
 
 defineParameterType({
   name: 'component',
-  regexp: /\w+.\w+/,
+  regexp: /`(\w+.\w+)`/,
   transformer: (name) => name
 })
 
 defineParameterType({
-  name: 'endpoint',
+  name: 'label',
   regexp: /\w+.\w+.\w+/,
   transformer: (name) => name
 })
 
 defineParameterType({
-  name: 'command',
-  regexp: /`(.+)`/,
+  name: 'token',
+  regexp: /`(\w+)`/,
   transformer: (cmd) => cmd
 })
 
