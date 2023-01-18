@@ -23,6 +23,12 @@ defineParameterType({
 defineParameterType({
   name: 'token',
   regexp: /`(\w+)`/,
+  transformer: (token) => token
+})
+
+defineParameterType({
+  name: 'command',
+  regexp: /`(.+)`/,
   transformer: (cmd) => cmd
 })
 

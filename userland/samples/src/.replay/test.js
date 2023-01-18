@@ -11,9 +11,9 @@ const { suite } = require('./suite')
  * @return {Promise<boolean>}
  */
 const test = async (components, remotes, autonomous) => {
-  const results = await tap.test('Replay suite', suite(components, remotes, autonomous))
+  const { ok } = await tap.test('Replay suite', suite(components, remotes, autonomous))
 
-  return results.ok === true
+  return ok
 }
 
 exports.test = test
