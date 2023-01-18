@@ -85,9 +85,7 @@ declare namespace toa.samples.operations {
     extensions?: Extensions
   }
 
-  type Set = {
-    [operation: string]: Sample[]
-  }
+  type Set = Record<string, Sample[]>
 
 }
 

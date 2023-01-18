@@ -21,10 +21,9 @@ afterAll(async () => {
   await stage.shutdown()
 })
 
-it('should book a pot', async () => {
+it('should receive event', async () => {
   const created = await remote.invoke('transit', { input: { material: 'glass' } })
   const id = created.output.id
-
   const payload = { id }
   const message = { payload }
   const request = { query: payload }

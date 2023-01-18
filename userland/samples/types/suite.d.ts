@@ -8,9 +8,7 @@ declare namespace toa.samples {
     messages?: Messages
   }
 
-  type Components = {
-    [key: string]: Component
-  }
+  type Components = Record<string, Component>
 
   type Suite = {
     autonomous: boolean

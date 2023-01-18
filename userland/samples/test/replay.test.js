@@ -42,7 +42,7 @@ it('should connect remotes', () => {
   }
 })
 
-it('should replay samples', async () => {
+it('should invoke operations with samples', async () => {
   const { autonomous, components } = fixtures.suite
 
   for (const [id, component] of Object.entries(components)) {
