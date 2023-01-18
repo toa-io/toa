@@ -1,6 +1,7 @@
 'use strict'
 
 const { state } = require('./state')
+const { binding } = require('./binding')
 
 /** @type {toa.stage.Shutdown} */
 const shutdown = async () => {
@@ -12,6 +13,7 @@ const shutdown = async () => {
   await Promise.all(disconnections)
 
   state.reset()
+  binding.reset()
 }
 
 exports.shutdown = shutdown

@@ -13,6 +13,4 @@ const component = jest.fn(async () => connector())
 const composition = jest.fn(async () => connector())
 const remote = jest.fn(async () => connector())
 
-const boot = { manifest, component, composition, remote }
-
-exports.mock = { boot }
+module.exports = { manifest, component, composition, remote }

@@ -2,7 +2,10 @@
 
 const { generate } = require('randomstring')
 
-const { mock } = require('./boot.mock')
+const mock = {
+  boot: require('./boot.mock')
+}
+
 jest.mock('@toa.io/boot', () => mock.boot)
 
 const stage = require('../')
