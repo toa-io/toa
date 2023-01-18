@@ -8,9 +8,6 @@ const framework = require('./framework')
 let composition, messages, credits, stats, a
 
 beforeAll(async () => {
-  // noinspection JSUnresolvedVariable
-  delete global.TOA_INTEGRATION_OMIT_EMISSION
-
   framework.env('local')
 
   composition = await framework.compose(['messages', 'credits', 'stats', 'a'])
@@ -21,9 +18,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  global.TOA_INTEGRATION_OMIT_EMISSION = true
-  await timeout(100) // process events
-
   if (composition) await composition.disconnect()
   if (messages) await messages.disconnect()
   if (credits) await credits.disconnect()

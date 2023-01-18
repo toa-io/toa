@@ -40,19 +40,20 @@ it('should not throw on concurrency conflict', async () => {
 })
 
 it('should count messages', async () => {
-  // noinspection JSUnresolvedVariable
-  delete global.TOA_INTEGRATION_OMIT_EMISSION
-
   const times = 5 + random(5)
   const sender = newid()
 
-  await repeat(() => messages.invoke('add', { input: { sender, text: generate(), free: true } }), times)
+  await repeat(() => messages.invoke('add', {
+    input: {
+      sender,
+      text: generate(),
+      free: true
+    }
+  }), times)
 
   await timeout(200) // event processing with retries
 
   const updated = await stats.invoke('observe', { query: { id: sender } })
 
   expect(updated.output.messages).toBe(times)
-
-  global.TOA_INTEGRATION_OMIT_EMISSION = true
 })

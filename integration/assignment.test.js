@@ -54,9 +54,6 @@ it('should assign', async () => {
 })
 
 it('should emit events', async () => {
-  // noinspection JSUnresolvedVariable
-  delete global.TOA_INTEGRATION_OMIT_EMISSION
-
   const sender = newid()
   const text = generate()
   const created = await messages.invoke('add', { input: { sender, text } })
@@ -77,8 +74,6 @@ it('should emit events', async () => {
   const stat = await stats.invoke('observe', { query: { id: sender } })
 
   expect(stat.output.bankrupt).toBe(true)
-
-  global.TOA_INTEGRATION_OMIT_EMISSION = true
 })
 
 it('should throw StateNotFound', async () => {
@@ -91,7 +86,10 @@ it('should throw StateNotFound', async () => {
 it('should throw StatePrecondition', async () => {
   const id = newid()
 
-  await expect(messages.invoke('assign', { input: { text: generate() }, query: { id, version: 1 } }))
+  await expect(messages.invoke('assign', {
+    input: { text: generate() },
+    query: { id, version: 1 }
+  }))
     .rejects.toMatchObject({ code: codes.StatePrecondition })
 })
 
