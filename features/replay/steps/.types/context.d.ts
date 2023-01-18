@@ -3,10 +3,20 @@ import * as _samples from '@toa.io/userland/samples'
 
 declare namespace toa.samples.features {
 
+  type Operation = {
+    endpoint: string
+    samples: _samples.operations.Sample[]
+  }
+
+  type Receiver = {
+    label: string
+    samples: _samples.messages.Sample[]
+  }
+
   type Context = {
     component?: string
-    operation?: string
-    samples?: _samples.Declaration[]
+    operation?: Operation
+    receiver?: Receiver
     stage?: _stage.Stage
     ok?: boolean
   }

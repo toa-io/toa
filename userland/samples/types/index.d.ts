@@ -15,6 +15,9 @@ declare namespace toa.samples {
 
 }
 
+export * as operations from './operations'
+export * as messages from './messages'
+
 export const context: toa.samples.replay.Context
 export const components: toa.samples.replay.Components
 export const replay: toa.samples.replay.Replay

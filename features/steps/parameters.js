@@ -16,7 +16,7 @@ defineParameterType({
 
 defineParameterType({
   name: 'label',
-  regexp: /\w+.\w+.\w+/,
+  regexp: /`([\w.]+)`/,
   transformer: (name) => name
 })
 

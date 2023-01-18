@@ -1,7 +1,7 @@
 Feature: Message samples
 
   Scenario: Sample passes
-    Given I have a message sample labeled store.orders.created for tea.pots:
+    Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should book a pot
       payload:

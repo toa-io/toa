@@ -17,22 +17,29 @@ beforeEach(() => {
   context = {}
 })
 
-describe('Given I have (an )operation sample(s) for {token} of {component}:', () => {
-  const step = gherkin.steps.Gi('I have (an )operation sample(s) for {token} of {component}:')
+describe('Given I have (a )sample(s) for {token} operation of {component}:', () => {
+  const step = gherkin.steps.Gi('I have (a )sample(s) for {token} operation of {component}:')
 
   it('should be', () => undefined)
 
   it('should define context', () => {
-    const operation = generate()
+    const endpoint = generate()
     const component = generate()
     const input = generate()
     const output = generate()
     const sample = { input, output }
     const samples = [sample]
+    const operation = { endpoint, samples }
     const yaml = dump(sample)
 
-    step.call(context, operation, component, yaml)
+    step.call(context, endpoint, component, yaml)
 
-    expect(context).toMatchObject({ operation, component, samples })
+    expect(context).toMatchObject({ component, operation })
   })
+})
+
+describe('Given I have (a )message {label} sample(s) for {component}:', () => {
+  const step = gherkin.steps.Gi('I have (a )message {label} sample(s) for {component}:')
+
+  it('should be', () => undefined)
 })

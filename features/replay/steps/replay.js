@@ -14,14 +14,14 @@ When('I replay it',
   async function () {
     const [namespace, name] = this.component.split('.')
     const path = resolve(COMPONENTS, namespace, name)
-    const samples = this.samples.map(translate)
+    const samples = this.operation.samples.map(translate)
 
     const suite = {
       autonomous: true,
       components: {
         [this.component]: {
           operations: {
-            [this.operation]: samples
+            [this.operation.endpoint]: samples
           }
         }
       }

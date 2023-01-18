@@ -15,19 +15,16 @@ declare namespace toa.samples.messages {
 
   }
 
-  type Declaration = {
-    [key: string]: declaration.Sample
-  }
+  type Declaration = Record<string, declaration.Sample>
 
   type Sample = {
     payload?: object
     request?: _operations.Sample | null
   }
 
-  type Set = {
-    [label: string]: Sample
-  }
+  type Set = Record<string, Sample>
 
 }
 
-export type Messages = toa.samples.messages.Set
+export type Sample = toa.samples.messages.Sample
+export type Set = toa.samples.messages.Set
