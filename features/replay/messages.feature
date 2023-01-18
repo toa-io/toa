@@ -19,7 +19,6 @@ Feature: Message samples
     Given I have a message sample labeled store.orders.created for tea.pots:
       """yaml
       title: Should book a pot
-      component: tea.pots # autonomous sample may contain component's name
       payload:
         pot: 1
       query:

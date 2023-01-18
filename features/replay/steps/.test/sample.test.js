@@ -42,4 +42,19 @@ describe('Given I have (a )message {label} sample(s) for {component}:', () => {
   const step = gherkin.steps.Gi('I have (a )message {label} sample(s) for {component}:')
 
   it('should be', () => undefined)
+
+  it('should define context', () => {
+    const label = generate()
+    const component = generate()
+    const input = generate()
+    const payload = generate()
+    const sample = { input, payload }
+    const samples = [sample]
+    const receiver = { label, samples }
+    const yaml = dump(sample)
+
+    step.call(context, label, component, yaml)
+
+    expect(context).toMatchObject({ component, receiver })
+  })
 })

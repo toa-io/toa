@@ -19,14 +19,14 @@ Given('I have (a )sample(s) for {token} operation of {component}:',
 
 Given('I have (a )message {label} sample(s) for {component}:',
   /**
-   * @param {string} endpoint
+   * @param {string} label
    * @param {string} component
    * @param {string} yaml
    * @this {toa.samples.features.Context}
    */
-  function (endpoint, component, yaml) {
+  function (label, component, yaml) {
     const samples = /** @type {toa.samples.Declaration[]} */ split(yaml)
 
     this.component = component
-    this.operation = { endpoint, samples }
+    this.receiver = { label, samples }
   })
