@@ -9,7 +9,7 @@ const schema = load(path)
 
 /**
  * @param {toa.samples.operations.Declaration} declaration
- * @returns {toa.samples.Sample}
+ * @returns {toa.samples.operations.Sample}
  */
 const translate = (declaration) => {
   norm.prepare(declaration)

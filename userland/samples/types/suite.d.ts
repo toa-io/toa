@@ -1,11 +1,11 @@
-import { Operations } from './operations'
-import { Messages } from './messages'
+import * as _operations from './operations'
+import * as _messages from './messages'
 
 declare namespace toa.samples {
 
   type Component = {
-    operations?: Operations
-    messages?: Messages
+    operations?: _operations.Set
+    messages?: _messages.Set
   }
 
   type Components = Record<string, Component>

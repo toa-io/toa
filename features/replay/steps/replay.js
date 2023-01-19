@@ -14,8 +14,9 @@ When('I replay it',
   async function () {
     const [namespace, name] = this.component.split('.')
     const path = resolve(COMPONENTS, namespace, name)
-    const samples = this.operation.samples.map(translate)
+    const samples = /** @type {toa.samples.operations.Sample[]} */ this.operation.samples.map(translate)
 
+    /** @type {toa.samples.Suite} */
     const suite = {
       autonomous: true,
       components: {

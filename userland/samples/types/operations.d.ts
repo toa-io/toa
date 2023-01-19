@@ -1,4 +1,4 @@
-import type * as _core from '@toa.io/core'
+import type * as _core from '@toa.io/core/types'
 
 declare namespace toa.samples.operations {
 

@@ -15,8 +15,7 @@ Feature: Message samples
     Then it passes
 
   Scenario: Partial sample passes
-
-    Given I have a message sample labeled store.orders.created for tea.pots:
+    Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should book a pot
       payload:
@@ -28,7 +27,7 @@ Feature: Message samples
     Then it passes
 
   Scenario: Sample fails
-    Given I have a message sample labeled store.orders.created for tea.pots:
+    Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should not work
       payload:
@@ -40,7 +39,7 @@ Feature: Message samples
     Then it fails
 
   Scenario: Sample with blocked request passes
-    Given I have a message sample labeled store.orders.created for tea.post:
+    Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should book a pot (without request)
       component: tea.pots
@@ -56,7 +55,7 @@ Feature: Message samples
     Then it passes
 
   Scenario: Sample with request sample passes
-    Given I have a message sample labeled store.order.created for tea.pots:
+    Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should book a pot (with request sample)
       payload:
@@ -77,7 +76,7 @@ Feature: Message samples
     Then it passes
 
   Scenario: Message without output but with request passes
-    Given I have a message sample labeled store.orders.created for tea.pots:
+    Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should book a pot
       payload:
@@ -94,7 +93,7 @@ Feature: Message samples
     Then it passes
 
   Scenario: Message without output and request is incorrect
-    Given I have a message sample labeled store.orders.created for tea.pots:
+    Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should book a pot
       payload:
