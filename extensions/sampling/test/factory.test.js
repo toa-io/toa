@@ -21,6 +21,10 @@ it('should implement storage', () => {
   expect(factory.storage).toBeDefined()
 })
 
-it('should implement emitter', async () => {
+it('should implement emitter', () => {
   expect(factory.emitter).toBeDefined()
+})
+
+it('should implement receiver', () => {
+  expect(factory.receiver).toBeDefined()
 })

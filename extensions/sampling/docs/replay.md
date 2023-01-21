@@ -17,18 +17,19 @@ is, the *sampling context*.
 If invocation request contains `sample` extension, Sampling Component Decoration creates a sampling
 context, invokes operation and verifies:
 
+- request, if `request` is declared[^1];
 - reply, if `output` is declared;
 - events published, if `events` are declared.
 
-On invocation start, if sampling context is defined (that is, request sample is given), then it will
-be verified against the request. See [receiver decorator](#receiver-decorator).
+[^1]: request verification is used to test receivers' output
+with [message samples](/userland/samples/readme.md).
 
 ### Context Decorator
 
 Context decorator validates inputs and substitutes outputs of context calls (local and remote) using
 sampling context. If no output is provided, then an actual call is performed.
 
-### Context Extension Decorator
+### Aspect Decorator
 
 Context extension (aspect) decorator validates aspect invocation arguments and substitutes its
 returned value.
@@ -45,3 +46,9 @@ Emitter decorator records events published after operation invocation to a sampl
 is then used by Component decorator for verification.
 
 > Autonomous samples replay doesn't emit events to a binding.
+
+### Receiver Decorator
+
+Receiver decorator is discarding incoming messages, containing `component` property not matching
+decorated component's id. This allows to replay messages samples with a desired component within
+a composition (as receivers can't be called directly). 

@@ -8,8 +8,6 @@ const { ReplayException } = require('../exceptions')
  * @param {toa.core.Request} request
  */
 const verify = (sample, request) => {
-  if (sample === undefined) return
-
   const matches = match(request, sample)
 
   if (!matches) throw new ReplayException(`operation request mismatch`)

@@ -8,7 +8,7 @@ const { validate } = require('./.component/validate')
 const verify = require('./.component')
 
 /**
- * @implements {toa.core.Component}
+ * @implements {toa.sampling.Component}
  */
 class Component extends Connector {
   /** @type {toa.core.Locator} */
@@ -29,10 +29,12 @@ class Component extends Connector {
     this.depends(component)
   }
 
-  /** @hot */
+  /**
+   * @hot
+   */
   async invoke (endpoint, request) {
-    if (request.sample === undefined) return this.#component.invoke(endpoint, request)
-    else return this.#apply(endpoint, request)
+    if ('sample' in request) return this.#apply(endpoint, request)
+    else return this.#component.invoke(endpoint, request)
   }
 
   /**
@@ -43,9 +45,9 @@ class Component extends Connector {
   async #apply (endpoint, request) {
     const { sample, ...rest } = request
 
-    validate(sample)
+    if (sample !== undefined) validate(sample)
 
-    verify.request(sample.request, request)
+    if ('request' in sample) verify.request(sample.request, request)
 
     // make sure current state will be requested from the storage
     if (sample.storage?.current !== undefined && rest.query === undefined) rest.query = { id: newid() }
@@ -53,8 +55,8 @@ class Component extends Connector {
     /** @type {toa.core.Reply} */
     const reply = await context.apply(sample, () => this.#component.invoke(endpoint, rest))
 
-    verify.reply(sample.reply, reply)
-    verify.events(sample.events)
+    if ('reply' in sample) verify.reply(sample.reply, reply)
+    if ('events' in sample) verify.events(sample.events)
 
     return reply
   }

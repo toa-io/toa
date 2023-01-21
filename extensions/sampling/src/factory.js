@@ -5,6 +5,7 @@ const { Component } = require('./component')
 const { Context } = require('./context')
 const { Storage } = require('./storage')
 const { Emitter } = require('./emitter')
+const { Receiver } = require('./receiver')
 
 /**
  * @implements {toa.core.extensions.Factory}
@@ -27,6 +28,10 @@ class Factory {
 
   emitter (emitter, label) {
     return new Emitter(emitter, label)
+  }
+
+  receiver (receiver, locator) {
+    return new Receiver(receiver, locator)
   }
 }
 

@@ -11,8 +11,6 @@ const schema = load(path)
  * @param {toa.sampling.request.Sample} sample
  */
 const validate = (sample) => {
-  if (sample === undefined) return
-
   const error = schema.fit(sample)
 
   if (error !== null) throw new SampleException(error.message)

@@ -4,13 +4,14 @@ const { empty } = require('@toa.io/libraries/generic')
 const { ReplayException } = require('../exceptions')
 
 /**
- * Published events matching the sample are being removed from the sample, therefore if there are any keys
- * remaining in the sample.events object, then it is a sample mismatch, that is, an exception.
+ * Published events matching the sample are being removed from the sample,
+ * therefore if there are any keys remaining in the sample.events object,
+ * then it is a sample mismatch, that is, an exception.
  *
  * @param {toa.sampling.request.Events} samples
  */
 const verify = (samples) => {
-  if (samples !== undefined && !empty(samples)) throw exception(samples)
+  if (!empty(samples)) throw exception(samples)
 }
 
 /**

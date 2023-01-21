@@ -10,15 +10,11 @@ it('should be', () => {
   expect(validate).toBeDefined()
 })
 
-/** @type {toa.sampling.Request} */
+/** @type {toa.sampling.request.Sample} */
 let sample
 
 beforeEach(() => {
   sample = { autonomous: flip() }
-})
-
-it('should not throw on undefined', () => {
-  expect(() => validate(undefined)).not.toThrow()
 })
 
 describe('reply', () => {
