@@ -3,20 +3,20 @@
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
-const fixtures = require('./suite.translate.fixtures')
-const { translate } = require('../src/.suite/.component/translate')
+const fixtures = require('./replay.translate.operation.fixtures')
+const { operation: translate } = require('../src/.replay/translate')
 
 it('should be', () => {
   expect(translate).toBeDefined()
 })
 
-/** @type {toa.samples.operations.Declaration} */
+/** @type {toa.samples.Operation} */
 let declaration
 
-/** @type {toa.samples.Sample} */
+/** @type {toa.sampling.request.Sample} */
 let sample
 
-/** @type {toa.samples.Suite} */
+/** @type {toa.sampling.request.Sample} */
 let expected
 
 beforeEach(() => {

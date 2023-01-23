@@ -3,7 +3,6 @@
 const { resolve } = require('node:path')
 const yaml = require('@toa.io/libraries/yaml')
 
-const { translate } = require('../src/.suite/.component/translate')
 const { components } = require('../src/suite')
 
 it('should be', () => {
@@ -32,7 +31,7 @@ describe('components', () => {
   })
 
   it('should load component samples', async () => {
-    const expected = await actual()
+    const expected = await operations()
     const { components } = suite
 
     expect(Object.keys(components)).toStrictEqual([component])
@@ -45,16 +44,46 @@ describe('components', () => {
     expect(set.undo).toStrictEqual(expected.undo)
   })
 
-  const actual = async () => {
-    const samples = resolve(path, 'samples')
+  // it('should load message samples', async () => {
+  //   const expected = await messages()
+  //   const { components } = suite
+  //
+  //   const set = components[component].messages
+  //
+  //   expect(set).toStrictEqual(expected)
+  // })
 
-    const do1 = (await yaml.load.all(resolve(samples, 'do.yaml'))).map(translate)
-    const do2 = (await yaml.load.all(resolve(samples, 'dummies.dummy.do.yaml'))).map(translate)
-    const undo = (await yaml.load.all(resolve(samples, 'dummies.dummy.undo.yaml'))).map(translate)
+  /**
+   * @returns {Promise<toa.samples.operations.Set>}
+   */
+  const operations = async () => {
+    const root = resolve(path, 'samples')
+
+    /** @type {toa.samples.Operation[]} */
+    const do1 = (await yaml.load.all(resolve(root, 'do.yaml')))
+
+    /** @type {toa.samples.Operation[]} */
+    const do2 = (await yaml.load.all(resolve(root, 'dummies.dummy.do.yaml')))
+
+    /** @type {toa.samples.Operation[]} */
+    const undo = (await yaml.load.all(resolve(root, 'dummies.dummy.undo.yaml')))
 
     return {
       do: [...do1, ...do2],
       undo
     }
   }
+
+  /**
+   *
+   * @returns {Promise<toa.samples.messages.Set>}
+   */
+  // const messages = async () => {
+  //   const root = resolve(path, 'samples/messages')
+  //   const label = 'somewhere.something.happened'
+  //   const file = resolve(root, label + '.yaml')
+  //   const messages = await yaml.load.all(file)
+  //
+  //   return { [label]: messages }
+  // }
 })

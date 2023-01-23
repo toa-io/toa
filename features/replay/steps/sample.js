@@ -28,5 +28,5 @@ Given('I have (a )message {label} sample(s) for {component}:',
     const samples = /** @type {toa.samples.Declaration[]} */ split(yaml)
 
     this.component = component
-    this.receiver = { label, samples }
+    this.message = { label, samples }
   })

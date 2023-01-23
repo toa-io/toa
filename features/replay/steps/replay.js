@@ -2,7 +2,7 @@
 
 const { resolve } = require('node:path')
 const { replay } = require('@toa.io/userland/samples')
-const { translate } = require('../../../userland/samples/src/.suite/.component/translate')
+const { translate } = require('./.replay')
 const stage = require('@toa.io/userland/stage')
 
 const { When } = require('@cucumber/cucumber')
@@ -14,19 +14,9 @@ When('I replay it',
   async function () {
     const [namespace, name] = this.component.split('.')
     const path = resolve(COMPONENTS, namespace, name)
-    const samples = /** @type {toa.samples.operations.Sample[]} */ this.operation.samples.map(translate)
 
     /** @type {toa.samples.Suite} */
-    const suite = {
-      autonomous: true,
-      components: {
-        [this.component]: {
-          operations: {
-            [this.operation.endpoint]: samples
-          }
-        }
-      }
-    }
+    const suite = translate(this)
 
     await stage.composition([path])
 

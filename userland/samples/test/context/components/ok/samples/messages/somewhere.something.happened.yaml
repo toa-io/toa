@@ -1,0 +1,6 @@
+title: Foobar
+payload:
+  foo: bar
+input: foo
+query:
+  id: bar

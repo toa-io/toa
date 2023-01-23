@@ -2,8 +2,10 @@
 
 const { component } = require('./.suite')
 
-/** @type {toa.samples.replay.suite.Components} */
+/** @type {toa.samples.constructors.Components} */
 const components = async (paths) => {
+  const autonomous = true
+
   /** @type {toa.samples.Components} */
   const components = {}
 
@@ -13,10 +15,7 @@ const components = async (paths) => {
     components[id] = samples
   }
 
-  /** @type {toa.samples.Suite} */
-  const suite = { autonomous: true, components }
-
-  return suite
+  return { autonomous, components }
 }
 
 exports.components = components

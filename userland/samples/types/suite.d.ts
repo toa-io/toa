@@ -1,7 +1,11 @@
-import * as _operations from './operations'
-import * as _messages from './messages'
+import * as _operations from './operation'
+import * as _messages from './message'
 
 declare namespace toa.samples {
+
+  namespace constructors {
+    type Components = (paths: string[]) => Promise<Suite>
+  }
 
   type Component = {
     operations?: _operations.Set

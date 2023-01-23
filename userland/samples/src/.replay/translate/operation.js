@@ -2,16 +2,16 @@
 
 const { resolve } = require('node:path')
 const { load } = require('@toa.io/libraries/schema')
-const norm = require('./.translate')
+const norm = require('./.operation')
 
-const path = resolve(__dirname, 'sample.cos.yaml')
+const path = resolve(__dirname, './.operation/sample.cos.yaml')
 const schema = load(path)
 
 /**
- * @param {toa.samples.operations.Declaration} declaration
- * @returns {toa.samples.operations.Sample}
+ * @param {toa.samples.Operation} declaration
+ * @returns {toa.sampling.request.Sample}
  */
-const translate = (declaration) => {
+const operation = (declaration) => {
   norm.prepare(declaration)
   schema.validate(declaration)
 
@@ -20,22 +20,29 @@ const translate = (declaration) => {
   const reply = { output }
   const storage = { current, next }
 
-  /** @type {toa.samples.operations.Context} */
+  /** @type {toa.sampling.request.Context} */
   let context = {}
 
-  /** @type {toa.samples.messages.Set} */
+  /** @type {toa.sampling.request.Events} */
   let events
 
   if (local !== undefined) context.local = norm.calls(local)
   if (remote !== undefined) context.remote = norm.calls(remote)
   if (declaration.events !== undefined) events = norm.events(declaration.events)
 
-  /** @type {toa.samples.Sample} */
-  const sample = { title, request, reply, context, storage, events, extensions }
+  const sample = /** @type {toa.sampling.request.Sample} */ {
+    title,
+    request,
+    reply,
+    context,
+    storage,
+    events,
+    extensions
+  }
 
   norm.cleanup(sample)
 
   return sample
 }
 
-exports.translate = translate
+exports.operation = operation

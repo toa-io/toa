@@ -6,7 +6,6 @@ const { merge } = require('@toa.io/libraries/generic')
 const yaml = require('@toa.io/libraries/yaml')
 
 const { parse } = require('./parse')
-const { translate } = require('./translate')
 
 /**
  * @param {toa.norm.Component} manifest
@@ -22,8 +21,9 @@ const operations = async (manifest) => {
   for (const file of files) {
     const name = basename(file, EXTENSION)
     const [component, operation] = parse(name)
-    const declarations = /** @type {toa.samples.operations.Declaration} */ await yaml.load.all(file)
-    const samples = declarations.map((declaration) => translate(declaration))
+
+    /** @type {toa.samples.Operation[]} */
+    const samples = await yaml.load.all(file)
 
     if (id !== undefined && component !== undefined && component !== id) {
       throw new Error(`Component id mismatch: '${id}' expected, '${component}' given`)

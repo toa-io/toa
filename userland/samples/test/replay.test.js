@@ -3,9 +3,11 @@
 const clone = require('clone-deep')
 
 const { stage } = require('./stage.mock')
-const mock = { stage }
+const { translate } = require('./replay.translate.mock')
+const mock = { stage, translate }
 
 jest.mock('@toa.io/userland/stage', () => mock.stage)
+jest.mock('../src/.replay/translate', () => mock.translate)
 
 const fixtures = require('./replay.fixtures')
 const { replay } = require('../src')
@@ -42,20 +44,45 @@ it('should connect remotes', () => {
   }
 })
 
-it('should invoke operations with samples', async () => {
-  const { autonomous, components } = fixtures.suite
+it('should invoke operations with translated samples', async () => {
+  const translation = (declaration) => {
+    const find = (call) => call[0].input === declaration.input
+    const index = mock.translate.operation.mock.calls.findIndex(find)
+    const sample = mock.translate.operation.mock.results[index].value
 
-  for (const [id, component] of Object.entries(components)) {
+    return { index, sample }
+  }
+
+  /**
+   * @param {string} component
+   * @return {Promise<jest.MockedObject<toa.core.Component>>}
+   */
+  const find = async (component) => {
+    for (let n = 0; n < stage.remote.mock.calls.length; n++) {
+      const call = stage.remote.mock.calls[n]
+
+      if (call[0] === component) return await stage.remote.mock.results[n].value
+    }
+
+    throw new Error(`Remote ${component} hasn't been connected`)
+  }
+
+  for (const [id, component] of Object.entries(fixtures.suite.components)) {
     const remote = await find(id)
 
-    for (const [operation, samples] of Object.entries(component.operations)) {
-      for (const sample of samples) {
-        const { request, ...rest } = sample
+    for (const [endpoint, declarations] of Object.entries(component.operations)) {
+      for (const declaration of declarations) {
+        const { index, sample } = translation(declaration)
 
-        request.sample = clone(rest)
-        request.sample.autonomous = autonomous
+        expect(index).toBeGreaterThan(-1)
 
-        expect(remote.invoke).toHaveBeenCalledWith(operation, request)
+        const { input } = declaration
+
+        sample.autonomous = suite.autonomous
+
+        const request = { input, sample }
+
+        expect(remote.invoke).toHaveBeenNthCalledWith(index + 1, endpoint, request)
       }
     }
   }
@@ -64,17 +91,3 @@ it('should invoke operations with samples', async () => {
 it('should return results', () => {
   expect(ok).toStrictEqual(true)
 })
-
-/**
- * @param {string} component
- * @return {Promise<jest.MockedObject<toa.core.Component>>}
- */
-const find = async (component) => {
-  for (let n = 0; n < stage.remote.mock.calls.length; n++) {
-    const call = stage.remote.mock.calls[n]
-
-    if (call[0] === component) return await stage.remote.mock.results[n].value
-  }
-
-  throw new Error(`Remote ${component} hasn't been connected`)
-}

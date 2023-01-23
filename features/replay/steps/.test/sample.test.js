@@ -50,11 +50,11 @@ describe('Given I have (a )message {label} sample(s) for {component}:', () => {
     const payload = generate()
     const sample = { input, payload }
     const samples = [sample]
-    const receiver = { label, samples }
+    const message = { label, samples }
     const yaml = dump(sample)
 
     step.call(context, label, component, yaml)
 
-    expect(context).toMatchObject({ component, receiver })
+    expect(context).toMatchObject({ component, message })
   })
 })

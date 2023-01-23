@@ -32,3 +32,14 @@ Feature: Context extensions (aspects) samples
       """
     When I replay it
     Then it passes
+
+  Scenario: False configuration sample fails
+    Given I have a sample for `signal` operation of `echo.beacon`:
+      """yaml
+      title: Should woof
+      output: woof
+      configuration:
+        signal: croak
+      """
+    When I replay it
+    Then it fails

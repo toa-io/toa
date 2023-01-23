@@ -6,7 +6,7 @@ const component = (id, remotes, component, autonomous) =>
   async (test) => {
     const remote = remotes[id]
 
-    await operations(component.operations, test, autonomous, remote)
+    if (component.operations) await operations(component.operations, test, autonomous, remote)
 
     test.end()
   }

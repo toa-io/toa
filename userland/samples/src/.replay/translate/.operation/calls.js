@@ -3,10 +3,11 @@
 const { defined } = require('@toa.io/libraries/generic')
 
 /**
- * @param {toa.samples.operations.declaration.context.Calls} calls
- * @returns {toa.samples.operations.context.Calls}
+ * @param {toa.samples.operation.Calls} calls
+ * @returns {toa.sampling.request.context.Calls}
  */
 const calls = (calls) => {
+  /** @type {toa.sampling.request.context.Calls} */
   const output = {}
 
   for (let [endpoint, samples] of Object.entries(calls)) {
@@ -14,21 +15,21 @@ const calls = (calls) => {
 
     const target = []
 
-    output[endpoint] = target
-
     for (const sample of samples) {
       const translation = call(sample)
 
       target.push(translation)
     }
+
+    output[endpoint] = target
   }
 
   return output
 }
 
 /**
- * @param {toa.samples.declaration.context.Call} call
- * @returns {toa.samples.Call}
+ * @param {toa.samples.operation.Call} call
+ * @returns {toa.sampling.request.context.Call}
  */
 const call = (call) => {
   let request

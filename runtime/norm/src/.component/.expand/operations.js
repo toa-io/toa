@@ -14,20 +14,4 @@ function operations (manifest) {
   }
 }
 
-// const schema = (schema, entity) => {
-//   const properties = schema.properties ?? schema
-//
-//   for (const [name, value] of Object.entries(properties)) {
-//     if (value === null) {
-//       properties[name] = entity.properties[name]
-//     } else if (typeof value === 'string' && value[0] === '~') {
-//       const key = value.substring(1)
-//
-//       properties[name] = entity.properties[key]
-//     }
-//   }
-//
-//   return expand(schema)
-// }
-
 exports.operations = operations

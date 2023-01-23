@@ -6,15 +6,12 @@ const { gherkin } = require('@toa.io/libraries/mock')
 
 const fixtures = require('./replay.fixtures')
 
-const mock = {
-  gherkin,
-  samples: fixtures.mock.samples,
-  stage: fixtures.mock.stage
-}
+const mock = { gherkin, ...fixtures.mock }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/userland/samples', () => mock.samples)
 jest.mock('@toa.io/userland/stage', () => mock.stage)
+
 require('../replay')
 
 const root = resolve(__dirname, '../../../../userland/example/components')
@@ -57,15 +54,13 @@ describe('When I replay it', () => {
     })
 
     it('should replay operation sample', async () => {
-      const sample = /** @type {toa.samples.operations.Declaration} */ context.operation.samples[0]
-
       /** @type {toa.samples.Suite} */
       const suite = {
         autonomous: true,
         components: {
           [context.component]: {
             operations: {
-              [context.operation.endpoint]: [{ request: { input: sample.input } }]
+              [context.operation.endpoint]: context.operation.samples
             }
           }
         }
@@ -80,6 +75,44 @@ describe('When I replay it', () => {
 
     it('should shutdown stage', async () => {
       expect(mock.stage.shutdown).toHaveBeenCalled()
+    })
+  })
+
+  describe('message sample', () => {
+    beforeEach(async () => {
+      const label = generate()
+      const payload = { [generate()]: generate() }
+      const input = generate()
+      const query = { criteria: generate() }
+
+      /** @type {toa.samples.Message} */
+      const declaration = { payload, input, query }
+      const samples = [declaration]
+
+      context.message = { label, samples }
+      delete context.ok
+
+      await step.call(context)
+    })
+
+    it('should replay message sample', async () => {
+      /** @type {toa.samples.Suite} */
+      const suite = {
+        autonomous: true,
+        components: {
+          [context.component]: {
+            messages: {
+              [context.message.label]: context.message.samples
+            }
+          }
+        }
+      }
+
+      expect(mock.samples.replay).toHaveBeenCalledWith(suite)
+    })
+
+    it('should write result to context', async () => {
+      expect(context.ok).toStrictEqual(await mock.samples.replay.mock.results[0].value)
     })
   })
 })

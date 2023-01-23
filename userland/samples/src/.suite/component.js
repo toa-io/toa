@@ -10,7 +10,10 @@ const load = require('./.component')
 const component = async (path) => {
   const manifest = await stage.manifest(path)
   const operations = await load.operations(manifest)
-  const component = { operations }
+  const messages = await load.messages(manifest)
+
+  /** @type {toa.samples.Component} */
+  const component = { operations, messages }
 
   return [manifest.locator.id, component]
 }

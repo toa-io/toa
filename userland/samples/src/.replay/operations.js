@@ -1,6 +1,6 @@
 'use strict'
 
-const constants = require('./constants')
+const translate = require('./translate')
 
 /**
  * @param {toa.samples.operations.Set} set
@@ -16,23 +16,24 @@ const operations = async (set, test, autonomous, remote) => {
 }
 
 /**
- * @param {toa.samples.operations.Sample[]} samples
+ * @param {toa.samples.Operation[]} operations
  * @param {boolean} autonomous
  * @param {toa.core.Component} remote
  * @param {string} endpoint
  */
-const operation = (samples, autonomous, remote, endpoint) =>
+const operation = (operations, autonomous, remote, endpoint) =>
   async (test) => {
     let n = 0
 
-    for (const sample of samples) {
+    for (const operation of operations) {
       n++
 
-      const { title, request, ...rest } = sample
-      const name = title ?? 'Sample ' + n
+      const input = operation.input
+      const sample = translate.operation(operation)
+      const request = { input, sample }
+      const name = sample.title ?? 'Sample ' + n
 
-      request.sample = rest
-      request.sample.autonomous = autonomous
+      sample.autonomous = autonomous
 
       await test.test(name, async () => remote.invoke(endpoint, request))
     }

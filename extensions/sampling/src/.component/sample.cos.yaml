@@ -1,4 +1,5 @@
 autonomous: boolean
+title: string
 request: &request
   input: ~
   query:

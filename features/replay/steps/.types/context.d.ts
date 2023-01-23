@@ -5,18 +5,18 @@ declare namespace toa.samples.features {
 
   type Operation = {
     endpoint: string
-    samples: _samples.operations.Sample[]
+    samples: _samples.Operation[]
   }
 
-  type Receiver = {
+  type Message = {
     label: string
-    samples: _samples.messages.Sample[]
+    samples: _samples.Message[]
   }
 
   type Context = {
     component?: string
     operation?: Operation
-    receiver?: Receiver
+    message?: Message
     stage?: _stage.Stage
     ok?: boolean
   }

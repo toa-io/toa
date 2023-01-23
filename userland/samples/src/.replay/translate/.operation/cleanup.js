@@ -3,7 +3,7 @@
 const { defined, empty } = require('@toa.io/libraries/generic')
 
 /**
- * @param {toa.samples.operations.Sample} sample
+ * @param {toa.sampling.request.Sample} sample
  */
 const cleanup = (sample) => {
   for (const [key, value] of Object.entries(sample)) {

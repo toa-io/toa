@@ -163,8 +163,8 @@ describe('When I invoke {word} with:', () => {
   })
 })
 
-describe('When I call {endpoint} with:', () => {
-  const step = gherkin.steps.Wh('I call {endpoint} with:')
+describe('When I call {token} with:', () => {
+  const step = gherkin.steps.Wh('I call {token} with:')
 
   it('should be', () => undefined)
 

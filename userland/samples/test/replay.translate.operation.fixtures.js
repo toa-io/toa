@@ -78,7 +78,7 @@ const extension = () => ([{ permanent: flip() }])
 /** @type {toa.samples.Extensions} */
 const extensions = { [generate()]: extension() }
 
-/** @type {toa.samples.Declaration} */
+/** @type {toa.samples.Operation} */
 const declaration = {
   title,
   input,
@@ -89,7 +89,7 @@ const declaration = {
   extensions
 }
 
-/** @type {toa.samples.Sample} */
+/** @type {toa.sampling.request.Sample} */
 const expected = {
   title,
   request,

@@ -26,7 +26,7 @@ Feature: Message samples
     When I replay it
     Then it passes
 
-  Scenario: Sample fails
+  Scenario: False sample fails
     Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should not work

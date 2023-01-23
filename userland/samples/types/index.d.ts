@@ -1,23 +1,8 @@
-import * as _suite from './suite'
+import * as _replay from './replay'
 
-declare namespace toa.samples {
+export { Operation } from './operation'
+export { Message } from './message'
 
-  namespace replay {
-
-    namespace suite {
-      type Components = (paths: string[]) => Promise<_suite.Suite>
-    }
-
-    type Components = (paths: string[]) => Promise<boolean>
-    type Context = (path: string) => Promise<boolean>
-    type Replay = (suite: _suite.Suite) => Promise<boolean>
-  }
-
-}
-
-export * as operations from './operations'
-export * as messages from './messages'
-
-export const context: toa.samples.replay.Context
-export const components: toa.samples.replay.Components
-export const replay: toa.samples.replay.Replay
+export const context: _replay.Context
+export const components: _replay.Components
+export const replay: _replay.Replay
