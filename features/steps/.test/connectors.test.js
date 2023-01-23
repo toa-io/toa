@@ -104,11 +104,11 @@ describe('When I invoke {word}', () => {
   beforeEach(() => {
     output = generate()
 
-    connector = {
+    connector = /** @type {toa.core.Component} */ {
       invoke: jest.fn(() => ({ output }))
     }
 
-    context = { connector: /** @type {toa.core.Runtime} */ connector }
+    context = { connector }
 
     endpoint = generate()
   })
@@ -126,8 +126,8 @@ describe('When I invoke {word}', () => {
   })
 })
 
-describe('When I invoke {word} with:', () => {
-  const step = gherkin.steps.Wh('I invoke {word} with:')
+describe('When I invoke {token} with:', () => {
+  const step = gherkin.steps.Wh('I invoke {token} with:')
 
   it('should be', () => undefined)
 
@@ -137,11 +137,11 @@ describe('When I invoke {word} with:', () => {
   let connector
 
   beforeEach(() => {
-    connector = {
+    connector = /** @type {toa.core.Component} */ {
       invoke: jest.fn(() => ({ output: generate() }))
     }
 
-    context = { connector: /** @type {toa.core.Runtime} */ connector }
+    context = { connector }
   })
 
   it('should invoke', async () => {
@@ -163,8 +163,8 @@ describe('When I invoke {word} with:', () => {
   })
 })
 
-describe('When I call {token} with:', () => {
-  const step = gherkin.steps.Wh('I call {token} with:')
+describe('When I call {endpoint} with:', () => {
+  const step = gherkin.steps.Wh('I call {endpoint} with:')
 
   it('should be', () => undefined)
 

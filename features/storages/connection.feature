@@ -4,7 +4,7 @@ Feature: SQL Storage Connection
     Given I have a PostgreSQL database developer
 
   Scenario: Connect to PostgreSQL without exceptions
-    When I boot sql.one component
+    When I boot `sql.one` component
     Then I disconnect
 
   Scenario: Shared connection compose
