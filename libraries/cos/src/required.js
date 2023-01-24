@@ -3,7 +3,7 @@
 const { subtract } = require('@toa.io/libraries/generic')
 
 /**
- * @param {toa.schema.JSON} schema
+ * @param {Object} schema
  */
 function required (schema) {
   const required = new Set()

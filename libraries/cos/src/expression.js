@@ -4,9 +4,9 @@ const { EXPRESSION } = require('./constants')
 
 /**
  * @param {string} value
- * @returns {toa.schema.JSON | undefined}
+ * @returns {Object}
  */
-const values = (value) => {
+const expression = (value) => {
   if (typeof value !== 'string') return
 
   const match = value.match(EXPRESSION)
@@ -19,4 +19,4 @@ const values = (value) => {
   }
 }
 
-exports.values = values
+exports.expression = expression

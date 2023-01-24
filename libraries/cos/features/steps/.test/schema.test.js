@@ -7,10 +7,10 @@ const { gherkin } = require('@toa.io/libraries/mock')
 const { mock: schema } = require('./schema.fixtures')
 const mock = { gherkin, schema }
 
-// const Schema = schema.Schema
-
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('../../../src/expand', () => mock.schema)
+
+const { is } = require('@toa.io/libraries/schemas')
 
 require('../schema')
 
@@ -34,7 +34,7 @@ describe('When I write schema:', () => {
 
     step.call(context, yaml)
 
-    expect(mock.schema.expand).toHaveBeenCalledWith(schema)
+    expect(mock.schema.expand).toHaveBeenCalledWith(schema, is)
     expect(context.schema).toStrictEqual(schema)
   })
 })

@@ -4,13 +4,15 @@ const { PRIMITIVES } = require('./constants')
 
 /**
  * @param {any[]} array
- * @param {Function} expand
- * @returns {toa.schema.JSON}
+ * @param {toa.cos.validate} validate
+ * @returns {Object}
  */
-const array = (array, expand) => {
+const array = (array, validate) => {
+  const { expand } = require('./expand')
+
   if (array.length === 0) throw new Error('Array property declaration must be non-empty')
 
-  const type = /** @type {toa.schema.Type} */ typeof array[0]
+  const type = typeof array[0]
 
   // array of a given type
   if (array.length === 1) {
@@ -19,7 +21,7 @@ const array = (array, expand) => {
     let items
 
     if (PRIMITIVES.includes(sample)) items = { type: sample }
-    else items = expand(array[0])
+    else items = expand(array[0], validate)
 
     return {
       type: 'array',
