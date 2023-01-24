@@ -1,7 +1,8 @@
 'use strict'
 
+const { expand } = require('@toa.io/libraries/schemas')
+
 const { load: yaml } = require('@toa.io/libraries/yaml')
-const { expand } = require('./expand')
 const { Schema } = require('./schema')
 
 /**
@@ -9,8 +10,8 @@ const { Schema } = require('./schema')
  * @returns {toa.schema.Schema}
  */
 const load = (path) => {
-  const cons = yaml.sync(path)
-  const schema = expand(cons)
+  const cos = yaml.sync(path)
+  const schema = expand(cos)
 
   return new Schema(schema)
 }

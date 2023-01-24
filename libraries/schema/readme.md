@@ -1,9 +1,3 @@
-# Concise Object Schema
+# Obsolete
 
-Concise Object Schema (COS) is a human-friendly object schema description language.
-
-See [features](./features/cos.feature) for details.
-
-## References
-
-- Implementation uses [Ajv](https://ajv.js.org).
+Use [@toa.io/schemas](/libraries/schemas).

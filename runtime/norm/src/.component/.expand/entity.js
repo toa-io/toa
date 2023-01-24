@@ -1,6 +1,6 @@
 'use strict'
 
-const { expand } = require('@toa.io/libraries/schema')
+const { expand } = require('@toa.io/libraries/schemas')
 
 const { resolve } = require('../../shortcuts')
 
