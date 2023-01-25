@@ -4,7 +4,7 @@ declare namespace toa.schemas {
 
   namespace constructors {
 
-    type schema = (schema: object) => Schema
+    type schema = (schema: any) => Schema
 
   }
 
@@ -20,6 +20,8 @@ declare namespace toa.schemas {
     id: string
 
     fit(object: any): Error | null
+
+    validate(object: any): void
   }
 
 }

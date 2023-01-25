@@ -3,6 +3,7 @@
 const { expand } = require('@toa.io/libraries/cos')
 const { defined } = require('@toa.io/libraries/generic')
 const { create, valid } = require('./validator')
+const { Exception } = require('./exception')
 
 /**
  * @implements {toa.schemas.Schema}
@@ -27,6 +28,16 @@ class Schema {
 
     if (valid) return null
     else return this.#error()
+  }
+
+  validate (value) {
+    const valid = this.#validate(value)
+
+    if (!valid) {
+      const error = this.#error()
+
+      throw new Exception(error)
+    }
   }
 
   #error = () => {

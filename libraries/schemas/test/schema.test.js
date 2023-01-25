@@ -50,3 +50,18 @@ describe('fit', () => {
     expect(value.foo).toStrictEqual('1')
   })
 })
+
+describe('validate', () => {
+  it('should throw Exception', async () => {
+    expect.assertions(1)
+
+    const schema = schemas.schema({ foo: 'string' })
+    const value = { foo: { not: 'ok' } }
+
+    try {
+      schema.validate(value)
+    } catch (exception) {
+      expect(exception).toBeInstanceOf(schemas.Exception)
+    }
+  })
+})
