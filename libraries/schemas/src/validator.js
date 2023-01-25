@@ -19,7 +19,11 @@ const is = (schema) => {
   return validator.validateSchema(schema) === true
 }
 
-const OPTIONS = { useDefaults: true, coerceTypes: true }
+const OPTIONS = {
+  useDefaults: true,
+  coerceTypes: true,
+  strictTypes: false // omit warning: missing type "object"
+}
 
 exports.create = create
 exports.is = is
