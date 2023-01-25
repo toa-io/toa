@@ -48,9 +48,9 @@ it('should invoke operations with translated samples', async () => {
   const translation = (declaration) => {
     const find = (call) => call[0].input === declaration.input
     const index = mock.translate.operation.mock.calls.findIndex(find)
-    const sample = mock.translate.operation.mock.results[index].value
+    const request = mock.translate.operation.mock.results[index].value
 
-    return { index, sample }
+    return { index, request }
   }
 
   /**
@@ -72,16 +72,9 @@ it('should invoke operations with translated samples', async () => {
 
     for (const [endpoint, declarations] of Object.entries(component.operations)) {
       for (const declaration of declarations) {
-        const { index, sample } = translation(declaration)
+        const { index, request } = translation(declaration)
 
         expect(index).toBeGreaterThan(-1)
-
-        const { input } = declaration
-
-        sample.autonomous = suite.autonomous
-
-        const request = { input, sample }
-
         expect(remote.invoke).toHaveBeenNthCalledWith(index + 1, endpoint, request)
       }
     }

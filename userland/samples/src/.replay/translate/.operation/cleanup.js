@@ -7,7 +7,9 @@ const { defined, empty } = require('@toa.io/libraries/generic')
  */
 const cleanup = (sample) => {
   for (const [key, value] of Object.entries(sample)) {
-    if (value === undefined || (empty(defined(value)) && key !== 'request')) delete sample[key]
+    if (value === undefined || (typeof value === 'object' && empty(defined(value)))) {
+      delete sample[key]
+    }
   }
 }
 

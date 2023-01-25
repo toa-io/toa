@@ -1,3 +1,5 @@
+$id: operation
+
 autonomous: boolean
 title: string
 input: ~

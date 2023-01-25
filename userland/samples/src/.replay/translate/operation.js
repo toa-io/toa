@@ -1,22 +1,20 @@
 'use strict'
 
-const { resolve } = require('node:path')
-const { load } = require('@toa.io/libraries/schema')
 const norm = require('./.operation')
+const { schemas } = require('./schemas')
 
-const path = resolve(__dirname, './.operation/sample.cos.yaml')
-const schema = load(path)
+const schema = schemas.schema('operation')
 
 /**
  * @param {toa.samples.Operation} declaration
- * @returns {toa.sampling.request.Sample}
+ * @param {boolean} autonomous
+ * @returns {toa.sampling.Request}
  */
-const operation = (declaration) => {
+const operation = (declaration, autonomous) => {
   norm.prepare(declaration)
   schema.validate(declaration)
 
   const { title, input, output, local, remote, current, next, extensions } = declaration
-  const request = { input }
   const reply = { output }
   const storage = { current, next }
 
@@ -31,8 +29,8 @@ const operation = (declaration) => {
   if (declaration.events !== undefined) events = norm.events(declaration.events)
 
   const sample = /** @type {toa.sampling.request.Sample} */ {
+    autonomous,
     title,
-    request,
     reply,
     context,
     storage,
@@ -42,7 +40,7 @@ const operation = (declaration) => {
 
   norm.cleanup(sample)
 
-  return sample
+  return { input, sample }
 }
 
 exports.operation = operation

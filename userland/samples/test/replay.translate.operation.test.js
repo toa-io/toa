@@ -13,45 +13,39 @@ it('should be', () => {
 /** @type {toa.samples.Operation} */
 let declaration
 
-/** @type {toa.sampling.request.Sample} */
-let sample
+/** @type {toa.sampling.Request} */
+let request
 
 /** @type {toa.sampling.request.Sample} */
 let expected
 
+const autonomous = true
+
 beforeEach(() => {
   declaration = clone(fixtures.declaration)
   expected = clone(fixtures.expected)
-  sample = translate(declaration)
+  request = translate(declaration, autonomous)
 })
 
 it('should translate input', () => {
-  expect(sample).toStrictEqual(expected)
-})
-
-it('should create empty request', async () => {
-  delete declaration.input
-
-  sample = translate(declaration)
-
-  expect(sample.request).toStrictEqual({})
+  expect(request).toStrictEqual(expected)
 })
 
 describe('validation', () => {
   it('should not allow additional properties', () => {
     declaration.foo = generate()
 
-    expect(() => translate(declaration)).toThrow('additional property \'foo\'')
+    expect(() => translate(declaration, true)).toThrow('must NOT have additional properties')
   })
 })
 
 describe('specials', () => {
   it('should transform configuration object to permanent sample', async () => {
     const configuration = { foo: generate() }
-    const declaration = { configuration }
-    const sample = translate(declaration)
+    const declaration = /** @type {toa.samples.Operation} */ { configuration }
+    const request = translate(declaration, true)
 
-    expect(sample.extensions.configuration).toStrictEqual([{
+    expect(request.sample.extensions.configuration).toStrictEqual([{
       result: configuration,
       permanent: true
     }])
@@ -69,6 +63,6 @@ describe('specials', () => {
       }
     }
 
-    expect(() => translate(declaration)).toThrow('ambiguous')
+    expect(() => translate(declaration, true)).toThrow('ambiguous')
   })
 })

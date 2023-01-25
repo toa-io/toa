@@ -28,12 +28,8 @@ const operation = (operations, autonomous, remote, endpoint) =>
     for (const operation of operations) {
       n++
 
-      const input = operation.input
-      const sample = translate.operation(operation)
-      const request = { input, sample }
-      const name = sample.title ?? 'Sample ' + n
-
-      sample.autonomous = autonomous
+      const request = translate.operation(operation, autonomous)
+      const name = operation.title ?? 'Sample ' + n
 
       await test.test(name, async () => remote.invoke(endpoint, request))
     }

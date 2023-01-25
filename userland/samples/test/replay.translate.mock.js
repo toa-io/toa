@@ -2,9 +2,9 @@
 
 // noinspection JSCheckFunctionSignatures
 const operation = jest.fn((declaration) => {
-  const { input, ...rest } = declaration
+  const { input, ...sample } = declaration
 
-  return rest
+  return { input, sample }
 })
 
 const translate = { operation }

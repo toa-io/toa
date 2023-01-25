@@ -6,7 +6,6 @@ const { flip } = require('@toa.io/libraries/generic')
 const title = generate()
 const input = generate()
 const output = generate()
-const request = { input }
 const reply = { output }
 
 const context = {}
@@ -89,15 +88,18 @@ const declaration = {
   extensions
 }
 
-/** @type {toa.sampling.request.Sample} */
+/** @type {toa.sampling.Request} */
 const expected = {
-  title,
-  request,
-  reply,
-  context: context.sample,
-  storage: storage.sample,
-  events: events.sample,
-  extensions
+  input,
+  sample: {
+    autonomous: true,
+    title,
+    reply,
+    context: context.sample,
+    storage: storage.sample,
+    events: events.sample,
+    extensions
+  }
 }
 
 exports.declaration = declaration
