@@ -27,8 +27,10 @@ describe('new', () => {
 describe('argument', () => {
   it('should provide initial state if no argument passed', () => {
     const entity = new Entity(fixtures.schema)
+    const defaults = fixtures.schema.defaults.mock.results[0].value
+    const expected = { ...defaults, _version: 0 }
 
-    expect(entity.get()).toStrictEqual(fixtures.schema.defaults.mock.results[0].value)
+    expect(entity.get()).toStrictEqual(expected)
   })
 
   it('should set provide origin state', () => {

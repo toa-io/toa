@@ -4,7 +4,7 @@ name: messages
 entity:
   schema:
     properties:
-      sender: toa:id
+      sender: .id
       text: string
       timestamp: integer
       deleted: boolean

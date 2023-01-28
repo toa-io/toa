@@ -17,9 +17,9 @@ const to = (entity) => {
 const from = (record) => {
   if (record === undefined || record === null) return null
 
-  const { _id, _version, ...rest } = record
+  const { _id, ...rest } = record
 
-  return { id: _id, _version, ...rest }
+  return { id: _id, ...rest }
 }
 
 exports.to = to

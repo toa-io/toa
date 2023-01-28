@@ -43,7 +43,7 @@ class Entity {
     }
   }
 
-  #initial = (id) => this.#schema.defaults({ id })
+  #initial = (id) => ({ ...this.#schema.defaults({ id }), _version: 0 })
 }
 
 exports.Entity = Entity
