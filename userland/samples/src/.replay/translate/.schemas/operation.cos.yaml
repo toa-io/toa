@@ -7,7 +7,7 @@ output: ~
 local: &calls
   ~+:
     input: ~
-    query:
+    query: &query
       id: string
       criteria: string
       omit: number

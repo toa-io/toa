@@ -44,7 +44,7 @@ it('should call original receiver', async () => {
 })
 
 it('should not call original receiver on component mismatch', async () => {
-  message.sample = { component: generate() }
+  message.sample = { component: generate(), request: {} }
 
   await receiver.receive(message)
 
@@ -52,9 +52,21 @@ it('should not call original receiver on component mismatch', async () => {
 })
 
 it('should call original receiver on component match', async () => {
-  message.sample = { component: locator.id }
+  message.sample = { component: locator.id, request: {} }
 
   await receiver.receive(message)
 
   expect(fixtures.receiver.receive).toHaveBeenCalled()
+})
+
+it('should pass sample.request as sample', async () => {
+  const request = { title: generate() }
+
+  message.sample = { component: locator.id, request }
+
+  const expected = { ...message, sample: request }
+
+  await receiver.receive(message)
+
+  expect(fixtures.receiver.receive).toHaveBeenCalledWith(expected)
 })

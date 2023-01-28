@@ -81,6 +81,38 @@ it('should invoke operations with translated samples', async () => {
   }
 })
 
+it('should emit translated messages', async () => {
+  /**
+   * @param {toa.samples.Message} declaration
+   * @param {string} id
+   * @returns {{index: number, message: toa.sampling.Message}}
+   */
+  const translation = (declaration, id) => {
+    const find = (call) => call[0].payload === declaration.payload
+    const index = mock.translate.message.mock.calls.findIndex(find)
+    const message = mock.translate.message.mock.results[index].value
+    const translation = mock.translate.message.mock.calls[index]
+
+    const [, autonomous, component] = translation
+
+    expect(autonomous).toStrictEqual(fixtures.suite.autonomous)
+    expect(component).toStrictEqual(id)
+
+    return { index, message }
+  }
+
+  for (const [id, component] of Object.entries(fixtures.suite.components)) {
+    for (const [label, declarations] of Object.entries(component.messages)) {
+      for (const declaration of declarations) {
+        const { index, message } = translation(declaration, id)
+
+        expect(stage.binding.binding.emit)
+          .toHaveBeenNthCalledWith(index + 1, label, message)
+      }
+    }
+  }
+})
+
 it('should return results', () => {
   expect(ok).toStrictEqual(true)
 })

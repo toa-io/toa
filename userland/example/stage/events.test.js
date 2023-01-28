@@ -24,9 +24,9 @@ afterAll(async () => {
 it('should receive event', async () => {
   const created = await remote.invoke('transit', { input: { material: 'glass' } })
   const id = created.output.id
-  const payload = { id }
+  const payload = { pot: id }
   const message = { payload }
-  const request = { query: payload }
+  const request = { query: { id } }
 
   await binding.emit('store.orders.created', message)
 

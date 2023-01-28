@@ -37,7 +37,10 @@ const msgs = () => {
   const samples = []
 
   for (let i = 0; i < random(3) + 1; i++) {
-    const sample = /** @type {toa.samples.messages.Sample} */ {}
+    const sample = /** @type {toa.samples.messages.Sample} */ {
+      payload: generate(),
+      input: generate()
+    }
 
     samples.push(sample)
   }

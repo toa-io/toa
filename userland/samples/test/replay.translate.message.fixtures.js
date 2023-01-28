@@ -8,7 +8,12 @@ const message = {
   title: generate(),
   payload: { [generate()]: generate() },
   input: generate(),
-  query: { id: generate() }
+  query: { id: generate() },
+  request: {
+    current: {
+      id: generate()
+    }
+  }
 }
 
 const autonomous = flip()

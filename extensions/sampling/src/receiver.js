@@ -29,11 +29,18 @@ class Receiver extends Connector {
    * @param {toa.sampling.Message} message
    */
   async receive (message) {
-    const sample = message.sample
-    const component = sample?.component
+    if (message.sample === undefined) return this.#receiver.receive(message)
+    else return this.#apply(message)
+  }
+
+  async #apply (message) {
+    // validation
+    const { component, request } = message.sample
 
     if (component === undefined || component === this.#id) {
-      await this.#receiver.receive(message)
+      message.sample = /** @type {toa.sampling.request.Sample} */ request
+
+      return this.#receiver.receive(message)
     }
   }
 }

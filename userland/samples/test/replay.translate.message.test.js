@@ -11,7 +11,7 @@ it('should be', async () => {
 })
 
 /** @type {toa.samples.Message} */
-const declaration = clone(fixtures.message)
+let declaration
 
 /** @type {toa.sampling.Message} */
 let message
@@ -22,6 +22,7 @@ let sample
 beforeEach(() => {
   jest.clearAllMocks()
 
+  declaration = clone(fixtures.message)
   message = translate(declaration, fixtures.autonomous, fixtures.component)
   sample = message.sample
 })
@@ -31,23 +32,45 @@ it('should copy payload', async () => {
 })
 
 it('should copy title', async () => {
-  expect(sample.title).toStrictEqual(declaration.title)
+  expect(sample.request.title).toStrictEqual(declaration.title)
 })
 
 it('should copy autonomous', async () => {
-  expect(sample.autonomous).toStrictEqual(fixtures.autonomous)
+  expect(sample.request.autonomous).toStrictEqual(fixtures.autonomous)
 })
 
 it('should copy component', async () => {
   expect(sample.component).toStrictEqual(fixtures.component)
 })
 
-it('should copy input and query to request', async () => {
-  const input = declaration.input
-  const query = declaration.query
+it.each(['input', 'query'])('should copy %s to request', async (key) => {
+  const value = declaration[key]
 
-  expect(sample.request).toMatchObject({ input, query })
+  expect(sample.request.request[key]).toStrictEqual(value)
 })
+
+it.each(['input', 'query'])('should create request with %s', async (key) => {
+  const value = declaration[key]
+
+  delete declaration.request
+
+  const { sample } = translate(declaration, fixtures.autonomous, fixtures.component)
+
+  expect(sample.request.request[key]).toStrictEqual(value)
+})
+
+it('should keep request properties', async () => {
+  expect(sample.request.storage.current).toMatchObject(fixtures.message.request.current)
+})
+
+it('should add `terminate: true` if request is not defined (and sample is autonomous)',
+  async () => {
+    delete declaration.request
+
+    message = translate(declaration, fixtures.autonomous, fixtures.component)
+
+    expect(message.sample.request.terminate).toStrictEqual(true)
+  })
 
 describe('validation', () => {
   /** @type {toa.samples.Message} */

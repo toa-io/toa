@@ -38,7 +38,7 @@ Feature: Message samples
     When I replay it
     Then it fails
 
-  Scenario: Sample with blocked request passes
+  Scenario: Samp    le with blocked request passes
     Given I have a message `store.orders.created` sample for `tea.pots`:
       """yaml
       title: Should book a pot (without request)
@@ -59,17 +59,19 @@ Feature: Message samples
       """yaml
       title: Should book a pot (with request sample)
       payload:
-        pot: 1
+        pot: 7aa9b2302a854a9aaaa292159a9d1b70
       input:
         booked: true
       query:
-        id: 1
+        id: 7aa9b2302a854a9aaaa292159a9d1b70
       request:
         current:
-          id: 1
+          id: 7aa9b2302a854a9aaaa292159a9d1b70
+          material: glass
           booked: false
         next:
-          id: 1
+          id: 7aa9b2302a854a9aaaa292159a9d1b70
+          material: glass
           booked: true
       """
     When I replay it

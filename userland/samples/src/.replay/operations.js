@@ -20,6 +20,7 @@ const operations = async (set, test, autonomous, remote) => {
  * @param {boolean} autonomous
  * @param {toa.core.Component} remote
  * @param {string} endpoint
+ * @returns {function}
  */
 const operation = (operations, autonomous, remote, endpoint) =>
   async (test) => {
@@ -29,7 +30,7 @@ const operation = (operations, autonomous, remote, endpoint) =>
       n++
 
       const request = translate.operation(operation, autonomous)
-      const name = operation.title ?? 'Sample ' + n
+      const name = operation.title ?? 'Sample #' + n
 
       await test.test(name, async () => remote.invoke(endpoint, request))
     }

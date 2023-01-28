@@ -5,8 +5,9 @@ declare namespace toa.sampling {
 
   namespace messages {
 
-    type Sample = _request.Sample & {
+    type Sample = {
       component: string
+      request: _request.Sample
     }
 
   }

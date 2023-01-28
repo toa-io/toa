@@ -48,7 +48,8 @@ class Schema {
       keyword: error.keyword,
       property: error.propertyName,
       path: error.instancePath,
-      schema: error.schemaPath
+      schema: error.schemaPath,
+      params: error.params
     }
 
     return defined(mapped)

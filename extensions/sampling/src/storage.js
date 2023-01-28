@@ -48,6 +48,7 @@ class Storage extends Connector {
   }
 
   async store (object) {
+    /** @type {toa.sampling.request.Sample} */
     const sample = context.get()
     const next = sample?.storage?.next
 

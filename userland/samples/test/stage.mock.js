@@ -26,7 +26,10 @@ const remote = jest.fn(async (id) => {
   return { locator, invoke }
 })
 
-const stage = { manifest, composition, remote, shutdown }
+const emit = jest.fn()
+const binding = { binding: { emit } }
+
+const stage = { manifest, composition, remote, shutdown, binding }
 
 exports.invoke = invoke
 exports.stage = stage

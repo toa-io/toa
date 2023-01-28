@@ -48,6 +48,7 @@ declare namespace toa.sampling {
       storage?: Storage
       events?: Events
       extensions?: Extensions
+      terminate?: boolean
     }
 
   }
@@ -62,4 +63,3 @@ export type Request = toa.sampling.Request
 export type Storage = toa.sampling.request.Storage
 export type Sample = toa.sampling.request.Sample
 export type Context = toa.sampling.request.Context
-export type Extensions = toa.sampling.request.Extensions

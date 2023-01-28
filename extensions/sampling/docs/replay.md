@@ -51,4 +51,4 @@ is then used by Component decorator for verification.
 
 Receiver decorator is discarding incoming messages, containing `component` property not matching
 decorated component's id. This allows to replay messages samples with a desired component within
-a composition (as receivers can't be called directly). 
+a composition (as receivers can't be called directly).
