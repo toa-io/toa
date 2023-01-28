@@ -12,6 +12,12 @@ declare namespace toa.core.bridges {
   interface Event {
     condition(object): Promise<boolean>
 
+    payload(object): Promise<object>
+  }
+
+  interface Receiver {
+    condition(object): Promise<boolean>
+
     request(object): Promise<_core.Request>
   }
 
@@ -20,7 +26,7 @@ declare namespace toa.core.bridges {
 
     event(path: string, label: string): Event
 
-    receiver(path: string, label: string): any
+    receiver(path: string, label: string): Receiver
   }
 
 }

@@ -11,12 +11,12 @@ it('should be', () => {
 
 const context = /** @type {toa.node.Context} */ new Connector()
 
-it('should return as output', async () => {
+it('should return output', async () => {
   const values = [{ [generate()]: generate() }, generate()]
 
   for (const value of values) {
     const run = () => value
-    const ctor = () => ({ run })
+    const ctor = () => /** @type {toa.core.bridges.Algorithm} */ ({ run })
     const runner = new Runner(ctor, context)
 
     await runner.connect()
