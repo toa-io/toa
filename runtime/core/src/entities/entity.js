@@ -19,7 +19,7 @@ class Entity {
       this.#origin = argument
     } else {
       const id = typeof argument === 'string' ? argument : newid()
-      this.#state = this.#initial(id)
+      this.#init(id)
     }
   }
 
@@ -32,7 +32,7 @@ class Entity {
 
     if (error !== null) throw new EntityContractException(error)
 
-    this.#state = value
+    this.#set(value)
   }
 
   event () {
@@ -43,7 +43,17 @@ class Entity {
     }
   }
 
-  #initial = (id) => ({ ...this.#schema.defaults({ id }), _version: 0 })
+  #init (id) {
+    const value = { ...this.#schema.defaults({ id }), _version: 0 }
+
+    this.#set(value)
+  }
+
+  #set (value) {
+    Object.defineProperty(value, 'id', { writable: false, configurable: false })
+
+    this.#state = value
+  }
 }
 
 exports.Entity = Entity
