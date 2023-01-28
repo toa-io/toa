@@ -1,6 +1,6 @@
 'use strict'
 
-const { expand } = require('@toa.io/libraries/cos')
+const { expand } = require('@toa.io/libraries/concise')
 const { defined } = require('@toa.io/libraries/generic')
 const { create, valid } = require('./validator')
 const { Exception } = require('./exception')

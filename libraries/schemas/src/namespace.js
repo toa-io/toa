@@ -1,7 +1,7 @@
 'use strict'
 
 const { reduce } = require('@toa.io/libraries/generic')
-const { expand } = require('@toa.io/libraries/cos')
+const { expand } = require('@toa.io/libraries/concise')
 
 const { Schema } = require('./schema')
 const { create, is } = require('./validator')

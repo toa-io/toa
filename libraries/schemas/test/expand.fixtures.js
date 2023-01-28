@@ -7,7 +7,7 @@ const expand = /** @type {jest.MockedFn<toa.schemas.expand>} */
 
 const is = /** @type {toa.schemas.valid} */ generate()
 
-const cos = { expand }
+const concise = { expand }
 const validator = { is }
 
-exports.mock = { cos, validator }
+exports.mock = { concise, validator }

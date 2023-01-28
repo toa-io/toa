@@ -2,7 +2,7 @@
 
 ## schema(cos): Schema
 
-Factory for [Schema class](./types/schema.d.ts). See [COS](/libraries/cos).
+Factory for [Schema class](./types/schema.d.ts). See [COS](/libraries/consice).
 
 ### `.fit(value)`
 

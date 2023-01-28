@@ -1,6 +1,6 @@
 'use strict'
 
-const cos = require('@toa.io/libraries/cos')
+const cos = require('@toa.io/libraries/concise')
 const { is } = require('./validator')
 
 /** @type {toa.schemas.expand} */
