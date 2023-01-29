@@ -30,7 +30,7 @@ class Channel extends Connector {
 
   async disconnection () {
     // solves 'Channel ended, no reply will be forthcoming'
-    await timeout(10)
+    await timeout(50)
   }
 
   async request (label, request) {

@@ -17,10 +17,12 @@ const messages = async (manifest) => {
 
   for (const file of files) {
     const label = basename(file, EXTENSION)
-    const declarations = /** @type {toa.samples.messages.Declaration} */ await yaml.load.all(file)
+    const samples = /** @type {toa.samples.Message[]} */ await yaml.load.all(file)
 
-    messages[label] = declarations
+    messages[label] = samples
   }
+
+  return messages
 }
 
 const DIRECTORY = 'samples/messages'

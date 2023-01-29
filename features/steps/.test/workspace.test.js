@@ -23,8 +23,8 @@ afterEach(async () => {
   if (context.cwd !== undefined) await directory.remove(context.cwd)
 })
 
-describe('Given I have a component {word}', () => {
-  const step = gherkin.steps.Gi('I have a component {word}')
+describe('Given I have a component {component}', () => {
+  const step = gherkin.steps.Gi('I have a component {component}')
 
   it('should be', () => undefined)
 

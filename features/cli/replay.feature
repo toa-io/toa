@@ -1,7 +1,7 @@
 Feature: Replay samples
 
   Scenario: Replay component samples under component root
-    Given I have a component math.calculations
+    Given I have a component `math.calculations`
     And my working directory is ./components/math.calculations
     When I run `toa replay`
     Then program should exit with code 0
@@ -17,7 +17,7 @@ Feature: Replay samples
       """
 
   Scenario: Replay component samples using implicit path
-    Given I have a component math.calculations
+    Given I have a component `math.calculations`
     And my working directory is ./
     When I run `toa replay ./components/math.calculations`
     Then program should exit with code 0
@@ -50,4 +50,13 @@ Feature: Replay samples
       """
       # Subtest: math.calculations
       # Subtest: node.syntaxes
+      """
+
+  Scenario: Replay message sample
+    Given I have a component `external.consumer`
+    When I run `toa replay ./components/external.consumer`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: Should pass payload to input
       """

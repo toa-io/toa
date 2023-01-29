@@ -5,7 +5,7 @@ const { template } = require('./.workspace/context')
 
 const { Given } = require('@cucumber/cucumber')
 
-Given('I have a component {word}',
+Given('I have a component {component}',
   async function (component) {
     await copy([component], this.cwd)
   })

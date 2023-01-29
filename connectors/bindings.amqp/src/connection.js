@@ -4,7 +4,6 @@ const amqp = require('amqplib')
 
 const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/libraries/console')
-const { timeout } = require('@toa.io/libraries/generic')
 
 class Connection extends Connector {
   /** @type {toa.amqp.Pointer} */
@@ -38,9 +37,6 @@ class Connection extends Connector {
     // TODO: handle current operations
     // http://www.squaremobius.net/amqp.node/channel_api.html#model_close
     await this.#connection.close()
-
-    // waiting for a new amqp client to be implemented
-    await timeout(200)
 
     console.info(`AMQP Binding disconnected from ${this.#pointer.label}`)
   }
