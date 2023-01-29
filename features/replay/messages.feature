@@ -5,11 +5,11 @@ Feature: Message samples
       """yaml
       title: Should book a pot
       payload:
-        pot: 1
+        pot: 7aa9b2302a854a9aaaa292159a9d1b70
       input:
         booked: true
       query:
-        id: 1
+        id: 7aa9b2302a854a9aaaa292159a9d1b70
       """
     When I replay it
     Then it passes
@@ -19,9 +19,9 @@ Feature: Message samples
       """yaml
       title: Should book a pot
       payload:
-        pot: 1
+        pot: 7aa9b2302a854a9aaaa292159a9d1b70
       query:
-        id: 1
+        id: 7aa9b2302a854a9aaaa292159a9d1b70
       """
     When I replay it
     Then it passes
@@ -37,22 +37,6 @@ Feature: Message samples
       """
     When I replay it
     Then it fails
-
-  Scenario: Samp    le with blocked request passes
-    Given I have a message `store.orders.created` sample for `tea.pots`:
-      """yaml
-      title: Should book a pot (without request)
-      component: tea.pots
-      payload:
-        pot: 1
-      input:
-        booked: true
-      query:
-        id: 1
-      request: ~
-      """
-    When I replay it
-    Then it passes
 
   Scenario: Sample with request sample passes
     Given I have a message `store.orders.created` sample for `tea.pots`:
@@ -82,24 +66,16 @@ Feature: Message samples
       """yaml
       title: Should book a pot
       payload:
-        pot: 1
+        pot: 7aa9b2302a854a9aaaa292159a9d1b70
       request:
         current:
-          id: 1
+          id: 7aa9b2302a854a9aaaa292159a9d1b70
+          material: glass
           booked: false
         next:
-          id: 1
+          id: 7aa9b2302a854a9aaaa292159a9d1b70
+          material: glass
           booked: true
       """
     When I replay it
     Then it passes
-
-  Scenario: Message without output and request is incorrect
-    Given I have a message `store.orders.created` sample for `tea.pots`:
-      """yaml
-      title: Should book a pot
-      payload:
-        pot: 1
-      """
-    When I replay it
-    Then it fails

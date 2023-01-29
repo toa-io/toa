@@ -48,6 +48,7 @@ class Component extends Connector {
     if (sample !== undefined) validate(sample)
 
     if ('request' in sample) verify.request(sample.request, request)
+    if (sample.terminate === true) return {}
 
     // make sure current state will be requested from the storage
     if (sample.storage?.current !== undefined && rest.query === undefined) rest.query = { id: newid() }

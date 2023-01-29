@@ -26,3 +26,4 @@ extensions:
     - arguments: [~]
       result: ~
       permanent: boolean
+terminate: boolean

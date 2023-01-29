@@ -72,6 +72,14 @@ it('should add `terminate: true` if request is not defined (and sample is autono
     expect(message.sample.request.terminate).toStrictEqual(true)
   })
 
+it('should not create undefined keys in request', async () => {
+  delete declaration.input
+
+  message = translate(declaration, fixtures.autonomous, fixtures.component)
+
+  expect('input' in message.sample.request.request).toStrictEqual(false)
+})
+
 describe('validation', () => {
   /** @type {toa.samples.Message} */
   let declaration

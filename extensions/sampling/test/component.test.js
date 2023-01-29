@@ -113,6 +113,16 @@ describe('invocation', () => {
 
     expect(argument.query?.id).toBeDefined()
   })
+
+  it('should not invoke operation if sample.terminate is `true`', async () => {
+    jest.clearAllMocks()
+
+    request.sample = { terminate: true }
+
+    await component.invoke(endpoint, request)
+
+    expect(fixtures.component.invoke).not.toHaveBeenCalled()
+  })
 })
 
 describe('verification', () => {
@@ -137,6 +147,14 @@ describe('verification', () => {
       request.sample = { request: { input: request.input } }
 
       await expect(component.invoke(endpoint, request)).resolves.toBeDefined()
+    })
+
+    it('should throw on mismatch and sample.terminate is `true`', async () => {
+      const input = generate()
+
+      request.sample = { request: { input }, terminate: true }
+
+      await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(ReplayException)
     })
   })
 
