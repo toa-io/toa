@@ -7,6 +7,9 @@ Feature: Event samples
       input:
         material: glass
         volume: 1.5
+      next:
+        material: glass
+        volume: 1.5
       events:
         created:
           material: glass

@@ -92,6 +92,8 @@ describe('invocation', () => {
       expect(sample).toBeDefined()
 
       undo = sample.context.local.undo
+
+      return {}
     })
 
     await component.invoke(endpoint, request)
@@ -188,6 +190,16 @@ describe('verification', () => {
       request.sample = { events: { created: { payload: {} } } }
 
       await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(ReplayException)
+    })
+
+    it('should throw before events if sample is invalid', async () => {
+      const reply = { exception: generate() }
+
+      request.sample = { events: { created: { payload: {} } } }
+
+      fixtures.component.invoke.mockImplementationOnce(() => reply)
+
+      await expect(component.invoke(endpoint, request)).rejects.toStrictEqual(reply.exception)
     })
   })
 })

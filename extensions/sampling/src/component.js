@@ -56,6 +56,7 @@ class Component extends Connector {
     /** @type {toa.core.Reply} */
     const reply = await context.apply(sample, () => this.#component.invoke(endpoint, rest))
 
+    if (reply.exception) throw reply.exception
     if ('reply' in sample) verify.reply(sample.reply, reply)
     if ('events' in sample) verify.events(sample.events)
 
