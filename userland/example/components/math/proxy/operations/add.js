@@ -1,10 +1,10 @@
 'use strict'
 
-async function transition (input, _, context) {
+async function observation (input, none, context) {
   const request = { input }
 
   // noinspection JSUnresolvedVariable
   return context.remote.math.calculations.add(request)
 }
 
-exports.transition = transition
+exports.observation = observation

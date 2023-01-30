@@ -33,14 +33,14 @@ class Context extends Connector {
   }
 
   async call (namespace, name, endpoint, request) {
-    const sample = /** @type {toa.sampling.Request} */ context.get()
+    const sample = /** @type {toa.sampling.request.Sample} */ context.get()
     const key = namespace + dot + name + dot + endpoint
     const requests = sample?.context?.remote?.[key]
     const call = requests?.shift()
     const segments = [namespace, name, endpoint]
 
     if (call?.reply === undefined && sample?.autonomous) {
-      throw new SampleException(`Autonomous sample is missing '${segments.join(dot)}' reply`)
+      throw new SampleException(`autonomous sample is missing '${segments.join(dot)}' reply`)
     }
 
     return this.#replay('call', call, segments, request)

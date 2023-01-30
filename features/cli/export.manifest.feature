@@ -11,7 +11,7 @@ Feature: Print manifest
       """
 
   Scenario Outline: Print manifest from component directory using `toa export <artifact>`
-    Given I have a component dummies.one
+    Given I have a component `dummies.one`
     And my working directory is ./components/dummies.one
     When I run `toa export <artifact>`
     And stdout should contain lines:
@@ -26,7 +26,7 @@ Feature: Print manifest
 
 
   Scenario: Print manifest located by path
-    Given I have a component dummies.two
+    Given I have a component `dummies.two`
     And my working directory is ./
     When I run `toa export manifest -p ./components/dummies.two`
     And stdout should contain lines:
@@ -36,7 +36,7 @@ Feature: Print manifest
       """
 
   Scenario Outline: Validate valid manifest
-    Given I have a component dummies.two
+    Given I have a component `dummies.two`
     # which has valid manifest
     And my working directory is ./components/dummies.two
     When I run `toa export manifest <flag>`
@@ -49,7 +49,7 @@ Feature: Print manifest
       | -e      |
 
   Scenario: Validate invalid manifest
-    Given I have a component dummies.invalid
+    Given I have a component `dummies.invalid`
     # which has invalid manifest
     And my working directory is ./components/dummies.invalid
     When I run `toa export manifest -e`
