@@ -5,3 +5,4 @@ local:
     query:
       criteria: 'material==steel'
       limit: 10
+    output: []
