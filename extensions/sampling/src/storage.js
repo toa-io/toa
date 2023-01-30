@@ -23,46 +23,85 @@ class Storage extends Connector {
 
   async get (query) {
     const sample = context.get()
-    const current = sample?.storage?.current
 
-    if (current !== undefined) {
-      if (Array.isArray(current)) throw new SampleException('current must be object')
+    /** @type {toa.core.storages.Record} */
+    let object
 
-      return normalize(current)
-    }
+    if (sample !== undefined) object = this.#get(sample)
+    if (object === undefined) object = await this.#storage.get(query)
 
-    return this.#storage.get(query)
+    return object
   }
 
   async find (query) {
     const sample = context.get()
-    const current = sample?.storage?.current
 
-    if (current !== undefined) {
-      if (!Array.isArray(current)) throw new SampleException('current must be array')
+    /** @type {toa.core.storages.Record[]} */
+    let objects
 
-      return current.map(normalize)
-    }
+    if (sample !== undefined) objects = this.#get(sample, true)
+    if (objects === undefined) objects = await this.#storage.find(query)
 
-    return this.#storage.find(query)
+    return objects
   }
 
   async store (object) {
     /** @type {toa.sampling.request.Sample} */
     const sample = context.get()
-    const next = sample?.storage?.next
 
-    if (next !== undefined) {
-      const matches = match(object, next)
+    /** @type {boolean} */
+    let result
 
-      if (!matches) throw new ReplayException('next state mismatch')
-    }
+    if (sample !== undefined) result = this.#store(object, sample)
+    if (result === undefined) result = await this.#storage.store(object)
 
-    return this.#storage.store(object)
+    return result
   }
 
   async upsert (query, changeset, insert) {
     return this.#storage.upsert(query, changeset, insert)
+  }
+
+  /**
+   * @param {toa.sampling.request.Sample} sample
+   * @param {boolean} [array]
+   * @returns {toa.core.storages.Record | toa.core.storages.Record[] | undefined}
+   */
+  #get (sample, array = false) {
+    const current = sample.storage?.current
+
+    if (current === undefined && sample.autonomous === true) {
+      throw new SampleException('autonomous sample must contain current state')
+    }
+
+    if (current === undefined) return
+
+    if (Array.isArray(current) !== array) {
+      throw new SampleException('current state must be an ' + (array ? 'array' : 'object'))
+    }
+
+    return array ? current.map(normalize) : normalize(current)
+  }
+
+  /**
+   * @param {toa.core.storages.Record} object
+   * @param {toa.sampling.request.Sample} sample
+   * @returns {boolean | undefined}
+   */
+  #store (object, sample) {
+    const next = sample.storage?.next
+
+    if (next === undefined && sample.autonomous === true) {
+      throw new SampleException('autonomous sample must contain next state')
+    }
+
+    if (next === undefined) return
+
+    const matches = match(object, next)
+
+    if (!matches) throw new ReplayException('next state mismatch')
+
+    return true
   }
 }
 

@@ -11,7 +11,7 @@ Given('I have (a )sample(s) for {token} operation of {component}:',
    * @this {toa.samples.features.Context}
    */
   function (endpoint, component, yaml) {
-    const samples = /** @type {toa.samples.Declaration[]} */ split(yaml)
+    const samples = /** @type {toa.samples.Message[]} */ split(yaml)
 
     this.component = component
     this.operation = { endpoint, samples }
@@ -25,7 +25,7 @@ Given('I have (a )message {label} sample(s) for {component}:',
    * @this {toa.samples.features.Context}
    */
   function (label, component, yaml) {
-    const samples = /** @type {toa.samples.Declaration[]} */ split(yaml)
+    const samples = /** @type {toa.samples.Message[]} */ split(yaml)
 
     this.component = component
     this.message = { label, samples }

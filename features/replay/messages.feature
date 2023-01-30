@@ -1,8 +1,8 @@
 Feature: Message samples
 
-  Scenario: Sample passes
-    Given I have a message `store.orders.created` sample for `tea.pots`:
-      """yaml
+  Scenario: Samples pass
+    Given I have message `store.orders.created` samples for `tea.pots`:
+      """
       title: Should book a pot
       payload:
         pot: 7aa9b2302a854a9aaaa292159a9d1b70
@@ -10,6 +10,23 @@ Feature: Message samples
         booked: true
       query:
         id: 7aa9b2302a854a9aaaa292159a9d1b70
+      ---
+      title: Should book a pot (with request sample)
+      payload:
+        pot: 7aa9b2302a854a9aaaa292159a9d1b70
+      input:
+        booked: true
+      query:
+        id: 7aa9b2302a854a9aaaa292159a9d1b70
+      request:
+        current:
+          id: 7aa9b2302a854a9aaaa292159a9d1b70
+          material: glass
+          booked: false
+        next:
+          id: 7aa9b2302a854a9aaaa292159a9d1b70
+          material: glass
+          booked: true
       """
     When I replay it
     Then it passes

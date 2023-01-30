@@ -31,7 +31,7 @@ declare namespace toa.sampling {
     }
 
     type Storage = {
-      current?: _core.storages.Record
+      current?: _core.storages.Record | _core.storages.Record[]
       next?: _core.storages.Record
     }
 
