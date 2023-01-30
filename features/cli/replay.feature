@@ -60,3 +60,18 @@ Feature: Replay samples
       """
       # Subtest: Should pass payload to input
       """
+
+  Scenario: Replay samples from the context directory
+    Given I have components:
+      | math.calculations |
+      | node.syntaxes     |
+      | external.consumer |
+    And I have a context
+    When I run `toa replay`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: math.calculations
+      # Subtest: node.syntaxes
+      # Subtest: external.consumer
+      """

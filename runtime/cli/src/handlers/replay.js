@@ -24,6 +24,7 @@ async function replay (argv) {
 
   const message = (ok ? GREEN + 'PASSED' : RED + 'FAILED') + RESET
 
+  // print after tap's output
   process.on('beforeExit', () => console.log(message))
 }
 
