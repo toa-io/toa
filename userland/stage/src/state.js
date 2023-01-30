@@ -4,7 +4,7 @@ const state = {}
 
 const reset = () => {
   Object.assign(state, {
-    reset: reset,
+    reset,
     components: [],
     compositions: [],
     remotes: []

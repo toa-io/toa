@@ -53,7 +53,7 @@ it('should provide event', () => {
 
   expect(event).toStrictEqual({
     state,
-    origin: origin,
+    origin,
     changeset: { foo: 'new value' }
   })
 })

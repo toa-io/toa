@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "find-up": "5.0.0",
-    "yargs": "17.2.1"
+    "yargs": "17.6.2"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }
