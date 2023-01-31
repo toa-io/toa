@@ -2,12 +2,12 @@ import * as _suite from "./suite";
 
 declare namespace toa.samples.replay {
 
-  type Components = (paths: string[]) => Promise<boolean>
-  type Context = (path: string) => Promise<boolean>
-  type Replay = (suite: _suite.Suite) => Promise<boolean>
+  type components = (paths: string[]) => Promise<boolean>
+  type context = (path: string) => Promise<boolean>
+  type replay = (suite: _suite.Suite, paths: string[]) => Promise<boolean>
 
 }
 
-export type Context = toa.samples.replay.Context
-export type Components = toa.samples.replay.Components
-export type Replay = toa.samples.replay.Replay
+export type context = toa.samples.replay.context
+export type components = toa.samples.replay.components
+export type replay = toa.samples.replay.replay

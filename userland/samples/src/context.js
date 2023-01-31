@@ -1,14 +1,14 @@
 'use strict'
 
-const { context: load } = require('@toa.io/norm')
-const { components } = require('./components')
+const norm = require('@toa.io/norm')
+const test = require('./components')
 
-/** @type {toa.samples.replay.Context} */
+/** @type {toa.samples.replay.context} */
 const context = async (path) => {
-  const context = await load(path)
+  const context = await norm.context(path)
   const paths = context.components.map((component) => component.path)
 
-  return components(paths)
+  return test.components(paths)
 }
 
 exports.context = context

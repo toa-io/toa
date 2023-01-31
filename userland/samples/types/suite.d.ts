@@ -4,7 +4,7 @@ import * as _messages from './message'
 declare namespace toa.samples {
 
   namespace constructors {
-    type Components = (paths: string[]) => Promise<Suite>
+    type components = (paths: string[]) => Promise<Suite>
   }
 
   type Component = {

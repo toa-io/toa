@@ -1,32 +1,27 @@
 'use strict'
 
-const { resolve } = require('node:path')
+const { generate } = require('randomstring')
 
-const { stage } = require('./stage.mock')
 const { suite } = require('./suite.mock')
 const { replay } = require('./replay.mock')
-const mock = { stage, suite, replay }
+const mock = { suite, replay }
 
-jest.mock('@toa.io/userland/stage', () => mock.stage)
 jest.mock('../src/suite', () => mock.suite)
 jest.mock('../src/replay', () => mock.replay)
 
 const { components } = require('../')
 
-const path = resolve(__dirname, '../../example/components/math/calculations')
-const paths = [path]
-
 it('should be', () => {
   expect(components).toBeDefined()
 })
 
-beforeAll(async () => {
-  await components(paths)
-})
+const paths = [generate()]
 
-it('should boot composition', () => {
-  expect(stage.composition).toHaveBeenCalled()
-  expect(stage.composition).toHaveBeenCalledWith(paths)
+/** @type {boolean} */
+let result
+
+beforeAll(async () => {
+  result = await components(paths)
 })
 
 it('should load suite', async () => {
@@ -36,9 +31,9 @@ it('should load suite', async () => {
 it('should replay suite', async () => {
   const suite = await mock.suite.components.mock.results[0].value
 
-  expect(mock.replay.replay).toHaveBeenCalledWith(suite)
+  expect(mock.replay.replay).toHaveBeenCalledWith(suite, paths)
 })
 
-it('should shutdown stage', () => {
-  expect(stage.shutdown).toHaveBeenCalled()
+it('should return result', async () => {
+  expect(result).toStrictEqual(await mock.replay.replay.mock.results[0].value)
 })

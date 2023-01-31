@@ -2,7 +2,7 @@
 
 const { component } = require('./.suite')
 
-/** @type {toa.samples.constructors.Components} */
+/** @type {toa.samples.constructors.components} */
 const components = async (paths) => {
   const autonomous = true
 

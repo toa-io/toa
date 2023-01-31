@@ -1,5 +1,6 @@
 'use strict'
 
+const { resolve } = require('node:path')
 const clone = require('clone-deep')
 
 const { stage } = require('./stage.mock')
@@ -21,11 +22,19 @@ let ok
 /** @type {toa.samples.Suite} */
 let suite
 
+const path = resolve(__dirname, '../../example/components/math/calculations')
+const paths = [path]
+
 beforeEach(async () => {
   jest.clearAllMocks()
 
   suite = clone(fixtures.suite)
-  ok = await replay(suite)
+  ok = await replay(suite, paths)
+})
+
+it('should boot composition', () => {
+  expect(stage.composition).toHaveBeenCalled()
+  expect(stage.composition).toHaveBeenCalledWith(paths)
 })
 
 it('should connect remotes', () => {
@@ -111,6 +120,10 @@ it('should emit translated messages', async () => {
       }
     }
   }
+})
+
+it('should shutdown stage', () => {
+  expect(stage.shutdown).toHaveBeenCalled()
 })
 
 it('should return results', () => {

@@ -3,7 +3,6 @@
 const { resolve } = require('node:path')
 const { replay } = require('@toa.io/userland/samples')
 const { translate } = require('./.replay')
-const stage = require('@toa.io/userland/stage')
 
 const { When } = require('@cucumber/cucumber')
 
@@ -18,11 +17,7 @@ When('I replay it',
     /** @type {toa.samples.Suite} */
     const suite = translate(this)
 
-    await stage.composition([path])
-
-    this.ok = await replay(suite)
-
-    await stage.shutdown()
+    this.ok = await replay(suite, [path])
   })
 
 const COMPONENTS = resolve(__dirname, '../../../userland/example/components')

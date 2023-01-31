@@ -1,19 +1,13 @@
 'use strict'
 
-const stage = require('@toa.io/userland/stage')
 const { components: load } = require('./suite')
 const { replay } = require('./replay')
 
-/** @type {toa.samples.replay.Components} */
+/** @type {toa.samples.replay.components} */
 const components = async (paths) => {
-  await stage.composition(paths)
-
   const suite = await load(paths)
-  const ok = await replay(suite)
 
-  await stage.shutdown()
-
-  return ok
+  return await replay(suite, paths)
 }
 
 exports.components = components

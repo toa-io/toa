@@ -10,7 +10,6 @@ const mock = { gherkin, ...fixtures.mock }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/userland/samples', () => mock.samples)
-jest.mock('@toa.io/userland/stage', () => mock.stage)
 
 require('../replay')
 
@@ -49,10 +48,6 @@ describe('When I replay it', () => {
       await step.call(context)
     })
 
-    it('should start composition', async () => {
-      expect(mock.stage.composition).toHaveBeenCalledWith([path])
-    })
-
     it('should replay operation sample', async () => {
       /** @type {toa.samples.Suite} */
       const suite = {
@@ -66,15 +61,11 @@ describe('When I replay it', () => {
         }
       }
 
-      expect(mock.samples.replay).toHaveBeenCalledWith(suite)
+      expect(mock.samples.replay).toHaveBeenCalledWith(suite, [path])
     })
 
     it('should write result to context', async () => {
       expect(context.ok).toStrictEqual(await mock.samples.replay.mock.results[0].value)
-    })
-
-    it('should shutdown stage', async () => {
-      expect(mock.stage.shutdown).toHaveBeenCalled()
     })
   })
 
@@ -108,7 +99,7 @@ describe('When I replay it', () => {
         }
       }
 
-      expect(mock.samples.replay).toHaveBeenCalledWith(suite)
+      expect(mock.samples.replay).toHaveBeenCalledWith(suite, [path])
     })
 
     it('should write result to context', async () => {
