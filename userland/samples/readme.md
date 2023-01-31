@@ -48,14 +48,16 @@ of the event receiver is consuming.
 
 ## Autonomy
 
-Component-level samples are *autonomous*, namely, does not assume actual remote calls as
+Component level samples are *autonomous*, namely, does not assume actual remote calls as
 replaying of component-level samples will boot only that component. Remote call attempt not declared
 within sample will cause an exception.
 See [examples](../example/components/math/calculations/samples).
 
-As for context-level samples, remote calls with non-declared outputs will be actually performed.
-Replaying these samples will boot the composition with all components of the context (so as required
-extensions). See [examples](../example/samples).
+For context level samples (integration samples), remote calls with non-declared outputs will be
+actually performed. Replaying these samples will boot the composition with all components of the
+context (so as required extensions). See [examples](../example/samples).
+
+> Integration samples are more flexible and less sensitive to implementation details.
 
 ## Replay
 
