@@ -1,5 +1,3 @@
-$id: message
-
 autonomous: boolean
 component: string
 title: string
