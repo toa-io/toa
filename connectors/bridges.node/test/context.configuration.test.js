@@ -13,10 +13,11 @@ beforeEach(async () => {
   await context.connect()
 })
 
-it('should expose annex', async () => {
-  expect(context.annexes.configuration).toBeDefined()
+it('should expose aspect', async () => {
+  expect(context.aspects.configuration).toBeDefined()
 })
 
 it('should expose values', () => {
   expect(context.configuration).toStrictEqual(fixtures.configuration)
+  expect(context.configuration.foo).toStrictEqual(fixtures.configuration.foo)
 })

@@ -1,0 +1,5 @@
+title: Should multiply numbers
+input:
+  a: 3
+  b: 4
+output: 12

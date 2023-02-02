@@ -3,28 +3,53 @@
 const { dirname, resolve } = require('node:path')
 const findUp = require('find-up')
 
-const find = (from, filename) => {
+/**
+ * @param {string | string[]} from
+ * @param {string} filename
+ * @param {boolean} test
+ * @return {string | string[] | null}
+ */
+const find = (from, filename, test) => {
   if (from instanceof Array) {
-    const found = new Set(from.map((path) => find(path, filename)))
+    const found = new Set(from.map((path) => find(path, filename, true)))
 
-    found.delete(undefined)
+    found.delete(null)
 
-    return found.size > 0 ? [...found] : undefined
+    if (found.size === 0) {
+      if (test === true) return null
+      else throw new Error(`File '${filename}' is found in ${from.join(', ')}`)
+    }
+
+    return [...found]
   }
 
   const cwd = resolve(process.cwd(), from)
   const path = findUp.sync(filename, { cwd })
 
-  if (path === undefined) throw new Error(`Cannot find '${filename}' from '${from}'`)
+  if (path === undefined) {
+    if (test === true) return null
+    else throw new Error(`Cannot find '${filename}' from '${from}'`)
+  }
 
   return dirname(path)
 }
 
-const component = (from) => find(from, MANIFEST)
-const context = (from) => find(from, CONTEXT)
+/**
+ * @param {string | string[]} from
+ * @param {boolean} test
+ * @return {string | string[] | null}
+ */
+const components = (from, test = false) => find(from, MANIFEST, test)
+
+/**
+ * @param {string | string[]} from
+ * @param {boolean} test
+ * @return {string | string[] | null}
+ */
+const context = (from, test = false) => find(from, CONTEXT, test)
 
 const MANIFEST = 'manifest.toa.yaml'
 const CONTEXT = 'context.toa.yaml'
 
-exports.component = component
+exports.components = components
 exports.context = context

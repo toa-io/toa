@@ -1,13 +1,14 @@
 'use strict'
 
-const { copy } = require('./.workspace/components')
-const { template } = require('./.workspace/context')
+const components = require('./.workspace/components')
+const samples = require('./.workspace/samples')
+const context = require('./.workspace/context')
 
 const { Given } = require('@cucumber/cucumber')
 
-Given('I have a component {word}',
+Given('I have a component {component}',
   async function (component) {
-    await copy([component], this.cwd)
+    await components.copy([component], this.cwd)
   })
 
 Given('I have components:',
@@ -15,9 +16,9 @@ Given('I have components:',
    * @param {import('@cucumber/cucumber').DataTable} table
    */
   async function (table) {
-    const components = table.transpose().raw()[0]
+    const list = table.transpose().raw()[0]
 
-    await copy(components, this.cwd)
+    await components.copy(list, this.cwd)
   })
 
 Given('I have a context',
@@ -25,14 +26,22 @@ Given('I have a context',
    * @this {toa.features.Context}
    */
   async function () {
-    await template(this.cwd)
+    await context.template(this.cwd)
   })
 
 Given('I have a context with:',
   /**
    * @param {string} [additions]
-   * @returns {Promise<void>}
+   * @this {toa.features.Context}
    */
   async function (additions) {
-    await template(this.cwd, additions)
+    await context.template(this.cwd, additions)
+  })
+
+Given('I have integration samples',
+  /**
+   * @this {toa.features.Context}
+   */
+  async function () {
+    await samples.copy(this.cwd)
   })

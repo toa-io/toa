@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge } = require('../src/merge')
+const { merge, overwrite, add } = require('../src')
 
 it('should merge arrays', () => {
   const target = [1, 2]
@@ -34,13 +34,13 @@ it('should throw TypeError on non-objects', () => {
   expect(() => merge({}, 2)).toThrow(TypeError)
 
   expect(() => merge({ a: { b: null } }, { a: { b: 'test' } }))
-    .toThrow(new TypeError('gears/merge: conflict at /a/b (\'test\', \'null\')'))
+    .toThrow(new TypeError('generic/merge: conflict at /a/b (\'test\', \'null\')'))
 
   expect(() => merge({ a: { b: null } }, 1))
-    .toThrow(new TypeError('gears/merge: arguments must be of the same type at /'))
+    .toThrow(new TypeError('generic/merge: arguments must be of the same type at /'))
 
   expect(() => merge({ a: { b: 'a' } }, { a: { b: 1 } }))
-    .toThrow(new TypeError('gears/merge: conflict at /a/b (\'1\', \'a\')'))
+    .toThrow(new TypeError('generic/merge: conflict at /a/b (\'1\', \'a\')'))
 })
 
 it('should throw on conflict', () => {
@@ -94,10 +94,10 @@ describe('options', () => {
     })
   })
 
-  describe('override', () => {
-    const options = { override: true }
+  describe('overwrite', () => {
+    const options = { overwrite: true }
 
-    it('should override on conflicts', () => {
+    it('should overwrite on conflicts', () => {
       const a = { a: 1, b: 1, d: [1, 2] }
       const b = { a: 2, c: 1, d: [3, 4] }
 
@@ -106,7 +106,7 @@ describe('options', () => {
       expect(a).toStrictEqual({ a: 2, b: 1, c: 1, d: [3, 4] })
     })
 
-    it('should override primitive with object', () => {
+    it('should overwrite primitive with object', () => {
       const a = { a: 1 }
       const b = { a: { c: 1 } }
 
@@ -115,7 +115,7 @@ describe('options', () => {
       expect(a.a).toStrictEqual(b.a)
     })
 
-    it('should override primitive with array', () => {
+    it('should overwrite primitive with array', () => {
       const a = { a: 1 }
       const b = { a: [1, 2] }
 
@@ -123,5 +123,39 @@ describe('options', () => {
 
       expect(a.a).toStrictEqual(b.a)
     })
+  })
+})
+
+describe('overwrite', () => {
+  it('should be', async () => {
+    expect(overwrite).toBeDefined()
+  })
+
+  it('should overwrite properties', async () => {
+    const target = { a: 1, b: 2 }
+    const source = { b: 3, c: 4 }
+    const expected = { a: 1, b: 3, c: 4 }
+
+    const output = overwrite(target, source)
+
+    expect(output).toStrictEqual(expected)
+    expect(target).toStrictEqual(expected)
+  })
+})
+
+describe('add', () => {
+  it('should be', async () => {
+    expect(add).toBeDefined()
+  })
+
+  it('should add new properties', async () => {
+    const target = { a: 1, b: 2 }
+    const source = { b: 3, c: 4 }
+    const expected = { a: 1, b: 2, c: 4 }
+
+    const output = add(target, source)
+
+    expect(output).toStrictEqual(expected)
+    expect(target).toStrictEqual(expected)
   })
 })

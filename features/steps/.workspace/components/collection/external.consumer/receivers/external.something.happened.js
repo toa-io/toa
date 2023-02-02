@@ -1,5 +1,5 @@
 'use strict'
 
 exports.request = (payload) => ({
-  input: payload
+  input: { description: payload.text }
 })

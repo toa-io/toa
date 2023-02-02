@@ -1,5 +1,6 @@
 'use strict'
 
+/** @type {toa.generic.Difference} */
 const difference = (a, b) => {
   const diff = {}
 

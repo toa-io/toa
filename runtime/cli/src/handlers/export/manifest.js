@@ -4,7 +4,7 @@ const { component } = require('@toa.io/norm')
 const { dump } = require('@toa.io/libraries/yaml')
 const { console } = require('@toa.io/libraries/console')
 
-const { component: find } = require('../../util/find')
+const { components: find } = require('../../util/find')
 
 const print = async (argv) => {
   const path = find(argv.path)

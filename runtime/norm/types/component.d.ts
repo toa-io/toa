@@ -6,7 +6,7 @@ export namespace toa.norm {
     namespace operations {
 
       type Type = 'transition' | 'observation' | 'assignment'
-      type Scope = 'object' | 'objects' | 'changeset'
+      type Scope = 'object' | 'objects' | 'changeset' | 'none'
 
     }
 
@@ -35,8 +35,13 @@ export namespace toa.norm {
       [key: string]: Event
     }
 
-    interface Extensions {
-      [key: string]: Object
+    interface Receiver {
+      transition: string
+      adaptive: boolean
+      conditioned: boolean
+      bridge: string
+      binding: string
+      path: string
     }
 
     type Entity = {
@@ -50,9 +55,11 @@ export namespace toa.norm {
       name: string
       version: string
       entity: Entity
-      operations?: component.Operations
-      events?: component.Events
-      extensions?: component.Extensions
+      bindings: string[]
+      operations?: Operations
+      events?: Events
+      receivers: Record<string, Receiver>
+      extensions?: Record<string, Object>
     }
 
     type Constructor = (path: string) => Promise<Component>

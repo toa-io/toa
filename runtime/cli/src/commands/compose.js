@@ -24,7 +24,6 @@ const builder = (yargs) => {
       ['$0 compose ./components/**/'],
       ['$0 compose ./a/**/ ./b/**/']
     ])
-    .strictCommands()
 }
 
 exports.command = 'compose [paths...]'

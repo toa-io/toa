@@ -21,7 +21,7 @@ const test = (statement, name) => {
   return declaration && match
 }
 
-const pattern = new RegExp('^(Objects?|Changeset)(Transition|Observation|Assignment)Factory$')
+const pattern = new RegExp('^(Objects?|Changeset|None)(Transition|Observation|Assignment)Factory$')
 
 exports.define = define
 exports.test = test

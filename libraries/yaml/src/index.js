@@ -1,49 +1,48 @@
 'use strict'
 
-const { readFile, writeFile } = require('node:fs/promises')
-const { readFileSync } = require('node:fs')
+const { file: { read, write } } = require('@toa.io/libraries/filesystem')
 
 const yaml = require('js-yaml')
 
 /**
  * @param {string} path
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 const load = async (path) => {
-  const contents = await readFile(path, 'utf8')
+  const contents = await read(path)
 
-  return yaml.load(contents)
+  return parse(contents)
 }
 
 /**
  * @param {string} path
- * @returns {Promise<Object[]>}
+ * @returns {Promise<object[]>}
  */
 load.all = async (path) => {
-  const contents = await readFile(path, 'utf8')
+  const contents = await read(path)
 
-  return yaml.loadAll(contents)
+  return split(contents)
 }
 
 /**
  * @param {string} path
- * @returns {Object}
+ * @returns {object}
  */
 load.sync = (path) => {
-  const contents = readFileSync(path, 'utf8')
+  const contents = read.sync(path)
 
-  return yaml.load(contents)
+  return parse(contents)
 }
 
 /**
- * @param {Object} object
+ * @param {object} object
  * @param {string} path
  * @returns {Promise<void>}
  */
 const save = async (object, path) => {
   const contents = dump(object)
 
-  await writeFile(path, contents, 'utf8')
+  await write(path, contents)
 }
 
 /**
@@ -59,16 +58,21 @@ load.try = async (path) => {
 }
 
 /**
- * @param {Object} object
+ * @param {object} object
  * @returns {string}
  */
 const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
 
 /**
  * @param {string} string
- * @returns {Object}
+ * @returns {toa.core.Request}
  */
-const parse = (string) => yaml.load(string)
+const parse = (string) => {
+  const object = yaml.load(string)
+  const plain = dump(object) // resolve references into duplicate objects
+
+  return yaml.load(plain)
+}
 
 /**
  * @param {string} string

@@ -1,38 +1,39 @@
-// noinspection ES6UnusedImports,JSUnusedGlobalSymbols
-
-import { Connector, Locator, Receiver, Reply, Request, Runtime } from './index'
+import * as _core from './index'
 
 declare namespace toa.core.bindings {
 
-    interface Consumer extends Connector {
-        request(request: Request): Promise<Reply>
-    }
+  type Properties = {
+    async?: boolean
+  }
 
-    interface Emitter extends Connector {
-        emit(payload: object): Promise<void>
-    }
+  interface Consumer extends _core.Connector {
+    request(request: Request): Promise<_core.Reply>
+  }
 
-    interface Broadcaster extends Connector {
-        send(label: string, payload: Object): Promise<void>
+  interface Emitter extends _core.Connector {
+    emit(message: _core.Message): Promise<void>
+  }
 
-        receive(label: string, callback: (payload: object) => Promise<void>): Promise<void>
-    }
+  interface Broadcaster extends _core.Connector {
+    send(label: string, payload: Object): Promise<void>
 
-    interface Factory {
-        producer?(locator: Locator, endpoints: Array<string>, producer: Runtime): Connector
+    receive(label: string, callback: (payload: object) => Promise<void>): Promise<void>
+  }
 
-        consumer?(locator: Locator, endpoint: string): Consumer
+  interface Factory {
+    producer?(locator: _core.Locator, endpoints: Array<string>, producer: _core.Component): _core.Connector
 
-        emitter?(locator: Locator, label: string): Emitter
+    consumer?(locator: _core.Locator, endpoint: string): Consumer
 
-        receiver?(locator: Locator, label: string, id: string, receiver: Receiver): Connector
+    emitter?(locator: _core.Locator, label: string): Emitter
 
-        broadcaster?(name: string, group?: string): Broadcaster
-    }
+    receiver?(locator: _core.Locator, label: string, id: string, receiver: _core.Receiver): _core.Connector
+
+    broadcaster?(name: string, group?: string): Broadcaster
+  }
 
 }
 
-export type Consumer = toa.core.bindings.Consumer
 export type Emitter = toa.core.bindings.Emitter
-export type Broadcaster = toa.core.bindings.Broadcaster
 export type Factory = toa.core.bindings.Factory
+export type Properties = toa.core.bindings.Properties

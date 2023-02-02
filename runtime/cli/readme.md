@@ -1,4 +1,4 @@
-# Toa Command Line
+# Toa Command Line Interface
 
 ## Development
 
@@ -36,6 +36,32 @@ $ toa configure bar.baz --reset | source /dev/stdin
 <dd>Output Configuration Object as YAML.
 
 <code>--json</code> as JSON
+</dd>
+</dl>
+
+### replay
+
+[Replay](/extensions/sampling/docs/replay.md) samples. Reports in [TAP](https://testanything.org)
+format.
+
+<dl>
+<dt><code>toa replay [paths...]</code></dt>
+<dd>
+<code>paths</code> path(s) to component(s) or a context (default <code>.</code>)<br/>
+
+#### Examples
+
+```shell
+$ toa replay
+$ toa replay ./path/to/component
+$ toa replay ./components/a ./components/b
+$ toa replay ./components/*
+$ toa replay ./path/to/context
+```
+
+If path is a context directory (containing `context.toa.yaml` file), samples for components within
+the context will be found and replayed sequentially.
+
 </dd>
 </dl>
 

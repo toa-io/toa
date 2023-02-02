@@ -12,14 +12,14 @@ yargs(process.argv.slice(2))
     'boolean-negation': false
   })
   .middleware((argv) => {
-    if (argv.log === undefined) argv.log = 'info'
+    if (argv.log === undefined) argv.log = process.env.TOA_DEBUG === '1' ? 'debug' : 'info'
 
     console.level(argv.log)
   })
   .fail((msg, err) => {
     const actual = err || new Error(msg)
 
-    console.error(process.env.TOA_DEBUG ? actual : actual.message)
+    console.error(process.env.TOA_DEBUG === '1' ? actual : actual.message)
 
     process.exit(actual.exitCode > 0 ? actual.exitCode : 1)
   })

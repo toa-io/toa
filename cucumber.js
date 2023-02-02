@@ -1,9 +1,8 @@
-const common = { publishQuiet: true }
+const common = { publishQuiet: true, failFast: true }
 
 module.exports = {
   default: {
     ...common,
-    paths: ['./features'],
     require: ['./features/**/*.js']
   },
   schema: {
@@ -15,5 +14,10 @@ module.exports = {
     ...common,
     paths: ['runtime/norm/features'],
     require: ['runtime/norm/features/**/*.js']
+  },
+  samples: {
+    ...common,
+    paths: ['userland/samples/features'],
+    require: ['userland/samples/features/**/*.js']
   }
 }

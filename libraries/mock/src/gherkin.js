@@ -21,7 +21,9 @@ for (const KEYWORD of KEYWORDS) {
   }
 
   exports.steps[KEYWORD] = (index) => {
-    const step = typeof index === 'number' ? calls[KEYWORD][index] : calls[KEYWORD].find((call) => call[0] === index)?.[1]
+    const step = typeof index === 'number'
+      ? calls[KEYWORD][index]
+      : calls[KEYWORD].find((call) => call[0] === index)?.[1]
 
     if (step === undefined) throw new Error(`Step '${KEYWORD} ${index}' is not defined`)
 

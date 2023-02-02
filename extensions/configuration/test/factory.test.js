@@ -14,7 +14,7 @@ beforeAll(async () => {
 })
 
 it('should expose context', () => {
-  expect(factory.annex).toBeInstanceOf(Function)
+  expect(factory.aspect).toBeInstanceOf(Function)
 })
 
 it('should expose provider', () => {

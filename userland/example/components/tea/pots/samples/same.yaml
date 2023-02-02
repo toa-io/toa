@@ -1,0 +1,8 @@
+title: Should find same material
+input: steel
+local:
+  enumerate:
+    query:
+      criteria: 'material==steel'
+      limit: 10
+    output: []

@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 const { join } = require('node:path')
-const { patch } = require('@toa.io/libraries/generic')
+const { overwrite } = require('@toa.io/libraries/generic')
 const { save, load, parse } = require('@toa.io/libraries/yaml')
 
 /**
@@ -16,7 +16,7 @@ const template = async (directory, additions) => {
   if (additions !== undefined) {
     const add = parse(additions)
 
-    patch(template, add)
+    overwrite(template, add)
   }
 
   await save(template, path)

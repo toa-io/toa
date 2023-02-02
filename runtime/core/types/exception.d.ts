@@ -1,9 +1,9 @@
 declare namespace toa.core {
 
-    interface Exception {
-        code: number
-        message: string
-    }
+  interface Exception {
+    code: number
+    message: string
+  }
 
 }
 

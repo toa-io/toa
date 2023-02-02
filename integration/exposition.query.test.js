@@ -168,7 +168,7 @@ describe('projection', () => {
     const json = await response.json()
 
     expect(new Set(Object.keys(json.output[0])))
-      .toStrictEqual(new Set(['id', '_version', 'sender', 'text']))
+      .toStrictEqual(new Set(['id', 'sender', 'text']))
   })
 
   it('should apply defined projection', async () => {
@@ -188,7 +188,7 @@ describe('projection', () => {
     const json = await response.json()
 
     expect(new Set(Object.keys(json.output[0])))
-      .toStrictEqual(new Set(['id', '_version', 'text', 'sender', 'timestamp']))
+      .toStrictEqual(new Set(['id', 'text', 'sender', 'timestamp']))
   })
 
   it('should throw if not allowed key passed', async () => {

@@ -5,7 +5,7 @@ const boot = require('@toa.io/boot')
 const { Factory } = require('@toa.io/extensions.configuration')
 
 const { subcommands } = require('./.configure/subcommands')
-const { component: find } = require('../util/find')
+const { components: find } = require('../util/find')
 
 async function configure (argv) {
   const path = find(argv.path)

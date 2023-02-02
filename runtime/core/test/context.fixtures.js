@@ -11,8 +11,8 @@ const discover = jest.fn(() => ({
   link: jest.fn()
 }))
 
-const annexes = [new Connector(), new Connector()]
+const aspects = [new Connector(), new Connector()]
 
 exports.local = local
 exports.discover = discover
-exports.annexes = annexes
+exports.aspects = aspects

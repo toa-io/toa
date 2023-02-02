@@ -1,0 +1,7 @@
+title: Should undo
+input: 1
+output: true
+---
+title: Should not undo
+input: 0
+output: false

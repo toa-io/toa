@@ -37,7 +37,7 @@ it('should mutate all object type properties', () => {
   expect(object).toStrictEqual({
     a: {
       b: {
-        c: c, seen: 1
+        c, seen: 1
       },
       seen: 1
     },

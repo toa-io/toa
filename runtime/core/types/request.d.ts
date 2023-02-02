@@ -1,23 +1,23 @@
 declare namespace toa.core {
 
-    namespace request {
+  namespace request {
 
-        interface Query {
-            id?: string
-            criteria?: string
-            omit?: number
-            limit?: number
-            sort?: Array<string>
-            projection?: Array<string>
-            version?: number
-        }
-
+    interface Query {
+      id?: string
+      criteria?: string
+      omit?: number
+      limit?: number
+      sort?: Array<string>
+      projection?: Array<string>
+      version?: number
     }
 
-    interface Request {
-        input?: Object
-        query?: request.Query
-    }
+  }
+
+  interface Request {
+    input?: any
+    query?: request.Query
+  }
 
 }
 

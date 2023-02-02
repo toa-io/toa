@@ -3,15 +3,17 @@
 const { Emission, Event } = require('@toa.io/core')
 
 const boot = require('./index')
+const extensions = require('./extensions')
 
 const emission = (definitions, locator) => {
   if (definitions === undefined) return
 
   const events = Object.entries(definitions).map(([label, definition]) => {
-    const transmitter = boot.bindings.emit(definition.binding, locator, label)
+    const emitter = boot.bindings.emit(definition.binding, locator, label)
+    const decorator = extensions.emitter(emitter, label)
     const bridge = boot.bridge.event(definition.bridge, definition.path, label)
 
-    return new Event(definition, transmitter, bridge)
+    return new Event(definition, decorator, bridge)
   })
 
   return new Emission(events)

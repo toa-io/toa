@@ -3,6 +3,7 @@
 const { Receiver, Locator } = require('@toa.io/core')
 
 const boot = require('./index')
+const extensions = require('./extensions')
 
 const receivers = async (manifest, runtime) => {
   if (manifest.receivers === undefined) return []
@@ -13,6 +14,7 @@ const receivers = async (manifest, runtime) => {
     const local = await boot.remote(manifest.locator, manifest)
     const bridge = boot.bridge.receiver(definition.bridge, manifest.path, label)
     const receiver = new Receiver(definition, local, bridge)
+    const decorator = extensions.receiver(receiver, manifest.locator)
 
     let transport = definition.binding
 
@@ -27,7 +29,7 @@ const receivers = async (manifest, runtime) => {
     }
 
     const { id } = new Locator(manifest.name, manifest.namespace)
-    const binding = boot.bindings.receive(transport, remote, endpoint, id, receiver)
+    const binding = boot.bindings.receive(transport, remote, endpoint, id, decorator)
 
     binding.depends(runtime)
     receivers.push(binding)

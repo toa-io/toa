@@ -5,17 +5,19 @@ import type { Error } from './error'
 declare namespace toa.schema {
 
   type Type = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-  type Value = string | number | boolean
 
   type JSON = {
     $id?: string
     type?: Type
     properties?: Object
+    patternProperties?: Object
     required?: string[]
     system?: boolean
-    default?: Value
-    oneOf?: object[]
+    default?: any
+    oneOf?: any[]
+    enum?: any[]
     items?: JSON
+    additionalProperties?: boolean
   }
 
   interface Schema {

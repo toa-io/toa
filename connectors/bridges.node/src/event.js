@@ -2,6 +2,9 @@
 
 const { Connector } = require('@toa.io/core')
 
+/**
+ * @implements {toa.core.bridges.Event}
+ */
 class Event extends Connector {
   #event
 

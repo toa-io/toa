@@ -1,8 +1,8 @@
 'use strict'
 
 /**
- * @param {toa.core.storages.Entity} entity
- * @returns {toa.core.storages.Entity}
+ * @param {toa.core.storages.Record} entity
+ * @returns {toa.core.storages.Record}
  */
 const to = (entity) => {
   const { _version, ...rest } = entity

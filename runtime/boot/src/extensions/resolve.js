@@ -10,7 +10,7 @@ const { instances } = require('./instances')
  * @param {string} base
  * @returns {toa.core.extensions.Factory}
  */
-const resolve = (reference, base) => {
+const resolve = (reference, base = process.cwd()) => {
   const path = find(reference, base)
 
   if (instances[path] === undefined) instances[path] = create(path)

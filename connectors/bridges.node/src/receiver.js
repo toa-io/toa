@@ -2,6 +2,9 @@
 
 const { Connector } = require('@toa.io/core')
 
+/**
+ * @implements {toa.core.bridges.Receiver}
+ */
 class Receiver extends Connector {
   #receiver
 

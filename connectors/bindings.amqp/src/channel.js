@@ -29,8 +29,8 @@ class Channel extends Connector {
   }
 
   async disconnection () {
-    // Channel ended, no reply will be forthcoming
-    await timeout(10)
+    // solves 'Channel ended, no reply will be forthcoming'
+    await timeout(50)
   }
 
   async request (label, request) {
@@ -61,37 +61,43 @@ class Channel extends Connector {
       const content = unpack(received.content)
       const reply = await invocation(content)
 
-      const message = pack(reply)
+      const buffer = pack(reply)
       const properties = { correlationId: received.properties.correlationId }
 
-      await this.#channel.publish(exchange, received.properties.replyTo, message, properties)
+      await this.#channel.publish(exchange, received.properties.replyTo, buffer, properties)
       await this.#channel.ack(received)
     })
   }
 
-  async publish (label, payload, options) {
+  async publish (label, content, options) {
     const exchange = 'event.' + label
 
+    // TODO: assert once per exchange
     await this.#channel.assertExchange(exchange, 'fanout', EXCHANGE)
 
-    const message = pack(payload)
+    const buffer = pack(content)
 
-    await this.#channel.publish(exchange, '', message, options)
+    await this.#channel.publish(exchange, '', buffer, options)
   }
 
   async subscribe (label, id, callback) {
     const exchange = 'event.' + label
     const queue = exchange + '..' + id
+    const options = { consumerTag: id }
 
     await this.#channel.assertExchange(exchange, 'fanout', EXCHANGE)
     await this.#channel.assertQueue(queue, QUEUE)
     await this.#channel.bindQueue(queue, exchange, '')
 
-    await this.#channel.consume(queue, async (received) => {
-      const content = unpack(received.content)
+    await this.#channel.consume(queue, async (message) => {
+      const content = unpack(message.content)
       await callback(content)
-      await this.#channel.ack(received)
-    })
+      await this.#channel.ack(message)
+    }, options)
+  }
+
+  async unsubscribe (id) {
+    await this.#channel.cancel(id)
   }
 
   async #bind (label) {

@@ -62,10 +62,33 @@ describe('function', () => {
   it('should not define unknown scope', () => {
     const assignment = (input, message) => null
     const module = { assignment }
-
     const definition = define(module)
 
     expect(definition.scope).toStrictEqual(undefined)
+  })
+
+  it('should define none scope', async () => {
+    const observation = (input) => null
+    const module = { observation }
+    const definition = define(module)
+
+    expect(definition.scope).toStrictEqual('none')
+  })
+
+  it('should define none scope for _', async () => {
+    const observation = (input, none, context) => null
+    const module = { observation }
+    const definition = define(module)
+
+    expect(definition.scope).toStrictEqual('none')
+  })
+
+  it('should define null input', async () => {
+    const observation = () => null
+    const module = { observation }
+    const definition = define(module)
+
+    expect(definition.input).toStrictEqual(null)
   })
 })
 
@@ -116,6 +139,28 @@ describe('class', () => {
 
     expect(() => define(module)).toThrow('does not match conventions')
   })
+
+  it('should define none scope', async () => {
+    class Observation {
+      run (input) {}
+    }
+
+    const module = { Observation }
+    const definition = define(module)
+
+    expect(definition.scope).toStrictEqual('none')
+  })
+
+  it('should define null input', async () => {
+    class Observation {
+      run () {}
+    }
+
+    const module = { Observation }
+    const definition = define(module)
+
+    expect(definition.input).toStrictEqual(null)
+  })
 })
 
 describe('factory', () => {
@@ -135,5 +180,16 @@ describe('factory', () => {
 
   it('should define scope', () => {
     expect(definition.scope).toStrictEqual('object')
+  })
+
+  it('should define none scope', async () => {
+    class NoneObservationFactory {
+      create () {}
+    }
+
+    const module = { NoneObservationFactory }
+    const definition = define(module)
+
+    expect(definition.scope).toStrictEqual('none')
   })
 })

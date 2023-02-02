@@ -5,6 +5,7 @@ const { serve } = require('../handlers/serve')
 const builder = (yargs) => {
   yargs
     .positional('path', {
+      alias: 'p',
       group: 'Command options:',
       type: 'string',
       desc: 'Path to package',

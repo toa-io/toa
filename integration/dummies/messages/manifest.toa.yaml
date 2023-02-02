@@ -4,7 +4,7 @@ name: messages
 entity:
   schema:
     properties:
-      sender: id
+      sender: .id
       text: string
       timestamp: integer
       deleted: boolean
@@ -28,6 +28,7 @@ operations:
     output:
       properties:
         id: .
+        sender: .
         text: .
         timestamp: .
       required: [id, text]
@@ -51,6 +52,7 @@ operations:
       required: [sender, text]
     output:
       properties:
+        id: .
         ok: string
       required: [id, ok]
   assign:

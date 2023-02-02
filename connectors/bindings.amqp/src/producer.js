@@ -8,7 +8,7 @@ class Producer extends Connector {
   #channel
   /** @type {toa.core.Locator} */
   #locator
-  /** @type {toa.core.Runtime} */
+  /** @type {toa.core.Component} */
   #producer
   /** @type {Array<string>} */
   #endpoints

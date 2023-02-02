@@ -3,7 +3,7 @@
 const { context } = require('./context')
 const { component } = require('./component')
 
-exports.shortcuts = require('./shortcuts') // used by cli
+exports.shortcuts = require('./shortcuts')
 
 exports.context = context
 exports.component = component

@@ -76,7 +76,7 @@ When('I invoke {word}',
     await invoke.call(this, endpoint)
   })
 
-When('I invoke {word} with:',
+When('I invoke {token} with:',
   /**
    * @param {string} endpoint
    * @param {string} yaml

@@ -5,7 +5,7 @@ const { generate } = require('randomstring')
 const fixtures = require('./context.origins.fixtures')
 const { Context } = require('../src/context')
 
-const origins = fixtures.context.annexes[0]
+const origins = fixtures.context.aspects[0]
 
 let context
 
@@ -17,8 +17,8 @@ beforeEach(async () => {
   await context.connect()
 })
 
-it('should expose annex', async () => {
-  expect(context.annexes.origins).toBeDefined()
+it('should expose aspect', async () => {
+  expect(context.aspects.origins).toBeDefined()
 })
 
 it('should invoke', async () => {

@@ -1,0 +1,11 @@
+title: Should add numbers
+input:
+  a: 1
+  b: 2
+output: 3
+---
+title: Should add negative numbers
+input:
+  a: -1
+  b: -2
+output: -3

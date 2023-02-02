@@ -1,7 +1,3 @@
-# Concise JSON Schema validator
+# Obsolete
 
-Uses [Ajv](https://ajv.js.org).
-
-## Features
-
-- [Concise syntax](./features/conciseness.feature)
+Use [@toa.io/schemas](/libraries/schemas).

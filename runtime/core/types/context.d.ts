@@ -1,24 +1,22 @@
-// noinspection ES6UnusedImports
-
-import { Request } from './request'
-import { Reply } from './reply'
-import * as extensions from './extensions'
-import { Connector } from './connector'
+import * as _request from './request'
+import * as _reply from './reply'
+import * as _extensions from './extensions'
+import * as _connector from './connector'
 
 declare namespace toa.core {
 
-  interface Context extends Connector {
-    annexes: extensions.Annex[]
+  interface Context extends _connector.Connector {
+    aspects: _extensions.Aspect[]
 
     /**
      * Calls local endpoint
      */
-    apply(endpoint: string, request: Request): Promise<Reply>
+    apply(endpoint: string, request: _request.Request): Promise<_reply.Reply>
 
     /**
      * Calls remote endpoint
      */
-    call(namespace: string, name: string, endpoint: string, request: Request): Promise<Reply>
+    call(namespace: string, name: string, endpoint: string, request: _request.Request): Promise<_reply.Reply>
   }
 
 }

@@ -72,7 +72,9 @@ See [Bridges](#).
 
 ## Foreign Messages
 
+> This is temporary not supported.
+
 *Foreign messages* are produced outside the context and thus may not conform
-to [UCP](/../../documentation/communication/ucp.dm). As sources of foreign messages may not be
+to [UCP](/documentation/communication/ucp.md). As sources of foreign messages may not be
 discovered, components consuming foreign messages must explicitly define receiver's `binding`
 property to prevent discovery attempts.

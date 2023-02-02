@@ -13,6 +13,7 @@ operations:
   transit:
     concurrency: retry
     output:
+      id: .
       foo: string
   underlay:
     concurrency: retry

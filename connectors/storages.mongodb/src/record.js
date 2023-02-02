@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @param {toa.core.storages.Entity} entity
+ * @param {toa.core.storages.Record} entity
  * @returns {toa.mongodb.Record}
  */
 const to = (entity) => {
@@ -12,14 +12,14 @@ const to = (entity) => {
 
 /**
  * @param {toa.mongodb.Record} record
- * @returns {toa.core.storages.Entity}
+ * @returns {toa.core.storages.Record}
  */
 const from = (record) => {
   if (record === undefined || record === null) return null
 
-  const { _id, _version, ...rest } = record
+  const { _id, ...rest } = record
 
-  return { id: _id, _version, ...rest }
+  return { id: _id, ...rest }
 }
 
 exports.to = to

@@ -3,11 +3,10 @@ prototype: null
 entity:
   schema:
     properties:
-      id: id
+      id:
+        $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id'
       _version:
         type: integer
-        default: 0
-        system: true
     required: [id]
 
 operations:
@@ -19,3 +18,5 @@ operations:
     output: object
   assign:
     input: object
+  enumerate:
+    output: array

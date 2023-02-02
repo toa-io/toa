@@ -1,7 +1,7 @@
 Feature: Environment variable TOA_ENV
 
   Scenario: TOA_ENV for compositions
-    Given I have a component dummies.one
+    Given I have a component `dummies.one`
     And I have a context
     When I export deployment for production
     And I run `helm template deployment`
@@ -14,7 +14,7 @@ Feature: Environment variable TOA_ENV
       """
 
   Scenario: TOA_ENV for services
-    Given I have a component exposed.one
+    Given I have a component `exposed.one`
     And I have a context
     When I export deployment for production
     And I run `helm template deployment`

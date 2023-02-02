@@ -1,17 +1,20 @@
 'use strict'
 
+const extensions = require('./extensions')
+
 /**
  * @param {toa.core.Locator} locator
- * @param {string} storage
- * @returns {toa.core.storages.Storage}
+ * @param {string} provider
+ * @returns {toa.core.Storage}
  */
-const storage = (locator, storage) => {
-  const { Factory } = require(storage)
+const storage = (locator, provider) => {
+  const { Factory } = require(provider)
 
   /** @type {toa.core.storages.Factory} */
   const factory = new Factory()
+  const storage = factory.storage(locator)
 
-  return factory.storage(locator)
+  return extensions.storage(storage)
 }
 
 exports.storage = storage

@@ -4,7 +4,7 @@ Feature: Node algorithm implementation syntaxes
 
   Algorithm outputs configuration value.
 
-    Given I boot node.syntaxes component
+    Given I boot `node.syntaxes` component
     When I invoke <endpoint>
     And I disconnect
     Then the reply should match:

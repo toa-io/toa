@@ -22,7 +22,9 @@ declare namespace toa.features {
   }
 
   type Context = {
+    process?: Promise<any>
     cwd?: string
+    exitCode?: number
     stdout?: string
     stderr?: string
     stdoutLines?: string[]

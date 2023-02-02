@@ -45,10 +45,10 @@ describe('is', () => {
     await remove(path)
   })
 
-  it('should throw if not exists', async () => {
+  it('should return false if not exists', async () => {
     const path = join(tmpdir(), newid())
 
-    await expect(is(path)).rejects.toThrow(/ENOENT: no such file or directory/)
+    await expect(is(path)).resolves.toStrictEqual(false)
   })
 })
 

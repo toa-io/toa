@@ -8,16 +8,22 @@ const {
   StateInitializationException
 } = require('./exceptions')
 
+/**
+ * @implements {toa.core.State}
+ */
 class State {
+  /** @type {toa.core.Storage} */
   #storage
+
+  /** @type {toa.core.entity.Factory} */
   #entity
-  #emitter
+  #emission
   #initialized
 
-  constructor (storage, entity, emitter, initialized) {
+  constructor (storage, entity, emission, initialized) {
     this.#storage = storage
     this.#entity = entity
-    this.#emitter = emitter
+    this.#emission = emission
     this.#initialized = initialized
   }
 
@@ -51,21 +57,23 @@ class State {
     return this.#entity.changeset(query)
   }
 
+  none () {
+    return null
+  }
+
   async commit (state) {
     const event = state.event()
 
     let ok = true
 
     if (!empty(event.changeset)) {
-      const values = state.get()
-      ok = await this.#storage.store(values)
+      const object = state.get()
 
-      // TODO: do not wait because outbox will handle failures
+      ok = await this.#storage.store(object)
+
       // TODO: handle slow emissions (too many concurrent emissions)
-      // noinspection JSUnresolvedVariable
-      if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
-        await this.#emitter.emit(event)
-      }
+      // TODO: do not wait because outbox will handle failures
+      await this.#emission.emit(event)
     }
 
     return ok
@@ -88,10 +96,7 @@ class State {
     }
 
     // TODO: same as above
-    // noinspection JSUnresolvedVariable
-    if (global.TOA_INTEGRATION_OMIT_EMISSION !== true) {
-      await this.#emitter.emit({ changeset, state: result })
-    }
+    await this.#emission.emit({ changeset, state: result })
   }
 }
 

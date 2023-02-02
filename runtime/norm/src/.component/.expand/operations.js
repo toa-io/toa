@@ -1,6 +1,6 @@
 'use strict'
 
-const { expand } = require('@toa.io/libraries/schema')
+const { expand } = require('@toa.io/libraries/schemas')
 const { resolve } = require('../../shortcuts')
 
 function operations (manifest) {
@@ -13,21 +13,5 @@ function operations (manifest) {
     if (operation.bindings !== undefined) operation.bindings = operation.bindings.map(resolve)
   }
 }
-
-// const schema = (schema, entity) => {
-//   const properties = schema.properties ?? schema
-//
-//   for (const [name, value] of Object.entries(properties)) {
-//     if (value === null) {
-//       properties[name] = entity.properties[name]
-//     } else if (typeof value === 'string' && value[0] === '~') {
-//       const key = value.substring(1)
-//
-//       properties[name] = entity.properties[key]
-//     }
-//   }
-//
-//   return expand(schema)
-// }
 
 exports.operations = operations

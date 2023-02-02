@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { decode, encode, empty, merge } = require('@toa.io/libraries/generic')
+const { decode, encode, empty, overwrite } = require('@toa.io/libraries/generic')
 
 const { Connector } = require('@toa.io/core')
 const { form } = require('./.provider/form')
@@ -101,7 +101,7 @@ class Provider extends Connector {
     object = clone(object)
 
     const form = clone(this.#form)
-    const value = merge(form, object, { override: true })
+    const value = overwrite(form, object)
 
     this.#schema.validate(value)
 

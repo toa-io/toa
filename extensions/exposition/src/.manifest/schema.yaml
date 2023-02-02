@@ -44,7 +44,7 @@ definitions:
               enum: [transition, observation, assignment]
             scope:
               type: string
-              enum: [object, objects, changeset]
+              enum: [object, objects, changeset, none]
             query:
               type: boolean
           additionalProperties: false

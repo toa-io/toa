@@ -74,6 +74,7 @@ class EntityContractException extends ContractException {
 }
 
 // #region exports
+exports.Exception = Exception
 exports.SystemException = SystemException
 exports.RequestContractException = RequestContractException
 exports.ResponseContractException = ResponseContractException
@@ -83,7 +84,11 @@ for (const [name, code] of Object.entries(codes)) {
   const classname = name + 'Exception'
 
   if (exports[classname] === undefined) {
-    exports[classname] = class extends Exception {constructor (message) { super(code, message) }}
+    exports[classname] = class extends Exception {
+      constructor (message) {
+        super(code, message || classname)
+      }
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const { execute } = require('@toa.io/libraries/command')
-const { remap, encode, patch } = require('@toa.io/libraries/generic')
+const { remap, encode, overwrite } = require('@toa.io/libraries/generic')
 
 const { get } = require('./get')
 
@@ -15,7 +15,7 @@ const store = async (name, values) => {
 
   declaration.metadata.name = name
 
-  patch(declaration.data, data)
+  overwrite(declaration.data, data)
 
   const input = JSON.stringify(declaration)
 

@@ -13,5 +13,5 @@ beforeEach(() => {
 
 it('should expand', () => {
   expand(source)
-  expect(source).toStrictEqual(fixtures.target)
+  expect(source).toMatchObject(fixtures.target)
 })

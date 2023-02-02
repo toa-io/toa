@@ -6,23 +6,23 @@ const { Connector } = require('./connector')
  * @implements {toa.core.Context}
  */
 class Context extends Connector {
-  annexes
+  aspects
 
   #local
   #discover
   #remotes = {}
 
-  constructor (local, discover, annexes = []) {
+  constructor (local, discover, aspects = []) {
     super()
 
-    this.annexes = annexes
+    this.aspects = aspects
 
     this.#local = local
     this.#discover = discover
 
     this.depends(local)
 
-    if (annexes.length > 0) this.depends(annexes)
+    if (aspects.length > 0) this.depends(aspects)
   }
 
   async apply (endpoint, request) {

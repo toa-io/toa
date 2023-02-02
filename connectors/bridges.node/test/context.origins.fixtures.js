@@ -3,7 +3,7 @@
 const context = /** @type {toa.core.Context} */ {
   apply: jest.fn(),
   call: jest.fn(),
-  annexes: [
+  aspects: [
     {
       name: 'origins',
       invoke: jest.fn()

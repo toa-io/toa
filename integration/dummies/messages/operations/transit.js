@@ -1,6 +1,6 @@
 'use strict'
 
-async function transition () {
+async function transition (input, object) {
   return { output: { ok: 'ok' } }
 }
 

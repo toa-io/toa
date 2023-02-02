@@ -2,13 +2,13 @@
 
 const boot = require('@toa.io/boot')
 const yaml = require('@toa.io/libraries/yaml')
-const { component: find } = require('../util/find')
+const { components: find } = require('../util/find')
 
 async function invoke (argv) {
   const path = find(argv.path)
-  const request = yaml.parse(argv.request)
+  const request = argv.request ? yaml.parse(argv.request) : {}
 
-  const composition = await boot.composition([path], { bindings: null })
+  const composition = await boot.composition([path])
   await composition.connect()
 
   const manifest = await boot.manifest(path)

@@ -13,7 +13,7 @@ class Client extends Connector {
   /** @type {toa.sql.Connection} */
   #connection
 
-  /** @type {toa.conveyor.Conveyor<toa.core.storages.Entity, boolean>} */
+  /** @type {toa.conveyor.Conveyor<toa.core.storages.Record, boolean>} */
   #conveyor
 
   /**

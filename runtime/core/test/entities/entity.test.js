@@ -27,19 +27,14 @@ describe('new', () => {
 describe('argument', () => {
   it('should provide initial state if no argument passed', () => {
     const entity = new Entity(fixtures.schema)
+    const defaults = fixtures.schema.defaults.mock.results[0].value
+    const expected = { ...defaults, _version: 0 }
 
-    expect(entity.get()).toStrictEqual(fixtures.schema.defaults.mock.results[0].value)
+    expect(entity.get()).toStrictEqual(expected)
   })
 
-  it('should set provide origin state', () => {
+  it('should set state', () => {
     const state = fixtures.state()
-    const entity = new Entity(fixtures.schema, state)
-
-    expect(entity.get()).toStrictEqual(state)
-  })
-
-  it('should not validate origin state', () => {
-    const state = fixtures.failed()
     const entity = new Entity(fixtures.schema, state)
 
     expect(entity.get()).toStrictEqual(state)
@@ -58,7 +53,24 @@ it('should provide event', () => {
 
   expect(event).toStrictEqual({
     state,
-    origin: origin,
+    origin,
     changeset: { foo: 'new value' }
   })
+})
+
+it('should define `id` as readonly', async () => {
+  const origin = fixtures.state()
+  const entity = new Entity(fixtures.schema, origin)
+  const state = entity.get()
+
+  expect(() => (state.id = 1)).toThrow('assign to read only property')
+})
+
+it('should seal id', async () => {
+  const origin = fixtures.state()
+  const entity = new Entity(fixtures.schema, origin)
+  const state = entity.get()
+  const redefine = () => Object.defineProperty(state, 'id', { writable: true })
+
+  expect(redefine).toThrow('redefine property')
 })

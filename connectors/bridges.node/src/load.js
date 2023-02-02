@@ -1,7 +1,7 @@
 'use strict'
 
 const { basename, resolve } = require('path')
-const glob = require('fast-glob')
+const { file: { glob } } = require('@toa.io/libraries/filesystem')
 
 const operation = (root, name) => load(root, OPERATIONS_DIRECTORY, name)
 const event = (root, name) => load(root, EVENTS_DIRECTORY, name)

@@ -1,21 +1,36 @@
-import * as index from './index'
+import * as _core from './index'
+import * as _component from './component'
+import * as _context from './context'
+import * as _storages from './storages'
+import * as _bindings from './bindings'
 
 declare namespace toa.core.extensions {
 
   interface Factory {
-    tenant?(locator: index.Locator, declaration: Object): index.Connector
+    tenant?(locator: _core.Locator, declaration: Object): _core.Connector
 
-    annex?(locator: index.Locator, declaration: Object): Annex
+    aspect?(locator: _core.Locator, declaration: Object): Aspect
 
-    service?(name?: string): index.Connector | undefined
+    service?(name?: string): _core.Connector
+
+    component?(component: _component.Component): _component.Component
+
+    context?(context: _context.Context): _context.Context
+
+    storage?(storage: _storages.Storage): _storages.Storage
+
+    emitter?(emitter: _bindings.Emitter, label: string): _bindings.Emitter
+
+    receiver?(receiver: _core.Receiver, locator: _core.Locator): _core.Receiver
   }
 
-  interface Annex extends index.Connector {
+  interface Aspect extends _core.Connector {
     name: string
-    invoke: Function
+
+    invoke(...args: any[]): Promise<any>
   }
 
 }
 
 export type Factory = toa.core.extensions.Factory
-export type Annex = toa.core.extensions.Annex
+export type Aspect = toa.core.extensions.Aspect
