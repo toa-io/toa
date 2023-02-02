@@ -1,6 +1,6 @@
 'use strict'
 
-const { join, basename } = require('node:path')
+const { join, relative } = require('node:path')
 const { file } = require('@toa.io/libraries/filesystem')
 const yaml = require('@toa.io/libraries/yaml')
 
@@ -9,23 +9,33 @@ const yaml = require('@toa.io/libraries/yaml')
  * @returns {object[]}
  */
 const directory = (path) => {
-  const pattern = join(path, '*' + EXTENSION)
+  const pattern = join(path, '**', '*' + EXTENSION)
   const files = file.glob.sync(pattern)
 
-  return files.map(load)
+  return files.map(load(path))
 }
 
 /**
  * @param {string} path
  * @returns {object}
  */
-const load = (path) => {
-  /** @type {object} */
+const load = (root) => (path) => {
   const schema = yaml.load.sync(path)
 
-  if (schema.$id === undefined) schema.$id = basename(path, EXTENSION)
+  if (schema.$id === undefined) schema.$id = id(root, path)
 
   return schema
+}
+
+/**
+ * @param {string} root
+ * @param {string} path
+ * @returns {string}
+ */
+const id = (root, path) => {
+  const base = path.slice(0, -EXTENSION.length)
+
+  return relative(root, base)
 }
 
 const EXTENSION = '.cos.yaml'

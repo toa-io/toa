@@ -10,9 +10,7 @@ it('should be', async () => {
 
 it('should expand COS', async () => {
   const cos = {
-    $id: 'foo',
-    bar: 'string',
-    baz: 'number'
+    $id: 'foo', bar: 'string', baz: 'number'
   }
 
   const namespace = schemas.namespace([cos])
@@ -23,14 +21,11 @@ it('should expand COS', async () => {
 
 it('should resolve references', async () => {
   const foo = {
-    $id: generate(),
-    foo: 'string'
+    $id: generate(), foo: 'string'
   }
 
   const bar = {
-    $id: generate(),
-    bar: { $ref: foo.$id },
-    baz: { $ref: foo.$id + '#/properties/foo' }
+    $id: generate(), bar: { $ref: foo.$id }, baz: { $ref: foo.$id + '#/properties/foo' }
   }
 
   const namespace = schemas.namespace([foo, bar])
@@ -49,24 +44,50 @@ it('should resolve references', async () => {
 })
 
 describe('directory', () => {
-  it('should load schemas from directory', async () => {
+  /** @type {toa.schemas.Namespace} */
+  let namespace
+
+  beforeAll(() => {
     const path = join(__dirname, 'schemas')
-    const namespace = schemas.namespace(path)
 
-    const number = namespace.schema('number')
+    namespace = schemas.namespace(path)
+  })
 
-    expect(number).toBeDefined()
-    expect(number.fit({ foo: 5 })).toStrictEqual(null)
-    expect(number.fit({ foo: 'not a number' })).toMatchObject({ keyword: 'type' })
+  it('should load schemas from directory', async () => {
+    const one = namespace.schema('one')
 
-    const string = namespace.schema('string')
+    expect(one).toBeDefined()
+    expect(one.fit({ foo: 5 })).toStrictEqual(null)
+    expect(one.fit({ foo: 'not a number' })).toMatchObject({ keyword: 'type' })
 
-    expect(string).toBeDefined()
-    expect(string.fit({ bar: 'a string' })).toStrictEqual(null)
-    expect(string.fit({ bar: [1, 2] })).toMatchObject({ keyword: 'type' })
+    const two = namespace.schema('two')
+
+    expect(two).toBeDefined()
+    expect(two.fit({ bar: 'a string' })).toStrictEqual(null)
+    expect(two.fit({ bar: [1, 2] })).toMatchObject({ keyword: 'type' })
 
     const no = namespace.schema('not.a.schema')
 
     expect(no).toStrictEqual(undefined)
+  })
+
+  it('should resolve reference', async () => {
+    const schema = namespace.schema('two')
+
+    expect(schema.fit({ foo: 5 })).toStrictEqual(null)
+    expect(schema.fit({ foo: [1, 2] })).toMatchObject({ keyword: 'type' })
+  })
+
+  it('should load schemas in nested directories', async () => {
+    const schema = namespace.schema('nested/and.three')
+
+    expect(schema).toBeDefined()
+    expect(schema.fit({ qux: [3, 2, 1] })).toStrictEqual(null)
+  })
+
+  it('should resolve references to nested schemas', async () => {
+    const schema = namespace.schema('two')
+
+    expect(schema.fit({ baz: [1, 2] })).toStrictEqual(null)
   })
 })
