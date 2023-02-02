@@ -3,6 +3,8 @@
 const { generate } = require('randomstring')
 const { Locator, Connector } = require('@toa.io/core')
 
+const { SampleException } = require('../src/exceptions')
+
 const fixtures = require('./receiver.fixtures')
 const { Factory } = require('../src')
 
@@ -69,4 +71,18 @@ it('should pass sample.request as sample', async () => {
   await receiver.receive(message)
 
   expect(fixtures.receiver.receive).toHaveBeenCalledWith(expected)
+})
+
+it('should throw on invalid sample', async () => {
+  // noinspection JSValidateTypes
+  message.sample = { foo: generate() }
+
+  await expect(receiver.receive(message)).rejects.toBeInstanceOf(SampleException)
+})
+
+it('should not validate authentic sample', async () => {
+  // noinspection JSValidateTypes
+  message.sample = { authentic: true, foo: generate() }
+
+  await expect(receiver.receive(message)).resolves.not.toThrow()
 })

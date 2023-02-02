@@ -4,7 +4,7 @@ const { Connector } = require('@toa.io/core')
 const { newid } = require('@toa.io/libraries/generic')
 
 const { context } = require('./sample')
-const { validate } = require('./.component/validate')
+const { validate } = require('./validate')
 const verify = require('./.component')
 
 /**
@@ -45,7 +45,7 @@ class Component extends Connector {
   async #apply (endpoint, request) {
     const { sample, ...rest } = request
 
-    if (sample !== undefined && sample.authentic !== true) validate(sample)
+    validate(sample, 'request')
 
     if ('request' in sample) verify.request(sample.request, request)
     if (sample.terminate === true) return {}

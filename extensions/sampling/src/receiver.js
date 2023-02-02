@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { validate } = require('./validate')
 
 /**
  * @implements {toa.sampling.Receiver}
@@ -34,7 +35,8 @@ class Receiver extends Connector {
   }
 
   async #apply (message) {
-    // validation
+    validate(message.sample, 'message')
+
     const { component, request } = message.sample
 
     if (component === undefined || component === this.#id) {

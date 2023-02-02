@@ -6,6 +6,7 @@ declare namespace toa.sampling {
   namespace messages {
 
     type Sample = {
+      authentic?: boolean
       component: string
       request: _request.Sample
     }
