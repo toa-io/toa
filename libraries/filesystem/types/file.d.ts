@@ -10,9 +10,15 @@ declare namespace toa.filesystem.file {
 
     sync(file: string, contents): void
   }
+
+  interface Glob {
+    (pattern: string): Promise<string[]>
+
+    sync(pattern: string): string[]
+  }
 }
 
 export const read: toa.filesystem.file.Read
 export const write: toa.filesystem.file.Write
+export const glob: toa.filesystem.file.Glob
 export const lines: (file: string) => Promise<string[]>
-export const glob: (pattern: string) => Promise<string[]>

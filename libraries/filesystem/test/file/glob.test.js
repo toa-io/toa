@@ -14,3 +14,11 @@ it('should find files', async () => {
 
   expect(files).toStrictEqual(expected)
 })
+
+it('should find files synchronously', async () => {
+  const pattern = resolve(__dirname, 'glob*.txt')
+  const expected = ['glob.1.txt', 'glob.2.txt'].map((name) => resolve(__dirname, name))
+  const files = glob.sync(pattern)
+
+  expect(files).toStrictEqual(expected)
+})
