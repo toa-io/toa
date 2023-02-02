@@ -92,6 +92,7 @@ const declaration = {
 const expected = {
   input,
   sample: {
+    authentic: true,
     autonomous: true,
     title,
     reply,

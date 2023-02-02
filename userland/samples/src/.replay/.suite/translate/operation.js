@@ -29,6 +29,7 @@ const operation = (declaration, autonomous) => {
   if (declaration.events !== undefined) events = transform.events(declaration.events)
 
   const sample = /** @type {toa.sampling.request.Sample} */ {
+    authentic: true,
     autonomous,
     title,
     reply,

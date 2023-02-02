@@ -80,6 +80,10 @@ it('should not create undefined keys in request', async () => {
   expect('input' in message.sample.request.request).toStrictEqual(false)
 })
 
+it('should declare sample as authentic', async () => {
+  expect(sample.authentic).toStrictEqual(true)
+})
+
 describe('validation', () => {
   /** @type {toa.samples.Message} */
   let declaration

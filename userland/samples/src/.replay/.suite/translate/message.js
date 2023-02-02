@@ -18,7 +18,7 @@ const message = (declaration, autonomous, component) => {
   const request = translate.request(declaration, autonomous)
 
   /** @type {toa.sampling.messages.Sample} */
-  const sample = { component, request }
+  const sample = { authentic: true, component, request }
 
   return { payload, sample }
 }
