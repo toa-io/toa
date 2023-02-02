@@ -48,6 +48,13 @@ describe('verification', () => {
     await expect(component.invoke(endpoint, request)).rejects.toBeInstanceOf(SampleException)
   })
 
+  it('should not validate authentic sample', async () => {
+    // noinspection JSValidateTypes
+    request.sample = { authentic: true, foo: generate() }
+
+    await expect(component.invoke(endpoint, request)).resolves.not.toThrow()
+  })
+
   it('should not throw if sample is not defined', async () => {
     await expect(component.invoke(endpoint, request)).resolves.not.toThrow()
   })

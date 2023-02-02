@@ -40,6 +40,7 @@ declare namespace toa.sampling {
     type Events = Record<string, _core.Message>
 
     type Sample = {
+      authentic?: boolean
       autonomous?: boolean
       title?: string
       request?: _core.Request

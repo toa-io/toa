@@ -45,7 +45,7 @@ class Component extends Connector {
   async #apply (endpoint, request) {
     const { sample, ...rest } = request
 
-    if (sample !== undefined) validate(sample)
+    if (sample !== undefined && sample.authentic !== true) validate(sample)
 
     if ('request' in sample) verify.request(sample.request, request)
     if (sample.terminate === true) return {}
