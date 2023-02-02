@@ -1,7 +1,9 @@
 'use strict'
 
-const { resolve } = require('node:path')
+const { join, resolve } = require('node:path')
 const { generate } = require('randomstring')
+const { flip } = require('@toa.io/libraries/generic')
+const { directory: { glob } } = require('@toa.io/libraries/filesystem')
 const { gherkin } = require('@toa.io/libraries/mock')
 
 const fixtures = require('./replay.fixtures')
@@ -13,13 +15,16 @@ jest.mock('@toa.io/userland/samples', () => mock.samples)
 
 require('../replay')
 
-const root = resolve(__dirname, '../../../../userland/example/components')
+const COMPONENTS = resolve(__dirname, '../../../../userland/example/components')
 
 /** @type {toa.samples.features.Context} */
 let context
 
 /** @type {string} */
 let path
+
+/** @type {boolean} */
+let autonomous
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -28,8 +33,9 @@ beforeEach(() => {
   const name = 'pots'
   const component = namespace + '.' + name
 
-  path = resolve(root, namespace, name)
-  context = { component }
+  path = join(COMPONENTS, namespace, name)
+  autonomous = flip()
+  context = { autonomous, component }
 })
 
 describe('When I replay it', () => {
@@ -51,33 +57,36 @@ describe('When I replay it', () => {
     it('should replay operation sample', async () => {
       /** @type {toa.samples.Suite} */
       const suite = {
-        autonomous: true,
-        components: {
+        autonomous,
+        operations: {
           [context.component]: {
-            operations: {
-              [context.operation.endpoint]: context.operation.samples
-            }
+            [context.operation.endpoint]: context.operation.samples
           }
         }
       }
 
-      expect(mock.samples.replay).toHaveBeenCalledWith(suite, [path])
+      expect(mock.samples.replay).toHaveBeenCalledWith(suite, expect.arrayContaining([path]))
     })
 
     it('should write result to context', async () => {
       expect(context.ok).toStrictEqual(await mock.samples.replay.mock.results[0].value)
     })
+
+    it('should pass paths of composition components for integration samples', async () => {
+      await integration(context)
+    })
   })
 
   describe('message sample', () => {
     beforeEach(async () => {
+      const component = generate()
       const label = generate()
       const payload = { [generate()]: generate() }
       const input = generate()
       const query = { criteria: generate() }
 
       /** @type {toa.samples.Message} */
-      const declaration = { payload, input, query }
+      const declaration = { component, payload, input, query }
       const samples = [declaration]
 
       context.message = { label, samples }
@@ -89,21 +98,36 @@ describe('When I replay it', () => {
     it('should replay message sample', async () => {
       /** @type {toa.samples.Suite} */
       const suite = {
-        autonomous: true,
-        components: {
-          [context.component]: {
-            messages: {
-              [context.message.label]: context.message.samples
-            }
-          }
+        autonomous,
+        messages: {
+          [context.message.label]: context.message.samples
         }
       }
 
-      expect(mock.samples.replay).toHaveBeenCalledWith(suite, [path])
+      expect(mock.samples.replay).toHaveBeenCalledWith(suite, expect.arrayContaining([path]))
     })
 
     it('should write result to context', async () => {
       expect(context.ok).toStrictEqual(await mock.samples.replay.mock.results[0].value)
     })
+
+    it('should pass paths of composition components for integration samples', async () => {
+      await integration(context)
+    })
   })
+
+  const integration = async (context) => {
+    jest.clearAllMocks()
+
+    const pattern = join(COMPONENTS, '*/*')
+    const paths = await glob(pattern)
+
+    context.autonomous = false
+
+    await step.call(context)
+
+    const args = mock.samples.replay.mock.calls[0]
+
+    expect(args[1]).toStrictEqual(expect.arrayContaining(paths))
+  }
 })

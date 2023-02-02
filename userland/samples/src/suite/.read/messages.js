@@ -5,19 +5,22 @@ const { file: { glob } } = require('@toa.io/libraries/filesystem')
 const yaml = require('@toa.io/libraries/yaml')
 
 /**
- * @param {toa.norm.Component} manifest
+ * @param {string} path
+ * @param {string} [id]
  * @returns {Promise<toa.samples.messages.Set>}
  */
-const messages = async (manifest) => {
+const messages = async (path, id) => {
   /** @type {toa.samples.messages.Set} */
   const messages = {}
 
-  const pattern = join(manifest.path, DIRECTORY, PATTERN)
+  const pattern = join(path, DIRECTORY, PATTERN)
   const files = await glob(pattern)
 
   for (const file of files) {
     const label = basename(file, EXTENSION)
     const samples = /** @type {toa.samples.Message[]} */ await yaml.load.all(file)
+
+    if (id !== undefined) samples.forEach((sample) => (sample.component = id))
 
     messages[label] = samples
   }

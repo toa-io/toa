@@ -23,6 +23,7 @@ describe('Given I have (a )sample(s) for {token} operation of {component}:', () 
   it('should be', () => undefined)
 
   it('should define context', () => {
+    const autonomous = true
     const endpoint = generate()
     const component = generate()
     const input = generate()
@@ -34,7 +35,7 @@ describe('Given I have (a )sample(s) for {token} operation of {component}:', () 
 
     step.call(context, endpoint, component, yaml)
 
-    expect(context).toMatchObject({ component, operation })
+    expect(context).toMatchObject({ autonomous, component, operation })
   })
 })
 
@@ -44,17 +45,18 @@ describe('Given I have (a )message {label} sample(s) for {component}:', () => {
   it('should be', () => undefined)
 
   it('should define context', () => {
+    const autonomous = true
     const label = generate()
     const component = generate()
     const input = generate()
     const payload = generate()
-    const sample = { input, payload }
+    const sample = { payload, input }
     const samples = [sample]
     const message = { label, samples }
     const yaml = dump(sample)
 
     step.call(context, label, component, yaml)
 
-    expect(context).toMatchObject({ component, message })
+    expect(context).toMatchObject({ autonomous, component, message })
   })
 })

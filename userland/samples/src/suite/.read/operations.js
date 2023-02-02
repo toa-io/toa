@@ -8,29 +8,31 @@ const yaml = require('@toa.io/libraries/yaml')
 const { parse } = require('./parse')
 
 /**
- * @param {toa.norm.Component} manifest
- * @returns {Promise<toa.samples.operations.Set>}
+ * @param {string} path
+ * @param {string} [id]
+ * @returns {Promise<toa.samples.suite.Operations>}
  */
-const operations = async (manifest) => {
-  /** @type {toa.samples.operations.Set} */
+const operations = async (path, id) => {
+  /** @type {toa.samples.suite.Operations} */
   const operations = {}
-  const pattern = join(manifest.path, DIRECTORY, PATTERN)
+
+  const pattern = join(path, DIRECTORY, PATTERN)
   const files = await glob(pattern)
-  const id = manifest.locator.id
 
   for (const file of files) {
     const name = basename(file, EXTENSION)
-    const [component, operation] = parse(name)
+    const [component, operation] = parse(name, id)
 
     /** @type {toa.samples.Operation[]} */
     const samples = await yaml.load.all(file)
 
-    if (id !== undefined && component !== undefined && component !== id) {
-      throw new Error(`Component id mismatch: '${id}' expected, '${component}' given`)
-    }
+    if (operations[component] === undefined) operations[component] = {}
 
-    if (operations[operation] === undefined) operations[operation] = samples
-    else merge(operations[operation], samples)
+    /** @type {toa.samples.operations.Set} */
+    const set = operations[component]
+
+    if (set[operation] === undefined) set[operation] = samples
+    else set[operation] = merge(set[operation], samples)
   }
 
   return operations

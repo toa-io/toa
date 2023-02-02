@@ -3,20 +3,15 @@ import * as _messages from './message'
 
 declare namespace toa.samples {
 
-  namespace constructors {
-    type components = (paths: string[]) => Promise<Suite>
+  namespace suite {
+    type Operations = Record<string, _operations.Set>
   }
-
-  type Component = {
-    operations?: _operations.Set
-    messages?: _messages.Set
-  }
-
-  type Components = Record<string, Component>
 
   type Suite = {
+    title: string
     autonomous: boolean
-    components?: Components
+    operations?: suite.Operations
+    messages?: _messages.Set
   }
 
 }

@@ -4,7 +4,7 @@ const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
 const fixtures = require('./replay.translate.operation.fixtures')
-const { operation: translate } = require('../src/.replay/translate')
+const { operation: translate } = require('../src/.replay/.suite/translate')
 
 it('should be', () => {
   expect(translate).toBeDefined()
@@ -51,7 +51,7 @@ describe('specials', () => {
     }])
   })
 
-  it('should throw if configuration provided twice', async () => {
+  it('should throw if configuration is provided twice', async () => {
     const configuration = { foo: generate() }
 
     const declaration = {

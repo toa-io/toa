@@ -1,6 +1,7 @@
 'use strict'
 
-const { resolve } = require('node:path')
+const { join, resolve } = require('node:path')
+const { directory: { glob } } = require('@toa.io/libraries/filesystem')
 const { replay } = require('@toa.io/userland/samples')
 const { translate } = require('./.replay')
 
@@ -12,12 +13,24 @@ When('I replay it',
    */
   async function () {
     const [namespace, name] = this.component.split('.')
-    const path = resolve(COMPONENTS, namespace, name)
+
+    let paths
+
+    if (this.autonomous) {
+      const path = join(COMPONENTS, namespace, name)
+
+      paths = [path]
+    } else {
+      const pattern = join(COMPONENTS, '*/*')
+
+      paths = await glob(pattern)
+    }
 
     /** @type {toa.samples.Suite} */
     const suite = translate(this)
 
-    this.ok = await replay(suite, [path])
+    this.ok = await replay(suite, paths)
   })
 
-const COMPONENTS = resolve(__dirname, '../../../userland/example/components')
+const CONTEXT = resolve(__dirname, '../../../userland/example')
+const COMPONENTS = join(CONTEXT, 'components')

@@ -13,6 +13,7 @@ Given('I have (a )sample(s) for {token} operation of {component}:',
   function (endpoint, component, yaml) {
     const samples = /** @type {toa.samples.Message[]} */ split(yaml)
 
+    this.autonomous = true
     this.component = component
     this.operation = { endpoint, samples }
   })
@@ -27,6 +28,7 @@ Given('I have (a )message {label} sample(s) for {component}:',
   function (label, component, yaml) {
     const samples = /** @type {toa.samples.Message[]} */ split(yaml)
 
+    this.autonomous = true
     this.component = component
     this.message = { label, samples }
   })

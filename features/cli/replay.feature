@@ -8,7 +8,7 @@ Feature: Replay samples
     Then stdout should contain lines:
       """
       # Subtest: math.calculations
-        # Subtest: Replay
+        # Subtest: Operations
           # Subtest: multi
             # Subtest: Should add numbers
           # Subtest: sum
@@ -71,7 +71,23 @@ Feature: Replay samples
     Then program should exit with code 0
     Then stdout should contain lines:
       """
+      # Subtest: Operations
       # Subtest: math.calculations
       # Subtest: node.syntaxes
-      # Subtest: external.consumer
+      # Subtest: external.something.happened
+      """
+
+  Scenario: Replay integration samples
+    Given I have components:
+      | math.calculations |
+      | node.syntaxes     |
+      | external.consumer |
+    And I have a context
+    And I have integration samples
+    When I run `toa replay`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: Component samples
+      # Subtest: Integration samples
       """

@@ -17,13 +17,13 @@ const manifest = jest.fn(async (path) => ({ path, locator: locator() }))
 const composition = jest.fn()
 const shutdown = jest.fn()
 
-const invoke = jest.fn(async (operation, request) => request.reply)
-
 const remote = jest.fn(async (id) => {
   const [namespace, name] = id.split('.')
   const locator = new Locator(name, namespace)
+  const invoke = jest.fn(async (operation, request) => request.reply)
+  const disconnect = jest.fn(async () => undefined)
 
-  return { locator, invoke }
+  return { locator, invoke, disconnect }
 })
 
 const emit = jest.fn()
@@ -31,5 +31,4 @@ const binding = { binding: { emit } }
 
 const stage = { manifest, composition, remote, shutdown, binding }
 
-exports.invoke = invoke
 exports.stage = stage

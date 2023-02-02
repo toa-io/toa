@@ -61,7 +61,7 @@ describe('Given I have components:', () => {
   it('should throw if non existent component', async () => {
     const table = gherkin.table([['non.existent']])
 
-    await expect(step.call(context, table)).rejects.toThrow(/ENOENT: no such file or directory/)
+    await expect(step.call(context, table)).rejects.toThrow('does not exists')
   })
 })
 
@@ -109,3 +109,16 @@ describe('Given I have a context', () => {
   })
 })
 
+describe('Given I have integration samples', () => {
+  const step = gherkin.steps.Gi('I have integration samples')
+
+  it('should be', async () => undefined)
+
+  it('should create samples directory', async () => {
+    await step.call(context)
+
+    const path = join(context.cwd, 'samples')
+
+    expect(await directory.is(path)).toStrictEqual(true)
+  })
+})

@@ -1,3 +1,3 @@
-name: dummies
+name: test
 packages: components/*
 registry: whatever.none

@@ -1,0 +1,10 @@
+title: First sample
+input:
+  foo: 1
+output:
+  bar: 2
+---
+input:
+  foo: 2
+output:
+  bar: 3

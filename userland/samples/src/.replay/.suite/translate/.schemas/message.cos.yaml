@@ -1,6 +1,7 @@
 $id: message
 
 autonomous: boolean
+component: string
 title: string
 payload: object
 input: ~

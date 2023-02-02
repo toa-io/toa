@@ -8,7 +8,7 @@ const { translate } = require('./replay.translate.mock')
 const mock = { stage, translate }
 
 jest.mock('@toa.io/userland/stage', () => mock.stage)
-jest.mock('../src/.replay/translate', () => mock.translate)
+jest.mock('../src/.replay/.suite/translate', () => mock.translate)
 
 const fixtures = require('./replay.fixtures')
 const { replay } = require('../src')
@@ -37,29 +37,12 @@ it('should boot composition', () => {
   expect(stage.composition).toHaveBeenCalledWith(paths)
 })
 
-it('should connect remotes', () => {
-  const { components } = suite
-  const ids = Object.keys(components)
-
-  expect(ids.length).toBeGreaterThan(0)
-  expect(stage.remote).toHaveBeenCalledTimes(ids.length)
-
-  let n = 0
-
-  for (const id of ids) {
-    n++
-
-    expect(stage.remote).toHaveBeenNthCalledWith(n, id)
-  }
-})
-
 it('should invoke operations with translated samples', async () => {
   const translation = (declaration) => {
     const find = (call) => call[0].input === declaration.input
     const index = mock.translate.operation.mock.calls.findIndex(find)
-    const request = mock.translate.operation.mock.results[index].value
 
-    return { index, request }
+    return mock.translate.operation.mock.results[index].value
   }
 
   /**
@@ -70,21 +53,20 @@ it('should invoke operations with translated samples', async () => {
     for (let n = 0; n < stage.remote.mock.calls.length; n++) {
       const call = stage.remote.mock.calls[n]
 
-      if (call[0] === component) return await stage.remote.mock.results[n].value
+      if (call[0] === component) return stage.remote.mock.results[n].value
     }
 
     throw new Error(`Remote ${component} hasn't been connected`)
   }
 
-  for (const [id, component] of Object.entries(fixtures.suite.components)) {
+  for (const [id, set] of Object.entries(fixtures.suite.operations)) {
     const remote = await find(id)
 
-    for (const [endpoint, declarations] of Object.entries(component.operations)) {
-      for (const declaration of declarations) {
-        const { index, request } = translation(declaration)
+    for (const [endpoint, samples] of Object.entries(set)) {
+      for (const sample of samples) {
+        const request = translation(sample)
 
-        expect(index).toBeGreaterThan(-1)
-        expect(remote.invoke).toHaveBeenNthCalledWith(index + 1, endpoint, request)
+        expect(remote.invoke).toHaveBeenCalledWith(endpoint, request)
       }
     }
   }
@@ -96,28 +78,23 @@ it('should emit translated messages', async () => {
    * @param {string} id
    * @returns {{index: number, message: toa.sampling.Message}}
    */
-  const translation = (declaration, id) => {
+  const translation = (declaration) => {
     const find = (call) => call[0].payload === declaration.payload
     const index = mock.translate.message.mock.calls.findIndex(find)
     const message = mock.translate.message.mock.results[index].value
-    const translation = mock.translate.message.mock.calls[index]
+    const call = mock.translate.message.mock.calls[index]
 
-    const [, autonomous, component] = translation
-
-    expect(autonomous).toStrictEqual(fixtures.suite.autonomous)
-    expect(component).toStrictEqual(id)
+    expect(call[1]).toStrictEqual(fixtures.suite.autonomous)
 
     return { index, message }
   }
 
-  for (const [id, component] of Object.entries(fixtures.suite.components)) {
-    for (const [label, declarations] of Object.entries(component.messages)) {
-      for (const declaration of declarations) {
-        const { index, message } = translation(declaration, id)
+  for (const [label, samples] of Object.entries(fixtures.suite.messages)) {
+    for (const sample of samples) {
+      const { index, message } = translation(sample)
 
-        expect(stage.binding.binding.emit)
-          .toHaveBeenNthCalledWith(index + 1, label, message)
-      }
+      expect(stage.binding.binding.emit)
+        .toHaveBeenNthCalledWith(index + 1, label, message)
     }
   }
 })
@@ -127,5 +104,13 @@ it('should shutdown stage', () => {
 })
 
 it('should return results', () => {
+  expect(ok).toStrictEqual(true)
+})
+
+it.each(['messages', 'operations'])('should not throw if no %s defined', async (key) => {
+  delete suite[key]
+
+  ok = await replay(suite, paths)
+
   expect(ok).toStrictEqual(true)
 })

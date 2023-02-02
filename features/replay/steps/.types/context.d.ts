@@ -14,6 +14,7 @@ declare namespace toa.samples.features {
   }
 
   type Context = {
+    autonomous?: boolean
     component?: string
     operation?: Operation
     message?: Message

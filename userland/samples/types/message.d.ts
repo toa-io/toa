@@ -11,6 +11,7 @@ declare namespace toa.samples {
 
   type Message = {
     title?: string
+    component: string
     payload: Object
     input?: any
     query?: _core.Query

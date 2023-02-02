@@ -1,6 +1,6 @@
 'use strict'
 
-const norm = require('./.operation')
+const transform = require('./.operation')
 const { schemas } = require('./schemas')
 
 const schema = schemas.schema('operation')
@@ -11,7 +11,7 @@ const schema = schemas.schema('operation')
  * @returns {toa.sampling.Request}
  */
 const operation = (declaration, autonomous) => {
-  norm.prepare(declaration)
+  transform.prepare(declaration)
   schema.validate(declaration)
 
   const { title, input, output, local, remote, current, next, extensions } = declaration
@@ -24,9 +24,9 @@ const operation = (declaration, autonomous) => {
   /** @type {toa.sampling.request.Events} */
   let events
 
-  if (local !== undefined) context.local = norm.calls(local)
-  if (remote !== undefined) context.remote = norm.calls(remote)
-  if (declaration.events !== undefined) events = norm.events(declaration.events)
+  if (local !== undefined) context.local = transform.calls(local)
+  if (remote !== undefined) context.remote = transform.calls(remote)
+  if (declaration.events !== undefined) events = transform.events(declaration.events)
 
   const sample = /** @type {toa.sampling.request.Sample} */ {
     autonomous,
@@ -38,7 +38,7 @@ const operation = (declaration, autonomous) => {
     extensions
   }
 
-  norm.cleanup(sample)
+  transform.cleanup(sample)
 
   return { input, sample }
 }

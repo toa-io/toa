@@ -39,7 +39,8 @@ Feature: Context level samples
         b: 2
       output: 4
       remote:
-        math.calculations.add: 4 # collapsed output declaration
+        math.calculations.add:
+          output: 4
       """
     When I replay it
     Then it passes

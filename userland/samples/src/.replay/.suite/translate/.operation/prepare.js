@@ -1,6 +1,6 @@
 'use strict'
 
-const specials = require('./.prepare')
+const specials = require('./specials')
 
 /**
  * @param {toa.samples.Operation & Object} declaration

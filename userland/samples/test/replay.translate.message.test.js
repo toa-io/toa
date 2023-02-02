@@ -3,7 +3,7 @@
 const clone = require('clone-deep')
 
 const fixtures = require('./replay.translate.message.fixtures')
-const { message: translate } = require('../src/.replay/translate')
+const { message: translate } = require('../src/.replay/.suite/translate')
 const { generate } = require('randomstring')
 
 it('should be', async () => {

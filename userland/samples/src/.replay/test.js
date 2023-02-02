@@ -6,11 +6,10 @@ const replay = require('./suite')
 
 /**
  * @param {toa.samples.Suite} suite
- * @param {Record<string, toa.core.Component>} remotes
  * @return {Promise<boolean>}
  */
-const test = async (suite, remotes) => {
-  const { ok } = await tap.test('Replay suite', replay.suite(suite, remotes))
+const test = async (suite) => {
+  const { ok } = await tap.test(suite.title, replay.suite(suite))
 
   return ok
 }

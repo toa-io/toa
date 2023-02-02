@@ -4,17 +4,15 @@ const { generate } = require('randomstring')
 const { random } = require('@toa.io/libraries/generic')
 
 /** @type {toa.samples.Suite} */
-const suite = { autonomous: true, components: {} }
+const suite = { autonomous: true, operations: {} }
 
 /**
  * @returns {toa.samples.Operation[]}
  */
 const ops = () => {
-  /** @type {toa.samples.Operation[]} */
   const samples = []
 
   for (let i = 0; i < random(3) + 1; i++) {
-    /** @type {toa.samples.Operation} */
     const sample = {
       input: generate(),
       output: generate(),
@@ -30,14 +28,15 @@ const ops = () => {
 }
 
 /**
- * @returns {toa.samples.messages.Sample[]}
+ * @returns {toa.samples.Message[]}
  */
 const msgs = () => {
-  /** @type {toa.samples.messages.Sample[]} */
+  /** @type {toa.samples.Message[]} */
   const samples = []
 
   for (let i = 0; i < random(3) + 1; i++) {
-    const sample = /** @type {toa.samples.messages.Sample} */ {
+    const sample = /** @type {toa.samples.Message} */ {
+      component: generate(),
       payload: generate(),
       input: generate()
     }
@@ -50,6 +49,7 @@ const msgs = () => {
 
 // components
 for (let i = 0; i < random(3) + 1; i++) {
+  const id = generate() + '.' + generate()
   const operations = {}
   const messages = {}
 
@@ -61,9 +61,12 @@ for (let i = 0; i < random(3) + 1; i++) {
     messages[label] = msgs()
   }
 
-  const id = generate() + '.' + generate()
-
-  suite.components[id] = { operations, messages }
+  suite.operations[id] = operations
 }
+
+/** @type {string} */
+const label = generate()
+
+suite.messages = { [label]: msgs() }
 
 exports.suite = suite

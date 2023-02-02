@@ -15,7 +15,9 @@ const copy = async (list, to) => {
     const source = join(COLLECTION, component)
     const target = join(to, 'components', component)
 
-    await directory.is(source)
+    const dir = await directory.is(source)
+
+    if (!dir) throw Error('Source directory does not exists')
 
     await directory.ensure(target)
     await directory.copy(source, target)

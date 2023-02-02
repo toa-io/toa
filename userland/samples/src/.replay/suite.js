@@ -1,16 +1,19 @@
 'use strict'
 
-const { component } = require('./component')
+const replay = require('./.suite')
 
 /**
  * @param {toa.samples.Suite} suite
- * @param {Record<string, toa.core.Component>} remotes
- * @return {Promise<void>}
+ * @returns {Function}
  */
-const suite = (suite, remotes) =>
+const suite = (suite) =>
   async (test) => {
-    for (const [id, samples] of Object.entries(suite.components)) {
-      await test.test(id, component(id, remotes, samples, suite.autonomous))
+    if ('operations' in suite) {
+      await test.test('Operations', replay.operations(suite.operations, suite.autonomous))
+    }
+
+    if ('messages' in suite) {
+      await test.test('Messages', replay.messages(suite.messages, suite.autonomous))
     }
 
     test.end()
