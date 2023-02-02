@@ -1,15 +1,23 @@
 # Toa Schema Validator
 
-## schema(cos): Schema
+Takes your [COS](/libraries/concise), transforms it to JSONSchema and feeds it
+to [Ajv](https://ajv.js.org).
 
-Factory for [Schema class](./types/schema.d.ts). See [COS](/libraries/consice).
+*Also, slightly transforms validation error objects for no obvious reason.*
+
+## schema(schema: cos): Schema
+
+Factory for [Schema class](./types/schema.d.ts).
 
 ### `.fit(value)`
 
 Returns [error](./types/schema.d.ts) if given value doesn't match the schema, `null` otherwise.
 
-## Namespace
+## namespace(schemas: cos[]): Namespace
 
-Uses [Ajv](https://ajv.js.org).
+Factory for [Namespace class](./types/namespace.d.ts).
 
+## namespace(path: string): Namespace
 
+Loads schemas from `.cos.yaml` files within given directory, setting their missing `$id` to the file
+basename and returns `Namespace`.

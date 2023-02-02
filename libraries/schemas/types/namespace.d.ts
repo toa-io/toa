@@ -4,7 +4,7 @@ declare namespace toa.schemas {
 
   namespace constructors {
 
-    type namespace = (schemas: any[]) => Namespace
+    type namespace = (schemas: any[] | string) => Namespace
 
   }
 

@@ -6,7 +6,7 @@ const yaml = require('js-yaml')
 
 /**
  * @param {string} path
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 const load = async (path) => {
   const contents = await read(path)
@@ -16,7 +16,7 @@ const load = async (path) => {
 
 /**
  * @param {string} path
- * @returns {Promise<Object[]>}
+ * @returns {Promise<object[]>}
  */
 load.all = async (path) => {
   const contents = await read(path)
@@ -26,7 +26,7 @@ load.all = async (path) => {
 
 /**
  * @param {string} path
- * @returns {Object}
+ * @returns {object}
  */
 load.sync = (path) => {
   const contents = read.sync(path)
@@ -35,7 +35,7 @@ load.sync = (path) => {
 }
 
 /**
- * @param {Object} object
+ * @param {object} object
  * @param {string} path
  * @returns {Promise<void>}
  */
@@ -58,7 +58,7 @@ load.try = async (path) => {
 }
 
 /**
- * @param {Object} object
+ * @param {object} object
  * @returns {string}
  */
 const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })

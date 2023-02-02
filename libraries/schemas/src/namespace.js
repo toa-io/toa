@@ -5,6 +5,7 @@ const { expand } = require('@toa.io/libraries/concise')
 
 const { Schema } = require('./schema')
 const { create, is } = require('./validator')
+const { directory } = require('./directory')
 
 /**
  * @implements {toa.schemas.Namespace}
@@ -27,6 +28,8 @@ class Namespace {
 
 /** @type {toa.schemas.constructors.namespace} */
 const namespace = (coses) => {
+  if (typeof coses === 'string') coses = directory(coses)
+
   const schemas = coses.map((cos) => expand(cos, is))
   const validator = create(schemas)
   const extract = (schema) => validator.getSchema(schema.$id)
