@@ -1,11 +1,9 @@
 'use strict'
 
-const { resolve } = require('node:path')
-const { load } = require('@toa.io/libraries/schema')
+const { schemas } = require('../schemas')
 const { SampleException } = require('../exceptions')
 
-const path = resolve(__dirname, 'sample.cos.yaml')
-const schema = load(path)
+const schema = schemas.schema('request')
 
 /**
  * @param {toa.sampling.request.Sample} sample

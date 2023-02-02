@@ -1,3 +1,5 @@
+$id: request
+
 autonomous: boolean
 title: string
 request: &request
