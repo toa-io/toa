@@ -36,6 +36,7 @@
     "clone-deep": "4.0.1",
     "fast-glob": "3.2.11",
     "js-yaml": "4.1.0",
+    "msgpackr": "1.8.3",
     "uuid": "9.0.0"
   }
 }
