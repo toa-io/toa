@@ -75,15 +75,18 @@ await io.reply('add_numbers', (payload) => (payload.a + payload.b))
 Send encoded request message with `replyTo`, `contentType` and `correlationId` properties set and
 return decoded reply.
 
-By default, Request message contents are encoded using [msgpack](https://msgpack.org) with
+By default, request message contents are encoded using [msgpack](https://msgpack.org) with
 a `contentType` property set to `application/msgpack`. If encoding format is specified and
 supported, contents are encoded accordingly.
 
 Exceptions to this are Buffers, which are sent without encoding and a `contentType` property set
 to specified encoding format or `application/octet-stream` if it's not specified.
 
-On the initial call, a durable `queue` for requests and a transient queue for replies
-(named `{queue}..{random-id}`) are asserted.
+On the initial call, a [durable](https://www.rabbitmq.com/queues.html#properties) queue for
+requests and an [exclusive](https://www.rabbitmq.com/queues.html#properties) queue for replies are
+asserted.
+
+[^1]: [Queue properties](https://www.rabbitmq.com/queues.html#properties)
 
 ### Example
 

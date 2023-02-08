@@ -48,12 +48,13 @@ class Channel {
 
   /**
    * @param {string} queue
-   * @param {boolean} durable
+   * @param {boolean} persistent
    * @returns {Promise<void>}
    */
-  async #assert (queue, durable) {
+  async #assert (queue, persistent) {
     if (!(queue in this.#queues)) {
-      const assertion = this.#channel.assertQueue(queue, { durable })
+      const options = persistent ? PERSISTENT : TRANSIENT
+      const assertion = this.#channel.assertQueue(queue, options)
 
       this.#queues[queue] = { assertion }
     }
@@ -80,5 +81,11 @@ class Channel {
       this.#channel.ack(message)
     }
 }
+
+/** @type {import('amqplib').Options.AssertQueue} */
+const PERSISTENT = { durable: true }
+
+/** @type {import('amqplib').Options.AssertQueue} */
+const TRANSIENT = { exclusive: true }
 
 exports.Channel = Channel

@@ -30,14 +30,28 @@ beforeEach(async () => {
 describe('consume', () => {
   const consumer = /** @type {toa.comq.consumer} */ jest.fn(async () => undefined)
   const queue = generate()
-  const durable = flip()
+  const persistent = flip()
 
   beforeEach(async () => {
-    await channel.consume(queue, durable, consumer)
+    await channel.consume(queue, persistent, consumer)
   })
 
-  it('should assert queue', async () => {
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { durable })
+  it('should assert durable queue', async () => {
+    const queue = generate()
+    const persistent = true
+
+    await channel.consume(queue, persistent, consumer)
+
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { durable: true })
+  })
+
+  it('should assert exclusive queue', async () => {
+    const queue = generate()
+    const persistent = false
+
+    await channel.consume(queue, persistent, consumer)
+
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { exclusive: true })
   })
 
   it('should bind consumer', async () => {
