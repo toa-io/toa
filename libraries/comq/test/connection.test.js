@@ -9,13 +9,13 @@ const mock = { amqplib }
 jest.mock('amqplib', () => mock.amqplib)
 jest.mock('../src/channel')
 const { Connection } = require('../src/connection')
-const { /** @type {jest.MockedClass<toa.messenger.Channel>} */ Channel } = require('../src/channel')
+const { /** @type {jest.MockedClass<toa.comq.Channel>} */ Channel } = require('../src/channel')
 
 it('should be', async () => {
   expect(Connection).toBeDefined()
 })
 
-/** @type {toa.messenger.Connection} */
+/** @type {toa.comq.Connection} */
 let connection
 
 const url = generate()
@@ -41,7 +41,7 @@ describe.each([['in', 'createChannel'], ['out', 'createConfirmChannel']])('%s', 
   /** @type {import('amqplib').Channel} */
   let chan
 
-  /** @type {toa.messenger.Channel} */
+  /** @type {toa.comq.Channel} */
   let channel
 
   beforeEach(async () => {

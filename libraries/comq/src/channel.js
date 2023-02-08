@@ -1,19 +1,23 @@
 'use strict'
 
+/**
+ * @typedef {import('amqplib').Channel | import('amqplib').ConfirmChannel} AMQPChannel
+ */
+
 const { lazy } = require('@toa.io/libraries/generic')
 
 /**
- * @implements {toa.messenger.Channel}
+ * @implements {toa.comq.Channel}
  */
 class Channel {
   /** @type {import('amqplib').Channel} */
   #channel
 
-  /** @type {Record<string, toa.messenger.channel.Queue>} */
+  /** @type {Record<string, toa.comq.channel.Queue>} */
   #queues = {}
 
   /**
-   * @param {import('amqplib').Channel} channel
+   * @param {AMQPChannel} channel
    */
   constructor (channel) {
     this.#channel = channel
@@ -23,16 +27,16 @@ class Channel {
     /**
      * @param {string} queue
      * @param {boolean} durable
-     * @param {toa.messenger.consumer} consumer
+     * @param {toa.comq.consumer} consumer
      * @returns {Promise<void>}
      */
     async (queue, durable, consumer) => {
-      // TODO: ack
-      await this.#channel.consume(queue, consumer)
+      await this.#channel.consume(queue, this.#consume(consumer))
     })
 
   async send (queue, buffer, properties) {
     // TODO: handle `false` response
+    // TODO: ConfirmChannel callback
     this.#channel.sendToQueue(queue, buffer, properties)
   }
 
@@ -64,6 +68,17 @@ class Channel {
   async #durable (queue) {
     return this.#assert(queue, true)
   }
+
+  /**
+   * @param {toa.comq.consumer} consumer
+   * @returns {toa.comq.consumer}
+   */
+  #consume = (consumer) =>
+    async (message) => {
+      await consumer(message)
+
+      this.#channel.ack(message)
+    }
 }
 
 exports.Channel = Channel

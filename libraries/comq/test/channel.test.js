@@ -16,7 +16,7 @@ let conn
 /** @type {jest.MockedObject<import('amqplib').Channel>} */
 let chan
 
-/** @type {toa.messenger.Channel} */
+/** @type {toa.comq.Channel} */
 let channel
 
 beforeEach(async () => {
@@ -28,7 +28,7 @@ beforeEach(async () => {
 })
 
 describe('consume', () => {
-  const consumer = /** @type {toa.messenger.consumer} */ jest.fn(async () => generate())
+  const consumer = /** @type {toa.comq.consumer} */ jest.fn(async () => undefined)
   const queue = generate()
   const durable = flip()
 
@@ -41,7 +41,28 @@ describe('consume', () => {
   })
 
   it('should bind consumer', async () => {
-    expect(chan.consume).toHaveBeenCalledWith(queue, consumer)
+    expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function))
+
+    const content = randomBytes(8)
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content }
+    const callback = chan.consume.mock.calls[0][1]
+
+    await callback(message)
+
+    expect(consumer).toHaveBeenCalledWith(message)
+  })
+
+  it('should ack message', async () => {
+    const consumer = chan.consume.mock.calls[0][1]
+
+    expect(typeof consumer).toStrictEqual('function')
+
+    const content = randomBytes(8)
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content }
+
+    await consumer(message)
+
+    expect(chan.ack).toHaveBeenCalledWith(message)
   })
 })
 

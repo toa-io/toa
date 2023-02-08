@@ -9,10 +9,10 @@ const { encode } = require('../src/encode')
 const mock = require('./connection.mock')
 const { IO } = require('../src/io')
 
-/** @type {toa.messenger.IO} */
+/** @type {toa.comq.IO} */
 let io
 
-/** @type {jest.MockedObject<toa.messenger.Connection>} */
+/** @type {jest.MockedObject<toa.comq.Connection>} */
 let connection
 
 beforeEach(async () => {
@@ -57,7 +57,7 @@ describe.each(['in', 'out'])('%sput channel', (key) => {
 })
 
 describe('queues', () => {
-  /** @type {jest.MockedObject<toa.messenger.Channel>} */
+  /** @type {jest.MockedObject<toa.comq.Channel>} */
   let input
 
   beforeEach(async () => {
@@ -81,10 +81,10 @@ describe('queues', () => {
 })
 
 describe('encoding', () => {
-  /** @type {jest.MockedObject<toa.messenger.Channel>} */
+  /** @type {jest.MockedObject<toa.comq.Channel>} */
   let input
 
-  /** @type {jest.MockedObject<toa.messenger.Channel>} */
+  /** @type {jest.MockedObject<toa.comq.Channel>} */
   let output
 
   const encodings = ['application/msgpack', 'application/json']

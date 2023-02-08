@@ -1,20 +1,24 @@
-# Toa Messenger
+# ComQ
 
-Microservice intercommunication on top of AMQP.
+Microservice communications over [AMQP](https://github.com/amqp-node/amqplib) for
+Node.js.
 
 ## Features
 
 1. No static configuration
-2. Request-reply (RPC)
+2. [Request](#request)-[reply](#reply) (RPC)
 3. Events (pub/sub)
 4. Reconnection handling
-5. Content encoding/decoding
-6. Graceful shutdown scenario
+5. Flow control
+6. Content encoding/decoding
+7. Graceful shutdown
 
-> Features are described in the [`features`](features) directory.
->
-> To run them you should start RabbitMQ server with `docker compose up -d`,
-> then execute `npm run test:features`
+> Features are described in the [`features`](features) directory. To run them you should start
+> RabbitMQ server with `docker compose up -d`, then execute `npm run test:features`
+
+## Installation
+
+`npm i comq`
 
 ## Connect
 
@@ -26,7 +30,7 @@ to [`amqplib.connect`](https://amqp-node.github.io/amqplib/channel_api.html#conn
 ### Example
 
 ```javascript
-const { connect } = require('@toa.io/messenger')
+const { connect } = require('comq')
 
 const url = 'amqp://developer:secret@localhost'
 const io = await connect(url)
@@ -55,8 +59,8 @@ and `producer` returned value isn't `Buffer`, then exception is thrown.
 > If incoming message doesn't have a `replyTo` property, an exception is thrown without
 > calling `producer`.
 >
-> `replyTo` queue is not asserted, therefore a message with `replyTo` referring a non-existent queue
-> will cause AMQP channel error.
+> `replyTo` queue is not asserted, therefore a request message with `replyTo` referring to a
+> non-existent queue will cause an AMQP channel error.
 
 ### Example
 
@@ -104,14 +108,14 @@ The following `contentType` values are supported:
 
 ## IO Channels
 
-`IO` creates two channels: input and output.
+`IO` lazy creates two channels: input and output.
 
 Input channel used for consuming requests and events. It has prefetch count set to `300` (currently,
-there is no option to configure this value).
+not configurable).
 
 Output channel is
 a [ConfirmChannel](https://amqp-node.github.io/amqplib/channel_api.html#confirmchannel) used to send
-replies, emit events and *send requests* (see [below](#graceful-shutdown)).
+requests, emit events, send and *receive* replies (see [below](#graceful-shutdown)).
 
 ## Graceful shutdown
 

@@ -1,6 +1,6 @@
 import { ConsumeMessage, MessageProperties } from 'amqplib'
 
-declare namespace toa.messenger {
+declare namespace toa.comq {
 
   namespace channel {
 
@@ -30,4 +30,4 @@ declare namespace toa.messenger {
 
 }
 
-export type Channel = toa.messenger.Channel
+export type Channel = toa.comq.Channel

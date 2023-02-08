@@ -12,23 +12,23 @@ const { encode } = require('./encode')
 const { replies } = require('./.io/replies')
 
 /**
- * @implements {toa.messenger.IO}
+ * @implements {toa.comq.IO}
  */
 class IO {
-  /** @type {toa.messenger.Channel} */
+  /** @type {toa.comq.Channel} */
   #in
 
-  /** @type {toa.messenger.Channel} */
+  /** @type {toa.comq.Channel} */
   #out
 
-  /** @type {toa.messenger.Connection} */
+  /** @type {toa.comq.Connection} */
   #connection
 
-  /** @type {Record<string, toa.messenger.Replies>} */
+  /** @type {Record<string, toa.comq.Replies>} */
   #replies = {}
 
   /**
-   * @param {toa.messenger.Connection} connection
+   * @param {toa.comq.Connection} connection
    */
   constructor (connection) {
     this.#connection = connection
@@ -37,7 +37,7 @@ class IO {
   reply = lazy(this, [this.#input, this.#output],
     /**
      * @param {string} queue
-     * @param {toa.messenger.producer} producer
+     * @param {toa.comq.producer} producer
      * @returns {Promise<void>}
      */
     async (queue, producer) => {
@@ -95,7 +95,7 @@ class IO {
   // endregion
 
   /**
-   * @param {toa.messenger.producer} producer
+   * @param {toa.comq.producer} producer
    * @returns {function(message: Message): Promise<void>}
    */
   #producer = (producer) =>
@@ -118,7 +118,7 @@ class IO {
 
   /**
    * @param {string} queue
-   * @returns {toa.messenger.consumer}
+   * @returns {toa.comq.consumer}
    */
   #consumer = (queue) => {
     const replies = this.#replies[queue]

@@ -3,6 +3,7 @@
 const channel = () => ({
   prefetch: jest.fn(() => undefined),
   consume: jest.fn(async () => undefined),
+  ack: jest.fn(() => undefined),
   assertQueue: jest.fn(async () => undefined),
   sendToQueue: jest.fn(async () => undefined),
   close: jest.fn(async () => undefined)

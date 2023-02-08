@@ -5,16 +5,16 @@ const { generate } = require('randomstring')
 const mock = require('./connection.mock')
 const { IO } = require('../src/io')
 
-/** @type {toa.messenger.IO} */
+/** @type {toa.comq.IO} */
 let io
 
-/** @type {jest.MockedObject<toa.messenger.Connection>} */
+/** @type {jest.MockedObject<toa.comq.Connection>} */
 let connection
 
-/** @type {jest.MockedObject<toa.messenger.Channel>} */
+/** @type {jest.MockedObject<toa.comq.Channel>} */
 let input
 
-/** @type {jest.MockedObject<toa.messenger.Channel>} */
+/** @type {jest.MockedObject<toa.comq.Channel>} */
 let output
 
 beforeEach(async () => {

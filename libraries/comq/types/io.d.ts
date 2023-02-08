@@ -1,4 +1,4 @@
-declare namespace toa.messenger {
+declare namespace toa.comq {
 
   type producer = (message: any) => Promise<any>
 
@@ -18,4 +18,4 @@ declare namespace toa.messenger {
 
 }
 
-export type IO = toa.messenger.IO
+export type IO = toa.comq.IO

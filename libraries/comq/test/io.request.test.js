@@ -8,10 +8,10 @@ const mock = require('./connection.mock')
 const { IO } = require('../src/io')
 const { randomBytes } = require('node:crypto')
 
-/** @type {toa.messenger.IO} */
+/** @type {toa.comq.IO} */
 let io
 
-/** @type {jest.MockedObject<toa.messenger.Connection>} */
+/** @type {jest.MockedObject<toa.comq.Connection>} */
 let connection
 
 beforeEach(async () => {
@@ -29,7 +29,7 @@ it('should be', async () => {
 const queue = generate()
 const payload = { [generate()]: generate() }
 
-/** @type {jest.MockedObject<toa.messenger.Channel>} */
+/** @type {jest.MockedObject<toa.comq.Channel>} */
 let output
 let promise
 
