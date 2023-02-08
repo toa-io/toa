@@ -20,9 +20,9 @@ for (const KEYWORD of KEYWORDS) {
     calls[KEYWORD].push(args)
   }
 
-  exports.steps[KEYWORD] = (index) => {
+  exports.steps[KEYWORD] = (index = 0) => {
     const step = typeof index === 'number'
-      ? calls[KEYWORD][index]
+      ? calls[KEYWORD][index].slice(-1)[0]
       : calls[KEYWORD].find((call) => call[0] === index)?.[1]
 
     if (step === undefined) throw new Error(`Step '${KEYWORD} ${index}' is not defined`)

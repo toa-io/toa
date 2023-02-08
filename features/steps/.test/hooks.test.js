@@ -20,7 +20,7 @@ afterEach(async () => {
 })
 
 describe('Before', () => {
-  const step = gherkin.steps.Be(0)[0]
+  const step = gherkin.steps.Be()
 
   it('should create temp directory', async () => {
     delete context.cwd
@@ -33,7 +33,7 @@ describe('Before', () => {
 })
 
 describe('BeforeALl', () => {
-  const step = gherkin.steps.BeAl(0)[0]
+  const step = gherkin.steps.BeAl()
 
   it('should be', () => undefined)
 

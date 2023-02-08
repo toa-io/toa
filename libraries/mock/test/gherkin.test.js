@@ -5,6 +5,10 @@ const { transpose, acronyms } = require('@toa.io/libraries/generic')
 
 const { gherkin } = require('../')
 
+beforeEach(() => {
+  gherkin.clear()
+})
+
 describe('steps', () => {
   const KEYWORDS = ['Given', 'When', 'Then', 'Before', 'BeforeAll', 'After', 'AfterAll']
 
@@ -74,11 +78,22 @@ describe('steps', () => {
         expression(implementation1)
         expression(implementation2)
 
-        const result1 = gherkin.steps[KEYWORD](0)[0]
-        const result2 = gherkin.steps[KEYWORD](1)[0]
+        const result1 = gherkin.steps[KEYWORD](0)
+        const result2 = gherkin.steps[KEYWORD](1)
 
         expect(result1).toStrictEqual(implementation1)
         expect(result2).toStrictEqual(implementation2)
+      })
+
+      it('should return first call by default', async () => {
+        const implementation1 = () => null
+        const implementation2 = () => null
+
+        expression(implementation1)
+        expression(implementation2)
+
+        const result1 = gherkin.steps[KEYWORD]()
+        expect(result1).toStrictEqual(implementation1)
       })
 
       it('should have acronym', () => {
