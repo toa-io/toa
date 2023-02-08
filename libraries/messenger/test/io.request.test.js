@@ -131,18 +131,18 @@ describe('reply', () => {
     expect(output).toStrictEqual(content)
   })
 
-  // const encodings = ['application/msgpack', 'application/json']
-  //
-  // it.each(encodings)('should decode %s', async (contentType) => {
-  //   const value = generate()
-  //   const content = encode(value, contentType)
-  //
-  //   await reply(content)
-  //
-  //   const output = await promise
-  //
-  //   expect(output).toStrictEqual(value)
-  // })
+  const encodings = ['application/msgpack', 'application/json']
+
+  it.each(encodings)('should decode %s', async (contentType) => {
+    const value = generate()
+    const content = encode(value, contentType)
+
+    await reply(content, contentType)
+
+    const output = await promise
+
+    expect(output).toStrictEqual(value)
+  })
 })
 
 const reply = async (content = randomBytes(8), contentType = undefined) => {

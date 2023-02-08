@@ -38,6 +38,10 @@ class Channel {
 
   deliver = lazy(this, this.#durable, this.send)
 
+  async close () {
+    await this.#channel.close()
+  }
+
   /**
    * @param {string} queue
    * @param {boolean} durable

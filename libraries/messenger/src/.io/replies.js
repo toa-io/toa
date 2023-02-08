@@ -5,7 +5,7 @@ const { EventEmitter } = require('node:events')
 
 /**
  * @param {string} label
- * @returns {toa.messenger.io.Replies}
+ * @returns {toa.messenger.Replies}
  */
 const replies = (label) => {
   const id = randomBytes(8).toString('hex')
@@ -14,7 +14,7 @@ const replies = (label) => {
   const once = (name, callback) => events.once(name, callback)
   const emit = (name, value) => events.emit(name, value)
 
-  return { id, queue, once, emit }
+  return { queue, once, emit }
 }
 
 exports.replies = replies

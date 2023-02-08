@@ -3,7 +3,8 @@
 const channel = () => ({
   consume: jest.fn(async () => undefined),
   deliver: jest.fn(async () => undefined),
-  send: jest.fn(async () => undefined)
+  send: jest.fn(async () => undefined),
+  close: jest.fn(async () => undefined)
 })
 
 /**
@@ -11,7 +12,8 @@ const channel = () => ({
  */
 const connection = () => (/** @type {jest.MockedObject<toa.messenger.Connection>} */ {
   in: jest.fn(async () => channel()),
-  out: jest.fn(async () => channel())
+  out: jest.fn(async () => channel()),
+  close: jest.fn(async () => undefined)
 })
 
 exports.connection = connection

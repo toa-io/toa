@@ -1,4 +1,5 @@
 import * as _channel from './channel'
+import * as _io from './io'
 
 declare namespace toa.messenger {
 
@@ -8,6 +9,10 @@ declare namespace toa.messenger {
     in(): Promise<_channel.Channel>
 
     out(): Promise<_channel.Channel>
+
+    close(): Promise<void>
   }
+
+  type connect = (url: string) => Promise<_io.IO>
 
 }

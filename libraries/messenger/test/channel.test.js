@@ -93,3 +93,11 @@ describe('send', () => {
     expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, properties)
   })
 })
+
+describe('close', () => {
+  it('should close channel', async () => {
+    await channel.close()
+
+    expect(chan.close).toHaveBeenCalled()
+  })
+})

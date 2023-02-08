@@ -60,7 +60,16 @@ describe.each([['in', 'createChannel'], ['out', 'createConfirmChannel']])('%s', 
     expect(Channel).toHaveBeenCalledWith(chan)
   })
 
-  ;(key === 'in' ? it : it.skip)('should set prefetch', async () => {
+  ;(key === 'in' ? it : () => undefined)('should set prefetch', async () => {
     expect(chan.prefetch).toHaveBeenCalledWith(300)
   })
+})
+
+it('should close connection', async () => {
+  await connection.connect()
+  await connection.close()
+
+  const amqp = await amqplib.connect.mock.results[0].value
+
+  expect(amqp.close).toHaveBeenCalled()
 })

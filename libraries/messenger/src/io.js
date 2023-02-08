@@ -24,7 +24,7 @@ class IO {
   /** @type {toa.messenger.Connection} */
   #connection
 
-  /** @type {Record<string, toa.messenger.io.Replies>} */
+  /** @type {Record<string, toa.messenger.Replies>} */
   #replies = {}
 
   /**
@@ -52,9 +52,9 @@ class IO {
      * @returns {Promise<void>}
      */
     async (queue, payload, contentType) => {
-      const raw = Buffer.isBuffer(payload) || contentType === BUFFER
+      const raw = Buffer.isBuffer(payload)
 
-      contentType ??= raw ? BUFFER : MSGPACK
+      contentType ??= raw ? OCTETS : MSGPACK
 
       const buffer = raw ? payload : encode(payload, contentType)
       const correlationId = randomBytes(8).toString('hex')
@@ -70,6 +70,14 @@ class IO {
       return reply
     })
 
+  async close () {
+    await this.#in?.close()
+    await this.#out?.close()
+    await this.#connection.close()
+  }
+
+  // region initializers
+
   async #input () {
     this.#in = await this.#connection.in()
   }
@@ -84,30 +92,28 @@ class IO {
     await this.#out.consume(this.#replies[queue].queue, false, this.#consumer(queue))
   }
 
+  // endregion
+
   /**
    * @param {toa.messenger.producer} producer
    * @returns {function(message: Message): Promise<void>}
    */
   #producer = (producer) =>
-    /**
-     * @param {Message} request
-     * @returns {Promise<void>}
-     */
-    async (request) => {
-      if (!('replyTo' in request.properties)) throw new Error('Request is missing `replyTo` property')
+    async (message) => {
+      if (!('replyTo' in message.properties)) throw new Error('Request is missing `replyTo` property')
 
-      const payload = decode(request)
+      const payload = decode(message)
       const reply = await producer(payload)
 
-      let { correlationId, contentType } = request.properties
+      let { correlationId, contentType } = message.properties
 
-      if (Buffer.isBuffer(reply)) contentType = BUFFER
+      if (Buffer.isBuffer(reply)) contentType = OCTETS
       if (contentType === undefined) throw new Error('Reply to request without contentType must be of Buffer type')
 
-      const buffer = contentType === BUFFER ? reply : encode(reply, contentType)
+      const buffer = contentType === OCTETS ? reply : encode(reply, contentType)
       const properties = { contentType, correlationId }
 
-      await this.#out.deliver(request.properties.replyTo, buffer, properties)
+      await this.#out.deliver(message.properties.replyTo, buffer, properties)
     }
 
   /**
@@ -118,13 +124,14 @@ class IO {
     const replies = this.#replies[queue]
 
     return (message) => {
-      // decode
-      replies.emit(message.properties.correlationId, message.content)
+      const payload = decode(message)
+
+      replies.emit(message.properties.correlationId, payload)
     }
   }
 }
 
-const BUFFER = 'application/octet-stream'
+const OCTETS = 'application/octet-stream'
 const MSGPACK = 'application/msgpack'
 
 exports.IO = IO

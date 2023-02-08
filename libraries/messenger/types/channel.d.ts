@@ -24,6 +24,8 @@ declare namespace toa.messenger {
     deliver(queue: string, buffer: Buffer, properties: message.Properties): Promise<void>
 
     send(queue: string, buffer: Buffer, properties: message.Properties): Promise<void>
+
+    close(): Promise<void>
   }
 
 }

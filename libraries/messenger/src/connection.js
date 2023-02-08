@@ -25,6 +25,10 @@ class Connection {
     this.#connection = await amqp.connect(this.#url)
   }
 
+  async close () {
+    await this.#connection.close()
+  }
+
   async in () {
     const chan = await this.#connection.createChannel()
 

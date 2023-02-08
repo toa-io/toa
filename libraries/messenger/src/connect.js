@@ -3,11 +3,8 @@
 const { IO } = require('./io')
 const { Connection } = require('./connection')
 
-/**
- * @param {string} url
- * @returns {Promise<toa.messenger.IO>}
- */
-async function connect (url) {
+/** @type {toa.messenger.connect} */
+const connect = async (url) => {
   const connection = new Connection(url)
 
   await connection.connect()

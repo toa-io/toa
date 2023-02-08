@@ -1,6 +1,7 @@
 'use strict'
 
 // region setup
+
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
 const { encode } = require('../src/encode')
@@ -23,6 +24,7 @@ beforeEach(async () => {
 
 const queue = generate()
 const produce = jest.fn(async () => generate())
+
 // endregion
 
 describe.each(['in', 'out'])('%sput channel', (key) => {
