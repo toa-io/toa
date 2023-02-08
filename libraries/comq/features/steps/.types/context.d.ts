@@ -1,9 +1,10 @@
-import { IO } from '@toa.io/libraries/comq/types'
+import * as _io from '../../../types'
 
 declare namespace toa.comq.features {
 
   type Context = {
-    io: IO
+    io: _io.IO
+    reply?: any
   }
 
 }

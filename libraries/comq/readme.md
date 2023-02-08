@@ -42,7 +42,7 @@ await io.close()
 
 ## Reply
 
-`async IO.reply(queue: string, exchange: string, producer)`
+`async IO.reply(queue: string, producer)`
 
 `producer`'s signature is `async (message: any): any`
 
@@ -53,8 +53,8 @@ a `correlationId` that has the same value as in the original request.
 
 Reply message is encoded using the same encoding format as the request message, if it is specified
 and supported, unless `producer` returned `Buffer`, in which case encoding format will be set
-to `application/octet-stream`. If encoding format of request message isn't specified or supported
-and `producer` returned value isn't `Buffer`, then exception is thrown.
+to `application/octet-stream`. If encoding format of the request message isn't specified or
+supported and `producer` has returned value isn't `Buffer`, then exception is thrown.
 
 > If incoming message doesn't have a `replyTo` property, an exception is thrown without
 > calling `producer`.
@@ -77,8 +77,7 @@ return decoded reply.
 
 By default, Request message contents are encoded using [msgpack](https://msgpack.org) with
 a `contentType` property set to `application/msgpack`. If encoding format is specified and
-supported,
-contents are encoded accordingly.
+supported, contents are encoded accordingly.
 
 Exceptions to this are Buffers, which are sent without encoding and a `contentType` property set
 to specified encoding format or `application/octet-stream` if it's not specified.
@@ -103,15 +102,15 @@ Buffer object.
 
 The following `contentType` values are supported:
 
-- `application/json`
 - `application/msgpack`
+- `application/json`
 
 ## IO Channels
 
 `IO` lazy creates two channels: input and output.
 
-Input channel used for consuming requests and events. It has prefetch count set to `300` (currently,
-not configurable).
+Input channel is used for consuming requests and events. It has prefetch count set to `300`
+(currently, not configurable).
 
 Output channel is
 a [ConfirmChannel](https://amqp-node.github.io/amqplib/channel_api.html#confirmchannel) used to send

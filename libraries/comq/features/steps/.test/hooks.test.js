@@ -1,11 +1,12 @@
 'use strict'
 
-const { generate } = require('randomstring')
 const { gherkin } = require('@toa.io/libraries/mock')
 const mock = { gherkin }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/libraries/comq')
+
+const { io } = require('./io.mock')
 
 const {
   /** @type {jest.MockedFn<toa.comq.connect>} */
@@ -16,8 +17,6 @@ require('../hooks')
 
 /** @type {toa.comq.features.Context} */
 let context
-
-const io = { close: jest.fn(async () => undefined) }
 
 connect.mockImplementation(async () => /** @type {toa.comq.IO} */ io)
 

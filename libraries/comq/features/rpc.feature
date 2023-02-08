@@ -1,10 +1,13 @@
 Feature: Request-reply (RPC)
 
-  Scenario: Getting reply
-    Given function `add` is replying `add_numbers` request queue
-    When I send the request to `add_numbers` queue:
+  Scenario: Send request and get reply
+    Given producer `add` is replying `add_numbers` queue
+    When I send following request to `add_numbers` queue:
     """yaml
     a: 1
     b: 2
     """
-    Then I get the reply: 3
+    Then I get the reply:
+    """yaml
+    3
+    """
