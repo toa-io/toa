@@ -52,15 +52,11 @@ class IO {
     /**
      * @param {string} queue
      * @param {any} payload
-     * @param {string} [contentType]
+     * @param {comq.encoding} [encoding]
      * @returns {Promise<void>}
      */
-    async (queue, payload, contentType) => {
-      const raw = Buffer.isBuffer(payload)
-
-      contentType ??= raw ? OCTETS : MSGPACK
-
-      const buffer = raw ? payload : encode(payload, contentType)
+    async (queue, payload, encoding) => {
+      const [buffer, contentType] = this.#encode(payload, encoding)
       const correlationId = randomBytes(8).toString('hex')
       const emitter = this.#emitters[queue]
       const replyTo = emitter.queue
@@ -80,6 +76,20 @@ class IO {
       const consumer = this.#getMessageConsumer(callback)
 
       await this.#input.subscribe(exchange, queue, consumer)
+    })
+
+  emit = lazy(this, this.#createOutput,
+    /**
+     * @param {string} exchange
+     * @param {any} payload
+     * @param {comq.encoding} [encoding]
+     * @returns {Promise<void>}
+     */
+    async (exchange, payload, encoding) => {
+      const [buffer, contentType] = this.#encode(payload, encoding)
+      const properties = { contentType }
+
+      await this.#output.publish(exchange, buffer, properties)
     })
 
   async seal () {
@@ -159,9 +169,27 @@ class IO {
 
       await callback(payload)
     }
+
+  /**
+   * @param {any} payload
+   * @param {comq.encoding} [contentType]
+   * @returns [Buffer, string]
+   */
+  #encode (payload, contentType) {
+    const raw = Buffer.isBuffer(payload)
+
+    contentType ??= raw ? OCTETS : MSGPACK
+
+    const buffer = raw ? payload : encode(payload, contentType)
+
+    return [buffer, contentType]
+  }
 }
 
+/** @type {comq.encoding} */
 const OCTETS = 'application/octet-stream'
+
+/** @type {comq.encoding} */
 const MSGPACK = 'application/msgpack'
 
 exports.IO = IO

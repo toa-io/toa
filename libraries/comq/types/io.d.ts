@@ -3,6 +3,8 @@ declare namespace comq {
   type producer = (message: any) => Promise<any>
   type consumer = (message: any) => Promise<void>
 
+  type encoding = 'application/msgpack' | 'application/json' | 'application/octet-stream'
+
   interface ReplyEmitter {
     queue: string
 
@@ -14,9 +16,11 @@ declare namespace comq {
   interface IO {
     reply(queue: string, produce: producer): Promise<void>
 
-    request(queue: string, payload: object, encoding?: string): Promise<any>
+    request(queue: string, payload: any, encoding?: encoding): Promise<any>
 
     consume(exchange: string, group: string, consumer: consumer): Promise<void>
+
+    emit(exchange: string, payload: any, encoding?: encoding): Promise<void>
 
     seal(): Promise<void>
 

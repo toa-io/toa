@@ -5,6 +5,7 @@ const channel = () => ({
   deliver: jest.fn(async () => undefined),
   send: jest.fn(async () => undefined),
   subscribe: jest.fn(async () => undefined),
+  publish: jest.fn(async () => undefined),
   close: jest.fn(async () => undefined)
 })
 
