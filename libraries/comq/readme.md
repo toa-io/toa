@@ -5,7 +5,7 @@ Node.js.
 
 ## Features
 
-1. Zero configuration
+1. Ø configuration
 2. [Request](#request)-[reply](#reply) (RPC)
 3. Events ([pub](#emission)/[sub](#consumption))
 4. [Message acknowledgement](#acknowledgement)
