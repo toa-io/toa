@@ -13,6 +13,7 @@ Node.js.
 6. [Flow control](#io-channels)
 7. [Content encoding/decoding](#encoding)
 8. [Graceful shutdown](#graceful-shutdown)
+9. Broker restart or temporary connection loss [resilience](#persistence)
 
 > Features are described in the [`features`](features) directory. To run them you should start
 > RabbitMQ server with `docker compose up -d`, then execute `npm run test:features`
@@ -76,8 +77,8 @@ await io.reply('add_numbers', ({ a, b }) => (a + b))
 Send encoded request message with `replyTo` and `correlationId` properties set and
 return decoded reply.
 
-On the initial call, a durable queue for requests and an exclusive queue for replies are asserted.
-See [Queue properties](https://www.rabbitmq.com/queues.html#properties).
+On the initial call, a queue for requests and a [transient](#persistence) queue for replies are
+asserted.
 
 ### Example
 
@@ -175,3 +176,12 @@ consumed. Output channel remains available.
 
 It is recommended to call `.seal()`, finish processing current requests and events, and then
 call `.close()`.
+
+## Persistence
+
+Queues are declared as durable. Transient queues are durable queues
+with 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable
+currently).
+
+Messages are sent
+with [`delivery mode` 2](https://www.rabbitmq.com/publishers.html#message-properties).
