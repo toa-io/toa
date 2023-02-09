@@ -4,7 +4,7 @@ const decoders = require('./.encoders')
 
 /**
  * @param {import('amqplib').ConsumeMessage} message
- * @returns {object | Buffer}
+ * @returns {any}
  */
 const decode = (message) => {
   const type = message.properties.contentType

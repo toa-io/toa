@@ -3,13 +3,15 @@
 const { randomBytes } = require('node:crypto')
 const { EventEmitter } = require('node:events')
 
+const { concat } = require('./concat')
+
 /**
  * @param {string} label
- * @returns {toa.comq.Replies}
+ * @returns {toa.comq.ReplyEmitter}
  */
-const replies = (label) => {
+const createReplyEmitter = (label) => {
   const id = randomBytes(8).toString('hex')
-  const queue = label + '..' + id
+  const queue = concat(label, id)
   const events = new EventEmitter()
   const once = (name, callback) => events.once(name, callback)
   const emit = (name, value) => events.emit(name, value)
@@ -17,4 +19,4 @@ const replies = (label) => {
   return { queue, once, emit }
 }
 
-exports.replies = replies
+exports.createReplyEmitter = createReplyEmitter

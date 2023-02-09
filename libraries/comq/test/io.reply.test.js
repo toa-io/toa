@@ -7,6 +7,7 @@ const { generate } = require('randomstring')
 const { encode } = require('../src/encode')
 
 const mock = require('./connection.mock')
+const { encodings } = require('./encodings')
 
 const { IO } = require('../src/io')
 
@@ -91,8 +92,6 @@ describe('encoding', () => {
 
   /** @type {jest.MockedObject<toa.comq.Channel>} */
   let output
-
-  const encodings = ['application/msgpack', 'application/json']
 
   beforeEach(async () => {
     await io.reply(queue, produce)

@@ -13,9 +13,6 @@ class Channel {
   /** @type {import('amqplib').Channel} */
   #channel
 
-  /** @type {Record<string, toa.comq.channel.Queue>} */
-  #queues = {}
-
   /**
    * @param {AMQPChannel} channel
    */
@@ -23,15 +20,17 @@ class Channel {
     this.#channel = channel
   }
 
-  consume = lazy(this, this.#assert,
+  consume = lazy(this, this.#assertQueue,
     /**
      * @param {string} queue
      * @param {boolean} durable
-     * @param {toa.comq.channel.consumer} consumer
+     * @param {toa.comq.channel.consumer} callback
      * @returns {Promise<void>}
      */
-    async (queue, durable, consumer) => {
-      await this.#channel.consume(queue, this.#consume(consumer))
+    async (queue, durable, callback) => {
+      const consumer = this.#getAcknowledgingConsumer(callback)
+
+      await this.#channel.consume(queue, consumer)
     })
 
   async send (queue, buffer, properties) {
@@ -42,17 +41,20 @@ class Channel {
     this.#channel.sendToQueue(queue, buffer, properties)
   }
 
-  deliver = lazy(this, this.#persistent, this.send)
+  deliver = lazy(this, this.#assertPersistentQueue, this.send)
 
-  subscribe = lazy(this, [this.#exchange, this.#bind],
+  subscribe = lazy(this,
+    [this.#assertExchange, this.#bindQueue],
     /**
      * @param {string} exchange
      * @param {string} queue
-     * @param {toa.comq.channel.consumer} consumer
+     * @param {toa.comq.channel.consumer} callback
      * @returns {Promise<void>}
      */
-    async (exchange, queue, consumer) => {
-      await this.#channel.consume(queue, this.#consume(consumer))
+    async (exchange, queue, callback) => {
+      const consumer = this.#getAcknowledgingConsumer(callback)
+
+      await this.#channel.consume(queue, consumer)
     })
 
   async close () {
@@ -66,30 +68,25 @@ class Channel {
    * @param {boolean} persistent
    * @returns {Promise<void>}
    */
-  async #assert (queue, persistent) {
-    if (!(queue in this.#queues)) {
-      const options = persistent ? PERSISTENT : TRANSIENT
-      const assertion = this.#channel.assertQueue(queue, options)
+  async #assertQueue (queue, persistent) {
+    const options = persistent ? PERSISTENT_QUEUE : TRANSIENT_QUEUE
 
-      this.#queues[queue] = { assertion }
-    }
-
-    return this.#queues[queue].assertion
+    await this.#channel.assertQueue(queue, options)
   }
 
   /**
    * @param {string} queue
    * @returns {Promise<void>}
    */
-  async #persistent (queue) {
-    return this.#assert(queue, true)
+  async #assertPersistentQueue (queue) {
+    return this.#assertQueue(queue, true)
   }
 
   /**
    * @param {string} exchange
    * @returns {Promise<void>}
    */
-  async #exchange (exchange) {
+  async #assertExchange (exchange) {
     await this.#channel.assertExchange(exchange, FANOUT)
   }
 
@@ -99,20 +96,20 @@ class Channel {
    * @param {string} queue
    * @returns {Promise<void>}
    */
-  async #bind (exchange, queue) {
-    await this.#persistent(queue)
-    await this.#channel.bindQueue(queue, exchange, EMPTY)
+  async #bindQueue (exchange, queue) {
+    await this.#assertPersistentQueue(queue)
+    await this.#channel.bindQueue(queue, exchange, DEFAULT_ROUTING_KEY)
   }
 
   // endregion
 
   /**
-   * @param {toa.comq.channel.consumer} consumer
+   * @param {toa.comq.channel.consumer} callback
    * @returns {toa.comq.channel.consumer}
    */
-  #consume = (consumer) =>
+  #getAcknowledgingConsumer = (callback) =>
     async (message) => {
-      await consumer(message)
+      await callback(message)
 
       this.#channel.ack(message)
     }
@@ -121,12 +118,12 @@ class Channel {
 const HOUR = 3600 * 1000
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const PERSISTENT = {}
+const PERSISTENT_QUEUE = {}
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const TRANSIENT = { arguments: { 'x-expires': HOUR } }
+const TRANSIENT_QUEUE = { arguments: { 'x-expires': HOUR } }
 
 const FANOUT = 'fanout'
-const EMPTY = ''
+const DEFAULT_ROUTING_KEY = ''
 
 exports.Channel = Channel
