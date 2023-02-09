@@ -143,17 +143,6 @@ The following content types are supported:
 - `application/msgpack`
 - `application/json`
 
-## Acknowledgement
-
-Incoming messages are "positive
-acknowledged" ([ack](https://amqp-node.github.io/amqplib/channel_api.html#channel_ack)), unless
-message handler function throws an exception. Messages are **not** "negative
-acknowledged" ([nack](https://amqp-node.github.io/amqplib/channel_api.html#channel_nack)) as it's
-assumed, that the handler's exception will cause
-the [process to crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html). In this
-scenario, RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the
-message due to a connection loss.
-
 ## IO Channels
 
 `IO` lazy creates two channels: input and output.
@@ -178,10 +167,17 @@ call `.close()`.
 
 ## Persistence
 
-Queues and exchanges are asserted as `durable`.
+Queues and exchanges are `durable`. Transient queues have 1
+hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable currently). Messages are
+sent with [`delivery mode` 2](https://www.rabbitmq.com/publishers.html#message-properties).
 
-Transient queues have 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) and persistent have
-1 week (non-configurable currently).
+## Acknowledgement
 
-Messages are sent
-with [`delivery mode` 2](https://www.rabbitmq.com/publishers.html#message-properties).
+Incoming messages are "positive
+acknowledged" ([ack](https://amqp-node.github.io/amqplib/channel_api.html#channel_ack)), unless
+message handler function throws an exception. Messages are **not** "negative
+acknowledged" ([nack](https://amqp-node.github.io/amqplib/channel_api.html#channel_nack)) as it's
+assumed, that the handler's exception will cause
+the [process to crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html). In this
+scenario, RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the
+message due to a connection loss.

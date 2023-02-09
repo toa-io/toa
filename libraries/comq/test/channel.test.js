@@ -42,7 +42,16 @@ describe('consume', () => {
 
     await channel.consume(queue, persistent, consumer)
 
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { arguments: { 'x-expires': 7 * 24 * 3600 * 1000 } })
+    expect(chan.assertQueue).toHaveBeenCalledTimes(2)
+
+    const [name, options] = chan.assertQueue.mock.calls[1]
+
+    expect(name).toStrictEqual(queue)
+
+    if (options !== undefined) {
+      expect(options.durable).not.toStrictEqual(false)
+      expect(options.arguments?.['x-expires']).toBeUndefined()
+    }
   })
 
   it('should assert transient queue', async () => {

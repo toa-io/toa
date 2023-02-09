@@ -119,10 +119,9 @@ class Channel {
 }
 
 const HOUR = 3600 * 1000
-const WEEK = 7 * 24 * HOUR
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const PERSISTENT = { arguments: { 'x-expires': WEEK } }
+const PERSISTENT = {}
 
 /** @type {import('amqplib').Options.AssertQueue} */
 const TRANSIENT = { arguments: { 'x-expires': HOUR } }
