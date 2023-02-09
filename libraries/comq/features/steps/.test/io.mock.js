@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const io = /** @type {jest.MockedObject<toa.comq.IO>} */ {
+const io = /** @type {jest.MockedObject<comq.IO>} */ {
   reply: jest.fn(async () => undefined),
   request: jest.fn(async () => generate()),
   close: jest.fn(async () => undefined)

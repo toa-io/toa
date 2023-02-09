@@ -12,23 +12,23 @@ const { encode } = require('./encode')
 const io = require('./.io')
 
 /**
- * @implements {toa.comq.IO}
+ * @implements {comq.IO}
  */
 class IO {
-  /** @type {toa.comq.Connection} */
+  /** @type {comq.Connection} */
   #connection
 
-  /** @type {toa.comq.Channel} */
+  /** @type {comq.Channel} */
   #input
 
-  /** @type {toa.comq.Channel} */
+  /** @type {comq.Channel} */
   #output
 
-  /** @type {Record<string, toa.comq.ReplyEmitter>} */
+  /** @type {Record<string, comq.ReplyEmitter>} */
   #emitters = {}
 
   /**
-   * @param {toa.comq.Connection} connection
+   * @param {comq.Connection} connection
    */
   constructor (connection) {
     this.#connection = connection
@@ -38,7 +38,7 @@ class IO {
     [this.#createOutput, this.#createInput],
     /**
      * @param {string} queue
-     * @param {toa.comq.producer} callback
+     * @param {comq.producer} callback
      * @returns {Promise<void>}
      */
     async (queue, callback) => {
@@ -116,8 +116,8 @@ class IO {
   // endregion
 
   /**
-   * @param {toa.comq.producer} callback
-   * @returns {toa.comq.channel.consumer}
+   * @param {comq.producer} callback
+   * @returns {comq.channel.consumer}
    */
   #getRequestConsumer = (callback) =>
     async (message) => {
@@ -139,8 +139,8 @@ class IO {
 
   /**
    * @param {string} queue
-   * @param {toa.comq.ReplyEmitter} emitter
-   * @returns {toa.comq.channel.consumer}
+   * @param {comq.ReplyEmitter} emitter
+   * @returns {comq.channel.consumer}
    */
   #getReplyConsumer = (queue, emitter) =>
     (message) => {
@@ -150,8 +150,8 @@ class IO {
     }
 
   /**
-   * @param {toa.comq.consumer} callback
-   * @returns {toa.comq.channel.consumer}
+   * @param {comq.consumer} callback
+   * @returns {comq.channel.consumer}
    */
   #getMessageConsumer = (callback) =>
     async (message) => {

@@ -7,7 +7,7 @@ const { concat } = require('./concat')
 
 /**
  * @param {string} label
- * @returns {toa.comq.ReplyEmitter}
+ * @returns {comq.ReplyEmitter}
  */
 const createReplyEmitter = (label) => {
   const id = randomBytes(8).toString('hex')

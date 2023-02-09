@@ -7,7 +7,7 @@
 const { lazy } = require('@toa.io/libraries/generic')
 
 /**
- * @implements {toa.comq.Channel}
+ * @implements {comq.Channel}
  */
 class Channel {
   /** @type {import('amqplib').Channel} */
@@ -24,7 +24,7 @@ class Channel {
     /**
      * @param {string} queue
      * @param {boolean} durable
-     * @param {toa.comq.channel.consumer} callback
+     * @param {comq.channel.consumer} callback
      * @returns {Promise<void>}
      */
     async (queue, durable, callback) => {
@@ -48,7 +48,7 @@ class Channel {
     /**
      * @param {string} exchange
      * @param {string} queue
-     * @param {toa.comq.channel.consumer} callback
+     * @param {comq.channel.consumer} callback
      * @returns {Promise<void>}
      */
     async (exchange, queue, callback) => {
@@ -104,8 +104,8 @@ class Channel {
   // endregion
 
   /**
-   * @param {toa.comq.channel.consumer} callback
-   * @returns {toa.comq.channel.consumer}
+   * @param {comq.channel.consumer} callback
+   * @returns {comq.channel.consumer}
    */
   #getAcknowledgingConsumer = (callback) =>
     async (message) => {

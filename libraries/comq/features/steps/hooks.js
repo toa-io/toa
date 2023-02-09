@@ -3,7 +3,7 @@
 const { Before, AfterAll, BeforeAll } = require('@cucumber/cucumber')
 const { connect } = require('@toa.io/libraries/comq')
 
-/** @type {toa.comq.IO} */
+/** @type {comq.IO} */
 let io
 
 BeforeAll(async function () {
@@ -12,7 +12,7 @@ BeforeAll(async function () {
 
 Before(
   /**
-   * @this {toa.comq.features.Context}
+   * @this {comq.features.Context}
    */
   async function () {
     this.io ??= io

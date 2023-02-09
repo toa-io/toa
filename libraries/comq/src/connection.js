@@ -5,7 +5,7 @@ const amqp = require('amqplib')
 const { Channel } = require('./channel')
 
 /**
- * @implements {toa.comq.Connection}
+ * @implements {comq.Connection}
  */
 class Connection {
   /** @type {string} */

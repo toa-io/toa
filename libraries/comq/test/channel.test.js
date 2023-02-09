@@ -16,7 +16,7 @@ let conn
 /** @type {jest.MockedObject<import('amqplib').Channel>} */
 let chan
 
-/** @type {toa.comq.Channel} */
+/** @type {comq.Channel} */
 let channel
 
 beforeEach(async () => {
@@ -28,7 +28,7 @@ beforeEach(async () => {
 })
 
 describe('consume', () => {
-  const consumer = /** @type {toa.comq.channel.consumer} */ jest.fn(async () => undefined)
+  const consumer = /** @type {comq.channel.consumer} */ jest.fn(async () => undefined)
   const queue = generate()
   const persistent = flip()
 
@@ -144,7 +144,7 @@ describe('send', () => {
 describe('subscribe', () => {
   const exchange = generate()
   const queue = generate()
-  const consumer = /** @type {toa.comq.channel.consumer} */ jest.fn(() => undefined)
+  const consumer = /** @type {comq.channel.consumer} */ jest.fn(() => undefined)
 
   beforeEach(async () => {
     jest.clearAllMocks()

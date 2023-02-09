@@ -1,7 +1,7 @@
 import * as _channel from './channel'
 import * as _io from './io'
 
-declare namespace toa.comq {
+declare namespace comq {
 
   interface Connection {
     connect(): Promise<void>

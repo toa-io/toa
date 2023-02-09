@@ -11,10 +11,10 @@ const { encodings } = require('./encodings')
 
 const { IO } = require('../src/io')
 
-/** @type {toa.comq.IO} */
+/** @type {comq.IO} */
 let io
 
-/** @type {jest.MockedObject<toa.comq.Connection>} */
+/** @type {jest.MockedObject<comq.Connection>} */
 let connection
 
 beforeEach(async () => {
@@ -59,7 +59,7 @@ describe.each(['in', 'out'])('%sput channel', (key) => {
 })
 
 describe('queues', () => {
-  /** @type {jest.MockedObject<toa.comq.Channel>} */
+  /** @type {jest.MockedObject<comq.Channel>} */
   let input
 
   beforeEach(async () => {
@@ -87,10 +87,10 @@ describe('should send rep', () => {
 })
 
 describe('encoding', () => {
-  /** @type {jest.MockedObject<toa.comq.Channel>} */
+  /** @type {jest.MockedObject<comq.Channel>} */
   let input
 
-  /** @type {jest.MockedObject<toa.comq.Channel>} */
+  /** @type {jest.MockedObject<comq.Channel>} */
   let output
 
   beforeEach(async () => {

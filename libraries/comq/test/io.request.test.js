@@ -9,10 +9,10 @@ const { encode } = require('../src/encode')
 const mock = require('./connection.mock')
 const { IO } = require('../src/io')
 
-/** @type {toa.comq.IO} */
+/** @type {comq.IO} */
 let io
 
-/** @type {jest.MockedObject<toa.comq.Connection>} */
+/** @type {jest.MockedObject<comq.Connection>} */
 let connection
 
 beforeEach(async () => {
@@ -31,7 +31,7 @@ it('should be', async () => {
 const queue = generate()
 const payload = { [generate()]: generate() }
 
-/** @type {jest.MockedObject<toa.comq.Channel>} */
+/** @type {jest.MockedObject<comq.Channel>} */
 let output
 let promise
 

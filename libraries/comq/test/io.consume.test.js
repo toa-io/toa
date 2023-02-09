@@ -8,10 +8,10 @@ const { encodings } = require('./encodings')
 
 const { IO } = require('../src/io')
 
-/** @type {toa.comq.IO} */
+/** @type {comq.IO} */
 let io
 
-/** @type {jest.MockedObject<toa.comq.Connection>} */
+/** @type {jest.MockedObject<comq.Connection>} */
 let connection
 
 beforeEach(async () => {
@@ -29,7 +29,7 @@ const exchange = generate()
 const group = generate()
 const consumer = jest.fn(() => undefined)
 
-/** @type {jest.MockedObject<toa.comq.Channel>} */
+/** @type {jest.MockedObject<comq.Channel>} */
 let input
 
 beforeEach(async () => {

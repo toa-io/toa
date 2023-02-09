@@ -1,6 +1,6 @@
 import * as _io from '../../../types'
 
-declare namespace toa.comq.features {
+declare namespace comq.features {
 
   type Context = {
     io: _io.IO

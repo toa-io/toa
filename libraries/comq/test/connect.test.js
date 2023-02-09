@@ -10,7 +10,7 @@ jest.mock('../src/connection')
 const { IO } = require('../src/io')
 
 const {
-  /** @type {jest.MockedClass<toa.comq.Connection>} */
+  /** @type {jest.MockedClass<comq.Connection>} */
   Connection
 } = require('../src/connection')
 
@@ -20,7 +20,7 @@ it('should be', async () => {
 
 const url = generate()
 
-/** @type {toa.comq.IO} */
+/** @type {comq.IO} */
 let io
 
 beforeEach(async () => {
@@ -36,7 +36,7 @@ it('should return IO', async () => {
 it('should pass active connection', async () => {
   expect(Connection).toHaveBeenCalledWith(url)
 
-  /** @type {jest.MockedObject<toa.comq.Connection>} */
+  /** @type {jest.MockedObject<comq.Connection>} */
   const instance = Connection.mock.instances[0]
 
   expect(instance.connect).toHaveBeenCalled()

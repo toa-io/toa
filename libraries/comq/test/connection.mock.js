@@ -9,9 +9,9 @@ const channel = () => ({
 })
 
 /**
- * @returns {jest.MockedObject<toa.comq.Connection>}
+ * @returns {jest.MockedObject<comq.Connection>}
  */
-const connection = () => (/** @type {jest.MockedObject<toa.comq.Connection>} */ {
+const connection = () => (/** @type {jest.MockedObject<comq.Connection>} */ {
   in: jest.fn(async () => channel()),
   out: jest.fn(async () => channel()),
   close: jest.fn(async () => undefined)

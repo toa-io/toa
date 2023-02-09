@@ -6,7 +6,7 @@ Given('I consume events from {token} exchange as {token}',
   /**
    * @param {string} exchange
    * @param {string} group
-   * @this {toa.comq.features.Context}
+   * @this {comq.features.Context}
    */
   async function (exchange, group) {
   })

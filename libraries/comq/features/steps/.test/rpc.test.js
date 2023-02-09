@@ -12,7 +12,7 @@ jest.mock('@cucumber/cucumber', () => mock.gherkin)
 
 require('../rpc')
 
-/** @type {toa.comq.features.Context} */
+/** @type {comq.features.Context} */
 let context
 
 const queue = generate()

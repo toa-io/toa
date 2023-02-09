@@ -3,7 +3,7 @@
 const { IO } = require('./io')
 const { Connection } = require('./connection')
 
-/** @type {toa.comq.connect} */
+/** @type {comq.connect} */
 const connect = async (url) => {
   const connection = new Connection(url)
 
