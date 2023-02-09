@@ -23,27 +23,27 @@ beforeEach(() => {
   context = { io }
 })
 
-describe('Given producer {token} is replying {token} queue', () => {
-  const step = gherkin.steps.Gi('producer {token} is replying {token} queue')
+describe('Given function replying {token} queue:', () => {
+  const step = gherkin.steps.Gi('function replying {token} queue:')
 
   it('should be', () => undefined)
 
-  const root = resolve(__dirname, '../producers')
+  it('should assign given function as producer', async () => {
+    const javascript = '({ a, b }) => a + b'
 
-  it.each(['add'])('should set `add` as producer', async (name) => {
-    const path = join(root, name)
-    const producer = require(path)[name]
+    await step.call(context, queue, javascript)
 
-    expect(producer).toBeInstanceOf(Function)
+    expect(io.reply).toHaveBeenCalledWith(queue, expect.any(Function))
 
-    await step.call(context, name, queue)
+    const producer = io.reply.mock.calls[0][1]
+    const sum = producer({ a: 1, b: 2 })
 
-    expect(io.reply).toHaveBeenCalledWith(queue, producer)
+    expect(sum).toStrictEqual(3)
   })
 })
 
-describe('When I send following request to {token} queue:', () => {
-  const step = gherkin.steps.Wh('I send following request to {token} queue:')
+describe('When I send following request to the {token} queue:', () => {
+  const step = gherkin.steps.Wh('I send following request to the {token} queue:')
 
   it('should be', async () => undefined)
 

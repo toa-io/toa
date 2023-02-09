@@ -5,7 +5,7 @@ const { EventEmitter } = require('node:events')
 
 /**
  * @param {string} label
- * @return {toa.comq.Replies}
+ * @returns {toa.comq.Replies}
  */
 const replies = (label) => {
   const id = randomBytes(8).toString('hex')

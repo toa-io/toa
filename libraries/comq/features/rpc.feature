@@ -1,13 +1,21 @@
 Feature: Request-reply (RPC)
 
-  Scenario: Send request and get reply
-    Given producer `add` is replying `add_numbers` queue
-    When I send following request to `add_numbers` queue:
+  Scenario Outline: Send request and get reply (<queue>)
+    Given function replying `<queue>` queue:
+    """
+    ({ a, b }) => { return <expression> }
+    """
+    When I send following request to the `<queue>` queue:
     """yaml
-    a: 1
-    b: 2
+    a: <a>
+    b: <b>
     """
     Then I get the reply:
     """yaml
-    3
+    <reply>
     """
+    Examples:
+      | queue            | expression | a | b | reply |
+      | add_numbers      | a + b      | 1 | 2 | 3     |
+      | multiply_numbers | a * b      | 1 | 2 | 2     |
+      | divide_numbers   | a / b      | 4 | 2 | 2     |

@@ -8,16 +8,18 @@ declare namespace toa.comq {
       assertion?: Promise<any>
     }
 
+    type consumer = (message: ConsumeMessage) => void | Promise<void>
+
   }
 
-  type consumer = (message: ConsumeMessage) => void | Promise<void>
-
   interface Channel {
-    consume(queue: string, durable: boolean, consumer: consumer): Promise<void>
+    consume(queue: string, durable: boolean, consumer: channel.consumer): Promise<void>
 
     deliver(queue: string, buffer: Buffer, properties: Options.Publish): Promise<void>
 
     send(queue: string, buffer: Buffer, properties: Options.Publish): Promise<void>
+
+    subscribe(exchange: string, queue: string, consumer: channel.consumer): Promise<void>
 
     close(): Promise<void>
   }

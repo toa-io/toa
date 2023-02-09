@@ -27,7 +27,7 @@ class Channel {
     /**
      * @param {string} queue
      * @param {boolean} durable
-     * @param {toa.comq.consumer} consumer
+     * @param {toa.comq.channel.consumer} consumer
      * @returns {Promise<void>}
      */
     async (queue, durable, consumer) => {
@@ -42,11 +42,24 @@ class Channel {
     this.#channel.sendToQueue(queue, buffer, properties)
   }
 
-  deliver = lazy(this, this.#durable, this.send)
+  deliver = lazy(this, this.#persistent, this.send)
+
+  subscribe = lazy(this, [this.#exchange, this.#bind],
+    /**
+     * @param {string} exchange
+     * @param {string} queue
+     * @param {toa.comq.channel.consumer} consumer
+     * @returns {Promise<void>}
+     */
+    async (exchange, queue, consumer) => {
+      await this.#channel.consume(queue, this.#consume(consumer))
+    })
 
   async close () {
     await this.#channel.close()
   }
+
+  // region initializers
 
   /**
    * @param {string} queue
@@ -68,13 +81,34 @@ class Channel {
    * @param {string} queue
    * @returns {Promise<void>}
    */
-  async #durable (queue) {
+  async #persistent (queue) {
     return this.#assert(queue, true)
   }
 
   /**
-   * @param {toa.comq.consumer} consumer
-   * @returns {toa.comq.consumer}
+   * @param {string} exchange
+   * @returns {Promise<void>}
+   */
+  async #exchange (exchange) {
+    await this.#channel.assertExchange(exchange, FANOUT)
+  }
+
+  /**
+   *
+   * @param {string} exchange
+   * @param {string} queue
+   * @returns {Promise<void>}
+   */
+  async #bind (exchange, queue) {
+    await this.#persistent(queue)
+    await this.#channel.bindQueue(queue, exchange, EMPTY)
+  }
+
+  // endregion
+
+  /**
+   * @param {toa.comq.channel.consumer} consumer
+   * @returns {toa.comq.channel.consumer}
    */
   #consume = (consumer) =>
     async (message) => {
@@ -84,12 +118,16 @@ class Channel {
     }
 }
 
-/** @type {import('amqplib').Options.AssertQueue} */
-const PERSISTENT = {}
-
 const HOUR = 3600 * 1000
+const WEEK = 7 * 24 * HOUR
+
+/** @type {import('amqplib').Options.AssertQueue} */
+const PERSISTENT = { arguments: { 'x-expires': WEEK } }
 
 /** @type {import('amqplib').Options.AssertQueue} */
 const TRANSIENT = { arguments: { 'x-expires': HOUR } }
+
+const FANOUT = 'fanout'
+const EMPTY = ''
 
 exports.Channel = Channel

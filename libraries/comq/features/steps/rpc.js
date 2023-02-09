@@ -1,26 +1,24 @@
 'use strict'
 
 const assert = require('node:assert')
-const { join } = require('node:path')
 const { parse } = require('@toa.io/libraries/yaml')
 const { match } = require('@toa.io/libraries/generic')
 const { Given, When, Then } = require('@cucumber/cucumber')
 
-Given('producer {token} is replying {token} queue',
+Given('function replying {token} queue:',
   /**
-   * @param {string} name
    * @param {string} queue
+   * @param {string} javascript
    * @this {toa.comq.features.Context}
    */
-  async function (name, queue) {
-    const path = join(PRODUCERS, name)
-    const mod = require(path)
-    const producer = mod[name]
+  async function (queue, javascript) {
+    // eslint-disable-next-line no-new-func
+    const producer = new Function('return ' + javascript)()
 
     await this.io.reply(queue, producer)
   })
 
-When('I send following request to {token} queue:',
+When('I send following request to the {token} queue:',
   /**
    * @param {string} queue
    * @param {string} yaml
@@ -43,5 +41,3 @@ Then('I get the reply:',
 
     assert.equal(matches, true, 'Reply mismatch')
   })
-
-const PRODUCERS = join(__dirname, 'producers')

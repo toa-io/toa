@@ -7,6 +7,7 @@ const { generate } = require('randomstring')
 const { encode } = require('../src/encode')
 
 const mock = require('./connection.mock')
+
 const { IO } = require('../src/io')
 
 /** @type {toa.comq.IO} */
@@ -80,6 +81,10 @@ describe('queues', () => {
   })
 })
 
+describe('should send rep', () => {
+
+})
+
 describe('encoding', () => {
   /** @type {jest.MockedObject<toa.comq.Channel>} */
   let input
@@ -135,7 +140,7 @@ describe('encoding', () => {
       contentType: properties.contentType
     }
 
-    expect(output.deliver).toHaveBeenCalledWith(properties.replyTo, reply, props)
+    expect(output.send).toHaveBeenCalledWith(properties.replyTo, reply, props)
   })
 
   it.each(['specified', 'supported'])('should pass buffer if encoding format not %s', async (problem) => {
@@ -172,7 +177,7 @@ describe('encoding', () => {
 
     await producer(message)
 
-    expect(output.deliver)
+    expect(output.send)
       .toHaveBeenCalledWith(
         expect.any(String),
         buffer,

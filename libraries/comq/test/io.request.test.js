@@ -1,12 +1,13 @@
 'use strict'
 
 // region setup
+
+const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
 const { encode } = require('../src/encode')
 
 const mock = require('./connection.mock')
 const { IO } = require('../src/io')
-const { randomBytes } = require('node:crypto')
 
 /** @type {toa.comq.IO} */
 let io
@@ -20,6 +21,7 @@ beforeEach(async () => {
   connection = mock.connection()
   io = new IO(connection)
 })
+
 // endregion
 
 it('should be', async () => {

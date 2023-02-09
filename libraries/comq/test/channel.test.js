@@ -28,7 +28,7 @@ beforeEach(async () => {
 })
 
 describe('consume', () => {
-  const consumer = /** @type {toa.comq.consumer} */ jest.fn(async () => undefined)
+  const consumer = /** @type {toa.comq.channel.consumer} */ jest.fn(async () => undefined)
   const queue = generate()
   const persistent = flip()
 
@@ -42,7 +42,7 @@ describe('consume', () => {
 
     await channel.consume(queue, persistent, consumer)
 
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, {})
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { arguments: { 'x-expires': 7 * 24 * 3600 * 1000 } })
   })
 
   it('should assert transient queue', async () => {
@@ -54,7 +54,7 @@ describe('consume', () => {
     expect(chan.assertQueue).toHaveBeenCalledWith(queue, { arguments: { 'x-expires': 3600 * 1000 } })
   })
 
-  it('should bind consumer', async () => {
+  it('should start consuming', async () => {
     expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function))
 
     const content = randomBytes(8)
@@ -90,7 +90,7 @@ describe.each(['deliver', 'send'])('%s', () => {
   })
 
   it('should assert durable queue', async () => {
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, {})
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, expect.not.objectContaining({ durable: false }))
   })
 
   it('should assert queue once', async () => {
@@ -129,6 +129,51 @@ describe('send', () => {
       ...properties,
       persistent: true
     })
+  })
+})
+
+describe('subscribe', () => {
+  const exchange = generate()
+  const queue = generate()
+  const consumer = /** @type {toa.comq.channel.consumer} */ jest.fn(() => undefined)
+
+  beforeEach(async () => {
+    jest.clearAllMocks()
+
+    await channel.subscribe(exchange, queue, consumer)
+  })
+
+  it('should assert durable fanout exchange', async () => {
+    expect(chan.assertExchange).toHaveBeenCalledTimes(1)
+
+    const [name, type, options] = chan.assertExchange.mock.calls[0]
+
+    expect(name).toStrictEqual(exchange)
+    expect(type).toStrictEqual('fanout')
+
+    if (options !== undefined) expect(options).not.toMatchObject({ durable: false })
+  })
+
+  it('should assert durable queue', async () => {
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, expect.not.objectContaining({ durable: false }))
+  })
+
+  it('should bind queue to exchange', async () => {
+    expect(chan.bindQueue).toHaveBeenCalledTimes(1)
+    expect(chan.bindQueue).toHaveBeenCalledWith(queue, exchange, '')
+  })
+
+  it('should start consuming', async () => {
+    expect(chan.consume).toHaveBeenCalledTimes(1)
+    expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function))
+
+    const consume = chan.consume.mock.calls[0][1]
+    const message = generate()
+
+    await consume(message)
+
+    expect(consumer).toHaveBeenCalledWith(message)
+    expect(chan.ack).toHaveBeenCalledWith(message)
   })
 })
 
