@@ -89,7 +89,7 @@ describe.each(['deliver', 'send'])('%s', () => {
     await channel.deliver(queue, buffer, properties)
   })
 
-  it('should assert persistent queue', async () => {
+  it('should assert durable queue', async () => {
     expect(chan.assertQueue).toHaveBeenCalledWith(queue, {})
   })
 
@@ -113,7 +113,7 @@ describe.each(['deliver', 'send'])('%s', () => {
   })
 
   it('should send to queue', async () => {
-    expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, properties)
+    expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, expect.objectContaining(properties))
   })
 })
 
@@ -122,10 +122,13 @@ describe('send', () => {
   const buffer = randomBytes(10)
   const properties = { replyTo: generate() }
 
-  it('should send to queue', async () => {
+  it('should send persistent message', async () => {
     await channel.send(queue, buffer, properties)
 
-    expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, properties)
+    expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, {
+      ...properties,
+      persistent: true
+    })
   })
 })
 

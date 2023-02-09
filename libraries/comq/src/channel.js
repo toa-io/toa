@@ -35,6 +35,8 @@ class Channel {
     })
 
   async send (queue, buffer, properties) {
+    properties.persistent ??= true
+
     // TODO: handle `false` response
     // TODO: ConfirmChannel callback
     this.#channel.sendToQueue(queue, buffer, properties)
