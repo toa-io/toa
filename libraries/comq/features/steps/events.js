@@ -1,6 +1,9 @@
 'use strict'
 
-const { Given } = require('@cucumber/cucumber')
+const assert = require('node:assert')
+const { generate } = require('randomstring')
+const { timeout } = require('@toa.io/libraries/generic')
+const { Given, When, Then } = require('@cucumber/cucumber')
 
 Given('I consume events from {token} exchange as {token}',
   /**
@@ -10,7 +13,32 @@ Given('I consume events from {token} exchange as {token}',
    */
   async function (exchange, group) {
     await this.io.consume(exchange, group, (payload) => {
-      this.events ??= {}
-      this.events[group] = payload
+      this.consumed ??= {}
+      this.consumed[group] = payload
     })
+  })
+
+When('I emit an event to the {token} exchange',
+  /**
+   * @param {string} exchange
+   * @this {comq.features.Context}
+   */
+  async function (exchange) {
+    const message = generate()
+
+    await this.io.emit(exchange, message)
+
+    this.published = message
+  })
+
+Then('{token} has received the event',
+  /**
+   * @param {string} group
+   * @this {comq.features.Context}
+   */
+  async function (group) {
+    await timeout(100)
+
+    assert.notEqual(this.published, undefined, 'No event has been published')
+    assert.equal(this.published, this.consumed[group], `'${group}' haven't consumed event`)
   })
