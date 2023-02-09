@@ -8,6 +8,7 @@ const channel = () => ({
   assertExchange: jest.fn(async () => undefined),
   bindQueue: jest.fn(async () => undefined),
   sendToQueue: jest.fn(async () => undefined),
+  publish: jest.fn(async () => undefined),
   close: jest.fn(async () => undefined)
 })
 

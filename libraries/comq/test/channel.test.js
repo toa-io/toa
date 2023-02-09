@@ -1,5 +1,7 @@
 'use strict'
 
+// region setup
+
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
 const { flip } = require('@toa.io/libraries/generic')
@@ -26,6 +28,8 @@ beforeEach(async () => {
   chan = await conn.createChannel()
   channel = new Channel(chan)
 })
+
+// endregion
 
 describe('consume', () => {
   const consumer = /** @type {comq.channel.consumer} */ jest.fn(async () => undefined)
@@ -124,6 +128,10 @@ describe.each(['deliver', 'send'])('%s', () => {
   it('should send to queue', async () => {
     expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, expect.objectContaining(properties))
   })
+
+  it('should throw if no properties provided', async () => {
+    await expect(channel.deliver(queue, buffer)).resolves.not.toThrow()
+  })
 })
 
 describe('send', () => {
@@ -138,6 +146,10 @@ describe('send', () => {
       ...properties,
       persistent: true
     })
+  })
+
+  it('should throw if no properties provided', async () => {
+    await expect(channel.send(queue, buffer)).resolves.not.toThrow()
   })
 })
 
@@ -183,6 +195,35 @@ describe('subscribe', () => {
 
     expect(consumer).toHaveBeenCalledWith(message)
     expect(chan.ack).toHaveBeenCalledWith(message)
+  })
+})
+
+describe('publish', () => {
+  const exchange = generate()
+  const buffer = randomBytes(8)
+
+  it('should be', async () => {
+    expect(channel.publish).toBeDefined()
+  })
+
+  beforeEach(async () => {
+    await channel.publish(exchange, buffer)
+  })
+
+  it('should assert durable fanout exchange', async () => {
+    expect(chan.assertExchange).toHaveBeenCalledTimes(1)
+
+    const [name, type, options] = chan.assertExchange.mock.calls[0]
+
+    expect(name).toStrictEqual(exchange)
+    expect(type).toStrictEqual('fanout')
+
+    if (options !== undefined) expect(options).not.toMatchObject({ durable: false })
+  })
+
+  it('should publish persistent message', async () => {
+    expect(chan.publish).toHaveBeenCalled()
+    expect(chan.publish).toHaveBeenCalledWith(exchange, '', buffer, { persistent: true })
   })
 })
 

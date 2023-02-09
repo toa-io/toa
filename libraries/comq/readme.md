@@ -5,7 +5,7 @@ Node.js.
 
 ## Features
 
-1. Ø configuration
+1. Dynamic topology
 2. [Request](#request)-[reply](#reply) (RPC)
 3. Events ([pub](#emission)/[sub](#consumption))
 4. [Message acknowledgement](#acknowledgement)
@@ -87,22 +87,6 @@ const sum = await io.request('add_numbers', { a: 1, b: 2 })
 console.log(sum) // 3
 ```
 
-## Emission
-
-`async IO.emit(exchange: string, payload: any, [encoding: string])`
-
-Publish encoded event message to the `exchange`.
-
-On the initial call,
-a [fanout exchange](https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchanges) is
-asserted.
-
-### Example
-
-```javascript
-await io.emit('numbers_added', { a: 1, b: 2 })
-```
-
 ## Consumption
 
 `async IO.consume(exchange: string, group: string, consumer)`
@@ -122,6 +106,22 @@ group*.
 await io.consume('numbers_added', 'logger', (payload) => {
   console.log(`${payload.a} was added to ${payload.b}`)
 })
+```
+
+## Emission
+
+`async IO.emit(exchange: string, payload: any, [encoding: string])`
+
+Publish encoded event message to the `exchange`.
+
+On the initial call,
+a [fanout exchange](https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchanges) is
+asserted.
+
+### Example
+
+```javascript
+await io.emit('numbers_added', { a: 1, b: 2 })
 ```
 
 ## Encoding

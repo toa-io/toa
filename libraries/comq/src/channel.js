@@ -34,11 +34,9 @@ class Channel {
     })
 
   async send (queue, buffer, properties) {
-    properties.persistent ??= true
+    const args = [queue, buffer]
 
-    // TODO: handle `false` response
-    // TODO: ConfirmChannel callback
-    this.#channel.sendToQueue(queue, buffer, properties)
+    this.#publish('sendToQueue', args, properties)
   }
 
   deliver = lazy(this, this.#assertPersistentQueue, this.send)
@@ -55,6 +53,18 @@ class Channel {
       const consumer = this.#getAcknowledgingConsumer(callback)
 
       await this.#channel.consume(queue, consumer)
+    })
+
+  publish = lazy(this, this.#assertExchange,
+    /**
+     * @param {string} exchange
+     * @param {Buffer} buffer
+     * @param {import('amqplib').Options.Publish} [properties]
+     */
+    (exchange, buffer, properties) => {
+      const args = [exchange, DEFAULT_ROUTING_KEY, buffer]
+
+      this.#publish('publish', args, properties)
     })
 
   async close () {
@@ -113,6 +123,15 @@ class Channel {
 
       this.#channel.ack(message)
     }
+
+  #publish (method, args, properties) {
+    properties ??= {}
+    properties.persistent ??= true
+
+    // TODO: flow control
+    // TODO: ConfirmChannel callback
+    this.#channel[method](...args, properties)
+  }
 }
 
 const HOUR = 3600 * 1000
