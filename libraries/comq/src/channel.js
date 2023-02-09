@@ -83,9 +83,11 @@ class Channel {
 }
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const PERSISTENT = { durable: true }
+const PERSISTENT = {}
+
+const HOUR = 3600 * 1000
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const TRANSIENT = { exclusive: true }
+const TRANSIENT = { arguments: { 'x-expires': HOUR } }
 
 exports.Channel = Channel

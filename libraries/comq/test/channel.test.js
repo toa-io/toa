@@ -36,22 +36,22 @@ describe('consume', () => {
     await channel.consume(queue, persistent, consumer)
   })
 
-  it('should assert durable queue', async () => {
+  it('should assert persistent queue', async () => {
     const queue = generate()
     const persistent = true
 
     await channel.consume(queue, persistent, consumer)
 
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { durable: true })
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, {})
   })
 
-  it('should assert exclusive queue', async () => {
+  it('should assert transient queue', async () => {
     const queue = generate()
     const persistent = false
 
     await channel.consume(queue, persistent, consumer)
 
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { exclusive: true })
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { arguments: { 'x-expires': 3600 * 1000 } })
   })
 
   it('should bind consumer', async () => {
@@ -89,8 +89,8 @@ describe.each(['deliver', 'send'])('%s', () => {
     await channel.deliver(queue, buffer, properties)
   })
 
-  it('should assert durable queue', async () => {
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { durable: true })
+  it('should assert persistent queue', async () => {
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, {})
   })
 
   it('should assert queue once', async () => {
