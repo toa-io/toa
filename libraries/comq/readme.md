@@ -5,12 +5,12 @@ Node.js.
 
 ## Features
 
-1. No static configuration
+1. Zero configuration
 2. [Request](#request)-[reply](#reply) (RPC)
 3. Events ([pub](#emission)/[sub](#consumption))
 4. Reconnection handling
 5. [Message acknowledgement](#acknowledgement)
-6. Flow control
+6. [Flow control](#io-channels)
 7. [Content encoding/decoding](#encoding)
 8. [Graceful shutdown](#graceful-shutdown)
 
@@ -55,32 +55,29 @@ a `correlationId` that has the same value as in the original request.
 Reply message is encoded using the same encoding format as the request message, if it is specified
 and supported, unless `producer` returned `Buffer`, in which case encoding format will be set
 to `application/octet-stream`. If encoding format of the request message isn't specified or
-supported and `producer` has returned value isn't `Buffer`, then exception is thrown.
+supported and `producer` has returned value that isn't a `Buffer`, then exception is thrown.
 
 > If incoming message doesn't have a `replyTo` property, an exception is thrown without
 > calling `producer`.
->
+
 > `replyTo` queue is not asserted, therefore a request message with `replyTo` referring to a
 > non-existent queue will cause an AMQP channel error.
 
 ### Example
 
 ```javascript
-await io.reply('add_numbers', (payload) => (payload.a + payload.b))
+await io.reply('add_numbers', ({ a, b }) => (a + b))
 ```
 
 ## Request
 
 `async IO.request(queue: string, payload: any, [encoding: string])`
 
-Send encoded request message with `replyTo`, `contentType` and `correlationId` properties set and
+Send encoded request message with `replyTo` and `correlationId` properties set and
 return decoded reply.
 
-On the initial call, a [durable](https://www.rabbitmq.com/queues.html#properties) queue for
-requests and an [exclusive](https://www.rabbitmq.com/queues.html#properties) queue for replies are
-asserted.
-
-[^1]: [Queue properties](https://www.rabbitmq.com/queues.html#properties)
+On the initial call, a durable queue for requests and an exclusive queue for replies are asserted.
+See [Queue properties](https://www.rabbitmq.com/queues.html#properties).
 
 ### Example
 
@@ -103,7 +100,7 @@ asserted.
 ### Example
 
 ```javascript
-await io.emit('added_numbers', { a: 1, b: 2 })
+await io.emit('numbers_added', { a: 1, b: 2 })
 ```
 
 ## Consumption
@@ -122,24 +119,24 @@ group*.
 ### Example
 
 ```javascript
-await io.consume('added_numbers', 'logger', (payload) => {
+await io.consume('numbers_added', 'logger', (payload) => {
   console.log(`${payload.a} was added to ${payload.b}`)
 })
 ```
 
 ## Encoding
 
-By default, outgoing message contents are encoded using [msgpack](https://msgpack.org) with
-a `contentType` property set to `application/msgpack`. If encoding format is
+By default, outgoing message contents are encoded with [msgpack](https://msgpack.org) and
+the `contentType` property is set to `application/msgpack`. If encoding format is
 specified ([request](#request), [emit](#emission)) and supported, contents are encoded accordingly.
 
-Exceptions are Buffers, which are sent without encoding and a `contentType` property set
+Exceptions are Buffers, which are sent without encoding and the `contentType` property set
 to specified encoding format or `application/octet-stream` if it's not specified.
 
 Incoming messages are decoded based on the presence and value of the `contentType` property. If the
-header is present and its value is supported, the message is decoded accordingly. If the header is
-missing or its value is `application/octet-stream` or not supported, the message is passed as a raw
-Buffer object.
+header is present and its value is supported, the message is decoded. If the header is missing or
+its value is `application/octet-stream` or is not supported, the message is passed as a raw Buffer
+object.
 
 The following content types are supported:
 
@@ -171,10 +168,10 @@ requests, emit events, send *and consume* replies.
 
 ## Graceful shutdown
 
-`IO.seal()` closes input channel, that is, guarantees no more requests or events will be consumed.
-Output channel remains available.
+`async IO.seal()` closes input channel, that is, guarantees no more requests or events will be
+consumed. Output channel remains available.
 
-`IO.close()` closes both input (if it hasn't been closed before) and output channels.
+`async IO.close()` closes both input (if it hasn't been closed before) and output channels.
 
-If an application acts both as a producer and as a consumer, to shut it down it is recommended to
-call `.seal()`, finish processing current requests and events, and then call `.close()`.
+It is recommended to call `.seal()`, finish processing current requests and events, and then
+call `.close()`.
