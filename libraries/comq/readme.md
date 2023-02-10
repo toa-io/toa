@@ -167,9 +167,9 @@ call `.close()`.
 
 ## Persistence
 
-Queues and exchanges are `durable`. Transient queues have 1
-hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable currently). Messages are
-sent with [`delivery mode` 2](https://www.rabbitmq.com/publishers.html#message-properties).
+Queues and exchanges are `durable`. [Transient](#request) queues have 1
+hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable currently). Outgoing
+messages are [`persistent`](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish).
 
 ## Acknowledgement
 

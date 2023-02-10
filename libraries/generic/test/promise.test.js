@@ -57,3 +57,27 @@ it('should reject', async () => {
 
   await expect(instance).rejects.toThrow('test')
 })
+
+describe('callback', () => {
+  it('should be', async () => {
+    expect(instance.callback).toBeDefined()
+  })
+
+  it('should reject if error in defined', async () => {
+    const error = new Error()
+    const result = undefined
+
+    setImmediate(() => instance.callback(error, result))
+
+    await expect(instance).rejects.toThrow(error)
+  })
+
+  it('should resolve to result in no error defined', async () => {
+    const error = undefined
+    const result = generate()
+
+    setImmediate(() => instance.callback(error, result))
+
+    await expect(instance).resolves.toStrictEqual(result)
+  })
+})

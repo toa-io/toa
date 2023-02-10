@@ -5,10 +5,11 @@ declare namespace toa.generic {
     type Exposed = Promise<void> & {
       resolve: (value?: any) => void
       reject: (error?: Error) => void
+      callback: (error: Error, result: any) => void
     }
 
     type constructor = () => Exposed
-
+    
   }
 
 }
