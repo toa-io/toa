@@ -280,3 +280,34 @@ describe('close', () => {
     await callback(message)
   })
 })
+
+describe('back pressure', () => {
+  const exchange = generate()
+  const queue = generate()
+  const buffer = randomBytes(8)
+
+  it('should apply back pressure', async () => {
+    expect.assertions(3)
+
+    // noinspection JSCheckFunctionSignatures
+    chan.publish.mockImplementationOnce((_0, _1, _2, _3, resolve) => {
+      resolve(null)
+
+      return false
+    })
+
+    await channel.publish(exchange, buffer)
+
+    expect(chan.publish).toHaveBeenCalled()
+
+    setImmediate(() => {
+      expect(chan.sendToQueue).not.toHaveBeenCalled()
+
+      chan.emit('drain')
+    })
+
+    await channel.send(queue, buffer)
+
+    expect(chan.sendToQueue).toHaveBeenCalled()
+  })
+})

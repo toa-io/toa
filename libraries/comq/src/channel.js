@@ -13,6 +13,9 @@ class Channel {
   /** @type {AMQPChannel} */
   #channel
 
+  /** @type {toa.generic.promise.Exposed} */
+  #unpause
+
   /**
    * @param {AMQPChannel} channel
    */
@@ -119,10 +122,17 @@ class Channel {
     properties ??= {}
     properties.persistent ??= true
 
+    if (this.#unpause !== undefined) await this.#unpause
+
     const confirmation = promise()
 
-    // TODO: flow control
-    this.#channel[method](...args, properties, confirmation.callback)
+    // it is reasonably expected that #publish is called on ConfirmChannel
+    // once this will be a problem, Channel class should be refactored into
+    // abstract Channel and two inheritors: Input and Output to make sure
+    // input channel does not have publication methods
+    const resume = this.#channel[method](...args, properties, confirmation.callback)
+
+    if (resume === false) this.#pause()
 
     return confirmation
   }
@@ -148,6 +158,15 @@ class Channel {
 
       this.#channel.ack(message)
     })
+
+  #pause () {
+    this.#unpause = promise()
+
+    this.#channel.once('drain', () => {
+      this.#unpause.resolve()
+      this.#unpause = undefined
+    })
+  }
 }
 
 const HOUR = 3600 * 1000
