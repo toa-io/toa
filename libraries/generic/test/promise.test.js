@@ -80,4 +80,12 @@ describe('callback', () => {
 
     await expect(instance).resolves.toStrictEqual(result)
   })
+
+  it.each([undefined, null])('should resolve to result if error is %s', async (error) => {
+    const result = generate()
+
+    setImmediate(() => instance.callback(error, result))
+
+    await expect(instance).resolves.toStrictEqual(result)
+  })
 })

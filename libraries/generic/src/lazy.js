@@ -5,10 +5,10 @@ const lazy = (context, initializers, method) => {
   if (context[LOCK] === undefined) context[LOCK] = Symbol('methods locking key')
   if (!Array.isArray(initializers)) initializers = [initializers]
 
-  return async (...args) => {
+  return async function (...args) {
     await call(context, initializers, args)
 
-    return method.apply(context, args)
+    return method.apply(this, args)
   }
 }
 

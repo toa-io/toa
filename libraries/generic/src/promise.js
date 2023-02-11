@@ -12,7 +12,7 @@ const promise = () => {
     })
 
   function callback (error, result) {
-    if (error !== undefined) oh(error)
+    if (error) oh(error)
     else ok(result)
   }
 
