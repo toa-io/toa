@@ -4,13 +4,13 @@
  * @typedef {import('amqplib').Channel | import('amqplib').ConfirmChannel} AMQPChannel
  */
 
-const { lazy } = require('@toa.io/libraries/generic')
+const { lazy, track, promise } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {comq.Channel}
  */
 class Channel {
-  /** @type {import('amqplib').Channel} */
+  /** @type {AMQPChannel} */
   #channel
 
   /**
@@ -24,19 +24,17 @@ class Channel {
     /**
      * @param {string} queue
      * @param {boolean} durable
-     * @param {comq.channel.consumer} callback
+     * @param {comq.channels.consumer} callback
      * @returns {Promise<void>}
      */
     async (queue, durable, callback) => {
-      const consumer = this.#getAcknowledgingConsumer(callback)
-
-      await this.#channel.consume(queue, consumer)
+      await this.#consume(queue, callback)
     })
 
   async send (queue, buffer, properties) {
     const args = [queue, buffer]
 
-    this.#publish('sendToQueue', args, properties)
+    await this.#publish('sendToQueue', args, properties)
   }
 
   deliver = lazy(this, this.#assertPersistentQueue, this.send)
@@ -46,13 +44,11 @@ class Channel {
     /**
      * @param {string} exchange
      * @param {string} queue
-     * @param {comq.channel.consumer} callback
+     * @param {comq.channels.consumer} callback
      * @returns {Promise<void>}
      */
     async (exchange, queue, callback) => {
-      const consumer = this.#getAcknowledgingConsumer(callback)
-
-      await this.#channel.consume(queue, consumer)
+      await this.#consume(queue, callback)
     })
 
   publish = lazy(this, this.#assertExchange,
@@ -61,13 +57,14 @@ class Channel {
      * @param {Buffer} buffer
      * @param {import('amqplib').Options.Publish} [properties]
      */
-    (exchange, buffer, properties) => {
+    async (exchange, buffer, properties) => {
       const args = [exchange, DEFAULT_ROUTING_KEY, buffer]
 
-      this.#publish('publish', args, properties)
+      await this.#publish('publish', args, properties)
     })
 
   async close () {
+    await track(this) // complete current processing
     await this.#channel.close()
   }
 
@@ -114,24 +111,43 @@ class Channel {
   // endregion
 
   /**
-   * @param {comq.channel.consumer} callback
-   * @returns {comq.channel.consumer}
+   * @param {string} method
+   * @param {any[]} args
+   * @param {import('amqplib').Options.Publish} properties
    */
-  #getAcknowledgingConsumer = (callback) =>
-    async (message) => {
-      await callback(message)
-
-      this.#channel.ack(message)
-    }
-
-  #publish (method, args, properties) {
+  async #publish (method, args, properties) {
     properties ??= {}
     properties.persistent ??= true
 
+    const confirmation = promise()
+
     // TODO: flow control
-    // TODO: ConfirmChannel callback
-    this.#channel[method](...args, properties)
+    this.#channel[method](...args, properties, confirmation.callback)
+
+    return confirmation
   }
+
+  /**
+   * @param {string} queue
+   * @param {comq.channels.consumer} callback
+   * @returns {Promise<void>}
+   */
+  async #consume (queue, callback) {
+    const consumer = this.#getAcknowledgingConsumer(callback)
+
+    await this.#channel.consume(queue, consumer)
+  }
+
+  /**
+   * @param {comq.channels.consumer} callback
+   * @returns {comq.channels.consumer}
+   */
+  #getAcknowledgingConsumer = (callback) =>
+    track(this, async (message) => {
+      await callback(message)
+
+      this.#channel.ack(message)
+    })
 }
 
 const HOUR = 3600 * 1000

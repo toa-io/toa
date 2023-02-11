@@ -4,7 +4,7 @@
 
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
-const { flip } = require('@toa.io/libraries/generic')
+const { flip, promise } = require('@toa.io/libraries/generic')
 
 const { Channel } = require('../src/channel')
 const { amqplib } = require('./amqplib.mock')
@@ -126,11 +126,21 @@ describe.each(['deliver', 'send'])('%s', () => {
   })
 
   it('should send to queue', async () => {
-    expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, expect.objectContaining(properties))
+    const call = chan.sendToQueue.mock.calls[0]
+
+    expect(call[0]).toStrictEqual(queue)
+    expect(call[1]).toStrictEqual(buffer)
+    expect(call[2]).toMatchObject(properties)
   })
 
   it('should throw if no properties provided', async () => {
     await expect(channel.deliver(queue, buffer)).resolves.not.toThrow()
+  })
+
+  it('should await confirmation', async () => {
+    const callback = chan.sendToQueue.mock.calls[0][3]
+
+    expect(callback).toBeInstanceOf(Function)
   })
 })
 
@@ -142,10 +152,11 @@ describe('send', () => {
   it('should send persistent message', async () => {
     await channel.send(queue, buffer, properties)
 
-    expect(chan.sendToQueue).toHaveBeenCalledWith(queue, buffer, {
-      ...properties,
-      persistent: true
-    })
+    const call = chan.sendToQueue.mock.calls[0]
+
+    expect(call[0]).toStrictEqual(queue)
+    expect(call[1]).toStrictEqual(buffer)
+    expect(call[2]).toMatchObject({ persistent: true, ...properties })
   })
 
   it('should throw if no properties provided', async () => {
@@ -222,8 +233,14 @@ describe('publish', () => {
   })
 
   it('should publish persistent message', async () => {
-    expect(chan.publish).toHaveBeenCalled()
-    expect(chan.publish).toHaveBeenCalledWith(exchange, '', buffer, { persistent: true })
+    expect(chan.publish).toHaveBeenCalledTimes(1)
+
+    const call = chan.publish.mock.calls[0]
+
+    expect(call[0]).toStrictEqual(exchange)
+    expect(call[1]).toStrictEqual('')
+    expect(call[2]).toStrictEqual(buffer)
+    expect(call[3]).toMatchObject({ persistent: true })
   })
 })
 
@@ -232,5 +249,34 @@ describe('close', () => {
     await channel.close()
 
     expect(chan.close).toHaveBeenCalled()
+  })
+
+  it('should wait for event processing to be completed', async () => {
+    expect.assertions(2)
+
+    const queue = generate()
+    const persistent = flip()
+    const processing = promise()
+    const consumer = jest.fn(() => processing)
+
+    await channel.consume(queue, persistent, consumer)
+
+    const callback = chan.consume.mock.calls[0][1]
+    const content = randomBytes(8)
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content }
+
+    setImmediate(async () => {
+      setImmediate(() => {
+        expect(chan.close).not.toHaveBeenCalled()
+
+        processing.resolve()
+      })
+
+      await channel.close()
+
+      expect(chan.close).toHaveBeenCalled()
+    })
+
+    await callback(message)
   })
 })

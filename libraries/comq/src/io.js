@@ -127,7 +127,7 @@ class IO {
 
   /**
    * @param {comq.producer} callback
-   * @returns {comq.channel.consumer}
+   * @returns {comq.channels.consumer}
    */
   #getRequestConsumer = (callback) =>
     async (message) => {
@@ -150,7 +150,7 @@ class IO {
   /**
    * @param {string} queue
    * @param {comq.ReplyEmitter} emitter
-   * @returns {comq.channel.consumer}
+   * @returns {comq.channels.consumer}
    */
   #getReplyConsumer = (queue, emitter) =>
     (message) => {
@@ -161,7 +161,7 @@ class IO {
 
   /**
    * @param {comq.consumer} callback
-   * @returns {comq.channel.consumer}
+   * @returns {comq.channels.consumer}
    */
   #getMessageConsumer = (callback) =>
     async (message) => {

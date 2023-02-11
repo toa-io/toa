@@ -1,3 +1,5 @@
+// noinspection JSCheckFunctionSignatures
+
 'use strict'
 
 const channel = () => ({
@@ -7,8 +9,8 @@ const channel = () => ({
   assertQueue: jest.fn(async () => undefined),
   assertExchange: jest.fn(async () => undefined),
   bindQueue: jest.fn(async () => undefined),
-  sendToQueue: jest.fn(async () => undefined),
-  publish: jest.fn(async () => undefined),
+  sendToQueue: jest.fn(async (_0, _1, _2, resolve) => resolve?.(null)),
+  publish: jest.fn(async (_0, _1, _2, _3, resolve) => resolve?.(null)),
   close: jest.fn(async () => undefined)
 })
 
