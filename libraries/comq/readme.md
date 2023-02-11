@@ -14,6 +14,7 @@ Node.js.
 7. [Content encoding](#encoding)
 8. [Graceful shutdown](#graceful-shutdown)
 9. Broker restart or connection loss [resilience](#persistence)
+10. [Prefetch confirmation gap](#cause-effect-confirmation-lag)
 
 > Features are described in the [`features`](features) directory. To run them you should start
 > RabbitMQ server with `docker compose up -d`, then execute `npm run test:features`
@@ -41,6 +42,22 @@ const io = await connect(url)
 
 await io.close()
 ```
+
+## Definitions
+
+The following documentation refers to a few terms:
+
+**Request** is an AMQP message that has the `replyTo` and `correlationId` properties set.
+
+**Reply** is an AMQP message sent in response to a Request and sent to the queue specified in
+the `replyTo` property of the Request. The `correlationId` property of the Reply is set to the same
+value as in the Request.
+
+**Event** is an AMQP message that is published to an exchange.
+
+**Producer** is an application role that receives Requests and produces Replies and Events.
+
+**Consumer** is an application role that sends Requests and receives Replies and Events.
 
 ## Reply
 
@@ -94,8 +111,8 @@ console.log(sum) // 3
 
 `consumer` function's signature is `async? (message: any): void`
 
-Assert durable fanout `exchange` and durable queue for the consumer `group`, and then bind the queue
-to the exchange. Essentially, one event message is delivered to a single consumer within *each
+Assert durable fanout `exchange` and durable queue for the Consumer `group`, and then bind the queue
+to the exchange. Essentially, one event message is delivered to a single Consumer within *each
 group*.
 
 > Typically, the value of `group` refers to the name of a microservice running in multiple
@@ -197,20 +214,20 @@ must be idempotent.
 
 Let's consider a scenario where an application receives messages ("causes") from a queue, processes
 them, and then publishes expected messages ("effects") to another queue. An example of this is a
-producer that consumes requests and produces replies. The rate at which messages are consumed is
+Producer that consumes requests and produces replies. The rate at which messages are consumed is
 limited by a "prefetch count", which is the maximum number of concurrent requests that can be
 processed at the same time.
 
 For simplicity, let's assume that the prefetch count is set to 1. After a "cause" message is
 consumed, the next message in the queue is held until the current message is acknowledged ("ack").
-The current message is acknowledged once the producer function is completed, which means that an "
+The current message is acknowledged once the Producer function is completed, which means that an "
 effect" message has been successfully published using the ConfirmChannel. This "effect" message is
 considered to be published when a confirmation is received from the broker.
 
 In summary, the next "cause" message will be consumed from the queue only after the "effect" message
-publication has been confirmed. Due to the ["at least once" effect](#-at-least-once-), **there is a
-delay between the moment when a response is delivered to the consumer and the moment when the next
-request is consumed from the request queue**.
+publication has been confirmed. Due to the ["at least once" effect](#-at-least-once-), *there is a
+delay between the moment when a response **is delivered** to the Consumer and the moment when the
+next request is consumed from the request queue*.
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764545934661005&cot=14">
 <picture>
@@ -219,13 +236,13 @@ request is consumed from the request queue**.
 </picture>
 </a>
 
-A lightweight producer (one that produces responses quickly) can result in being "overloaded"
-from the consumer's perspective (that is, does not consume messages with an expected rate), even
-though the producer being idle while waiting for response publication confirmations.
+A lightweight Producer (one that produces responses quickly) can result in being "overloaded"
+from the Consumer's perspective (that is, does not consume messages with an expected rate), even
+though the Producer being idle while waiting for response publication confirmations.
 
 #### Prefetch Confirmation Gap
 
-The problem of "overloaded" idling producer is addressed by increasing the prefetch count in the
-incoming message handlers ([IO.consume](#consumption) and [IO.reply](#reply)) for each response
-sent, before receiving confirmation from the broker. There is currently no limit to the amount the
-prefetch count can be increased.
+The problem of "overloaded" idling Producer is addressed by increasing the prefetch count of the
+input channel in the incoming message handlers ([IO.consume](#consumption) and [IO.reply](#reply))
+for each response sent, before receiving confirmation from the broker. There is currently no limit
+to the amount the prefetch count can be increased.
