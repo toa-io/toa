@@ -14,7 +14,6 @@ Node.js.
 7. [Content encoding](#encoding)
 8. [Graceful shutdown](#graceful-shutdown)
 9. Broker restart or connection loss [resilience](#persistence)
-10. [Prefetch confirmation gap](#cause-effect-confirmation-lag)
 
 > Features are described in the [`features`](features) directory. To run them you should start
 > RabbitMQ server with `docker compose up -d`, then execute `npm run test:features`
@@ -209,7 +208,7 @@ RabbitMQ delivers a message **before** it has been written to disk, therefore pr
 once" delivery guarantee. Considering that, system using communications over AMQP
 must be idempotent.
 
-### Cause-Effect Confirmation Gap
+### Cause-Effect Confirmation Lag
 
 Let's consider a scenario where an application receives messages ("causes") from a queue, processes
 them, and then publishes expected messages ("effects") to another queue. An example of this is a
@@ -230,8 +229,8 @@ next Request is consumed from the Request queue*.
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764545934661005&cot=14">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="docs/gap-dark.jpg">
-<img alt="Confirmation Lag" width="640" src="docs/gap-light.jpg">
+<source media="(prefers-color-scheme: dark)" srcset="docs/lag-dark.jpg">
+<img alt="Confirmation Lag" width="640" src="docs/lag-light.jpg">
 </picture>
 </a>
 
@@ -241,7 +240,8 @@ though the Producer being idle while waiting for response publication confirmati
 
 #### Prefetch Confirmation Gap
 
-The problem of "overloaded" idling Producer is addressed by increasing the prefetch count of the
+The problem of "overloaded" idling Producer may be addressed by increasing the prefetch count of the
 input channel in the incoming message handlers ([IO.consume](#consumption) and [IO.reply](#reply))
-for each response sent, before receiving confirmation from the broker. There is currently no limit
-to the amount the prefetch count can be increased.
+for each response sent, before receiving confirmation from the broker.
+
+> The solution is not implemented yet.

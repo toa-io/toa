@@ -32,8 +32,9 @@ class Connection {
   async in () {
     const chan = await this.#connection.createChannel()
 
-    // noinspection ES6MissingAwait
-    chan.prefetch(300)
+    // despite the documentation statement, it returns a Promise
+    // https://amqp-node.github.io/amqplib/channel_api.html#channel_prefetch
+    await chan.prefetch(300)
 
     return new Channel(chan)
   }

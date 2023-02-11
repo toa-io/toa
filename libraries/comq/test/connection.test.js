@@ -60,9 +60,11 @@ describe.each([['in', 'createChannel'], ['out', 'createConfirmChannel']])('%s', 
     expect(Channel).toHaveBeenCalledWith(chan)
   })
 
-  ;(key === 'in' ? it : () => undefined)('should set prefetch', async () => {
-    expect(chan.prefetch).toHaveBeenCalledWith(300)
-  })
+  if (key === 'in') {
+    it('should set prefetch', async () => {
+      expect(chan.prefetch).toHaveBeenCalledWith(300)
+    })
+  }
 })
 
 it('should close connection', async () => {
