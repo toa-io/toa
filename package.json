@@ -54,7 +54,7 @@
     "test:lint": "npx standard --verbose | npx snazzy",
     "test:unit": "npx jest --roots runtime connectors extensions operations libraries features userland",
     "test:integration": "npx jest --roots integration --runInBand --testTimeout 30000",
-    "test:features": "npx cucumber-js",
+    "test:features": "npx cucumber-js && npx cucumber-js -p comq",
     "test:features:unit": "npx cucumber-js -p schema && npx cucumber-js -p norm",
     "test:samples": "toa replay userland/example",
     "test:all": "npm run test && npm run test:integration && npm run test:features && test:samples",
