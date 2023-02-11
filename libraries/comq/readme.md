@@ -8,11 +8,12 @@ Node.js.
 1. Dynamic topology
 2. [Request](#request)-[reply](#reply) (RPC)
 3. Events ([pub](#emission)/[sub](#consumption))
-4. [Message acknowledgement](#acknowledgement)
-5. [Flow control](#io-channels)
-6. [Content encoding](#encoding)
-7. [Graceful shutdown](#graceful-shutdown)
-8. Broker restart or connection loss [resilience](#persistence)
+4. [Consumer acknowledgements](#acknowledgements)
+5. [Publisher confirms](#io-channels)
+6. [Flow control](#io-channels)
+7. [Content encoding](#encoding)
+8. [Graceful shutdown](#graceful-shutdown)
+9. Broker restart or connection loss [resilience](#persistence)
 
 > Features are described in the [`features`](features) directory. To run them you should start
 > RabbitMQ server with `docker compose up -d`, then execute `npm run test:features`
@@ -148,14 +149,14 @@ The following content types are supported:
 `IO` lazy creates two channels: input and output.
 
 Input channel is used to consume requests and events. It
-has [prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch) set to `300`
-(currently, non-configurable).
+has [prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch) [initially](#cause-effect-confirmation-lag)
+set to `300` (currently, non-configurable).
 
 Output channel is
 a [ConfirmChannel](https://amqp-node.github.io/amqplib/channel_api.html#confirmchannel) used to send
 requests, emit events, send *and consume* replies.
 
-## Graceful shutdown
+## Graceful Shutdown
 
 `async IO.seal()` closes input channel, that is, guarantees no more requests or events will be
 consumed. Output channel remains available.
@@ -171,7 +172,7 @@ Queues and exchanges are `durable`. [Transient](#request) queues have 1
 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable currently). Outgoing
 messages are [`persistent`](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish).
 
-## Acknowledgement
+## Acknowledgements
 
 Incoming messages are "positive
 acknowledged" ([ack](https://amqp-node.github.io/amqplib/channel_api.html#channel_ack)), unless
@@ -181,3 +182,50 @@ assumed, that the handler's exception will cause
 the [process to crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html). In this
 scenario, RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the
 message due to a connection loss.
+
+See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/confirms.html).
+
+## Notes
+
+### "At least once"
+
+RabbitMQ delivers a message **before** it has been written to disk, therefore provides "at least
+once" delivery guarantee. Considering that, system using communications over AMQP
+must be idempotent.
+
+### Cause-Effect Confirmation Lag
+
+Let's consider a scenario where an application receives messages ("causes") from a queue, processes
+them, and then publishes expected messages ("effects") to another queue. An example of this is a
+producer that consumes requests and produces replies. The rate at which messages are consumed is
+limited by a "prefetch count", which is the maximum number of concurrent requests that can be
+processed at the same time.
+
+For simplicity, let's assume that the prefetch count is set to 1. After a "cause" message is
+consumed, the next message in the queue is held until the current message is acknowledged ("ack").
+The current message is acknowledged once the producer function is completed, which means that an "
+effect" message has been successfully published using the ConfirmChannel. This "effect" message is
+considered to be published when a confirmation is received from the broker.
+
+In summary, the next "cause" message will be consumed from the queue only after the "effect" message
+publication has been confirmed. Due to the ["at least once" effect](#-at-least-once-), **there is a
+delay between the moment when a response is delivered to the consumer and the moment when the next
+request is consumed from the request queue**.
+
+<a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764545934661005&cot=14">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="./.docs/kekl-dark.jpg">
+<img alt="Confirmation Lag" width="640" height="458" src="./.docs/kekl-light.jpg">
+</picture>
+</a>
+
+A lightweight producer (one that produces responses quickly) can result in being "overloaded"
+from the consumer's perspective (that is, does not consume messages with an expected rate), even
+though the producer being idle while waiting for response publication confirmations.
+
+#### Prefetch Confirmation Gap
+
+The problem of "overloaded" idling producer is addressed by increasing the prefetch count in the
+incoming message handlers ([IO.consume](#consumption) and [IO.reply](#reply)) for each response
+sent, before receiving confirmation from the broker. There is currently no limit to the amount the
+prefetch count can be increased.
