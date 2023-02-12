@@ -96,7 +96,7 @@ await io.reply('add_numbers', ({ a, b }) => (a + b))
 Send encoded Request message with `replyTo` and `correlationId` properties set and
 return decoded Reply content.
 
-On the initial call, a queue for Requests and a [transient](#persistence) queue for Replies are
+On the initial call, a queue for Requests and a [temporary](#persistence) queue for Replies are
 asserted.
 
 ### Example
@@ -113,8 +113,9 @@ console.log(sum) // 3
 
 `consumer` function's signature is `async? (message: any): void`
 
-Assert fanout `exchange` and durable queue for the Consumer `group`, and then bind the queue to the
+Assert fanout `exchange` and queue for the Consumer `group`, and then bind the queue to the
 exchange. Essentially, one Event message is delivered to a single Consumer within *each group*.
+Received Events are decoded and passed to the `consumer`.
 
 > Typically, the value of `group` refers to the name of a microservice running in multiple
 > instances.
@@ -186,9 +187,11 @@ call `.close()`.
 
 ## Persistence
 
-Queues and exchanges are `durable`. [Transient](#request) queues have 1
-hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable currently). Outgoing
-messages are [`persistent`](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish).
+Queues and exchanges
+are [durable](https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue). [Temporary](#request)
+queues have 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable currently).
+Outgoing messages
+are [`persistent`](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish).
 
 ## Acknowledgements
 
