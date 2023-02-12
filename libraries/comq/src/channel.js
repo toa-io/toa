@@ -14,7 +14,7 @@ class Channel {
   #channel
 
   /** @type {toa.generic.promise.Exposed} */
-  #unpause
+  #paused
 
   /**
    * @param {AMQPChannel} channel
@@ -61,7 +61,7 @@ class Channel {
      * @param {import('amqplib').Options.Publish} [properties]
      */
     async (exchange, buffer, properties) => {
-      const args = [exchange, DEFAULT_ROUTING_KEY, buffer]
+      const args = [exchange, '', buffer]
 
       await this.#publish('publish', args, properties)
     })
@@ -97,7 +97,7 @@ class Channel {
    * @returns {Promise<void>}
    */
   async #assertExchange (exchange) {
-    await this.#channel.assertExchange(exchange, FANOUT)
+    await this.#channel.assertExchange(exchange, 'fanout')
   }
 
   /**
@@ -108,7 +108,7 @@ class Channel {
    */
   async #bindQueue (exchange, queue) {
     await this.#assertPersistentQueue(queue)
-    await this.#channel.bindQueue(queue, exchange, DEFAULT_ROUTING_KEY)
+    await this.#channel.bindQueue(queue, exchange, '')
   }
 
   // endregion
@@ -122,11 +122,11 @@ class Channel {
     properties ??= {}
     properties.persistent ??= true
 
-    if (this.#unpause !== undefined) await this.#unpause
+    if (this.#paused !== undefined) await this.#paused
 
     const confirmation = promise()
 
-    // it is reasonably expected that #publish is called on ConfirmChannel
+    // it is reasonably expected that #publish is called on a ConfirmChannel
     // once this will be a problem, Channel class should be refactored into
     // abstract Channel and two inheritors: Input and Output to make sure
     // input channel does not have publication methods
@@ -160,12 +160,13 @@ class Channel {
     })
 
   #pause () {
-    this.#unpause = promise()
+    this.#paused = promise()
+    this.#channel.once('drain', () => this.#unpause())
+  }
 
-    this.#channel.once('drain', () => {
-      this.#unpause.resolve()
-      this.#unpause = undefined
-    })
+  #unpause () {
+    this.#paused.resolve()
+    this.#paused = undefined
   }
 }
 
@@ -176,8 +177,5 @@ const PERSISTENT_QUEUE = {}
 
 /** @type {import('amqplib').Options.AssertQueue} */
 const TRANSIENT_QUEUE = { arguments: { 'x-expires': HOUR } }
-
-const FANOUT = 'fanout'
-const DEFAULT_ROUTING_KEY = ''
 
 exports.Channel = Channel
