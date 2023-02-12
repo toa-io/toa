@@ -200,3 +200,14 @@ scenario, RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automat
 message due to a connection loss.
 
 See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/confirms.html).
+
+# IO events
+
+IO emits events for testing, diagnostics or logging purposes.
+
+`IO.on(event: string, listener: Function): void`
+
+Subscribe to one of the diagnostic events:
+
+- `flow`: back pressure has been applied by a channel stream
+- `drain`: back pressure has been removed from a channel stream
