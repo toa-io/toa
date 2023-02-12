@@ -64,7 +64,7 @@ describe('consume', () => {
 
     await channel.consume(queue, persistent, consumer)
 
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { arguments: { 'x-expires': 3600 * 1000 } })
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { expires: 3600 * 1000 })
   })
 
   it('should start consuming', async () => {

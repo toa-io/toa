@@ -176,6 +176,6 @@ const HOUR = 3600 * 1000
 const PERSISTENT_QUEUE = {}
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const TRANSIENT_QUEUE = { arguments: { 'x-expires': HOUR } }
+const TRANSIENT_QUEUE = { expires: HOUR }
 
 exports.Channel = Channel
