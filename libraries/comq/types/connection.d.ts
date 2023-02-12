@@ -6,9 +6,9 @@ declare namespace comq {
   interface Connection {
     connect(): Promise<void>
 
-    in(): Promise<_channel.Channel>
+    createInputChannel(): Promise<_channel.Channel>
 
-    out(): Promise<_channel.Channel>
+    createOutputChannel(): Promise<_channel.Channel>
 
     close(): Promise<void>
   }

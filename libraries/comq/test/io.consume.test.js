@@ -37,11 +37,11 @@ beforeEach(async () => {
 
   await io.consume(exchange, group, consumer)
 
-  input = await connection.in.mock.results[0]?.value
+  input = await connection.createInputChannel.mock.results[0]?.value
 })
 
 it('should initialize input channel', async () => {
-  expect(connection.in).toHaveBeenCalled()
+  expect(connection.createInputChannel).toHaveBeenCalled()
 })
 
 it('should subscribe', async () => {

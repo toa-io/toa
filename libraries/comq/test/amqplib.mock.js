@@ -16,7 +16,7 @@ class Channel extends EventEmitter {
   close = jest.fn(async () => undefined)
 }
 
-const connection = () => ({
+const connection = () => (/** @type {jest.MockedObject<comq.Connection>} */ {
   createChannel: jest.fn(async () => new Channel()),
   createConfirmChannel: jest.fn(async () => new Channel()),
   close: jest.fn(async () => undefined)

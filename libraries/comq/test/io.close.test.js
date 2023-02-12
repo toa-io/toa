@@ -74,6 +74,6 @@ const reply = async () => {
   // initialize both channels
   await io.reply(generate(), () => undefined)
 
-  input = await connection.in.mock.results[0].value
-  output = await connection.out.mock.results[0].value
+  input = await connection.createInputChannel.mock.results[0].value
+  output = await connection.createOutputChannel.mock.results[0].value
 }

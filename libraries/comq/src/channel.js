@@ -4,6 +4,7 @@
  * @typedef {import('amqplib').Channel | import('amqplib').ConfirmChannel} AMQPChannel
  */
 
+const { EventEmitter } = require('node:events')
 const { lazy, track, promise } = require('@toa.io/libraries/generic')
 
 /**
@@ -15,6 +16,8 @@ class Channel {
 
   /** @type {toa.generic.promise.Exposed} */
   #paused
+
+  #diagnostics = new EventEmitter()
 
   /**
    * @param {AMQPChannel} channel
@@ -69,6 +72,10 @@ class Channel {
   async close () {
     await track(this) // complete current processing
     await this.#channel.close()
+  }
+
+  diagnose (event, listener) {
+    this.#diagnostics.on(event, listener)
   }
 
   // region initializers
@@ -149,12 +156,12 @@ class Channel {
   }
 
   /**
-   * @param {comq.channels.consumer} callback
+   * @param {comq.channels.consumer} consumer
    * @returns {comq.channels.consumer}
    */
-  #getAcknowledgingConsumer = (callback) =>
+  #getAcknowledgingConsumer = (consumer) =>
     track(this, async (message) => {
-      await callback(message)
+      await consumer(message)
 
       this.#channel.ack(message)
     })
@@ -162,11 +169,13 @@ class Channel {
   #pause () {
     this.#paused = promise()
     this.#channel.once('drain', () => this.#unpause())
+    this.#diagnostics.emit('flow')
   }
 
   #unpause () {
     this.#paused.resolve()
     this.#paused = undefined
+    this.#diagnostics.emit('drain')
   }
 }
 

@@ -27,6 +27,8 @@ Node.js.
 
 `async connect(url: string): IO`
 
+Returns an instance of IO when a successful connection with the broker is established.
+
 `url` is passed
 to [`amqplib.connect`](https://amqp-node.github.io/amqplib/channel_api.html#connect).
 
@@ -201,13 +203,19 @@ message due to a connection loss.
 
 See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/confirms.html).
 
-# IO events
+## Diagnostics
 
-IO emits events for testing, diagnostics or logging purposes.
+IO emits events for testing, diagnostics, or logging purposes.
 
-`IO.on(event: string, listener: Function): void`
+`IO.diagnose(event: string, listener: Function): void`
 
 Subscribe to one of the diagnostic events:
 
-- `flow`: back pressure has been applied by a channel stream
-- `drain`: back pressure has been removed from a channel stream
+- `flow`: back pressure has been applied by an output channel
+- `drain`: back pressure has been removed from an output channel
+
+### Example
+
+```javascript
+io.diagnose('flow', () => console.log('Back pressure has been applied'))
+```

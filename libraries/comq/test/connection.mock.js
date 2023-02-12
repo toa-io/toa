@@ -6,6 +6,7 @@ const channel = () => ({
   send: jest.fn(async () => undefined),
   subscribe: jest.fn(async () => undefined),
   publish: jest.fn(async () => undefined),
+  diagnose: jest.fn(async () => undefined),
   close: jest.fn(async () => undefined)
 })
 
@@ -13,8 +14,8 @@ const channel = () => ({
  * @returns {jest.MockedObject<comq.Connection>}
  */
 const connection = () => (/** @type {jest.MockedObject<comq.Connection>} */ {
-  in: jest.fn(async () => channel()),
-  out: jest.fn(async () => channel()),
+  createInputChannel: jest.fn(async () => channel()),
+  createOutputChannel: jest.fn(async () => channel()),
   close: jest.fn(async () => undefined)
 })
 

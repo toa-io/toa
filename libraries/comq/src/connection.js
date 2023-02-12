@@ -29,7 +29,7 @@ class Connection {
     await this.#connection.close()
   }
 
-  async in () {
+  async createInputChannel () {
     const chan = await this.#connection.createChannel()
 
     // despite the documentation statement, it returns a Promise
@@ -39,7 +39,7 @@ class Connection {
     return new Channel(chan)
   }
 
-  async out () {
+  async createOutputChannel () {
     const chan = await this.#connection.createConfirmChannel()
 
     return new Channel(chan)

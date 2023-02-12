@@ -39,11 +39,11 @@ const REPLY = new RegExp(`^${queue}..[0-9a-f]+$`)
 
 beforeEach(async () => {
   promise = io.request(queue, payload)
-  output = await connection.out.mock.results[0]?.value
+  output = await connection.createOutputChannel.mock.results[0]?.value
 })
 
 it('should initialize output channel', async () => {
-  expect(connection.out).toHaveBeenCalled()
+  expect(connection.createOutputChannel).toHaveBeenCalled()
 })
 
 it('should consume transient queue', async () => {
@@ -135,16 +135,20 @@ describe('reply', () => {
 
   const encodings = ['application/msgpack', 'application/json']
 
-  it.each(encodings)('should decode %s', async (contentType) => {
-    const value = generate()
-    const content = encode(value, contentType)
+  it.each(encodings)('should decode %s',
+    /**
+     * @param {comq.encoding}contentType
+     */
+    async (contentType) => {
+      const value = generate()
+      const content = encode(value, contentType)
 
-    await reply(content, contentType)
+      await reply(content, contentType)
 
-    const output = await promise
+      const output = await promise
 
-    expect(output).toStrictEqual(value)
-  })
+      expect(output).toStrictEqual(value)
+    })
 })
 
 const reply = async (content = randomBytes(8), contentType = undefined) => {

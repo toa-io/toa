@@ -6,8 +6,9 @@ const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
 const { flip, promise } = require('@toa.io/libraries/generic')
 
-const { Channel } = require('../src/channel')
+const backpressure = require('./backpressure')
 const { amqplib } = require('./amqplib.mock')
+const { Channel } = require('../src/channel')
 
 it('should be', async () => {
   expect(Channel).toBeDefined()
@@ -289,12 +290,7 @@ describe('back pressure', () => {
   it('should apply back pressure', async () => {
     expect.assertions(3)
 
-    // noinspection JSCheckFunctionSignatures
-    chan.publish.mockImplementationOnce((_0, _1, _2, _3, resolve) => {
-      resolve(null)
-
-      return false
-    })
+    chan.publish.mockImplementationOnce(backpressure.publish)
 
     await channel.publish(exchange, buffer)
 
@@ -309,5 +305,34 @@ describe('back pressure', () => {
     await channel.send(queue, buffer)
 
     expect(chan.sendToQueue).toHaveBeenCalled()
+  })
+})
+
+describe('diagnostics', () => {
+  const exchange = generate()
+  const buffer = randomBytes(8)
+
+  it('should be', async () => {
+    expect(channel.diagnose).toBeDefined()
+  })
+
+  it('should emit back pressure events', async () => {
+    chan.publish.mockImplementationOnce(backpressure.publish)
+
+    let flowed = false
+    let drained = false
+
+    channel.diagnose('flow', () => (flowed = true))
+    channel.diagnose('drain', () => (drained = true))
+
+    setImmediate(() => {
+      expect(flowed).toStrictEqual(true)
+
+      chan.emit('drain')
+
+      expect(drained).toStrictEqual(true)
+    })
+
+    await channel.publish(exchange, buffer)
   })
 })

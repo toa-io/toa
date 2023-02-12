@@ -34,7 +34,7 @@ it('should connect', async () => {
   expect(amqplib.connect).toHaveBeenCalledWith(url)
 })
 
-describe.each([['in', 'createChannel'], ['out', 'createConfirmChannel']])('%s', (key, method) => {
+describe.each([['Input', 'createChannel'], ['Output', 'createConfirmChannel']])('%s', (key, method) => {
   /** @type {jest.MockedObject<import('amqplib').Connection>} */
   let amqp
 
@@ -48,7 +48,7 @@ describe.each([['in', 'createChannel'], ['out', 'createConfirmChannel']])('%s', 
     await connection.connect()
 
     amqp = await amqplib.connect.mock.results[0].value
-    channel = await connection[key]()
+    channel = await connection['create' + key + 'Channel']()
 
     expect(amqp[method]).toHaveBeenCalled()
 
@@ -60,7 +60,7 @@ describe.each([['in', 'createChannel'], ['out', 'createConfirmChannel']])('%s', 
     expect(Channel).toHaveBeenCalledWith(chan)
   })
 
-  if (key === 'in') {
+  if (key === 'Input') {
     it('should set prefetch', async () => {
       expect(chan.prefetch).toHaveBeenCalledWith(300)
     })

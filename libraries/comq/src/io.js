@@ -4,6 +4,7 @@
  * @typedef {import('amqplib').ConsumeMessage} Message
  */
 
+const { EventEmitter } = require('node:events')
 const { randomBytes } = require('node:crypto')
 const { lazy, promise } = require('@toa.io/libraries/generic')
 
@@ -23,6 +24,8 @@ class IO {
 
   /** @type {comq.Channel} */
   #output
+
+  #diagnostics = new EventEmitter()
 
   /** @type {Record<string, comq.ReplyEmitter>} */
   #emitters = {}
@@ -104,14 +107,30 @@ class IO {
     await this.#connection.close()
   }
 
+  diagnose (event, handler) {
+    this.#diagnostics.on(event, handler)
+  }
+
   // region initializers
 
   async #createInput () {
-    this.#input = await this.#connection.in()
+    this.#input = await this.#createChannel('Input')
   }
 
   async #createOutput () {
-    this.#output = await this.#connection.out()
+    this.#output = await this.#createChannel('Output')
+  }
+
+  /**
+   * @param {string} type
+   * @returns {Promise<comq.Channel>}
+   */
+  async #createChannel (type) {
+    const channel = await this.#connection[`create${type}Channel`]()
+
+    channel.diagnose('*', (event) => this.#diagnostics.emit(event))
+
+    return channel
   }
 
   async #consumeReplies (queue) {

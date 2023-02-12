@@ -1,3 +1,5 @@
+import * as _diagnostics from './diagnostic'
+
 declare namespace comq {
 
   type producer = (message: any) => Promise<any>
@@ -25,6 +27,8 @@ declare namespace comq {
     seal(): Promise<void>
 
     close(): Promise<void>
+
+    diagnose(event: _diagnostics.event, listener: Function): void
   }
 
 }

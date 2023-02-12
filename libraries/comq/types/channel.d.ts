@@ -1,4 +1,6 @@
 import { ConsumeMessage, Options } from 'amqplib'
+import * as _diagnostics from './diagnostic'
+
 
 declare namespace comq {
 
@@ -20,6 +22,8 @@ declare namespace comq {
     publish(exchange: string, buffer: Buffer, properties?: Options.Publish): Promise<void>
 
     close(): Promise<void>
+
+    diagnose(event: _diagnostics.event, listener: Function): void
   }
 
 }

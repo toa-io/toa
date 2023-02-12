@@ -29,32 +29,30 @@ const produce = jest.fn(async () => generate())
 
 // endregion
 
-describe.each(['in', 'out'])('%sput channel', (key) => {
-  const name = key + 'put'
-
-  it(`should create ${name} channel`, async () => {
+describe.each(['createInputChannel', 'createOutputChannel'])('%sput channel', (method) => {
+  it(`should ${method}`, async () => {
     await io.reply(queue, produce)
 
-    expect(connection[key]).toHaveBeenCalled()
+    expect(connection[method]).toHaveBeenCalled()
   })
 
-  it(`should create ${name} channel once`, async () => {
+  it(`should ${method} once`, async () => {
     const label1 = generate()
     const label2 = generate()
 
     await io.reply(label1, produce)
     await io.reply(label2, produce)
 
-    expect(connection[key].mock.calls.length).toStrictEqual(1)
+    expect(connection[method].mock.calls.length).toStrictEqual(1)
   })
 
-  it(`should concurrently create ${name} channel once`, async () => {
+  it(`should concurrently ${method} once`, async () => {
     const label1 = generate()
     const label2 = generate()
 
     await Promise.all([io.reply(label1, produce), io.reply(label2, produce)])
 
-    expect(connection[key].mock.calls.length).toStrictEqual(1)
+    expect(connection[method].mock.calls.length).toStrictEqual(1)
   })
 })
 
@@ -65,7 +63,7 @@ describe('queues', () => {
   beforeEach(async () => {
     await io.reply(queue, produce)
 
-    input = await connection.in.mock.results[0].value
+    input = await connection.createInputChannel.mock.results[0].value
   })
 
   it('should consume durable queue', async () => {
@@ -96,8 +94,8 @@ describe('encoding', () => {
   beforeEach(async () => {
     await io.reply(queue, produce)
 
-    input = await connection.in.mock.results[0].value
-    output = await connection.out.mock.results[0].value
+    input = await connection.createInputChannel.mock.results[0].value
+    output = await connection.createOutputChannel.mock.results[0].value
   })
 
   it.each(encodings)('should decode message content (%s)', async (encoding) => {

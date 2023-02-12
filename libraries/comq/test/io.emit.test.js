@@ -25,7 +25,7 @@ beforeEach(async () => {
 
   await io.emit(exchange, payload)
 
-  output = await connection.out.mock.results[0].value
+  output = await connection.createOutputChannel.mock.results[0].value
 })
 
 it('should be', async () => {
@@ -36,7 +36,7 @@ const exchange = generate()
 const payload = generate()
 
 it('should create output channel', async () => {
-  expect(connection.out).toHaveBeenCalled()
+  expect(connection.createOutputChannel).toHaveBeenCalled()
   expect(output).toBeDefined()
 })
 
