@@ -13,20 +13,17 @@ async function run () {
 
   console.log('Connected')
 
-  interval = setInterval(send, INTERVAL)
+  interval = setInterval(emit, INTERVAL)
 
   process.on('SIGINT', exit)
 }
 
-async function send () {
-  const a = Math.round(Math.random() * 100)
-  const b = Math.round(Math.random() * 100)
+async function emit () {
+  const number = Math.round(Math.random() * 100)
 
-  console.log(`Sending request with ${a} and ${b}`)
+  await io.emit('random_numbers', number)
 
-  const reply = await io.request('add_numbers', { a, b })
-
-  console.log(`Reply received, ${a} + ${b} equals ${reply}`)
+  console.log(`Random number ${number} emitted`)
 }
 
 async function exit () {

@@ -16,6 +16,10 @@ Node.js.
 9. [Graceful shutdown](#graceful-shutdown)
 10. Broker restart or connection loss [resilience](#persistence)
 
+## TL;DR
+
+[Code examples](examples)
+
 ## Installation
 
 `npm i comq`

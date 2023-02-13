@@ -8,7 +8,7 @@ let io
 async function run () {
   io = await connect(url)
 
-  console.log('Connected to AMQP server')
+  console.log('Connected')
 
   await io.reply('add_numbers', produce)
 
@@ -26,7 +26,7 @@ async function produce ({ a, b }) {
 async function exit () {
   await io.close()
 
-  console.log('Disconnected from AMQP server')
+  console.log('Disconnected')
 }
 
 run().then()
