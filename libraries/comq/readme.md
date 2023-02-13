@@ -14,7 +14,7 @@ Node.js.
 7. [Back pressure](https://amqp-node.github.io/amqplib/channel_api.html#flowcontrol) handling
 8. [Content encoding](#encoding)
 9. [Graceful shutdown](#graceful-shutdown)
-10. Broker restart or connection loss [resilience](#persistence)
+10. Broker restart and connection loss [resilience](#persistence)
 
 ## TL;DR
 
