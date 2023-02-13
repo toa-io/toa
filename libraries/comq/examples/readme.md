@@ -30,9 +30,13 @@ $ node examples/events/consumer A
 $ node examples/events/consumer B
 ```
 
+[source](events/consumer.js)
+
 ```shell
 $ node examples/events/producer
 ```
+
+[source](events/producer.js)
 
 `A` and `B` are consumer groups.
 
