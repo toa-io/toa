@@ -16,6 +16,8 @@ const createReplyEmitter = (label) => {
   const once = (name, callback) => events.once(name, callback)
   const emit = (name, value) => events.emit(name, value)
 
+  events.setMaxListeners(0)
+
   return { queue, once, emit }
 }
 

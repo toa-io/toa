@@ -128,7 +128,8 @@ class IO {
   async #createChannel (type) {
     const channel = await this.#connection[`create${type}Channel`]()
 
-    channel.diagnose('*', (event) => this.#diagnostics.emit(event))
+    channel.diagnose('flow', () => this.#diagnostics.emit('flow'))
+    channel.diagnose('drain', () => this.#diagnostics.emit('drain'))
 
     return channel
   }

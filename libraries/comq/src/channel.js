@@ -75,7 +75,7 @@ class Channel {
   }
 
   diagnose (event, listener) {
-    this.#diagnostics.on(event, listener)
+    this.#diagnostics.on(event, () => listener())
   }
 
   // region initializers
@@ -167,6 +167,8 @@ class Channel {
     })
 
   #pause () {
+    if (this.#paused !== undefined) return
+
     this.#paused = promise()
     this.#channel.once('drain', () => this.#unpause())
     this.#diagnostics.emit('flow')
