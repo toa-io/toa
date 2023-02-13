@@ -75,7 +75,7 @@ class Channel {
   }
 
   diagnose (event, listener) {
-    this.#diagnostics.on(event, () => listener())
+    this.#diagnostics.on(event, listener)
   }
 
   // region initializers

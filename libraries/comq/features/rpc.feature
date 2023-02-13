@@ -1,5 +1,8 @@
 Feature: Request-reply (RPC)
 
+  Background:
+    Given active connection to amqp://developer:secret@localhost
+
   Scenario Outline: Send request and get reply (<queue>)
     Given function replying `<queue>` queue:
     """

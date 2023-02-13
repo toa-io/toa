@@ -170,8 +170,8 @@ The following content types are supported:
 `IO` lazy creates two channels: input and output.
 
 Input channel is used to consume Requests and Events. It
-has [prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch) [initially](#cause-effect-confirmation-lag)
-set to `300` (currently, non-configurable).
+has [prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch) set to `300`
+(currently non-configurable).
 
 Output channel is
 a [ConfirmChannel](https://amqp-node.github.io/amqplib/channel_api.html#confirmchannel) used to send
@@ -190,10 +190,10 @@ call `.close()`.
 ## Persistence
 
 Queues and exchanges
-are [durable](https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue). [Temporary](#request)
-queues have 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (non-configurable currently).
+are [durable](https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue).[Temporary](#request)
+queues have 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (currently non-configurable).
 Outgoing messages
-are [`persistent`](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish).
+are [persistent](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish).
 
 ## Acknowledgements
 

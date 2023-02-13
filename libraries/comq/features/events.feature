@@ -1,5 +1,8 @@
 Feature: Events (pub/sub)
 
+  Background:
+    Given active connection to amqp://developer:secret@localhost
+
   Scenario: Send and receive an event
     Given I consume events from `numbers_added` exchange as `checker`
     When I emit an event to the `numbers_added` exchange

@@ -19,3 +19,16 @@ defineParameterType({
   regexp: /\d+(?:.\d+)?/,
   transformer: (value) => Number(value)
 })
+
+defineParameterType({
+  name: 'status',
+  regexp: /(up|down)/,
+  transformer: (value) => value
+})
+// ^amqps?:\/\/(\w+:\w+\@)?\w+(\:\d+)?$
+
+defineParameterType({
+  name: 'url',
+  regexp: /amqps?:\/\/(?:\w+:\w+@)?\w+(?::\d+)?/,
+  transformer: (value) => value
+})

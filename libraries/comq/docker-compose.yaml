@@ -2,7 +2,7 @@ version: "3.9"
 services:
   rabbitmq:
     image: rabbitmq:3.10.0-management
-    container_name: rmq
+    container_name: comq-rmq
     ports:
       - '5673:5672'
       - '15673:15672'

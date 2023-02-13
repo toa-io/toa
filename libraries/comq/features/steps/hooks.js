@@ -1,25 +1,12 @@
 'use strict'
 
-const { Before, AfterAll, BeforeAll, setDefaultTimeout } = require('@cucumber/cucumber')
-const { connect } = require('@toa.io/libraries/comq')
+const { AfterAll } = require('@cucumber/cucumber')
+const { ConnectedWorld } = require('./world')
 
-setDefaultTimeout(60 * 1000)
-
-/** @type {comq.IO} */
-let io
-
-BeforeAll(async function () {
-  io = await connect('amqp://developer:secret@localhost:5673')
-})
-
-Before(
+AfterAll(
   /**
    * @this {comq.features.Context}
    */
   async function () {
-    this.io ??= io
+    await ConnectedWorld.disconnect()
   })
-
-AfterAll(async function () {
-  await io?.close()
-})
