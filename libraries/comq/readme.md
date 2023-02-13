@@ -16,9 +16,6 @@ Node.js.
 9. [Graceful shutdown](#graceful-shutdown)
 10. Broker restart or connection loss [resilience](#persistence)
 
-> Features are described in the [`features`](features) directory. To run them you should start
-> RabbitMQ server with `docker compose up -d`, then execute `npm run test:features`
-
 ## Installation
 
 `npm i comq`
@@ -27,7 +24,8 @@ Node.js.
 
 `async connect(url: string): IO`
 
-Returns an instance of IO when a successful connection with the broker is established.
+Returns an instance of [`IO`](types/io.d.ts) once a successful connection to the broker is
+established.
 
 `url` is passed
 to [`amqplib.connect`](https://amqp-node.github.io/amqplib/channel_api.html#connect).
@@ -208,7 +206,7 @@ See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/
 
 ## Diagnostics
 
-IO emits events for testing, diagnostics, or logging purposes.
+`IO` emits events for testing, diagnostics, or logging purposes.
 
 `IO.diagnose(event: string, listener: Function): void`
 

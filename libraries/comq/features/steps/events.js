@@ -12,9 +12,11 @@ Given('I consume events from {token} exchange as {token}',
    * @this {comq.features.Context}
    */
   async function (exchange, group) {
-    await this.io.consume(exchange, group, (payload) => {
+    await this.io.consume(exchange, group, async (payload) => {
       this.consumed ??= {}
       this.consumed[group] = payload
+
+      await timeout(100)
     })
   })
 

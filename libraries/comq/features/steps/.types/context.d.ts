@@ -7,6 +7,7 @@ declare namespace comq.features {
     reply?: any
     consumed?: Record<string, any>
     published?: any
+    events?: { [K in _io.event]?: boolean }
   }
 
 }
