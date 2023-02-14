@@ -111,6 +111,6 @@ it('should track multiple methods', async () => {
   await Promise.all([test.do(), test.undo()])
 })
 
-it('should resolve if methods haven`t been called', async () => {
+it('should resolve if methods haven\'t been called', async () => {
   await track(this)
 })
