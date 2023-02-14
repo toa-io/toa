@@ -8,13 +8,13 @@ Node.js.
 1. Dynamic topology
 2. [Request](#request)-[reply](#reply) (RPC)
 3. Events ([pub](#emission)/[sub](#consumption))
-4. [Consumer acknowledgements](#acknowledgements)
-5. [Publisher confirms](#io-channels)
-6. [Flow control](#io-channels)
-7. [Back pressure](https://amqp-node.github.io/amqplib/channel_api.html#flowcontrol) handling
-8. [Content encoding](#encoding)
+4. [Content encoding](#encoding)
+5. [Tolerant connection](#connection-tolerance)
+6. Broker restart [resilience](#persistence)
+7. [Flow control](#io-channels)
+   with [back pressure](https://amqp-node.github.io/amqplib/channel_api.html#flowcontrol) handling
+8. [Consumer acknowledgements](#acknowledgements) and [publisher confirms](#io-channels)
 9. [Graceful shutdown](#graceful-shutdown)
-10. Broker restart and connection loss [resilience](#persistence)
 
 ## TL;DR
 
@@ -165,6 +165,12 @@ The following content types are supported:
 - `application/msgpack`
 - `application/json`
 
+## Connection tolerance
+
+On the initial connection or if the established connection is temporarily lost, ComQ will keep
+attempting to connect to the broker indefinitely with increasing intervals (up to 30 seconds). If
+the broker rejects the connection (e.g. due to access being denied), an exception will be thrown.
+
 ## IO Channels
 
 `IO` lazy creates two channels: input and output.
@@ -216,11 +222,11 @@ See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/
 
 Subscribe to one of the diagnostic events:
 
-- `flow`: back pressure has been applied by an output channel
-- `drain`: back pressure has been removed from an output channel
+- `flow`: back pressure is applied by an output channel
+- `drain`: back pressure is removed from an output channel
 
 ### Example
 
 ```javascript
-io.diagnose('flow', () => console.log('Back pressure has been applied'))
+io.diagnose('flow', () => console.log('Back pressure is applied'))
 ```
