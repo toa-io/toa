@@ -20,7 +20,7 @@ const queue = generate()
 beforeEach(() => {
   jest.clearAllMocks()
 
-  context = { io }
+  context = /** @type {comq.features.Context} */ { io }
 })
 
 describe('Given function replying {token} queue:', () => {
@@ -42,8 +42,8 @@ describe('Given function replying {token} queue:', () => {
   })
 })
 
-describe('When I send following request to the {token} queue:', () => {
-  const step = gherkin.steps.Wh('I send following request to the {token} queue:')
+describe('When a consumer sends the following request to the {token} queue:', () => {
+  const step = gherkin.steps.Wh('a consumer sends the following request to the {token} queue:')
 
   it('should be', async () => undefined)
 
@@ -66,8 +66,8 @@ describe('When I send following request to the {token} queue:', () => {
   })
 })
 
-describe('Then I get the reply:', (type, value) => {
-  const step = gherkin.steps.Th('I get the reply:')
+describe('Then the consumer receives the reply:', (type, value) => {
+  const step = gherkin.steps.Th('the consumer receives the reply:')
 
   it('should be', async () => undefined)
 

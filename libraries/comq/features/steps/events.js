@@ -5,13 +5,13 @@ const { generate } = require('randomstring')
 const { timeout } = require('@toa.io/libraries/generic')
 const { Given, When, Then } = require('@cucumber/cucumber')
 
-Given('I consume events from {token} exchange as {token}',
+Given('(that ){token} is consuming events from the {token} exchange',
   /**
-   * @param {string} exchange
    * @param {string} group
+   * @param {string} exchange
    * @this {comq.features.Context}
    */
-  async function (exchange, group) {
+  async function (group, exchange) {
     await this.io.consume(exchange, group, async (payload) => {
       this.consumed ??= {}
       this.consumed[group] = payload
@@ -33,7 +33,7 @@ When('I emit an event to the {token} exchange',
     this.published = message
   })
 
-Then('{token} has received the event',
+Then('{token} receives the event',
   /**
    * @param {string} group
    * @this {comq.features.Context}

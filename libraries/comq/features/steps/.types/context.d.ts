@@ -2,7 +2,8 @@ import * as _io from '../../../types'
 
 declare namespace comq.features {
 
-  type Context = {
+  interface Context {
+    url?: string
     io?: _io.IO
     reply?: any
     consumed?: Record<string, any>

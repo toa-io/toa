@@ -1,19 +1,19 @@
 Feature: Request-reply (RPC)
 
   Background:
-    Given active connection to amqp://developer:secret@localhost
+    Given an active connection to amqp://developer:secret@localhost
 
   Scenario Outline: Send request and get reply (<queue>)
     Given function replying `<queue>` queue:
     """
     ({ a, b }) => { return <expression> }
     """
-    When I send following request to the `<queue>` queue:
+    When a consumer sends the following request to the `<queue>` queue:
     """yaml
     a: <a>
     b: <b>
     """
-    Then I get the reply:
+    Then the consumer receives the reply:
     """yaml
     <reply>
     """

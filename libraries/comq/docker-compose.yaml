@@ -9,6 +9,11 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: developer
       RABBITMQ_DEFAULT_PASS: secret
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 5
     deploy:
       resources:
         limits:

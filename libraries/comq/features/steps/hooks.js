@@ -1,12 +1,12 @@
 'use strict'
 
 const { AfterAll } = require('@cucumber/cucumber')
-const { ConnectedWorld } = require('./world')
+const { Context } = require('./context')
 
 AfterAll(
   /**
    * @this {comq.features.Context}
    */
   async function () {
-    await ConnectedWorld.disconnect()
+    await Context.disconnect()
   })

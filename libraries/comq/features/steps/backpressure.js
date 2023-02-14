@@ -41,7 +41,7 @@ When('I\'m sending {quantity}B requests to the {token} queue at {quantity}Hz for
     await Promise.all(promises)
   })
 
-Then('back pressure has been applied',
+Then('back pressure was applied',
   /**
    * @this {comq.features.Context}
    */

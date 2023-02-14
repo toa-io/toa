@@ -29,6 +29,6 @@ defineParameterType({
 
 defineParameterType({
   name: 'url',
-  regexp: /amqps?:\/\/(?:\w+:\w+@)?\w+(?::\d+)?/,
+  regexp: /amqps?:\/\/(?:\S+:\S+@)?\w+(?::\d+)?/,
   transformer: (value) => value
 })

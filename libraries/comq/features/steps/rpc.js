@@ -18,7 +18,7 @@ Given('function replying {token} queue:',
     await this.io.reply(queue, producer)
   })
 
-When('I send following request to the {token} queue:',
+When('a consumer sends the following request to the {token} queue:',
   /**
    * @param {string} queue
    * @param {string} yaml
@@ -30,7 +30,7 @@ When('I send following request to the {token} queue:',
     this.reply = await this.io.request(queue, payload)
   })
 
-Then('I get the reply:',
+Then('the consumer receives the reply:',
   /**
    * @param {string} yaml
    * @this {comq.features.Context}

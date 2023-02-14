@@ -1,6 +1,7 @@
 'use strict'
 
 // region setup
+
 const { generate } = require('randomstring')
 
 const { amqplib } = require('./amqplib.mock')
@@ -8,6 +9,7 @@ const mock = { amqplib }
 
 jest.mock('amqplib', () => mock.amqplib)
 jest.mock('../src/channel')
+
 const { Connection } = require('../src/connection')
 const { /** @type {jest.MockedClass<comq.Channel>} */ Channel } = require('../src/channel')
 
@@ -25,6 +27,7 @@ beforeEach(() => {
 
   connection = new Connection(url)
 })
+
 // endregion
 
 it('should connect', async () => {
@@ -33,6 +36,26 @@ it('should connect', async () => {
   expect(amqplib.connect).toHaveBeenCalled()
   expect(amqplib.connect).toHaveBeenCalledWith(url)
 })
+
+it('should reconnect in 5 seconds', async () => {
+  const error = { code: 'ECONNREFUSED' }
+
+  amqplib.connect.mockImplementationOnce(async () => { throw error })
+
+  await expect(connection.connect()).resolves.not.toThrow()
+
+  expect(amqplib.connect).toHaveBeenCalledTimes(2)
+})
+
+it('should throw if code is not ECONNREFUSED', async () => {
+  const error = new Error()
+
+  amqplib.connect.mockImplementationOnce(async () => { throw error })
+
+  await expect(connection.connect()).rejects.toThrow(error)
+})
+
+// Socket closed abruptly during opening handshake
 
 describe.each([['Input', 'createChannel'], ['Output', 'createConfirmChannel']])('%s', (key, method) => {
   /** @type {jest.MockedObject<import('amqplib').Connection>} */

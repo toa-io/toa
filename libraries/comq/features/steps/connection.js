@@ -3,9 +3,9 @@
 const assert = require('node:assert')
 const { timeout } = require('@toa.io/libraries/generic')
 
-const { Given, Then } = require('@cucumber/cucumber')
+const { Given, When, Then } = require('@cucumber/cucumber')
 
-Given('active connection to {url}',
+Given('an active connection to {url}',
   /**
    * @param {string} url
    * @this {comq.features.Context}
@@ -14,47 +14,72 @@ Given('active connection to {url}',
     await this.connect(url)
   })
 
-Given('I\'m connecting to {url} for {number} second(s)',
+When('I attempt to connect to {url} for {number} second(s)',
   /**
-   *
    * @param {string} url
    * @param {number} interval
    * @this {comq.features.Context}
    */
   async function (url, interval) {
-    const connect = async () => {
-      try {
-        await this.connect(url)
-      } catch (exception) {
-        this.exception = exception
-      }
-    }
-
     const wait = async () => await timeout(interval * 1000)
 
-    await Promise.any([connect(), wait()])
+    await Promise.any([connect(this, url), wait()])
   })
 
-Then('the connection hasn\'t been established',
+When('I attempt to connect to {url}',
+  /**
+   * @param {string} url
+   * @this {comq.features.Context}
+   */
+  async function (url) {
+    await connect(this, url)
+  })
+
+Then('the connection is not established',
   /**
    * @this {comq.features.Context}
    */
   function () {
-    assert.equal(this.io, undefined, 'connection has been established contrary to expectations')
+    assert.equal(this.io, undefined, 'connection is established contrary to expectations')
   })
 
-Then('the connection has been established',
+Then('the connection is established',
   /**
    * @this {comq.features.Context}
    */
   function () {
-    assert.notEqual(this.io, undefined, 'connection has not been established')
+    assert.notEqual(this.io, undefined, 'connection is not established')
   })
 
-Then('no exceptions have been thrown',
+Then('no exceptions are thrown',
   /**
    * @this {comq.features.Context}
    */
   function () {
-    assert.equal(this.exception, undefined, 'exception has been thrown: ' + this.exception?.message)
+    assert.equal(this.exception, undefined, 'exception is thrown: ' + this.exception?.message)
   })
+
+Then('an exception is thrown: {string}',
+  /**
+   * @param {string} text
+   * @this {comq.features.Context}
+   */
+  function (message) {
+    assert.notEqual(this.exception, undefined, 'exception isn\'t thrown')
+
+    assert.equal(this.exception.message.includes(message), true,
+      'exception message mismatch ' + this.exception.message)
+  })
+
+/**
+ * @param {comq.features.Context} context
+ * @param {string} url
+ * @returns {Promise<void>}
+ */
+const connect = async (context, url) => {
+  try {
+    await context.connect(url)
+  } catch (exception) {
+    context.exception = exception
+  }
+}

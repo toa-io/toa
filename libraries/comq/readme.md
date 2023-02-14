@@ -61,7 +61,7 @@ value as in the Request.
 
 **Producer** is an application role that receives Requests and produces Replies and Events.
 
-**Consumer** is an application role that sends Requests and receives Replies and Events.
+**Consumer** is an application role that sends Requests and consumes Replies and Events.
 
 ## Reply
 

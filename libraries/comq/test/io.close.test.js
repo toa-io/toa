@@ -33,7 +33,7 @@ describe('close', () => {
     expect(output.close).toHaveBeenCalled()
   })
 
-  it('should not throw if channels haven`t been initialized', async () => {
+  it('should not throw if channels haven\'t been initialized', async () => {
     await expect(io.close()).resolves.not.toThrow()
   })
 
@@ -57,7 +57,7 @@ describe('seal', () => {
     expect(output.close).not.toHaveBeenCalled()
   })
 
-  it('should not throw if channels haven`t been initialized', async () => {
+  it('should not throw if channels haven\'t been initialized', async () => {
     await expect(io.seal()).resolves.not.toThrow()
   })
 

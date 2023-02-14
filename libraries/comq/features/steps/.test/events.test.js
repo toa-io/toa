@@ -16,11 +16,11 @@ let context
 beforeEach(() => {
   jest.clearAllMocks()
 
-  context = { io }
+  context = /** @type {comq.features.Context} */ { io }
 })
 
-describe('Given I consume events from {token} exchange as {token}', () => {
-  const step = gherkin.steps.Gi('I consume events from {token} exchange as {token}')
+describe('Given (that ){token} is consuming events from the {token} exchange', () => {
+  const step = gherkin.steps.Gi('(that ){token} is consuming events from the {token} exchange')
 
   it('should be', async () => undefined)
 
@@ -30,7 +30,7 @@ describe('Given I consume events from {token} exchange as {token}', () => {
   let consumer
 
   beforeEach(async () => {
-    await step.call(context, exchange, group)
+    await step.call(context, group, exchange)
 
     consumer = io.consume.mock.calls[0]?.[2]
 
@@ -70,8 +70,8 @@ describe('When I emit an event to the {token} exchange', () => {
   })
 })
 
-describe('Then {token} has received the event', () => {
-  const step = gherkin.steps.Th('{token} has received the event')
+describe('Then {token} receives the event', () => {
+  const step = gherkin.steps.Th('{token} receives the event')
 
   const payload = generate()
   const group = generate()

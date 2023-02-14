@@ -30,7 +30,7 @@ describe('When I\'m sending {quantity}B requests to the {token} queue at {quanti
   beforeAll(async () => {
     jest.clearAllMocks()
 
-    context = { io }
+    context = /** @type {comq.features.Context} */ { io }
 
     await step.call(context, bytesQ, queue, frequencyQ, seconds)
   })
@@ -68,11 +68,11 @@ describe('When I\'m sending {quantity}B requests to the {token} queue at {quanti
   })
 })
 
-describe('Then back pressure has been applied', () => {
-  const step = gherkin.steps.Th('back pressure has been applied')
+describe('Then back pressure was applied', () => {
+  const step = gherkin.steps.Th('back pressure was applied')
 
   beforeEach(() => {
-    context = { io }
+    context = /** @type {comq.features.Context} */ { io }
   })
 
   it('should be', async () => undefined)

@@ -1,16 +1,16 @@
 Feature: Events (pub/sub)
 
   Background:
-    Given active connection to amqp://developer:secret@localhost
+    Given an active connection to amqp://developer:secret@localhost
 
-  Scenario: Send and receive an event
-    Given I consume events from `numbers_added` exchange as `checker`
+  Scenario: Sending and receiving an event
+    Given that `checker` is consuming events from the `numbers_added` exchange
     When I emit an event to the `numbers_added` exchange
-    Then `checker` has received the event
+    Then `checker` receives the event
 
-  Scenario: Receive an event by two consumer groups
-    Given I consume events from `numbers_added` exchange as `first`
-    And I consume events from `numbers_added` exchange as `second`
+  Scenario: Receiving an event by two consumer groups
+    Given that `first` is consuming events from the `numbers_added` exchange
+    And `second` is consuming events from the `numbers_added` exchange
     When I emit an event to the `numbers_added` exchange
-    Then `first` has received the event
-    And `second` has received the event
+    Then `first` receives the event
+    And `second` receives the event

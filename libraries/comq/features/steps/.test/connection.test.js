@@ -4,7 +4,7 @@ const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
 const { random, promise } = require('@toa.io/libraries/generic')
 const { gherkin } = require('@toa.io/libraries/mock')
-const { comq } = require('./connect.mock')
+const { comq } = require('./comq.mock')
 const world = require('./context.mock')
 const mock = { gherkin, comq }
 
@@ -22,8 +22,8 @@ beforeEach(() => {
   context = world.context()
 })
 
-describe('Given active connection to {url}', () => {
-  const step = gherkin.steps.Gi('active connection to {url}')
+describe('Given an active connection to {url}', () => {
+  const step = gherkin.steps.Gi('an active connection to {url}')
 
   it('should be', async () => undefined)
 
@@ -38,8 +38,8 @@ describe('Given active connection to {url}', () => {
   })
 })
 
-describe('Given I\'m connecting to {url} for {number} second(s)', () => {
-  const step = gherkin.steps.Gi('I\'m connecting to {url} for {number} second(s)')
+describe('When I attempt to connect to {url} for {number} second(s)', () => {
+  const step = gherkin.steps.Wh('I attempt to connect to {url} for {number} second(s)')
 
   it('should be', async () => undefined)
 
@@ -91,8 +91,32 @@ describe('Given I\'m connecting to {url} for {number} second(s)', () => {
   })
 })
 
-describe.each([['', true], ['n\'t', false]])('Then the connection has%s been established', (not, defined) => {
-  const step = gherkin.steps.Th(`the connection has${not} been established`)
+describe('When I attempt to connect to {url}', () => {
+  const step = gherkin.steps.Wh('I attempt to connect to {url}')
+
+  it('should be', async () => undefined)
+
+  const url = generate()
+
+  it('should connect', async () => {
+    await step.call(context, url)
+
+    expect(context.connect).toHaveBeenCalledWith(url)
+  })
+
+  it('should store exception', async () => {
+    const exception = new Error(generate())
+
+    context.connect.mockImplementationOnce(async () => { throw exception })
+
+    await step.call(context, url)
+
+    expect(context.exception).toStrictEqual(exception)
+  })
+})
+
+describe.each([['', true], [' not', false]])('Then the connection is%s established', (not, defined) => {
+  const step = gherkin.steps.Th(`the connection is${not} established`)
 
   it('should be', async () => undefined)
 
@@ -109,8 +133,8 @@ describe.each([['', true], ['n\'t', false]])('Then the connection has%s been est
   })
 })
 
-describe('Then no exceptions have been thrown', () => {
-  const step = gherkin.steps.Th('no exceptions have been thrown')
+describe('Then no exceptions are thrown', () => {
+  const step = gherkin.steps.Th('no exceptions are thrown')
 
   it('should be', async () => undefined)
 
@@ -120,7 +144,33 @@ describe('Then no exceptions have been thrown', () => {
     expect(() => step.call(context)).toThrow(AssertionError)
   })
 
-  it(`should pass if io isn't defined`, async () => {
+  it(`should pass if exception isn't defined`, async () => {
     expect(() => step.call(context)).not.toThrow()
+  })
+})
+
+describe('Then an exception is thrown: {string}', () => {
+  const step = gherkin.steps.Th('an exception is thrown: {string}')
+
+  const message = generate()
+
+  it('should be', async () => undefined)
+
+  it(`should pass if exception is defined and message matches`, async () => {
+    context.exception = new Error(message)
+
+    const slice = message.slice(2, 6)
+
+    expect(() => step.call(context, slice)).not.toThrow()
+  })
+
+  it(`should fail if exception isn't defined`, async () => {
+    expect(() => step.call(context)).toThrow(AssertionError)
+  })
+
+  it('should fail if message doesn\'t match', async () => {
+    context.exception = new Error(generate())
+
+    expect(() => step.call(context)).toThrow(AssertionError)
   })
 })
