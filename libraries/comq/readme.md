@@ -8,13 +8,13 @@ Node.js.
 1. Dynamic topology
 2. [Request](#request)-[reply](#reply) (RPC)
 3. Events ([pub](#emission)/[sub](#consumption))
-4. [Consumer acknowledgements](#acknowledgements)
-5. [Publisher confirms](#io-channels)
-6. [Flow control](#io-channels)
-7. [Back pressure](https://amqp-node.github.io/amqplib/channel_api.html#flowcontrol) handling
-8. [Content encoding](#encoding)
+4. [Content encoding](#encoding)
+5. [Tolerant connection](#connection-tolerance)
+6. Broker restart [resilience](#persistence)
+7. [Flow control](#io-channels)
+   with [back pressure](https://amqp-node.github.io/amqplib/channel_api.html#flowcontrol) handling
+8. [Consumer acknowledgements](#acknowledgements) and [publisher confirms](#io-channels)
 9. [Graceful shutdown](#graceful-shutdown)
-10. Broker restart and connection loss [resilience](#persistence)
 
 ## TL;DR
 
@@ -113,11 +113,13 @@ console.log(sum) // 3
 
 `async IO.consume(exchange: string, group: string, consumer)`
 
-`consumer` function's signature is `async? (message: any): void`
+`consumer` function's signature is `async? (payload: any): void`
 
-Assert fanout `exchange` and queue for the Consumer `group`, and then bind the queue to the
-exchange. Essentially, one Event message is delivered to a single Consumer within *each group*.
-Received Events are decoded and passed to the `consumer`.
+Start consuming decoded Events.
+
+On the initial call (once per unique `exchange` value), asserts fanout `exchange` and queue for the
+Consumer `group`, and then binds the queue to the exchange. That is, one Event message is delivered
+to a single Consumer within *each group*.
 
 > Typically, the value of `group` refers to the name of a microservice running in multiple
 > instances.
@@ -134,7 +136,7 @@ await io.consume('numbers_added', 'logger', (payload) => {
 
 `async IO.emit(exchange: string, payload: any, [encoding: string])`
 
-Publish encoded Event message to the `exchange`.
+Publish encoded Events to the `exchange`.
 
 On the initial call,
 a [fanout exchange](https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchanges) is
@@ -165,7 +167,13 @@ The following content types are supported:
 - `application/msgpack`
 - `application/json`
 
-## IO Channels
+## Connection tolerance
+
+On the initial connection or if the established connection is temporarily lost, ComQ will keep
+attempting to connect to the broker indefinitely with increasing intervals (up to 30 seconds). If
+the broker rejects the connection (e.g. due to access being denied), an exception will be thrown.
+
+## I/O Channels
 
 `IO` lazy creates two channels: input and output.
 
@@ -189,11 +197,12 @@ call `.close()`.
 
 ## Persistence
 
-Queues and exchanges
-are [durable](https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue).[Temporary](#request)
-queues have 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl) (currently non-configurable).
-Outgoing messages
-are [persistent](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish).
+- Queues and exchanges
+  are [durable](https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue)
+- [Temporary](#request) queues have 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl)
+  (currently non-configurable)
+- Outgoing messages
+  are [persistent](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish)
 
 ## Acknowledgements
 
@@ -216,11 +225,11 @@ See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/
 
 Subscribe to one of the diagnostic events:
 
-- `flow`: back pressure has been applied by an output channel
-- `drain`: back pressure has been removed from an output channel
+- `flow`: back pressure is applied by an output channel
+- `drain`: back pressure is removed from an output channel
 
 ### Example
 
 ```javascript
-io.diagnose('flow', () => console.log('Back pressure has been applied'))
+io.diagnose('flow', () => console.log('Back pressure is applied'))
 ```
