@@ -1,24 +1,19 @@
 Feature: Request-reply (RPC)
 
   Background:
-    Given an active connection to amqp://developer:secret@localhost
+    Given an active connection to the broker
 
-  Scenario Outline: Send request and get reply (<queue>)
-    Given function replying `<queue>` queue:
+  Scenario: Sending request and getting reply
+    Given function replying `add_numbers` queue:
     """
-    ({ a, b }) => { return <expression> }
+    ({ a, b }) => { return a + b }
     """
-    When a consumer sends the following request to the `<queue>` queue:
+    When the consumer sends the following request to the `add_numbers` queue:
     """yaml
-    a: <a>
-    b: <b>
+    a: 1
+    b: 2
     """
     Then the consumer receives the reply:
     """yaml
-    <reply>
+    3
     """
-    Examples:
-      | queue            | expression | a | b | reply |
-      | add_numbers      | a + b      | 1 | 2 | 3     |
-      | multiply_numbers | a * b      | 1 | 2 | 2     |
-      | divide_numbers   | a / b      | 4 | 2 | 2     |

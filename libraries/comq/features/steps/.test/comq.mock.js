@@ -3,6 +3,7 @@
 const { generate } = require('randomstring')
 
 const io = () => ({
+  diagnose: jest.fn(() => undefined),
   close: jest.fn(async () => undefined)
 })
 

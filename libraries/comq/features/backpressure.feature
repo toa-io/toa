@@ -1,12 +1,12 @@
 Feature: Back pressure handling
 
   Background:
-    Given an active connection to amqp://developer:secret@localhost
+    Given an active connection to the broker
 
   Scenario: Flooding a queue
     Given function replying `flood` queue:
     """
     () => { return new Buffer.from('ok') }
     """
-    When I'm sending 20KiB requests to the `flood` queue at 5kHz for 0.2 seconds
+    When I'm sending 20kB requests to the `flood` queue at 5kHz for 0.2 seconds
     Then back pressure was applied

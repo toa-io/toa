@@ -18,7 +18,7 @@ Given('function replying {token} queue:',
     await this.io.reply(queue, producer)
   })
 
-When('a consumer sends the following request to the {token} queue:',
+When('the consumer sends the following request to the {token} queue:',
   /**
    * @param {string} queue
    * @param {string} yaml

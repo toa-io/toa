@@ -11,7 +11,7 @@ declare namespace comq.features {
     events?: { [K in _io.event]?: boolean }
     exception?: Error
 
-    connect(url: string): Promise<void>
+    connect(user?: string, password?: string): Promise<void>
   }
 
 }

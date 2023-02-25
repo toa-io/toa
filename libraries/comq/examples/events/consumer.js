@@ -27,7 +27,7 @@ function consume (number) {
 async function exit () {
   await io.close()
 
-  console.log('Disconnected')
+  console.log('\nDisconnected')
 }
 
 run().then()

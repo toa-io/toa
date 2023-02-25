@@ -23,7 +23,7 @@ async function emit () {
 
   await io.emit('random_numbers', number)
 
-  console.log(`Random number ${number} emitted`)
+  console.log(`Random number ${number} is emitted`)
 }
 
 async function exit () {
@@ -31,7 +31,7 @@ async function exit () {
 
   await io.close()
 
-  console.log('Disconnected')
+  console.log('\nDisconnected')
 }
 
 run().then()

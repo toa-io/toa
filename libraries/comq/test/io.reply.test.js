@@ -80,8 +80,20 @@ describe('queues', () => {
   })
 })
 
-describe('should send rep', () => {
+describe('reply', () => {
+  it('should throw if producer returned undefined', async () => {
+    const produce = () => undefined
 
+    await io.reply(queue, produce)
+
+    const input = await connection.createInputChannel.mock.results[0].value
+    const callback = input.consume.mock.calls[0][2]
+    const content = randomBytes(10)
+    const properties = { replyTo: generate() }
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
+
+    await expect(callback(message)).rejects.toThrow('must return value')
+  })
 })
 
 describe('encoding', () => {

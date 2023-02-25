@@ -2,7 +2,7 @@
 
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
-const { random, promise } = require('@toa.io/libraries/generic')
+const { random, promex } = require('@toa.io/libraries/generic')
 const { gherkin } = require('@toa.io/libraries/mock')
 const { comq } = require('./comq.mock')
 const world = require('./context.mock')
@@ -22,46 +22,43 @@ beforeEach(() => {
   context = world.context()
 })
 
-describe('Given an active connection to {url}', () => {
-  const step = gherkin.steps.Gi('an active connection to {url}')
+describe('Given an active connection to the broker', () => {
+  const step = gherkin.steps.Gi('an active connection to the broker')
 
   it('should be', async () => undefined)
 
-  const url = generate()
-
   beforeEach(async () => {
-    await step.call(context, url)
+    await step.call(context)
   })
 
   it('should connect', async () => {
-    expect(context.connect).toHaveBeenCalledWith(url)
+    expect(context.connect).toHaveBeenCalled()
   })
 })
 
-describe('When I attempt to connect to {url} for {number} second(s)', () => {
-  const step = gherkin.steps.Wh('I attempt to connect to {url} for {number} second(s)')
+describe('When I attempt to connect to the broker for {number} second(s)', () => {
+  const step = gherkin.steps.Wh('I attempt to connect to the broker for {number} second(s)')
 
   it('should be', async () => undefined)
 
-  const url = generate()
   const interval = (random(2) + 1) / 10
 
   describe('broker available', () => {
     beforeEach(async () => {
-      await step.call(context, url, interval)
+      await step.call(context, interval)
     })
 
     it('should call connect', async () => {
-      expect(context.connect).toHaveBeenCalledWith(url)
+      expect(context.connect).toHaveBeenCalled()
     })
   })
 
   describe('broker unavailable', () => {
-    /** @type {toa.generic.promise.Exposed} */
+    /** @type {toa.generic.Promex} */
     let connection
 
     beforeEach(() => {
-      connection = promise()
+      connection = promex()
 
       context.connect.mockImplementationOnce(async () => connection)
     })
@@ -69,7 +66,7 @@ describe('When I attempt to connect to {url} for {number} second(s)', () => {
     it('should quit after given interval', async () => {
       const start = new Date().getTime()
 
-      await step.call(context, url, interval)
+      await step.call(context, interval)
 
       const end = new Date().getTime()
       const inaccuracy = 1 // setTimeout is inaccurate
@@ -84,24 +81,22 @@ describe('When I attempt to connect to {url} for {number} second(s)', () => {
 
       context.connect.mockImplementationOnce(async () => { throw exception })
 
-      await step.call(context, url, interval)
+      await step.call(context, interval)
 
       expect(context.exception).toStrictEqual(exception)
     })
   })
 })
 
-describe('When I attempt to connect to {url}', () => {
-  const step = gherkin.steps.Wh('I attempt to connect to {url}')
+describe('When I attempt to connect to the broker', () => {
+  const step = gherkin.steps.Wh('I attempt to connect to the broker')
 
   it('should be', async () => undefined)
 
-  const url = generate()
-
   it('should connect', async () => {
-    await step.call(context, url)
+    await step.call(context)
 
-    expect(context.connect).toHaveBeenCalledWith(url)
+    expect(context.connect).toHaveBeenCalled()
   })
 
   it('should store exception', async () => {
@@ -109,9 +104,24 @@ describe('When I attempt to connect to {url}', () => {
 
     context.connect.mockImplementationOnce(async () => { throw exception })
 
-    await step.call(context, url)
+    await step.call(context)
 
     expect(context.exception).toStrictEqual(exception)
+  })
+})
+
+describe('When I attempt to connect to the broker as {string} with password {string}', () => {
+  const step = gherkin.steps.Wh('I attempt to connect to the broker as {string} with password {string}')
+
+  it('should be', async () => undefined)
+
+  const user = generate()
+  const password = generate()
+
+  it('should connect with credentials', async () => {
+    await step.call(context, user, password)
+
+    expect(context.connect).toHaveBeenCalledWith(user, password)
   })
 })
 
@@ -123,13 +133,13 @@ describe.each([['', true], [' not', false]])('Then the connection is%s establish
   it(`should fail if io is${defined ? 'n\'t' : ''} defined`, async () => {
     context.io = defined ? undefined : generate()
 
-    expect(() => step.call(context)).toThrow(AssertionError)
+    await expect(step.call(context)).rejects.toThrow(AssertionError)
   })
 
   it(`should pass if io is${defined ? '' : 'n\'t'} defined`, async () => {
     context.io = defined ? generate() : undefined
 
-    expect(() => step.call(context)).not.toThrow()
+    await expect(step.call(context)).resolves.not.toThrow()
   })
 })
 

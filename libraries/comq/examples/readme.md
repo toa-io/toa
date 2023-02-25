@@ -18,6 +18,8 @@ $ node exampels/rpc/consumer
 
 [source](rpc/consumer.js)
 
+> Try to run consumer first.
+
 ## Events
 
 Run in multiple terminals:

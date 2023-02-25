@@ -5,7 +5,7 @@
  */
 
 const { EventEmitter } = require('node:events')
-const { lazy, track, promise } = require('@toa.io/libraries/generic')
+const { lazy, promex } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {comq.Channel}
@@ -14,7 +14,10 @@ class Channel {
   /** @type {AMQPChannel} */
   #channel
 
-  /** @type {toa.generic.promise.Exposed} */
+  /** @type {string[]} */
+  #tags = []
+
+  /** @type {toa.generic.Promex} */
   #paused
 
   #diagnostics = new EventEmitter()
@@ -69,9 +72,10 @@ class Channel {
       await this.#publish('publish', args, properties)
     })
 
-  async close () {
-    await track(this) // complete current processing
-    await this.#channel.close()
+  async seal () {
+    const promises = this.#tags.map((tag) => this.#channel.cancel(tag))
+
+    await Promise.all(promises)
   }
 
   diagnose (event, listener) {
@@ -131,7 +135,7 @@ class Channel {
 
     if (this.#paused !== undefined) await this.#paused
 
-    const confirmation = promise()
+    const confirmation = promex()
 
     // it is reasonably expected that #publish is called on a ConfirmChannel
     // once this will be a problem, Channel class should be refactored into
@@ -152,7 +156,9 @@ class Channel {
   async #consume (queue, callback) {
     const consumer = this.#getAcknowledgingConsumer(callback)
 
-    await this.#channel.consume(queue, consumer)
+    const response = await this.#channel.consume(queue, consumer)
+
+    this.#tags.push(response.consumerTag)
   }
 
   /**
@@ -160,16 +166,16 @@ class Channel {
    * @returns {comq.channels.consumer}
    */
   #getAcknowledgingConsumer = (consumer) =>
-    track(this, async (message) => {
+    async (message) => {
       await consumer(message)
 
       this.#channel.ack(message)
-    })
+    }
 
   #pause () {
     if (this.#paused !== undefined) return
 
-    this.#paused = promise()
+    this.#paused = promex()
     this.#channel.once('drain', () => this.#unpause())
     this.#diagnostics.emit('flow')
   }

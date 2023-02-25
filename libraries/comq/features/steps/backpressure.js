@@ -24,10 +24,6 @@ When('I\'m sending {quantity}B requests to the {token} queue at {quantity}Hz for
     const interval = Math.max((1000 / frequency), 1)
     const each = Math.max(1 / (1000 / frequency), 1)
 
-    this.events = {}
-
-    this.io.diagnose('flow', () => (this.events.flow = true))
-
     const promises = []
 
     for (let i = 0; i < times; i++) {

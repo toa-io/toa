@@ -23,6 +23,8 @@ class Connection {
   }
 
   async connect () {
+    console.log('Connecting...')
+
     await retry((retry) => this.#tryConnect(retry), RETRY)
   }
 
@@ -33,8 +35,7 @@ class Connection {
   async createInputChannel () {
     const chan = await this.#connection.createChannel()
 
-    // despite the documentation statement, it returns a Promise
-    // https://amqp-node.github.io/amqplib/channel_api.html#channel_prefetch
+    // it actually returns a Promise
     await chan.prefetch(300)
 
     return new Channel(chan)
@@ -56,6 +57,17 @@ class Connection {
       if (transient(exception)) return retry()
       else throw exception
     }
+
+    // this.#connection.on('error', (e) => {
+    //   console.log('error', e)
+    // })
+    //
+    // this.#connection.on('close', (error) => {
+    //   console.log('close', error.message)
+    //   console.log(error)
+    //
+    //   this.connect()
+    // })
   }
 }
 

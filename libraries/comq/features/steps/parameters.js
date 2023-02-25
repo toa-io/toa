@@ -22,7 +22,7 @@ defineParameterType({
 
 defineParameterType({
   name: 'status',
-  regexp: /(up|down)/,
+  regexp: /(up|down|crashed)/,
   transformer: (value) => value
 })
 // ^amqps?:\/\/(\w+:\w+\@)?\w+(\:\d+)?$

@@ -57,7 +57,6 @@ it.each(encodings)('should pass decoded event (%s)', async (contentType) => {
   const content = encode(payload, contentType)
   const properties = { contentType }
   const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-
   const callback = input.subscribe.mock.calls[0][2]
 
   await callback(message)

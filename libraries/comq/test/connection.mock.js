@@ -7,7 +7,7 @@ const channel = () => ({
   subscribe: jest.fn(async () => undefined),
   publish: jest.fn(async () => undefined),
   diagnose: jest.fn(async () => undefined),
-  close: jest.fn(async () => undefined)
+  seal: jest.fn(async () => undefined)
 })
 
 /**

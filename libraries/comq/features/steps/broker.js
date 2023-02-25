@@ -5,22 +5,27 @@ const { execute } = require('@toa.io/libraries/command')
 
 const { Given } = require('@cucumber/cucumber')
 
-Given('the RabbitMQ broker is {status}',
+Given('the broker is/has {status}',
   /**
    * @param {'up' | 'down'} status
    * @this {comq.features.Context}
    */
   async function (status) {
-    const command = status === 'up' ? 'start' : 'stop'
-
-    await execute(`docker ${command} comq-rmq`)
-
-    if (status === 'up') {
-      await healthy()
-
-      while (this.io === undefined) await timeout(1000)
-    } else await timeout(1000)
+    await actions[status](this)
   })
+
+const actions = {
+  up: async (context) => {
+    await execute('docker start comq-rmq')
+    await healthy()
+  },
+  down: async () => {
+    await execute('docker stop comq-rmq')
+  },
+  crashed: async () => {
+    await execute('docker kill comq-rmq')
+  }
+}
 
 async function healthy () {
   let process

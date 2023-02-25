@@ -6,7 +6,7 @@
 
 const { EventEmitter } = require('node:events')
 const { randomBytes } = require('node:crypto')
-const { lazy, promise } = require('@toa.io/libraries/generic')
+const { lazy, track, promex } = require('@toa.io/libraries/generic')
 
 const { decode } = require('./decode')
 const { encode } = require('./encode')
@@ -64,7 +64,7 @@ class IO {
       const emitter = this.#emitters[queue]
       const replyTo = emitter.queue
       const properties = { contentType, correlationId, replyTo }
-      const reply = promise()
+      const reply = promex()
 
       emitter.once(correlationId, reply.resolve)
 
@@ -76,7 +76,7 @@ class IO {
   consume = lazy(this, this.#createInput,
     async (exchange, group, callback) => {
       const queue = io.concat(exchange, group)
-      const consumer = this.#getMessageConsumer(callback)
+      const consumer = this.#getEventConsumer(callback)
 
       await this.#input.subscribe(exchange, queue, consumer)
     })
@@ -96,14 +96,14 @@ class IO {
     })
 
   async seal () {
-    await this.#input?.close()
+    await this.#input?.seal()
 
     this.#input = undefined
   }
 
   async close () {
-    await this.#input?.close()
-    await this.#output?.close()
+    await this.seal()
+    await track(this)
     await this.#connection.close()
   }
 
@@ -150,11 +150,13 @@ class IO {
    * @returns {comq.channels.consumer}
    */
   #getRequestConsumer = (callback) =>
-    async (message) => {
+    track(this, async (message) => {
       if (!('replyTo' in message.properties)) throw new Error('Request is missing `replyTo` property')
 
       const payload = decode(message)
       const reply = await callback(payload)
+
+      if (reply === undefined) throw new Error('Producer must return value')
 
       let { correlationId, contentType } = message.properties
 
@@ -165,7 +167,7 @@ class IO {
       const properties = { contentType, correlationId }
 
       await this.#output.send(message.properties.replyTo, buffer, properties)
-    }
+    })
 
   /**
    * @param {string} queue
@@ -183,12 +185,12 @@ class IO {
    * @param {comq.consumer} callback
    * @returns {comq.channels.consumer}
    */
-  #getMessageConsumer = (callback) =>
-    async (message) => {
+  #getEventConsumer = (callback) =>
+    track(this, async (message) => {
       const payload = decode(message)
 
       await callback(payload)
-    }
+    })
 
   /**
    * @param {any} payload

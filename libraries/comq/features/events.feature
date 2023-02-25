@@ -1,7 +1,7 @@
 Feature: Events (pub/sub)
 
   Background:
-    Given an active connection to amqp://developer:secret@localhost
+    Given an active connection to the broker
 
   Scenario: Sending and receiving an event
     Given that `checker` is consuming events from the `numbers_added` exchange

@@ -5,41 +5,50 @@ const { timeout } = require('@toa.io/libraries/generic')
 
 const { Given, When, Then } = require('@cucumber/cucumber')
 
-Given('an active connection to {url}',
+Given('an active connection to the broker',
   /**
-   * @param {string} url
    * @this {comq.features.Context}
    */
-  async function (url) {
-    await this.connect(url)
+  async function () {
+    this.connecting = this.connect()
+
+    await this.connecting
   })
 
-When('I attempt to connect to {url} for {number} second(s)',
+When('I attempt to connect to the broker for {number} second(s)',
   /**
-   * @param {string} url
    * @param {number} interval
    * @this {comq.features.Context}
    */
-  async function (url, interval) {
+  async function (interval) {
     const wait = async () => await timeout(interval * 1000)
 
-    await Promise.any([connect(this, url), wait()])
+    await Promise.any([connect(this), wait()])
   })
 
-When('I attempt to connect to {url}',
+When('I attempt to connect to the broker',
   /**
-   * @param {string} url
    * @this {comq.features.Context}
    */
-  async function (url) {
-    await connect(this, url)
+  async function () {
+    await connect(this)
+  })
+
+When('I attempt to connect to the broker as {string} with password {string}',
+  /**
+   * @param {string} user
+   * @param {string} password
+   * @this {comq.features.Context}
+   */
+  async function (user, password) {
+    await connect(this, user, password)
   })
 
 Then('the connection is not established',
   /**
    * @this {comq.features.Context}
    */
-  function () {
+  async function () {
     assert.equal(this.io, undefined, 'connection is established contrary to expectations')
   })
 
@@ -47,7 +56,9 @@ Then('the connection is established',
   /**
    * @this {comq.features.Context}
    */
-  function () {
+  async function () {
+    if (this.connecting) await this.connecting
+
     assert.notEqual(this.io, undefined, 'connection is not established')
   })
 
@@ -61,7 +72,7 @@ Then('no exceptions are thrown',
 
 Then('an exception is thrown: {string}',
   /**
-   * @param {string} text
+   * @param {string} message
    * @this {comq.features.Context}
    */
   function (message) {
@@ -73,12 +84,13 @@ Then('an exception is thrown: {string}',
 
 /**
  * @param {comq.features.Context} context
- * @param {string} url
+ * @param {string} [user]
+ * @param {string} [password]
  * @returns {Promise<void>}
  */
-const connect = async (context, url) => {
+const connect = async (context, user, password) => {
   try {
-    await context.connect(url)
+    await context.connect(user, password)
   } catch (exception) {
     context.exception = exception
   }

@@ -4,7 +4,7 @@
 
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
-const { flip, promise } = require('@toa.io/libraries/generic')
+const { flip, random } = require('@toa.io/libraries/generic')
 
 const backpressure = require('./backpressure')
 const { amqplib } = require('./amqplib.mock')
@@ -245,40 +245,31 @@ describe('publish', () => {
   })
 })
 
-describe('close', () => {
-  it('should close channel', async () => {
-    await channel.close()
-
-    expect(chan.close).toHaveBeenCalled()
+describe('seal', () => {
+  it('should be', async () => {
+    expect(channel.seal).toBeDefined()
   })
 
-  it('should wait for event processing to be completed', async () => {
-    expect.assertions(2)
+  it('should cancel consumption', async () => {
+    const tags = []
 
-    const queue = generate()
-    const persistent = flip()
-    const processing = promise()
-    const consumer = jest.fn(() => processing)
+    for (let i = 0; i < random(5) + 3; i++) {
+      const queue = generate()
+      const consumer = jest.fn()
 
-    await channel.consume(queue, persistent, consumer)
+      await channel.consume(queue, flip(), consumer)
 
-    const callback = chan.consume.mock.calls[0][1]
-    const content = randomBytes(8)
-    const message = /** @type {import('amqplib').ConsumeMessage} */ { content }
+      const { consumerTag: tag } = await chan.consume.mock.results[i].value
 
-    setImmediate(async () => {
-      setImmediate(() => {
-        expect(chan.close).not.toHaveBeenCalled()
+      expect(tag).toBeDefined()
+      expect(tags.indexOf(tag)).toStrictEqual(-1)
 
-        processing.resolve()
-      })
+      tags.push(tag)
+    }
 
-      await channel.close()
+    await channel.seal()
 
-      expect(chan.close).toHaveBeenCalled()
-    })
-
-    await callback(message)
+    for (const tag of tags) expect(chan.cancel).toHaveBeenCalledWith(tag)
   })
 })
 

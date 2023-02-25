@@ -42,8 +42,8 @@ describe('Given function replying {token} queue:', () => {
   })
 })
 
-describe('When a consumer sends the following request to the {token} queue:', () => {
-  const step = gherkin.steps.Wh('a consumer sends the following request to the {token} queue:')
+describe('When the consumer sends the following request to the {token} queue:', () => {
+  const step = gherkin.steps.Wh('the consumer sends the following request to the {token} queue:')
 
   it('should be', async () => undefined)
 

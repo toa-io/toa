@@ -37,9 +37,12 @@ it('should connect', async () => {
   expect(amqplib.connect).toHaveBeenCalledWith(url)
 })
 
-it('should reconnect in 5 seconds', async () => {
-  const error = { code: 'ECONNREFUSED' }
+const TRANSIENT_ERRORS = [
+  { code: 'ECONNREFUSED' },
+  { message: 'Socket closed abruptly during opening handshake' }
+]
 
+it.each(TRANSIENT_ERRORS)('should reconnect in 5 seconds if error is not permanent', async (error) => {
   amqplib.connect.mockImplementationOnce(async () => { throw error })
 
   await expect(connection.connect()).resolves.not.toThrow()
@@ -47,15 +50,13 @@ it('should reconnect in 5 seconds', async () => {
   expect(amqplib.connect).toHaveBeenCalledTimes(2)
 })
 
-it('should throw if code is not ECONNREFUSED', async () => {
+it('should throw if error is permanent', async () => {
   const error = new Error()
 
   amqplib.connect.mockImplementationOnce(async () => { throw error })
 
   await expect(connection.connect()).rejects.toThrow(error)
 })
-
-// Socket closed abruptly during opening handshake
 
 describe.each([['Input', 'createChannel'], ['Output', 'createConfirmChannel']])('%s', (key, method) => {
   /** @type {jest.MockedObject<import('amqplib').Connection>} */

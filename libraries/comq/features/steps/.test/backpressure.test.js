@@ -56,16 +56,6 @@ describe('When I\'m sending {quantity}B requests to the {token} queue at {quanti
 
     expect(io.request).toHaveBeenCalledTimes(times)
   })
-
-  it('should store flow event', async () => {
-    expect(io.diagnose).toHaveBeenCalledWith('flow', expect.any(Function))
-
-    const listener = io.diagnose.mock.calls[0][1]
-
-    listener()
-
-    expect(context.events.flow).toStrictEqual(true)
-  })
 })
 
 describe('Then back pressure was applied', () => {

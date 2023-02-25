@@ -12,7 +12,7 @@ services:
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 5s
-      timeout: 5s
+      timeout: 1s
       retries: 5
     deploy:
       resources:

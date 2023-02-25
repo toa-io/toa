@@ -18,8 +18,8 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-describe('the RabbitMQ broker is {status}', () => {
-  const step = gherkin.steps.Gi('the RabbitMQ broker is {status}')
+describe('the broker is/has {status}', () => {
+  const step = gherkin.steps.Gi('the broker is/has {status}')
 
   it('should be', async () => undefined)
 
@@ -63,5 +63,11 @@ describe('the RabbitMQ broker is {status}', () => {
     await step.call(context, 'down')
 
     expect(command.execute).toHaveBeenCalledWith('docker stop comq-rmq')
+  })
+
+  it('should kill comq-rmq container', async () => {
+    await step.call(context, 'crashed')
+
+    expect(command.execute).toHaveBeenCalledWith('docker kill comq-rmq')
   })
 })

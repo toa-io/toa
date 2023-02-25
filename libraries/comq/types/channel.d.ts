@@ -21,7 +21,7 @@ declare namespace comq {
 
     publish(exchange: string, buffer: Buffer, properties?: Options.Publish): Promise<void>
 
-    close(): Promise<void>
+    seal(): Promise<void>
 
     diagnose(event: _diagnostics.event, listener: Function): void
   }
