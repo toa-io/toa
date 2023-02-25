@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { promise } = require('../')
+const { promex } = require('../')
 
 const { track } = require('../')
 
@@ -9,10 +9,10 @@ it('should be', async () => {
   expect(track).toBeDefined()
 })
 
-/** @type {toa.generic.promise.Exposed} */
+/** @type {toa.generic.Promex} */
 let done
 
-/** @type {toa.generic.promise.Exposed} */
+/** @type {toa.generic.Promex} */
 let undone
 
 const method1 = /** @type {jest.MockedFn<(a: string, b: string) => Promise>} */
@@ -38,8 +38,8 @@ let test
 beforeEach(() => {
   jest.clearAllMocks()
 
-  done = promise()
-  undone = promise()
+  done = promex()
+  undone = promex()
   test = new Test()
 })
 

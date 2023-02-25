@@ -2,17 +2,17 @@
 
 const { generate } = require('randomstring')
 
-const { promise } = require('../src')
+const { promex } = require('../src')
 
 it('should be', async () => {
-  expect(promise).toBeDefined()
+  expect(promex).toBeDefined()
 })
 
-/** @type {toa.generic.promise.Exposed} */
+/** @type {toa.generic.Promex} */
 let instance
 
 beforeEach(() => {
-  instance = promise()
+  instance = promex()
 })
 
 it('should return promise', async () => {
