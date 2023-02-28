@@ -28,7 +28,7 @@ it.each([
   ['drain', 'Output'],
   ['flow', 'Input'],
   ['drain', 'Input']
-])('should re-emit `%s` from %s',
+])('should re-emit `%s` from %s channel',
   async (event, channelType) => {
     const listener = /** @type {Function} */ jest.fn(() => undefined)
 
@@ -44,6 +44,25 @@ it.each([
 
     const call = channel.diagnose.mock.calls.find((call) => call[0] === event)
     const emit = call[1]
+
+    emit(event)
+
+    expect(listener).toHaveBeenCalled()
+  })
+
+it.each(['open', 'close'])('should re-emit %s from connection',
+  /**
+   * @param {comq.diagnostics.event} event
+   */
+  async (event) => {
+    const listener = /** @type {Function} */ jest.fn(() => undefined)
+
+    expect(connection.diagnose).toHaveBeenCalledWith(event, expect.any(Function))
+
+    const call = connection.diagnose.mock.calls.find((call) => call[0] === event)
+    const emit = call[1]
+
+    io.diagnose(event, listener)
 
     emit(event)
 

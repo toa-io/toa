@@ -35,6 +35,10 @@ class IO {
    */
   constructor (connection) {
     this.#connection = connection
+
+    for (const event of CONNECTION_EVENTS) {
+      this.#connection.diagnose(event, (...args) => this.#diagnostics.emit(event, ...args))
+    }
   }
 
   reply = lazy(this,
@@ -66,6 +70,7 @@ class IO {
       const properties = { contentType, correlationId, replyTo }
       const reply = promex()
 
+      // memory leak in case of connection loss as reply will never be received
       emitter.once(correlationId, reply.resolve)
 
       await this.#output.deliver(queue, buffer, properties)
@@ -213,5 +218,8 @@ const OCTETS = 'application/octet-stream'
 
 /** @type {comq.encoding} */
 const MSGPACK = 'application/msgpack'
+
+/** @type {comq.diagnostics.event[]} */
+const CONNECTION_EVENTS = ['open', 'close']
 
 exports.IO = IO

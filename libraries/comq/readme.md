@@ -9,11 +9,10 @@ Node.js.
 2. [Request](#request)-[reply](#reply) (RPC)
 3. Events ([pub](#emission)/[sub](#consumption))
 4. [Content encoding](#encoding)
-5. [Tolerant connection](#connection-tolerance)
-6. Broker restart [resilience](#persistence)
-7. [Flow control](#io-channels)
-   with [back pressure](https://amqp-node.github.io/amqplib/channel_api.html#flowcontrol) handling
-8. [Consumer acknowledgements](#acknowledgements) and [publisher confirms](#io-channels)
+5. [Consumer acknowledgements](#acknowledgements) and [publisher confirms](#io-segregation)
+6. [Connection tolerance](#connection-tolerance)
+7. Broker restart [resilience](#persistence)
+8. [Flow control](#io-segregation) with back pressure handling
 9. [Graceful shutdown](#graceful-shutdown)
 
 ## TL;DR
@@ -83,7 +82,7 @@ supported and `producer` has returned value that isn't a `Buffer`, then exceptio
 > calling `producer`.
 
 > `replyTo` queue is not asserted, therefore a Request message with `replyTo` referring to a
-> non-existent queue will cause an AMQP channel error.
+> non-existent queue will cause an exception.
 
 ### Example
 
@@ -127,8 +126,8 @@ to a single Consumer within *each group*.
 ### Example
 
 ```javascript
-await io.consume('numbers_added', 'logger', (payload) => {
-  console.log(`${payload.a} was added to ${payload.b}`)
+await io.consume('numbers_added', 'logger', ({ a, b }) => {
+  console.log(`${a} was added to ${b}`)
 })
 ```
 
@@ -189,18 +188,18 @@ acknowledged" ([ack](https://amqp-node.github.io/amqplib/channel_api.html#channe
 message handler function throws an exception. Messages are **not** "negative
 acknowledged" ([nack](https://amqp-node.github.io/amqplib/channel_api.html#channel_nack)) as it's
 assumed, that the handler's exception will cause
-the [process to crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html). In this
-scenario, RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the
-message due to a connection loss.
+the [process to crash](#it-will-crash). In this scenario,
+RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the message due
+to a connection loss.
 
 Outgoing messages are considered as *sent*
 when a [confirmation](https://www.rabbitmq.com/confirms.html#publisher-confirms) is received.
 
 See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/confirms.html).
 
-## I/O Channels
+## I/O Segregation
 
-`IO` lazy creates two channels: input and output.
+`IO` creates two channels: input and output.
 
 Input channel is used to consume Requests and Events. It
 has [prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch) set to `300`
@@ -208,7 +207,13 @@ has [prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch
 
 Output channel is
 a [ConfirmChannel](https://amqp-node.github.io/amqplib/channel_api.html#confirmchannel) used to send
-Requests, emit Events, send *and consume* Replies. It's prefetch count is infinite.
+Requests, emit Events, send *and consume* Replies. The channel's prefetch count is infinite, and it
+handles the [back pressure mechanism](https://www.rabbitmq.com/flow-control.html).
+
+I/O segregation addresses the potential issue of a *prefetch deadlock*. If you use the same channel
+or channel pool for both inputs and outputs, you may consume the maximum number of messages allowed
+by the prefetch setting, but then processing functions that send outgoing requests will not be able
+to receive replies since the prefetch limit has already been reached.
 
 ## Graceful Shutdown
 
@@ -264,5 +269,11 @@ established, there is no way to capture the initial `open` event.
 ### Example
 
 ```javascript
-io.diagnose('close', (error) => console.log('Connection is closed: ' + error?.message))
+io.diagnose('flow', () => console.log('Back pressure was applied'))
 ```
+
+## It Will Crash
+
+Neither connection nor channel errors are handled, thus, the
+process [will crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html) in case any
+of them.

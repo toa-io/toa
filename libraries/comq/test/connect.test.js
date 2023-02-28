@@ -39,6 +39,6 @@ it('should pass active connection', async () => {
   /** @type {jest.MockedObject<comq.Connection>} */
   const instance = Connection.mock.instances[0]
 
-  expect(instance.connect).toHaveBeenCalled()
+  expect(instance.open).toHaveBeenCalled()
   expect(IO).toHaveBeenCalledWith(instance)
 })

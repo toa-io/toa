@@ -12,11 +12,11 @@ const { concat } = require('./concat')
 const createReplyEmitter = (label) => {
   const id = randomBytes(8).toString('hex')
   const queue = concat(label, id)
-  const events = new EventEmitter()
-  const once = (name, callback) => events.once(name, callback)
-  const emit = (name, value) => events.emit(name, value)
+  const emitter = new EventEmitter()
+  const once = (name, callback) => emitter.once(name, callback)
+  const emit = (name, value) => emitter.emit(name, value)
 
-  events.setMaxListeners(0)
+  emitter.setMaxListeners(0)
 
   return { queue, once, emit }
 }

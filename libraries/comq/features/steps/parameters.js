@@ -21,14 +21,19 @@ defineParameterType({
 })
 
 defineParameterType({
+  name: 'url',
+  regexp: /amqps?:\/\/(?:\S+:\S+@)?\w+(?::\d+)?/,
+  transformer: (value) => value
+})
+
+defineParameterType({
   name: 'status',
   regexp: /(up|down|crashed)/,
   transformer: (value) => value
 })
-// ^amqps?:\/\/(\w+:\w+\@)?\w+(\:\d+)?$
 
 defineParameterType({
-  name: 'url',
-  regexp: /amqps?:\/\/(?:\S+:\S+@)?\w+(?::\d+)?/,
+  name: 'connection-event',
+  regexp: /(lost|restored)/,
   transformer: (value) => value
 })

@@ -17,15 +17,25 @@ class Channel extends EventEmitter {
   publish = jest.fn((_0, _1, _2, _3, resolve) => resolve?.(null))
 }
 
-const connection = () => (/** @type {jest.MockedObject<comq.Connection>} */ {
-  createChannel: jest.fn(async () => new Channel()),
-  createConfirmChannel: jest.fn(async () => new Channel()),
-  close: jest.fn(async () => undefined)
-})
+class Connection extends EventEmitter {
+  constructor () {
+    super()
+
+    // noinspection JSValidateTypes
+    this.removeAllListeners = jest.spyOn(this, 'removeAllListeners')
+
+    // noinspection JSValidateTypes
+    this.on = jest.spyOn(this, 'on')
+  }
+
+  createChannel = jest.fn(async () => new Channel())
+  createConfirmChannel = jest.fn(async () => new Channel())
+  close = jest.fn(async () => undefined)
+}
 
 /** @type {jest.MockedObject<import('amqplib')>} */
 const amqplib = {
-  connect: jest.fn(async () => connection())
+  connect: jest.fn(async () => new Connection())
 }
 
 exports.amqplib = amqplib

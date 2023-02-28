@@ -82,6 +82,20 @@ Then('an exception is thrown: {string}',
       'exception message mismatch ' + this.exception.message)
   })
 
+Then('the connection is {connection-event}',
+  /**
+   * @param {'lost' | 'restored'} key
+   * @this {comq.features.Context}
+   */
+  async function (key) {
+    const event = CONNECTION_EVENTS[key]
+    const gap = CONNECTION_GAPS[key]
+
+    await timeout(gap)
+
+    assert.equal(this.events[event], true, 'connection was not ' + key)
+  })
+
 /**
  * @param {comq.features.Context} context
  * @param {string} [user]
@@ -94,4 +108,14 @@ const connect = async (context, user, password) => {
   } catch (exception) {
     context.exception = exception
   }
+}
+
+const CONNECTION_EVENTS = {
+  lost: 'close',
+  restored: 'open'
+}
+
+const CONNECTION_GAPS = {
+  lost: global.COMQ_TESTING_CONNECTION_GAP_LOST ?? 10,
+  restored: global.COMQ_TESTING_CONNECTION_GAP_RESTORED ?? 5000
 }

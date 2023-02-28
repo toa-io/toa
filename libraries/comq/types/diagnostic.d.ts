@@ -1,6 +1,6 @@
 declare namespace comq.diagnostics {
 
-  type event = 'connect' | 'close' | 'flow' | 'drain'
+  type event = 'open' | 'close' | 'flow' | 'drain'
 
 }
 

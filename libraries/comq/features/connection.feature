@@ -1,4 +1,4 @@
-Feature: Tolerant Connection
+Feature: Connection Tolerance
 
   Scenario: Connecting to a broker before it was started
     Given the broker is down

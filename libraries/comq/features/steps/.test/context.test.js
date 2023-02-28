@@ -60,13 +60,18 @@ describe('connect', () => {
     expect(comq.connect).toHaveBeenCalledWith(`amqp://${user}:${password}@localhost:5673`)
   })
 
-  it('should store flow event', async () => {
-    expect(io.diagnose).toHaveBeenCalledWith('flow', expect.any(Function))
+  it.each(['open', 'close', 'flow'])('should store connection %s event',
+    /**
+     * @param {comq.diagnostics.event} event
+     */
+    async (event) => {
+      expect(io.diagnose).toHaveBeenCalledWith(event, expect.any(Function))
+      expect(context.events[event]).not.toStrictEqual(true)
 
-    const listener = io.diagnose.mock.calls[0][1]
+      const listener = io.diagnose.mock.calls.find((call) => call[0] === event)[1]
 
-    listener()
+      listener()
 
-    expect(context.events.flow).toStrictEqual(true)
-  })
+      expect(context.events[event]).toStrictEqual(true)
+    })
 })

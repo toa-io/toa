@@ -16,7 +16,8 @@ const channel = () => ({
 const connection = () => (/** @type {jest.MockedObject<comq.Connection>} */ {
   createInputChannel: jest.fn(async () => channel()),
   createOutputChannel: jest.fn(async () => channel()),
-  close: jest.fn(async () => undefined)
+  close: jest.fn(async () => undefined),
+  diagnose: jest.fn(() => undefined)
 })
 
 exports.connection = connection

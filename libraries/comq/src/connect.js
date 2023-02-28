@@ -7,7 +7,7 @@ const { Connection } = require('./connection')
 const connect = async (url) => {
   const connection = new Connection(url)
 
-  await connection.connect()
+  await connection.open()
 
   return new IO(connection)
 }

@@ -1,5 +1,6 @@
 'use strict'
 
+const { EventEmitter } = require('node:events')
 const amqp = require('amqplib')
 const { retry } = require('@toa.io/libraries/generic')
 
@@ -15,6 +16,8 @@ class Connection {
   /** @type {import('amqplib').Connection} */
   #connection
 
+  #diagnostics = new EventEmitter()
+
   /**
    * @param {string} url
    */
@@ -22,10 +25,8 @@ class Connection {
     this.#url = url
   }
 
-  async connect () {
-    console.log('Connecting...')
-
-    await retry((retry) => this.#tryConnect(retry), RETRY)
+  async open () {
+    await retry((retry) => this.#open(retry), RETRY)
   }
 
   async close () {
@@ -35,7 +36,6 @@ class Connection {
   async createInputChannel () {
     const chan = await this.#connection.createChannel()
 
-    // it actually returns a Promise
     await chan.prefetch(300)
 
     return new Channel(chan)
@@ -47,10 +47,14 @@ class Connection {
     return new Channel(chan)
   }
 
+  async diagnose (event, listener) {
+    this.#diagnostics.on(event, listener)
+  }
+
   /**
    * @param {Function} retry
    */
-  async #tryConnect (retry) {
+  async #open (retry) {
     try {
       this.#connection = await amqp.connect(this.#url)
     } catch (exception) {
@@ -58,16 +62,23 @@ class Connection {
       else throw exception
     }
 
-    // this.#connection.on('error', (e) => {
-    //   console.log('error', e)
-    // })
-    //
-    // this.#connection.on('close', (error) => {
-    //   console.log('close', error.message)
-    //   console.log(error)
-    //
-    //   this.connect()
-    // })
+    this.#diagnostics.emit('open')
+    this.#connection.on('close', (error) => this.#close(error))
+
+    // prevents process crash, 'close' will be emitted next
+    // https://amqp-node.github.io/amqplib/channel_api.html#model_events
+    this.#connection.on('error', () => undefined)
+  }
+
+  /**
+   * @param {Error} error
+   */
+  async #close (error) {
+    this.#diagnostics.emit('close', error)
+
+    this.#connection.removeAllListeners()
+
+    if (error !== undefined) await this.open()
   }
 }
 
@@ -82,8 +93,6 @@ const RETRY = {
  */
 const transient = (exception) => {
   const ECONNREFUSED = exception.code === 'ECONNREFUSED'
-
-  // didn't find anything reliable
   const HANDSHAKE = exception.message === 'Socket closed abruptly during opening handshake'
 
   return ECONNREFUSED || HANDSHAKE
