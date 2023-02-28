@@ -6,14 +6,14 @@ Node.js.
 ## Features
 
 1. Dynamic topology
-2. [Request](#request)-[reply](#reply) (RPC)
-3. Events ([pub](#emission)/[sub](#consumption))
-4. [Content encoding](#encoding)
-5. [Consumer acknowledgements](#acknowledgements) and [publisher confirms](#io-segregation)
-6. [Connection tolerance](#connection-tolerance)
-7. Broker restart [resilience](#persistence)
-8. [Flow control](#io-segregation) with back pressure handling
-9. [Graceful shutdown](#graceful-shutdown)
+2. Request-reply (RPC)
+3. Events (pub/sub)
+4. Content encoding
+5. Flow control with back pressure handling
+6. Consumer acknowledgements and publisher confirms
+7. Connection tolerance
+8. Broker restart resilience
+9. Graceful shutdown
 
 ## TL;DR
 
@@ -168,52 +168,63 @@ The following content types are supported:
 
 ## Connection Tolerance
 
-On the initial connection or if the established connection is temporarily lost, ComQ will keep
-attempting to connect to the broker indefinitely with increasing intervals (up to 30 seconds). If
-the broker rejects the connection (e.g. due to access being denied), an exception will be thrown.
+When initially connecting to the broker or if the established connection is lost, connection
+attempts will be repeated indefinitely with intervals increasing up to 30 seconds. Once reconnected,
+topology will be recovered, and unanswered requests and unconfirmed events will be resent.
 
-## Persistence
+If the broker rejects the connection (for example, due to access being denied), an exception will be
+thrown.
 
-- Queues and exchanges
-  are [durable](https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue)
-- [Temporary](#request) queues have 1 hour [TTL](https://www.rabbitmq.com/ttl.html#queue-ttl)
-  (currently non-configurable)
-- Outgoing messages
-  are [persistent](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish)
+## Topology
 
-## Acknowledgements
+Topology is designed to deliver maximum performance while ensuring that the **at least once**
+guarantee provided by RabbitMQ is maintained.
 
-Incoming messages are "positive
-acknowledged" ([ack](https://amqp-node.github.io/amqplib/channel_api.html#channel_ack)), unless
-message handler function throws an exception. Messages are **not** "negative
-acknowledged" ([nack](https://amqp-node.github.io/amqplib/channel_api.html#channel_nack)) as it's
-assumed, that the handler's exception will cause
-the [process to crash](#it-will-crash). In this scenario,
-RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the message due
-to a connection loss.
+> Topology design assumes that unanswered Requests and unconfirmed Events will be resent upon
+> reconnection.
 
-Outgoing messages are considered as *sent*
-when a [confirmation](https://www.rabbitmq.com/confirms.html#publisher-confirms) is received.
+### Channels
+
+`IO` lazy creates individual channels for Requests, Replies, and Events.
+
+- [Prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch) for incoming
+  Requests and Events are separated. Each is set to `300` (currently non-configurable).
+- Incoming Replies have no prefetch limit.
+- Outgoing Events are transmitted
+  using [confirmation mechanism](https://www.rabbitmq.com/confirms.html#publisher-confirms).
+
+Channel segregation addresses the potential issue of a prefetch deadlock, which may take place
+when using a single channel or channel pool.
+
+### Exchanges and Queues
+
+- Exchanges and queues for Events, and queues for Requests
+  are [durable](https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue).
+- Queues for Replies are *exclusive*.
+
+### Messages
+
+- Events are [persistent](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish),
+  while Requests and Replies are not.
+- Events and Requests are consumed using
+  manual [acknowledgment mode](https://www.rabbitmq.com/confirms.html#acknowledgement-modes),
+  and Replies are consumed using automatic.
+
+> Messages are **not** "negative
+> acknowledged" in case of handler function's exception as it's assumed, it will cause
+> the [process to crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html). In this
+> scenario, RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the
+> message due to a connection loss.
 
 See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/confirms.html).
 
-## I/O Segregation
+### Cheatsheet
 
-`IO` creates two channels: input and output.
-
-Input channel is used to consume Requests and Events. It
-has [prefetch count](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch) set to `300`
-(currently non-configurable).
-
-Output channel is
-a [ConfirmChannel](https://amqp-node.github.io/amqplib/channel_api.html#confirmchannel) used to send
-Requests, emit Events, send *and consume* Replies. The channel's prefetch count is infinite, and it
-handles the [back pressure mechanism](https://www.rabbitmq.com/flow-control.html).
-
-I/O segregation addresses the potential issue of a *prefetch deadlock*. If you use the same channel
-or channel pool for both inputs and outputs, you may consume the maximum number of messages allowed
-by the prefetch setting, but then processing functions that send outgoing requests will not be able
-to receive replies since the prefetch limit has already been reached.
+| Message | Prefetch  | Confirms | Queue     | Ack | Persistent |
+|---------|-----------|----------|-----------|-----|------------|
+| Request | limited   | no       | durable   | yes | no         |
+| Reply   | unlimited | no       | exclusive | no  | no         |
+| Event   | limited   | yes      | durable   | yes | yes        |
 
 ## Graceful Shutdown
 
@@ -271,9 +282,3 @@ established, there is no way to capture the initial `open` event.
 ```javascript
 io.diagnose('flow', () => console.log('Back pressure was applied'))
 ```
-
-## It Will Crash
-
-Neither connection nor channel errors are handled, thus, the
-process [will crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html) in case any
-of them.

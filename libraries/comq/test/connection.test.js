@@ -28,6 +28,7 @@ beforeEach(() => {
   connection = new Connection(url)
 })
 
+/** @type {[string, Partial<Error>][]} */
 const TRANSIENT_ERRORS = [
   ['ECONNREFUSED', { code: 'ECONNREFUSED' }],
   ['Socket closed', { message: 'Socket closed abruptly during opening handshake' }]
@@ -39,7 +40,6 @@ describe('initial connection', () => {
   it('should connect', async () => {
     await connection.open()
 
-    expect(amqplib.connect).toHaveBeenCalled()
     expect(amqplib.connect).toHaveBeenCalledWith(url)
   })
 
