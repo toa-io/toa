@@ -1,7 +1,7 @@
 'use strict'
 
 const { EventEmitter } = require('node:events')
-const { lazy, promex } = require('@toa.io/libraries/generic')
+const { lazy, promex, retry } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {comq.Channel}
@@ -20,6 +20,9 @@ class Channel {
   #paused
 
   #diagnostics = new EventEmitter()
+
+  /** @type {toa.generic.Promex} */
+  #recovery = promex()
 
   /**
    * @param {comq.Topology} topology
@@ -85,6 +88,13 @@ class Channel {
     this.#diagnostics.on(event, listener)
   }
 
+  async recover (connection) {
+    await this.create(connection)
+
+    this.#recovery.resolve()
+    this.#recovery = promex()
+  }
+
   // region initializers
 
   /**
@@ -94,7 +104,7 @@ class Channel {
   async #assertQueue (name) {
     const options = this.#topology.durable ? DURABLE : EXCLUSIVE
 
-    await this.#channel.assertQueue(name, options)
+    await this.#ensure(() => this.#channel.assertQueue(name, options))
   }
 
   /**
@@ -181,6 +191,20 @@ class Channel {
     this.#paused = undefined
     this.#diagnostics.emit('drain')
   }
+
+  async #ensure (fn) {
+    return retry(async (retry) => {
+      try {
+        return await fn()
+      } catch (exception) {
+        if (permanent(exception)) throw exception
+
+        await this.#recovery
+
+        retry()
+      }
+    }, { base: 0 })
+  }
 }
 
 /**
@@ -194,6 +218,13 @@ const create = async (connection, topology) => {
   await channel.create(connection)
 
   return channel
+}
+
+/**
+ * @return {boolean}
+ */
+const permanent = (exception) => {
+  return exception.code === 405 // RESOURCE-LOCKED
 }
 
 const DEFAULT = ''

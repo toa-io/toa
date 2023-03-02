@@ -398,6 +398,52 @@ describe('back pressure', () => {
   })
 })
 
+describe('recovery', () => {
+  const queue = generate()
+  const consumer = /** @type {comq.channel.consumer} */ jest.fn(() => undefined)
+
+  beforeEach(async () => {
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+  })
+
+  const permanent = [
+    ['RESOURCE-LOCKED', { code: 405 }]
+  ]
+
+  it.each(permanent)('should not recover on %s', async (_, exception) => {
+    chan.assertQueue.mockImplementation(async () => { throw exception })
+
+    await expect(channel.consume(queue, consumer)).rejects.toStrictEqual(exception)
+  })
+
+  it('should assert queue after recovery', async () => {
+    chan.assertQueue.mockImplementation(async () => { throw new Error() })
+
+    /** @type {comq.amqp.Connection} */
+    let replacement
+    let completed = false
+
+    setImmediate(async () => {
+      expect(completed).toStrictEqual(false)
+
+      chan.assertQueue.mockImplementation(async () => {})
+      completed = true
+      replacement = await amqplib.connect()
+
+      await channel.recover(replacement)
+    })
+
+    await channel.consume(queue, consumer)
+
+    expect(completed).toStrictEqual(true)
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.assertQueue).toHaveBeenCalled()
+  })
+})
+
 describe('diagnostics', () => {
   const exchange = generate()
   const buffer = randomBytes(8)
@@ -430,8 +476,12 @@ describe('diagnostics', () => {
   })
 })
 
-const getCreatedChannel = () => {
+/**
+ * @param {comq.amqp.Connection} [conn]
+ * @return {jest.MockedObject<comq.amqp.Channel>}
+ */
+const getCreatedChannel = (conn) => {
   const method = `create${topology.confirms ? 'Confirm' : ''}Channel`
 
-  return connection[method].mock.results[0].value
+  return (conn ?? connection)[method].mock.results[0].value
 }

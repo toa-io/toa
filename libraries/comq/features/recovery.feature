@@ -20,6 +20,22 @@ Feature: Topology Recovery
     3
     """
 
+  Scenario: Broker crashing while defining producer
+    Given function replying `add_numbers` queue is expected:
+    """
+    ({ a, b }) => { return a + b }
+    """
+    And the broker has crashed
+    When the broker is up
+    And the consumer sends the following request to the `add_numbers` queue:
+    """yaml
+    a: 1
+    b: 2
+    """
+    Then the consumer receives the reply:
+    """yaml
+    3
+    """
 
   Scenario: Sending the request while broker is down
     Given function replying `add_numbers` queue:

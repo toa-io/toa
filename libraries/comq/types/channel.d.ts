@@ -1,4 +1,4 @@
-import { ConsumeMessage, Options } from 'amqplib'
+import { ConsumeMessage, Options, Connection } from 'amqplib'
 import * as _diagnostics from './diagnostic'
 
 declare namespace comq {
@@ -10,7 +10,7 @@ declare namespace comq {
   }
 
   interface Channel {
-    create(connection: import('amqplib').Connection): Promise<void>
+    create(connection: Connection): Promise<void>
 
     consume(queue: string, consumer: channels.consumer): Promise<void>
 
@@ -23,6 +23,8 @@ declare namespace comq {
     seal(): Promise<void>
 
     diagnose(event: _diagnostics.event, listener: Function): void
+
+    recover(connection: Connection): Promise<void>
   }
 
 }

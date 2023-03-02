@@ -17,6 +17,9 @@ class Connection {
   /** @type {import('amqplib').Connection} */
   #connection
 
+  /** @type {comq.Channel[]} */
+  #channels = []
+
   /** @type {toa.generic.Promex} */
   #recovery = promex()
 
@@ -40,7 +43,11 @@ class Connection {
   async createChannel (type) {
     const preset = presets[type]
 
-    return retry(async (retry) => this.#createChannel(retry, preset), { base: 0 })
+    const channel = await retry(async (retry) => this.#createChannel(retry, preset), { base: 0 })
+
+    this.#channels.push(channel)
+
+    return channel
   }
 
   async diagnose (event, listener) {
@@ -64,6 +71,8 @@ class Connection {
     // https://amqp-node.github.io/amqplib/channel_api.html#model_events
     this.#connection.on('error', () => undefined)
     this.#diagnostics.emit('open')
+
+    for (const channel of this.#channels) await channel.recover(this.#connection)
 
     this.#recovery.resolve()
     this.#recovery = promex()

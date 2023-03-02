@@ -4,15 +4,16 @@
 
 const { generate } = require('randomstring')
 
+const { timeout } = require('@toa.io/libraries/generic')
 const { amqplib } = require('./amqplib.mock')
-const mock = { amqplib }
+const { channel: create } = require('./connection.mock')
+const mock = { amqplib, channel: { create } }
 
 jest.mock('amqplib', () => mock.amqplib)
-jest.mock('../src/channel')
+jest.mock('../src/channel', () => mock.channel)
 
 const presets = require('../src/presets')
 const { Connection } = require('../src/connection')
-const { /** @type {jest.MockedFn} */ create } = require('../src/channel')
 
 it('should be', async () => {
   expect(Connection).toBeDefined()
@@ -93,6 +94,24 @@ describe('reconnection', () => {
   it('should prevent process crash', async () => {
     expect(conn.on).toHaveBeenCalledWith('error', expect.any(Function))
   })
+
+  it('should recover channels', async () => {
+    await connection.createChannel('request')
+
+    const channel = await create.mock.results[0].value
+
+    expect(channel).toBeDefined()
+
+    conn.emit('close', new Error())
+
+    await timeout(0)
+
+    expect(amqplib.connect).toHaveBeenCalledTimes(2)
+
+    const replacement = await amqplib.connect.mock.results[1].value
+
+    expect(channel.recover).toHaveBeenCalledWith(replacement)
+  })
 })
 
 describe('create channel', () => {
@@ -109,6 +128,9 @@ describe('create channel', () => {
     /** @type {comq.topology.type[]} */
     ['request', 'reply', 'event'])('should create channel of %s type',
     async (type) => {
+      // noinspection JSCheckFunctionSignatures
+      create.mockImplementationOnce(async () => generate())
+
       const preset = presets[type]
       const channel = await connection.createChannel(type)
 
@@ -120,6 +142,7 @@ describe('create channel', () => {
     create.mockImplementation(async () => { throw new Error() })
 
     setTimeout(() => {
+      // noinspection JSCheckFunctionSignatures
       create.mockImplementation(async () => generate())
 
       conn.emit('close', new Error())
