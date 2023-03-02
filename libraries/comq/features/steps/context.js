@@ -17,6 +17,7 @@ class Context extends World {
   published
   events = {}
   exception
+  expected
 
   async connect (user, password) {
     const url = locator(user, password)

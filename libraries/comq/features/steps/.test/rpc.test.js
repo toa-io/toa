@@ -1,8 +1,8 @@
 'use strict'
 
-const { resolve, join } = require('node:path')
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
+const { promex } = require('@toa.io/libraries/generic')
 const { dump } = require('@toa.io/libraries/yaml')
 const { gherkin } = require('@toa.io/libraries/mock')
 const { io } = require('./io.mock')
@@ -42,16 +42,21 @@ describe('Given function replying {token} queue:', () => {
   })
 })
 
+describe('Given function replying {token} queue is expected:', () => {
+  gherkin.steps.Gi('function replying {token} queue is expected:')
+
+  it('should be', () => undefined)
+})
+
 describe('When the consumer sends the following request to the {token} queue:', () => {
   const step = gherkin.steps.Wh('the consumer sends the following request to the {token} queue:')
 
   it('should be', async () => undefined)
 
   const payload = { [generate()]: generate() }
+  const yaml = dump(payload)
 
   beforeEach(async () => {
-    const yaml = dump(payload)
-
     await step.call(context, queue, yaml)
   })
 
@@ -59,10 +64,28 @@ describe('When the consumer sends the following request to the {token} queue:', 
     expect(io.request).toHaveBeenCalledWith(queue, payload)
   })
 
-  it('should store reply', async () => {
+  it('should store reply promise', async () => {
     const reply = await io.request.mock.results[0].value
 
-    expect(context.reply).toStrictEqual(reply)
+    expect(await context.reply).toStrictEqual(reply)
+  })
+
+  it('should wait for context.expected', async () => {
+    context.expected = promex()
+
+    let completed = false
+
+    setImmediate(() => {
+      expect(completed).toStrictEqual(false)
+
+      completed = true
+
+      context.expected.resolve()
+    })
+
+    await step.call(context, queue, yaml)
+
+    expect(completed).toStrictEqual(true)
   })
 })
 
@@ -85,15 +108,22 @@ describe('Then the consumer receives the reply:', (type, value) => {
     })
 
     it('should throw if differ', async () => {
-      context.reply = generate()
+      const promise = promex()
 
-      expect(() => step.call(context, yaml)).toThrow(AssertionError)
+      context.reply = promise
+      promise.resolve(generate())
+
+      await expect(step.call(context, yaml)).rejects.toThrow(AssertionError)
     })
 
     it('should pass if equals', async () => {
-      context.reply = value
+      const promise = promex()
 
-      expect(() => step.call(context, yaml)).not.toThrow()
+      context.reply = promise
+
+      promise.resolve(value)
+
+      await expect(step.call(context, yaml)).resolves.not.toThrow()
     })
   })
 })

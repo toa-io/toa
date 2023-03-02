@@ -2,7 +2,7 @@
 
 const { EventEmitter } = require('node:events')
 const amqp = require('amqplib')
-const { retry } = require('@toa.io/libraries/generic')
+const { retry, promex } = require('@toa.io/libraries/generic')
 
 const presets = require('./presets')
 const channels = require('./channel')
@@ -16,6 +16,9 @@ class Connection {
 
   /** @type {import('amqplib').Connection} */
   #connection
+
+  /** @type {toa.generic.Promex} */
+  #recovery = promex()
 
   #diagnostics = new EventEmitter()
 
@@ -37,7 +40,7 @@ class Connection {
   async createChannel (type) {
     const preset = presets[type]
 
-    return channels.create(this.#connection, preset)
+    return retry(async (retry) => this.#createChannel(retry, preset), { base: 0 })
   }
 
   async diagnose (event, listener) {
@@ -61,6 +64,9 @@ class Connection {
     // https://amqp-node.github.io/amqplib/channel_api.html#model_events
     this.#connection.on('error', () => undefined)
     this.#diagnostics.emit('open')
+
+    this.#recovery.resolve()
+    this.#recovery = promex()
   }
 
   /**
@@ -72,6 +78,22 @@ class Connection {
     this.#connection.removeAllListeners()
 
     if (error !== undefined) await this.open()
+  }
+
+  /**
+   * @param {Function} retry
+   * @param {comq.Topology} preset
+   * @return {Promise<comq.Channel>}
+   */
+  async #createChannel (retry, preset) {
+    try {
+      // await to catch rejection
+      return await channels.create(this.#connection, preset)
+    } catch {
+      await this.#recovery
+
+      retry()
+    }
   }
 }
 

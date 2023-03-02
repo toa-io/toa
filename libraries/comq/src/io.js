@@ -1,9 +1,5 @@
 'use strict'
 
-/**
- * @typedef {import('amqplib').ConsumeMessage} Message
- */
-
 const { EventEmitter } = require('node:events')
 const { randomBytes } = require('node:crypto')
 const { lazy, track, promex } = require('@toa.io/libraries/generic')
@@ -28,10 +24,10 @@ class IO {
   /** @type {comq.Channel} */
   #events
 
-  #diagnostics = new EventEmitter()
-
   /** @type {Record<string, comq.ReplyEmitter>} */
   #emitters = {}
+
+  #diagnostics = new EventEmitter()
 
   /**
    * @param {comq.Connection} connection
@@ -205,17 +201,17 @@ class IO {
 
   /**
    * @param {any} payload
-   * @param {comq.encoding} [contentType]
+   * @param {comq.encoding} [encoding]
    * @returns [Buffer, string]
    */
-  #encode (payload, contentType) {
+  #encode (payload, encoding) {
     const raw = Buffer.isBuffer(payload)
 
-    contentType ??= raw ? OCTETS : MSGPACK
+    encoding ??= raw ? OCTETS : DEFAULT
 
-    const buffer = raw ? payload : encode(payload, contentType)
+    const buffer = raw ? payload : encode(payload, encoding)
 
-    return [buffer, contentType]
+    return [buffer, encoding]
   }
 }
 
@@ -223,7 +219,7 @@ class IO {
 const OCTETS = 'application/octet-stream'
 
 /** @type {comq.encoding} */
-const MSGPACK = 'application/msgpack'
+const DEFAULT = 'application/msgpack'
 
 /** @type {comq.diagnostics.event[]} */
 const CONNECTION_EVENTS = ['open', 'close']

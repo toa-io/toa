@@ -115,6 +115,20 @@ describe('create channel', () => {
       expect(create).toHaveBeenCalledWith(conn, preset)
       expect(channel).toStrictEqual(await create.mock.results[0].value)
     })
+
+  it('should create channel after exception', async () => {
+    create.mockImplementation(async () => { throw new Error() })
+
+    setTimeout(() => {
+      create.mockImplementation(async () => generate())
+
+      conn.emit('close', new Error())
+    }, 1)
+
+    const channel = await connection.createChannel('request')
+
+    expect(channel).toStrictEqual(await create.mock.results[1].value)
+  })
 })
 
 it('should close connection', async () => {
