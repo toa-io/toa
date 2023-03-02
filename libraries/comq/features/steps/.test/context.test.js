@@ -15,13 +15,13 @@ it('should be', async () => {
 /** @type {comq.features.Context} */
 let context
 
-beforeEach(() => {
-  jest.clearAllMocks()
-
+beforeAll(async () => {
   const _ = {}
 
   // noinspection JSValidateTypes
   context = new Context(_)
+
+  await context.connect()
 })
 
 describe('connect', () => {
@@ -33,8 +33,6 @@ describe('connect', () => {
   let io
 
   beforeEach(async () => {
-    await context.connect()
-
     io = await comq.connect.mock.results[0].value
   })
 

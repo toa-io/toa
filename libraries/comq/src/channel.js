@@ -1,9 +1,5 @@
 'use strict'
 
-/**
- * @typedef {import('amqplib').Channel | import('amqplib').ConfirmChannel} AMQPChannel
- */
-
 const { EventEmitter } = require('node:events')
 const { lazy, promex } = require('@toa.io/libraries/generic')
 
@@ -11,7 +7,10 @@ const { lazy, promex } = require('@toa.io/libraries/generic')
  * @implements {comq.Channel}
  */
 class Channel {
-  /** @type {AMQPChannel} */
+  /** @type {comq.Topology} */
+  #topology
+
+  /** @type {comq.amqp.Channel} */
   #channel
 
   /** @type {string[]} */
@@ -23,33 +22,39 @@ class Channel {
   #diagnostics = new EventEmitter()
 
   /**
-   * @param {AMQPChannel} channel
+   * @param {comq.Topology} topology
    */
-  constructor (channel) {
-    this.#channel = channel
+  constructor (topology) {
+    this.#topology = topology
+  }
+
+  async create (connection) {
+    const method = `create${this.#topology.confirms ? 'Confirm' : ''}Channel`
+
+    this.#channel = await connection[method]()
   }
 
   consume = lazy(this, this.#assertQueue,
     /**
      * @param {string} queue
-     * @param {boolean} durable
      * @param {comq.channels.consumer} callback
-     * @returns {Promise<void>}
      */
-    async (queue, durable, callback) => {
+    async (queue, callback) => {
       await this.#consume(queue, callback)
     })
 
-  async send (queue, buffer, properties) {
-    const args = [queue, buffer]
-
-    await this.#publish('sendToQueue', args, properties)
-  }
-
-  deliver = lazy(this, this.#assertPersistentQueue, this.send)
+  send = lazy(this, this.#assertQueue,
+    /**
+     * @param {string} queue
+     * @param {Buffer} buffer
+     * @param {comq.amqp.options.Publish} options
+     */
+    async (queue, buffer, options) => {
+      await this.#publish(DEFAULT, queue, buffer, options)
+    })
 
   subscribe = lazy(this,
-    [this.#assertExchange, this.#bindQueue],
+    [this.#assertExchange, this.#assertBoundQueue],
     /**
      * @param {string} exchange
      * @param {string} queue
@@ -67,15 +72,13 @@ class Channel {
      * @param {import('amqplib').Options.Publish} [properties]
      */
     async (exchange, buffer, properties) => {
-      const args = [exchange, '', buffer]
-
-      await this.#publish('publish', args, properties)
+      await this.#publish(exchange, DEFAULT, buffer, properties)
     })
 
   async seal () {
-    const promises = this.#tags.map((tag) => this.#channel.cancel(tag))
+    const cancellations = this.#tags.map((tag) => this.#channel.cancel(tag))
 
-    await Promise.all(promises)
+    await Promise.all(cancellations)
   }
 
   diagnose (event, listener) {
@@ -85,22 +88,13 @@ class Channel {
   // region initializers
 
   /**
-   * @param {string} queue
-   * @param {boolean} persistent
+   * @param {string} name
    * @returns {Promise<void>}
    */
-  async #assertQueue (queue, persistent) {
-    const options = persistent ? PERSISTENT_QUEUE : TRANSIENT_QUEUE
+  async #assertQueue (name) {
+    const options = this.#topology.durable ? DURABLE : EXCLUSIVE
 
-    await this.#channel.assertQueue(queue, options)
-  }
-
-  /**
-   * @param {string} queue
-   * @returns {Promise<void>}
-   */
-  async #assertPersistentQueue (queue) {
-    return this.#assertQueue(queue, true)
+    await this.#channel.assertQueue(name, options)
   }
 
   /**
@@ -108,7 +102,10 @@ class Channel {
    * @returns {Promise<void>}
    */
   async #assertExchange (exchange) {
-    await this.#channel.assertExchange(exchange, 'fanout')
+    /** @type {import('amqplib').Options.AssertExchange} */
+    const options = { durable: this.#topology.durable }
+
+    await this.#channel.assertExchange(exchange, 'fanout', options)
   }
 
   /**
@@ -117,31 +114,26 @@ class Channel {
    * @param {string} queue
    * @returns {Promise<void>}
    */
-  async #bindQueue (exchange, queue) {
-    await this.#assertPersistentQueue(queue)
+  async #assertBoundQueue (exchange, queue) {
+    await this.#assertQueue(queue)
     await this.#channel.bindQueue(queue, exchange, '')
   }
 
   // endregion
 
   /**
-   * @param {string} method
-   * @param {any[]} args
-   * @param {import('amqplib').Options.Publish} properties
+   * @param {string} exchange
+   * @param {string} queue
+   * @param {Buffer} buffer
+   * @param {comq.amqp.options.Publish} options
    */
-  async #publish (method, args, properties) {
-    properties ??= {}
-    properties.persistent ??= true
-
+  async #publish (exchange, queue, buffer, options) {
     if (this.#paused !== undefined) await this.#paused
 
-    const confirmation = promex()
+    options = Object.assign({ persistent: this.#topology.persistent }, options)
 
-    // it is reasonably expected that #publish is called on a ConfirmChannel
-    // once this will be a problem, Channel class should be refactored into
-    // abstract Channel and two inheritors: Input and Output to make sure
-    // input channel does not have publication methods
-    const resume = this.#channel[method](...args, properties, confirmation.callback)
+    const confirmation = this.#topology.confirms ? promex() : undefined
+    const resume = this.#channel.publish(exchange, queue, buffer, options, confirmation?.callback)
 
     if (resume === false) this.#pause()
 
@@ -150,13 +142,17 @@ class Channel {
 
   /**
    * @param {string} queue
-   * @param {comq.channels.consumer} callback
+   * @param {comq.channels.consumer} consumer
    * @returns {Promise<void>}
    */
-  async #consume (queue, callback) {
-    const consumer = this.#getAcknowledgingConsumer(callback)
+  async #consume (queue, consumer) {
+    /** @type {import('amqplib').Options.Consume} */
+    const options = {}
 
-    const response = await this.#channel.consume(queue, consumer)
+    if (this.#topology.acknowledgements) consumer = this.#getAcknowledgingConsumer(consumer)
+    else options.noAck = true
+
+    const response = await this.#channel.consume(queue, consumer, options)
 
     this.#tags.push(response.consumerTag)
   }
@@ -187,12 +183,25 @@ class Channel {
   }
 }
 
-const HOUR = 3600 * 1000
+/**
+ * @param {comq.amqp.Connection} connection
+ * @param {comq.Topology} topology
+ * @return {Promise<comq.Channel>}
+ */
+const create = async (connection, topology) => {
+  const channel = new Channel(topology)
+
+  await channel.create(connection)
+
+  return channel
+}
+
+const DEFAULT = ''
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const PERSISTENT_QUEUE = {}
+const DURABLE = { durable: true }
 
 /** @type {import('amqplib').Options.AssertQueue} */
-const TRANSIENT_QUEUE = { expires: HOUR }
+const EXCLUSIVE = { exclusive: true }
 
-exports.Channel = Channel
+exports.create = create

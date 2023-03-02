@@ -14,12 +14,16 @@ let io
 let connection
 
 /** @type {jest.MockedObject<comq.Channel>} */
-let input
+let requests
+
+/** @type {jest.MockedObject<comq.Channel>} */
+let events
 
 beforeEach(async () => {
   jest.clearAllMocks()
 
-  input = undefined
+  requests = undefined
+  events = undefined
 
   connection = mock.connection()
   io = new IO(connection)
@@ -30,32 +34,35 @@ describe('seal', () => {
     expect(io.seal).toBeDefined()
   })
 
-  it('should seal input channel', async () => {
+  it('should seal requests and events channels', async () => {
     await reply()
     await io.close()
 
-    expect(input.seal).toHaveBeenCalled()
+    expect(requests.seal).toHaveBeenCalled()
+    expect(events.seal).toHaveBeenCalled()
   })
 
   it('should not throw if channels haven\'t been initialized', async () => {
     await expect(io.seal()).resolves.not.toThrow()
   })
 
-  it('should not seal input channel twice', async () => {
+  it('should not seal channel twice', async () => {
     await reply()
     await io.seal()
     await io.close()
 
-    expect(input.seal).toHaveBeenCalledTimes(1)
+    expect(requests.seal).toHaveBeenCalledTimes(1)
+    expect(events.seal).toHaveBeenCalledTimes(1)
   })
 })
 
 describe('close', () => {
-  it('should seal input channel', async () => {
+  it('should seal requests and events channels', async () => {
     await reply()
     await io.close()
 
-    expect(input.seal).toHaveBeenCalled()
+    expect(requests.seal).toHaveBeenCalled()
+    expect(events.seal).toHaveBeenCalled()
   })
 
   it('should not throw if channels haven\'t been initialized', async () => {
@@ -70,12 +77,11 @@ describe('close', () => {
 
     await io.consume(queue, group, consumer)
 
-    const input = await connection.createInputChannel.mock.results[0].value
-    const callback = input.subscribe.mock.calls[0][2]
-
+    const channel = await findChannel('event')
+    const callback = channel.subscribe.mock.calls[0][2]
     const content = randomBytes(8)
     const properties = {}
-    const message = { content, properties }
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
 
     callback(message)
 
@@ -104,12 +110,11 @@ describe('close', () => {
 
     await reply(/** @type {Function} */ producer)
 
-    const input = await connection.createInputChannel.mock.results[0].value
-    const callback = input.consume.mock.calls[0][2]
-
+    const channel = await findChannel('request')
+    const callback = channel.consume.mock.calls[0][1]
     const content = generate()
     const properties = { replyTo: generate(), contentType: 'text/plain' }
-    const message = { content, properties }
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
 
     callback(message)
 
@@ -144,8 +149,22 @@ describe('close', () => {
  * @return {Promise<void>}
  */
 const reply = async (producer = () => undefined) => {
-  // initialize both channels
+  // create channels
   await io.reply(generate(), producer)
+  await io.emit(generate(), {})
 
-  input = await connection.createInputChannel.mock.results[0].value
+  requests = await findChannel('request')
+  events = await findChannel('event')
+}
+
+/**
+ * @param {comq.topology.type} type
+ * @returns {jest.MockedObject<comq.Channel>}
+ */
+const findChannel = (type) => {
+  const index = connection.createChannel.mock.calls.findIndex(([t]) => (t === type))
+
+  if (index === -1) throw new Error(`${type} channel hasn't been created`)
+
+  return connection.createChannel.mock.results[index].value
 }

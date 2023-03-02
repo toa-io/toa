@@ -4,6 +4,7 @@
 
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
+const { timeout } = require('@toa.io/libraries/generic')
 const { encode } = require('../src/encode')
 
 const mock = require('./connection.mock')
@@ -32,35 +33,45 @@ const queue = generate()
 const payload = { [generate()]: generate() }
 
 /** @type {jest.MockedObject<comq.Channel>} */
-let output
+let requests
+
+/** @type {jest.MockedObject<comq.Channel>} */
+let replies
+
 let promise
 
 const REPLY = new RegExp(`^${queue}..[0-9a-f]+$`)
 
 beforeEach(async () => {
   promise = io.request(queue, payload)
-  output = await connection.createOutputChannel.mock.results[0]?.value
+
+  // allows initializers to run
+  await timeout(0)
+
+  requests = await findChannel('request')
+  replies = await findChannel('reply')
 })
 
-it('should initialize output channel', async () => {
-  expect(connection.createOutputChannel).toHaveBeenCalled()
+it('should initialize request-reply channels', async () => {
+  expect(connection.createChannel).toHaveBeenCalledWith('request')
+  expect(connection.createChannel).toHaveBeenCalledWith('reply')
 })
 
-it('should consume transient queue', async () => {
-  expect(output.consume).toHaveBeenCalledWith(expect.stringMatching(REPLY), false, expect.any(Function))
+it('should consume replies queue', async () => {
+  expect(replies.consume).toHaveBeenCalledWith(expect.stringMatching(REPLY), expect.any(Function))
 })
 
-describe('deliver', () => {
+describe('send', () => {
   let call
 
   beforeEach(() => {
-    expect(output.deliver).toHaveBeenCalledTimes(1)
-    expect(output.consume).toHaveBeenCalledTimes(1)
+    expect(requests.send).toHaveBeenCalledTimes(1)
+    expect(replies.consume).toHaveBeenCalledTimes(1)
 
-    call = output.deliver.mock.calls[0]
+    call = requests.send.mock.calls[0]
   })
 
-  it('should deliver message to the queue', async () => {
+  it('should sent request message to the queue', async () => {
     expect(call[0]).toStrictEqual(queue)
   })
 
@@ -72,12 +83,13 @@ describe('deliver', () => {
 
   it('should set replyTo', async () => {
     const request = call[2]
-    const queue = output.consume.mock.calls[0][0]
+    const queue = replies.consume.mock.calls[0][0]
 
     expect(request.replyTo).toStrictEqual(queue)
   })
 
   it('should encode message with msgpack by default', async () => {
+    /** @type {comq.encoding} */
     const contentType = 'application/msgpack'
     const buffer = encode(payload, contentType)
 
@@ -92,7 +104,7 @@ describe('deliver', () => {
   })
 
   it('should send buffer', async () => {
-    output.deliver.mockClear()
+    requests.send.mockClear()
 
     const payload = randomBytes(8)
 
@@ -100,22 +112,22 @@ describe('deliver', () => {
 
     await io.request(queue, payload)
 
-    const [, buffer, properties] = output.deliver.mock.calls[0]
+    const [, buffer, properties] = requests.send.mock.calls[0]
 
     expect(buffer).toStrictEqual(payload)
     expect(properties.contentType).toStrictEqual('application/octet-stream')
   })
 
   it('should send buffer with specified encoding', async () => {
-    output.deliver.mockClear()
+    requests.send.mockClear()
 
     const payload = randomBytes(8)
     const encoding = 'wtf/' + generate()
 
     setImmediate(reply)
-    await io.request(queue, payload, encoding)
+    await io.request(queue, payload, /** @type {comq.encoding} */ encoding)
 
-    const [, buffer, properties] = output.deliver.mock.calls[0]
+    const [, buffer, properties] = requests.send.mock.calls[0]
 
     expect(buffer).toStrictEqual(payload)
     expect(properties.contentType).toStrictEqual(encoding)
@@ -123,15 +135,16 @@ describe('deliver', () => {
 })
 
 describe('reply', () => {
-  it.each([undefined, 'application/octet-stream'])('should return raw content if encoding is %s', async (contentType) => {
-    const content = randomBytes(8)
+  it.each([undefined, 'application/octet-stream'])('should return raw content if encoding is %s',
+    async (contentType) => {
+      const content = randomBytes(8)
 
-    await reply(content, contentType)
+      await reply(content, contentType)
 
-    const output = await promise
+      const output = await promise
 
-    expect(output).toStrictEqual(content)
-  })
+      expect(output).toStrictEqual(content)
+    })
 
   const encodings = ['application/msgpack', 'application/json']
 
@@ -152,10 +165,22 @@ describe('reply', () => {
 })
 
 const reply = async (content = randomBytes(8), contentType = undefined) => {
-  const correlationId = output.deliver.mock.calls[0][2].correlationId
+  const correlationId = requests.send.mock.calls[0][2].correlationId
   const properties = { correlationId, contentType }
-  const callback = output.consume.mock.calls[0][2]
+  const callback = replies.consume.mock.calls[0][1]
   const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
 
   await callback(message)
+}
+
+/**
+ * @param {comq.topology.type} type
+ * @returns {jest.MockedObject<comq.Channel>}
+ */
+const findChannel = (type) => {
+  const index = connection.createChannel.mock.calls.findIndex(([t]) => (t === type))
+
+  if (index === -1) throw new Error(`${type} channel hasn't been created`)
+
+  return connection.createChannel.mock.results[index].value
 }

@@ -9,8 +9,8 @@ const { connect } = require('@toa.io/libraries/comq')
 class Context extends World {
   /** @type {comq.IO} */
   static io
+  static url
 
-  url
   io
   reply
   consumed
@@ -21,19 +21,20 @@ class Context extends World {
   async connect (user, password) {
     const url = locator(user, password)
 
-    if (url !== this.url) {
-      if (this.url !== undefined) await Context.disconnect()
-
-      this.url = url
-
-      Context.io = await connect(url)
-
-      for (const event of EVENTS) {
-        Context.io.diagnose(event, () => (this.events[event] = true))
-      }
-    }
+    if (url !== Context.url) await this.#connect(url)
 
     this.io = Context.io
+  }
+
+  async #connect (url) {
+    if (Context.url !== undefined) await Context.disconnect()
+
+    Context.url = url
+    Context.io = await connect(url)
+
+    for (const event of EVENTS) {
+      Context.io.diagnose(event, () => (this.events[event] = true))
+    }
   }
 
   static async disconnect () {

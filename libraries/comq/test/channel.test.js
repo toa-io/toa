@@ -8,26 +8,45 @@ const { flip, random } = require('@toa.io/libraries/generic')
 
 const backpressure = require('./backpressure')
 const { amqplib } = require('./amqplib.mock')
-const { Channel } = require('../src/channel')
+const fixtures = require('./channel.fixtures')
+const { create } = require('../src/channel')
 
 it('should be', async () => {
-  expect(Channel).toBeDefined()
+  expect(create).toBeDefined()
 })
 
-let conn
+/** @type {jest.MockedObject<import('amqplib').Connection>} */
+let connection
 
-/** @type {jest.MockedObject<import('amqplib').Channel>} */
-let chan
+/** @type {comq.Topology} */
+let topology
 
 /** @type {comq.Channel} */
 let channel
 
+/** @type {jest.MockedObject<comq.amqp.Channel>} */
+let chan
+
 beforeEach(async () => {
   jest.clearAllMocks()
 
-  conn = await amqplib.connect()
-  chan = await conn.createChannel()
-  channel = new Channel(chan)
+  connection = await amqplib.connect()
+  topology = fixtures.preset()
+})
+
+it('should return Channel', async () => {
+  channel = await create(connection, topology)
+
+  expect(channel).toBeDefined()
+})
+
+it.each([true, false])('should create channel (confirms: %s)', async (confirms) => {
+  const method = `create${confirms ? 'Confirm' : ''}Channel`
+
+  topology.confirms = confirms
+  channel = await create(connection, topology)
+
+  expect(connection[method]).toHaveBeenCalled()
 })
 
 // endregion
@@ -35,41 +54,31 @@ beforeEach(async () => {
 describe('consume', () => {
   const consumer = /** @type {comq.channel.consumer} */ jest.fn(async () => undefined)
   const queue = generate()
-  const persistent = flip()
 
   beforeEach(async () => {
-    await channel.consume(queue, persistent, consumer)
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    await channel.consume(queue, consumer)
   })
 
-  it('should assert persistent queue', async () => {
-    const queue = generate()
-    const persistent = true
+  it('should assert queue', async () => {
+    await channel.consume(queue, consumer)
 
-    await channel.consume(queue, persistent, consumer)
+    const options = topology.durable ? { durable: true } : { exclusive: true }
 
-    expect(chan.assertQueue).toHaveBeenCalledTimes(2)
-
-    const [name, options] = chan.assertQueue.mock.calls[1]
-
-    expect(name).toStrictEqual(queue)
-
-    if (options !== undefined) {
-      expect(options.durable).not.toStrictEqual(false)
-      expect(options.arguments?.['x-expires']).toBeUndefined()
-    }
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, options)
   })
 
-  it('should assert transient queue', async () => {
-    const queue = generate()
-    const persistent = false
+  it('should start consuming (ack: %s)', async () => {
+    jest.clearAllMocks()
 
-    await channel.consume(queue, persistent, consumer)
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
 
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, { expires: 3600 * 1000 })
-  })
+    await channel.consume(queue, consumer)
 
-  it('should start consuming', async () => {
-    expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function))
+    expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function), expect.anything())
 
     const content = randomBytes(8)
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content }
@@ -79,36 +88,69 @@ describe('consume', () => {
 
     expect(consumer).toHaveBeenCalledWith(message)
   })
+})
 
-  it('should ack message', async () => {
-    const consumer = chan.consume.mock.calls[0][1]
+describe('acknowledgements', () => {
+  const consumer = /** @type {comq.channel.consumer} */ jest.fn(async () => undefined)
+  const queue = generate()
 
-    expect(typeof consumer).toStrictEqual('function')
+  it.each([
+    ['', true],
+    ['not ', false]
+  ])('should %sack incoming messages', async (_, ack) => {
+    topology.acknowledgements = ack
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
 
+    await channel.consume(queue, consumer)
+
+    const callback = chan.consume.mock.calls[0][1]
     const content = randomBytes(8)
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content }
 
-    await consumer(message)
+    await callback(message)
 
-    expect(chan.ack).toHaveBeenCalledWith(message)
+    if (ack) expect(chan.ack).toHaveBeenCalledWith(message)
+    else expect(chan.ack).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ['manual', true],
+    ['automatic', false]
+  ])('should create consumer with %s acknowledgements', async (_, ack) => {
+    topology.acknowledgements = ack
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    await channel.consume(queue, consumer)
+
+    const options = chan.consume.mock.calls[0][2]
+
+    if (ack) expect(options).not.toMatchObject({ noAck: true })
+    else expect(options).toMatchObject({ noAck: true })
   })
 })
 
-describe.each(['deliver', 'send'])('%s', () => {
+describe('send', () => {
   const queue = generate()
   const buffer = randomBytes(10)
-  const properties = { replyTo: generate() }
+  const options = { contentType: 'application/octet-stream' }
 
   beforeEach(async () => {
-    await channel.deliver(queue, buffer, properties)
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    await channel.send(queue, buffer, options)
   })
 
-  it('should assert durable queue', async () => {
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, expect.not.objectContaining({ durable: false }))
+  it('should assert queue', async () => {
+    const options = topology.durable ? { durable: true } : { exclusive: true }
+
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, expect.objectContaining(options))
   })
 
   it('should assert queue once', async () => {
-    await channel.deliver(queue, buffer, properties)
+    await channel.send(queue, buffer, options)
 
     expect(chan.assertQueue).toHaveBeenCalledTimes(1)
   })
@@ -116,52 +158,78 @@ describe.each(['deliver', 'send'])('%s', () => {
   it('should assert queue once concurrently', async () => {
     jest.clearAllMocks()
 
-    expect(chan.assertQueue).toHaveBeenCalledTimes(0)
-
     const queue = generate()
-    const deliver = () => channel.deliver(queue, buffer, properties)
+    const send = () => channel.send(queue, buffer, options)
 
-    await Promise.all([deliver(), deliver()])
+    await Promise.all([send(), send()])
 
     expect(chan.assertQueue).toHaveBeenCalledTimes(1)
   })
 
-  it('should send to queue', async () => {
-    const call = chan.sendToQueue.mock.calls[0]
+  it('should publish a message', async () => {
+    const call = chan.publish.mock.calls[0]
 
-    expect(call[0]).toStrictEqual(queue)
-    expect(call[1]).toStrictEqual(buffer)
-    expect(call[2]).toMatchObject(properties)
+    expect(call[0]).toStrictEqual('') // default exchange
+    expect(call[1]).toStrictEqual(queue)
+    expect(call[2]).toStrictEqual(buffer)
+    expect(call[3]).toMatchObject(options)
   })
 
-  it('should throw if no properties provided', async () => {
-    await expect(channel.deliver(queue, buffer)).resolves.not.toThrow()
+  it('should add persistent option', async () => {
+    const options = chan.publish.mock.calls[0][3]
+
+    expect(options).toMatchObject({ persistent: topology.persistent })
   })
 
-  it('should await confirmation', async () => {
-    const callback = chan.sendToQueue.mock.calls[0][3]
+  it('should not overwrite persistent option', async () => {
+    jest.clearAllMocks()
 
-    expect(callback).toBeInstanceOf(Function)
-  })
-})
+    const persistent = flip()
 
-describe('send', () => {
-  const queue = generate()
-  const buffer = randomBytes(10)
-  const properties = { replyTo: generate() }
+    topology.persistent = persistent
+    options.persistent = !persistent
 
-  it('should send persistent message', async () => {
-    await channel.send(queue, buffer, properties)
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
 
-    const call = chan.sendToQueue.mock.calls[0]
+    await channel.send(queue, buffer, options)
 
-    expect(call[0]).toStrictEqual(queue)
-    expect(call[1]).toStrictEqual(buffer)
-    expect(call[2]).toMatchObject({ persistent: true, ...properties })
+    const actual = chan.publish.mock.calls[0][3]
+
+    expect(actual.persistent).toStrictEqual(!persistent)
   })
 
-  it('should throw if no properties provided', async () => {
-    await expect(channel.send(queue, buffer)).resolves.not.toThrow()
+  it.each([
+    ['', true],
+    [' not', false]
+  ])('should%s await confirmation', async (_, confirms) => {
+    jest.clearAllMocks()
+
+    topology.confirms = confirms
+
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    await channel.send(queue, buffer, options)
+
+    const callback = chan.publish.mock.calls[0][4]
+
+    if (confirms) expect(callback).toBeInstanceOf(Function)
+    else expect(callback).toBeUndefined()
+  })
+
+  it.each([
+    ['persistent', true],
+    ['transient', false]
+  ])('should send %s message', async (_, persistent) => {
+    jest.clearAllMocks()
+
+    topology.persistent = persistent
+
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    await channel.send(queue, buffer, options)
   })
 })
 
@@ -173,10 +241,13 @@ describe('subscribe', () => {
   beforeEach(async () => {
     jest.clearAllMocks()
 
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
     await channel.subscribe(exchange, queue, consumer)
   })
 
-  it('should assert durable fanout exchange', async () => {
+  it('should assert fanout exchange', async () => {
     expect(chan.assertExchange).toHaveBeenCalledTimes(1)
 
     const [name, type, options] = chan.assertExchange.mock.calls[0]
@@ -184,11 +255,14 @@ describe('subscribe', () => {
     expect(name).toStrictEqual(exchange)
     expect(type).toStrictEqual('fanout')
 
-    if (options !== undefined) expect(options).not.toMatchObject({ durable: false })
+    if (topology.durable) expect(options).not.toMatchObject({ durable: false })
+    else expect(options).toMatchObject({ durable: false })
   })
 
-  it('should assert durable queue', async () => {
-    expect(chan.assertQueue).toHaveBeenCalledWith(queue, expect.not.objectContaining({ durable: false }))
+  it('should assert queue', async () => {
+    const options = topology.durable ? { durable: true } : { exclusive: true }
+
+    expect(chan.assertQueue).toHaveBeenCalledWith(queue, expect.objectContaining(options))
   })
 
   it('should bind queue to exchange', async () => {
@@ -196,9 +270,23 @@ describe('subscribe', () => {
     expect(chan.bindQueue).toHaveBeenCalledWith(queue, exchange, '')
   })
 
-  it('should start consuming', async () => {
+  it.each([
+    ['with acknowledgements', true],
+    ['without acknowledgements', false]
+  ])('should start consuming %s', async (_, ack) => {
+    topology.acknowledgements = ack
+
+    jest.clearAllMocks()
+
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    await channel.subscribe(exchange, queue, consumer)
+
+    const options = ack ? {} : { noAck: true }
+
     expect(chan.consume).toHaveBeenCalledTimes(1)
-    expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function))
+    expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function), expect.objectContaining(options))
 
     const consume = chan.consume.mock.calls[0][1]
     const message = generate()
@@ -206,7 +294,9 @@ describe('subscribe', () => {
     await consume(message)
 
     expect(consumer).toHaveBeenCalledWith(message)
-    expect(chan.ack).toHaveBeenCalledWith(message)
+
+    if (ack) expect(chan.ack).toHaveBeenCalledWith(message)
+    else expect(chan.ack).not.toHaveBeenCalledWith(message)
   })
 })
 
@@ -219,10 +309,13 @@ describe('publish', () => {
   })
 
   beforeEach(async () => {
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
     await channel.publish(exchange, buffer)
   })
 
-  it('should assert durable fanout exchange', async () => {
+  it('should assert exchange', async () => {
     expect(chan.assertExchange).toHaveBeenCalledTimes(1)
 
     const [name, type, options] = chan.assertExchange.mock.calls[0]
@@ -230,10 +323,11 @@ describe('publish', () => {
     expect(name).toStrictEqual(exchange)
     expect(type).toStrictEqual('fanout')
 
-    if (options !== undefined) expect(options).not.toMatchObject({ durable: false })
+    if (topology.durable) expect(options).not.toMatchObject({ durable: false })
+    else expect(options).toMatchObject({ durable: false })
   })
 
-  it('should publish persistent message', async () => {
+  it('should publish message', async () => {
     expect(chan.publish).toHaveBeenCalledTimes(1)
 
     const call = chan.publish.mock.calls[0]
@@ -241,7 +335,9 @@ describe('publish', () => {
     expect(call[0]).toStrictEqual(exchange)
     expect(call[1]).toStrictEqual('')
     expect(call[2]).toStrictEqual(buffer)
-    expect(call[3]).toMatchObject({ persistent: true })
+
+    if (topology.persistent) expect(call[3]).toMatchObject({ persistent: true })
+    else expect(call[3]).not.toMatchObject({ persistent: true })
   })
 })
 
@@ -257,7 +353,7 @@ describe('seal', () => {
       const queue = generate()
       const consumer = jest.fn()
 
-      await channel.consume(queue, flip(), consumer)
+      await channel.consume(queue, consumer)
 
       const { consumerTag: tag } = await chan.consume.mock.results[i].value
 
@@ -281,6 +377,9 @@ describe('back pressure', () => {
   it('should apply back pressure', async () => {
     expect.assertions(3)
 
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
     chan.publish.mockImplementationOnce(backpressure.publish)
 
     await channel.publish(exchange, buffer)
@@ -288,14 +387,14 @@ describe('back pressure', () => {
     expect(chan.publish).toHaveBeenCalled()
 
     setImmediate(() => {
-      expect(chan.sendToQueue).not.toHaveBeenCalled()
+      expect(chan.publish).toHaveBeenCalledTimes(1)
 
       chan.emit('drain')
     })
 
     await channel.send(queue, buffer)
 
-    expect(chan.sendToQueue).toHaveBeenCalled()
+    expect(chan.publish).toHaveBeenCalledTimes(2)
   })
 })
 
@@ -308,6 +407,9 @@ describe('diagnostics', () => {
   })
 
   it('should emit back pressure events', async () => {
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
     chan.publish.mockImplementationOnce(backpressure.publish)
 
     let flowed = false
@@ -327,3 +429,9 @@ describe('diagnostics', () => {
     await channel.publish(exchange, buffer)
   })
 })
+
+const getCreatedChannel = () => {
+  const method = `create${topology.confirms ? 'Confirm' : ''}Channel`
+
+  return connection[method].mock.results[0].value
+}

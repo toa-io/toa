@@ -15,7 +15,7 @@ let io
 let connection
 
 /** @type {jest.MockedObject<comq.Channel>} */
-let output
+let events
 
 beforeEach(async () => {
   jest.clearAllMocks()
@@ -25,7 +25,7 @@ beforeEach(async () => {
 
   await io.emit(exchange, payload)
 
-  output = await connection.createOutputChannel.mock.results[0].value
+  events = await findChannel('event')
 })
 
 it('should be', async () => {
@@ -35,15 +35,15 @@ it('should be', async () => {
 const exchange = generate()
 const payload = generate()
 
-it('should create output channel', async () => {
-  expect(connection.createOutputChannel).toHaveBeenCalled()
-  expect(output).toBeDefined()
+it('should create events channel', async () => {
+  expect(connection.createChannel).toHaveBeenCalledWith('event')
+  expect(events).toBeDefined()
 })
 
 it('should publish to an exchange', async () => {
-  expect(output.publish).toHaveBeenCalledTimes(1)
+  expect(events.publish).toHaveBeenCalledTimes(1)
 
-  const args = output.publish.mock.calls[0]
+  const args = events.publish.mock.calls[0]
 
   expect(args[0]).toStrictEqual(exchange)
 })
@@ -51,7 +51,7 @@ it('should publish to an exchange', async () => {
 it('should encode message as msgpack by default', async () => {
   const encoding = 'application/msgpack'
   const buf = encode(payload, encoding)
-  const [, buffer, properties] = output.publish.mock.calls[0]
+  const [, buffer, properties] = events.publish.mock.calls[0]
 
   expect(buffer).toStrictEqual(buf)
   expect(properties.contentType).toStrictEqual(encoding)
@@ -61,8 +61,20 @@ it.each(encodings)('should publish message encoded as %s', async (encoding) => {
   await io.emit(exchange, payload, encoding)
 
   const buf = encode(payload, encoding)
-  const [, buffer, properties] = output.publish.mock.calls[1]
+  const [, buffer, properties] = events.publish.mock.calls[1]
 
   expect(buffer).toStrictEqual(buf)
   expect(properties.contentType).toStrictEqual(encoding)
 })
+
+/**
+ * @param {comq.topology.type} type
+ * @returns {jest.MockedObject<comq.Channel>}
+ */
+const findChannel = (type) => {
+  const index = connection.createChannel.mock.calls.findIndex(([t]) => (t === type))
+
+  if (index === -1) throw new Error(`${type} channel hasn't been created`)
+
+  return connection.createChannel.mock.results[index].value
+}

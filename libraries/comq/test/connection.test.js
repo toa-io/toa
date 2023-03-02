@@ -10,8 +10,9 @@ const mock = { amqplib }
 jest.mock('amqplib', () => mock.amqplib)
 jest.mock('../src/channel')
 
+const presets = require('../src/presets')
 const { Connection } = require('../src/connection')
-const { /** @type {jest.MockedClass<comq.Channel>} */ Channel } = require('../src/channel')
+const { /** @type {jest.MockedFn} */ create } = require('../src/channel')
 
 it('should be', async () => {
   expect(Connection).toBeDefined()
@@ -94,39 +95,27 @@ describe('reconnection', () => {
   })
 })
 
-describe.each([['Input', 'createChannel'], ['Output', 'createConfirmChannel']])('%s',
-  (key, method) => {
-    /** @type {jest.MockedObject<import('amqplib').Connection>} */
-    let amqp
+describe('create channel', () => {
+  /** @type {jest.MockedObject<import('amqplib').Connection>} */
+  let conn
 
-    /** @type {import('amqplib').Channel} */
-    let chan
+  beforeEach(async () => {
+    await connection.open()
 
-    /** @type {comq.Channel} */
-    let channel
-
-    beforeEach(async () => {
-      await connection.open()
-
-      amqp = await amqplib.connect.mock.results[0].value
-      channel = await connection['create' + key + 'Channel']()
-
-      expect(amqp[method]).toHaveBeenCalled()
-
-      chan = await amqp[method].mock.results[0].value
-    })
-
-    it('should create channel', async () => {
-      expect(channel).toBeInstanceOf(Channel)
-      expect(Channel).toHaveBeenCalledWith(chan)
-    })
-
-    if (key === 'Input') {
-      it('should set prefetch', async () => {
-        expect(chan.prefetch).toHaveBeenCalledWith(300)
-      })
-    }
+    conn = await amqplib.connect.mock.results[0].value
   })
+
+  it.each(
+    /** @type {comq.topology.type[]} */
+    ['request', 'reply', 'event'])('should create channel of %s type',
+    async (type) => {
+      const preset = presets[type]
+      const channel = await connection.createChannel(type)
+
+      expect(create).toHaveBeenCalledWith(conn, preset)
+      expect(channel).toStrictEqual(await create.mock.results[0].value)
+    })
+})
 
 it('should close connection', async () => {
   await connection.open()

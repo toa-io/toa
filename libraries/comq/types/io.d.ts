@@ -1,15 +1,10 @@
 import * as _diagnostics from './diagnostic'
+import { encoding } from './encoding'
 
 declare namespace comq {
 
   type producer = (message: any) => Promise<any>
   type consumer = (message: any) => Promise<void>
-
-  type encoding =
-    'application/msgpack'
-    | 'application/json'
-    | 'application/octet-stream'
-    | 'text/plain'
 
   interface ReplyEmitter {
     queue: string

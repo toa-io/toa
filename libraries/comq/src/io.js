@@ -20,10 +20,13 @@ class IO {
   #connection
 
   /** @type {comq.Channel} */
-  #input
+  #requests
 
   /** @type {comq.Channel} */
-  #output
+  #replies
+
+  /** @type {comq.Channel} */
+  #events
 
   #diagnostics = new EventEmitter()
 
@@ -42,7 +45,7 @@ class IO {
   }
 
   reply = lazy(this,
-    [this.#createOutput, this.#createInput],
+    [this.#createRequestReplyChannels],
     /**
      * @param {string} queue
      * @param {comq.producer} callback
@@ -51,11 +54,11 @@ class IO {
     async (queue, callback) => {
       const consumer = this.#getRequestConsumer(callback)
 
-      await this.#input.consume(queue, true, consumer)
+      await this.#requests.consume(queue, consumer)
     })
 
   request = lazy(this,
-    [this.#createOutput, this.#consumeReplies],
+    [this.#createRequestReplyChannels, this.#consumeReplies],
     /**
      * @param {string} queue
      * @param {any} payload
@@ -73,20 +76,20 @@ class IO {
       // memory leak in case of connection loss as reply will never be received
       emitter.once(correlationId, reply.resolve)
 
-      await this.#output.deliver(queue, buffer, properties)
+      await this.#requests.send(queue, buffer, properties)
 
       return reply
     })
 
-  consume = lazy(this, this.#createInput,
+  consume = lazy(this, this.#createEventChannel,
     async (exchange, group, callback) => {
       const queue = io.concat(exchange, group)
       const consumer = this.#getEventConsumer(callback)
 
-      await this.#input.subscribe(exchange, queue, consumer)
+      await this.#events.subscribe(exchange, queue, consumer)
     })
 
-  emit = lazy(this, this.#createOutput,
+  emit = lazy(this, this.#createEventChannel,
     /**
      * @param {string} exchange
      * @param {any} payload
@@ -97,13 +100,15 @@ class IO {
       const [buffer, contentType] = this.#encode(payload, encoding)
       const properties = { contentType }
 
-      await this.#output.publish(exchange, buffer, properties)
+      await this.#events.publish(exchange, buffer, properties)
     })
 
   async seal () {
-    await this.#input?.seal()
+    await this.#requests?.seal()
+    await this.#events?.seal()
 
-    this.#input = undefined
+    this.#requests = undefined
+    this.#events = undefined
   }
 
   async close () {
@@ -118,25 +123,13 @@ class IO {
 
   // region initializers
 
-  async #createInput () {
-    this.#input = await this.#createChannel('Input')
+  async #createRequestReplyChannels () {
+    this.#requests = await this.#createChannel('request')
+    this.#replies = await this.#createChannel('reply')
   }
 
-  async #createOutput () {
-    this.#output = await this.#createChannel('Output')
-  }
-
-  /**
-   * @param {string} type
-   * @returns {Promise<comq.Channel>}
-   */
-  async #createChannel (type) {
-    const channel = await this.#connection[`create${type}Channel`]()
-
-    channel.diagnose('flow', () => this.#diagnostics.emit('flow'))
-    channel.diagnose('drain', () => this.#diagnostics.emit('drain'))
-
-    return channel
+  async #createEventChannel () {
+    this.#events = await this.#createChannel('event')
   }
 
   async #consumeReplies (queue) {
@@ -145,10 +138,23 @@ class IO {
 
     this.#emitters[queue] = emitter
 
-    await this.#output.consume(emitter.queue, false, consumer)
+    await this.#replies.consume(emitter.queue, consumer)
   }
 
   // endregion
+
+  /**
+   * @param {comq.topology.type} type
+   * @returns {Promise<comq.Channel>}
+   */
+  async #createChannel (type) {
+    const channel = await this.#connection.createChannel(type)
+
+    channel.diagnose('flow', () => this.#diagnostics.emit('flow', type))
+    channel.diagnose('drain', () => this.#diagnostics.emit('drain', type))
+
+    return channel
+  }
 
   /**
    * @param {comq.producer} callback
@@ -171,7 +177,7 @@ class IO {
       const buffer = contentType === OCTETS ? reply : encode(reply, contentType)
       const properties = { contentType, correlationId }
 
-      await this.#output.send(message.properties.replyTo, buffer, properties)
+      await this.#replies.send(message.properties.replyTo, buffer, properties)
     })
 
   /**

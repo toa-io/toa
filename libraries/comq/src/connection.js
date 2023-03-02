@@ -4,7 +4,8 @@ const { EventEmitter } = require('node:events')
 const amqp = require('amqplib')
 const { retry } = require('@toa.io/libraries/generic')
 
-const { Channel } = require('./channel')
+const presets = require('./presets')
+const channels = require('./channel')
 
 /**
  * @implements {comq.Connection}
@@ -33,18 +34,10 @@ class Connection {
     await this.#connection.close()
   }
 
-  async createInputChannel () {
-    const chan = await this.#connection.createChannel()
+  async createChannel (type) {
+    const preset = presets[type]
 
-    await chan.prefetch(300)
-
-    return new Channel(chan)
-  }
-
-  async createOutputChannel () {
-    const chan = await this.#connection.createConfirmChannel()
-
-    return new Channel(chan)
+    return channels.create(this.#connection, preset)
   }
 
   async diagnose (event, listener) {
@@ -62,12 +55,12 @@ class Connection {
       else throw exception
     }
 
-    this.#diagnostics.emit('open')
     this.#connection.on('close', (error) => this.#close(error))
 
     // prevents process crash, 'close' will be emitted next
     // https://amqp-node.github.io/amqplib/channel_api.html#model_events
     this.#connection.on('error', () => undefined)
+    this.#diagnostics.emit('open')
   }
 
   /**

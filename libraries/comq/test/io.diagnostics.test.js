@@ -23,31 +23,33 @@ it('should be', async () => {
   expect(io.diagnose).toBeDefined()
 })
 
-it.each([
-  ['flow', 'Output'],
-  ['drain', 'Output'],
-  ['flow', 'Input'],
-  ['drain', 'Input']
-])('should re-emit `%s` from %s channel',
-  async (event, channelType) => {
-    const listener = /** @type {Function} */ jest.fn(() => undefined)
+it.each(
+  /** @type {comq.topology.type[]} */
+  ['request', 'reply', 'event'])('should re-emit flow and drain events from %s channel',
+  async (type) => {
+    const flowListener = /** @type {Function} */ jest.fn(() => undefined)
+    const drainListener = /** @type {Function} */ jest.fn(() => undefined)
 
-    io.diagnose(/** @type {comq.diagnostics.event} */ event, listener)
+    io.diagnose('flow', flowListener)
+    io.diagnose('drain', drainListener)
 
-    // lazy create io channels
+    // create channels
     await io.reply(generate(), () => undefined)
+    await io.emit(generate(), () => undefined)
 
-    /** @type {jest.MockedObject<comq.Channel>} */
-    const channel = await connection[`create${channelType}Channel`].mock.results[0].value
+    const channel = await findChannel(type)
 
-    expect(channel.diagnose).toHaveBeenCalledWith(event, expect.any(Function))
+    expect(channel.diagnose).toHaveBeenCalledWith('flow', expect.any(Function))
+    expect(channel.diagnose).toHaveBeenCalledWith('drain', expect.any(Function))
 
-    const call = channel.diagnose.mock.calls.find((call) => call[0] === event)
-    const emit = call[1]
+    const flow = channel.diagnose.mock.calls.find((call) => call[0] === 'flow')[1]
+    const drain = channel.diagnose.mock.calls.find((call) => call[0] === 'drain')[1]
 
-    emit(event)
+    flow()
+    drain()
 
-    expect(listener).toHaveBeenCalled()
+    expect(flowListener).toHaveBeenCalledWith(type)
+    expect(drainListener).toHaveBeenCalledWith(type)
   })
 
 it.each(['open', 'close'])('should re-emit %s from connection',
@@ -68,3 +70,15 @@ it.each(['open', 'close'])('should re-emit %s from connection',
 
     expect(listener).toHaveBeenCalled()
   })
+
+/**
+ * @param {comq.topology.type} type
+ * @returns {jest.MockedObject<comq.Channel>}
+ */
+const findChannel = (type) => {
+  const index = connection.createChannel.mock.calls.findIndex(([t]) => (t === type))
+
+  if (index === -1) throw new Error(`${type} channel hasn't been created`)
+
+  return connection.createChannel.mock.results[index].value
+}

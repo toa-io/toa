@@ -29,52 +29,53 @@ const produce = jest.fn(async () => generate())
 
 // endregion
 
-describe.each(['createInputChannel', 'createOutputChannel'])('%sput channel', (method) => {
-  it(`should ${method}`, async () => {
+describe('channels', (type) => {
+  it('should create request-reply channels', async () => {
     await io.reply(queue, produce)
 
-    expect(connection[method]).toHaveBeenCalled()
+    expect(connection.createChannel).toHaveBeenCalledWith('request')
+    expect(connection.createChannel).toHaveBeenCalledWith('reply')
   })
 
-  it(`should ${method} once`, async () => {
+  it('should create channels once', async () => {
     const label1 = generate()
     const label2 = generate()
 
     await io.reply(label1, produce)
     await io.reply(label2, produce)
 
-    expect(connection[method].mock.calls.length).toStrictEqual(1)
+    expect(connection.createChannel.mock.calls.length).toStrictEqual(2)
   })
 
-  it(`should concurrently ${method} once`, async () => {
+  it('should concurrently create channels once', async () => {
     const label1 = generate()
     const label2 = generate()
 
     await Promise.all([io.reply(label1, produce), io.reply(label2, produce)])
 
-    expect(connection[method].mock.calls.length).toStrictEqual(1)
+    expect(connection.createChannel.mock.calls.length).toStrictEqual(2)
   })
 })
 
 describe('queues', () => {
   /** @type {jest.MockedObject<comq.Channel>} */
-  let input
+  let requests
 
   beforeEach(async () => {
     await io.reply(queue, produce)
 
-    input = await connection.createInputChannel.mock.results[0].value
+    requests = await findChannel('request')
   })
 
-  it('should consume durable queue', async () => {
-    expect(input.consume).toHaveBeenCalledWith(queue, true, expect.any(Function))
+  it('should consume queue', async () => {
+    expect(requests.consume).toHaveBeenCalledWith(queue, expect.any(Function))
   })
 
   it('should throw if message is missing replyTo', async () => {
     const content = randomBytes(10)
     const properties = {}
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-    const producer = input.consume.mock.calls[0][2]
+    const producer = requests.consume.mock.calls[0][1]
 
     await expect(producer(message)).rejects.toThrow('is missing `replyTo` property')
   })
@@ -86,8 +87,8 @@ describe('reply', () => {
 
     await io.reply(queue, produce)
 
-    const input = await connection.createInputChannel.mock.results[0].value
-    const callback = input.consume.mock.calls[0][2]
+    const requests = await findChannel('request')
+    const callback = requests.consume.mock.calls[0][1]
     const content = randomBytes(10)
     const properties = { replyTo: generate() }
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
@@ -98,16 +99,16 @@ describe('reply', () => {
 
 describe('encoding', () => {
   /** @type {jest.MockedObject<comq.Channel>} */
-  let input
+  let requests
 
   /** @type {jest.MockedObject<comq.Channel>} */
-  let output
+  let replies
 
   beforeEach(async () => {
     await io.reply(queue, produce)
 
-    input = await connection.createInputChannel.mock.results[0].value
-    output = await connection.createOutputChannel.mock.results[0].value
+    requests = await findChannel('request')
+    replies = await findChannel('reply')
   })
 
   it.each(encodings)('should decode message content (%s)', async (encoding) => {
@@ -115,8 +116,7 @@ describe('encoding', () => {
     const content = encode(value, encoding)
     const properties = { contentType: encoding, replyTo: generate() }
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-
-    const producer = input.consume.mock.calls[0][2]
+    const producer = requests.consume.mock.calls[0][1]
 
     await producer(message)
 
@@ -134,7 +134,7 @@ describe('encoding', () => {
     }
 
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-    const producer = input.consume.mock.calls[0][2]
+    const producer = requests.consume.mock.calls[0][1]
 
     await producer(message)
 
@@ -149,7 +149,7 @@ describe('encoding', () => {
       contentType: properties.contentType
     }
 
-    expect(output.send).toHaveBeenCalledWith(properties.replyTo, reply, props)
+    expect(replies.send).toHaveBeenCalledWith(properties.replyTo, reply, props)
   })
 
   it.each(['specified', 'supported'])('should pass buffer if encoding format not %s', async (problem) => {
@@ -159,7 +159,7 @@ describe('encoding', () => {
     if (problem === 'supported') properties.contentType = 'wtf/' + generate()
 
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-    const producer = input.consume.mock.calls[0][2]
+    const producer = requests.consume.mock.calls[0][1]
 
     produce.mockImplementationOnce(async () => randomBytes(8))
 
@@ -179,14 +179,14 @@ describe('encoding', () => {
     }
 
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-    const producer = input.consume.mock.calls[0][2]
+    const producer = requests.consume.mock.calls[0][1]
     const buffer = randomBytes(8)
 
     produce.mockImplementationOnce(async () => buffer)
 
     await producer(message)
 
-    expect(output.send)
+    expect(replies.send)
       .toHaveBeenCalledWith(
         expect.any(String),
         buffer,
@@ -203,8 +203,16 @@ describe('encoding', () => {
     }
 
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-    const producer = input.consume.mock.calls[0][2]
+    const producer = requests.consume.mock.calls[0][1]
 
     await expect(producer(message)).rejects.toThrow('must be of Buffer type')
   })
 })
+
+const findChannel = (type) => {
+  const index = connection.createChannel.mock.calls.findIndex(([t]) => (t === type))
+
+  if (index === -1) throw new Error(`${type} channel hasn't been created`)
+
+  return connection.createChannel.mock.results[index].value
+}

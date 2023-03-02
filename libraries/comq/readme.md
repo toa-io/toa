@@ -81,9 +81,6 @@ supported and `producer` has returned value that isn't a `Buffer`, then exceptio
 > If incoming message doesn't have a `replyTo` property, an exception is thrown without
 > calling `producer`.
 
-> `replyTo` queue is not asserted, therefore a Request message with `replyTo` referring to a
-> non-existent queue will cause an exception.
-
 ### Example
 
 ```javascript
@@ -104,8 +101,6 @@ asserted.
 
 ```javascript
 const sum = await io.request('add_numbers', { a: 1, b: 2 })
-
-console.log(sum) // 3
 ```
 
 ## Consumption
@@ -165,12 +160,13 @@ The following content types are supported:
 
 - `application/msgpack`
 - `application/json`
+- `text/plain`
 
 ## Connection Tolerance
 
 When initially connecting to the broker or if the established connection is lost, connection
 attempts will be repeated indefinitely with intervals increasing up to 30 seconds. Once reconnected,
-topology will be recovered, and unanswered requests and unconfirmed events will be resent.
+topology will be recovered, and unanswered Requests and unconfirmed Events will be resent.
 
 If the broker rejects the connection (for example, due to access being denied), an exception will be
 thrown.
@@ -193,8 +189,11 @@ guarantee provided by RabbitMQ is maintained.
 - Outgoing Events are transmitted
   using [confirmation mechanism](https://www.rabbitmq.com/confirms.html#publisher-confirms).
 
-Channel segregation addresses the potential issue of a prefetch deadlock, which may take place
+Channel segregation addresses the potential issue of a prefetch deadlock[^1], which may take place
 when using a single channel or channel pool.
+
+[^1]: maximum amount of messages is consumed, while handlers of those messages are expecting
+replies.
 
 ### Exchanges and Queues
 
@@ -204,14 +203,15 @@ when using a single channel or channel pool.
 
 ### Messages
 
-- Events are [persistent](https://amqp-node.github.io/amqplib/channel_api.html#channel_publish),
-  while Requests and Replies are not.
+- Events are
+  *persistent* ([delivery mode 2](https://www.rabbitmq.com/publishers.html#message-properties)),
+  while Requests and Replies are not (mode 1).
 - Events and Requests are consumed using
   manual [acknowledgment mode](https://www.rabbitmq.com/confirms.html#acknowledgement-modes),
-  and Replies are consumed using automatic.
+  and Replies are consumed using automatic mode.
 
 > Messages are **not** "negative
-> acknowledged" in case of handler function's exception as it's assumed, it will cause
+> acknowledged" in case of an exception in the handler function, as it is expected to cause
 > the [process to crash](https://www.reactivedesignpatterns.com/patterns/let-it-crash.html). In this
 > scenario, RabbitMQ [will requeue](https://www.rabbitmq.com/confirms.html#automatic-requeueing) the
 > message due to a connection loss.
@@ -220,11 +220,11 @@ See [Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/
 
 ### Cheatsheet
 
-| Message | Prefetch  | Confirms | Queue     | Ack | Persistent |
-|---------|-----------|----------|-----------|-----|------------|
-| Request | limited   | no       | durable   | yes | no         |
-| Reply   | unlimited | no       | exclusive | no  | no         |
-| Event   | limited   | yes      | durable   | yes | yes        |
+| Message | Prefetch  | Confirms | Queue     | Acknowledgement | Persistent |
+|---------|-----------|----------|-----------|-----------------|------------|
+| Request | limited   | no       | durable   | manual          | no         |
+| Reply   | unlimited | no       | exclusive | automatic       | no         |
+| Event   | limited   | yes      | durable   | manual          | yes        |
 
 ## Graceful Shutdown
 
@@ -269,12 +269,12 @@ calling `IO.close()`.
 
 Subscribe to one of the diagnostic events:
 
-- `open`: connection is restored[^1]
+- `open`: connection is restored[^2]
 - `close`: connection is [closed](https://amqp-node.github.io/amqplib/channel_api.html#model_events)
-- `flow`: back pressure is applied to an output channel
-- `drain`: back pressure is removed from an output channel
+- `flow`: back pressure is applied to a channel (channel type is passed as an argument)
+- `drain`: back pressure is removed from a channel (channel type is passed as an argument)
 
-[^1]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
+[^2]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
 established, there is no way to capture the initial `open` event.
 
 ### Example
