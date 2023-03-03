@@ -54,6 +54,7 @@ it('should call initializer before action', async () => {
 
 it('should pass arguments to action', async () => {
   const args = [generate(), generate()]
+
   await instance.action(...args)
 
   expect(action).toHaveBeenCalledWith(...args)
@@ -231,4 +232,25 @@ it('should call initializers sequentially', async () => {
   await instance.do()
 
   expect(instance.log).toStrictEqual([1, 2])
+})
+
+describe('reset', () => {
+  it('should be', async () => {
+    expect(lazy.reset).toBeDefined()
+  })
+
+  it('should reset initialization', async () => {
+    const instance = new LazyInitialized()
+
+    await instance.action()
+    await instance.action()
+
+    expect(initialize).toHaveBeenCalledTimes(1)
+
+    lazy.reset(instance)
+
+    await instance.action()
+
+    expect(initialize).toHaveBeenCalledTimes(2)
+  })
 })

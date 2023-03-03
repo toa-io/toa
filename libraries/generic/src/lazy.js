@@ -58,6 +58,12 @@ const lock = (context, init, args, key) => {
   return promise
 }
 
+const reset = (context) => {
+  delete context[LOCK]
+}
+
 const LOCK = Symbol('context locking key')
 
-exports.lazy = lazy
+lazy.reset = reset
+
+exports.lazy = /** @type {toa.generic.Lazy} */ lazy

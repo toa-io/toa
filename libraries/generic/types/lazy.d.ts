@@ -6,6 +6,8 @@ declare namespace toa.generic {
     method: T
   ) => T
 
-}
+  type Lazy = lazy & {
+    reset: (context: object) => void
+  }
 
-export const lazy: toa.generic.lazy
+}
