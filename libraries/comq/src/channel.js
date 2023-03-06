@@ -19,10 +19,13 @@ class Channel {
   /** @type {toa.generic.Promex} */
   #paused
 
-  #diagnostics = new EventEmitter()
-
   /** @type {toa.generic.Promex} */
   #recovery = promex()
+
+  /** @type {Set<toa.generic.Promex>} */
+  #confirmations = new Set()
+
+  #diagnostics = new EventEmitter()
 
   /**
    * @param {comq.Topology} topology
@@ -107,8 +110,13 @@ class Channel {
     lazy.reset(this)
     await recall(this)
 
-    this.#recovery.resolve()
-    this.#recovery = promex()
+    for (const confirmation of this.#confirmations) confirmation.reject(REJECTION)
+
+    // let rejections be handled
+    setImmediate(() => {
+      this.#recovery.resolve()
+      this.#recovery = promex()
+    })
   }
 
   // region initializers
@@ -158,10 +166,25 @@ class Channel {
 
     options = Object.assign({ persistent: this.#topology.persistent }, options)
 
-    const confirmation = this.#topology.confirms ? promex() : undefined
+    const confirmation = this.#topology.confirms ? this.#confirmation() : undefined
     const resume = this.#channel.publish(exchange, queue, buffer, options, confirmation?.callback)
 
     if (resume === false) this.#pause()
+
+    return confirmation
+  }
+
+  /**
+   * @return {toa.generic.Promex}
+   */
+  #confirmation () {
+    const confirmation = promex()
+
+    this.#confirmations.add(confirmation)
+
+    confirmation
+      .catch(NOOP) // have no idea why, but this is required
+      .finally(() => this.#confirmations.delete(confirmation))
 
     return confirmation
   }
@@ -232,10 +255,13 @@ const create = async (connection, topology) => {
  * @return {boolean}
  */
 const permanent = (exception) => {
+  if (exception === undefined) return false
+
   const CLOSED = exception.message === 'Channel closed'
   const ENDED = exception.message === 'Channel ended, no reply will be forthcoming'
+  const INTERNAL = exception === REJECTION
 
-  return !CLOSED && !ENDED
+  return !CLOSED && !ENDED && !INTERNAL
 }
 
 const DEFAULT = ''
@@ -245,5 +271,9 @@ const DURABLE = { durable: true }
 
 /** @type {import('amqplib').Options.AssertQueue} */
 const EXCLUSIVE = { exclusive: true }
+
+const REJECTION = /** @type {Error} */ Symbol('rejection')
+
+const NOOP = () => undefined
 
 exports.create = create

@@ -9,7 +9,7 @@ Node.js.
 2. Request-reply (RPC)
 3. Events (pub/sub)
 4. Content encoding
-5. Flow control with back pressure handling
+5. Flow control and back pressure handling
 6. Consumer acknowledgements and publisher confirms
 7. Connection tolerance
 8. Broker restart resilience
@@ -273,7 +273,8 @@ Subscribe to one of the diagnostic events:
 
 - `open`: connection is restored[^2]
 - `close`: connection is [closed](https://amqp-node.github.io/amqplib/channel_api.html#model_events)
-- `flow`: back pressure is applied to a channel (channel type is passed as an argument)
+- `flow`: back pressure is applied to a channel ([channel type](./types/topology.d.ts) is passed as
+  an argument)
 - `drain`: back pressure is removed from a channel (channel type is passed as an argument)
 
 [^2]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
@@ -282,5 +283,5 @@ established, there is no way to capture the initial `open` event.
 ### Example
 
 ```javascript
-io.diagnose('flow', () => console.log('Back pressure was applied'))
+io.diagnose('flow', (type) => console.log(`Back pressure was applied to the ${type} channel`))
 ```

@@ -16,8 +16,8 @@ processed at the same time.
 
 For simplicity, let's assume that the prefetch count is set to 1. After a "cause" message is
 consumed, the next message in the queue is held until the current message is acknowledged ("ack").
-The current message is acknowledged once the Producer function is completed, which means that an "
-effect" message has been successfully published using the ConfirmChannel. This "effect" message is
+The current message is acknowledged once the Producer function is completed, which means that an
+"effect" message has been successfully published using the ConfirmChannel. This "effect" message is
 considered to be published when a confirmation is received from the broker.
 
 In summary, the next "cause" message will be consumed from the queue only after the "effect" message
@@ -35,11 +35,3 @@ next Request is consumed from the Request queue*.
 A lightweight Producer (one that produces responses quickly) can result in being "overloaded"
 from the Consumer's perspective (that is, does not consume messages with an expected rate), even
 though the Producer being idle while waiting for response publication confirmations.
-
-### Prefetch Confirmation Gap
-
-The problem of "overloaded" idling Producer may be addressed by increasing the prefetch count of the
-input channel in the incoming message handlers ([IO.consume](#consumption) and [IO.reply](#reply))
-for each response sent, before receiving confirmation from the broker.
-
-> The solution is not implemented yet.

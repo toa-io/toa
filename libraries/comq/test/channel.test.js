@@ -590,6 +590,43 @@ describe('recovery', () => {
 
     expect(repl.publish).toHaveBeenCalled()
   })
+
+  it('should re-publish unconfirmed messages', async () => {
+    jest.clearAllMocks()
+
+    const exchange = generate()
+    const buffer = randomBytes(8)
+    const options = { contentType: 'application/octet-stream' }
+
+    topology.confirms = true
+    channel = await create(connection, topology)
+
+    // create channel
+    await channel.consume(generate(), () => undefined)
+
+    const chan = await getCreatedChannel()
+
+    chan.publish.mockImplementation(() => true)
+
+    /** @type {jest.MockedObject<comq.amqp.Connection>} */
+    let replacement
+
+    setImmediate(async () => {
+      replacement = await amqplib.connect()
+
+      await channel.recover(replacement)
+    })
+
+    await channel.publish(exchange, buffer, options)
+
+    expect(replacement).toBeDefined()
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.publish).toHaveBeenCalledWith(
+      exchange, '', buffer, expect.objectContaining(options), expect.any(Function)
+    )
+  })
 })
 
 describe('diagnostics', () => {

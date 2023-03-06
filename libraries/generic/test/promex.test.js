@@ -39,9 +39,7 @@ it('should resolve', async () => {
 it('should resolve value', async () => {
   const value = generate()
 
-  setImmediate(() => {
-    instance.resolve(value)
-  })
+  setImmediate(() => instance.resolve(value))
 
   const resolved = await instance
 
@@ -51,9 +49,7 @@ it('should resolve value', async () => {
 it('should reject', async () => {
   expect(instance.reject).toBeDefined()
 
-  setImmediate(() => {
-    instance.reject(new Error('test'))
-  })
+  setImmediate(() => instance.reject(new Error('test')))
 
   await expect(instance).rejects.toThrow('test')
 })
