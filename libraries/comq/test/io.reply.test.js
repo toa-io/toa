@@ -82,6 +82,34 @@ describe('queues', () => {
 })
 
 describe('reply', () => {
+  /** @type {jest.MockedObject<comq.Channel>} */
+  let requests
+
+  /** @type {jest.MockedObject<comq.Channel>} */
+  let replies
+
+  beforeEach(async () => {
+  })
+
+  it('should `throw` reply', async () => {
+    await io.reply(queue, produce)
+
+    requests = await findChannel('request')
+    replies = await findChannel('reply')
+
+    const content = randomBytes(10)
+    const properties = { replyTo: generate(), contentType: 'text/plain' }
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
+    const producer = requests.consume.mock.calls[0][1]
+
+    await producer(message)
+
+    const reply = await produce.mock.results[0].value
+    const buffer = encode(reply, properties.contentType)
+
+    expect(replies.throw).toHaveBeenCalledWith(properties.replyTo, buffer, expect.anything())
+  })
+
   it('should throw if producer returned undefined', async () => {
     const produce = () => undefined
 
@@ -149,7 +177,7 @@ describe('encoding', () => {
       contentType: properties.contentType
     }
 
-    expect(replies.send).toHaveBeenCalledWith(properties.replyTo, reply, props)
+    expect(replies.throw).toHaveBeenCalledWith(properties.replyTo, reply, props)
   })
 
   it.each(['specified', 'supported'])('should pass buffer if encoding format not %s', async (problem) => {
@@ -186,7 +214,7 @@ describe('encoding', () => {
 
     await producer(message)
 
-    expect(replies.send)
+    expect(replies.throw)
       .toHaveBeenCalledWith(
         expect.any(String),
         buffer,

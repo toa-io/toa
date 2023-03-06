@@ -83,6 +83,14 @@ class Channel {
         await this.#publish(exchange, DEFAULT, buffer, properties)
       }))
 
+  async throw (queue, buffer, options) {
+    try {
+      await this.#publish(DEFAULT, queue, buffer, options)
+    } catch {
+      // whatever
+    }
+  }
+
   async seal () {
     const cancellations = this.#tags.map((tag) => this.#channel.cancel(tag))
 

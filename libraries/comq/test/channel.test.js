@@ -234,6 +234,38 @@ describe('send', () => {
   })
 })
 
+describe('throw', () => {
+  const queue = generate()
+  const buffer = randomBytes(10)
+  const options = { contentType: 'application/octet-stream' }
+
+  beforeEach(async () => {
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+  })
+
+  it('should be', async () => {
+    expect(channel.throw).toBeDefined()
+  })
+
+  it('should publish a message', async () => {
+    await channel.throw(queue, buffer, options)
+
+    const call = chan.publish.mock.calls[0]
+
+    expect(call[0]).toStrictEqual('') // default exchange
+    expect(call[1]).toStrictEqual(queue)
+    expect(call[2]).toStrictEqual(buffer)
+    expect(call[3]).toMatchObject(options)
+  })
+
+  it('should catch exceptions', async () => {
+    chan.publish.mockImplementation(() => { throw new Error() })
+
+    await expect(channel.throw(queue, buffer, options)).resolves.not.toThrow()
+  })
+})
+
 describe('subscribe', () => {
   const exchange = generate()
   const queue = generate()

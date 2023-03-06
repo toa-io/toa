@@ -78,8 +78,10 @@ specified and supported, unless `producer` returned `Buffer`, in which case enco
 set to `application/octet-stream`. If encoding format of the Request message isn't specified or
 supported and `producer` has returned value that isn't a `Buffer`, then exception is thrown.
 
-> If incoming message doesn't have a `replyTo` property, an exception is thrown without
+> If the incoming message does not have a `replyTo` property, an exception is thrown without
 > calling `producer`.
+
+> The reply queue is not asserted, as it is expected to be done by the Consumer.
 
 ### Example
 
@@ -192,8 +194,8 @@ guarantee provided by RabbitMQ is maintained.
 Channel segregation addresses the potential issue of a prefetch deadlock[^1], which may take place
 when using a single channel or channel pool.
 
-[^1]: maximum amount of messages is consumed, while handlers of those messages are expecting
-replies.
+[^1]: the maximum number of messages has been consumed while handlers of those messages have sent
+requests and are expecting replies.
 
 ### Exchanges and Queues
 
