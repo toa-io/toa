@@ -1,17 +1,15 @@
 'use strict'
 
-/**
- * @param {() => any} fn
- * @param {(e?: error) => Promise<boolean>} recover
- */
-const failsafe = async (fn, recover) => {
-  try {
-    return await fn()
-  } catch (exception) {
-    if (await recover(exception) === false) throw exception
+/** @type {toa.generic.failsafe} */
+const failsafe = (context, recover, method) =>
+  async function call (...args) {
+    try {
+      return await method.apply(context, args)
+    } catch (exception) {
+      if (await recover.call(context, exception) === false) throw exception
 
-    return failsafe(fn, recover)
+      return call.apply(this, args)
+    }
   }
-}
 
 exports.failsafe = failsafe
