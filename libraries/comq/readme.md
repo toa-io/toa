@@ -166,7 +166,7 @@ The following content types are supported:
 
 When initially connecting to the broker or if the established connection is lost, connection
 attempts will be repeated indefinitely with intervals increasing up to 30 seconds. Once reconnected,
-topology will be recovered, and unanswered Requests and unconfirmed Events will be resent.
+the topology will be recovered, and unanswered Requests and unconfirmed Events will be resent.
 
 If the broker rejects the connection (for example, due to access being denied), an exception will be
 thrown.

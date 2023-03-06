@@ -1,7 +1,7 @@
 'use strict'
 
 const { EventEmitter } = require('node:events')
-const { lazy, promex, retry } = require('@toa.io/libraries/generic')
+const { lazy, recall, promex, failsafe } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {comq.Channel}
@@ -37,46 +37,51 @@ class Channel {
     this.#channel = await connection[method]()
   }
 
-  consume = lazy(this, this.#assertQueue,
-    /**
-     * @param {string} queue
-     * @param {comq.channels.consumer} callback
-     */
-    async (queue, callback) => {
-      await this.#consume(queue, callback)
-    })
+  consume = recall(this,
+    failsafe(this, this.#recover,
+      lazy(this, this.#assertQueue,
+        /**
+         * @param {string} queue
+         * @param {comq.channels.consumer} callback
+         */
+        async (queue, callback) => {
+          await this.#consume(queue, callback)
+        })))
 
-  send = lazy(this, this.#assertQueue,
-    /**
-     * @param {string} queue
-     * @param {Buffer} buffer
-     * @param {comq.amqp.options.Publish} options
-     */
-    async (queue, buffer, options) => {
-      await this.#publish(DEFAULT, queue, buffer, options)
-    })
+  subscribe = recall(this,
+    failsafe(this, this.#recover,
+      lazy(this, [this.#assertExchange, this.#assertBoundQueue],
+        /**
+         * @param {string} exchange
+         * @param {string} queue
+         * @param {comq.channels.consumer} callback
+         * @returns {Promise<void>}
+         */
+        async (exchange, queue, callback) => {
+          await this.#consume(queue, callback)
+        })))
 
-  subscribe = lazy(this,
-    [this.#assertExchange, this.#assertBoundQueue],
-    /**
-     * @param {string} exchange
-     * @param {string} queue
-     * @param {comq.channels.consumer} callback
-     * @returns {Promise<void>}
-     */
-    async (exchange, queue, callback) => {
-      await this.#consume(queue, callback)
-    })
+  send = failsafe(this, this.#recover,
+    lazy(this, this.#assertQueue,
+      /**
+       * @param {string} queue
+       * @param {Buffer} buffer
+       * @param {comq.amqp.options.Publish} options
+       */
+      async (queue, buffer, options) => {
+        await this.#publish(DEFAULT, queue, buffer, options)
+      }))
 
-  publish = lazy(this, this.#assertExchange,
-    /**
-     * @param {string} exchange
-     * @param {Buffer} buffer
-     * @param {import('amqplib').Options.Publish} [properties]
-     */
-    async (exchange, buffer, properties) => {
-      await this.#publish(exchange, DEFAULT, buffer, properties)
-    })
+  publish = failsafe(this, this.#recover,
+    lazy(this, this.#assertExchange,
+      /**
+       * @param {string} exchange
+       * @param {Buffer} buffer
+       * @param {import('amqplib').Options.Publish} [properties]
+       */
+      async (exchange, buffer, properties) => {
+        await this.#publish(exchange, DEFAULT, buffer, properties)
+      }))
 
   async seal () {
     const cancellations = this.#tags.map((tag) => this.#channel.cancel(tag))
@@ -91,6 +96,9 @@ class Channel {
   async recover (connection) {
     await this.create(connection)
 
+    lazy.reset(this)
+    await recall(this)
+
     this.#recovery.resolve()
     this.#recovery = promex()
   }
@@ -104,7 +112,7 @@ class Channel {
   async #assertQueue (name) {
     const options = this.#topology.durable ? DURABLE : EXCLUSIVE
 
-    await this.#ensure(() => this.#channel.assertQueue(name, options))
+    await this.#channel.assertQueue(name, options)
   }
 
   /**
@@ -192,18 +200,10 @@ class Channel {
     this.#diagnostics.emit('drain')
   }
 
-  async #ensure (fn) {
-    return retry(async (retry) => {
-      try {
-        return await fn()
-      } catch (exception) {
-        if (permanent(exception)) throw exception
+  async #recover (exception) {
+    if (permanent(exception)) return false
 
-        await this.#recovery
-
-        retry()
-      }
-    }, { base: 0 })
+    await this.#recovery
   }
 }
 
@@ -224,7 +224,10 @@ const create = async (connection, topology) => {
  * @return {boolean}
  */
 const permanent = (exception) => {
-  return exception.code === 405 // RESOURCE-LOCKED
+  const CLOSED = exception.message === 'Channel closed'
+  const ENDED = exception.message === 'Channel ended, no reply will be forthcoming'
+
+  return !CLOSED && !ENDED
 }
 
 const DEFAULT = ''

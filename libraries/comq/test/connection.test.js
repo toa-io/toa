@@ -96,9 +96,9 @@ describe('reconnection', () => {
   })
 
   it('should recover channels', async () => {
-    await connection.createChannel('request')
+    const channel = await connection.createChannel('request')
 
-    const channel = await create.mock.results[0].value
+    //    const channel = await create.mock.results[0].value
 
     expect(channel).toBeDefined()
 

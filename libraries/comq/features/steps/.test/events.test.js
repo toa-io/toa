@@ -2,6 +2,7 @@
 
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
+const { promex } = require('@toa.io/libraries/generic')
 const { gherkin } = require('@toa.io/libraries/mock')
 const { io } = require('./io.mock')
 const mock = { gherkin }
@@ -50,6 +51,12 @@ describe('Given (that ){token} is consuming events from the {token} exchange', (
   })
 })
 
+describe('Given {token} consuming events from the {token} exchange is expected', () => {
+  const step = gherkin.steps.Gi('{token} consuming events from the {token} exchange is expected')
+
+  it('should be', async () => undefined)
+})
+
 describe('When I emit an event to the {token} exchange', () => {
   const step = gherkin.steps.Wh('I emit an event to the {token} exchange')
 
@@ -67,6 +74,26 @@ describe('When I emit an event to the {token} exchange', () => {
 
   it('should emit event', async () => {
     expect(io.emit).toHaveBeenCalledWith(exchange, expect.anything())
+  })
+
+  it('should wait for context.expected', async () => {
+    jest.clearAllMocks()
+    
+    context.expected = promex()
+
+    let resolved = false
+
+    setImmediate(() => {
+      expect(io.emit).not.toHaveBeenCalled()
+
+      resolved = true
+      context.expected.resolve()
+    })
+
+    await step.call(context, exchange)
+
+    expect(io.emit).toHaveBeenCalled()
+    expect(resolved).toStrictEqual(true)
   })
 })
 

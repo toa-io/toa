@@ -12,12 +12,19 @@ Given('(that ){token} is consuming events from the {token} exchange',
    * @this {comq.features.Context}
    */
   async function (group, exchange) {
-    await this.io.consume(exchange, group, async (payload) => {
-      this.consumed ??= {}
-      this.consumed[group] = payload
+    await consume(this, group, exchange)
+  })
 
-      await timeout(100)
-    })
+Given('{token} consuming events from the {token} exchange is expected',
+  /**
+   * @param {string} group
+   * @param {string} exchange
+   * @this {comq.features.Context}
+   */
+  async function (group, exchange) {
+    await timeout(500) // let it crash
+
+    this.expected = consume(this, group, exchange)
   })
 
 When('I emit an event to the {token} exchange',
@@ -26,6 +33,8 @@ When('I emit an event to the {token} exchange',
    * @this {comq.features.Context}
    */
   async function (exchange) {
+    if (this.expected) await this.expected
+
     const message = generate()
 
     await this.io.emit(exchange, message)
@@ -44,3 +53,17 @@ Then('{token} receives the event',
     assert.notEqual(this.published, undefined, 'No event has been published')
     assert.equal(this.published, this.consumed[group], `'${group}' haven't consumed event`)
   })
+
+/**
+ * @param {comq.features.Context} context
+ * @param {string} group
+ * @param {string} exchange
+ * @return {Promise<void>}
+ */
+const consume = async (context, group, exchange) => {
+  context.consumed ??= {}
+
+  return context.io.consume(exchange, group, async (payload) => {
+    context.consumed[group] = payload
+  })
+}

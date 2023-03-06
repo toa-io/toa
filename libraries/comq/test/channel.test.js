@@ -30,6 +30,7 @@ let chan
 beforeEach(async () => {
   jest.clearAllMocks()
 
+  chan = undefined
   connection = await amqplib.connect()
   topology = fixtures.preset()
 })
@@ -342,6 +343,11 @@ describe('publish', () => {
 })
 
 describe('seal', () => {
+  beforeEach(async () => {
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+  })
+
   it('should be', async () => {
     expect(channel.seal).toBeDefined()
   })
@@ -399,6 +405,7 @@ describe('back pressure', () => {
 })
 
 describe('recovery', () => {
+  const exchange = generate()
   const queue = generate()
   const consumer = /** @type {comq.channel.consumer} */ jest.fn(() => undefined)
 
@@ -418,17 +425,14 @@ describe('recovery', () => {
   })
 
   it('should assert queue after recovery', async () => {
-    chan.assertQueue.mockImplementation(async () => { throw new Error() })
+    chan.assertQueue.mockImplementation(async () => { throw new Error('Channel closed') })
 
     /** @type {comq.amqp.Connection} */
     let replacement
-    let completed = false
 
     setImmediate(async () => {
-      expect(completed).toStrictEqual(false)
-
       chan.assertQueue.mockImplementation(async () => {})
-      completed = true
+
       replacement = await amqplib.connect()
 
       await channel.recover(replacement)
@@ -436,11 +440,123 @@ describe('recovery', () => {
 
     await channel.consume(queue, consumer)
 
-    expect(completed).toStrictEqual(true)
-
     const repl = await getCreatedChannel(replacement)
 
     expect(repl.assertQueue).toHaveBeenCalled()
+  })
+
+  it('should re-assert exchange after exception', async () => {
+    chan.assertExchange.mockImplementation(async () => { throw new Error('Channel ended, no reply will be forthcoming') })
+
+    /** @type {comq.amqp.Connection} */
+    let replacement
+
+    setImmediate(async () => {
+      chan.assertExchange.mockImplementation(async () => {})
+
+      replacement = await amqplib.connect()
+
+      await channel.recover(replacement)
+    })
+
+    await channel.subscribe(exchange, queue, consumer)
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.assertExchange).toHaveBeenCalled()
+  })
+
+  it('should re-bind queue after exception', async () => {
+    chan.bindQueue.mockImplementation(async () => { throw new Error('Channel ended, no reply will be forthcoming') })
+
+    /** @type {comq.amqp.Connection} */
+    let replacement
+
+    setImmediate(async () => {
+      chan.bindQueue.mockImplementation(async () => {})
+
+      replacement = await amqplib.connect()
+
+      await channel.recover(replacement)
+    })
+
+    await channel.subscribe(exchange, queue, consumer)
+
+    expect(replacement).toBeDefined()
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.bindQueue).toHaveBeenCalled()
+  })
+
+  it('should re-consume after recovery', async () => {
+    await channel.consume(queue, consumer)
+
+    const replacement = await amqplib.connect()
+
+    await channel.recover(replacement)
+
+    const chan = await getCreatedChannel(replacement)
+
+    expect(chan.consume).toHaveBeenCalledWith(queue, expect.any(Function), expect.anything())
+  })
+
+  it('should re-consume after exception ', async () => {
+    chan.consume.mockImplementation(async () => { throw new Error('Channel ended, no reply will be forthcoming') })
+
+    /** @type {comq.amqp.Connection} */
+    let replacement
+
+    setTimeout(async () => {
+      // noinspection JSCheckFunctionSignatures
+      chan.consume.mockImplementation(async () => ({ consumerTag: generate() }))
+      replacement = await amqplib.connect()
+
+      await channel.recover(replacement)
+    }, 1)
+
+    await channel.consume(queue, consumer)
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.consume).toHaveBeenCalled()
+  })
+
+  it('should re-subscribe after recovery', async () => {
+    await channel.subscribe(exchange, queue, consumer)
+
+    const replacement = await amqplib.connect()
+
+    await channel.recover(replacement)
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.consume).toHaveBeenCalledWith(queue, expect.any(Function), expect.anything())
+  })
+
+  it('should re-send after exception', async () => {
+    const queue = generate()
+    const buffer = Buffer.from(generate())
+
+    /** @type {comq.amqp.Connection} */
+    let replacement
+
+    chan.publish.mockImplementation(() => { throw new Error('Channel closed') })
+
+    setTimeout(async () => {
+      expect(chan.publish).toHaveBeenCalled()
+
+      chan.publish.mockImplementation(async () => {})
+      replacement = await amqplib.connect()
+
+      await channel.recover(replacement)
+    }, 1)
+
+    await channel.send(queue, buffer)
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.publish).toHaveBeenCalled()
   })
 })
 
