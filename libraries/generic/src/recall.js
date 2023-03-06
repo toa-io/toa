@@ -3,10 +3,10 @@
 /** @type {toa.generic.recall} */
 const recall = (context, method = undefined) => {
   if (method === undefined) return replay(context)
-  else return record(context, method)
+  else return recorder(context, method)
 }
 
-const record = (context, method) => (...args) => {
+const recorder = (context, method) => async (...args) => {
   if (context[METHODS] === undefined) context[METHODS] = []
 
   if (method[CALLS] === undefined) {
@@ -14,9 +14,11 @@ const record = (context, method) => (...args) => {
     method[CALLS] = []
   }
 
+  const result = await method.apply(context, args)
+
   method[CALLS].push(args)
 
-  return method.apply(context, args)
+  return result
 }
 
 const replay = async (context) => {

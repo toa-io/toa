@@ -8,8 +8,16 @@ it('should be', async () => {
 })
 
 const context = { foo: generate() }
-const method = /** @type {jest.MockedFn<(...args: any[]) => any>} */
-  jest.fn(function () { return this.foo })
+
+/** @type {jest.MockedFn<(...args: any[]) => any>} */
+let method
+
+beforeEach(() => {
+  jest.clearAllMocks()
+
+  method = /** @type {jest.MockedFn<(...args: any[]) => any>} */
+    jest.fn(function () { return this.foo })
+})
 
 it('should return function', async () => {
   const func = recall(context, method)
@@ -24,7 +32,7 @@ it('should return result', async () => {
   expect(output).toStrictEqual(await method.mock.results[0].value)
 })
 
-it('should call method within context', async () => {
+it('should call method within the context', async () => {
   const func = recall(context, method)
   const output = await func()
 
@@ -60,4 +68,25 @@ it('should re-call', async () => {
 
 it('should not trow on empty re-call', async () => {
   await expect(recall(context)).resolves.not.toThrow()
+})
+
+it('should not re-call those thrown exceptions', async () => {
+  expect.assertions(2)
+
+  method.mockImplementationOnce(async () => 1)
+  method.mockImplementationOnce(async () => { throw new Error() })
+
+  const func = recall(context, method)
+
+  await func()
+
+  try {
+    await func()
+  } catch (e) {
+    expect(e).toBeDefined()
+  }
+
+  await recall(context)
+
+  expect(method).toHaveBeenCalledTimes(3)
 })
