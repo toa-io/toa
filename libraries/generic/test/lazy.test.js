@@ -240,17 +240,20 @@ describe('reset', () => {
   })
 
   it('should reset initialization', async () => {
-    const instance = new LazyInitialized()
+    const instance = new InitializerIntersection()
 
-    await instance.action()
-    await instance.action()
+    await instance.do()
+    await instance.undo()
 
     expect(initialize).toHaveBeenCalledTimes(1)
+    expect(initialize2).toHaveBeenCalledTimes(1)
 
     lazy.reset(instance)
 
-    await instance.action()
+    await instance.do()
+    await instance.undo()
 
     expect(initialize).toHaveBeenCalledTimes(2)
+    expect(initialize2).toHaveBeenCalledTimes(2)
   })
 })

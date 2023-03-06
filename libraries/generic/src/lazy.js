@@ -59,7 +59,7 @@ const lock = (context, init, args, key) => {
 }
 
 const reset = (context) => {
-  delete context[LOCK]
+  context[LOCK] = context[LOCK] = Symbol('methods locking key')
 }
 
 const LOCK = Symbol('context locking key')
