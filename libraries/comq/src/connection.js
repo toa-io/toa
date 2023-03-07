@@ -65,7 +65,7 @@ class Connection {
       else throw exception
     }
 
-    this.#connection.on('close', (error) => this.#close(error))
+    this.#connection.on('close', this.#close)
 
     // prevents process crash, 'close' will be emitted next
     // https://amqp-node.github.io/amqplib/channel_api.html#model_events
@@ -81,7 +81,7 @@ class Connection {
   /**
    * @param {Error} error
    */
-  async #close (error) {
+  #close = async (error) => {
     this.#diagnostics.emit('close', error)
 
     this.#connection.removeAllListeners()
@@ -89,8 +89,8 @@ class Connection {
     if (error !== undefined) await this.open()
   }
 
-  async #recover () {
-    await this.#recovery
+  #recover () {
+    return this.#recovery
   }
 }
 
@@ -104,10 +104,10 @@ const RETRY = {
  * @returns {boolean}
  */
 const transient = (exception) => {
-  const ECONNREFUSED = exception.code === 'ECONNREFUSED'
-  const HANDSHAKE = exception.message === 'Socket closed abruptly during opening handshake'
+  const refused = exception.code === 'ECONNREFUSED'
+  const handshake = exception.message === 'Socket closed abruptly during opening handshake'
 
-  return ECONNREFUSED || HANDSHAKE
+  return refused || handshake
 }
 
 exports.Connection = Connection

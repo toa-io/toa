@@ -31,6 +31,7 @@ beforeEach(async () => {
   jest.clearAllMocks()
 
   chan = undefined
+  channel = undefined
   connection = await amqplib.connect()
   topology = fixtures.preset()
 })
@@ -627,6 +628,43 @@ describe('recovery', () => {
       exchange, '', buffer, expect.objectContaining(options), expect.any(Function)
     )
   })
+
+  it('should unpause on recovery', async () => {
+    jest.clearAllMocks()
+
+    topology.confirms = false
+    channel = await create(connection, topology)
+
+    const exchange = generate()
+    const buffer = randomBytes(8)
+    const options = { contentType: 'application/octet-stream' }
+
+    // create channel
+    await channel.publish(exchange, buffer, options)
+
+    const chan = await getCreatedChannel()
+
+    chan.publish.mockImplementation(() => false)
+
+    await channel.publish(exchange, buffer, options) // now paused
+
+    expect(chan.publish).toHaveBeenCalledTimes(2)
+
+    /** @type {jest.MockedObject<comq.amqp.Connection>} */
+    let replacement
+
+    setImmediate(async () => {
+      replacement = await amqplib.connect()
+
+      await channel.recover(replacement)
+    })
+
+    await channel.publish(exchange, buffer, options)
+
+    const repl = await getCreatedChannel(replacement)
+
+    expect(repl.publish).toHaveBeenCalled()
+  })
 })
 
 describe('diagnostics', () => {
@@ -634,6 +672,8 @@ describe('diagnostics', () => {
   const buffer = randomBytes(8)
 
   it('should be', async () => {
+    channel = await create(connection, topology)
+
     expect(channel.diagnose).toBeDefined()
   })
 

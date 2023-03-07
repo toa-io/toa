@@ -96,8 +96,7 @@ await io.reply('add_numbers', ({ a, b }) => (a + b))
 Send encoded Request message with `replyTo` and `correlationId` properties set and
 return decoded Reply content.
 
-On the initial call, a queue for Requests and a [temporary](#persistence) queue for Replies are
-asserted.
+On the initial call, queues for Requests and Replies are asserted.
 
 ### Example
 
@@ -113,9 +112,9 @@ const sum = await io.request('add_numbers', { a: 1, b: 2 })
 
 Start consuming decoded Events.
 
-On the initial call (once per unique `exchange` value), asserts fanout `exchange` and queue for the
-Consumer `group`, and then binds the queue to the exchange. That is, one Event message is delivered
-to a single Consumer within *each group*.
+Asserts fanout `exchange` (once per unique `exchange`) and queue for the Consumer `group` (once per
+unique `exchange` and `group` pair), and then binds the queue to the exchange. That is, one Event
+message is delivered to a single Consumer within *each group*.
 
 > Typically, the value of `group` refers to the name of a microservice running in multiple
 > instances.
@@ -132,7 +131,7 @@ await io.consume('numbers_added', 'logger', ({ a, b }) => {
 
 `async IO.emit(exchange: string, payload: any, [encoding: string])`
 
-Publish encoded Events to the `exchange`.
+Publish encoded Event to the `exchange`.
 
 On the initial call,
 a [fanout exchange](https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchanges) is

@@ -153,15 +153,15 @@ class IO {
   }
 
   /**
-   * @param {comq.producer} callback
+   * @param {comq.producer} producer
    * @returns {comq.channels.consumer}
    */
-  #getRequestConsumer = (callback) =>
+  #getRequestConsumer = (producer) =>
     track(this, async (message) => {
       if (!('replyTo' in message.properties)) throw new Error('Request is missing `replyTo` property')
 
       const payload = decode(message)
-      const reply = await callback(payload)
+      const reply = await producer(payload)
 
       if (reply === undefined) throw new Error('Producer must return value')
 

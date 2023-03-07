@@ -110,13 +110,15 @@ class Channel {
     lazy.reset(this)
     await recall(this)
 
+    this.#unpause(REJECTION)
+
     for (const confirmation of this.#confirmations) confirmation.reject(REJECTION)
 
-    // let rejections be handled
-    setImmediate(() => {
+    // let confirmation rejections be handled
+    setTimeout(async () => {
       this.#recovery.resolve()
       this.#recovery = promex()
-    })
+    }, 5)
   }
 
   // region initializers
@@ -225,8 +227,15 @@ class Channel {
     this.#diagnostics.emit('flow')
   }
 
-  #unpause () {
-    this.#paused.resolve()
+  /**
+   * @param {Error} [exception]
+   */
+  #unpause (exception) {
+    if (this.#paused === undefined) return
+
+    if (exception === undefined) this.#paused.resolve()
+    else this.#paused.reject(exception)
+
     this.#paused = undefined
     this.#diagnostics.emit('drain')
   }
@@ -255,13 +264,12 @@ const create = async (connection, topology) => {
  * @return {boolean}
  */
 const permanent = (exception) => {
-  if (exception === undefined) return false
+  const closed = exception.message === 'Channel closed'
+  const ended = exception.message === 'Channel ended, no reply will be forthcoming'
+  const internal = exception === REJECTION
+  const unpause = exception.pause === 1
 
-  const CLOSED = exception.message === 'Channel closed'
-  const ENDED = exception.message === 'Channel ended, no reply will be forthcoming'
-  const INTERNAL = exception === REJECTION
-
-  return !CLOSED && !ENDED && !INTERNAL
+  return !closed && !ended && !internal && !unpause
 }
 
 const DEFAULT = ''
