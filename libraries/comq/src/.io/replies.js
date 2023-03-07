@@ -15,10 +15,11 @@ const createReplyEmitter = (label) => {
   const emitter = new EventEmitter()
   const once = (name, callback) => emitter.once(name, callback)
   const emit = (name, value) => emitter.emit(name, value)
+  const clear = () => emitter.removeAllListeners()
 
   emitter.setMaxListeners(0)
 
-  return { queue, once, emit }
+  return { queue, once, emit, clear }
 }
 
 exports.createReplyEmitter = createReplyEmitter

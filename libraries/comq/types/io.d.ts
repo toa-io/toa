@@ -12,6 +12,8 @@ declare namespace comq {
     once(name: string, callback: Function): void
 
     emit(name: string, value: any): void
+
+    clear(): void
   }
 
   interface IO {

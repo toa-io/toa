@@ -125,12 +125,26 @@ describe('send', () => {
     const encoding = 'wtf/' + generate()
 
     setImmediate(reply)
+
     await io.request(queue, payload, /** @type {comq.encoding} */ encoding)
 
     const [, buffer, properties] = requests.send.mock.calls[0]
 
     expect(buffer).toStrictEqual(payload)
     expect(properties.contentType).toStrictEqual(encoding)
+  })
+
+  it('should resend unanswered Requests', async () => {
+    expect(requests.diagnose).toHaveBeenCalledWith('recover', expect.any(Function))
+
+    const calls = requests.diagnose.mock.calls.filter((call) => call[0] === 'recover')
+    const listeners = calls.map((call) => call[1])
+
+    for (const listener of listeners) listener()
+
+    await immediate()
+
+    expect(requests.send).toHaveBeenCalledTimes(2)
   })
 })
 

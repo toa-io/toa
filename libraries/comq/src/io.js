@@ -2,7 +2,7 @@
 
 const { EventEmitter } = require('node:events')
 const { randomBytes } = require('node:crypto')
-const { lazy, track, promex } = require('@toa.io/libraries/generic')
+const { lazy, track, failsafe, promex } = require('@toa.io/libraries/generic')
 
 const { decode } = require('./decode')
 const { encode } = require('./encode')
@@ -26,6 +26,9 @@ class IO {
 
   /** @type {Record<string, comq.ReplyEmitter>} */
   #emitters = {}
+
+  /** @type {Set<toa.generic.Promex>} */
+  #pendingRelies = new Set()
 
   #diagnostics = new EventEmitter()
 
@@ -54,27 +57,27 @@ class IO {
     })
 
   request = lazy(this, [this.#createRequestReplyChannels, this.#consumeReplies],
-    /**
-     * @param {string} queue
-     * @param {any} payload
-     * @param {comq.encoding} [encoding]
-     * @returns {Promise<void>}
-     */
-    async (queue, payload, encoding) => {
-      const [buffer, contentType] = this.#encode(payload, encoding)
-      const correlationId = randomBytes(8).toString('hex')
-      const emitter = this.#emitters[queue]
-      const replyTo = emitter.queue
-      const properties = { contentType, correlationId, replyTo }
-      const reply = promex()
+    failsafe(this, this.#recover,
+      /**
+       * @param {string} queue
+       * @param {any} payload
+       * @param {comq.encoding} [encoding]
+       * @returns {Promise<void>}
+       */
+      async (queue, payload, encoding) => {
+        const [buffer, contentType] = this.#encode(payload, encoding)
+        const correlationId = randomBytes(8).toString('hex')
+        const emitter = this.#emitters[queue]
+        const replyTo = emitter.queue
+        const properties = { contentType, correlationId, replyTo }
+        const reply = this.#createReply()
 
-      // memory leak in case of connection loss as reply will never be received
-      emitter.once(correlationId, reply.resolve)
+        emitter.once(correlationId, reply.resolve)
 
-      await this.#requests.send(queue, buffer, properties)
+        await this.#requests.send(queue, buffer, properties)
 
-      return reply
-    })
+        return reply
+      }))
 
   consume = lazy(this, this.#createEventChannel,
     async (exchange, group, callback) => {
@@ -121,6 +124,8 @@ class IO {
   async #createRequestReplyChannels () {
     this.#requests = await this.#createChannel('request')
     this.#replies = await this.#createChannel('reply')
+
+    this.#requests.diagnose('recover', this.#resend)
   }
 
   async #createEventChannel () {
@@ -200,6 +205,28 @@ class IO {
     })
 
   /**
+   * @return {toa.generic.Promex}
+   */
+  #createReply () {
+    const reply = promex()
+
+    this.#pendingRelies.add(reply)
+
+    reply.catch(NOOP).finally(() => this.#pendingRelies.delete(reply))
+
+    return reply
+  }
+
+  #recover (exception) {
+    if (exception !== REJECTION) return false
+  }
+
+  #resend = () => {
+    for (const emitter of Object.values(this.#emitters)) emitter.clear()
+    for (const reply of this.#pendingRelies) reply.reject(REJECTION)
+  }
+
+  /**
    * @param {any} payload
    * @param {comq.encoding} [encoding]
    * @returns [Buffer, string]
@@ -226,5 +253,9 @@ const CONNECTION_EVENTS = ['open', 'close']
 
 /** @type {comq.diagnostics.event[]} */
 const CHANNEL_EVENTS = ['flow', 'drain', 'recover']
+
+const REJECTION = /** @type {Error} */ Symbol('interrupt')
+
+const NOOP = () => undefined
 
 exports.IO = IO
