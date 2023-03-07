@@ -193,7 +193,7 @@ guarantee provided by RabbitMQ is maintained.
 Channel segregation addresses the potential issue of a prefetch deadlock[^1], which may take place
 when using a single channel or channel pool.
 
-[^1]: the maximum number of messages has been consumed while handlers of those messages have sent
+[^1]: The maximum number of messages has been consumed while handlers of those messages have sent
 requests and are expecting replies.
 
 ### Exchanges and Queues
@@ -241,9 +241,12 @@ Requests.
 `async IO.close()`
 
 1. Call `IO.seal()`.
-2. Wait for any outstanding messages to be processed and acknowledged. Sending Requests, receiving
-   Replies, and emitting Events will still be available.
+2. Wait for any outstanding messages to be processed[^2] and acknowledged. Sending Requests,
+   receiving Replies, and emitting Events will still be available.
 3. Close the connection.
+
+[^2]: Therefore, if the underlying connection is lost, `.close()` will only be completed once the
+connection is [recovered](#connection-tolerance).
 
 ### Advanced Scenarios
 
@@ -270,13 +273,13 @@ calling `IO.close()`.
 
 Subscribe to one of the diagnostic events:
 
-- `open`: connection is restored[^2]
+- `open`: connection is restored[^3]
 - `close`: connection is [closed](https://amqp-node.github.io/amqplib/channel_api.html#model_events)
 - `flow`: back pressure is applied to a channel ([channel type](./types/topology.d.ts) is passed as
   an argument)
 - `drain`: back pressure is removed from a channel (channel type is passed as an argument)
 
-[^2]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
+[^3]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
 established, there is no way to capture the initial `open` event.
 
 ### Example
