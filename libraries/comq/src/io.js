@@ -28,7 +28,7 @@ class IO {
   #emitters = {}
 
   /** @type {Set<toa.generic.Promex>} */
-  #pendingRelies = new Set()
+  #pendingReplies = new Set()
 
   #diagnostics = new EventEmitter()
 
@@ -210,9 +210,9 @@ class IO {
   #createReply () {
     const reply = promex()
 
-    this.#pendingRelies.add(reply)
+    this.#pendingReplies.add(reply)
 
-    reply.catch(NOOP).finally(() => this.#pendingRelies.delete(reply))
+    reply.catch(NOOP).finally(() => this.#pendingReplies.delete(reply))
 
     return reply
   }
@@ -223,7 +223,7 @@ class IO {
 
   #resend = () => {
     for (const emitter of Object.values(this.#emitters)) emitter.clear()
-    for (const reply of this.#pendingRelies) reply.reject(REJECTION)
+    for (const reply of this.#pendingReplies) reply.reject(REJECTION)
   }
 
   /**
