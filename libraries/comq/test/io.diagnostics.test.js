@@ -23,33 +23,34 @@ it('should be', async () => {
   expect(io.diagnose).toBeDefined()
 })
 
-it.each(
-  /** @type {comq.topology.type[]} */
-  ['request', 'reply', 'event'])('should re-emit flow and drain events from %s channel',
-  async (type) => {
-    const flowListener = /** @type {Function} */ jest.fn(() => undefined)
-    const drainListener = /** @type {Function} */ jest.fn(() => undefined)
+describe.each(['request', 'reply', 'event'])('%s channel events',
+  /**
+   * @param {comq.topology.type} type
+   */
+  (type) => {
+    it.each(['flow', 'drain', 'recover'])('should re-emit %s',
+      /**
+       * @param {comq.diagnostics.event} event
+       */
+      async (event) => {
+        const listener = /** @type {Function} */ jest.fn()
 
-    io.diagnose('flow', flowListener)
-    io.diagnose('drain', drainListener)
+        io.diagnose(event, listener)
 
-    // create channels
-    await io.reply(generate(), () => undefined)
-    await io.emit(generate(), () => undefined)
+        // create channels
+        await io.reply(generate(), () => undefined)
+        await io.consume(generate(), generate(), () => undefined)
 
-    const channel = await findChannel(type)
+        const channel = await findChannel(type)
 
-    expect(channel.diagnose).toHaveBeenCalledWith('flow', expect.any(Function))
-    expect(channel.diagnose).toHaveBeenCalledWith('drain', expect.any(Function))
+        expect(channel.diagnose).toHaveBeenCalledWith(event, expect.any(Function))
 
-    const flow = channel.diagnose.mock.calls.find((call) => call[0] === 'flow')[1]
-    const drain = channel.diagnose.mock.calls.find((call) => call[0] === 'drain')[1]
+        const callback = channel.diagnose.mock.calls.find((call) => call[0] === event)[1]
 
-    flow()
-    drain()
+        callback()
 
-    expect(flowListener).toHaveBeenCalledWith(type)
-    expect(drainListener).toHaveBeenCalledWith(type)
+        expect(listener).toHaveBeenCalledWith(type)
+      })
   })
 
 it.each(['open', 'close'])('should re-emit %s from connection',

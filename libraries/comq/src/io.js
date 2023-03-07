@@ -225,6 +225,6 @@ const DEFAULT = 'application/msgpack'
 const CONNECTION_EVENTS = ['open', 'close']
 
 /** @type {comq.diagnostics.event[]} */
-const CHANNEL_EVENTS = ['flow', 'drain']
+const CHANNEL_EVENTS = ['flow', 'drain', 'recover']
 
 exports.IO = IO
