@@ -277,7 +277,8 @@ Subscribe to one of the diagnostic events:
 - `close`: connection is [closed](https://amqp-node.github.io/amqplib/channel_api.html#model_events)
 - `flow`: back pressure is applied to a channel ([channel type](./types/topology.d.ts) is passed as
   an argument)
-- `drain`: back pressure is removed from a channel (channel type is passed as an argument)
+- `drain`: back pressure is removed from a channel (channel type is passed)
+- `recover`: channel's topology is recovered (channel type is passed)
 
 [^3]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
 established, there is no way to capture the initial `open` event.

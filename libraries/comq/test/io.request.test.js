@@ -4,7 +4,7 @@
 
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
-const { timeout } = require('@toa.io/libraries/generic')
+const { immediate } = require('@toa.io/libraries/generic')
 const { encode } = require('../src/encode')
 
 const mock = require('./connection.mock')
@@ -46,7 +46,7 @@ beforeEach(async () => {
   promise = io.request(queue, payload)
 
   // allows initializers to run
-  await timeout(0)
+  await immediate()
 
   requests = await findChannel('request')
   replies = await findChannel('reply')
@@ -98,7 +98,7 @@ describe('send', () => {
   })
 
   it('should throw if encoding is not supported', async () => {
-    const encoding = 'wtf/' + generate()
+    const encoding = /** @type {comq.encoding} */ 'wtf/' + generate()
 
     await expect(io.request(queue, payload, encoding)).rejects.toThrow('is not supported')
   })

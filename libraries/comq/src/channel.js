@@ -1,7 +1,7 @@
 'use strict'
 
 const { EventEmitter } = require('node:events')
-const { lazy, recall, promex, failsafe } = require('@toa.io/libraries/generic')
+const { lazy, recall, promex, failsafe, immediate } = require('@toa.io/libraries/generic')
 
 /**
  * @implements {comq.Channel}
@@ -114,11 +114,12 @@ class Channel {
 
     for (const confirmation of this.#confirmations) confirmation.reject(REJECTION)
 
-    // let confirmation rejections be handled
-    setTimeout(async () => {
-      this.#recovery.resolve()
-      this.#recovery = promex()
-    }, 5)
+    // let unpause and confirmation rejections be handled
+    await immediate()
+
+    this.#recovery.resolve()
+    this.#recovery = promex()
+    this.#diagnostics.emit('recover')
   }
 
   // region initializers

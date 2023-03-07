@@ -66,7 +66,7 @@ it.each(['open', 'close'])('should re-emit %s from connection',
 
     io.diagnose(event, listener)
 
-    emit(event)
+    emit()
 
     expect(listener).toHaveBeenCalled()
   })

@@ -53,8 +53,7 @@ class IO {
       await this.#requests.consume(queue, consumer)
     })
 
-  request = lazy(this,
-    [this.#createRequestReplyChannels, this.#consumeReplies],
+  request = lazy(this, [this.#createRequestReplyChannels, this.#consumeReplies],
     /**
      * @param {string} queue
      * @param {any} payload
@@ -146,8 +145,9 @@ class IO {
   async #createChannel (type) {
     const channel = await this.#connection.createChannel(type)
 
-    channel.diagnose('flow', () => this.#diagnostics.emit('flow', type))
-    channel.diagnose('drain', () => this.#diagnostics.emit('drain', type))
+    for (const event of CHANNEL_EVENTS) {
+      channel.diagnose(event, () => this.#diagnostics.emit(event, type))
+    }
 
     return channel
   }
@@ -223,5 +223,8 @@ const DEFAULT = 'application/msgpack'
 
 /** @type {comq.diagnostics.event[]} */
 const CONNECTION_EVENTS = ['open', 'close']
+
+/** @type {comq.diagnostics.event[]} */
+const CHANNEL_EVENTS = ['flow', 'drain']
 
 exports.IO = IO

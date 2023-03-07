@@ -665,6 +665,17 @@ describe('recovery', () => {
 
     expect(repl.publish).toHaveBeenCalled()
   })
+
+  it('should emit recover event', async () => {
+    const listener = /** @type {Function} */ jest.fn()
+
+    channel = await create(connection, topology)
+    channel.diagnose('recover', listener)
+
+    await channel.recover(connection)
+
+    expect(listener).toHaveBeenCalled()
+  })
 })
 
 describe('diagnostics', () => {
