@@ -4,15 +4,15 @@ const { generate } = require('randomstring')
 
 const { connect } = require('../')
 
-jest.mock('../src/io')
-jest.mock('../src/connection')
+jest.mock('../source/io')
+jest.mock('../source/connection')
 
-const { IO } = require('../src/io')
+const { IO } = require('../source/io')
 
 const {
   /** @type {jest.MockedClass<comq.Connection>} */
   Connection
-} = require('../src/connection')
+} = require('../source/connection')
 
 it('should be', async () => {
   expect(connect).toBeDefined()

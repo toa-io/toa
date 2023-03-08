@@ -1,6 +1,6 @@
 'use strict'
 
-const presets = require('../src/presets')
+const presets = require('../source/presets')
 
 it('should define request preset', async () => {
   expect(presets.request).toStrictEqual({

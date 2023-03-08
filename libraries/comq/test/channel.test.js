@@ -9,7 +9,7 @@ const { flip, random } = require('@toa.io/libraries/generic')
 const backpressure = require('./backpressure')
 const { amqplib } = require('./amqplib.mock')
 const fixtures = require('./channel.fixtures')
-const { create } = require('../src/channel')
+const { create } = require('../source/channel')
 
 it('should be', async () => {
   expect(create).toBeDefined()

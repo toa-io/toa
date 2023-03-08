@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 
 const mock = require('./connection.mock')
 
-const { IO } = require('../src/io')
+const { IO } = require('../source/io')
 
 /** @type {comq.IO} */
 let io

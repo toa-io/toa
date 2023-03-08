@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const { pack } = require('msgpackr')
 
-const { encode } = require('../src/encode')
+const { encode } = require('../source/encode')
 
 it('should be', async () => {
   expect(encode).toBeDefined()

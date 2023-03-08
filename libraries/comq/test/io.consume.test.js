@@ -1,12 +1,12 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { encode } = require('../src/encode')
+const { encode } = require('../source/encode')
 
 const mock = require('./connection.mock')
 const { encodings } = require('./encodings')
 
-const { IO } = require('../src/io')
+const { IO } = require('../source/io')
 
 /** @type {comq.IO} */
 let io

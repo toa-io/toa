@@ -10,10 +10,10 @@ const { channel: create } = require('./connection.mock')
 const mock = { amqplib, channel: { create } }
 
 jest.mock('amqplib', () => mock.amqplib)
-jest.mock('../src/channel', () => mock.channel)
+jest.mock('../source/channel', () => mock.channel)
 
-const presets = require('../src/presets')
-const { Connection } = require('../src/connection')
+const presets = require('../source/presets')
+const { Connection } = require('../source/connection')
 
 it('should be', async () => {
   expect(Connection).toBeDefined()
