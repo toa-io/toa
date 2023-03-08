@@ -18,3 +18,5 @@ declare namespace comq {
   type connect = (url: string) => Promise<_io.IO>
 
 }
+
+export type connect = comq.connect

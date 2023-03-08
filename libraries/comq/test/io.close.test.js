@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { promex } = require('@toa.io/libraries/generic')
+const { promex, immediate } = require('@toa.io/libraries/generic')
 
 const mock = require('./connection.mock')
 const { IO } = require('../src/io')
@@ -46,13 +46,36 @@ describe('seal', () => {
     await expect(io.seal()).resolves.not.toThrow()
   })
 
-  it('should not seal channel twice', async () => {
-    await reply()
-    await io.seal()
-    await io.close()
+  it('should be able to send requests', async () => {
+    // create requests channel
+    io.request(generate(), randomBytes(8)).then()
 
-    expect(requests.seal).toHaveBeenCalledTimes(1)
-    expect(events.seal).toHaveBeenCalledTimes(1)
+    // creating channel
+    await immediate()
+
+    await io.seal()
+
+    io.request(generate(), randomBytes(8)).then()
+
+    // calling channel.send()
+    await immediate()
+
+    const n = connection.createChannel.mock.calls.findIndex((call) => call[0] === 'request')
+    const channel = await connection.createChannel.mock.results[n].value
+
+    expect(channel.send).toHaveBeenCalledTimes(2)
+  })
+
+  it('should be able to emit events', async () => {
+    // create events channel
+    await io.consume(generate(), generate(), () => undefined)
+    await io.seal()
+    await io.emit(generate(), randomBytes(8))
+
+    const n = connection.createChannel.mock.calls.findIndex((call) => call[0] === 'event')
+    const channel = await connection.createChannel.mock.results[n].value
+
+    expect(channel.publish).toHaveBeenCalled()
   })
 })
 

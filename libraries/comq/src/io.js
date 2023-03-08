@@ -43,8 +43,7 @@ class IO {
     }
   }
 
-  reply = lazy(this,
-    [this.#createRequestReplyChannels],
+  reply = lazy(this, this.#createRequestReplyChannels,
     /**
      * @param {string} queue
      * @param {comq.producer} callback
@@ -104,9 +103,6 @@ class IO {
   async seal () {
     await this.#requests?.seal()
     await this.#events?.seal()
-
-    this.#requests = undefined
-    this.#events = undefined
   }
 
   async close () {
@@ -115,8 +111,8 @@ class IO {
     await this.#connection.close()
   }
 
-  diagnose (event, handler) {
-    this.#diagnostics.on(event, handler)
+  diagnose (event, listener) {
+    this.#diagnostics.on(event, listener)
   }
 
   // region initializers
@@ -212,7 +208,7 @@ class IO {
 
     this.#pendingReplies.add(reply)
 
-    reply.catch(NOOP).finally(() => this.#pendingReplies.delete(reply))
+    reply.catch(noop).finally(() => this.#pendingReplies.delete(reply))
 
     return reply
   }
@@ -254,8 +250,8 @@ const CONNECTION_EVENTS = ['open', 'close']
 /** @type {comq.diagnostics.event[]} */
 const CHANNEL_EVENTS = ['flow', 'drain', 'recover']
 
-const REJECTION = /** @type {Error} */ Symbol('interrupt')
+const REJECTION = /** @type {Error} */ Symbol('resend')
 
-const NOOP = () => undefined
+function noop () {}
 
 exports.IO = IO

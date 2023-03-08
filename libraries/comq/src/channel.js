@@ -186,7 +186,7 @@ class Channel {
     this.#confirmations.add(confirmation)
 
     confirmation
-      .catch(NOOP) // have no idea why, but this is required
+      .catch(noop) // have no idea why, but this is required
       .finally(() => this.#confirmations.delete(confirmation))
 
     return confirmation
@@ -283,6 +283,6 @@ const EXCLUSIVE = { exclusive: true }
 
 const REJECTION = /** @type {Error} */ Symbol('rejection')
 
-const NOOP = () => undefined
+function noop () {}
 
 exports.create = create
