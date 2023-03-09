@@ -1,6 +1,6 @@
 'use strict'
 
-const decoders = require('./.encoders')
+const decoders = require('./encoders')
 
 /**
  * @param {import('amqplib').ConsumeMessage} message

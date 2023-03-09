@@ -1,6 +1,6 @@
 'use strict'
 
-const encoders = require('./.encoders')
+const encoders = require('./encoders')
 
 /**
  * @param {any} payload
