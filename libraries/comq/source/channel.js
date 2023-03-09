@@ -223,6 +223,7 @@ class Channel {
         const requeue = !message.fields.redelivered
 
         this.#channel.nack(message, false, requeue)
+        this.#diagnostics.emit('discard', message, exception)
       }
     }
 

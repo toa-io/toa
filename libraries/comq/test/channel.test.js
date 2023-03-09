@@ -726,15 +726,41 @@ describe('diagnostics', () => {
     channel.diagnose('flow', () => (flowed = true))
     channel.diagnose('drain', () => (drained = true))
 
-    setImmediate(() => {
-      expect(flowed).toStrictEqual(true)
-
-      chan.emit('drain')
-
-      expect(drained).toStrictEqual(true)
-    })
-
     await channel.publish(exchange, buffer)
+
+    expect(flowed).toStrictEqual(true)
+
+    chan.emit('drain')
+
+    expect(drained).toStrictEqual(true)
+  })
+
+  it('should emit `discard` event', async () => {
+    jest.clearAllMocks()
+
+    topology.acknowledgements = true
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    const listener = /** @type {Function} */ jest.fn()
+
+    channel.diagnose('discard', listener)
+
+    const queue = generate()
+    const exception = new Error(generate())
+    const consumer = async () => { throw exception }
+
+    await channel.consume(queue, consumer)
+
+    const callback = /** @type {Function} */ chan.consume.mock.calls[0][1]
+    const content = randomBytes(8)
+    const properties = {}
+    const fields = { redelivered: true }
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties, fields }
+
+    await callback(message)
+
+    expect(listener).toHaveBeenCalledWith(message, exception)
   })
 })
 
