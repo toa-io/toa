@@ -1,11 +1,12 @@
 'use strict'
 
+const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
 
 const { encode } = require('../source/encode')
 const { encodings } = require('./encodings')
-const mock = require('./connection.mock')
 
+const mock = require('./connection.mock')
 const { IO } = require('../source/io')
 
 /** @type {comq.IO} */
@@ -64,6 +65,27 @@ it.each(encodings)('should publish message encoded as %s', async (encoding) => {
   const [, buffer, properties] = events.publish.mock.calls[1]
 
   expect(buffer).toStrictEqual(buf)
+  expect(properties.contentType).toStrictEqual(encoding)
+})
+
+it('should publish Buffer as application/octet-steam by default', async () => {
+  const payload = randomBytes(8)
+
+  await io.emit(exchange, payload)
+  const [, buffer, properties] = events.publish.mock.calls[1]
+
+  expect(buffer).toStrictEqual(payload)
+  expect(properties.contentType).toStrictEqual('application/octet-stream')
+})
+
+it('should publish Buffer with specified encoding format', async () => {
+  const payload = randomBytes(8)
+  const encoding = 'application/json'
+
+  await io.emit(exchange, payload, encoding)
+  const [, buffer, properties] = events.publish.mock.calls[1]
+
+  expect(buffer).toStrictEqual(payload)
   expect(properties.contentType).toStrictEqual(encoding)
 })
 

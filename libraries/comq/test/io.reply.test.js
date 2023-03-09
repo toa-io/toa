@@ -77,7 +77,7 @@ describe('queues', () => {
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
     const producer = requests.consume.mock.calls[0][1]
 
-    await expect(producer(message)).rejects.toThrow('is missing `replyTo` property')
+    await expect(producer(message)).rejects.toThrow('is missing the `replyTo` property')
   })
 })
 
@@ -121,7 +121,7 @@ describe('reply', () => {
     const properties = { replyTo: generate() }
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
 
-    await expect(callback(message)).rejects.toThrow('must return value')
+    await expect(callback(message)).rejects.toThrow('must return a value')
   })
 })
 
@@ -180,22 +180,6 @@ describe('encoding', () => {
     expect(replies.throw).toHaveBeenCalledWith(properties.replyTo, reply, props)
   })
 
-  it.each(['specified', 'supported'])('should pass buffer if encoding format not %s', async (problem) => {
-    const content = randomBytes(10)
-    const properties = { replyTo: generate() }
-
-    if (problem === 'supported') properties.contentType = 'wtf/' + generate()
-
-    const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
-    const producer = requests.consume.mock.calls[0][1]
-
-    produce.mockImplementationOnce(async () => randomBytes(8))
-
-    await producer(message)
-
-    expect(produce).toHaveBeenCalledWith(content)
-  })
-
   it('should set octet-stream for Buffer reply', async () => {
     const request = { [generate()]: generate() }
     const content = encode(request, 'application/msgpack')
@@ -233,7 +217,7 @@ describe('encoding', () => {
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
     const producer = requests.consume.mock.calls[0][1]
 
-    await expect(producer(message)).rejects.toThrow('must be of Buffer type')
+    await expect(producer(message)).rejects.toThrow('must be of type `Buffer`')
   })
 })
 

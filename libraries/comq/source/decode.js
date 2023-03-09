@@ -7,11 +7,14 @@ const decoders = require('./.encoders')
  * @returns {any}
  */
 const decode = (message) => {
-  const type = message.properties.contentType
+  const encoding = message.properties.contentType ?? DEFAULT
 
-  if (type === undefined || !(type in decoders)) return message.content
+  if (encoding === DEFAULT) return message.content
+  if (!(encoding in decoders)) throw new Error(`Encoding '${encoding}' is not supported`)
 
-  return decoders[type].decode(message.content)
+  return decoders[encoding].decode(message.content)
 }
+
+const DEFAULT = 'application/octet-stream'
 
 exports.decode = decode

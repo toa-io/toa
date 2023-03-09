@@ -159,17 +159,17 @@ class IO {
    */
   #getRequestConsumer = (producer) =>
     track(this, async (message) => {
-      if (!('replyTo' in message.properties)) throw new Error('Request is missing `replyTo` property')
+      if (!('replyTo' in message.properties)) throw new Error('Request is missing the `replyTo` property')
 
       const payload = decode(message)
       const reply = await producer(payload)
 
-      if (reply === undefined) throw new Error('Producer must return value')
+      if (reply === undefined) throw new Error('The `producer` function must return a value')
 
       let { correlationId, contentType } = message.properties
 
       if (Buffer.isBuffer(reply)) contentType = OCTETS
-      if (contentType === undefined) throw new Error('Reply to request without contentType must be of Buffer type')
+      if (contentType === undefined) throw new Error('Reply to a Request without the `contentType` property must be of type `Buffer`')
 
       const buffer = contentType === OCTETS ? reply : encode(reply, contentType)
       const properties = { contentType, correlationId }

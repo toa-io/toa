@@ -1,5 +1,6 @@
 'use strict'
 
+const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
 const { pack } = require('msgpackr')
 
@@ -48,11 +49,11 @@ it('should return buffer if content type is not defined', async () => {
   expect(decoded).toStrictEqual(object)
 })
 
-it.each(['application/octet-stream', 'wtf/' + generate()])('should return buffer if content type is %s', async (type) => {
+it('should return buffer if content type is application/octet-stream', async () => {
   const object = { [generate()]: generate() }
   const json = JSON.stringify(object)
   const content = Buffer.from(json)
-  const contentType = type
+  const contentType = 'application/octet-stream'
   const properties = { contentType }
   const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
 
@@ -61,4 +62,13 @@ it.each(['application/octet-stream', 'wtf/' + generate()])('should return buffer
   const decoded = JSON.parse(string)
 
   expect(decoded).toStrictEqual(object)
+})
+
+it('should throw if content-type is not supported', async () => {
+  const content = randomBytes(8)
+  const contentType = 'wtf/' + generate()
+  const properties = { contentType }
+  const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties }
+
+  expect(() => decode(message)).toThrow('is not supported')
 })

@@ -103,7 +103,7 @@ describe('send', () => {
     await expect(io.request(queue, payload, encoding)).rejects.toThrow('is not supported')
   })
 
-  it('should send buffer', async () => {
+  it('should send a Buffer', async () => {
     requests.send.mockClear()
 
     const payload = randomBytes(8)
@@ -118,7 +118,7 @@ describe('send', () => {
     expect(properties.contentType).toStrictEqual('application/octet-stream')
   })
 
-  it('should send buffer with specified encoding', async () => {
+  it('should send a buffer with the specified encoding', async () => {
     requests.send.mockClear()
 
     const payload = randomBytes(8)
