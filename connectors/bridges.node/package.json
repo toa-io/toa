@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.node",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa Node Bridge (inproc)",
   "homepage": "https://toa.io",
   "author": {
@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "@toa.io/core": "*",
-    "@toa.io/generic": "*",
     "@toa.io/filesystem": "*",
+    "@toa.io/generic": "*",
     "fast-glob": "3.2.7"
   },
   "devDependencies": {

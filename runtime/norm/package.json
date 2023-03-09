@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/norm",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa declarations normalization and validation",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -24,8 +24,8 @@
   "dependencies": {
     "@toa.io/core": "*",
     "@toa.io/generic": "*",
-    "@toa.io/yaml": "*",
     "@toa.io/schema": "*",
-    "@toa.io/schemas": "*"
+    "@toa.io/schemas": "*",
+    "@toa.io/yaml": "*"
   }
 }

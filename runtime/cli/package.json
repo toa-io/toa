@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,12 +19,12 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/generic": "*",
-    "@toa.io/yaml": "*",
-    "@toa.io/kubernetes": "*",
     "@toa.io/console": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/kubernetes": "*",
     "@toa.io/norm": "*",
     "@toa.io/runtime": "*",
+    "@toa.io/yaml": "*",
     "find-up": "5.0.0",
     "yargs": "17.6.2"
   },

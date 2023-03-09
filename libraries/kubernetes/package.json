@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/kubernetes",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa kubectl/kubectx wrapper",
   "homepage": "https://toa.io",
   "author": {
@@ -23,7 +23,7 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/generic": "*",
-    "@toa.io/command": "*"
+    "@toa.io/command": "*",
+    "@toa.io/generic": "*"
   }
 }

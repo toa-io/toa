@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/userland",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa development kit",
   "homepage": "https://toa.io",
   "author": {
@@ -26,11 +26,11 @@
   "dependencies": {
     "@toa.io/boot": "*",
     "@toa.io/core": "*",
-    "@toa.io/norm": "*",
+    "@toa.io/filesystem": "*",
     "@toa.io/generic": "*",
+    "@toa.io/norm": "*",
     "@toa.io/schemas": "*",
     "@toa.io/yaml": "*",
-    "@toa.io/filesystem": "*",
     "tap": "16.3.4"
   }
 }

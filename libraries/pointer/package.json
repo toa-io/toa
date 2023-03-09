@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {
@@ -23,9 +23,9 @@
   },
   "main": "source/index.js",
   "dependencies": {
+    "@toa.io/console": "*",
     "@toa.io/generic": "*",
     "@toa.io/schema": "*",
-    "@toa.io/console": "*",
     "@toa.io/yaml": "*"
   }
 }

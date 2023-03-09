@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.configuration",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa Configuration",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -18,8 +18,8 @@
   "dependencies": {
     "@toa.io/core": "*",
     "@toa.io/generic": "*",
-    "@toa.io/yaml": "*",
     "@toa.io/schema": "*",
+    "@toa.io/yaml": "*",
     "clone-deep": "4.0.1"
   }
 }

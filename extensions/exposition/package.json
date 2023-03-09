@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa Resources Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "@toa.io/bindings.amqp": "*",
+    "@toa.io/console": "*",
     "@toa.io/core": "*",
     "@toa.io/generic": "*",
-    "@toa.io/console": "*",
     "@toa.io/schema": "*",
     "@toa.io/yaml": "*",
     "cors": "2.8.5",

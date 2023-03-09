@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,10 +21,10 @@
   },
   "dependencies": {
     "@toa.io/core": "*",
-    "@toa.io/schema": "*",
     "@toa.io/filesystem": "*",
     "@toa.io/generic": "*",
     "@toa.io/norm": "*",
+    "@toa.io/schema": "*",
     "clone-deep": "4.0.1"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"

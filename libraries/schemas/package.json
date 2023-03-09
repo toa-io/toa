@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/schemas",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa Schemas",
   "homepage": "https://toa.io",
   "author": {
@@ -23,9 +23,9 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/generic": "*",
     "@toa.io/concise": "*",
     "@toa.io/filesystem": "*",
+    "@toa.io/generic": "*",
     "@toa.io/yaml": "*",
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1"

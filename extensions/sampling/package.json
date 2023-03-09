@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.sampling",
-  "version": "0.2.0-dev.107",
+  "version": "0.2.0-dev.108",
   "description": "Toa operations sampling",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
