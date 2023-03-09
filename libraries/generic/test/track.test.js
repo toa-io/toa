@@ -114,3 +114,23 @@ it('should track multiple methods', async () => {
 it('should resolve if methods haven\'t been called', async () => {
   await track(this)
 })
+
+it('should handle exceptions', async () => {
+  expect.assertions(2)
+
+  const exception = new Error(generate())
+
+  class Bad {
+    do = track(this, async () => { throw exception })
+  }
+
+  const b = new Bad()
+
+  try {
+    await b.do()
+  } catch (e) {
+    expect(e).toStrictEqual(exception)
+  }
+
+  await expect(track(b)).resolves.not.toThrow()
+})
