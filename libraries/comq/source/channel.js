@@ -215,9 +215,15 @@ class Channel {
    */
   #getAcknowledgingConsumer = (consumer) =>
     async (message) => {
-      await consumer(message)
+      try {
+        await consumer(message)
 
-      this.#channel.ack(message)
+        this.#channel.ack(message)
+      } catch (exception) {
+        const requeue = !message.fields.redelivered
+
+        this.#channel.nack(message, false, requeue)
+      }
     }
 
   #pause () {

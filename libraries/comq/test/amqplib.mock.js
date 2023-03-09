@@ -10,6 +10,7 @@ class Channel extends EventEmitter {
   consume = jest.fn(async () => ({ consumerTag: generate() }))
   cancel = jest.fn(async () => undefined)
   ack = jest.fn(() => undefined)
+  nack = jest.fn(() => undefined)
   assertQueue = jest.fn(async () => undefined)
   assertExchange = jest.fn(async () => undefined)
   bindQueue = jest.fn(async () => undefined)

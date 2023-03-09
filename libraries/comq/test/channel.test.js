@@ -131,6 +131,32 @@ describe('acknowledgements', () => {
     if (ack) expect(options).not.toMatchObject({ noAck: true })
     else expect(options).toMatchObject({ noAck: true })
   })
+
+  it.each(/** @type {[string, boolean][]} */ [
+    ['nack', true],
+    ['discard', false]
+  ])('should %s the message caused an exception', async (_, requeue) => {
+    topology.acknowledgements = true
+
+    channel = await create(connection, topology)
+    chan = await getCreatedChannel()
+
+    const consumer = /** @type {Function} */ jest.fn(async () => { throw new Error() })
+
+    await channel.consume(queue, consumer)
+
+    const callback = chan.consume.mock.calls[0][1]
+    const content = randomBytes(8)
+    const properties = {}
+    const fields = {}
+    const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties, fields }
+
+    if (!requeue) fields.redelivered = !requeue
+
+    await callback(message)
+
+    expect(chan.nack).toHaveBeenCalledWith(message, false, requeue)
+  })
 })
 
 describe('send', () => {
