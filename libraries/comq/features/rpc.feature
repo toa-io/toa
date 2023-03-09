@@ -17,3 +17,16 @@ Feature: Request-reply (RPC)
     """yaml
     3
     """
+
+  Scenario: Message causing an exception is discarded
+    Given function replying `divide_numbers` queue:
+    """
+    ({ a, b }) => { return a / b }
+    """
+    When the consumer sends the following request to the `add_numbers` queue:
+    """yaml
+    a: 1
+    b: 0
+    """
+    Then the request is discarded
+    And the consumer does not receive the reply
