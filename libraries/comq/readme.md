@@ -281,14 +281,18 @@ calling `IO.close()`.
 
 Subscribe to one of the diagnostic events:
 
-- `open`: connection is restored[^3]
-- `close`: connection is closed
-  (optional [`error`](https://amqp-node.github.io/amqplib/channel_api.html#model_events) is passed
-  as an argument)
-- `flow`: back pressure is applied to a channel ([channel type](./types/topology.d.ts) is passed as
-  an argument)
-- `drain`: back pressure is removed from a channel (channel type is passed)
-- `recover`: channel's topology is recovered (channel type is passed)
+- `open`: connection is restored[^3].
+- `close`: connection is closed.
+  Optional [`error`](https://amqp-node.github.io/amqplib/channel_api.html#model_events) is passed
+  as an argument.
+- `flow`: back pressure is applied to a channel. [Channel type](./types/topology.d.ts) is passed as
+  an argument.
+- `drain`: back pressure is removed from a channel. Channel type is passed.
+- `recover`: channel's topology is recovered. Channel type is passed.
+- `discard`: message is [discarded](#messages) as it repeatedly caused
+  exceptions.
+  Raw [amqp message object](https://amqp-node.github.io/amqplib/channel_api.html#channel_consume)
+  and the exception are passed as arguments.
 
 [^3]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
 established, there is no way to capture the initial `open` event.
