@@ -11,9 +11,10 @@ Node.js.
 4. Content encoding
 5. Flow control and back pressure handling
 6. Consumer acknowledgements and publisher confirms
-7. Connection tolerance
-8. Broker restart resilience
-9. Graceful shutdown
+7. Poison message handling
+8. Connection tolerance
+9. Broker restart resilience
+10. Graceful shutdown
 
 ## TL;DR
 
