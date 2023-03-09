@@ -80,10 +80,10 @@ class Channel {
       /**
        * @param {string} exchange
        * @param {Buffer} buffer
-       * @param {import('amqplib').Options.Publish} [properties]
+       * @param {import('amqplib').Options.Publish} [options]
        */
-      async (exchange, buffer, properties) => {
-        await this.#publish(exchange, DEFAULT, buffer, properties)
+      async (exchange, buffer, options) => {
+        await this.#publish(exchange, DEFAULT, buffer, options)
       }))
 
   async throw (queue, buffer, options) {
@@ -245,14 +245,14 @@ class Channel {
     if (this.#paused !== undefined) return
 
     this.#paused = promex()
-    this.#channel.once('drain', () => this.#unpause())
+    this.#channel.once('drain', this.#unpause)
     this.#diagnostics.emit('flow')
   }
 
   /**
    * @param {Error} [exception]
    */
-  #unpause (exception) {
+  #unpause = (exception) => {
     if (this.#paused === undefined) return
 
     if (exception === undefined) this.#paused.resolve()
