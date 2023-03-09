@@ -147,7 +147,7 @@ class IO {
     const channel = await this.#connection.createChannel(type)
 
     for (const event of CHANNEL_EVENTS) {
-      channel.diagnose(event, () => this.#diagnostics.emit(event, type))
+      channel.diagnose(event, (...args) => this.#diagnostics.emit(event, type, ...args))
     }
 
     return channel
@@ -248,7 +248,7 @@ const DEFAULT = 'application/msgpack'
 const CONNECTION_EVENTS = ['open', 'close']
 
 /** @type {comq.diagnostics.event[]} */
-const CHANNEL_EVENTS = ['flow', 'drain', 'recover']
+const CHANNEL_EVENTS = ['flow', 'drain', 'recover', 'discard']
 
 const REJECTION = /** @type {Error} */ Symbol('resend')
 

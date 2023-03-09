@@ -28,7 +28,7 @@ describe.each(['request', 'reply', 'event'])('%s channel events',
    * @param {comq.topology.type} type
    */
   (type) => {
-    it.each(['flow', 'drain', 'recover'])('should re-emit %s',
+    it.each(['flow', 'drain', 'recover', 'discard'])('should re-emit %s',
       /**
        * @param {comq.diagnostics.event} event
        */
@@ -45,11 +45,12 @@ describe.each(['request', 'reply', 'event'])('%s channel events',
 
         expect(channel.diagnose).toHaveBeenCalledWith(event, expect.any(Function))
 
-        const callback = channel.diagnose.mock.calls.find((call) => call[0] === event)[1]
+        const emit = channel.diagnose.mock.calls.find((call) => call[0] === event)[1]
+        const args = [generate(), generate()]
 
-        callback()
+        emit(...args)
 
-        expect(listener).toHaveBeenCalledWith(type)
+        expect(listener).toHaveBeenCalledWith(type, ...args)
       })
   })
 
@@ -67,9 +68,11 @@ it.each(['open', 'close'])('should re-emit %s from connection',
 
     io.diagnose(event, listener)
 
-    emit()
+    const args = [generate(), generate()]
 
-    expect(listener).toHaveBeenCalled()
+    emit(...args)
+
+    expect(listener).toHaveBeenCalledWith(...args)
   })
 
 /**

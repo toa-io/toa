@@ -290,8 +290,8 @@ Subscribe to one of the diagnostic events:
 - `drain`: back pressure is removed from a channel. Channel type is passed.
 - `recover`: channel's topology is recovered. Channel type is passed.
 - `discard`: message is [discarded](#messages) as it repeatedly caused
-  exceptions.
-  Raw [amqp message object](https://amqp-node.github.io/amqplib/channel_api.html#channel_consume)
+  exceptions. Channel type,
+  raw [amqp message object](https://amqp-node.github.io/amqplib/channel_api.html#channel_consume)
   and the exception are passed as arguments.
 
 [^3]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
