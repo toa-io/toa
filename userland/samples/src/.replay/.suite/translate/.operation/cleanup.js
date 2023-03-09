@@ -1,6 +1,6 @@
 'use strict'
 
-const { defined, empty } = require('@toa.io/libraries/generic')
+const { defined, empty } = require('@toa.io/generic')
 
 /**
  * @param {toa.sampling.request.Sample} sample

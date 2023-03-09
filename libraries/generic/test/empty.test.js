@@ -1,6 +1,6 @@
 'use strict'
 
-const { empty } = require('../src/empty')
+const { empty } = require('../source/empty')
 
 it('should return true', () => {
   expect(empty({})).toBe(true)

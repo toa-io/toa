@@ -1,7 +1,7 @@
 'use strict'
 
-const { encode, letters: { up, down } } = require('@toa.io/libraries/generic')
-const mock = require('@toa.io/libraries/mock')
+const { encode, letters: { up, down } } = require('@toa.io/generic')
+const mock = require('@toa.io/mock')
 
 const { deployment } = require('../')
 

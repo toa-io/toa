@@ -1,7 +1,7 @@
 'use strict'
 
-const { timeout } = require('@toa.io/libraries/generic')
-const { execute } = require('@toa.io/libraries/command')
+const { timeout } = require('@toa.io/generic')
+const { execute } = require('@toa.io/command')
 
 const { Given } = require('@cucumber/cucumber')
 

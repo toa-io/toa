@@ -45,7 +45,7 @@ something:
   namespace2.component2: protocol://host4
 ```
 
-See the [schema](src/uris/.construct/schema.yaml).
+See the [schema](source/uris/.construct/schema.yaml).
 
 ### Concise Declaration
 
@@ -63,7 +63,7 @@ something:
 ### Usage
 
 ```javascript
-const { uris } = require('@toa.io/libraries/pointer')
+const { uris } = require('@toa.io/pointer')
 
 const annotation = uris.construct(declaration)
 const url = uris.resolve(annotation, locator)

@@ -1,6 +1,6 @@
 'use strict'
 
-const { newid } = require('@toa.io/libraries/generic')
+const { newid } = require('@toa.io/generic')
 const framework = require('./framework')
 
 const cli = framework.cli('./dummies/credits')

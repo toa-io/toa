@@ -1,6 +1,6 @@
 'use strict'
 
-const { connect } = require('@toa.io/libraries/comq')
+const { connect } = require('comq')
 const { url } = require('../const')
 
 let io

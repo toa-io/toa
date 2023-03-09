@@ -1,11 +1,11 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { remap, encode } = require('@toa.io/libraries/generic')
+const { remap, encode } = require('@toa.io/generic')
 
 const mock = require('./command.mock')
 
-jest.mock('@toa.io/libraries/command', () => mock.command)
+jest.mock('@toa.io/command', () => mock.command)
 const { secrets } = require('../')
 
 it('should be', () => {

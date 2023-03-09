@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
-const { random } = require('@toa.io/libraries/generic')
+const { random } = require('@toa.io/generic')
 const { Locator } = require('@toa.io/core')
 
 const fixtures = require('./uris.fixtures')

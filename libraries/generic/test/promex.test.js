@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const { promex } = require('../src')
+const { promex } = require('../source')
 
 it('should be', async () => {
   expect(promex).toBeDefined()

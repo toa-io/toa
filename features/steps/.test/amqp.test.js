@@ -1,8 +1,8 @@
 'use strict'
 
-const { dump } = require('@toa.io/libraries/yaml')
+const { dump } = require('@toa.io/yaml')
 
-const { gherkin } = require('@toa.io/libraries/mock')
+const { gherkin } = require('@toa.io/mock')
 const { amqp } = require('./amqp.fixtures')
 
 const mock = { gherkin, amqp }

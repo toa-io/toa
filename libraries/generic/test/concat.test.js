@@ -1,6 +1,6 @@
 'use strict'
 
-const { concat } = require('../src/concat')
+const { concat } = require('../source/concat')
 
 it('should concat strings', () => {
   expect(concat('/', 'ref')).toBe('/ref')

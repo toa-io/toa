@@ -2,8 +2,8 @@
 
 const { generate } = require('randomstring')
 
-const { random } = require('@toa.io/libraries/generic')
-const { dump } = require('@toa.io/libraries/yaml')
+const { random } = require('@toa.io/generic')
+const { dump } = require('@toa.io/yaml')
 
 const spec = () => {
   const kind = generate()

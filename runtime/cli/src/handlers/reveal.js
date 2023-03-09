@@ -1,7 +1,7 @@
 'use strict'
 
-const { secrets } = require('@toa.io/libraries/kubernetes')
-const { remap, decode } = require('@toa.io/libraries/generic')
+const { secrets } = require('@toa.io/kubernetes')
+const { remap, decode } = require('@toa.io/generic')
 
 const reveal = async (argv) => {
   const secret = await secrets.get(argv.secret)

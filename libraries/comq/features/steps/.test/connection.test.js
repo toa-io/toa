@@ -2,14 +2,14 @@
 
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
-const { random, promex } = require('@toa.io/libraries/generic')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { random, promex } = require('@toa.io/generic')
+const { gherkin } = require('@toa.io/mock')
 const { comq } = require('./comq.mock')
 const world = require('./context.mock')
 const mock = { gherkin, comq }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-jest.mock('@toa.io/libraries/comq', () => mock.comq)
+jest.mock('comq', () => mock.comq)
 
 require('../connection')
 

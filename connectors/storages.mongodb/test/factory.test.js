@@ -1,6 +1,6 @@
 'use strict'
 
-const { encode } = require('@toa.io/libraries/generic')
+const { encode } = require('@toa.io/generic')
 
 const fixtures = require('./factory.fixtures')
 const mock = fixtures.mock

@@ -1,6 +1,6 @@
 'use strict'
 
-const { letters: { capitalize } } = require('@toa.io/libraries/generic')
+const { letters: { capitalize } } = require('@toa.io/generic')
 const { types } = require('./constants')
 const func = require('./function')
 

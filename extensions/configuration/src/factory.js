@@ -1,6 +1,6 @@
 'use strict'
 
-const { Schema } = require('@toa.io/libraries/schema')
+const { Schema } = require('@toa.io/schema')
 const { Aspect } = require('./aspect')
 const { Configuration } = require('./configuration')
 const { Provider } = require('./provider')

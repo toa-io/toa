@@ -1,6 +1,6 @@
 'use strict'
 
-const { primitive } = require('../src')
+const { primitive } = require('../source')
 
 it('should be', async () => {
   expect(primitive).toBeDefined()

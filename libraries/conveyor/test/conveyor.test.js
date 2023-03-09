@@ -1,10 +1,10 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random } = require('@toa.io/libraries/generic')
+const { random } = require('@toa.io/generic')
 
-const { ProcessorException } = require('../src/exceptions')
-const { Conveyor } = require('../src')
+const { ProcessorException } = require('../source/exceptions')
+const { Conveyor } = require('../source')
 
 it('should be', () => {
   expect(Conveyor).toBeDefined()

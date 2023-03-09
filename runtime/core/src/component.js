@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('@toa.io/libraries/console')
+const { console } = require('@toa.io/console')
 const { Connector } = require('./connector')
 const { NotImplementedException } = require('./exceptions')
 

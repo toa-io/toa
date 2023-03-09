@@ -1,7 +1,7 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const yaml = require('@toa.io/libraries/yaml')
+const yaml = require('@toa.io/yaml')
 
 const { components } = require('../src/suite')
 

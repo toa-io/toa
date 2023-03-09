@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory: { remove } } = require('@toa.io/libraries/filesystem')
+const { directory: { remove } } = require('@toa.io/filesystem')
 
 /**
  * @implements {toa.deployment.images.Registry}

@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { decode, encode, empty, overwrite } = require('@toa.io/libraries/generic')
+const { decode, encode, empty, overwrite } = require('@toa.io/generic')
 
 const { Connector } = require('@toa.io/core')
 const { form } = require('./.provider/form')

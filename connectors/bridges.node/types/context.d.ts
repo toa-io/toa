@@ -1,4 +1,4 @@
-import { Underlay } from '@toa.io/libraries/generic/types'
+import { Underlay } from '@toa.io/generic/types'
 import { Connector } from "@toa.io/core/types";
 
 declare namespace toa.node {

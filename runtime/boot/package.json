@@ -19,12 +19,12 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/libraries": "*",
-    "@toa.io/norm": "*"
-  },
   "dependencies": {
+    "@toa.io/core": "*",
+    "@toa.io/schema": "*",
+    "@toa.io/filesystem": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/norm": "*",
     "clone-deep": "4.0.1"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"

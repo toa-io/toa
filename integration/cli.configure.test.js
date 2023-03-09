@@ -1,7 +1,7 @@
 'use strict'
 
-const { encode, decode } = require('@toa.io/libraries/generic')
-const { parse } = require('@toa.io/libraries/yaml')
+const { encode, decode } = require('@toa.io/generic')
+const { parse } = require('@toa.io/yaml')
 
 const framework = require('./framework')
 

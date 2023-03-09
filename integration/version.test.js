@@ -1,6 +1,6 @@
 'use strict'
 
-const { random, repeat, newid } = require('@toa.io/libraries/generic')
+const { random, repeat, newid } = require('@toa.io/generic')
 const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')
@@ -65,6 +65,9 @@ it('should throw on version conflict', async () => {
 
   await remote.invoke('transit', { input: { balance: 2 }, query: { id } })
 
-  await expect(remote.invoke('transit', { input: { balance: 2 }, query: { id, version: output._version } }))
+  await expect(remote.invoke('transit', {
+    input: { balance: 2 },
+    query: { id, version: output._version }
+  }))
     .rejects.toMatchObject({ code: codes.StatePrecondition })
 })

@@ -1,6 +1,6 @@
 'use strict'
 
-const { dump } = require('@toa.io/libraries/yaml')
+const { dump } = require('@toa.io/yaml')
 
 const reset = (provider) => console.log('unset ' + provider.key)
 

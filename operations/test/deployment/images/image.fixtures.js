@@ -2,7 +2,7 @@
 
 const { Image } = require('../../../src/deployment/images/image')
 const { generate } = require('randomstring')
-const { hash } = require('@toa.io/libraries/generic')
+const { hash } = require('@toa.io/generic')
 
 const version = generate()
 const name = generate()

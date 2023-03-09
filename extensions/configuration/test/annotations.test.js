@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
-const { sample } = require('@toa.io/libraries/generic')
+const { sample } = require('@toa.io/generic')
 
 const fixtures = require('./annotations.fixtures')
 const { annotation } = require('../')

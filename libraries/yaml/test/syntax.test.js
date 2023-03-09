@@ -1,7 +1,7 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { load } = require('../src')
+const { load } = require('../source')
 
 const path = resolve(__dirname, 'syntax.yaml')
 

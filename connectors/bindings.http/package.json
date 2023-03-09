@@ -18,11 +18,9 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/libraries": "*"
-  },
   "dependencies": {
+    "@toa.io/core": "*",
+    "@toa.io/console": "*",
     "agentkeepalive": "4.2.1",
     "express": "4.18.1",
     "node-fetch": "2.6.7"

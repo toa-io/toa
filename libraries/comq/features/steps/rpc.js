@@ -2,8 +2,8 @@
 
 const assert = require('node:assert')
 const { randomBytes } = require('node:crypto')
-const { parse } = require('@toa.io/libraries/yaml')
-const { match, timeout } = require('@toa.io/libraries/generic')
+const { parse } = require('@toa.io/yaml')
+const { match, timeout } = require('@toa.io/generic')
 const { Given, When, Then } = require('@cucumber/cucumber')
 
 Given('function replying {token} queue:',

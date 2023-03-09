@@ -1,7 +1,7 @@
 'use strict'
 
 const { exceptions: { RequestSyntaxException, RequestConflictException } } = require('@toa.io/core')
-const { empty } = require('@toa.io/libraries/generic')
+const { empty } = require('@toa.io/generic')
 
 const etag = require('./etag')
 

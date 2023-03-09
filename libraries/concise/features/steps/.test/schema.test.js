@@ -1,16 +1,16 @@
 'use strict'
 
 const { AssertionError } = require('node:assert')
-const { dump } = require('@toa.io/libraries/yaml')
+const { dump } = require('@toa.io/yaml')
 
-const { gherkin } = require('@toa.io/libraries/mock')
+const { gherkin } = require('@toa.io/mock')
 const { mock: schema } = require('./schema.fixtures')
 const mock = { gherkin, schema }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-jest.mock('../../../src/expand', () => mock.schema)
+jest.mock('../../../source/expand', () => mock.schema)
 
-const { is } = require('@toa.io/libraries/schemas')
+const { is } = require('@toa.io/schemas')
 
 require('../schema')
 

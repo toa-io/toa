@@ -2,8 +2,8 @@
 
 const { resolve } = require('node:path')
 
-const { load } = require('@toa.io/libraries/yaml')
-const { Schema } = require('@toa.io/libraries/schema')
+const { load } = require('@toa.io/yaml')
+const { Schema } = require('@toa.io/schema')
 
 const path = resolve(__dirname, 'schema.yaml')
 const object = load.sync(path)

@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const { directory } = require('@toa.io/libraries/filesystem')
+const { directory } = require('@toa.io/filesystem')
 const { readFile } = require('node:fs/promises')
 const { generate } = require('randomstring')
 

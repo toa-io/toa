@@ -2,9 +2,9 @@
 
 const { join, resolve } = require('node:path')
 const { generate } = require('randomstring')
-const { flip } = require('@toa.io/libraries/generic')
-const { directory: { glob } } = require('@toa.io/libraries/filesystem')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { flip } = require('@toa.io/generic')
+const { directory: { glob } } = require('@toa.io/filesystem')
+const { gherkin } = require('@toa.io/mock')
 
 const fixtures = require('./replay.fixtures')
 

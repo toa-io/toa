@@ -33,7 +33,6 @@
     "@toa.io/extensions.exposition": "0.2.0-dev.107",
     "@toa.io/extensions.origins": "0.2.0-dev.107",
     "@toa.io/extensions.sampling": "0.2.0-dev.107",
-    "@toa.io/libraries": "0.2.0-dev.107",
     "@toa.io/norm": "0.2.0-dev.107",
     "@toa.io/operations": "0.2.0-dev.107",
     "@toa.io/prototype": "0.2.0-dev.107",

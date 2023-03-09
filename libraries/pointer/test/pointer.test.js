@@ -2,11 +2,11 @@
 
 const mock = { console: { info: jest.fn(), warn: jest.fn() } }
 
-jest.mock('@toa.io/libraries/console', () => mock)
+jest.mock('@toa.io/console', () => mock)
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { encode, letters: { up } } = require('@toa.io/libraries/generic')
+const { encode, letters: { up } } = require('@toa.io/generic')
 
 const { Pointer } = require('../')
 

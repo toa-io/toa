@@ -18,10 +18,10 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/libraries": "*"
-  },
   "dependencies": {
+    "@toa.io/generic": "*",
+    "@toa.io/console": "*",
+    "@toa.io/yaml": "*",
     "@rsql/parser": "1.2.4",
     "clone-deep": "4.0.1"
   },

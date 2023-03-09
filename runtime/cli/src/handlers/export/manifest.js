@@ -1,8 +1,8 @@
 'use strict'
 
 const { component } = require('@toa.io/norm')
-const { dump } = require('@toa.io/libraries/yaml')
-const { console } = require('@toa.io/libraries/console')
+const { dump } = require('@toa.io/yaml')
+const { console } = require('@toa.io/console')
 
 const { components: find } = require('../../util/find')
 

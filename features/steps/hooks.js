@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory } = require('@toa.io/libraries/filesystem')
+const { directory } = require('@toa.io/filesystem')
 const { Before, BeforeAll } = require('@cucumber/cucumber')
 
 BeforeAll(() => {

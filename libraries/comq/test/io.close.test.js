@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { promex, immediate } = require('@toa.io/libraries/generic')
+const { promex, immediate } = require('@toa.io/generic')
 
 const mock = require('./connection.mock')
 const { IO } = require('../source/io')

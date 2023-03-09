@@ -2,7 +2,7 @@
 
 const assert = require('node:assert')
 const { resolve } = require('node:path')
-const { directory, file } = require('@toa.io/libraries/filesystem')
+const { directory, file } = require('@toa.io/filesystem')
 const { Given, Then } = require('@cucumber/cucumber')
 
 Given('my working directory is {path}',

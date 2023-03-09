@@ -1,6 +1,6 @@
 'use strict'
 
-const { newid } = require('@toa.io/libraries/generic')
+const { newid } = require('@toa.io/generic')
 const { codes } = require('@toa.io/core/src/exceptions')
 
 const framework = require('./framework')

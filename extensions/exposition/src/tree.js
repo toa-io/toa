@@ -3,7 +3,7 @@
 const path = require('path')
 const { match } = require('path-to-regexp')
 
-const { console } = require('@toa.io/libraries/console')
+const { console } = require('@toa.io/console')
 
 /**
  * @implements {toa.extensions.exposition.Tree}

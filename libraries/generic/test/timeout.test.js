@@ -2,7 +2,7 @@
 
 const { performance } = require('perf_hooks')
 
-const { timeout } = require('../src/timeout')
+const { timeout } = require('../source/timeout')
 
 it('should wait', async () => {
   const start = performance.now()

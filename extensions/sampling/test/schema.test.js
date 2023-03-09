@@ -1,6 +1,6 @@
 'use strict'
 
-const { flip } = require('@toa.io/libraries/generic')
+const { flip } = require('@toa.io/generic')
 
 const { SampleException } = require('../src/exceptions')
 const { validate } = require('../src/validate')

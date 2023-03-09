@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { hash } = require('../src')
+const { hash } = require('../source')
 
 it('should hash', () => {
   const str = generate()

@@ -1,6 +1,6 @@
 'use strict'
 
-const { add } = require('@toa.io/libraries/generic')
+const { add } = require('@toa.io/generic')
 const { Connector } = require('./connector')
 
 /**

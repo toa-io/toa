@@ -4,7 +4,7 @@ const { resolve } = require('node:path')
 const { generate } = require('randomstring')
 
 const boot = require('@toa.io/boot')
-const { encode, random } = require('@toa.io/libraries/generic')
+const { encode, random } = require('@toa.io/generic')
 
 const { Factory } = require('@toa.io/extensions.configuration')
 

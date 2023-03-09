@@ -1,6 +1,6 @@
 'use strict'
 
-const { encode } = require('@toa.io/libraries/generic')
+const { encode } = require('@toa.io/generic')
 
 const framework = require('./framework')
 

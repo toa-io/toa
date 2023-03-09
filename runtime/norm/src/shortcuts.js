@@ -1,6 +1,6 @@
 'use strict'
 
-const { empty, merge } = require('@toa.io/libraries/generic')
+const { empty, merge } = require('@toa.io/generic')
 
 /**
  * Resolves shortcuts

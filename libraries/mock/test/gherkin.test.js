@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { transpose, acronyms } = require('@toa.io/libraries/generic')
+const { transpose, acronyms } = require('@toa.io/generic')
 
 const { gherkin } = require('../')
 

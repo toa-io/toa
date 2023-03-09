@@ -1,8 +1,8 @@
 'use strict'
 
 const { join, basename } = require('node:path')
-const { file: { glob } } = require('@toa.io/libraries/filesystem')
-const yaml = require('@toa.io/libraries/yaml')
+const { file: { glob } } = require('@toa.io/filesystem')
+const yaml = require('@toa.io/yaml')
 
 /**
  * @param {string} path

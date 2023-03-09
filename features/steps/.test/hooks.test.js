@@ -1,7 +1,7 @@
 'use strict'
 
-const { directory } = require('@toa.io/libraries/filesystem')
-const mock = require('@toa.io/libraries/mock')
+const { directory } = require('@toa.io/filesystem')
+const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../hooks')

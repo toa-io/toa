@@ -1,6 +1,6 @@
 'use strict'
 
-const { remap } = require('../src/remap')
+const { remap } = require('../source/remap')
 
 it('should remap values', () => {
   const object = { a: 1, b: 2 }

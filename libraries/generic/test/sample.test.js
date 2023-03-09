@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { sample } = require('../src/sample')
+const { sample } = require('../source/sample')
 
 const array = [1, 2, 3, 4, 5].map(() => generate())
 

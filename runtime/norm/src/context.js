@@ -1,9 +1,9 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { convolve } = require('@toa.io/libraries/generic')
-const { directory: { glob } } = require('@toa.io/libraries/filesystem')
-const { load } = require('@toa.io/libraries/yaml')
+const { convolve } = require('@toa.io/generic')
+const { directory: { glob } } = require('@toa.io/filesystem')
+const { load } = require('@toa.io/yaml')
 
 const { component } = require('./component')
 

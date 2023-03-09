@@ -3,10 +3,10 @@
 const { join } = require('node:path')
 const { AssertionError } = require('node:assert')
 
-const { transpose } = require('@toa.io/libraries/generic')
-const { directory } = require('@toa.io/libraries/filesystem')
-const { load } = require('@toa.io/libraries/yaml')
-const mock = require('@toa.io/libraries/mock')
+const { transpose } = require('@toa.io/generic')
+const { directory } = require('@toa.io/filesystem')
+const { load } = require('@toa.io/yaml')
+const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../deployment')

@@ -1,6 +1,6 @@
 'use strict'
 
-const { difference } = require('../src/difference')
+const { difference } = require('../source/difference')
 
 it('should return object difference', () => {
   const a = {

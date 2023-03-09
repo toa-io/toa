@@ -1,8 +1,8 @@
 'use strict'
 
 const assert = require('node:assert')
-const { transpose, match } = require('@toa.io/libraries/generic')
-const { parse } = require('@toa.io/libraries/yaml')
+const { transpose, match } = require('@toa.io/generic')
+const { parse } = require('@toa.io/yaml')
 
 const { cli } = require('./.connectors/cli')
 const get = require('./.workspace/components')

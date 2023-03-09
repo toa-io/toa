@@ -2,11 +2,11 @@
 
 const { resolve } = require('node:path')
 const { generate } = require('randomstring')
-const { transpose } = require('@toa.io/libraries/generic')
-const { dump } = require('@toa.io/libraries/yaml')
+const { transpose } = require('@toa.io/generic')
+const { dump } = require('@toa.io/yaml')
 const { AssertionError } = require('node:assert')
 
-const { gherkin } = require('@toa.io/libraries/mock')
+const { gherkin } = require('@toa.io/mock')
 
 const fixtures = require('./connectors.fixtures')
 const mock = { gherkin, boot: fixtures.mock.boot }

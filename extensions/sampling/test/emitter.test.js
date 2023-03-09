@@ -3,7 +3,7 @@
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
-const { sample: pick } = require('@toa.io/libraries/generic')
+const { sample: pick } = require('@toa.io/generic')
 
 const fixtures = require('./emitter.fixtures')
 const { Emitter } = require('../src/emitter')

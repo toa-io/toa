@@ -1,8 +1,8 @@
 'use strict'
 
 const assert = require('node:assert')
-const { split, parse } = require('@toa.io/libraries/yaml')
-const { match } = require('@toa.io/libraries/generic')
+const { split, parse } = require('@toa.io/yaml')
+const { match } = require('@toa.io/generic')
 
 const { Then } = require('@cucumber/cucumber')
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { Conveyor } = require('@toa.io/libraries/conveyor')
+const { Conveyor } = require('@toa.io/conveyor')
 
 /**
  * @implements {toa.sql.Client}

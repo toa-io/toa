@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const mock = { uris: { construct: () => generate() }, Pointer: class {} }
 
-jest.mock('@toa.io/libraries/pointer', () => mock)
+jest.mock('@toa.io/pointer', () => mock)
 const { annotation } = require('../')
 
 it('should export annotations', () => {

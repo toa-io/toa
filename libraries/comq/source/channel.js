@@ -1,7 +1,7 @@
 'use strict'
 
 const { EventEmitter } = require('node:events')
-const { lazy, recall, promex, failsafe, immediate } = require('@toa.io/libraries/generic')
+const { lazy, recall, promex, failsafe, immediate } = require('@toa.io/generic')
 
 /**
  * @implements {comq.Channel}

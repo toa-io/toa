@@ -25,10 +25,10 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/libraries": "*"
-  },
   "dependencies": {
+    "@toa.io/generic": "*",
+    "@toa.io/yaml": "*",
+    "@toa.io/filesystem": "*",
     "execa": "5.1.1"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"

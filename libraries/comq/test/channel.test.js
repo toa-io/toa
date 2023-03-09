@@ -4,7 +4,7 @@
 
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
-const { flip, random } = require('@toa.io/libraries/generic')
+const { flip, random } = require('@toa.io/generic')
 
 const backpressure = require('./backpressure')
 const { amqplib } = require('./amqplib.mock')

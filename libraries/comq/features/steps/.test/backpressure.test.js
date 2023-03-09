@@ -2,8 +2,8 @@
 
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
-const { random, quantity } = require('@toa.io/libraries/generic')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { random, quantity } = require('@toa.io/generic')
+const { gherkin } = require('@toa.io/mock')
 const { io } = require('./io.mock')
 const mock = { gherkin }
 

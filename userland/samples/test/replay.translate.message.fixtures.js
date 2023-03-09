@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { flip } = require('@toa.io/libraries/generic')
+const { flip } = require('@toa.io/generic')
 
 /** @type {toa.samples.Message} */
 const message = {

@@ -1,6 +1,6 @@
 'use strict'
 
-const { match, newid } = require('@toa.io/libraries/generic')
+const { match, newid } = require('@toa.io/generic')
 const { Connector } = require('@toa.io/core')
 
 const { context } = require('./sample')

@@ -1,10 +1,10 @@
 'use strict'
 
 const assert = require('node:assert')
-const { parse } = require('@toa.io/libraries/yaml')
-const { is } = require('@toa.io/libraries/schemas')
+const { parse } = require('@toa.io/yaml')
+const { is } = require('@toa.io/schemas')
 
-const { expand } = require('../../src/expand')
+const { expand } = require('../../source/expand')
 const { When, Then } = require('@cucumber/cucumber')
 
 When('I write schema:',

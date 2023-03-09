@@ -4,7 +4,7 @@
 
 const { MongoClient } = require('mongodb')
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/libraries/console')
+const { console } = require('@toa.io/console')
 
 /**
  * @implements {toa.mongodb.Connection}

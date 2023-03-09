@@ -2,10 +2,10 @@
 
 const { join } = require('node:path')
 const { generate } = require('randomstring')
-const { load } = require('@toa.io/libraries/yaml')
-const { directory } = require('@toa.io/libraries/filesystem')
-const { sample } = require('@toa.io/libraries/generic')
-const mock = require('@toa.io/libraries/mock')
+const { load } = require('@toa.io/yaml')
+const { directory } = require('@toa.io/filesystem')
+const { sample } = require('@toa.io/generic')
+const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../workspace')

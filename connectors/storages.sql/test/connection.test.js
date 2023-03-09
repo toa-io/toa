@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { encode } = require('@toa.io/libraries/generic')
+const { encode } = require('@toa.io/generic')
 const { Pointer } = require('../src/pointer')
 
 const { knex } = require('./knex.mock')

@@ -1,7 +1,7 @@
 'use strict'
 
 const amqp = require('amqplib')
-const { parse } = require('@toa.io/libraries/yaml')
+const { parse } = require('@toa.io/yaml')
 
 const { When } = require('@cucumber/cucumber')
 

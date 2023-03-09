@@ -4,7 +4,7 @@ const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
 const fixtures = require('./convolve.fixtures')
-const { convolve } = require('../src')
+const { convolve } = require('../source')
 
 let source
 
@@ -61,7 +61,10 @@ it('should determine nested tagged values', () => {
   const discriminator = generate()
   const baz = generate()
 
-  source['bar@' + discriminator] = { ['baz@' + discriminator]: baz, ['baz@' + generate()]: generate() }
+  source['bar@' + discriminator] = {
+    ['baz@' + discriminator]: baz,
+    ['baz@' + generate()]: generate()
+  }
 
   source = convolve(source, discriminator)
 

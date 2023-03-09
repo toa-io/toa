@@ -1,6 +1,6 @@
 'use strict'
 
-const { random } = require('../src/random')
+const { random } = require('../source/random')
 
 it('should be less than or equal to ceil(max)', () => {
   const iterations = 100

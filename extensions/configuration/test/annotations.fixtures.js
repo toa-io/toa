@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { random } = require('@toa.io/libraries/generic')
+const { random } = require('@toa.io/generic')
 
 const instance = () => {
   const name = generate()

@@ -1,8 +1,8 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random } = require('@toa.io/libraries/generic')
-const mock = require('@toa.io/libraries/mock')
+const { random } = require('@toa.io/generic')
+const mock = require('@toa.io/mock')
 
 const { deployment } = require('../')
 

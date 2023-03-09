@@ -2,7 +2,7 @@
 
 const { AssertionError } = require('node:assert')
 
-const mock = require('@toa.io/libraries/mock')
+const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../output')

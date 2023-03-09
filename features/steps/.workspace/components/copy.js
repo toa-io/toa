@@ -1,7 +1,7 @@
 'use strict'
 
 const { join } = require('node:path')
-const { directory } = require('@toa.io/libraries/filesystem')
+const { directory } = require('@toa.io/filesystem')
 
 const { COLLECTION } = require('./constants')
 

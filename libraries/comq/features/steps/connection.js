@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('node:assert')
-const { timeout } = require('@toa.io/libraries/generic')
+const { timeout } = require('@toa.io/generic')
 
 const { Given, When, Then } = require('@cucumber/cucumber')
 

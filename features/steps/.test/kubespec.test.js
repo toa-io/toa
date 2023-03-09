@@ -4,9 +4,9 @@ const clone = require('clone-deep')
 const { generate } = require('randomstring')
 const { AssertionError } = require('node:assert')
 
-const mock = require('@toa.io/libraries/mock')
-const { sample } = require('@toa.io/libraries/generic')
-const { dump } = require('@toa.io/libraries/yaml')
+const mock = require('@toa.io/mock')
+const { sample } = require('@toa.io/generic')
+const { dump } = require('@toa.io/yaml')
 
 const fixtures = require('./kubespec.fixtures')
 

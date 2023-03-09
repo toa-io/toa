@@ -20,7 +20,7 @@
     "runtime/*",
     "connectors/*",
     "extensions/*",
-    "libraries",
+    "libraries/*",
     "operations",
     "userland"
   ],

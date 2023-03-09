@@ -1,6 +1,6 @@
 'use strict'
 
-const connectors = require('@toa.io/libraries/pointer')
+const connectors = require('@toa.io/pointer')
 
 const { PREFIX } = require('./constants')
 

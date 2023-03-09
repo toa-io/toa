@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge, overwrite, add } = require('../src')
+const { merge, overwrite, add } = require('../source')
 
 it('should merge arrays', () => {
   const target = [1, 2]

@@ -4,7 +4,7 @@ const { access, writeFile: write } = require('node:fs/promises')
 const { join, resolve } = require('node:path')
 const { tmpdir } = require('node:os')
 const { generate } = require('randomstring')
-const { newid } = require('@toa.io/libraries/generic')
+const { newid } = require('@toa.io/generic')
 
 const { directory: { copy, ensure, is, remove, temp, glob } } = require('../')
 
@@ -105,7 +105,7 @@ describe('glob', () => {
   })
 
   it('should find by pattern', async () => {
-    const expected = ['src', 'test', 'types'].map((dir) => resolve(__dirname, '../', dir))
+    const expected = ['source', 'test', 'types'].map((dir) => resolve(__dirname, '../', dir))
 
     const found = await glob(resolve(__dirname, '../*'))
 

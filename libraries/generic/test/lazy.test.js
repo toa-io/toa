@@ -1,9 +1,9 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { timeout } = require('../src')
+const { timeout } = require('../source')
 
-const { lazy } = require('../src')
+const { lazy } = require('../source')
 
 it('should be', async () => {
   expect(lazy).toBeDefined()

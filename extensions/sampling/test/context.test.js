@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
-const { random } = require('@toa.io/libraries/generic')
+const { random } = require('@toa.io/generic')
 
 const { Context } = require('../src/context')
 const { Aspect } = require('../src/aspect')

@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { underlay } = require('@toa.io/libraries/generic')
+const { underlay } = require('@toa.io/generic')
 
 /**
  * @implements {toa.node.Context}

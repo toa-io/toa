@@ -18,8 +18,9 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@toa.io/core": "*",
-    "@toa.io/libraries": "*"
+    "@toa.io/generic": "*",
+    "@toa.io/schemas": "*"
   }
 }

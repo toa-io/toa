@@ -1,6 +1,6 @@
 # Kubernetes
 
-Wrapper for `kubectl` working in current context, and `kubectx`.
+Wrapper for `kubectl` and `kubectx` working in the current context.
 
 ## Secrets
 

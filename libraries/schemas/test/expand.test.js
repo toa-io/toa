@@ -5,8 +5,8 @@ const { generate } = require('randomstring')
 const fixtures = require('./expand.fixtures')
 const mock = fixtures.mock
 
-jest.mock('@toa.io/libraries/concise', () => mock.concise)
-jest.mock('../src/validator', () => mock.validator)
+jest.mock('@toa.io/concise', () => mock.concise)
+jest.mock('../source/validator', () => mock.validator)
 
 const { expand } = require('../')
 

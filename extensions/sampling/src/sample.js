@@ -1,6 +1,6 @@
 'use strict'
 
-const generic = require('@toa.io/libraries/generic')
+const generic = require('@toa.io/generic')
 
 const id = Symbol('sampling')
 

@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const mock = require('./command.mock')
 
-jest.mock('@toa.io/libraries/command', () => mock.command)
+jest.mock('@toa.io/command', () => mock.command)
 const { context } = require('../')
 
 it('should be', () => {

@@ -1,6 +1,6 @@
 'use strict'
 
-const { traverse } = require('@toa.io/libraries/generic')
+const { traverse } = require('@toa.io/generic')
 const { verbose } = require('./.normalize/verbose')
 
 const normalize = (manifest) => {

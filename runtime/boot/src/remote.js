@@ -1,7 +1,7 @@
 'use strict'
 
 const { Remote } = require('@toa.io/core')
-const { remap } = require('@toa.io/libraries/generic')
+const { remap } = require('@toa.io/generic')
 
 const boot = require('./index')
 

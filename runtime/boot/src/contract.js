@@ -1,7 +1,7 @@
 'use strict'
 
 const { contract: { Request, Reply } } = require('@toa.io/core')
-const { Schema } = require('@toa.io/libraries/schema')
+const { Schema } = require('@toa.io/schema')
 
 const request = (definition) => {
   const request = Request.schema(definition)

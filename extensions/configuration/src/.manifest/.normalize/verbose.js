@@ -1,6 +1,6 @@
 'use strict'
 
-const { remap } = require('@toa.io/libraries/generic')
+const { remap } = require('@toa.io/generic')
 
 const verbose = (node) => {
   const isObject = node.properties !== undefined

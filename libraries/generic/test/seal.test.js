@@ -1,6 +1,6 @@
 'use strict'
 
-const { seal } = require('../src/seal')
+const { seal } = require('../source/seal')
 
 it('should seal', () => {
   const object = { foo: 'bar' }

@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge } = require('@toa.io/libraries/generic')
+const { merge } = require('@toa.io/generic')
 
 const bridge = async (root, manifest) => {
   await Promise.all([

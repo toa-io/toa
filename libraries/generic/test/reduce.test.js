@@ -1,6 +1,6 @@
 'use strict'
 
-const { reduce } = require('../src')
+const { reduce } = require('../source')
 
 it('should be', async () => {
   expect(reduce).toBeDefined()

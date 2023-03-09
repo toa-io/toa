@@ -1,6 +1,6 @@
 'use strict'
 
-const { secrets } = require('@toa.io/libraries/kubernetes')
+const { secrets } = require('@toa.io/kubernetes')
 
 const conceal = async (argv) => {
   const { secret, key, value } = argv

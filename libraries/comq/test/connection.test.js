@@ -4,7 +4,7 @@
 
 const { generate } = require('randomstring')
 
-const { timeout } = require('@toa.io/libraries/generic')
+const { timeout } = require('@toa.io/generic')
 const { amqplib } = require('./amqplib.mock')
 const { channel: create } = require('./connection.mock')
 const mock = { amqplib, channel: { create } }

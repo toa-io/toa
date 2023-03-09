@@ -1,6 +1,6 @@
 'use strict'
 
-const pointer = require('@toa.io/libraries/pointer')
+const pointer = require('@toa.io/pointer')
 
 const { validate } = require('./.deployment/validate')
 

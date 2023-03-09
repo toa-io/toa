@@ -1,7 +1,7 @@
 'use strict'
 
 const norm = require('@toa.io/norm')
-const { merge } = require('@toa.io/libraries/generic')
+const { merge } = require('@toa.io/generic')
 
 const read = require('./.read')
 

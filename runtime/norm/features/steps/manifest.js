@@ -2,9 +2,9 @@
 
 const assert = require('node:assert')
 const { join } = require('node:path')
-const { parse, save } = require('@toa.io/libraries/yaml')
-const { directory } = require('@toa.io/libraries/filesystem')
-const { match } = require('@toa.io/libraries/generic')
+const { parse, save } = require('@toa.io/yaml')
+const { directory } = require('@toa.io/filesystem')
+const { match } = require('@toa.io/generic')
 
 const { component: load } = require('../../src')
 

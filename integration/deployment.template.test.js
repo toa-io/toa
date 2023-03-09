@@ -6,8 +6,8 @@ const { join } = require('node:path')
 const { generate } = require('randomstring')
 
 const boot = require('@toa.io/boot')
-const { sample } = require('@toa.io/libraries/generic')
-const { split } = require('@toa.io/libraries/yaml')
+const { sample } = require('@toa.io/generic')
+const { split } = require('@toa.io/yaml')
 
 const fixtures = require('./deployment.template.fixtures')
 

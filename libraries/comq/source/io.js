@@ -2,7 +2,7 @@
 
 const { EventEmitter } = require('node:events')
 const { randomBytes } = require('node:crypto')
-const { lazy, track, failsafe, promex } = require('@toa.io/libraries/generic')
+const { lazy, track, failsafe, promex } = require('@toa.io/generic')
 
 const { decode } = require('./decode')
 const { encode } = require('./encode')

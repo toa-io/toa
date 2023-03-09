@@ -18,11 +18,11 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/libraries": "*"
-  },
   "dependencies": {
+    "@toa.io/core": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/pointer": "*",
+    "@toa.io/console": "*",
     "mongodb": "4.13.0"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"

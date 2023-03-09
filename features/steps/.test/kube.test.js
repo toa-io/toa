@@ -1,13 +1,13 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const mock = require('@toa.io/libraries/mock')
+const mock = require('@toa.io/mock')
 
-jest.mock('@toa.io/libraries/kubernetes')
+jest.mock('@toa.io/kubernetes')
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../kube.js')
 
-const kube = /** @type {{ context: { set: jest.Mock } }} */ require('@toa.io/libraries/kubernetes')
+const kube = /** @type {{ context: { set: jest.Mock } }} */ require('@toa.io/kubernetes')
 
 const gherkin = mock.gherkin
 

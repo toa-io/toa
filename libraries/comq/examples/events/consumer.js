@@ -1,7 +1,7 @@
 'use strict'
 
 const { randomBytes } = require('node:crypto')
-const { connect } = require('@toa.io/libraries/comq')
+const { connect } = require('comq')
 const { url } = require('../const')
 
 const group = process.argv[2] ?? randomBytes(4).toString('hex')

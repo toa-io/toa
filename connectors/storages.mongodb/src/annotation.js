@@ -1,5 +1,5 @@
 'use strict'
 
-const { uris } = require('@toa.io/libraries/pointer')
+const { uris } = require('@toa.io/pointer')
 
 exports.annotation = uris.construct

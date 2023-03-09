@@ -3,7 +3,7 @@
 const express = require('express')
 
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/libraries/console')
+const { console } = require('@toa.io/console')
 
 class Server extends Connector {
   #app

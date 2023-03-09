@@ -18,16 +18,16 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/libraries": "*"
+  "devDependencies": {
+    "@toa.io/mock": "*",
+    "@types/amqplib": "0.8.2"
   },
   "dependencies": {
-    "amqplib": "0.10.0",
-    "execa": "5.1.1"
+    "@toa.io/core": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/console": "*",
+    "@toa.io/pointer": "*",
+    "amqplib": "0.10.0"
   },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24",
-  "devDependencies": {
-    "@types/amqplib": "0.8.2"
-  }
+  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }

@@ -1,7 +1,7 @@
 'use strict'
 
 const { World } = require('@cucumber/cucumber')
-const { connect } = require('@toa.io/libraries/comq')
+const { connect } = require('comq')
 
 /**
  * @implements {comq.features.Context}

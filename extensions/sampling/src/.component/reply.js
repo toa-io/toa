@@ -1,6 +1,6 @@
 'use strict'
 
-const { match } = require('@toa.io/libraries/generic')
+const { match } = require('@toa.io/generic')
 const { ReplayException } = require('../exceptions')
 
 /**

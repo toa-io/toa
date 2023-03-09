@@ -1,12 +1,12 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { gherkin } = require('@toa.io/mock')
 const { command } = require('./command.mock')
 const mock = { gherkin, command }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-jest.mock('@toa.io/libraries/command', () => mock.command)
+jest.mock('@toa.io/command', () => mock.command)
 
 jest.setTimeout(10000)
 

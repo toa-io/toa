@@ -1,8 +1,8 @@
 'use strict'
 
-const { repeat } = require('../src/repeat')
+const { repeat } = require('../source/repeat')
 const { generate } = require('randomstring')
-const { random } = require('../src/random')
+const { random } = require('../source/random')
 
 it('should repeat', () => {
   const fn = jest.fn()

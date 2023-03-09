@@ -4,7 +4,7 @@
 
 const { randomBytes } = require('node:crypto')
 const { generate } = require('randomstring')
-const { immediate } = require('@toa.io/libraries/generic')
+const { immediate } = require('@toa.io/generic')
 const { encode } = require('../source/encode')
 
 const mock = require('./connection.mock')

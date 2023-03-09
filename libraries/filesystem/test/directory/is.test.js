@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { join } = require('node:path')
-const { is } = require('../../src/directory')
+const { is } = require('../../source/directory')
 
 it('should be', async () => {
   expect(is).toBeDefined()

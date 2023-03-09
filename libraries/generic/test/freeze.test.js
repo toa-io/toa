@@ -1,6 +1,6 @@
 'use strict'
 
-const { freeze } = require('../src/freeze')
+const { freeze } = require('../source/freeze')
 
 it('should freeze', () => {
   const object = { foo: 'bar' }

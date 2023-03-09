@@ -2,7 +2,7 @@
 
 const { EventEmitter } = require('node:events')
 const amqp = require('amqplib')
-const { retry, promex, failsafe } = require('@toa.io/libraries/generic')
+const { retry, promex, failsafe } = require('@toa.io/generic')
 
 const presets = require('./presets')
 const channels = require('./channel')

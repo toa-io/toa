@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { encode, letters: { up } } = require('@toa.io/libraries/generic')
+const { encode, letters: { up } } = require('@toa.io/generic')
 
 const { Pointer } = require('../src/pointer')
 const { PREFIX } = require('../src/constants')

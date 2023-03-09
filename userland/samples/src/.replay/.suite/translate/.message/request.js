@@ -1,6 +1,6 @@
 'use strict'
 
-const { add, defined } = require('@toa.io/libraries/generic')
+const { add, defined } = require('@toa.io/generic')
 const translate = require('../operation')
 
 /**

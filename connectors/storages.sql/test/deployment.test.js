@@ -1,11 +1,11 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { dependencies } = require('@toa.io/libraries/mock')
+const { dependencies } = require('@toa.io/mock')
 
 const mock = { deployment: jest.fn(() => generate()), Pointer: function () {} }
 
-jest.mock('@toa.io/libraries/pointer', () => mock)
+jest.mock('@toa.io/pointer', () => mock)
 const { deployment } = require('../')
 
 it('should be', () => {

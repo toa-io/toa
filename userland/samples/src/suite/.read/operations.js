@@ -1,9 +1,9 @@
 'use strict'
 
 const { basename, join } = require('node:path')
-const { file: { glob } } = require('@toa.io/libraries/filesystem')
-const { merge } = require('@toa.io/libraries/generic')
-const yaml = require('@toa.io/libraries/yaml')
+const { file: { glob } } = require('@toa.io/filesystem')
+const { merge } = require('@toa.io/generic')
+const yaml = require('@toa.io/yaml')
 
 const { parse } = require('./parse')
 

@@ -18,10 +18,14 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/libraries": "*"
+  "devDependencies": {
+    "@toa.io/mock": "*"
   },
   "dependencies": {
+    "@toa.io/generic": "*",
+    "@toa.io/console": "*",
+    "@toa.io/conveyor": "*",
+    "@toa.io/pointer": "*",
     "knex": "2.4.2",
     "pg": "8.9.0"
   }

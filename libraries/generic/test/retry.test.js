@@ -1,6 +1,6 @@
 'use strict'
 
-const { retry, RetryError, timeout, random } = require('../src')
+const { retry, RetryError, timeout, random } = require('../source')
 
 /** @type {toa.generic.retry.Options} */
 let options

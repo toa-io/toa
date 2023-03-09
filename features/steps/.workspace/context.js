@@ -2,8 +2,8 @@
 
 const clone = require('clone-deep')
 const { join } = require('node:path')
-const { overwrite } = require('@toa.io/libraries/generic')
-const { save, load, parse } = require('@toa.io/libraries/yaml')
+const { overwrite } = require('@toa.io/generic')
+const { save, load, parse } = require('@toa.io/yaml')
 
 /**
  * @param {string} directory

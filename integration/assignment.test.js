@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { exceptions: { codes } } = require('@toa.io/core')
-const { newid, timeout } = require('@toa.io/libraries/generic')
+const { newid, timeout } = require('@toa.io/generic')
 
 // noinspection DuplicatedCode
 const framework = require('./framework')

@@ -3,8 +3,8 @@
 const assert = require('node:assert')
 const { join } = require('node:path')
 
-const { load, parse } = require('@toa.io/libraries/yaml')
-const { match } = require('@toa.io/libraries/generic')
+const { load, parse } = require('@toa.io/yaml')
+const { match } = require('@toa.io/generic')
 
 const { When, Then } = require('@cucumber/cucumber')
 

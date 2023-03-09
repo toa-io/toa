@@ -1,4 +1,4 @@
-import { Pointer as Base } from '@toa.io/libraries/pointer/types'
+import { Pointer as Base } from '@toa.io/pointer/types'
 
 declare namespace toa.sql {
 

@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 const { comq } = require('./comq.mock')
 const mock = { comq }
 
-jest.mock('@toa.io/libraries/comq', () => mock.comq)
+jest.mock('comq', () => mock.comq)
 
 const { Context } = require('../context')
 

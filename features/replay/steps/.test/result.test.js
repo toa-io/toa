@@ -1,7 +1,7 @@
 'use strict'
 
 const { AssertionError } = require('node:assert')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { gherkin } = require('@toa.io/mock')
 const mock = { gherkin }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)

@@ -1,7 +1,7 @@
 'use strict'
 
 const { Locator } = require('@toa.io/core')
-const { encode } = require('@toa.io/libraries/generic')
+const { encode } = require('@toa.io/generic')
 
 const fixtures = require('./aspect.fixtures')
 const { Factory } = require('../')

@@ -1,6 +1,6 @@
 'use strict'
 
-const { defined } = require('@toa.io/libraries/generic')
+const { defined } = require('@toa.io/generic')
 
 /**
  * @param {toa.samples.operation.Calls} calls

@@ -3,8 +3,8 @@
 const { join, posix } = require('node:path')
 const { readFile: read, writeFile: write } = require('node:fs/promises')
 
-const { hash } = require('@toa.io/libraries/generic')
-const { directory } = require('@toa.io/libraries/filesystem')
+const { hash } = require('@toa.io/generic')
+const { directory } = require('@toa.io/filesystem')
 
 /**
  * @implements {toa.deployment.images.Image}

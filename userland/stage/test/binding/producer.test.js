@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Locator, Connector } = require('@toa.io/core')
-const { sample } = require('@toa.io/libraries/generic')
+const { sample } = require('@toa.io/generic')
 
 const fixtures = require('./producer.fixtures')
 const { binding, Factory } = require('../../src/binding')

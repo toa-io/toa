@@ -15,11 +15,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "peerDependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/libraries": "*"
-  },
   "dependencies": {
+    "@toa.io/core": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/yaml": "*",
+    "@toa.io/schema": "*",
     "clone-deep": "4.0.1"
   }
 }

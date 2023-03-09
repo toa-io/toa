@@ -2,7 +2,7 @@
 
 const assert = require('node:assert')
 const { generate } = require('randomstring')
-const { timeout } = require('@toa.io/libraries/generic')
+const { timeout } = require('@toa.io/generic')
 const { Given, When, Then } = require('@cucumber/cucumber')
 
 Given('(that ){token} is consuming events from the {token} exchange',

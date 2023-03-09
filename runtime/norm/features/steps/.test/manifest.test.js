@@ -1,8 +1,8 @@
 'use strict'
 
 const { AssertionError } = require('assert')
-const { dump } = require('@toa.io/libraries/yaml')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { dump } = require('@toa.io/yaml')
+const { gherkin } = require('@toa.io/mock')
 
 const mock = { gherkin }
 

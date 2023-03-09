@@ -1,8 +1,8 @@
 'use strict'
 
 const { join } = require('node:path')
-const { hash } = require('@toa.io/libraries/generic')
-const { directory: { copy } } = require('@toa.io/libraries/filesystem')
+const { hash } = require('@toa.io/generic')
+const { directory: { copy } } = require('@toa.io/filesystem')
 
 const { Image } = require('./image')
 

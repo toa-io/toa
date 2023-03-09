@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector, exceptions: { NotImplementedException } } = require('@toa.io/core')
-const { console } = require('@toa.io/libraries/console')
+const { console } = require('@toa.io/console')
 
 const translate = require('./translate')
 

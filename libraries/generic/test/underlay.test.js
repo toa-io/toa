@@ -1,6 +1,6 @@
 'use strict'
 
-const { underlay } = require('../src')
+const { underlay } = require('../source')
 
 describe('segments', () => {
   const instance = underlay((segs) => segs)

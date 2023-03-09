@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { match } = require('@toa.io/libraries/generic')
+const { match } = require('@toa.io/generic')
 
 const { context } = require('./sample')
 const { ReplayException } = require('./exceptions')

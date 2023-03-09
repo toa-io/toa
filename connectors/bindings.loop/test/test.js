@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { sample } = require('@toa.io/libraries/generic')
+const { sample } = require('@toa.io/generic')
 
 const { Factory } = require('../src/factory')
 const fixtures = require('./fixtures')

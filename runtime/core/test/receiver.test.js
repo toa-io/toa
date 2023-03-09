@@ -2,7 +2,7 @@
 
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
-const { merge } = require('@toa.io/libraries/generic')
+const { merge } = require('@toa.io/generic')
 
 jest.mock('../src/connector')
 

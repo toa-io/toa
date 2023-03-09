@@ -18,11 +18,11 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/libraries": "*"
-  },
   "dependencies": {
+    "@toa.io/core": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/schema": "*",
+    "@toa.io/yaml": "*",
     "node-fetch": "2.6.7"
   },
   "devDependencies": {

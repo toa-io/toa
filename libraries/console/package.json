@@ -1,4 +1,28 @@
 {
-  "private": true,
-  "main": "src/index.js"
+  "name": "@toa.io/console",
+  "version": "0.2.0-dev.107",
+  "description": "Toa Console",
+  "homepage": "https://toa.io",
+  "author": {
+    "name": "Artem Gurtovoi",
+    "url": "https://github.com/temich"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "engines": {
+    "node": ">= 12.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "source/index.js",
+  "dependencies": {
+    "chalk": "4.1.2"
+  }
 }

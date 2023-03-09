@@ -1,7 +1,7 @@
 'use strict'
 
 const { resolve } = require('node:path')
-const { directory: { glob } } = require('@toa.io/libraries/filesystem')
+const { directory: { glob } } = require('@toa.io/filesystem')
 
 const fixtures = require('./context.fixtures')
 const { suite } = require('./suite.mock')

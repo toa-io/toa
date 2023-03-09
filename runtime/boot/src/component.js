@@ -1,8 +1,8 @@
 'use strict'
 
-const { remap } = require('@toa.io/libraries/generic')
+const { remap } = require('@toa.io/generic')
 const { Component, Locator, State, entities } = require('@toa.io/core')
-const { Schema } = require('@toa.io/libraries/schema')
+const { Schema } = require('@toa.io/schema')
 
 const boot = require('./index')
 

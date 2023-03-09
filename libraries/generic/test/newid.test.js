@@ -1,6 +1,6 @@
 'use strict'
 
-const { newid } = require('../src')
+const { newid } = require('../source')
 
 it('should return id', () => {
   const id = newid()

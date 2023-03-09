@@ -5,7 +5,7 @@ const { generate } = require('randomstring')
 const { load } = require('../.workspace/components')
 
 const { knex } = require('@toa.io/storages.sql/test/knex.mock')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { gherkin } = require('@toa.io/mock')
 const fixtures = require('./storages.fixtures')
 const mock = { gherkin, sql: fixtures.mock.sql, knex }
 

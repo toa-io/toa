@@ -1,6 +1,6 @@
 'use strict'
 
-const { split } = require('@toa.io/libraries/yaml')
+const { split } = require('@toa.io/yaml')
 const { Given } = require('@cucumber/cucumber')
 
 Given('I have (a )sample(s) for {token} operation of {component}:',

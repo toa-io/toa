@@ -1,6 +1,6 @@
 'use strict'
 
-const { namespace } = require('@toa.io/libraries/schemas')
+const { namespace } = require('@toa.io/schemas')
 
 const schemas = namespace(__dirname)
 

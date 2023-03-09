@@ -1,6 +1,6 @@
 'use strict'
 
-const { empty } = require('@toa.io/libraries/generic')
+const { empty } = require('@toa.io/generic')
 const parse = { ...require('./query/criteria'), ...require('./query/options') }
 
 class Query {

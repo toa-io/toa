@@ -1,6 +1,6 @@
 'use strict'
 
-const { freeze } = require('@toa.io/libraries/generic')
+const { freeze } = require('@toa.io/generic')
 
 const { Operation } = require('./operation')
 

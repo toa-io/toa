@@ -1,7 +1,7 @@
 'use strict'
 
 const { join, resolve } = require('node:path')
-const { directory: { glob } } = require('@toa.io/libraries/filesystem')
+const { directory: { glob } } = require('@toa.io/filesystem')
 const { replay } = require('@toa.io/userland/samples')
 const { translate } = require('./.replay')
 

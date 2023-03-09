@@ -1,7 +1,7 @@
 'use strict'
 
 const { join } = require('node:path')
-const yaml = require('@toa.io/libraries/yaml')
+const yaml = require('@toa.io/yaml')
 
 const { context } = require('../src/suite')
 

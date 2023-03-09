@@ -1,6 +1,6 @@
 'use strict'
 
-const { convolve } = require('@toa.io/libraries/generic')
+const { convolve } = require('@toa.io/generic')
 const { events, operations, extensions } = require('./.normalize')
 
 const normalize = (component, environment) => {

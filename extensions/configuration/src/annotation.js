@@ -1,6 +1,6 @@
 'use strict'
 
-const { Schema } = require('@toa.io/libraries/schema')
+const { Schema } = require('@toa.io/schema')
 
 /**
  * @param {Object} annotation

@@ -1,7 +1,7 @@
 'use strict'
 
-const { dump } = require('@toa.io/libraries/yaml')
-const { gherkin } = require('@toa.io/libraries/mock')
+const { dump } = require('@toa.io/yaml')
+const { gherkin } = require('@toa.io/mock')
 const mock = { gherkin }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)

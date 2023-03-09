@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory } = require('@toa.io/libraries/filesystem')
+const { directory } = require('@toa.io/filesystem')
 
 /**
  * @implements {toa.deployment.Operator}
