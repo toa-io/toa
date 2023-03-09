@@ -1,0 +1,5 @@
+{
+  "private": true,
+  "main": "source/index.js",
+  "types": "types/index.d.ts"
+}

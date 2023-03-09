@@ -10,14 +10,14 @@ module.exports = {
     paths: ['libraries/schema/features'],
     require: ['libraries/schema/features/**/*.js']
   },
+  comq: {
+    ...common,
+    paths: ['libraries/comq/features'],
+    require: ['libraries/comq/features/**/*.js']
+  },
   norm: {
     ...common,
     paths: ['runtime/norm/features'],
     require: ['runtime/norm/features/**/*.js']
-  },
-  samples: {
-    ...common,
-    paths: ['userland/samples/features'],
-    require: ['userland/samples/features/**/*.js']
   }
 }

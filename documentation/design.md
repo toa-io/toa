@@ -20,8 +20,7 @@ algorithm is an entry point for an application developer.
 ### Types
 
 Operations have three phases: *retrieve* - get current state using *query*, *run* - execute
-algorithm, and
-*commit* - store new state.
+algorithm, and *commit* - store new state.
 
 Retrieve or commit phases may be optional depending on operation's type.
 

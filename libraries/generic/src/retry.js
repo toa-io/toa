@@ -16,6 +16,7 @@ const retry = async (func, options = {}, attempt = 0) => {
     inner = (async () => {
       const interval = Math.min(options.base * Math.pow(options.factor, attempt), options.max)
       const dispersion = interval * options.dispersion * (Math.random() - 0.5)
+
       await timeout(interval + dispersion)
 
       return retry(func, options, attempt + 1)
