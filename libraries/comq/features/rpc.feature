@@ -18,15 +18,11 @@ Feature: Request-reply (RPC)
     3
     """
 
-  Scenario: Message causing an exception is discarded
-    Given function replying `divide_numbers` queue:
+  Scenario: Request causing an exception is discarded
+    Given function replying `throw_error` queue:
     """
-    ({ a, b }) => { return a / b }
+    () => { throw new Error() }
     """
-    When the consumer sends the following request to the `add_numbers` queue:
-    """yaml
-    a: 1
-    b: 0
-    """
-    Then the request is discarded
+    When the consumer sends the request to the `throw_error` queue
+    Then the message is discarded
     And the consumer does not receive the reply

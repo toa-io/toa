@@ -1,8 +1,9 @@
 'use strict'
 
 const assert = require('node:assert')
+const { randomBytes } = require('node:crypto')
 const { parse } = require('@toa.io/libraries/yaml')
-const { match } = require('@toa.io/libraries/generic')
+const { match, timeout } = require('@toa.io/libraries/generic')
 const { Given, When, Then } = require('@cucumber/cucumber')
 
 Given('function replying {token} queue:',
@@ -40,9 +41,18 @@ When('the consumer sends the following request to the {token} queue:',
   async function (queue, yaml) {
     const payload = parse(yaml)
 
-    if (this.expected) await this.expected
+    await send.call(this, queue, payload)
+  })
 
-    this.reply = this.io.request(queue, payload)
+When('the consumer sends the request to the {token} queue',
+  /**
+   * @param {string} queue
+   * @this {comq.features.Context}
+   */
+  async function (queue) {
+    const payload = randomBytes(8)
+
+    await send.call(this, queue, payload)
   })
 
 Then('the consumer receives the reply:',
@@ -57,3 +67,24 @@ Then('the consumer receives the reply:',
 
     assert.equal(matches, true, 'Reply mismatch')
   })
+
+Then('the consumer does not receive the reply',
+  /**
+   * @this {comq.features.Context}
+   */
+  async function () {
+    let reply
+
+    const get = async () => (reply = await this.reply)
+    const gap = () => timeout(50)
+
+    await Promise.any([get(), gap()])
+
+    assert.equal(reply, undefined, 'The reply was received')
+  })
+
+async function send (queue, payload) {
+  if (this.expected) await this.expected
+
+  this.reply = this.io.request(queue, payload)
+}

@@ -89,7 +89,19 @@ describe('When the consumer sends the following request to the {token} queue:', 
   })
 })
 
-describe('Then the consumer receives the reply:', (type, value) => {
+describe('When the consumer sends the request to the {token} queue', () => {
+  const step = gherkin.steps.Wh('the consumer sends the request to the {token} queue')
+
+  it('should be', async () => undefined)
+
+  it('should send request', async () => {
+    await step.call(context, queue)
+
+    expect(io.request).toHaveBeenCalledWith(queue, expect.any(Buffer))
+  })
+})
+
+describe('Then the consumer receives the reply:', () => {
   const step = gherkin.steps.Th('the consumer receives the reply:')
 
   it('should be', async () => undefined)
@@ -125,5 +137,25 @@ describe('Then the consumer receives the reply:', (type, value) => {
 
       await expect(step.call(context, yaml)).resolves.not.toThrow()
     })
+  })
+})
+
+describe('Then the consumer does not receive the reply', () => {
+  const step = gherkin.steps.Th('the consumer does not receive the reply')
+
+  it('should be', async () => undefined)
+
+  it('should throw if reply is received within 50ms', async () => {
+    context.reply = promex()
+
+    setTimeout(() => {
+      context.reply.resolve(generate())
+    }, 10)
+
+    await expect(step.call(context)).rejects.toThrow(AssertionError)
+  })
+
+  it('should not throw if reply is not received', async () => {
+    await expect(step.call(context)).resolves.not.toThrow(AssertionError)
   })
 })

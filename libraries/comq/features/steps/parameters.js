@@ -37,3 +37,9 @@ defineParameterType({
   regexp: /(lost|restored)/,
   transformer: (value) => value
 })
+
+defineParameterType({
+  name: 'message',
+  regexp: /(request|event)/,
+  transformer: (value) => value
+})

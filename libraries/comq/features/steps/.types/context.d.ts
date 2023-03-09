@@ -1,4 +1,5 @@
-import * as _io from '../../../types'
+import * as _diagnostics from '../../../types/diagnostic'
+import * as _io from '../../../types/io'
 
 declare namespace comq.features {
 
@@ -8,7 +9,7 @@ declare namespace comq.features {
     reply?: Promise<any>
     consumed?: Record<string, any>
     published?: any
-    events?: { [K in _io.event]?: boolean }
+    events?: { [K in _diagnostics.event]?: boolean }
     exception?: Error
     expected: Promise<any>
 

@@ -60,6 +60,6 @@ const USER = 'developer'
 const PASSWORD = 'secret'
 
 /** @type {comq.diagnostics.event[]} */
-const EVENTS = ['open', 'close', 'flow']
+const EVENTS = ['open', 'close', 'flow', 'discard']
 
 exports.Context = Context

@@ -220,12 +220,26 @@ class Channel {
 
         this.#channel.ack(message)
       } catch (exception) {
-        const requeue = !message.fields.redelivered
-
-        this.#channel.nack(message, false, requeue)
-        this.#diagnostics.emit('discard', message, exception)
+        if (message.fields.redelivered) this.#discard(message, exception)
+        else this.#requeue(message)
       }
     }
+
+  /**
+   * @param {import('amqplib').ConsumeMessage} message
+   */
+  #requeue (message) {
+    this.#channel.nack(message, false, true)
+  }
+
+  /**
+   * @param {import('amqplib').ConsumeMessage} message
+   * @param {Error} [exception]
+   */
+  #discard (message, exception) {
+    this.#channel.nack(message, false, false)
+    this.#diagnostics.emit('discard', message, exception)
+  }
 
   #pause () {
     if (this.#paused !== undefined) return

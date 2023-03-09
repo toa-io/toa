@@ -735,7 +735,10 @@ describe('diagnostics', () => {
     expect(drained).toStrictEqual(true)
   })
 
-  it('should emit `discard` event', async () => {
+  it.each(/** @type {[string, boolean][]} */ [
+    ['', true],
+    [' not', false]
+  ])('should%s emit `discard` event', async (_, redelivered) => {
     jest.clearAllMocks()
 
     topology.acknowledgements = true
@@ -755,12 +758,13 @@ describe('diagnostics', () => {
     const callback = /** @type {Function} */ chan.consume.mock.calls[0][1]
     const content = randomBytes(8)
     const properties = {}
-    const fields = { redelivered: true }
+    const fields = { redelivered }
     const message = /** @type {import('amqplib').ConsumeMessage} */ { content, properties, fields }
 
     await callback(message)
 
-    expect(listener).toHaveBeenCalledWith(message, exception)
+    if (redelivered) expect(listener).toHaveBeenCalledWith(message, exception)
+    else expect(listener).not.toHaveBeenCalled()
   })
 })
 

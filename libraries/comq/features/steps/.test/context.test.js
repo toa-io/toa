@@ -58,7 +58,7 @@ describe('connect', () => {
     expect(comq.connect).toHaveBeenCalledWith(`amqp://${user}:${password}@localhost:5673`)
   })
 
-  it.each(['open', 'close', 'flow'])('should store connection %s event',
+  it.each(['open', 'close', 'flow', 'discard'])('should store %s event',
     /**
      * @param {comq.diagnostics.event} event
      */
