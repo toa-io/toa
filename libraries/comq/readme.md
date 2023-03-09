@@ -293,7 +293,7 @@ Subscribe to one of the diagnostic events:
 - `discard`: message is [discarded](#messages) as it repeatedly caused
   exceptions. Channel type,
   raw [amqp message object](https://amqp-node.github.io/amqplib/channel_api.html#channel_consume)
-  and the exception are passed as arguments.
+  and the optional exception are passed as arguments.
 
 [^3]: As [`connect`](#connect) function returns an instance of `IO` *after* the connection has been
 established, there is no way to capture the initial `open` event.
