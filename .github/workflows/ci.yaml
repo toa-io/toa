@@ -50,7 +50,7 @@ jobs:
           else
             npm version minor
             npm version minor -ws
-            git commit -am "chore: bump version"
+            git commit -am "chore: bump version" --no-verify
             git push
             npm publish --tag dev
           fi
