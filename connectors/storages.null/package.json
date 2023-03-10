@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/storages.null",
-  "version": "0.3.0",
+  "version": "0.3.1-dev.0",
   "description": "Toa Null Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
