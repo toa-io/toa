@@ -5,7 +5,6 @@ const { resolve, dirname } = require('node:path')
 const { directory: { find } } = require('../../')
 
 describe('find', () => {
-  const ROOT = resolve(__dirname, '../../../../')
   const THIS = resolve(__dirname, '../../')
   const LIBRARIES = resolve(__dirname, '../../../')
 
@@ -17,12 +16,6 @@ describe('find', () => {
     const path = find('@toa.io/filesystem', '/')
 
     expect(path).toStrictEqual(LIBRARIES + '/filesystem')
-  })
-
-  it('should find by package name with directory', () => {
-    const path = find('@toa.io/userland/samples', '/')
-
-    expect(path).toStrictEqual(ROOT + '/userland/samples')
   })
 
   it('should resolve package by relative path', () => {

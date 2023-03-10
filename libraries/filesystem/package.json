@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/filesystem",
-  "version": "0.2.0-dev.108",
+  "version": "0.2.1",
   "description": "Toa Filesystem Tools",
   "homepage": "https://toa.io",
   "author": {
