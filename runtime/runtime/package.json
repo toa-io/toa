@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "0.2.1",
+  "version": "0.2.2-dev.3",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
