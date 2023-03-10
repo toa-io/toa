@@ -49,7 +49,7 @@ jobs:
             git commit -am "chore: bump version" --no-verify
             git checkout dev
             git merge main
-            git push --no-verify
+            git push --all origin --no-verify
             npm publish --workspaces
           else
             npm version prerelease --workspaces --include-workspace-root --no-commit-hooks --no-workspaces-update --preid dev --no-git-tag-version
