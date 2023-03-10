@@ -51,6 +51,6 @@ jobs:
             npm version minor
             npm version minor -ws
             git commit -am "chore: bump version" --no-verify
-            git push
+            git push --no-verify
             npm publish --tag dev
           fi
