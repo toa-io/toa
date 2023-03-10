@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/toa",
-  "version": "0.2.2-dev.2",
+  "version": "0.2.2-dev.3",
   "private": true,
   "description": "Microservice operations distributed runtime",
   "homepage": "https://toa.io",
