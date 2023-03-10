@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "0.2.2-dev.5",
+  "version": "0.3.0",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
