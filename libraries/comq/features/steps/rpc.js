@@ -44,7 +44,7 @@ When('the consumer sends the following request to the {token} queue:',
     await send.call(this, queue, payload)
   })
 
-When('the consumer sends the request to the {token} queue',
+When('the consumer sends a request to the {token} queue',
   /**
    * @param {string} queue
    * @this {comq.features.Context}

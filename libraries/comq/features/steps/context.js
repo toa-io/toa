@@ -25,6 +25,8 @@ class Context extends World {
     if (url !== Context.url) await this.#connect(url)
 
     this.io = Context.io
+
+    for (const event of EVENTS) this.io.diagnose(event, () => (this.events[event] = true))
   }
 
   async #connect (url) {
@@ -32,10 +34,6 @@ class Context extends World {
 
     Context.url = url
     Context.io = await connect(url)
-
-    for (const event of EVENTS) {
-      Context.io.diagnose(event, () => (this.events[event] = true))
-    }
   }
 
   static async disconnect () {

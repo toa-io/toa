@@ -23,6 +23,6 @@ Feature: Request-reply (RPC)
     """
     () => { throw new Error() }
     """
-    When the consumer sends the request to the `throw_error` queue
+    When the consumer sends a request to the `throw_error` queue
     Then the message is discarded
     And the consumer does not receive the reply
