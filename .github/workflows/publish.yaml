@@ -47,6 +47,9 @@ jobs:
           if [ ${{ github.base_ref }} = main ]; then
             npm version minor --workspaces --include-workspace-root --no-commit-hooks --no-workspaces-update -m "chore: bump version"
             npm publish --workspaces
+            git checkout dev
+            git merge main
+            git push
           else
             npm version prerelease --workspaces --include-workspace-root --no-commit-hooks --no-workspaces-update -m "chore: bump version" --preid dev
             npm publish --workspaces --tag dev
