@@ -30,7 +30,7 @@ Boot the composition.
 
 ## Remote
 
-`async component(paths: string[]): toa.core.Component`
+`async remote(paths: string[]): toa.core.Component`
 
 Connect the remote.
 
