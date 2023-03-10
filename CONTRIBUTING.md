@@ -23,7 +23,18 @@ $ npm i
 $ export TOA_ENV=local
 ```
 
-### Code Structure Requirements
+## Branching Model
+
+Please
+follow [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow). Name
+feature branches as `feat/feature-name`.
+
+### Versioning
+
+Feature branches **must not** change versions. Version is updated when PR is merged to the `dev`
+branch.
+
+## Code Structure
 
 These requirements may have reasonable exceptions. The point is to create as uniform code as
 possible and prevent some
