@@ -45,12 +45,15 @@ jobs:
           git config user.email "${{ github.actor}}@users.noreply.github.com"
           
           if [ ${{ github.base_ref }} = main ]; then
-            npm version minor --workspaces --include-workspace-root --no-commit-hooks --no-workspaces-update -m "chore: bump version"
+            npm version minor --workspaces --include-workspace-root --no-commit-hooks --no-workspaces-update -m "chore: bump version" --no-git-tag-vesion
             npm publish --workspaces
+            git commit -am "chore: bump version"
             git checkout dev
             git merge main
             git push
           else
-            npm version prerelease --workspaces --include-workspace-root --no-commit-hooks --no-workspaces-update -m "chore: bump version" --preid dev
+            npm version prerelease --workspaces --include-workspace-root --no-commit-hooks --no-workspaces-update --preid dev --no-git-tag-version
+            git commit -am "chore: bump version"
+            git push
             npm publish --workspaces --tag dev
           fi
