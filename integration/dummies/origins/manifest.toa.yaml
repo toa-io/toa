@@ -1,0 +1,27 @@
+namespace: dummies
+name: origins
+
+entity:
+  storage: ~
+  schema:
+    foo:
+      type: string
+      default: 0
+    bar: string
+
+operations:
+  foo:
+    concurrency: retry
+    output:
+      status: number
+      body: object
+  bar:
+    concurrency: retry
+    input:
+      retries: number
+    output:
+      status: number
+      body: object
+
+origins:
+  local: http://localhost:8000

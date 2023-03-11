@@ -1,0 +1,47 @@
+# This file helps with IDE autocompletion
+compositions:
+  - name: todos
+    image: localhost:5000/composition-todos:0.0.0
+    replicas: 2
+    components:
+      - todos-tasks
+      - todos-stats
+  - name: users
+    image: localhost:5000/composition-users:0.0.0
+    replicas: 3
+    components:
+      - users-users
+# TODO: create component services only if sync binding is being used
+components:
+  - todos-tasks
+  - todos-stats
+  - users-users
+variables:
+  global:
+    - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
+      value: foo
+      secret:
+        name: secret-name
+        key: secret-key
+  todos-tasks:
+    - name: TOA_CONFIGURATION_TODOS_TASKS
+      value: foo
+      secret:
+        name: secret-name
+        key: secret-key
+services:
+  - name: resources-gateway
+    image: localhost:5000/resources-gateway:0.0.0
+    port: 8000
+    replicas: 2
+    ingress:
+      host: dummies.toa.io
+      class: alb
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+proxies:
+  - name: storage-proxy
+    target: host.docker.internal
+environment: development

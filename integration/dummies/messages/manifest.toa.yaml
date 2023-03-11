@@ -1,0 +1,106 @@
+namespace: messages
+name: messages
+
+entity:
+  schema:
+    properties:
+      sender: .id
+      text: string
+      timestamp: integer
+      deleted: boolean
+
+operations:
+  add:
+    input:
+      properties:
+        sender: .
+        text: .
+        timestamp: .
+        free: boolean
+        deleted: .
+      required: [sender, text]
+    output:
+      properties:
+        id: .
+      required: [id]
+    query: false
+  get:
+    output:
+      properties:
+        id: .
+        sender: .
+        text: .
+        timestamp: .
+      required: [id, text]
+  update:
+    concurrency: none
+    forward: transit
+    input:
+      properties:
+        text: .
+  change:
+    forward: update
+  find:
+    output: array
+    query: true
+  transit:
+    concurrency: none
+    input:
+      properties:
+        sender: .
+        text: .
+      required: [sender, text]
+    output:
+      properties:
+        id: .
+        ok: string
+      required: [id, ok]
+  assign:
+    input:
+      text: .
+
+extensions:
+  exposition:
+    /:
+      query:
+        criteria: deleted!=true;
+        sort: [timestamp:desc]
+
+      operations: [find]
+
+      /:sender:
+        query:
+          omit:
+            range: [0, 10]
+          limit:
+            range: [1, 20]
+        operations: [add, find]
+        /:id:
+          operations: [get, update]
+    /bad/queries/:sender:
+      query:
+        criteria: deleted!=true
+      operations: [add, find]
+    /query:
+      /criteria/closed:
+        query:
+          criteria: ~
+        operations: [find]
+      /unsorted/set:
+        operations: [find]
+      /projection/restricted:
+        query:
+          projection: [text, sender, timestamp]
+        operations: [add, find]
+      /fixed/set:
+        query:
+          omit: 10
+          limit: 20
+        operations: [find]
+      /non/deleted:
+        query:
+          criteria: deleted!=true;
+        operations: [add, find]
+
+configuration:
+  price: 1

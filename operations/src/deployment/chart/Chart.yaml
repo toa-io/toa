@@ -1,0 +1,7 @@
+# This file helps with IDE autocompletion
+apiVersion: v2
+name: toa-application
+description: Toa Application Chart
+type: application
+version: 0.0.0
+appVersion: "0.0.0"

@@ -1,0 +1,35 @@
+{
+  "name": "@toa.io/operations",
+  "version": "0.2.1-dev.3",
+  "description": "Toa Deployment",
+  "homepage": "https://toa.io",
+  "author": {
+    "name": "Artem Gurtovoi",
+    "url": "https://github.com/temich"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "engines": {
+    "node": ">= 12.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@toa.io/filesystem": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/yaml": "*",
+    "execa": "5.1.1"
+  },
+  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+}

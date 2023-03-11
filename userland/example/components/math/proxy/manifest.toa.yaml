@@ -1,0 +1,11 @@
+name: proxy
+namespace: math
+
+entity: null
+
+operations:
+  add:
+    input:
+      a: number
+      b: number
+    output: number

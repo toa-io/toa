@@ -1,0 +1,49 @@
+namespace: credits
+name: balance
+
+entity:
+  schema:
+    properties:
+      balance:
+        type: integer
+        default: 10
+  initialized: true
+
+operations:
+  transit:
+    concurrency: none
+    input:
+      properties:
+        balance: .
+  deduce:
+    concurrency: none
+    input: integer
+    output: integer
+    query: true
+  debit:
+    concurrency: retry
+    input: integer
+    output: integer
+    query: true
+  transfer:
+    concurrency: none
+    input: id   # source balance
+    output: integer
+    query: true # target balance
+  nullify:
+    concurrency: retry
+    output: integer
+  set:
+    input:
+      balance: .
+    forward: assign
+  add:
+    input:
+      balance: .
+    query: false
+    forward: transit
+
+extensions:
+  '@toa.io/extensions.exposition':
+    /: [add]
+    /:id: [observe, set]

@@ -1,0 +1,69 @@
+$schema: https://json-schema.org/draft/2019-09/schema
+$id: https://schemas.toa.io/0.0.0/rtd
+
+definitions:
+  resource:
+    patternProperties:
+      ^(\/([^\/#\?]+)?)+\/?$:
+        $ref: "#/definitions/resource"
+    properties:
+      query:
+        type: object
+        properties:
+          criteria:
+            nullable: true
+            type: string
+            minLength: 1
+          sort:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+          projection:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+          omit:
+            $ref: "#/definitions/range"
+          limit:
+            $ref: "#/definitions/range"
+        additionalProperties: false
+      operations:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          type: object
+          properties:
+            operation:
+              $ref: definitions#/definitions/token
+            type:
+              enum: [transition, observation, assignment]
+            scope:
+              type: string
+              enum: [object, objects, changeset, none]
+            query:
+              type: boolean
+          additionalProperties: false
+    additionalProperties: false
+  range:
+    type: object
+    properties:
+      value:
+        type: integer
+        minimum: 0
+      range:
+        type: array
+        uniqueItems: true
+        minItems: 0
+        items:
+          $ref: "#/definitions/range/properties/value"
+      additionalProperties: false
+    required: [range]
+
+$ref: "#/definitions/resource"
+not:
+  required: [operations] # root doesn't have path

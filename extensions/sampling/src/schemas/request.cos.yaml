@@ -1,0 +1,31 @@
+$id: request
+
+autonomous: boolean
+title: string
+request: &request
+  input: ~
+  query:
+    id: string
+    criteria: string
+    omit: number
+    limit: number
+reply: &reply
+  output: ~
+  error: ~
+context:
+  local: &calls
+    ~:
+      - request: *request
+        reply: *reply
+  remote: *calls
+storage:
+  current+: object
+  next: object
+events:
+  ~: object
+extensions:
+  ~:
+    - arguments: [~]
+      result: ~
+      permanent: boolean
+terminate: boolean

@@ -1,0 +1,16 @@
+prototype: ../a
+
+namespace: dummies
+name: b
+
+entity:
+  schema:
+    properties:
+      length:
+        type: integer
+        maximum: 10
+      description: string
+    required: [length]
+
+receivers:
+  dummies.a.happened: transit

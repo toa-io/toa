@@ -1,0 +1,98 @@
+{
+  "name": "@toa.io/toa",
+  "version": "0.2.1-dev.3",
+  "private": true,
+  "description": "Microservice operations distributed runtime",
+  "homepage": "https://toa.io",
+  "author": {
+    "name": "Artem Gurtovoi",
+    "url": "https://github.com/temich"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "workspaces": [
+    "runtime/*",
+    "connectors/*",
+    "extensions/*",
+    "libraries/*",
+    "operations",
+    "userland"
+  ],
+  "engines": {
+    "node": ">= 12.0.0"
+  },
+  "bin": {
+    "toa": "runtime/runtime/bin/toa"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "7.17.0",
+    "@commitlint/cli": "14.1.0",
+    "@commitlint/config-conventional": "14.1.0",
+    "@cucumber/cucumber": "9.0.0",
+    "@types/jest": "28.1.1",
+    "@types/node": "18.0.0",
+    "amqplib": "0.10.0",
+    "clone-deep": "4.0.1",
+    "execa": "5.1.1",
+    "husky": "8.0.3",
+    "jest": "29.5.0",
+    "knex": "2.4.2",
+    "node-fetch": "2.6.7",
+    "randomstring": "1.2.3",
+    "snazzy": "9.0.0",
+    "standard": "17.0.0"
+  },
+  "scripts": {
+    "prepare": "npx husky install",
+    "test": "npm run test:lint && npm run test:unit && npm run test:features:unit",
+    "test:lint": "npx standard --verbose | npx snazzy",
+    "test:unit": "npx jest --roots runtime connectors extensions operations libraries features userland",
+    "test:integration": "npx jest --roots integration --runInBand --testTimeout 30000",
+    "test:features": "npx cucumber-js && npx cucumber-js -p comq",
+    "test:features:unit": "npx cucumber-js -p schema && npx cucumber-js -p norm",
+    "test:samples": "toa replay userland/example",
+    "test:all": "npm run test && npm run test:integration && npm run test:features && test:samples",
+    "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",
+    "lint": "npx standard --verbose --fix | npx snazzy",
+    "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
+    "version:dev": "npx --yes lerna version --conventional-prerelease --preid dev --force-publish --no-git-tag-version --no-push --no-changelog --yes",
+    "publish:local": "npm publish --workspaces --registry=http://localhost:4873",
+    "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
+    "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
+    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context"
+  },
+  "standard": {
+    "parser": "@babel/eslint-parser",
+    "env": [
+      "jest"
+    ],
+    "globals": [
+      "AbortController"
+    ]
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/runtime",
+      "<rootDir>/connectors",
+      "<rootDir>/extensions",
+      "<rootDir>/operations",
+      "<rootDir>/libraries",
+      "<rootDir>/integration",
+      "<rootDir>/features",
+      "<rootDir>/userland"
+    ],
+    "testMatch": [
+      "**/(*.)+(test).js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "bail": true
+  }
+}

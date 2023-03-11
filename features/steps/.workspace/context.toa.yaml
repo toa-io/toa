@@ -1,0 +1,7 @@
+name: collection
+version: 0.0.0
+packages: 'components/*'
+registry: collection
+amqp: amqp://host.docker.internal
+mongodb: mongodb://host.docker.internal
+sql: pg://host.docker.internal/integration

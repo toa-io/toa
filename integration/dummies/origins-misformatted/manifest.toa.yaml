@@ -1,0 +1,13 @@
+namespace: dummies
+name: origins
+
+entity:
+  storage: ~
+  schema:
+    foo:
+      type: string
+      default: 0
+    bar: string
+
+origins:
+  local: [not-a-url]

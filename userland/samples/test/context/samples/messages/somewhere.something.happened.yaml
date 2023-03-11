@@ -1,0 +1,6 @@
+title: First sample
+component: dummies.dummy
+payload:
+  foo: 1
+input:
+  bar: 2

@@ -1,0 +1,17 @@
+name: three
+namespace: mongo
+
+entity:
+  storage: mongodb
+  schema:
+    foo:
+      type: integer
+      default: 0
+    bar: string
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      foo: .
+      bar: .

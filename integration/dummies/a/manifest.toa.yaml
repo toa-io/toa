@@ -1,0 +1,32 @@
+namespace: dummies
+name: a
+
+entity:
+  schema:
+    properties:
+      title: string
+      length: integer
+    required: [title]
+  initialized: true
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      title: .
+  create:
+    forward: transit
+    query: false
+    input:
+      title: .
+      length: .
+
+receivers:
+  messages.messages.created: transit
+
+extensions:
+  exposition:
+    /:
+      operations: [create]
+    /:id:
+      operations: [observe]

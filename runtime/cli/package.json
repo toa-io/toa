@@ -1,0 +1,32 @@
+{
+  "name": "@toa.io/cli",
+  "version": "0.2.1-dev.3",
+  "description": "Toa CLI",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "main": "src/program.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@toa.io/console": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/kubernetes": "*",
+    "@toa.io/norm": "*",
+    "@toa.io/runtime": "*",
+    "@toa.io/yaml": "*",
+    "find-up": "5.0.0",
+    "yargs": "17.6.2"
+  },
+  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+}

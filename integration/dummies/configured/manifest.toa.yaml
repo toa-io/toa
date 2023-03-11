@@ -1,0 +1,28 @@
+namespace: dummies
+name: configured
+
+entity:
+  storage: ~
+  schema:
+    foo:
+      type: string
+      default: 0
+    bar: string
+
+operations:
+  transit:
+    concurrency: retry
+    output:
+      id: .
+      foo: string
+  underlay:
+    concurrency: retry
+    output:
+      foo: string
+      sum: number
+
+configuration:
+  foo: Hello
+  bar:
+    a: 1
+    b: 2

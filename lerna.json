@@ -1,0 +1,15 @@
+{
+  "command": {
+    "add": {
+      "exact": true
+    },
+    "version": {
+      "conventionalCommits": true,
+      "exact": true,
+      "message": "chore(release): %s",
+      "ignoreScripts": true
+    }
+  },
+  "useWorkspaces": true,
+  "version": "0.2.0-dev.108"
+}

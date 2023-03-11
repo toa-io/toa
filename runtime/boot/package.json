@@ -1,0 +1,31 @@
+{
+  "name": "@toa.io/boot",
+  "version": "0.2.1-dev.3",
+  "description": "Toa Boot",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "src/index.js",
+  "types": "types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@toa.io/core": "*",
+    "@toa.io/filesystem": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/norm": "*",
+    "@toa.io/schema": "*",
+    "clone-deep": "4.0.1"
+  },
+  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+}

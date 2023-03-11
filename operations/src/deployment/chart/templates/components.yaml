@@ -1,0 +1,16 @@
+{{- range .Values.components }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ . }}
+spec:
+  type: ClusterIP
+  selector:
+    {{ . }}: "1"
+  ports:
+    - name: http-binding
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+{{- end }}

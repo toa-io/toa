@@ -1,0 +1,47 @@
+name: Publish packages
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - dev
+
+jobs:
+  publish:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@users.noreply.github.com"
+          echo ${{ github.base_ref }}
+          
+          if [ ${{ github.base_ref }} = main ]; then
+            npm version minor --workspaces --include-workspace-root --no-workspaces-update --no-git-tag-version
+            git commit -am "chore: bump version" --no-verify
+            git checkout dev
+            git merge main
+            git push --all origin --no-verify
+            npm publish --workspaces
+          else
+            npm version prerelease --workspaces --include-workspace-root --no-workspaces-update --preid dev --no-git-tag-version
+            git commit -am "chore: bump version" --no-verify
+            git push --no-verify
+            npm publish --workspaces --tag dev
+          fi

@@ -1,0 +1,26 @@
+namespace: dummies
+name: a
+
+entity:
+  schema:
+    properties:
+      title: string
+      length: integer
+    required: [title]
+  initialized: true
+
+operations:
+  create:
+    forward: transit
+    query: false
+    input:
+      title: .
+      length: .
+
+extensions:
+  exposition:
+    /:id:
+      operations: [observe]
+    /v2/:id:
+      operations: [observe]
+

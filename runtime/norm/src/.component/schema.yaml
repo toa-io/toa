@@ -1,0 +1,222 @@
+$schema: https://json-schema.org/draft/2019-09/schema
+$id: https://schemas.toa.io/0.0.0/manifest
+
+definitions:
+  binding:
+    type: string
+    not:
+      const: '@toa.io/bindings.loop' # loop is for system use only
+
+type: object
+properties:
+  prototype:
+    type: object
+    nullable: true
+    properties:
+      prototype:
+        $ref: '#/properties/prototype'
+      path:
+        type: string
+      operations:
+        type: object
+        propertyNames:
+          $ref: 'definitions#/definitions/token'
+        patternProperties:
+          '.*':
+            type: object
+            properties:
+              bridge:
+                $ref: '#/properties/bridge'
+
+  path:
+    type: string
+
+  locator:
+    type: object
+    properties:
+      id:
+        $ref: 'definitions#/definitions/locator'
+      label:
+        $ref: 'definitions#/definitions/label'
+
+  namespace:
+    $ref: 'definitions#/definitions/token'
+    not:
+      oneOf:
+        - const: 'system'
+        - const: 'default'
+  name:
+    $ref: 'definitions#/definitions/token'
+
+  version:
+    $ref: 'definitions#/definitions/version'
+
+  entity:
+    type: object
+    properties:
+      storage:
+        type: string
+      schema:
+        $ref: 'definitions#/definitions/schema'
+        type: object
+        properties:
+          type:
+            default: object
+            const: object
+          additionalProperties:
+            default: false
+            const: false
+          properties:
+            type: object
+            propertyNames:
+              oneOf:
+                - $ref: 'definitions#/definitions/token'
+                - enum: [_version]
+      initialized:
+        type: boolean
+        default: false
+    required: [schema]
+    additionalProperties: false
+
+  bindings:
+    type: array
+    uniqueItems: true
+    minItems: 1
+    items:
+      $ref: '#/definitions/binding'
+
+  bridge:
+    type: string
+
+  operations:
+    type: object
+    propertyNames:
+      $ref: 'definitions#/definitions/token'
+    patternProperties:
+      '.*':
+        type: object
+        properties:
+          type:
+            enum: [transition, observation, assignment]
+          scope:
+            enum: [object, objects, changeset, none]
+          concurrency:
+            enum: [none, retry]
+          forward:
+            $ref: 'definitions#/definitions/token'
+          bridge:
+            type: string
+          bindings:
+            $ref: '#/properties/bindings'
+          input:
+            $ref: 'definitions#/definitions/schema'
+            not:
+              properties:
+                additionalProperties:
+                  const: true
+              required: [additionalProperties]
+          output:
+            $ref: 'definitions#/definitions/schema'
+          query:
+            type: boolean
+        required: [type, scope, bindings]
+        allOf:
+          - if: # transition
+              properties:
+                type:
+                  const: transition
+            then:
+              properties:
+                scope:
+                  enum: [object]
+              if: # transition query: false
+                not:
+                  properties:
+                    query:
+                      const: false
+                  required: [query]
+              then:
+                required: [concurrency]
+          - if: # not transition
+              not:
+                properties:
+                  type:
+                    const: transition
+            then:
+              properties:
+                concurrency:
+                  const: ~ # never pass
+          - if: # observation
+              properties:
+                type:
+                  const: observation
+            then:
+              properties:
+                scope:
+                  enum: [object, objects, none]
+                query:
+                  not:
+                    const: false
+          - if: # assignment
+              properties:
+                type:
+                  const: assignment
+            then:
+              properties:
+                scope:
+                  enum: [changeset]
+        additionalProperties: false
+    additionalProperties: false
+
+  events:
+    type: object
+    propertyNames:
+      $ref: 'definitions#/definitions/token'
+    patternProperties:
+      '.*':
+        type: object
+        properties:
+          bridge:
+            type: string
+          path:
+            type: string
+          binding:
+            $ref: '#/definitions/binding'
+          conditioned:
+            type: boolean
+            default: false
+          subjective:
+            type: boolean
+            default: false
+        required: [bridge, path]
+        additionalProperties: false
+
+  receivers:
+    type: object
+    propertyNames:
+      $ref: 'definitions#/definitions/endpoint'
+    patternProperties:
+      '.*':
+        type: object
+        properties:
+          transition:
+            $ref: 'definitions#/definitions/token'
+          bridge:
+            type: string
+          binding:
+            type: string
+          path:
+            type: string
+          conditioned:
+            type: boolean
+            default: false
+          adaptive:
+            type: boolean
+            default: false
+        required: [transition, bridge, path]
+        additionalProperties: false
+
+  extensions:
+    type: object
+
+additionalProperties: false

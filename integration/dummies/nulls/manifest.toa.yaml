@@ -1,0 +1,20 @@
+namespace: dummies
+name: nulls
+
+entity:
+  storage: ~
+  schema:
+    foo:
+      type: integer
+      default: 0
+    bar: string
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      foo: .
+      bar: .
+
+exposition:
+  /: [transit]

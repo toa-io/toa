@@ -1,0 +1,45 @@
+{
+  "name": "@toa.io/runtime",
+  "version": "0.2.1-dev.3",
+  "description": "Toa Runtime",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "main": "package.json",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "toa": "bin/toa"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@toa.io/bindings.amqp": "0.2.0-dev.108",
+    "@toa.io/bindings.http": "0.2.0-dev.108",
+    "@toa.io/bindings.loop": "0.2.0-dev.108",
+    "@toa.io/boot": "0.2.0-dev.108",
+    "@toa.io/bridges.node": "0.2.0-dev.108",
+    "@toa.io/cli": "0.2.0-dev.108",
+    "@toa.io/core": "0.2.0-dev.108",
+    "@toa.io/extensions.configuration": "0.2.0-dev.108",
+    "@toa.io/extensions.exposition": "0.2.0-dev.108",
+    "@toa.io/extensions.origins": "0.2.0-dev.108",
+    "@toa.io/extensions.sampling": "0.2.0-dev.108",
+    "@toa.io/norm": "0.2.0-dev.108",
+    "@toa.io/operations": "0.2.0-dev.108",
+    "@toa.io/prototype": "0.2.0-dev.108",
+    "@toa.io/storages.mongodb": "0.2.0-dev.108",
+    "@toa.io/storages.null": "0.2.0-dev.108",
+    "@toa.io/storages.sql": "0.2.0-dev.108",
+    "@toa.io/userland": "0.2.0-dev.108"
+  },
+  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+}

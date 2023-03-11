@@ -1,0 +1,24 @@
+namespace: stats
+name: stats
+
+entity:
+  initialized: true
+  schema:
+    messages:
+      type: integer
+      default: 0
+    bankrupt: boolean
+
+operations:
+  update:
+    concurrency: retry
+    input:
+      messages: boolean
+      bankrupt: boolean
+
+receivers:
+  messages.messages.created: update
+  credits.balance.updated: update
+
+exposition:
+  /:id: [observe, update]

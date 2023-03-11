@@ -1,0 +1,7 @@
+name: responder
+namespace: echo
+
+operations:
+  echo:
+    input: string
+    output: string

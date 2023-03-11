@@ -1,0 +1,14 @@
+namespace: dummies
+name: env
+
+entity:
+  schema:
+    properties:
+      length:
+        maximum: 10
+      description: string
+    required: [length]
+
+origins:
+  foo: https://production
+  foo@integration: http://test

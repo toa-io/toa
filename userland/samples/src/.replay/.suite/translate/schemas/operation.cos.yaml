@@ -1,0 +1,23 @@
+autonomous: boolean
+title: string
+input: ~
+output: ~
+local: &calls
+  ~+:
+    input: ~
+    query:
+      id: string
+      criteria: string
+      omit: number
+      limit: number
+    output: ~
+remote: *calls
+current+: object
+next: object
+events:
+  ~: object
+extensions:
+  ~:
+    - arguments: [~]
+      result: ~
+      permanent: boolean

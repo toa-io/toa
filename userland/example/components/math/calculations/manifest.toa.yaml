@@ -1,0 +1,16 @@
+name: calculations
+namespace: math
+
+entity: null
+
+operations:
+  add:
+    input:
+      a: number
+      b: number
+    output: number
+  increment:
+    input:
+      value: number
+      times: 1
+    output: number

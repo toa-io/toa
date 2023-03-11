@@ -1,0 +1,8 @@
+prototype: ../a
+
+namespace: dummies
+name: duplicate-event
+
+events:
+  - label: conditioned
+    subjective: false

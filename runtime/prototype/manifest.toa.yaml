@@ -1,0 +1,22 @@
+prototype: null
+
+entity:
+  schema:
+    properties:
+      id:
+        $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id'
+      _version:
+        type: integer
+    required: [id]
+
+operations:
+  transit:
+    virtual: true
+    input: object
+    output: object
+  observe:
+    output: object
+  assign:
+    input: object
+  enumerate:
+    output: array

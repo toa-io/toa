@@ -1,0 +1,21 @@
+name: consumer
+namespace: external
+
+entity:
+  storage: sql
+  schema:
+    time: integer
+    description: string
+
+operations:
+  transit:
+    concurrency: none
+    input:
+      time: .
+      description: .
+    query: false
+
+receivers:
+  external.something.happened:
+    binding: amqp
+    transition: transit

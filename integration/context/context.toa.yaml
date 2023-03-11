@@ -1,0 +1,42 @@
+name: dummies
+description: Integration tests dummies context
+version: 0.0.0
+packages: '*'
+
+runtime:
+  registry: http://host.docker.internal:4873
+  proxy: http://host.docker.internal:4873
+
+registry:
+  base: 153896708942.dkr.ecr.eu-west-1.amazonaws.com
+  base@dev: localhost:5000
+  platforms@dev: ~
+
+compositions:
+  - name: messages
+    components:
+      - messages.messages
+      - stats.stats
+
+exposition:
+  host: dummies.toa.dev
+  host@staging: dummies.stage.toa.dev
+  host@dev: local.kind
+
+  class: alb
+  class@dev: nginx
+
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+  annotations@dev: ~
+
+mongodb: mongodb://is-not-defined # this is not deployable, value must present to pass validation
+mongodb@dev: mongodb://host.docker.internal
+
+amqp: amqp://host.docker.internal
+
+configuration:
+  messages.messages:
+    price: 2

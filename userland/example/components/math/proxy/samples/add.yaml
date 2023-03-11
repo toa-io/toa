@@ -1,0 +1,11 @@
+title: Should add numbers
+input:
+  a: 1
+  b: 2
+output: 3
+remote:
+  math.calculations.add:
+    input:
+      a: 1
+      b: 2
+    output: 3

@@ -1,0 +1,33 @@
+{
+  "name": "@toa.io/schemas",
+  "version": "0.2.1-dev.3",
+  "description": "Toa Schemas",
+  "homepage": "https://toa.io",
+  "author": {
+    "name": "Artem Gurtovoi",
+    "url": "https://github.com/temich"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "engines": {
+    "node": ">= 12.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "source/index.js",
+  "dependencies": {
+    "@toa.io/concise": "*",
+    "@toa.io/filesystem": "*",
+    "@toa.io/generic": "*",
+    "@toa.io/yaml": "*",
+    "ajv": "8.6.3",
+    "ajv-formats": "2.1.1"
+  }
+}

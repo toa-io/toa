@@ -1,0 +1,7 @@
+title: Should echo
+output: quack
+---
+title: Should substitute configuration
+output: woof
+configuration:
+  signal: woof
