@@ -34,6 +34,7 @@ jobs:
           
           if [ ${{ github.base_ref }} = main ]; then
             npm version minor --workspaces --include-workspace-root --no-workspaces-update --no-git-tag-version
+            git fetch
             git commit -am "chore: bump version" --no-verify
             git checkout dev
             git merge main
