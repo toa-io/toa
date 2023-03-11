@@ -44,7 +44,7 @@ describe('When I boot {component} component', () => {
   })
 })
 
-describe('When I compose {word} component', () => {
+describe('When I compose {component} component', () => {
   const step = gherkin.steps.Wh('I compose {component} component')
 
   it('should be', () => undefined)
@@ -57,7 +57,29 @@ describe('When I compose {word} component', () => {
 
     await step.call(context, reference)
 
-    expect(mock.boot.composition).toHaveBeenCalledWith([path])
+    expect(mock.boot.composition).toHaveBeenCalledWith([path], expect.any(Object))
+
+    const composition = mock.boot.composition.mock.results[0].value
+
+    expect(composition.connect).toHaveBeenCalled()
+    expect(context.connector).toStrictEqual(composition)
+  })
+})
+
+describe('When I compose {component} component with {label} binding', () => {
+  const step = gherkin.steps.Wh('I compose {component} component with {label} binding')
+
+  it('should be', () => undefined)
+
+  it('should start composition', async () => {
+    const context = {}
+    const reference = generate()
+    const binding = generate()
+    const path = resolve(COLLECTION, reference)
+
+    await step.call(context, reference, binding)
+
+    expect(mock.boot.composition).toHaveBeenCalledWith([path], { bindings: [binding] })
 
     const composition = mock.boot.composition.mock.results[0].value
 
@@ -80,7 +102,7 @@ describe('When I compose components:', () => {
 
     await step.call(context, data)
 
-    expect(mock.boot.composition).toHaveBeenCalledWith(paths)
+    expect(mock.boot.composition).toHaveBeenCalledWith(paths, expect.any(Object))
 
     const composition = mock.boot.composition.mock.results[0].value
 
@@ -168,15 +190,15 @@ describe('When I call {endpoint} with:', () => {
 
   it('should be', () => undefined)
 
-  it('should call remote', async () => {
-    const namespace = generate()
-    const name = generate()
-    const operation = generate()
-    const endpoint = `${namespace}.${name}.${operation}`
-    const request = { [generate()]: generate() }
-    const yaml = dump(request)
-    const context = {}
+  const namespace = generate()
+  const name = generate()
+  const operation = generate()
+  const endpoint = `${namespace}.${name}.${operation}`
+  const request = { [generate()]: generate() }
+  const yaml = dump(request)
+  const context = {}
 
+  it('should call remote', async () => {
     await step.call(context, endpoint, yaml)
 
     expect(mock.boot.remote).toHaveBeenCalled()
@@ -187,10 +209,18 @@ describe('When I call {endpoint} with:', () => {
 
     expect(remote.disconnect).toHaveBeenCalled()
   })
+
+  it('should set reply', async () => {
+    await step.call(context, endpoint, yaml)
+
+    const remote = mock.boot.remote.mock.results[0].value
+
+    expect(context.reply).toStrictEqual(await remote.invoke.mock.results[0].value)
+  })
 })
 
-describe('Then the reply should match:', () => {
-  const step = gherkin.steps.Th('the reply should match:')
+describe('Then the reply is received:', () => {
+  const step = gherkin.steps.Th('the reply is received:')
 
   it('should be', () => undefined)
 

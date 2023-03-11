@@ -5,12 +5,13 @@ const { resolve } = require('./load')
 
 /**
  * @param {string[]} references
+ * @param {string[]} [bindings]
  * @returns {Promise<toa.core.Connector>}
  **/
-const composition = async (references) => {
-  const paths = references.map(resolve)
-  const composition =
-    /** @type {toa.core.Connector} */ await boot.composition(paths)
+const composition = async (references, bindings) => {
+  const paths = /** @type {string[]} */ references.map(resolve)
+  const options = { bindings }
+  const composition = /** @type {toa.core.Connector} */ await boot.composition(paths, options)
 
   await composition.connect()
 

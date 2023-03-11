@@ -6,7 +6,7 @@ Feature: No scope operations
       """yaml
       input: hey
       """
-    Then the reply should match:
+    Then the reply is received:
       """yaml
       output: hey
       """

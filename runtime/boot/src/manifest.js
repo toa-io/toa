@@ -15,14 +15,14 @@ const manifest = async (path, options) => {
     }
 
     const check = (binding) => require(binding).properties?.async === true
-    const mediator = options.bindings.find(check)
+    const asyncBinding = options.bindings.find(check)
 
-    if (mediator === undefined) throw new Error('Bindings override must contain at least one async binding')
+    if (asyncBinding === undefined) throw new Error('Bindings override must contain at least one async binding')
 
-    for (const event of Object.values(manifest.events)) event.binding = mediator
+    for (const event of Object.values(manifest.events)) event.binding = asyncBinding
 
     if (manifest.receivers) {
-      for (const receiver of Object.values(manifest.receivers)) receiver.binding = mediator
+      for (const receiver of Object.values(manifest.receivers)) receiver.binding = asyncBinding
     }
   }
 

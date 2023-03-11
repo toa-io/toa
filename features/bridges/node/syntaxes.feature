@@ -7,7 +7,7 @@ Feature: Node algorithm implementation syntaxes
     Given I boot `node.syntaxes` component
     When I invoke <endpoint>
     And I disconnect
-    Then the reply should match:
+    Then the reply is received:
       """
       output:
         foo: bar

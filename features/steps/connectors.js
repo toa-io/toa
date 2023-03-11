@@ -40,6 +40,20 @@ When('I compose {component} component',
     this.connector = await get.composition([reference])
   })
 
+When('I compose {component} component with {label} binding',
+  /**
+   * @param {string} reference
+   * @param {string} binding
+   * @this {toa.features.Context}
+   */
+  async function (reference, binding) {
+    global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
+
+    this.connector = await get.composition([reference], [binding])
+
+    global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = undefined
+  })
+
 When('I compose components:',
   /**
    * @param {import('@cucumber/cucumber').DataTable} data
@@ -99,11 +113,11 @@ When('I call {endpoint} with:',
     const remote = await get.remote(namespace, name)
     const request = parse(yaml)
 
-    await remote.invoke(operation, request)
+    this.reply = await remote.invoke(operation, request)
     await remote.disconnect()
   })
 
-Then('the reply should match:',
+Then('the reply is received:',
   /**
    * @param {string} yaml
    * @this {toa.features.Context}
@@ -125,9 +139,7 @@ async function invoke (endpoint, request = {}) {
 
   const { output, error, exception } = await component.invoke(endpoint, request)
 
-  if (exception !== undefined) {
-    throw new Error(exception.message)
-  }
+  if (exception !== undefined) throw new Error(exception.message)
 
   this.reply = { output, error }
 }
