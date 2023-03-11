@@ -30,8 +30,6 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
-          echo $NODE_AUTH_TOKEN
-          npm whoami
           
           if [ ${{ github.base_ref }} = main ]; then
             npm version minor --workspaces --include-workspace-root --no-workspaces-update --no-git-tag-version
