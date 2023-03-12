@@ -28,8 +28,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor}}@users.noreply.github.com"
+          git config user.name "toabot"
+          git config user.email "127577558+toabot@users.noreply.github.com"
           echo ${{ github.base_ref }}
           
           if [ ${{ github.base_ref }} = main ]; then
