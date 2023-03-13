@@ -24,9 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Bump version
         run: |
           git config user.name "toabot"
           git config user.email "127577558+toabot@users.noreply.github.com"
@@ -39,10 +37,18 @@ jobs:
             git checkout dev
             git merge main
             git push --all origin --no-verify
-            npm publish --workspaces
           else
             npm version prerelease --workspaces --include-workspace-root --no-workspaces-update --preid dev --no-git-tag-version
             git commit -am "chore: bump version" --no-verify
             git push --no-verify
+          fi
+
+      - name: Publish packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ ${{ github.base_ref }} = main ]; then
+            npm publish --workspaces
+          else
             npm publish --workspaces --tag dev
           fi
