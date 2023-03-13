@@ -1,4 +1,4 @@
-import { Connector, Request, Reply, Message } from '@toa.io/core/types'
+import { Connector, Request, Reply, Message, Receiver } from '@toa.io/core/types'
 import * as comq from 'comq'
 
 declare namespace toa.amqp {
@@ -9,6 +9,8 @@ declare namespace toa.amqp {
     reply(queue: string, process: comq.producer): Promise<void>
 
     emit(exchange: string, message: Message): Promise<void>
+
+    consume(exchange: string, group: string, callback: comq.consumer): Promise<void>
   }
 
 }

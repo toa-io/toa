@@ -27,7 +27,7 @@ declare namespace toa.core.bindings {
 
     emitter?(locator: _core.Locator, label: string): Emitter
 
-    receiver?(locator: _core.Locator, label: string, id: string, receiver: _core.Receiver): _core.Connector
+    receiver?(locator: _core.Locator, label: string, group: string, receiver: _core.Receiver): _core.Connector
 
     broadcaster?(name: string, group?: string): Broadcaster
   }

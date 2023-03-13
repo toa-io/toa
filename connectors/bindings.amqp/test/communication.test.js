@@ -84,4 +84,14 @@ describe('connected', () => {
 
     expect(io.emit).toHaveBeenCalledWith(exchange, message)
   })
+
+  it('should consume', async () => {
+    const exchange = generate()
+    const group = generate()
+    const consumer = jest.fn(async () => undefined)
+
+    await comm.consume(exchange, group, consumer)
+
+    expect(io.consume).toHaveBeenCalledWith(exchange, group, consumer)
+  })
 })

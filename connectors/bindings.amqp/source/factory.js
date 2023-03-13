@@ -5,6 +5,7 @@ const { Communication } = require('./communication')
 const { Producer } = require('./producer')
 const { Consumer } = require('./consumer')
 const { Emitter } = require('./emitter')
+const { Receiver } = require('./receiver')
 
 /**
  * @implements {toa.core.bindings.Factory}
@@ -26,6 +27,12 @@ class Factory {
     const comm = this.#getCommunication(locator)
 
     return new Emitter(comm, locator, label)
+  }
+
+  receiver (locator, label, group, receiver) {
+    const comm = this.#getCommunication(locator)
+
+    return new Receiver(comm, locator, label, group, receiver)
   }
 
   /**
