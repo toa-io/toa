@@ -1,11 +1,13 @@
 'use strict'
 
+// region setup
+
 const { generate } = require('randomstring')
-const { Locator } = require('@toa.io/core')
 
 jest.mock('../source/pointer')
 jest.mock('../source/communication')
 jest.mock('../source/producer')
+jest.mock('../source/consumer')
 
 const {
   /** @type {jest.MockedClass<Communication>} */
@@ -22,7 +24,14 @@ const {
   Producer
 } = require('../source/producer')
 
+const {
+  /** @type {jest.MockedClass<Consumer>} */
+  Consumer
+} = require('../source/consumer')
+
 const { Factory } = require('../')
+
+// endregion
 
 it('should be', async () => {
   expect(Factory).toBeDefined()
@@ -32,32 +41,45 @@ it('should be', async () => {
 let factory
 
 beforeEach(() => {
+  jest.clearAllMocks()
+
   factory = new Factory()
 })
 
-describe('Producer', () => {
+let locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
+
+const endpoints = [generate(), generate()]
+const endpoint = generate()
+const component = /** @type {toa.core.Component} */ {}
+
+/** @type {jest.MockedObject<toa.amqp.Communication>} */
+let comm
+
+/** @type {toa.core.Connector} */
+let producer
+
+/** @type {toa.core.bindings.Consumer} */
+let consumer
+
+describe.each(['Producer', 'Consumer'])('%s assets', (classname) => {
+  const method = classname.toLowerCase()
+
   it('should be', async () => {
-    expect(factory.producer).toBeDefined()
+    expect(factory[method]).toBeDefined()
   })
-
-  /** @type {toa.core.Locator} */
-  let locator
-
-  const endpoints = [generate(), generate()]
-
-  const component = /** @type {toa.core.Component} */ {}
-
-  /** @type {toa.core.Connector} */
-  let connector
 
   beforeEach(() => {
     jest.clearAllMocks()
 
-    const name = generate()
-    const namespace = generate()
+    switch (method) {
+      case 'producer':
+        factory.producer(locator, endpoints, component)
+        break
+      case 'consumer':
+        factory.consumer(locator, endpoint)
+        break
+    }
 
-    locator = new Locator(name, namespace)
-    connector = factory.producer(locator, endpoints, component)
   })
 
   it('should create Pointer', async () => {
@@ -69,11 +91,28 @@ describe('Producer', () => {
 
     expect(Communication).toHaveBeenCalledWith(pointer)
   })
+})
+
+describe('Producer', () => {
+  beforeEach(() => {
+    producer = factory.producer(locator, endpoints, component)
+    comm = Communication.mock.instances[0]
+  })
 
   it('should create Producer', async () => {
-    const communication = Communication.mock.instances[0]
+    expect(Producer).toHaveBeenCalledWith(comm, locator, endpoints, component)
+    expect(producer).toStrictEqual(Producer.mock.instances[0])
+  })
+})
 
-    expect(Producer).toHaveBeenCalledWith(communication, locator, endpoints, component)
-    expect(connector).toBeInstanceOf(Producer)
+describe('Consumer', () => {
+  beforeEach(() => {
+    consumer = factory.consumer(locator, endpoint)
+    comm = Communication.mock.instances[0]
+  })
+
+  it('should create Consumer', async () => {
+    expect(Consumer).toHaveBeenCalledWith(comm, locator, endpoint)
+    expect(consumer).toStrictEqual(Consumer.mock.instances[0])
   })
 })

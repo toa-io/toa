@@ -37,6 +37,10 @@ class Communication extends Connector {
   async reply (queue, process) {
     await this.#io.reply(queue, process)
   }
+
+  async request (queue, request) {
+    return this.#io.request(queue, request)
+  }
 }
 
 exports.Communication = Communication

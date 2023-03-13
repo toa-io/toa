@@ -1,9 +1,12 @@
 'use strict'
 
+const { generate } = require('randomstring')
+
 /**
  * @return {jest.MockedObject<comq.IO>}
  */
 const io = () => (/** @type {jest.MockedObject<comq.IO>} */ {
+  request: jest.fn(async () => generate()),
   reply: jest.fn(async () => undefined),
   seal: jest.fn(async () => undefined),
   close: jest.fn(async () => undefined)

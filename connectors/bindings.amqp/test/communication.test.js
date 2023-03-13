@@ -65,4 +65,14 @@ describe('connected', () => {
 
     expect(io.reply).toHaveBeenCalledWith(queue, producer)
   })
+
+  it('should send request', async () => {
+    const queue = generate()
+    const request = generate()
+
+    const reply = await comm.request(queue, request)
+
+    expect(io.request).toHaveBeenCalledWith(queue, request)
+    expect(reply).toStrictEqual(await io.request.mock.results[0].value)
+  })
 })
