@@ -23,12 +23,12 @@ class Channel extends Connector {
     this.depends(connection)
   }
 
-  async connection () {
+  async open () {
     this.#channel = await this.#connection.channel()
     this.#channel.prefetch(100)
   }
 
-  async disconnection () {
+  async close () {
     // solves 'Channel ended, no reply will be forthcoming'
     await timeout(50)
   }

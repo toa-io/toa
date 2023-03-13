@@ -19,7 +19,7 @@ class Consumer extends Connector {
     this.#endpoint = endpoint
   }
 
-  async connection () {
+  async open () {
     this.#url = Consumer.#locate(this.#locator, this.#endpoint)
   }
 

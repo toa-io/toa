@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 const { random } = require('@toa.io/generic')
 const mock = require('@toa.io/mock')
 
-const { deployment } = require('../')
+const { deployment } = require('../src')
 
 /** @type {toa.norm.context.dependencies.Instance[]} */
 let instances

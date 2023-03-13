@@ -25,7 +25,7 @@ class Producer extends Connector {
     this.depends(producer)
   }
 
-  async connection () {
+  async open () {
     await Promise.all(this.#endpoints.map((endpoint) => this.#endpoint(endpoint)))
   }
 

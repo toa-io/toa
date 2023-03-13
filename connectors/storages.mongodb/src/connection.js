@@ -27,7 +27,7 @@ class Connection extends Connector {
     this.#client = new MongoClient(pointer.reference, OPTIONS)
   }
 
-  async connection () {
+  async open () {
     await this.#client.connect()
 
     this.#collection = this.#client.db(this.#pointer.db).collection(this.#pointer.collection)
@@ -35,7 +35,7 @@ class Connection extends Connector {
     console.info(`Storage Mongo connected to ${this.#pointer.label}/${this.#pointer.db}/${this.#pointer.collection}`)
   }
 
-  async disconnection () {
+  async close () {
     await this.#client.close()
 
     console.info(`Storage Mongo disconnected from ${this.#pointer.label}/${this.#pointer.db}/${this.#pointer.collection}`)

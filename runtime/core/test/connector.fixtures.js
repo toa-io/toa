@@ -14,23 +14,23 @@ class TestConnector extends Connector {
     this.#label = label
   }
 
-  async connection () {
+  async open () {
     await timeout(random(10))
     this.#seq.push(`+${this.#label}`)
   }
 
-  async disconnection () {
+  async close () {
     await timeout(random(10))
     this.#seq.push(`-${this.#label}`)
   }
 
-  disconnected () {
+  async dispose () {
     this.#seq.push(`*${this.#label}`)
   }
 }
 
 class FailingConnector extends Connector {
-  async connection () {
+  async open () {
     await timeout(random(10))
     throw new Error('FailingConnector')
   }

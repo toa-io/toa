@@ -1,5 +1,5 @@
 import * as _diagnostics from './diagnostic'
-import { encoding } from './encoding'
+import * as _encoding from './encoding'
 
 declare namespace comq {
 
@@ -19,11 +19,11 @@ declare namespace comq {
   interface IO {
     reply(queue: string, produce: producer): Promise<void>
 
-    request(queue: string, payload: any, encoding?: encoding): Promise<any>
+    request(queue: string, payload: any, encoding?: _encoding.encoding): Promise<any>
 
     consume(exchange: string, group: string, consumer: consumer): Promise<void>
 
-    emit(exchange: string, payload: any, encoding?: encoding): Promise<void>
+    emit(exchange: string, payload: any, encoding?: _encoding.encoding): Promise<void>
 
     seal(): Promise<void>
 
@@ -34,4 +34,6 @@ declare namespace comq {
 
 }
 
+export type producer = comq.producer
+export type consumer = comq.consumer
 export type IO = comq.IO

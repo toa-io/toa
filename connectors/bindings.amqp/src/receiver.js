@@ -27,11 +27,11 @@ class Receiver extends Connector {
     this.depends(receiver)
   }
 
-  async connection () {
+  async open () {
     await this.#channel.subscribe(this.#label, this.#id, (message) => this.#receiver.receive(message))
   }
 
-  async disconnection () {
+  async close () {
     await this.#channel.unsubscribe(this.#id)
   }
 }

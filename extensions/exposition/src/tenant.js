@@ -15,7 +15,7 @@ class Tenant extends Connector {
     this.depends(binding)
   }
 
-  async connection () {
+  async open () {
     await this.#binding.receive('ping', () => this.#expose())
     await this.#expose()
   }

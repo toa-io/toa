@@ -1,7 +1,6 @@
 'use strict'
 
 const { Pointer: Base } = require('@toa.io/pointer')
-const { PREFIX } = require('./constants')
 
 class Pointer extends Base {
   /**
@@ -11,6 +10,8 @@ class Pointer extends Base {
     super(PREFIX, locator, OPTIONS)
   }
 }
+
+const PREFIX = 'bindings-amqp'
 
 /** @type {toa.pointer.Options} */
 const OPTIONS = { protocol: 'amqp:' }

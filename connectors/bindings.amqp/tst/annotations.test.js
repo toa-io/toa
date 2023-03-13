@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 const mock = { uris: { construct: () => generate() }, Pointer: class {} }
 
 jest.mock('@toa.io/pointer', () => mock)
-const { annotation } = require('../')
+const { annotation } = require('../src')
 
 it('should export annotations', () => {
   expect(annotation).toBeDefined()

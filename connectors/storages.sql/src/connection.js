@@ -36,14 +36,14 @@ class Connection extends Connector {
     this.#client = this.#configure()
   }
 
-  async connection () {
+  async open () {
     // https://github.com/knex/knex/issues/1886
     await this.#client.raw('select 1')
 
     console.info(`SQL storage connected to ${this.#pointer.label}`)
   }
 
-  async disconnection () {
+  async close () {
     delete Connection.#connections[this.#pointer.key]
     await this.#client.destroy()
 

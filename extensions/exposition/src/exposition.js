@@ -27,7 +27,7 @@ class Exposition extends Connector {
   }
 
   /** @override */
-  async connection () {
+  async open () {
     await this.#broadcast.receive('expose', this.#expose.bind(this))
     this.#broadcast.send('ping', {}).then()
 

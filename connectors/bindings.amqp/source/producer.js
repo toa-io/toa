@@ -2,13 +2,12 @@
 
 const { Connector } = require('@toa.io/core')
 
-const { binding } = require('./binding')
-const { label } = require('./label')
+const { name } = require('./queues')
 
-/**
- * @implements {toa.core.Connector}
- */
 class Producer extends Connector {
+  /** @type {toa.amqp.Communication} */
+  #comm
+
   /** @type {toa.core.Locator} */
   #locator
 
@@ -19,24 +18,31 @@ class Producer extends Connector {
   #component
 
   /**
+   * @param {toa.amqp.Communication} comm
    * @param {toa.core.Locator} locator
    * @param {string[]} endpoints
    * @param {toa.core.Component} component
    */
-  constructor (locator, endpoints, component) {
+  constructor (comm, locator, endpoints, component) {
     super()
 
+    this.#comm = comm
     this.#locator = locator
     this.#endpoints = endpoints
     this.#component = component
+
+    this.depends(comm)
+    this.depends(component)
   }
 
   async open () {
-    for (const endpoint of this.#endpoints) {
-      const command = label(this.#locator, endpoint)
+    await Promise.all(this.#endpoints.map((endpoint) => this.#endpoint(endpoint)))
+  }
 
-      await binding.reply(command, (request) => this.#component.invoke(endpoint, request))
-    }
+  async #endpoint (endpoint) {
+    const queue = name(this.#locator, endpoint)
+
+    await this.#comm.reply(queue, (request) => this.#component.invoke(endpoint, request))
   }
 }
 

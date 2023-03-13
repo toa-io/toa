@@ -38,7 +38,7 @@ class Provider extends Connector {
     this.#form = form(schema.schema)
   }
 
-  async connection () {
+  async open () {
     await this.#retrieve()
   }
 

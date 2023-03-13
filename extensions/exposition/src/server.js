@@ -42,7 +42,7 @@ class Server extends Connector {
     this.#app.use(route, callback)
   }
 
-  async connection () {
+  async open () {
     console.info(`Starting HTTP server at :${PORT} ...`)
 
     return new Promise((resolve, reject) => {
@@ -59,7 +59,7 @@ class Server extends Connector {
     })
   }
 
-  async disconnection () {
+  async close () {
     console.info(`Stopping HTTP server at :${PORT} ...`)
 
     return new Promise((resolve, reject) => {

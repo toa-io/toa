@@ -1,45 +1,54 @@
-# AMQP Binding
+# Toa AMQP Binding
 
-AMQP binding is asynchronous, broadcast and *systemic*, that is being used by the runtime.
-See [Bindings](#).
+AMQP asynchronous binding on top of [ComQ](/libraries/comq).
 
 ## Deployment
 
-AMQP binding requires RabbitMQ broker(s) available from the cluster. As AMQP is a systemic binding,
-so at least one `system` or `default` broker must be provisioned.
+AMQP deployment must be declared with
+the [Pointer annotation](/libraries/pointer/readme.md#annotation). Either `system` or `default`
+pointers must be defined.
 
-### Declaration
-
-AMQP deployment must be declared by [URI Set annotation](#) with a `system` extension, which value
-must be the host of the broker to be used by the runtime. Either `system` or `default` hosts must be
-defined.
+Well-known annotation shortcut `amqp` is available.
 
 ```yaml
 # context.toa.yaml
 annotations:
-  @toa.io/bindings.amqp:
-     system: host0          # the runtime 
-     default: host1         # all undeclared
-     dummies: host2         # namespace-wide
-     dummies.dummy1: host3  # component exclusive
+  "@toa.io/bindings.amqp":
+    system: url0          # the runtime 
+    default: url1         # all undeclared
+    dummies: url2         # namespace-wide
+    dummies.dummy1: url  # component exclusive
 ```
 
 ### Concise Declaration
 
-> Well-known shortcut `amqp` is available.
-
-String annotation value is considered as `default`.
-
-The next two declarations are equivalent.
+Well-known shortcut `amqp` is available. The next two declarations are equivalent:
 
 ```yaml
 # context.toa.yaml
 annotations:
-  @toa.io/bindings.amqp:
-     default: host1
+  "@toa.io/bindings.amqp":
+    system: url0
+    dummies: url1
+```
+
+```yaml
+# context.toa.yaml
+amqp:
+  system: url0
+  dummies: url1
+```
+
+`string` annotation value is considered as `default`. The next two declarations are equivalent:
+
+```yaml
+# context.toa.yaml
+annotations:
+  "@toa.io/bindings.amqp":
+    default: url1
 ``` 
 
 ```yaml
 # context.toa.yaml
-amqp: host1
+amqp: url1
 ``` 

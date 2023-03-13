@@ -4,7 +4,7 @@ declare namespace toa.pointer {
     protocol: string    // for local environment
   }
 
-  class Pointer {
+  interface Pointer {
     protocol: string
     host: string
     port: number
@@ -17,5 +17,3 @@ declare namespace toa.pointer {
   }
 
 }
-
-export type Pointer = toa.pointer.Pointer
