@@ -12,7 +12,7 @@ class Factory {
     const pointer = /** @type {toa.pointer.Pointer} */ new Pointer(locator)
     const comm = new Communication(pointer)
 
-    return new Producer(comm)
+    return new Producer(comm, locator, endpoints, component)
   }
 }
 

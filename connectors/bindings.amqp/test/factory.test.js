@@ -45,7 +45,7 @@ describe('Producer', () => {
 
   const endpoints = [generate(), generate()]
 
-  const producer = /** @type {toa.core.Component} */ {}
+  const component = /** @type {toa.core.Component} */ {}
 
   /** @type {toa.core.Connector} */
   let connector
@@ -57,7 +57,7 @@ describe('Producer', () => {
     const namespace = generate()
 
     locator = new Locator(name, namespace)
-    connector = factory.producer(locator, endpoints, producer)
+    connector = factory.producer(locator, endpoints, component)
   })
 
   it('should create Pointer', async () => {
@@ -73,7 +73,7 @@ describe('Producer', () => {
   it('should create Producer', async () => {
     const communication = Communication.mock.instances[0]
 
-    expect(Producer).toHaveBeenCalledWith(communication)
+    expect(Producer).toHaveBeenCalledWith(communication, locator, endpoints, component)
     expect(connector).toBeInstanceOf(Producer)
   })
 })
