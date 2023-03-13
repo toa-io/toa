@@ -8,8 +8,9 @@ const { generate } = require('randomstring')
 const communication = () => (
   /** @type {jest.MockedObject<toa.amqp.Communication>} */ {
     connect: jest.fn(async () => undefined),
-    reply: jest.fn(async () => undefined),
     request: jest.fn(async () => generate()),
+    reply: jest.fn(async () => undefined),
+    emit: jest.fn(async () => undefined),
 
     link: jest.fn()
   }

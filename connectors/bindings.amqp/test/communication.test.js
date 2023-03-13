@@ -75,4 +75,13 @@ describe('connected', () => {
     expect(io.request).toHaveBeenCalledWith(queue, request)
     expect(reply).toStrictEqual(await io.request.mock.results[0].value)
   })
+
+  it('should emit', async () => {
+    const exchange = generate()
+    const message = generate()
+
+    await comm.emit(exchange, message)
+
+    expect(io.emit).toHaveBeenCalledWith(exchange, message)
+  })
 })

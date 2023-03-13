@@ -46,12 +46,6 @@ it('should depend onComponent', async () => {
   expect(component.link).toHaveBeenCalled()
 })
 
-describe('connect', () => {
-  beforeEach(async () => {
-    await producer.connect()
-  })
-})
-
 it('should bind endpoints', async () => {
   await producer.connect()
 

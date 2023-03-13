@@ -8,6 +8,7 @@ jest.mock('../source/pointer')
 jest.mock('../source/communication')
 jest.mock('../source/producer')
 jest.mock('../source/consumer')
+jest.mock('../source/emitter')
 
 const {
   /** @type {jest.MockedClass<Communication>} */
@@ -29,6 +30,11 @@ const {
   Consumer
 } = require('../source/consumer')
 
+const {
+  /** @type {jest.MockedClass<Emitter>} */
+  Emitter
+} = require('../source/emitter')
+
 const { Factory } = require('../')
 
 // endregion
@@ -46,8 +52,7 @@ beforeEach(() => {
   factory = new Factory()
 })
 
-let locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
-
+const locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
 const endpoints = [generate(), generate()]
 const endpoint = generate()
 const component = /** @type {toa.core.Component} */ {}
@@ -61,7 +66,10 @@ let producer
 /** @type {toa.core.bindings.Consumer} */
 let consumer
 
-describe.each(['Producer', 'Consumer'])('%s assets', (classname) => {
+/** @type {toa.core.bindings.Emitter} */
+let emitter
+
+describe.each(['Producer', 'Consumer', 'Emitter'])('%s assets', (classname) => {
   const method = classname.toLowerCase()
 
   it('should be', async () => {
@@ -78,8 +86,10 @@ describe.each(['Producer', 'Consumer'])('%s assets', (classname) => {
       case 'consumer':
         factory.consumer(locator, endpoint)
         break
+      case 'emitter':
+        factory.emitter(locator, endpoint)
+        break
     }
-
   })
 
   it('should create Pointer', async () => {
@@ -99,7 +109,7 @@ describe('Producer', () => {
     comm = Communication.mock.instances[0]
   })
 
-  it('should create Producer', async () => {
+  it('should create instance', async () => {
     expect(Producer).toHaveBeenCalledWith(comm, locator, endpoints, component)
     expect(producer).toStrictEqual(Producer.mock.instances[0])
   })
@@ -111,8 +121,20 @@ describe('Consumer', () => {
     comm = Communication.mock.instances[0]
   })
 
-  it('should create Consumer', async () => {
+  it('should create instance', async () => {
     expect(Consumer).toHaveBeenCalledWith(comm, locator, endpoint)
     expect(consumer).toStrictEqual(Consumer.mock.instances[0])
+  })
+})
+
+describe('Emitter', () => {
+  beforeEach(() => {
+    emitter = factory.emitter(locator, endpoint)
+    comm = Communication.mock.instances[0]
+  })
+
+  it('should create instance', async () => {
+    expect(Emitter).toHaveBeenCalledWith(comm, locator, endpoint)
+    expect(emitter).toStrictEqual(Emitter.mock.instances[0])
   })
 })
