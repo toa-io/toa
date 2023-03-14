@@ -24,9 +24,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Downgrade npm
-        run: npm i -g npm@8.19.2
-
       - name: Bump version
         run: |
           git config user.name "toabot"
