@@ -33,13 +33,13 @@ jobs:
           git config user.email "127577558+toabot@users.noreply.github.com"
           
           if [ ${{ github.base_ref }} = main ]; then
-            npx lerna version --conventional-graduate --no-commit-hooks --no-changelog --yes
+            npx lerna@6.5.1 version --conventional-graduate --no-commit-hooks --no-changelog --yes
             git fetch
             git checkout dev
             git merge main
             git push --all origin --no-verify
           else
-            npx lerna version --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --message "chore(prerelease): %s"
+            npx lerna@6.5.1 version --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --message "chore(prerelease): %s"
           fi
 
       - name: Publish packages
