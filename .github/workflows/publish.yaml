@@ -28,19 +28,15 @@ jobs:
         run: |
           git config user.name "toabot"
           git config user.email "127577558+toabot@users.noreply.github.com"
-          echo ${{ github.base_ref }}
           
           if [ ${{ github.base_ref }} = main ]; then
-            npm version minor --workspaces --include-workspace-root --no-workspaces-update --no-git-tag-version
+            npx lerna version --conventional-graduate --sync-workspace-lock --no-commit-hooks --yes
             git fetch
-            git commit -am "chore: bump version" --no-verify
             git checkout dev
             git merge main
             git push --all origin --no-verify
           else
-            npm version prerelease --workspaces --include-workspace-root --no-workspaces-update --preid dev --no-git-tag-version
-            git commit -am "chore: bump version" --no-verify
-            git push --no-verify
+            npx lerna version --conventional-prerelease --preid dev --sync-workspace-lock --no-commit-hooks --no-changelog --yes
           fi
 
       - name: Publish packages

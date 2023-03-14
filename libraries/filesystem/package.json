@@ -23,7 +23,7 @@
   },
   "main": "source/index.js",
   "devDependencies": {
-    "@toa.io/generic": "*"
+    "@toa.io/generic": "0.3.0"
   },
   "dependencies": {
     "fast-glob": "3.2.12"

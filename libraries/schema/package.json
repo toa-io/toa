@@ -23,9 +23,9 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/generic": "*",
-    "@toa.io/schemas": "*",
-    "@toa.io/yaml": "*",
+    "@toa.io/generic": "0.3.0",
+    "@toa.io/schemas": "0.3.0",
+    "@toa.io/yaml": "0.3.0",
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1"
   }

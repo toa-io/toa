@@ -24,13 +24,13 @@
   "main": "src/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/boot": "*",
-    "@toa.io/core": "*",
-    "@toa.io/filesystem": "*",
-    "@toa.io/generic": "*",
-    "@toa.io/norm": "*",
-    "@toa.io/schemas": "*",
-    "@toa.io/yaml": "*",
+    "@toa.io/boot": "0.3.0",
+    "@toa.io/core": "0.3.0",
+    "@toa.io/filesystem": "0.3.0",
+    "@toa.io/generic": "0.3.0",
+    "@toa.io/norm": "0.3.0",
+    "@toa.io/schemas": "0.3.0",
+    "@toa.io/yaml": "0.3.0",
     "tap": "16.3.4"
   }
 }

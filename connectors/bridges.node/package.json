@@ -26,9 +26,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/filesystem": "*",
-    "@toa.io/generic": "*",
+    "@toa.io/core": "0.3.0",
+    "@toa.io/filesystem": "0.3.0",
+    "@toa.io/generic": "0.3.0",
     "fast-glob": "3.2.7"
   },
   "devDependencies": {

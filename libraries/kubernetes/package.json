@@ -23,7 +23,7 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/command": "*",
-    "@toa.io/generic": "*"
+    "@toa.io/command": "0.3.0",
+    "@toa.io/generic": "0.3.0"
   }
 }

@@ -16,10 +16,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/generic": "*",
-    "@toa.io/schema": "*",
-    "@toa.io/yaml": "*",
+    "@toa.io/core": "0.3.0",
+    "@toa.io/generic": "0.3.0",
+    "@toa.io/schema": "0.3.0",
+    "@toa.io/yaml": "0.3.0",
     "clone-deep": "4.0.1"
   }
 }

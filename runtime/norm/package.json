@@ -19,13 +19,13 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "devDependencies": {
-    "@toa.io/mock": "*"
+    "@toa.io/mock": "0.3.0"
   },
   "dependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/generic": "*",
-    "@toa.io/schema": "*",
-    "@toa.io/schemas": "*",
-    "@toa.io/yaml": "*"
+    "@toa.io/core": "0.3.0",
+    "@toa.io/generic": "0.3.0",
+    "@toa.io/schema": "0.3.0",
+    "@toa.io/schemas": "0.3.0",
+    "@toa.io/yaml": "0.3.0"
   }
 }

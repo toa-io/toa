@@ -184,6 +184,15 @@ guarantee provided by RabbitMQ is maintained.
 > Topology design assumes that unanswered Requests and unconfirmed Events will be resent upon
 > reconnection.
 
+### Dynamic
+
+Static topology refers to the process of defining the complete topology declaration along with the
+code that uses it. While this approach may provide a clear and comprehensive view of the system's
+architecture, it can be prone to duplication of effort. Moreover, some topologies are inherently
+dynamic, such as those that depend on runtime data like incoming messages, making static topology
+impossible or hard to maintain. The tradeoff of potentially encountering runtime topology
+declaration exceptions, which are more likely to happen during development, is deemed acceptable.
+
 ### Channels
 
 `IO` lazy creates individual channels for Requests, Replies, and Events.
