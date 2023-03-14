@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@toa.io/generic": "*",
-    "msgpackr": "1.8.5"
+    "msgpackr": "1.8.5",
+    "amqplib": "0.10.3"
   }
 }
