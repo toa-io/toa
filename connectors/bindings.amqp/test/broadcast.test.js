@@ -2,6 +2,7 @@
 
 // region setup
 
+const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
 
 const mock = {
@@ -12,8 +13,6 @@ const mock = {
 jest.mock('../source/queues', () => mock.queues)
 
 const { Broadcast } = require('../source/broadcast')
-const { Emitter } = require('../source/emitter')
-const { generate } = require('randomstring')
 
 it('should be', async () => {
   expect(Broadcast).toBeDefined()
@@ -79,6 +78,6 @@ it('should create unique group if not provided', async () => {
   await broadcast.receive(label, process)
 
   const group = comm.consume.mock.calls[0][1]
-  
+
   expect(group).toBeDefined()
 })

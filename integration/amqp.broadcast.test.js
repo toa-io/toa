@@ -13,9 +13,9 @@ beforeAll(async () => {
 
   const prefix = 'test-prefix'
 
-  a = factory.broadcaster(prefix)
-  b = factory.broadcaster(prefix)
-  c = factory.broadcaster(prefix)
+  a = factory.broadcast(prefix)
+  b = factory.broadcast(prefix)
+  c = factory.broadcast(prefix)
 
   await a.connect()
   await b.connect()
@@ -53,6 +53,6 @@ it('should receive', async () => {
     receivedB()
   })
 
-  await b.send(label, message)
+  await b.transmit(label, message)
   await receiving
 })

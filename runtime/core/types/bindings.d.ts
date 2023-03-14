@@ -14,8 +14,8 @@ declare namespace toa.core.bindings {
     emit(message: _core.Message): Promise<void>
   }
 
-  interface Broadcaster extends _core.Connector {
-    send(label: string, payload: Object): Promise<void>
+  interface Broadcast extends _core.Connector {
+    transmit(label: string, payload: object): Promise<void>
 
     receive(label: string, callback: (payload: object) => Promise<void>): Promise<void>
   }
@@ -29,7 +29,7 @@ declare namespace toa.core.bindings {
 
     receiver?(locator: _core.Locator, label: string, group: string, receiver: _core.Receiver): _core.Connector
 
-    broadcaster?(name: string, group?: string): Broadcaster
+    broadcast?(name: string, group?: string): Broadcast
   }
 
 }

@@ -183,7 +183,6 @@ describe('Receiver', () => {
 
 describe('Broadcast', () => {
   beforeEach(() => {
-
     broadcast = factory.broadcast(name, group)
     comm = Communication.mock.instances[0]
   })

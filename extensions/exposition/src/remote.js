@@ -9,7 +9,7 @@ const translate = require('./translate')
  * @implements {toa.extensions.exposition.Remote}
  */
 class Remote extends Connector {
-  /** @type {toa.core.Runtime} */
+  /** @type {toa.core.Component} */
   #remote
 
   /** @type {toa.extensions.exposition.Tree} */
@@ -17,7 +17,7 @@ class Remote extends Connector {
 
   /**
    * @param {toa.extensions.exposition.Server} server
-   * @param {toa.core.Runtime} remote
+   * @param {toa.core.Component} remote
    * @param {toa.extensions.exposition.Tree} tree
    */
   constructor (server, remote, tree) {

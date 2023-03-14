@@ -3,6 +3,7 @@
 const { Connector } = require('@toa.io/core')
 
 class Tenant extends Connector {
+  /** @type {toa.core.bindings.Broadcast} */
   #binding
   #declaration
 
@@ -21,7 +22,7 @@ class Tenant extends Connector {
   }
 
   async #expose () {
-    await this.#binding.send('expose', this.#declaration)
+    await this.#binding.transmit('expose', this.#declaration)
   }
 }
 
