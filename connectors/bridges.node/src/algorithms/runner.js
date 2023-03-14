@@ -24,7 +24,7 @@ class Runner extends Connector {
     this.depends(context)
   }
 
-  async connection () {
+  async open () {
     this.#instance = /** @type {toa.core.bridges.Algorithm} */ this.#ctor()
   }
 

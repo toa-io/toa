@@ -21,11 +21,11 @@ class Component extends Connector {
     Object.values(operations).forEach((operation) => this.depends(operation))
   }
 
-  async connection () {
+  async open () {
     console.info(`Runtime '${this.locator.id}' connected`)
   }
 
-  disconnected () {
+  async dispose () {
     console.info(`Runtime '${this.locator.id}' disconnected`)
   }
 

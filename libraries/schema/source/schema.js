@@ -10,11 +10,15 @@ const { options } = require('./options')
 const { definitions } = require('./definitions')
 const { keywords } = require('./keywrods')
 
-const validator = new Ajv(options)
+const create = () => {
+  const validator = new Ajv(options)
 
-formats(validator)
-keywords(validator)
-definitions(validator)
+  formats(validator)
+  keywords(validator)
+  definitions(validator)
+
+  return validator
+}
 
 /**
  * @implements {toa.schema.Schema}
@@ -23,6 +27,7 @@ class Schema {
   /** @type {toa.schema.JSON} */
   schema
 
+  #validator
   #validate
   #defaults
   #match
@@ -33,7 +38,8 @@ class Schema {
    * @param {any} schema
    */
   constructor (schema) {
-    this.#validate = validator.compile(schema)
+    this.#validator = create()
+    this.#validate = this.#validator.compile(schema)
 
     if (schema.properties !== undefined) this.#recompile(schema)
 
@@ -93,7 +99,7 @@ class Schema {
       system.$id = $id + '_system'
     }
 
-    this.#defaults = validator.compile(defaults)
+    this.#defaults = this.#validator.compile(defaults)
 
     for (const [key, value] of Object.entries(schema.properties)) {
       const { ...copy } = value
@@ -103,7 +109,7 @@ class Schema {
       if (value.system === true) system.properties[key] = copy
     }
 
-    this.#system = validator.compile(system)
+    this.#system = this.#validator.compile(system)
 
     // match
     const match = clone(schema)
@@ -120,7 +126,7 @@ class Schema {
       if (node.default !== undefined && node[PROPERTIES] !== 1) delete node.default
     })
 
-    this.#match = validator.compile(match)
+    this.#match = this.#validator.compile(match)
 
     // adapt
     const adaptive = clone(schema)
@@ -138,7 +144,7 @@ class Schema {
       if (node.default !== undefined && node[PROPERTIES] !== 1) delete node.default
     })
 
-    this.#adapt = validator.compile(adaptive)
+    this.#adapt = this.#validator.compile(adaptive)
   }
 
   /**

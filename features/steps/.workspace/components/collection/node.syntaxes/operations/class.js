@@ -1,5 +1,8 @@
 'use strict'
 
+/**
+ * @implements {toa.core.bridges.Algorithm}
+ */
 class Transition {
   #foo
 
@@ -10,7 +13,7 @@ class Transition {
   async run (input, object) {
     const foo = this.#foo
 
-    return { foo }
+    return { output: { foo } }
   }
 }
 

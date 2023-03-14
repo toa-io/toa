@@ -4,8 +4,8 @@ declare namespace toa.pointer {
 
   namespace uris {
 
-    type Node = {
-      [key: string]: string | Node
+    type Node = string | {
+      [key: string]: Node
     }
 
     type Constructor = (declaration: URIs | string) => URIs
@@ -19,10 +19,10 @@ declare namespace toa.pointer {
 
   }
 
-  type URIs = {
+  type URIs = string | {
     default?: string
-    [key: string]: string | uris.Node
-  } | string
+    [key: string]: uris.Node
+  }
 
 }
 

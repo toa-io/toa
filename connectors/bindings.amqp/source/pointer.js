@@ -1,13 +1,8 @@
 'use strict'
 
 const { Pointer: Base } = require('@toa.io/pointer')
-
 const { PREFIX } = require('./constants')
 
-// noinspection JSClosureCompilerSyntax
-/**
- * @implements {toa.amqp.Pointer}
- */
 class Pointer extends Base {
   /**
    * @param {toa.core.Locator} locator

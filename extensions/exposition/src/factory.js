@@ -25,7 +25,7 @@ class Factory {
   }
 
   tenant (locator, declaration) {
-    const broadcast = this.#boot.bindings.broadcast(BINDING, GROUP, locator.id)
+    const broadcast = this.#boot.bindings.broadcast(BINDING, NAME, locator.id)
 
     return new Tenant(broadcast, locator, declaration)
   }
@@ -35,7 +35,7 @@ class Factory {
   }
 
   #expose () {
-    const broadcast = this.#boot.bindings.broadcast(BINDING, GROUP)
+    const broadcast = this.#boot.bindings.broadcast(BINDING, NAME)
     const connect = this.#connect.bind(this)
     const exposition = new Exposition(broadcast, connect)
 
@@ -71,6 +71,6 @@ class Factory {
 }
 
 const BINDING = '@toa.io/bindings.amqp'
-const GROUP = 'exposition'
+const NAME = 'exposition'
 
 exports.Factory = Factory

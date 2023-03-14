@@ -27,7 +27,7 @@ class Receiver extends Connector {
     this.#receiver = receiver
   }
 
-  async connection () {
+  async open () {
     await binding.subscribe(this.#label, (message) => this.#receiver.receive(message))
   }
 }

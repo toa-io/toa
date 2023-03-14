@@ -13,7 +13,7 @@ class Discovery extends Connector {
     this.#lookup = lookup
   }
 
-  async connection () {
+  async open () {
     this.#lookups = {}
   }
 

@@ -2,7 +2,7 @@
 
 const { expand } = require('@toa.io/concise')
 const { defined } = require('@toa.io/generic')
-const { create, valid } = require('./validator')
+const { create, is } = require('./validator')
 const { Exception } = require('./exception')
 
 /**
@@ -59,7 +59,7 @@ class Schema {
 /** @type {toa.schemas.constructors.schema} */
 const schema = (cos) => {
   const validator = create()
-  const schema = expand(cos, valid)
+  const schema = expand(cos, is)
   const validate = validator.compile(schema)
 
   return new Schema(validate)

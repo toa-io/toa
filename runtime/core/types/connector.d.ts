@@ -12,9 +12,11 @@ declare namespace toa.core {
 
     disconnect(interrupt?: boolean): Promise<void>
 
-    connection(): Promise<void>
+    open(): Promise<void>
 
-    disconnection(): Promise<void>
+    close(): Promise<void>
+
+    dispose(): Promise<void>
   }
 
 }

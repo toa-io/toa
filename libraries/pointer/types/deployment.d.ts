@@ -1,8 +1,6 @@
-// noinspection ES6UnusedImports
-
 import { dependency } from '@toa.io/operations/types/deployment'
 import { dependencies } from '@toa.io/norm/types'
-import { URIs } from './uris'
+import * as _uris from './uris'
 
 declare namespace toa.pointer {
 
@@ -14,9 +12,10 @@ declare namespace toa.pointer {
 
   }
 
-  type Deployment = (instances: dependencies.Instance[], uris: URIs, options: deployment.Options)
-    => dependency.Declaration
+  type Deployment = (
+    instances: dependencies.Instance[],
+    uris: _uris.URIs,
+    options: deployment.Options
+  ) => dependency.Declaration
 
 }
-
-export const deployment: toa.pointer.Deployment

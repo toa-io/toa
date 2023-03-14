@@ -31,7 +31,7 @@ class Producer extends Connector {
     this.#component = component
   }
 
-  async connection () {
+  async open () {
     for (const endpoint of this.#endpoints) {
       const command = label(this.#locator, endpoint)
 

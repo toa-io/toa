@@ -5,11 +5,11 @@ const { console } = require('@toa.io/console')
 const { Component } = require('./component')
 
 class Remote extends Component {
-  async connection () {
+  async open () {
     console.info(`Remote '${this.locator.id}' connected`)
   }
 
-  async disconnected () {
+  async dispose () {
     console.info(`Remote '${this.locator.id}' disconnected`)
   }
 }
