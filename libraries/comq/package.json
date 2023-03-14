@@ -1,6 +1,6 @@
 {
   "name": "comq",
-  "version": "0.3.1-alpha.0",
+  "version": "0.3.0",
   "description": "ComQ",
   "homepage": "https://toa.io",
   "author": {
@@ -24,12 +24,12 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "devDependencies": {
-    "@toa.io/command": "0.3.1-alpha.0",
-    "@toa.io/mock": "0.3.1-alpha.0",
-    "@toa.io/yaml": "0.3.1-alpha.0"
+    "@toa.io/command": "0.3.0",
+    "@toa.io/mock": "0.3.0",
+    "@toa.io/yaml": "0.3.0"
   },
   "dependencies": {
-    "@toa.io/generic": "0.3.1-alpha.0",
+    "@toa.io/generic": "0.3.0",
     "amqplib": "0.10.3",
     "msgpackr": "1.8.5"
   }

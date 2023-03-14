@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/yaml",
-  "version": "0.3.1-alpha.0",
+  "version": "0.3.0",
   "description": "Toa YAML",
   "homepage": "https://toa.io",
   "author": {
@@ -23,6 +23,6 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/filesystem": "0.3.1-alpha.0"
+    "@toa.io/filesystem": "0.3.0"
   }
 }
