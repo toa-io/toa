@@ -23,11 +23,11 @@
   },
   "main": "source/index.js",
   "devDependencies": {
-    "@toa.io/mock": "*"
+    "@toa.io/mock": "*",
+    "@toa.io/schemas": "*"
   },
   "dependencies": {
     "@toa.io/generic": "*",
-    "@toa.io/schemas": "*",
     "@toa.io/yaml": "*"
   }
 }
