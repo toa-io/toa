@@ -23,8 +23,7 @@
   },
   "main": "source/index.js",
   "devDependencies": {
-    "@toa.io/mock": "0.3.0",
-    "@toa.io/schemas": "0.3.0"
+    "@toa.io/mock": "0.3.0"
   },
   "dependencies": {
     "@toa.io/generic": "0.3.0",
