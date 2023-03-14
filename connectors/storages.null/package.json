@@ -16,7 +16,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@toa.io/core": "0.3.0"
+    "@toa.io/core": "*"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
