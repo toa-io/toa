@@ -37,7 +37,6 @@
     "@cucumber/cucumber": "9.0.0",
     "@types/jest": "28.1.1",
     "@types/node": "18.0.0",
-    "amqplib": "0.10.3",
     "clone-deep": "4.0.1",
     "execa": "5.1.1",
     "husky": "8.0.3",
