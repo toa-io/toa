@@ -1,11 +1,16 @@
 'use strict'
 
+const { Locator } = require('@toa.io/core')
+
 const { Pointer } = require('./pointer')
 const { Communication } = require('./communication')
 const { Producer } = require('./producer')
 const { Consumer } = require('./consumer')
 const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
+const { Broadcast } = require('./broadcast')
+
+const { SYSTEM } = require('./constants')
 
 /**
  * @implements {toa.core.bindings.Factory}
@@ -33,6 +38,13 @@ class Factory {
     const comm = this.#getCommunication(locator)
 
     return new Receiver(comm, locator, label, group, receiver)
+  }
+
+  broadcast (name, group) {
+    const locator = new Locator(name, SYSTEM)
+    const comm = this.#getCommunication(locator)
+
+    return new Broadcast(comm, locator, group)
   }
 
   /**

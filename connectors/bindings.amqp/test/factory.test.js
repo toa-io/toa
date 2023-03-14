@@ -3,6 +3,7 @@
 // region setup
 
 const { generate } = require('randomstring')
+const { Locator } = require('@toa.io/core')
 
 jest.mock('../source/pointer')
 jest.mock('../source/communication')
@@ -10,6 +11,7 @@ jest.mock('../source/producer')
 jest.mock('../source/consumer')
 jest.mock('../source/emitter')
 jest.mock('../source/receiver')
+jest.mock('../source/broadcast')
 
 const {
   /** @type {jest.MockedClass<Communication>} */
@@ -41,9 +43,12 @@ const {
   Receiver
 } = require('../source/receiver')
 
-const { Factory } = require('../')
+const {
+  /** @type {jest.MockedClass<Broadcast>} */
+  Broadcast
+} = require('../source/broadcast')
 
-// endregion
+const { Factory } = require('../')
 
 it('should be', async () => {
   expect(Factory).toBeDefined()
@@ -61,6 +66,7 @@ beforeEach(() => {
 const locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
 const endpoints = [generate(), generate()]
 const endpoint = generate()
+const name = generate()
 const group = generate()
 const component = /** @type {toa.core.Component} */ {}
 const processor = /** @type {toa.core.Receiver} */ {}
@@ -80,7 +86,12 @@ let receiver
 /** @type {toa.core.bindings.Emitter} */
 let emitter
 
-describe.each(['Producer', 'Consumer', 'Emitter', 'Receiver'])('%s assets', (classname) => {
+/** @type {toa.core.bindings.Broadcast} */
+let broadcast
+
+// endregion
+
+describe.each(['Producer', 'Consumer', 'Emitter', 'Receiver', 'Broadcast'])('%s assets', (classname) => {
   const method = classname.toLowerCase()
 
   it('should be', async () => {
@@ -103,12 +114,17 @@ describe.each(['Producer', 'Consumer', 'Emitter', 'Receiver'])('%s assets', (cla
       case 'receiver':
         factory.receiver(locator, endpoint, group, processor)
         break
+      case 'broadcast':
+        factory.broadcast(name, group)
+        break
     }
   })
 
-  it('should create Pointer', async () => {
-    expect(Pointer).toHaveBeenCalledWith(locator)
-  })
+  if (method !== 'broadcast') {
+    it('should create Pointer', async () => {
+      expect(Pointer).toHaveBeenCalledWith(locator)
+    })
+  }
 
   it('should create Communication', async () => {
     const pointer = Pointer.mock.instances[0]
@@ -162,5 +178,25 @@ describe('Receiver', () => {
   it('should create instance', async () => {
     expect(Receiver).toHaveBeenCalledWith(comm, locator, endpoint, group, processor)
     expect(receiver).toStrictEqual(Receiver.mock.instances[0])
+  })
+})
+
+describe('Broadcast', () => {
+  beforeEach(() => {
+
+    broadcast = factory.broadcast(name, group)
+    comm = Communication.mock.instances[0]
+  })
+
+  it('should create Locator', async () => {
+    const locator = Broadcast.mock.calls[0][1]
+
+    expect(locator.namespace).toStrictEqual('system')
+    expect(locator.name).toStrictEqual(name)
+  })
+
+  it('should create instance', async () => {
+    expect(Broadcast).toHaveBeenCalledWith(comm, expect.any(Locator), group)
+    expect(broadcast).toStrictEqual(Broadcast.mock.instances[0])
   })
 })
