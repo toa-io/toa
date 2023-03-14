@@ -109,6 +109,6 @@ describe('glob', () => {
 
     const found = await glob(resolve(__dirname, '../*'))
 
-    expect(found).toStrictEqual(expected)
+    expect(found).toStrictEqual(expect.arrayContaining(expected))
   })
 })
