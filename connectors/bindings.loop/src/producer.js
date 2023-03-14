@@ -19,11 +19,11 @@ class Producer extends Connector {
     this.depends(producer)
   }
 
-  async connection () {
+  async open () {
     this.#endpoints.forEach((endpoint) => this.#operation(endpoint))
   }
 
-  async disconnection () {
+  async close () {
     this.#endpoints.forEach((endpoint) => delete this.#binding[endpoint])
   }
 

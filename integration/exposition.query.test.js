@@ -20,7 +20,7 @@ beforeAll(async () => {
   resources = await (new extension.Factory(boot)).service()
 
   await resources.connect()
-  await timeout(200) // resources discovery
+  await timeout(1000) // resources discovery
 })
 
 afterAll(async () => {

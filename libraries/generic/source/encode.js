@@ -24,6 +24,7 @@ const decode = (input) => {
   }
 }
 
+/** @type {BufferEncoding} */
 const ENCODING = 'base64'
 
 exports.encode = encode

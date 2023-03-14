@@ -2,15 +2,14 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { encode, letters: { up } } = require('@toa.io/generic')
+const { encode } = require('@toa.io/generic')
 
-const { Pointer } = require('../src/pointer')
-const { PREFIX } = require('../src/constants')
+const { Pointer } = require('../source/pointer')
 
 /** @type {toa.core.Locator} */
 let locator
 
-/** @type {toa.amqp.Pointer} */
+/** @type {Pointer} */
 let pointer
 
 const protocol = 'amqp:'
@@ -35,7 +34,7 @@ beforeEach(() => {
   const namespace = generate()
   const uris = { default: url.href }
   const value = encode(uris)
-  const key = `TOA_${up(PREFIX)}_POINTER`
+  const key = 'TOA_BINDINGS_AMQP_POINTER'
 
   process.env[key] = value
 

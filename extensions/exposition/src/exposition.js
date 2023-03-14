@@ -4,7 +4,7 @@ const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/console')
 
 class Exposition extends Connector {
-  /** @type {toa.core.bindings.Broadcaster} */
+  /** @type {toa.core.bindings.Broadcast} */
   #broadcast
 
   /** @type {toa.extensions.exposition.remotes.Factory} */
@@ -14,7 +14,7 @@ class Exposition extends Connector {
   #remotes = {}
 
   /**
-   * @param {toa.core.bindings.Broadcaster} broadcast
+   * @param {toa.core.bindings.Broadcast} broadcast
    * @param {toa.extensions.exposition.remotes.Factory} connect
    */
   constructor (broadcast, connect) {
@@ -27,9 +27,9 @@ class Exposition extends Connector {
   }
 
   /** @override */
-  async connection () {
+  async open () {
     await this.#broadcast.receive('expose', this.#expose.bind(this))
-    this.#broadcast.send('ping', {}).then()
+    this.#broadcast.transmit('ping', {}).then()
 
     console.info(this.constructor.name + ' started')
   }
@@ -52,7 +52,7 @@ class Exposition extends Connector {
   /**
    * @param {string} namespace
    * @param {string} name
-   * @returns {Promise<Remote>}
+   * @returns {Promise<toa.extensions.exposition.Remote>}
    */
   async #connect (namespace, name) {
     const remote = await this.#remote(namespace, name)

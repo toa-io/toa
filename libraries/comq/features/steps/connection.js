@@ -21,9 +21,11 @@ When('I attempt to connect to the broker for {number} second(s)',
    * @this {comq.features.Context}
    */
   async function (interval) {
-    const wait = async () => await timeout(interval * 1000)
+    const gap = timeout(interval * 1000)
 
-    await Promise.any([connect(this), wait()])
+    this.connecting = connect(this)
+
+    await Promise.any([this.connecting, gap])
   })
 
 When('I attempt to connect to the broker',

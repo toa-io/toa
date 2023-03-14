@@ -13,11 +13,11 @@ class Composition extends Connector {
     if (tenants.length > 0) this.depends(tenants)
   }
 
-  async connection () {
+  async open () {
     console.info('Composition complete')
   }
 
-  async disconnected () {
+  async dispose () {
     console.info('Composition shutdown complete')
   }
 }

@@ -1,4 +1,5 @@
 import { connect } from './connection'
 
-export type { IO } from './io'
+export type { IO, consumer, producer } from './io'
+
 export const connect: connect

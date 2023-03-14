@@ -16,7 +16,7 @@ beforeEach(async () => {
   emission = new Emission(fixtures.events)
   event = clone(fixtures.event)
 
-  await emission.connection()
+  await emission.open()
 })
 
 it('should depend on events', () => {

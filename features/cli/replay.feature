@@ -53,7 +53,8 @@ Feature: Replay samples
       """
 
   Scenario: Replay message sample
-    Given I have a component `external.consumer`
+    Given I have a PostgreSQL database developer
+    And I have a component `external.consumer`
     When I run `toa replay ./components/external.consumer`
     Then program should exit with code 0
     Then stdout should contain lines:

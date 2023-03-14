@@ -20,7 +20,7 @@ class Reflection extends Connector {
     this.#source = source
   }
 
-  async connection () {
+  async open () {
     this.value = await this.#source()
   }
 }

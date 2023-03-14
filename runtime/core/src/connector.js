@@ -3,7 +3,6 @@
 const { console } = require('@toa.io/console')
 const { newid } = require('@toa.io/generic')
 
-// noinspection JSClosureCompilerSyntax
 /**
  * Abstract connections hierarchy
  * @implements {toa.core.Connector}
@@ -11,10 +10,13 @@ const { newid } = require('@toa.io/generic')
 class Connector {
   /** @type {Array<Connector>} */
   #dependencies = []
+
   /** @type {Array<Connector>} */
   #links = []
+
   /** @type {Promise} */
   #connecting
+
   /** @type {Promise} */
   #disconnecting
 
@@ -88,7 +90,7 @@ class Connector {
 
     this.#connecting = (async () => {
       await Promise.all(this.#dependencies.map((connector) => connector.connect()))
-      await this.connection()
+      await this.open()
     })()
 
     try {
@@ -133,13 +135,13 @@ class Connector {
         if (delay > DELAY) console.warn(`Connector ${this.id} still disconnecting (${delay})`)
       }, DELAY)
 
-      if (interrupt !== true) await this.disconnection()
+      if (interrupt !== true) await this.close()
 
       clearInterval(interval)
 
       await Promise.all(this.#dependencies.map(connector => connector.disconnect()))
 
-      this.disconnected()
+      await this.dispose()
     })()
 
     await this.#disconnecting
@@ -162,24 +164,18 @@ class Connector {
 
   /**
    * Called on connection
-   *
-   * @returns {Promise<void>}
    */
-  async connection () {}
+  async open () {}
 
   /**
    * Called on disconnection
-   *
-   * @returns {Promise<void>}
    */
-  async disconnection () {}
+  async close () {}
 
   /**
    * Called after self and dependants disconnection is complete
-   *
-   * @returns {void}
    */
-  disconnected () {}
+  async dispose () {}
 }
 
 const DELAY = 5000

@@ -24,7 +24,7 @@ class Context extends Connector {
     this.depends(context)
   }
 
-  async connection () {
+  async open () {
     this.aspects = this.#aspects(/** @type {toa.core.extensions.Aspect[]} */ this.#context.aspects)
   }
 

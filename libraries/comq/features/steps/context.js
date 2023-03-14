@@ -12,6 +12,7 @@ class Context extends World {
   static url
 
   io
+  connecting
   reply
   consumed
   published
@@ -37,7 +38,9 @@ class Context extends World {
   }
 
   static async disconnect () {
-    await Context.io?.close()
+    if (Context.io === undefined) return
+
+    await Context.io.close()
 
     Context.io = undefined
   }
