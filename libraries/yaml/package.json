@@ -23,6 +23,6 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/filesystem": "*"
+    "@toa.io/filesystem": "0.3.0"
   }
 }

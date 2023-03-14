@@ -19,8 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/console": "*",
-    "@toa.io/core": "*",
+    "@toa.io/console": "0.3.0",
+    "@toa.io/core": "0.3.0",
     "agentkeepalive": "4.2.1",
     "express": "4.18.1",
     "node-fetch": "2.6.7"

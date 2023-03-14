@@ -23,6 +23,6 @@
   },
   "main": "source/index.js",
   "devDependencies": {
-    "@toa.io/generic": "*"
+    "@toa.io/generic": "0.3.0"
   }
 }

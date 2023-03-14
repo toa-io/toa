@@ -19,14 +19,14 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "@toa.io/runtime": "*"
+    "@toa.io/runtime": "0.3.0"
   },
   "dependencies": {
-    "@toa.io/console": "*",
-    "@toa.io/generic": "*",
-    "@toa.io/kubernetes": "*",
-    "@toa.io/norm": "*",
-    "@toa.io/yaml": "*",
+    "@toa.io/console": "0.3.0",
+    "@toa.io/generic": "0.3.0",
+    "@toa.io/kubernetes": "0.3.0",
+    "@toa.io/norm": "0.3.0",
+    "@toa.io/yaml": "0.3.0",
     "find-up": "5.0.0",
     "yargs": "17.6.2"
   },

@@ -19,10 +19,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "*",
-    "@toa.io/generic": "*",
-    "@toa.io/schema": "*",
-    "@toa.io/yaml": "*",
+    "@toa.io/core": "0.3.0",
+    "@toa.io/generic": "0.3.0",
+    "@toa.io/schema": "0.3.0",
+    "@toa.io/yaml": "0.3.0",
     "node-fetch": "2.6.7"
   },
   "devDependencies": {

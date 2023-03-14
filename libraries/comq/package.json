@@ -24,12 +24,12 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "devDependencies": {
-    "@toa.io/command": "*",
-    "@toa.io/mock": "*",
-    "@toa.io/yaml": "*"
+    "@toa.io/command": "0.3.0",
+    "@toa.io/mock": "0.3.0",
+    "@toa.io/yaml": "0.3.0"
   },
   "dependencies": {
-    "@toa.io/generic": "*",
+    "@toa.io/generic": "0.3.0",
     "msgpackr": "1.8.5",
     "amqplib": "0.10.3"
   }

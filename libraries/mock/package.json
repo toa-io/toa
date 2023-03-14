@@ -24,6 +24,6 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/generic": "*"
+    "@toa.io/generic": "0.3.0"
   }
 }
