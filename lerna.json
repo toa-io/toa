@@ -6,7 +6,6 @@
     "version": {
       "conventionalCommits": true,
       "exact": true,
-      "message": "chore(release): %s",
       "ignoreScripts": true
     }
   },
