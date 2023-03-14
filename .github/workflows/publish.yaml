@@ -33,13 +33,13 @@ jobs:
           if [ ${{ github.base_ref }} = main ]; then
             npm version minor --workspaces --include-workspace-root --no-workspaces-update --no-git-tag-version
             git fetch
-            git commit -am "chore: bump version" --no-verify
+            git commit -am "chore: bump minor version" --no-verify
             git checkout dev
             git merge main
             git push --all origin --no-verify
           else
             npm version prerelease --workspaces --include-workspace-root --no-workspaces-update --preid dev --no-git-tag-version
-            git commit -am "chore: bump version" --no-verify
+            git commit -am "chore: bump prerelease version" --no-verify
             git push --no-verify
           fi
 
