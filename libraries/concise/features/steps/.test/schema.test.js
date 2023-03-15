@@ -3,11 +3,11 @@
 const { AssertionError } = require('node:assert')
 const { dump } = require('@toa.io/yaml')
 
-const { gherkin } = require('@toa.io/mock')
+const tomato = require('@toa.io/tomato')
 const { mock: schema } = require('./schema.fixtures')
-const mock = { gherkin, schema }
+const mock = { tomato, schema }
 
-jest.mock('@cucumber/cucumber', () => mock.gherkin)
+jest.mock('@cucumber/cucumber', () => mock.tomato)
 jest.mock('../../../source/expand', () => mock.schema)
 
 const { is } = require('@toa.io/schemas')
@@ -24,7 +24,7 @@ beforeEach(() => {
 })
 
 describe('When I write schema:', () => {
-  const step = gherkin.steps.Wh('I write schema:')
+  const step = tomato.steps.Wh('I write schema:')
 
   it('should be', () => undefined)
 
@@ -40,7 +40,7 @@ describe('When I write schema:', () => {
 })
 
 describe('Then it is equivalent to:', () => {
-  const step = gherkin.steps.Th('it is equivalent to:')
+  const step = tomato.steps.Th('it is equivalent to:')
 
   it('should be', () => undefined)
 
