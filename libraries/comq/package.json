@@ -1,6 +1,6 @@
 {
   "name": "comq",
-  "version": "0.4.0-dev.0",
+  "version": "0.4.0-dev.1",
   "description": "ComQ",
   "homepage": "https://toa.io",
   "author": {
@@ -25,8 +25,8 @@
   "types": "types/index.d.ts",
   "devDependencies": {
     "@toa.io/command": "0.4.0-dev.0",
-    "@toa.io/mock": "0.4.0-dev.0",
-    "@toa.io/yaml": "0.4.0-dev.0"
+    "@toa.io/mock": "0.4.0-dev.1",
+    "@toa.io/yaml": "0.4.0-dev.1"
   },
   "dependencies": {
     "@toa.io/generic": "0.4.0-dev.0",
