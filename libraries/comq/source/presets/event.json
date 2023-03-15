@@ -1,7 +1,0 @@
-{
-  "prefetch": 300,
-  "confirms": true,
-  "durable": true,
-  "acknowledgements": true,
-  "persistent": true
-}
