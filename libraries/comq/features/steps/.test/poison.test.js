@@ -1,10 +1,10 @@
 'use strict'
 
 const { AssertionError } = require('node:assert')
-const { gherkin } = require('@toa.io/mock')
-const mock = { gherkin }
+const tomato = require('@toa.io/tomato')
+const mock = { tomato }
 
-jest.mock('@cucumber/cucumber', () => mock.gherkin)
+jest.mock('@cucumber/cucumber', () => mock.tomato)
 
 require('../poison')
 
@@ -16,7 +16,7 @@ beforeEach(() => {
 })
 
 describe('Then the message is discarded', () => {
-  const step = gherkin.steps.Th('the message is discarded')
+  const step = tomato.steps.Th('the message is discarded')
 
   it('should be', async () => undefined)
 

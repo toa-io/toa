@@ -4,11 +4,11 @@ const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
 const { promex } = require('@toa.io/generic')
 const { dump } = require('@toa.io/yaml')
-const { gherkin } = require('@toa.io/mock')
+const tomato = require('@toa.io/tomato')
 const { io } = require('./io.mock')
-const mock = { gherkin }
+const mock = { tomato }
 
-jest.mock('@cucumber/cucumber', () => mock.gherkin)
+jest.mock('@cucumber/cucumber', () => mock.tomato)
 
 require('../rpc')
 
@@ -24,7 +24,7 @@ beforeEach(() => {
 })
 
 describe('Given function replying {token} queue:', () => {
-  const step = gherkin.steps.Gi('function replying {token} queue:')
+  const step = tomato.steps.Gi('function replying {token} queue:')
 
   it('should be', () => undefined)
 
@@ -43,13 +43,13 @@ describe('Given function replying {token} queue:', () => {
 })
 
 describe('Given function replying {token} queue is expected:', () => {
-  gherkin.steps.Gi('function replying {token} queue is expected:')
+  tomato.steps.Gi('function replying {token} queue is expected:')
 
   it('should be', () => undefined)
 })
 
 describe('When the consumer sends the following request to the {token} queue:', () => {
-  const step = gherkin.steps.Wh('the consumer sends the following request to the {token} queue:')
+  const step = tomato.steps.Wh('the consumer sends the following request to the {token} queue:')
 
   it('should be', async () => undefined)
 
@@ -90,7 +90,7 @@ describe('When the consumer sends the following request to the {token} queue:', 
 })
 
 describe('When the consumer sends a request to the {token} queue', () => {
-  const step = gherkin.steps.Wh('the consumer sends a request to the {token} queue')
+  const step = tomato.steps.Wh('the consumer sends a request to the {token} queue')
 
   it('should be', async () => undefined)
 
@@ -102,7 +102,7 @@ describe('When the consumer sends a request to the {token} queue', () => {
 })
 
 describe('Then the consumer receives the reply:', () => {
-  const step = gherkin.steps.Th('the consumer receives the reply:')
+  const step = tomato.steps.Th('the consumer receives the reply:')
 
   it('should be', async () => undefined)
 
@@ -141,7 +141,7 @@ describe('Then the consumer receives the reply:', () => {
 })
 
 describe('Then the consumer does not receive the reply', () => {
-  const step = gherkin.steps.Th('the consumer does not receive the reply')
+  const step = tomato.steps.Th('the consumer does not receive the reply')
 
   it('should be', async () => undefined)
 

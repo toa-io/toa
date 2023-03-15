@@ -3,11 +3,11 @@
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
 const { random, quantity } = require('@toa.io/generic')
-const { gherkin } = require('@toa.io/mock')
+const tomato = require('@toa.io/tomato')
 const { io } = require('./io.mock')
-const mock = { gherkin }
+const mock = { tomato }
 
-jest.mock('@cucumber/cucumber', () => mock.gherkin)
+jest.mock('@cucumber/cucumber', () => mock.tomato)
 
 require('../backpressure')
 
@@ -15,7 +15,7 @@ require('../backpressure')
 let context
 
 describe('When I\'m sending {quantity}B requests to the {token} queue at {quantity}Hz for {number} second(s)', () => {
-  const step = gherkin.steps.Wh('I\'m sending {quantity}B requests to the {token} queue at {quantity}Hz for {number} second(s)')
+  const step = tomato.steps.Wh('I\'m sending {quantity}B requests to the {token} queue at {quantity}Hz for {number} second(s)')
 
   it('should be', async () => undefined)
 
@@ -59,7 +59,7 @@ describe('When I\'m sending {quantity}B requests to the {token} queue at {quanti
 })
 
 describe('Then back pressure was applied', () => {
-  const step = gherkin.steps.Th('back pressure was applied')
+  const step = tomato.steps.Th('back pressure was applied')
 
   beforeEach(() => {
     context = /** @type {comq.features.Context} */ { io }
