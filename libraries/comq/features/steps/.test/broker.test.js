@@ -1,11 +1,11 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { gherkin } = require('@toa.io/mock')
+const tomato = require('@toa.io/tomato')
 const { command } = require('./command.mock')
-const mock = { gherkin, command }
+const mock = { tomato, command }
 
-jest.mock('@cucumber/cucumber', () => mock.gherkin)
+jest.mock('@cucumber/cucumber', () => mock.tomato)
 jest.mock('@toa.io/command', () => mock.command)
 
 jest.setTimeout(10000)
@@ -19,7 +19,7 @@ beforeEach(() => {
 })
 
 describe('the broker is/has {status}', () => {
-  const step = gherkin.steps.Gi('the broker is/has {status}')
+  const step = tomato.steps.Gi('the broker is/has {status}')
 
   it('should be', async () => undefined)
 

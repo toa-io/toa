@@ -19,8 +19,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "devDependencies": {
-    "@toa.io/mock": "0.4.0-dev.0",
-    "@types/amqplib": "0.8.2"
+    "@toa.io/mock": "0.4.0-dev.0"
   },
   "dependencies": {
     "@toa.io/console": "0.4.0-dev.0",

@@ -3,12 +3,12 @@
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
 const { random, promex } = require('@toa.io/generic')
-const { gherkin } = require('@toa.io/mock')
+const tomato = require('@toa.io/tomato')
 const { comq } = require('./comq.mock')
 const world = require('./context.mock')
-const mock = { gherkin, comq }
+const mock = { tomato, comq }
 
-jest.mock('@cucumber/cucumber', () => mock.gherkin)
+jest.mock('@cucumber/cucumber', () => mock.tomato)
 jest.mock('comq', () => mock.comq)
 
 require('../connection')
@@ -23,7 +23,7 @@ beforeEach(() => {
 })
 
 describe('Given an active connection to the broker', () => {
-  const step = gherkin.steps.Gi('an active connection to the broker')
+  const step = tomato.steps.Gi('an active connection to the broker')
 
   it('should be', async () => undefined)
 
@@ -37,7 +37,7 @@ describe('Given an active connection to the broker', () => {
 })
 
 describe('When I attempt to connect to the broker for {number} second(s)', () => {
-  const step = gherkin.steps.Wh('I attempt to connect to the broker for {number} second(s)')
+  const step = tomato.steps.Wh('I attempt to connect to the broker for {number} second(s)')
 
   it('should be', async () => undefined)
 
@@ -89,7 +89,7 @@ describe('When I attempt to connect to the broker for {number} second(s)', () =>
 })
 
 describe('When I attempt to connect to the broker', () => {
-  const step = gherkin.steps.Wh('I attempt to connect to the broker')
+  const step = tomato.steps.Wh('I attempt to connect to the broker')
 
   it('should be', async () => undefined)
 
@@ -111,7 +111,7 @@ describe('When I attempt to connect to the broker', () => {
 })
 
 describe('When I attempt to connect to the broker as {string} with password {string}', () => {
-  const step = gherkin.steps.Wh('I attempt to connect to the broker as {string} with password {string}')
+  const step = tomato.steps.Wh('I attempt to connect to the broker as {string} with password {string}')
 
   it('should be', async () => undefined)
 
@@ -126,7 +126,7 @@ describe('When I attempt to connect to the broker as {string} with password {str
 })
 
 describe.each([['', true], [' not', false]])('Then the connection is%s established', (not, defined) => {
-  const step = gherkin.steps.Th(`the connection is${not} established`)
+  const step = tomato.steps.Th(`the connection is${not} established`)
 
   it('should be', async () => undefined)
 
@@ -144,7 +144,7 @@ describe.each([['', true], [' not', false]])('Then the connection is%s establish
 })
 
 describe('Then no exceptions are thrown', () => {
-  const step = gherkin.steps.Th('no exceptions are thrown')
+  const step = tomato.steps.Th('no exceptions are thrown')
 
   it('should be', async () => undefined)
 
@@ -160,7 +160,7 @@ describe('Then no exceptions are thrown', () => {
 })
 
 describe('Then an exception is thrown: {string}', () => {
-  const step = gherkin.steps.Th('an exception is thrown: {string}')
+  const step = tomato.steps.Th('an exception is thrown: {string}')
 
   const message = generate()
 

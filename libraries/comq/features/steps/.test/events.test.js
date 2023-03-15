@@ -3,11 +3,11 @@
 const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
 const { promex } = require('@toa.io/generic')
-const { gherkin } = require('@toa.io/mock')
+const tomato = require('@toa.io/tomato')
 const { io } = require('./io.mock')
-const mock = { gherkin }
+const mock = { tomato }
 
-jest.mock('@cucumber/cucumber', () => mock.gherkin)
+jest.mock('@cucumber/cucumber', () => mock.tomato)
 
 require('../events')
 
@@ -21,7 +21,7 @@ beforeEach(() => {
 })
 
 describe('Given (that ){token} is consuming events from the {token} exchange', () => {
-  const step = gherkin.steps.Gi('(that ){token} is consuming events from the {token} exchange')
+  const step = tomato.steps.Gi('(that ){token} is consuming events from the {token} exchange')
 
   it('should be', async () => undefined)
 
@@ -52,13 +52,13 @@ describe('Given (that ){token} is consuming events from the {token} exchange', (
 })
 
 describe('Given {token} consuming events from the {token} exchange is expected', () => {
-  const step = gherkin.steps.Gi('{token} consuming events from the {token} exchange is expected')
+  const step = tomato.steps.Gi('{token} consuming events from the {token} exchange is expected')
 
   it('should be', async () => undefined)
 })
 
 describe('When I emit an event to the {token} exchange', () => {
-  const step = gherkin.steps.Wh('I emit an event to the {token} exchange')
+  const step = tomato.steps.Wh('I emit an event to the {token} exchange')
 
   it('should be', async () => undefined)
 
@@ -98,7 +98,7 @@ describe('When I emit an event to the {token} exchange', () => {
 })
 
 describe('Then {token} receives the event', () => {
-  const step = gherkin.steps.Th('{token} receives the event')
+  const step = tomato.steps.Th('{token} receives the event')
 
   const payload = generate()
   const group = generate()
