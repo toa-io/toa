@@ -234,6 +234,46 @@ it('should call initializers sequentially', async () => {
   expect(instance.log).toStrictEqual([1, 2])
 })
 
+it('should override argument values', async () => {
+  const method = /** @type {Function} */ jest.fn()
+
+  class Test {
+    do = lazy(this, this.#update, method)
+
+    #update (foo, bar) {
+      return [foo + ' updated', bar + ' updated']
+    }
+  }
+
+  const test = new Test()
+  const foo = generate()
+  const bar = generate()
+
+  await test.do(foo, bar)
+
+  expect(method).toHaveBeenCalledWith(foo + ' updated', bar + ' updated')
+})
+
+it('should partially override argument values', async () => {
+  const method = /** @type {Function} */ jest.fn()
+
+  class Test {
+    do = lazy(this, this.#update, method)
+
+    #update (foo, bar) {
+      return [foo + ' updated']
+    }
+  }
+
+  const test = new Test()
+  const foo = generate()
+  const bar = generate()
+
+  await test.do(foo, bar)
+
+  expect(method).toHaveBeenCalledWith(foo + ' updated', bar)
+})
+
 describe('reset', () => {
   it('should be', async () => {
     expect(lazy.reset).toBeDefined()

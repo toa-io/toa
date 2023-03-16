@@ -6,7 +6,9 @@ const lazy = (context, initializers, method) => {
   if (!Array.isArray(initializers)) initializers = [initializers]
 
   return async function (...args) {
-    await call(context, initializers, args)
+    const override = await call(context, initializers, args)
+
+    if (override !== undefined) args.splice(0, override.length, ...override)
 
     return method.apply(this, args)
   }
@@ -16,10 +18,18 @@ const lazy = (context, initializers, method) => {
  * @param {object} context
  * @param {Function[]} initializers
  * @param {any[]} args
- * @returns {Promise<void>}
+ * @returns {Promise<any[]>}
  */
 const call = async (context, initializers, args) => {
-  for (const init of initializers) await resolve(context, init, args)
+  let override
+
+  for (const init of initializers) {
+    const result = await resolve(context, init, args)
+
+    if (result !== undefined) override = result
+  }
+
+  return override
 }
 
 /**
