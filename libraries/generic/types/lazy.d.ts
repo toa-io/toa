@@ -7,7 +7,7 @@ declare namespace toa.generic {
   ) => T
 
   type Lazy = lazy & {
-    reset: (context: object) => void
+    reset: (context: Object) => void
   }
 
 }

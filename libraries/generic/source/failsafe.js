@@ -8,6 +8,8 @@ const failsafe = (context, recover, method = undefined) => {
   }
 
   return async function call (...args) {
+    if (context[DISABLED] === true) return await method.apply(context, args)
+
     try {
       return await method.apply(context, args)
     } catch (exception) {
@@ -17,4 +19,11 @@ const failsafe = (context, recover, method = undefined) => {
     }
   }
 }
-exports.failsafe = failsafe
+
+failsafe.disable = (context) => {
+  context[DISABLED] = true
+}
+
+const DISABLED = Symbol('disabled')
+
+exports.failsafe = /** @type {toa.generic.Failsafe} */ failsafe
