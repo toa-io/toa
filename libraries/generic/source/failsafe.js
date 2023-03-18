@@ -2,13 +2,14 @@
 
 /** @type {toa.generic.failsafe} */
 const failsafe = (context, recover, method = undefined) => {
+  // two arguments passed
   if (method === undefined) {
     method = recover
     recover = undefined
   }
 
   return async function call (...args) {
-    if (context[DISABLED] === true) return await method.apply(context, args)
+    if (call[DISABLED] === true) return await method.apply(context, args)
 
     try {
       return await method.apply(context, args)
@@ -20,8 +21,8 @@ const failsafe = (context, recover, method = undefined) => {
   }
 }
 
-failsafe.disable = (context) => {
-  context[DISABLED] = true
+failsafe.disable = (...methods) => {
+  for (const method of methods) method[DISABLED] = true
 }
 
 const DISABLED = Symbol('disabled')

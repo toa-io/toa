@@ -123,10 +123,11 @@ describe('disable', () => {
   it('should throw exception', async () => {
     const exception = generate()
 
-    failsafe.disable(instance)
+    failsafe.disable(instance.doWithRecovery, instance.doWithoutRecovery)
 
-    fn.mockImplementationOnce(async () => { throw exception })
+    fn.mockImplementation(async () => { throw exception })
 
     await expect(instance.doWithRecovery()).rejects.toStrictEqual(exception)
+    await expect(instance.doWithoutRecovery()).rejects.toStrictEqual(exception)
   })
 })
