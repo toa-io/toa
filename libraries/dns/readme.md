@@ -2,9 +2,9 @@
 
 ## Deduplication
 
-`async dedupe(...addresses: string[]): string[]`
+`async dedupe(...urls: string[]): string[]`
 
-Resolves DNS names to IP addresses and returns an array of unique URLs.
+Resolves DNS names to IP addresses and returns an array of unique URLs. `urls` must be valid urls.
 
 ### Example
 
