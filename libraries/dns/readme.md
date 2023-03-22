@@ -22,7 +22,7 @@ const urls = await dedupe(inputs)
 console.log(urls)
 
 //   [
-//     'amqp://20.207.73.82:5672/?test=true',
+//     'amqp://20.207.73.82/?test=true',
 //     'amqp://20.207.73.82:5672'
 //   ]
 ```
