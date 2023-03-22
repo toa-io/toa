@@ -6,8 +6,7 @@ for [cucumber.js](https://github.com/cucumber/cucumber-js).
 > ![Important](https://img.shields.io/badge/Important-red)<br/>
 > Please note that this was originally created for internal use within
 > the [Toa project](https://github.com/toa-io/toa), and as such may not fully meet your specific
-> needs
-> or requirements.
+> needs or requirements.
 
 ## Usage with Jest
 
