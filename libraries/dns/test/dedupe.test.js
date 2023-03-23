@@ -2,8 +2,6 @@
 
 const { each } = require('@toa.io/generic')
 
-const dns = require('node:dns/promises')
-
 const { dedupe } = require('../')
 
 it('should be', async () => {
@@ -23,7 +21,6 @@ it('should resolve hosts', async () => {
      * @param {number} i
      */
     async (reference, i) => {
-
       const original = new URL(input[i])
       const result = new URL(reference)
 
