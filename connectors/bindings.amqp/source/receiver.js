@@ -1,7 +1,6 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { name } = require('./queues')
 
 class Receiver extends Connector {
   /** @type {string} */
@@ -18,15 +17,14 @@ class Receiver extends Connector {
 
   /**
    * @param {toa.amqp.Communication} comm
-   * @param {toa.core.Locator} locator
-   * @param {string} label
+   * @param {string} exchange
    * @param {string} group
    * @param {toa.core.Receiver} receiver
    */
-  constructor (comm, locator, label, group, receiver) {
+  constructor (comm, exchange, group, receiver) {
     super()
 
-    this.#exchange = name(locator, label)
+    this.#exchange = exchange
     this.#group = group
     this.#comm = comm
     this.#receiver = receiver

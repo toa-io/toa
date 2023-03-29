@@ -28,16 +28,28 @@ class Factory {
     return new Consumer(comm, locator, endpoint)
   }
 
+  /**
+   * @param {toa.core.Locator} locator
+   * @param {string} label
+   * @return {Emitter}
+   */
   emitter (locator, label) {
     const comm = this.#getCommunication(locator)
 
     return new Emitter(comm, locator, label)
   }
 
-  receiver (locator, label, group, receiver) {
-    const comm = this.#getCommunication(locator)
+  /**
+   * @param {toa.core.Locator} source
+   * @param {string} label
+   * @param {string} group
+   * @param {toa.core.Receiver} receiver
+   * @return {Receiver}
+   */
+  receiver (source, label, group, receiver) {
+    const comm = this.#getCommunication(source)
 
-    return new Receiver(comm, locator, label, group, receiver)
+    return new Receiver(comm, label, group, receiver)
   }
 
   broadcast (name, group) {
@@ -49,11 +61,11 @@ class Factory {
 
   /**
    *
-   * @param {toa.core.Locator} locator
+   * @param {toa.core.Locator} source
    * @return {toa.amqp.Communication}
    */
-  #getCommunication (locator) {
-    const pointer = /** @type {toa.pointer.Pointer} */ new Pointer(locator)
+  #getCommunication (source) {
+    const pointer = /** @type {toa.pointer.Pointer} */ new Pointer(source)
 
     return new Communication(pointer)
   }

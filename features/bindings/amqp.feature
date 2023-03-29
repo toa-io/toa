@@ -1,7 +1,7 @@
 Feature: AMQP binding
 
   Scenario: Send a request and receive a reply via AMQP
-    And I compose `echo.responder` component with `@toa.io/bindings.amqp` binding
+    Given I compose `echo.responder` component with `@toa.io/bindings.amqp` binding
     When I call `echo.responder.echo` with:
       """yaml
       input: ok
@@ -11,3 +11,4 @@ Feature: AMQP binding
       output: ok
       """
     And I disconnect
+

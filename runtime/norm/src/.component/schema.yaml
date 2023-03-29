@@ -193,8 +193,6 @@ properties:
 
   receivers:
     type: object
-    propertyNames:
-      $ref: 'definitions#/definitions/endpoint'
     patternProperties:
       '.*':
         type: object
@@ -205,6 +203,8 @@ properties:
             type: string
           binding:
             type: string
+          source:
+            $ref: 'definitions#/definitions/token'
           path:
             type: string
           conditioned:

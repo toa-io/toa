@@ -66,6 +66,7 @@ beforeEach(() => {
 const locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
 const endpoints = [generate(), generate()]
 const endpoint = generate()
+const label = locator.id + '.' + endpoint
 const name = generate()
 const group = generate()
 const component = /** @type {toa.core.Component} */ {}
@@ -171,12 +172,12 @@ describe('Emitter', () => {
 
 describe('Receiver', () => {
   beforeEach(() => {
-    receiver = factory.receiver(locator, endpoint, group, processor)
+    receiver = factory.receiver(locator, label, group, processor)
     comm = Communication.mock.instances[0]
   })
 
   it('should create instance', async () => {
-    expect(Receiver).toHaveBeenCalledWith(comm, locator, endpoint, group, processor)
+    expect(Receiver).toHaveBeenCalledWith(comm, label, group, processor)
     expect(receiver).toStrictEqual(Receiver.mock.instances[0])
   })
 })
