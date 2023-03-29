@@ -1,7 +1,6 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
-const { newid } = require('@toa.io/generic')
 
 const { name } = require('./queues')
 
@@ -28,7 +27,7 @@ class Broadcast extends Connector {
 
     this.#comm = comm
     this.#locator = locator
-    this.#group = group ?? newid()
+    this.#group = group
 
     this.depends(comm)
   }

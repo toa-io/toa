@@ -67,7 +67,7 @@ it('should receive', async () => {
   expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
 })
 
-it('should create unique group if not provided', async () => {
+it('should consume exclusively if group is not provided', async () => {
   jest.clearAllMocks()
 
   broadcast = new Broadcast(comm, locator)
@@ -79,5 +79,5 @@ it('should create unique group if not provided', async () => {
 
   const group = comm.consume.mock.calls[0][1]
 
-  expect(group).toBeDefined()
+  expect(group).toBeUndefined()
 })
