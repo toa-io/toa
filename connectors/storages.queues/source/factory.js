@@ -1,6 +1,7 @@
 'use strict'
 
 const { connector } = require('@toa.io/generics.amqp')
+const { normalize } = require('./properties')
 const { Storage } = require('./storage')
 
 /**
@@ -10,7 +11,9 @@ class Factory {
   storage (locator, properties) {
     const comm = connector(PREFIX, locator)
 
-    return new Storage(comm, /** @type {toa.queues.Properties} */ properties)
+    properties = normalize(properties)
+
+    return new Storage(comm, properties)
   }
 }
 

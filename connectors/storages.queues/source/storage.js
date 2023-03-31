@@ -25,8 +25,9 @@ class Storage extends Connector {
     this.depends(comm)
   }
 
-  async store (record) {
-    await this.#comm.emit(this.#exchange, record)
+  async store (payload) {
+    const message = { payload }
+    await this.#comm.emit(this.#exchange, message)
 
     return true
   }

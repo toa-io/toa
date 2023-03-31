@@ -62,4 +62,13 @@ describe('storage', () => {
     expect(Storage).toHaveBeenCalledWith(comm, properties)
     expect(storage).toStrictEqual(Storage.mock.instances[0])
   })
+
+  it('should normalize properties', async () => {
+    jest.clearAllMocks()
+
+    properties = generate()
+    storage = factory.storage(locator, properties)
+
+    expect(Storage).toHaveBeenCalledWith(expect.anything(), { exchange: properties })
+  })
 })

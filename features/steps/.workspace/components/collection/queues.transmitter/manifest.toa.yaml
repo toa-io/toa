@@ -1,4 +1,4 @@
-name: one
+name: transmitter
 namespace: queues
 
 entity:
@@ -16,4 +16,4 @@ operations:
       foo: .
       bar: .
 
-queues: queues.one.output
+queues: queues.transmitter.output

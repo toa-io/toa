@@ -37,9 +37,10 @@ describe('store', () => {
   it('should publish a message', async () => {
     /** @type {toa.core.storages.Record} */
     const record = { id: generate(), _version: 0 }
+    const message = { payload: record }
 
     await storage.store(record)
 
-    expect(comm.emit).toHaveBeenCalledWith(properties.exchange, record)
+    expect(comm.emit).toHaveBeenCalledWith(properties.exchange, expect.objectContaining(message))
   })
 })
