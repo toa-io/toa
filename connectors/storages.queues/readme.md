@@ -2,7 +2,7 @@
 
 Stores entities as published messages.
 
-> Only RabbitMQ broker is currently supported.
+> At this time, only the RabbitMQ broker is supported.
 
 ## Properties
 
@@ -44,7 +44,7 @@ Broker addresses must be declared using [Pointer](/libraries/pointer) annotation
 # context.toa.yaml
 annotations:
   "@toa.io/storages.queues":
-    dummies.dummy: amqps://host1
+    dummies.dummy: amqps://host0
 ```
 
 Well-known shortcut `queues` is available and
@@ -52,5 +52,5 @@ the [connection sharding](https://github.com/toa-io/comq#sharded-connection) is 
 
 ```yaml
 # context.toa.yaml
-queues: amqps://host{1-3}
+queues: amqps://host{0-2}
 ```

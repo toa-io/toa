@@ -1,10 +1,11 @@
 {
-  "name": "@toa.io/bindings.amqp",
+  "name": "@toa.io/generics.amqp",
   "version": "0.4.0-dev.5",
-  "description": "Toa AMQP Binding",
+  "description": "Toa Generic AMQP Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "source/index.js",
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -18,15 +19,9 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "devDependencies": {
-    "@toa.io/mock": "0.4.0-dev.5"
-  },
   "dependencies": {
-    "@toa.io/console": "0.4.0-dev.5",
     "@toa.io/core": "0.4.0-dev.5",
-    "@toa.io/generic": "0.4.0-dev.5",
-    "@toa.io/generics.amqp": "0.4.0-dev.5",
-    "@toa.io/pointer": "0.4.0-dev.5"
-  },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+    "@toa.io/pointer": "0.4.0-dev.5",
+    "comq": "0.5.2"
+  }
 }
