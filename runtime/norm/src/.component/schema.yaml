@@ -219,4 +219,7 @@ properties:
   extensions:
     type: object
 
+  properties:
+    type: object
+
 additionalProperties: false

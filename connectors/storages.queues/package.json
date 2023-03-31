@@ -17,5 +17,9 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@toa.io/core": "0.4.0-dev.5",
+    "@toa.io/generics.amqp": "0.4.0-dev.5"
   }
 }
