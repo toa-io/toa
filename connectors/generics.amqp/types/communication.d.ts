@@ -14,3 +14,5 @@ declare namespace toa.amqp {
   }
 
 }
+
+export type Communication = toa.amqp.Communication

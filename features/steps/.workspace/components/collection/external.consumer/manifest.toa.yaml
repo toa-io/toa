@@ -16,6 +16,7 @@ operations:
     query: false
 
 receivers:
-  external.something.happened:
+  something_happened:
     binding: amqp
+    source: external
     transition: transit

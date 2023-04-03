@@ -19,9 +19,8 @@ it('should be', async () => {
 /** @type {jest.MockedObject<toa.amqp.Communication>} */
 const comm = mock.communication()
 
-const locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
+const exchange = generate()
 const group = generate()
-const label = generate()
 
 const processor = /** @type {jest.MockedObject<toa.core.Receiver>} */ {
   connect: jest.fn(async () => undefined),
@@ -35,7 +34,7 @@ let receiver
 beforeEach(() => {
   jest.clearAllMocks()
 
-  receiver = new Receiver(comm, locator, label, group, processor)
+  receiver = new Receiver(comm, exchange, group, processor)
 })
 
 it('should be instance of Connector', async () => {
@@ -48,10 +47,6 @@ it('should depend on communication', async () => {
 
 it('should consume events', async () => {
   await receiver.open()
-
-  expect(mock.queues.name).toHaveBeenCalledWith(locator, label)
-
-  const exchange = mock.queues.name.mock.results[0].value
 
   expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
 

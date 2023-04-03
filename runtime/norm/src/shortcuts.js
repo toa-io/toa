@@ -16,15 +16,16 @@ const resolve = (token) => {
 /**
  * Finds object keys with known shortcuts, resolves and groups them to a given group key if provided
  *
+ * @param {Object} shortcuts
  * @param {Object} object
  * @param {string} [group]
  */
-const recognize = (object, group) => {
+const recognize = (shortcuts, object, group) => {
   if (object === undefined) return
 
   const target = group === undefined ? object : {}
 
-  for (const [alias, name] of Object.entries(SHORTCUTS)) {
+  for (const [alias, name] of Object.entries(shortcuts)) {
     const value = object[alias]
 
     if (value === undefined) continue
@@ -43,10 +44,11 @@ const SHORTCUTS = {
   node: '@toa.io/bridges.node',
   mongodb: '@toa.io/storages.mongodb',
   sql: '@toa.io/storages.sql',
+  queues: '@toa.io/storages.queues',
   exposition: '@toa.io/extensions.exposition',
-  origins: '@toa.io/extensions.origins',
   configuration: '@toa.io/extensions.configuration'
 }
 
 exports.recognize = recognize
 exports.resolve = resolve
+exports.SHORTCUTS = SHORTCUTS

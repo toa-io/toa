@@ -25,8 +25,8 @@
     "@toa.io/console": "0.4.0-dev.5",
     "@toa.io/core": "0.4.0-dev.5",
     "@toa.io/generic": "0.4.0-dev.5",
-    "@toa.io/pointer": "0.4.0-dev.5",
-    "comq": "0.5.0"
+    "@toa.io/generics.amqp": "0.4.0-dev.5",
+    "@toa.io/pointer": "0.4.0-dev.5"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }

@@ -19,7 +19,7 @@ class Emitter extends Connector {
   }
 
   async emit (message) {
-    return binding.emit(this.#label, message)
+    await binding.emit(this.#label, message)
   }
 }
 

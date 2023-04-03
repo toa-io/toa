@@ -2,6 +2,6 @@
 
 const { factory } = require('./factory')
 
-const receive = (binding, locator, endpoint, id, receiver) => factory(binding).receiver(locator, endpoint, id, receiver)
+const receive = (binding, source, label, group, receiver) => factory(binding).receiver(source, label, group, receiver)
 
 exports.receive = receive

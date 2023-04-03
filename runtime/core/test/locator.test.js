@@ -79,3 +79,35 @@ describe('global', () => {
     expect(locator.hostname()).toStrictEqual(name.toLowerCase())
   })
 })
+
+describe('parse', () => {
+  it('should be', async () => {
+    expect(Locator.parse).toBeInstanceOf(Function)
+  })
+
+  const namespace = generate()
+  const name = generate()
+  const id = `${namespace}.${name}`
+
+  it('should parse id', async () => {
+    const locator = Locator.parse(id)
+
+    expect(locator.namespace).toStrictEqual(namespace)
+    expect(locator.name).toStrictEqual(name)
+  })
+
+  it('should parse endpoint', async () => {
+    const endpoint = `${id}.${generate()}`
+    const locator = Locator.parse(endpoint)
+
+    expect(locator.namespace).toStrictEqual(namespace)
+    expect(locator.name).toStrictEqual(name)
+  })
+
+  it('should parse token as global', async () => {
+    const locator = Locator.parse(name)
+
+    expect(locator.namespace).toBeUndefined()
+    expect(locator.name).toStrictEqual(name)
+  })
+})

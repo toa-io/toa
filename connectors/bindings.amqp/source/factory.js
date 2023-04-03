@@ -1,16 +1,15 @@
 'use strict'
 
 const { Locator } = require('@toa.io/core')
+const { connector } = require('@toa.io/generics.amqp')
 
-const { Pointer } = require('./pointer')
-const { Communication } = require('./communication')
 const { Producer } = require('./producer')
 const { Consumer } = require('./consumer')
 const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
 const { Broadcast } = require('./broadcast')
 
-const { SYSTEM } = require('./constants')
+const { SYSTEM, PREFIX } = require('./constants')
 
 /**
  * @implements {toa.core.bindings.Factory}
@@ -28,16 +27,28 @@ class Factory {
     return new Consumer(comm, locator, endpoint)
   }
 
+  /**
+   * @param {toa.core.Locator} locator
+   * @param {string} label
+   * @return {Emitter}
+   */
   emitter (locator, label) {
     const comm = this.#getCommunication(locator)
 
     return new Emitter(comm, locator, label)
   }
 
-  receiver (locator, label, group, receiver) {
-    const comm = this.#getCommunication(locator)
+  /**
+   * @param {toa.core.Locator} source
+   * @param {string} label
+   * @param {string} group
+   * @param {toa.core.Receiver} receiver
+   * @return {Receiver}
+   */
+  receiver (source, label, group, receiver) {
+    const comm = this.#getCommunication(source)
 
-    return new Receiver(comm, locator, label, group, receiver)
+    return new Receiver(comm, label, group, receiver)
   }
 
   broadcast (name, group) {
@@ -49,13 +60,11 @@ class Factory {
 
   /**
    *
-   * @param {toa.core.Locator} locator
+   * @param {toa.core.Locator} source
    * @return {toa.amqp.Communication}
    */
-  #getCommunication (locator) {
-    const pointer = /** @type {toa.pointer.Pointer} */ new Pointer(locator)
-
-    return new Communication(pointer)
+  #getCommunication (source) {
+    return connector(PREFIX, source)
   }
 }
 

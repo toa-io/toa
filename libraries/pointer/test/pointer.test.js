@@ -1,13 +1,13 @@
 'use strict'
 
+const { generate } = require('randomstring')
+const { encode, letters: { up } } = require('@toa.io/generic')
+
 const mock = { console: { info: jest.fn(), warn: jest.fn() } }
 
 jest.mock('@toa.io/console', () => mock)
 
-const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { encode, letters: { up } } = require('@toa.io/generic')
-
 const { Pointer } = require('../')
 
 it('should be', () => {

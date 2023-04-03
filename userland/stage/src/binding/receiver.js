@@ -3,7 +3,6 @@
 const { Connector } = require('@toa.io/core')
 
 const { binding } = require('./binding')
-const { label } = require('./label')
 
 /**
  * @implements {toa.core.Connector}
@@ -17,13 +16,13 @@ class Receiver extends Connector {
 
   /**
    * @param {toa.core.Locator} locator
-   * @param {string} endpoint
+   * @param {string} label
    * @param {toa.core.Receiver} receiver
    */
-  constructor (locator, endpoint, receiver) {
+  constructor (label, receiver) {
     super()
 
-    this.#label = label(locator, endpoint)
+    this.#label = label
     this.#receiver = receiver
   }
 

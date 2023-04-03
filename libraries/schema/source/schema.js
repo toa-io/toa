@@ -138,7 +138,7 @@ class Schema {
     traverse(adaptive, (node) => {
       const isMeta = typeof node.type === 'object'
 
-      if (node.properties !== undefined && node[PROPERTY] !== 1 && !isMeta) properties(node.properties)
+      if (node.properties !== undefined && node[PROPERTY] !== 1 && node[PROPERTIES] !== 1 && !isMeta) properties(node.properties)
 
       if (node.required && node[PROPERTIES] !== 1) delete node.required
       if (node.default !== undefined && node[PROPERTIES] !== 1) delete node.default

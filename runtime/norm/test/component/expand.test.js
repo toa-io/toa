@@ -15,3 +15,14 @@ it('should expand', () => {
   expand(source)
   expect(source).toMatchObject(fixtures.target)
 })
+
+it('should recognize storages.queues', async () => {
+  const queues = { foo: 'bar' }
+
+  source.queues = clone(queues)
+
+  expand(source)
+
+  expect(source.queues).toBeUndefined()
+  expect(source.properties['@toa.io/storages.queues']).toMatchObject(queues)
+})
