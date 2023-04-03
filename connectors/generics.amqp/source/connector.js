@@ -9,11 +9,12 @@ const { Communication } = require('./communication')
  * @returns {toa.amqp.Communication}
  */
 const connector = (prefix, locator) => {
-  const pointer = /** @type {toa.pointer.Pointer} */ new Pointer(prefix, locator, OPTIONS)
+  const pointer = new Pointer(prefix, locator, OPTIONS)
 
-  return new Communication(pointer)
+  return new Communication(pointer.reference)
 }
 
+/** @type {toa.pointer.Options} */
 const OPTIONS = { protocol: 'amqp:' }
 
 exports.connector = connector

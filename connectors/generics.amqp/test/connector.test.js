@@ -2,14 +2,10 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
+const { /** @type {jest.MockedClass<Pointer>} */ Pointer } = require('@toa.io/pointer')
 
 jest.mock('../source/communication')
 jest.mock('@toa.io/pointer')
-
-const {
-  /** @type {jest.MockedClass<Pointer>} */
-  Pointer
-} = require('@toa.io/pointer')
 
 const {
   /** @type {jest.MockedClass<Communication>} */
@@ -36,6 +32,8 @@ beforeEach(() => {
   const namespace = generate()
   const name = generate()
 
+  Pointer.mockImplementation(() => ({ reference: generate() }))
+
   locator = new Locator(name, namespace)
   comm = connector(prefix, locator)
 })
@@ -45,8 +43,8 @@ it('should create Pointer', async () => {
 })
 
 it('should return Communication', async () => {
-  const pointer = Pointer.mock.instances[0]
+  const pointer = Pointer.mock.results[0].value
 
-  expect(Communication).toHaveBeenCalledWith(pointer)
+  expect(Communication).toHaveBeenCalledWith(pointer.reference)
   expect(comm).toStrictEqual(Communication.mock.instances[0])
 })
