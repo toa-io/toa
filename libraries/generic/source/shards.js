@@ -8,7 +8,7 @@ const { range } = require('./range')
 const shards = (input) => {
   const match = input.match(RANGE)
 
-  if (match === null) throw new Error('Invalid input format')
+  if (match === null) return [input]
 
   const numbers = range(match.groups.range)
 

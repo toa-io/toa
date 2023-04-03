@@ -20,6 +20,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@toa.io/generic": "0.4.0-dev.6",
     "@toa.io/core": "0.4.0-dev.6",
     "@toa.io/pointer": "0.4.0-dev.6",
     "comq": "0.5.2"
