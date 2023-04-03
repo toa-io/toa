@@ -11,12 +11,13 @@ const range = (input) => {
 function parse (input) {
   input = input.trim()
 
-  const match = input.match(RANGE)
+  const [left, right] = input.split(SEPARATOR)
 
-  if (match === null) throw new Error('Invalid input format')
+  const min = Number(left)
+  const max = right === undefined ? min : Number(right)
 
-  const min = Number(match.groups.min)
-  const max = match.groups.max === undefined ? min : Number(match.groups.max)
+  if (Number.isNaN(min)) throw new Error('Invalid input format')
+
   const result = []
 
   for (let i = min; i <= max; i++) result.push(i)
@@ -24,6 +25,6 @@ function parse (input) {
   return result
 }
 
-const RANGE = /^(?<min>\d+)(?:(?:-|..)(?<max>\d+))?$/
+const SEPARATOR = /-|\.\./
 
 exports.range = range
