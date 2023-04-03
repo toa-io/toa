@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "0.4.0-dev.6",
+  "version": "0.4.0-dev.7",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {
@@ -24,8 +24,8 @@
   "main": "source/index.js",
   "dependencies": {
     "@toa.io/console": "0.4.0-dev.6",
-    "@toa.io/generic": "0.4.0-dev.6",
-    "@toa.io/schema": "0.4.0-dev.6",
-    "@toa.io/yaml": "0.4.0-dev.6"
+    "@toa.io/generic": "0.4.0-dev.7",
+    "@toa.io/schema": "0.4.0-dev.7",
+    "@toa.io/yaml": "0.4.0-dev.7"
   }
 }
