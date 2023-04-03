@@ -21,8 +21,10 @@ it('should expand shards', async () => {
   expect(output).toStrictEqual(expect.arrayContaining(expected))
 })
 
-it('should throw on invalid format', async () => {
+it('should return input in no range specified', async () => {
   const input = 'hello'
+  const output = shards(input)
 
-  expect(() => shards(input)).toThrow('Invalid input format')
+  expect(output.length).toStrictEqual(1)
+  expect(output[0]).toStrictEqual(input)
 })
