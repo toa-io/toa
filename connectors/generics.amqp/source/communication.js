@@ -7,23 +7,23 @@ const { Connector } = require('@toa.io/core')
  * @implements {toa.amqp.Communication}
  */
 class Communication extends Connector {
-  /** @type {string} */
-  #reference
+  /** @type {string[]} */
+  #references
 
   /** @type {comq.IO} */
   #io
 
   /**
-   * @param {string} reference
+   * @param {string[]} references
    */
-  constructor (reference) {
+  constructor (references) {
     super()
 
-    this.#reference = reference
+    this.#references = references
   }
 
   async open () {
-    this.#io = await connect(this.#reference)
+    this.#io = await connect(...this.#references)
   }
 
   async close () {

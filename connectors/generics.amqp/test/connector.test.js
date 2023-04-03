@@ -2,15 +2,20 @@
 
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
-const { /** @type {jest.MockedClass<Pointer>} */ Pointer } = require('@toa.io/pointer')
+const { random } = require('@toa.io/generic')
 
-jest.mock('../source/communication')
-jest.mock('@toa.io/pointer')
+const {
+  /** @type {jest.MockedClass<Pointer>} */
+  Pointer
+} = require('@toa.io/pointer')
 
 const {
   /** @type {jest.MockedClass<Communication>} */
   Communication
 } = require('../source/communication')
+
+jest.mock('../source/communication')
+jest.mock('@toa.io/pointer')
 
 const { connector } = require('../')
 
@@ -42,9 +47,27 @@ it('should create Pointer', async () => {
   expect(Pointer).toHaveBeenCalledWith(prefix, locator, { protocol: 'amqp:' })
 })
 
-it('should return Communication', async () => {
+it('should create Communication', async () => {
   const pointer = Pointer.mock.results[0].value
 
-  expect(Communication).toHaveBeenCalledWith(pointer.reference)
+  expect(Communication).toHaveBeenCalledWith([pointer.reference])
+})
+
+it('should return Communication', async () => {
   expect(comm).toStrictEqual(Communication.mock.instances[0])
+})
+
+it('should parse ranges', async () => {
+  jest.clearAllMocks()
+
+  const base = generate()
+  const shardsCount = random(5) + 1
+
+  Pointer.mockImplementation(() => ({ reference: `{0-${shardsCount - 1}}.${base}` }))
+
+  const expected = Array.from({ length: shardsCount }, (_, i) => `${i}.${base}`)
+
+  comm = connector(prefix, locator)
+
+  expect(Communication).toHaveBeenCalledWith(expected)
 })

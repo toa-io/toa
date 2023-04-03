@@ -12,7 +12,7 @@ it('should be', async () => {
   expect(Communication).toBeDefined()
 })
 
-const reference = generate()
+const references = [generate(), generate()]
 
 /** @type {toa.amqp.Communication} */
 let comm
@@ -20,17 +20,17 @@ let comm
 beforeEach(() => {
   jest.clearAllMocks()
 
-  comm = new Communication(reference)
+  comm = new Communication(references)
 })
 
 it('should be instance of Connector', async () => {
   expect(comm).toBeInstanceOf(Connector)
 })
 
-it('should connect to a given pointer reference', async () => {
+it('should connect with given references', async () => {
   await comm.open()
 
-  expect(mock.comq.connect).toHaveBeenCalledWith(reference)
+  expect(mock.comq.connect).toHaveBeenCalledWith(...references)
 })
 
 describe('connected', () => {
