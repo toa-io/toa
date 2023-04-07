@@ -78,6 +78,17 @@ the context will be found and replayed sequentially.
 </dd>
 </dl>
 
+### export variables
+
+<dl>
+<dt><code>toa export variables [environment]</code></dt>
+<dd>Print variables for given environment.
+
+<code>environment</code> deployment environment name (default <code>local</code>).<br/>
+<code>--path</code> path to context (default <code>.</code>)<br/>
+</dd>
+</dl>
+
 ## Deployment
 
 > Deployment commands use current `kubectl` context.
