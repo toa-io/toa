@@ -7,17 +7,24 @@ const { execute } = require('./.command/execute')
 
 const { When, Then } = require('@cucumber/cucumber')
 
+const COMMAND_TIMEOUT = 3000
+
 When('I run {command}',
   /**
    * @param {string} command
    * @return {Promise<void>}
    */
-  async function (command) {
+  function (command) {
+    this.cwd = process.cwd()
     this.process = execute.call(this, command)
 
-    const grace = timeout(1000)
+    const grace = timeout(COMMAND_TIMEOUT).then(() => new Error(`command "${command}" took a long time (${COMMAND_TIMEOUT} ms.)`))
 
-    await Promise.any([grace, this.process])
+    return Promise.any([grace, this.process]).then((result) => {
+      if (result instanceof Error) {
+        assert.fail(result.message)
+      }
+    })
   })
 
 When('I abort execution', async function () {
