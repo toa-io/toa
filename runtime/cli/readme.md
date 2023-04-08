@@ -89,6 +89,10 @@ the context will be found and replayed sequentially.
 </dd>
 </dl>
 
+> It's recommended to add `.env` to `.gitignore`. Alsa know that credentials to connection will be initially empty. 
+
+> Credentials specified in a `.env` file are preserved during environment selection.
+
 ## Deployment
 
 > Deployment commands use current `kubectl` context.

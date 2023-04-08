@@ -5,7 +5,7 @@ Feature: Export local deployment environment variables
     And stdout should contain lines:
       """
       toa env
-      Select environment
+      Select environment,
         -p, --path
       """
 
@@ -26,3 +26,24 @@ Feature: Export local deployment environment variables
       TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
       """
 
+  Scenario: Should keep secret values when overwriting .env
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        default: amqp://whatever
+        default@some: amqp://developer:secret@some.host
+      """
+    When I run `toa env some`
+    And I update environment value with:
+      """
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
+      """
+    And I run `toa env some`
+    Then I have an environment with:
+      """
+      TOA_ENV=some
+      TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAc29tZS5ob3N0In0=
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
+      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
+      """

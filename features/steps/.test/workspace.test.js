@@ -5,7 +5,7 @@ const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
 const { load } = require('@toa.io/yaml')
 const { directory, file } = require('@toa.io/filesystem')
-const { sample, random } = require('@toa.io/generic')
+const { sample } = require('@toa.io/generic')
 const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
@@ -157,5 +157,44 @@ describe('Then I have an environment with:', () => {
     await file.write(envFile, existingText)
 
     await expect(step.call(context, searchText)).resolves.not.toThrow()
+  })
+})
+
+describe('Then I update environment value with:', () => {
+  const step = gherkin.steps.Th('I update environment value with:')
+
+  let envFile
+
+  beforeEach(() => {
+    envFile = join(context.cwd, '.env')
+  })
+
+  it('should be', async () => undefined)
+
+  it('should fail if .env file does not exists', async () => {
+    await expect(step.call(context, '')).rejects.toThrow('ENOENT')
+  })
+
+  it('should update .env file', async () => {
+    const updatedText = `A=${generate()}`;
+    const existLines = [`A=${generate()}`, `B=${generate()}`]
+    const existingText = existLines.join('\n')
+    await file.write(envFile, existingText)
+
+    await step.call(context, updatedText)
+    const resultedTexts = await file.read(envFile);
+    expect(resultedTexts.includes(updatedText)).toBe(true);
+  })
+
+  it('should remove old value from .env file after update', async () => {
+    const updatedText = `A=${generate()}`;
+    const replacedValue = `A=${generate()}`;
+    const existLines = [replacedValue, `B=${generate()}`]
+    const existingText = existLines.join('\n')
+    await file.write(envFile, existingText)
+
+    await step.call(context, updatedText)
+    const resultedTexts = await file.read(envFile);
+    expect(resultedTexts.includes(replacedValue)).toBe(false);
   })
 })
