@@ -64,6 +64,10 @@ class Operator {
     return output
   }
 
+  variables () {
+    return this.#deployment.variables()
+  }
+
   /**
    * @param type {string}
    * @param [path] {string}
