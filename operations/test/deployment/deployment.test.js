@@ -39,3 +39,23 @@ it('should forbid local deployment environment', () => {
 
   expect(create).toThrow(/name 'local' is not allowed/)
 })
+
+describe('variables', () => {
+  let deployment /** @type {toa.deployment.Deployment} */
+
+  it('should be define', () => {
+    const context = clone(fixtures.context)
+
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+
+    expect(typeof deployment.variables).toBe('function')
+  })
+
+  it('should return variables', () => {
+    const context = clone(fixtures.context)
+    const [{ variables }] = fixtures.dependencies
+
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+    expect(deployment.variables()).toEqual(variables)
+  })
+})

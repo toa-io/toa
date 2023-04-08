@@ -52,6 +52,8 @@ declare namespace toa.deployment {
         install(options: installation.Options): Promise<void>
 
         template(options: template.Options): Promise<string>
+
+        variables(): dependency.Variables
     }
 
 }

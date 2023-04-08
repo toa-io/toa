@@ -75,6 +75,10 @@ class Deployment {
       ['template', this.#declaration.name, ...args, this.#target],
       { silently: true })
   }
+
+  variables () {
+    return this.#contents.variables
+  }
 }
 
 const TEMPLATES = join(__dirname, 'chart/templates')
