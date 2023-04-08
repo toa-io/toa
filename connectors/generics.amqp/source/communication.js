@@ -31,7 +31,7 @@ class Communication extends Connector {
   }
 
   async dispose () {
-    await this.#io.close()
+    if (this.#io !== undefined) await this.#io.close()
   }
 
   async reply (queue, process) {
