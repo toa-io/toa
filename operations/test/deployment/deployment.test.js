@@ -4,6 +4,7 @@ const clone = require('clone-deep')
 
 const fixtures = require('./deployment.fixtures')
 const { Deployment } = require('../../src/deployment/deployment')
+const { secretVariables, bindingVariables } = require('./deployment.fixtures')
 
 /** @type {toa.deployment.Deployment} */
 let deployment
@@ -38,4 +39,50 @@ it('should forbid local deployment environment', () => {
   const create = () => new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
 
   expect(create).toThrow(/name 'local' is not allowed/)
+})
+
+describe('variables', () => {
+  let deployment /** @type {toa.deployment.Deployment} */
+
+  it('should be define', () => {
+    const context = clone(fixtures.context)
+
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+
+    expect(typeof deployment.variables).toBe('function')
+  })
+
+  it('should return variables', () => {
+    const context = clone(fixtures.context)
+    const [{ variables }] = fixtures.dependencies
+
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+    expect(deployment.variables()).toEqual(variables)
+  })
+
+  it('should return variables', () => {
+    const context = clone(fixtures.context)
+    const [{ variables }] = fixtures.dependencies
+
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+    expect(deployment.variables()).toEqual(variables)
+  })
+
+  it('should merge all variables', () => {
+    const context = clone(fixtures.context)
+    deployment = new Deployment(context, fixtures.compositions, [{
+      variables: {
+        global: [fixtures.secretVariables]
+      }
+    }, {
+      variables: {
+        global: [fixtures.bindingVariables]
+      }
+    }], fixtures.process)
+
+    const result = deployment.variables()
+    expect(result.global.length).toBe(2)
+    expect(result.global.find(item => item.name === secretVariables.name)).toBeDefined()
+    expect(result.global.find(item => item.name === bindingVariables.name)).toBeDefined()
+  })
 })

@@ -21,6 +21,8 @@ Feature: Export local deployment environment variables
     Then I have an environment with:
       """
       TOA_ENV=some
-      TOA_BINDINGS_AMQP_POINTER=
+      TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAc29tZS5ob3N0In0=
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=
+      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
       """
 
