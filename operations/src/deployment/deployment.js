@@ -13,10 +13,13 @@ const { merge, declare, describe } = require('./.deployment')
 class Deployment {
   /** @type {toa.deployment.Declaration} */
   #declaration
+
   /** @type {toa.deployment.Contents} */
   #contents
+
   /** @type {toa.operations.Process} */
   #process
+
   /** @type {string} */
   #target
 

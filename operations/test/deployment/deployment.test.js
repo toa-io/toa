@@ -4,7 +4,6 @@ const clone = require('clone-deep')
 
 const fixtures = require('./deployment.fixtures')
 const { Deployment } = require('../../src/deployment/deployment')
-const { secretVariables, bindingVariables } = require('./deployment.fixtures')
 
 /** @type {toa.deployment.Deployment} */
 let deployment
@@ -65,24 +64,25 @@ describe('variables', () => {
     const [{ variables }] = fixtures.dependencies
 
     deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+
     expect(deployment.variables()).toEqual(variables)
   })
 
   it('should merge all variables', () => {
     const context = clone(fixtures.context)
-    deployment = new Deployment(context, fixtures.compositions, [{
-      variables: {
-        global: [fixtures.secretVariables]
-      }
-    }, {
-      variables: {
-        global: [fixtures.bindingVariables]
-      }
-    }], fixtures.process)
+
+    /** @type {toa.deployment.Dependency} */
+    const dep1 = { variables: { global: [fixtures.secretVariable] } }
+
+    /** @type {toa.deployment.Dependency} */
+    const dep2 = { variables: { global: [fixtures.bindingVariable] } }
+
+    deployment = new Deployment(context, fixtures.compositions, [dep1, dep2], fixtures.process)
 
     const result = deployment.variables()
-    expect(result.global.length).toBe(2)
-    expect(result.global.find(item => item.name === secretVariables.name)).toBeDefined()
-    expect(result.global.find(item => item.name === bindingVariables.name)).toBeDefined()
+    const expectedVariables = [fixtures.bindingVariable, fixtures.secretVariable]
+
+    expect(result.global.length).toBe(expectedVariables.length)
+    expect(result.global).toStrictEqual(expect.arrayContaining(expectedVariables))
   })
 })
