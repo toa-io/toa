@@ -2,10 +2,17 @@
 
 'use strict'
 
+const { TOA_ENV_VAR } = require('./constants')
+const dotenv = require('dotenv')
+
 const yargs = require('yargs/yargs')
 
 const { console } = require('@toa.io/console')
 const { version } = require('@toa.io/runtime')
+
+if (!process.env[TOA_ENV_VAR]) {
+  dotenv.config()
+}
 
 yargs(process.argv.slice(2))
   .parserConfiguration({

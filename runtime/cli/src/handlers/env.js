@@ -3,8 +3,7 @@
 const boot = require('@toa.io/boot')
 const { context: find } = require('../util/find')
 const { file } = require('@toa.io/filesystem')
-
-const TOA_ENV_VAR = 'TOA_ENV'
+const { TOA_ENV_VAR } = require('../constants')
 
 async function env (argv) {
   const path = find(argv.path)
