@@ -26,3 +26,25 @@ Feature: Export local deployment environment variables
       TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
       """
 
+  Scenario: Should keep secret values when overwriting .env
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        default: amqp://whatever
+        default@some: amqp://developer:secret@some.host
+        default@dev: amqp://developer:secret@dev.host
+      """
+    When I run `toa env some`
+    And I update environment with:
+      """
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
+      """
+    And I run `toa env dev`
+    Then I have an environment with:
+      """
+      TOA_ENV=dev
+      TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAZGV2Lmhvc3QifQ==
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
+      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
+      """

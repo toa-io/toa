@@ -2,6 +2,7 @@
 
 const assert = require('node:assert')
 const { join } = require('node:path')
+const dotenv = require('dotenv')
 const { subtract } = require('@toa.io/generic')
 const { file } = require('@toa.io/filesystem')
 const components = require('./.workspace/components')
@@ -63,6 +64,18 @@ Then('I have an environment with:',
     const diff = subtract(searchLines, existingLines)
 
     assert.equal(diff.length, 0, 'Environment does not contain at least one of the given lines')
+  })
+
+Then('I update environment with:',
+  async function (newValue) {
+    const path = join(this.cwd, ENV_FILE)
+    const contents = await file.read(path)
+    const oldVars = dotenv.parse(contents)
+    const newVars = dotenv.parse(newValue)
+    const merged = { ...oldVars, ...newVars }
+    const envLines = Object.entries(merged).map(([key, value]) => `${key}=${value}`)
+    const mergedLines = envLines.join('\n')
+    await file.write(path, mergedLines)
   })
 
 const ENV_FILE = '.env'
