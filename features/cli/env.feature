@@ -36,7 +36,7 @@ Feature: Export local deployment environment variables
         default@dev: amqp://developer:secret@dev.host
       """
     When I run `toa env some`
-    And I update environment value with:
+    And I update environment with:
       """
       TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
       """

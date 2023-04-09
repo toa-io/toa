@@ -160,8 +160,8 @@ describe('Then I have an environment with:', () => {
   })
 })
 
-describe('Then I update environment value with:', () => {
-  const step = gherkin.steps.Th('I update environment value with:')
+describe('Then I update environment with:', () => {
+  const step = gherkin.steps.Th('I update environment with:')
 
   let envFile
 
