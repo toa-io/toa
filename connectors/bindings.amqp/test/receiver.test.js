@@ -51,9 +51,19 @@ it('should consume events', async () => {
   expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
 
   const callback = comm.consume.mock.calls[0][2]
-  const message = generate()
+  const message = { payload: generate() }
 
   await callback(message)
 
   expect(processor.receive).toHaveBeenCalledWith(message)
+})
+
+it('should be wrapped into a payload if it does not already exist', async () => {
+  await receiver.open()
+  const callback = comm.consume.mock.calls[0][2]
+  const message = generate()
+
+  await callback(message)
+
+  expect(processor.receive).toHaveBeenCalledWith({ payload: message })
 })

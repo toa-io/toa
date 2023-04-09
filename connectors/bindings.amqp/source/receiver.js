@@ -33,7 +33,7 @@ class Receiver extends Connector {
   }
 
   async open () {
-    await this.#comm.consume(this.#exchange, this.#group, (message) => this.#receiver.receive(message))
+    await this.#comm.consume(this.#exchange, this.#group, (message) => this.#receiver.receive(message.payload ? message : { payload: message }))
   }
 }
 
