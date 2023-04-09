@@ -8,6 +8,7 @@ const mock = { gherkin }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../manifest')
+const {describe} = require("node:test");
 
 it('should be', () => undefined)
 
@@ -55,6 +56,18 @@ describe('When I declare {operation} with:', () => {
 
     expect(context.manifest.operations[type]).toStrictEqual({ type, scope })
   })
+})
+
+
+describe('When I declare receiver {receiver} with:', () => {
+  const step = gherkin.steps.Wh('I declare receiver {receiver} with:')
+
+  it('should be', () => undefined)
+
+  it('should declare receiver', () => {
+
+  })
+
 })
 
 describe('Then normalized {operation} declaration must contain:', () => {

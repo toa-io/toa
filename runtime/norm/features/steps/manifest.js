@@ -37,6 +37,11 @@ When('I declare {operation} with:',
     this.manifest.operations = { [type]: declaration }
   })
 
+When('I declare receiver {receiver} with:',
+  function (reci) {
+
+  })
+
 Then('normalized {operation} declaration must contain:',
   /**
    * @param {toa.norm.component.operations.Type} type
