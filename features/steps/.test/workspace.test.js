@@ -177,8 +177,8 @@ describe('Then I update environment with:', () => {
 
   it('should update .env file', async () => {
     const updatedText = `A=${generate()}`;
-    const existLines = [`A=${generate()}`, `B=${generate()}`]
-    const existingText = existLines.join('\n')
+    const existingLines = [`A=${generate()}`, `B=${generate()}`]
+    const existingText = existingLines.join('\n')
     await file.write(envFile, existingText)
 
     await step.call(context, updatedText)
