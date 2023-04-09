@@ -189,8 +189,8 @@ describe('Then I update environment value with:', () => {
   it('should remove old value from .env file after update', async () => {
     const updatedText = `A=${generate()}`;
     const replacedValue = `A=${generate()}`;
-    const existLines = [replacedValue, `B=${generate()}`]
-    const existingText = existLines.join('\n')
+    const existingLines = [replacedValue, `B=${generate()}`]
+    const existingText = existingLines.join('\n')
     await file.write(envFile, existingText)
 
     await step.call(context, updatedText)

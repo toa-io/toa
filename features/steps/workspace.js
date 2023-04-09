@@ -73,7 +73,7 @@ Then('I update environment value with:',
     const oldVars = dotenv.parse(contents)
     const newVars = dotenv.parse(newValue)
     const merged = { ...oldVars, ...newVars }
-    const envLines = Object.keys(merged).map(key => `${key}=${merged[key]}`)
+    const envLines = Object.entries(merged).map(([key, value]) => `${key}=${value}`)
     const mergedLines = envLines.join('\n')
     await file.write(path, mergedLines)
   })

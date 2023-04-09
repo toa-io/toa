@@ -5,7 +5,7 @@ Feature: Export local deployment environment variables
     And stdout should contain lines:
       """
       toa env
-      Select environment,
+      Select environment
         -p, --path
       """
 
@@ -33,17 +33,18 @@ Feature: Export local deployment environment variables
       amqp:
         default: amqp://whatever
         default@some: amqp://developer:secret@some.host
+        default@dev: amqp://developer:secret@dev.host
       """
     When I run `toa env some`
     And I update environment value with:
       """
       TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
       """
-    And I run `toa env some`
+    And I run `toa env dev`
     Then I have an environment with:
       """
-      TOA_ENV=some
-      TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAc29tZS5ob3N0In0=
+      TOA_ENV=dev
+      TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAZGV2Lmhvc3QifQ==
       TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
       TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
       """

@@ -1,20 +1,17 @@
 'use strict'
 
-const { stat } = require('node:fs')
+const { stat } = require('node:fs/promises')
 
 const exists = async (file) => {
-  return new Promise((resolve, reject) => {
-    stat(file, (err) => {
-      if (err === null) {
-        resolve(true)
-      } else if (err.code === 'ENOENT') {
-        // file does not exist
-        resolve(false)
-      } else {
-        reject(err)
-      }
-    })
-  })
+  try {
+    await stat(file)
+    return true
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return false
+    }
+    throw err
+  }
 }
 
 exports.exists = exists

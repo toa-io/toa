@@ -89,7 +89,7 @@ the context will be found and replayed sequentially.
 </dd>
 </dl>
 
-> It's recommended to add `.env` to `.gitignore`. Alsa know that credentials to connection will be initially empty. 
+> It is recommended to add `.env` to `.gitignore`. Credentials will be empty initially. 
 
 > Credentials specified in a `.env` file are preserved during environment selection.
 
