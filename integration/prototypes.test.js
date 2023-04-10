@@ -17,7 +17,7 @@ afterAll(async () => {
   if (composition) await composition.disconnect()
   if (remote) await remote.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should merge reply', async () => {

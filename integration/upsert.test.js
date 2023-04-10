@@ -18,7 +18,7 @@ afterAll(async () => {
   if (remote) await remote.disconnect()
   if (composition) await composition.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should upsert', async () => {

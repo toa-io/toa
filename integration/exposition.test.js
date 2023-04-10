@@ -27,7 +27,7 @@ afterAll(async () => {
   if (a) await a.disconnect()
   if (composition) await composition.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 describe('routing', () => {
