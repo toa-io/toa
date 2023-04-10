@@ -22,7 +22,7 @@ afterAll(async () => {
   if (messages) await messages.disconnect()
   if (credits) await credits.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should deduce credits', async () => {

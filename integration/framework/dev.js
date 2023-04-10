@@ -4,7 +4,7 @@
  * @param {boolean} on
  */
 const dev = (on) => {
-  if (on) process.env.TOA_ENV = '1'
+  if (on) process.env.TOA_DEV = '1'
   else delete process.env.TOA_DEV
 }
 

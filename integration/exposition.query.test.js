@@ -27,7 +27,7 @@ afterAll(async () => {
   if (resources) await resources.disconnect()
   if (composition) await composition.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 describe('criteria', () => {

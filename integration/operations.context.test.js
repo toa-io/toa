@@ -17,7 +17,7 @@ afterAll(async () => {
   if (credits) await credits.disconnect()
   if (composition) await composition.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should provide local operations', async () => {
