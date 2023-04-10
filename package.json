@@ -90,9 +90,6 @@
     "testMatch": [
       "**/(*.)+(test).js"
     ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest.setup.js"
-    ],
     "bail": true
   }
 }
