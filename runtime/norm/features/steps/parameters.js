@@ -7,3 +7,9 @@ defineParameterType({
   regexp: /transition|observation|assignment/,
   transformer: (type) => type
 })
+
+defineParameterType({
+  name: 'label',
+  regexp: /\S+/,
+  transformer: (name) => name
+})

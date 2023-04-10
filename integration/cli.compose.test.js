@@ -9,7 +9,7 @@ beforeAll(() => {
 })
 
 afterAll(() => {
-  framework.env()
+  framework.dev(false)
 })
 
 it('should compose', async () => {

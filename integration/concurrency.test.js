@@ -22,7 +22,7 @@ afterAll(async () => {
   if (stats) await stats.disconnect()
   if (composition) await composition.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should not throw on concurrency conflict', async () => {

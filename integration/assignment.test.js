@@ -26,7 +26,7 @@ afterAll(async () => {
 
   if (composition) await composition.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should assign', async () => {

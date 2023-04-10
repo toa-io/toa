@@ -1,8 +1,9 @@
 'use strict'
 
 const { AssertionError } = require('assert')
+const { generate } = require('randomstring')
 const { dump } = require('@toa.io/yaml')
-const { gherkin } = require('@toa.io/mock')
+const gherkin = require('@toa.io/tomato')
 
 const mock = { gherkin }
 
@@ -15,7 +16,7 @@ it('should be', () => undefined)
 let context
 
 beforeEach(() => {
-  const manifest = {
+  const manifest = /** @type {toa.norm.component.Declaration} */ {
     name: 'test',
     namespace: 'features',
     version: '1.0.0',
@@ -40,8 +41,8 @@ describe('Given I have an entity schema:', () => {
   })
 })
 
-describe('When I declare {operation} with:', () => {
-  const step = gherkin.steps.Wh('I declare {operation} with:')
+describe('When I declare operation {operation} with:', () => {
+  const step = gherkin.steps.Wh('I declare operation {operation} with:')
 
   it('should be', () => undefined)
 
@@ -57,8 +58,84 @@ describe('When I declare {operation} with:', () => {
   })
 })
 
-describe('Then normalized {operation} declaration must contain:', () => {
-  const step = gherkin.steps.Th('normalized {operation} declaration must contain:')
+describe('When I declare receiver for {label} with:', () => {
+  const step = gherkin.steps.Wh('I declare receiver for {label} with:')
+
+  it('should be', () => undefined)
+
+  it('should declare receiver', () => {
+    const event = 'assignment'
+    const input = { binding: 'amqp' }
+    const yaml = dump(input)
+
+    step.call(context, event, yaml)
+
+    expect(context.manifest.receivers[event]).toStrictEqual(input)
+  })
+
+})
+
+describe('Then normalized receiver for event {label} must contain:', () => {
+  const step = gherkin.steps.Th('normalized receiver for event {label} must contain:')
+
+  it('should be', () => undefined)
+
+  it('should throw if does not contain', async () => {
+    const label = generate()
+    const operation = generate()
+
+    context.manifest.operations = {
+      [operation]: {
+        type: 'transition',
+        scope: 'object',
+        concurrency: 'none'
+      }
+    }
+
+    context.manifest.receivers = {
+      [label]: {
+        path: '',
+        bridge: 'node',
+        transition: operation,
+        binding: 'amqp'
+      }
+    }
+
+    const input = { binding: 'kafka' }
+    const yaml = dump({ input })
+
+    await expect(step.call(context, label, yaml)).rejects.toThrow(AssertionError)
+  })
+
+  it('should not throw if contain', async () => {
+    const label = generate()
+    const operation = generate()
+
+    context.manifest.operations = {
+      [operation]: {
+        type: 'transition',
+        scope: 'object',
+        concurrency: 'none'
+      }
+    }
+
+    context.manifest.receivers = {
+      [label]: {
+        path: '',
+        bridge: 'node',
+        transition: operation,
+        binding: 'amqp'
+      }
+    }
+
+    const yaml = dump({ transition: operation })
+
+    await expect(step.call(context, label, yaml)).resolves.not.toThrow()
+  })
+})
+
+describe('Then normalized operation {operation} declaration must contain:', () => {
+  const step = gherkin.steps.Th('normalized operation {operation} declaration must contain:')
 
   it('should be', () => undefined)
 

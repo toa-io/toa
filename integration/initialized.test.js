@@ -19,7 +19,7 @@ afterAll(async () => {
   if (messages) await messages.disconnect()
   if (remote) await remote.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should provide default', async () => {

@@ -17,7 +17,7 @@ afterAll(async () => {
   if (composition) await composition.disconnect()
   if (discovery) await discovery.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should lookup', async () => {

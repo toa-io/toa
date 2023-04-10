@@ -21,7 +21,7 @@ afterAll(async () => {
   if (remote) await remote.disconnect()
   if (composition) await composition.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should init state if no query', async () => {

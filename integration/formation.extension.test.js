@@ -7,7 +7,7 @@ beforeAll(() => {
 })
 
 afterAll(() => {
-  framework.env()
+  framework.dev(false)
 })
 
 it('should resolve relative extension', async () => {

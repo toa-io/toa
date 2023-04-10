@@ -23,7 +23,7 @@ beforeAll(async () => {
 afterAll(async () => {
   if (component !== undefined) await component.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should preform operations', async () => {

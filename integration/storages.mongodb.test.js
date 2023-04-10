@@ -24,7 +24,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await storage.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 describe('add', () => {

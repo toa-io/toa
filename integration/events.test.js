@@ -24,7 +24,7 @@ afterAll(async () => {
   if (stats) await stats.disconnect()
   if (a) await a.disconnect()
 
-  framework.env()
+  framework.dev(false)
 })
 
 it('should receive', async () => {
