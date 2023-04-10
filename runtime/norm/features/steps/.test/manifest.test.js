@@ -2,13 +2,12 @@
 
 const { AssertionError } = require('assert')
 const { dump } = require('@toa.io/yaml')
-const { gherkin } = require('@toa.io/mock')
+const gherkin = require('@toa.io/tomato')
 
 const mock = { gherkin }
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 require('../manifest')
-const {describe} = require("node:test");
 
 it('should be', () => undefined)
 
@@ -58,8 +57,8 @@ describe('When I declare operation {operation} with:', () => {
   })
 })
 
-describe('When I declare receiver for {event} with:', () => {
-  const step = gherkin.steps.Wh('I declare receiver for {event} with:')
+describe('When I declare receiver for {label} with:', () => {
+  const step = gherkin.steps.Wh('I declare receiver for {label} with:')
 
   it('should be', () => undefined)
 
@@ -76,8 +75,8 @@ describe('When I declare receiver for {event} with:', () => {
 
 })
 
-describe('Then normalized receiver for event {event} must contain:', () => {
-  const step = gherkin.steps.Th('normalized receiver for event {event} must contain:')
+describe('Then normalized receiver for event {label} must contain:', () => {
+  const step = gherkin.steps.Th('normalized receiver for event {label} must contain:')
 
   it('should be', () => undefined)
 })
