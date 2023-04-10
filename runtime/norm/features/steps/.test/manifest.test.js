@@ -1,6 +1,7 @@
 'use strict'
 
 const { AssertionError } = require('assert')
+const { generate } = require('randomstring')
 const { dump } = require('@toa.io/yaml')
 const gherkin = require('@toa.io/tomato')
 
@@ -79,6 +80,64 @@ describe('Then normalized receiver for event {label} must contain:', () => {
   const step = gherkin.steps.Th('normalized receiver for event {label} must contain:')
 
   it('should be', () => undefined)
+
+  it('should throw if does not contain', async () => {
+    const label = generate()
+    const operation = generate();
+
+    context.manifest.operations = {
+        [operation]: {
+          type: 'transition',
+          scope: 'object',
+          concurrency: 'none'
+        }
+    }
+
+    context.manifest.receivers = {
+      [label]: {
+        path: '',
+        bridge: 'node',
+        transition: operation,
+        binding: 'amqp'
+      }
+    }
+
+    const input = {
+      binding: 'sql',
+    }
+
+    const yaml = dump({ input })
+
+    await expect(step.call(context, label, yaml)).rejects.toThrow(AssertionError)
+  })
+
+  it('should not throw if contain', async () => {
+    const label = generate()
+    const operation = generate();
+
+    context.manifest.operations = {
+      [operation]: {
+        type: 'transition',
+        scope: 'object',
+        concurrency: 'none'
+      }
+    }
+
+    context.manifest.receivers = {
+      [label]: {
+        path: '',
+        bridge: 'node',
+        transition: operation,
+        binding: 'amqp'
+      }
+    }
+
+    const yaml = dump({
+      transition: operation
+    })
+
+    await expect(step.call(context, label, yaml)).resolves.not.toThrow()
+  })
 })
 
 describe('Then normalized operation {operation} declaration must contain:', () => {
