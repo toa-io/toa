@@ -57,11 +57,11 @@ When('I declare operation {operation} with:',
     this.manifest.operations = { [type]: declaration }
   })
 
-When('I declare receiver for {event} with:',
-  async function (event, yaml) {
+When('I declare receiver for {label} with:',
+  async function (label, yaml) {
     const declaration = parse(yaml)
 
-    this.manifest.receivers = { [event]: declaration }
+    this.manifest.receivers = { [label]: declaration }
   })
 
 Then('normalized operation {operation} declaration must contain:',
@@ -74,14 +74,14 @@ Then('normalized operation {operation} declaration must contain:',
     await checkManifest.call(this, 'operations', type, yaml)
   })
 
-Then('normalized receiver for event {event} must contain:',
+Then('normalized receiver for event {label} must contain:',
   /**
-   * @param {string} event
+   * @param {string} label
    * @param {string} yaml
    * @this {toa.norm.features.Context}
    */
-  async function (event, yaml) {
-    await checkManifest.call(this, 'receivers', event, yaml)
+  async function (label, yaml) {
+    await checkManifest.call(this, 'receivers', label, yaml)
   })
 
 /**

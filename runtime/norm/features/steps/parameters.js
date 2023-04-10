@@ -9,7 +9,7 @@ defineParameterType({
 })
 
 defineParameterType({
-  name: 'event',
-  regexp: /\D+/,
-  transformer: (event) => event
+  name: 'label',
+  regexp: /\S+/,
+  transformer: (name) => name
 })

@@ -215,8 +215,7 @@ properties:
             default: false
           foreign:
             type: boolean
-            default: false
-        required: [transition, bridge, path]
+        required: [transition, bridge, path, foreign]
         additionalProperties: false
 
   extensions:
