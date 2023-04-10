@@ -75,7 +75,7 @@ Feature: Replay samples
       # Subtest: Operations
       # Subtest: math.calculations
       # Subtest: node.syntaxes
-      # Subtest: external.something.happened
+      # Subtest: something_happened
       """
 
   Scenario: Replay integration samples

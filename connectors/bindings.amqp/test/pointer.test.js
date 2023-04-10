@@ -49,11 +49,11 @@ it('should expose reference', () => {
 })
 
 it('should set amqp: protocol on localhost', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_DEV = '1'
 
   pointer = new Pointer(locator)
 
   expect(pointer.protocol).toStrictEqual(protocol)
 
-  delete process.env.TOA_ENV
+  delete process.env.TOA_DEV
 })

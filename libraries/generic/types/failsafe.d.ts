@@ -6,4 +6,8 @@ declare namespace toa.generic {
     method?: T
   ) => T
 
+  type Failsafe = failsafe & {
+    disable: (...methods: Function[]) => void
+  }
+
 }

@@ -30,7 +30,7 @@ describe('resolve', () => {
 
 describe('recognize', () => {
   it('should not change unknown', () => {
-    recognize(object)
+    recognize(fixtures.SHORTCUTS, object)
 
     expect(object).toStrictEqual(fixtures.object)
   })
@@ -38,7 +38,7 @@ describe('recognize', () => {
   it('should resolve known', () => {
     const known = append()
 
-    recognize(object)
+    recognize(fixtures.SHORTCUTS, object)
 
     for (const [alias, name] of Object.entries(fixtures.SHORTCUTS)) {
       expect(object[alias]).toBeUndefined()
@@ -50,7 +50,7 @@ describe('recognize', () => {
     const known = append()
     const group = generate()
 
-    recognize(object, group)
+    recognize(fixtures.SHORTCUTS, object, group)
 
     expect(object[group]).toStrictEqual(known)
 
@@ -59,12 +59,13 @@ describe('recognize', () => {
 
   it('should not overwrite group', () => {
     append()
+
     const group = generate()
     const existing = { [generate()]: generate() }
 
     object[group] = clone(existing)
 
-    recognize(object, group)
+    recognize(fixtures.SHORTCUTS, object, group)
 
     expect(object[group]).toStrictEqual(expect.objectContaining(existing))
   })

@@ -4,7 +4,7 @@ const { directory } = require('@toa.io/filesystem')
 const { Before, BeforeAll } = require('@cucumber/cucumber')
 
 BeforeAll(() => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_DEV = '1'
 })
 
 Before(

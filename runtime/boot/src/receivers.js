@@ -16,26 +16,29 @@ const receivers = async (manifest, runtime) => {
     const receiver = new Receiver(definition, local, bridge)
     const decorator = extensions.receiver(receiver, manifest.locator)
 
-    let transport = definition.binding
-
-    const [namespace, name, endpoint] = label.split('.')
-    const remote = new Locator(name, namespace)
-
-    if (transport === undefined) {
-      const discovery = await boot.discovery.discovery()
-      const { events } = await discovery.lookup(remote)
-
-      transport = events[endpoint].binding
-    }
-
-    const { id } = new Locator(manifest.name, manifest.namespace)
-    const binding = boot.bindings.receive(transport, remote, endpoint, id, decorator)
+    const locator = Locator.parse(label)
+    const transport = definition.binding ?? await resolveBinding(locator, label)
+    const source = definition.source ? Locator.parse(definition.source) : locator
+    const binding = boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
 
     binding.depends(runtime)
     receivers.push(binding)
   }
 
   return receivers
+}
+
+/**
+ * @param {toa.core.Locator} locator
+ * @param {string} label
+ * @return {Promise<string>}
+ */
+async function resolveBinding (locator, label) {
+  const event = label.split('.').pop()
+  const discovery = await boot.discovery.discovery()
+  const { events } = await discovery.lookup(locator)
+
+  return events[event].binding
 }
 
 exports.receivers = receivers

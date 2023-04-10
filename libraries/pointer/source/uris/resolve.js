@@ -2,27 +2,15 @@
 
 /** @type {toa.pointer.uris.Resolver} */
 const resolve = (locator, uris) => {
-  let entry
+  const keys = [locator.id, locator.namespace, 'default']
+  const entry = keys.find((key) => key in uris)
+  const uri = uris[entry]
 
-  /** @type {string} */
-  let uri
-
-  const entries = [locator.id, locator.namespace, 'default']
-
-  for (const key of entries) {
-    if (typeof uris[key] === 'string') {
-      uri = uris[key]
-      entry = key
-
-      break
-    }
-  }
-
-  if (uri === undefined) throw new Error(`URI annotation for '${locator.id}' is not found`)
+  if (entry === undefined) throw new Error(`URI annotation for '${locator.id}' is not found`)
 
   const url = new URL(uri)
 
-  if (url.hostname === '') throw new Error(`URI annotation for '${locator.id}' must contain hostname`)
+  if (url.hostname === '') throw new Error(`URI annotation for '${locator.id}' must contain a hostname`)
 
   return { url, entry }
 }

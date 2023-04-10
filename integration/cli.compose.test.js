@@ -5,7 +5,7 @@ const framework = require('./framework')
 const cli = framework.cli('./dummies/')
 
 beforeAll(() => {
-  framework.env('local')
+  framework.dev(true)
 })
 
 afterAll(() => {

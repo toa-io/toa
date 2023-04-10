@@ -1,6 +1,6 @@
 'use strict'
 
-const { defineParameterType } = require('@cucumber/cucumber')
+const { defineParameterType, setDefaultTimeout } = require('@cucumber/cucumber')
 
 defineParameterType({
   name: 'path',
@@ -49,3 +49,5 @@ defineParameterType({
   regexp: /PostgreSQL/,
   transformer: (name) => name
 })
+
+setDefaultTimeout(10 * 1000)

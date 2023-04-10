@@ -42,9 +42,9 @@ declare namespace toa.core {
     }
 
     interface Factory {
-      storage(locator: Locator): Storage
+      storage(locator: Locator, properties?: object): Storage
 
-      migration(driver?: string): Migration
+      migration?(driver?: string): Migration
     }
   }
 

@@ -21,7 +21,7 @@ let locator
 /** @type {string} */
 let label
 
-const id = generate()
+const group = generate()
 const endpoint = generate()
 
 beforeEach(async () => {
@@ -32,8 +32,8 @@ beforeEach(async () => {
   const name = generate()
 
   locator = new Locator(name, namespace)
-  receiver = factory.receiver(locator, endpoint, id, fixtures.receiver)
   label = locator.id + '.' + endpoint
+  receiver = factory.receiver(locator, label, group, fixtures.receiver)
 
   await receiver.connect()
 })

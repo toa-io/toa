@@ -1,0 +1,19 @@
+name: transmitter
+namespace: queues
+
+entity:
+  storage: queues
+  schema:
+    foo:
+      type: integer
+      default: 0
+    bar: string
+
+operations:
+  transit:
+    concurrency: none
+    input:
+      foo: .
+      bar: .
+
+queues: queues.transmitter.output

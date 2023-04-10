@@ -29,3 +29,27 @@ it('should await', async () => {
     expect(element).toStrictEqual(arr[index])
   })
 })
+
+it('should update values', () => {
+  const arr = [1, 2, 3]
+
+  each(arr, (n, index) => n + index)
+
+  expect(arr).toStrictEqual(expect.arrayContaining([1, 3, 5]))
+})
+
+it('should update partially', () => {
+  const arr = [1, 2, 3]
+
+  each(arr, (n, index) => { if (index === 1) return 10 })
+
+  expect(arr).toStrictEqual(expect.arrayContaining([1, 10, 3]))
+})
+
+it('should update values with async callback', async () => {
+  const arr = [1, 2, 3]
+
+  await each(arr, async (n, index) => n + index)
+
+  expect(arr).toStrictEqual(expect.arrayContaining([1, 3, 5]))
+})

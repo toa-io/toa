@@ -11,7 +11,7 @@ const path = join(__dirname, './dummies/credits')
 let component
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.dev(true)
 
   const manifest = await boot.manifest(path)
 

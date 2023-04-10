@@ -22,3 +22,4 @@ export const read: toa.filesystem.file.Read
 export const write: toa.filesystem.file.Write
 export const glob: toa.filesystem.file.Glob
 export const lines: (file: string) => Promise<string[]>
+export const is: (path: string) => Promise<boolean>

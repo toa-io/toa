@@ -7,14 +7,14 @@ const { Producer } = require('./producer')
 
 class Factory {
   /**
-   * @param {toa.core.Locator} locator
+   * @param {toa.core.Locator} source
    * @param {string} label
-   * @param {string} id
+   * @param {string} group
    * @param {toa.core.Receiver} receiver
    * @returns {toa.core.Connector}
    */
-  receiver (locator, label, id, receiver) {
-    return new Receiver(locator, label, receiver)
+  receiver (source, label, group, receiver) {
+    return new Receiver(label, receiver)
   }
 
   /**

@@ -37,9 +37,9 @@ describe('BeforeALl', () => {
 
   it('should be', () => undefined)
 
-  it('should set TOA_ENV to local', () => {
-    step.call()
+  it('should set TOA_DEV', () => {
+    step.call(context)
 
-    expect(process.env.TOA_ENV).toStrictEqual('local')
+    expect(process.env.TOA_DEV).toStrictEqual('1')
   })
 })

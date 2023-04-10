@@ -40,11 +40,11 @@ it('should expose collection', () => {
 })
 
 it('should define schema on local environment', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_DEV = '1'
 
   expect(() => (pointer = new Pointer(locator))).not.toThrow()
 
   expect(pointer.protocol).toStrictEqual('mongodb:')
 
-  delete process.env.TOA_ENV
+  delete process.env.TOA_DEV
 })

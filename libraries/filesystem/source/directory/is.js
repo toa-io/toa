@@ -14,6 +14,10 @@ const is = async (path) => {
   }
 }
 
+/**
+ * @param {string} path
+ * @return {Promise<boolean>}
+ */
 const dir = async (path) => {
   const entry = await stat(path)
 

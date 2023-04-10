@@ -1,14 +1,13 @@
 'use strict'
 
-const { recognize } = require('../shortcuts')
+const shortcuts = require('../shortcuts')
 
 /**
  * @param {toa.norm.context.Declaration | object} context
  */
 const expand = (context) => {
-  recognize(context, 'annotations')
-  recognize(context.annotations)
-
+  shortcuts.recognize(shortcuts.SHORTCUTS, context, 'annotations')
+  shortcuts.recognize(shortcuts.SHORTCUTS, context.annotations)
 }
 
 exports.expand = expand

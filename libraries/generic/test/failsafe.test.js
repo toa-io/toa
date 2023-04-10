@@ -11,8 +11,10 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-const fn = /** @type {jest.MockedFunction} */ jest.fn(async () => generate())
-const recover = jest.fn(async () => true)
+const fn = /** @type {jest.MockedFunction} */
+  jest.fn(async () => generate())
+const recover = /** @type {jest.MockedFunction<(...args: any[]) => Promise<any>>} */
+  jest.fn(async () => true)
 
 class FailsafeTest {
   doWithRecovery = failsafe(this, this.#recover, async (...args) => {
@@ -60,6 +62,14 @@ describe.each([
 
     expect(fn).toHaveBeenCalledWith(...args)
   })
+
+  it('should call again', async () => {
+    fn.mockImplementationOnce(async () => { throw new Error() })
+
+    await instance[method]()
+
+    expect(fn).toHaveBeenCalledTimes(2)
+  })
 })
 
 describe('recovery function', () => {
@@ -106,5 +116,18 @@ describe('recovery function', () => {
     fn.mockImplementationOnce(() => { throw new Error() })
 
     instance.do()
+  })
+})
+
+describe('disable', () => {
+  it('should throw exception', async () => {
+    const exception = generate()
+
+    failsafe.disable(instance.doWithRecovery, instance.doWithoutRecovery)
+
+    fn.mockImplementation(async () => { throw exception })
+
+    await expect(instance.doWithRecovery()).rejects.toStrictEqual(exception)
+    await expect(instance.doWithoutRecovery()).rejects.toStrictEqual(exception)
   })
 })
