@@ -8,7 +8,7 @@ const { shutdown } = require('./shutdown')
 const binding = require('./binding')
 
 // staging always runs on local deployment environment
-process.env.TOA_ENV = 'local'
+process.env.TOA_ENV = 'toa_local'
 
 exports.manifest = manifest
 exports.component = component

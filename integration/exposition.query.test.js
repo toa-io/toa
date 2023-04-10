@@ -14,7 +14,7 @@ let resources, composition
 const locator = (path) => 'http://localhost:8000' + path
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.env('toa_local')
 
   composition = await framework.compose(['messages', 'stats', 'credits'])
   resources = await (new extension.Factory(boot)).service()

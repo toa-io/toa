@@ -7,7 +7,7 @@ const framework = require('./framework')
 let factory, a, b, c
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.env('toa_local')
 
   factory = new Factory()
 

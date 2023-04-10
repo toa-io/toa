@@ -24,7 +24,7 @@ it('should create storage', () => {
   const locator = new Locator(name, namespace)
 
   // use default pointer values
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_ENV = 'toa_local'
 
   const storage = factory.storage(locator)
 

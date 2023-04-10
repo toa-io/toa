@@ -82,14 +82,14 @@ the context will be found and replayed sequentially.
 
 <dl>
 <dt><code>toa env [environment]</code></dt>
-<dd>Select environment. Set local environment variables with <code>.env</code>.
+<dd>Select environment. Set local environment variables to <code>.env</code> file.
 
 <code>environment</code> deployment environment name (default <code>local</code>).<br/>
 <code>--path</code> path to context (default <code>.</code>)<br/>
 </dd>
 </dl>
 
-> It is recommended to add `.env` to `.gitignore`. Credentials will be empty initially. 
+> It is recommended to add `.env` to `.gitignore`.
 
 > Credentials specified in a `.env` file are preserved during environment selection.
 
@@ -101,7 +101,10 @@ the context will be found and replayed sequentially.
 
 <dl>
 <dt><code>toa deploy [environment]</code></dt>
-<dd>Deploy context.</dd>
+<dd>Deploy context.
+
+<code>environment</code> deployment environment name (default <code>default</code>).<br/>
+</dd>
 </dl>
 
 ### conceal

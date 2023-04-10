@@ -14,7 +14,7 @@ const locator = new Locator('balance', 'credits')
 let storage
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.env('toa_local')
 
   storage = boot.storage(locator, connector)
 

@@ -20,7 +20,7 @@ $ npm i
 ```
 
 ```shell
-$ export TOA_ENV=local
+$ export TOA_ENV=toa_local
 ```
 
 ## Branching Model

@@ -17,7 +17,7 @@ class Pointer {
    * @param {toa.pointer.Options} options
    */
   constructor (prefix, locator, options) {
-    const local = process.env.TOA_ENV === 'local'
+    const local = process.env.TOA_ENV === 'toa_local'
     const url = local ? get.local(options.protocol) : get.env(prefix, locator)
 
     this.protocol = url.protocol

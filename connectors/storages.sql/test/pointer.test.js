@@ -45,7 +45,7 @@ it('should define package prefix', () => {
 })
 
 it('should define protocol for local environment', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_ENV = 'toa_local'
 
   const pointer = new Pointer(locator)
 
@@ -92,7 +92,7 @@ it('should use locator.namespace as default schema name', () => {
 it('should use TOA_STORAGES_SQL_DATABASE as default database name', () => {
   const database = generate()
 
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_ENV = 'toa_local'
   process.env.TOA_STORAGES_SQL_DATABASE = database
 
   const pointer = new Pointer(locator)

@@ -3,7 +3,7 @@
 const framework = require('./framework')
 
 beforeAll(() => {
-  framework.env('local')
+  framework.env('toa_local')
 })
 
 afterAll(() => {

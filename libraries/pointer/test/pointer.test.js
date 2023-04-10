@@ -106,7 +106,7 @@ it('should expose reference', () => {
 })
 
 it('should use localhost and given protocol on local environment', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_ENV = 'toa_local'
 
   pointer = new Pointer(prefix, locator, options)
 
@@ -117,7 +117,7 @@ it('should use localhost and given protocol on local environment', () => {
 })
 
 it('should use default protocol and credentials on local environment', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_ENV = 'toa_local'
 
   pointer = new Pointer(prefix, locator, options)
 

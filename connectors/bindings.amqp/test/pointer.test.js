@@ -49,7 +49,7 @@ it('should expose reference', () => {
 })
 
 it('should set amqp: protocol on localhost', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_ENV = 'toa_local'
 
   pointer = new Pointer(locator)
 

@@ -8,7 +8,7 @@ let composition
 let remote
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.env('toa_local')
 
   composition = await framework.compose(['configured'])
   remote = await framework.remote('dummies.configured')

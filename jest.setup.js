@@ -1,3 +1,3 @@
 'use strict'
 
-delete process.env.TOA_ENV
+// delete process.env.TOA_ENV
