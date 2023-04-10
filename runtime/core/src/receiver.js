@@ -13,6 +13,9 @@ class Receiver extends Connector {
   /** @type {boolean} */
   #adaptive
 
+  /** @type {boolean} */
+  #foreign
+
   /** @type {string} */
   #endpoint
 
@@ -21,9 +24,6 @@ class Receiver extends Connector {
 
   /** @type {toa.core.bridges.Event} */
   #bridge
-
-  /** @type {boolean} */
-  #foreign
 
   /**
    *
@@ -34,15 +34,15 @@ class Receiver extends Connector {
   constructor (definition, local, bridge) {
     super()
 
-    const { conditioned, adaptive, transition, foreign } = definition
+    const { conditioned, adaptive, foreign, transition } = definition
 
     this.#conditioned = conditioned
     this.#adaptive = adaptive
+    this.#foreign = foreign
     this.#endpoint = transition
 
     this.#local = local
     this.#bridge = bridge
-    this.#foreign = foreign
 
     this.depends(local)
     this.depends(bridge)
@@ -56,7 +56,7 @@ class Receiver extends Connector {
 
     const request = await this.#request(payload)
 
-    if (extensions) add(request, extensions)
+    if (extensions !== undefined) add(request, extensions)
 
     await this.#local.invoke(this.#endpoint, request)
   }
@@ -66,15 +66,20 @@ class Receiver extends Connector {
   }
 
   /**
-   * @param message
-   * @return {{extensions: (Pick<*, Exclude<keyof *, "payload">>|*[]), payload: *}}
+   * @param {toa.core.Message | any} message
+   * @return {{payload: any, extensions: object | undefined}}
    */
   #parse (message) {
-    const { payload, ...extensions } = message
-    return {
-      payload: this.#foreign ? message : payload,
-      extensions: this.#foreign ? [] : extensions
+    if (this.#foreign) {
+      return {
+        payload: message,
+        extensions: undefined
+      }
     }
+
+    const { payload, ...extensions } = message
+
+    return { payload, extensions }
   }
 }
 
