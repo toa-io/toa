@@ -4,11 +4,11 @@ const { stat } = require('node:fs/promises')
 
 /**
  * @param {string} path
- * @returns {Promise<boolean>}
+ * @return {Promise<boolean>}
  */
 const is = async (path) => {
   try {
-    return await dir(path)
+    return await file(path)
   } catch {
     return false
   }
@@ -18,10 +18,10 @@ const is = async (path) => {
  * @param {string} path
  * @return {Promise<boolean>}
  */
-const dir = async (path) => {
+const file = async (path) => {
   const entry = await stat(path)
 
-  return entry.isDirectory()
+  return entry.isFile()
 }
 
 exports.is = is

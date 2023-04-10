@@ -1,20 +1,23 @@
 // noinspection ES6UnusedImports
 
-import { installation, template } from './deployment'
+import * as _deployment from './deployment'
+import * as _dependency from './dependency'
 
 declare namespace toa.deployment {
 
-    interface Operator {
-        export(path?: string): Promise<string>
+  interface Operator {
+    export(path?: string): Promise<string>
 
-        prepare(path?: string): Promise<string>
+    prepare(path?: string): Promise<string>
 
-        build(): Promise<void>
+    build(): Promise<void>
 
-        install(options?: installation.Options): Promise<void>
+    install(options?: _deployment.installation.Options): Promise<void>
 
-        template(options?: template.Options): Promise<string>
-    }
+    template(options?: _deployment.template.Options): Promise<string>
+
+    variables(): _dependency.dependency.Variables
+  }
 
 }
 

@@ -10,7 +10,7 @@ let composition
 let remote
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.dev(true)
 
   composition = await framework.compose(['nulls'])
   remote = await framework.remote('dummies.nulls')

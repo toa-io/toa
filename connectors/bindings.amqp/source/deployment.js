@@ -1,6 +1,6 @@
 'use strict'
 
-const connectors = require('@toa.io/pointer')
+const pointer = require('@toa.io/pointer')
 
 const { PREFIX } = require('./constants')
 
@@ -13,7 +13,7 @@ const deployment = (instances, annotation) => {
   /** @type {toa.pointer.deployment.Options} */
   const options = { prefix: PREFIX }
 
-  return connectors.deployment(instances, annotation, options)
+  return pointer.deployment(instances, annotation, options)
 }
 
 /**
@@ -22,7 +22,7 @@ const deployment = (instances, annotation) => {
 const validate = (annotation) => {
   const defined = annotation !== undefined
   const defaults = defined && (typeof annotation === 'string' || annotation.default !== undefined)
-  const correct = defined && (defaults || annotation.system !== undefined)
+  const correct = defined && (defaults || 'system' in annotation)
 
   if (!correct) {
     throw new Error('AMQP deployment requires either \'system\' or \'default\' pointer annotation')

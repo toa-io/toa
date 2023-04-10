@@ -8,7 +8,7 @@ const { codes } = require('@toa.io/core/src/exceptions')
 let composition, remote, messages
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.dev(true)
 
   composition = await framework.compose(['credits'])
   remote = await framework.remote('credits.balance')

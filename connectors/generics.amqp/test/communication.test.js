@@ -2,6 +2,7 @@
 
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
+const { promex } = require('@toa.io/generic')
 const mock = require('./comq.mock')
 
 jest.mock('comq', () => mock.comq)
@@ -31,6 +32,25 @@ it('should connect with given references', async () => {
   await comm.open()
 
   expect(mock.comq.connect).toHaveBeenCalledWith(...references)
+})
+
+it('should not throw if `close()` is called before connection is complete', async () => {
+  const exception = new Error(generate())
+
+  const connection = promex()
+  let connected = false
+
+  mock.comq.connect.mockImplementationOnce(() => connection)
+
+  setImmediate(() => {
+    expect(connected).toStrictEqual(false)
+
+    connection.reject(exception)
+  })
+
+  await expect(comm.connect()).rejects.toThrow(exception)
+
+  connected = true
 })
 
 describe('connected', () => {

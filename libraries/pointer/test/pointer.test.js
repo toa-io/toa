@@ -106,22 +106,22 @@ it('should expose reference', () => {
 })
 
 it('should use localhost and given protocol on local environment', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_DEV = '1'
 
   pointer = new Pointer(prefix, locator, options)
 
-  delete process.env.TOA_ENV
+  delete process.env.TOA_DEV
 
   expect(pointer.hostname).toStrictEqual('localhost')
   expect(pointer.protocol).toStrictEqual(options.protocol)
 })
 
 it('should use default protocol and credentials on local environment', () => {
-  process.env.TOA_ENV = 'local'
+  process.env.TOA_DEV = '1'
 
   pointer = new Pointer(prefix, locator, options)
 
-  delete process.env.TOA_ENV
+  delete process.env.TOA_DEV
 
   expect(pointer.reference).toStrictEqual(`${options.protocol}//developer:secret@localhost`)
   expect(pointer.label).toStrictEqual(`${options.protocol}//developer@localhost`)

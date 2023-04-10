@@ -30,12 +30,49 @@ it('should pass -n argument if options.namespace is set', async () => {
   expect(namespace).toStrictEqual(fixtures.options.namespace)
 })
 
-it('should forbid local deployment environment', () => {
-  const context = clone(fixtures.context)
+describe('variables', () => {
+  let deployment /** @type {toa.deployment.Deployment} */
 
-  context.environment = 'local'
+  it('should be define', () => {
+    const context = clone(fixtures.context)
 
-  const create = () => new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
 
-  expect(create).toThrow(/name 'local' is not allowed/)
+    expect(typeof deployment.variables).toBe('function')
+  })
+
+  it('should return variables', () => {
+    const context = clone(fixtures.context)
+    const [{ variables }] = fixtures.dependencies
+
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+    expect(deployment.variables()).toEqual(variables)
+  })
+
+  it('should return variables', () => {
+    const context = clone(fixtures.context)
+    const [{ variables }] = fixtures.dependencies
+
+    deployment = new Deployment(context, fixtures.compositions, fixtures.dependencies, fixtures.process)
+
+    expect(deployment.variables()).toEqual(variables)
+  })
+
+  it('should merge all variables', () => {
+    const context = clone(fixtures.context)
+
+    /** @type {toa.deployment.Dependency} */
+    const dep1 = { variables: { global: [fixtures.secretVariable] } }
+
+    /** @type {toa.deployment.Dependency} */
+    const dep2 = { variables: { global: [fixtures.bindingVariable] } }
+
+    deployment = new Deployment(context, fixtures.compositions, [dep1, dep2], fixtures.process)
+
+    const result = deployment.variables()
+    const expectedVariables = [fixtures.bindingVariable, fixtures.secretVariable]
+
+    expect(result.global.length).toBe(expectedVariables.length)
+    expect(result.global).toStrictEqual(expect.arrayContaining(expectedVariables))
+  })
 })

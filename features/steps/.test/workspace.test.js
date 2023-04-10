@@ -1,9 +1,10 @@
 'use strict'
 
 const { join } = require('node:path')
+const { AssertionError } = require('node:assert')
 const { generate } = require('randomstring')
 const { load } = require('@toa.io/yaml')
-const { directory } = require('@toa.io/filesystem')
+const { directory, file } = require('@toa.io/filesystem')
 const { sample } = require('@toa.io/generic')
 const mock = require('@toa.io/mock')
 
@@ -120,5 +121,80 @@ describe('Given I have integration samples', () => {
     const path = join(context.cwd, 'samples')
 
     expect(await directory.is(path)).toStrictEqual(true)
+  })
+})
+
+describe('Then I have an environment with:', () => {
+  const step = gherkin.steps.Th('I have an environment with:')
+
+  let envFile
+
+  beforeEach(() => {
+    envFile = join(context.cwd, '.env')
+  })
+
+  it('should be', async () => undefined)
+
+  it('should fail if .env file does not exists', async () => {
+    await expect(step.call(context, '')).rejects.toThrow('ENOENT')
+  })
+
+  it('should fail if .env doest not contain one of the lines', async () => {
+    const line = generate()
+    const lines = [line, generate()].join('\n')
+
+    await file.write(envFile, line + '\n')
+
+    await expect(step.call(context, lines)).rejects.toThrow(AssertionError)
+  })
+
+  it('should pass if .env contain all lines', async () => {
+    const searchLines = [generate(), generate()]
+    const searchText = searchLines.join('\n')
+    const existingLines = [generate(), ...searchLines, generate()]
+    const existingText = existingLines.join('\n')
+
+    await file.write(envFile, existingText)
+
+    await expect(step.call(context, searchText)).resolves.not.toThrow()
+  })
+})
+
+describe('Then I update environment with:', () => {
+  const step = gherkin.steps.Th('I update environment with:')
+
+  let envFile
+
+  beforeEach(() => {
+    envFile = join(context.cwd, '.env')
+  })
+
+  it('should be', async () => undefined)
+
+  it('should fail if .env file does not exists', async () => {
+    await expect(step.call(context, '')).rejects.toThrow('ENOENT')
+  })
+
+  it('should update .env file', async () => {
+    const updatedText = `A=${generate()}`;
+    const existingLines = [`A=${generate()}`, `B=${generate()}`]
+    const existingText = existingLines.join('\n')
+    await file.write(envFile, existingText)
+
+    await step.call(context, updatedText)
+    const resultedTexts = await file.read(envFile);
+    expect(resultedTexts.includes(updatedText)).toBe(true);
+  })
+
+  it('should remove old value from .env file after update', async () => {
+    const updatedText = `A=${generate()}`;
+    const replacedValue = `A=${generate()}`;
+    const existingLines = [replacedValue, `B=${generate()}`]
+    const existingText = existingLines.join('\n')
+    await file.write(envFile, existingText)
+
+    await step.call(context, updatedText)
+    const resultedTexts = await file.read(envFile);
+    expect(resultedTexts.includes(replacedValue)).toBe(false);
   })
 })
