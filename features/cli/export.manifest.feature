@@ -29,7 +29,7 @@ Feature: Print manifest
     Given I have a component `dummies.two`
     And my working directory is ./
     When I run `toa export manifest -p ./components/dummies.two`
-    And stdout should contain lines:
+    Then stdout should contain lines:
       """
       name: two
       namespace: dummies

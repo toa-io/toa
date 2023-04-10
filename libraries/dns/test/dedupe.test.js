@@ -38,7 +38,6 @@ it('should dedupe', async () => {
   const urls = await dedupe(input)
 
   expect(urls.length).toStrictEqual(2)
-  console.log(urls)
 })
 
 const IPv4 = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/

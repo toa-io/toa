@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/dns",
-  "version": "0.4.0-dev.8",
+  "version": "0.4.0",
   "description": "Toa DNS Tools",
   "homepage": "https://toa.io",
   "author": {

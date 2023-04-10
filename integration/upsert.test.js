@@ -8,7 +8,7 @@ const framework = require('./framework')
 let composition, remote
 
 beforeAll(async () => {
-  framework.env('local')
+  framework.dev(true)
 
   composition = await framework.compose(['initialized'])
   remote = await framework.remote('dummies.initialized')

@@ -11,7 +11,7 @@ const variables = (context, variables) => {
   if (context.environment !== undefined) {
     const variable = format('TOA_ENV', context.environment)
 
-    variables.global.push(variable)
+    variables.global.unshift(variable)
   }
 
   return variables

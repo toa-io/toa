@@ -13,10 +13,13 @@ const { merge, declare, describe } = require('./.deployment')
 class Deployment {
   /** @type {toa.deployment.Declaration} */
   #declaration
+
   /** @type {toa.deployment.Contents} */
   #contents
+
   /** @type {toa.operations.Process} */
   #process
+
   /** @type {string} */
   #target
 
@@ -28,8 +31,6 @@ class Deployment {
    */
   constructor (context, compositions, dependencies, process) {
     const dependency = merge(dependencies)
-
-    if (context.environment === 'local') throw new Error('Deployment environment name \'local\' is not allowed.')
 
     this.#declaration = declare(context, dependency)
     this.#contents = describe(context, compositions, dependency)
@@ -74,6 +75,10 @@ class Deployment {
     return await this.#process.execute('helm',
       ['template', this.#declaration.name, ...args, this.#target],
       { silently: true })
+  }
+
+  variables () {
+    return this.#contents.variables
   }
 }
 

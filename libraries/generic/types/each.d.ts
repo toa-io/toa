@@ -4,6 +4,6 @@ declare namespace toa.generic {
     type Callback<T> = (element: T, index: number) => Promise<void> | void
   }
 
-  type Each<T> = (iterable: Array<T>, callback: each.Callback<T>) => Promise<void> | void
+  type Each<T> = (array: Array<T>, callback: each.Callback<T>) => Promise<void> | void
 
 }
