@@ -2,33 +2,60 @@
 
 const { join } = require('node:path')
 const dotenv = require('dotenv')
+const { file } = require('@toa.io/filesystem')
 const boot = require('@toa.io/boot')
 const { context: find } = require('../util/find')
-const { file } = require('@toa.io/filesystem')
-
-/**
- * @param path {string}
- * @return {$ObjMap<string, string>}
- */
-async function getCurrentEnv (path) {
-  const exists = await file.exists(path)
-  if (exists === false) {
-    return {}
-  }
-  const content = await file.read(path)
-  return dotenv.parse(content)
-}
 
 async function env (argv) {
   const path = find(argv.path)
   const filepath = join(path, '.env')
   const operator = await boot.deployment(path, argv.environment)
   const variables = operator.variables()
-  const env = await getCurrentEnv(filepath)
-  const lines = variables.global.map((variable) => `${variable.name}=${variable.secret ? env[variable.name] ?? '' : variable.value}`)
-  const contents = lines.join('\n')
+  const currentValues = await read(filepath)
+  const nextValues = merge(variables.global, currentValues)
 
-  await file.write(filepath, contents)
+  await write(filepath, nextValues)
+}
+
+/**
+ * @param path {string}
+ * @returns {Record<string, string>}
+ */
+async function read (path) {
+  const exists = await file.is(path)
+
+  if (!exists) return {}
+
+  const contents = await file.read(path)
+
+  return dotenv.parse(contents)
+}
+
+/**
+ * @param {string} path
+ * @param {toa.deployment.dependency.Variable[]} values
+ * @return {Promise<void>}
+ */
+async function write (path, values) {
+  const contents = values.reduce((lines, { name, value }) => lines + `${name}=${value}\n`, '')
+
+  await file.write(path, contents)
+}
+
+/**
+ * @param {toa.deployment.dependency.Variable[] } variables
+ * @param {Record<string, string>} current
+ * @return {toa.deployment.dependency.Variable[]}
+ */
+function merge (variables, current) {
+  return variables.map((variable) => {
+    if (variable.secret === undefined) return variable
+
+    return {
+      name: variable.name,
+      value: current[variable.name] ?? ''
+    }
+  })
 }
 
 exports.env = env
