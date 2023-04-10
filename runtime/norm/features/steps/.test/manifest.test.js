@@ -41,8 +41,8 @@ describe('Given I have an entity schema:', () => {
   })
 })
 
-describe('When I declare {operation} with:', () => {
-  const step = gherkin.steps.Wh('I declare {operation} with:')
+describe('When I declare operation {operation} with:', () => {
+  const step = gherkin.steps.Wh('I declare operation {operation} with:')
 
   it('should be', () => undefined)
 
@@ -58,20 +58,32 @@ describe('When I declare {operation} with:', () => {
   })
 })
 
-
-describe('When I declare receiver {receiver} with:', () => {
-  const step = gherkin.steps.Wh('I declare receiver {receiver} with:')
+describe('When I declare receiver for {event} with:', () => {
+  const step = gherkin.steps.Wh('I declare receiver for {event} with:')
 
   it('should be', () => undefined)
 
   it('should declare receiver', () => {
+    const event = 'assignment'
+    const input = {
+      binding: 'amqp'
+    }
+    const yaml = dump(input)
 
+    step.call(context, event, yaml)
+    expect(context.manifest.receivers[event]).toStrictEqual(input)
   })
 
 })
 
-describe('Then normalized {operation} declaration must contain:', () => {
-  const step = gherkin.steps.Th('normalized {operation} declaration must contain:')
+describe('Then normalized receiver for event {event} must contain:', () => {
+  const step = gherkin.steps.Th('normalized receiver for event {event} must contain:')
+
+  it('should be', () => undefined)
+})
+
+describe('Then normalized operation {operation} declaration must contain:', () => {
+  const step = gherkin.steps.Th('normalized operation {operation} declaration must contain:')
 
   it('should be', () => undefined)
 
