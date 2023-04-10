@@ -56,8 +56,8 @@ Feature: Export local deployment environment variables
     Then I have an environment with:
       """
       TOA_ENV=local
-      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
-      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=secret
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=
+      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
       """
     Examples:
       | command   |

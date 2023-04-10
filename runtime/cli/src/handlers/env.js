@@ -2,7 +2,6 @@
 
 const { join } = require('node:path')
 const dotenv = require('dotenv')
-const { each } = require('@toa.io/generic')
 const { file } = require('@toa.io/filesystem')
 const boot = require('@toa.io/boot')
 const { context: find } = require('../util/find')
@@ -14,12 +13,6 @@ async function env (argv) {
   const variables = operator.variables()
   const currentValues = await read(filepath)
   const nextValues = merge(variables.global, currentValues)
-
-  console.log(nextValues)
-
-  if (argv.environment === 'local') localDefaults(nextValues)
-
-  console.log(nextValues)
 
   await write(filepath, nextValues)
 }
@@ -61,19 +54,6 @@ function merge (variables, current) {
     return {
       name: variable.name,
       value: current[variable.name] ?? ''
-    }
-  })
-}
-
-/**
- * @param {toa.deployment.dependency.Variable[]} variables
- */
-function localDefaults (variables) {
-  each(variables, ({ name, value }) => {
-    if (value === '') {
-      if (name.endsWith('_USERNAME')) value = 'developer'
-      if (name.endsWith('_PASSWORD')) value = 'secret'
-      if (value !== '') return { name, value }
     }
   })
 }
