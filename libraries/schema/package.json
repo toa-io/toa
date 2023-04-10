@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/schema",
-  "version": "0.4.0-dev.8",
+  "version": "0.4.0-dev.9",
   "description": "Toa Schema",
   "homepage": "https://toa.io",
   "author": {
@@ -23,9 +23,9 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/generic": "0.4.0-dev.8",
-    "@toa.io/schemas": "0.4.0-dev.8",
-    "@toa.io/yaml": "0.4.0-dev.8",
+    "@toa.io/generic": "0.4.0-dev.9",
+    "@toa.io/schemas": "0.4.0-dev.9",
+    "@toa.io/yaml": "0.4.0-dev.9",
     "ajv": "8.6.3",
     "ajv-formats": "2.1.1"
   }
