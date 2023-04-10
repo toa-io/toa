@@ -24,11 +24,11 @@ it('should create storage', () => {
   const locator = new Locator(name, namespace)
 
   // use default pointer values
-  process.env.TOA_ENV = 'toa_local'
+  process.env.TOA_DEV = '1'
 
   const storage = factory.storage(locator)
 
-  delete process.env.TOA_ENV
+  delete process.env.TOA_DEV
 
   expect(storage).toBeDefined()
   expect(storage).toBeInstanceOf(Storage)

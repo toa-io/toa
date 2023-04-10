@@ -10,7 +10,7 @@ let messages
 let credits
 
 beforeAll(async () => {
-  framework.env('toa_local')
+  framework.dev(true)
 
   composition = await framework.compose(['../context/messages', 'credits'])
   messages = await framework.remote('messages.messages')

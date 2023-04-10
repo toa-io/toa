@@ -45,13 +45,13 @@ it('should define package prefix', () => {
 })
 
 it('should define protocol for local environment', () => {
-  process.env.TOA_ENV = 'toa_local'
+  process.env.TOA_DEV = '1'
 
   const pointer = new Pointer(locator)
 
   expect(pointer.protocol).toStrictEqual('pg:')
 
-  delete process.env.TOA_ENV
+  delete process.env.TOA_DEV
 })
 
 it('should resolve database, schema, table and key', () => {
@@ -92,12 +92,12 @@ it('should use locator.namespace as default schema name', () => {
 it('should use TOA_STORAGES_SQL_DATABASE as default database name', () => {
   const database = generate()
 
-  process.env.TOA_ENV = 'toa_local'
+  process.env.TOA_DEV = '1'
   process.env.TOA_STORAGES_SQL_DATABASE = database
 
   const pointer = new Pointer(locator)
 
-  delete process.env.TOA_ENV
+  delete process.env.TOA_DEV
   delete process.env.TOA_STORAGES_SQL_DATABASE
 
   expect(pointer.database).toStrictEqual(database)

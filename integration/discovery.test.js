@@ -7,7 +7,7 @@ const framework = require('./framework')
 let composition, discovery
 
 beforeAll(async () => {
-  framework.env('toa_local')
+  framework.dev(true)
 
   composition = await framework.compose(['credits'])
   discovery = await framework.discovery()

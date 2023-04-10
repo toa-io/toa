@@ -6,6 +6,7 @@ const builder = (yargs) => {
   yargs
     .positional('environment', {
       type: 'string',
+      default: 'default',
       desc: 'Deployment environment'
     })
     .option('path', {

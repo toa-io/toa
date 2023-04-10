@@ -8,7 +8,7 @@ const framework = require('./framework')
 let composition, remote
 
 beforeAll(async () => {
-  framework.env('toa_local')
+  framework.dev(true)
 
   composition = await framework.compose(['credits'])
   remote = await framework.remote('credits.balance')
