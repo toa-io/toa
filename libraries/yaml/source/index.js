@@ -65,7 +65,7 @@ const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
 
 /**
  * @param {string} string
- * @returns {toa.core.Request}
+ * @returns {object}
  */
 const parse = (string) => {
   const object = yaml.load(string)
