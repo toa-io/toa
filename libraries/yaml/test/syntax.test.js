@@ -3,7 +3,7 @@
 const { resolve } = require('node:path')
 const { load } = require('../source')
 
-const path = resolve(__dirname, 'syntax.yaml')
+const path = resolve(__dirname, './examples/syntax.yaml')
 
 let object
 

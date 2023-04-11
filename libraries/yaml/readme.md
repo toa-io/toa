@@ -24,28 +24,28 @@ Write the `data` to a `file` in YAML format.
 This tag loads content from an external file and merges it with the current YAML.
 
 ```yaml
-b: !import [path]
+$import: <path>
 ```
 - `path` - can be specified as an absolute or relative path, or as a glob pattern.
 
 
 ### Example
 
-`a.yaml`
 ```yaml
+#a.yaml
 foo:
   bar: 1
 ```
 
-`b.yaml`
 ```yaml
+#b.yaml
 qux: 'hello'
 foo:
   baz: 2
 ```
 
-`c.yaml`
 ```yaml
+#c.yaml
 $import: ./*.yaml
 ```
 
