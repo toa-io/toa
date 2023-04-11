@@ -72,6 +72,7 @@ const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
  */
 const parse = (string, path) => {
   const object = yaml.load(string)
+
   return process(object, path)
 }
 
@@ -82,10 +83,10 @@ const parse = (string, path) => {
 const split = (string) => yaml.loadAll(string)
 
 function process (object, path) {
-  const plain = dump(object) // resolve references into duplicate objects
-  const resolvedObject = yaml.load(plain)
+  const string = dump(object) // resolve references into duplicate objects
+  const copy = yaml.load(string)
 
-  return extend(resolvedObject, path)
+  return extend(copy, path)
 }
 
 /**
