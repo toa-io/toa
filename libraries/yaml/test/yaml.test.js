@@ -9,14 +9,14 @@ const { save, load, dump, parse, split } = require('../')
 
 describe('load', () => {
   it('should return object', async () => {
-    const object = await load(path.resolve(__dirname, './yaml.yaml'))
+    const object = await load(path.resolve(__dirname, './examples/yaml.yaml'))
 
     expect(object.foo).toEqual('bar')
     expect(object.baz).toStrictEqual('.')
   })
 
   it('should return array', async () => {
-    const objects = await load.all(path.resolve(__dirname, './yaml.multi.yaml'))
+    const objects = await load.all(path.resolve(__dirname, './examples/yaml.multi.yaml'))
 
     expect(objects).toStrictEqual([{ foo: 'bar' }, { baz: 1 }])
   })
@@ -49,7 +49,7 @@ describe('save', () => {
 
 describe('sync', () => {
   it('should return object', () => {
-    const object = load.sync(path.resolve(__dirname, './yaml.yaml'))
+    const object = load.sync(path.resolve(__dirname, './examples/yaml.yaml'))
 
     expect(object.foo).toEqual('bar')
   })
@@ -63,7 +63,7 @@ describe('sync', () => {
 
 describe('try', () => {
   it('should return object', async () => {
-    const object = await load.try(path.resolve(__dirname, './yaml.yaml'))
+    const object = await load.try(path.resolve(__dirname, './examples/yaml.yaml'))
 
     expect(object?.foo).toEqual('bar')
   })
@@ -84,7 +84,7 @@ it('should parse ', () => {
 })
 
 it('should split', async () => {
-  const file = path.resolve(__dirname, './yaml.multi.yaml')
+  const file = path.resolve(__dirname, './examples/yaml.multi.yaml')
   const contents = await readFile(file, 'utf8')
 
   const objects = split(contents)

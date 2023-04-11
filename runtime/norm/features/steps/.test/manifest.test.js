@@ -82,7 +82,7 @@ describe('Then normalized receiver for event {label} must contain:', () => {
 
   it('should throw if does not contain', async () => {
     const label = generate()
-    const operation = generate()
+    const operation = 'save'
 
     context.manifest.operations = {
       [operation]: {

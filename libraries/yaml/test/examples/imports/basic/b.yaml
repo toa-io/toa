@@ -1,0 +1,3 @@
+qux: 'hello'
+foo:
+  baz: 2
