@@ -29,48 +29,39 @@ b: !import [path]
 - `path` - can be specified as an absolute or relative path, or as a glob pattern.
 
 
-### Example: for only one file
+### Example
 
-`imported.yaml`
+`a.yaml`
 ```yaml
-someB: a
+foo:
+  bar: 1
 ```
 
-`main.yaml`
+`b.yaml`
 ```yaml
-some: a
-b: !import "imported.yaml"
+qux: 'hello'
+foo:
+  baz: 2
 ```
 
-`result`
+`c.yaml`
 ```yaml
-some: a
-b:
-  someB: a
-```
-
-### Example: for glob pattern
-
-`a.schema.yaml`
-```yaml
-some1: a
-```
-
-`b.schema.yaml`
-```yaml
-some2: b
-```
-
-`main.yaml`
-```yaml
-some: a
-b: !import "*.schema.yaml"
+$import: ./*.yaml
 ```
 
 `result`
-```yaml
-some: a
-b:
-  some1: a
-  some2: b
+```javascript
+const value = yaml('c.yaml')
+
+console.log(value)
+
+/*
+Outputs:
+
+foo:
+  bar: 1
+  baz: 2
+qux: 'hello'
+*/
 ```
+
