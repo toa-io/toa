@@ -42,8 +42,8 @@ class Communication extends Connector {
     return this.#io.request(queue, request)
   }
 
-  async emit (exchange, message) {
-    await this.#io.emit(exchange, message)
+  async emit (exchange, message, properties) {
+    await this.#io.emit(exchange, message, properties)
   }
 
   async consume (exchange, group, consumer) {

@@ -49,6 +49,16 @@ it('should emit', async () => {
   expect(mock.queues.name).toHaveBeenCalledWith(locator, label)
 
   const exchange = mock.queues.name.mock.results[0].value
+  const args = comm.emit.mock.calls[0]
 
-  expect(comm.emit).toHaveBeenCalledWith(exchange, message)
+  expect(args[0]).toStrictEqual(exchange)
+  expect(args[1]).toStrictEqual(message)
+})
+
+it('should set authored header', async () => {
+  const message = generate()
+
+  await emitter.emit(message)
+
+  expect(comm.emit.mock.calls[0][2]).toMatchObject({ headers: { 'toa.io/amqp': '0' } })
 })

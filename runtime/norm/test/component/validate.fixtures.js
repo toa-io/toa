@@ -47,7 +47,6 @@ const ok = {
   },
   receivers: {
     'foo.bar.happened': {
-      foreign: true,
       transition: 'add',
       bridge: 'whatever',
       binding: 'amqp',
