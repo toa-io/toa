@@ -49,19 +49,19 @@ foo:
 $import: ./*.yaml
 ```
 
-`result`
 ```javascript
-const value = yaml('c.yaml')
+const value = yaml.load('c.yaml')
 
 console.log(value)
 
 /*
-Outputs:
-
-foo:
-  bar: 1
-  baz: 2
-qux: 'hello'
+{
+  foo: {
+    bar: 1,
+    baz: 2
+  },
+  qux: 'hello'
+}
 */
 ```
 
