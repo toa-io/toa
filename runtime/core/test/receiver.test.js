@@ -93,18 +93,3 @@ describe('adaptive', () => {
       .toHaveBeenCalledWith(definition.transition, await fixtures.bridge.request.mock.results[0].value)
   })
 })
-
-describe('foreign', () => {
-  beforeEach(() => {
-    definition.foreign = true
-    receiver = new Receiver(definition, fixtures.local, fixtures.bridge)
-  })
-
-  it('should wrap data from foreign event to payload', async () => {
-    const payload = { foo: generate() }
-
-    await receiver.receive(payload)
-
-    expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, payload)
-  })
-})

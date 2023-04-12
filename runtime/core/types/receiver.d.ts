@@ -4,7 +4,7 @@ import * as _connector from './connector'
 declare namespace toa.core {
 
   interface Receiver extends _connector.Connector {
-    receive(message: _message.Message | any): Promise<void>
+    receive(message: _message.Message): Promise<void>
   }
 
 }

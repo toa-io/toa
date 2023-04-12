@@ -10,26 +10,6 @@ const { component: load } = require('../../src')
 
 const { Given, When, Then } = require('@cucumber/cucumber')
 
-/**
- * @param variant {'operations'| 'receivers'}
- * @param type {string}
- * @param yaml {string}
- * @return {Promise<void>}
- */
-async function checkManifest (variant, type, yaml) {
-  const temp = await directory.temp()
-  const path = join(temp, 'manifest.toa.yaml')
-
-  await save(this.manifest, path)
-
-  const manifest = await load(temp)
-  const operation = manifest[variant][type]
-  const query = parse(yaml)
-  const contains = match(operation, query)
-
-  assert.equal(contains, true)
-}
-
 Given('I have an entity schema:',
   /**
    * @param {string} yaml
@@ -41,7 +21,7 @@ Given('I have an entity schema:',
     this.manifest.entity = { schema }
   })
 
-When('I declare operation {operation} with:',
+When('I declare {operation} with:',
   /**
    * @param {toa.norm.component.operations.Type} type
    * @param {string} yaml
@@ -57,31 +37,24 @@ When('I declare operation {operation} with:',
     this.manifest.operations = { [type]: declaration }
   })
 
-When('I declare receiver for {label} with:',
-  async function (label, yaml) {
-    const declaration = parse(yaml)
-
-    this.manifest.receivers = { [label]: declaration }
-  })
-
-Then('normalized operation {operation} declaration must contain:',
+Then('normalized {operation} declaration must contain:',
   /**
    * @param {toa.norm.component.operations.Type} type
    * @param {string} yaml
    * @this {toa.norm.features.Context}
    */
   async function (type, yaml) {
-    await checkManifest.call(this, 'operations', type, yaml)
-  })
+    const temp = await directory.temp()
+    const path = join(temp, 'manifest.toa.yaml')
 
-Then('normalized receiver for event {label} must contain:',
-  /**
-   * @param {string} label
-   * @param {string} yaml
-   * @this {toa.norm.features.Context}
-   */
-  async function (label, yaml) {
-    await checkManifest.call(this, 'receivers', label, yaml)
+    await save(this.manifest, path)
+
+    const manifest = await load(temp)
+    const operation = manifest.operations[type]
+    const query = parse(yaml)
+    const contains = match(operation, query)
+
+    assert.equal(contains, true)
   })
 
 /**

@@ -22,7 +22,6 @@ operations:
 receivers:
   store.orders.created:
     transition: transit
-    foreign: false
     binding: amqp # avoid discovery
 
 configuration:
