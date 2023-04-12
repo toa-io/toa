@@ -20,8 +20,8 @@ Write the `data` to a `file` in YAML format.
 
 # Additional YAML tags
 
-## !import
-This tag loads content from an external file and merges it with the current YAML.
+## $import
+This tag loads content from an external file and merges it into the resulting object.
 
 ```yaml
 $import: <path>
