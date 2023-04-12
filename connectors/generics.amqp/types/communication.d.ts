@@ -8,7 +8,7 @@ declare namespace toa.amqp {
 
     reply(queue: string, process: comq.producer): Promise<void>
 
-    emit(exchange: string, message: any): Promise<void>
+    emit(exchange: string, message: any, properties?: object): Promise<void>
 
     consume(exchange: string, group: string, callback: comq.consumer): Promise<void>
   }
