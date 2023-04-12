@@ -33,7 +33,17 @@ class Receiver extends Connector {
   }
 
   async open () {
-    await this.#comm.consume(this.#exchange, this.#group, (message) => this.#receiver.receive(message))
+    await this.#comm.consume(this.#exchange, this.#group, this.#receive)
+  }
+
+  /**
+   * @param {any} message
+   * @param {object} properties
+   */
+  #receive = async (message, properties) => {
+    if (!('toa.io/amqp' in properties.headers)) message = { payload: message }
+
+    await this.#receiver.receive(message)
   }
 }
 
