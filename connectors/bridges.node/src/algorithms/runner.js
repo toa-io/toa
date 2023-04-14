@@ -29,7 +29,7 @@ class Runner extends Connector {
   }
 
   async run (input, state) {
-    let reply = await this.#instance.run(input, state)
+    let reply = await this.#instance.execute(input, state)
 
     if (reply !== undefined) reply = normalize(reply)
 

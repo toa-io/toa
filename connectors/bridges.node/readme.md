@@ -100,4 +100,4 @@ return { output: { ok: 1 } }
 ### Storing Context
 
 > Algorithm definition should store reference to the `context` object without copying its value
-> type variables as they may change over time.
+> type variables as they may change over operation lifetime.

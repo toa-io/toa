@@ -15,8 +15,8 @@ it('should return output', async () => {
   const values = [{ [generate()]: generate() }, generate()]
 
   for (const value of values) {
-    const run = () => value
-    const ctor = () => /** @type {toa.core.bridges.Algorithm} */ ({ run })
+    const execute = () => value
+    const ctor = () => /** @type {toa.core.bridges.Algorithm} */ ({ execute })
     const runner = new Runner(ctor, context)
 
     await runner.connect()
@@ -28,8 +28,8 @@ it('should return output', async () => {
 })
 
 it('should not return undefined output', async () => {
-  const run = () => undefined
-  const ctor = () => ({ run })
+  const execute = () => undefined
+  const ctor = () => ({ execute })
   const runner = new Runner(ctor, context)
 
   await runner.connect()

@@ -19,7 +19,7 @@ beforeAll(async () => {
   operations = await define.operations(root)
 })
 
-it('should be', () => {
+it('should define', () => {
   expect(operations).toBeDefined()
 })
 
