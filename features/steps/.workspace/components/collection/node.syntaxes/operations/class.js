@@ -6,7 +6,7 @@
 class Transition {
   #foo
 
-  constructor (context) {
+  async mount (context) {
     this.#foo = context.configuration.foo
   }
 

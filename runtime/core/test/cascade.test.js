@@ -21,11 +21,11 @@ it('should depend on bridges', () => {
   expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.bridges)
 })
 
-it('should call bridges.run', async () => {
+it('should call bridges.execute', async () => {
   const args = [1, 2]
   await cascade.run(...args)
 
-  for (const bridge of fixtures.bridges) expect(bridge.run).toHaveBeenCalledWith(...args)
+  for (const bridge of fixtures.bridges) expect(bridge.execute).toHaveBeenCalledWith(...args)
 })
 
 it('should merge output', async () => {
@@ -38,5 +38,5 @@ it('should interrupt on error', async () => {
   const reply = await cascade.run({ error: 'b' })
 
   expect(reply).toStrictEqual({ error: 'b' })
-  expect(fixtures.bridges[2].run).not.toHaveBeenCalled()
+  expect(fixtures.bridges[2].execute).not.toHaveBeenCalled()
 })

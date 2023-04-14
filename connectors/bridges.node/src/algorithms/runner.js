@@ -6,32 +6,34 @@ const { Connector } = require('@toa.io/core')
  * @implements {toa.core.bridges.Algorithm}
  */
 class Runner extends Connector {
-  /** @type {toa.node.algorithms.Constructor} */
-  #ctor
+  /** @type {toa.node.Algorithm} */
+  #algorithm
 
-  /** @type {toa.core.bridges.Algorithm} */
-  #instance
+  /** @type {toa.node.Context} */
+  #context
 
   /**
-   * @param {toa.node.algorithms.Constructor} ctor
+   * @param {toa.node.Algorithm} algorithm
    * @param {toa.node.Context} context
    */
-  constructor (ctor, context) {
+  constructor (algorithm, context) {
     super()
 
-    this.#ctor = ctor
+    this.#algorithm = algorithm
+    this.#context = context
 
     this.depends(context)
   }
 
   async open () {
-    this.#instance = /** @type {toa.core.bridges.Algorithm} */ this.#ctor()
+    await this.#algorithm.mount?.(this.#context)
   }
 
-  async run (input, state) {
-    let reply = await this.#instance.execute(input, state)
+  async execute (input, state) {
+    let reply = await this.#algorithm.execute(input, state)
 
     if (reply !== undefined) reply = normalize(reply)
+    else reply = {}
 
     return reply
   }

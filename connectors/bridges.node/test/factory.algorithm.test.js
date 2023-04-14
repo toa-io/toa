@@ -32,7 +32,7 @@ for (const sample of ['fn', 'cls', 'fct']) {
 
     await algorithm.connect()
 
-    const promise = algorithm.run(input, state)
+    const promise = algorithm.execute(input, state)
 
     await expect(promise).resolves.not.toThrow()
 

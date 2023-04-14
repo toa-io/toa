@@ -1,10 +1,32 @@
 'use strict'
 
-/** @type {toa.node.define.algorithms.Constructor} */
-const create = (func, context) => {
-  const execute = (input, state) => func(input, state, context)
+/**
+ * @implements {toa.node.Algorithm}
+ */
+class Func {
+  /** @type {toa.node.algorithms.func} */
+  #func
 
-  return /** @type {toa.core.bridges.Algorithm} */ { execute }
+  /** @type {toa.node.Context} */
+  #context
+
+  /**
+   * @param {toa.node.algorithms.func} func
+   */
+  constructor (func) {
+    this.#func = func
+  }
+
+  execute (input, state) {
+    return this.#func(input, state, this.#context)
+  }
+
+  mount (context) {
+    this.#context = context
+  }
 }
+
+/** @type {toa.node.define.algorithms.Constructor} */
+const create = (func) => new Func(func)
 
 exports.create = create

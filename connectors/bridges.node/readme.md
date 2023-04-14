@@ -41,12 +41,18 @@ See [Operation properties](#).
 
 ### Class
 
+#### Example
+
 ```javascript
 // operations/transit.js
 
 class Transition {
-  constructor (context) {}
-
+  #context
+  
+  async mount(context) {
+    this.#context = context
+  }
+  
   execute (input, object) {
     // ...
 
@@ -66,8 +72,6 @@ it defines operation's `scope`.
 
 ```javascript
 class ObjectTransitionFactory {
-  constructor (context) {}
-
   create () {
     // ...
   }

@@ -1,8 +1,8 @@
 'use strict'
 
 /** @type {toa.node.define.algorithms.Constructor} */
-const create = (Factory, context) => {
-  const factory = new Factory(context)
+const create = (Factory) => {
+  const factory = new Factory()
 
   return factory.create()
 }
