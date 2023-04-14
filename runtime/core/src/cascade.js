@@ -18,7 +18,7 @@ class Cascade extends Connector {
     const reply = {}
 
     for (const bridge of this.#bridges) {
-      const partial = await bridge.run(...args)
+      const partial = await bridge.execute(...args)
 
       if (partial.error) return { error: partial.error }
 

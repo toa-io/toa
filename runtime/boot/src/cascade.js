@@ -27,8 +27,7 @@ const cascade = (manifest, endpoint, definition, context) => {
     bridges.unshift(bridge)
   }
 
-  if (bridges.length > 1) return new Cascade(bridges)
-  else return bridges[0]
+  return new Cascade(bridges)
 }
 
 exports.cascade = cascade

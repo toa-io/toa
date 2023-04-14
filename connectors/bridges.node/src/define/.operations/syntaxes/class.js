@@ -9,7 +9,7 @@ const define = (descriptor) => {
   const declaration = /** @type {import('@babel/types').ClassDeclaration} */ descriptor.statement
 
   descriptor.name = descriptor.name.toLowerCase()
-  descriptor.statement = method(declaration, 'run')
+  descriptor.statement = method(declaration, 'execute')
 
   return func.define(descriptor)
 }
