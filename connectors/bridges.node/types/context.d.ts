@@ -14,6 +14,7 @@ declare namespace toa.node {
 
     // known extensions
     origins?: Underlay
+    configuration?: Underlay
   }
 
 }

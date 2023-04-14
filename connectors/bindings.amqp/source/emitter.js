@@ -29,8 +29,10 @@ class Emitter extends Connector {
   }
 
   async emit (message) {
-    await this.#comm.emit(this.#exchange, message)
+    await this.#comm.emit(this.#exchange, message, PROPERTIES)
   }
 }
+
+const PROPERTIES = { headers: { 'toa.io/amqp': '0' } }
 
 exports.Emitter = Emitter

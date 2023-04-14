@@ -51,9 +51,25 @@ it('should consume events', async () => {
   expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
 
   const callback = comm.consume.mock.calls[0][2]
-  const message = generate()
+  const payload = generate()
+  const message = { payload }
+  const properties = { headers: { 'toa.io/amqp': '0' } }
 
-  await callback(message)
+  await callback(message, properties)
 
   expect(processor.receive).toHaveBeenCalledWith(message)
+})
+
+it('should consume foreign events', async () => {
+  await receiver.open()
+
+  expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
+
+  const callback = comm.consume.mock.calls[0][2]
+  const message = generate()
+  const properties = { headers: {} }
+
+  await callback(message, properties)
+
+  expect(processor.receive).toHaveBeenCalledWith({ payload: message })
 })

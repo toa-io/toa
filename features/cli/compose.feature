@@ -8,7 +8,6 @@ Feature: toa compose
       """
       toa compose [paths...]
       Run composition
-      Examples:
         toa compose ./component
         toa compose ./first ./second
         toa compose ./components/**/

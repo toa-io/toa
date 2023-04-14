@@ -1,0 +1,4 @@
+$import: ./a.yaml
+qux: 'hello'
+foo:
+  baz: 2

@@ -1,16 +1,16 @@
 'use strict'
 
 /**
- * @implements {toa.core.bridges.Algorithm}
+ * @implements {toa.node.Algorithm}
  */
 class Transition {
   #context
 
-  constructor (context) {
+  async mount (context) {
     this.#context = context
   }
 
-  async run (input, object) {
+  async execute (input, object) {
     return { output: { input, state: object, context: this.#context !== undefined } }
   }
 }

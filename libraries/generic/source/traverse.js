@@ -1,9 +1,9 @@
 'use strict'
 
 /**
- * @param {Object} object
- * @param {(node: Object) => Object} visit
- * @returns {Object}
+ * @param {object} object
+ * @param {(node: object) => object} visit
+ * @returns {object}
  */
 const traverse = (object, visit) => {
   if (typeof object !== 'object' || object === null || Array.isArray(object)) return object

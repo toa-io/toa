@@ -213,9 +213,7 @@ properties:
           adaptive:
             type: boolean
             default: false
-          foreign:
-            type: boolean
-        required: [transition, bridge, path, foreign]
+        required: [transition, bridge, path]
         additionalProperties: false
 
   extensions:

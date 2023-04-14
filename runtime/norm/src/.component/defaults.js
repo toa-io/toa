@@ -5,7 +5,7 @@ const defaults = (manifest) => {
   if (manifest.prototype === undefined) manifest.prototype = '@toa.io/prototype'
 
   if (manifest.bindings === undefined) {
-    const local = process.env.TOA_ENV === 'local'
+    const local = process.env.TOA_DEV === '1'
 
     manifest.bindings = local
       ? ['@toa.io/bindings.amqp']

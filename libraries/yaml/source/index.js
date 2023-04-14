@@ -3,6 +3,7 @@
 const { file: { read, write } } = require('@toa.io/filesystem')
 
 const yaml = require('js-yaml')
+const extensions = require('./extensions')
 
 /**
  * @param {string} path
@@ -11,7 +12,7 @@ const yaml = require('js-yaml')
 const load = async (path) => {
   const contents = await read(path)
 
-  return parse(contents)
+  return parse(contents, path)
 }
 
 /**
@@ -20,8 +21,9 @@ const load = async (path) => {
  */
 load.all = async (path) => {
   const contents = await read(path)
+  const objects = split(contents)
 
-  return split(contents)
+  return objects.map((object) => process(object, path))
 }
 
 /**
@@ -31,7 +33,7 @@ load.all = async (path) => {
 load.sync = (path) => {
   const contents = read.sync(path)
 
-  return parse(contents)
+  return parse(contents, path)
 }
 
 /**
@@ -65,13 +67,13 @@ const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
 
 /**
  * @param {string} string
- * @returns {toa.core.Request}
+ * @param {string} [path]
+ * @returns {object}
  */
-const parse = (string) => {
+const parse = (string, path) => {
   const object = yaml.load(string)
-  const plain = dump(object) // resolve references into duplicate objects
 
-  return yaml.load(plain)
+  return process(object, path)
 }
 
 /**
@@ -79,6 +81,23 @@ const parse = (string) => {
  * @returns {Object[]}
  */
 const split = (string) => yaml.loadAll(string)
+
+function process (object, path) {
+  const string = dump(object) // resolve references into duplicate objects
+  const copy = yaml.load(string)
+
+  return extend(copy, path)
+}
+
+/**
+ *
+ * @param {object} object
+ * @param {string} [path]
+ * @return {object}
+ */
+const extend = (object, path) => {
+  return extensions.reduce((value, extension) => extension(value, path, exports), object)
+}
 
 exports.load = load
 exports.dump = dump

@@ -6,11 +6,11 @@
 class Transition {
   #foo
 
-  constructor (context) {
+  async mount (context) {
     this.#foo = context.configuration.foo
   }
 
-  async run (input, object) {
+  async execute (input, object) {
     const foo = this.#foo
 
     return { output: { foo } }

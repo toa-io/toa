@@ -1,7 +1,8 @@
 import { Operation } from '@toa.io/norm/types'
 import { Node, Statement } from '@babel/types'
-import { bridges } from '@toa.io/core/types'
-import * as context from './context'
+import * as _bridges from '@toa.io/core/types/bridges'
+import * as _context from './context'
+import * as _algorithm from './algorithms'
 
 declare namespace toa.node.define {
 
@@ -22,7 +23,7 @@ declare namespace toa.node.define {
 
     type Test = (node: Node, type: string) => boolean
 
-    type Constructor = (func: Function, context: context.Context) => bridges.Algorithm
+    type Constructor = (func: _algorithm.func, context: _context.Context) => _algorithm.Algorithm
   }
 
   type Algorithms = (root: string) => Promise<algorithms.List>

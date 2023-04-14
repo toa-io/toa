@@ -97,10 +97,11 @@ describe('connected', () => {
   it('should emit', async () => {
     const exchange = generate()
     const message = generate()
+    const properties = { appId: 'test' }
 
-    await comm.emit(exchange, message)
+    await comm.emit(exchange, message, properties)
 
-    expect(io.emit).toHaveBeenCalledWith(exchange, message)
+    expect(io.emit).toHaveBeenCalledWith(exchange, message, properties)
   })
 
   it('should consume', async () => {

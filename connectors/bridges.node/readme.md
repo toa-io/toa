@@ -41,12 +41,18 @@ See [Operation properties](#).
 
 ### Class
 
+#### Example
+
 ```javascript
 // operations/transit.js
 
 class Transition {
-  constructor (context) {}
-
+  #context
+  
+  async mount(context) {
+    this.#context = context
+  }
+  
   execute (input, object) {
     // ...
 
@@ -66,8 +72,6 @@ it defines operation's `scope`.
 
 ```javascript
 class ObjectTransitionFactory {
-  constructor (context) {}
-
   create () {
     // ...
   }
@@ -100,4 +104,4 @@ return { output: { ok: 1 } }
 ### Storing Context
 
 > Algorithm definition should store reference to the `context` object without copying its value
-> type variables as they may change over time.
+> type variables as they may change over operation lifetime.
