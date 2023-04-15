@@ -1,6 +1,9 @@
 'use strict'
 
 const { each } = require('@toa.io/generic')
+const mock = require('./dns.mock')
+
+jest.mock('node:dns/promises', () => mock)
 
 const { dedupe } = require('../')
 
@@ -29,7 +32,7 @@ it('should resolve hosts', async () => {
       expect(result.port).toStrictEqual(original.port)
       expect(result.hash).toStrictEqual(original.hash)
       expect(result.search).toStrictEqual(original.search)
-      expect(result.hostname).toMatch(IPv4)
+      expect(result.hostname).toStrictEqual(mock.lookup.mock.results[i].value.address)
     })
 })
 
@@ -39,5 +42,3 @@ it('should dedupe', async () => {
 
   expect(urls.length).toStrictEqual(2)
 })
-
-const IPv4 = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/

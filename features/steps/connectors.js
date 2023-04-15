@@ -109,12 +109,18 @@ When('I call {endpoint} with:',
    * @this {toa.features.Context}
    */
   async function (endpoint, yaml) {
-    const [namespace, name, operation] = endpoint.split('.')
-    const remote = await get.remote(namespace, name)
     const request = parse(yaml)
 
-    this.reply = await remote.invoke(operation, request)
-    await remote.disconnect()
+    await call.call(this, endpoint, request)
+  })
+
+When('I call {endpoint}',
+  /**
+   * @param {string} endpoint
+   * @this {toa.features.Context}
+   */
+  async function (endpoint) {
+    await call.call(this, endpoint, {})
   })
 
 Then('the reply is received:',
@@ -142,4 +148,19 @@ async function invoke (endpoint, request = {}) {
   if (exception !== undefined) throw new Error(exception.message)
 
   this.reply = { output, error }
+}
+
+/**
+ * @param {string} endpoint
+ * @param {toa.core.Request} request
+ * @this {toa.features.Context}
+ * @return {Promise<void>}
+ */
+async function call (endpoint, request) {
+  const [namespace, name, operation] = endpoint.split('.')
+  const remote = await get.remote(namespace, name)
+
+  this.reply = await remote.invoke(operation, request)
+
+  await remote.disconnect()
 }

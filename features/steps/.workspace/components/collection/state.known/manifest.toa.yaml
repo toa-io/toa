@@ -1,0 +1,12 @@
+name: known
+namespace: state
+
+entity: null
+
+operations:
+  set:
+    concurrency: retry
+    query: false
+    input: number
+  get:
+    output: number
