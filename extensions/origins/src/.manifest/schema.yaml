@@ -9,5 +9,5 @@ properties:
     patternProperties:
       '.*':
         type: string
-        pattern: ^https?:\/\/(?=.{1,254}(?::|$))(?:(?!\d|-)(?![a-z0-9\-]{1,62}-(?:\.|:|$))[a-z0-9\-]{1,63}\b(?!\.$)\.?)+(:\d+)?$
+        pattern: ^https?:\/\/([-a-z0-9.^\/^\\]+)\.([a-z0-9.^\/^\\]+)$
 required: [origins]
