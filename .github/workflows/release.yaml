@@ -1,4 +1,4 @@
-name: Publish packages
+name: Release
 
 on:
   pull_request:
@@ -33,7 +33,7 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      - name: Bump version
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.TOABOT_GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: ${{ steps.gpg.outputs.name }}
@@ -43,11 +43,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ ${{ github.base_ref }} = main ]; then
-            npx lerna@6.5.1 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci(release): %s" --sign-git-commit
+            npx lerna@6.5.1 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
             git fetch
             git checkout dev
             git merge main
             git push --all origin --no-verify
           else
-            npx lerna@6.5.1 publish --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --message "ci(prerelease): %s" --git-tag-command "echo %s" --sign-git-commit
+            npx lerna@6.5.1 publish --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
           fi

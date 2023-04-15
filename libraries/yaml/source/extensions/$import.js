@@ -1,3 +1,5 @@
+'use strict'
+
 const { resolve, dirname } = require('node:path')
 const { traverse, merge } = require('@toa.io/generic')
 const { file } = require('@toa.io/filesystem')
