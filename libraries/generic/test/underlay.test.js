@@ -7,9 +7,11 @@ describe('segments', () => {
 
   it('should pass segments', () => {
     const result = instance.dummies.a.transit()
+
     expect(result).toStrictEqual(['dummies', 'a', 'transit'])
 
     const repeat = instance.foo.bar.assign()
+
     expect(repeat).toStrictEqual(['foo', 'bar', 'assign'])
   })
 

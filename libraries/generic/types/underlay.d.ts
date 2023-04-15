@@ -8,7 +8,7 @@ declare namespace toa.generic {
   interface Underlay {
     (...args: any[]): any
 
-    [key: string]: Underlay
+    [key: string]: Underlay | any
   }
 
 }
