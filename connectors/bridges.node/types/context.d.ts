@@ -1,21 +1,21 @@
 import { Underlay } from '@toa.io/generic/types'
-import { Connector } from "@toa.io/core/types";
+import { Connector } from '@toa.io/core/types'
+import { Aspect } from '@toa.io/core/types/extensions'
 
 declare namespace toa.node {
-
-  interface Aspectes {
-    [key: string]: Function
-  }
 
   interface Context extends Connector {
     local: Underlay
     remote: Underlay
-    aspects: Aspectes
+    aspects: Record<string, Function>
 
     // known extensions
     origins?: Underlay
-    configuration?: Underlay
+    configuration?: object
+    state?: object
   }
+
+  type shortcut = (context: Context, aspect: Aspect) => void
 
 }
 

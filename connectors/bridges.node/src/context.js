@@ -3,6 +3,8 @@
 const { Connector } = require('@toa.io/core')
 const { underlay } = require('@toa.io/generic')
 
+const shortcuts = require('./shortcuts')
+
 /**
  * @implements {toa.node.Context}
  */
@@ -48,38 +50,10 @@ class Context extends Connector {
 
       map[aspect.name] = aspect.invoke.bind(aspect)
 
-      // well-known aspects
-      if (aspect.name === 'configuration') this.#configuration(aspect)
-      if (aspect.name === 'origins') this.origins = this.#origins(aspect)
+      if (aspect.name in shortcuts) shortcuts[aspect.name](this, aspect)
     }
 
     return map
-  }
-
-  /**
-   * @param {toa.core.extensions.Aspect} aspect
-   */
-  #origins (aspect) {
-    return underlay(async (segs, args) => {
-      if (segs.length < 2) throw new Error(`Origins call requires at least 2 arguments, ${segs.length} given`)
-
-      const name = segs.shift()
-      const method = segs.pop().toUpperCase()
-      const path = segs.join('/')
-      const request = { method, ...args[0] }
-      const options = args[1]
-
-      return await aspect.invoke(name, path, request, options)
-    })
-  }
-
-  /**
-   * @param {toa.core.extensions.Aspect} aspect
-   */
-  #configuration (aspect) {
-    Object.defineProperty(this, 'configuration', {
-      get: () => aspect.invoke()
-    })
   }
 }
 
