@@ -27,7 +27,7 @@ declare namespace toa.core.extensions {
   interface Aspect extends _core.Connector {
     name: string
 
-    invoke(...args: any[]): Promise<any>
+    invoke: Function
   }
 
 }

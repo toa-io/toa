@@ -5,7 +5,7 @@ const { Composition } = require('@toa.io/core')
 const boot = require('./index')
 
 async function composition (paths, options) {
-  options = Object.assign({}, options, EXTENSIONS)
+  options = Object.assign({}, options)
 
   /** @type {toa.norm.Component[]} */
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
@@ -27,10 +27,6 @@ async function composition (paths, options) {
     boot.receivers(manifests[index], component)))
 
   return new Composition(expositions.flat(), producers.flat(), receivers.flat(), tenants.flat())
-}
-
-const EXTENSIONS = {
-  extensions: ['@toa.io/extensions.sampling']
 }
 
 exports.composition = composition

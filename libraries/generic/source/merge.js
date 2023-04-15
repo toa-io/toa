@@ -1,5 +1,7 @@
 'use strict'
 
+const { entries } = require('./entries')
+
 /** @type {toa.generic.Merge} */
 const merge = (
   target,
@@ -21,7 +23,7 @@ const merge = (
       target.push(...source)
     } else if (options.ignore !== true) target.push(...source)
   } else if (typeof source === 'object' && typeof target === 'object') {
-    for (const [name, value] of Object.entries(source)) {
+    for (const [name, value] of entries(source)) {
       path.push(name)
 
       if (source[name] !== undefined) {

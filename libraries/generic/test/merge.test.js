@@ -1,6 +1,7 @@
 'use strict'
 
 const { merge, overwrite, add } = require('../source')
+const { generate } = require('randomstring')
 
 it('should merge arrays', () => {
   const target = [1, 2]
@@ -78,6 +79,17 @@ it('should ignore undefined arguments', () => {
   const result = merge(undefined, undefined)
 
   expect(result).toStrictEqual({})
+})
+
+it('should merge symbol properties', async () => {
+  const sym = Symbol('test')
+  const value = generate()
+  const source = { [sym]: value }
+  const target = {}
+
+  merge(target, source)
+
+  expect(target).toStrictEqual(source)
 })
 
 describe('options', () => {

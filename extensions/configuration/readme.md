@@ -102,14 +102,14 @@ name: dummy
 namespace: dummies
 
 extensions:
-  @toa.io/extensions.configuration:
-     properties:
-       foo:
-         type: string
-         default: 'baz'
-       bar:
-         type: number
-     required: [foo]
+  "@toa.io/extensions.configuration":
+    properties:
+      foo:
+        type: string
+        default: 'baz'
+      bar:
+        type: number
+    required: [foo]
 ```
 
 ### Concise Declaration
@@ -133,16 +133,16 @@ configuration:
 ```yaml
 # component.toa.yaml
 extensions:
-  @toa.io/extensions.configuration:
-     properties:
-       foo:
-         type: string
-         default: baz
-       bar:
-         type: number
-         default: 1
-     additionalProperties: false
-     required: [foo, bar]
+  "@toa.io/extensions.configuration":
+    properties:
+      foo:
+        type: string
+        default: baz
+      bar:
+        type: number
+        default: 1
+    additionalProperties: false
+    required: [foo, bar]
 ```
 
 ## Context Configuration
