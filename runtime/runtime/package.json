@@ -33,6 +33,7 @@
     "@toa.io/extensions.exposition": "0.7.0-dev.0",
     "@toa.io/extensions.origins": "0.7.0-dev.0",
     "@toa.io/extensions.sampling": "0.7.0-dev.0",
+    "@toa.io/extensions.state": "0.7.0-dev.0",
     "@toa.io/norm": "0.7.0-dev.0",
     "@toa.io/operations": "0.7.0-dev.0",
     "@toa.io/prototype": "0.6.0",
