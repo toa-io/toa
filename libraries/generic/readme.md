@@ -32,3 +32,9 @@ Transforms `amqp://shard{0-2}.domain.com` into:
 Uses [`range`](#range).
 
 See [tests](test/shards.test.js).
+
+# Entries
+
+`entries(object: object): [key, value][]`
+
+`Object.entries` including Symbols.
