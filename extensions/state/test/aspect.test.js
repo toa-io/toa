@@ -29,14 +29,14 @@ it('should extend Connector', async () => {
 })
 
 it('should expose name', async () => {
-  expect(aspect.name).toStrictEqual('cache')
+  expect(aspect.name).toStrictEqual('state')
 })
 
 it('should implement invoke', async () => {
   expect(aspect.invoke).toBeDefined()
 })
 
-it('should cache', async () => {
+it('should store', async () => {
   const value = { [generate()]: generate() }
 
   aspect.invoke(value)

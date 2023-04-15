@@ -8,7 +8,7 @@ const { Connector } = require('@toa.io/core')
  * @implements {toa.core.extensions.Aspect}
  */
 class Aspect extends Connector {
-  name = 'cache'
+  name = 'state'
 
   /** @type {object} */
   #value = {}

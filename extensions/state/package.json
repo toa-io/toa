@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/extensions.cache",
+  "name": "@toa.io/extensions.state",
   "version": "0.1.0",
-  "description": "Toa Cache",
+  "description": "Toa State",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "source/index.js",

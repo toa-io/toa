@@ -219,6 +219,38 @@ describe('When I call {endpoint} with:', () => {
   })
 })
 
+describe('When I call {endpoint}', () => {
+  const step = gherkin.steps.Wh('I call {endpoint}')
+
+  it('should be', async () => undefined)
+
+  const namespace = generate()
+  const name = generate()
+  const operation = generate()
+  const endpoint = `${namespace}.${name}.${operation}`
+  const context = {}
+
+  it('should call remote', async () => {
+    await step.call(context, endpoint)
+
+    expect(mock.boot.remote).toHaveBeenCalled()
+
+    const remote = mock.boot.remote.mock.results[0].value
+
+    expect(remote.invoke).toHaveBeenCalledWith(operation, {})
+
+    expect(remote.disconnect).toHaveBeenCalled()
+  })
+
+  it('should set reply', async () => {
+    await step.call(context, endpoint)
+
+    const remote = mock.boot.remote.mock.results[0].value
+
+    expect(context.reply).toStrictEqual(await remote.invoke.mock.results[0].value)
+  })
+})
+
 describe('Then the reply is received:', () => {
   const step = gherkin.steps.Th('the reply is received:')
 
