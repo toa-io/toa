@@ -8,15 +8,20 @@ const { newid } = require('@toa.io/generic')
 
 const framework = require('./framework')
 
-const connector = '@toa.io/storages.mongodb'
 const locator = new Locator('balance', 'credits')
+
+const component = /** @type {toa.norm.Component} */ {
+  path: process.cwd(),
+  locator,
+  entity: { storage: '@toa.io/storages.mongodb' }
+}
 
 let storage
 
 beforeAll(async () => {
   framework.dev(true)
 
-  storage = boot.storage(locator, connector)
+  storage = boot.storage(component)
 
   await expect(storage.connect()).resolves.not.toThrow()
 })

@@ -19,7 +19,7 @@ const storage = (component) => {
 
 function load (component) {
   const reference = component.entity.storage
-  const path = require.resolve(reference, { paths: [component.path] })
+  const path = require.resolve(reference, { paths: [component.path, __dirname] })
   const { Factory } = require(path)
 
   const pkg = loadPackageJson(component.path, reference)
@@ -29,11 +29,13 @@ function load (component) {
 }
 
 function loadPackageJson (root, reference) {
-  const path = join(root, reference, 'package.json')
+  const packageJson = join(reference, 'package.json')
 
   try {
+    const path = require.resolve(packageJson, { paths: [root, __dirname] })
+
     return require(path)
-  } catch {
+  } catch (e) {
     return null
   }
 }
