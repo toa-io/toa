@@ -34,11 +34,11 @@ const collapse = (manifest, prototype) => {
     }
   }
 
-  delete prototype.entity?.storage
+  delete prototype.entity?.storage // ???
 
-  const { entity, remotes, events } = prototype
+  const { entity, events } = prototype
 
-  merge(manifest, { entity, remotes, events })
+  merge(manifest, { entity, events })
 }
 
 exports.collapse = collapse

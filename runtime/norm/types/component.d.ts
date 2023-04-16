@@ -45,7 +45,7 @@ export namespace toa.norm {
     }
 
     type Entity = {
-      schema: Object
+      schema: object
       storage?: string
       initialized?: boolean
     }
@@ -59,7 +59,8 @@ export namespace toa.norm {
       operations?: Operations
       events?: Events
       receivers: Record<string, Receiver>
-      extensions?: Record<string, Object>
+      extensions?: Record<string, object>
+      properties: Record<string, object>
     }
 
     type Constructor = (path: string) => Promise<Component>

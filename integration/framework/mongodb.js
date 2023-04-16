@@ -6,7 +6,14 @@ const { Locator } = require('@toa.io/core')
 const connect = async (id) => {
   const [namespace, name] = id.split('.')
   const locator = new Locator(name, namespace)
-  const storage = boot.storage(locator, '@toa.io/storages.mongodb')
+
+  const manifest = /** @type {toa.norm.Component} */ {
+    path: process.cwd(),
+    locator,
+    entity: { storage: '@toa.io/storages.mongodb' }
+  }
+
+  const storage = boot.storage(manifest)
 
   await storage.connect()
 

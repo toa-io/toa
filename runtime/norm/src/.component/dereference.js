@@ -47,10 +47,6 @@ const schema = (object, resolve) => {
   return object
 }
 
-const types = {
-  id: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id' }
-}
-
 const forward = (operation, operations) => {
   const target = operations[operation.forward]
 
