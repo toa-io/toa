@@ -1,0 +1,9 @@
+name: storage
+namespace: custom
+
+entity:
+  storage: ./storage
+
+operations:
+  transit:
+    concurrency: retry

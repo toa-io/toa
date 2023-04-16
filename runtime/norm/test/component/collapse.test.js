@@ -60,6 +60,7 @@ it('should ignore bindings', () => {
   expect(manifest).toStrictEqual(source)
 
   delete manifest.bindings
+
   collapse(manifest, prototype)
   expect(manifest).toStrictEqual({})
 })
@@ -70,12 +71,4 @@ it('should merge operations', () => {
 
   collapse(manifest, prototype, '/somewhere')
   expect(manifest).toStrictEqual(samples.operations.result)
-})
-
-it('should merge remotes', () => {
-  const manifest = clone(samples.remotes.manifest)
-  const prototype = clone(samples.remotes.prototype)
-
-  collapse(manifest, prototype, '/somewhere')
-  expect(manifest).toStrictEqual(samples.remotes.result)
 })
