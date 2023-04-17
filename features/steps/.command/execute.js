@@ -22,9 +22,11 @@ async function execute (command, options = {}) {
 
   try {
     result = await exec(command, options)
+
     this.exitCode = 0
   } catch (e) {
     result = e
+
     this.exitCode = e.status
 
     if (e.code === 'ABORT_ERR') this.aborted = true
