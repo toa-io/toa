@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,7 +22,7 @@
     "@toa.io/core": "0.7.0",
     "@toa.io/filesystem": "0.7.0",
     "@toa.io/generic": "0.7.0",
-    "@toa.io/norm": "0.7.0",
+    "@toa.io/norm": "0.7.1",
     "@toa.io/schema": "0.7.0",
     "clone-deep": "4.0.1"
   },

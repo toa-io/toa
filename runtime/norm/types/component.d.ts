@@ -45,7 +45,7 @@ export namespace toa.norm {
     }
 
     type Entity = {
-      schema: object
+      schema: Object
       storage?: string
       initialized?: boolean
     }
