@@ -20,6 +20,14 @@ When('I export deployment for {word}',
     return deployment.export.call(this, env)
   })
 
+When('I export variables',
+  /**
+   * @this {toa.features.Context}
+   */
+  function () {
+
+  })
+
 Then('exported {helm-artifact} should contain:',
   /**
    * @param {string} artifact
