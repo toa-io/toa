@@ -13,6 +13,7 @@ const {
   collapse,
   dereference,
   defaults,
+  dependencies,
   normalize
 } = require('./.component')
 
@@ -32,7 +33,7 @@ const load = async (path, base) => {
   if (base !== undefined) path = find(path, base, MANIFEST)
 
   const file = join(path, MANIFEST)
-  const manifest = await yaml(file)
+  const manifest = /** @type {toa.norm.Component} */ await yaml(file)
 
   manifest.path = path
 
@@ -50,6 +51,7 @@ const load = async (path, base) => {
   }
 
   dereference(manifest)
+  dependencies(manifest)
 
   return manifest
 }

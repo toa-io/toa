@@ -1,6 +1,7 @@
 'use strict'
 
 const { join } = require('node:path')
+const { load } = require('./load')
 
 /**
  * @param {toa.norm.context.dependencies.References} references
@@ -12,7 +13,8 @@ const resolve = (references, annotations) => {
   const dependencies = {}
 
   for (const [dependency, components] of Object.entries(references)) {
-    const id = name(dependency)
+    const { metadata, module } = load(dependency)
+    const id = metadata.name
 
     const instances = components.map((component) => ({
       locator: component.locator,
@@ -22,7 +24,6 @@ const resolve = (references, annotations) => {
     dependencies[dependency] = instances
 
     const annotation = annotations?.[id]
-    const module = require(dependency)
 
     if (annotation !== undefined && module.annotation !== undefined) {
       annotations[id] = module.annotation(annotation, instances)
@@ -30,16 +31,6 @@ const resolve = (references, annotations) => {
   }
 
   return dependencies
-}
-
-/**
- * @param {string} dependency
- * @returns {string}
- */
-const name = (dependency) => {
-  const pkg = require(join(dependency, 'package.json'))
-
-  return pkg.name
 }
 
 exports.resolve = resolve
