@@ -84,3 +84,15 @@ it('should not modify input', async () => {
 
   expect(schema).toStrictEqual(origin)
 })
+
+it('should expand reference', async () => {
+  const ref = '#ok'
+  const cos = { foo: 'ref:' + ref }
+  const schema = expand(cos, valid)
+
+  expect(schema).toMatchObject({ properties: { foo: { $ref: ref } } })
+})
+
+it('should not throw on numbers ', async () => {
+  expect(() => expand({ foo: 1 }, valid)).not.toThrow()
+})

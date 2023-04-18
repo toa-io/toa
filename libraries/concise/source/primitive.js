@@ -2,6 +2,7 @@
 
 const { PRIMITIVES } = require('./constants')
 const { expression } = require('./expression')
+const { reference } = require('./reference')
 
 /**
  * @param {string} value
@@ -10,7 +11,11 @@ const { expression } = require('./expression')
 const primitive = (value) => {
   const regex = expression(value)
 
-  if (regex !== undefined) return regex
+  if (regex !== null) return regex
+
+  const ref = reference(value)
+
+  if (ref !== null) return ref
 
   const type = typeof value
 
