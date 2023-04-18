@@ -20,4 +20,6 @@ Factory for [Namespace class](./types/namespace.d.ts).
 ## namespace(path: string): Namespace
 
 Loads schemas from `.cos.yaml` files within given directory, setting their missing `$id` to the file
-basename and returns `Namespace`.
+relative path and basename and returns `Namespace`.
+
+> "up" references (`../`) are not supported

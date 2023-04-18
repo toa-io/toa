@@ -27,7 +27,7 @@
     "@toa.io/filesystem": "0.7.0",
     "@toa.io/generic": "0.7.0",
     "@toa.io/yaml": "0.7.0",
-    "ajv": "8.6.3",
+    "ajv": "8.12.0",
     "ajv-formats": "2.1.1"
   }
 }
