@@ -34,13 +34,13 @@ it('should not throw if valid', () => {
 it('should require origins', () => {
   delete declaration.origins
 
-  expect(exec).toThrow(/fewer than 1 items/)
+  expect(exec).toThrow(/fewer than 1/)
 })
 
 it('should require at least one origin', () => {
   declaration.origins = {}
 
-  expect(exec).toThrow(/fewer than 1 items/)
+  expect(exec).toThrow(/fewer than 1/)
 })
 
 it('should require origin values as strings', () => {
