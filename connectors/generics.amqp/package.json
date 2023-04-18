@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/generics.amqp",
-  "version": "0.7.0",
+  "version": "0.7.1-dev.0",
   "description": "Toa Generic AMQP Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,9 +20,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "0.7.0",
+    "@toa.io/core": "0.7.1-dev.0",
     "@toa.io/generic": "0.7.0",
-    "@toa.io/pointer": "0.7.0",
+    "@toa.io/pointer": "0.7.1-dev.0",
     "comq": "0.6.0"
   }
 }
