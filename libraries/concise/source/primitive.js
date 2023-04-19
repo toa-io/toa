@@ -1,31 +1,37 @@
 'use strict'
 
-const { PRIMITIVES } = require('./constants')
-const { expression } = require('./expression')
-const { reference } = require('./reference')
-const { map } = require('./map')
+const { PRIMITIVES } = require('./expressions/constants')
+const expressions = require('./expressions')
 
 /**
- * @param {string} value
+ * @param {any} value
  * @returns {Object}
  */
 const primitive = (value) => {
-  const regex = expression(value)
+  const expression = parse(value)
 
-  if (regex !== null) return regex
-
-  const ref = reference(value)
-
-  if (ref !== null) return ref
-
-  const m = map(value)
-
-  if (m !== null) return m
+  if (expression !== null) return expression
 
   const type = typeof value
 
   if (PRIMITIVES.includes(value)) return { type: value }
   if (PRIMITIVES.includes(type)) return { type, default: value }
+}
+
+/**
+ * @param {any} value
+ * @returns {Object}
+ */
+function parse (value) {
+  if (typeof value !== 'string') return null
+
+  for (const expression of expressions) {
+    const result = expression(value)
+
+    if (result !== null) return result
+  }
+
+  return null
 }
 
 exports.primitive = primitive
