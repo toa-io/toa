@@ -91,4 +91,94 @@ Feature: Replay samples
       """
       # Subtest: Component samples
       # Subtest: Integration samples
+      # Subtest: Should add numbers /integration
+      # Subtest: Should add negative numbers /integration
+      """
+
+  Scenario Outline: Replay specific component samples file
+    Given I have a component `math.calculations`
+    And my working directory is ./components/math.calculations
+    When I run `toa replay --sample <selector>`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: sum
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: multi
+      """
+    Examples:
+      | selector           |
+      | sum                |
+      | ./samples/sum.yaml |
+      | samples/sum        |
+
+  Scenario Outline: Replay specific integration samples file
+    Given I have a component `math.calculations`
+    And I have integration samples
+    When I run `toa replay --sample <selector>`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: sum
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: multi
+      """
+    Examples:
+      | selector                             |
+      | math.calculations.sum                |
+      | ./samples/math.calculations.sum.yaml |
+      | samples/math.calculations.sum        |
+
+  Scenario Outline: Replay specific component sample
+    Given I have a component `math.calculations`
+    And my working directory is ./components/math.calculations
+    When I run `toa replay --title "<selector>"`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: Should add negative numbers
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Should add numbers
+      """
+    Examples:
+      | selector                    |
+      | Should add negative numbers |
+      | negative                    |
+
+  Scenario Outline: Replay specific integration sample
+    Given I have a component `math.calculations`
+    And I have integration samples
+    When I run `toa replay --title "<selector>"`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: Should add negative numbers /integration
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Should add numbers /integration
+      """
+    Examples:
+      | selector                                 |
+      | Should add negative numbers /integration |
+      | negative .* /integration                 |
+
+  Scenario: Replay integration tests only
+    Given I have a component `math.calculations`
+    And I have integration samples
+    When I run `toa replay --integration`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: Integration samples
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Component samples
       """
