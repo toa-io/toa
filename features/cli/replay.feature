@@ -95,10 +95,10 @@ Feature: Replay samples
       # Subtest: Should add negative numbers /integration
       """
 
-  Scenario Outline: Replay specific samples file
+  Scenario: Replay specified operation samples
     Given I have a component `math.calculations`
     And my working directory is ./components/math.calculations
-    When I run `toa replay --sample <selector>`
+    When I run `toa replay --operation sum`
     Then program should exit with code 0
     And stdout should contain lines:
       """
@@ -108,31 +108,21 @@ Feature: Replay samples
       """
       # Subtest: multi
       """
-    Examples:
-      | selector           |
-      | sum                |
-      | ./samples/sum.yaml |
-      | samples/sum        |
 
-  Scenario Outline: Replay specific integration samples file
+  Scenario: Replay integration samples for specified operation
     Given I have a component `math.calculations`
     And I have a context
     And I have integration samples
-    When I run `toa replay --sample <selector>`
+    When I run `toa replay --operation multi`
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      # Subtest: sum
+      # Subtest: multi
       """
     And stdout should not contain lines:
       """
-      # Subtest: multi
+      # Subtest: sum
       """
-    Examples:
-      | selector                             |
-      | math.calculations.sum                |
-      | ./samples/math.calculations.sum.yaml |
-      | samples/math.calculations.sum        |
 
   Scenario Outline: Replay specific component sample
     Given I have a component `math.calculations`
