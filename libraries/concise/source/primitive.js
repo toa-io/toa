@@ -3,6 +3,7 @@
 const { PRIMITIVES } = require('./constants')
 const { expression } = require('./expression')
 const { reference } = require('./reference')
+const { map } = require('./map')
 
 /**
  * @param {string} value
@@ -16,6 +17,10 @@ const primitive = (value) => {
   const ref = reference(value)
 
   if (ref !== null) return ref
+
+  const m = map(value)
+
+  if (m !== null) return m
 
   const type = typeof value
 

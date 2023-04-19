@@ -96,3 +96,20 @@ it('should expand reference', async () => {
 it('should not throw on numbers ', async () => {
   expect(() => expand({ foo: 1 }, valid)).not.toThrow()
 })
+
+it.each(['string', 'number', 'integer', 'boolean', 'object', 'array'])('should expand Map<%s>',
+  async (type) => {
+    const cos = { foo: `<${type}>` }
+    const schema = expand(cos, valid)
+
+    expect(schema).toMatchObject({
+      properties: {
+        foo: {
+          type: 'object',
+          patternProperties: {
+            '^.+$': { type }
+          }
+        }
+      }
+    })
+  })
