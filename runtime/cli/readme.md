@@ -48,6 +48,7 @@ format.
 <dt><code>toa replay [paths...]</code></dt>
 <dd>
 <code>paths</code> path(s) to component(s) or a context (default <code>.</code>)<br/>
+<code>--integration</code> replay integration tests only<br/>
 <code>--sample &lt;pattern&gt;</code> glob pattern to match sample files<br/>
 <code>--title &lt;regexp&gt;</code> regexp to match sample titles<br/>
 </dd>
