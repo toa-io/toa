@@ -13,7 +13,9 @@ async function replay (argv) {
 
   /** @type {toa.samples.suite.Options} */
   const options = {
-    component: argv.component
+    component: argv.component,
+    integration: argv.integration,
+    operation: argv.operation
   }
 
   if (paths !== null) {

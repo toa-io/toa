@@ -23,11 +23,11 @@ const builder = (yargs) => {
       group: 'Command options:',
       describe: 'Replay integration tests only'
     })
-    .option('sample', {
-      alias: 's',
+    .option('operation', {
+      alias: 'o',
       type: 'string',
       group: 'Command options:',
-      describe: 'Replay samples found by glob pattern'
+      describe: 'Replay samples for specified operation'
     })
     .option('title', {
       alias: 't',
