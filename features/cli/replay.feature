@@ -124,7 +124,7 @@ Feature: Replay samples
       # Subtest: sum
       """
 
-  Scenario Outline: Replay specific component sample
+  Scenario Outline: Replay component sample by title
     Given I have a component `math.calculations`
     And my working directory is ./components/math.calculations
     When I run `toa replay --title "<selector>"`
@@ -141,8 +141,9 @@ Feature: Replay samples
       | selector                    |
       | Should add negative numbers |
       | negative                    |
+      | neg\w+ numbers              |
 
-  Scenario Outline: Replay specific integration sample
+  Scenario Outline: Replay integration sample by title <selector>
     Given I have a component `math.calculations`
     And I have a context
     And I have integration samples
@@ -159,7 +160,7 @@ Feature: Replay samples
     Examples:
       | selector                                 |
       | Should add negative numbers /integration |
-      | negative .* /integration                 |
+      | negative \w+ /integration                |
 
   Scenario: Replay integration tests only
     Given I have a component `math.calculations`
