@@ -9,14 +9,16 @@ it('should be', () => {
   expect(components).toBeDefined()
 })
 
-const root = resolve(__dirname, 'context/components/ok')
-const paths = [root]
+const dummy = resolve(__dirname, 'context/components/dummy')
+const pot = resolve(__dirname, 'context/components/pot')
 const component = 'dummies.dummy'
 
 /** @type {toa.samples.Suite} */
 let suite
 
 beforeAll(async () => {
+  const paths = [dummy]
+
   suite = await components(paths)
 })
 
@@ -51,11 +53,29 @@ it('should load message samples', async () => {
   expect(suite.messages).toStrictEqual(expected)
 })
 
+describe('options', () => {
+  const paths = [dummy, pot]
+
+  it('should filter samples by component id', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { component: 'dummies.dummy' }
+
+    suite = await components(paths, options)
+
+    expect(suite.operations['dummies.pot']).toBeUndefined()
+
+    const messages = suite.messages['somewhere.something.happened']
+
+    expect(messages.length).toStrictEqual(1)
+    expect(messages[0].component).toStrictEqual('dummies.dummy')
+  })
+})
+
 /**
  * @returns {Promise<toa.samples.operations.Set>}
  */
 const operations = async () => {
-  const path = resolve(root, 'samples')
+  const path = resolve(dummy, 'samples')
 
   /** @type {toa.samples.Operation[]} */
   const do1 = (await yaml.load.all(resolve(path, 'do.yaml')))
@@ -77,7 +97,7 @@ const operations = async () => {
  */
 const messages = async () => {
   const label = 'somewhere.something.happened'
-  const file = resolve(root, 'samples/messages', label + '.yaml')
+  const file = resolve(dummy, 'samples/messages', label + '.yaml')
   const declarations = await yaml.load.all(file)
   const messages = declarations.map((sample) => ({ component, ...sample }))
 

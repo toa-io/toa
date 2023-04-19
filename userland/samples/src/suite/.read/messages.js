@@ -6,10 +6,10 @@ const yaml = require('@toa.io/yaml')
 
 /**
  * @param {string} path
- * @param {string} [id]
+ * @param {toa.samples.suite.Options} options
  * @returns {Promise<toa.samples.messages.Set>}
  */
-const messages = async (path, id) => {
+const messages = async (path, options) => {
   /** @type {toa.samples.messages.Set} */
   const messages = {}
 
@@ -18,9 +18,11 @@ const messages = async (path, id) => {
 
   for (const file of files) {
     const label = basename(file, EXTENSION)
-    const samples = /** @type {toa.samples.Message[]} */ await yaml.load.all(file)
 
-    if (id !== undefined) samples.forEach((sample) => (sample.component = id))
+    let samples = /** @type {toa.samples.Message[]} */ await yaml.load.all(file)
+
+    if ('id' in options) samples.forEach((sample) => (sample.component = options.id))
+    if ('component' in options) samples = samples.filter((sample) => sample.component === options.component)
 
     messages[label] = samples
   }

@@ -14,10 +14,6 @@ const parse = (name, def) => {
     throw new Error(`Component id mismatch: '${id}' expected, '${component}' given`)
   }
 
-  // if (id === undefined) {
-  //   throw new Error('Sample file name must be an operation endpoint')
-  // }
-
   return [id, endpoint]
 }
 

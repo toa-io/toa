@@ -1,9 +1,9 @@
-import * as _suite from "./suite";
+import * as _suite from './suite'
 
 declare namespace toa.samples.replay {
 
-  type components = (paths: string[]) => Promise<boolean>
-  type context = (path: string) => Promise<boolean>
+  type components = (paths: string[], options?: _suite.Options) => Promise<boolean>
+  type context = (path: string, options?: _suite.Options) => Promise<boolean>
   type replay = (suite: _suite.Suite, paths: string[]) => Promise<boolean>
 
 }
