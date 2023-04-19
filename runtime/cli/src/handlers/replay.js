@@ -15,7 +15,8 @@ async function replay (argv) {
   const options = {
     component: argv.component,
     integration: argv.integration,
-    operation: argv.operation
+    operation: argv.operation,
+    title: argv.title
   }
 
   if (paths !== null) {

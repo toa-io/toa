@@ -33,7 +33,7 @@ const builder = (yargs) => {
       alias: 't',
       type: 'string',
       group: 'Command options:',
-      describe: 'Replay samples with titles matching regexp'
+      describe: 'Replay samples with titles matching given regexp'
     })
 }
 
