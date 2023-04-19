@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "0.7.3",
+  "version": "0.7.4-dev.0",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -27,7 +27,7 @@
     "@toa.io/bindings.loop": "0.7.0",
     "@toa.io/boot": "0.7.3",
     "@toa.io/bridges.node": "0.7.1",
-    "@toa.io/cli": "0.7.3",
+    "@toa.io/cli": "0.8.0-dev.0",
     "@toa.io/core": "0.7.1",
     "@toa.io/extensions.configuration": "0.7.1",
     "@toa.io/extensions.exposition": "0.7.1",
@@ -40,7 +40,7 @@
     "@toa.io/storages.mongodb": "0.7.1",
     "@toa.io/storages.null": "0.6.0",
     "@toa.io/storages.sql": "0.7.1",
-    "@toa.io/userland": "0.7.3"
+    "@toa.io/userland": "0.8.0-dev.0"
   },
   "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
 }
