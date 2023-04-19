@@ -95,7 +95,7 @@ Feature: Replay samples
       # Subtest: Should add negative numbers /integration
       """
 
-  Scenario Outline: Replay specific component samples file
+  Scenario Outline: Replay specific samples file
     Given I have a component `math.calculations`
     And my working directory is ./components/math.calculations
     When I run `toa replay --sample <selector>`
@@ -184,4 +184,20 @@ Feature: Replay samples
     And stdout should not contain lines:
       """
       # Subtest: Component samples
+      """
+
+  Scenario: Replay specific component samples
+    Given I have components:
+      | math.calculations |
+      | external.consumer |
+    And I have a context
+    When I run `toa replay --component external.consumer`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: something_happened
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: math.calculations
       """
