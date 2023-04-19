@@ -116,6 +116,7 @@ Feature: Replay samples
 
   Scenario Outline: Replay specific integration samples file
     Given I have a component `math.calculations`
+    And I have a context
     And I have integration samples
     When I run `toa replay --sample <selector>`
     Then program should exit with code 0
@@ -153,6 +154,7 @@ Feature: Replay samples
 
   Scenario Outline: Replay specific integration sample
     Given I have a component `math.calculations`
+    And I have a context
     And I have integration samples
     When I run `toa replay --title "<selector>"`
     Then program should exit with code 0
@@ -171,6 +173,7 @@ Feature: Replay samples
 
   Scenario: Replay integration tests only
     Given I have a component `math.calculations`
+    And I have a context
     And I have integration samples
     When I run `toa replay --integration`
     Then program should exit with code 0
