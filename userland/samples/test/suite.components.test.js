@@ -106,7 +106,7 @@ describe('options', () => {
     const options = { title: 'Something happened with a dummy' }
 
     suite = await components(paths, options)
-    
+
     const messages = suite.messages['somewhere.something.happened']
 
     expect(messages.length).toStrictEqual(1)
