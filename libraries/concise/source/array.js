@@ -1,6 +1,6 @@
 'use strict'
 
-const { PRIMITIVES } = require('./constants')
+const { PRIMITIVES } = require('./expressions/constants')
 
 /**
  * @param {any[]} array

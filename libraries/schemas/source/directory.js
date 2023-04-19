@@ -16,7 +16,7 @@ const directory = (path) => {
 }
 
 /**
- * @param {string} path
+ * @param {string} root
  * @returns {object}
  */
 const load = (root) => (path) => {

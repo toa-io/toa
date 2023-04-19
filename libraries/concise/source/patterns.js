@@ -1,6 +1,6 @@
 'use strict'
 
-const { EXPRESSION } = require('./constants')
+const { EXPRESSION } = require('./expressions/constants')
 
 /**
  * @param {Object} properties
