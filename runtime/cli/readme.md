@@ -48,6 +48,10 @@ format.
 <dt><code>toa replay [paths...]</code></dt>
 <dd>
 <code>paths</code> path(s) to component(s) or a context (default <code>.</code>)<br/>
+<code>--sample &lt;pattern&gt;</code> glob pattern to match sample files<br/>
+<code>--title &lt;regexp&gt;</code> regexp to match sample titles<br/>
+</dd>
+</dl>
 
 #### Examples
 
@@ -57,13 +61,11 @@ $ toa replay ./path/to/component
 $ toa replay ./components/a ./components/b
 $ toa replay ./components/*
 $ toa replay ./path/to/context
+$ toa replay --title "should add numbers"
 ```
 
 If path is a context directory (containing `context.toa.yaml` file), samples for components within
 the context will be found and replayed sequentially.
-
-</dd>
-</dl>
 
 ## Exporting
 
