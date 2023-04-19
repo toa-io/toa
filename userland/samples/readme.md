@@ -15,11 +15,10 @@ See [features](/features/replay).
 
 Sample is an object containing values of operation inputs (i.e.: request, context outputs and
 current state) to be substituted and outcomes (reply, context calls, next state and events emission)
-to be verified. See its [schema](./src/.suite/.component/sample.cos.yaml).
+to be verified. See its [schema](./src/.replay/.suite/translate/schemas/operation.cos.yaml).
 
 > Although `input` and `output` are declared as arbitrary values, they must conform to the
-> corresponding
-> operation schemas.
+> corresponding operation schemas.
 
 ### Declaration
 
@@ -35,7 +34,7 @@ and `name` must match corresponding component, therefore are optional.
 
 Message Sample is an object containing receiver's input (`payload`) to be substituted and
 outcomes (`input` and `query`) to be verified. Message sample may contain corresponding operation
-sample. See its [schema](#).
+sample. See its [schema](./src/.replay/.suite/translate/schemas/message.cos.yaml).
 
 > Message samples are always [autonomous](#autonomy).
 
