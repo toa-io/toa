@@ -9,14 +9,16 @@ it('should be', () => {
   expect(components).toBeDefined()
 })
 
-const root = resolve(__dirname, 'context/components/ok')
-const paths = [root]
+const dummy = resolve(__dirname, 'context/components/dummy')
+const pot = resolve(__dirname, 'context/components/pot')
 const component = 'dummies.dummy'
 
 /** @type {toa.samples.Suite} */
 let suite
 
 beforeAll(async () => {
+  const paths = [dummy]
+
   suite = await components(paths)
 })
 
@@ -51,11 +53,72 @@ it('should load message samples', async () => {
   expect(suite.messages).toStrictEqual(expected)
 })
 
+describe('options', () => {
+  const paths = [dummy, pot]
+
+  it('should filter samples by component id', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { component: 'dummies.dummy' }
+
+    suite = await components(paths, options)
+
+    expect(suite.operations['dummies.pot']).toBeUndefined()
+
+    const messages = suite.messages['somewhere.something.happened']
+
+    expect(messages.length).toStrictEqual(1)
+    expect(messages[0].component).toStrictEqual('dummies.dummy')
+  })
+
+  it('should filter samples by operation name', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { operation: 'do' }
+
+    suite = await components(paths, options)
+
+    expect('undo' in suite.operations['dummies.dummy']).toStrictEqual(false)
+  })
+
+  it('should filter operation samples by title', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { title: 'Should not undo' }
+
+    suite = await components(paths, options)
+
+    expect('do' in suite.operations['dummies.dummy']).toStrictEqual(false)
+    expect(suite.operations['dummies.dummy'].undo.length).toStrictEqual(1)
+    expect(suite.operations['dummies.dummy'].undo[0].title).toStrictEqual(options.title)
+  })
+
+  it('should filter operation samples by title as regexp', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { title: 'Should [a-z]{2}t undo' }
+
+    suite = await components(paths, options)
+
+    expect(suite.operations['dummies.dummy']?.do).toBeUndefined()
+    expect(suite.operations['dummies.dummy'].undo.length).toStrictEqual(1)
+    expect(suite.operations['dummies.dummy'].undo[0].title).toStrictEqual('Should not undo')
+  })
+
+  it('should filter message samples by title', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { title: 'Something happened with a dummy' }
+
+    suite = await components(paths, options)
+
+    const messages = suite.messages['somewhere.something.happened']
+
+    expect(messages.length).toStrictEqual(1)
+    expect(messages[0].title).toStrictEqual(options.title)
+  })
+})
+
 /**
  * @returns {Promise<toa.samples.operations.Set>}
  */
 const operations = async () => {
-  const path = resolve(root, 'samples')
+  const path = resolve(dummy, 'samples')
 
   /** @type {toa.samples.Operation[]} */
   const do1 = (await yaml.load.all(resolve(path, 'do.yaml')))
@@ -77,7 +140,7 @@ const operations = async () => {
  */
 const messages = async () => {
   const label = 'somewhere.something.happened'
-  const file = resolve(root, 'samples/messages', label + '.yaml')
+  const file = resolve(dummy, 'samples/messages', label + '.yaml')
   const declarations = await yaml.load.all(file)
   const messages = declarations.map((sample) => ({ component, ...sample }))
 

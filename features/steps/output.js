@@ -27,6 +27,11 @@ Then('{word} should contain line(s):',
     find(this, channel, lines)
   })
 
+Then('{word} should not contain line(s):',
+  function (channel, lines) {
+    find(this, channel, lines, undefined, true)
+  })
+
 Then('{word} should contain line(s) once:',
   function (channel, lines) {
     find(this, channel, lines, 1)
@@ -45,9 +50,10 @@ Then('{word} should be: {string}',
  * @param {string} channel
  * @param {string} lines
  * @param {number} [exact]
+ * @param {boolean} [reverse]
  * @returns {number[]}
  */
-const find = (context, channel, lines, exact = undefined) => {
+const find = (context, channel, lines, exact = undefined, reverse = false) => {
   const queries = lines.split('\n').map((line) => line.trim())
 
   /** @type {number[]} */
@@ -65,10 +71,10 @@ const find = (context, channel, lines, exact = undefined) => {
 
     count.push(matches)
 
-    assert.notEqual(matches, 0, 'Line not found: ' + query)
+    assert[reverse ? 'equal' : 'notEqual'](matches, 0, 'Line not found: ' + query)
 
     if (exact !== undefined) {
-      assert.equal(matches, exact, 'Line found multiple times: ' + query)
+      assert[reverse ? 'notEqual' : 'equal'](matches, exact, 'Line found multiple times: ' + query)
     }
   }
 
