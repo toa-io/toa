@@ -6,7 +6,7 @@ const { EXPRESSION } = require('./constants')
  * @param {string} value
  * @returns {object}
  */
-const expression = (value) => {
+const regular = (value) => {
   if (typeof value !== 'string') return null
 
   const match = value.match(EXPRESSION)
@@ -19,4 +19,4 @@ const expression = (value) => {
   }
 }
 
-exports.expression = expression
+exports.regular = regular
