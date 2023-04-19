@@ -69,6 +69,15 @@ describe('options', () => {
     expect(messages.length).toStrictEqual(1)
     expect(messages[0].component).toStrictEqual('dummies.dummy')
   })
+
+  it('should filter samples by operation name', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { operation: 'do' }
+
+    suite = await components(paths, options)
+
+    expect('undo' in suite.operations['dummies.dummy']).toStrictEqual(false)
+  })
 })
 
 /**

@@ -23,7 +23,8 @@ const operations = async (path, options) => {
     const name = basename(file, EXTENSION)
     const [component, operation] = parse(name, options.id)
 
-    if ('component' in options && component !== options.component) continue
+    if (options.component !== undefined && component !== options.component) continue
+    if (options.operation !== undefined && operation !== options.operation) continue
 
     const samples = /** @type {toa.samples.Operation[]} */ await yaml.load.all(file)
 

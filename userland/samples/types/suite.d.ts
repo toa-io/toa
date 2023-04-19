@@ -8,8 +8,9 @@ declare namespace toa.samples {
 
     type Options = {
       id?: string
+      integration?: boolean,
       component?: string
-      integration?: boolean
+      operation?: string
     }
   }
 
