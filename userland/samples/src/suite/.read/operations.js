@@ -6,6 +6,7 @@ const { merge } = require('@toa.io/generic')
 const yaml = require('@toa.io/yaml')
 
 const { parse } = require('./parse')
+const { filter } = require('./filter')
 
 /**
  * @param {string} path
@@ -26,7 +27,10 @@ const operations = async (path, options) => {
     if (options.component !== undefined && component !== options.component) continue
     if (options.operation !== undefined && operation !== options.operation) continue
 
-    const samples = /** @type {toa.samples.Operation[]} */ await yaml.load.all(file)
+    let samples = /** @type {toa.samples.Operation[]} */ await yaml.load.all(file)
+
+    if (options.title !== undefined) samples = filter(samples, options.title)
+    if (samples.length === 0) continue
 
     if (operations[component] === undefined) operations[component] = {}
 

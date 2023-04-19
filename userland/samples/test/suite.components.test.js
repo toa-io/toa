@@ -78,6 +78,40 @@ describe('options', () => {
 
     expect('undo' in suite.operations['dummies.dummy']).toStrictEqual(false)
   })
+
+  it('should filter operation samples by title', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { title: 'Should not undo' }
+
+    suite = await components(paths, options)
+
+    expect('do' in suite.operations['dummies.dummy']).toStrictEqual(false)
+    expect(suite.operations['dummies.dummy'].undo.length).toStrictEqual(1)
+    expect(suite.operations['dummies.dummy'].undo[0].title).toStrictEqual(options.title)
+  })
+
+  it('should filter operation samples by title as regexp', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { title: 'Should [a-z]{2}t undo' }
+
+    suite = await components(paths, options)
+
+    expect(suite.operations['dummies.dummy']?.do).toBeUndefined()
+    expect(suite.operations['dummies.dummy'].undo.length).toStrictEqual(1)
+    expect(suite.operations['dummies.dummy'].undo[0].title).toStrictEqual('Should not undo')
+  })
+
+  it('should filter message samples by title', async () => {
+    /** @type {toa.samples.suite.Options} */
+    const options = { title: 'Something happened with a dummy' }
+
+    suite = await components(paths, options)
+    
+    const messages = suite.messages['somewhere.something.happened']
+
+    expect(messages.length).toStrictEqual(1)
+    expect(messages[0].title).toStrictEqual(options.title)
+  })
 })
 
 /**

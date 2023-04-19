@@ -4,6 +4,8 @@ const { join, basename } = require('node:path')
 const { file: { glob } } = require('@toa.io/filesystem')
 const yaml = require('@toa.io/yaml')
 
+const { filter } = require('./filter')
+
 /**
  * @param {string} path
  * @param {toa.samples.suite.Options} options
@@ -21,8 +23,9 @@ const messages = async (path, options) => {
 
     let samples = /** @type {toa.samples.Message[]} */ await yaml.load.all(file)
 
-    if ('id' in options) samples.forEach((sample) => (sample.component = options.id))
-    if ('component' in options) samples = samples.filter((sample) => sample.component === options.component)
+    if (options.id !== undefined) samples.forEach((sample) => (sample.component = options.id))
+    if (options.component !== undefined) samples = samples.filter((sample) => sample.component === options.component)
+    if (options.title !== undefined) samples = filter(samples, options.title)
 
     messages[label] = samples
   }
