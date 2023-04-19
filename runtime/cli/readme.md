@@ -49,7 +49,7 @@ format.
 <dd>
 <code>paths</code> path(s) to component(s) or a context (default <code>.</code>)<br/>
 <code>--integration</code> replay integration tests only<br/>
-<code>--component &lt;id&gt;</code> replay samples for specified component<br/>
+<code>--component &lt;id&gt;</code> replay samples for specified component id<br/>
 <code>--sample &lt;pattern&gt;</code> glob pattern to match sample files<br/>
 <code>--title &lt;regexp&gt;</code> regexp to match sample titles<br/>
 </dd>
