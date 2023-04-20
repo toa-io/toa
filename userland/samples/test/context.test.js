@@ -14,6 +14,7 @@ jest.mock('../src/replay', () => mock.replay)
 jest.mock('../src/components', () => mock.components)
 
 const { context } = require('../src/context')
+const { generate } = require('randomstring')
 
 it('should be', async () => {
   expect(context).toBeDefined()
@@ -24,6 +25,9 @@ const COMPONENTS = resolve(CONTEXT, 'components/*')
 
 /** @type {string[]} */
 let paths
+
+/** @type {toa.samples.suite.Options} */
+const options = { component: generate() }
 
 /** @type {boolean} */
 let ok
@@ -37,15 +41,15 @@ beforeEach(async () => {
 
   mock.components.components.mockImplementation(async () => true)
 
-  ok = await context(CONTEXT)
+  ok = await context(CONTEXT, options)
 })
 
 it('should replay context components sample sets', async () => {
-  expect(mock.components.components).toHaveBeenCalledWith(paths)
+  expect(mock.components.components).toHaveBeenCalledWith(paths, options)
 })
 
 it('should load integration suite', async () => {
-  expect(mock.suite.context).toHaveBeenCalledWith(CONTEXT)
+  expect(mock.suite.context).toHaveBeenCalledWith(CONTEXT, options)
 })
 
 it('should replay integration suite', async () => {

@@ -11,15 +11,23 @@ async function replay (argv) {
 
   const paths = find.components(argv.paths, true)
 
+  /** @type {toa.samples.suite.Options} */
+  const options = {
+    component: argv.component,
+    integration: argv.integration,
+    operation: argv.operation,
+    title: argv.title
+  }
+
   if (paths !== null) {
-    ok = await components(paths)
+    ok = await components(paths, options)
   } else {
     // no components found, checking context
     const path = find.context(argv.paths[0], true)
 
     if (path === null) throw new Error('Neither components nor context found in ' + argv.paths.join(','))
 
-    ok = await context(path)
+    ok = await context(path, options)
   }
 
   const message = (ok ? GREEN + 'PASSED' : RED + 'FAILED') + RESET

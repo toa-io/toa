@@ -17,15 +17,18 @@ it('should be', () => {
 
 const paths = [generate()]
 
+/** @type {toa.samples.suite.Options} */
+const options = { component: generate() }
+
 /** @type {boolean} */
 let result
 
 beforeAll(async () => {
-  result = await components(paths)
+  result = await components(paths, options)
 })
 
 it('should load suite', async () => {
-  expect(mock.suite.components).toHaveBeenCalledWith(paths)
+  expect(mock.suite.components).toHaveBeenCalledWith(paths, options)
 })
 
 it('should replay suite', async () => {

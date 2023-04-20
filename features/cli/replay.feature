@@ -91,4 +91,104 @@ Feature: Replay samples
       """
       # Subtest: Component samples
       # Subtest: Integration samples
+      # Subtest: Should add numbers /integration
+      # Subtest: Should add negative numbers /integration
+      """
+
+  Scenario: Replay specified operation samples
+    Given I have a component `math.calculations`
+    And my working directory is ./components/math.calculations
+    When I run `toa replay --operation sum`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: sum
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: multi
+      """
+
+  Scenario: Replay integration samples for specified operation
+    Given I have a component `math.calculations`
+    And I have a context
+    And I have integration samples
+    When I run `toa replay --operation multi`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: multi
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: sum
+      """
+
+  Scenario Outline: Replay component sample by title
+    Given I have a component `math.calculations`
+    And my working directory is ./components/math.calculations
+    When I run `toa replay --title "<selector>"`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: Should add negative numbers
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Should add numbers
+      """
+    Examples:
+      | selector                    |
+      | Should add negative numbers |
+      | negative                    |
+      | neg\w+ numbers              |
+
+  Scenario Outline: Replay integration sample by title <selector>
+    Given I have a component `math.calculations`
+    And I have a context
+    And I have integration samples
+    When I run `toa replay --title "<selector>"`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: Should add negative numbers /integration
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Should add numbers /integration
+      """
+    Examples:
+      | selector                                 |
+      | Should add negative numbers /integration |
+      | negative \w+ /integration                |
+
+  Scenario: Replay integration tests only
+    Given I have a component `math.calculations`
+    And I have a context
+    And I have integration samples
+    When I run `toa replay --integration`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: Integration samples
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Component samples
+      """
+
+  Scenario: Replay specific component samples
+    Given I have components:
+      | math.calculations |
+      | external.consumer |
+    And I have a context
+    When I run `toa replay --component external.consumer`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: something_happened
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: math.calculations
       """

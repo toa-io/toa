@@ -5,6 +5,14 @@ declare namespace toa.samples {
 
   namespace suite {
     type Operations = Record<string, _operations.Set>
+
+    type Options = {
+      id?: string
+      integration?: boolean
+      component?: string
+      operation?: string
+      title?: string
+    }
   }
 
   type Suite = {
@@ -17,3 +25,4 @@ declare namespace toa.samples {
 }
 
 export type Suite = toa.samples.Suite
+export type Options = toa.samples.suite.Options

@@ -1,6 +1,8 @@
 'use strict'
 
 const { AssertionError } = require('node:assert')
+const { generate } = require('randomstring')
+const { sample } = require('@toa.io/generic')
 
 const mock = require('@toa.io/mock')
 
@@ -89,4 +91,31 @@ describe('Then {word} should be: {string}', () => {
     expect(() => step.call(context, 'stdout', 'a message')).not.toThrow()
     expect(() => step.call(context, 'stdout', 'a message  ')).not.toThrow()
   })
+})
+
+describe('Then {word} should not contain line(s):', () => {
+  const step = gherkin.steps.Th('{word} should not contain line(s):')
+
+  it('should be', async () => undefined)
+
+  describe.each(/** @type {string[]} */['stdout', 'stderr'])('%s',
+    (channel) => {
+      const channelLines = channel + 'Lines'
+
+      beforeEach(() => {
+        context[channelLines] = [generate(), generate()]
+      })
+
+      it('should pass if not contains', async () => {
+        const line = generate()
+
+        expect(() => step.call(context, channel, line)).not.toThrow()
+      })
+
+      it('should throw if contains', async () => {
+        const line = sample(context[channelLines])
+
+        expect(() => step.call(context, channel, line)).toThrow(AssertionError)
+      })
+    })
 })

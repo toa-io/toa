@@ -6,13 +6,14 @@ const { merge } = require('@toa.io/generic')
 const yaml = require('@toa.io/yaml')
 
 const { parse } = require('./parse')
+const { filter } = require('./filter')
 
 /**
  * @param {string} path
- * @param {string} [id]
+ * @param {toa.samples.suite.Options} options
  * @returns {Promise<toa.samples.suite.Operations>}
  */
-const operations = async (path, id) => {
+const operations = async (path, options) => {
   /** @type {toa.samples.suite.Operations} */
   const operations = {}
 
@@ -21,10 +22,15 @@ const operations = async (path, id) => {
 
   for (const file of files) {
     const name = basename(file, EXTENSION)
-    const [component, operation] = parse(name, id)
+    const [component, operation] = parse(name, options.id)
 
-    /** @type {toa.samples.Operation[]} */
-    const samples = await yaml.load.all(file)
+    if (options.component !== undefined && component !== options.component) continue
+    if (options.operation !== undefined && operation !== options.operation) continue
+
+    let samples = /** @type {toa.samples.Operation[]} */ await yaml.load.all(file)
+
+    if (options.title !== undefined) samples = filter(samples, options.title)
+    if (samples.length === 0) continue
 
     if (operations[component] === undefined) operations[component] = {}
 
@@ -32,7 +38,7 @@ const operations = async (path, id) => {
     const set = operations[component]
 
     if (set[operation] === undefined) set[operation] = samples
-    else set[operation] = merge(set[operation], samples)
+    else set[operation] = /** @type {toa.samples.Operation[]} */ merge(set[operation], samples)
   }
 
   return operations
