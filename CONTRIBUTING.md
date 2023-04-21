@@ -5,12 +5,14 @@
 
 ## What You'll Need
 
-1. [Node LTS](https://nodejs.org/)
-2. [Docker Desktop](https://www.docker.com/get-started)
-3. [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-with-a-package-manager)
-4. [Helm](https://helm.sh/docs/intro/install/#from-homebrew-macos)
-5. [Telepresence](https://www.telepresence.io/docs/latest/install/)
-6. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
+1. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
+2. [Node LTS](https://nodejs.org/)
+3. [Docker Desktop](https://www.docker.com/get-started)
+
+To work with [operations](operations):
+
+1. [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-with-a-package-manager)
+2. [Helm](https://helm.sh/docs/intro/install/#from-homebrew-macos)
 
 ## Setup
 
@@ -22,6 +24,10 @@ $ npm i
 ```shell
 $ export TOA_DEV=1
 ```
+
+## Discipline
+
+Please follow the [Cycle](documentation/contributing/cycle.md).
 
 ## Branching Model
 
