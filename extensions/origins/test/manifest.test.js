@@ -4,7 +4,7 @@ const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
 const fixtures = require('./manifest.fixtures')
-const { manifest } = require('../src')
+const { manifest } = require('../source')
 
 let declaration
 

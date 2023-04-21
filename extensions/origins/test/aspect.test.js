@@ -11,7 +11,7 @@ const mock = fixtures.mock
 
 jest.mock('node-fetch', () => mock.fetch)
 
-const { Aspect } = require('../src/aspect')
+const { Aspect } = require('../source/aspect')
 
 /** @type {toa.extensions.origins.Aspect} */ let aspect
 

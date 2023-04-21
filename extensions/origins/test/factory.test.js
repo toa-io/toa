@@ -2,11 +2,11 @@
 
 const { generate } = require('randomstring')
 
-const { Aspect } = require('../src/aspect')
+const { Aspect } = require('../source/aspect')
 const { Locator } = require('@toa.io/core')
 
 const fixtures = require('./factory.fixtures')
-const { Factory } = require('../src')
+const { Factory } = require('../source')
 
 /** @type {toa.core.extensions.Factory} */
 let factory
