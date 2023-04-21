@@ -2,8 +2,7 @@ version: "3.9"
 services:
   verdaccio:
     image: verdaccio/verdaccio:5.10.2
-    ports:
-      - '4873:4873'
+    ports: ['4873:4873']
   rabbitmq:
     image: rabbitmq:3.10.0-management
     ports:
@@ -14,16 +13,17 @@ services:
       RABBITMQ_DEFAULT_PASS: secret
   mongodb:
     image: mongo:5.0.8
-    ports:
-      - '27017:27017'
+    ports: ['27017:27017']
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
   postgres:
     image: postgres:14.4
-    ports:
-      - '5432:5432'
+    ports: ['5432:5432']
     environment:
       POSTGRES_USER: developer
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: integration
+  http-echo:
+    image: ealen/echo-server:0.7.0
+    ports: ['8888:80']
