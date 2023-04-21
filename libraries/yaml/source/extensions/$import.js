@@ -1,8 +1,15 @@
 'use strict'
 
 const { resolve, dirname } = require('node:path')
-const { traverse, merge } = require('@toa.io/generic')
+const { traverse, add } = require('@toa.io/generic')
 const { file } = require('@toa.io/filesystem')
+
+/** @type {toa.yaml.extension} */
+const $import = (object, path, yaml) => {
+  return traverse(object, (node) => {
+    if ('$import' in node) extend(node, path, yaml)
+  })
+}
 
 /**
  * @param {{$import: string}} node
@@ -17,14 +24,7 @@ function extend (node, path, yaml) {
 
   delete node.$import
 
-  return objects.reduce((node, object) => merge(node, object), node)
-}
-
-/** @type {toa.yaml.extension} */
-const $import = (object, path, yaml) => {
-  return traverse(object, (node) => {
-    if ('$import' in node) extend(node, path, yaml)
-  })
+  return objects.reduce((node, object) => add(node, object), node)
 }
 
 module.exports = $import
