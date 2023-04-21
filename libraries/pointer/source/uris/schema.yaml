@@ -1,5 +1,4 @@
 $schema: https://json-schema.org/draft/2019-09/schema
-$id: https://schemas.toa.io/0.0.0/storages/mongodb/annotations
 
 definitions:
   node:

@@ -1,6 +1,7 @@
 'use strict'
 
-const { normalize, validate } = require('./.construct')
+const { normalize } = require('./normalize')
+const { validate } = require('./validate')
 
 /**
  * @param {toa.pointer.URIs} declaration

@@ -138,3 +138,7 @@ describe('resolve', () => {
     expect(url.href).toStrictEqual(uri)
   })
 })
+
+it('should expose validate function', async () => {
+  expect(uris.validate).toBeInstanceOf(Function)
+})

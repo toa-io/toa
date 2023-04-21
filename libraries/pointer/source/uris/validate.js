@@ -2,14 +2,14 @@
 
 const path = require('path')
 
-const { Schema } = require('@toa.io/schema')
+const schemas = require('@toa.io/schemas')
 const { load } = require('@toa.io/yaml')
 
-const schema = load.sync(path.resolve(__dirname, 'schema.yaml'))
-const validator = new Schema(schema)
+const cos = load.sync(path.resolve(__dirname, 'schema.yaml'))
+const schema = schemas.schema(cos)
 
 const validate = (declaration) => {
-  const error = validator.fit(declaration)
+  const error = schema.fit(declaration)
 
   if (error) throw new TypeError(error.message)
 }
