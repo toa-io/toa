@@ -6,22 +6,34 @@ Origins extension enables external communications over supported protocols (`HTT
 
 ```yaml
 # manifest.toa.yaml
+name: dummy
+namespace: dummies
+
 origins:
-  website: http://www.domain.com
+  website: http://www.domain.com/docs/
   messages: amqps://amqp.amazon.com
 ```
 
 ```javascript
 // Node.js bridge 
 async function transition (input, object, context) {
-  await context.http.docs.example.get() // GET http://www.domain.com/docs/example
+  await context.http.example.get() // GET http://www.domain.com/docs/example
   await context.amqp.emit('something_happened', { really: true })
 }
 ```
 
+```yaml
+# context.toa.yaml
+origins:
+  dummies.dummy:
+    messages: amqps://amqp.azure.com
+    messages@staging: amqp://amqp.stage
+```
+
 ## Declaration
 
-Origins extension declaration is a [Pointer](/libraries/pointer).
+Origins extension declaration is a [Pointer](/libraries/pointer). Declarations can be overridden by
+the context annotations.
 
 ## HTTP
 
