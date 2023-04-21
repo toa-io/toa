@@ -1,0 +1,9 @@
+name: http
+namespace: origins
+
+operations:
+  test:
+    output: object
+
+origins:
+  echo: http://localhost:8888

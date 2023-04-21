@@ -5,7 +5,7 @@ Feature: Node algorithm implementation syntaxes
   Algorithm outputs configuration value.
 
     Given I boot `node.syntaxes` component
-    When I invoke <endpoint>
+    When I invoke `<endpoint>`
     And I disconnect
     Then the reply is received:
       """
