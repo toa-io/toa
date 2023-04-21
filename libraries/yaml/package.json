@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/yaml",
-  "version": "0.7.1",
+  "version": "0.7.2-dev.0",
   "description": "Toa YAML",
   "homepage": "https://toa.io",
   "author": {
