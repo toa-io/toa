@@ -12,3 +12,20 @@ Feature: Origins Extension
           originalUrl: /some/path
       """
     And I disconnect
+
+  Scenario: Deployment annotations
+    Given I have a component `origins.http`
+    And I have a context with:
+      """yaml
+      origins:
+        origins.http:
+          bad: http://localhost:8888/
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        origins-http:
+          - name: TOA_ORIGINS_ORIGINS_HTTP
+            value: eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
+      """

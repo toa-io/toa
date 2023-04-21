@@ -7,3 +7,4 @@ operations:
 
 origins:
   echo: http://localhost:8888/some/
+  bad: dev://null
