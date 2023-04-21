@@ -25,7 +25,9 @@ const manifest = async (path, options = {}) => {
     for (const event of Object.values(manifest.events)) event.binding = asyncBinding
 
     if (manifest.receivers) {
-      for (const receiver of Object.values(manifest.receivers)) receiver.binding = asyncBinding
+      for (const receiver of Object.values(manifest.receivers)) {
+        if (receiver.source === undefined) receiver.binding = asyncBinding
+      }
     }
   }
 
