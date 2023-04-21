@@ -1,5 +1,9 @@
 'use strict'
 
-const { declaration } = require('./manifest.fixtures')
+const { generate } = require('randomstring')
+
+const declaration = {
+  [generate()]: 'https://toa.io'
+}
 
 exports.declaration = declaration

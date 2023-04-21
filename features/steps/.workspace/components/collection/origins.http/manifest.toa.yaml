@@ -6,4 +6,4 @@ operations:
     output: object
 
 origins:
-  echo: http://localhost:8888
+  echo: http://localhost:8888/some/

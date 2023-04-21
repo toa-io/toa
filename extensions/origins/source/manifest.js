@@ -1,13 +1,5 @@
 'use strict'
 
-const { normalize, validate } = require('./.manifest')
+const { uris } = require('@toa.io/pointer')
 
-const manifest = (declaration) => {
-  declaration = normalize(declaration)
-
-  validate(declaration)
-
-  return declaration
-}
-
-exports.manifest = manifest
+exports.manifest = uris.construct

@@ -12,16 +12,16 @@ class Aspect extends Connector {
   /** @readonly */
   name = 'origins'
 
-  /** @type {toa.extensions.origins.Origins} */
+  /** @type {toa.pointer.URIs} */
   #origins
 
   /**
-   * @param {toa.extensions.origins.Declaration | Object} declaration
+   * @param {toa.pointer.URIs} declaration
    */
   constructor (declaration) {
     super()
 
-    this.#origins = declaration.origins
+    this.#origins = declaration
   }
 
   async invoke (name, path, request, options) {
@@ -31,9 +31,7 @@ class Aspect extends Connector {
 
     if (options?.substitutions !== undefined) origin = substitute(origin, options.substitutions)
 
-    const url = new URL(origin)
-
-    if (path !== undefined) append(url, path)
+    const url = path === undefined ? new URL(origin) : new URL(path, origin)
 
     return this.#request(url.href, request, options?.retry)
   }
@@ -76,18 +74,6 @@ const substitute = (origin, substitutions) => {
   const replace = () => substitutions.shift()
 
   return origin.replace(PLACEHOLDER, replace)
-}
-
-/**
- * @param {URL} url
- * @param {string} path
- */
-const append = (url, path) => {
-  const [pathname, search] = path.split('?')
-
-  url.pathname = pathname
-
-  if (search !== undefined) url.search = search
 }
 
 const PLACEHOLDER = /\*/g

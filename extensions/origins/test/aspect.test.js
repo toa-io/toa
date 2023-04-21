@@ -57,15 +57,15 @@ describe('invoke', () => {
     await expect(() => aspect.invoke('bar', path, request)).rejects.toThrow(/is not defined/)
   })
 
-  it('should not resolve absolute urls', async () => {
+  it('should resolve URL', async () => {
     jest.clearAllMocks()
     mock.fetch.respond(200, response)
 
-    const path = 'https://toa.io'
+    const path = 'ok'
 
-    await aspect.invoke(name, path, clone(request))
+    await aspect.invoke('deep', path, clone(request))
 
-    expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.declaration.origins.foo + '/' + path)
+    expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.declaration.deep + path)
   })
 
   it('should substitute wildcards', async () => {
@@ -91,7 +91,7 @@ describe('invoke', () => {
 
     const url = mock.fetch.mock.calls[0][0]
 
-    expect(url).toStrictEqual(fixtures.declaration.origins.foo + '/' + path)
+    expect(url).toStrictEqual(fixtures.declaration.foo + '/' + path)
   })
 
   it('should not throw if path is not defined', async () => {
@@ -107,7 +107,7 @@ describe('invoke', () => {
     })
 
     it('should pass url', () => {
-      expect(call[0]).toStrictEqual(fixtures.declaration.origins.foo + path)
+      expect(call[0]).toStrictEqual(fixtures.declaration.foo + path)
     })
 
     it('should pass request', () => {

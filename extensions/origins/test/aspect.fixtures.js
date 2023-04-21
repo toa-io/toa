@@ -2,11 +2,11 @@
 
 const { generate } = require('randomstring')
 
+/** @type {toa.pointer.URIs} */
 const declaration = {
-  origins: {
-    foo: 'https://' + generate().toLowerCase(),
-    amazon: 'https://*.*.amazon.com:*'
-  }
+  foo: 'https://' + generate().toLowerCase(),
+  amazon: 'https://*.*.amazon.com:*',
+  deep: 'http://www.domain.com/some/path/'
 }
 
 const responses = []

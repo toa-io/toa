@@ -2,7 +2,10 @@
 
 const { normalize, validate } = require('./.construct')
 
-/** @type {toa.pointer.uris.Constructor} */
+/**
+ * @param {toa.pointer.URIs} declaration
+ * @returns {toa.pointer.URIs}
+ */
 const construct = (declaration) => {
   const normalized = normalize(declaration)
 
