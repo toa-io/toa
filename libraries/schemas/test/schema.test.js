@@ -64,4 +64,19 @@ describe('validate', () => {
       expect(exception).toBeInstanceOf(schemas.Exception)
     }
   })
+
+  it('should support formats', async () => {
+    const schema = schemas.schema({
+      properties: {
+        foo: {
+          type: 'string',
+          format: 'uri'
+        }
+      }
+    })
+
+    const value = { foo: 'http://toa.io' }
+
+    expect(() => schema.validate(value)).not.toThrow()
+  })
 })

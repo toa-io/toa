@@ -1,6 +1,7 @@
 'use strict'
 
 const { default: Ajv } = require('ajv/dist/2019')
+const formats = /** @type {Function} */ require('ajv-formats')
 const { add } = require('@toa.io/generic')
 
 /**
@@ -8,8 +9,12 @@ const { add } = require('@toa.io/generic')
  */
 const create = (schemas) => {
   const options = add({ schemas }, OPTIONS)
+  // noinspection JSCheckFunctionSignatures
+  const ajv = new Ajv(options)
 
-  return new Ajv(options)
+  formats(ajv)
+
+  return ajv
 }
 
 /** @type {toa.schemas.is} */
