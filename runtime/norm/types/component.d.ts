@@ -42,6 +42,7 @@ export namespace toa.norm {
       bridge: string
       binding: string
       path: string
+      source?: string
     }
 
     type Entity = {
