@@ -63,3 +63,17 @@ Feature: Export local deployment environment variables
       | command   |
       | env       |
       | env local |
+
+  Scenario: Component-specific variables
+    Given I have a component `origins.http`
+    And I have a context with:
+      """
+      origins:
+        origins.http:
+          bad: http://localhost:8888/
+      """
+    When I run `toa env`
+    Then I have an environment with:
+      """
+      TOA_ORIGINS_ORIGINS_HTTP=eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
+      """
