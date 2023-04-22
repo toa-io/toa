@@ -29,3 +29,15 @@ Feature: Origins Extension
           - name: TOA_ORIGINS_ORIGINS_HTTP
             value: eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
       """
+
+  Scenario: Local environment
+    Given I have a component `origins.http`
+    And I have a context with:
+      """
+      origins:
+        origins.http:
+          bad: http://localhost:8888/
+      """
+    When I run `toa env`
+    Then I run `toa invoke bad -p ./components/origins.http`
+    Then program should exit with code 0

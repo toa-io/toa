@@ -4,6 +4,8 @@ namespace: origins
 operations:
   test:
     output: object
+  bad:
+    output: object
 
 origins:
   echo: http://localhost:8888/some/
