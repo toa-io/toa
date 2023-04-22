@@ -12,11 +12,11 @@ class Aspect extends Connector {
   /** @readonly */
   name = 'origins'
 
-  /** @type {toa.pointer.URIs} */
+  /** @type {toa.origins.annotation.Component} */
   #origins
 
   /**
-   * @param {toa.pointer.URIs} declaration
+   * @param {toa.origins.annotation.Component} declaration
    */
   constructor (declaration) {
     super()

@@ -1,5 +1,7 @@
 'use strict'
 
+const { PREFIX } = require('./constants')
+
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
  * @param {toa.origins.Annotations} annotations
@@ -20,7 +22,5 @@ function deployment (instances, annotations) {
 
   return { variables }
 }
-
-const PREFIX = 'TOA_ORIGINS_'
 
 exports.deployment = deployment
