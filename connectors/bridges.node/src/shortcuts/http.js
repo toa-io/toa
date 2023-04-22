@@ -3,8 +3,8 @@
 const { underlay } = require('@toa.io/generic')
 
 /** @type {toa.node.shortcut} */
-const origins = (context, aspect) => {
-  context.origins = underlay(async (segs, args) => {
+const http = (context, aspect) => {
+  context.http = underlay(async (segs, args) => {
     if (segs.length < 2) throw new Error(`Origins call requires at least 2 arguments, ${segs.length} given`)
 
     const name = segs.shift()
@@ -17,4 +17,4 @@ const origins = (context, aspect) => {
   })
 }
 
-exports.origins = origins
+exports.http = http

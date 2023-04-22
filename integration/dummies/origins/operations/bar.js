@@ -7,7 +7,7 @@ async function transition (input, object, context) {
     options.retry = { base: 0, retries: input.retries }
   }
 
-  const response = await context.origins.local.path.to.something.get(undefined, options)
+  const response = await context.http.local.path.to.something.get(undefined, options)
   const status = response.status
 
   const body = await response.json()

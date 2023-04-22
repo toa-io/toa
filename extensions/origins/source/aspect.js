@@ -10,7 +10,7 @@ const { retry } = require('@toa.io/generic')
  */
 class Aspect extends Connector {
   /** @readonly */
-  name = 'origins'
+  name = 'http'
 
   /** @type {toa.origins.annotation.Component} */
   #origins

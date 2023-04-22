@@ -1,7 +1,7 @@
 'use strict'
 
 async function observation (input, none, context) {
-  const response = await context.origins.echo.path.get()
+  const response = await context.http.echo.path.get()
   const output = await response.json()
 
   return { output }

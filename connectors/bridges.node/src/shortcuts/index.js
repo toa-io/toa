@@ -1,9 +1,9 @@
 'use strict'
 
-const { origins } = require('./origins')
+const { http } = require('./http')
 const { configuration } = require('./configuration')
 const { state } = require('./state')
 
-exports.origins = origins
+exports.http = http
 exports.configuration = configuration
 exports.state = state

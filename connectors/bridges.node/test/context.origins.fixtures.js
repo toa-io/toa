@@ -5,7 +5,7 @@ const context = /** @type {toa.core.Context} */ {
   call: jest.fn(),
   aspects: [
     {
-      name: 'origins',
+      name: 'http',
       invoke: jest.fn()
     }
   ],

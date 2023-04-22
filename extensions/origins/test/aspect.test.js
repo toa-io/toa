@@ -26,7 +26,7 @@ it('should be instance of core.Connector', () => {
 })
 
 it('should have name \'origins\'', () => {
-  expect(aspect.name).toStrictEqual('origins')
+  expect(aspect.name).toStrictEqual('http')
 })
 
 describe('invoke', () => {

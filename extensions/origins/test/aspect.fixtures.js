@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-/** @type {toa.pointer.URIs} */
+/** @type {toa.origins.annotation.Component} */
 const declaration = {
   foo: 'https://' + generate().toLowerCase(),
   amazon: 'https://*.*.amazon.com:*',
