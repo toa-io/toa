@@ -1,6 +1,7 @@
 'use strict'
 
 const schemas = require('./schemas')
+const protocols = require('./protocols')
 
 /**
  * @param {toa.origins.Manifest} manifest
@@ -8,6 +9,13 @@ const schemas = require('./schemas')
  */
 function manifest (manifest) {
   schemas.manifest.validate(manifest)
+
+  for (const uri of Object.values(manifest)) {
+    const protocol = new URL(uri).protocol
+    const supported = protocols.find((provider) => provider.protocols.includes(protocol))
+
+    if (supported === undefined) throw new Error(`'${protocol}' protocol is not supported`)
+  }
 
   return manifest
 }

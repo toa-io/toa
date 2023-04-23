@@ -1,4 +1,4 @@
-name: http
+name: amqp
 namespace: origins
 
 operations:
@@ -8,5 +8,5 @@ operations:
     output: object
 
 origins:
-  echo: http://localhost:8888/some/
-  bad: https://null
+  queue: amqp://localhost
+  bad: amqp://dev/null

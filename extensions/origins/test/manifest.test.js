@@ -1,6 +1,8 @@
 'use strict'
 
 const { generate } = require('randomstring')
+const { PROTOCOLS } = require('./constants')
+
 const { manifest } = require('../')
 
 it('should be', async () => {
@@ -8,7 +10,7 @@ it('should be', async () => {
 })
 
 it('should return manifest', async () => {
-  const input = { [generate()]: 'dev://' + generate() }
+  const input = { [generate()]: 'http://' + generate() }
   const output = manifest(input)
 
   expect(output).toStrictEqual(input)
@@ -25,7 +27,7 @@ it('should fail not Record<string, string>', async () => {
 })
 
 it('should pass if valid', async () => {
-  const input = { foo: 'dev://' + generate() }
+  const input = { foo: 'amqp://' + generate() }
 
   expect(() => manifest(input)).not.toThrow()
 })
@@ -34,4 +36,16 @@ it('should fail if not uri', async () => {
   const input = { [generate()]: generate() }
 
   expect(() => manifest(input)).toThrow('must match format')
+})
+
+it('should throw if protocol is not supported', async () => {
+  const input = { foo: 'wat://' + generate() }
+
+  expect(() => manifest(input)).toThrow('is not supported')
+})
+
+it.each(PROTOCOLS)('should support %s protocol', async (protocol) => {
+  const input = { foo: protocol + '//' + generate() }
+
+  expect(() => manifest(input)).not.toThrow()
 })

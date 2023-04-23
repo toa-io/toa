@@ -13,6 +13,18 @@ Feature: Origins Extension
       """
     And I disconnect
 
+  Scenario: Local environment with annotations
+    Given I have a component `origins.http`
+    And I have a context with:
+      """
+      origins:
+        origins.http:
+          bad: http://localhost:8888/
+      """
+    When I run `toa env`
+    And I run `toa invoke bad -p ./components/origins.http`
+    Then program should exit with code 0
+
   Scenario: Deployment annotations
     Given I have a component `origins.http`
     And I have a context with:
@@ -28,24 +40,16 @@ Feature: Origins Extension
         origins-http:
           - name: TOA_ORIGINS_ORIGINS_HTTP
             value: eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
-          - name: TOA_ORIGINS_ORIGINS_HTTP_BAD_USERNAME
-            secret:
-              name: toa-origins-origins-http-bad
-              key: username
-          - name: TOA_ORIGINS_ORIGINS_HTTP_BAD_PASSWORD
-            secret:
-              name: toa-origins-origins-http-bad
-              key: password
       """
 
-  Scenario: Local environment
-    Given I have a component `origins.http`
-    And I have a context with:
-      """
-      origins:
-        origins.http:
-          bad: http://localhost:8888/
-      """
+  Scenario: AMQP credentials
+    Given I have a component `origins.amqp`
+    And I have a context
     When I run `toa env`
-    Then I run `toa invoke bad -p ./components/origins.http`
+    And I update an environment with:
+      """
+      TOA_ORIGINS_ORIGINS_AMQP_TEST_USERNAME=developer
+      TOA_ORIGINS_ORIGINS_AMQP_TEST_PASSWORD=secret
+      """
+    And I run `toa invoke test -p ./components/origins.amqp`
     Then program should exit with code 0
