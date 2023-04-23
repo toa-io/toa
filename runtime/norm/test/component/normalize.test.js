@@ -40,6 +40,6 @@ describe('extensions', () => {
   it('should throw if manifest is undefined', () => {
     manifest.extensions['./dummies/extension'].ok = false
 
-    expect(() => normalize(manifest)).toThrow(/didn't return manifest/)
+    expect(() => normalize(manifest)).toThrow(/hasn't returned manifest/)
   })
 })

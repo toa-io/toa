@@ -1,8 +1,12 @@
 'use strict'
 
-const { normalize, validate } = require('./.construct')
+const { normalize } = require('./normalize')
+const { validate } = require('./validate')
 
-/** @type {toa.pointer.uris.Constructor} */
+/**
+ * @param {toa.pointer.URIs} declaration
+ * @returns {toa.pointer.URIs}
+ */
 const construct = (declaration) => {
   const normalized = normalize(declaration)
 

@@ -10,7 +10,8 @@ declare namespace toa.node {
     aspects: Record<string, Function>
 
     // known extensions
-    origins?: Underlay
+    http?: Underlay
+    amqp?: Underlay
     configuration?: object
     state?: object
   }

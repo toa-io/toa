@@ -1,10 +1,10 @@
 {
   "name": "@toa.io/extensions.origins",
   "version": "0.7.2-dev.0",
-  "description": "Toa operations context HTTP client",
+  "description": "Toa Origins",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
-  "main": "src/index.js",
+  "main": "source/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -21,8 +21,9 @@
   "dependencies": {
     "@toa.io/core": "0.7.2-dev.0",
     "@toa.io/generic": "0.7.0",
-    "@toa.io/schema": "0.7.2-dev.0",
+    "@toa.io/schemas": "0.7.2-dev.0",
     "@toa.io/yaml": "0.7.2-dev.0",
+    "comq": "0.6.0",
     "node-fetch": "2.6.7"
   },
   "devDependencies": {

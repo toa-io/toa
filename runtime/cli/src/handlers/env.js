@@ -12,7 +12,11 @@ async function env (argv) {
   const operator = await boot.deployment(path, argv.environment)
   const variables = operator.variables()
   const currentValues = await read(filepath)
-  const nextValues = merge(variables.global, currentValues)
+  const values = []
+
+  for (const scoped of Object.values(variables)) values.push(...scoped)
+
+  const nextValues = merge(values, currentValues)
 
   await write(filepath, nextValues)
 }
