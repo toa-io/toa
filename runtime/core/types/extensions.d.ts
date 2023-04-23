@@ -9,7 +9,7 @@ declare namespace toa.core.extensions {
   interface Factory {
     tenant?(locator: _core.Locator, declaration: object): _core.Connector
 
-    aspect?(locator: _core.Locator, declaration: object): Aspect
+    aspect?(locator: _core.Locator, declaration: object): Aspect | Aspect[]
 
     service?(name?: string): _core.Connector
 
