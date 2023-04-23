@@ -3,8 +3,8 @@
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
-const fixtures = require('./convolve.fixtures')
-const { convolve } = require('../source')
+const fixtures = require('./.test/convolve.fixtures')
+const { convolve } = require('../')
 
 let source
 

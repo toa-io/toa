@@ -2,6 +2,7 @@
 
 const { connect } = require('comq')
 const { Connector } = require('@toa.io/core')
+const { shards } = require('@toa.io/generic')
 
 /**
  * @implements {toa.origins.amqp.Aspect}

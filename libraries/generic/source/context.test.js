@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const fixtures = require('./context.fixtures')
+const fixtures = require('./.test/context.fixtures')
 const { context, timeout } = require('../')
 
 it('should be', () => {
