@@ -1,15 +1,15 @@
 'use strict'
 
-const { uris } = require('@toa.io/pointer')
+const schemas = require('./schemas')
 
 /**
- * @param {toa.pointer.URIs} declaration
- * @returns {toa.pointer.URIs}
+ * @param {toa.origins.Manifest} manifest
+ * @returns {toa.origins.Manifest}
  */
-function manifest (declaration) {
-  uris.validate(declaration)
+function manifest (manifest) {
+  schemas.manifest.validate(manifest)
 
-  return declaration
+  return manifest
 }
 
 exports.manifest = manifest

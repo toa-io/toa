@@ -1,6 +1,7 @@
 'use strict'
 
-const { PREFIX } = require('./constants')
+const schemas = require('./schemas')
+const create = require('./.deployment')
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
@@ -8,17 +9,10 @@ const { PREFIX } = require('./constants')
  * @returns {toa.deployment.dependency.Declaration}
  */
 function deployment (instances, annotations) {
-  const variables = {}
+  schemas.annotations.validate(annotations)
 
-  for (const [id, annotation] of Object.entries(annotations)) {
-    const component = instances.find((instance) => instance.locator.id === id)
-    const name = PREFIX + component.locator.uppercase
-    const json = JSON.stringify(annotation)
-    const value = btoa(json)
-    const variable = { name, value }
-
-    variables[component.locator.label] = [variable]
-  }
+  const uris = create.uris(instances, annotations)
+  const variables = { ...uris }
 
   return { variables }
 }
