@@ -1,6 +1,7 @@
 'use strict'
 
 const { letters: { up } } = require('@toa.io/generic')
+const protocols = require('./protocols')
 
 /**
  * @param {toa.norm.context.dependencies.Instance[]} instances
@@ -14,7 +15,7 @@ function deployment (instances) {
     for (const [origin, reference] of Object.entries(manifest)) {
       const url = new URL(reference)
 
-      if (PROTOCOLS.includes(url.protocol)) {
+      if (protocols.includes(url.protocol)) {
         variables[locator.label] = secrets(locator, origin)
       }
     }
@@ -53,7 +54,4 @@ function secret (locator, origin, property) {
   }
 }
 
-const PROTOCOLS = ['amqp:', 'amqps:']
-
-exports.protocols = PROTOCOLS
 exports.deployment = deployment

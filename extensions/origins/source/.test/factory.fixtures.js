@@ -2,8 +2,12 @@
 
 const { generate } = require('randomstring')
 
-const declaration = {
-  [generate()]: 'https://toa.io'
+/** @type {Record<string, string>} */
+const manifest = {
+  [generate()]: 'https://toa.io',
+  [generate()]: 'https://api.domain.com',
+  [generate()]: 'amqp://localhost',
+  [generate()]: 'amqps://localhost'
 }
 
-exports.declaration = declaration
+exports.manifest = manifest

@@ -9,8 +9,8 @@ const mock = { comq }
 
 jest.mock('comq', () => mock.comq)
 
-const fixtures = require('./.test/amqp.fixtures')
-const { create } = require('./amqp')
+const fixtures = require('./.test/aspect.fixtures')
+const { create } = require('./aspect')
 
 it('should be', async () => {
   expect(create).toBeInstanceOf(Function)

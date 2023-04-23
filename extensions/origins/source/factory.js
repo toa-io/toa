@@ -1,18 +1,33 @@
 'use strict'
 
-const aspects = require('./aspects')
-const { apply } = require('./env')
+const protocols = require('./protocols')
+const env = require('./env')
 
+/**
+ * @implements {toa.core.extensions.Factory}
+ */
 class Factory {
-  /**
-   * @param {toa.core.Locator} locator
-   * @param {toa.origins.annotation.Component} declaration
-   * @return {toa.core.extensions.Aspect[]}
-   */
-  aspect (locator, declaration) {
-    apply(locator, declaration)
+  aspect (locator, manifest) {
+    env.apply(locator, /** @type {toa.origins.Manifest} */ manifest)
 
-    return aspects.map((create) => create(declaration))
+    return protocols.map((protocol) => this.#createAspect(protocol, manifest))
+  }
+
+  /**
+   * @param {object} protocol
+   * @param {toa.origins.Manifest} manifest
+   * @return {toa.core.extensions.Aspect}
+   */
+  #createAspect (protocol, manifest) {
+    const protocolManifest = {}
+
+    for (const [origin, reference] of Object.entries(manifest)) {
+      const url = new URL(reference)
+
+      if (protocol.protocols.includes(url.protocol)) protocolManifest[origin] = reference
+    }
+
+    return new protocol.create(protocolManifest)
   }
 }
 

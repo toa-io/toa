@@ -44,12 +44,19 @@ Feature: Origins Extension
 
   Scenario: AMQP credentials
     Given I have a component `origins.amqp`
-    And I have a context
+    And I have a context with:
+      """yaml
+      origins:
+        origins.amqp:
+          bad: amqp://localhost
+      """
     When I run `toa env`
     And I update an environment with:
       """
-      TOA_ORIGINS_ORIGINS_AMQP_TEST_USERNAME=developer
-      TOA_ORIGINS_ORIGINS_AMQP_TEST_PASSWORD=secret
+      TOA_ORIGINS_ORIGINS_AMQP_QUEUE_USERNAME=developer
+      TOA_ORIGINS_ORIGINS_AMQP_QUEUE_PASSWORD=secret
+      TOA_ORIGINS_ORIGINS_AMQP_BAD_USERNAME=developer
+      TOA_ORIGINS_ORIGINS_AMQP_BAD_PASSWORD=secret
       """
     And I run `toa invoke test -p ./components/origins.amqp`
     Then program should exit with code 0

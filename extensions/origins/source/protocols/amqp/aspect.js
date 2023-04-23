@@ -40,6 +40,7 @@ class Aspect extends Connector {
 
   #open = async ([origin, reference]) => {
     const io = await connect(reference)
+
     this.#origins[origin] = restrict(io)
   }
 
@@ -53,6 +54,7 @@ class Aspect extends Connector {
  * @return {Partial<comq.IO>}
  */
 function restrict (io) {
+  // noinspection JSUnresolvedReference
   return {
     request: (...args) => io.request(...args),
     emit: (...args) => io.emit(...args),

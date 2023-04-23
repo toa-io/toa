@@ -10,7 +10,7 @@ it('should remap values', () => {
   expect(result).toStrictEqual({ a: 2, b: 3 })
 })
 
-it('should return new object', () => {
+it('should not modify argument', () => {
   const object = { a: 1, b: 2 }
 
   remap(object, (value) => value + 1)
