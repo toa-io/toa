@@ -41,4 +41,17 @@ Uses [node-fetch](https://github.com/node-fetch/node-fetch) and returns its resu
 
 ## AMQP
 
-Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO`.
+Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO` restricted
+to `emit` and `request` methods.
+
+AMQP origins require credential secrets to be deployed. Secret's name must
+follow `toa-origins-{namespace}-{component}-{origin}` and it must have keys `username`
+and `password`.
+
+### Example
+
+```shell
+# deploy credentials to the current kubectl context
+$ toa conceal toa-origins-dummies-dummiy-messages username developer
+$ toa conceal toa-origins-dummies-dummiy-messages password secret
+```
