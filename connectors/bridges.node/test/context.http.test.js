@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const fixtures = require('./context.origins.fixtures')
+const fixtures = require('./context.http.fixtures')
 const { Context } = require('../src/context')
 
 const origins = fixtures.context.aspects[0]

@@ -13,6 +13,11 @@ Feature: Origins Extension
       """
     And I disconnect
 
+  Scenario: AMQP Aspect
+    Given I boot `origins.amqp_local` component
+    Then I invoke `test`
+    And I disconnect
+
   Scenario: Local environment with annotations
     Given I have a component `origins.http`
     And I have a context with:
