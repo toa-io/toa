@@ -27,7 +27,7 @@ class Factory {
       if (protocol.protocols.includes(url.protocol)) protocolManifest[origin] = reference
     }
 
-    return new protocol.create(protocolManifest)
+    return protocol.create(protocolManifest)
   }
 }
 

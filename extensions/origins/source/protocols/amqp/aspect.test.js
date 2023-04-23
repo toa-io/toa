@@ -33,6 +33,10 @@ it('should be instance of Connector', async () => {
   expect(aspect).toBeInstanceOf(Connector)
 })
 
+it('should expose name', async () => {
+  expect(aspect.name).toStrictEqual('amqp')
+})
+
 it('should connect', async () => {
   await aspect.open()
 

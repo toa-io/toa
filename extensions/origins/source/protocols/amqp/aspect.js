@@ -7,6 +7,7 @@ const { Connector } = require('@toa.io/core')
  * @implements {toa.origins.amqp.Aspect}
  */
 class Aspect extends Connector {
+  name = 'amqp'
   /** @type {toa.origins.Manifest} */
   #manifest
 
