@@ -7,7 +7,7 @@ const { overwrite } = require('@toa.io/generic')
  * @param {toa.core.Locator} locator
  * @param {toa.origins.annotation.Component} declaration
  */
-function override (locator, declaration) {
+function apply (locator, declaration) {
   const variable = PREFIX + locator.uppercase
 
   if (!(variable in process.env)) return
@@ -19,4 +19,4 @@ function override (locator, declaration) {
   overwrite(declaration, value)
 }
 
-exports.override = override
+exports.apply = apply

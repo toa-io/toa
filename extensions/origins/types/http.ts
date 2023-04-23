@@ -1,9 +1,8 @@
 import * as fetch from 'node-fetch'
-
 import * as _extensions from '@toa.io/core/types/extensions'
 import * as _retry from '@toa.io/generic/types/retry'
 
-declare namespace toa.extensions.origins {
+declare namespace toa.origins.http {
 
   namespace invocation {
     type Options = {

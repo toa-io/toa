@@ -6,7 +6,7 @@ const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/generic')
 
 /**
- * @implements {toa.extensions.origins.Aspect}
+ * @implements {toa.origins.http.Aspect}
  */
 class Aspect extends Connector {
   /** @readonly */

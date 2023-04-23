@@ -1,18 +1,18 @@
 'use strict'
 
-const { override } = require('./env')
-const { Aspect } = require('./aspect')
+const aspects = require('./aspects')
+const { apply } = require('./env')
 
 class Factory {
   /**
    * @param {toa.core.Locator} locator
    * @param {toa.origins.annotation.Component} declaration
-   * @return {Aspect}
+   * @return {toa.core.extensions.Aspect[]}
    */
   aspect (locator, declaration) {
-    override(locator, declaration)
+    apply(locator, declaration)
 
-    return new Aspect(declaration)
+    return aspects.map((Aspect) => new Aspect(declaration))
   }
 }
 

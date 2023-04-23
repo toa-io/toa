@@ -1,6 +1,6 @@
 Feature: Origins Extension
 
-  Scenario: Using `http` protocol
+  Scenario: HTTP Aspect
     Given I boot `origins.http` component
     When I invoke `test`
     Then the reply is received:
