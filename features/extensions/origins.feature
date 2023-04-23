@@ -28,6 +28,14 @@ Feature: Origins Extension
         origins-http:
           - name: TOA_ORIGINS_ORIGINS_HTTP
             value: eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
+          - name: TOA_ORIGINS_ORIGINS_HTTP_BAD_USERNAME
+            secret:
+              name: toa-origins-origins-http-bad
+              key: username
+          - name: TOA_ORIGINS_ORIGINS_HTTP_BAD_PASSWORD
+            secret:
+              name: toa-origins-origins-http-bad
+              key: password
       """
 
   Scenario: Local environment
