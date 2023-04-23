@@ -6,12 +6,12 @@ const { random } = require('@toa.io/generic')
 
 const { Connector } = require('@toa.io/core')
 
-const fixtures = require('./aspects.http.fixtures')
+const fixtures = require('./.test/http.fixtures')
 const mock = fixtures.mock
 
 jest.mock('node-fetch', () => mock.fetch)
 
-const { Aspect } = require('../source/aspects/http')
+const { Aspect } = require('./http')
 
 /** @type {toa.extensions.origins.Aspect} */ let aspect
 

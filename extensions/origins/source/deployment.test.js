@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const { sample, letters: { up } } = require('@toa.io/generic')
 
-const fixtures = require('./deployment.fixtures')
+const fixtures = require('./.test/deployment.fixtures')
 const { deployment } = require('../')
 
 it('should be', async () => {

@@ -5,12 +5,12 @@ const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
 const { sample, overwrite } = require('@toa.io/generic')
 
-jest.mock('../source/aspects/http')
+jest.mock('./aspects/http')
 
-const { Aspect } = require('../source/aspects/http')
+const { Aspect } = require('./aspects/http')
 
-const fixtures = require('./factory.fixtures')
-const { Factory } = require('../source')
+const fixtures = require('./.test/factory.fixtures')
+const { Factory } = require('../')
 
 let factory
 

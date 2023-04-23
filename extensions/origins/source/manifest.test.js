@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { PROTOCOLS } = require('./constants')
+const { PROTOCOLS } = require('./.test/constants')
 
 const { manifest } = require('../')
 
