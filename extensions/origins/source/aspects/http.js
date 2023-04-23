@@ -12,16 +12,16 @@ class Aspect extends Connector {
   /** @readonly */
   name = 'http'
 
-  /** @type {toa.origins.annotation.Component} */
+  /** @type {toa.origins.Manifest} */
   #origins
 
   /**
-   * @param {toa.origins.annotation.Component} declaration
+   * @param {toa.origins.Manifest} manifest
    */
-  constructor (declaration) {
+  constructor (manifest) {
     super()
 
-    this.#origins = declaration
+    this.#origins = manifest
   }
 
   async invoke (name, path, request, options) {
@@ -78,4 +78,11 @@ const substitute = (origin, substitutions) => {
 
 const PLACEHOLDER = /\*/g
 
-exports.Aspect = Aspect
+/**
+ * @param {toa.origins.Manifest} manifest
+ */
+function create (manifest) {
+  return new Aspect(manifest)
+}
+
+exports.create = create

@@ -11,14 +11,14 @@ const mock = fixtures.mock
 
 jest.mock('node-fetch', () => mock.fetch)
 
-const { Aspect } = require('./http')
+const { create } = require('./http')
 
 /** @type {toa.extensions.origins.Aspect} */ let aspect
 
 beforeEach(() => {
   jest.clearAllMocks()
 
-  aspect = new Aspect(fixtures.declaration)
+  aspect = create(fixtures.manifest)
 })
 
 it('should be instance of core.Connector', () => {
@@ -65,7 +65,7 @@ describe('invoke', () => {
 
     await aspect.invoke('deep', path, clone(request))
 
-    expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.declaration.deep + path)
+    expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.manifest.deep + path)
   })
 
   it('should substitute wildcards', async () => {
@@ -91,7 +91,7 @@ describe('invoke', () => {
 
     const url = mock.fetch.mock.calls[0][0]
 
-    expect(url).toStrictEqual(fixtures.declaration.foo + '/' + path)
+    expect(url).toStrictEqual(fixtures.manifest.foo + '/' + path)
   })
 
   it('should not throw if path is not defined', async () => {
@@ -107,7 +107,7 @@ describe('invoke', () => {
     })
 
     it('should pass url', () => {
-      expect(call[0]).toStrictEqual(fixtures.declaration.foo + path)
+      expect(call[0]).toStrictEqual(fixtures.manifest.foo + path)
     })
 
     it('should pass request', () => {
@@ -131,7 +131,7 @@ describe('invoke', () => {
 
       mock.fetch.respond(200, response)
 
-      /** @type {toa.extensions.origins.invocation.Options} */
+      /** @type {toa.origins.http.invocation.Options} */
       const options = {
         retry: { base: 0, retries: attempts }
       }

@@ -16,7 +16,7 @@ it('should return manifest', async () => {
   expect(output).toStrictEqual(input)
 })
 
-it('should fail not Record<string, string>', async () => {
+it('should fail if not Record<string, string>', async () => {
   const input = /** @type {toa.origins.Manifest} */ {
     foo: {
       bar: 'dev://null'

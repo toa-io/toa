@@ -12,7 +12,7 @@ class Factory {
   aspect (locator, declaration) {
     apply(locator, declaration)
 
-    return aspects.map((Aspect) => new Aspect(declaration))
+    return aspects.map((create) => create(declaration))
   }
 }
 

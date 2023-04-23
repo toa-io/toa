@@ -7,7 +7,7 @@ const { sample, overwrite } = require('@toa.io/generic')
 
 jest.mock('./aspects/http')
 
-const { Aspect } = require('./aspects/http')
+const { create } = require('./aspects/http')
 
 const fixtures = require('./.test/factory.fixtures')
 const { Factory } = require('../')
@@ -23,7 +23,7 @@ beforeEach(() => {
 it('should create aspect', () => {
   factory.aspect(new Locator(generate(), generate()), fixtures.declaration)
 
-  expect(Aspect).toHaveBeenCalledWith(fixtures.declaration)
+  expect(create).toHaveBeenCalledWith(fixtures.declaration)
 })
 
 it('should overwrites URLs from environment', async () => {
@@ -40,5 +40,5 @@ it('should overwrites URLs from environment', async () => {
 
   const expected = overwrite(declaration, override)
 
-  expect(Aspect).toHaveBeenCalledWith(expected)
+  expect(create).toHaveBeenCalledWith(expected)
 })

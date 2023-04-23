@@ -2,8 +2,8 @@
 
 const { generate } = require('randomstring')
 
-/** @type {toa.origins.annotation.Component} */
-const declaration = {
+/** @type {toa.origins.Manifest} */
+const manifest = {
   foo: 'https://' + generate().toLowerCase(),
   amazon: 'https://*.*.amazon.com:*',
   deep: 'http://www.domain.com/some/path/'
@@ -30,5 +30,5 @@ fetch.reset = () => {
   responses.length = 0
 }
 
-exports.declaration = declaration
+exports.manifest = manifest
 exports.mock = { fetch }
