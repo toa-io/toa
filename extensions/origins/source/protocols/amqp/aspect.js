@@ -41,7 +41,8 @@ class Aspect extends Connector {
   }
 
   #open = async ([origin, reference]) => {
-    const io = await connect(reference)
+    const references = shards(reference)
+    const io = await connect(...references)
 
     this.#origins[origin] = restrict(io)
   }

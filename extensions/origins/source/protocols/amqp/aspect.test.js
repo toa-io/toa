@@ -45,6 +45,24 @@ it('should connect', async () => {
   }
 })
 
+it('should connect to shards', async () => {
+  jest.clearAllMocks()
+
+  manifest = {
+    test: 'amqps://host{0-2}.domain.com'
+  }
+
+  aspect = create(manifest)
+
+  const shards = []
+
+  for (let i = 0; i < 3; i++) shards.push(`amqps://host${i}.domain.com`)
+
+  await aspect.open()
+
+  expect(comq.connect).toHaveBeenCalledWith(...shards)
+})
+
 it('should disconnect', async () => {
   await aspect.open()
   await aspect.close()
