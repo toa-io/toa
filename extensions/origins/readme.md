@@ -1,6 +1,6 @@
 # Toa Origins
 
-Origins extension enables external communications over supported protocols (`HTTP` and `AMQP`).
+`origins` extension enables external communications over supported protocols (HTTP and AMQP).
 
 ## TL;DR
 
@@ -10,15 +10,15 @@ name: dummy
 namespace: dummies
 
 origins:
-  website: http://www.domain.com/docs/
-  messages: amqps://amqp.amazon.com
+  docs: http://www.domain.com/docs/
+  amazon: amqps://amqp.amazon.com
 ```
 
 ```javascript
 // Node.js bridge 
 async function transition (input, object, context) {
-  await context.http.example.get() // GET http://www.domain.com/docs/example
-  await context.amqp.emit('something_happened', { really: true })
+  await context.http.docs.example.get() // GET http://www.domain.com/docs/example
+  await context.amqp.amazon.emit('something_happened', { really: true })
 }
 ```
 
@@ -26,14 +26,13 @@ async function transition (input, object, context) {
 # context.toa.yaml
 origins:
   dummies.dummy:
-    messages: amqps://amqp.azure.com
-    messages@staging: amqp://amqp.stage
+    amazon: amqps://amqp.azure.com
+    amazon@staging: amqp://amqp.stage
 ```
 
-## Declaration
+## Manifest
 
-Origins extension declaration is a [Pointer](/libraries/pointer). Declarations can be overridden by
-the context annotations.
+`origins` manifest is an object conforming declaring origin names as keys an origin URLs as values.
 
 ## HTTP
 
@@ -44,7 +43,7 @@ Uses [node-fetch](https://github.com/node-fetch/node-fetch) and returns its resu
 Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO` restricted
 to `emit` and `request` methods.
 
-AMQP origins require credential secrets to be deployed. Secret's name must
+AMQP origins can have credential secrets deployed. Secret's name must
 follow `toa-origins-{namespace}-{component}-{origin}` and it must have keys `username`
 and `password`.
 
