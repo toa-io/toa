@@ -161,6 +161,24 @@ describe.each(protocols)('absolute URL', (protocol) => {
   it('should request absolute URL', async () => {
     mock.fetch.respond(200, response)
 
+    const properties = { null: true }
+    const url = protocol + '//' + generate()
+    const request = { method: 'POST' }
+
+    aspect = create(fixtures.manifest, properties)
+
+    await aspect.invoke(url, request)
+
+    expect(mock.fetch).toHaveBeenCalledWith(url, request)
+  })
+
+  it('should allow if TOA_DEV=1 and no properties', async () => {
+    const dev = process.env.TOA_DEV
+
+    process.env.TOA_DEV = '1'
+
+    mock.fetch.respond(200, response)
+
     const url = protocol + '//' + generate()
     const request = { method: 'POST' }
 
@@ -169,6 +187,8 @@ describe.each(protocols)('absolute URL', (protocol) => {
     await aspect.invoke(url, request)
 
     expect(mock.fetch).toHaveBeenCalledWith(url, request)
+
+    process.env.TOA_DEV = dev
   })
 
   it('should throw if URL not allowed', async () => {

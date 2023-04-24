@@ -4,7 +4,7 @@
  * @implements {toa.origins.http.Permissions}
  */
 class Permissions {
-  #default = false
+  #default = process.env.TOA_DEV === '1'
 
   /** @type {RegExp[]} */
   #allowances = []
@@ -16,8 +16,7 @@ class Permissions {
    * @param {toa.origins.http.Properties} properties
    */
   constructor (properties) {
-    if (properties === undefined) this.#default = true
-    else this.#parse(properties)
+    if (properties !== undefined) this.#parse(properties)
   }
 
   test (url) {

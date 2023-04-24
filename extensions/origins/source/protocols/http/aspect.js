@@ -111,7 +111,7 @@ function substitute (origin, substitutions) {
  * @returns {boolean}
  */
 function isAbsoluteURL (path) {
-  return protocols.find((protocol) => path.indexOf(protocol) === 0) !== undefined
+  return protocols.findIndex((protocol) => path.indexOf(protocol) === 0) !== -1
 }
 
 const PLACEHOLDER = /\*/g
@@ -122,6 +122,7 @@ const PLACEHOLDER = /\*/g
  */
 function create (manifest, properties) {
   const permissions = new Permissions(properties)
+
   return new Aspect(manifest, permissions)
 }
 
