@@ -23,15 +23,23 @@ class Factory {
   #createAspect (protocol, manifest) {
     const protocolManifest = {}
 
+    let properties
+
     // let properties
 
     for (const [origin, reference] of Object.entries(manifest)) {
+      if (origin[0] === '.') {
+        if (origin.substring(1) === protocol.id) properties = reference
+
+        continue
+      }
+
       const url = new URL(reference)
 
       if (protocol.protocols.includes(url.protocol)) protocolManifest[origin] = reference
     }
 
-    return protocol.create(protocolManifest)
+    return protocol.create(protocolManifest, properties)
   }
 }
 
