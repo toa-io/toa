@@ -44,6 +44,12 @@ it('should throw if protocol is not supported', async () => {
   expect(() => manifest(input)).toThrow('is not supported')
 })
 
+it('should convert null to {}', async () => {
+  const output = manifest(null)
+  
+  expect(output).toStrictEqual({})
+})
+
 it.each(PROTOCOLS)('should support %s protocol', async (protocol) => {
   const input = { foo: protocol + '//' + generate() }
 

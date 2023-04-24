@@ -5,4 +5,4 @@ operations:
   test:
     output: object
 
-origins: { }
+origins: ~

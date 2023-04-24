@@ -85,6 +85,16 @@ async function transition (input, object, context) {
 }
 ```
 
+#### `null` origins
+
+To enable the extension for a component that uses arbitrary URLs without any specific origins to
+declare, the Origins manifest should be set to `null`.
+
+```yaml
+# manifest.toa.yaml
+origins: ~
+```
+
 ## AMQP Aspect
 
 Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO` restricted
