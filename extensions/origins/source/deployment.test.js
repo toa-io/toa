@@ -131,12 +131,11 @@ describe('amqp', () => {
 
     expect(variables).toBeDefined()
 
-    const envPrefix = `TOA_ORIGINS_${component.locator.uppercase}_`
-    const secPrefix = `toa-origins-${component.locator.label}-`
+    const envPrefix = `TOA_ORIGINS_${component.locator.uppercase}_${up(origin)}_`
+    const secretName = `toa-origins-${component.locator.label}-${origin}`
 
     for (const property of ['username', 'password']) {
       const variableName = envPrefix + up(property)
-      const secretName = secPrefix + property
       const variable = findVariable(variables, variableName)
 
       expect(variable).toBeDefined()

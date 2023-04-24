@@ -5,35 +5,65 @@ const fetch = require('node-fetch')
 const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/generic')
 
+const { Permissions } = require('./.aspect/permissions')
+const { id } = require('./id')
+const protocols = require('./protocols')
+
 /**
  * @implements {toa.origins.http.Aspect}
  */
 class Aspect extends Connector {
   /** @readonly */
-  name = 'http'
+  name = id
 
   /** @type {toa.origins.Manifest} */
   #origins
 
+  /** @type {toa.origins.http.Permissions} */
+  #permissions
+
   /**
    * @param {toa.origins.Manifest} manifest
+   * @param {toa.origins.http.Permissions} permissions
    */
-  constructor (manifest) {
+  constructor (manifest, permissions) {
     super()
 
     this.#origins = manifest
+    this.#permissions = permissions
   }
 
   async invoke (name, path, request, options) {
     let origin = this.#origins[name]
 
-    if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
+    if (origin === undefined) {
+      if (isAbsoluteURL(/** @type {string} */ name)) {
+        return this.#invokeURL(
+          /** @type {string} */ name,
+          /** @type {import('node-fetch').RequestInit} */ path
+        )
+      } else throw new Error(`Origin '${name}' is not defined`)
+    }
+
+    // absolute urls are forbidden when using origins
+    if (typeof path === 'string' && isAbsoluteURL(path)) throw new Error(`Absolute URLs are forbidden (${path})`)
 
     if (options?.substitutions !== undefined) origin = substitute(origin, options.substitutions)
 
     const url = path === undefined ? new URL(origin) : new URL(path, origin)
 
     return this.#request(url.href, request, options?.retry)
+  }
+
+  /**
+   * @param {string} url
+   * @param {import('node-fetch').RequestInit} request
+   * @return {Promise<void>}
+   */
+  async #invokeURL (url, request) {
+    if (this.#permissions.test(url) === false) throw new Error(`URL '${url}' is not allowed`)
+
+    return this.#request(url, request)
   }
 
   /**
@@ -70,19 +100,30 @@ class Aspect extends Connector {
  * @param {string[]} substitutions
  * @returns {string}
  */
-const substitute = (origin, substitutions) => {
+function substitute (origin, substitutions) {
   const replace = () => substitutions.shift()
 
   return origin.replace(PLACEHOLDER, replace)
+}
+
+/**
+ * @param {string} path
+ * @returns {boolean}
+ */
+function isAbsoluteURL (path) {
+  return protocols.findIndex((protocol) => path.indexOf(protocol) === 0) !== -1
 }
 
 const PLACEHOLDER = /\*/g
 
 /**
  * @param {toa.origins.Manifest} manifest
+ * @param {toa.origins.http.Properties} [properties]
  */
-function create (manifest) {
-  return new Aspect(manifest)
+function create (manifest, properties) {
+  const permissions = new Permissions(properties)
+
+  return new Aspect(manifest, permissions)
 }
 
 exports.create = create

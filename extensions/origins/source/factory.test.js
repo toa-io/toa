@@ -13,7 +13,6 @@ const amqp = require('./protocols/amqp/aspect')
 const fixtures = require('./.test/factory.fixtures')
 const { Factory } = require('../')
 
-/** @type {toa.core.extensions.Factory} */
 let factory
 
 beforeEach(() => {
@@ -28,8 +27,8 @@ it('should create aspects', () => {
   const httpManifest = filterManifest(fixtures.manifest, 'http')
   const amqpManifest = filterManifest(fixtures.manifest, 'amqp')
 
-  expect(http.create).toHaveBeenCalledWith(httpManifest)
-  expect(amqp.create).toHaveBeenCalledWith(amqpManifest)
+  expect(http.create).toHaveBeenCalledWith(httpManifest, undefined)
+  expect(amqp.create).toHaveBeenCalledWith(amqpManifest, undefined)
 })
 
 describe('env', () => {
@@ -47,7 +46,7 @@ describe('env', () => {
 
     const expected = overwrite(httpManifest, override)
 
-    expect(http.create).toHaveBeenCalledWith(expected)
+    expect(http.create.mock.calls[0][0]).toStrictEqual(expected)
   })
 
   describe('amqp', () => {
@@ -102,6 +101,25 @@ describe('env', () => {
       expect(url.hostname).toStrictEqual(hostname)
       expect(url.username).toStrictEqual(username)
       expect(url.password).toStrictEqual(password)
+    })
+  })
+
+  describe('http', () => {
+    it('should read properties', async () => {
+      const properties = {
+        '.http': {
+          [generate()]: generate()
+        }
+      }
+
+      const locator = new Locator(generate(), generate())
+      const json = JSON.stringify(properties)
+
+      process.env['TOA_ORIGINS_' + locator.uppercase] = btoa(json)
+
+      factory.aspect(locator, fixtures.manifest)
+
+      expect(http.create).toHaveBeenCalledWith(expect.anything(), properties['.http'])
     })
   })
 })
