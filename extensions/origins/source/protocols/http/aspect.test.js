@@ -3,8 +3,10 @@
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 const { random } = require('@toa.io/generic')
-
 const { Connector } = require('@toa.io/core')
+
+/** @type {string[]} */
+const protocols = require('../http/protocols')
 
 const fixtures = require('./.test/aspect.fixtures')
 const mock = fixtures.mock
@@ -68,7 +70,7 @@ describe('invoke', () => {
     expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.manifest.deep + path)
   })
 
-  it.each(['http:', 'https:'])('should throw on absolute URL (%s)',
+  it.each(protocols)('should throw on absolute URL (%s)',
     async (protocol) => {
       jest.clearAllMocks()
       mock.fetch.respond(200, response)
@@ -107,6 +109,7 @@ describe('invoke', () => {
     jest.clearAllMocks()
     mock.fetch.respond(200, response)
 
+    // noinspection JSCheckFunctionSignatures
     expect(() => aspect.invoke(name)).not.toThrow()
   })
 
@@ -149,5 +152,20 @@ describe('invoke', () => {
 
       expect(mock.fetch).toHaveBeenCalledTimes(attempts)
     })
+  })
+})
+
+describe('absolute URL', () => {
+  const response = { [generate()]: generate() }
+
+  it.each(protocols)('should request absolute URL (%s)', async (protocol) => {
+    mock.fetch.respond(200, response)
+
+    const url = protocol + '//' + generate()
+    const request = { method: 'POST' }
+
+    await aspect.invoke(url, request)
+
+    expect(mock.fetch).toHaveBeenCalledWith(url, request)
   })
 })

@@ -29,12 +29,19 @@ class Aspect extends Connector {
   async invoke (name, path, request, options) {
     let origin = this.#origins[name]
 
-    if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
+    if (origin === undefined) {
+      if (isAbsoluteURL(/** @type {string} */ name)) {
+        return this.#invokeURL(
+          /** @type {string} */ name,
+          /** @type {import('node-fetch').RequestInit} */ path
+        )
+      } else throw new Error(`Origin '${name}' is not defined`)
+    }
 
     // absolute urls are forbidden when using origins
     if (typeof path === 'string'
-      && protocols.find((protocol) => path.indexOf(protocol) === 0) !== undefined) {
-      
+      && isAbsoluteURL(path)) {
+
       throw new Error(`Absolute URLs are forbidden (${path})`)
     }
 
@@ -43,6 +50,15 @@ class Aspect extends Connector {
     const url = path === undefined ? new URL(origin) : new URL(path, origin)
 
     return this.#request(url.href, request, options?.retry)
+  }
+
+  /**
+   * @param {string} url
+   * @param {import('node-fetch').RequestInit} request
+   * @return {Promise<void>}
+   */
+  async #invokeURL (url, request) {
+    return this.#request(url, request)
   }
 
   /**
@@ -79,10 +95,18 @@ class Aspect extends Connector {
  * @param {string[]} substitutions
  * @returns {string}
  */
-const substitute = (origin, substitutions) => {
+function substitute (origin, substitutions) {
   const replace = () => substitutions.shift()
 
   return origin.replace(PLACEHOLDER, replace)
+}
+
+/**
+ * @param {string} path
+ * @returns {boolean}
+ */
+function isAbsoluteURL (path) {
+  return protocols.find((protocol) => path.indexOf(protocol) === 0) !== undefined
 }
 
 const PLACEHOLDER = /\*/g
