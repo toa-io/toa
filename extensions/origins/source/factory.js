@@ -3,12 +3,14 @@
 const protocols = require('./protocols')
 const env = require('./env')
 
-/**
- * @implements {toa.core.extensions.Factory}
- */
 class Factory {
+  /**
+   * @param {toa.core.Locator} locator
+   * @param {toa.origins.Manifest} manifest
+   * @return {toa.core.extensions.Aspect[]}
+   */
   aspect (locator, manifest) {
-    env.apply(locator, /** @type {toa.origins.Manifest} */ manifest)
+    env.apply(locator, manifest)
 
     return protocols.map((protocol) => this.#createAspect(protocol, manifest))
   }
@@ -20,6 +22,8 @@ class Factory {
    */
   #createAspect (protocol, manifest) {
     const protocolManifest = {}
+
+    // let properties
 
     for (const [origin, reference] of Object.entries(manifest)) {
       const url = new URL(reference)

@@ -104,6 +104,12 @@ describe('env', () => {
       expect(url.password).toStrictEqual(password)
     })
   })
+
+  describe('http', () => {
+    it('should read permissions', async () => {
+
+    })
+  })
 })
 
 /**

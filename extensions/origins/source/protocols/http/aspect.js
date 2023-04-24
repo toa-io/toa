@@ -5,6 +5,8 @@ const fetch = require('node-fetch')
 const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/generic')
 
+const { Permissions } = require('./.aspect/permissions')
+const { id } = require('./id')
 const protocols = require('./protocols')
 
 /**
@@ -12,18 +14,23 @@ const protocols = require('./protocols')
  */
 class Aspect extends Connector {
   /** @readonly */
-  name = 'http'
+  name = id
 
   /** @type {toa.origins.Manifest} */
   #origins
 
+  /** @type {toa.origins.http.Permissions} */
+  #permissions
+
   /**
    * @param {toa.origins.Manifest} manifest
+   * @param {toa.origins.http.Permissions} permissions
    */
-  constructor (manifest) {
+  constructor (manifest, permissions) {
     super()
 
     this.#origins = manifest
+    this.#permissions = permissions
   }
 
   async invoke (name, path, request, options) {
@@ -39,10 +46,7 @@ class Aspect extends Connector {
     }
 
     // absolute urls are forbidden when using origins
-    if (typeof path === 'string' &&
-      isAbsoluteURL(path)) {
-      throw new Error(`Absolute URLs are forbidden (${path})`)
-    }
+    if (typeof path === 'string' && isAbsoluteURL(path)) throw new Error(`Absolute URLs are forbidden (${path})`)
 
     if (options?.substitutions !== undefined) origin = substitute(origin, options.substitutions)
 
@@ -57,6 +61,8 @@ class Aspect extends Connector {
    * @return {Promise<void>}
    */
   async #invokeURL (url, request) {
+    if (this.#permissions.test(url) === false) throw new Error(`URL '${url}' is not allowed`)
+
     return this.#request(url, request)
   }
 
@@ -112,9 +118,11 @@ const PLACEHOLDER = /\*/g
 
 /**
  * @param {toa.origins.Manifest} manifest
+ * @param {toa.origins.http.Properties} [properties]
  */
-function create (manifest) {
-  return new Aspect(manifest)
+function create (manifest, properties) {
+  const permissions = new Permissions(properties)
+  return new Aspect(manifest, permissions)
 }
 
 exports.create = create

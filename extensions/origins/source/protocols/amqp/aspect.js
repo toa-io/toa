@@ -4,11 +4,13 @@ const { connect } = require('comq')
 const { Connector } = require('@toa.io/core')
 const { shards } = require('@toa.io/generic')
 
+const { id } = require('./id')
+
 /**
  * @implements {toa.origins.amqp.Aspect}
  */
 class Aspect extends Connector {
-  name = 'amqp'
+  name = id
   /** @type {toa.origins.Manifest} */
   #manifest
 

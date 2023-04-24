@@ -11,6 +11,12 @@ declare namespace toa.origins.http {
     }
   }
 
+  type Properties = Record<string | null, boolean>
+
+  interface Permissions {
+    test(url: string): boolean
+  }
+
   interface Aspect extends _extensions.Aspect {
     invoke(origin: string, path: string, request?: fetch.RequestInit, options?: invocation.Options): Promise<fetch.Response>
 
@@ -18,3 +24,5 @@ declare namespace toa.origins.http {
   }
 
 }
+
+export type Aspect = toa.origins.http.Aspect
