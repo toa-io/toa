@@ -12,7 +12,7 @@ declare namespace toa.origins.http {
   }
 
   interface Aspect extends _extensions.Aspect {
-    invoke(name: string, path: string, request: fetch.RequestInit, options?: invocation.Options): Promise<fetch.Response>
+    invoke(name: string, path: string, request?: fetch.RequestInit, options?: invocation.Options): Promise<fetch.Response>
   }
 
 }
