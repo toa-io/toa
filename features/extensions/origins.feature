@@ -60,6 +60,24 @@ Feature: Origins Extension
             value: eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
       """
 
+  Scenario: AMQP credentials deployment annotations
+    Given I have a component `origins.amqp`
+    And I have a context
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        origins-amqp:
+          - name: TOA_ORIGINS_ORIGINS_AMQP_QUEUE_USERNAME
+            secret:
+              name: toa-origins-origins-amqp-queue
+              key: username
+          - name: TOA_ORIGINS_ORIGINS_AMQP_QUEUE_PASSWORD
+            secret:
+              name: toa-origins-origins-amqp-queue
+              key: password
+      """
+
   Scenario: AMQP credentials
     Given I have a component `origins.amqp`
     And I have a context with:

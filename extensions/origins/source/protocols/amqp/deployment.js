@@ -12,13 +12,19 @@ function deployment (instances) {
   const variables = {}
 
   for (const { locator, manifest } of instances) {
+    const secrets = []
+
     for (const [origin, reference] of Object.entries(manifest)) {
       const url = new URL(reference)
 
       if (protocols.includes(url.protocol)) {
-        variables[locator.label] = secrets(locator, origin)
+        const originSecrets = createSecrets(locator, origin)
+
+        secrets.push(...originSecrets)
       }
     }
+
+    variables[locator.label] = secrets
   }
 
   return variables
@@ -29,10 +35,10 @@ function deployment (instances) {
  * @param {string} origin
  * @return {toa.deployment.dependency.Variable[]}
  */
-function secrets (locator, origin) {
+function createSecrets (locator, origin) {
   const properties = ['username', 'password']
 
-  return properties.map((property) => secret(locator, origin, property))
+  return properties.map((property) => createSecret(locator, origin, property))
 }
 
 /**
@@ -41,9 +47,9 @@ function secrets (locator, origin) {
  * @param {string} property
  * @return {toa.deployment.dependency.Variable}
  */
-function secret (locator, origin, property) {
-  const variable = `TOA_ORIGINS_${locator.uppercase}_${up(property)}`
-  const secret = `toa-origins-${locator.label}-${property}`
+function createSecret (locator, origin, property) {
+  const variable = `TOA_ORIGINS_${locator.uppercase}_${up(origin)}_${up(property)}`
+  const secret = `toa-origins-${locator.label}-${origin}`
 
   return {
     name: variable,
