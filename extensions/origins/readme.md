@@ -18,7 +18,7 @@ origins:
 // Node.js bridge 
 async function transition (input, object, context) {
   // direct Aspect invocation
-  await context.aspects.http('./example', { method: 'GET' })
+  await context.aspects.http('docs', './example', { method: 'GET' })
 
   // shortcuts
   await context.http.docs.example.get() // GET http://www.domain.com/docs/example
