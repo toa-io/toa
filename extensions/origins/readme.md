@@ -17,6 +17,10 @@ origins:
 ```javascript
 // Node.js bridge 
 async function transition (input, object, context) {
+  // direct Aspect invocation
+  await context.aspects.http('./example', { method: 'GET' })
+
+  // shortcuts
   await context.http.docs.example.get() // GET http://www.domain.com/docs/example
   await context.amqp.amazon.emit('something_happened', { really: true })
 }
@@ -34,11 +38,54 @@ origins:
 
 `origins` manifest is an object conforming declaring origin names as keys an origin URLs as values.
 
-## HTTP
+## HTTP Aspect
 
 Uses [node-fetch](https://github.com/node-fetch/node-fetch) and returns its result.
 
-## AMQP
+Aspect invocation function
+signature: `async (origin: string, rel: string, reuest: fetch.Request): fetch.Response`
+
+- `origin`: name of the origin in the manifest
+- `rel`: relative reference to a resource
+- `request`: `Request` form `node-fetch`
+
+### Absolute URLs
+
+Requests to arbitrary URLs can be implemented with overloaded direct Aspect invocation.
+
+`async (url: string, request: fetch.Request): fetch.Response`
+
+By default, requests to arbitrary URLs are not allowed and must be explicitly permitted by setting
+permissions in the Origins Annotation.
+
+The Rules object is stored in the `.http` property of the corresponding component. Each key in the
+Rules object is a regular expression that URLs will be tested against, and each value is a
+permission — either `true` to allow the URL or `false` to deny it. In cases where a URL matches
+multiple rules, denial takes priority.
+
+> The `null` key is a special case that represents "any URL".
+
+#### Example
+
+```yaml
+# context.toa.yaml
+origins:
+  dummies.dummy:
+    .http:
+      /^https?:\/\/api.domain.com/: true
+      /^http:\/\/sandbox.domain.com/@staging: true  # staging environment
+      /.*hackers.*/: false                          # deny rule
+      ~: true                                       # allow any URL
+```
+
+```javascript
+// Node.js bridge 
+async function transition (input, object, context) {
+  await context.aspects.http('https://api.domain.com/example', { method: 'POST' })
+}
+```
+
+## AMQP Aspect
 
 Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO` restricted
 to `emit` and `request` methods.
