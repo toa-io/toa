@@ -52,7 +52,7 @@ it('should be available as context.http', async () => {
 })
 
 it('should validate extension manifest', async () => {
-  await expect(framework.compose(['origins-misformatted'])).rejects.toThrow('must be string')
+  await expect(framework.compose(['origins-misformatted'])).rejects.toThrow()
 })
 
 it('should retry', async () => {

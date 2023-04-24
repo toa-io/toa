@@ -55,3 +55,21 @@ it.each(PROTOCOLS)('should support %s protocol', async (protocol) => {
 
   expect(() => manifest(input)).not.toThrow()
 })
+
+it('should handle placeholders', async () => {
+  const input = { foo: 'http://${FOO}' + generate() + ':${BAR}/' } // eslint-disable-line no-template-curly-in-string
+
+  expect(() => manifest(input)).not.toThrow()
+})
+
+it('should handle host shards', async () => {
+  const input = { foo: 'http://{0-3}' + generate() }
+
+  expect(() => manifest(input)).not.toThrow()
+})
+
+it('should handle port shards', async () => {
+  const input = { foo: 'http://' + generate() + ':888{0-9}' }
+
+  expect(() => manifest(input)).not.toThrow()
+})
