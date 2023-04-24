@@ -96,3 +96,14 @@ Feature: Origins Extension
       """
     And I run `toa invoke test -p ./components/origins.amqp`
     Then program should exit with code 0
+
+  Scenario: Origin with environment variable placeholder
+    Given I have a component `origins.http_echo`
+    And I have a context
+    When I run `toa env`
+    And I update an environment with:
+      """
+      ECHO_PORT=8888
+      """
+    And I run `toa invoke test -p ./components/origins.http_echo`
+    Then program should exit with code 0

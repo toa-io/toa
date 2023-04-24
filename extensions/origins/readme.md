@@ -1,6 +1,6 @@
 # Toa Origins
 
-`origins` extension enables external communications over supported protocols (HTTP and AMQP).
+Enables external communications over supported protocols (HTTP and AMQP).
 
 ## TL;DR
 
@@ -37,6 +37,20 @@ origins:
 ## Manifest
 
 `origins` manifest is an object conforming declaring origin names as keys an origin URLs as values.
+Component's `origins` manifest can be overridden by the Context `origins` annotation.
+
+### Sharded Connections
+
+Origin value may contain [shards](/libraries/generic/readme.md#shards) placeholders.
+
+### Environment Variables
+
+Origin value may contain environment variable placeholders.
+
+```yaml
+origins:
+  foo@dev: stage${STAGE_NUMBER}.stages.com 
+```
 
 ## HTTP Aspect
 
