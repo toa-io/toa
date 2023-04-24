@@ -9,7 +9,7 @@ const protocols = require('./protocols')
  */
 function manifest (manifest) {
   if (manifest === null) return {}
-  
+
   schemas.manifest.validate(manifest)
 
   for (const uri of Object.values(manifest)) {

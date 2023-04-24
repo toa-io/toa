@@ -39,9 +39,8 @@ class Aspect extends Connector {
     }
 
     // absolute urls are forbidden when using origins
-    if (typeof path === 'string'
-      && isAbsoluteURL(path)) {
-
+    if (typeof path === 'string' &&
+      isAbsoluteURL(path)) {
       throw new Error(`Absolute URLs are forbidden (${path})`)
     }
 

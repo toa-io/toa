@@ -46,7 +46,7 @@ it('should throw if protocol is not supported', async () => {
 
 it('should convert null to {}', async () => {
   const output = manifest(null)
-  
+
   expect(output).toStrictEqual({})
 })
 
