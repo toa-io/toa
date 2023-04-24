@@ -5,6 +5,8 @@ const fetch = require('node-fetch')
 const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/generic')
 
+const protocols = require('./protocols')
+
 /**
  * @implements {toa.origins.http.Aspect}
  */
@@ -28,6 +30,13 @@ class Aspect extends Connector {
     let origin = this.#origins[name]
 
     if (origin === undefined) throw new Error(`Origin '${name}' is not defined`)
+
+    // absolute urls are forbidden when using origins
+    if (typeof path === 'string'
+      && protocols.find((protocol) => path.indexOf(protocol) === 0) !== undefined) {
+      
+      throw new Error(`Absolute URLs are forbidden (${path})`)
+    }
 
     if (options?.substitutions !== undefined) origin = substitute(origin, options.substitutions)
 

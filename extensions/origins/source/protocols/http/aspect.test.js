@@ -13,7 +13,7 @@ jest.mock('node-fetch', () => mock.fetch)
 
 const { create } = require('./aspect')
 
-/** @type {toa.extensions.origins.Aspect} */ let aspect
+/** @type {toa.origins.http.Aspect} */ let aspect
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -45,7 +45,7 @@ describe('invoke', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-
+    mock.fetch.reset()
     mock.fetch.respond(200, response)
 
     result = await aspect.invoke(name, path, clone(request))
@@ -67,6 +67,15 @@ describe('invoke', () => {
 
     expect(mock.fetch.mock.calls[0][0]).toStrictEqual(fixtures.manifest.deep + path)
   })
+
+  it.each(['http:', 'https:'])('should throw on absolute URL (%s)',
+    async (protocol) => {
+      jest.clearAllMocks()
+      mock.fetch.respond(200, response)
+
+      await expect(aspect.invoke('deep', protocol + '//api.domain.com', clone(request)))
+        .rejects.toThrow('Absolute URLs are forbidden')
+    })
 
   it('should substitute wildcards', async () => {
     jest.clearAllMocks()
@@ -125,7 +134,7 @@ describe('invoke', () => {
     it('should retry', async () => {
       jest.clearAllMocks()
 
-      const attempts = random(5) + 1
+      const attempts = random(5) + 2
 
       for (let i = 1; i < attempts; i++) mock.fetch.respond(500)
 
