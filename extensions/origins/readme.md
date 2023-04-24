@@ -100,7 +100,7 @@ async function transition (input, object, context) {
 }
 ```
 
-#### `null` origins
+#### `null` manifest
 
 To enable the extension for a component that uses arbitrary URLs without any specific origins to
 declare, the Origins manifest should be set to `null`.
