@@ -48,8 +48,9 @@ Origin value may contain [shards](/libraries/generic/readme.md#shards) placehold
 Origin value may contain environment variable placeholders.
 
 ```yaml
+# manifest.toa.yaml
 origins:
-  foo@dev: stage${STAGE_NUMBER}.stages.com 
+  foo@dev: stage${STAGE_NUMBER}.stages.com
 ```
 
 ## HTTP Aspect
