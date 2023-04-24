@@ -18,6 +18,19 @@ Feature: Origins Extension
     Then I invoke `test`
     And I disconnect
 
+  Scenario: HTTP Aspect absolute URL
+    Given I boot `origins.http_absolute` component
+    When I invoke `test`
+    Then the reply is received:
+      """yaml
+      output:
+        http:
+          method: GET
+          protocol: http
+          originalUrl: /path/to/resource
+      """
+    And I disconnect
+
   Scenario: Local environment with annotations
     Given I have a component `origins.http`
     And I have a context with:
