@@ -106,10 +106,7 @@ operations:
 ### Algorithm Example
 
 ```javascript
-// operations/add.js
-/**
- * Stores a message. Debits senders's balance for each one.
- */
+// Node.js Bridge
 async function transition (input, entity, context) {
   const price = context.configuration.price
   const request = { input: price, query: { id: input.sender } }
@@ -122,8 +119,3 @@ async function transition (input, entity, context) {
   return { output: { id: entity.id } }
 }
 ```
-
-## Component
-
-Microservices are [known](https://en.wikipedia.org/wiki/Microservices) to be organized around
-business capabilities and independently deployable.
