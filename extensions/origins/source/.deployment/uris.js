@@ -16,7 +16,9 @@ function uris (instances, annotations) {
     if (component === undefined) throw new Error(`Origins annotations error: component '${id}' is not found`)
 
     for (const origin of Object.keys(annotation)) {
-      if (!(origin in component.manifest)) {
+      const properties = origin[0] === '.'
+
+      if (!properties && !(origin in component.manifest)) {
         throw new Error(`Origins annotations error: component '${id}' doesn't have '${origin}' origin`)
       }
     }

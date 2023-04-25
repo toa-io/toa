@@ -49,6 +49,8 @@ Feature: Origins Extension
       """yaml
       origins:
         origins.http:
+          .http:
+            /https:\/\/w+.amazon.com/: true
           bad: http://localhost:8888/
       """
     When I export deployment
@@ -57,7 +59,7 @@ Feature: Origins Extension
       variables:
         origins-http:
           - name: TOA_ORIGINS_ORIGINS_HTTP
-            value: eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
+            value: eyIuaHR0cCI6eyIvaHR0cHM6XFwvXFwvdysuYW1hem9uLmNvbS8iOnRydWV9LCJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
       """
 
   Scenario: AMQP credentials deployment annotations

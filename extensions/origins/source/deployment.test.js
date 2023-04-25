@@ -148,6 +148,21 @@ describe('amqp', () => {
   })
 })
 
+describe('http', () => {
+  it('should not throw on properties', async () => {
+    const annotations = {
+      [component.locator.id]: {
+        '.http': {
+          null: true
+        },
+        [origin]: 'amqps://whatever'
+      }
+    }
+
+    expect(() => deployment(components, annotations)).not.toThrow()
+  })
+})
+
 /**
  * @param {toa.deployment.dependency.Variable[]} variables
  * @param {string} name
