@@ -3,7 +3,7 @@
 async function observation (input, object, context) {
   const foo = context.configuration.foo
 
-  return { foo }
+  return { output: foo }
 }
 
 exports.observation = observation

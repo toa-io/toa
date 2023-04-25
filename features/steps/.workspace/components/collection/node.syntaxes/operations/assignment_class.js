@@ -13,7 +13,7 @@ class Assignment {
   async execute (input, changeset) {
     const foo = this.#foo
 
-    return { output: { foo } }
+    return foo
   }
 }
 

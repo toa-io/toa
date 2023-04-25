@@ -7,34 +7,25 @@ entity:
 operations:
   transition_function:
     concurrency: none
-    output:
-      foo: string
+    output: string
   transition_class:
     concurrency: none
-    output:
-      foo: string
+    output: string
   transition_factory:
     concurrency: none
-    output:
-      foo: string
+    output: string
   observation_function:
-    output:
-      foo: string
+    output: string
   observation_class:
-    output:
-      foo: string
+    output: string
   observation_factory:
-    output:
-      foo: string
+    output: string
   assignment_function:
-    output:
-      foo: string
+    output: string
   assignment_class:
-    output:
-      foo: string
+    output: string
   assignment_factory:
-    output:
-      foo: string
+    output: string
 
 configuration:
   foo: 'bar'

@@ -13,7 +13,7 @@ class Transition {
   async execute (input, object) {
     const foo = this.#foo
 
-    return { output: { foo } }
+    return { output: foo }
   }
 }
 
