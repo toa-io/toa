@@ -68,7 +68,7 @@ Operation algorithm must be:
 
 1. **Stateless.** Results of running N operation instances 1 time each must be the same as result of
    running 1 operation instance N times.
-2. **Deterministic**. Gives the same response when it has the same arguments.
+2. **Deterministic**. Gives the same output when it has the same input.
 3. **Autonomous.** Doesn't impose requirements on the execution environment (i.e. network access).
 4. **Pure.** Doesn't produce side effects. Therefore, the only effects allowed are Context
    interactions and updates to the State.
