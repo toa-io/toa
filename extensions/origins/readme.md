@@ -53,7 +53,7 @@ origins:
   foo@dev: stage${STAGE_NUMBER}.stages.com
 ```
 
-This is only usable on local development environment.
+This is only usable in local development environment.
 
 ## HTTP Aspect
 
