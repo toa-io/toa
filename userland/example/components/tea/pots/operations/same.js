@@ -1,6 +1,6 @@
 'use strict'
 
-async function observation (input, none, context) {
+async function computation (input, context) {
   const criteria = `material==${input}`
   const query = { criteria, limit }
 
@@ -10,4 +10,4 @@ async function observation (input, none, context) {
 
 const limit = 10
 
-exports.observation = observation
+exports.computation = computation

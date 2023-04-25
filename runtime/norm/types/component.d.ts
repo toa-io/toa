@@ -5,8 +5,8 @@ export namespace toa.norm {
   namespace component {
     namespace operations {
 
-      type Type = 'transition' | 'observation' | 'assignment'
-      type Scope = 'object' | 'objects' | 'changeset' | 'none'
+      type Type = 'transition' | 'observation' | 'assignment' | 'computation' | 'effect'
+      type Scope = 'object' | 'objects' | 'changeset'
 
     }
 

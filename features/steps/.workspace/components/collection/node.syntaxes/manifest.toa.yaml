@@ -2,21 +2,42 @@ name: syntaxes
 namespace: node
 
 entity:
-  storage: null
+  storage: ./storage
 
 operations:
-  function:
+  transition_function:
     concurrency: none
-    output:
-      foo: string
-  class:
+    output: string
+  transition_class:
     concurrency: none
-    output:
-      foo: string
-  factory:
+    output: string
+  transition_factory:
     concurrency: none
-    output:
-      foo: string
+    output: string
+  observation_function:
+    output: string
+  observation_class:
+    output: string
+  observation_factory:
+    output: string
+  assignment_function:
+    output: string
+  assignment_class:
+    output: string
+  assignment_factory:
+    output: string
+  computation_function:
+    output: string
+  computation_class:
+    output: string
+  computation_factory:
+    output: string
+  effect_function:
+    output: string
+  effect_class:
+    output: string
+  effect_factory:
+    output: string
 
 configuration:
   foo: 'bar'

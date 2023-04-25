@@ -3,14 +3,13 @@
 ## TL;DR
 
 ```javascript
-// operation `set`
-async function transition (input, none, context) {
-  context.state.a = 1
+// Node.js Bridge
+async function effect (input, context) {
+  context.state.a = 1 // set value to the state
 }
 
-// operation `get`
-async function observation (input, none, context) {
-  return context.state.a // 1
+async function computation (input, context) {
+  return context.state.a // get value from the state
 }
 ```
 

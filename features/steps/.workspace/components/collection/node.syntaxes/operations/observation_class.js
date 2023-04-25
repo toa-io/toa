@@ -3,7 +3,7 @@
 /**
  * @implements {toa.core.bridges.Algorithm}
  */
-class Transition {
+class Observation {
   #foo
 
   async mount (context) {
@@ -13,8 +13,8 @@ class Transition {
   async execute (input, object) {
     const foo = this.#foo
 
-    return { output: { foo } }
+    return { output: foo }
   }
 }
 
-exports.Transition = Transition
+exports.Observation = Observation

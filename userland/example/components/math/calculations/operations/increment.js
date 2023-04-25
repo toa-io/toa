@@ -1,6 +1,6 @@
 'use strict'
 
-async function observation (input, none, context) {
+async function computation (input, context) {
   let value = input.value
 
   for (let i = 0; i < input.times; i++) {
@@ -12,4 +12,4 @@ async function observation (input, none, context) {
   return value
 }
 
-exports.observation = observation
+exports.computation = computation
