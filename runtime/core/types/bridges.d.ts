@@ -8,7 +8,11 @@ declare namespace toa.core.bridges {
   interface Algorithm extends connector.Connector {
     mount(context?: context.Context): Promise<void>
 
-    execute(input?: any, scope?: object | object[]): Promise<reply.Reply>
+    execute(input: any, scope: object | object[]): Promise<reply.Reply>
+
+    execute(input: any): Promise<reply.Reply>
+
+    execute(): Promise<reply.Reply>
   }
 
   interface Event {
