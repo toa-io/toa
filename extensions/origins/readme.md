@@ -53,6 +53,8 @@ origins:
   foo@dev: stage${STAGE_NUMBER}.stages.com
 ```
 
+This is only usable on local development environment.
+
 ## HTTP Aspect
 
 Uses [node-fetch](https://github.com/node-fetch/node-fetch) and returns its result.
