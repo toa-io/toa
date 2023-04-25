@@ -38,3 +38,7 @@ Feature: Node algorithm implementation syntaxes
       | function | computation |
       | class    | computation |
       | factory  | computation |
+      | function | effect      |
+      | class    | effect      |
+      | factory  | effect      |
+

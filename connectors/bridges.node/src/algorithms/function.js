@@ -17,12 +17,13 @@ class Func {
     this.#func = func
   }
 
-  execute (input, state) {
-    return this.#func(input, state, this.#context)
-  }
-
   mount (context) {
     this.#context = context
+  }
+
+  execute (input, state) {
+    if (state === undefined) return this.#func(input, this.#context)
+    else return this.#func(input, state, this.#context)
   }
 }
 

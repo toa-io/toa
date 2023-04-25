@@ -26,6 +26,18 @@ operations:
     output: string
   assignment_factory:
     output: string
+  computation_function:
+    output: string
+  computation_class:
+    output: string
+  computation_factory:
+    output: string
+  effect_function:
+    output: string
+  effect_class:
+    output: string
+  effect_factory:
+    output: string
 
 configuration:
   foo: 'bar'

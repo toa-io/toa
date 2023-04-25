@@ -97,7 +97,7 @@ properties:
         type: object
         properties:
           type:
-            enum: [transition, observation, assignment]
+            enum: [transition, observation, assignment, computation, effect]
           scope:
             enum: [object, objects, changeset, none]
           concurrency:
@@ -165,6 +165,24 @@ properties:
               properties:
                 scope:
                   enum: [changeset]
+          - if: # computation
+              properties:
+                type:
+                  const: computation
+            then:
+              properties:
+                scope:
+                  const: none
+                  default: none
+          - if: # effect
+              properties:
+                type:
+                  const: effect
+            then:
+              properties:
+                scope:
+                  const: none
+                  default: none
         additionalProperties: false
     additionalProperties: false
 
