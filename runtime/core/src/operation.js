@@ -9,7 +9,6 @@ class Operation extends Connector {
   #cascade
   #contract
   #query
-
   #scope
 
   constructor (cascade, scope, contract, query, definition) {

@@ -1,11 +1,10 @@
 Feature: Node algorithm implementation syntaxes
 
-  Scenario Outline: Run operation with <endpoint> syntax
+  Algorithms output configuration value.
 
-  Algorithm outputs configuration value.
-
+  Scenario Outline: Run transition with <syntax> syntax
     Given I boot `node.syntaxes` component
-    When I invoke `<endpoint>`
+    When I invoke `transition_<syntax>`
     And I disconnect
     Then the reply is received:
       """
@@ -13,7 +12,28 @@ Feature: Node algorithm implementation syntaxes
         foo: bar
       """
     Examples:
-      | endpoint |
+      | syntax   |
       | function |
       | class    |
       | factory  |
+
+  Scenario Outline: Run <type> with <syntax> syntax
+    Given I boot `node.syntaxes` component
+    When I invoke `<type>_<syntax>` with:
+      """yaml
+      query: {}
+      """
+    And I disconnect
+    Then the reply is received:
+      """
+      output:
+        foo: bar
+      """
+    Examples:
+      | syntax   | type        |
+      | function | observation |
+      | class    | observation |
+      | factory  | observation |
+      | function | assignment  |
+      | class    | assignment  |
+      | factory  | assignment  |
