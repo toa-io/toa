@@ -4,8 +4,7 @@
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528920876193&cot=14">
     <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./.design/design-dark.jpg">
-        <img alt="4D" width="600" height="466" src="./.design/design-light.jpg">
+        <img alt="Design" width="800" height="622" src="./.design/design.jpg">
     </picture>
 </a>
 ---
@@ -26,8 +25,7 @@ Retrieve or commit phases may be optional depending on operation's type.
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764528922779666&cot=14">
     <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./.design/operation-dark.jpg">
-        <img alt="4D" width="581" height="299" src="./.design/operation-light.jpg">
+        <img alt="Operations" width="800" height="384" src="./.design/operations.jpg">
     </picture>
 </a>
 
