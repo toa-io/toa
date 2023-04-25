@@ -36,7 +36,7 @@ origins:
 
 ## Manifest
 
-`origins` manifest is an object conforming declaring origin names as keys an origin URLs as values.
+`origins` manifest is an object with origin names as keys an origin URLs as values.
 Component's `origins` manifest can be overridden by the Context `origins` annotation.
 
 ### Sharded Connections
