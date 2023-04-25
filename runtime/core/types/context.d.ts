@@ -17,6 +17,9 @@ declare namespace toa.core {
      * Calls remote endpoint
      */
     call(namespace: string, name: string, endpoint: string, request: _request.Request): Promise<_reply.Reply>
+
+    // shortcuts
+    [key: string]: any
   }
 
 }

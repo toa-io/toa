@@ -25,31 +25,31 @@ Feature: Replay samples
   Scenario Outline: Replay multiple component sample sets found with <type>
     Given I have components:
       | math.calculations |
-      | node.syntaxes     |
+      | echo.responder    |
     And my working directory is ./components
     When I run `toa replay <argument>`
     Then program should exit with code 0
     Then stdout should contain lines:
       """
       # Subtest: math.calculations
-      # Subtest: node.syntaxes
+      # Subtest: echo.responder
       """
     Examples:
-      | argument                            | type    |
-      | ./math.calculations ./node.syntaxes | list    |
-      | *                                   | pattern |
+      | argument                             | type    |
+      | ./math.calculations ./echo.responder | list    |
+      | *                                    | pattern |
 
   Scenario: Replay sample sets of all components within a context
     Given I have components:
       | math.calculations |
-      | node.syntaxes     |
+      | echo.responder    |
     And I have a context
     When I run `toa replay`
     Then program should exit with code 0
     Then stdout should contain lines:
       """
       # Subtest: math.calculations
-      # Subtest: node.syntaxes
+      # Subtest: echo.responder
       """
 
   Scenario: Replay message sample
@@ -65,7 +65,7 @@ Feature: Replay samples
   Scenario: Replay samples from the context directory
     Given I have components:
       | math.calculations |
-      | node.syntaxes     |
+      | echo.responder    |
       | external.consumer |
     And I have a context
     When I run `toa replay`
@@ -74,14 +74,14 @@ Feature: Replay samples
       """
       # Subtest: Operations
       # Subtest: math.calculations
-      # Subtest: node.syntaxes
+      # Subtest: echo.responder
       # Subtest: something_happened
       """
 
   Scenario: Replay integration samples
     Given I have components:
       | math.calculations |
-      | node.syntaxes     |
+      | echo.responder    |
       | external.consumer |
     And I have a context
     And I have integration samples

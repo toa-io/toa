@@ -1,16 +1,11 @@
 Feature: Invoke operation
 
-  Scenario Outline: Invoke <syntax> operation which uses context
-    Given I have a component `node.syntaxes`
-    And my working directory is ./components/node.syntaxes
-    When I run `toa invoke <syntax>`
+  Scenario: Invoke operation
+    Given I have a component `echo.responder`
+    And my working directory is ./components/echo.responder
+    When I run `toa invoke echo "{ input: 'foo' }"`
     Then stderr should be empty
     And stdout should contain lines:
     """
-    { output: { foo: 'bar' } }
+    { output: 'foo' }
     """
-    Examples:
-      | syntax   |
-      | function |
-      | class    |
-      | factory  |

@@ -1,7 +1,7 @@
 'use strict'
 
-async function observation (input) {
+async function computation (input) {
   return input.a * input.b
 }
 
-exports.observation = observation
+exports.computation = computation

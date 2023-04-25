@@ -2,8 +2,8 @@
 
 const { CACHE_KEY } = require('./.common/constants')
 
-async function observation (_, none, context) {
+async function computation (_, context) {
   return context.state[CACHE_KEY]
 }
 
-exports.observation = observation
+exports.computation = computation

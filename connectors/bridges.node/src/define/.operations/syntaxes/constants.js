@@ -1,4 +1,4 @@
 'use strict'
 
-exports.types = ['transition', 'observation', 'assignment']
-exports.scopes = ['object', 'objects', 'changeset', 'none']
+exports.types = ['transition', 'observation', 'assignment', 'computation', 'effect']
+exports.scopes = ['object', 'objects', 'changeset']
