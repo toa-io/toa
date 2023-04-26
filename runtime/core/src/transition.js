@@ -50,8 +50,8 @@ class Transition extends Operation {
 /** @type {toa.generic.retry.Options} */
 const RETRY = {
   base: 10,
-  dispersion: 1,
   max: 5000,
+  dispersion: 1,
   retries: Infinity
 }
 

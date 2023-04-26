@@ -46,7 +46,8 @@ const SHORTCUTS = {
   sql: '@toa.io/storages.sql',
   queues: '@toa.io/storages.queues',
   exposition: '@toa.io/extensions.exposition',
-  configuration: '@toa.io/extensions.configuration'
+  configuration: '@toa.io/extensions.configuration',
+  origins: '@toa.io/extensions.origins'
 }
 
 exports.recognize = recognize

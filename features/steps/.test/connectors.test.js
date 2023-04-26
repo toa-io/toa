@@ -111,8 +111,8 @@ describe('When I compose components:', () => {
   })
 })
 
-describe('When I invoke {word}', () => {
-  const step = gherkin.steps.Wh('I invoke {word}')
+describe('When I invoke {token}', () => {
+  const step = gherkin.steps.Wh('I invoke {token}')
 
   it('should be', () => undefined)
 

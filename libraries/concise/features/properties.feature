@@ -89,6 +89,23 @@ Feature: Object properties
       additionalProperties: false
       """
 
+  Scenario: Wildcard complex property
+    When I write schema:
+      """yaml
+      ~:
+        type: string
+        format: uri
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      patternProperties:
+        "^.*$":
+          type: string
+          format: uri
+      additionalProperties: false
+      """
+
   Scenario: Property as known keyword
     When I write schema:
       """yaml

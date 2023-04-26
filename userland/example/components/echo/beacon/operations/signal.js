@@ -1,7 +1,7 @@
 'use strict'
 
-async function observation (input, none, context) {
+async function computation (input, context) {
   return context.configuration.signal
 }
 
-exports.observation = observation
+exports.computation = computation

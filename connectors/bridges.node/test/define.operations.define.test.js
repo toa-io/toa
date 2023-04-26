@@ -34,13 +34,49 @@ it('should throw if no function exported', () => {
 })
 
 describe('function', () => {
-  it('should parse declaration', () => {
+  it('should parse transition declaration', () => {
     function transition (input, object) {}
 
     const module = { transition }
     const definition = define(module)
 
     expect(definition).toMatchObject({ type: 'transition', scope: 'object' })
+  })
+
+  it('should parse observation declaration', () => {
+    function observation (input, object) {}
+
+    const module = { observation }
+    const definition = define(module)
+
+    expect(definition).toMatchObject({ type: 'observation', scope: 'object' })
+  })
+
+  it('should parse assignment declaration', () => {
+    function assignment (input, changeset) {}
+
+    const module = { assignment }
+    const definition = define(module)
+
+    expect(definition).toMatchObject({ type: 'assignment', scope: 'changeset' })
+  })
+
+  it('should parse computation declaration', () => {
+    function computation (input, context) {}
+
+    const module = { computation }
+    const definition = define(module)
+
+    expect(definition).toMatchObject({ type: 'computation', scope: undefined })
+  })
+
+  it('should parse effect declaration', () => {
+    function effect (input, context) {}
+
+    const module = { effect }
+    const definition = define(module)
+
+    expect(definition).toMatchObject({ type: 'effect', scope: undefined })
   })
 
   it('should parse expression', () => {
@@ -67,20 +103,12 @@ describe('function', () => {
     expect(definition.scope).toStrictEqual(undefined)
   })
 
-  it('should define none scope', async () => {
+  it('should not define scope', async () => {
     const observation = (input) => null
     const module = { observation }
     const definition = define(module)
 
-    expect(definition.scope).toStrictEqual('none')
-  })
-
-  it('should define none scope for _', async () => {
-    const observation = (input, none, context) => null
-    const module = { observation }
-    const definition = define(module)
-
-    expect(definition.scope).toStrictEqual('none')
+    expect(definition.scope).toBeUndefined()
   })
 
   it('should define null input', async () => {
@@ -140,7 +168,7 @@ describe('class', () => {
     expect(() => define(module)).toThrow('does not match conventions')
   })
 
-  it('should define none scope', async () => {
+  it('should define not define default scope', async () => {
     class Observation {
       execute (input) {}
     }
@@ -148,7 +176,7 @@ describe('class', () => {
     const module = { Observation }
     const definition = define(module)
 
-    expect(definition.scope).toStrictEqual('none')
+    expect(definition.scope).toBeUndefined()
   })
 
   it('should define null input', async () => {
@@ -160,6 +188,28 @@ describe('class', () => {
     const definition = define(module)
 
     expect(definition.input).toStrictEqual(null)
+  })
+
+  it('should parse Computation', async () => {
+    class Computation {
+      execute () {}
+    }
+
+    const module = { Computation }
+    const definition = define(module)
+
+    expect(definition.type).toStrictEqual('computation')
+  })
+
+  it('should parse Effect', async () => {
+    class Effect {
+      execute () {}
+    }
+
+    const module = { Effect }
+    const definition = define(module)
+
+    expect(definition.type).toStrictEqual('effect')
   })
 })
 
@@ -182,14 +232,33 @@ describe('factory', () => {
     expect(definition.scope).toStrictEqual('object')
   })
 
-  it('should define none scope', async () => {
+  it('should throw if not follows convention', async () => {
     class NoneObservationFactory {
       create () {}
     }
 
     const module = { NoneObservationFactory }
+
+    expect(() => define(module)).toThrow('does not match conventions')
+  })
+
+  it('should parse ComputationFactory', () => {
+    class ComputationFactory {
+    }
+
+    const module = { ComputationFactory }
     const definition = define(module)
 
-    expect(definition.scope).toStrictEqual('none')
+    expect(definition.type).toStrictEqual('computation')
+  })
+
+  it('should parse EffectFactory', () => {
+    class EffectFactory {
+    }
+
+    const module = { EffectFactory }
+    const definition = define(module)
+
+    expect(definition.type).toStrictEqual('effect')
   })
 })

@@ -1,3 +1,5 @@
+// noinspection JSValidateTypes
+
 'use strict'
 
 /** @type {toa.node.define.operations.Define} */
@@ -7,8 +9,8 @@ const define = (descriptor) => {
   /** @type {toa.node.define.operations.Definition} */
   const definition = {}
 
-  definition.type = /** @type {typeof toa.norm.component.Operation.scope} */ match[2].toLowerCase()
-  definition.scope = /** @type {typeof toa.norm.component.Operation.type} */ match[1].toLowerCase()
+  definition.type = match.groups.type.toLowerCase()
+  definition.scope = match.groups.scope?.toLowerCase()
 
   return definition
 }
@@ -21,7 +23,7 @@ const test = (statement, name) => {
   return declaration && match
 }
 
-const pattern = new RegExp('^(Objects?|Changeset|None)(Transition|Observation|Assignment)Factory$')
+const pattern = new RegExp('^(?<scope>Objects?|Changeset)?(?<type>Transition|Observation|Assignment|Computation|Effect)Factory$')
 
 exports.define = define
 exports.test = test

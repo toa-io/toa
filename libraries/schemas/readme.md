@@ -22,4 +22,4 @@ Factory for [Namespace class](./types/namespace.d.ts).
 Loads schemas from `.cos.yaml` files within given directory, setting their missing `$id` to the file
 relative path and basename and returns `Namespace`.
 
-> "up" references (`../`) are not supported
+> "up" schema references (`../`) are not supported.

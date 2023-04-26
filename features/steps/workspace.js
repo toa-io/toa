@@ -66,7 +66,7 @@ Then('I have an environment with:',
     assert.equal(diff.length, 0, 'Environment does not contain at least one of the given lines')
   })
 
-Then('I update environment with:',
+Then('I update an environment with:',
   async function (newValue) {
     const path = join(this.cwd, ENV_FILE)
     const contents = await file.read(path)

@@ -18,7 +18,8 @@ const aspects = (manifest) => {
 
     const aspect = factory.aspect(manifest.locator, declaration)
 
-    aspects.push(aspect)
+    if (Array.isArray(aspect)) aspects.push(...aspect)
+    else aspects.push(aspect)
   }
 
   return aspects

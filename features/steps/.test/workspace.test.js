@@ -160,8 +160,8 @@ describe('Then I have an environment with:', () => {
   })
 })
 
-describe('Then I update environment with:', () => {
-  const step = gherkin.steps.Th('I update environment with:')
+describe('Then I update an environment with:', () => {
+  const step = gherkin.steps.Th('I update an environment with:')
 
   let envFile
 
@@ -176,25 +176,25 @@ describe('Then I update environment with:', () => {
   })
 
   it('should update .env file', async () => {
-    const updatedText = `A=${generate()}`;
+    const updatedText = `A=${generate()}`
     const existingLines = [`A=${generate()}`, `B=${generate()}`]
     const existingText = existingLines.join('\n')
     await file.write(envFile, existingText)
 
     await step.call(context, updatedText)
-    const resultedTexts = await file.read(envFile);
-    expect(resultedTexts.includes(updatedText)).toBe(true);
+    const resultedTexts = await file.read(envFile)
+    expect(resultedTexts.includes(updatedText)).toBe(true)
   })
 
   it('should remove old value from .env file after update', async () => {
-    const updatedText = `A=${generate()}`;
-    const replacedValue = `A=${generate()}`;
+    const updatedText = `A=${generate()}`
+    const replacedValue = `A=${generate()}`
     const existingLines = [replacedValue, `B=${generate()}`]
     const existingText = existingLines.join('\n')
     await file.write(envFile, existingText)
 
     await step.call(context, updatedText)
-    const resultedTexts = await file.read(envFile);
-    expect(resultedTexts.includes(replacedValue)).toBe(false);
+    const resultedTexts = await file.read(envFile)
+    expect(resultedTexts.includes(replacedValue)).toBe(false)
   })
 })

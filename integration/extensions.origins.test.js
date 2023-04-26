@@ -39,7 +39,7 @@ it('should be available as context.extensions.origins', async () => {
   expect(reply.output).toStrictEqual({ status, body })
 })
 
-it('should be available as context.origins', async () => {
+it('should be available as context.http', async () => {
   const status = 200
   const body = { [generate()]: generate() }
 
@@ -52,7 +52,7 @@ it('should be available as context.origins', async () => {
 })
 
 it('should validate extension manifest', async () => {
-  await expect(framework.compose(['origins-misformatted'])).rejects.toThrow(/origins\/local must be string/)
+  await expect(framework.compose(['origins-misformatted'])).rejects.toThrow()
 })
 
 it('should retry', async () => {

@@ -8,8 +8,6 @@ declare namespace toa.pointer {
       [key: string]: Node
     }
 
-    type Constructor = (declaration: URIs | string) => URIs
-
     type Resolution = {
       url: URL
       entry: string
@@ -27,6 +25,3 @@ declare namespace toa.pointer {
 }
 
 export type URIs = toa.pointer.URIs
-
-export const construct: toa.pointer.uris.Constructor
-export const resolve: toa.pointer.uris.Resolver

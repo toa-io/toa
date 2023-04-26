@@ -59,3 +59,20 @@ const _1 = object.a.b // (['a', 'b'])
 
 object.a.b.c = 1 // (['a', 'b', 'c'], 1)
 ```
+
+# Echo
+
+`echo(input: string): string`
+
+Returns the input string.
+Substitutes environment variables to a placeholders following `${NAME}` syntax.
+
+## Example
+
+```javascript
+process.env['FOO'] = 'bar'
+
+const output = echo('foo: ${FOO}')
+
+console.log(output) // foo: bar
+```

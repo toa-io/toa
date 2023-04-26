@@ -113,3 +113,15 @@ it.each(['string', 'number', 'integer', 'boolean', 'object', 'array'])('should e
       }
     })
   })
+
+const FORMATS = ['date', 'time', 'date-time', 'duration', 'uri', 'uri-reference', 'uri-template', 'url', 'email', 'hostname', 'ipv4', 'ipv6', 'regex', 'uuid', 'json-pointer', 'json-pointer-uri-fragment', 'relative-json-pointer', 'byte', 'int32', 'int64', 'float', 'double', 'password', 'binary']
+
+it.each(FORMATS)('should expand %s formats', async (format) => {
+  const cos = format
+  const schema = expand(cos, valid)
+
+  expect(schema).toMatchObject({
+    type: 'string',
+    format
+  })
+})

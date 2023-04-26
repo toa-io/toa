@@ -37,7 +37,7 @@ Then('exported {helm-artifact} should contain:',
   async function (artifact, text) {
     const matches = await contains(this.cwd, artifact, text)
 
-    assert.equal(matches, true, `'${artifact}' doesn't contain:\n${text}`)
+    assert.equal(matches, true, `'${artifact}' doesn't match`)
   })
 
 Then('exported {helm-artifact} should not contain:',

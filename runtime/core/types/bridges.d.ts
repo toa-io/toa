@@ -6,7 +6,13 @@ import type * as connector from './connector'
 declare namespace toa.core.bridges {
 
   interface Algorithm extends connector.Connector {
-    execute(input?: any, scope?: object | object[]): Promise<reply.Reply>
+    mount(context?: context.Context): Promise<void>
+
+    execute(input: any, scope: object | object[]): Promise<reply.Reply>
+
+    execute(input: any): Promise<reply.Reply>
+
+    execute(): Promise<reply.Reply>
   }
 
   interface Event {

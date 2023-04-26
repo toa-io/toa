@@ -1,0 +1,12 @@
+name: amqp
+namespace: origins
+
+operations:
+  test:
+    output: object
+  bad:
+    output: object
+
+origins:
+  queue: amqp://localhost
+  bad: amqp://dev/null

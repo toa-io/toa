@@ -1,5 +1,0 @@
-title: Should output 'bar'
-current: { }
-next: { }
-output:
-  foo: bar

@@ -14,7 +14,7 @@ declare namespace toa.core {
 
   }
 
-  interface Request {
+  type Request = {
     input?: any
     query?: request.Query
   }

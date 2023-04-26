@@ -81,7 +81,7 @@ Then('I disconnect',
     }
   })
 
-When('I invoke {word}',
+When('I invoke {token}',
   /**
    * @param {string} endpoint
    * @this {toa.features.Context}

@@ -15,8 +15,12 @@ declare namespace toa.node {
     type func = (input?: any, scope?: object | object[], context?: _context.Context) => Promise<_core.Reply>
   }
 
-  interface Algorithm extends bridges.Algorithm {
-    mount?(context?: _context.Context): Promise<void> | void
+  interface Algorithm {
+    mount?(context: _context.Context): Promise<void> | void
+
+    execute(input: any, scope: object | object[]): Promise<_core.Reply>
+
+    execute(input: any): Promise<_core.Reply>
   }
 
 }
