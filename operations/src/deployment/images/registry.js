@@ -64,7 +64,7 @@ class Registry {
    * @returns {Promise<void>}
    */
   async #push (image) {
-    const args = ['buildx', 'build', '--push', '--tag', image.reference, image.context]
+    const args = ['--context=default', 'buildx', 'build', '--push', '--tag', image.reference, image.context]
     const local = this.#registry.platforms === null
 
     if (local) {
