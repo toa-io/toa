@@ -41,7 +41,7 @@ definitions:
             operation:
               $ref: definitions#/definitions/token
             type:
-              enum: [transition, observation, assignment]
+              enum: [transition, observation, assignment, computation, effect]
             scope:
               type: string
               enum: [object, objects, changeset, none]

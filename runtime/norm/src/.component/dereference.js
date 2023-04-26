@@ -32,7 +32,7 @@ const resolve = (schema) => (property) => {
 }
 
 const schema = (object, resolve) => {
-  if (object === undefined || typeof object !== 'object') return
+  if (object === undefined || object === null || typeof object !== 'object') return
   if (object.type === 'string' && object.default?.[0] === '.') return resolve(object.default.substring(1))
 
   if (object.type === 'array') {
