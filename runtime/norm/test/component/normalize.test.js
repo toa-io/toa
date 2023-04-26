@@ -43,3 +43,17 @@ describe('extensions', () => {
     expect(() => normalize(manifest)).toThrow(/hasn't returned manifest/)
   })
 })
+
+describe('receivers', () => {
+  it('should substitute default namespace', async () => {
+    manifest.receivers = {
+      'messages.created': 'add'
+    }
+
+    normalize(manifest)
+
+    expect(manifest.receivers).toStrictEqual({
+      'default.messages.created': 'add'
+    })
+  })
+})

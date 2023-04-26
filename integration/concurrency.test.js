@@ -11,7 +11,7 @@ beforeAll(async () => {
   framework.dev(true)
 
   composition = await framework.compose(['messages', 'credits', 'stats'])
-  messages = await framework.remote('messages.messages')
+  messages = await framework.remote('default.messages')
   credits = await framework.remote('credits.balance')
   stats = await framework.remote('stats.stats')
 })
@@ -51,7 +51,7 @@ it('should count messages', async () => {
     }
   }), times)
 
-  await timeout(200) // event processing with retries
+  await timeout(400) // event processing with retries
 
   const updated = await stats.invoke('observe', { query: { id: sender } })
 

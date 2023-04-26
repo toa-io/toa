@@ -12,8 +12,8 @@ beforeAll(async () => {
   framework.dev(true)
 
   composition = await framework.compose(['messages', 'credits'])
-  remote = await framework.remote('messages.messages')
-  messages = await framework.mongodb.connect('messages.messages')
+  remote = await framework.remote('default.messages')
+  messages = await framework.mongodb.connect('default.messages')
 })
 
 afterAll(async () => {

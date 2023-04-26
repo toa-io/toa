@@ -209,7 +209,7 @@ describe('request', () => {
 
   describe('if-match', () => {
     const sender = newid()
-    const urls = { messages: locator('/messages/messages/' + sender + '/') }
+    const urls = { messages: locator('/messages/' + sender + '/') }
 
     beforeAll(async () => {
       const created = await fetch(urls.messages, {
@@ -222,7 +222,7 @@ describe('request', () => {
 
       const { output } = await created.json()
 
-      urls.message = locator('/messages/messages/' + sender + '/' + output.id + '/')
+      urls.message = locator('/messages/' + sender + '/' + output.id + '/')
     })
 
     it('should return 400 if if-match is invalid', async () => {
@@ -308,7 +308,7 @@ describe('request', () => {
   describe('path params', () => {
     const times = 5 + random(5)
     const sender = newid()
-    const url = locator('/messages/messages/' + sender + '/')
+    const url = locator('/messages/' + sender + '/')
 
     it('should use path params as query criteria for safe methods', async () => {
       const send = async () => {
@@ -356,7 +356,7 @@ describe('request', () => {
 
   describe('query', () => {
     const sender = newid()
-    const url = locator('/messages/messages/' + sender + '/')
+    const url = locator('/messages/' + sender + '/')
 
     it('should return 400 on malformed criteria', async () => {
       const response = await fetch(`${url}?criteria=foo!`)
@@ -419,7 +419,7 @@ describe('request', () => {
     })
 
     describe('exact omit, limit', () => {
-      const url = locator('/messages/messages/query/fixed/set/')
+      const url = locator('/messages/query/fixed/set/')
 
       it('should return 403 on exact limit violation', async () => {
         const response = await fetch(url + '?limit=19')
@@ -494,7 +494,7 @@ describe('response', () => {
   it('should return 404 on StateNotFound', async () => {
     const sender = newid()
     const id = newid()
-    const url = locator('/messages/messages/' + sender + '/' + id + '/')
+    const url = locator('/messages/' + sender + '/' + id + '/')
     const response = await fetch(url)
 
     expect(response.status).toBe(404)
@@ -502,7 +502,7 @@ describe('response', () => {
 
   it('should return 201 on transition without query', async () => {
     const sender = newid()
-    const url = locator('/messages/messages/' + sender + '/')
+    const url = locator('/messages/' + sender + '/')
 
     const response = await fetch(url, {
       method: 'POST',
@@ -530,7 +530,7 @@ describe('response', () => {
 
   it('should return 500 on user space exception', async () => {
     const sender = newid()
-    const url = locator('/messages/messages/' + sender + '/')
+    const url = locator('/messages/' + sender + '/')
 
     const response = await fetch(url, {
       method: 'POST',
@@ -551,7 +551,7 @@ describe('response', () => {
 
   it('should return 412 on version mismatch', async () => {
     const sender = newid()
-    const url = locator('/messages/messages/' + sender + '/')
+    const url = locator('/messages/' + sender + '/')
 
     const created = await fetch(url, {
       method: 'POST',
@@ -585,7 +585,7 @@ describe('response', () => {
   describe('query', () => {
     const times = 5 + random(5)
     const sender = newid()
-    const url = locator('/messages/messages/' + sender + '/')
+    const url = locator('/messages/' + sender + '/')
 
     beforeAll(async () => {
       let index = 0
@@ -619,7 +619,7 @@ describe('response', () => {
     })
 
     it('should return sorted', async () => {
-      const url = locator(`/messages/messages/query/unsorted/set/?criteria=sender==${sender}&sort=timestamp:desc`)
+      const url = locator(`/messages/query/unsorted/set/?criteria=sender==${sender}&sort=timestamp:desc`)
       const response = await fetch(url)
 
       expect(response.status).toBe(200)

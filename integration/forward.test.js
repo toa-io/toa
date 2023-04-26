@@ -10,7 +10,7 @@ beforeAll(async () => {
   framework.dev(true)
 
   composition = await framework.compose(['messages', 'credits'])
-  remote = await framework.remote('messages.messages')
+  remote = await framework.remote('default.messages')
 })
 
 afterAll(async () => {

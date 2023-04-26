@@ -22,7 +22,7 @@ operations:
       length: .
 
 receivers:
-  messages.messages.created: transit
+  messages.created: transit
 
 extensions:
   exposition:
