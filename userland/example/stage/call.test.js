@@ -10,11 +10,11 @@ const root = resolve(__dirname, '../components')
 let remote
 
 beforeAll(async () => {
-  const path = resolve(root, 'math/calculations')
+  const path = resolve(root, 'echo')
 
   await stage.composition([path])
 
-  remote = await stage.remote('math.calculations')
+  remote = await stage.remote('echo')
 })
 
 afterAll(async () => {
@@ -22,12 +22,9 @@ afterAll(async () => {
 })
 
 it('should call endpoint', async () => {
-  const a = Math.random()
-  const b = Math.random()
+  const reply = await remote.invoke('signal', {})
 
-  const reply = await remote.invoke('add', { input: { a, b } })
-
-  expect(reply.output).toStrictEqual(a + b)
+  expect(reply.output).toStrictEqual('quack')
 })
 
 it('should throw on invalid input', async () => {

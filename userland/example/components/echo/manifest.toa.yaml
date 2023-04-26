@@ -1,5 +1,4 @@
-name: beacon
-namespace: echo
+name: echo
 
 operations:
   signal:
