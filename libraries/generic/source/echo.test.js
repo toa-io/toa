@@ -19,7 +19,7 @@ const value = generate()
 it.each([
   ['${TEST}', 'TEST', value, value], // eslint-disable-line no-template-curly-in-string
   ['a${FOO}', 'FOO', value, `a${value}`], // eslint-disable-line no-template-curly-in-string
-  ['a${FOO}bar', 'FOO', value, `a${value}bar`] // eslint-disable-line no-template-curly-in-string
+  ['a${FOO_BAR}bar', 'FOO_BAR', value, `a${value}bar`] // eslint-disable-line no-template-curly-in-string
 ])('should substitute environment variables in %s',
   async (input, variable, value, expected) => {
     process.env[variable] = value
