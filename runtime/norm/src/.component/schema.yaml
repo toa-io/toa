@@ -41,10 +41,10 @@ properties:
 
   namespace:
     $ref: 'definitions#/definitions/token'
+    default: 'default'
     not:
       oneOf:
         - const: 'system'
-        - const: 'default'
   name:
     $ref: 'definitions#/definitions/token'
 

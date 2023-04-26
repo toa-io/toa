@@ -26,6 +26,8 @@ const component = async (path) => {
   normalize(manifest, process.env.TOA_ENV)
   validate(manifest)
 
+  manifest.locator = new Locator(manifest.name, manifest.namespace)
+
   return manifest
 }
 
@@ -43,8 +45,6 @@ const load = async (path, base) => {
   await merge(path, manifest)
 
   if (manifest.prototype !== null) {
-    manifest.locator = new Locator(manifest.name, manifest.namespace)
-
     const prototype = await load(manifest.prototype, path)
 
     collapse(manifest, prototype)
