@@ -156,7 +156,7 @@ describe('request', () => {
 
   it('should return 400 on invalid body', async () => {
     const id = newid()
-    const url = locator('/stats/' + id + '/')
+    const url = locator('/stats/stats/' + id + '/')
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -180,7 +180,7 @@ describe('request', () => {
 
   it('should return 405 if no method matched', async () => {
     const id = newid()
-    const url = locator('/stats/' + id + '/')
+    const url = locator('/stats/stats/' + id + '/')
 
     const response = await fetch(url, {
       method: 'POST',

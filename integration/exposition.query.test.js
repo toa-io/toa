@@ -34,7 +34,7 @@ describe('criteria', () => {
   it('should apply', async () => {
     const sender = newid()
     const times = 10
-    const url = locator('/messages/query/non/deleted/')
+    const url = locator('/messages/messages/query/non/deleted/')
 
     expect.assertions(times + 2)
 
@@ -58,7 +58,7 @@ describe('criteria', () => {
   })
 
   it('should throw RequestConflict if closed', async () => {
-    const url = locator('/messages/bad/queries/' + newid() + '/?criteria=sender==1')
+    const url = locator('/messages/messages/bad/queries/' + newid() + '/?criteria=sender==1')
     const response = await fetch(url)
 
     expect(response.status).toBe(403)
@@ -71,7 +71,7 @@ describe('criteria', () => {
   it('should append if open', async () => {
     const sender = newid()
     const times = 10
-    const url = locator('/messages/' + sender + '/')
+    const url = locator('/messages/messages/' + sender + '/')
 
     await repeat(async (i) => {
       const response = await fetch(url, {
@@ -93,7 +93,7 @@ describe('criteria', () => {
   })
 
   it('should forbid closed empty criteria', async () => {
-    const url = locator('/messages/query/criteria/closed/')
+    const url = locator('/messages/messages/query/criteria/closed/')
 
     const ok = await fetch(url)
 
@@ -107,7 +107,7 @@ describe('criteria', () => {
 
 describe('omit, limit', () => {
   it('should throw if out of boundaries', async () => {
-    const url = locator('/messages/' + newid() + '/')
+    const url = locator('/messages/messages/' + newid() + '/')
 
     await expect(fetch(url + '?limit=21')).resolves.toMatchObject({ status: 403 })
     await expect(fetch(url + '?limit=0')).resolves.toMatchObject({ status: 403 })
@@ -120,7 +120,7 @@ describe('sort', () => {
   it('should append if open', async () => {
     const sender = newid()
     const times = 10
-    const url = locator('/messages/' + sender + '/')
+    const url = locator('/messages/messages/' + sender + '/')
 
     await repeat(async (i) => {
       const response = await fetch(url, {
@@ -154,7 +154,7 @@ describe('sort', () => {
 describe('projection', () => {
   it('should apply', async () => {
     const sender = newid()
-    const url = locator('/messages/' + sender + '/')
+    const url = locator('/messages/messages/' + sender + '/')
 
     const created = await fetch(url, {
       method: 'POST',
@@ -173,7 +173,7 @@ describe('projection', () => {
 
   it('should apply defined projection', async () => {
     const sender = newid()
-    const created = await fetch(locator('/messages/' + sender + '/'), {
+    const created = await fetch(locator('/messages/messages/' + sender + '/'), {
       method: 'POST',
       body: JSON.stringify({ text: generate(), timestamp: 1, deleted: false }),
       headers: { 'content-type': 'application/json' }
@@ -181,7 +181,7 @@ describe('projection', () => {
 
     expect(created.status).toBe(201)
 
-    const response = await fetch(locator('/messages/query/projection/restricted/?criteria=sender==' + sender))
+    const response = await fetch(locator('/messages/messages/query/projection/restricted/?criteria=sender==' + sender))
 
     expect(response.status).toBe(200)
 
@@ -193,7 +193,7 @@ describe('projection', () => {
 
   it('should throw if not allowed key passed', async () => {
     const sender = newid()
-    const created = await fetch(locator('/messages/' + sender + '/'), {
+    const created = await fetch(locator('/messages/messages/' + sender + '/'), {
       method: 'POST',
       body: JSON.stringify({ text: generate(), timestamp: 1, deleted: false }),
       headers: { 'content-type': 'application/json' }
@@ -201,7 +201,7 @@ describe('projection', () => {
 
     expect(created.status).toBe(201)
 
-    const url = locator('/messages/query/projection/restricted/?criteria=sender==' +
+    const url = locator('/messages/messages/query/projection/restricted/?criteria=sender==' +
       sender + '&projection=deleted')
 
     const response = await fetch(url)
