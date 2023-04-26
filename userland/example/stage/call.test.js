@@ -7,14 +7,18 @@ const stage = require('@toa.io/userland/stage')
 const root = resolve(__dirname, '../components')
 
 /** @type {toa.core.Component} */
-let remote
+let echo
+
+/** @type {toa.core.Component} */
+let math
 
 beforeAll(async () => {
-  const path = resolve(root, 'echo')
+  const paths = ['echo', 'math/calculations'].map((rel) => resolve(root, rel))
 
-  await stage.composition([path])
+  await stage.composition(paths)
 
-  remote = await stage.remote('echo')
+  echo = await stage.remote('echo')
+  math = await stage.remote('math.calculations')
 })
 
 afterAll(async () => {
@@ -22,7 +26,7 @@ afterAll(async () => {
 })
 
 it('should call endpoint', async () => {
-  const reply = await remote.invoke('signal', {})
+  const reply = await echo.invoke('signal', {})
 
   expect(reply.output).toStrictEqual('quack')
 })
@@ -31,6 +35,6 @@ it('should throw on invalid input', async () => {
   const a = 'not a number'
   const b = 'neither'
 
-  await expect(remote.invoke('add', { input: { a, b } }))
+  await expect(math.invoke('add', { input: { a, b } }))
     .rejects.toBeInstanceOf(RequestContractException)
 })
