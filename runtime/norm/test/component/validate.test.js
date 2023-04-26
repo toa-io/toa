@@ -55,9 +55,11 @@ describe('namespace', () => {
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 
-  it('should forbid \'default\' namespace', () => {
-    manifest.namespace = 'default'
-    expect(() => validate(manifest)).toThrow(/must NOT be valid/)
+  it('should set `default` namespace', async () => {
+    delete manifest.namespace
+
+    expect(() => validate(manifest)).not.toThrow()
+    expect(manifest.namespace).toStrictEqual('default')
   })
 })
 

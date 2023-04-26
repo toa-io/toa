@@ -53,5 +53,5 @@ Feature: Print manifest
     # which has invalid manifest
     And my working directory is ./components/dummies.invalid
     When I run `toa export manifest -e`
-    Then stderr should be: "error locator/id must match pattern"
+    Then stderr should be: "error Locator name must be defined"
     Then stdout should be empty

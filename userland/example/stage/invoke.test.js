@@ -9,7 +9,7 @@ const root = resolve(__dirname, '../components')
 let component
 
 beforeAll(async () => {
-  const path = resolve(root, 'math/calculations')
+  const path = resolve(root, 'math.calculations')
 
   component = await stage.component(path)
 })

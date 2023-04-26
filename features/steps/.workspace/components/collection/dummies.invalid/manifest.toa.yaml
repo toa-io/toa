@@ -1,5 +1,3 @@
-name: one
-
 entity:
   storage: ~
   schema:

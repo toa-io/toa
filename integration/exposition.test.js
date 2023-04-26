@@ -15,7 +15,7 @@ const locator = (path) => 'http://localhost:8000' + path
 beforeAll(async () => {
   framework.dev(true)
 
-  composition = await framework.compose(['messages', 'stats', 'credits'])
+  composition = await framework.compose(['messages', 'stats', 'credits', 'echo'])
   resources = (new extension.Factory(boot)).service()
 
   await resources.connect()
@@ -42,6 +42,13 @@ describe('routing', () => {
     expect(json).toStrictEqual({ output: { id, balance: 10 } })
   })
 
+  it('should should expose routes of default namespace', async () => {
+    const url = locator('/echo/')
+    const response = await fetch(url)
+
+    expect(response.status).toBe(200)
+  })
+
   it('should expose routes dynamically', async () => {
     const id = newid()
     const url = locator('/dummies/a/' + id + '/')
@@ -49,7 +56,7 @@ describe('routing', () => {
     const before = await fetch(url)
 
     if (before.status === 500) {
-      // shutdown Kind deployment and run `docker compose restart`
+      // if this happened, shutdown Kind deployment and run `docker compose restart`
       process.exit(1)
     }
 
@@ -119,6 +126,13 @@ describe('routing', () => {
 
     expect(response.status).toBe(204)
   })
+
+  it('should map effect as POST', async () => {
+    const url = locator('/echo/')
+    const response = await fetch(url, { method: 'POST' })
+
+    expect(response.status).toBe(201)
+  })
 })
 
 describe('request', () => {
@@ -142,7 +156,7 @@ describe('request', () => {
 
   it('should return 400 on invalid body', async () => {
     const id = newid()
-    const url = locator('/stats/' + id + '/')
+    const url = locator('/stats/stats/' + id + '/')
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -166,7 +180,7 @@ describe('request', () => {
 
   it('should return 405 if no method matched', async () => {
     const id = newid()
-    const url = locator('/stats/' + id + '/')
+    const url = locator('/stats/stats/' + id + '/')
 
     const response = await fetch(url, {
       method: 'POST',

@@ -1,0 +1,8 @@
+name: echo
+
+operations:
+  foo:
+    output: string
+
+exposition:
+  /: [foo, bar]

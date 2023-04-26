@@ -102,6 +102,8 @@ const method = (operation) => {
 
   if (operation.type === 'observation') return 'GET'
   if (operation.type === 'assignment') return 'PATCH'
+  if (operation.type === 'computation') return 'GET'
+  if (operation.type === 'effect') return 'POST'
 }
 
 exports.Tree = Tree
