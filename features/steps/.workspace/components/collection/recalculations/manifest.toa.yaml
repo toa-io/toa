@@ -1,0 +1,8 @@
+name: recalculations
+
+operations:
+  sum:
+    input:
+      a: number
+      b: number
+    output: number

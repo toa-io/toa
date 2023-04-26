@@ -1,0 +1,13 @@
+name: calculations
+
+operations:
+  sum:
+    input:
+      a: number
+      b: number
+    output: number
+  multi:
+    input:
+      a: number
+      b: number
+    output: number
