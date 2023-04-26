@@ -13,7 +13,7 @@ let echo
 let math
 
 beforeAll(async () => {
-  const paths = ['echo', 'math/calculations'].map((rel) => resolve(root, rel))
+  const paths = ['echo', 'math.calculations'].map((rel) => resolve(root, rel))
 
   await stage.composition(paths)
 

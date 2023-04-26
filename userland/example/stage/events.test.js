@@ -10,7 +10,7 @@ const root = resolve(__dirname, '../components')
 let remote
 
 beforeAll(async () => {
-  const path = resolve(root, 'tea/pots')
+  const path = resolve(root, 'tea.pots')
 
   await stage.composition([path])
 

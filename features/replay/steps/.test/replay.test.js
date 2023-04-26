@@ -33,7 +33,7 @@ beforeEach(() => {
   const name = 'pots'
   const component = namespace + '.' + name
 
-  path = join(COMPONENTS, namespace, name)
+  path = join(COMPONENTS, component)
   autonomous = flip()
   context = { autonomous, component }
 })
@@ -119,7 +119,7 @@ describe('When I replay it', () => {
   const integration = async (context) => {
     jest.clearAllMocks()
 
-    const pattern = join(COMPONENTS, '*/*')
+    const pattern = join(COMPONENTS, '*')
     const paths = await glob(pattern)
 
     context.autonomous = false
