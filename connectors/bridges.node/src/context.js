@@ -34,7 +34,11 @@ class Context extends Connector {
     return this.#context.apply(endpoint, request)
   })
 
-  remote = underlay(async ([namespace, name, endpoint], [request]) => {
+  remote = underlay(async (segments, [request]) => {
+    if (segments.length === 2) segments.unshift('default') // default namespace
+
+    const [namespace, name, endpoint] = segments
+
     return this.#context.call(namespace, name, endpoint, request)
   })
 
