@@ -11,7 +11,7 @@ const protocols = require('./protocols')
 function manifest (manifest) {
   if (manifest === null) return {}
 
-  manifest = remap(manifest, echo)
+  manifest = remap(manifest, (origin) => echo(origin))
   validate(manifest)
 
   for (const url of Object.values(manifest)) {

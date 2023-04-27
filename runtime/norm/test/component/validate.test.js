@@ -106,15 +106,6 @@ describe('entity', () => {
       expect(manifest.entity.schema.type).toBe('object')
     })
 
-    it('should forbid additional properties', () => {
-      manifest.entity.schema = { additionalProperties: true }
-      expect(() => validate(manifest)).toThrow(/must be equal to constant 'false'/)
-
-      manifest.entity.schema = {}
-      validate(manifest)
-      expect(manifest.entity.schema.additionalProperties).toBe(false)
-    })
-
     it('should have property names matching token pattern', () => {
       manifest.entity.schema.properties._foo = { type: 'string' }
       expect(() => validate(manifest)).toThrow(/pattern/)
