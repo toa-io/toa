@@ -62,10 +62,11 @@ object.a.b.c = 1 // (['a', 'b', 'c'], 1)
 
 # Echo
 
-`echo(input: string): string`
+`echo(input: string, variables?: Record<string, string>): string`
 
 Returns the input string.
-Substitutes environment variables to a placeholders following `${NAME}` syntax.
+Substitutes variables to a placeholders following `${NAME}` syntax.
+If no variables are passed, then environment variables are used.
 
 ## Example
 
