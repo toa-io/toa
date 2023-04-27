@@ -119,3 +119,22 @@ Feature: Object properties
           type: string
       additionalProperties: false
       """
+
+  Scenario Outline: Additional properties: <value>
+    When I write schema:
+      """yaml
+      title: string
+      ...: <value>
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        title:
+          type: string
+      additionalProperties: <value>
+      """
+    Examples:
+      | value |
+      | true  |
+      | false |
