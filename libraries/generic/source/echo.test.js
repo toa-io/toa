@@ -38,3 +38,10 @@ it('should substitute custom variables', async () => {
 
   expect(result).toStrictEqual('hello world')
 })
+
+it('should substitute arrays', async () => {
+  // {2} is replaces with empty string
+  const result = echo('make {0} not {1}{2}', ['love', 'war'])
+
+  expect(result).toStrictEqual('make love not war')
+})
