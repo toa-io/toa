@@ -38,8 +38,13 @@ const object = (schema, validate) => {
     delete schema.properties.$id
   }
 
+  if ('...' in schema.properties) {
+    schema.additionalProperties = schema.properties['...']
+    delete schema.properties['...']
+  }
+
   schema.type = 'object'
-  schema.additionalProperties = false
+  schema.additionalProperties = schema.additionalProperties ?? false
 
   schema.properties = remap(schema.properties, (value) => expand(value, validate))
 
