@@ -2,12 +2,13 @@
 
 /**
  * @param {string} input
+ * @param {Record<string, string>} [variables]
  * @returns {string}
  */
-const echo = (input) => {
-  return input.replaceAll(RX, (_, variable) => process.env[variable] ?? '')
+const echo = (input, variables = process.env) => {
+  return input.replaceAll(RX, (_, variable) => variables[variable] ?? '')
 }
 
-const RX = /\${([A-Z_]{0,32})}/g
+const RX = /\${([A-Za-z_]{0,32})}/g
 
 exports.echo = echo
