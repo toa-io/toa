@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/storages.queues",
-  "version": "0.7.2",
+  "version": "0.7.3-dev.0",
   "description": "Toa Queues Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,6 +20,6 @@
   },
   "dependencies": {
     "@toa.io/core": "0.8.0",
-    "@toa.io/generics.amqp": "0.7.2"
+    "@toa.io/generics.amqp": "0.7.3-dev.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.origins",
-  "version": "0.8.0",
+  "version": "0.8.1-dev.0",
   "description": "Toa Origins",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@toa.io/core": "0.8.0",
     "@toa.io/generic": "0.8.0",
-    "@toa.io/schemas": "0.8.0",
+    "@toa.io/schemas": "0.8.1-dev.0",
     "@toa.io/yaml": "0.7.2",
     "comq": "0.6.0",
     "node-fetch": "2.6.7"

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.sampling",
-  "version": "0.7.2",
+  "version": "0.7.3-dev.0",
   "description": "Toa operations sampling",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,6 +21,6 @@
   "dependencies": {
     "@toa.io/core": "0.8.0",
     "@toa.io/generic": "0.8.0",
-    "@toa.io/schemas": "0.8.0"
+    "@toa.io/schemas": "0.8.1-dev.0"
   }
 }
