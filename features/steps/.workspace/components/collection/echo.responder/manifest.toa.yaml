@@ -5,3 +5,8 @@ operations:
   echo:
     input: string
     output: string
+  reflect:
+    input:
+      id: string
+      ...: true
+    output: object
