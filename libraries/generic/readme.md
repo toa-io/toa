@@ -70,10 +70,31 @@ If no variables are passed, then environment variables are used.
 
 ## Example
 
+### Environment variables
+
 ```javascript
 process.env['FOO'] = 'bar'
 
 const output = echo('foo: ${FOO}')
 
 console.log(output) // foo: bar
+```
+
+### Custom variables
+
+```javascript
+const variables = { foo: 'world' }
+const output = echo('hello ${foo}', variables)
+
+console.log(output) // hello world
+```
+
+## Index substitutions
+
+`echo(input: string, values: string[]): string`
+
+When the second argument is an `Array`, its values are substituted to a placeholders following `{N}` syntax.
+
+```javascript
+echo('make {0} not {1}', ['love', 'war'])
 ```
