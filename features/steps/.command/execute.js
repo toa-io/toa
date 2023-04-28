@@ -27,7 +27,7 @@ async function execute (command, options = {}) {
   } catch (e) {
     result = e
 
-    this.exitCode = e.status
+    this.exitCode = e.code
 
     if (e.code === 'ABORT_ERR') this.aborted = true
   }
