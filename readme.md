@@ -46,7 +46,7 @@ Non-scattered documentation is coming this summer.
 - Unlimited extensibility
     - persistent storages
     - communication protocols
-    - runtime abstractions
+    - runtime core abstractions
 - Development environment configuration
 
 ### Operations
