@@ -46,6 +46,7 @@ Non-scattered documentation is coming this summer.
     - persistent storages
     - communication protocols
     - runtime abstractions
+- Development environment configuration
 
 ### Operations
 
