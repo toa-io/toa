@@ -14,8 +14,8 @@ Non-scattered documentation is coming this summer.
 - Interservice communications
     - Seamless fault tolerant RPC and Events
     - Uniform intercommunication interface
-        - Input/Query segregation
-        - Output/Error replies
+        - Input/query segregation
+        - Output/error replies
     - Automatic service discovery
     - Distributed exception handling
     - Multi-protocol transmission
