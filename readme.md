@@ -13,7 +13,7 @@ Non-scattered documentation is coming this summer.
 
 - Interservice communications
     - Seamless fault tolerant RPC and Events
-    - Uniform intercommunication interface
+    - Uniform interface
         - Input/query segregation
         - Output/error replies
     - Automatic service discovery
@@ -38,21 +38,21 @@ Non-scattered documentation is coming this summer.
     - Node.js support
 - Service prototyping (inheritance)
 - Generic prototype
-- Declarative data and operations contracts
+- Data and operations contracts
 - Declarative HTTP API endpoints
 - Declarative integration tests
 - Runtime bootloader API
 - CLI
-- Unlimited extensibility
-    - persistent storages
-    - communication protocols
-    - runtime core abstractions
+- Unlimited extensibility:
+    - Persistent storages
+    - Communication protocols
+    - Runtime core abstractions
 - Development environment configuration
 
 ### Operations
 
 - Standalone infrastructure configuration
-- Components distribution across compositions (containers)
+- Components distribution across containers
 - One-command fully automated deployment
     - Preset multi-arch docker images
     - Helm deployment to kubernetes
