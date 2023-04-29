@@ -25,6 +25,8 @@ class Factory {
   }
 
   receiver (root, label) {
+    if (label.startsWith(DEFAULT)) label = label.substring(DEFAULT.length)
+
     const receiver = load.receiver(root, label)
 
     return new Receiver(receiver)
@@ -44,5 +46,7 @@ function runner (module, context) {
 
   return new Runner(instance, context)
 }
+
+const DEFAULT = 'default.'
 
 exports.Factory = Factory

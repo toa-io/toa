@@ -7,21 +7,18 @@ const { translate } = require('./.replay')
 
 const { When } = require('@cucumber/cucumber')
 
-When('I replay it',
-  /**
-   * @this {toa.samples.features.Context}
-   */
+When('I replay it', /**
+ * @this {toa.samples.features.Context}
+ */
   async function () {
-    const [namespace, name] = this.component.split('.')
-
     let paths
 
     if (this.autonomous) {
-      const path = join(COMPONENTS, namespace, name)
+      const path = join(COMPONENTS, this.component)
 
       paths = [path]
     } else {
-      const pattern = join(COMPONENTS, '*/*')
+      const pattern = join(COMPONENTS, '*')
 
       paths = await glob(pattern)
     }

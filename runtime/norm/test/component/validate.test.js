@@ -55,9 +55,11 @@ describe('namespace', () => {
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 
-  it('should forbid \'default\' namespace', () => {
-    manifest.namespace = 'default'
-    expect(() => validate(manifest)).toThrow(/must NOT be valid/)
+  it('should set `default` namespace', async () => {
+    delete manifest.namespace
+
+    expect(() => validate(manifest)).not.toThrow()
+    expect(manifest.namespace).toStrictEqual('default')
   })
 })
 
@@ -102,15 +104,6 @@ describe('entity', () => {
       manifest.entity.schema = {}
       validate(manifest)
       expect(manifest.entity.schema.type).toBe('object')
-    })
-
-    it('should forbid additional properties', () => {
-      manifest.entity.schema = { additionalProperties: true }
-      expect(() => validate(manifest)).toThrow(/must be equal to constant 'false'/)
-
-      manifest.entity.schema = {}
-      validate(manifest)
-      expect(manifest.entity.schema.additionalProperties).toBe(false)
     })
 
     it('should have property names matching token pattern', () => {

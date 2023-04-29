@@ -17,7 +17,7 @@ operations:
       bankrupt: boolean
 
 receivers:
-  messages.messages.created: update
+  messages.created: update
   credits.balance.updated: update
 
 exposition:

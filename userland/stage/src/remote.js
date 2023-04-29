@@ -7,9 +7,12 @@ const { state } = require('./state')
 
 /** @type {toa.stage.Remote} */
 const remote = async (id) => {
-  const [namespace, name] = id.split('.')
-  const locator = new Locator(name, namespace)
+  const segments = id.split('.')
 
+  if (segments.length === 1) segments.unshift('default')
+
+  const [namespace, name] = segments
+  const locator = new Locator(name, namespace)
   const remote = await boot.remote(locator)
 
   await remote.connect()

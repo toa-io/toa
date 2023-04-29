@@ -14,7 +14,7 @@ beforeAll(async () => {
 
   composition = await framework.compose(['messages', 'credits', 'stats'])
 
-  messages = await framework.remote('messages.messages')
+  messages = await framework.remote('default.messages')
   credits = await framework.remote('credits.balance')
   stats = await framework.remote('stats.stats')
 })

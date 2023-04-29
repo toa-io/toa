@@ -99,6 +99,22 @@ Feature: Origins Extension
     And I run `toa invoke test -p ./components/origins.amqp`
     Then program should exit with code 0
 
+  Scenario: AMQP misconfiguration
+    Given I have a component `origins.amqp`
+    And I have a context with:
+      """yaml
+      origins:
+        origins.amqp:
+          bad: amqp://localhost:5555
+      """
+    When I run `toa env`
+    And I run `toa invoke test -p ./components/origins.amqp`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      error connect ECONNREFUSED ::1:5555
+      """
+
   Scenario: Origin with environment variable placeholder
     Given I have a component `origins.http_echo`
     And I have a context
