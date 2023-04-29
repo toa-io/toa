@@ -35,6 +35,7 @@ Non-scattered documentation is coming this summer.
 ### Development
 
 - Language interoperability
+    - Node.js support
 - Service prototyping (inheritance)
 - Generic prototype
 - Declarative data and operations contracts
