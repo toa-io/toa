@@ -13,13 +13,14 @@ Non-scattered documentation is coming this summer.
 
 - Interservice communications
     - Seamless fault tolerant RPC and Events
+    - Flow control
+    - Eventual consistency guarantee
     - Uniform interface
         - Input/query segregation
         - Output/error replies
     - Automatic service discovery
     - Distributed exception handling
-    - Multi-protocol transmission
-    - Built-in AMQP and HTTP support
+    - Multi-protocol transmission (built-in AMQP and HTTP support)
     - In-memory communications within compositions
     - Message contract validation
 - Persistent state management
@@ -27,10 +28,12 @@ Non-scattered documentation is coming this summer.
     - Batching
     - Data contract validation
     - Built-in implementations for MongoDB and SQL
-- HTTP API with runtime resource discovery
-- External communications with permissions
+- API Gateway
+    - Realtime resource discovery
+    - Semantic method mapping
 - Configuration
 - Transient state
+- External communications with permissions
 
 ### Development
 
