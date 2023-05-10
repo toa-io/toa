@@ -1,6 +1,6 @@
 Feature: Configuration Extension
 
-  Scenario: Should has configuration
+  Scenario: Should have configuration
     Given I boot `configuration.base` component
     When I invoke `echo`
     Then the reply is received:
