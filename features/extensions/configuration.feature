@@ -1,21 +1,22 @@
 Feature: Configuration Extension
 
   Scenario: Should has configuration
-    Given I boot `configuration.simple` component
-    When I invoke `transit`
+    Given I boot `configuration.base` component
+    When I invoke `echo`
     Then the reply is received:
       """yaml
       output:
-        foo: Hello
+        foo: hello
       """
     And I disconnect
 
   Scenario: Should extend configuration from prototype
-    Given I boot `configuration.prototype` component
-    When I invoke `transit`
+    Given I boot `configuration.extended` component
+    When I invoke `echo`
     Then the reply is received:
       """yaml
       output:
-        foo: Hello
+        foo: hello
+        bar: 1
       """
     And I disconnect
