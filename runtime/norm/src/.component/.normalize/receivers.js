@@ -7,8 +7,10 @@ function receivers (component) {
 
   for (const [key, value] of Object.entries(receivers)) {
     const segments = key.split('.')
+    const source = value.source ?? 'default'
 
-    if (segments.length === 3) continue
+    if (source !== 'default') continue
+    if (segments.length === 3) continue // already with a namespace
 
     const newKey = 'default.' + key
 

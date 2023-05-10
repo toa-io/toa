@@ -1,0 +1,10 @@
+namespace: configuration
+name: base
+
+operations:
+  echo:
+    output:
+      foo: string
+
+configuration:
+  foo: hello
