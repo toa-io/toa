@@ -10,7 +10,7 @@ function receivers (component) {
     const source = value.source ?? 'default'
 
     if (source !== 'default') continue
-    if (segments.length === 3) continue
+    if (segments.length === 3) continue // already with a namespace
 
     const newKey = 'default.' + key
 
