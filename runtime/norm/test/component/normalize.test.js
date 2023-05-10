@@ -57,7 +57,7 @@ describe('receivers', () => {
     })
   })
 
-  it('should not substitute default namespace, for source !== default', async () => {
+  it('should not substitute default namespace for foreign events', async () => {
     const receiver = {
       transition: 'add',
       source: 'test'
