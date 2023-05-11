@@ -229,15 +229,15 @@ describe('operations', () => {
 })
 
 describe('receivers', () => {
-  it('should throw if transition points to undefined transition', () => {
-    manifest.receivers['foo.bar.happened'].transition = 'not-exists'
+  it('should throw if transition points to undefined operation', () => {
+    manifest.receivers['foo.bar.happened'].operation = 'not-exists'
 
-    expect(() => validate(manifest)).toThrow(/refers to undefined transition/)
+    expect(() => validate(manifest)).toThrow(/refers to undefined operation/)
   })
 
-  it('should throw if transition points to non transition', () => {
-    manifest.receivers['foo.bar.happened'].transition = 'get'
+  it('should throw if transition points to observation', () => {
+    manifest.receivers['foo.bar.happened'].operation = 'get'
 
-    expect(() => validate(manifest)).toThrow(/refers to non-transition/)
+    expect(() => validate(manifest)).toThrow(/one of the allowed types/)
   })
 })

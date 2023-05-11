@@ -112,7 +112,7 @@ Feature: Origins Extension
     Then program should exit with code 1
     And stderr should contain lines:
       """
-      error connect ECONNREFUSED ::1:5555
+      error connect ECONNREFUSED
       """
 
   Scenario: Origin with environment variable placeholder

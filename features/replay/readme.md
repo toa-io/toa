@@ -1,1 +1,1 @@
-Context for these features is located in [userland/example](/userland/example) directory.
+The Context for these features is located under [userland/example](/userland/example) directory.

@@ -9,6 +9,8 @@ const root = resolve(__dirname, '../components')
 let component
 
 beforeAll(async () => {
+  process.env.TOA_DEV = '1'
+
   const path = resolve(root, 'math.calculations')
 
   component = await stage.component(path)
@@ -16,6 +18,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await stage.shutdown()
+
+  delete process.env.TOA_DEV
 })
 
 it('should invoke', async () => {

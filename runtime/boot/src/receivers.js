@@ -12,7 +12,7 @@ const receivers = async (manifest, runtime) => {
 
   for (const [label, definition] of Object.entries(manifest.receivers)) {
     const local = await boot.remote(manifest.locator, manifest)
-    const bridge = boot.bridge.receiver(definition.bridge, manifest.path, label)
+    const bridge = definition.bridge !== undefined ? boot.bridge.receiver(definition.bridge, manifest.path, label) : undefined
     const receiver = new Receiver(definition, local, bridge)
     const decorator = extensions.receiver(receiver, manifest.locator)
 

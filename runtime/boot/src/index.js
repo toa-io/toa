@@ -1,5 +1,7 @@
 'use strict'
 
+require('./env')
+
 const { call } = require('./call')
 const { cascade } = require('./cascade')
 const { component } = require('./component')

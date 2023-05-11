@@ -5,42 +5,43 @@
  */
 class Binding {
   /** @type {Record<string, function[]>} */
-  #subs = {}
+  #callbacks = {}
 
   /** @type {Record<string, function>} */
-  #calls = {}
+  #producers = {}
 
   async subscribe (label, callback) {
-    if (this.#subs[label] === undefined) this.#subs[label] = []
+    if (this.#callbacks[label] === undefined) this.#callbacks[label] = []
 
-    this.#subs[label].push(callback)
+    this.#callbacks[label].push(callback)
   }
 
   async emit (label, message) {
-    const callbacks = this.#subs[label]
+    if (!(label in this.#callbacks)) return
 
-    if (callbacks === undefined) return undefined
-
+    const callbacks = this.#callbacks[label]
     const promises = callbacks.map((callback) => callback(message))
 
     await Promise.all(promises)
   }
 
   async reply (label, produce) {
-    if (this.#calls[label] !== undefined) throw new Error(`Label '${label}' is already bound`)
+    if (label in this.#producers) throw new Error(`Label '${label}' is already bound`)
 
-    this.#calls[label] = produce
+    this.#producers[label] = produce
   }
 
   async request (label, request) {
-    if (this.#calls[label] === undefined) throw new Error(`Label '${label}' is not bound`)
+    if (!(label in this.#producers)) throw new Error(`Label '${label}' is not bound`)
 
-    return this.#calls[label](request)
+    const produce = this.#producers[label]
+
+    return produce(request)
   }
 
   reset () {
-    this.#subs = {}
-    this.#calls = {}
+    this.#callbacks = {}
+    this.#producers = {}
   }
 }
 

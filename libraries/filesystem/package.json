@@ -26,6 +26,7 @@
     "@toa.io/generic": "0.9.0"
   },
   "dependencies": {
-    "fast-glob": "3.2.12"
+    "fast-glob": "3.2.12",
+    "find-up": "5.0.0"
   }
 }

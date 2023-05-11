@@ -1,4 +1,4 @@
-import type { Locator } from '@toa.io/core/types'
+import type {Locator} from '@toa.io/core/types'
 
 export namespace toa.norm {
 
@@ -36,7 +36,7 @@ export namespace toa.norm {
     }
 
     interface Receiver {
-      transition: string
+      operation: string
       adaptive: boolean
       conditioned: boolean
       bridge: string

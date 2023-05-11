@@ -2,8 +2,8 @@
 
 const { CACHE_KEY } = require('./.common/constants')
 
-async function transition (input, object, context) {
+async function effect (input, context) {
   context.state[CACHE_KEY] = input
 }
 
-exports.transition = transition
+exports.effect = effect
