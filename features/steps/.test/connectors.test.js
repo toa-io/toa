@@ -62,29 +62,6 @@ describe('When I compose {component} component', () => {
     const composition = mock.boot.composition.mock.results[0].value
 
     expect(composition.connect).toHaveBeenCalled()
-    expect(context.connector).toStrictEqual(composition)
-  })
-})
-
-describe('When I compose {component} component with {label} binding', () => {
-  const step = gherkin.steps.Wh('I compose {component} component with {label} binding')
-
-  it('should be', () => undefined)
-
-  it('should start composition', async () => {
-    const context = {}
-    const reference = generate()
-    const binding = generate()
-    const path = resolve(COLLECTION, reference)
-
-    await step.call(context, reference, binding)
-
-    expect(mock.boot.composition).toHaveBeenCalledWith([path], { bindings: [binding] })
-
-    const composition = mock.boot.composition.mock.results[0].value
-
-    expect(composition.connect).toHaveBeenCalled()
-    expect(context.connector).toStrictEqual(composition)
   })
 })
 
@@ -107,7 +84,6 @@ describe('When I compose components:', () => {
     const composition = mock.boot.composition.mock.results[0].value
 
     expect(composition.connect).toHaveBeenCalled()
-    expect(context.connector).toStrictEqual(composition)
   })
 })
 

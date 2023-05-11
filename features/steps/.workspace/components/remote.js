@@ -1,20 +1,13 @@
 'use strict'
 
-const { Locator } = require('@toa.io/core')
-const boot = require('@toa.io/boot')
+const stage = require('@toa.io/userland/stage')
 
 /**
- * @param {string} namespace
- * @param {string} name
+ * @param {string} id
  * @returns {Promise<toa.core.Component>}
  */
-const remote = async (namespace, name) => {
-  const locator = new Locator(name, namespace)
-  const remote = await boot.remote(locator)
-
-  await remote.connect()
-
-  return remote
+const remote = async (id) => {
+  return stage.remote(id)
 }
 
 exports.remote = remote

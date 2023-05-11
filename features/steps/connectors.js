@@ -37,21 +37,7 @@ When('I compose {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await get.composition([reference])
-  })
-
-When('I compose {component} component with {label} binding',
-  /**
-   * @param {string} reference
-   * @param {string} binding
-   * @this {toa.features.Context}
-   */
-  async function (reference, binding) {
-    global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
-
-    this.connector = await get.composition([reference], [binding])
-
-    global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = undefined
+    await get.composition([reference])
   })
 
 When('I compose components:',
@@ -157,8 +143,8 @@ async function invoke (endpoint, request = {}) {
  * @return {Promise<void>}
  */
 async function call (endpoint, request) {
-  const [namespace, name, operation] = endpoint.split('.')
-  const remote = await get.remote(namespace, name)
+  const operation = endpoint.split('.').pop()
+  const remote = await get.remote(endpoint)
 
   this.reply = await remote.invoke(operation, request)
 
