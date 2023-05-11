@@ -87,3 +87,22 @@ it('should apply methods with the context', async () => {
   expect(size).toStrictEqual(0)
   expect(Array.from(values)).toStrictEqual([])
 })
+
+it.each([
+  ['Array', Array], ['Set', Set], ['Map', Map], ['Uint8Array', Uint8Array], ['null', null]
+])('should not proxy %s', async (_, Type) => {
+  const generator = /** @type {jest.MockedFn} */ jest.fn(() => Type?.constructor ? new Type() : Type)
+
+  object = generate(generator)
+
+  expect(object.a?.foo).toBeUndefined()
+})
+
+it('should not proxy primitive values', async () => {
+  const generator = /** @type {jest.MockedFn} */ jest.fn(() => 1)
+
+  object = generate(generator)
+
+  expect(typeof object.a).toStrictEqual('number')
+  expect(object.a?.foo).toBeUndefined()
+})

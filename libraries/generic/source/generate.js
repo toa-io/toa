@@ -13,7 +13,7 @@ function generate (generator) {
  * @param {string[]} [segments]
  */
 function proxy (value, generator, segments = []) {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) return value
+  if (value?.constructor.name !== 'Object') return value
 
   return new Proxy(value, {
     get: (node, key) => {
