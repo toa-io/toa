@@ -59,3 +59,31 @@ it('should pass segments and value', async () => {
 
   expect(generator).toHaveBeenCalledWith(['a', 'b'], value)
 })
+
+it('should pass segments repeatedly repeatedly', async () => {
+  const generator = /** @type {jest.MockedFn} */ jest.fn(() => ({}))
+  const value = randomstring.generate()
+
+  object = generate(generator)
+  object.a.b = value
+
+  expect(generator).toHaveBeenNthCalledWith(1, ['a'])
+  expect(generator).toHaveBeenNthCalledWith(2, ['a', 'b'], value)
+
+  object.a.b = value
+
+  expect(generator).toHaveBeenNthCalledWith(3, ['a'])
+  expect(generator).toHaveBeenNthCalledWith(4, ['a', 'b'], value)
+})
+
+it('should apply methods with the context', async () => {
+  const generator = () => new Set()
+
+  object = generate(generator)
+
+  const size = object.a.size
+  const values = object.a.values()
+
+  expect(size).toStrictEqual(0)
+  expect(Array.from(values)).toStrictEqual([])
+})
