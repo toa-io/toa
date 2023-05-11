@@ -1,4 +1,4 @@
-name: responder
+name: beacon
 namespace: echo
 
 operations:
@@ -10,3 +10,6 @@ operations:
       id: string
       ...: true
     output: object
+  print:
+    input: string
+    output: string

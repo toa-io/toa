@@ -17,7 +17,7 @@ Set Configuration Object key. Nested keys are addressed with dot notation.
 
 #### Examples
 
-It is assumed you are in the component's directory, use `--path` otherwise.
+> It is assumed you are in the component's directory, use `--path` otherwise.
 
 ```shell
 # set new value

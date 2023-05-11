@@ -45,8 +45,7 @@ $ toa conceal
 
 ## Problem Definition
 
-- Components must be reusable in different contexts and deployment environments,
-  that is in different configurations.
+- Components must be reusable in different contexts and deployment environments that are in different configurations.
 - Some algorithm parameters must be deployed secretly.
 
 ## Definitions
@@ -57,8 +56,7 @@ Set of static[^1] parameters for all algorithms within a given system.
 
 ### Configuration Schema
 
-Schema defining component's algorithms parameters (optionally with default
-values).
+Schema is defining component's algorithm parameters (optionally with default values).
 
 ### Configuration Object
 
@@ -66,7 +64,7 @@ Value valid against Configuration Schema.
 
 ### Configuration Value
 
-Merge result of Configuration Schema's defaults and Configuration Object.
+The merge result of Configuration Schema's defaults and Configuration Object.
 
 ### Context Configuration
 
@@ -86,7 +84,7 @@ Configuration Schema is declared as a component extension
 using [JSON Schema](https://json-schema.org) `object` type.
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
-> By introducing non-backward compatible changes to a Configuration Schema the compatibility
+> By introducing non-backward compatible changes to a Configuration Schema, the compatibility
 > with existent contexts and deployment environments will be broken. That is, Configuration
 > Schema changes are subjects of component versioning.
 
@@ -109,7 +107,7 @@ extensions:
         default: 'baz'
       bar:
         type: number
-    required: [foo]
+    required: [ foo ]
 ```
 
 ### Concise Declaration
@@ -121,7 +119,7 @@ type and no additional properties allowed.
 
 Also note that a well-known shortcut `configuration` is available.
 
-Next two declarations are equivalent.
+The next two declarations are equivalent.
 
 ```yaml
 # component.toa.yaml
@@ -142,13 +140,13 @@ extensions:
         type: number
         default: 1
     additionalProperties: false
-    required: [foo, bar]
+    required: [ foo, bar ]
 ```
 
 ## Context Configuration
 
-Context Configuration is declared as a context annotaion. Its keys must be
-component identifiers and its values must be Configuration Objects for those
+Context Configuration is declared as a context annotation. Its keys must be
+component identifiers, and its values must be Configuration Objects for those
 components.
 
 Context Configuration keys and Configuration Object keys may be defined
@@ -171,6 +169,9 @@ Configuration Objects for local environment may be created
 by [`toa configure`](../../runtime/cli/readme.md#configure) command.
 
 ## Configuration Secrets
+
+> ![Important](https://img.shields.io/badge/Important-red)<br/>
+> Not implemented. [#132](https://github.com/toa-io/toa/issues/132)
 
 Context Configuration values which are uppercase strings prefixed with `$`
 considered as Secrets.
@@ -207,7 +208,7 @@ function transition (input, entity, context) {
 
 > ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
 > It is strongly **not** recommended to store a copy of value type configuration
-> values outside of operation scope, thus it prevents operation to benefit
+> values outside operation scope, thus it prevents operation to benefit
 > from [hot updates](#).
 >
 > ```javascript

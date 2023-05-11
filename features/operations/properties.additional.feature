@@ -1,7 +1,7 @@
 Feature: Additional properties
 
   Scenario: Input schema with additional properties
-    Given I boot `echo.responder` component
+    Given I boot `echo.beacon` component
     When I invoke `reflect` with:
       """yaml
       input:
