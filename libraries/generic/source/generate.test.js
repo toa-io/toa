@@ -60,7 +60,7 @@ it('should pass segments and value', async () => {
   expect(generator).toHaveBeenCalledWith(['a', 'b'], value)
 })
 
-it('should pass segments repeatedly repeatedly', async () => {
+it('should pass segments repeatedly', async () => {
   const generator = /** @type {jest.MockedFn} */ jest.fn(() => ({}))
   const value = randomstring.generate()
 
