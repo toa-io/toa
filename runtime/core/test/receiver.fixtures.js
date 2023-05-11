@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 
 const definition = /** @type {toa.norm.component.Receiver} */ {
-  transition: generate(),
+  operation: generate(),
   conditioned: false,
   adaptive: false
 }

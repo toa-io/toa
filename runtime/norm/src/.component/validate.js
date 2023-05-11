@@ -27,14 +27,16 @@ const events = (manifest) => {
 
 const receivers = (manifest) => {
   for (const [locator, receiver] of Object.entries(manifest.receivers)) {
-    if (manifest.operations?.[receiver.transition] === undefined) {
-      throw new Error(`Receiver '${locator}' refers to undefined transition '${receiver.transition}'`)
+    if (manifest.operations?.[receiver.operation] === undefined) {
+      throw new Error(`Receiver '${locator}' refers to undefined operation '${receiver.operation}'`)
     }
 
-    if (manifest.operations[receiver.transition].type !== 'transition') {
-      throw new Error(`Receiver '${locator}' refers to non-transition '${receiver.transition}'`)
+    if (!TYPES.has(manifest.operations[receiver.operation].type)) {
+      throw new Error(`Receiver '${locator}' must refer to an operation of one of the allowed types: ${Array.from(TYPES).join(', ')}`)
     }
   }
 }
+
+const TYPES = new Set(['transition', 'effect'])
 
 exports.validate = validate

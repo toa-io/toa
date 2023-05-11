@@ -19,4 +19,4 @@ receivers:
   something_happened:
     binding: amqp
     source: external
-    transition: transit
+    operation: transit

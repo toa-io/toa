@@ -31,17 +31,17 @@ class Receiver extends Connector {
   constructor (definition, local, bridge) {
     super()
 
-    const { conditioned, adaptive, transition } = definition
+    const { conditioned, adaptive, operation } = definition
 
     this.#conditioned = conditioned
     this.#adaptive = adaptive
-    this.#endpoint = transition
+    this.#endpoint = operation
 
     this.#local = local
     this.#bridge = bridge
 
     this.depends(local)
-    this.depends(bridge)
+    if (bridge !== undefined) this.depends(bridge)
   }
 
   /** @hot */

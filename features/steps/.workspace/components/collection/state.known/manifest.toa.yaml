@@ -8,3 +8,6 @@ operations:
     input: number
   get:
     output: number
+
+receivers:
+  something_happened: set

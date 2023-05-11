@@ -19,4 +19,4 @@ operations:
 receivers:
   queues.transmitter.output:
     binding: amqp
-    transition: transit
+    operation: transit
