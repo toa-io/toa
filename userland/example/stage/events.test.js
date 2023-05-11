@@ -10,6 +10,8 @@ const root = resolve(__dirname, '../components')
 let remote
 
 beforeAll(async () => {
+  process.env.TOA_DEV = '1'
+
   const path = resolve(root, 'tea.pots')
 
   await stage.composition([path])
@@ -19,6 +21,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await stage.shutdown()
+
+  delete process.env.TOA_DEV
 })
 
 it('should receive event', async () => {
