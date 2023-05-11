@@ -19,7 +19,7 @@ class Receiver extends Connector {
   /** @type {toa.core.Component} */
   #local
 
-  /** @type {toa.core.bridges.Event} */
+  /** @type {toa.core.bridges.Receiver} */
   #bridge
 
   /**
@@ -52,13 +52,13 @@ class Receiver extends Connector {
 
     const request = await this.#request(payload)
 
-    if (extensions) add(request, extensions)
+    add(request, extensions)
 
     await this.#local.invoke(this.#endpoint, request)
   }
 
   async #request (payload) {
-    return this.#adaptive ? await this.#bridge.request(payload) : payload
+    return this.#adaptive ? await this.#bridge.request(payload) : { input: payload }
   }
 }
 

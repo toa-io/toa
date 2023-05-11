@@ -10,4 +10,6 @@ operations:
     output: number
 
 receivers:
-  something_happened: set
+  somewhere.something.happened:
+    operation: set
+    binding: amqp
