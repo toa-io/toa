@@ -25,3 +25,16 @@ Feature: State extension
       output: 2
       """
     And I disconnect
+
+  Scenario: Using well-known context shortcut with set
+    Given I compose `state.set` component
+    When I call `state.set.set` with:
+      """yaml
+      input: [1,2,3]
+      """
+    And I call `state.set.get`
+    Then the reply is received:
+      """yaml
+      output: [1, 2, 3]
+      """
+    And I disconnect

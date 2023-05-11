@@ -13,19 +13,19 @@ function generate (generator) {
  * @param {string[]} [segments]
  */
 function proxy (value, generator, segments = []) {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) return value
+  if (value?.constructor.name !== 'Object') return value
 
   return new Proxy(value, {
-    get: (_, key) => {
-      segments.push(key)
+    get: (node, key) => {
+      const next = [...segments, key]
+      const value = generator(next)
 
-      const value = generator(segments)
-
-      return proxy(value, generator, segments)
+      return proxy(value, generator, next)
     },
     set: (_, key, value) => {
-      segments.push(key)
-      generator(segments, value)
+      const next = [...segments, key]
+
+      generator(next, value)
 
       return true
     }

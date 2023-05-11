@@ -1,0 +1,8 @@
+name: set
+namespace: state
+
+operations:
+  set:
+    input: [ number ]
+  get:
+    output: [ number ]
