@@ -25,3 +25,19 @@ Feature: State extension
       output: 2
       """
     And I disconnect
+
+  Scenario: Using well-known context shortcut with set
+    Given I compose `state.uniq` component
+    When I call `state.uniq.set` with:
+      """yaml
+      input:
+        value1: 1
+        value2: 2
+        value3: 1
+      """
+    And I call `state.uniq.get`
+    Then the reply is received:
+      """yaml
+      output: [1, 2]
+      """
+    And I disconnect

@@ -1,0 +1,17 @@
+name: uniq
+namespace: state
+
+entity: null
+
+operations:
+  set:
+    concurrency: retry
+    query: false
+    input:
+      value1: number
+      value2: number
+      value3: number
+  get:
+    output:
+      type: array
+      items: number
