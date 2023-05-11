@@ -106,3 +106,13 @@ it('should not proxy primitive values', async () => {
   expect(typeof object.a).toStrictEqual('number')
   expect(object.a?.foo).toBeUndefined()
 })
+
+it('should preserve methods length', async () => {
+  const generator = () => new Set()
+
+  object = generate(generator)
+
+  const set = object.foo
+
+  expect(set.has.length).toStrictEqual(new Set().has.length)
+})

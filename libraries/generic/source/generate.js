@@ -17,8 +17,6 @@ function proxy (value, generator, segments = []) {
 
   return new Proxy(value, {
     get: (node, key) => {
-      if (key in node) return original(node, key)
-
       const next = [...segments, key]
       const value = generator(next)
 
@@ -32,14 +30,6 @@ function proxy (value, generator, segments = []) {
       return true
     }
   })
-}
-
-function original (node, key) {
-  const value = node[key]
-
-  // breaks fn.length
-  if (typeof value === 'function') return (...args) => value.apply(node, args)
-  else return value
 }
 
 exports.generate = generate
