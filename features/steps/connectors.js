@@ -50,7 +50,7 @@ When('I compose components:',
     const rows = transpose(cells)
     const references = rows[0]
 
-    this.connector = await stage.composition(references)
+    await stage.composition(references)
   })
 
 Then('I disconnect',

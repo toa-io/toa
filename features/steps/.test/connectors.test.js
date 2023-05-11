@@ -248,8 +248,8 @@ describe('Then the reply is received:', () => {
   })
 })
 
-describe('When an event {token} is emitted with the payload:', () => {
-  const step = gherkin.steps.Wh('an event {token} is emitted with the payload:')
+describe('When an event {label} is emitted with the payload:', () => {
+  const step = gherkin.steps.Wh('an event {label} is emitted with the payload:')
 
   it('should be', async () => undefined)
 })

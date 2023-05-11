@@ -26,7 +26,7 @@ class Receiver extends Connector {
    *
    * @param {toa.norm.component.Receiver} definition
    * @param {toa.core.Component} local
-   * @param {toa.core.bridges.Event} bridge
+   * @param {toa.core.bridges.Receiver} bridge
    */
   constructor (definition, local, bridge) {
     super()
