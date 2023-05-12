@@ -13,6 +13,8 @@ let echo
 let math
 
 beforeAll(async () => {
+  process.env.TOA_DEV = '1'
+
   const paths = ['echo', 'math.calculations'].map((rel) => resolve(root, rel))
 
   await stage.composition(paths)
@@ -23,6 +25,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await stage.shutdown()
+
+  delete process.env.TOA_DEV
 })
 
 it('should call endpoint', async () => {

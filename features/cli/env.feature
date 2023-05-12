@@ -77,3 +77,23 @@ Feature: Export local deployment environment variables
       """
       TOA_ORIGINS_ORIGINS_HTTP=eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
       """
+
+  Scenario Outline: Print an environment variable
+    Given I have a component `echo.beacon`
+    And I have a context
+    And I run `toa env`
+    And I update an environment with:
+      """
+      FOO=bar
+      """
+    And my working directory is <cwd>
+    When I run `toa invoke print "{ input: 'FOO' }" -p <path>`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      { output: 'bar' }
+      """
+    Examples:
+      | cwd                      | path                     |
+      | ./                       | ./components/echo.beacon |
+      | ./components/echo.beacon | .                        |

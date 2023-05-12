@@ -89,7 +89,7 @@ describe('receivers', () => {
     const manifest = await load('./dummies/b')
 
     expect(manifest.receivers['dummies.a.happened']).toStrictEqual({
-      transition: 'transit',
+      operation: 'transit',
       adaptive: false,
       conditioned: false,
       bridge: expect.any(String),

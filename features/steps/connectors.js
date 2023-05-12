@@ -5,7 +5,7 @@ const { transpose, match } = require('@toa.io/generic')
 const { parse } = require('@toa.io/yaml')
 
 const { cli } = require('./.connectors/cli')
-const get = require('./.workspace/components')
+const stage = require('./.workspace/components')
 
 const { When, Then } = require('@cucumber/cucumber')
 
@@ -28,7 +28,7 @@ When('I boot {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = /** @type {toa.core.Connector} */ await get.component(reference)
+    this.connector = /** @type {toa.core.Connector} */ await stage.component(reference)
   })
 
 When('I compose {component} component',
@@ -37,21 +37,7 @@ When('I compose {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    this.connector = await get.composition([reference])
-  })
-
-When('I compose {component} component with {label} binding',
-  /**
-   * @param {string} reference
-   * @param {string} binding
-   * @this {toa.features.Context}
-   */
-  async function (reference, binding) {
-    global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
-
-    this.connector = await get.composition([reference], [binding])
-
-    global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = undefined
+    await stage.composition([reference])
   })
 
 When('I compose components:',
@@ -64,7 +50,7 @@ When('I compose components:',
     const rows = transpose(cells)
     const references = rows[0]
 
-    this.connector = await get.composition(references)
+    await stage.composition(references)
   })
 
 Then('I disconnect',
@@ -135,6 +121,18 @@ Then('the reply is received:',
     assert.equal(matches, true, 'Reply does not match')
   })
 
+When('an event {label} is emitted with the payload:',
+  /**
+   * @param {string} label
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (label, yaml) {
+    const payload = parse(yaml)
+
+    await stage.emit(label, payload)
+  })
+
 /**
  * @param {string} endpoint
  * @param {toa.core.Request} request
@@ -157,8 +155,8 @@ async function invoke (endpoint, request = {}) {
  * @return {Promise<void>}
  */
 async function call (endpoint, request) {
-  const [namespace, name, operation] = endpoint.split('.')
-  const remote = await get.remote(namespace, name)
+  const operation = endpoint.split('.').pop()
+  const remote = await stage.remote(endpoint)
 
   this.reply = await remote.invoke(operation, request)
 

@@ -56,4 +56,21 @@ describe('receivers', () => {
       'default.messages.created': 'add'
     })
   })
+
+  it('should not substitute default namespace for foreign events', async () => {
+    const receiver = {
+      transition: 'add',
+      source: 'test'
+    }
+
+    manifest.receivers = {
+      'messages.created': receiver
+    }
+
+    normalize(manifest)
+
+    expect(manifest.receivers).toStrictEqual({
+      'messages.created': receiver
+    })
+  })
 })

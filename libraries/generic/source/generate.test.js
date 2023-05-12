@@ -59,3 +59,60 @@ it('should pass segments and value', async () => {
 
   expect(generator).toHaveBeenCalledWith(['a', 'b'], value)
 })
+
+it('should pass segments repeatedly', async () => {
+  const generator = /** @type {jest.MockedFn} */ jest.fn(() => ({}))
+  const value = randomstring.generate()
+
+  object = generate(generator)
+  object.a.b = value
+
+  expect(generator).toHaveBeenNthCalledWith(1, ['a'])
+  expect(generator).toHaveBeenNthCalledWith(2, ['a', 'b'], value)
+
+  object.a.b = value
+
+  expect(generator).toHaveBeenNthCalledWith(3, ['a'])
+  expect(generator).toHaveBeenNthCalledWith(4, ['a', 'b'], value)
+})
+
+it('should apply methods with the context', async () => {
+  const generator = () => new Set()
+
+  object = generate(generator)
+
+  const size = object.a.size
+  const values = object.a.values()
+
+  expect(size).toStrictEqual(0)
+  expect(Array.from(values)).toStrictEqual([])
+})
+
+it.each([
+  ['Array', Array], ['Set', Set], ['Map', Map], ['Uint8Array', Uint8Array], ['null', null]
+])('should not proxy %s', async (_, Type) => {
+  const generator = /** @type {jest.MockedFn} */ jest.fn(() => Type?.constructor ? new Type() : Type)
+
+  object = generate(generator)
+
+  expect(object.a?.foo).toBeUndefined()
+})
+
+it('should not proxy primitive values', async () => {
+  const generator = /** @type {jest.MockedFn} */ jest.fn(() => 1)
+
+  object = generate(generator)
+
+  expect(typeof object.a).toStrictEqual('number')
+  expect(object.a?.foo).toBeUndefined()
+})
+
+it('should preserve methods length', async () => {
+  const generator = () => new Set()
+
+  object = generate(generator)
+
+  const set = object.foo
+
+  expect(set.has.length).toStrictEqual(new Set().has.length)
+})

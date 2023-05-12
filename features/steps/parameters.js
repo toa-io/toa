@@ -4,7 +4,7 @@ const { defineParameterType, setDefaultTimeout } = require('@cucumber/cucumber')
 
 defineParameterType({
   name: 'path',
-  regexp: /\.\/[^'\s]*|\/toa(?:\/\w+)*\/?/,
+  regexp: /\.(?:\/[^'\s]*)?|\/toa(?:\/\w+)*\/?/,
   transformer: (path) => path
 })
 

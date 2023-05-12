@@ -34,7 +34,7 @@ it('should apply', async () => {
 
   await receiver.receive({ payload })
 
-  expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, payload)
+  expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.operation, { input: payload })
 })
 
 it.each([[false], [true]])('should pass UI extensions (adaptive: %s)', async (adaptive) => {
@@ -49,7 +49,7 @@ it.each([[false], [true]])('should pass UI extensions (adaptive: %s)', async (ad
 
   await receiver.receive(message)
 
-  const request = adaptive ? await fixtures.bridge.request.mock.results[0].value : payload
+  const request = adaptive ? await fixtures.bridge.request.mock.results[0].value : { input: payload }
   const expected = merge(clone(request), extension)
 
   const argument = fixtures.local.invoke.mock.calls[0][1]
@@ -68,7 +68,7 @@ describe('conditioned', () => {
     await receiver.receive({ payload })
 
     expect(fixtures.bridge.condition).toHaveBeenCalledWith(payload)
-    expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.transition, payload)
+    expect(fixtures.local.invoke).toHaveBeenCalledWith(definition.operation, { input: payload })
   })
 
   it('should not apply if condition is false', async () => {
@@ -90,6 +90,6 @@ describe('adaptive', () => {
     await receiver.receive({ payload })
 
     expect(fixtures.local.invoke)
-      .toHaveBeenCalledWith(definition.transition, await fixtures.bridge.request.mock.results[0].value)
+      .toHaveBeenCalledWith(definition.operation, await fixtures.bridge.request.mock.results[0].value)
   })
 })

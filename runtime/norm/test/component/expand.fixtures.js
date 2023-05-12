@@ -53,7 +53,7 @@ const source = {
     two: {
       binding: 'amqp',
       bridge: 'node',
-      transition: 'transit'
+      operation: 'transit'
     }
   }
 }
@@ -123,12 +123,12 @@ const target = {
   },
   receivers: {
     one: {
-      transition: 'transit'
+      operation: 'transit'
     },
     two: {
       bridge: '@toa.io/bridges.node',
       binding: '@toa.io/bindings.amqp',
-      transition: 'transit'
+      operation: 'transit'
     }
   }
 }

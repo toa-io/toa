@@ -2,8 +2,6 @@
 
 'use strict'
 
-if (!('TOA_ENV' in process.env)) require('dotenv').config()
-
 const yargs = require('yargs/yargs')
 
 const { console } = require('@toa.io/console')

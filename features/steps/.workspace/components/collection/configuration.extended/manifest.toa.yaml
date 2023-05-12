@@ -1,0 +1,11 @@
+prototype: '../configuration.base'
+namespace: configuration
+name: extended
+
+operations:
+  echo:
+    output:
+      bar: number
+
+configuration:
+  bar: 1

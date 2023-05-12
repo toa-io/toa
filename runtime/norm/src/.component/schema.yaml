@@ -207,7 +207,7 @@ properties:
       '.*':
         type: object
         properties:
-          transition:
+          operation:
             $ref: 'definitions#/definitions/token'
           bridge:
             type: string
@@ -223,7 +223,7 @@ properties:
           adaptive:
             type: boolean
             default: false
-        required: [ transition, bridge, path ]
+        required: [ operation ]
         additionalProperties: false
 
   extensions:

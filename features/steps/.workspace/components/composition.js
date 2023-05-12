@@ -1,7 +1,9 @@
 'use strict'
 
-const boot = require('@toa.io/boot')
-const { resolve } = require('./load')
+const { join } = require('node:path')
+const stage = require('@toa.io/userland/stage')
+
+const { COLLECTION } = require('./constants')
 
 /**
  * @param {string[]} references
@@ -9,13 +11,9 @@ const { resolve } = require('./load')
  * @returns {Promise<toa.core.Connector>}
  **/
 const composition = async (references, bindings) => {
-  const paths = /** @type {string[]} */ references.map(resolve)
-  const options = { bindings }
-  const composition = /** @type {toa.core.Connector} */ await boot.composition(paths, options)
+  const paths = /** @type {string[]} */ references.map((reference) => join(COLLECTION, reference))
 
-  await composition.connect()
-
-  return composition
+  await stage.composition(paths)
 }
 
 exports.composition = composition

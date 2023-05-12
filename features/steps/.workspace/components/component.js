@@ -1,19 +1,18 @@
 'use strict'
 
-const boot = require('@toa.io/boot')
-const { load } = require('./load')
+const { join } = require('node:path')
+const stage = require('@toa.io/userland/stage')
+
+const { COLLECTION } = require('./constants')
 
 /**
  * @param {string} reference
  * @returns {Promise<toa.core.Component>}
  **/
 const component = async (reference) => {
-  const manifest = await load(reference)
-  const component = await boot.component(manifest)
+  const path = join(COLLECTION, reference)
 
-  await component.connect()
-
-  return component
+  return stage.component(path)
 }
 
 exports.component = component

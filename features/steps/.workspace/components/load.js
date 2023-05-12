@@ -1,7 +1,7 @@
 'use strict'
 
-const path = require('node:path')
-const boot = require('@toa.io/boot')
+const { join } = require('node:path')
+const stage = require('@toa.io/userland/stage')
 
 const { COLLECTION } = require('./constants')
 
@@ -10,18 +10,9 @@ const { COLLECTION } = require('./constants')
  * @returns {toa.norm.Component}
  */
 const load = async (reference) => {
-  const path = resolve(reference)
+  const path = join(COLLECTION, reference)
 
-  return await boot.manifest(path)
-}
-
-/**
- * @param {string} reference
- * @returns {string}
- */
-const resolve = (reference) => {
-  return path.resolve(COLLECTION, reference)
+  return stage.manifest(path)
 }
 
 exports.load = load
-exports.resolve = resolve

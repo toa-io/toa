@@ -7,9 +7,6 @@ const { remote } = require('./remote')
 const { shutdown } = require('./shutdown')
 const binding = require('./binding')
 
-// staging always runs on local deployment environment
-process.env.TOA_DEV = '1'
-
 exports.manifest = manifest
 exports.component = component
 exports.composition = composition
