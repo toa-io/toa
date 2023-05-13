@@ -1,0 +1,7 @@
+title: Should return value
+extensions:
+  state:
+    - result:
+        value: bar
+      permanent: true
+output: bar
