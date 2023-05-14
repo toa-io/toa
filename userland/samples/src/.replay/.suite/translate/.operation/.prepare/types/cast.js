@@ -3,7 +3,10 @@
 const { map } = require('@toa.io/generic')
 
 const types = {
-  Map: require('./map')
+  Map: require('./map'),
+  Set: require('./set'),
+  sync: require('./sync'),
+  async: require('./async')
 }
 
 function cast (value) {

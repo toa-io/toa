@@ -67,3 +67,22 @@ Feature: Context extensions (aspects) samples
       """
     When I replay it
     Then it passes
+
+  Scenario: Origins request async sample
+    Given I have a sample for `get` operation of `web`:
+      """yaml
+      title: Should return state value
+      extensions:
+        http:
+          - arguments:
+              - dev
+              - path/to/resource
+              - method: GET
+            result:
+              json:async:
+                foo: bar
+      output:
+        foo: bar
+      """
+    When I replay it
+    Then it passes

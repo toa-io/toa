@@ -1,7 +1,3 @@
 'use strict'
 
-function cast (value) {
-  return new Map(Object.entries(value))
-}
-
-module.exports = cast
+module.exports = (value) => new Map(Object.entries(value))

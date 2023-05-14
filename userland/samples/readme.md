@@ -44,6 +44,12 @@ Operation samples must be located under the `samples/messages` directory in the 
 root. Samples file names must follow the convention `namesace.component.event.yaml`, that is, be a
 label of the event receiver is consuming.
 
+#### Aspect Shortcuts
+
+- `configuration` for [Configuration](/extensions/configuration)
+- `state` for [State](/extensions/state)
+- `http` for HTTP Aspect from [Origins](/extensions/origins)
+
 #### Aspect Result Type Hints
 
 When using aspect calls, there might be situations where the returned values cannot be adequately described using YAML.
