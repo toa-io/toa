@@ -54,3 +54,16 @@ Feature: Context extensions (aspects) samples
       """
     When I replay it
     Then it passes
+
+  Scenario: State Map sample
+    Given I have a sample for `resolve` operation of `echo`:
+      """yaml
+      title: Should return state value
+      input: foo
+      state:
+        values:Map:
+          foo: bar
+      output: bar
+      """
+    When I replay it
+    Then it passes

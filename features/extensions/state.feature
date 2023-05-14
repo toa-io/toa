@@ -26,7 +26,7 @@ Feature: State extension
       """
     And I disconnect
 
-  Scenario: Using well-known context shortcut with set
+  Scenario: Using well-known context shortcut with a set
     Given I compose `state.set` component
     When I call `state.set.set` with:
       """yaml
