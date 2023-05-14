@@ -1,0 +1,12 @@
+title: Should return value
+extensions:
+  state:
+    - result:
+        value: bar
+      permanent: true
+output: bar
+---
+title: Should return value (declaration with a shortcut)
+state:
+  value: bar
+output: bar

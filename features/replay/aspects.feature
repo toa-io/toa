@@ -8,12 +8,12 @@ Feature: Context extensions (aspects) samples
     Given I have a sample for `signal` operation of `echo`:
       """yaml
       title: Should woof
-      output: woof
       extensions:
         configuration:
           - result:
               signal: woof
             permanent: true
+      output: woof
       """
     When I replay it
     Then it passes
@@ -26,9 +26,9 @@ Feature: Context extensions (aspects) samples
     Given I have a sample for `signal` operation of `echo`:
       """yaml
       title: Should croak
-      output: croak
       configuration:
         signal: croak
+      output: croak
       """
     When I replay it
     Then it passes
@@ -37,9 +37,52 @@ Feature: Context extensions (aspects) samples
     Given I have a sample for `signal` operation of `echo`:
       """yaml
       title: Should woof
-      output: woof
       configuration:
         signal: croak
+      output: woof
       """
     When I replay it
     Then it fails
+
+  Scenario: State sample
+    Given I have a sample for `get` operation of `echo`:
+      """yaml
+      title: Should return state value
+      state:
+        value: foo
+      output: foo
+      """
+    When I replay it
+    Then it passes
+
+  Scenario: State Map sample
+    Given I have a sample for `resolve` operation of `echo`:
+      """yaml
+      title: Should return state value
+      input: foo
+      state:
+        values:Map:
+          foo: bar
+      output: bar
+      """
+    When I replay it
+    Then it passes
+
+  Scenario: Origins request async sample
+    Given I have a sample for `get` operation of `web`:
+      """yaml
+      title: Should return state value
+      extensions:
+        http:
+          - arguments:
+              - dev
+              - path/to/resource
+              - method: GET
+            result:
+              json:async:
+                foo: bar
+      output:
+        foo: bar
+      """
+    When I replay it
+    Then it passes

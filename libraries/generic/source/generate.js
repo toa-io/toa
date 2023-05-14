@@ -1,5 +1,7 @@
 'use strict'
 
+const { plain } = require('./plain')
+
 /**
  * @param {function} generator
  */
@@ -13,7 +15,7 @@ function generate (generator) {
  * @param {string[]} [segments]
  */
 function proxy (value, generator, segments = []) {
-  if (value?.constructor.name !== 'Object') return value
+  if (!plain(value)) return value
 
   return new Proxy(value, {
     get: (node, key) => {

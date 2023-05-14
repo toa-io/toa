@@ -50,7 +50,7 @@ class Component extends Connector {
     if ('request' in sample) verify.request(sample.request, request)
     if (sample.terminate === true) return {}
 
-    // make sure current state will be requested from the storage
+    // make sure the current state will be requested from the storage
     if (sample.storage?.current !== undefined && rest.query === undefined) rest.query = { id: newid() }
 
     /** @type {toa.core.Reply} */

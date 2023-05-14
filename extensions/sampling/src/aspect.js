@@ -1,6 +1,6 @@
 'use strict'
 
-const { difference, match } = require('@toa.io/generic')
+const { match } = require('@toa.io/generic')
 const { context } = require('./sample')
 const { ReplayException } = require('./exceptions')
 
@@ -42,10 +42,6 @@ class Aspect {
       const matches = match(args, sample.arguments)
 
       if (!matches) {
-        const diff = difference(sample.arguments, args)
-
-        console.error(diff)
-
         throw new ReplayException(`Context extension '${this.name}' call arguments mismatch`)
       }
     }

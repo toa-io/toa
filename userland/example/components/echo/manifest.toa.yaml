@@ -3,6 +3,11 @@ name: echo
 operations:
   signal:
     output: string
+  get:
+    output: string
+  resolve:
+    input: string
+    output: string
 
 configuration:
   signal: quack

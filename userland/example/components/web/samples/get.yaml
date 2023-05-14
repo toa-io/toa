@@ -1,0 +1,6 @@
+title: Should return response
+http:
+  json:async:
+    foo: bar
+output:
+  foo: bar
