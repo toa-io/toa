@@ -3,7 +3,7 @@
 Library is for internal use only. Barely documented. If you really need to understand something,
 see [tests](test).
 
-# Range
+## Range
 
 `range(input: string): number[]`
 
@@ -15,7 +15,7 @@ Transforms:
 
 See [tests](test/range.test.js).
 
-# Shards
+## Shards
 
 `shards(input: string): string[]`
 
@@ -33,13 +33,13 @@ Uses [`range`](#range).
 
 See [tests](test/shards.test.js).
 
-# Entries
+## Entries
 
 `entries(object: object): [key, value][]`
 
 `Object.entries` including Symbols.
 
-# Generate
+## Generate
 
 `generate(generate: function): object`
 
@@ -48,7 +48,7 @@ See [tests](test/shards.test.js).
 `segments` are nested property names, used to access the generated object and optional `value` is
 passed if property was assigned with a value.
 
-## Example
+### Example
 
 ```javascript
 const generator = (segments, [key, value]) => {} // any property is an object
@@ -60,7 +60,7 @@ const _1 = object.a.b // (['a', 'b'])
 object.a.b.c = 1 // (['a', 'b', 'c'], 1)
 ```
 
-# Echo
+## Echo
 
 `echo(input: string, variables?: Record<string, string>): string`
 
@@ -68,9 +68,9 @@ Returns the input string.
 Substitutes variables to a placeholders following `${NAME}` syntax.
 If no variables are passed, then environment variables are used.
 
-## Example
+### Example
 
-### Environment variables
+#### Environment variables
 
 ```javascript
 process.env['FOO'] = 'bar'
@@ -80,7 +80,7 @@ const output = echo('foo: ${FOO}')
 console.log(output) // foo: bar
 ```
 
-### Custom variables
+#### Custom variables
 
 ```javascript
 const variables = { foo: 'world' }
@@ -89,7 +89,7 @@ const output = echo('hello ${foo}', variables)
 console.log(output) // hello world
 ```
 
-## Index substitutions
+### Index substitutions
 
 `echo(input: string, values: string[]): string`
 
@@ -98,3 +98,19 @@ When the second argument is an `Array`, its values are substituted to a placehol
 ```javascript
 echo('make {0} not {1}', ['love', 'war'])
 ```
+
+# Map
+
+`map(object: object, transformation: Function): object`
+
+Deeply maps an object to a new object using given key-value transformation function.
+
+`(key, value) => [key, value] | undefined`
+
+If the transformation function returns `undefined` then the current key-value pair will remain unchanged.
+
+# Plain
+
+`plain(candidate: any): boolean`
+
+Returns `true` if an argument is a POJO, `false` otherwise.

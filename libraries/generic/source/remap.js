@@ -3,7 +3,7 @@
 /**
  * @template {object} T
  * @param {T} object
- * @param {(value: any, key: string) => any} callback
+ * @param {(value: any, key?: string) => any} callback
  * @returns {T}
  */
 const remap = (object, callback) =>
