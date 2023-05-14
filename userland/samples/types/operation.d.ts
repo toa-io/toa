@@ -1,5 +1,5 @@
 import * as _core from '@toa.io/core/types'
-import * as _sampling from '@toa.io/extensions.sampling'
+import * as _sampling from '@toa.io/extensions.sampling/types/request'
 
 declare namespace toa.samples {
 
@@ -27,7 +27,7 @@ declare namespace toa.samples {
     remote?: operations.Calls
     local?: operations.Calls
     events?: operations.Events
-    extensions?: _sampling.request.Extensions
+    extensions?: _sampling.Extensions
   }
 
 }

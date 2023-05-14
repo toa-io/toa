@@ -1,14 +1,14 @@
 'use strict'
 
-const shortcuts = require('./shortcuts')
+const { cast, expand } = require('./.prepare')
 
 /**
  * @param {toa.samples.Operation & Object} declaration
  */
 const prepare = (declaration) => {
-  for (const [shortcut, prepare] of Object.entries(shortcuts)) {
-    if (shortcut in declaration) prepare(declaration)
-  }
+  expand(declaration)
+
+  if ('extensions' in declaration) cast(declaration.extensions)
 }
 
 exports.prepare = prepare
