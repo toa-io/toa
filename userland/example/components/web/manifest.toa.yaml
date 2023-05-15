@@ -1,0 +1,8 @@
+name: web
+
+operations:
+  get:
+    output: object
+
+origins:
+  dev: https://null

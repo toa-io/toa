@@ -1,6 +1,6 @@
 'use strict'
 
-async function computation (input, context) {
+async function computation (_, context) {
   const response = await context.http.echo.path.get()
   const output = await response.json()
 
