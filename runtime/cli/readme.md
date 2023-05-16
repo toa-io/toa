@@ -116,7 +116,6 @@ the context will be found and replayed sequentially.
 <dl>
 <dt>
 <code>toa conceal</code>
-<img src="https://img.shields.io/badge/Not_Implemented-red" alt="Not Implemented"/>
 </dt>
 <dd>Deploy new declared secrets.
 
