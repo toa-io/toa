@@ -181,6 +181,8 @@ configuration:
     api-key: $STRIPE_API_KEY
 ```
 
+Configuration values that are assigned with a reference to the Secret must be of type `string`.
+
 ### Secrets Deployment
 
 Secrets are not being deployed with context
