@@ -36,11 +36,14 @@ const array = (array) => {
 
   const type = typeof array[0]
 
-  return {
+  const schema = {
     type: 'array',
-    items: { type },
     default: array
   }
+
+  if (array.length === 1) schema.items = array[0]
+
+  return schema
 }
 
 const SYM = Symbol()

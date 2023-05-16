@@ -109,9 +109,6 @@ describe('normalization', () => {
       properties: {
         foo: {
           type: 'array',
-          items: {
-            type: 'number'
-          },
           default: [1, 2, 3]
         }
       }

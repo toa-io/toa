@@ -1,6 +1,6 @@
 'use strict'
 
-const { traverse } = require('@toa.io/generic')
+const { traverse, plain } = require('@toa.io/generic')
 
 /**
  * @param {toa.schema.JSON | Object} schema

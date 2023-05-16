@@ -10,6 +10,22 @@ Feature: Configuration Extension
       """
     And I disconnect
 
+  Scenario Outline: Array of objects
+    Given I boot `configuration.array` component
+    When I invoke `greet` with:
+      """yaml
+      input: <index>
+      """
+    Then the reply is received:
+      """yaml
+      output: <output>
+      """
+    And I disconnect
+    Examples:
+      | index | output         |
+      | 0     | good day       |
+      | 1     | good afternoon |
+
   Scenario: Extending prototype's configuration
     Given I boot `configuration.extended` component
     When I invoke `echo`
