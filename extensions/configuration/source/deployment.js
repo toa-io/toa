@@ -1,21 +1,18 @@
 'use strict'
 
-const { encode } = require('@toa.io/generic')
+const { merge } = require('@toa.io/generic')
+const get = require('./.deployment')
 
 /**
- * @type {toa.deployment.dependency.Constructor}
+ * @param {toa.norm.context.dependencies.Instance[]} components
+ * @param {object} annotations
+ * @return {toa.deployment.dependency.Declaration}
  */
 const deployment = (components, annotations) => {
-  const variables = {}
+  const variables = get.variables(components, annotations)
+  const secrets = get.secrets(components, annotations)
 
-  for (const [id, annotation] of Object.entries(annotations)) {
-    const component = components.find((component) => component.locator.id === id)
-
-    variables[component.locator.label] = [{
-      name: 'TOA_CONFIGURATION_' + component.locator.uppercase,
-      value: encode(annotation)
-    }]
-  }
+  merge(variables, secrets)
 
   return { variables }
 }

@@ -1,9 +1,11 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { decode, encode, empty, overwrite, map } = require('@toa.io/generic')
+const { decode, encode, empty, overwrite } = require('@toa.io/generic')
 
 const { Connector } = require('@toa.io/core')
+
+const { secrets } = require('./secrets')
 const { form } = require('./.provider/form')
 
 /**
@@ -102,29 +104,16 @@ class Provider extends Connector {
   }
 
   #reveal (object) {
-    return map(object,
-      /**
-       * @param {string} value
-       */
-      (value) => {
-        if (typeof value !== 'string') return
+    return secrets(object, (variable) => {
+      if (!(variable in process.env)) throw new Error(`Configuration secret value ${variable} is not set`)
 
-        const match = value.match(SECRET_RX)
+      const base64 = process.env[variable]
 
-        if (match === null) return
-
-        const variable = PREFIX + '_' + match.groups.variable
-
-        if (!(variable in process.env)) throw new Error(`Configuration secret value ${match.groups.variable} is not set`)
-
-        const base64 = process.env[variable]
-
-        return decode(base64)
-      })
+      return decode(base64)
+    })
   }
 }
 
 const PREFIX = 'TOA_CONFIGURATION_'
-const SECRET_RX = /^\$(?<variable>[A-Z_]{1,32})$/
 
 exports.Provider = Provider

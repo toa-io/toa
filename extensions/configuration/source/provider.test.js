@@ -3,7 +3,7 @@
 const { generate } = require('randomstring')
 const { encode } = require('@toa.io/generic')
 
-const { Provider } = require('../src/provider')
+const { Provider } = require('./provider')
 
 it('should be', async () => {
   expect(Provider).toBeInstanceOf(Function)

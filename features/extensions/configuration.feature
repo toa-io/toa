@@ -92,3 +92,5 @@ Feature: Configuration Extension
               name: toa-configuration
               key: FOO_VALUE
       """
+
+

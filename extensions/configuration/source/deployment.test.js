@@ -1,9 +1,11 @@
 'use strict'
 
-const { encode } = require('@toa.io/generic')
+const clone = require('clone-deep')
+const { encode, sample } = require('@toa.io/generic')
 
 const fixtures = require('./deployment.fixtures')
 const { deployment } = require('../')
+const { generate } = require('randomstring')
 
 /** @type {toa.deployment.dependency.Declaration} */
 let declaration
@@ -42,4 +44,27 @@ it('should map configurations', () => {
     expect(env.value).toBeDefined()
     expect(env.value).toStrictEqual(encoded)
   }
+})
+
+it('should declare secrets', async () => {
+  const annotations = clone(fixtures.annotations)
+  const component = sample(fixtures.components)
+  const id = component.locator.id
+  const key = generate()
+  const name = generate().substring(0, 16).toUpperCase()
+  const value = '$' + name
+
+  if (annotations[id] === undefined) annotations[id] = {}
+
+  annotations[id][key] = value
+
+  declaration = deployment(fixtures.components, annotations)
+
+  const variables = declaration.variables[component.locator.label]
+
+  expect(variables).toBeDefined()
+
+  const secret = variables.find((variable) => variable.name === 'TOA_CONFIGURATION__' + name)
+
+  expect(secret).toBeDefined()
 })
