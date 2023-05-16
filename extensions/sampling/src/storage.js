@@ -99,7 +99,7 @@ class Storage extends Connector {
 
     const matches = match(object, next)
 
-    if (!matches) throw new ReplayException('next state mismatch')
+    if (!matches) throw new ReplayException('next state mismatch', object, next)
 
     return true
   }

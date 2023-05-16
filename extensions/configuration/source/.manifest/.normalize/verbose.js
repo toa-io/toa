@@ -21,7 +21,6 @@ const convert = (node) => {
 }
 
 function property (node) {
-  // if (node === null) throw new Error('Configuration: cannot resolve type of null, use JSONSchema declaration.')
   if (node === null) return { type: 'null', default: null }
 
   const type = Array.isArray(node) ? 'array' : typeof node
