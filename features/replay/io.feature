@@ -13,7 +13,7 @@ Feature: Component IO samples
     Then it passes
 
   Scenario: Correct multiple IO samples are passing
-    Given I have a sample for `add` operation of `math.calculations`:
+    Given I have samples for `add` operation of `math.calculations`:
       """
       input:
         a: 1

@@ -75,7 +75,6 @@ it('should invoke operations with translated samples', async () => {
 it('should emit translated messages', async () => {
   /**
    * @param {toa.samples.Message} declaration
-   * @param {string} id
    * @returns {{index: number, message: toa.sampling.Message}}
    */
   const translation = (declaration) => {

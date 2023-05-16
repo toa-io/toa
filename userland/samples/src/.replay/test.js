@@ -9,9 +9,11 @@ const replay = require('./suite')
  * @return {Promise<boolean>}
  */
 const test = async (suite) => {
-  const { ok } = await tap.test(suite.title, replay.suite(suite))
+  const result = await tap.test(suite.title, OPTIONS, replay.suite(suite))
 
-  return ok
+  return result === null ? false : result.ok
 }
+
+const OPTIONS = { bail: true }
 
 exports.test = test
