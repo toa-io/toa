@@ -4,7 +4,7 @@ const clone = require('clone-deep')
 const { generate } = require('randomstring')
 const { sample } = require('@toa.io/generic')
 
-const fixtures = require('./annotations.fixtures')
+const fixtures = require('./annotation.fixtures')
 const { annotation } = require('../')
 
 let input
