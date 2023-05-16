@@ -10,33 +10,29 @@ function map (input, transform) {
   const result = {}
 
   for (const [key, value] of Object.entries(input)) {
-    if (plain(value)) {
-      result[key] = map(value, transform)
+    let output
 
-      continue
-    }
+    if (transform.length === 1) output = val(key, value, transform)
+    else output = keyVal(key, value, transform)
 
-    let k = key
-    let v = value
-
-    if (transform.length === 1) v = val(value, transform)
-    else [k, v] = keyVal(key, value, transform)
-
-    result[k] = v
+    if (output !== undefined) result[output[0]] = output[1]
+    else if (plain(value)) result[key] = map(value, transform)
+    else result[key] = value
   }
 
   return result
 }
 
 /**
+ * @param {any} key
  * @param {any} value
  * @param {toa.generic.map.v} transform
  * @returns {*}
  */
-function val (value, transform) {
+function val (key, value, transform) {
   const output = transform(value)
 
-  return output === undefined ? value : output
+  return output === undefined ? undefined : [key, output]
 }
 
 /**
@@ -48,7 +44,7 @@ function val (value, transform) {
 function keyVal (key, value, transform) {
   const output = transform(key, value)
 
-  return output !== undefined ? output : [key, value]
+  return output === undefined ? undefined : output
 }
 
 exports.map = map

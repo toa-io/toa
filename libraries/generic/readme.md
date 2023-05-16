@@ -104,8 +104,7 @@ echo('make {0} not {1}', ['love', 'war'])
 `map(object: object, transformation: Function): object`
 
 Traverse through a given plain object replacing its values (or key-value pairs) with a given transformation function.
-Vales are any object's properties, that are not plain objects. If the transformation function returns `undefined` then
-the current key-value pair will remain unchanged.
+If the transformation function returns `undefined` then the current key-value pair will remain unchanged.
 
 Transformation function signature is:
 
