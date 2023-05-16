@@ -79,6 +79,8 @@ Feature: Context extensions (aspects) samples
               - path/to/resource
               - method: GET
             result:
+              headers:
+                get:sync: 'application/json'
               json:async:
                 foo: bar
       output:
