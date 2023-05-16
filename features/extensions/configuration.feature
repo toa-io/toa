@@ -54,3 +54,41 @@ Feature: Configuration Extension
     """
     { output: { foo: 'super secret password' } }
     """
+
+  Scenario: Configuration deployment
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """
+      configuration:
+        configuration.base:
+          foo: ok
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        configuration-base:
+          - name: TOA_CONFIGURATION_CONFIGURATION_BASE
+            value: eyJmb28iOiJvayJ9
+      """
+
+  Scenario: Configuration secret values deployment
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """
+      configuration:
+        configuration.base:
+          foo: $FOO_VALUE
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        configuration-base:
+          - name: TOA_CONFIGURATION_CONFIGURATION_BASE
+            value: eyJmb28iOiIkRk9PX1ZBTFVFIn0=
+          - name: TOA_CONFIGURATION__FOO_VALUE
+            secret:
+              name: toa-configuration
+              key: FOO_VALUE
+      """
