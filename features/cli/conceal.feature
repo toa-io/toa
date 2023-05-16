@@ -17,9 +17,9 @@ Feature: Deploy secrets
     Then program should exit
     And stdout should contain lines:
       """
-      database
+      toa-database
       """
-    Then I run `kubectl get secret database -o jsonpath='{.data}' -o yaml`
+    Then I run `kubectl get secret toa-database -o jsonpath='{.data}' -o yaml`
     Then program should exit
     And stdout should contain lines:
       """

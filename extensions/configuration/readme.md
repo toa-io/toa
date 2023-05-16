@@ -38,7 +38,7 @@ configuration:
 ### Deploy secrets
 
 ```shell
-$ toa conceal toa-configuration BAZ_VALUE '$ecr3t'
+$ toa conceal configuration BAZ_VALUE '$ecr3t'
 ```
 
 ---
@@ -190,10 +190,10 @@ deployment ([`toa deploy`](../../runtime/cli/readme.md#deploy)),
 thus must be deployed separately at least once for each deployment environment
 manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
 
-Deployed kubernetes secret's name is predefined as `toa-configuration`.
+Deployed kubernetes secret's name is predefined as `configuration`.
 
 ```shell
-$ toa conceal toa-configuration STRIPE_API_KEY xxxxxxxx
+$ toa conceal configuration STRIPE_API_KEY xxxxxxxx
 ```
 
 ## Operation Context

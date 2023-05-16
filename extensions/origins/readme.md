@@ -118,13 +118,13 @@ Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.I
 to `emit` and `request` methods.
 
 AMQP origins can have credential secrets deployed. Secret's name must
-follow `toa-origins-{namespace}-{component}-{origin}` and it must have keys `username`
+follow `origins-{namespace}-{component}-{origin}` and it must have keys `username`
 and `password`.
 
 ### Example
 
 ```shell
 # deploy credentials to the current kubectl context
-$ toa conceal toa-origins-dummies-dummiy-messages username developer
-$ toa conceal toa-origins-dummies-dummiy-messages password secret
+$ toa conceal origins-dummies-dummiy-messages username developer
+$ toa conceal origins-dummies-dummiy-messages password secret
 ```

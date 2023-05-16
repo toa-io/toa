@@ -3,8 +3,11 @@
 const { secrets } = require('@toa.io/kubernetes')
 const { remap, decode } = require('@toa.io/generic')
 
+const { PREFIX } = require('./conceal')
+
 const reveal = async (argv) => {
-  const secret = await secrets.get(argv.secret)
+  const prefixed = PREFIX + argv.secret
+  const secret = await secrets.get(prefixed)
   const values = remap(secret.data, decode)
 
   for (const [key, value] of Object.entries(values)) {
