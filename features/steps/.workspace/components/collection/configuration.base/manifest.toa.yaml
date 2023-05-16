@@ -8,3 +8,4 @@ operations:
 
 configuration:
   foo: hello
+  bar: null
