@@ -74,3 +74,11 @@ it('should not visit arrays', () => {
 
   expect(count).toStrictEqual(3)
 })
+
+it('should visit mutated arrays', async () => {
+  object.a = 1
+
+  const visit = (node) => [node]
+
+  expect(() => traverse(object, visit)).not.toThrow()
+})
