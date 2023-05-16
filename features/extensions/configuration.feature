@@ -1,6 +1,6 @@
 Feature: Configuration Extension
 
-  Scenario: Should provide Aspect
+  Scenario: Using Aspect
     Given I boot `configuration.base` component
     When I invoke `echo`
     Then the reply is received:
@@ -10,7 +10,7 @@ Feature: Configuration Extension
       """
     And I disconnect
 
-  Scenario: Should extend prototype's configuration
+  Scenario: Extending prototype's configuration
     Given I boot `configuration.extended` component
     When I invoke `echo`
     Then the reply is received:
@@ -21,7 +21,7 @@ Feature: Configuration Extension
       """
     And I disconnect
 
-  Scenario: Configuration environment override
+  Scenario: Environment override
     Given I have a component `configuration.base`
     And I have a context with:
       """
@@ -36,7 +36,7 @@ Feature: Configuration Extension
     { output: { foo: 'bye' } }
     """
 
-  Scenario: Configuration secret values
+  Scenario: Secret values
     Given I have a component `configuration.base`
     And I have a context with:
       """
@@ -55,7 +55,7 @@ Feature: Configuration Extension
     { output: { foo: 'super secret password' } }
     """
 
-  Scenario: Configuration deployment
+  Scenario: Deployment
     Given I have a component `configuration.base`
     And I have a context with:
       """
@@ -72,7 +72,7 @@ Feature: Configuration Extension
             value: eyJmb28iOiJvayJ9
       """
 
-  Scenario: Configuration secret values deployment
+  Scenario: Secret values deployment
     Given I have a component `configuration.base`
     And I have a context with:
       """
@@ -93,4 +93,31 @@ Feature: Configuration Extension
               key: FOO_VALUE
       """
 
+  Scenario: Shared secret deployment
+    Given I have components:
+      | configuration.base     |
+      | configuration.extended |
+    And I have a context with:
+      """
+      configuration:
+        configuration.base:
+          foo: $FOO_VALUE
+        configuration.extended:
+          baz: $FOO_VALUE
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        configuration-base:
+          - name: TOA_CONFIGURATION__FOO_VALUE
+            secret:
+              name: toa-configuration
+              key: FOO_VALUE
+        configuration-extended:
+          - name: TOA_CONFIGURATION__FOO_VALUE
+            secret:
+              name: toa-configuration
+              key: FOO_VALUE
+      """
 
