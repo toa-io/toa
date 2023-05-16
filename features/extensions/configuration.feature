@@ -146,3 +146,7 @@ Feature: Configuration Extension
           foo: $FOO_VALUE
       """
     When I run `toa env`
+    Then the environment contains:
+    """
+    TOA_CONFIGURATION__FOO_VALUE=
+    """
