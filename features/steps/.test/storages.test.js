@@ -2,7 +2,7 @@
 
 const { AssertionError } = require('assert')
 const { generate } = require('randomstring')
-const { load } = require('./.workspace/components')
+const { load } = require('../.workspace/components')
 
 const { knex } = require('@toa.io/storages.sql/test/knex.mock')
 const { gherkin } = require('@toa.io/mock')
@@ -14,7 +14,7 @@ jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/storages.sql', () => mock.sql)
 jest.mock('knex', () => mock.knex)
 
-require('./storages.js')
+require('../storages.js')
 
 it('should be', () => undefined)
 

@@ -11,7 +11,8 @@ const { dump } = require('@toa.io/yaml')
 const fixtures = require('./kubespec.fixtures')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-require('./kubespec.js')
+
+require('../kubespec.js')
 
 const gherkin = mock.gherkin
 

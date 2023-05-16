@@ -9,7 +9,8 @@ const { sample } = require('@toa.io/generic')
 const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-require('./workspace')
+
+require('../workspace')
 
 const gherkin = mock.gherkin
 
@@ -18,10 +19,6 @@ let context
 
 beforeEach(async () => {
   context = { cwd: await directory.temp() }
-})
-
-afterEach(async () => {
-  if (context.cwd !== undefined) await directory.remove(context.cwd)
 })
 
 describe('Given I have a component {component}', () => {
@@ -124,8 +121,8 @@ describe('Given I have integration samples', () => {
   })
 })
 
-describe('Then I have an environment with:', () => {
-  const step = gherkin.steps.Th('I have an environment with:')
+describe('Then the environment contains:', () => {
+  const step = gherkin.steps.Th('the environment contains:')
 
   let envFile
 

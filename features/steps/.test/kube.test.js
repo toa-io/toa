@@ -5,7 +5,8 @@ const mock = require('@toa.io/mock')
 
 jest.mock('@toa.io/kubernetes')
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-require('./kube.js')
+
+require('../kube.js')
 
 const kube = /** @type {{ context: { set: jest.Mock } }} */ require('@toa.io/kubernetes')
 

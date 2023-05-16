@@ -137,3 +137,12 @@ Feature: Configuration Extension
               key: FOO_VALUE
       """
 
+  Scenario: Local environment secrets
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """
+      configuration:
+        configuration.base:
+          foo: $FOO_VALUE
+      """
+    When I run `toa env`

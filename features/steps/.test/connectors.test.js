@@ -14,7 +14,7 @@ const mock = { gherkin, boot: fixtures.mock.boot }
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/boot', () => mock.boot)
 
-require('./connectors')
+require('../connectors')
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -255,4 +255,4 @@ describe('When an event {label} is emitted with the payload:', () => {
   it('should be', async () => undefined)
 })
 
-const COLLECTION = resolve(__dirname, '.workspace/components/collection')
+const COLLECTION = resolve(__dirname, '../.workspace/components/collection')

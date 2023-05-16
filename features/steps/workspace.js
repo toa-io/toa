@@ -51,7 +51,7 @@ Given('I have integration samples',
     await samples.copy(this.cwd)
   })
 
-Then('I have an environment with:',
+Then('the environment contains:',
   /**
    * @param {string} [search]
    * @this {toa.features.Context}
@@ -67,11 +67,15 @@ Then('I have an environment with:',
   })
 
 Then('I update an environment with:',
-  async function (newValue) {
+  /**
+   * @param {string} update
+   * @this {toa.features.Context}
+   */
+  async function (update) {
     const path = join(this.cwd, ENV_FILE)
     const contents = await file.read(path)
     const oldVars = dotenv.parse(contents)
-    const newVars = dotenv.parse(newValue)
+    const newVars = dotenv.parse(update)
     const merged = { ...oldVars, ...newVars }
     const envLines = Object.entries(merged).map(([key, value]) => `${key}=${value}`)
     const mergedLines = envLines.join('\n')

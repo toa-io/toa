@@ -12,7 +12,7 @@ Feature: Custom storage
         custom.storage: foo
       """
     When I run `toa env`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_TEST_CUSTOM_STORAGE=foo
       """
