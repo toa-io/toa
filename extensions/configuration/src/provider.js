@@ -1,7 +1,7 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { decode, encode, empty, overwrite } = require('@toa.io/generic')
+const { decode, encode, empty, overwrite, map } = require('@toa.io/generic')
 
 const { Connector } = require('@toa.io/core')
 const { form } = require('./.provider/form')
@@ -39,11 +39,7 @@ class Provider extends Connector {
   }
 
   async open () {
-    await this.#retrieve()
-  }
-
-  async #source () {
-    return this.#value
+    this.#retrieve()
   }
 
   set (key, value) {
@@ -77,7 +73,11 @@ class Provider extends Connector {
     return this.object === undefined ? undefined : encode(this.object)
   }
 
-  async #retrieve () {
+  #source () {
+    return this.#value
+  }
+
+  #retrieve () {
     const string = process.env[this.key]
     const object = string === undefined ? {} : decode(string)
 
@@ -85,16 +85,10 @@ class Provider extends Connector {
   }
 
   #set (object) {
-    this.#validate(object)
+    object = this.#reveal(object)
     this.#merge(object)
 
     this.object = empty(object) ? undefined : object
-  }
-
-  #validate (object) {
-    const error = this.#schema.match(object)
-
-    if (error !== null) throw new TypeError(error.message)
   }
 
   #merge (object) {
@@ -104,11 +98,33 @@ class Provider extends Connector {
     const value = overwrite(form, object)
 
     this.#schema.validate(value)
-
     this.#value = value
+  }
+
+  #reveal (object) {
+    return map(object,
+      /**
+       * @param {string} value
+       */
+      (value) => {
+        if (typeof value !== 'string') return
+
+        const match = value.match(SECRET_RX)
+
+        if (match === null) return
+
+        const variable = PREFIX + '_' + match.groups.variable
+
+        if (!(variable in process.env)) throw new Error(`Configuration secret value ${match.groups.variable} is not set`)
+
+        const base64 = process.env[variable]
+
+        return decode(base64)
+      })
   }
 }
 
 const PREFIX = 'TOA_CONFIGURATION_'
+const SECRET_RX = /^\$(?<variable>[A-Z_]{1,32})$/
 
 exports.Provider = Provider

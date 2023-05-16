@@ -47,10 +47,10 @@ Feature: Configuration Extension
     When I run `toa env`
     And I update an environment with:
       """
-      TOA_CONFIGURATION__FOO_SECRET_VALUE=secret
+      TOA_CONFIGURATION__FOO_SECRET_VALUE=c3VwZXIgc2VjcmV0IHBhc3N3b3Jk
       """
     And I run `toa invoke echo -p ./components/configuration.base`
     And stdout should contain lines:
     """
-    { output: { foo: 'secret' } }
+    { output: { foo: 'super secret password' } }
     """
