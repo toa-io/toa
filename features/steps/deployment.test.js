@@ -9,8 +9,8 @@ const { load } = require('@toa.io/yaml')
 const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-require('../deployment')
-require('../workspace')
+require('./deployment')
+require('./workspace')
 
 const gherkin = mock.gherkin
 
@@ -70,7 +70,7 @@ describe('Then exported {helm-artifact} should contain:', () => {
   const step = gherkin.steps.Th('exported {helm-artifact} should contain:')
 
   beforeEach(() => {
-    context.cwd = join(__dirname, 'assets')
+    context.cwd = join(__dirname, '.test/assets')
   })
 
   describe('chart', () => {
@@ -94,7 +94,7 @@ describe('Then exported {helm-artifact} should not contain:', () => {
   const step = gherkin.steps.Th('exported {helm-artifact} should not contain:')
 
   beforeEach(() => {
-    context.cwd = join(__dirname, 'assets')
+    context.cwd = join(__dirname, '.test/assets')
   })
 
   it('should be', () => undefined)

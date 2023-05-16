@@ -5,7 +5,7 @@ const mock = require('@toa.io/mock')
 
 jest.mock('@toa.io/kubernetes')
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-require('../kube.js')
+require('./kube.js')
 
 const kube = /** @type {{ context: { set: jest.Mock } }} */ require('@toa.io/kubernetes')
 
@@ -21,7 +21,7 @@ describe('Given I have a kube context {word}', () => {
   it('should set context', async () => {
     const context = generate()
 
-    await step.call(null, context)
+    await step(context)
 
     expect(kube.context.set).toHaveBeenCalledWith(context)
   })

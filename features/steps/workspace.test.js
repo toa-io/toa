@@ -9,7 +9,7 @@ const { sample } = require('@toa.io/generic')
 const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
-require('../workspace')
+require('./workspace')
 
 const gherkin = mock.gherkin
 

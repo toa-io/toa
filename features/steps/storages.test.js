@@ -2,10 +2,11 @@
 
 const { AssertionError } = require('assert')
 const { generate } = require('randomstring')
-const { load } = require('../.workspace/components')
+const { load } = require('./.workspace/components')
 
 const { knex } = require('@toa.io/storages.sql/test/knex.mock')
 const { gherkin } = require('@toa.io/mock')
+const { random } = require('@toa.io/generic')
 const fixtures = require('./storages.fixtures')
 const mock = { gherkin, sql: fixtures.mock.sql, knex }
 
@@ -13,8 +14,7 @@ jest.mock('@cucumber/cucumber', () => mock.gherkin)
 jest.mock('@toa.io/storages.sql', () => mock.sql)
 jest.mock('knex', () => mock.knex)
 
-require('../storages.js')
-const { random } = require('../../../libraries/generic')
+require('./storages.js')
 
 it('should be', () => undefined)
 
@@ -64,7 +64,6 @@ describe('Given I have a {storage} database {word}', () => {
     expect(context.storage.migration).toStrictEqual(migration)
     expect(context.storage.tables).toStrictEqual({})
   })
-
 })
 
 describe('Given the database has a structure for the {component} component', () => {

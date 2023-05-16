@@ -75,6 +75,7 @@ Then('I update an environment with:',
     const merged = { ...oldVars, ...newVars }
     const envLines = Object.entries(merged).map(([key, value]) => `${key}=${value}`)
     const mergedLines = envLines.join('\n')
+
     await file.write(path, mergedLines)
   })
 
