@@ -38,3 +38,25 @@ it('should keep unmodified keys', async () => {
 
   expect(output).toStrictEqual({ foo: 'replaced', bar: 'baz' })
 })
+
+it('should transform values', async () => {
+  function transform (value) {
+    if (typeof value === 'string') return value + ' world'
+  }
+
+  const input = { foo: { bar: 'hello' } }
+  const output = map(input, transform)
+
+  expect(output).toStrictEqual({ foo: { bar: 'hello world' } })
+})
+
+it('should transform values of object type', async () => {
+  function transform (key, _) {
+    if (key === 'foo') return [key, { baz: 'bye' }]
+  }
+
+  const input = { foo: { bar: 'hello' } }
+  const output = map(input, transform)
+
+  expect(output).toStrictEqual({ foo: { baz: 'bye' } })
+})

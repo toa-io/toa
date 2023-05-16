@@ -18,7 +18,7 @@ Feature: Export local deployment environment variables
         default@some: amqp://developer:secret@some.host
       """
     When I run `toa env some`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_ENV=some
       TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAc29tZS5ob3N0In0=
@@ -41,7 +41,7 @@ Feature: Export local deployment environment variables
       TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
       """
     And I run `toa env dev`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_ENV=dev
       TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAZGV2Lmhvc3QifQ==
@@ -53,7 +53,7 @@ Feature: Export local deployment environment variables
     Given I have a component `dummies.one`
     And I have a context
     When I run `toa <command>`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_ENV=local
       TOA_BINDINGS_AMQP_DEFAULT_USERNAME=
@@ -73,7 +73,7 @@ Feature: Export local deployment environment variables
           bad: http://localhost:8888/
       """
     When I run `toa env`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_ORIGINS_ORIGINS_HTTP=eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
       """

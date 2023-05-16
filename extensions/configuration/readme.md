@@ -30,15 +30,15 @@ function transition (input, entity, context) {
 # context.toa.yaml
 configuration:
   dummies.dummy:
-    foo: qux
-    foo@staging: quux # use deployment environment discriminator
-    baz: $BAZ_VALUE   # use secrets
+    foo: qux          # override default value defined by dummies.dummy
+    foo@staging: quux # deployment environment discriminator
+    baz: $BAZ_VALUE   # secret
 ```
 
 ### Deploy secrets
 
 ```shell
-$ toa conceal
+$ toa conceal configuration BAZ_VALUE '$ecr3t'
 ```
 
 ---
@@ -107,7 +107,7 @@ extensions:
         default: 'baz'
       bar:
         type: number
-    required: [ foo ]
+    required: [foo]
 ```
 
 ### Concise Declaration
@@ -140,7 +140,7 @@ extensions:
         type: number
         default: 1
     additionalProperties: false
-    required: [ foo, bar ]
+    required: [foo, bar]
 ```
 
 ## Context Configuration
@@ -170,11 +170,7 @@ by [`toa configure`](../../runtime/cli/readme.md#configure) command.
 
 ## Configuration Secrets
 
-> ![Important](https://img.shields.io/badge/Important-red)<br/>
-> Not implemented. [#132](https://github.com/toa-io/toa/issues/132)
-
-Context Configuration values which are uppercase strings prefixed with `$`
-considered as Secrets.
+Context Configuration values which are uppercase strings prefixed with `$` considered as Secrets.
 
 ### Example
 
@@ -185,12 +181,20 @@ configuration:
     api-key: $STRIPE_API_KEY
 ```
 
+Configuration values that are assigned with a reference to the Secret must be of type `string`.
+
 ### Secrets Deployment
 
 Secrets are not being deployed with context
 deployment ([`toa deploy`](../../runtime/cli/readme.md#deploy)),
 thus must be deployed separately at least once for each deployment environment
 manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
+
+Deployed kubernetes secret's name is predefined as `configuration`.
+
+```shell
+$ toa conceal configuration STRIPE_API_KEY xxxxxxxx
+```
 
 ## Operation Context
 

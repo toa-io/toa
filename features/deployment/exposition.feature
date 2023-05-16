@@ -8,4 +8,3 @@ Feature: Exposition Deployment
 
   Scenario: Dockerfile has correct command
     Then the file ./images/*exposition*/Dockerfile should contain exact line 'CMD toa serve .'
-

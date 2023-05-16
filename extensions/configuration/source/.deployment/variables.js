@@ -3,9 +3,12 @@
 const { encode } = require('@toa.io/generic')
 
 /**
- * @type {toa.deployment.dependency.Constructor}
+ * @param {toa.norm.context.dependencies.Instance[]} components
+ * @param {object} annotations
+ * @return {toa.deployment.dependency.Variables}
  */
-const deployment = (components, annotations) => {
+function variables (components, annotations) {
+  /** @type {toa.deployment.dependency.Variables} */
   const variables = {}
 
   for (const [id, annotation] of Object.entries(annotations)) {
@@ -17,7 +20,7 @@ const deployment = (components, annotations) => {
     }]
   }
 
-  return { variables }
+  return variables
 }
 
-exports.deployment = deployment
+exports.variables = variables

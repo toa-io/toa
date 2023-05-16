@@ -2,42 +2,20 @@
 
 ## Development
 
-### configure
-
-Outputs shell commands to manipulate local environment variables, thus must be piped
-with `source /dev/stdin` to apply.
+### env
 
 <dl>
-<dt><code>toa configure &lt;key&gt; [value]</code></dt>
-<dd>
-Set Configuration Object key. Nested keys are addressed with dot notation.
+<dt><code>toa env [environment]</code></dt>
+<dd>Set local environment variables to a <code>.env</code> file.
 
-<code>--path</code> path to component (default <code>.</code>)<br/>
-<code>--reset</code> clear <code>key</code><br/>
-
-#### Examples
-
-> It is assumed you are in the component's directory, use `--path` otherwise.
-
-```shell
-# set new value
-$ toa configure foo 'new value' | source /dev/stdin
-```
-
-```shell
-# clear key
-$ toa configure bar.baz --reset | source /dev/stdin
-```
-
-</dd>
-<dt><code>toa configure reset</code></dt>
-<dd>Remove Configuration Object.</dd>
-<dt><code>toa configure print</code></dt>
-<dd>Output Configuration Object as YAML.
-
-<code>--json</code> as JSON
+<code>environment</code> deployment environment name (default <code>local</code>).<br/>
+<code>--path</code> path to context (default <code>.</code>)<br/>
 </dd>
 </dl>
+
+Credentials specified in `.env` file are preserved.
+
+> It is recommended to add `.env` to `.gitignore`.
 
 ### replay
 
@@ -66,10 +44,8 @@ $ toa replay ./path/to/context
 $ toa replay --title "should add numbers"
 ```
 
-If path is a context directory (containing `context.toa.yaml` file), samples for components within
+If a path is a context directory (containing `context.toa.yaml` file), samples for components within
 the context will be found and replayed sequentially.
-
-## Exporting
 
 ### export manifest
 
@@ -81,22 +57,6 @@ the context will be found and replayed sequentially.
 <code>--error</code> print errors only<br/>
 </dd>
 </dl>
-
-### env
-
-<dl>
-<dt><code>toa env [environment]</code></dt>
-<dd>Select environment. Set local environment variables to <code>.env</code> file.
-
-<code>environment</code> deployment environment name (default <code>local</code>).<br/>
-<code>--path</code> path to context (default <code>.</code>)<br/>
-</dd>
-</dl>
-
-> It is recommended to add `.env` to `.gitignore`.
-
-> Credentials specified in a `.env` file are preserved during environment selection.
-
 ## Deployment
 
 > Deployment commands use current `kubectl` context.
@@ -116,7 +76,6 @@ the context will be found and replayed sequentially.
 <dl>
 <dt>
 <code>toa conceal</code>
-<img src="https://img.shields.io/badge/Not_Implemented-red" alt="Not Implemented"/>
 </dt>
 <dd>Deploy new declared secrets.
 

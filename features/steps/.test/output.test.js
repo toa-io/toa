@@ -7,6 +7,7 @@ const { sample } = require('@toa.io/generic')
 const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
+
 require('../output')
 
 const gherkin = mock.gherkin

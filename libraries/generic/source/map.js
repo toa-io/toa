@@ -4,13 +4,16 @@ const { plain } = require('./plain')
 
 /**
  * @param {object} input
- * @param {(key: string, value: any) => [key: string, value: any]} transform
+ * @param {toa.generic.map.transform} transform
  */
 function map (input, transform) {
   const result = {}
 
   for (const [key, value] of Object.entries(input)) {
-    const output = transform(key, value)
+    let output
+
+    if (transform.length === 1) output = val(key, value, transform)
+    else output = keyVal(key, value, transform)
 
     if (output !== undefined) result[output[0]] = output[1]
     else if (plain(value)) result[key] = map(value, transform)
@@ -18,6 +21,30 @@ function map (input, transform) {
   }
 
   return result
+}
+
+/**
+ * @param {any} key
+ * @param {any} value
+ * @param {toa.generic.map.v} transform
+ * @returns {*}
+ */
+function val (key, value, transform) {
+  const output = transform(value)
+
+  return output === undefined ? undefined : [key, output]
+}
+
+/**
+ * @param {string} key
+ * @param {any} value
+ * @param {toa.generic.map.kv} transform
+ * @returns {*}
+ */
+function keyVal (key, value, transform) {
+  const output = transform(key, value)
+
+  return output === undefined ? undefined : output
 }
 
 exports.map = map

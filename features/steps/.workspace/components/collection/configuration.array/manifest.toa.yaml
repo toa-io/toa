@@ -1,0 +1,14 @@
+namespace: configuration
+name: base
+
+operations:
+  greet:
+    input: [0, 1]
+    output: string
+
+configuration:
+  greetings:
+    - a: good
+      b: day
+    - a: good
+      b: afternoon

@@ -4,6 +4,7 @@ const { resolve } = require('node:path')
 const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
+
 require('../directory')
 
 const gherkin = mock.gherkin
@@ -67,7 +68,7 @@ describe('Given my working directory is {path}:', () => {
 
   it('should handle glob', async () => {
     const path = resolve(__dirname)
-    const expected = resolve(path, 'assets/directory')
+    const expected = resolve(path, './assets/directory')
 
     context.cwd = path
     process.chdir(path)

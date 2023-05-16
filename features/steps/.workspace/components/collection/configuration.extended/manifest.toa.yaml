@@ -9,3 +9,4 @@ operations:
 
 configuration:
   bar: 1
+  baz: something
