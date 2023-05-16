@@ -103,11 +103,17 @@ echo('make {0} not {1}', ['love', 'war'])
 
 `map(object: object, transformation: Function): object`
 
-Deeply maps an object to a new object using given key-value transformation function.
+Traverse through a given plain object replacing its values (or key-value pairs) with a given transformation function.
+Vales are any object's properties, that are not plain objects. If the transformation function returns `undefined` then
+the current key-value pair will remain unchanged.
 
-`(key, value) => [key, value] | undefined`
+Transformation function signature is:
 
-If the transformation function returns `undefined` then the current key-value pair will remain unchanged.
+`(value: any) => any | undefined`
+
+or
+
+`(key: string, value: any) => [string, any] | undefined`
 
 # Plain
 
