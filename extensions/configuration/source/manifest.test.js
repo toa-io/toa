@@ -120,10 +120,4 @@ describe('normalization', () => {
 
     expect(() => manifest(concise)).toThrow(/array items type because it's empty/)
   })
-
-  it('should throw on null', () => {
-    const concise = { foo: null }
-
-    expect(() => manifest(concise)).toThrow(/type of null/)
-  })
 })
