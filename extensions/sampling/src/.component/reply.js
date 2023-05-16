@@ -10,7 +10,7 @@ const { ReplayException } = require('../exceptions')
 const verify = (sample, reply) => {
   const matches = match(reply, sample)
 
-  if (!matches) throw new ReplayException(`operation reply mismatch`)
+  if (!matches) throw new ReplayException(`operation reply mismatch`, reply, sample)
 }
 
 exports.verify = verify

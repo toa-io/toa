@@ -42,7 +42,7 @@ class Aspect {
       const matches = match(args, sample.arguments)
 
       if (!matches) {
-        throw new ReplayException(`Context extension '${this.name}' call arguments mismatch`)
+        throw new ReplayException(`Context extension '${this.name}' call arguments mismatch`, args, sample.arguments)
       }
     }
 

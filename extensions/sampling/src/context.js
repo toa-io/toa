@@ -57,7 +57,7 @@ class Context extends Connector {
     if (sample?.request !== undefined) {
       const matches = match(request, sample.request)
 
-      if (matches === false) throw new ReplayException(`Call '${segments.join(dot)}' request mismatch`)
+      if (matches === false) throw new ReplayException(`Call '${segments.join(dot)}' request mismatch`, request, sample.request)
     }
 
     if (sample?.reply !== undefined) return sample.reply
