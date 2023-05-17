@@ -100,3 +100,18 @@ it('should import into array of arrays', async () => {
 
   expect(object).toStrictEqual([[{ b: 1 }]])
 })
+
+it('should import deep properties of array type', async () => {
+  const path = resolve(__dirname, './examples/imports/arrays/f.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual({
+    root: {
+      array: [{
+        item: {
+          b: 1
+        }
+      }]
+    }
+  })
+})
