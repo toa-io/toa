@@ -65,7 +65,7 @@ it('should throw exception if file not found', async () => {
   await expect(load(path)).rejects.toThrow('No files matching pattern')
 })
 
-it('should import in array element', async () => {
+it('should import into array elements', async () => {
   const path = resolve(__dirname, './examples/imports/arrays/a.yaml')
   const object = await load(path)
 

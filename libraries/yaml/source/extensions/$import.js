@@ -9,7 +9,7 @@ const $import = (object, path, yaml) => {
   return traverse(object, (node) => {
     if ('$import' in node) extend(node, path, yaml)
 
-    for (const [, value] of Object.entries(node)) {
+    for (const value of Object.values(node)) {
       if (Array.isArray(value)) value.forEach(item => $import(item, path, yaml))
     }
   })
