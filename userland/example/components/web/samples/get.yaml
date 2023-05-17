@@ -1,5 +1,7 @@
 title: Should return response
 http:
+  headers:
+    get:sync: 'application/json'
   json:async:
     foo: bar
 output:
