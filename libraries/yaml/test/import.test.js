@@ -64,3 +64,54 @@ it('should throw exception if file not found', async () => {
 
   await expect(load(path)).rejects.toThrow('No files matching pattern')
 })
+
+it('should import properties of array type', async () => {
+  const path = resolve(__dirname, './examples/imports/arrays/a.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual({
+    array: [{
+      item: {
+        b: 1
+      }
+    }]
+  })
+})
+
+it('should import into mixed array', async () => {
+  const path = resolve(__dirname, './examples/imports/arrays/c.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual({
+    array: ['hello', { b: 1 }, null]
+  })
+})
+
+it('should import into array', async () => {
+  const path = resolve(__dirname, './examples/imports/arrays/d.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual([{ b: 1 }])
+})
+
+it('should import into array of arrays', async () => {
+  const path = resolve(__dirname, './examples/imports/arrays/e.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual([[{ b: 1 }]])
+})
+
+it('should import deep properties of array type', async () => {
+  const path = resolve(__dirname, './examples/imports/arrays/f.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual({
+    root: {
+      array: [{
+        item: {
+          b: 1
+        }
+      }]
+    }
+  })
+})
