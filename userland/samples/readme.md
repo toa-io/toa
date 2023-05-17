@@ -92,11 +92,11 @@ context (so as required extensions). See [examples](../example/samples).
 
 ## Replay
 
+> Replaying samples requires local deployment environment.
+
 ### CLI
 
-Samples may be *replayed* using [`toa replay`](/runtime/cli/readme.md#replay) command.
-
-> Replaying samples requires local deployment environment.
+Samples may be replayed using [`toa replay`](/runtime/cli/readme.md#replay) command.
 
 See [features](/features/cli/replay.feature).
 
