@@ -51,3 +51,16 @@ it('should import within multidoc files', async () => {
 
   expect(object).toStrictEqual([{ foo: { bar: 1 } }, { qux: 'hello' }])
 })
+
+it('should import from upper directories', async () => {
+  const path = resolve(__dirname, './examples/imports/inner/inner.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual({ inner: 'ok', outer: 'ok' })
+})
+
+it('should throw exception if file not found', async () => {
+  const path = resolve(__dirname, './examples/imports/wrong/missing.yaml')
+
+  await expect(load(path)).rejects.toThrow('No files matching pattern')
+})

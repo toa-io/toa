@@ -20,6 +20,9 @@ function extend (node, path, yaml) {
   const basepath = dirname(path)
   const pattern = resolve(basepath, node.$import)
   const files = file.glob.sync(pattern).filter((file) => file !== path)
+
+  if (files.length === 0) throw new Error(`No files matching pattern '${pattern}'`)
+
   const objects = files.map((path) => yaml.load.sync(path))
 
   delete node.$import
