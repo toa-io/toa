@@ -93,3 +93,10 @@ it('should import into array', async () => {
 
   expect(object).toStrictEqual([{ b: 1 }])
 })
+
+it('should import into array of arrays', async () => {
+  const path = resolve(__dirname, './examples/imports/arrays/e.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual([[{ b: 1 }]])
+})
