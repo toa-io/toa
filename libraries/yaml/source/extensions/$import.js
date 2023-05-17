@@ -15,7 +15,9 @@ const walk = (object, path, yaml) => {
   return traverse(object, (node) => {
     if ('$import' in node) extend(node, path, yaml)
 
-    for (const value of Object.values(object)) $import(value, path, yaml)
+    for (const value of Object.values(object)) {
+      if (Array.isArray(value)) $import(value, path, yaml)
+    }
   })
 }
 
