@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.origins",
-  "version": "0.10.0-dev.5",
+  "version": "0.10.0-dev.6",
   "description": "Toa Origins",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,10 +19,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "1.1.0-dev.5",
-    "@toa.io/generic": "0.11.0-dev.5",
-    "@toa.io/schemas": "0.8.4-dev.5",
-    "@toa.io/yaml": "0.7.6-dev.5",
+    "@toa.io/core": "1.1.0-dev.6",
+    "@toa.io/generic": "0.11.0-dev.6",
+    "@toa.io/schemas": "0.8.4-dev.6",
+    "@toa.io/yaml": "0.7.6-dev.6",
     "comq": "0.7.0",
     "node-fetch": "2.6.7"
   },
