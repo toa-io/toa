@@ -57,7 +57,7 @@
     "test:features": "npx cucumber-js",
     "test:features:unit": "npx cucumber-js -p schema && npx cucumber-js -p norm",
     "test:samples": "toa replay userland/example",
-    "test:all": "npm run test && npm run test:integration && npm run test:features && test:samples",
+    "test:all": "npm run test && npm run test:integration && npm run test:samples && npm run test:features",
     "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",
     "lint": "npx standard --verbose --fix | npx snazzy",
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
