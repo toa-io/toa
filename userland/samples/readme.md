@@ -92,6 +92,40 @@ context (so as required extensions). See [examples](../example/samples).
 
 ## Replay
 
+### CLI
+
 Samples may be *replayed* using [`toa replay`](/runtime/cli/readme.md#replay) command.
 
 > Replaying samples requires local deployment environment.
+
+See [features](/features/cli/replay.feature).
+
+### Framework
+
+`async components(paths: string[], options?): boolean`
+
+Replay component samples.
+
+`async components(paths: string[], options?): boolean`
+
+Replay context and its components' samples.
+
+#### Options
+
+<dl>
+<dt><code><strong>id</strong>: string</code></dt>
+<dd>Replay samples for a specified component</dd>
+
+<dt><code><strong>integration</strong>: string</code></dt>
+<dd>Replay samples for a specified component only</dd>
+<dd></dd>
+
+<dt><code><strong>operation</strong>: string</code></dt>
+<dd>Replay samples for specified operation</dd>
+
+<dt><code><strong>title</strong>: string</code></dt>
+<dd>Replay samples with titles matching given regexp</dd>
+
+</dl>
+
+See [types](types/suite.d.ts).
