@@ -1,0 +1,4 @@
+root:
+  array:
+    - item:
+        $import: './b.yaml'
