@@ -1,3 +1,3 @@
 array:
-  - configuration:
+  - item:
       $import: './b.yaml'

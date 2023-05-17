@@ -71,7 +71,7 @@ it('should import into array elements', async () => {
 
   expect(object).toStrictEqual({
     array: [{
-      configuration: {
+      item: {
         b: 1
       }
     }]
