@@ -6,11 +6,13 @@ const { file } = require('@toa.io/filesystem')
 
 /** @type {toa.yaml.extension} */
 const $import = (object, path, yaml) => {
+  if (Array.isArray(object)) object.forEach(item => $import(item, path, yaml))
+
   return traverse(object, (node) => {
     if ('$import' in node) extend(node, path, yaml)
 
-    for (const value of Object.values(node)) {
-      if (Array.isArray(value)) value.forEach(item => $import(item, path, yaml))
+    for (const value of Object.values(object)) {
+      if (Array.isArray(value)) $import(value, path, yaml)
     }
   })
 }

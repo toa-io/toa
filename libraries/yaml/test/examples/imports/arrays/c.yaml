@@ -1,0 +1,5 @@
+array:
+  - 'hello'
+  - $import: './b.yaml'
+  - null
+
