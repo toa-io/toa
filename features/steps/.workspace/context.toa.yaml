@@ -2,6 +2,6 @@ name: collection
 version: 0.0.0
 packages: 'components/*'
 registry: collection
-amqp@dev: amqp://host.docker.internal
-mongodb@dev: mongodb://host.docker.internal
-sql@dev: pg://host.docker.internal/integration
+amqp: amqp://host.docker.internal
+mongodb: mongodb://host.docker.internal
+sql: pg://host.docker.internal/integration
