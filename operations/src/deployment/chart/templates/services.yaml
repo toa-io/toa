@@ -47,7 +47,9 @@ metadata:
 {{ toYaml .ingress.annotations | indent 4 }}
   {{- end }}
 spec:
-  ingressClassName: {{ required "ingress.class is required" .ingress.class }}
+  {{- if .ingress.class }}
+  ingressClassName: {{ .ingress.class }}
+  {{- end }}
   rules:
     - host: {{ required "ingress.host is required" .ingress.host }}
       http:
