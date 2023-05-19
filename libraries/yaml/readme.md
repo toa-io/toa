@@ -22,50 +22,41 @@ Same as load(), but understands multi-document sources.
 
 Write the `data` to a `file` in YAML format.
 
-# Additional YAML tags
+# Keywords
 
-## $import
+Keywords are used as object keys; that is, they can only be applied to the objects they belong to (*target objects*).
 
-This tag loads content from an external file and merges it into the resulting object.
+## <assign
 
-```yaml
-$import: <path>
-```
+Assign properties of a source object to a target.
 
-- `path` - can be specified as an absolute or relative path, or as a glob pattern.
+The source object may be a part of the current document, an external file or its part, or a set of files or their parts.
+Parts of the document are references using JSONPath.
 
 ### Example
 
 ```yaml
-#a.yaml
-foo:
-  bar: 1
+# source.yaml
+greeting:
+  hello: world
 ```
 
 ```yaml
-#b.yaml
-qux: 'hello'
+# target.yaml
 foo:
-  baz: 2
+  bar: baz
+<assign: $.foo ./source.yaml source.yaml#$.greeting
 ```
+
+An object, loaded from `target.yaml` will look like:
 
 ```yaml
-#c.yaml
-$import: ./*.yaml
+foo:
+  bar: baz
+bar: baz        # assigned by $.foo
+greeting: # assigned by ./source.yaml
+  hello: world
+hello: world    # assigned by source.yaml#$.greeting
 ```
 
-```javascript
-const value = yaml.load('c.yaml')
-
-console.log(value)
-
-/*
-{
-  foo: {
-    bar: 1,
-    baz: 2
-  },
-  qux: 'hello'
-}
-*/
-```
+Paths can be specified as an absolute or relative path, or as a glob pattern.
