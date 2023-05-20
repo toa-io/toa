@@ -21,7 +21,7 @@ class ReplayException extends SamplingException {
   constructor (message, actual, expected) {
     super(RANGE + 2, message)
 
-    if (actual !== undefined && expected !== undefined) this.diff = diff(actual, expected, DIFF_OPTIONS)
+    if (actual !== undefined && expected !== undefined) this.diff = diff(expected, actual, DIFF_OPTIONS)
   }
 }
 
