@@ -18,7 +18,7 @@ it('should be', () => {
 const paths = [generate()]
 
 /** @type {toa.samples.suite.Options} */
-const options = { component: generate() }
+const options = { component: generate(), runner: { [generate()]: generate() } }
 
 /** @type {boolean} */
 let result
@@ -34,7 +34,7 @@ it('should load suite', async () => {
 it('should replay suite', async () => {
   const suite = await mock.suite.components.mock.results[0].value
 
-  expect(mock.replay.replay).toHaveBeenCalledWith(suite, paths)
+  expect(mock.replay.replay).toHaveBeenCalledWith(suite, paths, options.runner)
 })
 
 it('should return result', async () => {

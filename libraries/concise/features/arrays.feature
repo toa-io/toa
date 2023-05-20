@@ -107,7 +107,7 @@ Feature: Arrays
       additionalProperties: false
       """
 
-  Scenario: Enum of concise objects
+  Scenario: One of concise objects
     When I write schema:
       """yaml
       foo:
@@ -120,10 +120,20 @@ Feature: Arrays
       type: object
       properties:
         foo:
-          type: object
-          enum:
-            - foo: 'hello'
-              bar: 1
-            - baz: number
+          oneOf:
+            - type: object
+              properties:
+                foo:
+                  type: string
+                  default: 'hello'
+                bar:
+                  type: number
+                  default: 1
+              additionalProperties: false
+            - type: object
+              properties:
+                baz:
+                  type: number
+              additionalProperties: false
       additionalProperties: false
       """

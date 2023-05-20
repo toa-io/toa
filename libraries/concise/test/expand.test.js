@@ -139,3 +139,35 @@ it.each(FORMATS)('should expand %s formats', async (format) => {
     format
   })
 })
+
+it('should expand array of schemas to enum', async () => {
+  const cos = [
+    { foo: 'string' },
+    { bar: 'number' }
+  ]
+
+  const schema = expand(cos, valid)
+
+  expect(schema).toStrictEqual({
+    oneOf: [
+      {
+        type: 'object',
+        properties: {
+          foo: {
+            type: 'string'
+          }
+        },
+        additionalProperties: false
+      },
+      {
+        type: 'object',
+        properties: {
+          bar: {
+            type: 'number'
+          }
+        },
+        additionalProperties: false
+      }
+    ]
+  })
+})
