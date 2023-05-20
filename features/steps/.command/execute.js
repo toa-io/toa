@@ -30,6 +30,7 @@ async function execute (command, options = {}) {
     this.exitCode = e.code
 
     if (e.code === 'ABORT_ERR') this.aborted = true
+    else console.error(e)
   }
 
   this.stdout = result.stdout.trim()
