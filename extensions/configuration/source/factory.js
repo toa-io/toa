@@ -11,11 +11,11 @@ const { Provider } = require('./provider')
 class Factory {
   /**
    * @param {toa.core.Locator} locator
-   * @param {toa.schema.JSON | Object} declaration
+   * @param {toa.schema.JSON | Object} annotation
    * @return {toa.extensions.configuration.Aspect}
    */
-  aspect (locator, declaration) {
-    const schema = new Schema(declaration)
+  aspect (locator, annotation) {
+    const schema = new Schema(annotation)
     const provider = new Provider(locator, schema)
     const configuration = new Configuration(provider)
 
