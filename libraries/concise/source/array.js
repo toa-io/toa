@@ -14,13 +14,12 @@ const array = (array, validate) => {
 
   const type = typeof array[0]
   const sample = array[0]
-  const primitive = PRIMITIVES.includes(sample)
 
   // array of a given type
   if (array.length === 1) {
     let items
 
-    if (primitive) items = { type: sample }
+    if (PRIMITIVES.includes(sample)) items = { type: sample }
     else items = expand(array[0], validate)
 
     return {
