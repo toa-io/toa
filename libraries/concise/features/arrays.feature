@@ -106,3 +106,24 @@ Feature: Arrays
             additionalProperties: false
       additionalProperties: false
       """
+
+  Scenario: Enum of concise objects
+    When I write schema:
+      """yaml
+      foo:
+        - foo: 'hello'
+          bar: 1
+        - baz: number
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo:
+          type: object
+          enum:
+            - foo: 'hello'
+              bar: 1
+            - baz: number
+      additionalProperties: false
+      """
