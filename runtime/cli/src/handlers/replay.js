@@ -16,7 +16,8 @@ async function replay (argv) {
     component: argv.component,
     integration: argv.integration,
     operation: argv.operation,
-    title: argv.title
+    title: argv.title,
+    runner: { bail: true }
   }
 
   if (paths !== null) {

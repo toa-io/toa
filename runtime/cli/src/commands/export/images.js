@@ -8,10 +8,6 @@ const builder = (yargs) => {
       type: 'string',
       desc: 'Path to export to'
     })
-    .positional('environment', {
-      type: 'string',
-      desc: 'Deployment environment'
-    })
     .option('path', {
       alias: 'p',
       group: 'Command options:',
@@ -21,7 +17,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = ['images <environment> <target>', 'imgs', 'img']
+exports.command = ['images <target>', 'img']
 exports.desc = 'Export docker image sources'
 exports.builder = builder
 exports.handler = prepare

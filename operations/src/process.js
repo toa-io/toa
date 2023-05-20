@@ -7,7 +7,7 @@ const execa = require('execa')
  */
 class Process {
   async execute (cmd, args, options = {}) {
-    console.log('toa> ', cmd, args.join(' '))
+    console.log('toa>', cmd, args.join(' '))
 
     /** @type {execa.ExecaReturnValue<import('stream').Stream>} */
     const command = execa(cmd, args)
