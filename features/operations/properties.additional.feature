@@ -16,3 +16,17 @@ Feature: Additional properties
       """
     And I disconnect
 
+  Scenario: Input validation removes additional properties
+    Given I boot `dummies.one` component
+    When I invoke `transit` with:
+      """yaml
+      input:
+        foo: 1
+        bar: 'hello'
+        baz: 'additional property'
+      """
+    Then the reply is received:
+      """yaml
+      output: {}
+      """
+    And I disconnect
