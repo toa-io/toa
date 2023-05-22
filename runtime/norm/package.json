@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/norm",
-  "version": "1.0.2-dev.8",
+  "version": "1.0.2-dev.9",
   "description": "Toa declarations normalization and validation",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,13 +19,13 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "devDependencies": {
-    "@toa.io/mock": "0.7.9-dev.8"
+    "@toa.io/mock": "0.7.9-dev.9"
   },
   "dependencies": {
-    "@toa.io/core": "1.1.0-dev.8",
-    "@toa.io/generic": "0.11.0-dev.8",
-    "@toa.io/schema": "0.7.6-dev.8",
-    "@toa.io/schemas": "0.8.4-dev.8",
-    "@toa.io/yaml": "0.7.6-dev.8"
+    "@toa.io/core": "1.1.0-dev.9",
+    "@toa.io/generic": "0.11.0-dev.9",
+    "@toa.io/schema": "0.7.6-dev.9",
+    "@toa.io/schemas": "0.8.4-dev.9",
+    "@toa.io/yaml": "0.7.6-dev.9"
   }
 }
