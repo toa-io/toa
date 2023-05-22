@@ -17,8 +17,8 @@ Feature: Additional properties
     And I disconnect
 
   Scenario: Input validation removes additional properties
-    Given I boot `dummies.one` component
-    When I invoke `transit` with:
+    Given I compose `dummies.one` component
+    When I call `dummies.one.transit` with:
       """yaml
       input:
         foo: 1

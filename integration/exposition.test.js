@@ -137,20 +137,15 @@ describe('routing', () => {
 
 describe('request', () => {
   it('should return 400 on invalid query', async () => {
-    const url = locator('/credits/balance/' + newid() + '/?foo=bar')
+    const url = locator('/credits/balance/' + newid() + '/?criteria=1')
     const response = await fetch(url)
 
     expect(response.status).toBe(400)
 
     const reply = await response.json()
 
-    expect(reply).toStrictEqual({
-      code: codes.RequestContract,
-      keyword: 'additionalProperties',
-      property: 'foo',
-      path: '/query',
-      schema: '#/properties/query/additionalProperties',
-      message: expect.any(String)
+    expect(reply).toMatchObject({
+      code: codes.QuerySyntax
     })
   })
 
@@ -160,7 +155,7 @@ describe('request', () => {
 
     const response = await fetch(url, {
       method: 'PUT',
-      body: JSON.stringify({ foo: 'bar' }),
+      body: JSON.stringify({ messages: { foo: 'bar' } }),
       headers: { 'content-type': 'application/json' }
     })
 
@@ -170,10 +165,10 @@ describe('request', () => {
 
     expect(reply).toStrictEqual({
       code: codes.RequestContract,
-      keyword: 'additionalProperties',
-      property: 'foo',
-      path: '/input',
-      schema: '#/properties/input/additionalProperties',
+      keyword: 'type',
+      property: 'input/messages',
+      path: '/input/messages',
+      schema: '#/properties/input/properties/messages/type',
       message: expect.any(String)
     })
   })
