@@ -1,6 +1,7 @@
 'use strict'
 
 const assert = require('node:assert')
+const { exceptions } = require('@toa.io/core')
 const { transpose, match } = require('@toa.io/generic')
 const { parse } = require('@toa.io/yaml')
 
@@ -143,7 +144,7 @@ async function invoke (endpoint, request = {}) {
 
   const { output, error, exception } = await component.invoke(endpoint, request)
 
-  if (exception !== undefined) throw new Error(exception.message)
+  if (exception !== undefined) throw new Error(`${exceptions.names[exception.code]}: ${exception.message}`)
 
   this.reply = { output, error }
 }
