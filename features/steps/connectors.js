@@ -122,6 +122,14 @@ Then('the reply is received:',
     assert.equal(matches, true, 'Reply does not match')
   })
 
+Then('the reply is received',
+  /**
+   * @this {toa.features.Context}
+   */
+  function () {
+    assert.notEqual(this.reply, undefined, 'Reply is received')
+  })
+
 Then('the following exception is thrown:',
   /**
    * @param {string} yaml

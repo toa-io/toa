@@ -265,6 +265,29 @@ describe('Then the reply is received:', () => {
   })
 })
 
+describe('Then the reply is received', () => {
+  const step = gherkin.steps.Th('the reply is received')
+
+  /** @type {toa.features.Context} */
+  let context
+
+  beforeEach(() => {
+    context = {}
+  })
+
+  it('should be', async () => undefined)
+
+  it('should fail if reply is not received', async () => {
+    expect(() => step.call(context)).toThrow(AssertionError)
+  })
+
+  it('should pass if reply is received', async () => {
+    context.reply = {}
+
+    expect(() => step.call(context)).not.toThrow()
+  })
+})
+
 describe('Then the following exception is thrown:', () => {
   const step = gherkin.steps.Th('the following exception is thrown:')
 

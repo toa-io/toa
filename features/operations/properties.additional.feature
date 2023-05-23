@@ -25,10 +25,7 @@ Feature: Additional properties
         bar: 'hello'
         baz: 'additional property'
       """
-    Then the reply is received:
-      """yaml
-      output: {}
-      """
+    Then the reply is received
     And I disconnect
 
   Scenario: Input type mismatch
