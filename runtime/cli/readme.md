@@ -101,9 +101,14 @@ the context will be found and replayed sequentially.
 <dt>
 <code>toa shell [image]</code>
 </dt>
-<dd>Run interactive shell inside the current Kubernetes context.
+<dd>Run interactive shell inside the current Kubernetes context using disposable pod.
 
-<code>--image</code> docker image<br/>
-<code>--command</code> run command
+<code>image</code> docker image<br/>
 </dd>
 </dl>
+
+Extra arguments may be passed:
+
+```shell
+$ toa shell -- ping 1.1
+```
