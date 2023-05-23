@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "1.1.0-dev.10",
+  "version": "1.1.0-dev.11",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@toa.io/console": "0.6.0",
-    "@toa.io/generic": "0.11.0-dev.10",
-    "@toa.io/kubernetes": "0.7.5-dev.10",
-    "@toa.io/norm": "1.0.2-dev.10",
-    "@toa.io/yaml": "0.7.6-dev.10",
+    "@toa.io/generic": "0.11.0-dev.11",
+    "@toa.io/kubernetes": "0.7.5-dev.11",
+    "@toa.io/norm": "1.0.2-dev.11",
+    "@toa.io/yaml": "0.7.6-dev.11",
     "find-up": "5.0.0",
     "yargs": "17.6.2"
   },

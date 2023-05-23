@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/mock",
-  "version": "0.7.9-dev.10",
+  "version": "0.7.9-dev.11",
   "description": "Toa Mocks",
   "homepage": "https://toa.io",
   "author": {
@@ -24,9 +24,9 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "devDependencies": {
-    "@toa.io/norm": "1.0.2-dev.10"
+    "@toa.io/norm": "1.0.2-dev.11"
   },
   "dependencies": {
-    "@toa.io/generic": "0.11.0-dev.10"
+    "@toa.io/generic": "0.11.0-dev.11"
   }
 }
