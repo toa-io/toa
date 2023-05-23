@@ -122,6 +122,18 @@ Then('the reply is received:',
     assert.equal(matches, true, 'Reply does not match')
   })
 
+Then('the following exception is thrown:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  function (yaml) {
+    const object = parse(yaml)
+    const matches = match(this.exception, object)
+
+    assert.equal(matches, true, 'Exception doesn\'t match')
+  })
+
 When('an event {label} is emitted with the payload:',
   /**
    * @param {string} label
@@ -159,7 +171,11 @@ async function call (endpoint, request) {
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
 
-  this.reply = await remote.invoke(operation, request)
+  try {
+    this.reply = await remote.invoke(operation, request)
+  } catch (exception) {
+    this.exception = exception
+  }
 
   await remote.disconnect()
 }

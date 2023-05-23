@@ -173,6 +173,7 @@ describe('When I call {endpoint} with:', () => {
   const endpoint = `${namespace}.${name}.${operation}`
   const request = { [generate()]: generate() }
   const yaml = dump(request)
+  /** @type {toa.features.Context} */
   const context = {}
 
   it('should call remote', async () => {
@@ -193,6 +194,21 @@ describe('When I call {endpoint} with:', () => {
     const remote = mock.boot.remote.mock.results[0].value
 
     expect(context.reply).toStrictEqual(await remote.invoke.mock.results[0].value)
+  })
+
+  it('should set exception', async () => {
+    const exception = new Error(generate())
+    const invoke = () => { throw exception }
+    const connect = () => undefined
+    const disconnect = () => undefined
+
+    // noinspection JSCheckFunctionSignatures
+    mock.boot.remote.mockResolvedValueOnce({ connect, disconnect, invoke })
+
+    await step.call(context, endpoint, yaml)
+
+    expect(context.exception).toBeDefined()
+    expect(context.exception).toStrictEqual(exception)
   })
 })
 
@@ -246,6 +262,41 @@ describe('Then the reply is received:', () => {
     const yaml = dump(context.reply)
 
     expect(() => step.call(context, yaml)).not.toThrow()
+  })
+})
+
+describe('Then the following exception is thrown:', () => {
+  const step = gherkin.steps.Th('the following exception is thrown:')
+
+  /** @type {toa.features.Context} */
+  let context
+
+  beforeEach(() => {
+    context = {}
+  })
+
+  it('should be', async () => undefined)
+
+  it('should fail if no exception is thrown', async () => {
+    expect(() => step.call(context)).toThrow(AssertionError)
+  })
+
+  it('should fail if not matches', async () => {
+    context.exception = { code: 1, message: generate() }
+
+    const expected = { code: 0, message: generate() }
+    const yaml = dump(expected)
+
+    expect(() => step.call(context, yaml)).toThrow(AssertionError)
+  })
+
+  it('should pass if matches', async () => {
+    context.exception = { code: 1, message: generate() }
+
+    const yaml = dump(context.exception)
+
+    expect(() => step.call(context, yaml)).not.toThrow()
+
   })
 })
 

@@ -11,7 +11,7 @@ describe('fit', () => {
   })
 
   it('should set defaults', () => {
-    const schema = new Schema({ properties: { a: { type: 'string', default: 'not set' } } })
+    const schema = new Schema({ type: 'object', properties: { a: { type: 'string', default: 'not set' } } })
     const value = {}
 
     schema.fit(value)
@@ -20,7 +20,7 @@ describe('fit', () => {
   })
 
   it('should provide defaults', () => {
-    const schema = new Schema({ properties: { a: { type: 'string', default: 'not set' } } })
+    const schema = new Schema({ type: 'object', properties: { a: { type: 'string', default: 'not set' } } })
     const defaults = schema.defaults()
 
     expect(defaults).toStrictEqual({ a: 'not set' })
@@ -35,6 +35,7 @@ describe('fit', () => {
 
   it('should format error', () => {
     const schema = new Schema({
+      type: 'object',
       properties: {
         a: { type: 'integer' },
         b: { type: 'boolean' }
@@ -74,7 +75,7 @@ describe('validate', () => {
       }
     })
 
-    const value = { foo: '5' }
+    const value = { foo: 5 }
 
     expect(() => schema.validate(value)).not.toThrow()
     expect(value.foo).toStrictEqual(5)
@@ -98,10 +99,12 @@ describe('validate', () => {
 
 describe('match', () => {
   const schema = new Schema({
+    type: 'object',
     properties: {
       a: { type: 'integer' },
       b: { type: 'boolean', default: false },
       c: {
+        type: 'object',
         properties: {
           d: {
             type: 'number',
@@ -162,6 +165,7 @@ describe('match', () => {
 
 describe('adapt', () => {
   const schema = new Schema({
+    type: 'object',
     properties: {
       a: { type: 'integer' },
       b: { type: 'boolean', default: false },
@@ -205,6 +209,7 @@ describe('adapt', () => {
 describe('formats', () => {
   it('should support ajv-formats', () => {
     const schema = new Schema({
+      type: 'object',
       properties: {
         url: {
           type: 'string',
@@ -222,6 +227,7 @@ describe('formats', () => {
 describe('definitions', () => {
   it('should have definitions', () => {
     const schema = new Schema({
+      type: 'object',
       properties: {
         id: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/token' },
         remote: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/locator' },
@@ -234,6 +240,7 @@ describe('definitions', () => {
 
   it('should define endpoint', () => {
     const schema = new Schema({
+      type: 'object',
       properties: {
         event: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/endpoint' }
       }
@@ -249,6 +256,7 @@ describe('definitions', () => {
 
   it('should define locator', () => {
     const schema = new Schema({
+      type: 'object',
       properties: {
         remote: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/locator' }
       }
@@ -263,6 +271,7 @@ describe('definitions', () => {
 
   it('should define label', () => {
     const schema = new Schema({
+      type: 'object',
       properties: {
         foo: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/label' }
       }
@@ -277,6 +286,7 @@ describe('definitions', () => {
 
   it('should define version', () => {
     const schema = new Schema({
+      type: 'object',
       properties: {
         version: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/version' }
       }
@@ -292,6 +302,7 @@ describe('keywords', () => {
   describe('system', () => {
     it('should modify property to readonly', () => {
       const schema = new Schema({
+        type: 'object',
         properties: {
           foo: {
             type: 'string',

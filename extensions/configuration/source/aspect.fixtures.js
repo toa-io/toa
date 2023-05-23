@@ -3,21 +3,20 @@
 const { generate } = require('randomstring')
 
 const schema = {
+  type: 'object',
   properties: {
     foo: {
       type: 'string',
       default: generate()
     },
     bar: {
+      type: 'object',
       properties: {
         baz: {
           type: 'number',
           default: 1
         }
       }
-    },
-    quu: {
-      type: 'number'
     }
   }
 }

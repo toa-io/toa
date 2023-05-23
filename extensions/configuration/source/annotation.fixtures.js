@@ -10,6 +10,7 @@ const instance = () => {
   const locator = new Locator(name, namespace)
 
   const manifest = {
+    type: 'object',
     properties: {
       foo: {
         type: 'number',

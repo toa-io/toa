@@ -635,7 +635,7 @@ describe('response', () => {
     })
 
     it('should select with omit, limit', async () => {
-      // omit + limit must be less than times in context of this test
+      // `omit` + `limit` must be less than `times` in this test
       const omit = random(2)
       const limit = 1 + random(2)
       const response = await fetch(`${url}?omit=${omit}&limit=${limit}`)
