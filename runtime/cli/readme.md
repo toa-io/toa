@@ -60,7 +60,7 @@ the context will be found and replayed sequentially.
 
 ## Operations
 
-> Deployment commands use current `kubectl` context.
+> Commands use current Kubernetes context.
 
 ### deploy
 
@@ -75,15 +75,8 @@ the context will be found and replayed sequentially.
 ### conceal
 
 <dl>
-<dt>
-<code>toa conceal</code>
-</dt>
-<dd>Deploy new declared secrets.
-
-<code>--reset</code> don't skip already deployed</dd>
-
 <dt><code>toa conceal &lt;secret&gt; &lt;key&gt; &lt;value&gt;</code></dt>
-<dd>Deploy a <code>key</code> with a <code>value</code> to a <code>secret</code>.</dd>
+<dd>Deploy a <code>key</code> with a <code>value</code> to a secret named <code>toa-{secret}</code>.</dd>
 </dl>
 
 ### reveal
@@ -101,13 +94,13 @@ the context will be found and replayed sequentially.
 <dt>
 <code>toa shell [image]</code>
 </dt>
-<dd>Run interactive shell inside the current Kubernetes context using disposable pod.
+<dd>Run interactive shell inside a disposable pod.
 
 <code>image</code> docker image<br/>
 </dd>
 </dl>
 
-Extra arguments may be passed:
+Extra arguments can be passed:
 
 ```shell
 $ toa shell -- ping 1.1
