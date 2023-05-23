@@ -1,6 +1,7 @@
 'use strict'
 
 const assert = require('node:assert')
+const { exceptions } = require('@toa.io/core')
 const { transpose, match } = require('@toa.io/generic')
 const { parse } = require('@toa.io/yaml')
 
@@ -121,6 +122,18 @@ Then('the reply is received:',
     assert.equal(matches, true, 'Reply does not match')
   })
 
+Then('the following exception is thrown:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  function (yaml) {
+    const object = parse(yaml)
+    const matches = match(this.exception, object)
+
+    assert.equal(matches, true, 'Exception doesn\'t match')
+  })
+
 When('an event {label} is emitted with the payload:',
   /**
    * @param {string} label
@@ -143,7 +156,7 @@ async function invoke (endpoint, request = {}) {
 
   const { output, error, exception } = await component.invoke(endpoint, request)
 
-  if (exception !== undefined) throw new Error(exception.message)
+  if (exception !== undefined) throw new Error(`${exceptions.names[exception.code]}: ${exception.message}`)
 
   this.reply = { output, error }
 }
@@ -158,7 +171,11 @@ async function call (endpoint, request) {
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
 
-  this.reply = await remote.invoke(operation, request)
+  try {
+    this.reply = await remote.invoke(operation, request)
+  } catch (exception) {
+    this.exception = exception
+  }
 
   await remote.disconnect()
 }

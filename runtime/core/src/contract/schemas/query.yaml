@@ -1,3 +1,4 @@
+type: object
 properties:
   id:
     $ref: https://schemas.toa.io/0.0.0/definitions#/definitions/id

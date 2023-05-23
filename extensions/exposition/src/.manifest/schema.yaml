@@ -3,6 +3,7 @@ $id: https://schemas.toa.io/0.0.0/rtd
 
 definitions:
   resource:
+    type: 'object'
     patternProperties:
       ^(\/([^\/#\?]+)?)+\/?$:
         $ref: "#/definitions/resource"
@@ -41,10 +42,10 @@ definitions:
             operation:
               $ref: definitions#/definitions/token
             type:
-              enum: [transition, observation, assignment, computation, effect]
+              enum: [ transition, observation, assignment, computation, effect ]
             scope:
               type: string
-              enum: [object, objects, changeset, none]
+              enum: [ object, objects, changeset, none ]
             query:
               type: boolean
           additionalProperties: false
@@ -62,8 +63,9 @@ definitions:
         items:
           $ref: "#/definitions/range/properties/value"
       additionalProperties: false
-    required: [range]
+    required: [ range ]
 
 $ref: "#/definitions/resource"
 not:
-  required: [operations] # root doesn't have path
+  type: object
+  required: [ operations ] # root doesn't have path

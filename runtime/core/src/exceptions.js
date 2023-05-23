@@ -1,5 +1,7 @@
 'use strict'
 
+const { swap } = require('@toa.io/generic')
+
 const codes = {
   System: 0,
   NotImplemented: 10,
@@ -93,4 +95,5 @@ for (const [name, code] of Object.entries(codes)) {
 }
 
 exports.codes = codes
+exports.names = swap(codes)
 // #endregion

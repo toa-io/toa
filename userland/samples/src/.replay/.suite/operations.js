@@ -12,7 +12,6 @@ const operations = (operations, autonomous) =>
     for (const [id, set] of Object.entries(operations)) {
       await test.test(id, component(id, set, autonomous))
     }
-
   }
 
 exports.operations = operations

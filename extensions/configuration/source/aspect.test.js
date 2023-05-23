@@ -46,8 +46,7 @@ describe('defaults', () => {
       foo: fixtures.schema.properties.foo.default,
       bar: {
         baz: fixtures.schema.properties.bar.properties.baz.default
-      },
-      quu: 0
+      }
     })
   })
 })

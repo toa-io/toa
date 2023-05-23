@@ -8,7 +8,7 @@ const { traverse } = require('@toa.io/generic')
  */
 const form = (schema) => {
   const defaults = (node) => {
-    if (node.properties !== undefined) return { ...node.properties }
+    if (node.type === 'object' && node.properties !== undefined) return { ...node.properties }
     if (node.default !== undefined) return node.default
 
     return null
