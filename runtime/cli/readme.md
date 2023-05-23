@@ -57,7 +57,8 @@ the context will be found and replayed sequentially.
 <code>--error</code> print errors only<br/>
 </dd>
 </dl>
-## Deployment
+
+## Operations
 
 > Deployment commands use current `kubectl` context.
 
@@ -93,3 +94,21 @@ the context will be found and replayed sequentially.
 </dt>
 <dd>Print keys and values of a secret.</dd>
 </dl>
+
+### shell
+
+<dl>
+<dt>
+<code>toa shell [image]</code>
+</dt>
+<dd>Run interactive shell inside the current Kubernetes context using disposable pod.
+
+<code>image</code> docker image<br/>
+</dd>
+</dl>
+
+Extra arguments may be passed:
+
+```shell
+$ toa shell -- ping 1.1
+```
