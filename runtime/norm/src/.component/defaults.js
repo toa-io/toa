@@ -3,15 +3,7 @@
 // these defaults are required before validation
 const defaults = (manifest) => {
   if (manifest.prototype === undefined) manifest.prototype = '@toa.io/prototype'
-
-  if (manifest.bindings === undefined) {
-    const local = process.env.TOA_DEV === '1'
-
-    manifest.bindings = local
-      ? ['@toa.io/bindings.amqp']
-      : ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
-  }
-
+  if (manifest.bindings === undefined) manifest.bindings = ['@toa.io/bindings.amqp']
   if (manifest.bridge === undefined) manifest.bridge = '@toa.io/bridges.node'
 
   if (manifest.entity === null || manifest.entity === undefined) manifest.entity = { storage: null }
