@@ -2,6 +2,7 @@
 
 const { connect } = require('comq')
 const { Connector } = require('@toa.io/core')
+const { console } = require('@toa.io/console')
 
 /**
  * @implements {toa.amqp.Communication}
@@ -24,6 +25,8 @@ class Communication extends Connector {
 
   async open () {
     this.#io = await connect(...this.#references)
+
+    console.info(`AMQP connection to ${this.#labels()} is established`)
   }
 
   async close () {
@@ -49,6 +52,22 @@ class Communication extends Connector {
   async consume (exchange, group, consumer) {
     await this.#io.consume(exchange, group, consumer)
   }
+
+  #labels () {
+    return this.#references.map(label).join(', ')
+  }
+}
+
+/**
+ * @param {string} reference
+ * @return {string}
+ */
+function label (reference) {
+  const url = new URL(reference)
+
+  url.password = ''
+
+  return url.href
 }
 
 exports.Communication = Communication
