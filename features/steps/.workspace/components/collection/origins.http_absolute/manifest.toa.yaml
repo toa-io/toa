@@ -1,8 +1,10 @@
-name: http
+name: http_absolute
 namespace: origins
 
 operations:
-  test:
+  get:
+    input:
+      url: uri
     output: object
 
 origins: ~

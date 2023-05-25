@@ -29,6 +29,8 @@ it.each([
     const output = echo(input)
 
     expect(output).toStrictEqual(expected)
+
+    delete process.env[variable]
   })
 
 it('should substitute custom variables', async () => {
@@ -39,9 +41,27 @@ it('should substitute custom variables', async () => {
   expect(result).toStrictEqual('hello world')
 })
 
+it('should substitute missing values with an empty string', async () => {
+  const template = 'hello ${FOO}'
+  const result = echo(template)
+
+  expect(result).toStrictEqual('hello ')
+})
+
 it('should substitute arrays', async () => {
-  // {2} is replaces with empty string
+  // {2} is replaced with an empty string
   const result = echo('make {0} not {1}{2}', ['love', 'war'])
 
   expect(result).toStrictEqual('make love not war')
+})
+
+it('should not replace non-numbers', async () => {
+  const result = echo('{0}{1-2}{1}', ['foo', 'bar'])
+
+  expect(result).toStrictEqual('foo{1-2}bar')
+})
+
+it('should substitute arguments', async () => {
+  expect(echo('hello {0}', 'world')).toStrictEqual('hello world')
+  expect(echo('make {0} not {1}', 'love', 'war')).toStrictEqual('make love not war')
 })

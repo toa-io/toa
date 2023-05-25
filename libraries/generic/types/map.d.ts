@@ -1,6 +1,6 @@
 declare namespace toa.generic.map {
-  type kv = (key: string, value: any) => [key: string, value: any]
-  type v = (value: any) => any
+  type kv<T> = (key: string, value: T) => [key: string, value: T]
+  type v<T> = (value: T) => T
 
-  type transform = kv & v
+  type transform<T> = kv<T> & v<T>
 }

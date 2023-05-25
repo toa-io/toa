@@ -25,8 +25,6 @@ class Factory {
 
     let properties
 
-    // let properties
-
     for (const [origin, reference] of Object.entries(manifest)) {
       if (origin[0] === '.') {
         if (origin.substring(1) === protocol.id) properties = reference

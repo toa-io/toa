@@ -2,12 +2,14 @@
 
 /**
  * @param {string} input
- * @param {Record<string, string> | string[]} [argument]
+ * @param {Record<string, string> | string[] | string} [argument]
+ * @param {...string} [substitutions]
  * @returns {string}
  */
-function echo (input, argument = process.env) {
-  if (Array.isArray(argument)) return array(input, argument)
-  else return object(input, argument)
+function echo (input, argument = process.env, ...substitutions) {
+  if (typeof argument === 'string') return array(input, [argument, ...substitutions])
+  else if (Array.isArray(argument)) return array(input, argument)
+  else return object(input, /** @type {Record<string, string>} */ argument)
 }
 
 /**

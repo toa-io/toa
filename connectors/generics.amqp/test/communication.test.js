@@ -13,7 +13,7 @@ it('should be', async () => {
   expect(Communication).toBeDefined()
 })
 
-const references = [generate(), generate()]
+const references = ['amqp://rmq' + generate(), 'amqps://rmq' + generate()]
 
 /** @type {toa.amqp.Communication} */
 let comm

@@ -99,6 +99,14 @@ When the second argument is an `Array`, its values are substituted to a placehol
 echo('make {0} not {1}', ['love', 'war'])
 ```
 
+### Arguments substitution
+
+When the second argument is a `string`, it and next arguments are substituted as an [array](#index-substitutions).
+
+```javascript
+echo('make {0} not {1}', 'love', 'war')
+```
+
 # Map
 
 `map(object: object, transformation: Function): object`
@@ -108,11 +116,11 @@ If the transformation function returns `undefined` then the current key-value pa
 
 Transformation function signature is:
 
-`(value: any) => any | undefined`
+`(value: any) => any | void`
 
 or
 
-`(key: string, value: any) => [string, any] | undefined`
+`(key: string, value: any) => [string, any] | void`
 
 # Plain
 

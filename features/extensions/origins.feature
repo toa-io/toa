@@ -19,17 +19,22 @@ Feature: Origins Extension
     And I disconnect
 
   Scenario: HTTP Aspect absolute URL
-    Given I boot `origins.http_absolute` component
-    When I invoke `test`
-    Then the reply is received:
-      """yaml
-      output:
-        http:
-          method: GET
-          protocol: http
-          originalUrl: /path/to/resource
+    Given I have a component `origins.http_absolute`
+    And I have a context with:
       """
-    And I disconnect
+      origins:
+        origins.http_absolute:
+          .http:
+            /^http:\/\/localhost:8888/: true
+      """
+    And I run `toa env`
+    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path/to/resource' } }" -p ./components/origins.http_absolute`
+    Then program should exit with code 0
+    And stdout should contain lines:
+    """
+    method: 'GET'
+    originalUrl: '/path/to/resource'
+    """
 
   Scenario: Local environment with annotations
     Given I have a component `origins.http`
@@ -42,6 +47,17 @@ Feature: Origins Extension
     When I run `toa env`
     And I run `toa invoke bad -p ./components/origins.http`
     Then program should exit with code 0
+
+  Scenario: HTTP permissions annotation
+    Given I have a component `origins.http_absolute`
+    And I have a context
+    When I run `toa env`
+    And I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.http_absolute`
+    Then program should exit with code 1
+    And stderr should contain lines:
+    """
+    error URL 'http://localhost:8888/path' is not allowed
+    """
 
   Scenario: Deployment annotations
     Given I have a component `origins.http`
@@ -124,4 +140,21 @@ Feature: Origins Extension
       ECHO_PORT=8888
       """
     And I run `toa invoke test -p ./components/origins.http_echo`
+    Then program should exit with code 0
+
+  Scenario: Permission with environment variable placeholder
+    Given I have a component `origins.http_absolute`
+    And I have a context with:
+      """
+      origins:
+        origins.http_absolute:
+          .http:
+            /^http:\/\/localhost:${ECHO_PORT}/: true
+      """
+    And I run `toa env`
+    And I update an environment with:
+      """
+      ECHO_PORT=8888
+      """
+    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.http_absolute`
     Then program should exit with code 0
