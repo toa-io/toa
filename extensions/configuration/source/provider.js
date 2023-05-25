@@ -6,7 +6,7 @@ const { decode, encode, empty, overwrite } = require('@toa.io/generic')
 const { Connector } = require('@toa.io/core')
 
 const { secrets } = require('./secrets')
-const { form } = require('./.provider/form')
+const { env, form } = require('./.provider')
 
 /**
  * @implements {toa.extensions.configuration.Provider}
@@ -88,6 +88,8 @@ class Provider extends Connector {
 
   #set (object) {
     object = this.#reveal(object)
+    object = env(object)
+
     this.#merge(object)
 
     this.object = empty(object) ? undefined : object

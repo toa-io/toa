@@ -24,9 +24,10 @@ function map (input, transform) {
 }
 
 /**
- * @param {any} key
- * @param {any} value
- * @param {toa.generic.map.v} transform
+ * @template {T}
+ * @param {string} key
+ * @param {T} value
+ * @param {toa.generic.map.v<T>} transform
  * @returns {*}
  */
 function val (key, value, transform) {
@@ -36,9 +37,10 @@ function val (key, value, transform) {
 }
 
 /**
+ * @template {T}
  * @param {string} key
- * @param {any} value
- * @param {toa.generic.map.kv} transform
+ * @param {T} value
+ * @param {toa.generic.map.kv<T>} transform
  * @returns {*}
  */
 function keyVal (key, value, transform) {

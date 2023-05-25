@@ -1,5 +1,7 @@
 'use strict'
 
+/* eslint-disable no-template-curly-in-string */
+
 const { generate } = require('randomstring')
 const { encode } = require('@toa.io/generic')
 
@@ -52,6 +54,41 @@ it('should replace nested secrets', async () => {
   expect(value).toStrictEqual({ foo: { bar: secrets.BAR } })
 })
 
+it('should replace placeholders', async () => {
+  const name = 'FOO_VALUE'
+  const configuration = { foo: { bar: 'foo_${' + name + '}' } }
+  const value = generate()
+
+  setEnv(configuration)
+  setVal(name, value)
+
+  await provider.open()
+  const source = provider.source()
+
+  expect(source).toStrictEqual({ foo: { bar: 'foo_' + value } })
+})
+
+it('should replace multiple placeholders', async () => {
+  const configuration = { foo: '${FOO} ${BAR}' }
+
+  setEnv(configuration)
+  setVal('FOO', 'hello')
+  setVal('BAR', 'world')
+
+  await provider.open()
+  const source = provider.source()
+
+  expect(source).toStrictEqual({ foo: 'hello world' })
+})
+
+it('should throw if variable not set', async () => {
+  const configuration = { foo: '${FOO}' }
+
+  setEnv(configuration)
+
+  await expect(provider.open()).rejects.toThrow('not set')
+})
+
 const usedVariables = []
 
 /**
@@ -60,8 +97,9 @@ const usedVariables = []
  */
 function setEnv (configuration, secrets) {
   const variable = PREFIX + locator.uppercase
+  const encoded = encode(configuration)
 
-  setVal(variable, configuration)
+  setVal(variable, encoded)
 
   if (secrets !== undefined) {
     for (const [key, value] of Object.entries(secrets)) {
@@ -74,7 +112,7 @@ function setEnv (configuration, secrets) {
 }
 
 function setVal (variable, value) {
-  process.env[variable] = encode(value)
+  process.env[variable] = value
   usedVariables.push(variable)
 }
 

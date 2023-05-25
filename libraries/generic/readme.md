@@ -116,11 +116,11 @@ If the transformation function returns `undefined` then the current key-value pa
 
 Transformation function signature is:
 
-`(value: any) => any | undefined`
+`(value: any) => any | void`
 
 or
 
-`(key: string, value: any) => [string, any] | undefined`
+`(key: string, value: any) => [string, any] | void`
 
 # Plain
 
