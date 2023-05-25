@@ -4,10 +4,11 @@
 
 ### env
 
+Export environment to a `.env` file.
+
 <dl>
 <dt><code>toa env [environment]</code></dt>
-<dd>Set local environment variables to a <code>.env</code> file.
-
+<dd>
 <code>environment</code> deployment environment name (default <code>local</code>).<br/>
 <code>--path</code> path to context (default <code>.</code>)<br/>
 </dd>

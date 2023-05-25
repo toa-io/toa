@@ -163,11 +163,6 @@ configuration:
     bar@staging: 2
 ```
 
-### Local environment
-
-Configuration Objects for local environment may be created
-by [`toa configure`](../../runtime/cli/readme.md#configure) command.
-
 ## Configuration Secrets
 
 Context Configuration values which are uppercase strings prefixed with `$` considered as Secrets.
@@ -196,13 +191,13 @@ Deployed kubernetes secret's name is predefined as `configuration`.
 $ toa conceal configuration STRIPE_API_KEY xxxxxxxx
 ```
 
-## Operation Context
+## Aspect
 
-Configuration Value is available as a well-known operation context extension `configuration`.
-
-### Usage: node
+Configuration Value is available as a well-known operation Aspect `configuration`.
 
 ```javascript
+// Node.js bridge
+
 function transition (input, entity, context) {
   const foo = context.configiuration.foo
 
@@ -216,21 +211,45 @@ function transition (input, entity, context) {
 > from [hot updates](#).
 >
 > ```javascript
-> // THIS IS WEIRD, BAD AND NOT RECOMMENDED
+> // NOT RECOMMENDED
 > let foo
 > 
 > function transition (input, entity, context) {
+>   // NOT RECOMMENDED
 >   if (foo === undefined) foo = context.configuration.foo
 > 
 >   // ...
 > }
 > ```
-> See [Genuine operations](#).
+> See [Genuine operations](/documentation/design.md#genuine-operations).
+
+## Development Configuration
+
+Configuration can be exported by [`toa env`](/runtime/cli/readme.md#env).
+
+### Local Environment Placeholders
+
+Context Configuration values may contain placeholders that reference environment variables.
+
+> Placeholders can only be used with local environment (exported by `toa env`), as these values are not
+> deployed.
+
+```yaml
+# context.toa.yaml
+configuration:
+  dummies.dummy:
+    url@local: https://stage${STAGE}.intranet/
+```
+
+```dotenv
+# .env
+STAGE=82
+```
 
 ## Appendix
 
 - [Discussion](./docs/discussion.md)
 - [Configuration consistency](./docs/consistency.md)
 
-[^1]: Cannot be changed without a deployment. New values are considered to be a subject of
+[^1]: Cannot be changed without a deployment as new values are considered to be a subject of
 testing. [#146](https://github.com/toa-io/toa/issues/146)
