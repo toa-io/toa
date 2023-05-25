@@ -141,3 +141,20 @@ Feature: Origins Extension
       """
     And I run `toa invoke test -p ./components/origins.http_echo`
     Then program should exit with code 0
+
+  Scenario: Permission with environment variable placeholder
+    Given I have a component `origins.http_absolute`
+    And I have a context with:
+      """
+      origins:
+        origins.http_absolute:
+          .http:
+            /^http:\/\/localhost:${ECHO_PORT}/: true
+      """
+    And I run `toa env`
+    And I update an environment with:
+      """
+      ECHO_PORT=8888
+      """
+    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.http_absolute`
+    Then program should exit with code 0
