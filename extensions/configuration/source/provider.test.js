@@ -81,12 +81,15 @@ it('should replace multiple placeholders', async () => {
   expect(source).toStrictEqual({ foo: 'hello world' })
 })
 
-it('should throw if variable not set', async () => {
+it('should not replace if variable not set', async () => {
   const configuration = { foo: '${FOO}' }
 
   setEnv(configuration)
 
-  await expect(provider.open()).rejects.toThrow('not set')
+  await provider.open()
+  const value = provider.source()
+
+  expect(value).toStrictEqual(configuration)
 })
 
 const usedVariables = []

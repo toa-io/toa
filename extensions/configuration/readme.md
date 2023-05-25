@@ -230,6 +230,7 @@ Configuration can be exported by [`toa env`](/runtime/cli/readme.md#env).
 ### Local Environment Placeholders
 
 Context Configuration values may contain placeholders that reference environment variables.
+Placeholders are replaced with values if the corresponding environment variables are set.
 
 > Placeholders can only be used with local environment (exported by `toa env`), as these values are not
 > deployed.

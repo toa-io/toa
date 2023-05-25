@@ -10,11 +10,7 @@ function env (object) {
     (value) => {
       if (typeof value !== 'string') return
 
-      return value.replaceAll(RX, (_, variable) => {
-        if (!(variable in process.env)) throw new Error(`Configuration refers to environment variable '${variable}' which is not set`)
-
-        return process.env[variable]
-      })
+      return value.replaceAll(RX, (match, variable) => process.env[variable] ?? match)
     })
 }
 
