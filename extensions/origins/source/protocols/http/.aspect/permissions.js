@@ -26,9 +26,7 @@ class Permissions {
 
     const allowance = this.#allowances.findIndex((regexp) => regexp.test(url))
 
-    if (allowance !== -1) return true
-
-    return this.#default
+    return allowance !== -1
   }
 
   #parse (properties) {

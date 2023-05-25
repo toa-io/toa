@@ -1,5 +1,10 @@
 'use strict'
 
+/**
+ * @typedef {import('node-fetch').RequestInit} Request
+ * @typedef {import('node-fetch').Response} Response
+ */
+
 const fetch = require('node-fetch')
 
 const { Connector } = require('@toa.io/core')
@@ -37,12 +42,8 @@ class Aspect extends Connector {
     let origin = this.#origins[name]
 
     if (origin === undefined) {
-      if (isAbsoluteURL(/** @type {string} */ name)) {
-        return this.#invokeURL(
-          /** @type {string} */ name,
-          /** @type {import('node-fetch').RequestInit} */ path
-        )
-      } else throw new Error(`Origin '${name}' is not defined`)
+      if (isAbsoluteURL(name)) return this.#invokeURL(name, /** @type {Request} */ path)
+      else throw new Error(`Origin '${name}' is not defined`)
     }
 
     // absolute urls are forbidden when using origins
@@ -57,8 +58,8 @@ class Aspect extends Connector {
 
   /**
    * @param {string} url
-   * @param {import('node-fetch').RequestInit} request
-   * @return {Promise<void>}
+   * @param {Request} request
+   * @return {Promise<Response>}
    */
   async #invokeURL (url, request) {
     if (this.#permissions.test(url) === false) throw new Error(`URL '${url}' is not allowed`)
@@ -68,9 +69,9 @@ class Aspect extends Connector {
 
   /**
    * @param {string} url
-   * @param {import('node-fetch').RequestInit} request
+   * @param {Request} request
    * @param {toa.generic.retry.Options} [options]
-   * @return {Promise<import('node-fetch').Response>}
+   * @return {Promise<Response>}
    */
   async #request (url, request, options) {
     const call = () => fetch(url, request)
