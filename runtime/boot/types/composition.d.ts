@@ -6,6 +6,7 @@ declare namespace toa.boot {
 
     type Options = {
       bindings?: string[]
+      storage?: string
       extensions?: string[]
     }
 

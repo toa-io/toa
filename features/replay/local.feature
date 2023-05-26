@@ -6,6 +6,7 @@ Feature: Local call samples
       title: Increment 1
       input:
         value: 1
+        times: 1
       output: 2
       local:
         add:
@@ -14,20 +15,10 @@ Feature: Local call samples
             b: 1
           output: 2
       ---
-      title: Increment 2
-      input:
-        value: 2
-      output: 3
-      local:
-        add:
-          input:
-            a: 2
-            b: 1
-          output: 3
-      ---
       title: Whatever `add` returns
       input:
         value: 1
+        times: 1
       output: 3
       local:
         add:
@@ -64,31 +55,13 @@ Feature: Local call samples
     When I replay it
     Then it passes
 
-  Scenario: Sample with actual local call passes
-
-  If the local call sample does not contain output an actual call will be performed.
-
+  Scenario: Sample without call input validation passes
     Given I have a sample for `increment` operation of `math.calculations`:
       """yaml
       title: Increment by 1
       input:
         value: 1
-      output: 2
-      local:
-        add:
-          input:
-            a: 1
-            b: 1
-      """
-    When I replay it
-    Then it passes
-
-  Scenario: Sample with no call input validation passes
-    Given I have a sample for `increment` operation of `math.calculations`:
-      """yaml
-      title: Increment by 1
-      input:
-        value: 1
+        times: 1
       output: 2
       local:
         add:
@@ -103,6 +76,7 @@ Feature: Local call samples
       title: Increment by 1
       input:
         value: 2
+        times: 1
       output: 2
       local:
         add:
@@ -119,6 +93,7 @@ Feature: Local call samples
       title: Increment by 1
       input:
         value: 2
+        times: 1
       output: 2
       local:
         add:

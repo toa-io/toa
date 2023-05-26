@@ -4,12 +4,13 @@ const replay = require('./.suite')
 
 /**
  * @param {toa.samples.Suite} suite
+ * @param {Record<string, toa.core.Component>} components
  * @returns {Function}
  */
-const suite = (suite) =>
+const suite = (suite, components) =>
   async (test) => {
     if ('operations' in suite) {
-      await test.test('Operations', replay.operations(suite.operations, suite.autonomous))
+      await test.test('Operations', replay.operations(suite.operations, components, suite.autonomous))
     }
 
     if ('messages' in suite) {

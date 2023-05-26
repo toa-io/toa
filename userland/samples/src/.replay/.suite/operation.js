@@ -19,7 +19,7 @@ const operation = (remote, endpoint, samples, autonomous) =>
       const request = translate.operation(operation, autonomous)
       const name = operation.title ?? 'Sample #' + n
 
-      await test.test(name, async () => remote.invoke(endpoint, request))
+      await test.test(name, async () => await remote.invoke(endpoint, request))
     }
 
     test.end()

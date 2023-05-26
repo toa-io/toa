@@ -1,27 +1,28 @@
+import * as _core from '@toa.io/core/types'
 import * as _operations from './operation'
 import * as _messages from './message'
 
 declare namespace toa.samples {
 
-    namespace suite {
-        type Operations = Record<string, _operations.Set>
+  namespace suite {
+    type Operations = Record<string, _operations.Set>
 
-        type Options = {
-            id?: string
-            integration?: boolean
-            component?: string
-            operation?: string
-            title?: string
-            runner?: object
-        }
+    type Options = {
+      id?: string
+      integration?: boolean
+      component?: string
+      operation?: string
+      title?: string
+      runner?: object
     }
+  }
 
-    type Suite = {
-        title: string
-        autonomous: boolean
-        operations?: suite.Operations
-        messages?: _messages.Set
-    }
+  type Suite = {
+    title?: string
+    autonomous: boolean
+    operations?: suite.Operations
+    messages?: _messages.Set
+  }
 
 }
 

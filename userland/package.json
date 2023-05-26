@@ -30,6 +30,7 @@
     "@toa.io/generic": "0.11.0-dev.13",
     "@toa.io/norm": "1.0.2-dev.13",
     "@toa.io/schemas": "0.8.4-dev.13",
+    "@toa.io/storages.null": "0.6.0",
     "@toa.io/yaml": "0.7.6-dev.13",
     "tap": "16.3.4"
   }

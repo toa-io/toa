@@ -14,6 +14,7 @@ Given('I have (an )integration sample(s) of {endpoint} operation:',
     const samples = /** @type {toa.samples.Message[]} */ split(yaml)
 
     this.autonomous = false
+    this.integration = true
     this.component = namespace + '.' + name
     this.operation = { endpoint, samples }
   })

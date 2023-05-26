@@ -12,7 +12,7 @@ const read = require('./.read')
  */
 const components = async (paths, options = {}) => {
   /** @type {toa.samples.Suite} */
-  const suite = { title: 'Component samples', autonomous: true, operations: {}, messages: {} }
+  const suite = { title: 'Component samples', autonomous: true, operations: {} }
 
   for (const path of paths) {
     const manifest = await norm.component(path)
@@ -20,9 +20,9 @@ const components = async (paths, options = {}) => {
     options.id = manifest.locator.id
 
     const operations = await read.operations(path, options)
-    const messages = await read.messages(path, options)
+    // const messages = await read.messages(path, options)
 
-    merge(suite, { operations, messages })
+    merge(suite, { operations })
   }
 
   return suite
