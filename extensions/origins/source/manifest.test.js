@@ -73,3 +73,10 @@ it('should handle port shards', async () => {
 
   expect(() => manifest(input)).not.toThrow()
 })
+
+it.each(['dev:sec', 'dev'])('should throw if url contains credentials (%s)',
+  async (credentials) => {
+    const input = { foo: `http://${credentials}@${generate()}:888{0-9}` }
+
+    expect(() => manifest(input)).toThrow('must not contain credentials')
+  })

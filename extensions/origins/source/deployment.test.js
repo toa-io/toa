@@ -100,6 +100,18 @@ it('should create variables', () => {
   expect(variable.value).toStrictEqual(base64)
 })
 
+it.each(['http', 'amqp'])('should throw if %s annotation contains credentials',
+  async (protocol) => {
+    /** @type {toa.origins.Annotations} */
+    const annotations = {
+      [component.locator.id]: {
+        [origin]: protocol + '://dev:sec@host-' + generate()
+      }
+    }
+
+    expect(() => deployment(components, annotations)).toThrow('Origins must not contain credentials')
+  })
+
 describe('amqp', () => {
   beforeEach(() => {
     const amqpComponents = components.filter(

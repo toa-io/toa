@@ -21,11 +21,12 @@ class Context extends Connector {
 
     this.aspects = aspects
     this.#context = context
-    this.depends(context)
+
+    if (process.env.TOA_SAMPLING_AUTONOMOUS !== '1') this.depends(context)
   }
 
   async apply (endpoint, request) {
-    const sample = /** @type {toa.sampling.Request} */ context.get()
+    const sample = /** @type {toa.sampling.request.Sample} */ context.get()
     const requests = sample?.context?.local?.[endpoint]
     const call = requests?.shift()
 
@@ -48,7 +49,7 @@ class Context extends Connector {
 
   /**
    * @param {'apply' | 'call'} method
-   * @param {toa.sampling.Request} sample
+   * @param {toa.sampling.request.Sample} sample
    * @param {string[]} segments
    * @param {toa.core.Request} request
    * @returns {Promise<toa.core.Reply>}

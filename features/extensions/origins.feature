@@ -13,11 +13,6 @@ Feature: Origins Extension
       """
     And I disconnect
 
-  Scenario: AMQP Aspect
-    Given I boot `origins.amqp_local` component
-    Then I invoke `test`
-    And I disconnect
-
   Scenario: HTTP Aspect absolute URL
     Given I have a component `origins.http_absolute`
     And I have a context with:
@@ -78,6 +73,34 @@ Feature: Origins Extension
             value: eyIuaHR0cCI6eyIvaHR0cHM6XFwvXFwvdysuYW1hem9uLmNvbS8iOnRydWV9LCJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
       """
 
+  Scenario: Origin with environment variable placeholder
+    Given I have a component `origins.http_echo`
+    And I have a context
+    When I run `toa env`
+    And I update an environment with:
+      """
+      ECHO_PORT=8888
+      """
+    And I run `toa invoke test -p ./components/origins.http_echo`
+    Then program should exit with code 0
+
+  Scenario: HTTP permission with environment variable placeholder
+    Given I have a component `origins.http_absolute`
+    And I have a context with:
+      """
+      origins:
+        origins.http_absolute:
+          .http:
+            /^http:\/\/localhost:${ECHO_PORT}/: true
+      """
+    And I run `toa env`
+    And I update an environment with:
+      """
+      ECHO_PORT=8888
+      """
+    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.http_absolute`
+    Then program should exit with code 0
+
   Scenario: AMQP credentials deployment annotations
     Given I have a component `origins.amqp`
     And I have a context
@@ -98,19 +121,12 @@ Feature: Origins Extension
 
   Scenario: AMQP credentials
     Given I have a component `origins.amqp`
-    And I have a context with:
-      """yaml
-      origins:
-        origins.amqp:
-          bad: amqp://localhost
-      """
+    And I have a context
     When I run `toa env`
     And I update an environment with:
       """
       TOA_ORIGINS_ORIGINS_AMQP_QUEUE_USERNAME=developer
       TOA_ORIGINS_ORIGINS_AMQP_QUEUE_PASSWORD=secret
-      TOA_ORIGINS_ORIGINS_AMQP_BAD_USERNAME=developer
-      TOA_ORIGINS_ORIGINS_AMQP_BAD_PASSWORD=secret
       """
     And I run `toa invoke test -p ./components/origins.amqp`
     Then program should exit with code 0
@@ -121,7 +137,7 @@ Feature: Origins Extension
       """yaml
       origins:
         origins.amqp:
-          bad: amqp://localhost:5555
+          queue: amqp://localhost:5555
       """
     When I run `toa env`
     And I run `toa invoke test -p ./components/origins.amqp`
@@ -131,30 +147,26 @@ Feature: Origins Extension
       error connect ECONNREFUSED
       """
 
-  Scenario: Origin with environment variable placeholder
-    Given I have a component `origins.http_echo`
-    And I have a context
-    When I run `toa env`
-    And I update an environment with:
+  Scenario: Credentials in the origin's manifest
+    Given I have a component `origins.amqp_credentials`
+    And I run `toa invoke test -p ./components/origins.amqp_credentials`
+    Then program should exit with code 1
+    And stderr should contain lines:
       """
-      ECHO_PORT=8888
+      error Origins must not contain credentials.
       """
-    And I run `toa invoke test -p ./components/origins.http_echo`
-    Then program should exit with code 0
 
-  Scenario: Permission with environment variable placeholder
-    Given I have a component `origins.http_absolute`
+  Scenario: Credentials in the context
+    Given I have a component `origins.amqp`
     And I have a context with:
-      """
+      """yaml
       origins:
-        origins.http_absolute:
-          .http:
-            /^http:\/\/localhost:${ECHO_PORT}/: true
+        origins.amqp:
+          queue: amqp://developer:secret@localhost
       """
-    And I run `toa env`
-    And I update an environment with:
+    When I run `toa env`
+    Then program should exit with code 1
+    And stderr should contain lines:
       """
-      ECHO_PORT=8888
+      error Origins must not contain credentials.
       """
-    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.http_absolute`
-    Then program should exit with code 0

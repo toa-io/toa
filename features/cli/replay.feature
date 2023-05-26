@@ -56,7 +56,6 @@ Feature: Replay samples
     Given I have components:
       | math.calculations |
       | echo.beacon       |
-      | external.consumer |
     And I have a context
     When I run `toa replay`
     Then program should exit with code 0
@@ -71,7 +70,6 @@ Feature: Replay samples
     Given I have components:
       | math.calculations |
       | echo.beacon       |
-      | external.consumer |
     And I have a context
     And I have integration samples
     When I run `toa replay`
@@ -190,4 +188,9 @@ Feature: Replay samples
   Scenario: Replay autonomous sample without environment for a component with storage defined
     Given I have a component `tea.pots`
     When I run `TOA_DEV=0 toa replay ./components/tea.pots`
+    Then program should exit with code 0
+
+  Scenario: Replay autonomous sample without environment for a component with AMQP Origin
+    Given I have a component `origins.amqp`
+    When I run `TOA_DEV=0 toa replay ./components/origins.amqp`
     Then program should exit with code 0
