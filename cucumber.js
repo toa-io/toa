@@ -5,11 +5,6 @@ module.exports = {
     ...common,
     require: ['./features/**/*.js']
   },
-  schema: {
-    ...common,
-    paths: ['libraries/schema/features'],
-    require: ['libraries/schema/features/**/*.js']
-  },
   comq: {
     ...common,
     paths: ['libraries/comq/features'],
