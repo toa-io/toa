@@ -5,7 +5,7 @@ const { generate } = require('randomstring')
 
 const { file: { read } } = require('../../')
 
-const FILE = resolve(__dirname, 'read.txt')
+const FILE = resolve(__dirname, '.test/read.txt')
 
 it('should be', () => {
   expect(read).toBeDefined()
