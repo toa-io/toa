@@ -127,3 +127,11 @@ or
 `plain(candidate: any): boolean`
 
 Returns `true` if an argument is a POJO, `false` otherwise.
+
+# Filter
+
+`async filter(array: any[], test): any[]`
+
+`test` function signature is `async (any) => boolean`
+
+Async array filter.
