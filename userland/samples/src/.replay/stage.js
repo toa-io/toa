@@ -30,11 +30,15 @@ async function remotes (paths) {
 async function components (paths) {
   const components = {}
 
+  process.env.TOA_SAMPLING_AUTONOMOUS = '1'
+
   for (const path of paths) {
     const id = await getId(path)
 
     components[id] = await stage.component(path, { storage })
   }
+
+  delete process.env.TOA_SAMPLING_AUTONOMOUS
 
   return components
 }

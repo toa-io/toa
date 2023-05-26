@@ -3,6 +3,7 @@
 const { remap, echo, shards } = require('@toa.io/generic')
 const schemas = require('./schemas')
 const protocols = require('./protocols')
+const credentials = require('./.credentials')
 
 /**
  * @param {toa.origins.Manifest} manifest
@@ -29,6 +30,8 @@ function manifest (manifest) {
 function validate (manifest) {
   manifest = remap(manifest, (value) => shards(value)[0])
   schemas.manifest.validate(manifest)
+
+  Object.values(manifest).forEach(credentials.check)
 }
 
 function supports (provider, url) {
