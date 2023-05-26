@@ -192,3 +192,13 @@ Feature: Replay samples
       """
       # Subtest: math.calculations
       """
+
+  Scenario: Replay autonomous samples without environment
+    Given I have a component `math.calculations`
+    When I run `TOA_DEV=0 toa replay ./components/math.calculations`
+    Then program should exit with code 0
+
+  Scenario: Replay autonomous sample without environment for a component with storage defined
+    Given I have a component `tea.pots`
+    When I run `TOA_DEV=0 toa replay ./components/tea.pots`
+    Then program should exit with code 0

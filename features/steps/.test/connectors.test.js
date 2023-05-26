@@ -33,7 +33,7 @@ describe('When I boot {component} component', () => {
 
     await step.call(context, reference)
 
-    expect(mock.boot.manifest).toHaveBeenCalledWith(path)
+    expect(mock.boot.manifest.mock.calls[0][0]).toStrictEqual(path)
 
     const manifest = mock.boot.manifest.mock.results[0].value
 

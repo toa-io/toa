@@ -43,3 +43,12 @@ Feature: Additional properties
       property: input/foo
       """
     And I disconnect
+
+  Scenario: Input schema with default value
+    Given I compose `echo.beacon` component
+    When I call `echo.beacon.def`
+    Then the reply is received:
+      """yaml
+      output: ok
+      """
+    And I disconnect
