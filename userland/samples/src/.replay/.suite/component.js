@@ -5,21 +5,16 @@ const stage = require('@toa.io/userland/stage')
 const { operation } = require('./operation')
 
 /**
- *
- * @param {string} id
+ * @param {toa.core.Component} component
  * @param {toa.samples.operations.Set} set
  * @param {boolean} autonomous
  * @returns {Function}
  */
-const component = (id, set, autonomous) =>
+const component = (component, set, autonomous) =>
   async (test) => {
-    const remote = await stage.remote(id)
-
     for (const [endpoint, samples] of Object.entries(set)) {
-      await test.test(endpoint, operation(remote, endpoint, samples, autonomous))
+      await test.test(endpoint, operation(component, endpoint, samples, autonomous))
     }
-
-    await remote.disconnect()
   }
 
 exports.component = component

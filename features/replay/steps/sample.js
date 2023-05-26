@@ -28,7 +28,7 @@ Given('I have (a )message {label} sample(s) for {component}:',
   function (label, component, yaml) {
     const samples = /** @type {toa.samples.Message[]} */ split(yaml)
 
-    this.autonomous = true
+    this.autonomous = false
     this.component = component
     this.message = { label, samples }
   })

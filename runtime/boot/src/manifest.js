@@ -37,11 +37,14 @@ const manifest = async (path, options = {}) => {
     if (!(extension in manifest.extensions)) manifest.extensions[extension] = null
   }
 
+  if ('storage' in options && 'entity' in manifest) manifest.entity.storage = options.storage
+
   manifest.locator = new Locator(manifest.name, manifest.namespace)
 
   return manifest
 }
 
+/** @type {toa.boot.composition.Options} */
 const DEFAULTS = {
   extensions: ['@toa.io/extensions.sampling', '@toa.io/extensions.state']
 }

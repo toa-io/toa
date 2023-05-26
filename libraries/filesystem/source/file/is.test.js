@@ -9,7 +9,7 @@ it('should be', () => {
 })
 
 it('should return true if file exists', async () => {
-  const file = join(__dirname, 'read.txt')
+  const file = join(__dirname, '.test/read.txt')
 
   expect(await is(file)).toBe(true)
 })

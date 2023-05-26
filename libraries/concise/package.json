@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/concise",
-  "version": "0.11.0-dev.0",
+  "version": "0.11.0-dev.1",
   "description": "Toa Concise Object Schema",
   "homepage": "https://toa.io",
   "author": {
@@ -23,10 +23,10 @@
   },
   "main": "source/index.js",
   "devDependencies": {
-    "@toa.io/tomato": "0.7.5-dev.13"
+    "@toa.io/tomato": "0.7.5-dev.14"
   },
   "dependencies": {
-    "@toa.io/generic": "0.11.0-dev.13",
-    "@toa.io/yaml": "0.7.6-dev.13"
+    "@toa.io/generic": "0.11.0-dev.14",
+    "@toa.io/yaml": "0.7.6-dev.14"
   }
 }

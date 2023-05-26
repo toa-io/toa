@@ -34,7 +34,7 @@ it('should define suite as autonomous', async () => {
   expect(suite.autonomous).toStrictEqual(true)
 })
 
-it('should load component samples', async () => {
+it('should load operation samples', async () => {
   const expected = await operations()
 
   expect(Object.keys(suite.operations)).toStrictEqual([component])
@@ -47,12 +47,6 @@ it('should load component samples', async () => {
   expect(set.undo).toStrictEqual(expected.undo)
 })
 
-it('should load message samples', async () => {
-  const expected = await messages()
-
-  expect(suite.messages).toStrictEqual(expected)
-})
-
 describe('options', () => {
   const paths = [dummy, pot]
 
@@ -63,11 +57,6 @@ describe('options', () => {
     suite = await components(paths, options)
 
     expect(suite.operations['dummies.pot']).toBeUndefined()
-
-    const messages = suite.messages['somewhere.something.happened']
-
-    expect(messages.length).toStrictEqual(1)
-    expect(messages[0].component).toStrictEqual('dummies.dummy')
   })
 
   it('should filter samples by operation name', async () => {
@@ -101,16 +90,14 @@ describe('options', () => {
     expect(suite.operations['dummies.dummy'].undo[0].title).toStrictEqual('Should not undo')
   })
 
-  it('should filter message samples by title', async () => {
+  it('should filter operation samples by title', async () => {
     /** @type {toa.samples.suite.Options} */
-    const options = { title: 'Something happened with a dummy' }
+    const options = { title: 'Should not undo' }
 
     suite = await components(paths, options)
 
-    const messages = suite.messages['somewhere.something.happened']
-
-    expect(messages.length).toStrictEqual(1)
-    expect(messages[0].title).toStrictEqual(options.title)
+    expect(Object.keys(suite.operations['dummies.dummy']).length).toStrictEqual(1)
+    expect(suite.operations['dummies.dummy'].undo[0].title).toStrictEqual(options.title)
   })
 })
 
@@ -132,17 +119,4 @@ const operations = async () => {
   return {
     do: [...do1, ...do2], undo
   }
-}
-
-/**
- *
- * @returns {Promise<toa.samples.messages.Set>}
- */
-const messages = async () => {
-  const label = 'somewhere.something.happened'
-  const file = resolve(dummy, 'samples/messages', label + '.yaml')
-  const declarations = await yaml.load.all(file)
-  const messages = declarations.map((sample) => ({ component, ...sample }))
-
-  return { [label]: messages }
 }

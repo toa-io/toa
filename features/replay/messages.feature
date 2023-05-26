@@ -48,7 +48,7 @@ Feature: Message samples
       """yaml
       title: Should not work
       payload:
-        pot: 1
+        pot: 7aa9b2302a854a9aaaa292159a9d1b70
       input:
         booked: false
       """

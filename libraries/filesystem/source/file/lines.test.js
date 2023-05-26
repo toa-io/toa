@@ -3,7 +3,7 @@
 const { resolve } = require('node:path')
 const { file: { lines } } = require('../../')
 
-const FILE = resolve(__dirname, 'lines.txt')
+const FILE = resolve(__dirname, '.test/lines.txt')
 
 it('should be', () => {
   expect(lines).toBeDefined()

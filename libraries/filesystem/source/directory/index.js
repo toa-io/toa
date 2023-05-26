@@ -7,6 +7,7 @@ const { glob } = require('./glob')
 const { is } = require('./is')
 const { remove } = require('./remove')
 const { temp } = require('./temp')
+const { directories } = require('./directories')
 
 exports.copy = copy
 exports.ensure = ensure
@@ -15,3 +16,4 @@ exports.glob = glob
 exports.is = is
 exports.remove = remove
 exports.temp = temp
+exports.directories = directories
