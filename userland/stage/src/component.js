@@ -2,10 +2,11 @@
 
 const boot = require('@toa.io/boot')
 const { state } = require('./state')
+const binding = require.resolve('./binding')
 
 /** @type {toa.stage.Component} */
 const component = async (path) => {
-  const manifest = await boot.manifest(path)
+  const manifest = await boot.manifest(path, { bindings: [binding] })
   const component = await boot.component(manifest)
 
   await component.connect()

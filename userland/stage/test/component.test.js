@@ -18,7 +18,7 @@ it('should boot component', async () => {
   const path = generate()
   const component = await stage.component(path)
 
-  expect(mock.boot.manifest).toHaveBeenCalledWith(path)
+  expect(mock.boot.manifest.mock.calls[0][0]).toStrictEqual(path)
   expect(mock.boot.component).toHaveBeenCalledWith(await mock.boot.manifest.mock.results[0].value)
   expect(component).toStrictEqual(await mock.boot.component.mock.results[0].value)
   expect(component.connect).toHaveBeenCalled()
