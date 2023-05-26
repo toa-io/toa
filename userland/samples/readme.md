@@ -36,7 +36,7 @@ Message Sample is an object containing receiver's input (`payload`) to be substi
 outcomes (`input` and `query`) to be verified. Message sample may contain the corresponding operation
 sample. See its [schema](./src/.replay/.suite/translate/schemas/message.cos.yaml).
 
-> Message samples are always [autonomous](#autonomy).
+> Message samples are only supported at [context level](#autonomy).
 
 ### Declaration
 

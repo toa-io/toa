@@ -52,16 +52,6 @@ Feature: Replay samples
       # Subtest: echo.beacon
       """
 
-  Scenario: Replay message sample
-    Given I have a PostgreSQL database developer
-    And I have a component `external.consumer`
-    When I run `toa replay ./components/external.consumer`
-    Then program should exit with code 0
-    Then stdout should contain lines:
-      """
-      # Subtest: Should pass payload to input
-      """
-
   Scenario: Replay samples from the context directory
     Given I have components:
       | math.calculations |
@@ -75,7 +65,6 @@ Feature: Replay samples
       # Subtest: Operations
       # Subtest: math.calculations
       # Subtest: echo.beacon
-      # Subtest: something_happened
       """
 
   Scenario: Replay integration samples
@@ -177,16 +166,16 @@ Feature: Replay samples
       # Subtest: Component samples
       """
 
-  Scenario: Replay specific component samples
+  Scenario: Replay samples for a specific component
     Given I have components:
       | math.calculations |
-      | external.consumer |
+      | tea.pots          |
     And I have a context
-    When I run `toa replay --component external.consumer`
+    When I run `toa replay --component tea.pots`
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      # Subtest: something_happened
+      # Subtest: tea.pots
       """
     And stdout should not contain lines:
       """
