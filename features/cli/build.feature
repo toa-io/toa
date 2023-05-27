@@ -38,3 +38,25 @@ Feature: Build images
       | command |
       | build   |
       | push    |
+
+  Scenario: Replay samples inside a container
+    Given I have components:
+      | echo.beacon       |
+      | math.calculations |
+    And I have a context with:
+    """
+    compositions:
+      - name: temp-0
+        components:
+          - echo.beacon
+          - math.calculations
+    """
+    When I run `toa build`
+    And I run `docker run --rm $(docker images -q localhost:5000/collection/composition-temp-0 | head -n 1) sh -c "toa replay *"`
+    Then stdout should contain lines:
+      """
+      # Subtest: echo.beacon
+      # Subtest: math.calculations
+      <...>PASSED
+      """
+    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-temp-0)`
