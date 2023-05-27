@@ -31,7 +31,7 @@ format.
 <code>--component &lt;id&gt;</code> Replay samples for a specified component <code>id</code>.<br/>
 <code>--operation &lt;name&gt;</code> Replay samples for specified operation.<br/>
 <code>--title &lt;regexp&gt;</code> Regexp to match sample titles.<br/>
-<code>--dock</code> Run in docker. Applicable only for component samples.
+<code>--dock</code> Run in Docker. Applicable only for component samples.
 </dd>
 </dl>
 
@@ -98,7 +98,7 @@ the context will be found and replayed sequentially.
 </dt>
 <dd>Run interactive shell inside a disposable pod.
 
-<code>image</code> docker image<br/>
+<code>image</code> Docker image<br/>
 </dd>
 </dl>
 
