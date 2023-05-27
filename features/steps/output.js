@@ -111,7 +111,7 @@ const compare = (reference, line) => {
 }
 
 function substituteExpression (expression) {
-  if (!(expression in expressions)) throw new Error(`Expression ${expression} is not supported`)
+  if (!(expression in expressions)) return expression
   else return expressions[expression]
 }
 

@@ -6,5 +6,5 @@ Feature: Operations failures
     When I run `toa invoke setid "{}"`
     Then stderr should contain lines:
     """
-    error Cannot assign to read only property 'id'
+    <...>Cannot assign to read only property 'id'
     """
