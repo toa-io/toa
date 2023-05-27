@@ -41,27 +41,19 @@ class Operator {
 
     await this.#registry.prepare(target)
     await this.#registry.push()
-
-    await directory.remove(target)
   }
 
   async install (options = {}) {
     options = Object.assign({}, OPTIONS, options)
 
-    const [source] = await Promise.all([this.export(), this.build()])
-
+    await Promise.all([this.export(), this.build()])
     await this.#deployment.install(options)
-
-    await directory.remove(source)
   }
 
   async template (options = {}) {
-    const source = await this.export()
-    const output = await this.#deployment.template(options)
+    await this.export()
 
-    await directory.remove(source)
-
-    return output
+    return await this.#deployment.template(options)
   }
 
   variables () {

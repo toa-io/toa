@@ -38,7 +38,7 @@ declare namespace toa.deployment {
 
   namespace template {
     interface Options {
-      namespace: string
+      namespace?: string
     }
   }
 
