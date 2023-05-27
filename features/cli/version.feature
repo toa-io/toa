@@ -4,4 +4,4 @@ Feature: toa -v
 
   Scenario: Output version
     When I run `toa -v`
-    Then stdout should be version
+    Then stdout should be the version

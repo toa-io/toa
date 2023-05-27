@@ -1,7 +1,9 @@
 name: collection
 version: 0.0.0
 packages: 'components/*'
-registry: collection
+registry:
+  base: localhost:5000
+  platforms: ~
 amqp: amqp://host.docker.internal
 mongodb: mongodb://host.docker.internal
 sql: pg://host.docker.internal/integration
