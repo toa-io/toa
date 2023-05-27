@@ -4,11 +4,11 @@ const boot = require('@toa.io/boot')
 
 const { context: find } = require('../util/find')
 
-const build = async (argv) => {
+const push = async (argv) => {
   const path = find(argv.path)
   const operator = await boot.deployment(path, argv.environment)
 
-  await operator.build()
+  await operator.push()
 }
 
-exports.build = build
+exports.push = push

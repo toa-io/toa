@@ -21,7 +21,7 @@ class Operator {
   }
 
   async export (path) {
-    const target = await Operator.#target('deployment', path)
+    const target = await createDirectory('deployment', path)
 
     await this.#deployment.export(target)
 
@@ -29,15 +29,15 @@ class Operator {
   }
 
   async prepare (path) {
-    const target = await Operator.#target('images', path)
+    const target = await createDirectory('images', path)
 
     await this.#registry.prepare(target)
 
     return target
   }
 
-  async build () {
-    const target = await Operator.#target('images')
+  async push () {
+    const target = await createDirectory('images')
 
     await this.#registry.prepare(target)
     await this.#registry.push()
@@ -59,18 +59,18 @@ class Operator {
   variables () {
     return this.#deployment.variables()
   }
+}
 
-  /**
-   * @param type {string}
-   * @param [path] {string}
-   * @returns {Promise<string>}
-   */
-  static async #target (type, path) {
-    if (path === undefined) path = await directory.temp('toa-' + type)
-    else path = await directory.ensure(path)
+/**
+ * @param {string} type
+ * @param {string} [path]
+ * @return {Promise<string>}
+ */
+async function createDirectory (type, path) {
+  if (path === undefined) path = await directory.temp('toa-' + type)
+  else path = await directory.ensure(path)
 
-    return path
-  }
+  return path
 }
 
 /** @type {toa.deployment.installation.Options} */

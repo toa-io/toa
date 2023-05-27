@@ -10,7 +10,7 @@ declare namespace toa.deployment {
 
     prepare(path?: string): Promise<string>
 
-    build(): Promise<void>
+    push(): Promise<void>
 
     install(options?: _deployment.installation.Options): Promise<void>
 
