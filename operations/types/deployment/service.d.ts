@@ -1,20 +1,18 @@
-// noinspection ES6UnusedImports
-
-import type { Deployable } from './deployment'
+import type * as _deployment from './deployment'
 
 declare namespace toa.deployment {
 
-    interface Ingress {
-        host: string
-        class: string
-        annotations?: object
-    }
+  interface Ingress {
+    host: string
+    class: string
+    annotations?: object
+  }
 
-    interface Service extends Deployable {
-        port: number
-        ingress?: Ingress
-    }
-    
+  interface Service extends _deployment.Deployable {
+    port: number
+    ingress?: Ingress
+  }
+
 }
 
 export type Service = toa.deployment.Service

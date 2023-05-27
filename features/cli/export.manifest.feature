@@ -42,7 +42,6 @@ Feature: Print manifest
     When I run `toa export manifest <flag>`
     Then stderr should be empty
     And stdout should be empty
-
     Examples:
       | flag    |
       | --error |
@@ -53,5 +52,5 @@ Feature: Print manifest
     # which has invalid manifest
     And my working directory is ./components/dummies.invalid
     When I run `toa export manifest -e`
-    Then stderr should be: "error Locator name must be defined"
+    Then stderr should be: "<...>Locator name must be defined"
     Then stdout should be empty

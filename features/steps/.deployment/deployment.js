@@ -6,7 +6,7 @@ const boot = require('@toa.io/boot')
 /**
  * @param {string} [environment]
  */
-async function ex (environment= undefined) {
+async function deployment (environment = undefined) {
   const context = this.cwd
   const target = join(this.cwd, 'deployment')
   const operator = await boot.deployment(context, environment)
@@ -14,4 +14,13 @@ async function ex (environment= undefined) {
   await operator.export(target)
 }
 
-exports.ex = ex
+async function images () {
+  const context = this.cwd
+  const target = join(this.cwd, 'images')
+  const registry = await boot.registry(context)
+
+  await registry.prepare(target)
+}
+
+exports.deployment = deployment
+exports.images = images

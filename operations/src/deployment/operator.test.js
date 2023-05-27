@@ -14,12 +14,12 @@ describe('env', () => {
   /** @type {toa.deployment.Deployment} */
   let deployment
 
-  /** @type {toa.deployment.images.Registry} */
+  /** @type {toa.deployment.Registry} */
   let registry
 
   beforeEach(() => {
     deployment = /** @type {toa.deployment.Deployment} */ {}
-    registry = /** @type {toa.deployment.images.Registry} */ {}
+    registry = /** @type {toa.deployment.Registry} */ {}
   })
 
   it('should be', async () => {
@@ -31,7 +31,10 @@ describe('env', () => {
   it('should return variables', async () => {
     const variables = { [generate()]: { name: generate(), value: generate() } }
 
-    deployment.variables = jest.fn(() => variables)
+    deployment.variables =
+      /** @type {typeof toa.deployment.Operator.variables} */
+      jest.fn(() => variables)
+
     operator = new Operator(deployment, registry)
 
     const output = operator.variables()

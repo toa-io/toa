@@ -6,26 +6,23 @@ const { join } = require('node:path')
 const { load, parse } = require('@toa.io/yaml')
 const { match } = require('@toa.io/generic')
 
-const { When, Then } = require('@cucumber/cucumber')
+const extract = require('./.deployment')
 
-const deployment = require('./.deployment')
+const { When, Then } = require('@cucumber/cucumber')
 
 When('I export deployment',
   function () {
-    return deployment.export.call(this)
+    return extract.deployment.call(this)
+  })
+
+When('I export images',
+  function () {
+    return extract.images.call(this)
   })
 
 When('I export deployment for {word}',
   function (env) {
-    return deployment.export.call(this, env)
-  })
-
-When('I export variables',
-  /**
-   * @this {toa.features.Context}
-   */
-  function () {
-
+    return extract.deployment.call(this, env)
   })
 
 Then('exported {helm-artifact} should contain:',

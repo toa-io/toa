@@ -51,7 +51,7 @@ Feature: Origins Extension
     Then program should exit with code 1
     And stderr should contain lines:
     """
-    error URL 'http://localhost:8888/path' is not allowed
+    <...>URL 'http://localhost:8888/path' is not allowed
     """
 
   Scenario: Deployment annotations
@@ -144,7 +144,7 @@ Feature: Origins Extension
     Then program should exit with code 1
     And stderr should contain lines:
       """
-      error connect ECONNREFUSED
+      <...>ECONNREFUSED
       """
 
   Scenario: Credentials in the origin's manifest
@@ -153,7 +153,7 @@ Feature: Origins Extension
     Then program should exit with code 1
     And stderr should contain lines:
       """
-      error Origins must not contain credentials.
+      <...>Origins must not contain credentials.
       """
 
   Scenario: Credentials in the context
@@ -168,5 +168,5 @@ Feature: Origins Extension
     Then program should exit with code 1
     And stderr should contain lines:
       """
-      error Origins must not contain credentials.
+      <...>Origins must not contain credentials.
       """

@@ -11,7 +11,7 @@ class Composition extends Image {
 
   /** @type {string} */
   #name
-  /** @type {Array<toa.norm.Component>} */
+  /** @type {toa.norm.Component[]} */
   #components
 
   /**

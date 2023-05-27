@@ -1,6 +1,6 @@
-Feature: Deploy compositions
+Feature: Export Compositions Deployment
 
-  Scenario: Deploy two components without explicit compositions
+  Scenario: Two components without explicit compositions
     Given I have components:
       | dummies.one |
       | dummies.two |

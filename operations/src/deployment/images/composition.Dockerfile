@@ -1,4 +1,4 @@
-FROM node:18.2.0-alpine3.15
+FROM node:18.16.0-alpine3.17
 
 ENV NODE_ENV=production
 RUN if [ {{registry}} != undefined ]; then npm set registry {{registry}}; fi

@@ -1,6 +1,6 @@
 'use strict'
 
-const { Image } = require('../../../src/deployment/images/image')
+const { Image } = require('./image')
 const { generate } = require('randomstring')
 const { hash } = require('@toa.io/generic')
 

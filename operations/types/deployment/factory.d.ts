@@ -1,11 +1,13 @@
-// noinspection ES6UnusedImports
-import type { Operator } from './operator'
+import type * as _operator from './operator'
+import * as _registry from './registry'
 
 declare namespace toa.deployment {
 
-    interface Factory {
-        operator(): Operator
-    }
+  interface Factory {
+    operator(): _operator.Operator
+
+    registry(): _registry.Registry
+  }
 
 }
 

@@ -9,19 +9,12 @@ const variables = (context, variables) => {
   if (variables.global === undefined) variables.global = []
 
   if (context.environment !== undefined) {
-    const variable = format('TOA_ENV', context.environment)
+    const variable = { name: 'TOA_ENV', value: context.environment }
 
     variables.global.unshift(variable)
   }
 
   return variables
 }
-
-/**
- * @param {string} name
- * @param {string} value
- * @returns {toa.deployment.dependency.Variable}
- */
-const format = (name, value) => ({ name, value })
 
 exports.variables = variables

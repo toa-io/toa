@@ -1,5 +1,6 @@
 'use strict'
 
-const { ex } = require('./ex')
+const { deployment, images } = require('./deployment')
 
-exports.export = ex
+exports.deployment = deployment
+exports.images = images

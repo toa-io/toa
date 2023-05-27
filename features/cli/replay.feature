@@ -194,3 +194,32 @@ Feature: Replay samples
     Given I have a component `origins.amqp`
     When I run `TOA_DEV=0 toa replay ./components/origins.amqp`
     Then program should exit with code 0
+
+  Scenario: Replay samples in Docker
+    Given I have components:
+      | math.calculations |
+      | echo.beacon       |
+    And my working directory is ./components
+    When I run `toa replay * --dock`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: math.calculations
+      # Subtest: echo.beacon
+      """
+
+  Scenario: Replay samples with options in Docker
+    Given I have components:
+      | math.calculations |
+      | echo.beacon       |
+    And my working directory is ./components
+    When I run `toa replay * --component math.calculations --dock`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: math.calculations
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: echo.beacon
+      """
