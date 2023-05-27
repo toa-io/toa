@@ -6,10 +6,6 @@ declare namespace toa.deployment {
   interface Operator {
     export(path?: string): Promise<string>
 
-    prepare(path?: string): Promise<string>
-
-    push(): Promise<void>
-
     install(options?: _deployment.installation.Options): Promise<void>
 
     template(options?: _deployment.template.Options): Promise<string>

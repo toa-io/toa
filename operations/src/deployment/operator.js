@@ -30,17 +30,10 @@ class Operator {
   }
 
   async prepare (path) {
-    const target = await workspace.create('images', path)
-
-    await this.#registry.prepare(target)
-
-    return target
+    return await this.#registry.prepare(path)
   }
 
   async push () {
-    const target = await workspace.create('images')
-
-    await this.#registry.prepare(target)
     await this.#registry.push()
   }
 

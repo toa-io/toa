@@ -13,4 +13,12 @@ const prepare = async (argv) => {
   console.log(path)
 }
 
+// const prepare = async (argv) => {
+//   const context = find(argv.path)
+//   const registry = await boot.registry(context)
+//   const path = await registry.prepare(argv.target)
+//
+//   console.log(path)
+// }
+
 exports.prepare = prepare

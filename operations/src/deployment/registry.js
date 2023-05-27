@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory: { remove } } = require('@toa.io/filesystem')
+const workspace = require('./workspace')
 
 /**
  * @implements {toa.deployment.Registry}
@@ -8,11 +8,14 @@ const { directory: { remove } } = require('@toa.io/filesystem')
 class Registry {
   /** @type {toa.norm.context.Registry} */
   #registry
+
   /** @type {toa.deployment.images.Factory} */
   #factory
+
   /** @type {toa.operations.Process} */
   #process
-  /** @type {Array<toa.deployment.images.Image>} */
+
+  /** @type {toa.deployment.images.Image[]} */
   #images = []
 
   /**
@@ -34,15 +37,18 @@ class Registry {
     return this.#create('service', path, service)
   }
 
-  async prepare (target) {
-    await Promise.all(this.#images.map((image) => image.prepare(target)))
+  async prepare (root) {
+    const path = await workspace.create('images', root)
+
+    await Promise.all(this.#images.map((image) => image.prepare(path)))
+
+    return path
   }
 
   async push () {
-    for (const image of this.#images) {
-      await this.#push(image)
-      await remove(image.context)
-    }
+    await this.prepare()
+
+    for (const image of this.#images) await this.#push(image)
   }
 
   /**
@@ -61,39 +67,48 @@ class Registry {
 
   /**
    * @param {toa.deployment.images.Image} image
+   * @param {boolean} [push]
    * @returns {Promise<void>}
    */
-  async #push (image) {
-    const args = ['--context=default', 'buildx', 'build', '--push', '--tag', image.reference, image.context]
-    const local = this.#registry.platforms === null
+  async #build (image, push = false) {
+    const args = ['--context=default', 'buildx', 'build']
 
-    if (local) {
-      args.push('--builder', 'default')
-    } else {
+    if (push) args.push('--push')
+
+    args.push('--tag', image.reference, image.context)
+
+    const multiarch = this.#registry.platforms !== null
+
+    if (multiarch) {
       const platform = this.#registry.platforms.join(',')
 
       args.push('--platform', platform)
       args.push('--builder', BUILDER)
 
-      await this.#builder()
-    }
+      await this.#ensureBuilder()
+    } else args.push('--builder', 'default')
 
     await this.#process.execute('docker', args)
   }
 
-  async #builder () {
+  async #push (image) {
+    await this.#build(image, true)
+  }
+
+  async #ensureBuilder () {
     const ls = 'buildx ls'.split(' ')
     const output = await this.#process.execute('docker', ls, { silently: true })
+    const exists = output.split('\n').findIndex((line) => line.startsWith('toa '))
 
-    const exists = output.split('\n').find((line) => line.startsWith('toa '))
+    if (exists === -1) await this.#createBuilder()
+  }
 
-    if (exists === undefined) {
-      const create = `buildx create --name ${BUILDER} --use`.split(' ')
-      const bootstrap = 'buildx inspect --bootstrap'.split(' ')
+  async #createBuilder () {
+    const create = `buildx create --name ${BUILDER} --use`.split(' ')
+    const bootstrap = 'buildx inspect --bootstrap'.split(' ')
 
-      await this.#process.execute('docker', create)
-      await this.#process.execute('docker', bootstrap)
-    }
+    await this.#process.execute('docker', create)
+    await this.#process.execute('docker', bootstrap)
   }
 }
 

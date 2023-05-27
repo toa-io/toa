@@ -9,7 +9,7 @@ declare namespace toa.deployment {
 
     service(path: string, service: _dependency.Service): _image.Image
 
-    prepare(target: string): Promise<void>
+    prepare(path: string): Promise<string>
 
     push(): Promise<void>
   }

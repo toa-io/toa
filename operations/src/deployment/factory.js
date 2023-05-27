@@ -15,6 +15,12 @@ class Factory {
   /** @type {toa.norm.Context} */
   #context
 
+  /** @type {Composition[]} */
+  #compositions
+
+  /** @type {toa.deployment.Dependency[]} */
+  #dependencies
+
   /** @type {toa.deployment.Registry} */
   #registry
 
@@ -31,12 +37,12 @@ class Factory {
     const imagesFactory = new ImagesFactory(context.name, context.runtime)
 
     this.#registry = new Registry(context.registry, imagesFactory, this.#process)
+    this.#compositions = this.#context.compositions.map((composition) => this.#composition(composition))
+    this.#dependencies = this.#getDependencies()
   }
 
   operator () {
-    const compositions = this.#context.compositions.map((composition) => this.#composition(composition))
-    const dependencies = this.#dependencies()
-    const deployment = new Deployment(this.#context, compositions, dependencies, this.#process)
+    const deployment = new Deployment(this.#context, this.#compositions, this.#dependencies, this.#process)
 
     return new Operator(deployment, this.#registry)
   }
@@ -58,12 +64,12 @@ class Factory {
   /**
    * @returns {toa.deployment.Dependency[]}
    */
-  #dependencies () {
+  #getDependencies () {
     /** @type {toa.deployment.Dependency[]} */
     const dependencies = []
 
     for (const [reference, instances] of Object.entries(this.#context.dependencies)) {
-      const dependency = this.#dependency(reference, instances)
+      const dependency = this.#getDependency(reference, instances)
 
       if (dependency !== undefined) dependencies.push(dependency)
     }
@@ -76,7 +82,7 @@ class Factory {
    * @param {toa.norm.context.dependencies.Instance[]} instances
    * @returns {toa.deployment.Dependency | undefined}
    */
-  #dependency (path, instances) {
+  #getDependency (path, instances) {
     const module = require(path)
     const pkg = require(path + '/package.json')
 
