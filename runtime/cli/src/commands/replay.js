@@ -4,6 +4,10 @@
 
 const { replay } = require('../handlers/replay')
 
+/*
+!!! OPTIONS MUST BE SYNCHRONIZED WITH ../handlers/.replay/args !!!
+ */
+
 const builder = (yargs) => {
   yargs
     .positional('paths', {
@@ -34,6 +38,13 @@ const builder = (yargs) => {
       type: 'string',
       group: 'Command options:',
       describe: 'Replay samples with titles matching given regexp'
+    })
+    .option('dock', {
+      alias: 'd',
+      type: 'boolean',
+      default: false,
+      group: 'Command options:',
+      describe: 'Replay inside Docker container'
     })
 }
 

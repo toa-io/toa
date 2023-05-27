@@ -68,6 +68,8 @@ class Factory {
     /** @type {toa.deployment.Dependency[]} */
     const dependencies = []
 
+    if (this.#context.dependencies === undefined) return dependencies
+
     for (const [reference, instances] of Object.entries(this.#context.dependencies)) {
       const dependency = this.#getDependency(reference, instances)
 

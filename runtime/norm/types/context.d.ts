@@ -12,7 +12,7 @@ declare namespace toa.norm {
     }
 
     interface Registry {
-      base: string
+      base?: string
       platforms?: string[] | null
     }
 
@@ -40,11 +40,11 @@ declare namespace toa.norm {
 
     interface Declaration {
       name: string
-      description: string
-      version: string
-      runtime: Runtime | string
-      registry: Registry | string
-      packages: string
+      description?: string
+      version?: string
+      runtime?: Runtime | string
+      registry?: Registry | string
+      packages?: string
       compositions?: Composition[]
       annotations?: Record<string, object>
     }
@@ -53,11 +53,10 @@ declare namespace toa.norm {
   }
 
   interface Context extends context.Declaration {
-    locator: Locator
-    runtime: context.Runtime
+    runtime?: context.Runtime
     environment?: string
-    registry: context.Registry
-    components: _component.Component[]
+    registry?: context.Registry
+    components?: _component.Component[]
     dependencies?: context.Dependencies
   }
 

@@ -1,10 +1,16 @@
 'use strict'
 
 const find = require('../util/find')
+const { context, components } = require('@toa.io/userland/samples')
 
+const { dock } = require('./.replay/dock')
+
+/**
+ * @param {Record<string, string | boolean>} argv
+ * @return {Promise<void>}
+ */
 async function replay (argv) {
-  // prevent loading userland which is intended for local use only
-  const { context, components } = require('@toa.io/userland/samples')
+  if (argv.dock) return dock(argv)
 
   /** @type {boolean} */
   let ok

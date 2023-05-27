@@ -52,9 +52,9 @@ class Image {
   get version () {}
 
   tag (base) {
-    const tag = hash(this.#runtime.version + ';' + this.version)
+    const tag = hash(this.#runtime?.version + ';' + this.version)
 
-    this.reference = posix.join(base, `${this.#scope}/${this.#type}-${this.name}:${tag}`)
+    this.reference = posix.join(base ?? '', this.#scope, `${this.#type}-${this.name}:${tag}`)
   }
 
   async prepare (root) {
