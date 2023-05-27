@@ -1,6 +1,6 @@
 'use strict'
 
-const { push } = require('../handlers/push')
+const { build } = require('../handlers/build')
 
 const builder = (yargs) => {
   yargs
@@ -13,7 +13,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'push'
-exports.desc = 'Build and push Docker images'
+exports.command = 'build'
+exports.desc = 'Build Docker images'
 exports.builder = builder
-exports.handler = push
+exports.handler = build

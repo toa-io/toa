@@ -11,6 +11,8 @@ declare namespace toa.deployment {
 
     prepare(path: string): Promise<string>
 
+    build(): Promise<void>
+
     push(): Promise<void>
   }
 

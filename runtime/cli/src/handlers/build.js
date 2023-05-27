@@ -4,11 +4,11 @@ const boot = require('@toa.io/boot')
 
 const { context: find } = require('../util/find')
 
-const push = async (argv) => {
+const build = async (argv) => {
   const path = find(argv.path)
   const registry = await boot.registry(path)
 
-  await registry.push()
+  await registry.build()
 }
 
-exports.push = push
+exports.build = build

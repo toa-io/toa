@@ -45,6 +45,12 @@ class Registry {
     return path
   }
 
+  async build () {
+    await this.prepare()
+
+    for (const image of this.#images) await this.#build(image)
+  }
+
   async push () {
     await this.prepare()
 
