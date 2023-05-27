@@ -1,6 +1,4 @@
-// noinspection ES6UnusedImports
-
-import { Component } from './component'
+import * as _component from './component'
 import { Locator } from '@toa.io/core/types'
 
 declare namespace toa.norm {
@@ -20,7 +18,7 @@ declare namespace toa.norm {
 
     interface Composition {
       name: string,
-      components: string[] | Component[]
+      components: string[] | _component.Component[]
     }
 
     namespace dependencies {
@@ -31,7 +29,7 @@ declare namespace toa.norm {
       }
 
       type References = {
-        [reference: string]: Component[]
+        [reference: string]: _component.Component[]
       }
 
     }
@@ -59,7 +57,7 @@ declare namespace toa.norm {
     runtime: context.Runtime
     environment?: string
     registry: context.Registry
-    components: Component[]
+    components: _component.Component[]
     dependencies?: context.Dependencies
   }
 
