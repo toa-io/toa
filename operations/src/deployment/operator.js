@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory } = require('@toa.io/filesystem')
+const workspace = require('./workspace')
 
 /**
  * @implements {toa.deployment.Operator}
@@ -8,12 +8,13 @@ const { directory } = require('@toa.io/filesystem')
 class Operator {
   /** @type {toa.deployment.Deployment} */
   #deployment
-  /** @type {toa.deployment.images.Registry} */
+
+  /** @type {toa.deployment.Registry} */
   #registry
 
   /**
    * @param deployment {toa.deployment.Deployment}
-   * @param registry {toa.deployment.images.Registry}
+   * @param registry {toa.deployment.Registry}
    */
   constructor (deployment, registry) {
     this.#deployment = deployment
@@ -21,7 +22,7 @@ class Operator {
   }
 
   async export (path) {
-    const target = await createDirectory('deployment', path)
+    const target = await workspace.create('deployment', path)
 
     await this.#deployment.export(target)
 
@@ -29,7 +30,7 @@ class Operator {
   }
 
   async prepare (path) {
-    const target = await createDirectory('images', path)
+    const target = await workspace.create('images', path)
 
     await this.#registry.prepare(target)
 
@@ -37,7 +38,7 @@ class Operator {
   }
 
   async push () {
-    const target = await createDirectory('images')
+    const target = await workspace.create('images')
 
     await this.#registry.prepare(target)
     await this.#registry.push()
@@ -46,7 +47,7 @@ class Operator {
   async install (options = {}) {
     options = Object.assign({}, OPTIONS, options)
 
-    await Promise.all([this.export(), this.build()])
+    await Promise.all([this.export(), this.push()])
     await this.#deployment.install(options)
   }
 
@@ -61,21 +62,7 @@ class Operator {
   }
 }
 
-/**
- * @param {string} type
- * @param {string} [path]
- * @return {Promise<string>}
- */
-async function createDirectory (type, path) {
-  if (path === undefined) path = await directory.temp('toa-' + type)
-  else path = await directory.ensure(path)
-
-  return path
-}
-
 /** @type {toa.deployment.installation.Options} */
-const OPTIONS = {
-  wait: false
-}
+const OPTIONS = { wait: false }
 
 exports.Operator = Operator

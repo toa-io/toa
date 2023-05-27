@@ -1,6 +1,4 @@
-// noinspection JSUnusedGlobalSymbols,ES6UnusedImports
-
-import { Service } from './service'
+import * as _service from './service'
 import { dependencies } from '@toa.io/norm/types/context'
 
 declare namespace toa.deployment {
@@ -58,20 +56,17 @@ declare namespace toa.deployment {
 
   type Dependency = {
     references?: dependency.Reference[]
-    services?: Service[] // deployment.Service
+    services?: _service.Service[] // deployment.Service
     proxies?: dependency.Proxy[]
     variables?: dependency.Variables
   }
 
 }
 
-export namespace dependency {
-  export type Declaration = toa.deployment.dependency.Declaration
-  export type Reference = toa.deployment.dependency.Reference
-  export type Service = toa.deployment.dependency.Service
-  export type Proxy = toa.deployment.dependency.Proxy
-  export type Variables = toa.deployment.dependency.Variables
-  export type Variable = toa.deployment.dependency.Variable
-}
-
+export type Declaration = toa.deployment.dependency.Declaration
+export type Reference = toa.deployment.dependency.Reference
+export type Service = toa.deployment.dependency.Service
+export type Proxy = toa.deployment.dependency.Proxy
+export type Variables = toa.deployment.dependency.Variables
+export type Variable = toa.deployment.dependency.Variable
 export type Dependency = toa.deployment.Dependency

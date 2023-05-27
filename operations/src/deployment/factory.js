@@ -2,8 +2,9 @@
 
 const { Process } = require('../process')
 const { Operator } = require('./operator')
-const { Factory: Images, Registry } = require('./images')
+const { Factory: ImagesFactory } = require('./images')
 const { Deployment } = require('./deployment')
+const { Registry } = require('./registry')
 const { Composition } = require('./composition')
 const { Service } = require('./service')
 
@@ -13,8 +14,10 @@ const { Service } = require('./service')
 class Factory {
   /** @type {toa.norm.Context} */
   #context
-  /** @type {toa.deployment.images.Registry} */
+
+  /** @type {toa.deployment.Registry} */
   #registry
+
   /** @type {toa.operations.Process} */
   #process
 
@@ -25,8 +28,9 @@ class Factory {
     this.#context = context
     this.#process = new Process()
 
-    const images = new Images(context.name, context.runtime)
-    this.#registry = new Registry(context.registry, images, this.#process)
+    const imagesFactory = new ImagesFactory(context.name, context.runtime)
+
+    this.#registry = new Registry(context.registry, imagesFactory, this.#process)
   }
 
   operator () {
@@ -35,6 +39,10 @@ class Factory {
     const deployment = new Deployment(this.#context, compositions, dependencies, this.#process)
 
     return new Operator(deployment, this.#registry)
+  }
+
+  registry () {
+    return this.#registry
   }
 
   /**

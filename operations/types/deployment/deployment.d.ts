@@ -1,8 +1,6 @@
-// noinspection ES6UnusedImports,JSUnusedGlobalSymbols
-
-import type { Composition } from './composition'
-import type { Service } from './service'
-import type { dependency } from './dependency'
+import type * as _composition from './composition'
+import type * as _service from './service'
+import type * as _dependency from './dependency'
 
 declare namespace toa.deployment {
 
@@ -13,15 +11,15 @@ declare namespace toa.deployment {
     description?: string
     version: string
     appVersion: string
-    dependencies: dependency.Reference[]
+    dependencies: _dependency.Reference[]
   }
 
   interface Contents {
-    compositions?: Composition[]
+    compositions?: _composition.Composition[]
     components?: string[]
-    services?: Service[]
-    proxies?: dependency.Proxy[]
-    variables?: dependency.Variables
+    services?: _service.Service[]
+    proxies?: _dependency.Proxy[]
+    variables?: _dependency.Variables
 
     [key: string]: Object
   }
@@ -54,7 +52,7 @@ declare namespace toa.deployment {
 
     template(options: template.Options): Promise<string>
 
-    variables(): dependency.Variables
+    variables(): _dependency.Variables
   }
 
 }

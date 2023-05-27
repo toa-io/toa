@@ -14,12 +14,12 @@ describe('env', () => {
   /** @type {toa.deployment.Deployment} */
   let deployment
 
-  /** @type {toa.deployment.images.Registry} */
+  /** @type {toa.deployment.Registry} */
   let registry
 
   beforeEach(() => {
     deployment = /** @type {toa.deployment.Deployment} */ {}
-    registry = /** @type {toa.deployment.images.Registry} */ {}
+    registry = /** @type {toa.deployment.Registry} */ {}
   })
 
   it('should be', async () => {

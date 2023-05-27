@@ -1,5 +1,3 @@
-// noinspection ES6UnusedImports
-
 import * as _deployment from './deployment'
 import * as _dependency from './dependency'
 
@@ -16,7 +14,7 @@ declare namespace toa.deployment {
 
     template(options?: _deployment.template.Options): Promise<string>
 
-    variables(): _dependency.dependency.Variables
+    variables(): _dependency.Variables
   }
 
 }

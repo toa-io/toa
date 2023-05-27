@@ -3,7 +3,7 @@
 const { directory: { remove } } = require('@toa.io/filesystem')
 
 /**
- * @implements {toa.deployment.images.Registry}
+ * @implements {toa.deployment.Registry}
  */
 class Registry {
   /** @type {toa.norm.context.Registry} */
