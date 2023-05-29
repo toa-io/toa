@@ -1,6 +1,6 @@
 'use strict'
 
-const { Range } = require('../src/query/range')
+const { Range } = require('./range')
 
 let range
 

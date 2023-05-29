@@ -2,8 +2,8 @@
 
 const clone = require('clone-deep')
 
-const { normalize } = require('../src/.manifest')
-const fixtures = require('./manifest.normalize.fixtures')
+const { normalize } = require('./')
+const fixtures = require('./normalize.fixtures')
 
 describe('normalize', () => {
   let manifest, resources

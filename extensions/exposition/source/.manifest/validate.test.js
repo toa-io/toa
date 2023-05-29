@@ -1,6 +1,6 @@
 'use strict'
 
-const { validate } = require('../src/.manifest')
+const { validate } = require('./')
 
 it('should validate', () => {
   const resources = {
