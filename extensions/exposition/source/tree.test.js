@@ -1,6 +1,6 @@
 'use strict'
 
-const { Tree } = require('../src/tree')
+const { Tree } = require('./tree')
 const fixtures = require('./tree.fixtures')
 
 let tree
