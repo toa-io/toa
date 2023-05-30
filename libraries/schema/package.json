@@ -28,5 +28,6 @@
     "@toa.io/yaml": "0.7.6-canary.0",
     "ajv": "8.12.0",
     "ajv-formats": "2.1.1"
-  }
+  },
+  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }

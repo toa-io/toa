@@ -27,5 +27,6 @@
     "@toa.io/schema": "0.7.6-canary.0",
     "@toa.io/schemas": "0.8.4-canary.0",
     "@toa.io/yaml": "0.7.6-canary.0"
-  }
+  },
+  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }

@@ -25,5 +25,6 @@
   "dependencies": {
     "@toa.io/command": "0.6.0",
     "@toa.io/generic": "0.11.0-canary.0"
-  }
+  },
+  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }

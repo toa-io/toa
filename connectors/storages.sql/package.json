@@ -28,5 +28,6 @@
     "@toa.io/pointer": "0.8.4-canary.0",
     "knex": "2.4.2",
     "pg": "8.9.0"
-  }
+  },
+  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }

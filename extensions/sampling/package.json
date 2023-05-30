@@ -23,5 +23,6 @@
     "@toa.io/generic": "0.11.0-canary.0",
     "@toa.io/schemas": "0.8.4-canary.0",
     "jest-diff": "29.5.0"
-  }
+  },
+  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }
