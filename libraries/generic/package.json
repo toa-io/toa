@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/generic",
-  "version": "0.11.0-dev.3",
+  "version": "0.12.0-dev.3",
   "description": "Toa Generic Tools",
   "homepage": "https://toa.io",
   "author": {
@@ -25,5 +25,5 @@
   "dependencies": {
     "uuid": "9.0.0"
   },
-  "gitHead": "f588a6eed5b62c43da21ba3d1e07cb2b557e8860"
+  "gitHead": "f46b481d29b2e9311d2874bd25201f9295761dc7"
 }
