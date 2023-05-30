@@ -10,7 +10,6 @@ definitions:
             $ref: '#/definitions/node'
   locator:
     type: string
-    format: uri
 
 type: object
 patternProperties:

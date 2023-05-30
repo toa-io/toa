@@ -59,7 +59,7 @@
     "test:features:unit": "npx cucumber-js -p norm",
     "test:samples:unit": "toa replay userland/example/components/*",
     "test:samples:all": "TOA_DEV=1 toa replay userland/example",
-    "test:all": "npm run test && npm run test:integration && npm run test:features",
+    "test:all": "npm run ci && npm run test && npm run test:integration && npm run test:features",
     "integration:deploy": "npm run publish:local && npx toa deploy ./integration/context",
     "lint": "npx standard --verbose --fix | npx snazzy",
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
@@ -68,7 +68,8 @@
     "canary": "npx lerna@6.5.1 publish --canary --preid dev --no-commit-hooks --no-changelog --yes --message \"ci: prerelease\" --git-tag-command \"echo %s\" --sign-git-commit",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
-    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context"
+    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
+    "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i"
   },
   "standard": {
     "parser": "@babel/eslint-parser",
