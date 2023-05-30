@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/mock",
-  "version": "0.8.0-canary.0",
+  "version": "0.8.0-canary.1",
   "description": "Toa Mocks",
   "homepage": "https://toa.io",
   "author": {
@@ -24,10 +24,10 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "devDependencies": {
-    "@toa.io/norm": "1.1.0-canary.0"
+    "@toa.io/norm": "1.1.0-canary.1"
   },
   "dependencies": {
-    "@toa.io/generic": "0.11.0-canary.0"
+    "@toa.io/generic": "0.11.0-canary.1"
   },
   "gitHead": "9df4bd7b43b7ac8d799a04e878850fabc301a092"
 }

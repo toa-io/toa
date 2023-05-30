@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.state",
-  "version": "0.9.0-canary.0",
+  "version": "0.9.0-canary.1",
   "description": "Toa State",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -16,7 +16,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/generic": "0.11.0-canary.0"
+    "@toa.io/generic": "0.11.0-canary.1"
   },
   "gitHead": "9df4bd7b43b7ac8d799a04e878850fabc301a092"
 }
