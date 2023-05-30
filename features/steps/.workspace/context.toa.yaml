@@ -4,6 +4,7 @@ packages: 'components/*'
 registry:
   base: localhost:5000
   platforms: ~
-amqp: amqp://host.docker.internal
-mongodb: mongodb://host.docker.internal
-sql: pg://host.docker.internal/integration
+amqp: amqp://localhost
+amqp@dock: amqp://host.docker.internal
+mongodb: mongodb://localhost
+sql: pg://localhost

@@ -40,7 +40,6 @@ Feature: toa compose
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      info Composition complete
       info Composition shutdown complete
       """
 
@@ -49,11 +48,15 @@ Feature: toa compose
       | dummies.one |
       | dummies.two |
     And I have a context
-    When I run `toa env`
-    And I run `toa compose ./components/* --kill --dock`
+    When I run `toa env dock`
+    And I update an environment with:
+    """
+    TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
+    TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=secret
+    """
+    And I run `toa compose ./components/* --dock --kill`
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      info Composition complete
       info Composition shutdown complete
       """
