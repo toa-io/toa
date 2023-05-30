@@ -44,6 +44,8 @@ const { track } = require('./track')
 const { transpose } = require('./transpose')
 const { traverse } = require('./traverse')
 const { underlay } = require('./underlay')
+const { defaults } = require('./defaults')
+const { clear } = require('./clear')
 
 exports.acronyms = require('./acronyms')
 exports.letters = require('./letters')
@@ -96,3 +98,5 @@ exports.track = track
 exports.transpose = transpose
 exports.traverse = traverse
 exports.underlay = underlay
+exports.defaults = defaults
+exports.clear = clear

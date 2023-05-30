@@ -135,3 +135,20 @@ Returns `true` if an argument is a POJO, `false` otherwise.
 `test` function signature is `async (any) => boolean`
 
 Async array filter.
+
+# Defaults
+
+`async defaults(schema: object): object`
+
+`schema` - `JSONSchema` object with `default` properties
+
+Return object with defaults values.
+
+
+# Clear
+
+`async clear(source: object): object`
+
+`object` - any object
+
+Return object copy without properties with `null`, `undefined` values

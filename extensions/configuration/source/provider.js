@@ -1,12 +1,12 @@
 'use strict'
 
 const clone = require('clone-deep')
-const { decode, encode, empty, overwrite } = require('@toa.io/generic')
+const { decode, encode, empty, overwrite, defaults } = require('@toa.io/generic')
 
 const { Connector } = require('@toa.io/core')
 
 const { secrets } = require('./secrets')
-const { env, form } = require('./.provider')
+const { env } = require('./.provider')
 
 /**
  * @implements {toa.extensions.configuration.Provider}
@@ -37,7 +37,7 @@ class Provider extends Connector {
     this.#schema = schema
 
     // form is required to enable nested defaults
-    this.#form = form(schema.schema)
+    this.#form = defaults(schema.schema)
   }
 
   async open () {

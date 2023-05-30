@@ -1,5 +1,6 @@
 'use strict'
 
+const { defaults } = require('@toa.io/generic')
 const norm = require('@toa.io/norm')
 const { merge } = require('@toa.io/generic')
 
@@ -20,6 +21,29 @@ const components = async (paths, options = {}) => {
     options.id = manifest.locator.id
 
     const operations = await read.operations(path, options)
+    const locator = `${manifest.namespace}.${manifest.name}`
+
+    for (const [key, value] of Object.entries(manifest.operations)) {
+      const manifestOperations = operations[locator]
+
+      if (manifestOperations === undefined) {
+        continue
+      }
+
+      const operation = manifestOperations[key]
+
+      if (operation === undefined) {
+        continue
+      }
+
+      operation.forEach(item => {
+        const defaultValue = defaults(value.input)
+        if (defaultValue !== null && item.input !== undefined) {
+          item.input = Object.assign(defaultValue, item.input)
+        }
+      })
+    }
+
     // const messages = await read.messages(path, options)
 
     merge(suite, { operations })

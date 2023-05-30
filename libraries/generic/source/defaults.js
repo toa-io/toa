@@ -1,20 +1,22 @@
 'use strict'
 
-const { traverse } = require('@toa.io/generic')
+const { traverse } = require('./traverse')
+const { clear } = require('./clear')
 
 /**
  * @param {toa.schema.JSON | Object} schema
  * @return {Object}
  */
-const form = (schema) => {
-  const defaults = (node) => {
+const defaults = (schema) => {
+  const parse = (node) => {
     if (node.type === 'object' && node.properties !== undefined) return { ...node.properties }
     if (node.default !== undefined) return node.default
 
     return null
   }
 
-  return traverse(schema, defaults)
+  const values = traverse(schema, parse)
+  return clear(values)
 }
 
-exports.form = form
+exports.defaults = defaults

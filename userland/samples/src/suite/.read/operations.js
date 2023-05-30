@@ -11,6 +11,7 @@ const { filter } = require('./filter')
 /**
  * @param {string} path
  * @param {toa.samples.suite.Options} options
+ * @param {}
  * @returns {Promise<toa.samples.suite.Operations>}
  */
 const operations = async (path, options) => {
