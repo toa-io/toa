@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "0.20.0-dev.0",
+  "version": "0.20.0-dev.1",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {
@@ -25,8 +25,8 @@
   "dependencies": {
     "@toa.io/console": "0.6.0",
     "@toa.io/generic": "0.11.0-dev.3",
-    "@toa.io/schemas": "0.20.0-dev.0",
-    "@toa.io/yaml": "0.20.0-dev.0"
+    "@toa.io/schemas": "0.20.0-dev.1",
+    "@toa.io/yaml": "0.20.0-dev.1"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
