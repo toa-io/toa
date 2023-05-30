@@ -9,6 +9,7 @@ const fixtures = require('./uris.fixtures')
 const { uris } = require('../')
 
 const gen = () => 'schema://host-' + generate().toLowerCase() + ':' + (random(1000) + 1000)
+const genUrlWithShards = () => 'schema://host{1-2}-' + generate().toLowerCase() + ':' + (random(1000) + 1000)
 
 describe('construct', () => {
   const construct = uris.construct
@@ -34,6 +35,16 @@ describe('construct', () => {
 
     it('should allow dot notation', () => {
       const url = gen()
+
+      annotations['foo.bar'] = url
+
+      construct(annotations)
+
+      expect(annotations['foo.bar']).toStrictEqual(url)
+    })
+
+    it('should allow dot notation with shards', () => {
+      const url = genUrlWithShards()
 
       annotations['foo.bar'] = url
 
