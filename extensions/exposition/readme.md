@@ -31,8 +31,8 @@ Host: api.example.com
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764555658883997&cot=14">
     <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./.readme/overview-dark.jpg">
-        <img alt="Exposition" width="800" height="427" src="./.readme/overview-light.jpg">
+        <source media="(prefers-color-scheme: dark)" srcset="./documentation/.readme/overview-dark.jpg">
+        <img alt="Exposition" width="800" height="427" src="./documentation/.readme/overview-light.jpg">
     </picture>
 </a>
 
@@ -147,7 +147,8 @@ exposition:
 ### Queries
 
 Query object declared with `query` RTD key is used as the `Request.query` argument for corresponding operation calls.
-RTD Query conforms [UI Query schema](#).
+RTD Query extends [UI Query schema](#).
+If the operation forbids queries, then it is inherited.
 
 ```yaml
 # manifest.toa.yaml
@@ -189,7 +190,7 @@ exposition:
 GET /dummies?criteria=rank==5
 ```
 
-The request example above will result in an operation call with the request:
+The request example above will result in an operation call with the following Request:
 
 ```yaml
 query:
@@ -219,7 +220,7 @@ limit: [10, 100]
 
 #### Sort
 
-The `sort` query property defines the result order of the observation with an `objects` scope (enumeration). It contains
+The `sort` query property defines the result order of the Observation with an `objects` scope (enumeration). It contains
 an ordered set of sorting statements delimited by a comma. Each statement consists of an entity property name with an
 optional sorting direction suffix (`:asc` or `:desc`).
 
@@ -237,7 +238,7 @@ sort: 'rank:desc,timestamp:asc'
 
 #### Projection
 
-A list of Entity properties to be included in the observation result, delimited by a comma.
+A list of Entity properties to be included in the Observation result, delimited by a comma.
 
 ```yaml
 projection: id,title,timestamp
@@ -245,6 +246,66 @@ projection: id,title,timestamp
 
 ### Directives
 
+Exposition Directives are declared using corresponding RTD keys, and can add or modify the behavior of the request
+processing.
+
+- [Identity Authentication and Access Authorization](./documentation/ia3.md)
+
 ## Requests Mapping
 
+HTTP requests are mapped to operation calls based on the following rules:
+
+- The body of the HTTP request serves as an Input for the corresponding operation.
+- The HTTP query parameters are used as a Query.
+
+The mapping of HTTP methods is as follows:
+
+| Operation                           | Method |
+|-------------------------------------|--------|
+| **Transition** with allowed query   | `PUT`  |
+| **Transition** with forbidden query | `POST` |
+| **Observation**                     | `GET`  |
+| **Assignment**                      | `PUT`  |
+| **Calculation**                     | `GET`  |
+| **Effect**                          | `POST` |
+
+> There is no option to override this mapping
+
 ## Context Annotation
+
+The Exposition annotation declares options for its deployment.
+
+```yaml
+extensions:
+  '@toa.io/extensions.exposition':
+    host: the.exmaple.com
+```
+
+A shortcut is also available.
+
+```yaml
+exposition:
+  host: the.example.com
+```
+
+| Option        | Description                                                      |
+|---------------|------------------------------------------------------------------|
+| `host`        | Domain name to be used for the corresponding Kubernetes Ingress. |
+| `class`       | Ingress class                                                    |
+| `annotations` | Ingress annotations                                              |
+
+### Example
+
+```yaml
+exposition:
+  host: the.example.com
+  host@staging: the.example.dev
+  class: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+```
+
+
+
