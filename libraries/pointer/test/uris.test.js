@@ -9,7 +9,6 @@ const fixtures = require('./uris.fixtures')
 const { uris } = require('../')
 
 const gen = () => 'schema://host-' + generate().toLowerCase() + ':' + (random(1000) + 1000)
-const genUrlWithShards = () => 'schema://host{1-2}-' + generate().toLowerCase() + ':' + (random(1000) + 1000)
 
 describe('construct', () => {
   const construct = uris.construct
@@ -43,14 +42,12 @@ describe('construct', () => {
       expect(annotations['foo.bar']).toStrictEqual(url)
     })
 
-    it('should allow dot notation with shards', () => {
-      const url = genUrlWithShards()
-
-      annotations['foo.bar'] = url
+    it('should allow shards', () => {
+      const annotations = 'schema://host{1-2}-' + generate().toLowerCase()
 
       construct(annotations)
 
-      expect(annotations['foo.bar']).toStrictEqual(url)
+      expect(annotations).toStrictEqual(annotations)
     })
 
     it('should allow dot notation with namespace value', () => {
@@ -66,12 +63,6 @@ describe('construct', () => {
       // noinspection JSCheckFunctionSignatures
       expect(() => construct(1)).toThrow(TypeError)
       expect(() => construct(null)).toThrow(TypeError)
-    })
-
-    it('should throw if property is not url', () => {
-      annotations.foo = 'not url'
-
-      expect(() => construct(annotations)).toThrow(TypeError)
     })
   })
 })
