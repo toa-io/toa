@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/norm",
-  "version": "1.1.0-dev.0",
+  "version": "1.1.0-canary.0",
   "description": "Toa declarations normalization and validation",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,14 +19,14 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "devDependencies": {
-    "@toa.io/mock": "0.8.0-dev.0"
+    "@toa.io/mock": "0.8.0-canary.0"
   },
   "dependencies": {
-    "@toa.io/core": "1.1.0-dev.0",
-    "@toa.io/generic": "0.11.0-dev.0",
-    "@toa.io/schema": "0.8.0-dev.0",
-    "@toa.io/schemas": "0.9.0-dev.0",
-    "@toa.io/yaml": "0.8.0-dev.0"
+    "@toa.io/core": "1.1.0-canary.0",
+    "@toa.io/generic": "0.11.0-canary.0",
+    "@toa.io/schema": "0.8.0-canary.0",
+    "@toa.io/schemas": "0.9.0-canary.0",
+    "@toa.io/yaml": "0.8.0-canary.0"
   },
   "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }
