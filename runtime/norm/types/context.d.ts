@@ -15,8 +15,8 @@ declare namespace toa.norm {
       base?: string
       platforms?: string[] | null
       build?: {
-        command?: string
         arguments?: string[]
+        run?: string
       }
     }
 

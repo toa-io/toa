@@ -11,6 +11,6 @@ ADD . .
 # run 'npm i' in each component
 RUN find . -maxdepth 1 -type d \( ! -name . \) -exec /bin/sh -c "cd '{}' && if [ -f package.json ]; then npm i; fi" \;
 
-RUN {{build.command}}
+{{build.run}}
 
 CMD toa compose *

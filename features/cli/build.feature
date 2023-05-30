@@ -60,3 +60,36 @@ Feature: Build images
       <...>PASSED
       """
     Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-temp-0)`
+
+  Scenario: Additional build command
+    Given I have a component `dummies.one`
+    And I have a context with:
+    """
+    registry:
+      build:
+        run: echo hello!
+    """
+    When I run `toa build`
+    Then stderr should contain lines:
+      """
+      <...>RUN echo hello!
+      """
+    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-one)`
+
+  Scenario: Multiline build command
+    Given I have a component `dummies.one`
+    And I have a context with:
+    """
+    registry:
+      build:
+        run: |
+          echo hi!
+          echo bye!
+    """
+    When I run `toa build`
+    Then stderr should contain lines:
+      """
+      <...>RUN echo hi!
+      <...>RUN echo bye!
+      """
+    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-one)`

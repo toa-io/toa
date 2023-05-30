@@ -46,8 +46,7 @@ class Image {
     this.#runtime = runtime
     this.#type = this.constructor.name.toLowerCase()
 
-    this.#values.runtime = runtime
-    this.#values.build = overwrite(this.#values.build, registry.build)
+    this.#setValues()
   }
 
   tag () {
@@ -89,6 +88,13 @@ class Image {
     return path
   }
 
+  #setValues () {
+    this.#values.runtime = this.#runtime
+    this.#values.build = overwrite(this.#values.build, this.#registry.build)
+
+    if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)
+  }
+
   /**
    * @param key {string}
    * @returns {string}
@@ -98,6 +104,16 @@ class Image {
 
     return this.#values[source]?.[property] ?? ''
   }
+}
+
+function createRunCommands (input) {
+  const lines = input.split('\n')
+
+  return lines.reduce((commands, command) => {
+    commands += '\nRUN ' + command
+
+    return commands
+  }, '')
 }
 
 exports.Image = Image
