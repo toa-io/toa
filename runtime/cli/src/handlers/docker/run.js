@@ -22,8 +22,6 @@ async function run (repository, command, runArguments) {
   const args = ['run', '--rm', ...(runArguments ?? []), id, 'sh', '-c', command]
   const done = promex()
 
-  console.log('toa> docker', args)
-
   const running = await spawn('docker', args, { stdio: 'inherit' })
 
   running.on('exit', done.resolve)

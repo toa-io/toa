@@ -16,6 +16,8 @@ Run composition.
 </dd>
 </dl>
 
+> Note that your `localhost` it is accessible from the container as `host.docker.internal`.
+
 ### env
 
 Export environment to a `.env` file.
