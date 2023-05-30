@@ -55,7 +55,10 @@ Feature: Additional properties
 
   Scenario: Input schema with default object value
     Given I compose `echo.beacon` component
-    When I call `echo.beacon.fwd`
+    When I call `echo.beacon.fwd` with:
+    """
+    input: {}
+    """
     Then the reply is received:
       """yaml
       output:
