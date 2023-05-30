@@ -24,3 +24,17 @@ Feature: Container Building Options
     When I export images
     Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN echo test > .test'
     And the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN rm .test'
+
+  Scenario: Building a container with arguments
+    Given I have a component `dummies.one`
+    Given I have a context with:
+    """
+    registry:
+      build:
+        arguments: [FOO, BAR]
+    """
+    When I export images
+    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'
+    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ENV FOO=$FOO'
+    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'
+    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'

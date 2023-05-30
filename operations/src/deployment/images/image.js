@@ -92,6 +92,7 @@ class Image {
     this.#values.runtime = this.#runtime
     this.#values.build = overwrite(this.#values.build, this.#registry.build)
 
+    if (this.#values.build.arguments !== undefined) this.#values.build.arguments = createArguments(this.#values.build.arguments)
     if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)
   }
 
@@ -114,6 +115,17 @@ function createRunCommands (input) {
 
     return commands
   }, '')
+}
+
+function createArguments (variables) {
+  const args = []
+
+  for (const variable of variables) {
+    args.push('ARG ' + variable)
+    args.push(`ENV ${variable}=$${variable}`)
+  }
+
+  return args.join('\n')
 }
 
 exports.Image = Image

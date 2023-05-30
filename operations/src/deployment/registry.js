@@ -84,6 +84,10 @@ class Registry {
 
     const multiarch = this.#registry.platforms !== null
 
+    if (this.#registry.build?.arguments !== undefined) {
+      for (const arg of this.#registry.build.arguments) args.push('--build-arg', `${arg}=\${${arg}}`)
+    }
+
     if (multiarch) {
       const platform = this.#registry.platforms.join(',')
 

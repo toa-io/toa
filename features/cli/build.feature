@@ -87,9 +87,26 @@ Feature: Build images
           echo bye!
     """
     When I run `toa build`
-    Then stderr should contain lines:
+    Then program should exit with code 0
+    And stderr should contain lines:
       """
       <...>RUN echo hi!
       <...>RUN echo bye!
+      """
+    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-one)`
+
+  Scenario: Building with arguments
+    Given I have a component `dummies.one`
+    And I have a context with:
+    """
+    registry:
+      build:
+        arguments: [ENV_NAME]
+    """
+    When I run `toa build`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      <...>--build-arg ENV_NAME=${ENV_NAME}
       """
     Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-one)`
