@@ -107,7 +107,7 @@ When the second argument is a `string`, it and next arguments are substituted as
 echo('make {0} not {1}', 'love', 'war')
 ```
 
-# Map
+## Map
 
 `map(object: object, transformation: Function): object`
 
@@ -122,13 +122,13 @@ or
 
 `(key: string, value: any) => [string, any] | void`
 
-# Plain
+## Plain
 
 `plain(candidate: any): boolean`
 
 Returns `true` if an argument is a POJO, `false` otherwise.
 
-# Filter
+## Filter
 
 `async filter(array: any[], test): any[]`
 
@@ -144,7 +144,6 @@ Async array filter.
 
 Return object with defaults values.
 
-
 # Clear
 
 `async clear(source: object): object`
@@ -152,3 +151,9 @@ Return object with defaults values.
 `object` - any object
 
 Return object copy without properties with `null`, `undefined` values
+
+## Pick
+
+`pick(source: object, properties: string[]): object`
+
+Constructs an object by picking the set of `properties` from `source` object.

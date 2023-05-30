@@ -33,3 +33,30 @@ Feature: toa compose
       | `toa compose ./components/dummies.two` | ./                       | 0     |
       | `toa compose dummies.one dummies.two`  | ./components             | 0     |
       | `toa compose ./**/*`                   | ./                       | 1     |
+
+  Scenario: Shutdown composition after it's started
+    Given I have a component `dummies.one`
+    When I run `toa compose ./components/* --kill`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      info Composition shutdown complete
+      """
+
+  Scenario: Run composition in docker
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context
+    When I run `toa env docker`
+    And I update an environment with:
+    """
+    TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
+    TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=secret
+    """
+    And I run `toa compose ./components/* --dock --kill`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      info Composition shutdown complete
+      """
