@@ -43,3 +43,17 @@ Feature: toa compose
       info Composition complete
       info Composition shutdown complete
       """
+
+  Scenario: Run composition in docker
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context
+    When I run `toa env`
+    And I run `toa compose ./components/* --kill --dock`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      info Composition complete
+      info Composition shutdown complete
+      """

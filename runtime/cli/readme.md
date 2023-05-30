@@ -11,7 +11,7 @@ Run composition.
 <dd>
 <code>paths</code> glob patterns to look for components<br/>
 <code>--kill</code> shutdown composition after it's started<br/>
-<code>--dock</code> run in Docker<br/>
+<code>--dock</code> run in Docker using current <code>.env</code><br/>
 <code>--bindnings</code> override bindings (obsolete)<br/>
 </dd>
 </dl>
