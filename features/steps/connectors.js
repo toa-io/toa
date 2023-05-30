@@ -116,6 +116,8 @@ Then('the reply is received:',
    * @this {toa.features.Context}
    */
   function (yaml) {
+    if (this.exception !== undefined) throw this.exception
+
     const object = parse(yaml)
     const matches = match(this.reply, object)
 
