@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/conveyor",
-  "version": "0.7.5-dev.16",
+  "version": "0.7.5-canary.0",
   "description": "Toa Conveyor",
   "homepage": "https://toa.io",
   "author": {
@@ -23,6 +23,6 @@
   },
   "main": "source/index.js",
   "devDependencies": {
-    "@toa.io/generic": "0.11.0-dev.16"
+    "@toa.io/generic": "0.11.0-canary.0"
   }
 }
