@@ -19,7 +19,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/console": "0.6.0",
+    "@toa.io/console": "0.20.0-dev.1",
     "@toa.io/core": "0.20.0-dev.1",
     "agentkeepalive": "4.2.1",
     "express": "4.18.1",

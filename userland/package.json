@@ -27,10 +27,10 @@
     "@toa.io/boot": "0.20.0-dev.1",
     "@toa.io/core": "0.20.0-dev.1",
     "@toa.io/filesystem": "0.20.0-dev.1",
-    "@toa.io/generic": "0.11.0-dev.3",
+    "@toa.io/generic": "0.20.0-dev.1",
     "@toa.io/norm": "0.20.0-dev.1",
     "@toa.io/schemas": "0.20.0-dev.1",
-    "@toa.io/storages.null": "0.6.0",
+    "@toa.io/storages.null": "0.20.0-dev.1",
     "@toa.io/yaml": "0.20.0-dev.1",
     "tap": "16.3.4"
   },
