@@ -4,6 +4,8 @@ declare namespace toa.deployment.images {
     readonly reference: string
     readonly context: string
 
+    tag(): void
+
     prepare(root: string): Promise<string>
   }
 

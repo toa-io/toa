@@ -11,6 +11,8 @@ beforeEach(() => {
 })
 
 it('should assign url', () => {
+  instance.tag()
+
   expect(instance.reference).toEqual(`${fixtures.registry.base}/${fixtures.scope}/class-${fixtures.name}:${fixtures.version}`)
 })
 
