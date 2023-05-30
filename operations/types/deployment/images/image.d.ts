@@ -1,13 +1,13 @@
 declare namespace toa.deployment.images {
 
-    export interface Image {
-        readonly reference: string
-        readonly context: string
+  export interface Image {
+    readonly reference: string
+    readonly context: string
 
-        tag(base: string): void
+    tag(): void
 
-        prepare(root: string): Promise<string>
-    }
+    prepare(root: string): Promise<string>
+  }
 
 }
 

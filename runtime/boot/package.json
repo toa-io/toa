@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "1.1.0-dev.0",
+  "version": "1.1.0-canary.2",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,13 +19,13 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "1.1.0-dev.0",
-    "@toa.io/filesystem": "1.1.0-dev.0",
-    "@toa.io/generic": "0.11.0-dev.0",
-    "@toa.io/norm": "1.1.0-dev.0",
-    "@toa.io/schema": "0.8.0-dev.0",
+    "@toa.io/core": "1.1.0-canary.2",
+    "@toa.io/filesystem": "1.1.0-canary.2",
+    "@toa.io/generic": "0.11.0-canary.2",
+    "@toa.io/norm": "1.1.0-canary.2",
+    "@toa.io/schema": "0.8.0-canary.2",
     "clone-deep": "4.0.1",
     "dotenv": "16.0.3"
   },
-  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
+  "gitHead": "881065788070a30eb6b0a5d22b26de12bc2589fc"
 }

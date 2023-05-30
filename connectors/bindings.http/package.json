@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.http",
-  "version": "0.8.0-dev.0",
+  "version": "0.8.0-canary.2",
   "description": "Toa HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,10 +20,10 @@
   },
   "dependencies": {
     "@toa.io/console": "0.6.0",
-    "@toa.io/core": "1.1.0-dev.0",
+    "@toa.io/core": "1.1.0-canary.2",
     "agentkeepalive": "4.2.1",
     "express": "4.18.1",
     "node-fetch": "2.6.7"
   },
-  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
+  "gitHead": "881065788070a30eb6b0a5d22b26de12bc2589fc"
 }
