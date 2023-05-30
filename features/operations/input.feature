@@ -52,3 +52,13 @@ Feature: Additional properties
       output: ok
       """
     And I disconnect
+
+  Scenario: Input schema with default object value
+    Given I compose `echo.beacon` component
+    When I call `echo.beacon.fwd`
+    Then the reply is received:
+      """yaml
+      output:
+        id: ok
+      """
+    And I disconnect

@@ -1,6 +1,6 @@
 'use strict'
 
-class Computation {
+class Effect {
   #context
 
   async mount (context) {
@@ -12,4 +12,4 @@ class Computation {
   }
 }
 
-exports.Computation = Computation
+exports.Effect = Effect

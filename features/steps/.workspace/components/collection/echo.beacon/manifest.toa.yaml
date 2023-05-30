@@ -17,3 +17,9 @@ operations:
     forward: echo
     input: ok
     output: string
+  fwd:
+    forward: reflect
+    input:
+      id: ok
+      ...: true
+    output: object
