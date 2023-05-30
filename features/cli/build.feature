@@ -101,12 +101,18 @@ Feature: Build images
     """
     registry:
       build:
-        arguments: [ENV_NAME]
+        arguments: [TOA_DEV]
+        run: echo toa_dev_is_${TOA_DEV} > value.txt
     """
     When I run `toa build`
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      <...>--build-arg ENV_NAME=${ENV_NAME}
+      <...>--build-arg TOA_DEV=1
+      """
+    And I run `docker run --rm $(docker images -q localhost:5000/collection/composition-dummies-one | head -n 1) sh -c "cat value.txt"`
+    Then stdout should contain lines:
+      """
+      toa_dev_is_1
       """
     Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-one)`
