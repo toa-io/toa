@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/generic",
-  "version": "0.11.0-dev.16",
+  "version": "0.11.0-canary.1",
   "description": "Toa Generic Tools",
   "homepage": "https://toa.io",
   "author": {
@@ -24,5 +24,6 @@
   "main": "source/index.js",
   "dependencies": {
     "uuid": "9.0.0"
-  }
+  },
+  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }

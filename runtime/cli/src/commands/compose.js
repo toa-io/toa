@@ -12,10 +12,20 @@ const builder = (yargs) => {
       default: '.'
     })
     .array('paths')
+    .option('kill', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Immediate shutdown'
+    })
+    .option('dock', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Run in Docker'
+    })
     .option('bindings', {
       group: 'Command options:',
       type: 'string',
-      desc: 'Bindings'
+      desc: 'OBSOLETE'
     })
     .array('bindings')
     .example([

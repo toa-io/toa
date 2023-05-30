@@ -10,15 +10,16 @@ const execute = promisify(exec)
 /**
  * @param {string} repository
  * @param {string} command
+ * @param {string[]} runArguments
  * @return {Promise<void>}
  */
-async function run (repository, command) {
+async function run (repository, command, runArguments) {
   const imagesResult =
     /** @type {{ stdout: string }} */
     await execute(`docker images -q ${repository} | head -n 1`)
 
   const id = imagesResult.stdout.trim()
-  const args = ['run', '--rm', id, 'sh', '-c', command]
+  const args = ['run', '--rm', ...(runArguments ?? []), id, 'sh', '-c', command]
   const done = promex()
 
   const running = await spawn('docker', args, { stdio: 'inherit' })

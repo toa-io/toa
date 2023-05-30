@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/types",
-  "version": "0.0.3-dev.7",
+  "version": "0.0.3-canary.1",
   "description": "Toa Types for Node.js",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -14,5 +14,6 @@
   "types": "source/index.d.ts",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "d99f2da96b204c60f51eecc6ed2daa3876e23258"
 }
