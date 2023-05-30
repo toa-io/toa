@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.amqp",
-  "version": "0.8.0-canary.2",
+  "version": "0.8.0-dev.0",
   "description": "Toa AMQP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@toa.io/console": "0.6.0",
-    "@toa.io/core": "1.1.0-canary.2",
-    "@toa.io/generic": "0.11.0-canary.2",
-    "@toa.io/generics.amqp": "0.9.0-canary.2",
-    "@toa.io/pointer": "0.9.0-canary.2"
+    "@toa.io/core": "1.1.0-dev.0",
+    "@toa.io/generic": "0.11.0-dev.0",
+    "@toa.io/generics.amqp": "0.9.0-dev.0",
+    "@toa.io/pointer": "0.9.0-dev.0"
   },
   "gitHead": "881065788070a30eb6b0a5d22b26de12bc2589fc"
 }
