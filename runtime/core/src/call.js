@@ -15,8 +15,13 @@ class Call extends Connector {
     this.depends(transmitter)
   }
 
+  /**
+   * @param {toa.core.Request} request
+   */
   async invoke (request = {}) {
     this.#contract.fit(request)
+
+    request.authentic = true
 
     const { exception, ...reply } = await this.#transmitter.request(request)
 

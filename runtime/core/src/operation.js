@@ -7,26 +7,31 @@ class Operation extends Connector {
   scope
 
   #cascade
-  #contract
+  #contracts
   #query
   #scope
 
-  constructor (cascade, scope, contract, query, definition) {
+  constructor (cascade, scope, contracts, query, definition) {
     super()
 
     this.scope = scope
 
     this.#cascade = cascade
-    this.#contract = contract
+    this.#contracts = contracts
     this.#query = query
     this.#scope = definition.scope
 
     this.depends(cascade)
   }
 
+  /**
+   * @param {toa.core.Request} request
+   * @return {Promise<toa.core.Reply>}
+   */
   async invoke (request) {
     try {
-      if (request.query) request.query = this.#query.parse(request.query)
+      if (request.authentic !== true) this.#contracts.request.fit(request)
+      if ('query' in request) request.query = this.#query.parse(request.query)
 
       const store = { request }
 
@@ -52,7 +57,7 @@ class Operation extends Connector {
     const { request, state } = store
     const reply = await this.#cascade.run(request.input, state) || {}
 
-    this.#contract.fit(reply)
+    this.#contracts.reply.fit(reply)
 
     store.reply = reply
   }
