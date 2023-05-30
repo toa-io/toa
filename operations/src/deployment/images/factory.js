@@ -9,30 +9,44 @@ const { Service } = require('./service')
 class Factory {
   /** @type {string} */
   #scope
+
   /** @type {toa.norm.context.Runtime} */
   #runtime
 
+  /** @type {toa.norm.context.Registry} */
+  #registry
+
   /**
-   * @param scope {string}
-   * @param runtime {toa.norm.context.Runtime}
+   * @param {string} scope
+   * @param {toa.norm.context.Runtime} runtime
+   * @param {toa.norm.context.Registry} registry
    */
-  constructor (scope, runtime) {
+  constructor (scope, runtime, registry) {
     this.#scope = scope
     this.#runtime = runtime
+    this.#registry = registry
   }
 
   /**
    * @returns {Composition}
    */
   composition (composition) {
-    return new Composition(this.#scope, this.#runtime, composition)
+    const instance = new Composition(this.#scope, this.#runtime, this.#registry, composition)
+
+    instance.tag()
+
+    return instance
   }
 
   /**
    * @returns {Service}
    */
   service (path, service) {
-    return new Service(this.#scope, this.#runtime, path, service)
+    const instance = new Service(this.#scope, this.#runtime, this.#registry, path, service)
+
+    instance.tag()
+
+    return instance
   }
 }
 

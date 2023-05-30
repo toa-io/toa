@@ -25,9 +25,15 @@ const runtime = {
   version: generate()
 }
 
+/** @type {toa.norm.context.Registry} */
+const registry = {
+  base: generate()
+}
+
 exports.scope = generate()
 exports.name = name
 exports.version = hash(runtime.version + ';' + version)
 exports.Class = Class
 exports.runtime = runtime
+exports.registry = registry
 exports.process = process

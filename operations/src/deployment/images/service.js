@@ -28,11 +28,12 @@ class Service extends Image {
   /**
    * @param {string} scope
    * @param {toa.norm.context.Runtime} runtime
+   * @param {toa.norm.context.Registry} registry
    * @param {string} reference
    * @param {toa.deployment.dependency.Service} service
    */
-  constructor (scope, runtime, reference, service) {
-    super(scope, runtime)
+  constructor (scope, runtime, registry, reference, service) {
+    super(scope, runtime, registry)
 
     this.service = service.name
 

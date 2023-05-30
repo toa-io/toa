@@ -14,6 +14,10 @@ declare namespace toa.norm {
     interface Registry {
       base?: string
       platforms?: string[] | null
+      build?: {
+        command?: string
+        arguments?: string[]
+      }
     }
 
     interface Composition {

@@ -65,7 +65,6 @@ class Registry {
   #create (type, ...args) {
     const image = this.#factory[type](...args)
 
-    image.tag(this.#registry?.base)
     this.#images.push(image)
 
     return image
