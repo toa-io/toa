@@ -33,3 +33,8 @@ Feature: toa compose
       | `toa compose ./components/dummies.two` | ./                       | 0     |
       | `toa compose dummies.one dummies.two`  | ./components             | 0     |
       | `toa compose ./**/*`                   | ./                       | 1     |
+
+  Scenario: Shutdown composition after it's started
+    Given I have a component `dummies.one`
+    When I run `toa compose --kill`
+    Then program should exit with code 0
