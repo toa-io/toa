@@ -2,6 +2,20 @@
 
 ## Development
 
+### compose
+
+Run composition.
+
+<dl>
+<dt><code>toa compose [paths]</code></dt>
+<dd>
+<code>paths</code> glob patterns to look for components<br/>
+<code>--kill</code> shutdown composition after it's started<br/>
+<code>--dock</code> run in Docker<br/>
+<code>--bindnings</code> override bindings (obsolete)<br/>
+</dd>
+</dl>
+
 ### env
 
 Export environment to a `.env` file.
