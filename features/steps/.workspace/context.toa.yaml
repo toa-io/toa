@@ -5,6 +5,8 @@ registry:
   base: localhost:5000
   platforms: ~
 amqp: amqp://localhost
-amqp@dock: amqp://host.docker.internal
+amqp@docker: amqp://host.docker.internal
 mongodb: mongodb://localhost
+mongodb@docker: mongodb://host.docker.internal
 sql: pg://localhost
+sql@docker: pg://host.docker.internal

@@ -48,7 +48,7 @@ Feature: toa compose
       | dummies.one |
       | dummies.two |
     And I have a context
-    When I run `toa env dock`
+    When I run `toa env docker`
     And I update an environment with:
     """
     TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
