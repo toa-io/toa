@@ -12,6 +12,11 @@ const builder = (yargs) => {
       default: '.'
     })
     .array('paths')
+    .option('kill', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Immediate shutdown'
+    })
     .option('bindings', {
       group: 'Command options:',
       type: 'string',

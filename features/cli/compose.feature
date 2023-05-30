@@ -36,5 +36,10 @@ Feature: toa compose
 
   Scenario: Shutdown composition after it's started
     Given I have a component `dummies.one`
-    When I run `toa compose --kill`
+    When I run `toa compose ./components/* --kill`
     Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      info Composition complete
+      info Composition shutdown complete
+      """

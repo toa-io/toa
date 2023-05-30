@@ -9,6 +9,8 @@ async function compose (argv) {
   const composition = await boot.composition(paths, argv)
 
   await composition.connect()
+
+  if (argv.kill === true) await composition.disconnect()
 }
 
 exports.compose = compose
