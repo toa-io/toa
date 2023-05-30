@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.sampling",
-  "version": "0.9.0-dev.0",
+  "version": "0.9.0-dev.1",
   "description": "Toa operations sampling",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,9 +19,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "1.1.0-dev.0",
-    "@toa.io/generic": "0.11.0-dev.0",
-    "@toa.io/schemas": "0.9.0-dev.0",
+    "@toa.io/core": "1.1.0-dev.1",
+    "@toa.io/generic": "0.11.0-dev.1",
+    "@toa.io/schemas": "0.9.0-dev.1",
     "jest-diff": "29.5.0"
   },
   "gitHead": "881065788070a30eb6b0a5d22b26de12bc2589fc"
