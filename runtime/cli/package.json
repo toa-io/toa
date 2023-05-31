@@ -22,11 +22,11 @@
     "@toa.io/runtime": "*"
   },
   "dependencies": {
-    "@toa.io/console": "0.20.0-dev.4",
-    "@toa.io/generic": "0.20.0-dev.4",
-    "@toa.io/kubernetes": "0.20.0-dev.4",
-    "@toa.io/norm": "0.20.0-dev.4",
-    "@toa.io/yaml": "0.20.0-dev.4",
+    "@toa.io/console": "0.20.0-dev.5",
+    "@toa.io/generic": "0.20.0-dev.5",
+    "@toa.io/kubernetes": "0.20.0-dev.5",
+    "@toa.io/norm": "0.20.0-dev.5",
+    "@toa.io/yaml": "0.20.0-dev.5",
     "dotenv": "16.1.1",
     "find-up": "5.0.0",
     "yargs": "17.6.2"
