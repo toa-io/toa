@@ -276,7 +276,7 @@ The mapping of HTTP methods is as follows:
 The Exposition annotation declares options for its deployment.
 
 ```yaml
-extensions:
+annotations:
   '@toa.io/extensions.exposition':
     host: the.exmaple.com
 ```
