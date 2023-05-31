@@ -76,7 +76,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1...
 
 ### Persistent Credentials
 
-`Basic` and `Bearer` credentials are persistent, so the Authentication system includes with corresponding Components.
+`Basic` and `Bearer` credentials are persistent, so the Authentication system includes corresponding Components.
 
 | Component           | Description                      |
 |---------------------|----------------------------------|
@@ -118,7 +118,7 @@ password?: string
 </dl>
 
 ```yaml
-token?: string
+token: string
 ```
 
 <dl>
