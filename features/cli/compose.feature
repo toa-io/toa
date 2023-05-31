@@ -60,3 +60,4 @@ Feature: toa compose
       """
       info Composition shutdown complete
       """
+

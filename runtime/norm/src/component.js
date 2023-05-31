@@ -35,7 +35,7 @@ const load = async (path, base) => {
   if (base !== undefined) path = find(path, base, MANIFEST)
 
   const file = join(path, MANIFEST)
-  const manifest = /** @type {toa.norm.Component} */ await yaml(file)
+  const manifest = /** @type {toa.norm.Component} */ await yaml(file) ?? {}
 
   manifest.path = path
 
