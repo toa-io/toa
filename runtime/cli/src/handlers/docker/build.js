@@ -20,7 +20,7 @@ async function build (contextPath, componentPatterns) {
 
   const composition = context.compositions[0].name
 
-  return `${context.registry.base ? context.registry.base + '/' : ''}${context.name}/composition-${composition}`
+  return `${context.registry.base === undefined ? '' : context.registry.base + '/'}${context.name}/composition-${composition}`
 }
 
 /**
