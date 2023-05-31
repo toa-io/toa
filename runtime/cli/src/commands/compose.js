@@ -22,6 +22,12 @@ const builder = (yargs) => {
       type: 'boolean',
       desc: 'Run in Docker'
     })
+    .option('context', {
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Path to the Context (used with --dock)',
+      default: '.'
+    })
     .option('bindings', {
       group: 'Command options:',
       type: 'string',

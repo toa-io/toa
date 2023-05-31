@@ -50,11 +50,11 @@ async function replay (argv) {
  * @return {Promise<void>}
  */
 async function dock (argv) {
-  const repository = await docker.build(argv.paths)
+  const repository = await docker.build(argv.context, argv.paths)
   const args = pick(argv, ['component', 'operation', 'integration', 'title'])
   const command = docker.command('toa replay *', args)
 
-  await docker.run(repository, command)
+  await docker.run(repository, command, argv.env)
 }
 
 const GREEN = '\x1b[32m'

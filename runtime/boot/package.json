@@ -25,7 +25,7 @@
     "@toa.io/norm": "0.20.0-dev.5",
     "@toa.io/schema": "0.20.0-dev.5",
     "clone-deep": "4.0.1",
-    "dotenv": "16.0.3"
+    "dotenv": "16.1.1"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }

@@ -8,7 +8,7 @@ const { context: find } = require('../util/find')
 
 async function env (argv) {
   const path = find(argv.path)
-  const filepath = join(path, '.env')
+  const filepath = join(path, argv.as)
   const operator = await boot.deployment(path, argv.environment)
   const variables = operator.variables()
   const currentValues = await read(filepath)

@@ -50,10 +50,10 @@ Feature: toa compose
     And I have a context
     When I run `toa env docker`
     And I update an environment with:
-    """
-    TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
-    TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=secret
-    """
+      """
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
+      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=secret
+      """
     And I run `toa compose ./components/* --dock --kill`
     Then program should exit with code 0
     And stdout should contain lines:
@@ -61,3 +61,46 @@ Feature: toa compose
       info Composition shutdown complete
       """
 
+  Scenario: Run composition in docker with custom env file
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context
+    When I run `toa env docker --as .env.docker`
+    And I update an environment file `.env.docker` with:
+      """
+      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
+      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=secret
+      """
+    And I run `toa compose ./components/* --dock --kill --env .env.docker`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      info Composition shutdown complete
+      """
+
+  Scenario: Run composition in docker with custom context runtime options
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context
+    When I run `toa env broken-runtime --as .env.broken`
+    And I run `toa compose ./components/* --dock --kill --env .env.broken`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      <...>npm ERR! code EUNSUPPORTEDPROXY
+      """
+
+  Scenario: Run composition in docker with custom context build options
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context
+    When I run `toa env broken-build --as .env.broken`
+    And I run `toa compose ./components/* --dock --kill --env .env.broken`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      <...>no-such-command" did not complete successfully: exit code: 127
+      """

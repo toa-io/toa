@@ -52,6 +52,12 @@ const builder = (yargs) => {
       group: 'Command options:',
       describe: 'Replay inside Docker container'
     })
+    .option('context', {
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Path to the Context (used with --dock)',
+      default: '.'
+    })
 }
 
 exports.command = 'replay [paths...]'

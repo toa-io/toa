@@ -1,18 +1,18 @@
 'use strict'
 
 const { newid } = require('@toa.io/generic')
-const { component: load } = require('@toa.io/norm')
+const norm = require('@toa.io/norm')
 const { deployment: { Factory } } = require('@toa.io/operations')
-const runtime = require('@toa.io/runtime')
 
 const find = require('../../util/find')
 
 /**
- * @param {string[]} paths
+ * @param {string} contextPath
+ * @param {string[]} componentPatterns
  * @return {Promise<string>}
  */
-async function build (paths) {
-  const context = await createContext(/** @type {string[]} */ paths)
+async function build (contextPath, componentPatterns) {
+  const context = await createContext(contextPath, componentPatterns)
   const factory = new Factory(context)
   const registry = factory.registry()
 
@@ -20,32 +20,26 @@ async function build (paths) {
 
   const composition = context.compositions[0].name
 
-  return `${context.name}/composition-${composition}`
+  return `${context.registry.base ? context.registry.base + '/' : ''}${context.name}/composition-${composition}`
 }
 
 /**
- * @param {string[]} patterns
+ * @param {string} contextPath
+ * @param {string[]} componentPatterns
  * @return {Promise<toa.norm.Context>}
  */
-async function createContext (patterns) {
-  const paths = patterns.map((pattern) => find.components(pattern))
+async function createContext (contextPath, componentPatterns) {
+  const contextRoot = find.context(contextPath)
+  const context = await norm.context(contextRoot)
+  const paths = componentPatterns.map((pattern) => find.components(pattern))
   const components = await loadComponents(paths)
   const rnd = newid().substring(0, 6)
   const name = 'replay-' + rnd
 
-  return {
-    name: 'toa-temp',
-    runtime: {
-      version: runtime.version
-    },
-    registry: {
-      platforms: null
-    },
-    compositions: [{
-      name,
-      components
-    }]
-  }
+  context.name += '-' + rnd
+  context.compositions = [{ name, components }]
+
+  return context
 }
 
 /**
@@ -56,7 +50,7 @@ async function loadComponents (paths) {
   const components = []
 
   for (const path of paths) {
-    const component = await load(path)
+    const component = await norm.component(path)
 
     components.push(component)
   }

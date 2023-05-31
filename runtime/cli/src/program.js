@@ -16,6 +16,11 @@ yargs(process.argv.slice(2))
 
     console.level(argv.log)
   })
+  .middleware(async (argv) => {
+    if (argv.env === undefined) return
+
+    require('dotenv').config({ path: /** @type {string} */ argv.env })
+  })
   .fail((msg, err) => {
     const actual = err || new Error(msg)
 
@@ -25,6 +30,10 @@ yargs(process.argv.slice(2))
   })
   .option('log', {
     describe: 'Log level'
+  })
+  .option('env', {
+    type: 'string',
+    describe: 'Path to environment variables file (.env format)'
   })
   .commandDir('./commands')
   .demandCommand(1, 'A command is required. Pass --help to see all available commands and options.')

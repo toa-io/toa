@@ -12,9 +12,15 @@ const builder = (yargs) => {
     .option('path', {
       alias: 'p',
       group: 'Command options:',
-      describe: 'Path to component',
+      describe: 'Path to a Context',
       type: 'string',
       default: '.'
+    })
+    .option('as', {
+      group: 'Command options:',
+      describe: 'Output file path',
+      type: 'string',
+      default: '.env'
     })
 }
 
