@@ -164,6 +164,21 @@ Feature: Replay samples
       # Subtest: Component samples
       """
 
+  Scenario: Replay autonomous tests only
+    Given I have a component `math.calculations`
+    And I have a context
+    And I have integration samples
+    When I run `toa replay --autonomous`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: Component samples
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Integration samples
+      """
+
   Scenario: Replay samples for a specific component
     Given I have components:
       | math.calculations |

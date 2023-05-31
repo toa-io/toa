@@ -21,6 +21,12 @@ const builder = (yargs) => {
       group: 'Command options:',
       describe: 'Replay samples for specified component'
     })
+    .option('autonomous', {
+      alias: 'a',
+      type: 'boolean',
+      group: 'Command options:',
+      describe: 'Replay autonomous tests only'
+    })
     .option('integration', {
       alias: 'i',
       type: 'boolean',
