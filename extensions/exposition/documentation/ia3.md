@@ -29,7 +29,7 @@ The Authentication system is request-agnostic, meaning it does not depend on the
 content of the request body.
 The only information it handles is the value of the `Authorization` header.
 
-> Except [its own resources](#authentication-resources).
+> Except for [its own resources](#persistent-credentials).
 
 ### Basic scheme
 
@@ -101,22 +101,27 @@ These components expose a list of resources to manage credentials.
 <dl>
 <dt><code>PUT</code></dt>
 <dd>Create or update Basic credentials. Request body is as following:<br/>
-<code>
-username?: string<br/>
-password?: string
-</code>
 </dd>
 </dl>
+
+```yaml
+username?: string
+password?: string
+```
 
 #### `/.identity/subjects/:id`
 
 <dl>
 <dt><code>POST</code></dt>
 <dd>Add <code>Bearer</code> token credentials to an Identity. Request body is as following:<br/>
-<code>
-token?: string<br/>
-</code>
 </dd>
+</dl>
+
+```yaml
+token?: string
+```
+
+<dl>
 <dt><code>DELETE</code></dt>
 <dd>Delete provided <code>Bearer</code> token credentials.
 </dd>
