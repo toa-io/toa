@@ -12,7 +12,7 @@ Run composition.
 <code>paths</code> glob patterns to look for components<br/>
 <code>--kill</code> shutdown composition after it's started<br/>
 <code>--dock</code> run in Docker using current <code>.env</code><br/>
-<code>--bindnings</code> override bindings (obsolete)<br/>
+<code>--bindnings</code> override bindings (obsolete)
 </dd>
 </dl>
 
@@ -27,12 +27,13 @@ Export environment to a `.env` file.
 <dd>
 <code>environment</code> deployment environment name (default <code>local</code>).<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
+<code>--as</code> output file path (default <code>.env</code>)
 </dd>
 </dl>
 
-Credentials specified in `.env` file are preserved.
+Credentials specified in the output file are preserved.
 
-> It is recommended to add `.env` to `.gitignore`.
+> It is recommended to add `.env*` to `.gitignore`.
 
 ### replay
 
@@ -73,7 +74,7 @@ found and replayed sequentially.
 <dd>Print normalized manifest.
 
 <code>--path</code> path to component (default <code>.</code>)<br/>
-<code>--error</code> print errors only<br/>
+<code>--error</code> print errors only
 </dd>
 </dl>
 
@@ -109,7 +110,7 @@ Deploy a Context.
 <code>--namespace</code> Kubernetes namespace to apply the Helm chat to<br/>
 <code>--wait</code> wait until all
 Pods [are ready](https://helm.sh/docs/intro/using_helm/#helpful-options-for-installupgraderollback)<br/>
-<code>--dry</code> do not apply the Helm chart<br/>
+<code>--dry</code> do not apply the Helm chart
 </dd>
 </dl>
 
