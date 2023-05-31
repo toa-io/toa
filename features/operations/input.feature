@@ -52,3 +52,12 @@ Feature: Additional properties
       output: ok
       """
     And I disconnect
+
+  Scenario: Invocation with default value
+    Given I boot `echo.beacon` component
+    When I invoke `def`
+    Then the reply is received:
+      """yaml
+      output: ok
+      """
+    And I disconnect

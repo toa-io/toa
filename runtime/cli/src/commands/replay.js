@@ -21,6 +21,12 @@ const builder = (yargs) => {
       group: 'Command options:',
       describe: 'Replay samples for specified component'
     })
+    .option('autonomous', {
+      alias: 'a',
+      type: 'boolean',
+      group: 'Command options:',
+      describe: 'Replay autonomous tests only'
+    })
     .option('integration', {
       alias: 'i',
       type: 'boolean',
@@ -45,6 +51,12 @@ const builder = (yargs) => {
       default: false,
       group: 'Command options:',
       describe: 'Replay inside Docker container'
+    })
+    .option('context', {
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Path to the Context (used with --dock)',
+      default: '.'
     })
 }
 

@@ -85,7 +85,7 @@ const find = (context, channel, lines, exact = undefined, reverse = false) => {
 
     count.push(matches)
 
-    assert[reverse ? 'equal' : 'notEqual'](matches, 0, 'Line not found: ' + query)
+    assert[reverse ? 'equal' : 'notEqual'](matches, 0, `Line${reverse ? '' : ' not'} found: ${query}`)
 
     if (exact !== undefined) {
       assert[reverse ? 'notEqual' : 'equal'](matches, exact, 'Line found multiple times: ' + query)

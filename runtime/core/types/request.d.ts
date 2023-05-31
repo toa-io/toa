@@ -17,6 +17,7 @@ declare namespace toa.core {
   type Request = {
     input?: any
     query?: request.Query
+    authentic?: boolean
   }
 
 }

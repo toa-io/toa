@@ -4,7 +4,7 @@ const { normalize } = require('./normalize')
 const { validate } = require('./validate')
 
 /**
- * @param {toa.pointer.URIs} declaration
+ * @param {toa.pointer.URIs | string} declaration
  * @returns {toa.pointer.URIs}
  */
 const construct = (declaration) => {

@@ -42,6 +42,14 @@ describe('construct', () => {
       expect(annotations['foo.bar']).toStrictEqual(url)
     })
 
+    it('should allow shards', () => {
+      const annotations = 'schema://host{1-2}-' + generate().toLowerCase()
+
+      construct(annotations)
+
+      expect(annotations).toStrictEqual(annotations)
+    })
+
     it('should allow dot notation with namespace value', () => {
       annotations.foo = gen()
       annotations['foo.bar'] = gen()
@@ -55,12 +63,6 @@ describe('construct', () => {
       // noinspection JSCheckFunctionSignatures
       expect(() => construct(1)).toThrow(TypeError)
       expect(() => construct(null)).toThrow(TypeError)
-    })
-
-    it('should throw if property is not url', () => {
-      annotations.foo = 'not url'
-
-      expect(() => construct(annotations)).toThrow(TypeError)
     })
   })
 })

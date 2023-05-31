@@ -11,16 +11,18 @@ class Composition extends Image {
 
   /** @type {string} */
   #name
+
   /** @type {toa.norm.Component[]} */
   #components
 
   /**
-   * @param scope {string}
-   * @param runtime {toa.norm.context.Runtime}
-   * @param composition {toa.norm.context.Composition}
+   * @param {string} scope
+   * @param {toa.norm.context.Runtime} runtime
+   * @param {toa.norm.context.Registry} registry
+   * @param {toa.norm.context.Composition} composition
    */
-  constructor (scope, runtime, composition) {
-    super(scope, runtime)
+  constructor (scope, runtime, registry, composition) {
+    super(scope, runtime, registry)
 
     this.#name = composition.name
     this.#components = composition.components

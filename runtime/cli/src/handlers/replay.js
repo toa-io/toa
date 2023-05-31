@@ -1,12 +1,13 @@
 'use strict'
 
-const find = require('../util/find')
+const { pick } = require('@toa.io/generic')
 const { context, components } = require('@toa.io/userland/samples')
 
-const { dock } = require('./.replay/dock')
+const find = require('../util/find')
+const docker = require('./docker')
 
 /**
- * @param {Record<string, string | boolean>} argv
+ * @param {Record<string, string | string[] | boolean>} argv
  * @return {Promise<void>}
  */
 async function replay (argv) {
@@ -20,6 +21,7 @@ async function replay (argv) {
   /** @type {toa.samples.suite.Options} */
   const options = {
     component: argv.component,
+    autonomous: argv.autonomous,
     integration: argv.integration,
     operation: argv.operation,
     title: argv.title,
@@ -41,6 +43,18 @@ async function replay (argv) {
 
   // print after tap's output
   process.on('beforeExit', () => console.log(message))
+}
+
+/**
+ * @param {Record<string, string | string[] | boolean>} argv
+ * @return {Promise<void>}
+ */
+async function dock (argv) {
+  const repository = await docker.build(argv.context, argv.paths)
+  const args = pick(argv, ['component', 'operation', 'integration', 'title'])
+  const command = docker.command('toa replay *', args)
+
+  await docker.run(repository, command, argv.env)
 }
 
 const GREEN = '\x1b[32m'

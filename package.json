@@ -65,9 +65,11 @@
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
     "version:dev": "npx lerna@6.5.1 version --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --no-git-tag-version",
     "publish:local": "npm publish --workspaces --registry=http://localhost:4873",
+    "canary": "npx lerna@6.5.1 publish --canary --preid dev --no-commit-hooks --no-changelog --yes --message \"ci: prerelease\" --git-tag-command \"echo %s\" --sign-git-commit",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
-    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context"
+    "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
+    "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i"
   },
   "standard": {
     "parser": "@babel/eslint-parser",

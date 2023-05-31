@@ -34,7 +34,7 @@ class Factory {
     this.#context = context
     this.#process = new Process()
 
-    const imagesFactory = new ImagesFactory(context.name, context.runtime)
+    const imagesFactory = new ImagesFactory(context.name, context.runtime, context.registry)
 
     this.#registry = new Registry(context.registry, imagesFactory, this.#process)
     this.#compositions = context.compositions.map((composition) => this.#composition(composition))

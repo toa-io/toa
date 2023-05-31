@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/userland",
-  "version": "1.2.0-dev.16",
+  "version": "0.20.0-dev.7",
   "description": "Toa development kit",
   "homepage": "https://toa.io",
   "author": {
@@ -24,14 +24,15 @@
   "main": "src/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/boot": "1.1.0-dev.2",
-    "@toa.io/core": "1.1.0-dev.16",
-    "@toa.io/filesystem": "1.1.0-dev.2",
-    "@toa.io/generic": "0.11.0-dev.16",
-    "@toa.io/norm": "1.1.0-dev.0",
-    "@toa.io/schemas": "0.8.4-dev.16",
-    "@toa.io/storages.null": "0.6.0",
-    "@toa.io/yaml": "0.7.6-dev.16",
+    "@toa.io/boot": "0.20.0-dev.7",
+    "@toa.io/core": "0.20.0-dev.7",
+    "@toa.io/filesystem": "0.20.0-dev.7",
+    "@toa.io/generic": "0.20.0-dev.7",
+    "@toa.io/norm": "0.20.0-dev.7",
+    "@toa.io/schemas": "0.20.0-dev.7",
+    "@toa.io/storages.null": "0.20.0-dev.7",
+    "@toa.io/yaml": "0.20.0-dev.7",
     "tap": "16.3.4"
-  }
+  },
+  "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }

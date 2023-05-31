@@ -3,7 +3,7 @@ import type * as _dependency from './dependency'
 import type * as _image from "./images/image"
 
 declare namespace toa.deployment {
-
+  
   interface Registry {
     composition(composition: _norm.Composition): _image.Image
 

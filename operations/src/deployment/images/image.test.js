@@ -7,15 +7,13 @@ const { generate } = require('randomstring')
 let instance
 
 beforeEach(() => {
-  instance = new fixtures.Class(fixtures.scope, fixtures.runtime)
+  instance = new fixtures.Class(fixtures.scope, fixtures.runtime, fixtures.registry)
 })
 
 it('should assign url', () => {
-  const registry = generate()
+  instance.tag()
 
-  instance.tag(registry)
-
-  expect(instance.reference).toEqual(`${registry}/${fixtures.scope}/class-${fixtures.name}:${fixtures.version}`)
+  expect(instance.reference).toEqual(`${fixtures.registry.base}/${fixtures.scope}/class-${fixtures.name}:${fixtures.version}`)
 })
 
 describe('prepare', () => {
