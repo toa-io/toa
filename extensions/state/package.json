@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.state",
-  "version": "0.20.0-dev.6",
+  "version": "0.20.0-dev.7",
   "description": "Toa State",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -16,7 +16,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/generic": "0.20.0-dev.6"
+    "@toa.io/generic": "0.20.0-dev.7"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
