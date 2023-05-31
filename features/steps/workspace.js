@@ -72,15 +72,29 @@ Then('I update an environment with:',
    * @this {toa.features.Context}
    */
   async function (update) {
-    const path = join(this.cwd, ENV_FILE)
-    const contents = await file.read(path)
-    const oldVars = dotenv.parse(contents)
-    const newVars = dotenv.parse(update)
-    const merged = { ...oldVars, ...newVars }
-    const envLines = Object.entries(merged).map(([key, value]) => `${key}=${value}`)
-    const mergedLines = envLines.join('\n')
-
-    await file.write(path, mergedLines)
+    await updateEnv.call(this, update, ENV_FILE)
   })
+
+Then('I update an environment file {label} with:',
+  /**
+   * @param {string} envFile
+   * @param {string} update
+   * @this {toa.features.Context}
+   */
+  async function (envFile, update) {
+    await updateEnv.call(this, update, envFile)
+  })
+
+async function updateEnv (update, envFile) {
+  const path = join(this.cwd, envFile)
+  const contents = await file.read(path)
+  const oldVars = dotenv.parse(contents)
+  const newVars = dotenv.parse(update)
+  const merged = { ...oldVars, ...newVars }
+  const envLines = Object.entries(merged).map(([key, value]) => `${key}=${value}`)
+  const mergedLines = envLines.join('\n')
+
+  await file.write(path, mergedLines)
+}
 
 const ENV_FILE = '.env'

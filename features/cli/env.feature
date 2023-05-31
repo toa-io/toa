@@ -9,7 +9,7 @@ Feature: Export local deployment environment variables
         -p, --path
       """
 
-  Scenario: Select `some` environment
+  Scenario: Export `some` environment
     Given I have a component `dummies.one`
     And I have a context with:
       """yaml
