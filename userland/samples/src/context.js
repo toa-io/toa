@@ -15,7 +15,7 @@ const context = async (path, options = {}) => {
   let ok = true
 
   if (options.integration !== true) ok = await test.components(paths, options)
-  if (ok) ok = await replay(suite, paths, options.runner)
+  if (ok && options.autonomous !== true) ok = await replay(suite, paths, options.runner)
 
   return ok
 }

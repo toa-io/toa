@@ -7,7 +7,7 @@ const find = require('../util/find')
 const docker = require('./docker')
 
 /**
- * @param {Record<string, string | boolean>} argv
+ * @param {Record<string, string | string[] | boolean>} argv
  * @return {Promise<void>}
  */
 async function replay (argv) {
@@ -21,6 +21,7 @@ async function replay (argv) {
   /** @type {toa.samples.suite.Options} */
   const options = {
     component: argv.component,
+    autonomous: argv.autonomous,
     integration: argv.integration,
     operation: argv.operation,
     title: argv.title,

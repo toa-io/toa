@@ -43,8 +43,9 @@ format.
 <dt><code>toa replay [paths...]</code></dt>
 <dd>
 <code>paths</code> Path(s) to component(s) or a context (default <code>.</code>).<br/>
-<code>--integration</code> Replay integration tests only.<br/>
 <code>--component &lt;id&gt;</code> Replay samples for a specified component <code>id</code>.<br/>
+<code>--integration</code> Replay integration tests only.<br/>
+<code>--autonomous</code> Replay autonomous tests only.<br/>
 <code>--operation &lt;name&gt;</code> Replay samples for specified operation.<br/>
 <code>--title &lt;regexp&gt;</code> Regexp to match sample titles.<br/>
 <code>--dock</code> Run in Docker. Applicable only for component samples.
