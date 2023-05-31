@@ -214,6 +214,7 @@ Feature: Replay samples
     Given I have components:
       | math.calculations |
       | echo.beacon       |
+    And I have a context
     And my working directory is ./components
     When I run `toa replay * --dock`
     Then program should exit with code 0
@@ -227,6 +228,7 @@ Feature: Replay samples
     Given I have components:
       | math.calculations |
       | echo.beacon       |
+    And I have a context
     And my working directory is ./components
     When I run `toa replay * --component math.calculations --dock`
     Then program should exit with code 0

@@ -78,3 +78,29 @@ Feature: toa compose
       """
       info Composition shutdown complete
       """
+
+  Scenario: Run composition in docker with custom context runtime options
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context
+    When I run `toa env broken-runtime --as .env.broken`
+    And I run `toa compose ./components/* --dock --kill --env .env.broken`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      <...>npm ERR! code EUNSUPPORTEDPROXY
+      """
+
+  Scenario: Run composition in docker with custom context build options
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context
+    When I run `toa env broken-build --as .env.broken`
+    And I run `toa compose ./components/* --dock --kill --env .env.broken`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      <...>no-such-command" did not complete successfully: exit code: 127
+      """

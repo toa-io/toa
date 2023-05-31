@@ -26,11 +26,11 @@ async function compose (argv) {
  * @return {Promise<void>}
  */
 async function dock (argv) {
-  const repository = await docker.build(argv.paths)
+  const repository = await docker.build(argv.context, argv.paths)
   const args = pick(argv, ['kill', 'bindings'])
   const command = docker.command('toa compose *', args)
 
-  await docker.run(repository, command)
+  await docker.run(repository, command, argv.env)
 }
 
 exports.compose = compose
