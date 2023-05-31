@@ -138,8 +138,13 @@ token: string
 ## FAQ
 
 <dl>
-<dt>How do I log out a user?</dt>
+<dt>How can I log out a user?</dt>
 <dd>Delete <code>Token</code> credentials from the device.</dd>
 <dt>Where are the sessions?</dt>
 <dd>The Authentication system is stateless, meaning it does not store any information between requests except for persistent credentials.</dd>
+<dt>How can I pass the Identity to an operation call?</dt>
+<dd>
+This is not possible. Refer to the Resource Design Guidelines for more information. 
+<a href="https://github.com/toa-io/toa/issues/353">#353</a>
+</dd>
 </dl>
