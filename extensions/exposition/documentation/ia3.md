@@ -22,9 +22,14 @@ Identity.
 Identity is intrinsically linked to credentials, as an Identity is established only when the first set of credentials
 for that Identity is created.
 In other words, the creation of credentials marks the inception of an Identity.
+Once the last credentials are removed from the Identity, it ceases to exist.
 Without credentials, there is no basis for defining or asserting an Identity.
 
-Credentials are passed as a value of the `Authorization` HTTP header using one of the supported authentication schemes.
+The Authentication system is request-agnostic, meaning it does not depend on the specific URL being requested or the
+content of the request body.
+The only information it handles is the value of the `Authorization` header.
+
+> Except [its own resources](#authentication-resources).
 
 ### Basic scheme
 
@@ -36,7 +41,7 @@ Authorization: Basic aGVsbG86d29ybGQK
 
 ### Token scheme
 
-Own tokens issued by the Authentication layer. The tokens are [PASETO](https://paseto.io).
+Tokens issued by the Authentication system. These tokens are [PASETO](https://paseto.io).
 
 The `Token` is the primary authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response containing
@@ -65,10 +70,71 @@ exposition:
 
 The example above demonstrates the default list of trusted providers.
 
-## Components
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1...
+```
 
-| Component           | Description                                          |
-|---------------------|------------------------------------------------------|
-| `identity.basic`    | Basic authentication credentials                     |
-| `identity.subjects` | OpenID/OAuth token subjects connected to an Identity |
-| `identity.roles`    | Roles for the `role` Directive.                      |
+### Persistent Credentials
+
+`Basic` and `Bearer` credentials are persistent, so the Authentication system includes with corresponding Components.
+
+| Component           | Description                      |
+|---------------------|----------------------------------|
+| `identity.basic`    | Basic authentication credentials |
+| `identity.subjects` | OpenID/OAuth token subjects      |
+
+These components expose a list of resources to manage credentials.
+
+#### `/.identity`
+
+<dl>
+<dt><code>POST</code></dt>
+<dd>Create a new Identity with provided credentials.</dd>
+<dt><code>GET</code></dt>
+<dd>Resolve provided credentials to an Identity.</dd>
+<dt><code>DELETE</code></dt>
+<dd>Delete all credentials of an Identity.</dd>
+</dl>
+
+#### `/.identity/basic/:id`
+
+<dl>
+<dt><code>PUT</code></dt>
+<dd>Create or update Basic credentials. Request body is as following:<br/>
+<code>
+username?: string<br/>
+password?: string
+</code>
+</dd>
+</dl>
+
+#### `/.identity/subjects/:id`
+
+<dl>
+<dt><code>POST</code></dt>
+<dd>Add <code>Bearer</code> token credentials to an Identity. Request body is as following:<br/>
+<code>
+token?: string<br/>
+</code>
+</dd>
+<dt><code>DELETE</code></dt>
+<dd>Delete provided <code>Bearer</code> token credentials.
+</dd>
+</dl>
+
+## Authorization
+
+### Managing Roles
+
+| Component        | Description                     |
+|------------------|---------------------------------|
+| `identity.roles` | Roles for the `role` Directive. |
+
+## FAQ
+
+<dl>
+<dt>How do I log out a user?</dt>
+<dd>Delete <code>Token</code> credentials from the device.</dd>
+<dt>Where are the sessions?</dt>
+<dd>The Authentication system is stateless, meaning it does not store any information between requests except for persistent credentials.</dd>
+</dl>
