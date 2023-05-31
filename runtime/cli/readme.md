@@ -1,5 +1,12 @@
 # Toa Command Line Interface
 
+## Common Options
+
+<dl>
+<dt><code>--env</code></dt>
+<dd>Path to the environment variables file (`.env` format)</dd>
+</dl>
+
 ## Development
 
 ### compose
@@ -9,10 +16,11 @@ Run composition.
 <dl>
 <dt><code>toa compose [paths]</code></dt>
 <dd>
-<code>paths</code> glob patterns to look for components<br/>
-<code>--kill</code> shutdown composition after it's started<br/>
-<code>--dock</code> run in Docker using current <code>.env</code><br/>
-<code>--bindnings</code> override bindings (obsolete)
+<code>paths</code> Glob patterns to look for components.<br/>
+<code>--kill</code> Shutdown composition after it's started<br/>
+<code>--dock</code> Run in Docker using current <code>.env</code>.<br/>
+<code>--context</code> Path to the Context root (default <code>.</code>).<br/>
+<code>--bindnings</code> Override bindings (obsolete).
 </dd>
 </dl>
 

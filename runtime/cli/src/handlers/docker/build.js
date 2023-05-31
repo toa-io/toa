@@ -34,7 +34,7 @@ async function createContext (patterns) {
   const name = 'replay-' + rnd
 
   return {
-    name: 'toa-temp',
+    name: 'toa-intermediate-' + rnd,
     runtime: {
       version: runtime.version
     },
