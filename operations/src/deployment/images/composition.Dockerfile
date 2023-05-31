@@ -10,9 +10,9 @@ RUN npm i -g @toa.io/runtime@{{runtime.version}}
 WORKDIR /composition
 ADD . .
 
+{{build.run}}
+
 # run 'npm i' in each component
 RUN find . -maxdepth 1 -type d \( ! -name . \) -exec /bin/sh -c "cd '{}' && if [ -f package.json ]; then npm i; fi" \;
-
-{{build.run}}
 
 CMD toa compose *
