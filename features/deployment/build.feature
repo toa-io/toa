@@ -38,3 +38,24 @@ Feature: Container Building Options
     Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ENV FOO=$FOO'
     Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'
     Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'
+
+  Scenario: Building a container with internal registry
+    Given I have a component `dummies.one`
+    Given I have a context with:
+    """
+    runtime:
+      registry: http://host.docker.internal:4873
+    """
+    When I export images
+    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN if [ http://host.docker.internal:4873 != undefined ]; then npm set registry http://host.docker.internal:4873; fi'
+
+  Scenario: Building a container with internal registry proxy
+    Given I have a component `dummies.one`
+    Given I have a context with:
+    """
+    runtime:
+      proxy: http://host.docker.internal:4873
+    """
+    When I export images
+    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN if [ http://host.docker.internal:4873 != undefined ]; then npm set proxy http://host.docker.internal:4873; fi'
+
