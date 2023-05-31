@@ -1,6 +1,5 @@
 'use strict'
 
-const { file: { dot } } = require('@toa.io/filesystem')
 const { pick } = require('@toa.io/generic')
 const boot = require('@toa.io/boot')
 
@@ -27,12 +26,11 @@ async function compose (argv) {
  * @return {Promise<void>}
  */
 async function dock (argv) {
-  const envFile = await dot('env')
   const repository = await docker.build(argv.paths)
   const args = pick(argv, ['kill', 'bindings'])
   const command = docker.command('toa compose *', args)
 
-  await docker.run(repository, command, ['--env-file', envFile])
+  await docker.run(repository, command)
 }
 
 exports.compose = compose

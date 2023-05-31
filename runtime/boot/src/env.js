@@ -3,7 +3,7 @@
 const { file } = require('@toa.io/filesystem')
 
 async function setup () {
-  const path = await file.dot('env')
+  const path = process.env.TOA_ENV_FILE ?? await file.dot('env')
 
   if (path !== undefined) require('dotenv').config({ path })
 }
