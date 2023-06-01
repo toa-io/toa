@@ -123,7 +123,7 @@ In other words, the Identity must have a specified or more general Role.
 
 Roles are persistent, so the Authorization includes `identity.roles` Component, that exposes the following resources:
 
-#### `/.identity/roles/:id`
+#### `/identity/roles/:id`
 
 <dl>
 <dt><code>POST</code></dt>
@@ -145,7 +145,7 @@ role: string
 roles: [string]
 ```
 
-#### `/.identity/roles/:id/:role`
+#### `/identity/roles/:id/:role`
 
 <dl>
 <dt><code>DELETE</code></dt>

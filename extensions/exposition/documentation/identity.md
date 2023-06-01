@@ -80,9 +80,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1...
 | `identity.basic`    | Basic authentication credentials |
 | `identity.subjects` | OpenID/OAuth token subjects      |
 
-These components expose a list of resources to manage credentials.
+These Components expose a list of resources to manage credentials.
 
-#### `/.identity`
+#### `/identity`
 
 <dl>
 <dt><code>POST</code></dt>
@@ -93,7 +93,7 @@ These components expose a list of resources to manage credentials.
 <dd>Delete all credentials of an Identity.</dd>
 </dl>
 
-#### `/.identity/basic/:id`
+#### `/identity/basic/:id`
 
 > `:id` placeholder refers to an Identity.
 
@@ -108,7 +108,7 @@ username?: string
 password?: string
 ```
 
-#### `/.identity/subjects/:id`
+#### `/identity/subjects/:id`
 
 <dl>
 <dt><code>POST</code></dt>
@@ -135,7 +135,7 @@ Technically speaking, since the Authentication is request-agnostic, user credent
 can be sent with any request.
 
 However, it is most likely that a request originator will need to obtain an Identity value for subsequent requests.
-For this reason, it is recommended to make a `GET /.identity` request.
+For this reason, it is recommended to make a `GET /identity` request.
 </dd>
 <dt>How can I log out a user?</dt>
 <dd>Delete <code>Token</code> credentials from the device.</dd>

@@ -248,6 +248,29 @@ projection: id,title,timestamp
 
 Exposition Directives are declared using corresponding RTD keys, and can add or modify the behavior of the request
 processing.
+Directives are applied to the RTD node where they are declared and to all nested nodes.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /:
+    role: reader
+    /documents: # role directive is applied
+      ...
+```
+
+When it is necessary to avoid directive nesting for RTD branch, it can be declared adjacent.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /:
+    role: reader
+  /documents: # role directive is not applied
+    ...
+```
 
 - [Access Authorization](./documentation/access.md)
 
