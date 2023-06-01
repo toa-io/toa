@@ -5,7 +5,7 @@
 <a href="">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./.ia3/overview-dark.jpg">
-    <img alt="IA3" width="800" height="676" src="./.ia3/overview-light.jpg">
+    <img alt="IA3" width="600" height="507" src="./.ia3/overview-light.jpg">
   </picture>
 </a>
 
