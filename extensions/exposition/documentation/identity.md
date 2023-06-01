@@ -1,4 +1,4 @@
-# Identity Authentication and Access Authorization Framework
+# Identity authentication
 
 ## Concept
 
@@ -14,8 +14,6 @@
 Identity is the fundamental entity within an authentication system that represents the **unique identifier** of an
 individual, organization, application or device.
 
-## Authentication
-
 In order to prove its Identity, the request originator must provide a valid _credentials_ that are associated with that
 Identity.
 
@@ -25,11 +23,19 @@ In other words, the creation of credentials marks the inception of an Identity.
 Once the last credentials are removed from the Identity, it ceases to exist.
 Without credentials, there is no basis for defining or asserting an Identity.
 
+## Authentication
+
+The Authenticaiton system resolves provided credentials to an Identity using one of the supported authentication
+schemes.
+
 The Authentication system is request-agnostic, meaning it does not depend on the specific URL being requested or the
 content of the request body.
 The only information it handles is the value of the `Authorization` header.
 
 > Except for [its own resources](#persistent-credentials).
+
+If the provided credentials are not valid or not associated with an identity, then Authentication interrupts request
+processing and responds with an authentication error.
 
 ### Basic scheme
 
@@ -58,11 +64,13 @@ OpenID tokens issued by trusted providers.
 For more information, refer to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html),
 [RFC6750](https://datatracker.ietf.org/doc/html/rfc6750).
 
-Trusted providers are specified using the `oidc.trust` property within the Exposition annotation.
+Trusted providers are specified using the `idenity.trust` property within the Exposition annotation.
 
 ```yaml
+# context.toa.yaml
+
 exposition:
-  oidc:
+  identity:
     trust:
       - https://accounts.google.com
       - https://appleid.apple.com
@@ -126,14 +134,6 @@ token: string
 <dd>Delete provided <code>Bearer</code> token credentials.
 </dd>
 </dl>
-
-## Authorization
-
-### Managing Roles
-
-| Component        | Description                     |
-|------------------|---------------------------------|
-| `identity.roles` | Roles for the `role` Directive. |
 
 ## FAQ
 

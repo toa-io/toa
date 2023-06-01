@@ -34,7 +34,8 @@ Non-scattered documentation is coming this summer.
 - [API Gateway](/extensions/exposition)
   - Realtime resource discovery
   - Semantic method mapping
-  - [Identity Authentication and Access Authorization](extensions/exposition/documentation/ia3.md)
+  - [Identity](extensions/exposition/documentation/identity.md)
+  - [Access Control](extensions/exposition/documentation/access.md)
   - Realtime events
 - [Configuration](/extensions/configuration)
 - Transient state

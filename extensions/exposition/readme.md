@@ -172,7 +172,7 @@ exposition:
 #### Criteria
 
 The criteria property is considered as *open* when it ends with a `;`, allowing the combination of request query
-criteria using and logic. Otherwise, criteria property is *closed*, that is, doesn't allow `criteria` in a request
+criteria using `and` logic. Otherwise, criteria property is *closed*, that is, doesn't allow `criteria` in a request
 query.
 
 ```yaml
@@ -249,7 +249,7 @@ projection: id,title,timestamp
 Exposition Directives are declared using corresponding RTD keys, and can add or modify the behavior of the request
 processing.
 
-- [Identity Authentication and Access Authorization](./documentation/ia3.md)
+- [Access Authorization](./documentation/access.md)
 
 ## Requests Mapping
 
@@ -306,6 +306,3 @@ exposition:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
 ```
-
-
-
