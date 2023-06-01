@@ -4,8 +4,8 @@
 
 <a href="">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./.ia3/overview-dark.jpg">
-    <img alt="IA3" width="600" height="507" src="./.ia3/overview-light.jpg">
+    <source media="(prefers-color-scheme: dark)" srcset="./.assets/ia3-dark.jpg">
+    <img alt="IA3" width="600" height="507" src="./.assets/ia3-light.jpg">
   </picture>
 </a>
 
@@ -107,6 +107,14 @@ A Role matches the value of the `rule` directive if that Role has the specified 
 The example above defines a `role` directive with the specified `developer:senior` Role Scope.
 This directive matches the roles `developer:senior` and `developer`,
 but it **does not** match the Role `developer:senior:javascript`.
+
+<a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764556008550471&cot=14">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".assets/role-scopes-dark.jpg">
+    <img alt="IA3" width="600" height="425" src=".assets/role-scopes-light.jpg">
+  </picture>
+</a>
+
 
 > The root-level Role Scope `system` is preserved and cannot be used with the `role` directives.
 

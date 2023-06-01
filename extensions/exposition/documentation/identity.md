@@ -1,6 +1,4 @@
-# Identity authentication
-
-## Identity
+# Identity
 
 Identity is the fundamental entity within an authentication system that represents the **unique identifier** of an
 individual, organization, application or device.

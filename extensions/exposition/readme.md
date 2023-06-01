@@ -31,8 +31,8 @@ Host: api.example.com
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764555658883997&cot=14">
     <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./documentation/.readme/overview-dark.jpg">
-        <img alt="Exposition" width="800" height="427" src="./documentation/.readme/overview-light.jpg">
+        <source media="(prefers-color-scheme: dark)" srcset="./documentation/.assets/overview-dark.jpg">
+        <img alt="Exposition" width="800" height="427" src="./documentation/.assets/overview-light.jpg">
     </picture>
 </a>
 
