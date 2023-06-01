@@ -107,6 +107,7 @@ A Role matches the value of the `rule` directive if that Role has the specified 
 The example above defines a `role` directive with the specified `developer:senior` Role Scope.
 This directive matches the roles `developer:senior` and `developer`,
 but it **does not** match the Role `developer:senior:javascript`.
+In other words, the Identity must have a specified or more general role.
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764556008550471&cot=14">
   <picture>
