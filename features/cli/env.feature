@@ -102,4 +102,4 @@ Feature: Export local deployment environment variables
     Given I have a component `dummies.one`
     And I have a context
     When I run `toa env some --as .env.some`
-    Then the file ./.env.some should contain exact line 'TOA_ENV=some'
+    Then the file ./.env.some contains exact line 'TOA_ENV=some'

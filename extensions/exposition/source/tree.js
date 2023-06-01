@@ -24,7 +24,7 @@ class Tree {
 
   /** @hot */
   match (path) {
-    // dev only check
+    // dev-only check
     if (process.env.TOA_ENV === 'local') {
       const nodes = this.#nodes.filter((node) => node.match(path) !== false)
 

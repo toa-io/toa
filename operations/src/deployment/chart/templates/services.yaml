@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-{{ required "deployment name is required" .name }}
+  name: extensions-{{ required "deployment name is required" .name }}
 spec:
   replicas: {{ .replicas | default 2 }}
   selector:

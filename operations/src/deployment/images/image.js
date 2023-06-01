@@ -29,9 +29,6 @@ class Image {
   /** @type {toa.norm.context.Runtime} */
   #runtime
 
-  /** @type {string} */
-  #type
-
   /** @type {{ runtime?: Partial<toa.norm.context.Runtime>, build: object }} */
   #values = { build: { command: 'echo hello' } }
 
@@ -44,7 +41,6 @@ class Image {
     this.#scope = scope
     this.#registry = registry
     this.#runtime = runtime
-    this.#type = this.constructor.name.toLowerCase()
 
     this.#setValues()
   }
@@ -52,7 +48,7 @@ class Image {
   tag () {
     const tag = hash(this.#runtime?.version + ';' + this.version)
 
-    this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.#type}-${this.name}:${tag}`)
+    this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.name}:${tag}`)
   }
 
   /**
@@ -72,7 +68,7 @@ class Image {
   async prepare (root) {
     if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')
 
-    const path = join(root, `${this.#type}-${this.name}.${this.version}`)
+    const path = join(root, `${this.name}.${this.version}`)
 
     await directory.ensure(path)
 

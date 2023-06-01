@@ -18,10 +18,13 @@ class Service extends Image {
 
   /** @type {string} */
   #group
+
   /** @type {string} */
   #name
+
   /** @type {string} */
   #path
+
   /** @type {string} */
   #version
 
@@ -44,7 +47,7 @@ class Service extends Image {
   }
 
   get name () {
-    return this.#group + '-' + this.#name
+    return 'extensions-' + this.#group + '-' + this.#name
   }
 
   get version () {

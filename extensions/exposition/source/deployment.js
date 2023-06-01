@@ -9,7 +9,7 @@ const { PORT } = require('./constants')
  */
 const deployment = (components, annotations) => {
   const group = 'exposition'
-  const name = 'resources'
+  const name = 'gateway'
   const version = require('../package.json').version
   const port = PORT
   const ingress = annotations

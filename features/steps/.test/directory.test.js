@@ -91,8 +91,8 @@ describe('Given my working directory is {path}:', () => {
   })
 })
 
-describe('Then the file {path} should contain exact line {string}', () => {
-  const step = gherkin.steps.Th('the file {path} should contain exact line {string}')
+describe('Then the file {path} contains exact line {string}', () => {
+  const step = gherkin.steps.Th('the file {path} contains exact line {string}')
   const chdir = (path) => gherkin.steps.Gi('my working directory is {path}').call(context, path)
 
   beforeEach(async () => {

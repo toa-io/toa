@@ -6,7 +6,7 @@ Feature: Service Deployment
     When I export deployment for dev
     And I run `helm template deployment`
     Then program should exit
-    And service-exposition-resources Deployment container spec should contain:
+    And extensions-exposition-gateway Deployment container spec should contain:
       """
       env:
         - name: TOA_BINDINGS_AMQP_DEFAULT_USERNAME

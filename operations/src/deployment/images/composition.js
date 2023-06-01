@@ -29,7 +29,7 @@ class Composition extends Image {
   }
 
   get name () {
-    return this.#name
+    return 'composition-' + this.#name
   }
 
   get version () {
