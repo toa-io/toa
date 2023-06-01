@@ -272,6 +272,8 @@ exposition:
     ...
 ```
 
+#### Implemented Directives
+
 - [Access Authorization](./documentation/access.md)
 
 ## Requests Mapping
@@ -329,3 +331,8 @@ exposition:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
 ```
+
+## See Also
+
+- [Identity](documentation/identity.md)
+- [Access authorization](documentation/access.md)
