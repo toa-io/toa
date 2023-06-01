@@ -1,14 +1,5 @@
 # Identity authentication
 
-## Concept
-
-<a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764555919725830&cot=14">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./.ia3/overview-dark.jpg">
-    <img alt="IA3" width="350" height="646" src="./.ia3/overview-light.jpg">
-  </picture>
-</a>
-
 ## Identity
 
 Identity is the fundamental entity within an authentication system that represents the **unique identifier** of an
@@ -106,9 +97,11 @@ These components expose a list of resources to manage credentials.
 
 #### `/.identity/basic/:id`
 
+> `:id` placeholder refers to an Identity.
+
 <dl>
 <dt><code>PUT</code></dt>
-<dd>Create or update Basic credentials. Request body is as following:<br/>
+<dd>Create or update Basic credentials. Request body is as follows:
 </dd>
 </dl>
 
@@ -121,7 +114,7 @@ password?: string
 
 <dl>
 <dt><code>POST</code></dt>
-<dd>Add <code>Bearer</code> token credentials to an Identity. Request body is as following:<br/>
+<dd>Add <code>Bearer</code> token credentials to an Identity. Request body is as follows:<br/>
 </dd>
 </dl>
 
@@ -138,10 +131,20 @@ token: string
 ## FAQ
 
 <dl>
+<dt>How can I log in a user?</dt>
+<dd>
+Technically speaking, since the Authentication is request-agnostic, user credentials
+can be sent with any request.
+
+However, it is most likely that a request originator will need to obtain an Identity value for subsequent requests.
+For this reason, it is recommended to make a `GET /.identity` request.
+</dd>
 <dt>How can I log out a user?</dt>
 <dd>Delete <code>Token</code> credentials from the device.</dd>
 <dt>Where are the sessions?</dt>
-<dd>The Authentication system is stateless, meaning it does not store any information between requests except for persistent credentials.</dd>
+<dd>
+The Authentication is stateless, meaning it does not store any information between
+requests except for persistent credentials.</dd>
 <dt>How can I pass the Identity to an operation call?</dt>
 <dd>
 This is not possible. Refer to the Resource Design Guidelines for more information. 
