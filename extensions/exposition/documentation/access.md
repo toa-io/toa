@@ -156,7 +156,7 @@ roles: [string]
 
 ```yaml
 /identity/roles/:id:
-  role=system:roles
+  role: system:roles
 ````
 
 ### Principal

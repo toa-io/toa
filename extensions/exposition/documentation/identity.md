@@ -125,10 +125,10 @@ token: string
 ```yaml
 /identity:
   /basic/:id:
-    id=id
-    role=system:identity:basic
+    id: id
+    role: system:identity:basic
   /subjects/:id:
-    id=id
+    id: id
 ````
 
 Refer to [Access Authorization](access.md) for detailed information.
