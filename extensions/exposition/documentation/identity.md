@@ -108,6 +108,12 @@ username?: string
 password?: string
 ```
 
+```yaml
+/identity/basic/:id:
+  id=id
+  role=system:identity:basic
+````
+
 #### `/identity/subjects/:id`
 
 <dl>
@@ -120,11 +126,10 @@ password?: string
 token: string
 ```
 
-<dl>
-<dt><code>DELETE</code></dt>
-<dd>Delete provided <code>Bearer</code> token credentials.
-</dd>
-</dl>
+```yaml
+/identity/subjects/:id:
+  id=id
+````
 
 ## FAQ
 
