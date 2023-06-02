@@ -1,0 +1,17 @@
+name: basic
+
+entity:
+  schema:
+    username: string
+    password: string
+  initialized: true
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      username?: string
+      password?: string
+
+exposition:
+  /:id: [transit]
