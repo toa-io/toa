@@ -20,7 +20,7 @@ properties:
       operations:
         type: object
         propertyNames:
-          $ref: 'definitions#/definitions/token'
+          $ref: 'definitions#/definitions/name'
         patternProperties:
           '.*':
             type: object
@@ -68,7 +68,7 @@ properties:
             type: object
             propertyNames:
               oneOf:
-                - $ref: 'definitions#/definitions/token'
+                - $ref: 'definitions#/definitions/name'
                 - enum: [_version]
       initialized:
         type: boolean
@@ -89,7 +89,7 @@ properties:
   operations:
     type: object
     propertyNames:
-      $ref: 'definitions#/definitions/token'
+      $ref: 'definitions#/definitions/name'
     patternProperties:
       '.*':
         type: object
@@ -101,7 +101,7 @@ properties:
           concurrency:
             enum: [none, retry]
           forward:
-            $ref: 'definitions#/definitions/token'
+            $ref: 'definitions#/definitions/name'
           bridge:
             type: string
           bindings:
@@ -182,7 +182,7 @@ properties:
   events:
     type: object
     propertyNames:
-      $ref: 'definitions#/definitions/token'
+      $ref: 'definitions#/definitions/name'
     patternProperties:
       '.*':
         type: object
@@ -209,13 +209,13 @@ properties:
         type: object
         properties:
           operation:
-            $ref: 'definitions#/definitions/token'
+            $ref: 'definitions#/definitions/name'
           bridge:
             type: string
           binding:
             type: string
           source:
-            $ref: 'definitions#/definitions/token'
+            $ref: 'definitions#/definitions/name'
           path:
             type: string
           conditioned:

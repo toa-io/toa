@@ -10,6 +10,9 @@ definitions:
   id:
     type: string
     pattern: ^[a-fA-F0-9]{32}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?$
   label:
     type: string
     pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(-([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$
