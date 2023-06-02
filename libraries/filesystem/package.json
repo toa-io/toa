@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/filesystem",
-  "version": "0.20.0-dev.10",
+  "version": "0.20.0-dev.11",
   "description": "Toa Filesystem Tools",
   "homepage": "https://toa.io",
   "author": {
@@ -23,7 +23,7 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/generic": "0.20.0-dev.10",
+    "@toa.io/generic": "0.20.0-dev.11",
     "fast-glob": "3.2.12",
     "find-up": "5.0.0"
   },
