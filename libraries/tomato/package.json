@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/tomato",
-  "version": "0.20.0-dev.8",
+  "version": "0.20.0-dev.9",
   "description": "Gherkin Mock",
   "homepage": "https://toa.io",
   "author": {
@@ -27,7 +27,7 @@
     "randomstring": "*"
   },
   "dependencies": {
-    "@toa.io/generic": "0.20.0-dev.8"
+    "@toa.io/generic": "0.20.0-dev.9"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
