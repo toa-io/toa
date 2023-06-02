@@ -14,16 +14,16 @@ Feature: Origins Extension
     And I disconnect
 
   Scenario: HTTP Aspect absolute URL
-    Given I have a component `origins.http_absolute`
+    Given I have a component `origins.httpAbsolute`
     And I have a context with:
       """
       origins:
-        origins.http_absolute:
+        origins.httpAbsolute:
           .http:
             /^http:\/\/localhost:8888/: true
       """
     And I run `toa env`
-    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path/to/resource' } }" -p ./components/origins.http_absolute`
+    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path/to/resource' } }" -p ./components/origins.httpAbsolute`
     Then program should exit with code 0
     And stdout should contain lines:
     """
@@ -44,10 +44,10 @@ Feature: Origins Extension
     Then program should exit with code 0
 
   Scenario: HTTP permissions annotation
-    Given I have a component `origins.http_absolute`
+    Given I have a component `origins.httpAbsolute`
     And I have a context
     When I run `toa env`
-    And I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.http_absolute`
+    And I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.httpAbsolute`
     Then program should exit with code 1
     And stderr should contain lines:
     """
@@ -74,22 +74,22 @@ Feature: Origins Extension
       """
 
   Scenario: Origin with environment variable placeholder
-    Given I have a component `origins.http_echo`
+    Given I have a component `origins.httpEcho`
     And I have a context
     When I run `toa env`
     And I update an environment with:
       """
       ECHO_PORT=8888
       """
-    And I run `toa invoke test -p ./components/origins.http_echo`
+    And I run `toa invoke test -p ./components/origins.httpEcho`
     Then program should exit with code 0
 
   Scenario: HTTP permission with environment variable placeholder
-    Given I have a component `origins.http_absolute`
+    Given I have a component `origins.httpAbsolute`
     And I have a context with:
       """
       origins:
-        origins.http_absolute:
+        origins.httpAbsolute:
           .http:
             /^http:\/\/localhost:${ECHO_PORT}/: true
       """
@@ -98,7 +98,7 @@ Feature: Origins Extension
       """
       ECHO_PORT=8888
       """
-    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.http_absolute`
+    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.httpAbsolute`
     Then program should exit with code 0
 
   Scenario: AMQP credentials deployment annotations
@@ -148,8 +148,8 @@ Feature: Origins Extension
       """
 
   Scenario: Credentials in the origin's manifest
-    Given I have a component `origins.amqp_credentials`
-    And I run `toa invoke test -p ./components/origins.amqp_credentials`
+    Given I have a component `origins.amqpCredentials`
+    And I run `toa invoke test -p ./components/origins.amqpCredentials`
     Then program should exit with code 1
     And stderr should contain lines:
       """

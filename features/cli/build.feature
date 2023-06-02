@@ -46,13 +46,13 @@ Feature: Build images
     And I have a context with:
     """
     compositions:
-      - name: temp-0
+      - name: temp0
         components:
           - echo.beacon
           - math.calculations
     """
     When I run `toa build`
-    And I run `docker run --rm $(docker images -q localhost:5000/collection/composition-temp-0 | head -n 1) sh -c "toa replay *"`
+    And I run `docker run --rm $(docker images -q localhost:5000/collection/composition-temp0 | head -n 1) sh -c "toa replay *"`
     Then stdout should contain lines:
       """
       # Subtest: echo.beacon

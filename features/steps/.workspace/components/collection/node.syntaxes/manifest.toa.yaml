@@ -5,38 +5,38 @@ entity:
   storage: ./storage
 
 operations:
-  transition_function:
+  transitionFunction:
     concurrency: none
     output: string
-  transition_class:
+  transitionClass:
     concurrency: none
     output: string
-  transition_factory:
+  transitionFactory:
     concurrency: none
     output: string
-  observation_function:
+  observationFunction:
     output: string
-  observation_class:
+  observationClass:
     output: string
-  observation_factory:
+  observationFactory:
     output: string
-  assignment_function:
+  assignmentFunction:
     output: string
-  assignment_class:
+  assignmentClass:
     output: string
-  assignment_factory:
+  assignmentFactory:
     output: string
-  computation_function:
+  computationFunction:
     output: string
-  computation_class:
+  computationClass:
     output: string
-  computation_factory:
+  computationFactory:
     output: string
-  effect_function:
+  effectFunction:
     output: string
-  effect_class:
+  effectClass:
     output: string
-  effect_factory:
+  effectFactory:
     output: string
 
 configuration:

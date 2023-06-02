@@ -6,7 +6,7 @@ definitions:
     $ref: https://json-schema.org/draft/2019-09/schema
   token:
     type: string
-    pattern: ^[a-zA-Z]+([_-a-zA-Z0-9]*[a-zA-Z0-9]+)?$
+    pattern: ^[a-zA-Z]([a-zA-Z0-9]{1,31})?$
   id:
     type: string
     pattern: ^[a-fA-F0-9]{32}$

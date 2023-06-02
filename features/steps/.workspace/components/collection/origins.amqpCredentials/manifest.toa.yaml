@@ -1,4 +1,4 @@
-name: amqp_credentials
+name: amqpCredentials
 namespace: origins
 
 origins:

@@ -33,7 +33,7 @@ async function run (repository, command, envFile) {
 
   await done
 
-  await execute(`docker rmi ${id}`)
+  await execute(`docker rmi --force ${id}`)
 }
 
 exports.run = run

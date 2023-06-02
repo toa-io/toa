@@ -1,11 +1,11 @@
 'use strict'
 
-const { Computation } = require('./computation_class')
+const { Effect } = require('./effectClass')
 
 /**
  * @implements {toa.node.algorithms.Factory}
  */
-class ComputationFactory {
+class EffectFactory {
   #context
 
   constructor (context) {
@@ -13,8 +13,8 @@ class ComputationFactory {
   }
 
   create () {
-    return new Computation()
+    return new Effect()
   }
 }
 
-exports.ComputationFactory = ComputationFactory
+exports.EffectFactory = EffectFactory
