@@ -1,6 +1,6 @@
 'use strict'
 
-const { Observation } = require('./observation_class')
+const { Observation } = require('./observationClass')
 
 /**
  * @implements {toa.node.algorithms.Factory}

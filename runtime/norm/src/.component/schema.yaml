@@ -39,14 +39,15 @@ properties:
       label:
         $ref: 'definitions#/definitions/label'
 
+  name:
+    $ref: 'definitions#/definitions/token'
+
   namespace:
     $ref: 'definitions#/definitions/token'
     default: 'default'
     not:
       oneOf:
         - const: 'system'
-  name:
-    $ref: 'definitions#/definitions/token'
 
   version:
     $ref: 'definitions#/definitions/version'
@@ -68,11 +69,11 @@ properties:
             propertyNames:
               oneOf:
                 - $ref: 'definitions#/definitions/token'
-                - enum: [ _version ]
+                - enum: [_version]
       initialized:
         type: boolean
         default: false
-    required: [ schema ]
+    required: [schema]
     additionalProperties: false
 
   bindings:
@@ -94,11 +95,11 @@ properties:
         type: object
         properties:
           type:
-            enum: [ transition, observation, assignment, computation, effect ]
+            enum: [transition, observation, assignment, computation, effect]
           scope:
-            enum: [ object, objects, changeset, none ]
+            enum: [object, objects, changeset, none]
           concurrency:
-            enum: [ none, retry ]
+            enum: [none, retry]
           forward:
             $ref: 'definitions#/definitions/token'
           bridge:
@@ -111,7 +112,7 @@ properties:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
-        required: [ type, scope, bindings ]
+        required: [type, scope, bindings]
         allOf:
           - if: # transition
               properties:
@@ -120,15 +121,15 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [ object ]
+                  enum: [object]
               if: # transition query: false
                 not:
                   properties:
                     query:
                       const: false
-                  required: [ query ]
+                  required: [query]
               then:
-                required: [ concurrency ]
+                required: [concurrency]
           - if: # not transition
               not:
                 properties:
@@ -145,7 +146,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [ object, objects, none ]
+                  enum: [object, objects, none]
                 query:
                   not:
                     const: false
@@ -156,7 +157,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [ changeset ]
+                  enum: [changeset]
           - if: # computation
               properties:
                 type:
@@ -198,7 +199,7 @@ properties:
           subjective:
             type: boolean
             default: false
-        required: [ bridge, path ]
+        required: [bridge, path]
         additionalProperties: false
 
   receivers:
@@ -223,7 +224,7 @@ properties:
           adaptive:
             type: boolean
             default: false
-        required: [ operation ]
+        required: [operation]
         additionalProperties: false
 
   extensions:

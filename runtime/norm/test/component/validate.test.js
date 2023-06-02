@@ -37,14 +37,14 @@ describe('namespace', () => {
     manifest.namespace = 'foo_'
     expect(() => validate(manifest)).toThrow(/must match pattern/)
 
+    manifest.namespace = 'foo_bar'
+    expect(() => validate(manifest)).toThrow(/must match pattern/)
+
     manifest.namespace = 'foo-'
     expect(() => validate(manifest)).toThrow(/must match pattern/)
 
-    manifest.namespace = 'foo-BAR'
-    expect(() => validate(manifest)).not.toThrow()
-
-    manifest.namespace = 'foo_bar'
-    expect(() => validate(manifest)).not.toThrow()
+    manifest.namespace = 'foo-bar'
+    expect(() => validate(manifest)).toThrow('must match pattern')
 
     manifest.namespace = 'FooBar12'
     expect(() => validate(manifest)).not.toThrow()
@@ -230,7 +230,7 @@ describe('operations', () => {
 
 describe('receivers', () => {
   it('should throw if transition points to undefined operation', () => {
-    manifest.receivers['foo.bar.happened'].operation = 'not-exists'
+    manifest.receivers['foo.bar.happened'].operation = 'notExists'
 
     expect(() => validate(manifest)).toThrow(/refers to undefined operation/)
   })
