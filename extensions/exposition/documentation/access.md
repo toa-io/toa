@@ -145,18 +145,19 @@ role: string
 roles: [string]
 ```
 
-```yaml
-/identity/roles/:id:
-  id=id
-  role=system:roles
-````
-
 #### `/identity/roles/:id/:role`
 
 <dl>
 <dt><code>DELETE</code></dt>
 <dd>Detach a Role from an Indetity.</dd>
 </dl>
+
+#### Authorization Directives
+
+```yaml
+/identity/roles/:id:
+  role=system:roles
+````
 
 ### Principal
 

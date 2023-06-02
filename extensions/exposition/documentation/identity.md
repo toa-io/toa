@@ -108,12 +108,6 @@ username?: string
 password?: string
 ```
 
-```yaml
-/identity/basic/:id:
-  id=id
-  role=system:identity:basic
-````
-
 #### `/identity/subjects/:id`
 
 <dl>
@@ -126,10 +120,18 @@ password?: string
 token: string
 ```
 
+#### Authorization Directives
+
 ```yaml
-/identity/subjects/:id:
-  id=id
+/identity:
+  /basic/:id:
+    id=id
+    role=system:identity:basic
+  /subjects/:id:
+    id=id
 ````
+
+Refer to [Access Authorization](access.md) for detailed information.
 
 ## FAQ
 
