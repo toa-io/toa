@@ -88,7 +88,7 @@ found and replayed sequentially.
 
 ## Operations
 
-> Some commands use current Kubernetes context.
+> Some commands use current `kubectl` and `docker` context.
 
 ### build
 
