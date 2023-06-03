@@ -17,7 +17,8 @@ declare namespace toa.norm {
       build?: {
         arguments?: string[]
         run?: string
-      }
+      },
+      credentials: string
     }
 
     interface Composition {

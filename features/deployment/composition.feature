@@ -7,7 +7,7 @@ Feature: Export Compositions Deployment
     And I have a context
     When I export deployment
     Then exported values should contain:
-    """
+    """yaml
     compositions:
       - name: dummies-one
         components:

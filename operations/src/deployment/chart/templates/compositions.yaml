@@ -34,5 +34,9 @@ spec:
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}
+      {{- if $.Values.credentials }}
+      imagePullSecrets:
+        - name: {{ $.Values.credentials }}
+      {{- end }}
 ---
 {{- end }}
