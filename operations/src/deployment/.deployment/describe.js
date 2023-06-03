@@ -14,6 +14,7 @@ const describe = (context, compositions, dependency) => {
   const components = get.components(compositions)
   const dependencies = get.dependencies(references)
   const variables = get.variables(context, dependency.variables)
+  const credentials = context.registry.credentials
 
   return {
     compositions,
@@ -21,6 +22,7 @@ const describe = (context, compositions, dependency) => {
     services,
     proxies,
     variables,
+    credentials,
     ...dependencies
   }
 }

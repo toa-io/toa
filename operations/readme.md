@@ -28,3 +28,15 @@ registry:
       echo test > .test
       rm .test
 ```
+
+#### Registry Credentials
+
+When using private container registry,
+a secret containing required credentials can be specified using `registry.credentials` option.
+
+```yaml
+# context.toa.yaml
+
+registry:
+  credentials: docker-credentials-secret-name
+```
