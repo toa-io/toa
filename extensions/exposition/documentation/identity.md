@@ -17,11 +17,11 @@ Without credentials, there is no basis for defining or asserting an Identity.
 The Authenticaiton system resolves provided credentials to an Identity using one of the supported authentication
 schemes.
 
-The Authentication system is request-agnostic, meaning it does not depend on the specific URL being requested or the
-content of the request body.
+The Authentication is request-agnostic, meaning it does not depend on the specific URL being requested or the content of
+the request body.
 The only information it handles is the value of the `Authorization` header.
 
-> Except for [its own resources](#persistent-credentials).
+> Except for its own [management resources](#persistent-credentials).
 
 If the provided credentials are not valid or not associated with an identity, then Authentication interrupts request
 processing and responds with an authentication error.

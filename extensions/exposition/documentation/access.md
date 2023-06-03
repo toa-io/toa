@@ -164,13 +164,14 @@ roles: [string]
 When an application is deployed for the first time, there are no credentials, and therefore, there is no Identity that
 could have a Role to manage Roles of other Identities.
 
-This issue is addressed by using the `principal` key in the Exposition annotation:
+This issue is addressed by using the `principal` key in the annotation:
 
 ```yaml
 # context.toa.yaml
 
 exposition:
-  principal: root
+  identity:
+    principal: root
 ```
 
 The value of the principal key is the `username` of the [Basic credentials](identity.md#basic-scheme).
