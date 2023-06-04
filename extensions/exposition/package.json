@@ -1,10 +1,10 @@
 {
   "name": "@toa.io/extensions.exposition",
   "version": "0.20.0-dev.7",
-  "description": "Toa Resources Exposition",
+  "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
-  "main": "source/index.js",
+  "main": "source.js/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"

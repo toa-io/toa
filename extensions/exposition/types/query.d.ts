@@ -3,13 +3,13 @@ import type { Node, Operation } from './declarations'
 
 declare namespace toa.extensions.exposition {
 
-    namespace query {
+  namespace query {
         type Factory = (node: Node) => Query
-    }
+  }
 
-    interface Query {
-        parse(query: RequestQuery, operation: Operation): RequestQuery
-    }
+  interface Query {
+    parse(query: RequestQuery, operation: Operation): RequestQuery
+  }
 
 }
 

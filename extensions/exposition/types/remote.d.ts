@@ -4,15 +4,15 @@ import type * as declarations from './declarations'
 
 declare namespace toa.extensions.exposition {
 
-    namespace remotes {
+  namespace remotes {
 
         type Factory = (namespace: string, name: string) => Promise<Remote>
 
-    }
+  }
 
-    interface Remote {
-        update(declaration: declarations.Node): void
-    }
+  interface Remote {
+    update(declaration: declarations.Node): void
+  }
 
 }
 
