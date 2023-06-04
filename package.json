@@ -102,7 +102,7 @@
       "<rootDir>/userland"
     ],
     "testMatch": [
-      "**/(*.)+(test).js"
+      "**/(*.)+(test).(js|ts)"
     ],
     "bail": true
   },

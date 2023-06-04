@@ -1,6 +1,6 @@
-class Server {
+export class Server {
   foo (): string {
-    return 'ok again'
+    return 'ok'
   }
 
   bar (): void {

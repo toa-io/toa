@@ -32,5 +32,9 @@
     "express": "4.18.1",
     "path-to-regexp": "6.2.0"
   },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
