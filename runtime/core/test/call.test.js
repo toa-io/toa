@@ -1,11 +1,8 @@
 'use strict'
 
-const { Call } = require('../src/call')
 const fixtures = require('./call.fixtures')
-
-jest.mock('../src/connector')
-
-const { Connector } = require('../src/connector')
+const { Call } = require('../src/call')
+const { transmission } = require('./call.fixtures')
 
 let call
 
@@ -16,9 +13,7 @@ beforeEach(() => {
 })
 
 it('should depend on transmission', () => {
-  expect(call).toBeInstanceOf(Connector)
-  expect(call).toBe(Connector.mock.instances[0])
-  expect(Connector.mock.instances[0].depends).toHaveBeenCalledWith(fixtures.transmission)
+  expect(transmission.link).toHaveBeenLastCalledWith(call)
 })
 
 it('should call transmission', async () => {

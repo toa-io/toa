@@ -8,7 +8,7 @@ runtime:
   proxy: http://host.docker.internal:4873
 
 registry:
-  base: 153896708942.dkr.ecr.eu-west-1.amazonaws.com
+  base: localhost:5000
   base@dev: localhost:5000
   platforms@dev: ~
 
