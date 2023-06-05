@@ -18,8 +18,6 @@ directives grants access, then the Authorization interrupts request processing a
 
 > The Authorization directive provider is named `authorization`,
 > so the full names of the directives are `authorization:{directive}`.
-> Since it is a built-in provider, all directives have shortcuts and can be declared without the `authorization:`
-> prefix.
 
 ### `anonymous`
 
@@ -219,10 +217,11 @@ In the example above:
   This means that an Identity can submit and edit their own posts.
 - an Attachment `post:edit` attaches Directive `role: app:posts:editor` to `post:edit` Policy Scope.
   This means that an identity with the role scope `app:posts:editor` can edit posts by any author,
-  in addition to the fact that the author themselves can do this thanks to the previous attachment.
+  in addition to the fact that the author themselves can do this thanks to the previous Attachment.
 
 > Policies are namespace-scoped, meaning they can be attached to any Route under the corresponding `/{namespace}`
 > prefix.
+> Directives of the Attachment are applied to the node where the `attachment` is declared.
 
 ## Principal
 

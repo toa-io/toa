@@ -109,11 +109,14 @@ When it is necessary to avoid directive nesting, a Route can be declared adjacen
 ```yaml
 /posts:
   /:user-id:
-    authorization:id: user-id
+    id: user-id
   /:user-id/:post-id:
-    authorization:role: editor
+    role: editor
 ```
 
 In this example, the Route `/posts/:user-id/:post-id` has only the `authorization:role` directive applied.
+
+> Directives can be declared without the `{provider}:` prefix unless there are multiple directives with the same name
+> across different providers.
 
 See [Access Authorization](./access.md) as an example of directive provider.
