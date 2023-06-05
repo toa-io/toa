@@ -97,30 +97,23 @@ declared and to all nested nodes.
 ```yaml
 /posts/:user-id:
   authorization:id: user-id
-  GET: observe
   /:post-id:
-    PUT:
-      operation: transit
-      authorization:role: editor
+    authorization:role: editor
 ```
 
-In the above example, the route `/posts/:user-id/:post-id` has both `authorization:id` and `authorization:role`
+In the above example, the Route `/posts/:user-id/:post-id` has both `authorization:id` and `authorization:role`
 directives applied.
 
-When it is necessary to avoid directive nesting, a route can be declared adjacent.
+When it is necessary to avoid directive nesting, a Route can be declared adjacent.
 
 ```yaml
 /posts:
   /:user-id:
     authorization:id: user-id
-    GET: observe
   /:user-id/:post-id:
-    PUT:
-      operation: transit
-      authorization:role: editor
+    authorization:role: editor
 ```
 
-In this example, the Method `PUT` of the Route `/posts/:user-id/:post-id` has only the `authorization:role` directive
-applied.
+In this example, the Route `/posts/:user-id/:post-id` has only the `authorization:role` directive applied.
 
 See [Access Authorization](./access.md) as an example of directive provider.

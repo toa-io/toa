@@ -77,7 +77,7 @@ default namespace.
 # manifest.toa.yaml
 
 name: rooms
-namespace: chat
+namespace: messaging
 
 exposition:
   /: ...
@@ -86,9 +86,9 @@ exposition:
 ```
 
 ```
-/chat/rooms/
-/chat/rooms/:user-id/
-/chat/rooms/:user-id/:room-id/
+/messaging/rooms/
+/messaging/rooms/:user-id/
+/messaging/rooms/:user-id/:room-id/
 ```
 
 ## Context annotation
@@ -129,5 +129,6 @@ exposition:
 
 ## See Also
 
+- [Resource Tree Definition](documentation/tree.md)
 - [Identity](documentation/identity.md)
 - [Access authorization](documentation/access.md)
