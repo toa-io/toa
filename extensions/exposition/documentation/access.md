@@ -100,12 +100,20 @@ name: posts
 
 exposition:
   /:user-id:
-    GET: observe
-    POST: transit
+    GET:
+      operation: observe
+      policy: read:list
+    POST:
+      operation: transit
+      policy: post:submit
     policy: post
     /:post-id:
-      GET: observe
-      PUT: assign
+      GET:
+        operation: observe
+        policy: read:post
+      PUT:
+        operation: assign
+        policy: post:edit
 ```
 
 ```yaml
@@ -114,12 +122,11 @@ exposition:
 exposition:
   /posts:
     attachment:
-      post:GET:
+      read:
         anonymous: true
-      post:POST:
+      post:
         id: user-id
-      post:PUT:
-        id: user-id
+      post:edit:
         role: app:posts:editor
 ```
 
