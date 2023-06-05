@@ -1,6 +1,6 @@
 'use strict'
 
-const { Transition } = require('./transition_class')
+const { Transition } = require('./transitionClass')
 
 /**
  * @implements {toa.node.algorithms.Factory}

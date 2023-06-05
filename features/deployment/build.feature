@@ -47,7 +47,7 @@ Feature: Container Building Options
       registry: http://host.docker.internal:4873
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ http://host.docker.internal:4873 != undefined ]; then npm set registry http://host.docker.internal:4873; fi'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set registry http://host.docker.internal:4873; fi'
 
   Scenario: Building a container with internal registry proxy
     Given I have a component `dummies.one`
@@ -57,5 +57,5 @@ Feature: Container Building Options
       proxy: http://host.docker.internal:4873
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ http://host.docker.internal:4873 != undefined ]; then npm set proxy http://host.docker.internal:4873; fi'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set proxy http://host.docker.internal:4873; fi'
 

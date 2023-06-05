@@ -1,6 +1,6 @@
 'use strict'
 
-const { Assignment } = require('./assignment_class')
+const { Assignment } = require('./assignmentClass')
 
 /**
  * @implements {toa.node.algorithms.Factory}
