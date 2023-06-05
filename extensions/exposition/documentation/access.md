@@ -11,7 +11,7 @@
 
 ## Directives
 
-The Authorization is implemented as a set of [RTD Directives](../readme.md#directives).
+The Authorization is implemented as a set of [RTD Directives](tree.md#directives).
 
 Directives are executed in a predetermined order until one of them grants access to a resource. If none of the
 directives grants access, then the Authorization interrupts request processing and responds with an authorization error.
@@ -73,6 +73,41 @@ Read [Roles](#roles) for more details.
 
 The Rule is a collection of authorization directives. It allows access only if all the specified directives grant
 access. The value of the `rule` directive can be a single Rule or a list of Rules.
+
+### `policy` and `attachment`
+
+Component Resource branches cannot have Authorization Directives.
+Instead, they must declare Authorization Policies to be attached to a Tree as a set of Authorization Directives.
+
+```yaml
+# manifest.toa.yaml
+
+name: posts
+
+exposition:
+  /:user-id:
+    GET: observe
+    POST: transit
+    policy: post
+    /:post-id:
+      GET: observe
+      PUT: assign
+```
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /posts:
+    attachment:
+      post:GET:
+        anonymous: true
+      post:POST:
+        id: user-id
+      post:PUT:
+        id: user-id
+        role: app:posts:editor
+```
 
 #### Example
 
