@@ -74,6 +74,20 @@ Read [Roles](#roles) for more details.
 The Rule is a collection of authorization directives. It allows access only if all the specified directives grant
 access. The value of the `rule` directive can be a single Rule or a list of Rules.
 
+#### Example
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /commits/:user-id:
+    rule:
+      id: user-id
+      role: developer
+```
+
+Access will be granted if an Identity matches a `user-id` placeholder and has a Role of `developer`.
+
 ### `policy` and `attachment`
 
 Component Resource branches cannot have Authorization Directives.
@@ -108,20 +122,6 @@ exposition:
         id: user-id
         role: app:posts:editor
 ```
-
-#### Example
-
-```yaml
-# context.toa.yaml
-
-exposition:
-  /commits/:user-id:
-    rule:
-      id: user-id
-      role: developer
-```
-
-Access will be granted if an Identity matches a `user-id` placeholder and has a Role of `developer`.
 
 ## Roles
 
