@@ -88,47 +88,6 @@ exposition:
 
 Access will be granted if an Identity matches a `user-id` placeholder and has a Role of `developer`.
 
-### `policy` and `attachment`
-
-Component Resource branches cannot have Authorization Directives.
-Instead, they must declare Authorization Policies to be attached to a Tree as a set of Authorization Directives.
-
-```yaml
-# manifest.toa.yaml
-
-name: posts
-
-exposition:
-  /:user-id:
-    GET:
-      operation: observe
-      policy: read:list
-    POST:
-      operation: transit
-      policy: post:submit
-    /:post-id:
-      GET:
-        operation: observe
-        policy: read:post
-      PUT:
-        operation: assign
-        policy: post:edit
-```
-
-```yaml
-# context.toa.yaml
-
-exposition:
-  /posts:
-    attachment:
-      read:
-        anonymous: true
-      post:
-        id: user-id
-      post:edit:
-        role: app:posts:editor
-```
-
 ## Roles
 
 Role values are strings that can be assigned to an Identity and used for matching with values of
@@ -205,7 +164,67 @@ roles: [string]
   role: system:roles
 ````
 
-### Principal
+## Policies
+
+Component Resource branches cannot have authorization directives.
+Instead, they must declare Authorization Policies using `policy` directive to
+be attached in the Context to a Resource Tree as a set of Authorization Directives using `attachment` directive.
+
+This restriction provides a separation of concerns, allowing components to be reused in different Contexts with varying
+access rules.
+
+```yaml
+# manifest.toa.yaml
+
+name: posts
+
+exposition:
+  /:user-id:
+    GET:
+      operation: observe
+      policy: read:list
+    POST:
+      operation: transit
+      policy: post:submit
+    /:post-id:
+      GET:
+        operation: observe
+        policy: read:post
+      PUT:
+        operation: assign
+        policy: post:edit
+```
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /posts:
+    attachment:
+      read:
+        anonymous: true
+      post:
+        id: user-id
+      post:edit:
+        role: app:posts:editor
+```
+
+Policy values as well as [Role](#roles) values define hierarchical Policy Scopes.
+
+In the example above:
+
+- an Attachment `read` attaches Directive `anonymous: true` to both `read:list` and `read:post` Policy Scopes.
+  This means that a list of posts and each individual post can be accessed without authorization.
+- an Attachment `post` attaches Directive `id: user-id` to both `post:submit` and `post:edit` Policy Scopes.
+  This means that an Identity can submit and edit their own posts.
+- an Attachment `post:edit` attaches Directive `role: app:posts:editor` to `post:edit` Policy Scope.
+  This means that an identity with the role scope `app:posts:editor` can edit posts by any author,
+  in addition to the fact that the author themselves can do this thanks to the previous attachment.
+
+> Policies are namespace-scoped, meaning they can be attached to any Route under the corresponding `/{namespace}`
+> prefix.
+
+## Principal
 
 When an application is deployed for the first time, there are no credentials, and therefore, there is no Identity that
 could have a Role to manage Roles of other Identities.
