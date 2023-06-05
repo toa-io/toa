@@ -16,9 +16,14 @@ The Authorization is implemented as a set of [RTD Directives](../readme.md#direc
 Directives are executed in a predetermined order until one of them grants access to a resource. If none of the
 directives grants access, then the Authorization interrupts request processing and responds with an authorization error.
 
+> The Authorization directive provider is named `authorization`,
+> so the full names of the directives are `authorization:{directive}`.
+> Since it is a built-in provider, all directives have shortcuts and can be declared without the `authorization:`
+> prefix.
+
 ### `anonymous`
 
-Grants access if its value is `true` and the Identity is `null`, meaning that no credentials were provided.
+Grants access if its value is `true` and no credentials were provided.
 
 ### `id`
 
