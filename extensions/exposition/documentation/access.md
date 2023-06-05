@@ -106,7 +106,6 @@ exposition:
     POST:
       operation: transit
       policy: post:submit
-    policy: post
     /:post-id:
       GET:
         operation: observe
