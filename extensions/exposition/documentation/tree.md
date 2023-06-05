@@ -1,18 +1,9 @@
-# Resource tree definition
-
-<a href="">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".assets/rtd-dark.jpg">
-    <img alt="IA3" width="600" height="293" src="./.assets/rtd-light.jpg">
-  </picture>
-</a>
-
-## Common Syntax
+# Resource Tree Definition
 
 The foundation of a Resource Tree Definition (RTD) is an RTD node.
 An RTD node is an object that consists of _Routes_, _Methods_ and _Directives_.
 
-### Routes
+## Routes
 
 A Route is a key starting with `/` and it has a value as a nested RTD node.
 
@@ -39,7 +30,7 @@ An RTD node that does not contain any Routes is called an _RTD leaf_.
 
 Route segments prefixed with a colon `:` are Route Variables. Refer to [Query mapping](tree.query.md) for the details.
 
-### Methods
+## Methods
 
 Methods are mappings of the HTTP methods to the corresponding operations.
 
@@ -88,7 +79,7 @@ As method mapping is unambiguous for all operations, except Transition, a consic
 /posts/:id: [observe, assign]
 ```
 
-### Directives
+## Directives
 
 RTD Directives are declared using RTD node or Method keys following the `{provider}:{directive}` pattern and can be used
 to add or modify the behavior of request processing. Directive declarations are applied to the RTD node where they are

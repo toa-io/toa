@@ -52,6 +52,13 @@ a `ping` message, it broadcasts an `expose` message.
 
 ## Resource branch
 
+<a href="">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="documentation/.assets/rtd-dark.jpg">
+    <img alt="IA3" width="600" height="293" src="documentation/.assets/rtd-light.jpg">
+  </picture>
+</a>
+
 A Component can specify how to expose its Operations as HTTP resources by declaring a Resource branch using the manifest
 extension.
 
@@ -85,11 +92,15 @@ exposition:
   /:user-id/:room-id: ...
 ```
 
+The declaration above will result in exposing the following resources:
+
 ```
 /messaging/rooms/
 /messaging/rooms/:user-id/
 /messaging/rooms/:user-id/:room-id/
 ```
+
+Refer to [Resource Tree Definition](documentation/tree.md) for the details.
 
 ## Context annotation
 

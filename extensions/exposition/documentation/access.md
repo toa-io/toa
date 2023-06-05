@@ -212,7 +212,7 @@ Policy values as well as [Role](#roles) values define hierarchical Policy Scopes
 In the example above:
 
 - an Attachment `read` attaches Directive `anonymous: true` to both `read:list` and `read:post` Policy Scopes.
-  This means that a list of posts and each individual post can be accessed without authorization.
+  This means that a list of posts and each post can be accessed without authorization.
 - an Attachment `post` attaches Directive `id: user-id` to both `post:submit` and `post:edit` Policy Scopes.
   This means that an Identity can submit and edit their own posts.
 - an Attachment `post:edit` attaches Directive `role: app:posts:editor` to `post:edit` Policy Scope.
