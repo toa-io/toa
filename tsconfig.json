@@ -10,6 +10,7 @@
     "incremental": true
   },
   "exclude": [
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "**/transpiled"
   ]
 }

@@ -4,4 +4,4 @@ transpiled/
 .idea
 lerna-debug.log
 .DS_Store
-.tsbuildinfo
+*.tsbuildinfo
