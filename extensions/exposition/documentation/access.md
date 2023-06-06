@@ -237,6 +237,58 @@ In the example above:
   This means that an identity with the role scope `app:posts:editor` can edit posts by any author,
   in addition to the fact that the author themselves can do this thanks to the previous Attachment.
 
-> Policies are namespace-scoped, meaning they can be attached to any Route under the corresponding `/{namespace}`
-> prefix.
-> Directives of the Attachment are applied to the node where the `attachment` is declared.
+### Nesting
+
+Policies are namespace-scoped, meaning they can be attached to any Route under the corresponding `/{namespace}`
+prefix.
+
+Attachment is applied to the node where it is declared, as well as its nested nodes.
+Directives of the Attachment are applied to the node where the attached Policies are declared, as well as their
+nested nodes.
+
+Here's an example of how this works:
+
+```yaml
+# manifest.toa.yaml
+
+name: posts
+
+exposition:
+  /:user-id:
+    GET:
+      operation: observe
+      policy: read
+  /:user-id/:post-id:
+    GET:
+      operation: observe
+      policy: read
+```
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /posts:
+    /:user-id:
+      attachment:
+        read:
+          anonymous: true
+    /:user-id/:post-id:
+      attachment:
+        read:
+          role: reader
+```
+
+In the example above, the same Policy `read` is attached to two Routes with different Directives.
+
+The following example demonstrates the attachment of the `read` Policy to both Routes with the same Directive:
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /posts:
+    attachment:
+      read:
+        anonymous: true
+```
