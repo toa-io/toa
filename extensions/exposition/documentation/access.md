@@ -65,7 +65,7 @@ exposition:
 
 Access will be granted if the resolved Identity has a role that matches `developer` or `reviewer`.
 
-Read [Roles](#roles) for more details.
+Read [Roles](#roles) section for more details.
 
 ### `rule`
 
@@ -93,7 +93,7 @@ the [`role` directive](#role).
 
 ### Hierarchy
 
-Role values are alphanumeric tokens separated by a colon (:).
+Role values are alphanumeric tokens separated by a colon (`:`).
 Each token defines a Role Scope, forming a hierarchy.
 A Role matches the value of the `rule` directive if that Role has the specified Scope in a directive.
 
@@ -162,6 +162,24 @@ roles: [string]
   role: system:roles
 ````
 
+### Principal
+
+When an application is deployed for the first time, there are no credentials, and therefore, there is no Identity that
+could have a Role to manage Roles of other Identities.
+
+This issue is addressed by using the `principal` key in the annotation:
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  identity:
+    principal: root
+```
+
+The value of the principal key is the `username` of the [Basic credentials](identity.md#basic-scheme).
+Once such credentials are created, the corresponding Identity will be assigned the `system` Role.
+
 ## Policies
 
 Component Resource branches cannot have authorization directives.
@@ -222,21 +240,3 @@ In the example above:
 > Policies are namespace-scoped, meaning they can be attached to any Route under the corresponding `/{namespace}`
 > prefix.
 > Directives of the Attachment are applied to the node where the `attachment` is declared.
-
-## Principal
-
-When an application is deployed for the first time, there are no credentials, and therefore, there is no Identity that
-could have a Role to manage Roles of other Identities.
-
-This issue is addressed by using the `principal` key in the annotation:
-
-```yaml
-# context.toa.yaml
-
-exposition:
-  identity:
-    principal: root
-```
-
-The value of the principal key is the `username` of the [Basic credentials](identity.md#basic-scheme).
-Once such credentials are created, the corresponding Identity will be assigned the `system` Role.

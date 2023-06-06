@@ -141,5 +141,5 @@ exposition:
 ## See Also
 
 - [Resource Tree Definition](documentation/tree.md)
-- [Identity](documentation/identity.md)
+- [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)
