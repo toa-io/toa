@@ -1,6 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
+const { join } = require('node:path')
 
 const schemas = require('../')
 
@@ -78,5 +79,14 @@ describe('validate', () => {
     const value = { foo: 'http://toa.io' }
 
     expect(() => schema.validate(value)).not.toThrow()
+  })
+})
+
+describe('file', () => {
+  it('should load schema from a file', async () => {
+    const path = join(__dirname, 'schemas/one.cos.yaml')
+    const schema = schemas.schema(path)
+
+    expect(() => schema.validate({ foo: 5 })).not.toThrow()
   })
 })

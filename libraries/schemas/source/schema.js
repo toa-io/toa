@@ -2,6 +2,8 @@
 
 const { expand } = require('@toa.io/concise')
 const { defined } = require('@toa.io/generic')
+const { file } = require('@toa.io/filesystem')
+const yaml = require('@toa.io/yaml')
 const { create, is } = require('./validator')
 const { Exception } = require('./exception')
 
@@ -58,6 +60,8 @@ class Schema {
 
 /** @type {toa.schemas.constructors.schema} */
 const schema = (cos) => {
+  if (file.is.sync(cos)) cos = yaml.load.sync(cos)
+
   const validator = create()
   const schema = expand(cos, is)
   const validate = validator.compile(schema)
