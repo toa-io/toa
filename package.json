@@ -38,7 +38,7 @@
     "@babel/eslint-parser": "7.17.0",
     "@commitlint/cli": "14.1.0",
     "@commitlint/config-conventional": "14.1.0",
-    "@cucumber/cucumber": "9.0.0",
+    "@cucumber/cucumber": "9.1.2",
     "@types/jest": "28.1.1",
     "@types/node": "18.0.0",
     "clone-deep": "4.0.1",
@@ -52,7 +52,8 @@
     "randomstring": "1.2.3",
     "snazzy": "9.0.0",
     "standard": "17.0.0",
-    "ts-jest": "29.1.0"
+    "ts-jest": "29.1.0",
+    "ts-node": "10.9.1"
   },
   "scripts": {
     "prepare": "npx husky install",

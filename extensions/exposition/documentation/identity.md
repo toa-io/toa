@@ -23,7 +23,7 @@ The only information it handles is the value of the `Authorization` header.
 
 > Except for its own [management resources](#persistent-credentials).
 
-If the provided credentials are not valid or not associated with an identity, then Authentication interrupts request
+If the provided credentials are not valid or not associated with an Identity, then Authentication interrupts request
 processing and responds with an authentication error.
 
 ### Basic scheme
@@ -38,20 +38,24 @@ Authorization: Basic aGVsbG86d29ybGQK
 
 Tokens issued by the Authentication system. These tokens are [PASETO](https://paseto.io).
 
+```http
+Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
+```
+
 The `Token` is the primary authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response containing
 `Token` credentials and will be required to switch to the `Token` scheme for any subsequent requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.
-
-```http
-Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
-```
 
 ### Bearer scheme
 
 OpenID tokens issued by trusted providers.
 For more information, refer to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html),
 [RFC6750](https://datatracker.ietf.org/doc/html/rfc6750).
+
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1...
+```
 
 Trusted providers are specified using the `idenity.trust` property within the Exposition annotation.
 
@@ -66,10 +70,6 @@ exposition:
 ```
 
 The example above demonstrates the default list of trusted providers.
-
-```http
-Authorization: Bearer eyJhbGciOiJIUzI1...
-```
 
 ### Persistent Credentials
 
