@@ -8,5 +8,8 @@
     "strict": true,
     "skipLibCheck": true,
     "incremental": true
-  }
+  },
+  "exclude": [
+    "**/*.test.ts"
+  ]
 }
