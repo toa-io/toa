@@ -28,7 +28,7 @@ processing and responds with an authentication error.
 
 ### Basic scheme
 
-Classic ID/password pair authentication. See [RFC7617](https://datatracker.ietf.org/doc/html/rfc7617).
+Classic username/password pair. See [RFC7617](https://datatracker.ietf.org/doc/html/rfc7617).
 
 ```http
 Authorization: Basic aGVsbG86d29ybGQK
@@ -152,7 +152,7 @@ The Authentication is stateless, meaning it does not store any information betwe
 requests except for persistent credentials.</dd>
 <dt>How can I pass the Identity to an operation call?</dt>
 <dd>
-This is not possible. Refer to the Resource Design Guidelines for more information. 
+This is not possible. Refer to the Resource Design Guidelines for more information.
 <a href="https://github.com/toa-io/toa/issues/353">#353</a>
 </dd>
 </dl>
