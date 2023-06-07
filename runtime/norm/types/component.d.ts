@@ -1,81 +1,61 @@
-import type {Locator} from '@toa.io/core/types'
+import type { Locator, operations } from '@toa.io/core'
 
-export namespace toa.norm {
-
-  namespace component {
-    namespace operations {
-
-      type Type = 'transition' | 'observation' | 'assignment' | 'computation' | 'effect'
-      type Scope = 'object' | 'objects' | 'changeset'
-
-    }
-
-    interface Map {
-      [id: string]: Component
-    }
-
-    interface Operation {
-      type?: operations.Type
-      scope?: operations.Scope
-      bindings?: string[]
-      input?: any
-      output?: any
-      error?: any
-    }
-
-    interface Operations {
-      [key: string]: Operation
-    }
-
-    interface Event {
-      binding: string
-    }
-
-    interface Events {
-      [key: string]: Event
-    }
-
-    interface Receiver {
-      operation: string
-      adaptive: boolean
-      conditioned: boolean
-      bridge: string
-      binding: string
-      path: string
-      source?: string
-    }
-
-    type Entity = {
-      schema: Object
-      storage?: string
-      initialized?: boolean
-    }
-
-    interface Declaration {
-      prototype: string
-      namespace: string
-      name: string
-      version: string
-      entity: Entity
-      bindings: string[]
-      operations?: Operations
-      events?: Events
-      receivers: Record<string, Receiver>
-      extensions?: Record<string, object>
-      properties?: Record<string, object>
-    }
-
-    type Constructor = (path: string) => Promise<Component>
-  }
-
-  interface Component extends component.Declaration {
-    locator: Locator
-    path: string
-  }
+type Map = {
+  [id: string]: Component
 }
 
-export type Component = toa.norm.Component
-export type Operation = toa.norm.component.Operation
-export type Declaration = toa.norm.component.Declaration
+type Operation = {
+  type?: operations.type
+  scope?: operations.scope
+  bindings?: string[]
+  input?: any
+  output?: any
+  error?: any
+}
 
-export const component: toa.norm.component.Constructor
+type Operations = {
+  [key: string]: Operation
+}
+
+type Event = {
+  binding: string
+}
+
+type Events = {
+  [key: string]: Event
+}
+
+type Receiver = {
+  operation: string
+  adaptive: boolean
+  conditioned: boolean
+  bridge: string
+  binding: string
+  path: string
+  source?: string
+}
+
+type Entity = {
+  schema: Object
+  storage?: string
+  initialized?: boolean
+}
+
+type Declaration = {
+  prototype: string
+  namespace: string
+  name: string
+  version: string
+  entity: Entity
+  bindings: string[]
+  operations: Operations
+  events?: Events
+  receivers: Record<string, Receiver>
+  extensions?: Record<string, object>
+  properties?: Record<string, object>
+}
+
+export type Manifest = Declaration & {
+  locator: Locator
+  path: string
+}

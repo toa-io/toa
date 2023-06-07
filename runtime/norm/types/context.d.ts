@@ -73,5 +73,3 @@ export type Context = toa.norm.Context
 export namespace dependencies {
   export type Instance = toa.norm.context.dependencies.Instance
 }
-
-export const context: toa.norm.context.Constructor
