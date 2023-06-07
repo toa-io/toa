@@ -26,34 +26,12 @@ it('should expand operation shortcuts', async () => {
   expect(node).toStrictEqual({
     '/': {
       GET: {
-        operation: 'observe'
+        operation: 'observe',
+        type: 'observation'
       }
     }
   })
 })
-
-it('should throw on operation type mismatch', async () => {
-  const declaration: Node = {
-    '/': {
-      GET: {
-        operation: 'transit'
-      }
-    }
-  }
-
-  expect(() => normalize(declaration, manifest)).toThrow('cannot be mapped to')
-})
-
-it('should throw on undefined operation', async () => {
-  const declaration: Node = {
-    '/': {
-      GET: generate()
-    }
-  }
-
-  expect(() => normalize(declaration, manifest)).toThrow('is not defined')
-})
-
 
 it('should expand operation shortcuts in nested Routes', async () => {
   const declaration: Node = {
@@ -70,7 +48,8 @@ it('should expand operation shortcuts in nested Routes', async () => {
     '/': {
       '/dummies': {
         GET: {
-          operation: 'observe'
+          operation: 'observe',
+          type: 'observation'
         }
       }
     }
@@ -90,7 +69,8 @@ it('should expand method shortcuts', async () => {
     '/': {
       '/dummies': {
         GET: {
-          operation: 'observe'
+          operation: 'observe',
+          type: 'observation'
         }
       }
     }

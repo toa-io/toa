@@ -1,6 +1,14 @@
 import { validate, methods, Node } from './syntax'
+import { generate } from 'randomstring'
+import type { Manifest } from '@toa.io/norm'
 
 describe('validate', () => {
+  const operations: Manifest['operations'] = {
+    observe: {
+      type: 'observation'
+    }
+  }
+
   it('should be', async () => {
     expect(validate).toBeInstanceOf(Function)
   })
@@ -9,12 +17,13 @@ describe('validate', () => {
     const node: Node = {
       '/': {
         GET: {
-          operation: 'observe'
+          operation: 'observe',
+          type: 'observation'
         }
       }
     }
 
-    expect(() => validate(node)).not.toThrow()
+    expect(() => validate(node, operations)).not.toThrow()
   })
 
   it('should throw if invalid mapping', async () => {
@@ -24,7 +33,30 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node)).toThrow('must have required property')
+    expect(() => validate(node, operations)).toThrow('must have required property')
+  })
+
+  it('should throw on operation type mismatch', async () => {
+    const node: Node = {
+      '/': {
+        GET: {
+          operation: 'transit',
+          type: 'transition'
+        }
+      }
+    }
+
+    expect(() => validate(node, operations)).toThrow('cannot be mapped')
+  })
+
+  it('should throw if maps to undefined operation', async () => {
+    const node: Node = {
+      '/': {
+        GET: { operation: generate(), type: 'observation' }
+      }
+    }
+
+    expect(() => validate(node, operations)).toThrow('is mapped to undefined operation')
   })
 })
 

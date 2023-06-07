@@ -5,7 +5,7 @@ type Map = {
 }
 
 type Operation = {
-  type?: operations.type
+  type: operations.type
   scope?: operations.scope
   bindings?: string[]
   input?: any
@@ -42,15 +42,15 @@ type Entity = {
 }
 
 type Declaration = {
-  prototype: string
-  namespace: string
+  prototype?: string
+  namespace?: string
   name: string
   version: string
-  entity: Entity
-  bindings: string[]
+  entity?: Entity
+  bindings?: string[]
   operations: Operations
   events?: Events
-  receivers: Record<string, Receiver>
+  receivers?: Record<string, Receiver>
   extensions?: Record<string, object>
   properties?: Record<string, object>
 }

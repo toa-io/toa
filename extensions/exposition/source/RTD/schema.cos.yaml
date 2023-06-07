@@ -4,6 +4,7 @@
 # methods
 /^(GET|POST|PUT|PATCH|DELETE)$/:
   operation*: string
+  type*: [transition, observation, assignment, computation, effect]
   query: object
 
 # directives

@@ -23,30 +23,27 @@ function route (declaration: Node | string, manifest: Partial<Manifest>): RTD.No
 
   for (let [key, value] of Object.entries(declaration)) {
     if (key[0] === '/') node[key] = route(value as Node | string, manifest)
-    if (methods.has(key as RTD.method)) node[key as RTD.method] = mapping(value as Mapping, key as RTD.method, manifest)
+    if (methods.has(key as RTD.method)) node[key as RTD.method] = mapping(value as Mapping, manifest)
   }
 
   return node
 }
 
-function mapping (value: Mapping, method: RTD.method, manifest: Partial<Manifest>): RTD.Mapping {
-  if (typeof value === 'string') value = { operation: value as operations.type }
+function mapping (value: Mapping, manifest: Partial<Manifest>): RTD.Mapping {
+  if (typeof value === 'string') {
+    const type = operationType(value, manifest)
 
-  if (!methods.has(method)) throw new Error('')
-
-  const type = operationType(value.operation, manifest)
-  const allowedTypes = ALLOWED_MAPPINGS[method]
-
-  if (!allowedTypes.has(type)) throw new Error(`Method '${method}' cannot be mapped to '${type}'. Allowed operation types: '${[...allowedTypes].join('\', \'')}'`)
+    value = { operation: value as string, type }
+  }
 
   return value as RTD.Mapping
 }
 
-function method (operation: operations.type, manifest: Partial<Manifest>): RTD.Methods {
+function method (operation: string, manifest: Partial<Manifest>): RTD.Methods {
   const type = operationType(operation, manifest)
   const method = UNAMBIGUOUS_METHODS[type]
 
-  if (method !== undefined) return { [method]: mapping(operation, method, manifest) }
+  if (method !== undefined) return { [method]: mapping(operation, manifest) }
   else throw new Error(`Ambiguous mapping for '${operation}'. Use explicit method declaration.`)
 }
 
@@ -64,17 +61,8 @@ const UNAMBIGUOUS_METHODS: Partial<Record<operations.type, RTD.method>> = {
   'effect': 'POST'
 }
 
-const ALLOWED_MAPPINGS: Record<RTD.method, Set<operations.type>> = {
-  'GET': new Set(['observation', 'computation']),
-  'POST': new Set(['transition', 'effect']),
-  'PUT': new Set(['transition']),
-  'PATCH': new Set(['assignment']),
-  'DELETE': new Set()
-}
-
 export type Node = {
-  [k: string]: Node | Mapping | string | any
+  [k: string]: Node | Mapping | string | any // directive
 }
 
 export type Mapping = RTD.Mapping | string // operation name
-
