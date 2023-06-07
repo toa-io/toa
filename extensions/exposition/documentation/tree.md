@@ -66,11 +66,12 @@ If a Method only has an `operation` key, it can be declared directly as the valu
 
 HTTP methods can only be mapped to operations of the corresponding types.
 
-| HTTP method | Operation type                                 |
-|-------------|------------------------------------------------|
-| `GET`       | **Observation**<br/>**Computation**            |
-| `PUT`       | **Transition** (with Query)<br/>**Assignment** |
-| `POST`      | **Transition** (without Query)<br/>**Effect**  |
+| HTTP method | Operation type                                |
+|-------------|-----------------------------------------------|
+| `POST`      | **Transition** (without Query)<br/>**Effect** |
+| `PUT`       | **Transition** (with Query)                   |
+| `GET`       | **Observation**<br/>**Computation**           |
+| `PATCH`     | **Assignment**                                |
 
 As method mapping is unambiguous for all operations, except Transition, a consice syntax is available:
 

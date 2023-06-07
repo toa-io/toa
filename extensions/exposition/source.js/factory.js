@@ -10,9 +10,6 @@ const { Remote } = require('./remote')
 const { Tree } = require('./tree')
 const { Query, constraints } = require('./query')
 
-/**
- * @implements {toa.core.extensions.Factory}
- */
 class Factory {
   #boot
 

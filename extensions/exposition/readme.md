@@ -143,3 +143,4 @@ exposition:
 - [Resource Tree Definition](documentation/tree.md)
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)
+- [Features](features)
