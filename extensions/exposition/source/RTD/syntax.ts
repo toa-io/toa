@@ -1,12 +1,9 @@
 import { join } from 'node:path'
 import schemas from '@toa.io/schemas'
-import { Manifest } from '@toa.io/norm'
-
-import type * as core from '@toa.io/core'
 
 const schema = schemas.schema(join(__dirname, 'schema.cos.yaml'))
 
-export function validate (node: Node, operations: Manifest['operations']): void {
+export function validate (node: Node, operations: Operations): void {
   schema.validate(node)
 
   eachMethod(node, testMethod(operations))
@@ -19,7 +16,7 @@ function eachMethod (node: Node, test: (method: method, mapping: Mapping) => voi
   }
 }
 
-function testMethod (operations: Manifest['operations']): (method: method, mapping: Mapping) => void {
+function testMethod (operations: Operations): (method: method, mapping: Mapping) => void {
   return (method: method, mapping: Mapping) => {
     const allowedTypes = ALLOWED_MAPPINGS[method]
 
@@ -44,6 +41,9 @@ const ALLOWED_MAPPINGS: Record<method, Set<core.operations.type>> = {
   'DELETE': new Set()
 }
 
+import type { Manifest } from '@toa.io/norm'
+import type * as core from '@toa.io/core'
+
 export type Node = {
   [k: string]: Routes | Methods | Directives
 }
@@ -67,3 +67,5 @@ export type Mapping = {
   type: core.operations.type
   query?: object
 }
+
+type Operations = Manifest['operations']
