@@ -86,11 +86,31 @@ it('should not modify input', async () => {
 })
 
 it('should expand reference', async () => {
-  const ref = '#ok'
-  const cos = { foo: 'ref:' + ref }
+  const cos = { foo: 'ref:path/id' }
   const schema = expand(cos, valid)
 
-  expect(schema).toMatchObject({ properties: { foo: { $ref: ref } } })
+  expect(schema).toMatchObject({ properties: { foo: { $ref: 'path/id' } } })
+})
+
+it('should expand property reference', async () => {
+  const cos = { foo: 'ref:id#/foo' }
+  const schema = expand(cos, valid)
+
+  expect(schema).toMatchObject({ properties: { foo: { $ref: 'id#/properties/foo' } } })
+})
+
+it('should expand root reference', async () => {
+  const cos = { foo: 'ref:path/id#/' }
+  const schema = expand(cos, valid)
+
+  expect(schema).toMatchObject({ properties: { foo: { $ref: 'path/id#/' } } })
+})
+
+it('should expand root self-reference', async () => {
+  const cos = { foo: 'ref:#/' }
+  const schema = expand(cos, valid)
+
+  expect(schema).toMatchObject({ properties: { foo: { $ref: '#/' } } })
 })
 
 it('should not throw on numbers ', async () => {

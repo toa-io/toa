@@ -29,3 +29,47 @@ Feature: Schema references
             $ref: types/ok
       additionalProperties: false
       """
+
+  Scenario: Self-reference
+    When I write schema:
+      """yaml
+      foo:
+        bar: number
+      baz: ref:#/foo/bar
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo:
+          type: object
+          properties:
+            bar:
+              type: number
+          additionalProperties: false
+        baz:
+          $ref: '#/properties/foo/properties/bar'
+      additionalProperties: false
+      """
+
+  Scenario: Root self-refernece
+    When I write schema:
+      """yaml
+      foo:
+        bar: number
+        next: ref:#/
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo:
+          type: object
+          properties:
+            bar:
+              type: number
+            next:
+              $ref: '#/'
+          additionalProperties: false
+      additionalProperties: false
+      """
