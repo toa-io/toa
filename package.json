@@ -78,6 +78,9 @@
     ],
     "globals": [
       "AbortController"
+    ],
+    "ignore": [
+      "**/transpiled/"
     ]
   },
   "jest": {
