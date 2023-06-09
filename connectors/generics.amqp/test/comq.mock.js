@@ -15,7 +15,8 @@ const io = () => (/** @type {jest.MockedObject<comq.IO>} */ {
 })
 
 const comq = {
-  connect: jest.fn(async () => io())
+  connect: jest.fn(async () => io()),
+  assert: jest.fn(async () => io())
 }
 
 exports.comq = comq

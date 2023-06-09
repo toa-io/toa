@@ -1,6 +1,6 @@
 'use strict'
 
-const { connect } = require('comq')
+const { assert } = require('comq')
 const { Connector } = require('@toa.io/core')
 const { shards } = require('@toa.io/generic')
 
@@ -44,7 +44,7 @@ class Aspect extends Connector {
 
   #open = async ([origin, reference]) => {
     const references = shards(reference)
-    const io = await connect(...references)
+    const io = await assert(...references)
 
     this.#origins[origin] = restrict(io)
   }
