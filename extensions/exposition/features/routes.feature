@@ -1,7 +1,7 @@
 Feature: RTD Routes
 
   Scenario Outline: Basic Route
-    Given the `greeter` Component with the following manifest:
+    Given the `greeter` Component running with the following manifest:
       """yaml
       namespace: examples
 
@@ -14,17 +14,17 @@ Feature: RTD Routes
             GET: greet
           /mehtod: greet
       """
-    When the request is received:
+    When the request is sent:
       """http
       GET /examples/basic<route>
       accept: application/yaml
       """
-    Then the reply is sent:
+    Then the reply is received:
       """
       200 OK
       content-type: application/vnd.toa.reply+yaml
 
-      reply: Hello
+      output: Hello
       """
     Examples:
       | route                |

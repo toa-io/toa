@@ -1,11 +1,7 @@
-import { join } from 'node:path'
-import schemas from '@toa.io/schemas'
-
-const schema = schemas.schema(join(__dirname, 'schema.cos.yaml'))
+import { schema } from './schema'
 
 export function validate (node: Node, operations: Operations): void {
   schema.validate(node)
-
   eachMethod(node, testMethod(operations))
 }
 
