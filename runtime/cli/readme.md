@@ -131,6 +131,7 @@ Deploy a generic Kubernetes secret with the prefix `toa-`.
 <dd>
 <code>secret</code> Secret name.<br/>
 <code>key-values</code> List of keys and values of the secret as <code>key=value</code>.<br/>
+<code>--namespace</code> Target Kubernetes namespace
 </dd>
 </dl>
 
