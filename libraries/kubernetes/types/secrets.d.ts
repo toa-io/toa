@@ -15,7 +15,7 @@ declare namespace toa.kubernetes {
 
         type Get = (name: string) => Promise<Declaration | null>
 
-        type Store = (name: string, values: Secret, type?: string) => Promise<void>
+        type Store = (name: string, values: Secret, namespace?: string) => Promise<void>
 
     }
 

@@ -3,11 +3,12 @@
 const { execute } = require('@toa.io/command')
 
 /** @type {toa.kubernetes.secrets.Store} */
-const store = async (name, values, type = 'generic') => {
-  await execute(`kubectl delete secret ${name} --ignore-not-found`)
+const store = async (name, values, namespace) => {
+  const ns = namespace ? ` --namespace=${namespace}` : ''
+  await execute(`kubectl delete secret ${name} --ignore-not-found${ns}`)
 
   const args = formatArgs(values)
-  const command = `kubectl create secret ${type} ${name} ${args}`
+  const command = `kubectl create secret generic ${name} ${args}${ns}`
 
   const process = await execute(command)
 

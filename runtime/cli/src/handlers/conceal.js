@@ -13,7 +13,7 @@ const conceal = async (argv) => {
 
   const secret = PREFIX + argv.secret
 
-  await secrets.store(secret, values)
+  await secrets.store(secret, values, argv.namespace)
 }
 
 const PREFIX = 'toa-'

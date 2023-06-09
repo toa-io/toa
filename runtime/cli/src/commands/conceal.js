@@ -12,22 +12,16 @@ const builder = (yargs) => {
       array: true,
       desc: 'Secret key-value pairs'
     })
-    .option('type', {
+    .option('namespace', {
+      alias: 'n',
       group: 'Command options:',
       type: 'string',
-      desc: 'Secret type',
-      default: 'generic'
-    })
-    .option('replace', {
-      group: 'Command options:',
-      type: 'boolean',
-      desc: 'Delele existing keys',
-      default: false
+      desc: 'Target Kubernetes namespace'
     })
     .example([
       ['$0 conceal amqp-credentials username=developer'],
       ['$0 conceal amqp-credentials username=developer password=secret'],
-      ['$0 conceal regcred --type docker-registry docker-server=localhost']
+      ['$0 conceal amqp-credentials username=developer --namespace app']
     ])
 }
 

@@ -38,7 +38,7 @@ configuration:
 ### Deploy secrets
 
 ```shell
-$ toa conceal configuration BAZ_VALUE '$ecr3t'
+$ toa conceal configuration BAZ_VALUE=$ecr3t
 ```
 
 ---
@@ -188,7 +188,7 @@ manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
 Deployed kubernetes secret's name is predefined as `configuration`.
 
 ```shell
-$ toa conceal configuration STRIPE_API_KEY xxxxxxxx
+$ toa conceal configuration STRIPE_API_KEY=xxxxxxxx
 ```
 
 ## Aspect

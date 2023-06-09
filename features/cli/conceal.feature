@@ -25,3 +25,13 @@ Feature: Deploy secrets
       type: Opaque
       """
     Then I run `kubectl delete secret toa-database`
+
+  Scenario: Deploy a secret to a namespace
+    Given I have a kube context kind-kind
+    When I run `kubectl create ns test-secret`
+    And I run `toa conceal test foo=bar --namespace test-secret`
+    And I run `kubectl get secrets --namespace test-secret`
+    Then stdout should contain lines:
+      """
+      toa-test
+      """
