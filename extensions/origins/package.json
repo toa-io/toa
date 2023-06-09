@@ -23,7 +23,7 @@
     "@toa.io/generic": "0.20.0-dev.13",
     "@toa.io/schemas": "0.20.0-dev.13",
     "@toa.io/yaml": "0.20.0-dev.13",
-    "comq": "0.8.0-dev.1",
+    "comq": "0.8.0",
     "node-fetch": "2.6.7"
   },
   "devDependencies": {
