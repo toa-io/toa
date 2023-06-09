@@ -41,7 +41,7 @@ it('should connect', async () => {
   await aspect.open()
 
   for (const reference of Object.values(manifest)) {
-    expect(comq.connect).toHaveBeenCalledWith(reference)
+    expect(comq.assert).toHaveBeenCalledWith(reference)
   }
 })
 
@@ -60,7 +60,7 @@ it('should connect to shards', async () => {
 
   await aspect.open()
 
-  expect(comq.connect).toHaveBeenCalledWith(...shards)
+  expect(comq.assert).toHaveBeenCalledWith(...shards)
 })
 
 it('should disconnect', async () => {
@@ -68,8 +68,8 @@ it('should disconnect', async () => {
   await aspect.close()
 
   for (const reference of Object.values(manifest)) {
-    const index = comq.connect.mock.calls.findIndex((call) => call[0] === reference)
-    const io = await comq.connect.mock.results[index].value
+    const index = comq.assert.mock.calls.findIndex((call) => call[0] === reference)
+    const io = await comq.assert.mock.results[index].value
 
     expect(io.close).toHaveBeenCalled()
   }
@@ -92,9 +92,9 @@ describe('invoke', () => {
     origin = sample(origins)
 
     const reference = manifest[origin]
-    const index = comq.connect.mock.calls.findIndex((call) => call[0] === reference)
+    const index = comq.assert.mock.calls.findIndex((call) => call[0] === reference)
 
-    io = await comq.connect.mock.results[index].value
+    io = await comq.assert.mock.results[index].value
     args = [generate(), generate(), generate()]
   })
 
