@@ -1,35 +1,29 @@
 'use strict'
 
 const { execute } = require('@toa.io/command')
-const { remap, encode, overwrite } = require('@toa.io/generic')
-
-const { get } = require('./get')
 
 /** @type {toa.kubernetes.secrets.Store} */
-const store = async (name, values) => {
-  const command = 'kubectl apply -f -'
-  const data = remap(values, encode)
+const store = async (name, values, type = 'generic') => {
+  await execute(`kubectl delete secret ${name} --ignore-not-found`)
 
-  /** @type {toa.kubernetes.secrets.Declaration} */
-  const declaration = (await get(name)) ?? BLANK
+  const args = formatArgs(values)
+  const command = `kubectl create secret ${type} ${name} ${args}`
 
-  declaration.metadata.name = name
-
-  overwrite(declaration.data, data)
-
-  const input = JSON.stringify(declaration)
-
-  const process = await execute(command, input)
+  const process = await execute(command)
 
   if (process.exitCode !== 0) throw new Error(process.error)
 }
 
-const BLANK = {
-  apiVersion: 'v1',
-  kind: 'Secret',
-  metadata: { name: '' },
-  data: {},
-  type: 'Opaque'
+function formatArgs (values) {
+  const args = []
+
+  for (const [key, value] of Object.entries(values)) {
+    const argument = `--from-literal=${key}=${value}`
+
+    args.push(argument)
+  }
+
+  return args.join(' ')
 }
 
 exports.store = store

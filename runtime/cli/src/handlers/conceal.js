@@ -3,10 +3,17 @@
 const { secrets } = require('@toa.io/kubernetes')
 
 const conceal = async (argv) => {
-  const { secret, key, value } = argv
-  const prefixed = PREFIX + secret
+  const values = argv['key-values'].reduce((values, pair) => {
+    const [key, value] = pair.split('=')
 
-  await secrets.store(prefixed, { [key]: value })
+    values[key] = value
+
+    return values
+  }, {})
+
+  const secret = PREFIX + argv.secret
+
+  await secrets.store(secret, values)
 }
 
 const PREFIX = 'toa-'

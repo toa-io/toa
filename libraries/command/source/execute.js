@@ -6,6 +6,7 @@ const { Readable } = require('node:stream')
 /** @type {toa.command.Execute} */
 const execute = (command, input = undefined) => {
   return new Promise((resolve) => {
+    console.log(command)
     /** @type {toa.command.Result} */
     const process = exec(command, (_, stdout, stderr) => {
       process.output = stdout.trim()
