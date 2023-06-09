@@ -14,7 +14,7 @@ Feature: toa compose
         toa compose ./a/**/ ./b/**/
       """
 
-  Scenario Outline: Run compositions
+  Scenario Outline: Run compositions from <working directory>
     Given I have components:
       | dummies.one |
       | dummies.two |
@@ -30,8 +30,8 @@ Feature: toa compose
     Examples:
       | command                                | working directory        | delay |
       | `toa compose`                          | ./components/dummies.one | 0     |
-      | `toa compose ./components/dummies.two` | ./                       | 0     |
       | `toa compose dummies.one dummies.two`  | ./components             | 0     |
+      | `toa compose ./components/dummies.two` | ./                       | 0     |
       | `toa compose ./**/*`                   | ./                       | 1     |
 
   Scenario: Shutdown composition after it's started

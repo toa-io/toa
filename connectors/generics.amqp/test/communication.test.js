@@ -31,7 +31,7 @@ it('should be instance of Connector', async () => {
 it('should connect with given references', async () => {
   await comm.open()
 
-  expect(mock.comq.connect).toHaveBeenCalledWith(...references)
+  expect(mock.comq.assert).toHaveBeenCalledWith(...references)
 })
 
 it('should not throw if `close()` is called before connection is complete', async () => {
@@ -40,7 +40,7 @@ it('should not throw if `close()` is called before connection is complete', asyn
   const connection = promex()
   let connected = false
 
-  mock.comq.connect.mockImplementationOnce(() => connection)
+  mock.comq.assert.mockImplementationOnce(() => connection)
 
   setImmediate(() => {
     expect(connected).toStrictEqual(false)
@@ -60,7 +60,7 @@ describe('connected', () => {
   beforeEach(async () => {
     await comm.open()
 
-    io = await mock.comq.connect.mock.results[0].value
+    io = await mock.comq.assert.mock.results[0].value
   })
 
   it('should close', async () => {

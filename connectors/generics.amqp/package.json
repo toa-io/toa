@@ -23,7 +23,7 @@
     "@toa.io/core": "0.20.0-dev.13",
     "@toa.io/generic": "0.20.0-dev.13",
     "@toa.io/pointer": "0.20.0-dev.13",
-    "comq": "0.7.0"
+    "comq": "0.8.0-dev.1"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
