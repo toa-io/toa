@@ -124,11 +124,23 @@ Pods [are ready](https://helm.sh/docs/intro/using_helm/#helpful-options-for-inst
 
 ### conceal
 
-Deploy a `key` with a `value` to a secret named `toa-{secret}`.
+Deploy a generic Kubernetes secret with the prefix `toa-`.
 
 <dl>
-<dt><code>toa conceal &lt;secret&gt; &lt;key&gt; &lt;value&gt;</code></dt>
+<dt><code>toa conceal &lt;secret&gt; &lt;key-values...&gt;</code></dt>
+<dd>
+<code>secret</code> Secret name.<br/>
+<code>key-values</code> List of keys and values of the secret as <code>key=value</code>.<br/>
+</dd>
 </dl>
+
+> Existing secret will be replaced.
+
+#### Example
+
+```shell
+$ toa conceal bindings-amqp-default username=developer password=secret
+```
 
 ### reveal
 

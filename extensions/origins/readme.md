@@ -125,6 +125,7 @@ and `password`.
 
 ```shell
 # deploy credentials to the current kubectl context
-$ toa conceal origins-dummies-dummiy-messages username developer
-$ toa conceal origins-dummies-dummiy-messages password secret
+$ toa conceal origins-dummies-dummiy-messages username=developer password=secret
 ```
+
+See [`toa conceal`](/runtime/cli/readme.md#conceal).

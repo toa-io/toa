@@ -7,15 +7,25 @@ const builder = (yargs) => {
     .positional('secret', {
       type: 'string'
     })
-    .positional('key', {
-      type: 'string'
+    .positional('key-values', {
+      type: 'string',
+      array: true,
+      desc: 'Secret key-value pairs'
     })
-    .positional('value', {
-      type: 'string'
+    .option('namespace', {
+      alias: 'n',
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Target Kubernetes namespace'
     })
+    .example([
+      ['$0 conceal amqp-credentials username=developer'],
+      ['$0 conceal amqp-credentials username=developer password=secret'],
+      ['$0 conceal amqp-credentials username=developer --namespace app']
+    ])
 }
 
-exports.command = 'conceal <secret> <key> <value>'
-exports.desc = 'Deploy a key with a value to a secret'
+exports.command = 'conceal <secret> <key-values...>'
+exports.desc = 'Deploy a secret'
 exports.builder = builder
 exports.handler = conceal
