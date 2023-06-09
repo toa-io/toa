@@ -13,7 +13,7 @@ COPY --chown=node:node . /composition
 {{build.run}}
 
 # run 'npm i' in each component
-RUN find . -maxdepth 1 -type d \( ! -name . \) -exec /bin/sh -c "cd '{}' && if [ -f package.json ]; then npm i --omit=dev; fi" \;
+RUN for entry in *; do if [ -f "$entry/package.json" ]; then (cd $entry && npm i --omit=dev); fi; done
 
 USER node
 CMD toa compose *

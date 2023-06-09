@@ -27,7 +27,7 @@ Feature: Container Building Options
 
   Scenario: Building a container with arguments
     Given I have a component `dummies.one`
-    Given I have a context with:
+    And I have a context with:
     """
     registry:
       build:
@@ -39,9 +39,9 @@ Feature: Container Building Options
     Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
     Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
 
-  Scenario: Building a container with internal registry
+  Scenario: Building an image with custom npm registry
     Given I have a component `dummies.one`
-    Given I have a context with:
+    And I have a context with:
     """
     runtime:
       registry: http://host.docker.internal:4873
@@ -49,7 +49,7 @@ Feature: Container Building Options
     When I export images
     Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set registry http://host.docker.internal:4873; fi'
 
-  Scenario: Building a container with internal registry proxy
+  Scenario: Building an image with custom npm proxy
     Given I have a component `dummies.one`
     Given I have a context with:
     """
@@ -59,3 +59,9 @@ Feature: Container Building Options
     When I export images
     Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set proxy http://host.docker.internal:4873; fi'
 
+  Scenario: Building an image with incorrect dependency in `package.json`
+    Given I have a component `broken.dependency`
+    And I have a context
+    When I run `toa build`
+    Then program should exit with code 1
+    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-broken-dependency)`

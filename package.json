@@ -87,7 +87,7 @@
       "AbortController"
     ],
     "ignore": [
-      "**/transpiled"
+      "**/transpiled/"
     ]
   },
   "jest": {

@@ -1,0 +1,7 @@
+{
+  "name": "broken.dependency",
+  "private": true,
+  "dependencies": {
+    "@non-existent/dependency": "1.0.0"
+  }
+}
