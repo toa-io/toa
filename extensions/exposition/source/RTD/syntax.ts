@@ -20,10 +20,8 @@ function testMethod (operations: Operations): (method: method, mapping: Mapping)
     const allowedTypes = ALLOWED_MAPPINGS[method]
 
     if (!allowedTypes.has(mapping.type)) {
-      throw new Error(
-        `Method '${method}' cannot be mapped to '${mapping.type}'. ` +
-        `Allowed operation types: '${[...allowedTypes].join('\', \'')}'.`
-      )
+      throw new Error(`Method '${method}' cannot be mapped to '${mapping.type}'. ` +
+        `Allowed operation types: '${[...allowedTypes].join('\', \'')}'.`)
     }
 
     if (!(mapping.operation in operations)) {
@@ -46,7 +44,6 @@ export type Tree = Record<string, Node>
 
 export type Node = Routes & (Methods | Directives)
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface Routes {
   [k: string]: Routes | Methods | Directives
 }
