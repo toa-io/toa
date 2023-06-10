@@ -9,26 +9,21 @@ export function validate (node: Node, operations: Operations): void {
 }
 
 function eachMethod (node: Node, test: (method: method, mapping: Mapping) => void): void {
-  for (const [key, value] of Object.entries(node)) {
+  for (const [key, value] of Object.entries(node))
     if (key[0] === '/') eachMethod(value, test)
     else if (methods.has(key as method)) test(key as method, value as Mapping)
-  }
 }
 
 function testMethod (operations: Operations): (method: method, mapping: Mapping) => void {
   return (method: method, mapping: Mapping): void => {
     const allowedTypes = ALLOWED_MAPPINGS[method]
 
-    if (!allowedTypes.has(mapping.type)) {
-      throw new Error(
-        `Method '${method}' cannot be mapped to '${mapping.type}'. ` +
-        `Allowed operation types: '${[...allowedTypes].join('\', \'')}'.`
-      )
-    }
+    if (!allowedTypes.has(mapping.type))
+      throw new Error(`Method '${method}' cannot be mapped to '${mapping.type}'. ` +
+        `Allowed operation types: '${[...allowedTypes].join('\', \'')}'.`)
 
-    if (!(mapping.operation in operations)) {
+    if (!(mapping.operation in operations))
       throw new Error(`Method '${method}' is mapped to undefined operation '${mapping.operation}'`)
-    }
   }
 }
 
@@ -46,7 +41,6 @@ export type Tree = Record<string, Node>
 
 export type Node = Routes & (Methods | Directives)
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface Routes {
   [k: string]: Routes | Methods | Directives
 }

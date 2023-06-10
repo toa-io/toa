@@ -2,6 +2,25 @@ extends: standard-with-typescript
 overrides:
   - files: ['*.ts']
     rules:
+      import/no-default-export: error
+      newline-before-return: error
+      padding-line-between-statements:
+        - error
+        - blankLine: always
+          prev: block-like
+          next: '*'
+        - blankLine: always
+          prev: '*'
+          next: block-like
+      function-paren-newline:
+        - error
+        - never
+      max-depth: [error, 2]
+      max-statements-per-line:
+        - error
+        - max: 1
+      curly: [error, multi]
+      '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
 parserOptions:
   project: ./tsconfig.json

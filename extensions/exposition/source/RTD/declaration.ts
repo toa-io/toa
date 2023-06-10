@@ -1,5 +1,4 @@
 import { add } from '@toa.io/generic'
-
 import * as syntax from './syntax'
 
 import type * as RTD from './syntax'
@@ -29,6 +28,9 @@ function route (declaration: Node | string, operations: Operations): RTD.Node {
     if (syntax.methods.has(key as RTD.method)) node[key] = mapping(value as Mapping, operations)
   }
 
+  if (Object.keys(node).length === 0) console.log('u')
+  else console.log('b')
+
   return node
 }
 
@@ -41,12 +43,12 @@ function method (operation: string, operations: Operations): RTD.Methods {
 }
 
 function methods (values: string[], operations: Operations): RTD.Methods {
-  return values.reduce((mappings, value) => {
-    const map = method(value, operations)
+  return values.reduce((methods, value) => {
+    const mtd = method(value, operations)
 
-    add(mappings, map)
+    add(methods, mtd)
 
-    return mappings
+    return methods
   }, {})
 }
 
