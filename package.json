@@ -91,6 +91,9 @@
     "testMatch": [
       "**/(*.)+(test).(js|ts)"
     ],
+    "testPathIgnorePatterns": [
+      ".*\/transpiled\/"
+    ],
     "bail": true
   }
 }

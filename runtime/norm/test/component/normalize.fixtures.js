@@ -7,7 +7,9 @@ const operations = {
   bindings: ['foo', 'bar'],
   'bindings@local': ['foo'],
   operations: {
-    add: {}
+    add: {
+      type: 'assignment'
+    }
   },
   extensions: {
     '@toa.io/extensions.exposition': {
