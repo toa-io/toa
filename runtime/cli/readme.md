@@ -162,12 +162,13 @@ Run interactive shell inside a disposable pod inside a Kubernetes cluster.
 <code>toa shell [image]</code>
 </dt>
 <dd>
-<code>image</code> Docker image<br/>
+<code>image</code> Docker image to Run (default <code>alpine</code>).<br/>
 </dd>
 </dl>
 
-Extra arguments can be passed:
+#### Examples
 
 ```shell
-$ toa shell -- ping 1.1
+$ toa shell mongo
+$ toa shell -- ping 1.1 # extra arguments can be passed
 ```
