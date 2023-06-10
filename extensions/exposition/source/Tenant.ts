@@ -1,5 +1,8 @@
 import { Connector } from '@toa.io/core'
 
+import type { Locator, bindings } from '@toa.io/core'
+import type * as RTD from './RTD/syntax'
+
 export class Tenant extends Connector {
   private readonly broadcast: bindings.Broadcast
   private readonly branch: RTD.Branch
@@ -13,15 +16,12 @@ export class Tenant extends Connector {
     this.depends(broadcast)
   }
 
-  async open () {
+  async open (): Promise<void> {
     await this.expose()
     await this.broadcast.receive('ping', this.expose.bind(this))
   }
 
-  private async expose () {
+  private async expose (): Promise<void> {
     await this.broadcast.transmit('expose', this.branch)
   }
 }
-
-import type { Locator, bindings } from '@toa.io/core'
-import type * as RTD from './RTD/syntax'

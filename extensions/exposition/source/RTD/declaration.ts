@@ -21,7 +21,7 @@ function route (declaration: Node | string, manifest: Manifest): RTD.Node {
 
   if (typeof declaration === 'string') return method(declaration as operations.type, manifest) as RTD.Node
 
-  for (let [key, value] of Object.entries(declaration)) {
+  for (const [key, value] of Object.entries(declaration)) {
     if (key[0] === '/') node[key] = route(value as Node | string, manifest)
     if (methods.has(key as RTD.method)) node[key as RTD.method] = mapping(value as Mapping, manifest)
   }
@@ -33,10 +33,10 @@ function mapping (value: Mapping, manifest: Manifest): RTD.Mapping {
   if (typeof value === 'string') {
     const type = operationType(value, manifest)
 
-    value = { operation: value as string, type }
+    value = { operation: value, type }
   }
 
-  return value as RTD.Mapping
+  return value
 }
 
 function method (operation: string, manifest: Manifest): RTD.Methods {
@@ -55,13 +55,13 @@ function operationType (operation: string, manifest: Manifest): operations.type 
 }
 
 const UNAMBIGUOUS_METHODS: Partial<Record<operations.type, RTD.method>> = {
-  'observation': 'GET',
-  'assignment': 'PATCH',
-  'computation': 'GET',
-  'effect': 'POST'
+  observation: 'GET',
+  assignment: 'PATCH',
+  computation: 'GET',
+  effect: 'POST'
 }
 
-export type Node = {
+export interface Node {
   [k: string]: Node | Mapping | string | any // directive
 }
 

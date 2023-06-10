@@ -1,6 +1,6 @@
 declare namespace toa.queues {
 
-  type Properties = {
+  interface Properties {
     exchange: string
   }
 

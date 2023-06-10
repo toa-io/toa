@@ -1,5 +1,5 @@
-import { generate } from "randomstring"
-import type { Manifest } from "@toa.io/norm"
+import { generate } from 'randomstring'
+import type { Manifest } from '@toa.io/norm'
 
 export function manifest (): Partial<Manifest> {
   return {

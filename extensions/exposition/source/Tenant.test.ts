@@ -3,6 +3,8 @@ import { Locator } from '@toa.io/core'
 import { Tenant } from './Tenant'
 import { broadcast } from './Tenant.fixtures'
 
+import type * as RTD from './RTD/syntax'
+
 it('should be', async () => {
   expect(Tenant).toBeInstanceOf(Function)
 })
@@ -41,5 +43,3 @@ it('should expose on ping', async () => {
 
   expect(broadcast.transmit).toHaveBeenCalledTimes(2)
 })
-
-import type * as RTD from './RTD/syntax'

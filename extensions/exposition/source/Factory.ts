@@ -1,7 +1,10 @@
 import { Tenant } from './Tenant'
 
+import type { Connector, Locator, extensions } from '@toa.io/core'
+import type { Node } from './RTD/syntax'
+
 export class Factory implements extensions.Factory {
-  private boot: boot
+  private readonly boot: boot
 
   constructor (boot: boot) {
     this.boot = boot
@@ -13,8 +16,5 @@ export class Factory implements extensions.Factory {
     return new Tenant(broadcast, locator, branch)
   }
 }
-
-import type { Connector, Locator, extensions } from '@toa.io/core'
-import type { Node } from './RTD/syntax'
 
 type boot = typeof import('@toa.io/boot')
