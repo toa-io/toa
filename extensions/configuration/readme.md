@@ -213,11 +213,11 @@ function transition (input, entity, context) {
 > ```javascript
 > // NOT RECOMMENDED
 > let foo
-> 
+>
 > function transition (input, entity, context) {
 >   // NOT RECOMMENDED
 >   if (foo === undefined) foo = context.configuration.foo
-> 
+>
 >   // ...
 > }
 > ```

@@ -15,7 +15,7 @@ origins:
 ```
 
 ```javascript
-// Node.js bridge 
+// Node.js bridge
 async function transition (input, object, context) {
   // direct Aspect invocation
   await context.aspects.http('docs', './example', { method: 'GET' })
@@ -96,7 +96,7 @@ origins:
 ```
 
 ```javascript
-// Node.js bridge 
+// Node.js bridge
 async function transition (input, object, context) {
   await context.aspects.http('https://api.domain.com/example', { method: 'POST' })
 }
