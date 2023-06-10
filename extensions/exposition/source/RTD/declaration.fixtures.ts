@@ -10,6 +10,9 @@ export function manifest (): Partial<Manifest> {
       },
       transit: {
         type: 'transition'
+      },
+      assign: {
+        type: 'assignment'
       }
     }
   }

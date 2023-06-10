@@ -6,7 +6,7 @@ export interface Request<Input> {
 export interface Query {
   id?: string
   version?: number
-  criteria?: Object
+  criteria?: object
   omit?: number
   limit?: number
   sort?: string[]

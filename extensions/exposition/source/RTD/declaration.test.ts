@@ -77,6 +77,16 @@ it('should expand method shortcuts', async () => {
   })
 })
 
+it('should throw on unsupported type', async () => {
+  const declaration: Node = {
+    '/': {
+      '/dummies': []
+    }
+  }
+
+  expect(() => normalize(declaration, manifest)).toThrow('Unresolved shortcut')
+})
+
 it('should throw on ambiguous method shortcuts', async () => {
   const declaration: Node = {
     '/': {

@@ -1,4 +1,4 @@
-import * as core from '@toa.io/core'
+import type * as core from '@toa.io/core'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const broadcast: jest.MockedObject<core.bindings.Broadcast> = {

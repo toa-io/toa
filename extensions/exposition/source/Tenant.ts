@@ -7,7 +7,7 @@ export class Tenant extends Connector {
   private readonly broadcast: bindings.Broadcast
   private readonly branch: RTD.Branch
 
-  constructor (broadcast: bindings.Broadcast, { name, namespace }: Locator, node: RTD.Node) {
+  public constructor (broadcast: bindings.Broadcast, { name, namespace }: Locator, node: RTD.Node) {
     super()
 
     this.broadcast = broadcast
@@ -16,9 +16,11 @@ export class Tenant extends Connector {
     this.depends(broadcast)
   }
 
-  async open (): Promise<void> {
+  public async open (): Promise<void> {
     await this.expose()
     await this.broadcast.receive('ping', this.expose.bind(this))
+
+    console.info(`Exposition Tenant for ${this.branch.namespace}.${this.branch.name} has started.`)
   }
 
   private async expose (): Promise<void> {

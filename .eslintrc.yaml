@@ -1,0 +1,13 @@
+extends: standard-with-typescript
+overrides:
+  - files: ['*.ts']
+    rules:
+      '@typescript-eslint/explicit-member-accessibility': error
+parserOptions:
+  project: ./tsconfig.json
+env:
+  jest: true
+ignorePatterns:
+  - '*.d.ts'
+  - '*.test.ts'
+  - '**/transpiled/'

@@ -32,7 +32,7 @@ function testMethod (operations: Operations): (method: method, mapping: Mapping)
   }
 }
 
-export const methods: Set<method> = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+export const methods = new Set<method>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 
 const ALLOWED_MAPPINGS: Record<method, Set<core.operations.type>> = {
   GET: new Set(['observation', 'computation']),
@@ -42,10 +42,9 @@ const ALLOWED_MAPPINGS: Record<method, Set<core.operations.type>> = {
   DELETE: new Set()
 }
 
-export interface Node {
-  [k: string]: Routes | Methods | Directives
-}
+export type Node = Routes | Methods | Directives
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface Routes {
   [k: string]: Node
 }
@@ -54,9 +53,7 @@ export type Methods = {
   [k in method]?: Mapping
 }
 
-export interface Directives {
-  [k: string]: any
-}
+export type Directives = Record<string, any>
 
 export type method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 

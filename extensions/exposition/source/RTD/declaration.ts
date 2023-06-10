@@ -1,3 +1,5 @@
+import { plain } from '@toa.io/generic'
+
 import { methods } from './syntax'
 
 import type * as RTD from './syntax'
@@ -20,6 +22,7 @@ function route (declaration: Node | string, manifest: Manifest): RTD.Node {
   const node: RTD.Node = {}
 
   if (typeof declaration === 'string') return method(declaration as operations.type, manifest) as RTD.Node
+  else if (!plain(declaration)) throw new Error(`Unresolved shortcut ${JSON.stringify(declaration)}`)
 
   for (const [key, value] of Object.entries(declaration)) {
     if (key[0] === '/') node[key] = route(value as Node | string, manifest)

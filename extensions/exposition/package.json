@@ -16,6 +16,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@toa.io/generic": "0.20.0-dev.15"
+  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
