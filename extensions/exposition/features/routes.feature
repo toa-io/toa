@@ -1,7 +1,7 @@
 Feature: RTD Routes
 
   Scenario Outline: Basic Route
-    Given the `greeter` Component running with the following manifest:
+    Given the `greeter` Component is running with the following manifest:
       """yaml
       namespace: examples
 

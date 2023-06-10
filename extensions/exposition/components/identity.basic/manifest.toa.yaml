@@ -16,4 +16,4 @@ operations:
 exposition:
   /:id:
     GET: observe
-    PUT: transit
+    POST: transit

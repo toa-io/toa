@@ -1,8 +1,9 @@
-import { normalize, Node } from './declaration'
+import { normalize } from './declaration'
 import * as fixtures from './declaration.fixtures'
 import { generate } from 'randomstring'
-
 import type { Manifest } from '@toa.io/norm'
+import type { Node } from './declaration'
+import type * as syntax from './syntax'
 
 it('should be', async () => {
   expect(normalize).toBeInstanceOf(Function)
@@ -80,11 +81,26 @@ it('should expand method shortcuts', async () => {
 it('should throw on unsupported type', async () => {
   const declaration: Node = {
     '/': {
-      '/dummies': []
+      '/dummies': ['observe', 'assign']
     }
   }
 
-  expect(() => normalize(declaration, manifest)).toThrow('Unresolved shortcut')
+  const node = normalize(declaration, manifest)
+
+  expect(node).toStrictEqual({
+    '/': {
+      '/dummies': {
+        GET: {
+          operation: 'observe',
+          type: 'observation'
+        },
+        PATCH: {
+          operation: 'assign',
+          type: 'assignment'
+        },
+      }
+    }
+  } as syntax.Node)
 })
 
 it('should throw on ambiguous method shortcuts', async () => {

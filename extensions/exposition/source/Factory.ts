@@ -1,12 +1,11 @@
 import { Tenant } from './Tenant'
-
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Node } from './RTD/syntax'
 
 export class Factory implements extensions.Factory {
-  private readonly boot: boot
+  private readonly boot: bootloader
 
-  public constructor (boot: boot) {
+  public constructor (boot: bootloader) {
     this.boot = boot
   }
 
@@ -18,4 +17,4 @@ export class Factory implements extensions.Factory {
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type boot = typeof import('@toa.io/boot')
+type bootloader = typeof import('@toa.io/boot')

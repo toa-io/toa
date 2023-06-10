@@ -42,11 +42,13 @@ const ALLOWED_MAPPINGS: Record<method, Set<core.operations.type>> = {
   DELETE: new Set()
 }
 
-export type Node = Routes | Methods | Directives
+export type Tree = Record<string, Node>
+
+export type Node = Routes & (Methods | Directives)
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface Routes {
-  [k: string]: Node
+  [k: string]: Routes | Methods | Directives
 }
 
 export type Methods = {
