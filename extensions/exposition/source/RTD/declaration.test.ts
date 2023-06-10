@@ -1,6 +1,6 @@
 import { normalize, Node } from './declaration'
 import * as fixtures from './declaration.fixtures'
-import { generate } from "randomstring"
+import { generate } from 'randomstring'
 
 import type { Manifest } from '@toa.io/norm'
 
@@ -8,10 +8,10 @@ it('should be', async () => {
   expect(normalize).toBeInstanceOf(Function)
 })
 
-let manifest: Partial<Manifest>
+let manifest: Manifest
 
 beforeEach(() => {
-  manifest = fixtures.manifest()
+  manifest = fixtures.manifest() as Manifest
 })
 
 it('should expand operation shortcuts', async () => {

@@ -1,3 +1,6 @@
-import { Composition } from './composition'
+import * as core from '@toa.io/core'
+import * as composition from './composition'
 
-export const composition: Composition
+export * as bindings from './bindings'
+
+export const composition: (paths: string[], options: composition.Options) => Promise<core.Connector>

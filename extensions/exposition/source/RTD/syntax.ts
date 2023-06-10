@@ -44,7 +44,7 @@ export type Node = {
   [k: string]: Routes | Methods | Directives
 }
 
-type Routes = {
+export type Routes = {
   [k: string]: Node
 }
 
@@ -52,7 +52,7 @@ export type Methods = {
   [k in method]?: Mapping
 }
 
-type Directives = {
+export type Directives = {
   [k: string]: any
 }
 
@@ -62,6 +62,12 @@ export type Mapping = {
   operation: string
   type: core.operations.type
   query?: object
+}
+
+export type Branch = {
+  name: string
+  namespace: string
+  node: Node
 }
 
 type Operations = Manifest['operations']
