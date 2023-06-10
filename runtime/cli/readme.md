@@ -124,11 +124,24 @@ Pods [are ready](https://helm.sh/docs/intro/using_helm/#helpful-options-for-inst
 
 ### conceal
 
-Deploy a `key` with a `value` to a secret named `toa-{secret}`.
+Deploy a generic Kubernetes secret with the prefix `toa-`.
 
 <dl>
-<dt><code>toa conceal &lt;secret&gt; &lt;key&gt; &lt;value&gt;</code></dt>
+<dt><code>toa conceal &lt;secret&gt; &lt;key-values...&gt;</code></dt>
+<dd>
+<code>secret</code> Secret name.<br/>
+<code>key-values</code> List of keys and values of the secret as <code>key=value</code>.<br/>
+<code>--namespace</code> Kubernetes namespace where the secret should be deployed.
+</dd>
 </dl>
+
+> Existing secret will be replaced.
+
+#### Example
+
+```shell
+$ toa conceal bindings-amqp-default username=developer password=secret
+```
 
 ### reveal
 
@@ -149,12 +162,13 @@ Run interactive shell inside a disposable pod inside a Kubernetes cluster.
 <code>toa shell [image]</code>
 </dt>
 <dd>
-<code>image</code> Docker image<br/>
+<code>image</code> Docker image to Run (default <code>alpine</code>).<br/>
 </dd>
 </dl>
 
-Extra arguments can be passed:
+#### Examples
 
 ```shell
-$ toa shell -- ping 1.1
+$ toa shell mongo
+$ toa shell -- ping 1.1 # extra arguments can be passed
 ```

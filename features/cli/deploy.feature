@@ -8,9 +8,8 @@ Feature: Deployment
       | dummies.one |
       | dummies.two |
     And I have a context
-    When I run `toa conceal bindings-amqp-default username developer`
-    And I run `toa conceal bindings-amqp-default password secret`
-    When I run `toa deploy docker --wait`
+    When I run `toa conceal bindings-amqp-default username=developer password=secret`
+    And I run `toa deploy docker --wait`
     Then program should exit with code 0
     When I run `kubectl get pods`
     Then stdout should contain lines:

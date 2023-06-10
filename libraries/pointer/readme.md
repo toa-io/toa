@@ -103,10 +103,8 @@ amqp:
 ```
 
 ```shell
-$ toa conceal bindings-amqp-default username admin
-$ toa conceal bindings-amqp-default password ibreakthings
-$ toa conceal bindings-amqp-dummies-dummy username developer
-$ toa conceal bindings-amqp-dummies-dummy password iluvtests
+$ toa conceal bindings-amqp-default username=admin password=ibreakthings
+$ toa conceal bindings-amqp-dummies-dummy username=developer password=iluvtests
 ```
 
 See [`toa conceal`](../../runtime/cli/readme.md#conceal).
