@@ -1,24 +1,25 @@
 import type { Node } from './Node'
+import type { Segments } from './segment'
 
 export class Route {
-  private readonly segments: string[]
+  private readonly segments: Segments
   private readonly node: Node
 
-  public constructor (segments: string[], node: Node) {
+  public constructor (segments: Segments, node: Node) {
     this.segments = segments
     this.node = node
   }
 
-  public match (segments: string[]): Node | null {
+  public match (segments: Segments): Node | null {
     for (let i = 0; i < this.segments?.length; i++)
-      if (this.segments[i] !== segments[i])
+      if (this.segments[i] !== null && this.segments[i] !== segments[i])
         return null
 
     if (this.segments.length === segments.length) return this.node
-    else return this.nested(segments)
+    else return this.matchNested(segments)
   }
 
-  private nested (segments: string[]): Node | null {
+  private matchNested (segments: Segments): Node | null {
     const slice = segments.slice(this.segments.length)
 
     return this.node.match(slice)

@@ -1,5 +1,6 @@
 import { Route } from './Route'
 import { segment } from './segment'
+import type { Segments } from './segment'
 import type * as syntax from './RTD/syntax'
 
 export class Node {
@@ -13,7 +14,7 @@ export class Node {
     return create(definition)
   }
 
-  public match (segments: string[]): Node | null {
+  public match (segments: Segments): Node | null {
     for (const route of this.routes) {
       const node = route.match(segments)
 

@@ -1,9 +1,10 @@
 import { generate } from 'randomstring'
 import { Route } from './Route'
 import { Node } from './Node'
+import type { Segments } from './segment'
 
 describe('own key', () => {
-  let segments: string[]
+  let segments: Segments
   let route: Route
   let node: Node
 
@@ -42,6 +43,18 @@ describe('own key', () => {
     const match = route.match(segments)
 
     expect(match).toStrictEqual(null)
+  })
+
+  it('should match placeholders', async () => {
+    segments = [generate(), null, generate()]
+    route = new Route(segments, node)
+
+    segments = [...segments]
+    segments[1] = generate()
+
+    const match = route.match(segments)
+
+    expect(match).toBe(node)
   })
 })
 
