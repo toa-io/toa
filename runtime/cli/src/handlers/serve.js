@@ -15,9 +15,9 @@ const serve = async (argv) => {
   const factory = new Factory(boot)
 
   /** @type {toa.core.Connector} */
-  const service = factory.service()
+  const service = factory.service(argv.service)
 
-  if (service === undefined) throw new Error(`Cannot find service '${argv.name}' in ${argv.path}`)
+  if (service === null) throw new Error(`Service '${argv.service}' is not implemented by ${argv.path}`)
 
   await service.connect()
 

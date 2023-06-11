@@ -7,8 +7,8 @@ Feature: toa serve
     Then program should exit
     And stdout should contain lines:
     """
-    toa serve [path]
-    Run service
+    toa serve <path> <service>
+    Run a service
     """
 
   Scenario Outline: Run service
@@ -19,7 +19,7 @@ Feature: toa serve
   - shortcut
 
     Given my working directory is /toa
-    When I run `toa serve <reference>`
+    When I run `toa serve <reference> gateway`
     And I wait 0.5 seconds
     And I abort execution
     Then stderr should be empty

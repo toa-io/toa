@@ -7,21 +7,21 @@ import * as _bindings from './bindings'
 declare namespace toa.core.extensions {
 
   interface Factory {
-    tenant?(locator: _core.Locator, declaration: object): _core.Connector
+    tenant? (locator: _core.Locator, declaration: object): _core.Connector
 
-    aspect?(locator: _core.Locator, declaration: object): Aspect | Aspect[]
+    aspect? (locator: _core.Locator, declaration: object): Aspect | Aspect[]
 
-    service?(name?: string): _core.Connector
+    service? (name?: string): _core.Connector | null
 
-    component?(component: _component.Component): _component.Component
+    component? (component: _component.Component): _component.Component
 
-    context?(context: _context.Context): _context.Context
+    context? (context: _context.Context): _context.Context
 
-    storage?(storage: _storages.Storage): _storages.Storage
+    storage? (storage: _storages.Storage): _storages.Storage
 
-    emitter?(emitter: _bindings.Emitter, label: string): _bindings.Emitter
+    emitter? (emitter: _bindings.Emitter, label: string): _bindings.Emitter
 
-    receiver?(receiver: _core.Receiver, locator: _core.Locator): _core.Receiver
+    receiver? (receiver: _core.Receiver, locator: _core.Locator): _core.Receiver
   }
 
   interface Aspect extends _core.Connector {
