@@ -37,8 +37,6 @@ const ALLOWED_MAPPINGS: Record<method, Set<core.operations.type>> = {
   DELETE: new Set()
 }
 
-export type Tree = Record<string, Node>
-
 export type Node = Routes & (Methods | Directives)
 
 export interface Routes {

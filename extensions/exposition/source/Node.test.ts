@@ -1,6 +1,7 @@
 import { generate } from 'randomstring'
 import { Node } from './Node'
 import { Route } from './Route'
+import type * as syntax from './RTD/syntax'
 
 it('should return nested node if one of the routes matches', async () => {
   const node1 = new Node()
@@ -16,7 +17,43 @@ it('should return nested node if one of the routes matches', async () => {
 
   const match1 = node.match(segments1)
   const match2 = node.match(segments2)
+  const match3 = node.match([generate(), generate()])
 
   expect(match1).toBe(node1)
   expect(match2).toBe(node2)
+  expect(match3).toStrictEqual(null)
+})
+
+describe('factory', () => {
+  it('should create Node from RTD', async () => {
+    const definition: syntax.Node = {
+      '/foo': {},
+      '/bar': {}
+    }
+
+    const node = Node.create(definition)
+
+    expect(node.match(['foo'])).not.toBeNull()
+    expect(node.match(['bar'])).not.toBeNull()
+    expect(node.match(['baz'])).toBeNull()
+  })
+
+  it('should create Tree recurcively', async () => {
+    const definition: syntax.Node = {
+      '/foo': {
+        '/nested': {}
+      },
+      '/bar': {
+        '/nested': {}
+      }
+    }
+
+    const node = Node.create(definition)
+
+    expect(node.match(['foo'])).not.toBeNull()
+    expect(node.match(['foo', 'nested'])).not.toBeNull()
+    expect(node.match(['bar'])).not.toBeNull()
+    expect(node.match(['bar', 'nested'])).not.toBeNull()
+    expect(node.match(['bar', 'baz'])).toBeNull()
+  })
 })
