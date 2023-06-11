@@ -20,8 +20,22 @@ overrides:
         - error
         - max: 1
       curly: [error, multi]
-      no-trailing-spaces: warn
-      no-multiple-empty-lines: warn
+      no-trailing-spaces: warn      # prevents IDE
+      no-multiple-empty-lines: warn # from going crazy
+      import/order:
+        - error
+        - groups:
+            - builtin
+            - external
+            - internal
+            - parent
+            - index
+            - sibling
+            - object
+            - type
+      '@typescript-eslint/consistent-type-imports':
+        - error
+        - fixStyle: separate-type-imports
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
 parserOptions:
