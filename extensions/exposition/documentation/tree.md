@@ -30,6 +30,8 @@ An RTD node that does not contain any Routes is called an _RTD leaf_.
 
 Route segments prefixed with a colon `:` are Route Variables. Refer to [Query mapping](tree.query.md) for the details.
 
+> Route declarations must not have a trailing slash.
+
 ## Methods
 
 Methods are mappings of the HTTP methods to the corresponding operations.
