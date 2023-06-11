@@ -8,10 +8,10 @@ export function validate (node: Node, operations: Operations): void {
   eachMethod(node, testMethod(operations))
 }
 
-function eachMethod (node: Node, test: (method: Method, mapping: Mapping) => void): void {
+function eachMethod (node: Node, testMethod: (method: Method, mapping: Mapping) => void): void {
   for (const [key, value] of Object.entries(node))
-    if (key[0] === '/') eachMethod(value, test)
-    else if (methods.has(key as Method)) test(key as Method, value as Mapping)
+    if (key[0] === '/') eachMethod(value, testMethod)
+    else if (methods.has(key as Method)) testMethod(key as Method, value as Mapping)
 }
 
 function testMethod (operations: Operations): (method: Method, mapping: Mapping) => void {

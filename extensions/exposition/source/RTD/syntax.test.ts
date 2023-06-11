@@ -13,7 +13,7 @@ describe('validate', () => {
     expect(validate).toBeInstanceOf(Function)
   })
 
-  it('should not throw on valid node', async () => {
+  it('should not throw on root node', async () => {
     const node: Node = {
       '/': {
         GET: {
@@ -24,6 +24,16 @@ describe('validate', () => {
     }
 
     expect(() => validate(node, operations)).not.toThrow()
+  })
+
+  it('should throw on empty key', async () => {
+    const node: Node = {
+      '/foo': {
+        '/': {}
+      }
+    }
+
+    expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
   })
 
   it('should not throw on non-root node', async () => {
@@ -49,6 +59,17 @@ describe('validate', () => {
     expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
   })
 
+  it('should not allow trailing slash in nested nodes', async () => {
+    const node: Node = {
+      '/foo': {
+        GET: { operation: 'observe', type: 'observation' },
+        '/bar/': {}
+      }
+    }
+
+    expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
+  })
+
   it('should throw if invalid mapping', async () => {
     const node = {
       '/': {
@@ -56,7 +77,7 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('must have required property')
+    expect(() => validate(node, operations)).toThrow('must have required property \'operation\'')
   })
 
   it('should throw on operation type mismatch', async () => {

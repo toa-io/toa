@@ -1,17 +1,5 @@
-import * as _schemas from './schema'
+import type { Schema } from './schema'
 
-declare namespace toa.schemas {
-
-  namespace constructors {
-
-    type namespace = (schemas: any[] | string) => Namespace
-
-  }
-
-  interface Namespace {
-    schema(id: string): _schemas.Schema
-  }
-
+export interface Namespace {
+  schema (id: string): Schema
 }
-
-export type namespace = toa.schemas.constructors.namespace

@@ -56,4 +56,31 @@ describe('factory', () => {
     expect(node.match(['bar', 'nested'])).not.toBeNull()
     expect(node.match(['bar', 'baz'])).toBeNull()
   })
+
+  it('should create root Route', async () => {
+    const definition: syntax.Node = {
+      '/': {},
+    }
+
+    const node = Node.create(definition)
+
+    expect(node.match([])).not.toBeNull()
+  })
+
+  it('should create nested root Route', async () => {
+    const definition: syntax.Node = {
+      '/teapots': {
+        '/': {
+          GET: {},
+          '/cold': {}
+        },
+        '/hot': {}
+      },
+    }
+
+    const node = Node.create(definition)
+
+    expect(node.match(['teapots', 'cold'])).not.toBeNull()
+    expect(node.match(['teapots', 'hot'])).not.toBeNull()
+  })
 })

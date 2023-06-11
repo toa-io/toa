@@ -1,5 +1,5 @@
 # routes
-/^\/(.*[^\/])?$/: ref:#/
+/^\/.{1,128}(?<!\/)$/: ref:#/
 
 # methods
 /^(GET|POST|PUT|PATCH|DELETE)$/:

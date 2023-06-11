@@ -100,6 +100,18 @@ The declaration above will result in exposing the following resources:
 /messaging/rooms/:user-id/:room-id/
 ```
 
+Resource branches may contain only [Routes](documentation/tree.md#routes).
+
+```yaml
+# manifest.toa.yaml
+
+exposition:
+  GET: observe    # NOT VALID: Methods are not allowed
+  role: developer # NOT VALID: Directives are not allowed
+  /:
+    GET: observe  # OK: nested Node
+```
+
 Refer to [Resource Tree Definition](documentation/tree.md) for the details.
 
 ## Context annotation

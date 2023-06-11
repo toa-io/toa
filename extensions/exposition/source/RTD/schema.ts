@@ -1,6 +1,7 @@
 import { resolve } from 'node:path'
 import schemas from '@toa.io/schemas'
 
-const path = resolve(__dirname, '../../schemas/RTD.node.cos.yaml')
+const path = resolve(__dirname, '../../schemas')
+const namespace = schemas.namespace(path)
 
-export const schema = schemas.schema(path)
+export const schema = namespace.schema('branch')
