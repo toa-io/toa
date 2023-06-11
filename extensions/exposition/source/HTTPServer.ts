@@ -46,5 +46,5 @@ function create (): HTTPServer {
 
 function supportedMethods (req: Request, res: Response, next: NextFunction): void {
   if (syntax.methods.has(req.method as syntax.method)) next()
-  else res.status(501).end()
+  else res.sendStatus(501)
 }
