@@ -5,33 +5,27 @@ import type * as RTD from './syntax'
 import type { Manifest } from '@toa.io/norm'
 import type { operations } from '@toa.io/core'
 
-export function normalize (declaration: Node, manifest: Manifest): RTD.Tree {
-  return routes(declaration, manifest.operations)
+export function normalize (declaration: Node, manifest: Manifest): RTD.Node {
+  return normalizeNode(declaration, manifest.operations)
 }
 
-function routes (declaration: Node, operations: Operations): RTD.Node {
-  const node: RTD.Node = {}
+function normalizeNode (declaration: Node | string, operations: Operations): RTD.Node {
+  const node: RTD.Node = { '': null } // prevents compilation errors that I was unable to resolve
 
-  for (const [key, value] of Object.entries(declaration)) node[key] = route(value, operations)
-
-  return node
-}
-
-function route (declaration: Node | string, operations: Operations): RTD.Node {
-  const node: RTD.Node = {}
-
-  if (typeof declaration === 'string') return method(declaration as operations.type, operations) as RTD.Node
-  else if (Array.isArray(declaration)) return methods(declaration, operations)
+  if (typeof declaration === 'string') return normalizeMethod(declaration as operations.type, operations) as RTD.Node
+  else if (Array.isArray(declaration)) return normalizeMethods(declaration, operations)
 
   for (const [key, value] of Object.entries(declaration)) {
-    if (key[0] === '/') node[key] = route(value as Node | string, operations)
-    if (syntax.methods.has(key as RTD.method)) node[key] = mapping(value as Mapping, operations)
+    if (key[0] === '/') node[key] = normalizeNode(value as Node | string, operations)
+    if (syntax.methods.has(key as RTD.method)) node[key] = normalizeMapping(value as Mapping, operations)
   }
+
+  delete node[''] // see above
 
   return node
 }
 
-function method (operation: string, operations: Operations): RTD.Methods {
+function normalizeMethod (operation: string, operations: Operations): RTD.Methods {
   const type = operationType(operation, operations)
   const method = UNAMBIGUOUS_METHODS[type]
 
@@ -39,17 +33,17 @@ function method (operation: string, operations: Operations): RTD.Methods {
   else throw new Error(`Ambiguous mapping for '${operation}'. Use explicit method declaration.`)
 }
 
-function methods (values: string[], operations: Operations): RTD.Methods {
+function normalizeMethods (values: string[], operations: Operations): RTD.Methods {
   return values.reduce((methods, value) => {
-    const mtd = method(value, operations)
+    const metod = normalizeMethod(value, operations)
 
-    add(methods, mtd)
+    add(methods, metod)
 
     return methods
   }, {})
 }
 
-function mapping (value: Mapping, operations: Operations): RTD.Mapping {
+function normalizeMapping (value: Mapping, operations: Operations): RTD.Mapping {
   if (typeof value === 'string') {
     const type = operationType(value, operations)
 

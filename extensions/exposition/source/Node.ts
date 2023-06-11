@@ -11,7 +11,7 @@ export class Node {
   }
 
   public static create (definition: syntax.Node): Node {
-    return create(definition)
+    return createNode(definition)
   }
 
   public match (segments: Segments): Node | null {
@@ -25,16 +25,18 @@ export class Node {
   }
 }
 
-function create (definition: syntax.Node): Node {
+function createNode (definition: syntax.Node): Node {
   const routes = []
 
-  for (const [key, value] of Object.entries(definition)) {
-    const node = Node.create(value)
-    const segments = segment(key)
-    const route = new Route(segments, node)
-
-    routes.push(route)
-  }
+  for (const [key, value] of Object.entries(definition))
+    routes.push(createRoute(value, key))
 
   return new Node(routes)
+}
+
+function createRoute (value: syntax.Node, key: string): Route {
+  const node = Node.create(value)
+  const segments = segment(key)
+
+  return new Route(segments, node)
 }
