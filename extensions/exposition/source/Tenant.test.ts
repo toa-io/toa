@@ -5,10 +5,6 @@ import { broadcast } from './Tenant.fixtures'
 
 import type * as RTD from './RTD/syntax'
 
-it('should be', async () => {
-  expect(Tenant).toBeInstanceOf(Function)
-})
-
 const name = generate()
 const namespace = generate()
 const locator = new Locator(name, namespace)

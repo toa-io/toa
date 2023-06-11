@@ -28,9 +28,6 @@ function route (declaration: Node | string, operations: Operations): RTD.Node {
     if (syntax.methods.has(key as RTD.method)) node[key] = mapping(value as Mapping, operations)
   }
 
-  if (Object.keys(node).length === 0) console.log('u')
-  else console.log('b')
-
   return node
 }
 

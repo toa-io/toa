@@ -1,11 +1,13 @@
 import { Tenant } from './Tenant'
+import { Gateway } from './Gateway'
+
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Node } from './RTD/syntax'
 
 export class Factory implements extensions.Factory {
-  private readonly boot: bootloader
+  private readonly boot: Bootloader
 
-  public constructor (boot: bootloader) {
+  public constructor (boot: Bootloader) {
     this.boot = boot
   }
 
@@ -14,7 +16,18 @@ export class Factory implements extensions.Factory {
 
     return new Tenant(broadcast, locator, branch)
   }
+
+  public service (name: string): Connector | null {
+    if (!(name in this)) return null
+    else return this[name as Service]()
+  }
+
+  private gateway (): Gateway {
+    return new Gateway()
+  }
 }
 
+type Service = 'gateway'
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type bootloader = typeof import('@toa.io/boot')
+type Bootloader = typeof import('@toa.io/boot')

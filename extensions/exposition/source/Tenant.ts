@@ -1,6 +1,4 @@
-import { Connector } from '@toa.io/core'
-
-import type { Locator, bindings } from '@toa.io/core'
+import { Connector, type Locator, type bindings } from '@toa.io/core'
 import type * as RTD from './RTD/syntax'
 
 export class Tenant extends Connector {
@@ -20,7 +18,7 @@ export class Tenant extends Connector {
     await this.expose()
     await this.broadcast.receive('ping', this.expose.bind(this))
 
-    console.info(`Exposition Tenant for ${this.branch.namespace}.${this.branch.name} has started.`)
+    console.info(`Exposition Tenant for '${this.branch.namespace}.${this.branch.name}' has started.`)
   }
 
   private async expose (): Promise<void> {

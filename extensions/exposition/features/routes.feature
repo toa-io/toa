@@ -1,9 +1,12 @@
 Feature: RTD Routes
 
-  Scenario Outline: Basic Route
-    Given the `greeter` Component is running with the following manifest:
+  Background:
+    Given the Service is running
+
+  Scenario Outline: Basic Routes
+    Given the `greeter` is running with the following manifest:
       """yaml
-      namespace: examples
+      namespace: basic
 
       exposition:
         /strict:
@@ -16,7 +19,7 @@ Feature: RTD Routes
       """
     When the request is sent:
       """http
-      GET /examples/basic<route>
+      GET /basic/greeter<route>
       accept: application/yaml
       """
     Then the reply is received:
