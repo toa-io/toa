@@ -20,6 +20,8 @@ overrides:
         - error
         - max: 1
       curly: [error, multi]
+      no-trailing-spaces: warn
+      no-multiple-empty-lines: warn
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
 parserOptions:
