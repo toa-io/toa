@@ -22,6 +22,9 @@ overrides:
       curly: [error, multi]
       no-trailing-spaces: warn      # prevents IDE
       no-multiple-empty-lines: warn # from going crazy
+      newline-per-chained-call:
+        - error
+        - ignoreChainWithDepth: 1
       import/order:
         - error
         - groups:
