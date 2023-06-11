@@ -12,6 +12,9 @@ overrides:
         - blankLine: always
           prev: '*'
           next: block-like
+        - blankLine: always
+          prev: [const, let]
+          next: expression
       function-paren-newline:
         - error
         - never
