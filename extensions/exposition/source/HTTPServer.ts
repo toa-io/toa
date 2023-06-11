@@ -1,8 +1,9 @@
-import express, { type Express, type Request, type Response, type NextFunction } from 'express'
+import express from 'express'
 import cors from 'cors'
 import { Connector } from '@toa.io/core'
-import { type Server } from 'node:http'
 import * as syntax from './RTD/syntax'
+import type { Server } from 'node:http'
+import type { Express, Request, Response, NextFunction } from 'express'
 
 export class HTTPServer extends Connector {
   private readonly app: Express
@@ -38,12 +39,12 @@ function create (): HTTPServer {
   app.enable('case sensitive routing')
   app.enable('strict routing')
   app.use(cors({ allowedHeaders: ['content-type'] }))
-  app.use(methods)
+  app.use(supportedMethods)
 
   return new HTTPServer(app)
 }
 
-function methods (req: Request, res: Response, next: NextFunction): void {
+function supportedMethods (req: Request, res: Response, next: NextFunction): void {
   if (syntax.methods.has(req.method as syntax.method)) next()
   else res.status(501).end()
 }
