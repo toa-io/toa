@@ -18,16 +18,15 @@ export class Factory implements extensions.Factory {
   }
 
   public service (name: string): Connector | null {
-    if (!(name in this)) return null
-    else return this[name as Service]()
+    if (name === 'gateway') return this.gateway()
+
+    return null
   }
 
   private gateway (): Gateway {
     return new Gateway()
   }
 }
-
-type Service = 'gateway'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type Bootloader = typeof import('@toa.io/boot')

@@ -8,14 +8,14 @@ export function validate (node: Node, operations: Operations): void {
   eachMethod(node, testMethod(operations))
 }
 
-function eachMethod (node: Node, test: (method: method, mapping: Mapping) => void): void {
+function eachMethod (node: Node, test: (method: Method, mapping: Mapping) => void): void {
   for (const [key, value] of Object.entries(node))
     if (key[0] === '/') eachMethod(value, test)
-    else if (methods.has(key as method)) test(key as method, value as Mapping)
+    else if (methods.has(key as Method)) test(key as Method, value as Mapping)
 }
 
-function testMethod (operations: Operations): (method: method, mapping: Mapping) => void {
-  return (method: method, mapping: Mapping): void => {
+function testMethod (operations: Operations): (method: Method, mapping: Mapping) => void {
+  return (method: Method, mapping: Mapping): void => {
     const allowedTypes = ALLOWED_MAPPINGS[method]
 
     if (!allowedTypes.has(mapping.type))
@@ -27,9 +27,9 @@ function testMethod (operations: Operations): (method: method, mapping: Mapping)
   }
 }
 
-export const methods = new Set<method>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+export const methods = new Set<Method>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 
-const ALLOWED_MAPPINGS: Record<method, Set<core.operations.type>> = {
+const ALLOWED_MAPPINGS: Record<Method, Set<core.operations.type>> = {
   GET: new Set(['observation', 'computation']),
   POST: new Set(['transition', 'effect']),
   PUT: new Set(['transition']),
@@ -37,19 +37,18 @@ const ALLOWED_MAPPINGS: Record<method, Set<core.operations.type>> = {
   DELETE: new Set()
 }
 
-export type Node = Routes & (Methods | Directives)
+export type Node = Routes | Methods | Directives
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface Routes {
-  [k: string]: Routes | Methods | Directives
+  [k: string]: Node
 }
 
-export type Methods = {
-  [k in method]?: Mapping
-}
+export type Methods = Partial<Record<Method, Mapping>>
 
 export type Directives = Record<string, any>
 
-export type method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface Mapping {
   operation: string
