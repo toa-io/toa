@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
 import { Node } from './Node'
-import type * as syntax from './RTD/syntax'
+import type * as syntax from './syntax'
 
 it('should create node from RTD', async () => {
   const definition: syntax.Node = {

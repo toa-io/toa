@@ -10,7 +10,7 @@ describe('own key', () => {
 
   beforeEach(() => {
     segments = [generate(), generate()]
-    node = new Node()
+    node = Node.create({})
     route = new Route(segments, node)
     segments = [...segments] // clone
   })
@@ -55,26 +55,5 @@ describe('own key', () => {
     const match = route.match(segments)
 
     expect(match).toBe(node)
-  })
-})
-
-describe('nested routes', () => {
-  it('should return nested matching nodes', async () => {
-    const node1 = new Node()
-    const segments1 = [generate(), generate()]
-    const route1 = new Route(segments1, node1)
-    const node2 = new Node()
-    const segments2 = [generate(), generate()]
-    const route2 = new Route(segments2, node2)
-
-    const node = new Node([route1, route2])
-    const segments = [generate(), generate()]
-    const route = new Route(segments, node)
-
-    const match1 = route.match([...segments, ...segments1])
-    const match2 = route.match([...segments, ...segments2])
-
-    expect(match1).toBe(node1)
-    expect(match2).toBe(node2)
   })
 })
