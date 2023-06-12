@@ -1,7 +1,6 @@
 import { Route } from './Route'
-import { segment } from './segment'
+import { segment, type Segments } from './segment'
 import * as syntax from './RTD/syntax'
-import type { Segments } from './segment'
 
 export class Node {
   public readonly intermediate: boolean

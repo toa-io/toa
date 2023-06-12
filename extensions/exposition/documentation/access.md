@@ -21,7 +21,10 @@ directives grants access, then the Authorization interrupts request processing a
 
 ### `anonymous`
 
-Grants access if its value is `true` and no credentials were provided.
+Grants access if its value is `true` and no credentials were provided[^1].
+
+[^1]: Credentials in the request make the
+response [non-chachable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
 
 ### `id`
 
