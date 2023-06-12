@@ -100,7 +100,7 @@ The declaration above will result in exposing the following resources:
 /messaging/rooms/:user-id/:room-id/
 ```
 
-Resource branches may contain only [Routes](documentation/tree.md#routes).
+The top-level node of the resource branch may only contain [Routes](documentation/tree.md#routes).
 
 ```yaml
 # manifest.toa.yaml

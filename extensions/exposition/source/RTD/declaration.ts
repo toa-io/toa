@@ -30,7 +30,7 @@ function normalizeMethod (operation: string, operations: Operations): RTD.Method
   const method = UNAMBIGUOUS_METHODS[type]
 
   if (method !== undefined) return { [method]: { operation, type } }
-  else throw new Error(`Ambiguous mapping for '${operation}'. Use explicit method declaration.`)
+  else throw new syntax.Exception(`Ambiguous mapping for '${operation}'. Use explicit method declaration.`)
 }
 
 function normalizeMethods (values: string[], operations: Operations): RTD.Methods {
@@ -56,7 +56,7 @@ function normalizeMapping (value: Mapping, operations: Operations): RTD.Mapping 
 function operationType (operation: string, operations: Operations): operations.type {
   const type = operations?.[operation]?.type
 
-  if (type === undefined) throw new Error(`Operation '${operation}' is not defined.`)
+  if (type === undefined) throw new syntax.Exception(`Operation '${operation}' is not defined.`)
   else return type
 }
 

@@ -1,4 +1,4 @@
-import { validate, methods, Node } from './syntax'
+import { validate, methods, Exception, type Node } from './syntax'
 import { generate } from 'randomstring'
 import type { Manifest } from '@toa.io/norm'
 
@@ -26,14 +26,48 @@ describe('validate', () => {
     expect(() => validate(node, operations)).not.toThrow()
   })
 
-  it('should throw on empty key', async () => {
+  it('should not throw on empty key', async () => {
     const node: Node = {
       '/foo': {
-        '/': {}
+        '/': {
+          '/bar': {}
+        },
+        '/baz': {}
       }
     }
 
+    expect(() => validate(node, operations)).not.toThrow()
+  })
+
+  it('should throw on methods of the top-level node', async () => {
+    const node: Node = {
+      GET: {
+        operation: 'observe',
+        type: 'observation'
+      },
+      '/foo': {}
+    }
+
     expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
+  })
+
+  it('should throw on unreachable methods', async () => {
+    const node: Node = {
+      '/foo': {
+        GET: {
+          operation: 'observe',
+          type: 'observation'
+        },
+        '/': {
+          GET: {
+            operation: 'observe',
+            type: 'observation'
+          }
+        }
+      }
+    }
+
+    expect(() => validate(node, operations)).toThrow('unreachable')
   })
 
   it('should not throw on non-root node', async () => {
@@ -108,5 +142,14 @@ describe('methods', () => {
   it('should be', async () => {
     expect(methods).toBeInstanceOf(Set)
     expect(methods.size).toBeGreaterThan(0)
+  })
+})
+
+describe('exception', () => {
+  it('should add prefix', async () => {
+    const message = generate()
+    const exception = new Exception(message)
+
+    expect(exception.message).toStrictEqual('RTD syntax error: ' + message)
   })
 })

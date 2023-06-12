@@ -82,6 +82,18 @@ As method mapping is unambiguous for all operations, except Transition, a consic
 /posts/:id: [observe, assign]
 ```
 
+### Intermediate Nodes
+
+An RTD Node that has a Route with a key `/` is an _intermediate_ Node.
+Intermediate Nodes must not have Methods as they ar are unreachable.
+
+```yaml
+/posts: # Node is intermediate
+  GET: select # INVALID: Method is unreachable
+  /:
+    PUT: transit
+```
+
 ## Directives
 
 RTD Directives are declared using RTD node or Method keys following the `{provider}:{directive}` pattern and can be used

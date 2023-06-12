@@ -15,7 +15,7 @@ export class Route {
       if (this.segments[i] !== null && this.segments[i] !== segments[i])
         return null
 
-    if (this.segments.length === segments.length) return this.node
+    if (this.segments.length === segments.length && !this.node.intermediate) return this.node
     else return this.matchNested(segments)
   }
 
