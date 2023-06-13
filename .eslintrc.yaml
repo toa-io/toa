@@ -7,11 +7,11 @@ overrides:
       padding-line-between-statements:
         - error
         - blankLine: always
-          prev: block-like
+          prev: [block-like, if]
           next: '*'
         - blankLine: always
           prev: '*'
-          next: block-like
+          next: [block-like, if]
         - blankLine: always
           prev: [const, let]
           next: expression
