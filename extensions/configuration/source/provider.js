@@ -109,9 +109,7 @@ class Provider extends Connector {
     return secrets(object, (variable) => {
       if (!(variable in process.env)) throw new Error(`Configuration secret value ${variable} is not set`)
 
-      const base64 = process.env[variable]
-
-      return decode(base64)
+      return process.env[variable]
     })
   }
 }
