@@ -108,7 +108,7 @@ function setEnv (configuration, secrets) {
     for (const [key, value] of Object.entries(secrets)) {
       const variable = PREFIX + '_' + key
 
-      process.env[variable] = encode(value)
+      process.env[variable] = value
       usedVariables.push(variable)
     }
   }
