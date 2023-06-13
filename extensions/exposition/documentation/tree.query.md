@@ -20,19 +20,19 @@ namespace: tea
 exposition:
   /hot:
     GET:
-      operation: select
+      endpoint: select
       query:
         criteria: state==hot
     /top10:
       GET:
-        operation: observe
+        endpoint: observe
         query:
           criteria: state==hot
           sort: rank:desc
           limit: 10
   /latest:
     GET:
-      operation: observe
+      endpoint: observe
       query:
         sort: timestamp:decs
         limit: 1

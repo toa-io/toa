@@ -3,8 +3,10 @@ import { Route } from './Route'
 import { Node } from './Node'
 import type { Segments } from './segment'
 import { createNode, createRoute } from './factory'
+import { Context } from './Context'
 
 describe('own key', () => {
+  const context = {} as Context
   let segments: Segments
   let route: Route
   let node: Node
@@ -12,8 +14,8 @@ describe('own key', () => {
   beforeEach(() => {
     segments = [generate(), generate()]
     const key = '/' + segments.join('/')
-    node = createNode({})
-    route = createRoute(key, node)
+    node = createNode({}, context)
+    route = createRoute(key, node, context)
   })
 
   it('should match own key', async () => {

@@ -26,8 +26,8 @@ function testMethod (operations: Operations): (method: Method, mapping: Mapping)
       throw new Exception(`Method '${method}' cannot be mapped to '${mapping.type}'. ` +
         `Allowed operation types: '${[...allowedTypes].join('\', \'')}'.`)
 
-    if (!(mapping.operation in operations))
-      throw new Exception(`Method '${method}' is mapped to undefined operation '${mapping.operation}'`)
+    if (!(mapping.endpoint in operations))
+      throw new Exception(`Method '${method}' is mapped to undefined operation '${mapping.endpoint}'`)
   }
 }
 
@@ -61,7 +61,7 @@ export type Directives = Record<string, any>
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface Mapping {
-  operation: string
+  endpoint: string
   type: core.operations.type
 }
 

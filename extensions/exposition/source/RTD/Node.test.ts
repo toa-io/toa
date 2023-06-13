@@ -73,7 +73,7 @@ it('should create methods', async () => {
   const definition: syntax.Node = {
     '/': {
       GET: {
-        operation: generate(),
+        endpoint: generate(),
         type: 'observation'
       }
     },
@@ -91,7 +91,7 @@ it('should find methods below intermediate nodes', async () => {
     '/foo': {
       '/': {
         GET: {
-          operation: generate(),
+          endpoint: generate(),
           type: 'observation'
         }
       }

@@ -27,7 +27,7 @@ it('should expand operation shortcuts', async () => {
   expect(node).toStrictEqual({
     '/': {
       GET: {
-        operation: 'observe',
+        endpoint: 'observe',
         type: 'observation'
       }
     }
@@ -49,7 +49,7 @@ it('should expand operation shortcuts in nested Routes', async () => {
     '/': {
       '/dummies': {
         GET: {
-          operation: 'observe',
+          endpoint: 'observe',
           type: 'observation'
         }
       }
@@ -70,7 +70,7 @@ it('should expand method shortcuts', async () => {
     '/': {
       '/dummies': {
         GET: {
-          operation: 'observe',
+          endpoint: 'observe',
           type: 'observation'
         }
       }
@@ -91,11 +91,11 @@ it('should throw on unsupported type', async () => {
     '/': {
       '/dummies': {
         GET: {
-          operation: 'observe',
+          endpoint: 'observe',
           type: 'observation'
         },
         PATCH: {
-          operation: 'assign',
+          endpoint: 'assign',
           type: 'assignment'
         },
       }

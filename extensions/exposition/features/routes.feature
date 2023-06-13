@@ -11,7 +11,7 @@ Feature: RTD Routes
       exposition:
         /strict:
           GET:
-            operation: greet
+            endpoint: greet
         /shortcuts:
           /operation:
             GET: greet

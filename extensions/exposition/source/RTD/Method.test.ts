@@ -10,7 +10,7 @@ const remote = {
 } as unknown as jest.MockedObject<Component>
 
 const mapping = {
-  operation: generate()
+  endpoint: generate()
 } as unknown as syntax.Mapping
 
 const context: Context = { remote }
@@ -32,7 +32,7 @@ describe.each([...syntax.methods])('%s', (verb) => {
     const params = { [param]: generate() }
     const reply = await method.call(body, params)
 
-    expect(remote.invoke).toHaveBeenCalledWith(mapping.operation, expect.anything())
+    expect(remote.invoke).toHaveBeenCalledWith(mapping.endpoint, expect.anything())
     expect(reply).toStrictEqual(await remote.invoke.mock.results[0].value)
   })
 })

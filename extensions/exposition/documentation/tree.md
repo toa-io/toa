@@ -39,7 +39,7 @@ Methods are mappings of the HTTP methods to the corresponding operations.
 A Method is a key named after the corresponding HTTP method, with a value following the schema below:
 
 ```yaml
-operation: string
+endpoint: string
 query?: Query
 ```
 
@@ -52,10 +52,10 @@ If a Method only has an `operation` key, it can be declared directly as the valu
 ```yaml
 /teapots:
   GET:
-    operation: select
+    endpoint: select
   /hot:
     GET:
-      operation: select
+      endpoint: select
       query:
         criteria: state==hot
 /posts:

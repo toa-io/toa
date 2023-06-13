@@ -31,7 +31,7 @@ export function createRoute (key: string, value: syntax.Node, context: Context):
 }
 
 export function createMethod (method: syntax.Method, definition: syntax.Mapping, context: Context): Method {
-  const endpoint = new Endpoint(context.remote, definition.operation)
+  const endpoint = new Endpoint(context.remote, definition.endpoint)
   const Class = method === 'POST' ? InputMethod : QueryMethod
 
   return new Class(endpoint)

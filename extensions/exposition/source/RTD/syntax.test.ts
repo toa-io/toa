@@ -17,7 +17,7 @@ describe('validate', () => {
     const node: Node = {
       '/': {
         GET: {
-          operation: 'observe',
+          endpoint: 'observe',
           type: 'observation'
         }
       }
@@ -42,7 +42,7 @@ describe('validate', () => {
   it('should throw on methods of the top-level node', async () => {
     const node: Node = {
       GET: {
-        operation: 'observe',
+        endpoint: 'observe',
         type: 'observation'
       },
       '/foo': {}
@@ -55,12 +55,12 @@ describe('validate', () => {
     const node: Node = {
       '/foo': {
         GET: {
-          operation: 'observe',
+          endpoint: 'observe',
           type: 'observation'
         },
         '/': {
           GET: {
-            operation: 'observe',
+            endpoint: 'observe',
             type: 'observation'
           }
         }
@@ -74,7 +74,7 @@ describe('validate', () => {
     const node: Node = {
       '/foo': {
         GET: {
-          operation: 'observe',
+          endpoint: 'observe',
           type: 'observation'
         }
       }
@@ -86,7 +86,7 @@ describe('validate', () => {
   it('should not allow trailing slash', async () => {
     const node: Node = {
       '/foo/': {
-        GET: { operation: 'observe', type: 'observation' }
+        GET: { endpoint: 'observe', type: 'observation' }
       }
     }
 
@@ -96,7 +96,7 @@ describe('validate', () => {
   it('should not allow trailing slash in nested nodes', async () => {
     const node: Node = {
       '/foo': {
-        GET: { operation: 'observe', type: 'observation' },
+        GET: { endpoint: 'observe', type: 'observation' },
         '/bar/': {}
       }
     }
@@ -111,14 +111,14 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('must have required property \'operation\'')
+    expect(() => validate(node, operations)).toThrow('must have required property \'endpoint\'')
   })
 
   it('should throw on operation type mismatch', async () => {
     const node: Node = {
       '/': {
         GET: {
-          operation: 'transit',
+          endpoint: 'transit',
           type: 'transition'
         }
       }
@@ -130,7 +130,7 @@ describe('validate', () => {
   it('should throw if maps to undefined operation', async () => {
     const node: Node = {
       '/': {
-        GET: { operation: generate(), type: 'observation' }
+        GET: { endpoint: generate(), type: 'observation' }
       }
     }
 

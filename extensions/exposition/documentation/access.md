@@ -200,17 +200,17 @@ name: posts
 exposition:
   /:user-id:
     GET:
-      operation: observe
+      endpoint: observe
       policy: read:list
     POST:
-      operation: transit
+      endpoint: transit
       policy: post:submit
     /:post-id:
       GET:
-        operation: observe
+        endpoint: observe
         policy: read:post
       PUT:
-        operation: assign
+        endpoint: assign
         policy: post:edit
 ```
 
@@ -259,11 +259,11 @@ name: posts
 exposition:
   /:user-id:
     GET:
-      operation: observe
+      endpoint: observe
       policy: read
   /:user-id/:post-id:
     GET:
-      operation: observe
+      endpoint: observe
       policy: read
 ```
 
