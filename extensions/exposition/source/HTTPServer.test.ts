@@ -3,8 +3,6 @@ import { express, cors } from './HTTPServer.fixtures'
 import { Connector } from '@toa.io/core'
 import type { Express } from 'express'
 import type { CorsOptions } from 'cors'
-import * as timers from 'timers'
-import { generate } from 'randomstring'
 
 jest.mock('express', () => () => express())
 jest.mock('cors', () => (options: CorsOptions) => cors(options))

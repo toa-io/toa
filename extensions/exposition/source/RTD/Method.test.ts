@@ -1,21 +1,21 @@
 import { generate } from 'randomstring'
-import { createMethod } from './factory'
-import { type Method } from './Method'
+import { createBranch } from './factory'
+import type { Node } from './Node'
 import * as syntax from './syntax'
-import { Context } from './Context'
-import { Component } from '@toa.io/core'
+import { context } from './Context.mock'
 
-const remote = {
-  invoke: jest.fn(async () => generate())
-} as unknown as jest.MockedObject<Component>
+const mapping: syntax.Mapping = {
+  endpoint: generate(),
+  type: 'observation'
+}
 
-const mapping = {
-  endpoint: generate()
-} as unknown as syntax.Mapping
+const definition: syntax.Node = {
+  '/': {
+    GET: mapping
+  }
+}
 
-const context: Context = { remote }
-
-let method: Method
+let branch: Node
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -23,16 +23,18 @@ beforeEach(() => {
 
 describe.each([...syntax.methods])('%s', (verb) => {
   beforeEach(() => {
-    method = createMethod(verb, mapping, context)
+    branch = createBranch(definition, context)
   })
 
   it('should call endpoint', async () => {
     const body = generate()
     const param = generate()
     const params = { [param]: generate() }
-    const reply = await method.call(body, params)
+    const node = branch.match([context.namespace, context.name])
+    const method = node?.methods.get('GET')
+    const reply = await method?.call(body, params)
 
-    expect(remote.invoke).toHaveBeenCalledWith(mapping.endpoint, expect.anything())
-    expect(reply).toStrictEqual(await remote.invoke.mock.results[0].value)
+    expect(context.remote.invoke).toHaveBeenCalledWith(mapping.endpoint, expect.anything())
+    expect(reply).toStrictEqual(await context.remote.invoke.mock.results[0].value)
   })
 })

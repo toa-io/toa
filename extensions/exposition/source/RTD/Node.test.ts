@@ -1,15 +1,10 @@
 import { generate } from 'randomstring'
-import { createNode } from './factory'
+import { createBranch } from './factory'
 import { Method } from './Method'
-import { Component } from '@toa.io/core'
-import { Context } from './Context'
 import type * as syntax from './syntax'
+import { context } from './Context.mock'
 
-const remote = {
-  invoke: jest.fn(async () => generate())
-} as unknown as jest.MockedObject<Component>
-
-const context: Context = { remote }
+const { namespace, name, remote } = context
 
 it('should create node from RTD', async () => {
   const definition: syntax.Node = {
@@ -17,11 +12,11 @@ it('should create node from RTD', async () => {
     '/bar': {}
   }
 
-  const node = createNode(definition, context)
+  const node = createBranch(definition, context)
 
-  expect(node.match(['foo'])).not.toBeNull()
-  expect(node.match(['bar'])).not.toBeNull()
-  expect(node.match(['baz'])).toBeNull()
+  expect(node.match([namespace, name, 'foo'])).not.toBeNull()
+  expect(node.match([namespace, name, 'bar'])).not.toBeNull()
+  expect(node.match([namespace, name, 'baz'])).toBeNull()
 })
 
 it('should create tree recurcively', async () => {
@@ -34,13 +29,13 @@ it('should create tree recurcively', async () => {
     }
   }
 
-  const node = createNode(definition, context)
+  const node = createBranch(definition, context)
 
-  expect(node.match(['foo'])).not.toBeNull()
-  expect(node.match(['foo', 'nested'])).not.toBeNull()
-  expect(node.match(['bar'])).not.toBeNull()
-  expect(node.match(['bar', 'nested'])).not.toBeNull()
-  expect(node.match(['bar', 'baz'])).toBeNull()
+  expect(node.match([namespace, name, 'foo'])).not.toBeNull()
+  expect(node.match([namespace, name, 'foo', 'nested'])).not.toBeNull()
+  expect(node.match([namespace, name, 'bar'])).not.toBeNull()
+  expect(node.match([namespace, name, 'bar', 'nested'])).not.toBeNull()
+  expect(node.match([namespace, name, 'bar', 'baz'])).toBeNull()
 })
 
 it('should create root Route', async () => {
@@ -48,9 +43,9 @@ it('should create root Route', async () => {
     '/': {},
   }
 
-  const node = createNode(definition, context)
+  const node = createBranch(definition, context)
 
-  expect(node.match([])).not.toBeNull()
+  expect(node.match([namespace, name])).not.toBeNull()
 })
 
 it('should create nested root route', async () => {
@@ -63,10 +58,10 @@ it('should create nested root route', async () => {
     },
   }
 
-  const node = createNode(definition, context)
+  const node = createBranch(definition, context)
 
-  expect(node.match(['teapots', 'cold'])).not.toBeNull()
-  expect(node.match(['teapots', 'hot'])).not.toBeNull()
+  expect(node.match([namespace, name, 'teapots', 'cold'])).not.toBeNull()
+  expect(node.match([namespace, name, 'teapots', 'hot'])).not.toBeNull()
 })
 
 it('should create methods', async () => {
@@ -79,11 +74,20 @@ it('should create methods', async () => {
     },
   }
 
-  const node = createNode(definition, context)
-  const found = node.match([])
+  const node = createBranch(definition, context)
+  const found = node.match([namespace, name])
 
   expect(found?.methods.has('GET')).toStrictEqual(true)
-  expect(found?.methods.get('GET')).toBeInstanceOf(Method)
+
+  const method = found?.methods.get('GET') as Method
+
+  expect(method).toBeInstanceOf(Method)
+
+  const body = generate()
+
+  await method.call(body, {})
+
+  expect(remote.invoke).toHaveBeenCalledWith(definition['/'].GET.endpoint, expect.anything())
 })
 
 it('should find methods below intermediate nodes', async () => {
@@ -98,8 +102,21 @@ it('should find methods below intermediate nodes', async () => {
     },
   }
 
-  const node = createNode(definition, context)
-  const found = node.match(['foo'])
+  const node = createBranch(definition, context)
+  const found = node.match([namespace, name, 'foo'])
 
   expect(found?.methods.has('GET')).toStrictEqual(true)
+})
+
+it('should omit default namespace', async () => {
+  const ctx = { ...context, namespace: 'default' }
+
+  const definition: syntax.Node = {
+    '/foo': {}
+  }
+
+  const node = createBranch(definition, ctx)
+
+  expect(node.match([namespace, name, 'foo'])).toBeNull()
+  expect(node.match([name, 'foo'])).not.toBeNull()
 })

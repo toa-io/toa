@@ -9,14 +9,22 @@ export class HTTPServer extends Connector {
   private readonly app: Express
   private server?: Server
 
-  public constructor (app: Express) {
+  private constructor (app: Express) {
     super()
 
     this.app = app
   }
 
   public static create (): HTTPServer {
-    return create()
+    const app = express()
+
+    app.disable('x-powered-by')
+    app.enable('case sensitive routing')
+    app.enable('strict routing')
+    app.use(cors({ allowedHeaders: ['content-type'] }))
+    app.use(supportedMethods)
+
+    return new HTTPServer(app)
   }
 
   public override async open (): Promise<void> {
@@ -30,18 +38,6 @@ export class HTTPServer extends Connector {
       console.info('HTTP Server stopped.')
     })
   }
-}
-
-function create (): HTTPServer {
-  const app = express()
-
-  app.disable('x-powered-by')
-  app.enable('case sensitive routing')
-  app.enable('strict routing')
-  app.use(cors({ allowedHeaders: ['content-type'] }))
-  app.use(supportedMethods)
-
-  return new HTTPServer(app)
 }
 
 function supportedMethods (req: Request, res: Response, next: NextFunction): void {

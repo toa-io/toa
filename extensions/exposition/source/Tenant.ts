@@ -5,11 +5,11 @@ export class Tenant extends Connector {
   private readonly broadcast: bindings.Broadcast
   private readonly branch: RTD.Branch
 
-  public constructor (broadcast: bindings.Broadcast, { name, namespace }: Locator, node: RTD.Node) {
+  public constructor (broadcast: bindings.Broadcast, { namespace, name }: Locator, node: RTD.Node) {
     super()
 
     this.broadcast = broadcast
-    this.branch = { name, namespace, node }
+    this.branch = { namespace, name, node }
 
     this.depends(broadcast)
   }

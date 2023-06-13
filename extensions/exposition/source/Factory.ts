@@ -1,6 +1,5 @@
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
-
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Node } from './RTD/syntax'
 

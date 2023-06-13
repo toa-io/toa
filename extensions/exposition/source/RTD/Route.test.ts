@@ -1,62 +1,56 @@
 import { generate } from 'randomstring'
-import { Route } from './Route'
 import { Node } from './Node'
-import type { Segments } from './segment'
-import { createNode, createRoute } from './factory'
-import { Context } from './Context'
+import { createBranch } from './factory'
+import * as syntax from './syntax'
+import { context } from './Context.mock'
+
+const { namespace, name } = context
+
+const definition: syntax.Node = {
+  '/': {}
+}
+
+let branch: Node
+
+beforeEach(() => {
+  jest.clearAllMocks()
+
+  branch = createBranch(definition, context)
+})
 
 describe('own key', () => {
-  const context = {} as Context
-  let segments: Segments
-  let route: Route
-  let node: Node
-
-  beforeEach(() => {
-    segments = [generate(), generate()]
-    const key = '/' + segments.join('/')
-    node = createNode({}, context)
-    route = createRoute(key, node, context)
-  })
-
   it('should match own key', async () => {
-    const match = route.match(segments)
+    const match = branch.match([namespace])
 
-    expect(match).toStrictEqual(node)
+    expect(match).not.toBeNull()
   })
 
   it('should not match key with different segment', async () => {
-    segments[1] = generate()
+    const match = branch.match([namespace, generate()])
 
-    const match = route.match(segments)
-
-    expect(match).toStrictEqual(null)
+    expect(match).toBeNull()
   })
 
   it('should not match key with extra segment', async () => {
-    segments.push(generate())
+    const match = branch.match([namespace, name, generate()])
 
-    const match = route.match(segments)
-
-    expect(match).toStrictEqual(null)
+    expect(match).toBeNull()
   })
 
   it('should not match key with missing segment', async () => {
-    segments.pop()
+    const match = branch.match([name])
 
-    const match = route.match(segments)
-
-    expect(match).toStrictEqual(null)
+    expect(match).toBeNull()
   })
 
   it('should match placeholders', async () => {
-    segments = [generate(), null, generate()]
-    route = new Route(segments, node)
+    const definition: syntax.Node = {
+      '/:user-id': {}
+    }
 
-    segments = [...segments]
-    segments[1] = generate()
+    const branch = createBranch(definition, context)
+    const match = branch.match([namespace, name, generate()])
 
-    const match = route.match(segments)
-
-    expect(match).toBe(node)
+    expect(match).not.toBeNull()
   })
 })

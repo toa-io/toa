@@ -1,20 +1,19 @@
-import { schema } from './schema'
-
+import * as schemas from './schemas'
 import type { Manifest } from '@toa.io/norm'
 import type * as core from '@toa.io/core'
 
 export function validate (node: Node, operations: Operations): void {
-  schema.validate(node)
+  schemas.branch.validate(node)
   testNode(node, testMethod(operations))
 }
 
 function testNode (node: Node, testMethod: (method: Method, mapping: Mapping) => void): void {
-  const transient = '/' in node
+  const intermediate = '/' in node
 
   for (const [key, value] of Object.entries(node))
-    if (key[0] === '/') testNode(value, testMethod)
+    if (key[0] === '/') testNode(value as Node, testMethod)
     else if (methods.has(key as Method))
-      if (transient) throw new Exception('Methods of intermediate Nodes are unreachable. Move the declaration to the \'/\' key.')
+      if (intermediate) throw new Exception('Methods of intermediate nodes are unreachable. Move the declaration to the \'/\' key.')
       else testMethod(key as Method, value as Mapping)
 }
 
