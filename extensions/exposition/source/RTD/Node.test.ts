@@ -94,3 +94,7 @@ it('should find methods below intermediate nodes', async () => {
 
   expect(found?.methods.has('GET')).toStrictEqual(true)
 })
+
+it('should create method', async () => {
+
+})

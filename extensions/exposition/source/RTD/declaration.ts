@@ -10,17 +10,15 @@ export function normalize (declaration: Node, manifest: Manifest): RTD.Node {
 }
 
 function normalizeNode (declaration: Node | string, operations: Operations): RTD.Node {
-  const node: RTD.Node = { '': null } // prevents compilation errors that I was unable to resolve
+  const node: RTD.Node = {}
 
   if (typeof declaration === 'string') return normalizeMethod(declaration as operations.type, operations) as RTD.Node
   else if (Array.isArray(declaration)) return normalizeMethods(declaration, operations)
 
   for (const [key, value] of Object.entries(declaration)) {
-    if (key[0] === '/') node[key] = normalizeNode(value as Node | string, operations)
-    if (syntax.methods.has(key as RTD.Method)) node[key] = normalizeMapping(value as Mapping, operations)
+    if (key[0] === '/') node[key as keyof RTD.Node] = normalizeNode(value as Node | string, operations)
+    if (syntax.methods.has(key as RTD.Method)) node[key as RTD.Method] = normalizeMapping(value as Mapping, operations)
   }
-
-  delete node[''] // see above
 
   return node
 }
@@ -50,7 +48,7 @@ function normalizeMapping (value: Mapping, operations: Operations): RTD.Mapping 
     value = { operation: value, type }
   }
 
-  return value
+  return value as RTD.Mapping
 }
 
 function operationType (operation: string, operations: Operations): operations.type {
@@ -71,6 +69,6 @@ export interface Node {
   [k: string]: Node | Mapping | any // directive
 }
 
-export type Mapping = RTD.Mapping | string // operation name(s)
+export type Mapping = RTD.Mapping | string[] | string // operation name(s)
 
 type Operations = Manifest['operations']

@@ -63,7 +63,6 @@ export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export interface Mapping {
   operation: string
   type: core.operations.type
-  query?: object
 }
 
 export interface Branch {

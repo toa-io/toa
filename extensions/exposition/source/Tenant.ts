@@ -14,7 +14,7 @@ export class Tenant extends Connector {
     this.depends(broadcast)
   }
 
-  public async open (): Promise<void> {
+  public override async open (): Promise<void> {
     await this.expose()
     await this.broadcast.receive('ping', this.expose.bind(this))
 

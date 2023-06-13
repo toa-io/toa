@@ -1,4 +1,5 @@
 import { Route } from './Route'
+import { type Method } from './Method'
 import { segment, type Segments } from './segment'
 import * as syntax from './syntax'
 
@@ -43,4 +44,4 @@ function createRoute (key: string, value: syntax.Node): Route {
   return new Route(segments, node)
 }
 
-type Methods = Map<syntax.Method, syntax.Mapping>
+type Methods = Map<syntax.Method, Method>

@@ -19,13 +19,13 @@ export class HTTPServer extends Connector {
     return create()
   }
 
-  public async open (): Promise<void> {
+  public override async open (): Promise<void> {
     this.server = this.app.listen(8000, () => {
       console.info('HTTP Server is listening.')
     })
   }
 
-  public async close (): Promise<void> {
+  public override async close (): Promise<void> {
     this.server?.close(() => {
       console.info('HTTP Server stopped.')
     })
