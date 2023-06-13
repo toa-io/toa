@@ -5,14 +5,8 @@ import type { Request, Reply } from '@toa.io/core'
 export abstract class Method {
   private readonly endpoint: Endpoint
 
-  protected constructor (endpoint: Endpoint) {
+  public constructor (endpoint: Endpoint) {
     this.endpoint = endpoint
-  }
-
-  public static create (method: syntax.Method, endpoint: Endpoint): Method {
-    const Class = method === 'POST' ? InputMethod : QueryMethod
-
-    return new Class(endpoint)
   }
 
   public async call (body: any, params: Record<string, string>): Promise<Reply> {
@@ -24,14 +18,16 @@ export abstract class Method {
   protected abstract request (body: any, params: Record<string, string>): Request
 }
 
-class InputMethod extends Method {
+export class InputMethod extends Method {
   protected override request (body: any, params: Record<string, string>): Request {
     return {}
   }
 }
 
-class QueryMethod extends Method {
+export class QueryMethod extends Method {
   protected override request (body: any, params: Record<string, string>): Request {
     return {}
   }
 }
+
+export type Methods = Map<syntax.Method, Method>

@@ -2,6 +2,7 @@ import { generate } from 'randomstring'
 import { Route } from './Route'
 import { Node } from './Node'
 import type { Segments } from './segment'
+import { createNode, createRoute } from './factory'
 
 describe('own key', () => {
   let segments: Segments
@@ -10,9 +11,9 @@ describe('own key', () => {
 
   beforeEach(() => {
     segments = [generate(), generate()]
-    node = Node.create({})
-    route = new Route(segments, node)
-    segments = [...segments] // clone
+    const key = '/' + segments.join('/')
+    node = createNode({})
+    route = createRoute(key, node)
   })
 
   it('should match own key', async () => {

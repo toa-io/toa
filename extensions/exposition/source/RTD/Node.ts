@@ -1,29 +1,16 @@
-import { Route } from './Route'
-import { type Method } from './Method'
-import { segment, type Segments } from './segment'
-import * as syntax from './syntax'
+import { type Segments } from './segment'
+import { type Route } from './Route'
+import { type Methods } from './Method'
 
 export class Node {
   public readonly intermediate: boolean
   public readonly methods: Methods
   private readonly routes: Route[]
 
-  private constructor (routes: Route[], methods: Methods, intermediate: boolean) {
+  public constructor (routes: Route[], methods: Methods, intermediate: boolean) {
     this.routes = routes
     this.methods = methods
     this.intermediate = intermediate
-  }
-
-  public static create (definition: syntax.Node): Node {
-    const routes: Route[] = []
-    const methods: Methods = new Map()
-    const intermediate = '/' in definition
-
-    for (const [key, value] of Object.entries(definition))
-      if (key[0] === '/') routes.push(createRoute(key, value))
-      else if (syntax.methods.has(key as syntax.Method)) methods.set(key as syntax.Method, value)
-
-    return new Node(routes, methods, intermediate)
   }
 
   public match (segments: Segments): Node | null {
@@ -36,12 +23,3 @@ export class Node {
     return null
   }
 }
-
-function createRoute (key: string, value: syntax.Node): Route {
-  const segments = segment(key)
-  const node = Node.create(value)
-
-  return new Route(segments, node)
-}
-
-type Methods = Map<syntax.Method, Method>

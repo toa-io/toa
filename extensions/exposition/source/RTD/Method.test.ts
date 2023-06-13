@@ -1,15 +1,19 @@
 import { generate } from 'randomstring'
-import { Method } from './Method'
+import { createMethod } from './factory'
+import { type Method } from './Method'
 import * as syntax from './syntax'
-import type { Endpoint } from './Endpoint'
+import { Context } from './Context'
+import { Component } from '@toa.io/core'
 
-const endpoint = {
-  call: jest.fn(async () => generate())
-} as unknown as jest.MockedObject<Endpoint>
+const remote = {
+  invoke: jest.fn(async () => generate())
+} as unknown as jest.MockedObject<Component>
 
-const body = generate()
-const param = generate()
-const params = { [param]: generate() }
+const mapping = {
+  operation: generate()
+} as unknown as syntax.Mapping
+
+const context: Context = { remote }
 
 let method: Method
 
@@ -19,12 +23,16 @@ beforeEach(() => {
 
 describe.each([...syntax.methods])('%s', (verb) => {
   beforeEach(() => {
-    method = Method.create(verb, endpoint)
+    method = createMethod(verb, mapping, context)
   })
 
   it('should call endpoint', async () => {
+    const body = generate()
+    const param = generate()
+    const params = { [param]: generate() }
     const reply = await method.call(body, params)
 
-    expect(reply).toStrictEqual(await endpoint.call.mock.results[0].value)
+    expect(remote.invoke).toHaveBeenCalledWith(mapping.operation, expect.anything())
+    expect(reply).toStrictEqual(await remote.invoke.mock.results[0].value)
   })
 })
