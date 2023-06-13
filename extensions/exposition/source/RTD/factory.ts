@@ -1,10 +1,14 @@
-import { Node } from './Node'
+import { Node, IntermediateNode } from './Node'
 import { Route } from './Route'
 import { InputMethod, QueryMethod, type Method, type Methods } from './Method'
 import { Endpoint } from './Endpoint'
 import { type Context } from './Context'
 import * as syntax from './syntax'
 import { segment } from './segment'
+
+export function createRoot (): Node {
+  return new Node([], new Map())
+}
 
 export function createBranch (node: syntax.Node, context: Context): Node {
   let definition = createNodeDefinition(context.name, node)
@@ -30,7 +34,8 @@ function createNode (definition: syntax.Node, context: Context): Node {
       methods.set(key as syntax.Method, method)
     }
 
-  return new Node(routes, methods, intermediate)
+  if (intermediate) return new IntermediateNode(routes)
+  else return new Node(routes, methods)
 }
 
 function createRoute (key: string, value: syntax.Node, context: Context): Route {

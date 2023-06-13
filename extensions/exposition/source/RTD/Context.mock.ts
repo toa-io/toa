@@ -1,7 +1,7 @@
 import { generate } from 'randomstring'
 import { type Component } from '@toa.io/core'
 
-const namespace = generate()
+const namespace = 'ns-' + generate()
 const name = generate()
 
 const remote = {

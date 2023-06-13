@@ -3,14 +3,12 @@ import { type Route } from './Route'
 import { type Methods } from './Method'
 
 export class Node {
-  public readonly intermediate: boolean
   public readonly methods: Methods
-  private readonly routes: Route[]
+  private routes: Route[]
 
-  public constructor (routes: Route[], methods: Methods, intermediate: boolean) {
+  public constructor (routes: Route[], methods: Methods) {
     this.routes = routes
     this.methods = methods
-    this.intermediate = intermediate
   }
 
   public match (segments: Segments): Node | null {
@@ -21,5 +19,21 @@ export class Node {
     }
 
     return null
+  }
+
+  public merge (node: Node): void {
+    this.routes.push(...node.routes)
+  }
+
+  public replace (node: Node): void {
+    this.routes = node.routes
+  }
+}
+
+export class IntermediateNode extends Node {
+  public constructor (routes: Route[]) {
+    const methods: Methods = new Map()
+
+    super(routes, methods)
   }
 }

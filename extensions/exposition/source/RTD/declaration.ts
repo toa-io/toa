@@ -17,6 +17,7 @@ function normalizeNode (declaration: Node | string, operations: Operations): RTD
 
   for (const [key, value] of Object.entries(declaration)) {
     if (key[0] === '/') node[key as keyof RTD.Node] = normalizeNode(value as Node | string, operations)
+
     if (syntax.methods.has(key as RTD.Method)) node[key as RTD.Method] = normalizeMapping(value as Mapping, operations)
   }
 
@@ -61,8 +62,7 @@ function operationType (endpoint: string, operations: Operations): operations.ty
 const UNAMBIGUOUS_METHODS: Partial<Record<operations.type, RTD.Method>> = {
   observation: 'GET',
   assignment: 'PATCH',
-  computation: 'GET',
-  effect: 'POST'
+  computation: 'GET'
 }
 
 export interface Node {

@@ -71,21 +71,21 @@ HTTP methods can only be mapped to operations of the corresponding types.
 | HTTP method | Operation type                                |
 |-------------|-----------------------------------------------|
 | `POST`      | **Transition** (without Query)<br/>**Effect** |
-| `PUT`       | **Transition** (with Query)                   |
+| `PUT`       | **Transition** (with Query)<br/>**Effect**    |
 | `GET`       | **Observation**<br/>**Computation**           |
-| `PATCH`     | **Assignment**                                |
+| `PATCH`     | **Assignment**<br/>**Effect**                 |
 
-As method mapping is unambiguous for all operations, except Transition, a consice syntax is available:
+As method mapping is unambiguous for Observation, Assignent, and Computation, a consice syntax is available:
 
 ```yaml
-/posts: observe
-/posts/:id: [observe, assign]
+/items: compute
+/items/:id: [observe, assign]
 ```
 
 ### Intermediate Nodes
 
 An RTD Node that has a Route with a key `/` is an _intermediate_ Node.
-Intermediate Nodes must not have Methods as they ar are unreachable.
+Intermediate Nodes must not have Methods as they are unreachable.
 
 ```yaml
 /posts: # Node is intermediate

@@ -1,4 +1,4 @@
-import type { Node } from './Node'
+import { IntermediateNode, type Node } from './Node'
 import type { Segments } from './segment'
 
 export class Route {
@@ -15,7 +15,7 @@ export class Route {
       if (this.segments[i] !== null && this.segments[i] !== segments[i])
         return null
 
-    if (this.segments.length === segments.length && !this.node.intermediate) return this.node
+    if (this.segments.length === segments.length && !(this.node instanceof IntermediateNode)) return this.node
     else return this.matchNested(segments)
   }
 
