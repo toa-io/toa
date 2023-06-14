@@ -10,9 +10,13 @@ it('should be', async () => {
 })
 
 let manifest: Manifest
+let namespace: string
+let component: string
 
 beforeEach(() => {
   manifest = fixtures.manifest() as Manifest
+  namespace = manifest.namespace
+  component = manifest.name
 })
 
 it('should expand operation shortcuts', async () => {
@@ -27,6 +31,8 @@ it('should expand operation shortcuts', async () => {
   expect(node).toStrictEqual({
     '/': {
       GET: {
+        namespace,
+        component,
         endpoint: 'observe',
         type: 'observation'
       }
@@ -49,6 +55,8 @@ it('should expand operation shortcuts in nested Routes', async () => {
     '/': {
       '/dummies': {
         GET: {
+          namespace,
+          component,
           endpoint: 'observe',
           type: 'observation'
         }
@@ -70,6 +78,8 @@ it('should expand method shortcuts', async () => {
     '/': {
       '/dummies': {
         GET: {
+          namespace,
+          component,
           endpoint: 'observe',
           type: 'observation'
         }
@@ -91,10 +101,14 @@ it('should throw on unsupported type', async () => {
     '/': {
       '/dummies': {
         GET: {
+          namespace,
+          component,
           endpoint: 'observe',
           type: 'observation'
         },
         PATCH: {
+          namespace,
+          component,
           endpoint: 'assign',
           type: 'assignment'
         },

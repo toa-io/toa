@@ -1,4 +1,5 @@
-import { Node, IntermediateNode } from './Node'
+import { type Remotes } from '../Remotes'
+import { Node, type NodeProperties } from './Node'
 import { Route } from './Route'
 import { InputMethod, QueryMethod, type Method, type Methods } from './Method'
 import { Endpoint } from './Endpoint'
@@ -6,19 +7,22 @@ import { type Context } from './Context'
 import * as syntax from './syntax'
 import { segment } from './segment'
 
-export function createRoot (): Node {
-  return new Node([], new Map())
-}
-
-export function createBranch (node: syntax.Node, context: Context): Node {
-  let definition = createNodeDefinition(context.name, node)
-
-  if (context.namespace !== 'default') definition = createNodeDefinition(context.namespace, definition)
+export function createTrunk (definition: syntax.Node, remotes: Remotes): Node {
+  const context: Context = { remotes, protected: true }
 
   return createNode(definition, context)
 }
 
-function createNode (definition: syntax.Node, context: Context): Node {
+export function createBranch (definition: syntax.Branch, context: Context): Node {
+  let nodeDefinition = createNodeDefinition(definition.component, definition.node)
+
+  if (definition.namespace !== 'default')
+    nodeDefinition = createNodeDefinition(definition.namespace, nodeDefinition)
+
+  return createNode(nodeDefinition, context)
+}
+
+export function createNode (definition: syntax.Node, context: Context): Node {
   const routes: Route[] = []
   const methods: Methods = new Map()
   const intermediate = '/' in definition
@@ -34,19 +38,24 @@ function createNode (definition: syntax.Node, context: Context): Node {
       methods.set(key as syntax.Method, method)
     }
 
-  if (intermediate) return new IntermediateNode(routes)
-  else return new Node(routes, methods)
+  const properties: NodeProperties = {
+    intermediate,
+    protected: context.protected === true
+  }
+
+  return new Node(routes, methods, properties)
 }
 
-function createRoute (key: string, value: syntax.Node, context: Context): Route {
+function createRoute (key: string, definition: syntax.Node, context: Context): Route {
   const segments = segment(key)
-  const node = createNode(value, context)
+  const node = createNode(definition, context)
 
   return new Route(segments, node)
 }
 
-function createMethod (method: syntax.Method, definition: syntax.Mapping, context: Context): Method {
-  const endpoint = new Endpoint(context.remote, definition.endpoint)
+function createMethod (method: syntax.Method, mapping: syntax.Mapping, context: Context): Method {
+  const discovery = context.remotes.discover(mapping.namespace, mapping.component)
+  const endpoint = new Endpoint(discovery, mapping.endpoint)
   const Class = method === 'POST' ? InputMethod : QueryMethod
 
   return new Class(endpoint)

@@ -28,4 +28,4 @@ export class Factory implements extensions.Factory {
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type Bootloader = typeof import('@toa.io/boot')
+export type Bootloader = typeof import('@toa.io/boot')

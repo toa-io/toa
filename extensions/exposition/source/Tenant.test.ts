@@ -5,11 +5,11 @@ import { broadcast } from './Tenant.fixtures'
 
 import type * as RTD from './RTD/syntax'
 
-const name = generate()
+const component = generate()
 const namespace = generate()
-const locator = new Locator(name, namespace)
+const locator = new Locator(component, namespace)
 const node: RTD.Node = { '/': { [generate()]: generate() } }
-const branch: RTD.Branch = { name, namespace, node }
+const branch: RTD.Branch = { component, namespace, node }
 
 let tenant: Tenant
 

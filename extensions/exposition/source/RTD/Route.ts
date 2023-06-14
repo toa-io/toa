@@ -1,5 +1,5 @@
-import { IntermediateNode, type Node } from './Node'
-import type { Segments } from './segment'
+import { type Node } from './Node'
+import { type Segments } from './segment'
 
 export class Route {
   private readonly segments: Segments
@@ -15,8 +15,21 @@ export class Route {
       if (this.segments[i] !== null && this.segments[i] !== segments[i])
         return null
 
-    if (this.segments.length === segments.length && !(this.node instanceof IntermediateNode)) return this.node
+    if (this.segments.length === segments.length && !this.node.intermediate) return this.node
     else return this.matchNested(segments)
+  }
+
+  public equals (route: Route): boolean {
+    if (route.segments.length !== this.segments.length) return false
+
+    for (let i = 0; i < this.segments.length; i++)
+      if (this.segments[i] !== route.segments[i]) return false
+
+    return true
+  }
+
+  public merge (route: Route): void {
+    this.node.merge(route.node)
   }
 
   private matchNested (segments: Segments): Node | null {

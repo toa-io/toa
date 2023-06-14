@@ -3,6 +3,8 @@
 
 # methods
 /^(GET|POST|PUT|PATCH|DELETE)$/:
+  namespace: default
+  component*: string
   endpoint*: string
   type*: [transition, observation, assignment, computation, effect]
   query: object

@@ -3,6 +3,7 @@ import type { Manifest } from '@toa.io/norm'
 
 export function manifest (): Partial<Manifest> {
   return {
+    namespace: generate(),
     name: generate(),
     operations: {
       observe: {

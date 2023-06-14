@@ -9,7 +9,7 @@ export class Tenant extends Connector {
     super()
 
     this.broadcast = broadcast
-    this.branch = { namespace, name, node }
+    this.branch = { namespace, component: name, node }
 
     this.depends(broadcast)
   }
@@ -18,7 +18,7 @@ export class Tenant extends Connector {
     await this.expose()
     await this.broadcast.receive('ping', this.expose.bind(this))
 
-    console.info(`Exposition Tenant for '${this.branch.namespace}.${this.branch.name}' has started.`)
+    console.info(`Exposition Tenant for '${this.branch.namespace}.${this.branch.component}' has started.`)
   }
 
   private async expose (): Promise<void> {

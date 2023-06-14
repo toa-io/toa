@@ -43,7 +43,7 @@ type Entity = {
 
 type Declaration = {
   prototype?: string
-  namespace?: string
+  namespace: string
   name: string
   version: string
   entity?: Entity

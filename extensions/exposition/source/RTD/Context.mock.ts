@@ -1,11 +1,13 @@
 import { generate } from 'randomstring'
 import { type Component } from '@toa.io/core'
+import { type Remotes } from '../Remotes'
 
-const namespace = 'ns-' + generate()
-const name = generate()
-
-const remote = {
+const remote = (): jest.MockedObject<Component> => ({
   invoke: jest.fn(async () => generate())
-} as unknown as jest.MockedObject<Component>
+} as unknown as jest.MockedObject<Component>)
 
-export const context = { namespace, name, remote }
+const remotes = {
+  discover: jest.fn(async () => remote())
+} as unknown as jest.MockedObject<Remotes>
+
+export const context = { remotes }

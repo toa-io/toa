@@ -2,9 +2,9 @@ import * as schemas from './schemas'
 import type { Manifest } from '@toa.io/norm'
 import type * as core from '@toa.io/core'
 
-export function validate (node: Node, operations: Operations): void {
-  schemas.branch.validate(node)
-  testNode(node, testMethod(operations))
+export function validate (branch: Branch, operations: Operations): void {
+  schemas.branch.validate(branch)
+  testNode(branch.node, testMethod(operations))
 }
 
 function testNode (node: Node, testMethod: (method: Method, mapping: Mapping) => void): void {
@@ -60,13 +60,15 @@ export type Directives = Record<string, any>
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface Mapping {
+  namespace: string
+  component: string
   endpoint: string
   type: core.operations.type
 }
 
 export interface Branch {
-  name: string
   namespace: string
+  component: string
   node: Node
 }
 

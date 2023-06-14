@@ -6,35 +6,35 @@ import type { Manifest } from '@toa.io/norm'
 import type { operations } from '@toa.io/core'
 
 export function normalize (declaration: Node, manifest: Manifest): RTD.Node {
-  return normalizeNode(declaration, manifest.operations)
+  return normalizeNode(declaration, manifest)
 }
 
-function normalizeNode (declaration: Node | string, operations: Operations): RTD.Node {
+function normalizeNode (declaration: Node | string, manifest: Manifest): RTD.Node {
   const node: RTD.Node = {}
 
-  if (typeof declaration === 'string') return normalizeMethod(declaration as operations.type, operations) as RTD.Node
-  else if (Array.isArray(declaration)) return normalizeMethods(declaration, operations)
+  if (typeof declaration === 'string') return normalizeMethod(declaration as operations.type, manifest) as RTD.Node
+  else if (Array.isArray(declaration)) return normalizeMethods(declaration, manifest)
 
   for (const [key, value] of Object.entries(declaration)) {
-    if (key[0] === '/') node[key as keyof RTD.Node] = normalizeNode(value as Node | string, operations)
+    if (key[0] === '/') node[key as keyof RTD.Node] = normalizeNode(value as Node | string, manifest)
 
-    if (syntax.methods.has(key as RTD.Method)) node[key as RTD.Method] = normalizeMapping(value as Mapping, operations)
+    if (syntax.methods.has(key as RTD.Method)) node[key as RTD.Method] = normalizeMapping(value as Mapping, manifest)
   }
 
   return node
 }
 
-function normalizeMethod (endpoint: string, operations: Operations): RTD.Methods {
-  const type = operationType(endpoint, operations)
-  const method = UNAMBIGUOUS_METHODS[type]
+function normalizeMethod (endpoint: string, manifest: Manifest): RTD.Methods {
+  const mapping = normalizeMapping(endpoint, manifest)
+  const method = UNAMBIGUOUS_METHODS[mapping.type]
 
-  if (method !== undefined) return { [method]: { endpoint, type } }
+  if (method !== undefined) return { [method]: mapping }
   else throw new syntax.Exception(`Ambiguous mapping for '${endpoint}'. Use explicit method declaration.`)
 }
 
-function normalizeMethods (values: string[], operations: Operations): RTD.Methods {
+function normalizeMethods (values: string[], manifest: Manifest): RTD.Methods {
   return values.reduce((methods, value) => {
-    const metod = normalizeMethod(value, operations)
+    const metod = normalizeMethod(value, manifest)
 
     add(methods, metod)
 
@@ -42,11 +42,13 @@ function normalizeMethods (values: string[], operations: Operations): RTD.Method
   }, {})
 }
 
-function normalizeMapping (value: Mapping, operations: Operations): RTD.Mapping {
+function normalizeMapping (value: Mapping, manifest: Manifest): RTD.Mapping {
   if (typeof value === 'string') {
-    const type = operationType(value, operations)
+    const namespace = manifest.namespace
+    const component = manifest.name
+    const type = operationType(value, manifest.operations)
 
-    value = { endpoint: value, type }
+    value = { namespace, component, endpoint: value, type }
   }
 
   return value as RTD.Mapping
