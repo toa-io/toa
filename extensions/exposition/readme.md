@@ -150,6 +150,28 @@ exposition:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
 ```
 
+### Context resources
+
+Exposition annotaion can contain resource definitions.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  host: the.example.com
+  /code:
+    GET:
+      namespace: development
+      component: code
+      endpoint: checkout
+```
+
+In the example above, a request `GET /code` will be mapped to the `development.code.checkout` operation call.
+
+A shortcut is available: `endpoint: development.code.checkout`.
+
+If a component resource branch conflicts with an annotation, the annotation takes precedence.
+
 ## See Also
 
 - [Resource Tree Definition](documentation/tree.md)
