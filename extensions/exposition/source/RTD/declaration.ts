@@ -5,8 +5,11 @@ import type * as RTD from './syntax'
 import type { Manifest } from '@toa.io/norm'
 import type { operations } from '@toa.io/core'
 
-export function normalize (declaration: Node, manifest: Manifest): RTD.Node {
-  return normalizeNode(declaration, manifest)
+export function normalize (declaration: Node, manifest: Manifest): RTD.Branch {
+  const node = normalizeNode(declaration, manifest)
+  const { namespace, name: component } = manifest
+
+  return { namespace, component, node }
 }
 
 function normalizeNode (declaration: Node | string, manifest: Manifest): RTD.Node {

@@ -93,15 +93,15 @@ describe('entity', () => {
     })
 
     it('should be JSON schema object', () => {
-      manifest.entity.branch = { properties: { foo: 'bar' } }
+      manifest.entity.schema = { properties: { foo: 'bar' } }
       expect(() => validate(manifest)).toThrow()
     })
 
     it('should be JSON schema object of type object', () => {
-      manifest.entity.branch = { type: 'integer' }
+      manifest.entity.schema = { type: 'integer' }
       expect(() => validate(manifest)).toThrow(/must be equal to constant 'object'/)
 
-      manifest.entity.branch = {}
+      manifest.entity.schema = {}
       validate(manifest)
       expect(manifest.entity.schema.type).toBe('object')
     })

@@ -3,6 +3,8 @@
 const { generate } = require('randomstring')
 
 const operations = {
+  namespace: 'dummies',
+  name: 'dummy',
   path: __dirname,
   bindings: ['foo', 'bar'],
   'bindings@local': ['foo'],
