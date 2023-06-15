@@ -5,11 +5,11 @@ import { type Tree } from './RTD/Tree'
 import { type Label } from './Label'
 
 export class Gateway extends Connector {
-  private readonly broadcast: bindings.Broadcast<Label>
+  private readonly broadcast: Broadcast
   private readonly server: HTTPServer
   private readonly tree: Tree
 
-  public constructor (broadcast: bindings.Broadcast<Label>, server: HTTPServer, tree: Tree) {
+  public constructor (broadcast: Broadcast, server: HTTPServer, tree: Tree) {
     super()
 
     this.broadcast = broadcast
@@ -23,7 +23,7 @@ export class Gateway extends Connector {
     await this.broadcast.receive<Branch>('expose', this.merge.bind(this))
     await this.broadcast.transmit<null>('ping', null)
 
-    console.info('Gateway has started and is in the process of resource discovery.')
+    console.info('Gateway has started and is awaiting resource branches.')
   }
 
   private merge (branch: Branch): void {
@@ -33,3 +33,5 @@ export class Gateway extends Connector {
       `'${branch.namespace}.${branch.component}' has been merged.`)
   }
 }
+
+type Broadcast = bindings.Broadcast<Label>
