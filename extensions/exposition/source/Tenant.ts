@@ -1,11 +1,12 @@
 import { Connector, type Locator, type bindings } from '@toa.io/core'
+import { type Label } from './Label'
 import type * as RTD from './RTD/syntax'
 
 export class Tenant extends Connector {
-  private readonly broadcast: bindings.Broadcast
+  private readonly broadcast: bindings.Broadcast<Label>
   private readonly branch: RTD.Branch
 
-  public constructor (broadcast: bindings.Broadcast, { namespace, name }: Locator, node: RTD.Node) {
+  public constructor (broadcast: bindings.Broadcast<Label>, { namespace, name }: Locator, node: RTD.Node) {
     super()
 
     this.broadcast = broadcast
