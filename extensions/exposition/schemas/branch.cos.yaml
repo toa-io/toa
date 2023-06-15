@@ -1,5 +1,2 @@
 # routes
-namespace: string
-component: string
-node:
-  /^\/(.{1,128}[^\/])?$/: ref:node
+/^\/(.{1,128}[^\/])?$/: ref:node

@@ -1,4 +1,4 @@
-import { validate, methods, Exception, type Node, Branch } from './syntax'
+import { validate, methods, Exception, type Node } from './syntax'
 import { generate } from 'randomstring'
 import type { Manifest } from '@toa.io/norm'
 import * as syntax from './syntax'
@@ -18,7 +18,7 @@ describe('validate', () => {
   })
 
   it('should not throw on root node', async () => {
-    const node: Branch = defineBranch({
+    const node: Node = {
       '/': {
         GET: {
           namespace,
@@ -27,26 +27,26 @@ describe('validate', () => {
           type: 'observation'
         }
       }
-    })
+    }
 
     expect(() => validate(node, operations)).not.toThrow()
   })
 
   it('should not throw on empty key', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/foo': {
         '/': {
           '/bar': {}
         },
         '/baz': {}
       }
-    })
+    }
 
     expect(() => validate(node, operations)).not.toThrow()
   })
 
   it('should throw on unreachable methods', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/foo': {
         GET: {
           namespace,
@@ -63,13 +63,13 @@ describe('validate', () => {
           }
         }
       }
-    })
+    }
 
     expect(() => validate(node, operations)).toThrow('unreachable')
   })
 
   it('should not throw on non-root node', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/foo': {
         GET: {
           namespace,
@@ -78,13 +78,13 @@ describe('validate', () => {
           type: 'observation'
         }
       }
-    })
+    }
 
     expect(() => validate(node, operations)).not.toThrow()
   })
 
   it('should not allow trailing slash', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/foo/': {
         GET: {
           namespace,
@@ -93,13 +93,13 @@ describe('validate', () => {
           type: 'observation'
         }
       }
-    })
+    }
 
     expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
   })
 
   it('should not allow trailing slash in nested nodes', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/foo': {
         GET: {
           namespace,
@@ -109,23 +109,23 @@ describe('validate', () => {
         },
         '/bar/': {}
       }
-    })
+    }
 
     expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
   })
 
   it('should throw if invalid mapping', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/': {
         GET: {}
       }
-    })
+    }
 
     expect(() => validate(node, operations)).toThrow('must have required property')
   })
 
   it('should throw on operation type mismatch', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/': {
         GET: {
           namespace,
@@ -134,13 +134,13 @@ describe('validate', () => {
           type: 'transition'
         }
       }
-    })
+    }
 
     expect(() => validate(node, operations)).toThrow('cannot be mapped')
   })
 
   it('should throw if maps to undefined operation', async () => {
-    const node = defineBranch({
+    const node: Node = {
       '/': {
         GET: {
           namespace,
@@ -149,7 +149,7 @@ describe('validate', () => {
           type: 'observation'
         }
       }
-    })
+    }
 
     expect(() => validate(node, operations)).toThrow('is mapped to undefined operation')
   })
@@ -170,7 +170,3 @@ describe('exception', () => {
     expect(exception.message).toStrictEqual('RTD syntax error: ' + message)
   })
 })
-
-function defineBranch (node: syntax.Node): syntax.Branch {
-  return { namespace, component, node }
-}

@@ -2,9 +2,9 @@ import * as schemas from './schemas'
 import type { Manifest } from '@toa.io/norm'
 import type * as core from '@toa.io/core'
 
-export function validate (branch: Branch, operations: Operations): void {
-  schemas.branch.validate(branch)
-  testNode(branch.node, testMethod(operations))
+export function validate (node: Node, operations: Operations): void {
+  schemas.branch.validate(node)
+  testNode(node, testMethod(operations))
 }
 
 function testNode (node: Node, testMethod: (method: Method, mapping: Mapping) => void): void {

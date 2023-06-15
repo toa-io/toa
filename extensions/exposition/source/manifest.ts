@@ -1,13 +1,12 @@
 import { normalize } from './RTD/declaration'
 import { validate } from './RTD/syntax'
-
 import type { Manifest } from '@toa.io/norm'
 import type { Node } from './RTD/syntax'
 
-export function manifest (node: Node, manifest: Manifest): Node {
-  const branch = normalize(node, manifest)
+export function manifest (declaration: Node, manifest: Manifest): Node {
+  const node = normalize(declaration, manifest)
 
-  validate(branch, manifest.operations)
+  validate(node, manifest.operations)
 
   return node
 }

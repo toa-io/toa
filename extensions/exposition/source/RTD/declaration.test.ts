@@ -29,16 +29,12 @@ it('should expand operation shortcuts', async () => {
   const node = normalize(declaration, manifest)
 
   expect(node).toStrictEqual({
-    namespace,
-    component,
-    node: {
-      '/': {
-        GET: {
-          namespace,
-          component,
-          endpoint: 'observe',
-          type: 'observation'
-        }
+    '/': {
+      GET: {
+        namespace,
+        component,
+        endpoint: 'observe',
+        type: 'observation'
       }
     }
   })
@@ -56,17 +52,13 @@ it('should expand operation shortcuts in nested Routes', async () => {
   const node = normalize(declaration, manifest)
 
   expect(node).toStrictEqual({
-    namespace,
-    component,
-    node: {
-      '/': {
-        '/dummies': {
-          GET: {
-            namespace,
-            component,
-            endpoint: 'observe',
-            type: 'observation'
-          }
+    '/': {
+      '/dummies': {
+        GET: {
+          namespace,
+          component,
+          endpoint: 'observe',
+          type: 'observation'
         }
       }
     }
@@ -83,17 +75,13 @@ it('should expand method shortcuts', async () => {
   const node = normalize(declaration, manifest)
 
   expect(node).toStrictEqual({
-    namespace,
-    component,
-    node: {
-      '/': {
-        '/dummies': {
-          GET: {
-            namespace,
-            component,
-            endpoint: 'observe',
-            type: 'observation'
-          }
+    '/': {
+      '/dummies': {
+        GET: {
+          namespace,
+          component,
+          endpoint: 'observe',
+          type: 'observation'
         }
       }
     }
@@ -110,24 +98,20 @@ it('should throw on unsupported type', async () => {
   const node = normalize(declaration, manifest)
 
   expect(node).toStrictEqual({
-    namespace,
-    component,
-    node: {
-      '/': {
-        '/dummies': {
-          GET: {
-            namespace,
-            component,
-            endpoint: 'observe',
-            type: 'observation'
-          },
-          PATCH: {
-            namespace,
-            component,
-            endpoint: 'assign',
-            type: 'assignment'
-          },
-        }
+    '/': {
+      '/dummies': {
+        GET: {
+          namespace,
+          component,
+          endpoint: 'observe',
+          type: 'observation'
+        },
+        PATCH: {
+          namespace,
+          component,
+          endpoint: 'assign',
+          type: 'assignment'
+        },
       }
     }
   } as syntax.Node)

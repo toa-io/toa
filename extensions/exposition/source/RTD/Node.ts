@@ -5,8 +5,8 @@ import type { Segments } from './segment'
 
 export class Node {
   public readonly intermediate: boolean
-  public readonly protected: boolean
   public readonly methods: Methods
+  private readonly protected: boolean
   private readonly routes: Route[]
 
   public constructor (routes: Route[], methods: Methods, properties: NodeProperties) {
