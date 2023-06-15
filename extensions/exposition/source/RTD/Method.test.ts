@@ -2,7 +2,7 @@ import { generate } from 'randomstring'
 import { createBranch } from './factory'
 import type { Node } from './Node'
 import * as syntax from './syntax'
-import { context } from './Context.mock'
+import { remotes } from './Context.mock'
 import { Component } from '@toa.io/core'
 
 const namespace = generate()
@@ -29,7 +29,7 @@ describe.each([...syntax.methods])('%s', (verb) => {
       }
     })
 
-    branch = createBranch(definition, context)
+    branch = createBranch(definition, remotes)
   })
 
   it('should call endpoint', async () => {
@@ -39,7 +39,7 @@ describe.each([...syntax.methods])('%s', (verb) => {
     const node = branch.match([namespace, component])
     const method = node?.methods.get(verb)
     const reply = await method?.call(body, params)
-    const remote: jest.MockedObject<Component> = await context.remotes.discover.mock.results[0].value
+    const remote: jest.MockedObject<Component> = await remotes.discover.mock.results[0].value
 
     expect(remote.invoke).toHaveBeenCalledWith(mapping.endpoint, expect.anything())
     expect(reply).toStrictEqual(await remote.invoke.mock.results[0].value)

@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
 import { createBranch, createTrunk } from './factory'
-import { context } from './Context.mock'
+import { remotes } from './Context.mock'
 import { Method } from './Method'
 import type { Component } from '@toa.io/core'
 import type * as syntax from './syntax'
@@ -23,7 +23,7 @@ it('should create node from RTD', async () => {
     }
   }
 
-  const node = createBranch(definition, context)
+  const node = createBranch(definition, remotes)
 
   expect(node.match([namespace, component, 'foo'])).not.toBeNull()
   expect(node.match([namespace, component, 'bar'])).not.toBeNull()
@@ -44,7 +44,7 @@ it('should create tree recurcively', async () => {
     }
   }
 
-  const node = createBranch(definition, context)
+  const node = createBranch(definition, remotes)
 
   expect(node.match([namespace, component, 'foo'])).not.toBeNull()
   expect(node.match([namespace, component, 'foo', 'nested'])).not.toBeNull()
@@ -62,7 +62,7 @@ it('should create root Route', async () => {
     }
   }
 
-  const node = createBranch(definition, context)
+  const node = createBranch(definition, remotes)
 
   expect(node.match([namespace, component])).not.toBeNull()
 })
@@ -81,7 +81,7 @@ it('should create nested root route', async () => {
     }
   }
 
-  const node = createBranch(definition, context)
+  const node = createBranch(definition, remotes)
 
   expect(node.match([namespace, component, 'teapots', 'cold'])).not.toBeNull()
   expect(node.match([namespace, component, 'teapots', 'hot'])).not.toBeNull()
@@ -103,8 +103,8 @@ it('should create methods', async () => {
     }
   }
 
-  const node = createBranch(definition, context)
-  const remote: jest.MockedObject<Component> = await context.remotes.discover.mock.results[0].value
+  const node = createBranch(definition, remotes)
+  const remote: jest.MockedObject<Component> = await remotes.discover.mock.results[0].value
   const found = node.match([namespace, component])
 
   if (found === null) throw new Error('?')
@@ -138,7 +138,7 @@ it('should find methods below intermediate nodes', async () => {
     }
   }
 
-  const node = createBranch(definition, context)
+  const node = createBranch(definition, remotes)
   const found = node.match([namespace, component, 'foo'])
 
   expect(found?.methods.has('GET')).toStrictEqual(true)
@@ -155,7 +155,7 @@ it('should omit default namespace', async () => {
     }
   }
 
-  const node = createBranch(definition, context)
+  const node = createBranch(definition, remotes)
 
   expect(node.match([namespace, component, 'foo'])).toBeNull()
   expect(node.match([component, 'foo'])).not.toBeNull()
@@ -173,7 +173,7 @@ it('should create trunk', async () => {
     '/foo': { GET }
   }
 
-  const trunk = createTrunk(definition, context.remotes)
+  const trunk = createTrunk(definition, remotes)
   const foo = trunk.match(['foo'])
 
   expect(trunk.match(['foo'])).not.toBeNull()
@@ -183,9 +183,9 @@ it('should create trunk', async () => {
   if (get === undefined) throw new Error('?')
 
   expect(get).toBeDefined()
-  expect(context.remotes.discover).toHaveBeenCalledWith(namespace, component)
+  expect(remotes.discover).toHaveBeenCalledWith(namespace, component)
 
-  const remote: jest.MockedObject<Component> = await context.remotes.discover.mock.results[0].value
+  const remote: jest.MockedObject<Component> = await remotes.discover.mock.results[0].value
 
   await get.call(null, {})
 
@@ -196,8 +196,8 @@ it('should merge nodes', async () => {
   const definition1 = defineBranch({ '/foo': { GET: {} } })
   const definition2 = defineBranch({ '/bar': { POST: {} } })
 
-  const node1 = createBranch(definition1, context)
-  const node2 = createBranch(definition2, context)
+  const node1 = createBranch(definition1, remotes)
+  const node2 = createBranch(definition2, remotes)
 
   node1.merge(node2)
 
@@ -211,8 +211,8 @@ it('should merge nodes', async () => {
 it('should merge methods', async () => {
   const definition1 = defineBranch({ '/foo': { GET: {} } })
   const definition2 = defineBranch({ '/foo': { POST: {} } })
-  const node1 = createBranch(definition1, context)
-  const node2 = createBranch(definition2, context)
+  const node1 = createBranch(definition1, remotes)
+  const node2 = createBranch(definition2, remotes)
 
   node1.merge(node2)
 
@@ -253,15 +253,15 @@ it('should not overwrite methods in the trunk', async () => {
     }
   })
 
-  const trunk = createTrunk(trunkDefinition, context.remotes)
-  const branch = createBranch(branchDefinition, context)
+  const trunk = createTrunk(trunkDefinition, remotes)
+  const branch = createBranch(branchDefinition, remotes)
 
   trunk.merge(branch)
 
   const node = trunk.match([namespace, component, 'foo'])
   const method = node?.methods.get('GET')
-  const trunkRemote: jest.MockedObject<Component> = await context.remotes.discover.mock.results[0].value
-  const branchRemote: jest.MockedObject<Component> = await context.remotes.discover.mock.results[1].value
+  const trunkRemote: jest.MockedObject<Component> = await remotes.discover.mock.results[0].value
+  const branchRemote: jest.MockedObject<Component> = await remotes.discover.mock.results[1].value
 
   if (method === undefined) throw new Error('?')
 

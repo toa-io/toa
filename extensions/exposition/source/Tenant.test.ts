@@ -1,7 +1,7 @@
 import { generate } from 'randomstring'
 import { Locator } from '@toa.io/core'
 import { Tenant } from './Tenant'
-import { broadcast } from './Tenant.fixtures'
+import { broadcast } from './Factory.fixtures'
 
 import type * as RTD from './RTD/syntax'
 
@@ -35,7 +35,7 @@ it('should expose on ping', async () => {
 
   const expose = broadcast.receive.mock.calls[0][1]
 
-  await expose()
+  await expose(undefined)
 
   expect(broadcast.transmit).toHaveBeenCalledTimes(2)
 })

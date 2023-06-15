@@ -2,7 +2,7 @@ import { generate } from 'randomstring'
 import { type Node } from './Node'
 import { createBranch } from './factory'
 import * as syntax from './syntax'
-import { context } from './Context.mock'
+import { remotes } from './Context.mock'
 import { Route } from './Route'
 
 const namespace = generate()
@@ -21,7 +21,7 @@ let branch: Node
 beforeEach(() => {
   jest.clearAllMocks()
 
-  branch = createBranch(definition, context)
+  branch = createBranch(definition, remotes)
 })
 
 it('should match own key', async () => {
@@ -57,7 +57,7 @@ it('should match placeholders', async () => {
     }
   }
 
-  const branch = createBranch(definition, context)
+  const branch = createBranch(definition, remotes)
   const match = branch.match([namespace, component, generate()])
 
   expect(match).not.toBeNull()

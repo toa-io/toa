@@ -9,7 +9,7 @@ export class Node {
   private readonly protected: boolean
   private readonly routes: Route[]
 
-  public constructor (routes: Route[], methods: Methods, properties: NodeProperties) {
+  public constructor (routes: Route[], methods: Methods, properties: Properties) {
     this.intermediate = properties.intermediate
     this.protected = properties.protected
     this.routes = routes
@@ -53,7 +53,7 @@ export class Node {
   }
 }
 
-export interface NodeProperties {
+export interface Properties {
   intermediate: boolean
   protected: boolean
 }

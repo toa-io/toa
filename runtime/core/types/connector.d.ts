@@ -2,7 +2,7 @@ export class Connector {
   id: string
   connected: boolean
 
-  depends (connector: Connector): Connector
+  depends (connector: Connector | Connector[]): Connector
 
   link (connector: Connector): void
 

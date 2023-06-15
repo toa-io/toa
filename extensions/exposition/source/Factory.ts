@@ -1,5 +1,8 @@
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
+import { Remotes } from './Remotes'
+import { Tree } from './RTD/Tree'
+import { HTTPServer } from './HTTPServer'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Node } from './RTD/syntax'
 
@@ -11,7 +14,7 @@ export class Factory implements extensions.Factory {
   }
 
   public tenant (locator: Locator, branch: Node): Connector {
-    const broadcast = this.boot.bindings.broadcast('@toa.io/bindings.amqp', 'exposition', locator.id)
+    const broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
 
     return new Tenant(broadcast, locator, branch)
   }
@@ -23,9 +26,16 @@ export class Factory implements extensions.Factory {
   }
 
   private gateway (): Gateway {
-    return new Gateway()
+    const broadcast = this.boot.bindings.broadcast(CHANNEL)
+    const server = HTTPServer.create()
+    const remotes = new Remotes(this.boot)
+    const tree = new Tree({}, remotes)
+
+    return new Gateway(broadcast, server, tree)
   }
 }
+
+const CHANNEL = 'exposition'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 export type Bootloader = typeof import('@toa.io/boot')

@@ -14,10 +14,10 @@ declare namespace toa.core.bindings {
     emit (message: _core.Message): Promise<void>
   }
 
-  interface Broadcast extends _core.Connector {
-    transmit (label: string, payload: object): Promise<void>
+  interface Broadcast<L> extends _core.Connector {
+    transmit<T> (label: L, payload: T): Promise<void>
 
-    receive (label: string, callback: (payload?: object) => Promise<void>): Promise<void>
+    receive<T> (label: L, callback: (payload: T) => void | Promise<void>): Promise<void>
   }
 
   interface Factory {
@@ -37,4 +37,4 @@ declare namespace toa.core.bindings {
 export type Emitter = toa.core.bindings.Emitter
 export type Factory = toa.core.bindings.Factory
 export type Properties = toa.core.bindings.Properties
-export type Broadcast = toa.core.bindings.Broadcast
+export type Broadcast<L> = toa.core.bindings.Broadcast<L>

@@ -6,7 +6,7 @@ const remote = (): jest.MockedObject<Component> => ({
   invoke: jest.fn(async () => generate())
 } as unknown as jest.MockedObject<Component>)
 
-const remotes = {
+export const remotes = {
   discover: jest.fn(async () => remote())
 } as unknown as jest.MockedObject<Remotes>
 

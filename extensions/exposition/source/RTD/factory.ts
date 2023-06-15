@@ -1,5 +1,5 @@
 import { type Remotes } from '../Remotes'
-import { Node, type NodeProperties } from './Node'
+import { Node, type Properties } from './Node'
 import { Route } from './Route'
 import { InputMethod, QueryMethod, type Method, type Methods } from './Method'
 import { Endpoint } from './Endpoint'
@@ -13,16 +13,18 @@ export function createTrunk (definition: syntax.Node, remotes: Remotes): Node {
   return createNode(definition, context)
 }
 
-export function createBranch (definition: syntax.Branch, context: Context): Node {
+export function createBranch (definition: syntax.Branch, remotes: Remotes): Node {
   let nodeDefinition = createNodeDefinition(definition.component, definition.node)
 
   if (definition.namespace !== 'default')
     nodeDefinition = createNodeDefinition(definition.namespace, nodeDefinition)
 
+  const context = { remotes }
+
   return createNode(nodeDefinition, context)
 }
 
-export function createNode (definition: syntax.Node, context: Context): Node {
+function createNode (definition: syntax.Node, context: Context): Node {
   const routes: Route[] = []
   const methods: Methods = new Map()
   const intermediate = '/' in definition
@@ -38,7 +40,7 @@ export function createNode (definition: syntax.Node, context: Context): Node {
       methods.set(key as syntax.Method, method)
     }
 
-  const properties: NodeProperties = {
+  const properties: Properties = {
     intermediate,
     protected: context.protected === true
   }
