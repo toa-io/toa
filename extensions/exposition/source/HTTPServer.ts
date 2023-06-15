@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { Connector } from '@toa.io/core'
+import { promex } from '@toa.io/generic'
 import * as syntax from './RTD/syntax'
 import type { Server } from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
@@ -28,15 +29,23 @@ export class HTTPServer extends Connector {
   }
 
   public override async open (): Promise<void> {
-    this.server = this.app.listen(8000, () => {
-      console.info('HTTP Server is listening.')
-    })
+    const listening = promex<undefined>()
+
+    this.server = this.app.listen(8000, listening.callback)
+
+    await listening
+
+    console.info('HTTP Server is listening.')
   }
 
   public override async close (): Promise<void> {
-    this.server?.close(() => {
-      console.info('HTTP Server stopped.')
-    })
+    const stopped = promex<undefined>()
+
+    this.server?.close(stopped.callback)
+
+    await stopped
+
+    console.info('HTTP Server has been stopped.')
   }
 }
 

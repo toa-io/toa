@@ -1,3 +1,4 @@
+import http from 'node:http'
 import { HTTPServer } from './HTTPServer'
 import { express, cors } from './HTTPServer.fixtures'
 import { Connector } from '@toa.io/core'
@@ -37,16 +38,30 @@ it('should support cors', async () => {
 })
 
 it('should start HTTP server', async () => {
-  await server.open()
+  const stared = server.open()
 
   expect(app.listen).toHaveBeenCalledWith(8000, expect.anything())
+
+  const done = app.listen.mock.calls[0][1]
+
+  if (done !== undefined) done()
+
+  await stared
 })
 
 it('should stop HTTP server', async () => {
-  await server.open()
-  await server.close()
+  const started = server.open()
 
-  const httpServer = app.listen.mock.results[0].value
+  app.listen.mock.calls[0][1]?.() // `listen` callback
+
+  await started
+
+  const stopped = server.close()
+  const httpServer: jest.MockedObject<http.Server> = app.listen.mock.results[0].value
 
   expect(httpServer.close).toHaveBeenCalled()
+
+  httpServer.close.mock.calls[0][0]?.() // `close` callback
+
+  await stopped
 })
