@@ -1,5 +1,5 @@
 import type * as core from '@toa.io/core'
-import type { Label } from './Label'
+import type { Label } from './discovery'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const broadcast: jest.MockedObject<core.bindings.Broadcast<Label>> = {

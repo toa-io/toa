@@ -1,5 +1,5 @@
 import { Connector, type Locator, type bindings } from '@toa.io/core'
-import { type Label } from './Label'
+import { type Label } from './discovery'
 import type * as RTD from './RTD/syntax'
 
 export class Tenant extends Connector {

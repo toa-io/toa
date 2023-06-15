@@ -2,7 +2,7 @@ import { Connector, type bindings } from '@toa.io/core'
 import { type Branch } from './RTD/syntax'
 import { type HTTPServer } from './HTTPServer'
 import { type Tree } from './RTD/Tree'
-import { type Label } from './Label'
+import { type Label } from './discovery'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
