@@ -40,7 +40,9 @@ overrides:
             - object
             - type
       max-params: error
-      '@typescript-eslint/consistent-type-imports': error
+      '@typescript-eslint/consistent-type-imports':
+        - error
+        - fixStyle: inline-type-imports
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
 parserOptions:
