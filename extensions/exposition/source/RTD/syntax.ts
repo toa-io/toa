@@ -13,8 +13,11 @@ function testNode (node: Node, testMethod: (method: Method, mapping: Mapping) =>
   for (const [key, value] of Object.entries(node))
     if (key[0] === '/') testNode(value as Node, testMethod)
     else if (methods.has(key as Method))
-      if (intermediate) throw new Exception('Methods of intermediate nodes are unreachable. Move the declaration to the \'/\' key.')
-      else testMethod(key as Method, value as Mapping)
+      if (intermediate)
+        throw new Exception('Methods of intermediate nodes are unreachable. ' +
+          'Move the declaration to the \'/\' key.')
+      else
+        testMethod(key as Method, value as Mapping)
 }
 
 function testMethod (operations: Operations): (method: Method, mapping: Mapping) => void {
@@ -26,7 +29,8 @@ function testMethod (operations: Operations): (method: Method, mapping: Mapping)
         `Allowed operation types: '${[...allowedTypes].join('\', \'')}'.`)
 
     if (!(mapping.endpoint in operations))
-      throw new Exception(`Method '${method}' is mapped to undefined operation '${mapping.endpoint}'`)
+      throw new Exception(`Method '${method}' is mapped ` +
+        `to undefined operation '${mapping.endpoint}'`)
   }
 }
 

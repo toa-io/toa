@@ -11,13 +11,17 @@ export function normalize (declaration: Node, manifest: Manifest): RTD.Node {
 function normalizeNode (declaration: Node | string, manifest: Manifest): RTD.Node {
   const node: RTD.Node = {}
 
-  if (typeof declaration === 'string') return normalizeMethod(declaration as operations.type, manifest) as RTD.Node
-  else if (Array.isArray(declaration)) return normalizeMethods(declaration, manifest)
+  if (typeof declaration === 'string')
+    return normalizeMethod(declaration as operations.type, manifest) as RTD.Node
+  else if (Array.isArray(declaration))
+    return normalizeMethods(declaration, manifest)
 
   for (const [key, value] of Object.entries(declaration)) {
-    if (key[0] === '/') node[key as keyof RTD.Node] = normalizeNode(value as Node | string, manifest)
+    if (key[0] === '/')
+      node[key as keyof RTD.Node] = normalizeNode(value as Node | string, manifest)
 
-    if (syntax.methods.has(key as RTD.Method)) node[key as RTD.Method] = normalizeMapping(value as Mapping, manifest)
+    if (syntax.methods.has(key as RTD.Method))
+      node[key as RTD.Method] = normalizeMapping(value as Mapping, manifest)
   }
 
   return node
@@ -27,8 +31,11 @@ function normalizeMethod (endpoint: string, manifest: Manifest): RTD.Methods {
   const mapping = normalizeMapping(endpoint, manifest)
   const method = UNAMBIGUOUS_METHODS[mapping.type]
 
-  if (method !== undefined) return { [method]: mapping }
-  else throw new syntax.Exception(`Ambiguous mapping for '${endpoint}'. Use explicit method declaration.`)
+  if (method !== undefined)
+    return { [method]: mapping }
+  else
+    throw new syntax.Exception(`Ambiguous mapping for '${endpoint}'. ` +
+      'Use explicit method declaration.')
 }
 
 function normalizeMethods (values: string[], manifest: Manifest): RTD.Methods {
