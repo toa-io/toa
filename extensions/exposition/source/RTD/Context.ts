@@ -1,6 +1,6 @@
 import { type Remotes } from '../Remotes'
 
 export interface Context {
-  protected?: boolean
+  protected: boolean
   remotes: Remotes
 }

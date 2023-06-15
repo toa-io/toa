@@ -13,15 +13,11 @@ export function createTrunk (definition: syntax.Node, remotes: Remotes): Node {
   return createNode(definition, context)
 }
 
-export function createBranch (definition: syntax.Branch, remotes: Remotes): Node {
-  let nodeDefinition = createNodeDefinition(definition.component, definition.node)
+export function createBranch (branch: syntax.Branch, remotes: Remotes): Node {
+  const definition = createBranchDefinition(branch)
+  const context = { remotes, protected: false }
 
-  if (definition.namespace !== 'default')
-    nodeDefinition = createNodeDefinition(definition.namespace, nodeDefinition)
-
-  const context = { remotes }
-
-  return createNode(nodeDefinition, context)
+  return createNode(definition, context)
 }
 
 function createNode (definition: syntax.Node, context: Context): Node {
@@ -42,7 +38,7 @@ function createNode (definition: syntax.Node, context: Context): Node {
 
   const properties: Properties = {
     intermediate,
-    protected: context.protected === true
+    protected: context.protected
   }
 
   return new Node(routes, methods, properties)
@@ -61,6 +57,15 @@ function createMethod (method: syntax.Method, mapping: syntax.Mapping, context: 
   const Class = method === 'POST' ? InputMethod : QueryMethod
 
   return new Class(endpoint)
+}
+
+function createBranchDefinition (branch: syntax.Branch): syntax.Node {
+  let node = createNodeDefinition(branch.component, branch.node)
+
+  if (branch.namespace !== 'default')
+    node = createNodeDefinition(branch.namespace, node)
+
+  return node
 }
 
 function createNodeDefinition (segment: string, node: syntax.Node): syntax.Node {

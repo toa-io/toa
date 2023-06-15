@@ -11,11 +11,13 @@ export class Route {
   }
 
   public match (segments: Segments): Node | null {
-    for (let i = 0; i < this.segments?.length; i++)
+    for (let i = 0; i < this.segments.length; i++)
       if (this.segments[i] !== null && this.segments[i] !== segments[i])
         return null
 
-    if (this.segments.length === segments.length && !this.node.intermediate) return this.node
+    const exact = this.segments.length === segments.length
+
+    if (exact && !this.node.intermediate) return this.node
     else return this.matchNested(segments)
   }
 
