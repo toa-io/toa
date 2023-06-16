@@ -4,7 +4,6 @@ import * as _boot from '@toa.io/boot'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Factory } from './Factory'
-
 import type { Node } from './RTD/syntax'
 
 jest.mock('@toa.io/boot')

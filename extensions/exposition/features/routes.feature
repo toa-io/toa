@@ -1,7 +1,7 @@
 Feature: RTD Routes
 
-  Background:
-    Given the Service is running
+  Scenario: Running the Gateway
+    Given the Gateway is running
 
   Scenario Outline: Basic Routes
     Given the `greeter` is running with the following manifest:

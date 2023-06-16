@@ -17,7 +17,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/boot": "0.20.0-dev.16",
     "@toa.io/core": "0.20.0-dev.16",
     "@toa.io/generic": "0.20.0-dev.16",
     "@types/cors": "2.8.13",
