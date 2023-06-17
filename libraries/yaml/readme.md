@@ -38,9 +38,9 @@ Load an object from the specified file and assign its properties to the current 
 <assign: <path>
 ```
 
-- `path` - can be specified as an absolute or relative path, or as a glob pattern.
+- `path` Absolute or relative path, or a glob pattern.
 
-When using a pattern, all mathed files will be processed successively.
+When using a pattern, all mathed files will be processed sequentially.
 
 #### Example
 
