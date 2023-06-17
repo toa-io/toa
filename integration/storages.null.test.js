@@ -2,7 +2,6 @@
 
 const { generate } = require('randomstring')
 const { newid } = require('@toa.io/generic')
-const { codes } = require('@toa.io/core/src/exceptions')
 const framework = require('./framework')
 
 let composition
@@ -30,12 +29,10 @@ it('should transit', async () => {
   expect(reply).toStrictEqual({ output: { id: expect.any(String) } })
 })
 
-it('should throw on observe', async () => {
+it('should return null on observe', async () => {
   const id = newid()
 
   const invoke = remote.invoke('observe', { query: { id } })
 
-  await expect(invoke).rejects.toMatchObject({
-    code: codes.StateNotFound
-  })
+  await expect(invoke).resolves.toStrictEqual(null)
 })

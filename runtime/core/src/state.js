@@ -41,10 +41,10 @@ class State {
     if (record === null) {
       if (this.#initialized && query.id !== undefined && query.version === undefined) return this.init(query.id)
       else if (query.version !== undefined) throw new StatePreconditionException()
-      else throw new StateNotFoundException()
     }
 
-    return this.#entity.object(record)
+    if (record === null) return null
+    else return this.#entity.object(record)
   }
 
   async objects (query) {
