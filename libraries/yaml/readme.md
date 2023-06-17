@@ -63,7 +63,8 @@ foo:
 ```
 
 ```javascript
-const value = yaml.load('c.yaml')
+const load = require('@toa.io/yaml')
+const value = load('c.yaml')
 
 console.log(value)
 

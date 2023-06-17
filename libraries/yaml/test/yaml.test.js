@@ -5,7 +5,7 @@ const { directory } = require('@toa.io/filesystem')
 const { readFile } = require('node:fs/promises')
 const { generate } = require('randomstring')
 
-const { save, load, dump, parse, split } = require('../')
+const { save, load, dump, parse, split, patch } = require('../')
 
 describe('load', () => {
   it('should return object', async () => {
@@ -90,4 +90,39 @@ it('should split', async () => {
   const objects = split(contents)
 
   expect(objects).toStrictEqual([{ foo: 'bar' }, { baz: 1 }])
+})
+
+describe('patch', () => {
+  it('should be', async () => {
+    expect(patch).toBeInstanceOf(Function)
+  })
+
+  it('should patch', async () => {
+    const temp = await directory.temp()
+    const filepath = path.join(temp, 'test.yaml')
+    const original = { foo: generate() }
+    const diff = { bar: generate() }
+
+    await save(original, filepath)
+    await patch(filepath, diff)
+
+    const result = await load(filepath)
+
+    expect(result).toStrictEqual({ ...original, ...diff })
+  })
+
+  it('should merge values', async () => {
+    const temp = await directory.temp()
+    const filepath = path.join(temp, 'test.yaml')
+    const original = { foo: { bar: generate() } }
+    const diff = { foo: { baz: generate() } }
+    const expected = { foo: { ...original.foo, ...diff.foo } }
+
+    await save(original, filepath)
+    await patch(filepath, diff)
+
+    const result = await load(filepath)
+
+    expect(result).toStrictEqual(expected)
+  })
 })

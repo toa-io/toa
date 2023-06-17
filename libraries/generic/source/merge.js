@@ -2,13 +2,8 @@
 
 const { entries } = require('./entries')
 
-/** @type {toa.generic.Merge} */
-const merge = (
-  target,
-  source,
-  options = /** @type {toa.generic.merge.Options} */ {},
-  path = /** @type {string[]} */ []
-) => {
+// noinspection FunctionWithMoreThanThreeNegationsJS
+const merge = (target, source, options = {}, path = []) => {
   if (target === undefined) target = {}
   if (source === undefined) source = {}
 
@@ -47,12 +42,7 @@ const merge = (
   return target
 }
 
-/** @type {toa.generic.merge.Predefined} */
 const overwrite = (target, source) => merge(target, source, { overwrite: true })
-
-/**
- * @type {toa.generic.merge.Predefined}
- */
 const add = (target, source) => merge(target, source, { ignore: true })
 
 const string = (path) => '/' + path.join('/')
