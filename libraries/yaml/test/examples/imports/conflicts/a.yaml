@@ -1,4 +1,4 @@
-$import: ./b.yaml
+<assign: ./b.yaml
 foo: 1
 obj:
   bar: 1

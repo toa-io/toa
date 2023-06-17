@@ -1,40 +1,48 @@
 # Toa Yaml
 
-JavaScript parser and stringifier for YAML.
+Wrapper for [js-yaml](https://github.com/nodeca/js-yaml).
 
-## yaml.load(path: string): object
+`async load(path: string): object`
 
-Parse the data from a YAML file and convert it into JSON format.
+`sync(path: string): object`
 
-## yaml.dump(input: object): string
+Read an object from a YAML flie.
 
-Serializes object as a YAML document.
+`all(path: string): object[]`
 
-## yaml.parse(input: string): object
+Read an array from a multi-document YAML file.
 
-Parses string as single YAML document.
+`async save(object: object, path: strgin): void`
 
-## yaml.split(path: string): object
+Write an object to a YAML file.
 
-Same as load(), but understands multi-document sources.
+`parse(input: string): object`
 
-## yaml.save(file: string, data: object): object
+Parse a YAML document.
 
-Write the `data` to a `file` in YAML format.
+`split(input: string): object[]`
 
-# Additional YAML tags
+Parse a multi-document YAML.
 
-## $import
+`dump(input: object): string`
 
-This tag loads content from an external file and merges it into the resulting object.
+Serialize an object to a YAML document.
+
+## YAML Keywords (non-standard)
+
+### <assign
+
+Load an object from the specified file and assign its properties to the current node recursively (deep merge).
 
 ```yaml
-$import: <path>
+<assign: <path>
 ```
 
 - `path` - can be specified as an absolute or relative path, or as a glob pattern.
 
-### Example
+When using a pattern, all mathed files will be processed successively.
+
+#### Example
 
 ```yaml
 #a.yaml
@@ -51,7 +59,7 @@ foo:
 
 ```yaml
 #c.yaml
-$import: ./*.yaml
+<assign: '*.yaml'
 ```
 
 ```javascript
