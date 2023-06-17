@@ -45,20 +45,20 @@ When using a pattern, all mathed files will be processed sequentially.
 #### Example
 
 ```yaml
-#a.yaml
+# a.yaml
 foo:
   bar: 1
 ```
 
 ```yaml
-#b.yaml
+# b.yaml
 qux: 'hello'
 foo:
   baz: 2
 ```
 
 ```yaml
-#c.yaml
+# c.yaml
 <assign: '*.yaml'
 ```
 
