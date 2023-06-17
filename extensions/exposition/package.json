@@ -2,7 +2,6 @@
   "name": "@toa.io/extensions.exposition",
   "version": "0.20.0-dev.18",
   "description": "Toa Exposition",
-  "description": "Toa Resources Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "transpiled/index.js",
@@ -28,6 +27,9 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
+  },
+  "scripts": {
+    "transpile": "tsc"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
