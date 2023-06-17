@@ -23,11 +23,16 @@ class Call extends Connector {
 
     request.authentic = true
 
-    const { exception, ...reply } = await this.#transmitter.request(request)
+    const reply = await this.#transmitter.request(request)
 
-    if (exception) throw exception
+    if (reply === null) return null
+    else {
+      const { exception, ...rest } = reply
 
-    return reply
+      if (exception !== undefined) throw exception
+
+      return rest
+    }
   }
 }
 
