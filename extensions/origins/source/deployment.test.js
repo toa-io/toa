@@ -62,16 +62,6 @@ describe('validation', () => {
 
     expect(() => deployment(components, annotations)).toThrow('must be object')
   })
-
-  it('should throw if annotation is URI is not valid', async () => {
-    const annotations = {
-      [component.locator.id]: {
-        [origin]: 'hello!'
-      }
-    }
-
-    expect(() => deployment(components, annotations)).toThrow('must match format')
-  })
 })
 
 it('should create variables', () => {

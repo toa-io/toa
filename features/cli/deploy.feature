@@ -17,5 +17,7 @@ Feature: Deployment
     composition-dummies-one-<...> Running
     composition-dummies-two-<...> Running
     """
-    Then I run `helm uninstall collection --wait`
-
+    Then I run `helm uninstall collection`
+    And I run `kubectl delete secret toa-bindings-amqp-default`
+    And I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-one)`
+    And I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-two)`

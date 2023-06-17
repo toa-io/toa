@@ -15,9 +15,13 @@ function deployment (instances) {
     const secrets = []
 
     for (const [origin, reference] of Object.entries(manifest)) {
-      const url = new URL(reference)
+      let protocol
 
-      if (protocols.includes(url.protocol)) {
+      const match = reference.match(RX)
+
+      if (match !== null) protocol = match.groups.protocol
+
+      if (protocols.includes(protocol)) {
         const originSecrets = createSecrets(locator, origin)
 
         secrets.push(...originSecrets)
@@ -59,5 +63,7 @@ function createSecret (locator, origin, property) {
     }
   }
 }
+
+const RX = /^(?<protocol>\w{1,12}:)/
 
 exports.deployment = deployment

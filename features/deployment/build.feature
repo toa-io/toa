@@ -64,4 +64,7 @@ Feature: Container Building Options
     And I have a context
     When I run `toa build`
     Then program should exit with code 1
-    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-broken-dependency)`
+    And stderr should contain lines:
+      """
+      <...>ERR! 404  '@non-existent/dependency@1.0.0' is not in this registry.
+      """
