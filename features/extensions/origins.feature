@@ -26,10 +26,10 @@ Feature: Origins Extension
     When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path/to/resource' } }" -p ./components/origins.httpAbsolute`
     Then program should exit with code 0
     And stdout should contain lines:
-    """
-    method: 'GET'
-    originalUrl: '/path/to/resource'
-    """
+      """
+      method: 'GET'
+      originalUrl: '/path/to/resource'
+      """
 
   Scenario: Local environment with annotations
     Given I have a component `origins.http`
@@ -50,9 +50,9 @@ Feature: Origins Extension
     And I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.httpAbsolute`
     Then program should exit with code 1
     And stderr should contain lines:
-    """
-    <...>URL 'http://localhost:8888/path' is not allowed
-    """
+      """
+      <...>URL 'http://localhost:8888/path' is not allowed
+      """
 
   Scenario: Deployment annotations
     Given I have a component `origins.http`
@@ -80,11 +80,15 @@ Feature: Origins Extension
     And I update an environment with:
       """
       ECHO_PORT=8888
+      ECHO_SUFFIX=host
+      ECHO_ORIGIN=localhost:8888
       """
-    And I run `toa invoke test -p ./components/origins.httpEcho`
-    Then program should exit with code 0
+    Then I run `toa invoke port -p ./components/origins.httpEcho`
+    And program should exit with code 0
+    Then I run `toa invoke suffixed -p ./components/origins.httpEcho`
+    And program should exit with code 0
 
-  Scenario: HTTP permission with environment variable placeholder
+  Scenario: HTTP permission with environment variable placeholder as port
     Given I have a component `origins.httpAbsolute`
     And I have a context with:
       """
@@ -97,6 +101,23 @@ Feature: Origins Extension
     And I update an environment with:
       """
       ECHO_PORT=8888
+      """
+    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.httpAbsolute`
+    Then program should exit with code 0
+
+  Scenario: HTTP permission with environment variable placeholder as part of the host
+    Given I have a component `origins.httpAbsolute`
+    And I have a context with:
+      """
+      origins:
+        origins.httpAbsolute:
+          .http:
+            /^http:\/\/local${ECHO_HOST}:8888/: true
+      """
+    And I run `toa env`
+    And I update an environment with:
+      """
+      ECHO_HOST=host
       """
     When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path' } }" -p ./components/origins.httpAbsolute`
     Then program should exit with code 0

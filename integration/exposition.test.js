@@ -486,7 +486,21 @@ describe('request', () => {
 })
 
 describe('response', () => {
-  it('should return 404 on StateNotFound', async () => {
+  it('should return 404 on StateNotFound with transition', async () => {
+    const sender = newid()
+    const id = newid()
+    const url = locator('/messages/' + sender + '/' + id + '/')
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify({ sender, text: 'foo' }),
+      headers: { 'content-type': 'application/json' }
+    })
+
+    expect(response.status).toBe(404)
+  })
+
+  it('should return 404 on failed object observation', async () => {
     const sender = newid()
     const id = newid()
     const url = locator('/messages/' + sender + '/' + id + '/')

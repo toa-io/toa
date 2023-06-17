@@ -5,6 +5,7 @@
  */
 function check (reference) {
   if (typeof reference !== 'string') return // aspect properties object
+  if (!URL.canParse(reference)) return
 
   const url = new URL(reference)
 

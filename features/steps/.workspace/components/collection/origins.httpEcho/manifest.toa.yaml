@@ -2,8 +2,14 @@ name: http
 namespace: origins
 
 operations:
-  test:
+  port:
+    output: object
+  suffixed:
     output: object
 
 origins:
-  echo: http://localhost:${ECHO_PORT}/some/
+  port: http://localhost:${ECHO_PORT}/some/
+  suffixed: http://local${ECHO_SUFFIX}:8888/some/
+  origin: http://${ECHO_ORIGIN}
+  domain: http://sandbox.${ECHO_HOST}.com/
+  subdomain: http://${ECHO_NUMBER}.example.com/

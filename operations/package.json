@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "0.20.0-dev.16",
+  "version": "0.20.0-dev.18",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
   "author": {
@@ -26,9 +26,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/filesystem": "0.20.0-dev.16",
-    "@toa.io/generic": "0.20.0-dev.16",
-    "@toa.io/yaml": "0.20.0-dev.16",
+    "@toa.io/filesystem": "0.20.0-dev.18",
+    "@toa.io/generic": "0.20.0-dev.18",
+    "@toa.io/yaml": "0.20.0-dev.18",
     "execa": "5.1.1"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"

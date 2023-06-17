@@ -59,7 +59,7 @@ Feature: Build images
       # Subtest: math.calculations
       <...>PASSED
       """
-    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-temp-0)`
+    Then I run `docker rmi $(docker images -q localhost:5000/collection/composition-temp0)`
 
   Scenario: Additional build command
     Given I have a component `dummies.one`

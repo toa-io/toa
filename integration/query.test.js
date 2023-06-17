@@ -195,9 +195,9 @@ describe('validation', () => {
 })
 
 describe('not found', () => {
-  it('should throw if target is an entity', async () => {
+  it('should return null on failed object observation', async () => {
     await expect(remote.invoke('get', { query: { criteria: 'id==1' } }))
-      .rejects.toMatchObject({ code: codes.StateNotFound })
+      .resolves.toStrictEqual(null)
   })
 
   it('should return empty array if target is a set', async () => {
