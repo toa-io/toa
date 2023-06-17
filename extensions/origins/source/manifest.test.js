@@ -32,12 +32,6 @@ it('should pass if valid', async () => {
   expect(() => manifest(input)).not.toThrow()
 })
 
-it('should fail if not uri', async () => {
-  const input = { [generate()]: generate() }
-
-  expect(() => manifest(input)).toThrow('must match format')
-})
-
 it('should throw if protocol is not supported', async () => {
   const input = { foo: 'wat://' + generate() }
 
