@@ -11,6 +11,11 @@ const etag = require('./etag')
  * @hot
  */
 const ok = (reply, res, req) => {
+  if (reply === null) {
+    res.status(404).end()
+    return
+  }
+
   if (reply.output?._version !== undefined) {
     const { _version, ...output } = reply.output
     const condition = req.get('if-none-match')
