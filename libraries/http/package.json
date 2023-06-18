@@ -1,5 +1,5 @@
 {
-  "name": "@toa.io/puh",
+  "name": "@toa.io/http",
   "version": "0.20.0-dev.18",
   "description": "Text-level HTTP client",
   "homepage": "https://toa.io",

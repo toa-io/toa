@@ -21,7 +21,7 @@ export function request (input: string): Request {
   parser.execute(buffer as any)
   parser.finish()
 
-  if (!complete) throw new Error('Request is not complete')
+  if (!complete) throw new Error('Failed to parse the request')
 
   return request as Request
 }
