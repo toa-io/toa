@@ -39,7 +39,7 @@
     "@commitlint/config-conventional": "14.1.0",
     "@cucumber/cucumber": "9.1.2",
     "@types/jest": "28.1.1",
-    "@types/node": "18.0.0",
+    "@types/node": "20.3.1",
     "@types/randomstring": "1.1.8",
     "clone-deep": "4.0.1",
     "cucumber-tsflow": "4.0.6",

@@ -1,6 +1,6 @@
-# Toa Pull
+# Puh
 
-**Pu**re **l**ow-**l**evel http client.
+**Pu**re low-level **h**ttp client.
 
 Combination of [http-parser-js](https://github.com/creationix/http-parser-js)
 and [node-fetch](https://github.com/node-fetch/node-fetch)

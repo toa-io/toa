@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/pull",
+  "name": "@toa.io/puh",
   "version": "0.20.0-dev.18",
-  "description": "HTTP request/response",
+  "description": "Text-level HTTP client",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
@@ -23,6 +23,9 @@
   },
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
+  "bin": {
+    "puh": "bin/puh"
+  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
