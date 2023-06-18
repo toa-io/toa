@@ -1,18 +1,16 @@
 import { join } from 'node:path'
-import { binding } from 'cucumber-tsflow'
 import { directory } from '@toa.io/filesystem'
 import * as yaml from '@toa.io/yaml'
 
-@binding()
 export class Workspace {
-  private root: string = ''
+  private root: string = '/dev/null'
 
   public static exists
   (target: Workspace, key: string, descriptor: PropertyDescriptor): PropertyDescriptor {
     const method = descriptor.value
 
     descriptor.value = async function (this: Workspace, ...args: any[]): Promise<any> {
-      if (this.root === '') this.root = await directory.temp()
+      if (this.root === '/dev/null') this.root = await directory.temp()
 
       return method.apply(this, args)
     }
