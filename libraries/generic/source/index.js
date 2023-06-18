@@ -44,6 +44,7 @@ const { timeout } = require('./timeout')
 const { track } = require('./track')
 const { transpose } = require('./transpose')
 const { traverse } = require('./traverse')
+const { trim } = require('./trim')
 const { underlay } = require('./underlay')
 
 exports.acronyms = require('./acronyms')
@@ -97,4 +98,5 @@ exports.timeout = timeout
 exports.track = track
 exports.transpose = transpose
 exports.traverse = traverse
+exports.trim = trim
 exports.underlay = underlay
