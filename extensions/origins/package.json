@@ -24,7 +24,7 @@
     "@toa.io/schemas": "0.20.0-dev.18",
     "@toa.io/yaml": "0.20.0-dev.18",
     "comq": "0.8.0",
-    "node-fetch": "2.6.7"
+    "node-fetch": "2.6.11"
   },
   "devDependencies": {
     "@types/node-fetch": "2.6.2"
