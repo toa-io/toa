@@ -11,3 +11,11 @@ and [node-fetch](https://github.com/node-fetch/node-fetch)
 `request(http: string): string`
 
 Perform an HTTP request.
+
+## CLI
+
+```shell
+$ npm i -g @toa.io/puh
+$ puh
+GET https://google.com/ HTTP/1.1
+```
