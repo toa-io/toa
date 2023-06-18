@@ -1,6 +1,6 @@
 Feature: RTD Routes
 
-  Scenario: Running the Gateway
+  Background:
     Given the Gateway is running
 
   Scenario Outline: Basic Routes
@@ -17,13 +17,13 @@ Feature: RTD Routes
             GET: greet
           /mehtod: greet
       """
-    When the request is sent:
+    When the following request is received:
       """http
       GET /basic/greeter<route>
       accept: application/yaml
       """
-    Then the reply is received:
-      """
+    Then the following reply is sent:
+      """http
       200 OK
       content-type: application/vnd.toa.reply+yaml
 

@@ -48,16 +48,13 @@ function normalizeMethods (values: string[], manifest: Manifest): RTD.Methods {
   }, {})
 }
 
-function normalizeMapping (value: Mapping, manifest: Manifest): RTD.Mapping {
-  if (typeof value === 'string') {
-    const namespace = manifest.namespace
-    const component = manifest.name
-    const type = operationType(value, manifest.operations)
+function normalizeMapping (mapping: Mapping, manifest: Manifest): RTD.Mapping {
+  const namespace = manifest.namespace
+  const component = manifest.name
+  const endpoint: string = typeof mapping === 'string' ? mapping : mapping.endpoint
+  const type = operationType(endpoint, manifest.operations)
 
-    value = { namespace, component, endpoint: value, type }
-  }
-
-  return value as RTD.Mapping
+  return { namespace, component, endpoint, type }
 }
 
 function operationType (endpoint: string, operations: Operations): operations.type {
@@ -77,6 +74,6 @@ export interface Node {
   [k: string]: Node | Mapping | any // directive
 }
 
-export type Mapping = RTD.Mapping | string[] | string // operation name(s)
+export type Mapping = RTD.Mapping | string // operation name(s)
 
 type Operations = Manifest['operations']

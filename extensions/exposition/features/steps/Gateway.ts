@@ -24,5 +24,6 @@ export class Gateway {
   @after()
   public async stop (): Promise<void> {
     await this.instance?.disconnect()
+    this.instance = null
   }
 }

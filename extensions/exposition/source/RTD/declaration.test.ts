@@ -19,6 +19,29 @@ beforeEach(() => {
   component = manifest.name
 })
 
+it('should add namespace, component', async () => {
+  const declaration: Node = {
+    '/': {
+      GET: {
+        endpoint: 'observe'
+      }
+    }
+  }
+
+  const node = normalize(declaration, manifest)
+
+  expect(node).toStrictEqual({
+    '/': {
+      GET: {
+        namespace,
+        component,
+        endpoint: 'observe',
+        type: 'observation'
+      }
+    }
+  })
+})
+
 it('should expand operation shortcuts', async () => {
   const declaration: Node = {
     '/': {
