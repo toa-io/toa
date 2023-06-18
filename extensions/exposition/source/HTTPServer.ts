@@ -4,7 +4,7 @@ import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
 import * as syntax from './RTD/syntax'
 import type { Server } from 'node:http'
-import type { Express, Request, Response, NextFunction } from 'express'
+import type { Express, Request, Response, NextFunction, RequestHandler } from 'express'
 
 export class HTTPServer extends Connector {
   private readonly app: Express
@@ -28,7 +28,11 @@ export class HTTPServer extends Connector {
     return new HTTPServer(app)
   }
 
-  public override async open (): Promise<void> {
+  public handle (handler: RequestHandler): void {
+    this.app.use(handler)
+  }
+
+  protected override async open (): Promise<void> {
     const listening = promex<undefined>()
 
     this.server = this.app.listen(8000, listening.callback)
@@ -38,7 +42,7 @@ export class HTTPServer extends Connector {
     console.info('HTTP Server is listening.')
   }
 
-  public override async close (): Promise<void> {
+  protected override async close (): Promise<void> {
     const stopped = promex<undefined>()
 
     this.server?.close(stopped.callback)

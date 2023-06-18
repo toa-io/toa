@@ -5,5 +5,6 @@ import type { Label } from './discovery'
 export const broadcast: jest.MockedObject<core.bindings.Broadcast<Label>> = {
   transmit: jest.fn(),
   receive: jest.fn(),
+  connect: jest.fn(),
   link: jest.fn()
 } as jest.MockedObject<core.bindings.Broadcast<Label>>

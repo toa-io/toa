@@ -1,18 +1,18 @@
 export class Connector {
-  id: string
-  connected: boolean
+  public id: string
+  public connected: boolean
 
-  depends (connector: Connector | Connector[]): Connector
+  public connect (): Promise<void>
+
+  public disconnect (interrupt?: boolean): Promise<void>
+
+  protected depends (connector: Connector | Connector[]): Connector
 
   link (connector: Connector): void
 
-  connect (): Promise<void>
+  protected open (): Promise<void>
 
-  disconnect (interrupt?: boolean): Promise<void>
+  protected close (): Promise<void>
 
-  open (): Promise<void>
-
-  close (): Promise<void>
-
-  dispose (): Promise<void>
+  protected dispose (): Promise<void>
 }

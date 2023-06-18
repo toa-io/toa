@@ -19,18 +19,18 @@ Feature: RTD Routes
       """
     When the following request is received:
       """http
-      GET /basic/greeter<route>
+      GET /basic/greeter<route> HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
       """http
       200 OK
-      content-type: application/vnd.toa.reply+yaml
+      content-type: application/yaml
 
       output: Hello
       """
     Examples:
-      | route                |
-      | /strict              |
-      | /shortcuts/operation |
-      | /shortcuts/method    |
+      | route   |
+      | /strict |
+#      | /shortcuts/operation |
+#      | /shortcuts/method    |

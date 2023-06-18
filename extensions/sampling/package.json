@@ -22,7 +22,7 @@
     "@toa.io/core": "0.20.0-dev.18",
     "@toa.io/generic": "0.20.0-dev.18",
     "@toa.io/schemas": "0.20.0-dev.18",
-    "jest-diff": "29.5.0"
+    "jest-diff": "^29.5.0"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }

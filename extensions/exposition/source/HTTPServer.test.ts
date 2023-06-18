@@ -4,6 +4,7 @@ import { express, cors } from './HTTPServer.fixtures'
 import { Connector } from '@toa.io/core'
 import type { Express } from 'express'
 import type { CorsOptions } from 'cors'
+import { immediate } from '@toa.io/generic'
 
 jest.mock('express', () => () => express())
 jest.mock('cors', () => (options: CorsOptions) => cors(options))
@@ -38,7 +39,9 @@ it('should support cors', async () => {
 })
 
 it('should start HTTP server', async () => {
-  const stared = server.open()
+  const stared = server.connect()
+
+  await immediate()
 
   expect(app.listen).toHaveBeenCalledWith(8000, expect.anything())
 
@@ -50,18 +53,30 @@ it('should start HTTP server', async () => {
 })
 
 it('should stop HTTP server', async () => {
-  const started = server.open()
+  const started = server.connect()
+
+  await immediate()
 
   app.listen.mock.calls[0][1]?.() // `listen` callback
 
   await started
 
-  const stopped = server.close()
+  const stopped = server.disconnect()
   const httpServer: jest.MockedObject<http.Server> = app.listen.mock.results[0].value
+
+  await immediate()
 
   expect(httpServer.close).toHaveBeenCalled()
 
   httpServer.close.mock.calls[0][0]?.() // `close` callback
 
   await stopped
+})
+
+it('should register request handler', async () => {
+  const handler = () => undefined
+
+  server.handle(handler)
+
+  expect(app.use).toHaveBeenCalledWith(handler)
 })
