@@ -24,7 +24,7 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "bin": {
-    "puh": "bin/puh"
+    "http": "bin/http"
   },
   "jest": {
     "preset": "ts-jest",

@@ -1,21 +1,21 @@
-# Puh
+# HTTP
 
-**Pu**re low-level **h**ttp client.
+Text-level http client.
 
 Combination of [http-parser-js](https://github.com/creationix/http-parser-js)
 and [node-fetch](https://github.com/node-fetch/node-fetch)
-
-> The methods below assume that a `Request-URI` is passed in the `absoluteURI`
-> form [[5.1.2]](https://datatracker.ietf.org/doc/html/rfc2616#section-5.1.2).
 
 `request(http: string): string`
 
 Perform an HTTP request.
 
+> `Request-URI` must be passed in the `absoluteURI`
+> form [[5.1.2]](https://datatracker.ietf.org/doc/html/rfc2616#section-5.1.2).
+
 ## CLI
 
 ```shell
-$ npm i -g @toa.io/puh
-$ puh
+$ npm i -g @toa.io/http
+$ http
 GET https://google.com/ HTTP/1.1
 ```
