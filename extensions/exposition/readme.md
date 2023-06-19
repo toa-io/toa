@@ -36,18 +36,22 @@ Host: api.example.com
     </picture>
 </a>
 
-The Exposition extension includes a Service which is an HTTP server with ingress and a Tenant. The Service communicates
-with Tenants to discover their resource declarations and exposes them as HTTP resources. An instance of the Tenant is
+The Exposition extension includes a Service which is an HTTP server with ingress and a Tenant. The
+Service communicates
+with Tenants to discover their resource declarations and exposes them as HTTP resources. An instance
+of the Tenant is
 running within each Composition that has at least one Component with a resource declaration.
 
 ## Resource tree discovery
 
 During the startup of the Tenant instance, it broadcasts an `expose` message
 containing [Resource branches](#resource-branch)
-of the Components within the Composition. Upon receiving the `expose` message, instances of the Service (re-)configures
+of the Components within the Composition. Upon receiving the `expose` message, instances of the
+Service (re-)configures
 corresponding routes for its HTTP server.
 
-During the startup of the Service instance, it broadcasts a `ping` message. Once an instance of the Tenant receives
+During the startup of the Service instance, it broadcasts a `ping` message. Once an instance of the
+Tenant receives
 a `ping` message, it broadcasts an `expose` message.
 
 ## Resource branch
@@ -59,7 +63,8 @@ a `ping` message, it broadcasts an `expose` message.
   </picture>
 </a>
 
-A Component can specify how to expose its Operations as HTTP resources by declaring a Resource branch using the manifest
+A Component can specify how to expose its Operations as HTTP resources by declaring a Resource
+branch using the manifest
 extension.
 
 ```yaml
@@ -77,7 +82,8 @@ Alternatively, a shortcut `exposition` is available:
 exposition: ...
 ```
 
-Resource branches are attached to a Tree with a prefix `/{namespace}/{name}` or `/{name}` for components within the
+Resource branches are attached to a Tree with a prefix `/{namespace}/{name}` or `/{name}` for
+components within the
 default namespace.
 
 ```yaml
@@ -167,8 +173,10 @@ exposition:
       type: observation
 ```
 
-In the example above, a request `GET /code` will be mapped to the `development.code.checkout` operation call.
-Unlike a component resource branch declaration, properties `namespace`, `component`, and `type` are required.
+In the example above, a request `GET /code` will be mapped to the `development.code.checkout`
+operation call.
+Unlike a component resource branch declaration, properties `namespace`, `component`, and `type` are
+required.
 
 > A shortcut is available: `endpoint: development.code.checkout`.
 
@@ -176,6 +184,7 @@ If a component resource branch conflicts with an annotation, the annotation take
 
 ## See Also
 
+- [Protocol support](documentation/protocol.md)
 - [Resource Tree Definition](documentation/tree.md)
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)

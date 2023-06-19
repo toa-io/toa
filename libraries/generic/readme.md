@@ -151,3 +151,9 @@ Constructs an object by picking the set of `properties` from `source` object.
 `trim (input: string): string`
 
 Trim lines of multiline text.
+
+## Buffer
+
+Buffer a stream.
+
+`buffer (stream: Readable): Buffer`

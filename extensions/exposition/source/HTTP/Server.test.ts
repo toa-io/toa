@@ -1,5 +1,6 @@
 import http from 'node:http'
-import { Server, Message } from './Server'
+import { Processing, Server } from './Server'
+import { type OutgoingMessage } from './messages'
 import { express, cors, createRequest, res, next } from './Server.fixtures'
 import { Connector } from '@toa.io/core'
 import type { Express, Request, RequestHandler } from 'express'
@@ -75,8 +76,8 @@ it('should stop HTTP server', async () => {
 })
 
 it('should register request handler', async () => {
-  const process = jest.fn(async () => ({}))
-  const req = { [generate()]: generate() } as unknown as Request
+  const process = jest.fn(async () => ({})) as unknown as Processing
+  const req = createRequest()
 
   server.attach(process)
 
@@ -94,7 +95,7 @@ it('should send 501 on unknown method', async () => {
 })
 
 describe('request', () => {
-  const process = jest.fn(async () => ({}))
+  const process = jest.fn(async () => ({})) as unknown as Processing
 
   beforeEach(() => {
     server.attach(process)
@@ -102,19 +103,19 @@ describe('request', () => {
 
   it('should pass decoded request', async () => {
     const headers = { 'content-type': 'application/json' }
-    const content = { [generate()]: generate() }
-    const json = JSON.stringify(content)
+    const value = { [generate()]: generate() }
+    const json = JSON.stringify(value)
     const req = createRequest({ headers }, json)
 
     await use(req)
 
-    expect(process).toHaveBeenCalledWith(expect.objectContaining({ content }))
+    expect(process).toHaveBeenCalledWith(expect.objectContaining({ value }))
   })
 })
 
 describe('result', () => {
   it('should send status code 200 if the result has a value', async () => {
-    const process = async (): Promise<Message> => ({ value: generate() })
+    const process = async (): Promise<OutgoingMessage> => ({ headers: {}, value: generate() })
     const req = createRequest()
 
     server.attach(process)
@@ -124,7 +125,7 @@ describe('result', () => {
   })
 
   it('should send status code 204 if the result has no value', async () => {
-    const process = async (): Promise<Message> => ({})
+    const process = async (): Promise<OutgoingMessage> => ({ headers: {} })
     const req = createRequest()
 
     server.attach(process)

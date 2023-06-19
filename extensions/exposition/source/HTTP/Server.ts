@@ -3,6 +3,7 @@ import cors from 'cors'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
 import * as syntax from '../RTD/syntax'
+import { type IncomingMessage, type OutgoingMessage, read } from './messages'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
 
@@ -29,10 +30,9 @@ export class Server extends Connector {
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: Request, response: Response, next: NextFunction) => {
-      const message = { path: '' }
-
-      process(message)
+    this.app.use((request: Request, response: Response, next: NextFunction): void => {
+      read(request)
+        .then(process)
         .then(this.success(response))
         .catch(next)
     })
@@ -58,8 +58,8 @@ export class Server extends Connector {
     console.info('HTTP Server has been stopped.')
   }
 
-  private success (response: Response): (output: Message) => void {
-    return (output: Message) => {
+  private success (response: Response): (output: OutgoingMessage) => void {
+    return (output: OutgoingMessage) => {
       if (output.value === undefined) response.status(204)
       else response.status(200)
     }
@@ -71,13 +71,4 @@ function supportedMethods (req: Request, res: Response, next: NextFunction): voi
   else res.sendStatus(501)
 }
 
-export interface Message {
-  headers?: Record<string, string>
-  value?: any
-}
-
-export interface IncomingMessage extends Message {
-  path: string
-}
-
-export type Processing = (input: IncomingMessage) => Promise<Message>
+export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>

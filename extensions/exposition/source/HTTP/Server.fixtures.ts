@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer'
 import { Readable } from 'stream'
-import type { IncomingMessage } from './Server'
+import type { IncomingMessage } from './messages'
 import type * as http from 'node:http'
 import type { NextFunction, Response, Express, Request } from 'express'
 import type { CorsOptions } from 'cors'
@@ -16,18 +16,21 @@ const app = {
   listen: jest.fn(() => server)
 } as unknown as jest.Mock<Express>
 
-export function createRequest (req: Partial<Request> = {}, content: string = ''):
+export function createRequest (req: Partial<Request> = {}, content: string | Buffer = ''):
 jest.MockedObject<Request> {
-  const buffer = Buffer.from(content)
+  const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content)
   const stream = Readable.from(buffer)
 
-  Object.assign(stream, req)
+  Object.assign(stream, { headers: {} }, req)
 
   return stream as unknown as jest.MockedObject<Request>
 }
 
 export function createIncomingMessage (path: string): IncomingMessage {
-  return { path }
+  const headers = {}
+  const value = null
+
+  return { path, headers, value }
 }
 
 export const res = {
