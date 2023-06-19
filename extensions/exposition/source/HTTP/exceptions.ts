@@ -19,3 +19,9 @@ export class UnsupportedMediaType extends Exception {
     super(415)
   }
 }
+
+export class NotAcceptable extends Exception {
+  public constructor () {
+    super(406)
+  }
+}

@@ -35,7 +35,10 @@ export function createIncomingMessage (path: string): IncomingMessage {
 
 export const res = {
   status: jest.fn(() => res),
-  sendStatus: jest.fn(() => res)
+  sendStatus: jest.fn(() => res),
+  set: jest.fn(() => res),
+  send: jest.fn(() => res),
+  end: jest.fn(() => res)
 } as unknown as jest.MockedObject<Response>
 
 export const next = jest.fn() as unknown as NextFunction

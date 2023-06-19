@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
-import { type IncomingMessage, type OutgoingMessage, read } from './messages'
+import { type IncomingMessage, type OutgoingMessage, read, write } from './messages'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
 
@@ -34,7 +34,7 @@ export class Server extends Connector {
     this.app.use((request: Request, response: Response, next: NextFunction): void => {
       read(request)
         .then(process)
-        .then(this.success(response))
+        .then(this.success(request, response))
         .catch(next)
     })
   }
@@ -59,10 +59,9 @@ export class Server extends Connector {
     console.info('HTTP Server has been stopped.')
   }
 
-  private success (response: Response) {
-    return (output: OutgoingMessage) => {
-      if (output.value === undefined) response.status(204)
-      else response.status(200)
+  private success (request: Request, response: Response) {
+    return (message: OutgoingMessage) => {
+      write(request, response, message)
     }
   }
 }

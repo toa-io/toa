@@ -133,6 +133,19 @@ describe('result', () => {
 
     expect(res.status).toHaveBeenCalledWith(204)
   })
+
+  it('should send result', async () => {
+    const value = { [generate()]: generate() }
+    const json = JSON.stringify(value)
+    const buf = Buffer.from(json)
+    const process = async (): Promise<OutgoingMessage> => ({ headers: {}, value })
+    const req = createRequest({ headers: { 'accept': 'application/json' } })
+
+    server.attach(process)
+    await use(req)
+
+    expect(res.send).toHaveBeenCalledWith(buf)
+  })
 })
 
 describe('options', () => {

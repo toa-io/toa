@@ -4,10 +4,12 @@ import * as yaml from './yaml'
 import * as msgpack from './msgpack'
 
 export const formats: Record<string, Format> = {
-  'application/json': json,
   'application/yaml': yaml,
+  'application/json': json,
   'application/msgpack': msgpack
 }
+
+export const types = Object.keys(formats)
 
 export interface Format {
   encode: (value: any) => Buffer
