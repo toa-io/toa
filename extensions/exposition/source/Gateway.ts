@@ -32,10 +32,10 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private async process (input: http.IncomingMessage): Promise<any> {
+  private async process (input: http.IncomingMessage): Promise<http.OutgoingMessage> {
     this.tree.match(input.path)
 
-    return {}
+    return { headers: {} }
   }
 
   private async discover (): Promise<void> {

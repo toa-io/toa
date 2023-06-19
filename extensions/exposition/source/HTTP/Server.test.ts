@@ -135,6 +135,21 @@ describe('result', () => {
   })
 })
 
+describe('options', () => {
+  it('should send 501 on unspecified method', async () => {
+    jest.clearAllMocks()
+
+    server = Server.create({ methods: new Set(['COPY']) })
+    app = express.mock.results[0]?.value
+
+    const req = createRequest({ method: 'GET' })
+
+    await use(req)
+
+    expect(res.sendStatus).toHaveBeenCalledWith(501)
+  })
+})
+
 async function use (req: Request): Promise<void> {
   for (const call of app.use.mock.calls) {
     const usage = call[0] as unknown as RequestHandler

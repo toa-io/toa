@@ -3,8 +3,8 @@ import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
 import { Tree } from './RTD/Tree'
 import { Server } from './HTTP'
+import { methods, type Node } from './RTD/syntax'
 import type { Connector, Locator, extensions } from '@toa.io/core'
-import type { Node } from './RTD/syntax'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader
@@ -27,7 +27,7 @@ export class Factory implements extensions.Factory {
 
   private gateway (): Gateway {
     const broadcast = this.boot.bindings.broadcast(CHANNEL)
-    const server = Server.create()
+    const server = Server.create({ methods })
     const remotes = new Remotes(this.boot)
     const tree = new Tree({}, remotes)
 
