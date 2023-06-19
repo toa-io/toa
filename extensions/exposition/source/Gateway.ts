@@ -1,16 +1,15 @@
 import { Connector, type bindings } from '@toa.io/core'
-import { type Request, type Response } from 'express'
 import { type Branch } from './RTD/syntax'
-import { type HTTPServer } from './HTTPServer'
 import { type Tree } from './RTD/Tree'
 import { type Label } from './discovery'
+import type * as http from './HTTP'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
-  private readonly server: HTTPServer
+  private readonly server: http.Server
   private readonly tree: Tree
 
-  public constructor (broadcast: Broadcast, server: HTTPServer, tree: Tree) {
+  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree) {
     super()
 
     this.broadcast = broadcast
@@ -19,10 +18,11 @@ export class Gateway extends Connector {
 
     this.depends(broadcast)
     this.depends(server)
+
+    server.attach(this.process.bind(this))
   }
 
   protected override async open (): Promise<void> {
-    // await this.handle()
     await this.discover()
 
     console.info('Gateway has started and is awaiting resource branches.')
@@ -32,12 +32,10 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private handle (): void {
-    // this.server.handle(this.process.bind(this))
-  }
+  private async process (input: http.IncomingMessage): Promise<http.Message> {
+    this.tree.match(input.path)
 
-  private process (request: Request, response: Response): void {
-
+    return {}
   }
 
   private async discover (): Promise<void> {

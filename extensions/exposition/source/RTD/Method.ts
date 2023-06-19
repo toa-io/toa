@@ -1,6 +1,6 @@
+import { type Request, type Reply } from '@toa.io/core'
 import { type Endpoint } from './Endpoint'
 import type * as syntax from './syntax'
-import type { Request, Reply } from '@toa.io/core'
 
 export abstract class Method {
   private readonly endpoint: Endpoint

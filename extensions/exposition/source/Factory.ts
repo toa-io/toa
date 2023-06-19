@@ -2,7 +2,7 @@ import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
 import { Tree } from './RTD/Tree'
-import { HTTPServer } from './HTTPServer'
+import { Server } from './HTTP'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Node } from './RTD/syntax'
 
@@ -27,7 +27,7 @@ export class Factory implements extensions.Factory {
 
   private gateway (): Gateway {
     const broadcast = this.boot.bindings.broadcast(CHANNEL)
-    const server = HTTPServer.create()
+    const server = Server.create()
     const remotes = new Remotes(this.boot)
     const tree = new Tree({}, remotes)
 

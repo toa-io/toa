@@ -1,16 +1,16 @@
 import * as assert from 'assert'
-import { binding, when, then, WorldParameters } from 'cucumber-tsflow'
+import { binding, when, then } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
 import { trim } from '@toa.io/generic'
-import { type Parameters } from './parameters'
+import { Parameters } from './parameters'
 
-@binding([WorldParameters])
+@binding([Parameters])
 export class HTTP {
   private readonly origin: string
   private response: string = ''
 
-  public constructor (parameters: WorldParameters<Parameters>) {
-    this.origin = parameters.value.origin
+  public constructor (parameters: Parameters) {
+    this.origin = parameters.origin
   }
 
   @when('the following request is received:')
@@ -28,7 +28,7 @@ export class HTTP {
     for (const line of lines) {
       const includes = this.response.includes(line)
 
-      assert.equal(includes, true, `Response is missing '${line}'`)
+      assert.equal(includes, true, `Response is missing '${line}'\n${this.response}`)
     }
   }
 }

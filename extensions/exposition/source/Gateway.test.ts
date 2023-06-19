@@ -1,7 +1,10 @@
-import { Gateway } from './Gateway'
-import { Connector } from '@toa.io/core'
-import { broadcast, server, tree } from './Gateway.fixtures'
+import { generate } from 'randomstring'
 import { immediate } from '@toa.io/generic'
+import { Connector } from '@toa.io/core'
+import { Gateway } from './Gateway'
+import { broadcast, server, tree } from './Gateway.fixtures'
+import { createIncomingMessage } from './HTTP/Server.fixtures'
+import { type Processing } from './HTTP'
 
 let gateway: Gateway
 
@@ -18,6 +21,10 @@ it('should be instance of Connector', async () => {
 it('should depend on connectors', async () => {
   expect(broadcast.link).toHaveBeenCalledWith(gateway)
   expect(server.link).toHaveBeenCalledWith(gateway)
+})
+
+it('should add request handler', async () => {
+  expect(server.attach).toHaveBeenCalledWith(expect.any(Function))
 })
 
 it('should ping on startup', async () => {
@@ -44,4 +51,23 @@ it('should merge branches', async () => {
   merge(branch)
 
   expect(tree.merge).toHaveBeenCalledWith(branch)
+})
+
+describe('request processing', () => {
+  let process: Processing
+
+  beforeEach(async () => {
+    await gateway.connect()
+    await immediate()
+
+    process = server.attach.mock.calls[0][0]
+  })
+
+  it('should find node', async () => {
+    const message = createIncomingMessage(generate())
+
+    await process(message)
+
+    expect(tree.match).toHaveBeenCalledWith(message.path)
+  })
 })
