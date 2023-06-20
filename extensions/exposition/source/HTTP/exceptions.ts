@@ -1,4 +1,4 @@
-class Exception extends Error {
+export class Exception extends Error {
   public readonly status: number
 
   protected constructor (status: number, message?: string) {
@@ -8,19 +8,23 @@ class Exception extends Error {
   }
 }
 
-export class BadRequest extends Exception {
+export class ClientError extends Exception {
+
+}
+
+export class BadRequest extends ClientError {
   public constructor (message?: string) {
     super(400, message)
   }
 }
 
-export class UnsupportedMediaType extends Exception {
+export class UnsupportedMediaType extends ClientError {
   public constructor () {
     super(415)
   }
 }
 
-export class NotAcceptable extends Exception {
+export class NotAcceptable extends ClientError {
   public constructor () {
     super(406)
   }

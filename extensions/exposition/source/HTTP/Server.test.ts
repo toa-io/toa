@@ -7,6 +7,7 @@ import type { Express, Request, RequestHandler } from 'express'
 import type { CorsOptions } from 'cors'
 import { immediate } from '@toa.io/generic'
 import { generate } from 'randomstring'
+import { BadRequest } from './exceptions'
 
 jest.mock('express', () => () => express())
 jest.mock('cors', () => (options: CorsOptions) => cors(options))
@@ -145,6 +146,57 @@ describe('result', () => {
     await use(req)
 
     expect(res.send).toHaveBeenCalledWith(buf)
+  })
+
+  it('should return 500 on exception', async () => {
+    const process = async (): Promise<OutgoingMessage> => {
+      throw new Error('Bad')
+    }
+
+    const req = createRequest()
+
+    server.attach(process)
+    await use(req)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.send).not.toHaveBeenCalled()
+  })
+
+  it('should output exception message if debug is enabled', async () => {
+    jest.clearAllMocks()
+
+    server = Server.create({ debug: true })
+    app = express.mock.results[0]?.value
+
+    const message = generate()
+    const req = createRequest()
+
+    const process = async (): Promise<OutgoingMessage> => {
+      throw new Error(message)
+    }
+
+    server.attach(process)
+    await use(req)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.set).toHaveBeenCalledWith('content-type', 'text/plain')
+    expect(res.send).toHaveBeenCalledWith(message)
+  })
+
+  it('should send client error', async () => {
+    const req = createRequest()
+    const message = generate()
+
+    const process = async (): Promise<OutgoingMessage> => {
+      throw new BadRequest(message)
+    }
+
+    server.attach(process)
+    await use(req)
+
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.set).toHaveBeenCalledWith('content-type', 'text/plain')
+    expect(res.send).toHaveBeenCalledWith(message)
   })
 })
 

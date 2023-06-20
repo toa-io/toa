@@ -137,11 +137,12 @@ exposition:
   host: the.example.com
 ```
 
-| Option        | Description                                                      |
-|---------------|------------------------------------------------------------------|
-| `host`        | Domain name to be used for the corresponding Kubernetes Ingress. |
-| `class`       | Ingress class                                                    |
-| `annotations` | Ingress annotations                                              |
+| Option        | Type      | Description                                                      |
+|---------------|-----------|------------------------------------------------------------------|
+| `host`        | `string`  | Domain name to be used for the corresponding Kubernetes Ingress. |
+| `class`       | `string`  | Ingress class                                                    |
+| `annotations` | `object`  | Ingress annotations                                              |
+| `debug`       | `boolean` | Output server errors. Default `false`.                           |
 
 ### Example
 

@@ -72,46 +72,23 @@ describe('read', () => {
 describe('write', () => {
   it('should write encoded response', async () => {
     const value = { [generate()]: generate() }
-    const message: OutgoingMessage = { headers: {}, value }
     const json = JSON.stringify(value)
     const buf = Buffer.from(json)
     const headers = { 'accept': 'application/json' }
     const request = createRequest({ headers }, buf)
 
-    write(request, res, message)
+    write(request, res, value)
 
     expect(res.set).toHaveBeenCalledWith('content-type', 'application/json')
-    expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith(buf)
-  })
-
-  it('should not write if no response', async () => {
-    const headers = { 'accept': 'application/json' }
-    const request = createRequest({ headers })
-    const message: OutgoingMessage = { headers: {} }
-
-    write(request, res, message)
-
-    expect(res.set).not.toHaveBeenCalled()
-    expect(res.status).toHaveBeenCalledWith(204)
-    expect(res.send).not.toHaveBeenCalled()
-    expect(res.end).toHaveBeenCalled()
   })
 
   it('should throw on unsupported response media type', async () => {
     const headers = { 'accept': 'wtf/' + generate() }
     const request = createRequest({ headers })
-    const message: OutgoingMessage = { headers: {}, value: 'hello' }
+    const value = generate()
 
-    expect(() => write(request, res, message)).toThrow(NotAcceptable)
-  })
-
-  it('should not throw unsupported media type if no response', async () => {
-    const headers = { 'accept': 'wtf/' + generate() }
-    const request = createRequest({ headers })
-    const message: OutgoingMessage = { headers: {} }
-
-    expect(() => write(request, res, message)).not.toThrow()
+    expect(() => write(request, res, value)).toThrow(NotAcceptable)
   })
 
   it('should use application/yaml as default', async () => {

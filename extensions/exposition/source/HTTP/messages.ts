@@ -9,27 +9,19 @@ export async function read (request: Request): Promise<IncomingMessage> {
   const { path, headers } = request
   const value = await decode(request)
 
-  return { path, headers, value }
+  return { path, headers, value } // TODO
 }
 
-export function write (request: Request, response: Response, message: OutgoingMessage): void {
-  encode(message, request)
+export function write (request: Request, response: Response, value: any): void {
+  const buf = encode(value, request, response)
 
-  for (const [header, value] of Object.entries(message.headers))
-    response.set(header, value as string)
-
-  if (message.value === undefined)
-    response.status(204)
-      .end()
-  else
-    response.status(200)
-      .send(message.value)
+  response.send(buf)
 }
 
 async function decode (request: Request): Promise<any> {
   const type = request.headers['content-type']
 
-  if (type === undefined) return null
+  if (type === undefined) return undefined
 
   if (!(type in formats)) throw new UnsupportedMediaType()
 
@@ -43,15 +35,15 @@ async function decode (request: Request): Promise<any> {
   }
 }
 
-function encode (message: OutgoingMessage, request: Request): void {
-  if (message.value === undefined) return
-
+function encode (value: any, request: Request, response: Response): Buffer {
   const type = acceptable(request)
   const format = formats[type]
+  const buf = format.encode(value)
 
-  message.value = format.encode(message.value)
-  message.headers['content-type'] = type
+  response.set('content-type', type)
   // content-length and etag are set by Express
+
+  return buf
 }
 
 function acceptable (request: Request): string {
