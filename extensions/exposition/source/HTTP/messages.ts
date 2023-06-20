@@ -5,11 +5,8 @@ import { buffer } from '@toa.io/generic'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
-export async function read (request: Request): Promise<IncomingMessage> {
-  const { path, headers } = request
-  const value = await decode(request)
-
-  return { path, headers, value } // TODO
+export async function read (request: Request): Promise<any> {
+  return await decode(request)
 }
 
 export function write (request: Request, response: Response, value: any): void {

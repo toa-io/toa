@@ -10,24 +10,15 @@ beforeEach(() => {
 })
 
 describe('read', () => {
-  it('should read path and headers', async () => {
-    const path = generate()
-    const headers = { [generate()]: generate() }
-    const request = createRequest({ path, headers })
-    const message = await read(request)
-
-    expect(message).toStrictEqual(expect.objectContaining({ path, headers }))
-  })
-
   it('should parse application/json', async () => {
     const path = generate()
     const headers = { 'content-type': 'application/json' }
-    const value = { [generate()]: generate() }
-    const json = JSON.stringify(value)
+    const input = { [generate()]: generate() }
+    const json = JSON.stringify(input)
     const request = createRequest({ path, headers }, json)
-    const message = await read(request)
+    const output = await read(request)
 
-    expect(message.value).toStrictEqual(value)
+    expect(output).toStrictEqual(input)
   })
 
   it('should parse application/yaml', async () => {
@@ -35,20 +26,20 @@ describe('read', () => {
     const headers = { 'content-type': 'application/yaml' }
     const yaml = 'foo: 1'
     const request = createRequest({ path, headers }, yaml)
-    const message = await read(request)
+    const value = await read(request)
 
-    expect(message.value).toStrictEqual({ foo: 1 })
+    expect(value).toStrictEqual({ foo: 1 })
   })
 
   it('should parse application/mskpack', async () => {
     const path = generate()
     const headers = { 'content-type': 'application/msgpack' }
-    const value = { [generate()]: generate() }
-    const msg = msgpack.encode(value)
+    const input = { [generate()]: generate() }
+    const msg = msgpack.encode(input)
     const request = createRequest({ path, headers }, msg)
-    const message = await read(request)
+    const output = await read(request)
 
-    expect(message.value).toStrictEqual(value)
+    expect(output).toStrictEqual(input)
   })
 
   it('should throw on unsupported request media type', async () => {
