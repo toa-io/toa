@@ -5,17 +5,13 @@ import { buffer } from '@toa.io/generic'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
-export async function read (request: Request): Promise<any> {
-  return await decode(request)
-}
-
 export function write (request: Request, response: Response, value: any): void {
   const buf = encode(value, request, response)
 
   response.send(buf)
 }
 
-async function decode (request: Request): Promise<any> {
+export async function read (request: Request): Promise<any> {
   const type = request.headers['content-type']
 
   if (type === undefined) return undefined
@@ -33,7 +29,7 @@ async function decode (request: Request): Promise<any> {
 }
 
 function encode (value: any, request: Request, response: Response): Buffer {
-  const type = acceptable(request)
+  const type = negotiate(request)
   const format = formats[type]
   const buf = format.encode(value)
 
@@ -43,7 +39,7 @@ function encode (value: any, request: Request, response: Response): Buffer {
   return buf
 }
 
-function acceptable (request: Request): string {
+function negotiate (request: Request): string {
   const negotiator = new Negotiator(request)
   const mediaType = negotiator.mediaType(types)
 
