@@ -1,9 +1,9 @@
-export function promex<T> (): Promex<T>
+export function promex<T = undefined> (): Promex<T>
 
-interface Promex<T = any, E = any> extends Promise<T> {
+interface Promex<T> extends Promise<T> {
   resolve (value: T): void
 
-  reject (reason: E): void
+  reject (reason: any): void
 
-  callback (error?: E, result?: T): void
+  callback (error?: any, result?: T): void
 }
