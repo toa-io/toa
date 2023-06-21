@@ -14,19 +14,29 @@ export class Components {
     this.workspace = workspace
   }
 
+  @given('the `{word}` is running')
+  public async run (name: string): Promise<void> {
+    await this.runComponent(name)
+  }
+
   @given('the `{word}` is running with the following manifest:')
-  public async run (name: string, yaml: string): Promise<void> {
+  public async patchAndRun (name: string, yaml: string): Promise<void> {
     const manifest = parse(yaml)
+
+    await this.runComponent(name, manifest)
+  }
+
+  @after()
+  public async stop (): Promise<void> {
+    await this.composition?.disconnect()
+  }
+
+  private async runComponent (name: string, manifest?: object): Promise<void> {
     const path = await this.workspace.addComponent(name, manifest)
 
     this.composition = await boot.composition([path])
 
     await this.composition.connect()
     await timeout(200) // discovery
-  }
-
-  @after()
-  public async stop (): Promise<void> {
-    await this.composition?.disconnect()
   }
 }

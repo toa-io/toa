@@ -3,7 +3,7 @@ Feature: RTD Routes
   Background:
     Given the Gateway is running
 
-  Scenario Outline: Basic Routes
+  Scenario Outline: Basic routes
     Given the `greeter` is running with the following manifest:
       """yaml
       namespace: basic

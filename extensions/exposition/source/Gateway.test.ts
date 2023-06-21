@@ -4,7 +4,7 @@ import { Connector } from '@toa.io/core'
 import { Gateway } from './Gateway'
 import { broadcast, server, tree } from './Gateway.fixtures'
 import { createIncomingMessage } from './HTTP/Server.fixtures'
-import { type Processing } from './HTTP'
+import { MethodNotAllowed, NotFound, type Processing } from './HTTP'
 import { type Node } from './RTD'
 
 let gateway: Gateway
@@ -70,11 +70,29 @@ describe('request processing', () => {
   })
 
   it('should find node', async () => {
-    const message = createIncomingMessage(generate())
+    mockNode(method, call)
 
     await process(message)
 
     expect(tree.match).toHaveBeenCalledWith(message.path)
+  })
+
+  it('should throw if node is not found', async () => {
+    const message = createIncomingMessage(generate())
+
+    tree.match.mockImplementationOnce(() => null)
+
+    await expect(process(message)).rejects.toThrow(NotFound)
+  })
+
+  it('should throw if method is not found', async () => {
+    const message = createIncomingMessage(generate())
+    const methods = new Map()
+    const node = { methods } as unknown as Node
+
+    tree.match.mockImplementationOnce(() => node)
+
+    await expect(process(message)).rejects.toThrow(MethodNotAllowed)
   })
 
   it('should call method', async () => {
@@ -85,7 +103,7 @@ describe('request processing', () => {
     expect(call).toHaveBeenCalled()
   })
 
-  it('should call method', async () => {
+  it('should output reply', async () => {
     mockNode(method, call)
 
     const output = await process(message)

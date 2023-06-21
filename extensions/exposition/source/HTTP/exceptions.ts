@@ -19,6 +19,18 @@ export class BadRequest extends ClientError {
   }
 }
 
+export class NotFound extends ClientError {
+  public constructor () {
+    super(404)
+  }
+}
+
+export class MethodNotAllowed extends ClientError {
+  public constructor () {
+    super(405)
+  }
+}
+
 class MediaTypeException extends ClientError {
   private static readonly message = 'Supported media types:\n- ' + types.join('\n- ')
 
@@ -27,14 +39,14 @@ class MediaTypeException extends ClientError {
   }
 }
 
-export class UnsupportedMediaType extends MediaTypeException {
-  public constructor () {
-    super(415)
-  }
-}
-
 export class NotAcceptable extends MediaTypeException {
   public constructor () {
     super(406)
+  }
+}
+
+export class UnsupportedMediaType extends MediaTypeException {
+  public constructor () {
+    super(415)
   }
 }

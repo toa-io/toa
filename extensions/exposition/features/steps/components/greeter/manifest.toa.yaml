@@ -3,3 +3,7 @@ name: greeter
 operations:
   greet:
     output: string
+
+exposition:
+  /:
+    GET: greet
