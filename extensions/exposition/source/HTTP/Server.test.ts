@@ -180,7 +180,7 @@ describe('result', () => {
 
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.set).toHaveBeenCalledWith('content-type', 'text/plain')
-    expect(res.send).toHaveBeenCalledWith(message)
+    expect(res.send).toHaveBeenCalledWith(expect.stringContaining(message))
   })
 
   it('should send client error', async () => {
@@ -196,7 +196,7 @@ describe('result', () => {
 
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.set).toHaveBeenCalledWith('content-type', 'text/plain')
-    expect(res.send).toHaveBeenCalledWith(message)
+    expect(res.send).toHaveBeenCalledWith(expect.stringContaining(message))
   })
 })
 

@@ -87,12 +87,13 @@ export class Server extends Connector {
     return (exception: Error) => {
       const status = exception instanceof Exception ? exception.status : 500
       const outputAllowed = exception instanceof ClientError || this.debug
+      const message = exception.stack ?? exception.message
 
       response.status(status)
 
-      if (exception.message !== '' && outputAllowed) {
+      if (message !== '' && outputAllowed) {
         response.set('content-type', 'text/plain')
-        response.send(exception.message)
+        response.send(message)
       } else
         response.end()
     }
