@@ -42,6 +42,16 @@ describe('read', () => {
     expect(output).toStrictEqual(input)
   })
 
+  it('should parse text/plain', async () => {
+    const path = generate()
+    const headers = { 'content-type': 'text/plain' }
+    const input = generate()
+    const request = createRequest({ path, headers }, input)
+    const output = await read(request)
+
+    expect(output).toStrictEqual(input)
+  })
+
   it('should throw on unsupported request media type', async () => {
     const path = generate()
     const headers = { 'content-type': 'wtf/' + generate() }
