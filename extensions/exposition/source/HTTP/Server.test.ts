@@ -29,8 +29,6 @@ it('should instance of connector', async () => {
 it('should create express app', async () => {
   expect(express).toHaveBeenCalled()
   expect(app.disable).toHaveBeenCalledWith('x-powered-by')
-  expect(app.enable).toHaveBeenCalledWith('case sensitive routing')
-  expect(app.enable).toHaveBeenCalledWith('strict routing')
 })
 
 it('should support cors', async () => {
@@ -132,7 +130,7 @@ describe('result', () => {
     server.attach(process)
     await use(req)
 
-    expect(res.status).toHaveBeenCalledWith(204)
+    expect(res.sendStatus).toHaveBeenCalledWith(204)
   })
 
   it('should send result', async () => {
@@ -196,7 +194,7 @@ describe('result', () => {
 
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.set).toHaveBeenCalledWith('content-type', 'text/plain')
-    expect(res.send).toHaveBeenCalledWith(expect.stringContaining(message))
+    expect(res.send).toHaveBeenCalledWith(message)
   })
 })
 

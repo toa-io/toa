@@ -6,8 +6,12 @@ import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
 export function write (request: Request, response: Response, value: any): void {
-  const buf = encode(value, request, response)
+  const type = negotiate(request)
+  const format = formats[type]
+  const buf = format.encode(value)
 
+  // content-length and etag are set by Express
+  response.set('content-type', type)
   response.send(buf)
 }
 
@@ -26,17 +30,6 @@ export async function read (request: Request): Promise<any> {
   } catch {
     throw new BadRequest()
   }
-}
-
-function encode (value: any, request: Request, response: Response): Buffer {
-  const type = negotiate(request)
-  const format = formats[type]
-  const buf = format.encode(value)
-
-  response.set('content-type', type)
-  // content-length and etag are set by Express
-
-  return buf
 }
 
 function negotiate (request: Request): string {

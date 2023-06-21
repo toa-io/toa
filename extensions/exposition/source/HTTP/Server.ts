@@ -25,8 +25,6 @@ export class Server extends Connector {
     const app = express()
 
     app.disable('x-powered-by')
-    app.enable('case sensitive routing')
-    app.enable('strict routing')
     app.use(cors({ allowedHeaders: ['content-type'] }))
     app.use(supportedMethods(properties.methods))
 
@@ -43,7 +41,7 @@ export class Server extends Connector {
   }
 
   protected override async open (): Promise<void> {
-    const listening = promex<undefined>()
+    const listening = promex()
 
     this.server = this.app.listen(8000, listening.callback)
 
@@ -53,7 +51,7 @@ export class Server extends Connector {
   }
 
   protected override async close (): Promise<void> {
-    const stopped = promex<undefined>()
+    const stopped = promex()
 
     this.server?.close(stopped.callback)
 
@@ -75,7 +73,7 @@ export class Server extends Connector {
         response.set(header, value as string)
 
       if (message.value === undefined)
-        response.status(204)
+        response.sendStatus(204)
       else {
         response.status(200)
         write(request, response, message.value)
@@ -87,11 +85,12 @@ export class Server extends Connector {
     return (exception: Error) => {
       const status = exception instanceof Exception ? exception.status : 500
       const outputAllowed = exception instanceof ClientError || this.debug
-      const message = exception.stack ?? exception.message
 
       response.status(status)
 
-      if (message !== '' && outputAllowed) {
+      if (outputAllowed) {
+        const message = exception instanceof ClientError ? exception.message : exception.stack
+
         response.set('content-type', 'text/plain')
         response.send(message)
       } else
