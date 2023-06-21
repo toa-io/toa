@@ -12,12 +12,12 @@ function testNode (node: Node, testMethod: (method: Method, mapping: Mapping) =>
 
   for (const [key, value] of Object.entries(node))
     if (key[0] === '/') testNode(value as Node, testMethod)
-    else if (methods.has(key as Method))
+    else if (methods.has(key))
       if (intermediate)
         throw new Exception('Methods of intermediate nodes are unreachable. ' +
           'Move the declaration to the \'/\' key.')
       else
-        testMethod(key as Method, value as Mapping)
+        testMethod(key, value as Mapping)
 }
 
 function testMethod (operations: Operations): (method: Method, mapping: Mapping) => void {
@@ -61,7 +61,7 @@ export type Methods = Partial<Record<Method, Mapping>>
 
 export type Directives = Record<string, any>
 
-export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | string
 
 export interface Mapping {
   namespace: string

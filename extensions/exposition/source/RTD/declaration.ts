@@ -18,10 +18,10 @@ function normalizeNode (declaration: Node | string, manifest: Manifest): RTD.Nod
 
   for (const [key, value] of Object.entries(declaration)) {
     if (key[0] === '/')
-      node[key as keyof RTD.Node] = normalizeNode(value as Node | string, manifest)
+      node[key] = normalizeNode(value as Node | string, manifest)
 
-    if (syntax.methods.has(key as RTD.Method))
-      node[key as RTD.Method] = normalizeMapping(value as Mapping, manifest)
+    if (syntax.methods.has(key))
+      node[key] = normalizeMapping(value as Mapping, manifest)
   }
 
   return node

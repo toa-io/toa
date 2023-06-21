@@ -1,6 +1,6 @@
 import { type Remotes } from './Remotes'
 import { type Server } from './HTTP'
-import { type Tree } from './RTD/Tree'
+import { type Tree } from './RTD'
 
 export const remotes = {
   connect: jest.fn(),

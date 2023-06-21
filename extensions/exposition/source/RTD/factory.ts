@@ -30,10 +30,10 @@ function createNode (definition: syntax.Node, context: Context): Node {
       const route = createRoute(key, value, context)
 
       routes.push(route)
-    } else if (syntax.methods.has(key as syntax.Method)) {
-      const method = createMethod(key as syntax.Method, value, context)
+    } else if (syntax.methods.has(key)) {
+      const method = createMethod(key, value, context)
 
-      methods.set(key as syntax.Method, method)
+      methods.set(key, method)
     }
 
   const properties: Properties = {

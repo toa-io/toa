@@ -33,9 +33,11 @@ export class Gateway extends Connector {
   }
 
   private async process (input: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    this.tree.match(input.path)
+    const node = this.tree.match(input.path)
+    const method = node?.methods.get(input.method)
+    const value = await method?.call({}, {})
 
-    return { headers: {} }
+    return { headers: {}, value }
   }
 
   private async discover (): Promise<void> {

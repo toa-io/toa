@@ -15,7 +15,7 @@ Feature: RTD Routes
         /shortcuts:
           /operation:
             GET: greet
-          /mehtod: greet
+          /method: greet
       """
     When the following request is received:
       """http
@@ -30,7 +30,7 @@ Feature: RTD Routes
       output: Hello
       """
     Examples:
-      | route   |
-      | /strict |
-#      | /shortcuts/operation |
-#      | /shortcuts/method    |
+      | route                |
+      | /strict              |
+      | /shortcuts/operation |
+      | /shortcuts/method    |

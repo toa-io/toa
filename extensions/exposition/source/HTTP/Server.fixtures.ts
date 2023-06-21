@@ -26,11 +26,11 @@ jest.MockedObject<Request> {
   return stream as unknown as jest.MockedObject<Request>
 }
 
-export function createIncomingMessage (path: string): IncomingMessage {
+export function createIncomingMessage (path: string, method: string = 'GET'): IncomingMessage {
   const headers = {}
   const value = null
 
-  return { path, headers, value }
+  return { method, path, headers, value }
 }
 
 export const res = {

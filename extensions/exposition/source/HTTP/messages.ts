@@ -46,6 +46,7 @@ interface Message {
 }
 
 export interface IncomingMessage extends Message {
+  method: string
   path: string
   headers: IncomingHttpHeaders
 }

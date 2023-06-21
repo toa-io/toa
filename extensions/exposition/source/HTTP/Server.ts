@@ -61,10 +61,10 @@ export class Server extends Connector {
   }
 
   private async read (request: Request): Promise<IncomingMessage> {
-    const { path, headers } = request
+    const { method, path, headers } = request
     const value = await read(request)
 
-    return { path, headers, value }
+    return { method, path, headers, value }
   }
 
   private success (request: Request, response: Response) {

@@ -101,14 +101,16 @@ describe('request', () => {
   })
 
   it('should pass decoded request', async () => {
+    const path = generate()
+    const method = generate()
     const headers = { 'content-type': 'application/json' }
     const value = { [generate()]: generate() }
     const json = JSON.stringify(value)
-    const req = createRequest({ headers }, json)
+    const req = createRequest({ path, method, headers }, json)
 
     await use(req)
 
-    expect(process).toHaveBeenCalledWith(expect.objectContaining({ value }))
+    expect(process).toHaveBeenCalledWith(expect.objectContaining({ path, method, headers, value }))
   })
 })
 

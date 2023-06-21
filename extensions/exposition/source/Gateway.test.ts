@@ -5,6 +5,7 @@ import { Gateway } from './Gateway'
 import { broadcast, server, tree } from './Gateway.fixtures'
 import { createIncomingMessage } from './HTTP/Server.fixtures'
 import { type Processing } from './HTTP'
+import { type Node } from './RTD'
 
 let gateway: Gateway
 
@@ -56,6 +57,11 @@ it('should merge branches', async () => {
 describe('request processing', () => {
   let process: Processing
 
+  const method = generate()
+  const reply = { output: generate() }
+  const call = jest.fn(async () => reply)
+  const message = createIncomingMessage(generate(), method)
+
   beforeEach(async () => {
     await gateway.connect()
     await immediate()
@@ -70,4 +76,30 @@ describe('request processing', () => {
 
     expect(tree.match).toHaveBeenCalledWith(message.path)
   })
+
+  it('should call method', async () => {
+    mockNode(method, call)
+
+    await process(message)
+
+    expect(call).toHaveBeenCalled()
+  })
+
+  it('should call method', async () => {
+    mockNode(method, call)
+
+    const output = await process(message)
+
+    expect(output).toMatchObject({ value: reply })
+  })
 })
+
+function mockNode (verb: string, call: () => Promise<any>): jest.MockedObject<Node> {
+  const method = { call }
+  const methods = new Map([[verb, method]])
+  const node = { methods } as unknown as jest.MockedObject<Node>
+
+  tree.match.mockImplementationOnce(() => node)
+
+  return node
+}
