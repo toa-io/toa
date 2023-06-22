@@ -34,14 +34,15 @@ async function computation (input, context) {
 
 ## Distributed lock manager
 
-`async lock(id: string): boolean`
+`async lock(id: string, callback: async? () => void)`
 
-Acquire a lock with a given ID. Returns `true` if a lock is acquired, `false` otherwise. If the lock
-is not acquired, the Promise is resolved when the lock is released.
+Attempts to acquire a lock with the specified `id`.
+If the lock is successfully acquired, the `callback` function is executed.
+Once the execution of the `callback` is completed, the lock is released.
 
 ```javascript
 async function computation (input, context) {
-  const acquired = await context.stash.lock('lock id')
+  await context.stash.lock('lock id', () => console.log('Lock aquired'))
 }
 ```
 
