@@ -1,6 +1,6 @@
 # Toa
 
-Toa is a way to build and operate reliable distributed systems at an incredible development speed.
+Low-code paltform for developers.
 
 ## Status
 
@@ -21,19 +21,21 @@ Non-scattered documentation is coming this summer.
     - Automatic service discovery
     - Distributed exception handling
     - Multi-protocol transmission (built-in AMQP and HTTP support)
-    - In-memory communications within compositions
-    - Message contract validation
+    - In-memory communications
+    - Messages validation
 - Persistent state management
     - Concurrency control
     - Batching
-    - Data contract validation
+    - Data validation
     - Built-in implementations for MongoDB and SQL
+- Shared cache
+- Distributed lock manager
 - API Gateway
     - Realtime resource discovery
     - Semantic method mapping
 - Configuration
 - Transient state
-- External communications with permissions
+- External communications governance
 
 ### Development
 
@@ -41,20 +43,20 @@ Non-scattered documentation is coming this summer.
     - Node.js support
 - Service prototyping (inheritance)
 - Generic prototype
-- Data and operations contracts
 - Declarative HTTP API endpoints
 - Declarative integration tests
 - Runtime bootloader API
+- Development environment configuration
 - CLI
-- Unlimited extensibility:
+- Extensibility:
     - Persistent storages
     - Communication protocols
     - Runtime core abstractions
-- Development environment configuration
 
 ### Operations
 
 - Standalone infrastructure configuration
+- Multi-environment configuration
 - Components distribution across containers
 - One-command fully automated deployment
     - Preset multi-arch docker images
