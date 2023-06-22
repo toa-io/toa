@@ -1,5 +1,8 @@
 Feature: Errors
 
+  Background:
+    Given the Gateway is running
+
   Scenario Outline: Missing routes
     Given the `greeter` is running with the following manifest:
       """yaml
