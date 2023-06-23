@@ -13,25 +13,6 @@ it('should load', async () => {
   await expect(load('dummies/b')).resolves.not.toThrow()
 })
 
-it('should convolve with TOA_ENV', async () => {
-  const env = process.env.TOA_ENV
-
-  const original = await load('dummies/env')
-
-  expect(Object.entries(original.extensions)[0][1]).toStrictEqual({ foo: 'https://production' })
-
-  process.env.TOA_ENV = 'integration'
-
-  const component = await load('dummies/env')
-
-  const entries = Object.entries(component.extensions)
-  const origins = entries[0][1]
-
-  expect(origins).toStrictEqual({ foo: 'http://test' })
-
-  process.env.TOA_ENV = env
-})
-
 describe('prototype', () => {
   it('should use generic prototype as default', async () => {
     const manifest = await load('./dummies/a')

@@ -1,4 +1,4 @@
-Feature: Origins Extension
+Feature: Origins extension
 
   Scenario: HTTP Aspect
     Given I boot `origins.http` component

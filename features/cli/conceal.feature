@@ -28,10 +28,11 @@ Feature: Deploy secrets
 
   Scenario: Deploy a secret to a namespace
     Given I have a kube context kind-kind
-    When I run `kubectl create ns test-secret`
+    When I run `kubectl create namespace test-secret --dry-run=client -o json | kubectl apply -f -`
     And I run `toa conceal test foo=bar --namespace test-secret`
     And I run `kubectl get secrets --namespace test-secret`
     Then stdout should contain lines:
       """
       toa-test
       """
+    Then I run `kubectl delete secret toa-test -n test-secret`

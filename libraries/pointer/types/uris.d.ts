@@ -1,27 +1,19 @@
-import { Locator } from '@toa.io/core/types'
+import type { Locator } from '@toa.io/core'
 
-declare namespace toa.pointer {
+export function construct (declaration: URIs | string): URIs
 
-  namespace uris {
+export function resolve (locator: Locator, uris: URIs): Resolution
 
-    type Node = string | {
-      [key: string]: Node
-    }
-
-    type Resolution = {
-      url: URL
-      entry: string
-    }
-
-    type Resolver = (locator: Locator, uris: URIs) => Resolution
-
-  }
-
-  type URIs = string | {
-    default?: string
-    [key: string]: uris.Node
-  }
-
+type Node = string | {
+  [key: string]: Node
 }
 
-export type URIs = toa.pointer.URIs
+type URIs = string | {
+  default?: string
+  [key: string]: Node
+}
+
+type Resolution = {
+  url: URL
+  entry: string
+}

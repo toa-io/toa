@@ -4,6 +4,7 @@ const assert = require('node:assert')
 const { exceptions } = require('@toa.io/core')
 const { transpose, match } = require('@toa.io/generic')
 const { parse } = require('@toa.io/yaml')
+const { diff } = require('jest-diff')
 
 const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')
@@ -118,10 +119,10 @@ Then('the reply is received:',
   function (yaml) {
     if (this.exception !== undefined) throw this.exception
 
-    const object = parse(yaml)
-    const matches = match(this.reply, object)
+    const expected = parse(yaml)
+    const matches = match(this.reply, expected)
 
-    assert.equal(matches, true, 'Reply does not match')
+    assert.equal(matches, true, diff(expected, this.reply))
   })
 
 Then('the reply is received',
@@ -138,10 +139,10 @@ Then('the following exception is thrown:',
    * @this {toa.features.Context}
    */
   function (yaml) {
-    const object = parse(yaml)
-    const matches = match(this.exception, object)
+    const expected = parse(yaml)
+    const matches = match(this.exception, expected)
 
-    assert.equal(matches, true, 'Exception doesn\'t match')
+    assert.equal(matches, true, diff(expected, this.exception))
   })
 
 When('an event {label} is emitted with the payload:',

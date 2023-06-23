@@ -1,9 +1,9 @@
 'use strict'
 
+jest.mock('../src/connector')
+
 const { Call } = require('../src/call')
 const fixtures = require('./call.fixtures')
-
-jest.mock('../src/connector')
 
 const { Connector } = require('../src/connector')
 

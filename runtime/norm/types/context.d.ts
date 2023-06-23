@@ -1,77 +1,40 @@
 import * as _component from './component'
 import { Locator } from '@toa.io/core/types'
+import type { Declaration } from './context/declaration'
 
-declare namespace toa.norm {
-
-  namespace context {
-
-    interface Runtime {
-      version: string
-      registry?: string
-      proxy?: string
-    }
-
-    interface Registry {
-      base?: string
-      platforms?: string[] | null
-      build?: {
-        arguments?: string[]
-        run?: string
-      },
-      credentials: string
-    }
-
-    interface Composition {
-      name: string,
-      components: string[] | _component.Component[]
-    }
-
-    namespace dependencies {
-
-      type Instance = {
-        locator: Locator
-        manifest?: Object
-      }
-
-      type References = {
-        [reference: string]: _component.Component[]
-      }
-
-    }
-
-    interface Dependencies {
-      [reference: string]: dependencies.Instance[]
-    }
-
-    interface Declaration {
-      name: string
-      description?: string
-      version?: string
-      runtime?: Runtime | string
-      registry?: Registry | string
-      packages?: string
-      compositions?: Composition[]
-      annotations?: Record<string, object>
-    }
-
-    type Constructor = (path: string, environment?: string) => Promise<Context>
-  }
-
-  interface Context extends context.Declaration {
-    runtime?: context.Runtime
-    environment?: string
-    registry?: context.Registry
-    components?: _component.Component[]
-    dependencies?: context.Dependencies
-  }
-
+interface Runtime {
+  version: string
+  registry?: string
+  proxy?: string
 }
 
-export type Composition = toa.norm.context.Composition
-export type Context = toa.norm.Context
-
-export namespace dependencies {
-  export type Instance = toa.norm.context.dependencies.Instance
+interface Registry {
+  base?: string
+  platforms?: string[] | null
+  build?: {
+    arguments?: string[]
+    run?: string
+  },
+  credentials: string
 }
 
-export const context: toa.norm.context.Constructor
+interface Composition {
+  name: string,
+  components: _component.Component[]
+}
+
+export interface Dependency {
+  locator: Locator
+  manifest?: object
+}
+
+interface Context extends Declaration {
+  runtime?: Runtime
+  environment?: string
+  registry?: Registry
+  compositions?: Composition[]
+  components?: _component.Component[]
+  dependencies?: Record<string, Dependency[]>
+}
+
+export function context (path: string, environment?: string): Promise<Context>

@@ -4,6 +4,9 @@ const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
 const { random } = require('@toa.io/generic')
 
+jest.mock('../source/communication')
+jest.mock('@toa.io/pointer')
+
 const {
   /** @type {jest.MockedClass<Pointer>} */
   Pointer
@@ -13,9 +16,6 @@ const {
   /** @type {jest.MockedClass<Communication>} */
   Communication
 } = require('../source/communication')
-
-jest.mock('../source/communication')
-jest.mock('@toa.io/pointer')
 
 const { connector } = require('../')
 

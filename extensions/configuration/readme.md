@@ -1,4 +1,4 @@
-# Toa Configuration Extension
+# Toa Configuration
 
 ## TL;DR
 
@@ -45,7 +45,8 @@ $ toa conceal configuration BAZ_VALUE=$ecr3t
 
 ## Problem Definition
 
-- Components must be reusable in different contexts and deployment environments that are in different configurations.
+- Components must be reusable in different contexts and deployment environments that are in
+  different configurations.
 - Some algorithm parameters must be deployed secretly.
 
 ## Definitions
@@ -232,7 +233,8 @@ Configuration can be exported by [`toa env`](/runtime/cli/readme.md#env).
 Context Configuration values may contain placeholders that reference environment variables.
 Placeholders are replaced with values if the corresponding environment variables are set.
 
-> Placeholders can only be used with local environment (exported by `toa env`), as these values are not
+> Placeholders can only be used with local environment (exported by `toa env`), as these values are
+> not
 > deployed.
 
 ```yaml

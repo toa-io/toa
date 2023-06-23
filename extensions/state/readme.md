@@ -1,4 +1,4 @@
-# Toa State Extension
+# Toa State
 
 ## TL;DR
 

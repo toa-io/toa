@@ -25,7 +25,8 @@
   "dependencies": {
     "@toa.io/generic": "0.20.0-dev.18",
     "fast-glob": "3.2.12",
-    "find-up": "5.0.0"
+    "find-up": "5.0.0",
+    "fs-extra": "11.1.1"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }

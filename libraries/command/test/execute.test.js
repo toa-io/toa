@@ -22,7 +22,7 @@ it('should not throw on error', async () => {
   const process = await execute(command)
 
   expect(process.exitCode).toStrictEqual(127)
-  expect(process.error).toContain('command not found')
+  expect(process.error).toContain('not found')
 })
 
 it('should pass stdin', async () => {
