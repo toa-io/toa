@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "/dev/null",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "sourceMap": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "incremental": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "noImplicitOverride": true
+  },
+  "exclude": [
+    "**/transpiled"
+  ]
+}

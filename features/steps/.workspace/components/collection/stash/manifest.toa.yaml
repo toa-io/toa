@@ -1,0 +1,9 @@
+name: stash
+
+operations:
+  set:
+    input: string
+  get:
+    output: string
+
+stash: ~
