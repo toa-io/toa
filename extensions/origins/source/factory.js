@@ -32,8 +32,6 @@ class Factory {
         continue
       }
 
-      if (!URL.canParse(reference)) throw new Error(`${reference} is invalid URL`)
-
       const url = new URL(reference)
 
       if (protocol.protocols.includes(url.protocol)) protocolManifest[origin] = reference
