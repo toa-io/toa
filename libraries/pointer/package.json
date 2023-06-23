@@ -22,6 +22,7 @@
     "access": "public"
   },
   "main": "source/index.js",
+  "types": "types/index.d.ts",
   "dependencies": {
     "@toa.io/console": "0.20.0-dev.18",
     "@toa.io/generic": "0.20.0-dev.18",

@@ -65,3 +65,18 @@ Feature: Stash extension
       """yaml
       output: '3'
       """
+
+  Scenario: Deployment
+    Given I have a component `stash`
+    And I have a context with:
+      """
+      stash: redis://redis.example.com
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        default-stash:
+          - name: TOA_STASH
+            value: redis://redis.example.com
+      """

@@ -29,11 +29,9 @@ Values are encoded using [msgpack](https://msgpack.org).
 
 ## Distributed lock manager
 
-`async lock(id: string | string[], callback: async? () => void)`
+`async lock(id: string | string[], routine: async? () => void)`
 
-See `redlock`'s [`using` method](https://github.com/mike-marcacci/node-redlock#usage).
-
-Lock ID is component-scoped.
+Executes `routine` once a lock is succesively acquired. Lock ID is component-scoped.
 
 ```javascript
 async function computation (input, context) {
@@ -51,10 +49,13 @@ stash: ~
 
 ## Deployment
 
-`stash` context annotation is a [Pointer](/libraries/pointer).
+`stash` context annotation is a [Pointer](/libraries/pointer)-like.
 
 ```yaml
 stash: # shortcut is available
   default: redis://redis.example.com
   dummies.dummy: redis://dummies.redis.example.com
 ```
+
+Neither Password Authentication nor TLS are implemented.
+[#367](https://github.com/toa-io/toa/issues/367)
