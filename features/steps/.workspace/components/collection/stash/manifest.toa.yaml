@@ -10,5 +10,15 @@ operations:
     output: number
   del:
     input: string
+  store:
+    input:
+      oneOf:
+        - type: object
+        - type: array
+  fetch:
+    output:
+      oneOf:
+        - type: object
+        - type: array
 
 stash: ~

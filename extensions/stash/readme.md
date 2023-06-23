@@ -16,7 +16,7 @@ async function computation (input, context) {
 
 Keys are component-scoped, meaning that the underlying Redis keys are `namespace:name:key`.
 
-### Additional methods
+### Storing objects
 
 `async store (key: string, value: object, ...args: Array<string | number>)`
 
@@ -51,10 +51,10 @@ stash: ~
 
 ## Deployment
 
-Stash context annotation is a [Pointer](/libraries/pointer).
+`stash` context annotation is a [Pointer](/libraries/pointer).
 
 ```yaml
 stash: # shortcut is available
-  default: redis://localhost
-  dummies.dummy: redis://redis{0-3}.example.com:6379 # shard syntax is available for clusters
+  default: redis://redis.example.com
+  dummies.dummy: redis://dummies.redis.example.com
 ```

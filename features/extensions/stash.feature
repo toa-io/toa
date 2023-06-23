@@ -12,6 +12,32 @@ Feature: Stash extension
       output: hello
       """
 
+  Scenario: Storing an object
+    Given I boot `stash` component
+    When I invoke `store` with:
+      """yaml
+      input:
+        foo: bar
+      """
+    When I invoke `fetch`
+    Then the reply is received:
+      """yaml
+      output:
+        foo: bar
+      """
+
+  Scenario: Storing an array
+    Given I boot `stash` component
+    When I invoke `store` with:
+      """yaml
+      input: [foo, bar]
+      """
+    When I invoke `fetch`
+    Then the reply is received:
+      """yaml
+      output: [foo, bar]
+      """
+
   Scenario: Using increment
     Given I boot `stash` component
     When I invoke `del` with:
