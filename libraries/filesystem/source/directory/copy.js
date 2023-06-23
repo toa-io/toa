@@ -1,10 +1,9 @@
 'use strict'
 
-const { promisify } = require('node:util')
-const exec = promisify(require('node:child_process').exec)
+const fs = require('fs-extra')
 
 const copy = async (source, target) => {
-  await exec(`cp -r "${source}/" "${target}"`)
+  await fs.copy(source, target)
 }
 
 exports.copy = copy
