@@ -1,3 +1,4 @@
+import Redlock from 'redlock'
 import { encode } from 'msgpackr'
 import { generate } from 'randomstring'
 import { Aspect } from './Aspect'
@@ -5,16 +6,23 @@ import * as mock from './Connection.fixtures'
 import type { Connection } from './Connection'
 import type { Cluster } from 'ioredis'
 
+jest.mock('redlock')
+
 let aspect: Aspect
 let connection: jest.MockedObject<Connection>
-let cluster: jest.MockedObject<Cluster>
+let redis: jest.MockedObject<Cluster>
+let redlock: jest.MockedObject<Redlock>
 
 const key = generate()
 
 beforeEach(() => {
+  jest.clearAllMocks()
+
   connection = new mock.Connection() as unknown as jest.MockedObject<Connection>
-  cluster = connection.redis as unknown as jest.MockedObject<Cluster>
+  redis = connection.redis as unknown as jest.MockedObject<Cluster>
   aspect = new Aspect(connection)
+  const m = (Redlock as unknown as jest.Mock<Redlock>).mock
+  redlock = (Redlock as unknown as jest.Mock<Redlock>).mock.instances[0] as unknown as jest.MockedObject<Redlock>
 })
 
 it('should depend on Connection', async () => {
@@ -26,14 +34,14 @@ it('should set', async () => {
 
   await aspect.invoke('set', key, value)
 
-  expect(cluster.set).toHaveBeenCalledWith(key, value)
+  expect(redis.set).toHaveBeenCalledWith(key, value)
 })
 
 it('should get', async () => {
   const value = await aspect.invoke('get', key)
 
-  expect(cluster.get).toHaveBeenCalledWith(key)
-  expect(value).toStrictEqual(await cluster.get.mock.results[0].value)
+  expect(redis.get).toHaveBeenCalledWith(key)
+  expect(value).toStrictEqual(await redis.get.mock.results[0].value)
 })
 
 describe('buffers', () => {
@@ -45,7 +53,7 @@ describe('buffers', () => {
 
     const buffer = encode(value)
 
-    expect(cluster.set).toHaveBeenCalledWith(key, buffer)
+    expect(redis.set).toHaveBeenCalledWith(key, buffer)
   })
 
   it('should pass arguments', async () => {
@@ -54,7 +62,7 @@ describe('buffers', () => {
 
     await aspect.invoke('store', key, value, 'EX', 1000)
 
-    expect(cluster.set).toHaveBeenCalledWith(key, buffer, 'EX', 1000)
+    expect(redis.set).toHaveBeenCalledWith(key, buffer, 'EX', 1000)
   })
 
   it.each([
@@ -63,11 +71,33 @@ describe('buffers', () => {
   ])('should decode %s', async (_, value) => {
     const buffer = encode(value)
 
-    cluster.getBuffer.mockImplementationOnce(async () => buffer)
+    redis.getBuffer.mockImplementationOnce(async () => buffer)
 
     const output = await aspect.invoke('fetch', key)
 
-    expect(cluster.getBuffer).toHaveBeenCalledWith(key)
+    expect(redis.getBuffer).toHaveBeenCalledWith(key)
     expect(output).toStrictEqual(value)
   })
+})
+
+it('should create DLM', async () => {
+  expect(Redlock).toHaveBeenCalledWith([redis])
+})
+
+it('should acquire lock', async () => {
+  const keys = [generate(), generate()]
+  const callback = jest.fn()
+
+  await aspect.invoke('lock', keys, callback)
+
+  expect(redlock.using).toHaveBeenCalledWith(keys, 5000, callback)
+})
+
+it('should handle non-array key', async () => {
+  const key = generate()
+  const callback = jest.fn()
+
+  await aspect.invoke('lock', key, callback)
+
+  expect(redlock.using).toHaveBeenCalledWith([key], 5000, callback)
 })

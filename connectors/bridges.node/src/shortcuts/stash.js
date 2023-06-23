@@ -1,20 +1,16 @@
 'use strict'
 
+const { underlay } = require('@toa.io/generic')
+
 /** @type {toa.node.shortcut} */
 const stash = (context, aspect) => {
-  context.stash = { get: get(aspect), set: set(aspect) }
-}
+  context.stash = underlay(async (segs, args) => {
+    if (segs.length !== 1) throw new Error(`Stash aspect call should have 1 segment, [${segs.join(', ')}] given`)
 
-function get (aspect) {
-  return function (key) {
-    return aspect.invoke('get', key)
-  }
-}
+    const method = segs[0]
 
-function set (aspect) {
-  return function (key, value) {
-    return aspect.invoke('set', key, value)
-  }
+    return aspect.invoke(method, ...args)
+  })
 }
 
 exports.stash = stash

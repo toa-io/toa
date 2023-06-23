@@ -1,6 +1,7 @@
 # Toa Stash
 
-Shared cache and distributed lock manager on top of [ioredis](https://github.com/redis/ioredis).
+Shared cache and distributed lock manager on top of [ioredis](https://github.com/redis/ioredis)
+and [redlock](https://github.com/mike-marcacci/node-redlock).
 
 ## Shared cache
 
@@ -28,13 +29,9 @@ Values are encoded using [msgpack](https://msgpack.org).
 
 ## Distributed lock manager
 
-> Implemented by [Node.js bridge](/connectors/bridges.node)
+`async lock(id: string | string[], callback: async? () => void)`
 
-`async lock(id: string, callback: async? () => void)`
-
-Attempts to acquire a lock with the specified `id`.
-If the lock is successfully acquired, the `callback` function is executed.
-Once the execution of the `callback` is completed, the lock is released.
+See `redlock`'s [`using` method](https://github.com/mike-marcacci/node-redlock#usage).
 
 Lock ID is component-scoped.
 

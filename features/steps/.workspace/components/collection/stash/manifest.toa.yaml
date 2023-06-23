@@ -5,5 +5,10 @@ operations:
     input: string
   get:
     output: string
+  inc:
+    input: string
+    output: number
+  del:
+    input: string
 
 stash: ~
