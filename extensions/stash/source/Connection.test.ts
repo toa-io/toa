@@ -31,13 +31,13 @@ it('should be instance of Connector', async () => {
 
 it('should connect', async () => {
   const keyPrefix = `${locator.namespace}:${locator.name}:`
-  const options: redis.ClusterOptions = { keyPrefix, enableReadyCheck: true }
+  const options: redis.ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
 
   expect(Redis).toHaveBeenCalledWith(url, options)
 
-  // await connection.connect()
-  //
-  // expect(cluster.connect).toHaveBeenCalled()
+  await connection.connect()
+
+  expect(cluster.connect).toHaveBeenCalled()
 })
 
 it('should disconnect', async () => {
