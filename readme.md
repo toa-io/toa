@@ -1,6 +1,6 @@
 # Toa
 
-Low-code paltform for developers.
+Low-code solution for developers.
 
 ## Status
 
@@ -12,27 +12,27 @@ Non-scattered documentation is coming this summer.
 ### Runtime
 
 - Interservice communications
-    - Seamless fault tolerant RPC and Events
-    - Flow control
-    - Eventual consistency guarantee
-    - Uniform interface
-        - Input/query segregation
-        - Output/error replies
-    - Automatic service discovery
-    - Distributed exception handling
-    - Multi-protocol transmission (built-in AMQP and HTTP support)
-    - In-memory communications
-    - Messages validation
+  - Seamless fault tolerant RPC and Events
+  - Flow control
+  - Eventual consistency guarantee
+  - Uniform interface
+    - Input/query segregation
+    - Output/error replies
+  - Automatic service discovery
+  - Distributed exception handling
+  - Multi-protocol transmission (built-in AMQP and HTTP support)
+  - In-memory communications
+  - Messages validation
 - Persistent state management
-    - Concurrency control
-    - Batching
-    - Data validation
-    - Built-in implementations for MongoDB and SQL
+  - Concurrency control
+  - Batching
+  - Data validation
+  - Built-in implementations for MongoDB and SQL
 - Shared cache
 - Distributed lock manager
 - API Gateway
-    - Realtime resource discovery
-    - Semantic method mapping
+  - Realtime resource discovery
+  - Semantic method mapping
 - Configuration
 - Transient state
 - External communications governance
@@ -40,7 +40,7 @@ Non-scattered documentation is coming this summer.
 ### Development
 
 - Language interoperability
-    - Node.js support
+  - Node.js support
 - Service prototyping (inheritance)
 - Generic prototype
 - Declarative HTTP API endpoints
@@ -49,9 +49,9 @@ Non-scattered documentation is coming this summer.
 - Development environment configuration
 - CLI
 - Extensibility:
-    - Persistent storages
-    - Communication protocols
-    - Runtime core abstractions
+  - Persistent storages
+  - Communication protocols
+  - Runtime core abstractions
 
 ### Operations
 
@@ -59,6 +59,6 @@ Non-scattered documentation is coming this summer.
 - Multi-environment configuration
 - Components distribution across containers
 - One-command fully automated deployment
-    - Preset multi-arch docker images
-    - Helm deployment to kubernetes
+  - Preset multi-arch docker images
+  - Helm deployment to kubernetes
 - Secrets management CLI
