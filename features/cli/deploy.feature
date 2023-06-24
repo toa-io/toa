@@ -7,15 +7,18 @@ Feature: Deployment
     Given I have components:
       | dummies.one |
       | dummies.two |
+      | stash       |
     And I have a context
     When I run `toa conceal bindings-amqp-default username=developer password=secret`
     And I run `toa deploy docker --wait`
     Then program should exit with code 0
-    When I run `kubectl get pods`
+    When I wait 5 seconds
+    And I run `kubectl get pods`
     Then stdout should contain lines:
     """
     composition-dummies-one-<...> Running
     composition-dummies-two-<...> Running
+    composition-default-stash-<...> Running
     """
     Then I run `helm uninstall collection`
     And I run `kubectl delete secret toa-bindings-amqp-default`

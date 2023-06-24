@@ -18,3 +18,5 @@ mongodb@docker: mongodb://host.docker.internal
 
 sql: pg://localhost
 sql@docker: pg://host.docker.internal
+
+stash@docker: redis://host.docker.internal
