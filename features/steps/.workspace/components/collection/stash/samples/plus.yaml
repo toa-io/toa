@@ -1,0 +1,12 @@
+extensions:
+  stash:
+    - result: null
+    - arguments:
+        - get
+        - key
+      result: 1
+    - arguments:
+        - set
+        - key
+        - 1
+      result: ~

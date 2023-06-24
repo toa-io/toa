@@ -80,3 +80,9 @@ Feature: Stash extension
           - name: TOA_STASH
             value: redis://redis.example.com
       """
+
+  Scenario: Replay sample
+    Given I have a component `stash`
+    And my working directory is ./components/stash
+    When I run `TOA_STASH=redis://localhost toa replay -a`
+    Then program should exit with code 0

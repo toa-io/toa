@@ -1,7 +1,7 @@
 'use strict'
 
 async function effect (_, context) {
-  await context.stash.lock('lock id', async () => {
+  await context.stash.lock('plusing', async () => {
     let value = await context.stash.get('key')
 
     value++
