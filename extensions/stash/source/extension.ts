@@ -1,4 +1,4 @@
-import * as pointer from '@toa.io/pointer'
+import { createDeployment, type URIMap, type Request } from '@toa.io/pointer'
 import { Aspect } from './Aspect'
 import { Connection } from './Connection'
 import type { Locator, extensions } from '@toa.io/core'
@@ -19,14 +19,13 @@ export class Factory implements extensions.Factory {
   }
 }
 
-export function deployment
-(instances: context.Dependency[], annotation: pointer.Annotation): Dependency {
-  const requests: pointer.Request[] = instances.map(createRequest)
+export function deployment (instances: context.Dependency[], annotation: URIMap): Dependency {
+  const requests: Request[] = instances.map(createRequest)
 
-  return pointer.createDeployment(ID, annotation, requests)
+  return createDeployment(ID, annotation, requests)
 }
 
-function createRequest (instance: context.Dependency): pointer.Request {
+function createRequest (instance: context.Dependency): Request {
   return {
     label: instance.locator.label,
     selectors: [instance.locator.id]

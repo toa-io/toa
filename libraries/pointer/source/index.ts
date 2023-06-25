@@ -1,4 +1,4 @@
 export { createDeployment } from './createDeployment'
 
-export type { Annotation, Declaration } from './annotation'
-export type { Request } from './Deployment'
+export type { Declaration } from './annotation'
+export type { Request, URIMap } from './Deployment'

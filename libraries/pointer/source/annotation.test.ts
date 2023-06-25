@@ -69,4 +69,11 @@ describe('validation', () => {
       expect(() => normalize(declaration))
         .toThrow('must not contain credentials')
     })
+
+  it('should throw if key is not deployable', async () => {
+    const declaration = { 'foo.bar': 'http://localhost' }
+
+    expect(() => normalize(declaration))
+      .toThrow('must NOT have additional properties')
+  })
 })
