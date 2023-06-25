@@ -1,4 +1,51 @@
+import { generate } from 'randomstring'
 import { normalize } from './annotation'
+
+describe('normalize', () => {
+  it('should expand default shards', async () => {
+    const declaration = 'amqp://rmq{0-2}.example.com'
+    const annotation = normalize(declaration)
+
+    expect(annotation)
+      .toStrictEqual({
+        '.': [
+          'amqp://rmq0.example.com',
+          'amqp://rmq1.example.com',
+          'amqp://rmq2.example.com'
+        ]
+      })
+  })
+
+  it('should expand shards within array', async () => {
+    const declaration = {
+      foo: ['amqp://rmq.example.com', 'amqp://rmq{0-2}.example.com']
+    }
+
+    const annotation = normalize(declaration)
+
+    expect(annotation)
+      .toStrictEqual({
+        foo: [
+          'amqp://rmq.example.com',
+          'amqp://rmq0.example.com',
+          'amqp://rmq1.example.com',
+          'amqp://rmq2.example.com'
+        ]
+      })
+  })
+
+  it('should substitute environment variables', async () => {
+    process.env.STAGE = generate()
+
+    const declaration = 'http://stage-${STAGE}.example.com'
+    const annotation = normalize(declaration)
+
+    expect(annotation)
+      .toStrictEqual({
+        '.': [`http://stage-${process.env.STAGE}.example.com`]
+      })
+  })
+})
 
 describe('validation', () => {
   it('should pass', async () => {

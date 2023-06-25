@@ -11,8 +11,7 @@ The Pointer annotation is an object whose keys must be one of the following:
 - namespace (e.g.: `dummies`)
 - default (`.`)
 
-The values of the annotation object must be URL or a set of URLs without credentials,
-with support for [shard syntax](/libraries/generic/readme.md#shards).
+The values of the annotation object must be URL or a set of URLs without credentials.
 
 ```yaml
 something:
@@ -20,7 +19,6 @@ something:
   two:
     - amqp://rmq0.example.com
     - amqp://rmq1.example.com
-  two.three: amqp://rmq{0-5}.example.com
 ```
 
 If the Pointer annotation is a `string`, then its value is considered as default (`.`).
@@ -29,7 +27,22 @@ If the Pointer annotation is a `string`, then its value is considered as default
 mongodb: mongo://default.db.example.com
 ```
 
-When the Pointer is used for component-specific values and the component is in the `default`
+### URL format
+
+Pointer values support placeholders for [shards](/libraries/generic/readme.md#shards) and
+environment variables.
+
+```yaml
+something:
+  one: redis://redis{0-2}.example.com
+  two: amqp://${RMQ_HOST}.example.com
+```
+
+Theese placeholders are resolved during deployment.
+
+### `default` namespace
+
+When the Pointer is used for component-specific URLs and the component is in the `default`
 namespace (that is, no `namepsace` is specified in its manifest), the annotation value must
 explicitly contain the `default` namespace.
 

@@ -24,6 +24,7 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "dependencies": {
+    "@toa.io/generic": "0.20.0-dev.21",
     "@toa.io/schemas": "0.20.0-dev.21"
   },
   "scripts": {

@@ -1,9 +1,9 @@
-declare namespace toa.generic {
+export function promex<T = undefined> (): Promex<T>
 
-  type Promex<T> = Promise<T> & {
-    resolve: (value?: T) => void
-    reject: (error?: Error) => void
-    callback: (error: Error, result: T) => void
-  }
+interface Promex<T> extends Promise<T> {
+  resolve (value: T): void
 
+  reject (reason: any): void
+
+  callback (error?: any, result?: T): void
 }

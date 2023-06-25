@@ -1,21 +1,13 @@
 import { nameVariable } from './env'
-import { normalize } from './annotation'
 import type { Dependency, Variable, Variables } from '@toa.io/operations'
-import type { Declaration } from './annotation'
 
 export class Deployment {
   private readonly id: string
-  private readonly annotation: Annotation
+  private readonly annotation: URIMap
 
-  private constructor (id: string, annotation: Annotation) {
+  public constructor (id: string, annotation: URIMap) {
     this.id = id
     this.annotation = annotation
-  }
-
-  public static create (id: string, declaration: Declaration): Deployment {
-    const annotation = normalize(declaration)
-
-    return new Deployment(id, annotation)
   }
 
   public export (requests: Request[]): Dependency {
@@ -59,4 +51,4 @@ export interface Request {
   selectors: string[]
 }
 
-export type Annotation = Record<string, string[]>
+export type URIMap = Record<string, string[]>
