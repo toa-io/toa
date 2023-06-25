@@ -2,4 +2,4 @@
 
 const { uris } = require('@toa.io/pointer')
 
-exports.annotation = uris.construct
+// exports.annotation = uris.construct

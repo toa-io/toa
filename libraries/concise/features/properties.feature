@@ -106,6 +106,23 @@ Feature: Object properties
       additionalProperties: false
       """
 
+  Scenario: Wildcard array property
+    When I write schema:
+      """yaml
+      ~: [uri]
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      patternProperties:
+        "^.*$":
+          type: array
+          items:
+            type: string
+            format: uri
+      additionalProperties: false
+      """
+
   Scenario: Property as known keyword
     When I write schema:
       """yaml

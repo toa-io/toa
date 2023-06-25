@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
-import { Connection } from './Connection'
 import { Connector, type Locator } from '@toa.io/core'
+import { Connection } from './Connection'
 import { Redis } from './Connection.fixtures'
 import type * as redis from 'ioredis'
 
@@ -26,26 +26,31 @@ beforeEach(() => {
 })
 
 it('should be instance of Connector', async () => {
-  expect(connection).toBeInstanceOf(Connector)
+  expect(connection)
+    .toBeInstanceOf(Connector)
 })
 
 it('should connect', async () => {
   const keyPrefix = `${locator.namespace}:${locator.name}:`
   const options: redis.ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
 
-  expect(Redis).toHaveBeenCalledWith(url, options)
+  expect(Redis)
+    .toHaveBeenCalledWith(url, options)
 
   await connection.connect()
 
-  expect(cluster.connect).toHaveBeenCalled()
+  expect(cluster.connect)
+    .toHaveBeenCalled()
 })
 
 it('should disconnect', async () => {
   await connection.disconnect()
 
-  expect(cluster.disconnect).toHaveBeenCalled()
+  expect(cluster.disconnect)
+    .toHaveBeenCalled()
 })
 
 it('should expose cluster', async () => {
-  expect(connection.redis).toStrictEqual(cluster)
+  expect(connection.redis)
+    .toStrictEqual(cluster)
 })

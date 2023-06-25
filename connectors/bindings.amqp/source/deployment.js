@@ -8,12 +8,13 @@ const { PREFIX } = require('./constants')
  * @type {toa.deployment.dependency.Constructor}
  */
 const deployment = (instances, annotation) => {
-  validate(annotation)
-
-  /** @type {toa.pointer.deployment.Options} */
-  const options = { prefix: PREFIX }
-
-  return pointer.deployment(instances, annotation, options)
+  // validate(annotation)
+  //
+  // /** @type {toa.pointer.deployment.Options} */
+  // const options = { prefix: PREFIX }
+  //
+  // return pointer.deployment(instances, annotation, options)
+  return {}
 }
 
 /**

@@ -18,7 +18,7 @@ type Service = {
   }
 }
 
-type Variable = {
+export type Variable = {
   name: string
   value?: string
   secret?: {
@@ -27,7 +27,7 @@ type Variable = {
   }
 }
 
-type Variables = Record<string, Variable[]>
+export type Variables = Record<string, Variable[]>
 
 export type Dependency = {
   references?: Reference[]

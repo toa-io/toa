@@ -2,6 +2,7 @@
 
 const assert = require('node:assert')
 const { join } = require('node:path')
+const { diff } = require('jest-diff')
 
 const { load, parse } = require('@toa.io/yaml')
 const { match } = require('@toa.io/generic')
@@ -32,9 +33,7 @@ Then('exported {helm-artifact} should contain:',
    * @return {Promise<void>}
    */
   async function (artifact, text) {
-    const matches = await contains(this.cwd, artifact, text)
-
-    assert.equal(matches, true, `'${artifact}' doesn't match`)
+    await contains(this.cwd, artifact, text)
   })
 
 Then('exported {helm-artifact} should not contain:',
@@ -44,9 +43,7 @@ Then('exported {helm-artifact} should not contain:',
    * @return {Promise<void>}
    */
   async function (artifact, text) {
-    const matches = await contains(this.cwd, artifact, text)
-
-    assert.equal(matches, false, `'${artifact}' contain:\n${text}`)
+    await contains(this.cwd, artifact, text)
   })
 
 /**
@@ -61,5 +58,7 @@ const contains = async (cwd, artifact, text) => {
   const contents = await load(path)
   const expected = parse(text)
 
-  return match(contents, expected)
+  const matches = match(contents, expected)
+
+  assert.equal(matches, true, diff(expected, contents))
 }

@@ -44,7 +44,6 @@ it('should resolve references', async () => {
 })
 
 describe('directory', () => {
-  /** @type {toa.schemas.Namespace} */
   let namespace
 
   beforeAll(() => {

@@ -8,9 +8,6 @@ const { Registry } = require('./registry')
 const { Composition } = require('./composition')
 const { Service } = require('./service')
 
-/**
- * @implements {toa.deployment.Factory}
- */
 class Factory {
   /** @type {toa.norm.Context} */
   #context

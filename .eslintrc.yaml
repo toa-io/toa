@@ -54,5 +54,4 @@ env:
   jest: true
 ignorePatterns:
   - '*.d.ts'
-  - '*.test.ts' # debatable
   - '**/transpiled/'

@@ -1,70 +1,53 @@
-Feature: Pointer deployment
+Feature: Pointer
 
-  Scenario Outline: URI Set deployment of <id>
-
-  URI Set must be deployed as global variable with URI Set object encoded
-
-    Given I have components:
-      | <namespace>.one |
-      | <namespace>.two |
+  Scenario: Deploy default URL
+    Given I have a component `stash`
     And I have a context with:
-      """
-      <id>:
-        system: amqp://whatever
-        <namespace>.one: <id>://host1
-        <namespace>.two: <id>://host2:3000
+      """yaml
+      stash: redis://redis.example.com
       """
     When I export deployment
     Then exported values should contain:
       """
       variables:
-        global:
-          - name: TOA_<PREFIX>_POINTER
+        default-stash:
+          - name: TOA_STASH_DEFAULT_STASH
+            value: redis://redis.example.com
       """
 
-    Examples:
-      | namespace | id      | PREFIX           |
-      | dummies   | amqp    | BINDINGS_AMQP    |
-      | mongo     | mongodb | STORAGES_MONGODB |
-
-  Scenario Outline: Deployment of <id> secrets for usernames and passwords
-
-  For each entry in URI Set a pair of `username` and `password` global secret variables must be deployed.
-
-    Given I have components:
-      | <namespace>.one |
-      | <namespace>.two |
+  Scenario: Deploy default URL set
+    Given I have a component `stash`
     And I have a context with:
-      """
-      <id>:
-        system: <id>://host0:3000
-        <namespace>: <id>://host1
-        <namespace>.one: <id>://host2
+      """yaml
+      stash:
+        - redis://redis0.example.com
+        - redis://redis1.example.com
       """
     When I export deployment
     Then exported values should contain:
       """
       variables:
-        global:
-          - name: TOA_<PREFIX>_<NAMESPACE>_USERNAME
-            secret:
-              name: toa-<prefix>-<namespace>
-              key: username
-          - name: TOA_<PREFIX>_<NAMESPACE>_PASSWORD
-            secret:
-              name: toa-<prefix>-<namespace>
-              key: password
-          - name: TOA_<PREFIX>_<NAMESPACE>_ONE_USERNAME
-            secret:
-              name: toa-<prefix>-<namespace>-one
-              key: username
-          - name: TOA_<PREFIX>_<NAMESPACE>_ONE_PASSWORD
-            secret:
-              name: toa-<prefix>-<namespace>-one
-              key: password
+        default-stash:
+          - name: TOA_STASH_DEFAULT_STASH
+            value: redis://redis0.example.com redis://redis1.example.com
       """
 
+  Scenario Outline: Deploy URL for a <type>
+    Given I have a component `stash`
+    And I have a context with:
+      """yaml
+      stash:
+        <key>: redis://redis.example.com
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        default-stash:
+          - name: TOA_STASH_DEFAULT_STASH
+            value: redis://redis.example.com
+      """
     Examples:
-      | namespace | id      | PREFIX           | NAMESPACE | prefix            |
-      | dummies   | amqp    | BINDINGS_AMQP    | DUMMIES   | bindings-amqp     |
-      | mongo     | mongodb | STORAGES_MONGODB | MONGO     | storages-mongodb |
+      | type      | key           |
+      | component | default.stash |
+      | namespace | default       |

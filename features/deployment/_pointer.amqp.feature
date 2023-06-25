@@ -1,7 +1,6 @@
 Feature: Dedicated system broker credentials deployment
 
   Scenario: Credentials for system AMQP binding
-
     Given I have a component `dummies.one`
     And I have a context with:
       """
@@ -23,4 +22,3 @@ Feature: Dedicated system broker credentials deployment
               name: toa-bindings-amqp-system
               key: password
       """
-

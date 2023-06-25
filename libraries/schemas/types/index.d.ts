@@ -1,10 +1,6 @@
-import { namespace } from './namespace'
-import { schema, is } from './schema'
-import { expand } from './expand'
-import { Exception } from './exception'
+import type { Schema } from './schema'
+import type { Namespace } from './namespace'
 
-export const namespace: namespace
-export const schema: schema
-export const is: is
-export const expand: expand
-export const Exception: Exception
+export function schema (cos: string): Schema
+
+export function namespace (coses: any[] | string): Namespace
