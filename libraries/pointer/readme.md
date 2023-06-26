@@ -5,11 +5,9 @@ and [extensions](/extensions).
 
 ## Annotation syntax
 
-The Pointer annotation is an object whose keys must be one of the following:
-
-- component ID (e.g.: `dummies.dummy`)
-- namespace (e.g.: `dummies`)
-- default (`.`)
+The Pointer annotation is an object whose keys are arbitrary dot-separated strings.
+The meaning of these keys are defined in the corresponding module that unilizes the Poiner for URL
+deployment.
 
 The values of the annotation object must be URL or a set of URLs without credentials.
 

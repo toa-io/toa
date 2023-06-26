@@ -1,6 +1,6 @@
 # Toa Origins
 
-Enables external communications over supported protocols (HTTP and AMQP).
+External communications with permissions over supported protocols (HTTP and AMQP).
 
 ## TL;DR
 
@@ -11,18 +11,17 @@ namespace: dummies
 
 origins:
   docs: http://www.domain.com/docs/
-  amazon: amqps://amqp.amazon.com
+  queues: ~
 ```
 
 ```javascript
-// Node.js bridge 
 async function transition (input, object, context) {
-  // direct Aspect invocation
-  await context.aspects.http('docs', './example', { method: 'GET' })
-
-  // shortcuts
   await context.http.docs.example.get() // GET http://www.domain.com/docs/example
-  await context.amqp.amazon.emit('something_happened', { really: true })
+  await context.amqp.queues.emit('something_happened', { really: true })
+
+  // direct Aspect invocation
+  await context.aspects.http('docs', 'example', { method: 'GET' })
+  await context.aspects.http('http://api.example.com', { method: 'GET' })
 }
 ```
 
@@ -30,30 +29,8 @@ async function transition (input, object, context) {
 # context.toa.yaml
 origins:
   dummies.dummy:
-    amazon: amqps://amqp.azure.com
-    amazon@staging: amqp://amqp.stage
+    queues: amqps://amqp.azure.com
 ```
-
-## Manifest
-
-`origins` manifest is an object with origin names as keys an origin URLs as values.
-Component's `origins` manifest can be overridden by the Context `origins` annotation.
-
-### Sharded Connections
-
-Origin value may contain [shards](/libraries/generic/readme.md#shards) placeholders.
-
-### Environment Variables
-
-Origin value may contain environment variable placeholders.
-
-```yaml
-# manifest.toa.yaml
-origins:
-  foo@dev: stage${STAGE_NUMBER}.stages.com
-```
-
-This is only usable in local development environment.
 
 ## HTTP Aspect
 
@@ -63,46 +40,37 @@ Aspect invocation function
 signature: `async (origin: string, rel: string, reuest: fetch.Request): fetch.Response`
 
 - `origin`: name of the origin in the manifest
-- `rel`: relative reference to a resource
+- `rel`: reference to a resource relative to the origin's value
 - `request`: `Request` form `node-fetch`
 
 ### Absolute URLs
 
-Requests to arbitrary URLs can be implemented with overloaded direct Aspect invocation.
-
 `async (url: string, request: fetch.Request): fetch.Response`
 
+Requests to arbitrary URLs can be implemented with overloaded direct Aspect invocation.
+
 By default, requests to arbitrary URLs are not allowed and must be explicitly permitted by setting
-permissions in the Origins Annotation.
-
-The Rules object is stored in the `.http` property of the corresponding component. Each key in the
-Rules object is a regular expression that URLs will be tested against, and each value is a
-permission — either `true` to allow the URL or `false` to deny it. In cases where a URL matches
-multiple rules, denial takes priority.
-
-> The `null` key is a special case that represents "any URL".
-
-#### Example
-
-```yaml
-# context.toa.yaml
-origins:
-  dummies.dummy:
-    .http:
-      /^https?:\/\/api.domain.com/: true
-      /^http:\/\/sandbox.domain.com/@staging: true  # staging environment
-      /.*hackers.*/: false                          # deny rule
-      ~: true                                       # allow any URL
-```
+permissions in the [Origins annotation](#context-annotation).
 
 ```javascript
-// Node.js bridge 
+// Node.js bridge
 async function transition (input, object, context) {
   await context.aspects.http('https://api.domain.com/example', { method: 'POST' })
 }
 ```
 
-#### `null` manifest
+## AMQP Aspect
+
+Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO` restricted
+to `emit` and `request` methods.
+
+## Manifest
+
+`origins` manifest is a [Pointer](/libraries/pointer) with origin names as keys.
+Its values can be overridden by the context [annotation](#context-annotation).
+If the value is `null`, then it _must_ be overriden.
+
+### `null` manifest
 
 To enable the extension for a component that uses arbitrary URLs without any specific origins to
 declare, the Origins manifest should be set to `null`.
@@ -112,20 +80,77 @@ declare, the Origins manifest should be set to `null`.
 origins: ~
 ```
 
-## AMQP Aspect
+## Context annotation
 
-Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO` restricted
-to `emit` and `request` methods.
+The `origins` annotation is a set of Pointers defined for the corresponding components.
+The values of each pointer override the values defined in the manifest.
 
-AMQP origins can have credential secrets deployed. Secret's name must
-follow `origins-{namespace}-{component}-{origin}` and it must have keys `username`
-and `password`.
-
-### Example
-
-```shell
-# deploy credentials to the current kubectl context
-$ toa conceal origins-dummies-dummiy-messages username=developer password=secret
+```yaml
+# context.toa.yaml
+origins:
+  dummies.dummy:
+    queues: amqps://amqp.azure.com
 ```
 
-See [`toa conceal`](/runtime/cli/readme.md#conceal).
+If the same origin name is used across multiple componets, it can be overridden in the _wildcard
+group_ (`.`).
+
+```yaml
+# context.toa.yaml
+origins:
+  .:
+    # overrides `common` origin in the components where it declared
+    common: https://api.example.com
+  dummies.dummy:
+    # takes priority over wildcard
+    common: https://another.api.com
+```
+
+### HTTP URL Permissions
+
+The rules for arbitrary HTTP requests are stored in the `.http` property of the corresponding
+component as an object.
+Each key in the rules object is a regular expression that URLs will be tested against, and each
+value is a permission — either `true` to allow the URL or `false` to deny it.
+In cases where a URL matches multiple rules, denial takes priority.
+
+> The `null` is a special key that represents any URL.
+
+#### Example
+
+```yaml
+# context.toa.yaml
+origins:
+  dummies.dummy:
+    .http:
+      /^https?:\/\/api.domain.com/: true
+      /^http:\/\/sandbox.domain.com/@staging: true  # `staging` environment
+      /.*hackers.*/: false                          # deny rule
+      ~: true                                       # allow any URL
+```
+
+Rules declared in the wildcard group are applied to all components:
+
+```yaml
+origins:
+  .:
+    .http:
+      /.*hackers.*/: false
+```
+
+## Deployment
+
+Each key of the annotation is deployed as a Pointer with ID
+following `origins-{component}-{origin}` with dots replaced by dashes.
+This means credentials for the declared origins must be deployed as follows:
+
+```yaml
+# context.toa.yaml
+origins:
+  dummies.dummy:
+    queues: amqp://rmq.example.com
+```
+
+```shell
+$ toa conceal origins-dummies-dummy-queues username=developer password=secret
+```

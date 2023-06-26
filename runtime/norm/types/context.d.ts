@@ -23,9 +23,9 @@ interface Composition {
   components: _component.Component[]
 }
 
-export interface Dependency {
+export interface Dependency<T> {
   locator: Locator
-  manifest?: object
+  manifest?: T
 }
 
 interface Context extends Declaration {

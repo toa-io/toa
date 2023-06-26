@@ -14,6 +14,9 @@ To create a new package or migrate an existing one to TypeScript, follow these s
   },
   "include": [
     "source"
+  ],
+  "exclude": [
+    "**/*.test.ts"
   ]
 }
 ```

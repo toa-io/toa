@@ -69,8 +69,10 @@ Feature: Origins extension
       """
       variables:
         origins-http:
-          - name: TOA_ORIGINS_ORIGINS_HTTP
-            value: eyIuaHR0cCI6eyIvaHR0cHM6XFwvXFwvdysuYW1hem9uLmNvbS8iOnRydWV9LCJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
+          - name: TOA_ORIGINS_ORIGINS_HTTP_BAD
+            value: http://localhost:8888/
+          - name: TOA_ORIGINS_ORIGINS_HTTP__PROPERTIES
+            value: todo
       """
 
   Scenario: Origin with environment variable placeholder

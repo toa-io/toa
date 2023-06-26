@@ -1,10 +1,5 @@
 'use strict'
 
-/**
- * @typedef {import('node-fetch').RequestInit} Request
- * @typedef {import('node-fetch').Response} Response
- */
-
 const fetch = require('node-fetch')
 
 const { Connector } = require('@toa.io/core')
@@ -14,9 +9,6 @@ const { Permissions } = require('./.aspect/permissions')
 const { id } = require('./id')
 const protocols = require('./protocols')
 
-/**
- * @implements {toa.origins.http.Aspect}
- */
 class Aspect extends Connector {
   /** @readonly */
   name = id
@@ -67,12 +59,6 @@ class Aspect extends Connector {
     return this.#request(url, request)
   }
 
-  /**
-   * @param {string} url
-   * @param {Request} request
-   * @param {toa.generic.retry.Options} [options]
-   * @return {Promise<Response>}
-   */
   async #request (url, request, options) {
     const call = () => fetch(url, request)
 
