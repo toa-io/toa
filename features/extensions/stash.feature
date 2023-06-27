@@ -60,10 +60,25 @@ Feature: Stash extension
       input: 0
       """
     And I call `default.stash.locks`
-    And I call `default.stash.get`
     Then the reply is received:
       """yaml
-      output: '3'
+      output: [1, 2, 3]
+      """
+
+  Scenario: Using DLM with delay
+    Given I compose `stash` component
+    When I call `default.stash.set` with:
+      """yaml
+      input: 0
+      """
+    And I call `default.stash.locks` with:
+      """yaml
+      input:
+        delay: 9000
+      """
+    Then the reply is received:
+      """yaml
+      output: [1, 2, 3]
       """
 
   Scenario: Deployment
