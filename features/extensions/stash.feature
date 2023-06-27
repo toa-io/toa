@@ -74,7 +74,7 @@ Feature: Stash extension
     And I call `default.stash.locks` with:
       """yaml
       input:
-        delay: 9000
+        delay: 5000
       """
     Then the reply is received:
       """yaml
