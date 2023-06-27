@@ -21,5 +21,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "source/index.js"
+  "main": "source/index.js",
+  "gitHead": "594d7a02c777e0c39252ff3dd1beddd069d8081d"
 }
