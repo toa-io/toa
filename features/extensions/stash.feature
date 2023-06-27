@@ -59,7 +59,10 @@ Feature: Stash extension
       """yaml
       input: 0
       """
-    And I call `default.stash.locks`
+    And I call `default.stash.locks` with:
+      """yaml
+      input: {}
+      """
     Then the reply is received:
       """yaml
       output: [1, 2, 3]
