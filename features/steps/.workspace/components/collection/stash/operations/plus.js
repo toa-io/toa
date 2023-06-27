@@ -1,10 +1,8 @@
 'use strict'
 
-const { timeout } = require('@toa.io/generic')
-
 async function effect (input, context) {
   const result = await context.stash.lock('plusing', async () => {
-    await timeout(input.delay)
+    await new Promise((resolve) => setTimeout(resolve, input.delay))
 
     let value = await context.stash.get('key')
 
