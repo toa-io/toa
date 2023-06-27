@@ -29,7 +29,7 @@ Values are encoded using [msgpack](https://msgpack.org).
 
 ## Distributed lock manager
 
-`async lock(id: string | string[], routine: async? () => void)`
+`async lock<T>(id: string | string[], routine: async? () => T): T`
 
 Executes `routine` once a lock is succesively acquired. Lock ID is component-scoped.
 

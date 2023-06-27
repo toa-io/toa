@@ -1,4 +1,4 @@
-import Redlock from 'redlock'
+import Redlock from 'redlock-temp-fix'
 import { encode, decode } from 'msgpackr'
 import { Connector, type extensions } from '@toa.io/core'
 import type { Connection } from './Connection'
@@ -13,25 +13,28 @@ export class Aspect extends Connector implements extensions.Aspect {
     super()
 
     this.redis = connection.redis
-    this.redlock = new Redlock([this.redis])
+    this.redlock = new Redlock([this.redis], { retryCount: -1 })
 
     this.depends(connection)
   }
 
   public async invoke (method: 'store', key: string, value: object): Promise<void>
   public async invoke (method: 'fetch', key: string): Promise<object>
-  public async invoke (method: 'lock', key: string | string[], routine: Routine): Promise<void>
+  public async invoke<T> (method: 'lock', key: Resources, routine: Routine<T>): Promise<T>
   public async invoke (method: string, ...args: unknown[]): Promise<any>
   public async invoke (method: string, ...args: unknown[]): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     if (typeof this.redis[method] === 'function') return this.redis[method](...args)
 
-    if (method === 'store') await this.store(args[0] as string, args[1] as object, ...args.slice(2))
+    if (method === 'store')
+      await this.store(args[0] as string, args[1] as object, ...args.slice(2))
 
-    if (method === 'fetch') return await this.fetch(args[0] as string)
+    if (method === 'fetch')
+      return await this.fetch(args[0] as string)
 
-    if (method === 'lock') await this.lock(args[0] as string, args[1] as () => Promise<void>)
+    if (method === 'lock')
+      return await this.lock(args[0] as string, args[1] as () => any)
   }
 
   private async store (key: string, value: object, ...args: unknown[]): Promise<void> {
@@ -48,11 +51,12 @@ export class Aspect extends Connector implements extensions.Aspect {
     return buffer === null ? null : decode(buffer)
   }
 
-  private async lock (key: string | string[], routine: Routine): Promise<void> {
+  private async lock<T> (key: string | string[], routine: Routine<T>): Promise<T> {
     if (typeof key === 'string') key = [key]
 
-    await this.redlock.using(key, 5000, routine)
+    return await this.redlock.using<T>(key, 5000, routine)
   }
 }
 
-type Routine = () => Promise<void>
+type Routine<T> = () => Promise<T>
+type Resources = string | string[]
