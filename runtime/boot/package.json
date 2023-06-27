@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "0.20.0-dev.21",
+  "version": "0.20.0-dev.22",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,11 +20,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "0.20.0-dev.21",
-    "@toa.io/filesystem": "0.20.0-dev.21",
-    "@toa.io/generic": "0.20.0-dev.21",
-    "@toa.io/norm": "0.20.0-dev.21",
-    "@toa.io/schema": "0.20.0-dev.21",
+    "@toa.io/core": "0.20.0-dev.22",
+    "@toa.io/filesystem": "0.20.0-dev.22",
+    "@toa.io/generic": "0.20.0-dev.22",
+    "@toa.io/norm": "0.20.0-dev.22",
+    "@toa.io/schema": "0.20.0-dev.22",
     "clone-deep": "4.0.1",
     "dotenv": "16.1.1"
   },
