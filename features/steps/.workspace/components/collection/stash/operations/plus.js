@@ -13,8 +13,6 @@ async function effect (input, context) {
     return value
   })
 
-  console.log('plus:', result)
-
   return result
 }
 
