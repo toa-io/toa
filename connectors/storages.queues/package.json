@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/storages.queues",
-  "version": "0.20.0-dev.22",
+  "version": "0.20.0-dev.23",
   "description": "Toa Queues Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,8 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "0.20.0-dev.22",
-    "@toa.io/generics.amqp": "0.20.0-dev.22"
+    "@toa.io/core": "0.20.0-dev.23",
+    "@toa.io/generics.amqp": "0.20.0-dev.23"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
