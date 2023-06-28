@@ -38,9 +38,9 @@
     "@toa.io/extensions.state": "0.20.0-dev.26",
     "@toa.io/norm": "0.20.0-dev.26",
     "@toa.io/operations": "0.20.0-dev.26",
-    "@toa.io/prototype": "0.6.0",
+    "@toa.io/prototype": "0.20.0-dev.26",
     "@toa.io/storages.mongodb": "0.20.0-dev.26",
-    "@toa.io/storages.null": "0.6.0",
+    "@toa.io/storages.null": "0.20.0-dev.26",
     "@toa.io/storages.sql": "0.20.0-dev.26",
     "@toa.io/userland": "0.20.0-dev.26"
   },
