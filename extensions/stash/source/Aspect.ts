@@ -34,7 +34,7 @@ export class Aspect extends Connector implements extensions.Aspect {
       return await this.fetch(args[0] as string)
 
     if (method === 'lock')
-      return await this.lock(args[0] as string, args[1] as () => any)
+      return await this.lock(args[0] as Resources, args[1] as () => any)
   }
 
   private async store (key: string, value: object, ...args: unknown[]): Promise<void> {
@@ -51,7 +51,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     return buffer === null ? null : decode(buffer)
   }
 
-  private async lock<T> (key: string | string[], routine: Routine<T>): Promise<T> {
+  private async lock<T> (key: Resources, routine: Routine<T>): Promise<T> {
     if (typeof key === 'string') key = [key]
 
     return await this.redlock.using<T>(key, 5000, routine)
