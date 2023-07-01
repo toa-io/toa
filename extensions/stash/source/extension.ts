@@ -1,4 +1,4 @@
-import { createDeployment, type URIMap, type Request } from '@toa.io/pointer'
+import { createVariables, type URIMap, type Request } from '@toa.io/pointer'
 import { Aspect } from './Aspect'
 import { Connection } from './Connection'
 import type { Locator, extensions } from '@toa.io/core'
@@ -20,9 +20,10 @@ export class Factory implements extensions.Factory {
 }
 
 export function deployment (instances: context.Dependency[], annotation: URIMap): Dependency {
-  const requests: Request[] = instances.map(createRequest)
+  const requests: Request[] = instances.map((instance) => createRequest(instance))
+  const variables = createVariables(ID, annotation, requests)
 
-  return createDeployment(ID, annotation, requests)
+  return { variables }
 }
 
 function createRequest (instance: context.Dependency): Request {

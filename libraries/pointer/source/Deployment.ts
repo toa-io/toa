@@ -1,5 +1,5 @@
 import { nameVariable } from './env'
-import type { Dependency, Variable, Variables } from '@toa.io/operations'
+import type { Variable, Variables } from '@toa.io/operations'
 
 export class Deployment {
   private readonly id: string
@@ -10,17 +10,17 @@ export class Deployment {
     this.annotation = annotation
   }
 
-  public export (requests: Request[]): Dependency {
+  public export (requests: Request[]): Variables {
     const variables: Variables = {}
 
     for (const request of requests)
       variables[request.label] = this.createVariables(request.selectors)
 
-    return { variables }
+    return variables
   }
 
   private createVariables (selectors: string[]): Variable[] {
-    return selectors.map(this.createVariable.bind(this))
+    return selectors.map((selector) => this.createVariable(selector))
   }
 
   private createVariable (selector: string): Variable {

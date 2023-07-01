@@ -1,6 +1,6 @@
 Feature: Pointer
 
-  Scenario: Deploy default URL
+  Scenario: Deploy a default URL
     Given I have a component `stash`
     And I have a context with:
       """yaml

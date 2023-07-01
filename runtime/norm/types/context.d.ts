@@ -23,7 +23,7 @@ interface Composition {
   components: _component.Component[]
 }
 
-export interface Dependency<T> {
+export interface Dependency<T = undefined> {
   locator: Locator
   manifest?: T
 }
