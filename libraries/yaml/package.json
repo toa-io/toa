@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/yaml",
-  "version": "0.20.0-dev.21",
+  "version": "0.20.0-dev.28",
   "description": "Toa YAML",
   "homepage": "https://toa.io",
   "author": {
@@ -23,12 +23,12 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/filesystem": "0.20.0-dev.21",
-    "@toa.io/generic": "0.20.0-dev.21",
+    "@toa.io/filesystem": "0.20.0-dev.28",
+    "@toa.io/generic": "0.20.0-dev.28",
     "js-yaml": "4.1.0"
   },
   "devDependencies": {
     "@types/js-yaml": "4.0.5"
   },
-  "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
+  "gitHead": "594d7a02c777e0c39252ff3dd1beddd069d8081d"
 }

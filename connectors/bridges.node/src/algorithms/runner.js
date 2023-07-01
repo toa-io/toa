@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { plain } = require('@toa.io/generic')
 
 /**
  * @implements {toa.core.bridges.Algorithm}
@@ -40,7 +41,7 @@ class Runner extends Connector {
 }
 
 function normalize (reply) {
-  const object = typeof reply === 'object'
+  const object = plain(reply)
   const output = object && reply.output !== undefined
   const error = object && reply.error !== undefined
 

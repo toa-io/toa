@@ -20,5 +20,13 @@ operations:
       oneOf:
         - type: object
         - type: array
+  locks:
+    input:
+      delay: 0
+    output: [number]
+  plus:
+    input:
+      delay: 0
+    output: number
 
 stash: ~

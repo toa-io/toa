@@ -1,4 +1,4 @@
-import Redlock from 'redlock'
+import Redlock from 'redlock-temp-fix'
 import { encode } from 'msgpackr'
 import { generate } from 'randomstring'
 import { Aspect } from './Aspect'
@@ -6,7 +6,7 @@ import * as mock from './Connection.fixtures'
 import type { Connection } from './Connection'
 import type { Cluster } from 'ioredis'
 
-jest.mock('redlock')
+jest.mock('redlock-temp-fix')
 
 let aspect: Aspect
 let connection: jest.MockedObject<Connection>
@@ -91,7 +91,7 @@ describe('buffers', () => {
 
 it('should create DLM', async () => {
   expect(Redlock)
-    .toHaveBeenCalledWith([redis])
+    .toHaveBeenCalledWith([redis], { retryCount: -1 })
 })
 
 it('should acquire lock', async () => {
@@ -102,6 +102,17 @@ it('should acquire lock', async () => {
 
   expect(redlock.using)
     .toHaveBeenCalledWith(keys, 5000, callback)
+})
+
+it('should return result', async () => {
+  const keys = [generate(), generate()]
+  const callback = jest.fn()
+
+  redlock.using.mockImplementationOnce(async () => generate())
+
+  const result = await aspect.invoke('lock', keys, callback)
+
+  expect(result).toStrictEqual(await redlock.using.mock.results[0].value)
 })
 
 it('should handle non-array key', async () => {
