@@ -55,7 +55,7 @@ amqp:
 
 Although the most common use case of the Pointer is component-specific connection strings, where
 the keys are namespaces or component IDs, it is not mandatory.
-The Pointer considers keys as arbitrary nested dot-separated strings.
+The Pointer considers keys as nested dot-separated alphanumeric strings.
 
 A module that uses the Pointer, resolves a set of URLs by providing annotation and a set of
 _selectors_ during deployment.

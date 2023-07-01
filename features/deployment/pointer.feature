@@ -32,7 +32,7 @@ Feature: Pointer
             value: redis://redis0.example.com redis://redis1.example.com
       """
 
-  Scenario Outline: Deploy URL for a <type>
+  Scenario Outline: Deploy a URL for a <type>
     Given I have a component `stash`
     And I have a context with:
       """yaml
