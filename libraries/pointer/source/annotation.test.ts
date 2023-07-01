@@ -37,6 +37,7 @@ describe('normalize', () => {
   it('should substitute environment variables', async () => {
     process.env.STAGE = generate()
 
+    // eslint-disable-next-line no-template-curly-in-string
     const declaration = 'http://stage-${STAGE}.example.com'
     const annotation = normalize(declaration)
 

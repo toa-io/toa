@@ -112,7 +112,7 @@ Secret names for the specified keys are as follows:
 > If secrets are not deployed with the [`toa conceal`](/runtime/cli/readme.md#conceal), then their
 > names must be prefixed with `toa-`.
 
-Only one secret can be deployed per annotation key. Therefore, when using a URL set, all URLs will
+Only one secret can be deployed per selector. Therefore, when using a URL set, all URLs will
 utilize the same credentials.
 
 ### Plain

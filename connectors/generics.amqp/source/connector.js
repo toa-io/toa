@@ -1,22 +1,14 @@
 'use strict'
 
-const { shards } = require('@toa.io/generic')
-const { Pointer } = require('@toa.io/pointer')
+const { resolve } = require('@toa.io/pointer')
 const { Communication } = require('./communication')
 
-/**
- * @param {string} prefix
- * @param {toa.core.Locator} locator
- * @returns {toa.amqp.Communication}
- */
-const connector = (prefix, locator) => {
-  const pointer = new Pointer(prefix, locator, OPTIONS)
-  const references = shards(pointer.reference)
+const connector = (id, locator) => {
+  const urls = process.env.TOA_DEV === '1' ? [DEV_URL] : resolve(id, locator.id)
 
-  return new Communication(references)
+  return new Communication(urls)
 }
 
-/** @type {toa.pointer.Options} */
-const OPTIONS = { protocol: 'amqp:' }
+const DEV_URL = 'amqp://developer:secret@localhost'
 
 exports.connector = connector

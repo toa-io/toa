@@ -21,8 +21,8 @@ it('should exist', () => {
 })
 
 it('should throw if annotation is not defined', () => {
-  expect(() => deployment(instances, undefined))
-    .toThrow('AMQP deployment requires either \'system\' or \'default\' pointer annotation')
+  expect(() => deployment([], {}))
+    .toThrow('cannot be resolved')
 })
 
 it('should throw if \'system\' is not defined', () => {
@@ -32,5 +32,5 @@ it('should throw if \'system\' is not defined', () => {
   for (const instance of instances) annotation[instance.locator.id] = url.href
 
   expect(() => deployment(instances, annotation))
-    .toThrow('AMQP deployment requires either \'system\' or \'default\' pointer annotation')
+    .toThrow('cannot be resolved')
 })

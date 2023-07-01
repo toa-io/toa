@@ -7,11 +7,11 @@ it('should create from selector', async () => {
   const id = generate()
   const selector = generate()
   const annotation = { [selector]: uri() }
-  const request: Request = { label: generate(), selectors: [selector] }
+  const request: Request = { group: generate(), selectors: [selector] }
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.label]: [{
+    [request.group]: [{
       name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
       value: annotation[selector]
     }]
@@ -26,11 +26,11 @@ it('should create from partial match', async () => {
   const key = generate()
   const selector = `${key}.${generate()}`
   const annotation = { [key]: uri() }
-  const request: Request = { label: generate(), selectors: [selector] }
+  const request: Request = { group: generate(), selectors: [selector] }
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.label]: [{
+    [request.group]: [{
       name: `TOA_${id.toUpperCase()}_${
         selector
           .replace('.', '_')
@@ -48,11 +48,11 @@ it('should create from default', async () => {
   const id = generate()
   const annotation = uri()
   const selector = generate()
-  const request: Request = { label: generate(), selectors: [selector] }
+  const request: Request = { group: generate(), selectors: [selector] }
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.label]: [{
+    [request.group]: [{
       name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
       value: annotation
     }]
@@ -67,11 +67,11 @@ it('should create from array', async () => {
   const selector = generate()
   const values = [uri(), uri()]
   const annotation = { [selector]: values }
-  const request: Request = { label: generate(), selectors: [selector] }
+  const request: Request = { group: generate(), selectors: [selector] }
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.label]: [{
+    [request.group]: [{
       name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
       value: values.join(' ')
     }]
@@ -86,11 +86,11 @@ it('should create from default array', async () => {
   const selector = generate()
   const values = [uri(), uri()]
   const annotation = values
-  const request: Request = { label: generate(), selectors: [selector] }
+  const request: Request = { group: generate(), selectors: [selector] }
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.label]: [{
+    [request.group]: [{
       name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
       value: values.join(' ')
     }]
@@ -98,6 +98,16 @@ it('should create from default array', async () => {
 
   expect(variables)
     .toStrictEqual(expectation)
+})
+
+it('should throw if selector cannot be resolved', async () => {
+  const id = generate()
+  const selector = generate()
+  const annotation = {}
+  const request: Request = { group: generate(), selectors: [selector] }
+
+  expect(() => createVariables(id, annotation, [request]))
+    .toThrow('cannot be resolved.')
 })
 
 function uri (): string {

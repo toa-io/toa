@@ -11,9 +11,6 @@ const { Broadcast } = require('./broadcast')
 
 const { SYSTEM, PREFIX } = require('./constants')
 
-/**
- * @implements {toa.core.bindings.Factory}
- */
 class Factory {
   producer (locator, endpoints, component) {
     const comm = this.#getCommunication(locator)

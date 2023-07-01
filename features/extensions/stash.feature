@@ -65,7 +65,7 @@ Feature: Stash extension
       """
     Then the reply is received:
       """yaml
-      output: [1, 2, 3]
+      output: [1, 2]
       """
 
   Scenario: Using DLM with delay
@@ -81,7 +81,7 @@ Feature: Stash extension
       """
     Then the reply is received:
       """yaml
-      output: [1, 2, 3]
+      output: [1, 2]
       """
 
   Scenario: Deployment

@@ -1,4 +1,4 @@
 'use strict'
 
-exports.PREFIX = 'bindings-amqp'
+exports.PREFIX = 'amqp'
 exports.SYSTEM = 'system'

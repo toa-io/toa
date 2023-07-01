@@ -1,33 +1,25 @@
 'use strict'
 
-const pointer = require('@toa.io/pointer')
-
+const { createVariables } = require('@toa.io/pointer')
 const { PREFIX } = require('./constants')
 
-/**
- * @type {toa.deployment.dependency.Constructor}
- */
 const deployment = (instances, annotation) => {
-  // validate(annotation)
-  //
-  // /** @type {toa.pointer.deployment.Options} */
-  // const options = { prefix: PREFIX }
-  //
-  // return pointer.deployment(instances, annotation, options)
-  return {}
+  const request = createRequest(instances)
+  const variables = createVariables(PREFIX, annotation, [request])
+
+  return { variables }
 }
 
-/**
- * @param {toa.pointer.URIs} annotation
- */
-const validate = (annotation) => {
-  const defined = annotation !== undefined
-  const defaults = defined && (typeof annotation === 'string' || annotation.default !== undefined)
-  const correct = defined && (defaults || 'system' in annotation)
+function createRequest (instances) {
+  const selectors = createSelectors(instances)
 
-  if (!correct) {
-    throw new Error('AMQP deployment requires either \'system\' or \'default\' pointer annotation')
-  }
+  selectors.push('system')
+
+  return { group: 'global', selectors }
+}
+
+function createSelectors (instances) {
+  return instances.map((instance) => instance.locator.id)
 }
 
 exports.deployment = deployment

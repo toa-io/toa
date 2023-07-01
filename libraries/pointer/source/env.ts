@@ -1,5 +1,5 @@
 export function nameVariable (...segments: string[]): string {
-  return segments.join('_')
+  return 'TOA_' + segments.join('_')
     .replaceAll(/[-.]/g, '_')
     .toUpperCase()
 }

@@ -28,7 +28,7 @@ export function deployment (instances: context.Dependency[], annotation: URIMap)
 
 function createRequest (instance: context.Dependency): Request {
   return {
-    label: instance.locator.label,
+    group: instance.locator.label,
     selectors: [instance.locator.id]
   }
 }

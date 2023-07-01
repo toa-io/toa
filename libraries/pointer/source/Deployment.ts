@@ -14,7 +14,7 @@ export class Deployment {
     const variables: Variables = {}
 
     for (const request of requests)
-      variables[request.label] = this.createVariables(request.selectors)
+      variables[request.group] = this.createVariables(request.selectors)
 
     return variables
   }
@@ -24,7 +24,7 @@ export class Deployment {
   }
 
   private createVariable (selector: string): Variable {
-    const name = nameVariable('TOA', this.id, selector)
+    const name = nameVariable(this.id, selector)
     const values = this.resolve(selector)
     const value = values.join(' ')
 
@@ -42,12 +42,15 @@ export class Deployment {
       if (current in this.annotation) return this.annotation[current]
     }
 
+    if (this.annotation['.'] === undefined)
+      throw new Error(`Selector '${selector}' cannot be resolved.`)
+
     return this.annotation['.']
   }
 }
 
 export interface Request {
-  label: string
+  group: string
   selectors: string[]
 }
 

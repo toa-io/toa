@@ -5,7 +5,7 @@ import type { context } from '@toa.io/norm'
 export function deployment (instances: Instances, annotation: Declaration): Dependency {
   const variables: Variables = {}
 
-  const requests: Request[] = [{ label: '', selectors: [''] }]
+  const requests: Request[] = [{ group: '', selectors: [''] }]
 
   createDeployment(ID, annotation as unknown as URIMap, requests)
 

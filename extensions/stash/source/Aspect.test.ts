@@ -112,7 +112,8 @@ it('should return result', async () => {
 
   const result = await aspect.invoke('lock', keys, callback)
 
-  expect(result).toStrictEqual(await redlock.using.mock.results[0].value)
+  expect(result)
+    .toStrictEqual(await redlock.using.mock.results[0].value)
 })
 
 it('should handle non-array key', async () => {
