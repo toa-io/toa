@@ -1,5 +1,5 @@
 import { nameVariable } from './env'
-import type { Variable, Variables } from '@toa.io/operations'
+import type { Variables, Variable } from '@toa.io/operations'
 
 export class Deployment {
   private readonly id: string

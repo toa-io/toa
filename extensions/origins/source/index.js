@@ -1,9 +1,7 @@
 'use strict'
 
-const { manifest } = require('./manifest')
-const { extension } = require('./extension')
+const { deployment } = require('./extension')
 const { Factory } = require('./factory')
 
-exports.manifest = manifest
-exports.deployment = extension
+exports.deployment = deployment
 exports.Factory = Factory

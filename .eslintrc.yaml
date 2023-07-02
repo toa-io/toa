@@ -30,7 +30,7 @@ overrides:
       no-multiple-empty-lines: warn # from going crazy
       newline-per-chained-call:
         - error
-        - ignoreChainWithDepth: 1
+        - ignoreChainWithDepth: 2
       import/order:
         - error
         - groups:

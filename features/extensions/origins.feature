@@ -72,7 +72,7 @@ Feature: Origins extension
           - name: TOA_ORIGINS_ORIGINS_HTTP_BAD
             value: http://localhost:8888/
           - name: TOA_ORIGINS_ORIGINS_HTTP__PROPERTIES
-            value: todo
+            value: 3gABpS5odHRw3gABuS9odHRwczpcL1wvdysuYW1hem9uLmNvbS/D
       """
 
   Scenario: Origin with environment variable placeholder

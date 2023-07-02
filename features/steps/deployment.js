@@ -43,16 +43,15 @@ Then('exported {helm-artifact} should not contain:',
    * @return {Promise<void>}
    */
   async function (artifact, text) {
-    await contains(this.cwd, artifact, text)
+    await contains(this.cwd, artifact, text, false)
   })
 
 /**
  * @param {string} cwd
  * @param {string} artifact
  * @param {string} text
- * @return {Promise<boolean>}
  */
-const contains = async (cwd, artifact, text) => {
+const contains = async (cwd, artifact, text, expectation = true) => {
   const filename = artifact + '.yaml'
   const path = join(cwd, 'deployment', filename)
   const contents = await load(path)
@@ -60,5 +59,5 @@ const contains = async (cwd, artifact, text) => {
 
   const matches = match(contents, expected)
 
-  assert.equal(matches, true, diff(expected, contents))
+  assert.equal(matches, expectation, diff(expected, contents))
 }

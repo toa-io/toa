@@ -72,7 +72,7 @@ describe('validation', () => {
     })
 
   it('should throw if key is not deployable', async () => {
-    const declaration = { 'foo.bar': 'http://localhost' }
+    const declaration = { 'foo bar': 'http://localhost' }
 
     expect(() => normalize(declaration))
       .toThrow('must NOT have additional properties')

@@ -92,23 +92,9 @@ origins:
     queues: amqps://amqp.azure.com
 ```
 
-If the same origin name is used across multiple componets, it can be overridden in the _wildcard
-group_ (`.`).
-
-```yaml
-# context.toa.yaml
-origins:
-  .:
-    # overrides `common` origin in the components where it declared
-    common: https://api.example.com
-  dummies.dummy:
-    # takes priority over wildcard
-    common: https://another.api.com
-```
-
 ### HTTP URL Permissions
 
-The rules for arbitrary HTTP requests are stored in the `.http` property of the corresponding
+The rules for arbitrary HTTP requests are stored in the `http` property of the corresponding
 component as an object.
 Each key in the rules object is a regular expression that URLs will be tested against, and each
 value is a permission — either `true` to allow the URL or `false` to deny it.
@@ -122,20 +108,11 @@ In cases where a URL matches multiple rules, denial takes priority.
 # context.toa.yaml
 origins:
   dummies.dummy:
-    .http:
+    http:
       /^https?:\/\/api.domain.com/: true
       /^http:\/\/sandbox.domain.com/@staging: true  # `staging` environment
-      /.*hackers.*/: false                          # deny rule
+      /.*hackers.*/: false                          # deny
       ~: true                                       # allow any URL
-```
-
-Rules declared in the wildcard group are applied to all components:
-
-```yaml
-origins:
-  .:
-    .http:
-      /.*hackers.*/: false
 ```
 
 ## Deployment

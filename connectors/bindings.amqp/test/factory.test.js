@@ -117,7 +117,7 @@ describe.each(['Producer', 'Consumer', 'Emitter', 'Receiver', 'Broadcast'])('%s 
 
   if (method !== 'broadcast') {
     it('should create Communication', async () => {
-      expect(connector).toHaveBeenCalledWith('bindings-amqp', locator)
+      expect(connector).toHaveBeenCalledWith('amqp', locator)
     })
   }
 })
