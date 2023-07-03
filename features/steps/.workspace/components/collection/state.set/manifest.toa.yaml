@@ -3,6 +3,8 @@ namespace: state
 
 operations:
   set:
-    input: [ number ]
+    input: [number]
   get:
-    output: [ number ]
+    output: [number]
+
+state: ~
