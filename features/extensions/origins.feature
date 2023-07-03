@@ -22,8 +22,8 @@ Feature: Origins extension
           .http:
             /^http:\/\/localhost:8888/: true
       """
-    And I run `toa env`
-    When I run `toa invoke get "{ input: { url: 'http://localhost:8888/path/to/resource' } }" -p ./components/origins.httpAbsolute`
+    When I run `toa env`
+    And I run `toa invoke get "{ input: { url: 'http://localhost:8888/path/to/resource' } }" -p ./components/origins.httpAbsolute`
     Then program should exit with code 0
     And stdout should contain lines:
       """

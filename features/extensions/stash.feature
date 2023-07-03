@@ -102,5 +102,21 @@ Feature: Stash extension
   Scenario: Replay sample
     Given I have a component `stash`
     And my working directory is ./components/stash
-    When I run `TOA_STASH_DEFAULT_STASH=redis://localhost toa replay -a`
+    When I run `toa replay`
+    Then program should exit with code 0
+
+  Scenario: Invoke operation
+    Given I have a component `stash`
+    And I have a context with:
+      """yaml
+      amqp: amqp://localhost
+      stash: redis://localhost
+      """
+    And I run `toa env`
+    And I update an environment with:
+    """
+
+    """
+    And my working directory is ./components/stash
+    When I run `TOA_DEV=0 toa invoke set "{ input: 'foo' }"`
     Then program should exit with code 0
