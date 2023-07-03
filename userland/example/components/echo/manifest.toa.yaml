@@ -11,3 +11,5 @@ operations:
 
 configuration:
   signal: quack
+
+state: ~
