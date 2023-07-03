@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.configuration",
-  "version": "0.20.0-dev.29",
+  "version": "0.20.0-dev.30",
   "description": "Toa Configuration",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -16,10 +16,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "0.20.0-dev.29",
-    "@toa.io/generic": "0.20.0-dev.29",
-    "@toa.io/schema": "0.20.0-dev.29",
-    "@toa.io/yaml": "0.20.0-dev.29",
+    "@toa.io/core": "0.20.0-dev.30",
+    "@toa.io/generic": "0.20.0-dev.30",
+    "@toa.io/schema": "0.20.0-dev.30",
+    "@toa.io/yaml": "0.20.0-dev.30",
     "clone-deep": "4.0.1"
   },
   "gitHead": "594d7a02c777e0c39252ff3dd1beddd069d8081d"
