@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/console",
-  "version": "0.20.0-dev.28",
+  "version": "0.20.0-dev.31",
   "description": "Toa Console",
   "homepage": "https://toa.io",
   "author": {
@@ -25,5 +25,5 @@
   "dependencies": {
     "chalk": "4.1.2"
   },
-  "gitHead": "594d7a02c777e0c39252ff3dd1beddd069d8081d"
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

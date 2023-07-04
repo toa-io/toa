@@ -26,6 +26,25 @@ Feature: Deploy secrets
       """
     Then I run `kubectl delete secret toa-database`
 
+  Scenario: Deploy a secret keys sequentally
+    Given I have a kube context kind-kind
+    When I run `toa conceal database user=application`
+    When I run `toa conceal database password=mySecretPassword`
+    Then stderr should be empty
+    When I run `kubectl get secrets`
+    Then stdout should contain lines:
+      """
+      toa-database
+      """
+    When I run `kubectl get secret toa-database -o jsonpath='{.data}' -o yaml`
+    Then stdout should contain lines:
+      """
+      user: YXBwbGljYXRpb24=
+      password: bXlTZWNyZXRQYXNzd29yZA==
+      type: Opaque
+      """
+    Then I run `kubectl delete secret toa-database`
+
   Scenario: Deploy a secret to a namespace
     Given I have a kube context kind-kind
     When I run `kubectl create namespace test-secret --dry-run=client -o json | kubectl apply -f -`

@@ -13,3 +13,5 @@ receivers:
   somewhere.something.happened:
     operation: set
     binding: amqp
+
+state: ~

@@ -11,6 +11,7 @@ const SHORTCUTS = {
   exposition: '@toa.io/extensions.exposition',
   origins: '@toa.io/extensions.origins',
   configuration: '@toa.io/extensions.configuration',
+  state: '@toa.io/extensions.state',
   stash: '@toa.io/extensions.stash'
 }
 

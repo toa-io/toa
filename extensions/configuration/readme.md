@@ -5,20 +5,24 @@
 ### Define
 
 ```yaml
-# component.toa.yaml
+# manifest.toa.yaml
 name: dummy
 namespace: dummies
 
 configuration:
-  foo: bar
-  baz: 1
+  schema:
+    foo: string
+    bar: number
+  defaults:
+    foo: bar
+    bar: 1
 ```
 
 ### Use
 
 ```javascript
 function transition (input, entity, context) {
-  const { foo, baz } = context.configuration
+  const { foo, bar } = context.configuration
 
   // ...
 }
@@ -30,9 +34,9 @@ function transition (input, entity, context) {
 # context.toa.yaml
 configuration:
   dummies.dummy:
-    foo: qux          # override default value defined by dummies.dummy
+    foo: qux          # override default value
     foo@staging: quux # deployment environment discriminator
-    baz: $BAZ_VALUE   # secret
+    bar: $BAZ_VALUE   # secret
 ```
 
 ### Deploy secrets
@@ -49,126 +53,80 @@ $ toa conceal configuration BAZ_VALUE=$ecr3t
   different configurations.
 - Some algorithm parameters must be deployed secretly.
 
-## Definitions
+## Manifest
 
-### Configuration (Distributed System Configuration)
+Component's configuration is declared using `configuration` manifest,
+containing `schema` and optionnaly `defaults` properties.
 
-Set of static[^1] parameters for all algorithms within a given system.
+### Schema
 
-### Configuration Schema
-
-Schema is defining component's algorithm parameters (optionally with default values).
-
-### Configuration Object
-
-Value valid against Configuration Schema.
-
-### Configuration Value
-
-The merge result of Configuration Schema's defaults and Configuration Object.
-
-### Context Configuration
-
-Map of Configuration Objects for components added to a given context.
-
-## Responsibility Segregation
-
-Configuration Schema is a *form* of configuration defined by component. Specific *values* for
-specific contexts and deployment environments are defined by Context Configuration according to the
-Schema.
-
-See [Reusable Components](#).
-
-## Configuration Schema
-
-Configuration Schema is declared as a component extension
-using [JSON Schema](https://json-schema.org) `object` type.
-
-> ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
-> By introducing non-backward compatible changes to a Configuration Schema, the compatibility
-> with existent contexts and deployment environments will be broken. That is, Configuration
-> Schema changes are subjects of component versioning.
-
-> ![Recommendation](https://img.shields.io/badge/Recommendation-green)<br/>
-> Having default values for all required parameters will allow components to be runnable
-> without configuration (i.e. on local environment).
-
-### Example
+Configuration schema is declared with [COS](/libraries/concise).
 
 ```yaml
-# component.toa.yaml
+# manifest.toa.yaml
 name: dummy
 namespace: dummies
 
-extensions:
-  "@toa.io/extensions.configuration":
-    properties:
-      foo:
-        type: string
-        default: 'baz'
-      bar:
-        type: number
-    required: [foo]
-```
-
-### Concise Declaration
-
-As it is known that Configuration Schema is declared with a JSON Schema `object` type, any
-configuration declaration without defined `properties` considered as concise. Properties of concise
-declaration are treated as required Configuration Schema properties with the same type as its value
-type and no additional properties allowed.
-
-Also note that a well-known shortcut `configuration` is available.
-
-The next two declarations are equivalent.
-
-```yaml
-# component.toa.yaml
 configuration:
-  foo: baz
-  bar: 1
+  schema:
+    foo: string
+    bar: number
 ```
+
+> Introducing non-backward compatible changes to a configuration schema will result in a loss of
+> compatibility with existing contexts and deployment environments.
+> Therefore, configuration schema changes are subject to component versioning.
+
+### Defaults
+
+The default configuration value can be provided using the `defaults` property, which should conform
+to the configuration schema.
 
 ```yaml
-# component.toa.yaml
-extensions:
-  "@toa.io/extensions.configuration":
-    properties:
-      foo:
-        type: string
-        default: baz
-      bar:
-        type: number
-        default: 1
-    additionalProperties: false
-    required: [foo, bar]
+# manifest.toa.yaml
+name: dummy
+namespace: dummies
+
+configuration:
+  schema:
+    foo: string
+    bar: number
+  defaults:
+    foo: hello
+    bar: 0
 ```
 
-## Context Configuration
+#### Schema defaults hint
 
-Context Configuration is declared as a context annotation. Its keys must be
-component identifiers, and its values must be Configuration Objects for those
-components.
+The configuration schema itself can contain default primitive values using the COS syntax.
 
-Context Configuration keys and Configuration Object keys may be defined
-with [deployment environment discriminators](#).
+```yaml
+# manifest.toa.yaml
+name: dummy
+namespace: dummies
 
-### Example
+configuration:
+  schema:
+    foo: hello
+    bar: 0
+```
+
+## Annotation
+
+A component's configuration can be overridden using the configuration context annotation.
 
 ```yaml
 # context.toa.yaml
 configuration:
   dummies.dummy:
-    foo: quu
+    foo: bye
     bar: 1
     bar@staging: 2
 ```
 
-## Configuration Secrets
+## Secrets
 
-Context Configuration values which are uppercase strings prefixed with `$` considered as Secrets.
-
-### Example
+Configuration annotation values which are uppercase strings prefixed with `$` considered as secrets.
 
 ```yaml
 # context.toa.yaml
@@ -177,14 +135,10 @@ configuration:
     api-key: $STRIPE_API_KEY
 ```
 
-Configuration values that are assigned with a reference to the Secret must be of type `string`.
-
-### Secrets Deployment
-
 Secrets are not being deployed with context
-deployment ([`toa deploy`](../../runtime/cli/readme.md#deploy)),
+deployment ([`toa deploy`](/runtime/cli/readme.md#deploy)),
 thus must be deployed separately at least once for each deployment environment
-manually ([`toa conceal`](../../runtime/cli/readme.md#conceal)).
+manually ([`toa conceal`](/runtime/cli/readme.md#conceal)).
 
 Deployed kubernetes secret's name is predefined as `configuration`.
 
@@ -194,11 +148,9 @@ $ toa conceal configuration STRIPE_API_KEY=xxxxxxxx
 
 ## Aspect
 
-Configuration Value is available as a well-known operation Aspect `configuration`.
+Component's configuration value is available as a well-known Aspect `configuration`.
 
 ```javascript
-// Node.js bridge
-
 function transition (input, entity, context) {
   const foo = context.configiuration.foo
 
@@ -206,36 +158,13 @@ function transition (input, entity, context) {
 }
 ```
 
-> ![Warning](https://img.shields.io/badge/Warning-yellow)<br/>
-> It is strongly **not** recommended to store a copy of value type configuration
-> values outside operation scope, thus it prevents operation to benefit
-> from [hot updates](#).
->
-> ```javascript
-> // NOT RECOMMENDED
-> let foo
-> 
-> function transition (input, entity, context) {
->   // NOT RECOMMENDED
->   if (foo === undefined) foo = context.configuration.foo
-> 
->   // ...
-> }
-> ```
-> See [Genuine operations](/documentation/design.md#genuine-operations).
+### Local environment placeholders
 
-## Development Configuration
-
-Configuration can be exported by [`toa env`](/runtime/cli/readme.md#env).
-
-### Local Environment Placeholders
-
-Context Configuration values may contain placeholders that reference environment variables.
+Configuration annotation values may contain placeholders that reference environment variables.
 Placeholders are replaced with values if the corresponding environment variables are set.
 
-> Placeholders can only be used with local environment (exported by `toa env`), as these values are
-> not
-> deployed.
+> Placeholders can only be used with local environment (exported
+> by [`toa env`](/runtime/cli/readme.md#env)), as these values are not deployed.
 
 ```yaml
 # context.toa.yaml
@@ -248,11 +177,3 @@ configuration:
 # .env
 STAGE=82
 ```
-
-## Appendix
-
-- [Discussion](./docs/discussion.md)
-- [Configuration consistency](./docs/consistency.md)
-
-[^1]: Cannot be changed without a deployment as new values are considered to be a subject of
-testing. [#146](https://github.com/toa-io/toa/issues/146)

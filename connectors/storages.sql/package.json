@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/storages.sql",
-  "version": "0.20.0-dev.28",
+  "version": "0.20.0-dev.31",
   "description": "Toa SQL Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,12 +19,12 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/console": "0.20.0-dev.28",
-    "@toa.io/conveyor": "0.20.0-dev.28",
-    "@toa.io/generic": "0.20.0-dev.28",
-    "@toa.io/pointer": "0.20.0-dev.28",
+    "@toa.io/console": "0.20.0-dev.31",
+    "@toa.io/conveyor": "0.20.0-dev.31",
+    "@toa.io/generic": "0.20.0-dev.31",
+    "@toa.io/pointer": "0.20.0-dev.31",
     "knex": "2.4.2",
     "pg": "8.9.0"
   },
-  "gitHead": "594d7a02c777e0c39252ff3dd1beddd069d8081d"
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
