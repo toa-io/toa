@@ -2,6 +2,7 @@ import { encode } from 'msgpackr'
 import { createVariables, type Request } from '@toa.io/pointer'
 import { merge } from '@toa.io/generic'
 import { normalize, split, type Annotation, type Properties } from './annotation'
+import { type Manifest, validate } from './manifest'
 import type { Locator } from '@toa.io/core'
 import type { Dependency, Variables } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
@@ -30,7 +31,7 @@ export function deployment (instances: Instance[], annotation: Annotation): Depe
 }
 
 export function manifest (manifest: Manifest): Manifest {
-  console.log('TEMP: manifest()')
+  validate(manifest)
 
   return manifest
 }
@@ -49,5 +50,4 @@ function createPropertiesVariable (locator: Locator, properties: Properties): Va
 const ID_PREFIX = 'origins-'
 const ENV_PREFIX = 'TOA_ORIGINS_'
 
-export type Manifest = Record<string, string | null>
 export type Instance = context.Dependency<Manifest>

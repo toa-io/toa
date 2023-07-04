@@ -191,3 +191,19 @@ it('should expand array of schemas to enum', async () => {
     ]
   })
 })
+
+it('should expand oneOf', async () => {
+  const cos = { '/.+/': [{ type: 'string' }, { type: 'null' }] }
+
+  const schema = expand(cos, valid)
+
+  expect(schema).toStrictEqual({
+    type: 'object',
+    patternProperties: {
+      '.+': {
+        oneOf: [{ type: 'string' }, { type: 'null' }]
+      }
+    },
+    additionalProperties: false
+  })
+})

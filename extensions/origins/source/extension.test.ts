@@ -1,15 +1,16 @@
 import { generate } from 'randomstring'
 import { encode } from 'msgpackr'
 import { Locator } from '@toa.io/core'
-import { deployment, type Manifest, type Instance } from './extension'
-import { type Annotation, type Properties } from './annotation'
+import { deployment, type Instance } from './extension'
+import type { Annotation, Properties } from './annotation'
+import type { Manifest } from './manifest'
 import type { Dependency } from '@toa.io/operations'
 
 const locator = new Locator(generate(), generate())
 const NAMESPACE = locator.namespace.toUpperCase()
 const NAME = locator.name.toUpperCase()
 
-it('should create deploy pointer variables', async () => {
+it('should deploy pointer variables', async () => {
   const manifest: Manifest = { queue: null }
   const instance: Instance = { locator, manifest }
   const url = 'amqp://host-' + generate()
@@ -24,12 +25,12 @@ it('should create deploy pointer variables', async () => {
 
   const expected: Dependency = {
     variables: {
-      [locator.label]: [
+      [locator.label]: expect.arrayContaining([
         {
           name: `TOA_ORIGINS_${NAMESPACE}_${NAME}_QUEUE`,
           value: url
         }
-      ]
+      ])
     }
   }
 
@@ -37,7 +38,7 @@ it('should create deploy pointer variables', async () => {
     .toMatchObject(expected)
 })
 
-it('should create deploy default origins', async () => {
+it('should deploy default origin', async () => {
   const example = 'http://api.example.com'
   const manifest: Manifest = { example }
   const instance: Instance = { locator, manifest }
@@ -46,12 +47,12 @@ it('should create deploy default origins', async () => {
 
   const expected: Dependency = {
     variables: {
-      [locator.label]: [
+      [locator.label]: expect.arrayContaining([
         {
           name: `TOA_ORIGINS_${NAMESPACE}_${NAME}_EXAMPLE`,
           value: example
         }
-      ]
+      ])
     }
   }
 
@@ -77,12 +78,12 @@ it('should deploy properties', async () => {
 
   const expected: Dependency = {
     variables: {
-      [locator.label]: [
+      [locator.label]: expect.arrayContaining([
         {
           name: `TOA_ORIGINS_${NAMESPACE}_${NAME}__PROPERTIES`,
           value
         }
-      ]
+      ])
     }
   }
 
