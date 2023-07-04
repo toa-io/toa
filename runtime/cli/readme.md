@@ -72,7 +72,8 @@ $ toa replay ./path/to/context
 $ toa replay --title "should add numbers"
 ```
 
-If the path is a Context root (containing `context.toa.yaml` file), samples for components within the Context will be
+If the path is a Context root (containing `context.toa.yaml` file), samples for components within
+the Context will be
 found and replayed sequentially.
 
 ### export manifest
@@ -135,7 +136,7 @@ Deploy a generic Kubernetes secret with the prefix `toa-`.
 </dd>
 </dl>
 
-> Existing secret will be replaced.
+> If a secret already exists, then given `key-values` will be added to it.
 
 #### Example
 
