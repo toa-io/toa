@@ -77,14 +77,23 @@ Feature: Origins extension
 
   Scenario: Origin with environment variable placeholder
     Given I have a component `origins.httpEcho`
-    And I have a context
-    When I run `toa env`
-    And I update an environment with:
+    And I have a context with:
+      """yaml
+      origins:
+        origins.httpEcho:
+          port: http://localhost:${{ ECHO_PORT }}/some/
+          suffixed: http://local${{ ECHO_SUFFIX }}:8888/some/
+          origin: http://${{ ECHO_ORIGIN }}
+          domain: http://sandbox.${{ ECHO_HOST }}.com/
+          subdomain: http://${{ ECHO_NUMBER }}.example.com/
+      """
+    And environment variables:
       """
       ECHO_PORT=8888
       ECHO_SUFFIX=host
       ECHO_ORIGIN=localhost:8888
       """
+    When I run `toa env`
     Then I run `toa invoke port -p ./components/origins.httpEcho`
     And program should exit with code 0
     Then I run `toa invoke suffixed -p ./components/origins.httpEcho`

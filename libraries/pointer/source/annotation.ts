@@ -19,9 +19,7 @@ export function normalize (declaration: Declaration): URIMap {
 }
 
 function format (values: string[]): string[] {
-  return values.map(shards)
-    .flat()
-    .map((value) => echo(value))
+  return values.map(shards).flat()
 }
 
 function validate (map: URIMap): void {

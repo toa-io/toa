@@ -24,18 +24,14 @@ If the Pointer annotation is a `string`, then its value is considered as default
 mongodb: mongo://default.db.example.com
 ```
 
-### URL format
+### Shards
 
-Pointer values support placeholders for [shards](/libraries/generic/readme.md#shards) and
-environment variables.
+Pointer values can contain [shards](/libraries/generic/readme.md#shards) syntax.
 
 ```yaml
 something:
   one: redis://redis{0-2}.example.com
-  two: amqp://${RMQ_HOST}.example.com
 ```
-
-Theese placeholders are resolved during deployment.
 
 ### `default` namespace
 

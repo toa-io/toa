@@ -9,7 +9,7 @@ const components = require('./.workspace/components')
 const samples = require('./.workspace/samples')
 const context = require('./.workspace/context')
 
-const { Given, Then } = require('@cucumber/cucumber')
+const { Given, Then, After } = require('@cucumber/cucumber')
 
 Given('I have a component {component}',
   async function (component) {
@@ -85,6 +85,22 @@ Then('I update an environment file {label} with:',
     await updateEnv.call(this, update, envFile)
   })
 
+Given('environment variables:',
+  function (contents) {
+    const vars = dotenv.parse(contents)
+
+    for (const [name, value] of Object.entries(vars)) {
+      process.env[name] = value
+      VARS.push(name)
+    }
+  })
+
+After(function () {
+  for (const name of VARS) delete process[name]
+
+  VARS.length = 0
+})
+
 async function updateEnv (update, envFile) {
   const path = join(this.cwd, envFile)
   const contents = await file.read(path)
@@ -98,3 +114,4 @@ async function updateEnv (update, envFile) {
 }
 
 const ENV_FILE = '.env'
+const VARS = []
