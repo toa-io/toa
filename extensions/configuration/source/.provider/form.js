@@ -10,6 +10,7 @@ const form = (schema) => {
   const defaults = (node) => {
     if (node.type === 'object' && node.properties !== undefined) return { ...node.properties }
     if (node.default !== undefined) return node.default
+    if (node.type === 'array') return []
 
     return null
   }
