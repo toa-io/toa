@@ -13,11 +13,12 @@ export function deployment (instances: Instance[], annotation: Annotation): Depe
   const variables: Variables = {}
 
   for (const instance of instances) {
-    const id = ID_PREFIX + instance.locator.label
+    const label: string = instance.locator.label
+    const id = ID_PREFIX + label
     const component = annotation[instance.locator.id]
     const { origins, properties } = split(component)
     const selectors = Object.keys(instance.manifest)
-    const request: Request = { group: instance.locator.label, selectors }
+    const request: Request = { group: label, selectors }
     const instanceVariables = createVariables(id, origins, [request])
 
     merge(variables, instanceVariables)

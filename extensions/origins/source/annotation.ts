@@ -1,15 +1,16 @@
 import { resolve } from 'node:path'
 import * as schemas from '@toa.io/schemas'
-import { type Instance } from './extension'
-import type * as pointer from '@toa.io/pointer'
+import protocols from './protocols'
+import type { Instance } from './extension'
 
 export function normalize (annotation: Annotation, instances: Instance[]): void {
   schema.validate(annotation)
   mergeDefaults(annotation, instances)
+  checkProtocols(annotation)
 }
 
 export function split (component: Component): {
-  origins: pointer.Declaration
+  origins: Origins
   properties: Properties
 } {
   const origins: Origins = {}
@@ -35,9 +36,28 @@ function mergeInstance (origins: Origins, instance: Instance): Component {
     if (origins[origin] === undefined)
       if (value === null)
         throw new Error(`Origin '${origin}' is not defined for '${instance.locator.id}'`)
-      else origins[origin] = value
+      else origins[origin] = [value]
 
   return origins
+}
+
+function checkProtocols (annotation: Annotation): void {
+  for (const component of Object.values(annotation)) {
+    const { origins } = split(component)
+    const urls = Object.values(origins).flat()
+
+    for (const url of urls)
+      protocolSupported(url)
+  }
+}
+
+function protocolSupported (reference: string): void {
+  const url = new URL(reference)
+
+  for (const protocol of protocols)
+    if (protocol.protocols.includes(url.protocol)) return
+
+  throw new Error(`Protocol '${url.protocol}' is not supported.`)
 }
 
 const path = resolve(__dirname, '../schemas/annotation.cos.yaml')

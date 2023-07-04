@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
 import { Locator } from '@toa.io/core'
-import { type Annotation, type Component, split, normalize } from './annotation'
+import { split, normalize, type Component, type Annotation } from './annotation'
 import { type Instance } from './extension'
 
 let annotation: Annotation
@@ -56,7 +56,7 @@ describe('normalize', () => {
 
     expect(annotation)
       .toStrictEqual({
-        [locator.id]: { one }
+        [locator.id]: { one: [one] }
       })
   })
 
@@ -90,6 +90,17 @@ describe('normalize', () => {
 
     expect(run)
       .not.toThrow()
+  })
+
+  it('should throw if protocol is not supported', async () => {
+    annotation = {
+      [locator.id]: {
+        one: 'mqtt://host-' + generate()
+      }
+    }
+
+    expect(run)
+      .toThrow('is not supported')
   })
 })
 

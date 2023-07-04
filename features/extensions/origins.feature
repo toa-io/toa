@@ -77,6 +77,14 @@ Feature: Origins extension
 
   Scenario: Origin with environment variable placeholder
     Given I have a component `origins.httpEcho`
+    And environment variables:
+      """
+      ECHO_PORT=8888
+      ECHO_SUFFIX=host
+      ECHO_HOST=example
+      ECHO_ORIGIN=localhost:8888
+      ECHO_NUMBER=0
+      """
     And I have a context with:
       """yaml
       origins:
@@ -85,13 +93,7 @@ Feature: Origins extension
           suffixed: http://local${{ ECHO_SUFFIX }}:8888/some/
           origin: http://${{ ECHO_ORIGIN }}
           domain: http://sandbox.${{ ECHO_HOST }}.com/
-          subdomain: http://${{ ECHO_NUMBER }}.example.com/
-      """
-    And environment variables:
-      """
-      ECHO_PORT=8888
-      ECHO_SUFFIX=host
-      ECHO_ORIGIN=localhost:8888
+          subdomain: http://api${{ ECHO_NUMBER }}.example.com/
       """
     When I run `toa env`
     Then I run `toa invoke port -p ./components/origins.httpEcho`
