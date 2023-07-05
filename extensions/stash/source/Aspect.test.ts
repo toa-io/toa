@@ -4,13 +4,14 @@ import { generate } from 'randomstring'
 import { Aspect } from './Aspect'
 import * as mock from './Connection.fixtures'
 import type { Connection } from './Connection'
-import type { Cluster } from 'ioredis'
+import type { Redis } from 'ioredis'
 
 jest.mock('redlock-temp-fix')
 
 let aspect: Aspect
 let connection: jest.MockedObject<Connection>
-let redis: jest.MockedObject<Cluster>
+let redises: Array<jest.MockedObject<Redis>>
+let redis: jest.MockedObject<Redis>
 let redlock: jest.MockedObject<Redlock>
 
 const key = generate()
@@ -19,7 +20,8 @@ beforeEach(() => {
   jest.clearAllMocks()
 
   connection = new mock.Connection() as unknown as jest.MockedObject<Connection>
-  redis = connection.redis as unknown as jest.MockedObject<Cluster>
+  redises = connection.redises as unknown as Array<jest.MockedObject<Redis>>
+  redis = redises[0]
   aspect = new Aspect(connection)
 
   redlock = (Redlock as unknown as jest.Mock<Redlock>).mock

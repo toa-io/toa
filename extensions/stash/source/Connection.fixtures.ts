@@ -15,7 +15,7 @@ export const Redis = jest.fn(() => ({
 })) as unknown as jest.Mock<typeof redis.Redis>
 
 export const Connection = jest.fn(() => ({
-  redis: new Redis(),
+  redises: [new Redis()],
   link: jest.fn()
 }))
 

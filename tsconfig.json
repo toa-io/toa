@@ -11,7 +11,8 @@
     "incremental": true,
     "strict": true,
     "experimentalDecorators": true,
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
+    "allowJs": true
   },
   "exclude": [
     "**/transpiled"

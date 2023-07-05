@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./transpiled",
-    "allowJs": true
+    "outDir": "./transpiled"
   },
   "include": [
     "source"

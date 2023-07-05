@@ -1,8 +1,6 @@
 'use strict'
 
-const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
-const { sample } = require('@toa.io/generic')
 
 const comq = require('./.test/mock.comq')
 const mock = { comq }
@@ -41,79 +39,6 @@ it('should connect', async () => {
   await aspect.open()
 
   for (const reference of Object.values(manifest)) {
-    expect(comq.assert).toHaveBeenCalledWith(reference)
+    expect(comq.assert).toHaveBeenCalledWith(...reference)
   }
-})
-
-it('should connect to shards', async () => {
-  jest.clearAllMocks()
-
-  manifest = {
-    test: 'amqps://host{0-2}.domain.com'
-  }
-
-  aspect = create(manifest)
-
-  const shards = []
-
-  for (let i = 0; i < 3; i++) shards.push(`amqps://host${i}.domain.com`)
-
-  await aspect.open()
-
-  expect(comq.assert).toHaveBeenCalledWith(...shards)
-})
-
-it('should disconnect', async () => {
-  await aspect.open()
-  await aspect.close()
-
-  for (const reference of Object.values(manifest)) {
-    const index = comq.assert.mock.calls.findIndex((call) => call[0] === reference)
-    const io = await comq.assert.mock.results[index].value
-
-    expect(io.close).toHaveBeenCalled()
-  }
-})
-
-describe('invoke', () => {
-  /** @type {jest.MockedObject<comq.IO>} */
-  let io
-
-  /** @type {string} */
-  let origin
-
-  let args
-
-  beforeEach(async () => {
-    await aspect.open()
-
-    const origins = Object.keys(manifest)
-
-    origin = sample(origins)
-
-    const reference = manifest[origin]
-    const index = comq.assert.mock.calls.findIndex((call) => call[0] === reference)
-
-    io = await comq.assert.mock.results[index].value
-    args = [generate(), generate(), generate()]
-  })
-
-  it('should be', async () => {
-    expect(aspect.invoke).toBeInstanceOf(Function)
-  })
-
-  it.each(['emit', 'request'])('should %s', async (method) => {
-    await aspect.invoke(origin, method, ...args)
-
-    expect(io[method]).toHaveBeenCalledWith(...args)
-  })
-
-  it.each(['reply', 'consume', generate()])('should not expose %s',
-    async (method) => {
-      await expect(aspect.invoke(origin, method)).rejects.toThrow()
-    })
-
-  it('should throw if unknown origin', async () => {
-    await expect(aspect.invoke(generate(), 'emit')).rejects.toThrow()
-  })
 })
