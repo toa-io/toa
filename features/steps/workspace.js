@@ -3,6 +3,7 @@
 const assert = require('node:assert')
 const { join } = require('node:path')
 const dotenv = require('dotenv')
+const { diff } = require('jest-diff')
 const { subtract } = require('@toa.io/generic')
 const { file } = require('@toa.io/filesystem')
 const components = require('./.workspace/components')
@@ -61,9 +62,11 @@ Then('the environment contains:',
     const path = join(this.cwd, ENV_FILE)
     const contents = await file.read(path)
     const existingLines = contents.split('\n')
-    const diff = subtract(searchLines, existingLines)
+    const diffLines = subtract(searchLines, existingLines)
 
-    assert.equal(diff.length, 0, 'Environment does not contain at least one of the given lines')
+    assert.equal(diffLines.length, 0,
+      'Environment does not contain at least one of the given lines.\n' +
+      diff(searchLines, existingLines))
   })
 
 Then('I update an environment with:',
