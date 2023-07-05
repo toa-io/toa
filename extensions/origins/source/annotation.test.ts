@@ -10,6 +10,7 @@ let component: Component
 const locator = new Locator(generate(), generate())
 
 beforeEach(() => {
+  annotation = {}
   instances = []
 })
 
@@ -117,6 +118,10 @@ describe('normalize', () => {
     expect(run)
       .toThrow('inconsistent')
   })
+
+  it('should not throw if annotation is undefined', async () => {
+    expect(run).not.toThrow()
+  })
 })
 
 describe('split', () => {
@@ -141,5 +146,5 @@ describe('split', () => {
 })
 
 function run (): void {
-  normalize(annotation, instances)
+  normalize(instances, annotation)
 }

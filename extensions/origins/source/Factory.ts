@@ -8,7 +8,7 @@ import type { Manifest } from './manifest'
 
 export class Factory implements extensions.Factory {
   public aspect (locator: Locator, manifest: Manifest): extensions.Aspect[] {
-    const names = Object.keys(manifest)
+    const names = manifest === null ? [] : Object.keys(manifest)
     const uris = this.getURIs(locator, names)
     const properties = this.getProperties(locator)
 

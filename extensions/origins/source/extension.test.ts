@@ -91,6 +91,37 @@ it('should deploy properties', async () => {
     .toMatchObject(expected)
 })
 
+it('should deploy properties with null manifest', async () => {
+  const manifest: Manifest = null
+  const instance: Instance = { locator, manifest }
+  const properties: Properties = {
+    '.http': {
+      '/^http:\\/\\/\\w+api.example.com/': true
+    }
+  }
+
+  const annotation: Annotation = {
+    [locator.id]: properties
+  }
+
+  const deploy = deployment([instance], annotation)
+  const value = encode(properties).toString('base64')
+
+  const expected: Dependency = {
+    variables: {
+      [locator.label]: expect.arrayContaining([
+        {
+          name: `TOA_ORIGINS_${NAMESPACE}_${NAME}__PROPERTIES`,
+          value
+        }
+      ])
+    }
+  }
+
+  expect(deploy)
+    .toMatchObject(expected)
+})
+
 it('should deploy credentials for amqp', async () => {
   const manifest: Manifest = { queue: null }
   const instance: Instance = { locator, manifest }

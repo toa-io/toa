@@ -39,8 +39,7 @@ class Aspect extends Connector {
     return this.#origins[origin][method](...args)
   }
 
-  #open = async ([origin, reference]) => {
-    const references = shards(reference)
+  #open = async ([origin, references]) => {
     const io = await assert(...references)
 
     this.#origins[origin] = restrict(io)

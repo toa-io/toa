@@ -19,6 +19,12 @@ it('should throw if not a uri', async () => {
   expect(run).toThrow('must match format')
 })
 
+it('should not throw on null manifest', async () => {
+  manifest = null
+
+  expect(run).not.toThrow()
+})
+
 function run (): void {
   validate(manifest)
 }

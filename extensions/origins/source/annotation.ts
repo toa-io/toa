@@ -3,7 +3,7 @@ import * as schemas from '@toa.io/schemas'
 import { type Protocol, protocols } from './protocols'
 import type { Instance } from './extension'
 
-export function normalize (annotation: Annotation, instances: Instance[]): void {
+export function normalize (instances: Instance[], annotation: Annotation): void {
   schema.validate(annotation)
   mergeDefaults(annotation, instances)
   checkProtocols(annotation)
@@ -33,6 +33,8 @@ function mergeDefaults (annotation: Annotation, instances: Instance[]): void {
 
 function mergeInstance (origins: Origins, instance: Instance): Component {
   const id: string = instance.locator.id
+
+  if (instance.manifest === null) return origins
 
   for (const [origin, value] of Object.entries(instance.manifest))
     if (origins[origin] === undefined)
