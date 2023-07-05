@@ -16,7 +16,9 @@ export const Redis = jest.fn(() => ({
 
 export const Connection = jest.fn(() => ({
   redises: [new Redis()],
-  link: jest.fn()
+  link: jest.fn(),
+  connect: jest.fn(),
+  disconnect: jest.fn()
 }))
 
 export const ioredis = { Redis }

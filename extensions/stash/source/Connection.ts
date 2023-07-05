@@ -1,19 +1,26 @@
 import { Redis, type ClusterOptions } from 'ioredis'
 import { Connector, type Locator } from '@toa.io/core'
+import { resolve } from '@toa.io/pointer'
+import { ID } from './extension'
 
 export class Connection extends Connector {
-  public readonly redises: Redis[]
+  public readonly redises: Redis[] = []
+  private readonly locator: Locator
 
-  public constructor (urls: string[], locator: Locator) {
+  public constructor (locator: Locator) {
     super()
 
-    const keyPrefix = `${locator.namespace}:${locator.name}:`
-    const options: ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
-
-    this.redises = urls.map((url) => new Redis(url, options))
+    this.locator = locator
   }
 
   protected override async open (): Promise<void> {
+    const keyPrefix = `${this.locator.namespace}:${this.locator.name}:`
+    const options: ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
+    const urls = this.resolveURLs()
+
+    for (const url of urls)
+      this.redises.push(new Redis(url, options))
+
     const connecting = this.redises.map(this.connectNode.bind(this))
 
     await Promise.all(connecting)
@@ -30,5 +37,10 @@ export class Connection extends Connector {
     await redis.connect()
 
     console.log(`Stash connected to ${redis.options.host as string}:${String(redis.options.port)}`)
+  }
+
+  private resolveURLs (): string[] {
+    if (process.env.TOA_DEV === '1') return ['redis://localhost']
+    else return resolve(ID, this.locator.id)
   }
 }

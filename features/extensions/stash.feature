@@ -138,12 +138,12 @@ Feature: Stash extension
     And I run `toa env`
     And I update an environment with:
       """
-      TOA_DEV=0
       TOA_AMQP_SYSTEM_USERNAME=developer
       TOA_AMQP_SYSTEM_PASSWORD=secret
       TOA_AMQP_DEFAULT_STASH_USERNAME=developer
       TOA_AMQP_DEFAULT_STASH_PASSWORD=secret
       """
     And my working directory is ./components/stash
-    When I run `toa invoke locks "{ input: {} }"`
+    When I run `TOA_DEV=0 toa invoke set "{ input: 0 }"`
+    And I run `TOA_DEV=0 toa invoke locks "{ input: {} }"`
     Then program should exit with code 0

@@ -16,13 +16,15 @@ let redlock: jest.MockedObject<Redlock>
 
 const key = generate()
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks()
 
   connection = new mock.Connection() as unknown as jest.MockedObject<Connection>
   redises = connection.redises as unknown as Array<jest.MockedObject<Redis>>
   redis = redises[0]
   aspect = new Aspect(connection)
+
+  await aspect.connect()
 
   redlock = (Redlock as unknown as jest.Mock<Redlock>).mock
     .instances[0] as unknown as jest.MockedObject<Redlock>

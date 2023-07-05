@@ -7,15 +7,9 @@ import type { Dependency } from '@toa.io/operations'
 
 export class Factory implements extensions.Factory {
   public aspect (locator: Locator): extensions.Aspect {
-    const references = this.url(locator)
-    const connection = new Connection(references, locator)
+    const connection = new Connection(locator)
 
     return new Aspect(connection)
-  }
-
-  private url (locator: Locator): string[] {
-    if (process.env.TOA_DEV === '1') return ['redis://localhost']
-    else return resolve(ID, locator.id)
   }
 }
 
@@ -33,4 +27,4 @@ function createRequest (instance: context.Dependency): Request {
   }
 }
 
-const ID = 'stash'
+export const ID = 'stash'
