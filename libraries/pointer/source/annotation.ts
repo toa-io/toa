@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import * as schemas from '@toa.io/schemas'
-import { echo, shards } from '@toa.io/generic'
+import { shards } from '@toa.io/generic'
 import type { URIMap } from './Deployment'
 
 export function normalize (declaration: Declaration): URIMap {

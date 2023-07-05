@@ -9,9 +9,9 @@ jest.mock('ioredis', () => ({
 }))
 
 let connection: Connection
-let cluster: jest.MockedObject<redis.Cluster>
+let redises: Array<jest.MockedObject<redis.Redis>>
 
-const url = generate()
+const urls = [generate(), generate(), generate()]
 
 const locator = {
   namespace: generate(),
@@ -21,8 +21,8 @@ const locator = {
 beforeEach(() => {
   jest.clearAllMocks()
 
-  connection = new Connection(url, locator)
-  cluster = Redis.mock.results[0].value
+  connection = new Connection(urls, locator)
+  redises = Redis.mock.results.map((result) => result.value)
 })
 
 it('should be instance of Connector', async () => {
@@ -35,22 +35,22 @@ it('should connect', async () => {
   const options: redis.ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
 
   expect(Redis)
-    .toHaveBeenCalledWith(url, options)
+    .toHaveBeenCalledWith(urls[0], options)
 
   await connection.connect()
 
-  expect(cluster.connect)
-    .toHaveBeenCalled()
+  for (const redis of redises)
+    expect(redis.connect).toHaveBeenCalled()
 })
 
 it('should disconnect', async () => {
   await connection.disconnect()
 
-  expect(cluster.disconnect)
-    .toHaveBeenCalled()
+  for (const redis of redises)
+    expect(redis.disconnect).toHaveBeenCalled()
 })
 
 it('should expose cluster', async () => {
-  expect(connection.redis)
-    .toStrictEqual(cluster)
+  expect(connection.redises)
+    .toStrictEqual(redises)
 })

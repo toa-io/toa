@@ -7,17 +7,6 @@ import type { Locator } from '@toa.io/core'
 import type { Dependency, Variables } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
 
-function createInstanceVariables (instance: Instance, origins: Origins) {
-  if (instance.manifest === null) return {}
-
-  const label: string = instance.locator.label
-  const id = ID_PREFIX + label
-  const selectors = Object.keys(instance.manifest)
-  const request: Request = { group: label, selectors }
-
-  return createVariables(id, origins, [request])
-}
-
 export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
   normalize(instances, annotation)
 
@@ -40,6 +29,17 @@ export function manifest (manifest: Manifest): Manifest {
   validate(manifest)
 
   return manifest
+}
+
+function createInstanceVariables (instance: Instance, origins: Origins): Variables {
+  if (instance.manifest === null) return {}
+
+  const label: string = instance.locator.label
+  const id = ID_PREFIX + label
+  const selectors = Object.keys(instance.manifest)
+  const request: Request = { group: label, selectors }
+
+  return createVariables(id, origins, [request])
 }
 
 function createPropertiesVariable (locator: Locator, properties: Properties): Variables {

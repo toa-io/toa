@@ -87,6 +87,6 @@ export interface Request {
   selectors: string[]
 }
 
-const insecureProtocols = ['http:', 'https:']
+const insecureProtocols = ['http:', 'https:', 'redis:']
 
 export type URIMap = Record<string, string[]>

@@ -2,7 +2,6 @@
 
 const { assert } = require('comq')
 const { Connector } = require('@toa.io/core')
-const { shards } = require('@toa.io/generic')
 
 const { id } = require('./id')
 

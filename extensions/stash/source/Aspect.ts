@@ -12,8 +12,8 @@ export class Aspect extends Connector implements extensions.Aspect {
   public constructor (connection: Connection) {
     super()
 
-    this.redis = connection.redis
-    this.redlock = new Redlock([this.redis], { retryCount: -1 })
+    this.redis = connection.redises[0]
+    this.redlock = new Redlock(connection.redises, { retryCount: -1 })
 
     this.depends(connection)
   }

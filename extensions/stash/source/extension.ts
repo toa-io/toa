@@ -1,4 +1,4 @@
-import { createVariables, type URIMap, type Request } from '@toa.io/pointer'
+import { createVariables, resolve, type URIMap, type Request } from '@toa.io/pointer'
 import { Aspect } from './Aspect'
 import { Connection } from './Connection'
 import type { Locator, extensions } from '@toa.io/core'
@@ -7,15 +7,15 @@ import type { Dependency } from '@toa.io/operations'
 
 export class Factory implements extensions.Factory {
   public aspect (locator: Locator): extensions.Aspect {
-    const url = this.url()
-    const connection = new Connection(url, locator)
+    const references = this.url(locator)
+    const connection = new Connection(references, locator)
 
     return new Aspect(connection)
   }
 
-  private url (): string {
-    if (process.env.TOA_DEV === '1') return 'redis://localhost'
-    else return ''
+  private url (locator: Locator): string[] {
+    if (process.env.TOA_DEV === '1') return ['redis://localhost']
+    else return resolve(ID, locator.id)
   }
 }
 

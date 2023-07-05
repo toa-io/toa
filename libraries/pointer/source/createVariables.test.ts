@@ -140,10 +140,12 @@ it('should create credential secrets', async () => {
     .toStrictEqual(expectation)
 })
 
-it('should not create credetial secrets for http', async () => {
+it.each([
+  'http:', 'redis:'
+])('should not create credetial secrets for %s', async (protocol) => {
   const id = generate()
   const selector = generate()
-  const annotation = { [selector]: uri('http:') }
+  const annotation = { [selector]: uri(protocol) }
   const request: Request = { group: generate(), selectors: [selector] }
   const variables = createVariables(id, annotation, [request])
 

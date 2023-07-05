@@ -1,4 +1,3 @@
-import { generate } from 'randomstring'
 import { normalize } from './annotation'
 
 describe('normalize', () => {
