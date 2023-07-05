@@ -1,5 +1,4 @@
 import { generate } from 'randomstring'
-import { Annotation } from '@toa.io/extensions.origins/transpiled/annotation'
 import { createVariables } from './createVariables'
 import type { Variable, Variables } from '@toa.io/operations'
 import type { Request } from './Deployment'

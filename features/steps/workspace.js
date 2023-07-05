@@ -90,15 +90,17 @@ Given('environment variables:',
     const vars = dotenv.parse(contents)
 
     for (const [name, value] of Object.entries(vars)) {
+      VARS.set(name, process.env[name])
       process.env[name] = value
-      VARS.push(name)
     }
   })
 
 After(function () {
-  for (const name of VARS) delete process[name]
+  for (const [key, value] of VARS) {
+    process.env[key] = value
+  }
 
-  VARS.length = 0
+  VARS.clear()
 })
 
 async function updateEnv (update, envFile) {
@@ -114,4 +116,4 @@ async function updateEnv (update, envFile) {
 }
 
 const ENV_FILE = '.env'
-const VARS = []
+const VARS = new Map()

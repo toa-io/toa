@@ -1,4 +1,4 @@
-import { createVariables, resolve, type URIMap, type Request } from '@toa.io/pointer'
+import { createVariables, type URIMap, type Request } from '@toa.io/pointer'
 import { Aspect } from './Aspect'
 import { Connection } from './Connection'
 import type { Locator, extensions } from '@toa.io/core'
