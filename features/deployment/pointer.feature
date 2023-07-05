@@ -51,3 +51,35 @@ Feature: Pointer
       | type      | key           |
       | component | default.stash |
       | namespace | default       |
+
+
+  Scenario: Credentials for AMQP binding
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """
+      amqp:
+        .: amqp://default.example.com
+        system: amqp://system.example.com
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      variables:
+        global:
+          - name: TOA_AMQP_SYSTEM_USERNAME
+            secret:
+              name: toa-amqp-system
+              key: username
+          - name: TOA_AMQP_SYSTEM_PASSWORD
+            secret:
+              name: toa-amqp-system
+              key: password
+          - name: TOA_AMQP_DUMMIES_ONE_USERNAME
+            secret:
+              name: toa-amqp.default
+              key: username
+          - name: TOA_AMQP_DUMMIES_ONE_PASSWORD
+            secret:
+              name: toa-amqp.default
+              key: password
+      """

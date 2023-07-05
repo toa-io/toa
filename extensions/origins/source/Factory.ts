@@ -2,7 +2,7 @@ import { decode } from 'msgpackr'
 import { resolve, type URIMap } from '@toa.io/pointer'
 import { protocols, type Protocol } from './protocols'
 import { ENV_PREFIX, ID_PREFIX, PROPERTIES_SUFFIX } from './extension'
-import { type Properties } from './annotation'
+import type { Properties } from './annotation'
 import type { Locator, extensions } from '@toa.io/core'
 import type { Manifest } from './manifest'
 

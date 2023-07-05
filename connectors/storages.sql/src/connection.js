@@ -3,15 +3,13 @@
 const knex = require('knex')
 const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/console')
+const { resolve } = require('@toa.io/pointer')
+const { ID } = require('./deployment')
 
-/**
- * @implements {toa.sql.Connection}
- */
 class Connection extends Connector {
-  static #connections = {}
+  table
 
-  /** @type {toa.sql.Pointer} */
-  #pointer
+  #locator
 
   /** @type {string} */
   #driver
@@ -19,35 +17,25 @@ class Connection extends Connector {
   /** @type {import('knex').Knex} */
   #client
 
-  /**
-   * @param {toa.sql.Pointer} pointer
-   */
-  constructor (pointer) {
+  constructor (locator) {
     super()
 
-    const key = pointer.key
-    const connections = Connection.#connections
-
-    if (connections[key] !== undefined) return connections[key]
-    else connections[key] = this
-
-    this.#pointer = pointer
-    this.#driver = pointer.protocol.slice(0, -1)
-    this.#client = this.#configure()
+    this.#locator = locator
   }
 
   async open () {
+    this.#client = this.#configure()
+
     // https://github.com/knex/knex/issues/1886
     await this.#client.raw('select 1')
 
-    console.info(`SQL storage connected to ${this.#pointer.label}`)
+    console.info('SQL storage connected')
   }
 
   async close () {
-    delete Connection.#connections[this.#pointer.key]
     await this.#client.destroy()
 
-    console.info(`SQL storage disconnected from ${this.#pointer.label}`)
+    console.info('SQL storage disconnected')
   }
 
   async insert (table, objects) {
@@ -57,16 +45,25 @@ class Connection extends Connector {
   }
 
   #configure () {
-    const pointer = this.#pointer
+    const references = this.#resolveURLs()
+    const reference = references[0]
+    const url = new URL(reference)
+    let [, database, schema, table] = url.pathname.split('/')
+    const client = url.protocol.slice(0, -1)
+
+    if (schema === undefined) schema = this.#locator.namespace
+    if (table === undefined) table = this.#locator.name
+
+    this.table = `${schema}.${table}`
 
     const config = {
-      client: this.#driver,
+      client,
       connection: {
-        host: pointer.hostname,
-        port: pointer.port,
-        user: pointer.username,
-        password: pointer.password,
-        database: pointer.database
+        host: url.hostname,
+        port: url.port,
+        user: url.username,
+        password: url.password,
+        database: database || process.env.TOA_STORAGES_SQL_DATABASE
       },
       pool: {
         min: 0
@@ -74,6 +71,11 @@ class Connection extends Connector {
     }
 
     return knex(config)
+  }
+
+  #resolveURLs () {
+    if (process.env.TOA_DEV === '1') return ['pg://developer:secret@localhost']
+    else return resolve(ID, this.#locator.id)
   }
 }
 
