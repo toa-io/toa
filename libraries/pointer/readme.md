@@ -82,28 +82,14 @@ URL resolution for the example above is as follows:
 For security reasons, URL credentials cannot be specified in the annotation;
 they must be deployed secretly.
 
-Secret names must match the annotation keys with dots
-replaced by dashes and prefixed by an identifier
+The secret name must match the selector, with dots replaced by dashes and prefixed by an identifier
 provided by the corresponding connector or extension using the Pointer.
 
 ### Example
 
-Given the [AMQP binding](/connectors/bindings.amqp)
-providing `amqp` Pointer identifier and the follwing annotation:
-
-```yaml
-# context.toa.yaml
-amqp:
-  .: amqp://default.rmq.example.com
-  dummies: amqp://dummies.rmq.example.com
-  dummies.dummy: amqp://dummy.rmq.example.com
-```
-
-Secret names for the specified keys are as follows:
-
-- `amqp.default`
-- `amqp-dummies`
-- `amqp-dummies-dummy`
+Suppose we have the [AMQP binding](/connectors/bindings.amqp) that provides the `amqp` Pointer
+identifier and the selector `dummies.dummy`. In this case, the secret name would
+be `amqp-dummies-dummy`.
 
 > If secrets are not deployed with the [`toa conceal`](/runtime/cli/readme.md#conceal), then their
 > names must be prefixed with `toa-`.
@@ -116,7 +102,6 @@ utilize the same credentials.
 Secret's value for plain authentication must contain `username` and `password` keys.
 
 ```shell
-$ toa conceal amqp.default username=developer password=secret
 $ toa conceal amqp-dummies-dummy username=developer password=secret
 ```
 

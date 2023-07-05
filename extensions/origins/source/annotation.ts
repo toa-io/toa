@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import * as schemas from '@toa.io/schemas'
-import protocols from './protocols'
+import { type Protocol, protocols } from './protocols'
 import type { Instance } from './extension'
 
 export function normalize (annotation: Annotation, instances: Instance[]): void {
@@ -32,11 +32,13 @@ function mergeDefaults (annotation: Annotation, instances: Instance[]): void {
 }
 
 function mergeInstance (origins: Origins, instance: Instance): Component {
+  const id: string = instance.locator.id
+
   for (const [origin, value] of Object.entries(instance.manifest))
     if (origins[origin] === undefined)
       if (value === null)
-        throw new Error(`Origin '${origin}' is not defined for '${instance.locator.id}'`)
-      else origins[origin] = [value]
+        throw new Error(`Origin '${origin}' is not defined for '${id}'`)
+      else origins[origin] = value
 
   return origins
 }
@@ -44,18 +46,30 @@ function mergeInstance (origins: Origins, instance: Instance): Component {
 function checkProtocols (annotation: Annotation): void {
   for (const component of Object.values(annotation)) {
     const { origins } = split(component)
-    const urls = Object.values(origins).flat()
+    const urlSets = Object.values(origins)
 
-    for (const url of urls)
-      protocolSupported(url)
+    for (const urls of urlSets)
+      checkURLs(Array.isArray(urls) ? urls : [urls])
   }
 }
 
-function protocolSupported (reference: string): void {
+function checkURLs (urls: string[]): void {
+  let id: string | null = null
+
+  for (const url of urls) {
+    const protocol = resolveProtocol(url)
+
+    if (id === null) id = protocol.id
+    else if (id !== protocol.id)
+      throw new Error(`Origin has inconsistent protocols: ${id}, ${protocol.id}`)
+  }
+}
+
+function resolveProtocol (reference: string): Protocol {
   const url = new URL(reference)
 
   for (const protocol of protocols)
-    if (protocol.protocols.includes(url.protocol)) return
+    if (protocol.protocols.includes(url.protocol)) return protocol
 
   throw new Error(`Protocol '${url.protocol}' is not supported.`)
 }

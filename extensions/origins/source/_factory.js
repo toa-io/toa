@@ -3,7 +3,7 @@
 const protocols = require('./protocols')
 const env = require('./env')
 
-class Factory {
+class _factory {
   /**
    * @param {toa.core.Locator} locator
    * @param {toa.origins.Manifest} manifest
@@ -41,4 +41,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+exports.Factory = _factory

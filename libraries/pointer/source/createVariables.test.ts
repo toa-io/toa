@@ -110,6 +110,47 @@ it('should throw if selector cannot be resolved', async () => {
     .toThrow('cannot be resolved.')
 })
 
-function uri (): string {
-  return 'http://host-' + generate()
+it('should create credential secrets', async () => {
+  const id = generate()
+  const selector = generate()
+  const annotation = { [selector]: uri('amqp:') }
+  const request: Request = { group: generate(), selectors: [selector] }
+  const variables = createVariables(id, annotation, [request])
+
+  const expectation: Variables = {
+    [request.group]: expect.arrayContaining([
+      {
+        name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}_USERNAME`,
+        secret: {
+          name: `toa-${id}-${selector}`,
+          key: 'username'
+        }
+      },
+      {
+        name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}_PASSWORD`,
+        secret: {
+          name: `toa-${id}-${selector}`,
+          key: 'password'
+        }
+      }
+    ])
+  }
+
+  expect(variables)
+    .toStrictEqual(expectation)
+})
+
+it('should not create credetial secrets for http', async () => {
+  const id = generate()
+  const selector = generate()
+  const annotation = { [selector]: uri('http:') }
+  const request: Request = { group: generate(), selectors: [selector] }
+  const variables = createVariables(id, annotation, [request])
+
+  for (const variable of variables[request.group])
+    expect(variable.secret).toBeUndefined()
+})
+
+function uri (protocol = 'http:'): string {
+  return protocol + '//host-' + generate()
 }

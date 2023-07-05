@@ -65,7 +65,7 @@ it('should deploy properties', async () => {
   const instance: Instance = { locator, manifest }
   const properties: Properties = {
     '.http': {
-      '/^http://api.example.com/': true
+      '/^http:\\/\\/\\w+api.example.com/': true
     }
   }
 
@@ -82,6 +82,44 @@ it('should deploy properties', async () => {
         {
           name: `TOA_ORIGINS_${NAMESPACE}_${NAME}__PROPERTIES`,
           value
+        }
+      ])
+    }
+  }
+
+  expect(deploy)
+    .toMatchObject(expected)
+})
+
+it('should deploy credentials for amqp', async () => {
+  const manifest: Manifest = { queue: null }
+  const instance: Instance = { locator, manifest }
+  const url = 'amqp://host-' + generate()
+
+  const annotation: Annotation = {
+    [locator.id]: {
+      queue: url
+    }
+  }
+
+  const deploy = deployment([instance], annotation)
+
+  const expected: Dependency = {
+    variables: {
+      [locator.label]: expect.arrayContaining([
+        {
+          name: `TOA_ORIGINS_${NAMESPACE}_${NAME}_QUEUE_USERNAME`,
+          secret: {
+            name: `toa-origins-${locator.label}-queue`,
+            key: 'username'
+          }
+        },
+        {
+          name: `TOA_ORIGINS_${NAMESPACE}_${NAME}_QUEUE_PASSWORD`,
+          secret: {
+            name: `toa-origins-${locator.label}-queue`,
+            key: 'password'
+          }
         }
       ])
     }

@@ -1,4 +1,4 @@
-import { nameVariable } from './env'
+import { nameVariable, nameSecret } from './naming'
 import type { Variables, Variable } from '@toa.io/operations'
 
 export class Deployment {
@@ -20,15 +20,48 @@ export class Deployment {
   }
 
   private createVariables (selectors: string[]): Variable[] {
-    return selectors.map((selector) => this.createVariable(selector))
+    const variables: Variable[] = []
+
+    for (const selector of selectors) {
+      const variable = this.createVariable(selector)
+      const secrets = this.createSecrets(selector)
+
+      variables.push(variable, ...secrets)
+    }
+
+    return variables
   }
 
   private createVariable (selector: string): Variable {
     const name = nameVariable(this.id, selector)
-    const values = this.resolve(selector)
-    const value = values.join(' ')
+    const references = this.resolve(selector)
+    const value = references.join(' ')
 
     return { name, value }
+  }
+
+  private createSecrets (selector: string): Variable[] {
+    const varialbes: Variable[] = []
+    const references = this.resolve(selector)
+    const reference = references[0]
+    const url = new URL(reference)
+
+    if (insecureProtocols.includes(url.protocol)) return []
+
+    for (const key of ['username', 'password']) {
+      const varName = nameVariable(this.id, selector, key)
+      const secretName = nameSecret(this.id, selector)
+
+      varialbes.push({
+        name: varName,
+        secret: {
+          name: secretName,
+          key
+        }
+      })
+    }
+
+    return varialbes
   }
 
   private resolve (selector: string): string[] {
@@ -53,5 +86,7 @@ export interface Request {
   group: string
   selectors: string[]
 }
+
+const insecureProtocols = ['http:', 'https:']
 
 export type URIMap = Record<string, string[]>

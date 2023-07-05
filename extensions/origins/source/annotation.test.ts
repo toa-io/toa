@@ -31,10 +31,14 @@ describe('normalize', () => {
         '.http': {
           '/.*hackers.*/': false
         },
-        one: 'amqp://host{0,2}-' + generate(),
+        one: 'http://host{0,2}-' + generate(),
         two: [
-          'amqp://hostA-' + generate(),
-          'amqp://hostB-' + generate()
+          'http://hostA-' + generate(),
+          'https://hostB-' + generate()
+        ],
+        three: [
+          'amqp://hostB-' + generate(),
+          'amqps://hostB-' + generate()
         ]
       }
     }
@@ -56,7 +60,7 @@ describe('normalize', () => {
 
     expect(annotation)
       .toStrictEqual({
-        [locator.id]: { one: [one] }
+        [locator.id]: { one }
       })
   })
 
@@ -101,6 +105,17 @@ describe('normalize', () => {
 
     expect(run)
       .toThrow('is not supported')
+  })
+
+  it('should throw if origin url protocols are inconsistent', async () => {
+    annotation = {
+      [locator.id]: {
+        one: ['http://host-' + generate(), 'amqp://host-' + generate()]
+      }
+    }
+
+    expect(run)
+      .toThrow('inconsistent')
   })
 })
 

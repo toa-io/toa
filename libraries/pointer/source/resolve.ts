@@ -1,4 +1,4 @@
-import { nameVariable } from './env'
+import { nameVariable } from './naming'
 
 export function resolve (id: string, selector: string): string [] {
   const variable = nameVariable(id, selector)

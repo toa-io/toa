@@ -3,3 +3,8 @@ export function nameVariable (...segments: string[]): string {
     .replaceAll(/[-.]/g, '_')
     .toUpperCase()
 }
+
+export function nameSecret (...segments: string[]): string {
+  return 'toa-' + segments.join('-')
+    .replaceAll('.', '-')
+}

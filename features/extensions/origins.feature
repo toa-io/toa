@@ -61,7 +61,7 @@ Feature: Origins extension
       origins:
         origins.http:
           .http:
-            /https:\/\/w+.amazon.com/: true
+            /https:\/\/\w+.amazon.com/: true
           bad: http://localhost:8888/
       """
     When I export deployment
@@ -72,7 +72,7 @@ Feature: Origins extension
           - name: TOA_ORIGINS_ORIGINS_HTTP_BAD
             value: http://localhost:8888/
           - name: TOA_ORIGINS_ORIGINS_HTTP__PROPERTIES
-            value: 3gABpS5odHRw3gABuS9odHRwczpcL1wvdysuYW1hem9uLmNvbS/D
+            value: 3gABpS5odHRw3gABui9odHRwczpcL1wvXHcrLmFtYXpvbi5jb20vww==
       """
 
   Scenario: Origin with environment variable placeholder
@@ -120,6 +120,7 @@ Feature: Origins extension
 
   Scenario: HTTP permission with environment variable placeholder as part of the host
     Given I have a component `origins.httpAbsolute`
+    And environment variables:
     And I have a context with:
       """
       origins:

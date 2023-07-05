@@ -38,7 +38,7 @@ export function manifest (manifest: Manifest): Manifest {
 }
 
 function createPropertiesVariable (locator: Locator, properties: Properties): Variables {
-  const name = ENV_PREFIX + locator.uppercase + '__PROPERTIES'
+  const name = ENV_PREFIX + locator.uppercase + PROPERTIES_SUFFIX
   const value = encode(properties).toString('base64')
 
   return {
@@ -48,7 +48,8 @@ function createPropertiesVariable (locator: Locator, properties: Properties): Va
   }
 }
 
-const ID_PREFIX = 'origins-'
-const ENV_PREFIX = 'TOA_ORIGINS_'
+export const ID_PREFIX = 'origins-'
+export const ENV_PREFIX = 'TOA_ORIGINS_'
+export const PROPERTIES_SUFFIX = '__PROPERTIES'
 
 export type Instance = context.Dependency<Manifest>
