@@ -82,19 +82,32 @@ URL resolution for the example above is as follows:
 For security reasons, URL credentials cannot be specified in the annotation;
 they must be deployed secretly.
 
-The secret name must match the selector, with dots replaced by dashes and prefixed by an identifier
-provided by the corresponding connector or extension using the Pointer.
+Secret names must match the annotation keys with dots replaced by dashes and prefixed by an
+identifier provided by the corresponding connector or extension using the Pointer.
 
 ### Example
 
-Suppose we have the [AMQP binding](/connectors/bindings.amqp) that provides the `amqp` Pointer
-identifier and the selector `dummies.dummy`. In this case, the secret name would
-be `amqp-dummies-dummy`.
+Given the [AMQP binding](/connectors/bindings.amqp)
+providing `amqp` Pointer identifier and the follwing annotation:
+
+```yaml
+# context.toa.yaml
+amqp:
+  .: amqp://default.rmq.example.com
+  dummies: amqp://dummies.rmq.example.com
+  dummies.dummy: amqp://dummy.rmq.example.com
+```
+
+Secret names for the specified keys are as follows:
+
+- `amqp.default`
+- `amqp-dummies`
+- `amqp-dummies-dummy`
 
 > If secrets are not deployed with the [`toa conceal`](/runtime/cli/readme.md#conceal), then their
 > names must be prefixed with `toa-`.
 
-Only one secret can be deployed per selector. Therefore, when using a URL set, all URLs will
+Only one secret can be deployed per annotation key. Therefore, when using a URL set, all URLs will
 utilize the same credentials.
 
 ### Plain

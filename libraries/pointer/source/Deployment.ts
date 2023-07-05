@@ -34,7 +34,7 @@ export class Deployment {
 
   private createVariable (selector: string): Variable {
     const name = nameVariable(this.id, selector)
-    const references = this.resolve(selector)
+    const { references } = this.resolve(selector)
     const value = references.join(' ')
 
     return { name, value }
@@ -42,21 +42,21 @@ export class Deployment {
 
   private createSecrets (selector: string): Variable[] {
     const varialbes: Variable[] = []
-    const references = this.resolve(selector)
+    const { key, references } = this.resolve(selector)
     const reference = references[0]
     const url = new URL(reference)
 
     if (insecureProtocols.includes(url.protocol)) return []
 
-    for (const key of ['username', 'password']) {
-      const varName = nameVariable(this.id, selector, key)
-      const secretName = nameSecret(this.id, selector)
+    for (const token of ['username', 'password']) {
+      const varName = nameVariable(this.id, selector, token)
+      const secretName = nameSecret(this.id, key)
 
       varialbes.push({
         name: varName,
         secret: {
           name: secretName,
-          key
+          key: token
         }
       })
     }
@@ -64,27 +64,39 @@ export class Deployment {
     return varialbes
   }
 
-  private resolve (selector: string): string[] {
-    if (selector in this.annotation) return this.annotation[selector]
+  private resolve (selector: string): AnnotationRecord {
+    if (selector in this.annotation) return this.getRecord(selector)
 
     const segments = selector.split('.')
 
     while (segments.pop() !== undefined) {
       const current = segments.join('.')
 
-      if (current in this.annotation) return this.annotation[current]
+      if (current in this.annotation) return this.getRecord(current)
     }
 
     if (this.annotation['.'] === undefined)
       throw new Error(`Selector '${selector}' cannot be resolved.`)
 
-    return this.annotation['.']
+    return this.getRecord('.')
+  }
+
+  private getRecord (key: string): AnnotationRecord {
+    return {
+      key,
+      references: this.annotation[key]
+    }
   }
 }
 
 export interface Request {
   group: string
   selectors: string[]
+}
+
+interface AnnotationRecord {
+  key: string
+  references: string[]
 }
 
 const insecureProtocols = ['http:', 'https:', 'redis:']

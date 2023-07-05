@@ -7,4 +7,5 @@ export function nameVariable (...segments: string[]): string {
 export function nameSecret (...segments: string[]): string {
   return 'toa-' + segments.join('-')
     .replaceAll('.', '-')
+    .replace(/--$/, '.default')
 }
