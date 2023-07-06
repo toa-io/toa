@@ -11,7 +11,7 @@ type Request<Input> = {
 type Response<Output, Error> = {
     output: Output
     error: Error
-    excetion: toa.core.Exception
+    excpetion: toa.core.Exception
 }
 
 type Event<Payload> = {
