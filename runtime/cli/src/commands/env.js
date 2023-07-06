@@ -22,6 +22,13 @@ const builder = (yargs) => {
       type: 'string',
       default: '.env'
     })
+    .option('interactive', {
+      alias: 'i',
+      group: 'Command options:',
+      describe: 'Prompt for secrets',
+      type: 'boolean',
+      default: false
+    })
 }
 
 exports.command = 'env [environment]'

@@ -36,6 +36,7 @@ Export environment to a `.env` file.
 <code>environment</code> deployment environment name (default <code>local</code>).<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
 <code>--as</code> output file path (default <code>.env</code>)
+<code>--interactive</code> prompt for secret values (default `false`)
 </dd>
 </dl>
 

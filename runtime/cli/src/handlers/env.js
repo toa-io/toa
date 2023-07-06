@@ -1,6 +1,9 @@
 'use strict'
 
 const { join } = require('node:path')
+const readline = require('node:readline/promises')
+const { stdin: input, stdout: output } = require('node:process')
+
 const dotenv = require('dotenv')
 const { file } = require('@toa.io/filesystem')
 const boot = require('@toa.io/boot')
@@ -14,11 +17,17 @@ async function env (argv) {
   const currentValues = await read(filepath)
   const values = []
 
-  for (const scoped of Object.values(variables)) values.push(...scoped)
+  for (const scoped of Object.values(variables)) {
+    values.push(...scoped)
+  }
 
-  const nextValues = merge(values, currentValues)
+  let result = merge(values, currentValues)
 
-  await write(filepath, nextValues)
+  if (argv.interactive) {
+    result = await promptSecrets(result)
+  }
+
+  await write(filepath, result)
 }
 
 /**
@@ -41,25 +50,57 @@ async function read (path) {
  * @return {Promise<void>}
  */
 async function write (path, values) {
-  const contents = values.reduce((lines, { name, value }) => lines + `${name}=${value}\n`, '')
+  const contents = values.reduce((lines, { name, value }) => lines + `${name}=${value ?? ''}\n`, '')
 
   await file.write(path, contents)
 }
 
 /**
- * @param {toa.deployment.dependency.Variable[] } variables
+ * @param {toa.deployment.dependency.Variable[]} variables
  * @param {Record<string, string>} current
  * @return {toa.deployment.dependency.Variable[]}
  */
 function merge (variables, current) {
   return variables.map((variable) => {
-    if (variable.secret === undefined) return variable
+    if (variable.secret === undefined || !current[variable.name]) return variable
 
     return {
       name: variable.name,
-      value: current[variable.name] ?? ''
+      value: current[variable.name]
     }
   })
 }
+
+async function promptSecrets (variables) {
+  const rl = readline.createInterface({ input, output })
+  const result = []
+
+  for (const variable of variables) {
+    if (variable.secret === undefined) result.push(variable)
+    else result.push(await promptSecret(variable, rl))
+  }
+
+  rl.close()
+
+  return result
+}
+
+async function promptSecret (variable, rl) {
+  const key = `${variable.secret.name}/${variable.secret.key}`
+  const value = await prompt(key, rl)
+
+  return {
+    name: variable.name,
+    value
+  }
+}
+
+async function prompt (key, rl) {
+  if (SECRETS[key] === undefined) SECRETS[key] = await rl.question(`${key}: `)
+
+  return SECRETS[key]
+}
+
+const SECRETS = {}
 
 exports.env = env

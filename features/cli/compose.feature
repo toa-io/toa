@@ -71,8 +71,10 @@ Feature: toa compose
     When I run `toa env docker --as .env.docker`
     And I update an environment file `.env.docker` with:
       """
-      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=developer
-      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=secret
+      TOA_AMQP_DUMMIES_ONE_USERNAME=developer
+      TOA_AMQP_DUMMIES_ONE_PASSWORD=secret
+      TOA_AMQP_DUMMIES_TWO_USERNAME=developer
+      TOA_AMQP_DUMMIES_TWO_PASSWORD=secret
       """
     And I run `toa compose ./components/* --dock --kill --env .env.docker`
     Then program should exit with code 0
