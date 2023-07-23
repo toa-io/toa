@@ -49,11 +49,11 @@ stash: ~
 
 ## Deployment
 
-`stash` context annotation is a [Pointer](/libraries/pointer)-like.
+`stash` context annotation is a [Pointer](/libraries/pointer) with ID `stash`.
 
 ```yaml
 stash: # shortcut is available
-  default: redis://redis.example.com
+  .: redis://redis.example.com
   dummies.dummy: redis://dummies.redis.example.com
 ```
 

@@ -6,7 +6,6 @@ const mock = require('@toa.io/mock')
 
 const { deployment } = require('../')
 
-/** @type {toa.norm.context.dependencies.Instance[]} */
 let instances
 
 /** @returns {URL} */

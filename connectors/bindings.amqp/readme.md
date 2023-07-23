@@ -1,54 +1,19 @@
-# Toa AMQP Binding
+# Toa AMQP binding
 
 AMQP asynchronous binding on top of [ComQ](/libraries/comq).
 
-## Deployment
-
-AMQP deployment must be declared with
-the [Pointer annotation](/libraries/pointer/readme.md#annotation). Either `system` or `default`
-pointers must be defined.
-
-Well-known annotation shortcut `amqp` is available.
+## Annotation
 
 ```yaml
-# context.toa.yaml
-annotations:
-  "@toa.io/bindings.amqp":
-    system: url0          # the runtime 
-    default: url1         # all undeclared
-    dummies: url2         # namespace-wide
-    dummies.dummy1: url  # component exclusive
-```
-
-### Concise Declaration
-
-Well-known shortcut `amqp` is available. The next two declarations are equivalent:
-
-```yaml
-# context.toa.yaml
-annotations:
-  "@toa.io/bindings.amqp":
-    system: url0
-    dummies: url1
-```
-
-```yaml
-# context.toa.yaml
 amqp:
-  system: url0
-  dummies: url1
+  context:
+    .: amqp://com.example.com
+    dummies.dummy: amqp://dummmy.example.com
+  sources:
+    somewhere: amqp://queues.somewhere.com
 ```
 
-`string` annotation value is considered as `default`. The next two declarations are equivalent:
+Context annotaition is a [Pointer](/libraries/pointer) with `amqp-context` ID.
 
-```yaml
-# context.toa.yaml
-annotations:
-  "@toa.io/bindings.amqp":
-    default: url1
-``` 
-
-```yaml
-# context.toa.yaml
-amqp: url1
-``` 
+Sources annotation is a set of Pointers, declared by components consuming foreign events.
+Each Pointer ID is as follows: `amqp-sources-{source}`.

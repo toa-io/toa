@@ -88,14 +88,15 @@ identifier provided by the corresponding connector or extension using the Pointe
 ### Example
 
 Given the [AMQP binding](/connectors/bindings.amqp)
-providing `amqp` Pointer identifier and the follwing annotation:
+providing `amqp-context` Pointer identifier and the follwing annotation:
 
 ```yaml
 # context.toa.yaml
 amqp:
-  .: amqp://default.rmq.example.com
-  dummies: amqp://dummies.rmq.example.com
-  dummies.dummy: amqp://dummy.rmq.example.com
+  context:
+    .: amqp://default.rmq.example.com
+    dummies: amqp://dummies.rmq.example.com
+    dummies.dummy: amqp://dummy.rmq.example.com
 ```
 
 Secret names for the specified keys are as follows:

@@ -90,7 +90,7 @@ class Factory {
     const annotations = this.#context.annotations?.[pkg.name]
 
     /** @type {toa.deployment.dependency.Declaration} */
-    const dependency = module.deployment(instances, annotations)
+    const dependency = module.deployment(instances, annotations) // TODO: , #context
 
     /** @type {toa.deployment.Service[]} */
     const services = dependency.services?.map((service) => this.#service(path, service))
