@@ -28,16 +28,33 @@ const walk = (object, path, yaml) => {
  */
 function extend (node, path, yaml) {
   const basepath = dirname(path)
-  const pattern = resolve(basepath, node['<assign'])
+  const reference = resolve(basepath, node['<assign'])
+  const [pattern, fragment] = reference.split('#')
   const files = file.glob.sync(pattern).filter((file) => file !== path)
 
   if (files.length === 0) throw new Error(`No files matching pattern '${pattern}'`)
 
-  const objects = files.map((path) => yaml.load.sync(path))
+  const contents = files.map((path) => yaml.load.sync(path))
+  const objects = contents.map((object) => extract(object, fragment))
 
   delete node['<assign']
 
   return objects.reduce((node, object) => add(node, object), node)
+}
+
+function extract (object, path) {
+  if (path === undefined) return object
+
+  const segments = path.split('/')
+  let cursor = object
+
+  for (const segment of segments) {
+    cursor = cursor[segment]
+
+    if (typeof cursor !== 'object') throw new Error('<assign: fragment must be an object')
+  }
+
+  return cursor
 }
 
 exports.assign = assign

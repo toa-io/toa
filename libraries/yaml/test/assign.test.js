@@ -115,3 +115,23 @@ it('should import deep properties of array type', async () => {
     }
   })
 })
+
+it('should import fragments', async () => {
+  const path = resolve(__dirname, './examples/imports/paths/a.yaml')
+  const object = await load(path)
+
+  expect(object).toStrictEqual({
+    foo: {
+      value: 1
+    },
+    bar: {
+      value: 2
+    }
+  })
+})
+
+it('should throw if fragment is not an object', async () => {
+  const path = resolve(__dirname, './examples/imports/paths/non-object.yaml')
+
+  await expect(load(path)).rejects.toThrow('must be an object')
+})
