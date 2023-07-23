@@ -32,15 +32,17 @@ Serialize an object to a YAML document.
 
 ### <assign
 
-Load an object from the specified file and assign its properties to the current node recursively (deep merge).
+Load an object from the specified file and assign its properties to the current node recursively (
+deep merge).
 
 ```yaml
-<assign: <path>
+<assign: <path>[#fragment]
 ```
 
-- `path` Absolute or relative path, or a glob pattern.
+- `path` Absolute or relative path to a file, or a glob pattern.
+- `fragment` URL path to a source object (optional)
 
-When using a pattern, all mathed files will be processed sequentially.
+When using a pattern, all matched files will be processed sequentially.
 
 #### Example
 
@@ -60,21 +62,4 @@ foo:
 ```yaml
 # c.yaml
 <assign: '*.yaml'
-```
-
-```javascript
-const load = require('@toa.io/yaml')
-const value = load('c.yaml')
-
-console.log(value)
-
-/*
-{
-  foo: {
-    bar: 1,
-    baz: 2
-  },
-  qux: 'hello'
-}
-*/
 ```
