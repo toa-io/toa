@@ -71,3 +71,23 @@ it('should parse ranges', async () => {
 
   expect(Communication).toHaveBeenCalledWith(expected)
 })
+
+it('should parse env variables', async () => {
+  jest.clearAllMocks()
+
+  const base = generate()
+  const varName = generate({ charset: 'abcDerWsxzF', length: 6 })
+  const varValue = generate()
+
+  process.env[varName] = varValue
+
+  const reference = `\${${varName}}.${base}`
+
+  Pointer.mockImplementation(() => ({ reference }))
+
+  const expected = `${varValue}.${base}`
+
+  comm = connector(prefix, locator)
+
+  expect(Communication).toHaveBeenCalledWith([expected])
+})
