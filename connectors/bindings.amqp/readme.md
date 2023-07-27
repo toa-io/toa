@@ -14,7 +14,7 @@ Well-known annotation shortcut `amqp` is available.
 # context.toa.yaml
 annotations:
   "@toa.io/bindings.amqp":
-    system: url0          # the runtime 
+    system: url0          # the runtime
     default: url1         # all undeclared
     dummies: url2         # namespace-wide
     dummies.dummy1: url  # component exclusive
@@ -46,9 +46,21 @@ amqp:
 annotations:
   "@toa.io/bindings.amqp":
     default: url1
-``` 
+```
 
 ```yaml
 # context.toa.yaml
 amqp: url1
-``` 
+```
+
+### Environment Variables
+
+Then Connection string may contain `environment` variable placeholders.
+
+```yaml
+# manifest.toa.yaml
+amqp:
+  foo@dev: amqp://stage${STAGE_NUMBER}.stages.com:5672
+```
+
+This is only usable in local development environment.
