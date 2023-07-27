@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: composition-{{ required "deployment name is required" .name }}
+  name: composition-{{ required "composition name is required" .name }}
 spec:
   replicas: {{ .replicas | default 2 }}
   selector:

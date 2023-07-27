@@ -101,9 +101,9 @@ amqp:
 
 Secret names for the specified keys are as follows:
 
-- `amqp.default`
-- `amqp-dummies`
-- `amqp-dummies-dummy`
+- `amqp-context.default`
+- `amqp-context-dummies`
+- `amqp-context-dummies-dummy`
 
 > If secrets are not deployed with the [`toa conceal`](/runtime/cli/readme.md#conceal), then their
 > names must be prefixed with `toa-`.
@@ -116,7 +116,7 @@ utilize the same credentials.
 Secret's value for plain authentication must contain `username` and `password` keys.
 
 ```shell
-$ toa conceal amqp-dummies-dummy username=developer password=secret
+$ toa conceal amqp-context-dummies-dummy username=developer password=secret
 ```
 
 ### TLS
@@ -152,6 +152,6 @@ selectors: string[]
 import { resolve } from '@toa.io/pointer'
 
 // resolve a set of URLs with credentials
-// for a given pointer identifier and the component ID
+// for a given pointer identifier and a selector
 const urls = resolve(id, locator.id)
 ```
