@@ -34,7 +34,7 @@ export class Deployment {
 
   private createVariable (selector: string): Variable {
     const name = nameVariable(this.id, selector)
-    const { references } = this.resolve(selector)
+    const { references } = this.resolveRecord(selector)
     const value = references.join(' ')
 
     return { name, value }
@@ -42,7 +42,7 @@ export class Deployment {
 
   private createSecrets (selector: string): Variable[] {
     const varialbes: Variable[] = []
-    const { key, references } = this.resolve(selector)
+    const { key, references } = this.resolveRecord(selector)
     const reference = references[0]
     const url = new URL(reference)
 
@@ -64,7 +64,7 @@ export class Deployment {
     return varialbes
   }
 
-  private resolve (selector: string): AnnotationRecord {
+  private resolveRecord (selector: string): AnnotationRecord {
     if (selector in this.annotation) return this.getRecord(selector)
 
     const segments = selector.split('.')

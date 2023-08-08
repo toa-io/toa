@@ -66,7 +66,7 @@
     "test:samples:unit": "toa replay userland/example/components/*",
     "test:samples:all": "TOA_DEV=1 toa replay userland/example",
     "test:all": "npm run ci && npm run transpile && npm run test && npm run test:integration && npm run test:stage && npm run test:features",
-    "lint": "npx standard --verbose --fix | npx snazzy",
+    "lint": "npx eslint .",
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
     "version:dev": "npx lerna@6.5.1 version --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --no-git-tag-version",
     "publish:local": "npx lerna@6.5.1 publish from-package --force-publish --no-changelog --yes --no-git-tag-version --registry=http://localhost:4873",
