@@ -4,7 +4,6 @@
   "description": "Toa AMQP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
-  "main": "source/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -15,15 +14,22 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
   "dependencies": {
     "@toa.io/console": "0.20.0-dev.32",
     "@toa.io/core": "0.20.0-dev.32",
     "@toa.io/generic": "0.20.0-dev.32",
     "@toa.io/generics.amqp": "0.20.0-dev.32",
     "@toa.io/pointer": "0.20.0-dev.32"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run transpile",
+    "transpile": "tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

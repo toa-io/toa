@@ -9,7 +9,7 @@ const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
 const { Broadcast } = require('./broadcast')
 
-const { SYSTEM, PREFIX } = require('./constants')
+const { SYSTEM } = require('./constants')
 
 class Factory {
   producer (locator, endpoints, component) {
@@ -24,26 +24,14 @@ class Factory {
     return new Consumer(comm, locator, endpoint)
   }
 
-  /**
-   * @param {toa.core.Locator} locator
-   * @param {string} label
-   * @return {Emitter}
-   */
   emitter (locator, label) {
     const comm = this.#getCommunication(locator)
 
     return new Emitter(comm, locator, label)
   }
 
-  /**
-   * @param {toa.core.Locator} source
-   * @param {string} label
-   * @param {string} group
-   * @param {toa.core.Receiver} receiver
-   * @return {Receiver}
-   */
-  receiver (source, label, group, receiver) {
-    const comm = this.#getCommunication(source)
+  receiver (locator, label, group, receiver) {
+    const comm = this.#getCommunication(locator)
 
     return new Receiver(comm, label, group, receiver)
   }
@@ -55,13 +43,9 @@ class Factory {
     return new Broadcast(comm, locator, group)
   }
 
-  /**
-   *
-   * @param {toa.core.Locator} source
-   * @return {toa.amqp.Communication}
-   */
-  #getCommunication (source) {
-    return connector(PREFIX, source)
+  #getCommunication (locator) {
+    // TODO: replace this method with getSource(name) and getContext(locator)
+    return connector('amqp-source', locator.id)
   }
 }
 

@@ -52,34 +52,25 @@ Feature: Pointer
       | component | default.stash |
       | namespace | default       |
 
-
-  Scenario: Credentials for AMQP binding
-    Given I have a component `dummies.one`
+  Scenario: Deploy credentials
+    Given I have a component `mongo.one`
     And I have a context with:
-      """
-      amqp:
-        .: amqp://default.example.com
-        system: amqp://system.example.com
+      """yaml
+      mongodb: mongodb://mongo.exmaple.com
       """
     When I export deployment
     Then exported values should contain:
-      """
+      """yaml
       variables:
-        global:
-          - name: TOA_AMQP_SYSTEM_USERNAME
+        mongo-one:
+          - name: TOA_MONGODB_MONGO_ONE
+            value: mongodb://mongo.exmaple.com
+          - name: TOA_MONGODB_MONGO_ONE_USERNAME
             secret:
-              name: toa-amqp-system
+              name: toa-mongodb.default
               key: username
-          - name: TOA_AMQP_SYSTEM_PASSWORD
+          - name: TOA_MONGODB_MONGO_ONE_PASSWORD
             secret:
-              name: toa-amqp-system
-              key: password
-          - name: TOA_AMQP_DUMMIES_ONE_USERNAME
-            secret:
-              name: toa-amqp.default
-              key: username
-          - name: TOA_AMQP_DUMMIES_ONE_PASSWORD
-            secret:
-              name: toa-amqp.default
+              name: toa-mongodb.default
               key: password
       """

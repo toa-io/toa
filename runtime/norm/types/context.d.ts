@@ -25,7 +25,8 @@ interface Composition {
 
 export interface Dependency<T = undefined> {
   locator: Locator
-  manifest: T
+  manifest: T,
+  component: _component.Component
 }
 
 interface Context extends Declaration {
