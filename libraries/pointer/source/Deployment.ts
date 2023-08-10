@@ -43,10 +43,8 @@ export class Deployment {
   private createSecrets (selector: string): Variable[] {
     const varialbes: Variable[] = []
     const { key, references } = this.resolveRecord(selector)
-    const reference = references[0]
-    const url = new URL(reference)
 
-    if (insecureProtocols.includes(url.protocol)) return []
+    if (this.insecure(references)) return []
 
     for (const token of ['username', 'password']) {
       const varName = nameVariable(this.id, selector, token)
@@ -86,6 +84,13 @@ export class Deployment {
       key,
       references: this.annotation[key]
     }
+  }
+
+  private insecure (references: string[]): boolean {
+    const reference = references[0]
+    const url = new URL(reference)
+
+    return insecureProtocols.includes(url.protocol)
   }
 }
 

@@ -4,9 +4,7 @@ import { type Dependency } from '@toa.io/operations'
 import { type Instance } from './instance'
 import { type Annotation } from './annotation'
 
-export function createDependency (instances: Instance[], sources: Sources): Dependency {
-  if (sources === undefined) return {}
-
+export function createDependency (sources: Sources, instances: Instance[]): Dependency {
   const requests = []
 
   for (const instance of instances) {

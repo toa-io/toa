@@ -6,6 +6,8 @@ import type { URIMap } from './Deployment'
 export function normalize (declaration: Declaration): URIMap {
   const map: URIMap = {}
 
+  if (declaration === undefined) return map
+
   if (typeof declaration === 'string' || Array.isArray(declaration))
     declaration = { '.': declaration }
 
@@ -41,4 +43,4 @@ function checkCredentials (uri: string): void {
 const path = resolve(__dirname, '../schemas/urimap.cos.yaml')
 const schema = schemas.schema(path)
 
-export type Declaration = string | string[] | Record<string, string | string[]>
+export type Declaration = string | string[] | Record<string, string | string[]> | undefined

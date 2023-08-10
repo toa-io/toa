@@ -18,6 +18,10 @@ export function echo (input: string): string
 export function echo (input: string, values: Record<string, string>): string
 export function echo (input: string, ...values: string[]): string
 
+export function encode (input: any): string
+
+export function decode (input: string): any
+
 export { promex } from './promex'
 export { merge, add, overwrite } from './merge'
 export { map } from './map'
