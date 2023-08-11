@@ -20,8 +20,8 @@
     "@toa.io/console": "0.20.0-dev.32",
     "@toa.io/core": "0.20.0-dev.32",
     "@toa.io/generic": "0.20.0-dev.32",
-    "@toa.io/generics.amqp": "0.20.0-dev.32",
-    "@toa.io/pointer": "0.20.0-dev.32"
+    "@toa.io/pointer": "0.20.0-dev.32",
+    "comq": "0.8.0"
   },
   "scripts": {
     "prepublishOnly": "npm run transpile",

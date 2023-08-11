@@ -5,4 +5,4 @@ operations:
     output: object
 
 origins:
-  dev: https://null
+  dev: ~

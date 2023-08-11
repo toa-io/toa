@@ -8,6 +8,8 @@ const find = require('../secrets')
  * @return {toa.deployment.dependency.Variables}
  */
 function secrets (components, annotations) {
+  if (annotations === undefined) return {}
+
   /** @type {toa.deployment.dependency.Variables} */
   const variables = {}
 

@@ -1,4 +1,5 @@
 import { nameVariable } from './naming'
+import { type AnnotationRecord, type URIMap } from './Deployment'
 
 export function resolve (id: string, selector: string): string [] {
   const variable = nameVariable(id, selector)
@@ -9,6 +10,21 @@ export function resolve (id: string, selector: string): string [] {
   const urls = value.split(' ')
 
   return withCredentials(variable, urls)
+}
+
+export function resolveRecord (uris: URIMap, selector: string): AnnotationRecord {
+  if (selector in uris) return getRecord(uris, selector)
+
+  const segments = selector.split('.')
+
+  while (segments.pop() !== undefined) {
+    const current = segments.join('.')
+
+    if (current in uris) return getRecord(uris, current)
+  }
+
+  if ('.' in uris) return getRecord(uris, '.')
+  else throw new Error(`Selector '${selector}' cannot be resolved.`)
 }
 
 function withCredentials (variable: string, urls: string[]): string[] {
@@ -25,4 +41,11 @@ function addCredentials (ref: string, username: string, password: string): strin
   url.password = password
 
   return url.href
+}
+
+function getRecord (uris: URIMap, key: string): AnnotationRecord {
+  return {
+    key,
+    references: uris[key]
+  }
 }

@@ -1,4 +1,5 @@
 import { nameVariable, nameSecret } from './naming'
+import { resolveRecord } from './resolve'
 import type { Variables, Variable } from '@toa.io/operations'
 
 export class Deployment {
@@ -63,27 +64,7 @@ export class Deployment {
   }
 
   private resolveRecord (selector: string): AnnotationRecord {
-    if (selector in this.annotation) return this.getRecord(selector)
-
-    const segments = selector.split('.')
-
-    while (segments.pop() !== undefined) {
-      const current = segments.join('.')
-
-      if (current in this.annotation) return this.getRecord(current)
-    }
-
-    if (this.annotation['.'] === undefined)
-      throw new Error(`Selector '${selector}' cannot be resolved.`)
-
-    return this.getRecord('.')
-  }
-
-  private getRecord (key: string): AnnotationRecord {
-    return {
-      key,
-      references: this.annotation[key]
-    }
+    return resolveRecord(this.annotation, selector)
   }
 
   private insecure (references: string[]): boolean {
@@ -99,7 +80,7 @@ export interface Request {
   selectors: string[]
 }
 
-interface AnnotationRecord {
+export interface AnnotationRecord {
   key: string
   references: string[]
 }

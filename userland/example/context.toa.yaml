@@ -4,3 +4,7 @@ registry: example
 
 amqp: amqp://localhost
 mongodb: mongodb://localhost
+
+origins:
+  default.web:
+    dev: http://localhost

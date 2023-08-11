@@ -1,38 +1,26 @@
-import { resolve } from 'node:path'
-import * as schemas from '@toa.io/schemas'
+import * as pointer from '@toa.io/pointer'
+import { type URIMap } from '@toa.io/pointer'
 
 export function normalize (declaration: Declaration): Annotation {
   const annotation = expand(declaration)
+  const context = pointer.normalize(annotation.context)
+  const sources = pointer.normalize(annotation.sources)
 
-  schema.validate(annotation)
-
-  return annotation
+  return { context, sources }
 }
 
-function expand (declaration: Declaration): Annotation {
-  if (typeof declaration === 'string') return { context: { '.': declaration } }
-
-  const annotation: Annotation = { ...declaration }
-
-  if (typeof annotation.context === 'string') annotation.context = { '.': annotation.context }
-
-  return annotation
+function expand (declaration: string | Declaration): Declaration {
+  if (typeof declaration === 'string') return { context: { '.': [declaration] } }
+  else if (Array.isArray(declaration)) return { context: { '.': declaration } }
+  else return declaration
 }
-
-function loadSchema (): schemas.Schema {
-  const path = resolve(__dirname, '../../schemas/annotation.cos.yaml')
-
-  return schemas.schema(path)
-}
-
-const schema = loadSchema()
 
 export interface Annotation {
-  context: string | Record<string, string>
-  sources?: Record<string, string>
+  context: URIMap
+  sources?: URIMap
 }
 
-export type Declaration = string | {
-  context: string | Annotation['context']
-  sources?: Annotation['sources']
+export interface Declaration {
+  context: string | URIMap
+  sources?: URIMap
 }

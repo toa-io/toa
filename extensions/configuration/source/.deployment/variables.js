@@ -2,12 +2,9 @@
 
 const { encode } = require('@toa.io/generic')
 
-/**
- * @param {toa.norm.context.dependencies.Instance[]} components
- * @param {object} annotations
- * @return {toa.deployment.dependency.Variables}
- */
 function variables (components, annotations) {
+  if (annotations === undefined) return {}
+
   /** @type {toa.deployment.dependency.Variables} */
   const variables = {}
 
