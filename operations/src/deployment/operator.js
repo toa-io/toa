@@ -53,6 +53,22 @@ class Operator {
   variables () {
     return this.#deployment.variables()
   }
+
+  listVariables () {
+    const used = new Set()
+    const list = []
+
+    for (const variables of Object.values(this.#deployment.variables())) {
+      for (const variable of variables) {
+        if (used.has(variable.name)) continue
+
+        list.push(variable)
+        used.add(variable.name)
+      }
+    }
+
+    return list
+  }
 }
 
 /** @type {toa.deployment.installation.Options} */

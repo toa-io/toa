@@ -1,1 +1,0 @@
-export { connector } from './connector'

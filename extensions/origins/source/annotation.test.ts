@@ -55,7 +55,7 @@ describe('normalize', () => {
     instances.push({
       locator,
       manifest: { one }
-    })
+    } as unknown as Instance)
 
     run()
 
@@ -73,7 +73,7 @@ describe('normalize', () => {
       manifest: {
         one: null
       }
-    })
+    } as unknown as Instance)
 
     expect(run)
       .toThrow('is not defined for')
@@ -91,7 +91,7 @@ describe('normalize', () => {
       manifest: {
         one: null
       }
-    })
+    } as unknown as Instance)
 
     expect(run)
       .not.toThrow()

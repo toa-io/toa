@@ -1,7 +1,7 @@
 import * as pointer from '@toa.io/pointer'
 import { type URIMap } from '@toa.io/pointer'
 
-export function normalize (declaration: Declaration): Annotation {
+export function normalize (declaration: string | Declaration): Annotation {
   const annotation = expand(declaration)
   const context = pointer.normalize(annotation.context)
   const sources = pointer.normalize(annotation.sources)
@@ -21,6 +21,6 @@ export interface Annotation {
 }
 
 export interface Declaration {
-  context: string | URIMap
-  sources?: URIMap
+  context: string | Record<string, string | string[]>
+  sources?: Record<string, string | string[]>
 }

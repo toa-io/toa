@@ -13,18 +13,15 @@ async function env (argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
   const operator = await boot.deployment(path, argv.environment)
-  const variables = operator.variables()
+  const variables = operator.listVariables()
   const currentValues = await read(filepath)
-  const values = []
 
-  for (const scoped of Object.values(variables)) {
-    values.push(...scoped)
-  }
-
-  let result = merge(values, currentValues)
+  const result = merge(variables, currentValues)
 
   if (argv.interactive) {
-    result = await promptSecrets(result)
+    const secrets = await promptSecrets(result)
+
+    mergeSecrets(result, secrets)
   }
 
   await write(filepath, result)
@@ -73,34 +70,48 @@ function merge (variables, current) {
 
 async function promptSecrets (variables) {
   const rl = readline.createInterface({ input, output })
-  const result = []
+  const secrets = {}
 
   for (const variable of variables) {
-    if (variable.secret === undefined) result.push(variable)
-    else result.push(await promptSecret(variable, rl))
+    if (variable.secret === undefined) continue
+
+    const key = getKey(variable.secret)
+
+    secrets[key] = await promptSecret(key, rl)
   }
 
   rl.close()
 
-  return result
+  return secrets
 }
 
-async function promptSecret (variable, rl) {
-  const key = `${variable.secret.name}/${variable.secret.key}`
-  const value = await prompt(key, rl)
-
-  return {
-    name: variable.name,
-    value
-  }
-}
-
-async function prompt (key, rl) {
+async function promptSecret (key, rl) {
   if (SECRETS[key] === undefined) SECRETS[key] = await rl.question(`${key}: `)
 
   return SECRETS[key]
 }
 
+/**
+ * @param {toa.deployment.dependency.Variable[]} variables
+ * @param {Record<string, string>} secrets
+ */
+function mergeSecrets (variables, secrets) {
+  for (const variable of variables) {
+    if (variable.secret === undefined) continue
+
+    const key = getKey(variable.secret)
+
+    variable.value = secrets[key]
+
+    delete variable.secret
+  }
+}
+
+function getKey (secret) {
+  return `${secret.name}/${secret.key}`
+}
+
 const SECRETS = {}
 
 exports.env = env
+exports.promptSecrets = promptSecrets

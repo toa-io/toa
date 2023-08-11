@@ -12,7 +12,7 @@ const NAME = locator.name.toUpperCase()
 
 it('should deploy pointer variables', async () => {
   const manifest: Manifest = { queue: null }
-  const instance: Instance = { locator, manifest }
+  const instance = { locator, manifest } as unknown as Instance
   const url = 'amqp://host-' + generate()
 
   const annotation: Annotation = {
@@ -41,7 +41,7 @@ it('should deploy pointer variables', async () => {
 it('should deploy default origin', async () => {
   const example = 'http://api.example.com'
   const manifest: Manifest = { example }
-  const instance: Instance = { locator, manifest }
+  const instance = { locator, manifest } as unknown as Instance
   const annotation: Annotation = {}
   const deploy = deployment([instance], annotation)
 
@@ -62,7 +62,7 @@ it('should deploy default origin', async () => {
 
 it('should deploy properties', async () => {
   const manifest: Manifest = {}
-  const instance: Instance = { locator, manifest }
+  const instance = { locator, manifest } as unknown as Instance
   const properties: Properties = {
     '.http': {
       '/^http:\\/\\/\\w+api.example.com/': true
@@ -93,7 +93,7 @@ it('should deploy properties', async () => {
 
 it('should deploy properties with null manifest', async () => {
   const manifest: Manifest = null
-  const instance: Instance = { locator, manifest }
+  const instance = { locator, manifest } as unknown as Instance
   const properties: Properties = {
     '.http': {
       '/^http:\\/\\/\\w+api.example.com/': true
@@ -124,7 +124,7 @@ it('should deploy properties with null manifest', async () => {
 
 it('should deploy credentials for amqp', async () => {
   const manifest: Manifest = { queue: null }
-  const instance: Instance = { locator, manifest }
+  const instance = { locator, manifest } as unknown as Instance
   const url = 'amqp://host-' + generate()
 
   const annotation: Annotation = {
