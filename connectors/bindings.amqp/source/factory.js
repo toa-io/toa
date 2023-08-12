@@ -7,7 +7,8 @@ const { Consumer } = require('./consumer')
 const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
 const { Broadcast } = require('./broadcast')
-const { resolveURIs } = require('./deployment/context')
+const context = require('./deployment/context')
+const sources = require('./deployment/sources')
 
 const { SYSTEM } = require('./constants')
 const { Communication } = require('./communication')
@@ -32,7 +33,7 @@ class Factory {
   }
 
   receiver (locator, label, group, receiver) {
-    const comm = this.#getContext(locator)
+    const comm = this.#getSource(locator, label)
 
     return new Receiver(comm, label, group, receiver)
   }
@@ -45,9 +46,15 @@ class Factory {
   }
 
   #getContext (locator) {
-    const urls = resolveURIs(locator)
+    const resolve = async () => context.resolveURIs(locator)
 
-    return new Communication(urls)
+    return new Communication(resolve)
+  }
+
+  #getSource (locator, label) {
+    const resolve = async () => sources.resolveURIs(locator, label)
+
+    return new Communication(resolve)
   }
 }
 

@@ -2,28 +2,25 @@
 
 const { assert } = require('comq')
 const { Connector } = require('@toa.io/core')
-
-const { id } = require('./id')
+const protocol = require('./index')
 
 class Aspect extends Connector {
-  name = id
+  name = protocol.id
 
-  #manifest
+  #resolve
 
   /** @type {Record<string, Partial<comq.IO>>} */
   #origins = {}
 
-  /**
-   * @param {toa.origins.Manifest} manifest
-   */
-  constructor (manifest) {
+  constructor (resolve) {
     super()
 
-    this.#manifest = manifest
+    this.#resolve = resolve
   }
 
   async open () {
-    const promises = Object.entries(this.#manifest).map(this.#open)
+    const cfg = await this.#resolve()
+    const promises = Object.entries(cfg.origins).map(this.#open)
 
     await Promise.all(promises)
   }
@@ -35,6 +32,10 @@ class Aspect extends Connector {
   }
 
   async invoke (origin, method, ...args) {
+    if (this.#origins[origin]?.[method] === undefined) {
+      throw new Error(`Origin "${origin}" or method "${method}" is undefined`)
+    }
+
     return this.#origins[origin][method](...args)
   }
 
@@ -62,11 +63,8 @@ function restrict (io) {
   }
 }
 
-/**
- * @param {toa.origins.Manifest} manifest
- */
-function create (manifest) {
-  return new Aspect(manifest)
+function create (resolve) {
+  return new Aspect(resolve)
 }
 
 exports.create = create

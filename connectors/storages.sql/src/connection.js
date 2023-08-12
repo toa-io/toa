@@ -24,7 +24,7 @@ class Connection extends Connector {
   }
 
   async open () {
-    this.#client = this.#configure()
+    this.#client = await this.#configure()
 
     // https://github.com/knex/knex/issues/1886
     await this.#client.raw('select 1')
@@ -44,8 +44,8 @@ class Connection extends Connector {
     return true
   }
 
-  #configure () {
-    const references = this.#resolveURLs()
+  async #configure () {
+    const references = await this.#resolveURLs()
     const reference = references[0]
     const url = new URL(reference)
     let [, database, schema, table] = url.pathname.split('/')
@@ -73,9 +73,9 @@ class Connection extends Connector {
     return knex(config)
   }
 
-  #resolveURLs () {
+  async #resolveURLs () {
     if (process.env.TOA_DEV === '1') return ['pg://developer:secret@localhost']
-    else return resolve(ID, this.#locator.id)
+    else return await resolve(ID, this.#locator.id)
   }
 }
 

@@ -9,7 +9,12 @@ Feature: Origins extension
           bad: http://localhost:8888/
       """
     When I run `toa env`
-    And I run `TOA_DEV=1 toa invoke test -p ./components/origins.http`
+    And I update an environment with:
+    """
+    TOA_AMQP_CONTEXT__USERNAME=developer
+    TOA_AMQP_CONTEXT__PASSWORD=secret
+    """
+    And I run `TOA_DEV=0 toa invoke test -p ./components/origins.http`
     And stdout should contain lines:
       """
       method: 'GET'
@@ -31,7 +36,6 @@ Feature: Origins extension
       """
       TOA_ORIGINS_ORIGINS_HTTPABSOLUTE__PROPERTIES=3gABpS5odHRw3gABui9eaHR0cDpcL1wvbG9jYWxob3N0Ojg4ODgvww==
       """
-
 
   Scenario: HTTP Aspect absolute URL
     Given I have a component `origins.httpAbsolute`
@@ -101,9 +105,9 @@ Feature: Origins extension
       """
       ECHO_PORT=8888
       ECHO_SUFFIX=host
-      ECHO_HOST=example
+      ECHO_HOST=localhost
       ECHO_ORIGIN=localhost:8888
-      ECHO_NUMBER=0
+      ECHO_NUMBER=8
       """
     And I have a context with:
       """yaml
@@ -112,8 +116,8 @@ Feature: Origins extension
           port: http://localhost:${{ ECHO_PORT }}/some/
           suffixed: http://local${{ ECHO_SUFFIX }}:8888/some/
           origin: http://${{ ECHO_ORIGIN }}
-          domain: http://sandbox.${{ ECHO_HOST }}.com/
-          subdomain: http://api${{ ECHO_NUMBER }}.example.com/
+          domain: http://${{ ECHO_HOST }}:8888/
+          subdomain: http://localhost:${{ ECHO_NUMBER }}888/
       """
     When I run `toa env`
     Then I run `toa invoke port -p ./components/origins.httpEcho`

@@ -16,7 +16,7 @@ export class Connection extends Connector {
   protected override async open (): Promise<void> {
     const keyPrefix = `${this.locator.namespace}:${this.locator.name}:`
     const options: ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
-    const urls = this.resolveURLs()
+    const urls = await this.resolveURLs()
 
     for (const url of urls)
       this.redises.push(new Redis(url, options))
@@ -39,8 +39,8 @@ export class Connection extends Connector {
     console.log(`Stash connected to ${redis.options.host as string}:${String(redis.options.port)}`)
   }
 
-  private resolveURLs (): string[] {
+  private async resolveURLs (): Promise<string[]> {
     if (process.env.TOA_DEV === '1') return ['redis://localhost']
-    else return resolve(ID, this.locator.id)
+    else return await resolve(ID, this.locator.id)
   }
 }

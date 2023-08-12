@@ -109,18 +109,9 @@ Feature: Stash extension
     Given I have a component `stash`
     And I have a context with:
       """yaml
-      amqp: amqp://localhost
       stash: redis://localhost
       """
     And I run `toa env`
-    And I update an environment with:
-      """
-      TOA_DEV=0
-      TOA_AMQP_SYSTEM_USERNAME=developer
-      TOA_AMQP_SYSTEM_PASSWORD=secret
-      TOA_AMQP_DEFAULT_STASH_USERNAME=developer
-      TOA_AMQP_DEFAULT_STASH_PASSWORD=secret
-      """
     And my working directory is ./components/stash
     When I run `toa invoke set "{ input: 'foo' }"`
     Then program should exit with code 0
@@ -145,3 +136,58 @@ Feature: Stash extension
     When I run `TOA_DEV=0 toa invoke set "{ input: 0 }"`
     And I run `TOA_DEV=0 toa invoke locks "{ input: {} }"`
     Then program should exit with code 0
+
+  Scenario: Invoke operation with multiple connections
+    Given I have a component `stash`
+    And I have a context with:
+      """yaml
+      amqp: amqp://localhost
+      stash:
+        - redis://localhost:6379
+        - redis://localhost:6378
+        - redis://localhost:6377
+      """
+    And I run `toa env`
+    And I update an environment with:
+      """
+      TOA_DEV=0
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      TOA_AMQP_DEFAULT_STASH_USERNAME=developer
+      TOA_AMQP_DEFAULT_STASH_PASSWORD=secret
+      """
+    And my working directory is ./components/stash
+    When I run `TOA_DEV=0 toa invoke set "{ input: 'foo' }"`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      Stash connected to localhost:6377
+      Stash connected to localhost:6378
+      Stash connected to localhost:6379
+      """
+
+  Scenario: Dedupe connections
+    Given I have a component `stash`
+    And I have a context with:
+      """yaml
+      amqp: amqp://localhost
+      stash:
+        - redis://localhost:6379
+        - redis://localhost:6379
+      """
+    And I run `toa env`
+    And I update an environment with:
+      """
+      TOA_DEV=0
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      TOA_AMQP_DEFAULT_STASH_USERNAME=developer
+      TOA_AMQP_DEFAULT_STASH_PASSWORD=secret
+      """
+    And my working directory is ./components/stash
+    When I run `TOA_DEV=0 toa invoke set "{ input: 'foo' }"`
+    Then program should exit with code 0
+    And stdout should contain lines once:
+      """
+      Stash connected to localhost:6379
+      """

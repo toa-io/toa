@@ -22,7 +22,7 @@ class Connection extends Connector {
   }
 
   async open () {
-    const urls = this.#resolveURLs()
+    const urls = await this.#resolveURLs()
     const db = this.#locator.namespace
     const collection = this.#locator.name
 
@@ -80,9 +80,9 @@ class Connection extends Connector {
     return this.#collection.findOneAndUpdate(query, update, options)
   }
 
-  #resolveURLs () {
+  async #resolveURLs () {
     if (process.env.TOA_DEV === '1') return ['mongodb://developer:secret@localhost']
-    else return resolve(ID, this.#locator.id)
+    else return await resolve(ID, this.#locator.id)
   }
 }
 

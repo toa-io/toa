@@ -15,12 +15,6 @@ class Receiver extends Connector {
   /** @type {toa.core.Receiver} */
   #receiver
 
-  /**
-   * @param {toa.amqp.Communication} comm
-   * @param {string} exchange
-   * @param {string} group
-   * @param {toa.core.Receiver} receiver
-   */
   constructor (comm, exchange, group, receiver) {
     super()
 

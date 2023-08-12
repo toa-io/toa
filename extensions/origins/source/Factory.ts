@@ -1,6 +1,7 @@
 import { decode } from 'msgpackr'
 import { resolve, type URIMap } from '@toa.io/pointer'
-import { protocols, type Protocol } from './protocols'
+import { memo } from '@toa.io/generic'
+import { type Protocol, protocols } from './protocols'
 import { ENV_PREFIX, ID_PREFIX, PROPERTIES_SUFFIX } from './extension'
 import type { Properties } from './annotation'
 import type { Locator, extensions } from '@toa.io/core'
@@ -8,27 +9,34 @@ import type { Manifest } from './manifest'
 
 export class Factory implements extensions.Factory {
   public aspect (locator: Locator, manifest: Manifest): extensions.Aspect[] {
-    const uris = this.getURIs(locator, manifest)
-    const properties = this.getProperties(locator)
-
-    return protocols.map((protocol) => this.createAspect(protocol, uris, properties))
+    return protocols.map((protocol) => this.createAspect(locator, manifest, protocol))
   }
 
-  private createAspect (protocol: Protocol, uris: URIMap, properties: Properties):
+  private createAspect (locator: Locator, manifest: Manifest, protocol: Protocol):
   extensions.Aspect {
-    const protocolOrigins = this.filterOrigins(uris, protocol.protocols)
-    const protocolProperties = properties['.' + protocol.id as keyof Properties] ?? {}
+    const resolver = this.resolver(locator, manifest, protocol)
 
-    return protocol.create(protocolOrigins, protocolProperties)
+    return protocol.create(resolver)
   }
 
-  private getURIs (locator: Locator, manifest: Manifest): URIMap {
+  private resolver (locator: Locator, manifest: Manifest, protocol: Protocol): Resolver {
+    return memo(async (): Promise<Configuration> => {
+      const uris = await this.getURIs(locator, manifest)
+      const allProperties = this.getProperties(locator)
+      const origins = this.filterOrigins(uris, protocol.protocols)
+      const properties = allProperties['.' + protocol.id as keyof Properties] ?? {}
+
+      return { origins, properties }
+    })
+  }
+
+  private async getURIs (locator: Locator, manifest: Manifest): Promise<URIMap> {
     const map: URIMap = {}
 
     if (manifest === null) return map
 
     for (const [name, value] of Object.entries(manifest))
-      map[name] = value !== null ? [value] : this.readOrigin(locator, name)
+      map[name] = value !== null ? [value] : await this.readOrigin(locator, name)
 
     return map
   }
@@ -46,10 +54,10 @@ export class Factory implements extensions.Factory {
     return filtered
   }
 
-  private readOrigin (locator: Locator, name: string): string[] {
+  private async readOrigin (locator: Locator, name: string): Promise<string[]> {
     const id = ID_PREFIX + locator.label
 
-    return resolve(id, name)
+    return await resolve(id, name)
   }
 
   private getProperties (locator: Locator): Properties {
@@ -63,3 +71,10 @@ export class Factory implements extensions.Factory {
     return decode(buffer)
   }
 }
+
+export interface Configuration {
+  origins: URIMap
+  properties: Record<string, boolean>
+}
+
+export type Resolver = () => Promise<Configuration>

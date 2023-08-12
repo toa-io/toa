@@ -22,6 +22,8 @@ export function encode (input: any): string
 
 export function decode (input: string): any
 
+export function memo<T> (fn: T): T
+
 export { promex } from './promex'
 export { merge, add, overwrite } from './merge'
 export { map } from './map'

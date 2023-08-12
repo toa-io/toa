@@ -1,6 +1,7 @@
-import { createVariables, type Request } from '@toa.io/pointer'
+import { createVariables, resolve, type Request } from '@toa.io/pointer'
 import { type component } from '@toa.io/norm'
 import { type Dependency } from '@toa.io/operations'
+import { type Locator } from '@toa.io/core'
 import { type Instance } from './instance'
 import { type Annotation } from './annotation'
 
@@ -13,9 +14,13 @@ export function createDependency (sources: Sources, instances: Instance[]): Depe
     if (request !== null) requests.push(request)
   }
 
-  const variables = createVariables('amqp-sources', sources, requests)
+  const variables = createVariables(ID, sources, requests)
 
   return { variables }
+}
+
+export async function resolveURIs (locator: Locator, label: string): Promise<string[]> {
+  return await resolve(ID, locator.id)
 }
 
 function createRequest (instance: Instance): Request | null {
@@ -33,5 +38,7 @@ function createSelectors (component: component.Component): string[] | null {
 
   return sources.filter((source) => source !== undefined) as string[]
 }
+
+const ID = 'amqp-sources'
 
 type Sources = Annotation['sources']

@@ -1,15 +1,17 @@
+import { dedupe } from '@toa.io/dns'
 import { nameVariable } from './naming'
 import { type AnnotationRecord, type URIMap } from './Deployment'
 
-export function resolve (id: string, selector: string): string [] {
+export async function resolve (id: string, selector: string): Promise<string[]> {
   const variable = nameVariable(id, selector)
   const value = process.env[variable]
 
   if (value === undefined) throw new Error(`${variable} is not set.`)
 
   const urls = value.split(' ')
+  const unique = await dedupe(urls)
 
-  return withCredentials(variable, urls)
+  return withCredentials(variable, unique)
 }
 
 export function resolveRecord (uris: URIMap, selector: string): AnnotationRecord {

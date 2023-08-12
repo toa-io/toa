@@ -13,11 +13,6 @@ class Consumer extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
-  /**
-   * @param {toa.amqp.Communication} comm
-   * @param {toa.core.Locator} locator
-   * @param {string} endpoint
-   */
   constructor (comm, locator, endpoint) {
     super()
 

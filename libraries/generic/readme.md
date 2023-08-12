@@ -157,3 +157,7 @@ Trim lines of multiline text.
 Buffer a stream.
 
 `buffer (stream: Readable): Buffer`
+
+## Memo
+
+Meoizes function returned value.

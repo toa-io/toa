@@ -3,27 +3,22 @@
 const { assert } = require('comq')
 const { Connector } = require('@toa.io/core')
 
-/**
- * @implements {toa.amqp.Communication}
- */
 class Communication extends Connector {
-  /** @type {string[]} */
-  #references
+  #resolve
 
   /** @type {comq.IO} */
   #io
 
-  /**
-   * @param {string[]} references
-   */
-  constructor (references) {
+  constructor (resolve) {
     super()
 
-    this.#references = references
+    this.#resolve = resolve
   }
 
   async open () {
-    this.#io = await assert(...this.#references)
+    const references = await this.#resolve()
+
+    this.#io = await assert(...references)
   }
 
   async close () {

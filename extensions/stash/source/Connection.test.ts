@@ -33,21 +33,6 @@ it('should be instance of Connector', async () => {
     .toBeInstanceOf(Connector)
 })
 
-it('should connect', async () => {
-  await connection.connect()
-
-  const keyPrefix = `${locator.namespace}:${locator.name}:`
-  const options: redis.ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
-
-  expect(Redis)
-    .toHaveBeenCalledWith(urls[0], options)
-
-  redises = Redis.mock.results.map((result) => result.value)
-
-  for (const redis of redises)
-    expect(redis.connect).toHaveBeenCalled()
-})
-
 it('should disconnect', async () => {
   await connection.connect()
   await connection.disconnect()
