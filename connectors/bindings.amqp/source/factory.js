@@ -52,7 +52,9 @@ class Factory {
   }
 
   #getSource (locator, label) {
-    const resolve = async () => sources.resolveURIs(locator, label)
+    const resolve = (locator.namespace === undefined)
+      ? async () => sources.resolveURIs(locator, label)
+      : async () => context.resolveURIs(locator)
 
     return new Communication(resolve)
   }

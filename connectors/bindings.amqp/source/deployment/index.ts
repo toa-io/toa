@@ -6,7 +6,5 @@ import { type Instance } from './instance'
 export function deployment (instances: Instance[], declaration: Declaration): Dependency {
   const annotation = normalize(declaration)
 
-  const dep = sources.createDependency(instances, annotation.sources)
-
-  return dep
+  return sources.createDependency(annotation.sources, instances)
 }
