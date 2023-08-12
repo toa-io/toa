@@ -17,7 +17,7 @@ Feature: AMQP deployment
       variables:
         global:
           - name: TOA_AMQP_CONTEXT
-            value: eyIuIjoiYW1xcDovL2xvY2FsaG9zdCJ9
+            value: eyIuIjpbImFtcXA6Ly9sb2NhbGhvc3QiXX0=
           - name: TOA_AMQP_CONTEXT__USERNAME
             secret:
               name: toa-amqp-context.default

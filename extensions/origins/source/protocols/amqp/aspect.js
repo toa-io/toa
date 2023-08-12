@@ -7,7 +7,7 @@ const { id } = require('./id')
 
 class Aspect extends Connector {
   name = id
-  /** @type {toa.origins.Manifest} */
+
   #manifest
 
   /** @type {Record<string, Partial<comq.IO>>} */

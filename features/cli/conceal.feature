@@ -4,7 +4,7 @@ Feature: Deploy secrets
     When I run `toa conceal --help`
     Then stdout should contain lines:
       """
-      toa conceal <secret> <key-values...>
+      toa conceal [secret] [key-values...]
       Deploy a secret
       """
 

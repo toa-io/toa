@@ -9,7 +9,7 @@ Feature: Deployment
       | dummies.two |
       | stash       |
     And I have a context
-    When I run `toa conceal bindings-amqp-default username=developer password=secret`
+    When I run `toa conceal amqp-context.default username=developer password=secret`
     And I run `toa deploy docker --wait`
     Then program should exit with code 0
     When I wait 5 seconds

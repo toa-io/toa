@@ -8,8 +8,7 @@ import type { Manifest } from './manifest'
 
 export class Factory implements extensions.Factory {
   public aspect (locator: Locator, manifest: Manifest): extensions.Aspect[] {
-    const names = manifest === null ? [] : Object.keys(manifest)
-    const uris = this.getURIs(locator, names)
+    const uris = this.getURIs(locator, manifest)
     const properties = this.getProperties(locator)
 
     return protocols.map((protocol) => this.createAspect(protocol, uris, properties))
@@ -23,11 +22,13 @@ export class Factory implements extensions.Factory {
     return protocol.create(protocolOrigins, protocolProperties)
   }
 
-  private getURIs (locator: Locator, names: string[]): URIMap {
+  private getURIs (locator: Locator, manifest: Manifest): URIMap {
     const map: URIMap = {}
 
-    for (const name of names)
-      map[name] = this.readOrigin(locator, name)
+    if (manifest === null) return map
+
+    for (const [name, value] of Object.entries(manifest))
+      map[name] = value !== null ? [value] : this.readOrigin(locator, name)
 
     return map
   }

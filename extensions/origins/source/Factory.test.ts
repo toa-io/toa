@@ -35,14 +35,12 @@ it('should create aspect', async () => {
     one: 'http://whatever'
   }
 
-  process.env[`TOA_ORIGINS_${locator.uppercase}_ONE`] = 'http://api.example.com/'
-
   const aspects = factory.aspect(locator, manifest)
 
   expect(aspects.length).toStrictEqual(2)
 
   const origins = {
-    one: [process.env[`TOA_ORIGINS_${locator.uppercase}_ONE`]]
+    one: [manifest.one]
   }
 
   const properties = {}

@@ -2,9 +2,14 @@ Feature: Origins extension
 
   Scenario: HTTP Aspect
     Given I have a component `origins.http`
-    And I have a context
+    And I have a context with:
+      """
+      origins:
+        origins.http:
+          bad: http://localhost:8888/
+      """
     When I run `toa env`
-    And I run `toa invoke test -p ./components/origins.http`
+    And I run `TOA_DEV=1 toa invoke test -p ./components/origins.http`
     And stdout should contain lines:
       """
       method: 'GET'
@@ -55,7 +60,7 @@ Feature: Origins extension
           bad: http://localhost:8888/
       """
     When I run `toa env`
-    And I run `toa invoke bad -p ./components/origins.http`
+    And I run `TOA_DEV=1 toa invoke bad -p ./components/origins.http`
     Then program should exit with code 0
 
   Scenario: HTTP permissions annotation
@@ -135,7 +140,12 @@ Feature: Origins extension
 
   Scenario: AMQP credentials deployment annotations
     Given I have a component `origins.amqp`
-    And I have a context
+    And I have a context with:
+      """yaml
+      origins:
+        origins.amqp:
+          queue: amqp://localhost
+      """
     When I export deployment
     Then exported values should contain:
       """
@@ -153,14 +163,19 @@ Feature: Origins extension
 
   Scenario: AMQP credentials
     Given I have a component `origins.amqp`
-    And I have a context
+    And I have a context with:
+      """yaml
+      origins:
+        origins.amqp:
+          queue: amqp://localhost
+      """
     When I run `toa env`
     And I update an environment with:
       """
       TOA_ORIGINS_ORIGINS_AMQP_QUEUE_USERNAME=developer
       TOA_ORIGINS_ORIGINS_AMQP_QUEUE_PASSWORD=secret
       """
-    And I run `toa invoke test -p ./components/origins.amqp`
+    And I run `TOA_DEV=1 toa invoke test -p ./components/origins.amqp`
     Then program should exit with code 0
 
   Scenario: AMQP misconfiguration

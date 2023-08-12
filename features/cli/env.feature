@@ -14,15 +14,15 @@ Feature: Export local deployment environment variables
     And I have a context with:
       """yaml
       amqp:
-        .: amqp://whatever
+        context: amqp://whatever
       """
     When I run `toa env some`
     Then the environment contains:
       """
       TOA_ENV=some
-      TOA_AMQP_DUMMIES_ONE=amqp://whatever
-      TOA_AMQP_DUMMIES_ONE_USERNAME=
-      TOA_AMQP_DUMMIES_ONE_PASSWORD=
+      TOA_AMQP_CONTEXT=eyIuIjpbImFtcXA6Ly93aGF0ZXZlciJdfQ==
+      TOA_AMQP_CONTEXT__USERNAME=
+      TOA_AMQP_CONTEXT__PASSWORD=
       """
 
   Scenario: Keeping secret values while switching environment
@@ -30,20 +30,21 @@ Feature: Export local deployment environment variables
     And I have a context with:
       """yaml
       amqp:
-        .: amqp://whatever
-        .@some: amqp://some.host
-        .@dev: amqp://dev.host
+        context:
+          .: amqp://whatever
+          .@some: amqp://some.host
+          .@dev: amqp://dev.host
       """
     When I run `toa env some`
     And I update an environment with:
       """
-      TOA_AMQP_DUMMIES_ONE_USERNAME=test
+      TOA_AMQP_CONTEXT__USERNAME=test
       """
     And I run `toa env dev`
     Then the environment contains:
       """
       TOA_ENV=dev
-      TOA_AMQP_DUMMIES_ONE_USERNAME=test
+      TOA_AMQP_CONTEXT__USERNAME=test
       """
 
   Scenario Outline: Setting `local` environment
