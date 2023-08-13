@@ -74,8 +74,7 @@
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
-    "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i",
-    "transpile": "npm run transpile --workspaces --if-present"
+    "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i"
   },
   "jest": {
     "preset": "ts-jest",

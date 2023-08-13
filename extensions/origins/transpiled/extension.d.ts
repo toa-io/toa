@@ -1,0 +1,10 @@
+import { type Annotation } from './annotation';
+import { type Manifest } from './manifest';
+import type { Dependency } from '@toa.io/operations';
+import type { context } from '@toa.io/norm';
+export declare function deployment(instances: Instance[], annotation?: Annotation): Dependency;
+export declare function manifest(manifest: Manifest): Manifest;
+export declare const ID_PREFIX = "origins-";
+export declare const ENV_PREFIX = "TOA_ORIGINS_";
+export declare const PROPERTIES_SUFFIX = "__PROPERTIES";
+export type Instance = context.Dependency<Manifest>;
