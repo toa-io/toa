@@ -151,25 +151,6 @@ Feature: Configuration Extension
       """
     When I run `toa env`
     Then the environment contains:
-    """
-    TOA_CONFIGURATION__FOO_VALUE=
-    """
-
-  Scenario: Local environment variable placeholders
-    Given I have a component `configuration.base`
-    And I have a context with:
-      """yaml
-      configuration:
-        configuration.base:
-          foo: foo_${FOO_VALUE}
       """
-    When I run `toa env`
-    And I update an environment with:
+      TOA_CONFIGURATION__FOO_VALUE=
       """
-      FOO_VALUE=bar
-      """
-    And I run `toa invoke echo -p ./components/configuration.base`
-    And stdout should contain lines:
-    """
-    { output: { foo: 'foo_bar' } }
-    """

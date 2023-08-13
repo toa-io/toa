@@ -126,7 +126,7 @@ configuration:
 
 ## Secrets
 
-Configuration annotation values which are uppercase strings prefixed with `$` considered as secrets.
+Configuration annotation top-level values which are uppercase strings prefixed with `$` considered as secrets.
 
 ```yaml
 # context.toa.yaml

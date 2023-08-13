@@ -4,7 +4,8 @@
   "description": "Toa Configuration",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
-  "main": "source/index.js",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -15,12 +16,13 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@toa.io/core": "0.20.0-dev.34",
-    "@toa.io/generic": "0.20.0-dev.34",
-    "@toa.io/schema": "0.20.0-dev.34",
-    "@toa.io/yaml": "0.20.0-dev.34",
-    "clone-deep": "4.0.1"
+  "scripts": {
+    "prepublishOnly": "npm run transpile",
+    "transpile": "tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
