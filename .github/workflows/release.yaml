@@ -28,7 +28,6 @@ jobs:
           fetch-depth: 0
 
       - run: npm install
-      - run: npm run transpile
       - run: npm test
 
   publish:
