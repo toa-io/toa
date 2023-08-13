@@ -65,7 +65,7 @@
     "test:features:unit": "npx cucumber-js -p norm",
     "test:samples:unit": "toa replay userland/example/components/*",
     "test:samples:all": "TOA_DEV=1 toa replay userland/example",
-    "test:all": "npm run ci && npm run transpile && npm run test && npm run test:integration && npm run test:stage && npm run test:features",
+    "test:all": "npm run ci && npm run test && npm run test:integration && npm run test:stage && npm run test:features",
     "lint": "npx eslint .",
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
     "version:dev": "npx lerna@6.5.1 version --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --no-git-tag-version",
@@ -74,7 +74,8 @@
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
-    "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i"
+    "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i",
+    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled && npm run transpile --if-present\""
   },
   "jest": {
     "preset": "ts-jest",
