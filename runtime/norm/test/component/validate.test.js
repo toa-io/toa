@@ -240,4 +240,10 @@ describe('receivers', () => {
 
     expect(() => validate(manifest)).toThrow(/one of the allowed types/)
   })
+
+  it('should throw if source has a name `context`', async () => {
+    manifest.receivers['foo.bar.happened'].source = 'context'
+
+    expect(() => validate(manifest)).toThrow(/must NOT be valid/)
+  })
 })

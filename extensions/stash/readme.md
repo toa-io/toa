@@ -31,7 +31,7 @@ Values are encoded using [msgpack](https://msgpack.org).
 
 `async lock<T>(id: string | string[], routine: async? () => T): T`
 
-Executes `routine` once a lock is succesively acquired. Lock ID is component-scoped.
+Executes `routine` once a lock is successfully acquired. Lock ID is component-scoped.
 
 ```javascript
 async function computation (input, context) {
@@ -49,13 +49,13 @@ stash: ~
 
 ## Deployment
 
-`stash` context annotation is a [Pointer](/libraries/pointer)-like.
+`stash` context annotation is a [Pointer](/libraries/pointer) with ID `stash`.
 
 ```yaml
 stash: # shortcut is available
-  default: redis://redis.example.com
+  .: redis://redis.example.com
   dummies.dummy: redis://dummies.redis.example.com
 ```
 
-Neither Password Authentication nor TLS are implemented.
+Neither password authentication nor TLS are implemented.
 [#367](https://github.com/toa-io/toa/issues/367)

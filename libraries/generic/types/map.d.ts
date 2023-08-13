@@ -1,6 +1,5 @@
-declare namespace toa.generic.map {
-  type kv<T> = (key: string, value: T) => [key: string, value: T]
-  type v<T> = (value: T) => T
+export function map<T = object, R = object> (input: T, transformer: Transformer<T, R>): R
 
-  type transform<T> = kv<T> & v<T>
+interface Transformer<T, R> {
+  (key: keyof T, value: T[keyof T]): [keyof R, R[keyof R]]
 }

@@ -205,11 +205,6 @@ Feature: Replay samples
     When I run `TOA_DEV=0 toa replay ./components/tea.pots`
     Then program should exit with code 0
 
-  Scenario: Replay autonomous sample without environment for a component with AMQP Origin
-    Given I have a component `origins.amqp`
-    When I run `TOA_DEV=0 toa replay ./components/origins.amqp`
-    Then program should exit with code 0
-
   Scenario: Replay samples in Docker
     Given I have components:
       | math.calculations |

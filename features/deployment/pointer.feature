@@ -1,70 +1,80 @@
-Feature: Pointer deployment
+Feature: Pointer
 
-  Scenario Outline: URI Set deployment of <id>
-
-  URI Set must be deployed as global variable with URI Set object encoded
-
-    Given I have components:
-      | <namespace>.one |
-      | <namespace>.two |
+  Scenario: Deploy a default URL
+    Given I have a component `stash`
     And I have a context with:
-      """
-      <id>:
-        system: amqp://whatever
-        <namespace>.one: <id>://host1
-        <namespace>.two: <id>://host2:3000
+      """yaml
+      stash: redis://redis.example.com
       """
     When I export deployment
     Then exported values should contain:
       """
-      variables:
-        global:
-          - name: TOA_<PREFIX>_POINTER
+      compositions:
+        - name: default-stash
+          variables:
+            - name: TOA_STASH_DEFAULT_STASH
+              value: redis://redis.example.com
       """
 
-    Examples:
-      | namespace | id      | PREFIX           |
-      | dummies   | amqp    | BINDINGS_AMQP    |
-      | mongo     | mongodb | STORAGES_MONGODB |
-
-  Scenario Outline: Deployment of <id> secrets for usernames and passwords
-
-  For each entry in URI Set a pair of `username` and `password` global secret variables must be deployed.
-
-    Given I have components:
-      | <namespace>.one |
-      | <namespace>.two |
+  Scenario: Deploy default URL set
+    Given I have a component `stash`
     And I have a context with:
-      """
-      <id>:
-        system: <id>://host0:3000
-        <namespace>: <id>://host1
-        <namespace>.one: <id>://host2
+      """yaml
+      stash:
+        - redis://redis0.example.com
+        - redis://redis1.example.com
       """
     When I export deployment
     Then exported values should contain:
       """
-      variables:
-        global:
-          - name: TOA_<PREFIX>_<NAMESPACE>_USERNAME
-            secret:
-              name: toa-<prefix>-<namespace>
-              key: username
-          - name: TOA_<PREFIX>_<NAMESPACE>_PASSWORD
-            secret:
-              name: toa-<prefix>-<namespace>
-              key: password
-          - name: TOA_<PREFIX>_<NAMESPACE>_ONE_USERNAME
-            secret:
-              name: toa-<prefix>-<namespace>-one
-              key: username
-          - name: TOA_<PREFIX>_<NAMESPACE>_ONE_PASSWORD
-            secret:
-              name: toa-<prefix>-<namespace>-one
-              key: password
+      compositions:
+        - name: default-stash
+          variables:
+            - name: TOA_STASH_DEFAULT_STASH
+              value: redis://redis0.example.com redis://redis1.example.com
       """
 
+  Scenario Outline: Deploy a URL for a <type>
+    Given I have a component `stash`
+    And I have a context with:
+      """yaml
+      stash:
+        <key>: redis://redis.example.com
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-stash
+          variables:
+            - name: TOA_STASH_DEFAULT_STASH
+              value: redis://redis.example.com
+      """
     Examples:
-      | namespace | id      | PREFIX           | NAMESPACE | prefix            |
-      | dummies   | amqp    | BINDINGS_AMQP    | DUMMIES   | bindings-amqp     |
-      | mongo     | mongodb | STORAGES_MONGODB | MONGO     | storages-mongodb |
+      | type      | key           |
+      | component | default.stash |
+      | namespace | default       |
+
+  Scenario: Deploy credentials
+    Given I have a component `mongo.one`
+    And I have a context with:
+      """yaml
+      mongodb: mongodb://mongo.exmaple.com
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: mongo-one
+          variables:
+            - name: TOA_MONGODB_MONGO_ONE
+              value: mongodb://mongo.exmaple.com
+            - name: TOA_MONGODB_MONGO_ONE_USERNAME
+              secret:
+                name: toa-mongodb.default
+                key: username
+            - name: TOA_MONGODB_MONGO_ONE_PASSWORD
+              secret:
+                name: toa-mongodb.default
+                key: password
+      """

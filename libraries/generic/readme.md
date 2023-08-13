@@ -1,7 +1,7 @@
 # Toa Generic Tools
 
 Library is for internal use only. Barely documented. If you really need to understand something,
-see [tests](test).
+see [tests](source).
 
 ## Range
 
@@ -93,7 +93,8 @@ console.log(output) // hello world
 
 `echo(input: string, values: string[]): string`
 
-When the second argument is an `Array`, its values are substituted to a placeholders following `{N}` syntax.
+When the second argument is an `Array`, its values are substituted to a placeholders following `{N}`
+syntax.
 
 ```javascript
 echo('make {0} not {1}', ['love', 'war'])
@@ -101,7 +102,8 @@ echo('make {0} not {1}', ['love', 'war'])
 
 ### Arguments substitution
 
-When the second argument is a `string`, it and next arguments are substituted as an [array](#index-substitutions).
+When the second argument is a `string`, it and next arguments are substituted as
+an [array](#index-substitutions).
 
 ```javascript
 echo('make {0} not {1}', 'love', 'war')
@@ -111,8 +113,10 @@ echo('make {0} not {1}', 'love', 'war')
 
 `map(object: object, transformation: Function): object`
 
-Traverse through a given plain object replacing its values (or key-value pairs) with a given transformation function.
-If the transformation function returns `undefined` then the current key-value pair will remain unchanged.
+Traverse through a given plain object replacing its values (or key-value pairs) with a given
+transformation function.
+If the transformation function returns `undefined` then the current key-value pair will remain
+unchanged.
 
 Transformation function signature is:
 
@@ -142,3 +146,18 @@ Async array filter.
 
 Constructs an object by picking the set of `properties` from `source` object.
 
+## Trim
+
+`trim (input: string): string`
+
+Trim lines of multiline text.
+
+## Buffer
+
+Buffer a stream.
+
+`buffer (stream: Readable): Buffer`
+
+## Memo
+
+Meoizes function returned value.

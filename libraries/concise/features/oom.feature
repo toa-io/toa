@@ -52,7 +52,7 @@ Feature: One or many
       additionalProperties: false
       """
 
-  Scenario: One or many as pattern property
+  Scenario: One or many as a wildcard property
     When I write schema:
       """yaml
       ~+: string
@@ -62,6 +62,24 @@ Feature: One or many
       type: object
       patternProperties:
         "^.*$":
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+      additionalProperties: false
+      """
+
+  Scenario: One or many as a pattern property
+    When I write schema:
+      """yaml
+      /^[a-z]+$/+: string
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      patternProperties:
+        "^[a-z]+$":
           oneOf:
             - type: string
             - type: array

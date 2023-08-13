@@ -2,9 +2,6 @@
 
 const workspace = require('./workspace')
 
-/**
- * @implements {toa.deployment.Operator}
- */
 class Operator {
   /** @type {toa.deployment.Deployment} */
   #deployment

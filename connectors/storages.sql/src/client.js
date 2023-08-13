@@ -3,9 +3,6 @@
 const { Connector } = require('@toa.io/core')
 const { Conveyor } = require('@toa.io/conveyor')
 
-/**
- * @implements {toa.sql.Client}
- */
 class Client extends Connector {
   /** @type {string} */
   #table
@@ -16,20 +13,20 @@ class Client extends Connector {
   /** @type {toa.conveyor.Conveyor<toa.core.storages.Record, boolean>} */
   #conveyor
 
-  /**
-   * @param {toa.sql.Connection} connection
-   * @param {toa.sql.Pointer} pointer
-   */
-  constructor (connection, pointer) {
+  constructor (connection) {
     super()
 
     this.#connection = connection
-    this.#table = pointer.table
-
-    const insert = (objects) => connection.insert(this.#table, objects)
-    this.#conveyor = new Conveyor(insert)
 
     this.depends(connection)
+  }
+
+  async open () {
+    this.#table = this.#connection.table
+
+    const insert = (objects) => this.#connection.insert(this.#table, objects)
+
+    this.#conveyor = new Conveyor(insert)
   }
 
   async insert (object) {

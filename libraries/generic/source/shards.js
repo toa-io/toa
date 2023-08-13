@@ -2,9 +2,6 @@
 
 const { range } = require('./range')
 
-/**
- * @type {toa.generic.shards}
- */
 const shards = (input) => {
   const match = input.match(RANGE)
 
@@ -15,6 +12,6 @@ const shards = (input) => {
   return numbers.map((number) => input.replace(RANGE, String(number)))
 }
 
-const RANGE = /{(?<range>[^{}]+)}/
+const RANGE = /{(?<range>[0-9]{1,8}-[0-9]{1,8})}/
 
 exports.shards = shards

@@ -4,7 +4,7 @@ Feature: Deploy secrets
     When I run `toa conceal --help`
     Then stdout should contain lines:
       """
-      toa conceal <secret> <key-values...>
+      toa conceal [secret] [key-values...]
       Deploy a secret
       """
 
@@ -55,3 +55,11 @@ Feature: Deploy secrets
       toa-test
       """
     Then I run `kubectl delete secret toa-test -n test-secret`
+
+  Scenario: Running command without key-value
+    When I run `toa conceal database`
+    Then program should exit with code 1
+
+  Scenario: Running command without arguments
+    When I run `toa conceal`
+    Then program should exit with code 1

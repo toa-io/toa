@@ -6,4 +6,4 @@ operations:
     output: object
 
 origins:
-  queue: amqp://localhost
+  queue: ~

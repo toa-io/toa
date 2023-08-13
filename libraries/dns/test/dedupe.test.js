@@ -42,3 +42,10 @@ it('should dedupe', async () => {
 
   expect(urls.length).toStrictEqual(2)
 })
+
+it('should dedupe host name and ip', async () => {
+  const input = ['http://localhost', 'http://127.0.0.1']
+  const urls = await dedupe(input)
+
+  expect(urls).toStrictEqual(['http://127.0.0.1/'])
+})

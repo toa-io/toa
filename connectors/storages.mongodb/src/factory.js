@@ -1,16 +1,11 @@
 'use strict'
 
-const { Pointer } = require('./pointer')
 const { Connection } = require('./connection')
 const { Storage } = require('./storage')
 
-/**
- * @implements {toa.core.storages.Factory}
- */
 class Factory {
   storage (locator) {
-    const pointer = new Pointer(locator)
-    const connection = new Connection(pointer)
+    const connection = new Connection(locator)
 
     return new Storage(connection)
   }

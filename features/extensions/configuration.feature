@@ -40,7 +40,7 @@ Feature: Configuration Extension
   Scenario: Environment override
     Given I have a component `configuration.base`
     And I have a context with:
-      """
+      """yaml
       configuration:
         configuration.base:
           foo: bye
@@ -55,7 +55,7 @@ Feature: Configuration Extension
   Scenario: Secret values
     Given I have a component `configuration.base`
     And I have a context with:
-      """
+      """yaml
       configuration:
         configuration.base:
           foo: $FOO_SECRET_VALUE
@@ -74,39 +74,41 @@ Feature: Configuration Extension
   Scenario: Deployment
     Given I have a component `configuration.base`
     And I have a context with:
-      """
+      """yaml
       configuration:
         configuration.base:
           foo: ok
       """
     When I export deployment
     Then exported values should contain:
-      """
-      variables:
-        configuration-base:
-          - name: TOA_CONFIGURATION_CONFIGURATION_BASE
-            value: eyJmb28iOiJvayJ9
+      """yaml
+      compositions:
+        - name: configuration-base
+          variables:
+            - name: TOA_CONFIGURATION_CONFIGURATION_BASE
+              value: eyJmb28iOiJvayJ9
       """
 
   Scenario: Secret values deployment
     Given I have a component `configuration.base`
     And I have a context with:
-      """
+      """yaml
       configuration:
         configuration.base:
           foo: $FOO_VALUE
       """
     When I export deployment
     Then exported values should contain:
-      """
-      variables:
-        configuration-base:
-          - name: TOA_CONFIGURATION_CONFIGURATION_BASE
-            value: eyJmb28iOiIkRk9PX1ZBTFVFIn0=
-          - name: TOA_CONFIGURATION__FOO_VALUE
-            secret:
-              name: toa-configuration
-              key: FOO_VALUE
+      """yaml
+      compositions:
+        - name: configuration-base
+          variables:
+            - name: TOA_CONFIGURATION_CONFIGURATION_BASE
+              value: eyJmb28iOiIkRk9PX1ZBTFVFIn0=
+            - name: TOA_CONFIGURATION__FOO_VALUE
+              secret:
+                name: toa-configuration
+                key: FOO_VALUE
       """
 
   Scenario: Shared secret deployment
@@ -114,7 +116,7 @@ Feature: Configuration Extension
       | configuration.base     |
       | configuration.extended |
     And I have a context with:
-      """
+      """yaml
       configuration:
         configuration.base:
           foo: $FOO_VALUE
@@ -123,24 +125,26 @@ Feature: Configuration Extension
       """
     When I export deployment
     Then exported values should contain:
-      """
-      variables:
-        configuration-base:
-          - name: TOA_CONFIGURATION__FOO_VALUE
-            secret:
-              name: toa-configuration
-              key: FOO_VALUE
-        configuration-extended:
-          - name: TOA_CONFIGURATION__FOO_VALUE
-            secret:
-              name: toa-configuration
-              key: FOO_VALUE
+      """yaml
+      compositions:
+        - name: configuration-base
+          variables:
+            - name: TOA_CONFIGURATION__FOO_VALUE
+              secret:
+                name: toa-configuration
+                key: FOO_VALUE
+        - name: configuration-extended
+          variables:
+            - name: TOA_CONFIGURATION__FOO_VALUE
+              secret:
+                name: toa-configuration
+                key: FOO_VALUE
       """
 
   Scenario: Local environment secrets
     Given I have a component `configuration.base`
     And I have a context with:
-      """
+      """yaml
       configuration:
         configuration.base:
           foo: $FOO_VALUE
@@ -154,7 +158,7 @@ Feature: Configuration Extension
   Scenario: Local environment variable placeholders
     Given I have a component `configuration.base`
     And I have a context with:
-      """
+      """yaml
       configuration:
         configuration.base:
           foo: foo_${FOO_VALUE}

@@ -1,7 +1,7 @@
 import { $ } from './index'
 
 jest.mock('node:child_process', () => ({
-  exec: (command: string, callback: Function) => exec(command, callback)
+  exec: (command: string, callback: (...args: any[]) => any) => exec(command, callback)
 }))
 
 it('should call exec', async () => {
