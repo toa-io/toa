@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
+import { Connector, Locator } from '@toa.io/core'
 import { Connection } from './Connection'
-import { Connector, type Locator } from '@toa.io/core'
 import { Redis } from './Connection.fixtures'
 import type * as redis from 'ioredis'
 
@@ -9,43 +9,48 @@ jest.mock('ioredis', () => ({
 }))
 
 let connection: Connection
-let cluster: jest.MockedObject<redis.Cluster>
+let redises: Array<jest.MockedObject<redis.Redis>>
 
-const url = generate()
+const urls = [uri(), uri(), uri()]
+const locator = new Locator(generate(), generate())
 
-const locator = {
-  namespace: generate(),
-  name: generate()
-} as unknown as Locator
+beforeAll(() => {
+  process.env[`TOA_STASH_${locator.uppercase}`] = urls.join(' ')
+})
+
+afterAll(() => {
+  process.env[`TOA_STASH_${locator.uppercase}`] = undefined
+})
 
 beforeEach(() => {
   jest.clearAllMocks()
 
-  connection = new Connection(url, locator)
-  cluster = Redis.mock.results[0].value
+  connection = new Connection(locator)
 })
 
 it('should be instance of Connector', async () => {
-  expect(connection).toBeInstanceOf(Connector)
-})
-
-it('should connect', async () => {
-  const keyPrefix = `${locator.namespace}:${locator.name}:`
-  const options: redis.ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
-
-  expect(Redis).toHaveBeenCalledWith(url, options)
-
-  await connection.connect()
-
-  expect(cluster.connect).toHaveBeenCalled()
+  expect(connection)
+    .toBeInstanceOf(Connector)
 })
 
 it('should disconnect', async () => {
+  await connection.connect()
   await connection.disconnect()
 
-  expect(cluster.disconnect).toHaveBeenCalled()
+  redises = Redis.mock.results.map((result) => result.value)
+
+  for (const redis of redises)
+    expect(redis.disconnect).toHaveBeenCalled()
 })
 
 it('should expose cluster', async () => {
-  expect(connection.redis).toStrictEqual(cluster)
+  await connection.connect()
+  redises = Redis.mock.results.map((result) => result.value)
+
+  expect(connection.redises)
+    .toStrictEqual(redises)
 })
+
+function uri (): string {
+  return 'redis://host-' + generate()
+}

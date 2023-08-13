@@ -4,16 +4,10 @@ const { Connector } = require('@toa.io/core')
 
 const { to } = require('./.storage/translate')
 
-/**
- * @implements {toa.sql.Storage}
- */
 class Storage extends Connector {
   /** @type {toa.sql.Client} */
   #client
 
-  /**
-   * @param {toa.sql.Client} client
-   */
   constructor (client) {
     super()
 

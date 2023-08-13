@@ -22,17 +22,9 @@ it('should expand shards', async () => {
 })
 
 it('should return input if no range specified', async () => {
-  const input = 'hello'
+  const input = 'he{0}llo'
   const output = shards(input)
 
   expect(output.length).toStrictEqual(1)
   expect(output[0]).toStrictEqual(input)
-})
-
-it('should handle one-element range', async () => {
-  const input = 'host{1}.domain.com'
-  const output = shards(input)
-
-  expect(output.length).toStrictEqual(1)
-  expect(output[0]).toStrictEqual('host1.domain.com')
 })

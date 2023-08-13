@@ -17,4 +17,3 @@ Feature: Objects
       | string  |
       | number  |
       | boolean |
-

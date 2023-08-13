@@ -16,4 +16,5 @@ const components = (compositions) => {
 
   return Array.from(components)
 }
+
 exports.components = components

@@ -8,14 +8,14 @@ Feature: Deploy secrets for AMQP binding
     Then program should exit
     And stdout should contain lines:
       """
-      - name: TOA_BINDINGS_AMQP_DEFAULT_USERNAME
+      - name: TOA_AMQP_CONTEXT__USERNAME
         valueFrom:
           secretKeyRef:
-            name: toa-bindings-amqp-default
+            name: toa-amqp-context.default
             key: username
-      - name: TOA_BINDINGS_AMQP_DEFAULT_PASSWORD
+      - name: TOA_AMQP_CONTEXT__PASSWORD
         valueFrom:
           secretKeyRef:
-            name: toa-bindings-amqp-default
+            name: toa-amqp-context.default
             key: password
       """

@@ -18,7 +18,8 @@ const resolve = (references, annotations) => {
 
     const instances = components.map((component) => ({
       locator: component.locator,
-      manifest: component.extensions?.[id]
+      manifest: component.extensions?.[id],
+      component
     }))
 
     dependencies[dependency] = instances

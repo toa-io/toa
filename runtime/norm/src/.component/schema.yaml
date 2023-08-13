@@ -216,6 +216,8 @@ properties:
             type: string
           source:
             $ref: 'definitions#/definitions/name'
+            not:
+              const: context
           path:
             type: string
           conditioned:

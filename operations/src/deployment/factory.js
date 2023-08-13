@@ -8,9 +8,6 @@ const { Registry } = require('./registry')
 const { Composition } = require('./composition')
 const { Service } = require('./service')
 
-/**
- * @implements {toa.deployment.Factory}
- */
 class Factory {
   /** @type {toa.norm.Context} */
   #context
@@ -90,10 +87,10 @@ class Factory {
 
     if (module.deployment === undefined) return
 
-    const annotations = this.#context.annotations?.[pkg.name]
+    const annotation = this.#context.annotations?.[pkg.name]
 
     /** @type {toa.deployment.dependency.Declaration} */
-    const dependency = module.deployment(instances, annotations)
+    const dependency = module.deployment(instances, annotation)
 
     /** @type {toa.deployment.Service[]} */
     const services = dependency.services?.map((service) => this.#service(path, service))

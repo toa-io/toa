@@ -2,32 +2,25 @@
 
 const { assert } = require('comq')
 const { Connector } = require('@toa.io/core')
-const { shards } = require('@toa.io/generic')
+const protocol = require('./index')
 
-const { id } = require('./id')
-
-/**
- * @implements {toa.origins.amqp.Aspect}
- */
 class Aspect extends Connector {
-  name = id
-  /** @type {toa.origins.Manifest} */
-  #manifest
+  name = protocol.id
+
+  #resolve
 
   /** @type {Record<string, Partial<comq.IO>>} */
   #origins = {}
 
-  /**
-   * @param {toa.origins.Manifest} manifest
-   */
-  constructor (manifest) {
+  constructor (resolve) {
     super()
 
-    this.#manifest = manifest
+    this.#resolve = resolve
   }
 
   async open () {
-    const promises = Object.entries(this.#manifest).map(this.#open)
+    const cfg = await this.#resolve()
+    const promises = Object.entries(cfg.origins).map(this.#open)
 
     await Promise.all(promises)
   }
@@ -39,11 +32,14 @@ class Aspect extends Connector {
   }
 
   async invoke (origin, method, ...args) {
+    if (this.#origins[origin]?.[method] === undefined) {
+      throw new Error(`Origin "${origin}" or method "${method}" is undefined`)
+    }
+
     return this.#origins[origin][method](...args)
   }
 
-  #open = async ([origin, reference]) => {
-    const references = shards(reference)
+  #open = async ([origin, references]) => {
     const io = await assert(...references)
 
     this.#origins[origin] = restrict(io)
@@ -67,11 +63,8 @@ function restrict (io) {
   }
 }
 
-/**
- * @param {toa.origins.Manifest} manifest
- */
-function create (manifest) {
-  return new Aspect(manifest)
+function create (resolve) {
+  return new Aspect(resolve)
 }
 
 exports.create = create

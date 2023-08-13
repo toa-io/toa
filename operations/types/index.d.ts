@@ -1,1 +1,1 @@
-export * as deployment from './deployment'
+export * from './dependency'

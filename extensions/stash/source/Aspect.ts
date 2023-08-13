@@ -6,15 +6,14 @@ import type { Redis } from 'ioredis'
 
 export class Aspect extends Connector implements extensions.Aspect {
   public readonly name = 'stash'
-  private readonly redis: Redis
-  private readonly redlock: Redlock
+  private readonly connection: Connection
+  private redis: Redis | null = null
+  private redlock: Redlock | null = null
 
   public constructor (connection: Connection) {
     super()
 
-    this.redis = connection.redis
-    this.redlock = new Redlock([this.redis], { retryCount: -1 })
-
+    this.connection = connection
     this.depends(connection)
   }
 
@@ -37,6 +36,11 @@ export class Aspect extends Connector implements extensions.Aspect {
       return await this.lock(args[0] as Resources, args[1] as () => any)
   }
 
+  protected override async open (): Promise<void> {
+    this.redis = this.connection.redises[0]
+    this.redlock = new Redlock(this.connection.redises, { retryCount: -1 })
+  }
+
   private async store (key: string, value: object, ...args: unknown[]): Promise<void> {
     const buffer = encode(value)
 
@@ -46,12 +50,16 @@ export class Aspect extends Connector implements extensions.Aspect {
   }
 
   private async fetch (key: string): Promise<object | null> {
+    if (this.redis === null) return null
+
     const buffer = await this.redis.getBuffer(key)
 
     return buffer === null ? null : decode(buffer)
   }
 
-  private async lock<T> (key: Resources, routine: Routine<T>): Promise<T> {
+  private async lock<T> (key: Resources, routine: Routine<T>): Promise<T | null> {
+    if (this.redlock === null) return null
+
     if (typeof key === 'string') key = [key]
 
     return await this.redlock.using<T>(key, 5000, routine)

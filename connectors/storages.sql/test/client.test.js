@@ -5,22 +5,18 @@ const { generate } = require('randomstring')
 const fixtures = require('./client.fixtures')
 const { Client } = require('../src/client')
 
-/** @type {toa.sql.Pointer} */
-let pointer
-
-/** @type {toa.sql.Connection} */
 let connection
 
-/** @type {toa.sql.Client} */
 let client
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks()
 
   connection = /** @type {toa.sql.Connection} */ fixtures.connection
-  pointer = /** @type {toa.sql.Pointer} */ fixtures.pointer
 
-  client = new Client(connection, pointer)
+  client = new Client(connection)
+
+  await client.connect()
 })
 
 it('should be', () => {
@@ -36,7 +32,7 @@ it('should insert', async () => {
 
   await client.insert(object)
 
-  expect(connection.insert).toHaveBeenCalledWith(pointer.table, [object])
+  expect(connection.insert).toHaveBeenCalledWith(connection.table, [object])
 })
 
 it('should batch insert', async () => {
@@ -55,8 +51,8 @@ it('should batch insert', async () => {
   ])
 
   expect(connection.insert).toHaveBeenCalledTimes(2)
-  expect(connection.insert).toHaveBeenNthCalledWith(1, pointer.table, [a])
-  expect(connection.insert).toHaveBeenNthCalledWith(2, pointer.table, [b, c])
+  expect(connection.insert).toHaveBeenNthCalledWith(1, connection.table, [a])
+  expect(connection.insert).toHaveBeenNthCalledWith(2, connection.table, [b, c])
 })
 
 it('should update', async () => {
@@ -65,5 +61,5 @@ it('should update', async () => {
 
   await client.update(criteria, object)
 
-  expect(connection.update).toHaveBeenCalledWith(pointer.table, criteria, object)
+  expect(connection.update).toHaveBeenCalledWith(connection.table, criteria, object)
 })

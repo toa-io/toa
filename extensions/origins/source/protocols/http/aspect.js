@@ -1,41 +1,35 @@
 'use strict'
 
-/**
- * @typedef {import('node-fetch').RequestInit} Request
- * @typedef {import('node-fetch').Response} Response
- */
-
 const fetch = require('node-fetch')
 
 const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/generic')
 
 const { Permissions } = require('./.aspect/permissions')
-const { id } = require('./id')
 const protocols = require('./protocols')
+const protocol = require('./index')
 
-/**
- * @implements {toa.origins.http.Aspect}
- */
 class Aspect extends Connector {
   /** @readonly */
-  name = id
+  name = protocol.id
 
-  /** @type {toa.origins.Manifest} */
+  #resolve
   #origins
-
-  /** @type {toa.origins.http.Permissions} */
   #permissions
 
-  /**
-   * @param {toa.origins.Manifest} manifest
-   * @param {toa.origins.http.Permissions} permissions
-   */
-  constructor (manifest, permissions) {
+  constructor (resolve, permissions) {
     super()
 
-    this.#origins = manifest
+    this.#resolve = resolve
     this.#permissions = permissions
+
+    this.depends(permissions)
+  }
+
+  async open () {
+    const { origins } = await this.#resolve()
+
+    this.#origins = origins
   }
 
   async invoke (name, path, request, options) {
@@ -56,23 +50,12 @@ class Aspect extends Connector {
     return this.#request(url.href, request, options?.retry)
   }
 
-  /**
-   * @param {string} url
-   * @param {Request} request
-   * @return {Promise<Response>}
-   */
   async #invokeURL (url, request) {
     if (this.#permissions.test(url) === false) throw new Error(`URL '${url}' is not allowed`)
 
     return this.#request(url, request)
   }
 
-  /**
-   * @param {string} url
-   * @param {Request} request
-   * @param {toa.generic.retry.Options} [options]
-   * @return {Promise<Response>}
-   */
   async #request (url, request, options) {
     const call = () => fetch(url, request)
 
@@ -117,14 +100,10 @@ function isAbsoluteURL (path) {
 
 const PLACEHOLDER = /\*/g
 
-/**
- * @param {toa.origins.Manifest} manifest
- * @param {toa.origins.http.Properties} [properties]
- */
-function create (manifest, properties) {
-  const permissions = new Permissions(properties)
+function create (resolve) {
+  const permissions = new Permissions(resolve)
 
-  return new Aspect(manifest, permissions)
+  return new Aspect(resolve, permissions)
 }
 
 exports.create = create

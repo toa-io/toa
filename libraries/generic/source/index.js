@@ -1,5 +1,6 @@
 'use strict'
 
+const { buffer } = require('./buffer')
 const { concat } = require('./concat')
 const { context } = require('./context')
 const { convolve } = require('./convolve')
@@ -19,6 +20,7 @@ const { immediate } = require('./immediate')
 const { lazy } = require('./lazy')
 const { map } = require('./map')
 const { match } = require('./match')
+const { memo } = require('./memo')
 const { merge, overwrite, add } = require('./merge')
 const { newid } = require('./newid')
 const { pick } = require('./pick')
@@ -44,12 +46,14 @@ const { timeout } = require('./timeout')
 const { track } = require('./track')
 const { transpose } = require('./transpose')
 const { traverse } = require('./traverse')
+const { trim } = require('./trim')
 const { underlay } = require('./underlay')
 
 exports.acronyms = require('./acronyms')
 exports.letters = require('./letters')
 
 exports.add = add
+exports.buffer = buffer
 exports.concat = concat
 exports.context = context
 exports.convolve = convolve
@@ -70,6 +74,7 @@ exports.immediate = immediate
 exports.lazy = lazy
 exports.map = map
 exports.match = match
+exports.memo = memo
 exports.merge = merge
 exports.newid = newid
 exports.pick = pick
@@ -97,4 +102,5 @@ exports.timeout = timeout
 exports.track = track
 exports.transpose = transpose
 exports.traverse = traverse
+exports.trim = trim
 exports.underlay = underlay
