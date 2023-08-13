@@ -21,13 +21,6 @@ it('should call exec with arguments', async () => {
   expect(exec.mock.calls[0][0]).toStrictEqual('echo ok')
 })
 
-// it('should pipe stdout and stderr', async () => {
-//   await $`echo ok`
-//
-//   expect(stdout.pipe).toHaveBeenCalledWith(process.stdout)
-//   expect(stderr.pipe).toHaveBeenCalledWith(process.stderr)
-// })
-
 const stdin = {
   write: jest.fn(),
   end: jest.fn()
