@@ -49,9 +49,9 @@ $ toa conceal configuration BAZ_VALUE=$ecr3t
 
 ## Problem Definition
 
-- Components must be reusable in different contexts and deployment environments that are in
-  different configurations.
-- Some algorithm parameters must be deployed secretly.
+- Components should be runnable in different deployment environments.
+- Some algorithm's parameters should be deployed secretly.
+- Components should be reusable in different contexts.
 
 ## Manifest
 
@@ -68,7 +68,7 @@ name: dummy
 namespace: dummies
 
 configuration:
-  schema:
+  $schema:
     foo: string
     bar: number
 ```
@@ -136,8 +136,8 @@ configuration:
 ```
 
 Secrets are not being deployed with context
-deployment ([`toa deploy`](/runtime/cli/readme.md#deploy)),
-thus must be deployed separately at least once for each deployment environment
+deployment ([`toa deploy`](/runtime/cli/readme.md#deploy)), thus must be deployed separately at
+least once for each deployment environment
 manually ([`toa conceal`](/runtime/cli/readme.md#conceal)).
 
 Deployed kubernetes secret's name is predefined as `configuration`.
@@ -148,7 +148,7 @@ $ toa conceal configuration STRIPE_API_KEY=xxxxxxxx
 
 ## Aspect
 
-Component's configuration value is available as a well-known Aspect `configuration`.
+Component's configuration values are available as a well-known Aspect `configuration`.
 
 ```javascript
 function transition (input, entity, context) {
@@ -156,24 +156,4 @@ function transition (input, entity, context) {
 
   // ...
 }
-```
-
-### Local environment placeholders
-
-Configuration annotation values may contain placeholders that reference environment variables.
-Placeholders are replaced with values if the corresponding environment variables are set.
-
-> Placeholders can only be used with local environment (exported
-> by [`toa env`](/runtime/cli/readme.md#env)), as these values are not deployed.
-
-```yaml
-# context.toa.yaml
-configuration:
-  dummies.dummy:
-    url@local: https://stage${STAGE}.intranet/
-```
-
-```dotenv
-# .env
-STAGE=82
 ```
