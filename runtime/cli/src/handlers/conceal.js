@@ -29,7 +29,7 @@ async function concealValue (argv) {
 async function concealValues (argv) {
   const path = find(argv.path)
   const operator = await boot.deployment(path, argv.environment)
-  const variables = operator.listVariables()
+  const variables = operator.variables()
   const values = await promptSecrets(variables)
   const groups = groupValues(values)
 

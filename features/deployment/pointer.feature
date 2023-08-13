@@ -9,10 +9,11 @@ Feature: Pointer
     When I export deployment
     Then exported values should contain:
       """
-      variables:
-        default-stash:
-          - name: TOA_STASH_DEFAULT_STASH
-            value: redis://redis.example.com
+      compositions:
+        - name: default-stash
+          variables:
+            - name: TOA_STASH_DEFAULT_STASH
+              value: redis://redis.example.com
       """
 
   Scenario: Deploy default URL set
@@ -26,10 +27,11 @@ Feature: Pointer
     When I export deployment
     Then exported values should contain:
       """
-      variables:
-        default-stash:
-          - name: TOA_STASH_DEFAULT_STASH
-            value: redis://redis0.example.com redis://redis1.example.com
+      compositions:
+        - name: default-stash
+          variables:
+            - name: TOA_STASH_DEFAULT_STASH
+              value: redis://redis0.example.com redis://redis1.example.com
       """
 
   Scenario Outline: Deploy a URL for a <type>
@@ -42,10 +44,11 @@ Feature: Pointer
     When I export deployment
     Then exported values should contain:
       """
-      variables:
-        default-stash:
-          - name: TOA_STASH_DEFAULT_STASH
-            value: redis://redis.example.com
+      compositions:
+        - name: default-stash
+          variables:
+            - name: TOA_STASH_DEFAULT_STASH
+              value: redis://redis.example.com
       """
     Examples:
       | type      | key           |
@@ -61,16 +64,17 @@ Feature: Pointer
     When I export deployment
     Then exported values should contain:
       """yaml
-      variables:
-        mongo-one:
-          - name: TOA_MONGODB_MONGO_ONE
-            value: mongodb://mongo.exmaple.com
-          - name: TOA_MONGODB_MONGO_ONE_USERNAME
-            secret:
-              name: toa-mongodb.default
-              key: username
-          - name: TOA_MONGODB_MONGO_ONE_PASSWORD
-            secret:
-              name: toa-mongodb.default
-              key: password
+      compositions:
+        - name: mongo-one
+          variables:
+            - name: TOA_MONGODB_MONGO_ONE
+              value: mongodb://mongo.exmaple.com
+            - name: TOA_MONGODB_MONGO_ONE_USERNAME
+              secret:
+                name: toa-mongodb.default
+                key: username
+            - name: TOA_MONGODB_MONGO_ONE_PASSWORD
+              secret:
+                name: toa-mongodb.default
+                key: password
       """

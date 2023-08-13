@@ -19,18 +19,9 @@ spec:
       containers:
         - name: {{ .name }}
           image: {{ .image }}
-          {{- if $.Values.variables }}
+          {{- if .variables }}
           env:
-            {{- range $component := .components }}
-              {{- range $key, $vars := $.Values.variables }}
-                {{- if eq $component $key }}
-                  {{- range $vars }}
-                  {{- include "env.var" . | indent 12 }}
-                  {{- end }}
-                {{- end }}
-              {{- end }}
-            {{- end }}
-            {{- range $.Values.variables.global }}
+            {{- range .variables }}
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}

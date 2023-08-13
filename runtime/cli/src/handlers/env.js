@@ -13,7 +13,7 @@ async function env (argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
   const operator = await boot.deployment(path, argv.environment)
-  const variables = operator.listVariables()
+  const variables = operator.variables()
   const currentValues = await read(filepath)
 
   const result = merge(variables, currentValues)

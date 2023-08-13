@@ -92,11 +92,12 @@ Feature: Stash extension
       """
     When I export deployment
     Then exported values should contain:
-      """
-      variables:
-        default-stash:
-          - name: TOA_STASH_DEFAULT_STASH
-            value: redis://redis.example.com
+      """yaml
+      compositions:
+        - name: default-stash
+          variables:
+            - name: TOA_STASH_DEFAULT_STASH
+              value: redis://redis.example.com
       """
 
   Scenario: Replay sample

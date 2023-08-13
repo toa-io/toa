@@ -14,19 +14,20 @@ Feature: AMQP deployment
     When I export deployment
     Then exported values should contain:
       """yaml
-      variables:
-        global:
-          - name: TOA_AMQP_CONTEXT
-            value: eyIuIjpbImFtcXA6Ly9sb2NhbGhvc3QiXX0=
-          - name: TOA_AMQP_CONTEXT__USERNAME
-            secret:
-              name: toa-amqp-context.default
-              key: username
-          - name: TOA_AMQP_CONTEXT__PASSWORD
-            secret:
-              name: toa-amqp-context.default
-              key: password
-      """
+      compositions:
+        - name: external-consumer
+          variables:
+            - name: TOA_AMQP_CONTEXT
+              value: eyIuIjpbImFtcXA6Ly9sb2NhbGhvc3QiXX0=
+            - name: TOA_AMQP_CONTEXT__USERNAME
+              secret:
+                name: toa-amqp-context.default
+                key: username
+            - name: TOA_AMQP_CONTEXT__PASSWORD
+              secret:
+                name: toa-amqp-context.default
+                key: password
+        """
 
   Scenario: Deploy a context with namespace-specific cluster
     Given I have a context with:
@@ -40,16 +41,17 @@ Feature: AMQP deployment
     When I export deployment
     Then exported values should contain:
       """yaml
-      variables:
-        global:
-          - name: TOA_AMQP_CONTEXT_EXTERNAL_USERNAME
-            secret:
-              name: toa-amqp-context-external
-              key: username
-          - name: TOA_AMQP_CONTEXT_EXTERNAL_PASSWORD
-            secret:
-              name: toa-amqp-context-external
-              key: password
+      compositions:
+        - name: external-consumer
+          variables:
+            - name: TOA_AMQP_CONTEXT_EXTERNAL_USERNAME
+              secret:
+                name: toa-amqp-context-external
+                key: username
+            - name: TOA_AMQP_CONTEXT_EXTERNAL_PASSWORD
+              secret:
+                name: toa-amqp-context-external
+                key: password
       """
 
   Scenario: Deploy a context with component-specific cluster
@@ -64,16 +66,17 @@ Feature: AMQP deployment
     When I export deployment
     Then exported values should contain:
       """yaml
-      variables:
-        global:
-          - name: TOA_AMQP_CONTEXT_EXTERNAL_CONSUMER_USERNAME
-            secret:
-              name: toa-amqp-context-external-consumer
-              key: username
-          - name: TOA_AMQP_CONTEXT_EXTERNAL_CONSUMER_PASSWORD
-            secret:
-              name: toa-amqp-context-external-consumer
-              key: password
+      compositions:
+        - name: external-consumer
+          variables:
+            - name: TOA_AMQP_CONTEXT_EXTERNAL_CONSUMER_USERNAME
+              secret:
+                name: toa-amqp-context-external-consumer
+                key: username
+            - name: TOA_AMQP_CONTEXT_EXTERNAL_CONSUMER_PASSWORD
+              secret:
+                name: toa-amqp-context-external-consumer
+                key: password
       """
 
   Scenario: Deploy sources Pointer
@@ -87,16 +90,17 @@ Feature: AMQP deployment
     When I export deployment
     Then exported values should contain:
       """yaml
-      variables:
-        external-consumer:
-          - name: TOA_AMQP_SOURCES_EXTERNAL
-            value: amqp://external.example.com
-          - name: TOA_AMQP_SOURCES_EXTERNAL_USERNAME
-            secret:
-              name: toa-amqp-sources-external
-              key: username
-          - name: TOA_AMQP_SOURCES_EXTERNAL_PASSWORD
-            secret:
-              name: toa-amqp-sources-external
-              key: password
+      compositions:
+        - name: external-consumer
+          variables:
+            - name: TOA_AMQP_SOURCES_EXTERNAL
+              value: amqp://external.example.com
+            - name: TOA_AMQP_SOURCES_EXTERNAL_USERNAME
+              secret:
+                name: toa-amqp-sources-external
+                key: username
+            - name: TOA_AMQP_SOURCES_EXTERNAL_PASSWORD
+              secret:
+                name: toa-amqp-sources-external
+                key: password
       """

@@ -90,13 +90,14 @@ Feature: Origins extension
       """
     When I export deployment
     Then exported values should contain:
-      """
-      variables:
-        origins-http:
-          - name: TOA_ORIGINS_ORIGINS_HTTP_BAD
-            value: http://localhost:8888/
-          - name: TOA_ORIGINS_ORIGINS_HTTP__PROPERTIES
-            value: 3gABpS5odHRw3gABui9odHRwczpcL1wvXHcrLmFtYXpvbi5jb20vww==
+      """yaml
+      compositions:
+        - name: origins-http
+          variables:
+            - name: TOA_ORIGINS_ORIGINS_HTTP_BAD
+              value: http://localhost:8888/
+            - name: TOA_ORIGINS_ORIGINS_HTTP__PROPERTIES
+              value: 3gABpS5odHRw3gABui9odHRwczpcL1wvXHcrLmFtYXpvbi5jb20vww==
       """
 
   Scenario: Origin with environment variable placeholder
@@ -152,17 +153,18 @@ Feature: Origins extension
       """
     When I export deployment
     Then exported values should contain:
-      """
-      variables:
-        origins-amqp:
-          - name: TOA_ORIGINS_ORIGINS_AMQP_QUEUE_USERNAME
-            secret:
-              name: toa-origins-origins-amqp-queue
-              key: username
-          - name: TOA_ORIGINS_ORIGINS_AMQP_QUEUE_PASSWORD
-            secret:
-              name: toa-origins-origins-amqp-queue
-              key: password
+      """yaml
+      compositions:
+        - name: origins-amqp
+          variables:
+            - name: TOA_ORIGINS_ORIGINS_AMQP_QUEUE_USERNAME
+              secret:
+                name: toa-origins-origins-amqp-queue
+                key: username
+            - name: TOA_ORIGINS_ORIGINS_AMQP_QUEUE_PASSWORD
+              secret:
+                name: toa-origins-origins-amqp-queue
+                key: password
       """
 
   Scenario: AMQP credentials

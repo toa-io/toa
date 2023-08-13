@@ -2,9 +2,6 @@
 
 const workspace = require('./workspace')
 
-/**
- * @implements {toa.deployment.Operator}
- */
 class Operator {
   /** @type {toa.deployment.Deployment} */
   #deployment
@@ -52,22 +49,6 @@ class Operator {
 
   variables () {
     return this.#deployment.variables()
-  }
-
-  listVariables () {
-    const used = new Set()
-    const list = []
-
-    for (const variables of Object.values(this.#deployment.variables())) {
-      for (const variable of variables) {
-        if (used.has(variable.name)) continue
-
-        list.push(variable)
-        used.add(variable.name)
-      }
-    }
-
-    return list
   }
 }
 
