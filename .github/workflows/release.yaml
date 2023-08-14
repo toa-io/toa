@@ -33,7 +33,7 @@ jobs:
 
   publish:
     if: github.event.pull_request.merged == true
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
