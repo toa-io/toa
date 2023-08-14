@@ -34,8 +34,8 @@
   "scripts": {
     "transpile": "tsc"
   },
-  "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e",
   "devDependencies": {
     "@types/negotiator": "0.6.1"
-  }
+  },
+  "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
