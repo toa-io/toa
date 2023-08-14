@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "/dev/null",
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "ESNext",
@@ -10,7 +11,8 @@
     "incremental": true,
     "strict": true,
     "experimentalDecorators": true,
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
+    "allowJs": true
   },
   "exclude": [
     "**/transpiled"

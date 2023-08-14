@@ -1,6 +1,6 @@
+import { generate } from 'randomstring'
 import { normalize } from './declaration'
 import * as fixtures from './declaration.fixtures'
-import { generate } from 'randomstring'
 import type { Manifest } from '@toa.io/norm'
 import type { Node } from './declaration'
 import type * as syntax from './syntax'
@@ -14,7 +14,7 @@ let namespace: string
 let component: string
 
 beforeEach(() => {
-  manifest = fixtures.manifest() as Manifest
+  manifest = fixtures.manifest()
   namespace = manifest.namespace
   component = manifest.name
 })
@@ -134,10 +134,10 @@ it('should throw on unsupported type', async () => {
           component,
           endpoint: 'assign',
           type: 'assignment'
-        },
+        }
       }
     }
-  } as syntax.Node)
+  } satisfies syntax.Node)
 })
 
 it('should throw on ambiguous method shortcuts', async () => {

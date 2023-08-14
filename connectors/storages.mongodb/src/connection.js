@@ -5,40 +5,40 @@
 const { MongoClient } = require('mongodb')
 const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/console')
+const { resolve } = require('@toa.io/pointer')
+const { ID } = require('./deployment')
 
-/**
- * @implements {toa.mongodb.Connection}
- */
 class Connection extends Connector {
-  /** @type {toa.mongodb.Pointer} */
-  #pointer
+  #locator
   /** @type {import('mongodb').MongoClient} */
   #client
   /** @type {import('mongodb').Collection<toa.mongodb.Record>} */
   #collection
 
-  /**
-   * @param {toa.mongodb.Pointer} pointer
-   */
-  constructor (pointer) {
+  constructor (locator) {
     super()
 
-    this.#pointer = pointer
-    this.#client = new MongoClient(pointer.reference, OPTIONS)
+    this.#locator = locator
   }
 
   async open () {
+    const urls = await this.#resolveURLs()
+    const db = this.#locator.namespace
+    const collection = this.#locator.name
+
+    this.#client = new MongoClient(urls[0], OPTIONS)
+
     await this.#client.connect()
 
-    this.#collection = this.#client.db(this.#pointer.db).collection(this.#pointer.collection)
+    this.#collection = this.#client.db(db).collection(collection)
 
-    console.info(`Storage Mongo connected to ${this.#pointer.label}/${this.#pointer.db}/${this.#pointer.collection}`)
+    console.info('Storage Mongo connected')
   }
 
   async close () {
     await this.#client.close()
 
-    console.info(`Storage Mongo disconnected from ${this.#pointer.label}/${this.#pointer.db}/${this.#pointer.collection}`)
+    console.info('Storage Mongo disconnected')
   }
 
   /** @hot */
@@ -78,6 +78,11 @@ class Connection extends Connector {
   /** @hot */
   async update (query, update, options) {
     return this.#collection.findOneAndUpdate(query, update, options)
+  }
+
+  async #resolveURLs () {
+    if (process.env.TOA_DEV === '1') return ['mongodb://developer:secret@localhost']
+    else return await resolve(ID, this.#locator.id)
   }
 }
 

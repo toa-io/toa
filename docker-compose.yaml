@@ -24,6 +24,18 @@ services:
       POSTGRES_USER: developer
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: integration
+  redis0:
+    image: redis:7.0.11
+    ports:
+      - '6379:6379'
+  redis1:
+    image: redis:7.0.11
+    ports:
+      - '6378:6379'
+  redis2:
+    image: redis:7.0.11
+    ports:
+      - '6377:6379'
   http-echo:
     image: ealen/echo-server:0.7.0
     ports: ['8888:80']

@@ -1,9 +1,9 @@
 import { generate } from 'randomstring'
 import { type Node } from './Node'
 import { createBranch } from './factory'
-import * as syntax from './syntax'
 import { remotes } from './Context.mock'
 import { Route } from './Route'
+import type * as syntax from './syntax'
 
 const namespace = generate()
 const component = generate()
@@ -64,7 +64,7 @@ it('should match placeholders', async () => {
 })
 
 it('should compare equal routes', async () => {
-  const node = {} as Node
+  const node = {} as unknown as Node
   const segment = generate()
   const route1 = new Route([segment], node)
   const route2 = new Route([segment], node)

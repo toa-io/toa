@@ -1,2 +1,4 @@
-export type { Composition, dependencies } from './context'
-export type { Manifest, Operation } from './component'
+export * as context from './context'
+export * as component from './component'
+
+export { Manifest } from './component'

@@ -9,4 +9,4 @@ operations:
 
 origins:
   echo: http://localhost:8888/some/
-  bad: https://null
+  bad: ~

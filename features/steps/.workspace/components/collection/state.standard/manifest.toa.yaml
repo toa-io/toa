@@ -8,3 +8,5 @@ operations:
     input: number
   get:
     output: number
+
+state: ~

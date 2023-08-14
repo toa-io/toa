@@ -1,7 +1,7 @@
 # Toa Generic Tools
 
 Library is for internal use only. Barely documented. If you really need to understand something,
-see [tests](test).
+see [tests](source).
 
 ## Range
 
@@ -157,3 +157,7 @@ Trim lines of multiline text.
 Buffer a stream.
 
 `buffer (stream: Readable): Buffer`
+
+## Memo
+
+Meoizes function returned value.

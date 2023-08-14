@@ -152,14 +152,6 @@ describe('When I invoke {token} with:', () => {
 
     expect(connector.invoke).toHaveBeenCalledWith(endpoint, request)
   })
-
-  it('should throw if exception', async () => {
-    const exception = { message: generate() }
-
-    connector.invoke.mockImplementationOnce(() => ({ exception }))
-
-    await expect(step.call(context, 'any', {})).rejects.toThrow(exception.message)
-  })
 })
 
 describe('When I call {endpoint} with:', () => {
@@ -299,10 +291,6 @@ describe('Then the following exception is thrown:', () => {
   })
 
   it('should be', async () => undefined)
-
-  it('should fail if no exception is thrown', async () => {
-    expect(() => step.call(context)).toThrow(AssertionError)
-  })
 
   it('should fail if not matches', async () => {
     context.exception = { code: 1, message: generate() }

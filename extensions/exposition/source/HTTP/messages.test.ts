@@ -1,9 +1,9 @@
+import { Buffer } from 'node:buffer'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
-import { OutgoingMessage, read, write } from './messages'
+import { type OutgoingMessage, read, write } from './messages'
 import { createRequest, res } from './Server.fixtures'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
-import { Buffer } from 'node:buffer'
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -75,7 +75,7 @@ describe('write', () => {
     const value = { [generate()]: generate() }
     const json = JSON.stringify(value)
     const buf = Buffer.from(json)
-    const headers = { 'accept': 'application/json' }
+    const headers = { accept: 'application/json' }
     const request = createRequest({ headers }, buf)
 
     write(request, res, value)
@@ -85,11 +85,13 @@ describe('write', () => {
   })
 
   it('should throw on unsupported response media type', async () => {
-    const headers = { 'accept': 'wtf/' + generate() }
+    const headers = { accept: 'wtf/' + generate() }
     const request = createRequest({ headers })
     const value = generate()
 
-    expect(() => write(request, res, value)).toThrow(NotAcceptable)
+    expect(() => {
+      write(request, res, value)
+    }).toThrow(NotAcceptable)
   })
 
   it('should use application/yaml as default', async () => {
@@ -103,7 +105,7 @@ describe('write', () => {
   })
 
   it('should negotiate', async () => {
-    const headers = { 'accept': 'text/html, application/*;q=0.2, image/jpeg;q=0.8' }
+    const headers = { accept: 'text/html, application/*;q=0.2, image/jpeg;q=0.8' }
     const request = createRequest({ headers })
     const message: OutgoingMessage = { headers: {}, value: 'hello' }
 

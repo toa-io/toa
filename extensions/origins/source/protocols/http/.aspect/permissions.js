@@ -1,23 +1,26 @@
 'use strict'
 
 const { echo } = require('@toa.io/generic')
+const { Connector } = require('@toa.io/core')
 
-/**
- * @implements {toa.origins.http.Permissions}
- */
-class Permissions {
-  #default = process.env.TOA_DEV === '1'
-
+class Permissions extends Connector {
   /** @type {RegExp[]} */
   #allowances = []
 
   /** @type {RegExp[]} */
   #denials = []
 
-  /**
-   * @param {toa.origins.http.Properties} properties
-   */
-  constructor (properties) {
+  #resolve
+
+  constructor (resolve) {
+    super()
+
+    this.#resolve = resolve
+  }
+
+  async open () {
+    const { properties } = await this.#resolve()
+
     if (properties !== undefined) this.#parse(properties)
   }
 

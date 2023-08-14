@@ -1,7 +1,6 @@
-import { validate, methods, Exception, type Node } from './syntax'
 import { generate } from 'randomstring'
+import { validate, methods, Exception, type Node } from './syntax'
 import type { Manifest } from '@toa.io/norm'
-import * as syntax from './syntax'
 
 const namespace = generate()
 const component = generate()
@@ -29,7 +28,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).not.toThrow()
+    expect(() => {
+      validate(node, operations)
+    }).not.toThrow()
   })
 
   it('should not throw on empty key', async () => {
@@ -42,7 +43,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).not.toThrow()
+    expect(() => {
+      validate(node, operations)
+    }).not.toThrow()
   })
 
   it('should throw on unreachable methods', async () => {
@@ -65,7 +68,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('unreachable')
+    expect(() => {
+      validate(node, operations)
+    }).toThrow('unreachable')
   })
 
   it('should not throw on non-root node', async () => {
@@ -80,7 +85,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).not.toThrow()
+    expect(() => {
+      validate(node, operations)
+    }).not.toThrow()
   })
 
   it('should not allow trailing slash', async () => {
@@ -95,7 +102,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
+    expect(() => {
+      validate(node, operations)
+    }).toThrow('must NOT have additional properties')
   })
 
   it('should not allow trailing slash in nested nodes', async () => {
@@ -111,7 +120,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('must NOT have additional properties')
+    expect(() => {
+      validate(node, operations)
+    }).toThrow('must NOT have additional properties')
   })
 
   it('should throw if invalid mapping', async () => {
@@ -121,7 +132,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('must have required property')
+    expect(() => {
+      validate(node, operations)
+    }).toThrow('must have required property')
   })
 
   it('should throw on operation type mismatch', async () => {
@@ -136,7 +149,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('cannot be mapped')
+    expect(() => {
+      validate(node, operations)
+    }).toThrow('cannot be mapped')
   })
 
   it('should throw if maps to undefined operation', async () => {
@@ -151,7 +166,9 @@ describe('validate', () => {
       }
     }
 
-    expect(() => validate(node, operations)).toThrow('is mapped to undefined operation')
+    expect(() => {
+      validate(node, operations)
+    }).toThrow('is mapped to undefined operation')
   })
 })
 

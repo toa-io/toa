@@ -1,9 +1,9 @@
 import { generate } from 'randomstring'
+import { type Component } from '@toa.io/core'
 import { createBranch } from './factory'
-import type { Node } from './Node'
 import * as syntax from './syntax'
 import { remotes } from './Context.mock'
-import { Component } from '@toa.io/core'
+import type { Node } from './Node'
 
 const namespace = generate()
 const component = generate()

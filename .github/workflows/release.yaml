@@ -8,15 +8,39 @@ on:
       - dev
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - run: npm install
+      - run: npm run transpile
+      - run: npm test
+
   publish:
     if: github.event.pull_request.merged == true
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           registry-url: 'https://registry.npmjs.org'
 
       - name: Checkout

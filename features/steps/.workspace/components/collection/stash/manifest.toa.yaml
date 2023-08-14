@@ -1,0 +1,32 @@
+name: stash
+
+operations:
+  set:
+    input: string
+  get:
+    output: string
+  inc:
+    input: string
+    output: number
+  del:
+    input: string
+  store:
+    input:
+      oneOf:
+        - type: object
+        - type: array
+  fetch:
+    output:
+      oneOf:
+        - type: object
+        - type: array
+  locks:
+    input:
+      delay: 0
+    output: [number]
+  plus:
+    input:
+      delay: 0
+    output: number
+
+stash: ~

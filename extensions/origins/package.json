@@ -1,10 +1,9 @@
 {
   "name": "@toa.io/extensions.origins",
-  "version": "0.20.0-dev.18",
+  "version": "0.20.0-dev.36",
   "description": "Toa Origins",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
-  "main": "source/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -15,19 +14,27 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/core": "0.20.0-dev.18",
-    "@toa.io/generic": "0.20.0-dev.18",
-    "@toa.io/schemas": "0.20.0-dev.18",
-    "@toa.io/yaml": "0.20.0-dev.18",
+    "@toa.io/core": "0.20.0-dev.36",
+    "@toa.io/generic": "0.20.0-dev.36",
+    "@toa.io/pointer": "0.20.0-dev.36",
+    "@toa.io/schemas": "0.20.0-dev.36",
     "comq": "0.8.0",
-    "node-fetch": "2.6.11"
+    "msgpackr": "1.9.5",
+    "node-fetch": "2.6.7"
   },
   "devDependencies": {
     "@types/node-fetch": "2.6.2"
   },
-  "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
+  "scripts": {
+    "prepublishOnly": "npm run transpile",
+    "transpile": "tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "gitHead": "594d7a02c777e0c39252ff3dd1beddd069d8081d"
 }

@@ -1,15 +1,22 @@
 'use strict'
 
-const pointer = require('@toa.io/pointer')
+const { createVariables } = require('@toa.io/pointer')
 
-/** @type {toa.deployment.dependency.Constructor} */
 const deployment = (instances, annotation) => {
-  if (annotation === undefined) throw new Error('MongoDB pointer annotation is required')
+  const requests = instances.map((instance) => createRequest(instance))
+  const variables = createVariables(ID, annotation, requests)
 
-  return pointer.deployment(instances, annotation, OPTIONS)
+  return { variables }
 }
 
-/** @type {toa.pointer.deployment.Options} */
-const OPTIONS = { prefix: 'storages-mongodb' }
+function createRequest (instance) {
+  return {
+    group: instance.locator.label,
+    selectors: [instance.locator.id]
+  }
+}
 
+const ID = 'mongodb'
+
+exports.ID = ID
 exports.deployment = deployment

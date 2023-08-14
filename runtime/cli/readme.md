@@ -35,7 +35,8 @@ Export environment to a `.env` file.
 <dd>
 <code>environment</code> deployment environment name (default <code>local</code>).<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
-<code>--as</code> output file path (default <code>.env</code>)
+<code>--as</code> output file path (default <code>.env</code>)<br/>
+<code>--interactive</code> prompt for secret values
 </dd>
 </dl>
 
@@ -72,7 +73,8 @@ $ toa replay ./path/to/context
 $ toa replay --title "should add numbers"
 ```
 
-If the path is a Context root (containing `context.toa.yaml` file), samples for components within the Context will be
+If the path is a Context root (containing `context.toa.yaml` file), samples for components within
+the Context will be
 found and replayed sequentially.
 
 ### export manifest
@@ -131,11 +133,14 @@ Deploy a generic Kubernetes secret with the prefix `toa-`.
 <dd>
 <code>secret</code> Secret name.<br/>
 <code>key-values</code> List of keys and values of the secret as <code>key=value</code>.<br/>
-<code>--namespace</code> Kubernetes namespace where the secret should be deployed.
+<code>--namespace</code> Kubernetes namespace where the secret should be deployed.<br/>
+<code>--interactive</code> prompt for secret values<br/>
+<code>--environment</code> environment name for interactive mode<br/>
+<code>--path</code> path to a context for interactive mode
 </dd>
 </dl>
 
-> Existing secret will be replaced.
+> If a secret already exists, then given `key-values` will be added to it.
 
 #### Example
 

@@ -5,11 +5,8 @@ const { expand } = require('@toa.io/concise')
 
 const { Schema } = require('./schema')
 const { create, is } = require('./validator')
-const { directory } = require('./directory')
+const { readDirectory } = require('./directory')
 
-/**
- * @implements {toa.schemas.Namespace}
- */
 class Namespace {
   /** @type {Record<string, toa.schemas.Schema>} */
   #schemas
@@ -26,17 +23,23 @@ class Namespace {
   }
 }
 
-/** @type {toa.schemas.constructors.namespace} */
-const namespace = (coses) => {
-  if (typeof coses === 'string') coses = directory(coses)
-
-  const schemas = coses.map((cos) => expand(cos, is))
+const namespace = (path) => {
+  const entries = typeof path === 'string' ? readDirectory(path) : path.map((schema) => ({ schema }))
+  const schemas = entries.map(transform)
   const validator = create(schemas)
   const extract = (schema) => validator.getSchema(schema.$id)
   const instantiate = (validate) => new Schema(validate)
   const instances = schemas.map(extract).map(instantiate)
 
   return new Namespace(instances)
+}
+
+function transform (entry) {
+  const schema = expand(entry.schema, is)
+
+  schema.$id ??= entry.id
+
+  return schema
 }
 
 exports.namespace = namespace

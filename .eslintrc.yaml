@@ -30,7 +30,7 @@ overrides:
       no-multiple-empty-lines: warn # from going crazy
       newline-per-chained-call:
         - error
-        - ignoreChainWithDepth: 1
+        - ignoreChainWithDepth: 2
       import/order:
         - error
         - groups:
@@ -43,6 +43,7 @@ overrides:
             - object
             - type
       max-params: error
+      arrow-parens: error
       '@typescript-eslint/consistent-type-imports':
         - error
         - fixStyle: inline-type-imports
@@ -54,5 +55,4 @@ env:
   jest: true
 ignorePatterns:
   - '*.d.ts'
-  - '*.test.ts' # debatable
   - '**/transpiled/'

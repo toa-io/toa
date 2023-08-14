@@ -1,124 +1,161 @@
-# Pointer
+# Toa Pointer
 
-Library to declare, deploy and resolve URL to connect to at the runtime. Used by connectors.
+The Pointer is a mechanism to deploy and resolve at runtime a set of URLs.
+Used by [connectors](/connectors) and [extensions](/extensions).
 
-## Pointer class
+## Annotation syntax
 
-Pointer builds URL for a given locator, protocol and a package prefix. Prefix must be unique value
-for a given package conforming [label format](#) (ex.: `bindings-ampq`).
+The Pointer annotation is an object whose keys are arbitrary dot-separated strings.
+The meaning of these keys are defined in the corresponding module that unilizes the Poiner.
 
-### Constructor signature
-
-<dl>
-<dt><code>prefix</code></dt>
-<dd><code>string</code> unique for each package</dd>
-<dt><code>locator</code></dt>
-<dd><code>toa.core.Locator</code> component for which Pointer is intended</dd>
-<dt><code>options</code></dt>
-<dd><code><a href="./types/pointer.d.ts">toa.pointer.Options</a></code> Pointer options</dd>
-</dl>
-
-### Local Environment
-
-If `TOA_ENV` is `local` then these values are used:
-
-| Property | Value       |
-|----------|-------------|
-| hostname | `localhost` |
-| username | `developer` |
-| password | `secret`    |
-
-> In the local environment there is no way to provide values for `protocol` or `port`.
-
-See [types](types/pointer.d.ts) and [tests](test/pointer.test.js) for details.
-
-## Annotation
-
-Declaration of a set of hosts, matching exact components, namespaces with a default value for
-non-matched ones.
+The values of the annotation object must be a URL or a list of URLs without credentials.
 
 ```yaml
 something:
-  default: protocol://host1
-  namespace1: protocol://host2
-  namespace1.component1: protocol://host3
-  namespace2.component2: protocol://host4
+  one: amqp://all-dummies.rmq.example.com
+  two:
+    - amqp://rmq0.example.com
+    - amqp://rmq1.example.com
 ```
 
-See the [schema](source/uris/.construct/schema.yaml).
-
-### Concise Declaration
-
-Next two declarations are equivalent.
+If the Pointer annotation is a `string`, then its value is considered as default (`.`).
 
 ```yaml
-something: host1
+mongodb: mongo://default.db.example.com
 ```
+
+### Shards
+
+Pointer values can contain [shards](/libraries/generic/readme.md#shards) syntax.
 
 ```yaml
 something:
-  default: host1
+  one: redis://redis{0-2}.example.com
 ```
 
-### Usage
+### Deduplication
 
-```javascript
-const { uris } = require('@toa.io/pointer')
+Pointer values are [DNS-deduplicated](/libraries/dns/readme.md#deduplication).
 
-const annotation = uris.construct(declaration)
-const url = uris.resolve(annotation, locator)
+### `default` namespace
+
+When the Pointer is used for component-specific URLs and the component is in the `default`
+namespace (that is, no `namepsace` is specified in its manifest), the annotation value must
+explicitly contain the `default` namespace.
+
+```yaml
+amqp:
+  # value for the `default` namespace
+  default: amqp://default-ns.rmq.example.com
+  # value for `teapots` component of the `default` namespace
+  default.teapots: amqp://default-dummy.rmq.example.com
 ```
 
-See [types](types/uris.d.ts) and [tests](test/uris.test.js) for details.
+## Resolution
 
-### Custom Extensions
+Although the most common use case of the Pointer is component-specific connection strings, where
+the keys are namespaces or component IDs, it is not mandatory.
+The Pointer considers keys as nested dot-separated alphanumeric strings.
 
-Packages using Pointer Annotation may use or require additional properties.
-See [Deployment Extensions](#extensions) below.
+A module that uses the Pointer, resolves a set of URLs by providing annotation and a set of
+_selectors_ during deployment.
+The resolution finds _the deepest match for a given dot-separated string_ within the annotation,
+falling back to the default URL (`.` key) if no matches are found.
 
-## Deployment
+### Example
 
-Deployment function builds global[^1] variables: containing Annotation and a set of variables for
-pointer credentials.
+```yaml
+# context.toa.yaml
 
-See [types](types/deployment.d.ts) and [tests](test/deployment.test.js) for details.
+amqp:
+  .: amqp://default.rmq.example.com # default URL
+  dummies: amqp://all-dummies.rmq.example.com # default URL for the `dummies` namespace
+  dummies.dummy: amqp://dummies1.rmq.example.com # URL for the `dummies.dummy` component
+```
 
-### Credentials
+URL resolution for the example above is as follows:
 
-Each entry of the Annotation requires values for `username` and `password`. These values are being
-deployed as global[^1] secret variables. Secret names are following the
-convention: `toa-package-prefix-entry-label` and `key` names match corresponding URL
-properties (`username` and `password`).
+| Selector          | Result                               | Description        |
+|-------------------|--------------------------------------|--------------------|
+| `dummies.dummy`   | `amqp://d1.rmq.example.com`          | Exact match        |
+| `dummies.another` | `amqp://all-dummies.rmq.example.com` | Partial match      |
+| `what.ever`       | `amqp://default.rmq.example.com`     | No match (default) |
 
-> Note that declaration is made of `Locator.id` while secret names contain `Locator.label`.
-> See [Locator](#).
+## Credentials
 
-#### Example
+For security reasons, URL credentials cannot be specified in the annotation;
+they must be deployed secretly.
+
+Secret names must match the annotation keys with dots replaced by dashes and prefixed by an
+identifier provided by the corresponding connector or extension using the Pointer.
+
+### Example
+
+Given the [AMQP binding](/connectors/bindings.amqp)
+providing `amqp-context` Pointer identifier and the follwing annotation:
 
 ```yaml
 # context.toa.yaml
 amqp:
-  default: amqp://host0
-  dummies.dummy: amqps://host1:5671
+  context:
+    .: amqp://default.rmq.example.com
+    dummies: amqp://dummies.rmq.example.com
+    dummies.dummy: amqp://dummy.rmq.example.com
 ```
+
+Secret names for the specified keys are as follows:
+
+- `amqp-context.default`
+- `amqp-context-dummies`
+- `amqp-context-dummies-dummy`
+
+> If secrets are not deployed with the [`toa conceal`](/runtime/cli/readme.md#conceal), then their
+> names must be prefixed with `toa-`.
+
+Only one secret can be deployed per annotation key. Therefore, when using a URL set, all URLs will
+utilize the same credentials.
+
+### Plain
+
+Secret's value for plain authentication must contain `username` and `password` keys.
 
 ```shell
-$ toa conceal bindings-amqp-default username=admin password=ibreakthings
-$ toa conceal bindings-amqp-dummies-dummy username=developer password=iluvtests
+$ toa conceal amqp-context-dummies-dummy username=developer password=secret
 ```
 
-See [`toa conceal`](../../runtime/cli/readme.md#conceal).
+### TLS
 
-### Extensions
+Not implemented. [#367](https://github.com/toa-io/toa/issues/367)
 
-For each custom extension additional proxy is being deployed.
+## API
 
-#### Example
+### Deployment
 
-AMQP binding is a systematic binding used by the runtime. That is a system proxy must be deployed
-and compositions require variables to establish connection through that proxy.
+```typescript
+import { createVariables } from '@toa.io/pointer'
 
-Therefore, AMQP binding declares a `system` extension and deployment function declares additional
-proxy `bindings-amqp-system`.
+// ...
 
-[^1]: [#174](https://github.com/toa-io/toa/issues/174)
+const variables = createVariables(id, annotation, requests)
+```
+
+`id` is a Pointer identifier, `annotation` the Pointer annotation value, and `requests` is an array
+of objects conforming to the following:
+
+```yaml
+# label of the component
+label: string
+# list of the annotation keys to be deployed for the component
+selectors: string[]
+```
+
+### Resolution
+
+```typescript
+// runtime
+import { resolve } from '@toa.io/pointer'
+
+// resolve a set of URLs with credentials
+// for a given pointer identifier and a selector
+const urls = resolve(id, locator.id)
+```

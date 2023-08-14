@@ -9,11 +9,6 @@ module.exports = {
     ...common,
     require: ['./features/**/*.js', './features/**/*.ts']
   },
-  norm: {
-    ...common,
-    paths: ['runtime/norm/features'],
-    require: ['runtime/norm/features/**/*.js']
-  },
   exposition: {
     ...common,
     paths: ['extensions/exposition/features'],

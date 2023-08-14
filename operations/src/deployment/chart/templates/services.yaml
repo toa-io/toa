@@ -16,9 +16,9 @@ spec:
       containers:
         - name: extensions-{{ .name }}
           image: {{ .image }}
-          {{- if $.Values.variables }}
+          {{- if .variables }}
           env:
-            {{- range $.Values.variables.global }}
+            {{- range .variables }}
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}

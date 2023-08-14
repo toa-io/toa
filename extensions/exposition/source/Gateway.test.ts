@@ -49,7 +49,7 @@ it('should merge branches', async () => {
   const merge = broadcast.receive.mock.calls[0][1]
   const branch = { '/foo': {} }
 
-  merge(branch)
+  void merge(branch)
 
   expect(tree.merge).toHaveBeenCalledWith(branch)
 })

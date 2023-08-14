@@ -4,7 +4,6 @@ import { remotes } from './Context.mock'
 import { Method } from './Method'
 import type { Component } from '@toa.io/core'
 import type * as syntax from './syntax'
-import { Mapping } from './syntax'
 
 const namespace = generate()
 const component = generate()
@@ -162,7 +161,7 @@ it('should omit default namespace', async () => {
 })
 
 it('should create trunk', async () => {
-  const GET: Mapping = {
+  const GET: syntax.Mapping = {
     namespace,
     component,
     endpoint: generate(),
@@ -187,7 +186,7 @@ it('should create trunk', async () => {
 
   const remote: jest.MockedObject<Component> = await remotes.discover.mock.results[0].value
 
-  await get.call(null, {})
+  await get.call({}, {})
 
   expect(remote.invoke).toHaveBeenCalledWith(GET.endpoint, expect.anything())
 })

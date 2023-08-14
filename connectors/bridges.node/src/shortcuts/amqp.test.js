@@ -26,7 +26,7 @@ it('should define shortcut', async () => {
 })
 
 it('should call invoke', async () => {
-  const args = Array.from({ length: random(5) + 2 }, generate)
+  const args = Array.from({ length: random(5) + 2 }, () => generate())
 
   await context.amqp.test.emit(...args)
 

@@ -17,12 +17,6 @@ class Producer extends Connector {
   /** @type {toa.core.Component} */
   #component
 
-  /**
-   * @param {toa.amqp.Communication} comm
-   * @param {toa.core.Locator} locator
-   * @param {string[]} endpoints
-   * @param {toa.core.Component} component
-   */
   constructor (comm, locator, endpoints, component) {
     super()
 

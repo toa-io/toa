@@ -1,0 +1,34 @@
+{
+  "name": "@toa.io/extensions.stash",
+  "version": "0.20.0-dev.36",
+  "description": "Toa Stash",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@toa.io/pointer": "0.20.0-dev.36",
+    "ioredis": "5.3.2",
+    "msgpackr": "1.9.5",
+    "redlock-temp-fix": "5.0.0-beta.2"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run transpile",
+    "transpile": "tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
+}

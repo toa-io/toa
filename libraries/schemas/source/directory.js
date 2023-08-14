@@ -8,7 +8,7 @@ const yaml = require('@toa.io/yaml')
  * @param {string} path
  * @returns {object[]}
  */
-const directory = (path) => {
+const readDirectory = (path) => {
   const pattern = join(path, '**', '*' + EXTENSION)
   const files = file.glob.sync(pattern)
 
@@ -21,10 +21,9 @@ const directory = (path) => {
  */
 const load = (root) => (path) => {
   const schema = yaml.load.sync(path)
+  const id = calculateID(root, path)
 
-  if (schema.$id === undefined) schema.$id = id(root, path)
-
-  return schema
+  return { id, schema }
 }
 
 /**
@@ -32,7 +31,7 @@ const load = (root) => (path) => {
  * @param {string} path
  * @returns {string}
  */
-const id = (root, path) => {
+const calculateID = (root, path) => {
   const base = path.slice(0, -EXTENSION.length)
 
   return relative(root, base)
@@ -40,4 +39,4 @@ const id = (root, path) => {
 
 const EXTENSION = '.cos.yaml'
 
-exports.directory = directory
+exports.readDirectory = readDirectory

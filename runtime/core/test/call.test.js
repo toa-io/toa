@@ -2,7 +2,6 @@
 
 const fixtures = require('./call.fixtures')
 const { Call } = require('../src/call')
-const { transmission } = require('./call.fixtures')
 
 let call
 
@@ -13,7 +12,7 @@ beforeEach(() => {
 })
 
 it('should depend on transmission', () => {
-  expect(transmission.link).toHaveBeenLastCalledWith(call)
+  expect(fixtures.transmission.link).toHaveBeenLastCalledWith(call)
 })
 
 it('should call transmission', async () => {

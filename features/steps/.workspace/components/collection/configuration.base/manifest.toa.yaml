@@ -7,4 +7,5 @@ operations:
       foo: string
 
 configuration:
-  foo: hello
+  schema:
+    foo: hello

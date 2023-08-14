@@ -41,3 +41,20 @@ Feature: SQL Storage Operations
       | callee  |
       | sql.one |
       | sql.two |
+
+  Scenario: Create a record with environment
+    Given I have a component `sql.one`
+    And I have a context with:
+      """yaml
+      sql: pg://localhost/developer
+      """
+    When I run `toa env`
+    And I update an environment with:
+      """
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      TOA_SQL_SQL_ONE_USERNAME=developer
+      TOA_SQL_SQL_ONE_PASSWORD=secret
+      """
+    And I run `TOA_DEV=0 toa invoke transit "{ input: { bar: 'test' } }" -p ./components/sql.one`
+    Then program should exit with code 0

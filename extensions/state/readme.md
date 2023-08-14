@@ -1,4 +1,4 @@
-# Toa State Extension
+# Toa State
 
 ## TL;DR
 
@@ -15,5 +15,15 @@ async function computation (input, context) {
 
 ## Definition
 
-`State` is an initially empty object created when a Component instance starts running. It is shared
+`state` is an initially empty object created when a Component instance starts running. It is shared
 across Operations of that Component *instance*.
+
+## Manifest
+
+To enable extension add its `null` manifest.
+
+```yaml
+# manifest.toa.yaml
+
+state: ~
+```

@@ -5,7 +5,7 @@ import type { Bootloader } from './Factory'
 import type { Locator } from '@toa.io/core'
 
 jest.mock('@toa.io/boot', () => ({
-  remote: (locator: Locator) => boot.remote(locator)
+  remote: async (locator: Locator) => await boot.remote(locator)
 }))
 
 const boot = {

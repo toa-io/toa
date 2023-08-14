@@ -1,13 +1,13 @@
-import http from 'node:http'
-import { Processing, Server } from './Server'
-import { type OutgoingMessage } from './messages'
-import { express, cors, createRequest, res, next } from './Server.fixtures'
 import { Connector } from '@toa.io/core'
-import type { Express, Request, RequestHandler } from 'express'
-import type { CorsOptions } from 'cors'
 import { immediate } from '@toa.io/generic'
 import { generate } from 'randomstring'
+import { type Processing, Server } from './Server'
+import { type OutgoingMessage } from './messages'
+import { express, cors, createRequest, res, next } from './Server.fixtures'
 import { BadRequest } from './exceptions'
+import type { Express, Request, RequestHandler } from 'express'
+import type { CorsOptions } from 'cors'
+import type http from 'node:http'
 
 jest.mock('express', () => () => express())
 jest.mock('cors', () => (options: CorsOptions) => cors(options))
@@ -32,7 +32,7 @@ it('should create express app', async () => {
 })
 
 it('should support cors', async () => {
-  expect(cors).toHaveBeenCalledWith(<CorsOptions>{ allowedHeaders: ['content-type'] })
+  expect(cors).toHaveBeenCalledWith({ allowedHeaders: ['content-type'] } satisfies CorsOptions)
 
   const middleware = cors.mock.results[0].value
 
@@ -140,7 +140,7 @@ describe('result', () => {
     const json = JSON.stringify(value)
     const buf = Buffer.from(json)
     const process = async (): Promise<OutgoingMessage> => ({ headers: {}, value })
-    const req = createRequest({ headers: { 'accept': 'application/json' } })
+    const req = createRequest({ headers: { accept: 'application/json' } })
 
     server.attach(process)
     await use(req)

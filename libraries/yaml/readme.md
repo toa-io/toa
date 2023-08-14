@@ -63,3 +63,11 @@ foo:
 # c.yaml
 <assign: '*.yaml'
 ```
+
+## Environment variables
+
+YAML documents can contain environment variable placeholders.
+
+```yaml
+foo: ${{ BAR }}
+```

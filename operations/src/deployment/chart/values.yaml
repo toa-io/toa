@@ -6,6 +6,12 @@ compositions:
     components:
       - todos-tasks
       - todos-stats
+    variables:
+      - name: TOA_CONFIGURATION_TODOS_TASKS
+        value: foo
+        secret:
+          name: secret-name
+          key: secret-key
   - name: users
     image: localhost:5000/composition-users:0.0.0
     replicas: 3
@@ -16,19 +22,6 @@ components:
   - todos-tasks
   - todos-stats
   - users-users
-variables:
-  global:
-    - name: TOA_BINDINGS_AMQP_SYSTEM_USERNAME
-      value: foo
-      secret:
-        name: secret-name
-        key: secret-key
-  todos-tasks:
-    - name: TOA_CONFIGURATION_TODOS_TASKS
-      value: foo
-      secret:
-        name: secret-name
-        key: secret-key
 services:
   - name: resources-gateway
     image: localhost:5000/resources-gateway:0.0.0
@@ -41,6 +34,12 @@ services:
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    variables:
+      - name: TOA_CONFIGURATION_TODOS_TASKS
+        value: foo
+        secret:
+          name: secret-name
+          key: secret-key
 proxies:
   - name: storage-proxy
     target: host.docker.internal

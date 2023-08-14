@@ -1,7 +1,7 @@
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
-import { Tree } from './RTD/Tree'
+import { Tree } from './RTD'
 import { Server } from './HTTP'
 import { methods, type Node } from './RTD/syntax'
 import type { Connector, Locator, extensions } from '@toa.io/core'
