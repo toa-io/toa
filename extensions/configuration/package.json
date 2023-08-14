@@ -24,5 +24,10 @@
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
+  "dependencies": {
+    "@toa.io/core": "0.20.0-dev.34",
+    "@toa.io/generic": "0.20.0-dev.34",
+    "@toa.io/schemas": "0.20.0-dev.34"
+  }
 }

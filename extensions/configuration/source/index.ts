@@ -1,1 +1,3 @@
-export { manifest, deployment } from './extension'
+export { manifest } from './manifest'
+export { deployment } from './deployment'
+export { Factory } from './Factory'

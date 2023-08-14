@@ -18,7 +18,7 @@ export function deployment (instances: Instance[], annotation: Annotation): Depe
     validate(instance, values)
 
     variables[instance.locator.label] = [{
-      name: `TOA_CONFIGURATION_${instance.locator.uppercase}`,
+      name: PREFIX + instance.locator.uppercase,
       value: encode(values)
     }]
 
@@ -43,7 +43,7 @@ function createSecrets (values: object): Variable[] {
     const name = match.groups?.variable as string
 
     secrets.push({
-      name: 'TOA_CONFIGURATION__' + name,
+      name: PREFIX + '_' + name,
       secret: {
         name: 'toa-configuration',
         key: name
@@ -62,7 +62,8 @@ function validate (instace: Instance, values: object): void {
   schema.validate(configuration)
 }
 
-const SECRET_RX = /^\$(?<variable>[A-Z0-9_]{1,32})$/
+export const SECRET_RX = /^\$(?<variable>[A-Z0-9_]{1,32})$/
+export const PREFIX = 'TOA_CONFIGURATION_'
 
 export type Annotation = Record<string, object>
 export type Instance = context.Dependency<Manifest>

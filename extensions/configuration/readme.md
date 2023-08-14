@@ -68,7 +68,7 @@ name: dummy
 namespace: dummies
 
 configuration:
-  $schema:
+  schema:
     foo: string
     bar: number
 ```
@@ -76,6 +76,18 @@ configuration:
 > Introducing non-backward compatible changes to a configuration schema will result in a loss of
 > compatibility with existing contexts and deployment environments.
 > Therefore, configuration schema changes are subject to component versioning.
+
+If `configuration` object doesn't contain property `schema`, then it is considered to be schema.
+
+```yaml
+# manifest.toa.yaml
+name: dummy
+namespace: dummies
+
+configuration:
+  foo: string
+  bar: number
+```
 
 ### Defaults
 
