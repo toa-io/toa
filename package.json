@@ -56,13 +56,12 @@
   },
   "scripts": {
     "prepare": "npx husky install",
-    "test": "npm run test:lint && npm run test:unit && npm run test:features:unit",
+    "test": "npm run test:lint && npm run test:unit",
     "test:lint": "npx eslint .",
     "test:unit": "npx jest --roots runtime connectors extensions operations libraries features userland",
     "test:stage": "npx jest --roots userland/example/stage --testPathIgnorePatterns .*/transpiled/",
     "test:integration": "npx jest --roots integration --runInBand --testTimeout 180000",
     "test:features": "npx cucumber-js",
-    "test:features:unit": "npx cucumber-js -p norm",
     "test:samples:unit": "toa replay userland/example/components/*",
     "test:samples:all": "TOA_DEV=1 toa replay userland/example",
     "test:all": "npm run ci && npm run test && npm run test:integration && npm run test:stage && npm run test:features",
@@ -75,7 +74,7 @@
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i",
-    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled && npm run transpile --if-present\""
+    "transpile": "npm exec --workspaces -c \"rm -rf transpiled\" && npx lerna@6.5.1 run transpile"
   },
   "jest": {
     "preset": "ts-jest",

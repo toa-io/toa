@@ -7,8 +7,11 @@ operations:
     output: string
 
 configuration:
-  greetings:
-    - a: good
-      b: day
-    - a: good
-      b: afternoon
+  schema:
+    greetings: [{ a: string, b: string }]
+  defaults:
+    greetings:
+      - a: good
+        b: day
+      - a: good
+        b: afternoon

@@ -8,7 +8,7 @@ on:
       - dev
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -28,6 +28,7 @@ jobs:
           fetch-depth: 0
 
       - run: npm install
+      - run: npm run transpile
       - run: npm test
 
   publish:

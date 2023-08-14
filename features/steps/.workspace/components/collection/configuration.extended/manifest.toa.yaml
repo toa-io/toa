@@ -8,5 +8,6 @@ operations:
       bar: number
 
 configuration:
-  bar: 1
-  baz: something
+  schema:
+    bar: 1
+    baz: something

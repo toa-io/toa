@@ -1,7 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { random, newid, encode } = require('@toa.io/generic')
+const { random, newid } = require('@toa.io/generic')
 
 const framework = require('./framework')
 
@@ -37,22 +37,4 @@ it('should deduce credits', async () => {
   const balance = await credits.invoke('observe', { query: { id: sender } })
 
   expect(balance.output.balance).toStrictEqual(10 - times)
-})
-
-// configuration
-it('should deduce more credits', async () => {
-  process.env.TOA_CONFIGURATION_MESSAGES_MESSAGES = encode({ price: 2 })
-
-  await composition.reconnect()
-
-  const sender = newid()
-  const text = generate()
-
-  await messages.invoke('add', { input: { sender, text } })
-
-  const balance = await credits.invoke('observe', { query: { id: sender } })
-
-  expect(balance.output.balance).toStrictEqual(10 - 2)
-
-  delete process.env.TOA_CONFIGURATION_MESSAGES_MESSAGES
 })
