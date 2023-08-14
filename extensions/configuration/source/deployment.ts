@@ -5,7 +5,7 @@ import { type Manifest } from './manifest'
 import * as validators from './schemas'
 import type { context } from '@toa.io/norm'
 
-export function deployment (instances: Instance[], annotation: Annotation): Dependency {
+export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
   validators.annotation.validate(annotation)
 
   const variables: Variables = {}
