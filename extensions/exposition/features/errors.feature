@@ -35,7 +35,7 @@ Feature: Errors
       405 Method Not Allowed
       """
 
-  Scenario: Unsupported Method
+  Scenario: Unsupported method
     When the following request is received:
       """http
       COPY /basic/greeter HTTP/1.1
