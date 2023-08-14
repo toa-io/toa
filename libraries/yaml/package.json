@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/yaml",
-  "version": "0.20.0-dev.35",
+  "version": "0.20.0-dev.36",
   "description": "Toa YAML",
   "homepage": "https://toa.io",
   "author": {
@@ -23,8 +23,8 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/filesystem": "0.20.0-dev.35",
-    "@toa.io/generic": "0.20.0-dev.35",
+    "@toa.io/filesystem": "0.20.0-dev.36",
+    "@toa.io/generic": "0.20.0-dev.36",
     "js-yaml": "4.1.0"
   },
   "devDependencies": {
