@@ -15,8 +15,8 @@ A Route is a key starting with `/` and it has a value as a nested RTD node.
     /:post-id: ...
 ```
 
-Route declarations can also be flat, meaning that the RTD can have adjacent branches. The following is equivalent to the
-above:
+Route declarations can also be flat, meaning that the RTD can have adjacent branches.
+The following will represent the same resources as the above:
 
 ```yaml
 /users/:user-id: ...
