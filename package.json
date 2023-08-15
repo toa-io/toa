@@ -74,7 +74,8 @@
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "ci": "npm exec --workspaces -c \"rm -rf node_modules\" && npm i",
-    "transpile": "npm exec --workspaces -c \"rm -rf transpiled\" && npx lerna@6.5.1 run transpile"
+    "transpile": "npm exec --workspaces -c \"rm -rf transpiled\" && npx lerna@6.5.1 run transpile",
+    "rebuild": "npm run ci && npm run transpile"
   },
   "jest": {
     "preset": "ts-jest",
