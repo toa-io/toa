@@ -6,7 +6,10 @@ operations:
     output: object
   bad:
     output: object
+  def:
+    output: object
 
 origins:
   echo: http://localhost:8888/some/
   bad: ~
+  default: http://api.example.com
