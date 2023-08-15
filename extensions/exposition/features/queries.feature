@@ -9,10 +9,27 @@ Feature: Queries
       | a7edded6b2ab47a0aca9508cc4da4138 | Third pot  | 300    |
     And the Gateway is running
 
-  Scenario: Querying by id
+  Scenario: Using query parameter
     When the following request is received:
       """
       GET /pots/pot?id=99988d785d7d445cad45dbf8531f560b HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      output:
+        id: 99988d785d7d445cad45dbf8531f560b
+        title: Second pot
+        volume: 200
+      """
+
+  Scenario: Using path segment
+    When the following request is received:
+      """
+      GET /pots/99988d785d7d445cad45dbf8531f560b HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:

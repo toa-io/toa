@@ -24,3 +24,5 @@ exposition:
     GET: enumerate
   /pot:
     GET: observe
+  /:id:
+    GET: observe
