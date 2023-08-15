@@ -22,6 +22,29 @@ Feature: Origins extension
       originalUrl: '/some/path'
       """
 
+  Scenario: HTTP Aspect with overriden value
+    Given I have a component `origins.http`
+    And I have a context with:
+      """
+      origins:
+        origins.http:
+          bad: http://localhost:8888/
+          default: http://localhost:8888/
+      """
+    When I run `toa env`
+    And I update an environment with:
+    """
+    TOA_AMQP_CONTEXT__USERNAME=developer
+    TOA_AMQP_CONTEXT__PASSWORD=secret
+    """
+    And I run `TOA_DEV=0 toa invoke def -p ./components/origins.http`
+    And stdout should contain lines:
+      """
+      method: 'GET'
+      protocol: 'http'
+      originalUrl: '/path'
+      """
+
   Scenario: HTTP Aspect absolute URL properties environment
     Given I have a component `origins.httpAbsolute`
     And I have a context with:

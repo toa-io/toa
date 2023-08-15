@@ -23,6 +23,7 @@ export class Factory implements extensions.Factory {
     return memo(async (): Promise<Configuration> => {
       const uris = await this.getURIs(locator, manifest)
       const allProperties = this.getProperties(locator)
+
       const origins = this.filterOrigins(uris, protocol.protocols)
       const properties = allProperties['.' + protocol.id as keyof Properties] ?? {}
 
@@ -36,7 +37,14 @@ export class Factory implements extensions.Factory {
     if (manifest === null) return map
 
     for (const [name, value] of Object.entries(manifest))
-      map[name] = value !== null ? [value] : await this.readOrigin(locator, name)
+      try {
+        map[name] = await this.readOrigin(locator, name)
+      } catch {
+        // eslint-disable-next-line max-depth
+        if (value === null) throw new Error(`Origin value ${name} is not defined`)
+
+        map[name] = [value]
+      }
 
     return map
   }
