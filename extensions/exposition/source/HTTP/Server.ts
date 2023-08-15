@@ -69,15 +69,16 @@ export class Server extends Connector {
 
   private success (request: Request, response: Response) {
     return (message: OutgoingMessage) => {
-      for (const [header, value] of Object.entries(message.headers))
-        response.set(header, value as string)
+      const status = request.method === 'POST' ? 201 : (message.body === undefined ? 204 : 200)
 
-      if (message.body === undefined)
-        response.sendStatus(204)
-      else {
-        response.status(request.method === 'POST' ? 201 : 200)
+      response
+        .status(status)
+        .set(message.headers)
+
+      if (message.body !== undefined)
         write(request, response, message.body)
-      }
+      else
+        response.end()
     }
   }
 
