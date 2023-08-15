@@ -5,11 +5,15 @@ const http_parser_js_1 = require("http-parser-js");
 function request(input) {
     const parser = new http_parser_js_1.HTTPParser(http_parser_js_1.HTTPParser.REQUEST);
     const request = {};
+    const bodyChunks = [];
     let complete = false;
     parser[http_parser_js_1.HTTPParser.kOnHeadersComplete] = function (req) {
         request.method = http_parser_js_1.HTTPParser.methods[req.method];
         request.url = req.url;
         request.headers = reduceHeaders(req.headers);
+    };
+    parser[http_parser_js_1.HTTPParser.kOnBody] = function (chunk, offset, length) {
+        bodyChunks.push(chunk.subarray(offset, offset + length));
     };
     parser[http_parser_js_1.HTTPParser.kOnMessageComplete] = function () {
         complete = true;
@@ -19,6 +23,8 @@ function request(input) {
     parser.finish();
     if (!complete)
         throw new Error('Failed to parse the request');
+    if (bodyChunks.length > 0)
+        request.body = Buffer.concat(bodyChunks);
     return request;
 }
 exports.request = request;

@@ -3,6 +3,7 @@ import { HTTPParser } from 'http-parser-js'
 export function request (input: string): Request {
   const parser = new HTTPParser(HTTPParser.REQUEST)
   const request: Partial<Request> = {}
+  const bodyChunks: Buffer[] = []
 
   let complete = false
 
@@ -10,6 +11,10 @@ export function request (input: string): Request {
     request.method = HTTPParser.methods[req.method]
     request.url = req.url
     request.headers = reduceHeaders(req.headers)
+  }
+
+  parser[HTTPParser.kOnBody] = function (chunk, offset, length) {
+    bodyChunks.push(chunk.subarray(offset, offset + length))
   }
 
   parser[HTTPParser.kOnMessageComplete] = function () {
@@ -22,6 +27,9 @@ export function request (input: string): Request {
   parser.finish()
 
   if (!complete) throw new Error('Failed to parse the request')
+
+  if (bodyChunks.length > 0)
+    request.body = Buffer.concat(bodyChunks)
 
   return request as Request
 }

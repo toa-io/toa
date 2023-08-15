@@ -38,7 +38,11 @@ exposition:
         limit: 1
 ```
 
-> `POST` method mapping cannot have `query` declaration.
+`null` value of the `query` denies any query arguments in the request.
+
+> `POST` method mapping cannot have `query` declaration other than `null`.
+
+```yaml
 
 ## Criteria
 
@@ -53,6 +57,7 @@ name: dummy
 
 exposition:
   /:
+    endpoint: observe
     query:
       criteria: state==hot; # open criteria
 ```
@@ -81,11 +86,18 @@ limit:
 ```
 
 If `range` is not specified, then the `value` is constat.
-If no `value` is specified, then the lower boundary is considered the default value.
+If no `value` is specified, then the lower boundary of the `range` is considered the default value.
 Both of these cases have consice shortcuts:
 
 ```yaml
 omit: 10
+limit: [10, 100]
+```
+
+Default values for `omit` and `limit` are:
+
+```yaml
+omit: [0, 1000]
 limit: [10, 100]
 ```
 

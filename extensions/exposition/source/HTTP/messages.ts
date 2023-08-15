@@ -5,10 +5,10 @@ import { buffer } from '@toa.io/generic'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
-export function write (request: Request, response: Response, value: any): void {
+export function write (request: Request, response: Response, body: any): void {
   const type = negotiate(request)
   const format = formats[type]
-  const buf = format.encode(value)
+  const buf = format.encode(body)
 
   // content-length and etag are set by Express
   response.set('content-type', type)
@@ -23,6 +23,7 @@ export async function read (request: Request): Promise<any> {
   if (!(type in formats)) throw new UnsupportedMediaType()
 
   const format = formats[type]
+
   const buf = await buffer(request)
 
   try {
@@ -42,7 +43,7 @@ function negotiate (request: Request): string {
 }
 
 interface Message {
-  value?: any
+  body?: any
 }
 
 export interface IncomingMessage extends Message {

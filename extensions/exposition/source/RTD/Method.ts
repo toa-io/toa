@@ -20,7 +20,7 @@ export abstract class Method {
 
 export class InputMethod extends Method {
   protected override request (body: any, params: Record<string, string>): Request {
-    return {}
+    return { input: body }
   }
 }
 

@@ -32,16 +32,16 @@ export class Gateway extends Connector {
   }
 
   private async process (input: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    const value = await this.call(input)
+    const body = await this.call(input)
 
-    return { headers: {}, value }
+    return { headers: {}, body }
   }
 
   private async call (input: http.IncomingMessage): Promise<any> {
     const node = this.tree.match(input.path) ?? this.throw(http.NotFound)
     const method = node?.methods.get(input.method) ?? this.throw(http.MethodNotAllowed)
 
-    return await method?.call({}, {})
+    return await method?.call(input.body, {})
   }
 
   private throw (Exception: new () => Error): null {

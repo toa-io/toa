@@ -20,7 +20,7 @@ export class Server extends Connector {
   }
 
   public static create (options: Partial<Properties> = {}): Server {
-    const properties: Properties = Object.assign({}, defaults, options)
+    const properties: Properties = Object.assign({}, defaults(), options)
 
     const app = express()
 
@@ -62,9 +62,9 @@ export class Server extends Connector {
 
   private async read (request: Request): Promise<IncomingMessage> {
     const { method, path, headers } = request
-    const value = await read(request)
+    const body = await read(request)
 
-    return { method, path, headers, value }
+    return { method, path, headers, body }
   }
 
   private success (request: Request, response: Response) {
@@ -72,16 +72,16 @@ export class Server extends Connector {
       for (const [header, value] of Object.entries(message.headers))
         response.set(header, value as string)
 
-      if (message.value === undefined)
+      if (message.body === undefined)
         response.sendStatus(204)
       else {
-        response.status(200)
-        write(request, response, message.value)
+        response.status(request.method === 'POST' ? 201 : 200)
+        write(request, response, message.body)
       }
     }
   }
 
-  private fail (request: Request, response: Response) {
+  private fail (_: Request, response: Response) {
     return (exception: Error) => {
       const status = exception instanceof Exception ? exception.status : 500
       const outputAllowed = exception instanceof ClientError || this.debug
@@ -89,7 +89,9 @@ export class Server extends Connector {
       response.status(status)
 
       if (outputAllowed) {
-        const message = exception instanceof ClientError ? exception.message : exception.stack
+        const message = exception instanceof ClientError
+          ? exception.message
+          : (exception.stack ?? exception.message)
 
         response.set('content-type', 'text/plain')
         response.send(message)
@@ -111,9 +113,11 @@ interface Properties {
   debug: boolean
 }
 
-const defaults: Properties = {
-  methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-  debug: false
+function defaults (): Properties {
+  return {
+    methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
+    debug: process.env.TOA_DEV === '1'
+  }
 }
 
 export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>

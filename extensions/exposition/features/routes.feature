@@ -1,4 +1,4 @@
-Feature: RTD Routes
+Feature: Routes
 
   Background:
     Given the Gateway is running

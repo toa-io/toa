@@ -108,7 +108,7 @@ describe('request processing', () => {
 
     const output = await process(message)
 
-    expect(output).toMatchObject({ value: reply })
+    expect(output).toMatchObject({ body: reply })
   })
 })
 

@@ -96,7 +96,7 @@ describe('write', () => {
 
   it('should use application/yaml as default', async () => {
     const request = createRequest()
-    const message: OutgoingMessage = { headers: {}, value: 'hello' }
+    const message: OutgoingMessage = { headers: {}, body: 'hello' }
 
     write(request, res, message)
 
@@ -107,7 +107,7 @@ describe('write', () => {
   it('should negotiate', async () => {
     const headers = { accept: 'text/html, application/*;q=0.2, image/jpeg;q=0.8' }
     const request = createRequest({ headers })
-    const message: OutgoingMessage = { headers: {}, value: 'hello' }
+    const message: OutgoingMessage = { headers: {}, body: 'hello' }
 
     write(request, res, message)
 

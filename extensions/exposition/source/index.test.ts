@@ -5,3 +5,5 @@
  * Importing jest here fixes the issue.
  */
 import 'jest'
+
+it.skip('', () => undefined) // prevent jest from complaining about missing tests
