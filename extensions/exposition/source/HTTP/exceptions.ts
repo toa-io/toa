@@ -50,3 +50,9 @@ export class UnsupportedMediaType extends MediaTypeException {
     super(415)
   }
 }
+
+export class PreconditionFailed extends ClientError {
+  public constructor () {
+    super(412)
+  }
+}

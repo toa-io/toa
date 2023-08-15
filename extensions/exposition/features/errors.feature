@@ -9,12 +9,12 @@ Feature: Errors
       namespace: basic
       """
     When the following request is received:
-      """http
+      """
       GET <route> HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
-      """http
+      """
       404 Not Found
       """
     Examples:
@@ -26,7 +26,7 @@ Feature: Errors
   Scenario: Missing method
     Given the `greeter` is running
     When the following request is received:
-      """http
+      """
       PATCH /greeter HTTP/1.1
       accept: application/yaml
       """
@@ -37,11 +37,31 @@ Feature: Errors
 
   Scenario: Unsupported method
     When the following request is received:
-      """http
+      """
       COPY /basic/greeter HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
       """http
       501 Not Implemented
+      """
+
+  Scenario: Request body does not match input schema
+    Given the `pots` is running
+    When the following request is received:
+      """
+      POST /pots HTTP/1.1
+      accept: application/yaml
+      content-type: application/yaml
+      content-length: 20
+
+      foo: Hello
+      bar: 1.5
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      content-type: text/plain
+
+      must have required property 'title'
       """

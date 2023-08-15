@@ -2,6 +2,8 @@ import { Connector, type bindings } from '@toa.io/core'
 import { type Tree, type syntax } from './RTD'
 import { type Label } from './discovery'
 import * as http from './HTTP'
+import { type Method } from './RTD/Method'
+import { rethrow } from './exceptions'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
@@ -41,7 +43,9 @@ export class Gateway extends Connector {
     const node = this.tree.match(input.path) ?? this.throw(http.NotFound)
     const method = node?.methods.get(input.method) ?? this.throw(http.MethodNotAllowed)
 
-    return await method?.call(input.body, {})
+    return await (method as Method)
+      .call(input.body, {})
+      .catch(rethrow)
   }
 
   private throw (Exception: new () => Error): null {

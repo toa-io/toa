@@ -18,12 +18,12 @@ Feature: Routes
           /method: greet
       """
     When the following request is received:
-      """http
+      """
       GET /basic/greeter<route> HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
-      """http
+      """
       200 OK
       content-type: application/yaml
 
@@ -42,12 +42,12 @@ Feature: Routes
         /: greet
       """
     When the following request is received:
-      """http
+      """
       GET /greeter HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
-      """http
+      """
       200 OK
       content-type: application/yaml
 

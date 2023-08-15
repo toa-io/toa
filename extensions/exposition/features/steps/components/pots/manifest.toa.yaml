@@ -4,13 +4,14 @@ entity:
   schema:
     title: string
     volume: number
+    temperature?: number
 
 operations:
   transit:
     concurrency: none
     input:
-      title: ~
-      volume: ~
+      title*: ~
+      volume*: ~
 
 exposition:
   /:
