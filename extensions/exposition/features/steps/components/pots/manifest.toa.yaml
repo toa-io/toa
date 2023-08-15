@@ -12,8 +12,15 @@ operations:
     input:
       title*: ~
       volume*: ~
+  observe:
+    output:
+      id: string
+      title: string
+      volume: number
 
 exposition:
   /:
     POST: transit
+    GET: enumerate
+  /pot:
     GET: observe

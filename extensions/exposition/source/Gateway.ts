@@ -7,14 +7,12 @@ import { rethrow } from './exceptions'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
-  private readonly server: http.Server
   private readonly tree: Tree
 
   public constructor (broadcast: Broadcast, server: http.Server, tree: Tree) {
     super()
 
     this.broadcast = broadcast
-    this.server = server
     this.tree = tree
 
     this.depends(broadcast)
@@ -33,18 +31,18 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private async process (input: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    const body = await this.call(input)
+  private async process (message: http.IncomingMessage): Promise<http.OutgoingMessage> {
+    const body = await this.call(message)
 
     return { headers: {}, body }
   }
 
-  private async call (input: http.IncomingMessage): Promise<any> {
-    const node = this.tree.match(input.path) ?? this.throw(http.NotFound)
-    const method = node?.methods.get(input.method) ?? this.throw(http.MethodNotAllowed)
+  private async call (message: http.IncomingMessage): Promise<any> {
+    const node = this.tree.match(message.path) ?? this.throw(http.NotFound)
+    const method = node?.methods.get(message.method) ?? this.throw(http.MethodNotAllowed)
 
     return await (method as Method)
-      .call(input.body, {})
+      .call(message.body, message.query)
       .catch(rethrow)
   }
 

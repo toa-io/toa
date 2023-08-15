@@ -132,7 +132,7 @@ describe('result', () => {
     server.attach(process)
     await use(req)
 
-    expect(res.sendStatus).toHaveBeenCalledWith(204)
+    expect(res.status).toHaveBeenCalledWith(204)
   })
 
   it('should send result', async () => {

@@ -11,17 +11,21 @@ export class Database {
     const [name, namespace = 'default'] = id.split('.').reverse()
     const collection = Database.client.db(namespace).collection(name)
 
-    const rows = table.raw()
-    const columns = rows[0]
-    const documents = Array(rows.length - 1)
+    const columns = table.raw()[0]
+    const rows = table.rows()
+    const documents = Array(rows.length)
 
-    for (let r = 1; r < rows.length; r++) {
-      const document: Record<string, any> = {}
+    for (let r = 0; r < rows.length; r++) {
+      const document: Record<string, string | number> = {}
 
-      for (let c = 0; c < columns.length; c++)
-        document[columns[c]] = rows[r][c]
+      for (let c = 0; c < columns.length; c++) {
+        const str = rows[r][c]
+        const int = parseInt(str)
 
-      documents[r - 1] = document
+        document[columns[c]] = int.toString() === str ? int : str
+      }
+
+      documents[r] = document
     }
 
     await collection.deleteMany()

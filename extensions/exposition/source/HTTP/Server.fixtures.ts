@@ -27,10 +27,7 @@ jest.MockedObject<Request> {
 }
 
 export function createIncomingMessage (path: string, method: string = 'GET'): IncomingMessage {
-  const headers = {}
-  const body = null
-
-  return { method, path, headers, body }
+  return { method, path, headers: {}, body: undefined, query: {} }
 }
 
 export const res = {

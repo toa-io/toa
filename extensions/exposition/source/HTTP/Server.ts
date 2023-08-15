@@ -61,21 +61,26 @@ export class Server extends Connector {
   }
 
   private async read (request: Request): Promise<IncomingMessage> {
-    const { method, path, headers } = request
+    const { method, path, headers, query } = request
     const body = await read(request)
 
-    return { method, path, headers, body }
+    return { method, path, headers, query, body }
   }
 
   private success (request: Request, response: Response) {
     return (message: OutgoingMessage) => {
-      const status = request.method === 'POST' ? 201 : (message.body === undefined ? 204 : 200)
+      let status
+
+      if (message.body === null) status = 404
+      else if (request.method === 'POST') status = 201
+      else if (message.body === undefined) status = 204
+      else status = 200
 
       response
         .status(status)
         .set(message.headers)
 
-      if (message.body !== undefined)
+      if (message.body !== undefined && message.body !== null)
         write(request, response, message.body)
       else
         response.end()

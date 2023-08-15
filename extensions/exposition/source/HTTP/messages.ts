@@ -2,6 +2,7 @@ import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
 import { type Request, type Response } from 'express'
 import Negotiator from 'negotiator'
 import { buffer } from '@toa.io/generic'
+import { type ParsedQs } from 'qs'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
@@ -50,6 +51,7 @@ export interface IncomingMessage extends Message {
   method: string
   path: string
   headers: IncomingHttpHeaders
+  query: ParsedQs
 }
 
 export interface OutgoingMessage extends Message {

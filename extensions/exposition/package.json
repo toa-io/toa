@@ -35,7 +35,8 @@
     "transpile": "tsc"
   },
   "devDependencies": {
-    "@types/negotiator": "0.6.1"
+    "@types/negotiator": "0.6.1",
+    "qs": "6.11.2"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
