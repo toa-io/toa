@@ -1,8 +1,8 @@
 export function segment (path: string): Segment[] {
-  return fragmet(path).map(parse)
+  return fragment(path).map(parse)
 }
 
-export function fragmet (path: string): string[] {
+export function fragment (path: string): string[] {
   const parts = path.split('/')
 
   if (parts[parts.length - 1] === '') parts.length--

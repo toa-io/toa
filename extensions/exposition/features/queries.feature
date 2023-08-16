@@ -40,4 +40,4 @@ Feature: Queries
         id: 99988d785d7d445cad45dbf8531f560b
         title: Second pot
         volume: 200
-      """
+        """

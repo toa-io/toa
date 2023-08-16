@@ -19,20 +19,22 @@ export class Route {
         return null
 
       if (segment.fragment === null)
-        parameters.push({ name: segment.placeholder, value: fragments[0] })
+        parameters.push({ name: segment.placeholder, value: fragments[i] })
     }
 
     const exact = this.segments.length === fragments.length
 
     if (exact && !this.node.intermediate) return this.node
-    else return this.matchNested(fragments, parameters)
+    else return this.nested(fragments, parameters)
   }
 
   public equals (route: Route): boolean {
-    if (route.segments.length !== this.segments.length) return false
+    if (route.segments.length !== this.segments.length)
+      return false
 
     for (let i = 0; i < this.segments.length; i++)
-      if (this.segments[i].fragment !== route.segments[i].fragment) return false
+      if (this.segments[i].fragment !== route.segments[i].fragment)
+        return false
 
     return true
   }
@@ -41,9 +43,9 @@ export class Route {
     this.node.merge(route.node)
   }
 
-  private matchNested (fragments: string[], parameters: Parameter[]): Node | null {
-    const slice = fragments.slice(this.segments.length)
+  private nested (fragments: string[], parameters: Parameter[]): Node | null {
+    fragments = fragments.slice(this.segments.length)
 
-    return this.node.match(slice, parameters)
+    return this.node.match(fragments, parameters)
   }
 }

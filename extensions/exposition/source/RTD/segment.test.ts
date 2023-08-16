@@ -1,4 +1,4 @@
-import { segment, fragmet } from './segment'
+import { segment, fragment } from './segment'
 
 it('should return segments', async () => {
   const segments = segment('/foo/bar/')
@@ -26,7 +26,7 @@ it('should handle root path', async () => {
 })
 
 it('should split', async () => {
-  const parts = fragmet('/foo/bar/')
+  const parts = fragment('/foo/bar/')
 
   expect(parts).toStrictEqual(['foo', 'bar'])
 })

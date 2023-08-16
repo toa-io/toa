@@ -27,11 +27,20 @@ export class InputMethod extends Method {
 
 export class QueryMethod extends Method {
   protected override request (body: any, query: Query, parameters: Parameter[]): Request {
-    if (parameters.length > 0)
-      query.criteria = parameters
+    const criteria: string[] = []
+
+    if (parameters.length > 0) {
+      const chunks = parameters
         .map(({ name, value }) => `${name}==${value}`)
-        .join(';') +
-        (query.criteria === undefined ? '' : ';' + query.criteria)
+
+      criteria.push(...chunks)
+    }
+
+    if (query.criteria !== undefined)
+      criteria.push(query.criteria)
+
+    if (criteria.length > 0)
+      query.criteria = criteria.join(';')
 
     return { input: body, query }
   }

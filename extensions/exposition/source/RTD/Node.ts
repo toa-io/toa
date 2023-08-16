@@ -27,14 +27,14 @@ export class Node {
 
   public merge (node: Node): void {
     for (const route of node.routes)
-      this.mergeRoute(route)
+      this.route(route)
 
     for (const [verb, method] of node.methods)
       if (!(this.protected || this.methods.has(verb)))
         this.methods.set(verb, method)
   }
 
-  private mergeRoute (candidate: Route): void {
+  private route (candidate: Route): void {
     for (const route of this.routes)
       if (candidate.equals(route)) {
         route.merge(candidate)

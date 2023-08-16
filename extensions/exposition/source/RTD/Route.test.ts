@@ -79,13 +79,16 @@ it('should compare equal routes', async () => {
 })
 
 it('should add parameters', async () => {
-  const segment: Segment = { fragment: null, placeholder: 'foo' }
+  const segments: Segment[] = [
+    { fragment: 'foo' },
+    { fragment: null, placeholder: 'foo' }
+  ]
   const node = {} as unknown as Node
-  const route = new Route([segment], node)
+  const route = new Route(segments, node)
   const parameters: Parameter[] = []
   const fragment = generate()
 
-  route.match([fragment], parameters)
+  route.match(['foo', fragment], parameters)
 
   expect(parameters).toHaveLength(1)
   expect(parameters[0].name).toStrictEqual('foo')

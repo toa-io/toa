@@ -7,7 +7,7 @@ Feature: Errors
       """
     When the following request is received:
       """
-      GET <route> HTTP/1.1
+      GET <path> HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -15,7 +15,7 @@ Feature: Errors
       404 Not Found
       """
     Examples:
-      | route                                |
+      | path                                 |
       | /basic/greeter/non-existent-segment/ |
       | /basic/non-existent-component/       |
       | /non-existent-namespace/             |

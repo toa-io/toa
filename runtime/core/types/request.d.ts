@@ -1,3 +1,5 @@
+import { Exception } from './exception'
+
 export interface Query {
   id?: string
   criteria?: string
@@ -12,4 +14,10 @@ export interface Request {
   input?: any
   query?: Query
   authentic?: boolean
+}
+
+export interface Reply {
+  output?: Object
+  error?: Object
+  exception?: Exception
 }
