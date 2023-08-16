@@ -18,12 +18,11 @@ export class Gateway {
 
     this.instance = service
 
-    await this.instance.connect()
+    await service.connect()
   }
 
   @afterAll()
   public static async stop (): Promise<void> {
     await this.instance?.disconnect()
-    this.instance = null
   }
 }

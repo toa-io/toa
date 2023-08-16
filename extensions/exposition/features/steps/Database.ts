@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, binding, when } from 'cucumber-tsflow'
+import { afterAll, beforeAll, binding, given } from 'cucumber-tsflow'
 import { type DataTable } from '@cucumber/cucumber'
 import { MongoClient } from 'mongodb'
 
@@ -6,17 +6,17 @@ import { MongoClient } from 'mongodb'
 export class Database {
   private static client: MongoClient
 
-  @when('the `{word}` database contains:')
+  @given('the `{word}` database contains:')
   public async upsert (id: string, table: DataTable): Promise<void> {
     const [name, namespace = 'default'] = id.split('.').reverse()
     const collection = Database.client.db(namespace).collection(name)
 
     const columns = table.raw()[0]
     const rows = table.rows()
-    const documents = Array(rows.length)
+    const documents: Document[] = []
 
     for (let r = 0; r < rows.length; r++) {
-      const document: Record<string, string | number> = {}
+      const document: Document = {}
 
       for (let c = 0; c < columns.length; c++) {
         const str = rows[r][c]
@@ -25,7 +25,7 @@ export class Database {
         document[columns[c]] = int.toString() === str ? int : str
       }
 
-      documents[r] = document
+      documents.push(document)
     }
 
     await collection.deleteMany({})
@@ -34,13 +34,15 @@ export class Database {
 
   @beforeAll()
   public static async connect (): Promise<void> {
-    Database.client = new MongoClient('mongodb://developer:secret@localhost:27017')
+    this.client = new MongoClient('mongodb://developer:secret@localhost:27017')
 
-    await Database.client.connect()
+    await this.client.connect()
   }
 
   @afterAll()
-  public async disconnect (): Promise<void> {
-    await Database.client.close()
+  public static async disconnect (): Promise<void> {
+    await this.client.close()
   }
 }
+
+type Document = Record<string, string | number>
