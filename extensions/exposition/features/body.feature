@@ -1,13 +1,10 @@
 Feature: Request body
 
-  Background:
-    Given the Gateway is running
-
   Scenario: Creating an entity
     Given the `pots` is running
     When the following request is received:
       """
-      POST /pots HTTP/1.1
+      POST /pots/ HTTP/1.1
       accept: application/yaml
       content-type: application/yaml
       content-length: 23

@@ -1,8 +1,5 @@
 Feature: Routes
 
-  Background:
-    Given the Gateway is running
-
   Scenario Outline: Basic routes
     Given the `greeter` is running with the following manifest:
       """yaml
@@ -30,10 +27,10 @@ Feature: Routes
       output: Hello
       """
     Examples:
-      | route                |
-      | /strict              |
-      | /shortcuts/operation |
-      | /shortcuts/method    |
+      | route                 |
+      | /strict/              |
+      | /shortcuts/operation/ |
+      | /shortcuts/method/    |
 
   Scenario: Basic routes within default namespace
     Given the `greeter` is running with the following manifest:
@@ -43,7 +40,7 @@ Feature: Routes
       """
     When the following request is received:
       """
-      GET /greeter HTTP/1.1
+      GET /greeter/ HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:

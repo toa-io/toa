@@ -28,7 +28,7 @@ export class Database {
       documents[r] = document
     }
 
-    await collection.deleteMany()
+    await collection.deleteMany({})
     await collection.insertMany(documents)
   }
 

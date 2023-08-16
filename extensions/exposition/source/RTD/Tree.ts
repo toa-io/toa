@@ -1,7 +1,8 @@
 import { type Remotes } from '../Remotes'
 import { type Node } from './Node'
 import { createBranch, createTrunk } from './factory'
-import { segment } from './segment'
+import { fragmet } from './segment'
+import { type Match, type Parameter } from './Match'
 import type * as syntax from './syntax'
 
 export class Tree {
@@ -13,10 +14,13 @@ export class Tree {
     this.remotes = remotes
   }
 
-  public match (path: string): Node | null {
-    const segments = segment(path)
+  public match (path: string): Match | null {
+    const fragments = fragmet(path)
+    const parameters: Parameter[] = []
+    const node = this.trunk.match(fragments, parameters)
 
-    return this.trunk.match(segments)
+    if (node === null) return null
+    else return { node, parameters }
   }
 
   public merge (definition: syntax.Branch): void {

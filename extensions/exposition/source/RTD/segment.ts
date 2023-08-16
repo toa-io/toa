@@ -1,12 +1,24 @@
-export function segment (path: string): Segments {
-  return path.substring(1)
-    .split('/')
-    .filter((segment) => segment !== '')
-    .map(nullify)
+export function segment (path: string): Segment[] {
+  return fragmet(path).map(parse)
 }
 
-function nullify (segment: string): string | null {
-  return segment[0] === ':' ? null : segment
+export function fragmet (path: string): string[] {
+  const parts = path.split('/')
+
+  if (parts[parts.length - 1] === '') parts.length--
+
+  // leading slash
+  return parts.splice(1)
 }
 
-export type Segments = Array<string | null>
+function parse (segment: string): Segment {
+  if (segment[0] === ':') return { fragment: null, placeholder: segment.substring(1) }
+  else return { fragment: segment }
+}
+
+export type Segment = {
+  fragment: string
+} | {
+  fragment: null
+  placeholder: string
+}

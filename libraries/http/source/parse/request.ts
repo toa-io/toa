@@ -1,8 +1,8 @@
 import { HTTPParser } from 'http-parser-js'
 
-export function request (input: string): Request {
+export function request (input: string): HTTPRequest {
   const parser = new HTTPParser(HTTPParser.REQUEST)
-  const request: Partial<Request> = {}
+  const request: Partial<HTTPRequest> = {}
   const bodyChunks: Buffer[] = []
 
   let complete = false
@@ -31,7 +31,7 @@ export function request (input: string): Request {
   if (bodyChunks.length > 0)
     request.body = Buffer.concat(bodyChunks)
 
-  return request as Request
+  return request as HTTPRequest
 }
 
 function reduceHeaders (array: string[]): Record<string, string> {
@@ -49,7 +49,7 @@ function reduceHeaders (array: string[]): Record<string, string> {
   return headers
 }
 
-export interface Request {
+interface HTTPRequest {
   url: string
   method: string
   headers: Record<string, string>

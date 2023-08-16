@@ -23,12 +23,14 @@ The following will represent the same resources as the above:
 /posts/:post-id: ...
 ```
 
-> Refer to the [Directives](#directives) section for an explanation of the differences between nested and adjacent RTD
+> Refer to the [Directives](#directives) section for an explanation of the differences between
+> nested and adjacent RTD
 > branches.
 
 An RTD node that does not contain any Routes is called an _RTD leaf_.
 
-Route segments prefixed with a colon `:` are Route Variables. Refer to [Query mapping](tree.query.md) for the details.
+Route segments prefixed with a colon `:` are Route Variables. Refer
+to [Query mapping](query.md) for the details.
 
 > Route declarations must not have a trailing slash.
 
@@ -36,18 +38,21 @@ Route segments prefixed with a colon `:` are Route Variables. Refer to [Query ma
 
 Methods are mappings of the HTTP methods to the corresponding operations.
 
-A Method is a key named after the corresponding HTTP method, with a value following the schema below:
+A Method is a key named after the corresponding HTTP method, with a value following the schema
+below:
 
 ```yaml
 endpoint: string
 query?: Query
 ```
 
-> Refer to [Query mapping](tree.query.md) for the details.
+> Refer to [Query mapping](query.md) for the details.
 
-Methods can be present in any RTD node. However, it is required that an RTD leaf must have at least one Method.
+Methods can be present in any RTD node.
+However, it is required that an RTD leaf must have at least one Method.
 
-If a Method only has an `operation` key, it can be declared directly as the value of the `operation` key.
+If a Method only has an `operation` key, it can be declared directly as the value of the `operation`
+key.
 
 ```yaml
 /teapots:
@@ -75,7 +80,8 @@ HTTP methods can only be mapped to operations of the corresponding types.
 | `GET`       | **Observation**<br/>**Computation**           |
 | `PATCH`     | **Assignment**<br/>**Effect**                 |
 
-As method mapping is unambiguous for Observation, Assignent, and Computation, a consice syntax is available:
+As method mapping is unambiguous for Observation, Assignent, and Computation, a consice syntax is
+available:
 
 ```yaml
 /items: compute
@@ -96,8 +102,10 @@ Intermediate Nodes must not have Methods as they are unreachable.
 
 ## Directives
 
-RTD Directives are declared using RTD node or Method keys following the `{provider}:{directive}` pattern and can be used
-to add or modify the behavior of request processing. Directive declarations are applied to the RTD node where they are
+RTD Directives are declared using RTD node or Method keys following the `{provider}:{directive}`
+pattern and can be used
+to add or modify the behavior of request processing. Directive declarations are applied to the RTD
+node where they are
 declared and to all nested nodes.
 
 ```yaml
@@ -107,8 +115,8 @@ declared and to all nested nodes.
     authorization:role: editor
 ```
 
-In the above example, the Route `/posts/:user-id/:post-id` has both `authorization:id` and `authorization:role`
-directives applied.
+In the above example, the Route `/posts/:user-id/:post-id/` has both `authorization:id`
+and `authorization:role` directives applied.
 
 When it is necessary to avoid directive nesting, a Route can be declared adjacent.
 
@@ -120,9 +128,11 @@ When it is necessary to avoid directive nesting, a Route can be declared adjacen
     role: editor
 ```
 
-In this example, the Route `/posts/:user-id/:post-id` has only the `authorization:role` directive applied.
+In this example, the Route `/posts/:user-id/:post-id/` has only the `authorization:role` directive
+applied.
 
-> Directives can be declared without the `{provider}:` prefix unless there are multiple directives with the same name
+> Directives can be declared without the `{provider}:` prefix unless there are multiple directives
+> with the same name
 > across different providers.
 
 See [Access Authorization](./access.md) as an example of directive provider.

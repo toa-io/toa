@@ -60,7 +60,7 @@ describe('request processing', () => {
   const method = generate()
   const reply = { output: generate() }
   const call = jest.fn(async () => reply)
-  const message = createIncomingMessage(generate(), method)
+  const message = createIncomingMessage(getPath(), method)
 
   beforeEach(async () => {
     await gateway.connect()
@@ -78,7 +78,7 @@ describe('request processing', () => {
   })
 
   it('should throw if node is not found', async () => {
-    const message = createIncomingMessage(generate())
+    const message = createIncomingMessage(getPath())
 
     tree.match.mockImplementationOnce(() => null)
 
@@ -86,11 +86,11 @@ describe('request processing', () => {
   })
 
   it('should throw if method is not found', async () => {
-    const message = createIncomingMessage(generate())
+    const message = createIncomingMessage(getPath())
     const methods = new Map()
     const node = { methods } as unknown as Node
 
-    tree.match.mockImplementationOnce(() => node)
+    tree.match.mockImplementationOnce(() => ({ node, parameters: [] }))
 
     await expect(process(message)).rejects.toThrow(MethodNotAllowed)
   })
@@ -117,7 +117,11 @@ function mockNode (verb: string, call: () => Promise<any>): jest.MockedObject<No
   const methods = new Map([[verb, method]])
   const node = { methods } as unknown as jest.MockedObject<Node>
 
-  tree.match.mockImplementationOnce(() => node)
+  tree.match.mockImplementationOnce(() => ({ node, parameters: [] }))
 
   return node
+}
+
+function getPath (): string {
+  return '/' + generate() + '/'
 }

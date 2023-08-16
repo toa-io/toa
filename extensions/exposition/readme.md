@@ -23,7 +23,7 @@ exposition:
 ```
 
 ```http
-GET /dummies/dummy
+GET /dummies/dummy/
 Host: api.example.com
 ```
 
@@ -105,6 +105,8 @@ The declaration above will result in exposing the following resources:
 /messaging/rooms/:user-id/
 /messaging/rooms/:user-id/:room-id/
 ```
+
+> Trailing slash is required.
 
 The top-level node of the resource branch may only contain [Routes](documentation/tree.md#routes).
 

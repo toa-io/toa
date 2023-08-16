@@ -22,7 +22,7 @@ beforeEach(() => {
   tree = new Tree(definition, remotes)
 })
 
-it('should match find context resources', async () => {
+it('should match context resources', async () => {
   expect(tree.match('/foo')).not.toBeNull()
   expect(tree.match('/bar')).toBeNull()
 })

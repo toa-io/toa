@@ -31,22 +31,25 @@ export class Gateway extends Connector {
   }
 
   private async process (message: http.IncomingMessage): Promise<http.OutgoingMessage> {
+    if (message.path[message.path.length - 1] !== '/')
+      throw new http.NotFound('Trailing slash is required.')
+
     const body = await this.call(message)
 
     return { headers: {}, body }
   }
 
   private async call (message: http.IncomingMessage): Promise<any> {
-    const node = this.tree.match(message.path)
+    const match = this.tree.match(message.path)
 
-    if (node === null) throw new http.NotFound()
+    if (match === null) throw new http.NotFound()
 
-    const method = node.methods.get(message.method)
+    const method = match.node.methods.get(message.method)
 
     if (method === undefined) throw new http.MethodNotAllowed()
 
     return await method
-      .call(message.body, message.query) // , match.params
+      .call(message.body, message.query, match.parameters)
       .catch(rethrow)
   }
 

@@ -1,7 +1,6 @@
-import type * as syntax from './syntax'
+import { type Parameter } from './Match'
 import type { Route } from './Route'
-import type { Method, Methods } from './Method'
-import type { Segments } from './segment'
+import type { Methods } from './Method'
 
 export class Node {
   public readonly intermediate: boolean
@@ -16,9 +15,9 @@ export class Node {
     this.methods = methods
   }
 
-  public match (segments: Segments): Node | null {
+  public match (fragments: string[], parameters: Parameter[]): Node | null {
     for (const route of this.routes) {
-      const node = route.match(segments)
+      const node = route.match(fragments, parameters)
 
       if (node !== null) return node
     }
@@ -31,7 +30,8 @@ export class Node {
       this.mergeRoute(route)
 
     for (const [verb, method] of node.methods)
-      this.mergeMethod(verb, method)
+      if (!(this.protected || this.methods.has(verb)))
+        this.methods.set(verb, method)
   }
 
   private mergeRoute (candidate: Route): void {
@@ -43,13 +43,6 @@ export class Node {
       }
 
     this.routes.push(candidate)
-  }
-
-  private mergeMethod (verb: syntax.Method, method: Method): void {
-    if (this.methods.has(verb) && this.protected)
-      return
-
-    this.methods.set(verb, method)
   }
 }
 

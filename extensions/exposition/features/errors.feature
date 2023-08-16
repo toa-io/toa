@@ -1,8 +1,5 @@
 Feature: Errors
 
-  Background:
-    Given the Gateway is running
-
   Scenario Outline: Missing routes
     Given the `greeter` is running with the following manifest:
       """yaml
@@ -21,13 +18,31 @@ Feature: Errors
       | route                                |
       | /basic/greeter/non-existent-segment/ |
       | /basic/non-existent-component/       |
-      | /non-existent-namespace              |
+      | /non-existent-namespace/             |
+
+  Scenario: Missing trailing slash
+    Given the `greeter` is running with the following manifest:
+        """yaml
+        namespace: basic
+        """
+    When the following request is received:
+        """
+        GET /basic/greeter HTTP/1.1
+        accept: application/json
+        """
+    Then the following reply is sent:
+        """
+        404 Not Found
+        content-type: application/json
+
+        "Trailing slash is required."
+        """
 
   Scenario: Missing method
     Given the `greeter` is running
     When the following request is received:
       """
-      PATCH /greeter HTTP/1.1
+      PATCH /greeter/ HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -38,7 +53,7 @@ Feature: Errors
   Scenario: Unsupported method
     When the following request is received:
       """
-      COPY /basic/greeter HTTP/1.1
+      COPY /basic/greeter/ HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -50,7 +65,7 @@ Feature: Errors
     Given the `pots` is running
     When the following request is received:
       """
-      POST /pots HTTP/1.1
+      POST /pots/ HTTP/1.1
       accept: application/yaml
       content-type: application/yaml
       content-length: 20
@@ -61,7 +76,7 @@ Feature: Errors
     Then the following reply is sent:
       """
       400 Bad Request
-      content-type: text/plain
+      content-type: application/yaml
 
       must have required property 'title'
       """

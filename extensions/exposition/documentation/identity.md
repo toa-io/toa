@@ -1,12 +1,15 @@
 # Identity
 
-Identity is the fundamental entity within an authentication system that represents the **unique identifier** of an
+Identity is the fundamental entity within an authentication system that represents the **unique
+identifier** of an
 individual, organization, application or device.
 
-In order to prove its Identity, the request originator must provide a valid _credentials_ that are associated with that
+In order to prove its Identity, the request originator must provide a valid _credentials_ that are
+associated with that
 Identity.
 
-Identity is intrinsically linked to credentials, as an Identity is established only when the first set of credentials
+Identity is intrinsically linked to credentials, as an Identity is established only when the first
+set of credentials
 for that Identity is created.
 In other words, the creation of credentials marks the inception of an Identity.
 Once the last credentials are removed from the Identity, it ceases to exist.
@@ -14,16 +17,19 @@ Without credentials, there is no basis for defining or asserting an Identity.
 
 ## Authentication
 
-The Authenticaiton system resolves provided credentials to an Identity using one of the supported authentication
+The Authenticaiton system resolves provided credentials to an Identity using one of the supported
+authentication
 schemes.
 
-The Authentication is request-agnostic, meaning it does not depend on the specific URL being requested or the content of
+The Authentication is request-agnostic, meaning it does not depend on the specific URL being
+requested or the content of
 the request body.
 The only information it handles is the value of the `Authorization` header.
 
 > Except for its own [management resources](#persistent-credentials).
 
-If the provided credentials are not valid or not associated with an Identity, then Authentication interrupts request
+If the provided credentials are not valid or not associated with an Identity, then Authentication
+interrupts request
 processing and responds with an authentication error.
 
 ### Basic scheme
@@ -43,14 +49,17 @@ Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
 ```
 
 The `Token` is the primary authentication scheme.
-If request originators use an alternative authentication scheme, they will receive a response containing
-`Token` credentials and will be required to switch to the `Token` scheme for any subsequent requests.
+If request originators use an alternative authentication scheme, they will receive a response
+containing
+`Token` credentials and will be required to switch to the `Token` scheme for any subsequent
+requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.
 
 ### Bearer scheme
 
 OpenID tokens issued by trusted providers.
-For more information, refer to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html),
+For more information, refer
+to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html),
 [RFC6750](https://datatracker.ietf.org/doc/html/rfc6750).
 
 ```http
@@ -73,7 +82,8 @@ The example above demonstrates the default list of trusted providers.
 
 ### Persistent Credentials
 
-`Basic` and `Bearer` credentials are persistent, so the Authentication system includes corresponding Components.
+`Basic` and `Bearer` credentials are persistent, so the Authentication system includes corresponding
+Components.
 
 | Component           | Description                      |
 |---------------------|----------------------------------|
@@ -82,7 +92,7 @@ The example above demonstrates the default list of trusted providers.
 
 These Components expose a list of resources to manage credentials.
 
-#### `/identity`
+#### `/identity/`
 
 <dl>
 <dt><code>POST</code></dt>
@@ -93,7 +103,7 @@ These Components expose a list of resources to manage credentials.
 <dd>Delete all credentials of an Identity.</dd>
 </dl>
 
-#### `/identity/basic/:id`
+#### `/identity/basic/:id/`
 
 > `:id` placeholder refers to an Identity.
 
@@ -108,7 +118,7 @@ username?: string
 password?: string
 ```
 
-#### `/identity/subjects/:id`
+#### `/identity/subjects/:id/`
 
 <dl>
 <dt><code>POST</code></dt>
@@ -141,8 +151,9 @@ Refer to [Access Authorization](access.md) for detailed information.
 Technically speaking, since the Authentication is request-agnostic, user credentials
 can be sent with any request.
 
-However, it is most likely that a request originator will need to obtain an Identity value for subsequent requests.
-For this reason, it is recommended to make a `GET /identity` request.
+However, it is most likely that a request originator will need to obtain an Identity value for
+subsequent requests.
+For this reason, it is recommended to make a `GET /identity/` request.
 </dd>
 <dt>How can I log out a user?</dt>
 <dd>Delete <code>Token</code> credentials from the device.</dd>

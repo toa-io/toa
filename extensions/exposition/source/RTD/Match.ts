@@ -2,5 +2,10 @@ import { type Node } from './Node'
 
 export interface Match {
   node: Node
-  params: Record<string, string>
+  parameters: Parameter[]
+}
+
+export interface Parameter {
+  name: string
+  value: string
 }

@@ -20,8 +20,8 @@ export class BadRequest extends ClientError {
 }
 
 export class NotFound extends ClientError {
-  public constructor () {
-    super(404)
+  public constructor (message?: string) {
+    super(404, message)
   }
 }
 

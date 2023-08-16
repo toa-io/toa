@@ -7,12 +7,11 @@ Feature: Queries
       | 4c4759e6f9c74da989d64511df42d6f4 | First pot  | 100    |
       | 99988d785d7d445cad45dbf8531f560b | Second pot | 200    |
       | a7edded6b2ab47a0aca9508cc4da4138 | Third pot  | 300    |
-    And the Gateway is running
 
   Scenario: Using query parameter
     When the following request is received:
       """
-      GET /pots/pot?id=99988d785d7d445cad45dbf8531f560b HTTP/1.1
+      GET /pots/pot/?id=99988d785d7d445cad45dbf8531f560b HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -29,7 +28,7 @@ Feature: Queries
   Scenario: Using path segment
     When the following request is received:
       """
-      GET /pots/99988d785d7d445cad45dbf8531f560b HTTP/1.1
+      GET /pots/99988d785d7d445cad45dbf8531f560b/ HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
