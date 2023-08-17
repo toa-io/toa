@@ -1,6 +1,6 @@
-import { type Remotes } from '../Remotes'
+import { type Component } from '@toa.io/core'
 
 export interface Context {
   protected: boolean
-  remotes: Remotes
+  discovery?: Promise<Component>
 }

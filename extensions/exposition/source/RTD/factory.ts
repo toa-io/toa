@@ -9,14 +9,15 @@ import { segment } from './segment'
 import { Mapping } from './Mapping'
 
 export function createTrunk (definition: syntax.Node, remotes: Remotes): Node {
-  const context: Context = { remotes, protected: true }
+  const context: Context = { protected: true }
 
   return createNode(definition, context)
 }
 
 export function createBranch (branch: syntax.Branch, remotes: Remotes): Node {
   const definition = createBranchDefinition(branch)
-  const context = { remotes, protected: false }
+  const discovery = remotes.discover(branch.namespace, branch.component)
+  const context: Context = { discovery, protected: false }
 
   return createNode(definition, context)
 }
@@ -53,8 +54,9 @@ function createRoute (key: string, definition: syntax.Node, context: Context): R
 }
 
 function createMethod (method: syntax.Method, mapping: syntax.Mapping, context: Context): Method {
-  const discovery = context.remotes.discover(mapping.namespace, mapping.component)
-  const endpoint = new Endpoint(discovery, mapping.endpoint)
+  if (context.discovery === undefined) throw new Error('?')
+
+  const endpoint = new Endpoint(context.discovery, mapping.endpoint)
   const map = Mapping.create(method)
 
   return new Method(endpoint, map)

@@ -3,7 +3,6 @@ import { type Bootloader } from './Factory'
 
 export class Remotes extends Connector {
   private readonly boot: Bootloader
-  private readonly remotes = new Map<string, Component>()
 
   public constructor (boot: Bootloader) {
     super()
@@ -12,15 +11,10 @@ export class Remotes extends Connector {
 
   public async discover (namespace: string, name: string): Promise<Component> {
     const locator = new Locator(name, namespace)
+    const remote = await this.boot.remote(locator)
 
-    if (!this.remotes.has(locator.id)) {
-      const remote = await this.boot.remote(locator)
+    this.depends(remote)
 
-      this.depends(remote)
-
-      this.remotes.set(locator.id, remote)
-    }
-
-    return this.remotes.get(locator.id) as Component
+    return remote
   }
 }
