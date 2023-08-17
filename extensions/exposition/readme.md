@@ -27,6 +27,8 @@ GET /dummies/dummy/
 Host: api.example.com
 ```
 
+See [features](features) for more examples.
+
 ## Overview
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764555658883997&cot=14">

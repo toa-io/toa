@@ -18,3 +18,5 @@ export class Remotes extends Connector {
     return remote
   }
 }
+
+// TODO: add factory with cache

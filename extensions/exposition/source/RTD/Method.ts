@@ -1,51 +1,23 @@
-import { type Request, type Reply, type Query } from '@toa.io/core'
+import { type Reply } from '@toa.io/core'
+import { type HTTPQuery } from '../HTTP'
+import { type Mapping } from './Mapping'
 import { type Endpoint } from './Endpoint'
 import { type Parameter } from './Match'
 import type * as syntax from './syntax'
 
-export abstract class Method {
+export class Method {
   private readonly endpoint: Endpoint
+  private readonly mapping: Mapping
 
-  public constructor (endpoint: Endpoint) {
+  public constructor (endpoint: Endpoint, mapping: Mapping) {
     this.endpoint = endpoint
+    this.mapping = mapping
   }
 
-  public async call (body: any, query: Query, parameters: Parameter[]): Promise<Reply> {
-    const request = this.request(body, query, parameters)
+  public async call (body: any, query: HTTPQuery, parameters: Parameter[]): Promise<Reply> {
+    const request = this.mapping.fit(body, query, parameters)
 
     return await this.endpoint.call(request)
-  }
-
-  protected abstract request (body: any, query: Query, parameters: Parameter[]): Request
-}
-
-export class InputMethod extends Method {
-  protected override request (input: any): Request {
-    return { input }
-  }
-}
-
-export class QueryMethod extends Method {
-  protected override request (input: any, query: Query, parameters: Parameter[]): Request {
-    const criteria: string[] = []
-
-    if (parameters.length > 0) {
-      const chunks = parameters
-        .map(({ name, value }) => `${name}==${value}`)
-
-      criteria.push(...chunks)
-    }
-
-    if (query.criteria !== undefined)
-      if (criteria.length > 0)
-        criteria.push('(' + query.criteria + ')')
-      else
-        criteria.push(query.criteria)
-
-    if (criteria.length > 0)
-      query.criteria = criteria.join(';')
-
-    return { input, query }
   }
 }
 
