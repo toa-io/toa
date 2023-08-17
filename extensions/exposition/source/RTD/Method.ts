@@ -20,13 +20,13 @@ export abstract class Method {
 }
 
 export class InputMethod extends Method {
-  protected override request (body: any): Request {
-    return { input: body }
+  protected override request (input: any): Request {
+    return { input }
   }
 }
 
 export class QueryMethod extends Method {
-  protected override request (body: any, query: Query, parameters: Parameter[]): Request {
+  protected override request (input: any, query: Query, parameters: Parameter[]): Request {
     const criteria: string[] = []
 
     if (parameters.length > 0) {
@@ -37,12 +37,15 @@ export class QueryMethod extends Method {
     }
 
     if (query.criteria !== undefined)
-      criteria.push(query.criteria)
+      if (criteria.length > 0)
+        criteria.push('(' + query.criteria + ')')
+      else
+        criteria.push(query.criteria)
 
     if (criteria.length > 0)
       query.criteria = criteria.join(';')
 
-    return { input: body, query }
+    return { input, query }
   }
 }
 

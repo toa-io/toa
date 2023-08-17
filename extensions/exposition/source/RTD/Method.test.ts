@@ -41,6 +41,16 @@ describe('QueryMethod', () => {
     expect(endpoint.call.mock.calls[0][0]).toMatchObject({ input: body })
   })
 
+  it('should send query', async () => {
+    const query = { criteria: 'foo==bar' }
+
+    await method.call({}, query, [])
+
+    expect(endpoint.call.mock.calls[0][0]).toMatchObject({
+      query: { criteria: 'foo==bar' }
+    })
+  })
+
   it('should use params as criteria', async () => {
     const parameters: Parameter[] = [
       { name: generate(), value: generate() },
@@ -59,13 +69,13 @@ describe('QueryMethod', () => {
 
   it('should combine criteria', async () => {
     const parameter: Parameter = { name: 'foo', value: 'bar' }
-    const query = { criteria: 'baz==qux' }
+    const query = { criteria: 'baz==qux,qux==bar' }
 
     await method.call({}, query, [parameter])
 
     expect(endpoint.call.mock.calls[0][0]).toMatchObject({
       query: {
-        criteria: 'foo==bar;baz==qux'
+        criteria: 'foo==bar;(baz==qux,qux==bar)'
       }
     })
   })
