@@ -14,15 +14,15 @@ export abstract class Mapping {
 
 class QueryableMapping extends Mapping {
   public fit (input: any, qs: HTTPQuery, parameters: Parameter[]): Request {
-    const query = this.getQuery(qs, parameters)
+    const query = this.query(qs, parameters)
 
     return { input, query }
   }
 
-  private getQuery (qs: HTTPQuery, parameters: Parameter[]): Query {
+  private query (qs: HTTPQuery, parameters: Parameter[]): Query {
     const query = qs as Query
 
-    this.addParameters(parameters, query)
+    this.addParameters(query, parameters)
 
     if (qs.sort !== undefined)
       query.sort = qs.sort.split(';')
@@ -30,7 +30,7 @@ class QueryableMapping extends Mapping {
     return query
   }
 
-  private addParameters (parameters: Parameter[], query: Query): void {
+  private addParameters (query: Query, parameters: Parameter[]): void {
     const criteria: string[] = []
 
     if (parameters.length > 0) {

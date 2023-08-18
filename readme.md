@@ -1,11 +1,11 @@
 # Toa
 
-Low-code solution for developers.
+Low-code solution for distributed systems.
 
 ## Status
 
 The project is under heavy development, while being used in production by its authors.
-Non-scattered documentation is coming this summer.
+Non-scattered documentation is coming this fall.
 
 ## Features
 
@@ -18,8 +18,8 @@ Non-scattered documentation is coming this summer.
   - Uniform interface
     - Input/query segregation
     - Output/error replies
+    - Distributed exception handling
   - Automatic service discovery
-  - Distributed exception handling
   - Multi-protocol transmission
     - built-in support for AMQP and HTTP
   - In-memory communications
@@ -30,7 +30,8 @@ Non-scattered documentation is coming this summer.
   - Data validation
   - Built-in implementations
     - MongoDB, Amazon DocumentDB
-    - PostgreSQL, MSSQL, MySQL, MariaDB, Oracle, CockroachDB, SQLite3, Better-SQLite3, and Amazon Redshift
+    - PostgreSQL, MSSQL, MySQL, MariaDB, Oracle, CockroachDB, SQLite3, Better-SQLite3, and Amazon
+      Redshift
 - [API Gateway](/extensions/exposition)
   - Realtime resource discovery
   - Semantic method mapping
