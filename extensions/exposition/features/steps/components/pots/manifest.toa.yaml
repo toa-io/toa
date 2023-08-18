@@ -18,24 +18,3 @@ operations:
       title: string
       volume: number
       temperature: number
-
-exposition:
-  /:
-    POST: transit
-    GET: enumerate
-  /:id:
-    GET: observe
-  /pot:
-    GET: observe
-  /big:
-    GET:
-      endpoint: enumerate
-      query:
-        criteria: volume>200;
-  /hottest2:
-    GET:
-      endpoint: enumerate
-      query:
-        criteria: temperature>60
-        sort: temperature:desc
-        limit: 2

@@ -22,21 +22,21 @@ Feature: Errors
 
   Scenario: Missing trailing slash
     Given the `greeter` is running with the following manifest:
-        """yaml
-        namespace: basic
-        """
+      """yaml
+      namespace: basic
+      """
     When the following request is received:
-        """
-        GET /basic/greeter HTTP/1.1
-        accept: application/json
-        """
+      """
+      GET /basic/greeter HTTP/1.1
+      accept: application/json
+      """
     Then the following reply is sent:
-        """
-        404 Not Found
-        content-type: application/json
+      """
+      404 Not Found
+      content-type: application/json
 
-        "Trailing slash is required."
-        """
+      "Trailing slash is required."
+      """
 
   Scenario: Missing method
     Given the `greeter` is running
@@ -82,7 +82,12 @@ Feature: Errors
       """
 
   Scenario: Query limit out of range
-    Given the `pots` is running
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET: enumerate
+      """
     When the following request is received:
       """
       GET /pots/?limit=1001 HTTP/1.1
@@ -97,16 +102,24 @@ Feature: Errors
       """
 
   Scenario: Closed query criteria
-    Given the `pots` is running
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /hot:
+          GET:
+            endpoint: enumerate
+            query:
+              criteria: temerature>60
+      """
     When the following request is received:
-        """
-        GET /pots/hottest2/?criteria=volume>500 HTTP/1.1
-        accept: text/plain
-        """
+      """
+      GET /pots/hot/?criteria=volume>500 HTTP/1.1
+      accept: text/plain
+      """
     Then the following reply is sent:
-        """
-        400 Bad Request
-        content-type: text/plain
+      """
+      400 Bad Request
+      content-type: text/plain
 
-        Query criteria is closed.
-        """
+      Query criteria is closed.
+      """
