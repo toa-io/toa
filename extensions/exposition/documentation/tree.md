@@ -24,8 +24,7 @@ The following will represent the same resources as the above:
 ```
 
 > Refer to the [Directives](#directives) section for an explanation of the differences between
-> nested and adjacent RTD
-> branches.
+> nested and adjacent RTD branches.
 
 An RTD node that does not contain any Routes is called an _RTD leaf_.
 
@@ -33,6 +32,22 @@ Route segments prefixed with a colon `:` are Route Variables. Refer
 to [Query mapping](query.md) for the details.
 
 > Route declarations must not have a trailing slash.
+
+### Route conflicts
+
+Routes with specific, non-variable segments are given precedence in routing decisions.
+
+Consider the following route declarations:
+
+```yaml
+/users/:id: ...
+/users/hot: ...
+```
+
+Request made to `/users/hot/`, will be routed to the second `/users/hot` Route,
+as it provides a more specific match compared to the generic `/users/:id` route.
+
+The priority of Routes with the same specificity is determined by the order of declaration.
 
 ## Methods
 

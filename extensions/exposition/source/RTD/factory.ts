@@ -38,6 +38,8 @@ function createNode (definition: syntax.Node, context: Context): Node {
       methods.set(key, method)
     }
 
+  routes.sort((a, b) => a.variables - b.variables)
+
   const properties: Properties = {
     intermediate,
     protected: context.protected

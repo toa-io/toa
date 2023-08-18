@@ -22,6 +22,8 @@ exposition:
   /:
     POST: transit
     GET: enumerate
+  /:id:
+    GET: observe
   /pot:
     GET: observe
   /big:
@@ -29,5 +31,3 @@ exposition:
       endpoint: enumerate
       query:
         criteria: volume>200
-  /:id:
-    GET: observe
