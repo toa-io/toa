@@ -197,6 +197,26 @@ describe('validate', () => {
       validate(node, operations)
     }).not.toThrow()
   })
+
+  it('should throw if limit is missing default value', async () => {
+    const node: Node = {
+      '/': {
+        GET: {
+          namespace,
+          component,
+          endpoint: 'observe',
+          type: 'observation',
+          query: {
+            limit: { range: [1, 100] }
+          }
+        }
+      }
+    }
+
+    expect(() => {
+      validate(node, operations)
+    }).toThrow('must have required property')
+  })
 })
 
 describe('methods', () => {

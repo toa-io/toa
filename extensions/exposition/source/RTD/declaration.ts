@@ -61,6 +61,9 @@ function normalizeMapping (mapping: Mapping, manifest: Manifest): RTD.Mapping {
   if (query !== undefined) {
     query.omit = normalizeRange(query.omit)
     query.limit = normalizeRange(query.limit)
+
+    if (query.limit?.value === undefined && query.limit?.range !== undefined)
+      query.limit.value = query.limit.range[0]
   }
 
   return { namespace, component, endpoint, type, query }

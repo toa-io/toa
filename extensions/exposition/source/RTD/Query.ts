@@ -9,9 +9,6 @@ export class Query {
   private readonly closed: boolean = false
 
   public constructor (query: syntax.Query) {
-    range(query.omit)
-    range(query.limit)
-
     if (query.criteria !== undefined) {
       const open = query.criteria[query.criteria.length - 1] === ';'
 
@@ -72,12 +69,12 @@ export class Query {
     const query = qs as core.Query
 
     if (qs.limit !== undefined)
-      query.limit = test(qs.limit, this.query.limit.range, 'limit')
+      query.limit = fit(qs.limit, this.query.limit.range, 'limit')
     else
       query.limit = this.query.limit.value
 
     if (qs.omit !== undefined)
-      query.omit = test(qs.omit, this.query.omit.range, 'omit')
+      query.omit = fit(qs.omit, this.query.omit.range, 'omit')
   }
 
   private fitSort (qs: http.Query): void {
@@ -92,11 +89,7 @@ export class Query {
   }
 }
 
-function range (input: syntax.Range): void {
-  if (input.value === undefined) input.value = input.range[0]
-}
-
-function test (string: string, range: [number, number], name: string): number {
+function fit (string: string, range: [number, number], name: string): number {
   const number = parseInt(string)
 
   if (number < range[0] || number > range[1])

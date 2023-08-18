@@ -11,5 +11,6 @@ limit:
   default:
     value: 10
     range: [1, 1000]
+  required: [value]
 selectors?: [string]
 projection?: [string]
