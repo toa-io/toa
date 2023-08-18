@@ -64,10 +64,10 @@ describe('directory', () => {
     expect(two).toBeDefined()
     expect(two.fit({ bar: 'a string' })).toStrictEqual(null)
     expect(two.fit({ bar: [1, 2] })).toMatchObject({ keyword: 'type' })
+  })
 
-    const no = namespace.schema('not.a.schema')
-
-    expect(no).toStrictEqual(undefined)
+  it('should throw on unknown schema', async () => {
+    expect(() => namespace.schema('not.a.schema')).toThrow()
   })
 
   it('should resolve reference', async () => {
