@@ -28,10 +28,17 @@ The following will represent the same resources as the above:
 
 An RTD node that does not contain any Routes is called an _RTD leaf_.
 
-Route segments prefixed with a colon `:` are Route Variables. Refer
-to [Query mapping](query.md) for the details.
-
 > Route declarations must not have a trailing slash.
+
+### Route variables
+
+Route segments prefixed with a colon (`:`) are Route variables.
+
+> A segment may include a reference to a single variable.
+> For instance, in the route `/messages/:sender-:recipient`,
+> a single variable is declared with the name `sender-:recipient`.
+
+Refer to [Query mapping](query.md) for the details.
 
 ### Route conflicts
 
