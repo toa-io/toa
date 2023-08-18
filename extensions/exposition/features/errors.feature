@@ -123,3 +123,24 @@ Feature: Errors
 
       Query criteria is closed.
       """
+
+  Scenario: Additional query parameters
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            endpoint: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/?foo=bar HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      content-type: text/plain
+
+      Query must NOT have additional properties
+      """

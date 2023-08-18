@@ -13,6 +13,8 @@ export class Node {
     this.protected = properties.protected
     this.routes = routes
     this.methods = methods
+
+    this.sort()
   }
 
   public match (fragments: string[], parameters: Parameter[]): Node | null {
@@ -27,14 +29,14 @@ export class Node {
 
   public merge (node: Node): void {
     for (const route of node.routes)
-      this.route(route)
+      this.mergeRoute(route)
 
     for (const [verb, method] of node.methods)
-      if (!(this.protected || this.methods.has(verb)))
+      if (!(this.protected && this.methods.has(verb)))
         this.methods.set(verb, method)
   }
 
-  private route (candidate: Route): void {
+  private mergeRoute (candidate: Route): void {
     for (const route of this.routes)
       if (candidate.equals(route)) {
         route.merge(candidate)
@@ -43,6 +45,11 @@ export class Node {
       }
 
     this.routes.push(candidate)
+    this.sort()
+  }
+
+  private sort (): void {
+    this.routes.sort((a, b) => a.variables - b.variables)
   }
 }
 

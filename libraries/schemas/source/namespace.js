@@ -19,6 +19,10 @@ class Namespace {
   }
 
   schema (id) {
+    if (!(id in this.#schemas)) {
+      throw new Error(`Namespace doesn't contain schema '${id}'`)
+    }
+
     return this.#schemas[id]
   }
 }

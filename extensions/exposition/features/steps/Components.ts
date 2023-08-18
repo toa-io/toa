@@ -27,7 +27,8 @@ export class Components {
   }
 
   @after()
-  public async stop (): Promise<void> {
+  @given('the `{word}` is stopped')
+  public async stop (_?: string): Promise<void> {
     await this.composition?.disconnect()
   }
 
@@ -37,6 +38,6 @@ export class Components {
     this.composition = await boot.composition([path])
 
     await this.composition.connect()
-    await timeout(200) // discovery
+    await timeout(50) // discovery
   }
 }

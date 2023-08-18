@@ -5,3 +5,4 @@ const path = resolve(__dirname, '../../schemas')
 const namespace = schemas.namespace(path)
 
 export const branch = namespace.schema('branch')
+export const querystring = namespace.schema('querystring')

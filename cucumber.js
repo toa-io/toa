@@ -7,7 +7,8 @@ const common = {
 module.exports = {
   default: {
     ...common,
-    require: ['./features/**/*.js', './features/**/*.ts']
+    require: ['./features/**/*.js', './features/**/*.ts'],
+    paths: ['extensions/exposition/features']
   },
   exposition: {
     ...common,

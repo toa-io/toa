@@ -1,5 +1,6 @@
 import * as http from '../HTTP'
 import { type Parameter } from './Match'
+import * as schemas from './schemas'
 import type * as syntax from './syntax'
 import type * as core from '@toa.io/core'
 
@@ -22,6 +23,11 @@ export class Query {
   }
 
   public fit (query: http.Query, parameters: Parameter[]): core.Query {
+    const error = schemas.querystring.fit(query)
+
+    if (error !== null)
+      throw new http.BadRequest('Query ' + error.message)
+
     this.fitCriteria(query, parameters)
     this.fitRanges(query)
     this.fitSort(query)

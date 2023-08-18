@@ -31,6 +31,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
+    "test:features": "npx cucumber-js",
     "transpile": "tsc"
   },
   "devDependencies": {

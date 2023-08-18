@@ -158,13 +158,19 @@ If no default value is provided, then the lower boundary of the range is used.
 
 Default values for `omit` and `limit` are:
 
-  ```yaml
+```yaml
 omit:
   value: 0
   range: [0, 1000]
 limit:
   value: 10
   range: [1, 1000]
+```
+
+Constant values can be declared using the shortcut:
+
+```yaml
+limit: 10
 ```
 
 ## Sort
