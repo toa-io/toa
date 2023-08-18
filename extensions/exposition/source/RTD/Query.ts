@@ -7,8 +7,8 @@ export class Query {
   private readonly query: syntax.Query
 
   public constructor (query: syntax.Query) {
-    fix(query.omit)
-    fix(query.limit)
+    range(query.omit)
+    range(query.limit)
 
     this.query = query
   }
@@ -58,12 +58,16 @@ export class Query {
   private fitSort (qs: http.Query): void {
     const query = qs as core.Query
 
-    if (qs.sort !== undefined)
-      query.sort = qs.sort.split(';')
+    if (qs.sort === undefined && this.query.sort === undefined)
+      return
+
+    const sort = (this.query.sort ?? '') + (qs.sort ?? '')
+
+    query.sort = sort.split(';')
   }
 }
 
-function fix (input: syntax.Range): void {
+function range (input: syntax.Range): void {
   if (input.value === undefined) input.value = input.range[0]
 }
 

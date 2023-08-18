@@ -5,10 +5,10 @@ Feature: Queries
       # See `steps/components/pots`
     And the `pots` database contains:
       | _id                              | title      | volume | temperature |
-      | 4c4759e6f9c74da989d64511df42d6f4 | First pot  | 100    | 90          |
+      | 4c4759e6f9c74da989d64511df42d6f4 | First pot  | 100    | 80          |
       | 99988d785d7d445cad45dbf8531f560b | Second pot | 200    | 30          |
       | a7edded6b2ab47a0aca9508cc4da4138 | Third pot  | 300    | 50          |
-      | bc6913d317334d76acd07d9f25f73535 | Fourth pot | 400    | 80          |
+      | bc6913d317334d76acd07d9f25f73535 | Fourth pot | 400    | 90          |
 
   Scenario: Request with `id` query parameter
     When the following request is received:
@@ -122,4 +122,26 @@ Feature: Queries
         - id: bc6913d317334d76acd07d9f25f73535
           title: Fourth pot
           volume: 400
+      """
+
+  Scenario: Predefined sorting
+    When the following request is received:
+      """
+      GET /pots/hottest2/ HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      output:
+        - id: bc6913d317334d76acd07d9f25f73535
+          title: Fourth pot
+          volume: 400
+          temperature: 90
+        - id: 4c4759e6f9c74da989d64511df42d6f4
+          title: First pot
+          volume: 100
+          temperature: 80
       """

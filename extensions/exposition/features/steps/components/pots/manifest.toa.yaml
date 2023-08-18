@@ -31,3 +31,9 @@ exposition:
       endpoint: enumerate
       query:
         criteria: volume>200
+  /hottest2:
+    GET:
+      endpoint: enumerate
+      query:
+        sort: temperature:desc
+        limit: 2

@@ -58,6 +58,11 @@ function normalizeMapping (mapping: Mapping, manifest: Manifest): RTD.Mapping {
 
   const query = mapping.query
 
+  if (query !== undefined) {
+    query.omit = normalizeRange(query.omit)
+    query.limit = normalizeRange(query.limit)
+  }
+
   return { namespace, component, endpoint, type, query }
 }
 
@@ -66,6 +71,16 @@ function operationType (endpoint: string, operations: Operations): operations.ty
 
   if (type === undefined) throw new syntax.Exception(`Operation '${endpoint}' is not defined.`)
   else return type
+}
+
+function normalizeRange (range: RTD.Range | number | [number, number]): RTD.Range {
+  if (typeof range === 'number')
+    return { value: range, range: [range, range] }
+
+  if (Array.isArray(range))
+    return { range }
+
+  return range
 }
 
 const UNAMBIGUOUS_METHODS: Partial<Record<operations.type, RTD.Method>> = {
