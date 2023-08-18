@@ -95,3 +95,18 @@ Feature: Errors
 
       Query limit must be between 1 and 1000 inclusive.
       """
+
+  Scenario: Closed query criteria
+    Given the `pots` is running
+    When the following request is received:
+        """
+        GET /pots/hottest2/?criteria=volume>500 HTTP/1.1
+        accept: text/plain
+        """
+    Then the following reply is sent:
+        """
+        400 Bad Request
+        content-type: text/plain
+
+        Query criteria is closed.
+        """

@@ -17,6 +17,7 @@ operations:
       id: string
       title: string
       volume: number
+      temperature: number
 
 exposition:
   /:
@@ -30,10 +31,11 @@ exposition:
     GET:
       endpoint: enumerate
       query:
-        criteria: volume>200
+        criteria: volume>200;
   /hottest2:
     GET:
       endpoint: enumerate
       query:
+        criteria: temperature>60
         sort: temperature:desc
         limit: 2

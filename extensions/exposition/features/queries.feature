@@ -104,7 +104,7 @@ Feature: Queries
         volume: 200
       """
 
-  Scenario: Request to a route with predefined query
+  Scenario: Request to a route with predefined criretia
     When the following request is received:
       """
       GET /pots/big/ HTTP/1.1
@@ -124,7 +124,25 @@ Feature: Queries
           volume: 400
       """
 
-  Scenario: Predefined sorting
+  Scenario: Request to a route with combined criteria
+    When the following request is received:
+      """
+      GET /pots/big/?criteria=temperature>50 HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      output:
+        - id: bc6913d317334d76acd07d9f25f73535
+          title: Fourth pot
+          volume: 400
+          temperature: 90
+      """
+
+  Scenario: Request to a route with predefined query
     When the following request is received:
       """
       GET /pots/hottest2/ HTTP/1.1

@@ -25,8 +25,15 @@ describe('Queryable', () => {
     expect(request.input).toBe(body)
   })
 
-  it.each(['id', 'criteria', 'omit', 'limit'] as Key[])('should set query.%s', async (key) => {
+  it.each(['id', 'criteria'] as Key[])('should set query.%s', async (key) => {
     const query = { [key]: generate() }
+    const request = converter.fit(undefined, query, [])
+
+    expect(request.query?.[key]).toBe(query[key])
+  })
+
+  it.each(['omit', 'limit'] as Key[])('should set query.%s', async (key) => {
+    const query = { [key]: '1' }
     const request = converter.fit(undefined, query, [])
 
     expect(request.query?.[key]).toBe(query[key])
@@ -57,7 +64,7 @@ describe('Queryable', () => {
 
     const request = converter.fit(undefined, query, [parameter])
 
-    expect(request.query?.criteria).toEqual('foo==bar;(baz==qux,qux==bar)')
+    expect(request.query?.criteria).toEqual('(foo==bar);(baz==qux,qux==bar)')
   })
 })
 
