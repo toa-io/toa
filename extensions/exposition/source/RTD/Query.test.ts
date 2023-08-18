@@ -19,3 +19,20 @@ it('should combine request criteria', async () => {
 
   expect(result.criteria).toStrictEqual('(foo==1);(bar==2;baz==3);(qux==4)')
 })
+
+it('should set id parameter as query.id', async () => {
+  const query: syntax.Query = {
+    omit: { range: [0, 1] },
+    limit: { range: [0, 1] }
+  }
+
+  const id = '87782631058445da81cb82f78b20c223'
+
+  const parameters: Parameter[] = [{ name: 'id', value: id }]
+
+  const instance = new Query(query)
+  const result = instance.fit({}, parameters)
+
+  expect(result.criteria).toBeUndefined()
+  expect(result.id).toStrictEqual(id)
+})

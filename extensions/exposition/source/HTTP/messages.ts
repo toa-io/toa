@@ -63,7 +63,8 @@ export interface IncomingMessage extends Message {
 }
 
 export interface OutgoingMessage extends Message {
-  headers: OutgoingHttpHeaders
+  status?: number
+  headers?: OutgoingHttpHeaders
 }
 
 export interface Query {

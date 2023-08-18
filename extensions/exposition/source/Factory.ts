@@ -4,6 +4,7 @@ import { Remotes } from './Remotes'
 import { Tree } from './RTD'
 import { Server } from './HTTP'
 import { methods, type Node } from './RTD/syntax'
+import { read } from './annotaiton'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
@@ -29,7 +30,8 @@ export class Factory implements extensions.Factory {
     const broadcast = this.boot.bindings.broadcast(CHANNEL)
     const server = Server.create({ methods })
     const remotes = new Remotes(this.boot)
-    const tree = new Tree({}, remotes)
+    const annotation = read()
+    const tree = new Tree(annotation, remotes)
 
     return new Gateway(broadcast, server, tree)
   }

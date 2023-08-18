@@ -65,9 +65,7 @@ Grants access if resolved Identity has a role matching the directive's value or 
 
 exposition:
   /code:
-    role:
-      - developer
-      - reviewer
+    role: [developer, reviewer]
 ```
 
 Access will be granted if the resolved Identity has a role that matches `developer` or `reviewer`.
@@ -256,8 +254,7 @@ In the example above:
 ### Nesting
 
 Policies are namespace-scoped, meaning they can be attached to any Route under the
-corresponding `/{namespace}`
-prefix.
+corresponding `/{namespace}` prefix.
 
 Attachment is applied to the node where it is declared, as well as its nested nodes.
 Directives of the Attachment are applied to the node where the attached Policies are declared, as

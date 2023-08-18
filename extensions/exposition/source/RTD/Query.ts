@@ -38,6 +38,14 @@ export class Query {
     if (this.query.criteria !== undefined)
       criteria.push(this.query.criteria)
 
+    const idx = parameters.findIndex((parameter) => parameter.name === 'id')
+
+    if (idx !== -1) {
+      query.id = parameters[idx].value
+
+      parameters.splice(idx, 1)
+    }
+
     if (parameters.length > 0) {
       const chunks = parameters
         .map(({ name, value }) => `${name}==${value}`)
