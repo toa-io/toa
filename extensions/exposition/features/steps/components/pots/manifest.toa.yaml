@@ -24,5 +24,10 @@ exposition:
     GET: enumerate
   /pot:
     GET: observe
+  /big:
+    GET:
+      endpoint: enumerate
+      query:
+        criteria: volume>200
   /:id:
     GET: observe
