@@ -7,7 +7,9 @@
   component*: string
   endpoint*: string
   type*: [transition, observation, assignment, computation, effect]
-  query: object
+  query:
+    $ref: query
+    default: { }
 
 # directives
 /^[a-z0-9]+:[a-z0-9]+$/: { }

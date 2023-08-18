@@ -3,11 +3,12 @@
 ## TL;DR
 
 ```yaml
+id?: string
 criteria?: string
-selectors: string[] | null
 sort?: string
 omit?: [integer]
 limit?: [integer]
+selectors?: string[]
 projection?: [string]
 ```
 
@@ -153,20 +154,17 @@ limit:
   range: [1, 100]
 ```
 
-If `range` is not specified, then the `value` is constat.
-If no `value` is specified, then the lower boundary of the `range` is considered the default value.
-Both of these cases have consice shortcuts:
-
-```yaml
-omit: 10
-limit: [10, 100]
-```
+If no default value is provided, then the lower boundary of the range is used.
 
 Default values for `omit` and `limit` are:
 
-```yaml
-omit: [0, 1000]
-limit: [10, 100]
+  ```yaml
+omit:
+  value: 0
+  range: [0, 1000]
+limit:
+  value: 10
+  range: [1, 1000]
 ```
 
 ## Sort
@@ -205,19 +203,18 @@ GET /dummies/?sort=timestamp:asc
 
 ## Selectors
 
-The `selectors` query property contains a semicolon-separated list of Entity properties allowed for
-a client to use in the `criteria` and `sort` query parameters.
-
-`null` value means that all Entity properties are allowed.
+The `selectors` query property contains a list of Entity properties allowed for a client to use in
+the `criteria` and `sort` query parameters.
+If no value is provided, then no selectors are allowed.
 
 ```yaml
-selectors: rank;timestamp
+selectors: [rank, timestamp]
 ```
 
 ## Projection
 
-A list of Entity properties to be included in the Observation result, delimited by a comma.
+A list of Entity properties to be included in the Observation result.
 
 ```yaml
-projection: id;title;timestamp
+projection: [id, title, timestamp]
 ```

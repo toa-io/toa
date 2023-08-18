@@ -107,7 +107,7 @@ Feature: Queries
   Scenario: Request to a route with predefined query
     When the following request is received:
       """
-      GET /pots/big/?limit=10 HTTP/1.1
+      GET /pots/big/ HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:

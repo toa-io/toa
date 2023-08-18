@@ -59,10 +59,14 @@ export class Gateway extends Connector {
   }
 
   private merge (branch: syntax.Branch): void {
-    this.tree.merge(branch)
+    try {
+      this.tree.merge(branch)
 
-    console.info('Resource branch of ' +
-      `'${branch.namespace}.${branch.component}' has been merged.`)
+      console.info('Resource branch of ' +
+        `'${branch.namespace}.${branch.component}' has been merged.`)
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 

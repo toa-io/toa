@@ -80,3 +80,18 @@ Feature: Errors
 
       must have required property 'title'
       """
+
+  Scenario: Query limit out of range
+    Given the `pots` is running
+    When the following request is received:
+      """
+      GET /pots/?limit=1001 HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      content-type: text/plain
+
+      Query limit must be between 1 and 1000 inclusive.
+      """

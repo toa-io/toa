@@ -13,10 +13,10 @@ export class Factory implements extensions.Factory {
     this.boot = boot
   }
 
-  public tenant (locator: Locator, branch: Node): Connector {
+  public tenant (locator: Locator, node: Node): Connector {
     const broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
 
-    return new Tenant(broadcast, locator, branch)
+    return new Tenant(broadcast, locator, node)
   }
 
   public service (name: string): Connector | null {

@@ -91,7 +91,15 @@ it('should create methods', async () => {
     namespace,
     component,
     endpoint: generate(),
-    type: 'observation'
+    type: 'observation',
+    query: {
+      omit: {
+        range: [0, 1000]
+      },
+      limit: {
+        range: [1, 100]
+      }
+    }
   }
 
   const definition: syntax.Branch = {
@@ -130,7 +138,15 @@ it('should find methods below intermediate nodes', async () => {
         '/': {
           GET: {
             endpoint: generate(),
-            type: 'observation'
+            type: 'observation',
+            query: {
+              omit: {
+                range: [0, 1000]
+              },
+              limit: {
+                range: [1, 100]
+              }
+            }
           }
         }
       }
@@ -165,7 +181,15 @@ it('should create trunk', async () => {
     namespace,
     component,
     endpoint: generate(),
-    type: 'observation'
+    type: 'observation',
+    query: {
+      omit: {
+        range: [0, 1000]
+      },
+      limit: {
+        range: [1, 100]
+      }
+    }
   }
 
   const definition: syntax.Node = {
@@ -192,7 +216,7 @@ it('should create trunk', async () => {
 })
 
 it('should merge nodes', async () => {
-  const definition1 = defineBranch({ '/foo': { GET: {} } })
+  const definition1 = defineBranch({ '/foo': { GET: { query } } })
   const definition2 = defineBranch({ '/bar': { POST: {} } })
 
   const node1 = createBranch(definition1, remotes)
@@ -208,7 +232,7 @@ it('should merge nodes', async () => {
 })
 
 it('should merge methods', async () => {
-  const definition1 = defineBranch({ '/foo': { GET: {} } })
+  const definition1 = defineBranch({ '/foo': { GET: { query } } })
   const definition2 = defineBranch({ '/foo': { POST: {} } })
   const node1 = createBranch(definition1, remotes)
   const node2 = createBranch(definition2, remotes)
@@ -233,7 +257,8 @@ it('should not overwrite methods in the trunk', async () => {
           GET: {
             namespace,
             component,
-            endpoint: trunkEndpoint
+            endpoint: trunkEndpoint,
+            query
           }
         }
       }
@@ -247,7 +272,8 @@ it('should not overwrite methods in the trunk', async () => {
       GET: {
         namespace,
         component,
-        endpoint: branchEndpoint
+        endpoint: branchEndpoint,
+        query
       }
     }
   })
@@ -273,3 +299,5 @@ it('should not overwrite methods in the trunk', async () => {
 function defineBranch (node: syntax.Node): syntax.Branch {
   return { namespace, component, node }
 }
+
+const query = { omit: { range: [0, 1000] }, limit: { range: [1, 100] } }

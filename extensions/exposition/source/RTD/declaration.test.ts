@@ -30,7 +30,7 @@ it('should add namespace, component', async () => {
 
   const node = normalize(declaration, manifest)
 
-  expect(node).toStrictEqual({
+  expect(node).toMatchObject({
     '/': {
       GET: {
         namespace,
@@ -51,7 +51,7 @@ it('should expand operation shortcuts', async () => {
 
   const node = normalize(declaration, manifest)
 
-  expect(node).toStrictEqual({
+  expect(node).toMatchObject({
     '/': {
       GET: {
         namespace,
@@ -74,7 +74,7 @@ it('should expand operation shortcuts in nested Routes', async () => {
 
   const node = normalize(declaration, manifest)
 
-  expect(node).toStrictEqual({
+  expect(node).toMatchObject({
     '/': {
       '/dummies': {
         GET: {
@@ -97,7 +97,7 @@ it('should expand method shortcuts', async () => {
 
   const node = normalize(declaration, manifest)
 
-  expect(node).toStrictEqual({
+  expect(node).toMatchObject({
     '/': {
       '/dummies': {
         GET: {
@@ -120,7 +120,7 @@ it('should throw on unsupported type', async () => {
 
   const node = normalize(declaration, manifest)
 
-  expect(node).toStrictEqual({
+  expect(node).toMatchObject({
     '/': {
       '/dummies': {
         GET: {

@@ -1,6 +1,7 @@
 import { generate } from 'randomstring'
 import { Mapping } from './Mapping'
 import { type Parameter } from './Match'
+import type * as syntax from './syntax'
 
 describe('NonQueryable', () => {
   const converter = Mapping.create('POST')
@@ -14,7 +15,8 @@ describe('NonQueryable', () => {
 })
 
 describe('Queryable', () => {
-  const converter = Mapping.create('PATCH')
+  const query: syntax.Query = { omit: { range: [0, 1000] }, limit: { range: [1, 100] } }
+  const converter = Mapping.create('PATCH', query)
 
   it('should set body as input', async () => {
     const body = generate()

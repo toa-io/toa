@@ -1,0 +1,15 @@
+id?: string
+criteria?: string
+sort?: string
+omit:
+  $ref: range
+  default:
+    value: 0
+    range: [0, 1000]
+limit:
+  $ref: range
+  default:
+    value: 10
+    range: [1, 1000]
+selectors?: [string]
+projection?: [string]

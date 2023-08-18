@@ -10,7 +10,15 @@ const foo: syntax.Node = {
     namespace: generate(),
     component: generate(),
     endpoint: generate(),
-    type: 'observation'
+    type: 'observation',
+    query: {
+      omit: {
+        range: [0, 1000]
+      },
+      limit: {
+        range: [1, 100]
+      }
+    }
   }
 }
 

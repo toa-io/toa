@@ -170,6 +170,33 @@ describe('validate', () => {
       validate(node, operations)
     }).toThrow('is mapped to undefined operation')
   })
+
+  it('should not throw on query declaration', async () => {
+    const node: Node = {
+      '/': {
+        GET: {
+          namespace,
+          component,
+          endpoint: 'observe',
+          type: 'observation',
+          query: {
+            criteria: 'foo==bar',
+            limit: {
+              value: 1,
+              range: [1, 10]
+            },
+            omit: {
+              range: [0, 200]
+            }
+          }
+        }
+      }
+    }
+
+    expect(() => {
+      validate(node, operations)
+    }).not.toThrow()
+  })
 })
 
 describe('methods', () => {

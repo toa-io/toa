@@ -54,7 +54,11 @@ function normalizeMapping (mapping: Mapping, manifest: Manifest): RTD.Mapping {
   const endpoint: string = typeof mapping === 'string' ? mapping : mapping.endpoint
   const type = operationType(endpoint, manifest.operations)
 
-  return { namespace, component, endpoint, type }
+  mapping = mapping as RTD.Mapping
+
+  const query = mapping.query
+
+  return { namespace, component, endpoint, type, query }
 }
 
 function operationType (endpoint: string, operations: Operations): operations.type {

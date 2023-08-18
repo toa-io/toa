@@ -63,11 +63,27 @@ export type Directives = Record<string, any>
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | string
 
+export interface Range {
+  value?: number
+  range: [number, number]
+}
+
+export interface Query {
+  id?: string
+  criteria?: string
+  sort?: string
+  selectors?: string[]
+  omit: Range
+  limit: Range
+  projection?: string[]
+}
+
 export interface Mapping {
   namespace: string
   component: string
   endpoint: string
   type: core.operations.type
+  query: Query
 }
 
 export interface Branch {

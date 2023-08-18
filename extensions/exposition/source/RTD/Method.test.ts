@@ -1,5 +1,5 @@
 import { generate } from 'randomstring'
-import { type HTTPQuery } from '../HTTP'
+import { type Query } from '../HTTP'
 import { type Endpoint } from './Endpoint'
 import { Method } from './Method'
 import { type Mapping } from './Mapping'
@@ -21,7 +21,7 @@ beforeEach(() => {
 
 it('should call endpoint', async () => {
   const body = generate()
-  const query: HTTPQuery = { [generate()]: generate() }
+  const query: Query = { [generate()]: generate() }
   const parameters: Parameter[] = [{ name: generate(), value: generate() }]
 
   await method.call(body, query, parameters)

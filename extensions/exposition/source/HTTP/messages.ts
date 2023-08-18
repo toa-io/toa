@@ -6,12 +6,8 @@ import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
 export function write (request: Request, response: Response, body: any): void {
-  const type = negotiate(request)
-  const format = formats[type]
-  const buf = format.encode(body)
+  const buf = format(body, request, response)
 
-  // content-length and etag are set by Express
-  response.set('content-type', type)
   response.send(buf)
 }
 
@@ -33,6 +29,19 @@ export async function read (request: Request): Promise<any> {
   }
 }
 
+function format (body: any, request: Request, response: Response): Buffer | undefined {
+  if (body === undefined || body?.length === 0) return
+
+  const type = negotiate(request)
+  const format = formats[type]
+  const buf = format.encode(body)
+
+  // content-length and etag are set by Express
+  response.set('content-type', type)
+
+  return buf
+}
+
 function negotiate (request: Request): string {
   const negotiator = new Negotiator(request)
   const mediaType = negotiator.mediaType(types)
@@ -50,14 +59,14 @@ export interface IncomingMessage extends Message {
   method: string
   path: string
   headers: IncomingHttpHeaders
-  query: HTTPQuery
+  query: Query
 }
 
 export interface OutgoingMessage extends Message {
   headers: OutgoingHttpHeaders
 }
 
-export interface HTTPQuery {
+export interface Query {
   id?: string
   criteria?: string
   sort?: string

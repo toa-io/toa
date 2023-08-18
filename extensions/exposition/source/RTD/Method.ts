@@ -1,5 +1,5 @@
 import { type Reply } from '@toa.io/core'
-import { type HTTPQuery } from '../HTTP'
+import { type Query } from '../HTTP'
 import { type Mapping } from './Mapping'
 import { type Endpoint } from './Endpoint'
 import { type Parameter } from './Match'
@@ -14,7 +14,7 @@ export class Method {
     this.mapping = mapping
   }
 
-  public async call (body: any, query: HTTPQuery, parameters: Parameter[]): Promise<Reply> {
+  public async call (body: any, query: Query, parameters: Parameter[]): Promise<Reply> {
     const request = this.mapping.fit(body, query, parameters)
 
     return await this.endpoint.call(request)

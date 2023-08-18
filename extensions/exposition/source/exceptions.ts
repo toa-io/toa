@@ -2,7 +2,7 @@ import { type Exception } from '@toa.io/core'
 import * as http from './HTTP'
 
 export function rethrow (exception: Exception): void {
-  // see core/src/exceptions.js
+  // see /runtime/core/src/exceptions.js
 
   if ((exception.code >= 200 && exception.code < 210) || exception.code === 221)
     throw new http.BadRequest(exception.message)
