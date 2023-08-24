@@ -35,8 +35,8 @@ export class EndpointFactory implements MethodFactory<Endpoint> {
 
   public create (method: syntax.Method, context: Context): Endpoint {
     const mapping = Mapping.create(method.verb, method.mapping.query)
-    const namespace = method.mapping.namespace ?? context.extensions?.namespace
-    const component = method.mapping.component ?? context.extensions?.component
+    const namespace = method.mapping.namespace ?? context.extension?.namespace
+    const component = method.mapping.component ?? context.extension?.component
 
     if (namespace === undefined || component === undefined)
       throw new Error('Annotation endpoints must be fully qualified.')

@@ -24,17 +24,17 @@ export class Tree<TMethod> {
     else return { node, parameters }
   }
 
-  public merge (node: syntax.Node, extensions: any): void {
-    const branch = this.createNode(node, !PROTECTED, extensions)
+  public merge (node: syntax.Node, extension: any): void {
+    const branch = this.createNode(node, !PROTECTED, extension)
 
     this.trunk.merge(branch)
   }
 
-  private createNode (node: syntax.Node, protect: boolean, extensions?: any): Node<TMethod> {
+  private createNode (node: syntax.Node, protect: boolean, extension?: any): Node<TMethod> {
     const context: Context = {
       protected: protect,
       methods: this.methods,
-      extensions
+      extension
     }
 
     return createNode(node, context)
