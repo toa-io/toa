@@ -1,8 +1,9 @@
 import { Connector, type bindings } from '@toa.io/core'
-import { type Tree, type syntax } from './RTD'
+import { type Tree } from './RTD'
 import { type Label } from './discovery'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
+import { type Branch } from './Branch'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
@@ -44,28 +45,28 @@ export class Gateway extends Connector {
 
     if (match === null) throw new http.NotFound()
 
-    const method = match.node.methods.get(message.method)
+    const method = match.node.methods[message.method]
 
     if (method === undefined) throw new http.MethodNotAllowed()
 
-    return await method
+    return method
       .call(message.body, message.query, match.parameters)
       .catch(rethrow)
   }
 
   private async discover (): Promise<void> {
-    await this.broadcast.receive<syntax.Branch>('expose', this.merge.bind(this))
+    await this.broadcast.receive<Branch>('expose', this.merge.bind(this))
     await this.broadcast.transmit<null>('ping', null)
   }
 
-  private merge (branch: syntax.Branch): void {
+  private merge (branch: Branch): void {
     try {
-      this.tree.merge(branch)
+      this.tree.merge(branch.node, branch)
 
       console.info('Resource branch of ' +
         `'${branch.namespace}.${branch.component}' has been merged.`)
-    } catch (e) {
-      console.error(e)
+    } catch (exception) {
+      console.error(exception)
     }
   }
 }

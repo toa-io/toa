@@ -1,8 +1,7 @@
-import { type Component } from '@toa.io/core'
-import { type Remotes } from '../Remotes'
+import { type MethodFactory } from './Method'
 
-export interface Context {
-  protected: boolean
-  discovery?: Promise<Component>
-  remotes?: Remotes
+export interface Context<Extension = any> {
+  readonly protected: boolean
+  readonly methods: MethodFactory
+  readonly extensions?: Extension
 }

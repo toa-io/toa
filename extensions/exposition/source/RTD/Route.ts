@@ -3,11 +3,13 @@ import { type Segment } from './segment'
 import { type Parameter } from './Match'
 
 export class Route {
+  public readonly root: boolean
   public readonly variables: number = 0
   private readonly segments: Segment[]
   private readonly node: Node
 
   public constructor (segments: Segment[], node: Node) {
+    this.root = segments.length === 0
     this.segments = segments
     this.node = node
 

@@ -1,5 +1,7 @@
 export * from './Tree'
 export * from './Node'
 export * from './Match'
+export * from './Method'
+export * from './Context'
 export * as syntax from './syntax'
 export * as schemas from './schemas'

@@ -1,10 +1,9 @@
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
-import { Tree } from './RTD'
+import { Tree, syntax } from './RTD'
 import { Server } from './HTTP'
-import { methods, type Node } from './RTD/syntax'
-import { read } from './annotaiton'
+import { EndpointFactory } from './Endpoint'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
@@ -14,7 +13,7 @@ export class Factory implements extensions.Factory {
     this.boot = boot
   }
 
-  public tenant (locator: Locator, node: Node): Connector {
+  public tenant (locator: Locator, node: syntax.Node): Connector {
     const broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
 
     return new Tenant(broadcast, locator, node)
@@ -28,10 +27,11 @@ export class Factory implements extensions.Factory {
 
   private gateway (): Gateway {
     const broadcast = this.boot.bindings.broadcast(CHANNEL)
-    const server = Server.create({ methods })
+    const server = Server.create({ methods: syntax.verbs })
     const remotes = new Remotes(this.boot)
-    const annotation = read()
-    const tree = new Tree(annotation, remotes)
+    const methods = new EndpointFactory(remotes)
+    const annotation: syntax.Node = { routes: [], methods: [], directives: [] }
+    const tree = new Tree(annotation, methods)
 
     return new Gateway(broadcast, server, tree)
   }

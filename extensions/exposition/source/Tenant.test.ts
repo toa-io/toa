@@ -2,14 +2,14 @@ import { generate } from 'randomstring'
 import { Locator } from '@toa.io/core'
 import { Tenant } from './Tenant'
 import { broadcast } from './Factory.fixtures'
-
+import { type Branch } from './Branch'
 import type * as RTD from './RTD/syntax'
 
 const component = generate()
 const namespace = generate()
 const locator = new Locator(component, namespace)
-const node: RTD.Node = { '/': { [generate()]: generate() } }
-const branch: RTD.Branch = { component, namespace, node }
+const node = { [generate()]: generate() } as unknown as RTD.Node
+const branch: Branch = { namespace, component, node }
 
 let tenant: Tenant
 

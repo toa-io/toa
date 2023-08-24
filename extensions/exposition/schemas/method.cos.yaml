@@ -1,0 +1,6 @@
+verb: /^(GET|POST|PUT|PATCH|DELETE)$/
+mapping:
+  endpoint: string
+  query?:
+    $ref: query
+    default: { }

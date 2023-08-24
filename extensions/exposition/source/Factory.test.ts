@@ -27,7 +27,7 @@ beforeEach(() => {
 describe('Tenant', () => {
   const name = generate()
   const locator = new Locator(name)
-  const branch: Node = {}
+  const branch: Node = { routes: [], methods: [], directives: [] }
 
   it('should be', async () => {
     expect(factory.tenant).toBeInstanceOf(Function)

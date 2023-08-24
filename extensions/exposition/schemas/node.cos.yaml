@@ -1,15 +1,8 @@
 # routes
-/^\/(.{1,128}[^\/])?$/: ref:#/
+routes: [ref:route]
+#/^\/(.{1,128}[^\/])?$/: ref:#/
 
-# methods
-/^(GET|POST|PUT|PATCH|DELETE)$/:
-  namespace: default
-  component*: string
-  endpoint*: string
-  type*: [transition, observation, assignment, computation, effect]
-  query:
-    $ref: query
-    default: { }
+methods: [ref:method]
 
 # directives
-/^[a-z0-9]{1,16}:[a-z0-9]{1,16}$/: { }
+directives: [ref:directive]

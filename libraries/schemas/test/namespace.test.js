@@ -89,4 +89,26 @@ describe('directory', () => {
 
     expect(schema.fit({ baz: [1, 2] })).toStrictEqual(null)
   })
+
+  it('should resolve circular references', async () => {
+    const schema = namespace.schema('circular/a')
+
+    const value = {
+      foo: {
+        b: {
+          bar: {
+            a: {
+              foo: {
+                value: 1
+              }
+            },
+            value: 'hello'
+          }
+        },
+        value: 1
+      }
+    }
+
+    expect(schema.fit(value)).toStrictEqual(null)
+  })
 })

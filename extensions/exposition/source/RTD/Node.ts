@@ -1,6 +1,6 @@
 import { type Parameter } from './Match'
-import type { Route } from './Route'
-import type { Methods } from './Method'
+import { type Methods } from './Method'
+import { type Route } from './Route'
 
 export class Node {
   public readonly intermediate: boolean
@@ -9,10 +9,10 @@ export class Node {
   private readonly routes: Route[]
 
   public constructor (routes: Route[], methods: Methods, properties: Properties) {
-    this.intermediate = properties.intermediate
-    this.protected = properties.protected
     this.routes = routes
     this.methods = methods
+    this.protected = properties.protected
+    this.intermediate = this.routes.findIndex((route) => route.root) !== -1
 
     this.sort()
   }
@@ -31,9 +31,9 @@ export class Node {
     for (const route of node.routes)
       this.mergeRoute(route)
 
-    for (const [verb, method] of node.methods)
-      if (!(this.protected && this.methods.has(verb)))
-        this.methods.set(verb, method)
+    for (const [verb, method] of Object.entries(node.methods))
+      if (!(this.protected && verb in this.methods))
+        this.methods[verb] = method
   }
 
   private mergeRoute (candidate: Route): void {
@@ -54,6 +54,5 @@ export class Node {
 }
 
 export interface Properties {
-  intermediate: boolean
   protected: boolean
 }

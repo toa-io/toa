@@ -47,11 +47,11 @@ it('should merge branches', async () => {
   await immediate()
 
   const merge = broadcast.receive.mock.calls[0][1]
-  const branch = { '/foo': {} }
+  const branch = { node: { '/foo': {} } }
 
   void merge(branch)
 
-  expect(tree.merge).toHaveBeenCalledWith(branch)
+  expect(tree.merge).toHaveBeenCalledWith(branch.node, branch)
 })
 
 describe('request processing', () => {
@@ -114,7 +114,7 @@ describe('request processing', () => {
 
 function mockNode (verb: string, call: () => Promise<any>): jest.MockedObject<Node> {
   const method = { call }
-  const methods = new Map([[verb, method]])
+  const methods = { [verb]: method }
   const node = { methods } as unknown as jest.MockedObject<Node>
 
   tree.match.mockImplementationOnce(() => ({ node, parameters: [] }))

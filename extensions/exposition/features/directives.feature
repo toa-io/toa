@@ -1,6 +1,6 @@
-Feature: Attributes
+Feature: Directives
 
-  Scenario: Dummy attribute
+  Scenario: Basic directive
     Given the annotation:
       """yaml
       /:

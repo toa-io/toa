@@ -1,17 +1,17 @@
-import { type Remotes } from '../Remotes'
 import { type Node } from './Node'
 import { createBranch, createTrunk } from './factory'
 import { fragment } from './segment'
 import { type Match, type Parameter } from './Match'
+import { type MethodFactory } from './Method'
 import type * as syntax from './syntax'
 
 export class Tree {
   private readonly trunk: Node
-  private readonly remotes: Remotes
+  private readonly methods: MethodFactory
 
-  public constructor (definition: syntax.Node, remotes: Remotes) {
-    this.trunk = createTrunk(definition, remotes)
-    this.remotes = remotes
+  public constructor (node: syntax.Node, methods: MethodFactory) {
+    this.trunk = createTrunk(node, methods)
+    this.methods = methods
   }
 
   public match (path: string): Match | null {
@@ -23,8 +23,8 @@ export class Tree {
     else return { node, parameters }
   }
 
-  public merge (definition: syntax.Branch): void {
-    const branch = createBranch(definition, this.remotes)
+  public merge (node: syntax.Node, extensions: Record<string, any>): void {
+    const branch = createBranch(node, this.methods, extensions)
 
     this.trunk.merge(branch)
   }

@@ -1,24 +1,25 @@
-import { type Reply } from '@toa.io/core'
-import { type Query } from '../HTTP'
-import { type Mapping } from './Mapping'
-import { type Endpoint } from './Endpoint'
-import { type Parameter } from './Match'
+import { type Context } from './Context'
 import type * as syntax from './syntax'
 
-export class Method {
-  private readonly endpoint: Endpoint
-  private readonly mapping: Mapping
+export type Methods = Record<string, any>
 
-  public constructor (endpoint: Endpoint, mapping: Mapping) {
-    this.endpoint = endpoint
-    this.mapping = mapping
-  }
-
-  public async call (body: any, query: Query, parameters: Parameter[]): Promise<Reply> {
-    const request = this.mapping.fit(body, query, parameters)
-
-    return await this.endpoint.call(request)
-  }
+export interface MethodFactory<T = any> {
+  create: (method: syntax.Method, context: Context) => T
 }
 
-export type Methods = Map<syntax.Method, Method>
+// export class Endpoint {
+//   private readonly discovery: Promise<Component>
+//   private readonly endpoint: string
+//   private remote: Component | null = null
+//
+//   public constructor (discovery: Promise<Component>, endpoint: string) {
+//     this.discovery = discovery
+//     this.endpoint = endpoint
+//   }
+//
+//   public async call (request: Request): Promise<Reply> {
+//     this.remote ??= await this.discovery
+//
+//     return await this.remote.invoke(this.endpoint, request)
+//   }
+// }

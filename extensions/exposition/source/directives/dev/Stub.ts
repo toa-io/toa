@@ -1,7 +1,7 @@
-import { type Attribute } from '../../attributes'
+import { type Directive } from '../index'
 import { type OutgoingMessage } from '../../HTTP'
 
-export class Stub implements Attribute {
+export class Stub implements Directive {
   private readonly value: any
 
   public constructor (value: any) {

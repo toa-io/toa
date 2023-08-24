@@ -1,7 +1,7 @@
-import * as http from '../HTTP'
-import { type Parameter } from './Match'
+import * as http from './HTTP'
+import { type Parameter } from './RTD'
 import * as schemas from './schemas'
-import type * as syntax from './syntax'
+import type * as syntax from './RTD/syntax'
 import type * as core from '@toa.io/core'
 
 export class Query {
@@ -54,12 +54,9 @@ export class Query {
       criteria.push(chunks)
     }
 
-    if (query.criteria !== undefined) {
-      if (this.closed)
-        throw new http.BadRequest('Query criteria is closed.')
-
-      criteria.push(query.criteria)
-    }
+    if (query.criteria !== undefined)
+      if (this.closed) throw new http.BadRequest('Query criteria is closed.')
+      else criteria.push(query.criteria)
 
     switch (criteria.length) {
       case 0:

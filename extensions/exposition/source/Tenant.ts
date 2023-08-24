@@ -1,10 +1,11 @@
 import { Connector, type Locator, type bindings } from '@toa.io/core'
 import { type Label } from './discovery'
+import { type Branch } from './Branch'
 import type * as RTD from './RTD/syntax'
 
 export class Tenant extends Connector {
   private readonly broadcast: Broadcast
-  private readonly branch: RTD.Branch
+  private readonly branch: Branch
 
   public constructor (broadcast: Broadcast, locator: Locator, node: RTD.Node) {
     super()

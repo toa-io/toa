@@ -1,6 +1,5 @@
 import { Query } from './Query'
-import { type Parameter } from './Match'
-import type * as syntax from './syntax'
+import { type Parameter, type syntax } from './RTD'
 
 it('should combine request criteria', async () => {
   const query: syntax.Query = {

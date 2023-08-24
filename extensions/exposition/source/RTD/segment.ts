@@ -5,6 +5,7 @@ export function segment (path: string): Segment[] {
 export function fragment (path: string): string[] {
   const parts = path.split('/')
 
+  // trailing slash
   if (parts[parts.length - 1] === '') parts.length--
 
   // leading slash

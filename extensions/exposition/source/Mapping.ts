@@ -1,15 +1,18 @@
-import { type Parameter } from './Match'
+import { type Parameter } from './RTD'
 import { Query } from './Query'
-import type * as http from '../HTTP'
-import type * as syntax from './syntax'
+import type * as http from './HTTP'
+import type * as syntax from './RTD/syntax'
 import type * as core from '@toa.io/core'
 
 export abstract class Mapping {
-  public static create (method: syntax.Method, query?: syntax.Query): Mapping {
-    if (method === 'POST')
-      return new NonQueryableMapping()
+  public static create (verb: string, query?: syntax.Query): Mapping {
+    if (verb === 'POST')
+      return new InputMapping()
 
-    const q = new Query(query as syntax.Query)
+    if (query === undefined)
+      throw new Error(`Query constraints must be defined for ${verb}`)
+
+    const q = new Query(query)
 
     return new QueryableMapping(q)
   }
@@ -33,7 +36,7 @@ class QueryableMapping extends Mapping {
   }
 }
 
-class NonQueryableMapping extends Mapping {
+class InputMapping extends Mapping {
   public fit (input: any): core.Request {
     return { input }
   }

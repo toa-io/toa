@@ -36,7 +36,8 @@ Feature: Routes
     Given the `greeter` is running with the following manifest:
       """yaml
       exposition:
-        /: greet
+        /:
+          GET: greet
       """
     When the following request is received:
       """
