@@ -1,8 +1,8 @@
 import { type Component, type Reply } from '@toa.io/core'
-import { type Context, type MethodFactory, type Parameter, type syntax } from './RTD'
+import { type MethodFactory, type Parameter, type syntax } from './RTD'
 import { type Remotes } from './Remotes'
 import { Mapping } from './Mapping'
-import { type Branch } from './Branch'
+import { type Context } from './Context'
 import type * as http from './HTTP'
 
 export class Endpoint {
@@ -33,13 +33,13 @@ export class EndpointFactory implements MethodFactory<Endpoint> {
     this.remotes = remotes
   }
 
-  public create (method: syntax.Method, context: Context<Branch>): Endpoint {
+  public create (method: syntax.Method, context: Context): Endpoint {
     const mapping = Mapping.create(method.verb, method.mapping.query)
     const namespace = method.mapping.namespace ?? context.extensions?.namespace
     const component = method.mapping.component ?? context.extensions?.component
 
     if (namespace === undefined || component === undefined)
-      throw new Error('Annotation methods must contain namespace and component properties.')
+      throw new Error('Annotation endpoints must be fully qualified.')
 
     const discovery = this.remotes.discover(namespace, component)
 

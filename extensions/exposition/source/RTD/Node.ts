@@ -1,14 +1,15 @@
-import { type Parameter } from './Match'
-import { type Methods } from './Method'
 import { type Route } from './Route'
+import { type Methods } from './Method'
+import { type Parameter } from './Match'
 
-export class Node {
+export class Node<TMethod> {
   public readonly intermediate: boolean
-  public readonly methods: Methods
+  public readonly methods: Methods<TMethod>
   private readonly protected: boolean
   private readonly routes: Route[]
 
-  public constructor (routes: Route[], methods: Methods, properties: Properties) {
+  // eslint-disable-next-line max-params
+  public constructor (routes: Route[], methods: Methods<TMethod>, properties: Properties) {
     this.routes = routes
     this.methods = methods
     this.protected = properties.protected
@@ -17,7 +18,7 @@ export class Node {
     this.sort()
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Node | null {
+  public match (fragments: string[], parameters: Parameter[]): Node<TMethod> | null {
     for (const route of this.routes) {
       const node = route.match(fragments, parameters)
 
@@ -27,7 +28,7 @@ export class Node {
     return null
   }
 
-  public merge (node: Node): void {
+  public merge (node: Node<TMethod>): void {
     for (const route of node.routes)
       this.mergeRoute(route)
 

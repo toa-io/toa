@@ -8,7 +8,7 @@ export class Factory implements directives.Factory {
     const Class = constructors.get(name)
 
     if (Class === undefined)
-      throw new Error(`'${this.name}' doesn't provide directive '${name}'`)
+      throw new Error(`Directive '${name}' is not provided by '${this.name}'.`)
 
     return new Class(value)
   }

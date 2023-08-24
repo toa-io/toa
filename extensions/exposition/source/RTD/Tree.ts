@@ -1,20 +1,21 @@
 import { type Node } from './Node'
-import { createBranch, createTrunk } from './factory'
+import { createNode } from './factory'
 import { fragment } from './segment'
 import { type Match, type Parameter } from './Match'
 import { type MethodFactory } from './Method'
+import { type Context } from './Context'
 import type * as syntax from './syntax'
 
-export class Tree {
-  private readonly trunk: Node
-  private readonly methods: MethodFactory
+export class Tree<TMethod> {
+  private readonly trunk: Node<TMethod>
+  private readonly methods: MethodFactory<TMethod>
 
   public constructor (node: syntax.Node, methods: MethodFactory) {
-    this.trunk = createTrunk(node, methods)
     this.methods = methods
+    this.trunk = this.createNode(node, PROTECTED)
   }
 
-  public match (path: string): Match | null {
+  public match (path: string): Match<TMethod> | null {
     const fragments = fragment(path)
     const parameters: Parameter[] = []
     const node = this.trunk.match(fragments, parameters)
@@ -23,9 +24,21 @@ export class Tree {
     else return { node, parameters }
   }
 
-  public merge (node: syntax.Node, extensions: Record<string, any>): void {
-    const branch = createBranch(node, this.methods, extensions)
+  public merge (node: syntax.Node, extensions: any): void {
+    const branch = this.createNode(node, !PROTECTED, extensions)
 
     this.trunk.merge(branch)
   }
+
+  private createNode (node: syntax.Node, protect: boolean, extensions?: any): Node<TMethod> {
+    const context: Context = {
+      protected: protect,
+      methods: this.methods,
+      extensions
+    }
+
+    return createNode(node, context)
+  }
 }
+
+const PROTECTED = true

@@ -3,7 +3,7 @@ import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
 import { Tree, syntax } from './RTD'
 import { Server } from './HTTP'
-import { EndpointFactory } from './Endpoint'
+import { type Endpoint, EndpointFactory } from './Endpoint'
 import * as env from './annotation'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
@@ -32,7 +32,7 @@ export class Factory implements extensions.Factory {
     const remotes = new Remotes(this.boot)
     const methods = new EndpointFactory(remotes)
     const annotation: syntax.Node = env.resolve()
-    const tree = new Tree(annotation, methods)
+    const tree = new Tree<Endpoint>(annotation, methods)
 
     return new Gateway(broadcast, server, tree)
   }

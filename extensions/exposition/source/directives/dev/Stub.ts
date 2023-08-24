@@ -9,6 +9,8 @@ export class Stub implements Directive {
   }
 
   public async pre (): Promise<OutgoingMessage> {
+    console.log('Stub pre')
+
     return { status: 200, body: this.value }
   }
 }

@@ -4,12 +4,13 @@ import { type Label } from './discovery'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import { type Branch } from './Branch'
+import { type Endpoint } from './Endpoint'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
-  private readonly tree: Tree
+  private readonly tree: Tree<Endpoint>
 
-  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree) {
+  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint>) {
     super()
 
     this.broadcast = broadcast
@@ -49,7 +50,7 @@ export class Gateway extends Connector {
 
     if (method === undefined) throw new http.MethodNotAllowed()
 
-    return method
+    return await method
       .call(message.body, message.query, match.parameters)
       .catch(rethrow)
   }

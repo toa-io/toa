@@ -88,7 +88,7 @@ describe('request processing', () => {
   it('should throw if method is not found', async () => {
     const message = createIncomingMessage(getPath())
     const methods = new Map()
-    const node = { methods } as unknown as Node
+    const node = { methods } as unknown as Node<any>
 
     tree.match.mockImplementationOnce(() => ({ node, parameters: [] }))
 
@@ -112,10 +112,10 @@ describe('request processing', () => {
   })
 })
 
-function mockNode (verb: string, call: () => Promise<any>): jest.MockedObject<Node> {
+function mockNode (verb: string, call: () => Promise<any>): jest.MockedObject<Node<any>> {
   const method = { call }
   const methods = { [verb]: method }
-  const node = { methods } as unknown as jest.MockedObject<Node>
+  const node = { methods } as unknown as jest.MockedObject<Node<any>>
 
   tree.match.mockImplementationOnce(() => ({ node, parameters: [] }))
 

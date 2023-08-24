@@ -44,6 +44,7 @@ overrides:
             - type
       max-params: error
       arrow-parens: error
+      no-warning-comments: error
       '@typescript-eslint/consistent-type-imports':
         - error
         - fixStyle: inline-type-imports
