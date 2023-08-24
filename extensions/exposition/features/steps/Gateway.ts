@@ -4,6 +4,7 @@ import { type Connector } from '@toa.io/core'
 import { parse } from '@toa.io/yaml'
 import { encode } from '@toa.io/generic'
 import { Factory } from '../../source'
+import * as syntax from '../../source/RTD/syntax'
 
 @binding()
 export class Gateway {
@@ -12,8 +13,9 @@ export class Gateway {
   @given('the annotation:')
   public async annotate (yaml: string): Promise<void> {
     const annotation = parse(yaml)
+    const node = syntax.parse(annotation)
 
-    process.env.TOA_EXPOSITION = encode(annotation)
+    process.env.TOA_EXPOSITION = encode(node)
 
     await Gateway.stop()
     await Gateway.start()
@@ -26,7 +28,7 @@ export class Gateway {
 
   @beforeAll()
   public static async start (): Promise<void> {
-    if (this.instance !== null) throw new Error('Gateway is already running')
+    if (this.instance !== null) throw new Error('Gateway is already running.')
 
     const factory = new Factory(boot)
     const service = factory.service('gateway')

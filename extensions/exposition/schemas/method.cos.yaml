@@ -1,5 +1,7 @@
 verb: /^(GET|POST|PUT|PATCH|DELETE)$/
 mapping:
+  namespace?: string
+  component?: string
   endpoint: string
   query?:
     $ref: query

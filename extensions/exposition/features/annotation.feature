@@ -5,14 +5,12 @@ Feature: Annotation
       """yaml
       /foo:
         GET:
-          component: pots
-          endpoint: enumerate
-          type: observation
+          endpoint: pots.enumerate
       """
     And the `pots` is running
     And the `pots` database contains:
-      | _id                              | title     | volume | temperature |
-      | 4c4759e6f9c74da989d64511df42d6f4 | First pot | 100    | 80          |
+      | _id                              | title     | volume |
+      | 4c4759e6f9c74da989d64511df42d6f4 | First pot | 100    |
     When the following request is received:
       """
       GET /foo/ HTTP/1.1

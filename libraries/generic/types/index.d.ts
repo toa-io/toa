@@ -22,7 +22,7 @@ export function echo (input: string, ...values: string[]): string
 
 export function encode (input: any): string
 
-export function decode (input: string): any
+export function decode<T = any> (input: string): T
 
 export function memo<T> (fn: T): T
 

@@ -64,10 +64,10 @@ describe('methods', () => {
     expect(root.methods[0].mapping).toMatchObject({ endpoint: 'observe' })
   })
 
-  it('should parse endpoint shortcut', async () => {
+  it('should parse fq endpoint', async () => {
     const declaration = {
       '/': {
-        GET: 'observe'
+        GET: 'dummies.dummy.observe'
       }
     }
 
@@ -76,7 +76,32 @@ describe('methods', () => {
 
     expect(root.methods).toHaveLength(1)
     expect(root.methods[0].verb).toBe('GET')
-    expect(root.methods[0].mapping).toMatchObject({ endpoint: 'observe' })
+
+    expect(root.methods[0].mapping).toMatchObject({
+      namespace: 'dummies',
+      component: 'dummy',
+      endpoint: 'observe'
+    })
+  })
+
+  it('should parse fq endpoint within default namespace', async () => {
+    const declaration = {
+      '/': {
+        GET: 'dummy.observe'
+      }
+    }
+
+    const node = parse(declaration)
+    const root = node.routes[0].node
+
+    expect(root.methods).toHaveLength(1)
+    expect(root.methods[0].verb).toBe('GET')
+
+    expect(root.methods[0].mapping).toMatchObject({
+      namespace: 'default',
+      component: 'dummy',
+      endpoint: 'observe'
+    })
   })
 })
 

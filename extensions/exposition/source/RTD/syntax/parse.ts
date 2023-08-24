@@ -56,7 +56,7 @@ function parseNode (input: object, shortcuts?: Shortcuts): Node {
   return node
 }
 
-function createNode (): Node {
+export function createNode (): Node {
   return {
     routes: [],
     methods: [],
@@ -74,13 +74,22 @@ function createRoute (path: string, node: Node): Route {
   return { path, node }
 }
 
-function parseMethod (verb: string, value: object | string): Method {
-  if (typeof value === 'string')
-    return { verb, mapping: { endpoint: value } }
+function parseMethod (verb: string, value: Mapping | string): Method {
+  const mapping = typeof value === 'string' ? { endpoint: value } : value
 
-  const mapping = value as Mapping
+  parseEndpoint(mapping)
 
   return { verb, mapping }
+}
+
+function parseEndpoint (mapping: Mapping): void {
+  const [endpoiont, component, namespace] = mapping.endpoint.split('.').reverse()
+
+  if (component !== undefined) {
+    mapping.component = component
+    mapping.namespace = namespace ?? mapping.namespace ?? 'default'
+    mapping.endpoint = endpoiont
+  }
 }
 
 const DIRECTIVE_RX = /^(?<family>\w{1,16}):(?<name>\w{1,6})$/

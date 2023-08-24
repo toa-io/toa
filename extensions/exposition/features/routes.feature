@@ -12,7 +12,6 @@ Feature: Routes
         /shortcuts:
           /operation:
             GET: greet
-          /method: greet
       """
     When the following request is received:
       """
@@ -30,7 +29,6 @@ Feature: Routes
       | route                 |
       | /strict/              |
       | /shortcuts/operation/ |
-      | /shortcuts/method/    |
 
   Scenario: Basic routes within default namespace
     Given the `greeter` is running with the following manifest:
