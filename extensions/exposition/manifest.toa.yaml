@@ -1,5 +1,0 @@
-name: greeter
-
-operations:
-  greet:
-    output: string
