@@ -9,8 +9,6 @@ export class Stub implements Directive {
   }
 
   public apply (): Output {
-    console.log('Stub pre')
-
     return { status: 200, body: this.value }
   }
 }
