@@ -5,7 +5,7 @@ import {
   type Route,
   type Method,
   type Mapping,
-  type Directive
+  type Directive, type Range
 } from './types'
 
 export function parse (input: object, shortcuts?: Shortcuts): Node {
@@ -78,6 +78,7 @@ function parseMethod (verb: string, value: Mapping | string): Method {
   const mapping = typeof value === 'string' ? { endpoint: value } : value
 
   parseEndpoint(mapping)
+  parseQuery(mapping)
 
   return { verb, mapping }
 }
@@ -90,6 +91,23 @@ function parseEndpoint (mapping: Mapping): void {
     mapping.namespace = namespace ?? mapping.namespace ?? 'default'
     mapping.endpoint = endpoiont
   }
+}
+
+function parseQuery (mapping: any): void {
+  const query = mapping.query
+
+  if (query === undefined)
+    return
+
+  if (typeof query.limit === 'number')
+    query.limit = expandRange(query.limit)
+
+  if (typeof query.omit === 'number')
+    query.omit = expandRange(query.omit)
+}
+
+function expandRange (range: number): Range {
+  return { value: range, range: [range, range] }
 }
 
 const DIRECTIVE_RX = /^(?<family>\w{1,16}):(?<name>\w{1,6})$/

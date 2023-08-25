@@ -2,13 +2,13 @@ import { type Node } from './Node'
 import { type Segment } from './segment'
 import { type Parameter } from './Match'
 
-export class Route<TMethod = any> {
+export class Route {
   public readonly root: boolean
   public readonly variables: number = 0
   private readonly segments: Segment[]
-  private readonly node: Node<TMethod>
+  private readonly node: Node
 
-  public constructor (segments: Segment[], node: Node<TMethod>) {
+  public constructor (segments: Segment[], node: Node) {
     this.root = segments.length === 0
     this.segments = segments
     this.node = node
@@ -18,7 +18,7 @@ export class Route<TMethod = any> {
         this.variables++
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Node<TMethod> | null {
+  public match (fragments: string[], parameters: Parameter[]): Node | null {
     for (let i = 0; i < this.segments.length; i++) {
       const segment = this.segments[i]
 
@@ -50,7 +50,7 @@ export class Route<TMethod = any> {
     this.node.merge(route.node)
   }
 
-  private matchNested (fragments: string[], parameters: Parameter[]): Node<TMethod> | null {
+  private matchNested (fragments: string[], parameters: Parameter[]): Node | null {
     fragments = fragments.slice(this.segments.length)
 
     return this.node.match(fragments, parameters)

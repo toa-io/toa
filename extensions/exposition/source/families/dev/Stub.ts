@@ -1,5 +1,5 @@
-import { type Directive } from '../index'
-import { type OutgoingMessage } from '../../HTTP'
+import { type Output } from '../../Directives'
+import { type Directive } from './Directive'
 
 export class Stub implements Directive {
   private readonly value: any
@@ -8,7 +8,7 @@ export class Stub implements Directive {
     this.value = value
   }
 
-  public async pre (): Promise<OutgoingMessage> {
+  public apply (): Output {
     console.log('Stub pre')
 
     return { status: 200, body: this.value }

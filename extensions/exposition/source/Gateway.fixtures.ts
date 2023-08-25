@@ -16,6 +16,6 @@ export const server = {
 export const tree = {
   match: jest.fn(),
   merge: jest.fn()
-} as unknown as jest.MockedObject<Tree<any>>
+} as unknown as jest.MockedObject<Tree<any, any>>
 
 export { broadcast } from './Factory.fixtures'

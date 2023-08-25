@@ -147,3 +147,25 @@ describe('validation', () => {
     expect(() => parse(declaration)).toThrow('additional properties')
   })
 })
+
+it('should expand ranges', async () => {
+  const declaration = {
+    '/': {
+      GET: {
+        endpoint: 'enumerate',
+        query: {
+          omit: 3,
+          limit: 2
+        }
+      }
+    }
+  }
+
+  const node = parse(declaration)
+  const query = node.routes[0].node.methods[0].mapping.query
+
+  expect(query).toMatchObject({
+    omit: { value: 3, range: [3, 3] },
+    limit: { value: 2, range: [2, 2] }
+  })
+})

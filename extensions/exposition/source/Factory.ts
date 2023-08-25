@@ -5,13 +5,17 @@ import { Tree, syntax } from './RTD'
 import { Server } from './HTTP'
 import { type Endpoint, EndpointFactory } from './Endpoint'
 import * as env from './annotation'
+import * as families from './families'
+import { type Directives, DirectivesFactory, type Family } from './Directives'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader
+  private readonly families: Family[]
 
   public constructor (boot: Bootloader) {
     this.boot = boot
+    this.families = families.load()
   }
 
   public tenant (locator: Locator, node: syntax.Node): Connector {
@@ -31,8 +35,9 @@ export class Factory implements extensions.Factory {
     const server = Server.create({ methods: syntax.verbs })
     const remotes = new Remotes(this.boot)
     const methods = new EndpointFactory(remotes)
+    const directives = new DirectivesFactory(this.families)
     const annotation: syntax.Node = env.resolve()
-    const tree = new Tree<Endpoint>(annotation, methods)
+    const tree = new Tree<Endpoint, Directives>(annotation, methods, directives)
 
     return new Gateway(broadcast, server, tree)
   }

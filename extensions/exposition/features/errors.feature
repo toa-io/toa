@@ -62,7 +62,12 @@ Feature: Errors
       """
 
   Scenario: Request body does not match input schema
-    Given the `pots` is running
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          POST: transit
+      """
     When the following request is received:
       """
       POST /pots/ HTTP/1.1

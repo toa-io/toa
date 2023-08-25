@@ -44,7 +44,7 @@
     "clone-deep": "4.0.1",
     "cucumber-tsflow": "4.0.6",
     "dotenv": "16.0.3",
-    "eslint-config-standard-with-typescript": "35.0.0",
+    "eslint-config-standard-with-typescript": "38.0.0",
     "execa": "5.1.1",
     "husky": "8.0.3",
     "jest": "29.5.0",

@@ -56,4 +56,4 @@ env:
   jest: true
 ignorePatterns:
   - '*.d.ts'
-  - '**/transpiled/'
+  - '*.js'

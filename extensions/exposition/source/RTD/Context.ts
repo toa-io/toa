@@ -1,10 +1,12 @@
 import { type MethodFactory } from './Method'
+import { type DirectivesFactory } from './Directives'
 
-// import { type DirectiveFactory } from './Directive'
-
-export interface Context<Extension = any> {
-  protected: boolean
-  readonly methods: MethodFactory
-  // readonly directives: DirectiveFactory
-  readonly extension?: Extension
+export interface Context<IMethod = any, IDirective = any, IExtension = any> {
+  readonly protected: boolean
+  readonly methods: MethodFactory<IMethod>
+  readonly directives: {
+    readonly factory: DirectivesFactory
+    stack: IDirective[]
+  }
+  readonly extension?: IExtension
 }

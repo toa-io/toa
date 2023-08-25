@@ -1,7 +1,7 @@
 import { type Node } from './Node'
 
-export interface Match<TMethod> {
-  node: Node<TMethod>
+export interface Match<IMethod, IDirectives> {
+  node: Node<IMethod, IDirectives>
   parameters: Parameter[]
 }
 
