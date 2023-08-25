@@ -1,4 +1,4 @@
-import { type Input, type Output, type Family } from '../../Directives'
+import { type Input, type Output, type Family } from '../../Directive'
 import { Stub } from './Stub'
 import { type Directive } from './Directive'
 

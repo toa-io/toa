@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { type Family } from '../Directives'
+import { type Family } from '../Directive'
 
 export function load (paths: string[] = []): Family[] {
   paths = paths.concat(builtin)

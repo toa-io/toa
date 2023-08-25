@@ -5,8 +5,8 @@ import { Tree, syntax } from './RTD'
 import { Server } from './HTTP'
 import { type Endpoint, EndpointFactory } from './Endpoint'
 import * as env from './annotation'
-import * as families from './families'
-import { type Directives, DirectivesFactory, type Family } from './Directives'
+import * as directives from './directives'
+import { type Directives, DirectivesFactory, type Family } from './Directive'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
@@ -15,7 +15,7 @@ export class Factory implements extensions.Factory {
 
   public constructor (boot: Bootloader) {
     this.boot = boot
-    this.families = families.load()
+    this.families = directives.load()
   }
 
   public tenant (locator: Locator, node: syntax.Node): Connector {

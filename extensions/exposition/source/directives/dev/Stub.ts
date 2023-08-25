@@ -1,4 +1,4 @@
-import { type Output } from '../../Directives'
+import { type Output } from '../../Directive'
 import { type Directive } from './Directive'
 
 export class Stub implements Directive {

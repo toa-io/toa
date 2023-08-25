@@ -5,7 +5,7 @@ import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import { type Branch } from './Branch'
 import { type Endpoint } from './Endpoint'
-import { type Directives } from './Directives'
+import { type Directives } from './Directive'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast

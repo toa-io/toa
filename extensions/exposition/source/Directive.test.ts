@@ -1,5 +1,5 @@
 import { generate } from 'randomstring'
-import { DirectivesFactory, type Family } from './Directives'
+import { DirectivesFactory, type Family } from './Directive'
 import { type syntax } from './RTD'
 import { type IncomingMessage } from './HTTP'
 
