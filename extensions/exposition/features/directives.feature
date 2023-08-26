@@ -10,12 +10,12 @@ Feature: Directives
     When the following request is received:
       """
       GET / HTTP/1.1
-      accept: application/yaml
+      accept: application/json
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
+      content-type: application/json
 
-      hello: world
+      {"hello":"world"}
       """
