@@ -1,19 +1,25 @@
+namespace: identity
 name: basic
 
 entity:
   schema:
     username: string
     password: string
-  initialized: true
 
 operations:
   transit:
     concurrency: retry
     input:
-      username?: string
-      password?: string
+      username: string
+      password: string
+  resolve:
+    input:
+      username: string
+      password: string
+    output:
+      id: string
 
-exposition:
-  /:id:
-    GET: observe
-    POST: transit
+configuration:
+  schema:
+    rounds: 10
+    pepper: ''
