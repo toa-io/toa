@@ -29,7 +29,17 @@ export class Database {
     }
 
     await collection.deleteMany({})
-    await collection.insertMany(documents)
+
+    if (documents.length > 0)
+      await collection.insertMany(documents)
+  }
+
+  @given('the `{word}` database is empty')
+  public async truncate (id: string): Promise<void> {
+    const [name, namespace = 'default'] = id.split('.').reverse()
+    const collection = Database.client.db(namespace).collection(name)
+
+    await collection.deleteMany({})
   }
 
   @beforeAll()

@@ -14,7 +14,7 @@ class Development implements Family {
     return new Class(value)
   }
 
-  public apply (input: Input, directives: Directive[]): Output {
+  public apply (directives: Directive[], input: Input): Output {
     for (const directive of directives) {
       const output = directive.apply(input)
 

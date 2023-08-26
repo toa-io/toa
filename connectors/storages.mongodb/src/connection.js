@@ -36,7 +36,7 @@ class Connection extends Connector {
   }
 
   async close () {
-    await this.#client.close()
+    await this.#client?.close()
 
     console.info('Storage Mongo disconnected')
   }

@@ -42,7 +42,7 @@ export class Gateway extends Connector {
     if (match === null)
       throw new http.NotFound()
 
-    const interrupt = await match.node.directives.apply(request)
+    const interrupt = await match.node.directives.apply(request, match.parameters)
 
     if (interrupt !== null)
       return interrupt

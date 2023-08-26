@@ -49,10 +49,8 @@ Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
 ```
 
 The `Token` is the primary authentication scheme.
-If request originators use an alternative authentication scheme, they will receive a response
-containing
-`Token` credentials and will be required to switch to the `Token` scheme for any subsequent
-requests.
+If request originators use an alternative authentication scheme, they will receive a response containing `Token`
+credentials and will be required to switch to the `Token` scheme for any subsequent requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.
 
 ### Bearer scheme
@@ -102,6 +100,19 @@ These Components expose a list of resources to manage credentials.
 <dt><code>DELETE</code></dt>
 <dd>Delete all credentials of an Identity.</dd>
 </dl>
+
+#### `/identity/basic/`
+
+<dl>
+<dt><code>POST</code></dt>
+<dd>Create new Identity with Basic credentials. Request body is as follows:
+</dd>
+</dl>
+
+```yaml
+username?: string
+password?: string
+```
 
 #### `/identity/basic/:id/`
 

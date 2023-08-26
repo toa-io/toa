@@ -1,4 +1,5 @@
 import { type IncomingMessage, type OutgoingMessage } from './HTTP'
+import { type Remotes } from './Remotes'
 import type * as RTD from './RTD'
 
 export class Directives {
@@ -8,9 +9,9 @@ export class Directives {
     this.directives = directives
   }
 
-  public async apply (request: IncomingMessage): Promise<Output> {
+  public async apply (request: IncomingMessage, parameters: RTD.Parameter[]): Promise<Output> {
     for (const directive of this.directives) {
-      const output = await directive.family.apply(request, directive.directives)
+      const output = await directive.family.apply(directive.directives, request, parameters)
 
       if (output !== null)
         return output
@@ -22,10 +23,13 @@ export class Directives {
 
 export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
   private readonly families: Record<string, Family> = {}
+  private readonly remtoes: Remotes
 
-  public constructor (families: Family[]) {
+  public constructor (families: Family[], remotes: Remotes) {
     for (const family of families)
       this.families[family.name] = family
+
+    this.remtoes = remotes
   }
 
   public create (declarations: RTD.syntax.Directive[]): Directives {
@@ -37,7 +41,7 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
       if (family === undefined)
         throw new Error(`Directive family '${declaration.family}' not found.`)
 
-      const directive = family.create(declaration.name, declaration.value)
+      const directive = family.create(declaration.name, declaration.value, this.remtoes)
 
       groups[declaration.family] ??= []
       groups[declaration.family].push(directive)
@@ -55,11 +59,13 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
   }
 }
 
-export interface Family {
+export interface Family<IDirective = any> {
   readonly name: string
 
-  create: (name: string, value: any) => any
-  apply: (request: Input, directives: any[]) => Output
+  create: (name: string, value: any, remotes: Remotes) => IDirective
+  apply: (directives: IDirective[],
+    request: Input,
+    parameters: RTD.Parameter[]) => Output | Promise<Output>
 }
 
 interface DirectiveSet {
@@ -68,4 +74,4 @@ interface DirectiveSet {
 }
 
 export type Input = IncomingMessage
-export type Output = OutgoingMessage | null | Promise<OutgoingMessage | null>
+export type Output = OutgoingMessage | null

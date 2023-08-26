@@ -13,13 +13,16 @@ operations:
       username: string
       password: string
   resolve:
-    input:
-      username: string
-      password: string
+    input: string
     output:
       id: string
 
 configuration:
-  schema:
-    rounds: 10
-    pepper: ''
+  rounds: 10
+  pepper: ''
+
+exposition:
+  /:
+    POST: transit
+  /:id:
+    PUT: transit

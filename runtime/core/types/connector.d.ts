@@ -6,7 +6,7 @@ export class Connector {
 
   public disconnect (interrupt?: boolean): Promise<void>
 
-  protected depends (connector: Connector | Connector[]): Connector
+  public depends (connector: Connector | Connector[]): Connector
 
   link (connector: Connector): void
 

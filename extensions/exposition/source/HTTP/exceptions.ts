@@ -19,6 +19,18 @@ export class BadRequest extends ClientError {
   }
 }
 
+export class Unauthorized extends ClientError {
+  public constructor (message?: string) {
+    super(401, message)
+  }
+}
+
+export class Forbidden extends ClientError {
+  public constructor (message?: string) {
+    super(403, message)
+  }
+}
+
 export class NotFound extends ClientError {
   public constructor (message?: string) {
     super(404, message)

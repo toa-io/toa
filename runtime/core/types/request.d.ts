@@ -17,7 +17,7 @@ export interface Request {
 }
 
 export interface Reply {
-  output?: Object
-  error?: Object
+  output?: any
+  error?: object
   exception?: Exception
 }

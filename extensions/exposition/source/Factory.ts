@@ -7,6 +7,7 @@ import { type Endpoint, EndpointFactory } from './Endpoint'
 import * as env from './annotation'
 import * as directives from './directives'
 import { type Directives, DirectivesFactory, type Family } from './Directive'
+import { Composition } from './Composition'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
@@ -36,11 +37,16 @@ export class Factory implements extensions.Factory {
     const server = Server.create({ methods: syntax.verbs })
     const remotes = new Remotes(this.boot)
     const methods = new EndpointFactory(remotes)
-    const directives = new DirectivesFactory(this.families)
+    const directives = new DirectivesFactory(this.families, remotes)
     const annotation: syntax.Node = env.resolve()
     const tree = new Tree<Endpoint, Directives>(annotation, methods, directives)
 
-    return new Gateway(broadcast, server, tree)
+    const gateway = new Gateway(broadcast, server, tree)
+    const composition = new Composition(this.boot)
+
+    gateway.depends(composition)
+
+    return gateway
   }
 }
 

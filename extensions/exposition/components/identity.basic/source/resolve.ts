@@ -1,10 +1,14 @@
+import { atob } from 'buffer'
 import { compare } from 'bcrypt'
 import { type Query, type Reply } from '@toa.io/types'
-import { type Context, type Credentials } from './types'
+import { type Context } from './types'
 
-export async function computation (input: Credentials,
-                                   context: Context): Promise<Reply<{ id: string }>> {
-  const query: Query = { criteria: `username==${input.username}` }
+export async function computation (input: string,
+  context: Context): Promise<Reply<{ id: string }>> {
+  const kv = atob(input)
+  const [username, password] = kv.split(':')
+
+  const query: Query = { criteria: `username==${username}` }
   const reply = await context.local.observe({ query })
 
   if (reply === null)
@@ -18,8 +22,8 @@ export async function computation (input: Credentials,
   if (output === undefined)
     return { error: { code: 1 } }
 
-  const password = input.password + context.configuration.pepper
-  const match = await compare(password, output.password)
+  const spicy = password + context.configuration.pepper
+  const match = await compare(spicy, output.password)
 
   if (match) return { output: { id: output.id } }
   else return { error: { code: 2 } }

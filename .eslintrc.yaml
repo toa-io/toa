@@ -50,7 +50,6 @@ overrides:
         - fixStyle: inline-type-imports
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
-      '@typescript-eslint/indent': off
 parserOptions:
   project: ./tsconfig.json
 env:

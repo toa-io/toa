@@ -20,6 +20,8 @@
     "@toa.io/core": "0.20.0-dev.36",
     "@toa.io/generic": "0.20.0-dev.36",
     "@toa.io/http": "0.20.0-dev.18",
+    "@types/bcrypt": "5.0.0",
+    "bcrypt": "5.1.1",
     "cors": "2.8.5",
     "express": "4.18.2",
     "js-yaml": "4.1.0",
@@ -31,8 +33,9 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "test:features": "npx cucumber-js",
-    "transpile": "tsc"
+    "install": "npm run transpile",
+    "transpile": "npx tsc & npx tsc -p ./components/identity.basic",
+    "test:features": "npx cucumber-js"
   },
   "devDependencies": {
     "@types/cors": "2.8.13",

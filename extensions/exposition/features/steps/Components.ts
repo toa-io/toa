@@ -38,6 +38,6 @@ export class Components {
     this.composition = await boot.composition([path])
 
     await this.composition.connect()
-    await timeout(100) // discovery
+    await timeout(50) // discovery
   }
 }

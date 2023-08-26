@@ -3,6 +3,7 @@ import { binding, when, then } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
 import { trim } from '@toa.io/generic'
 import { Parameters } from './parameters'
+import { Gateway } from './Gateway'
 
 @binding([Parameters])
 export class HTTP {
@@ -17,6 +18,7 @@ export class HTTP {
   public async request (input: string): Promise<any> {
     const request = trim(input) + '\n\n'
 
+    await Gateway.start()
     this.response = await http.request(request, this.origin)
   }
 
