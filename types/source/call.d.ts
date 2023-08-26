@@ -6,14 +6,14 @@ export interface Request<Input> {
 export interface Query {
   id?: string
   version?: number
-  criteria?: Object
+  criteria?: string
   omit?: number
   limit?: number
   sort?: string[]
   projection?: string[]
 }
 
-export interface Reply<Output> {
+export type Reply<Output> = {
   output?: Output
   error?: Error
 }
@@ -25,4 +25,5 @@ export interface Error {
   [key: string]: any
 }
 
-export type call<Input, Output> = (request: Request<Input>) => Promise<Reply<Output>>
+export type Call<Output = any, Input = any> = (request: Request<Input>) => Promise<Reply<Output>>
+export type Observation<Output = any, Input = undefined> = (request: Request<Input>) => Promise<Reply<Output> | null>
