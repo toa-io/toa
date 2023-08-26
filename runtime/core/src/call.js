@@ -21,6 +21,7 @@ class Call extends Connector {
   async invoke (request = {}) {
     this.#contract.fit(request)
 
+    // avoid validation on the recipient's side
     request.authentic = true
 
     const reply = await this.#transmitter.request(request)
