@@ -18,8 +18,8 @@ Feature: Access authorization
       # authorize as developer
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      accept: application/yaml
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
       """
     Then the following reply is sent:
       """
@@ -32,8 +32,8 @@ Feature: Access authorization
       # authorize as user while request URL with developer's id
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      accept: application/yaml
       authorization: Basic dXNlcjoxMjM0NQ==
+      accept: application/yaml
       """
     Then the following reply is sent:
       """
