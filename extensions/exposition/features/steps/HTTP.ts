@@ -22,8 +22,7 @@ export class HTTP {
 
   @then('the following reply is sent:')
   public checkResponse (expected: string): void {
-    const lines = trim(expected)
-      .split('\n')
+    const lines = trim(expected).split('\n')
 
     for (const line of lines) {
       const includes = this.response.includes(line)

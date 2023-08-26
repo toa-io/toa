@@ -19,3 +19,34 @@ Feature: Directives
 
       {"hello":"world"}
       """
+
+  Scenario: Nested routes
+    Given the annotation:
+      """yaml
+      /:
+        dev:stub:
+          hello: again
+        /pots: {}
+
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      hello: again
+      """
+    When the following request is received:
+      """
+      GET /pots/non-existent/ HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """

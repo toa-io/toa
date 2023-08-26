@@ -25,7 +25,8 @@ export class Factory implements extensions.Factory {
   }
 
   public service (name: string): Connector | null {
-    if (name === 'gateway') return this.gateway()
+    if (name === 'gateway')
+      return this.gateway()
 
     return null
   }
