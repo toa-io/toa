@@ -27,7 +27,7 @@ class Authorization implements Family<Directive> {
   public async preflight (directives: Directive[],
     input: Input,
     parameters: Parameter[]): Promise<Output> {
-    const identity = await this.authenticate(input.headers.authorization)
+    const identity = await this.resolve(input.headers.authorization)
 
     for (const directive of directives) {
       const allow = directive.authorize(identity, parameters)
@@ -40,11 +40,15 @@ class Authorization implements Family<Directive> {
     else throw new http.Forbidden()
   }
 
-  private async authenticate (authorization: string | undefined): Promise<Identity | null> {
+  private async resolve (authorization: string | undefined): Promise<Identity | null> {
     if (authorization === undefined)
       return null
 
     const space = authorization.indexOf(' ')
+
+    if (space === -1)
+      throw new http.Unauthorized('Malformed authorization header.')
+
     const Scheme = authorization.slice(0, space)
     const scheme = Scheme.toLowerCase()
     const value = authorization.slice(space + 1)

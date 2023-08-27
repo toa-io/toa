@@ -149,3 +149,21 @@ Feature: Errors
 
       Query must NOT have additional properties
       """
+
+  Scenario: Malformed authorization header
+    Given the annotation:
+      """yaml
+      /: {}
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      authorization: Basic
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+
+      Malformed authorization header.
+      """
