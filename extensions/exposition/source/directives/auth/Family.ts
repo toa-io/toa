@@ -73,7 +73,7 @@ class Authorization implements Family<Directive> {
     if (reply.error !== undefined)
       return null
 
-    const identity: Identity = { id: reply.output.id }
+    const identity: Identity = reply.output.identity
 
     if (scheme !== PRIMARY)
       await this.upgrade(identity)

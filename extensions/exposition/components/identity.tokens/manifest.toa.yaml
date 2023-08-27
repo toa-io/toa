@@ -3,13 +3,13 @@ name: tokens
 
 operations:
   encode:
-    input: object
+    input:
+      id*: id
+      ...: true
     output: string
   decode:
     input: string
-    output:
-      identity: object
-      refresh: string
+    output: object
   authenticate:
     forward: decode
 

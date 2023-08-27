@@ -237,3 +237,35 @@ Feature: Access authorization
       """
       403 Forbidden
       """
+
+  Scenario: Token authentication scheme
+    Given the annotation:
+      """yaml
+      /:id:
+        auth:id: id
+        dev:stub:
+          access: granted!
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Token v3.local.bhmh5t_NGvtp9pg1lAc3_XySnNSjkPLCU5NA3w3YuoqoIHtkEGA16kVGFkYwIieKusHGCR2YhsDUf1hV7DFgnkJiPSWg48rwIZivYCEor5QYlrxbpVCu058m_g6XO8g7Ln02ug8E1BeIjv-baPoxGxHJJQb4Mw9bFyzqGY-a51rtg50l3EKCRn_rsA
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      access: granted!
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Token v3.local.bkXkyVQU2UigvnQs_8jvPcbLwJqikawy-eX6PVNHmdovZSRuxIkJBfxYmZa6-ctR343EODSGAnE2rncX1DlyKmeUA9ODF4-ylc3cfnvL1EThTo77Uzx9vju312uv3VO-5Ud14_whBnc9BvBiDVI6C-VVxvASoDsxLohQbplD71h4pONyHrUBP_I19g
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
