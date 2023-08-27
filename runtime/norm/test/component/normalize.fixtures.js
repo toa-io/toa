@@ -15,7 +15,7 @@ const operations = {
   },
   extensions: {
     '@toa.io/extensions.exposition': {
-      ['/' + generate()]: ['add']
+      ['/' + generate()]: {}
     },
     './dummies/extension': {
       ok: true

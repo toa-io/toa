@@ -26,11 +26,11 @@ it('should throw if class does not match conventions', () => {
   expect(() => define(module)).toThrow('does not match conventions')
 })
 
-it('should throw if no function exported', () => {
+it('should return null if no function exported', () => {
   const foo = 'bar'
   const module = { foo }
 
-  expect(() => define(module)).toThrow('Module does not export function')
+  expect(define(module)).toBeNull()
 })
 
 describe('function', () => {
