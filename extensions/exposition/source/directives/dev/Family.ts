@@ -2,7 +2,7 @@ import { type Input, type Output, type Family } from '../../Directive'
 import { Stub } from './Stub'
 import { type Directive } from './Directive'
 
-class Development implements Family {
+class Development implements Family<Directive> {
   public readonly name: string = 'dev'
 
   public create (name: string, value: any): Directive {
@@ -14,7 +14,7 @@ class Development implements Family {
     return new Class(value)
   }
 
-  public apply (directives: Directive[], input: Input): Output {
+  public preflight (directives: Directive[], input: Input): Output {
     for (const directive of directives) {
       const output = directive.apply(input)
 
@@ -26,7 +26,7 @@ class Development implements Family {
   }
 }
 
-const constructors: Record<string, any> = {
+const constructors: Record<string, new (value: any) => Directive> = {
   stub: Stub
 }
 

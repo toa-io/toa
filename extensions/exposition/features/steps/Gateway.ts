@@ -40,7 +40,8 @@ export class Gateway {
   }
 
   @after()
-  public cleanup (): void {
-    process.env.TOA_EXPOSITION = undefined
+  public async cleanup (): Promise<void> {
+    delete process.env.TOA_EXPOSITION
+    await Gateway.stop()
   }
 }

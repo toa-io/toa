@@ -9,7 +9,7 @@ import { Id } from './Id'
 class Authorization implements Family<Directive> {
   public readonly name: string = 'auth'
   private readonly schemes: Record<string, Component> = {}
-  private discovery: Record<string, Promise<Component>> = {}
+  private readonly discovery: Record<string, Promise<Component>> = {}
 
   public create (name: string, value: any, remotes: Remotes): Directive {
     const Class = constructors[name]
@@ -17,20 +17,18 @@ class Authorization implements Family<Directive> {
     if (Class === undefined)
       throw new Error(`Directive '${name}' is not provided by '${this.name}'.`)
 
-    this.discovery = {
-      basic: remotes.discover('identity', 'basic')
-    }
+    this.discovery.basic = remotes.discover('identity', 'basic')
 
     return new Class(value)
   }
 
-  public async apply (directives: Directive[],
+  public async preflight (directives: Directive[],
     input: Input,
     parameters: Parameter[]): Promise<Output> {
     const identity = await this.resovle(input.headers.authorization)
 
     for (const directive of directives) {
-      const allow = directive.apply(identity, parameters)
+      const allow = directive.authorize(identity, parameters)
 
       if (allow)
         return null
@@ -45,11 +43,12 @@ class Authorization implements Family<Directive> {
       return null
 
     const space = authorization.indexOf(' ')
-    const scheme = authorization.slice(0, space).toLowerCase()
+    const Scheme = authorization.slice(0, space)
+    const scheme = Scheme.toLowerCase()
     const value = authorization.slice(space + 1)
 
     if (!(scheme in this.discovery))
-      throw new http.Unauthorized(`Unknown authentication scheme '${scheme}'.`)
+      throw new http.Unauthorized(`Unknown authentication scheme '${Scheme}'.`)
 
     this.schemes[scheme] ??= await this.discovery[scheme]
 

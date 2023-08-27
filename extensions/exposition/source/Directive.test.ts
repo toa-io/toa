@@ -8,12 +8,12 @@ const families: Array<jest.MockedObject<Family>> = [
   {
     name: 'foo',
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
-    apply: jest.fn()
+    preflight: jest.fn()
   },
   {
     name: 'bar',
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
-    apply: jest.fn()
+    preflight: jest.fn()
   }
 ]
 
@@ -69,8 +69,8 @@ it('should apply directive', async () => {
   const request = generate() as unknown as IncomingMessage
   const directive = families[0].create.mock.results[0].value
 
-  await directives.apply(request, [])
+  await directives.preflight(request, [])
 
-  expect(families[0].apply.mock.calls[0][0]).toStrictEqual([directive])
-  expect(families[0].apply.mock.calls[0][1]).toEqual(request)
+  expect(families[0].preflight.mock.calls[0][0]).toStrictEqual([directive])
+  expect(families[0].preflight.mock.calls[0][1]).toEqual(request)
 })

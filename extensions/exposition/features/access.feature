@@ -15,7 +15,6 @@ Feature: Access authorization
           access: granted!
       """
     When the following request is received:
-      # authorize as developer
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
@@ -29,7 +28,6 @@ Feature: Access authorization
       access: granted!
       """
     When the following request is received:
-      # authorize as user while request URL with developer's id
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic dXNlcjoxMjM0NQ==

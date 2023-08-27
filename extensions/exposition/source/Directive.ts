@@ -9,9 +9,9 @@ export class Directives {
     this.directives = directives
   }
 
-  public async apply (request: IncomingMessage, parameters: RTD.Parameter[]): Promise<Output> {
+  public async preflight (request: IncomingMessage, parameters: RTD.Parameter[]): Promise<Output> {
     for (const directive of this.directives) {
-      const output = await directive.family.apply(directive.directives, request, parameters)
+      const output = await directive.family.preflight(directive.directives, request, parameters)
 
       if (output !== null)
         return output
@@ -63,7 +63,7 @@ export interface Family<IDirective = any> {
   readonly name: string
 
   create: (name: string, value: any, remotes: Remotes) => IDirective
-  apply: (directives: IDirective[],
+  preflight: (directives: IDirective[],
     request: Input,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
 }
