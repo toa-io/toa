@@ -1,5 +1,5 @@
 import { type Output } from '../../Directive'
-import { type Directive } from './Directive'
+import { type Directive } from './types'
 
 export class Stub implements Directive {
   private readonly value: any

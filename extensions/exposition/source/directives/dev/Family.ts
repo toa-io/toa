@@ -1,6 +1,6 @@
 import { type Input, type Output, type Family } from '../../Directive'
 import { Stub } from './Stub'
-import { type Directive } from './Directive'
+import { type Directive } from './types'
 
 class Development implements Family<Directive> {
   public readonly name: string = 'dev'
