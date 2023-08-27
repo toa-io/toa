@@ -1,0 +1,18 @@
+namespace: identity
+name: tokens
+
+operations:
+  encode:
+    input: object
+    output: string
+  decode:
+    input: string
+    output:
+      identity: object
+      refresh: string
+  authenticate:
+    forward: decode
+
+configuration:
+  secret*: ''
+  lifetime*: 15552000  # seconds

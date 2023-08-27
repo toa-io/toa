@@ -5,5 +5,6 @@ export interface Directive {
 }
 
 export interface Identity {
-  id: string
+  readonly id: string
+  upgrade?: string
 }

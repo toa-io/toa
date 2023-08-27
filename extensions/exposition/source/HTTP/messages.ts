@@ -55,11 +55,12 @@ interface Message {
   body?: any
 }
 
-export interface IncomingMessage extends Message {
+export interface IncomingMessage<Identity = never> extends Message {
   method: string
   path: string
   headers: IncomingHttpHeaders
   query: Query
+  identity?: Identity
 }
 
 export interface OutgoingMessage extends Message {

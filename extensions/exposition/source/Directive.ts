@@ -95,5 +95,5 @@ interface DirectiveSet {
   directives: any[]
 }
 
-export type Input = IncomingMessage
+export type Input<Identity = never> = IncomingMessage<Identity>
 export type Output = OutgoingMessage | null

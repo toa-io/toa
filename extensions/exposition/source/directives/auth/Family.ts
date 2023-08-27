@@ -12,9 +12,10 @@ import { Rule } from './Rule'
 class Authorization implements Family<Directive> {
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
-  private readonly schemes: Record<string, Component> = {}
-  private readonly discovery: Record<string, Promise<Component>> = {}
+  private readonly schemes = {} as unknown as Schemes
+  private readonly discovery = {} as unknown as Discovery
   private roles: Promise<Component> | null = null
+  private tokens: Component | null = null
 
   public create (name: string, value: any, remotes: Remotes): Directive {
     const Class = constructors[name]
@@ -23,6 +24,7 @@ class Authorization implements Family<Directive> {
       throw new Error(`Directive '${name}' is not provided by '${this.name}' family.`)
 
     this.discovery.basic ??= remotes.discover('identity', 'basic')
+    this.discovery.token ??= remotes.discover('identity', 'tokens')
     this.roles ??= remotes.discover('identity', 'roles')
 
     if (Class === Role) return new Class(value, this.roles)
@@ -31,9 +33,11 @@ class Authorization implements Family<Directive> {
   }
 
   public async preflight (directives: Directive[],
-    input: Input,
+    input: Input<Identity | null>,
     parameters: Parameter[]): Promise<Output> {
     const identity = await this.resolve(input.headers.authorization)
+
+    input.identity = identity
 
     for (const directive of directives) {
       const allow = await directive.authorize(identity, parameters)
@@ -56,7 +60,7 @@ class Authorization implements Family<Directive> {
       throw new http.Unauthorized('Malformed authorization header.')
 
     const Scheme = authorization.slice(0, space)
-    const scheme = Scheme.toLowerCase()
+    const scheme = Scheme.toLowerCase() as Provider
     const value = authorization.slice(space + 1)
 
     if (!(scheme in this.discovery))
@@ -66,8 +70,23 @@ class Authorization implements Family<Directive> {
 
     const reply = await this.schemes[scheme].invoke('authenticate', { input: value })
 
-    if (reply.error !== undefined) return null
-    else return reply.output
+    if (reply.error !== undefined)
+      return null
+
+    const identity: Identity = { id: reply.output.id }
+
+    if (scheme !== PRIMARY)
+      await this.upgrade(identity)
+
+    return identity
+  }
+
+  private async upgrade (identity: Identity): Promise<void> {
+    this.tokens ??= await this.discovery.token
+
+    const reply = await this.tokens.invoke('encode', { input: identity })
+
+    identity.upgrade = `Token ${reply.output}`
   }
 }
 
@@ -77,5 +96,11 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   role: Role,
   rule: Rule
 }
+
+const PRIMARY = 'token'
+
+type Provider = 'basic' | 'token'
+type Discovery = Record<Provider, Promise<Component>>
+type Schemes = Record<Provider, Component>
 
 export = new Authorization()
