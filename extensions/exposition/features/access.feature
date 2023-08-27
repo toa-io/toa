@@ -93,3 +93,105 @@ Feature: Access authorization
       """
       403 Forbidden
       """
+
+  Scenario: Allow by `auth:role` directive
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+      | 1d95bd2c764142818f6ece5e084015b5 | efe3a65ebbee47ed95a73edd911ea328 | user      |
+    And the annotation:
+      """yaml
+      /:
+        auth:role: developer
+        dev:stub:
+          access: granted!
+      """
+    When the following request is received:
+      # identity with `developer` and `user` roles
+      """
+      GET / HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      access: granted!
+      """
+    When the following request is received:
+      # identity with no roles
+      """
+      GET / HTTP/1.1
+      authorization: Basic dXNlcjoxMjM0NQ==
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+
+  Scenario: Allow by `auth:role` directive with matching scope
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role           |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer:rust |
+    And the annotation:
+      """yaml
+      /:
+        auth:role: developer:rust:junior  # role scope matches
+        /nested:
+          dev:stub: good!
+      /javascript:
+        auth:role: developer:javascript   # role scope does not match
+        dev:stub: no good!
+      """
+    When the following request is received:
+      """
+      GET /nested/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: text/plain
+
+      good!
+      """
+    When the following request is received:
+      """
+      GET /javascript/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+
+  Scenario: Allow by `auth:role` matching one of the roles
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    And the annotation:
+      """yaml
+      /:
+        auth:role:
+          - developer
+          - admin
+        dev:stub:
+          access: granted!
+      """
+    When the following request is received:
+      # identity with `developer` and `user` roles
+      """
+      GET / HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      access: granted!
+      """

@@ -1,4 +1,5 @@
 import { parse, type Node } from './RTD/syntax'
+import { shortcuts } from './shortcuts'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest (declaration: object, manifest: Manifest): Node {
@@ -7,7 +8,7 @@ export function manifest (declaration: object, manifest: Manifest): Node {
   if (manifest.namespace !== undefined && manifest.namespace !== 'default')
     declaration = wrap(manifest.namespace, declaration)
 
-  const node = parse(declaration)
+  const node = parse(declaration, shortcuts)
 
   concretize(node, manifest)
 

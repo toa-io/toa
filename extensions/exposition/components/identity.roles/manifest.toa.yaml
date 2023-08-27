@@ -1,0 +1,19 @@
+namespace: identity
+name: roles
+
+entity:
+  schema:
+    identity: string
+    role: string
+
+operations:
+  transit:
+    query: false
+    input:
+      identity: string
+      role: string
+
+exposition:
+  /:identity:
+    auth:id: identity
+    POST: transit

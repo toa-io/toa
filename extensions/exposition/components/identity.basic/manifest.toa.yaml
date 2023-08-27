@@ -25,4 +25,5 @@ exposition:
   /:
     POST: transit
   /:id:
+    auth:id: id
     PUT: transit
