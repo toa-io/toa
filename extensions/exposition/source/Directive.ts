@@ -73,6 +73,13 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
   }
 }
 
+export const shortcuts: RTD.syntax.Shortcuts = new Map([
+  ['anonymous', 'auth:anonymous'],
+  ['id', 'auth:id'],
+  ['role', 'auth:role'],
+  ['rule', 'auth:rule']
+])
+
 export interface Family<IDirective = any> {
   readonly name: string
   readonly mandatory: boolean

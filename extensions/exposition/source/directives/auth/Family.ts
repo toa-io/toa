@@ -7,6 +7,7 @@ import { type Directive, type Identity } from './types'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
 import { Role } from './Role'
+import { Rule } from './Rule'
 
 class Authorization implements Family<Directive> {
   public readonly name: string = 'auth'
@@ -19,12 +20,13 @@ class Authorization implements Family<Directive> {
     const Class = constructors[name]
 
     if (Class === undefined)
-      throw new Error(`Directive '${name}' is not provided by '${this.name}'.`)
+      throw new Error(`Directive '${name}' is not provided by '${this.name}' family.`)
 
     this.discovery.basic ??= remotes.discover('identity', 'basic')
     this.roles ??= remotes.discover('identity', 'roles')
 
     if (Class === Role) return new Class(value, this.roles)
+    else if (Class === Rule) return new Class(value, this.create.bind(this))
     else return new Class(value)
   }
 
@@ -72,7 +74,8 @@ class Authorization implements Family<Directive> {
 const constructors: Record<string, new (value: any, argument?: any) => Directive> = {
   anonymous: Anonymous,
   id: Id,
-  role: Role
+  role: Role,
+  rule: Rule
 }
 
 export = new Authorization()

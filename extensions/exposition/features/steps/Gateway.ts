@@ -5,7 +5,7 @@ import { parse } from '@toa.io/yaml'
 import { encode } from '@toa.io/generic'
 import { Factory } from '../../source'
 import * as syntax from '../../source/RTD/syntax'
-import { shortcuts } from '../../source/shortcuts'
+import { shortcuts } from '../../source/Directive'
 
 @binding()
 export class Gateway {

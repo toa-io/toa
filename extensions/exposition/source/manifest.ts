@@ -1,5 +1,5 @@
 import { parse, type Node } from './RTD/syntax'
-import { shortcuts } from './shortcuts'
+import { shortcuts } from './Directive'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest (declaration: object, manifest: Manifest): Node {

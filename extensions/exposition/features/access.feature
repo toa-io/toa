@@ -62,7 +62,7 @@ Feature: Access authorization
       403 Forbidden
       """
 
-  Scenario: Allow by `auth:id` directive
+  Scenario: Using `auth:id` directive
     Given the annotation:
       """yaml
       /:id:
@@ -94,7 +94,7 @@ Feature: Access authorization
       403 Forbidden
       """
 
-  Scenario: Allow by `auth:role` directive
+  Scenario: Using `auth:role` directive
     Given the `identity.roles` database contains:
       | _id                              | identity                         | role      |
       | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
@@ -131,7 +131,7 @@ Feature: Access authorization
       403 Forbidden
       """
 
-  Scenario: Allow by `auth:role` directive with matching scope
+  Scenario: Using `auth:role` directive with scope matching
     Given the `identity.roles` database contains:
       | _id                              | identity                         | role           |
       | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer:rust |
@@ -175,7 +175,7 @@ Feature: Access authorization
     And the annotation:
       """yaml
       /:
-        auth:role:
+        role:
           - developer
           - admin
         dev:stub:
@@ -194,4 +194,46 @@ Feature: Access authorization
       content-type: application/yaml
 
       access: granted!
+      """
+
+  Scenario: Using `auth:rule` directive
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role           |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer:rust |
+    And the annotation:
+      """yaml
+      /rust/:id:
+        auth:rule:
+          id: id
+          role: developer:rust
+        dev:stub:
+          access: granted!
+      /javascript/:id:
+        rule:
+          id: id
+          role: developer:javascript
+        dev:stub:
+          access: granted!
+      """
+    When the following request is received:
+      """
+      GET /rust/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      access: granted!
+      """
+    When the following request is received:
+      """
+      GET /javascript/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
       """
