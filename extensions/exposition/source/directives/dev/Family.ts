@@ -4,6 +4,7 @@ import { type Directive } from './Directive'
 
 class Development implements Family<Directive> {
   public readonly name: string = 'dev'
+  public readonly mandatory: boolean = false
 
   public create (name: string, value: any): Directive {
     const Class = constructors[name]

@@ -8,6 +8,7 @@ import { type DirectivesFactory } from './Directives'
 import type * as syntax from './syntax'
 
 export class Tree<IMethod, IDirectives> {
+  private readonly root: syntax.Node
   private readonly trunk: Node<IMethod>
   private readonly methods: MethodFactory<IMethod>
   private readonly directives: DirectivesFactory
@@ -16,6 +17,7 @@ export class Tree<IMethod, IDirectives> {
     this.methods = methods
     this.directives = directives
     this.trunk = this.createNode(node, PROTECTED)
+    this.root = node
   }
 
   public match (path: string): Match<IMethod, IDirectives> | null {
@@ -39,7 +41,7 @@ export class Tree<IMethod, IDirectives> {
       methods: this.methods,
       directives: {
         factory: this.directives,
-        stack: []
+        stack: this.root?.directives ?? []
       },
       extension
     }

@@ -7,11 +7,13 @@ import { type Remotes } from './Remotes'
 const families: Array<jest.MockedObject<Family>> = [
   {
     name: 'foo',
-    create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
+    mandatory: false,
+    create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
     preflight: jest.fn()
   },
   {
     name: 'bar',
+    mandatory: true,
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
     preflight: jest.fn()
   }
@@ -22,6 +24,8 @@ let factory: DirectivesFactory
 beforeEach(() => {
   jest.clearAllMocks()
 
+  families[0].preflight.mockImplementation(() => null)
+  families[1].preflight.mockImplementation(() => null)
   factory = new DirectivesFactory(families, {} as unknown as Remotes)
 })
 
@@ -73,4 +77,13 @@ it('should apply directive', async () => {
 
   expect(families[0].preflight.mock.calls[0][0]).toStrictEqual([directive])
   expect(families[0].preflight.mock.calls[0][1]).toEqual(request)
+})
+
+it('should apply mandatory families', async () => {
+  const directives = factory.create([])
+  const request = generate() as unknown as IncomingMessage
+
+  await directives.preflight(request, [])
+
+  expect(families[1].preflight).toHaveBeenCalled()
 })

@@ -22,18 +22,24 @@ export class Directives {
 }
 
 export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
-  private readonly families: Record<string, Family> = {}
   private readonly remtoes: Remotes
+  private readonly families: Record<string, Family> = {}
+  private readonly mandatory: string[] = []
 
   public constructor (families: Family[], remotes: Remotes) {
-    for (const family of families)
+    for (const family of families) {
       this.families[family.name] = family
+
+      if (family.mandatory)
+        this.mandatory.push(family.name)
+    }
 
     this.remtoes = remotes
   }
 
   public create (declarations: RTD.syntax.Directive[]): Directives {
     const groups: Record<string, any> = {}
+    const mandatory = new Set(this.mandatory.slice())
 
     for (const declaration of declarations) {
       const family = this.families[declaration.family]
@@ -43,11 +49,19 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
 
       const directive = family.create(declaration.name, declaration.value, this.remtoes)
 
-      groups[declaration.family] ??= []
-      groups[declaration.family].push(directive)
+      groups[family.name] ??= []
+      groups[family.name].push(directive)
+      mandatory.delete(family.name)
     }
 
     const sets: DirectiveSet[] = []
+
+    // undeclared mandatory first
+    for (const family of mandatory)
+      sets.push({
+        family: this.families[family],
+        directives: []
+      })
 
     for (const [family, directives] of Object.entries(groups))
       sets.push({
@@ -61,6 +75,7 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
 
 export interface Family<IDirective = any> {
   readonly name: string
+  readonly mandatory: boolean
 
   create: (name: string, value: any, remotes: Remotes) => IDirective
   preflight: (directives: IDirective[],

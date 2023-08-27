@@ -12,7 +12,7 @@ operations:
     input:
       username: string
       password: string
-  resolve:
+  authenticate:
     input: string
     output:
       id: string

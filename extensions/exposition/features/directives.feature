@@ -3,6 +3,7 @@ Feature: Directives
   Scenario: Basic directive
     Given the annotation:
       """yaml
+      anonymous: true
       /:
         dev:stub:
           hello: world
@@ -23,6 +24,7 @@ Feature: Directives
   Scenario: Nested routes
     Given the annotation:
       """yaml
+      anonymous: true
       /:
         dev:stub:
           hello: again

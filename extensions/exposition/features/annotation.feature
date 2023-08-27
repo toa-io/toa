@@ -3,6 +3,7 @@ Feature: Annotation
   Scenario: Simple annotation
     Given the annotation:
       """yaml
+      anonymous: true
       /foo:
         GET:
           endpoint: pots.enumerate

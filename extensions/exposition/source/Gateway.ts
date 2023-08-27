@@ -1,8 +1,8 @@
 import { Connector, type bindings } from '@toa.io/core'
-import { type Tree } from './RTD'
-import { type Label } from './discovery'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
+import { type Tree } from './RTD'
+import { type Label } from './discovery'
 import { type Branch } from './Branch'
 import { type Endpoint } from './Endpoint'
 import { type Directives } from './Directive'
@@ -42,16 +42,17 @@ export class Gateway extends Connector {
     if (match === null)
       throw new http.NotFound()
 
-    const interruption = await match.node.directives.preflight(request, match.parameters)
+    const { node, parameters } = match
+    const interruption = await node.directives.preflight(request, parameters)
 
     if (interruption !== null)
       return interruption
 
-    if (!(request.method in match.node.methods))
+    if (!(request.method in node.methods))
       throw new http.MethodNotAllowed()
 
-    const body = await match.node.methods[request.method]
-      .call(request.body, request.query, match.parameters)
+    const body = await node.methods[request.method]
+      .call(request.body, request.query, parameters)
       .catch(rethrow)
 
     return { body }

@@ -110,6 +110,6 @@ function expandRange (range: number): Range {
   return { value: range, range: [range, range] }
 }
 
-const DIRECTIVE_RX = /^(?<family>\w{1,16}):(?<name>\w{1,6})$/
+const DIRECTIVE_RX = /^(?<family>\w{1,32}):(?<name>\w{1,32})$/
 
-type Shortcuts = Map<string, string>
+export type Shortcuts = Map<string, string>

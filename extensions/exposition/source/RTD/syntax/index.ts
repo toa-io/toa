@@ -1,2 +1,2 @@
-export { parse, createNode } from './parse'
+export * from './parse'
 export * from './types'
