@@ -19,6 +19,12 @@ export class Directives {
 
     return null
   }
+
+  public async settle (request: IncomingMessage, response: OutgoingMessage): Promise<void> {
+    for (const directive of this.directives)
+      if (directive.family.settle !== undefined)
+        await directive.family.settle(request, response, directive.directives)
+  }
 }
 
 export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
@@ -88,6 +94,10 @@ export interface Family<IDirective = any> {
   preflight: (directives: IDirective[],
     request: Input,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
+
+  settle?: (request: Input,
+    response: OutgoingMessage,
+    directives: IDirective[]) => void | Promise<void>
 }
 
 interface DirectiveSet {

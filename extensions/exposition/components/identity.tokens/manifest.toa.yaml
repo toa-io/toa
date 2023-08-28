@@ -2,17 +2,20 @@ namespace: identity
 name: tokens
 
 operations:
-  encode:
+  issue:
     input:
-      id*: id
-      ...: true
+      payload: object
+      lifetime: 15552000 # seconds
     output: string
-  decode:
+  resolve:
     input: string
-    output: object
+    output:
+      payload: object
   authenticate:
-    forward: decode
+    input: string
+    output:
+      identity: object
 
 configuration:
-  secret*: ''
-  lifetime*: 15552000  # seconds
+  key0*: ''
+  key1: string

@@ -2,11 +2,13 @@ import { types } from './formats'
 
 export class Exception extends Error {
   public readonly status: number
+  public readonly headers?: Record<string, string>
 
-  protected constructor (status: number, message?: string) {
+  protected constructor (status: number, message?: string, headers?: Record<string, string>) {
     super(message)
 
     this.status = status
+    this.headers = headers
   }
 }
 
@@ -20,8 +22,10 @@ export class BadRequest extends ClientError {
 }
 
 export class Unauthorized extends ClientError {
+  private static readonly headers: Record<string, string> = { 'www-authenticate': 'Basic' }
+
   public constructor (message?: string) {
-    super(401, message)
+    super(401, message, Unauthorized.headers)
   }
 }
 

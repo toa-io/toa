@@ -6,5 +6,6 @@ export interface Directive {
 
 export interface Identity {
   readonly id: string
-  upgrade?: string
+  scheme?: string
+  roles?: string[]
 }

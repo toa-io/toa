@@ -63,9 +63,10 @@ export interface IncomingMessage<Identity = never> extends Message {
   identity?: Identity
 }
 
-export interface OutgoingMessage extends Message {
+export interface OutgoingMessage {
   status?: number
   headers?: OutgoingHttpHeaders
+  body?: any
 }
 
 export interface Query {

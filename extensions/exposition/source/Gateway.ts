@@ -29,7 +29,7 @@ export class Gateway extends Connector {
     console.info('Gateway has started and is awaiting resource branches.')
   }
 
-  protected override async dispose (): Promise<void> {
+  protected override dispose (): void {
     console.info('Gateway is closed.')
   }
 
@@ -55,7 +55,11 @@ export class Gateway extends Connector {
       .call(request.body, request.query, parameters)
       .catch(rethrow)
 
-    return { body }
+    const response: http.OutgoingMessage = { body }
+
+    await node.directives.settle(request, response)
+
+    return response
   }
 
   private async discover (): Promise<void> {

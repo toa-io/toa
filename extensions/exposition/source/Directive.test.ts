@@ -9,13 +9,15 @@ const families: Array<jest.MockedObject<Family>> = [
     name: 'foo',
     mandatory: false,
     create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
-    preflight: jest.fn()
+    preflight: jest.fn(),
+    settle: jest.fn()
   },
   {
     name: 'bar',
     mandatory: true,
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
-    preflight: jest.fn()
+    preflight: jest.fn(),
+    settle: jest.fn()
   }
 ]
 

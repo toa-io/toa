@@ -113,7 +113,7 @@ describe('request processing', () => {
 function mockNode (verb: string = 'GET', call?: () => Promise<any>): jest.MockedObject<Node<any>> {
   const method = { call }
   const methods = { [verb]: method }
-  const directives = { preflight: jest.fn(() => null) }
+  const directives = { preflight: jest.fn(() => null), settle: jest.fn() }
   const node = { methods, directives } as unknown as jest.MockedObject<Node<any>>
 
   tree.match.mockImplementationOnce(() => ({ node, parameters: [] }))

@@ -45,6 +45,7 @@ export class Factory implements extensions.Factory {
     const composition = new Composition(this.boot)
 
     gateway.depends(composition)
+    composition.depends(server)
 
     return gateway
   }

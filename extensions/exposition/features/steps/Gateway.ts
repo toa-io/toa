@@ -13,7 +13,7 @@ export class Gateway {
 
   public static async start (): Promise<void> {
     if (this.instance !== null)
-      await Gateway.stop()
+      return
 
     process.env.TOA_EXPOSITION ??= DEFAULT_ANNOTATION
 

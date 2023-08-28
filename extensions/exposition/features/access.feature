@@ -22,6 +22,7 @@ Feature: Access authorization
     Then the following reply is sent:
       """
       401 Unauthorized
+      www-authenticate: Basic
       """
 
   Scenario: Allow anonymous access
@@ -268,4 +269,27 @@ Feature: Access authorization
     Then the following reply is sent:
       """
       403 Forbidden
+      """
+
+  Scenario: Switching to Token authentication scheme
+    Given the `greeter` is running with the following manifest:
+      """yaml
+      exposition:
+        /:id:
+          auth:id: id
+          GET: greet
+      """
+    When the following request is received:
+      """
+      GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      authorization: Token
+
+      output: Hello
       """

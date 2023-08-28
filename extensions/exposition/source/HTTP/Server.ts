@@ -53,10 +53,13 @@ export class Server extends Connector {
   protected override async close (): Promise<void> {
     const stopped = promex()
 
+    console.info('Stopping HTTP Server...')
     this.server?.close(stopped.callback)
 
     await stopped
+  }
 
+  protected override dispose (): void {
     console.info('HTTP Server has been stopped.')
   }
 
@@ -89,7 +92,14 @@ export class Server extends Connector {
 
   private fail (request: Request, response: Response) {
     return (exception: Error) => {
-      const status = exception instanceof Exception ? exception.status : 500
+      let status = 500
+
+      if (exception instanceof Exception) {
+        status = exception.status
+
+        response.set(exception.headers)
+      }
+
       const outputAllowed = exception instanceof ClientError || this.debug
 
       response.status(status)

@@ -36,7 +36,7 @@
   "scripts": {
     "install": "npm run transpile",
     "transpile": "npx tsc && npx tsc -p ./components/identity.basic && npx tsc -p ./components/identity.tokens",
-    "test:features": "npx cucumber-js"
+    "features": "npx cucumber-js"
   },
   "devDependencies": {
     "@types/cors": "2.8.13",

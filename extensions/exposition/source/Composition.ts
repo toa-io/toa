@@ -22,7 +22,7 @@ export class Composition extends Connector {
     console.info('Composition complete.')
   }
 
-  protected override async close (): Promise<void> {
+  protected override dispose (): void {
     console.info('Composition shutdown complete.')
   }
 }
