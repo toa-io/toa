@@ -1,11 +1,11 @@
 import { type Component, type Reply } from '@toa.io/core'
-import { type MethodFactory, type Parameter, type syntax } from './RTD'
+import { type Method, type MethodFactory, type Parameter, type syntax } from './RTD'
 import { type Remotes } from './Remotes'
 import { Mapping } from './Mapping'
 import { type Context } from './Context'
 import type * as http from './HTTP'
 
-export class Endpoint {
+export class Endpoint implements Method {
   private readonly endpoint: string
   private readonly mapping: Mapping
   private readonly discovery: Promise<Component>
@@ -23,6 +23,12 @@ export class Endpoint {
     this.remote ??= await this.discovery
 
     return await this.remote.invoke(this.endpoint, request)
+  }
+
+  public async close (): Promise<void> {
+    this.remote ??= await this.discovery
+
+    await this.remote.disconnect()
   }
 }
 

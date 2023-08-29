@@ -1,9 +1,9 @@
 import { type Route } from './Route'
-import { type Methods } from './Method'
+import { type Method, type Methods } from './Method'
 import { type Parameter } from './Match'
 import { type Directives } from './Directives'
 
-export class Node<IMethod = any, IDirectives extends Directives<IDirectives> = any> {
+export class Node<IMethod extends Method = any, IDirectives extends Directives<IDirectives> = any> {
   public intermediate: boolean
   public methods: Methods<IMethod>
   public directives: IDirectives
@@ -11,10 +11,8 @@ export class Node<IMethod = any, IDirectives extends Directives<IDirectives> = a
   private routes: Route[]
 
   // eslint-disable-next-line max-params
-  public constructor (routes: Route[],
-    methods: Methods<IMethod>,
-    directives: IDirectives,
-    properties: Properties) {
+  public constructor
+  (routes: Route[], methods: Methods<IMethod>, directives: IDirectives, properties: Properties) {
     this.routes = routes
     this.methods = methods
     this.directives = directives
@@ -44,9 +42,14 @@ export class Node<IMethod = any, IDirectives extends Directives<IDirectives> = a
   }
 
   private replace (node: Node<IMethod, IDirectives>): void {
+    const methods = Object.values(this.methods)
+
     this.routes = node.routes
     this.methods = node.methods
     this.directives = node.directives
+
+    for (const method of methods)
+      void method.close() // race condition is really unlikely
   }
 
   private append (node: Node<IMethod, IDirectives>): void {

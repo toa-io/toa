@@ -2,10 +2,11 @@ import { Node, type Properties } from './Node'
 import { Route } from './Route'
 import { type Context } from './Context'
 import { segment } from './segment'
-import { type Methods } from './Method'
+import { type Method, type Methods } from './Method'
 import type * as syntax from './syntax'
 
-export function createNode<TMethod> (node: syntax.Node, context: Context): Node<TMethod> {
+export function createNode<TMethod extends Method>
+(node: syntax.Node, context: Context): Node<TMethod> {
   context.directives.stack.push(...node.directives)
 
   const routes: Route[] = node.routes.map((route) => createRoute(route, context))
