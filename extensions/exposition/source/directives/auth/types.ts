@@ -6,6 +6,11 @@ export interface Directive {
 
 export interface Identity {
   readonly id: string
-  scheme?: string
+  scheme: string
   roles?: string[]
+  stale: boolean
+}
+
+export interface Extension {
+  identity: Identity | null
 }

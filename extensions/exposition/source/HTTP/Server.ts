@@ -53,7 +53,6 @@ export class Server extends Connector {
   protected override async close (): Promise<void> {
     const stopped = promex()
 
-    console.info('Stopping HTTP Server...')
     this.server?.close(stopped.callback)
 
     await stopped

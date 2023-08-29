@@ -16,9 +16,6 @@ const {
   validate
 } = require('./.context')
 
-/**
- * @type {toa.norm.context.Constructor}
- */
 const context = async (root, environment = process.env.TOA_ENV) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await load(path)

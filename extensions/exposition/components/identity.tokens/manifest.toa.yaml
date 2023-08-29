@@ -22,4 +22,4 @@ operations:
 configuration:
   key0*: string
   key1: string
-  reissue: .25
+  stale: .75

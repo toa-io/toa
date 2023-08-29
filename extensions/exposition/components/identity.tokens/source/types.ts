@@ -11,7 +11,7 @@ export interface Context {
 export interface Configuration {
   readonly key0: string
   readonly key1?: string
-  readonly reissue: number
+  readonly stale: number
 }
 
 export interface AuthenticateOutput {

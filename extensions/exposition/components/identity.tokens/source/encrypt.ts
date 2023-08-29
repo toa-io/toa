@@ -11,8 +11,7 @@ export async function effect (input: EncryptInput, context: Context): Promise<Re
     : new Date(Date.now() + input.lifetime * 1000).toISOString()
 
   const payload = { [KEY]: input.payload, exp }
-  const token = await V3.encrypt(payload, key)
-  const output = token.slice('v3.local.'.length)
+  const output = await V3.encrypt(payload, key)
 
   return { output }
 }

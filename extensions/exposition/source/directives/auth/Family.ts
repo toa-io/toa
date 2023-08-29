@@ -4,13 +4,13 @@ import { type Family, type Input, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
 import * as http from '../../HTTP'
 import { type OutgoingMessage } from '../../HTTP'
-import { type Directive, type Identity } from './types'
+import { type Directive, type Extension, type Identity } from './types'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
 import { Role } from './Role'
 import { Rule } from './Rule'
 
-class Authorization implements Family<Directive> {
+class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
   private readonly schemes = {} as unknown as Schemes
@@ -33,7 +33,7 @@ class Authorization implements Family<Directive> {
   }
 
   public async preflight (directives: Directive[],
-    input: Input<Identity | null>,
+    input: Input & Extension,
     parameters: Parameter[]): Promise<Output> {
     const identity = await this.resolve(input.headers.authorization)
 
@@ -50,12 +50,23 @@ class Authorization implements Family<Directive> {
     else throw new http.Forbidden()
   }
 
-  public async settle (request: Input<Identity | null>,
+  public async settle (request: Input & Extension,
     response: OutgoingMessage): Promise<void> {
-    if (request.identity?.scheme === undefined || request.identity.scheme === PRIMARY)
+    const identity = request.identity
+
+    if (identity === null)
       return
 
-    const authorization = await this.refresh(request.identity)
+    if (identity.scheme === PRIMARY && !identity.stale)
+      return
+
+    if (identity.roles === undefined)
+      await Role.set(identity, this.discovery.roles)
+
+    this.tokens ??= await this.discovery.tokens
+
+    const reply = await this.tokens.invoke('encrypt', { input: { payload: identity } })
+    const authorization = `Token ${reply.output}`
 
     if (response.headers === undefined)
       response.headers = {}
@@ -90,19 +101,9 @@ class Authorization implements Family<Directive> {
     const identity: Identity = reply.output.identity
 
     identity.scheme = scheme
+    identity.stale = reply.output.stale
 
     return identity
-  }
-
-  private async refresh (identity: Identity): Promise<string> {
-    this.tokens ??= await this.discovery.tokens
-
-    if (identity.roles === undefined)
-      await Role.set(identity, this.discovery.roles)
-
-    const reply = await this.tokens.invoke('issue', { input: { payload: identity } })
-
-    return `Token ${reply.output}`
   }
 }
 

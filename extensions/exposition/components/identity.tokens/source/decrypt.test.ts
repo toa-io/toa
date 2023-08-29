@@ -9,7 +9,7 @@ let context: Context
 beforeEach(() => {
   configuration = {
     key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
-    reissue: 0.25
+    stale: 0.25
   }
 
   context = { configuration } as unknown as Context

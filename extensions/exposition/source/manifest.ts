@@ -16,7 +16,7 @@ export function manifest (declaration: object, manifest: Manifest): Node {
 }
 
 function wrap (segment: string, declaration: object): object {
-  return { ['/' + segment]: declaration }
+  return { ['/' + segment]: { protected: true, ...declaration } }
 }
 
 function concretize (node: Node, manifest: Manifest): void {

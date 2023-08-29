@@ -20,6 +20,12 @@ function parseNode (input: object, shortcuts?: Shortcuts): Node {
   const node = createNode()
 
   for (let [key, value] of Object.entries(input)) {
+    if (key === 'protected') {
+      node.protected = value
+
+      continue
+    }
+
     if (key[0] === '/') {
       const route = parseRoute(key, value, shortcuts)
 

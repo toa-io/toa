@@ -1,8 +1,4 @@
-# routes
+protected: boolean
 routes: [ref:route]
-#/^\/(.{1,128}[^\/])?$/: ref:#/
-
 methods: [ref:method]
-
-# directives
 directives: [ref:directive]

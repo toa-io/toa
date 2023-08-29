@@ -86,16 +86,16 @@ export const shortcuts: RTD.syntax.Shortcuts = new Map([
   ['rule', 'auth:rule']
 ])
 
-export interface Family<IDirective = any> {
+export interface Family<IDirective = any, IExtension = any> {
   readonly name: string
   readonly mandatory: boolean
 
   create: (name: string, value: any, remotes: Remotes) => IDirective
   preflight: (directives: IDirective[],
-    request: Input,
+    request: IncomingMessage & IExtension,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
 
-  settle?: (request: Input,
+  settle?: (request: IncomingMessage & IExtension,
     response: OutgoingMessage,
     directives: IDirective[]) => void | Promise<void>
 }
@@ -105,5 +105,5 @@ interface DirectiveSet {
   directives: any[]
 }
 
-export type Input<Identity = never> = IncomingMessage<Identity>
+export type Input = IncomingMessage
 export type Output = OutgoingMessage | null

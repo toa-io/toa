@@ -13,9 +13,9 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
   for (const instance of instances) {
     const values = annotation[instance.locator.id]
 
-    if (values === undefined) continue
-
     validate(instance, values)
+
+    if (values === undefined) continue
 
     variables[instance.locator.label] = [{
       name: PREFIX + instance.locator.uppercase,
@@ -54,7 +54,7 @@ function createSecrets (values: object): Variable[] {
   return secrets
 }
 
-function validate (instace: Instance, values: object): void {
+function validate (instace: Instance, values: object = {}): void {
   const defaults = instace.manifest.defaults ?? {}
   const configuration = overwrite(defaults, values)
   const schema = schemas.schema(instace.manifest.schema)

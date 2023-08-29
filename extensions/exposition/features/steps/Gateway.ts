@@ -7,32 +7,11 @@ import { Factory } from '../../source'
 import * as syntax from '../../source/RTD/syntax'
 import { shortcuts } from '../../source/Directive'
 
+let instance: Connector | null = null
+
 @binding()
 export class Gateway {
-  private static instance: Connector | null = null
-
-  public static async start (): Promise<void> {
-    if (this.instance !== null)
-      return
-
-    process.env.TOA_EXPOSITION ??= DEFAULT_ANNOTATION
-
-    const factory = new Factory(boot)
-    const service = factory.service('gateway')
-
-    if (service === null)
-      throw new Error('?')
-
-    this.instance = service
-
-    await service.connect()
-  }
-
-  @afterAll()
-  public static async stop (): Promise<void> {
-    await this.instance?.disconnect()
-    this.instance = null
-  }
+  private default: boolean = true
 
   @given('the annotation:')
   public async annotate (yaml: string): Promise<void> {
@@ -40,12 +19,69 @@ export class Gateway {
     const node = syntax.parse(annotation, shortcuts)
 
     process.env.TOA_EXPOSITION = encode(node)
+
+    await Gateway.stop()
+
+    this.default = false
+  }
+
+  @given('the `{word}` configuration:')
+  public async configure (id: string, yaml: string): Promise<void> {
+    const [name, namespace = 'default'] = id.split('.').reverse()
+    const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`
+    const def = DEFAULT_CONFIGURATION[id] ?? {}
+    const patch: object = parse(yaml)
+    const configuration = Object.assign({}, def, patch)
+
+    process.env[key] = encode(configuration)
+
+    await Gateway.stop()
+
+    this.default = false
   }
 
   @after()
   public async cleanup (): Promise<void> {
+    if (this.default)
+      return
+
     delete process.env.TOA_EXPOSITION
+
     await Gateway.stop()
+  }
+
+  @afterAll()
+  public static async stop (): Promise<void> {
+    await instance?.disconnect()
+    instance = null
+  }
+
+  public async start (): Promise<void> {
+    if (instance !== null)
+      return
+
+    process.env.TOA_EXPOSITION ??= DEFAULT_ANNOTATION
+
+    this.writeConfiguration()
+
+    const factory = new Factory(boot)
+    const service = factory.service('gateway')
+
+    if (service === null)
+      throw new Error('?')
+
+    instance = service
+
+    await service.connect()
+  }
+
+  private writeConfiguration (): void {
+    for (const [id, configuration] of Object.entries(DEFAULT_CONFIGURATION)) {
+      const [name, namespace = 'default'] = id.split('.').reverse()
+      const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`
+
+      process.env[key] ??= encode(configuration)
+    }
   }
 }
 
@@ -60,3 +96,9 @@ const DEFAULT_ANNOTATION = encode({
     }
   ]
 } satisfies syntax.Node)
+
+const DEFAULT_CONFIGURATION: Record<string, object> = {
+  'identity.tokens': {
+    key0: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA'
+  }
+}

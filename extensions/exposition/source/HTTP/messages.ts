@@ -52,15 +52,14 @@ function negotiate (request: Request): string {
 }
 
 interface Message {
-  body?: any
+  body: any
 }
 
-export interface IncomingMessage<Identity = never> extends Message {
+export interface IncomingMessage extends Message {
   method: string
   path: string
   headers: IncomingHttpHeaders
   query: Query
-  identity?: Identity
 }
 
 export interface OutgoingMessage {

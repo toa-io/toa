@@ -1,4 +1,5 @@
 export interface Node {
+  protected?: boolean
   routes: Route[]
   methods: Method[]
   directives: Directive[]

@@ -15,7 +15,7 @@ export function createNode<TMethod> (node: syntax.Node, context: Context): Node<
     methods[method.verb] = context.methods.create(method, context)
 
   const directives = context.directives.factory.create(context.directives.stack)
-  const properties: Properties = { protected: context.protected }
+  const properties: Properties = { protected: node.protected ?? context.protected }
 
   return new Node(routes, methods, directives, properties)
 }

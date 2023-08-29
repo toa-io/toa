@@ -1,6 +1,7 @@
 import { type Component } from '@toa.io/core'
 import { generate } from 'randomstring'
 import { Role } from './Role'
+import { type Identity } from './types'
 
 const remote = {
   invoke: jest.fn()
@@ -15,7 +16,7 @@ beforeEach(() => {
 it('should return false if not matched', async () => {
   const roles = ['admin', 'user']
   const directive = new Role(roles, discovery)
-  const identity = { id: generate() }
+  const identity: Identity = { id: generate(), scheme: '', stale: false }
 
   remote.invoke.mockResolvedValueOnce({ output: [{ role: 'guest' }] })
 
@@ -53,7 +54,7 @@ it('should return false on non-scope substring match', async () => {
 
 async function match (expected: string[], actual: string[]): Promise<boolean> {
   const directive = new Role(expected, discovery)
-  const identity = { id: generate() }
+  const identity: Identity = { id: generate(), scheme: '', stale: false }
   const output = actual.map((role) => ({ role }))
 
   remote.invoke.mockResolvedValueOnce({ output })

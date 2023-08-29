@@ -17,7 +17,7 @@ Promise<Reply<AuthenticateOutput>> {
   const exp = new Date(reply.output.exp).getTime()
   const now = new Date().getTime()
   const lifetime = exp - iat
-  const stale = iat + lifetime * context.configuration.reissue < now
+  const stale = iat + lifetime * context.configuration.stale < now
 
   return { output: { identity, stale } }
 }

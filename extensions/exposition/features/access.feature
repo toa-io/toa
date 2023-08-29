@@ -250,7 +250,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      authorization: Token v3.local.bhmh5t_NGvtp9pg1lAc3_XySnNSjkPLCU5NA3w3YuoqoIHtkEGA16kVGFkYwIieKusHGCR2YhsDUf1hV7DFgnkJiPSWg48rwIZivYCEor5QYlrxbpVCu058m_g6XO8g7Ln02ug8E1BeIjv-baPoxGxHJJQb4Mw9bFyzqGY-a51rtg50l3EKCRn_rsA
+      authorization: Token v3.local.Ks6rVDVU5uuSBQI4-Yp_vV4N_I_u0KpGYGn5jlM0QLDsCGKFEvekI1W88NSGKyiXJDl2KHb0FSrCDXHhzeZaFHKNOOYSRhZAi546kvKqGSYLeuY0g_-2hSPaOTxeTtsE7VdLyCa5xdkXq1PB8_UQWnYVMW3i8I1mITYyax2yu9G_E0Qf4XH-8eYXlQnfnqofwLUih6mAjOMpaAP9uzJgkWs-6oJ1JOmttwZfEQ
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -260,10 +260,14 @@ Feature: Access authorization
 
       access: granted!
       """
+    And the reply does not contain:
+      """
+      authorization: Token
+      """
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      authorization: Token v3.local.bkXkyVQU2UigvnQs_8jvPcbLwJqikawy-eX6PVNHmdovZSRuxIkJBfxYmZa6-ctR343EODSGAnE2rncX1DlyKmeUA9ODF4-ylc3cfnvL1EThTo77Uzx9vju312uv3VO-5Ud14_whBnc9BvBiDVI6C-VVxvASoDsxLohQbplD71h4pONyHrUBP_I19g
+      authorization: Token v3.local.o6HcCI-YPaoI-wm7POxmgIjStJLPyasqrhoz4DXqFgqatBdJh-OV8-HpyWI7UWwiVyy_tZiOtjuSs8JZMW9deLbeorwdFQS1xiJh9VRTa5ntUMTBsQJ2tBftJkAm0frmd_DP_veTqJqvIbjPW0cqsU0s_f3qT-b5C3cqmmcxVk5-L6JYUmD7VhDFKynTk0Z9bgI_r0wYMiCuotYEGNfl7h0_WNrxfO57BQJhkQ
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -283,6 +287,48 @@ Feature: Access authorization
       """
       GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      authorization: Token
+
+      output: Hello
+      """
+
+  Scenario: Refreshing stale token
+    Given the `identity.tokens` configuration:
+      """yaml
+      stale: 0.0000003858024690358 # less than 1 second
+      """
+    And the `greeter` is running with the following manifest:
+      """yaml
+      exposition:
+        /:id:
+          auth:id: id
+          GET: greet
+      """
+    When the following request is received:
+      """
+      GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      authorization: Token ${{ token }}
+
+      output: Hello
+      """
+    Then after 1 second
+    When the following request is received:
+      """
+      GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Token ${{ token }}
       accept: application/yaml
       """
     Then the following reply is sent:

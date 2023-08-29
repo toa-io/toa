@@ -3,8 +3,7 @@ import { V3 } from 'paseto'
 import { type Context, type Claim, type DecryptOutput } from './types'
 import { KEY } from './const'
 
-export async function computation (input: string, context: Context): Promise<Reply<DecryptOutput>> {
-  const token = 'v3.local.' + input
+export async function computation (token: string, context: Context): Promise<Reply<DecryptOutput>> {
   const claim = await decrypt(token, context.configuration.key0)
 
   if (claim === null) return { error: { code: 0 } }
@@ -14,7 +13,7 @@ export async function computation (input: string, context: Context): Promise<Rep
 async function decrypt (token: string, key: string): Promise<Claim | null> {
   try {
     return await V3.decrypt<Claim>(token, key)
-  } catch {
+  } catch (e) {
     return null
   }
 }
