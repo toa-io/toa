@@ -38,14 +38,13 @@ export class Factory implements extensions.Factory {
     const remotes = new Remotes(this.boot)
     const methods = new EndpointFactory(remotes)
     const directives = new DirectivesFactory(this.families, remotes)
-    const annotation: syntax.Node = env.resolve()
+    const annotation = env.resolve()
     const tree = new Tree<Endpoint, Directives>(annotation, methods, directives)
 
-    const gateway = new Gateway(broadcast, server, tree)
     const composition = new Composition(this.boot)
+    const gateway = new Gateway(broadcast, server, tree)
 
     gateway.depends(composition)
-    composition.depends(server)
 
     return gateway
   }

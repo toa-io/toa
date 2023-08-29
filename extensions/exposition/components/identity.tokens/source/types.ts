@@ -1,20 +1,37 @@
 import { type Reply, type Request } from '@toa.io/types'
+import { type KEY } from './const'
 
 export interface Context {
   local: {
-    resolve: (request: Request<string>) => Promise<Reply<ResolveOutput>>
+    decrypt: (request: Request<string>) => Promise<Reply<DecryptOutput>>
   }
-  configuration: {
-    key0: string
-    key1: string
-  }
+  configuration: Configuration
+}
+
+export interface Configuration {
+  readonly key0: string
+  readonly key1?: string
+  readonly reissue: number
 }
 
 export interface AuthenticateOutput {
   identity: object
-  upgrade?: string
+  stale: boolean
 }
 
-export interface ResolveOutput {
+export interface EncryptInput {
   payload: object
+  lifetime: number
+}
+
+export interface DecryptOutput {
+  payload: object
+  iat: string
+  exp: string
+}
+
+export interface Claim {
+  [KEY]: object
+  iat: string
+  exp: string
 }

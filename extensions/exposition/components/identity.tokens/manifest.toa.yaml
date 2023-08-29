@@ -2,20 +2,24 @@ namespace: identity
 name: tokens
 
 operations:
-  issue:
+  encrypt:
     input:
       payload: object
-      lifetime: 15552000 # seconds
+      lifetime: 2592000 # seconds (30 days)
     output: string
-  resolve:
+  decrypt:
     input: string
     output:
       payload: object
+      iat: string
+      exp: string
   authenticate:
     input: string
     output:
       identity: object
+      stale: boolean
 
 configuration:
-  key0*: ''
+  key0*: string
   key1: string
+  reissue: .25

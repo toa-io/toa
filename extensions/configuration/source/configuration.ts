@@ -9,7 +9,8 @@ export function get (locator: Locator, manifest: Manifest): Configuration {
 
   substituteSecrets(values)
 
-  if (manifest.defaults !== undefined) add(values, manifest.defaults)
+  if (manifest.defaults !== undefined)
+    add(values, manifest.defaults)
 
   const schema = schemas.schema(manifest.schema)
 
