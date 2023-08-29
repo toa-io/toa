@@ -4,10 +4,10 @@ import { fragment } from './segment'
 import { type Match, type Parameter } from './Match'
 import { type MethodFactory } from './Method'
 import { type Context } from './Context'
-import { type DirectivesFactory } from './Directives'
+import { type Directives, type DirectivesFactory } from './Directives'
 import type * as syntax from './syntax'
 
-export class Tree<IMethod, IDirectives> {
+export class Tree<IMethod, IDirectives extends Directives<IDirectives>> {
   private readonly root: syntax.Node
   private readonly trunk: Node<IMethod>
   private readonly methods: MethodFactory<IMethod>

@@ -1,8 +1,9 @@
 import { type Route } from './Route'
 import { type Methods } from './Method'
 import { type Parameter } from './Match'
+import { type Directives } from './Directives'
 
-export class Node<IMethod = any, IDirectives = any> {
+export class Node<IMethod = any, IDirectives extends Directives<IDirectives> = any> {
   public intermediate: boolean
   public methods: Methods<IMethod>
   public directives: IDirectives
@@ -23,7 +24,7 @@ export class Node<IMethod = any, IDirectives = any> {
     this.sort()
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Node<IMethod> | null {
+  public match (fragments: string[], parameters: Parameter[]): Node<IMethod, IDirectives> | null {
     for (const route of this.routes) {
       const node = route.match(fragments, parameters)
 
@@ -33,32 +34,32 @@ export class Node<IMethod = any, IDirectives = any> {
     return null
   }
 
-  public merge (node: Node<IMethod>): void {
+  public merge (node: Node<IMethod, IDirectives>): void {
     this.intermediate = node.intermediate
-    this.directives = node.directives
 
     if (!this.protected) this.replace(node)
     else this.append(node)
+
+    this.sort()
   }
 
-  private replace (node: Node<IMethod>): void {
+  private replace (node: Node<IMethod, IDirectives>): void {
     this.routes = node.routes
     this.methods = node.methods
-
-    this.sort()
+    this.directives = node.directives
   }
 
-  private append (node: Node<IMethod>): void {
+  private append (node: Node<IMethod, IDirectives>): void {
     for (const route of node.routes)
       this.mergeRoute(route)
-
-    this.sort()
 
     for (const [verb, method] of Object.entries(node.methods))
       if (verb in this.methods)
         console.warn(`Overriding of the protected method ${verb} is not permitted.`)
       else
         this.methods[verb] = method
+
+    this.directives.merge(node.directives)
   }
 
   private mergeRoute (candidate: Route): void {

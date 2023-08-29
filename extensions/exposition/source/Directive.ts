@@ -2,7 +2,7 @@ import { type IncomingMessage, type OutgoingMessage } from './HTTP'
 import { type Remotes } from './Remotes'
 import type * as RTD from './RTD'
 
-export class Directives {
+export class Directives implements RTD.Directives<Directives> {
   private readonly directives: DirectiveSet[]
 
   public constructor (directives: DirectiveSet[]) {
@@ -24,6 +24,10 @@ export class Directives {
     for (const directive of this.directives)
       if (directive.family.settle !== undefined)
         await directive.family.settle(request, response, directive.directives)
+  }
+
+  public merge (directives: Directives): void {
+    this.directives.push(...directives.directives)
   }
 }
 
