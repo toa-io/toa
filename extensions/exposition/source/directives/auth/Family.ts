@@ -18,7 +18,7 @@ class Authorization implements Family<Directive, Extension> {
   private tokens: Component | null = null
 
   public create (name: string, value: any, remotes: Remotes): Directive {
-    const Class = CONSTRUCTORS[name]
+    const Class = CLASSES[name]
 
     if (Class === undefined)
       throw new Error(`Directive '${name}' is not provided by '${this.name}' family.`)
@@ -107,7 +107,7 @@ class Authorization implements Family<Directive, Extension> {
   }
 }
 
-const CONSTRUCTORS: Record<string, new (value: any, argument?: any) => Directive> = {
+const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
   anonymous: Anonymous,
   id: Id,
   role: Role,

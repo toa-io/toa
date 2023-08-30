@@ -301,7 +301,7 @@ Feature: Access authorization
   Scenario: Refreshing stale token
     Given the `identity.tokens` configuration:
       """yaml
-      stale: 0.0000003858024690358 # less than 1 second
+      stale: 0.0000003858024690358 # this will result in less than 1 second freshness
       """
     And the `greeter` is running with the following manifest:
       """yaml
@@ -338,4 +338,43 @@ Feature: Access authorization
       authorization: Token
 
       output: Hello
+      """
+
+  Scenario: Using token with roles
+    Given the annotation:
+      """yaml
+      /:
+        auth:role: developer
+        dev:stub:
+          access: granted!
+      """
+    And the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      authorization: Token ${{ token }}
+
+      access: granted!
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      authorization: Token ${{ token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      access: granted!
       """

@@ -1,6 +1,6 @@
-# Resource Tree Definition
+# Resource Tree Declaration
 
-The foundation of a Resource Tree Definition (RTD) is an RTD node.
+The foundation of a Resource Tree Declaration (RTD) is an RTD node.
 An RTD node is an object that consists of _Routes_, _Methods_ and _Directives_.
 
 ## Routes

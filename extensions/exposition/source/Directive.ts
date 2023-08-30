@@ -13,8 +13,11 @@ export class Directives implements RTD.Directives<Directives> {
     for (const directive of this.directives) {
       const output = await directive.family.preflight(directive.directives, request, parameters)
 
-      if (output !== null)
+      if (output !== null) {
+        await this.settle(request, output)
+
         return output
+      }
     }
 
     return null
@@ -49,7 +52,7 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
 
   public create (declarations: RTD.syntax.Directive[]): Directives {
     const groups: Record<string, any> = {}
-    const mandatory = new Set(this.mandatory.slice())
+    const mandatory = new Set(this.mandatory)
 
     for (const declaration of declarations) {
       const family = this.families[declaration.family]
@@ -95,6 +98,7 @@ export interface Family<IDirective = any, IExtension = any> {
   readonly mandatory: boolean
 
   create: (name: string, value: any, remotes: Remotes) => IDirective
+
   preflight: (directives: IDirective[],
     request: IncomingMessage & IExtension,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
