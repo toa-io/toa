@@ -23,8 +23,8 @@ beforeEach(() => {
 })
 
 it.each([
-  [true, -1],
-  [false, +1]
+  [true, -50],
+  [false, +50]
 ])('should mark as stale: %s', async (expected: boolean, shift: number) => {
   const now = Date.now()
   const left = LIFETIME * (1 - configuration.stale) + shift
@@ -32,11 +32,23 @@ it.each([
   const iat = new Date(now - left).toISOString()
   const exp = new Date(now + right).toISOString()
 
-  output = { payload, exp, iat }
+  output = { payload, exp, iat, refresh: false }
 
   const result = await authenticate('', context)
 
   expect(result).toEqual({ output: { identity: payload, stale: expected } })
 })
+
+it.each([true, false])('should return stale: %s',
+  async (refresh) => {
+    const iat = new Date().toISOString()
+    const exp = new Date(Date.now() + 1000).toISOString()
+
+    output = { payload, exp, iat, refresh }
+
+    const result = await authenticate('', context)
+
+    expect(result).toEqual({ output: { identity: payload, stale: refresh } })
+  })
 
 const LIFETIME = 2592000 * 1000

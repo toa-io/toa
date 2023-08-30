@@ -9,6 +9,7 @@ let context: Context
 beforeEach(() => {
   configuration = {
     key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
+    key1: 'k3.local.-498jfWenrZH-Dqw3-zQJih_hKzDgBgUMfe37OCqSOA',
     stale: 0.25
   }
 
@@ -26,5 +27,25 @@ it('should decrypt', async () => {
 
   const decrypted = await decrypt(encrypted.output, context)
 
-  expect(decrypted.output).toMatchObject({ payload })
+  expect(decrypted.output).toMatchObject({ payload, refresh: false })
+})
+
+it('should decrypt with key1', async () => {
+  const k1context = {
+    configuration: {
+      key0: configuration.key1
+    }
+  } as unknown as Context
+
+  const payload = { [generate()]: generate() }
+  const lifetime = 1
+
+  const encrypted = await encrypt({ payload, lifetime }, k1context)
+
+  if (encrypted.output === undefined)
+    throw new Error('?')
+
+  const decrypted = await decrypt(encrypted.output, context)
+
+  expect(decrypted.output).toMatchObject({ payload, refresh: true })
 })

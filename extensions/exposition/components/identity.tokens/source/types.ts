@@ -28,6 +28,7 @@ export interface DecryptOutput {
   payload: object
   iat: string
   exp: string
+  refresh: boolean
 }
 
 export interface Claim {
