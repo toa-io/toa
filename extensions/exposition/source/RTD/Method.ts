@@ -2,13 +2,13 @@ import { type Directives } from './Directives'
 import { type Endpoint } from './Endpoint'
 
 export class Method<
-  IEndpoint extends Endpoint<IEndpoint> = any,
-  IDirectives extends Directives<IDirectives> = any
+  TEndpoint extends Endpoint<TEndpoint> = any,
+  TDirectives extends Directives<TDirectives> = any
 > {
-  public readonly endpoint: IEndpoint | null
-  public readonly directives: IDirectives
+  public readonly endpoint: TEndpoint | null
+  public readonly directives: TDirectives
 
-  public constructor (endpoint: IEndpoint | null, directives: IDirectives) {
+  public constructor (endpoint: TEndpoint | null, directives: TDirectives) {
     this.endpoint = endpoint
     this.directives = directives
   }
@@ -19,6 +19,6 @@ export class Method<
 }
 
 export type Methods<
-  IEndpoint extends Endpoint<IEndpoint> = any,
-  IDirectives extends Directives<IDirectives> = any
-> = Record<string, Method<IEndpoint, IDirectives>>
+  TEndpoint extends Endpoint<TEndpoint> = any,
+  TDirectives extends Directives<TDirectives> = any
+> = Record<string, Method<TEndpoint, TDirectives>>

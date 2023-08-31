@@ -5,16 +5,16 @@ import { type Directives } from './Directives'
 import { type Endpoint } from './Endpoint'
 
 export class Node<
-  IEndpoint extends Endpoint<IEndpoint> = any,
-  IDirectives extends Directives<IDirectives> = any
+  TEndpoint extends Endpoint<TEndpoint> = any,
+  TDirectives extends Directives<TDirectives> = any
 > {
   public intermediate: boolean
-  public methods: Methods<IEndpoint, IDirectives>
+  public methods: Methods<TEndpoint, TDirectives>
   private readonly protected: boolean
   private routes: Route[]
 
   public constructor
-  (routes: Route[], methods: Methods<IEndpoint, IDirectives>, properties: Properties) {
+  (routes: Route[], methods: Methods<TEndpoint, TDirectives>, properties: Properties) {
     this.routes = routes
     this.methods = methods
     this.protected = properties.protected
@@ -23,7 +23,7 @@ export class Node<
     this.sort()
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Node<IEndpoint, IDirectives> | null {
+  public match (fragments: string[], parameters: Parameter[]): Node<TEndpoint, TDirectives> | null {
     for (const route of this.routes) {
       const node = route.match(fragments, parameters)
 
@@ -34,7 +34,7 @@ export class Node<
     return null
   }
 
-  public merge (node: Node<IEndpoint, IDirectives>): void {
+  public merge (node: Node<TEndpoint, TDirectives>): void {
     this.intermediate = node.intermediate
 
     if (!this.protected) this.replace(node)
@@ -43,7 +43,7 @@ export class Node<
     this.sort()
   }
 
-  private replace (node: Node<IEndpoint, IDirectives>): void {
+  private replace (node: Node<TEndpoint, TDirectives>): void {
     const methods = Object.values(this.methods)
 
     this.routes = node.routes
@@ -53,7 +53,7 @@ export class Node<
       void method.close() // race condition is really unlikely
   }
 
-  private append (node: Node<IEndpoint, IDirectives>): void {
+  private append (node: Node<TEndpoint, TDirectives>): void {
     for (const route of node.routes)
       this.mergeRoute(route)
 

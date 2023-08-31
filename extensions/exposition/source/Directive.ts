@@ -96,18 +96,18 @@ export const shortcuts: RTD.syntax.Shortcuts = new Map([
   ['incept', 'auth:incept']
 ])
 
-export interface Family<IDirective = any, IExtension = any> {
+export interface Family<TDirective = any, TExtension = any> {
   readonly name: string
   readonly mandatory: boolean
 
-  create: (name: string, value: any, remotes: Remotes) => IDirective
+  create: (name: string, value: any, remotes: Remotes) => TDirective
 
-  preflight: (directives: IDirective[],
-    request: IncomingMessage & IExtension,
+  preflight: (directives: TDirective[],
+    request: IncomingMessage & TExtension,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
 
-  settle?: (directives: IDirective[],
-    request: IncomingMessage & IExtension,
+  settle?: (directives: TDirective[],
+    request: IncomingMessage & TExtension,
     response: OutgoingMessage) => void | Promise<void>
 }
 

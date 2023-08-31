@@ -2,15 +2,15 @@ import { type Directives, type DirectivesFactory } from './Directives'
 import { type Endpoint, type EndpointsFactory } from './Endpoint'
 
 export interface Context<
-  IEndpoint extends Endpoint = any,
-  IDirective extends Directives<IDirective> = any,
-  IExtension = any
+  TEndpoint extends Endpoint = any,
+  TDirective extends Directives<TDirective> = any,
+  TExtension = any
 > {
   readonly protected: boolean
-  readonly endpoints: EndpointsFactory<IEndpoint>
+  readonly endpoints: EndpointsFactory<TEndpoint>
   readonly directives: {
     readonly factory: DirectivesFactory
-    stack: IDirective[]
+    stack: TDirective[]
   }
-  readonly extension?: IExtension
+  readonly extension?: TExtension
 }

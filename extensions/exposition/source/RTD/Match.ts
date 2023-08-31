@@ -3,10 +3,10 @@ import { type Directives } from './Directives'
 import { type Endpoint } from './Endpoint'
 
 export interface Match<
-  IEndpoint extends Endpoint<IEndpoint> = any,
-  IDirectives extends Directives<IDirectives> = any
+  TEndpoint extends Endpoint<TEndpoint> = any,
+  TDirectives extends Directives<TDirectives> = any
 > {
-  node: Node<IEndpoint, IDirectives>
+  node: Node<TEndpoint, TDirectives>
   parameters: Parameter[]
 }
 

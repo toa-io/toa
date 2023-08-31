@@ -8,12 +8,12 @@ import { type Endpoint, type EndpointsFactory } from './Endpoint'
 import type * as syntax from './syntax'
 
 export class Tree<
-  IEndpoint extends Endpoint<IEndpoint> = any,
-  IDirectives extends Directives<IDirectives> = any
+  TEndpoint extends Endpoint<TEndpoint> = any,
+  TDirectives extends Directives<TDirectives> = any
 > {
   private readonly root: syntax.Node
-  private readonly trunk: Node<IEndpoint, IDirectives>
-  private readonly endpoints: EndpointsFactory<IEndpoint>
+  private readonly trunk: Node<TEndpoint, TDirectives>
+  private readonly endpoints: EndpointsFactory<TEndpoint>
   private readonly directives: DirectivesFactory
 
   public constructor
@@ -24,7 +24,7 @@ export class Tree<
     this.root = node
   }
 
-  public match (path: string): Match<IEndpoint, IDirectives> | null {
+  public match (path: string): Match<TEndpoint, TDirectives> | null {
     const fragments = fragment(path)
     const parameters: Parameter[] = []
     const node = this.trunk.match(fragments, parameters)
