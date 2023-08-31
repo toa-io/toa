@@ -11,7 +11,8 @@ const payload = { id: generate() }
 beforeEach(() => {
   configuration = {
     key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
-    stale: 0.5
+    lifetime: 2592000,
+    refresh: 600
   }
 
   context = {
@@ -27,10 +28,8 @@ it.each([
   [false, +50]
 ])('should mark as stale: %s', async (expected: boolean, shift: number) => {
   const now = Date.now()
-  const left = LIFETIME * (1 - configuration.stale) + shift
-  const right = LIFETIME * configuration.stale + shift
-  const iat = new Date(now - left).toISOString()
-  const exp = new Date(now + right).toISOString()
+  const iat = new Date(now - configuration.refresh + shift).toISOString()
+  const exp = new Date(now + 1000).toISOString()
 
   output = { payload, exp, iat, refresh: false }
 
@@ -50,5 +49,3 @@ it.each([true, false])('should return stale: %s',
 
     expect(result).toEqual({ output: { identity: payload, stale: refresh } })
   })
-
-const LIFETIME = 2592000 * 1000

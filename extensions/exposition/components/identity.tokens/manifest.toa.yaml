@@ -4,8 +4,8 @@ name: tokens
 operations:
   encrypt:
     input:
-      payload: object
-      lifetime: 2592000 # seconds (30 days)
+      payload*: object
+      lifetime: number
     output: string
   decrypt:
     input: string
@@ -23,4 +23,5 @@ operations:
 configuration:
   key0*: string
   key1: string
-  stale: .75
+  lifetime: 2592000 # seconds (30 days)
+  refresh: 600 # seconds

@@ -21,7 +21,7 @@ export async function computation (token: string, context: Context): Promise<Rep
 async function decrypt (token: string, key: string): Promise<Claim | null> {
   try {
     return await V3.decrypt<Claim>(token, key)
-  } catch (e) {
+  } catch {
     return null
   }
 }

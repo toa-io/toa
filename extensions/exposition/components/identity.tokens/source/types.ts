@@ -11,7 +11,8 @@ export interface Context {
 export interface Configuration {
   readonly key0: string
   readonly key1?: string
-  readonly stale: number
+  readonly lifetime: number
+  readonly refresh: number
 }
 
 export interface AuthenticateOutput {
@@ -21,7 +22,7 @@ export interface AuthenticateOutput {
 
 export interface EncryptInput {
   payload: object
-  lifetime: number
+  lifetime?: number
 }
 
 export interface DecryptOutput {
