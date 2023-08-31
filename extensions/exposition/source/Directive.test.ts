@@ -7,14 +7,14 @@ import { type Remotes } from './Remotes'
 const families: Array<jest.MockedObject<Family>> = [
   {
     name: 'foo',
-    mandatory: false,
+    mandatory: true,
     create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
     preflight: jest.fn(),
     settle: jest.fn()
   },
   {
     name: 'bar',
-    mandatory: true,
+    mandatory: false,
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
     preflight: jest.fn(),
     settle: jest.fn()
@@ -87,5 +87,5 @@ it('should apply mandatory families', async () => {
 
   await directives.preflight(request, [])
 
-  expect(families[1].preflight).toHaveBeenCalled()
+  expect(families[0].preflight).toHaveBeenCalled()
 })

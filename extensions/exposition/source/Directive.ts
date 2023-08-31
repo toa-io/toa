@@ -54,6 +54,9 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
     const groups: Record<string, any> = {}
     const mandatory = new Set(this.mandatory)
 
+    declarations.sort((a, b) =>
+      (mandatory.has(b.family) ? 1 : 0) - (mandatory.has(a.family) ? 1 : 0))
+
     for (const declaration of declarations) {
       const family = this.families[declaration.family]
 
@@ -69,7 +72,6 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
 
     const sets: DirectiveSet[] = []
 
-    // undeclared mandatory first
     for (const family of mandatory)
       sets.push({
         family: this.families[family],
@@ -90,7 +92,8 @@ export const shortcuts: RTD.syntax.Shortcuts = new Map([
   ['anonymous', 'auth:anonymous'],
   ['id', 'auth:id'],
   ['role', 'auth:role'],
-  ['rule', 'auth:rule']
+  ['rule', 'auth:rule'],
+  ['incept', 'auth:incept']
 ])
 
 export interface Family<IDirective = any, IExtension = any> {

@@ -1,12 +1,24 @@
-import { type Context } from './Context'
-import type * as syntax from './syntax'
+import { type Directives } from './Directives'
+import { type Endpoint } from './Endpoint'
 
-export interface Method {
-  close: () => Promise<void>
+export class Method<
+  IEndpoint extends Endpoint<IEndpoint> = any,
+  IDirectives extends Directives<IDirectives> = any
+> {
+  public readonly endpoint: IEndpoint | null
+  public readonly directives: IDirectives
+
+  public constructor (endpoint: IEndpoint | null, directives: IDirectives) {
+    this.endpoint = endpoint
+    this.directives = directives
+  }
+
+  public async close (): Promise<void> {
+    await this.endpoint?.close()
+  }
 }
 
-export type Methods<T extends Method> = Record<string, T>
-
-export interface MethodFactory<T extends Method = any> {
-  create: (method: syntax.Method, context: Context) => T
-}
+export type Methods<
+  IEndpoint extends Endpoint<IEndpoint> = any,
+  IDirectives extends Directives<IDirectives> = any
+> = Record<string, Method<IEndpoint, IDirectives>>

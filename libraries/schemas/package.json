@@ -29,7 +29,8 @@
     "@toa.io/generic": "0.20.0-dev.36",
     "@toa.io/yaml": "0.20.0-dev.36",
     "ajv": "8.12.0",
-    "ajv-formats": "2.1.1"
+    "ajv-formats": "2.1.1",
+    "better-ajv-errors": "1.2.0"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

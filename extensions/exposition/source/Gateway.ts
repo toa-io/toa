@@ -43,21 +43,26 @@ export class Gateway extends Connector {
       throw new http.NotFound()
 
     const { node, parameters } = match
-    const interruption = await node.directives.preflight(request, parameters)
-
-    if (interruption !== null)
-      return interruption
 
     if (!(request.method in node.methods))
       throw new http.MethodNotAllowed()
 
-    const body = await node.methods[request.method]
+    const method = node.methods[request.method]
+    const interruption = await method.directives.preflight(request, parameters)
+
+    if (interruption !== null)
+      return interruption
+
+    if (method.endpoint === null)
+      throw new http.MethodNotAllowed()
+
+    const body = await method.endpoint
       .call(request.body, request.query, parameters)
       .catch(rethrow)
 
     const response: http.OutgoingMessage = { body }
 
-    await node.directives.settle(request, response)
+    await method.directives.settle(request, response)
 
     return response
   }

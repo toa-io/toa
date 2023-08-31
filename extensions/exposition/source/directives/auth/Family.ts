@@ -1,14 +1,15 @@
 import { type Component } from '@toa.io/core'
 import { type Parameter } from '../../RTD'
-import { type Family, type Input, type Output } from '../../Directive'
+import { type Family, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
 import * as http from '../../HTTP'
 import { type OutgoingMessage } from '../../HTTP'
-import { type Directive, type Extension, type Identity } from './types'
+import { type Directive, type Extension, type Identity, type Input } from './types'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
 import { Role } from './Role'
 import { Rule } from './Rule'
+import { Incept } from './Incept'
 
 class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
@@ -21,7 +22,7 @@ class Authorization implements Family<Directive, Extension> {
     const Class = CLASSES[name]
 
     if (Class === undefined)
-      throw new Error(`Directive '${name}' is not provided by '${this.name}' family.`)
+      throw new Error(`Directive '${name}' is not provided by the '${this.name}' family.`)
 
     this.discovery.basic ??= remotes.discover('identity', 'basic')
     this.discovery.tokens ??= remotes.discover('identity', 'tokens')
@@ -32,15 +33,14 @@ class Authorization implements Family<Directive, Extension> {
     else return new Class(value)
   }
 
-  public async preflight (directives: Directive[],
-    input: Input & Extension,
-    parameters: Parameter[]): Promise<Output> {
+  public async preflight
+  (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
     const identity = await this.resolve(input.headers.authorization)
 
     input.identity = identity
 
     for (const directive of directives) {
-      const allow = await directive.authorize(identity, parameters)
+      const allow = await directive.authorize(identity, input, parameters)
 
       if (allow)
         return null
@@ -50,8 +50,7 @@ class Authorization implements Family<Directive, Extension> {
     else throw new http.Forbidden()
   }
 
-  public async settle (request: Input & Extension,
-    response: OutgoingMessage): Promise<void> {
+  public async settle (request: Input, response: OutgoingMessage): Promise<void> {
     const identity = request.identity
 
     if (identity === null)
@@ -111,7 +110,8 @@ const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
   anonymous: Anonymous,
   id: Id,
   role: Role,
-  rule: Rule
+  rule: Rule,
+  incept: Incept
 }
 
 const PROVIDERS: Record<Scheme, Provider> = {

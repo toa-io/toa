@@ -13,6 +13,7 @@ export interface Route {
 export interface Method {
   verb: string
   mapping: Mapping
+  directives: Directive[]
 }
 
 export interface Directive {

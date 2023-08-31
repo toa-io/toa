@@ -1,9 +1,12 @@
 import { type Node } from './Node'
 import { type Directives } from './Directives'
-import { type Method } from './Method'
+import { type Endpoint } from './Endpoint'
 
-export interface Match<IMethod extends Method, IDirectives extends Directives<IDirectives>> {
-  node: Node<IMethod, IDirectives>
+export interface Match<
+  IEndpoint extends Endpoint<IEndpoint> = any,
+  IDirectives extends Directives<IDirectives> = any
+> {
+  node: Node<IEndpoint, IDirectives>
   parameters: Parameter[]
 }
 

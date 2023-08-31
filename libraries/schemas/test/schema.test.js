@@ -62,7 +62,7 @@ describe('validate', () => {
     try {
       schema.validate(value)
     } catch (exception) {
-      expect(exception).toBeInstanceOf(schemas.Exception)
+      expect(exception).toBeInstanceOf(TypeError)
     }
   })
 

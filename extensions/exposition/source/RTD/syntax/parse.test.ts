@@ -103,6 +103,23 @@ describe('methods', () => {
       endpoint: 'observe'
     })
   })
+
+  it('should parse directives', async () => {
+    const declaration = {
+      '/': {
+        GET: {
+          'auth:incept': 'id',
+          endpoint: 'observe'
+        }
+      }
+    }
+
+    const node = parse(declaration)
+    const root = node.routes[0].node
+
+    expect(root.methods[0].directives)
+      .toStrictEqual([{ family: 'auth', name: 'incept', value: 'id' }])
+  })
 })
 
 describe('directives', () => {
@@ -144,7 +161,7 @@ describe('validation', () => {
       }
     }
 
-    expect(() => parse(declaration)).toThrow('additional properties')
+    expect(() => parse(declaration)).toThrow('/methods/0/mapping')
   })
 })
 

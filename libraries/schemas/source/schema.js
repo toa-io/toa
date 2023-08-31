@@ -5,7 +5,7 @@ const { defined } = require('@toa.io/generic')
 const { file } = require('@toa.io/filesystem')
 const yaml = require('@toa.io/yaml')
 const { create, is } = require('./validator')
-const { Exception } = require('./exception')
+const betterAjvErrors = require('better-ajv-errors').default
 
 /**
  * @implements {toa.schemas.Schema}
@@ -14,7 +14,6 @@ class Schema {
   /** @type {string} */
   id
 
-  /** @type {import('ajv').ValidateFunction } */
   #validate
 
   /**
@@ -36,9 +35,9 @@ class Schema {
     const valid = this.#validate(value)
 
     if (!valid) {
-      const error = this.#error()
+      const error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
 
-      throw new Exception(error)
+      throw new TypeError(error[0].error)
     }
   }
 

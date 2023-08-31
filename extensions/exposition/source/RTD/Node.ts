@@ -1,38 +1,40 @@
 import { type Route } from './Route'
-import { type Method, type Methods } from './Method'
+import { type Methods } from './Method'
 import { type Parameter } from './Match'
 import { type Directives } from './Directives'
+import { type Endpoint } from './Endpoint'
 
-export class Node<IMethod extends Method = any, IDirectives extends Directives<IDirectives> = any> {
+export class Node<
+  IEndpoint extends Endpoint<IEndpoint> = any,
+  IDirectives extends Directives<IDirectives> = any
+> {
   public intermediate: boolean
-  public methods: Methods<IMethod>
-  public directives: IDirectives
+  public methods: Methods<IEndpoint, IDirectives>
   private readonly protected: boolean
   private routes: Route[]
 
-  // eslint-disable-next-line max-params
   public constructor
-  (routes: Route[], methods: Methods<IMethod>, directives: IDirectives, properties: Properties) {
+  (routes: Route[], methods: Methods<IEndpoint, IDirectives>, properties: Properties) {
     this.routes = routes
     this.methods = methods
-    this.directives = directives
     this.protected = properties.protected
     this.intermediate = this.routes.findIndex((route) => route.root) !== -1
 
     this.sort()
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Node<IMethod, IDirectives> | null {
+  public match (fragments: string[], parameters: Parameter[]): Node<IEndpoint, IDirectives> | null {
     for (const route of this.routes) {
       const node = route.match(fragments, parameters)
 
-      if (node !== null) return node
+      if (node !== null)
+        return node
     }
 
     return null
   }
 
-  public merge (node: Node<IMethod, IDirectives>): void {
+  public merge (node: Node<IEndpoint, IDirectives>): void {
     this.intermediate = node.intermediate
 
     if (!this.protected) this.replace(node)
@@ -41,18 +43,17 @@ export class Node<IMethod extends Method = any, IDirectives extends Directives<I
     this.sort()
   }
 
-  private replace (node: Node<IMethod, IDirectives>): void {
+  private replace (node: Node<IEndpoint, IDirectives>): void {
     const methods = Object.values(this.methods)
 
     this.routes = node.routes
     this.methods = node.methods
-    this.directives = node.directives
 
     for (const method of methods)
       void method.close() // race condition is really unlikely
   }
 
-  private append (node: Node<IMethod, IDirectives>): void {
+  private append (node: Node<IEndpoint, IDirectives>): void {
     for (const route of node.routes)
       this.mergeRoute(route)
 
@@ -61,8 +62,6 @@ export class Node<IMethod extends Method = any, IDirectives extends Directives<I
         console.warn(`Overriding of the protected method ${verb} is not permitted.`)
       else
         this.methods[verb] = method
-
-    this.directives.merge(node.directives)
   }
 
   private mergeRoute (candidate: Route): void {

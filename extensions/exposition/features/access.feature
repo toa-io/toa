@@ -12,8 +12,9 @@ Feature: Access authorization
     Given the annotation:
       """yaml
       /:
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       """
@@ -22,7 +23,6 @@ Feature: Access authorization
     Then the following reply is sent:
       """
       401 Unauthorized
-      www-authenticate: Basic
       """
 
   Scenario: Allow anonymous access
@@ -30,8 +30,9 @@ Feature: Access authorization
       """yaml
       /:
         auth:anonymous: true
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       """
@@ -50,8 +51,9 @@ Feature: Access authorization
       """yaml
       /:
         auth:anonymous: true
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       """
@@ -68,8 +70,9 @@ Feature: Access authorization
       """yaml
       /:id:
         auth:id: id
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       """
@@ -104,8 +107,9 @@ Feature: Access authorization
       """yaml
       /:
         auth:role: developer
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       # identity with `developer` and `user` roles
@@ -141,10 +145,12 @@ Feature: Access authorization
       /:
         auth:role: developer:rust:junior  # role scope matches
         /nested:
-          dev:stub: good!
+          GET:
+            dev:stub: good!
       /javascript:
         auth:role: developer:javascript   # role scope does not match
-        dev:stub: no good!
+        GET:
+          dev:stub: no good!
       """
     When the following request is received:
       """
@@ -179,8 +185,9 @@ Feature: Access authorization
         role:
           - developer
           - admin
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       # identity with `developer` and `user` roles
@@ -207,14 +214,16 @@ Feature: Access authorization
         auth:rule:
           id: id
           role: developer:rust
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       /javascript/:id:
         rule:
           id: id
           role: developer:javascript
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       """
@@ -244,8 +253,9 @@ Feature: Access authorization
       """yaml
       /:id:
         auth:id: id
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     When the following request is received:
       """
@@ -345,8 +355,9 @@ Feature: Access authorization
       """yaml
       /:
         auth:role: developer
-        dev:stub:
-          access: granted!
+        GET:
+          dev:stub:
+            access: granted!
       """
     And the `identity.roles` database contains:
       | _id                              | identity                         | role      |

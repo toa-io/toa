@@ -10,7 +10,7 @@ class Development implements Family<Directive> {
     const Class = constructors[name]
 
     if (Class === undefined)
-      throw new Error(`Directive '${name}' is not provided by '${this.name}'.`)
+      throw new Error(`Directive '${name}' is not provided by the '${this.name}' family.`)
 
     return new Class(value)
   }

@@ -1,7 +1,9 @@
 import { type Parameter } from '../../RTD'
+import type * as directive from '../../Directive'
 
 export interface Directive {
-  authorize: (identity: Identity | null, parameters: Parameter[]) => boolean | Promise<boolean>
+  authorize: (identity: Identity | null, input: Input, parameters: Parameter[]) =>
+  boolean | Promise<boolean>
 }
 
 export interface Identity {
@@ -14,3 +16,5 @@ export interface Identity {
 export interface Extension {
   identity: Identity | null
 }
+
+export type Input = directive.Input & Extension

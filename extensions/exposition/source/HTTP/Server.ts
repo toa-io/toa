@@ -93,11 +93,8 @@ export class Server extends Connector {
     return (exception: Error) => {
       let status = 500
 
-      if (exception instanceof Exception) {
+      if (exception instanceof Exception)
         status = exception.status
-
-        response.set(exception.headers)
-      }
 
       const outputAllowed = exception instanceof ClientError || this.debug
 

@@ -1,11 +1,11 @@
 import { type Component, type Reply } from '@toa.io/core'
-import { type Method, type MethodFactory, type Parameter, type syntax } from './RTD'
 import { type Remotes } from './Remotes'
 import { Mapping } from './Mapping'
 import { type Context } from './Context'
+import type * as RTD from './RTD'
 import type * as http from './HTTP'
 
-export class Endpoint implements Method {
+export class Endpoint implements RTD.Endpoint<Endpoint> {
   private readonly endpoint: string
   private readonly mapping: Mapping
   private readonly discovery: Promise<Component>
@@ -17,7 +17,7 @@ export class Endpoint implements Method {
     this.discovery = discovery
   }
 
-  public async call (body: any, query: http.Query, parameters: Parameter[]): Promise<Reply> {
+  public async call (body: any, query: http.Query, parameters: RTD.Parameter[]): Promise<Reply> {
     const request = this.mapping.fit(body, query, parameters)
 
     this.remote ??= await this.discovery
@@ -32,14 +32,14 @@ export class Endpoint implements Method {
   }
 }
 
-export class EndpointFactory implements MethodFactory<Endpoint> {
+export class EndpointFactory implements RTD.EndpointsFactory<Endpoint> {
   private readonly remotes: Remotes
 
   public constructor (remotes: Remotes) {
     this.remotes = remotes
   }
 
-  public create (method: syntax.Method, context: Context): Endpoint {
+  public create (method: RTD.syntax.Method, context: Context): Endpoint {
     const mapping = Mapping.create(method.verb, method.mapping.query)
     const namespace = method.mapping.namespace ?? context.extension?.namespace
     const component = method.mapping.component ?? context.extension?.component

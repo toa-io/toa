@@ -153,7 +153,8 @@ Feature: Errors
   Scenario: Malformed authorization header
     Given the annotation:
       """yaml
-      /: {}
+      /:
+        GET: {}
       """
     When the following request is received:
       """

@@ -2,23 +2,24 @@ import { Node, type Properties } from './Node'
 import { Route } from './Route'
 import { type Context } from './Context'
 import { segment } from './segment'
-import { type Method, type Methods } from './Method'
+import { Method, type Methods } from './Method'
+import { type Endpoint } from './Endpoint'
+import { type Directives } from './Directives'
 import type * as syntax from './syntax'
 
-export function createNode<TMethod extends Method>
-(node: syntax.Node, context: Context): Node<TMethod> {
-  context.directives.stack.push(...node.directives)
+export function createNode<IEndpoint extends Endpoint, IDirectives extends Directives>
+(node: syntax.Node, context: Context): Node<IEndpoint, IDirectives> {
+  context.directives.stack = node.directives.concat(context.directives.stack)
 
   const routes: Route[] = node.routes.map((route) => createRoute(route, context))
-  const methods: Methods<TMethod> = {}
+  const methods: Methods = {}
 
   for (const method of node.methods)
-    methods[method.verb] = context.methods.create(method, context)
+    methods[method.verb] = createMethod(method, context)
 
-  const directives = context.directives.factory.create(context.directives.stack)
   const properties: Properties = { protected: node.protected ?? context.protected }
 
-  return new Node(routes, methods, directives, properties)
+  return new Node(routes, methods, properties)
 }
 
 function createRoute (route: syntax.Route, context: Context): Route {
@@ -29,4 +30,15 @@ function createRoute (route: syntax.Route, context: Context): Route {
   context.directives.stack = stack // restore
 
   return new Route(segments, node)
+}
+
+function createMethod (method: syntax.Method, context: Context): Method {
+  const stack = context.directives.stack.concat(method.directives.reverse())
+  const directives = context.directives.factory.create(stack)
+
+  const endpoint = method.mapping.endpoint === undefined
+    ? null
+    : context.endpoints.create(method, context)
+
+  return new Method(endpoint, directives)
 }

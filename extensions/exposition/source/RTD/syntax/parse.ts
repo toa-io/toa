@@ -19,7 +19,7 @@ export function parse (input: object, shortcuts?: Shortcuts): Node {
 function parseNode (input: object, shortcuts?: Shortcuts): Node {
   const node = createNode()
 
-  for (let [key, value] of Object.entries(input)) {
+  for (const [key, value] of Object.entries(input)) {
     if (key === 'protected') {
       node.protected = value
 
@@ -35,22 +35,16 @@ function parseNode (input: object, shortcuts?: Shortcuts): Node {
     }
 
     if (verbs.has(key)) {
-      const method = parseMethod(key, value)
+      const method = parseMethod(key, value, shortcuts)
 
       node.methods.push(method)
 
       continue
     }
 
-    if (shortcuts?.has(key) === true)
-      key = shortcuts.get(key) as string
+    const directive = parseDirective(key, value, shortcuts)
 
-    const match = key.match(DIRECTIVE_RX)
-
-    if (match !== null) {
-      const { family, name } = match.groups as { family: string, name: string }
-      const directive: Directive = { family, name, value }
-
+    if (directive !== null) {
       node.directives.push(directive)
 
       continue
@@ -80,16 +74,21 @@ function createRoute (path: string, node: Node): Route {
   return { path, node }
 }
 
-function parseMethod (verb: string, value: Mapping | string): Method {
+function parseMethod (verb: string, value: Mapping | string, shortcuts?: Shortcuts): Method {
   const mapping = typeof value === 'string' ? { endpoint: value } : value
 
   parseEndpoint(mapping)
   parseQuery(mapping)
 
-  return { verb, mapping }
+  const directives = parseDirectives(mapping, shortcuts)
+
+  return { verb, mapping, directives }
 }
 
 function parseEndpoint (mapping: Mapping): void {
+  if (mapping.endpoint === undefined)
+    return
+
   const [endpoiont, component, namespace] = mapping.endpoint.split('.').reverse()
 
   if (component !== undefined) {
@@ -110,6 +109,38 @@ function parseQuery (mapping: any): void {
 
   if (typeof query.omit === 'number')
     query.omit = expandRange(query.omit)
+}
+
+function parseDirectives (mapping: Record<string, any>, shortcuts?: Shortcuts): Directive[] {
+  const directives: Directive[] = []
+
+  for (const [key, value] of Object.entries(mapping)) {
+    const directive = parseDirective(key, value, shortcuts)
+
+    if (directive === null)
+      continue
+
+    directives.push(directive)
+
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete mapping[key]
+  }
+
+  return directives
+}
+
+function parseDirective (key: string, value: any, shortcuts?: Shortcuts): Directive | null {
+  if (shortcuts?.has(key) === true)
+    key = shortcuts.get(key) as string
+
+  const match = key.match(DIRECTIVE_RX)
+
+  if (match === null)
+    return null
+
+  const { family, name } = match.groups as { family: string, name: string }
+
+  return { family, name, value }
 }
 
 function expandRange (range: number): Range {

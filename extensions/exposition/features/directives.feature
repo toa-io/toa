@@ -5,8 +5,9 @@ Feature: Directives
       """yaml
       anonymous: true
       /:
-        dev:stub:
-          hello: world
+        GET:
+          dev:stub:
+            hello: world
       """
     When the following request is received:
       """
@@ -28,7 +29,9 @@ Feature: Directives
       /:
         dev:stub:
           hello: again
-        /pots: {}
+        GET: {}
+        /pots:
+          GET: {}
 
       """
     When the following request is received:

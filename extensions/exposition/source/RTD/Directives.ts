@@ -1,6 +1,6 @@
 import type * as syntax from './syntax'
 
-export interface Directives<T> {
+export interface Directives<T = any> {
   merge: (directive: T) => void
 }
 
