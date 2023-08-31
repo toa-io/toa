@@ -26,7 +26,7 @@ export class Directives implements RTD.Directives<Directives> {
   public async settle (request: IncomingMessage, response: OutgoingMessage): Promise<void> {
     for (const directive of this.directives)
       if (directive.family.settle !== undefined)
-        await directive.family.settle(request, response, directive.directives)
+        await directive.family.settle(directive.directives, request, response)
   }
 
   public merge (directives: Directives): void {
@@ -106,9 +106,9 @@ export interface Family<IDirective = any, IExtension = any> {
     request: IncomingMessage & IExtension,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
 
-  settle?: (request: IncomingMessage & IExtension,
-    response: OutgoingMessage,
-    directives: IDirective[]) => void | Promise<void>
+  settle?: (directives: IDirective[],
+    request: IncomingMessage & IExtension,
+    response: OutgoingMessage) => void | Promise<void>
 }
 
 interface DirectiveSet {

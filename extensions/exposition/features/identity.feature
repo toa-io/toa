@@ -32,10 +32,9 @@ Feature: Idenity
           POST:
             incept: id
             endpoint: transit
-          /:id:
-            id: id
-            dev:stub:
-              access: granted!
+        /:id:
+          id: id
+          GET: observe
       """
     When the following request is received:
       # user:pass
@@ -44,7 +43,7 @@ Feature: Idenity
       authorization: Basic dXNlcjpwYXNz
       accept: application/yaml
       content-type: application/yaml
-      content-length: 14
+      content-length: 16
 
       name: Bill Smith
       """
@@ -59,20 +58,17 @@ Feature: Idenity
     When the following request is received:
       # basic credentials have been created
       """
-      GET /${{ id }}/ HTTP/1.1
+      GET /users/${{ id }}/ HTTP/1.1
       authorization: Basic dXNlcjpwYXNz
-      accept: application/yaml
       """
     Then the following reply is sent:
       """
       200 OK
-
-      access: granted!
       """
     When the following request is received:
       # valid token has been issued
       """
-      GET /${{ id }}/ HTTP/1.1
+      GET /users/${{ id }}/ HTTP/1.1
       authorization: Token ${{ token }}
       """
     Then the following reply is sent:

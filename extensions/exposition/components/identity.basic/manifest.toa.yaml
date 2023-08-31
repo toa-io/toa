@@ -5,6 +5,7 @@ entity:
   schema:
     username: string
     password: string
+  initialized: true
 
 operations:
   transit:
@@ -12,6 +13,12 @@ operations:
     input:
       username: string
       password: string
+  create:
+    input:
+      id*: string
+      credentials*: string
+    output:
+      id: string
   authenticate:
     input: string
     output:

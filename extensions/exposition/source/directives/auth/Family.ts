@@ -3,13 +3,21 @@ import { type Parameter } from '../../RTD'
 import { type Family, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
 import * as http from '../../HTTP'
-import { type OutgoingMessage } from '../../HTTP'
-import { type Directive, type Extension, type Identity, type Input } from './types'
+import {
+  type Directive,
+  type Discovery,
+  type Extension,
+  type Identity,
+  type Input,
+  type Schemes
+} from './types'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
 import { Role } from './Role'
 import { Rule } from './Rule'
 import { Incept } from './Incept'
+import { split } from './split'
+import { PRIMARY, PROVIDERS } from './schemes'
 
 class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
@@ -30,6 +38,7 @@ class Authorization implements Family<Directive, Extension> {
 
     if (Class === Role) return new Class(value, this.discovery.roles)
     else if (Class === Rule) return new Class(value, this.create.bind(this))
+    else if (Class === Incept) return new Class(value, this.discovery)
     else return new Class(value)
   }
 
@@ -50,7 +59,11 @@ class Authorization implements Family<Directive, Extension> {
     else throw new http.Forbidden()
   }
 
-  public async settle (request: Input, response: OutgoingMessage): Promise<void> {
+  public async settle
+  (directives: Directive[], request: Input, response: http.OutgoingMessage): Promise<void> {
+    for (const directive of directives)
+      await directive.settle?.(request, response)
+
     const identity = request.identity
 
     if (identity === null)
@@ -59,6 +72,7 @@ class Authorization implements Family<Directive, Extension> {
     if (identity.scheme === PRIMARY && !identity.stale)
       return
 
+    // Role directive could have set the value
     if (identity.roles === undefined)
       await Role.set(identity, this.discovery.roles)
 
@@ -77,18 +91,11 @@ class Authorization implements Family<Directive, Extension> {
     if (authorization === undefined)
       return null
 
-    const space = authorization.indexOf(' ')
-
-    if (space === -1)
-      throw new http.Unauthorized('Malformed authorization header.')
-
-    const Scheme = authorization.slice(0, space)
-    const scheme = Scheme.toLowerCase() as Scheme
+    const [scheme, value] = split(authorization)
     const provider = PROVIDERS[scheme]
-    const value = authorization.slice(space + 1)
 
     if (!(provider in this.discovery))
-      throw new http.Unauthorized(`Unknown authentication scheme '${Scheme}'.`)
+      throw new http.Unauthorized(`Unknown authentication scheme '${scheme}'.`)
 
     this.schemes[scheme] ??= await this.discovery[provider]
 
@@ -113,17 +120,5 @@ const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
   rule: Rule,
   incept: Incept
 }
-
-const PROVIDERS: Record<Scheme, Provider> = {
-  basic: 'basic',
-  token: 'tokens'
-}
-
-const PRIMARY: Scheme = 'token'
-
-type Scheme = 'basic' | 'token'
-type Provider = 'basic' | 'tokens' | 'roles'
-type Discovery = Record<Provider, Promise<Component>>
-type Schemes = Record<Scheme, Component>
 
 export = new Authorization()

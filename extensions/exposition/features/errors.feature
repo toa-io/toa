@@ -168,3 +168,40 @@ Feature: Errors
 
       Malformed authorization header.
       """
+
+  Scenario: Creating an Identity using inception with existing credentials
+    Given the `identity.basic` database is empty
+    And the `users` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          POST:
+            incept: id
+            endpoint: transit
+      """
+    When the following request is received:
+      # identity inception
+      """
+      POST /users/ HTTP/1.1
+      authorization: Basic dXNlcjpwYXNz
+      accept: application/yaml
+      content-type: application/yaml
+      content-length: 16
+
+      name: Bill Smith
+      """
+    And the following request is received:
+      # same credentials
+      """
+      POST /users/ HTTP/1.1
+      authorization: Basic dXNlcjpwYXNz
+      content-type: application/yaml
+      content-length: 16
+
+      name: Mary Louis
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """

@@ -1,9 +1,13 @@
+import { type Component } from '@toa.io/core'
 import { type Parameter } from '../../RTD'
+import type * as http from '../../HTTP'
 import type * as directive from '../../Directive'
 
 export interface Directive {
   authorize: (identity: Identity | null, input: Input, parameters: Parameter[]) =>
   boolean | Promise<boolean>
+
+  settle?: (request: Input, response: http.OutgoingMessage) => Promise<void>
 }
 
 export interface Identity {
@@ -18,3 +22,8 @@ export interface Extension {
 }
 
 export type Input = directive.Input & Extension
+
+export type Scheme = 'basic' | 'token'
+export type Provider = 'basic' | 'tokens' | 'roles'
+export type Discovery = Record<Provider, Promise<Component>>
+export type Schemes = Record<Scheme, Component>
