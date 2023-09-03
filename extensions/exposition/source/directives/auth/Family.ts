@@ -69,7 +69,7 @@ class Authorization implements Family<Directive, Extension> {
     if (identity === null)
       return
 
-    if (identity.scheme === PRIMARY && !identity.stale)
+    if (identity.scheme === PRIMARY && !identity.refresh)
       return
 
     // Role directive could have set the value
@@ -78,7 +78,7 @@ class Authorization implements Family<Directive, Extension> {
 
     this.tokens ??= await this.discovery.tokens
 
-    const reply = await this.tokens.invoke('encrypt', { input: { payload: identity } })
+    const reply = await this.tokens.invoke('encrypt', { input: { identity } })
     const authorization = `Token ${reply.output}`
 
     if (response.headers === undefined)
@@ -107,7 +107,7 @@ class Authorization implements Family<Directive, Extension> {
     const identity: Identity = reply.output.identity
 
     identity.scheme = scheme
-    identity.stale = reply.output.stale
+    identity.refresh = reply.output.refresh
 
     return identity
   }

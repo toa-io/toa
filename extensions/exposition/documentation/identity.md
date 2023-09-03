@@ -48,7 +48,7 @@ Tokens issued by the Authentication system. These tokens are [PASETO](https://pa
 Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
 ```
 
-The `Token` is the primary authentication scheme.
+The `Token` is the **primary** authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response containing `Token`
 credentials and will be required to switch to the `Token` scheme for any subsequent requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.

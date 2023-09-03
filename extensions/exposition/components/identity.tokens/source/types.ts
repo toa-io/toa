@@ -1,9 +1,9 @@
-import { type Reply, type Request } from '@toa.io/types'
-import { type KEY } from './const'
+import { type Call, type Observation } from '@toa.io/types'
 
 export interface Context {
   local: {
-    decrypt: (request: Request<string>) => Promise<Reply<DecryptOutput>>
+    observe: Observation<Entity>
+    decrypt: Call<DecryptOutput, string>
   }
   configuration: Configuration
 }
@@ -15,25 +15,34 @@ export interface Configuration {
   readonly refresh: number
 }
 
+export interface Entity {
+  identity: string
+  revokedAt?: number
+}
+
+export interface Identity extends Record<string, any> {
+  id: string
+}
+
 export interface AuthenticateOutput {
-  identity: object
-  stale: boolean
+  identity: Identity
+  refresh: boolean
 }
 
 export interface EncryptInput {
-  payload: object
+  identity: Identity
   lifetime?: number
 }
 
 export interface DecryptOutput {
-  payload: object
+  identity: Identity
   iat: string
-  exp: string
+  exp?: string
   refresh: boolean
 }
 
 export interface Claim {
-  [KEY]: object
+  identity: Identity
   iat: string
-  exp: string
+  exp?: string
 }

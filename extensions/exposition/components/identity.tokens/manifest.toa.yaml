@@ -1,27 +1,36 @@
 namespace: identity
 name: tokens
 
+entity:
+  schema:
+    revokedAt: number
+  initialized: true
+
 operations:
   encrypt:
     input:
-      payload*: object
-      lifetime: number
+      identity*: &payload
+        id: string
+        ...: true
+      lifetime: number # ms
     output: string
   decrypt:
     input: string
     output:
-      payload: object
+      identity: *payload
       iat: string
       exp: string
       refresh: boolean
   authenticate:
     input: string
     output:
-      identity: object
-      stale: boolean
+      identity: *payload
+      refresh: boolean
+  revoke:
+    concurrency: retry
 
 configuration:
   key0*: string
   key1: string
-  lifetime: 2592000 # seconds (30 days)
-  refresh: 600 # seconds
+  lifetime: 2592000000 # ms (30 days)
+  refresh: 900000      # ms (15 minutes)

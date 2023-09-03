@@ -1,13 +1,11 @@
-import { type Reply } from '@toa.io/types'
 import { V3 } from 'paseto'
+import { type Reply } from '@toa.io/types'
 import { type Context, type Claim, type DecryptOutput } from './types'
-import { KEY } from './const'
 
-export async function computation (token: string, context: Context): Promise<Reply<DecryptOutput>> {
-  let claim: Claim | null = null
+export async function computation (token: string, context: Context):
+Promise<Reply<DecryptOutput>> {
   let refresh = false
-
-  claim = await decrypt(token, context.configuration.key0)
+  let claim = await decrypt(token, context.configuration.key0)
 
   if (claim === null && context.configuration.key1 !== undefined) {
     refresh = true
@@ -15,7 +13,7 @@ export async function computation (token: string, context: Context): Promise<Rep
   }
 
   if (claim === null) return { error: { code: 0 } }
-  else return { output: { payload: claim[KEY], iat: claim.iat, exp: claim.exp, refresh } }
+  else return { output: { identity: claim.identity, iat: claim.iat, exp: claim.exp, refresh } }
 }
 
 async function decrypt (token: string, key: string): Promise<Claim | null> {

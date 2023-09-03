@@ -73,7 +73,6 @@ Feature: Errors
       POST /pots/ HTTP/1.1
       accept: application/yaml
       content-type: application/yaml
-      content-length: 20
 
       foo: Hello
       bar: 1.5
@@ -187,7 +186,6 @@ Feature: Errors
       authorization: Basic dXNlcjpwYXNz
       accept: application/yaml
       content-type: application/yaml
-      content-length: 16
 
       name: Bill Smith
       """
@@ -197,7 +195,6 @@ Feature: Errors
       POST /users/ HTTP/1.1
       authorization: Basic dXNlcjpwYXNz
       content-type: application/yaml
-      content-length: 16
 
       name: Mary Louis
       """

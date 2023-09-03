@@ -9,7 +9,6 @@ Feature: Idenity
       POST /identity/basic/ HTTP/1.1
       accept: application/yaml
       content-type: application/yaml
-      content-length: 37
 
       username: developer
       password: secret
@@ -43,7 +42,6 @@ Feature: Idenity
       authorization: Basic dXNlcjpwYXNz
       accept: application/yaml
       content-type: application/yaml
-      content-length: 16
 
       name: Bill Smith
       """
@@ -70,6 +68,54 @@ Feature: Idenity
       """
       GET /users/${{ id }}/ HTTP/1.1
       authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+
+  Scenario: Changing the password
+    Given the annotation:
+      """
+      /:id:
+        id: id
+        GET:
+          dev:stub:
+            access: granted!
+      """
+    And the `identity.basic` database contains:
+      # developer:secret
+      | _id                              | _version | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    When the following request is received:
+      """
+      PUT /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      username: developer
+      password: new-secret
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    When the following request is received:
+      # old password
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    When the following request is received:
+      # new password
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOm5ldy1zZWNyZXQ=
       """
     Then the following reply is sent:
       """

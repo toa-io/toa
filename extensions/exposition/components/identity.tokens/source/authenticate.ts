@@ -3,17 +3,27 @@ import { type AuthenticateOutput, type Context } from './types'
 
 export async function computation (token: string, context: Context):
 Promise<Reply<AuthenticateOutput>> {
-  const reply = await context.local.decrypt({ input: token })
+  const decryption = await context.local.decrypt({ input: token })
 
-  if (reply.error !== undefined)
-    return { error: reply.error }
+  if (decryption.error !== undefined)
+    return { error: decryption.error }
 
-  if (reply.output === undefined)
+  if (decryption.output === undefined)
     throw new Error('?')
 
-  const identity = reply.output.payload
-  const refresh = new Date(reply.output.iat).getTime() + context.configuration.refresh < Date.now()
-  const stale = refresh || reply.output.refresh
+  const identity = decryption.output.identity
+  const permanent = decryption.output.exp === undefined
+  const iat = new Date(decryption.output.iat).getTime()
+  const stale = !permanent && (iat + context.configuration.refresh < Date.now())
 
-  return { output: { identity, stale } }
+  if (stale) {
+    const revocation = await context.local.observe({ query: { id: identity.id } })
+
+    if (revocation?.output?.revokedAt !== undefined && iat < revocation.output.revokedAt)
+      return { error: { code: 1 } }
+  }
+
+  const refresh = stale || decryption.output.refresh
+
+  return { output: { identity, refresh } }
 }

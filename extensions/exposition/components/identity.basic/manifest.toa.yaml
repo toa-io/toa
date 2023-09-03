@@ -3,16 +3,16 @@ name: basic
 
 entity:
   schema:
-    username: string
-    password: string
+    username*: string
+    password*: string
   initialized: true
 
 operations:
   transit:
     concurrency: retry
     input:
-      username: string
-      password: string
+      username*: string
+      password*: string
   create:
     input:
       id*: string

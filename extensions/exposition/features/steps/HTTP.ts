@@ -20,7 +20,12 @@ export class HTTP {
 
   @when('the following request is received:')
   public async request (input: string): Promise<any> {
-    const text = trim(input) + '\n\n'
+    let [headers, body] = trim(input).split('\n\n')
+
+    if (body !== undefined)
+      headers += '\ncontent-length: ' + body.length
+
+    const text = headers + '\n\n' + body ?? ''
     const request = text.replaceAll(SUBSTITUTE, (_, name) => this.variables[name])
 
     await this.gateway.start()

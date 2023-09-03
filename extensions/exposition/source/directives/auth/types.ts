@@ -14,7 +14,7 @@ export interface Identity {
   readonly id: string
   scheme: string
   roles?: string[]
-  stale: boolean
+  refresh: boolean
 }
 
 export interface Extension {

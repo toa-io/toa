@@ -260,7 +260,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      authorization: Token v3.local.Ks6rVDVU5uuSBQI4-Yp_vV4N_I_u0KpGYGn5jlM0QLDsCGKFEvekI1W88NSGKyiXJDl2KHb0FSrCDXHhzeZaFHKNOOYSRhZAi546kvKqGSYLeuY0g_-2hSPaOTxeTtsE7VdLyCa5xdkXq1PB8_UQWnYVMW3i8I1mITYyax2yu9G_E0Qf4XH-8eYXlQnfnqofwLUih6mAjOMpaAP9uzJgkWs-6oJ1JOmttwZfEQ
+      authorization: Token v3.local.9oEtVJkfRw4cOJ8M4DxuVuAN29dGT26XMYyPAoXtwrkdkiJVSVj46sMNAOdlxwKGszJZV_ReOL26dxDVlsQ7QAIuRhRPlvsHYNOhcD-LApoAXV0S3IK16EMoEv7tE9z70FCLC3WoIW9RIQ8PR3uZhAdhSgBilsVOpWrk4XtnfCIlVwhYMKu79a66oZZhV2Q7Kl3nfYsf84-6rAL_1H0MsqCDUHVXuIg
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -277,7 +277,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      authorization: Token v3.local.o6HcCI-YPaoI-wm7POxmgIjStJLPyasqrhoz4DXqFgqatBdJh-OV8-HpyWI7UWwiVyy_tZiOtjuSs8JZMW9deLbeorwdFQS1xiJh9VRTa5ntUMTBsQJ2tBftJkAm0frmd_DP_veTqJqvIbjPW0cqsU0s_f3qT-b5C3cqmmcxVk5-L6JYUmD7VhDFKynTk0Z9bgI_r0wYMiCuotYEGNfl7h0_WNrxfO57BQJhkQ
+      authorization: Token v3.local.cjlxn4IJ9hI92KuksguzDx7_kYxgDFFGFnfNchf0cWnmos34dqX2XpTAUBd-LqgqfuH-lVGfNvjBUkw5JtHRBiIAVaPHF3Ncc0eafwgH2DPme9pndZL92fWryGnJ-sMHA28Q6UcXsIfhgd2JZ0n-585SBhwlosC3gKTcVHK7XNljeaTen4jZPw8uY-pdbsm6dDq3aKMzl8K78_BTTfiNPG2cI_aNuHw
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -303,7 +303,7 @@ Feature: Access authorization
       """
       200 OK
       content-type: application/yaml
-      authorization: Token
+      authorization: Token ${{ token }}
 
       output: Hello
       """
@@ -311,7 +311,7 @@ Feature: Access authorization
   Scenario: Refreshing stale token
     Given the `identity.tokens` configuration:
       """yaml
-      stale: 0.0000003858024690358 # this will result in less than 1 second freshness
+      refresh: 1000
       """
     And the `greeter` is running with the following manifest:
       """yaml

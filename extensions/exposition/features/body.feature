@@ -12,7 +12,6 @@ Feature: Request body
       POST /pots/ HTTP/1.1
       accept: application/yaml
       content-type: application/yaml
-      content-length: 23
 
       title: Hello
       volume: 1.5
@@ -21,7 +20,6 @@ Feature: Request body
       """
       201 Created
       content-type: application/yaml
-      content-length: 47
 
       output:
         id:
