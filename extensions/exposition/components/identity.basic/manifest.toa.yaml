@@ -11,6 +11,12 @@ operations:
   transit:
     concurrency: retry
     input:
+      username: string
+      password: string
+  incept:
+    forward: transit
+    query: false
+    input:
       username*: string
       password*: string
   create:
@@ -30,7 +36,7 @@ configuration:
 
 exposition:
   /:
-    POST: transit
+    POST: incept
   /:id:
     auth:id: id
-    PUT: transit
+    PATCH: transit

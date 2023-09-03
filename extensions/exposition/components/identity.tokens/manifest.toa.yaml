@@ -3,7 +3,7 @@ name: tokens
 
 entity:
   schema:
-    revokedAt: number
+    revokedAt: number   # timestamp
   initialized: true
 
 operations:
@@ -12,7 +12,7 @@ operations:
       identity*: &payload
         id: string
         ...: true
-      lifetime: number # ms
+      lifetime: number  # ms
     output: string
   decrypt:
     input: string
@@ -32,5 +32,5 @@ operations:
 configuration:
   key0*: string
   key1: string
-  lifetime: 2592000000 # ms (30 days)
-  refresh: 900000      # ms (15 minutes)
+  lifetime: 2592000000 # ms, 30 days
+  refresh: 600000      # ms, 10 minutes

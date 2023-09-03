@@ -89,12 +89,11 @@ Feature: Idenity
       | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
-      PUT /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       content-type: application/yaml
 
-      username: developer
       password: new-secret
       """
     Then the following reply is sent:
