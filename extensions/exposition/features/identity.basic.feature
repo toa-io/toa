@@ -27,16 +27,15 @@ Feature: Idenity
       """yaml
       exposition:
         /:
-          anonymous: true
+          anonymous: true     # checking compatibility with anonymous access
           POST:
             incept: id
             endpoint: transit
-        /:id:
+        /:id:                 # credential testing route
           id: id
           GET: observe
       """
     When the following request is received:
-      # user:pass
       """
       POST /users/ HTTP/1.1
       authorization: Basic dXNlcjpwYXNz
@@ -84,7 +83,6 @@ Feature: Idenity
             access: granted!
       """
     And the `identity.basic` database contains:
-      # developer:secret
       | _id                              | _version | username  | password                                                     |
       | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:

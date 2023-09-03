@@ -2,7 +2,6 @@ Feature: Tokens lifecycle
 
   Scenario: Switching to Token authentication scheme
     Given the `identity.basic` database contains:
-      # developer:secret
       | _id                              | username  | password                                                     |
       | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     And the `greeter` is running with the following manifest:
@@ -83,7 +82,6 @@ Feature: Tokens lifecycle
       refresh: 100
       """
     And the `identity.basic` database contains:
-      # developer:secret
       | _id                              | username  | password                                                     |
       | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
