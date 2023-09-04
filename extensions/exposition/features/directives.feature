@@ -32,7 +32,6 @@ Feature: Directives
         GET: {}
         /pots:
           GET: {}
-
       """
     When the following request is received:
       """

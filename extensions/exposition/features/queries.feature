@@ -8,7 +8,6 @@ Feature: Queries
       | a7edded6b2ab47a0aca9508cc4da4138 | Third pot  | 300    | 50          |
       | bc6913d317334d76acd07d9f25f73535 | Fourth pot | 400    | 90          |
 
-  @debug
   Scenario: Request with `id` query parameter
     Given the `pots` is running with the following manifest:
       """yaml
@@ -32,7 +31,6 @@ Feature: Queries
         volume: 200
       """
 
-  @debug
   Scenario: Request with query criteria
     Given the `pots` is running with the following manifest:
       """yaml

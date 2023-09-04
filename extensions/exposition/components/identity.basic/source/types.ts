@@ -18,14 +18,13 @@ export interface Context {
   }
 }
 
-interface Entity {
+export interface Entity {
   id: string
   username: string
   password: string
 }
 
 export interface TransitInput {
-  id: string
   username?: string
   password?: string
 }

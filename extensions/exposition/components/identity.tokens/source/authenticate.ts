@@ -12,9 +12,9 @@ Promise<Reply<AuthenticateOutput>> {
     throw new Error('?')
 
   const identity = decryption.output.identity
-  const permanent = decryption.output.exp === undefined
   const iat = new Date(decryption.output.iat).getTime()
-  const stale = !permanent && (iat + context.configuration.refresh < Date.now())
+  const transient = decryption.output.exp !== undefined
+  const stale = transient && (iat + context.configuration.refresh < Date.now())
 
   if (stale) {
     const revocation = await context.local.observe({ query: { id: identity.id } })

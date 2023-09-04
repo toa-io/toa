@@ -9,7 +9,7 @@ entity:
 operations:
   encrypt:
     input:
-      identity*: &payload
+      identity*: &identity
         id: string
         ...: true
       lifetime: number  # ms
@@ -17,14 +17,14 @@ operations:
   decrypt:
     input: string
     output:
-      identity: *payload
+      identity: *identity
       iat: string
       exp: string
       refresh: boolean
   authenticate:
     input: string
     output:
-      identity: *payload
+      identity: *identity
       refresh: boolean
   revoke:
     concurrency: retry
