@@ -8,7 +8,7 @@ export class Scheme implements Directive {
 
   public constructor (scheme: string) {
     this.scheme = scheme.toLowerCase()
-    this.Scheme = scheme[0].toUpperCase() + this.scheme.substring(1)
+    this.Scheme = scheme[0].toUpperCase() + scheme.substring(1)
   }
 
   public authorize (_: Identity | null, input: Input): boolean {

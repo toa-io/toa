@@ -15,5 +15,5 @@ operations:
 
 exposition:
   /:identity:
-    auth:id: identity
+    auth:role: system:identity:roles
     POST: transit

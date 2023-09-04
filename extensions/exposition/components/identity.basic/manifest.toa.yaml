@@ -38,6 +38,7 @@ exposition:
   /:
     POST: incept
   /:id:
+    auth:role: system:identity:basic
     auth:scheme: basic
     auth:id: id
     PATCH: transit
