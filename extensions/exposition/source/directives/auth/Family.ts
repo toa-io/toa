@@ -18,6 +18,7 @@ import { Rule } from './Rule'
 import { Incept } from './Incept'
 import { split } from './split'
 import { PRIMARY, PROVIDERS } from './schemes'
+import { Scheme } from './Scheme'
 
 class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
@@ -118,7 +119,8 @@ const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
   id: Id,
   role: Role,
   rule: Rule,
-  incept: Incept
+  incept: Incept,
+  scheme: Scheme
 }
 
 export = new Authorization()

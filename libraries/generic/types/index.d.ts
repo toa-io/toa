@@ -29,3 +29,4 @@ export function memo<T> (fn: T): T
 export { promex } from './promex'
 export { merge, add, overwrite } from './merge'
 export { map } from './map'
+export * as letters from './letters'

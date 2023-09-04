@@ -97,7 +97,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      authorization: Token ${{ token }}
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
 
       password: new-secret

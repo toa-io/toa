@@ -38,5 +38,6 @@ exposition:
   /:
     POST: incept
   /:id:
+    auth:scheme: basic
     auth:id: id
     PATCH: transit

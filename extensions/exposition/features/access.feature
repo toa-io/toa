@@ -324,3 +324,39 @@ Feature: Access authorization
 
       access: granted!
       """
+
+  Scenario: Using `auth:scheme` directive
+    Given the annotation:
+      """yaml
+      /:id:
+        auth:scheme: basic
+        auth:id: id
+        GET:
+          dev:stub:
+            access: granted!
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      access: granted!
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Token v3.local.9oEtVJkfRw4cOJ8M4DxuVuAN29dGT26XMYyPAoXtwrkdkiJVSVj46sMNAOdlxwKGszJZV_ReOL26dxDVlsQ7QAIuRhRPlvsHYNOhcD-LApoAXV0S3IK16EMoEv7tE9z70FCLC3WoIW9RIQ8PR3uZhAdhSgBilsVOpWrk4XtnfCIlVwhYMKu79a66oZZhV2Q7Kl3nfYsf84-6rAL_1H0MsqCDUHVXuIg
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+
+      Basic authentication scheme is required to access this resource.
+      """
