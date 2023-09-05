@@ -1,4 +1,4 @@
-Feature: Roles
+Feature: Roles management
 
   Scenario: Adding a role to an Identity
     Given the `identity.basic` database contains:
@@ -17,6 +17,16 @@ Feature: Roles
             access: granted!
       """
     When the following request is received:
+      # user doesn't have the required role
+      """
+      GET / HTTP/1.1
+      authorization: Basic dXNlcjpwYXNz
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+    When the following request is received:
       # root adds a role to a user
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
@@ -30,7 +40,7 @@ Feature: Roles
       201 Created
       """
     When the following request is received:
-      # user
+      # user now have the role
       """
       GET / HTTP/1.1
       authorization: Basic dXNlcjpwYXNz
