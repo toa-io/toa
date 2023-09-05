@@ -16,16 +16,16 @@ beforeEach(() => {
 it('should return false if not matched', async () => {
   const roles = ['admin', 'user']
   const directive = new Role(roles, discovery)
-  const identity: Identity = { id: generate(), scheme: '', stale: false }
+  const identity: Identity = { id: generate(), scheme: '', refresh: false }
 
-  remote.invoke.mockResolvedValueOnce({ output: [{ role: 'guest' }] })
+  remote.invoke.mockResolvedValueOnce({ output: ['guest'] })
 
   const result = await directive.authorize(identity)
 
   expect(result).toBe(false)
 
   expect(remote.invoke)
-    .toBeCalledWith('enumerate', { query: { criteria: `identity==${identity.id}`, limit: 1024 } })
+    .toBeCalledWith('list', { query: { criteria: `identity==${identity.id}`, limit: 1024 } })
 })
 
 it('should return true on exact match', async () => {
@@ -54,8 +54,8 @@ it('should return false on non-scope substring match', async () => {
 
 async function match (expected: string[], actual: string[]): Promise<boolean> {
   const directive = new Role(expected, discovery)
-  const identity: Identity = { id: generate(), scheme: '', stale: false }
-  const output = actual.map((role) => ({ role }))
+  const identity: Identity = { id: generate(), scheme: '', refresh: false }
+  const output = actual
 
   remote.invoke.mockResolvedValueOnce({ output })
 

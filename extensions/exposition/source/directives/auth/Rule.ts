@@ -14,10 +14,8 @@ export class Rule implements Directive {
 
   public async authorize
   (identity: Identity | null, input: any, parameters: Parameter[]): Promise<boolean> {
-    let authorized = true
-
     for (const directive of this.directives) {
-      authorized &&= await directive.authorize(identity, input, parameters)
+      const authorized = await directive.authorize(identity, input, parameters)
 
       if (!authorized)
         return false

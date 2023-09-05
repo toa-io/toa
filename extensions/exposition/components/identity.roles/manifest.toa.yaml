@@ -10,10 +10,13 @@ operations:
   transit:
     query: false
     input:
-      identity: string
-      role: string
+      identity*: string
+      role*: string
+  list:
+    output: [string]
 
 exposition:
   /:identity:
     auth:role: system:identity:roles
     POST: transit
+    GET: list

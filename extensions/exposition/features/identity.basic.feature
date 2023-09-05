@@ -1,4 +1,4 @@
-Feature: Idenity
+Feature: Basic authentication
 
   Background:
     Given the `identity.basic` database is empty

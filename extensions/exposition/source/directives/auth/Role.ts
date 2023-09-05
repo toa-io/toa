@@ -16,12 +16,12 @@ export class Role implements Directive {
     this.remote ??= await discovery
 
     const query: Query = { criteria: `identity==${identity.id}`, limit: 1024 }
-    const reply: Reply<RoleBinding[]> = await this.remote.invoke('enumerate', { query })
+    const reply: Reply<string[]> = await this.remote.invoke('list', { query })
 
     if (reply.output === undefined)
       return
 
-    identity.roles = reply.output.map((binding) => binding.role)
+    identity.roles = reply.output
   }
 
   public async authorize (identity: Identity | null): Promise<boolean> {
@@ -57,10 +57,4 @@ function compare (expected: string, actual: string): boolean {
       return false
 
   return true
-}
-
-interface RoleBinding {
-  id: string
-  identity: string
-  role: string
 }

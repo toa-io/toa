@@ -37,7 +37,12 @@ class QueryableMapping extends Mapping {
 }
 
 class InputMapping extends Mapping {
-  public fit (input: any): core.Request {
+  public fit (body: any, _: unknown, parameters: Parameter[]): core.Request {
+    const input = { ...body }
+
+    for (const parameter of parameters)
+      input[parameter.name] = parameter.value
+
     return { input }
   }
 }

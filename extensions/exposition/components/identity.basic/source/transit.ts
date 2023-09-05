@@ -3,7 +3,7 @@ import { type Context, type Entity, type TransitInput } from './types'
 
 export async function transition
 (input: TransitInput, object: Entity, context: Context): Promise<void> {
-  const existent = object.username !== undefined
+  const existent = object._version > 0
 
   if (existent)
     await context.remote.identity.tokens.revoke({ query: { id: object.id } })
