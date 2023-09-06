@@ -19,4 +19,6 @@ exposition:
   /:identity:
     auth:role: system:identity:roles
     POST: transit
-    GET: list
+    GET:
+      auth:id: identity
+      endpoint: list

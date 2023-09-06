@@ -162,3 +162,57 @@ Feature: Basic authentication
       | property |
       | username |
       | password |
+
+  Scenario: Granting a `system` role to a Principal
+    Given the `identity.basic` configuration:
+      """yaml
+      principal: root
+      """
+    And the annotation:
+      """yaml
+      /:
+        GET:
+          auth:role: system:stub
+          dev:stub:
+            access: granted!
+      """
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      content-type: application/yaml
+
+      username: root
+      password: secret#1234
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+    # role granting is eventual
+    Then after 0.1 seconds
+    When the following request is received:
+      """
+      GET /identity/roles/${{ id }}/ HTTP/1.1
+      authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - system
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      access: granted!
+      """
