@@ -1,12 +1,12 @@
 import { generate } from 'randomstring'
-import { type Configuration, type Context, type DecryptOutput } from './types'
+import { type Configuration, type Context, type DecryptOutput, type Identity } from './types'
 import { computation as authenticate } from './authenticate'
 
 let configuration: Configuration
 let context: Context
 let output: DecryptOutput
 
-const payload = { id: generate() }
+const identity: Identity = { id: generate() }
 
 beforeEach(() => {
   configuration = {
@@ -18,7 +18,8 @@ beforeEach(() => {
   context = {
     configuration,
     local: {
-      decrypt: jest.fn(async () => ({ output }))
+      decrypt: jest.fn(async () => ({ output })),
+      observe: jest.fn()
     }
   }
 })
@@ -31,11 +32,11 @@ it.each([
   const iat = new Date(now - configuration.refresh + shift).toISOString()
   const exp = new Date(now + 1000).toISOString()
 
-  output = { payload, exp, iat, refresh: false }
+  output = { identity, exp, iat, refresh: false }
 
   const result = await authenticate('', context)
 
-  expect(result).toEqual({ output: { identity: payload, stale: expected } })
+  expect(result).toEqual({ output: { identity, refresh: expected } })
 })
 
 it.each([true, false])('should return stale: %s',
@@ -43,9 +44,9 @@ it.each([true, false])('should return stale: %s',
     const iat = new Date().toISOString()
     const exp = new Date(Date.now() + 1000).toISOString()
 
-    output = { payload, exp, iat, refresh }
+    output = { identity, exp, iat, refresh }
 
     const result = await authenticate('', context)
 
-    expect(result).toEqual({ output: { identity: payload, stale: refresh } })
+    expect(result).toEqual({ output: { identity, refresh } })
   })

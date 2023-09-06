@@ -134,3 +134,31 @@ Feature: Basic authentication
       | username        | password    | problem  | code |
       | with whitespace | secret#1234 | Username | 0    |
       | root            | short       | Password | 1    |
+
+  Scenario Outline: Given <property> is not meeting one of requirements
+    Given the `identity.basic` configuration:
+      """yaml
+      <property>:
+        - ^\S{1,16}$
+        - ^[^A]{1,16}$  # should not contain 'A'
+      """
+    And the `identity.basic` database contains:
+      | _id                              | _version | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    When the following request is received:
+      """
+      PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      <property>: hasAinside
+      """
+    Then the following reply is sent:
+      """
+      409 Conflict
+      """
+    Examples:
+      | property |
+      | username |
+      | password |
