@@ -33,6 +33,8 @@ operations:
 configuration:
   rounds: 10
   pepper: ''
+  username+: ^\S{1,16}$
+  password+: ^\S{8,32}$
 
 exposition:
   /:

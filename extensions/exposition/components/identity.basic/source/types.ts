@@ -15,14 +15,16 @@ export interface Context {
   configuration: {
     readonly rounds: number
     readonly pepper: string
+    readonly username: string | string[]
+    readonly password: string | string[]
   }
 }
 
 export interface Entity {
-  id: string
+  readonly id: string
+  readonly _version: number
   username: string
   password: string
-  _version: number
 }
 
 export interface TransitInput {

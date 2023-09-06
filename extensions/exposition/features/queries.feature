@@ -25,10 +25,9 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        id: 99988d785d7d445cad45dbf8531f560b
-        title: Second pot
-        volume: 200
+      id: 99988d785d7d445cad45dbf8531f560b
+      title: Second pot
+      volume: 200
       """
 
   Scenario: Request with query criteria
@@ -48,13 +47,12 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        - id: 4c4759e6f9c74da989d64511df42d6f4
-          title: First pot
-          volume: 100
-        - id: 99988d785d7d445cad45dbf8531f560b
-          title: Second pot
-          volume: 200
+      - id: 4c4759e6f9c74da989d64511df42d6f4
+        title: First pot
+        volume: 100
+      - id: 99988d785d7d445cad45dbf8531f560b
+        title: Second pot
+        volume: 200
       """
 
   Scenario: Request with `omit` and `limit`
@@ -74,13 +72,12 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        - id: 99988d785d7d445cad45dbf8531f560b
-          title: Second pot
-          volume: 200
-        - id: a7edded6b2ab47a0aca9508cc4da4138
-          title: Third pot
-          volume: 300
+      - id: 99988d785d7d445cad45dbf8531f560b
+        title: Second pot
+        volume: 200
+      - id: a7edded6b2ab47a0aca9508cc4da4138
+        title: Third pot
+        volume: 300
       """
 
   Scenario: Request with sorting
@@ -100,13 +97,12 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        - id: bc6913d317334d76acd07d9f25f73535
-          title: Fourth pot
-          volume: 400
-        - id: a7edded6b2ab47a0aca9508cc4da4138
-          title: Third pot
-          volume: 300
+      - id: bc6913d317334d76acd07d9f25f73535
+        title: Fourth pot
+        volume: 400
+      - id: a7edded6b2ab47a0aca9508cc4da4138
+        title: Third pot
+        volume: 300
       """
 
   Scenario: Request to a route with a path variable
@@ -126,10 +122,9 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        id: 99988d785d7d445cad45dbf8531f560b
-        title: Second pot
-        volume: 200
+      id: 99988d785d7d445cad45dbf8531f560b
+      title: Second pot
+      volume: 200
       """
 
   Scenario: Request to a route with predefined criretia
@@ -152,13 +147,12 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        - id: a7edded6b2ab47a0aca9508cc4da4138
-          title: Third pot
-          volume: 300
-        - id: bc6913d317334d76acd07d9f25f73535
-          title: Fourth pot
-          volume: 400
+      - id: a7edded6b2ab47a0aca9508cc4da4138
+        title: Third pot
+        volume: 300
+      - id: bc6913d317334d76acd07d9f25f73535
+        title: Fourth pot
+        volume: 400
       """
 
   Scenario: Request to a route with combined criteria
@@ -181,11 +175,10 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        - id: bc6913d317334d76acd07d9f25f73535
-          title: Fourth pot
-          volume: 400
-          temperature: 90
+      - id: bc6913d317334d76acd07d9f25f73535
+        title: Fourth pot
+        volume: 400
+        temperature: 90
       """
 
   Scenario: Request to a route with predefined query
@@ -210,13 +203,12 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      output:
-        - id: bc6913d317334d76acd07d9f25f73535
-          title: Fourth pot
-          volume: 400
-          temperature: 90
-        - id: 4c4759e6f9c74da989d64511df42d6f4
-          title: First pot
-          volume: 100
-          temperature: 80
+      - id: bc6913d317334d76acd07d9f25f73535
+        title: Fourth pot
+        volume: 400
+        temperature: 90
+      - id: 4c4759e6f9c74da989d64511df42d6f4
+        title: First pot
+        volume: 100
+        temperature: 80
       """

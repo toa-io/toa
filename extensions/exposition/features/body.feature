@@ -10,7 +10,6 @@ Feature: Request body
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
-      accept: application/yaml
       content-type: application/yaml
 
       title: Hello
@@ -19,8 +18,4 @@ Feature: Request body
     Then the following reply is sent:
       """
       201 Created
-      content-type: application/yaml
-
-      output:
-        id:
       """

@@ -25,7 +25,7 @@ export class HTTP {
     if (body !== undefined)
       headers += '\ncontent-length: ' + body.length
 
-    const text = headers + '\n\n' + body ?? ''
+    const text = headers + '\n\n' + (body ?? '')
     const request = text.replaceAll(SUBSTITUTE, (_, name) => this.variables[name])
 
     await this.gateway.start()

@@ -3,8 +3,8 @@ name: roles
 
 entity:
   schema:
-    identity: string
-    role: string
+    identity*: string
+    role*: string
 
 operations:
   transit:

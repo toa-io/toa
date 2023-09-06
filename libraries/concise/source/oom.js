@@ -15,6 +15,7 @@ const oom = (properties) => {
     if (name === '~') name = 'null'
 
     const schema = {
+      default: value.default,
       oneOf: [
         value,
         {

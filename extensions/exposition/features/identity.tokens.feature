@@ -15,15 +15,15 @@ Feature: Tokens lifecycle
       """
       GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
+      content-type: text/plain
       authorization: Token ${{ token }}
 
-      output: Hello
+      Hello
       """
 
   Scenario: Refreshing stale token
@@ -42,30 +42,28 @@ Feature: Tokens lifecycle
       """
       GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
       authorization: Token ${{ token }}
 
-      output: Hello
+      Hello
       """
     Then after 1 second
     When the following request is received:
       """
       GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Token ${{ token }}
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
       authorization: Token
 
-      output: Hello
+      Hello
       """
 
   Scenario: Token revocation on password change
@@ -82,8 +80,8 @@ Feature: Tokens lifecycle
       refresh: 100
       """
     And the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | _version | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
@@ -106,7 +104,7 @@ Feature: Tokens lifecycle
       """
       200 OK
       """
-    Then after 0.1 seconds
+    Then after 0.2 seconds
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1

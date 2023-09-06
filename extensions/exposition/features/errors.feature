@@ -183,7 +183,7 @@ Feature: Errors
       # identity inception
       """
       POST /users/ HTTP/1.1
-      authorization: Basic dXNlcjpwYXNz
+      authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
 
@@ -193,8 +193,8 @@ Feature: Errors
       # same credentials
       """
       POST /users/ HTTP/1.1
-      authorization: Basic dXNlcjpwYXNz
-      content-type: application/yaml
+      authorization: Basic dXNlcjpwYXNzMTIzNA==
+      content-type: text/plain
 
       name: Mary Louis
       """

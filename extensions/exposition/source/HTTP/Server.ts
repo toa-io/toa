@@ -71,12 +71,13 @@ export class Server extends Connector {
 
   private success (request: Request, response: Response) {
     return (message: OutgoingMessage) => {
-      let status
+      let status = message.status
 
-      if (message.body === null) status = 404
-      else if (request.method === 'POST') status = 201
-      else if (message.body === undefined) status = 204
-      else status = 200
+      if (status === undefined)
+        if (message.body === null) status = 404
+        else if (request.method === 'POST') status = 201
+        else if (message.body === undefined) status = 204
+        else status = 200
 
       response
         .status(status)
@@ -101,11 +102,11 @@ export class Server extends Connector {
       response.status(status)
 
       if (outputAllowed) {
-        const message = exception instanceof ClientError
-          ? exception.message
+        const body = exception instanceof Exception
+          ? exception.body
           : (exception.stack ?? exception.message)
 
-        write(request, response, message)
+        write(request, response, body)
       } else
         response.end()
     }

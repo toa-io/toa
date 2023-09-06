@@ -1,4 +1,5 @@
 import { Connector, type bindings } from '@toa.io/core'
+import { type Reply } from '@toa.io/types'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import { type Tree } from './RTD'
@@ -56,11 +57,14 @@ export class Gateway extends Connector {
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 
-    const body = await method.endpoint
+    const reply = await method.endpoint
       .call(request.body, request.query, parameters)
-      .catch(rethrow)
+      .catch(rethrow) as Reply<unknown>
 
-    const response: http.OutgoingMessage = { body }
+    if (reply.error !== undefined)
+      throw new http.Conflict(reply.error)
+
+    const response: http.OutgoingMessage = { body: reply.output }
 
     await method.directives.settle(request, response)
 

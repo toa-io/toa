@@ -96,7 +96,7 @@ export const shortcuts: RTD.syntax.Shortcuts = new Map([
   ['incept', 'auth:incept']
 ])
 
-export interface Family<TDirective = any, TExtension = any> {
+export interface Family<TDirective = any, TExtension = any> extends RTD.Directives {
   readonly name: string
   readonly mandatory: boolean
 

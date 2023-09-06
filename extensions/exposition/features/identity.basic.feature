@@ -7,19 +7,14 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
-      accept: application/yaml
       content-type: application/yaml
 
       username: developer
-      password: secret
+      password: secret#1234
       """
     Then the following reply is sent:
       """
       201 Created
-      content-type: application/yaml
-
-      output:
-        id:
       """
 
   Scenario: Creating new Identity using inception
@@ -38,7 +33,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /users/ HTTP/1.1
-      authorization: Basic dXNlcjpwYXNz
+      authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
 
@@ -49,14 +44,13 @@ Feature: Basic authentication
       201 Created
       authorization: Token ${{ token }}
 
-      output:
-        id: ${{ id }}
+      id: ${{ id }}
       """
     When the following request is received:
       # basic credentials have been created
       """
       GET /users/${{ id }}/ HTTP/1.1
-      authorization: Basic dXNlcjpwYXNz
+      authorization: Basic dXNlcjpwYXNzMTIzNA==
       """
     Then the following reply is sent:
       """
@@ -118,3 +112,25 @@ Feature: Basic authentication
       """
       200 OK
       """
+
+  Scenario Outline: <problem> not meeting the requirements
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      accept: application/yaml
+      content-type: application/yaml
+
+      username: <username>
+      password: <password>
+      """
+    Then the following reply is sent:
+      """
+      409 Conflict
+
+      code: <code>
+      message: <problem> is not meeting the requirements.
+      """
+    Examples:
+      | username        | password    | problem  | code |
+      | with whitespace | secret#1234 | Username | 0    |
+      | root            | short       | Password | 1    |

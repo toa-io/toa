@@ -1,20 +1,58 @@
 import { genSalt, hash } from 'bcrypt'
+import { type Operation, type Reply } from '@toa.io/types'
 import { type Context, type Entity, type TransitInput } from './types'
 
-export async function transition
-(input: TransitInput, object: Entity, context: Context): Promise<void> {
-  const existent = object._version > 0
+export class Transition implements Operation {
+  private rounds: number = 10
+  private pepper: string = ''
+  private tokens: Tokens = undefined as unknown as Tokens
+  private usernameRx: RegExp[] = []
+  private passwrodRx: RegExp[] = []
 
-  if (existent)
-    await context.remote.identity.tokens.revoke({ query: { id: object.id } })
+  public mount (context: Context): void {
+    this.rounds = context.configuration.rounds
+    this.pepper = context.configuration.pepper
+    this.tokens = context.remote.identity.tokens
 
-  if (input.username !== undefined)
-    object.username = input.username
+    this.usernameRx = toRx(context.configuration.username)
+    this.passwrodRx = toRx(context.configuration.password)
+  }
 
-  if (input.password !== undefined) {
-    const salt = await genSalt(context.configuration.rounds)
-    const spicy = input.password + context.configuration.pepper
+  public async execute (input: TransitInput, object: Entity): Promise<Reply<void>> {
+    const existent = object._version > 0
 
-    object.password = await hash(spicy, salt)
+    if (existent)
+      await this.tokens.revoke({ query: { id: object.id } })
+
+    if (input.username !== undefined) {
+      if (invalid(input.username, this.usernameRx))
+        return { error: { code: 0, message: 'Username is not meeting the requirements.' } }
+
+      object.username = input.username
+    }
+
+    if (input.password !== undefined) {
+      if (invalid(input.password, this.passwrodRx))
+        return { error: { code: 1, message: 'Password is not meeting the requirements.' } }
+
+      const salt = await genSalt(this.rounds)
+      const spicy = input.password + this.pepper
+
+      object.password = await hash(spicy, salt)
+    }
+
+    return {}
   }
 }
+
+function toRx (input: string | string[]): RegExp[] {
+  const expressions = typeof input === 'string' ? [input] : input
+
+  return expressions.map((expression) => new RegExp(expression))
+}
+
+function invalid (value: string, expressions: RegExp[]): boolean {
+  return expressions.some((expression) => !expression.test(value))
+}
+
+type Tokens = Context['remote']['identity']['tokens']

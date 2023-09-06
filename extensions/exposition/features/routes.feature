@@ -16,14 +16,13 @@ Feature: Routes
     When the following request is received:
       """
       GET /basic/greeter<route> HTTP/1.1
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
 
-      output: Hello
+      Hello
       """
     Examples:
       | route                 |
@@ -40,12 +39,11 @@ Feature: Routes
     When the following request is received:
       """
       GET /greeter/ HTTP/1.1
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
 
-      output: Hello
+      Hello
       """

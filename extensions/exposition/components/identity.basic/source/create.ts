@@ -8,7 +8,7 @@ export async function effect
   const reply = await context.local.transit(request)
 
   if (reply.output === undefined)
-    throw new Error('?')
+    return { error: reply.error }
 
   return { output: { id: reply.output.id } }
 }
