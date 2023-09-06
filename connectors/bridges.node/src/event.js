@@ -7,15 +7,19 @@ const { Connector } = require('@toa.io/core')
  */
 class Event extends Connector {
   #event
+  #context
 
-  constructor (event) {
+  constructor (event, context) {
     super()
 
     this.#event = event
+    this.#context = context
+
+    this.depends(context)
   }
 
-  condition = async (...args) => this.#event.condition(...args)
-  payload = async (...args) => this.#event.payload(...args)
+  condition = async (...args) => this.#event.condition(...args, this.#context)
+  payload = async (...args) => this.#event.payload(...args, this.#context)
 }
 
 exports.Event = Event
