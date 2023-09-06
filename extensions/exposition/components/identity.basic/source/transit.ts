@@ -1,10 +1,11 @@
 import { genSalt, hash } from 'bcrypt'
 import { type Operation, type Reply } from '@toa.io/types'
-import { type Context, type Entity, type TransitInput } from './types'
+import { type Context, type Entity, type TransitInput, type TransitOutput } from './types'
 
 export class Transition implements Operation {
   private rounds: number = 10
   private pepper: string = ''
+  private principal?: string
   private tokens: Tokens = undefined as unknown as Tokens
   private usernameRx: RegExp[] = []
   private passwrodRx: RegExp[] = []
@@ -13,18 +14,22 @@ export class Transition implements Operation {
     this.rounds = context.configuration.rounds
     this.pepper = context.configuration.pepper
     this.tokens = context.remote.identity.tokens
+    this.principal = context.configuration.principal
 
     this.usernameRx = toRx(context.configuration.username)
     this.passwrodRx = toRx(context.configuration.password)
   }
 
-  public async execute (input: TransitInput, object: Entity): Promise<Reply<void>> {
+  public async execute (input: TransitInput, object: Entity): Promise<Reply<TransitOutput>> {
     const existent = object._version > 0
 
     if (existent)
       await this.tokens.revoke({ query: { id: object.id } })
 
     if (input.username !== undefined) {
+      if (existent && object.username === this.principal)
+        return { error: { code: 2, message: 'Principal username cannot be changed.' } }
+
       if (invalid(input.username, this.usernameRx))
         return { error: { code: 0, message: 'Username is not meeting the requirements.' } }
 
@@ -41,7 +46,7 @@ export class Transition implements Operation {
       object.password = await hash(spicy, salt)
     }
 
-    return {}
+    return { output: { id: object.id } }
   }
 }
 

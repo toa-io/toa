@@ -201,13 +201,14 @@ Feature: Basic authentication
     Then the following reply is sent:
       """
       200 OK
+      authorization: Token ${{ token }}
 
       - system
       """
     When the following request is received:
       """
       GET / HTTP/1.1
-      authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
+      authorization: Token ${{ token }}
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -215,4 +216,19 @@ Feature: Basic authentication
       200 OK
 
       access: granted!
+      """
+    # Principal username cannot be changed
+    When the following request is received:
+      """
+      PATCH /identity/basic/${{ id }}/ HTTP/1.1
+      authorization: Token ${{ token }}
+      content-type: application/yaml
+
+      username: admin
+      """
+    Then the following reply is sent:
+      """
+      409 Conflict
+
+      message: Principal username cannot be changed.
       """

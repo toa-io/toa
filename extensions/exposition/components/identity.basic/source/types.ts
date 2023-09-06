@@ -15,6 +15,7 @@ export interface Context {
   configuration: {
     readonly rounds: number
     readonly pepper: string
+    readonly principal?: string
     readonly username: string | string[]
     readonly password: string | string[]
   }
@@ -32,7 +33,7 @@ export interface TransitInput {
   password?: string
 }
 
-interface TransitOutput {
+export interface TransitOutput {
   id: string
 }
 
