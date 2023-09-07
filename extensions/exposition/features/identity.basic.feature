@@ -131,9 +131,9 @@ Feature: Basic authentication
       message: <problem> is not meeting the requirements.
       """
     Examples:
-      | username        | password    | problem  | code |
-      | with whitespace | secret#1234 | Username | 0    |
-      | root            | short       | Password | 1    |
+      | username        | password    | problem  | code             |
+      | with whitespace | secret#1234 | Username | INVALID_USERNAME |
+      | root            | short       | Password | INVALID_PASSWORD |
 
   Scenario Outline: Given <property> is not meeting one of requirements
     Given the `identity.basic` configuration:
@@ -230,5 +230,6 @@ Feature: Basic authentication
       """
       409 Conflict
 
+      code: PRINCIPAL_LOCKED
       message: Principal username cannot be changed.
       """

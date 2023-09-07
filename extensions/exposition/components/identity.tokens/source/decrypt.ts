@@ -1,9 +1,9 @@
 import { V3 } from 'paseto'
-import { type Reply } from '@toa.io/types'
+import { Nope, type Nopeable } from 'nopeable'
 import { type Context, type Claim, type DecryptOutput } from './types'
 
 export async function computation (token: string, context: Context):
-Promise<Reply<DecryptOutput>> {
+Promise<Nopeable<DecryptOutput>> {
   let refresh = false
   let claim = await decrypt(token, context.configuration.key0)
 
@@ -12,8 +12,8 @@ Promise<Reply<DecryptOutput>> {
     claim = await decrypt(token, context.configuration.key1)
   }
 
-  if (claim === null) return { error: { code: 0 } }
-  else return { output: { identity: claim.identity, iat: claim.iat, exp: claim.exp, refresh } }
+  if (claim === null) return new Nope('INVALID_TOKEN')
+  else return { identity: claim.identity, iat: claim.iat, exp: claim.exp, refresh }
 }
 
 async function decrypt (token: string, key: string): Promise<Claim | null> {

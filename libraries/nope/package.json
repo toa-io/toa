@@ -1,9 +1,11 @@
 {
-  "name": "@toa.io/types",
-  "version": "0.20.0-dev.36",
-  "description": "Toa Types for Node.js",
+  "name": "nopeable",
+  "version": "0.1.1",
+  "description": "Nope",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -11,12 +13,15 @@
   "bugs": {
     "url": "https://github.com/toa-io/toa/issues"
   },
-  "types": "source/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
-  "dependencies": {
-    "nopeable": "0.1.0"
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "install": "npm run transpile",
+    "transpile": "npx tsc"
   }
 }

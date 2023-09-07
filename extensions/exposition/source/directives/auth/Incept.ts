@@ -1,3 +1,4 @@
+import { Nope, type Nopeable } from 'nopeable'
 import * as http from '../../HTTP'
 import { type Directive, type Discovery, type Identity, type Input, type Schemes } from './types'
 import { split } from './split'
@@ -29,12 +30,13 @@ export class Incept implements Directive {
 
     this.schemes[scheme] ??= await this.discovery[provider]
 
-    const reply = await this.schemes[scheme].invoke('create', { input: { id, credentials } })
+    const identity = await this.schemes[scheme]
+      .invoke<Nopeable<Identity>>('create', { input: { id, credentials } })
 
-    if (reply.error !== undefined)
-      throw new http.Conflict(reply.error)
+    if (identity instanceof Nope)
+      throw new http.Conflict(identity)
 
-    request.identity = reply.output as Identity
+    request.identity = identity
     request.identity.scheme = scheme
   }
 }

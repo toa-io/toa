@@ -8,7 +8,7 @@ export interface Context {
   remote: {
     identity: {
       tokens: {
-        revoke: Call<unknown, IdentityTokensRevokeInput>
+        revoke: Call<void, IdentityTokensRevokeInput>
       }
     }
   }

@@ -17,7 +17,7 @@ Factory. Module file name without extension is an operation name (endpoint).
 function transition (input, object, context) {
   // ...
 
-  return { output: { foo: 'bar' } }
+  return { foo: 'bar' }
 }
 
 exports.transition = transition
@@ -48,15 +48,15 @@ See [Operation properties](#).
 
 class Transition {
   #context
-  
-  async mount(context) {
+
+  async mount (context) {
     this.#context = context
   }
-  
+
   execute (input, object) {
     // ...
 
-    return { output: { foo: 'bar' } }
+    return { foo: 'bar' }
   }
 }
 
@@ -86,20 +86,6 @@ implement [Algorithm Factory interface](#).
 
 > Factory class name examples: `ObjectTransitionFactory`, `ObjectsObservationFactory`,
 > `ChangesetAssignmentFactory`.
-
-### Return value
-
-Algorithm's return value must match [UCP Response](#), that is, to be an object with either `output`
-or `error` properties. If return value is a primitive or an object without neither `output`
-nor `error` properties, then it is considered as the value of `output`.
-
-Next two return values are equivalent.
-
-```javascript
-return { ok: 1 }
-
-return { output: { ok: 1 } } 
-```
 
 ### Storing Context
 

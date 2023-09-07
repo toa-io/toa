@@ -1,5 +1,4 @@
 import { type Component, type Query } from '@toa.io/core'
-import { type Reply } from '@toa.io/types'
 import { type Directive, type Identity } from './types'
 
 export class Role implements Directive {
@@ -16,12 +15,9 @@ export class Role implements Directive {
     this.remote ??= await discovery
 
     const query: Query = { criteria: `identity==${identity.id}`, limit: 1024 }
-    const reply: Reply<string[]> = await this.remote.invoke('list', { query })
+    const roles: string[] = await this.remote.invoke('list', { query })
 
-    if (reply.output === undefined)
-      return
-
-    identity.roles = reply.output
+    identity.roles = roles
   }
 
   public async authorize (identity: Identity | null): Promise<boolean> {

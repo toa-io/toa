@@ -1,7 +1,7 @@
 'use strict'
 
 async function computation () {
-  return { output: 'Hello' }
+  return 'Hello'
 }
 
 exports.computation = computation

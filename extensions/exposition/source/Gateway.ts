@@ -1,5 +1,5 @@
 import { Connector, type bindings } from '@toa.io/core'
-import { type Reply } from '@toa.io/types'
+import { Nope, type Nopeable } from 'nopeable'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import { type Tree } from './RTD'
@@ -59,12 +59,12 @@ export class Gateway extends Connector {
 
     const reply = await method.endpoint
       .call(request.body, request.query, parameters)
-      .catch(rethrow) as Reply<unknown>
+      .catch(rethrow) as Nopeable<unknown>
 
-    if (reply.error !== undefined)
-      throw new http.Conflict(reply.error)
+    if (reply instanceof Nope)
+      throw new http.Conflict(reply)
 
-    const response: http.OutgoingMessage = { body: reply.output }
+    const response: http.OutgoingMessage = { body: reply }
 
     await method.directives.settle(request, response)
 

@@ -1,29 +1,29 @@
-import { type Reply } from '@toa.io/types'
+import { Nope, type Nopeable } from 'nopeable'
 import { type AuthenticateOutput, type Context } from './types'
 
-export async function computation (token: string, context: Context):
-Promise<Reply<AuthenticateOutput>> {
-  const decryption = await context.local.decrypt({ input: token })
+export async function computation
+(token: string, context: Context): Promise<Nopeable<AuthenticateOutput>> {
+  const claim = await context.local.decrypt({ input: token })
 
-  if (decryption.error !== undefined)
-    return { error: decryption.error }
+  if (claim instanceof Nope)
+    return claim
 
-  if (decryption.output === undefined)
-    throw new Error('?')
-
-  const identity = decryption.output.identity
-  const iat = new Date(decryption.output.iat).getTime()
-  const transient = decryption.output.exp !== undefined
+  const identity = claim.identity
+  const iat = new Date(claim.iat).getTime()
+  const transient = claim.exp !== undefined
   const stale = transient && (iat + context.configuration.refresh < Date.now())
 
   if (stale) {
     const revocation = await context.local.observe({ query: { id: identity.id } })
 
-    if (revocation?.output?.revokedAt !== undefined && iat < revocation.output.revokedAt)
-      return { error: { code: 1 } }
+    if (revocation instanceof Nope)
+      return revocation
+
+    if (revocation?.revokedAt !== undefined && iat < revocation.revokedAt)
+      return new Nope('REVOKED')
   }
 
-  const refresh = stale || decryption.output.refresh
+  const refresh = stale || claim.refresh
 
-  return { output: { identity, refresh } }
+  return { identity, refresh }
 }

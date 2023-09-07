@@ -29,7 +29,8 @@
     "@toa.io/core": "0.20.0-dev.36",
     "@toa.io/filesystem": "0.20.0-dev.36",
     "@toa.io/generic": "0.20.0-dev.36",
-    "fast-glob": "3.2.7"
+    "fast-glob": "3.2.7",
+    "nopeable": "0.1.0"
   },
   "devDependencies": {
     "clone-deep": "4.0.1"

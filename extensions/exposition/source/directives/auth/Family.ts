@@ -1,9 +1,11 @@
 import { type Component } from '@toa.io/core'
+import { Nope } from 'nopeable'
 import { type Parameter } from '../../RTD'
 import { type Family, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
 import * as http from '../../HTTP'
 import {
+  type AuthenticationResult,
   type Directive,
   type Discovery,
   type Extension,
@@ -79,8 +81,8 @@ class Authorization implements Family<Directive, Extension> {
 
     this.tokens ??= await this.discovery.tokens
 
-    const reply = await this.tokens.invoke('encrypt', { input: { identity } })
-    const authorization = `Token ${reply.output}`
+    const token = await this.tokens.invoke<string>('encrypt', { input: { identity } })
+    const authorization = `Token ${token}`
 
     if (response.headers === undefined)
       response.headers = {}
@@ -100,15 +102,16 @@ class Authorization implements Family<Directive, Extension> {
 
     this.schemes[scheme] ??= await this.discovery[provider]
 
-    const reply = await this.schemes[scheme].invoke('authenticate', { input: value })
+    const result = await this.schemes[scheme]
+      .invoke<AuthenticationResult>('authenticate', { input: value })
 
-    if (reply.error !== undefined)
+    if (result instanceof Nope)
       return null
 
-    const identity: Identity = reply.output.identity
+    const identity = result.identity
 
     identity.scheme = scheme
-    identity.refresh = reply.output.refresh
+    identity.refresh = result.refresh
 
     return identity
   }

@@ -1,10 +1,10 @@
 import { Connector } from './connector'
 import { Locator } from './locator'
 import { Request } from './request'
-import { Reply } from './reply'
+import { type Nopeable } from 'nopeable'
 
 export interface Component extends Connector {
   locator: Locator
 
-  invoke (endpoint: string, request: Request): Promise<Reply>
+  invoke<T> (endpoint: string, request: Request): Promise<T>
 }

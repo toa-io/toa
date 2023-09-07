@@ -28,7 +28,8 @@ operations:
   authenticate:
     input: string
     output:
-      identity: object
+      identity:
+        id: string
 
 configuration:
   rounds: 10

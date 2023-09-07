@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('./connector')
+const { Nope } = require('nopeable')
 
 class Call extends Connector {
   #transmitter
@@ -15,9 +16,6 @@ class Call extends Connector {
     this.depends(transmitter)
   }
 
-  /**
-   * @param {toa.core.Request} request
-   */
   async invoke (request = {}) {
     this.#contract.fit(request)
 
@@ -28,11 +26,13 @@ class Call extends Connector {
 
     if (reply === null) return null
     else {
-      const { exception, ...rest } = reply
+      if (reply.exception !== undefined)
+        throw reply.exception
 
-      if (exception !== undefined) throw exception
+      if (reply.error !== undefined)
+        return new Nope(reply.error)
 
-      return rest
+      return reply.output
     }
   }
 }

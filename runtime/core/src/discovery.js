@@ -30,7 +30,7 @@ class Discovery extends Connector {
     const warning = () => console.warn(`Waiting for lookup response from '${id}'...`)
     const timeout = setTimeout(warning, TIMEOUT)
 
-    const { output } = await this.#lookups[id].invoke()
+    const output = await this.#lookups[id].invoke()
 
     console.debug(`Lookup response from '${id}' received`)
     clearTimeout(timeout)

@@ -189,6 +189,10 @@ Feature: Errors
 
       name: Bill Smith
       """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
     And the following request is received:
       # same credentials
       """

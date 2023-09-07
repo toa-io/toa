@@ -27,6 +27,7 @@
     "js-yaml": "4.1.0",
     "msgpackr": "1.9.5",
     "negotiator": "0.6.3",
+    "nopeable": "0.1.0",
     "paseto": "3.1.4"
   },
   "jest": {
