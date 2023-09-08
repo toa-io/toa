@@ -11,7 +11,13 @@ export class Tenant extends Connector {
     super()
 
     this.broadcast = broadcast
-    this.branch = { namespace: locator.namespace, component: locator.name, node }
+
+    this.branch = {
+      namespace: locator.namespace,
+      component: locator.name,
+      isolated: locator.namespace === 'identity',
+      node
+    }
 
     this.depends(broadcast)
   }

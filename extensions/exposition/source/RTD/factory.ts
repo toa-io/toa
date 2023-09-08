@@ -9,7 +9,10 @@ import type * as syntax from './syntax'
 
 export function createNode<TEndpoint extends Endpoint, TDirectives extends Directives>
 (node: syntax.Node, context: Context): Node<TEndpoint, TDirectives> {
-  context.directives.stack = node.directives.concat(context.directives.stack)
+  if (node.isolated === true)
+    context.directives.stack = node.directives
+  else
+    context.directives.stack = node.directives.concat(context.directives.stack)
 
   const routes: Route[] = node.routes.map((route) => createRoute(route, context))
   const methods: Methods = {}

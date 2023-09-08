@@ -20,8 +20,8 @@ function parseNode (input: object, shortcuts?: Shortcuts): Node {
   const node = createNode()
 
   for (const [key, value] of Object.entries(input)) {
-    if (key === 'protected') {
-      node.protected = value
+    if (PROPERTIES.includes(key as keyof Node)) {
+      node[key as keyof Node] = value
 
       continue
     }
@@ -148,5 +148,6 @@ function expandRange (range: number): Range {
 }
 
 const DIRECTIVE_RX = /^(?<family>\w{1,32}):(?<name>\w{1,32})$/
+const PROPERTIES: Array<keyof Node> = ['protected', 'isolated']
 
 export type Shortcuts = Map<string, string>

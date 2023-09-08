@@ -360,3 +360,23 @@ Feature: Access authorization
 
       Basic authentication scheme is required to access this resource.
       """
+
+  Scenario: Adding a role without required permissions
+
+  Trunk directives should not be applied to the Identity management resources.
+
+    Given the annotation:
+      """yaml
+      anonymous: true
+      """
+    When the following request is received:
+      """
+      POST /identity/roles/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      content-type: application/yaml
+
+      role: developer
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """

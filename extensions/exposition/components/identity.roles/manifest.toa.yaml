@@ -22,6 +22,7 @@ receivers:
   identity.basic.principal: principal
 
 exposition:
+  isolated: true
   /:identity:
     auth:role: system:identity:roles
     POST: transit

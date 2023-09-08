@@ -1,4 +1,5 @@
 protected: boolean
+isolated: boolean
 routes: [ref:route]
 methods: [ref:method]
 directives: [ref:directive]

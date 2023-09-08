@@ -75,7 +75,7 @@ class Authorization implements Family<Directive, Extension> {
     if (identity.scheme === PRIMARY && !identity.refresh)
       return
 
-    // Role directive could have set the value
+    // Role directive may have already set the value
     if (identity.roles === undefined)
       await Role.set(identity, this.discovery.roles)
 
@@ -94,7 +94,7 @@ class Authorization implements Family<Directive, Extension> {
     if (authorization === undefined)
       return null
 
-    const [scheme, value] = split(authorization)
+    const [scheme, credentials] = split(authorization)
     const provider = PROVIDERS[scheme]
 
     if (!(provider in this.discovery))
@@ -103,7 +103,7 @@ class Authorization implements Family<Directive, Extension> {
     this.schemes[scheme] ??= await this.discovery[provider]
 
     const result = await this.schemes[scheme]
-      .invoke<AuthenticationResult>('authenticate', { input: value })
+      .invoke<AuthenticationResult>('authenticate', { input: credentials })
 
     if (result instanceof Nope)
       return null

@@ -39,6 +39,7 @@ configuration:
   password+: ^\S{8,32}$
 
 exposition:
+  isolated: true
   /:
     anonymous: true
     POST: incept
