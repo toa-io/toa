@@ -29,6 +29,9 @@ operations:
   revoke:
     concurrency: retry
 
+receivers:
+  identity.bans.updated: revoke
+
 configuration:
   key0*: string
   key1: string

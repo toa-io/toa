@@ -23,7 +23,7 @@ export class HTTP {
     let [headers, body] = trim(input).split('\n\n')
 
     if (body !== undefined)
-      headers += '\ncontent-length: ' + body.length
+      headers += '\ncontent-length: ' + body?.length
 
     const text = headers + '\n\n' + (body ?? '')
     const request = text.replaceAll(SUBSTITUTE, (_, name) => this.variables[name])

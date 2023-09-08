@@ -23,12 +23,12 @@ it('should decrypt', async () => {
 
   const reply = await encrypt({ identity, lifetime }, context)
 
-  if (reply.output === undefined)
+  if (reply === undefined)
     throw new Error('?')
 
-  const decrypted = await decrypt(reply.output, context)
+  const decrypted = await decrypt(reply, context)
 
-  expect(decrypted.output).toMatchObject({ identity, refresh: false })
+  expect(decrypted).toMatchObject({ identity, refresh: false })
 })
 
 it('should decrypt with key1', async () => {
@@ -43,10 +43,10 @@ it('should decrypt with key1', async () => {
 
   const encrypted = await encrypt({ identity, lifetime }, k1context)
 
-  if (encrypted.output === undefined)
+  if (encrypted === undefined)
     throw new Error('?')
 
-  const decrypted = await decrypt(encrypted.output, context)
+  const decrypted = await decrypt(encrypted, context)
 
-  expect(decrypted.output).toMatchObject({ identity, refresh: true })
+  expect(decrypted).toMatchObject({ identity, refresh: true })
 })

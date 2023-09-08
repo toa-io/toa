@@ -22,11 +22,14 @@ export interface Extension {
   identity: Identity | null
 }
 
-export type Input = directive.Input & Extension
+export interface Ban {
+  banned: boolean
+}
 
+export type Input = directive.Input & Extension
 export type AuthenticationResult = Nopeable<{ identity: Identity, refresh: boolean }>
 
 export type Scheme = 'basic' | 'token'
-export type Provider = 'basic' | 'tokens' | 'roles'
-export type Discovery = Record<Provider, Promise<Component>>
+export type Remote = 'basic' | 'tokens' | 'roles' | 'bans'
+export type Discovery = Record<Remote, Promise<Component>>
 export type Schemes = Record<Scheme, Component>

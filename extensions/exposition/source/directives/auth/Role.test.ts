@@ -18,7 +18,7 @@ it('should return false if not matched', async () => {
   const directive = new Role(roles, discovery)
   const identity: Identity = { id: generate(), scheme: '', refresh: false }
 
-  remote.invoke.mockResolvedValueOnce({ output: ['guest'] })
+  remote.invoke.mockResolvedValueOnce(['guest'])
 
   const result = await directive.authorize(identity)
 
@@ -55,9 +55,8 @@ it('should return false on non-scope substring match', async () => {
 async function match (expected: string[], actual: string[]): Promise<boolean> {
   const directive = new Role(expected, discovery)
   const identity: Identity = { id: generate(), scheme: '', refresh: false }
-  const output = actual
 
-  remote.invoke.mockResolvedValueOnce({ output })
+  remote.invoke.mockResolvedValueOnce(actual)
 
   return await directive.authorize(identity)
 }

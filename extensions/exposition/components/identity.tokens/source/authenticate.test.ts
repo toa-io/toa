@@ -18,7 +18,7 @@ beforeEach(() => {
   context = {
     configuration,
     local: {
-      decrypt: jest.fn(async () => ({ output })),
+      decrypt: jest.fn(async () => (output)),
       observe: jest.fn()
     }
   }
@@ -36,7 +36,7 @@ it.each([
 
   const result = await authenticate('', context)
 
-  expect(result).toEqual({ output: { identity, refresh: expected } })
+  expect(result).toEqual({ identity, refresh: expected })
 })
 
 it.each([true, false])('should return stale: %s',
@@ -48,5 +48,5 @@ it.each([true, false])('should return stale: %s',
 
     const result = await authenticate('', context)
 
-    expect(result).toEqual({ output: { identity, refresh } })
+    expect(result).toEqual({ identity, refresh })
   })

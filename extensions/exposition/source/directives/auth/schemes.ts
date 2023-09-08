@@ -1,6 +1,6 @@
-import { type Provider, type Scheme } from './types'
+import { type Remote, type Scheme } from './types'
 
-export const PROVIDERS: Record<Scheme, Provider> = {
+export const PROVIDERS: Record<Scheme, Remote> = {
   basic: 'basic',
   token: 'tokens'
 }

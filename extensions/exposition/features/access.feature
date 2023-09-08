@@ -7,6 +7,7 @@ Feature: Access authorization
       | _id                              | username  | password                                                     |
       | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
       | e8e4f9c2a68d419b861403d71fabc915 | user      | $2b$10$Frszmrmsz9iwSXzBbRRMKeDVKsNxozkrLNSsN.SnVC.KPxLtQr/bK |
+    And the `identity.bans` database is empty
 
   Scenario: Deny by default
     Given the annotation:
@@ -375,6 +376,65 @@ Feature: Access authorization
       content-type: application/yaml
 
       role: developer
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+
+  Scenario: Banning an Identity
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role   |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | system |
+    And the annotation:
+      """yaml
+      /:id:
+        auth:id: id
+        GET:
+          dev:stub:
+            access: granted!
+      """
+    And the `identity.tokens` configuration:
+      """yaml
+      refresh: 1000
+      """
+    When the following request is received:
+      """
+      GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      authorization: Basic dXNlcjoxMjM0NQ==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      """
+    When the following request is received:
+      """
+      PUT /identity/bans/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      content-type: application/yaml
+
+      banned: true
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      """
+    # accessing a resource with a banned Identity
+    When the following request is received:
+      """
+      GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      authorization: Basic dXNlcjoxMjM0NQ==
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    Then after 1 second
+    When the following request is received:
+      """
+      GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      authorization: Token ${{ token }}
       """
     Then the following reply is sent:
       """

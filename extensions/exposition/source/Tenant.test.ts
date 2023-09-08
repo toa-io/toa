@@ -9,7 +9,7 @@ const component = generate()
 const namespace = generate()
 const locator = new Locator(component, namespace)
 const node = { [generate()]: generate() } as unknown as RTD.Node
-const branch: Branch = { namespace, component, node }
+const branch: Branch = { namespace, component, node, isolated: false }
 
 let tenant: Tenant
 

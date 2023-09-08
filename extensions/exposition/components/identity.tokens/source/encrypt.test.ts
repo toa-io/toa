@@ -19,12 +19,12 @@ it('should encrypt with given lifetime', async () => {
   const lifetime = 10
   const encrypted = await encrypt({ identity, lifetime }, context)
 
-  if (encrypted.output === undefined)
+  if (encrypted === undefined)
     throw new Error('?')
 
-  await expect(decrypt(encrypted.output, context)).resolves.toMatchObject({ output: { identity } })
+  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ identity })
 
   await timeout(lifetime)
 
-  await expect(decrypt(encrypted.output, context)).resolves.toMatchObject({ error: { code: 0 } })
+  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ code: 'INVALID_TOKEN' })
 })

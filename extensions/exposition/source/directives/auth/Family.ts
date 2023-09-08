@@ -5,12 +5,12 @@ import { type Family, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
 import * as http from '../../HTTP'
 import {
-  type AuthenticationResult,
+  type AuthenticationResult, type Ban,
   type Directive,
   type Discovery,
   type Extension,
   type Identity,
-  type Input,
+  type Input, type Remote,
   type Schemes
 } from './types'
 import { Anonymous } from './Anonymous'
@@ -28,6 +28,7 @@ class Authorization implements Family<Directive, Extension> {
   private readonly schemes = {} as unknown as Schemes
   private readonly discovery = {} as unknown as Discovery
   private tokens: Component | null = null
+  private bans: Component | null = null
 
   public create (name: string, value: any, remotes: Remotes): Directive {
     const Class = CLASSES[name]
@@ -35,9 +36,8 @@ class Authorization implements Family<Directive, Extension> {
     if (Class === undefined)
       throw new Error(`Directive '${name}' is not provided by the '${this.name}' family.`)
 
-    this.discovery.basic ??= remotes.discover('identity', 'basic')
-    this.discovery.tokens ??= remotes.discover('identity', 'tokens')
-    this.discovery.roles ??= remotes.discover('identity', 'roles')
+    for (const name of REMOTES)
+      this.discovery[name] ??= remotes.discover('identity', name)
 
     if (Class === Role) return new Class(value, this.discovery.roles)
     else if (Class === Rule) return new Class(value, this.create.bind(this))
@@ -110,10 +110,21 @@ class Authorization implements Family<Directive, Extension> {
 
     const identity = result.identity
 
+    if (scheme !== PRIMARY && await this.banned(identity))
+      throw new http.Unauthorized()
+
     identity.scheme = scheme
     identity.refresh = result.refresh
 
     return identity
+  }
+
+  private async banned (identity: Identity): Promise<boolean> {
+    this.bans ??= await this.discovery.bans
+
+    const ban = await this.bans.invoke<Ban>('observe', { query: { id: identity.id } })
+
+    return ban.banned
   }
 }
 
@@ -125,5 +136,7 @@ const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
   incept: Incept,
   scheme: Scheme
 }
+
+const REMOTES: Remote[] = ['basic', 'tokens', 'roles', 'bans']
 
 export = new Authorization()
