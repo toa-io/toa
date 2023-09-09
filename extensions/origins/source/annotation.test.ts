@@ -23,7 +23,7 @@ describe('normalize', () => {
     }
 
     expect(run)
-      .toThrow('additional properties')
+      .toThrow('not expected')
   })
 
   it('should not throw if valid', async () => {

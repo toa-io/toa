@@ -16,7 +16,7 @@ beforeEach(() => {
 
 it('should encrypt with given lifetime', async () => {
   const identity: Identity = { id: generate() }
-  const lifetime = 10
+  const lifetime = 100
   const encrypted = await encrypt({ identity, lifetime }, context)
 
   if (encrypted === undefined)

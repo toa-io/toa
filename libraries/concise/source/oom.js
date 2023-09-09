@@ -15,7 +15,6 @@ const oom = (properties) => {
     if (name === '~') name = 'null'
 
     const schema = {
-      default: value.default,
       oneOf: [
         value,
         {
@@ -24,6 +23,9 @@ const oom = (properties) => {
         }
       ]
     }
+
+    if (value.default !== undefined)
+      schema.default = value.default
 
     properties[name] = schema
 

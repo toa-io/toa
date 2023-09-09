@@ -35,7 +35,7 @@ describe('validation', () => {
   it('should not allow additional properties', () => {
     declaration.foo = generate()
 
-    expect(() => translate(declaration, true)).toThrow('must NOT have additional properties')
+    expect(() => translate(declaration, true)).toThrow('not expected')
   })
 })
 

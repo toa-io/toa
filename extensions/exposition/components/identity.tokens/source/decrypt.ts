@@ -12,7 +12,7 @@ Promise<Nopeable<DecryptOutput>> {
     claim = await decrypt(token, context.configuration.key1)
   }
 
-  if (claim === null) return new Nope('INVALID_TOKEN')
+  if (claim === null) return new Nope('INVALID_TOKEN', 'Invalid token')
   else return { identity: claim.identity, iat: claim.iat, exp: claim.exp, refresh }
 }
 

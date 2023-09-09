@@ -11,7 +11,7 @@ class Transition {
   }
 
   async execute (input, object) {
-    return { output: { input, state: object, context: this.#context !== undefined } }
+    return { input, state: object, context: this.#context !== undefined }
   }
 }
 

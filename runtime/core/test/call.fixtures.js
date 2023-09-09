@@ -4,7 +4,7 @@ const { generate } = require('randomstring')
 
 // noinspection JSCheckFunctionSignatures
 const transmission = {
-  request: jest.fn((request) => ({ [request.invalid ? 'exception' : generate()]: generate() })),
+  request: jest.fn((request) => ({ [request.invalid ? 'exception' : 'output']: generate() })),
   link: jest.fn()
 }
 

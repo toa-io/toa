@@ -108,16 +108,12 @@ describe('validation', () => {
     expect(check).toThrow('must be string')
   })
 
-  it.each(['input', 'query'])('should throw if request.%s is defined', async (key) => {
+  it.each([['input', 'query']])('should throw if request.%s is defined', async (key) => {
     expect.assertions(1)
 
     declaration[key] = { id: generate() }
     declaration.request = /** @type {toa.samples.Operation} */ { [key]: { id: generate() } }
 
-    try {
-      check()
-    } catch (exception) {
-      expect(exception).toMatchObject({ path: '/request' })
-    }
+    expect(() => check()).toThrow('/request')
   })
 })

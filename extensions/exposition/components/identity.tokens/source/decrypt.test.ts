@@ -19,7 +19,7 @@ beforeEach(() => {
 
 it('should decrypt', async () => {
   const identity: Identity = { id: generate() }
-  const lifetime = 10
+  const lifetime = 100
 
   const reply = await encrypt({ identity, lifetime }, context)
 
@@ -39,7 +39,7 @@ it('should decrypt with key1', async () => {
   } as unknown as Context
 
   const identity: Identity = { id: generate() }
-  const lifetime = 10
+  const lifetime = 100
 
   const encrypted = await encrypt({ identity, lifetime }, k1context)
 

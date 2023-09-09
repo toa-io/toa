@@ -36,7 +36,7 @@ it('should return reply', async () => {
 
   const reply = await call.invoke(request)
 
-  expect(reply).toStrictEqual(fixtures.transmission.request.mock.results[0].value)
+  expect(reply).toStrictEqual(fixtures.transmission.request.mock.results[0].value.output)
 })
 
 it('should throw received exceptions', async () => {
