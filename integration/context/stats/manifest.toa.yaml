@@ -21,4 +21,6 @@ receivers:
   credits.balance.updated: update
 
 exposition:
-  /:id: [observe, update]
+  /:id:
+    GET: observe
+    PATCH: update

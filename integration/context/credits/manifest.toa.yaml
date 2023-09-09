@@ -45,5 +45,8 @@ operations:
 
 extensions:
   '@toa.io/extensions.exposition':
-    /: [add]
-    /:id: [observe, set]
+    /:
+      POST: add
+    /:id:
+      GET: observe
+      PUT: set

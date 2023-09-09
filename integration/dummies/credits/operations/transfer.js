@@ -5,7 +5,7 @@ async function transfer (source, object, context) {
 
   object.balance += reply.output
 
-  return { output: object.balance }
+  return object.balance
 }
 
 exports.transition = transfer

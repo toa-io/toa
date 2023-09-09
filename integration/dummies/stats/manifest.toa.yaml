@@ -19,7 +19,3 @@ operations:
 receivers:
   messages.created: update
   credits.balance.updated: update
-
-exposition:
-  /:id:
-    operations: [observe, update]

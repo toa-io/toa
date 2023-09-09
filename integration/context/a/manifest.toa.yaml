@@ -28,6 +28,6 @@ receivers:
 extensions:
   exposition:
     /:
-      operations: [create]
+      POST: create
     /:id:
-      operations: [observe]
+      GET: observe
