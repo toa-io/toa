@@ -1,5 +1,6 @@
-import { readdir } from 'node:fs/promises'
+import { readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { type Dirent } from 'fs'
 import { Connector } from '@toa.io/core'
 import { type Bootloader } from './Factory'
 
@@ -12,7 +13,7 @@ export class Composition extends Connector {
   }
 
   protected override async open (): Promise<void> {
-    const paths = await find()
+    const paths = find()
     const composition = await this.boot.composition(paths)
 
     await composition.connect()
@@ -27,12 +28,17 @@ export class Composition extends Connector {
   }
 }
 
-async function find (): Promise<string[]> {
-  const entries = await readdir(ROOT, { withFileTypes: true })
+function find (): string[] {
+  return entries().map((entry) => resolve(entry.path, entry.name))
+}
 
-  return entries
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => resolve(entry.path, entry.name))
+function entries (): Dirent[] {
+  const entries = readdirSync(ROOT, { withFileTypes: true })
+
+  return entries.filter((entry) => entry.isDirectory())
 }
 
 const ROOT = resolve(__dirname, '../components/')
+
+export const componentLabels = entries().map((entry) => entry.name.replace('.', '-'))
+export const componentsPaths = find()

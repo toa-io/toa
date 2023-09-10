@@ -2,13 +2,8 @@
 
 const { connectors, extensions, resolve } = require('./.dependencies')
 
-/**
- * @param {toa.norm.Context} context
- * @returns {toa.norm.context.Dependencies}
- */
-const dependencies = (context) => {
-  /** @type {toa.norm.context.dependencies.References} */
-  const references = { ...connectors(context), ...extensions(context) }
+const dependencies = async (context) => {
+  const references = { ...connectors(context), ...(await extensions(context)) }
 
   return resolve(references, context.annotations)
 }

@@ -1,21 +1,15 @@
-type Reference = {
-  name: string
-  version: string
-  repository?: string
-  alias?: string
-  values?: Object
-}
-
-type Service = {
+export type Service = {
   group: string
   name: string
   version: string
   port: number
   ingress?: {
     host: string
-    class: string
+    class?: string
     annotations?: object
   }
+  variables: Variable[]
+  components?: string[]
 }
 
 export type Variable = {
@@ -30,7 +24,6 @@ export type Variable = {
 export type Variables = Record<string, Variable[]>
 
 export type Dependency = {
-  references?: Reference[]
   services?: Service[]
   variables?: Variables
 }

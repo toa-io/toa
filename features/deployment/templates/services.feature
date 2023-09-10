@@ -1,8 +1,14 @@
 Feature: Service Deployment
 
-  Scenario: Deploy service with system variables
+  Scenario: Deploy a service with global variables
     Given I have a component `exposed.one`
-    And I have a context
+    And I have a context with:
+      """yaml
+      exposition:
+        /:
+          GET:
+            dev:stub: ok!
+      """
     When I export deployment for dev
     And I run `helm template deployment`
     Then program should exit

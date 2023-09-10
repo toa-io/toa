@@ -2,21 +2,25 @@ Feature: Exposition deployment
 
   Background:
     Given I have a component `exposed.one`
-    And I have a context
 
   Scenario: Dockerfile has correct command
+    Given I have a context
     When I export images
     Then the file ./images/extensions-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve .'
 
-  Scenario: Deploying Identity
+  Scenario: Deploying component configuration
+    Given I have a context with:
+      """yaml
+      configuration:
+        identity.tokens:
+          key0: secret.key.0
+      """
     When I export deployment
-    And I export images
     Then exported values should contain:
       """yaml
-      compositions:
-        - group: extensions
-          name: exposition-identity
-          components:
-            - identity.basic
+      services:
+        - name: exposition-gateway
+          variables:
+          - name: TOA_CONFIGURATION_IDENTITY_TOKENS
+            value: eyJrZXkwIjoic2VjcmV0LmtleS4wIn0=
       """
-    And the file ./images/extensions-exposition-identity.*/Dockerfile contains exact line 'CMD toa compose *'

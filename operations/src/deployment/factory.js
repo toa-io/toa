@@ -9,24 +9,13 @@ const { Composition } = require('./composition')
 const { Service } = require('./service')
 
 class Factory {
-  /** @type {toa.norm.Context} */
   #context
-
-  /** @type {Composition[]} */
   #compositions
-
-  /** @type {toa.deployment.Dependency[]} */
   #dependencies
-
-  /** @type {toa.deployment.Registry} */
   #registry
-
-  /** @type {toa.operations.Process} */
   #process
+  #extensionComponents = []
 
-  /**
-   * @param context {toa.norm.Context}
-   */
   constructor (context) {
     this.#context = context
     this.#process = new Process()
@@ -48,19 +37,12 @@ class Factory {
     return this.#registry
   }
 
-  /**
-   * @param composition {toa.norm.context.Composition}
-   * @returns {Composition}
-   */
   #composition (composition) {
     const image = this.#registry.composition(composition)
 
     return new Composition(composition, image)
   }
 
-  /**
-   * @returns {toa.deployment.Dependency[]}
-   */
   #getDependencies () {
     /** @type {toa.deployment.Dependency[]} */
     const dependencies = []
@@ -76,11 +58,6 @@ class Factory {
     return dependencies
   }
 
-  /**
-   * @param {string} path
-   * @param {toa.norm.context.dependencies.Instance[]} instances
-   * @returns {toa.deployment.Dependency | undefined}
-   */
   #getDependency (path, instances) {
     const module = require(path)
     const pkg = require(path + '/package.json')

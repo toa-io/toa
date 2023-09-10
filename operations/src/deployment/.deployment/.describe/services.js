@@ -1,8 +1,10 @@
 'use strict'
 
+const { addVariables } = require('./variables')
+
 function services (services, variables) {
   for (const service of services) {
-    service.variables = variables.global
+    addVariables(service, variables)
   }
 }
 

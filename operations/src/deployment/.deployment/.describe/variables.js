@@ -1,10 +1,5 @@
 'use strict'
 
-/**
- * @param {toa.norm.Context} context
- * @param {toa.deployment.dependency.Variables} variables
- * @returns {toa.deployment.dependency.Variables}
- */
 const variables = (context, variables) => {
   if (variables.global === undefined) variables.global = []
 
@@ -17,4 +12,22 @@ const variables = (context, variables) => {
   return variables
 }
 
+function addVariables (deployment, variables) {
+  const used = new Set()
+
+  deployment.variables ??= []
+
+  for (const [key, set] of Object.entries(variables)) {
+    if (key !== 'global' && !deployment.components?.includes(key)) continue
+
+    for (const variable of set) {
+      if (used.has(variable.name)) continue
+
+      deployment.variables.push(variable)
+      used.add(variable.name)
+    }
+  }
+}
+
 exports.variables = variables
+exports.addVariables = addVariables

@@ -1,4 +1,4 @@
-import * as schemas from '../schemas'
+import * as schemas from '../../schemas'
 import {
   verbs,
   type Node,
