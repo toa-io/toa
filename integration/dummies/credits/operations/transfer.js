@@ -1,9 +1,9 @@
 'use strict'
 
 async function transfer (source, object, context) {
-  const reply = await context.local.nullify({ query: { id: source } })
+  const balance = await context.local.nullify({ query: { id: source } })
 
-  object.balance += reply.output
+  object.balance += balance
 
   return object.balance
 }

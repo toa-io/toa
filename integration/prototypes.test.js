@@ -22,5 +22,5 @@ afterAll(async () => {
 
 it('should merge reply', async () => {
   const reply = await remote.invoke('transit', { input: { sender: newid(), text: '2' } })
-  expect(reply).toMatchObject({ output: { id: expect.any(String), ok: 'ok' } })
+  expect(reply).toMatchObject({ id: expect.any(String), ok: 'ok' })
 })

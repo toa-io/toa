@@ -20,7 +20,6 @@ operations:
 extensions:
   exposition:
     /:id:
-      operations: [observe]
+      GET: observe
     /v2/:id:
-      operations: [observe]
-
+      GET: observe

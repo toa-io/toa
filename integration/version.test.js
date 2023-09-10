@@ -23,7 +23,7 @@ afterAll(async () => {
 
 it('should return', async () => {
   const id = newid()
-  const { output } = await remote.invoke('observe', { query: { id } })
+  const output = await remote.invoke('observe', { query: { id } })
 
   expect(output._version).toBe(0)
 })
@@ -31,7 +31,7 @@ it('should return', async () => {
 it('should return with projection', async () => {
   const id = newid()
 
-  const { output } = await remote.invoke('observe', { query: { id, projection: ['balance'] } })
+  const output = await remote.invoke('observe', { query: { id, projection: ['balance'] } })
 
   expect(output._version).toBe(0)
 })
@@ -41,7 +41,7 @@ it('should increment', async () => {
 
   await remote.invoke('transit', { input: { balance: 50 }, query: { id } })
   await remote.invoke('transit', { input: { balance: 30 }, query: { id } })
-  const { output } = await remote.invoke('observe', { query: { id } })
+  const output = await remote.invoke('observe', { query: { id } })
 
   expect(output._version).toBe(2)
 })
@@ -60,7 +60,7 @@ it('should throw on version conflict', async () => {
   const id = newid()
   await remote.invoke('transit', { input: { balance: 1 }, query: { id } }) // init
 
-  const { output } = await remote.invoke('observe', { query: { id } })
+  const output = await remote.invoke('observe', { query: { id } })
   expect(output._version).toBe(1)
 
   await remote.invoke('transit', { input: { balance: 2 }, query: { id } })
@@ -68,6 +68,5 @@ it('should throw on version conflict', async () => {
   await expect(remote.invoke('transit', {
     input: { balance: 2 },
     query: { id, version: output._version }
-  }))
-    .rejects.toMatchObject({ code: codes.StatePrecondition })
+  })).rejects.toMatchObject({ code: codes.StatePrecondition })
 })

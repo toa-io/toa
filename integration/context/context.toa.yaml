@@ -38,5 +38,7 @@ mongodb@dev: mongodb://host.docker.internal
 amqp: amqp://host.docker.internal
 
 configuration:
+  identity.tokens:
+    key0: secret-key-0
   messages.messages:
     price: 2

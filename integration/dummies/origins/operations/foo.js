@@ -6,7 +6,7 @@ async function transition (input, object, context) {
 
   const body = await response.json()
 
-  return { output: { status, body } }
+  return { status, body }
 }
 
 exports.transition = transition
