@@ -8,12 +8,13 @@ Feature: AMQP binding
       """
     Then the reply is received:
       """yaml
-      output: ok
+      ok
       """
     And I disconnect
 
   Scenario: Start a component with external event source
     Given I have a component `external.consumer`
+    And I have a PostgreSQL database developer
     And I have a context with:
       """yaml
       amqp:

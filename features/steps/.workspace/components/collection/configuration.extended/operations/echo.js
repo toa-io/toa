@@ -5,7 +5,7 @@ async function computation (input, context) {
 
   output.bar = context.configuration.bar
 
-  return { output }
+  return output
 }
 
 exports.computation = computation

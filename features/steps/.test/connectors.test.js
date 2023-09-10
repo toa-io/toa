@@ -104,7 +104,7 @@ describe('When I invoke {token}', () => {
     output = generate()
 
     connector = /** @type {toa.core.Component} */ {
-      invoke: jest.fn(() => ({ output }))
+      invoke: jest.fn(() => output)
     }
 
     context = { connector }
@@ -121,7 +121,7 @@ describe('When I invoke {token}', () => {
   it('should set reply ', async () => {
     await step.call(context, endpoint)
 
-    expect(context.reply).toMatchObject({ output })
+    expect(context.reply).toStrictEqual(output)
   })
 })
 
@@ -137,7 +137,7 @@ describe('When I invoke {token} with:', () => {
 
   beforeEach(() => {
     connector = /** @type {toa.core.Component} */ {
-      invoke: jest.fn(() => ({ output: generate() }))
+      invoke: jest.fn(() => generate())
     }
 
     context = { connector }

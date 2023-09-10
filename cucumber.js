@@ -8,7 +8,7 @@ module.exports = {
   default: {
     ...common,
     require: ['./features/**/*.js', './features/**/*.ts'],
-    paths: ['extensions/exposition/features']
+    paths: ['features']
   },
   exposition: {
     ...common,
