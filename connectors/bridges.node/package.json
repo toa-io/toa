@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.node",
-  "version": "0.20.0-dev.36",
+  "version": "0.20.0-dev.38",
   "description": "Toa Node Bridge (inproc)",
   "homepage": "https://toa.io",
   "author": {
@@ -26,12 +26,12 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "peerDependencies": {
-    "nopeable": "0.1.1"
+    "nopeable": "*"
   },
   "dependencies": {
-    "@toa.io/core": "0.20.0-dev.36",
-    "@toa.io/filesystem": "0.20.0-dev.36",
-    "@toa.io/generic": "0.20.0-dev.36",
+    "@toa.io/core": "0.20.0-dev.38",
+    "@toa.io/filesystem": "0.20.0-dev.38",
+    "@toa.io/generic": "0.20.0-dev.38",
     "fast-glob": "3.2.7"
   },
   "devDependencies": {

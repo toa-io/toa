@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "0.20.0-dev.36",
+  "version": "0.20.0-dev.38",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -16,10 +16,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "nopeable": "*"
+  },
   "dependencies": {
-    "@toa.io/core": "0.20.0-dev.36",
-    "@toa.io/generic": "0.20.0-dev.36",
-    "@toa.io/http": "0.20.0-dev.18",
+    "@toa.io/core": "0.20.0-dev.38",
+    "@toa.io/generic": "0.20.0-dev.38",
+    "@toa.io/http": "0.20.0-dev.20",
     "@types/bcrypt": "5.0.0",
     "bcrypt": "5.1.1",
     "cors": "2.8.5",
@@ -27,7 +30,6 @@
     "js-yaml": "4.1.0",
     "msgpackr": "1.9.5",
     "negotiator": "0.6.3",
-    "nopeable": "0.1.0",
     "paseto": "3.1.4"
   },
   "jest": {

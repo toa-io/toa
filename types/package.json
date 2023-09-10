@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/types",
-  "version": "0.20.0-dev.36",
+  "version": "0.20.0-dev.38",
   "description": "Toa Types for Node.js",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -16,7 +16,7 @@
     "access": "public"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
-  "dependencies": {
-    "nopeable": "0.1.0"
+  "peerDependencies": {
+    "nopeable": "*"
   }
 }
