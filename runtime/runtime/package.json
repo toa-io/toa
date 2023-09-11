@@ -28,7 +28,7 @@
     "@toa.io/bindings.loop": "0.20.0-dev.38",
     "@toa.io/boot": "0.20.0-dev.38",
     "@toa.io/bridges.node": "0.20.0-dev.38",
-    "@toa.io/cli": "0.20.0-dev.37",
+    "@toa.io/cli": "0.20.0-dev.38",
     "@toa.io/core": "0.20.0-dev.38",
     "@toa.io/extensions.configuration": "0.20.0-dev.38",
     "@toa.io/extensions.exposition": "0.20.0-dev.38",

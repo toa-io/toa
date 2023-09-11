@@ -4,6 +4,7 @@ const { Connector } = require('@toa.io/core')
 const { match } = require('@toa.io/generic')
 const { context } = require('./sample')
 const { ReplayException, SampleException } = require('./exceptions')
+const { Nope } = require('nopeable')
 
 /**
  * @implements {toa.core.Context}
@@ -61,8 +62,13 @@ class Context extends Connector {
       if (matches === false) throw new ReplayException(`Call '${segments.join(dot)}' request mismatch`, request, sample.request)
     }
 
-    if (sample?.reply !== undefined) return sample.reply
+    if (sample?.reply !== undefined) return this.#format(sample.reply)
     else return this.#context[method](...segments, request)
+  }
+
+  #format (reply) {
+    if (reply.error !== undefined) return new Nope(reply.error)
+    else return reply.output
   }
 }
 

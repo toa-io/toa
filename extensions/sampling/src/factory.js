@@ -7,9 +7,6 @@ const { Storage } = require('./storage')
 const { Emitter } = require('./emitter')
 const { Receiver } = require('./receiver')
 
-/**
- * @implements {toa.core.extensions.Factory}
- */
 class Factory {
   component (component) {
     return new Component(component)
@@ -35,10 +32,6 @@ class Factory {
   }
 }
 
-/**
- * @param {toa.core.extensions.Aspect} aspect
- * @returns {toa.core.extensions.Aspect}
- */
 const aspect = (aspect) => new Aspect(aspect)
 
 exports.Factory = Factory
