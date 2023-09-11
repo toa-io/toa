@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.http",
-  "version": "0.20.0-dev.38",
+  "version": "0.20.0-dev.39",
   "description": "Toa HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,8 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/console": "0.20.0-dev.38",
-    "@toa.io/core": "0.20.0-dev.38",
+    "@toa.io/console": "0.20.0-dev.39",
+    "@toa.io/core": "0.20.0-dev.39",
     "agentkeepalive": "4.2.1",
     "express": "4.18.1",
     "node-fetch": "2.6.11"
