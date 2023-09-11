@@ -12,7 +12,7 @@ operations:
       identity*: &identity
         id: string
         ...: true
-      lifetime: number  # ms
+      lifetime: number # seconds
     output: string
   decrypt:
     input: string
@@ -35,5 +35,5 @@ receivers:
 configuration:
   key0*: string
   key1: string
-  lifetime: 2592000000 # ms, 30 days
-  refresh: 600000      # ms, 10 minutes
+  lifetime: 2592000 # seconds, 30 days
+  refresh: 600      # seconds, 10 minutes

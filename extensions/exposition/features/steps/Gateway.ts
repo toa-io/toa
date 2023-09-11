@@ -2,7 +2,7 @@ import { after, afterAll, binding, given } from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
 import { parse } from '@toa.io/yaml'
-import { encode } from '@toa.io/generic'
+import { encode, timeout } from '@toa.io/generic'
 import { Factory } from '../../source'
 import * as syntax from '../../source/RTD/syntax'
 import { shortcuts } from '../../source/Directive'
@@ -73,6 +73,7 @@ export class Gateway {
     instance = service
 
     await service.connect()
+    await timeout(50) // resource discovery
   }
 
   private writeConfiguration (): void {

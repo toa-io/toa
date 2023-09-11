@@ -29,7 +29,7 @@ Feature: Tokens lifecycle
   Scenario: Refreshing stale token
     Given the `identity.tokens` configuration:
       """yaml
-      refresh: 1000
+      refresh: 1
       """
     And the `greeter` is running with the following manifest:
       """yaml
@@ -77,7 +77,7 @@ Feature: Tokens lifecycle
       """
     And the `identity.tokens` configuration:
       """yaml
-      refresh: 100
+      refresh: 0.1
       """
     And the `identity.basic` database contains:
       | _id                              | _version | username  | password                                                     |

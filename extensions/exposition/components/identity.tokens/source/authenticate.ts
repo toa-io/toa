@@ -1,29 +1,41 @@
 import { Nope, type Nopeable } from 'nopeable'
+import { type Operation } from '@toa.io/types'
 import { type AuthenticateOutput, type Context } from './types'
 
-export async function computation
-(token: string, context: Context): Promise<Nopeable<AuthenticateOutput>> {
-  const claim = await context.local.decrypt({ input: token })
+export class Computation implements Operation {
+  private refresh: number = 0
+  private decrypt: Context['local']['decrypt'] = undefined as unknown as Context['local']['decrypt']
+  private observe: Context['local']['observe'] = undefined as unknown as Context['local']['observe']
 
-  if (claim instanceof Nope)
-    return claim
-
-  const identity = claim.identity
-  const iat = new Date(claim.iat).getTime()
-  const transient = claim.exp !== undefined
-  const stale = transient && (iat + context.configuration.refresh < Date.now())
-
-  if (stale) {
-    const revocation = await context.local.observe({ query: { id: identity.id } })
-
-    if (revocation instanceof Nope)
-      return revocation
-
-    if (revocation?.revokedAt !== undefined && iat < revocation.revokedAt)
-      return new Nope('REVOKED')
+  public mount (context: Context): void {
+    this.refresh = context.configuration.refresh * 1000
+    this.decrypt = context.local.decrypt
+    this.observe = context.local.observe
   }
 
-  const refresh = stale || claim.refresh
+  public async execute (token: string): Promise<Nopeable<AuthenticateOutput>> {
+    const claim = await this.decrypt({ input: token })
 
-  return { identity, refresh }
+    if (claim instanceof Nope)
+      return claim
+
+    const identity = claim.identity
+    const iat = new Date(claim.iat).getTime()
+    const transient = claim.exp !== undefined
+    const stale = transient && (iat + this.refresh < Date.now())
+
+    if (stale) {
+      const revocation = await this.observe({ query: { id: identity.id } })
+
+      if (revocation instanceof Nope)
+        return revocation
+
+      if (revocation?.revokedAt !== undefined && iat < revocation.revokedAt)
+        return new Nope('REVOKED')
+    }
+
+    const refresh = stale || claim.refresh
+
+    return { identity, refresh }
+  }
 }

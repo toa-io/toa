@@ -1,10 +1,11 @@
 import { generate } from 'randomstring'
 import { type Configuration, type Context, type DecryptOutput, type Identity } from './types'
-import { computation as authenticate } from './authenticate'
+import { Computation as Authenticate } from './authenticate'
 
 let configuration: Configuration
 let context: Context
 let output: DecryptOutput
+let authenticate: Authenticate
 
 const identity: Identity = { id: generate() }
 
@@ -22,6 +23,9 @@ beforeEach(() => {
       observe: jest.fn()
     }
   }
+
+  authenticate = new Authenticate()
+  authenticate.mount(context)
 })
 
 it.each([
@@ -29,12 +33,12 @@ it.each([
   [false, +50]
 ])('should mark as stale: %s', async (expected: boolean, shift: number) => {
   const now = Date.now()
-  const iat = new Date(now - configuration.refresh + shift).toISOString()
+  const iat = new Date(now - configuration.refresh * 1000 + shift).toISOString()
   const exp = new Date(now + 1000).toISOString()
 
   output = { identity, exp, iat, refresh: false }
 
-  const result = await authenticate('', context)
+  const result = await authenticate.execute('')
 
   expect(result).toEqual({ identity, refresh: expected })
 })
@@ -46,7 +50,7 @@ it.each([true, false])('should return stale: %s',
 
     output = { identity, exp, iat, refresh }
 
-    const result = await authenticate('', context)
+    const result = await authenticate.execute('')
 
     expect(result).toEqual({ identity, refresh })
   })

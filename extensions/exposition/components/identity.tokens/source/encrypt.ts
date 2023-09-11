@@ -1,14 +1,25 @@
 import { V3 } from 'paseto'
+import { type Operation } from '@toa.io/types'
 import { type Claim, type Context, type EncryptInput } from './types'
 
-export async function effect (input: EncryptInput, context: Context): Promise<string> {
-  const lifetime = input.lifetime ?? context.configuration.lifetime
+export class Effect implements Operation {
+  private key: string = ''
+  private lifetime: number = 0
 
-  const exp = lifetime === 0
-    ? undefined
-    : new Date(Date.now() + lifetime).toISOString()
+  public mount (context: Context): void {
+    this.key = context.configuration.key0
+    this.lifetime = context.configuration.lifetime * 1000
+  }
 
-  const payload: Partial<Claim> = { identity: input.identity, exp }
+  public async execute (input: EncryptInput): Promise<string> {
+    const lifetime = input.lifetime === undefined ? this.lifetime : input.lifetime * 1000
 
-  return await V3.encrypt(payload, context.configuration.key0)
+    const exp = lifetime === 0
+      ? undefined
+      : new Date(Date.now() + lifetime).toISOString()
+
+    const payload: Partial<Claim> = { identity: input.identity, exp }
+
+    return await V3.encrypt(payload, this.key)
+  }
 }

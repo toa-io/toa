@@ -1,10 +1,11 @@
 import { generate } from 'randomstring'
-import { effect as encrypt } from './encrypt'
+import { Effect as Encrypt } from './encrypt'
 import { computation as decrypt } from './decrypt'
 import { type Configuration, type Context, type Identity } from './types'
 
 let configuration: Configuration
 let context: Context
+let encrypt: Encrypt
 
 beforeEach(() => {
   configuration = {
@@ -15,13 +16,16 @@ beforeEach(() => {
   }
 
   context = { configuration } as unknown as Context
+
+  encrypt = new Encrypt()
+  encrypt.mount(context)
 })
 
 it('should decrypt', async () => {
   const identity: Identity = { id: generate() }
   const lifetime = 100
 
-  const reply = await encrypt({ identity, lifetime }, context)
+  const reply = await encrypt.execute({ identity, lifetime })
 
   if (reply === undefined)
     throw new Error('?')
@@ -38,10 +42,13 @@ it('should decrypt with key1', async () => {
     }
   } as unknown as Context
 
+  encrypt = new Encrypt()
+  encrypt.mount(k1context)
+
   const identity: Identity = { id: generate() }
   const lifetime = 100
 
-  const encrypted = await encrypt({ identity, lifetime }, k1context)
+  const encrypted = await encrypt.execute({ identity, lifetime })
 
   if (encrypted === undefined)
     throw new Error('?')

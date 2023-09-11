@@ -396,7 +396,7 @@ Feature: Access authorization
       """
     And the `identity.tokens` configuration:
       """yaml
-      refresh: 1000
+      refresh: 1
       """
     When the following request is received:
       """
