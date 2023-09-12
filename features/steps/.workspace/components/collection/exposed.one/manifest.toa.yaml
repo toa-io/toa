@@ -1,5 +1,5 @@
 name: one
-namespace: dummies
+namespace: exposed
 
 entity:
   storage: ~

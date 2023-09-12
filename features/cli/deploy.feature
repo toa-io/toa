@@ -30,7 +30,8 @@ Feature: Deployment
     extension-exposition-gateway-<...> Running
     """
     Then I run `helm uninstall collection`
-    And I run `kubectl delete secret toa-bindings-amqp-default`
+    And I run `kubectl delete secret toa-amqp-context.default`
+    And I run `kubectl delete secret toa-mongodb.default`
     And I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-one)`
     And I run `docker rmi $(docker images -q localhost:5000/collection/composition-dummies-two)`
     And I run `docker rmi $(docker images -q localhost:5000/collection/composition-default-stash)`

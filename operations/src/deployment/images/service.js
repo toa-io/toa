@@ -47,7 +47,7 @@ class Service extends Image {
   }
 
   get name () {
-    return 'extensions-' + this.#group + '-' + this.#name
+    return 'extension-' + this.#group + '-' + this.#name
   }
 
   get version () {
