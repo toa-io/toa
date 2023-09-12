@@ -179,7 +179,7 @@ it('should expand ranges', async () => {
   }
 
   const node = parse(declaration)
-  const query = node.routes[0].node.methods[0].mapping.query
+  const query = node.routes[0].node.methods[0].mapping?.query
 
   expect(query).toMatchObject({
     omit: { value: 3, range: [3, 3] },

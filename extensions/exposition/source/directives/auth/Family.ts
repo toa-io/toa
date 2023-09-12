@@ -5,7 +5,8 @@ import { type Family, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
 import * as http from '../../HTTP'
 import {
-  type AuthenticationResult, type Ban,
+  type AuthenticationResult,
+  type Ban,
   type Directive,
   type Discovery,
   type Extension,
@@ -21,6 +22,7 @@ import { Incept } from './Incept'
 import { split } from './split'
 import { PRIMARY, PROVIDERS } from './schemes'
 import { Scheme } from './Scheme'
+import { Echo } from './Echo'
 
 class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
@@ -55,7 +57,7 @@ class Authorization implements Family<Directive, Extension> {
       const allow = await directive.authorize(identity, input, parameters)
 
       if (allow)
-        return null
+        return directive.reply?.(identity) ?? null
     }
 
     if (identity === null) throw new http.Unauthorized()
@@ -134,7 +136,8 @@ const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
   role: Role,
   rule: Rule,
   incept: Incept,
-  scheme: Scheme
+  scheme: Scheme,
+  echo: Echo
 }
 
 const REMOTES: Remote[] = ['basic', 'tokens', 'roles', 'bans']

@@ -1,4 +1,3 @@
-import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
@@ -8,6 +7,7 @@ import { type Endpoint, EndpointFactory } from './Endpoint'
 import * as directives from './directives'
 import { type Directives, DirectivesFactory, type Family } from './Directive'
 import { Composition } from './Composition'
+import * as root from './root'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
@@ -35,8 +35,8 @@ export class Factory implements extensions.Factory {
     const remotes = new Remotes(this.boot)
     const methods = new EndpointFactory(remotes)
     const directives = new DirectivesFactory(this.families, remotes)
-    const root = resolveRoot()
-    const tree = new Tree<Endpoint, Directives>(root, methods, directives)
+    const node = root.resolve()
+    const tree = new Tree<Endpoint, Directives>(node, methods, directives)
 
     const composition = new Composition(this.boot)
     const gateway = new Gateway(broadcast, server, tree)
@@ -45,13 +45,6 @@ export class Factory implements extensions.Factory {
 
     return gateway
   }
-}
-
-export function resolveRoot (): syntax.Node {
-  const value = process.env.TOA_EXPOSITION
-
-  if (value === undefined) return syntax.createNode()
-  else return decode<syntax.Node>(value)
 }
 
 const CHANNEL = 'exposition'

@@ -22,6 +22,10 @@ function wrap (segment: string, declaration: object): object {
 function concretize (node: Node, manifest: Manifest): void {
   for (const route of node.routes) {
     for (const method of route.node.methods) {
+      // eslint-disable-next-line max-depth
+      if (method.mapping === undefined)
+        continue
+
       method.mapping.namespace = manifest.namespace
       method.mapping.component = manifest.name
     }

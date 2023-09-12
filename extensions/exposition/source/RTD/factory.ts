@@ -39,7 +39,7 @@ function createMethod (method: syntax.Method, context: Context): Method {
   const stack = context.directives.stack.concat(method.directives.reverse())
   const directives = context.directives.factory.create(stack)
 
-  const endpoint = method.mapping.endpoint === undefined
+  const endpoint = method.mapping?.endpoint === undefined
     ? null
     : context.endpoints.create(method, context)
 

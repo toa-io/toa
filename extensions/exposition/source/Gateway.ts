@@ -1,8 +1,8 @@
-import { Connector, type bindings } from '@toa.io/core'
+import { type bindings, Connector } from '@toa.io/core'
 import { Nope, type Nopeable } from 'nopeable'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
-import { type Tree } from './RTD'
+import { type Method, type Parameter, type Tree } from './RTD'
 import { type Label } from './discovery'
 import { type Branch } from './Branch'
 import { type Endpoint } from './Endpoint'
@@ -50,10 +50,16 @@ export class Gateway extends Connector {
 
     const method = node.methods[request.method]
     const interruption = await method.directives.preflight(request, parameters)
+    const response = interruption ?? await this.call(method, request, parameters)
 
-    if (interruption !== null)
-      return interruption
+    await method.directives.settle(request, response)
 
+    return response
+  }
+
+  private async call
+  (method: Method<Endpoint, Directives>, request: http.IncomingMessage, parameters: Parameter[]):
+  Promise<http.OutgoingMessage> {
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 
@@ -64,11 +70,7 @@ export class Gateway extends Connector {
     if (reply instanceof Nope)
       throw new http.Conflict(reply)
 
-    const response: http.OutgoingMessage = { body: reply }
-
-    await method.directives.settle(request, response)
-
-    return response
+    return { body: reply }
   }
 
   private async discover (): Promise<void> {

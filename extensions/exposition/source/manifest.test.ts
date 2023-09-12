@@ -52,6 +52,6 @@ it('should set namespace and component', async () => {
   const root = cm.routes[0].node
   const GET = root.methods[0]
 
-  expect(GET.mapping.namespace).toBe(namespace)
-  expect(GET.mapping.component).toBe(name)
+  expect(GET.mapping?.namespace).toBe(namespace)
+  expect(GET.mapping?.component).toBe(name)
 })
