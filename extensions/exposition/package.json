@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "0.20.0-local.2",
+  "version": "0.20.0-local.3",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,10 +20,10 @@
     "nopeable": "*"
   },
   "dependencies": {
-    "@toa.io/core": "0.20.0-local.2",
-    "@toa.io/generic": "0.20.0-local.2",
-    "@toa.io/http": "0.20.0-local.2",
-    "@toa.io/schemas": "0.20.0-local.2",
+    "@toa.io/core": "0.20.0-local.3",
+    "@toa.io/generic": "0.20.0-local.3",
+    "@toa.io/http": "0.20.0-local.3",
+    "@toa.io/schemas": "0.20.0-local.3",
     "bcryptjs": "2.4.3",
     "cors": "2.8.5",
     "express": "4.18.2",
