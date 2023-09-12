@@ -16,7 +16,7 @@ export class Factory implements extensions.Factory {
 
   public constructor (boot: Bootloader) {
     this.boot = boot
-    this.families = directives.load()
+    this.families = directives.families
   }
 
   public tenant (locator: Locator, manifest: syntax.Node): Connector {

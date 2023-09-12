@@ -2,7 +2,7 @@ Feature: toa compose
 
   Run composition
 
-  Scenario: Show help
+  Scenario: Show `toa compose` help
     When I run `toa compose --help`
     And stdout should contain lines:
       """
@@ -25,6 +25,7 @@ Feature: toa compose
     Then stderr should be empty
     And stdout should contain lines:
       """
+      Toa
       info Composition complete
       """
     Examples:
