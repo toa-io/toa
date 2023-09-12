@@ -1,5 +1,5 @@
 import { atob } from 'buffer'
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 import { type Query } from '@toa.io/types'
 import { Nope, type Nopeable } from 'nopeable'
 import { type Context } from './types'

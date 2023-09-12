@@ -1,4 +1,4 @@
-import { genSalt, hash } from 'bcrypt'
+import { genSalt, hash } from 'bcryptjs'
 import { type Operation } from '@toa.io/types'
 import { Nope, type Nopeable } from 'nopeable'
 import { type Context, type Entity, type TransitInput, type TransitOutput } from './types'
