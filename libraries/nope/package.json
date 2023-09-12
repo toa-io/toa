@@ -21,7 +21,6 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "install": "npm run transpile",
     "transpile": "npx tsc"
   }
 }
