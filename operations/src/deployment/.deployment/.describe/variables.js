@@ -1,17 +1,5 @@
 'use strict'
 
-const variables = (context, variables) => {
-  if (variables.global === undefined) variables.global = []
-
-  if (context.environment !== undefined) {
-    const variable = { name: 'TOA_ENV', value: context.environment }
-
-    variables.global.unshift(variable)
-  }
-
-  return variables
-}
-
 function addVariables (deployment, variables) {
   const used = new Set()
 
@@ -29,5 +17,4 @@ function addVariables (deployment, variables) {
   }
 }
 
-exports.variables = variables
 exports.addVariables = addVariables

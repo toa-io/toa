@@ -3,8 +3,9 @@
 const extensions = async (context) => {
   const extensions = {}
   const components = context.components?.slice() ?? []
+  const extracted = await extractExtensionComponents(components, extensions)
 
-  components.push(...(await extractExtensionComponents(components, extensions)))
+  components.push(...extracted)
 
   for (const component of components) {
     if (component.extensions === undefined) continue
@@ -16,7 +17,7 @@ const extensions = async (context) => {
     }
   }
 
-  return extensions
+  return { extensions, components: extracted }
 }
 
 async function extractExtensionComponents (components, extensions) {

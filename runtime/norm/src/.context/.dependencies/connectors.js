@@ -1,14 +1,14 @@
 'use strict'
 
-/**
- * @param {toa.norm.Context} context
- * @returns {toa.norm.context.dependencies.References}
- */
-const connectors = (context) => {
-  /** @type {toa.norm.context.dependencies.References} */
+const connectors = (context, extracted) => {
   const connectors = {}
 
-  for (const component of context.components) {
+  const components = (context.components === undefined
+      ? extracted
+      : context.components.concat(extracted)
+  ) ?? []
+
+  for (const component of components) {
     if (connectors[component.entity.storage] === undefined) {
       connectors[component.entity.storage] = []
     }

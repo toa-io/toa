@@ -16,6 +16,7 @@ Feature: Deployment
           key0: secret.key.0
       """
     When I run `toa conceal amqp-context.default username=developer password=secret`
+    When I run `toa conceal mongodb.default username=developer password=secret`
     And I run `toa deploy docker --wait`
     Then program should exit with code 0
     When I wait 5 seconds
