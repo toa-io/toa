@@ -5,8 +5,7 @@ Feature: Configuration Extension
     When I invoke `echo`
     Then the reply is received:
       """yaml
-      output:
-        foo: hello
+      foo: hello
       """
     And I disconnect
 
@@ -18,7 +17,7 @@ Feature: Configuration Extension
       """
     Then the reply is received:
       """yaml
-      output: <output>
+      <output>
       """
     And I disconnect
     Examples:
@@ -31,9 +30,8 @@ Feature: Configuration Extension
     When I invoke `echo`
     Then the reply is received:
       """yaml
-      output:
-        foo: hello
-        bar: 1
+      foo: hello
+      bar: 1
       """
     And I disconnect
 
@@ -49,7 +47,7 @@ Feature: Configuration Extension
     And I run `toa invoke echo -p ./components/configuration.base`
     And stdout should contain lines:
     """
-    { output: { foo: 'bye' } }
+    { foo: 'bye' }
     """
 
   Scenario: Secret values
@@ -68,7 +66,7 @@ Feature: Configuration Extension
     And I run `toa invoke echo -p ./components/configuration.base`
     And stdout should contain lines:
     """
-    { output: { foo: 'super secret password' } }
+    { foo: 'super secret password' }
     """
 
   Scenario: Deployment

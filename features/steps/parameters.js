@@ -50,4 +50,4 @@ defineParameterType({
   transformer: (name) => name
 })
 
-setDefaultTimeout(60 * 1000)
+setDefaultTimeout(5 * 60 * 1000)

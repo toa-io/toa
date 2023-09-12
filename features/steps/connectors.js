@@ -168,11 +168,11 @@ async function invoke (endpoint, request = {}) {
 
   const reply = await component.invoke(endpoint, request)
 
-  if (reply instanceof Nope) {
-    throw new Error(`${exceptions.names[reply.code]}: ${reply.message}`)
+  if (reply.error !== undefined) {
+    throw new Error(`${exceptions.names[reply.error.code]}: ${reply.error.message}`)
   }
 
-  this.reply = reply
+  this.reply = reply.output
 }
 
 /**

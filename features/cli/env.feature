@@ -73,7 +73,7 @@ Feature: Export local deployment environment variables
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      { output: 'bar' }
+      bar
       """
     Examples:
       | cwd                      | path                     |

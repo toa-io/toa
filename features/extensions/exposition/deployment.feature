@@ -4,7 +4,12 @@ Feature: Exposition deployment
     Given I have a component `exposed.one`
 
   Scenario: Dockerfile has correct command
-    Given I have a context
+    Given I have a context with:
+      """
+      configuration:
+        identity.tokens:
+          key0: secret.key
+      """
     When I export images
     Then the file ./images/extensions-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve .'
 

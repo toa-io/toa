@@ -7,5 +7,5 @@ Feature: Invoke operation
     Then stderr should be empty
     And stdout should contain lines:
     """
-    { output: 'foo' }
+    foo
     """
