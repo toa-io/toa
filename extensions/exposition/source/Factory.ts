@@ -25,11 +25,8 @@ export class Factory implements extensions.Factory {
     return new Tenant(broadcast, locator, manifest)
   }
 
-  public service (name: string): Connector | null {
-    if (name === 'gateway')
-      return this.gateway()
-
-    return null
+  public service (): Connector | null {
+    return this.gateway()
   }
 
   private gateway (): Gateway {

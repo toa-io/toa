@@ -24,7 +24,6 @@
     "comq": "0.8.0"
   },
   "scripts": {
-    "prepublishOnly": "npm run transpile",
     "transpile": "tsc"
   },
   "jest": {

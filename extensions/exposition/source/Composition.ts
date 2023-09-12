@@ -38,7 +38,21 @@ function entries (): Dirent[] {
   return entries.filter((entry) => entry.isDirectory())
 }
 
-const ROOT = resolve(__dirname, '../components/')
+export function components (): Components {
+  const labels: string[] = []
+  const paths: string[] = []
 
-export const componentLabels = entries().map((entry) => entry.name.replace('.', '-'))
-export const componentsPaths = find()
+  for (const entry of entries()) {
+    labels.push(entry.name.replace('.', '-'))
+    paths.push(resolve(entry.path, entry.name))
+  }
+
+  return { labels, paths }
+}
+
+interface Components {
+  labels: string[]
+  paths: string[]
+}
+
+const ROOT = resolve(__dirname, '../components/')

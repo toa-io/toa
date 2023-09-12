@@ -29,7 +29,6 @@
     "@types/node-fetch": "2.6.2"
   },
   "scripts": {
-    "prepublishOnly": "npm run transpile",
     "transpile": "tsc"
   },
   "jest": {

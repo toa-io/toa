@@ -36,7 +36,7 @@ async function extractExtensionComponents (components, extensions) {
 
       if (mod.components === undefined) continue
 
-      for (const path of mod.components) {
+      for (const path of mod.components().paths) {
         const component = await load(path)
 
         extracted.push(component)

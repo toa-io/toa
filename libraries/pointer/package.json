@@ -29,7 +29,6 @@
     "@toa.io/schemas": "0.20.0-local.0"
   },
   "scripts": {
-    "prepublishOnly": "npm run transpile",
     "transpile": "tsc"
   },
   "jest": {
