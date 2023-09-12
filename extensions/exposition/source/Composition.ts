@@ -29,7 +29,7 @@ export class Composition extends Connector {
 }
 
 function find (): string[] {
-  return entries().map((entry) => resolve(entry.path, entry.name))
+  return entries().map((entry) => resolve(ROOT, entry.name))
 }
 
 function entries (): Dirent[] {
@@ -44,7 +44,7 @@ export function components (): Components {
 
   for (const entry of entries()) {
     labels.push(entry.name.replace('.', '-'))
-    paths.push(resolve(entry.path, entry.name))
+    paths.push(resolve(ROOT, entry.name))
   }
 
   return { labels, paths }
