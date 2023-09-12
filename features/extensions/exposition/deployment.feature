@@ -11,7 +11,7 @@ Feature: Exposition deployment
           key0: secret.key
       """
     When I export images
-    Then the file ./images/extensions-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve .'
+    Then the file ./images/extension-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve .'
 
   Scenario: Deploying component configuration
     Given I have a context with:
