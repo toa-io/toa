@@ -7,16 +7,12 @@ const builder = (yargs) => {
     .positional('path', {
       group: 'Command options:',
       type: 'string',
-      desc: 'Path or a shortcut of an extension'
-    })
-    .positional('service', {
-      group: 'Command options:',
-      type: 'string',
-      desc: 'Service name'
+      desc: 'Path or a shortcut of an extension',
+      default: '.'
     })
 }
 
-exports.command = 'serve <path> <service>'
+exports.command = 'serve [path]'
 exports.desc = 'Run an extension service'
 exports.builder = builder
 exports.handler = serve

@@ -11,13 +11,11 @@ const serve = async (argv) => {
 
   const { Factory } = require(module)
 
-  /** @type {toa.core.extensions.Factory} */
   const factory = new Factory(boot)
 
-  /** @type {toa.core.Connector} */
-  const service = factory.service(argv.service)
+  if (factory.service === undefined) throw new Error(`Service is not implemented by ${argv.path}`)
 
-  if (service === null) throw new Error(`Service '${argv.service}' is not implemented by ${argv.path}`)
+  const service = factory.service()
 
   await service.connect()
 
