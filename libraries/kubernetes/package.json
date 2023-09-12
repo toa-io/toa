@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/kubernetes",
-  "version": "0.20.0-local.4",
+  "version": "0.20.0-local.5",
   "description": "kubectl/kubectx wrapper",
   "homepage": "https://toa.io",
   "author": {
@@ -31,6 +31,6 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@toa.io/command": "0.20.0-local.4"
+    "@toa.io/command": "0.20.0-local.5"
   }
 }
