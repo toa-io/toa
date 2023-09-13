@@ -1,4 +1,4 @@
-# Components
+# Components and resources
 
 Exposition comes with a set of components that run within the same process. These components are configured in the same
 way as if they were a part of the Context. Resources exposed by the components are [isolated](tree.md#directives).
@@ -124,7 +124,7 @@ This essentially means that if the client uses the token at least once every `li
 valid token to authenticate with. Also, token revocation or changing roles of an Identity will take effect once
 the `refresh` period of the currently issued tokens has expired.
 
-Adjusting these two values is a delicate trade-off between security and client convinience.
+Adjusting these two values is a delicate trade-off between security, performance and client convinience.
 
 ```yaml
 # context.toa.yaml
@@ -216,7 +216,7 @@ banned: true
 
 Access requires `system:identity:bans` role.
 
-## Identity resolution resource
+## Auhentication echo
 
 Exposition implements a predefined resource `/identity/` with the `GET` method, which returns the Identity resolved by
 the provided credentials.
