@@ -59,6 +59,7 @@
   },
   "scripts": {
     "prepare": "npx husky install",
+    "install": "npm run transpile",
     "test": "npm run test:lint && npm run test:unit",
     "test:lint": "npx eslint .",
     "test:unit": "npx jest --roots runtime connectors extensions operations libraries features userland",
@@ -77,7 +78,8 @@
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "ci": "rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules\" && npm i",
-    "transpile": "npm exec --workspaces -c \"rm -rf transpiled\" && npx lerna@6.5.1 run transpile"
+    "transpile": "npx lerna@6.5.1 run transpile",
+    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && npm run transpile"
   },
   "jest": {
     "preset": "ts-jest",
