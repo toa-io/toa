@@ -1,7 +1,9 @@
 # Components and resources
 
-Exposition comes with a set of components that run within the same process. These components are configured in the same
-way as if they were a part of the Context. Resources exposed by the components are [isolated](tree.md#directives).
+Exposition comes with a set of components that run within the same process. These components are
+configured in the same
+way as if they were a part of the Context. Resources exposed by the components
+are [isolated](tree.md#directives).
 
 ## Basic credentials
 
@@ -9,7 +11,8 @@ The `identity.basic` component stores basic credentials.
 
 ### Password hashing
 
-Passwords are hashed using the [bcrypt](https://github.com/dcodeIO/bcrypt.js) algorithm with salt and pepper.
+Passwords are hashed using the [bcrypt](https://github.com/dcodeIO/bcrypt.js) algorithm with salt
+and pepper.
 
 ```yaml
 # context.toa.yaml
@@ -22,7 +25,8 @@ configuration:
 
 ### Credentials constraints
 
-Credential constraints are defined using a set of regular expressions (values must match all of them).
+Credential constraints are defined using a set of regular expressions (values must match all of
+them).
 
 ```yaml
 # context.toa.yaml
@@ -39,7 +43,8 @@ configuration:
 
 ### Principal
 
-When an application is deployed for the first time, there are no credentials, and therefore, there is no Identity that
+When an application is deployed for the first time, there are no credentials, and therefore, there
+is no Identity that
 could have a Role to manage Roles of other Identities.
 
 This issue is addressed by using the `principal` key in the configuration:
@@ -52,7 +57,8 @@ configuration:
     principal: root
 ```
 
-The value of the `principal` key corresponds to the `username` of the basic credentials. Once these credentials are
+The value of the `principal` key corresponds to the `username` of the basic credentials. Once these
+credentials are
 created, the associated Identity will be assigned the `system` Role.
 
 Once created, the username of the principal cannot be modified.
@@ -116,15 +122,20 @@ The `key0` configuration value is required.
 
 ### Token rotation
 
-Issued tokens are valid for a `lifetime` period defined in the configuration. After the `refresh` period, the token is
-considered obsolete (yet still valid), and a new token is [issued](#issuing-tokens) unless the provided one has
+Issued tokens are valid for a `lifetime` period defined in the configuration. After the `refresh`
+period, the token is
+considered obsolete (yet still valid), and a new token is [issued](#issuing-tokens) unless the
+provided one has
 been [revoked](#token-revocation).
 
-This essentially means that if the client uses the token at least once every `lifetime` period, it will always have a
-valid token to authenticate with. Also, token revocation or changing roles of an Identity will take effect once
+This essentially means that if the client uses the token at least once every `lifetime` period, it
+will always have a
+valid token to authenticate with. Also, token revocation or changing roles of an Identity will take
+effect once
 the `refresh` period of the currently issued tokens has expired.
 
-Adjusting these two values is a delicate trade-off between security, performance and client convinience.
+Adjusting these two values is a delicate trade-off between security, performance and client
+convinience.
 
 ```yaml
 # context.toa.yaml
@@ -148,7 +159,8 @@ Token revocation takes effect once the `refresh` period of the currently issued 
 
 ### Secret rotation
 
-Tokens are always encrypted using the `key0` configuration value, and they will be decrypted by attempting both
+Tokens are always encrypted using the `key0` configuration value, and they will be decrypted by
+attempting both
 the `key0` and `key1` values in order.
 
 `key0` is considered the "current key," and `key1` is considered the "previous key."
@@ -162,21 +174,27 @@ configuration:
     key1: $TOKEN_ENCRYPTION_KEY_2023Q2
 ```
 
-Secret rotation is performed by adding a new key as the `key0` value and moving the existing `key0` to the `key1` value.
+Secret rotation is performed by adding a new key as the `key0` value and moving the existing `key0`
+to the `key1` value.
 
-When rolling out the new secret key, there will be a period of time when the new key is deployed to some Exposition
-instances. During this time, these instances will start using the new key to encrypt tokens, while other instances will
+When rolling out the new secret key, there will be a period of time when the new key is deployed to
+some Exposition
+instances. During this time, these instances will start using the new key to encrypt tokens, while
+other instances will
 continue using the current key and will not be able to decrypt tokens encrypted with the new key.
 
 To address this issue, the `key1` configuration value may be used as a "transient key."
 
 The secret rotation is a 2-step process:
 
-> The process **must not** be performed earlier than the `lifetime` period since the last rotation, as it may invalidate
-> tokens before they expire. Therefore, it is guaranteed that there are no valid tokens issued with the current `key1`
+> The process **must not** be performed earlier than the `lifetime` period since the last rotation,
+> as it may invalidate
+> tokens before they expire. Therefore, it is guaranteed that there are no valid tokens issued with
+> the current `key1`
 > value.
 
-1. Deploy the new secret key to all Exposition instances as `key1`. This enables all instances to decrypt tokens
+1. Deploy the new secret key to all Exposition instances as `key1`. This enables all instances to
+   decrypt tokens
    encrypted with the new key while still using the current key for encryption.
 
 ```yaml
@@ -188,7 +206,8 @@ configuration:
     key1: $TOKEN_ENCRYPTION_KEY_2023Q4
 ```
 
-2. Move the new secret key from `key1` to `key0`, and move the current key from `key0` to `key1`. During this rollout,
+2. Move the new secret key from `key1` to `key0`, and move the current key from `key0` to `key1`.
+   During this rollout,
    all instances can decrypt tokens encrypted with both the new key and the current key.
 
 ```yaml
@@ -203,7 +222,8 @@ configuration:
 ## Banned Identities
 
 The `identity.bans` component manages banned identities.
-A banned identity will fail to authenticate with any associated credentials (except [tokens](#stateless-tokens) within
+A banned identity will fail to authenticate with any associated credentials (
+except [tokens](#stateless-tokens) within
 the `refresh` period).
 
 ```http
@@ -216,10 +236,10 @@ banned: true
 
 Access requires `system:identity:bans` role.
 
-## Auhentication echo
+## Authentication echo
 
-Exposition implements a predefined resource `/identity/` with the `GET` method, which returns the Identity resolved by
-the provided credentials.
+Exposition implements a predefined resource `/identity/` with the `GET` method, which returns the
+Identity resolved by the provided credentials.
 
 ```http
 GET /identity/
