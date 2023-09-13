@@ -51,7 +51,8 @@ Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
 ```
 
 The `Token` is the **primary** authentication scheme.
-If request originators use an alternative authentication scheme, they will receive a response containing `Token`
+If request originators use an alternative authentication scheme, they will receive a response
+containing `Token`
 credentials and will be required to switch to the `Token` scheme for any subsequent requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.
 
@@ -81,6 +82,57 @@ exposition:
 ```
 
 The example above demonstrates the default list of trusted providers.
+
+## Identity inception
+
+The simplest way to establish a relationship between an Identity and an entity representing a user
+is to synchronize their identifiers.
+
+This can be achieved by using the `auth:incept` directive as follows:
+
+```yaml
+# manifest.toa.yaml
+name: users
+
+entity:
+  schema:
+    name: string
+
+exposition:
+  /:
+    POST:
+      anonymous: true
+      incept: id
+      endpoint: transit
+```
+
+The value of the `auth:incept` directive refers to the name of the response property that will be
+returned by the `POST` operation, containing the created entity identifier.
+
+A request with Identity inception must contain (non-existent) credentials that will be associated
+with the created Identity.
+
+```http
+
+```http
+POST /users/
+authorization: Basic dXNlcjpwYXNz
+accept: application/yaml
+content-type: application/yaml
+
+name: John
+```
+
+```
+201 Created
+content-type: application/yaml
+
+id: 2428c31ecb6e4a51a24ef52f0c4181b9
+```
+
+As a result of processing the above request, the Identity with the
+identifier `2428c31ecb6e4a51a24ef52f0c4181b9` is created, and the provided Basic credentials are
+associated with it.
 
 ## FAQ
 
