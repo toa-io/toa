@@ -3,10 +3,6 @@
 Exposition comes with a set of components that run within the same process. These components are configured in the same
 way as if they were a part of the Context. Resources exposed by the components are [isolated](tree.md#directives).
 
-## TL;DR
-
-[Source](../components)
-
 ## Basic credentials
 
 The `identity.basic` component stores basic credentials.
@@ -206,20 +202,32 @@ configuration:
 
 ## Banned Identities
 
-> TODO
+The `identity.bans` component manages banned identities.
+A banned identity will fail to authenticate with any associated credentials (except [tokens](#stateless-tokens) within
+the `refresh` period).
 
-## `/identity/`
+```http
+PUT /identity/bans/:id/
+authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+content-type: application/yaml
+
+banned: true
+```
+
+Access requires `system:identity:bans` role.
+
+## Identity resolution resource
 
 Exposition implements a predefined resource `/identity/` with the `GET` method, which returns the Identity resolved by
 the provided credentials.
 
 ```http
 GET /identity/
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-Accept: application/yaml
+authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+accept: application/yaml
 ```
 
-```http request
+```
 200 OK
 
 id: fc8e66ddd51d45eea89602c9dd38a542
