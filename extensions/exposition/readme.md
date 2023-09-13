@@ -12,7 +12,8 @@ name: dummy
 namespace: dummies
 
 exposition:
-  /: observe
+  /:
+    GET: observe
 ```
 
 ```yaml
@@ -66,8 +67,7 @@ a `ping` message, it broadcasts an `expose` message.
 </a>
 
 A Component can specify how to expose its Operations as HTTP resources by declaring a Resource
-branch using the manifest
-extension.
+branch using the manifest extension.
 
 ```yaml
 # manifest.toa.yaml
@@ -85,8 +85,7 @@ exposition: ...
 ```
 
 Resource branches are attached to a Tree with a prefix `/{namespace}/{name}` or `/{name}` for
-components within the
-default namespace.
+components within the default namespace.
 
 ```yaml
 # manifest.toa.yaml
@@ -109,20 +108,6 @@ The declaration above will result in exposing the following resources:
 ```
 
 > Trailing slash is required.
-
-The top-level node of the resource branch may only contain [Routes](documentation/tree.md#routes).
-
-```yaml
-# manifest.toa.yaml
-
-exposition:
-  GET: observe    # NOT VALID: Methods are not allowed
-  role: developer # NOT VALID: Directives are not allowed
-  /:
-    GET: observe  # OK: nested Node
-```
-
-Refer to [Resource Tree Declaration](documentation/tree.md) for the details.
 
 ## Context annotation
 
@@ -148,6 +133,29 @@ exposition:
 | `annotations` | `object`  | Ingress annotations                                              |
 | `debug`       | `boolean` | Output server errors. Default `false`.                           |
 
+### Context resources
+
+Exposition annotaion can contain [resource declaration](documentation/tree.md) under the `/` key.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  host: the.example.com
+  /:
+    /code:
+      GET:
+        endpoint: development.code.checkout
+        type: observation
+```
+
+In the example above, a request `GET /code` will be mapped to the `development.code.checkout`
+operation call.
+Unlike a component resource branch declaration, properties `namespace`, `component`, and `type` are
+required.
+
+If component resource branch conflicts with an annotation, the annotation takes precedence.
+
 ### Example
 
 ```yaml
@@ -159,29 +167,10 @@ exposition:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+  /:
+    /foo:
+      GET: foo.bar.observe
 ```
-
-### Context resources
-
-Exposition annotaion can contain [resource declaration](documentation/tree.md).
-
-```yaml
-# context.toa.yaml
-
-exposition:
-  host: the.example.com
-  /code:
-    GET:
-      endpoint: development.code.checkout
-      type: observation
-```
-
-In the example above, a request `GET /code` will be mapped to the `development.code.checkout`
-operation call.
-Unlike a component resource branch declaration, properties `namespace`, `component`, and `type` are
-required.
-
-If a component resource branch conflicts with an annotation, the annotation takes precedence.
 
 ## See Also
 
