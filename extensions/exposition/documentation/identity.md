@@ -101,7 +101,6 @@ entity:
 exposition:
   /:
     POST:
-      anonymous: true
       incept: id
       endpoint: transit
 ```
@@ -128,9 +127,8 @@ content-type: application/yaml
 id: 2428c31ecb6e4a51a24ef52f0c4181b9
 ```
 
-As a result of processing the above request, the Identity with the
-identifier `2428c31ecb6e4a51a24ef52f0c4181b9` is created, and the provided Basic credentials are
-associated with it.
+As a result of processing the above request, the provided Basic credentials associated with the
+Identity `2428c31ecb6e4a51a24ef52f0c4181b9` are created.
 
 ## FAQ
 
