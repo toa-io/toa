@@ -16,4 +16,4 @@ export interface Query {
 }
 
 export type Call<Output = any, Input = any> = (request: Request<Input>) => Promise<Nopeable<Output>>
-export type Observation<Output = any, Input = undefined> = (request: Request<Input>) => Promise<Nopeable<Output | null>>
+export type Observation<Output = any, Input = undefined> = (request: Request<Input>) => Promise<Output | null>

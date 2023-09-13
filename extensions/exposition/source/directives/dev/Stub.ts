@@ -9,6 +9,6 @@ export class Stub implements Directive {
   }
 
   public apply (): Output {
-    return { status: 200, body: this.value }
+    return { body: this.value }
   }
 }

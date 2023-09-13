@@ -20,7 +20,7 @@ beforeEach(() => {
     configuration,
     local: {
       decrypt: jest.fn(async () => (output)),
-      observe: jest.fn()
+      observe: jest.fn(async () => null)
     }
   }
 

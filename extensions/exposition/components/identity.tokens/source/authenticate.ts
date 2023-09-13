@@ -27,10 +27,7 @@ export class Computation implements Operation {
     if (stale) {
       const revocation = await this.observe({ query: { id: identity.id } })
 
-      if (revocation instanceof Nope)
-        return revocation
-
-      if (revocation?.revokedAt !== undefined && iat < revocation.revokedAt)
+      if (revocation !== null && iat < revocation.revokedAt)
         return new Nope('REVOKED')
     }
 

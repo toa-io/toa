@@ -40,6 +40,8 @@ Classic username/password pair. See [RFC7617](https://datatracker.ietf.org/doc/h
 Authorization: Basic aGVsbG86d29ybGQK
 ```
 
+See [`identity.basic` component](components.md#basic-credentials).
+
 ### Token scheme
 
 Tokens issued by the Authentication system. These tokens are [PASETO](https://paseto.io).
@@ -52,6 +54,8 @@ The `Token` is the **primary** authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response containing `Token`
 credentials and will be required to switch to the `Token` scheme for any subsequent requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.
+
+See [`identity.tokens` component](components.md#stateless-tokens).
 
 ### Bearer scheme
 
@@ -77,82 +81,6 @@ exposition:
 ```
 
 The example above demonstrates the default list of trusted providers.
-
-### Persistent Credentials
-
-`Basic` and `Bearer` credentials are persistent, so the Authentication system includes corresponding
-Components.
-
-| Component           | Description                      |
-|---------------------|----------------------------------|
-| `identity.basic`    | Basic authentication credentials |
-| `identity.subjects` | OpenID/OAuth token subjects      |
-
-These Components expose a list of resources to manage credentials.
-
-#### `/identity/`
-
-<dl>
-<dt><code>POST</code></dt>
-<dd>Create a new Identity with provided credentials.</dd>
-<dt><code>GET</code></dt>
-<dd>Resolve provided credentials to an Identity.</dd>
-<dt><code>DELETE</code></dt>
-<dd>Delete all credentials of an Identity.</dd>
-</dl>
-
-#### `/identity/basic/`
-
-<dl>
-<dt><code>POST</code></dt>
-<dd>Create new Identity with Basic credentials. Request body is as follows:
-</dd>
-</dl>
-
-```yaml
-username?: string
-password?: string
-```
-
-#### `/identity/basic/:id/`
-
-> `:id` placeholder refers to an Identity.
-
-<dl>
-<dt><code>PUT</code></dt>
-<dd>Create or update Basic credentials. Request body is as follows:
-</dd>
-</dl>
-
-```yaml
-username?: string
-password?: string
-```
-
-#### `/identity/subjects/:id/`
-
-<dl>
-<dt><code>POST</code></dt>
-<dd>Add <code>Bearer</code> token credentials to an Identity. Request body is as follows:<br/>
-</dd>
-</dl>
-
-```yaml
-token: string
-```
-
-#### Authorization Directives
-
-```yaml
-/identity:
-  /basic/:id:
-    id: id
-    role: system:identity:basic
-  /subjects/:id:
-    id: id
-````
-
-Refer to [Access Authorization](access.md) for detailed information.
 
 ## FAQ
 

@@ -31,8 +31,7 @@ response [non-chachable](https://datatracker.ietf.org/doc/html/rfc7234#section-3
 ### `id`
 
 Grants access if resolved Identity matches the value of the URL path segment placeholder named after
-the directive's
-value.
+the directive's value.
 
 #### Example
 
@@ -170,26 +169,6 @@ roles: [string]
   role: system:roles
 ````
 
-### Principal
-
-When an application is deployed for the first time, there are no credentials, and therefore, there
-is no Identity that
-could have a Role to manage Roles of other Identities.
-
-This issue is addressed by using the `principal` key in the annotation:
-
-```yaml
-# context.toa.yaml
-
-exposition:
-  identity:
-    principal: root
-```
-
-The value of the principal key is the `username` of
-the [Basic credentials](identity.md#basic-scheme).
-Once such credentials are created, the corresponding Identity will be assigned the `system` Role.
-
 ## Policies
 
 Component Resource branches cannot have authorization directives.
@@ -258,8 +237,7 @@ corresponding `/{namespace}` prefix.
 
 Attachment is applied to the node where it is declared, as well as its nested nodes.
 Directives of the Attachment are applied to the node where the attached Policies are declared, as
-well as their
-nested nodes.
+well as their nested nodes.
 
 Here's an example of how this works:
 

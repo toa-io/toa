@@ -17,7 +17,7 @@ export interface Configuration {
 
 export interface Entity {
   identity: string
-  revokedAt?: number
+  revokedAt: number
 }
 
 export interface Identity extends Record<string, any> {
