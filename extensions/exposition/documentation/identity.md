@@ -113,8 +113,6 @@ A request with Identity inception must contain (non-existent) credentials that w
 with the created Identity.
 
 ```http
-
-```http
 POST /users/
 authorization: Basic dXNlcjpwYXNz
 accept: application/yaml
