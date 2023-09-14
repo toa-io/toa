@@ -68,10 +68,11 @@ jobs:
         run: |
           if [ ${{ github.base_ref }} = main ]; then
             npx lerna@6.5.1 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
-            git fetch
-            git checkout dev
-            git merge main
-            git push --all origin --no-verify
           else
             npx lerna@6.5.1 publish --conventional-prerelease --preid alpha --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
           fi
+
+          git fetch
+          git checkout dev
+          git merge ${{ github.base_ref }}
+          git push --all origin --no-verify
