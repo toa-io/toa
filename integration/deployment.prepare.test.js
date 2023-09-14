@@ -52,7 +52,7 @@ it('should export services', async () => {
   expect(fixtures.services.length).toBeGreaterThan(0)
 
   for (const service of fixtures.services) {
-    const dir = entries.find((entry) => entry.match(new RegExp(`^extensions-${service.name}.`)))
+    const dir = entries.find((entry) => entry.match(new RegExp(`^extension-${service.name}.`)))
 
     expect(dir).toBeDefined()
 

@@ -104,7 +104,7 @@ describe('When I invoke {token}', () => {
     output = generate()
 
     connector = /** @type {toa.core.Component} */ {
-      invoke: jest.fn(() => output)
+      invoke: jest.fn(() => ({ output }))
     }
 
     context = { connector }

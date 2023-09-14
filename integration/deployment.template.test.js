@@ -126,7 +126,7 @@ describe('services', () => {
       const service = find('Service', instance.name)
 
       expect(service).toBeDefined()
-      expect(service.spec.selector['toa.io/service']).toStrictEqual('extensions-exposition-gateway')
+      expect(service.spec.selector['toa.io/service']).toStrictEqual('extension-exposition-gateway')
 
       const port = service.spec.ports[0]
 

@@ -92,7 +92,7 @@ it('should depend on original context in autonomous mode', () => {
       await storage.apply(sample, async () => {
         const output = await context[method](...segments, request)
 
-        expect(output).toStrictEqual(reply)
+        expect(output).toStrictEqual(reply.output)
       })
     })
 
@@ -107,7 +107,7 @@ it('should depend on original context in autonomous mode', () => {
         const reply = await context[method](...segments, request)
 
         expect(fixtures.context[method]).not.toHaveBeenCalled()
-        expect(reply.output).toStrictEqual(output)
+        expect(reply).toStrictEqual(output)
       })
 
       // used sample is removed
