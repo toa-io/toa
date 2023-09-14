@@ -128,39 +128,7 @@ In other words, the Identity must have a specified or more general Role.
 
 > The root-level Role Scope `system` is preserved and cannot be used with the `role` directives.
 
-### Resources
-
-Roles are persistent, so the Authorization includes `identity.roles` Component, that exposes the
-following resources:
-
-#### `/identity/roles/:id/`
-
-<dl>
-<dt><code>POST</code></dt>
-<dd>Attach a role to an Identity. Request body is as follows:</dd>
-</dl>
-
-```yaml
-role: string
-```
-
-<dl>
-<dt><code>GET</code></dt>
-<dd>Get a list of Roles, attached to an Identity.</dd>
-<dt><code>PUT</code></dt>
-<dd>Replace Roles attached to an Identity. Request body is as follows:</dd>
-</dl>
-
-```yaml
-roles: [string]
-```
-
-#### `/identity/roles/:id/:role/`
-
-<dl>
-<dt><code>DELETE</code></dt>
-<dd>Detach a Role from an Indetity.</dd>
-</dl>
+See also [role management resources](components.md#roles).
 
 #### Authorization Directives
 

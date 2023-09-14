@@ -219,11 +219,30 @@ configuration:
     key1: $TOKEN_ENCRYPTION_KEY_2023Q3
 ```
 
+## Roles
+
+The `identity.roles` component manages roles of an Identity used by [access authorization](access.md#role).
+
+### Role resources
+
+#### `/identity/roles/:id/`
+
+`GET` Get roles of an Identity.
+
+Access requires credentials of the Identity or `system:identity:roles` role.
+
+`POST` Add a role to an Identity. Request body is as follows:
+
+```yaml
+role: string
+```
+
+Access requires `system:identity:roles` role.
+
 ## Banned Identities
 
 The `identity.bans` component manages banned identities.
-A banned identity will fail to authenticate with any associated credentials (
-except [tokens](#stateless-tokens) within
+A banned identity will fail to authenticate with any associated credentials (except [tokens](#stateless-tokens) within
 the `refresh` period).
 
 ```http
