@@ -1,4 +1,4 @@
 root:
   array:
     - item:
-        $import: './b.yaml'
+        <assign: './b.yaml'

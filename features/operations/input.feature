@@ -10,9 +10,8 @@ Feature: Additional properties
       """
     Then the reply is received:
       """yaml
-      output:
-        id: test
-        foo: bar
+      id: test
+      foo: bar
       """
     And I disconnect
 
@@ -49,7 +48,7 @@ Feature: Additional properties
     When I call `echo.beacon.def`
     Then the reply is received:
       """yaml
-      output: ok
+      ok
       """
     And I disconnect
 
@@ -58,6 +57,6 @@ Feature: Additional properties
     When I invoke `def`
     Then the reply is received:
       """yaml
-      output: ok
+      ok
       """
     And I disconnect

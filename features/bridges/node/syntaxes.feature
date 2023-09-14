@@ -11,7 +11,7 @@ Feature: Node algorithm implementation syntaxes
     And I disconnect
     Then the reply is received:
       """
-      output: bar
+      bar
       """
     Examples:
       | syntax   | type        |
@@ -31,7 +31,7 @@ Feature: Node algorithm implementation syntaxes
     And I disconnect
     Then the reply is received:
       """
-      output: bar
+      bar
       """
     Examples:
       | syntax   | type        |

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/kubernetes",
-  "version": "0.20.0-dev.40",
+  "version": "0.20.0-local.8",
   "description": "kubectl/kubectx wrapper",
   "homepage": "https://toa.io",
   "author": {
@@ -24,7 +24,6 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "scripts": {
-    "prepublishOnly": "npm run transpile",
     "transpile": "tsc"
   },
   "jest": {
@@ -32,6 +31,6 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@toa.io/command": "0.20.0-dev.40"
+    "@toa.io/command": "0.20.0-local.8"
   }
 }

@@ -1,10 +1,11 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "0.20.0-dev.40",
-  "description": "Toa Resources Exposition",
+  "version": "0.20.0-local.8",
+  "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
-  "main": "src/index.js",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/toa-io/toa.git"
@@ -15,22 +16,35 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "devDependencies": {
-    "@types/express": "4.17.13"
+  "peerDependencies": {
+    "nopeable": "*"
   },
   "dependencies": {
-    "@toa.io/bindings.amqp": "0.20.0-dev.40",
-    "@toa.io/console": "0.20.0-dev.40",
-    "@toa.io/core": "0.20.0-dev.40",
-    "@toa.io/generic": "0.20.0-dev.40",
-    "@toa.io/schema": "0.20.0-dev.40",
-    "@toa.io/yaml": "0.20.0-dev.40",
+    "@toa.io/core": "0.20.0-local.8",
+    "@toa.io/generic": "0.20.0-local.8",
+    "@toa.io/http": "0.20.0-local.8",
+    "@toa.io/schemas": "0.20.0-local.8",
+    "bcryptjs": "2.4.3",
     "cors": "2.8.5",
-    "express": "4.18.1",
-    "path-to-regexp": "6.2.0"
+    "express": "4.18.2",
+    "js-yaml": "4.1.0",
+    "msgpackr": "1.9.5",
+    "negotiator": "0.6.3",
+    "paseto": "3.1.4"
   },
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "transpile": "npx tsc && npx tsc -p ./components/identity.basic && npx tsc -p ./components/identity.tokens",
+    "features": "npx cucumber-js"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.3",
+    "@types/cors": "2.8.13",
+    "@types/express": "4.17.17",
+    "@types/negotiator": "0.6.1"
+  },
+  "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }

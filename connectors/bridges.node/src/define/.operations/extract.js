@@ -8,7 +8,12 @@ const syntaxes = require('./syntaxes')
  * @returns {toa.node.define.algorithms.Descriptor}
  */
 const extract = (module) => {
-  const [name, func] = find(module)
+  const entry = find(module)
+
+  if (entry === null)
+    return null
+
+  const [name, func] = entry
   const statement = parse(func)
 
   /** @type {toa.node.define.algorithms.Descriptor} */
@@ -32,7 +37,7 @@ const find = (module) => {
     if (typeof value === 'function') return [key, value]
   }
 
-  throw new Error('Module does not export function')
+  return null
 }
 
 /**

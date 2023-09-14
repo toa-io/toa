@@ -1,0 +1,50 @@
+namespace: identity
+name: basic
+
+entity:
+  schema:
+    username*: string
+    password*: string
+  initialized: true
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      username: string
+      password: string
+  incept:
+    forward: transit
+    query: false
+    input:
+      username*: string
+      password*: string
+  create:
+    input:
+      id*: string
+      credentials*: string
+    output:
+      id: string
+  authenticate:
+    input: string
+    output:
+      identity:
+        id: string
+
+configuration:
+  rounds: 10
+  pepper: ''
+  principal: string
+  username+: ^\S{1,16}$
+  password+: ^\S{8,32}$
+
+exposition:
+  isolated: true
+  /:
+    anonymous: true
+    POST: incept
+  /:id:
+    auth:role: system:identity:basic
+    auth:scheme: basic
+    auth:id: id
+    PATCH: transit

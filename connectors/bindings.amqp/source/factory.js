@@ -33,7 +33,7 @@ class Factory {
   }
 
   receiver (locator, label, group, receiver) {
-    const comm = this.#getSource(locator, label)
+    const comm = this.#getSource(locator)
 
     return new Receiver(comm, label, group, receiver)
   }
@@ -51,9 +51,9 @@ class Factory {
     return new Communication(resolve)
   }
 
-  #getSource (locator, label) {
+  #getSource (locator) {
     const resolve = (locator.namespace === undefined)
-      ? async () => sources.resolveURIs(locator, label)
+      ? async () => sources.resolveURIs(locator)
       : async () => context.resolveURIs(locator)
 
     return new Communication(resolve)

@@ -8,7 +8,7 @@ const algorithm = (bridge, path, endpoint, context) => {
   return algorithm
 }
 
-const event = (bridge, path, label) => resolve(bridge).event(path, label)
+const event = (bridge, path, label, context) => resolve(bridge).event(path, label, context)
 const receiver = (bridge, path, label) => resolve(bridge).receiver(path, label)
 
 const factories = {}

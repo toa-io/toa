@@ -1,0 +1,20 @@
+name: pots
+
+entity:
+  schema:
+    title: string
+    volume: number
+    temperature?: number
+
+operations:
+  transit:
+    concurrency: none
+    input:
+      title*: ~
+      volume*: ~
+  observe:
+    output:
+      id: string
+      title: string
+      volume: number
+      temperature: number

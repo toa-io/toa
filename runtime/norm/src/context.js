@@ -16,9 +16,6 @@ const {
   validate
 } = require('./.context')
 
-/**
- * @type {toa.norm.context.Constructor}
- */
 const context = async (root, environment = process.env.TOA_ENV) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await load(path)
@@ -35,7 +32,7 @@ const context = async (root, environment = process.env.TOA_ENV) => {
   const paths = await glob(pattern)
 
   context.components = await Promise.all(paths.map(component))
-  context.dependencies = dependencies(context)
+  context.dependencies = await dependencies(context)
 
   dereference(context)
   complete(context)

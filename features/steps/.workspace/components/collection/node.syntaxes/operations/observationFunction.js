@@ -1,9 +1,7 @@
 'use strict'
 
 async function observation (input, object, context) {
-  const foo = context.configuration.foo
-
-  return { output: foo }
+  return context.configuration.foo
 }
 
 exports.observation = observation

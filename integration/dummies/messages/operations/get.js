@@ -2,9 +2,8 @@
 
 async function observation (_, object) {
   const { id, sender, text, timestamp } = object
-  const output = { id, sender, text, timestamp }
 
-  return { output }
+  return { id, sender, text, timestamp }
 }
 
 exports.observation = observation

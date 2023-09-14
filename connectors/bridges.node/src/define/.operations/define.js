@@ -10,6 +10,9 @@ const syntaxes = require('./syntaxes')
 const define = (module) => {
   const descriptor = extract(module)
 
+  if (descriptor === null)
+    return null
+
   return syntaxes[descriptor.syntax].define(descriptor)
 }
 

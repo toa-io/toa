@@ -10,6 +10,7 @@ const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')
 
 const { When, Then } = require('@cucumber/cucumber')
+const { Nope } = require('nopeable')
 
 When('I debug command {word}',
   /**
@@ -165,11 +166,13 @@ When('an event {label} is emitted with the payload:',
 async function invoke (endpoint, request = {}) {
   const component = /** @type {toa.core.Component} */ this.connector
 
-  const { output, error, exception } = await component.invoke(endpoint, request)
+  const reply = await component.invoke(endpoint, request)
 
-  if (exception !== undefined) throw new Error(`${exceptions.names[exception.code]}: ${exception.message}`)
+  if (reply.error !== undefined) {
+    throw new Error(`${exceptions.names[reply.error.code]}: ${reply.error.message}`)
+  }
 
-  this.reply = { output, error }
+  this.reply = reply.output
 }
 
 /**

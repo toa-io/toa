@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "0.20.0-dev.40",
+  "version": "0.20.0-local.8",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {
@@ -24,12 +24,11 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/dns": "0.7.1-dev.6",
-    "@toa.io/generic": "0.20.0-dev.40",
-    "@toa.io/schemas": "0.20.0-dev.40"
+    "@toa.io/dns": "0.7.1-local.8",
+    "@toa.io/generic": "0.20.0-local.8",
+    "@toa.io/schemas": "0.20.0-local.8"
   },
   "scripts": {
-    "prepublishOnly": "npm run transpile",
     "transpile": "tsc"
   },
   "jest": {

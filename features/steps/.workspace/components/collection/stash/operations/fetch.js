@@ -1,9 +1,7 @@
 'use strict'
 
 async function computation (_, context) {
-  const output = await context.stash.fetch('object')
-
-  return { output }
+  return await context.stash.fetch('object')
 }
 
 exports.computation = computation

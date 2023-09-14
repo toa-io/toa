@@ -5,7 +5,7 @@ async function deduce (input, object) {
 
   object.balance -= input
 
-  return { output: object.balance }
+  return object.balance
 }
 
 exports.transition = deduce

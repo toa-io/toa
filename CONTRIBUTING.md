@@ -18,7 +18,8 @@ To work with [operations](operations):
 
 ```shell
 $ npm run env
-$ npm i
+$ npm run ci
+$ npm run transpile
 $ docker compose up -d
 ```
 

@@ -6,13 +6,13 @@ export class Connector {
 
   public disconnect (interrupt?: boolean): Promise<void>
 
-  protected depends (connector: Connector | Connector[]): Connector
+  public depends (connector: Connector | Connector[]): Connector
 
   link (connector: Connector): void
 
-  protected open (): Promise<void>
+  protected open (): Promise<void> | void
 
-  protected close (): Promise<void>
+  protected close (): Promise<void> | void
 
-  protected dispose (): Promise<void>
+  protected dispose (): Promise<void> | void
 }

@@ -127,7 +127,7 @@ commit message convention.
 
 In case a commit message is not enough to fully describe the request, then it should become an
 independent iteration of the Cycle without blocking current. Thereby, problem decomposition will
-continue until it compose a decision tree with elementary leafs described with a commit message.
+continue until it compose a decision tree with elementary leaves described with a commit message.
 
 #### Example
 

@@ -34,7 +34,7 @@ it('should not throw on concurrency conflict', async () => {
   await expect(repeat(() => credits.invoke('debit', { input: 1, query: { id } }), times))
     .resolves.not.toThrow()
 
-  const { output } = await credits.invoke('observe', { query: { id } })
+  const output = await credits.invoke('observe', { query: { id } })
 
   expect(output.balance).toBe(30 - times)
 })
@@ -55,5 +55,5 @@ it('should count messages', async () => {
 
   const updated = await stats.invoke('observe', { query: { id: sender } })
 
-  expect(updated.output.messages).toBe(times)
+  expect(updated.messages).toBe(times)
 })

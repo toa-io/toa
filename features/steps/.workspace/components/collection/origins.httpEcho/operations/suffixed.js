@@ -1,10 +1,9 @@
 'use strict'
 
-async function computation (input, context) {
+async function computation (_, context) {
   const response = await context.http.suffixed.path.get()
-  const output = await response.json()
 
-  return { output }
+  return await response.json()
 }
 
 exports.computation = computation

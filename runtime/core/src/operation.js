@@ -24,10 +24,6 @@ class Operation extends Connector {
     this.depends(cascade)
   }
 
-  /**
-   * @param {toa.core.Request} request
-   * @return {Promise<toa.core.Reply>}
-   */
   async invoke (request) {
     try {
       if (request.authentic !== true) this.#contracts.request.fit(request)

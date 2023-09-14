@@ -21,7 +21,7 @@ Given('my working directory is {path}',
     this.cwd = target
   })
 
-Then('the file {path} should contain exact line {string}',
+Then('the file {path} contains exact line {string}',
   /**
    * @param {string} relative
    * @param {string} line

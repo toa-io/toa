@@ -9,7 +9,7 @@ Feature: State extension
     And I call `state.standard.get`
     Then the reply is received:
       """yaml
-      output: 1
+      1
       """
     And I disconnect
 
@@ -22,7 +22,7 @@ Feature: State extension
     And I call `state.known.get`
     Then the reply is received:
       """yaml
-      output: 2
+      2
       """
     And I disconnect
 
@@ -35,6 +35,6 @@ Feature: State extension
     And I call `state.set.get`
     Then the reply is received:
       """yaml
-      output: [1, 2, 3]
+      [1, 2, 3]
       """
     And I disconnect

@@ -26,7 +26,7 @@ it('should transit', async () => {
   const input = { bar: generate() }
   const reply = await remote.invoke('transit', { input })
 
-  expect(reply).toStrictEqual({ output: { id: expect.any(String) } })
+  expect(reply).toStrictEqual({ id: expect.any(String) })
 })
 
 it('should return null on observe', async () => {

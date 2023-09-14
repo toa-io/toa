@@ -1,5 +1,4 @@
 array:
   - 'hello'
-  - $import: './b.yaml'
+  - <assign: './b.yaml'
   - null
-

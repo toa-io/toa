@@ -28,9 +28,9 @@ class State {
   }
 
   init (id) {
-    if (this.#initialized === true && id === undefined) {
-      throw new StateInitializationException('Cannot initialize entity which is initialized. Use request.query.id to access.')
-    }
+    // if (this.#initialized === true && id === undefined) {
+    //   throw new StateInitializationException('Cannot initialize entity which is initialized. Use request.query.id to access.')
+    // }
 
     return this.#entity.init(id)
   }
@@ -94,7 +94,7 @@ class State {
       else throw new StateNotFoundException()
     }
 
-    // TODO: same as above
+    // same as above
     await this.#emission.emit({ changeset, state: result })
   }
 }

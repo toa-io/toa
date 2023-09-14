@@ -2,6 +2,7 @@
 
 const { pick } = require('@toa.io/generic')
 const boot = require('@toa.io/boot')
+const { version } = require('@toa.io/runtime')
 
 const docker = require('./docker')
 const { components: find } = require('../util/find')
@@ -11,6 +12,8 @@ const { components: find } = require('../util/find')
  * @return {Promise<void>}
  */
 async function compose (argv) {
+  console.log('Runtime version:', version)
+
   if (argv.dock === true) return dock(argv)
 
   const paths = find(argv.paths)

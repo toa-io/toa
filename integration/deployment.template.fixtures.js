@@ -1,6 +1,6 @@
 'use strict'
 
-const scope = 'dummies'
+const scope = 'localhost:5000/dummies'
 
 const compositions = [
   {
@@ -21,7 +21,7 @@ const components = ['credits-balance', 'dummies-a', 'messages-messages', 'stats-
 
 const services = [
   {
-    name: 'exposition-resources',
+    name: 'extension-exposition-gateway',
     port: 8000,
     ingress: {
       host: expect.any(String),

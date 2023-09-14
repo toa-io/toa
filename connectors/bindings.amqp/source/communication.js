@@ -22,11 +22,11 @@ class Communication extends Connector {
   }
 
   async close () {
-    await this.#io.seal()
+    await this.#io?.seal()
   }
 
   async dispose () {
-    if (this.#io !== undefined) await this.#io.close()
+    await this.#io?.close()
   }
 
   async reply (queue, process) {

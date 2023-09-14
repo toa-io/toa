@@ -177,3 +177,16 @@ Run interactive shell inside a disposable pod inside a Kubernetes cluster.
 $ toa shell mongo
 $ toa shell -- ping 1.1 # extra arguments can be passed
 ```
+
+### key
+
+Generate a secret PASETO key.
+
+<dl>
+<dt>
+<code>toa key</code>
+</dt>
+<dd>
+<code>--public</code> <code>boolean</code> generate a public/private key pair.<br/>
+</dd>
+</dl>

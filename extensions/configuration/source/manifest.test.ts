@@ -5,7 +5,7 @@ it('should validate', async () => {
 
   expect(() => {
     manifest(additional)
-  }).toThrow('additional')
+  }).toThrow('not expected')
 
   const wrongType = { schema: 'not ok' } as unknown as Manifest
 

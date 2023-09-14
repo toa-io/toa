@@ -1,6 +1,6 @@
 title: Should add numbers
 input:
-  $import: assets/ab.yaml
+  <assign: assets/ab.yaml
 output: 3
 ---
 title: Should add negative numbers

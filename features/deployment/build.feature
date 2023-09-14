@@ -9,7 +9,7 @@ Feature: Container Building Options
         run: echo test
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN echo test'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN echo test'
 
   Scenario: Building a container with multiline RUN
     Given I have a component `dummies.one`
@@ -22,8 +22,8 @@ Feature: Container Building Options
           rm .test
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN echo test > .test'
-    And the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN rm .test'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN echo test > .test'
+    And the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN rm .test'
 
   Scenario: Building a container with arguments
     Given I have a component `dummies.one`
@@ -34,10 +34,10 @@ Feature: Container Building Options
         arguments: [FOO, BAR]
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ENV FOO=$FOO'
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'ARG FOO'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ENV FOO=$FOO'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
 
   Scenario: Building an image with custom npm registry
     Given I have a component `dummies.one`
@@ -47,7 +47,7 @@ Feature: Container Building Options
       registry: http://host.docker.internal:4873
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set registry http://host.docker.internal:4873; fi'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set registry http://host.docker.internal:4873; fi'
 
   Scenario: Building an image with custom npm proxy
     Given I have a component `dummies.one`
@@ -57,7 +57,7 @@ Feature: Container Building Options
       proxy: http://host.docker.internal:4873
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile should contain exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set proxy http://host.docker.internal:4873; fi'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set proxy http://host.docker.internal:4873; fi'
 
   Scenario: Building an image with incorrect dependency in `package.json`
     Given I have a component `broken.dependency`

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/command",
-  "version": "0.20.0-dev.40",
+  "version": "0.20.0-local.8",
   "description": "CommonJS wrapper for execa",
   "homepage": "https://toa.io",
   "author": {
@@ -24,7 +24,6 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "scripts": {
-    "prepublishOnly": "npm run transpile",
     "transpile": "tsc"
   },
   "jest": {

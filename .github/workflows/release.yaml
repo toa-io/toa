@@ -5,7 +5,7 @@ on:
     types: [closed]
     branches:
       - main
-      - dev
+      - alpha
 
 jobs:
   build:
@@ -67,11 +67,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ ${{ github.base_ref }} = main ]; then
-            npx lerna@7.1.5 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
+            npx lerna@6.5.1 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
             git fetch
             git checkout dev
             git merge main
             git push --all origin --no-verify
           else
-            npx lerna@7.1.5 publish --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
+            npx lerna@6.5.1 publish --conventional-prerelease --preid alpha --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
           fi

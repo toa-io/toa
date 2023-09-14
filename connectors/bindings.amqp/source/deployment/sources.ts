@@ -1,5 +1,5 @@
 import { createVariables, resolve, type Request } from '@toa.io/pointer'
-import { type component } from '@toa.io/norm'
+import { type Manifest } from '@toa.io/norm'
 import { type Dependency } from '@toa.io/operations'
 import { type Locator } from '@toa.io/core'
 import { type Instance } from './instance'
@@ -19,7 +19,7 @@ export function createDependency (sources: Sources, instances: Instance[]): Depe
   return { variables }
 }
 
-export async function resolveURIs (locator: Locator, label: string): Promise<string[]> {
+export async function resolveURIs (locator: Locator): Promise<string[]> {
   return await resolve(ID, locator.id)
 }
 
@@ -31,7 +31,7 @@ function createRequest (instance: Instance): Request | null {
   else return { group, selectors }
 }
 
-function createSelectors (component: component.Component): string[] | null {
+function createSelectors (component: Manifest): string[] | null {
   if (component.receivers === undefined) return null
 
   const sources = Object.values(component.receivers).map((receiver) => receiver.source)

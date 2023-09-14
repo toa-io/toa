@@ -1,6 +1,6 @@
 Feature: Stash extension
 
-  Scenario: Using cache
+  Scenario: Using stash
     Given I boot `stash` component
     When I invoke `set` with:
       """yaml
@@ -9,7 +9,7 @@ Feature: Stash extension
     When I invoke `get`
     Then the reply is received:
       """yaml
-      output: hello
+      hello
       """
 
   Scenario: Storing an object
@@ -22,8 +22,7 @@ Feature: Stash extension
     When I invoke `fetch`
     Then the reply is received:
       """yaml
-      output:
-        foo: bar
+      foo: bar
       """
 
   Scenario: Storing an array
@@ -35,7 +34,7 @@ Feature: Stash extension
     When I invoke `fetch`
     Then the reply is received:
       """yaml
-      output: [foo, bar]
+      [foo, bar]
       """
 
   Scenario: Using increment
@@ -50,7 +49,7 @@ Feature: Stash extension
       """
     Then the reply is received:
       """yaml
-      output: 1
+      1
       """
 
   Scenario: Using DLM
@@ -65,7 +64,7 @@ Feature: Stash extension
       """
     Then the reply is received:
       """yaml
-      output: [1, 2]
+      [1, 2]
       """
 
   Scenario: Using DLM with delay
@@ -81,7 +80,7 @@ Feature: Stash extension
       """
     Then the reply is received:
       """yaml
-      output: [1, 2]
+      [1, 2]
       """
 
   Scenario: Deployment
