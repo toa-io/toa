@@ -1,7 +1,15 @@
 'use strict'
 
-async function computation (input, context) {
-  return context.configuration.signal
+class Computation {
+  #context
+
+  async mount (context) {
+    this.#context = context
+  }
+
+  async execute () {
+    return this.#context.configuration.signal
+  }
 }
 
-exports.computation = computation
+exports.Computation = Computation

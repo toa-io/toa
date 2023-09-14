@@ -1,0 +1,18 @@
+namespace: identity
+name: bans
+
+entity:
+  schema:
+    banned: false
+  initialized: true
+
+operations:
+  assign:
+    input:
+      banned: true
+
+exposition:
+  isolated: true
+  /:id:
+    auth:role: system:identity:bans
+    PUT: assign

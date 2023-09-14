@@ -1,16 +1,12 @@
-declare namespace toa.core {
+export class Locator {
+  public readonly name: string
+  public readonly namespace: string
 
-    interface Locator {
-        name: string
-        namespace: string
+  public readonly id: string
+  public readonly label: string
+  public readonly uppercase: string
 
-        id: string
-        label: string
-        uppercase: string
+  constructor (name: string, namespace?: string)
 
-        hostname(type?: string): string
-    }
-
+  hostname (type?: string): string
 }
-
-export type Locator = toa.core.Locator

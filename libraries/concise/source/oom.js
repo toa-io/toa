@@ -24,6 +24,9 @@ const oom = (properties) => {
       ]
     }
 
+    if (value.default !== undefined)
+      schema.default = value.default
+
     properties[name] = schema
 
     delete properties[property]

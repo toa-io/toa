@@ -1,6 +1,6 @@
 'use strict'
 
-async function effect (input, context) {
+async function effect (_, context) {
   const event = { happened: true }
 
   await context.aspects.amqp('queue', 'emit', 'test_event', event)

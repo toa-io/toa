@@ -28,9 +28,9 @@ class State {
   }
 
   init (id) {
-    if (this.#initialized === true && id === undefined) {
-      throw new StateInitializationException('Cannot initialize entity which is initialized. Use request.query.id to access.')
-    }
+    // if (this.#initialized === true && id === undefined) {
+    //   throw new StateInitializationException('Cannot initialize entity which is initialized. Use request.query.id to access.')
+    // }
 
     return this.#entity.init(id)
   }
@@ -41,10 +41,10 @@ class State {
     if (record === null) {
       if (this.#initialized && query.id !== undefined && query.version === undefined) return this.init(query.id)
       else if (query.version !== undefined) throw new StatePreconditionException()
-      else throw new StateNotFoundException()
     }
 
-    return this.#entity.object(record)
+    if (record === null) return null
+    else return this.#entity.object(record)
   }
 
   async objects (query) {
@@ -94,7 +94,7 @@ class State {
       else throw new StateNotFoundException()
     }
 
-    // TODO: same as above
+    // same as above
     await this.#emission.emit({ changeset, state: result })
   }
 }

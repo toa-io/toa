@@ -27,14 +27,14 @@ afterAll(async () => {
 it('should init state if no query', async () => {
   const reply = await remote.invoke('add', { input: { sender: newid(), text: '123' } })
 
-  expect(reply).toStrictEqual({ output: { id: expect.any(String) } })
+  expect(reply).toStrictEqual({ id: expect.any(String) })
 })
 
 it('should return entity matching query', async () => {
   const sender = newid()
   const text = generate()
   await remote.invoke('add', { input: { sender, text } })
-  const { output } = await remote.invoke('observe', { query: { criteria: 'sender==' + sender } })
+  const output = await remote.invoke('observe', { query: { criteria: 'sender==' + sender } })
 
   expect(output.text).toBe(text)
 })
@@ -42,11 +42,11 @@ it('should return entity matching query', async () => {
 it('should return projection', async () => {
   const text = generate()
   const sender = newid()
-  const { output: created } = await remote.invoke('add', { input: { sender, text } })
+  const created = await remote.invoke('add', { input: { sender, text } })
   const id = created.id
   const reply = await remote.invoke('observe', { query: { id, projection: ['text'] } })
 
-  expect(reply.output).toStrictEqual({ id, text })
+  expect(reply).toStrictEqual({ id, text })
 })
 
 it('should sort', async () => {
@@ -67,11 +67,11 @@ it('should sort', async () => {
     }
   })
 
-  expect(reply.output.length).toBe(times)
+  expect(reply.length).toBe(times)
 
   let previous
 
-  for (const message of reply.output) {
+  for (const message of reply) {
     if (previous === undefined) {
       previous = message
       continue
@@ -100,19 +100,19 @@ it('should add or update based on query', async () => {
   const id1 = newid()
   const created = await remote.invoke('transit', { input: { sender: id1, text: '1' } })
 
-  expect(created.output.id).toBeDefined()
+  expect(created.id).toBeDefined()
 
   const id2 = newid()
   const updated = await remote.invoke('transit', {
     input: { sender: id2, text: '2' },
-    query: { criteria: 'id==' + created.output.id }
+    query: { criteria: 'id==' + created.id }
   })
 
-  expect(updated.output.id).toBe(created.output.id)
+  expect(updated.id).toBe(created.id)
 
-  const reply = await remote.invoke('get', { query: { criteria: 'id==' + created.output.id } })
+  const reply = await remote.invoke('get', { query: { criteria: 'id==' + created.id } })
 
-  expect(reply.output).toMatchObject({ sender: id2, text: '2' })
+  expect(reply).toMatchObject({ sender: id2, text: '2' })
 })
 
 it('should find by id', async () => {
@@ -120,14 +120,14 @@ it('should find by id', async () => {
     input: {
       sender: newid(), text: 't' + i
     }
-  })))).map((reply) => reply.output.id)
+  })))).map((reply) => reply.id)
 
   // there is a deterministic unit test for core/query class
   const one = ids[Math.round(ids.length * Math.random() * 0.9)]
 
   const reply = await remote.invoke('get', { query: { id: one } })
 
-  expect(reply.output.id).toBe(one)
+  expect(reply.id).toBe(one)
 })
 
 describe('validation', () => {
@@ -195,13 +195,13 @@ describe('validation', () => {
 })
 
 describe('not found', () => {
-  it('should throw if target is an entity', async () => {
+  it('should return null on failed object observation', async () => {
     await expect(remote.invoke('get', { query: { criteria: 'id==1' } }))
-      .rejects.toMatchObject({ code: codes.StateNotFound })
+      .resolves.toStrictEqual(null)
   })
 
   it('should return empty array if target is a set', async () => {
-    const { output } = await remote.invoke('find', { query: { criteria: 'id==1', limit: 10 } })
+    const output = await remote.invoke('find', { query: { criteria: 'id==1', limit: 10 } })
 
     expect(output).toStrictEqual([])
   })

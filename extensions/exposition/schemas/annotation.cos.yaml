@@ -1,0 +1,4 @@
+host?: string
+class?: string
+annotations?: <string>
+/?: ref:node

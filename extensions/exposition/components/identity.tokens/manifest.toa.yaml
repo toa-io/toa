@@ -1,0 +1,39 @@
+namespace: identity
+name: tokens
+
+entity:
+  schema:
+    revokedAt: number   # timestamp
+  initialized: true
+
+operations:
+  encrypt:
+    input:
+      identity*: &identity
+        id: string
+        ...: true
+      lifetime: number # seconds
+    output: string
+  decrypt:
+    input: string
+    output:
+      identity: *identity
+      iat: string
+      exp: string
+      refresh: boolean
+  authenticate:
+    input: string
+    output:
+      identity: *identity
+      refresh: boolean
+  revoke:
+    concurrency: retry
+
+receivers:
+  identity.bans.updated: revoke
+
+configuration:
+  key0*: string
+  key1: string
+  lifetime: 2592000 # seconds, 30 days
+  refresh: 600      # seconds, 10 minutes

@@ -2,30 +2,28 @@
 
 const assert = require('node:assert')
 const { join } = require('node:path')
+const { diff } = require('jest-diff')
 
 const { load, parse } = require('@toa.io/yaml')
 const { match } = require('@toa.io/generic')
 
-const { When, Then } = require('@cucumber/cucumber')
+const extract = require('./.deployment')
 
-const deployment = require('./.deployment')
+const { When, Then } = require('@cucumber/cucumber')
 
 When('I export deployment',
   function () {
-    return deployment.export.call(this)
+    return extract.deployment.call(this)
+  })
+
+When('I export images',
+  function () {
+    return extract.images.call(this)
   })
 
 When('I export deployment for {word}',
   function (env) {
-    return deployment.export.call(this, env)
-  })
-
-When('I export variables',
-  /**
-   * @this {toa.features.Context}
-   */
-  function () {
-
+    return extract.deployment.call(this, env)
   })
 
 Then('exported {helm-artifact} should contain:',
@@ -35,9 +33,7 @@ Then('exported {helm-artifact} should contain:',
    * @return {Promise<void>}
    */
   async function (artifact, text) {
-    const matches = await contains(this.cwd, artifact, text)
-
-    assert.equal(matches, true, `'${artifact}' doesn't match`)
+    await contains(this.cwd, artifact, text)
   })
 
 Then('exported {helm-artifact} should not contain:',
@@ -47,22 +43,21 @@ Then('exported {helm-artifact} should not contain:',
    * @return {Promise<void>}
    */
   async function (artifact, text) {
-    const matches = await contains(this.cwd, artifact, text)
-
-    assert.equal(matches, false, `'${artifact}' contain:\n${text}`)
+    await contains(this.cwd, artifact, text, false)
   })
 
 /**
  * @param {string} cwd
  * @param {string} artifact
  * @param {string} text
- * @return {Promise<boolean>}
  */
-const contains = async (cwd, artifact, text) => {
+const contains = async (cwd, artifact, text, expectation = true) => {
   const filename = artifact + '.yaml'
   const path = join(cwd, 'deployment', filename)
   const contents = await load(path)
   const expected = parse(text)
 
-  return match(contents, expected)
+  const matches = match(contents, expected)
+
+  assert.equal(matches, expectation, diff(expected, contents))
 }

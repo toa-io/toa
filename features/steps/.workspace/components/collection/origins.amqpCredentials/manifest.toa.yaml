@@ -1,0 +1,5 @@
+name: amqpCredentials
+namespace: origins
+
+origins:
+  target: amqp://developer:secret@localhost # credentials will cause an exception

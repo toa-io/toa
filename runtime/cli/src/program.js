@@ -16,15 +16,24 @@ yargs(process.argv.slice(2))
 
     console.level(argv.log)
   })
+  .middleware(async (argv) => {
+    if (argv.env === undefined) return
+
+    require('dotenv').config({ path: /** @type {string} */ argv.env })
+  })
   .fail((msg, err) => {
     const actual = err || new Error(msg)
 
-    console.error(process.env.TOA_DEBUG === '1' ? actual : actual.message)
+    console.error(actual)
 
     process.exit(actual.exitCode > 0 ? actual.exitCode : 1)
   })
   .option('log', {
     describe: 'Log level'
+  })
+  .option('env', {
+    type: 'string',
+    describe: 'Path to environment variables file (.env format)'
   })
   .commandDir('./commands')
   .demandCommand(1, 'A command is required. Pass --help to see all available commands and options.')

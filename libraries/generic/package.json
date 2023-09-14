@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/generic",
-  "version": "0.10.0",
+  "version": "0.20.0-local.8",
   "description": "Toa Generic Tools",
   "homepage": "https://toa.io",
   "author": {
@@ -22,7 +22,9 @@
     "access": "public"
   },
   "main": "source/index.js",
+  "types": "types/index.d.ts",
   "dependencies": {
     "uuid": "9.0.0"
-  }
+  },
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

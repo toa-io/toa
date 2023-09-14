@@ -4,10 +4,6 @@ const { build } = require('../handlers/build')
 
 const builder = (yargs) => {
   yargs
-    .positional('environment', {
-      type: 'string',
-      desc: 'Deployment environment'
-    })
     .option('path', {
       alias: 'p',
       group: 'Command options:',
@@ -17,7 +13,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'build [environment]'
-exports.desc = 'Build and push docker images'
+exports.command = 'build'
+exports.desc = 'Build Docker images'
 exports.builder = builder
 exports.handler = build

@@ -11,7 +11,13 @@ properties:
     type: string
   packages:
     type: string
+  build:
+    type: object
+    properties:
+      command:
+        type: string
   runtime:
+    type: object
     properties:
       version:
         $ref: 'definitions#/definitions/version'

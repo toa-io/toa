@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/filesystem",
-  "version": "1.0.1",
+  "version": "0.20.0-local.8",
   "description": "Toa Filesystem Tools",
   "homepage": "https://toa.io",
   "author": {
@@ -22,11 +22,11 @@
     "access": "public"
   },
   "main": "source/index.js",
-  "devDependencies": {
-    "@toa.io/generic": "0.10.0"
-  },
+  "types": "types/index.d.ts",
   "dependencies": {
+    "@toa.io/generic": "0.20.0-local.8",
     "fast-glob": "3.2.12",
     "find-up": "5.0.0"
-  }
+  },
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

@@ -1,13 +1,13 @@
-Feature: Deploy compositions
+Feature: Export Compositions Deployment
 
-  Scenario: Deploy two components without explicit compositions
+  Scenario: Two components without explicit compositions
     Given I have components:
       | dummies.one |
       | dummies.two |
     And I have a context
     When I export deployment
     Then exported values should contain:
-    """
+    """yaml
     compositions:
       - name: dummies-one
         components:

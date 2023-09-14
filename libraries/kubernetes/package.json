@@ -1,7 +1,7 @@
 {
   "name": "@toa.io/kubernetes",
-  "version": "0.7.4",
-  "description": "Toa kubectl/kubectx wrapper",
+  "version": "0.20.0-local.8",
+  "description": "kubectl/kubectx wrapper",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
@@ -16,14 +16,21 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 16.0.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "main": "source/index.js",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "scripts": {
+    "transpile": "tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
   "dependencies": {
-    "@toa.io/command": "0.6.0",
-    "@toa.io/generic": "0.10.0"
+    "@toa.io/command": "0.20.0-local.8"
   }
 }

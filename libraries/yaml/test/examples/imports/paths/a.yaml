@@ -1,0 +1,4 @@
+foo:
+  <assign: b.yaml#foo
+bar:
+  <assign: c.yaml#values/bar

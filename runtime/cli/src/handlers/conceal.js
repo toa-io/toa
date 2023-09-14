@@ -1,11 +1,61 @@
 'use strict'
 
 const { secrets } = require('@toa.io/kubernetes')
+const boot = require('@toa.io/boot')
+const { context: find } = require('../util/find')
+const { promptSecrets } = require('./env')
 
 const conceal = async (argv) => {
-  const { secret, key, value } = argv
-
-  await secrets.store(secret, { [key]: value })
+  if (argv.interactive) await concealValues(argv)
+  else await concealValue(argv)
 }
 
+async function concealValue (argv) {
+  if (argv['key-values'].length === 0) throw new Error('Key-values must be passed')
+
+  const values = argv['key-values'].reduce((values, pair) => {
+    const [key, value] = pair.split('=')
+
+    values[key] = value
+
+    return values
+  }, {})
+
+  const secret = PREFIX + argv.secret
+
+  await secrets.upsert(secret, values, argv.namespace)
+}
+
+async function concealValues (argv) {
+  const path = find(argv.path)
+  const operator = await boot.deployment(path, argv.environment)
+  const variables = operator.variables()
+  const values = await promptSecrets(variables)
+  const groups = groupValues(values)
+
+  for (const [secret, values] of Object.entries(groups)) {
+    await secrets.upsert(secret, values, argv.namespace)
+  }
+}
+
+/**
+ * @return {Record<string, Record<string, string>>}
+ */
+function groupValues (values) {
+  const secrets = {}
+
+  for (const [key, value] of Object.entries(values)) {
+    const [secret, variable] = key.split('/')
+
+    if (!(secret in secrets)) secrets[secret] = {}
+
+    secrets[secret][variable] = value
+  }
+
+  return secrets
+}
+
+const PREFIX = 'toa-'
+
 exports.conceal = conceal
+exports.PREFIX = PREFIX

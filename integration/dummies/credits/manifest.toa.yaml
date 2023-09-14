@@ -42,10 +42,3 @@ operations:
       balance: .
     query: false
     forward: transit
-
-extensions:
-  exposition:
-    /:
-      operations: [add]
-    /:id:
-      operations: [observe, set]

@@ -1,0 +1,15 @@
+name: httpEcho
+namespace: origins
+
+operations:
+  port:
+    output: object
+  suffixed:
+    output: object
+
+origins:
+  port: ~
+  suffixed: ~
+  origin: ~
+  domain: ~
+  subdomain: ~

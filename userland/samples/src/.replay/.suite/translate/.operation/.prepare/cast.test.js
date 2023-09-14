@@ -92,4 +92,3 @@ it('should cast to async Function', async () => {
   expect(promise).toBeInstanceOf(Promise)
   await expect(promise).resolves.toStrictEqual('hello')
 })
-

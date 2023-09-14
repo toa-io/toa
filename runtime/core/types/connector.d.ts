@@ -1,24 +1,18 @@
-declare namespace toa.core {
+export class Connector {
+  public id: string
+  public connected: boolean
 
-  interface Connector {
-    id: string
-    connected: boolean
+  public connect (): Promise<void>
 
-    depends(connector: Connector): Connector
+  public disconnect (interrupt?: boolean): Promise<void>
 
-    link(connector: Connector): void
+  public depends (connector: Connector | Connector[]): Connector
 
-    connect(): Promise<void>
+  link (connector: Connector): void
 
-    disconnect(interrupt?: boolean): Promise<void>
+  protected open (): Promise<void> | void
 
-    open(): Promise<void>
+  protected close (): Promise<void> | void
 
-    close(): Promise<void>
-
-    dispose(): Promise<void>
-  }
-
+  protected dispose (): Promise<void> | void
 }
-
-export type Connector = toa.core.Connector

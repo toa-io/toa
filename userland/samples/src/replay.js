@@ -1,13 +1,12 @@
 'use strict'
 
-const stage = require('@toa.io/userland/stage')
-const { test } = require('./.replay')
+const { test, stage } = require('./.replay')
 
 /** @type {toa.samples.replay.replay} */
-const replay = async (suite, paths) => {
-  await stage.composition(paths)
+const replay = async (suite, paths, options = undefined) => {
+  const components = await stage.setup(paths, suite.autonomous)
 
-  const ok = await test(suite)
+  const ok = await test(suite, components, options)
 
   await stage.shutdown()
 

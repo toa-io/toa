@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "0.8.3",
+  "version": "0.20.0-local.8",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {
@@ -21,11 +21,19 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "source/index.js",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/console": "0.6.0",
-    "@toa.io/generic": "0.10.0",
-    "@toa.io/schemas": "0.8.3",
-    "@toa.io/yaml": "0.7.5"
-  }
+    "@toa.io/dns": "0.7.1-local.8",
+    "@toa.io/generic": "0.20.0-local.8",
+    "@toa.io/schemas": "0.20.0-local.8"
+  },
+  "scripts": {
+    "transpile": "tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

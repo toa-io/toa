@@ -1,8 +1,5 @@
 'use strict'
 
-/**
- * @returns {toa.generic.Promex}
- */
 const promex = () => {
   let ok
   let oh
@@ -24,7 +21,7 @@ const promex = () => {
     callback
   }
 
-  return /** @type {toa.generic.Promex} */ Object.assign(promise, exposition)
+  return Object.assign(promise, exposition)
 }
 
 exports.promex = promex

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/schemas",
-  "version": "0.8.3",
+  "version": "0.20.0-local.8",
   "description": "Toa Schemas",
   "homepage": "https://toa.io",
   "author": {
@@ -22,12 +22,15 @@
     "access": "public"
   },
   "main": "source/index.js",
+  "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/concise": "0.10.2",
-    "@toa.io/filesystem": "1.0.1",
-    "@toa.io/generic": "0.10.0",
-    "@toa.io/yaml": "0.7.5",
+    "@toa.io/concise": "0.20.0-local.8",
+    "@toa.io/filesystem": "0.20.0-local.8",
+    "@toa.io/generic": "0.20.0-local.8",
+    "@toa.io/yaml": "0.20.0-local.8",
     "ajv": "8.12.0",
-    "ajv-formats": "2.1.1"
-  }
+    "ajv-formats": "2.1.1",
+    "better-ajv-errors": "1.2.0"
+  },
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

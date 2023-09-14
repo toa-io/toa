@@ -18,21 +18,25 @@ class Service extends Image {
 
   /** @type {string} */
   #group
+
   /** @type {string} */
   #name
+
   /** @type {string} */
   #path
+
   /** @type {string} */
   #version
 
   /**
    * @param {string} scope
    * @param {toa.norm.context.Runtime} runtime
+   * @param {toa.norm.context.Registry} registry
    * @param {string} reference
    * @param {toa.deployment.dependency.Service} service
    */
-  constructor (scope, runtime, reference, service) {
-    super(scope, runtime)
+  constructor (scope, runtime, registry, reference, service) {
+    super(scope, runtime, registry)
 
     this.service = service.name
 
@@ -43,7 +47,7 @@ class Service extends Image {
   }
 
   get name () {
-    return this.#group + '-' + this.#name
+    return 'extension-' + this.#group + '-' + this.#name
   }
 
   get version () {

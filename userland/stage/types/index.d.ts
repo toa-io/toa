@@ -1,9 +1,10 @@
 import * as _core from '@toa.io/core/types'
 import * as _norm from '@toa.io/norm/types'
+import * as _composition from '@toa.io/boot/types/composition'
 
 declare namespace toa.stage {
   type Manifest = (path: string) => Promise<_norm.Component>
-  type Component = (path: string) => Promise<_core.Component>
+  type Component = (path: string, options?: _composition.Options) => Promise<_core.Component>
   type Composition = (paths: string[]) => Promise<void>
   type Remote = (id: string) => Promise<_core.Component>
   type Shutdown = () => Promise<void>

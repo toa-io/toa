@@ -33,19 +33,19 @@ it('should assign', async () => {
   const sender = newid()
   const text = generate()
   const created = await messages.invoke('add', { input: { sender, text } })
-  const query = { id: created.output.id }
+  const query = { id: created.id }
 
-  expect(created.output.id).toBeDefined()
+  expect(created.id).toBeDefined()
 
   const reply = await messages.invoke('assign', { input: { text: generate() }, query })
 
   await timeout(200)
 
-  expect(reply).toStrictEqual({})
+  expect(reply).toBeUndefined()
 
   const updated = await messages.invoke('observe', { query })
 
-  expect(updated.output).toStrictEqual({
+  expect(updated).toStrictEqual({
     id: query.id,
     _version: 2,
     sender,
@@ -58,11 +58,11 @@ it('should emit events', async () => {
   const text = generate()
   const created = await messages.invoke('add', { input: { sender, text } })
 
-  expect(created.output.id).toBeDefined()
+  expect(created.id).toBeDefined()
 
   const before = await credits.invoke('observe', { query: { id: sender } })
 
-  expect(before.output).toStrictEqual({
+  expect(before).toStrictEqual({
     id: sender,
     _version: 1,
     balance: 9
@@ -73,7 +73,7 @@ it('should emit events', async () => {
 
   const stat = await stats.invoke('observe', { query: { id: sender } })
 
-  expect(stat.output.bankrupt).toBe(true)
+  expect(stat.bankrupt).toBe(true)
 })
 
 it('should throw StateNotFound', async () => {
@@ -99,7 +99,7 @@ it('should assign initialized', async () => {
 
   const reply = await credits.invoke('observe', { query: { id } })
 
-  expect(reply.output).toStrictEqual({
+  expect(reply).toStrictEqual({
     id,
     _version: 1,
     balance: 30

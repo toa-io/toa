@@ -11,10 +11,12 @@ const boot = require('./index')
  * @returns {Promise<toa.core.Component>}
  */
 const component = async (manifest) => {
+  boot.extensions.load(manifest)
+
   const locator = new Locator(manifest.name, manifest.namespace)
   const storage = boot.storage(manifest)
   const context = await boot.context(manifest)
-  const emission = boot.emission(manifest.events, locator)
+  const emission = boot.emission(manifest.events, locator, context)
   const schema = new Schema(manifest.entity.schema)
   const entity = new entities.Factory(schema)
   const state = new State(storage, entity, emission, manifest.entity.initialized)

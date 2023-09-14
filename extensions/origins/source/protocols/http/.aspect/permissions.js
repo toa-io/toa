@@ -1,21 +1,26 @@
 'use strict'
 
-/**
- * @implements {toa.origins.http.Permissions}
- */
-class Permissions {
-  #default = process.env.TOA_DEV === '1'
+const { echo } = require('@toa.io/generic')
+const { Connector } = require('@toa.io/core')
 
+class Permissions extends Connector {
   /** @type {RegExp[]} */
   #allowances = []
 
   /** @type {RegExp[]} */
   #denials = []
 
-  /**
-   * @param {toa.origins.http.Properties} properties
-   */
-  constructor (properties) {
+  #resolve
+
+  constructor (resolve) {
+    super()
+
+    this.#resolve = resolve
+  }
+
+  async open () {
+    const { properties } = await this.#resolve()
+
     if (properties !== undefined) this.#parse(properties)
   }
 
@@ -26,9 +31,7 @@ class Permissions {
 
     const allowance = this.#allowances.findIndex((regexp) => regexp.test(url))
 
-    if (allowance !== -1) return true
-
-    return this.#default
+    return allowance !== -1
   }
 
   #parse (properties) {
@@ -44,7 +47,8 @@ class Permissions {
 
       if (match === null) throw new Error(`'${key}' is not a regular expression`)
 
-      const regex = new RegExp(match.groups.expression)
+      const expression = echo(match.groups.expression)
+      const regex = new RegExp(expression)
 
       this.#addRule(regex, rule)
     }
@@ -55,8 +59,9 @@ class Permissions {
    * @param {boolean} rule
    */
   #addRule (regex, rule) {
-    if (rule === true) this.#allowances.push(regex)
-    else this.#denials.push(regex)
+    const rules = rule ? this.#allowances : this.#denials
+
+    rules.push(regex)
   }
 }
 

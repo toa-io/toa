@@ -1,30 +1,32 @@
-import { Retry } from './retry'
-import { Context } from './context'
-import { Flip } from './flip'
+import { Readable } from 'stream'
 
-export const context: Context
-export const flip: Flip
-export const retry: Retry
+export function flip (): boolean
 
-export * as acronyms from './acronyms'
+export function plain (candidate: any): boolean
+
+export async function timeout (ms: number): Promise<void>
+
+export async function immediate (): Promise<void>
+
+export function trim (input: string): string
+
+export async function buffer (stream: Readable): Promise<Buffer>
+
+export function traverse (object: object, visit: (node: object) => object): object
+
+export function shards (input: string): string[]
+
+export function echo (input: string): string
+export function echo (input: string, values: Record<string, string>): string
+export function echo (input: string, ...values: string[]): string
+
+export function encode (input: any): string
+
+export function decode<T = any> (input: string): T
+
+export function memo<T> (fn: T): T
+
+export { promex } from './promex'
+export { merge, add, overwrite } from './merge'
+export { map } from './map'
 export * as letters from './letters'
-
-export { concat } from './concat'
-export { defined } from './defined'
-export { difference } from './difference'
-export { empty } from './empty'
-export { encode, decode } from './encode'
-export { match } from './match'
-export { merge, overwrite, add } from './merge'
-export { newid } from './newid'
-export { primitive } from './primitive'
-export { random } from './random'
-export { reduce } from './reduce'
-export { remap } from './remap'
-export { sample } from './sample'
-export { subtract } from './subtract'
-export { timeout } from './timeout'
-export { transpose } from './transpose'
-export { underlay } from './underlay'
-
-export type { Underlay } from './underlay'

@@ -1,7 +1,7 @@
 # Toa Generic Tools
 
 Library is for internal use only. Barely documented. If you really need to understand something,
-see [tests](test).
+see [tests](source).
 
 ## Range
 
@@ -93,24 +93,71 @@ console.log(output) // hello world
 
 `echo(input: string, values: string[]): string`
 
-When the second argument is an `Array`, its values are substituted to a placeholders following `{N}` syntax.
+When the second argument is an `Array`, its values are substituted to a placeholders following `{N}`
+syntax.
 
 ```javascript
 echo('make {0} not {1}', ['love', 'war'])
 ```
 
-# Map
+### Arguments substitution
+
+When the second argument is a `string`, it and next arguments are substituted as
+an [array](#index-substitutions).
+
+```javascript
+echo('make {0} not {1}', 'love', 'war')
+```
+
+## Map
 
 `map(object: object, transformation: Function): object`
 
-Deeply maps an object to a new object using given key-value transformation function.
+Traverse through a given plain object replacing its values (or key-value pairs) with a given
+transformation function.
+If the transformation function returns `undefined` then the current key-value pair will remain
+unchanged.
 
-`(key, value) => [key, value] | undefined`
+Transformation function signature is:
 
-If the transformation function returns `undefined` then the current key-value pair will remain unchanged.
+`(value: any) => any | void`
 
-# Plain
+or
+
+`(key: string, value: any) => [string, any] | void`
+
+## Plain
 
 `plain(candidate: any): boolean`
 
 Returns `true` if an argument is a POJO, `false` otherwise.
+
+## Filter
+
+`async filter(array: any[], test): any[]`
+
+`test` function signature is `async (any) => boolean`
+
+Async array filter.
+
+## Pick
+
+`pick(source: object, properties: string[]): object`
+
+Constructs an object by picking the set of `properties` from `source` object.
+
+## Trim
+
+`trim (input: string): string`
+
+Trim lines of multiline text.
+
+## Buffer
+
+Buffer a stream.
+
+`buffer (stream: Readable): Buffer`
+
+## Memo
+
+Meoizes function returned value.

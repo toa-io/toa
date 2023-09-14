@@ -1,6 +1,6 @@
 Feature: Component deployment
 
-  Scenario: Deploy two components
+  Scenario: Export deployment of two components
     Given I have components:
       | dummies.one |
       | dummies.two |

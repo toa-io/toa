@@ -58,48 +58,5 @@ operations:
     input:
       text: .
 
-extensions:
-  exposition:
-    /:
-      query:
-        criteria: deleted!=true;
-        sort: [timestamp:desc]
-
-      operations: [find]
-
-      /:sender:
-        query:
-          omit:
-            range: [0, 10]
-          limit:
-            range: [1, 20]
-        operations: [add, find]
-        /:id:
-          operations: [get, update]
-    /bad/queries/:sender:
-      query:
-        criteria: deleted!=true
-      operations: [add, find]
-    /query:
-      /criteria/closed:
-        query:
-          criteria: ~
-        operations: [find]
-      /unsorted/set:
-        operations: [find]
-      /projection/restricted:
-        query:
-          projection: [text, sender, timestamp]
-        operations: [add, find]
-      /fixed/set:
-        query:
-          omit: 10
-          limit: 20
-        operations: [find]
-      /non/deleted:
-        query:
-          criteria: deleted!=true;
-        operations: [add, find]
-
 configuration:
   price: 1

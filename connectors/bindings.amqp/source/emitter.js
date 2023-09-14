@@ -14,11 +14,6 @@ class Emitter extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
-  /**
-   * @param {toa.amqp.Communication} comm
-   * @param {toa.core.Locator} locator
-   * @param {string} label
-   */
   constructor (comm, locator, label) {
     super()
 

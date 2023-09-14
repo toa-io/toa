@@ -1,12 +1,10 @@
 name: one
-namespace: dummies
+namespace: exposed
 
 entity:
   storage: ~
   schema:
-    foo:
-      type: integer
-      default: 0
+    foo: 0
     bar: string
 
 operations:
@@ -17,4 +15,5 @@ operations:
       bar: .
 
 exposition:
-  /: [transit]
+  /:
+    POST: transit

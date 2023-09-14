@@ -13,6 +13,10 @@ Factory for [Schema class](./types/schema.d.ts).
 
 Returns [error](./types/schema.d.ts) if given value doesn't match the schema, `null` otherwise.
 
+## schema(path: string): Schema
+
+Loads schema from a file.
+
 ## namespace(schemas: cos[]): Namespace
 
 Factory for [Namespace class](./types/namespace.d.ts).

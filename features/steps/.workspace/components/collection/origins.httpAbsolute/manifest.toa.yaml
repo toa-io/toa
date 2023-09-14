@@ -1,0 +1,10 @@
+name: httpAbsolute
+namespace: origins
+
+operations:
+  get:
+    input:
+      url: uri
+    output: object
+
+origins: ~

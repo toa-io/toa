@@ -27,7 +27,7 @@ const COMPONENTS = resolve(CONTEXT, 'components/*')
 let paths
 
 /** @type {toa.samples.suite.Options} */
-const options = { component: generate() }
+const options = { component: generate(), runner: { [generate()]: generate() } }
 
 /** @type {boolean} */
 let ok
@@ -55,7 +55,7 @@ it('should load integration suite', async () => {
 it('should replay integration suite', async () => {
   const suite = await mock.suite.context.mock.results[0].value
 
-  expect(replay.replay).toHaveBeenCalledWith(suite, paths)
+  expect(replay.replay).toHaveBeenCalledWith(suite, paths, options.runner)
 })
 
 it('should return false if components replay failed', async () => {

@@ -7,7 +7,7 @@ async function transition (input, object, context) {
   output.sum = a + b
   output.foo = context.configuration.foo
 
-  return { output }
+  return output
 }
 
 exports.transition = transition

@@ -1,14 +1,19 @@
 Feature: Objects
 
-  Scenario: Map
+  Scenario Outline: Map<<type>>
     When I write schema:
       """yaml
-      <string>
+      <<type>>
       """
     Then it is equivalent to:
       """yaml
       type: object
       patternProperties:
         "^.+$":
-          type: string
+          type: <type>
       """
+    Examples:
+      | type    |
+      | string  |
+      | number  |
+      | boolean |

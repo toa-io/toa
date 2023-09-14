@@ -16,6 +16,7 @@ Feature: String formats
       | format   |
       | date     |
       | uri      |
+      | url      |
       | hostname |
       | email    |
 

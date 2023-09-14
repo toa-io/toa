@@ -12,10 +12,10 @@ async function transition (input, object, context) {
     const request = { input: price, query: { id: input.sender } }
     const reply = await context.remote.credits.balance.debit(request)
 
-    if (reply.error !== undefined) return { error: reply.error }
+    if (reply.error !== undefined) return reply.error
   }
 
-  return { output: { id: object.id } }
+  return { id: object.id }
 }
 
 exports.transition = transition

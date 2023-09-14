@@ -2,6 +2,6 @@
 
 const { factory } = require('./factory')
 
-const broadcast = (binding, name, group) => factory(binding).broadcast(name, group)
+const broadcast = (channel, group, binding = '@toa.io/bindings.amqp') => factory(binding).broadcast(channel, group)
 
 exports.broadcast = broadcast

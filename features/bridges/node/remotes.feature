@@ -12,7 +12,7 @@ Feature: Remote calls
       """
     Then the reply is received:
       """yaml
-      output: 3
+      3
       """
     And I disconnect
 
@@ -28,6 +28,6 @@ Feature: Remote calls
       """
     Then the reply is received:
       """yaml
-      output: 3
+      3
       """
     And I disconnect

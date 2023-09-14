@@ -17,7 +17,7 @@ async function transition (input, object, context) {
     if (reply.error !== undefined) return { error: reply.error }
   }
 
-  return { output: { id: object.id } }
+  return { id: object.id }
 }
 
 exports.transition = transition

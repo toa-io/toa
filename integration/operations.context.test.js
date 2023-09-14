@@ -25,5 +25,5 @@ it('should provide local operations', async () => {
   const to = newid()
   const reply = await credits.invoke('transfer', { input: from, query: { id: to } })
 
-  expect(reply.output).toStrictEqual(20)
+  expect(reply).toStrictEqual(20)
 })

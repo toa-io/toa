@@ -1,13 +1,16 @@
 'use strict'
 
 const { secrets } = require('@toa.io/kubernetes')
-const { remap, decode } = require('@toa.io/generic')
+
+const { PREFIX } = require('./conceal')
 
 const reveal = async (argv) => {
-  const secret = await secrets.get(argv.secret)
-  const values = remap(secret.data, decode)
+  const prefixed = PREFIX + argv.secret
+  const data = await secrets.get(prefixed)
 
-  for (const [key, value] of Object.entries(values)) {
+  if (data === null) return
+
+  for (const [key, value] of Object.entries(data)) {
     const line = `${key}: ${value}`
 
     console.log(line)

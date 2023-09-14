@@ -80,3 +80,60 @@ Feature: Arrays
             additionalProperties: false
       additionalProperties: false
       """
+
+  Scenario: Array of concise objects with default values
+    When I write schema:
+      """yaml
+      foo:
+        - foo: 'hello'
+          bar: 1
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo:
+          type: array
+          items:
+            type: object
+            properties:
+              foo:
+                type: string
+                default: 'hello'
+              bar:
+                type: number
+                default: 1
+            additionalProperties: false
+      additionalProperties: false
+      """
+
+  Scenario: One of concise objects
+    When I write schema:
+      """yaml
+      foo:
+        - foo: 'hello'
+          bar: 1
+        - baz: number
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo:
+          oneOf:
+            - type: object
+              properties:
+                foo:
+                  type: string
+                  default: 'hello'
+                bar:
+                  type: number
+                  default: 1
+              additionalProperties: false
+            - type: object
+              properties:
+                baz:
+                  type: number
+              additionalProperties: false
+      additionalProperties: false
+      """

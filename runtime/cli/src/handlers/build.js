@@ -6,9 +6,9 @@ const { context: find } = require('../util/find')
 
 const build = async (argv) => {
   const path = find(argv.path)
-  const operator = await boot.deployment(path, argv.environment)
+  const registry = await boot.registry(path)
 
-  await operator.build()
+  await registry.build()
 }
 
 exports.build = build

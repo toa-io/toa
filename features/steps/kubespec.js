@@ -26,6 +26,7 @@ Then('{word} {word} {word} spec should contain:',
 
 const extract = (spec, node) => {
   if (node === 'container') return spec.spec.template.spec.containers[0]
+  if (node === 'template.spec') return spec.spec.template.spec
 
   throw new Error(`Unknown node '${node}'`)
 }

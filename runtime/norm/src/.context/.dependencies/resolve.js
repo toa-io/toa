@@ -1,15 +1,8 @@
 'use strict'
 
-const { join } = require('node:path')
 const { load } = require('./load')
 
-/**
- * @param {toa.norm.context.dependencies.References} references
- * @param {Object} annotations
- * @returns {toa.norm.context.Dependencies}
- */
 const resolve = (references, annotations) => {
-  /** @type {toa.norm.context.Dependencies} */
   const dependencies = {}
 
   for (const [dependency, components] of Object.entries(references)) {
@@ -18,7 +11,8 @@ const resolve = (references, annotations) => {
 
     const instances = components.map((component) => ({
       locator: component.locator,
-      manifest: component.extensions?.[id]
+      manifest: component.extensions?.[id],
+      component
     }))
 
     dependencies[dependency] = instances

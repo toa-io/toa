@@ -3,6 +3,7 @@
 const { generate } = require('randomstring')
 
 const connection = {
+  table: generate(),
   connection: jest.fn(),
   link: jest.fn(),
   connect: jest.fn(),
@@ -12,9 +13,4 @@ const connection = {
   update: jest.fn(() => true)
 }
 
-const pointer = {
-  table: generate()
-}
-
 exports.connection = connection
-exports.pointer = pointer

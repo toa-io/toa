@@ -1,9 +1,0 @@
-name: http
-namespace: origins
-
-operations:
-  test:
-    output: object
-
-origins:
-  echo: http://localhost:${ECHO_PORT}/some/

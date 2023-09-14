@@ -36,7 +36,7 @@ Message Sample is an object containing receiver's input (`payload`) to be substi
 outcomes (`input` and `query`) to be verified. Message sample may contain the corresponding operation
 sample. See its [schema](./src/.replay/.suite/translate/schemas/message.cos.yaml).
 
-> Message samples are always [autonomous](#autonomy).
+> Message samples are only supported at [context level](#autonomy).
 
 ### Declaration
 
@@ -92,6 +92,40 @@ context (so as required extensions). See [examples](../example/samples).
 
 ## Replay
 
-Samples may be *replayed* using [`toa replay`](/runtime/cli/readme.md#replay) command.
-
 > Replaying samples requires local deployment environment.
+
+### CLI
+
+Samples may be replayed using [`toa replay`](/runtime/cli/readme.md#replay) command.
+
+See [features](/features/cli/replay.feature).
+
+### Framework
+
+`async components(paths: string[], options?): boolean`
+
+Replay component samples.
+
+`async components(paths: string[], options?): boolean`
+
+Replay context and its components' samples.
+
+#### Options
+
+<dl>
+<dt><code><strong>id</strong>: string</code></dt>
+<dd>Replay samples for a specified component</dd>
+
+<dt><code><strong>integration</strong>: string</code></dt>
+<dd>Replay samples for a specified component only</dd>
+<dd></dd>
+
+<dt><code><strong>operation</strong>: string</code></dt>
+<dd>Replay samples for specified operation</dd>
+
+<dt><code><strong>title</strong>: string</code></dt>
+<dd>Replay samples with titles matching given regexp</dd>
+
+</dl>
+
+See [types](types/suite.d.ts).

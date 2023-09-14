@@ -58,7 +58,7 @@ describe('compositions', () => {
       const container = deployment.spec.template.spec.containers[0]
 
       expect(container.name).toStrictEqual(composition.name)
-      expect(container.image).toMatch(new RegExp(`/${fixtures.scope}/composition-${composition.name}:[a-z\\d]+$`))
+      expect(container.image).toMatch(new RegExp(`${fixtures.scope}/composition-${composition.name}:[a-z\\d]+$`))
     }
   })
 
@@ -104,8 +104,7 @@ describe('components', () => {
 describe('services', () => {
   it('should define deployments', () => {
     for (const service of fixtures.services) {
-      const name = 'service-' + service.name
-      const deployment = find('Deployment', name)
+      const deployment = find('Deployment', service.name)
 
       expect(deployment).toBeDefined()
 
@@ -116,7 +115,7 @@ describe('services', () => {
       const container = deployment.spec.template.spec.containers[0]
 
       expect(container.name).toStrictEqual(service.name)
-      expect(container.image).toMatch(new RegExp(`/${fixtures.scope}/service-${service.name}:[a-z\\d]+$`))
+      expect(container.image).toMatch(new RegExp(`${fixtures.scope}/${service.name}:[a-z\\d]+$`))
     }
   })
 
@@ -124,11 +123,10 @@ describe('services', () => {
     expect(fixtures.services.length > 0).toStrictEqual(true)
 
     for (const instance of fixtures.services) {
-      const name = 'service-' + instance.name
-      const service = find('Service', name)
+      const service = find('Service', instance.name)
 
       expect(service).toBeDefined()
-      expect(service.spec.selector['toa.io/service']).toStrictEqual('exposition-resources')
+      expect(service.spec.selector['toa.io/service']).toStrictEqual('extension-exposition-gateway')
 
       const port = service.spec.ports[0]
 
@@ -155,7 +153,7 @@ describe('services', () => {
       const backend = rule.http.paths[0].backend.service
 
       expect(rule.host).toStrictEqual(service.ingress.host)
-      expect(backend.name).toStrictEqual('service-' + service.name)
+      expect(backend.name).toStrictEqual(service.name)
       expect(backend.port.number).toStrictEqual(service.port)
     }
   })
