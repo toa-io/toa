@@ -35,7 +35,7 @@ something:
 
 ### Deduplication
 
-Pointer values are [DNS-deduplicated](/libraries/dns/readme.md#deduplication).
+Pointer values are [DNS-deduplicated](/libraries/dns/readme.md#deduplication) except `http:` schema.
 
 ### `default` namespace
 

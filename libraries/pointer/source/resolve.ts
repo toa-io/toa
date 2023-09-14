@@ -8,10 +8,14 @@ export async function resolve (id: string, selector: string): Promise<string[]> 
 
   if (value === undefined) throw new Error(`${variable} is not set.`)
 
-  const urls = value.split(' ')
-  const unique = await dedupe(urls)
+  let urls = value.split(' ')
 
-  return withCredentials(variable, unique)
+  const protocol = getProtocol(urls)
+
+  if (protocol !== 'http:')
+    urls = await dedupe(urls)
+
+  return withCredentials(variable, urls)
 }
 
 export function resolveRecord (uris: URIMap, selector: string): AnnotationRecord {
@@ -43,6 +47,12 @@ function addCredentials (ref: string, username: string, password: string): strin
   url.password = password
 
   return url.href
+}
+
+function getProtocol (urls: string[]): string {
+  const url = new URL(urls[0])
+
+  return url.protocol
 }
 
 function getRecord (uris: URIMap, key: string): AnnotationRecord {

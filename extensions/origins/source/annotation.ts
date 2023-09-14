@@ -32,14 +32,12 @@ function mergeDefaults (annotation: Annotation, instances: Instance[]): void {
 }
 
 function mergeInstance (origins: Origins, instance: Instance): Component {
-  const id: string = instance.locator.id
-
   if (instance.manifest === null) return origins
 
   for (const [origin, value] of Object.entries(instance.manifest))
     if (origins[origin] === undefined)
       if (value === null)
-        throw new Error(`Origin '${origin}' is not defined for '${id}'`)
+        throw new Error(`Origin '${origin}' is not defined for '${instance.locator.id}'`)
       else origins[origin] = value
 
   return origins
