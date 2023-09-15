@@ -67,9 +67,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ ${{ github.base_ref }} = main ]; then
-            npx lerna@6.5.1 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
+            npx lerna@7.3.0 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
           else
-            npx lerna@6.5.1 publish --conventional-prerelease --preid alpha --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
+            npx lerna@7.3.0 publish --conventional-prerelease --preid alpha --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
           fi
 
           git fetch
