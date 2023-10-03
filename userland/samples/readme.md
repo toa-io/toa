@@ -33,7 +33,8 @@ and `name` must match corresponding component, therefore are optional.
 ## Message Samples
 
 Message Sample is an object containing receiver's input (`payload`) to be substituted and
-outcomes (`input` and `query`) to be verified. Message sample may contain the corresponding operation
+outcomes (`input` and `query`) to be verified. Message sample may contain the corresponding
+operation
 sample. See its [schema](./src/.replay/.suite/translate/schemas/message.cos.yaml).
 
 > Message samples are only supported at [context level](#autonomy).
@@ -52,7 +53,8 @@ label of the event receiver is consuming.
 
 #### Aspect Result Type Hints
 
-When using aspect calls, there might be situations where the returned values cannot be adequately described using YAML.
+When using aspect calls, there might be situations where the returned values cannot be adequately
+described using YAML.
 To address this issue, type hints can be used.
 
 ```yaml
@@ -62,7 +64,7 @@ state:
     bar: 2
 ```
 
-In the above code snippet, the `state` Aspect returns a `values` field of type Map.
+In the code snippet above, the `state` Aspect returns a `values` field of type Map.
 
 ```yaml
 state:
@@ -91,8 +93,6 @@ context (so as required extensions). See [examples](../example/samples).
 > Integration samples are more flexible and less sensitive to implementation details.
 
 ## Replay
-
-> Replaying samples requires local deployment environment.
 
 ### CLI
 
