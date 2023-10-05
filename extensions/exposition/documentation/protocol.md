@@ -12,4 +12,7 @@ The following media types are supported for both requests and responses:
 The response format is determined by content negotiation
 using [negotiator](https://github.com/jshttp/negotiator).
 
-> Errors are always sent as `text/plain`. See [debug mode](../readme.md#context-annotation).
+## Streams
+
+Reply streams are transmitted
+using [chunked transfer encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding#directives).
