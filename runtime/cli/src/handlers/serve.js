@@ -6,7 +6,7 @@ const { directory: { find } } = require('@toa.io/filesystem')
 const { version } = require('@toa.io/runtime')
 
 const serve = async (argv) => {
-  console.log('Runtime version:', version)
+  console.log('Runtime', version)
 
   argv.path = shortcuts.resolve(argv.path)
 
