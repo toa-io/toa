@@ -163,6 +163,7 @@ exposition:
   host: the.example.com
   host@staging: the.example.dev
   class: alb
+  debug@staging: true
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
