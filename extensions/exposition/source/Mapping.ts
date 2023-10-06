@@ -37,12 +37,15 @@ class QueryableMapping extends Mapping {
 }
 
 class InputMapping extends Mapping {
-  public fit (body: any, _: unknown, parameters: Parameter[]): core.Request {
-    const input = { ...body }
-
-    for (const parameter of parameters)
-      input[parameter.name] = parameter.value
+  public fit (input: any, _: unknown, parameters: Parameter[]): core.Request {
+    if (typeof input === 'object')
+      this.assign(input, parameters)
 
     return { input }
+  }
+
+  private assign (input: Record<string, any>, parameters: Parameter[]): void {
+    for (const parameter of parameters)
+      input[parameter.name] = parameter.value
   }
 }

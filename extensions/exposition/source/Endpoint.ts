@@ -28,11 +28,11 @@ export class Endpoint implements RTD.Endpoint<Endpoint> {
   public async close (): Promise<void> {
     this.remote ??= await this.discovery
 
-    await this.remote.disconnect()
+    await this.remote.disconnect(INTERRUPT)
   }
 }
 
-export class EndpointFactory implements RTD.EndpointsFactory<Endpoint> {
+export class EndpointsFactory implements RTD.EndpointsFactory<Endpoint> {
   private readonly remotes: Remotes
 
   public constructor (remotes: Remotes) {
@@ -55,3 +55,5 @@ export class EndpointFactory implements RTD.EndpointsFactory<Endpoint> {
     return new Endpoint(method.mapping.endpoint, mapping, discovery)
   }
 }
+
+const INTERRUPT = true

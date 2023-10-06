@@ -3,7 +3,7 @@ import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
 import { Tree, syntax } from './RTD'
 import { Server } from './HTTP'
-import { type Endpoint, EndpointFactory } from './Endpoint'
+import { type Endpoint, EndpointsFactory } from './Endpoint'
 import * as directives from './directives'
 import { type Directives, DirectivesFactory, type Family } from './Directive'
 import { Composition } from './Composition'
@@ -30,17 +30,19 @@ export class Factory implements extensions.Factory {
   }
 
   private gateway (): Gateway {
+    const debug = process.env.TOA_EXPOSITION_DEBUG === '1'
     const broadcast = this.boot.bindings.broadcast(CHANNEL)
-    const server = Server.create({ methods: syntax.verbs })
+    const server = Server.create({ methods: syntax.verbs, debug })
     const remotes = new Remotes(this.boot)
-    const methods = new EndpointFactory(remotes)
-    const directives = new DirectivesFactory(this.families, remotes)
     const node = root.resolve()
+    const methods = new EndpointsFactory(remotes)
+    const directives = new DirectivesFactory(this.families, remotes)
     const tree = new Tree<Endpoint, Directives>(node, methods, directives)
 
     const composition = new Composition(this.boot)
     const gateway = new Gateway(broadcast, server, tree)
 
+    gateway.depends(remotes)
     gateway.depends(composition)
 
     return gateway

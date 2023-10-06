@@ -24,6 +24,7 @@
     "@toa.io/generic": "0.20.0-alpha.1",
     "@toa.io/http": "0.20.0-alpha.1",
     "@toa.io/schemas": "0.20.0-alpha.1",
+    "@toa.io/streams": "0.1.0-alpha.1",
     "bcryptjs": "2.4.3",
     "cors": "2.8.5",
     "express": "4.18.2",

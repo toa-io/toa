@@ -69,11 +69,12 @@ Feature: Tokens lifecycle
   Scenario: Token revocation on password change
     Given the annotation:
       """yaml
-      /:id:
-        id: id
-        GET:
-          dev:stub:
-            access: granted!
+      /:
+        /:id:
+          id: id
+          GET:
+            dev:stub:
+              access: granted!
       """
     And the `identity.tokens` configuration:
       """yaml

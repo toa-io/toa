@@ -1,7 +1,7 @@
 import { type Node } from './Node'
 import { createNode } from './factory'
 import { fragment } from './segment'
-import { type Match, type Parameter } from './Match'
+import { type Match } from './Match'
 import { type Context } from './Context'
 import { type Directives, type DirectivesFactory } from './Directives'
 import { type Endpoint, type EndpointsFactory } from './Endpoint'
@@ -26,11 +26,8 @@ export class Tree<
 
   public match (path: string): Match<TEndpoint, TDirectives> | null {
     const fragments = fragment(path)
-    const parameters: Parameter[] = []
-    const node = this.trunk.match(fragments, parameters)
 
-    if (node === null) return null
-    else return { node, parameters }
+    return this.trunk.match(fragments)
   }
 
   public merge (node: syntax.Node, extension: any): void {

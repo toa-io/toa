@@ -69,12 +69,13 @@ Feature: Basic authentication
 
   Scenario: Changing the password
     Given the annotation:
-      """
-      /:id:
-        id: id
-        GET:
-          dev:stub:
-            access: granted!
+      """yaml
+      /:
+        /:id:
+          id: id
+          GET:
+            dev:stub:
+              access: granted!
       """
     And the `identity.basic` database contains:
       | _id                              | _version | username  | password                                                     |
@@ -232,4 +233,43 @@ Feature: Basic authentication
 
       code: PRINCIPAL_LOCKED
       message: Principal username cannot be changed.
+      """
+
+  Scenario: Creating an Identity using inception with existing credentials
+    Given the `identity.basic` database is empty
+    And the `users` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          POST:
+            incept: id
+            endpoint: transit
+      """
+    When the following request is received:
+      # identity inception
+      """
+      POST /users/ HTTP/1.1
+      authorization: Basic dXNlcjpwYXNzMTIzNA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: Bill Smith
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    And the following request is received:
+      # same credentials
+      """
+      POST /users/ HTTP/1.1
+      authorization: Basic dXNlcjpwYXNzMTIzNA==
+      content-type: text/plain
+
+      name: Mary Louis
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
       """

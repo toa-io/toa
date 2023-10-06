@@ -1,14 +1,15 @@
 import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
+import { Readable } from 'node:stream'
 import { type Request, type Response } from 'express'
 import Negotiator from 'negotiator'
 import { buffer } from '@toa.io/generic'
+import { map } from '@toa.io/streams'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
 export function write (request: Request, response: Response, body: any): void {
-  const buf = format(body, request, response)
-
-  response.send(buf)
+  if (body instanceof Readable) void pipe(body, request, response)
+  else send(body, request, response)
 }
 
 export async function read (request: Request): Promise<any> {
@@ -29,8 +30,12 @@ export async function read (request: Request): Promise<any> {
   }
 }
 
-function format (body: any, request: Request, response: Response): Buffer | undefined {
-  if (body === undefined || body?.length === 0) return
+function send (body: any, request: Request, response: Response): void {
+  if (body === undefined || body?.length === 0) {
+    response.end()
+
+    return
+  }
 
   const type = negotiate(request)
   const format = formats[type]
@@ -38,8 +43,15 @@ function format (body: any, request: Request, response: Response): Buffer | unde
 
   // content-length and etag are set by Express
   response.set('content-type', type)
+  response.send(buf)
+}
 
-  return buf
+async function pipe (body: any, request: Request, response: Response): Promise<void> {
+  const type = negotiate(request)
+  const format = formats[type]
+
+  response.set('content-type', type)
+  map(body, format.encode).pipe(response)
 }
 
 function negotiate (request: Request): string {

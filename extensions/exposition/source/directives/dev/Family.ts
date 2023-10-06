@@ -1,5 +1,6 @@
 import { type Input, type Output, type Family } from '../../Directive'
 import { Stub } from './Stub'
+import { Throw } from './Throw'
 import { type Directive } from './types'
 
 class Development implements Family<Directive> {
@@ -28,7 +29,8 @@ class Development implements Family<Directive> {
 }
 
 const constructors: Record<string, new (value: any) => Directive> = {
-  stub: Stub
+  stub: Stub,
+  throw: Throw
 }
 
 export = new Development()

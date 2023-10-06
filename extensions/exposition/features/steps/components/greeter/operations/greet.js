@@ -1,6 +1,6 @@
 'use strict'
 
-async function computation () {
+function computation () {
   return 'Hello'
 }
 

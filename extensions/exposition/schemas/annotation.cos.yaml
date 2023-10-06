@@ -1,4 +1,5 @@
 host?: string
 class?: string
 annotations?: <string>
+debug?: boolean
 /?: ref:node

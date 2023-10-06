@@ -29,15 +29,17 @@ class Runner extends Connector {
 
     if (reply instanceof Nope) return { error: reply }
     else if (isGenerator(reply)) return Readable.from(reply)
+    else if (reply instanceof Readable) return reply
     else return { output: reply }
   }
 }
 
 function isGenerator (object) {
-  const constructor = object.constructor?.[Symbol.toStringTag]
+  const constructor = object?.constructor?.[Symbol.toStringTag]
 
-  return constructor === 'AsyncGeneratorFunction' ||
-    constructor === 'GeneratorFunction'
+  return constructor !== undefined &&
+    (constructor === 'AsyncGeneratorFunction' ||
+      constructor === 'GeneratorFunction')
 }
 
 exports.Runner = Runner

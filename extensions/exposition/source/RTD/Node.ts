@@ -1,6 +1,6 @@
 import { type Route } from './Route'
 import { type Methods } from './Method'
-import { type Parameter } from './Match'
+import { type Match, type Parameter } from './Match'
 import { type Directives } from './Directives'
 import { type Endpoint } from './Endpoint'
 
@@ -23,12 +23,12 @@ export class Node<
     this.sort()
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Node<TEndpoint, TDirectives> | null {
+  public match (fragments: string[], parameters: Parameter[] = []): Match | null {
     for (const route of this.routes) {
-      const node = route.match(fragments, parameters)
+      const match = route.match(fragments, parameters)
 
-      if (node !== null)
-        return node
+      if (match !== null)
+        return match
     }
 
     return null
