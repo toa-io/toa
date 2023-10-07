@@ -4,13 +4,14 @@
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764566111478378&cot=14">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".readme/overview.jpg">
-    <img alt="Realtime" width="700" height="202" src=".readme/overview.jpg">
+    <source media="(prefers-color-scheme: dark)" srcset=".readme/overview-dark.jpg">
+    <img alt="Realtime" width="700" height="202" src=".readme/overview-light.jpg">
   </picture>
 </a>
 
-Realtime extension combines application events into streams according to defined routes.
+---
 
+Realtime extension combines application events into streams according to defined routes.
 Clients may consume these streams [via Exposition](#exposition).
 
 ## Static routes
