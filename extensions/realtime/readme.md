@@ -69,16 +69,17 @@ specified key.
 
 For instance, when there are chat rooms with a list of users, and a user joins or leaves the room.
 When a message is sent to a room, an event will have a `room_id` property, but not a `user_id`.
-In this case, a dynamic route may be created as follows:
+In this case, when the user `a4b8e7e8` enters the room with id `general`,
+a dynamic route may be created as follows:
 
 ```yaml
 event: message.sent
 property: room_id
-value: 1
+value: general
 stream: a4b8e7e8
 ```
 
-Each time the message is sent to the room with `room_id: 1`, the event will be combined into a
+Each time the message is sent to the room with id `general`, the event will be combined into a
 stream with `a4b8e7e8` key.
 
 ### Managing dynamic routes
