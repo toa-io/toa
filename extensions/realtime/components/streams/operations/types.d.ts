@@ -1,7 +1,6 @@
-/// <reference types="node" />
-import { type Duplex } from 'node:stream';
+import { type Stream } from './lib/streams';
 export interface Context {
-    state: Record<string, Duplex>;
+    state: Record<string, Stream>;
 }
 export interface PushInput {
     key: string;

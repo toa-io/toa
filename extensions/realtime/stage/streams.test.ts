@@ -6,7 +6,7 @@ import { type Component } from '@toa.io/core'
 import { newid, timeout } from '@toa.io/generic'
 
 let component: Component
-let stream: Readable
+let stream: Readable & { __id: string }
 let events: Record<string, any[]> = {}
 
 beforeEach(async () => {
@@ -44,7 +44,7 @@ it('should create fresh stream', async () => {
   expect(events[key]).toEqual([{ event: 'first', data }])
 
   await create(key)
-  await timeout(10)
+  await timeout(0)
 
   expect(events[key]).toEqual([])
 
@@ -67,6 +67,35 @@ it('should ignore pushes to non-created streams', async () => {
   expect(events[key]).toEqual([{ event: 'second', data }])
 })
 
+it('should not destroy source stream if one of the forks is destroyed', async () => {
+  const data = generate()
+  const key = newid()
+
+  await create(key)
+  await push(key, 'first', data)
+
+  const firstStream = stream
+  const firstStreamEvents = events[key]
+
+  await create(key)
+  await push(key, 'second', data)
+
+  expect(firstStreamEvents).toEqual([{ event: 'first', data }, { event: 'second', data }])
+  expect(stream === firstStream).toBe(false)
+
+  stream.destroy()
+
+  await push(key, 'third', data)
+
+  expect(firstStreamEvents).toEqual([
+    { event: 'first', data },
+    { event: 'second', data },
+    { event: 'third', data }
+  ])
+
+  firstStream.destroy()
+})
+
 /// region component
 async function run (name: string = 'streams'): Promise<void> {
   const path = resolve(__dirname, `../components/${name}`)
@@ -79,7 +108,8 @@ async function create (key: string): Promise<void> {
 
   events[key] = chunks
 
-  stream = await component.invoke('create', { input: key }) as any
+  stream = await component.invoke('create', { input: key })
+  stream.__id = newid()
   stream.on('data', (chunk) => chunks.push(chunk))
 }
 
@@ -89,7 +119,7 @@ async function stop (): Promise<void> {
 
 async function push (key: string, event: string, data: any): Promise<void> {
   await component.invoke('push', { input: { key, event, data } })
-  await timeout(1) // wait for stream internals
+  await timeout(0) // wait for stream internals
 }
 
 /// endregion
