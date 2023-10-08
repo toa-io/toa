@@ -9,8 +9,6 @@
   </picture>
 </a>
 
----
-
 Realtime extension combines application events into streams according to defined routes.
 Clients may consume these streams [via Exposition](#exposition).
 

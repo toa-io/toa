@@ -1,0 +1,13 @@
+namespace: realtime
+name: streams
+
+operations:
+  create:
+    input: string
+  push:
+    input:
+      key: string
+      event: string
+      data: ~
+
+state: ~
