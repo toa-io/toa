@@ -31,7 +31,6 @@ realtime:
 
 ```yaml
 # context.toa.yaml
-
 realtime:
   users.updated: id
   orders.created: custromer_id
@@ -42,7 +41,7 @@ In case of conflict, the Context annotation takes precedence.
 ### Static route examples
 
 Given two rules: `users.updated: id` and `orders.created: customer_id`,
-the following events will be combined into a stream with `a4b8e7e8` key:
+the following events will be routed into a stream with `a4b8e7e8` key:
 
 ```yaml
 # users.updated
@@ -65,7 +64,7 @@ Among with an `event` and a `stream` key, a dynamic route has `property` and `va
 which define a condition that should be met for an event to be combined into a stream with the
 specified key.
 
-### Dynamic route examples
+### Dynamic route example
 
 For instance, when there are chat rooms with a list of users, and a user joins or leaves the room.
 When a message is sent to a room, an event will have a `room_id` property, but not a `user_id`.
@@ -79,7 +78,7 @@ value: general
 stream: a4b8e7e8
 ```
 
-Each time the message is sent to the room with id `general`, the event will be combined into a
+Each time the message is sent to the room with id `general`, the event will be routed into a
 stream with `a4b8e7e8` key.
 
 ### Managing dynamic routes
@@ -91,7 +90,7 @@ Dynamic routes are managed by the `realtime.routes` component, running in the Re
 ## Exposition
 
 Streams are exposed by the `realtime.streams` component, running in the Realtime extension, and are
-accessible via the `/realtime/streams/:id` resource with the following declaration:
+accessible via the `/realtime/streams/:id/` resource with the following declaration:
 
 ```yaml
   /:key:
@@ -99,8 +98,8 @@ accessible via the `/realtime/streams/:id` resource with the following declarati
     GET: fetch
 ```
 
-Refer to the [Exposition documentation](/extensions/exposition) for more
+Refer to the [Exposition extension](/extensions/exposition) for more
 details:
 
-- [Access authorization](/extensions/exposition/documentation/access.md)
 - [Streams](/extensions/exposition/documentation/protocol.md#streams)
+- [Access authorization](/extensions/exposition/documentation/access.md)
