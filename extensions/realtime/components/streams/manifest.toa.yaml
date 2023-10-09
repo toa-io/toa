@@ -6,8 +6,8 @@ operations:
     input: string
   push:
     input:
-      key: string
-      event: string
+      key*: string
+      event*: string
       data: ~
 
 state: ~

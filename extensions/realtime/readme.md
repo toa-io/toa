@@ -56,6 +56,8 @@ amount: 100
 
 ## Dynamic routes
 
+![Not implemented](https://img.shields.io/badge/Not%20implemented-red)
+
 Dynamic routes address the cases when a stream key is not a property of an event.
 
 Among with an `event` and a `stream` key, a dynamic route has `property` and `value` properties,
@@ -83,18 +85,12 @@ stream with `a4b8e7e8` key.
 
 Dynamic routes are managed by the `realtime.routes` component, running in the Realtime extension.
 
-> Not implemented yet.
-
 ## Exposition
 
-Streams are exposed by the `realtime.streams` component, running in the Realtime extension, and are
-accessible via the `/realtime/streams/:id/` resource with the following declaration:
-
-```yaml
-  /:key:
-    auth:id: key
-    GET: fetch
-```
+Streams are exposed by the [`realtime.streams`](components/streams) component, running in the
+Realtime extension, and are
+accessible via the `/realtime/streams/:key/` resource with
+the [`auth:id: key`](/extensions/exposition/documentation/access.md#id) authorization rule.
 
 Refer to the [Exposition extension](/extensions/exposition) for more
 details:

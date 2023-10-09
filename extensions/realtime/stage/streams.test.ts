@@ -6,7 +6,7 @@ import { type Component } from '@toa.io/core'
 import { newid, timeout } from '@toa.io/generic'
 
 let component: Component
-let stream: Readable & { __id: string }
+let stream: Readable
 let events: Record<string, any[]> = {}
 
 beforeEach(async () => {
@@ -31,7 +31,7 @@ it('should route events', async () => {
   await push(key2, event, data)
 
   expect(events[key1]).toEqual([{ event, data }])
-  expect(events[key1]).toEqual([{ event, data }])
+  expect(events[key2]).toEqual([{ event, data }])
 })
 
 it('should create fresh stream', async () => {
@@ -109,7 +109,6 @@ async function create (key: string): Promise<void> {
   events[key] = chunks
 
   stream = await component.invoke('create', { input: key })
-  stream.__id = newid()
   stream.on('data', (chunk) => chunks.push(chunk))
 }
 

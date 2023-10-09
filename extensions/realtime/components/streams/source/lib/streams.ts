@@ -1,6 +1,6 @@
 import { Duplex, PassThrough } from 'node:stream'
 
-export function addStream (key: string, map: Record<string, Duplex>): void {
+export function addStream (key: string, map: Record<string, Stream>): void {
   const stream = new Stream()
 
   map[key] = stream
@@ -17,7 +17,8 @@ export class Stream extends Duplex {
 
   public fork (): PassThrough {
     const destination = new PassThrough(objectMode)
-      .once('close', this.decrement.bind(this))
+
+    destination.once('close', this.decrement.bind(this))
 
     this.increment()
     this.pipe(destination)
