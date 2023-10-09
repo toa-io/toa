@@ -16,16 +16,17 @@ export class Stream extends Duplex {
   }
 
   public fork (): PassThrough {
-    const destination = new PassThrough(objectMode)
+    const through = new PassThrough()
 
-    destination.once('close', this.decrement.bind(this))
+    through.once('close', this.decrement.bind(this))
 
     this.increment()
-    this.pipe(destination)
+    this.pipe(through)
 
-    return destination
+    return through
   }
 
+  // has to be here
   public override _read (): void {
   }
 
