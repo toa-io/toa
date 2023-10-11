@@ -79,7 +79,6 @@ properties:
   bindings:
     type: array
     uniqueItems: true
-    minItems: 1
     items:
       $ref: '#/definitions/binding'
 

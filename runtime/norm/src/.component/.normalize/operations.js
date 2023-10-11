@@ -5,6 +5,7 @@ const operations = (component) => {
 
   for (const [endpoint, operation] of Object.entries(component.operations)) {
     if (operation.bindings === undefined) operation.bindings = component.bindings
+    if (operation.bindings === null) operation.bindings = []
     if (operation.virtual === true) delete component.operations[endpoint]
   }
 }
