@@ -5,6 +5,7 @@ operations:
   create:
     input: string
   push:
+    bindings: ~ # only for internal use
     input:
       key*: string
       event*: string

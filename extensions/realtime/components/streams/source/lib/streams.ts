@@ -1,4 +1,4 @@
-import { Duplex, PassThrough } from 'node:stream'
+import { PassThrough, Readable } from 'node:stream'
 
 export function addStream (key: string, map: Record<string, Stream>): void {
   const stream = new Stream()
@@ -8,7 +8,7 @@ export function addStream (key: string, map: Record<string, Stream>): void {
   stream.once('close', () => delete map[key])
 }
 
-export class Stream extends Duplex {
+export class Stream extends Readable {
   private forks: number = 0
 
   public constructor () {
@@ -16,7 +16,7 @@ export class Stream extends Duplex {
   }
 
   public fork (): PassThrough {
-    const through = new PassThrough()
+    const through = new PassThrough(objectMode)
 
     through.once('close', this.decrement.bind(this))
 

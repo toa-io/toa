@@ -97,6 +97,7 @@ it('should not destroy source stream if one of the forks is destroyed', async ()
 })
 
 /// region component
+
 async function run (name: string = 'streams'): Promise<void> {
   const path = resolve(__dirname, `../components/${name}`)
 
@@ -117,7 +118,10 @@ async function stop (): Promise<void> {
 }
 
 async function push (key: string, event: string, data: any): Promise<void> {
-  await component.invoke('push', { input: { key, event, data } })
+  const reply = await component.invoke<any>('push', { input: { key, event, data } })
+
+  expect(reply?.exception).toBeUndefined()
+
   await timeout(0) // wait for stream internals
 }
 

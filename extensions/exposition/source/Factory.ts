@@ -26,10 +26,6 @@ export class Factory implements extensions.Factory {
   }
 
   public service (): Connector | null {
-    return this.gateway()
-  }
-
-  private gateway (): Gateway {
     const debug = process.env.TOA_EXPOSITION_DEBUG === '1'
     const broadcast = this.boot.bindings.broadcast(CHANNEL)
     const server = Server.create({ methods: syntax.verbs, debug })

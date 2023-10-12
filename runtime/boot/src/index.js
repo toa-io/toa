@@ -13,7 +13,7 @@ const { exposition } = require('./exposition')
 const { images } = require('./images')
 const { manifest } = require('./manifest')
 const { operation } = require('./operation')
-const { receivers } = require('./receivers')
+const { receivers, receive } = require('./receivers')
 const { remote } = require('./remote')
 const { storage } = require('./storage')
 
@@ -35,6 +35,7 @@ exports.images = images
 exports.manifest = manifest
 exports.operation = operation
 exports.receivers = receivers
+exports.receive = receive
 exports.registry = registry
 exports.remote = remote
 exports.storage = storage

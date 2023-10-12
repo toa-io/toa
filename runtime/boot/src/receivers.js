@@ -9,9 +9,9 @@ const receivers = async (manifest, runtime) => {
   if (manifest.receivers === undefined) return []
 
   const receivers = []
+  const local = await boot.remote(manifest.locator, manifest)
 
   for (const [label, definition] of Object.entries(manifest.receivers)) {
-    const local = await boot.remote(manifest.locator, manifest)
     const bridge = definition.bridge !== undefined ? boot.bridge.receiver(definition.bridge, manifest.path, label) : undefined
     const receiver = new Receiver(definition, local, bridge)
     const decorator = extensions.receiver(receiver, manifest.locator)
@@ -28,6 +28,18 @@ const receivers = async (manifest, runtime) => {
   return receivers
 }
 
+async function receive (label, group, callback) {
+  if (callback === undefined) {
+    callback = group
+    group = undefined
+  }
+
+  const locator = Locator.parse(label)
+  const transport = await resolveBinding(locator, label)
+
+  return boot.bindings.receive(transport, locator, label, group, callback)
+}
+
 /**
  * @param {toa.core.Locator} locator
  * @param {string} label
@@ -42,3 +54,4 @@ async function resolveBinding (locator, label) {
 }
 
 exports.receivers = receivers
+exports.receive = receive
