@@ -43,7 +43,7 @@ export class EndpointsFactory implements RTD.EndpointsFactory<Endpoint> {
     if (method.mapping === undefined)
       throw new Error('Cannot create Endpoint without mapping.')
 
-    const mapping = Mapping.create(method.verb, method.mapping.query)
+    const mapping = Mapping.create(method.mapping.query)
     const namespace = method.mapping.namespace ?? context.extension?.namespace
     const component = method.mapping.component ?? context.extension?.component
 

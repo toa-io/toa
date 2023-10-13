@@ -19,10 +19,10 @@ export class Factory implements extensions.Factory {
     this.families = directives.families
   }
 
-  public tenant (locator: Locator, manifest: syntax.Node): Connector {
+  public tenant (locator: Locator, node: syntax.Node): Connector {
     const broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
 
-    return new Tenant(broadcast, locator, manifest)
+    return new Tenant(broadcast, locator, node)
   }
 
   public service (): Connector | null {

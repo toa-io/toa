@@ -1,9 +1,8 @@
 verb: /^(GET|POST|PUT|PATCH|DELETE)$/
 mapping:
-  namespace: string
-  component: string
+  namespace?: string
+  component?: string
   endpoint: string
-  query:
+  query?:
     $ref: query
-    default: { }
 directives: [ref:directive]

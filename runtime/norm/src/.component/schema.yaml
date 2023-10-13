@@ -166,6 +166,9 @@ properties:
                 scope:
                   const: none
                   default: none
+                query:
+                  const: false
+                  default: false
           - if: # effect
               properties:
                 type:
@@ -175,6 +178,9 @@ properties:
                 scope:
                   const: none
                   default: none
+                query:
+                  const: false
+                  default: false
         additionalProperties: false
     additionalProperties: false
 

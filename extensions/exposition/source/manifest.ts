@@ -1,4 +1,4 @@
-import { parse, type Node } from './RTD/syntax'
+import { parse, type Node, type Method, type Query } from './RTD/syntax'
 import { shortcuts } from './Directive'
 import type { Manifest } from '@toa.io/norm'
 
@@ -21,15 +21,25 @@ function wrap (segment: string, declaration: object): object {
 
 function concretize (node: Node, manifest: Manifest): void {
   for (const route of node.routes) {
-    for (const method of route.node.methods) {
-      // eslint-disable-next-line max-depth
-      if (method.mapping === undefined)
-        continue
-
-      method.mapping.namespace = manifest.namespace
-      method.mapping.component = manifest.name
-    }
+    for (const method of route.node.methods)
+      concretizeMethod(method, manifest)
 
     concretize(route.node, manifest)
   }
+}
+
+function concretizeMethod (method: Method, manifest: Manifest): void {
+  if (method.mapping === undefined)
+    return
+
+  const operation = manifest.operations[method.mapping.endpoint]
+
+  if (operation === undefined)
+    throw new Error(`Operation '${method.mapping.endpoint}' not found`)
+
+  if (operation.query !== false)
+    method.mapping.query = {} as unknown as Query // schema will substitute default values
+
+  method.mapping.namespace = manifest.namespace
+  method.mapping.component = manifest.name
 }

@@ -1,0 +1,9 @@
+name: echo
+
+operations:
+  compute:
+    input:
+      name*: string
+  affect:
+    input:
+      name*: string

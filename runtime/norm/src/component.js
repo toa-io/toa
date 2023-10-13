@@ -14,17 +14,16 @@ const {
   dereference,
   defaults,
   dependencies,
-  normalize
+  normalize,
+  extensions
 } = require('./.component')
 
-/**
- * @type {toa.norm.component.Constructor}
- */
 const component = async (path) => {
   const manifest = await load(path)
 
-  normalize(manifest, process.env.TOA_ENV)
+  normalize(manifest)
   validate(manifest)
+  extensions(manifest)
 
   manifest.locator = new Locator(manifest.name, manifest.namespace)
 
