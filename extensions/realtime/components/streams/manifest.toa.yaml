@@ -3,7 +3,8 @@ name: streams
 
 operations:
   create:
-    input: string
+    input:
+      key: string
   push:
     bindings: ~ # only for internal use
     input:
@@ -12,3 +13,8 @@ operations:
       data: ~
 
 state: ~
+
+exposition:
+  /:key:
+    auth:id: key
+    GET: create

@@ -109,7 +109,7 @@ async function create (key: string): Promise<void> {
 
   events[key] = chunks
 
-  stream = await component.invoke('create', { input: key })
+  stream = await component.invoke('create', { input: { key } })
   stream.on('data', (chunk) => chunks.push(chunk))
 }
 
