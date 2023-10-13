@@ -63,3 +63,9 @@ event: deleted
 data:
   bar: baz
 ```
+
+The server-side implementation with flow control and stream termination is trivial:
+
+```javascript
+eventStream.pipe(response)
+```
