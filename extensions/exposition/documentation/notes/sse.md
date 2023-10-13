@@ -64,7 +64,7 @@ data:
   bar: baz
 ```
 
-The server-side implementation with flow control and stream termination is trivial:
+The server-side implementation with flow control and stream termination handling is trivial:
 
 ```javascript
 eventStream.pipe(response)
