@@ -24,7 +24,7 @@ export class Streams {
 
     this.remote ??= await stage.remote('realtime.streams')
     this.events[key] = []
-    this.streams[key] = await this.remote.invoke('create', { input: key })
+    this.streams[key] = await this.remote.invoke('create', { input: { key } })
     this.streams[key].on('data', (data: object) => this.events[key].push(data))
   }
 

@@ -7,8 +7,10 @@ const namespace = 'ns' + generate()
 
 let mf: Manifest
 
+const operations = { observe: {} }
+
 beforeEach(() => {
-  mf = { namespace, name } as unknown as Manifest
+  mf = { namespace, name, operations } as unknown as Manifest
 })
 
 const declaration = {

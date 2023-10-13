@@ -65,7 +65,7 @@
     "test:unit": "npx jest --roots runtime connectors extensions operations libraries features userland",
     "test:stage": "npx jest --roots userland/example/stage --testPathIgnorePatterns .*/transpiled/",
     "test:integration": "npx jest --roots integration --runInBand --testTimeout 180000",
-    "test:features": "npx cucumber-js && npm run test:features --workspaces --if-present",
+    "test:features": "npx cucumber-js && npm run features --workspaces --if-present",
     "test:samples:unit": "toa replay userland/example/components/*",
     "test:samples:all": "TOA_DEV=1 toa replay userland/example",
     "test:all": "npm run test && npm run test:integration && npm run test:stage && npm run test:features",
