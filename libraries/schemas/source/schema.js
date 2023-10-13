@@ -35,7 +35,10 @@ class Schema {
     const valid = this.#validate(value)
 
     if (!valid) {
-      const error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
+      let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
+
+      if (error.length === 0)
+        throw new Error(this.#validate.errors[0].message)
 
       throw new TypeError(error[0].error)
     }

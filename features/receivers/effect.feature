@@ -1,7 +1,7 @@
 Feature: Receiver to an effect
 
   Scenario: Updating state with an event
-    Given I compose `state.known` component
+    Given I stage `state.known` component
     When an event `somewhere.something.happened` is emitted with the payload:
       """
       100

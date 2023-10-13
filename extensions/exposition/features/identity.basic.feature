@@ -26,6 +26,7 @@ Feature: Basic authentication
           POST:
             incept: id
             endpoint: transit
+            query: ~
         /:id:                 # credential testing route
           id: id
           GET: observe

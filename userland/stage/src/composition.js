@@ -6,8 +6,9 @@ const { state } = require('./state')
 const binding = require.resolve('./binding')
 
 /** @type {toa.stage.Composition} */
-const composition = async (paths) => {
-  const options = { bindings: [binding] }
+const composition = async (paths, options) => {
+  options ??= { bindings: [binding] }
+
   const composition = await boot.composition(paths, options)
 
   await composition.connect()

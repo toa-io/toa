@@ -1,5 +1,6 @@
 import { parse, type Node, type Method, type Query } from './RTD/syntax'
 import { shortcuts } from './Directive'
+import * as schemas from './schemas'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest (declaration: object, manifest: Manifest): Node {
@@ -11,6 +12,8 @@ export function manifest (declaration: object, manifest: Manifest): Node {
   const node = parse(declaration, shortcuts)
 
   concretize(node, manifest)
+
+  schemas.node.validate(node)
 
   return node
 }
@@ -37,7 +40,7 @@ function concretizeMethod (method: Method, manifest: Manifest): void {
   if (operation === undefined)
     throw new Error(`Operation '${method.mapping.endpoint}' not found`)
 
-  if (operation.query !== false)
+  if (method.mapping.query === undefined && operation.query !== false)
     method.mapping.query = {} as unknown as Query // schema will substitute default values
 
   method.mapping.namespace = manifest.namespace

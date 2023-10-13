@@ -7,6 +7,7 @@ Feature: Annotation
         anonymous: true
         /foo:
           GET:
+            query: {}
             endpoint: pots.enumerate
       """
     And the `pots` is running

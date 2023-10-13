@@ -10,7 +10,6 @@ const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')
 
 const { When, Then } = require('@cucumber/cucumber')
-const { Nope } = require('nopeable')
 
 When('I debug command {word}',
   /**
@@ -35,6 +34,15 @@ When('I boot {component} component',
   })
 
 When('I compose {component} component',
+  /**
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  async function (reference) {
+    await stage.composition([reference], {})
+  })
+
+When('I stage {component} component',
   /**
    * @param {string} reference
    * @this {toa.features.Context}

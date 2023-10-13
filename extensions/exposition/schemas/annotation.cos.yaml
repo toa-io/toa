@@ -1,5 +1,5 @@
-host?: string
-class?: string
-annotations?: <string>
-debug?: boolean
-/?: ref:node
+host: string
+class: string
+annotations: <string>
+debug: boolean
+/: ~

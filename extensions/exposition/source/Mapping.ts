@@ -6,7 +6,7 @@ import type * as core from '@toa.io/core'
 
 export abstract class Mapping {
   public static create (query?: syntax.Query): Mapping {
-    if (query === undefined)
+    if (query === undefined || query === null)
       return new InputMapping()
 
     const q = new Query(query)
@@ -34,7 +34,10 @@ class QueryableMapping extends Mapping {
 }
 
 class InputMapping extends Mapping {
-  public fit (input: any = {}, _: unknown, parameters: Parameter[]): core.Request {
+  public fit (input: any, _: unknown, parameters: Parameter[]): core.Request {
+    if (input === undefined && parameters.length > 0)
+      input = {}
+
     if (typeof input === 'object')
       this.assign(input, parameters)
 
