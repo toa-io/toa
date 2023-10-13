@@ -13,12 +13,8 @@ to access these events, user authentication is essential, typically implemented 
 an [HTTP Authentication framework](https://datatracker.ietf.org/doc/html/rfc2617).
 
 However, despite this being the most straightforward
-scenario, [SSE does not work this way]((https://github.com/whatwg/html/issues/2177). The only viable way to use SSE is
+scenario, [SSE does not work this way](https://github.com/whatwg/html/issues/2177). The only viable way to use SSE is
 to avoid the standard `EventSource` implementation.
-
-Although it is the most obvious scenario,
-[it doesn't work and noone cares](https://github.com/whatwg/html/issues/2177).
-The only way to use SSE is not to use standard `EventSource` implementation.
 
 ## Peculiar event format
 
