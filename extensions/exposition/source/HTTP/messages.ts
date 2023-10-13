@@ -46,12 +46,12 @@ function send (body: any, request: Request, response: Response): void {
   response.send(buf)
 }
 
-async function pipe (body: any, request: Request, response: Response): Promise<void> {
+async function pipe (stream: Readable, request: Request, response: Response): Promise<void> {
   const type = negotiate(request)
   const format = formats[type]
 
   response.set('content-type', type)
-  map(body, format.encode).pipe(response)
+  map(stream, format.encode).pipe(response)
 }
 
 function negotiate (request: Request): string {

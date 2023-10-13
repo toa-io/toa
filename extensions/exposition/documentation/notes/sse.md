@@ -13,7 +13,7 @@ to access these events, user authentication is essential, typically implemented 
 an [HTTP Authentication framework](https://datatracker.ietf.org/doc/html/rfc2617).
 
 However, despite this being the most straightforward
-scenario, [SSE does not work this way](https://github.com/whatwg/html/issues/2177). The only viable way to use SSE is
+scenario, [it does not work this way](https://github.com/whatwg/html/issues/2177). The only viable way to use SSE is
 to avoid the standard `EventSource` implementation.
 
 ## Peculiar event format
@@ -35,7 +35,7 @@ object.
 Furthermore, since the Event stream format defines its own content type, there is no built-in way to negotiate the
 format of the events.
 
-Additionally, the data value is limited to a single line, which hinders the use of
+Additionally, the `data` value is limited to a single line, which hinders the use of
 more [human-friendly formats](https://yaml.org) in a straightforward manner.
 
 ## HTTP is enough
@@ -44,7 +44,7 @@ Rather than resorting to a non-standard client and a predefined content format, 
 solution:
 
 ```http
-GET /events HTTP/1.1
+GET /events/ HTTP/1.1
 accept: application/yaml
 ```
 
@@ -64,7 +64,7 @@ data:
   bar: baz
 ```
 
-The server-side implementation with flow control and stream termination handling is trivial:
+Server-side implementation with flow control and stream termination handling is trivial:
 
 ```javascript
 eventStream.pipe(response)
