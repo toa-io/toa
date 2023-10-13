@@ -12,14 +12,14 @@ Non-scattered documentation is coming this fall.
 ### Runtime
 
 - Interservice communications
-  - Seamless fault tolerant RPC and Events
+  - Seamless resilient RPC and Events ([ComQ](https://github.com/toa-io/comq))
   - Flow control
-  - Eventual consistency guarantee
+  - Eventual consistency guarantee (not yet)
   - Uniform interface
     - Input/query segregation
-    - Output/error replies
+    - Successful rejections
     - Distributed exception handling
-  - Automatic service discovery
+  - Transparent service discovery
   - Multi-protocol transmission
     - built-in support for AMQP and HTTP
   - In-memory communications
@@ -33,13 +33,12 @@ Non-scattered documentation is coming this fall.
     - PostgreSQL, MSSQL, MySQL, MariaDB, Oracle, CockroachDB, SQLite3, Better-SQLite3, and Amazon
       Redshift
 - [API Gateway](/extensions/exposition)
-  - Realtime resource discovery
-  - Semantic method mapping
+  - Resource discovery
   - [Identity](extensions/exposition/documentation/identity.md)
   - [Access Control](extensions/exposition/documentation/access.md)
-  - Realtime events
+- [Realtime events](/extensions/realtime)
 - [Configuration](/extensions/configuration)
-- Transient state
+- [Transient state](/extensions/stash)
 - [External communications](/extensions/origins) governance
   - HTTP
   - AMQP
@@ -52,7 +51,7 @@ Non-scattered documentation is coming this fall.
   - Generic prototype
 - Data and operations contracts
 - Declarative API Gateway endpoints with authorization policies
-- [Declarative unit and integration tests](/userland/samples)
+- [Declarative integration tests](/userland/samples)
   - [Running in Docker](/runtime/cli/readme.md#replay)
 - [Runtime bootloader API](/userland/stage)
 - Development environment configuration
@@ -62,7 +61,6 @@ Non-scattered documentation is coming this fall.
   - Communication protocols
   - Runtime core abstractions
   - Arbitrary services
-- [Development environment configuration]
 
 ### Operations
 

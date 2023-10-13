@@ -53,7 +53,7 @@ class Operation extends Connector {
     const { request, state } = store
     const reply = await this.#cascade.run(request.input, state) || {}
 
-    this.#contracts.reply.fit(reply)
+    // this.#contracts.reply.fit(reply)
 
     store.reply = reply
   }

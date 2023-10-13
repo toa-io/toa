@@ -26,6 +26,22 @@ Run composition.
 
 > Note that your `localhost` it is accessible from a container as `host.docker.internal`.
 
+### call
+
+Call endpoint.
+
+<dl>
+<dt><code>toa call &lt;endpont&gt; [request]</code></dt>
+<dd>
+<code>endpoint</code> endpoint to call.<br/>
+<code>request</code> Request object.<br/>
+</dd>
+</dl>
+
+```shell
+$ toa call dummies.dummy.create "{ input: { name: 'foo' } }"
+```
+
 ### env
 
 Export environment to a `.env` file.

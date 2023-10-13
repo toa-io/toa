@@ -5,5 +5,4 @@ mapping:
   endpoint: string
   query:
     $ref: query
-    default: { }
 directives: [ref:directive]

@@ -163,6 +163,7 @@ exposition:
   host: the.example.com
   host@staging: the.example.dev
   class: alb
+  debug@staging: true
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
@@ -178,4 +179,5 @@ exposition:
 - [Resource Tree Definition](documentation/tree.md)
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)
+- [Components and resources](documentation/components.md)
 - [Features](features)

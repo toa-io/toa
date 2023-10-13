@@ -4,16 +4,17 @@ Feature: Tokens lifecycle
     Given the `identity.basic` database contains:
       | _id                              | username  | password                                                     |
       | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
-    And the `greeter` is running with the following manifest:
+    Given the annotation:
       """yaml
-      exposition:
-        /:id:
+      /:
+        /hello/:id:
           auth:id: id
-          GET: greet
+          GET:
+            dev:stub: Hello
       """
     When the following request is received:
       """
-      GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: text/plain
       """
@@ -31,16 +32,17 @@ Feature: Tokens lifecycle
       """yaml
       refresh: 1
       """
-    And the `greeter` is running with the following manifest:
+    And the annotation:
       """yaml
-      exposition:
-        /:id:
+      /:
+        /hello/:id:
           auth:id: id
-          GET: greet
+          GET:
+            dev:stub: Hello
       """
     When the following request is received:
       """
-      GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: text/plain
       """
@@ -54,7 +56,7 @@ Feature: Tokens lifecycle
     Then after 1 second
     When the following request is received:
       """
-      GET /greeter/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       authorization: Token ${{ token }}
       accept: text/plain
       """
@@ -69,11 +71,12 @@ Feature: Tokens lifecycle
   Scenario: Token revocation on password change
     Given the annotation:
       """yaml
-      /:id:
-        id: id
-        GET:
-          dev:stub:
-            access: granted!
+      /:
+        /:id:
+          id: id
+          GET:
+            dev:stub:
+              access: granted!
       """
     And the `identity.tokens` configuration:
       """yaml

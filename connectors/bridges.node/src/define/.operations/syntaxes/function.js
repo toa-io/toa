@@ -10,7 +10,7 @@ const define = (descriptor) => {
   /** @type {toa.node.define.operations.Definition} */
   const definition = {}
 
-  definition.type = /** @type {typeof toa.norm.component.Operation.type} */ name
+  definition.type = name
 
   if (node.params.length > 1) definition.scope = scope(node.params[1].name)
   if (node.params.length === 0) definition.input = null
@@ -29,7 +29,7 @@ const test = (statement, type) => {
 
 /**
  * @param {string} name
- * @returns {typeof toa.norm.component.Operation.scope}
+ * @returns {string}
  */
 const scope = (name) => scopes.includes(name) ? name : undefined
 

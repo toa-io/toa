@@ -10,7 +10,6 @@ const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')
 
 const { When, Then } = require('@cucumber/cucumber')
-const { Nope } = require('nopeable')
 
 When('I debug command {word}',
   /**
@@ -35,6 +34,15 @@ When('I boot {component} component',
   })
 
 When('I compose {component} component',
+  /**
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  async function (reference) {
+    await stage.composition([reference], {})
+  })
+
+When('I stage {component} component',
   /**
    * @param {string} reference
    * @this {toa.features.Context}
@@ -126,12 +134,34 @@ Then('the reply is received:',
     assert.equal(matches, true, diff(expected, this.reply))
   })
 
+Then('the reply stream is received:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (yaml) {
+    if (this.exception !== undefined) throw this.exception
+
+    const expected = parse(yaml)
+    const received = []
+
+    for await (const chunk of this.reply) {
+      received.push(chunk)
+    }
+
+    const matches = match(received, expected)
+
+    assert.equal(matches, true, diff(expected, received))
+  })
+
 Then('the reply is received',
   /**
    * @this {toa.features.Context}
    */
   function () {
-    assert.notEqual(this.reply, undefined, 'Reply is received')
+    if (this.exception !== undefined) throw this.exception
+
+    assert.notEqual(this.reply, undefined, 'Reply is not received')
   })
 
 Then('the following exception is thrown:',

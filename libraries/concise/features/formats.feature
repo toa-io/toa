@@ -20,3 +20,15 @@ Feature: String formats
       | hostname |
       | email    |
 
+  Scenario: Any
+    When I write schema:
+      """yaml
+      foo: ~
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo: {}
+      additionalProperties: false
+      """

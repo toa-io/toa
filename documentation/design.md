@@ -73,10 +73,6 @@ Operation algorithm must be:
    interactions and updates to the State.
 5. **Non-exceptional**. Doesn't use exceptions for control flow.
 
-> ![Important](https://img.shields.io/badge/Important-red)<br/>
-> Writing non-genuine operations is **strongly not recommended**, as they may result in exceptions
-> or system logical problems.
-
 ### Declaration
 
 Operations are declared in component's manifest file with `operations` object whose keys are
@@ -108,12 +104,14 @@ operations:
 
 ```javascript
 // Node.js Bridge
+const { Nope } = require('nopeable')
+
 async function transition (input, entity, context) {
   const price = context.configuration.price
   const request = { input: price, query: { id: input.sender } }
   const reply = await context.remote.credits.balance.debit(request)
 
-  if (reply.error) return { error: reply.error }
+  if (reply instanceof Nope) return reply
 
   Object.assign(entity, input)
 

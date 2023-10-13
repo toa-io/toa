@@ -27,13 +27,20 @@ export function deployment (_: unknown, annotation: Annotation | undefined): Dep
     }
 
   if (annotation?.['/'] !== undefined) {
-    annotation['/'] = parse(annotation['/'], shortcuts)
+    const node = { '/': annotation['/'] }
+    const tree = parse(node, shortcuts)
 
     service.variables.push({
       name: 'TOA_EXPOSITION',
-      value: encode(annotation['/'])
+      value: encode(tree)
     })
   }
+
+  if (annotation?.debug === true)
+    service.variables.push({
+      name: 'TOA_EXPOSITION_DEBUG',
+      value: '1'
+    })
 
   if (annotation !== undefined)
     schemas.annotaion.validate(annotation)

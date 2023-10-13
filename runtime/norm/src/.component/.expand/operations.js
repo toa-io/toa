@@ -10,7 +10,10 @@ function operations (manifest) {
     if (operation.input !== undefined) operation.input = expand(operation.input)
     if (operation.output !== undefined) operation.output = expand(operation.output)
     if (operation.bridge !== undefined) operation.bridge = resolve(operation.bridge)
-    if (operation.bindings !== undefined) operation.bindings = operation.bindings.map(resolve)
+
+    if (operation.bindings !== undefined && operation.bindings !== null) {
+      operation.bindings = operation.bindings.map(resolve)
+    }
   }
 }
 

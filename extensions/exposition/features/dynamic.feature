@@ -6,11 +6,21 @@ Feature: Dynamic tree updates
       | 4c4759e6f9c74da989d64511df42d6f4 | First pot | 100    | 80          |
 
   Scenario: Updating routes
+    Given the Gateway is running
     And the `pots` is running with the following manifest:
       """yaml
       exposition:
         /:
-          POST: transit
+          isolated: true
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
       """
     Then the `pots` is stopped
     Then the `pots` is running with the following manifest:

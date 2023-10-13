@@ -12,7 +12,7 @@ const { components: find } = require('../util/find')
  * @return {Promise<void>}
  */
 async function compose (argv) {
-  console.log('Runtime version:', version)
+  console.log('Runtime', version)
 
   if (argv.dock === true) return dock(argv)
 

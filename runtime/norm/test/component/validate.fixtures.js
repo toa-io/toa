@@ -34,6 +34,16 @@ const ok = {
       scope: 'changeset',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
+    },
+    compute: {
+      type: 'computation',
+      bridge: 'whatever',
+      bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
+    },
+    affect: {
+      type: 'effect',
+      bridge: 'whatever',
+      bindings: ['@toa.io/bindings.http', '@toa.io/bindings.amqp']
     }
   },
   events: {

@@ -101,7 +101,7 @@ function parseEndpoint (mapping: Mapping): void {
 function parseQuery (mapping: any): void {
   const query = mapping.query
 
-  if (query === undefined)
+  if (query === undefined || query === null)
     return
 
   if (typeof query.limit === 'number')

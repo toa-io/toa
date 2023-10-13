@@ -15,6 +15,8 @@ export class Remotes extends Connector {
 
     this.depends(remote)
 
+    await remote.connect()
+
     return remote
   }
 }

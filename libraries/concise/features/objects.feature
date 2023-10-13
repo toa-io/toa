@@ -17,3 +17,19 @@ Feature: Objects
       | string  |
       | number  |
       | boolean |
+
+  Scenario: Nullable object
+    When I write schema:
+      """yaml
+      name: string
+      _: true
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        name:
+          type: string
+      nullable: true
+      additionalProperties: false
+      """

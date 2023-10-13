@@ -46,6 +46,7 @@ const SHORTCUTS = {
   sql: '@toa.io/storages.sql',
   queues: '@toa.io/storages.queues',
   exposition: '@toa.io/extensions.exposition',
+  realtime: '@toa.io/extensions.realtime',
   configuration: '@toa.io/extensions.configuration',
   origins: '@toa.io/extensions.origins',
   stash: '@toa.io/extensions.stash'

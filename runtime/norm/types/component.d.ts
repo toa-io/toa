@@ -11,6 +11,7 @@ type Operation = {
   input?: any
   output?: any
   error?: any
+  query?: boolean
 }
 
 type Operations = {

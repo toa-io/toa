@@ -10,7 +10,8 @@ jest.mock('@toa.io/boot', () => ({
 
 const boot = {
   remote: jest.fn(async (..._) => ({
-    link: jest.fn((connector: Connector) => undefined)
+    connect: jest.fn(() => undefined),
+    link: jest.fn(() => undefined)
   }))
 } as unknown as jest.MockedObjectDeep<Bootloader>
 

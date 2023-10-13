@@ -69,11 +69,12 @@ Feature: Access authorization
   Scenario: Using `auth:id` directive
     Given the annotation:
       """yaml
-      /:id:
-        auth:id: id
-        GET:
-          dev:stub:
-            access: granted!
+      /:
+        /:id:
+          auth:id: id
+          GET:
+            dev:stub:
+              access: granted!
       """
     When the following request is received:
       """
@@ -144,14 +145,15 @@ Feature: Access authorization
     And the annotation:
       """yaml
       /:
-        auth:role: developer:rust:junior  # role scope matches
-        /nested:
+        /:
+          auth:role: developer:rust:junior  # role scope matches
+          /nested:
+            GET:
+              dev:stub: good!
+        /javascript:
+          auth:role: developer:javascript   # role scope does not match
           GET:
-            dev:stub: good!
-      /javascript:
-        auth:role: developer:javascript   # role scope does not match
-        GET:
-          dev:stub: no good!
+            dev:stub: no good!
       """
     When the following request is received:
       """
@@ -211,20 +213,21 @@ Feature: Access authorization
       | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer:rust |
     And the annotation:
       """yaml
-      /rust/:id:
-        auth:rule:
-          id: id
-          role: developer:rust
-        GET:
-          dev:stub:
-            access: granted!
-      /javascript/:id:
-        rule:
-          id: id
-          role: developer:javascript
-        GET:
-          dev:stub:
-            access: granted!
+      /:
+        /rust/:id:
+          auth:rule:
+            id: id
+            role: developer:rust
+          GET:
+            dev:stub:
+              access: granted!
+        /javascript/:id:
+          rule:
+            id: id
+            role: developer:javascript
+          GET:
+            dev:stub:
+              access: granted!
       """
     When the following request is received:
       """
@@ -252,11 +255,12 @@ Feature: Access authorization
   Scenario: Token authentication scheme
     Given the annotation:
       """yaml
-      /:id:
-        auth:id: id
-        GET:
-          dev:stub:
-            access: granted!
+      /:
+        /:id:
+          auth:id: id
+          GET:
+            dev:stub:
+              access: granted!
       """
     When the following request is received:
       """
@@ -329,12 +333,13 @@ Feature: Access authorization
   Scenario: Using `auth:scheme` directive
     Given the annotation:
       """yaml
-      /:id:
-        auth:scheme: basic
-        auth:id: id
-        GET:
-          dev:stub:
-            access: granted!
+      /:
+        /:id:
+          auth:scheme: basic
+          auth:id: id
+          GET:
+            dev:stub:
+              access: granted!
       """
     When the following request is received:
       """
@@ -388,11 +393,12 @@ Feature: Access authorization
       | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | system |
     And the annotation:
       """yaml
-      /:id:
-        auth:id: id
-        GET:
-          dev:stub:
-            access: granted!
+      /:
+        /:id:
+          auth:id: id
+          GET:
+            dev:stub:
+              access: granted!
       """
     And the `identity.tokens` configuration:
       """yaml

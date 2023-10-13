@@ -3,10 +3,12 @@ Feature: Annotation
   Scenario: Simple annotation
     Given the annotation:
       """yaml
-      anonymous: true
-      /foo:
-        GET:
-          endpoint: pots.enumerate
+      /:
+        anonymous: true
+        /foo:
+          GET:
+            query: {}
+            endpoint: pots.enumerate
       """
     And the `pots` is running
     And the `pots` database contains:

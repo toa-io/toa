@@ -168,41 +168,26 @@ Feature: Errors
       Malformed authorization header.
       """
 
-  Scenario: Creating an Identity using inception with existing credentials
-    Given the `identity.basic` database is empty
-    And the `users` is running with the following manifest:
+  Scenario Outline: Exception is thrown (debug: <debug>)
+    Given the annotation:
       """yaml
-      exposition:
-        /:
+      debug: <debug>
+      /:
+        GET:
           anonymous: true
-          POST:
-            incept: id
-            endpoint: transit
+          dev:throw: Broken!
       """
     When the following request is received:
-      # identity inception
       """
-      POST /users/ HTTP/1.1
-      authorization: Basic dXNlcjpwYXNzMTIzNA==
-      accept: application/yaml
-      content-type: application/yaml
-
-      name: Bill Smith
+      GET / HTTP/1.1
+      accept: text/plain
       """
     Then the following reply is sent:
       """
-      201 Created
+      500 Internal Server Error
+      <response>
       """
-    And the following request is received:
-      # same credentials
-      """
-      POST /users/ HTTP/1.1
-      authorization: Basic dXNlcjpwYXNzMTIzNA==
-      content-type: text/plain
-
-      name: Mary Louis
-      """
-    Then the following reply is sent:
-      """
-      403 Forbidden
-      """
+    Examples:
+      | debug | response          |
+      | false | content-length: 0 |
+      | true  | Error: Broken!    |

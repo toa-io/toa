@@ -26,6 +26,10 @@ export function decode<T = any> (input: string): T
 
 export function memo<T> (fn: T): T
 
+export function newid (): string
+
+export function match (candidate: any, reference: any): boolean
+
 export { promex } from './promex'
 export { merge, add, overwrite } from './merge'
 export { map } from './map'
