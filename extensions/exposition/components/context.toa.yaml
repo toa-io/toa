@@ -11,5 +11,5 @@ configuration:
   identity.tokens:
     key0: k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA
 
-realtime:
-  messages.created: [senderId, recipientId]
+exposition:
+  debug: true

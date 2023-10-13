@@ -10,6 +10,7 @@ const binding = require('./binding')
 exports.manifest = manifest
 exports.component = component
 exports.composition = composition
+exports.compose = composition
 exports.remote = remote
 exports.shutdown = shutdown
 exports.binding = binding

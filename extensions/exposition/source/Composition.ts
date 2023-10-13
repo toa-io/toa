@@ -1,6 +1,5 @@
-import { readdirSync } from 'node:fs'
+import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
-import { type Dirent } from 'fs'
 import { Connector } from '@toa.io/core'
 import { type Bootloader } from './Factory'
 

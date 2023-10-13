@@ -79,7 +79,6 @@ properties:
   bindings:
     type: array
     uniqueItems: true
-    minItems: 1
     items:
       $ref: '#/definitions/binding'
 
@@ -167,6 +166,9 @@ properties:
                 scope:
                   const: none
                   default: none
+                query:
+                  const: false
+                  default: false
           - if: # effect
               properties:
                 type:
@@ -176,6 +178,9 @@ properties:
                 scope:
                   const: none
                   default: none
+                query:
+                  const: false
+                  default: false
         additionalProperties: false
     additionalProperties: false
 

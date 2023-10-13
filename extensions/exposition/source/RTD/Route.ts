@@ -1,6 +1,6 @@
 import { type Node } from './Node'
 import { type Segment } from './segment'
-import { type Parameter } from './Match'
+import { type Match, type Parameter } from './Match'
 
 export class Route {
   public readonly root: boolean
@@ -18,7 +18,7 @@ export class Route {
         this.variables++
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Node | null {
+  public match (fragments: string[], parameters: Parameter[]): Match | null {
     for (let i = 0; i < this.segments.length; i++) {
       const segment = this.segments[i]
 
@@ -31,7 +31,7 @@ export class Route {
 
     const exact = this.segments.length === fragments.length
 
-    if (exact && !this.node.intermediate) return this.node
+    if (exact && !this.node.intermediate) return { node: this.node, parameters }
     else return this.matchNested(fragments, parameters)
   }
 
@@ -50,8 +50,9 @@ export class Route {
     this.node.merge(route.node)
   }
 
-  private matchNested (fragments: string[], parameters: Parameter[]): Node | null {
+  private matchNested (fragments: string[], parameters: Parameter[]): Match | null {
     fragments = fragments.slice(this.segments.length)
+    parameters = parameters.slice()
 
     return this.node.match(fragments, parameters)
   }

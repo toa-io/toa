@@ -1,0 +1,7 @@
+namespace: streams
+name: numbers
+
+operations:
+  generate:
+    input:
+      limit: number

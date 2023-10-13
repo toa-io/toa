@@ -1,11 +1,8 @@
 'use strict'
 
 const { directory: { find } } = require('@toa.io/filesystem')
-const { resolve } = require('../../shortcuts')
+const { resolve } = require('../shortcuts')
 
-/**
- * @param {toa.norm.Component} manifest
- */
 const extensions = (manifest) => {
   if (manifest.extensions === undefined) return
 

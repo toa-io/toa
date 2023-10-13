@@ -1,0 +1,16 @@
+name: messages
+
+entity:
+  schema:
+    sender*: string(32)
+    recipient*: string(32)
+    text*: string
+
+operations:
+  create:
+    query: false
+    forward: transit
+    input:
+      sender*: .
+      recipient*: .
+      text*: .

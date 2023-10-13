@@ -16,9 +16,16 @@ export class Gateway {
   @given('the annotation:')
   public async annotate (yaml: string): Promise<void> {
     const annotation = parse(yaml)
-    const node = syntax.parse(annotation, shortcuts)
 
-    process.env.TOA_EXPOSITION = encode(node)
+    if ('/' in annotation) {
+      const node = { '/': annotation['/'] }
+      const tree = syntax.parse(node, shortcuts)
+
+      process.env.TOA_EXPOSITION = encode(tree)
+    }
+
+    if (annotation.debug === true)
+      process.env.TOA_EXPOSITION_DEBUG = '1'
 
     await Gateway.stop()
 
@@ -40,22 +47,7 @@ export class Gateway {
     this.default = false
   }
 
-  @after()
-  public async cleanup (): Promise<void> {
-    if (this.default)
-      return
-
-    delete process.env.TOA_EXPOSITION
-
-    await Gateway.stop()
-  }
-
-  @afterAll()
-  public static async stop (): Promise<void> {
-    await instance?.disconnect()
-    instance = null
-  }
-
+  @given('the Gateway is running')
   public async start (): Promise<void> {
     if (instance !== null)
       return
@@ -74,6 +66,22 @@ export class Gateway {
 
     await service.connect()
     await timeout(50) // resource discovery
+  }
+
+  @after()
+  public async cleanup (): Promise<void> {
+    if (this.default)
+      return
+
+    delete process.env.TOA_EXPOSITION
+
+    await Gateway.stop()
+  }
+
+  @afterAll()
+  public static async stop (): Promise<void> {
+    await instance?.disconnect()
+    instance = null
   }
 
   private writeConfiguration (): void {

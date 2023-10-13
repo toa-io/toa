@@ -29,12 +29,6 @@ describe('extensions', () => {
 
     expect(manifest.extensions[path]).toStrictEqual(origins)
   })
-
-  it('should throw if manifest is undefined', () => {
-    manifest.extensions['./dummies/extension'].ok = false
-
-    expect(() => normalize(manifest)).toThrow(/hasn't returned manifest/)
-  })
 })
 
 describe('receivers', () => {

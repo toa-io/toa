@@ -128,7 +128,7 @@ interface Properties {
 function defaults (): Properties {
   return {
     methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-    debug: process.env.TOA_DEV === '1'
+    debug: false
   }
 }
 

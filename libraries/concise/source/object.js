@@ -43,6 +43,11 @@ const object = (schema, validate) => {
     delete schema.properties['...']
   }
 
+  if ('_' in schema.properties) {
+    schema.nullable = schema.properties._
+    delete schema.properties._
+  }
+
   schema.type = 'object'
   schema.additionalProperties = schema.additionalProperties ?? false
 

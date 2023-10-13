@@ -2,6 +2,7 @@
 
 const { Connector } = require('./connector')
 const { Nope } = require('nopeable')
+const { Readable } = require('stream')
 
 class Call extends Connector {
   #transmitter
@@ -25,6 +26,7 @@ class Call extends Connector {
     const reply = await this.#transmitter.request(request)
 
     if (reply === null) return null
+    else if (reply instanceof Readable) return reply
     else {
       if (reply.exception !== undefined)
         throw reply.exception

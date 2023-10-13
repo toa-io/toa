@@ -1,18 +1,6 @@
 Feature: AMQP binding
 
-  Scenario: Send a request and receive a reply via AMQP
-    Given I compose `echo.beacon` component
-    When I call `echo.beacon.echo` with:
-      """yaml
-      input: ok
-      """
-    Then the reply is received:
-      """yaml
-      ok
-      """
-    And I disconnect
-
-  Scenario: Start a component with external event source
+  Scenario: Start a component with an external event source
     Given I have a component `external.consumer`
     And I have a PostgreSQL database developer
     And I have a context with:

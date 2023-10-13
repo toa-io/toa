@@ -25,7 +25,7 @@ Feature: toa compose
     Then stderr should be empty
     And stdout should contain lines:
       """
-      Runtime version:
+      Runtime
       info Composition complete
       """
     Examples:

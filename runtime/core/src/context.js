@@ -38,7 +38,7 @@ class Context extends Connector {
   async #remote (namespace, name) {
     const key = namespace + '.' + name
 
-    if (this.#remotes[key] === undefined) this.#remotes[key] = this.#connect(namespace, name)
+    this.#remotes[key] ??= this.#connect(namespace, name)
 
     return this.#remotes[key]
   }

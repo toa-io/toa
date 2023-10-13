@@ -5,12 +5,9 @@ import type * as syntax from './RTD/syntax'
 import type * as core from '@toa.io/core'
 
 export abstract class Mapping {
-  public static create (verb: string, query?: syntax.Query): Mapping {
-    if (verb === 'POST')
+  public static create (query?: syntax.Query): Mapping {
+    if (query === undefined || query === null)
       return new InputMapping()
-
-    if (query === undefined)
-      throw new Error(`Query constraints must be defined for ${verb}`)
 
     const q = new Query(query)
 
@@ -37,12 +34,18 @@ class QueryableMapping extends Mapping {
 }
 
 class InputMapping extends Mapping {
-  public fit (body: any, _: unknown, parameters: Parameter[]): core.Request {
-    const input = { ...body }
+  public fit (input: any, _: unknown, parameters: Parameter[]): core.Request {
+    if (input === undefined && parameters.length > 0)
+      input = {}
 
-    for (const parameter of parameters)
-      input[parameter.name] = parameter.value
+    if (typeof input === 'object')
+      this.assign(input, parameters)
 
     return { input }
+  }
+
+  private assign (input: Record<string, any>, parameters: Parameter[]): void {
+    for (const parameter of parameters)
+      input[parameter.name] = parameter.value
   }
 }

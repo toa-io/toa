@@ -2,28 +2,16 @@ import * as _core from '@toa.io/core/types'
 import * as _norm from '@toa.io/norm/types'
 import * as _composition from '@toa.io/boot/types/composition'
 
-declare namespace toa.stage {
-  type Manifest = (path: string) => Promise<_norm.Component>
-  type Component = (path: string, options?: _composition.Options) => Promise<_core.Component>
-  type Composition = (paths: string[]) => Promise<void>
-  type Remote = (id: string) => Promise<_core.Component>
-  type Shutdown = () => Promise<void>
+export function manifest (path: string): Promise<_norm.Component>
 
-  interface Stage {
-    manifest: toa.stage.Manifest
-    component: toa.stage.Component
-    composition: toa.stage.Composition
-    remote: toa.stage.Remote
-    shutdown: toa.stage.Shutdown
-  }
-}
+export function component (path: string): Promise<_core.Component>
 
-export type Stage = toa.stage.Stage
+export function composition (paths: string[], options?: _composition.Options): Promise<void>
 
-export const manifest: toa.stage.Manifest
-export const component: toa.stage.Component
-export const composition: toa.stage.Composition
-export const remote: toa.stage.Remote
-export const shutdown: toa.stage.Shutdown
+export function compose (paths: string[]): Promise<void>
+
+export function remote (id: string): Promise<_core.Component>
+
+export function shutdown (): Promise<void>
 
 export * as binding from './binding'

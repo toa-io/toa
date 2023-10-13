@@ -172,6 +172,15 @@ describe('operations', () => {
     expect(() => validate(manifest)).toThrow(/must NOT be valid/)
   })
 
+  it.each([
+    ['computation', 'compute'],
+    ['effect', 'affect']
+  ])('should set query: false for %s', async (_, operation) => {
+    validate(manifest)
+
+    expect(manifest.operations[operation].query).toBe(false)
+  })
+
   describe('scope', () => {
     it('should have scope', () => {
       delete manifest.operations.get.scope

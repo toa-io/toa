@@ -21,7 +21,7 @@
     "@toa.io/generic": "0.20.0-alpha.1",
     "@toa.io/pointer": "0.20.0-alpha.1",
     "@toa.io/schemas": "0.20.0-alpha.1",
-    "comq": "0.8.0",
+    "comq": "0.10.1",
     "msgpackr": "1.9.5",
     "node-fetch": "2.6.7"
   },

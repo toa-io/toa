@@ -13,7 +13,7 @@ const patterns = (properties) => {
     for (const test of tests) {
       const result = test(property, schema)
 
-      if (result === undefined) continue
+      if (result === null) continue
 
       const [key, value] = result
 
@@ -29,15 +29,13 @@ const patterns = (properties) => {
 const expression = (key, value) => {
   const match = key.match(EXPRESSION)
 
-  if (match === null) return
-
-  return [match.groups.expression, value]
+  if (match === null) return null
+  else return [match.groups.expression, value]
 }
 
 const wildcard = (key, value) => {
-  if (key !== 'null') return
-
-  return ['^.*$', value]
+  if (key !== 'null') return null
+  else return ['^.*$', value]
 }
 
 const tests = [expression, wildcard]
