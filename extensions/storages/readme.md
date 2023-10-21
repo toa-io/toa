@@ -120,4 +120,12 @@ for local environment.
 
 Annotation value format is `file://{path}`.
 
-`file:///tmp/my-storage`
+`file:///var/my-storage`
+
+### Temporary
+
+Filesystem using OS temporary directory.
+
+Annotation value format is `tmp://{path}`.
+
+`tmp:///my-storage`

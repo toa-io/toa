@@ -9,7 +9,12 @@ const suites: Suite[] = [
   {
     run: true,
     schema: 'file:',
-    args: [join(tmpdir(), 'toa-storage')]
+    args: [join(tmpdir(), 'toa-storages-file')]
+  },
+  {
+    run: true,
+    schema: 'tmp:',
+    args: ['toa-storages-temp']
   }
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
@@ -42,6 +47,7 @@ describe.each(toRun)('%s', (schema, args) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -55,11 +61,13 @@ describe.each(toRun)('%s', (schema, args) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const handle2 = await open('albert.jpg')
     const stream2 = handle2.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream2)
+    await handle2.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -73,6 +81,7 @@ describe.each(toRun)('%s', (schema, args) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const result = await provider.get('/bar/lenna.png')
 
@@ -85,6 +94,7 @@ describe.each(toRun)('%s', (schema, args) => {
       const stream = handle.createReadStream()
 
       await provider.put(dir, as, stream)
+      await handle.close()
     }
 
     await put('z.png')
@@ -108,6 +118,7 @@ describe.each(toRun)('%s', (schema, args) => {
 
     await provider.put(dir, 'lenna.png', stream)
     await provider.link(dir + '/lenna.png', dir + '/lenna2.png')
+    await handle.close()
 
     const result = await provider.get(dir + '/lenna2.png') as Readable
     const output = await buffer(result)
@@ -126,6 +137,7 @@ describe.each(toRun)('%s', (schema, args) => {
 
     await provider.put(dir, 'lenna.png', stream)
     await provider.delete(dir + '/lenna.png')
+    await handle.close()
 
     const result = await provider.get(dir + '/lenna.png')
 
@@ -143,6 +155,7 @@ describe.each(toRun)('%s', (schema, args) => {
     await provider.put(dir, 'lenna.png', stream)
     await provider.link(dir + '/lenna.png', dir + '/lenna2.png')
     await provider.delete(dir + '/lenna.png')
+    await handle.close()
 
     const result = await provider.get(dir + '/lenna2.png')
 
@@ -155,6 +168,7 @@ describe.each(toRun)('%s', (schema, args) => {
 
     await provider.put(dir, 'lenna.png', stream)
     await provider.move(dir + '/lenna.png', dir + '/lenna2.png')
+    await handle.close()
 
     const result = await provider.get(dir + '/lenna2.png') as Readable
 
