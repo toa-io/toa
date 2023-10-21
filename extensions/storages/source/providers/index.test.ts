@@ -5,17 +5,19 @@ import { type Readable } from 'node:stream'
 import { buffer } from '@toa.io/streams'
 import { providers } from './index'
 
-const suites = [
+const suites: Suite[] = [
   {
     run: true,
     schema: 'file:',
     args: [join(tmpdir(), 'toa-storage')]
   }
   // add more providers here, use `run` as a condition to run the test
-  // for example `run: process.env.ACCESS_KEY_ID !== undefined`
-].filter(({ run }) => run).map(({ schema, args }) => [schema, args])
+  // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
+]
 
-describe.each(suites)('%s', (schema, args) => {
+const toRun = suites.filter(({ run }) => run).map(({ schema, args }) => [schema, args])
+
+describe.each(toRun)('%s', (schema, args) => {
   const Provider = providers[schema as keyof typeof providers]
   const provider = new Provider(...args)
 
@@ -177,4 +179,10 @@ async function read (rel: string): Promise<Buffer> {
   await handle.close()
 
   return buffer
+}
+
+interface Suite {
+  run: boolean
+  schema: string
+  args: any[]
 }
