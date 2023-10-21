@@ -61,9 +61,9 @@ async function effect (_, context) {
 
 > `Maybe<T> = T | Error`
 
-`async add(path: string, stream: Readable, type?: string): Maybe<Entry>`
+`async put(path: string, stream: Readable, type?: string): Maybe<Entry>`
 
-Add a BLOB to the storage and creates an entry under specified `path`.
+Add a BLOB to the storage and create an entry under specified `path`.
 
 BLOB type is identified
 using [magick numbers](https://github.com/sindresorhus/file-type).
@@ -86,7 +86,7 @@ If the path does not exist, a `NOT_FOUND` error is returned.
 
 `async fork(path: string, name: string, stream: Readable, type?: string): Entry`
 
-Add or replace a variant of the entry specified by `path`.
+Add or replace a `name` variant of the entry specified by `path`.
 
 The BLOB type is verified as in the `add` method.
 

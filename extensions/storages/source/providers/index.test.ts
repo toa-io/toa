@@ -146,6 +146,22 @@ describe.each(suites)('%s', (schema, args) => {
 
     expect(result).toBeNull()
   })
+
+  it('should move an entry', async () => {
+    const handle = await open('lenna.png')
+    const stream = handle.createReadStream()
+
+    await provider.put(dir, 'lenna.png', stream)
+    await provider.move(dir + '/lenna.png', dir + '/lenna2.png')
+
+    const result = await provider.get(dir + '/lenna2.png') as Readable
+
+    expect(result).not.toBeNull()
+
+    const nope = await provider.get(dir + '/lenna.png')
+
+    expect(nope).toBeNull()
+  })
 })
 
 async function open (rel: string): Promise<fs.FileHandle> {

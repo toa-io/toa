@@ -54,4 +54,11 @@ export class Filesystem implements Provider {
 
     await fse.remove(path)
   }
+
+  public async move (from: string, to: string): Promise<void> {
+    const asis = join(this.path, from)
+    const tobe = join(this.path, to)
+
+    await fs.rename(asis, tobe)
+  }
 }

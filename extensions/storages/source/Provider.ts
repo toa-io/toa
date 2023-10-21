@@ -6,4 +6,5 @@ export interface Provider {
   list: (path: string) => Promise<string[]>
   link: (from: string, to: string) => Promise<void>
   delete: (path: string) => Promise<void>
+  move: (from: string, to: string) => Promise<void>
 }
