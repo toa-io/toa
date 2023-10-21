@@ -66,7 +66,7 @@ async function effect (_, context) {
 Add a BLOB to the storage and creates an entry under specified `path`.
 
 BLOB type is identified
-using [magick numbers](https://en.wikipedia.org/wiki/List_of_file_signatures).
+using [magick numbers](https://github.com/sindresorhus/file-type).
 If the `type` argument is specified and does not match the BLOB type, then a `TYPE_MISMATCH` error
 is returned.
 

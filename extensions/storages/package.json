@@ -1,0 +1,31 @@
+{
+  "name": "@toa.io/extensions.storages",
+  "version": "0.20.0-alpha.2",
+  "description": "Toa Storages",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "test": "jest",
+    "transpile": "npx tsc"
+  },
+  "devDependencies": {
+    "@toa.io/streams": "0.1.0-alpha.2",
+    "@types/fs-extra": "11.0.3"
+  }
+}
