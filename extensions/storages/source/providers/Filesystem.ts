@@ -5,7 +5,7 @@ import * as fse from 'fs-extra'
 import { type Provider } from '../Provider'
 
 export class Filesystem implements Provider {
-  protected path: string
+  protected readonly path: string
 
   public constructor (path: string) {
     this.path = path
