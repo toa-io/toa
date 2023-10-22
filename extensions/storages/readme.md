@@ -8,6 +8,7 @@ BLOBs are stored with the meta-information object (Entry) having the following p
 
 - `id` - checksum
 - `type` - MIME type
+- `created` - creation timestamp (UNIX time, ms)
 - `hidden` - not included in the list of directory entries, default `false`
 - `variants` - array of:
   - `name` - unique variant name
@@ -19,6 +20,7 @@ BLOBs are stored with the meta-information object (Entry) having the following p
 ```yaml
 id: eecd837c
 type: image/jpeg
+created: 1698004822358
 hidden: false
 variants:
   - name: thumbnail.jpeg
@@ -97,18 +99,24 @@ If the entry does not exist, a `NOT_FOUND` error is returned.
 
 List entries under the specified `path`.
 
-If the path does not exist, a `NOT_FOUND` error is returned.
-
 `async fork(path: string, name: string, stream: Readable, type?: string): Entry`
 
 Add or replace a `name` variant of the entry specified by `path`.
 
 The BLOB type is verified as in the `add` method.
 
-`async fetch(path): Maybe<Readable>`
+`async fetch(path: string): Maybe<Readable>`
 
 Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
 A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
+
+`async hide(path: string): void`
+
+Set the `hidden` property of the entry specified by `path` to `true`.
+
+`async unhide(path: string): void`
+
+Set the `hidden` property of the entry specified by `path` to `false`.
 
 `async annotate(path: string, key: string, value: any): void`
 

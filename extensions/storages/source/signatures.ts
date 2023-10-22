@@ -1,7 +1,7 @@
 import { PassThrough, type Readable } from 'node:stream'
 import { promex } from '@toa.io/generic'
 
-export async function detect (stream: Readable): Promise<string | null> {
+export async function detect (stream: Readable, assertion?: string): Promise<string | Error> {
   const pass = new PassThrough()
   const chunks: Buffer[] = []
   const reading = promex<string>()
@@ -28,8 +28,15 @@ export async function detect (stream: Readable): Promise<string | null> {
   const signature = signatures
     .find(({ hex, offset }) => bytes.substring(offset, offset + hex.length) === hex)
 
-  if (signature !== undefined) return signature.type
-  else return null
+  const type = signature?.type ?? 'application/octet-stream'
+
+  if (assertion !== undefined && type !== assertion) {
+    stream.destroy()
+
+    return ERR_TYPE_MISMATCH
+  }
+
+  return type
 }
 
 // https://en.wikipedia.org/wiki/List_of_file_signatures
@@ -46,6 +53,8 @@ const signatures: Signature[] = [
 
 const HEADER_SIZE = signatures
   .reduce((max, { offset, hex }) => Math.max(max, offset + hex.length), 0)
+
+const ERR_TYPE_MISMATCH = new Error('TYPE_MISMATCH')
 
 interface Signature {
   type: string

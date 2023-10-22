@@ -35,7 +35,7 @@ describe('put', () => {
     lenna = await storage.put(dir, stream) as Entry
   })
 
-  it('should create an entry', async () => {
+  it('should not return error', async () => {
     expect(lenna).not.toBeInstanceOf(Error)
   })
 
@@ -55,6 +55,93 @@ describe('put', () => {
   it('should detect file type', async () => {
     expect(lenna.type).toBe('image/png')
   })
+
+  it('should return entry', async () => {
+    expect(lenna).toMatchObject({
+      id: lenna.id,
+      type: 'image/png',
+      hidden: false,
+      variants: [],
+      meta: {}
+    })
+  })
+
+  it('should create entry', async () => {
+    const entry = await storage.get(`${dir}/${lenna.id}`)
+
+    match(entry,
+      {
+        id: lenna.id,
+        type: 'image/png',
+        hidden: false,
+        variants: [],
+        meta: {}
+      }, undefined)
+  })
+
+  it('should set timestamp', async () => {
+    const now = Date.now()
+    const entry = await storage.get(`${dir}/${lenna.id}`) as Entry
+
+    expect(entry.created).toBeLessThanOrEqual(now)
+    expect(entry.created).toBeGreaterThan(now - 100)
+  })
+})
+
+describe('list', () => {
+  let albert: Entry
+  let lenna: Entry
+
+  beforeEach(async () => {
+    const handle0 = await open('albert.jpg')
+    const stream0 = handle0.createReadStream()
+    const handle1 = await open('lenna.png')
+    const stream1 = handle1.createReadStream()
+
+    albert = await storage.put(dir, stream0) as Entry
+    lenna = await storage.put(dir, stream1) as Entry
+  })
+
+  it('should return entries', async () => {
+    const entries = await storage.list(dir)
+
+    expect(entries).toMatchObject([
+      { id: albert.id },
+      { id: lenna.id }
+    ])
+  })
+
+  it('should exclude hidden', async () => {
+    const path = `${dir}/${lenna.id}`
+
+    await storage.hide(path)
+
+    const entries = await storage.list(dir)
+
+    expect(entries.length).toBe(1)
+  })
+})
+
+describe('hidden', () => {
+  let lenna: Entry
+
+  beforeEach(async () => {
+    const handle = await open('lenna.png')
+    const stream = handle.createReadStream()
+
+    lenna = await storage.put(dir, stream) as Entry
+  })
+
+  it('should set hidden', async () => {
+    const path = `${dir}/${lenna.id}`
+
+    await storage.hide(path)
+
+    const entry = await storage.get(path)
+
+    match(entry,
+      { hidden: true }, undefined)
+  })
 })
 
 it.each(['jpeg', 'gif', 'webp', 'heic'])('should detect image/%s',
@@ -65,3 +152,12 @@ it.each(['jpeg', 'gif', 'webp', 'heic'])('should detect image/%s',
 
     expect(entry.type).toBe('image/' + type)
   })
+
+it('should return error if type doesnt match', async () => {
+  const handle = await open('sample.jpeg')
+  const stream = handle.createReadStream()
+  const result = await storage.put(dir, stream, 'image/png')
+
+  match(result,
+    Error, (error: Error) => expect(error.message).toBe('TYPE_MISMATCH'))
+})

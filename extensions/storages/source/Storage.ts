@@ -1,7 +1,9 @@
-import { type Readable, PassThrough } from 'node:stream'
+import { Readable, PassThrough } from 'node:stream'
 import { posix } from 'node:path'
 import crypto from 'node:crypto'
-import { newid, promex } from '@toa.io/generic'
+import { decode, encode } from 'msgpackr'
+import { buffer, newid, promex } from '@toa.io/generic'
+import { match } from '@toa.io/match'
 import { type Provider } from './Provider'
 import { type Entry } from './Entry'
 import { detect } from './signatures'
@@ -14,20 +16,49 @@ export class Storage {
   }
 
   public async get (path: string): Promise<Entry | Error> {
-    return new Error('NOT_FOUND')
+    const metaPath = STORAGE + path + '/.meta'
+    const result = await this.provider.get(metaPath)
+
+    return match(result,
+      null, ERR_NOT_FOUND,
+      async (stream: Readable) => decode(await buffer(stream)))
   }
 
-  public async put (path: string, stream: Readable): Promise<Entry | Error> {
-    const hash = this.hash(stream)
-    const mime = detect(stream)
+  public async put (path: string, stream: Readable, type?: string): Promise<Entry | Error> {
+    const hashing = this.hash(stream)
+    const detecting = detect(stream, type)
     const tempname = await this.add(stream)
+    const id = await hashing
+    const mime = await detecting
 
-    const id = await hash
-    const type = await mime ?? 'application/octet-stream'
+    if (mime instanceof Error)
+      return mime
 
     await this.move(tempname, id)
 
-    return await this.create(path, id, type)
+    return await this.create(path, id, mime)
+  }
+
+  public async list (path: string): Promise<Entry[]> {
+    const entries = await this.provider.list(STORAGE + path)
+
+    const reading = entries
+      .map(async (id) => await this.get(posix.join(path, id)))
+
+    const meta = await Promise.all(reading)
+
+    return meta.filter((entry) => !(entry instanceof Error) && !entry.hidden) as Entry[]
+  }
+
+  public async hide (path: string): Promise<undefined | Error> {
+    const entry = await this.get(path)
+
+    if (entry instanceof Error)
+      return entry
+
+    entry.hidden = true
+
+    await this.update(path, entry)
   }
 
   private async add (stream: Readable): Promise<string> {
@@ -35,6 +66,7 @@ export class Storage {
     const pass = new PassThrough()
 
     stream.pipe(pass)
+    stream.on('close', () => pass.end())
 
     await this.provider.put(TEMP, tempname, pass)
 
@@ -47,6 +79,7 @@ export class Storage {
     const pass = new PassThrough()
 
     stream.pipe(pass)
+    stream.on('close', () => pass.end())
     pass.pipe(hash)
     hash.on('finish', () => checksum.resolve(hash.digest('hex')))
 
@@ -61,9 +94,30 @@ export class Storage {
   }
 
   private async create (path: string, id: string, type: string): Promise<Entry> {
-    return { id, type } as unknown as Entry
+    const entry: Entry = {
+      id,
+      type,
+      created: Date.now(),
+      hidden: false,
+      variants: [],
+      meta: {}
+    }
+
+    await this.update(posix.join(path, entry.id), entry)
+
+    return entry
+  }
+
+  private async update (path: string, entry: Entry): Promise<void> {
+    const buffer = encode(entry)
+    const stream = Readable.from(buffer)
+
+    await this.provider.put(STORAGE + path, '.meta', stream)
   }
 }
 
+const ERR_NOT_FOUND = new Error('NOT_FOUND')
+
 const TEMP = '/temp'
 const BLOB = '/blob'
+const STORAGE = '/storage'

@@ -37,7 +37,7 @@ export class Filesystem implements Provider {
 
     const entries = await fs.readdir(path, { withFileTypes: true })
 
-    return entries.filter((e) => e.isFile()).map((e) => e.name)
+    return entries.filter((e) => e.isDirectory()).map((e) => e.name)
   }
 
   public async delete (rel: string): Promise<void> {

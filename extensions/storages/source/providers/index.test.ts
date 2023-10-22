@@ -65,21 +65,20 @@ describe.each(cases)('%s', (protocol, url) => {
     expect(result).toBeNull()
   })
 
-  it('should list entries', async () => {
-    async function put (as: string): Promise<void> {
+  it('should list directries', async () => {
+    async function put (path: string, as: string): Promise<void> {
       const handle = await open('lenna.png')
       const stream = handle.createReadStream()
 
-      await provider.put(dir, as, stream)
+      await provider.put(path, as, stream)
     }
 
-    await put('z.png')
-    await put('a.png')
+    await put(dir + '/foo', 'z.png')
+    await put(dir + '/bar', 'a.png')
 
     const list = await provider.list(dir)
 
-    // alphabetical order
-    expect(list).toStrictEqual(['a.png', 'z.png'])
+    expect(list).toStrictEqual(expect.arrayContaining(['foo', 'bar']))
   })
 
   it('should return empty list if path does not exists', async () => {
