@@ -7,17 +7,15 @@ import { type Provider } from '../Provider'
 export class Filesystem implements Provider {
   protected readonly path: string
 
-  public constructor (path: string) {
-    this.path = path
+  public constructor (url: URL) {
+    this.path = url.pathname
   }
 
   public async get (rel: string): Promise<Readable | null> {
     const path = join(this.path, rel)
 
     try {
-      const handle = await fs.open(path, 'r')
-
-      return handle.createReadStream()
+      return (await fs.open(path, 'r')).createReadStream()
     } catch (e: any) {
       if (e?.code === 'ENOENT') return null
       else throw e
@@ -39,14 +37,7 @@ export class Filesystem implements Provider {
 
     const entries = await fs.readdir(path, { withFileTypes: true })
 
-    return entries.filter((e) => !e.isDirectory()).map((e) => e.name)
-  }
-
-  public async link (from: string, to: string): Promise<void> {
-    const source = join(this.path, from)
-    const link = join(this.path, to)
-
-    await fse.ensureSymlink(source, link)
+    return entries.filter((e) => e.isFile()).map((e) => e.name)
   }
 
   public async delete (rel: string): Promise<void> {

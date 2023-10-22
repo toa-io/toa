@@ -6,9 +6,9 @@ import { Filesystem } from './Filesystem'
 export class Temporary extends Filesystem {
   protected override readonly path: string
 
-  public constructor (dir: string) {
-    super(dir)
+  public constructor (url: URL) {
+    super(url)
 
-    this.path = join(tmpdir(), dir)
+    this.path = join(tmpdir(), url.pathname)
   }
 }

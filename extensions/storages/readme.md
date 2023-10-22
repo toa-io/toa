@@ -32,32 +32,47 @@ meta:
 
 ## Deduplication
 
-BLOBs are stored in the storage with the checksum as the key, ensuring that identical BLOBs are
-stored only once.
-Variants are not deduplicated across different paths.
+BLOBs are stored in the storage system with their checksum as the key, ensuring that identical BLOBs
+are stored only once.
+Variants, on the other hand, are not deduplicated across different entries.
+
+Underlying directory structure:
+
+```
+/temp
+  c28f4dfd          # random id, auto deleted
+/blobs
+  b4f577e0          # checksum
+/storage
+  /path/to/b4f577e0
+    .meta           # entry
+    thumbnail.jpeg  # variant BLOBs
+    thumbnail.webp
+```
 
 ## Annotation
 
 The `storages` context annotation is an object with keys that reference the storage name and
-provider-specific values.
+provider-specific URLs as values.
 
 ```yaml
 storages:
   photos: s3://us-east-1/my-bucket
-  photos@dev: file:///tmp/my-storage
+  photos@dev: file:///var/my-storage
 ```
 
 ## Aspect
 
-Storages extension provides `storages` aspect.
+The Storages extension provides `storages` aspect,
+containing named Storage instances, according to the annotation.
 
 ```javascript
 async function effect (_, context) {
-  await context.storages.photos.add('/path/to', stream, 'image/jpeg')
+  await context.storages.photos.get('/path/to/b4f577e0.thumbnail.jpeg')
 }
 ```
 
-### Aspect methods
+### Storage interface
 
 > `Maybe<T> = T | Error`
 

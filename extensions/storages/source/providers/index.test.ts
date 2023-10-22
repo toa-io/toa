@@ -8,28 +8,32 @@ import { providers } from './index'
 const suites: Suite[] = [
   {
     run: true,
-    schema: 'file:',
-    args: [join(tmpdir(), 'toa-storages-file')]
+    ref: `file://${join(tmpdir(), 'toa-storages-file')}`
   },
   {
     run: true,
-    schema: 'tmp:',
-    args: ['toa-storages-temp']
+    ref: 'tmp://toa-storages-temp'
   }
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
 ]
 
-const toRun = suites.filter(({ run }) => run).map(({ schema, args }) => [schema, args])
+const cases = suites
+  .filter(({ run }) => run)
+  .map(({ ref }) => {
+    const url = new URL(ref)
 
-describe.each(toRun)('%s', (schema, args) => {
-  const Provider = providers[schema as keyof typeof providers]
-  const provider = new Provider(...args)
+    return [url.protocol, url]
+  })
+
+describe.each(cases)('%s', (protocol, url) => {
+  const Provider = providers[protocol as keyof typeof providers]
+  const provider = new Provider(url)
 
   let dir: string
 
   beforeEach(() => {
-    dir = '/' + Math.random().toString(36).slice(2)
+    dir = '/' + rnd()
   })
 
   it('should be', async () => {
@@ -37,7 +41,7 @@ describe.each(toRun)('%s', (schema, args) => {
   })
 
   it('should return null if file not found', async () => {
-    const result = await provider.get(Math.random().toString())
+    const result = await provider.get(rnd())
 
     expect(result).toBeNull()
   })
@@ -47,6 +51,7 @@ describe.each(toRun)('%s', (schema, args) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -60,11 +65,13 @@ describe.each(toRun)('%s', (schema, args) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const handle2 = await open('albert.jpg')
     const stream2 = handle2.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream2)
+    await handle2.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -78,6 +85,7 @@ describe.each(toRun)('%s', (schema, args) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const result = await provider.get('/bar/lenna.png')
 
@@ -90,6 +98,7 @@ describe.each(toRun)('%s', (schema, args) => {
       const stream = handle.createReadStream()
 
       await provider.put(dir, as, stream)
+      await handle.close()
     }
 
     await put('z.png')
@@ -102,27 +111,9 @@ describe.each(toRun)('%s', (schema, args) => {
   })
 
   it('should return empty list if path does not exists', async () => {
-    const list = await provider.list('/' + Math.random().toString(36).slice(2))
+    const list = await provider.list('/' + rnd())
 
     expect(list).toStrictEqual([])
-  })
-
-  it('should create symlink', async () => {
-    const handle = await open('lenna.png')
-    const stream = handle.createReadStream()
-
-    await provider.put(dir, 'lenna.png', stream)
-    await provider.link(dir + '/lenna.png', dir + '/lenna2.png')
-
-    const result = await provider.get(dir + '/lenna2.png') as Readable
-    const output = await buffer(result)
-    const lenna = await read('lenna.png')
-
-    expect(output.compare(lenna)).toBe(0)
-
-    const list = await provider.list(dir)
-
-    expect(list).toStrictEqual(['lenna.png', 'lenna2.png'])
   })
 
   it('should delete entry', async () => {
@@ -130,6 +121,7 @@ describe.each(toRun)('%s', (schema, args) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
     await provider.delete(dir + '/lenna.png')
 
     const result = await provider.get(dir + '/lenna.png')
@@ -141,24 +133,12 @@ describe.each(toRun)('%s', (schema, args) => {
     await expect(provider.delete(dir + '/whatever')).resolves.not.toThrow()
   })
 
-  it('should delete symlinks of deleted entry', async () => {
-    const handle = await open('lenna.png')
-    const stream = handle.createReadStream()
-
-    await provider.put(dir, 'lenna.png', stream)
-    await provider.link(dir + '/lenna.png', dir + '/lenna2.png')
-    await provider.delete(dir + '/lenna.png')
-
-    const result = await provider.get(dir + '/lenna2.png')
-
-    expect(result).toBeNull()
-  })
-
   it('should move an entry', async () => {
     const handle = await open('lenna.png')
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
     await provider.move(dir + '/lenna.png', dir + '/lenna2.png')
 
     const result = await provider.get(dir + '/lenna2.png') as Readable
@@ -170,6 +150,10 @@ describe.each(toRun)('%s', (schema, args) => {
     expect(nope).toBeNull()
   })
 })
+
+function rnd (): string {
+  return Math.random().toString(36).slice(2)
+}
 
 async function open (rel: string): Promise<fs.FileHandle> {
   const path = join(__dirname, './.assets', rel)
@@ -188,6 +172,5 @@ async function read (rel: string): Promise<Buffer> {
 
 interface Suite {
   run: boolean
-  schema: string
-  args: any[]
+  ref: string
 }
