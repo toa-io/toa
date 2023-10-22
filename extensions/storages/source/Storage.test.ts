@@ -51,4 +51,17 @@ describe('put', () => {
 
     expect(copy.id).toBe(lenna.id)
   })
+
+  it('should detect file type', async () => {
+    expect(lenna.type).toBe('image/png')
+  })
 })
+
+it.each(['jpeg', 'gif', 'webp', 'heic'])('should detect image/%s',
+  async (type) => {
+    const handle = await open('sample.' + type)
+    const stream = handle.createReadStream()
+    const entry = await storage.put(dir, stream) as Entry
+
+    expect(entry.type).toBe('image/' + type)
+  })

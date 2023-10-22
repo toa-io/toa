@@ -4,6 +4,7 @@ import crypto from 'node:crypto'
 import { newid, promex } from '@toa.io/generic'
 import { type Provider } from './Provider'
 import { type Entry } from './Entry'
+import { detect } from './signatures'
 
 export class Storage {
   private readonly provider: Provider
@@ -18,40 +19,51 @@ export class Storage {
 
   public async put (path: string, stream: Readable): Promise<Entry | Error> {
     const hash = this.hash(stream)
-    const tempname = await this.send(stream)
-    const id = await hash
+    const mime = detect(stream)
+    const tempname = await this.add(stream)
 
-    return await this.create(tempname, path, id)
+    const id = await hash
+    const type = await mime ?? 'application/octet-stream'
+
+    await this.move(tempname, id)
+
+    return await this.create(path, id, type)
   }
 
-  private async send (stream: Readable): Promise<string> {
+  private async add (stream: Readable): Promise<string> {
     const tempname = newid()
-    const sending = new PassThrough()
+    const pass = new PassThrough()
 
-    stream.pipe(sending)
+    stream.pipe(pass)
 
-    await this.provider.put(TEMP, tempname, sending)
+    await this.provider.put(TEMP, tempname, pass)
 
     return tempname
   }
 
   private async hash (stream: Readable): Promise<string> {
     const hash = crypto.createHash('md5')
-    const hashed = promex<string>()
-    const hashing = new PassThrough()
+    const checksum = promex<string>()
+    const pass = new PassThrough()
 
-    hashing.pipe(hash)
-    hash.on('finish', () => hashed.resolve(hash.digest('hex')))
-    stream.pipe(hashing)
+    stream.pipe(pass)
+    pass.pipe(hash)
+    hash.on('finish', () => checksum.resolve(hash.digest('hex')))
 
-    return await hashed
+    return await checksum
   }
 
-  private async create (tempname: string, path: string, id: string): Promise<Entry> {
-    await this.provider.move(posix.join(TEMP, tempname), posix.join(path, id))
+  private async move (tempname: string, id: string): Promise<void> {
+    const temp = posix.join(TEMP, tempname)
+    const blob = posix.join(BLOB, id)
 
-    return { id } as unknown as Entry
+    await this.provider.move(temp, blob)
+  }
+
+  private async create (path: string, id: string, type: string): Promise<Entry> {
+    return { id, type } as unknown as Entry
   }
 }
 
 const TEMP = '/temp'
+const BLOB = '/blob'
