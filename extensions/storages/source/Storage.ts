@@ -15,7 +15,7 @@ export class Storage {
     this.provider = provider
   }
 
-  public async get (path: string): Promise<Entry | Error> {
+  public async get (path: string): Maybe<Entry> {
     const metaPath = STORAGE + path + '/.meta'
     const result = await this.provider.get(metaPath)
 
@@ -24,7 +24,7 @@ export class Storage {
       async (stream: Readable) => decode(await buffer(stream)))
   }
 
-  public async put (path: string, stream: Readable, type?: string): Promise<Entry | Error> {
+  public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
     const hashing = this.hash(stream)
     const detecting = detect(stream, type)
     const tempname = await this.add(stream)
@@ -50,13 +50,37 @@ export class Storage {
     return meta.filter((entry) => !(entry instanceof Error) && !entry.hidden) as Entry[]
   }
 
-  public async hide (path: string): Promise<undefined | Error> {
+  public async hide (path: string): Maybe<void> {
     const entry = await this.get(path)
 
     if (entry instanceof Error)
       return entry
 
     entry.hidden = true
+
+    await this.update(path, entry)
+  }
+
+  public async unhide (path: string): Maybe<void> {
+    const entry = await this.get(path)
+
+    if (entry instanceof Error)
+      return entry
+
+    entry.hidden = false
+
+    await this.update(path, entry)
+  }
+
+  public async annotate (path: string, key: string, value?: unknown): Maybe<void> {
+    const entry = await this.get(path)
+
+    if (entry instanceof Error)
+      return entry
+
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    if (value === undefined) delete entry.meta[key]
+    else entry.meta[key] = value
 
     await this.update(path, entry)
   }
@@ -121,3 +145,5 @@ const ERR_NOT_FOUND = new Error('NOT_FOUND')
 const TEMP = '/temp'
 const BLOB = '/blob'
 const STORAGE = '/storage'
+
+type Maybe<T> = Promise<T | Error>

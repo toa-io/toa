@@ -142,6 +142,45 @@ describe('hidden', () => {
     match(entry,
       { hidden: true }, undefined)
   })
+
+  it('should unhide', async () => {
+    const path = `${dir}/${lenna.id}`
+
+    await storage.hide(path)
+    await storage.unhide(path)
+
+    const entry = await storage.get(path)
+
+    match(entry,
+      { hidden: false }, undefined)
+  })
+})
+
+describe('annotate', () => {
+  let lenna: Entry
+
+  beforeEach(async () => {
+    const handle = await open('lenna.png')
+    const stream = handle.createReadStream()
+
+    lenna = await storage.put(dir, stream) as Entry
+  })
+
+  it('should set meta', async () => {
+    const path = `${dir}/${lenna.id}`
+
+    await storage.annotate(path, 'foo', 'bar')
+
+    const state0 = await storage.get(path) as Entry
+
+    expect(state0.meta).toMatchObject({ foo: 'bar' })
+
+    await storage.annotate(path, 'foo')
+
+    const state1 = await storage.get(path) as Entry
+
+    expect('foo' in state1.meta).toBe(false)
+  })
 })
 
 it.each(['jpeg', 'gif', 'webp', 'heic'])('should detect image/%s',

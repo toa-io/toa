@@ -110,15 +110,15 @@ The BLOB type is verified as in the `add` method.
 Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
 A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
 
-`async hide(path: string): void`
+`async hide(path: string): Maybe<void>`
 
 Set the `hidden` property of the entry specified by `path` to `true`.
 
-`async unhide(path: string): void`
+`async unhide(path: string): Maybe<void>`
 
 Set the `hidden` property of the entry specified by `path` to `false`.
 
-`async annotate(path: string, key: string, value: any): void`
+`async annotate(path: string, key: string, value: any): Maybe<void>`
 
 Set a `key` property in the `meta` of the entry specified by `path`.
 
