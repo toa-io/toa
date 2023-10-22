@@ -183,6 +183,50 @@ describe('annotate', () => {
   })
 })
 
+describe('variants', () => {
+  let lenna: Entry
+
+  beforeEach(async () => {
+    const handle = await open('lenna.png')
+    const stream = handle.createReadStream()
+
+    lenna = await storage.put(dir, stream) as Entry
+  })
+
+  it('should add variant', async () => {
+    const handle = await open('sample.jpeg')
+    const stream = handle.createReadStream()
+    const path = `${dir}/${lenna.id}`
+
+    await storage.fork(path, 'foo', stream)
+
+    const state = await storage.get(path) as Entry
+
+    expect(state.variants).toMatchObject([{ name: 'foo', type: 'image/jpeg' }])
+  })
+
+  it('should replace variant', async () => {
+    const handle0 = await open('sample.jpeg')
+    const stream0 = handle0.createReadStream()
+    const handle1 = await open('sample.webp')
+    const stream1 = handle1.createReadStream()
+    const path = `${dir}/${lenna.id}`
+
+    await storage.fork(path, 'foo', stream0)
+    await storage.fork(path, 'foo', stream1)
+
+    const state = await storage.get(path) as Entry
+
+    expect(state.variants).toMatchObject([{ name: 'foo', type: 'image/webp' }])
+  })
+})
+
+// describe('fetch', () => {
+//   it('should fetch', async () => {
+//     expect(0).toBe(1)
+//   })
+// })
+
 it.each(['jpeg', 'gif', 'webp', 'heic'])('should detect image/%s',
   async (type) => {
     const handle = await open('sample.' + type)

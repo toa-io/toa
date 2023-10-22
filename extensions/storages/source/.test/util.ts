@@ -34,9 +34,9 @@ export async function open (rel: string): Promise<fs.FileHandle> {
 }
 
 export async function read (rel: string): Promise<Buffer> {
-  const handle = await open(rel)
+  const path = join(__dirname, rel)
 
-  return await handle.readFile()
+  return fs.readFile(path)
 }
 
 interface Suite {

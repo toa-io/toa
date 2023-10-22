@@ -1,5 +1,5 @@
 import { type Readable } from 'node:stream'
-import { join, dirname } from 'node:path'
+import { dirname, join } from 'node:path'
 import fs from 'fs/promises'
 import fse from 'fs-extra'
 import { type Provider } from '../Provider'
@@ -15,7 +15,9 @@ export class Filesystem implements Provider {
     const path = join(this.path, rel)
 
     try {
-      return (await fs.open(path, 'r')).createReadStream()
+      const handle = await fs.open(path, 'r')
+
+      return handle.createReadStream()
     } catch (e: any) {
       if (e?.code === 'ENOENT') return null
       else throw e
@@ -33,11 +35,14 @@ export class Filesystem implements Provider {
   public async list (rel: string): Promise<string[]> {
     const path = join(this.path, rel)
 
-    if (!await fse.pathExists(path)) return []
+    if (!await fse.pathExists(path))
+      return []
 
     const entries = await fs.readdir(path, { withFileTypes: true })
 
-    return entries.filter((e) => e.isDirectory()).map((e) => e.name)
+    return entries
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name)
   }
 
   public async delete (rel: string): Promise<void> {

@@ -39,6 +39,27 @@ export class Storage {
     return await this.create(path, id, mime)
   }
 
+  public async fork (path: string, name: string, stream: Readable): Maybe<void> {
+    const detecting = detect(stream)
+
+    await this.provider.put(STORAGE + path, name, stream)
+
+    const type = await detecting
+
+    if (type instanceof Error)
+      return type
+
+    const entry = await this.get(path)
+
+    if (entry instanceof Error)
+      return entry
+
+    entry.variants = entry.variants.filter((variant) => variant.name !== name)
+    entry.variants.push({ name, type })
+
+    await this.update(path, entry)
+  }
+
   public async list (path: string): Promise<Entry[]> {
     const entries = await this.provider.list(STORAGE + path)
 

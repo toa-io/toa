@@ -28,6 +28,7 @@ describe.each(cases)('%s', (protocol, url) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -41,11 +42,13 @@ describe.each(cases)('%s', (protocol, url) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const handle2 = await open('albert.jpg')
     const stream2 = handle2.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream2)
+    await handle2.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -59,6 +62,7 @@ describe.each(cases)('%s', (protocol, url) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
+    await handle.close()
 
     const result = await provider.get('/bar/lenna.png')
 
@@ -71,6 +75,7 @@ describe.each(cases)('%s', (protocol, url) => {
       const stream = handle.createReadStream()
 
       await provider.put(path, as, stream)
+      await handle.close()
     }
 
     await put(dir + '/foo', 'z.png')
@@ -104,6 +109,7 @@ describe.each(cases)('%s', (protocol, url) => {
       const stream = handle.createReadStream()
 
       await provider.put(dir, 'lenna.png', stream)
+      await handle.close()
       await provider.delete(dir + '/lenna.png')
 
       const result = await provider.get(dir + '/lenna.png')
@@ -120,6 +126,7 @@ describe.each(cases)('%s', (protocol, url) => {
       const stream = handle.createReadStream()
 
       await provider.put(dir, 'lenna.png', stream)
+      await handle.close()
       await provider.delete(dir)
 
       const result = await provider.get(dir + '/lenna.png')
@@ -133,6 +140,7 @@ describe.each(cases)('%s', (protocol, url) => {
       const dir2 = '/' + rnd()
 
       await provider.put(dir, 'lenna.png', stream)
+      await handle.close()
       await provider.move(dir + '/lenna.png', dir2 + '/lenna2.png')
 
       const result = await provider.get(dir2 + '/lenna2.png') as Readable
