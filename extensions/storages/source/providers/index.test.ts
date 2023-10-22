@@ -1,30 +1,7 @@
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import * as fs from 'node:fs/promises'
 import { type Readable } from 'node:stream'
 import { buffer } from '@toa.io/streams'
+import { cases, open, rnd, read } from '../.test/util'
 import { providers } from './index'
-
-const suites: Suite[] = [
-  {
-    run: true,
-    ref: `file://${join(tmpdir(), 'toa-storages-file')}`
-  },
-  {
-    run: true,
-    ref: 'tmp://toa-storages-temp'
-  }
-  // add more providers here, use `run` as a condition to run the test
-  // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
-]
-
-const cases = suites
-  .filter(({ run }) => run)
-  .map(({ ref }) => {
-    const url = new URL(ref)
-
-    return [url.protocol, url]
-  })
 
 describe.each(cases)('%s', (protocol, url) => {
   const Provider = providers[protocol as keyof typeof providers]
@@ -51,7 +28,6 @@ describe.each(cases)('%s', (protocol, url) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -65,13 +41,11 @@ describe.each(cases)('%s', (protocol, url) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
 
     const handle2 = await open('albert.jpg')
     const stream2 = handle2.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream2)
-    await handle2.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -85,7 +59,6 @@ describe.each(cases)('%s', (protocol, url) => {
     const stream = handle.createReadStream()
 
     await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
 
     const result = await provider.get('/bar/lenna.png')
 
@@ -98,7 +71,6 @@ describe.each(cases)('%s', (protocol, url) => {
       const stream = handle.createReadStream()
 
       await provider.put(dir, as, stream)
-      await handle.close()
     }
 
     await put('z.png')
@@ -116,61 +88,61 @@ describe.each(cases)('%s', (protocol, url) => {
     expect(list).toStrictEqual([])
   })
 
-  it('should delete entry', async () => {
-    const handle = await open('lenna.png')
-    const stream = handle.createReadStream()
+  describe('danger', () => {
+    /*
 
-    await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
-    await provider.delete(dir + '/lenna.png')
+    WHEN MAKING CHANGES TO DELETION,
+    ALWAYS RUN TESTS IN STEP-BY-STEP DEBUGGING MODE
 
-    const result = await provider.get(dir + '/lenna.png')
+    YOU MAY EVENTUALLY DELETE YOUR ENTIRE FILE SYSTEM
 
-    expect(result).toBeNull()
-  })
+                              Sincerely yours, Murphy
 
-  it('should not throw if path does not exists', async () => {
-    await expect(provider.delete(dir + '/whatever')).resolves.not.toThrow()
-  })
+     */
 
-  it('should move an entry', async () => {
-    const handle = await open('lenna.png')
-    const stream = handle.createReadStream()
+    it('should delete entry', async () => {
+      const handle = await open('lenna.png')
+      const stream = handle.createReadStream()
 
-    await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
-    await provider.move(dir + '/lenna.png', dir + '/lenna2.png')
+      await provider.put(dir, 'lenna.png', stream)
+      await provider.delete(dir + '/lenna.png')
 
-    const result = await provider.get(dir + '/lenna2.png') as Readable
+      const result = await provider.get(dir + '/lenna.png')
 
-    expect(result).not.toBeNull()
+      expect(result).toBeNull()
+    })
 
-    const nope = await provider.get(dir + '/lenna.png')
+    it('should not throw if path does not exists', async () => {
+      await expect(provider.delete(dir + '/whatever')).resolves.not.toThrow()
+    })
 
-    expect(nope).toBeNull()
+    it('should delete directory', async () => {
+      const handle = await open('lenna.png')
+      const stream = handle.createReadStream()
+
+      await provider.put(dir, 'lenna.png', stream)
+      await provider.delete(dir)
+
+      const result = await provider.get(dir + '/lenna.png')
+
+      expect(result).toBeNull()
+    })
+
+    it('should move an entry', async () => {
+      const handle = await open('lenna.png')
+      const stream = handle.createReadStream()
+      const dir2 = '/' + rnd()
+
+      await provider.put(dir, 'lenna.png', stream)
+      await provider.move(dir + '/lenna.png', dir2 + '/lenna2.png')
+
+      const result = await provider.get(dir2 + '/lenna2.png') as Readable
+
+      expect(result).not.toBeNull()
+
+      const nope = await provider.get(dir + '/lenna.png')
+
+      expect(nope).toBeNull()
+    })
   })
 })
-
-function rnd (): string {
-  return Math.random().toString(36).slice(2)
-}
-
-async function open (rel: string): Promise<fs.FileHandle> {
-  const path = join(__dirname, './.assets', rel)
-
-  return await fs.open(path, 'r')
-}
-
-async function read (rel: string): Promise<Buffer> {
-  const handle = await open(rel)
-  const buffer = await handle.readFile()
-
-  await handle.close()
-
-  return buffer
-}
-
-interface Suite {
-  run: boolean
-  ref: string
-}

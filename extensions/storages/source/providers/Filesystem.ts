@@ -1,7 +1,7 @@
 import { type Readable } from 'node:stream'
-import { join } from 'node:path'
-import * as fs from 'fs/promises'
-import * as fse from 'fs-extra'
+import { join, dirname } from 'node:path'
+import fs from 'fs/promises'
+import fse from 'fs-extra'
 import { type Provider } from '../Provider'
 
 export class Filesystem implements Provider {
@@ -50,6 +50,7 @@ export class Filesystem implements Provider {
     const asis = join(this.path, from)
     const tobe = join(this.path, to)
 
+    await fse.ensureDir(dirname(tobe))
     await fs.rename(asis, tobe)
   }
 }
