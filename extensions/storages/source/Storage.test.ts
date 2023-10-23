@@ -325,7 +325,11 @@ it('should not return error if type application/octet-stream', async () => {
 it('should handle root entries', async () => {
   const handle = await open('sample.jpeg')
   const stream = handle.createReadStream()
-  const result = await storage.put('hello', stream)
+  const result = await storage.put('hello', stream) as Entry
 
   expect(result).not.toBeInstanceOf(Error)
+
+  const stored = await storage.fetch(result.id)
+
+  expect(stored).not.toBeInstanceOf(Error)
 })
