@@ -13,7 +13,7 @@ const factory = new Factory()
 
 beforeEach(() => {
   dir = '/' + rnd()
-  storage = factory.createStorage('tmp://storage-test')
+  storage = factory.createStorage('tmp:///storage-test')
 })
 
 it('should be', async () => {
