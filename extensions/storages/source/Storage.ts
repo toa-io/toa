@@ -15,8 +15,8 @@ export class Storage {
   }
 
   public async get (path: string): Maybe<Entry> {
-    const metafile = posix.join(ENTRIES, path, '/.meta')
-    const result = await this.provider.get(metafile)
+    const metapath = posix.join(ENTRIES, path, '/.meta')
+    const result = await this.provider.get(metapath)
 
     if (result === null) return ERR_NOT_FOUND
     else return decode(await buffer(result))

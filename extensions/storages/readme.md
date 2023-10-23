@@ -42,7 +42,7 @@ Underlying directory structure:
 
 ```
 /temp
-  c28f4dfd          # random id, auto deleted
+  c28f4dfd          # random id
 /blobs
   b4f577e0          # checksum
 /storage
@@ -139,7 +139,7 @@ for local environment.
 
 ### Filesystem
 
-Annotation value format is `file://{path}`.
+Annotation value format is `file:///{path}`.
 
 `file:///var/my-storage`
 
@@ -147,6 +147,6 @@ Annotation value format is `file://{path}`.
 
 Filesystem using OS temporary directory.
 
-Annotation value format is `tmp://{path}`.
+Annotation value format is `tmp:///{path}`.
 
 `tmp:///my-storage`
