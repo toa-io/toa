@@ -3,7 +3,6 @@ import { posix } from 'node:path'
 import crypto from 'node:crypto'
 import { decode, encode } from 'msgpackr'
 import { buffer, newid, promex } from '@toa.io/generic'
-import { match } from '@toa.io/match'
 import { type Provider } from './Provider'
 import { type Entry } from './Entry'
 import { detect } from './signatures'
@@ -19,9 +18,8 @@ export class Storage {
     const metaPath = posix.join(STORAGE, path, '/.meta')
     const result = await this.provider.get(metaPath)
 
-    return match(result,
-      null, ERR_NOT_FOUND,
-      async (stream: Readable) => decode(await buffer(stream)))
+    if (result === null) return ERR_NOT_FOUND
+    else return decode(await buffer(result))
   }
 
   public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
