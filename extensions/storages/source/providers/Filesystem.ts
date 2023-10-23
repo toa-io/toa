@@ -8,6 +8,9 @@ export class Filesystem implements Provider {
   protected readonly path: string
 
   public constructor (url: URL) {
+    if (url.host !== '')
+      throw new Error('URL must not contain host')
+
     this.path = url.pathname
   }
 
