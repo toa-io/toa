@@ -16,7 +16,7 @@ export class Storage {
   }
 
   public async get (path: string): Maybe<Entry> {
-    const metaPath = STORAGE + path + '/.meta'
+    const metaPath = posix.join(STORAGE, path, '/.meta')
     const result = await this.provider.get(metaPath)
 
     return match(result,
@@ -34,7 +34,7 @@ export class Storage {
     if (mime instanceof Error)
       return mime
 
-    await this.move(tempname, id)
+    await this.persist(tempname, id)
 
     return await this.create(path, id, mime)
   }
@@ -42,7 +42,7 @@ export class Storage {
   public async fork (path: string, name: string, stream: Readable): Maybe<void> {
     const detecting = detect(stream)
 
-    await this.provider.put(STORAGE + path, name, stream)
+    await this.provider.put(posix.join(STORAGE, path), name, stream)
 
     const type = await detecting
 
@@ -61,7 +61,7 @@ export class Storage {
   }
 
   public async list (path: string): Promise<Entry[]> {
-    const entries = await this.provider.list(STORAGE + path)
+    const entries = await this.provider.list(posix.join(STORAGE, path))
 
     const reading = entries
       .map(async (id) => await this.get(posix.join(path, id)))
@@ -71,26 +71,12 @@ export class Storage {
     return meta.filter((entry) => !(entry instanceof Error) && !entry.hidden) as Entry[]
   }
 
-  public async hide (path: string): Maybe<void> {
-    const entry = await this.get(path)
-
-    if (entry instanceof Error)
-      return entry
-
-    entry.hidden = true
-
-    await this.update(path, entry)
+  public async conceal (path: string): Maybe<void> {
+    return await this.hide(path)
   }
 
-  public async unhide (path: string): Maybe<void> {
-    const entry = await this.get(path)
-
-    if (entry instanceof Error)
-      return entry
-
-    entry.hidden = false
-
-    await this.update(path, entry)
+  public async reveal (path: string): Maybe<void> {
+    return await this.hide(path, false)
   }
 
   public async annotate (path: string, key: string, value?: unknown): Maybe<void> {
@@ -131,7 +117,7 @@ export class Storage {
     return await checksum
   }
 
-  private async move (tempname: string, id: string): Promise<void> {
+  private async persist (tempname: string, id: string): Promise<void> {
     const temp = posix.join(TEMP, tempname)
     const blob = posix.join(BLOB, id)
 
@@ -157,7 +143,18 @@ export class Storage {
     const buffer = encode(entry)
     const stream = Readable.from(buffer)
 
-    await this.provider.put(STORAGE + path, '.meta', stream)
+    await this.provider.put(posix.join(STORAGE, path), '.meta', stream)
+  }
+
+  private async hide (path: string, value: boolean = true): Maybe<void> {
+    const entry = await this.get(path)
+
+    if (entry instanceof Error)
+      return entry
+
+    entry.hidden = value
+
+    await this.update(path, entry)
   }
 }
 

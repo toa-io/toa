@@ -30,7 +30,7 @@ export async function detect (stream: Readable, assertion?: string): Promise<str
 
   const type = signature?.type ?? 'application/octet-stream'
 
-  if (assertion !== undefined && type !== assertion) {
+  if (assertion !== undefined && assertion !== 'application/octet-stream' && type !== assertion) {
     stream.destroy()
 
     return ERR_TYPE_MISMATCH

@@ -70,7 +70,7 @@ containing named Storage instances, according to the annotation.
 
 ```javascript
 async function effect (_, context) {
-  await context.storages.photos.get('/path/to/b4f577e0.thumbnail.jpeg')
+  await context.storages.photos.fetch('/path/to/b4f577e0.thumbnail.jpeg')
 }
 ```
 
@@ -108,11 +108,11 @@ Add or replace a `name` variant of the entry specified by `path`.
 Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
 A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
 
-`async hide(path: string): Maybe<void>`
+`async conceal(path: string): Maybe<void>`
 
 Set the `hidden` property of the entry specified by `path` to `true`.
 
-`async unhide(path: string): Maybe<void>`
+`async reveal(path: string): Maybe<void>`
 
 Set the `hidden` property of the entry specified by `path` to `false`.
 

@@ -86,6 +86,12 @@ describe('put', () => {
     expect(entry.created).toBeLessThanOrEqual(now)
     expect(entry.created).toBeGreaterThan(now - 100)
   })
+
+  describe('existing entry', () => {
+    it('should ', async () => {
+      expect(0).toBe(1)
+    })
+  })
 })
 
 describe('list', () => {
@@ -114,7 +120,7 @@ describe('list', () => {
   it('should exclude hidden', async () => {
     const path = `${dir}/${lenna.id}`
 
-    await storage.hide(path)
+    await storage.conceal(path)
 
     const entries = await storage.list(dir)
 
@@ -135,7 +141,7 @@ describe('hidden', () => {
   it('should set hidden', async () => {
     const path = `${dir}/${lenna.id}`
 
-    await storage.hide(path)
+    await storage.conceal(path)
 
     const entry = await storage.get(path)
 
@@ -146,8 +152,8 @@ describe('hidden', () => {
   it('should unhide', async () => {
     const path = `${dir}/${lenna.id}`
 
-    await storage.hide(path)
-    await storage.unhide(path)
+    await storage.conceal(path)
+    await storage.reveal(path)
 
     const entry = await storage.get(path)
 
@@ -221,11 +227,11 @@ describe('variants', () => {
   })
 })
 
-// describe('fetch', () => {
-//   it('should fetch', async () => {
-//     expect(0).toBe(1)
-//   })
-// })
+describe('fetch', () => {
+  it('should fetch', async () => {
+    expect(0).toBe(1)
+  })
+})
 
 it.each(['jpeg', 'gif', 'webp', 'heic'])('should detect image/%s',
   async (type) => {
@@ -243,4 +249,13 @@ it('should return error if type doesnt match', async () => {
 
   match(result,
     Error, (error: Error) => expect(error.message).toBe('TYPE_MISMATCH'))
+})
+
+it('should not return error if type application/octet-stream', async () => {
+  const handle = await open('sample.jpeg')
+  const stream = handle.createReadStream()
+  const result = await storage.put(dir, stream, 'application/octet-stream')
+
+  expect(result).not.toBeInstanceOf(Error)
+  expect(result).toMatchObject({ type: 'image/jpeg' })
 })
