@@ -99,7 +99,7 @@ If the entry does not exist, a `NOT_FOUND` error is returned.
 
 List entries under the specified `path`.
 
-`async fork(path: string, name: string, stream: Readable): Maybe<void>`
+`async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
 Add or replace a `name` variant of the entry specified by `path`.
 

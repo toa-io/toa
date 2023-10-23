@@ -1,4 +1,6 @@
+import { Readable } from 'node:stream'
 import { match } from '@toa.io/match'
+import { buffer } from '@toa.io/generic'
 import { Factory } from './Factory'
 import { Storage } from './Storage'
 import { open, rnd } from './.test/util'
@@ -88,8 +90,35 @@ describe('put', () => {
   })
 
   describe('existing entry', () => {
-    it('should ', async () => {
-      expect(0).toBe(1)
+    it('should unhide existing', async () => {
+      const path = `${dir}/${lenna.id}`
+
+      await storage.conceal(path)
+
+      const handle = await open('lenna.png')
+      const stream = handle.createReadStream()
+
+      await storage.put(dir, stream)
+
+      const entry = await storage.get(path)
+
+      match(entry,
+        { hidden: false }, undefined)
+    })
+
+    it('should preserve meta', async () => {
+      const path = `${dir}/${lenna.id}`
+
+      await storage.annotate(path, 'foo', 'bar')
+
+      const handle = await open('lenna.png')
+      const stream = handle.createReadStream()
+
+      await storage.put(dir, stream)
+
+      const entry = await storage.get(path) as Entry
+
+      expect(entry.meta).toMatchObject({ foo: 'bar' })
     })
   })
 })
@@ -204,7 +233,7 @@ describe('variants', () => {
     const stream = handle.createReadStream()
     const path = `${dir}/${lenna.id}`
 
-    await storage.fork(path, 'foo', stream)
+    await storage.diversify(path, 'foo', stream)
 
     const state = await storage.get(path) as Entry
 
@@ -218,8 +247,8 @@ describe('variants', () => {
     const stream1 = handle1.createReadStream()
     const path = `${dir}/${lenna.id}`
 
-    await storage.fork(path, 'foo', stream0)
-    await storage.fork(path, 'foo', stream1)
+    await storage.diversify(path, 'foo', stream0)
+    await storage.diversify(path, 'foo', stream1)
 
     const state = await storage.get(path) as Entry
 
@@ -228,8 +257,41 @@ describe('variants', () => {
 })
 
 describe('fetch', () => {
+  let lenna: Entry
+  let buf: Buffer
+
+  beforeEach(async () => {
+    const handle = await open('lenna.png')
+    const stream = handle.createReadStream()
+
+    buf = await buffer(stream)
+    lenna = await storage.put(dir, Readable.from(buf)) as Entry
+  })
+
   it('should fetch', async () => {
-    expect(0).toBe(1)
+    const path = `${dir}/${lenna.id}`
+    const stream = await storage.fetch(path)
+
+    const stored: Buffer = await match(stream,
+      Readable, async (stream: Readable) => await buffer(stream))
+
+    expect(stored.compare(buf)).toBe(0)
+  })
+
+  it('should fetch variant', async () => {
+    const handle = await open('sample.jpeg')
+    const stream = handle.createReadStream()
+    const buf = await buffer(stream)
+    const path = `${dir}/${lenna.id}`
+
+    await storage.diversify(path, '100x100.jpeg', Readable.from(buf))
+
+    const variant = await storage.fetch(`${path}.100x100.jpeg`)
+
+    const stored = await match(variant,
+      Readable, async (stream: Readable) => await buffer(stream))
+
+    expect(stored.compare(buf)).toBe(0)
   })
 })
 
@@ -258,4 +320,12 @@ it('should not return error if type application/octet-stream', async () => {
 
   expect(result).not.toBeInstanceOf(Error)
   expect(result).toMatchObject({ type: 'image/jpeg' })
+})
+
+it('should handle root entries', async () => {
+  const handle = await open('sample.jpeg')
+  const stream = handle.createReadStream()
+  const result = await storage.put('hello', stream)
+
+  expect(result).not.toBeInstanceOf(Error)
 })
