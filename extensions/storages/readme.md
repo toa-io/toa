@@ -42,7 +42,7 @@ Underlying directory structure:
 
 ```
 /temp
-  c28f4dfd          # random id, auto deleted
+  c28f4dfd          # random id
 /blobs
   b4f577e0          # checksum
 /storage
