@@ -86,6 +86,18 @@ BLOB type is identified
 using [magick numbers](https://github.com/sindresorhus/file-type).
 If the `type` argument is specified and does not match the BLOB type, then a `TYPE_MISMATCH` error
 is returned.
+If the BLOB type cannot be identified
+and the value of `type` is not in the list of identifiable types, then the value is trusted.
+
+Identifiable types:
+
+- `image/jpeg`
+- `image/png`
+- `image/gif`
+- `image/webp`
+- `image/heic`
+
+See [source](source/signatures.ts).
 
 If the entry already exists, it is returned, and its `hidden` property is set to `false`.
 

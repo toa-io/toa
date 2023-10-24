@@ -5,11 +5,11 @@ import fs from 'node:fs/promises'
 const suites: Suite[] = [
   {
     run: true,
-    ref: `file://${join(tmpdir(), 'toa-storages-file')}`,
+    ref: `file:///${join(tmpdir(), 'toa-storages-file')}`,
   },
   {
     run: true,
-    ref: 'tmp://toa-storages-temp',
+    ref: 'tmp:///toa-storages-temp',
   },
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`

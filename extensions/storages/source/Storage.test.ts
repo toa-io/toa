@@ -314,6 +314,24 @@ describe.each(cases)('%s', (_, reference) => {
       Error, (error: Error) => expect(error.message).toBe('TYPE_MISMATCH'))
   })
 
+  it('should trust unknown types', async () => {
+    const handle = await open('lenna.ascii')
+    const stream = handle.createReadStream()
+    const result = await storage.put(dir, stream, 'text/plain')
+
+    expect(result).not.toBeInstanceOf(Error)
+    expect(result).toMatchObject({ type: 'text/plain' })
+  })
+
+  it('should return error if type is identifiable', async () => {
+    const handle = await open('lenna.ascii')
+    const stream = handle.createReadStream()
+    const result = await storage.put(dir, stream, 'image/jpeg')
+
+    expect(result).toBeInstanceOf(Error)
+    expect(result).toMatchObject({ message: 'TYPE_MISMATCH' })
+  })
+
   it('should not return error if type application/octet-stream', async () => {
     const handle = await open('sample.jpeg')
     const stream = handle.createReadStream()

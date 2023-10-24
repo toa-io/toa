@@ -28,9 +28,12 @@ export async function detect (stream: Readable, assertion?: string): Promise<str
   const signature = signatures
     .find(({ hex, offset }) => bytes.substring(offset, offset + hex.length) === hex)
 
-  const type = signature?.type ?? 'application/octet-stream'
+  if (signature === undefined && assertion !== undefined && TYPES.includes(assertion))
+    return ERR_TYPE_MISMATCH
 
-  if (assertion !== undefined && assertion !== 'application/octet-stream' && type !== assertion) {
+  const type = signature?.type ?? assertion ?? 'application/octet-stream'
+
+  if (assertion !== undefined && assertion !== 'application/octet-stream' && assertion !== type) {
     stream.destroy()
 
     return ERR_TYPE_MISMATCH
@@ -53,6 +56,8 @@ const signatures: Signature[] = [
 
 const HEADER_SIZE = signatures
   .reduce((max, { offset, hex }) => Math.max(max, offset + hex.length), 0)
+
+const TYPES = signatures.map(({ type }) => type)
 
 const ERR_TYPE_MISMATCH = new Error('TYPE_MISMATCH')
 
