@@ -5,7 +5,7 @@ import { decode, encode } from 'msgpackr'
 import { buffer, newid, promex } from '@toa.io/generic'
 import { type Provider } from './Provider'
 import { type Entry } from './Entry'
-import { detect } from './signatures'
+import { Detector } from './Detector'
 
 export class Storage {
   private readonly provider: Provider
@@ -23,30 +23,30 @@ export class Storage {
   }
 
   public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
-    const hashing = this.hash(stream)
-    const detecting = detect(stream, type)
-    const tempname = await this.add(stream)
-    const id = await hashing
-    const mime = await detecting
+    const hash = stream.pipe(createHash('md5'))
+    const detector = new Detector(type)
+    const pipe = stream.pipe(detector)
+    const tempname = await this.add(pipe)
+    const id = hash.digest('hex')
 
-    if (mime instanceof Error)
-      return mime
+    if (detector.error !== null)
+      return detector.error
 
     await this.persist(tempname, id)
 
-    return await this.create(path, id, mime)
+    return await this.create(path, id, detector.type)
   }
 
   public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
-    const detecting = detect(stream)
+    const detector = new Detector()
+    const pipe = stream.pipe(detector)
 
-    await this.write(posix.join(ENTRIES, path), name, stream)
+    await this.provider.put(posix.join(ENTRIES, path), name, pipe)
 
-    const type = await detecting
+    if (detector.error !== null)
+      return detector.error
 
-    if (type instanceof Error)
-      return type
-
+    const type = detector.type
     const entry = await this.get(path)
 
     if (entry instanceof Error)
@@ -109,18 +109,9 @@ export class Storage {
   private async add (stream: Readable): Promise<string> {
     const tempname = newid()
 
-    await this.write(TEMP, tempname, stream)
+    await this.provider.put(TEMP, tempname, stream)
 
     return tempname
-  }
-
-  private async write (path: string, filname: string, stream: Readable): Promise<void> {
-    const pass = new PassThrough()
-
-    stream.pipe(pass)
-    stream.on('close', () => pass.end())
-
-    await this.provider.put(path, filname, pass)
   }
 
   private async hash (stream: Readable): Promise<string> {

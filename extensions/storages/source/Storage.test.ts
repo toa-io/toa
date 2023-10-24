@@ -36,6 +36,8 @@ describe.each(cases)('%s', (_, reference) => {
       const stream = handle.createReadStream()
 
       lenna = await storage.put(dir, stream) as Entry
+
+      await handle.close()
     })
 
     it('should not return error', async () => {
@@ -136,6 +138,9 @@ describe.each(cases)('%s', (_, reference) => {
 
       albert = await storage.put(dir, stream0) as Entry
       lenna = await storage.put(dir, stream1) as Entry
+
+      await handle0.close()
+      await handle1.close()
     })
 
     it('should return entries', async () => {
@@ -166,6 +171,8 @@ describe.each(cases)('%s', (_, reference) => {
       const stream = handle.createReadStream()
 
       lenna = await storage.put(dir, stream) as Entry
+
+      await handle.close()
     })
 
     it('should set hidden', async () => {
@@ -200,6 +207,8 @@ describe.each(cases)('%s', (_, reference) => {
       const stream = handle.createReadStream()
 
       lenna = await storage.put(dir, stream) as Entry
+
+      await handle.close()
     })
 
     it('should set meta', async () => {
@@ -227,6 +236,8 @@ describe.each(cases)('%s', (_, reference) => {
       const stream = handle.createReadStream()
 
       lenna = await storage.put(dir, stream) as Entry
+
+      await handle.close()
     })
 
     it('should add variant', async () => {
@@ -239,6 +250,8 @@ describe.each(cases)('%s', (_, reference) => {
       const state = await storage.get(path) as Entry
 
       expect(state.variants).toMatchObject([{ name: 'foo', type: 'image/jpeg' }])
+
+      await handle.close()
     })
 
     it('should replace variant', async () => {
@@ -259,14 +272,14 @@ describe.each(cases)('%s', (_, reference) => {
 
   describe('fetch', () => {
     let lenna: Entry
-    let buf: Buffer
 
     beforeEach(async () => {
       const handle = await open('lenna.png')
       const stream = handle.createReadStream()
 
-      buf = await buffer(stream)
-      lenna = await storage.put(dir, Readable.from(buf)) as Entry
+      lenna = await storage.put(dir, stream) as Entry
+
+      await handle.close()
     })
 
     it('should fetch', async () => {
@@ -275,6 +288,11 @@ describe.each(cases)('%s', (_, reference) => {
 
       const stored: Buffer = await match(stream,
         Readable, async (stream: Readable) => await buffer(stream))
+
+      const handle = await open('lenna.png')
+      const buf = await buffer(handle.createReadStream())
+
+      await handle.close()
 
       expect(stored.compare(buf)).toBe(0)
     })

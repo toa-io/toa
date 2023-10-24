@@ -1,6 +1,7 @@
 import { type Readable } from 'node:stream'
 import { dirname, join } from 'node:path'
-import fs from 'fs/promises'
+import { createReadStream } from 'node:fs'
+import fs from 'node:fs/promises'
 import fse from 'fs-extra'
 import { type Provider } from '../Provider'
 
@@ -17,14 +18,10 @@ export class FileSystem implements Provider {
   public async get (path: string): Promise<Readable | null> {
     path = join(this.path, path)
 
-    try {
-      const handle = await fs.open(path, 'r')
+    if (!await fse.exists(path))
+      return null
 
-      return handle.createReadStream()
-    } catch (e: any) {
-      if (e?.code === 'ENOENT') return null
-      else throw e
-    }
+    return createReadStream(path, { flags: 'r' })
   }
 
   public async put (rel: string, filename: string, stream: Readable): Promise<void> {
