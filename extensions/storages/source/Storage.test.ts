@@ -57,6 +57,10 @@ describe.each(cases)('%s', (_, reference) => {
       expect(lenna.type).toBe('image/png')
     })
 
+    it('should count size', async () => {
+      expect(lenna.size).toBe(473831)
+    })
+
     it('should return entry', async () => {
       expect(lenna).toMatchObject({
         id: lenna.id,
@@ -225,7 +229,7 @@ describe.each(cases)('%s', (_, reference) => {
 
       const state = await storage.get(path) as Entry
 
-      expect(state.variants).toMatchObject([{ name: 'foo', type: 'image/jpeg' }])
+      expect(state.variants).toMatchObject([{ name: 'foo', size: 73444, type: 'image/jpeg' }])
     })
 
     it('should replace variant', async () => {
@@ -343,7 +347,7 @@ describe.each(cases)('%s', (_, reference) => {
     const stream = await open('empty.txt')
     const result = await storage.put('empty', stream) as Entry
 
-    expect(result).not.toBeInstanceOf(Error)
+    expect(result.size).toBe(0)
 
     const stored = await storage.fetch(result.id) as Readable
 

@@ -1,8 +1,7 @@
-import { Readable, PassThrough } from 'node:stream'
+import { Readable } from 'node:stream'
 import { posix } from 'node:path'
-import { createHash } from 'node:crypto'
 import { decode, encode } from 'msgpackr'
-import { buffer, newid, promex } from '@toa.io/generic'
+import { buffer, newid } from '@toa.io/generic'
 import { type Provider } from './Provider'
 import { type Entry } from './Entry'
 import { Detector } from './Detector'
@@ -23,18 +22,18 @@ export class Storage {
   }
 
   public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
-    const hash = stream.pipe(createHash('md5'))
     const detector = new Detector(type)
     const pipe = stream.pipe(detector)
     const tempname = await this.add(pipe)
-    const id = hash.digest('hex')
 
     if (detector.error !== null)
       return detector.error
 
+    const id = detector.digest()
+
     await this.persist(tempname, id)
 
-    return await this.create(path, id, detector.type)
+    return await this.create(path, id, detector.size, detector.type)
   }
 
   public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
@@ -46,14 +45,14 @@ export class Storage {
     if (detector.error !== null)
       return detector.error
 
-    const type = detector.type
+    const { size, type } = detector
     const entry = await this.get(path)
 
     if (entry instanceof Error)
       return entry
 
     entry.variants = entry.variants.filter((variant) => variant.name !== name)
-    entry.variants.push({ name, type })
+    entry.variants.push({ name, size, type })
 
     await this.replace(path, entry)
   }
@@ -114,19 +113,6 @@ export class Storage {
     return tempname
   }
 
-  private async hash (stream: Readable): Promise<string> {
-    const hash = createHash('md5')
-    const checksum = promex<string>()
-    const pass = new PassThrough()
-
-    stream.pipe(pass)
-    stream.on('close', () => pass.end())
-    pass.pipe(hash)
-    hash.on('finish', () => checksum.resolve(hash.digest('hex')))
-
-    return await checksum
-  }
-
   private async persist (tempname: string, id: string): Promise<void> {
     const temp = posix.join(TEMP, tempname)
     const blob = posix.join(BLOBs, id)
@@ -134,9 +120,11 @@ export class Storage {
     await this.provider.move(temp, blob)
   }
 
-  private async create (path: string, id: string, type: string): Promise<Entry> {
+  // eslint-disable-next-line max-params
+  private async create (path: string, id: string, size: number, type: string): Promise<Entry> {
     const entry: Entry = {
       id,
+      size,
       type,
       created: Date.now(),
       hidden: false,

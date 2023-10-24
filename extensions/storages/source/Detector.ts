@@ -1,12 +1,15 @@
-import { PassThrough } from 'node:stream'
+import { PassThrough, type TransformCallback } from 'node:stream'
+import { createHash } from 'node:crypto'
 
 export class Detector extends PassThrough {
-  public type: string = 'application/octet-stream'
+  public size = 0
+  public type = 'application/octet-stream'
   public error: Error | null = null
 
+  private readonly hash = createHash('md5')
   private readonly assertion: string | undefined
   private position = 0
-  private completed = false
+  private detected = false
   private readonly chunks: Buffer[] = []
 
   public constructor (assertion?: string) {
@@ -15,15 +18,22 @@ export class Detector extends PassThrough {
     this.assertion = assertion
   }
 
-  public override _transform (buffer: Buffer, _: string, callback: Callback): void {
-    this.process(buffer)
-    this.push(buffer)
+  public digest (): string {
+    return this.hash.digest('hex')
+  }
 
-    callback()
+  public override _transform
+  (buffer: Buffer, encoding: BufferEncoding, callback: TransformCallback): void {
+    super._transform(buffer, encoding, callback)
+
+    this.process(buffer)
   }
 
   private readonly process = (buffer: Buffer): void => {
-    if (this.completed)
+    this.size += buffer.length
+    this.hash.update(buffer)
+
+    if (this.detected)
       return
 
     if (this.position + buffer.length > HEADER_SIZE)
@@ -37,7 +47,7 @@ export class Detector extends PassThrough {
   }
 
   private complete (): void {
-    this.completed = true
+    this.detected = true
 
     const header = Buffer.concat(this.chunks).toString('hex')
 
@@ -97,5 +107,3 @@ interface Signature {
   off: number
   type: string
 }
-
-type Callback = (error?: Error, data?: Buffer) => void

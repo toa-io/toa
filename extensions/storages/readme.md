@@ -7,11 +7,13 @@ Shared BLOB storage.
 BLOBs are stored with the meta-information object (Entry) having the following properties:
 
 - `id` - checksum
+- `size` - size in bytes
 - `type` - MIME type
 - `created` - creation timestamp (UNIX time, ms)
 - `hidden` - not included in the list of directory entries, default `false`
 - `variants` - array of:
-  - `name` - unique variant name
+  - `name` - unique name
+  - `size` - size in bytes
   - `type` - variant MIME type
 - `meta` - object with application-specific information, empty by default
 
