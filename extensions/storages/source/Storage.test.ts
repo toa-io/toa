@@ -296,14 +296,16 @@ describe.each(cases)('%s', (_, reference) => {
     })
   })
 
-  it.each(['jpeg', 'gif', 'webp', 'heic'])('should detect image/%s',
-    async (type) => {
-      const handle = await open('sample.' + type)
-      const stream = handle.createReadStream()
-      const entry = await storage.put(dir, stream) as Entry
+  describe('signatures', () => {
+    it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
+      async (type) => {
+        const handle = await open('sample.' + type)
+        const stream = handle.createReadStream()
+        const entry = await storage.put(dir, stream) as Entry
 
-      expect(entry.type).toBe('image/' + type)
-    })
+        expect(entry.type).toBe('image/' + type)
+      })
+  })
 
   it('should return error if type doesnt match', async () => {
     const handle = await open('sample.jpeg')
