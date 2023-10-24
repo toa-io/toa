@@ -32,12 +32,9 @@ describe.each(cases)('%s', (_, reference) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
-
-      await handle.close()
     })
 
     it('should not return error', async () => {
@@ -49,8 +46,7 @@ describe.each(cases)('%s', (_, reference) => {
     })
 
     it('should return id as checksum', async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
       const dir2 = '/' + rnd()
       const copy = await storage.put(dir2, stream) as Entry
 
@@ -95,12 +91,9 @@ describe.each(cases)('%s', (_, reference) => {
     describe('existing entry', () => {
       it('should unhide existing', async () => {
         const path = `${dir}/${lenna.id}`
+        const stream = await open('lenna.png')
 
         await storage.conceal(path)
-
-        const handle = await open('lenna.png')
-        const stream = handle.createReadStream()
-
         await storage.put(dir, stream)
 
         const entry = await storage.get(path)
@@ -111,12 +104,9 @@ describe.each(cases)('%s', (_, reference) => {
 
       it('should preserve meta', async () => {
         const path = `${dir}/${lenna.id}`
+        const stream = await open('lenna.png')
 
         await storage.annotate(path, 'foo', 'bar')
-
-        const handle = await open('lenna.png')
-        const stream = handle.createReadStream()
-
         await storage.put(dir, stream)
 
         const entry = await storage.get(path) as Entry
@@ -131,16 +121,11 @@ describe.each(cases)('%s', (_, reference) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const handle0 = await open('albert.jpg')
-      const stream0 = handle0.createReadStream()
-      const handle1 = await open('lenna.png')
-      const stream1 = handle1.createReadStream()
+      const stream0 = await open('albert.jpg')
+      const stream1 = await open('lenna.png')
 
       albert = await storage.put(dir, stream0) as Entry
       lenna = await storage.put(dir, stream1) as Entry
-
-      await handle0.close()
-      await handle1.close()
     })
 
     it('should return entries', async () => {
@@ -167,12 +152,9 @@ describe.each(cases)('%s', (_, reference) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
-
-      await handle.close()
     })
 
     it('should set hidden', async () => {
@@ -203,12 +185,9 @@ describe.each(cases)('%s', (_, reference) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
-
-      await handle.close()
     })
 
     it('should set meta', async () => {
@@ -232,17 +211,14 @@ describe.each(cases)('%s', (_, reference) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
-
-      await handle.close()
     })
 
     it('should add variant', async () => {
-      const handle = await open('sample.jpeg')
-      const stream = handle.createReadStream()
+      const stream = await open('sample.jpeg')
+
       const path = `${dir}/${lenna.id}`
 
       await storage.diversify(path, 'foo', stream)
@@ -250,15 +226,11 @@ describe.each(cases)('%s', (_, reference) => {
       const state = await storage.get(path) as Entry
 
       expect(state.variants).toMatchObject([{ name: 'foo', type: 'image/jpeg' }])
-
-      await handle.close()
     })
 
     it('should replace variant', async () => {
-      const handle0 = await open('sample.jpeg')
-      const stream0 = handle0.createReadStream()
-      const handle1 = await open('sample.webp')
-      const stream1 = handle1.createReadStream()
+      const stream0 = await open('sample.jpeg')
+      const stream1 = await open('sample.webp')
       const path = `${dir}/${lenna.id}`
 
       await storage.diversify(path, 'foo', stream0)
@@ -274,12 +246,9 @@ describe.each(cases)('%s', (_, reference) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
-
-      await handle.close()
     })
 
     it('should fetch', async () => {
@@ -289,17 +258,14 @@ describe.each(cases)('%s', (_, reference) => {
       const stored: Buffer = await match(stream,
         Readable, async (stream: Readable) => await buffer(stream))
 
-      const handle = await open('lenna.png')
-      const buf = await buffer(handle.createReadStream())
-
-      await handle.close()
+      const buf = await buffer(await open('lenna.png'))
 
       expect(stored.compare(buf)).toBe(0)
     })
 
     it('should fetch variant', async () => {
-      const handle = await open('sample.jpeg')
-      const stream = handle.createReadStream()
+      const stream = await open('sample.jpeg')
+
       const buf = await buffer(stream)
       const path = `${dir}/${lenna.id}`
 
@@ -317,8 +283,8 @@ describe.each(cases)('%s', (_, reference) => {
   describe('signatures', () => {
     it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
       async (type) => {
-        const handle = await open('sample.' + type)
-        const stream = handle.createReadStream()
+        const stream = await open('sample.' + type)
+
         const entry = await storage.put(dir, stream) as Entry
 
         expect(entry.type).toBe('image/' + type)
@@ -326,8 +292,8 @@ describe.each(cases)('%s', (_, reference) => {
   })
 
   it('should return error if type doesnt match', async () => {
-    const handle = await open('sample.jpeg')
-    const stream = handle.createReadStream()
+    const stream = await open('sample.jpeg')
+
     const result = await storage.put(dir, stream, 'image/png')
 
     match(result,
@@ -335,8 +301,8 @@ describe.each(cases)('%s', (_, reference) => {
   })
 
   it('should trust unknown types', async () => {
-    const handle = await open('lenna.ascii')
-    const stream = handle.createReadStream()
+    const stream = await open('lenna.ascii')
+
     const result = await storage.put(dir, stream, 'text/plain')
 
     expect(result).not.toBeInstanceOf(Error)
@@ -344,8 +310,8 @@ describe.each(cases)('%s', (_, reference) => {
   })
 
   it('should return error if type is identifiable', async () => {
-    const handle = await open('lenna.ascii')
-    const stream = handle.createReadStream()
+    const stream = await open('lenna.ascii')
+
     const result = await storage.put(dir, stream, 'image/jpeg')
 
     expect(result).toBeInstanceOf(Error)
@@ -353,8 +319,8 @@ describe.each(cases)('%s', (_, reference) => {
   })
 
   it('should not return error if type application/octet-stream', async () => {
-    const handle = await open('sample.jpeg')
-    const stream = handle.createReadStream()
+    const stream = await open('sample.jpeg')
+
     const result = await storage.put(dir, stream, 'application/octet-stream')
 
     expect(result).not.toBeInstanceOf(Error)
@@ -362,8 +328,8 @@ describe.each(cases)('%s', (_, reference) => {
   })
 
   it('should handle root entries', async () => {
-    const handle = await open('sample.jpeg')
-    const stream = handle.createReadStream()
+    const stream = await open('sample.jpeg')
+
     const result = await storage.put('hello', stream) as Entry
 
     expect(result).not.toBeInstanceOf(Error)
@@ -371,5 +337,20 @@ describe.each(cases)('%s', (_, reference) => {
     const stored = await storage.fetch(result.id)
 
     expect(stored).not.toBeInstanceOf(Error)
+  })
+
+  it('should store empty file', async () => {
+    const stream = await open('empty.txt')
+    const result = await storage.put('empty', stream) as Entry
+
+    expect(result).not.toBeInstanceOf(Error)
+
+    const stored = await storage.fetch(result.id) as Readable
+
+    expect(stored).not.toBeInstanceOf(Error)
+
+    const buf = await buffer(stored)
+
+    expect(buf.length).toBe(0)
   })
 })

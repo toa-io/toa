@@ -6,6 +6,7 @@ export class Detector extends PassThrough {
 
   private readonly assertion: string | undefined
   private position = 0
+  private completed = false
   private readonly chunks: Buffer[] = []
 
   public constructor (assertion?: string) {
@@ -15,13 +16,16 @@ export class Detector extends PassThrough {
   }
 
   public override _transform (buffer: Buffer, _: string, callback: Callback): void {
-    this.append(buffer)
+    this.process(buffer)
     this.push(buffer)
 
     callback()
   }
 
-  private readonly append = (buffer: Buffer): void => {
+  private readonly process = (buffer: Buffer): void => {
+    if (this.completed)
+      return
+
     if (this.position + buffer.length > HEADER_SIZE)
       buffer = buffer.subarray(0, HEADER_SIZE - this.position)
 
@@ -29,10 +33,12 @@ export class Detector extends PassThrough {
     this.position += buffer.length
 
     if (this.position === HEADER_SIZE)
-      this.detect()
+      this.complete()
   }
 
-  private detect (): void {
+  private complete (): void {
+    this.completed = true
+
     const header = Buffer.concat(this.chunks).toString('hex')
 
     const signature = signatures

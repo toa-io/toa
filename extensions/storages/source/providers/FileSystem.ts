@@ -21,7 +21,7 @@ export class FileSystem implements Provider {
     if (!await fse.exists(path))
       return null
 
-    return createReadStream(path, { flags: 'r' })
+    return createReadStream(path, F_R)
   }
 
   public async put (rel: string, filename: string, stream: Readable): Promise<void> {
@@ -38,7 +38,7 @@ export class FileSystem implements Provider {
     if (!await fse.pathExists(path))
       return []
 
-    const entries = await fs.readdir(path, { withFileTypes: true })
+    const entries = await fs.readdir(path, WITH_TYPES)
 
     return entries
       .filter((e) => e.isDirectory())
@@ -57,3 +57,6 @@ export class FileSystem implements Provider {
     await fs.rename(from, to)
   }
 }
+
+const F_R = { flags: 'r' }
+const WITH_TYPES = { withFileTypes: true } satisfies { withFileTypes: true }

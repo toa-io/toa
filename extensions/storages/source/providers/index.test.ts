@@ -24,11 +24,9 @@ describe.each(cases)('%s', (protocol, url) => {
   })
 
   it('should create entry', async () => {
-    const handle = await open('lenna.png')
-    const stream = handle.createReadStream()
+    const stream = await open('lenna.png')
 
     await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -38,17 +36,11 @@ describe.each(cases)('%s', (protocol, url) => {
   })
 
   it('should overwrite existing entry', async () => {
-    const handle = await open('lenna.png')
-    const stream = handle.createReadStream()
+    const stream0 = await open('lenna.png')
+    const stream1 = await open('albert.jpg')
 
-    await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
-
-    const handle2 = await open('albert.jpg')
-    const stream2 = handle2.createReadStream()
-
-    await provider.put(dir, 'lenna.png', stream2)
-    await handle2.close()
+    await provider.put(dir, 'lenna.png', stream0)
+    await provider.put(dir, 'lenna.png', stream1)
 
     const readable = await provider.get(dir + '/lenna.png') as Readable
     const output = await buffer(readable)
@@ -58,11 +50,9 @@ describe.each(cases)('%s', (protocol, url) => {
   })
 
   it('should get by path', async () => {
-    const handle = await open('lenna.png')
-    const stream = handle.createReadStream()
+    const stream = await open('lenna.png')
 
     await provider.put(dir, 'lenna.png', stream)
-    await handle.close()
 
     const result = await provider.get('/bar/lenna.png')
 
@@ -71,11 +61,9 @@ describe.each(cases)('%s', (protocol, url) => {
 
   it('should list directries', async () => {
     async function put (path: string, as: string): Promise<void> {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       await provider.put(path, as, stream)
-      await handle.close()
     }
 
     await put(dir + '/foo', 'z.png')
@@ -105,11 +93,9 @@ describe.each(cases)('%s', (protocol, url) => {
      */
 
     it('should delete entry', async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       await provider.put(dir, 'lenna.png', stream)
-      await handle.close()
       await provider.delete(dir + '/lenna.png')
 
       const result = await provider.get(dir + '/lenna.png')
@@ -122,11 +108,9 @@ describe.each(cases)('%s', (protocol, url) => {
     })
 
     it('should delete directory', async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
 
       await provider.put(dir, 'lenna.png', stream)
-      await handle.close()
       await provider.delete(dir)
 
       const result = await provider.get(dir + '/lenna.png')
@@ -135,12 +119,10 @@ describe.each(cases)('%s', (protocol, url) => {
     })
 
     it('should move an entry', async () => {
-      const handle = await open('lenna.png')
-      const stream = handle.createReadStream()
+      const stream = await open('lenna.png')
       const dir2 = '/' + rnd()
 
       await provider.put(dir, 'lenna.png', stream)
-      await handle.close()
       await provider.move(dir + '/lenna.png', dir2 + '/lenna2.png')
 
       const result = await provider.get(dir2 + '/lenna2.png') as Readable

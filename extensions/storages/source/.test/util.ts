@@ -1,6 +1,8 @@
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import fs from 'node:fs/promises'
+import { createReadStream } from 'node:fs'
+import { Readable } from 'node:stream'
 
 const suites: Suite[] = [
   {
@@ -27,10 +29,10 @@ export function rnd (): string {
   return Math.random().toString(36).slice(2)
 }
 
-export async function open (rel: string): Promise<fs.FileHandle> {
+export async function open (rel: string): Promise<Readable> {
   const path = join(__dirname, rel)
 
-  return await fs.open(path, 'r')
+  return createReadStream(path, F_R)
 }
 
 export async function read (rel: string): Promise<Buffer> {
@@ -38,6 +40,8 @@ export async function read (rel: string): Promise<Buffer> {
 
   return fs.readFile(path)
 }
+
+const F_R = {flags: 'r'}
 
 interface Suite {
   run: boolean
