@@ -1,9 +1,9 @@
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-import { Filesystem } from './Filesystem'
+import { FileSystem } from './FileSystem'
 
-export class Temporary extends Filesystem {
+export class Temporary extends FileSystem {
   protected override readonly path: string
 
   public constructor (url: URL) {

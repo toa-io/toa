@@ -4,18 +4,18 @@ import fs from 'fs/promises'
 import fse from 'fs-extra'
 import { type Provider } from '../Provider'
 
-export class Filesystem implements Provider {
+export class FileSystem implements Provider {
   protected readonly path: string
 
   public constructor (url: URL) {
     if (url.host !== '')
-      throw new Error('URL must not contain host')
+      throw new Error('File system URL must not contain host')
 
     this.path = url.pathname
   }
 
-  public async get (rel: string): Promise<Readable | null> {
-    const path = join(this.path, rel)
+  public async get (path: string): Promise<Readable | null> {
+    path = join(this.path, path)
 
     try {
       const handle = await fs.open(path, 'r')
@@ -29,14 +29,14 @@ export class Filesystem implements Provider {
 
   public async put (rel: string, filename: string, stream: Readable): Promise<void> {
     const dir = join(this.path, rel)
-    const filepath = join(dir, filename)
+    const path = join(dir, filename)
 
     await fse.ensureDir(dir)
-    await fs.writeFile(filepath, stream)
+    await fs.writeFile(path, stream)
   }
 
-  public async list (rel: string): Promise<string[]> {
-    const path = join(this.path, rel)
+  public async list (path: string): Promise<string[]> {
+    path = join(this.path, path)
 
     if (!await fse.pathExists(path))
       return []
@@ -48,17 +48,15 @@ export class Filesystem implements Provider {
       .map((e) => e.name)
   }
 
-  public async delete (rel: string): Promise<void> {
-    const path = join(this.path, rel)
-
-    await fse.remove(path)
+  public async delete (path: string): Promise<void> {
+    await fse.remove(join(this.path, path))
   }
 
   public async move (from: string, to: string): Promise<void> {
-    const asis = join(this.path, from)
-    const tobe = join(this.path, to)
+    from = join(this.path, from)
+    to = join(this.path, to)
 
-    await fse.ensureDir(dirname(tobe))
-    await fs.rename(asis, tobe)
+    await fse.ensureDir(dirname(to))
+    await fs.rename(from, to)
   }
 }
