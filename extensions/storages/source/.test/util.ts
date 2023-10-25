@@ -32,7 +32,7 @@ export function rnd (): string {
 export async function open (rel: string): Promise<Readable> {
   const path = join(__dirname, rel)
 
-  return createReadStream(path, F_R)
+  return createReadStream(path)
 }
 
 export async function read (rel: string): Promise<Buffer> {
@@ -40,8 +40,6 @@ export async function read (rel: string): Promise<Buffer> {
 
   return fs.readFile(path)
 }
-
-const F_R = {flags: 'r'} as const
 
 interface Suite {
   run: boolean
