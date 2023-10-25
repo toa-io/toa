@@ -27,9 +27,11 @@
   "devDependencies": {
     "@toa.io/match": "0.3.0",
     "@toa.io/streams": "0.1.0-alpha.2",
-    "@types/fs-extra": "11.0.3"
+    "@types/fs-extra": "11.0.3",
+    "dotenv": "16.3.1"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.435.0",
     "@toa.io/generic": "0.20.0-alpha.2",
     "fs-extra": "11.1.1",
     "msgpackr": "1.9.9"

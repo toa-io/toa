@@ -13,6 +13,10 @@ const suites: Suite[] = [
     run: true,
     ref: 'tmp:///toa-storages-temp',
   },
+  {
+    run: true,
+    ref: 's3:///s3-storage',
+  },
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
 ]
