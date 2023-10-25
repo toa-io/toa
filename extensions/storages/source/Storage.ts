@@ -24,7 +24,7 @@ export class Storage {
   public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
     const detector = new Detector(type)
     const pipe = stream.pipe(detector)
-    const tempname = await this.add(pipe)
+    const tempname = await this.transit(pipe)
 
     if (detector.error !== null)
       return detector.error
@@ -105,7 +105,7 @@ export class Storage {
     await this.replace(path, entry)
   }
 
-  private async add (stream: Readable): Promise<string> {
+  private async transit (stream: Readable): Promise<string> {
     const tempname = newid()
 
     await this.provider.put(TEMP, tempname, stream)

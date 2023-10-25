@@ -34,26 +34,6 @@ meta:
   nudity: false
 ```
 
-## Deduplication
-
-BLOBs are stored in the storage system with their checksum as the key, ensuring that identical BLOBs
-are stored only once.
-Variants, on the other hand, are not deduplicated across different entries.
-
-Underlying directory structure:
-
-```
-/temp
-  c28f4dfd          # random id
-/blobs
-  b4f577e0          # checksum
-/storage
-  /path/to/b4f577e0
-    .meta           # entry
-    thumbnail.jpeg  # variant BLOBs
-    thumbnail.webp
-```
-
 ## Annotation
 
 The `storages` context annotation is an object with keys that reference the storage name and
@@ -158,3 +138,23 @@ Filesystem using OS temporary directory.
 Annotation value format is `tmp:///{path}`.
 
 `tmp:///my-storage`
+
+## Deduplication
+
+BLOBs are stored in the storage system with their checksum as the key, ensuring that identical BLOBs
+are stored only once.
+Variants, on the other hand, are not deduplicated across different entries.
+
+Underlying directory structure:
+
+```
+/temp
+  c28f4dfd          # random id
+/blobs
+  b4f577e0          # checksum
+/storage
+  /path/to/b4f577e0
+    .meta           # entry
+    thumbnail.jpeg  # variant BLOBs
+    thumbnail.webp
+```
