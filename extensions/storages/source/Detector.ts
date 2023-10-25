@@ -51,7 +51,7 @@ export class Detector extends PassThrough {
 
     const header = Buffer.concat(this.chunks).toString('hex')
 
-    const signature = signatures
+    const signature = SIGNATURES
       .find(({ hex, off }) => header.slice(off, off + hex.length) === hex)
 
     this.verify(signature)
@@ -78,7 +78,7 @@ export class Detector extends PassThrough {
 }
 
 // https://en.wikipedia.org/wiki/List_of_file_signatures
-const signatures: Signature[] = [
+const SIGNATURES: Signature[] = [
   { hex: 'ffd8ffe0', off: 0, type: 'image/jpeg' },
   { hex: 'ffd8ffe1', off: 0, type: 'image/jpeg' },
   { hex: 'ffd8ffee', off: 0, type: 'image/jpeg' },
@@ -90,15 +90,15 @@ const signatures: Signature[] = [
   { hex: '6674797068656963', off: 8, type: 'image/heic' },
   { hex: '6674797061766966', off: 8, type: 'image/avif' }
   /*
-  When adding new signatures, add copyright-free sample file to the `.tests` directory
-  and update the "signatures" test group in `Storage.test.ts`.
+  When adding a new signature, please include a copyright-free sample file in the `.tests` directory
+  and update the 'signatures' test group in `Storage.test.ts`.
    */
 ]
 
-const HEADER_SIZE = signatures
+const HEADER_SIZE = SIGNATURES
   .reduce((max, { off, hex }) => Math.max(max, off + hex.length), 0) / 2
 
-const KNOWN_TYPES = new Set(signatures.map(({ type }) => type))
+const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
 const ERR_TYPE_MISMATCH = new Error('TYPE_MISMATCH')
 

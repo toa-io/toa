@@ -41,7 +41,7 @@ export async function read (rel: string): Promise<Buffer> {
   return fs.readFile(path)
 }
 
-const F_R = {flags: 'r'}
+const F_R = {flags: 'r'} as const
 
 interface Suite {
   run: boolean

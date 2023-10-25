@@ -58,5 +58,5 @@ export class FileSystem implements Provider {
   }
 }
 
-const F_R = { flags: 'r' }
-const WITH_TYPES = { withFileTypes: true } satisfies { withFileTypes: true }
+const F_R = { flags: 'r' } as const
+const WITH_TYPES = { withFileTypes: true } as const
