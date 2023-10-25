@@ -93,7 +93,7 @@ and the value of `type` is not in the list of known types, then the given value 
 
 Known types are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/jxl`, `image/avif`.
 
-See [source](source/signatures.ts).
+See [source](source/Detector.ts).
 
 If the entry already exists, it is returned, and its `hidden` property is set to `false`.
 
