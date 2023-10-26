@@ -10,7 +10,6 @@ BLOBs are stored with the meta-information object (Entry) having the following p
 - `size` - size in bytes
 - `type` - MIME type
 - `created` - creation timestamp (UNIX time, ms)
-- `hidden` - not included in the list of directory entries, default `false`
 - `variants` - array of:
   - `name` - unique name
   - `size` - size in bytes
@@ -23,7 +22,6 @@ BLOBs are stored with the meta-information object (Entry) having the following p
 id: eecd837c
 type: image/jpeg
 created: 1698004822358
-hidden: false
 variants:
   - name: thumbnail.jpeg
     type: image/jpeg
@@ -60,7 +58,7 @@ async function effect (_, context) {
 
 > `Maybe<T> = T | Error`
 
-`async put(path: string, stream: Readable, type?: string): Maybe<Entry>`
+#### `async put(path: string, stream: Readable, type?: string): Maybe<Entry>`
 
 Add a BLOB to the storage and create an entry under specified `path`.
 
@@ -73,38 +71,44 @@ and the value of `type` is not in the list of known types, then the given value 
 
 Known types are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/jxl`, `image/avif`.
 
-See [source](source/Detector.ts).
+See [source](source/Scanner.ts).
 
-If the entry already exists, it is returned, and its `hidden` property is set to `false`.
+If the entry already exists, it is returned, and it's [revealed](#async-revealpath-string-maybevoid).
 
-`async get(path: string): Maybe<Entry>`
+#### `async get(path: string): Maybe<Entry>`
 
 Get an entry.
 
 If the entry does not exist, a `NOT_FOUND` error is returned.
 
-`async list(path: string): Maybe<Entry[]>`
+#### `async list(path: string): string[]`
 
-List entries under the specified `path`.
+Get ordered list of `id`s of entries in under the `path`.
 
-`async diversify(path: string, name: string, stream: Readable): Maybe<void>`
+#### `async permutate(path: string, ids: string[]): Maybe<void>`
+
+Reorder entries under the `path`.
+
+Given list must be a permutation of the current list, otherwise a `PERMUTATION_MISMATCH` error is returned.
+
+#### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
 Add or replace a `name` variant of the entry specified by `path`.
 
-`async fetch(path: string): Maybe<Readable>`
+#### `async fetch(path: string): Maybe<Readable>`
 
 Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
 A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
 
-`async conceal(path: string): Maybe<void>`
+#### `async conceal(path: string): Maybe<void>`
 
-Set the `hidden` property of the entry specified by `path` to `true`.
+Remove the entry from the list.
 
-`async reveal(path: string): Maybe<void>`
+#### `async reveal(path: string): Maybe<void>`
 
-Set the `hidden` property of the entry specified by `path` to `false`.
+Restore the entry to the list.
 
-`async annotate(path: string, key: string, value: any): Maybe<void>`
+#### `async annotate(path: string, key: string, value: any): Maybe<void>`
 
 Set a `key` property in the `meta` of the entry specified by `path`.
 
@@ -149,12 +153,14 @@ Underlying directory structure:
 
 ```
 /temp
-  c28f4dfd          # random id
+  c28f4dfd            # random id
 /blobs
-  b4f577e0          # checksum
+  b4f577e0            # checksum
 /storage
-  /path/to/b4f577e0
-    .meta           # entry
-    thumbnail.jpeg  # variant BLOBs
-    thumbnail.webp
+  /path/to
+    .list             # list of entries
+    /b4f577e0
+      .meta           # entry
+      thumbnail.jpeg  # variant BLOBs
+      thumbnail.webp
 ```

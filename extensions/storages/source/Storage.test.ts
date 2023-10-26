@@ -65,7 +65,6 @@ describe.each(cases)('%s', (_, reference) => {
       expect(lenna).toMatchObject({
         id: lenna.id,
         type: 'image/png',
-        hidden: false,
         variants: [],
         meta: {}
       })
@@ -78,7 +77,6 @@ describe.each(cases)('%s', (_, reference) => {
         {
           id: lenna.id,
           type: 'image/png',
-          hidden: false,
           variants: [],
           meta: {}
         }, undefined)
@@ -94,16 +92,15 @@ describe.each(cases)('%s', (_, reference) => {
 
     describe('existing entry', () => {
       it('should unhide existing', async () => {
-        const path = `${dir}/${lenna.id}`
         const stream = await open('lenna.png')
+        const path = `${dir}/${lenna.id}`
 
         await storage.conceal(path)
         await storage.put(dir, stream)
 
-        const entry = await storage.get(path)
+        const list = await storage.list(dir)
 
-        match(entry,
-          { hidden: false }, undefined)
+        expect(list).toContainEqual(lenna.id)
       })
 
       it('should preserve meta', async () => {
@@ -132,13 +129,36 @@ describe.each(cases)('%s', (_, reference) => {
       lenna = await storage.put(dir, stream1) as Entry
     })
 
-    it('should return entries', async () => {
-      const entries = await storage.list(dir)
+    it('should list entries', async () => {
+      const list = await storage.list(dir)
 
-      expect(entries).toMatchObject([
-        { id: albert.id },
-        { id: lenna.id }
-      ])
+      expect(list).toMatchObject([albert.id, lenna.id])
+    })
+
+    it('should permutate', async () => {
+      const error = await storage.permutate(dir, [lenna.id, albert.id])
+
+      expect(error).toBeUndefined()
+
+      const list = await storage.list(dir)
+
+      expect(list).toMatchObject([lenna.id, albert.id])
+    })
+
+    it('should return PERMUTATION_MISMATCH', async () => {
+      const cases = [
+        [lenna.id],
+        [albert.id, lenna.id, 'unknown'],
+        [lenna.id, lenna.id],
+        [lenna.id, lenna.id, albert.id]
+      ]
+
+      for (const permutation of cases) {
+        const error = await storage.permutate(dir, permutation)
+
+        expect(error).toBeInstanceOf(Error)
+        expect(error).toMatchObject({ message: 'PERMUTATION_MISMATCH' })
+      }
     })
 
     it('should exclude hidden', async () => {
@@ -148,40 +168,19 @@ describe.each(cases)('%s', (_, reference) => {
 
       const entries = await storage.list(dir)
 
-      expect(entries.length).toBe(1)
-    })
-  })
-
-  describe('hidden', () => {
-    let lenna: Entry
-
-    beforeEach(async () => {
-      const stream = await open('lenna.png')
-
-      lenna = await storage.put(dir, stream) as Entry
-    })
-
-    it('should set hidden', async () => {
-      const path = `${dir}/${lenna.id}`
-
-      await storage.conceal(path)
-
-      const entry = await storage.get(path)
-
-      match(entry,
-        { hidden: true }, undefined)
+      expect(entries).toMatchObject([albert.id])
     })
 
     it('should unhide', async () => {
       const path = `${dir}/${lenna.id}`
 
       await storage.conceal(path)
-      await storage.reveal(path)
+      await storage.reveal(dir, lenna.id)
+      await storage.reveal(dir, lenna.id) // test that no duplicates are created
 
-      const entry = await storage.get(path)
+      const entries = await storage.list(dir)
 
-      match(entry,
-        { hidden: false }, undefined)
+      expect(entries).toMatchObject([albert.id, lenna.id])
     })
   })
 
