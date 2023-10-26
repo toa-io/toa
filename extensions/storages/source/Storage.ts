@@ -74,10 +74,25 @@ export class Storage {
     else return stream
   }
 
-  public async list (path: string): Promise<Entry[]> {
+  public async list (path: string): Promise<string[]> {
     const stream = await this.provider.get(posix.join(ENTRIES, path, LIST))
 
     return stream === null ? [] : decode(await buffer(stream))
+  }
+
+  public async permutate (path: string, ids: string[]): Maybe<void> {
+    const unique = new Set(ids)
+    const dir = posix.join(ENTRIES, path)
+    const list = await this.getList(dir)
+
+    if (list.length !== ids.length || unique.size !== ids.length)
+      return ERR_PERMUTATION_MISMATCH
+
+    for (const id of ids)
+      if (!list.includes(id))
+        return ERR_PERMUTATION_MISMATCH
+
+    await this.provider.put(dir, LIST, Readable.from(encode(ids)))
   }
 
   public async conceal (path: string): Maybe<void> {
@@ -190,6 +205,7 @@ export class Storage {
 }
 
 const ERR_NOT_FOUND = new Error('NOT_FOUND')
+const ERR_PERMUTATION_MISMATCH = new Error('PERMUTATION_MISMATCH')
 
 const TEMP = '/temp'
 const BLOBs = '/blobs'

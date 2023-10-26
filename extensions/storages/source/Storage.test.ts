@@ -130,9 +130,35 @@ describe.each(cases)('%s', (_, reference) => {
     })
 
     it('should list entries', async () => {
-      const entries = await storage.list(dir)
+      const list = await storage.list(dir)
 
-      expect(entries).toMatchObject([albert.id, lenna.id])
+      expect(list).toMatchObject([albert.id, lenna.id])
+    })
+
+    it('should permutate', async () => {
+      const error = await storage.permutate(dir, [lenna.id, albert.id])
+
+      expect(error).toBeUndefined()
+
+      const list = await storage.list(dir)
+
+      expect(list).toMatchObject([lenna.id, albert.id])
+    })
+
+    it('should return PERMUTATION_MISMATCH', async () => {
+      const cases = [
+        [lenna.id],
+        [albert.id, lenna.id, 'unknown'],
+        [lenna.id, lenna.id],
+        [lenna.id, lenna.id, albert.id]
+      ]
+
+      for (const permutation of cases) {
+        const error = await storage.permutate(dir, permutation)
+
+        expect(error).toBeInstanceOf(Error)
+        expect(error).toMatchObject({ message: 'PERMUTATION_MISMATCH' })
+      }
     })
 
     it('should exclude hidden', async () => {

@@ -85,7 +85,13 @@ If the entry does not exist, a `NOT_FOUND` error is returned.
 
 `async list(path: string): string[]`
 
-Get the list of `id`s of entries in under the `path`.
+Get ordered list of `id`s of entries in under the `path`.
+
+`async permutate(path: string, ids: string[]): Maybe<void>`
+
+Reorder entries under the `path`.
+
+Given list must be a permutation of the current list, otherwise a `PERMUTATION_MISMATCH` error is returned.
 
 `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
