@@ -39,6 +39,10 @@ Non-scattered documentation is coming this fall.
   - [Access Control](extensions/exposition/documentation/access.md)
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
+  - MIME type detection and validation
+  - Deduplication
+  - Arbitrary orderings
+  - Providers: file system, Amazon S3
 - [Transient state](/extensions/stash)
 - [External communications](/extensions/origins) governance
   - HTTP
