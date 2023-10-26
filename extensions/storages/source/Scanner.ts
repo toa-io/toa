@@ -1,7 +1,7 @@
 import { PassThrough, type TransformCallback } from 'node:stream'
 import { createHash } from 'node:crypto'
 
-export class Detector extends PassThrough {
+export class Scanner extends PassThrough {
   public size = 0
   public type = 'application/octet-stream'
   public error: Error | null = null
@@ -90,7 +90,7 @@ const SIGNATURES: Signature[] = [
   { hex: '6674797068656963', off: 8, type: 'image/heic' },
   { hex: '6674797061766966', off: 8, type: 'image/avif' }
   /*
-  When adding a new signature, please include a copyright-free sample file in the `.tests` directory
+  When adding a new signature, include a copyright-free sample file in the `.tests` directory
   and update the 'signatures' test group in `Storage.test.ts`.
    */
 ]

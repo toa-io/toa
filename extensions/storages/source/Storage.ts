@@ -2,9 +2,9 @@ import { Readable } from 'node:stream'
 import { posix } from 'node:path'
 import { decode, encode } from 'msgpackr'
 import { buffer, newid } from '@toa.io/generic'
-import { type Provider } from './Provider'
-import { type Entry } from './Entry'
-import { Detector } from './Detector'
+import { Scanner } from './Scanner'
+import type { Provider } from './Provider'
+import type { Entry } from './Entry'
 
 export class Storage {
   private readonly provider: Provider
@@ -22,7 +22,7 @@ export class Storage {
   }
 
   public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
-    const detector = new Detector(type)
+    const detector = new Scanner(type)
     const pipe = stream.pipe(detector)
     const tempname = await this.transit(pipe)
 
@@ -37,7 +37,7 @@ export class Storage {
   }
 
   public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
-    const detector = new Detector()
+    const detector = new Scanner()
     const pipe = stream.pipe(detector)
 
     await this.provider.put(posix.join(ENTRIES, path), name, pipe)
