@@ -69,11 +69,12 @@ is returned.
 If the BLOB type cannot be identified
 and the value of `type` is not in the list of known types, then the given value is used.
 
-Known types are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/jxl`, `image/avif`.
+Known types
+are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/jxl`, `image/avif`.
 
 See [source](source/Scanner.ts).
 
-If the entry already exists, it is returned, and it's [revealed](#async-revealpath-string-maybevoid).
+If the entry already exists, it is returned and [revealed](#async-revealpath-string-maybevoid).
 
 #### `async get(path: string): Maybe<Entry>`
 
@@ -94,7 +95,8 @@ Get ordered list of `id`s of entries in under the `path`.
 
 Reorder entries under the `path`.
 
-Given list must be a permutation of the current list, otherwise a `PERMUTATION_MISMATCH` error is returned.
+Given list must be a permutation of the current list, otherwise a `PERMUTATION_MISMATCH` error is
+returned.
 
 #### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
