@@ -5,7 +5,6 @@ import {
   GetObjectCommand,
   PutObjectCommand,
   DeleteObjectCommand,
-  ListObjectsV2Command,
   CopyObjectCommand
 } from '@aws-sdk/client-s3'
 import { type Provider } from '../Provider'
@@ -67,21 +66,6 @@ export class S3 implements Provider {
       Key: key,
       Body: stream
     }))
-  }
-
-  public async list (path: string): Promise<string[]> {
-    const prefix = join(this.path, path)
-    const list = (await this.client.send(new ListObjectsV2Command({
-      Bucket: this.bucket,
-      Prefix: prefix
-    })))?.Contents
-
-    if (list == null || list.length === 0) return []
-
-    /** Add handling for long (>1000) lists, dirs and better typings */
-    return list
-      .filter((item) => item.Key != null)
-      .map((object) => object.Key) as string[]
   }
 
   public async delete (path: string): Promise<void> {
