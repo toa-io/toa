@@ -83,9 +83,9 @@ Get an entry.
 
 If the entry does not exist, a `NOT_FOUND` error is returned.
 
-`async list(path: string): Maybe<Entry[]>`
+`async list(path: string): string[]`
 
-List entries under the specified `path`.
+Get the list of `id`s of entries in under the `path`.
 
 `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
@@ -149,12 +149,14 @@ Underlying directory structure:
 
 ```
 /temp
-  c28f4dfd          # random id
+  c28f4dfd            # random id
 /blobs
-  b4f577e0          # checksum
+  b4f577e0            # checksum
 /storage
-  /path/to/b4f577e0
-    .meta           # entry
-    thumbnail.jpeg  # variant BLOBs
-    thumbnail.webp
+  /path/to
+    .list             # list of entries
+    /b4f577e0
+      .meta           # entry
+      thumbnail.jpeg  # variant BLOBs
+      thumbnail.webp
 ```

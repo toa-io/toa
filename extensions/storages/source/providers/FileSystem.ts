@@ -21,7 +21,7 @@ export class FileSystem implements Provider {
     if (!await fse.exists(path))
       return null
 
-    return createReadStream(path, F_R)
+    return createReadStream(path)
   }
 
   public async put (rel: string, filename: string, stream: Readable): Promise<void> {
@@ -30,19 +30,6 @@ export class FileSystem implements Provider {
 
     await fse.ensureDir(dir)
     await fs.writeFile(path, stream)
-  }
-
-  public async list (path: string): Promise<string[]> {
-    path = join(this.path, path)
-
-    if (!await fse.pathExists(path))
-      return []
-
-    const entries = await fs.readdir(path, WITH_TYPES)
-
-    return entries
-      .filter((e) => e.isDirectory())
-      .map((e) => e.name)
   }
 
   public async delete (path: string): Promise<void> {
@@ -57,6 +44,3 @@ export class FileSystem implements Provider {
     await fs.rename(from, to)
   }
 }
-
-const F_R = { flags: 'r' } as const
-const WITH_TYPES = { withFileTypes: true } as const
