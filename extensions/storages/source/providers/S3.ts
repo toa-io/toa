@@ -1,5 +1,5 @@
 import { type Readable } from 'node:stream'
-import { join } from 'node:path'
+import { join } from 'node:path/posix'
 import {
   S3Client,
   GetObjectCommand,
