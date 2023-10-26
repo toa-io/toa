@@ -4,8 +4,9 @@ import {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
-  DeleteObjectCommand,
-  CopyObjectCommand
+  CopyObjectCommand,
+  ListObjectsV2Command,
+  DeleteObjectsCommand
 } from '@aws-sdk/client-s3'
 import { type Provider } from '../Provider'
 
@@ -70,11 +71,19 @@ export class S3 implements Provider {
 
   public async delete (path: string): Promise<void> {
     const key = join(this.path, path)
-
-    await this.client.send(new DeleteObjectCommand({
+    const prefix = key[0] === '/' ? key.substring(1) : key
+    const listResponse = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
-      Key: key
+      Prefix: prefix
     }))
+
+    if (listResponse.Contents != null && listResponse.Contents.length > 0)
+      await this.client.send(new DeleteObjectsCommand({
+        Bucket: this.bucket,
+        Delete: {
+          Objects: listResponse.Contents.map(({ Key }) => ({ Key }))
+        }
+      }))
   }
 
   public async move (from: string, to: string): Promise<void> {
