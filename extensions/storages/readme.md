@@ -81,6 +81,11 @@ Get an entry.
 
 If the entry does not exist, a `NOT_FOUND` error is returned.
 
+#### `async fetch(path: string): Maybe<Readable>`
+
+Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
+A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
+
 #### `async list(path: string): string[]`
 
 Get ordered list of `id`s of entries in under the `path`.
@@ -94,11 +99,6 @@ Given list must be a permutation of the current list, otherwise a `PERMUTATION_M
 #### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
 Add or replace a `name` variant of the entry specified by `path`.
-
-#### `async fetch(path: string): Maybe<Readable>`
-
-Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
-A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
 
 #### `async conceal(path: string): Maybe<void>`
 

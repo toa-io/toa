@@ -33,11 +33,7 @@ export class Storage {
 
     await this.persist(tempname, id)
 
-    const entry = await this.create(path, id, scanner.size, scanner.type)
-
-    await this.enroll(path, id, true)
-
-    return entry
+    return await this.create(path, id, scanner.size, scanner.type)
   }
 
   public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
@@ -58,7 +54,7 @@ export class Storage {
     entry.variants = entry.variants.filter((variant) => variant.name !== name)
     entry.variants.push({ name, size, type })
 
-    await this.replace(path, entry)
+    await this.save(path, entry)
   }
 
   public async fetch (path: string): Maybe<Readable> {
@@ -102,15 +98,17 @@ export class Storage {
     const index = list.indexOf(id)
 
     if (index === -1)
-      return
+      return ERR_NOT_FOUND
 
     list.splice(index, 1)
 
     await this.provider.put(dir, LIST, Readable.from(encode(list)))
   }
 
-  public async reveal (path: string, id: string): Maybe<void> {
-    await this.enroll(path, id)
+  public async reveal (path: string): Maybe<void> {
+    const { id, rel } = this.parse(path)
+
+    return await this.enroll(rel, id)
   }
 
   public async annotate (path: string, key: string, value?: unknown): Maybe<void> {
@@ -123,7 +121,7 @@ export class Storage {
     if (value === undefined) delete entry.meta[key]
     else entry.meta[key] = value
 
-    await this.replace(path, entry)
+    await this.save(path, entry)
   }
 
   private async transit (stream: Readable): Promise<string> {
@@ -162,32 +160,35 @@ export class Storage {
     const metafile = posix.join(path, entry.id)
     const existing = await this.get(metafile)
 
-    if (!(existing instanceof Error)) {
-      Object.assign(entry, existing)
+    if (existing instanceof Error)
+      await this.save(metafile, entry)
 
-      await this.reveal(path, id)
-    }
-
-    await this.replace(metafile, entry)
+    await this.enroll(path, id, true)
 
     return entry
   }
 
-  private async replace (rel: string, entry: Entry): Promise<void> {
+  private async save (rel: string, entry: Entry): Promise<void> {
     const buffer = encode(entry)
     const stream = Readable.from(buffer)
 
     await this.provider.put(posix.join(ENTRIES, rel), META, stream)
   }
 
-  private async enroll (path: string, id: string, shift: boolean = false): Promise<void> {
+  private async enroll (path: string, id: string, addition: boolean = false): Maybe<void> {
     const dir = posix.join(ENTRIES, path)
     const list = await this.getList(dir)
     const index = list.indexOf(id)
 
     if (index !== -1)
-      if (shift) list.splice(index, 1)
+      if (addition) list.splice(index, 1)
       else return
+    else if (!addition) {
+      const entry = await this.get(posix.join(path, id))
+
+      if (entry instanceof Error)
+        return entry
+    }
 
     list.push(id)
 
