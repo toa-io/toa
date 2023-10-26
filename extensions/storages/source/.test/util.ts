@@ -3,6 +3,12 @@ import { tmpdir } from 'node:os'
 import fs from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { Readable } from 'node:stream'
+import fse from 'fs-extra'
+import dotenv from 'dotenv'
+
+if (fse.existsSync(join(__dirname, '.env'))) {
+  dotenv.config({ path: join(__dirname, '.env') });
+}
 
 const suites: Suite[] = [
   {

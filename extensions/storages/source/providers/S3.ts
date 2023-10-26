@@ -10,9 +10,17 @@ import {
 } from '@aws-sdk/client-s3'
 import { type Provider } from '../Provider'
 
+const {
+  S3_REGION = '',
+  S3_ENDPOINT = '',
+  S3_ACCESS_KEY = '',
+  S3_SECRET_ACCESS_KEY = '',
+  S3_BUCKET = ''
+} = process.env
+
 export class S3 implements Provider {
   protected readonly path: string
-  protected readonly bucket = ''
+  protected readonly bucket = S3_BUCKET
   protected readonly client: S3Client
 
   public constructor (url: URL) {
@@ -20,8 +28,14 @@ export class S3 implements Provider {
       throw new Error('URL must not contain host')
 
     this.path = url.pathname
-    // have to get s3config from env
-    this.client = new S3Client()
+    this.client = new S3Client({
+      region: S3_REGION,
+      endpoint: S3_ENDPOINT,
+      credentials: {
+        accessKeyId: S3_ACCESS_KEY,
+        secretAccessKey: S3_SECRET_ACCESS_KEY
+      }
+    })
   }
 
   public async get (path: string): Promise<Readable | null> {
