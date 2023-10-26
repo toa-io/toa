@@ -87,11 +87,15 @@ If the entry does not exist, a `NOT_FOUND` error is returned.
 Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
 A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
 
+#### `async delete(path: string): Maybe<void>`
+
+Delete the entry specified by `path`.
+
 #### `async list(path: string): string[]`
 
 Get ordered list of `id`s of entries in under the `path`.
 
-#### `async permutate(path: string, ids: string[]): Maybe<void>`
+#### `async reorder(path: string, ids: string[]): Maybe<void>`
 
 Reorder entries under the `path`.
 
