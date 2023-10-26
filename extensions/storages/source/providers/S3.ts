@@ -87,7 +87,7 @@ export class S3 implements Provider {
   }
 
   public async move (from: string, to: string): Promise<void> {
-    const keyFrom = join(this.path, from)
+    const keyFrom = join(this.bucket, this.path, from)
     const keyTo = join(this.path, to)
 
     await this.client.send(new CopyObjectCommand({
