@@ -161,7 +161,7 @@ describe.each(cases)('%s', (_, reference) => {
       }
     })
 
-    it('should exclude hidden', async () => {
+    it('should exclude concealed', async () => {
       const path = `${dir}/${lenna.id}`
 
       await storage.conceal(path)
@@ -171,16 +171,29 @@ describe.each(cases)('%s', (_, reference) => {
       expect(entries).toMatchObject([albert.id])
     })
 
-    it('should unhide', async () => {
+    it('should reveal', async () => {
       const path = `${dir}/${lenna.id}`
 
       await storage.conceal(path)
-      await storage.reveal(dir, lenna.id)
-      await storage.reveal(dir, lenna.id) // test that no duplicates are created
+      await storage.reveal(path)
+      await storage.reveal(path) // test that no duplicates are created
 
       const entries = await storage.list(dir)
 
       expect(entries).toMatchObject([albert.id, lenna.id])
+    })
+
+    it('should return ERR_NOT_FOOUD if entry doesnt exist', async () => {
+      const path = `${dir}/oopsie`
+
+      const methods: Array<'reveal' | 'conceal'> = ['reveal', 'conceal']
+
+      for (const method of methods) {
+        const error = await storage[method](path)
+
+        expect(error).toBeInstanceOf(Error)
+        expect(error).toMatchObject({ message: 'NOT_FOUND' })
+      }
     })
   })
 
