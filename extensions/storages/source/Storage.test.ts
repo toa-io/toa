@@ -136,7 +136,7 @@ describe.each(cases)('%s', (_, reference) => {
     })
 
     it('should permutate', async () => {
-      const error = await storage.permutate(dir, [lenna.id, albert.id])
+      const error = await storage.reorder(dir, [lenna.id, albert.id])
 
       expect(error).toBeUndefined()
 
@@ -154,7 +154,7 @@ describe.each(cases)('%s', (_, reference) => {
       ]
 
       for (const permutation of cases) {
-        const error = await storage.permutate(dir, permutation)
+        const error = await storage.reorder(dir, permutation)
 
         expect(error).toBeInstanceOf(Error)
         expect(error).toMatchObject({ message: 'PERMUTATION_MISMATCH' })
@@ -293,6 +293,56 @@ describe.each(cases)('%s', (_, reference) => {
         Readable, async (stream: Readable) => await buffer(stream))
 
       expect(stored.compare(buf)).toBe(0)
+    })
+  })
+
+  describe('delete', () => {
+    let lenna: Entry
+
+    beforeEach(async () => {
+      const stream = await open('lenna.png')
+
+      lenna = await storage.put(dir, stream) as Entry
+    })
+
+    it('should remove from the list', async () => {
+      await storage.delete(`${dir}/${lenna.id}`)
+
+      const list = await storage.list(dir)
+
+      expect(list).not.toContain(lenna.id)
+    })
+
+    it('should delete entry', async () => {
+      await storage.delete(`${dir}/${lenna.id}`)
+
+      const result = await storage.get(`${dir}/${lenna.id}`)
+
+      match(result,
+        Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
+    })
+
+    it('should delete variants', async () => {
+      const stream = await open('sample.jpeg')
+
+      const path = `${dir}/${lenna.id}`
+
+      await storage.diversify(path, 'foo', stream)
+      await storage.delete(`${dir}/${lenna.id}`)
+
+      const variant = await storage.fetch(`${path}.foo`)
+
+      match(variant,
+        Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
+
+      stream.destroy()
+    })
+
+    it('should throw if path is not an entry', async () => {
+      const result = await storage.delete(dir)
+
+      expect(result).toBeInstanceOf(Error)
+      expect(result).toMatchObject({ message: 'NOT_FOUND' })
     })
   })
 

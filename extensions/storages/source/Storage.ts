@@ -13,14 +13,6 @@ export class Storage {
     this.provider = provider
   }
 
-  public async get (path: string): Maybe<Entry> {
-    const metapath = posix.join(ENTRIES, path, META)
-    const result = await this.provider.get(metapath)
-
-    if (result === null) return ERR_NOT_FOUND
-    else return decode(await buffer(result))
-  }
-
   public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
     const scanner = new Scanner(type)
     const pipe = stream.pipe(scanner)
@@ -36,29 +28,16 @@ export class Storage {
     return await this.create(path, id, scanner.size, scanner.type)
   }
 
-  public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
-    const scanner = new Scanner()
-    const pipe = stream.pipe(scanner)
+  public async get (path: string): Maybe<Entry> {
+    const metapath = posix.join(ENTRIES, path, META)
+    const result = await this.provider.get(metapath)
 
-    await this.provider.put(posix.join(ENTRIES, path), name, pipe)
-
-    if (scanner.error !== null)
-      return scanner.error
-
-    const { size, type } = scanner
-    const entry = await this.get(path)
-
-    if (entry instanceof Error)
-      return entry
-
-    entry.variants = entry.variants.filter((variant) => variant.name !== name)
-    entry.variants.push({ name, size, type })
-
-    await this.save(path, entry)
+    if (result === null) return ERR_NOT_FOUND
+    else return decode(await buffer(result))
   }
 
   public async fetch (path: string): Maybe<Readable> {
-    const { id, variant, rel } = this.parse(path)
+    const { rel, id, variant } = this.parse(path)
 
     const blob = variant === null
       ? posix.join(BLOBs, id)
@@ -70,13 +49,23 @@ export class Storage {
     else return stream
   }
 
+  public async delete (path: string): Maybe<void> {
+    const entry = await this.get(path)
+
+    if (entry instanceof Error)
+      return entry
+
+    await this.conceal(path)
+    await this.provider.delete(posix.join(ENTRIES, path))
+  }
+
   public async list (path: string): Promise<string[]> {
     const stream = await this.provider.get(posix.join(ENTRIES, path, LIST))
 
     return stream === null ? [] : decode(await buffer(stream))
   }
 
-  public async permutate (path: string, ids: string[]): Maybe<void> {
+  public async reorder (path: string, ids: string[]): Maybe<void> {
     const unique = new Set(ids)
     const dir = posix.join(ENTRIES, path)
     const list = await this.getList(dir)
@@ -109,6 +98,27 @@ export class Storage {
     const { id, rel } = this.parse(path)
 
     return await this.enroll(rel, id)
+  }
+
+  public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
+    const scanner = new Scanner()
+    const pipe = stream.pipe(scanner)
+
+    await this.provider.put(posix.join(ENTRIES, path), name, pipe)
+
+    if (scanner.error !== null)
+      return scanner.error
+
+    const { size, type } = scanner
+    const entry = await this.get(path)
+
+    if (entry instanceof Error)
+      return entry
+
+    entry.variants = entry.variants.filter((variant) => variant.name !== name)
+    entry.variants.push({ name, size, type })
+
+    await this.save(path, entry)
   }
 
   public async annotate (path: string, key: string, value?: unknown): Maybe<void> {
