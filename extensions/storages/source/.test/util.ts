@@ -21,7 +21,7 @@ const suites: Suite[] = [
   },
   {
     run: true,
-    ref: 's3:///s3-storage',
+    ref: 's3://s3.localhost.localstack.cloud:4566/us-east-1/testbucket',
   },
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`

@@ -131,7 +131,7 @@ Custom providers are not supported.
 
 ### Amazon S3
 
-Annotation value format is `s3://{region}/{bucket}`.
+Annotation value formats are `s3://{region}/{bucket}` and `s3://{endpoint}/{region}/{bucket}`.
 
 Requires secrets for the access key and secret key.
 See [`toa conceal`](/runtime/cli/readme.md#conceal) for deployment
@@ -139,6 +139,7 @@ and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 
 `s3://us-east-1/my-bucket`
+`s3://s3.my-instance.com:4566/us-east-1/my-bucket`
 
 ### Filesystem
 
