@@ -74,13 +74,12 @@ export class S3 implements Provider {
   }
 
   public async delete (key: string): Promise<void> {
-    const prefix = key[0] === '/' ? key.substring(1) : key
     const listResponse = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
-      Prefix: prefix
+      Prefix: key.substring(1)
     }))
 
-    if (listResponse.Contents != null && listResponse.Contents.length > 0)
+    if (listResponse.Contents !== undefined && listResponse.Contents.length > 0)
       await this.client.send(new DeleteObjectsCommand({
         Bucket: this.bucket,
         Delete: {
