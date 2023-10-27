@@ -117,6 +117,22 @@ describe.each(cases)('%s', (_, reference) => {
     })
   })
 
+  describe('get', () => {
+    it('should get blob by id', async () => {
+      const stream = await open('lenna.ascii')
+      const entry = await storage.put(dir, stream) as Entry
+      const stored = await storage.fetch(entry.id)
+
+      if (stored instanceof Error)
+        throw stored
+
+      const buf = await buffer(stored)
+      const expected = await buffer(await open('lenna.ascii'))
+
+      expect(buf.compare(expected)).toBe(0)
+    })
+  })
+
   describe('list', () => {
     let albert: Entry
     let lenna: Entry
