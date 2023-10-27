@@ -85,7 +85,12 @@ If the entry does not exist, a `NOT_FOUND` error is returned.
 #### `async fetch(path: string): Maybe<Readable>`
 
 Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
-A variant may be specified in the path, e.g., `/path/to/eecd837c.thumbnail.jpeg`.
+
+`path` can be an entry id, or a path to the entry, or a path to a variant of the entry.
+
+- `eecd837c` - fetch the BLOB by `id`
+- `/path/to/eecd837c` - fetch the BLOB by path
+- `/path/to/eecd837c.thumbnail.jpeg` - fetch the `thumbnail.jpeg` variant of the BLOB
 
 #### `async delete(path: string): Maybe<void>`
 
@@ -151,7 +156,7 @@ Annotation value format is `tmp:///{path}`.
 
 ## Deduplication
 
-BLOBs are stored in the storage system with their checksum as the key, ensuring that identical BLOBs
+BLOBs are stored in the underlying storage with their checksum as the key, ensuring that identical BLOBs
 are stored only once.
 Variants, on the other hand, are not deduplicated across different entries.
 
