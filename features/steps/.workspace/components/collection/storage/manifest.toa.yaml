@@ -1,0 +1,13 @@
+name: storage
+
+storages: [tmp]
+
+operations:
+  put:
+    input:
+      storage*: string
+      path*: string
+  get:
+    input:
+      storage*: string
+      path*: string
