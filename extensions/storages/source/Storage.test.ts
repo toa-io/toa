@@ -117,22 +117,6 @@ describe.each(cases)('%s', (_, reference) => {
     })
   })
 
-  describe('get', () => {
-    it('should get blob by id', async () => {
-      const stream = await open('lenna.ascii')
-      const entry = await storage.put(dir, stream) as Entry
-      const stored = await storage.fetch(entry.id)
-
-      if (stored instanceof Error)
-        throw stored
-
-      const buf = await buffer(stored)
-      const expected = await buffer(await open('lenna.ascii'))
-
-      expect(buf.compare(expected)).toBe(0)
-    })
-  })
-
   describe('list', () => {
     let albert: Entry
     let lenna: Entry
@@ -295,6 +279,20 @@ describe.each(cases)('%s', (_, reference) => {
       expect(stored.compare(buf)).toBe(0)
     })
 
+    it('should fetch blob by id', async () => {
+      const stream = await open('lenna.ascii')
+      const entry = await storage.put(dir, stream) as Entry
+      const stored = await storage.fetch(entry.id)
+
+      if (stored instanceof Error)
+        throw stored
+
+      const buf = await buffer(stored)
+      const expected = await buffer(await open('lenna.ascii'))
+
+      expect(buf.compare(expected)).toBe(0)
+    })
+
     it('should fetch variant', async () => {
       const stream = await open('sample.jpeg')
 
@@ -309,6 +307,13 @@ describe.each(cases)('%s', (_, reference) => {
         Readable, async (stream: Readable) => await buffer(stream))
 
       expect(stored.compare(buf)).toBe(0)
+    })
+
+    it('should not fetch blob by id and fake path', async () => {
+      const stored = await storage.fetch(`fake/${lenna.id}`)
+
+      match(stored,
+        Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
     })
   })
 

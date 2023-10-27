@@ -39,6 +39,13 @@ export class Storage {
   public async fetch (path: string): Maybe<Readable> {
     const { rel, id, variant } = this.parse(path)
 
+    if (variant === null && rel !== '') {
+      const entry = await this.get(path)
+
+      if (entry instanceof Error)
+        return entry
+    }
+
     const blob = variant === null
       ? posix.join(BLOBs, id)
       : posix.join(ENTRIES, rel, id, variant)
