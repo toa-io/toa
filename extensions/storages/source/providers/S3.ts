@@ -1,11 +1,11 @@
 import { type Readable } from 'node:stream'
 import { join } from 'node:path/posix'
+import { Upload } from '@aws-sdk/lib-storage'
 import dotenv from 'dotenv'
 import fse from 'fs-extra'
 import {
   S3Client,
   GetObjectCommand,
-  PutObjectCommand,
   CopyObjectCommand,
   ListObjectsV2Command,
   DeleteObjectsCommand,
@@ -66,11 +66,14 @@ export class S3 implements Provider {
   public async put (path: string, filename: string, stream: Readable): Promise<void> {
     const key = join(path, filename)
 
-    await this.client.send(new PutObjectCommand({
-      Bucket: this.bucket,
-      Key: key,
-      Body: stream
-    }))
+    await new Upload({
+      client: this.client,
+      params: {
+        Bucket: this.bucket,
+        Key: key,
+        Body: stream
+      }
+    }).done()
   }
 
   public async delete (key: string): Promise<void> {
@@ -90,6 +93,8 @@ export class S3 implements Provider {
 
   public async move (from: string, keyTo: string): Promise<void> {
     const keyFrom = join(this.bucket, from)
+
+    await new Promise((resolve) => setTimeout(resolve, 500))
 
     await this.client.send(new CopyObjectCommand({
       Bucket: this.bucket,
