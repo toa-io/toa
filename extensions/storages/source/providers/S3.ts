@@ -1,57 +1,61 @@
 import { type Readable } from 'node:stream'
 import { join } from 'node:path/posix'
+import dotenv from 'dotenv'
+import fse from 'fs-extra'
 import {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
   CopyObjectCommand,
   ListObjectsV2Command,
-  DeleteObjectsCommand
+  DeleteObjectsCommand,
+  type S3ClientConfigType
 } from '@aws-sdk/client-s3'
 import { type Provider } from '../Provider'
 
+if (fse.existsSync(join(__dirname, '.env')))
+  dotenv.config({ path: join(__dirname, '.env') })
+
 const {
-  S3_REGION = '',
-  S3_ENDPOINT = '',
   S3_ACCESS_KEY = '',
-  S3_SECRET_ACCESS_KEY = '',
-  S3_BUCKET = ''
+  S3_SECRET_ACCESS_KEY = ''
 } = process.env
 
 export class S3 implements Provider {
-  protected readonly path: string
-  protected readonly bucket = S3_BUCKET
+  protected readonly bucket: string
   protected readonly client: S3Client
 
   public constructor (url: URL) {
-    if (url.host !== '')
-      throw new Error('URL must not contain host')
+    const pathSegments = url.pathname.split('/').filter((segment) => segment !== '')
 
-    this.path = url.pathname
-    this.client = new S3Client({
-      region: S3_REGION,
-      endpoint: S3_ENDPOINT,
+    if (pathSegments.length === 0) throw new Error('S3 URL must contain at least two segments')
+
+    const s3Config: S3ClientConfigType = {
       credentials: {
         accessKeyId: S3_ACCESS_KEY,
         secretAccessKey: S3_SECRET_ACCESS_KEY
       }
-    })
+    }
+
+    if (pathSegments.length === 1) {
+      s3Config.region = url.host
+      this.bucket = pathSegments[0]
+    } else {
+      s3Config.region = pathSegments[0]
+      s3Config.endpoint = `http://${url.host}` // ???
+      this.bucket = pathSegments[1]
+    }
+
+    this.client = new S3Client(s3Config)
   }
 
-  public async get (path: string): Promise<Readable | null> {
-    const key = join(this.path, path)
-
+  public async get (key: string): Promise<Readable | null> {
     try {
       const fileResponse = await this.client.send(new GetObjectCommand({
         Bucket: this.bucket,
         Key: key
       }))
 
-      /**
-       * Code always runs in NodeJS environment,
-       * so there always will be NodeJS.Readable stream,
-       * there is no need of type guard ??
-       */
       return fileResponse.Body as Readable
     } catch (err: any) {
       if (err?.Code === 'NoSuchKey') return null
@@ -60,7 +64,7 @@ export class S3 implements Provider {
   }
 
   public async put (path: string, filename: string, stream: Readable): Promise<void> {
-    const key = join(this.path, path, filename)
+    const key = join(path, filename)
 
     await this.client.send(new PutObjectCommand({
       Bucket: this.bucket,
@@ -69,8 +73,7 @@ export class S3 implements Provider {
     }))
   }
 
-  public async delete (path: string): Promise<void> {
-    const key = join(this.path, path)
+  public async delete (key: string): Promise<void> {
     const prefix = key[0] === '/' ? key.substring(1) : key
     const listResponse = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
@@ -86,9 +89,8 @@ export class S3 implements Provider {
       }))
   }
 
-  public async move (from: string, to: string): Promise<void> {
-    const keyFrom = join(this.bucket, this.path, from)
-    const keyTo = join(this.path, to)
+  public async move (from: string, keyTo: string): Promise<void> {
+    const keyFrom = join(this.bucket, from)
 
     await this.client.send(new CopyObjectCommand({
       Bucket: this.bucket,
