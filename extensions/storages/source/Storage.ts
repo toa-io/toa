@@ -67,7 +67,8 @@ export class Storage {
   }
 
   public async list (path: string): Promise<string[]> {
-    const stream = await this.provider.get(posix.join(ENTRIES, path, LIST))
+    const listfile = posix.join(ENTRIES, path, LIST)
+    const stream = await this.provider.get(listfile)
 
     return stream === null ? [] : decode(await buffer(stream))
   }
@@ -75,7 +76,7 @@ export class Storage {
   public async reorder (path: string, ids: string[]): Maybe<void> {
     const unique = new Set(ids)
     const dir = posix.join(ENTRIES, path)
-    const list = await this.getList(dir)
+    const list = await this.list(path)
 
     if (list.length !== ids.length || unique.size !== ids.length)
       return ERR_PERMUTATION_MISMATCH
@@ -90,7 +91,7 @@ export class Storage {
   public async conceal (path: string): Maybe<void> {
     const { id, rel } = this.parse(path)
     const dir = posix.join(ENTRIES, rel)
-    const list = await this.getList(dir)
+    const list = await this.list(rel)
     const index = list.indexOf(id)
 
     if (index === -1)
@@ -156,13 +157,6 @@ export class Storage {
     await this.provider.move(temp, blob)
   }
 
-  private async getList (dir: string): Promise<string[]> {
-    const listfile = posix.join(dir, LIST)
-    const stream = await this.provider.get(listfile)
-
-    return stream === null ? [] : decode(await buffer(stream))
-  }
-
   // eslint-disable-next-line max-params
   private async create (path: string, id: string, size: number, type: string): Promise<Entry> {
     const entry: Entry = {
@@ -194,7 +188,7 @@ export class Storage {
 
   private async enroll (path: string, id: string, addition: boolean = false): Maybe<void> {
     const dir = posix.join(ENTRIES, path)
-    const list = await this.getList(dir)
+    const list = await this.list(path)
     const index = list.indexOf(id)
 
     if (index !== -1)
@@ -238,3 +232,5 @@ interface Path {
   id: string
   variant: string | null
 }
+
+export type Storages = Record<string, Storage>

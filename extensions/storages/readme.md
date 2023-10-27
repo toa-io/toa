@@ -127,7 +127,7 @@ Set a `key` property in the `meta` of the entry specified by `path`.
 
 Storage uses underlying providers to store BLOBs and entries.
 
-Custom providers are not supported.
+Custom providers are not supported yet.
 
 ### Amazon S3
 
