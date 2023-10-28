@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/prototype",
-  "version": "0.20.0",
+  "version": "0.20.1-alpha.0",
   "description": "Toa Generic Prototype",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
