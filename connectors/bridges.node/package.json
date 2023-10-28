@@ -25,13 +25,11 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "nopeable": "*"
-  },
   "dependencies": {
     "@toa.io/core": "0.22.0",
     "@toa.io/filesystem": "0.22.0",
     "@toa.io/generic": "0.22.0",
+    "@toa.io/match": "0.3.0",
     "fast-glob": "3.2.7"
   },
   "devDependencies": {

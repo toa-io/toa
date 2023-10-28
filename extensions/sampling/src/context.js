@@ -4,7 +4,6 @@ const { Connector } = require('@toa.io/core')
 const { match } = require('@toa.io/generic')
 const { context } = require('./sample')
 const { ReplayException, SampleException } = require('./exceptions')
-const { Nope } = require('nopeable')
 
 /**
  * @implements {toa.core.Context}
@@ -67,8 +66,13 @@ class Context extends Connector {
   }
 
   #format (reply) {
-    if (reply.error !== undefined) return new Nope(reply.error)
-    else return reply.output
+    if (reply.error !== undefined)
+      return Object.create(Error.prototype, {
+        message: { value: reply.error.message },
+        cause: { value: reply.error.cause },
+      })
+    else
+      return reply.output
   }
 }
 

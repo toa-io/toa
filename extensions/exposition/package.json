@@ -16,9 +16,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "peerDependencies": {
-    "nopeable": "*"
-  },
   "dependencies": {
     "@toa.io/core": "0.22.0",
     "@toa.io/generic": "0.22.0",
