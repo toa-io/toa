@@ -1,26 +1,21 @@
-name: Release
+name: Version
 
 on:
   pull_request:
     types: [closed]
     branches:
-      - main
-      - alpha
+      - dev
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     permissions: write-all
-
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x, 20.x]
 
     steps:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -32,7 +27,7 @@ jobs:
 
   publish:
     if: github.event.pull_request.merged == true
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -65,13 +60,4 @@ jobs:
           GIT_COMMITTER_EMAIL: ${{ steps.gpg.outputs.email }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ ${{ github.base_ref }} = main ]; then
-            npx lerna@7.3.0 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
-          else
-            npx lerna@7.3.0 publish --conventional-prerelease --preid alpha --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
-          fi
-
-          git fetch
-          git checkout dev
-          git merge ${{ github.base_ref }}
-          git push --all origin --no-verify
+          npx lerna@7.3.0 version --conventional-prerelease --preid dev --yes --no-changelog --message "ci: version"
