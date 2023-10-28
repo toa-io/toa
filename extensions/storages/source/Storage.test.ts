@@ -1,20 +1,22 @@
 import { Readable } from 'node:stream'
 import { match } from '@toa.io/match'
 import { buffer } from '@toa.io/generic'
-import { Factory } from './Factory'
 import { Storage } from './Storage'
 import { cases, open, rnd } from './.test/util'
 import { type Entry } from './Entry'
+import { providers } from './providers'
 
 let storage: Storage
 let dir: string
 
-const factory = new Factory()
-
-describe.each(cases)('%s', (_, reference) => {
+describe.each(cases)('%s', (_, url, secrets) => {
   beforeEach(() => {
     dir = '/' + rnd()
-    storage = factory.createStorage(reference as string)
+
+    const Provider = providers[url.protocol]
+    const provider = new Provider(url, secrets)
+
+    storage = new Storage(provider)
   })
 
   it('should be', async () => {

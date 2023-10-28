@@ -1,6 +1,6 @@
 name: storage
 
-storages: [tmp]
+storages: tmp
 
 operations:
   put:

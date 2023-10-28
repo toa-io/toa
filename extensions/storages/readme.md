@@ -32,17 +32,6 @@ meta:
   nudity: false
 ```
 
-## Annotation
-
-The `storages` context annotation is an object with keys that reference the storage name and
-provider-specific URLs as values.
-
-```yaml
-storages:
-  photos: s3://us-east-1/my-bucket
-  photos@dev: file:///var/my-storage
-```
-
 ## Aspect
 
 The Storages extension provides `storages` aspect,
@@ -134,9 +123,6 @@ Custom providers are not supported yet.
 Annotation value format is `s3://{region}/{bucket}`.
 
 Requires secrets for the access key and secret key.
-See [`toa conceal`](/runtime/cli/readme.md#conceal) for deployment
-and [`toa env`](/runtime/cli/readme.md#env)
-for local environment.
 
 `s3://us-east-1/my-bucket`
 
@@ -175,3 +161,35 @@ Underlying directory structure:
       thumbnail.jpeg  # variant BLOBs
       thumbnail.webp
 ```
+
+## Manifest
+
+Storage extension can be enabled by adding `storages` key to the component manifest.
+
+```yaml
+storages: [photos, videos]
+```
+
+Value of the `storages` key is an array of storage names, that should be declared in the context.
+
+It the names are unknown, `null` declaration can be used:
+
+```yaml
+storages: ~
+```
+
+## Annotation
+
+The `storages` context annotation is an object with keys that reference the storage name and
+provider-specific URLs as values.
+
+```yaml
+storages:
+  photos: s3://us-east-1/my-bucket
+  photos@dev: file:///var/my-storage
+```
+
+## Secrets
+
+Secrets declared by storage providers can be deployed by [`toa conceal`](/runtime/cli/readme.md#conceal),
+or set locally by [`toa env`](/runtime/cli/readme.md#env).

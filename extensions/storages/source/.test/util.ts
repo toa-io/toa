@@ -17,31 +17,34 @@ const suites: Suite[] = [
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
 ]
 
-function map (suite: Suite) {
+function map (suite: Suite): Case{
   const url = new URL(suite.ref)
 
-  return [url.protocol, url]
+  return [url.protocol, url, suite.secrets ?? {}]
 }
 
-export const cases = suites.filter(({run}) => run).map(map)
+export const cases = suites.filter(({ run }) => run).map(map)
 
-export function rnd (): string {
+export function rnd (): string{
   return Math.random().toString(36).slice(2)
 }
 
-export async function open (rel: string): Promise<Readable> {
+export async function open (rel: string): Promise<Readable>{
   const path = join(__dirname, rel)
 
   return createReadStream(path)
 }
 
-export async function read (rel: string): Promise<Buffer> {
+export async function read (rel: string): Promise<Buffer>{
   const path = join(__dirname, rel)
 
   return fs.readFile(path)
 }
 
-interface Suite {
+interface Suite{
   run: boolean
   ref: string
+  secrets?: Record<string, string>
 }
+
+type Case = [string, URL, Record<string, string>]
