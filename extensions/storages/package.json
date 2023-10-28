@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "0.20.0-alpha.3",
+  "version": "0.22.0-dev.0",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
