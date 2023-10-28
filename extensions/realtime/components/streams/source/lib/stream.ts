@@ -1,13 +1,5 @@
 import { PassThrough, Readable } from 'node:stream'
 
-export function addStream (key: string, map: Record<string, Stream>): void {
-  const stream = new Stream()
-
-  map[key] = stream
-
-  stream.once('close', () => delete map[key])
-}
-
 export class Stream extends Readable {
   private forks: number = 0
 

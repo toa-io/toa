@@ -21,7 +21,7 @@ export type Variable = {
   }
 }
 
-export type Variables = Record<string, Variable[]>
+export type Variables = Record<'global' | string, Variable[]>
 
 export type Dependency = {
   services?: Service[]

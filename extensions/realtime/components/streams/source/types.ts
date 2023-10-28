@@ -1,7 +1,9 @@
-import { type Stream } from './lib/streams'
+import { type Stream } from './lib/stream'
 
 export interface Context {
-  state: Record<string, Stream>
+  state: {
+    streams: Map<string, Stream>
+  }
 }
 
 export interface PushInput {
