@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/core",
-  "version": "0.22.0",
+  "version": "0.22.1-dev.0",
   "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -18,9 +18,6 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "peerDependencies": {
-    "nopeable": "*"
   },
   "dependencies": {
     "@rsql/parser": "1.2.4",

@@ -1,9 +1,9 @@
-import { type Call, type Observation } from '@toa.io/types'
+import { type Call, type Maybe, type Observation } from '@toa.io/types'
 
 export interface Context {
   local: {
     observe: Observation<Entity>
-    decrypt: Call<DecryptOutput, string>
+    decrypt: Call<Maybe<DecryptOutput>, string>
   }
   configuration: Configuration
 }

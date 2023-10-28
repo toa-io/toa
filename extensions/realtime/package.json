@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.realtime",
-  "version": "0.22.0",
+  "version": "0.22.1-dev.0",
   "description": "Toa Realtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -15,9 +15,6 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "peerDependencies": {
-    "nopeable": "*"
   },
   "jest": {
     "preset": "ts-jest",

@@ -1,5 +1,4 @@
-import { Nope, type Nopeable } from 'nopeable'
-import { type Operation } from '@toa.io/types'
+import { type Maybe, type Operation } from '@toa.io/types'
 import { type AuthenticateOutput, type Context } from './types'
 
 export class Computation implements Operation {
@@ -13,10 +12,10 @@ export class Computation implements Operation {
     this.observe = context.local.observe
   }
 
-  public async execute (token: string): Promise<Nopeable<AuthenticateOutput>> {
+  public async execute (token: string): Promise<Maybe<AuthenticateOutput>> {
     const claim = await this.decrypt({ input: token })
 
-    if (claim instanceof Nope)
+    if (claim instanceof Error)
       return claim
 
     const identity = claim.identity
@@ -28,7 +27,7 @@ export class Computation implements Operation {
       const revocation = await this.observe({ query: { id: identity.id } })
 
       if (revocation !== null && iat < revocation.revokedAt)
-        return new Nope('REVOKED')
+        return ERR_TOKEN_REVOKED
     }
 
     const refresh = stale || claim.refresh
@@ -36,3 +35,5 @@ export class Computation implements Operation {
     return { identity, refresh }
   }
 }
+
+const ERR_TOKEN_REVOKED = new Error('TOKEN_REVOKED')
