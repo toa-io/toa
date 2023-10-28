@@ -1,0 +1,60 @@
+extends: standard-with-typescript
+overrides:
+  - files: ['*.ts']
+    rules:
+      import/no-default-export: error
+      newline-before-return: error
+      padding-line-between-statements:
+        - error
+        - blankLine: always
+          prev: [block-like, if]
+          next: '*'
+        - blankLine: always
+          prev: '*'
+          next: [block-like, if]
+        - blankLine: always
+          prev: [const, let]
+          next: expression
+      function-paren-newline:
+        - error
+        - never
+      max-len:
+        - error
+        - 100
+      max-depth: [error, 2]
+      max-statements-per-line:
+        - error
+        - max: 1
+      curly: [error, multi]
+      no-trailing-spaces: warn      # prevents IDE
+      no-multiple-empty-lines: warn # from going crazy
+      newline-per-chained-call:
+        - error
+        - ignoreChainWithDepth: 2
+      import/order:
+        - error
+        - groups:
+            - builtin
+            - external
+            - internal
+            - parent
+            - index
+            - sibling
+            - object
+            - type
+      max-params: error
+      arrow-parens: error
+      no-warning-comments: error
+      '@typescript-eslint/consistent-type-imports':
+        - error
+        - fixStyle: inline-type-imports
+      '@typescript-eslint/member-ordering': error
+      '@typescript-eslint/explicit-member-accessibility': error
+      '@typescript-eslint/no-dynamic-delete': off
+parserOptions:
+  project: ./tsconfig.json
+env:
+  jest: true
+ignorePatterns:
+  - '*.d.ts'
+  - '*.js'

@@ -3,9 +3,6 @@
 const { Connector } = require('@toa.io/core')
 const { validate } = require('./validate')
 
-/**
- * @implements {toa.sampling.Receiver}
- */
 class Receiver extends Connector {
   /** @type {toa.core.Receiver} */
   #receiver
@@ -13,10 +10,6 @@ class Receiver extends Connector {
   /** @type {string} */
   #id
 
-  /**
-   * @param {toa.core.Receiver} receiver
-   * @param {toa.core.Locator} locator
-   */
   constructor (receiver, locator) {
     super()
 
@@ -26,9 +19,6 @@ class Receiver extends Connector {
     this.depends(receiver)
   }
 
-  /**
-   * @param {toa.sampling.Message} message
-   */
   async receive (message) {
     if (message.sample === undefined) return this.#receiver.receive(message)
     else return this.#apply(message)

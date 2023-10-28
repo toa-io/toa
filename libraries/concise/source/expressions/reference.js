@@ -10,7 +10,19 @@ function reference (value) {
   const match = value.match(RX)
 
   if (match === null) return null
-  else return { $ref: match.groups.ref }
+
+  const [file, ref] = match.groups.ref.split('#')
+  const parts = [file]
+
+  if (ref !== undefined) {
+    const propertyRef = ref.replaceAll(/\/(?!$)/g, '/properties/')
+
+    parts.push(propertyRef)
+  }
+
+  const $ref = parts.join('#')
+
+  return { $ref }
 }
 
 const RX = /^ref:(?<ref>.+)/

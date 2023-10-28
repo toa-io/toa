@@ -12,13 +12,6 @@ beforeEach(() => {
   manifest = clone(fixtures.operations)
 })
 
-describe('environment', () => {
-  it('should convolve with environment argument', () => {
-    normalize(manifest, 'local')
-    expect(manifest.operations.add.bindings).toStrictEqual(['foo'])
-  })
-})
-
 describe('operations', () => {
   it('should set default bindings', () => {
     normalize(manifest)
@@ -35,12 +28,6 @@ describe('extensions', () => {
     normalize(manifest)
 
     expect(manifest.extensions[path]).toStrictEqual(origins)
-  })
-
-  it('should throw if manifest is undefined', () => {
-    manifest.extensions['./dummies/extension'].ok = false
-
-    expect(() => normalize(manifest)).toThrow(/hasn't returned manifest/)
   })
 })
 

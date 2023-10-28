@@ -1,30 +1,29 @@
 'use strict'
 
 const { join, resolve } = require('node:path')
-const { directory: { glob } } = require('@toa.io/filesystem')
+const { directory } = require('@toa.io/filesystem')
 const { replay } = require('@toa.io/userland/samples')
 const { translate } = require('./.replay')
 
 const { When } = require('@cucumber/cucumber')
 
-When('I replay it', /**
- * @this {toa.samples.features.Context}
- */
+When('I replay it',
+  /**
+   * @this {toa.samples.features.Context}
+   */
   async function () {
+    /** @type {toa.samples.Suite} */
+    const suite = translate(this)
+
     let paths
 
-    if (this.autonomous) {
+    if (this.integration) {
+      paths = await directory.directories(COMPONENTS)
+    } else {
       const path = join(COMPONENTS, this.component)
 
       paths = [path]
-    } else {
-      const pattern = join(COMPONENTS, '*')
-
-      paths = await glob(pattern)
     }
-
-    /** @type {toa.samples.Suite} */
-    const suite = translate(this)
 
     this.ok = await replay(suite, paths)
   })

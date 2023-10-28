@@ -5,15 +5,10 @@ const stage = require('@toa.io/userland/stage')
 
 const { COLLECTION } = require('./constants')
 
-/**
- * @param {string[]} references
- * @param {string[]} [bindings]
- * @returns {Promise<toa.core.Connector>}
- **/
-const composition = async (references, bindings) => {
+const composition = async (references, options) => {
   const paths = /** @type {string[]} */ references.map((reference) => join(COLLECTION, reference))
 
-  await stage.composition(paths)
+  await stage.composition(paths, options)
 }
 
 exports.composition = composition

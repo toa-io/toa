@@ -1,0 +1,40 @@
+{
+  "name": "@toa.io/http",
+  "version": "0.20.0-alpha.2",
+  "description": "Text-level HTTP client",
+  "homepage": "https://toa.io",
+  "author": {
+    "name": "Artem Gurtovoi",
+    "url": "https://github.com/temich"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "engines": {
+    "node": ">= 12.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "bin": {
+    "http": "bin/http"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "transpile": "tsc"
+  },
+  "dependencies": {
+    "http-parser-js": "0.5.8",
+    "node-fetch": "2.6.11"
+  }
+}

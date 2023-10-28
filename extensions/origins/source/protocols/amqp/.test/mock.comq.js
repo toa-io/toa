@@ -2,7 +2,7 @@
 
 const { generate } = require('randomstring')
 
-const connect = jest.fn(async () => ({
+const assert = jest.fn(async () => ({
   emit: jest.fn(async () => undefined),
   request: jest.fn(async () => generate()),
   reply: jest.fn(async () => undefined),
@@ -10,4 +10,4 @@ const connect = jest.fn(async () => ({
   close: jest.fn(async () => undefined)
 }))
 
-exports.connect = connect
+exports.assert = assert

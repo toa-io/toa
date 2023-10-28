@@ -2,26 +2,23 @@
 
 const get = require('./.describe')
 
-/**
- * @param {toa.norm.Context} context
- * @param {toa.deployment.Composition[]} compositions
- * @param {toa.deployment.Dependency} dependency
- * @returns {toa.deployment.Contents}
- */
 const describe = (context, compositions, dependency) => {
-  const { references, services, proxies } = dependency
+  const { services } = dependency
+
+  dependency.variables.global ??= []
+  dependency.variables.global.unshift({ name: 'TOA_ENV', value: context.environment })
 
   const components = get.components(compositions)
-  const dependencies = get.dependencies(references)
-  const variables = get.variables(context, dependency.variables)
+  const credentials = context.registry?.credentials
+
+  get.compositions(compositions, dependency.variables, context.environment)
+  get.services(services, dependency.variables)
 
   return {
     compositions,
     components,
     services,
-    proxies,
-    variables,
-    ...dependencies
+    credentials,
   }
 }
 

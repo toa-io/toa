@@ -1,25 +1,23 @@
-declare namespace toa.core {
+import { Exception } from './exception'
 
-  namespace request {
-
-    interface Query {
-      id?: string
-      criteria?: string
-      omit?: number
-      limit?: number
-      sort?: Array<string>
-      projection?: Array<string>
-      version?: number
-    }
-
-  }
-
-  type Request = {
-    input?: any
-    query?: request.Query
-  }
-
+export interface Query {
+  id?: string
+  criteria?: string
+  omit?: number
+  limit?: number
+  sort?: Array<string>
+  projection?: Array<string>
+  version?: number
 }
 
-export type Request = toa.core.Request
-export type Query = toa.core.request.Query
+export interface Request {
+  input?: any
+  query?: Query
+  authentic?: boolean
+}
+
+export interface Reply {
+  output?: any
+  error?: object
+  exception?: Exception
+}

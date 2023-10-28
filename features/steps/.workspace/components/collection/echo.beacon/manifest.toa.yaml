@@ -13,3 +13,7 @@ operations:
   print:
     input: string
     output: string
+  def:
+    forward: echo
+    input: ok
+    output: string

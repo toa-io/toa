@@ -1,8 +1,10 @@
 'use strict'
 
 const assert = require('node:assert')
+const { exceptions } = require('@toa.io/core')
 const { transpose, match } = require('@toa.io/generic')
 const { parse } = require('@toa.io/yaml')
+const { diff } = require('jest-diff')
 
 const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')
@@ -32,6 +34,15 @@ When('I boot {component} component',
   })
 
 When('I compose {component} component',
+  /**
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  async function (reference) {
+    await stage.composition([reference], {})
+  })
+
+When('I stage {component} component',
   /**
    * @param {string} reference
    * @this {toa.features.Context}
@@ -115,10 +126,54 @@ Then('the reply is received:',
    * @this {toa.features.Context}
    */
   function (yaml) {
-    const object = parse(yaml)
-    const matches = match(this.reply, object)
+    if (this.exception !== undefined) throw this.exception
 
-    assert.equal(matches, true, 'Reply does not match')
+    const expected = parse(yaml)
+    const matches = match(this.reply, expected)
+
+    assert.equal(matches, true, diff(expected, this.reply))
+  })
+
+Then('the reply stream is received:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (yaml) {
+    if (this.exception !== undefined) throw this.exception
+
+    const expected = parse(yaml)
+    const received = []
+
+    for await (const chunk of this.reply) {
+      received.push(chunk)
+    }
+
+    const matches = match(received, expected)
+
+    assert.equal(matches, true, diff(expected, received))
+  })
+
+Then('the reply is received',
+  /**
+   * @this {toa.features.Context}
+   */
+  function () {
+    if (this.exception !== undefined) throw this.exception
+
+    assert.notEqual(this.reply, undefined, 'Reply is not received')
+  })
+
+Then('the following exception is thrown:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  function (yaml) {
+    const expected = parse(yaml)
+    const matches = match(this.exception, expected)
+
+    assert.equal(matches, true, diff(expected, this.exception))
   })
 
 When('an event {label} is emitted with the payload:',
@@ -141,11 +196,13 @@ When('an event {label} is emitted with the payload:',
 async function invoke (endpoint, request = {}) {
   const component = /** @type {toa.core.Component} */ this.connector
 
-  const { output, error, exception } = await component.invoke(endpoint, request)
+  const reply = await component.invoke(endpoint, request)
 
-  if (exception !== undefined) throw new Error(exception.message)
+  if (reply.error !== undefined) {
+    throw new Error(`${exceptions.names[reply.error.code]}: ${reply.error.message}`)
+  }
 
-  this.reply = { output, error }
+  this.reply = reply.output
 }
 
 /**
@@ -158,7 +215,11 @@ async function call (endpoint, request) {
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
 
-  this.reply = await remote.invoke(operation, request)
+  try {
+    this.reply = await remote.invoke(operation, request)
+  } catch (exception) {
+    this.exception = exception
+  }
 
   await remote.disconnect()
 }

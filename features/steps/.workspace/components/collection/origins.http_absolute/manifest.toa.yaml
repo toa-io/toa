@@ -1,8 +1,0 @@
-name: http
-namespace: origins
-
-operations:
-  test:
-    output: object
-
-origins: ~

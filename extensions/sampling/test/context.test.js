@@ -17,7 +17,7 @@ const factory = new Factory()
 /** @type {toa.core.Context} */
 let context
 
-/** @type {toa.sampling.Request} */
+/** @type {toa.sampling.request.Sample} */
 let sample
 
 /** @type {toa.core.Request} */
@@ -45,6 +45,18 @@ it('should be', () => {
 
 it('should depend on original context', () => {
   expect(fixtures.context.link).toHaveBeenCalledWith(context)
+})
+
+it('should depend on original context in autonomous mode', () => {
+  jest.clearAllMocks()
+
+  process.env.TOA_SAMPLING_AUTONOMOUS = '1'
+
+  context = factory.context(fixtures.context)
+
+  delete process.env.TOA_SAMPLING_AUTONOMOUS
+
+  expect(fixtures.context.link).not.toHaveBeenCalled()
 })
 
 ;['apply', 'call'].forEach((method) => {
@@ -80,7 +92,7 @@ it('should depend on original context', () => {
       await storage.apply(sample, async () => {
         const output = await context[method](...segments, request)
 
-        expect(output).toStrictEqual(reply)
+        expect(output).toStrictEqual(reply.output)
       })
     })
 
@@ -95,7 +107,7 @@ it('should depend on original context', () => {
         const reply = await context[method](...segments, request)
 
         expect(fixtures.context[method]).not.toHaveBeenCalled()
-        expect(reply.output).toStrictEqual(output)
+        expect(reply).toStrictEqual(output)
       })
 
       // used sample is removed
@@ -178,7 +190,7 @@ describe('aspects', () => {
 
     const args = [generate(), generate()]
 
-    /** @type {toa.sampling.Request} */
+    /** @type {toa.sampling.request.Sample} */
     const sample = {
       extensions: {
         [aspect.name]: [{ arguments: args }]
@@ -194,7 +206,7 @@ describe('aspects', () => {
   it('should not throw on arguments match', async () => {
     const args = [generate(), generate()]
 
-    /** @type {toa.sampling.Request} */
+    /** @type {toa.sampling.request.Sample} */
     const sample = {
       extensions: {
         [aspect.name]: [{ arguments: args }]
@@ -212,7 +224,7 @@ describe('aspects', () => {
   it('should return sampled result', async () => {
     const result = generate()
 
-    /** @type {toa.sampling.Request} */
+    /** @type {toa.sampling.request.Sample} */
     const sample = {
       extensions: {
         [aspect.name]: [{ result }]
@@ -251,5 +263,26 @@ describe('aspects', () => {
     await storage.apply(sample, () => aspect.invoke())
 
     expect(sample.extensions[aspect.name].length).toStrictEqual(1)
+  })
+
+  it('should throw on missing call result within autonomous sample', async () => {
+    const sample = { autonomous: true }
+
+    await expect(storage.apply(sample, () => aspect.invoke())).rejects.toThrow('sample does not contain')
+  })
+
+  it('should throw on missing call result within autonomous sample', async () => {
+    const sample = {
+      autonomous: true,
+      extensions: {
+        [aspect.name]: [
+          {
+            arguments: ['ok']
+          }
+        ]
+      }
+    }
+
+    await expect(storage.apply(sample, () => aspect.invoke('ok'))).rejects.toThrow('does not contain result')
   })
 })

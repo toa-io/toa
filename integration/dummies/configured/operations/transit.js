@@ -5,7 +5,7 @@ async function transition (input, object, context) {
 
   output.foo = context.aspects.configuration(['foo'])
 
-  return { output }
+  return output
 }
 
 exports.transition = transition

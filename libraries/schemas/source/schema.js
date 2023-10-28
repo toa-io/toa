@@ -2,8 +2,10 @@
 
 const { expand } = require('@toa.io/concise')
 const { defined } = require('@toa.io/generic')
+const { file } = require('@toa.io/filesystem')
+const yaml = require('@toa.io/yaml')
 const { create, is } = require('./validator')
-const { Exception } = require('./exception')
+const betterAjvErrors = require('better-ajv-errors').default
 
 /**
  * @implements {toa.schemas.Schema}
@@ -12,7 +14,6 @@ class Schema {
   /** @type {string} */
   id
 
-  /** @type {import('ajv').ValidateFunction } */
   #validate
 
   /**
@@ -34,9 +35,12 @@ class Schema {
     const valid = this.#validate(value)
 
     if (!valid) {
-      const error = this.#error()
+      let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
 
-      throw new Exception(error)
+      if (error.length === 0)
+        throw new Error(this.#validate.errors[0].message)
+
+      throw new TypeError(error[0].error)
     }
   }
 
@@ -58,6 +62,8 @@ class Schema {
 
 /** @type {toa.schemas.constructors.schema} */
 const schema = (cos) => {
+  if (typeof cos === 'string' && file.is.sync(cos)) cos = yaml.load.sync(cos)
+
   const validator = create()
   const schema = expand(cos, is)
   const validate = validator.compile(schema)

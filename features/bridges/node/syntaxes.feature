@@ -4,41 +4,40 @@ Feature: Node algorithm implementation syntaxes
 
   Scenario Outline: Run <type> with <syntax> syntax
     Given I boot `node.syntaxes` component
-    When I invoke `<type>_<syntax>` with:
+    When I invoke `<type><syntax>` with:
       """yaml
       query: {}
       """
     And I disconnect
     Then the reply is received:
       """
-      output: bar
+      bar
       """
     Examples:
       | syntax   | type        |
-      | function | transition  |
-      | class    | transition  |
-      | factory  | transition  |
-      | function | observation |
-      | class    | observation |
-      | factory  | observation |
-      | function | assignment  |
-      | class    | assignment  |
-      | factory  | assignment  |
+      | Function | transition  |
+      | Class    | transition  |
+      | Factory  | transition  |
+      | Function | observation |
+      | Class    | observation |
+      | Factory  | observation |
+      | Function | assignment  |
+      | Class    | assignment  |
+      | Factory  | assignment  |
 
   Scenario Outline: Run <type> with <syntax> syntax
     Given I boot `node.syntaxes` component
-    When I invoke `<type>_<syntax>`
+    When I invoke `<type><syntax>`
     And I disconnect
     Then the reply is received:
       """
-      output: bar
+      bar
       """
     Examples:
       | syntax   | type        |
-      | function | computation |
-      | class    | computation |
-      | factory  | computation |
-      | function | effect      |
-      | class    | effect      |
-      | factory  | effect      |
-
+      | Function | computation |
+      | Class    | computation |
+      | Factory  | computation |
+      | Function | effect      |
+      | Class    | effect      |
+      | Factory  | effect      |

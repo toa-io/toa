@@ -6,10 +6,7 @@ const stage = require('@toa.io/userland/stage')
 
 const root = resolve(__dirname, '../components')
 
-/** @type {toa.core.Component} */
 let echo
-
-/** @type {toa.core.Component} */
 let math
 
 beforeAll(async () => {
@@ -32,7 +29,7 @@ afterAll(async () => {
 it('should call endpoint', async () => {
   const reply = await echo.invoke('signal', {})
 
-  expect(reply.output).toStrictEqual('quack')
+  expect(reply).toStrictEqual('quack')
 })
 
 it('should throw on invalid input', async () => {

@@ -1,18 +1,10 @@
-declare namespace toa.generic {
-
-  namespace merge {
-
-    type Options = {
-      overwrite?: boolean
-      ignore?: boolean
-    }
-
-    type Predefined = (target: Object, source: Object) => Object
-  }
-
-  type Merge = (target: Object, source: Object, options: merge.Options, path: string[]) => Object
+interface Options {
+  overwrite: boolean
+  ignore: boolean
 }
 
-export const merge: toa.generic.Merge
-export const overwrite: toa.generic.merge.Predefined
-export const add: toa.generic.merge.Predefined
+export function merge (target: object, source: object, options?: Partial<Options>): object
+
+export function overwrite (target: object, source: object): object
+
+export function add (target: object, source: object): object

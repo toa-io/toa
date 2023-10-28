@@ -7,6 +7,7 @@ const { sample } = require('@toa.io/generic')
 const mock = require('@toa.io/mock')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
+
 require('../output')
 
 const gherkin = mock.gherkin
@@ -23,29 +24,35 @@ describe('Then {word} should contain line(s):', () => {
 
   it('should be', () => undefined)
 
-  it('should pass if contains', () => {
+  it('should pass if contains', async () => {
     context.stdoutLines = ['first', 'second', 'third']
 
-    expect(() => step.call(context, 'stdout', 'second')).not.toThrow()
+    await expect(step.call(context, 'stdout', 'second')).resolves.not.toThrow()
   })
 
-  it('should pass if has a whitespace', () => {
+  it('should pass if has a whitespace', async () => {
     context.stdoutLines = ['  first', '  second', '  third']
 
-    expect(() => step.call(context, 'stdout', 'second')).not.toThrow()
-    expect(() => step.call(context, 'stdout', ' second ')).not.toThrow()
+    await expect(step.call(context, 'stdout', 'second')).resolves.not.toThrow()
+    await expect(step.call(context, 'stdout', ' second ')).resolves.not.toThrow()
   })
 
-  it('should throw if not contains', () => {
+  it('should throw if not contains', async () => {
     context.stdoutLines = []
 
-    expect(() => step.call(context, 'stdout', 'second')).toThrow(AssertionError)
+    await expect(step.call(context, 'stdout', 'second')).rejects.toThrow(AssertionError)
   })
 
-  it('should pass if starts with', () => {
+  it('should pass if starts with', async () => {
     context.stdoutLines = ['first second third']
 
-    expect(() => step.call(context, 'stdout', 'first second')).not.toThrow()
+    await expect(step.call(context, 'stdout', 'first second')).resolves.not.toThrow()
+  })
+
+  it('should pass with wildcards', async () => {
+    context.stdoutLines = ['hello world example']
+
+    await expect(step.call(context, 'stdout', '<...> world')).resolves.not.toThrow()
   })
 })
 
@@ -54,16 +61,16 @@ describe('Then {word} should contain line(s) once:', () => {
 
   it('should be', () => undefined)
 
-  it('should throw if not contains', () => {
+  it('should throw if not contains', async () => {
     context.stdoutLines = []
 
-    expect(() => step.call(context, 'stdout', 'second')).toThrow(AssertionError)
+    await expect(step.call(context, 'stdout', 'second')).rejects.toThrow(AssertionError)
   })
 
-  it('should throw if contains more than once', () => {
+  it('should throw if contains more than once', async () => {
     context.stderrLines = ['one', 'one']
 
-    expect(() => step.call(context, 'stderr', 'one')).toThrow(AssertionError)
+    await expect(step.call(context, 'stderr', 'one')).rejects.toThrow(AssertionError)
   })
 })
 
@@ -72,24 +79,24 @@ describe('Then {word} should be: {string}', () => {
 
   it('should be', () => undefined)
 
-  it('should pass if equals', () => {
+  it('should pass if equals', async () => {
     context.stdout = 'a message'
 
-    expect(() => step.call(context, 'stdout', 'a message')).not.toThrow()
-    expect(() => step.call(context, 'stdout', 'wrong')).toThrow(AssertionError)
+    await expect(step.call(context, 'stdout', 'a message')).resolves.not.toThrow()
+    await expect(step.call(context, 'stdout', 'wrong')).rejects.toThrow(AssertionError)
   })
 
-  it('should pass if starts with', () => {
+  it('should pass if starts with', async () => {
     context.stdout = 'a message'
 
-    expect(() => step.call(context, 'stdout', 'a mess')).not.toThrow()
+    await expect(step.call(context, 'stdout', 'a mess')).resolves.not.toThrow()
   })
 
-  it('should trim', () => {
+  it('should trim', async () => {
     context.stdout = '  a message'
 
-    expect(() => step.call(context, 'stdout', 'a message')).not.toThrow()
-    expect(() => step.call(context, 'stdout', 'a message  ')).not.toThrow()
+    await expect(step.call(context, 'stdout', 'a message')).resolves.not.toThrow()
+    await expect(step.call(context, 'stdout', 'a message  ')).resolves.not.toThrow()
   })
 })
 
@@ -109,13 +116,13 @@ describe('Then {word} should not contain line(s):', () => {
       it('should pass if not contains', async () => {
         const line = generate()
 
-        expect(() => step.call(context, channel, line)).not.toThrow()
+        await expect(step.call(context, channel, line)).resolves.not.toThrow()
       })
 
       it('should throw if contains', async () => {
         const line = sample(context[channelLines])
 
-        expect(() => step.call(context, channel, line)).toThrow(AssertionError)
+        await expect(step.call(context, channel, line)).rejects.toThrow(AssertionError)
       })
     })
 })

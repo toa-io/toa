@@ -13,7 +13,7 @@ const traverse = (object, visit) => {
   let visited = visit(object)
 
   if (visited === undefined) visited = object
-  if (typeof visited !== 'object' || visited === null) return visited
+  if (!plain(visited)) return visited
 
   for (const [key, value] of Object.entries(visited)) visited[key] = traverse(value, visit)
 

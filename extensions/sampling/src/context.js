@@ -4,6 +4,7 @@ const { Connector } = require('@toa.io/core')
 const { match } = require('@toa.io/generic')
 const { context } = require('./sample')
 const { ReplayException, SampleException } = require('./exceptions')
+const { Nope } = require('nopeable')
 
 /**
  * @implements {toa.core.Context}
@@ -21,11 +22,12 @@ class Context extends Connector {
 
     this.aspects = aspects
     this.#context = context
-    this.depends(context)
+
+    if (process.env.TOA_SAMPLING_AUTONOMOUS !== '1') this.depends(context)
   }
 
   async apply (endpoint, request) {
-    const sample = /** @type {toa.sampling.Request} */ context.get()
+    const sample = /** @type {toa.sampling.request.Sample} */ context.get()
     const requests = sample?.context?.local?.[endpoint]
     const call = requests?.shift()
 
@@ -48,7 +50,7 @@ class Context extends Connector {
 
   /**
    * @param {'apply' | 'call'} method
-   * @param {toa.sampling.Request} sample
+   * @param {toa.sampling.request.Sample} sample
    * @param {string[]} segments
    * @param {toa.core.Request} request
    * @returns {Promise<toa.core.Reply>}
@@ -57,11 +59,16 @@ class Context extends Connector {
     if (sample?.request !== undefined) {
       const matches = match(request, sample.request)
 
-      if (matches === false) throw new ReplayException(`Call '${segments.join(dot)}' request mismatch`)
+      if (matches === false) throw new ReplayException(`Call '${segments.join(dot)}' request mismatch`, request, sample.request)
     }
 
-    if (sample?.reply !== undefined) return sample.reply
+    if (sample?.reply !== undefined) return this.#format(sample.reply)
     else return this.#context[method](...segments, request)
+  }
+
+  #format (reply) {
+    if (reply.error !== undefined) return new Nope(reply.error)
+    else return reply.output
   }
 }
 

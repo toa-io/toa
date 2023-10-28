@@ -1,10 +1,17 @@
 'use strict'
 
-const find = require('../util/find')
+const { pick } = require('@toa.io/generic')
+const { context, components } = require('@toa.io/userland/samples')
 
+const find = require('../util/find')
+const docker = require('./docker')
+
+/**
+ * @param {Record<string, string | string[] | boolean>} argv
+ * @return {Promise<void>}
+ */
 async function replay (argv) {
-  // prevent loading userland which is intended for local use only
-  const { context, components } = require('@toa.io/userland/samples')
+  if (argv.dock) return dock(argv)
 
   /** @type {boolean} */
   let ok
@@ -14,9 +21,11 @@ async function replay (argv) {
   /** @type {toa.samples.suite.Options} */
   const options = {
     component: argv.component,
+    autonomous: argv.autonomous,
     integration: argv.integration,
     operation: argv.operation,
-    title: argv.title
+    title: argv.title,
+    runner: { bail: true }
   }
 
   if (paths !== null) {
@@ -34,6 +43,18 @@ async function replay (argv) {
 
   // print after tap's output
   process.on('beforeExit', () => console.log(message))
+}
+
+/**
+ * @param {Record<string, string | string[] | boolean>} argv
+ * @return {Promise<void>}
+ */
+async function dock (argv) {
+  const repository = await docker.build(argv.context, argv.paths)
+  const args = pick(argv, ['component', 'operation', 'integration', 'title'])
+  const command = docker.command('toa replay *', args)
+
+  await docker.run(repository, command, argv.env)
 }
 
 const GREEN = '\x1b[32m'

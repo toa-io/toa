@@ -1,0 +1,7 @@
+namespace: streams
+name: aggregator
+
+operations:
+  sum:
+    input:
+      limit: number

@@ -1,0 +1,10 @@
+name: sequences
+
+operations:
+  numbers:
+    input: 5
+
+exposition:
+  /tokens:
+    anonymous: true
+    GET: tokens

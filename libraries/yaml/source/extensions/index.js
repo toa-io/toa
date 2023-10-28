@@ -1,3 +1,3 @@
-const $import = require('./$import')
+const { assign } = require('./assign')
 
-module.exports = [$import]
+module.exports = [assign]

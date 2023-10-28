@@ -17,11 +17,6 @@ class Broadcast extends Connector {
   /** @type {string} */
   #group
 
-  /**
-   * @param {toa.amqp.Communication} comm
-   * @param {toa.core.Locator} locator
-   * @param {string} [group]
-   */
   constructor (comm, locator, group) {
     super()
 

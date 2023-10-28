@@ -1,7 +1,6 @@
 title: Should add numbers
 input:
-  a: 1
-  b: 2
+  <assign: assets/ab.yaml
 output: 3
 ---
 title: Should add negative numbers

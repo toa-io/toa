@@ -20,7 +20,8 @@ const schemas = {
     type: 'object',
     properties: {
       input: { type: 'null' },
-      query: load.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml'))
+      query: load.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml')),
+      authentic: { type: 'boolean' }
     },
     additionalProperties: true
   }

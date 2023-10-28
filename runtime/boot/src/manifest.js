@@ -1,5 +1,6 @@
 'use strict'
 
+const clone = require('clone-deep')
 const { merge } = require('@toa.io/generic')
 const { component: load } = require('@toa.io/norm')
 const { Locator } = require('@toa.io/core')
@@ -8,7 +9,7 @@ const { Locator } = require('@toa.io/core')
  * @type {toa.boot.Manifest}
  */
 const manifest = async (path, options = {}) => {
-  merge(options, DEFAULTS)
+  options = merge(clone(options), DEFAULTS)
 
   const manifest = await load(path)
 
@@ -31,11 +32,14 @@ const manifest = async (path, options = {}) => {
     }
   }
 
-  if (!('extensions' in manifest)) manifest.extensions = {}
+  if (manifest.extensions === undefined) manifest.extensions = {}
 
+  // add `null` manifests
   for (const extension of options.extensions) {
     if (!(extension in manifest.extensions)) manifest.extensions[extension] = null
   }
+
+  if ('storage' in options && 'entity' in manifest) manifest.entity.storage = options.storage
 
   manifest.locator = new Locator(manifest.name, manifest.namespace)
 
@@ -43,7 +47,7 @@ const manifest = async (path, options = {}) => {
 }
 
 const DEFAULTS = {
-  extensions: ['@toa.io/extensions.sampling', '@toa.io/extensions.state']
+  extensions: ['@toa.io/extensions.sampling']
 }
 
 exports.manifest = manifest

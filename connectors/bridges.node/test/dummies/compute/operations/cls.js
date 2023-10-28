@@ -11,7 +11,7 @@ class Computation {
   }
 
   async execute (input) {
-    return { output: { input, context: this.#context !== undefined } }
+    return { input, context: this.#context !== undefined }
   }
 }
 

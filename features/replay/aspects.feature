@@ -2,7 +2,7 @@ Feature: Context extensions (aspects) samples
 
   Context extensions samples are declared as an array of aspect call samples. A sample from that array is used
   once on each aspect call, unless sample is declared as permanent. Permanent sample will be used constantly
-  for all calls. See schema (src/.suite/sample.cos.yaml).
+  for all calls.
 
   Scenario: Configuration sample
     Given I have a sample for `signal` operation of `echo`:
@@ -79,6 +79,8 @@ Feature: Context extensions (aspects) samples
               - path/to/resource
               - method: GET
             result:
+              headers:
+                get:sync: 'application/json'
               json:async:
                 foo: bar
       output:
@@ -86,3 +88,4 @@ Feature: Context extensions (aspects) samples
       """
     When I replay it
     Then it passes
+

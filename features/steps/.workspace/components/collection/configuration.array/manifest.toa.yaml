@@ -1,0 +1,17 @@
+namespace: configuration
+name: base
+
+operations:
+  greet:
+    input: [0, 1]
+    output: string
+
+configuration:
+  schema:
+    greetings: [{ a: string, b: string }]
+  defaults:
+    greetings:
+      - a: good
+        b: day
+      - a: good
+        b: afternoon

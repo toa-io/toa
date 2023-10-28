@@ -1,0 +1,30 @@
+{
+  "name": "@toa.io/extensions.realtime",
+  "version": "0.0.0-alpha.2",
+  "description": "Toa Realtime",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "nopeable": "*"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "transpile": "npx tsc && npx tsc -p ./components/streams",
+    "features": "npx cucumber-js"
+  }
+}

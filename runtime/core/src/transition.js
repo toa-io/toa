@@ -3,7 +3,7 @@
 const { retry } = require('@toa.io/generic')
 
 const { Operation } = require('./operation')
-const { StateConcurrencyException } = require('./exceptions')
+const { StateConcurrencyException, StateNotFoundException } = require('./exceptions')
 
 class Transition extends Operation {
   #concurrency
@@ -22,6 +22,9 @@ class Transition extends Operation {
     const { request } = store
 
     store.scope = request.query ? await this.query(request.query) : this.scope.init()
+
+    if (store.scope === null) throw new StateNotFoundException()
+
     store.state = store.scope.get()
   }
 
@@ -47,7 +50,6 @@ class Transition extends Operation {
   }
 }
 
-/** @type {toa.generic.retry.Options} */
 const RETRY = {
   base: 10,
   max: 5000,

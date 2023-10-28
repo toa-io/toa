@@ -1,9 +1,3 @@
-declare namespace toa.core {
-
-  type Message = {
-    payload: Object
-  }
-
+export interface Message<T = any> {
+  payload: T
 }
-
-export type Message = toa.core.Message

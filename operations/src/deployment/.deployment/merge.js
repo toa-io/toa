@@ -1,9 +1,5 @@
 'use strict'
 
-/**
- * @param {toa.deployment.Dependency[]} dependencies
- * @returns {toa.deployment.Dependency}
- */
 const merge = (dependencies) => {
   /** @type {toa.deployment.dependency.Reference[]} */
   const references = []
@@ -27,10 +23,6 @@ const merge = (dependencies) => {
   return { references, services, proxies, variables }
 }
 
-/**
- * @param {toa.deployment.dependency.Variables} merged
- * @param {toa.deployment.dependency.Variables} variables
- */
 const append = (merged, variables) => {
   for (const [component, vars] of Object.entries(variables)) {
     if (merged[component] === undefined) merged[component] = []

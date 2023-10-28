@@ -10,7 +10,11 @@ const operations = async (root) => {
   /** @type {toa.node.define.algorithms.List} */
   const algorithms = {}
 
-  for (const [name, module] of modules) algorithms[name] = algorithm.define(module)
+  for (const [name, module] of modules) {
+    const definition = algorithm.define(module)
+
+    if (definition !== null) algorithms[name] = definition
+  }
 
   return algorithms
 }

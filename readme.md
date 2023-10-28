@@ -1,62 +1,75 @@
 # Toa
 
-Toa is a way to build and operate reliable distributed systems at an incredible development speed.
+Low-code solution for distributed systems.
 
 ## Status
 
 The project is under heavy development, while being used in production by its authors.
-Non-scattered documentation is coming this summer.
+Non-scattered documentation is coming this fall.
 
 ## Features
 
 ### Runtime
 
 - Interservice communications
-    - Seamless fault tolerant RPC and Events
-    - Flow control
-    - Eventual consistency guarantee
-    - Uniform interface
-        - Input/query segregation
-        - Output/error replies
-    - Automatic service discovery
+  - Seamless resilient RPC and Events ([ComQ](https://github.com/toa-io/comq))
+  - Flow control
+  - Eventual consistency guarantee (not yet)
+  - Uniform interface
+    - Input/query segregation
+    - Successful rejections
     - Distributed exception handling
-    - Multi-protocol transmission (built-in AMQP and HTTP support)
-    - In-memory communications within compositions
-    - Message contract validation
+  - Transparent service discovery
+  - Multi-protocol transmission
+    - built-in support for AMQP and HTTP
+  - In-memory communications
+  - Messages validation
 - Persistent state management
-    - Concurrency control
-    - Batching
-    - Data contract validation
-    - Built-in implementations for MongoDB and SQL
-- API Gateway
-    - Realtime resource discovery
-    - Semantic method mapping
-- Configuration
-- Transient state
-- External communications with permissions
+  - Concurrency control
+  - Batching
+  - Data validation
+  - Built-in implementations
+    - MongoDB, Amazon DocumentDB
+    - PostgreSQL, MSSQL, MySQL, MariaDB, Oracle, CockroachDB, SQLite3, Better-SQLite3, and Amazon
+      Redshift
+- [API Gateway](/extensions/exposition)
+  - Resource discovery
+  - [Identity](extensions/exposition/documentation/identity.md)
+  - [Access Control](extensions/exposition/documentation/access.md)
+- [Realtime events](/extensions/realtime)
+- [Configuration](/extensions/configuration)
+- [Transient state](/extensions/stash)
+- [External communications](/extensions/origins) governance
+  - HTTP
+  - AMQP
 
 ### Development
 
 - Language interoperability
-    - Node.js support
+  - Node.js support
 - Service prototyping (inheritance)
-- Generic prototype
+  - Generic prototype
 - Data and operations contracts
-- Declarative HTTP API endpoints
-- Declarative integration tests
-- Runtime bootloader API
-- CLI
-- Unlimited extensibility:
-    - Persistent storages
-    - Communication protocols
-    - Runtime core abstractions
+- Declarative API Gateway endpoints with authorization policies
+- [Declarative integration tests](/userland/samples)
+  - [Running in Docker](/runtime/cli/readme.md#replay)
+- [Runtime bootloader API](/userland/stage)
 - Development environment configuration
+- [CLI](/runtime/cli)
+- Extensibility:
+  - Persistent storages
+  - Communication protocols
+  - Runtime core abstractions
+  - Arbitrary services
 
 ### Operations
 
 - Standalone infrastructure configuration
+- Multi-environment configuration
 - Components distribution across containers
 - One-command fully automated deployment
-    - Preset multi-arch docker images
-    - Helm deployment to kubernetes
-- Secrets management CLI
+  - Preset multi-arch docker images
+  - Helm deployment to kubernetes
+- CLI utilities
+  - Secrets management
+  - Remote Container Shell

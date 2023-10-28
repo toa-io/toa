@@ -26,20 +26,15 @@ it('should provide default', async () => {
   const request = { query: { id: newid() } }
   const reply = await remote.invoke('observe', request)
 
-  expect(reply.output?.balance).toBe(10)
+  expect(reply.balance).toBe(10)
 })
 
 it('should transit', async () => {
   const request = { input: 1, query: { id: newid() } }
   const reply = await remote.invoke('deduce', request)
 
-  expect(reply.output).toBe(9)
+  expect(reply).toBe(9)
 
-  const { output } = await remote.invoke('observe', { query: request.query })
+  const output = await remote.invoke('observe', { query: request.query })
   expect(output.balance).toBe(9)
-})
-
-it('should throw on query: false', async () => {
-  await expect(remote.invoke('add', { input: { balance: 20 } }))
-    .rejects.toMatchObject({ code: codes.StateInitialization })
 })

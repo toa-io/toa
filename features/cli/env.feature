@@ -9,21 +9,20 @@ Feature: Export local deployment environment variables
         -p, --path
       """
 
-  Scenario: Select `some` environment
+  Scenario: Export `some` environment
     Given I have a component `dummies.one`
     And I have a context with:
       """yaml
       amqp:
-        default: amqp://whatever
-        default@some: amqp://developer:secret@some.host
+        context: amqp://whatever
       """
     When I run `toa env some`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_ENV=some
-      TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAc29tZS5ob3N0In0=
-      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=
-      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
+      TOA_AMQP_CONTEXT=eyIuIjpbImFtcXA6Ly93aGF0ZXZlciJdfQ==
+      TOA_AMQP_CONTEXT__USERNAME=
+      TOA_AMQP_CONTEXT__PASSWORD=
       """
 
   Scenario: Keeping secret values while switching environment
@@ -31,52 +30,35 @@ Feature: Export local deployment environment variables
     And I have a context with:
       """yaml
       amqp:
-        default: amqp://whatever
-        default@some: amqp://developer:secret@some.host
-        default@dev: amqp://developer:secret@dev.host
+        context:
+          .: amqp://whatever
+          .@some: amqp://some.host
+          .@dev: amqp://dev.host
       """
     When I run `toa env some`
     And I update an environment with:
       """
-      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
+      TOA_AMQP_CONTEXT__USERNAME=test
       """
     And I run `toa env dev`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_ENV=dev
-      TOA_BINDINGS_AMQP_POINTER=eyJkZWZhdWx0IjoiYW1xcDovL2RldmVsb3BlcjpzZWNyZXRAZGV2Lmhvc3QifQ==
-      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=test
-      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
+      TOA_AMQP_CONTEXT__USERNAME=test
       """
 
   Scenario Outline: Setting `local` environment
     Given I have a component `dummies.one`
     And I have a context
     When I run `toa <command>`
-    Then I have an environment with:
+    Then the environment contains:
       """
       TOA_ENV=local
-      TOA_BINDINGS_AMQP_DEFAULT_USERNAME=
-      TOA_BINDINGS_AMQP_DEFAULT_PASSWORD=
       """
     Examples:
       | command   |
       | env       |
       | env local |
-
-  Scenario: Component-specific variables
-    Given I have a component `origins.http`
-    And I have a context with:
-      """
-      origins:
-        origins.http:
-          bad: http://localhost:8888/
-      """
-    When I run `toa env`
-    Then I have an environment with:
-      """
-      TOA_ORIGINS_ORIGINS_HTTP=eyJiYWQiOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgvIn0=
-      """
 
   Scenario Outline: Print an environment variable
     Given I have a component `echo.beacon`
@@ -91,9 +73,15 @@ Feature: Export local deployment environment variables
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      { output: 'bar' }
+      bar
       """
     Examples:
       | cwd                      | path                     |
       | ./                       | ./components/echo.beacon |
       | ./components/echo.beacon | .                        |
+
+  Scenario: Export environment to a custom file name
+    Given I have a component `dummies.one`
+    And I have a context
+    When I run `toa env some --as .env.some`
+    Then the file ./.env.some contains exact line 'TOA_ENV=some'

@@ -5,18 +5,42 @@ on:
     types: [closed]
     branches:
       - main
-      - dev
+      - alpha
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - run: npm install
+      - run: npm run transpile
+      - run: npm test
+
   publish:
     if: github.event.pull_request.merged == true
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           registry-url: 'https://registry.npmjs.org'
 
       - name: Checkout
@@ -43,11 +67,12 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ ${{ github.base_ref }} = main ]; then
-            npx lerna@6.5.1 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
-            git fetch
-            git checkout dev
-            git merge main
-            git push --all origin --no-verify
+            npx lerna@7.3.0 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: release" --sign-git-commit
           else
-            npx lerna@6.5.1 publish --conventional-prerelease --preid dev --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
+            npx lerna@7.3.0 publish --conventional-prerelease --preid alpha --no-commit-hooks --no-changelog --yes --message "ci: prerelease" --git-tag-command "echo %s" --sign-git-commit
           fi
+
+          git fetch
+          git checkout dev
+          git merge ${{ github.base_ref }}
+          git push --all origin --no-verify

@@ -17,7 +17,7 @@ const find = (from, filename, test) => {
 
     if (found.size === 0) {
       if (test === true) return null
-      else throw new Error(`File '${filename}' is found in ${from.join(', ')}`)
+      else throw new Error(`File '${filename}' is not found in ${from.join(', ')}`)
     }
 
     return [...found]

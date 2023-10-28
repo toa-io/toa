@@ -1,7 +1,24 @@
 name: collection
 version: 0.0.0
-packages: 'components/*'
-registry: collection
-amqp: amqp://host.docker.internal
-mongodb: mongodb://host.docker.internal
-sql: pg://host.docker.internal/integration
+packages: 'components/*' # do not change it, it's correct. integration tests will copy components under this path.
+runtime:
+  registry: http://host.docker.internal:4873
+  proxy: http://host.docker.internal:4873
+  registry@broken-runtime: no://where
+  proxy@broken-runtime: no://where
+registry:
+  build@broken-build:
+    run: no-such-command
+  base: localhost:5000
+  platforms: ~
+
+amqp: amqp://localhost
+amqp@docker: amqp://host.docker.internal
+
+mongodb: mongodb://localhost
+mongodb@docker: mongodb://host.docker.internal
+
+sql: pg://localhost/developer
+sql@docker: pg://host.docker.internal/developer
+
+stash@docker: redis://host.docker.internal

@@ -11,6 +11,7 @@ const { dump } = require('@toa.io/yaml')
 const fixtures = require('./kubespec.fixtures')
 
 jest.mock('@cucumber/cucumber', () => mock.gherkin)
+
 require('../kubespec.js')
 
 const gherkin = mock.gherkin
@@ -65,5 +66,4 @@ describe('Then {word} {word} {word} spec should contain:', () => {
       await expect(step.call(context, name, kind, node, reference)).rejects.toThrow(AssertionError)
     })
   })
-
 })

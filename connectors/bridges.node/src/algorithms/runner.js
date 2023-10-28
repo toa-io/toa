@@ -1,10 +1,9 @@
 'use strict'
 
+const { Nope } = require('nopeable')
 const { Connector } = require('@toa.io/core')
+const { Readable } = require('node:stream')
 
-/**
- * @implements {toa.core.bridges.Algorithm}
- */
 class Runner extends Connector {
   /** @type {toa.node.Algorithm} */
   #algorithm
@@ -12,10 +11,6 @@ class Runner extends Connector {
   /** @type {toa.node.Context} */
   #context
 
-  /**
-   * @param {toa.node.Algorithm} algorithm
-   * @param {toa.node.Context} context
-   */
   constructor (algorithm, context) {
     super()
 
@@ -30,23 +25,21 @@ class Runner extends Connector {
   }
 
   async execute (input, state) {
-    let reply = await this.#algorithm.execute(input, state)
+    const reply = await this.#algorithm.execute(input, state)
 
-    if (reply !== undefined) reply = normalize(reply)
-    else reply = {}
-
-    return reply
+    if (reply instanceof Nope) return { error: reply }
+    else if (isGenerator(reply)) return Readable.from(reply)
+    else if (reply instanceof Readable) return reply
+    else return { output: reply }
   }
 }
 
-function normalize (reply) {
-  const object = typeof reply === 'object'
-  const output = object && reply.output !== undefined
-  const error = object && reply.error !== undefined
+function isGenerator (object) {
+  const constructor = object?.constructor?.[Symbol.toStringTag]
 
-  if (!output && !error) reply = { output: reply }
-
-  return reply
+  return constructor !== undefined &&
+    (constructor === 'AsyncGeneratorFunction' ||
+      constructor === 'GeneratorFunction')
 }
 
 exports.Runner = Runner

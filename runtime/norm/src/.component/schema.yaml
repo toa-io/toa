@@ -20,7 +20,7 @@ properties:
       operations:
         type: object
         propertyNames:
-          $ref: 'definitions#/definitions/token'
+          $ref: 'definitions#/definitions/name'
         patternProperties:
           '.*':
             type: object
@@ -39,14 +39,15 @@ properties:
       label:
         $ref: 'definitions#/definitions/label'
 
+  name:
+    $ref: 'definitions#/definitions/token'
+
   namespace:
     $ref: 'definitions#/definitions/token'
     default: 'default'
     not:
       oneOf:
         - const: 'system'
-  name:
-    $ref: 'definitions#/definitions/token'
 
   version:
     $ref: 'definitions#/definitions/version'
@@ -67,18 +68,17 @@ properties:
             type: object
             propertyNames:
               oneOf:
-                - $ref: 'definitions#/definitions/token'
-                - enum: [ _version ]
+                - $ref: 'definitions#/definitions/name'
+                - enum: [_version]
       initialized:
         type: boolean
         default: false
-    required: [ schema ]
+    required: [schema]
     additionalProperties: false
 
   bindings:
     type: array
     uniqueItems: true
-    minItems: 1
     items:
       $ref: '#/definitions/binding'
 
@@ -88,19 +88,19 @@ properties:
   operations:
     type: object
     propertyNames:
-      $ref: 'definitions#/definitions/token'
+      $ref: 'definitions#/definitions/name'
     patternProperties:
       '.*':
         type: object
         properties:
           type:
-            enum: [ transition, observation, assignment, computation, effect ]
+            enum: [transition, observation, assignment, computation, effect]
           scope:
-            enum: [ object, objects, changeset, none ]
+            enum: [object, objects, changeset, none]
           concurrency:
-            enum: [ none, retry ]
+            enum: [none, retry]
           forward:
-            $ref: 'definitions#/definitions/token'
+            $ref: 'definitions#/definitions/name'
           bridge:
             type: string
           bindings:
@@ -111,7 +111,7 @@ properties:
             $ref: 'definitions#/definitions/schema'
           query:
             type: boolean
-        required: [ type, scope, bindings ]
+        required: [type, scope, bindings]
         allOf:
           - if: # transition
               properties:
@@ -120,15 +120,15 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [ object ]
+                  enum: [object]
               if: # transition query: false
                 not:
                   properties:
                     query:
                       const: false
-                  required: [ query ]
+                  required: [query]
               then:
-                required: [ concurrency ]
+                required: [concurrency]
           - if: # not transition
               not:
                 properties:
@@ -145,7 +145,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [ object, objects, none ]
+                  enum: [object, objects, none]
                 query:
                   not:
                     const: false
@@ -156,7 +156,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [ changeset ]
+                  enum: [changeset]
           - if: # computation
               properties:
                 type:
@@ -166,6 +166,9 @@ properties:
                 scope:
                   const: none
                   default: none
+                query:
+                  const: false
+                  default: false
           - if: # effect
               properties:
                 type:
@@ -175,13 +178,16 @@ properties:
                 scope:
                   const: none
                   default: none
+                query:
+                  const: false
+                  default: false
         additionalProperties: false
     additionalProperties: false
 
   events:
     type: object
     propertyNames:
-      $ref: 'definitions#/definitions/token'
+      $ref: 'definitions#/definitions/name'
     patternProperties:
       '.*':
         type: object
@@ -198,7 +204,7 @@ properties:
           subjective:
             type: boolean
             default: false
-        required: [ bridge, path ]
+        required: [bridge, path]
         additionalProperties: false
 
   receivers:
@@ -208,13 +214,15 @@ properties:
         type: object
         properties:
           operation:
-            $ref: 'definitions#/definitions/token'
+            $ref: 'definitions#/definitions/name'
           bridge:
             type: string
           binding:
             type: string
           source:
-            $ref: 'definitions#/definitions/token'
+            $ref: 'definitions#/definitions/name'
+            not:
+              const: context
           path:
             type: string
           conditioned:
@@ -223,7 +231,7 @@ properties:
           adaptive:
             type: boolean
             default: false
-        required: [ operation ]
+        required: [operation]
         additionalProperties: false
 
   extensions:

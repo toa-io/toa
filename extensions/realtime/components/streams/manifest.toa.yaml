@@ -1,0 +1,20 @@
+namespace: realtime
+name: streams
+
+operations:
+  create:
+    input:
+      key: string
+  push:
+    bindings: ~ # only for internal use
+    input:
+      key*: string
+      event*: string
+      data: ~
+
+state: ~
+
+exposition:
+  /:key:
+    auth:id: key
+    GET: create

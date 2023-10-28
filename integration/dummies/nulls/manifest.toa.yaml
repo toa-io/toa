@@ -17,4 +17,5 @@ operations:
       bar: .
 
 exposition:
-  /: [transit]
+  /:
+    PUT: transit

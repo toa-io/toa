@@ -7,9 +7,6 @@ const { Receiver } = require('./receiver')
 const { Context } = require('./context')
 const { extract } = require('./define/operations')
 
-/**
- * @implements {toa.core.bridges.Factory}
- */
 class Factory {
   algorithm (root, name, context) {
     const module = load.operation(root, name)
@@ -18,10 +15,11 @@ class Factory {
     return runner(module, ctx)
   }
 
-  event (root, label) {
+  event (root, label, context) {
     const event = load.event(root, label)
+    const ctx = new Context(context)
 
-    return new Event(event)
+    return new Event(event, ctx)
   }
 
   receiver (root, label) {

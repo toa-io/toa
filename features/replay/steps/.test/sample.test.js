@@ -45,7 +45,7 @@ describe('Given I have (a )message {label} sample(s) for {component}:', () => {
   it('should be', () => undefined)
 
   it('should define context', () => {
-    const autonomous = true
+    const autonomous = false
     const label = generate()
     const component = generate()
     const input = generate()

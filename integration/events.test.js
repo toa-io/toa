@@ -41,8 +41,8 @@ it('should receive', async () => {
   const counted = await stats.invoke('observe', { query: { id: sender } })
   const updated = await a.invoke('observe', { query: { id: sender } })
 
-  expect(counted.output.messages).toBe(times)
-  expect(updated.output.title).toBe(text)
+  expect(counted.messages).toBe(times)
+  expect(updated.title).toBe(text)
 })
 
 it('should receive conditionally', async () => {
@@ -57,7 +57,7 @@ it('should receive conditionally', async () => {
 
   const before = await stats.invoke('observe', { query: { id: sender } })
 
-  expect(before.output).toStrictEqual({
+  expect(before).toStrictEqual({
     id: sender,
     messages: 9,
     _version: 9
@@ -70,9 +70,9 @@ it('should receive conditionally', async () => {
   const balance = await credits.invoke('observe', { query: { id: sender } })
   const after = await stats.invoke('observe', { query: { id: sender } })
 
-  expect(balance.output.balance).toBe(0)
+  expect(balance.balance).toBe(0)
 
-  expect(after.output).toStrictEqual({
+  expect(after).toStrictEqual({
     id: sender,
     messages: 10,
     bankrupt: true,

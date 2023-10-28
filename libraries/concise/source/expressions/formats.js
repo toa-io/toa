@@ -1,7 +1,5 @@
 'use strict'
 
-require('ajv-formats')
-
 /**
  * @param {string} value
  * @returns {object}

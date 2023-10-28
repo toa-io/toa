@@ -1,4 +1,4 @@
-$import: ./a.yaml
+<assign: ./a.yaml
 qux: 'hello'
 foo:
   baz: 2

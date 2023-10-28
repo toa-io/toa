@@ -71,10 +71,6 @@ describe('When I replay it', () => {
     it('should write result to context', async () => {
       expect(context.ok).toStrictEqual(await mock.samples.replay.mock.results[0].value)
     })
-
-    it('should pass paths of composition components for integration samples', async () => {
-      await integration(context)
-    })
   })
 
   describe('message sample', () => {
@@ -110,24 +106,5 @@ describe('When I replay it', () => {
     it('should write result to context', async () => {
       expect(context.ok).toStrictEqual(await mock.samples.replay.mock.results[0].value)
     })
-
-    it('should pass paths of composition components for integration samples', async () => {
-      await integration(context)
-    })
   })
-
-  const integration = async (context) => {
-    jest.clearAllMocks()
-
-    const pattern = join(COMPONENTS, '*')
-    const paths = await glob(pattern)
-
-    context.autonomous = false
-
-    await step.call(context)
-
-    const args = mock.samples.replay.mock.calls[0]
-
-    expect(args[1]).toStrictEqual(expect.arrayContaining(paths))
-  }
 })

@@ -3,7 +3,7 @@
 const { join, posix } = require('node:path')
 const { readFile: read, writeFile: write } = require('node:fs/promises')
 
-const { hash } = require('@toa.io/generic')
+const { hash, overwrite } = require('@toa.io/generic')
 const { directory } = require('@toa.io/filesystem')
 
 /**
@@ -22,19 +22,33 @@ class Image {
 
   /** @type {string} */
   #scope
+
+  /** @type {toa.norm.context.Registry} */
+  #registry
+
   /** @type {toa.norm.context.Runtime} */
   #runtime
-  /** @type {string} */
-  #type
+
+  /** @type {{ runtime?: Partial<toa.norm.context.Runtime>, build: object }} */
+  #values = { build: { command: 'echo hello' } }
 
   /**
-   * @param scope {string}
-   * @param runtime {toa.norm.context.Runtime}
+   * @param {string} scope
+   * @param {toa.norm.context.Runtime} runtime
+   * @param {toa.norm.context.Registry} registry
    */
-  constructor (scope, runtime) {
+  constructor (scope, runtime, registry) {
     this.#scope = scope
+    this.#registry = registry
     this.#runtime = runtime
-    this.#type = this.constructor.name.toLowerCase()
+
+    this.#setValues()
+  }
+
+  tag () {
+    const tag = hash(this.#runtime?.version + ';' + this.version)
+
+    this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.name}:${tag}`)
   }
 
   /**
@@ -51,21 +65,15 @@ class Image {
    */
   get version () {}
 
-  tag (base) {
-    const tag = hash(this.#runtime.version + ';' + this.version)
-
-    this.reference = posix.join(base, `${this.#scope}/${this.#type}-${this.name}:${tag}`)
-  }
-
   async prepare (root) {
     if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')
 
-    const path = join(root, `${this.#type}-${this.name}.${this.version}`)
+    const path = join(root, `${this.name}.${this.version}`)
 
     await directory.ensure(path)
 
     const template = await read(this.dockerfile, 'utf-8')
-    const contents = template.replace(/{{(\.?\w+)}}/g, (_, key) => this.#value(key))
+    const contents = template.replace(/{{(\S{1,32})}}/g, (_, key) => this.#value(key))
     const ignore = 'Dockerfile'
 
     await write(join(path, 'Dockerfile'), contents)
@@ -76,16 +84,44 @@ class Image {
     return path
   }
 
+  #setValues () {
+    this.#values.runtime = this.#runtime
+    this.#values.build = overwrite(this.#values.build, this.#registry.build)
+
+    if (this.#values.build.arguments !== undefined) this.#values.build.arguments = createArguments(this.#values.build.arguments)
+    if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)
+  }
+
   /**
    * @param key {string}
    * @returns {string}
    */
   #value (key) {
-    const [, property] = key.split('.')
+    const [source, property] = key.split('.')
 
-    if (property !== undefined) return this[property]
-    else return this.#runtime[key]
+    return this.#values[source]?.[property] ?? ''
   }
+}
+
+function createRunCommands (input) {
+  const lines = input.split('\n')
+
+  return lines.reduce((commands, command) => {
+    commands += '\nRUN ' + command
+
+    return commands
+  }, '')
+}
+
+function createArguments (variables) {
+  const args = []
+
+  for (const variable of variables) {
+    args.push('ARG ' + variable)
+    args.push(`ENV ${variable}=$${variable}`)
+  }
+
+  return args.join('\n')
 }
 
 exports.Image = Image

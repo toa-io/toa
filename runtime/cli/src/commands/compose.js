@@ -12,10 +12,26 @@ const builder = (yargs) => {
       default: '.'
     })
     .array('paths')
+    .option('kill', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Immediate shutdown'
+    })
+    .option('dock', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Run in Docker'
+    })
+    .option('context', {
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Path to the Context (used with --dock)',
+      default: '.'
+    })
     .option('bindings', {
       group: 'Command options:',
       type: 'string',
-      desc: 'Bindings'
+      desc: 'OBSOLETE'
     })
     .array('bindings')
     .example([

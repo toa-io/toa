@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "0.7.9",
+  "version": "0.20.0-alpha.2",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,28 +19,30 @@
     "toa": "bin/toa"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "postversion": "jq --argjson value \"$(jq '.version' package.json)\" '.version = $value' ../../package.json > tmp.json && mv tmp.json ../../package.json"
   },
   "dependencies": {
-    "@toa.io/bindings.amqp": "0.7.5",
-    "@toa.io/bindings.http": "0.7.5",
-    "@toa.io/bindings.loop": "0.7.4",
-    "@toa.io/boot": "1.0.1",
-    "@toa.io/bridges.node": "0.9.2",
-    "@toa.io/cli": "1.0.1",
-    "@toa.io/core": "1.0.1",
-    "@toa.io/extensions.configuration": "1.0.1",
-    "@toa.io/extensions.exposition": "0.8.2",
-    "@toa.io/extensions.origins": "0.9.2",
-    "@toa.io/extensions.sampling": "0.8.0",
-    "@toa.io/extensions.state": "0.8.3",
-    "@toa.io/norm": "1.0.1",
-    "@toa.io/operations": "0.7.5",
-    "@toa.io/prototype": "0.6.0",
-    "@toa.io/storages.mongodb": "0.7.5",
-    "@toa.io/storages.null": "0.6.0",
-    "@toa.io/storages.sql": "0.7.5",
-    "@toa.io/userland": "1.1.0"
+    "@toa.io/bindings.amqp": "0.20.0-alpha.2",
+    "@toa.io/bindings.http": "0.20.0-alpha.1",
+    "@toa.io/bindings.loop": "0.20.0-alpha.2",
+    "@toa.io/boot": "0.20.0-alpha.2",
+    "@toa.io/bridges.node": "0.20.0-alpha.2",
+    "@toa.io/cli": "0.20.0-alpha.2",
+    "@toa.io/core": "0.20.0-alpha.2",
+    "@toa.io/extensions.configuration": "0.20.0-alpha.2",
+    "@toa.io/extensions.exposition": "0.20.0-alpha.2",
+    "@toa.io/extensions.origins": "0.20.0-alpha.2",
+    "@toa.io/extensions.sampling": "0.20.0-alpha.2",
+    "@toa.io/extensions.stash": "0.20.0-alpha.2",
+    "@toa.io/extensions.state": "0.20.0-alpha.2",
+    "@toa.io/norm": "0.20.0-alpha.2",
+    "@toa.io/operations": "0.20.0-alpha.2",
+    "@toa.io/prototype": "0.20.0-alpha.2",
+    "@toa.io/storages.mongodb": "0.20.0-alpha.2",
+    "@toa.io/storages.null": "0.20.0-alpha.2",
+    "@toa.io/storages.sql": "0.20.0-alpha.2",
+    "@toa.io/userland": "0.20.0-alpha.2"
   },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

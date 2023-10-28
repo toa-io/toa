@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: composition-{{ required "deployment name is required" .name }}
+  name: composition-{{ required "composition name is required" .name }}
 spec:
   replicas: {{ .replicas | default 2 }}
   selector:
@@ -19,20 +19,15 @@ spec:
       containers:
         - name: {{ .name }}
           image: {{ .image }}
-          {{- if $.Values.variables }}
+          {{- if .variables }}
           env:
-            {{- range $component := .components }}
-              {{- range $key, $vars := $.Values.variables }}
-                {{- if eq $component $key }}
-                  {{- range $vars }}
-                  {{- include "env.var" . | indent 12 }}
-                  {{- end }}
-                {{- end }}
-              {{- end }}
-            {{- end }}
-            {{- range $.Values.variables.global }}
+            {{- range .variables }}
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}
+      {{- if $.Values.credentials }}
+      imagePullSecrets:
+        - name: {{ $.Values.credentials }}
+      {{- end }}
 ---
 {{- end }}

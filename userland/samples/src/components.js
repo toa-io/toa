@@ -7,7 +7,7 @@ const { replay } = require('./replay')
 const components = async (paths, options = {}) => {
   const suite = await load(paths, options)
 
-  return await replay(suite, paths)
+  return await replay(suite, paths, options.runner)
 }
 
 exports.components = components

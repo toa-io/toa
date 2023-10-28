@@ -42,18 +42,6 @@ it('should return output', async () => {
   }
 })
 
-it('should not return undefined output', async () => {
-  const execute = () => undefined
-  const algorithm = /** @type {toa.node.Algorithm} */ { execute }
-  const runner = new Runner(algorithm, context)
-
-  await runner.connect()
-
-  const reply = await runner.execute()
-
-  expect(reply).not.toStrictEqual(undefined)
-})
-
 it('should mount', async () => {
   const execute = () => undefined
   const mount = jest.fn(() => undefined)

@@ -1,6 +1,6 @@
 import { bridges } from '@toa.io/core/types'
 import * as _context from './context'
-import * as _core from '@toa.io/core/types';
+import * as _core from '@toa.io/core/types'
 
 declare namespace toa.node {
 
@@ -16,11 +16,11 @@ declare namespace toa.node {
   }
 
   interface Algorithm {
-    mount?(context: _context.Context): Promise<void> | void
+    mount? (context: _context.Context): Promise<void> | void
 
-    execute(input: any, scope: object | object[]): Promise<_core.Reply>
+    execute (input: any, scope: object | object[]): Promise<any>
 
-    execute(input: any): Promise<_core.Reply>
+    execute (input: any): Promise<_core.Reply>
   }
 
 }

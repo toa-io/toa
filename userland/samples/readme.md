@@ -33,10 +33,11 @@ and `name` must match corresponding component, therefore are optional.
 ## Message Samples
 
 Message Sample is an object containing receiver's input (`payload`) to be substituted and
-outcomes (`input` and `query`) to be verified. Message sample may contain the corresponding operation
+outcomes (`input` and `query`) to be verified. Message sample may contain the corresponding
+operation
 sample. See its [schema](./src/.replay/.suite/translate/schemas/message.cos.yaml).
 
-> Message samples are always [autonomous](#autonomy).
+> Message samples are only supported at [context level](#autonomy).
 
 ### Declaration
 
@@ -52,7 +53,8 @@ label of the event receiver is consuming.
 
 #### Aspect Result Type Hints
 
-When using aspect calls, there might be situations where the returned values cannot be adequately described using YAML.
+When using aspect calls, there might be situations where the returned values cannot be adequately
+described using YAML.
 To address this issue, type hints can be used.
 
 ```yaml
@@ -62,7 +64,7 @@ state:
     bar: 2
 ```
 
-In the above code snippet, the `state` Aspect returns a `values` field of type Map.
+In the code snippet above, the `state` Aspect returns a `values` field of type Map.
 
 ```yaml
 state:
@@ -92,6 +94,38 @@ context (so as required extensions). See [examples](../example/samples).
 
 ## Replay
 
-Samples may be *replayed* using [`toa replay`](/runtime/cli/readme.md#replay) command.
+### CLI
 
-> Replaying samples requires local deployment environment.
+Samples may be replayed using [`toa replay`](/runtime/cli/readme.md#replay) command.
+
+See [features](/features/cli/replay.feature).
+
+### Framework
+
+`async components(paths: string[], options?): boolean`
+
+Replay component samples.
+
+`async components(paths: string[], options?): boolean`
+
+Replay context and its components' samples.
+
+#### Options
+
+<dl>
+<dt><code><strong>id</strong>: string</code></dt>
+<dd>Replay samples for a specified component</dd>
+
+<dt><code><strong>integration</strong>: string</code></dt>
+<dd>Replay samples for a specified component only</dd>
+<dd></dd>
+
+<dt><code><strong>operation</strong>: string</code></dt>
+<dd>Replay samples for specified operation</dd>
+
+<dt><code><strong>title</strong>: string</code></dt>
+<dd>Replay samples with titles matching given regexp</dd>
+
+</dl>
+
+See [types](types/suite.d.ts).

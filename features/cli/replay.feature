@@ -52,21 +52,10 @@ Feature: Replay samples
       # Subtest: echo.beacon
       """
 
-  Scenario: Replay message sample
-    Given I have a PostgreSQL database developer
-    And I have a component `external.consumer`
-    When I run `toa replay ./components/external.consumer`
-    Then program should exit with code 0
-    Then stdout should contain lines:
-      """
-      # Subtest: Should pass payload to input
-      """
-
   Scenario: Replay samples from the context directory
     Given I have components:
       | math.calculations |
       | echo.beacon       |
-      | external.consumer |
     And I have a context
     When I run `toa replay`
     Then program should exit with code 0
@@ -75,14 +64,12 @@ Feature: Replay samples
       # Subtest: Operations
       # Subtest: math.calculations
       # Subtest: echo.beacon
-      # Subtest: something_happened
       """
 
   Scenario: Replay integration samples
     Given I have components:
       | math.calculations |
       | echo.beacon       |
-      | external.consumer |
     And I have a context
     And I have integration samples
     When I run `toa replay`
@@ -177,18 +164,74 @@ Feature: Replay samples
       # Subtest: Component samples
       """
 
-  Scenario: Replay specific component samples
-    Given I have components:
-      | math.calculations |
-      | external.consumer |
+  Scenario: Replay autonomous tests only
+    Given I have a component `math.calculations`
     And I have a context
-    When I run `toa replay --component external.consumer`
+    And I have integration samples
+    When I run `toa replay --autonomous`
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      # Subtest: something_happened
+      # Subtest: Component samples
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: Integration samples
+      """
+
+  Scenario: Replay samples for a specific component
+    Given I have components:
+      | math.calculations |
+      | tea.pots          |
+    And I have a context
+    When I run `toa replay --component tea.pots`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      # Subtest: tea.pots
       """
     And stdout should not contain lines:
       """
       # Subtest: math.calculations
+      """
+
+  Scenario: Replay autonomous samples without environment
+    Given I have a component `math.calculations`
+    When I run `TOA_DEV=0 toa replay ./components/math.calculations`
+    Then program should exit with code 0
+
+  Scenario: Replay autonomous sample without environment for a component with storage defined
+    Given I have a component `tea.pots`
+    When I run `TOA_DEV=0 toa replay ./components/tea.pots`
+    Then program should exit with code 0
+
+  Scenario: Replay samples in Docker
+    Given I have components:
+      | math.calculations |
+      | echo.beacon       |
+    And I have a context
+    And my working directory is ./components
+    When I run `toa replay * --dock`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: math.calculations
+      # Subtest: echo.beacon
+      """
+
+  Scenario: Replay samples with options in Docker
+    Given I have components:
+      | math.calculations |
+      | echo.beacon       |
+    And I have a context
+    And my working directory is ./components
+    When I run `toa replay * --component math.calculations --dock`
+    Then program should exit with code 0
+    Then stdout should contain lines:
+      """
+      # Subtest: math.calculations
+      """
+    And stdout should not contain lines:
+      """
+      # Subtest: echo.beacon
       """

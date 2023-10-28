@@ -2,11 +2,7 @@ Feature: Reveal Secrets
 
   Background:
     Given I have a kube context kind-kind
-    Then I run `toa conceal database username MyUserName`
-    And program should exit
-    And I run `toa conceal database password MySecretPassword`
-    And program should exit
-    And I run `toa conceal network address 1.1.1.1`
+    Then I run `toa conceal database username=MyUserName password=MySecretPassword`
     And program should exit
 
   Scenario: Reveal a secret

@@ -1,8 +1,8 @@
 'use strict'
 
-const { file: { read, write } } = require('@toa.io/filesystem')
-
 const yaml = require('js-yaml')
+const { file: { read, write } } = require('@toa.io/filesystem')
+const { overwrite } = require('@toa.io/generic')
 const extensions = require('./extensions')
 
 /**
@@ -71,7 +71,8 @@ const dump = (object) => yaml.dump(object, { noRefs: true, lineWidth: -1 })
  * @returns {object}
  */
 const parse = (string, path) => {
-  const object = yaml.load(string)
+  const doc = env(string)
+  const object = yaml.load(doc)
 
   return process(object, path)
 }
@@ -99,8 +100,34 @@ const extend = (object, path) => {
   return extensions.reduce((value, extension) => extension(value, path, exports), object)
 }
 
+/**
+ *
+ * @param {string} path
+ * @param {object} diff
+ * @return {Promise<void>}
+ */
+async function patch (path, diff) {
+  const target = await load(path)
+  const result = overwrite(target, diff)
+
+  await save(result, path)
+}
+
+function env (contents) {
+  return contents.replaceAll(VARIABLE, (_, variable) => {
+    return global.process.env[variable] ?? throwEnv(variable)
+  })
+}
+
+function throwEnv (name) {
+  throw new Error(`Environment variable ${name} is not defined`)
+}
+
+const VARIABLE = /\${{ ([A-Z_]{1,32}) }}/g
+
 exports.load = load
 exports.dump = dump
 exports.parse = parse
 exports.split = split
 exports.save = save
+exports.patch = patch

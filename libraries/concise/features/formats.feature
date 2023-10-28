@@ -16,6 +16,19 @@ Feature: String formats
       | format   |
       | date     |
       | uri      |
+      | url      |
       | hostname |
       | email    |
 
+  Scenario: Any
+    When I write schema:
+      """yaml
+      foo: ~
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        foo: {}
+      additionalProperties: false
+      """

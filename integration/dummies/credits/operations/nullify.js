@@ -5,7 +5,7 @@ async function nullify (_, object) {
 
   object.balance = 0
 
-  return { output: balance }
+  return balance
 }
 
 exports.transition = nullify

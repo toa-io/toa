@@ -1,6 +1,8 @@
 'use strict'
 
 const { Connector } = require('./connector')
+const { Nope } = require('nopeable')
+const { Readable } = require('stream')
 
 class Call extends Connector {
   #transmitter
@@ -18,11 +20,22 @@ class Call extends Connector {
   async invoke (request = {}) {
     this.#contract.fit(request)
 
-    const { exception, ...reply } = await this.#transmitter.request(request)
+    // avoid validation on the recipient's side
+    request.authentic = true
 
-    if (exception) throw exception
+    const reply = await this.#transmitter.request(request)
 
-    return reply
+    if (reply === null) return null
+    else if (reply instanceof Readable) return reply
+    else {
+      if (reply.exception !== undefined)
+        throw reply.exception
+
+      if (reply.error !== undefined)
+        return new Nope(reply.error)
+
+      return reply.output
+    }
   }
 }
 

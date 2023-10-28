@@ -13,6 +13,8 @@ When('I run {command}',
    * @return {Promise<void>}
    */
   async function (command) {
+    if (this.process) await this.process
+
     this.process = execute.call(this, command)
 
     const grace = timeout(1000)

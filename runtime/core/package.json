@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/core",
-  "version": "1.0.1",
+  "version": "0.20.0-alpha.2",
   "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -12,18 +12,22 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "main": "src/index.js",
+  "types": "types/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
+  "peerDependencies": {
+    "nopeable": "*"
+  },
   "dependencies": {
     "@rsql/parser": "1.2.4",
-    "@toa.io/console": "0.6.0",
-    "@toa.io/generic": "0.10.0",
-    "@toa.io/yaml": "0.7.5",
+    "@toa.io/console": "0.20.0-alpha.2",
+    "@toa.io/generic": "0.20.0-alpha.2",
+    "@toa.io/yaml": "0.20.0-alpha.2",
     "clone-deep": "4.0.1"
   },
-  "gitHead": "2be07592325b2e4dc823e81d882a4e50bf50de24"
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
