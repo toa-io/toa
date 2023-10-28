@@ -13,7 +13,8 @@ const SHORTCUTS = {
   origins: '@toa.io/extensions.origins',
   configuration: '@toa.io/extensions.configuration',
   state: '@toa.io/extensions.state',
-  stash: '@toa.io/extensions.stash'
+  stash: '@toa.io/extensions.stash',
+  storages: '@toa.io/extensions.storages'
 }
 
 exports.extensions = extensions

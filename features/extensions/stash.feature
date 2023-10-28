@@ -119,7 +119,7 @@ Feature: Stash extension
   Scenario: Using DLM with multiple Redises
     Given I have a component `stash`
     And I have a context with:
-      """
+      """yaml
       amqp: amqp://localhost
       stash:
         - redis://localhost:6379

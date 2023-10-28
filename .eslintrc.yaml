@@ -28,9 +28,6 @@ overrides:
       curly: [error, multi]
       no-trailing-spaces: warn      # prevents IDE
       no-multiple-empty-lines: warn # from going crazy
-      newline-per-chained-call:
-        - error
-        - ignoreChainWithDepth: 2
       import/order:
         - error
         - groups:
@@ -50,7 +47,8 @@ overrides:
         - fixStyle: inline-type-imports
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
-      '@typescript-eslint/no-dynamic-delete': off
+      '@typescript-eslint/no-confusing-void-expression': off
+      no-void: off
 parserOptions:
   project: ./tsconfig.json
 env:

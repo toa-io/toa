@@ -1,14 +1,14 @@
-import * as _component from './component'
+import { Manifest } from './component'
 import { Locator } from '@toa.io/core/types'
 import type { Declaration } from './context/declaration'
 
-interface Runtime {
+interface Runtime{
   version: string
   registry?: string
   proxy?: string
 }
 
-interface Registry {
+interface Registry{
   base?: string
   platforms?: string[] | null
   build?: {
@@ -18,18 +18,18 @@ interface Registry {
   credentials: string
 }
 
-interface Composition {
+interface Composition{
   name: string,
   components: _component.Component[]
 }
 
-export interface Dependency<T = undefined> {
+export interface Dependency<T = undefined>{
   locator: Locator
   manifest: T,
-  component: _component.Component
+  component: Manifest
 }
 
-interface Context extends Declaration {
+interface Context extends Declaration{
   runtime?: Runtime
   environment?: string
   registry?: Registry

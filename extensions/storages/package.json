@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/extensions.realtime",
-  "version": "0.0.0",
-  "description": "Toa Realtime",
+  "name": "@toa.io/extensions.storages",
+  "version": "0.20.0-alpha.2",
+  "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "transpiled/index.js",
@@ -16,15 +16,22 @@
   "publishConfig": {
     "access": "public"
   },
-  "peerDependencies": {
-    "nopeable": "*"
-  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
   "scripts": {
-    "transpile": "rm -rf transpiled && npx tsc && rm -rf ./components/streams/operations && npx tsc -p ./components/streams",
-    "features": "npx cucumber-js"
+    "test": "jest",
+    "transpile": "rm -rf transpiled && npx tsc"
+  },
+  "devDependencies": {
+    "@toa.io/match": "0.3.0",
+    "@toa.io/streams": "0.1.0-alpha.2",
+    "@types/fs-extra": "11.0.3"
+  },
+  "dependencies": {
+    "@toa.io/generic": "0.20.0-alpha.2",
+    "fs-extra": "11.1.1",
+    "msgpackr": "1.9.9"
   }
 }
