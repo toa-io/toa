@@ -1,5 +1,4 @@
 import { type Component } from '@toa.io/core'
-import { Nope } from 'nopeable'
 import { type Parameter } from '../../RTD'
 import { type Family, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
@@ -107,7 +106,7 @@ class Authorization implements Family<Directive, Extension> {
     const result = await this.schemes[scheme]
       .invoke<AuthenticationResult>('authenticate', { input: credentials })
 
-    if (result instanceof Nope)
+    if (result instanceof Error)
       return null
 
     const identity = result.identity

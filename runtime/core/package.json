@@ -19,9 +19,6 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "peerDependencies": {
-    "nopeable": "*"
-  },
   "dependencies": {
     "@rsql/parser": "1.2.4",
     "@toa.io/console": "0.22.0",

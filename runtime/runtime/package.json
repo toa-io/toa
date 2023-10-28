@@ -36,6 +36,7 @@
     "@toa.io/extensions.sampling": "0.22.0",
     "@toa.io/extensions.stash": "0.22.0",
     "@toa.io/extensions.state": "0.22.0",
+    "@toa.io/extensions.storages": "0.22.0",
     "@toa.io/norm": "0.22.0",
     "@toa.io/operations": "0.22.0",
     "@toa.io/prototype": "0.22.0",

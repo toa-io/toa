@@ -16,9 +16,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "peerDependencies": {
-    "nopeable": "*"
-  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
