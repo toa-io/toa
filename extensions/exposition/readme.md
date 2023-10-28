@@ -1,9 +1,9 @@
 # Toa Exposition
 
-## TL;DR
-
-Exposition is a converter from [ROA](https://en.wikipedia.org/wiki/Resource-oriented_architecture)
+Converter from [ROA](https://en.wikipedia.org/wiki/Resource-oriented_architecture)
 to [SOA](https://en.wikipedia.org/wiki/Service-oriented_architecture).
+
+## TL;DR
 
 ```yaml
 # manifest.toa.yaml

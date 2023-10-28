@@ -3,9 +3,9 @@ import * as amqp from 'amqplib'
 import type { Connector, Reply, Exception } from '@toa.io/core/types'
 import type { Migration } from '@toa.io/core/types/storages'
 
-declare namespace toa.features {
+declare namespace toa.features{
 
-  namespace context {
+  namespace context{
 
     type Storage = {
       driver: string
@@ -35,6 +35,7 @@ declare namespace toa.features {
     amqp?: context.AMQP
     reply?: Reply
     exception?: Exception
+    env?: string[]
   }
 
 }

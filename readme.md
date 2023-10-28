@@ -1,6 +1,6 @@
 # Toa
 
-Low-code solution for distributed systems.
+Runtime for low-code distributed systems.
 
 ## Status
 
@@ -32,12 +32,17 @@ Non-scattered documentation is coming this fall.
     - MongoDB, Amazon DocumentDB
     - PostgreSQL, MSSQL, MySQL, MariaDB, Oracle, CockroachDB, SQLite3, Better-SQLite3, and Amazon
       Redshift
+- [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery
   - [Identity](extensions/exposition/documentation/identity.md)
   - [Access Control](extensions/exposition/documentation/access.md)
 - [Realtime events](/extensions/realtime)
-- [Configuration](/extensions/configuration)
+- [BLOB storage](/extensions/storages)
+  - MIME type detection and validation
+  - Deduplication
+  - Arbitrary orderings
+  - Providers: file system, Amazon S3
 - [Transient state](/extensions/stash)
 - [External communications](/extensions/origins) governance
   - HTTP
