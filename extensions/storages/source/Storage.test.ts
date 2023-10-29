@@ -138,7 +138,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     })
 
     it('should permutate', async () => {
-      const error = await storage.reorder(dir, [lenna.id, albert.id])
+      const error = await storage.permute(dir, [lenna.id, albert.id])
 
       expect(error).toBeUndefined()
 
@@ -156,7 +156,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
       ]
 
       for (const permutation of cases) {
-        const error = await storage.reorder(dir, permutation)
+        const error = await storage.permute(dir, permutation)
 
         expect(error).toBeInstanceOf(Error)
         expect(error).toMatchObject({ message: 'PERMUTATION_MISMATCH' })

@@ -73,7 +73,7 @@ export class Storage {
     return stream === null ? [] : decode(await buffer(stream))
   }
 
-  public async reorder (path: string, ids: string[]): Maybe<void> {
+  public async permute (path: string, ids: string[]): Maybe<void> {
     const unique = new Set(ids)
     const dir = posix.join(ENTRIES, path)
     const list = await this.list(path)

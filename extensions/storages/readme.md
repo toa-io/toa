@@ -89,7 +89,7 @@ Delete the entry specified by `path`.
 
 Get ordered list of `id`s of entries in under the `path`.
 
-#### `async reorder(path: string, ids: string[]): Maybe<void>`
+#### `async permute(path: string, ids: string[]): Maybe<void>`
 
 Reorder entries under the `path`.
 
