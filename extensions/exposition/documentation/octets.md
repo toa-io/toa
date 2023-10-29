@@ -18,7 +18,7 @@ RTD Node.
 
 Stores the content of the request body into a storage, under the request path with specified `content-type`.
 
-If the `content-type` is not acceptable or does not pass
+If request's `content-type` is not acceptable, or if the request body does not pass
 the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-string-maybeentry), the
 request is rejected with a `415 Unsupported Media Type` response.
 
@@ -70,7 +70,7 @@ executed in sequence.
 ```yaml
 octets:store:
   workflow:
-    - normalize: images.normalize # executed first
+    - optimize: images.optimize   # executed first
     - resize: images.resize       # executed second
       analyze: images.analyze     # executed in parallel with `resize`
 ```
@@ -105,7 +105,7 @@ id: eecd837c
 type: image/jpeg
 created: 1698004822358
 
-normalize: null
+optimize: null
 
 error:
   step: resize
