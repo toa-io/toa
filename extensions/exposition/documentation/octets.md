@@ -26,7 +26,7 @@ The value of the directive is an object with the following properties:
 
 - `accept`: a media type or an array of media types that are acceptable. If the `accept` property is not specified,
   any media type is acceptable (which is the default).
-- `workflow`: a list of [workflows](#workflows) to be executed once the content is successfully stored.
+- `workflow`: [workflow](#workflows) to be executed once the content is successfully stored.
 
 ```yaml
 /images:
