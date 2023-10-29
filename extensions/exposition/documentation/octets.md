@@ -1,0 +1,113 @@
+# Octets
+
+The `octets` directive family implements operations with BLOBs, using the [Storages extention](/extensions/storages).
+The most common use case is to handle file uploads, downloads, and processing.
+
+## `octets:storage`
+
+Sets the [storage name](/extensions/storages/readme.md#annotation) to be used for the `octets` directives under the
+current
+RTD Node.
+
+```yaml
+/images:
+  octets:storage: images
+```
+
+## `octets:store`
+
+Stores the content of the request body into a storage, under the request path with specified `content-type`.
+
+If the `content-type` is not acceptable or does not pass
+the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-string-maybeentry), the
+request is rejected with a `415 Unsupported Media Type` response.
+
+The value of the directive is an object with the following properties:
+
+- `accept`: a media type or an array of media types that are acceptable. If the `accept` property is not specified,
+  any media type is acceptable (which is the default).
+- `workflow`: a list of [workflows](#workflows) to be executed once the content is successfully stored.
+
+```yaml
+/images:
+  octets:storage: images
+  POST:
+    octets:store:
+      accept:
+        - image/jpeg
+        - image/png
+        - video/*
+      workflow:
+        resize: images.resize
+        analyze: images.analyze
+```
+
+### Workflows
+
+A workflow is a list of endpoints to be called.
+The following input will be passed to each endpoint:
+
+```yaml
+path: string
+entry: Entry
+```
+
+See [Entry](/extensions/storages/readme.md#entry).
+
+A _workflow unit_ is an object with keys referencing the workflow step identifier, and an endpoint as value.
+Steps within a workflow unit are executed in parallel.
+
+```yaml
+octets:store:
+  workflow:
+    resize: images.resize
+    analyze: images.analyze
+```
+
+A workflow can be a single workflow unit, or an array of workflow units. If it's an array, the workflow units are
+executed in sequence.
+
+```yaml
+octets:store:
+  workflow:
+    - normalize: images.normalize # executed first
+    - resize: images.resize       # executed second
+      analyze: images.analyze     # executed in parallel with `resize`
+```
+
+If one of the workflow units returns an error, the execution of the workflow is interrupted.
+
+### Response
+
+The response of the `octets:store` directive is the created Entry.
+
+```
+201 Created
+content-type: application/yaml
+
+id: eecd837c
+type: image/jpeg
+created: 1698004822358
+```
+
+If the `octets:store` directive contains a `workflow`, the response is a stream. The first chunk represents the created
+Entry, while subsequent chunks contain results from the workflow endpoints.
+
+In case a workflow endpoint returns an error, the error chunk is sent to the stream, and the stream is closed.
+
+```
+201 Created
+content-type: application/yaml
+transfer-encoding: chunked
+
+id: eecd837c
+type: image/jpeg
+created: 1698004822358
+
+normalize: null
+
+error:
+  step: resize
+  code: IMAGE_TOO_SMALL
+  message: Image is too small
+```
