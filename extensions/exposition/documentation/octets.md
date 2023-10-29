@@ -94,6 +94,7 @@ If the `octets:store` directive contains a `workflow`, the response is a stream.
 Entry, while subsequent chunks contain results from the workflow endpoints.
 
 In case a workflow endpoint returns an error, the error chunk is sent to the stream, and the stream is closed.
+Error's properties are added to the error chunk, among with the `step` identifier.
 
 ```
 201 Created
@@ -108,6 +109,27 @@ normalize: null
 
 error:
   step: resize
-  code: IMAGE_TOO_SMALL
+  code: TOO_SMALL
   message: Image is too small
 ```
+
+## `octets:fetch`
+
+Fetches the content of a stored BLOB corresponding to the request path, and returns it as the response body.
+
+The value of the directive is an object with the following properties:
+
+- `variants`: `boolean` indicating whether the
+  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be specified in the path.
+  Defaults to `true`, which prevents the original BLOBs from being accessed.
+
+```yaml
+/images:
+  octets:storage: images
+  /*:
+    GET:
+      octets:fetch:
+        variants: false  # allows accessing the original BLOBs
+```
+
+The `octets:fetch: ~` declaration is equivalent to defaults.
