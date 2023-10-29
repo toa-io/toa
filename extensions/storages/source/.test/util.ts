@@ -7,10 +7,6 @@ import { Readable } from 'node:stream'
 const suites: Suite[] = [
   {
     run: true,
-    ref: `file:///${join(tmpdir(), 'toa-storages-file')}`,
-  },
-  {
-    run: true,
     ref: 'tmp:///toa-storages-temp',
   },
   // add more providers here, use `run` as a condition to run the test
