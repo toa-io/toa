@@ -133,3 +133,53 @@ The value of the directive is an object with the following properties:
 ```
 
 The `octets:fetch: ~` declaration is equivalent to defaults.
+
+## `octets:list`
+
+Lists the entries stored under the request path.
+
+```yaml
+/images:
+  octets:storage: images
+  GET:
+    octets:list: ~
+```
+
+Responds with a list of entry identifiers.
+
+## `octets:delete`
+
+Deletes the entry corresponding to the request path.
+
+```yaml
+/images:
+  octets:storage: images
+  DELETE:
+    octets:delete: ~
+```
+
+## `octets:permute`
+
+Performs a [permutation](/extensions/storages/readme.md#async-permutepath-string-ids-string-maybevoid) on the entries
+under the request path.
+
+```yaml
+/images:
+  octets:storage: images
+  PUT:
+    octets:permute: ~
+```
+
+The request body must be a list of entry identifiers.
+
+## `octets:entry`
+
+Returns the entry corresponding to the request path.
+
+```yaml
+/images:
+  octets:storage: images
+  /*:
+    OPTIONS:
+      octets:entry: ~
+```
