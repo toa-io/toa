@@ -1,29 +1,29 @@
-import { type Component } from '@toa.io/core'
 import { match } from '@toa.io/match'
-import { type Parameter } from '../../RTD'
-import { type Family, type Output } from '../../Directive'
-import { type Remotes } from '../../Remotes'
 import * as http from '../../HTTP'
-import {
-  type AuthenticationResult,
-  type Ban,
-  type Directive,
-  type Discovery,
-  type Extension,
-  type Identity,
-  type Input,
-  type Remote,
-  type Schemes
-} from './types'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
 import { Role } from './Role'
 import { Rule } from './Rule'
 import { Incept } from './Incept'
-import { split } from './split'
-import { PRIMARY, PROVIDERS } from './schemes'
-import { Scheme } from './Scheme'
 import { Echo } from './Echo'
+import { split } from './split'
+import { Scheme } from './Scheme'
+import { PRIMARY, PROVIDERS } from './schemes'
+import type { Component } from '@toa.io/core'
+import type { Remotes } from '../../Remotes'
+import type { Family, Output } from '../../Directive'
+import type { Parameter } from '../../RTD'
+import type {
+  AuthenticationResult,
+  Ban,
+  Directive,
+  Discovery,
+  Extension,
+  Identity,
+  Input,
+  Remote,
+  Schemes
+} from './types'
 
 class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
