@@ -31,5 +31,5 @@ it('should encrypt with given lifetime', async () => {
 
   await timeout(lifetime * 1000)
 
-  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ code: 'INVALID_TOKEN' })
+  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ message: 'INVALID_TOKEN' })
 })

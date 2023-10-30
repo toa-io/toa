@@ -1,4 +1,4 @@
-import { Nope, type Nopeable } from 'nopeable'
+import { type Maybe } from '@toa.io/types'
 import * as http from '../../HTTP'
 import { type Directive, type Discovery, type Identity, type Input, type Schemes } from './types'
 import { split } from './split'
@@ -31,9 +31,9 @@ export class Incept implements Directive {
     this.schemes[scheme] ??= await this.discovery[provider]
 
     const identity = await this.schemes[scheme]
-      .invoke<Nopeable<Identity>>('create', { input: { id, credentials } })
+      .invoke<Maybe<Identity>>('create', { input: { id, credentials } })
 
-    if (identity instanceof Nope)
+    if (identity instanceof Error)
       throw new http.Conflict(identity)
 
     request.identity = identity

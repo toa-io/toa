@@ -3,9 +3,9 @@ import { buffer } from '@toa.io/streams'
 import { cases, open, rnd, read } from '../.test/util'
 import { providers } from './index'
 
-describe.each(cases)('%s', (protocol, url) => {
-  const Provider = providers[protocol as keyof typeof providers]
-  const provider = new Provider(url)
+describe.each(cases)('%s', (protocol, url, secrets) => {
+  const Provider = providers[protocol]
+  const provider = new Provider(url, secrets)
 
   let dir: string
 

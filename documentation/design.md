@@ -104,14 +104,13 @@ operations:
 
 ```javascript
 // Node.js Bridge
-const { Nope } = require('nopeable')
-
 async function transition (input, entity, context) {
   const price = context.configuration.price
   const request = { input: price, query: { id: input.sender } }
   const reply = await context.remote.credits.balance.debit(request)
 
-  if (reply instanceof Nope) return reply
+  if (reply instanceof Error)
+    return reply
 
   Object.assign(entity, input)
 

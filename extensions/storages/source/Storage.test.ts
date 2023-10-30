@@ -1,20 +1,22 @@
 import { Readable } from 'node:stream'
 import { match } from '@toa.io/match'
 import { buffer } from '@toa.io/generic'
-import { Factory } from './Factory'
 import { Storage } from './Storage'
 import { cases, open, rnd } from './.test/util'
 import { type Entry } from './Entry'
+import { providers } from './providers'
 
 let storage: Storage
 let dir: string
 
-const factory = new Factory()
-
-describe.each(cases)('%s', (_, reference) => {
+describe.each(cases)('%s', (_, url, secrets) => {
   beforeEach(() => {
     dir = '/' + rnd()
-    storage = factory.createStorage(reference as string)
+
+    const Provider = providers[url.protocol]
+    const provider = new Provider(url, secrets)
+
+    storage = new Storage(provider)
   })
 
   it('should be', async () => {
@@ -116,22 +118,6 @@ describe.each(cases)('%s', (_, reference) => {
 
         expect(entry.meta).toMatchObject({ foo: 'bar' })
       })
-    })
-  })
-
-  describe('get', () => {
-    it('should get blob by id', async () => {
-      const stream = await open('lenna.ascii')
-      const entry = await storage.put(dir, stream) as Entry
-      const stored = await storage.fetch(entry.id)
-
-      if (stored instanceof Error)
-        throw stored
-
-      const buf = await buffer(stored)
-      const expected = await buffer(await open('lenna.ascii'))
-
-      expect(buf.compare(expected)).toBe(0)
     })
   })
 
@@ -297,6 +283,20 @@ describe.each(cases)('%s', (_, reference) => {
       expect(stored.compare(buf)).toBe(0)
     })
 
+    it('should fetch blob by id', async () => {
+      const stream = await open('lenna.ascii')
+      const entry = await storage.put(dir, stream) as Entry
+      const stored = await storage.fetch(entry.id)
+
+      if (stored instanceof Error)
+        throw stored
+
+      const buf = await buffer(stored)
+      const expected = await buffer(await open('lenna.ascii'))
+
+      expect(buf.compare(expected)).toBe(0)
+    })
+
     it('should fetch variant', async () => {
       const stream = await open('sample.jpeg')
 
@@ -311,6 +311,13 @@ describe.each(cases)('%s', (_, reference) => {
         Readable, async (stream: Readable) => await buffer(stream))
 
       expect(stored.compare(buf)).toBe(0)
+    })
+
+    it('should not fetch blob by id and fake path', async () => {
+      const stored = await storage.fetch(`fake/${lenna.id}`)
+
+      match(stored,
+        Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
     })
   })
 

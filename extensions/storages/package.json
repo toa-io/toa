@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "0.20.0-alpha.2",
+  "version": "0.22.0",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -33,7 +33,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.435.0",
     "@aws-sdk/lib-storage": "3.437.0",
-    "@toa.io/extensions.storages": "file:",
     "@toa.io/generic": "0.20.0-alpha.2",
     "fs-extra": "11.1.1",
     "msgpackr": "1.9.9"

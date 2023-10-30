@@ -1,8 +1,8 @@
-import { type Call, type Observation, type Query } from '@toa.io/types'
+import { type Call, type Maybe, type Observation, type Query } from '@toa.io/types'
 
 export interface Context {
   local: {
-    observe: Observation<Entity>
+    observe: Observation<Maybe<Entity>>
     transit: Call<TransitOutput, TransitInput>
   }
   remote: {

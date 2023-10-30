@@ -18,5 +18,14 @@
     $ npm test
     ```
     in the [`storages` directory](../..).
+  Provider's constructor must have the following signature: `constructor(url: URL)`
 
-Provider's constructor must have the following signature: `constructor(url: URL)`
+## Secrets
+
+Provider class may have static `SECRETS` property of type `string[]` that lists the names of the secrets that it
+requires.
+The secrets are passed to the constructor as the second argument.
+
+`constructor(url: URL, secrets: Record<string, string>)`
+
+See [`Test` provider](./Test.ts) for an example.

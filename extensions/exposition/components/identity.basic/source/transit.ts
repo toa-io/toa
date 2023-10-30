@@ -1,6 +1,5 @@
 import { genSalt, hash } from 'bcryptjs'
-import { type Operation } from '@toa.io/types'
-import { Nope, type Nopeable } from 'nopeable'
+import { type Maybe, type Operation } from '@toa.io/types'
 import { type Context, type Entity, type TransitInput, type TransitOutput } from './types'
 
 export class Transition implements Operation {
@@ -21,7 +20,7 @@ export class Transition implements Operation {
     this.passwrodRx = toRx(context.configuration.password)
   }
 
-  public async execute (input: TransitInput, object: Entity): Promise<Nopeable<TransitOutput>> {
+  public async execute (input: TransitInput, object: Entity): Promise<Maybe<TransitOutput>> {
     const existent = object._version !== 0
 
     if (existent)
@@ -29,17 +28,17 @@ export class Transition implements Operation {
 
     if (input.username !== undefined) {
       if (existent && object.username === this.principal)
-        return new Nope('PRINCIPAL_LOCKED', 'Principal username cannot be changed.')
+        return ERR_PRINCIPAL_LOCKED
 
       if (invalid(input.username, this.usernameRx))
-        return new Nope('INVALID_USERNAME', 'Username is not meeting the requirements.')
+        return ERR_INVALID_USERNAME
 
       object.username = input.username
     }
 
     if (input.password !== undefined) {
       if (invalid(input.password, this.passwrodRx))
-        return new Nope('INVALID_PASSWORD', 'Password is not meeting the requirements.')
+        return ERR_INVALID_PASSWORD
 
       const salt = await genSalt(this.rounds)
       const spicy = input.password + this.pepper
@@ -60,5 +59,9 @@ function toRx (input: string | string[]): RegExp[] {
 function invalid (value: string, expressions: RegExp[]): boolean {
   return expressions.some((expression) => !expression.test(value))
 }
+
+const ERR_PRINCIPAL_LOCKED = new Error('PRINCIPAL_LOCKED')
+const ERR_INVALID_USERNAME = new Error('INVALID_USERNAME')
+const ERR_INVALID_PASSWORD = new Error('INVALID_PASSWORD')
 
 type Tokens = Context['remote']['identity']['tokens']

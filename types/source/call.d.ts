@@ -1,11 +1,9 @@
-import { type Nopeable } from 'nopeable'
-
-export interface Request<Input = undefined> {
+export interface Request<Input = undefined>{
   input?: Input
   query?: Query
 }
 
-export interface Query {
+export interface Query{
   id?: string
   version?: number
   criteria?: string
@@ -15,5 +13,6 @@ export interface Query {
   projection?: string[]
 }
 
-export type Call<Output = any, Input = any> = (request: Request<Input>) => Promise<Nopeable<Output>>
+export type Maybe<T> = T | Error
+export type Call<Output = any, Input = any> = (request: Request<Input>) => Promise<Output>
 export type Observation<Output = any, Input = undefined> = (request: Request<Input>) => Promise<Output | null>
