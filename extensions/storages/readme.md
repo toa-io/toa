@@ -128,7 +128,7 @@ and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
 
-`s3://us-east-1/my-bucket?endpoint=s3.my-instance.com:4566`
+`s3://us-east-1/my-bucket?endpoint=http://s3.my-instance.com:4566`
 
 ### Filesystem
 

@@ -1,8 +1,6 @@
 import { type Readable } from 'node:stream'
 import { join } from 'node:path/posix'
 import { Upload } from '@aws-sdk/lib-storage'
-import dotenv from 'dotenv'
-import fse from 'fs-extra'
 import {
   S3Client,
   GetObjectCommand,
@@ -13,38 +11,26 @@ import {
 } from '@aws-sdk/client-s3'
 import { type Provider } from '../Provider'
 
-if (fse.existsSync(join(__dirname, '.env')))
-  dotenv.config({ path: join(__dirname, '.env') })
-
-const {
-  S3_ACCESS_KEY = '',
-  S3_SECRET_ACCESS_KEY = ''
-} = process.env
-
 export class S3 implements Provider {
   protected readonly bucket: string
   protected readonly client: S3Client
 
-  public constructor (url: URL) {
+  public constructor (url: URL, secrets: Record<string, string>) {
     const pathSegments = url.pathname.split('/').filter((segment) => segment !== '')
 
-    if (pathSegments.length === 0) throw new Error('S3 URL must contain at least two segments')
+    if (pathSegments.length !== 1) throw new Error('S3 URL must contain two segments')
 
+    this.bucket = pathSegments[0]
     const s3Config: S3ClientConfigType = {
       credentials: {
-        accessKeyId: S3_ACCESS_KEY,
-        secretAccessKey: S3_SECRET_ACCESS_KEY
-      }
+        accessKeyId: secrets.ACCESS_KEY,
+        secretAccessKey: secrets.SECRET_ACCESS_KEY
+      },
+      region: url.host
     }
+    const endpoint = url.searchParams.get('endpoint')
 
-    if (pathSegments.length === 1) {
-      s3Config.region = url.host
-      this.bucket = pathSegments[0]
-    } else {
-      s3Config.region = pathSegments[0]
-      s3Config.endpoint = `http://${url.host}` // ???
-      this.bucket = pathSegments[1]
-    }
+    if (endpoint !== null) s3Config.endpoint = endpoint
 
     this.client = new S3Client(s3Config)
   }
