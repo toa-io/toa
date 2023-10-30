@@ -44,9 +44,9 @@ class Authorization implements Family<Directive, Extension> {
       this.discovery[name] ??= remotes.discover('identity', name)
 
     return match(Class,
-      Role, () => new Class(value, this.discovery.roles),
-      Rule, () => new Class(value, this.create.bind(this)),
-      Incept, () => new Class(value, this.discovery),
+      Role, () => new Role(value, this.discovery.roles),
+      Rule, () => new Rule(value, this.create.bind(this)),
+      Incept, () => new Incept(value, this.discovery),
       () => new Class(value))
   }
 
