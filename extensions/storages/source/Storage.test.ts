@@ -2,7 +2,7 @@ import { Readable } from 'node:stream'
 import { match } from '@toa.io/match'
 import { buffer } from '@toa.io/generic'
 import { Storage } from './Storage'
-import { cases, open, rnd } from './.test/util'
+import { cases, open, rnd, init } from './.test/util'
 import { type Entry } from './Entry'
 import { providers } from './providers'
 
@@ -10,6 +10,10 @@ let storage: Storage
 let dir: string
 
 describe.each(cases)('%s', (_, url, secrets) => {
+  beforeAll(async () => {
+    await init(url)
+  })
+
   beforeEach(() => {
     dir = '/' + rnd()
 

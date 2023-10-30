@@ -9,8 +9,6 @@ services:
       - SERVICES=s3
       - AWS_ACCESS_KEY_ID=test_access_key
       - AWS_SECRET_ACCESS_KEY=test_secret_access_key
-    volumes:
-      - './localstack_init.sh:/etc/localstack/init/ready.d/init-aws.sh'
   verdaccio:
     image: verdaccio/verdaccio:5.10.2
     ports: ['4873:4873']
