@@ -142,8 +142,8 @@ Annotation value format is `tmp:///{path}`.
 
 ## Deduplication
 
-BLOBs are stored in the underlying storage with their checksum as the key, ensuring that identical BLOBs
-are stored only once.
+BLOBs are stored in the underlying storage with their checksum as the key, ensuring that identical
+BLOBs are stored only once.
 Variants, on the other hand, are not deduplicated across different entries.
 
 Underlying directory structure:
@@ -191,5 +191,6 @@ storages:
 
 ## Secrets
 
-Secrets declared by storage providers can be deployed by [`toa conceal`](/runtime/cli/readme.md#conceal),
+Secrets declared by storage providers can be deployed
+by [`toa conceal`](/runtime/cli/readme.md#conceal),
 or set locally by [`toa env`](/runtime/cli/readme.md#env).

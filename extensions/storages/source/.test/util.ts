@@ -1,5 +1,4 @@
 import { join } from 'node:path'
-import { tmpdir } from 'node:os'
 import fs from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { Readable } from 'node:stream'
