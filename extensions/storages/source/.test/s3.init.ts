@@ -12,6 +12,9 @@ export const initScript = async (url: URL, secrets?: Record<string, string>) => 
   const createBucketCMD = new CreateBucketCommand({
     Bucket: url.pathname.substring(1)
   })
-
-  await client.send(createBucketCMD);
+  try {
+    await client.send(createBucketCMD);
+  } catch (err: any) {
+    console.log(err);
+  }
 }

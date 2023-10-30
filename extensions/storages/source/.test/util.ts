@@ -10,8 +10,11 @@ import { initScript } from './s3.init';
 const envPath = join(__dirname, '.env');
 
 if (fse.existsSync(envPath)) {
-  dotenv.config({ path: envPath });
+  dotenv.config({ path: envPath })
 }
+const s3Region = process.env.S3_REGION ?? 'us-west-1'
+const s3Bucket = process.env.S3_BUCKET ?? 'testbucket'
+const s3Endpoint = process.env.S3_ENDPOINT ? '?endpoint=' + process.env.S3_ENDPOINT : ''
 
 const suites: Suite[] = [
   {
@@ -23,8 +26,8 @@ const suites: Suite[] = [
     ref: 'tmp:///toa-storages-temp',
   },
   {
-    run: process.env.S3_LOCALSTACK === 'true',
-    ref: 's3://us-east-1/testbucket?endpoint=http://s3.localhost.localstack.cloud:4566',
+    run: process.env.S3_ACCESS_KEY !== undefined,
+    ref: `s3://${s3Region}/${s3Bucket}${s3Endpoint}`,
     secrets: {
       ACCESS_KEY: process.env.S3_ACCESS_KEY ?? '',
       SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY ?? ''
@@ -45,8 +48,8 @@ export const cases = suites.filter(({ run }) => run).map(map)
 
 export const init = async (url: URL) => {
   const suite = suites.find((suite) => suite.ref === url.href)
-  if (suite !== null && suite?.init) {
-    await suite?.init(url, suite.secrets)
+  if (suite?.init) {
+    await suite.init(url, suite.secrets)
   }
 }
 
