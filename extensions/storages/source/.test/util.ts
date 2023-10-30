@@ -6,8 +6,10 @@ import { Readable } from 'node:stream'
 import fse from 'fs-extra'
 import dotenv from 'dotenv'
 
-if (fse.existsSync(join(__dirname, '.env'))) {
-  dotenv.config({ path: join(__dirname, '.env') });
+const envPath = join(__dirname, '.env');
+
+if (fse.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
 }
 
 const suites: Suite[] = [
@@ -20,8 +22,12 @@ const suites: Suite[] = [
     ref: 'tmp:///toa-storages-temp',
   },
   {
-    run: true,
-    ref: 's3://s3.localhost.localstack.cloud:4566/us-east-1/testbucket',
+    run: process.env.S3_LOCALSTACK === 'true',
+    ref: 's3://us-east-1/testbucket?endpoint=http://s3.localhost.localstack.cloud:4566',
+    secrets: {
+      ACCESS_KEY: process.env.S3_ACCESS_KEY ?? '',
+      SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY ?? ''
+    }
   },
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
