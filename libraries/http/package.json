@@ -34,7 +34,6 @@
     "transpile": "tsc"
   },
   "dependencies": {
-    "http-parser-js": "0.5.8",
-    "node-fetch": "2.6.11"
+    "http-parser-js": "0.5.8"
   }
 }

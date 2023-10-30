@@ -1,7 +1,5 @@
 'use strict'
 
-const fetch = require('node-fetch')
-
 const { Connector } = require('@toa.io/core')
 const { retry } = require('@toa.io/generic')
 

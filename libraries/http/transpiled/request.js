@@ -22,27 +22,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.request = void 0;
-const node_fetch_1 = __importDefault(require("node-fetch"));
 const parse = __importStar(require("./parse"));
 async function request(http, origin) {
     const { method, url, headers, body } = parse.request(http);
     const reference = new URL(url, origin).href;
-    const response = await (0, node_fetch_1.default)(reference, { method, headers, body });
+    const response = await fetch(reference, { method, headers, body });
     const statusLine = `${response.status} ${response.statusText}\n`;
-    const headerLines = stringifyHeaders(response.headers.raw()) + '\n';
+    const headerLines = stringifyHeaders(response.headers) + '\n';
     const responseText = await response.text();
     return statusLine + headerLines + responseText;
 }
 exports.request = request;
 function stringifyHeaders(headers) {
     let lines = '';
-    for (const [name, values] of Object.entries(headers))
-        lines += `${name}: ${values.join(', ')}\n`;
+    headers.forEach((value, name) => (lines += `${name}: ${value}\n`));
     return lines;
 }
 //# sourceMappingURL=request.js.map
