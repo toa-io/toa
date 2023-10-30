@@ -1,4 +1,5 @@
 import { type Component } from '@toa.io/core'
+import { match } from '@toa.io/match'
 import { type Parameter } from '../../RTD'
 import { type Family, type Output } from '../../Directive'
 import { type Remotes } from '../../Remotes'
@@ -10,7 +11,8 @@ import {
   type Discovery,
   type Extension,
   type Identity,
-  type Input, type Remote,
+  type Input,
+  type Remote,
   type Schemes
 } from './types'
 import { Anonymous } from './Anonymous'
@@ -26,6 +28,7 @@ import { Echo } from './Echo'
 class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
+
   private readonly schemes = {} as unknown as Schemes
   private readonly discovery = {} as unknown as Discovery
   private tokens: Component | null = null
@@ -40,10 +43,11 @@ class Authorization implements Family<Directive, Extension> {
     for (const name of REMOTES)
       this.discovery[name] ??= remotes.discover('identity', name)
 
-    if (Class === Role) return new Class(value, this.discovery.roles)
-    else if (Class === Rule) return new Class(value, this.create.bind(this))
-    else if (Class === Incept) return new Class(value, this.discovery)
-    else return new Class(value)
+    return match(Class,
+      Role, () => new Class(value, this.discovery.roles),
+      Rule, () => new Class(value, this.create.bind(this)),
+      Incept, () => new Class(value, this.discovery),
+      () => new Class(value))
   }
 
   public async preflight
