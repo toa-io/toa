@@ -1,13 +1,13 @@
 # Octets
 
-The `octets` directive family implements operations with BLOBs, using the [Storages extention](/extensions/storages).
+The `octets` directive family implements operations with BLOBs, using
+the [Storages extention](/extensions/storages).
 The most common use case is to handle file uploads, downloads, and processing.
 
 ## `octets:storage`
 
-Sets the [storage name](/extensions/storages/readme.md#annotation) to be used for the `octets` directives under the
-current
-RTD Node.
+Sets the [storage name](/extensions/storages/readme.md#annotation) to be used for the `octets`
+directives under the current RTD Node.
 
 ```yaml
 /images:
@@ -16,16 +16,17 @@ RTD Node.
 
 ## `octets:store`
 
-Stores the content of the request body into a storage, under the request path with specified `content-type`.
+Stores the content of the request body into a storage, under the request path with
+specified `content-type`.
 
 If request's `content-type` is not acceptable, or if the request body does not pass
-the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-string-maybeentry), the
-request is rejected with a `415 Unsupported Media Type` response.
+the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-string-maybeentry),
+the request is rejected with a `415 Unsupported Media Type` response.
 
 The value of the directive is an object with the following properties:
 
-- `accept`: a media type or an array of media types that are acceptable. If the `accept` property is not specified,
-  any media type is acceptable (which is the default).
+- `accept`: a media type or an array of media types that are acceptable.
+  If the `accept` property is not specified, any media type is acceptable (which is the default).
 - `workflow`: [workflow](#workflows) to be executed once the content is successfully stored.
 
 ```yaml
@@ -54,7 +55,8 @@ entry: Entry
 
 See [Entry](/extensions/storages/readme.md#entry).
 
-A _workflow unit_ is an object with keys referencing the workflow step identifier, and an endpoint as value.
+A _workflow unit_ is an object with keys referencing the workflow step identifier, and an endpoint
+as value.
 Steps within a workflow unit are executed in parallel.
 
 ```yaml
@@ -64,7 +66,8 @@ octets:store:
     analyze: images.analyze
 ```
 
-A workflow can be a single unit, or an array of units. If it's an array, the workflow units are executed in sequence.
+A workflow can be a single unit, or an array of units.
+If it's an array, the workflow units are executed in sequence.
 
 ```yaml
 octets:store:
@@ -89,10 +92,12 @@ type: image/jpeg
 created: 1698004822358
 ```
 
-If the `octets:store` directive contains a `workflow`, the response is a stream. The first chunk represents the created
-Entry, while subsequent chunks contain results from the workflow endpoints.
+If the `octets:store` directive contains a `workflow`, the response is a stream.
+The first chunk represents the created Entry,
+while subsequent chunks contain results from the workflow endpoints.
 
-In case a workflow endpoint returns an error, the error chunk is sent to the stream, and the stream is closed.
+In case a workflow endpoint returns an error, the error chunk is sent to the stream, and the stream
+is closed.
 Error's properties are added to the error chunk, among with the `step` identifier.
 
 ```
@@ -114,12 +119,14 @@ error:
 
 ## `octets:fetch`
 
-Fetches the content of a stored BLOB corresponding to the request path, and returns it as the response body.
+Fetches the content of a stored BLOB corresponding to the request path, and returns it as the
+response body.
 
 The value of the directive is an object with the following properties:
 
 - `variants`: `boolean` indicating whether the
-  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be specified in the path.
+  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be
+  specified in the path.
   Defaults to `true`, which prevents the original BLOBs from being accessed.
 
 ```yaml
@@ -148,7 +155,7 @@ Responds with a list of entry identifiers.
 
 ## `octets:delete`
 
-Deletes the entry corresponding to the request path.
+Delete the entry corresponding to the request path.
 
 ```yaml
 /images:
@@ -159,7 +166,9 @@ Deletes the entry corresponding to the request path.
 
 ## `octets:permute`
 
-Performs a [permutation](/extensions/storages/readme.md#async-permutepath-string-ids-string-maybevoid) on the entries
+Performs
+a [permutation](/extensions/storages/readme.md#async-permutepath-string-ids-string-maybevoid) on the
+entries
 under the request path.
 
 ```yaml
