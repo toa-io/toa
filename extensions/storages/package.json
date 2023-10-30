@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@toa.io/match": "0.3.1",
-    "@toa.io/streams": "0.1.0-alpha.2",
+    "@toa.io/streams": "0.22.0",
     "@types/fs-extra": "11.0.3"
   },
   "dependencies": {
