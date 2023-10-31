@@ -63,8 +63,10 @@ export class Gateway extends Connector {
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 
+    const body = await request.parse()
+
     const reply = await method.endpoint
-      .call(request.body, request.query, parameters)
+      .call(body, request.query, parameters)
       .catch(rethrow) as Maybe<unknown>
 
     if (reply instanceof Error)

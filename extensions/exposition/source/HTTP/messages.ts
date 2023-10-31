@@ -2,8 +2,7 @@ import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
 import { Readable } from 'node:stream'
 import { type Request, type Response } from 'express'
 import Negotiator from 'negotiator'
-import { buffer } from '@toa.io/generic'
-import { map } from '@toa.io/streams'
+import { map, buffer } from '@toa.io/streams'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 
@@ -63,15 +62,12 @@ function negotiate (request: Request): string {
   return mediaType
 }
 
-interface Message {
-  body: any
-}
-
-export interface IncomingMessage extends Message {
+export interface IncomingMessage {
   method: string
   path: string
   headers: IncomingHttpHeaders
   query: Query
+  parse: <T> () => Promise<T>
 }
 
 export interface OutgoingMessage {
