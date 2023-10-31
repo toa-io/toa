@@ -24,5 +24,5 @@ it('should parse body', async () => {
 
   const result = request(http)
 
-  expect(result.body.toString()).toEqual('hello world')
+  expect(result.body?.toString()).toEqual('hello world')
 })
