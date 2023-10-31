@@ -85,7 +85,7 @@ export class Server extends Connector {
         .set(message.headers)
 
       if (message.body !== undefined && message.body !== null)
-        write(request, response, message.body)
+        write(request, response, message)
       else
         response.end()
     }
@@ -106,7 +106,7 @@ export class Server extends Connector {
           ? exception.body
           : (exception.stack ?? exception.message)
 
-        write(request, response, body)
+        write(request, response, { body })
       } else
         response.end()
     }
@@ -127,7 +127,7 @@ interface Properties {
 
 function defaults (): Properties {
   return {
-    methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
+    methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
     debug: false
   }
 }

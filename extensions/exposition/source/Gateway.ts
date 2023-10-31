@@ -35,9 +35,6 @@ export class Gateway extends Connector {
   }
 
   private async process (request: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    if (request.path[request.path.length - 1] !== '/')
-      throw new http.NotFound('Trailing slash is required.')
-
     const match = this.tree.match(request.path)
 
     if (match === null)
@@ -60,6 +57,9 @@ export class Gateway extends Connector {
   private async call
   (method: Method<Endpoint, Directives>, request: http.IncomingMessage, parameters: Parameter[]):
   Promise<http.OutgoingMessage> {
+    if (request.path[request.path.length - 1] !== '/')
+      throw new http.NotFound('Trailing slash is required.')
+
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 

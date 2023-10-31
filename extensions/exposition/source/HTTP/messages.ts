@@ -5,10 +5,13 @@ import Negotiator from 'negotiator'
 import { map, buffer } from '@toa.io/streams'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import type { Format } from './formats'
 
-export function write (request: Request, response: Response, body: any): void {
-  if (body instanceof Readable) void pipe(body, request, response)
-  else send(body, request, response)
+export function write (request: Request, response: Response, message: OutgoingMessage): void {
+  if (message.body instanceof Readable)
+    stream(message, request, response)
+  else
+    send(message, request, response)
 }
 
 export async function read (request: Request): Promise<any> {
@@ -29,28 +32,36 @@ export async function read (request: Request): Promise<any> {
   }
 }
 
-function send (body: any, request: Request, response: Response): void {
-  if (body === undefined || body?.length === 0) {
+function send (message: OutgoingMessage, request: Request, response: Response): void {
+  if (message.body === undefined || message.body?.length === 0) {
     response.end()
 
     return
   }
 
-  const type = negotiate(request)
-  const format = formats[type]
-  const buf = format.encode(body)
+  const encoder = format(request, response)
+  const buf = encoder.encode(message.body)
 
-  // content-length and etag are set by Express
-  response.set('content-type', type)
   response.send(buf)
 }
 
-async function pipe (stream: Readable, request: Request, response: Response): Promise<void> {
-  const type = negotiate(request)
-  const format = formats[type]
+function stream
+(message: OutgoingMessage, request: Request, response: Response): void {
+  if (message.headers !== undefined && 'content-type' in message.headers)
+    pipe(message, response)
+  else
+    pipeValues(message, request, response)
+}
 
-  response.set('content-type', type)
-  map(stream, format.encode).pipe(response)
+function pipe (message: OutgoingMessage, response: Response): void {
+  response.set(message.headers)
+  message.body.pipe(response)
+}
+
+function pipeValues (message: OutgoingMessage, request: Request, response: Response): void {
+  const encoder = format(request, response)
+
+  map(message.body, encoder.encode).pipe(response)
 }
 
 function negotiate (request: Request): string {
@@ -60,6 +71,15 @@ function negotiate (request: Request): string {
   if (mediaType === undefined) throw new NotAcceptable()
 
   return mediaType
+}
+
+function format (request: Request, response: Response): Format {
+  const type = negotiate(request)
+  const format = formats[type]
+
+  response.set('content-type', type)
+
+  return format
 }
 
 export interface IncomingMessage extends Readable {

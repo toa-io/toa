@@ -31,7 +31,7 @@ The value of the directive is an object with the following properties:
 
 ```yaml
 /images:
-  octets:storage: images
+  octets:context: images
   POST:
     octets:store:
       accept:
@@ -120,7 +120,8 @@ error:
 ## `octets:fetch`
 
 Fetches the content of a stored BLOB corresponding to the request path, and returns it as the
-response body.
+response body with the corresponding `content-type` and `content-length`.
+The `accept` request header is disregarded.
 
 The value of the directive is an object with the following properties:
 
@@ -131,7 +132,7 @@ The value of the directive is an object with the following properties:
 
 ```yaml
 /images:
-  octets:storage: images
+  octets:context: images
   /*:
     GET:
       octets:fetch:
@@ -146,7 +147,7 @@ Lists the entries stored under the request path.
 
 ```yaml
 /images:
-  octets:storage: images
+  octets:context: images
   GET:
     octets:list: ~
 ```
@@ -159,7 +160,7 @@ Delete the entry corresponding to the request path.
 
 ```yaml
 /images:
-  octets:storage: images
+  octets:context: images
   DELETE:
     octets:delete: ~
 ```
@@ -173,21 +174,9 @@ under the request path.
 
 ```yaml
 /images:
-  octets:storage: images
+  octets:context: images
   PUT:
     octets:permute: ~
 ```
 
 The request body must be a list of entry identifiers.
-
-## `octets:entry`
-
-Returns the entry corresponding to the request path.
-
-```yaml
-/images:
-  octets:storage: images
-  /*:
-    OPTIONS:
-      octets:entry: ~
-```

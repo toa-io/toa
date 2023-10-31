@@ -2,6 +2,7 @@ import { AssertionError } from 'node:assert'
 import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
 import { trim } from '@toa.io/generic'
+import { buffer } from '@toa.io/streams'
 import { open } from '../../../storages/source/test/util'
 import { Parameters } from './parameters'
 import { Gateway } from './Gateway'
@@ -31,21 +32,6 @@ export class HTTP {
     await this.gateway.start()
 
     this.response = await http.request(request, this.origin)
-  }
-
-  @when('the stream of `{word}` is received with the request:')
-  public async streamRequest (filename: string, head: string): Promise<any> {
-    head = trim(head) + '\n\n'
-
-    await this.gateway.start()
-
-    const { url, method, headers } = http.parse.request(head)
-    const href = new URL(url, this.origin).href
-    const body = open(filename)
-    const request = { method, headers, body, duplex: 'half' } as unknown as RequestInit
-    const response = await fetch(href, request)
-
-    this.response = await http.parse.response(response)
   }
 
   @then('the following reply is sent:')
@@ -88,6 +74,30 @@ export class HTTP {
           actual: this.response
         })
     }
+  }
+
+  @when('the stream of `{word}` is received with the request:')
+  public async streamRequest (filename: string, head: string): Promise<any> {
+    head = trim(head) + '\n\n'
+
+    await this.gateway.start()
+
+    const { url, method, headers } = http.parse.request(head)
+    const href = new URL(url, this.origin).href
+    const body = open(filename)
+    const request = { method, headers, body, duplex: 'half' } as unknown as RequestInit
+    const response = await fetch(href, request)
+
+    this.response = await http.parse.response(response)
+  }
+
+  @then('the stream equals to `{word}` is received with the reply:')
+  public async responseStreamMatch (filename: string, head: string): Promise<any> {
+    const buf = await buffer(open(filename))
+    const text = buf.toString('utf8')
+    const expected = head + '\n\n' + text
+
+    this.responseIncludes(expected)
   }
 }
 

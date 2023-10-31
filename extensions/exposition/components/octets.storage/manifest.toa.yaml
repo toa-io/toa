@@ -9,3 +9,16 @@ operations:
     input:
       storage*: string
       request*: ~
+  fetch: &simple
+    bindings: ~
+    input:
+      storage*: string
+      path*: ~
+  list: *simple
+  delete: *simple
+  permute:
+    bindings: ~
+    input:
+      storage*: string
+      path*: ~
+      list*: [string]

@@ -1,5 +1,9 @@
 import { Context } from './Context'
 import { Store } from './Store'
+import { Fetch } from './Fetch'
+import { List } from './List'
+import { Delete } from './Delete'
+import { Permute } from './Permute'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
 import type { Output, Family } from '../../Directive'
@@ -48,7 +52,11 @@ class Octets implements Family<Directive> {
 
 const DIRECTIVES: Record<string, new (value: any, discovery: Promise<Component>) => Directive> = {
   context: Context,
-  store: Store
+  store: Store,
+  fetch: Fetch,
+  list: List,
+  delete: Delete,
+  permute: Permute
 }
 
 export = new Octets()
