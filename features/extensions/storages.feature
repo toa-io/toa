@@ -56,7 +56,8 @@ Feature: Storages Extension
       """yaml
       message: "Storage 'wrong' is not defined"
       """
-
+      
+  @deployment
   Scenario: Deploying a storage
     Given I have a component `storage`
     And I have a context with:
@@ -83,6 +84,7 @@ Feature: Storages Extension
     And an environment variable `TOA_STORAGES_DUMMY_PASSWORD` is set to "secret"
     And I compose `storage` component
 
+  @deployment
   Scenario: Deploying a storage with secrets
     Given I have a component `storage`
     And I have a context with:
