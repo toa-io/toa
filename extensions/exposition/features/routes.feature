@@ -47,3 +47,43 @@ Feature: Routes
 
       Hello
       """
+
+  Scenario: Wildcard routes
+    Given the `greeter` is running with the following manifest:
+      """yaml
+      exposition:
+        /*:
+          GET: greet
+        /baz/*/qux:
+          GET: greet
+      """
+    When the following request is received:
+      """
+      GET /greeter/foo/ HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello
+      """
+    When the following request is received:
+      """
+      GET /greeter/foo/bar/ HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+    When the following request is received:
+      """
+      GET /greeter/baz/foo/qux/ HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello
+      """
