@@ -17,9 +17,8 @@ Feature: Octets directive family
             octets:fetch: ~
           DELETE:
             octets:delete: ~
-
       """
-    When the stream of `lenna.ascii` is received with the request:
+    When the stream of `lenna.ascii` is received in the request:
       """
       POST / HTTP/1.1
       accept: application/yaml
@@ -40,7 +39,7 @@ Feature: Octets directive family
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       """
-    Then the stream equals to `lenna.ascii` is received with the reply:
+    Then the stream equals to `lenna.ascii` is received in the reply:
       """
       200 OK
       content-type: application/octet-stream
@@ -76,7 +75,7 @@ Feature: Octets directive family
       """
 
   Scenario: Entries permutation
-    And the stream of `lenna.png` is received with the request:
+    And the stream of `lenna.png` is received in the request:
       """
       POST / HTTP/1.1
       accept: application/yaml
