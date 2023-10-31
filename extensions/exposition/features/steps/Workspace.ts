@@ -6,7 +6,7 @@ export class Workspace {
   private root: string = devnull
 
   public static exists
-  (target: Workspace, key: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+  (_0: unknown, _1: unknown, descriptor: PropertyDescriptor): PropertyDescriptor {
     const method = descriptor.value
 
     descriptor.value = async function (this: Workspace, ...args: any[]): Promise<any> {

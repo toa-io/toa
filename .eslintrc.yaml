@@ -44,7 +44,7 @@ overrides:
       no-warning-comments: error
       '@typescript-eslint/consistent-type-imports':
         - error
-        - fixStyle: inline-type-imports
+        - fixStyle: separate-type-imports
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
       '@typescript-eslint/no-confusing-void-expression': off

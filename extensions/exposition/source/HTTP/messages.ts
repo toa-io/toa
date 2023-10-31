@@ -62,7 +62,7 @@ function negotiate (request: Request): string {
   return mediaType
 }
 
-export interface IncomingMessage {
+export interface IncomingMessage extends Readable {
   method: string
   path: string
   headers: IncomingHttpHeaders

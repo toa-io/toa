@@ -33,7 +33,7 @@ export class Server extends Connector {
 
   public attach (process: Processing): void {
     this.app.use((request: Request, response: Response): void => {
-      this.format(request)
+      this.extend(request)
         .then(process)
         .then(this.success(request, response))
         .catch(this.fail(request, response))
@@ -62,11 +62,12 @@ export class Server extends Connector {
     console.info('HTTP Server has been stopped.')
   }
 
-  private async format (request: Request): Promise<IncomingMessage> {
-    const { method, path, headers, query } = request
-    const parse = async <T> (): Promise<T> => await read(request)
+  private async extend (request: Request): Promise<IncomingMessage> {
+    const message = request as unknown as IncomingMessage
 
-    return { method, path, headers, query, parse }
+    message.parse = async <T> (): Promise<T> => await read(request)
+
+    return message
   }
 
   private success (request: Request, response: Response) {
@@ -92,14 +93,13 @@ export class Server extends Connector {
 
   private fail (request: Request, response: Response) {
     return (exception: Error) => {
-      let status = 500
-
-      if (exception instanceof Exception)
-        status = exception.status
-
-      const outputAllowed = exception instanceof ClientError || this.debug
+      const status = exception instanceof Exception
+        ? exception.status
+        : 500
 
       response.status(status)
+
+      const outputAllowed = exception instanceof ClientError || this.debug
 
       if (outputAllowed) {
         const body = exception instanceof Exception

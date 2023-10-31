@@ -8,7 +8,7 @@ entity:
 
 operations:
   transit:
-    concurrency: none
+    query: false
     input:
       title*: ~
       volume*: ~

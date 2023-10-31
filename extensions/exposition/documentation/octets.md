@@ -4,14 +4,14 @@ The `octets` directive family implements operations with BLOBs, using
 the [Storages extention](/extensions/storages).
 The most common use case is to handle file uploads, downloads, and processing.
 
-## `octets:storage`
+## `octets:context`
 
 Sets the [storage name](/extensions/storages/readme.md#annotation) to be used for the `octets`
 directives under the current RTD Node.
 
 ```yaml
 /images:
-  octets:storage: images
+  octets:context: images
 ```
 
 ## `octets:store`

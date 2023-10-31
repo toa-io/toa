@@ -54,12 +54,12 @@ Feature: Routes
       exposition:
         /*:
           GET: greet
-        /baz/*/qux:
+        /foo/*/bar:
           GET: greet
       """
     When the following request is received:
       """
-      GET /greeter/foo/ HTTP/1.1
+      GET /greeter/baz/ HTTP/1.1
       accept: text/plain
       """
     Then the following reply is sent:
@@ -70,7 +70,7 @@ Feature: Routes
       """
     When the following request is received:
       """
-      GET /greeter/foo/bar/ HTTP/1.1
+      GET /greeter/baz/qux/ HTTP/1.1
       """
     Then the following reply is sent:
       """
@@ -78,7 +78,7 @@ Feature: Routes
       """
     When the following request is received:
       """
-      GET /greeter/baz/foo/qux/ HTTP/1.1
+      GET /greeter/foo/baz/bar/ HTTP/1.1
       accept: text/plain
       """
     Then the following reply is sent:

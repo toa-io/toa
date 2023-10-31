@@ -93,27 +93,6 @@ it('should send 501 on unknown method', async () => {
   expect(res.sendStatus).toHaveBeenCalledWith(501)
 })
 
-describe('request', () => {
-  const process = jest.fn(async () => ({})) as unknown as Processing
-
-  beforeEach(() => {
-    server.attach(process)
-  })
-
-  it('should pass decoded request', async () => {
-    const path = generate()
-    const method = generate()
-    const headers = { 'content-type': 'application/json' }
-    const body = { [generate()]: generate() }
-    const json = JSON.stringify(body)
-    const req = createRequest({ path, method, headers }, json)
-
-    await use(req)
-
-    expect(process).toHaveBeenCalledWith(expect.objectContaining({ path, method, headers, body }))
-  })
-})
-
 describe('result', () => {
   it('should send status code 200 if the result has a value', async () => {
     const process = async (): Promise<OutgoingMessage> => ({ headers: {}, body: generate() })

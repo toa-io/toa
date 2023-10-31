@@ -1,0 +1,54 @@
+import { Context } from './Context'
+import { Store } from './Store'
+import type { Component } from '@toa.io/core'
+import type { Remotes } from '../../Remotes'
+import type { Output, Family } from '../../Directive'
+import type { Directive, Input } from './types'
+
+class Octets implements Family<Directive> {
+  public readonly name: string = 'octets'
+  public readonly mandatory: boolean = false
+
+  private discovery = null as unknown as Promise<Component>
+
+  public create (name: string, value: any, remotes: Remotes): Directive {
+    const Class = DIRECTIVES[name]
+
+    if (Class === undefined)
+      throw new Error(`Directive '${name}' is not provided by the '${this.name}' family.`)
+
+    this.discovery ??= remotes.discover('octets', 'storage')
+
+    return new Class(value, this.discovery)
+  }
+
+  public async preflight (directives: Directive[], input: Input): Promise<Output> {
+    let context: Context | null = null
+    let action: Directive | null = null
+
+    for (const directive of directives)
+      if (directive instanceof Context)
+        context ??= directive
+      else if (action === null)
+        action = directive
+      else
+        throw new Error('Octets action is umbiguous.')
+
+    if (action === null)
+      return null
+
+    if (context === null)
+      throw new Error('Octets context is not defined.')
+
+    const storage = context.storage
+
+    return await action.apply(storage, input)
+  }
+}
+
+const DIRECTIVES: Record<string, new (value: any, discovery: Promise<Component>) => Directive> = {
+  context: Context,
+  store: Store
+}
+
+export = new Octets()

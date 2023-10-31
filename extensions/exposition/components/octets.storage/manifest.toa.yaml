@@ -1,0 +1,11 @@
+namespace: octets
+name: storage
+
+storages: ~
+
+operations:
+  store:
+    bindings: ~
+    input:
+      storage*: string
+      request*: ~
