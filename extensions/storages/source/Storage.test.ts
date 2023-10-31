@@ -2,7 +2,7 @@ import { Readable } from 'node:stream'
 import { match } from '@toa.io/match'
 import { buffer } from '@toa.io/generic'
 import { Storage } from './Storage'
-import { cases, open, rnd } from './.test/util'
+import { cases, open, rnd } from './test/util'
 import { type Entry } from './Entry'
 import { providers } from './providers'
 
@@ -34,7 +34,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
     })
@@ -48,7 +48,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     })
 
     it('should return id as checksum', async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
       const dir2 = '/' + rnd()
       const copy = await storage.put(dir2, stream) as Entry
 
@@ -94,7 +94,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
 
     describe('existing entry', () => {
       it('should unhide existing', async () => {
-        const stream = await open('lenna.png')
+        const stream = open('lenna.png')
         const path = `${dir}/${lenna.id}`
 
         await storage.conceal(path)
@@ -107,7 +107,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
 
       it('should preserve meta', async () => {
         const path = `${dir}/${lenna.id}`
-        const stream = await open('lenna.png')
+        const stream = open('lenna.png')
 
         await storage.annotate(path, 'foo', 'bar')
         await storage.put(dir, stream)
@@ -124,8 +124,8 @@ describe.each(cases)('%s', (_, url, secrets) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const stream0 = await open('albert.jpg')
-      const stream1 = await open('lenna.png')
+      const stream0 = open('albert.jpg')
+      const stream1 = open('lenna.png')
 
       albert = await storage.put(dir, stream0) as Entry
       lenna = await storage.put(dir, stream1) as Entry
@@ -203,7 +203,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
     })
@@ -229,13 +229,13 @@ describe.each(cases)('%s', (_, url, secrets) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
     })
 
     it('should add variant', async () => {
-      const stream = await open('sample.jpeg')
+      const stream = open('sample.jpeg')
 
       const path = `${dir}/${lenna.id}`
 
@@ -247,8 +247,8 @@ describe.each(cases)('%s', (_, url, secrets) => {
     })
 
     it('should replace variant', async () => {
-      const stream0 = await open('sample.jpeg')
-      const stream1 = await open('sample.webp')
+      const stream0 = open('sample.jpeg')
+      const stream1 = open('sample.webp')
       const path = `${dir}/${lenna.id}`
 
       await storage.diversify(path, 'foo', stream0)
@@ -264,7 +264,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
     })
@@ -276,13 +276,13 @@ describe.each(cases)('%s', (_, url, secrets) => {
       const stored: Buffer = await match(stream,
         Readable, async (stream: Readable) => await buffer(stream))
 
-      const buf = await buffer(await open('lenna.png'))
+      const buf = await buffer(open('lenna.png'))
 
       expect(stored.compare(buf)).toBe(0)
     })
 
     it('should fetch blob by id', async () => {
-      const stream = await open('lenna.ascii')
+      const stream = open('lenna.ascii')
       const entry = await storage.put(dir, stream) as Entry
       const stored = await storage.fetch(entry.id)
 
@@ -290,13 +290,13 @@ describe.each(cases)('%s', (_, url, secrets) => {
         throw stored
 
       const buf = await buffer(stored)
-      const expected = await buffer(await open('lenna.ascii'))
+      const expected = await buffer(open('lenna.ascii'))
 
       expect(buf.compare(expected)).toBe(0)
     })
 
     it('should fetch variant', async () => {
-      const stream = await open('sample.jpeg')
+      const stream = open('sample.jpeg')
 
       const buf = await buffer(stream)
       const path = `${dir}/${lenna.id}`
@@ -323,7 +323,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     let lenna: Entry
 
     beforeEach(async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
 
       lenna = await storage.put(dir, stream) as Entry
     })
@@ -346,7 +346,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     })
 
     it('should delete variants', async () => {
-      const stream = await open('sample.jpeg')
+      const stream = open('sample.jpeg')
 
       const path = `${dir}/${lenna.id}`
 
@@ -372,7 +372,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   describe('signatures', () => {
     it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
       async (type) => {
-        const stream = await open('sample.' + type)
+        const stream = open('sample.' + type)
 
         const entry = await storage.put(dir, stream) as Entry
 
@@ -381,7 +381,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   })
 
   it('should return error if type doesnt match', async () => {
-    const stream = await open('sample.jpeg')
+    const stream = open('sample.jpeg')
 
     const result = await storage.put(dir, stream, 'image/png')
 
@@ -390,7 +390,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   })
 
   it('should trust unknown types', async () => {
-    const stream = await open('lenna.ascii')
+    const stream = open('lenna.ascii')
 
     const result = await storage.put(dir, stream, 'text/plain')
 
@@ -399,7 +399,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   })
 
   it('should return error if type is identifiable', async () => {
-    const stream = await open('lenna.ascii')
+    const stream = open('lenna.ascii')
 
     const result = await storage.put(dir, stream, 'image/jpeg')
 
@@ -408,7 +408,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   })
 
   it('should not return error if type application/octet-stream', async () => {
-    const stream = await open('sample.jpeg')
+    const stream = open('sample.jpeg')
 
     const result = await storage.put(dir, stream, 'application/octet-stream')
 
@@ -417,7 +417,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   })
 
   it('should handle root entries', async () => {
-    const stream = await open('sample.jpeg')
+    const stream = open('sample.jpeg')
 
     const result = await storage.put('hello', stream) as Entry
 
@@ -429,7 +429,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   })
 
   it('should store empty file', async () => {
-    const stream = await open('empty.txt')
+    const stream = open('empty.txt')
     const result = await storage.put('empty', stream) as Entry
 
     expect(result.size).toBe(0)
