@@ -1,6 +1,8 @@
 import type * as directive from '../../Directive'
 
 export interface Directive {
+  readonly targeted: boolean
+
   apply: (storage: string, input: Input) => directive.Output | Promise<directive.Output>
 }
 

@@ -13,12 +13,12 @@ operations:
     bindings: ~
     input:
       storage*: string
-      path*: ~
+      path*: string
   list: *simple
   delete: *simple
   permute:
     bindings: ~
     input:
       storage*: string
-      path*: ~
+      path*: string
       list*: [string]

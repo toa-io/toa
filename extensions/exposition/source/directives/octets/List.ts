@@ -6,6 +6,8 @@ import type { Output } from '../../Directive'
 import type { Directive, Input } from './types'
 
 export class List implements Directive {
+  public readonly targeted = false
+
   private readonly discovery: Promise<Component>
   private storage: Component | null = null
 

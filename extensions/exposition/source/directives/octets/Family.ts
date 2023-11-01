@@ -1,3 +1,4 @@
+import { NotFound } from '../../HTTP'
 import { Context } from './Context'
 import { Store } from './Store'
 import { Fetch } from './Fetch'
@@ -44,9 +45,12 @@ class Octets implements Family<Directive> {
     if (context === null)
       throw new Error('Octets context is not defined.')
 
-    const storage = context.storage
+    const targeted = input.path[input.path.length - 1] !== '/'
 
-    return await action.apply(storage, input)
+    if (targeted !== action.targeted)
+      throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}.`)
+
+    return await action.apply(context.storage, input)
   }
 }
 

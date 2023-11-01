@@ -6,6 +6,8 @@ import type { Output } from '../../Directive'
 import type { Directive, Input } from './types'
 
 export class Delete implements Directive {
+  public readonly targeted = true
+
   private readonly discovery: Promise<Component>
   private storage: Component | null = null
 

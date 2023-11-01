@@ -5,8 +5,8 @@ import * as msgpack from './msgpack'
 import * as text from './text'
 
 export const formats: Record<string, Format> = {
-  'application/yaml': yaml,
   'application/msgpack': msgpack,
+  'application/yaml': yaml,
   'application/json': json,
   'text/plain': text
 }

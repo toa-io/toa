@@ -17,15 +17,30 @@ Feature: Octets directive family
             octets:fetch: ~
           DELETE:
             octets:delete: ~
+        /media:
+          /jpeg:
+            POST:
+              octets:store:
+                accept: image/jpeg
+          /jpeg-or-png:
+            POST:
+              octets:store:
+                accept:
+                  - image/jpeg
+                  - image/png
+          /images:
+            POST:
+              octets:store:
+                accept: image/*
       """
+
+  Scenario: Storing an entry
     When the stream of `lenna.ascii` is received in the request:
       """
       POST / HTTP/1.1
       accept: application/yaml
       content-type: application/octet-stream
       """
-
-  Scenario: Storing an entry
     Then the following reply is sent:
       """
       201 Created
@@ -75,6 +90,12 @@ Feature: Octets directive family
       """
 
   Scenario: Entries permutation
+    When the stream of `lenna.ascii` is received in the request:
+      """
+      POST / HTTP/1.1
+      accept: application/yaml
+      content-type: application/octet-stream
+      """
     And the stream of `lenna.png` is received in the request:
       """
       POST / HTTP/1.1
@@ -120,12 +141,44 @@ Feature: Octets directive family
       - 10cf16b458f759e0d617f2f3d83599ff
       """
 
+  Scenario: Media type control
+    When the stream of `lenna.ascii` is received in the request:
+      """
+      POST /media/jpeg/ HTTP/1.1
+      accept: application/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+!TODO!
+      """
+
   Scenario: Fetching non-existent BLOB
     When the following request is received:
       """
-      GET /non-existent HTTP/1.1
+      GET /whatever HTTP/1.1
       """
     Then the following reply is sent:
       """
       404 Not Found
+      """
+
+  Scenario: Fetching a BLOB with trailing slash
+    When the stream of `lenna.ascii` is received in the request:
+      """
+      POST / HTTP/1.1
+      accept: application/yaml
+      content-type: application/octet-stream
+      """
+    And the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff/ HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      content-type: text/plain
+
+      Trailing slash is redundant.
       """
