@@ -1,5 +1,3 @@
-import { types } from './formats'
-
 export class Exception extends Error {
   public readonly status: number
   public readonly body?: any
@@ -51,10 +49,8 @@ export class MethodNotAllowed extends ClientError {
 }
 
 class MediaTypeException extends ClientError {
-  private static readonly message = 'Supported media types:\n- ' + types.join('\n- ')
-
   protected constructor (status: number) {
-    super(status, MediaTypeException.message)
+    super(status)
   }
 }
 

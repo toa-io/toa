@@ -9,6 +9,7 @@ operations:
     input:
       storage*: string
       request*: ~
+      accept: string
   fetch: &simple
     bindings: ~
     input:

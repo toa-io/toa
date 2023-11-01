@@ -125,10 +125,10 @@ The `accept` request header is disregarded.
 
 The value of the directive is an object with the following properties:
 
-- `variants`: `boolean` indicating whether the
-  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be
-  specified in the path.
-  Defaults to `true`, which prevents the original BLOBs from being accessed.
+- `original`: `boolean` indicating whether the original BLOB is accessible,
+  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be specified in the path
+  otherwise.
+  Defaults to `false`.
 
 ```yaml
 /images:
@@ -136,7 +136,7 @@ The value of the directive is an object with the following properties:
   /*:
     GET:
       octets:fetch:
-        variants: false  # allows accessing the original BLOBs
+        original: true  # allow accessing the original BLOBs
 ```
 
 The `octets:fetch: ~` declaration is equivalent to defaults.

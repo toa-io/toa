@@ -87,10 +87,10 @@ describe('write', () => {
   it('should throw on unsupported response media type', async () => {
     const headers = { accept: 'wtf/' + generate() }
     const request = createRequest({ headers })
-    const value = generate()
+    const body = generate()
 
     expect(() => {
-      write(request, res, value)
+      write(request, res, { body })
     }).toThrow(NotAcceptable)
   })
 

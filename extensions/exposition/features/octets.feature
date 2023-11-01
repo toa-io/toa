@@ -142,15 +142,24 @@ Feature: Octets directive family
       """
 
   Scenario: Media type control
-    When the stream of `lenna.ascii` is received in the request:
+    When the stream of `lenna.png` is received in the request:
       """
       POST /media/jpeg/ HTTP/1.1
       accept: application/yaml
-      content-type: application/octet-stream
+      content-type: image/jpeg
       """
     Then the following reply is sent:
       """
-!TODO!
+      400 Bad Request
+      """
+    When the stream of `lenna.png` is received in the request:
+      """
+      POST /media/jpeg/ HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      415 Unsupported Media Type
       """
 
   Scenario: Fetching non-existent BLOB

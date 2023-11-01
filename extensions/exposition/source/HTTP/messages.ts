@@ -42,7 +42,7 @@ function send (message: OutgoingMessage, request: Request, response: Response): 
   const encoder = format(request, response)
   const buf = encoder.encode(message.body)
 
-  response.send(buf)
+  response.end(buf)
 }
 
 function stream
@@ -68,7 +68,8 @@ function negotiate (request: Request): string {
   const negotiator = new Negotiator(request)
   const mediaType = negotiator.mediaType(types)
 
-  if (mediaType === undefined) throw new NotAcceptable()
+  if (mediaType === undefined)
+    throw new NotAcceptable()
 
   return mediaType
 }
