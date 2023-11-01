@@ -2,6 +2,7 @@ import { Readable } from 'node:stream'
 import { posix } from 'node:path'
 import { decode, encode } from 'msgpackr'
 import { buffer, newid } from '@toa.io/generic'
+import { Err } from 'error-value'
 import { Scanner } from './Scanner'
 import type { TypeControl } from './Scanner'
 import type { Provider } from './Provider'
@@ -217,8 +218,8 @@ export class Storage {
   }
 }
 
-const ERR_NOT_FOUND = new Error('NOT_FOUND')
-const ERR_PERMUTATION_MISMATCH = new Error('PERMUTATION_MISMATCH')
+const ERR_NOT_FOUND = Err('NOT_FOUND')
+const ERR_PERMUTATION_MISMATCH = Err('PERMUTATION_MISMATCH')
 
 const TEMP = '/temp'
 const BLOBs = '/blobs'

@@ -25,12 +25,13 @@
     "transpile": "rm -rf transpiled && npx tsc"
   },
   "devDependencies": {
-    "@toa.io/match": "0.3.1",
     "@toa.io/streams": "0.22.0",
     "@types/fs-extra": "11.0.3"
   },
   "dependencies": {
     "@toa.io/generic": "0.20.0-alpha.2",
+    "@toa.io/match": "0.3.4",
+    "error-value": "0.2.4",
     "fs-extra": "11.1.1",
     "msgpackr": "1.9.9"
   }

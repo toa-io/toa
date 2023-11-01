@@ -26,8 +26,10 @@ describe.each(cases)('%s', (_, url, secrets) => {
   it('should return error if entry is not found', async () => {
     const result = await storage.get('not-found')
 
-    match(result,
-      Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
+    if (!(result instanceof Error))
+      throw new Error('Expected error')
+
+    expect(result).toMatchObject({ code: 'NOT_FOUND', message: 'NOT_FOUND' })
   })
 
   describe('put', () => {

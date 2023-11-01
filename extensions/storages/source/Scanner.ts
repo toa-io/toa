@@ -1,6 +1,7 @@
 import { PassThrough, type TransformCallback } from 'node:stream'
 import { createHash } from 'node:crypto'
 import { negotiate } from '@toa.io/http'
+import { Err } from 'error-value'
 
 export class Scanner extends PassThrough {
   public size = 0
@@ -55,6 +56,8 @@ export class Scanner extends PassThrough {
     const signature = SIGNATURES
       .find(({ hex, off }) => header.slice(off, off + hex.length) === hex)
 
+    this.verify(signature)
+
     const type = signature?.type ?? this.claim
 
     if (type !== undefined) {
@@ -62,7 +65,6 @@ export class Scanner extends PassThrough {
       this.type = type
     }
 
-    this.verify(signature)
     this.detected = true
   }
 
@@ -117,8 +119,8 @@ const HEADER_SIZE = SIGNATURES
 
 const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
-const ERR_TYPE_MISMATCH = new Error('TYPE_MISMATCH')
-const ERR_NOT_ACCEPTABLE = new Error('NOT_ACCEPTABLE')
+const ERR_TYPE_MISMATCH = Err('TYPE_MISMATCH')
+const ERR_NOT_ACCEPTABLE = Err('NOT_ACCEPTABLE')
 
 export interface TypeControl {
   claim?: string
