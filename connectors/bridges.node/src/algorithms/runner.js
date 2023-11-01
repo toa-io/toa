@@ -28,7 +28,7 @@ class Runner extends Connector {
     const reply = await this.#algorithm.execute(input, state)
 
     return match(reply,
-      Error, (error) => ({ error: { message: error.message, cause: error.cause } }),
+      Error, (error) => ({ error }),
       Readable, reply,
       isGenerator, (generator) => Readable.from(generator),
       (output) => ({ output })
