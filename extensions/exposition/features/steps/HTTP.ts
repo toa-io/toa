@@ -3,7 +3,7 @@ import { AssertionError } from 'assert'
 import { binding, when, then } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
 import { trim } from '@toa.io/generic'
-import { Parameters } from './parameters'
+import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
 @binding([Gateway, Parameters])
