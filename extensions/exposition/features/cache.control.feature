@@ -1,5 +1,6 @@
 Feature: Cache control directive
 
+  @cache-control
   Scenario: Default behavior
     Given the annotation:
       """yaml
@@ -20,6 +21,7 @@ Feature: Cache control directive
       cache-control: public, no-cache, max-age=60000
       """
 
+  @cache-control
   Scenario: Unsafe methods
     Given the annotation:
       """yaml
@@ -50,6 +52,7 @@ Feature: Cache control directive
       cache-control: public, no-cache, max-age=60000
       """
 
+  @cache-control
   Scenario: 404 Response
     Given the annotation:
       """yaml
