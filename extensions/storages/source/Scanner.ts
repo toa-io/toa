@@ -56,8 +56,6 @@ export class Scanner extends PassThrough {
     const signature = SIGNATURES
       .find(({ hex, off }) => header.slice(off, off + hex.length) === hex)
 
-    this.verify(signature)
-
     const type = signature?.type ?? this.claim
 
     if (type !== undefined) {
@@ -65,6 +63,7 @@ export class Scanner extends PassThrough {
       this.type = type
     }
 
+    this.verify(signature)
     this.detected = true
   }
 
