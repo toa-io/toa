@@ -5,6 +5,7 @@ import { Storage } from './Storage'
 import { cases, open, rnd } from './test/util'
 import { type Entry } from './Entry'
 import { providers } from './providers'
+import type { ErrorType } from 'error-value'
 
 let storage: Storage
 let dir: string
@@ -29,7 +30,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     if (!(result instanceof Error))
       throw new Error('Expected error')
 
-    expect(result).toMatchObject({ code: 'NOT_FOUND', message: 'NOT_FOUND' })
+    expect(result).toMatchObject({ code: 'NOT_FOUND' })
   })
 
   describe('put', () => {
@@ -161,7 +162,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
         const error = await storage.permute(dir, permutation)
 
         expect(error).toBeInstanceOf(Error)
-        expect(error).toMatchObject({ message: 'PERMUTATION_MISMATCH' })
+        expect(error).toMatchObject({ code: 'PERMUTATION_MISMATCH' })
       }
     })
 
@@ -196,7 +197,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
         const error = await storage[method](path)
 
         expect(error).toBeInstanceOf(Error)
-        expect(error).toMatchObject({ message: 'NOT_FOUND' })
+        expect(error).toMatchObject({ code: 'NOT_FOUND' })
       }
     })
   })
@@ -307,7 +308,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
 
       const variant = await storage.fetch(`${path}.100x100.jpeg`)
 
-      const stored = await match(variant,
+      const stored = await match<Promise<Buffer>>(variant,
         Readable, async (stream: Readable) => await buffer(stream))
 
       expect(stored.compare(buf)).toBe(0)
@@ -317,7 +318,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
       const stored = await storage.fetch(`fake/${lenna.id}`)
 
       match(stored,
-        Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
+        Error, (error: ErrorType) => expect(error.code).toBe('NOT_FOUND'))
     })
   })
 
@@ -344,7 +345,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
       const result = await storage.get(`${dir}/${lenna.id}`)
 
       match(result,
-        Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
+        Error, (error: ErrorType) => expect(error.code).toBe('NOT_FOUND'))
     })
 
     it('should delete variants', async () => {
@@ -358,7 +359,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
       const variant = await storage.fetch(`${path}.foo`)
 
       match(variant,
-        Error, (error: Error) => expect(error.message).toBe('NOT_FOUND'))
+        Error, (error: ErrorType) => expect(error.code).toBe('NOT_FOUND'))
 
       stream.destroy()
     })
@@ -367,7 +368,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
       const result = await storage.delete(dir)
 
       expect(result).toBeInstanceOf(Error)
-      expect(result).toMatchObject({ message: 'NOT_FOUND' })
+      expect(result).toMatchObject({ code: 'NOT_FOUND' })
     })
   })
 
@@ -388,7 +389,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     const result = await storage.put(dir, stream, { claim: 'image/png' })
 
     match(result,
-      Error, (error: Error) => expect(error.message).toBe('TYPE_MISMATCH'))
+      Error, (error: ErrorType) => expect(error.code).toBe('TYPE_MISMATCH'))
   })
 
   it('should trust unknown types', async () => {
@@ -406,7 +407,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     const result = await storage.put(dir, stream, { claim: 'image/jpeg' })
 
     expect(result).toBeInstanceOf(Error)
-    expect(result).toMatchObject({ message: 'TYPE_MISMATCH' })
+    expect(result).toMatchObject({ code: 'TYPE_MISMATCH' })
   })
 
   it('should not return error if type application/octet-stream', async () => {
@@ -424,7 +425,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
     const result = await storage.put(dir, stream, { accept: 'image/png' })
 
     match(result,
-      Error, (error: Error) => expect(error.message).toBe('NOT_ACCEPTABLE'))
+      Error, (error: ErrorType) => expect(error.code).toBe('NOT_ACCEPTABLE'))
   })
 
   it('should accept wildcard types', async () => {
