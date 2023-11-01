@@ -33,7 +33,7 @@ export async function read (request: Request): Promise<any> {
 }
 
 function send (message: OutgoingMessage, request: Request, response: Response): void {
-  if (message.body === undefined || message.body?.length === 0) {
+  if (message.body === undefined) {
     response.end()
 
     return
@@ -47,10 +47,14 @@ function send (message: OutgoingMessage, request: Request, response: Response): 
 
 function stream
 (message: OutgoingMessage, request: Request, response: Response): void {
-  if (message.headers !== undefined && 'content-type' in message.headers)
+  const encoded = message.headers !== undefined && 'content-type' in message.headers
+
+  if (encoded)
     pipe(message, response)
   else
-    pipeValues(message, request, response)
+    pipeEncoded(message, request, response)
+
+  message.body.on('error', () => response.end())
 }
 
 function pipe (message: OutgoingMessage, response: Response): void {
@@ -58,10 +62,11 @@ function pipe (message: OutgoingMessage, response: Response): void {
   message.body.pipe(response)
 }
 
-function pipeValues (message: OutgoingMessage, request: Request, response: Response): void {
+function pipeEncoded (message: OutgoingMessage, request: Request, response: Response): void {
   const encoder = format(request, response)
+  const encoded = map(message.body, encoder.encode)
 
-  map(message.body, encoder.encode).pipe(response)
+  encoded.pipe(response)
 }
 
 function negotiate (request: Request): string {

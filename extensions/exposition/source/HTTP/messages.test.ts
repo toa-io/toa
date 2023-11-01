@@ -72,8 +72,8 @@ describe('read', () => {
 
 describe('write', () => {
   it('should write encoded response', async () => {
-    const value = { [generate()]: generate() }
-    const json = JSON.stringify(value)
+    const value = { body: { [generate()]: generate() } }
+    const json = JSON.stringify(value.body)
     const buf = Buffer.from(json)
     const headers = { accept: 'application/json' }
     const request = createRequest({ headers }, buf)
@@ -81,7 +81,7 @@ describe('write', () => {
     write(request, res, value)
 
     expect(res.set).toHaveBeenCalledWith('content-type', 'application/json')
-    expect(res.send).toHaveBeenCalledWith(buf)
+    expect(res.end).toHaveBeenCalledWith(buf)
   })
 
   it('should throw on unsupported response media type', async () => {
@@ -94,14 +94,14 @@ describe('write', () => {
     }).toThrow(NotAcceptable)
   })
 
-  it('should use application/yaml as default', async () => {
+  it('should use msgpack by default', async () => {
     const request = createRequest()
     const message: OutgoingMessage = { headers: {}, body: 'hello' }
 
     write(request, res, message)
 
-    expect(res.set).toHaveBeenCalledWith('content-type', 'application/yaml')
-    expect(res.send).toHaveBeenCalled()
+    expect(res.set).toHaveBeenCalledWith('content-type', 'application/msgpack')
+    expect(res.end).toHaveBeenCalled()
   })
 
   it('should negotiate', async () => {
@@ -111,6 +111,6 @@ describe('write', () => {
 
     write(request, res, message)
 
-    expect(res.set).toHaveBeenCalledWith('content-type', 'application/yaml')
+    expect(res.set).toHaveBeenCalledWith('content-type', 'application/msgpack')
   })
 })

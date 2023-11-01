@@ -1,5 +1,6 @@
 import { match } from '@toa.io/match'
 import { BadRequest, UnsupportedMediaType } from '../../HTTP'
+import type { ErrorType } from 'error-value'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../Directive'
 import type { Directive, Input } from './types'
@@ -25,15 +26,15 @@ export class Store implements Directive {
     this.storage ??= await this.discovery
 
     const input = { storage, request, accept: this.accept }
-    const entry = await this.storage.invoke<any>('store', { input })
+    const entry = await this.storage.invoke('store', { input })
 
-    return match(entry,
-      Error, (error: Error) => this.throw(error),
+    return match<Output>(entry,
+      Error, (error: ErrorType) => this.throw(error, request),
       () => ({ body: entry }))
   }
 
-  private throw (error: Error): never {
-    throw match<Error>(error.message,
+  private throw (error: ErrorType, request: Input): never {
+    throw match(error.code,
       'NOT_ACCEPTABLE', () => new UnsupportedMediaType(),
       'TYPE_MISMATCH', () => new BadRequest(),
       error)

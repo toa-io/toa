@@ -145,7 +145,6 @@ Feature: Octets directive family
     When the stream of `lenna.png` is received in the request:
       """
       POST /media/jpeg/ HTTP/1.1
-      accept: application/yaml
       content-type: image/jpeg
       """
     Then the following reply is sent:
@@ -155,12 +154,37 @@ Feature: Octets directive family
     When the stream of `lenna.png` is received in the request:
       """
       POST /media/jpeg/ HTTP/1.1
-      accept: application/yaml
       """
     Then the following reply is sent:
       """
       415 Unsupported Media Type
       """
+    When the stream of `lenna.png` is received in the request:
+      """
+      POST /media/jpeg-or-png/ HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+
+  Scenario Outline: Receiving <format> images
+    When the stream of `sample.<format>` is received in the request:
+      """
+      POST /media/images/ HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    Examples:
+      | format |
+      | jpeg   |
+      | jxl    |
+      | gif    |
+      | heic   |
+      | avif   |
+      | webp   |
 
   Scenario: Fetching non-existent BLOB
     When the following request is received:

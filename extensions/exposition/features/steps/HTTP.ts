@@ -67,9 +67,9 @@ export class HTTP {
 
       const includes = this.response.includes(line)
 
-      if (!includes)
+      if (includes)
         throw new AssertionError({
-          message: `Response is missing '${line}'`,
+          message: `Response contains '${line}'`,
           expected: line,
           actual: this.response
         })
@@ -86,9 +86,17 @@ export class HTTP {
     const href = new URL(url, this.origin).href
     const body = open(filename)
     const request = { method, headers, body, duplex: 'half' } as unknown as RequestInit
-    const response = await fetch(href, request)
 
-    this.response = await http.parse.response(response)
+    try {
+      const response = await fetch(href, request)
+
+      this.response = await http.parse.response(response)
+    } catch (e: any) {
+      console.error(e)
+      console.error(e.cause)
+
+      throw e
+    }
   }
 
   @then('the stream equals to `{word}` is received in the reply:')

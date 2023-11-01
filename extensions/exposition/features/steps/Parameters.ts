@@ -4,7 +4,7 @@ export class Parameters {
   public readonly origin: string
 
   public constructor () {
-    this.origin = 'http://localhost:8000'
+    this.origin = 'http://127.0.0.1:8000'
   }
 }
 

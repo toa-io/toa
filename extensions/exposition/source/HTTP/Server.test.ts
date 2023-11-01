@@ -124,7 +124,7 @@ describe('result', () => {
     server.attach(process)
     await use(req)
 
-    expect(res.send).toHaveBeenCalledWith(buf)
+    expect(res.end).toHaveBeenCalledWith(buf)
   })
 
   it('should return 500 on exception', async () => {

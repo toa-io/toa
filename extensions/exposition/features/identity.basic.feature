@@ -181,6 +181,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      accept: application/yaml
       content-type: application/yaml
 
       username: root
@@ -224,6 +225,7 @@ Feature: Basic authentication
       """
       PATCH /identity/basic/${{ id }}/ HTTP/1.1
       authorization: Token ${{ token }}
+      accept: application/yaml
       content-type: application/yaml
 
       username: admin

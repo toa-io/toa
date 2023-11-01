@@ -109,6 +109,10 @@ export class Server extends Connector {
         write(request, response, { body })
       } else
         response.end()
+
+      // stop accepting a stream
+      if (!request.complete)
+        request.destroy()
     }
   }
 }

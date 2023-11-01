@@ -1,6 +1,5 @@
 import { Buffer } from 'buffer'
 import { Readable } from 'stream'
-import type { IncomingMessage } from './messages'
 import type * as http from 'node:http'
 import type { NextFunction, Response, Express, Request } from 'express'
 import type { CorsOptions } from 'cors'
@@ -24,10 +23,6 @@ jest.MockedObject<Request> {
   Object.assign(stream, { headers: {} }, req)
 
   return stream as unknown as jest.MockedObject<Request>
-}
-
-export function createIncomingMessage (path: string, method: string = 'GET'): IncomingMessage {
-  return { method, path, headers: {}, query: {} } as unknown as IncomingMessage
 }
 
 export const res = {
