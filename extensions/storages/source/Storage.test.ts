@@ -383,7 +383,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   it('should return error if type doesnt match', async () => {
     const stream = open('sample.jpeg')
 
-    const result = await storage.put(dir, stream, 'image/png')
+    const result = await storage.put(dir, stream, { claim: 'image/png' })
 
     match(result,
       Error, (error: Error) => expect(error.message).toBe('TYPE_MISMATCH'))
@@ -392,7 +392,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   it('should trust unknown types', async () => {
     const stream = open('lenna.ascii')
 
-    const result = await storage.put(dir, stream, 'text/plain')
+    const result = await storage.put(dir, stream, { claim: 'text/plain' })
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchObject({ type: 'text/plain' })
@@ -401,7 +401,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
   it('should return error if type is identifiable', async () => {
     const stream = open('lenna.ascii')
 
-    const result = await storage.put(dir, stream, 'image/jpeg')
+    const result = await storage.put(dir, stream, { claim: 'image/jpeg' })
 
     expect(result).toBeInstanceOf(Error)
     expect(result).toMatchObject({ message: 'TYPE_MISMATCH' })
@@ -410,7 +410,25 @@ describe.each(cases)('%s', (_, url, secrets) => {
   it('should not return error if type application/octet-stream', async () => {
     const stream = open('sample.jpeg')
 
-    const result = await storage.put(dir, stream, 'application/octet-stream')
+    const result = await storage.put(dir, stream, { claim: 'application/octet-stream' })
+
+    expect(result).not.toBeInstanceOf(Error)
+    expect(result).toMatchObject({ type: 'image/jpeg' })
+  })
+
+  it('should return error if type is not acceptable', async () => {
+    const stream = open('sample.jpeg')
+
+    const result = await storage.put(dir, stream, { accept: 'image/png' })
+
+    match(result,
+      Error, (error: Error) => expect(error.message).toBe('NOT_ACCEPTABLE'))
+  })
+
+  it('should accept wildcard types', async () => {
+    const stream = open('sample.jpeg')
+
+    const result = await storage.put(dir, stream, { accept: 'image/*' })
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchObject({ type: 'image/jpeg' })

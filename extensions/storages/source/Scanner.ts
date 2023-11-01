@@ -1,5 +1,6 @@
 import { PassThrough, type TransformCallback } from 'node:stream'
 import { createHash } from 'node:crypto'
+import { negotiate } from '@toa.io/http'
 
 export class Scanner extends PassThrough {
   public size = 0
@@ -7,15 +8,17 @@ export class Scanner extends PassThrough {
   public error: Error | null = null
 
   private readonly hash = createHash('md5')
-  private readonly assertion: string | undefined
+  private readonly claim?: string
+  private readonly accept?: string
   private position = 0
   private detected = false
   private readonly chunks: Buffer[] = []
 
-  public constructor (assertion?: string) {
+  public constructor (control?: TypeControl) {
     super()
 
-    this.assertion = assertion
+    this.claim = control?.claim
+    this.accept = control?.accept
   }
 
   public digest (): string {
@@ -47,33 +50,47 @@ export class Scanner extends PassThrough {
   }
 
   private complete (): void {
-    this.detected = true
-
     const header = Buffer.concat(this.chunks).toString('hex')
 
     const signature = SIGNATURES
       .find(({ hex, off }) => header.slice(off, off + hex.length) === hex)
 
+    const type = signature?.type ?? this.claim
+
+    if (type !== undefined) {
+      this.match(type)
+      this.type = type
+    }
+
     this.verify(signature)
-
-    const value = signature?.type ?? this.assertion
-
-    if (value !== undefined)
-      this.type = value
+    this.detected = true
   }
 
   private verify (signature: Signature | undefined): void {
-    if (this.assertion === undefined || this.assertion === 'application/octet-stream')
+    if (this.claim === undefined || this.claim === 'application/octet-stream')
       return
 
     const mismatch = signature === undefined
-      ? KNOWN_TYPES.has(this.assertion)
-      : this.assertion !== signature.type
+      ? KNOWN_TYPES.has(this.claim)
+      : this.claim !== signature.type
 
-    if (mismatch) {
-      this.error = ERR_TYPE_MISMATCH
-      this.end()
-    }
+    if (mismatch)
+      this.interrupt(ERR_TYPE_MISMATCH)
+  }
+
+  private match (type: string): void {
+    if (this.accept === undefined)
+      return
+
+    const unacceptable = negotiate(this.accept, [type]) === null
+
+    if (unacceptable)
+      this.interrupt(ERR_NOT_ACCEPTABLE)
+  }
+
+  private interrupt (error: Error): void {
+    this.error = error
+    this.end()
   }
 }
 
@@ -101,6 +118,12 @@ const HEADER_SIZE = SIGNATURES
 const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
 const ERR_TYPE_MISMATCH = new Error('TYPE_MISMATCH')
+const ERR_NOT_ACCEPTABLE = new Error('NOT_ACCEPTABLE')
+
+export interface TypeControl {
+  claim?: string
+  accept?: string
+}
 
 interface Signature {
   hex: string

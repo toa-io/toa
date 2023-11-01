@@ -3,6 +3,7 @@ import { posix } from 'node:path'
 import { decode, encode } from 'msgpackr'
 import { buffer, newid } from '@toa.io/generic'
 import { Scanner } from './Scanner'
+import type { TypeControl } from './Scanner'
 import type { Provider } from './Provider'
 import type { Entry } from './Entry'
 
@@ -13,7 +14,7 @@ export class Storage {
     this.provider = provider
   }
 
-  public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
+  public async put (path: string, stream: Readable, type?: TypeControl): Maybe<Entry> {
     const scanner = new Scanner(type)
     const pipe = stream.pipe(scanner)
     const tempname = await this.transit(pipe)
