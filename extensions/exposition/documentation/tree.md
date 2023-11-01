@@ -124,7 +124,7 @@ Intermediate Nodes must not have Methods as they are unreachable.
 
 ## Directives
 
-RTD Directives are declared using RTD node or Method keys following the `{provider}:{directive}` pattern and can be used
+RTD Directives are declared using RTD node or Method keys following the `{family}:{directive}` pattern and can be used
 to add or modify the behavior of request processing. Directive declarations are applied to the RTD node where they are
 declared and to all nested nodes.
 
@@ -150,10 +150,6 @@ When it is necessary to avoid directive nesting, a Route can be declared adjacen
 
 In this example, the Route `/posts/:user-id/:post-id/` has only the `authorization:role` directive
 applied.
-
-> Directives can be declared without the `{provider}:` prefix unless there are multiple directives
-> with the same name
-> across different providers.
 
 Another way to avoid nesting is to declare an _isolated_ Node as follows:
 

@@ -180,4 +180,5 @@ exposition:
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)
 - [Components and resources](documentation/components.md)
+- [Caching](documentation/cache.md)
 - [Features](features)

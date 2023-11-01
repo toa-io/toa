@@ -36,7 +36,8 @@ Non-scattered documentation is coming this fall.
 - [API Gateway](/extensions/exposition)
   - Resource discovery
   - [Identity](extensions/exposition/documentation/identity.md)
-  - [Access Control](extensions/exposition/documentation/access.md)
+  - [Access control](extensions/exposition/documentation/access.md)
+  - [Cache control](/extensions/exposition/documentation/cache.md)
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation
