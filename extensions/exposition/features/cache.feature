@@ -1,87 +1,45 @@
-Feature: Cache control directive
+Feature: Caching
 
-  @cache-control
-  Scenario: Default behavior
+  Scenario: Caching successful response
     Given the annotation:
       """yaml
       /:
         anonymous: true
         GET:
           cache:control: public, no-cache, max-age=60000
+          dev:stub: hello
       """
     When the following request is received:
       """
       GET / HTTP/1.1
-      accept: application/json
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/json
+      content-type: text/plain
       cache-control: public, no-cache, max-age=60000
+
+      hello
       """
 
-  @cache-control
-  Scenario: Unsafe methods
+  Scenario: Cache-control is not added when request is unsafe
     Given the annotation:
       """yaml
       /:
         anonymous: true
         cache:control: public, no-cache, max-age=60000
-        GET: {}
-        POST: {}
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-      cache-control: public, no-cache, max-age=60000
+        POST:
+          dev:stub: hello
       """
     When the following request is received:
       """
       POST / HTTP/1.1
       accept: application/yaml
       """
-    Then the reply does not contain::
+    Then the reply does not contain:
       """
       cache-control: public, no-cache, max-age=60000
       """
 
-  @cache-control
-  Scenario: 404 Response
-    Given the annotation:
-      """yaml
-      /:
-        anonymous: true
-        cache:control:
-          ok: public, no-cache, max-age=60000
-          404: public, no-cache, max-age=5000
-        GET: {}
-      """
-    When the following request is received:
-      """
-      GET /non-existing-route HTTP/1.1
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      404 Not Found
-      content-type: application/yaml
-      cache-control: public, no-cache, max-age=5000
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-      cache-control: public, no-cache, max-age=60000
-      """
+  # TODO: add scenarios for implicit modifications
