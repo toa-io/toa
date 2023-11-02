@@ -2,7 +2,7 @@ import { Readable } from 'node:stream'
 import { match } from '@toa.io/match'
 import { buffer } from '@toa.io/generic'
 import { Storage } from './Storage'
-import { cases, open, rnd } from './test/util'
+import { cases, open, rnd, init } from './test/util'
 import { type Entry } from './Entry'
 import { providers } from './providers'
 import type { ErrorType } from 'error-value'
@@ -11,6 +11,10 @@ let storage: Storage
 let dir: string
 
 describe.each(cases)('%s', (_, url, secrets) => {
+  beforeAll(async () => {
+    await init(url)
+  })
+
   beforeEach(() => {
     dir = '/' + rnd()
 
@@ -35,10 +39,12 @@ describe.each(cases)('%s', (_, url, secrets) => {
 
   describe('put', () => {
     let lenna: Entry
+    let startCreation: number
 
     beforeEach(async () => {
       const stream = open('lenna.png')
 
+      startCreation = Date.now()
       lenna = await storage.put(dir, stream) as Entry
     })
 
@@ -92,7 +98,7 @@ describe.each(cases)('%s', (_, url, secrets) => {
       const entry = await storage.get(`${dir}/${lenna.id}`) as Entry
 
       expect(entry.created).toBeLessThanOrEqual(now)
-      expect(entry.created).toBeGreaterThan(now - 100)
+      expect(entry.created).toBeGreaterThanOrEqual(startCreation)
     })
 
     describe('existing entry', () => {
