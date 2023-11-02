@@ -1,6 +1,5 @@
 const common = {
   requireModule: ['ts-node/register'],
-  publishQuiet: true,
   failFast: true
 }
 
