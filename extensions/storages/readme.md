@@ -116,15 +116,19 @@ Set a `key` property in the `meta` of the entry specified by `path`.
 
 Storage uses underlying providers to store BLOBs and entries.
 
-Custom providers are not supported yet.
+Custom providers are not supported.
 
 ### Amazon S3
 
-Annotation value format is `s3://{region}/{bucket}`.
+Annotation value formats is `s3://{region}/{bucket}?endpoint={endpoint}`.
 
 Requires secrets for the access key and secret key.
+See [`toa conceal`](/runtime/cli/readme.md#conceal) for deployment
+and [`toa env`](/runtime/cli/readme.md#env)
+for local environment.
+`endpoint` parameter is optional.
 
-`s3://us-east-1/my-bucket`
+`s3://us-east-1/my-bucket?endpoint=http://s3.my-instance.com:4566`
 
 ### Filesystem
 
