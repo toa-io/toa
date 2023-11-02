@@ -1,4 +1,4 @@
-FROM node:18.16.0-alpine3.17
+FROM node:18.18.2-alpine3.18
 
 {{build.arguments}}
 
