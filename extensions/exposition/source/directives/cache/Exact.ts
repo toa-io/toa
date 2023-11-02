@@ -1,15 +1,15 @@
-import { type Input } from '../../Directive'
-import { type Directive } from './types'
+import { parse } from '@tusbar/cache-control'
+import { type PostProcessInput, type Directive } from './types'
 import { isSafeMethod } from './utils'
 
 export class Exact implements Directive {
   private readonly value: string
 
   public constructor (value: string) {
-    this.value = value
+    this.value = parse(value).format()
   }
 
-  public postProcess (request: Input): Headers {
+  public postProcess (request: PostProcessInput): Headers {
     const additionalHeaders: Headers = new Headers()
 
     if (isSafeMethod(request.method))
