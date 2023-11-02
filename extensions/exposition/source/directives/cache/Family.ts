@@ -18,25 +18,25 @@ class Cache implements Family<Directive> {
   }
 
   public preflight (directives: Directive[], input: Input): Output {
-    for (const directive of directives) {
-      const output = directive.preProcess?.(input) ?? null
-
-      if (output !== null)
-        return output
-    }
-
     return null
   }
 
   public async settle
   (directives: Directive[], request: Input, response: http.OutgoingMessage): Promise<void> {
-    if (response.headers === undefined) response.headers = {}
+    const respHeaders: Headers = Object.entries(response.headers ?? {})
+      .reduce((acc, [key, value]) => {
+        if (value !== undefined) acc.append(key, value.toString())
+
+        return acc
+      }, new Headers())
 
     for (const directive of directives) {
-      const headers = directive.postProcess?.(request, response) ?? {}
+      const headers = directive.postProcess?.(request, response) ?? new Headers()
 
-      response.headers = { ...response.headers, ...headers }
+      headers.forEach((value, key) => respHeaders.append(key, value))
     }
+
+    response.headers = Object.fromEntries(respHeaders.entries())
   }
 }
 

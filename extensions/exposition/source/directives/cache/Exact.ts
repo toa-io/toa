@@ -1,5 +1,5 @@
-import { type Output, type Input } from '../../Directive'
-import { type OutputHeaders, type Directive } from './types'
+import { type Input } from '../../Directive'
+import { type Directive } from './types'
 import { isSafeMethod } from './utils'
 
 export class Exact implements Directive {
@@ -9,11 +9,11 @@ export class Exact implements Directive {
     this.value = value
   }
 
-  public postProcess (request: Input, response: Output): OutputHeaders {
-    const additionalHeaders: Record<string, string> = {}
+  public postProcess (request: Input): Headers {
+    const additionalHeaders: Headers = new Headers()
 
     if (isSafeMethod(request.method))
-      additionalHeaders['cache-control'] = this.value
+      additionalHeaders.set('cache-control', this.value)
 
     return additionalHeaders
   }
