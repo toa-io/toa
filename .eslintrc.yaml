@@ -42,6 +42,9 @@ overrides:
       max-params: error
       arrow-parens: error
       no-warning-comments: error
+      func-style:
+        - error
+        - declaration
       '@typescript-eslint/consistent-type-imports':
         - error
         - fixStyle: separate-type-imports
