@@ -4,10 +4,13 @@
 2. Add an entry to the provider map in [`index.ts`](./index.ts).
 3. Add a suite to the `suites` object in [`util.ts`](../.test/util.ts).
 4. Run `$ npm test` in the [`storages` directory](../..).
+5. (optional) To test S3 provider, add `.env` file into [`.test'](../.test) folder.
+6. (optional) To test S3 provider with localstack, run `docker compose up localstack` in [`root`](../../../../) 
 
 Provider's constructor must have the following signature:
+  `constructor(url: URL)`
 
-`constructor(url: URL)`
+Env variables for S3 Provider: `S3_ACCESS_KEY`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET`, `S3_REGION`, `S3_ENDPOINT`, 
 
 ## Secrets
 

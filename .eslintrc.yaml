@@ -49,6 +49,11 @@ overrides:
       '@typescript-eslint/explicit-member-accessibility': error
       '@typescript-eslint/no-confusing-void-expression': off
       no-void: off
+      eqeqeq:
+        - error
+        - always
+        - null: always
+
 parserOptions:
   project: ./tsconfig.json
 env:

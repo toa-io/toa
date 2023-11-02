@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "0.22.0",
+  "version": "0.22.1-dev.0",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {
@@ -26,7 +26,7 @@
   "dependencies": {
     "@toa.io/dns": "0.22.0",
     "@toa.io/generic": "0.22.0",
-    "@toa.io/schemas": "0.22.0"
+    "@toa.io/schemas": "0.22.1-dev.0"
   },
   "scripts": {
     "transpile": "tsc"
