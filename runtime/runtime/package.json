@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@toa.io/bindings.amqp": "0.22.1",
-    "@toa.io/bindings.http": "0.20.0-alpha.1",
     "@toa.io/bindings.loop": "0.22.0",
     "@toa.io/boot": "0.22.1",
     "@toa.io/bridges.node": "0.22.1",

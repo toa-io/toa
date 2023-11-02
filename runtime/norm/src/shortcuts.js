@@ -39,7 +39,6 @@ const recognize = (shortcuts, object, group) => {
 }
 
 const SHORTCUTS = {
-  http: '@toa.io/bindings.http',
   amqp: '@toa.io/bindings.amqp',
   node: '@toa.io/bridges.node',
   mongodb: '@toa.io/storages.mongodb',
