@@ -1,3 +1,4 @@
+import { parse } from '@tusbar/cache-control'
 import { type Input, type Output, type Family } from '../../Directive'
 import { Control } from './Control'
 import { type Directive } from './types'
@@ -31,10 +32,14 @@ class Cache implements Family<Directive> {
       }, new Headers())
 
     for (const directive of directives) {
-      const headers = directive.postProcess?.(request, response) ?? new Headers()
+      const headers = directive.postProcess?.(request) ?? new Headers()
 
       headers.forEach((value, key) => respHeaders.append(key, value))
     }
+
+    // do we need to remove duplicate values ??
+    if (respHeaders.has('cache-control'))
+      respHeaders.set('cache-control', parse(respHeaders.get('cache-control') ?? '').format())
 
     response.headers = Object.fromEntries(respHeaders.entries())
   }
