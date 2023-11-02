@@ -50,7 +50,7 @@ Feature: Caching
       """yaml
       /:
         auth:role: developer
-        cache:exact: public, max-age=60000
+        cache:exact: max-age=60000, public
         GET:
           dev:stub: hello
       """
@@ -65,7 +65,7 @@ Feature: Caching
       """
       200 OK
       content-type: text/plain
-      cache-control: public, max-age=60000
+      cache-control: max-age=60000, public
 
       hello
       """
@@ -78,7 +78,7 @@ Feature: Caching
       """yaml
       /:
         auth:role: developer
-        cache:control: public, max-age=60000
+        cache:control: max-age=60000, public
         GET:
           dev:stub: hello
       """
@@ -92,7 +92,7 @@ Feature: Caching
       """
       200 OK
       content-type: text/plain
-      cache-control: public, max-age=60000, no-cache
+      cache-control: max-age=60000, no-cache, public
 
       hello
       """
