@@ -37,6 +37,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
+    "test": "jest",
     "transpile": "rm -rf transpiled && npx tsc && npm run transpile:basic && npm run transpile:tokens",
     "transpile:basic": "rm -rf ./components/identity.basic/operations && npx tsc -p ./components/identity.basic",
     "transpile:tokens": "rm -rf ./components/identity.tokens/operations && npx tsc -p ./components/identity.tokens",

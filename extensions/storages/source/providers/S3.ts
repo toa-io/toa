@@ -23,7 +23,7 @@ export class S3 implements Provider {
     this.bucket = pathSegments[0]
     const s3Config: S3ClientConfigType = {
       credentials: {
-        accessKeyId: secrets.ACCESS_KEY,
+        accessKeyId: secrets.ACCESS_KEY_ID,
         secretAccessKey: secrets.SECRET_ACCESS_KEY
       },
       region: url.host

@@ -1,20 +1,7 @@
 import { join } from 'node:path'
 import fs from 'node:fs/promises'
 import { createReadStream, type ReadStream } from 'node:fs'
-import fse from 'fs-extra'
-import dotenv from 'dotenv'
-import { initScript } from './s3.init'
-
-const envPath = join(__dirname, '.env')
-
-if (fse.existsSync(envPath))
-  dotenv.config({ path: envPath })
-
-const s3Region = process.env.S3_REGION ?? 'us-west-1'
-const s3Bucket = process.env.S3_BUCKET ?? 'testbucket'
-const s3Endpoint = process.env.S3_ENDPOINT === undefined
-  ? '?endpoint=' + process.env.S3_ENDPOINT
-  : ''
+import { CreateBucketCommand, S3Client } from '@aws-sdk/client-s3'
 
 const suites: Suite[] = [
   {
@@ -22,13 +9,13 @@ const suites: Suite[] = [
     ref: 'tmp:///toa-storages-temp'
   },
   {
-    run: process.env.S3_ACCESS_KEY !== undefined,
-    ref: `s3://${s3Region}/${s3Bucket}${s3Endpoint}`,
+    run: true,
+    ref: 's3://us-west-1/test-bucket?endpoint=http://s3.localhost.localstack.cloud:4566',
     secrets: {
-      ACCESS_KEY: process.env.S3_ACCESS_KEY ?? '',
-      SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY ?? ''
+      ACCESS_KEY_ID: 'developer',
+      SECRET_ACCESS_KEY: 'secret'
     },
-    init: initScript
+    init: initS3
   }
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
@@ -37,17 +24,10 @@ const suites: Suite[] = [
 function map (suite: Suite): Case {
   const url = new URL(suite.ref)
 
-  return [url.protocol, url, suite.secrets ?? {}]
+  return [url.protocol, url, suite.secrets ?? {}, suite.init]
 }
 
 export const cases = suites.filter(({ run }) => run).map(map)
-
-export const init = async (url: URL): Promise<void> => {
-  const suite = suites.find((suite) => suite.ref === url.href)
-
-  if (suite?.init !== undefined)
-    await suite.init(url, suite.secrets)
-}
 
 export function rnd (): string {
   return Math.random().toString(36).slice(2)
@@ -65,11 +45,27 @@ export async function read (rel: string): Promise<Buffer> {
   return await fs.readFile(path)
 }
 
+async function initS3 (url: URL, secrets: Record<string, string>): Promise<void> {
+  const client = new S3Client({
+    credentials: {
+      accessKeyId: secrets.ACCESS_KEY_ID,
+      secretAccessKey: secrets.SECRET_ACCESS_KEY
+    },
+    region: url.host,
+    endpoint: url.searchParams.get('endpoint') ?? undefined
+  })
+
+  const command = new CreateBucketCommand({ Bucket: url.pathname.substring(1) })
+
+  await client.send(command).catch(() => undefined)
+}
+
 interface Suite {
   run: boolean
   ref: string
   secrets?: Record<string, string>
-  init?: (url: URL, secrets?: Record<string, string>) => Promise<void>
+  init?: SuiteInit
 }
 
-type Case = [string, URL, Record<string, string>]
+type SuiteInit = (url: URL, secrets: Record<string, string>) => Promise<void> | void
+type Case = [string, URL, Record<string, string>, SuiteInit?]

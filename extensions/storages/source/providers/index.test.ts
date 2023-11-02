@@ -1,16 +1,17 @@
 import { type Readable } from 'node:stream'
 import { buffer } from '@toa.io/streams'
-import { cases, open, rnd, read, init } from '../test/util'
+import { cases, open, rnd, read } from '../test/util'
 import { providers } from './index'
 
-describe.each(cases)('%s', (protocol, url, secrets) => {
+describe.each(cases)('%s', (...suite) => {
+  const [protocol, url, secrets, init] = suite
   const Provider = providers[protocol]
   const provider = new Provider(url, secrets)
 
   let dir: string
 
   beforeAll(async () => {
-    await init(url)
+    await init?.(url, secrets)
   })
 
   beforeEach(() => {
