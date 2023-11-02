@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "0.22.1",
+  "version": "0.22.2-dev.0",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,10 +17,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "0.22.1",
+    "@toa.io/core": "0.22.2-dev.0",
     "@toa.io/generic": "0.22.0",
     "@toa.io/http": "0.22.0",
-    "@toa.io/schemas": "0.22.0",
+    "@toa.io/schemas": "0.22.1-dev.0",
     "@toa.io/streams": "0.22.0",
     "bcryptjs": "2.4.3",
     "cors": "2.8.5",
