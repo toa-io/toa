@@ -43,9 +43,13 @@ Feature: Caching
       """
 
   Scenario: Cache-control is added without implicit modifications.
-    Given the annotation:
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    And the annotation:
       """yaml
       /:
+        auth:role: developer
         cache:exact: public, max-age=60000
         GET:
           dev:stub: hello
@@ -53,7 +57,9 @@ Feature: Caching
     When the following request is received:
       """
       GET / HTTP/1.1
-      accept: application/yaml
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: text/plain
+
       """
     Then the following reply is sent:
       """
@@ -65,9 +71,13 @@ Feature: Caching
       """
 
   Scenario: Cache-control is added with implicit 'no-cache'.
-    Given the annotation:
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    And the annotation:
       """yaml
       /:
+        auth:role: developer
         cache:control: public, max-age=60000
         GET:
           dev:stub: hello
@@ -75,7 +85,8 @@ Feature: Caching
     When the following request is received:
       """
       GET / HTTP/1.1
-      accept: application/yaml
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: text/plain
       """
     Then the following reply is sent:
       """
@@ -87,9 +98,13 @@ Feature: Caching
       """
 
   Scenario: Cache-control is added with implicit 'private'.
-    Given the annotation:
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    And the annotation:
       """yaml
       /:
+        auth:role: developer
         cache:control: max-age=60000
         GET:
           dev:stub: hello
@@ -97,7 +112,8 @@ Feature: Caching
     When the following request is received:
       """
       GET / HTTP/1.1
-      accept: application/yaml
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: text/plain
       """
     Then the following reply is sent:
       """
