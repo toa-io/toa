@@ -1,6 +1,7 @@
 import { type Input, type Output, type Family } from '../../Directive'
-import { Control } from './CacheControl'
+import { Control } from './Control'
 import { type Directive } from './types'
+import { Exact } from './Exact'
 import type * as http from '../../HTTP'
 
 class Cache implements Family<Directive> {
@@ -40,7 +41,8 @@ class Cache implements Family<Directive> {
 }
 
 const constructors: Record<string, new (value: any) => Directive> = {
-  control: Control
+  control: Control,
+  exact: Exact
 }
 
 export = new Cache()

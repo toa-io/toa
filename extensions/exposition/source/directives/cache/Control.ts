@@ -1,7 +1,6 @@
 import { type Output, type Input } from '../../Directive'
 import { type OutputHeaders, type Directive } from './types'
-
-const SAFE_METHODS = ['GET', 'OPTIONS', 'HEAD']
+import { isSafeMethod } from './utils'
 
 export class Control implements Directive {
   private readonly value: string
@@ -13,7 +12,7 @@ export class Control implements Directive {
   public postProcess (request: Input, response: Output): OutputHeaders {
     const additionalHeaders: Record<string, string> = {}
 
-    if (SAFE_METHODS.includes(request.method))
+    if (isSafeMethod(request.method))
       additionalHeaders['cache-control'] = this.value
 
     return additionalHeaders
