@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "0.22.1",
+  "version": "0.22.2-dev.0",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@toa.io/bindings.amqp": "0.22.2-dev.0",
+    "@toa.io/bindings.http": "0.20.0-alpha.1",
     "@toa.io/bindings.loop": "0.22.0",
     "@toa.io/boot": "0.22.2-dev.0",
     "@toa.io/bridges.node": "0.22.2-dev.0",
@@ -35,7 +36,7 @@
     "@toa.io/extensions.sampling": "0.22.2-dev.0",
     "@toa.io/extensions.stash": "0.22.1-dev.0",
     "@toa.io/extensions.state": "0.22.0",
-    "@toa.io/extensions.storages": "0.23.0-dev.0",
+    "@toa.io/extensions.storages": "0.22.2-dev.0",
     "@toa.io/norm": "0.22.2-dev.0",
     "@toa.io/operations": "0.22.1-dev.0",
     "@toa.io/prototype": "0.22.0",
