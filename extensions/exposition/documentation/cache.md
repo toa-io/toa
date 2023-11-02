@@ -19,10 +19,22 @@ to [safe HTTP methods](https://developer.mozilla.org/en-US/docs/Glossary/Safe/HT
 
 In terms of security, the following implicit modifications are made to the `Cache-Control` header:
 
-- If it contains the `public` directive and the request is authenticated, the `no-cache` directive is added. This is
-  done to prevent the storage of authentication tokens in shared caches.
-- If it does not contain the `private` directive and the request is authenticated, the `private` directive is added.
+- If it contains the `public` directive without `no-cache` and the request is authenticated,
+  the `no-cache` directive is added.
+  This is done to prevent the storage of authentication tokens in shared caches.
+- If it does not contain the `private` directive and the request is authenticated, the `private`
+  directive is added.
   This is to prevent the storage of private data in shared caches.
+
+## `cache:exact`
+
+Same as `cache:control` without implicit modifications.
+
+```yaml
+/:
+  GET:
+    cache:exact: public, max-age=60000
+```
 
 ## References
 
