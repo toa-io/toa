@@ -92,29 +92,29 @@ type: image/jpeg
 created: 1698004822358
 ```
 
-If the `octets:store` directive contains a `workflow`, the response is a stream.
-The first chunk represents the created Entry,
-while subsequent chunks contain results from the workflow endpoints.
+If the `octets:store` directive contains a `workflow`, the response is multipart.
+The first message represents the created Entry,
+while subsequent messages are results from the workflow endpoints.
 
-In case a workflow endpoint returns an error, the error chunk is sent to the stream, and the stream
-is closed.
-Error's properties are added to the error chunk, among with the `step` identifier.
+In case a workflow endpoint returns an error, the error message is sent, and the response is closed.
+Error's properties are added to the error message, among with the `step` identifier.
 
 ```
 201 Created
-content-type: application/yaml
-transfer-encoding: chunked
+content-type: multipart/yaml; boundary=-
 
+---
 id: eecd837c
 type: image/jpeg
 created: 1698004822358
-
+---
 optimize: null
-
+---
 error:
   step: resize
   code: TOO_SMALL
   message: Image is too small
+-----
 ```
 
 ## `octets:fetch`
