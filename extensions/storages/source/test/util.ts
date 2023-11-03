@@ -2,6 +2,9 @@ import { join } from 'node:path'
 import fs from 'node:fs/promises'
 import { createReadStream, type ReadStream } from 'node:fs'
 import { CreateBucketCommand, S3Client } from '@aws-sdk/client-s3'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: join(__dirname, '.env') })
 
 const suites: Suite[] = [
   {
@@ -9,7 +12,7 @@ const suites: Suite[] = [
     ref: 'tmp:///toa-storages-temp'
   },
   {
-    run: true,
+    run: process.env.RUN_S3 === '1',
     ref: 's3://us-west-1/test-bucket?endpoint=http://s3.localhost.localstack.cloud:4566',
     secrets: {
       ACCESS_KEY_ID: 'developer',
