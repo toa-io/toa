@@ -1,6 +1,5 @@
-import { parse } from '@tusbar/cache-control'
 import { type PostProcessInput, type Directive } from './types'
-import { isSafeMethod } from './utils'
+import { isSafeMethod, parseCacheControlFlags } from './utils'
 
 export class Control implements Directive {
   private readonly value: string
@@ -9,13 +8,12 @@ export class Control implements Directive {
   private readonly isNoCache: boolean
 
   public constructor (value: string) {
-    const parsedValue = parse(value)
+    this.value = value
+    const flagMap = parseCacheControlFlags(value)
 
-    this.value = parsedValue.format()
-
-    this.isPublic = parsedValue.public === true
-    this.isPrivate = parsedValue.private === true
-    this.isNoCache = parsedValue.noCache === true
+    this.isPublic = flagMap.public
+    this.isPrivate = flagMap.private
+    this.isNoCache = flagMap['no-cache']
   }
 
   public postProcess (request: PostProcessInput, headers: Headers): void {
