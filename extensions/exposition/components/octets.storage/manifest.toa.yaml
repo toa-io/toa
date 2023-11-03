@@ -15,6 +15,7 @@ operations:
     input:
       storage*: string
       path*: string
+  get: *simple
   list: *simple
   delete: *simple
   permute:

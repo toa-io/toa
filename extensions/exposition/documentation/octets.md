@@ -125,9 +125,11 @@ The `accept` request header is disregarded.
 
 The value of the directive is an object with the following properties:
 
-- `original`: `boolean` indicating whether the original BLOB is accessible,
+- `blob`: `boolean` indicating whether the original BLOB is accessible,
   [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be
   specified in the path otherwise.
+  Defaults to `true`.
+- `meta`: `boolean` indicating whether an Entry is accessible.
   Defaults to `false`.
 
 ```yaml
@@ -136,7 +138,14 @@ The value of the directive is an object with the following properties:
   /*:
     GET:
       octets:fetch:
-        original: true  # allow accessing the original BLOBs
+        blob: false # prevent access to the original BLOB
+        meta: true  # allow access to an Entry
+```
+
+To access an Entry, the request path must be suffixed with `:meta`:
+
+```http
+GET /images/eecd837c:meta HTTP/1.1
 ```
 
 The `octets:fetch: ~` declaration is equivalent to defaults.

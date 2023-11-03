@@ -34,7 +34,7 @@ Feature: Octets directive family
                 accept: image/*
       """
 
-  Scenario: Storing an entry
+  Scenario: Basic storage operations
     When the stream of `lenna.ascii` is received in the request:
       """
       POST / HTTP/1.1
@@ -59,6 +59,17 @@ Feature: Octets directive family
       200 OK
       content-type: application/octet-stream
       content-length: 8169
+      """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+
+      Metadata is not accessible.
       """
     When the following request is received:
       """
@@ -222,4 +233,53 @@ Feature: Octets directive family
       content-type: text/plain
 
       Trailing slash is redundant.
+      """
+
+  Scenario: Accessing an Entry and the original BLOLB
+    Given the annotation:
+      """yaml
+      debug: true
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store: ~
+        /*:
+          GET:
+            octets:fetch:
+              meta: true
+              blob: false
+      """
+    When the stream of `lenna.ascii` is received in the request:
+      """
+      POST / HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      content-length: 124
+
+      id: 10cf16b458f759e0d617f2f3d83599ff
+      type: application/octet-stream
+      size: 8169
+      """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+
+      Original BLOB is not accessible.
       """
