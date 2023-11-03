@@ -26,7 +26,8 @@ class Cache implements Family<Directive> {
     response.headers ??= new Headers()
 
     for (const directive of directives)
-      directive.postProcess?.(request, response.headers)
+      response.headers
+        .append('cache-control', directive.postProcess?.(request, response.headers) ?? '')
   }
 }
 
