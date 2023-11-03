@@ -1,3 +1,4 @@
+import { posix } from 'node:path'
 import { Forbidden, NotFound } from '../../HTTP'
 import type { Maybe } from '@toa.io/types'
 import type { Entry } from '@toa.io/extensions.storages'
@@ -10,14 +11,14 @@ import type { Directive, Input } from './types'
 export class Fetch implements Directive {
   public readonly targeted = true
 
+  private readonly permissions: Permissions
   private readonly discovery: Promise<Component>
   private storage: Component = null as unknown as Component
-  private readonly blob: boolean
-  private readonly meta: boolean
 
-  public constructor (options: Options | null, discovery: Promise<Component>) {
-    this.blob = options?.blob === true
-    this.meta = options?.meta === true
+  public constructor (options: Partial<Permissions> | null, discovery: Promise<Component>) {
+    const { blob = true, meta = false } = options ?? {}
+
+    this.permissions = { blob, meta }
     this.discovery = discovery
   }
 
@@ -31,6 +32,12 @@ export class Fetch implements Directive {
   }
 
   private async fetch (storage: string, request: Input): Promise<Output> {
+    const filename = posix.basename(request.url)
+    const variant = filename.includes('.')
+
+    if (!variant && !this.permissions.blob)
+      throw new Forbidden('BLOB variant must be specified.')
+
     const input = { storage, path: request.url }
     const { entry, stream } = await this.storage.invoke<FetchResult>('fetch', { input })
 
@@ -46,7 +53,7 @@ export class Fetch implements Directive {
   }
 
   private async get (storage: string, request: Input): Promise<Output> {
-    if (!this.meta)
+    if (!this.permissions.meta)
       throw new Forbidden('Metadata is not accessible.')
 
     const path = request.url.slice(0, -5)
@@ -60,9 +67,9 @@ export class Fetch implements Directive {
   }
 }
 
-interface Options {
-  blob?: boolean
-  meta?: boolean
+interface Permissions {
+  blob: boolean
+  meta: boolean
 }
 
 interface FetchResult {

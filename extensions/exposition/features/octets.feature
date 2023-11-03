@@ -281,5 +281,5 @@ Feature: Octets directive family
       """
       403 Forbidden
 
-      Original BLOB is not accessible.
+      BLOB variant must be specified.
       """

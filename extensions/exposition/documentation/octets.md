@@ -125,12 +125,12 @@ The `accept` request header is disregarded.
 
 The value of the directive is an object with the following properties:
 
+- `meta`: `boolean` indicating whether an Entry is accessible.
+  Defaults to `false`.
 - `blob`: `boolean` indicating whether the original BLOB is accessible,
   [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be
   specified in the path otherwise.
   Defaults to `true`.
-- `meta`: `boolean` indicating whether an Entry is accessible.
-  Defaults to `false`.
 
 ```yaml
 /images:
