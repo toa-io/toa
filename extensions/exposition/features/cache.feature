@@ -31,6 +31,73 @@ Feature: Caching
       hello
       """
 
+  Scenario: Nested cache directives
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    And the annotation:
+      """yaml
+      /:
+        cache:control: max-age=30000
+        GET:
+          anonymous: true
+          dev:stub: hello
+        /foo:
+          auth:role: developer
+          GET:
+            dev:stub: hello
+        /bar:
+          auth:role: developer
+          cache:control: max-age=60000, public
+          GET:
+            dev:stub: hello
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: text/plain
+      cache-control: max-age=30000
+
+      hello
+      """
+    When the following request is received:
+      """
+      GET /foo/ HTTP/1.1
+      accept: text/plain
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: text/plain
+      cache-control: max-age=30000, private
+
+      hello
+      """
+    When the following request is received:
+      """
+      GET /bar/ HTTP/1.1
+      accept: text/plain
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: text/plain
+      cache-control: max-age=60000, public, no-cache
+
+      hello
+      """
+    And the reply does not contain:
+      """
+      cache-control: max-age=30000
+      """
+
   Scenario: Cache-control is not added when request is unsafe
     Given the annotation:
       """yaml
@@ -100,7 +167,7 @@ Feature: Caching
       """
       200 OK
       content-type: text/plain
-      cache-control: max-age=60000, no-cache, public
+      cache-control: max-age=60000, public, no-cache
 
       hello
       """
