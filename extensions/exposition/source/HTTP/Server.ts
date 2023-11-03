@@ -81,7 +81,7 @@ export class Server extends Connector {
 
       response
         .status(status)
-        .set(message.headers)
+        .set(Object.fromEntries(message.headers?.entries() ?? []))
 
       if (message.body !== undefined && message.body !== null)
         write(request, response, message.body)
