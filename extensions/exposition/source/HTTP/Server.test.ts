@@ -116,7 +116,9 @@ describe('request', () => {
 
 describe('result', () => {
   it('should send status code 200 if the result has a value', async () => {
-    const process = async (): Promise<OutgoingMessage> => ({ headers: {}, body: generate() })
+    const process = async (): Promise<OutgoingMessage> => ({
+      headers: new Headers(), body: generate()
+    })
     const req = createRequest()
 
     server.attach(process)
@@ -126,7 +128,7 @@ describe('result', () => {
   })
 
   it('should send status code 204 if the result has no value', async () => {
-    const process = async (): Promise<OutgoingMessage> => ({ headers: {} })
+    const process = async (): Promise<OutgoingMessage> => ({ headers: new Headers() })
     const req = createRequest()
 
     server.attach(process)
@@ -139,7 +141,7 @@ describe('result', () => {
     const body = { [generate()]: generate() }
     const json = JSON.stringify(body)
     const buf = Buffer.from(json)
-    const process = async (): Promise<OutgoingMessage> => ({ headers: {}, body })
+    const process = async (): Promise<OutgoingMessage> => ({ headers: new Headers(), body })
     const req = createRequest({ headers: { accept: 'application/json' } })
 
     server.attach(process)
