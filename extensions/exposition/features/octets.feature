@@ -74,6 +74,14 @@ Feature: Octets directive family
       """
     When the following request is received:
       """
+      GET /10cf16b458f759e0d617f2f3d83599ff?foo=bar HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+    When the following request is received:
+      """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       """
     Then the following reply is sent:
@@ -144,7 +152,7 @@ Feature: Octets directive family
   Scenario: Media type control
     When the stream of `lenna.png` is received in the request:
       """
-      POST /media/jpeg/ HTTP/1.1
+      POST /media/jpeg-or-png/ HTTP/1.1
       content-type: image/jpeg
       """
     Then the following reply is sent:

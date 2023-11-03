@@ -20,7 +20,7 @@ export class Fetch implements Directive {
   public async apply (storage: string, request: Input): Promise<Output> {
     this.storage ??= await this.discovery
 
-    const input = { storage, path: request.path }
+    const input = { storage, path: request.url }
     const { entry, stream } = await this.storage.invoke<FetchResult>('fetch', { input })
 
     if (entry instanceof Error || stream instanceof Error)

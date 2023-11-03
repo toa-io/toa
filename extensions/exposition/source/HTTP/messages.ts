@@ -91,6 +91,7 @@ function format (request: Request, response: Response): Format {
 export interface IncomingMessage extends Readable {
   method: string
   path: string
+  url: string
   headers: IncomingHttpHeaders
   query: Query
   parse: <T> () => Promise<T>

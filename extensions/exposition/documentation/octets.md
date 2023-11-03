@@ -1,4 +1,4 @@
-# Octets
+# BLOBs
 
 The `octets` directive family implements operations with BLOBs, using
 the [Storages extention](/extensions/storages).
@@ -20,7 +20,7 @@ Stores the content of the request body into a storage, under the request path wi
 specified `content-type`.
 
 If request's `content-type` is not acceptable, or if the request body does not pass
-the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-string-maybeentry),
+the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-typecontrol-maybeentry),
 the request is rejected with a `415 Unsupported Media Type` response.
 
 The value of the directive is an object with the following properties:
@@ -126,8 +126,8 @@ The `accept` request header is disregarded.
 The value of the directive is an object with the following properties:
 
 - `original`: `boolean` indicating whether the original BLOB is accessible,
-  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be specified in the path
-  otherwise.
+  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be
+  specified in the path otherwise.
   Defaults to `false`.
 
 ```yaml

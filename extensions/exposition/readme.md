@@ -40,8 +40,10 @@ See [features](features) for more examples.
 </a>
 
 The Exposition extension includes a Service, which is an HTTP server with ingress and a Tenant.
-The Service communicates with Tenants to discover their resource declarations and exposes them as HTTP resources.
-An instance of the Tenant is running within each Composition that has at least one Component with a resource
+The Service communicates with Tenants to discover their resource declarations and exposes them as
+HTTP resources.
+An instance of the Tenant is running within each Composition that has at least one Component with a
+resource
 declaration.
 
 ## Resource tree discovery
@@ -178,6 +180,6 @@ exposition:
 - [Resource Tree Definition](documentation/tree.md)
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)
-- [Octets](documentation/octets.md)
+- [BLOBs](documentation/octets.md)
 - [Components and resources](documentation/components.md)
 - [Features](features)
