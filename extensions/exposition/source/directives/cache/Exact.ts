@@ -9,12 +9,9 @@ export class Exact implements Directive {
     this.value = parse(value).format()
   }
 
-  public postProcess (request: PostProcessInput): Headers {
-    const additionalHeaders: Headers = new Headers()
+  public postProcess (request: PostProcessInput, headers: Headers): void {
+    if (!isSafeMethod(request.method)) return
 
-    if (isSafeMethod(request.method))
-      additionalHeaders.set('cache-control', this.value)
-
-    return additionalHeaders
+    headers.append('cache-control', this.value)
   }
 }

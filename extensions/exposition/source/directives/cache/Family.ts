@@ -1,4 +1,3 @@
-import { parse } from '@tusbar/cache-control'
 import { type Input, type Output, type Family } from '../../Directive'
 import { Control } from './Control'
 import { type Directive } from './types'
@@ -24,24 +23,10 @@ class Cache implements Family<Directive> {
 
   public async settle
   (directives: Directive[], request: Input, response: http.OutgoingMessage): Promise<void> {
-    const respHeaders: Headers = Object.entries(response.headers ?? {})
-      .reduce((acc, [key, value]) => {
-        if (value !== undefined) acc.append(key, value.toString())
+    response.headers ??= new Headers()
 
-        return acc
-      }, new Headers())
-
-    for (const directive of directives) {
-      const headers = directive.postProcess?.(request) ?? new Headers()
-
-      headers.forEach((value, key) => respHeaders.append(key, value))
-    }
-
-    // do we need to remove duplicate values ??
-    if (respHeaders.has('cache-control'))
-      respHeaders.set('cache-control', parse(respHeaders.get('cache-control') ?? '').format())
-
-    response.headers = Object.fromEntries(respHeaders.entries())
+    for (const directive of directives)
+      directive.postProcess?.(request, response.headers)
   }
 }
 

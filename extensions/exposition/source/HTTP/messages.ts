@@ -1,4 +1,4 @@
-import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
+import { type IncomingHttpHeaders } from 'node:http'
 import { Readable } from 'node:stream'
 import { type Request, type Response } from 'express'
 import Negotiator from 'negotiator'
@@ -76,7 +76,7 @@ export interface IncomingMessage extends Message {
 
 export interface OutgoingMessage {
   status?: number
-  headers?: OutgoingHttpHeaders
+  headers?: Headers
   body?: any
 }
 

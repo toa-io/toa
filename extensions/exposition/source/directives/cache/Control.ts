@@ -18,19 +18,15 @@ export class Control implements Directive {
     this.isNoCache = parsedValue.noCache === true
   }
 
-  public postProcess (request: PostProcessInput): Headers {
-    const additionalHeaders: Headers = new Headers()
+  public postProcess (request: PostProcessInput, headers: Headers): void {
+    if (!isSafeMethod(request.method)) return
 
-    if (!isSafeMethod(request.method)) return additionalHeaders
-
-    additionalHeaders.set('cache-control', this.value)
+    headers.append('cache-control', this.value)
 
     if (request.identity !== null && this.isPublic && !this.isNoCache)
-      additionalHeaders.append('cache-control', 'no-cache')
+      headers.append('cache-control', 'no-cache')
 
     if (request.identity !== null && !this.isPublic && !this.isPrivate)
-      additionalHeaders.append('cache-control', 'private')
-
-    return additionalHeaders
+      headers.append('cache-control', 'private')
   }
 }

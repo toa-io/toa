@@ -2,7 +2,7 @@ import { type Output, type Input } from '../../Directive'
 
 export interface Directive {
   preProcess?: (input: Input) => Output
-  postProcess?: (input: Input) => Headers
+  postProcess?: (input: Input, headers: Headers) => void
 }
 
 export interface PostProcessInput extends Input {
