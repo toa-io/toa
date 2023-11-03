@@ -1,5 +1,13 @@
 Feature: Caching
 
+  Background:
+    Given the `identity.basic` database contains:
+      # developer:secret
+      # user:12345
+      | _id                              | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the `identity.bans` database is empty
+
   Scenario: Caching successful response
     Given the annotation:
       """yaml
