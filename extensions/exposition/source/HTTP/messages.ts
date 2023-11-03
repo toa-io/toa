@@ -54,7 +54,10 @@ function stream
   else
     pipeEncoded(message, request, response)
 
-  message.body.on('error', () => response.end())
+  message.body.on('error', (e: Error) => {
+    console.error(e)
+    response.end()
+  })
 }
 
 function pipe (message: OutgoingMessage, response: Response): void {

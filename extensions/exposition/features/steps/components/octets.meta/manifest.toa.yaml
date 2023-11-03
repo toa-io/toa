@@ -1,0 +1,10 @@
+namespace: octets
+name: meta
+
+storages: octets
+
+operations:
+  foo:
+    input:
+      path*: string
+      entry: object

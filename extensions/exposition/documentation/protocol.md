@@ -14,13 +14,18 @@ using [negotiator](https://github.com/jshttp/negotiator).
 
 ### Multipart types
 
-Multipart responses are endoded using content negotiation, and the content type of the response is set to one of the
-following:
+Multipart responses are endoded using content negotiation,
+and the `content-type` of the response is set to one of the custom `multipart/` subtypes, corresponding to the type of
+each part:
 
-- `multipart/msgpack` - each part is a MessagePack document
-- `multipart/yaml` - each part is a YAML document
-- `multipart/json` - each part is a JSON document
-- `multipart/text` - each part is a plain text document
+| Response type       | Part type             |
+|---------------------|-----------------------|
+| `multipart/msgpack` | `application/msgpack` |
+| `multipart/yaml`    | `application/yaml`    |
+| `multipart/json`    | `application/json`    |
+| `multipart/text`    | `text/plain`          |
+
+Example:
 
 ```
 GET /stream/ HTTP/1.1

@@ -15,6 +15,12 @@ overrides:
         - blankLine: always
           prev: [const, let]
           next: expression
+        - blankLine: always
+          prev: [multiline-const, multiline-let]
+          next: '*'
+        - blankLine: always
+          prev: '*'
+          next: [multiline-const, multiline-let]
       function-paren-newline:
         - error
         - never

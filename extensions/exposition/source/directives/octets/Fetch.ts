@@ -11,24 +11,22 @@ import type { Directive, Input } from './types'
 export class Fetch implements Directive {
   public readonly targeted = true
 
-  private readonly permissions: Permissions
+  private readonly permissions: Permissions = { blob: true, meta: false }
   private readonly discovery: Promise<Component>
   private storage: Component = null as unknown as Component
 
-  public constructor (options: Partial<Permissions> | null, discovery: Promise<Component>) {
-    const { blob = true, meta = false } = options ?? {}
-
-    this.permissions = { blob, meta }
+  public constructor (permissions: Partial<Permissions> | null, discovery: Promise<Component>) {
+    Object.assign(this.permissions, permissions)
     this.discovery = discovery
   }
 
   public async apply (storage: string, request: Input): Promise<Output> {
     this.storage ??= await this.discovery
 
-    const meta = request.url.slice(-5) === ':meta'
-
-    if (meta) return await this.get(storage, request)
-    else return await this.fetch(storage, request)
+    if (request.url.slice(-5) === ':meta')
+      return await this.get(storage, request)
+    else
+      return await this.fetch(storage, request)
   }
 
   private async fetch (storage: string, request: Input): Promise<Output> {

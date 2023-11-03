@@ -24,7 +24,7 @@ class Octets implements Family<Directive> {
 
     this.discovery ??= remotes.discover('octets', 'storage')
 
-    return new Class(value, this.discovery)
+    return new Class(value, this.discovery, remotes)
   }
 
   public async preflight (directives: Directive[], input: Input): Promise<Output> {
@@ -54,7 +54,7 @@ class Octets implements Family<Directive> {
   }
 }
 
-const DIRECTIVES: Record<string, new (value: any, discovery: Promise<Component>) => Directive> = {
+const DIRECTIVES: Record<string, Constructor> = {
   context: Context,
   store: Store,
   fetch: Fetch,
@@ -62,5 +62,7 @@ const DIRECTIVES: Record<string, new (value: any, discovery: Promise<Component>)
   delete: Delete,
   permute: Permute
 }
+
+type Constructor = new (value: any, discovery: Promise<Component>, remotes: Remotes) => Directive
 
 export = new Octets()

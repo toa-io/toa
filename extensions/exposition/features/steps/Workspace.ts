@@ -25,7 +25,8 @@ export class Workspace {
 
     await directory.copy(source, target)
 
-    if (patch !== undefined) await this.patchManifest(target, patch)
+    if (patch !== undefined)
+      await this.patchManifest(target, patch)
 
     return target
   }
