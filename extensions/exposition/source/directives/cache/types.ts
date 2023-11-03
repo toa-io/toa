@@ -8,3 +8,7 @@ export interface Directive {
 export interface PostProcessInput extends Input {
   identity?: unknown | null
 }
+
+export type CacheControlFlag = 'private' | 'public' | 'no-cache'
+
+export type CacheControlMap = Record<CacheControlFlag, boolean>
