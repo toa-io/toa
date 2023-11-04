@@ -89,7 +89,7 @@ function negotiate (request: Request): Format {
 }
 
 const BOUNDARY = 'cut'
-const CUT = Buffer.from(`--${BOUNDARY}`)
+const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
 export interface IncomingMessage extends Readable {

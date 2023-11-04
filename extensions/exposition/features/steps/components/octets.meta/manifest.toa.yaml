@@ -10,3 +10,4 @@ operations:
       entry: object
   bar: *operation
   baz: *operation
+  err: *operation
