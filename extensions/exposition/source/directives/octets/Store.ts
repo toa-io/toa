@@ -17,7 +17,7 @@ export class Store implements Directive {
 
   private readonly accept: string | undefined
   private readonly workflow: Workflow | undefined
-  private readonly discovery: Promise<Component>
+  private readonly discovery: Record<string, Promise<Component>> = {}
   private readonly remotes: Remotes
   private readonly components: Record<string, Component> = {}
   private storage: Component | null = null
@@ -36,12 +36,12 @@ export class Store implements Directive {
       Object, (unit: Unit) => [unit],
       undefined)
 
-    this.discovery = discovery
+    this.discovery.storage = discovery
     this.remotes = remotes
   }
 
   public async apply (storage: string, request: Input): Promise<Output> {
-    this.storage ??= await this.discovery
+    this.storage ??= await this.discovery.storage
 
     const input = { storage, request, accept: this.accept }
     const entry = await this.storage.invoke('store', { input })
@@ -95,8 +95,8 @@ export class Store implements Directive {
         // these promises are indirectly awaited in the yield loop
         void (async () => {
           const endpoint = unit[step]
-          const input: CallInput = { storage, path, entry }
-          const result = await this.call(endpoint, input)
+          const context: Context = { storage, path, entry }
+          const result = await this.call(endpoint, context)
 
           if (interrupted)
             return
@@ -113,7 +113,7 @@ export class Store implements Directive {
               promise.resolve(null)
           } else
             promise.resolve({ [step]: result ?? null })
-        })().catch((e) => results[index++].reject(e))
+        })().catch((e) => results[index].reject(e))
 
       // yield results from the queue as they come
       for (const promise of results) {
@@ -127,13 +127,20 @@ export class Store implements Directive {
     }
   }
 
-  private async call (endpoint: string, input: CallInput): Promise<Maybe<unknown>> {
+  private async call (endpoint: string, context: Context): Promise<Maybe<unknown>> {
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
     const key = `${namespace}.${component}`
 
-    this.components[key] ??= await this.remotes.discover(namespace, component)
+    this.components[key] ??= await this.discover(key, namespace, component)
 
-    return await this.components[key].invoke(operation, { input })
+    return await this.components[key].invoke(operation, { input: context })
+  }
+
+  private async discover (key: string, namespace: string, component: string): Promise<Component> {
+    if (this.discovery[key] === undefined)
+      this.discovery[key] = this.remotes.discover(namespace, component)
+
+    return await this.discovery[key]
   }
 }
 
@@ -145,7 +152,7 @@ interface Options {
   workflow: Workflow | Unit
 }
 
-interface CallInput {
+interface Context {
   storage: string
   path: string
   entry: Entry

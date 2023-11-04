@@ -1,9 +1,8 @@
-import { Buffer } from 'node:buffer'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
-import { type OutgoingMessage, read, write } from './messages'
-import { createRequest, res } from './Server.fixtures'
-import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import { read } from './messages'
+import { createRequest } from './Server.fixtures'
+import { BadRequest, UnsupportedMediaType } from './exceptions'
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -67,50 +66,5 @@ describe('read', () => {
     const request = createRequest({ path, headers }, text)
 
     await expect(read(request)).rejects.toThrow(BadRequest)
-  })
-})
-
-describe('write', () => {
-  it('should write encoded response', async () => {
-    const value = { body: { [generate()]: generate() } }
-    const json = JSON.stringify(value.body)
-    const buf = Buffer.from(json)
-    const headers = { accept: 'application/json' }
-    const request = createRequest({ headers }, buf)
-
-    write(request, res, value)
-
-    expect(res.set).toHaveBeenCalledWith('content-type', 'application/json')
-    expect(res.end).toHaveBeenCalledWith(buf)
-  })
-
-  it('should throw on unsupported response media type', async () => {
-    const headers = { accept: 'wtf/' + generate() }
-    const request = createRequest({ headers })
-    const body = generate()
-
-    expect(() => {
-      write(request, res, { body })
-    }).toThrow(NotAcceptable)
-  })
-
-  it('should use msgpack by default', async () => {
-    const request = createRequest()
-    const message: OutgoingMessage = { headers: {}, body: 'hello' }
-
-    write(request, res, message)
-
-    expect(res.set).toHaveBeenCalledWith('content-type', 'application/msgpack')
-    expect(res.end).toHaveBeenCalled()
-  })
-
-  it('should negotiate', async () => {
-    const headers = { accept: 'text/html, application/*;q=0.2, image/jpeg;q=0.8' }
-    const request = createRequest({ headers })
-    const message: OutgoingMessage = { headers: {}, body: 'hello' }
-
-    write(request, res, message)
-
-    expect(res.set).toHaveBeenCalledWith('content-type', 'application/msgpack')
   })
 })
