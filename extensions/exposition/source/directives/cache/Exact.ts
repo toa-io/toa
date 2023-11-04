@@ -1,25 +1,28 @@
-import { type PostProcessInput, type Directive } from './types'
+import { type PostProcessInput, type Directive, type CacheHeader } from './types'
 import { isSafeMethod } from './utils'
 
 export class Exact implements Directive {
   private readonly value: string
-  private cachedValue: string | null = null
+  private readonly cached: CacheHeader
 
   public constructor (value: string) {
     this.value = value
+    this.cached = {
+      initiated: false,
+      key: 'cache-control',
+      value: ''
+    }
   }
 
-  public postProcess (request: PostProcessInput, headers: Headers): string {
-    if (this.cachedValue !== null) return this.cachedValue
+  public settle (request: PostProcessInput): CacheHeader {
+    if (this.cached.initiated) return this.cached
 
-    if (!isSafeMethod(request.method)) {
-      this.cachedValue = ''
+    this.cached.initiated = true
 
-      return this.cachedValue
-    }
+    if (!isSafeMethod(request.method)) return this.cached
 
-    this.cachedValue = this.value
+    this.cached.value = this.value
 
-    return this.cachedValue
+    return this.cached
   }
 }

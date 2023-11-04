@@ -1,8 +1,7 @@
-import { type Output, type Input } from '../../Directive'
+import { type Input } from '../../Directive'
 
 export interface Directive {
-  preProcess?: (input: Input) => Output
-  postProcess?: (input: Input, headers: Headers) => void
+  settle: (input: Input) => CacheHeader
 }
 
 export interface PostProcessInput extends Input {
@@ -12,3 +11,9 @@ export interface PostProcessInput extends Input {
 export type CacheControlFlag = 'private' | 'public' | 'no-cache'
 
 export type CacheControlMap = Record<CacheControlFlag, boolean>
+
+export interface CacheHeader {
+  initiated: boolean
+  key: string
+  value: string
+}

@@ -1,4 +1,4 @@
-import { type PostProcessInput, type Directive } from './types'
+import { type PostProcessInput, type Directive, type CacheHeader } from './types'
 import { isSafeMethod, parseCacheControlFlags } from './utils'
 
 export class Control implements Directive {
@@ -6,10 +6,15 @@ export class Control implements Directive {
   private readonly isPublic: boolean
   private readonly isPrivate: boolean
   private readonly isNoCache: boolean
-  private cachedValue: string | null = null
+  private readonly cached: CacheHeader
 
   public constructor (value: string) {
     this.value = value
+    this.cached = {
+      initiated: false,
+      key: 'cache-control',
+      value: ''
+    }
     const flagMap = parseCacheControlFlags(value)
 
     this.isPublic = flagMap.public
@@ -17,23 +22,21 @@ export class Control implements Directive {
     this.isNoCache = flagMap['no-cache']
   }
 
-  public postProcess (request: PostProcessInput, headers: Headers): string {
-    if (this.cachedValue !== null) return this.cachedValue
+  public settle (request: PostProcessInput): CacheHeader {
+    if (this.cached.initiated) return this.cached
 
-    if (!isSafeMethod(request.method)) {
-      this.cachedValue = ''
+    this.cached.initiated = true
 
-      return this.cachedValue
-    }
+    if (!isSafeMethod(request.method)) return this.cached
 
-    this.cachedValue = this.value
+    this.cached.value = this.value
 
     if (request.identity !== null && this.isPublic && !this.isNoCache)
-      this.cachedValue += ', no-cache'
+      this.cached.value += ', no-cache'
 
-    if (request.identity !== null && !this.isPublic && !this.isPrivate)
-      this.cachedValue += ', private'
+    if (this.value !== '' && request.identity !== null && !this.isPublic && !this.isPrivate)
+      this.cached.value += ', private'
 
-    return this.cachedValue
+    return this.cached
   }
 }

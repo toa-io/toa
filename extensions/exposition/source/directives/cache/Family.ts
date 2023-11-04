@@ -25,9 +25,11 @@ class Cache implements Family<Directive> {
   (directives: Directive[], request: Input, response: http.OutgoingMessage): Promise<void> {
     response.headers ??= new Headers()
 
-    for (const directive of directives)
-      response.headers
-        .append('cache-control', directive.postProcess?.(request, response.headers) ?? '')
+    for (const directive of directives) {
+      const { key, value } = directive.settle(request)
+
+      if (value !== '') response.headers.append(key, value)
+    }
   }
 }
 
