@@ -60,4 +60,4 @@ jobs:
           GIT_COMMITTER_EMAIL: ${{ steps.gpg.outputs.email }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npx lerna@7.3.0 version --conventional-prerelease --preid dev --yes --no-changelog --message "ci: version"
+          npx lerna@7.3.0 version --conventional-prerelease --preid dev --yes --no-changelog --message "ci: %s"
