@@ -101,20 +101,20 @@ Error's properties are added to the error message, among with the `step` identif
 
 ```
 201 Created
-content-type: multipart/yaml; boundary=-
+content-type: multipart/yaml; boundary=cut
 
----
+--cut
 id: eecd837c
 type: image/jpeg
 created: 1698004822358
----
+--cut
 optimize: null
----
+--cut
 error:
   step: resize
   code: TOO_SMALL
   message: Image is too small
------
+--cut--
 ```
 
 ## `octets:fetch`

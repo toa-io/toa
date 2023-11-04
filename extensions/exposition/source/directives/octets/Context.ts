@@ -1,3 +1,4 @@
+import * as schemas from './schemas'
 import type { Output } from '../../Directive'
 import type { Directive } from './types'
 
@@ -6,6 +7,8 @@ export class Context implements Directive {
   public readonly storage
 
   public constructor (value: any) {
+    schemas.context.validate(value)
+
     this.storage = value
   }
 

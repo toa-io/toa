@@ -1,4 +1,5 @@
 import { NotFound } from '../../HTTP'
+import * as schemas from './schemas'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../Directive'
@@ -11,7 +12,9 @@ export class Delete implements Directive {
   private readonly discovery: Promise<Component>
   private storage: Component | null = null
 
-  public constructor (_: any, discovery: Promise<Component>) {
+  public constructor (value: null, discovery: Promise<Component>) {
+    schemas.remove.validate(value)
+
     this.discovery = discovery
   }
 

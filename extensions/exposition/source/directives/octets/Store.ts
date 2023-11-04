@@ -3,6 +3,7 @@ import { posix } from 'node:path'
 import { match } from '@toa.io/match'
 import { promex } from '@toa.io/generic'
 import { BadRequest, UnsupportedMediaType } from '../../HTTP'
+import * as schemas from './schemas'
 import type { Maybe } from '@toa.io/types'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes'
@@ -23,6 +24,8 @@ export class Store implements Directive {
 
   public constructor
   (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
+    schemas.store.validate(options)
+
     this.accept = match(options?.accept,
       String, (value: string) => value,
       Array, (types: string[]) => types.join(','),

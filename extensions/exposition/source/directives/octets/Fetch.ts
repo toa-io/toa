@@ -1,5 +1,6 @@
 import { posix } from 'node:path'
 import { Forbidden, NotFound } from '../../HTTP'
+import * as schemas from './schemas'
 import type { Maybe } from '@toa.io/types'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Readable } from 'node:stream'
@@ -16,6 +17,8 @@ export class Fetch implements Directive {
   private storage: Component = null as unknown as Component
 
   public constructor (permissions: Partial<Permissions> | null, discovery: Promise<Component>) {
+    schemas.fetch.validate(permissions)
+
     Object.assign(this.permissions, permissions)
     this.discovery = discovery
   }
