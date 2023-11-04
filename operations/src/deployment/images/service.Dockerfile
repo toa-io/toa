@@ -1,4 +1,4 @@
-FROM node:18.18.2-alpine3.18
+FROM node:20.9.0-alpine3.18
 
 ENV NODE_ENV=production
 RUN if [ "{{runtime.registry}}" != "" ]; then npm set registry {{runtime.registry}}; fi
