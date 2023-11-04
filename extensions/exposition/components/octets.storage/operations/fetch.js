@@ -29,7 +29,7 @@ async function fetch (input, context) {
 
   const { type, size } = variant ?? entry
 
-  return { stream, type, size }
+  return { stream, checksum: entry.id, type, size }
 }
 
 function split (basename) {

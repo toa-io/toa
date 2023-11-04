@@ -76,7 +76,7 @@ export class HTTP {
     }
   }
 
-  @when('the stream of `{word}` is received in the request:')
+  @when('the stream of `{word}` is received with the following headers:')
   public async streamRequest (filename: string, head: string): Promise<any> {
     head = trim(head) + '\n\n'
 
@@ -99,7 +99,7 @@ export class HTTP {
     }
   }
 
-  @then('the stream equals to `{word}` is received in the reply:')
+  @then('the stream equals to `{word}` is sent with the following headers:')
   public async responseStreamMatch (filename: string, head: string): Promise<any> {
     const buf = await buffer(open(filename))
     const text = buf.toString('utf8')

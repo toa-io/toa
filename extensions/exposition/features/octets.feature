@@ -35,7 +35,7 @@ Feature: Octets directive family
       """
 
   Scenario: Basic storage operations
-    When the stream of `lenna.ascii` is received in the request:
+    When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
       accept: application/yaml
@@ -54,11 +54,21 @@ Feature: Octets directive family
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       """
-    Then the stream equals to `lenna.ascii` is received in the reply:
+    Then the stream equals to `lenna.ascii` is sent with the following headers:
       """
       200 OK
       content-type: application/octet-stream
       content-length: 8169
+      etag: ${{ ETAG }}
+      """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      if-none-match: ${{ ETAG }}
+      """
+    Then the following reply is sent:
+      """
+      304 Not Modified
       """
     When the following request is received:
       """
@@ -109,13 +119,13 @@ Feature: Octets directive family
       """
 
   Scenario: Entries permutation
-    When the stream of `lenna.ascii` is received in the request:
+    When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
       accept: application/yaml
       content-type: application/octet-stream
       """
-    And the stream of `lenna.png` is received in the request:
+    And the stream of `lenna.png` is received with the following headers:
       """
       POST / HTTP/1.1
       accept: application/yaml
@@ -161,7 +171,7 @@ Feature: Octets directive family
       """
 
   Scenario: Media type control
-    When the stream of `lenna.png` is received in the request:
+    When the stream of `lenna.png` is received with the following headers:
       """
       POST /media/jpeg-or-png/ HTTP/1.1
       content-type: image/jpeg
@@ -170,7 +180,7 @@ Feature: Octets directive family
       """
       400 Bad Request
       """
-    When the stream of `lenna.png` is received in the request:
+    When the stream of `lenna.png` is received with the following headers:
       """
       POST /media/jpeg/ HTTP/1.1
       """
@@ -178,7 +188,7 @@ Feature: Octets directive family
       """
       415 Unsupported Media Type
       """
-    When the stream of `lenna.png` is received in the request:
+    When the stream of `lenna.png` is received with the following headers:
       """
       POST /media/jpeg-or-png/ HTTP/1.1
       """
@@ -188,7 +198,7 @@ Feature: Octets directive family
       """
 
   Scenario Outline: Receiving <format> images
-    When the stream of `sample.<format>` is received in the request:
+    When the stream of `sample.<format>` is received with the following headers:
       """
       POST /media/images/ HTTP/1.1
       """
@@ -216,7 +226,7 @@ Feature: Octets directive family
       """
 
   Scenario: Fetching a BLOB with trailing slash
-    When the stream of `lenna.ascii` is received in the request:
+    When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
       accept: application/yaml
@@ -250,7 +260,7 @@ Feature: Octets directive family
               meta: true
               blob: false
       """
-    When the stream of `lenna.ascii` is received in the request:
+    When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
       """

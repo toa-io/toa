@@ -94,7 +94,8 @@ type: image/jpeg
 created: 1698004822358
 ```
 
-If the `octets:store` directive contains a `workflow`, the response is [multipart](protocol.md#multipart-types).
+If the `octets:store` directive contains a `workflow`, the response
+is [multipart](protocol.md#multipart-types).
 The first part represents the created Entry, which is sent immediately after the BLOB is stored,
 while subsequent parts are results from the workflow endpoints, sent as soon as they are available.
 
@@ -122,7 +123,9 @@ message: Image is too small
 ## `octets:fetch`
 
 Fetches the content of a stored BLOB corresponding to the request path, and returns it as the
-response body with the corresponding `content-type` and `content-length`.
+response body with the corresponding `content-type`, `content-length`
+and `etag` ([conditional GET](https://datatracker.ietf.org/doc/html/rfc2616#section-9.3) is
+also supported).
 The `accept` request header is disregarded.
 
 The value of the directive is an object with the following properties:

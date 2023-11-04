@@ -39,6 +39,9 @@ export class Fetch implements Directive {
     if (!variant && !this.permissions.blob)
       throw new Forbidden('BLOB variant must be specified.')
 
+    if ('if-none-match' in request.headers)
+      return { status: 304 }
+
     const input = { storage, path: request.url }
     const result = await this.storage.invoke<Maybe<FetchResult>>('fetch', { input })
 
@@ -47,7 +50,8 @@ export class Fetch implements Directive {
 
     const headers = {
       'content-type': result.type,
-      'content-length': result.size
+      'content-length': result.size,
+      etag: result.checksum
     }
 
     return { headers, body: result.stream }
@@ -75,6 +79,7 @@ interface Permissions {
 
 interface FetchResult {
   stream: Readable
+  checksum: string
   size: number
   type: string
 }
