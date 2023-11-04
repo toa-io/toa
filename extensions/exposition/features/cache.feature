@@ -32,10 +32,7 @@ Feature: Caching
       """
 
   Scenario: Nested cache directives
-    Given the `identity.roles` database contains:
-      | _id                              | identity                         | role      |
-      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
-    And the annotation:
+    Given the annotation:
       """yaml
       /:
         cache:control: max-age=30000
@@ -95,7 +92,7 @@ Feature: Caching
       """
     And the reply does not contain:
       """
-      cache-control: max-age=30000
+      cache-control: max-age=30000, private
       """
 
   Scenario: Cache-control is not added when request is unsafe
@@ -118,10 +115,7 @@ Feature: Caching
       """
 
   Scenario: Cache-control is added without implicit modifications.
-    Given the `identity.roles` database contains:
-      | _id                              | identity                         | role      |
-      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
-    And the annotation:
+    Given the annotation:
       """yaml
       /:
         auth:role: developer
@@ -146,10 +140,7 @@ Feature: Caching
       """
 
   Scenario: Cache-control is added with implicit 'no-cache'.
-    Given the `identity.roles` database contains:
-      | _id                              | identity                         | role      |
-      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
-    And the annotation:
+    Given the annotation:
       """yaml
       /:
         auth:role: developer
@@ -173,10 +164,7 @@ Feature: Caching
       """
 
   Scenario: Cache-control is added with implicit 'private'.
-    Given the `identity.roles` database contains:
-      | _id                              | identity                         | role      |
-      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
-    And the annotation:
+    Given the annotation:
       """yaml
       /:
         auth:role: developer
