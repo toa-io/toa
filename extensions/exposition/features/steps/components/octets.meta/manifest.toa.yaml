@@ -4,7 +4,9 @@ name: meta
 storages: octets
 
 operations:
-  foo:
+  foo: &operation
     input:
       path*: string
       entry: object
+  bar: *operation
+  baz: *operation

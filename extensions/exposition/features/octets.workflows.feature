@@ -10,7 +10,10 @@ Feature: Octets storage workflows
         POST:
           octets:store:
             workflow:
-              add-foo: octets.meta.foo
+              - add-foo: octets.meta.foo
+                add-bar: octets.meta.bar
+              - add-baz: octets.meta.baz
+
         /*:
           GET:
             octets:fetch:
@@ -33,6 +36,10 @@ Feature: Octets storage workflows
       size: 8169
       --cut
       add-foo: null
+      --cut
+      add-bar: null
+      --cut
+      add-baz: null
       --cut--
       """
     When the following request is received:
@@ -50,4 +57,6 @@ Feature: Octets storage workflows
       size: 8169
       meta:
         foo: bar
+        bar: baz
+        baz: qux
       """
