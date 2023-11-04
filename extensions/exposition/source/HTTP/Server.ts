@@ -2,8 +2,11 @@ import express from 'express'
 import cors from 'cors'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
+import Negotiator from 'negotiator'
 import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
 import { ClientError, Exception } from './exceptions'
+import { formats, types } from './formats'
+import type { Format } from './formats'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
 
@@ -32,7 +35,7 @@ export class Server extends Connector {
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: Request, response: Response): void => {
+    this.app.use((request: any, response: Response): void => {
       this.extend(request)
         .then(process)
         .then(this.success(request, response))
@@ -62,15 +65,16 @@ export class Server extends Connector {
     console.info('HTTP Server has been stopped.')
   }
 
-  private async extend (request: Request): Promise<IncomingMessage> {
+  private async extend (request: IncomingMessage): Promise<IncomingMessage> {
     const message = request as unknown as IncomingMessage
 
+    message.encoder = negotiate(request)
     message.parse = async <T> (): Promise<T> => await read(request)
 
     return message
   }
 
-  private success (request: Request, response: Response) {
+  private success (request: IncomingMessage, response: Response) {
     return (message: OutgoingMessage) => {
       let status = message.status
 
@@ -91,7 +95,7 @@ export class Server extends Connector {
     }
   }
 
-  private fail (request: Request, response: Response) {
+  private fail (request: IncomingMessage, response: Response) {
     return (exception: Error) => {
       const status = exception instanceof Exception
         ? exception.status
@@ -110,7 +114,7 @@ export class Server extends Connector {
       } else
         response.end()
 
-      // stop accepting a stream
+      // stop accepting request
       if (!request.complete)
         request.destroy()
     }
@@ -122,6 +126,13 @@ function supportedMethods (methods: Set<string>) {
     if (methods.has(req.method)) next()
     else res.sendStatus(501)
   }
+}
+
+function negotiate (request: Request): Format | null {
+  const negotiator = new Negotiator(request)
+  const mediaType = negotiator.mediaType(types)
+
+  return mediaType === undefined ? null : formats[mediaType]
 }
 
 interface Properties {

@@ -1,4 +1,4 @@
-import { NotFound } from '../../HTTP'
+import { NotAcceptable, NotFound } from '../../HTTP'
 import * as schemas from './schemas'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
@@ -20,6 +20,9 @@ export class Permute implements Directive {
 
   public async apply (storage: string, request: Input): Promise<Output> {
     this.storage ??= await this.discovery
+
+    if (request.encoder === null)
+      throw new NotAcceptable()
 
     const path = request.path
     const list = await request.parse()

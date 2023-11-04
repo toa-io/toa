@@ -60,6 +60,9 @@ export class Gateway extends Connector {
     if (request.path[request.path.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required.')
 
+    if (request.encoder === null)
+      throw new http.NotAcceptable()
+
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 

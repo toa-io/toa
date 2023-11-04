@@ -1,13 +1,14 @@
 import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
 import { Readable } from 'node:stream'
 import { type Request, type Response } from 'express'
-import Negotiator from 'negotiator'
 import { buffer } from '@toa.io/streams'
-import { formats, types } from './formats'
+import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import type { ParsedQs } from 'qs'
 import type { Format } from './formats'
 
-export function write (request: Request, response: Response, message: OutgoingMessage): void {
+export function write
+(request: IncomingMessage, response: Response, message: OutgoingMessage): void {
   if (message.body instanceof Readable)
     stream(message, request, response)
   else
@@ -17,9 +18,11 @@ export function write (request: Request, response: Response, message: OutgoingMe
 export async function read (request: Request): Promise<any> {
   const type = request.headers['content-type']
 
-  if (type === undefined) return undefined
+  if (type === undefined)
+    return undefined
 
-  if (!(type in formats)) throw new UnsupportedMediaType()
+  if (!(type in formats))
+    throw new UnsupportedMediaType()
 
   const format = formats[type]
 
@@ -32,22 +35,24 @@ export async function read (request: Request): Promise<any> {
   }
 }
 
-function send (message: OutgoingMessage, request: Request, response: Response): void {
+function send (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
   if (message.body === undefined) {
     response.end()
 
     return
   }
 
-  const encoder = negotiate(request)
-  const buf = encoder.encode(message.body)
+  if (request.encoder === null)
+    throw new NotAcceptable()
 
-  response.set('content-type', encoder.type)
+  const buf = request.encoder.encode(message.body)
+
+  response.set('content-type', request.encoder.type)
   response.end(buf)
 }
 
 function stream
-(message: OutgoingMessage, request: Request, response: Response): void {
+(message: OutgoingMessage, request: IncomingMessage, response: Response): void {
   const encoded = message.headers !== undefined && 'content-type' in message.headers
 
   if (encoded)
@@ -66,39 +71,32 @@ function pipe (message: OutgoingMessage, response: Response): void {
   message.body.pipe(response)
 }
 
-function multipart (message: OutgoingMessage, request: Request, response: Response): void {
-  const encoder = negotiate(request)
-  const stream = message.body as Readable
+function multipart (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
+  if (request.encoder === null)
+    throw new NotAcceptable()
+
+  const encoder = request.encoder
 
   response.set('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
-  stream
-    .map((part) => Buffer.concat([CUT, encoder.encode(part)]))
+  message.body
+    .map((part: unknown) => Buffer.concat([CUT, encoder.encode(part)]))
     .on('end', () => response.end(FINALCUT))
     .pipe(response)
-}
-
-function negotiate (request: Request): Format {
-  const negotiator = new Negotiator(request)
-  const mediaType = negotiator.mediaType(types)
-
-  if (mediaType === undefined)
-    throw new NotAcceptable()
-
-  return formats[mediaType]
 }
 
 const BOUNDARY = 'cut'
 const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
-export interface IncomingMessage extends Readable {
+export interface IncomingMessage extends Request {
   method: string
   path: string
   url: string
   headers: IncomingHttpHeaders
   query: Query
   parse: <T> () => Promise<T>
+  encoder: Format | null
 }
 
 export interface OutgoingMessage {
@@ -107,7 +105,7 @@ export interface OutgoingMessage {
   body?: any
 }
 
-export interface Query {
+export interface Query extends ParsedQs {
   id?: string
   criteria?: string
   sort?: string
