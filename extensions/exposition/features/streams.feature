@@ -18,9 +18,13 @@ Feature: Reply streams
     Then the following reply is sent:
       """
       201 Created
-      transfer-encoding: chunked
+      content-type: multipart/text; boundary=cut
 
+      --cut
       0
+      --cut
       1
+      --cut
       2
+      --cut--
       """

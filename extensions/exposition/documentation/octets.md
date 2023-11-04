@@ -92,7 +92,7 @@ type: image/jpeg
 created: 1698004822358
 ```
 
-If the `octets:store` directive contains a `workflow`, the response is multipart.
+If the `octets:store` directive contains a `workflow`, the response is [multipart](protocol.md#multipart-types).
 The first message represents the created Entry,
 while subsequent messages are results from the workflow endpoints.
 

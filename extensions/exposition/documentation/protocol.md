@@ -12,11 +12,23 @@ The following media types are supported for both requests and responses:
 The response format is determined by content negotiation
 using [negotiator](https://github.com/jshttp/negotiator).
 
+```http
+GET / HTTP/1.1
+accept: application/yaml
+```
+
+```
+200 OK
+content-type: application/yaml
+
+foo: bar
+```
+
 ### Multipart types
 
 Multipart responses are endoded using content negotiation,
 and the `content-type` of the response is set to one of the custom `multipart/` subtypes, corresponding to the type of
-each part:
+the parts:
 
 | Response type       | Part type             |
 |---------------------|-----------------------|
@@ -34,13 +46,13 @@ accept: application/yaml
 
 ```
 200 OK
-content-type: multipart/yaml; boundary=-
+content-type: multipart/yaml; boundary=cut
 
----
+--cut
 foo: bar
----
+--cut
 baz: qux
------
+--cut--
 ```
 
 See also:

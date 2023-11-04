@@ -2,7 +2,7 @@ import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
 import { Readable } from 'node:stream'
 import { type Request, type Response } from 'express'
 import Negotiator from 'negotiator'
-import { map, buffer } from '@toa.io/streams'
+import { buffer } from '@toa.io/streams'
 import { formats, types } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 import type { Format } from './formats'
@@ -39,9 +39,10 @@ function send (message: OutgoingMessage, request: Request, response: Response): 
     return
   }
 
-  const encoder = format(request, response)
+  const encoder = negotiate(request)
   const buf = encoder.encode(message.body)
 
+  response.set('content-type', encoder.type)
   response.end(buf)
 }
 
@@ -52,7 +53,7 @@ function stream
   if (encoded)
     pipe(message, response)
   else
-    pipeEncoded(message, request, response)
+    multipart(message, request, response)
 
   message.body.on('error', (e: Error) => {
     console.error(e)
@@ -65,31 +66,31 @@ function pipe (message: OutgoingMessage, response: Response): void {
   message.body.pipe(response)
 }
 
-function pipeEncoded (message: OutgoingMessage, request: Request, response: Response): void {
-  const encoder = format(request, response)
-  const encoded = map(message.body, encoder.encode)
+function multipart (message: OutgoingMessage, request: Request, response: Response): void {
+  const encoder = negotiate(request)
+  const stream = message.body as Readable
 
-  encoded.pipe(response)
+  response.set('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
+
+  stream
+    .map((part) => Buffer.concat([CUT, encoder.encode(part)]))
+    .on('end', () => response.end(FINALCUT))
+    .pipe(response)
 }
 
-function negotiate (request: Request): string {
+function negotiate (request: Request): Format {
   const negotiator = new Negotiator(request)
   const mediaType = negotiator.mediaType(types)
 
   if (mediaType === undefined)
     throw new NotAcceptable()
 
-  return mediaType
+  return formats[mediaType]
 }
 
-function format (request: Request, response: Response): Format {
-  const type = negotiate(request)
-  const format = formats[type]
-
-  response.set('content-type', type)
-
-  return format
-}
+const BOUNDARY = 'cut'
+const CUT = Buffer.from(`--${BOUNDARY}`)
+const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
 export interface IncomingMessage extends Readable {
   method: string

@@ -23,17 +23,15 @@ export class Store implements Directive {
 
   public constructor
   (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
-    if (options !== null) {
-      this.accept = match(options.accept,
-        String, options.accept,
-        Array, (types: string[]) => types.join(','),
-        undefined)
+    this.accept = match(options?.accept,
+      String, (value: string) => value,
+      Array, (types: string[]) => types.join(','),
+      undefined)
 
-      this.workflow = match(options.workflow,
-        Array, options.workflow,
-        Object, () => [options.workflow],
-        undefined)
-    }
+    this.workflow = match(options?.workflow,
+      Array, (units: Unit[]) => units,
+      Object, (unit: Unit) => [unit],
+      undefined)
 
     this.discovery = discovery
     this.remotes = remotes
@@ -96,11 +94,11 @@ export class Store implements Directive {
           const endpoint = unit[step]
           const result = await this.call(endpoint, path, entry)
 
-          // as a result is received, resolve the next promise from the queue
-          const promise = results[index++]
-
           if (interrupted)
             return
+
+          // as a result is received, resolve the next promise from the queue
+          const promise = results[index++]
 
           if (result instanceof Error) {
             interrupted = true
@@ -113,7 +111,7 @@ export class Store implements Directive {
             promise.resolve({ [step]: result ?? null })
         })().catch((e) => results[index++].reject(e))
 
-      // yield results as they come
+      // yield results from the queue as they come
       for (const promise of results) {
         const result = await promise
 
