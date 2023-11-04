@@ -2,7 +2,7 @@
 
 const { Readable } = require('node:stream')
 const { Connector } = require('@toa.io/core')
-const { match } = require('@toa.io/match')
+const { match } = require('matchacho')
 
 class Runner extends Connector {
   /** @type {toa.node.Algorithm} */

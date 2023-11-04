@@ -1,5 +1,5 @@
 import { Readable } from 'node:stream'
-import { match } from '@toa.io/match'
+import { match } from 'matchacho'
 import { buffer } from '@toa.io/generic'
 import { Storage } from './Storage'
 import { cases, open, rnd } from './test/util'

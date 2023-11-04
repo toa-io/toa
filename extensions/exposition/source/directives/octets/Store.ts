@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream'
 import { posix } from 'node:path'
-import { match } from '@toa.io/match'
+import { match } from 'matchacho'
 import { promex } from '@toa.io/generic'
 import { BadRequest, UnsupportedMediaType } from '../../HTTP'
 import * as schemas from './schemas'
