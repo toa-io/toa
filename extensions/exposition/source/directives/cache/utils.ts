@@ -12,7 +12,7 @@ export function parseCacheControlFlags (headerValue: string): CacheControlMap {
     private: false,
     'no-cache': false
   }
-  const matches = headerValue.match(/\bprivate\b|\bpublic\b|\bno-cache\b/ig)
+  const matches = headerValue.match(/\b(private|public|no-cache)\b/ig)
 
   if (matches !== null)
     for (const key of matches)
