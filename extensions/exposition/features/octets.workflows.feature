@@ -1,7 +1,7 @@
 Feature: Octets storage workflows
 
-  Scenario: Adding metadata to a file
-    Given the `octets.meta` is running
+  Scenario: Running a workflow
+    Given the `octets.tester` is running
     Given the annotation:
       """yaml
       /:
@@ -10,10 +10,10 @@ Feature: Octets storage workflows
         POST:
           octets:store:
             workflow:
-              - add-foo: octets.meta.foo
-                add-bar: octets.meta.bar
-              - add-baz: octets.meta.baz
-
+              - add-foo: octets.tester.foo
+                add-bar: octets.tester.bar
+              - add-baz: octets.tester.baz
+              - diversify: octets.tester.diversify
         /*:
           GET:
             octets:fetch:
@@ -41,6 +41,8 @@ Feature: Octets storage workflows
         bar: baz
       --cut
       add-baz: null
+      --cut
+      diversify: null
       --cut--
       """
     When the following request is received:
@@ -61,9 +63,19 @@ Feature: Octets storage workflows
         bar: baz
         baz: qux
       """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff.hello.png HTTP/1.1
+      """
+    Then the stream equals to `lenna.png` is received in the reply:
+      """
+      200 OK
+      content-type: image/png
+      content-length: 473831
+      """
 
   Scenario: Getting error when adding metadata to a file
-    Given the `octets.meta` is running
+    Given the `octets.tester` is running
     Given the annotation:
       """yaml
       /:
@@ -72,9 +84,9 @@ Feature: Octets storage workflows
         POST:
           octets:store:
             workflow:
-              add-foo: octets.meta.foo
-              add-bar: octets.meta.err
-              add-baz: octets.meta.baz
+              add-foo: octets.tester.foo
+              add-bar: octets.tester.err
+              add-baz: octets.tester.baz
       """
     When the stream of `lenna.ascii` is received in the request:
       """

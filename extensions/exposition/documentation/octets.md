@@ -49,11 +49,13 @@ A workflow is a list of endpoints to be called.
 The following input will be passed to each endpoint:
 
 ```yaml
+storage: string
 path: string
 entry: Entry
 ```
 
-See [Entry](/extensions/storages/readme.md#entry).
+See [Entry](/extensions/storages/readme.md#entry) and an
+example [workflow step processor](../features/steps/components/octets.tester).
 
 A _workflow unit_ is an object with keys referencing the workflow step identifier, and an endpoint
 as value.
@@ -93,11 +95,11 @@ created: 1698004822358
 ```
 
 If the `octets:store` directive contains a `workflow`, the response is [multipart](protocol.md#multipart-types).
-The first message represents the created Entry,
-while subsequent messages are results from the workflow endpoints.
+The first part represents the created Entry, which is sent immediately after the BLOB is stored,
+while subsequent parts are results from the workflow endpoints, sent as soon as they are available.
 
-In case a workflow endpoint returns an error, the error message is sent, and the response is closed.
-Error's properties are added to the error message, among with the `step` identifier.
+In case a workflow endpoint returns an `Error`, the error part is sent, and the response is closed.
+Error's properties are added to the error part, among with the `step` identifier.
 
 ```
 201 Created
@@ -111,9 +113,9 @@ created: 1698004822358
 optimize: null
 --cut
 error:
-  step: resize
-  code: TOO_SMALL
-  message: Image is too small
+step: resize
+code: TOO_SMALL
+message: Image is too small
 --cut--
 ```
 

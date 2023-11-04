@@ -48,19 +48,13 @@ export class MethodNotAllowed extends ClientError {
   }
 }
 
-class MediaTypeException extends ClientError {
-  protected constructor (status: number) {
-    super(status)
-  }
-}
-
-export class NotAcceptable extends MediaTypeException {
+export class NotAcceptable extends ClientError {
   public constructor () {
     super(406)
   }
 }
 
-export class UnsupportedMediaType extends MediaTypeException {
+export class UnsupportedMediaType extends ClientError {
   public constructor () {
     super(415)
   }

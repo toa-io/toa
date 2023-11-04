@@ -4,7 +4,7 @@ import type { Directive } from './types'
 
 export class Context implements Directive {
   public readonly targeted = false
-  public readonly storage
+  public readonly storage: string
 
   public constructor (value: any) {
     schemas.context.validate(value)

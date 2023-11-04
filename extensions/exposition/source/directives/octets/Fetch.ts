@@ -40,17 +40,17 @@ export class Fetch implements Directive {
       throw new Forbidden('BLOB variant must be specified.')
 
     const input = { storage, path: request.url }
-    const { entry, stream } = await this.storage.invoke<FetchResult>('fetch', { input })
+    const result = await this.storage.invoke<Maybe<FetchResult>>('fetch', { input })
 
-    if (entry instanceof Error || stream instanceof Error)
+    if (result instanceof Error)
       throw new NotFound()
 
     const headers = {
-      'content-type': entry.type,
-      'content-length': entry.size
+      'content-type': result.type,
+      'content-length': result.size
     }
 
-    return { headers, body: stream }
+    return { headers, body: result.stream }
   }
 
   private async get (storage: string, request: Input): Promise<Output> {
@@ -74,6 +74,7 @@ interface Permissions {
 }
 
 interface FetchResult {
-  entry: Maybe<Entry>
-  stream: Maybe<Readable>
+  stream: Readable
+  size: number
+  type: string
 }

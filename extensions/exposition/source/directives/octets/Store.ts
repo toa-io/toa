@@ -48,13 +48,13 @@ export class Store implements Directive {
 
     return match<Output>(entry,
       Error, (error: ErrorType) => this.throw(error),
-      () => this.reply(request, entry))
+      () => this.reply(request, storage, entry))
   }
 
-  private reply (request: Input, entry: Entry): Output {
+  private reply (request: Input, storage: string, entry: Entry): Output {
     const body = this.workflow === undefined
       ? entry
-      : Readable.from(this.execute(request, entry))
+      : Readable.from(this.execute(request, storage, entry))
 
     return { body }
   }
@@ -74,7 +74,7 @@ export class Store implements Directive {
    *
    * If you need to change this, it may take a while.
    */
-  private async * execute (request: Input, entry: Entry): AsyncGenerator {
+  private async * execute (request: Input, storage: string, entry: Entry): AsyncGenerator {
     let interrupted = false
     const path = posix.join(request.path, entry.id)
 
@@ -95,7 +95,8 @@ export class Store implements Directive {
         // these promises are indirectly awaited in the yield loop
         void (async () => {
           const endpoint = unit[step]
-          const result = await this.call(endpoint, path, entry)
+          const input: CallInput = { storage, path, entry }
+          const result = await this.call(endpoint, input)
 
           if (interrupted)
             return
@@ -126,13 +127,13 @@ export class Store implements Directive {
     }
   }
 
-  private async call (endpoint: string, path: string, entry: Entry): Promise<Maybe<unknown>> {
+  private async call (endpoint: string, input: CallInput): Promise<Maybe<unknown>> {
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
     const key = `${namespace}.${component}`
 
     this.components[key] ??= await this.remotes.discover(namespace, component)
 
-    return await this.components[key].invoke(operation, { input: { path, entry } })
+    return await this.components[key].invoke(operation, { input })
   }
 }
 
@@ -142,4 +143,10 @@ type Workflow = Unit[]
 interface Options {
   accept: string | string[]
   workflow: Workflow | Unit
+}
+
+interface CallInput {
+  storage: string
+  path: string
+  entry: Entry
 }
