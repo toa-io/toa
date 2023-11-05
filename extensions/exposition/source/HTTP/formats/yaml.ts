@@ -1,6 +1,9 @@
 import { Buffer } from 'node:buffer'
 import * as yaml from 'js-yaml'
 
+export const type = 'application/yaml'
+export const multipart = 'multipart/yaml'
+
 export function decode (buffer: Buffer): any {
   const text = buffer.toString()
 

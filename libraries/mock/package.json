@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/mock",
-  "version": "0.22.0",
+  "version": "0.22.2-dev.5",
   "description": "Toa Mocks",
   "homepage": "https://toa.io",
   "author": {
@@ -16,7 +16,7 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 18.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -24,7 +24,7 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/generic": "0.22.0"
+    "@toa.io/generic": "0.22.2-dev.5"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

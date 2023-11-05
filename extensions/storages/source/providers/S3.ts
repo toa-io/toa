@@ -16,21 +16,19 @@ export class S3 implements Provider {
   protected readonly client: S3Client
 
   public constructor (url: URL, secrets: Record<string, string>) {
-    const pathSegments = url.pathname.split('/').filter((segment) => segment !== '')
+    this.bucket = url.pathname.split('/')[1]
 
-    if (pathSegments.length !== 1) throw new Error('S3 URL must contain two segments')
+    if (this.bucket === undefined || this.bucket === '')
+      throw new Error('S3 bucket not specified')
 
-    this.bucket = pathSegments[0]
     const s3Config: S3ClientConfigType = {
       credentials: {
-        accessKeyId: secrets.ACCESS_KEY,
+        accessKeyId: secrets.ACCESS_KEY_ID,
         secretAccessKey: secrets.SECRET_ACCESS_KEY
       },
-      region: url.host
+      region: url.host,
+      endpoint: url.searchParams.get('endpoint') ?? undefined
     }
-    const endpoint = url.searchParams.get('endpoint')
-
-    if (endpoint !== null) s3Config.endpoint = endpoint
 
     this.client = new S3Client(s3Config)
   }

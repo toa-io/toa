@@ -1,6 +1,7 @@
 import { atob } from 'buffer'
 import { compare } from 'bcryptjs'
 import { type Query, type Maybe } from '@toa.io/types'
+import { Err } from 'error-value'
 import { type Context } from './types'
 
 export async function computation (input: string, context: Context): Promise<Maybe<Output>> {
@@ -21,8 +22,8 @@ export async function computation (input: string, context: Context): Promise<May
   else return ERR_PASSWORD_MISMATCH
 }
 
-const ERR_NOT_FOUND = new Error('NOT_FOUND')
-const ERR_PASSWORD_MISMATCH = new Error('PASSWORD_MISMATCH')
+const ERR_NOT_FOUND = Err('NOT_FOUND')
+const ERR_PASSWORD_MISMATCH = Err('PASSWORD_MISMATCH')
 
 interface Output {
   identity: {

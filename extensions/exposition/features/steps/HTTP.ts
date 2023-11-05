@@ -1,8 +1,9 @@
-import * as assert from 'assert'
-import { AssertionError } from 'assert'
-import { binding, when, then } from 'cucumber-tsflow'
+import { AssertionError } from 'node:assert'
+import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
 import { trim } from '@toa.io/generic'
+import { buffer } from '@toa.io/streams'
+import { open } from '../../../storages/source/test/util'
 import { Parameters } from './parameters'
 import { Gateway } from './Gateway'
 
@@ -47,7 +48,11 @@ export class HTTP {
       const match = this.response.match(rx)
 
       if (match === null)
-        throw new AssertionError({ message: `Response is missing '${line}'\n${this.response}` })
+        throw new AssertionError({
+          message: `Response is missing '${line}'`,
+          expected: line,
+          actual: this.response
+        })
 
       Object.assign(this.variables, match.groups)
     }
@@ -62,8 +67,45 @@ export class HTTP {
 
       const includes = this.response.includes(line)
 
-      assert.equal(includes, false, `Response contains '${line}'\n${this.response}`)
+      if (includes)
+        throw new AssertionError({
+          message: `Response contains '${line}'`,
+          expected: line,
+          actual: this.response
+        })
     }
+  }
+
+  @when('the stream of `{word}` is received with the following headers:')
+  public async streamRequest (filename: string, head: string): Promise<any> {
+    head = trim(head) + '\n\n'
+
+    await this.gateway.start()
+
+    const { url, method, headers } = http.parse.request(head)
+    const href = new URL(url, this.origin).href
+    const body = open(filename)
+    const request = { method, headers, body, duplex: 'half' } as unknown as RequestInit
+
+    try {
+      const response = await fetch(href, request)
+
+      this.response = await http.parse.response(response)
+    } catch (e: any) {
+      console.error(e)
+      console.error(e.cause)
+
+      throw e
+    }
+  }
+
+  @then('the stream equals to `{word}` is sent with the following headers:')
+  public async responseStreamMatch (filename: string, head: string): Promise<any> {
+    const buf = await buffer(open(filename))
+    const text = buf.toString('utf8')
+    const expected = head + '\n\n' + text
+
+    this.responseIncludes(expected)
   }
 }
 

@@ -6,7 +6,7 @@ export class Workspace {
   private root: string = devnull
 
   public static exists
-  (target: Workspace, key: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+  (_0: unknown, _1: unknown, descriptor: PropertyDescriptor): PropertyDescriptor {
     const method = descriptor.value
 
     descriptor.value = async function (this: Workspace, ...args: any[]): Promise<any> {
@@ -25,7 +25,8 @@ export class Workspace {
 
     await directory.copy(source, target)
 
-    if (patch !== undefined) await this.patchManifest(target, patch)
+    if (patch !== undefined)
+      await this.patchManifest(target, patch)
 
     return target
   }

@@ -23,7 +23,7 @@ export function request (input: string): HTTPRequest {
 
   const buffer = Buffer.from(input)
 
-  parser.execute(buffer as any)
+  parser.execute(buffer)
   parser.finish()
 
   if (!complete) throw new Error('Failed to parse the request')
@@ -53,5 +53,5 @@ interface HTTPRequest {
   url: string
   method: string
   headers: Record<string, string>
-  body: Buffer
+  body?: Buffer
 }

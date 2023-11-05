@@ -1,5 +1,6 @@
 import { genSalt, hash } from 'bcryptjs'
 import { type Maybe, type Operation } from '@toa.io/types'
+import { Err } from 'error-value'
 import { type Context, type Entity, type TransitInput, type TransitOutput } from './types'
 
 export class Transition implements Operation {
@@ -60,8 +61,8 @@ function invalid (value: string, expressions: RegExp[]): boolean {
   return expressions.some((expression) => !expression.test(value))
 }
 
-const ERR_PRINCIPAL_LOCKED = new Error('PRINCIPAL_LOCKED')
-const ERR_INVALID_USERNAME = new Error('INVALID_USERNAME')
-const ERR_INVALID_PASSWORD = new Error('INVALID_PASSWORD')
+const ERR_PRINCIPAL_LOCKED = Err('PRINCIPAL_LOCKED', 'Principal username cannot be changed.')
+const ERR_INVALID_USERNAME = Err('INVALID_USERNAME', 'Username is not meeting the requirements.')
+const ERR_INVALID_PASSWORD = Err('INVALID_PASSWORD', 'Password is not meeting the requirements.')
 
 type Tokens = Context['remote']['identity']['tokens']

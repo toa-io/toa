@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/dns",
-  "version": "0.22.0",
+  "version": "0.22.2-dev.5",
   "description": "Toa DNS Tools",
   "homepage": "https://toa.io",
   "author": {
@@ -16,7 +16,7 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 18.0.0"
   },
   "publishConfig": {
     "access": "public"

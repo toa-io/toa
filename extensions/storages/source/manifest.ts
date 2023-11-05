@@ -1,8 +1,8 @@
-import { match } from '@toa.io/match'
+import { match } from 'matchacho'
 
 export function manifest (manifest: string | string[] | null): string[] {
   return match(manifest,
-    () => typeof manifest === 'string', (name: string) => [name],
+    String, (name: string) => [name],
     Array, manifest,
     null, [])
 }

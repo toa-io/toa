@@ -25,4 +25,4 @@ export class Rule implements Directive {
   }
 }
 
-type Create = (name: string, value: any) => Directive
+type Create = (name: string, value: any, ...args: any[]) => Directive
