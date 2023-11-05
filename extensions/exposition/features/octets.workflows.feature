@@ -19,7 +19,7 @@ Feature: Octets storage workflows
             octets:fetch:
               meta: true
       """
-    When the stream of `lenna.ascii` is received in the request:
+    When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
       accept: application/yaml
@@ -67,7 +67,7 @@ Feature: Octets storage workflows
       """
       GET /10cf16b458f759e0d617f2f3d83599ff.hello.png HTTP/1.1
       """
-    Then the stream equals to `lenna.png` is received in the reply:
+    Then the stream equals to `lenna.png` is sent with the following headers:
       """
       200 OK
       content-type: image/png
@@ -88,7 +88,7 @@ Feature: Octets storage workflows
               add-bar: octets.tester.err
               add-baz: octets.tester.baz
       """
-    When the stream of `lenna.ascii` is received in the request:
+    When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
       accept: application/yaml

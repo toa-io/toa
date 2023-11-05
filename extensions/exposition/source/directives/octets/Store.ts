@@ -75,20 +75,20 @@ export class Store implements Directive {
    * If you need to change this, it may take a while.
    */
   private async * execute (request: Input, storage: string, entry: Entry): AsyncGenerator {
-    let interrupted = false
-    const path = posix.join(request.path, entry.id)
-
     yield entry
+
+    const path = posix.join(request.path, entry.id)
+    let interrupted = false
 
     for (const unit of this.workflow as Workflow) {
       if (interrupted)
         break
 
-      let index = 0
       const steps = Object.keys(unit)
 
       // unit result promises queue
       const results = Array.from(steps, promex<unknown>)
+      let next = 0
 
       // execute steps in parallel
       for (const step of steps)
@@ -102,18 +102,17 @@ export class Store implements Directive {
             return
 
           // as a result is received, resolve the next promise from the queue
-          const promise = results[index++]
+          const promise = results[next++]
 
           if (result instanceof Error) {
             interrupted = true
             promise.resolve({ error: { step, ...result } })
 
             // cancel pending promises
-            for (const promise of results.slice(index))
-              promise.resolve(null)
+            results[next].resolve(null)
           } else
             promise.resolve({ [step]: result ?? null })
-        })().catch((e) => results[index].reject(e))
+        })().catch((e) => results[next].reject(e))
 
       // yield results from the queue as they come
       for (const promise of results) {
