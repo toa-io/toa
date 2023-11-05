@@ -5,7 +5,10 @@ Feature: Caching
       # developer:secret
       # user:12345
       | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer |
     And the `identity.bans` database is empty
 
   Scenario: Caching successful response
@@ -72,7 +75,7 @@ Feature: Caching
       """
       200 OK
       content-type: text/plain
-      cache-control: max-age=30000, private
+      cache-control: private, max-age=30000
 
       hello
       """
@@ -86,13 +89,13 @@ Feature: Caching
       """
       200 OK
       content-type: text/plain
-      cache-control: max-age=60000, public, no-cache
+      cache-control: no-cache, max-age=60000, public
 
       hello
       """
     And the reply does not contain:
       """
-      cache-control: max-age=30000, private
+      cache-control: private, max-age=30000
       """
 
   Scenario: Cache-control is not added when request is unsafe
@@ -114,7 +117,7 @@ Feature: Caching
       cache-control: max-age=60000
       """
 
-  Scenario: Cache-control is added without implicit modifications.
+  Scenario: Cache-control is added without implicit modifications
     Given the annotation:
       """yaml
       /:
@@ -135,54 +138,6 @@ Feature: Caching
       200 OK
       content-type: text/plain
       cache-control: max-age=60000, public
-
-      hello
-      """
-
-  Scenario: Cache-control is added with implicit 'no-cache'.
-    Given the annotation:
-      """yaml
-      /:
-        auth:role: developer
-        cache:control: max-age=60000, public
-        GET:
-          dev:stub: hello
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
-      accept: text/plain
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: text/plain
-      cache-control: max-age=60000, public, no-cache
-
-      hello
-      """
-
-  Scenario: Cache-control is added with implicit 'private'.
-    Given the annotation:
-      """yaml
-      /:
-        auth:role: developer
-        cache:control: max-age=60000
-        GET:
-          dev:stub: hello
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
-      accept: text/plain
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: text/plain
-      cache-control: max-age=60000, private
 
       hello
       """

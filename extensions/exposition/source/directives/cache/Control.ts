@@ -1,42 +1,59 @@
-import { type PostProcessInput, type Directive, type CacheHeader } from './types'
-import { isSafeMethod, parseCacheControlFlags } from './utils'
+import { match } from 'matchacho'
+import type { AuthenticatedRequest, Directive } from './types'
 
 export class Control implements Directive {
-  private readonly value: string
-  private readonly isPublic: boolean
-  private readonly isPrivate: boolean
-  private readonly isNoCache: boolean
-  private readonly cached: CacheHeader
+  protected readonly value: string
+  private cache: string | null = null
 
   public constructor (value: string) {
     this.value = value
-    this.cached = {
-      initiated: false,
-      key: 'cache-control',
-      value: ''
-    }
-    const flagMap = parseCacheControlFlags(value)
-
-    this.isPublic = flagMap.public
-    this.isPrivate = flagMap.private
-    this.isNoCache = flagMap['no-cache']
   }
 
-  public settle (request: PostProcessInput): CacheHeader {
-    if (this.cached.initiated) return this.cached
+  public set (request: AuthenticatedRequest, headers: Headers): void {
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method))
+      return
 
-    this.cached.initiated = true
+    this.cache ??= this.resolve(request)
 
-    if (!isSafeMethod(request.method)) return this.cached
+    headers.set('cache-control', this.cache)
+  }
 
-    this.cached.value = this.value
+  protected resolve (request: AuthenticatedRequest): string {
+    if (request.identity === null)
+      return this.value
 
-    if (request.identity !== null && this.isPublic && !this.isNoCache)
-      this.cached.value += ', no-cache'
+    const directives = this.parse()
 
-    if (this.value !== '' && request.identity !== null && !this.isPublic && !this.isPrivate)
-      this.cached.value += ', private'
+    if ((directives & (PUBLIC | NO_CACHE)) === PUBLIC)
+      return 'no-cache, ' + this.value
 
-    return this.cached
+    if ((directives & (PUBLIC | PRIVATE)) === 0)
+      return 'private, ' + this.value
+
+    return this.value
+  }
+
+  private parse (): number {
+    const found = this.value.match(DIRECTIVES_RX)
+
+    if (found === null)
+      return 0
+
+    let directives = 0
+
+    for (const directive of found)
+      directives |= match<number>(directive.toLowerCase(),
+        'private', PRIVATE,
+        'public', PUBLIC,
+        'no-cache', NO_CACHE,
+        0)
+
+    return directives
   }
 }
+
+const DIRECTIVES_RX = /\b(private|public|no-cache)\b/ig
+
+const PUBLIC = 1
+const PRIVATE = 2
+const NO_CACHE = 4

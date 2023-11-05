@@ -1,19 +1,9 @@
 import { type Input } from '../../Directive'
 
 export interface Directive {
-  settle: (input: Input) => CacheHeader
+  set: (input: Input, headers: Headers) => void
 }
 
-export interface PostProcessInput extends Input {
+export interface AuthenticatedRequest extends Input {
   identity?: unknown | null
-}
-
-export type CacheControlFlag = 'private' | 'public' | 'no-cache'
-
-export type CacheControlMap = Record<CacheControlFlag, boolean>
-
-export interface CacheHeader {
-  initiated: boolean
-  key: string
-  value: string
 }
