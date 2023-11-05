@@ -42,7 +42,7 @@ export class Control implements Directive {
     let directives = 0
 
     for (const directive of found)
-      directives |= match<number>(directive.toLowerCase(),
+      directives |= match<number>(directive,
         'private', PRIVATE,
         'public', PUBLIC,
         'no-cache', NO_CACHE,
