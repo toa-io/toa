@@ -22,7 +22,7 @@ export class Control implements Directive {
     if (request.identity === null)
       return this.value
 
-    const directives = this.parse()
+    const directives = this.mask()
 
     if ((directives & (PUBLIC | NO_CACHE)) === PUBLIC)
       return 'no-cache, ' + this.value
@@ -33,22 +33,22 @@ export class Control implements Directive {
     return this.value
   }
 
-  private parse (): number {
-    const found = this.value.match(DIRECTIVES_RX)
+  private mask (): number {
+    const directives = this.value.match(DIRECTIVES_RX)
 
-    if (found === null)
+    if (directives === null)
       return 0
 
-    let directives = 0
+    let mask = 0
 
-    for (const directive of found)
-      directives |= match<number>(directive,
+    for (const directive of directives)
+      mask |= match<number>(directive,
         'private', PRIVATE,
         'public', PUBLIC,
         'no-cache', NO_CACHE,
         0)
 
-    return directives
+    return mask
   }
 }
 
