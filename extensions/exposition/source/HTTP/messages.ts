@@ -1,23 +1,28 @@
 import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
 import { Readable } from 'node:stream'
 import { type Request, type Response } from 'express'
-import Negotiator from 'negotiator'
-import { buffer } from '@toa.io/generic'
-import { map } from '@toa.io/streams'
-import { formats, types } from './formats'
+import { buffer } from '@toa.io/streams'
+import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import type { ParsedQs } from 'qs'
+import type { Format } from './formats'
 
-export function write (request: Request, response: Response, body: any): void {
-  if (body instanceof Readable) void pipe(body, request, response)
-  else send(body, request, response)
+export function write
+(request: IncomingMessage, response: Response, message: OutgoingMessage): void {
+  if (message.body instanceof Readable)
+    stream(message, request, response)
+  else
+    send(message, request, response)
 }
 
 export async function read (request: Request): Promise<any> {
   const type = request.headers['content-type']
 
-  if (type === undefined) return undefined
+  if (type === undefined)
+    return undefined
 
-  if (!(type in formats)) throw new UnsupportedMediaType()
+  if (!(type in formats))
+    throw new UnsupportedMediaType()
 
   const format = formats[type]
 
@@ -30,48 +35,68 @@ export async function read (request: Request): Promise<any> {
   }
 }
 
-function send (body: any, request: Request, response: Response): void {
-  if (body === undefined || body?.length === 0) {
+function send (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
+  if (message.body === undefined) {
     response.end()
 
     return
   }
 
-  const type = negotiate(request)
-  const format = formats[type]
-  const buf = format.encode(body)
+  if (request.encoder === null)
+    throw new NotAcceptable()
 
-  // content-length and etag are set by Express
-  response.set('content-type', type)
-  response.send(buf)
+  const buf = request.encoder.encode(message.body)
+
+  response.set('content-type', request.encoder.type)
+  response.end(buf)
 }
 
-async function pipe (stream: Readable, request: Request, response: Response): Promise<void> {
-  const type = negotiate(request)
-  const format = formats[type]
+function stream
+(message: OutgoingMessage, request: IncomingMessage, response: Response): void {
+  const encoded = message.headers !== undefined && 'content-type' in message.headers
 
-  response.set('content-type', type)
-  map(stream, format.encode).pipe(response)
+  if (encoded)
+    pipe(message, response)
+  else
+    multipart(message, request, response)
+
+  message.body.on('error', (e: Error) => {
+    console.error(e)
+    response.end()
+  })
 }
 
-function negotiate (request: Request): string {
-  const negotiator = new Negotiator(request)
-  const mediaType = negotiator.mediaType(types)
-
-  if (mediaType === undefined) throw new NotAcceptable()
-
-  return mediaType
+function pipe (message: OutgoingMessage, response: Response): void {
+  response.set(message.headers)
+  message.body.pipe(response)
 }
 
-interface Message {
-  body: any
+function multipart (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
+  if (request.encoder === null)
+    throw new NotAcceptable()
+
+  const encoder = request.encoder
+
+  response.set('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
+
+  message.body
+    .map((part: unknown) => Buffer.concat([CUT, encoder.encode(part)]))
+    .on('end', () => response.end(FINALCUT))
+    .pipe(response)
 }
 
-export interface IncomingMessage extends Message {
+const BOUNDARY = 'cut'
+const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
+const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
+
+export interface IncomingMessage extends Request {
   method: string
   path: string
+  url: string
   headers: IncomingHttpHeaders
   query: Query
+  parse: <T> () => Promise<T>
+  encoder: Format | null
 }
 
 export interface OutgoingMessage {
@@ -80,7 +105,7 @@ export interface OutgoingMessage {
   body?: any
 }
 
-export interface Query {
+export interface Query extends ParsedQs {
   id?: string
   criteria?: string
   sort?: string

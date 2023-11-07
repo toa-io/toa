@@ -1,5 +1,5 @@
 import { type bindings, Connector } from '@toa.io/core'
-import { Nope, type Nopeable } from 'nopeable'
+import { type Maybe } from '@toa.io/types'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import { type Method, type Parameter, type Tree } from './RTD'
@@ -35,9 +35,6 @@ export class Gateway extends Connector {
   }
 
   private async process (request: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    if (request.path[request.path.length - 1] !== '/')
-      throw new http.NotFound('Trailing slash is required.')
-
     const match = this.tree.match(request.path)
 
     if (match === null)
@@ -60,14 +57,22 @@ export class Gateway extends Connector {
   private async call
   (method: Method<Endpoint, Directives>, request: http.IncomingMessage, parameters: Parameter[]):
   Promise<http.OutgoingMessage> {
+    if (request.path[request.path.length - 1] !== '/')
+      throw new http.NotFound('Trailing slash is required.')
+
+    if (request.encoder === null)
+      throw new http.NotAcceptable()
+
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 
-    const reply = await method.endpoint
-      .call(request.body, request.query, parameters)
-      .catch(rethrow) as Nopeable<unknown>
+    const body = await request.parse()
 
-    if (reply instanceof Nope)
+    const reply = await method.endpoint
+      .call(body, request.query, parameters)
+      .catch(rethrow) as Maybe<unknown>
+
+    if (reply instanceof Error)
       throw new http.Conflict(reply)
 
     return { body: reply }

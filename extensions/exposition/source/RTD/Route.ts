@@ -25,7 +25,7 @@ export class Route {
       if (segment.fragment !== null && segment.fragment !== fragments[i])
         return null
 
-      if (segment.fragment === null)
+      if (segment.fragment === null && segment.placeholder !== null)
         parameters.push({ name: segment.placeholder, value: fragments[i] })
     }
 

@@ -22,3 +22,6 @@ sql: pg://localhost/developer
 sql@docker: pg://host.docker.internal/developer
 
 stash@docker: redis://host.docker.internal
+
+storages:
+  tmp: tmp://integration

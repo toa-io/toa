@@ -1,0 +1,26 @@
+namespace: octets
+name: storage
+
+storages: ~
+
+operations:
+  store:
+    bindings: ~
+    input:
+      storage*: string
+      request*: ~
+      accept: string
+  fetch: &simple
+    bindings: ~
+    input:
+      storage*: string
+      path*: string
+  get: *simple
+  list: *simple
+  delete: *simple
+  permute:
+    bindings: ~
+    input:
+      storage*: string
+      path*: string
+      list*: [string]

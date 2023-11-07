@@ -12,7 +12,7 @@ Non-scattered documentation is coming this fall.
 ### Runtime
 
 - Interservice communications
-  - Seamless resilient RPC and Events ([ComQ](https://github.com/toa-io/comq))
+  - Reliable RPC and Events ([ComQ](https://github.com/toa-io/comq))
   - Flow control
   - Eventual consistency guarantee (not yet)
   - Uniform interface
@@ -29,14 +29,14 @@ Non-scattered documentation is coming this fall.
   - Batching
   - Data validation
   - Built-in implementations
-    - MongoDB, Amazon DocumentDB
-    - PostgreSQL, MSSQL, MySQL, MariaDB, Oracle, CockroachDB, SQLite3, Better-SQLite3, and Amazon
-      Redshift
+    - MongoDB
+    - SQL ([Knex](https://knexjs.org))
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery
   - [Identity](extensions/exposition/documentation/identity.md)
   - [Access Control](extensions/exposition/documentation/access.md)
+  - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation

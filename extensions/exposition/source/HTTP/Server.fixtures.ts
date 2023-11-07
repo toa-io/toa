@@ -17,17 +17,13 @@ const app = {
 } as unknown as jest.Mock<Express>
 
 export function createRequest (req: Partial<Request> = {}, content: string | Buffer = ''):
-jest.MockedObject<Request> {
+jest.MockedObject<IncomingMessage> {
   const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content)
   const stream = Readable.from(buffer)
 
   Object.assign(stream, { headers: {} }, req)
 
-  return stream as unknown as jest.MockedObject<Request>
-}
-
-export function createIncomingMessage (path: string, method: string = 'GET'): IncomingMessage {
-  return { method, path, headers: {}, body: undefined, query: {} }
+  return stream as unknown as jest.MockedObject<IncomingMessage>
 }
 
 export const res = {

@@ -1,13 +1,18 @@
 import { type Readable } from 'node:stream'
 import { buffer } from '@toa.io/streams'
-import { cases, open, rnd, read } from '../.test/util'
+import { cases, open, rnd, read } from '../test/util'
 import { providers } from './index'
 
-describe.each(cases)('%s', (protocol, url, secrets) => {
+describe.each(cases)('%s', (...suite) => {
+  const [protocol, url, secrets, init] = suite
   const Provider = providers[protocol]
   const provider = new Provider(url, secrets)
 
   let dir: string
+
+  beforeAll(async () => {
+    await init?.(url, secrets)
+  })
 
   beforeEach(() => {
     dir = '/' + rnd()
@@ -24,7 +29,7 @@ describe.each(cases)('%s', (protocol, url, secrets) => {
   })
 
   it('should create entry', async () => {
-    const stream = await open('lenna.png')
+    const stream = open('lenna.png')
 
     await provider.put(dir, 'lenna.png', stream)
 
@@ -36,8 +41,8 @@ describe.each(cases)('%s', (protocol, url, secrets) => {
   })
 
   it('should overwrite existing entry', async () => {
-    const stream0 = await open('lenna.png')
-    const stream1 = await open('albert.jpg')
+    const stream0 = open('lenna.png')
+    const stream1 = open('albert.jpg')
 
     await provider.put(dir, 'lenna.png', stream0)
     await provider.put(dir, 'lenna.png', stream1)
@@ -50,7 +55,7 @@ describe.each(cases)('%s', (protocol, url, secrets) => {
   })
 
   it('should get by path', async () => {
-    const stream = await open('lenna.png')
+    const stream = open('lenna.png')
 
     await provider.put(dir, 'lenna.png', stream)
 
@@ -72,7 +77,7 @@ describe.each(cases)('%s', (protocol, url, secrets) => {
      */
 
     it('should delete entry', async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
 
       await provider.put(dir, 'lenna.png', stream)
       await provider.delete(dir + '/lenna.png')
@@ -87,7 +92,7 @@ describe.each(cases)('%s', (protocol, url, secrets) => {
     })
 
     it('should delete directory', async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
 
       await provider.put(dir, 'lenna.png', stream)
       await provider.delete(dir)
@@ -98,7 +103,7 @@ describe.each(cases)('%s', (protocol, url, secrets) => {
     })
 
     it('should move an entry', async () => {
-      const stream = await open('lenna.png')
+      const stream = open('lenna.png')
       const dir2 = '/' + rnd()
 
       await provider.put(dir, 'lenna.png', stream)

@@ -1,0 +1,15 @@
+namespace: octets
+name: tester
+
+storages: octets
+
+operations:
+  foo: &operation
+    input:
+      storage*: string
+      path*: string
+      entry: object
+  bar: *operation
+  baz: *operation
+  err: *operation
+  diversify: *operation

@@ -1,8 +1,8 @@
 'use strict'
 
-const { Nope } = require('nopeable')
-const { Connector } = require('@toa.io/core')
 const { Readable } = require('node:stream')
+const { Connector } = require('@toa.io/core')
+const { match } = require('matchacho')
 
 class Runner extends Connector {
   /** @type {toa.node.Algorithm} */
@@ -27,10 +27,12 @@ class Runner extends Connector {
   async execute (input, state) {
     const reply = await this.#algorithm.execute(input, state)
 
-    if (reply instanceof Nope) return { error: reply }
-    else if (isGenerator(reply)) return Readable.from(reply)
-    else if (reply instanceof Readable) return reply
-    else return { output: reply }
+    return match(reply,
+      Error, (error) => ({ error }),
+      Readable, reply,
+      isGenerator, (generator) => Readable.from(generator),
+      (output) => ({ output })
+    )
   }
 }
 

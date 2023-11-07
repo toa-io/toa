@@ -12,6 +12,15 @@ Feature: RPC
       """
     And I disconnect
 
+  Scenario: Send a request and receive an error
+    Given I compose `nope` component
+    When I call `default.nope.nope`
+    Then the error is received:
+      """yaml
+      message: ERR
+      """
+    And I disconnect
+
   Scenario: Consume a stream
     Given I compose `streams.numbers` component
     When I call `streams.numbers.generate` with:

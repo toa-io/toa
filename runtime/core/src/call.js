@@ -1,8 +1,8 @@
 'use strict'
 
+const { Readable } = require('node:stream')
 const { Connector } = require('./connector')
-const { Nope } = require('nopeable')
-const { Readable } = require('stream')
+const { Err } = require('error-value')
 
 class Call extends Connector {
   #transmitter
@@ -32,9 +32,9 @@ class Call extends Connector {
         throw reply.exception
 
       if (reply.error !== undefined)
-        return new Nope(reply.error)
-
-      return reply.output
+        return Err(reply.error.code, reply.error)
+      else
+        return reply.output
     }
   }
 }

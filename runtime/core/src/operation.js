@@ -51,6 +51,7 @@ class Operation extends Connector {
 
   async run (store) {
     const { request, state } = store
+    // noinspection UnnecessaryLocalVariableJS
     const reply = await this.#cascade.run(request.input, state) || {}
 
     // this.#contracts.reply.fit(reply)

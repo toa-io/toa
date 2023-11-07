@@ -3,7 +3,7 @@
 Text-level http client.
 
 Combination of [http-parser-js](https://github.com/creationix/http-parser-js)
-and [node-fetch](https://github.com/node-fetch/node-fetch)
+and Fetch API
 
 `request(http: string): string`
 

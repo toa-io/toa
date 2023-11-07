@@ -90,7 +90,7 @@ Feature: toa compose
     Then program should exit with code 1
     And stderr should contain lines:
       """
-      <...>npm ERR! code EUNSUPPORTEDPROXY
+      <...>npm ERR! code EINVALIDPROXY
       """
 
   Scenario: Run composition in docker with custom context build options

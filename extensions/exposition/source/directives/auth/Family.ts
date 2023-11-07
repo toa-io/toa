@@ -1,32 +1,34 @@
-import { type Component } from '@toa.io/core'
-import { Nope } from 'nopeable'
-import { type Parameter } from '../../RTD'
-import { type Family, type Output } from '../../Directive'
-import { type Remotes } from '../../Remotes'
+import { match } from 'matchacho'
 import * as http from '../../HTTP'
-import {
-  type AuthenticationResult,
-  type Ban,
-  type Directive,
-  type Discovery,
-  type Extension,
-  type Identity,
-  type Input, type Remote,
-  type Schemes
-} from './types'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
 import { Role } from './Role'
 import { Rule } from './Rule'
 import { Incept } from './Incept'
-import { split } from './split'
-import { PRIMARY, PROVIDERS } from './schemes'
-import { Scheme } from './Scheme'
 import { Echo } from './Echo'
+import { split } from './split'
+import { Scheme } from './Scheme'
+import { PRIMARY, PROVIDERS } from './schemes'
+import type { Component } from '@toa.io/core'
+import type { Remotes } from '../../Remotes'
+import type { Family, Output } from '../../Directive'
+import type { Parameter } from '../../RTD'
+import type {
+  AuthenticationResult,
+  Ban,
+  Directive,
+  Discovery,
+  Extension,
+  Identity,
+  Input,
+  Remote,
+  Schemes
+} from './types'
 
 class Authorization implements Family<Directive, Extension> {
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
+
   private readonly schemes = {} as unknown as Schemes
   private readonly discovery = {} as unknown as Discovery
   private tokens: Component | null = null
@@ -41,10 +43,11 @@ class Authorization implements Family<Directive, Extension> {
     for (const name of REMOTES)
       this.discovery[name] ??= remotes.discover('identity', name)
 
-    if (Class === Role) return new Class(value, this.discovery.roles)
-    else if (Class === Rule) return new Class(value, this.create.bind(this))
-    else if (Class === Incept) return new Class(value, this.discovery)
-    else return new Class(value)
+    return match(Class,
+      Role, () => new Role(value, this.discovery.roles),
+      Rule, () => new Rule(value, this.create.bind(this)),
+      Incept, () => new Incept(value, this.discovery),
+      () => new Class(value))
   }
 
   public async preflight
@@ -107,7 +110,7 @@ class Authorization implements Family<Directive, Extension> {
     const result = await this.schemes[scheme]
       .invoke<AuthenticationResult>('authenticate', { input: credentials })
 
-    if (result instanceof Nope)
+    if (result instanceof Error)
       return null
 
     const identity = result.identity

@@ -63,6 +63,7 @@ it('should deploy default origin', async () => {
 it('should deploy properties', async () => {
   const manifest: Manifest = {}
   const instance = { locator, manifest } as unknown as Instance
+
   const properties: Properties = {
     '.http': {
       '/^http:\\/\\/\\w+api.example.com/': true
@@ -94,6 +95,7 @@ it('should deploy properties', async () => {
 it('should deploy properties with null manifest', async () => {
   const manifest: Manifest = null
   const instance = { locator, manifest } as unknown as Instance
+
   const properties: Properties = {
     '.http': {
       '/^http:\\/\\/\\w+api.example.com/': true

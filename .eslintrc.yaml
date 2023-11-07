@@ -15,6 +15,12 @@ overrides:
         - blankLine: always
           prev: [const, let]
           next: expression
+        - blankLine: always
+          prev: [multiline-const, multiline-let]
+          next: '*'
+        - blankLine: always
+          prev: '*'
+          next: [multiline-const, multiline-let]
       function-paren-newline:
         - error
         - never
@@ -42,13 +48,21 @@ overrides:
       max-params: error
       arrow-parens: error
       no-warning-comments: error
+      func-style:
+        - error
+        - declaration
       '@typescript-eslint/consistent-type-imports':
         - error
-        - fixStyle: inline-type-imports
+        - fixStyle: separate-type-imports
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
       '@typescript-eslint/no-confusing-void-expression': off
       no-void: off
+      eqeqeq:
+        - error
+        - always
+        - null: always
+
 parserOptions:
   project: ./tsconfig.json
 env:

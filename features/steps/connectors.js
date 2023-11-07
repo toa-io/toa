@@ -134,6 +134,24 @@ Then('the reply is received:',
     assert.equal(matches, true, diff(expected, this.reply))
   })
 
+Then('the error is received:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  function (yaml) {
+    if (this.exception !== undefined)
+      throw this.exception
+
+    if (!(this.reply instanceof Error))
+      throw new Error('Reply is not an error')
+
+    const expected = parse(yaml)
+    const matches = match(this.reply, expected)
+
+    assert.equal(matches, true, diff(expected, this.reply))
+  })
+
 Then('the reply stream is received:',
   /**
    * @param {string} yaml

@@ -34,14 +34,12 @@ origins:
 
 ## HTTP Aspect
 
-Uses [node-fetch](https://github.com/node-fetch/node-fetch) and returns its result.
-
 Aspect invocation function
-signature: `async (origin: string, rel: string, reuest: fetch.Request): fetch.Response`
+signature: `async (origin: string, rel: string, reuest: fetch.Request): Response`
 
 - `origin`: name of the origin in the manifest
 - `rel`: reference to a resource relative to the origin's value
-- `request`: `Request` form `node-fetch`
+- `request`: `Request` object
 
 ### Absolute URLs
 
