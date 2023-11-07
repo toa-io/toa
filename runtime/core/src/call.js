@@ -2,6 +2,7 @@
 
 const { Readable } = require('node:stream')
 const { Connector } = require('./connector')
+const { Err } = require('error-value')
 
 class Call extends Connector {
   #transmitter
@@ -31,12 +32,9 @@ class Call extends Connector {
         throw reply.exception
 
       if (reply.error !== undefined)
-        return Object.create(Error.prototype, {
-          message: { value: reply.error.message },
-          cause: { value: reply.error.cause }
-        })
-
-      return reply.output
+        return Err(reply.error.code, reply.error)
+      else
+        return reply.output
     }
   }
 }

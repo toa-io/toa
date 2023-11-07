@@ -1,14 +1,5 @@
 version: "3.9"
 services:
-  localstack:
-    image: localstack/localstack
-    ports:
-      - '127.0.0.1:4566:4566'
-      - '127.0.0.1:4510-4559:4510-4559'
-    environment:
-      - SERVICES=s3
-      - AWS_ACCESS_KEY_ID=test_access_key
-      - AWS_SECRET_ACCESS_KEY=test_secret_access_key
   verdaccio:
     image: verdaccio/verdaccio:5.10.2
     ports: ['4873:4873']
@@ -48,3 +39,12 @@ services:
   http-echo:
     image: ealen/echo-server:0.7.0
     ports: ['8888:80']
+  localstack:
+    image: localstack/localstack
+    ports:
+      - '127.0.0.1:4566:4566'
+      - '127.0.0.1:4510-4559:4510-4559'
+    environment:
+      - SERVICES=s3
+      - AWS_ACCESS_KEY_ID=developer
+      - AWS_SECRET_ACCESS_KEY=secret

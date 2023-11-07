@@ -2,7 +2,9 @@ import { Readable } from 'node:stream'
 import { posix } from 'node:path'
 import { decode, encode } from 'msgpackr'
 import { buffer, newid } from '@toa.io/generic'
+import { Err } from 'error-value'
 import { Scanner } from './Scanner'
+import type { TypeControl } from './Scanner'
 import type { Provider } from './Provider'
 import type { Entry } from './Entry'
 
@@ -13,7 +15,7 @@ export class Storage {
     this.provider = provider
   }
 
-  public async put (path: string, stream: Readable, type?: string): Maybe<Entry> {
+  public async put (path: string, stream: Readable, type?: TypeControl): Maybe<Entry> {
     const scanner = new Scanner(type)
     const pipe = stream.pipe(scanner)
     const tempname = await this.transit(pipe)
@@ -73,7 +75,7 @@ export class Storage {
     return stream === null ? [] : decode(await buffer(stream))
   }
 
-  public async reorder (path: string, ids: string[]): Maybe<void> {
+  public async permute (path: string, ids: string[]): Maybe<void> {
     const unique = new Set(ids)
     const dir = posix.join(ENTRIES, path)
     const list = await this.list(path)
@@ -216,8 +218,8 @@ export class Storage {
   }
 }
 
-const ERR_NOT_FOUND = new Error('NOT_FOUND')
-const ERR_PERMUTATION_MISMATCH = new Error('PERMUTATION_MISMATCH')
+const ERR_NOT_FOUND = Err('NOT_FOUND')
+const ERR_PERMUTATION_MISMATCH = Err('PERMUTATION_MISMATCH')
 
 const TEMP = '/temp'
 const BLOBs = '/blobs'

@@ -47,16 +47,26 @@ async function effect (_, context) {
 
 > `Maybe<T> = T | Error`
 
-#### `async put(path: string, stream: Readable, type?: string): Maybe<Entry>`
+#### `async put(path: string, stream: Readable, type?: TypeControl): Maybe<Entry>`
+
+```
+interface TypeControl {
+  claim?: string
+  accept?: string
+}
+```
 
 Add a BLOB to the storage and create an entry under specified `path`.
 
 BLOB type is identified
 using [magick numbers](https://github.com/sindresorhus/file-type).
-If the `type` argument is specified and does not match the BLOB type, then a `TYPE_MISMATCH` error
-is returned.
-If the BLOB type cannot be identified
-and the value of `type` is not in the list of known types, then the given value is used.
+
+If the `type` argument is specified and the value of the `claim` does not match the detected BLOB type, then
+a `TYPE_MISMATCH` error is returned.
+If the BLOB type cannot be identified and the value of the `claim` is not in the list of known types, then the given
+value is used.
+If the list of [acceptable types](https://datatracker.ietf.org/doc/html/rfc2616#section-14.1) is passed and the type of
+the BLOB does not match any of its values, then a `NOT_ACCEPTABLE` error is returned.
 
 Known types
 are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/jxl`, `image/avif`.
@@ -89,7 +99,7 @@ Delete the entry specified by `path`.
 
 Get ordered list of `id`s of entries in under the `path`.
 
-#### `async reorder(path: string, ids: string[]): Maybe<void>`
+#### `async permute(path: string, ids: string[]): Maybe<void>`
 
 Reorder entries under the `path`.
 
@@ -146,8 +156,8 @@ Annotation value format is `tmp:///{path}`.
 
 ## Deduplication
 
-BLOBs are stored in the underlying storage with their checksum as the key, ensuring that identical BLOBs
-are stored only once.
+BLOBs are stored in the underlying storage with their checksum as the key, ensuring that identical
+BLOBs are stored only once.
 Variants, on the other hand, are not deduplicated across different entries.
 
 Underlying directory structure:
@@ -195,5 +205,6 @@ storages:
 
 ## Secrets
 
-Secrets declared by storage providers can be deployed by [`toa conceal`](/runtime/cli/readme.md#conceal),
+Secrets declared by storage providers can be deployed
+by [`toa conceal`](/runtime/cli/readme.md#conceal),
 or set locally by [`toa env`](/runtime/cli/readme.md#env).

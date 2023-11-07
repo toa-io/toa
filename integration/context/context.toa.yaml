@@ -18,6 +18,11 @@ compositions:
       - messages.messages
       - stats.stats
 
+amqp: amqp://host.docker.internal
+
+mongodb: mongodb://is-not-defined # this is not deployable, value must present to pass validation
+mongodb@dev: mongodb://host.docker.internal
+
 exposition:
   host: dummies.toa.dev
   host@staging: dummies.stage.toa.dev
@@ -32,13 +37,11 @@ exposition:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
   annotations@dev: ~
 
-mongodb: mongodb://is-not-defined # this is not deployable, value must present to pass validation
-mongodb@dev: mongodb://host.docker.internal
-
-amqp: amqp://host.docker.internal
-
 configuration:
   identity.tokens:
     key0: secret-key-0
   messages.messages:
     price: 2
+
+storages:
+  octets: tmp:///octets

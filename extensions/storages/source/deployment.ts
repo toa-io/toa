@@ -16,6 +16,10 @@ export function deployment (instances: Instance[], annotation: Annotation): Depe
 }
 
 function validate (instances: Instance[], annotation: Annotation): void {
+  if (annotation === undefined)
+    throw new Error('Storages annotation is required by: ' +
+      `'${instances.map((i) => i.component.locator.id).join("', '")}'`)
+
   for (const instance of instances)
     contains(instance, annotation)
 

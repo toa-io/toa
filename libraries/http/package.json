@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/http",
-  "version": "0.22.0",
+  "version": "0.23.0-dev.0",
   "description": "Text-level HTTP client",
   "homepage": "https://toa.io",
   "author": {
@@ -16,7 +16,7 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 18.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "http-parser-js": "0.5.8",
-    "node-fetch": "2.6.11"
+    "negotiator": "0.6.3"
   }
 }

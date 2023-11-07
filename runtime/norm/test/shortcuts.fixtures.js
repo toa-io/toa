@@ -4,7 +4,6 @@ const { generate } = require('randomstring')
 const { random } = require('@toa.io/generic')
 
 const SHORTCUTS = {
-  http: '@toa.io/bindings.http',
   amqp: '@toa.io/bindings.amqp',
   mongodb: '@toa.io/storages.mongodb'
 }

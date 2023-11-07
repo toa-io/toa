@@ -2,8 +2,8 @@ import { Connector } from './connector'
 import { Locator } from './locator'
 import { Request } from './request'
 
-export interface Component extends Connector {
+export interface Component extends Connector{
   locator: Locator
 
-  invoke<T> (endpoint: string, request: Request): Promise<T>
+  invoke<T = any> (endpoint: string, request: Request): Promise<T>
 }
