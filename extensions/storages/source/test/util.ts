@@ -39,7 +39,7 @@ export function rnd (): string {
 export function open (rel: string): ReadStream {
   const path = join(__dirname, rel)
 
-  return createReadStream(path)
+  return createReadStream(path, { highWaterMark: 473900 })
 }
 
 export async function read (rel: string): Promise<Buffer> {
