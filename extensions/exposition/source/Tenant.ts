@@ -30,6 +30,11 @@ export class Tenant extends Connector {
       `'${this.branch.namespace}.${this.branch.component}' has started.`)
   }
 
+  public override async dispose (): Promise<void> {
+    console.info('Exposition Tenant for ' +
+      `'${this.branch.namespace}.${this.branch.component}' has been stopped.`)
+  }
+
   private async expose (): Promise<void> {
     await this.broadcast.transmit('expose', this.branch)
   }

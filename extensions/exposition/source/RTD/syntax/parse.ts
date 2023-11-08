@@ -5,7 +5,8 @@ import {
   type Route,
   type Method,
   type Mapping,
-  type Directive, type Range
+  type Directive,
+  type Range
 } from './types'
 
 export function parse (input: object, shortcuts?: Shortcuts): Node {
