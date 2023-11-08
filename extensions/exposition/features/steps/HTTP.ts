@@ -85,7 +85,13 @@ export class HTTP {
     const { url, method, headers } = http.parse.request(head)
     const href = new URL(url, this.origin).href
     const body = open(filename)
-    const request = { method, headers, body, duplex: 'half' } as unknown as RequestInit
+
+    const request = {
+      method,
+      headers: new Headers(headers),
+      body: body as unknown as ReadableStream,
+      duplex: 'half'
+    }
 
     try {
       const response = await fetch(href, request)

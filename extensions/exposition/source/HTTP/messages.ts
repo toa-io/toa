@@ -53,7 +53,7 @@ function send (message: OutgoingMessage, request: IncomingMessage, response: Res
 
 function stream
 (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
-  const encoded = message.headers !== undefined && 'content-type' in message.headers
+  const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
     pipe(message, response)
@@ -67,7 +67,7 @@ function stream
 }
 
 function pipe (message: OutgoingMessage, response: Response): void {
-  response.set(message.headers)
+  response.set(Object.fromEntries(message.headers?.entries() ?? []))
   message.body.pipe(response)
 }
 
