@@ -67,7 +67,7 @@ function stream
 }
 
 function pipe (message: OutgoingMessage, response: Response): void {
-  response.set(Object.fromEntries(message.headers?.entries() ?? []))
+  message.headers?.forEach((value, key) => response.set(key, value))
   message.body.pipe(response)
 }
 
