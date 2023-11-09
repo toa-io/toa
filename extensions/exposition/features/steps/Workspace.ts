@@ -1,4 +1,4 @@
-import { join, sep } from 'node:path/posix'
+import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { mkdtemp, copy } from 'fs-extra'
 import * as yaml from '@toa.io/yaml'
@@ -11,7 +11,8 @@ export class Workspace {
     const method = descriptor.value
 
     descriptor.value = async function (this: Workspace, ...args: any[]): Promise<any> {
-      if (this.root === devnull) this.root = await mkdtemp(tmpdir() + sep)
+      if (this.root === devnull) this.root =
+        await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
 
       return method.apply(this, args)
     }
