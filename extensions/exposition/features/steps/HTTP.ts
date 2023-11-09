@@ -86,9 +86,11 @@ export class HTTP {
     const href = new URL(url, this.origin).href
     const body = open(filename)
 
+    headers.connection = 'close'
+
     const request = {
       method,
-      headers: new Headers(headers),
+      headers,
       body: body as unknown as ReadableStream,
       duplex: 'half'
     }
