@@ -140,3 +140,21 @@ Feature: Caching
 
       hello
       """
+
+  Scenario: Response without caching
+    Given the annotation:
+      """yaml
+      /:
+        anonymous: true
+        GET:
+          dev:stub: hello
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      accept: text/plain
+      """
+    Then the reply does not contain:
+      """
+      cache-control:
+      """
