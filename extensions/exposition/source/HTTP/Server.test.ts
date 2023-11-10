@@ -97,7 +97,9 @@ describe('result', () => {
   it('should send status code 200 if the result has a value', async () => {
     const req = createRequest()
 
-    server.attach(async (): Promise<OutgoingMessage> => ({ headers: {}, body: generate() }))
+    server.attach(async (): Promise<OutgoingMessage> => ({
+      headers: new Headers(), body: generate()
+    }))
     await use(req)
 
     expect(res.status).toHaveBeenCalledWith(200)
@@ -106,7 +108,7 @@ describe('result', () => {
   it('should send status code 204 if the result has no value', async () => {
     const req = createRequest()
 
-    server.attach(async (): Promise<OutgoingMessage> => ({ headers: {} }))
+    server.attach(async (): Promise<OutgoingMessage> => ({ headers: new Headers() }))
     await use(req)
 
     expect(res.status).toHaveBeenCalledWith(204)
@@ -118,7 +120,7 @@ describe('result', () => {
     const buf = Buffer.from(json)
     const req = createRequest({ headers: { accept: 'application/json' } })
 
-    server.attach(async (): Promise<OutgoingMessage> => ({ headers: {}, body }))
+    server.attach(async (): Promise<OutgoingMessage> => ({ headers: new Headers(), body }))
     await use(req)
 
     expect(res.end).toHaveBeenCalledWith(buf)
