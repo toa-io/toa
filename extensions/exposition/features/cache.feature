@@ -9,7 +9,6 @@ Feature: Caching
     Given the `identity.roles` database contains:
       | _id                              | identity                         | role      |
       | 775a648d054e4ce1a65f8f17e5b51803 | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer |
-    And the `identity.bans` database is empty
 
   Scenario: Caching successful response
     Given the annotation:

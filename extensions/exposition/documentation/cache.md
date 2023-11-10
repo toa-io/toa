@@ -39,4 +39,4 @@ Same as `cache:control` without implicit modifications.
 ## References
 
 - HTTP 14.9.1 [What is cacheable](https://datatracker.ietf.org/doc/html/rfc2616#section-14.9.1)
-- See also [features](/extensions/exposition/features/cache.feature).
+- See also [features](/extensions/exposition/features/cache.feature)
