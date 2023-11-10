@@ -1,5 +1,6 @@
 import { join } from 'node:path'
-import { directory } from '@toa.io/filesystem'
+import { tmpdir } from 'node:os'
+import { mkdtemp, copy } from 'fs-extra'
 import * as yaml from '@toa.io/yaml'
 
 export class Workspace {
@@ -10,7 +11,8 @@ export class Workspace {
     const method = descriptor.value
 
     descriptor.value = async function (this: Workspace, ...args: any[]): Promise<any> {
-      if (this.root === devnull) this.root = await directory.temp()
+      if (this.root === devnull) this.root =
+        await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
 
       return method.apply(this, args)
     }
@@ -23,7 +25,7 @@ export class Workspace {
     const source = join(__dirname, 'components', name)
     const target = join(this.root, name)
 
-    await directory.copy(source, target)
+    await copy(source, target)
 
     if (patch !== undefined)
       await this.patchManifest(target, patch)

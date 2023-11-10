@@ -84,9 +84,8 @@ export class Server extends Connector {
         else if (message.body === undefined) status = 204
         else status = 200
 
-      response
-        .status(status)
-        .set(message.headers)
+      response.status(status)
+      message.headers?.forEach((value, key) => response.set(key, value))
 
       if (message.body !== undefined && message.body !== null)
         write(request, response, message)

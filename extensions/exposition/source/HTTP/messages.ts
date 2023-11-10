@@ -1,4 +1,4 @@
-import { type IncomingHttpHeaders, type OutgoingHttpHeaders } from 'node:http'
+import { type IncomingHttpHeaders } from 'node:http'
 import { Readable } from 'node:stream'
 import { type Request, type Response } from 'express'
 import { buffer } from '@toa.io/streams'
@@ -53,7 +53,7 @@ function send (message: OutgoingMessage, request: IncomingMessage, response: Res
 
 function stream
 (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
-  const encoded = message.headers !== undefined && 'content-type' in message.headers
+  const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
     pipe(message, response)
@@ -67,7 +67,7 @@ function stream
 }
 
 function pipe (message: OutgoingMessage, response: Response): void {
-  response.set(message.headers)
+  message.headers?.forEach((value, key) => response.set(key, value))
   message.body.pipe(response)
 }
 
@@ -101,7 +101,7 @@ export interface IncomingMessage extends Request {
 
 export interface OutgoingMessage {
   status?: number
-  headers?: OutgoingHttpHeaders
+  headers?: Headers
   body?: any
 }
 

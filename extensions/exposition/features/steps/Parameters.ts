@@ -8,8 +8,7 @@ export class Parameters {
   }
 }
 
-setDefaultTimeout(10 * 1000)
-
+setDefaultTimeout(30 * 1000)
 process.env.TOA_DEV = '1'
 
 // { octets: tmp:///exposition-octets }

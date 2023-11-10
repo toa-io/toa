@@ -35,7 +35,8 @@ Non-scattered documentation is coming this fall.
 - [API Gateway](/extensions/exposition)
   - Resource discovery
   - [Identity](extensions/exposition/documentation/identity.md)
-  - [Access Control](extensions/exposition/documentation/access.md)
+  - [Access control](extensions/exposition/documentation/access.md)
+  - [Cache control](/extensions/exposition/documentation/cache.md)
   - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)

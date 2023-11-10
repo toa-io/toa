@@ -4,6 +4,8 @@ function computation () {
   return ERR
 }
 
-const ERR = new Error('ERR')
+const ERR = Object.create(Error.prototype, {
+  message: { value: 'ERR', enumerable: true }
+})
 
 exports.computation = computation

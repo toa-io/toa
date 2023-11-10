@@ -182,4 +182,5 @@ exposition:
 - [Access authorization](documentation/access.md)
 - [BLOBs](documentation/octets.md)
 - [Components and resources](documentation/components.md)
+- [Caching](documentation/cache.md)
 - [Features](features)
