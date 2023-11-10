@@ -76,7 +76,8 @@
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
     "ci": "rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules\" && npm i",
     "transpile": "npx lerna@7.3.0 run transpile",
-    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && npm run transpile"
+    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && npm run transpile",
+    "compose": "docker compose rm -f -s -v && docker compose up -d"
   },
   "jest": {
     "preset": "ts-jest",

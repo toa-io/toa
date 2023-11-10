@@ -90,9 +90,9 @@ class Authorization implements Family<Directive, Extension> {
     const authorization = `Token ${token}`
 
     if (response.headers === undefined)
-      response.headers = {}
+      response.headers = new Headers()
 
-    response.headers.authorization = authorization
+    response.headers.set('authorization', authorization)
   }
 
   private async resolve (authorization: string | undefined): Promise<Identity | null> {

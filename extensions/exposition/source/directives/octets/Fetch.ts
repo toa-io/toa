@@ -48,11 +48,11 @@ export class Fetch implements Directive {
     if (result instanceof Error)
       throw new NotFound()
 
-    const headers = {
+    const headers = new Headers({
       'content-type': result.type,
-      'content-length': result.size,
+      'content-length': result.size.toString(),
       etag: result.checksum
-    }
+    })
 
     return { headers, body: result.stream }
   }

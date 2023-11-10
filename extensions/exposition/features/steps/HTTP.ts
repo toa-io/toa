@@ -4,7 +4,7 @@ import * as http from '@toa.io/http'
 import { trim } from '@toa.io/generic'
 import { buffer } from '@toa.io/streams'
 import { open } from '../../../storages/source/test/util'
-import { Parameters } from './parameters'
+import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
 @binding([Gateway, Parameters])
@@ -85,7 +85,15 @@ export class HTTP {
     const { url, method, headers } = http.parse.request(head)
     const href = new URL(url, this.origin).href
     const body = open(filename)
-    const request = { method, headers, body, duplex: 'half' } as unknown as RequestInit
+
+    headers.connection = 'close' // required for interrupted streams
+
+    const request = {
+      method,
+      headers,
+      body: body as unknown as ReadableStream,
+      duplex: 'half'
+    }
 
     try {
       const response = await fetch(href, request)
