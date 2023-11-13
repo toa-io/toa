@@ -111,6 +111,38 @@ When('I call {endpoint} with:',
     await call.call(this, endpoint, request)
   })
 
+When('I call {endpoint} without waiting with:',
+  /**
+   * @param {string} endpoint
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, yaml) {
+    const request = parse(yaml)
+
+    pendingCall.call(this, endpoint, request)
+  })
+
+Then('the pending reply is not received yet',
+  /**
+   * @this {toa.features.Context}
+   */
+  function () {
+    if (this.exception !== undefined) throw this.exception
+
+    assert.equal(this.pendingReply, undefined, 'Reply is received')
+  })
+
+Then('the pending reply is received',
+  /**
+   * @this {toa.features.Context}
+   */
+  function () {
+    if (this.exception !== undefined) throw this.exception
+
+    assert.notEqual(this.pendingReply, undefined, 'Reply is not received')
+  })
+
 When('I call {endpoint}',
   /**
    * @param {string} endpoint
@@ -235,6 +267,25 @@ async function call (endpoint, request) {
 
   try {
     this.reply = await remote.invoke(operation, request)
+  } catch (exception) {
+    this.exception = exception
+  }
+
+  await remote.disconnect()
+}
+
+/**
+ * @param {string} endpoint
+ * @param {toa.core.Request} request
+ * @this {toa.features.Context}
+ * @return {Promise<void>}
+ */
+async function pendingCall (endpoint, request) {
+  const operation = endpoint.split('.').pop()
+  const remote = await stage.remote(endpoint)
+
+  try {
+    this.pendingReply = await remote.invoke(operation, request)
   } catch (exception) {
     this.exception = exception
   }

@@ -23,14 +23,24 @@ Feature: MongoDB storage
       """yaml
       mongodb: mongodb://localhost
       """
-    And I boot `mongo.restart` component
-    When I stop docker container `mongodb`
-    And I invoke `transit` with:
+    And I stage `mongo.restart` component
+    And I call `mongo.restart.transit` with:
       """yaml
       input:
         foo: 1
         bar: 'test'
       """
-    When I start docker container `mongodb`
     Then the reply is received
+    When I stop docker container `mongodb`
+    And I call `mongo.restart.transit` without waiting with:
+      """yaml
+      input:
+        foo: 1
+        bar: 'test'
+      """
+    And I wait 1 second
+    Then the pending reply is not received yet
+    When I start docker container `mongodb`
+    And I wait 3 second
+    Then the pending reply is received
     And I disconnect
