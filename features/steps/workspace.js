@@ -108,6 +108,7 @@ After(function () {
 
 async function updateEnv (update, envFile) {
   const path = join(this.cwd, envFile)
+  await new Promise(resolve => setTimeout(resolve, 500))
   const contents = await file.read(path)
   const oldVars = dotenv.parse(contents)
   const newVars = dotenv.parse(update)

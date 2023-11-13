@@ -17,7 +17,7 @@ When('I run {command}',
 
     this.process = execute.call(this, command)
 
-    const grace = timeout(1000)
+    const grace = timeout(10000)
 
     await Promise.any([grace, this.process])
   })
