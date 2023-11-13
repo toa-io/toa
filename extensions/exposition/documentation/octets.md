@@ -114,9 +114,9 @@ created: 1698004822358
 optimize: null
 --cut
 error:
-step: resize
-code: TOO_SMALL
-message: Image is too small
+  step: resize
+  code: TOO_SMALL
+  message: Image is too small
 --cut--
 ```
 
