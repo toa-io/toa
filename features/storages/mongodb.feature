@@ -1,6 +1,6 @@
 Feature: MongoDB storage
 
-  Scenario: Create a record with environment
+  Scenario: Create a record with environment in MongoDB
     Given I have a component `mongo.one`
     And I have a context with:
       """yaml
@@ -16,3 +16,21 @@ Feature: MongoDB storage
       """
     And I run `TOA_DEV=0 toa invoke transit "{ input: { foo: 1, bar: 'test' } }" -p ./components/mongo.one`
     Then program should exit with code 0
+
+  Scenario: Create a record in MongoDB with reconnection
+    Given I have a docker container `mongodb`
+    And I have a context with:
+      """yaml
+      mongodb: mongodb://localhost
+      """
+    And I boot `mongo.restart` component
+    When I stop docker container `mongodb`
+    And I invoke `transit` with:
+      """yaml
+      input:
+        foo: 1
+        bar: 'test'
+      """
+    When I start docker container `mongodb`
+    Then the reply is received
+    And I disconnect
