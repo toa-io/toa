@@ -24,8 +24,10 @@ export class Server extends Connector {
     this.debug = debug
   }
 
-  public static create (options: Partial<Properties> = {}): Server {
-    const properties: Properties = Object.assign({}, defaults(), options)
+  public static create (options?: Partial<Properties>): Server {
+    const properties: Properties = options === undefined
+      ? DEFAULTS
+      : { ...DEFAULTS, ...options }
 
     const app = express()
 
@@ -147,11 +149,9 @@ async function adam (request: Request): Promise<void> {
   return await completed
 }
 
-function defaults (): Properties {
-  return {
-    methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
-    debug: false
-  }
+const DEFAULTS = {
+  methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
+  debug: false
 }
 
 interface Properties {
