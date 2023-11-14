@@ -35,7 +35,7 @@ export class Server extends Connector {
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: any, response: Response): void => {
+    this.app.use((request: any, response: Response) => {
       this.extend(request)
         .then(process)
         .then(this.success(request, response))
@@ -95,7 +95,11 @@ export class Server extends Connector {
   }
 
   private fail (request: IncomingMessage, response: Response) {
-    return (exception: Error) => {
+    return async (exception: Error) => {
+      if (!request.complete)
+        // https://github.com/whatwg/fetch/issues/1254
+        for await (const _ of request) void _
+
       const status = exception instanceof Exception
         ? exception.status
         : 500
@@ -112,10 +116,6 @@ export class Server extends Connector {
         write(request, response, { body })
       } else
         response.end()
-
-      // stop accepting request
-      if (!request.complete)
-        request.destroy()
     }
   }
 }

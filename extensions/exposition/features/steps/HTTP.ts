@@ -86,8 +86,6 @@ export class HTTP {
     const href = new URL(url, this.origin).href
     const body = open(filename)
 
-    headers.connection = 'close' // required for interrupted streams
-
     const request = {
       method,
       headers,
