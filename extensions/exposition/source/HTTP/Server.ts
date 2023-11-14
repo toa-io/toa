@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import os from 'node:os'
 import express from 'express'
 import cors from 'cors'
 import { Connector } from '@toa.io/core'
@@ -97,8 +99,7 @@ export class Server extends Connector {
   private fail (request: IncomingMessage, response: Response) {
     return async (exception: Error) => {
       if (!request.complete)
-        // https://github.com/whatwg/fetch/issues/1254
-        for await (const _ of request) void _
+        await adam(request)
 
       const status = exception instanceof Exception
         ? exception.status
@@ -134,9 +135,16 @@ function negotiate (request: Request): Format | null {
   return mediaType === undefined ? null : formats[mediaType]
 }
 
-interface Properties {
-  methods: Set<string>
-  debug: boolean
+// https://github.com/whatwg/fetch/issues/1254
+async function adam (request: Request): Promise<void> {
+  const completed = promex()
+  const devnull = fs.createWriteStream(os.devNull)
+
+  request
+    .on('end', completed.callback)
+    .pipe(devnull)
+
+  return await completed
 }
 
 function defaults (): Properties {
@@ -144,6 +152,11 @@ function defaults (): Properties {
     methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
     debug: false
   }
+}
+
+interface Properties {
+  methods: Set<string>
+  debug: boolean
 }
 
 export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>
