@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/command",
-  "version": "1.0.0-alpha.0",
+  "version": "0.24.0-alpha.0",
   "description": "CommonJS wrapper for execa",
   "homepage": "https://toa.io",
   "author": {
