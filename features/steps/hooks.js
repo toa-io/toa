@@ -14,6 +14,7 @@ Before(
    */
   async function () {
     this.cwd = await directory.temp()
+    this.containers = {}
   })
 
 After(

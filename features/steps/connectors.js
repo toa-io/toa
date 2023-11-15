@@ -119,28 +119,26 @@ When('I call {endpoint} without waiting with:',
    */
   async function (endpoint, yaml) {
     const request = parse(yaml)
-
-    pendingCall.call(this, endpoint, request)
+    call.call(this, endpoint, request)
   })
 
 Then('the pending reply is not received yet',
   /**
    * @this {toa.features.Context}
    */
-  function () {
+  async function () {
     if (this.exception !== undefined) throw this.exception
-
-    assert.equal(this.pendingReply, undefined, 'Reply is received')
+    assert.strictEqual(this.prevReply, this.reply, 'Reply is received')
   })
 
 Then('the pending reply is received',
   /**
    * @this {toa.features.Context}
    */
-  function () {
+  async function () {
     if (this.exception !== undefined) throw this.exception
-
-    assert.notEqual(this.pendingReply, undefined, 'Reply is not received')
+    await this.pendingReply
+    assert.notStrictEqual(this.prevReply, this.reply, 'Reply is not received')
   })
 
 When('I call {endpoint}',
@@ -262,30 +260,12 @@ async function invoke (endpoint, request = {}) {
  * @return {Promise<void>}
  */
 async function call (endpoint, request) {
+  this.prevReply = this.reply
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
-
+  this.pendingReply = remote.invoke(operation, request)
   try {
-    this.reply = await remote.invoke(operation, request)
-  } catch (exception) {
-    this.exception = exception
-  }
-
-  await remote.disconnect()
-}
-
-/**
- * @param {string} endpoint
- * @param {toa.core.Request} request
- * @this {toa.features.Context}
- * @return {Promise<void>}
- */
-async function pendingCall (endpoint, request) {
-  const operation = endpoint.split('.').pop()
-  const remote = await stage.remote(endpoint)
-
-  try {
-    this.pendingReply = await remote.invoke(operation, request)
+    this.reply = await this.pendingReply
   } catch (exception) {
     this.exception = exception
   }

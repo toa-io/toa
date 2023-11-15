@@ -17,13 +17,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
-  mongodb-restart:
-    image: mongo:5.0.8
-    container_name: mongodb-restart
-    ports: ['27017:27017']
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: developer
-      MONGO_INITDB_ROOT_PASSWORD: secret
   postgres:
     image: postgres:14.4
     ports: ['5432:5432']

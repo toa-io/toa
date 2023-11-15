@@ -1,34 +1,17 @@
 'use strict'
 
-const { Given, When, Then } = require('@cucumber/cucumber')
-const { resolve } = require('node:path')
-const { DockerComposeEnvironment, Wait } = require("testcontainers")
-const ROOT = resolve(__dirname, '../../')
-const composeFilePath = ROOT;
-const composeFile = "docker-compose.yaml";
+const { When } = require('@cucumber/cucumber')
+const { Wait, GenericContainer } = require("testcontainers")
 
-let environment
-
-Given('I have a docker container {component}',
+When('I start docker container {component}',
   /**
    * 
    * @param {string} container 
    * @return {Promise<void>}
    */
   async function (container) {
-    environment = await new DockerComposeEnvironment(composeFilePath, composeFile)
-      .withWaitStrategy('mongodb-restart', Wait.forLogMessage('Waiting for connections'))
-      .up(['mongodb-restart'])    
-  })
-
-Then('docker container {component} should had new connection',
-  /**
-   * 
-   * @param {string} container 
-   * @return {Promise<void>}
-   */
-  async function (container) {
-    console.dir(environment.getContainer('mongodb-restart'))
+    if (containersUpStrategies[container] === undefined) throw new Error('Unknown docker container')
+    this.containers[container] = await containersUpStrategies[container]()
   })
 
 When('I stop docker container {component}',
@@ -38,17 +21,25 @@ When('I stop docker container {component}',
    * @return {Promise<void>}
    */
   async function (container) {
-    await environment.down({ timeout: 1000 })
+    if (this.containers[container] === undefined) throw new Error(`Container ${container} is not running`)
+    await this.containers[container].stop({ timeout: 10000 })
+    // wait network to unbind port
+    await new Promise(resolve => setTimeout(resolve, 50))
+    delete this.containers[container]
   })
 
-When('I start docker container {component}',
-  /**
-   * 
-   * @param {string} container 
-   * @return {Promise<void>}
-   */
-  async function (container) {
-    environment = await new DockerComposeEnvironment(composeFilePath, composeFile)
-      .withWaitStrategy('mongodb-restart', Wait.forLogMessage('Waiting for connections'))
-      .up(['mongodb-restart'])
-  })
+const containersUpStrategies = {
+  mongodb: async function() {
+    return new GenericContainer('mongo:5.0.8')
+      .withExposedPorts({
+        container: 27017,
+        host: 27018
+      })
+      .withEnvironment({
+        MONGO_INITDB_ROOT_USERNAME: 'testcontainersuser',
+        MONGO_INITDB_ROOT_PASSWORD: 'secret'
+      })
+      .withWaitStrategy(Wait.forLogMessage('Waiting for connections'))
+      .start()
+  }
+}

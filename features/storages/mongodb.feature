@@ -18,13 +18,20 @@ Feature: MongoDB storage
     Then program should exit with code 0
 
   Scenario: Create a record in MongoDB with reconnection
-    Given I have a docker container `mongodb`
-    And I have a context with:
-      """yaml
-      mongodb: mongodb://localhost
+    Given environment variables:
       """
-    And I stage `mongo.restart` component
-    And I call `mongo.restart.transit` with:
+      TOA_DEV=0
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:27018
+      TOA_MONGODB_MONGO_ONE_USERNAME=testcontainersuser
+      TOA_MONGODB_MONGO_ONE_PASSWORD=secret
+      TOA_ENV=local
+      TOA_AMQP_CONTEXT=eyIuIjpbImFtcXA6Ly9sb2NhbGhvc3QiXX0=
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      """
+    When I start docker container `mongodb`
+    And I compose `mongo.one` component
+    And I call `mongo.one.transit` with:
       """yaml
       input:
         foo: 1
@@ -32,15 +39,15 @@ Feature: MongoDB storage
       """
     Then the reply is received
     When I stop docker container `mongodb`
-    And I call `mongo.restart.transit` without waiting with:
+    And I call `mongo.one.transit` without waiting with:
       """yaml
       input:
         foo: 1
         bar: 'test'
       """
-    And I wait 1 second
+    And I wait 3 seconds
     Then the pending reply is not received yet
     When I start docker container `mongodb`
-    And I wait 3 second
     Then the pending reply is received
     And I disconnect
+    
