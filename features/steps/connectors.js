@@ -39,13 +39,7 @@ When('I compose {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    try {
-      await stage.composition([reference], {})
-    } catch (err) {
-      this.exception = err
-      if (!this.failureAwait) throw err
-      this.failureAwait = false
-    }
+    await exceptionCatcher.bind(this)(stage.composition)([reference], {})
   })
 
 When('I stage {component} component',
@@ -277,4 +271,17 @@ async function call (endpoint, request) {
   }
 
   await remote.disconnect()
+}
+
+function exceptionCatcher(fn) {
+  if (!this.failureAwait) return fn
+  return async (...params) => {
+    try {
+      await fn(...params)
+    } catch (err) {
+      this.exception = err
+      this.failureAwait = false
+    }
+    if (this.failureAwait) throw new Error('Exception not raised')
+  }
 }
