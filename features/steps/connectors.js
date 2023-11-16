@@ -263,8 +263,8 @@ async function call (endpoint, request) {
   this.prevReply = this.reply
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
-  this.pendingReply = remote.invoke(operation, request)
   try {
+    this.pendingReply = remote.invoke(operation, request)
     this.reply = await this.pendingReply
   } catch (exception) {
     this.exception = exception
