@@ -38,6 +38,7 @@ declare namespace toa.features{
     exception?: Exception
     env?: string[]
     containers?: Record<string, StartedTestContainer>
+    failureAwait?: boolean
   }
 
 }

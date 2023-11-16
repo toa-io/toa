@@ -39,7 +39,13 @@ When('I compose {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    await stage.composition([reference], {})
+    try {
+      await stage.composition([reference], {})
+    } catch (err) {
+      this.exception = err
+      if (!this.failureAwait) throw err
+      this.failureAwait = false
+    }
   })
 
 When('I stage {component} component',

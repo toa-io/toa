@@ -51,3 +51,21 @@ Feature: MongoDB storage
     Then the pending reply is received
     And I disconnect
     
+  Scenario: Connect to MongoDB with uncorrect url parameter
+    Given environment variables:
+      """
+      TOA_DEV=0
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:27018?replset=rs0
+      TOA_MONGODB_MONGO_ONE_USERNAME=testcontainersuser
+      TOA_MONGODB_MONGO_ONE_PASSWORD=secret
+      TOA_ENV=local
+      TOA_AMQP_CONTEXT=eyIuIjpbImFtcXA6Ly9sb2NhbGhvc3QiXX0=
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      """
+    Then a failure is expected
+    When I compose `mongo.one` component
+    And it fails with:
+    """
+    option replset is not supported
+    """
