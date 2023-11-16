@@ -54,12 +54,12 @@ class Connection extends Connector {
   }
 
   /** @hot */
-  async add (record) {
+  async add (records) {
     /** @type {boolean} */
     let result
 
     try {
-      const response = await this.#collection.insertOne(record)
+      const response = await this.#collection.insertMany(records)
 
       result = response.acknowledged
     } catch (e) {
