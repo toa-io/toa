@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "0.24.0-alpha.1",
+  "version": "0.24.0-alpha.2",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -25,7 +25,7 @@
     "transpile": "rm -rf transpiled && npx tsc"
   },
   "devDependencies": {
-    "@toa.io/streams": "0.24.0-alpha.1",
+    "@toa.io/streams": "0.24.0-alpha.2",
     "@types/fs-extra": "11.0.3",
     "dotenv": "16.3.1"
   },
