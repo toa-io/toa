@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import os from 'node:os'
 import express from 'express'
 import cors from 'cors'
 import { Connector } from '@toa.io/core'
@@ -22,8 +24,10 @@ export class Server extends Connector {
     this.debug = debug
   }
 
-  public static create (options: Partial<Properties> = {}): Server {
-    const properties: Properties = Object.assign({}, defaults(), options)
+  public static create (options?: Partial<Properties>): Server {
+    const properties: Properties = options === undefined
+      ? DEFAULTS
+      : { ...DEFAULTS, ...options }
 
     const app = express()
 
@@ -35,7 +39,7 @@ export class Server extends Connector {
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: any, response: Response): void => {
+    this.app.use((request: any, response: Response) => {
       this.extend(request)
         .then(process)
         .then(this.success(request, response))
@@ -95,7 +99,10 @@ export class Server extends Connector {
   }
 
   private fail (request: IncomingMessage, response: Response) {
-    return (exception: Error) => {
+    return async (exception: Error) => {
+      if (!request.complete)
+        await adam(request)
+
       const status = exception instanceof Exception
         ? exception.status
         : 500
@@ -112,10 +119,6 @@ export class Server extends Connector {
         write(request, response, { body })
       } else
         response.end()
-
-      // stop accepting request
-      if (!request.complete)
-        request.destroy()
     }
   }
 }
@@ -134,16 +137,26 @@ function negotiate (request: Request): Format | null {
   return mediaType === undefined ? null : formats[mediaType]
 }
 
+// https://github.com/whatwg/fetch/issues/1254
+async function adam (request: Request): Promise<void> {
+  const completed = promex()
+  const devnull = fs.createWriteStream(os.devNull)
+
+  request
+    .on('end', completed.callback)
+    .pipe(devnull)
+
+  return await completed
+}
+
+const DEFAULTS = {
+  methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
+  debug: false
+}
+
 interface Properties {
   methods: Set<string>
   debug: boolean
-}
-
-function defaults (): Properties {
-  return {
-    methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
-    debug: false
-  }
 }
 
 export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>

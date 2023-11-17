@@ -10,6 +10,8 @@ export function composition (paths: string[], options?: _composition.Options): P
 
 export function compose (paths: string[]): Promise<void>
 
+export function serve (ref: string): Promise<_core.Component>
+
 export function remote (id: string): Promise<_core.Component>
 
 export function shutdown (): Promise<void>

@@ -7,8 +7,9 @@ const { binding } = require('./binding')
 const shutdown = async () => {
   const components = state.components.map((component) => component.disconnect())
   const compositions = state.compositions.map((composition) => composition.disconnect())
+  const services = state.services.map((service) => service.disconnect())
   const remotes = state.remotes.map((remote) => remote.disconnect())
-  const disconnections = [...components, ...compositions, ...remotes]
+  const disconnections = [...components, ...compositions, ...services, ...remotes]
 
   await Promise.all(disconnections)
 

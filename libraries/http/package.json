@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/http",
-  "version": "1.0.0-alpha.0",
+  "version": "0.24.0-alpha.1",
   "description": "Text-level HTTP client",
   "homepage": "https://toa.io",
   "author": {
