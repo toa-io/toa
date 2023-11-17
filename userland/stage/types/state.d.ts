@@ -1,11 +1,12 @@
 import * as _core from '@toa.io/core/types'
 
-declare namespace toa.stage {
+declare namespace toa.stage{
 
   type State = {
     reset: () => void
     components: _core.Component[]
     compositions: _core.Connector[]
+    services: _core.Connector[]
     remotes: _core.Component[]
   }
 

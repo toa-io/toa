@@ -11,22 +11,32 @@ Feature: toa serve
     Run an extension service
     """
 
-#  Scenario Outline: Run service
-#
-#  Service may be addressed by:
-#  - relative path
-#  - package name
-#  - shortcut
-#
-#    Given my working directory is /toa
-#    When I run `toa serve <reference>`
-#    And I wait 0.5 seconds
-#    And I abort execution
-#    Then stderr should be empty
-#
-#    Examples:
-#      | reference                     |
-#      | ./extensions/exposition       |
-#      | extensions/exposition         |
-#      | @toa.io/extensions.exposition |
-#      | exposition                    |
+  Scenario Outline: Run a service
+
+  Service may be addressed by:
+  - relative path
+  - package name
+  - shortcut
+
+    Given my working directory is /toa
+    And environment variables:
+      """
+      TOA_STORAGES=3gABo3RtcKp0bXA6Ly8vdG1w
+      TOA_CONFIGURATION_IDENTITY_TOKENS=eyJrZXkwIjoiJElERU5USVRZX1RPS0VOU19LRVkwIn0=
+      TOA_CONFIGURATION__IDENTITY_TOKENS_KEY0=k3.local.RyDuSdkJimIuxKsqZJbKGemlnizOjuXdR9QDF-Olr_A
+      """
+    When I run `toa serve <reference>`
+    And I wait 2 seconds
+    And I abort execution
+    Then stderr should be empty
+    And stdout should contain lines:
+      """
+      Gateway has started and is awaiting resource branches.
+      """
+
+    Examples:
+      | reference                     |
+      | ./extensions/exposition       |
+      | extensions/exposition         |
+      | @toa.io/extensions.exposition |
+      | exposition                    |
