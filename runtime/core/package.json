@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/core",
-  "version": "0.24.0-alpha.7",
+  "version": "0.24.0-alpha.8",
   "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,9 +21,9 @@
   },
   "dependencies": {
     "@rsql/parser": "1.2.4",
-    "@toa.io/console": "0.24.0-alpha.7",
-    "@toa.io/generic": "0.24.0-alpha.7",
-    "@toa.io/yaml": "0.24.0-alpha.7",
+    "@toa.io/console": "0.24.0-alpha.8",
+    "@toa.io/generic": "0.24.0-alpha.8",
+    "@toa.io/yaml": "0.24.0-alpha.8",
     "clone-deep": "4.0.1",
     "error-value": "0.3.0"
   },

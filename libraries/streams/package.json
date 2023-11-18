@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/streams",
-  "version": "0.24.0-alpha.7",
+  "version": "0.24.0-alpha.8",
   "description": "Stream utilities",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
