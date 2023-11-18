@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "jest",
-    "transpile": "rm -rf transpiled && npx tsc"
+    "transpile": "npx tsc"
   },
   "devDependencies": {
     "@toa.io/streams": "0.24.0-alpha.7",
