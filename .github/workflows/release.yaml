@@ -28,6 +28,7 @@ jobs:
           fetch-depth: 0
 
       - run: npm install
+      - run: npm transpile
       - run: npm test
 
   publish:
@@ -65,6 +66,9 @@ jobs:
           GIT_COMMITTER_EMAIL: ${{ steps.gpg.outputs.email }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          npm install
+          npm transpile
+
           if [ ${{ github.base_ref }} = release ]; then
             npx lerna@7.3.0 publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
           else

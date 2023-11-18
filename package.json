@@ -70,7 +70,6 @@
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
     "version:local": "npx lerna@7.3.0 version --conventional-prerelease --preid local --no-commit-hooks --no-changelog --yes --no-git-tag-version && git commit -am 'chore: local bump' --no-verify",
     "publish:canary": "npx lerna@7.3.0 publish --canary --preid local --registry http://localhost:4873",
-    "ci:local": "npm run version:local && npm run publish:local",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "buildx": "docker buildx create --name toa --use && docker buildx inspect --bootstrap",
     "setup": "docker compose up -d && npm run cluster && npm run buildx && npm run publish:local && npm ci && toa deploy ./integration/context",
