@@ -8,7 +8,7 @@ on:
       - alpha
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     permissions: write-all
 
