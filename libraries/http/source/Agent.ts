@@ -5,7 +5,7 @@ import * as http from './index'
 import { request } from './request'
 import type { Readable } from 'stream'
 
-export class Steps {
+export class Agent {
   protected readonly origin: string
   protected response: string = ''
   private readonly variables: Record<string, string> = {}

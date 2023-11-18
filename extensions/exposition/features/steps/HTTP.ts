@@ -5,7 +5,7 @@ import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
 @binding([Gateway, Parameters])
-export class HTTP extends http.Steps {
+export class HTTP extends http.Agent {
   private readonly gateway: Gateway
 
   public constructor (gateway: Gateway, parameters: Parameters) {
