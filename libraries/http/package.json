@@ -34,6 +34,8 @@
     "transpile": "tsc"
   },
   "dependencies": {
+    "@toa.io/generic": "0.24.0-alpha.2",
+    "@toa.io/streams": "0.24.0-alpha.2",
     "http-parser-js": "0.5.8",
     "negotiator": "0.6.3"
   }
