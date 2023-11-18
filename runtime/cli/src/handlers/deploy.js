@@ -1,7 +1,6 @@
 'use strict'
 
-const boot = require('@toa.io/boot')
-
+const operations = require('./operations')
 const { context: find } = require('../util/find')
 
 /**
@@ -10,7 +9,7 @@ const { context: find } = require('../util/find')
  */
 const deploy = async (argv) => {
   const path = find(argv.path)
-  const operator = await boot.deployment(path, argv.environment)
+  const operator = await operations.operator(path, argv.environment)
 
   if (argv.dry === true) {
     const options = {}

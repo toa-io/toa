@@ -1,24 +1,15 @@
 'use strict'
 
-const boot = require('@toa.io/boot')
 const { console } = require('@toa.io/console')
-
 const { context: find } = require('../../util/find')
+const operations = require('../operations')
 
 const prepare = async (argv) => {
-  const context = find(argv.path)
-  const operator = await boot.deployment(context)
-  const path = await operator.prepare(argv.target)
+  const path = find(argv.path)
+  const operator = await operations.operator(path, argv.environment)
+  const target = await operator.prepare(argv.target)
 
-  console.log(path)
+  console.log(target)
 }
-
-// const prepare = async (argv) => {
-//   const context = find(argv.path)
-//   const registry = await boot.registry(context)
-//   const path = await registry.prepare(argv.target)
-//
-//   console.log(path)
-// }
 
 exports.prepare = prepare
