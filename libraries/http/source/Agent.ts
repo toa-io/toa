@@ -6,9 +6,9 @@ import { request } from './request'
 import type { Readable } from 'stream'
 
 export class Agent {
+  public readonly variables: Record<string, string> = {}
   protected readonly origin: string
   protected response: string = ''
-  private readonly variables: Record<string, string> = {}
 
   public constructor (origin: string) {
     this.origin = origin
