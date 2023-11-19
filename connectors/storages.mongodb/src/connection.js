@@ -6,6 +6,7 @@ const { MongoClient } = require('mongodb')
 const { Connector } = require('@toa.io/core')
 const { console } = require('@toa.io/console')
 const { resolve } = require('@toa.io/pointer')
+const { Conveyor } = require('@toa.io/conveyor')
 const { ID } = require('./deployment')
 
 class Connection extends Connector {
@@ -14,6 +15,8 @@ class Connection extends Connector {
   #client
   /** @type {import('mongodb').Collection<toa.mongodb.Record>} */
   #collection
+  /** @type {toa.conveyor.Conveyor<toa.core.storages.Record, boolean>} */
+  #conveyor
 
   constructor (locator) {
     super()
@@ -31,7 +34,7 @@ class Connection extends Connector {
     await this.#client.connect()
 
     this.#collection = this.#client.db(db).collection(collection)
-
+    this.#conveyor = new Conveyor(objects => this.addMany(objects))
     console.info('Storage Mongo connected')
   }
 
@@ -54,8 +57,11 @@ class Connection extends Connector {
   }
 
   /** @hot */
-  async add (records) {
-    /** @type {boolean} */
+  async add (record) {
+    return this.#conveyor.process(record)
+  }
+
+  async addMany(records) {
     let result
 
     try {
@@ -63,7 +69,7 @@ class Connection extends Connector {
 
       result = response.acknowledged
     } catch (e) {
-      if (e.code === 11000) result = false // duplicate id
+      if (e.code === 11000) result = false
       else throw e
     }
 
