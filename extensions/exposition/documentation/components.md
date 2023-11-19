@@ -34,7 +34,7 @@ them).
 configuration:
   identity.basic:
     username:
-      - ^\S{1,16}$
+      - ^\S{1,128}$
     password:
       - ^\S{8,32}$
 ```

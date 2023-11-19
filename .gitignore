@@ -5,3 +5,4 @@ transpiled/
 lerna-debug.log
 .DS_Store
 *.tsbuildinfo
+**/.env
