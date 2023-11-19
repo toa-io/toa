@@ -39,7 +39,23 @@ When('I compose {component} component',
    * @this {toa.features.Context}
    */
   async function (reference) {
-    await exceptionCatcher.bind(this)(stage.composition)([reference], {})
+    await stage.composition([reference], {})
+  })
+
+Then('I compose {component} component and it fails with:',
+  /**
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  async function (reference, errorMessage) {
+    let error
+    try {
+      await stage.composition([reference], {})
+    } catch (err) {
+      error = err
+    }
+    assert.notEqual(error, undefined, 'No exception during composition')
+    assert.equal(error.message, errorMessage, 'Wrong error message')
   })
 
 When('I stage {component} component',
@@ -128,7 +144,7 @@ Then('the pending reply is not received yet',
    */
   async function () {
     if (this.exception !== undefined) throw this.exception
-    assert.strictEqual(this.prevReply, this.reply, 'Reply is received')
+    assert.equal(this.reply, undefined, 'Reply is received')
   })
 
 Then('the pending reply is received',
@@ -138,7 +154,7 @@ Then('the pending reply is received',
   async function () {
     if (this.exception !== undefined) throw this.exception
     await this.pendingReply
-    assert.notStrictEqual(this.prevReply, this.reply, 'Reply is not received')
+    assert.notEqual(this.reply, undefined, 'Reply is not received')
   })
 
 When('I call {endpoint}',
@@ -260,7 +276,7 @@ async function invoke (endpoint, request = {}) {
  * @return {Promise<void>}
  */
 async function call (endpoint, request) {
-  this.prevReply = this.reply
+  this.reply = undefined
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
   try {
@@ -271,17 +287,4 @@ async function call (endpoint, request) {
   }
 
   await remote.disconnect()
-}
-
-function exceptionCatcher(fn) {
-  if (!this.failureAwait) return fn
-  return async (...params) => {
-    try {
-      await fn(...params)
-    } catch (err) {
-      this.exception = err
-      this.failureAwait = false
-    }
-    if (this.failureAwait) throw new Error('Exception not raised')
-  }
 }
