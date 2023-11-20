@@ -2,8 +2,8 @@
 
 const { join } = require('node:path')
 const { writeFile: write } = require('node:fs/promises')
-const { directory: { copy } } = require('@toa.io/filesystem')
 const { dump } = require('@toa.io/yaml')
+const fs = require('fs-extra')
 
 const { merge, declare, describe } = require('./.deployment')
 
@@ -28,7 +28,7 @@ class Deployment {
     await Promise.all([
       write(join(target, 'Chart.yaml'), chart),
       write(join(target, 'values.yaml'), values),
-      copy(TEMPLATES, join(target, 'templates'))
+      fs.copy(TEMPLATES, join(target, 'templates'))
     ])
 
     this.#target = target

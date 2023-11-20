@@ -30,7 +30,8 @@
     "@toa.io/filesystem": "0.24.0-alpha.10",
     "@toa.io/generic": "0.24.0-alpha.10",
     "@toa.io/yaml": "0.24.0-alpha.10",
-    "execa": "5.1.1"
+    "execa": "5.1.1",
+    "fs-extra": "11.1.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
