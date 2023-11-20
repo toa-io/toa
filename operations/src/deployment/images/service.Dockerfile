@@ -7,6 +7,8 @@ RUN npm i -g @toa.io/runtime@{{runtime.version}} --omit=dev
 
 WORKDIR /service
 COPY --chown=node:node . /service
+RUN pwd
+RUN ls -al
 
 RUN npm i --omit=dev
 

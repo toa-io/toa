@@ -58,7 +58,7 @@ class Registry {
   }
 
   /**
-   * @param {"composition" | "service"} type
+   * @param {'composition' | 'service'} type
    * @param {...any} args
    * @returns {toa.deployment.images.Image}
    */
@@ -96,6 +96,8 @@ class Registry {
 
       await this.#ensureBuilder()
     } else args.push('--builder', 'default')
+
+    args.push('--progress', 'plain')
 
     await this.#process.execute('docker', args)
   }
