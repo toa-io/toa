@@ -93,8 +93,6 @@ class Connection extends Connector {
 }
 
 const OPTIONS = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   ignoreUndefined: true,
   connectTimeoutMS: 0,
   serverSelectionTimeoutMS: 0

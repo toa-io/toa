@@ -48,7 +48,7 @@ class Storage extends Connector {
     const criteria = { _id: entity.id, _version: entity._version }
     const result = await this.#connection.replace(criteria, to(entity))
 
-    return result.value !== null
+    return result !== null
   }
 
   async store (entity) {
@@ -75,7 +75,7 @@ class Storage extends Connector {
 
     const result = await this.#connection.update(criteria, update, options)
 
-    return from(result.value)
+    return from(result)
   }
 }
 
