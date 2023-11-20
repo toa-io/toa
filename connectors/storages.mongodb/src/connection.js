@@ -65,7 +65,7 @@ class Connection extends Connector {
     let result
 
     try {
-      const response = await this.#collection.insertMany(records)
+      const response = await this.#collection.insertMany(records, { ordered: false })
 
       result = response.acknowledged
     } catch (e) {
