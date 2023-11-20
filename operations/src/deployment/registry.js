@@ -6,23 +6,14 @@ const workspace = require('./workspace')
  * @implements {toa.deployment.Registry}
  */
 class Registry {
-  /** @type {toa.norm.context.Registry} */
   #registry
 
-  /** @type {toa.deployment.images.Factory} */
   #factory
 
-  /** @type {toa.operations.Process} */
   #process
 
-  /** @type {toa.deployment.images.Image[]} */
   #images = []
 
-  /**
-   * @param {toa.norm.context.Registry} registry
-   * @param {toa.deployment.images.Factory} factory
-   * @param {toa.operations.Process} process
-   */
   constructor (registry, factory, process) {
     this.#registry = registry
     this.#factory = factory
