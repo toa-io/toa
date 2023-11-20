@@ -35,10 +35,10 @@ declare namespace toa.features{
     storage?: context.Storage
     amqp?: context.AMQP
     reply?: Reply
+    pendingReply?: Promise<Reply>
     exception?: Exception
     env?: string[]
     containers?: Record<string, StartedTestContainer>
-    failureAwait?: boolean
   }
 
 }

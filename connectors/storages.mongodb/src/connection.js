@@ -69,7 +69,7 @@ class Connection extends Connector {
 
       result = response.acknowledged
     } catch (e) {
-      if (e.code === 11000) result = false
+      if (e.code === 11000) result = false // duplicate id
       else throw e
     }
 

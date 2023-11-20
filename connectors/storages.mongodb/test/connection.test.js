@@ -38,7 +38,7 @@ it('should insert', async () => {
 
   await connection.add(object)
 
-  expect(insertManyMock).toHaveBeenCalledWith([object])
+  expect(insertManyMock).toHaveBeenCalledWith([object], { ordered: false })
 })
 
 it('should batch insert', async () => {
@@ -53,6 +53,6 @@ it('should batch insert', async () => {
   ])
 
   expect(insertManyMock).toHaveBeenCalledTimes(2)
-  expect(insertManyMock).toHaveBeenNthCalledWith(1, [a])
-  expect(insertManyMock).toHaveBeenNthCalledWith(2, [b, c])
+  expect(insertManyMock).toHaveBeenNthCalledWith(1, [a], { ordered: false })
+  expect(insertManyMock).toHaveBeenNthCalledWith(2, [b, c], { ordered: false })
 })
