@@ -9,8 +9,6 @@ RUN npm i -g @toa.io/runtime@{{runtime.version}} --omit=dev
 
 WORKDIR /composition
 COPY --chown=node:node . /composition
-RUN pwd
-RUN ls -al
 
 {{build.run}}
 
