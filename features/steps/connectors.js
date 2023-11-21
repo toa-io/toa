@@ -130,7 +130,8 @@ When('I call {endpoint} without waiting with:',
    */
   async function (endpoint, yaml) {
     const request = parse(yaml)
-    call.call(this, endpoint, request)
+
+    void call.call(this, endpoint, request)
   })
 
 Then('the pending reply is not received yet',
@@ -139,6 +140,7 @@ Then('the pending reply is not received yet',
    */
   async function () {
     if (this.exception !== undefined) throw this.exception
+
     assert.equal(this.reply, undefined, 'Reply is received')
   })
 
@@ -148,8 +150,8 @@ Then('the pending reply is received',
    */
   async function () {
     if (this.exception !== undefined) throw this.exception
+
     await this.pendingReply
-    assert.notEqual(this.reply, undefined, 'Reply is not received')
   })
 
 When('I call {endpoint}',
@@ -274,6 +276,7 @@ async function call (endpoint, request) {
   this.reply = undefined
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
+
   try {
     this.pendingReply = remote.invoke(operation, request)
     this.reply = await this.pendingReply

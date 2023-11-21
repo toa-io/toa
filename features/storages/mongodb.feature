@@ -50,7 +50,7 @@ Feature: MongoDB storage
     When I start docker container `mongodb`
     Then the pending reply is received
     And I disconnect
-    
+
   Scenario: Connect to MongoDB with incorrect url parameter
     Given environment variables:
       """

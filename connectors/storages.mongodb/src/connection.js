@@ -34,7 +34,8 @@ class Connection extends Connector {
     await this.#client.connect()
 
     this.#collection = this.#client.db(db).collection(collection)
-    this.#conveyor = new Conveyor(objects => this.addMany(objects))
+    this.#conveyor = new Conveyor((objects) => this.addMany(objects))
+
     console.info('Storage Mongo connected')
   }
 
@@ -51,7 +52,7 @@ class Connection extends Connector {
 
   /** @hot */
   async find (query, options) {
-    const cursor = await this.#collection.find(query, options)
+    const cursor = this.#collection.find(query, options)
 
     return cursor.toArray()
   }
@@ -61,7 +62,7 @@ class Connection extends Connector {
     return this.#conveyor.process(record)
   }
 
-  async addMany(records) {
+  async addMany (records) {
     let result
 
     try {
@@ -69,7 +70,7 @@ class Connection extends Connector {
 
       result = response.acknowledged
     } catch (e) {
-      if (e.code === 11000) result = false // duplicate id
+      if (e.code === ERR_DUPLICATE_KEY) result = false
       else throw e
     }
 
@@ -97,5 +98,7 @@ const OPTIONS = {
   connectTimeoutMS: 0,
   serverSelectionTimeoutMS: 0
 }
+
+const ERR_DUPLICATE_KEY = 11000
 
 exports.Connection = Connection

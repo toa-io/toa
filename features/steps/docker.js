@@ -1,35 +1,37 @@
 'use strict'
 
 const { When } = require('@cucumber/cucumber')
-const { Wait, GenericContainer } = require("testcontainers")
+const { Wait, GenericContainer } = require('testcontainers')
+const { setTimeout } = require('node:timers/promises')
 
 When('I start docker container {component}',
   /**
-   * 
-   * @param {string} container 
+   *
+   * @param {string} container
    * @return {Promise<void>}
    */
   async function (container) {
     if (containersUpStrategies[container] === undefined) throw new Error('Unknown docker container')
+
     this.containers[container] = await containersUpStrategies[container]()
   })
 
 When('I stop docker container {component}',
   /**
-   * 
-   * @param {string} container 
+   *
+   * @param {string} container
    * @return {Promise<void>}
    */
   async function (container) {
     if (this.containers[container] === undefined) throw new Error(`Container ${container} is not running`)
+
     await this.containers[container].stop({ timeout: 10000 })
-    // wait network to unbind port
-    await new Promise(resolve => setTimeout(resolve, 50))
+    await setTimeout(50) // wait network to unbind the port
     delete this.containers[container]
   })
 
 const containersUpStrategies = {
-  mongodb: async function() {
+  mongodb: async function () {
     return new GenericContainer('mongo:5.0.8')
       .withExposedPorts({
         container: 27017,
