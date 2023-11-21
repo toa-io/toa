@@ -48,14 +48,9 @@ Then('I compose {component} component and it fails with:',
    * @this {toa.features.Context}
    */
   async function (reference, errorMessage) {
-    let error
-    try {
-      await stage.composition([reference], {})
-    } catch (err) {
-      error = err
-    }
-    assert.notEqual(error, undefined, 'No exception during composition')
-    assert.equal(error.message, errorMessage, 'Wrong error message')
+    await assert.rejects(stage.composition([reference], {}), {
+      message: errorMessage
+    })
   })
 
 When('I stage {component} component',
