@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.realtime",
-  "version": "0.24.0-alpha.2",
+  "version": "0.24.0-alpha.11",
   "description": "Toa Realtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,7 +21,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "transpile": "rm -rf transpiled && npx tsc && rm -rf ./components/streams/operations && npx tsc -p ./components/streams",
+    "transpile": "npx tsc && npx tsc -p ./components/streams",
     "features": "npx cucumber-js"
   }
 }

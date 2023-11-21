@@ -1,12 +1,11 @@
 'use strict'
 
-const boot = require('@toa.io/boot')
-
+const operations = require('./operations')
 const { context: find } = require('../util/find')
 
 const push = async (argv) => {
   const path = find(argv.path)
-  const registry = await boot.registry(path)
+  const registry = await operations.registry(path)
 
   await registry.push()
 }

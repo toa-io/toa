@@ -3,16 +3,15 @@
 const { join } = require('node:path')
 const readline = require('node:readline/promises')
 const { stdin: input, stdout: output } = require('node:process')
-
 const dotenv = require('dotenv')
 const { file } = require('@toa.io/filesystem')
-const boot = require('@toa.io/boot')
+const operations = require('./operations')
 const { context: find } = require('../util/find')
 
 async function env (argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
-  const operator = await boot.deployment(path, argv.environment)
+  const operator = await operations.operator(path, argv.environment)
   const variables = operator.variables()
   const currentValues = await read(filepath)
 

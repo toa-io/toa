@@ -1,119 +1,46 @@
-import { AssertionError } from 'node:assert'
 import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
-import { trim } from '@toa.io/generic'
-import { buffer } from '@toa.io/streams'
 import { open } from '../../../storages/source/test/util'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
 @binding([Gateway, Parameters])
-export class HTTP {
+export class HTTP extends http.Agent {
   private readonly gateway: Gateway
-  private readonly origin: string
-  private response: string = ''
-  private readonly variables: Record<string, string> = {}
 
   public constructor (gateway: Gateway, parameters: Parameters) {
+    super(parameters.origin)
     this.gateway = gateway
-    this.origin = parameters.origin
   }
 
   @when('the following request is received:')
-  public async request (input: string): Promise<any> {
-    let [headers, body] = trim(input).split('\n\n')
-
-    if (body !== undefined)
-      headers += '\ncontent-length: ' + body?.length
-
-    const text = headers + '\n\n' + (body ?? '')
-    const request = text.replaceAll(SUBSTITUTE, (_, name) => this.variables[name])
-
+  public override async request (input: string): Promise<any> {
     await this.gateway.start()
-
-    this.response = await http.request(request, this.origin)
+    await super.request(input)
   }
 
   @then('the following reply is sent:')
-  public responseIncludes (expected: string): void {
-    const lines = trim(expected).split('\n')
-
-    for (const line of lines) {
-      const escaped = line.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
-      const expression = escaped.replace(CAPTURE,
-        (_, name) => `(?<${name}>\\S{1,2048})`)
-
-      const rx = new RegExp(expression, 'i')
-      const match = this.response.match(rx)
-
-      if (match === null)
-        throw new AssertionError({
-          message: `Response is missing '${line}'`,
-          expected: line,
-          actual: this.response
-        })
-
-      Object.assign(this.variables, match.groups)
-    }
+  public override responseIncludes (expected: string): void {
+    super.responseIncludes(expected)
   }
 
   @then('the reply does not contain:')
-  public responseExcludes (expected: string): void {
-    const lines = trim(expected).split('\n')
-
-    for (const line of lines) {
-      line.replace(SUBSTITUTE, (_, name) => this.variables[name])
-
-      const includes = this.response.includes(line)
-
-      if (includes)
-        throw new AssertionError({
-          message: `Response contains '${line}'`,
-          expected: line,
-          actual: this.response
-        })
-    }
+  public override responseExcludes (expected: string): void {
+    super.responseExcludes(expected)
   }
 
   @when('the stream of `{word}` is received with the following headers:')
   public async streamRequest (filename: string, head: string): Promise<any> {
-    head = trim(head) + '\n\n'
+    const stream = open(filename)
 
     await this.gateway.start()
-
-    const { url, method, headers } = http.parse.request(head)
-    const href = new URL(url, this.origin).href
-    const body = open(filename)
-
-    const request = {
-      method,
-      headers,
-      body: body as unknown as ReadableStream,
-      duplex: 'half'
-    }
-
-    try {
-      const response = await fetch(href, request)
-
-      this.response = await http.parse.response(response)
-    } catch (e: any) {
-      console.error(e)
-      console.error(e.cause)
-
-      throw e
-    }
+    await super.stream(head, stream)
   }
 
   @then('the stream equals to `{word}` is sent with the following headers:')
   public async responseStreamMatch (filename: string, head: string): Promise<any> {
-    const buf = await buffer(open(filename))
-    const text = buf.toString('utf8')
-    const expected = head + '\n\n' + text
+    const stream = open(filename)
 
-    this.responseIncludes(expected)
+    await super.streamMatch(head, stream)
   }
 }
-
-const CAPTURE = /\\\$\\{\\{ (?<name>[A-Za-z_]{0,32}) \\}\\}/g
-const SUBSTITUTE = /\${{ (?<name>[A-Za-z_]{0,32}) }}/g

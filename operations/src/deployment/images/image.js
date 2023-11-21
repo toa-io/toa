@@ -4,7 +4,7 @@ const { join, posix } = require('node:path')
 const { readFile: read, writeFile: write } = require('node:fs/promises')
 
 const { hash, overwrite } = require('@toa.io/generic')
-const { directory } = require('@toa.io/filesystem')
+const fs = require('fs-extra')
 
 /**
  * @implements {toa.deployment.images.Image}
@@ -70,7 +70,7 @@ class Image {
 
     const path = join(root, `${this.name}.${this.version}`)
 
-    await directory.ensure(path)
+    await fs.ensureDir(path)
 
     const template = await read(this.dockerfile, 'utf-8')
     const contents = template.replace(/{{(\S{1,32})}}/g, (_, key) => this.#value(key))

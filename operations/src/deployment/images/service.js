@@ -3,7 +3,7 @@
 const { join, dirname } = require('node:path')
 
 const { Image } = require('./image')
-const { directory: { copy } } = require('@toa.io/filesystem')
+const fs = require('fs-extra')
 
 class Service extends Image {
   dockerfile = join(__dirname, 'service.Dockerfile')
@@ -57,7 +57,7 @@ class Service extends Image {
   async prepare (root) {
     const context = await super.prepare(root)
 
-    await copy(this.#path, context)
+    await fs.copy(this.#path, context)
 
     return context
   }

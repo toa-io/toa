@@ -2,7 +2,7 @@
 
 const { join } = require('node:path')
 const { hash } = require('@toa.io/generic')
-const { directory: { copy } } = require('@toa.io/filesystem')
+const fs = require('fs-extra')
 
 const { Image } = require('./image')
 
@@ -42,7 +42,7 @@ class Composition extends Image {
     const context = await super.prepare(root)
 
     for (const component of this.#components) {
-      await copy(component.path, join(context, component.locator.label))
+      await fs.copy(component.path, join(context, component.locator.label))
     }
 
     return context
