@@ -4,7 +4,6 @@
 
 const { MongoClient } = require('mongodb')
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/console')
 const { resolve } = require('@toa.io/pointer')
 const { Conveyor } = require('@toa.io/conveyor')
 const { ID } = require('./deployment')
