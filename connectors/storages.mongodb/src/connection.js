@@ -4,8 +4,8 @@
 
 const { MongoClient } = require('mongodb')
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/console')
 const { resolve } = require('@toa.io/pointer')
+const { Conveyor } = require('@toa.io/conveyor')
 const { ID } = require('./deployment')
 
 class Connection extends Connector {
@@ -14,6 +14,8 @@ class Connection extends Connector {
   #client
   /** @type {import('mongodb').Collection<toa.mongodb.Record>} */
   #collection
+  /** @type {toa.conveyor.Conveyor<toa.core.storages.Record, boolean>} */
+  #conveyor
 
   constructor (locator) {
     super()
@@ -31,6 +33,7 @@ class Connection extends Connector {
     await this.#client.connect()
 
     this.#collection = this.#client.db(db).collection(collection)
+    this.#conveyor = new Conveyor((objects) => this.addMany(objects))
 
     console.info('Storage Mongo connected')
   }
@@ -48,22 +51,25 @@ class Connection extends Connector {
 
   /** @hot */
   async find (query, options) {
-    const cursor = await this.#collection.find(query, options)
+    const cursor = this.#collection.find(query, options)
 
     return cursor.toArray()
   }
 
   /** @hot */
   async add (record) {
-    /** @type {boolean} */
+    return this.#conveyor.process(record)
+  }
+
+  async addMany (records) {
     let result
 
     try {
-      const response = await this.#collection.insertOne(record)
+      const response = await this.#collection.insertMany(records, { ordered: false })
 
       result = response.acknowledged
     } catch (e) {
-      if (e.code === 11000) result = false // duplicate id
+      if (e.code === ERR_DUPLICATE_KEY) result = false
       else throw e
     }
 
@@ -87,9 +93,11 @@ class Connection extends Connector {
 }
 
 const OPTIONS = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  ignoreUndefined: true
+  ignoreUndefined: true,
+  connectTimeoutMS: 0,
+  serverSelectionTimeoutMS: 0
 }
+
+const ERR_DUPLICATE_KEY = 11000
 
 exports.Connection = Connection
