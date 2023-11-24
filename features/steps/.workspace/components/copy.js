@@ -1,7 +1,7 @@
 'use strict'
 
 const { join } = require('node:path')
-const { directory } = require('@toa.io/filesystem')
+const fse = require('fs-extra')
 
 const { COLLECTION } = require('./constants')
 
@@ -15,12 +15,12 @@ const copy = async (list, to) => {
     const source = join(COLLECTION, component)
     const target = join(to, 'components', component)
 
-    const dir = await directory.is(source)
+    const dir = await fse.exists(source)
 
     if (!dir) throw Error('Source directory does not exists')
 
-    await directory.ensure(target)
-    await directory.copy(source, target)
+    await fse.ensureDir(target)
+    await fse.copy(source, target)
   }
 }
 

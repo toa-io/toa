@@ -21,6 +21,8 @@ declare namespace toa.mongodb {
 
         add(record: Record): Promise<boolean>
 
+        addMany(records: Record[]): Promise<boolean>
+
         replace(query: Filter<Record>, record: UpdateFilter<Record>, options?: FindOneAndReplaceOptions): Promise<any>
 
         update(query: Filter<Record>, update: UpdateFilter<Record>, options?: FindOneAndUpdateOptions): Promise<any>

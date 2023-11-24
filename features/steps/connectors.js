@@ -42,6 +42,17 @@ When('I compose {component} component',
     await stage.composition([reference], {})
   })
 
+Then('I compose {component} component and it fails with:',
+  /**
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  async function (reference, errorMessage) {
+    await assert.rejects(stage.composition([reference], {}), {
+      message: errorMessage
+    })
+  })
+
 When('I stage {component} component',
   /**
    * @param {string} reference
@@ -109,6 +120,38 @@ When('I call {endpoint} with:',
     const request = parse(yaml)
 
     await call.call(this, endpoint, request)
+  })
+
+When('I call {endpoint} without waiting with:',
+  /**
+   * @param {string} endpoint
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, yaml) {
+    const request = parse(yaml)
+
+    void call.call(this, endpoint, request)
+  })
+
+Then('the pending reply is not received yet',
+  /**
+   * @this {toa.features.Context}
+   */
+  async function () {
+    if (this.exception !== undefined) throw this.exception
+
+    assert.equal(this.reply, undefined, 'Reply is received')
+  })
+
+Then('the pending reply is received',
+  /**
+   * @this {toa.features.Context}
+   */
+  async function () {
+    if (this.exception !== undefined) throw this.exception
+
+    await this.pendingReply
   })
 
 When('I call {endpoint}',
@@ -230,11 +273,13 @@ async function invoke (endpoint, request = {}) {
  * @return {Promise<void>}
  */
 async function call (endpoint, request) {
+  this.reply = undefined
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
 
   try {
-    this.reply = await remote.invoke(operation, request)
+    this.pendingReply = remote.invoke(operation, request)
+    this.reply = await this.pendingReply
   } catch (exception) {
     this.exception = exception
   }

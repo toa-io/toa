@@ -5,6 +5,13 @@ import * as http from './index'
 import { request } from './request'
 import type { Readable } from 'stream'
 
+/*
+It is extracted from the Exposition.
+Use its features to test.
+
+/extensions/exposition/features/identity.feature
+ */
+
 export class Agent {
   public readonly variables: Record<string, string> = {}
   protected readonly origin: string
@@ -105,5 +112,5 @@ export class Agent {
   }
 }
 
-const CAPTURE = /\\\$\\{\\{ (?<name>[A-Za-z_]{0,32}) \\}\\}/g
-const SUBSTITUTE = /\${{ (?<name>[A-Za-z_]{0,32}) }}/g
+const CAPTURE = /\\\$\\{\\{ (?<name>\S{0,32}) \\}\\}/g
+const SUBSTITUTE = /\${{ (?<name>\S{0,32}) }}/g
