@@ -26,6 +26,7 @@
     "@toa.io/generic": "0.24.0-alpha.12",
     "@toa.io/kubernetes": "0.24.0-alpha.12",
     "@toa.io/norm": "0.24.0-alpha.12",
+    "@toa.io/operations": "0.24.0-alpha.12",
     "@toa.io/yaml": "0.24.0-alpha.12",
     "dotenv": "16.1.1",
     "find-up": "5.0.0",

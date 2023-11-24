@@ -3,7 +3,7 @@
 const { join } = require('node:path')
 const { rm, readdir } = require('node:fs/promises')
 
-const boot = require('@toa.io/boot')
+const { deployment: { Factory } } = require('@toa.io/operations')
 
 const fixtures = require('./deployment.prepare.fixtures')
 
@@ -18,7 +18,9 @@ let target
 let entries
 
 beforeAll(async () => {
-  operator = await boot.deployment(source)
+  const factory = await Factory.create(source)
+
+  operator = factory.operator()
   target = await operator.prepare()
   entries = await readdir(target)
 })

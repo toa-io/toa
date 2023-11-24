@@ -5,7 +5,7 @@
 const { join } = require('node:path')
 const { generate } = require('randomstring')
 
-const boot = require('@toa.io/boot')
+const { deployment: { Factory } } = require('@toa.io/operations')
 const { sample } = require('@toa.io/generic')
 const { split } = require('@toa.io/yaml')
 
@@ -24,7 +24,10 @@ const find = (kind, name) => {
 
 beforeAll(async () => {
   environment = generate()
-  operator = await boot.deployment(source, environment)
+
+  const factory = await Factory.create(source, environment)
+
+  operator = factory.operator()
   options = { namespace: generate() }
 
   const output = await operator.template(options)

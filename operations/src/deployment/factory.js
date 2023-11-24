@@ -1,5 +1,6 @@
 'use strict'
 
+const { context: load } = require('@toa.io/norm')
 const { Process } = require('../process')
 const { Operator } = require('./operator')
 const { Factory: ImagesFactory } = require('./images')
@@ -84,6 +85,12 @@ class Factory {
     const image = this.#registry.service(path, service)
 
     return new Service(service, image)
+  }
+
+  static async create (path, environment) {
+    const context = await load(path, environment)
+
+    return new Factory(context)
   }
 }
 

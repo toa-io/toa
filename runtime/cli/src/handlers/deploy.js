@@ -1,6 +1,6 @@
 'use strict'
 
-const operations = require('./operations')
+const { deployment: { Factory } } = require('@toa.io/operations')
 const { context: find } = require('../util/find')
 
 /**
@@ -9,7 +9,8 @@ const { context: find } = require('../util/find')
  */
 const deploy = async (argv) => {
   const path = find(argv.path)
-  const operator = await operations.operator(path, argv.environment)
+  const factory = await Factory.create(path, argv.environment)
+  const operator = factory.operator()
 
   if (argv.dry === true) {
     const options = {}
