@@ -17,7 +17,7 @@ Feature: Identity resource
     Then the following reply is sent:
       """
       200 OK
-      authorization: Token ${{ token }}
+      authorization: Token ${{ User.token }}
 
       id: efe3a65ebbee47ed95a73edd911ea328
       roles:
@@ -27,7 +27,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
-      authorization: Token ${{ token }}
+      authorization: Token ${{ User.token }}
       accept: application/yaml
       """
     Then the following reply is sent:

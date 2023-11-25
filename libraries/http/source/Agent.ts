@@ -13,9 +13,10 @@ Use its features to test.
  */
 
 export class Agent {
-  public readonly variables: Record<string, string> = {}
   protected readonly origin: string
   protected response: string = ''
+  private readonly keys: Record<string, string> = {}
+  private readonly values: Record<string, string> = {}
 
   public constructor (origin: string) {
     this.origin = origin
@@ -37,10 +38,8 @@ export class Agent {
     const lines = trim(expected).split('\n')
 
     for (const line of lines) {
-      const escaped = line.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
-      const expression = escaped.replace(CAPTURE,
-        (_, name) => `(?<${name}>\\S{1,2048})`)
+      const expression = escape(line)
+        .replace(CAPTURE, (_, name) => `(?<${this.key(name)}>\\S{1,2048})`)
 
       const rx = new RegExp(expression, 'i')
       const match = this.response.match(rx)
@@ -52,7 +51,7 @@ export class Agent {
           actual: this.response
         })
 
-      Object.assign(this.variables, match.groups)
+      Object.assign(this.values, match.groups)
     }
   }
 
@@ -60,7 +59,7 @@ export class Agent {
     const lines = trim(expected).split('\n')
 
     for (const line of lines) {
-      line.replace(SUBSTITUTE, (_, name) => this.variables[name])
+      line.replace(SUBSTITUTE, (_, name) => this.get(name))
 
       const includes = this.response.includes(line)
 
@@ -107,9 +106,32 @@ export class Agent {
     this.responseIncludes(expected)
   }
 
-  private substitute (text: string): string {
-    return text.replaceAll(SUBSTITUTE, (_, name) => this.variables[name])
+  public set (name: string, value: string): void {
+    const key = this.key(escape(name))
+
+    this.values[key] = value
   }
+
+  private get (name: string): string {
+    const key = this.key(escape(name))
+
+    return this.values[key]
+  }
+
+  private key (variable: string): string {
+    if (!(variable in this.keys))
+      this.keys[variable] = 'var' + Math.random().toString(36).slice(2, 8)
+
+    return this.keys[variable]
+  }
+
+  private substitute (text: string): string {
+    return text.replaceAll(SUBSTITUTE, (_, name) => this.get(name))
+  }
+}
+
+function escape (text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 const CAPTURE = /\\\$\\{\\{ (?<name>\S{0,32}) \\}\\}/g
