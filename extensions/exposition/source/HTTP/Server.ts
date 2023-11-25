@@ -8,6 +8,7 @@ import Negotiator from 'negotiator'
 import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
 import { ClientError, Exception } from './exceptions'
 import { formats, types } from './formats'
+import type { CorsOptions } from 'cors'
 import type { Format } from './formats'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
@@ -32,7 +33,7 @@ export class Server extends Connector {
     const app = express()
 
     app.disable('x-powered-by')
-    app.use(cors({ allowedHeaders: ['content-type'] }))
+    app.use(cors(CORS))
     app.use(supportedMethods(properties.methods))
 
     return new Server(app, properties.debug)
@@ -152,6 +153,13 @@ async function adam (request: Request): Promise<void> {
 const DEFAULTS = {
   methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
   debug: false
+}
+
+const CORS: CorsOptions = {
+  credentials: true,
+  maxAge: 86400,
+  allowedHeaders: ['accept', 'content-type'],
+  origin: (origin: string | undefined, callback) => callback(null, origin)
 }
 
 interface Properties {
