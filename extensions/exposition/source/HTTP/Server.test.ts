@@ -35,7 +35,7 @@ it('should support cors', async () => {
   expect(cors).toHaveBeenCalledWith(expect.objectContaining({
     credentials: true,
     maxAge: 86400,
-    allowedHeaders: ['accept', 'content-type']
+    allowedHeaders: ['accept', 'authorization', 'content-type']
   } satisfies CorsOptions))
 
   const middleware = cors.mock.results[0].value

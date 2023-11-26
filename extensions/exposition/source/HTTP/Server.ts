@@ -158,7 +158,7 @@ const DEFAULTS = {
 const CORS: CorsOptions = {
   credentials: true,
   maxAge: 86400,
-  allowedHeaders: ['accept', 'content-type'],
+  allowedHeaders: ['accept', 'authorization', 'content-type'],
   origin: (origin: string | undefined, callback) => callback(null, origin)
 }
 
