@@ -27,7 +27,7 @@ Feature: CORS Support
       204 No Content
       access-control-allow-origin: https://hello.world
       access-control-allow-methods: GET,HEAD,PUT,PATCH,POST,DELETE
-      access-control-allow-headers: accept,content-type
+      access-control-allow-headers: accept,authorization,content-type
       access-control-allow-credentials: true
       access-control-max-age: 86400
       vary: origin
