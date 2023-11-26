@@ -1,9 +1,9 @@
 'use strict'
 
+const { deployment: { Factory } } = require('@toa.io/operations')
 const { secrets } = require('@toa.io/kubernetes')
 const { context: find } = require('../util/find')
 const { promptSecrets } = require('./env')
-const operations = require('./operations')
 
 const conceal = async (argv) => {
   if (argv.interactive) await concealValues(argv)
@@ -28,7 +28,8 @@ async function concealValue (argv) {
 
 async function concealValues (argv) {
   const path = find(argv.path)
-  const operator = await operations.operator(path, argv.environment)
+  const factory = await Factory.create(path, argv.environment)
+  const operator = factory.operator()
   const variables = operator.variables()
   const values = await promptSecrets(variables)
   const groups = groupValues(values)

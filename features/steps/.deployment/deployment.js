@@ -1,7 +1,7 @@
 'use strict'
 
 const { join } = require('node:path')
-const boot = require('@toa.io/boot')
+const { deployment: { Factory } } = require('@toa.io/operations')
 
 /**
  * @param {string} [environment]
@@ -9,7 +9,8 @@ const boot = require('@toa.io/boot')
 async function deployment (environment = undefined) {
   const context = this.cwd
   const target = join(this.cwd, 'deployment')
-  const operator = await boot.deployment(context, environment)
+  const factory = await Factory.create(context, environment)
+  const operator = factory.operator()
 
   await operator.export(target)
 }
@@ -17,7 +18,8 @@ async function deployment (environment = undefined) {
 async function images () {
   const context = this.cwd
   const target = join(this.cwd, 'images')
-  const registry = await boot.registry(context)
+  const factory = await Factory.create(context)
+  const registry = factory.registry(context)
 
   await registry.prepare(target)
 }

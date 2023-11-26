@@ -2,7 +2,7 @@
 
 const { console } = require('@toa.io/console')
 const { context: find } = require('../../util/find')
-const operations = require('../operations')
+const { deployment: { Factory } } = require('@toa.io/operations')
 
 /**
  * @param {{ path: string, target: string, environment?: string }} argv
@@ -10,7 +10,8 @@ const operations = require('../operations')
  */
 const dump = async (argv) => {
   const path = find(argv.path)
-  const operator = await operations.operator(path, argv.environment)
+  const factory = await Factory.create(path, argv.environment)
+  const operator = factory.operator()
   const target = await operator.export(argv.target)
 
   console.log(target)
