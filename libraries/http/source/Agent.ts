@@ -112,10 +112,10 @@ export class Agent {
     this.values[key] = value
   }
 
-  private get (name: string): string {
+  public get (name: string): string {
     const key = this.key(escape(name))
 
-    return this.values[key]
+    return this.values[key] ?? ''
   }
 
   private key (variable: string): string {
