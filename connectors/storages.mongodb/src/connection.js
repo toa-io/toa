@@ -35,13 +35,13 @@ class Connection extends Connector {
     this.#collection = this.#client.db(db).collection(collection)
     this.#conveyor = new Conveyor((objects) => this.addMany(objects))
 
-    console.info('Storage Mongo connected')
+    console.info(`Storage Mongo '${this.#locator.id}' connected`)
   }
 
   async close () {
     await this.#client?.close()
 
-    console.info('Storage Mongo disconnected')
+    console.info(`Storage Mongo '${this.#locator.id}' disconnected`)
   }
 
   /** @hot */
