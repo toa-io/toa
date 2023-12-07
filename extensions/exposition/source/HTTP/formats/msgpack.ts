@@ -1,13 +1,16 @@
 import { type Buffer } from 'node:buffer'
-import * as msgpack from 'msgpackr'
-
-export const type = 'application/msgpack'
-export const multipart = 'multipart/msgpack'
+import { pack, unpack } from 'msgpackr'
 
 export function decode (buffer: Buffer): any {
-  return msgpack.decode(buffer)
+  return unpack(buffer)
 }
 
 export function encode (value: any): Buffer {
-  return msgpack.encode(value)
+  if (typeof value === 'object' && value !== null)
+    Object.setPrototypeOf(value, null)
+
+  return pack(value)
 }
+
+export const type = 'application/msgpack'
+export const multipart = 'multipart/msgpack'
