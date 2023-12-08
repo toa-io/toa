@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "0.24.0-alpha.16",
+  "version": "0.24.0-alpha.17",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -25,7 +25,7 @@
     "transpile": "npx tsc"
   },
   "devDependencies": {
-    "@toa.io/streams": "0.24.0-alpha.16",
+    "@toa.io/streams": "0.24.0-alpha.17",
     "@types/fs-extra": "11.0.3",
     "dotenv": "16.3.1"
   },
@@ -33,7 +33,7 @@
     "@aws-sdk/client-s3": "3.435.0",
     "@aws-sdk/lib-storage": "3.437.0",
     "@toa.io/generic": "0.20.0-alpha.2",
-    "@toa.io/http": "0.24.0-alpha.16",
+    "@toa.io/http": "0.24.0-alpha.17",
     "error-value": "0.3.0",
     "fs-extra": "11.1.1",
     "matchacho": "0.3.5",
