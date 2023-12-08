@@ -12,6 +12,8 @@ import {
 import { type Provider } from '../Provider'
 
 export class S3 implements Provider {
+  public static readonly SECRETS = ['ACCESS_KEY_ID', 'SECRET_ACCESS_KEY']
+
   protected readonly bucket: string
   protected readonly client: S3Client
 

@@ -79,7 +79,7 @@ Feature: Container Building Options
     Given I have a component `dummies.debian`
     Given I have a context
     When I export images
-    Then the file ./images/*dummies-debian*/Dockerfile contains exact line 'FROM 20.10.0-buster-slim'
+    Then the file ./images/*dummies-debian*/Dockerfile contains exact line 'FROM node:20.10.0-buster-slim'
 
   Scenario: Getting error because of different base images
     Given I have components:
@@ -108,10 +108,10 @@ Feature: Container Building Options
       """yaml
       compositions:
         - name: conflict
-          image: 20.0.0-buster-slim
+          image: node:20.0.0-buster-slim
           components:
             - dummies.one
             - dummies.debian
       """
     When I export images
-    Then the file ./images/*conflict*/Dockerfile contains exact line 'FROM 20.0.0-buster-slim'
+    Then the file ./images/*conflict*/Dockerfile contains exact line 'FROM node:20.0.0-buster-slim'

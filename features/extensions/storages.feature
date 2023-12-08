@@ -1,4 +1,4 @@
-Feature: Storages Extension 
+Feature: Storages Extension
 
   Scenario: Adding a file
     Given an encoded environment variable `TOA_STORAGES` is set to:
@@ -56,7 +56,7 @@ Feature: Storages Extension
       """yaml
       message: "Storage 'wrong' is not defined"
       """
-      
+
   @deployment
   Scenario: Deploying a storage
     Given I have a component `storage`
@@ -84,7 +84,6 @@ Feature: Storages Extension
     And an environment variable `TOA_STORAGES_DUMMY_PASSWORD` is set to "secret"
     And I compose `storage` component
 
-  @deployment
   Scenario: Deploying a storage with secrets
     Given I have a component `storage`
     And I have a context with:
@@ -108,4 +107,29 @@ Feature: Storages Extension
               secret:
                 name: toa-storages-tmp
                 key: PASSWORD
+      """
+
+  Scenario: Deploying S3 storage with secrets
+    Given I have a component `storage`
+    And I have a context with:
+      """yaml
+      storages:
+        tmp: s3:///us-west-2/test
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: default-storage
+          variables:
+            - name: TOA_STORAGES
+              value: 3gABo3RtcLRzMzovLy91cy13ZXN0LTIvdGVzdA==
+            - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
+              secret:
+                name: toa-storages-tmp
+                key: ACCESS_KEY_ID
+            - name: TOA_STORAGES_TMP_SECRET_ACCESS_KEY
+              secret:
+                name: toa-storages-tmp
+                key: SECRET_ACCESS_KEY
       """
