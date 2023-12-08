@@ -54,6 +54,8 @@ properties:
       properties:
         name:
           $ref: 'definitions#/definitions/token'
+        image:
+          type: string
         components:
           type: array
           minItems: 1

@@ -30,7 +30,7 @@ async function build (contextPath, componentPatterns) {
  */
 async function createContext (contextPath, componentPatterns) {
   const contextRoot = find.context(contextPath)
-  const context = await norm.context(contextRoot)
+  const context = await norm.context(contextRoot, 'docker')
   const paths = componentPatterns.map((pattern) => find.components(pattern))
   const components = await loadComponents(paths)
   const rnd = newid().substring(0, 6)

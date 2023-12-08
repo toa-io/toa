@@ -10,6 +10,7 @@ Feature: Deploy secrets
 
   Scenario: Deploy a new secret
     Given I have a kube context kind-kind
+    And I run `kubectl create namespace test-secret --dry-run=client -o json | kubectl apply -f -`
     When I run `toa conceal database user=application password=mySecretPassword`
     Then stderr should be empty
     When I run `kubectl get secrets`
@@ -28,6 +29,7 @@ Feature: Deploy secrets
 
   Scenario: Deploy a secret keys sequentally
     Given I have a kube context kind-kind
+    And I run `kubectl create namespace test-secret --dry-run=client -o json | kubectl apply -f -`
     When I run `toa conceal database user=application`
     When I run `toa conceal database password=mySecretPassword`
     Then stderr should be empty

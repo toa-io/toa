@@ -9,22 +9,15 @@ const { Image } = require('./image')
 class Composition extends Image {
   dockerfile = join(__dirname, 'composition.Dockerfile')
 
-  /** @type {string} */
   #name
-
-  /** @type {toa.norm.Component[]} */
+  #image
   #components
 
-  /**
-   * @param {string} scope
-   * @param {toa.norm.context.Runtime} runtime
-   * @param {toa.norm.context.Registry} registry
-   * @param {toa.norm.context.Composition} composition
-   */
   constructor (scope, runtime, registry, composition) {
     super(scope, runtime, registry)
 
     this.#name = composition.name
+    this.#image = composition.image
     this.#components = composition.components
   }
 
@@ -36,6 +29,24 @@ class Composition extends Image {
     const tags = this.#components.map((component) => component.locator.id + ':' + component.version)
 
     return hash(tags.join(';'))
+  }
+
+  get base () {
+    if (this.#image !== undefined)
+      return this.#image
+
+    let image = null
+
+    for (const component of this.#components) {
+      const value = component.build?.image
+
+      if (image !== null && image !== value)
+        throw new Error(`Composition '${this.#name}' requires different base images for its components. Specify base image for the composition in the context.`)
+
+      image = value
+    }
+
+    return image ?? undefined
   }
 
   async prepare (root) {

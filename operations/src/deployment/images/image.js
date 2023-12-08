@@ -13,36 +13,21 @@ const fs = require('fs-extra')
 class Image {
   context
   reference
-
-  /**
-   * @protected
-   * @type {string}
-   */
   dockerfile
 
-  /** @type {string} */
   #scope
-
-  /** @type {toa.norm.context.Registry} */
   #registry
-
-  /** @type {toa.norm.context.Runtime} */
   #runtime
+  #values = {
+    build: {
+      image: 'node:20.9.0-alpine3.18'
+    }
+  }
 
-  /** @type {{ runtime?: Partial<toa.norm.context.Runtime>, build: object }} */
-  #values = { build: { command: 'echo hello' } }
-
-  /**
-   * @param {string} scope
-   * @param {toa.norm.context.Runtime} runtime
-   * @param {toa.norm.context.Registry} registry
-   */
   constructor (scope, runtime, registry) {
     this.#scope = scope
     this.#registry = registry
     this.#runtime = runtime
-
-    this.#setValues()
   }
 
   tag () {
@@ -51,22 +36,16 @@ class Image {
     this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.name}:${tag}`)
   }
 
-  /**
-   * @abstract
-   * @protected
-   * @type {string}
-   */
   get name () {}
 
-  /**
-   * @abstract
-   * @protected
-   * @type {string}
-   */
   get version () {}
+
+  get base () {}
 
   async prepare (root) {
     if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')
+
+    this.#setValues()
 
     const path = join(root, `${this.name}.${this.version}`)
 
@@ -87,6 +66,11 @@ class Image {
   #setValues () {
     this.#values.runtime = this.#runtime
     this.#values.build = overwrite(this.#values.build, this.#registry.build)
+
+    const image = this.base
+
+    if (image !== undefined)
+      this.#values.build.image = image
 
     if (this.#values.build.arguments !== undefined) this.#values.build.arguments = createArguments(this.#values.build.arguments)
     if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)
