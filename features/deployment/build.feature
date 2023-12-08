@@ -68,3 +68,50 @@ Feature: Container Building Options
       """
       <...>ERR! 404  '@non-existent/dependency@1.0.0' is not in this registry.
       """
+
+  Scenario: Building an image with default base image
+    Given I have a component `dummies.one`
+    Given I have a context
+    When I export images
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'FROM node:20.9.0-alpine3.18'
+
+  Scenario: Building an image with custom base image
+    Given I have a component `dummies.debian`
+    Given I have a context
+    When I export images
+    Then the file ./images/*dummies-debian*/Dockerfile contains exact line 'FROM 20.10.0-buster-slim'
+
+  Scenario: Getting error because of different base images
+    Given I have components:
+      | dummies.one    |
+      | dummies.debian |
+    Given I have a context with:
+      """yaml
+      compositions:
+        - name: conflict
+          components:
+            - dummies.one
+            - dummies.debian
+      """
+    When I run `toa build`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      <...>Error: Composition 'conflict' requires different base images for its components.
+      """
+
+  Scenario: Building a composition with different base images
+    Given I have components:
+      | dummies.one    |
+      | dummies.debian |
+    Given I have a context with:
+      """yaml
+      compositions:
+        - name: conflict
+          image: 20.0.0-buster-slim
+          components:
+            - dummies.one
+            - dummies.debian
+      """
+    When I export images
+    Then the file ./images/*conflict*/Dockerfile contains exact line 'FROM 20.0.0-buster-slim'

@@ -52,6 +52,12 @@ properties:
   version:
     $ref: 'definitions#/definitions/version'
 
+  build:
+    type: object
+    properties:
+      image:
+        type: string
+
   entity:
     type: object
     properties:
