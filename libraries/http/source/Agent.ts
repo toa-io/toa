@@ -23,13 +23,14 @@ export class Agent {
   }
 
   public async request (input: string): Promise<any> {
-    let [headers, body] = trim(input).split('\n\n')
+    const substituted = this.substitute(input)
+
+    let [headers, body] = trim(substituted).split('\n\n')
 
     if (body !== undefined)
       headers += '\ncontent-length: ' + body?.length
 
-    const text = headers + '\n\n' + (body ?? '')
-    const message = this.substitute(text)
+    const message = headers + '\n\n' + (body ?? '')
 
     this.response = await request(message, this.origin)
   }
