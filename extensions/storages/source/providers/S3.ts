@@ -39,7 +39,7 @@ export class S3 implements Provider {
     try {
       const fileResponse = await this.client.send(new GetObjectCommand({
         Bucket: this.bucket,
-        Key: key
+        Key: key.slice(1)
       }))
 
       return fileResponse.Body as Readable
@@ -50,7 +50,7 @@ export class S3 implements Provider {
   }
 
   public async put (path: string, filename: string, stream: Readable): Promise<void> {
-    const key = join(path, filename)
+    const key = join(path, filename).slice(1)
 
     await new Upload({
       client: this.client,
@@ -80,11 +80,9 @@ export class S3 implements Provider {
   public async move (from: string, keyTo: string): Promise<void> {
     const keyFrom = join(this.bucket, from)
 
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
     await this.client.send(new CopyObjectCommand({
       Bucket: this.bucket,
-      Key: keyTo,
+      Key: keyTo.slice(1),
       CopySource: keyFrom
     }))
 
