@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.origins",
-  "version": "0.24.0-alpha.17",
+  "version": "0.24.0-alpha.18",
   "description": "Toa Origins",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,10 +17,10 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/core": "0.24.0-alpha.17",
-    "@toa.io/generic": "0.24.0-alpha.17",
-    "@toa.io/pointer": "0.24.0-alpha.17",
-    "@toa.io/schemas": "0.24.0-alpha.17",
+    "@toa.io/core": "0.24.0-alpha.18",
+    "@toa.io/generic": "0.24.0-alpha.18",
+    "@toa.io/pointer": "0.24.0-alpha.18",
+    "@toa.io/schemas": "0.24.0-alpha.18",
     "comq": "0.10.1",
     "msgpackr": "1.9.5"
   },
