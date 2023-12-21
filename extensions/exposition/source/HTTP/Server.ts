@@ -14,19 +14,27 @@ import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
 
 export class Server extends Connector {
-  private readonly debug: boolean
-  private readonly app: Express
   private server?: http.Server
 
-  private constructor (app: Express, debug: boolean) {
+  private constructor (private readonly app: Express,
+    private readonly debug: boolean,
+    private readonly requestedPort: number) {
     super()
+  }
 
-    this.app = app
-    this.debug = debug
+  public get port (): number {
+    if (this.server === undefined) return this.requestedPort
+
+    const address = this.server.address()
+
+    if (address === null || typeof address === 'string')
+      throw new Error('Server is not listening on a port.')
+
+    return address.port
   }
 
   public static create (options?: Partial<Properties>): Server {
-    const properties: Properties = options === undefined
+    const properties = options === undefined
       ? DEFAULTS
       : { ...DEFAULTS, ...options }
 
@@ -36,7 +44,7 @@ export class Server extends Connector {
     app.use(cors(CORS))
     app.use(supportedMethods(properties.methods))
 
-    return new Server(app, properties.debug)
+    return new Server(app, properties.debug, properties.port)
   }
 
   public attach (process: Processing): void {
@@ -51,7 +59,7 @@ export class Server extends Connector {
   protected override async open (): Promise<void> {
     const listening = promex()
 
-    this.server = this.app.listen(8000, listening.callback)
+    this.server = this.app.listen(this.requestedPort, listening.callback)
 
     await listening
 
@@ -64,6 +72,7 @@ export class Server extends Connector {
     this.server?.close(stopped.callback)
 
     await stopped
+    this.server = undefined
   }
 
   protected override dispose (): void {
@@ -150,9 +159,10 @@ async function adam (request: Request): Promise<void> {
   return await completed
 }
 
-const DEFAULTS = {
+const DEFAULTS: Properties = {
   methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
-  debug: false
+  debug: false,
+  port: 8000
 }
 
 const CORS: CorsOptions = {
@@ -165,6 +175,7 @@ const CORS: CorsOptions = {
 interface Properties {
   methods: Set<string>
   debug: boolean
+  port: number
 }
 
 export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>
