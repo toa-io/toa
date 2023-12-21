@@ -1,8 +1,8 @@
 node_modules/
 transpiled/
-.vscode
 .idea
 lerna-debug.log
 .DS_Store
 *.tsbuildinfo
 **/.env
+.eslintcache
