@@ -8,18 +8,30 @@ services:
     ports:
       - '5672:5672'
       - '15672:15672'
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
     environment:
       RABBITMQ_DEFAULT_USER: developer
       RABBITMQ_DEFAULT_PASS: secret
   mongodb:
     image: mongo:5.0.8
     ports: ['27017:27017']
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
   postgres:
     image: postgres:14.4
     ports: ['5432:5432']
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d integration -U developer"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_USER: developer
       POSTGRES_PASSWORD: secret
@@ -28,16 +40,22 @@ services:
     image: redis:7.0.11
     ports:
       - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
   redis1:
     image: redis:7.0.11
     ports:
       - '6378:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
   redis2:
     image: redis:7.0.11
     ports:
       - '6377:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
   http-echo:
-    image: ealen/echo-server:0.7.0
+    image: ealen/echo-server:0.8.12
     ports: ['8888:80']
   localstack:
     image: localstack/localstack
@@ -45,6 +63,13 @@ services:
       - '127.0.0.1:4566:4566'
       - '127.0.0.1:4510-4559:4510-4559'
     environment:
+      - DEBUG=1
       - SERVICES=s3
       - AWS_ACCESS_KEY_ID=developer
       - AWS_SECRET_ACCESS_KEY=secret
+      - AWS_DEFAULT_REGION=us-west-1
+    healthcheck:
+      test: [ "CMD", "awslocal", "s3api", "wait", "bucket-exists", "--bucket", "test-bucket" ]
+    volumes:
+      - "./extensions/storages/source/test/init-localstack.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
+      - "/var/run/docker.sock:/var/run/docker.sock"
