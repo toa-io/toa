@@ -37,6 +37,6 @@
     "error-value": "0.3.0",
     "fs-extra": "11.1.1",
     "matchacho": "0.3.5",
-    "msgpackr": "1.9.9"
+    "msgpackr": "1.10.1"
   }
 }
