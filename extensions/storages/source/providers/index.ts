@@ -8,7 +8,8 @@ export const providers: Record<string, ProviderClass> = {
   'file:': FileSystem,
   'tmp:': Temporary,
   'test:': Test,
-  's3:': S3
+  's3:': S3,
+  'https:': S3
 }
 
 export type ProviderClass =
