@@ -1,17 +1,17 @@
 import { join } from 'node:path'
-import { tmpdir } from 'node:os'
-import { mkdtemp, copy } from 'fs-extra'
+import { tmpdir, devNull } from 'node:os'
+import { mkdtemp, cp } from 'node:fs/promises'
 import * as yaml from '@toa.io/yaml'
 
 export class Workspace {
-  private root: string = devnull
+  private root: string = devNull
 
   public static exists
   (_0: unknown, _1: unknown, descriptor: PropertyDescriptor): PropertyDescriptor {
     const method = descriptor.value
 
     descriptor.value = async function (this: Workspace, ...args: any[]): Promise<any> {
-      if (this.root === devnull) this.root =
+      if (this.root === devNull) this.root =
         await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
 
       return method.apply(this, args)
@@ -25,7 +25,7 @@ export class Workspace {
     const source = join(__dirname, 'components', name)
     const target = join(this.root, name)
 
-    await copy(source, target)
+    await cp(source, target, { force: true, recursive: true })
 
     if (patch !== undefined)
       await this.patchManifest(target, patch)
@@ -39,5 +39,3 @@ export class Workspace {
     await yaml.patch(path, patch)
   }
 }
-
-const devnull = '/dev/null'
