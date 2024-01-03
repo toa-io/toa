@@ -1,4 +1,3 @@
-import { Buffer } from 'buffer'
 import { Readable } from 'stream'
 import type { IncomingMessage } from './messages'
 import type * as http from 'node:http'
