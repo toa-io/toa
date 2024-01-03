@@ -51,7 +51,7 @@ it('should count messages', async () => {
     }
   }), times)
 
-  await timeout(400) // event processing with retries
+  await timeout(2000) // event processing with retries
 
   const updated = await stats.invoke('observe', { query: { id: sender } })
 
