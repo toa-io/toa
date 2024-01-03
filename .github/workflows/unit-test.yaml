@@ -6,7 +6,7 @@ on:
       - "**/*.js"
       - "**/*.ts"
       - "package-lock.json"
-      - ".github/workflows/unit-test.yml"
+      - ".github/workflows/unit-test.yaml"
 
   push:
     branches:
