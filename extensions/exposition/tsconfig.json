@@ -1,12 +1,25 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./transpiled"
+    "composite": true,
+    "outDir": "./transpiled",
+    "rootDir": "./source"
   },
   "include": [
     "source"
   ],
   "exclude": [
     "**/*.test.ts"
+  ],
+  "references": [
+    {
+      "path": "components/identity.basic"
+    },
+    {
+      "path": "components/identity.tokens"
+    },
+    {
+      "path": "components/identity.roles"
+    }
   ]
 }

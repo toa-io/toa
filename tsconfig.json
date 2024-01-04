@@ -1,21 +1,41 @@
 {
   "compilerOptions": {
-    "outDir": "/dev/null",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "target": "ESNext",
-    "sourceMap": true,
-    "declaration": true,
-    "esModuleInterop": true,
+    // see https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
+    "lib": [
+      "ES2022"
+    ],
+    "module": "node16",
+    "target": "ES2022",
+    "moduleResolution": "Node16",
+    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
     "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": false,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "noImplicitOverride": true,
     "allowJs": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
-  "exclude": [
-    "**/transpiled"
+  "files": [],
+  "references": [
+    {
+      "path": "libraries"
+    },
+    {
+      "path": "extensions"
+    },
+    {
+      "path": "connectors"
+    },
   ]
 }

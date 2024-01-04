@@ -1,9 +1,14 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./transpiled"
+    "composite": true,
+    "outDir": "./transpiled",
+    "rootDir": "./source",
   },
   "include": [
-    "source"
+    "source/"
+  ],
+  "exclude": [
+    "**/*.test.ts"
   ]
 }

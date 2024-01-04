@@ -1,0 +1,27 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "configuration"
+    },
+    {
+      "path": "storages"
+    },
+    {
+      "path": "exposition"
+    },
+    {
+      "path": "origins"
+    },
+    {
+      "path": "realtime"
+    },
+    {
+      "path": "stash"
+    }
+  ]
+}

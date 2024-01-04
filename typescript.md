@@ -10,6 +10,7 @@ To create a new package or migrate an existing one to TypeScript, follow these s
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./transpiled"
   },
   "include": [
@@ -27,7 +28,6 @@ To create a new package or migrate an existing one to TypeScript, follow these s
 
 ```
   "main": "transpiled/index.js",
-  "types": "transpiled/index.d.ts",
   "scripts": {
     "transpile": "tsc"
   },

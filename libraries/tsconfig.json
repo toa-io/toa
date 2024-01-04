@@ -1,0 +1,24 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "command"
+    },
+    {
+      "path": "http"
+    },
+    {
+      "path": "kubernetes"
+    },
+    {
+      "path": "pointer"
+    },
+    {
+      "path": "streams"
+    }
+  ]
+}

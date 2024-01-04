@@ -1,6 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./transpiled"
   },
   "include": [
@@ -8,5 +9,10 @@
   ],
   "exclude": [
     "**/*.test.ts"
+  ],
+  "references": [
+    {
+      "path": "components/streams"
+    }
   ]
 }

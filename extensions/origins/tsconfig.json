@@ -1,10 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./transpiled"
+    "composite": true,
+    "outDir": "./transpiled",
   },
   "include": [
-    "source"
+    "source",
+    "source/protocols/http/.aspect/**/*" // TS ignores .dot files by default
   ],
   "exclude": [
     "**/*.test.ts"
