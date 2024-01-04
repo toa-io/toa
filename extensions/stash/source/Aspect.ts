@@ -1,3 +1,4 @@
+// @ts-expect-error -- this implementation should be replaced with official @redis libs
 import Redlock from 'redlock-temp-fix'
 import { encode, decode } from 'msgpackr'
 import { Connector, type extensions } from '@toa.io/core'
