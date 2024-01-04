@@ -66,11 +66,21 @@ overrides:
         - error
         - always
         - null: always
+      '@typescript-eslint/no-unsafe-argument': warn
+      '@typescript-eslint/non-nullable-type-assertion-style': warn
+      '@typescript-eslint/unbound-method': warn
 
+  - files: ["*.test.ts", "**/test/**"]
+    extends: 'plugin:@typescript-eslint/disable-type-checked'
+    env:
+      jest: true
+  - files: ['**/features/**/*.ts']
+    extends: 'plugin:@typescript-eslint/disable-type-checked'
+    rules:
+       '@typescript-eslint/prefer-nullish-coalescing': 'off'
+       '@typescript-eslint/strict-boolean-expressions': 'off'
 parserOptions:
-  project: ./tsconfig.json
-env:
-  jest: true
+  project: true
 ignorePatterns:
   - '*.d.ts'
   - '*.js'
