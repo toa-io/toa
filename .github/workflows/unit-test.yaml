@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 18
       - uses: azure/setup-helm@v3
-      - run: docker compose up -d
+      - run: docker compose up -d --quiet-pull
 
       - name: Install dependencies
         run: npm ci
