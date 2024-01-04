@@ -83,17 +83,17 @@ export class Agent {
     const request = {
       method,
       headers,
-      body: stream as unknown as ReadableStream,
-      duplex: 'half'
+      body: stream
     }
 
     try {
       const response = await fetch(href, request)
 
       this.response = await http.parse.response(response)
-    } catch (e: any) {
+    } catch (e) {
       console.error(e)
-      console.error(e.cause)
+
+      if (e instanceof Error) console.error(e.cause)
 
       throw e
     }
