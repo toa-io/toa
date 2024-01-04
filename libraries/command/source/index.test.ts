@@ -34,7 +34,7 @@ const stderr = {
   pipe: jest.fn()
 }
 
-const exec = jest.fn((command, callback) => {
+const exec = jest.fn((_command, callback) => {
   setImmediate(() => {
     callback(null)
   })

@@ -10,7 +10,7 @@ export class Effect implements Operation {
     context.state.streams = this.streams
   }
 
-  public async execute (input: Input, context: Context): Promise<Readable> {
+  public async execute (input: Input, _context: Context): Promise<Readable> {
     const key = input.key
 
     if (!this.streams.has(key))
