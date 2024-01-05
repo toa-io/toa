@@ -1,6 +1,5 @@
 'use strict'
 
-const clone = require('clone-deep')
 const { join } = require('node:path')
 
 const { overwrite } = require('@toa.io/generic')
@@ -12,7 +11,7 @@ const { save, load, parse } = require('@toa.io/yaml')
  */
 const template = async (directory, additions) => {
   const path = join(directory, FILENAME)
-  const template = clone(TEMPLATE)
+  const template = structuredClone(TEMPLATE)
 
   if (additions !== undefined) {
     const add = parse(additions)

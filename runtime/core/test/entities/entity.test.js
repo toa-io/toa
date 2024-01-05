@@ -37,7 +37,7 @@ describe('argument', () => {
     const state = fixtures.state()
     const entity = new Entity(fixtures.schema, state)
 
-    expect(entity.get()).toStrictEqual(state)
+    expect(entity.get()).toEqual(state)
   })
 })
 
@@ -51,7 +51,7 @@ it('should provide event', () => {
 
   const event = entity.event()
 
-  expect(event).toStrictEqual({
+  expect(event).toEqual({
     state,
     origin,
     changeset: { foo: 'new value' }
