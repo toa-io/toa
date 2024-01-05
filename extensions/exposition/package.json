@@ -37,10 +37,10 @@
   },
   "scripts": {
     "test": "jest",
-    "transpile": "npx tsc && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles",
-    "transpile:basic": "npx tsc -p ./components/identity.basic",
-    "transpile:tokens": "npx tsc -p ./components/identity.tokens",
-    "transpile:roles": "npx tsc -p ./components/identity.roles",
+    "transpile": "tsc --build",
+    "transpile:basic": "tsc -p ./components/identity.basic",
+    "transpile:tokens": "tsc -p ./components/identity.tokens",
+    "transpile:roles": "tsc -p ./components/identity.roles",
     "features": "npx cucumber-js"
   },
   "devDependencies": {

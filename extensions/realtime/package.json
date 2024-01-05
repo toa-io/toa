@@ -21,7 +21,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "transpile": "npx tsc && npx tsc -p ./components/streams",
+    "transpile": "tsc --build",
     "features": "npx cucumber-js"
   }
 }
