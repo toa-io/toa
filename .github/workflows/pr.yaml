@@ -1,0 +1,37 @@
+name: Test
+
+on:
+  pull_request:
+    paths:
+      - "**/*.js"
+      - "**/*.ts"
+      - "package-lock.json"
+      - ".github/workflows/unit-test.yaml"
+
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Run unit tests
+        run: npm test -- --coverage --testTimeout=30000 --reporters=github-actions --reporters=summary
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          flags: unit
+          fail_ci_if_error: true
