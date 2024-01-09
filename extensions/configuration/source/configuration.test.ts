@@ -21,6 +21,7 @@ afterEach(() => {
 
 it('should read value', async () => {
   manifest.schema = { foo: 'string' }
+
   const value: object = { foo: generate() }
 
   set(value)
