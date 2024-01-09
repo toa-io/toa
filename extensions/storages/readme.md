@@ -130,15 +130,15 @@ Custom providers are not supported.
 
 ### Amazon S3
 
-Annotation value formats is `s3://{region}/{bucket}?endpoint={endpoint}`.
+Annotation value formats are either `s3://{bucket}/{key}` or S3 HTTP endpoint like `https?://{endpoint}.s3.{region}.{rest_of_hostname}/{bucket}`.
 
-Requires secrets for the access key and secret key.
+Secrets for the AWS access key and secret key can be provided via SECRETS constructs property. If missed standard AWS SDK credentials resolve chain will be used (that means environment variable, shared config file, EC2 metadata service, etc.).
 See [`toa conceal`](/runtime/cli/readme.md#conceal) for deployment
 and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
 
-`s3://us-east-1/my-bucket?endpoint=http://s3.my-instance.com:4566`
+`s3://my-bucket`
 
 ### Filesystem
 
@@ -199,7 +199,7 @@ provider-specific URLs as values.
 
 ```yaml
 storages:
-  photos: s3://us-east-1/my-bucket
+  photos: s3://my-bucket
   photos@dev: file:///var/my-storage
 ```
 

@@ -65,6 +65,7 @@ services:
     environment:
       - DEBUG=1
       - SERVICES=s3
+      - ALLOW_NONSTANDARD_REGIONS=1
       - AWS_ACCESS_KEY_ID=developer
       - AWS_SECRET_ACCESS_KEY=secret
       - AWS_DEFAULT_REGION=us-west-1

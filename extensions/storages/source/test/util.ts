@@ -12,7 +12,7 @@ const suites: Suite[] = [
   },
   {
     run: process.env.RUN_S3 === '1',
-    ref: 's3://us-west-1/test-bucket?endpoint=http://s3.localhost.localstack.cloud:4566',
+    ref: 'https://s3.localhost.localstack.cloud:4566/test-bucket',
     secrets: {
       ACCESS_KEY_ID: 'developer',
       SECRET_ACCESS_KEY: 'secret'
