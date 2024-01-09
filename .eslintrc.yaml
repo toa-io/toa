@@ -16,6 +16,9 @@ overrides:
           prev: [const, let]
           next: expression
         - blankLine: always
+          prev: expression
+          next: [const, let]
+        - blankLine: always
           prev: [multiline-const, multiline-let]
           next: '*'
         - blankLine: always

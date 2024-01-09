@@ -16,6 +16,7 @@ it('should instance of connector', async () => {
 
 it('should start HTTP server', async () => {
   await server.connect()
+
   expect(server.connected).toBeTruthy()
   expect(server.port).toBeGreaterThan(0)
 })
@@ -24,6 +25,7 @@ it('should register request handler', async () => {
   const process: Processing = jest.fn().mockResolvedValue(undefined)
 
   server.attach(process)
+
   const res = await fetch(`http://localhost:${server.port}`)
 
   await res.text()
@@ -67,6 +69,7 @@ describe('result', () => {
     server.attach(async (): Promise<OutgoingMessage> => ({
       headers: new Headers(), body: randomUUID()
     }))
+
     const res = await fetch(`http://localhost:${server.port}/`)
 
     await res.text()
@@ -75,6 +78,7 @@ describe('result', () => {
 
   it('should send status code 204 if the result has no value', async () => {
     server.attach(async (): Promise<OutgoingMessage> => ({ headers: new Headers() }))
+
     const res = await fetch(`http://localhost:${server.port}/`)
 
     await res.text()
@@ -97,6 +101,7 @@ describe('result', () => {
 
   it('should return 500 on exception', async () => {
     server.attach(jest.fn().mockRejectedValue(new Error('Bad')))
+
     const res = await fetch(`http://localhost:${server.port}/`)
 
     await res.text()
@@ -107,6 +112,7 @@ describe('result', () => {
     const message = randomUUID()
 
     server.attach(jest.fn().mockRejectedValueOnce(new BadRequest(message)))
+
     const res = await fetch(`http://localhost:${server.port}/`)
     const text = await res.text()
 
@@ -119,6 +125,7 @@ describe('options', () => {
   it('should send 501 on unspecified method', async () => {
     server = Server.create({ methods: new Set(['COPY']), port: 0 })
     await server.connect()
+
     const res = await fetch(`http://localhost:${server.port}/`)
 
     await res.text()
