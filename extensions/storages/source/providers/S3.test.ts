@@ -49,9 +49,11 @@ describe('S3 storage provider', () => {
   })
 
   test('should remove folder with all files', async () => {
-    const headHandler = jest.fn().mockReturnValue(HttpResponse.xml('', { status: 404 }))
+    const headHandler = jest.fn().mockReturnValue(new Response('', {
+      status: 404, headers: { 'content-type': 'application/xml' }
+    }))
 
-    const listHandler = jest.fn().mockReturnValueOnce(HttpResponse.xml(`
+    const listHandler = jest.fn().mockReturnValueOnce(new Response(`
     <ListBucketResult>
       <NextContinuationToken>someToken</NextContinuationToken>
       <KeyCount>1001</KeyCount>
@@ -62,8 +64,8 @@ describe('S3 storage provider', () => {
       </Contents>
     </ListBucketResult>
     `, {
-      status: 200
-    })).mockReturnValueOnce(HttpResponse.xml(`
+      status: 200, headers: { 'content-type': 'application/xml' }
+    })).mockReturnValueOnce(new Response(`
     <ListBucketResult>
       <KeyCount>1001</KeyCount>
       <MaxKeys>1000</MaxKeys>
@@ -75,10 +77,10 @@ describe('S3 storage provider', () => {
       </Contents>
     </ListBucketResult>
     `, {
-      status: 200
+      status: 200, headers: { 'content-type': 'application/xml' }
     }))
 
-    const deleteHandler = jest.fn().mockReturnValue(HttpResponse.xml(`
+    const deleteHandler = jest.fn().mockReturnValue(new Response(`
     <DeleteResult>
       <Deleted>
         <Key>happy_face1.jpg</Key>
@@ -91,7 +93,7 @@ describe('S3 storage provider', () => {
       </Deleted>
     </DeleteResult>
     `, {
-      status: 200
+      status: 200, headers: { 'content-type': 'application/xml' }
     }))
 
     s3endpoint.use(http.head(`${S3_ENDPOINT}/some/absolute/path_to_remove`,
@@ -110,13 +112,14 @@ describe('S3 storage provider', () => {
   test('should be able to upload a file to S3', async () => {
     const body = Readable.from('test content')
 
-    const handler = jest.fn().mockReturnValue(HttpResponse.xml('', {
+    const handler = jest.fn().mockReturnValue(new Response('', {
       status: 200,
       headers: {
         ETag: 'test-etag',
         'x-amz-id-2': 'test_id_2',
         'x-amz-request-id': 'test_request_id',
-        Server: 'AmazonS3'
+        Server: 'AmazonS3',
+        'content-type': 'application/xml'
       }
     }))
 
