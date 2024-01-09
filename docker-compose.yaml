@@ -41,19 +41,19 @@ services:
     ports:
       - '6379:6379'
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
   redis1:
     image: redis:7.0.11
     ports:
       - '6378:6379'
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
   redis2:
     image: redis:7.0.11
     ports:
       - '6377:6379'
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
   http-echo:
     image: ealen/echo-server:0.8.12
     ports: ['8888:80']
@@ -69,7 +69,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=secret
       - AWS_DEFAULT_REGION=us-west-1
     healthcheck:
-      test: [ "CMD", "awslocal", "s3api", "wait", "bucket-exists", "--bucket", "test-bucket" ]
+      test: ["CMD", "awslocal", "s3api", "wait", "bucket-exists", "--bucket", "test-bucket"]
     volumes:
-      - "./extensions/storages/source/test/init-localstack.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
+      - "./integration/scripts/localstack.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
       - "/var/run/docker.sock:/var/run/docker.sock"
