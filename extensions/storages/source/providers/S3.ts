@@ -65,6 +65,7 @@ export class S3 implements Provider {
           const bucket = url.pathname.split('/')[1]
 
           assert.ok(typeof bucket === 'string', `Unable to get S3 bucket name from URL: ${url.toString()}`)
+
           this.bucket = bucket
         }
       }
@@ -83,14 +84,13 @@ export class S3 implements Provider {
 
     this.client = new S3Client(s3Config)
 
-    // eslint-disable-next-line @typescript-eslint/promise-function-async -- awaiting inside breaks stack trace
-    this.client.middlewareStack.add((next, _context) => (args) => {
+    this.client.middlewareStack.add((next, _context) => async (args) => {
       if ('Key' in args.input && typeof args.input.Key === 'string')
-        // removes leading slash
+      // removes leading slash
         args.input.Key = args.input.Key.replace(/^\//, '')
 
       if ('Prefix' in args.input && typeof args.input.Prefix === 'string')
-        // removes leading slash and ensures finishing slash
+      // removes leading slash and ensures finishing slash
         args.input.Prefix = args.input.Prefix.replace(/^\/|\/$/g, '') + '/'
 
       return next(args)
@@ -155,6 +155,7 @@ export class S3 implements Provider {
       }
 
     const objectsToRemove: ObjectIdentifier[] = []
+
     for await (const page of paginateListObjectsV2({ client }, { Bucket, Prefix: Key }))
       for (const { Key } of page.Contents ?? [])
         objectsToRemove.push({ Key })

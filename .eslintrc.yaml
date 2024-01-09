@@ -14,7 +14,7 @@ overrides:
           next: [block-like, if]
         - blankLine: always
           prev: [const, let]
-          next: expression
+          next: [expression, for]
         - blankLine: always
           prev: expression
           next: [const, let]
@@ -60,6 +60,7 @@ overrides:
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
       '@typescript-eslint/no-confusing-void-expression': off
+      '@typescript-eslint/return-await': off
       no-void: off
       eqeqeq:
         - error
