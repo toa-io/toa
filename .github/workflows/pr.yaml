@@ -31,7 +31,7 @@ jobs:
         run: npm run test:lint
 
       - name: Run unit tests
-        run: npm test:unit -- --coverage --testTimeout=30000 --reporters=github-actions --reporters=summary
+        run: npm run test:unit -- --coverage --testTimeout=30000 --reporters=github-actions --reporters=summary
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
