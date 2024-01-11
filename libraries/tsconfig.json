@@ -6,6 +6,12 @@
   "files": [],
   "references": [
     {
+      "path": "streams"
+    },
+    {
+      "path": "pointer"
+    },
+    {
       "path": "command"
     },
     {
@@ -14,11 +20,5 @@
     {
       "path": "kubernetes"
     },
-    {
-      "path": "pointer"
-    },
-    {
-      "path": "streams"
-    }
   ]
 }
