@@ -6,7 +6,7 @@ on:
       - "**/*.js"
       - "**/*.ts"
       - "package-lock.json"
-      - ".github/workflows/unit-test.yaml"
+      - ".github/workflows/pr.yaml"
 
   push:
     branches:
@@ -27,8 +27,11 @@ jobs:
         env:
           HUSKY: 0
 
+      - name: Run lint
+        run: npm run test:lint
+
       - name: Run unit tests
-        run: npm test -- --coverage --testTimeout=30000 --reporters=github-actions --reporters=summary
+        run: npm run test:unit -- --coverage --testTimeout=30000 --reporters=github-actions --reporters=summary
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
