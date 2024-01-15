@@ -27,11 +27,11 @@ async function run (repository, command, envFile) {
   const args = ['run', '--rm', ...envArgs, id, 'sh', '-c', command]
   const done = promex()
 
-  const running = await spawn('docker', args, { stdio: 'inherit' })
+  const running = spawn('docker', args, { stdio: 'inherit' })
 
   running.on('exit', done.resolve)
 
-  await done
+  const code = await done
 
   await execute(`docker rmi --force ${id}`)
 }
