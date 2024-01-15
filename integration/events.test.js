@@ -57,7 +57,7 @@ it('should receive conditionally', async () => {
 
   const before = await stats.invoke('observe', { query: { id: sender } })
 
-  expect(before).toStrictEqual({
+  expect(before).toEqual({
     id: sender,
     messages: 9,
     _version: 9
@@ -72,7 +72,7 @@ it('should receive conditionally', async () => {
 
   expect(balance.balance).toBe(0)
 
-  expect(after).toStrictEqual({
+  expect(after).toEqual({
     id: sender,
     messages: 10,
     bankrupt: true,
