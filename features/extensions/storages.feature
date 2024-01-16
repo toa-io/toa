@@ -9,8 +9,8 @@ Feature: Storages Extension
     When I call `default.storage.put` with:
       """yaml
       input:
-      storage: dummy
-      path: /lenna.ascii
+        storage: dummy
+        path: /lenna.ascii
       """
     Then the reply is received:
       """yaml
@@ -31,8 +31,8 @@ Feature: Storages Extension
     When I call `default.storage.put` with:
       """yaml
       input:
-      storage: dummy
-      path: /lenna.ascii
+        storage: dummy
+        path: /lenna.ascii
       """
     Then the reply is received:
       """yaml
@@ -50,8 +50,8 @@ Feature: Storages Extension
     When I call `default.storage.get` with:
       """yaml
       input:
-      storage: wrong
-      path: /lenna.ascii
+        storage: wrong
+        path: /lenna.ascii
       """
     Then the following exception is thrown:
       """yaml
