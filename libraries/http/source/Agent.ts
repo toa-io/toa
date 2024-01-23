@@ -1,4 +1,4 @@
-import { AssertionError } from 'node:assert'
+import * as assert from 'node:assert'
 import { trim } from '@toa.io/generic'
 import { buffer } from '@toa.io/streams'
 import * as http from './index'
@@ -46,13 +46,18 @@ export class Agent {
       const match = this.response.match(rx)
 
       if (match === null)
-        throw new AssertionError({
+        throw new assert.AssertionError({
           message: `Response is missing '${line}'`,
           expected: line,
           actual: this.response
         })
 
-      Object.assign(this.values, match.groups)
+      for (const [key, value] of Object.entries(match.groups ?? {})) {
+        assert.ok(!(key in this.values) || this.values[key] === value,
+          `'${key}' (${value}) is not equal to current value '${this.values[key]}'`)
+
+        this.values[key] = value
+      }
     }
   }
 
@@ -65,7 +70,7 @@ export class Agent {
       const includes = this.response.includes(line)
 
       if (includes)
-        throw new AssertionError({
+        throw new assert.AssertionError({
           message: `Response contains '${line}'`,
           expected: line,
           actual: this.response

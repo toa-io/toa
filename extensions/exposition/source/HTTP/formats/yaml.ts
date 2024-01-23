@@ -11,7 +11,7 @@ export function decode (buffer: Buffer): any {
 }
 
 export function encode (value: any): Buffer {
-  const text = yaml.dump(value)
+  const text = yaml.dump(value, { lineWidth: -1, noRefs: true })
 
   return Buffer.from(text)
 }
