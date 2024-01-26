@@ -17,6 +17,12 @@ const builder = (yargs) => {
       desc: 'Path to component',
       default: '.'
     })
+    .option('format', {
+      group: 'Command options:',
+      choices: ['yaml', 'json'],
+      desc: 'Exporting format',
+      default: 'yaml'
+    })
 }
 
 exports.command = ['manifest', 'man']
