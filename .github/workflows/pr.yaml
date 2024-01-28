@@ -37,4 +37,4 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           flags: unit
-          fail_ci_if_error: true
+          fail_ci_if_error: false

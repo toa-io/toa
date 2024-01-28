@@ -13,7 +13,10 @@ const print = async (argv) => {
 
   const manifest = await component(path)
 
-  if (argv.error !== true) console.log(dump(manifest))
+  if (argv.error !== true) {
+    const result = argv.format === 'json' ? JSON.stringify(manifest, null, 2) : dump(manifest)
+    console.log(result)
+  }
 }
 
 exports.manifest = print
