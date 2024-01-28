@@ -4,12 +4,12 @@ import { open } from '../../../storages/source/test/util'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
-@binding([Gateway, Parameters])
+@binding([Gateway, Parameters, http.Captures])
 export class HTTP extends http.Agent {
   private readonly gateway: Gateway
 
-  public constructor (gateway: Gateway, parameters: Parameters) {
-    super(parameters.origin)
+  public constructor (gateway: Gateway, parameters: Parameters, captures: http.Captures) {
+    super(parameters.origin, captures)
     this.gateway = gateway
   }
 

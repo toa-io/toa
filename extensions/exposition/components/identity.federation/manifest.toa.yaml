@@ -1,0 +1,74 @@
+namespace: identity
+name: federation
+
+entity:
+  schema:
+    type: object
+    properties:
+      iss:
+        description: The issuer, or signer, of the token, URI like `https://accounts.google.com`
+        type: string
+      sub:
+        description: the ID that represents the principal making the request
+        type: string
+    required:
+      - iss
+      - sub
+    additionalProperties: false
+  initialized: true
+
+operations:
+  transit:
+    concurrency: retry
+  incept:
+    forward: transit
+    query: false
+    input:
+      iss*: string
+      sub*: string
+  create:
+    input:
+      id*: string
+      credentials*: string
+    output:
+      id: string
+  authenticate:
+    input: string
+    output:
+      identity:
+        id: string
+
+configuration:
+  schema:
+    type: object
+    properties:
+      allowed_issuers:
+        description: Allowed origins for a token `iss` field
+        type: array
+        items:
+          type: string
+          format: uri
+        minItems: 1
+        uniqueItems: true
+      acceptable_audience:
+        type: array
+        items:
+          type: string
+        minItems: 1
+        uniqueItems: true
+      explicit_identity_creation:
+        description: Force identities to be explicitly created or incept before being used in authentication
+        type: boolean
+        default: false
+    additionalProperties: false
+
+exposition:
+  isolated: true
+  /:
+    anonymous: true
+    POST: incept
+  /:id:
+    auth:role: system:identity:federation
+    auth:scheme: bearer
+    auth:id: id
+    PATCH: transit
