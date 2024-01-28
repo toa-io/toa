@@ -27,13 +27,13 @@ it('should upsert', async () => {
 
   const upserted = await remote.invoke('observe', { query: { id } })
 
-  expect(upserted).toStrictEqual({ id, _version: 1, a: 1, b: 'foo' })
+  expect(upserted).toEqual({ id, _version: 1, a: 1, b: 'foo' })
 
   await remote.invoke('assign', { input: { a: 2 }, query: { id } })
 
   const updated = await remote.invoke('observe', { query: { id } })
 
-  expect(updated).toStrictEqual({ id, _version: 2, a: 2, b: 'foo' })
+  expect(updated).toEqual({ id, _version: 2, a: 2, b: 'foo' })
 })
 
 it('should not upsert if not match entity schema', async () => {

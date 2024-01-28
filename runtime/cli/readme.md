@@ -100,7 +100,8 @@ found and replayed sequentially.
 <dd>Print normalized manifest.
 
 <code>--path</code> path to component (default <code>.</code>)<br/>
-<code>--error</code> print errors only
+<code>--error</code> print errors only<br/>
+<code>--output</code> output format (default <code>yaml</code>)
 </dd>
 </dl>
 

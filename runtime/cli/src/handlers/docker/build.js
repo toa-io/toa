@@ -6,11 +6,6 @@ const { deployment: { Factory } } = require('@toa.io/operations')
 
 const find = require('../../util/find')
 
-/**
- * @param {string} contextPath
- * @param {string[]} componentPatterns
- * @return {Promise<string>}
- */
 async function build (contextPath, componentPatterns) {
   const context = await createContext(contextPath, componentPatterns)
   const factory = new Factory(context)
@@ -23,11 +18,6 @@ async function build (contextPath, componentPatterns) {
   return `${context.registry.base === undefined ? '' : context.registry.base + '/'}${context.name}/composition-${composition}`
 }
 
-/**
- * @param {string} contextPath
- * @param {string[]} componentPatterns
- * @return {Promise<toa.norm.Context>}
- */
 async function createContext (contextPath, componentPatterns) {
   const contextRoot = find.context(contextPath)
   const context = await norm.context(contextRoot, 'docker')

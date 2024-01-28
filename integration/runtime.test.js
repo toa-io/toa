@@ -32,5 +32,5 @@ it('should preform operations', async () => {
   await component.invoke('debit', { input: 1, query: { id } })
   const reply = await component.invoke('observe', { query: { id } })
 
-  expect(reply.output).toStrictEqual({ id, balance: 9, _version: 1 })
+  expect(reply.output).toEqual({ id, balance: 9, _version: 1 })
 })

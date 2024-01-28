@@ -1,6 +1,6 @@
 'use strict'
 
-const { Given, After } = require('@cucumber/cucumber')
+const { Given, After, Before } = require('@cucumber/cucumber')
 const { parse } = require('@toa.io/yaml')
 const { encode } = require('msgpackr')
 
@@ -16,18 +16,24 @@ Given('an encoded environment variable {token} is set to:',
   })
 
 function setEnv (name, value) {
-  this.env ??= []
   this.env.push(name)
 
   process.env[name] = value
 }
+
+Before(
+  /**
+   * @this {toa.features.Context}
+   */
+  function () {
+    this.env = []
+  })
 
 After(
   /**
    * @this {toa.features.Context}
    */
   function () {
-    if (this.env !== undefined)
-      for (const variable of this.env)
-        delete process.env[variable]
+    for (const variable of this.env)
+      delete process.env[variable]
   })

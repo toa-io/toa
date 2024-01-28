@@ -17,10 +17,11 @@ const builder = (yargs) => {
       desc: 'Path to component',
       default: '.'
     })
-    .option('format', {
+    .option('output', {
+      alias: 'o',
       group: 'Command options:',
       choices: ['yaml', 'json'],
-      desc: 'Exporting format',
+      desc: 'Output format',
       default: 'yaml'
     })
 }

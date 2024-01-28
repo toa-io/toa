@@ -1,4 +1,3 @@
-import { dedupe } from '@toa.io/dns'
 import { nameVariable } from './naming'
 import { type AnnotationRecord, type URIMap } from './Deployment'
 
@@ -6,20 +5,17 @@ export async function resolve (id: string, selector: string): Promise<string[]> 
   const variable = nameVariable(id, selector)
   const value = process.env[variable]
 
-  if (value === undefined) throw new Error(`${variable} is not set.`)
+  if (value === undefined)
+    throw new Error(`${variable} is not set.`)
 
-  let urls = value.split(' ')
-
-  const protocol = getProtocol(urls)
-
-  if (protocol !== 'http:')
-    urls = await dedupe(urls)
+  const urls = value.split(' ')
 
   return withCredentials(variable, urls)
 }
 
 export function resolveRecord (uris: URIMap, selector: string): AnnotationRecord {
-  if (selector in uris) return getRecord(uris, selector)
+  if (selector in uris)
+    return getRecord(uris, selector)
 
   const segments = selector.split('.')
 
@@ -47,12 +43,6 @@ function addCredentials (ref: string, username: string, password: string): strin
   url.password = password
 
   return url.href
-}
-
-function getProtocol (urls: string[]): string {
-  const url = new URL(urls[0])
-
-  return url.protocol
 }
 
 function getRecord (uris: URIMap, key: string): AnnotationRecord {

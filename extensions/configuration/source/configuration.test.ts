@@ -14,7 +14,7 @@ beforeEach(() => {
 
 afterEach(() => {
   for (const name of used)
-    process.env[name] = undefined
+    delete process.env[name]
 
   used = []
 })

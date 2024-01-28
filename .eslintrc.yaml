@@ -61,6 +61,7 @@ overrides:
       '@typescript-eslint/explicit-member-accessibility': error
       '@typescript-eslint/no-confusing-void-expression': off
       '@typescript-eslint/return-await': off
+      '@typescript-eslint/no-dynamic-delete': off
       no-void: off
       eqeqeq:
         - error

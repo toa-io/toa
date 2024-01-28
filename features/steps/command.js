@@ -41,5 +41,6 @@ Then('program should exit with code {int}',
    */
   async function (code) {
     await this.process
+
     assert.equal(this.exitCode, code, `Program exit code is not ${code}\n${this.stderr}`)
   })

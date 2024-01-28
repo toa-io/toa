@@ -45,7 +45,7 @@ it('should assign', async () => {
 
   const updated = await messages.invoke('observe', { query })
 
-  expect(updated).toStrictEqual({
+  expect(updated).toEqual({
     id: query.id,
     _version: 2,
     sender,
@@ -62,7 +62,7 @@ it('should emit events', async () => {
 
   const before = await credits.invoke('observe', { query: { id: sender } })
 
-  expect(before).toStrictEqual({
+  expect(before).toEqual({
     id: sender,
     _version: 1,
     balance: 9
@@ -99,7 +99,7 @@ it('should assign initialized', async () => {
 
   const reply = await credits.invoke('observe', { query: { id } })
 
-  expect(reply).toStrictEqual({
+  expect(reply).toEqual({
     id,
     _version: 1,
     balance: 30

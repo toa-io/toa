@@ -7,7 +7,8 @@ import { FileSystem } from './FileSystem'
 
 export class Temporary extends FileSystem {
   public constructor (url: URL) {
-    assert.equal(url.protocol, 'tmp:', `Invalid Temporary URL: ${url.toString()}`)
+    assert.equal(url.protocol, 'tmp:', `Invalid temporary URL: ${url.toString()}`)
+
     super(pathToFileURL(join(tmpdir(), url.pathname)))
   }
 }

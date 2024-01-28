@@ -5,6 +5,8 @@ export class Test extends Temporary {
   public static readonly SECRETS = ['USERNAME', 'PASSWORD']
 
   public constructor (url: URL, secrets: Record<string, string>) {
+    url.protocol = 'tmp:'
+
     super(url)
 
     assert(secrets.USERNAME !== undefined, 'Missing USERNAME')

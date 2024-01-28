@@ -33,10 +33,6 @@ something:
   one: redis://redis{0-2}.example.com
 ```
 
-### Deduplication
-
-Pointer values are [DNS-deduplicated](/libraries/dns/readme.md#deduplication) except `http:` schema.
-
 ### `default` namespace
 
 When the Pointer is used for component-specific URLs and the component is in the `default`
