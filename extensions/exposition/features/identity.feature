@@ -21,8 +21,8 @@ Feature: Identity resource
 
       id: efe3a65ebbee47ed95a73edd911ea328
       roles:
-      - developer
-      - system:identity
+        - developer
+        - system:identity
       """
     When the following request is received:
       """
@@ -36,8 +36,8 @@ Feature: Identity resource
 
       id: ${{ User.id }}
       roles:
-      - developer
-      - system:identity
+        - developer
+        - system:identity
       """
     # checking that it returns the same id for given token
     When the following request is received:
@@ -52,8 +52,8 @@ Feature: Identity resource
 
       id: ${{ User.id }}
       roles:
-      - developer
-      - system:identity
+        - developer
+        - system:identity
       """
 
   Scenario: Requesting Identity with non-existent credentials
