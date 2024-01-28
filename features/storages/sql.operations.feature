@@ -35,7 +35,6 @@ Feature: SQL Storage Operations
       | foo | bar  | _version |
       | 0   | test | 1        |
     And I disconnect
-
     Examples:
       | callee  |
       | sql.one |
@@ -43,6 +42,7 @@ Feature: SQL Storage Operations
 
   Scenario: Create a record with environment
     Given I have a component `sql.one`
+    And the database has a structure for the `sql.one` component
     And I have a context with:
       """yaml
       sql: pg://localhost/developer
@@ -57,3 +57,4 @@ Feature: SQL Storage Operations
       """
     And I run `TOA_DEV=0 toa invoke transit "{ input: { bar: 'test' } }" -p ./components/sql.one`
     Then program should exit with code 0
+    And I disconnect

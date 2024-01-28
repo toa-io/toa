@@ -30,12 +30,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.481.0",
-    "smithy-node-native-fetch": "^1.0.6",
     "@aws-sdk/lib-storage": "3.481.0",
     "@toa.io/generic": "0.20.0-alpha.2",
     "@toa.io/http": "0.24.0-alpha.18",
     "error-value": "0.3.0",
     "matchacho": "0.3.5",
-    "msgpackr": "1.10.1"
+    "msgpackr": "1.10.1",
+    "smithy-node-native-fetch": "1.1.0"
   }
 }

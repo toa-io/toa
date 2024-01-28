@@ -58,22 +58,21 @@ Feature: Storages Extension
       message: "Storage 'wrong' is not defined"
       """
 
-  @deployment
   Scenario: Deploying a storage
     Given I have a component `storage`
     And I have a context with:
       """yaml
       storages:
-      tmp: tmp:///whatever
+        tmp: tmp:///whatever
       """
     When I export deployment
     Then exported values should contain:
       """yaml
       compositions:
-      - name: default-storage
-      variables:
-      - name: TOA_STORAGES
-      value: 3gABo3RtcK90bXA6Ly8vd2hhdGV2ZXI=
+        - name: default-storage
+          variables:
+            - name: TOA_STORAGES
+              value: 3gABo3RtcK90bXA6Ly8vd2hhdGV2ZXI=
       """
 
   Scenario: Running 'test:' provider with secrets
@@ -90,24 +89,24 @@ Feature: Storages Extension
     And I have a context with:
       """yaml
       storages:
-      tmp: test:///whatever
+        tmp: test:///whatever
       """
     When I export deployment
     Then exported values should contain:
       """yaml
       compositions:
-      - name: default-storage
-      variables:
-      - name: TOA_STORAGES
-      value: 3gABo3RtcLB0ZXN0Oi8vL3doYXRldmVy
-      - name: TOA_STORAGES_TMP_USERNAME
-      secret:
-      name: toa-storages-tmp
-      key: USERNAME
-      - name: TOA_STORAGES_TMP_PASSWORD
-      secret:
-      name: toa-storages-tmp
-      key: PASSWORD
+        - name: default-storage
+          variables:
+            - name: TOA_STORAGES
+              value: 3gABo3RtcLB0ZXN0Oi8vL3doYXRldmVy
+            - name: TOA_STORAGES_TMP_USERNAME
+              secret:
+                name: toa-storages-tmp
+                key: USERNAME
+            - name: TOA_STORAGES_TMP_PASSWORD
+              secret:
+                name: toa-storages-tmp
+                key: PASSWORD
       """
 
   Scenario: Deploying S3 storage with secrets
@@ -115,22 +114,22 @@ Feature: Storages Extension
     And I have a context with:
       """yaml
       storages:
-      tmp: s3:///test
+        tmp: s3:///test
       """
     When I export deployment
     Then exported values should contain:
       """yaml
       compositions:
-      - name: default-storage
-      variables:
-      - name: TOA_STORAGES
-      value: 3gABo3RtcLRzMzovLy91cy13ZXN0LTIvdGVzdA==
-      - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
-      secret:
-      name: toa-storages-tmp
-      key: ACCESS_KEY_ID
-      - name: TOA_STORAGES_TMP_SECRET_ACCESS_KEY
-      secret:
-      name: toa-storages-tmp
-      key: SECRET_ACCESS_KEY
+        - name: default-storage
+          variables:
+          - name: TOA_STORAGES
+            value: 3gABo3RtcKpzMzovLy90ZXN0
+          - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
+            secret:
+              name: toa-storages-tmp
+              key: ACCESS_KEY_ID
+          - name: TOA_STORAGES_TMP_SECRET_ACCESS_KEY
+            secret:
+              name: toa-storages-tmp
+              key: SECRET_ACCESS_KEY
       """

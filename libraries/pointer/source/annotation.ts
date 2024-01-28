@@ -37,7 +37,7 @@ function checkCredentials (uri: string): void {
 
   if (url.username !== '' || url.password !== '')
     throw new Error(`Pointer URI '${uri}' must not contain credentials. ` +
-      'Please refer to the "Credentials" section in the documentation for more information.')
+      'Please refer to the "Credentials" section of the documentation for more information.')
 }
 
 const path = resolve(__dirname, '../schemas/urimap.cos.yaml')

@@ -3,7 +3,6 @@ import { encode, decode } from '@toa.io/generic'
 import { resolveRecord, naming } from '@toa.io/pointer'
 import { type Locator } from '@toa.io/core'
 import { type AnnotationRecord } from '@toa.io/pointer/transpiled/Deployment'
-import { dedupe } from '@toa.io/dns'
 import { type Annotation } from './annotation'
 
 export function createDependency (context: Context): Dependency {
@@ -18,11 +17,13 @@ export function createDependency (context: Context): Dependency {
 }
 
 export async function resolveURIs (locator: Locator): Promise<string[]> {
-  if (process.env.TOA_DEV === '1') return ['amqp://developer:secret@localhost']
+  if (process.env.TOA_DEV === '1')
+    return ['amqp://developer:secret@localhost']
 
   const value = process.env[VARIABLE]
 
-  if (value === undefined) throw new Error(`Environment variable ${VARIABLE} is not specified`)
+  if (value === undefined)
+    throw new Error(`Environment variable ${VARIABLE} is not specified`)
 
   const map = decode(value)
   const record = resolveRecord(map, locator.id)
@@ -80,8 +81,7 @@ function createSecretVariable (key: string, secretKey: string): Variable {
 }
 
 async function parseRecord (record: AnnotationRecord): Promise<string[]> {
-  const unique = await dedupe(record.references)
-  const urls = new Array(unique.length)
+  const urls = new Array(record.references.length)
   const key = record.key === '.' ? '' : record.key
   const username = readEnv(key, 'USERNAME')
   const password = readEnv(key, 'PASSWORD')

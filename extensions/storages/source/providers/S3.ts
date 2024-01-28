@@ -8,18 +8,18 @@ import {
   GetObjectCommand,
   CopyObjectCommand,
   DeleteObjectsCommand, paginateListObjectsV2,
-  type S3ClientConfigType,
   HeadObjectCommand, NotFound,
   DeleteObjectCommand,
-  type ObjectIdentifier,
-  NoSuchKey
+  NoSuchKey,
+  type S3ClientConfigType,
+  type ObjectIdentifier
 } from '@aws-sdk/client-s3'
 import * as nodeNativeFetch from 'smithy-node-native-fetch'
-import { type Provider } from '../Provider'
+import type { Provider } from '../Provider'
 import type { ReadableStream } from 'node:stream/web'
 
 export class S3 implements Provider {
-  public static SECRETS = ['ACCESS_KEY_ID', 'SECRET_ACCESS_KEY']
+  public static readonly SECRETS = ['ACCESS_KEY_ID', 'SECRET_ACCESS_KEY']
 
   protected readonly bucket: string
   protected readonly client: S3Client
@@ -109,14 +109,16 @@ export class S3 implements Provider {
         Key
       }))
 
-      if (fileResponse.Body === undefined) return null // should never happen
+      if (fileResponse.Body === undefined)
+        return null // should never happen
 
-      if (fileResponse.Body instanceof Readable) return fileResponse.Body
+      if (fileResponse.Body instanceof Readable)
+        return fileResponse.Body
 
       return Readable.fromWeb((fileResponse.Body instanceof Blob
         ? fileResponse.Body.stream()
         : fileResponse.Body
-      ) as unknown as ReadableStream) // types mismatch between Node 20 and aws-sdk
+      ) as ReadableStream) // types mismatch between Node 20 and aws-sdk
     } catch (err) {
       if (err instanceof NotFound || err instanceof NoSuchKey) return null
       else throw err

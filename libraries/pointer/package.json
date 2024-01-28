@@ -24,7 +24,6 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/dns": "0.24.0-alpha.18",
     "@toa.io/generic": "0.24.0-alpha.18",
     "@toa.io/schemas": "0.24.0-alpha.18"
   },
