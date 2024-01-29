@@ -15,6 +15,7 @@ entity:
       - iss
       - sub
     additionalProperties: false
+  initialized: true
 
 operations:
   transit:
@@ -72,8 +73,3 @@ exposition:
   /:
     anonymous: true
     POST: incept
-  /:id:
-    auth:role: system:identity:federation
-    auth:scheme: bearer
-    auth:id: id
-    PATCH: transit
