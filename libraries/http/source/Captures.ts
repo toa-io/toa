@@ -1,7 +1,5 @@
 import * as assert from 'node:assert'
-import { binding } from 'cucumber-tsflow'
 
-@binding()
 export class Captures extends Map<string, string> {
   public override set (key: string, value: string): this {
     if (super.has(key))

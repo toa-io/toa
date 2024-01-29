@@ -1,7 +1,7 @@
 import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
-import { Captures } from '@toa.io/http/transpiled/captures'
 import { open } from '../../../storages/source/test/util'
+import { Captures } from './Captures'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
