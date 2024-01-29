@@ -66,6 +66,9 @@ export function validateJwtPayload (
     assert.ok(typeof payload.nbf === 'number', 'Payload nbf is not a number')
     assert.ok(Date.now() >= payload.nbf * 1000, 'Token is not valid yet')
   }
+
+  assert.ok(allowedAudiences !== undefined || allowedIssuers !== undefined,
+    'No validation rules provided - at least one of allowedAudiences or allowedIssuers must be provided')
 }
 
 export async function validateSignature ({
