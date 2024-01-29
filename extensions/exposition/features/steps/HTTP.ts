@@ -1,14 +1,15 @@
 import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
+import { Captures } from '@toa.io/http/transpiled/captures'
 import { open } from '../../../storages/source/test/util'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
-@binding([Gateway, Parameters, http.Captures])
+@binding([Gateway, Parameters, Captures])
 export class HTTP extends http.Agent {
   private readonly gateway: Gateway
 
-  public constructor (gateway: Gateway, parameters: Parameters, captures: http.Captures) {
+  public constructor (gateway: Gateway, parameters: Parameters, captures: Captures) {
     super(parameters.origin, captures)
     this.gateway = gateway
   }

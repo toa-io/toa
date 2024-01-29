@@ -4,7 +4,7 @@ import * as http from 'node:http'
 import * as assert from 'node:assert'
 import * as util from 'node:util'
 import { binding, given, afterAll } from 'cucumber-tsflow'
-import { Captures } from '@toa.io/http'
+import { Captures } from '@toa.io/http/transpiled/captures'
 
 import type { AddressInfo } from 'node:net'
 
