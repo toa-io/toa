@@ -76,9 +76,11 @@ Trusted providers are specified using the `identity.federation` property within 
 
 configuration:
   identity.federation:
-    allowed_issuers:
-      - https://accounts.google.com
-      - https://appleid.apple.com
+    trust:
+      - issuer: https://accounts.google.com
+        audience:
+          - <GOOGLE_CLIENT_ID>
+      - issuer: https://appleid.apple.com
 ```
 
 ## Identity inception

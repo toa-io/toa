@@ -96,9 +96,21 @@ The `identity.federation` component manages OpenID Connect federated identities.
 Both implicit identities creation and forced [identity inception](./identity.md) are supported
 as in case with basic credentials. `principal` is also working in the same way.
 
-The configuration schema alongside it's default values is described in the [component manifest](../components/identity.federation/manifest.toa.yaml).
+The configuration schema alongside default values is described in the [component manifest](../components/identity.federation/manifest.toa.yaml).
 
-No federated tokens are accepted by default until at least one of `allowed_issuers` or `acceptable_audience` is explicitly defined in the configuration.
+No federated tokens are accepted by default until at least one entry is added to the `trust` configuration.
+
+```yaml
+# context.toa.yaml
+
+configuration:
+  identity.federation:
+    trust:
+      - issuer: https://token.actions.githubusercontent.com
+        audience:
+          - https://github.com/tinovyatkin
+          - https://github.com/temich
+```
 
 ## Stateless tokens
 
