@@ -28,5 +28,8 @@
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit"
     }
-  }
+  },
+  "editor.rulers": [
+    100
+  ]
 }
