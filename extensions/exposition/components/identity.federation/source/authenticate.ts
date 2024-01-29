@@ -9,10 +9,7 @@ import type { AuthenticateOutput, Context } from './types'
 
 async function authenticate (input: string,
   context: Context): Promise<Maybe<AuthenticateOutput>> {
-  const { iss, sub } = await validateIdToken(input, {
-    allowedIssuers: context.configuration.allowed_issuers,
-    allowedAudiences: context.configuration.acceptable_audience
-  })
+  const { iss, sub } = await validateIdToken(input, context.configuration.trust)
 
   const request: Request = { query: { criteria: `iss==${iss};sub==${sub}` } }
 

@@ -42,30 +42,43 @@ configuration:
   schema:
     type: object
     properties:
-      allowed_issuers:
-        description: Allowed origins for a token `iss` field
+      trust:
         type: array
         items:
-          type: string
-          format: uri
-        minItems: 1
-        uniqueItems: true
-      acceptable_audience:
-        description: >-
-          Acceptable `aud` value(s). At least one of `allowed_issuers` or `acceptable_audience`
-          must be provided in order for a OpenID token to pass validation
-        type: array
-        items:
-          type: string
-        minItems: 1
-        uniqueItems: true
+          title: Trust Configuration
+          type: object
+          additionalProperties: false
+          properties:
+            issuer:
+              description: Allowed origins for a token `iss` field
+              type: string
+              format: uri
+            audience:
+              description: Acceptable `aud` value(s)
+              type: array
+              items:
+                type: string
+              uniqueItems: true
+              minItems: 1
+          required:
+            - issuer
       explicit_identity_creation:
         description: Force identities to be explicitly created or incept before being used in authentication
         type: boolean
-        default: false
+        default: true
       principal:
         description: The value of `sub` of an identity token that will be assigned the `system` Role
-        type: string
+        type: object
+        properties:
+          iss:
+            type: string
+            format: uri
+          sub:
+            type: string
+        required:
+          - iss
+          - sub
+        additionalProperties: false
     additionalProperties: false
 
 exposition:

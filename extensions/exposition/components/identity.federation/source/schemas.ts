@@ -7,18 +7,7 @@
 
 export interface Schemas {
   configuration?: {
-    /**
-     * Allowed origins for a token `iss` field
-     *
-     * @minItems 1
-     */
-    allowed_issuers?: [string, ...string[]];
-    /**
-     * Acceptable `aud` value(s). At least one of `allowed_issuers` or `acceptable_audience` must be provided in order for a OpenID token to pass validation
-     *
-     * @minItems 1
-     */
-    acceptable_audience?: [string, ...string[]];
+    trust?: TrustConfiguration[];
     /**
      * Force identities to be explicitly created or incept before being used in authentication
      */
@@ -26,7 +15,10 @@ export interface Schemas {
     /**
      * The value of `sub` of an identity token that will be assigned the `system` Role
      */
-    principal?: string;
+    principal?: {
+      iss: string;
+      sub: string;
+    };
   };
   entity?: {
     /**
@@ -38,4 +30,16 @@ export interface Schemas {
      */
     sub: string;
   };
+}
+export interface TrustConfiguration {
+  /**
+   * Allowed origins for a token `iss` field
+   */
+  issuer: string;
+  /**
+   * Acceptable `aud` value(s)
+   *
+   * @minItems 1
+   */
+  audience?: [string, ...string[]];
 }

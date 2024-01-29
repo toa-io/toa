@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
-import assert from 'node:assert'
+import * as assert from 'node:assert'
 import type { JwtHeader, IdToken } from './types'
+import { type TrustConfiguration } from './schemas'
 
 export function decodeJwt (token: string): {
   header: unknown
@@ -28,30 +29,24 @@ export function validateJwtHeader (header: unknown): asserts header is JwtHeader
 
 export function validateJwtPayload (
   payload: unknown,
-  {
-    allowedIssuers,
-    allowedAudiences
-  }: {
-    readonly allowedIssuers?: readonly string[]
-    readonly allowedAudiences?: readonly string[]
-  }
+  trusted: TrustConfiguration[] = []
 ): asserts payload is IdToken {
+  assert.ok(trusted.length > 0, 'No trusted issuers provided')
+
   // full list of validations is at https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
   assert.ok(payload !== null && typeof payload === 'object', 'Payload is not an object')
+
   assert.ok('iss' in payload, 'Payload is missing iss')
   assert.ok(typeof payload.iss === 'string', 'Payload iss is not a string')
-
-  if (allowedIssuers !== undefined) {
-    assert.ok(allowedIssuers.includes(payload.iss), `Unknown issuer: ${payload.iss}`)
-  }
-
-  assert.ok('sub' in payload, 'Payload is missing sub')
-  assert.ok(typeof payload.sub === 'string', 'Payload sub is not a string')
-
   assert.ok('aud' in payload, 'Payload is missing aud')
   assert.ok(typeof payload.aud === 'string', 'Payload aud is not a string')
 
-  assert.ok(allowedAudiences?.includes(payload.aud) !== false, `Unknown audience: ${payload.aud}`)
+  assert.ok(trusted.some(config => config.issuer === payload.iss &&
+     (config.audience === undefined || config.audience.some(a => a === payload.aud))),
+     `Unknown issuer / audience: ${payload.iss} / ${payload.aud}`)
+
+  assert.ok('sub' in payload, 'Payload is missing sub')
+  assert.ok(typeof payload.sub === 'string', 'Payload sub is not a string')
 
   assert.ok('exp' in payload, 'Payload is missing exp')
   assert.ok(typeof payload.exp === 'number', 'Payload exp is not a number')
@@ -66,9 +61,6 @@ export function validateJwtPayload (
     assert.ok(typeof payload.nbf === 'number', 'Payload nbf is not a number')
     assert.ok(Date.now() >= payload.nbf * 1000, 'Token is not valid yet')
   }
-
-  assert.ok(allowedAudiences !== undefined || allowedIssuers !== undefined,
-    'No validation rules provided - at least one of allowedAudiences or allowedIssuers must be provided')
 }
 
 export async function validateSignature ({
@@ -133,18 +125,12 @@ export async function validateSignature ({
 
 export async function validateIdToken (
   token: string,
-  {
-    allowedIssuers,
-    allowedAudiences
-  }: {
-    readonly allowedIssuers?: readonly string[]
-    readonly allowedAudiences?: readonly string[]
-  }
+  trusted?: TrustConfiguration[]
 ): Promise<IdToken> {
   const { header, payload, rawHeader, rawPayload, signature } = decodeJwt(token)
 
   validateJwtHeader(header)
-  validateJwtPayload(payload, { allowedIssuers, allowedAudiences })
+  validateJwtPayload(payload, trusted)
   await validateSignature({
     header,
     rawHeader,

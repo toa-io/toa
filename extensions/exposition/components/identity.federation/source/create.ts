@@ -4,10 +4,7 @@ import type { Request } from '@toa.io/core'
 import type { Context, Entity } from './types'
 
 async function create (input: CreateInput, context: Context): Promise<CreateOutput> {
-  const { iss, sub } = await validateIdToken(input.credentials, {
-    allowedIssuers: context.configuration.allowed_issuers,
-    allowedAudiences: context.configuration.acceptable_audience
-  })
+  const { iss, sub } = await validateIdToken(input.credentials, context.configuration.trust)
 
   const request: Request = {
     input: { iss, sub } satisfies Omit<Entity, 'id'>,

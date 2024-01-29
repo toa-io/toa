@@ -9,7 +9,8 @@
 exports.condition = function (event, context) {
   return (
     context.configuration.principal !== undefined &&
-    event.state.sub === context.configuration.principal
+    event.state.sub === context.configuration.principal.sub &&
+    event.state.iss === context.configuration.principal.iss
   )
 }
 

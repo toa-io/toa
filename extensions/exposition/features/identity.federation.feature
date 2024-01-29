@@ -8,8 +8,9 @@ Feature: Identity Federation
   Scenario: Getting identity for a new user
     Given the `identity.federation` configuration:
       """yaml
-      allowed_issuers:
-      - http://localhost:44444
+      explicit_identity_creation: false
+      trust:
+        - issuer: http://localhost:44444
       """
     And the IDP token for User is issued
     When the following request is received:
@@ -56,9 +57,8 @@ Feature: Identity Federation
   Scenario: Creating an Identity using inception with existing credentials
     Given the `identity.federation` configuration:
       """yaml
-      allowed_issuers:
-      - http://localhost:44444
-      explicit_identity_creation: true
+      trust:
+        - issuer: http://localhost:44444
       """
     Given the `users` is running with the following manifest:
       """yaml
@@ -83,6 +83,32 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       201 Created
+      authorization: Token ${{ Bill.token }}
+
+      id: ${{ Bill.id }}
+      """
+    # check that both tokens corresponds to the same id
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      authorization: Token ${{ Bill.token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      id: ${{ Bill.id }}
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      authorization: Bearer ${{ Bill.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      id: ${{ Bill.id }}
       """
     And the following request is received:
       # same credentials
