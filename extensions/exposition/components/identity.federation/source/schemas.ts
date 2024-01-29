@@ -21,6 +21,10 @@ export interface Schemas {
      * Force identities to be explicitly created or incept before being used in authentication
      */
     explicit_identity_creation?: boolean;
+    /**
+     * The value of `sub` of an identity token that will be assigned the `system` Role
+     */
+    principal?: string;
   };
   entity?: {
     /**

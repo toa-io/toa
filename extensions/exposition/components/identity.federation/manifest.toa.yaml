@@ -60,6 +60,9 @@ configuration:
         description: Force identities to be explicitly created or incept before being used in authentication
         type: boolean
         default: false
+      principal:
+        description: The value of `sub` of an identity token that will be assigned the `system` Role
+        type: string
     additionalProperties: false
 
 exposition:
