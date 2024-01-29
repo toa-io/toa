@@ -51,6 +51,9 @@ configuration:
         minItems: 1
         uniqueItems: true
       acceptable_audience:
+        description: >-
+          Acceptable `aud` value(s). At least one of `allowed_issuers` or `acceptable_audience`
+          must be provided in order for a OpenID token to pass validation
         type: array
         items:
           type: string

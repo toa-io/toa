@@ -14,6 +14,8 @@ export interface Schemas {
      */
     allowed_issuers?: [string, ...string[]];
     /**
+     * Acceptable `aud` value(s). At least one of `allowed_issuers` or `acceptable_audience` must be provided in order for a OpenID token to pass validation
+     *
      * @minItems 1
      */
     acceptable_audience?: [string, ...string[]];
