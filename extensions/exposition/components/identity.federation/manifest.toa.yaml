@@ -1,0 +1,88 @@
+namespace: identity
+name: federation
+
+entity:
+  schema:
+    type: object
+    properties:
+      iss:
+        description: The issuer, or signer, of the token, URI like `https://accounts.google.com`
+        type: string
+      sub:
+        description: the ID that represents the principal making the request
+        type: string
+    required:
+      - iss
+      - sub
+    additionalProperties: false
+  initialized: true
+
+operations:
+  transit:
+    concurrency: retry
+  incept:
+    forward: transit
+    query: false
+    input:
+      iss*: string
+      sub*: string
+  create:
+    input:
+      id*: string
+      credentials*: string
+    output:
+      id: string
+  authenticate:
+    input: string
+    output:
+      identity:
+        id: string
+
+configuration:
+  schema:
+    type: object
+    properties:
+      trust:
+        type: array
+        items:
+          title: Trust Configuration
+          type: object
+          additionalProperties: false
+          properties:
+            issuer:
+              description: Allowed origins for a token `iss` field
+              type: string
+              format: uri
+            audience:
+              description: Acceptable `aud` value(s)
+              type: array
+              items:
+                type: string
+              uniqueItems: true
+              minItems: 1
+          required:
+            - issuer
+      explicit_identity_creation:
+        description: Force identities to be explicitly created or incept before being used in authentication
+        type: boolean
+        default: true
+      principal:
+        description: The value of `sub` of an identity token that will be assigned the `system` Role
+        type: object
+        properties:
+          iss:
+            type: string
+            format: uri
+          sub:
+            type: string
+        required:
+          - iss
+          - sub
+        additionalProperties: false
+    additionalProperties: false
+
+exposition:
+  isolated: true
+  /:
+    anonymous: true
+    POST: incept

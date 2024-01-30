@@ -1,13 +1,6 @@
 {
-  "prettier.enable": false, // this project is using `standard` for formatting, so disabling prettier
   "eslint.format.enable": true,
   "jest.autoRun": "off",
-  "[javascript][typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit"
-    }
-  },
   "eslint.useESLintClass": true,
   "eslint.options": {
     "cache": true,
@@ -27,4 +20,16 @@
     "**/node_modules/**": true,
     "**/transpiled/**": true
   },
+  "cucumberautocomplete.strictGherkinCompletion": true,
+  "cucumberautocomplete.strictGherkinValidation": true,
+  "cucumberautocomplete.skipDocStringsFormat": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    }
+  },
+  "editor.rulers": [
+    100
+  ]
 }

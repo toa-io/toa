@@ -5,8 +5,11 @@ import type * as http from '../../HTTP'
 import type * as directive from '../../Directive'
 
 export interface Directive {
-  authorize: (identity: Identity | null, input: Input, parameters: Parameter[]) =>
-  boolean | Promise<boolean>
+  authorize: (
+    identity: Identity | null,
+    input: Input,
+    parameters: Parameter[]
+  ) => boolean | Promise<boolean>
 
   reply?: (identity: Identity | null) => http.OutgoingMessage
 
@@ -31,7 +34,7 @@ export interface Ban {
 export type Input = directive.Input & Extension
 export type AuthenticationResult = Maybe<{ identity: Identity, refresh: boolean }>
 
-export type Scheme = 'basic' | 'token'
-export type Remote = 'basic' | 'tokens' | 'roles' | 'bans'
+export type Scheme = 'basic' | 'token' | 'bearer'
+export type Remote = 'basic' | 'federation' | 'tokens' | 'roles' | 'bans'
 export type Discovery = Record<Remote, Promise<Component>>
 export type Schemes = Record<Scheme, Component>

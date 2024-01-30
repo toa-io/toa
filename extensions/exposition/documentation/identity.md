@@ -69,19 +69,19 @@ to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.ht
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
-Trusted providers are specified using the `idenity.trust` property within the Exposition annotation.
+Trusted providers are specified using the `identity.federation` property within the configuration annotation.
 
 ```yaml
 # context.toa.yaml
 
-exposition:
-  identity:
+configuration:
+  identity.federation:
     trust:
-      - https://accounts.google.com
-      - https://appleid.apple.com
+      - issuer: https://accounts.google.com
+        audience:
+          - <GOOGLE_CLIENT_ID>
+      - issuer: https://appleid.apple.com
 ```
-
-The example above demonstrates the default list of trusted providers.
 
 ## Identity inception
 

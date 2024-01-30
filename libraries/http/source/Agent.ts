@@ -3,6 +3,7 @@ import { trim } from '@toa.io/generic'
 import { buffer } from '@toa.io/streams'
 import * as http from './index'
 import { request } from './request'
+import type { Captures } from './Captures'
 import type { Readable } from 'stream'
 
 /*
@@ -18,17 +19,16 @@ export class Agent {
   private readonly keys: Record<string, string> = {}
   private readonly values: Record<string, string> = {}
 
-  public constructor (origin: string) {
+  public constructor (origin: string, private readonly captures: Captures) {
     this.origin = origin
   }
 
   public async request (input: string): Promise<any> {
-    const substituted = this.substitute(input)
+    const substituted = this.captures.substitute(input)
 
     let [headers, body] = trim(substituted).split('\n\n')
 
-    if (body !== undefined)
-      headers += '\ncontent-length: ' + body?.length
+    if (body !== undefined) headers += '\ncontent-length: ' + body?.length
 
     const message = headers + '\n\n' + (body ?? '')
 
@@ -39,25 +39,16 @@ export class Agent {
     const lines = trim(expected).split('\n')
 
     for (const line of lines) {
-      const expression = escape(line)
-        .replace(CAPTURE, (_, name) => `(?<${this.key(name)}>\\S{1,2048})`)
+      if (line.trim() === '') continue
 
-      const rx = new RegExp(expression, 'i')
-      const match = this.response.match(rx)
+      const match = this.captures.capture(this.response, line)
 
-      if (match === null)
+      if (match === undefined)
         throw new assert.AssertionError({
           message: `Response is missing '${line}'`,
           expected: line,
           actual: this.response
         })
-
-      for (const [key, value] of Object.entries(match.groups ?? {})) {
-        assert.ok(!(key in this.values) || this.values[key] === value,
-          `'${key}' (${value}) is not equal to current value '${this.values[key]}'`)
-
-        this.values[key] = value
-      }
     }
   }
 
@@ -65,11 +56,9 @@ export class Agent {
     const lines = trim(expected).split('\n')
 
     for (const line of lines) {
-      line.replace(SUBSTITUTE, (_, name) => this.get(name))
+      const substituted = this.captures.substitute(line)
 
-      const includes = this.response.includes(line)
-
-      if (includes)
+      if (this.response.includes(substituted))
         throw new assert.AssertionError({
           message: `Response contains '${line}'`,
           expected: line,
@@ -80,7 +69,7 @@ export class Agent {
 
   public async stream (head: string, stream: Readable): Promise<any> {
     head = trim(head) + '\n\n'
-    head = this.substitute(head)
+    head = this.captures.substitute(head)
 
     const { url, method, headers } = http.parse.request(head)
     const href = new URL(url, this.origin).href
@@ -112,33 +101,17 @@ export class Agent {
     this.responseIncludes(expected)
   }
 
+  /**
+   * @deprecated - use Captures dependency injection
+   */
   public set (name: string, value: string): void {
-    const key = this.key(escape(name))
-
-    this.values[key] = value
+    this.captures.set(name, value)
   }
 
+  /**
+   * @deprecated - use Captures dependency injection
+   */
   public get (name: string): string {
-    const key = this.key(escape(name))
-
-    return this.values[key] ?? ''
-  }
-
-  private key (variable: string): string {
-    if (!(variable in this.keys))
-      this.keys[variable] = 'var' + Math.random().toString(36).slice(2, 8)
-
-    return this.keys[variable]
-  }
-
-  private substitute (text: string): string {
-    return text.replaceAll(SUBSTITUTE, (_, name) => this.get(name))
+    return this.captures.get(name) ?? ''
   }
 }
-
-function escape (text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
-
-const CAPTURE = /\\\$\\{\\{ (?<name>\S{0,32}) \\}\\}/g
-const SUBSTITUTE = /\${{ (?<name>\S{0,32}) }}/g
