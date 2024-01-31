@@ -47,9 +47,10 @@ function send (message: OutgoingMessage, request: IncomingMessage, response: Res
 
   const buf = request.encoder.encode(message.body)
 
-  response.set('content-type', request.encoder.type)
-  response.append('vary', 'accept')
-  response.end(buf)
+  response
+    .set('content-type', request.encoder.type)
+    .append('vary', 'accept')
+    .end(buf)
 }
 
 function stream
