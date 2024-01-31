@@ -107,7 +107,7 @@ Operation call will have the following query criteria:
 criteria: state==hot;type==cool;rank=5
 ```
 
-### POST method
+#### POST method
 
 `POST` method semantically used to create a new entity instance, that is, calling a Transition
 without Query.
