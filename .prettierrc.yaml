@@ -1,0 +1,11 @@
+# trying to match where possible JS `standard` style
+arrowParens: always
+bracketSpacing: true
+endOfLine: lf
+printWidth: 90
+quoteProps: as-needed
+semi: false
+singleQuote: true
+tabWidth: 2
+trailingComma: none
+useTabs: false

@@ -11,5 +11,9 @@ configuration:
   identity.tokens:
     key0: k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA
 
+  identity.federation:
+    allowed_issuers:
+      - http://localhost:44444
+
 exposition:
   debug: true
