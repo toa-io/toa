@@ -99,6 +99,7 @@ export interface IncomingMessage extends Request {
   query: Query
   parse: <T> () => Promise<T>
   encoder: Format | null
+  embed?: Record<string, any>
 }
 
 export interface OutgoingMessage {

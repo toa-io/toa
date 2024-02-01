@@ -1,7 +1,7 @@
 # HTTP request details
 
-The `vary` directives family provides an ability to pass HTTP request details as an input for
-an operation call.
+The vary directives family provides the capability to include HTTP request details as input for an
+operation call.
 
 ## TL;DR
 
@@ -10,29 +10,30 @@ exposition:
   /:
     vary:languages: [en, fr]
     GET:
-      vary:map:
-        language: lang        # predefined embeddings
-        :x-access-token: token # raw http header value
+      vary:embed:
+        language: lang          # predefined embeddings
+        :x-access-token: token  # raw http header value
       endpoint: texts.get
 ```
 
 ## Embeddings
 
-Request parts are embedded into operation call according to the mapping
-defined by `vary:map` directive.
-The embedding map keys are names of the embedding functions and values
-are property names of the operation call input object.
+Request parts are embedded into the operation call according to the mapping
+defined by the `vary:embed` directive.
+The keys in the embedding map are the names of the embedding functions, and the values are the
+property names of the operation call input object.
+
+> If a property is already present in the input, the embedded value will overwrite its current
+> value.
 
 ### Language
 
-Language embedding substitutes the most matching language code,
-according to the [`accept-language` request header](#TODO) and a list of supported languages,
-defined by `vary:languages` directive.
-
-Language embedding adds `accept-language` value to the `vary` HTTP response header.
+The `language` embedding substitutes the most matching language code based on the `accept-language`
+request header and a list of supported languages defined by the `vary:languages` directive, and also
+adds `accept-language` to the `vary` HTTP response header value.
 
 ### Raw headers
 
-Keys of the embedding map
-starting with semicolon (`:`) are embedded as raw values of the corresponding HTTP request headers.
-Names of these headers are added to the `vary` HTTP response header.
+Keys in the embedding map starting with a semicolon (:) are the names of HTTP request headers whose
+values are to be embedded into an operation call.
+The names of these headers are then included in the `vary` HTTP response header.

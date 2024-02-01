@@ -68,6 +68,9 @@ export class Gateway extends Connector {
 
     const body = await request.parse()
 
+    if ('embed' in request && typeof body === 'object' && body !== null)
+      Object.assign(body, request.embed)
+
     const reply = await method.endpoint
       .call(body, request.query, parameters)
       .catch(rethrow) as Maybe<unknown>
