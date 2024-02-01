@@ -27,7 +27,8 @@ foo: bar
 ### Multipart types
 
 Multipart responses are endoded using content negotiation,
-and the `content-type` of the response is set to one of the custom `multipart/` subtypes, corresponding to the type of
+and the `content-type` of the response is set to one of the custom `multipart/` subtypes,
+corresponding to the type of
 the parts:
 
 | Response type       | Part type             |
@@ -60,3 +61,12 @@ See also:
 - [Multipart Content-Type](https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html) at W3C
 - [Content-Type: multipart](https://learn.microsoft.com/en-us/previous-versions/office/developer/exchange-server-2010/aa493937(v=exchg.140))
   at Microsoft
+
+## CORS
+
+[CORS](https://www.w3.org/TR/2020/SPSD-cors-20200602/) is supported,
+credentials, any `origin`, and any request header fields are allowed.
+
+The following response headers are exposed:
+
+- `authorization`
