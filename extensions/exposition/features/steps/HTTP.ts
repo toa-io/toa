@@ -1,5 +1,8 @@
+import * as assert from 'node:assert'
 import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
+import * as msgpack from 'msgpackr'
+import * as YAML from 'js-yaml'
 import { open } from '../../../storages/source/test/util'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
@@ -7,6 +10,7 @@ import { Gateway } from './Gateway'
 @binding([Gateway, Parameters])
 export class HTTP extends http.Agent {
   private readonly gateway: Gateway
+  private fetched: Response | null = null
 
   public constructor (gateway: Gateway, parameters: Parameters) {
     super(parameters.origin)
@@ -16,12 +20,23 @@ export class HTTP extends http.Agent {
   @when('the following request is received:')
   public override async request (input: string): Promise<any> {
     await this.gateway.start()
-    await super.request(input)
+    this.fetched = await super.request(input)
   }
 
   @then('the following reply is sent:')
   public override responseIncludes (expected: string): void {
     super.responseIncludes(expected)
+  }
+
+  @then('response body contains {word}-encoded value:')
+  public async bodyIs (format: string, yaml: string): Promise<void> {
+    assert.ok(this.fetched !== null, 'Response is null')
+
+    const buf = await this.fetched.arrayBuffer()
+    const value = encoders[format]?.(buf as Buffer)
+    const expected = YAML.load(yaml)
+
+    assert.deepEqual(value, expected, 'Values are not equal')
   }
 
   @then('the reply does not contain:')
@@ -43,4 +58,8 @@ export class HTTP extends http.Agent {
 
     await super.streamMatch(head, stream)
   }
+}
+
+const encoders: Record<string, (buf: Buffer | Uint8Array) => any> = {
+  MessagePack: msgpack.decode
 }
