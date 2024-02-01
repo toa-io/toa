@@ -1,14 +1,12 @@
-import { type Output } from '../../Directive'
 import { type Directive } from './types'
 
-export class Stub implements Directive {
-  private readonly value: any
+export class Stub implements Directive<any> {
+  public readonly value: any
 
   public constructor (value: any) {
     this.value = value
   }
 
-  public apply (): Output {
-    return { body: this.value }
+  public apply (): void {
   }
 }
