@@ -1,14 +1,14 @@
 Feature: The Vary directive family
 
-  Scenario: Mapping `accept-language`
+  Scenario: Embedding language
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
         /:
           GET:
             vary:languages: [en, fr]
-            vary:map:
-              language: name
+            vary:embed:
+              language: name  # embed resolved language code as a `name` property of the operation input
             endpoint: compute
       """
     When the following request is received:

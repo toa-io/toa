@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { match } from 'matchacho'
 import * as http from '../../HTTP'
 import { Anonymous } from './Anonymous'
@@ -26,6 +27,7 @@ import type {
 } from './types'
 
 class Authorization implements Family<Directive, Extension> {
+  public readonly depends: string[] = ['Vary']
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
 
@@ -35,10 +37,10 @@ class Authorization implements Family<Directive, Extension> {
   private bans: Component | null = null
 
   public create (name: string, value: any, remotes: Remotes): Directive {
-    const Class = CLASSES[name]
+    assert.ok(name in CLASSES,
+      `Directive '${name}' is not provided by the '${this.name}' family.`)
 
-    if (Class === undefined)
-      throw new Error(`Directive '${name}' is not provided by the '${this.name}' family.`)
+    const Class = CLASSES[name]
 
     for (const name of REMOTES)
       this.discovery[name] ??= remotes.discover('identity', name)
