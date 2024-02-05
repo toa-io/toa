@@ -89,9 +89,32 @@ password?: string
 
 Access requires basic credentials of the modified Identity or `system:identity:basic` role.
 
+## Identity federation (OpenID connect)
+
+The `identity.federation` component manages OpenID Connect federated identities.
+
+Both implicit identities creation and forced [identity inception](./identity.md) are supported
+as in case with basic credentials. `principal` is also working in the same way.
+
+The configuration schema alongside default values is described in the [component manifest](../components/identity.federation/manifest.toa.yaml).
+
+No federated tokens are accepted by default until at least one entry is added to the `trust` configuration.
+
+```yaml
+# context.toa.yaml
+
+configuration:
+  identity.federation:
+    trust:
+      - issuer: https://token.actions.githubusercontent.com
+        audience:
+          - https://github.com/tinovyatkin
+          - https://github.com/temich
+```
+
 ## Stateless tokens
 
-The `identity.tokens` component manages statless authentication tokens.
+The `identity.tokens` component manages stateless authentication tokens.
 
 These tokens carry the information required to authenticate the Identity and authorize access.
 

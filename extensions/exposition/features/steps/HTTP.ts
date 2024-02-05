@@ -4,16 +4,17 @@ import * as http from '@toa.io/http'
 import * as msgpack from 'msgpackr'
 import * as YAML from 'js-yaml'
 import { open } from '../../../storages/source/test/util'
+import { Captures } from './Captures'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
 
-@binding([Gateway, Parameters])
+@binding([Gateway, Parameters, Captures])
 export class HTTP extends http.Agent {
   private readonly gateway: Gateway
   private fetched: Response | null = null
 
-  public constructor (gateway: Gateway, parameters: Parameters) {
-    super(parameters.origin)
+  public constructor (gateway: Gateway, parameters: Parameters, captures: Captures) {
+    super(parameters.origin, captures)
     this.gateway = gateway
   }
 
