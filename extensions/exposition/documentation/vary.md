@@ -13,11 +13,19 @@ exposition:
     vary:languages: [en, fr]
     GET:
       vary:embed:
-        language: lang          # predefined embeddings
+        # field_in_input: ':header_in_request' or a predefined_embedding
+        lang: language # predefined embeddings
         realm: realm
-        country: country
-        ip: ip
-        :x-access-token: token  # raw http header value
+        token: :x-access-token
+        country: # fallbacks are supported - first defined will be passed
+          - :CloudFront-Viewer-Country
+          - :CF-IPCountry
+          - :X-AppEngine-Country
+        ip:
+          - :CloudFront-Viewer-Address
+          - :CF-Connecting-IP
+          - :X-Appengine-User-IP
+          - ${{ split(:X-Forwarded-For, ',')[0] }} # PENDING decisions on intrinsic functions
       endpoint: texts.get
 ```
 
