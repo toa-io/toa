@@ -15,6 +15,8 @@ exposition:
       vary:embed:
         language: lang          # predefined embeddings
         realm: realm
+        country: country
+        ip: ip
         :x-access-token: token  # raw http header value
       endpoint: texts.get
 ```
