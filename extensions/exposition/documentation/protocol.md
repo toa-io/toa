@@ -70,3 +70,4 @@ credentials, any `origin`, and any request header fields are allowed.
 The following response headers are exposed:
 
 - `authorization`
+- headers used with the [`vary:embed` directive](vary.md#raw-headers)
