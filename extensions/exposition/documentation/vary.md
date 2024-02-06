@@ -13,28 +13,23 @@ exposition:
     vary:languages: [en, fr]
     GET:
       vary:embed:
-        # field_in_input: ':header_in_request' or a predefined_embedding
-        lang: language # predefined embeddings
+        lang: language          # predefined embeddings
         realm: realm
-        token: :x-access-token
-        country: # fallbacks are supported - first defined will be passed
-          - :CloudFront-Viewer-Country
-          - :CF-IPCountry
-          - :X-AppEngine-Country
-        ip:
+        token: :x-access-token  # raw header value
+        ip: # fallbacks
           - :CloudFront-Viewer-Address
           - :CF-Connecting-IP
           - :X-Appengine-User-IP
-          - ${{ split(:X-Forwarded-For, ',')[0] }} # PENDING decisions on intrinsic functions
-      endpoint: texts.get
+      endpoint: dummies.get
 ```
 
 ## Embeddings
 
 Request parts are embedded into the operation call according to the mapping
 defined by the `vary:embed` directive.
-The keys in the embedding map are the names of the embedding functions, and the values are the
-property names of the operation call input object.
+The keys in the embedding map are the names of the input properties details to be embedded to,
+and the values are the names of the embedding functions.
+If the value is an array, the first non-empty embedding function's result is used.
 
 > If a property is already present in the input, the embedded value will overwrite its current
 > value.
