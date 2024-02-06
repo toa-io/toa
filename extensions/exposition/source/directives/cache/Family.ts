@@ -1,7 +1,8 @@
-import { type Input, type Output, type Family } from '../../Directive'
 import { Control } from './Control'
-import { type Directive } from './types'
 import { Exact } from './Exact'
+import type { Input, Output } from '../../io'
+import type { Directive } from './types'
+import type { Family } from '../../Directive'
 import type * as http from '../../HTTP'
 
 class Cache implements Family<Directive> {

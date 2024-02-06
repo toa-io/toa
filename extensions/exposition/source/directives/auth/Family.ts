@@ -10,9 +10,10 @@ import { Echo } from './Echo'
 import { split } from './split'
 import { Scheme } from './Scheme'
 import { PRIMARY, PROVIDERS } from './schemes'
+import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
-import type { Family, Output } from '../../Directive'
+import type { Family } from '../../Directive'
 import type { Parameter } from '../../RTD'
 import type {
   AuthenticationResult,
@@ -42,15 +43,13 @@ class Authorization implements Family<Directive, Extension> {
 
     const Class = CLASSES[name]
 
-    for (const name of REMOTES) this.discovery[name] ??= remotes.discover('identity', name)
+    for (const name of REMOTES)
+      this.discovery[name] ??= remotes.discover('identity', name)
 
     return match(Class,
-      Role,
-      () => new Role(value, this.discovery.roles),
-      Rule,
-      () => new Rule(value, this.create.bind(this)),
-      Incept,
-      () => new Incept(value, this.discovery),
+      Role, () => new Role(value, this.discovery.roles),
+      Rule, () => new Rule(value, this.create.bind(this)),
+      Incept, () => new Incept(value, this.discovery),
       () => new Class(value))
   }
 
@@ -64,7 +63,8 @@ class Authorization implements Family<Directive, Extension> {
     for (const directive of directives) {
       const allow = await directive.authorize(identity, input, parameters)
 
-      if (allow) return directive.reply?.(identity) ?? null
+      if (allow)
+        return directive.reply?.(identity) ?? null
     }
 
     if (identity === null) throw new http.Unauthorized()

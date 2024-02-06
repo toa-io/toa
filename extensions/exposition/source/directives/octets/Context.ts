@@ -1,5 +1,5 @@
 import * as schemas from './schemas'
-import type { Output } from '../../Directive'
+import type { Output } from '../../io'
 import type { Directive } from './types'
 
 export class Context implements Directive {

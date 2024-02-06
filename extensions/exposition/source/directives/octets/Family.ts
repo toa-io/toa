@@ -5,9 +5,10 @@ import { Fetch } from './Fetch'
 import { List } from './List'
 import { Delete } from './Delete'
 import { Permute } from './Permute'
+import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
-import type { Output, Family } from '../../Directive'
+import type { Family } from '../../Directive'
 import type { Directive, Input } from './types'
 
 class Octets implements Family<Directive> {

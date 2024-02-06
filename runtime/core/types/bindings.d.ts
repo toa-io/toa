@@ -1,26 +1,26 @@
 import * as _core from './index'
 
-declare namespace toa.core.bindings {
+declare namespace toa.core.bindings{
 
   type Properties = {
     async?: boolean
   }
 
-  interface Consumer extends _core.Connector {
+  interface Consumer extends _core.Connector{
     request (request: Request): Promise<_core.Reply>
   }
 
-  interface Emitter extends _core.Connector {
+  interface Emitter extends _core.Connector{
     emit (message: _core.Message): Promise<void>
   }
 
-  interface Broadcast<L> extends _core.Connector {
+  interface Broadcast<L> extends _core.Connector{
     transmit<T> (label: L, payload: T): Promise<void>
 
     receive<T> (label: L, callback: (payload: T) => void | Promise<void>): Promise<void>
   }
 
-  interface Factory {
+  interface Factory{
     producer? (locator: _core.Locator, endpoints: Array<string>, producer: _core.Component): _core.Connector
 
     consumer? (locator: _core.Locator, endpoint: string): Consumer
@@ -37,4 +37,4 @@ declare namespace toa.core.bindings {
 export type Emitter = toa.core.bindings.Emitter
 export type Factory = toa.core.bindings.Factory
 export type Properties = toa.core.bindings.Properties
-export type Broadcast<L> = toa.core.bindings.Broadcast<L>
+export type Broadcast<L = any> = toa.core.bindings.Broadcast<L>

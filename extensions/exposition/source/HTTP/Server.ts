@@ -1,14 +1,12 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import express from 'express'
-import cors from 'cors'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
 import Negotiator from 'negotiator'
 import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
 import { ClientError, Exception } from './exceptions'
 import { formats, types } from './formats'
-import type { CorsOptions } from 'cors'
 import type { Format } from './formats'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
@@ -41,7 +39,7 @@ export class Server extends Connector {
     const app = express()
 
     app.disable('x-powered-by')
-    app.use(cors(CORS))
+    // app.use(cors(CORS))
     app.use(supportedMethods(properties.methods))
 
     return new Server(app, properties.debug, properties.port)
@@ -160,16 +158,9 @@ async function adam (request: Request): Promise<void> {
 }
 
 const DEFAULTS: Properties = {
-  methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
+  methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
   port: 8000
-}
-
-const CORS: CorsOptions = {
-  credentials: true,
-  maxAge: 86400,
-  allowedHeaders: ['accept', 'authorization', 'content-type'],
-  origin: (origin: string | undefined, callback) => callback(null, origin)
 }
 
 interface Properties {

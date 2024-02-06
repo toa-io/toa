@@ -22,7 +22,6 @@
     "@toa.io/schemas": "0.24.0-alpha.18",
     "@toa.io/streams": "0.24.0-alpha.18",
     "bcryptjs": "2.4.3",
-    "cors": "2.8.5",
     "error-value": "0.3.0",
     "express": "4.18.2",
     "js-yaml": "4.1.0",

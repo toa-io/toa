@@ -2,13 +2,13 @@ import { type Component } from '@toa.io/core'
 import { type Maybe } from '@toa.io/types'
 import { type Parameter } from '../../RTD'
 import type * as http from '../../HTTP'
-import type * as directive from '../../Directive'
+import type * as io from '../../io'
 
 export interface Directive {
   authorize: (
     identity: Identity | null,
     input: Input,
-    parameters: Parameter[]
+    parameters: Parameter[],
   ) => boolean | Promise<boolean>
 
   reply?: (identity: Identity | null) => http.OutgoingMessage
@@ -31,7 +31,7 @@ export interface Ban {
   banned: boolean
 }
 
-export type Input = directive.Input & Extension
+export type Input = io.Input & Extension
 export type AuthenticationResult = Maybe<{ identity: Identity, refresh: boolean }>
 
 export type Scheme = 'basic' | 'token' | 'bearer'

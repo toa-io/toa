@@ -1,17 +1,18 @@
-import { type IncomingMessage, type OutgoingMessage } from './HTTP'
-import { type Remotes } from './Remotes'
+import type { IncomingMessage, OutgoingMessage } from './HTTP'
+import type { Remotes } from './Remotes'
+import type { Output } from './io'
 import type * as RTD from './RTD'
 
 export class Directives implements RTD.Directives<Directives> {
-  private readonly directives: DirectiveSet[]
+  private readonly sets: DirectiveSet[]
 
-  public constructor (directives: DirectiveSet[]) {
-    this.directives = directives
+  public constructor (sets: DirectiveSet[]) {
+    this.sets = sets
   }
 
   public async preflight (request: IncomingMessage, parameters: RTD.Parameter[]): Promise<Output> {
-    for (const directive of this.directives) {
-      const output = await directive.family.preflight(directive.directives, request, parameters)
+    for (const set of this.sets) {
+      const output = await set.family.preflight(set.directives, request, parameters)
 
       if (output !== null) {
         await this.settle(request, output)
@@ -24,13 +25,13 @@ export class Directives implements RTD.Directives<Directives> {
   }
 
   public async settle (request: IncomingMessage, response: OutgoingMessage): Promise<void> {
-    for (const directive of this.directives)
-      if (directive.family.settle !== undefined)
-        await directive.family.settle(directive.directives, request, response)
+    for (const set of this.sets)
+      if (set.family.settle !== undefined)
+        await set.family.settle(set.directives, request, response)
   }
 
   public merge (directives: Directives): void {
-    this.directives.push(...directives.directives)
+    this.sets.push(...directives.sets)
   }
 }
 
@@ -115,6 +116,3 @@ interface DirectiveSet {
   family: Family
   directives: any[]
 }
-
-export type Input = IncomingMessage
-export type Output = OutgoingMessage | null

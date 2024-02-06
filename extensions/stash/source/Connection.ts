@@ -36,7 +36,7 @@ export class Connection extends Connector {
   private async connectNode (redis: Redis): Promise<void> {
     await redis.connect()
 
-    console.log(`Stash connected to ${redis.options.host as string}:${String(redis.options.port)}`)
+    console.log(`Stash connected to ${redis.options.host}:${String(redis.options.port)}`)
   }
 
   private async resolveURLs (): Promise<string[]> {

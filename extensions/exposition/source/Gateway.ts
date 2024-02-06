@@ -1,22 +1,26 @@
 import { type bindings, Connector } from '@toa.io/core'
-import { type Maybe } from '@toa.io/types'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
-import { type Method, type Parameter, type Tree } from './RTD'
-import { type Label } from './discovery'
-import { type Branch } from './Branch'
-import { type Endpoint } from './Endpoint'
-import { type Directives } from './Directive'
+import type { Interceptor } from './Interception'
+import type { Maybe } from '@toa.io/types'
+import type { Method, Parameter, Tree } from './RTD'
+import type { Label } from './discovery'
+import type { Branch } from './Branch'
+import type { Endpoint } from './Endpoint'
+import type { Directives } from './Directive'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree<Endpoint, Directives>
+  private readonly interceptor: Interceptor
 
-  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint, Directives>) {
+  // eslint-disable-next-line max-params, max-len
+  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint, Directives>, interception: Interceptor) {
     super()
 
     this.broadcast = broadcast
     this.tree = tree
+    this.interceptor = interception
 
     this.depends(broadcast)
     this.depends(server)
@@ -35,6 +39,11 @@ export class Gateway extends Connector {
   }
 
   private async process (request: http.IncomingMessage): Promise<http.OutgoingMessage> {
+    const interception = await this.interceptor.intercept(request)
+
+    if (interception !== null)
+      return interception
+
     const match = this.tree.match(request.path)
 
     if (match === null)
