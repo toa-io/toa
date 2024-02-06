@@ -13,13 +13,9 @@ exposition:
     vary:languages: [en, fr]
     GET:
       vary:embed:
-        lang: language          # predefined embeddings
+        lang: language # predefined embeddings
         realm: realm
-        token: :x-access-token  # raw header value
-        ip: # fallbacks
-          - :CloudFront-Viewer-Address
-          - :CF-Connecting-IP
-          - :X-Appengine-User-IP
+        token: :x-access-token # raw header value
       endpoint: dummies.get
 ```
 
@@ -58,3 +54,15 @@ of the [CORS](protocol.md#cors).
 
 [Multiple header fields](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2) are embedded
 as a comma-separated list.
+
+### Fallbacks
+
+If the embedding function is an array, the first non-empty resolved value is used.
+
+```yaml
+vary:embed:
+  ip: # fallbacks
+    - :CloudFront-Viewer-Address
+    - :CF-Connecting-IP
+    - :X-Appengine-User-IP
+```
