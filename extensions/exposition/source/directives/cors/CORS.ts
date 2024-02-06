@@ -17,14 +17,6 @@ export class CORS implements Family, Interceptor {
   private readonly exposeHeaders = Array.from(this.exposed).join(', ')
 
   public create (): null {
-    console.log('CORS created!')
-
-    return null
-  }
-
-  public preflight (_: unknown[], input: Input): Output {
-    console.log('CORS preflighted!')
-
     return null
   }
 

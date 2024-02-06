@@ -12,6 +12,9 @@ export class Directives implements RTD.Directives<Directives> {
 
   public async preflight (request: IncomingMessage, parameters: RTD.Parameter[]): Promise<Output> {
     for (const set of this.sets) {
+      if (set.family.preflight === undefined)
+        continue
+
       const output = await set.family.preflight(set.directives, request, parameters)
 
       if (output !== null) {
@@ -103,7 +106,7 @@ export interface Family<TDirective = any, TExtension = any> {
 
   create: (name: string, value: any, remotes: Remotes) => TDirective
 
-  preflight: (directives: TDirective[],
+  preflight?: (directives: TDirective[],
     request: IncomingMessage & TExtension,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
 
