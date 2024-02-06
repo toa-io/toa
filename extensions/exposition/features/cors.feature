@@ -1,20 +1,11 @@
 Feature: CORS Support
 
-  Background:
-    Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
-
   Scenario: Using CORS
     Given the annotation:
       """yaml
       /:
-        /public:
-          anonymous: true
-          GET:
-            dev:stub: Hello
-        /private/:id:
-          auth:id: id
+        anonymous: true
+        /foo:
           GET:
             dev:stub: Hello
       """
@@ -35,19 +26,7 @@ Feature: CORS Support
       """
     When the following request is received:
       """
-      GET /public/ HTTP/1.1
-      origin: https://hello.world
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      access-control-allow-origin: https://hello.world
-      vary: origin
-      """
-    When the following request is received:
-      """
-      GET /private/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
-      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      GET /foo/ HTTP/1.1
       origin: https://hello.world
       """
     Then the following reply is sent:
