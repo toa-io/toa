@@ -1,4 +1,4 @@
-import { type Input, type Output } from '../../Directive'
+import type { Input, Output } from '../../io'
 
 export interface Directive {
   apply: (input: Input) => Output
