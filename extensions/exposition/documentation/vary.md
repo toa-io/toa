@@ -1,6 +1,6 @@
 # HTTP request details
 
-The vary directives family provides the capability to include HTTP request details as input for an
+The `vary` directives family provides the capability to include HTTP request details as input for an
 operation call.
 
 ## TL;DR
