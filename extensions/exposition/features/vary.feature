@@ -1,27 +1,93 @@
 Feature: The Vary directive family
 
-  Scenario: Embedding language
+  Scenario Outline: Embedding a language code
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
         /:
+          vary:languages: [en, fr]
           GET:
-            vary:languages: [en, fr]
             vary:embed:
-              language: name  # embed resolved language code as a `name` property of the operation input
+              name: language  # embed resolved language code as a `name` property of the operation input
             endpoint: compute
       """
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
       accept: application/yaml
-      accept-language: en_US
+      accept-language: <accept>
       """
     Then the following reply is sent:
       """
       200 OK
       content-type: application/yaml
-      vary: accept, accept-language
+      content-language: <result>
+      vary: accept-language, accept
 
-      Hello, en!
+      Hello <result>
       """
+    Examples:
+      | accept | result |
+      | en     | en     |
+      | en_US  | en     |
+      | fr     | fr     |
+      | sw     | en     |
+
+  Scenario: Embedding a value of an arbitrary header
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            vary:embed:
+              name: :foo
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      accept: application/yaml
+      foo: bar
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      vary: foo, accept
+
+      Hello bar
+      """
+
+  Scenario Outline: Embedding a value from the list of options
+    Given the `echo` is running with the following manifest:
+        """yaml
+        exposition:
+          /:
+            vary:languages: [en, fr]
+            GET:
+              vary:embed:
+                name:
+                  - :foo
+                  - :bar
+                  - language
+              endpoint: compute
+        """
+    When the following request is received:
+        """
+        GET /echo/ HTTP/1.1
+        accept: application/yaml
+        <header>: <value>
+        """
+    Then the following reply is sent:
+        """
+        200 OK
+        content-type: application/yaml
+        vary: <header>, accept
+
+        Hello <value>
+        """
+    Examples:
+      | header          | value |
+      | foo             | bar   |
+      | bar             | baz   |
+      | accept-language | en    |

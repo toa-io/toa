@@ -78,16 +78,26 @@ export class Server extends Connector {
   }
 
   private async extend (request: IncomingMessage): Promise<IncomingMessage> {
-    const message = request as unknown as IncomingMessage
+    request.encoder = negotiate(request)
+    request.pipelines = { body: [], response: [] }
 
-    message.encoder = negotiate(request)
-    message.parse = async <T> (): Promise<T> => await read(request)
+    request.parse = async <T> (): Promise<T> => {
+      const value = await read(request)
 
-    return message
+      if (request.pipelines.body.length === 0)
+        return value
+
+      return request.pipelines.body.reduce((value, transform) => transform(value), value)
+    }
+
+    return request
   }
 
   private success (request: IncomingMessage, response: Response) {
     return (message: OutgoingMessage) => {
+      for (const transform of request.pipelines.response)
+        transform(message)
+
       let status = message.status
 
       if (status === undefined)

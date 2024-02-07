@@ -7,9 +7,9 @@ operation call.
 
 ```yaml
 exposition:
+  realms:
+    toa: the.toa.io
   /:
-    vary:realms:
-      toa: the.toa.io
     vary:languages: [en, fr]
     GET:
       vary:embed:
@@ -43,6 +43,7 @@ The `realm` embedding substitutes the realm identified based on the `host` reque
 The `language` embedding substitutes the most matching language code based on the `accept-language`
 request header and a list of supported languages defined by the `vary:languages` directive, and also
 adds `accept-language` to the `vary` HTTP response header value.
+If neither of the supported languages matches, the first supported language is used.
 
 ### Raw header values
 
