@@ -8,5 +8,8 @@
     secretKeyRef:
       name: {{ .secret.name }}
       key: {{ .secret.key }}
+      {{- if .secret.optional }}
+      optional: {{ .secret.optional }}
+      {{- end }}
   {{- end }}
 {{- end }}

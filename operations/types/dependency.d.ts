@@ -18,6 +18,7 @@ export type Variable = {
   secret?: {
     name: string,
     key: string
+    optional?: boolean
   }
 }
 
