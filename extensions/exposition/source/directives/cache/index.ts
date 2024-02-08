@@ -1,3 +1,3 @@
-import Family from './Family'
+import { Cache } from './Cache'
 
-export = Family
+export const cache = new Cache()

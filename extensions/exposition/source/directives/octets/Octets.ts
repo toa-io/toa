@@ -11,7 +11,7 @@ import type { Remotes } from '../../Remotes'
 import type { Family } from '../../Directive'
 import type { Directive, Input } from './types'
 
-class Octets implements Family<Directive> {
+export class Octets implements Family<Directive> {
   public readonly name: string = 'octets'
   public readonly mandatory: boolean = false
 
@@ -65,5 +65,3 @@ const DIRECTIVES: Record<string, Constructor> = {
 }
 
 type Constructor = new (value: any, discovery: Promise<Component>, remotes: Remotes) => Directive
-
-export = new Octets()

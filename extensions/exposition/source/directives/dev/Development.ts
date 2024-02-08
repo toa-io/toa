@@ -4,7 +4,7 @@ import { type Directive } from './types'
 import type { Input, Output } from '../../io'
 import type { Family } from '../../Directive'
 
-class Development implements Family<Directive> {
+export class Development implements Family<Directive> {
   public readonly name: string = 'dev'
   public readonly mandatory: boolean = false
 
@@ -33,5 +33,3 @@ const constructors: Record<string, new (value: any) => Directive> = {
   stub: Stub,
   throw: Throw
 }
-
-export = new Development()

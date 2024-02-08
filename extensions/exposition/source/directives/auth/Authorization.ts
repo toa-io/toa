@@ -27,7 +27,7 @@ import type {
   Schemes
 } from './types'
 
-class Authorization implements Family<Directive, Extension> {
+export class Authorization implements Family<Directive, Extension> {
   public readonly depends: string[] = ['Vary']
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
@@ -47,9 +47,9 @@ class Authorization implements Family<Directive, Extension> {
       this.discovery[name] ??= remotes.discover('identity', name)
 
     return match(Class,
-      Role, () => new Role(value, this.discovery.roles),
-      Rule, () => new Rule(value, this.create.bind(this)),
-      Incept, () => new Incept(value, this.discovery),
+      Role, () => new Role(value as string | string[], this.discovery.roles),
+      Rule, () => new Rule(value as Record<string, string>, this.create.bind(this)),
+      Incept, () => new Incept(value as string, this.discovery),
       () => new Class(value))
   }
 
@@ -142,5 +142,3 @@ const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans']
-
-export = new Authorization()
