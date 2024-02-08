@@ -46,11 +46,12 @@ export class Server extends Connector {
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: any, response: Response) => {
-      this.extend(request)
-        .then(process)
-        .then(this.success(request, response))
-        .catch(this.fail(request, response))
+    this.app.use((request: Request, response: Response) => {
+      const message = this.extend(request)
+
+      process(message)
+        .then(this.success(message, response))
+        .catch(this.fail(message, response))
     })
   }
 
@@ -76,20 +77,22 @@ export class Server extends Connector {
     console.info('HTTP Server has been stopped.')
   }
 
-  private async extend (request: IncomingMessage): Promise<IncomingMessage> {
-    request.encoder = negotiate(request)
-    request.pipelines = { body: [], response: [] }
+  private extend (request: Request): IncomingMessage {
+    const message = request as IncomingMessage
 
-    request.parse = async <T> (): Promise<T> => {
+    message.encoder = negotiate(request)
+    message.pipelines = { body: [], response: [] }
+
+    message.parse = async <T> (): Promise<T> => {
       const value = await read(request)
 
-      if (request.pipelines.body.length === 0)
+      if (message.pipelines.body.length === 0)
         return value
 
-      return request.pipelines.body.reduce((value, transform) => transform(value), value)
+      return message.pipelines.body.reduce((value, transform) => transform(value), value)
     }
 
-    return request
+    return message
   }
 
   private success (request: IncomingMessage, response: Response) {
