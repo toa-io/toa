@@ -1,3 +1,4 @@
+import { cors } from '../../cors'
 import type { Input } from '../../../io'
 import type { Embedding } from './Embedding'
 
@@ -6,6 +7,8 @@ export class Header implements Embedding {
 
   public constructor (name: string) {
     this.name = name
+
+    cors.allow(this.name)
   }
 
   public resolve (input: Input): string | undefined {

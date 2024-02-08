@@ -7,14 +7,8 @@ export class CORS implements Family, Interceptor {
   public readonly name = 'cors'
   public readonly mandatory = true
 
-  private readonly exposed = new Set<string>([
-    'authorization',
-    'content-type',
-    'content-length',
-    'etag'
-  ])
-
-  private readonly exposeHeaders = Array.from(this.exposed).join(', ')
+  private readonly allowedHeaders = new Set<string>(['accept', 'content-type'])
+  private allowedHeaderString = Array.from(this.allowedHeaders).join(', ')
 
   public create (): null {
     return null
@@ -26,7 +20,8 @@ export class CORS implements Family, Interceptor {
 
     output.headers ??= new Headers()
     output.headers.set('access-control-allow-origin', input.headers.origin)
-    output.headers.set('access-control-expose-headers', this.exposeHeaders)
+    output.headers.set('access-control-expose-headers',
+      'authorization, content-type, content-length, etag')
     output.headers.append('vary', 'origin')
   }
 
@@ -39,11 +34,16 @@ export class CORS implements Family, Interceptor {
       headers: new Headers({
         'access-control-allow-origin': input.headers.origin,
         'access-control-allow-methods': 'GET, POST, PUT, PATCH, DELETE',
-        'access-control-allow-headers': 'accept, authorization, content-type',
+        'access-control-allow-headers': this.allowedHeaderString,
         'access-control-allow-credentials': 'true',
         'access-control-max-age': '86400',
         vary: 'origin'
       })
     }
+  }
+
+  public allow (header: string): void {
+    this.allowedHeaders.add(header)
+    this.allowedHeaderString = Array.from(this.allowedHeaders).join(', ')
   }
 }

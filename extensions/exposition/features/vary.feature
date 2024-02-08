@@ -91,3 +91,29 @@ Feature: The Vary directive family
       | foo             | bar   |
       | bar             | baz   |
       | accept-language | en    |
+
+  Scenario: Adding headers used by defined embeddings to CORS permissions
+    Given the `echo` is running with the following manifest:
+        """yaml
+        exposition:
+          /:
+            vary:languages: [en, fr]
+            GET:
+              vary:embed:
+                name:
+                  - :foo
+                  - :bar
+                  - language
+              endpoint: compute
+        """
+    When the following request is received:
+        """
+        OPTIONS / HTTP/1.1
+        origin: http://example.com
+        access-control-request-headers: whatever
+        """
+    Then the following reply is sent:
+        """
+        204 No Content
+        access-control-allow-headers: accept, content-type, foo, bar, accept-language
+        """

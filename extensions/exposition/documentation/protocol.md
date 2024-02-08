@@ -67,7 +67,15 @@ See also:
 [CORS](https://www.w3.org/TR/2020/SPSD-cors-20200602/) is supported,
 credentials, any `origin`, and any request header fields are allowed.
 
+The following request headers are allowed:
+
+- `accept`
+- `content-type`
+- headers used by the [`vary:embed` directive](vary.md#embeddings)
+
 The following response headers are exposed:
 
 - `authorization`
-- headers used with the [`vary:embed` directive](vary.md#raw-headers)
+- `content-type`
+- `content-length`
+- `etag`
