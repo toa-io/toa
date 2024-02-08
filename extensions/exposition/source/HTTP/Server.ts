@@ -70,10 +70,9 @@ export class Server extends Connector {
     this.server?.close(stopped.callback)
 
     await stopped
-    this.server = undefined
-  }
 
-  protected override dispose (): void {
+    this.server = undefined
+
     console.info('HTTP Server has been stopped.')
   }
 

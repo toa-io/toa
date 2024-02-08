@@ -40,8 +40,9 @@ export class Factory implements extensions.Factory {
 
     gateway.depends(remotes)
     gateway.depends(composition)
+    server.depends(gateway)
 
-    return gateway
+    return server
   }
 }
 

@@ -13,6 +13,7 @@ export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree<Endpoint, Directives>
   private readonly interceptor: Interceptor
+  private readonly server: Connector
 
   // eslint-disable-next-line max-params, max-len
   public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint, Directives>, interception: Interceptor) {
@@ -21,9 +22,10 @@ export class Gateway extends Connector {
     this.broadcast = broadcast
     this.tree = tree
     this.interceptor = interception
+    this.server = server
 
     this.depends(broadcast)
-    this.depends(server)
+    // this.depends(server)
 
     server.attach(this.process.bind(this))
   }

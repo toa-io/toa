@@ -104,6 +104,8 @@ export interface Family<TDirective = any, TExtension = any> {
   readonly name: string
   readonly mandatory: boolean
 
+  // produce: (declarations: RTD.syntax.Directive[], remotes: Remotes) => TDirective[]
+
   create: (name: string, value: any, remotes: Remotes) => TDirective
 
   preflight?: (directives: TDirective[],
