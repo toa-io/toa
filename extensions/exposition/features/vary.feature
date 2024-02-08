@@ -101,9 +101,9 @@ Feature: The Vary directive family
             GET:
               vary:embed:
                 name:
+                  - language
                   - :foo
                   - :bar
-                  - language
               endpoint: compute
         """
     When the following request is received:
@@ -115,5 +115,5 @@ Feature: The Vary directive family
     Then the following reply is sent:
         """
         204 No Content
-        access-control-allow-headers: accept, content-type, foo, bar, accept-language
+        access-control-allow-headers: accept, content-type, accept-language, foo, bar
         """
