@@ -45,10 +45,10 @@ export class Factory {
   }
 
   private resolveSecrets (name: string,
-    Class: ProviderConstructor): Record<string, string> {
+    Class: ProviderConstructor): Record<string, string | undefined> {
     if (Class.SECRETS === undefined) return {}
 
-    const secrets: Record<string, string> = {}
+    const secrets: Record<string, string | undefined> = {}
 
     for (const secret of Class.SECRETS) {
       const variable = `${SERIALIZATION_PREFIX}_${name.toUpperCase()}_${secret.name.toUpperCase()}`
@@ -56,7 +56,8 @@ export class Factory {
 
       assert.ok(secret.optional === true || value !== undefined,
         `'${variable}' is not defined`)
-      secrets[secret.name] = value!
+
+      secrets[secret.name] = value
     }
 
     return secrets
