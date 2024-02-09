@@ -12,19 +12,23 @@ describe('S3 storage provider', () => {
   let provider: S3
   let s3endpoint: ReturnType<typeof setupServer>
 
-  process.env.AWS_REGION = 'us-east-1'
+  const AWS_REGION = 'us-east-1'
 
   const TEST_BUCKET_NAME = 'test-bucket'
-  const S3_ENDPOINT = `https://${TEST_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`
+  const S3_ENDPOINT = `https://${TEST_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com`
 
   beforeAll(async () => {
     jest.useRealTimers()
     s3endpoint = setupServer()
     s3endpoint.listen({ onUnhandledRequest: 'error' })
 
-    provider = new S3(new URL(`s3://${TEST_BUCKET_NAME}`), {
-      ACCESS_KEY_ID: 'test-jey',
-      SECRET_ACCESS_KEY: 'test-key-secret'
+    provider = new S3({
+      bucket: TEST_BUCKET_NAME,
+      region: AWS_REGION,
+      secrets: {
+        ACCESS_KEY_ID: 'test-key',
+        SECRET_ACCESS_KEY: 'test-key-secret'
+      }
     })
   })
 

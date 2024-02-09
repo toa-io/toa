@@ -1,17 +1,20 @@
 import { type Readable } from 'node:stream'
 import { dirname, join } from 'node:path'
 import fs from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
 import assert from 'node:assert'
-import { type Provider } from '../Provider'
+import { Provider } from '../Provider'
 
-export class FileSystem implements Provider {
+export interface FileSystemOptions {
+  path: string
+}
+
+export class FileSystem extends Provider<FileSystemOptions> {
   protected readonly path: string
 
-  public constructor (url: URL) {
-    assert.equal(url.protocol, 'file:', `Invalid FileSystem URL: ${url.toString()}`)
-
-    this.path = fileURLToPath(url)
+  public constructor (props: FileSystemOptions) {
+    super(props)
+    assert.ok(props.path, 'Missing path')
+    this.path = props.path
   }
 
   public async get (path: string): Promise<Readable | null> {
