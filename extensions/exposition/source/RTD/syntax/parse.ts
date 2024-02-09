@@ -28,7 +28,7 @@ function parseNode (input: object, shortcuts?: Shortcuts): Node {
     }
 
     if (key[0] === '/') {
-      const route = parseRoute(key, value, shortcuts)
+      const route = parseRoute(key, value as Node, shortcuts)
 
       node.routes.push(route)
 
@@ -36,7 +36,7 @@ function parseNode (input: object, shortcuts?: Shortcuts): Node {
     }
 
     if (verbs.has(key)) {
-      const method = parseMethod(key, value, shortcuts)
+      const method = parseMethod(key, value as Mapping, shortcuts)
 
       node.methods.push(method)
 
@@ -65,7 +65,7 @@ export function createNode (): Node {
   }
 }
 
-function parseRoute (path: string, value: object, shortcuts?: Shortcuts): Route {
+function parseRoute (path: string, value: Node, shortcuts?: Shortcuts): Route {
   const node = parse(value, shortcuts)
 
   return createRoute(path, node)
@@ -106,10 +106,10 @@ function parseQuery (mapping: any): void {
     return
 
   if (typeof query.limit === 'number')
-    query.limit = expandRange(query.limit)
+    query.limit = expandRange(query.limit as number)
 
   if (typeof query.omit === 'number')
-    query.omit = expandRange(query.omit)
+    query.omit = expandRange(query.omit as number)
 }
 
 function parseDirectives (mapping: Record<string, any>, shortcuts?: Shortcuts): Directive[] {
@@ -132,7 +132,7 @@ function parseDirectives (mapping: Record<string, any>, shortcuts?: Shortcuts): 
 
 function parseDirective (key: string, value: any, shortcuts?: Shortcuts): Directive | null {
   if (shortcuts?.has(key) === true)
-    key = shortcuts.get(key)!
+    key = shortcuts.get(key)! // eslint-disable-line @typescript-eslint/no-non-null-assertion
 
   const match = key.match(DIRECTIVE_RX)
 
