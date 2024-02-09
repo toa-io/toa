@@ -19,7 +19,9 @@ configuration:
           - two
 
 storages:
-  tmp: tmp:///tmp
+  tmp:
+    provider: tmp
+    prefix: hello
 
 exposition:
   debug: true

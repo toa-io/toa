@@ -1,12 +1,14 @@
 import * as assert from 'node:assert'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
 import * as msgpack from 'msgpackr'
 import * as YAML from 'js-yaml'
-import { open } from '../../../storages/source/test/util'
 import { Captures } from './Captures'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
+import type { Readable } from 'node:stream'
 
 @binding([Gateway, Parameters, Captures])
 export class HTTP extends http.Agent {
@@ -59,6 +61,12 @@ export class HTTP extends http.Agent {
 
     await super.streamMatch(head, stream)
   }
+}
+
+const FILEDIR = path.resolve(__dirname, '../../../storages/source/test/util')
+
+function open (filename: string): Readable {
+  return fs.createReadStream(path.join(FILEDIR, filename))
 }
 
 const encoders: Record<string, (buf: Buffer | Uint8Array) => any> = {

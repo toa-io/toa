@@ -11,5 +11,5 @@ export class Parameters {
 setDefaultTimeout(30 * 1000)
 process.env.TOA_DEV = '1'
 
-// { octets: tmp:///exposition-octets }
-process.env.TOA_STORAGES = '3gABpm9jdGV0c7h0bXA6Ly8vZXhwb3NpdGlvbi1vY3RldHM='
+// take this value form /features/extensions/storages.feature#Deploying S3 storage with secrets
+process.env.TOA_STORAGES = '3gABo3RtcN4AAqhwcm92aWRlcqJzM6ZidWNrZXSkdGVzdA=='
