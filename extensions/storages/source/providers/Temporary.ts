@@ -1,14 +1,14 @@
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import assert from 'node:assert'
-import { pathToFileURL } from 'node:url'
 
 import { FileSystem } from './FileSystem'
 
-export class Temporary extends FileSystem {
-  public constructor (url: URL) {
-    assert.equal(url.protocol, 'tmp:', `Invalid temporary URL: ${url.toString()}`)
+export interface TemporaryOptions {
+  prefix?: string
+}
 
-    super(pathToFileURL(join(tmpdir(), url.pathname)))
+export class Temporary extends FileSystem {
+  public constructor (props: TemporaryOptions) {
+    super({ path: join(tmpdir(), props.prefix ?? '') })
   }
 }

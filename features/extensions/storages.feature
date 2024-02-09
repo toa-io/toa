@@ -3,7 +3,9 @@ Feature: Storages Extension
   Scenario: Adding a file
     Given an encoded environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy: tmp:///whatever
+      dummy:
+        provider: tmp
+        prefix: whatever
       """
     And I compose `storage` component
     When I call `default.storage.put` with:
@@ -22,11 +24,15 @@ Feature: Storages Extension
   Scenario: Adding a file to S3
     Given an encoded environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy: s3://testbucket
+      dummy:
+        provider: s3
+        bucket: test-bucket
+        endpoint: http://s3.localhost.localstack.cloud:4566
+        region: us-west-1
       """
+
     And an environment variable `TOA_STORAGES_DUMMY_ACCESS_KEY` is set to "accessKey"
     And an environment variable `TOA_STORAGES_DUMMY_SECRET_ACCESS_KEY` is set to "secretAccessKey"
-    And an environment variable `AWS_ENDPOINT_URL_S3` is set to "http://s3.localhost.localstack.cloud:4566"
     And I compose `storage` component
     When I call `default.storage.put` with:
       """yaml
@@ -44,7 +50,9 @@ Feature: Storages Extension
   Scenario: Accessing undefined storage
     Given an encoded environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy: tmp:///whatever
+      dummy:
+        provider: tmp
+        prefix: whatever
       """
     And I compose `storage` component
     When I call `default.storage.get` with:
@@ -63,7 +71,9 @@ Feature: Storages Extension
     And I have a context with:
       """yaml
       storages:
-        tmp: tmp:///whatever
+        tmp:
+          provider: tmp
+          prefix: whatever
       """
     When I export deployment
     Then exported values should contain:
@@ -72,13 +82,15 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: 3gABo3RtcK90bXA6Ly8vd2hhdGV2ZXI=
+              value: 3gABo3RtcN4AAqhwcm92aWRlcqN0bXCmcHJlZml4qHdoYXRldmVy
       """
 
   Scenario: Running 'test:' provider with secrets
     Given an encoded environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy: test:///whatever
+      dummy:
+        provider: test
+        prefix: whatever
       """
     And an environment variable `TOA_STORAGES_DUMMY_USERNAME` is set to "developer"
     And an environment variable `TOA_STORAGES_DUMMY_PASSWORD` is set to "secret"
@@ -89,7 +101,8 @@ Feature: Storages Extension
     And I have a context with:
       """yaml
       storages:
-        tmp: test:///whatever
+        tmp:
+          provider: test
       """
     When I export deployment
     Then exported values should contain:
@@ -98,7 +111,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: 3gABo3RtcLB0ZXN0Oi8vL3doYXRldmVy
+              value: 3gABo3RtcN4AAahwcm92aWRlcqR0ZXN0
             - name: TOA_STORAGES_TMP_USERNAME
               secret:
                 name: toa-storages-tmp
@@ -114,7 +127,9 @@ Feature: Storages Extension
     And I have a context with:
       """yaml
       storages:
-        tmp: s3:///test
+        tmp:
+          provider: s3
+          bucket: test
       """
     When I export deployment
     Then exported values should contain:
@@ -123,13 +138,15 @@ Feature: Storages Extension
         - name: default-storage
           variables:
           - name: TOA_STORAGES
-            value: 3gABo3RtcKpzMzovLy90ZXN0
+            value: 3gABo3RtcN4AAqhwcm92aWRlcqJzM6ZidWNrZXSkdGVzdA==
           - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
             secret:
               name: toa-storages-tmp
               key: ACCESS_KEY_ID
+              optional: true
           - name: TOA_STORAGES_TMP_SECRET_ACCESS_KEY
             secret:
               name: toa-storages-tmp
               key: SECRET_ACCESS_KEY
+              optional: true
       """

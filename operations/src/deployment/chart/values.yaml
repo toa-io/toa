@@ -12,6 +12,7 @@ compositions:
         secret:
           name: secret-name
           key: secret-key
+          optional: false
   - name: users
     image: localhost:5000/composition-users:0.0.0
     replicas: 3

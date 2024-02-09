@@ -133,8 +133,19 @@ Custom providers are not supported.
 
 ### Amazon S3
 
-Annotation value formats are either `s3://{bucket}/{key}` or S3 HTTP endpoint
-like `https?://{endpoint}.s3.{region}.{rest_of_hostname}/{bucket}`.
+Annotation formats is like:
+
+```yaml
+storages:
+  photos:
+    provider: s3
+    bucket: my-bucket
+    region: eu-west-1
+  tmp:
+    provider: s3
+    endpoint: http://localhost:9000
+    bucket: my-bucket
+```
 
 Secrets for the AWS access key and secret key can be provided via SECRETS constructs property. If
 missed standard AWS SDK credentials resolve chain will be used (that means environment variable,
@@ -144,21 +155,42 @@ and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
 
-`s3://my-bucket`
 
 ### Filesystem
 
-Annotation value format is `file:///{path}`.
+Annotation format is:
 
-`file:///var/my-storage`
+```yaml
+storages:
+  photos@dev:
+    provider: fs
+    path: /var/my-storage
+```
 
 ### Temporary
 
 Filesystem using OS temporary directory.
 
-Annotation value format is `tmp:///{path}`.
+Annotation format is:
 
-`tmp:///my-storage`
+```yaml
+storages:
+  photos@dev:
+    provider: tmp
+    prefix: my-app-tmp
+```
+
+### Memory
+
+In-memory non-persistent storage.
+
+Annotation value format is:
+
+```yaml
+storages:
+  photos@dev:
+    provider: memory
+```
 
 ## Deduplication
 
@@ -205,8 +237,12 @@ provider-specific URLs as values.
 
 ```yaml
 storages:
-  photos: s3://my-bucket
-  photos@dev: file:///var/my-storage
+  photos:
+    provider: s3
+    bucket: my-bucket
+  photos@dev:
+    provider: fs
+    path: /var/my-storage
   tmp:
     provider: s3
     endpoint: http://localhost:9000

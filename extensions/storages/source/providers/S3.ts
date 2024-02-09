@@ -7,79 +7,57 @@ import {
   S3Client,
   GetObjectCommand,
   CopyObjectCommand,
-  DeleteObjectsCommand, paginateListObjectsV2,
-  HeadObjectCommand, NotFound,
+  DeleteObjectsCommand,
+  paginateListObjectsV2,
+  HeadObjectCommand,
+  NotFound,
   DeleteObjectCommand,
   NoSuchKey,
   type S3ClientConfigType,
   type ObjectIdentifier
 } from '@aws-sdk/client-s3'
 import * as nodeNativeFetch from 'smithy-node-native-fetch'
-import type { Provider } from '../Provider'
+import { Provider, type ProviderSecret, type ProviderSecrets } from '../Provider'
 import type { ReadableStream } from 'node:stream/web'
 
-export class S3 implements Provider {
-  public static readonly SECRETS = ['ACCESS_KEY_ID', 'SECRET_ACCESS_KEY']
+export interface S3Options {
+  bucket: string
+  prefix?: string
+  region?: string
+  endpoint?: string
+}
+
+export class S3 extends Provider<S3Options> {
+  public static override readonly SECRETS: readonly ProviderSecret[] = [
+    { name: 'ACCESS_KEY_ID', optional: true },
+    { name: 'SECRET_ACCESS_KEY', optional: true }
+  ]
 
   protected readonly bucket: string
   protected readonly client: S3Client
 
-  /**
-   *
-   * @param url - can be either s3 URL like s3://BUCKET-NAME/KEY
-   * or HTTPS S3 endpoint like https://BUCKET-NAME.s3.REGION.amazonaws.com/KEY
-   * @param secrets - optional credentials for S3 client. If omitted default AWS SDK
-   * credential resolving chain applies (i.e. environment variables, shared credentials file,
-   * EC2 metadata service, etc.)
-   */
-  public constructor (url: URL, secrets?: Record<typeof S3.SECRETS[number], string>) {
+  public constructor (props: S3Options & ProviderSecrets) {
+    super(props)
+
+    assert.ok(props.bucket, 'Missing bucket name')
+    this.bucket = props.bucket
+
     const s3Config: S3ClientConfigType = {
       retryMode: 'adaptive',
       ...nodeNativeFetch
     }
 
-    switch (url.protocol) {
-      case 's3:':
-        this.bucket = url.hostname
-        break
-
-      case 'https:':
-      case 'http:': {
-        /* eslint-disable max-len */
-        /**
-         * @see {@link https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-s3/src/main/java/com/amazonaws/services/s3/AmazonS3URI.java}
-         */
-        const match = /^(?<bucket>.+\.)?s3[.-](?<region>[a-z0-9-]+)\./i.exec(url.hostname)
-
-        assert.ok(match !== null, `Invalid S3 URI: ${url.toString()}`)
-
-        s3Config.endpoint = url.origin
-        s3Config.region = match.groups?.region?.toLowerCase()
-
-        if (typeof match.groups?.bucket === 'string')
-          this.bucket = match.groups.bucket.replace(/\.$/, '')
-        else {
-          // https://s3.amazonaws.com/bucket
-          // https://s3.amazonaws.com/bucket/
-          // https://s3.amazonaws.com/bucket/key
-          const bucket = url.pathname.split('/')[1]
-
-          assert.ok(typeof bucket === 'string', `Unable to get S3 bucket name from URL: ${url.toString()}`)
-
-          this.bucket = bucket
-        }
-      }
-
-        break
-
-      default:
-        throw new Error(`Unsupported protocol: ${url.protocol}`)
+    if (props.endpoint !== undefined) {
+      s3Config.forcePathStyle = props.endpoint.startsWith('http://')
+      s3Config.endpoint = props.endpoint
     }
 
-    if (typeof secrets?.ACCESS_KEY_ID === 'string')
+    if (props.region !== undefined) s3Config.region = props.region
+
+    if (typeof props.secrets?.ACCESS_KEY_ID === 'string')
       s3Config.credentials = {
-        accessKeyId: secrets.ACCESS_KEY_ID,
-        secretAccessKey: secrets.SECRET_ACCESS_KEY
+        accessKeyId: props.secrets.ACCESS_KEY_ID,
+        secretAccessKey: props.secrets.SECRET_ACCESS_KEY
       }
 
     this.client = new S3Client(s3Config)
@@ -109,16 +87,13 @@ export class S3 implements Provider {
         Key
       }))
 
-      if (fileResponse.Body === undefined)
-        return null // should never happen
+      if (fileResponse.Body === undefined) return null // should never happen
 
-      if (fileResponse.Body instanceof Readable)
-        return fileResponse.Body
+      if (fileResponse.Body instanceof Readable) return fileResponse.Body
 
       return Readable.fromWeb((fileResponse.Body instanceof Blob
         ? fileResponse.Body.stream()
-        : fileResponse.Body
-      ) as ReadableStream) // types mismatch between Node 20 and aws-sdk
+        : fileResponse.Body) as ReadableStream) // types mismatch between Node 20 and aws-sdk
     } catch (err) {
       if (err instanceof NotFound || err instanceof NoSuchKey) return null
       else throw err
@@ -159,8 +134,7 @@ export class S3 implements Provider {
     const objectsToRemove: ObjectIdentifier[] = []
 
     for await (const page of paginateListObjectsV2({ client }, { Bucket, Prefix: Key }))
-      for (const { Key } of page.Contents ?? [])
-        objectsToRemove.push({ Key })
+      for (const { Key } of page.Contents ?? []) objectsToRemove.push({ Key })
 
     // Removing all objects in parallel in batches
     await Promise.all((function * () {
@@ -168,7 +142,8 @@ export class S3 implements Provider {
         yield client.send(new DeleteObjectsCommand({
           Bucket,
           Delete: {
-            Objects: objectsToRemove.splice(0, 1000 /* max batch size for DeleteObjects */)
+            Objects: objectsToRemove.splice(0,
+              1000 /* max batch size for DeleteObjects */)
           }
         }))
     })())
