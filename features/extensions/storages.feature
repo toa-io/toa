@@ -103,10 +103,12 @@ Feature: Storages Extension
               secret:
                 name: toa-storages-tmp
                 key: USERNAME
+                optional: true
             - name: TOA_STORAGES_TMP_PASSWORD
               secret:
                 name: toa-storages-tmp
                 key: PASSWORD
+                optional: true
       """
 
   Scenario: Deploying S3 storage with secrets
