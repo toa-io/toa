@@ -12,8 +12,14 @@ configuration:
     key0: k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA
 
   identity.federation:
-    allowed_issuers:
-      - http://localhost:44444
+    trust:
+      - issuer: https://localhost
+        audience:
+          - one
+          - two
+
+storages:
+  tmp: tmp:///tmp
 
 exposition:
   debug: true

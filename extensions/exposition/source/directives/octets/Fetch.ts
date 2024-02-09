@@ -5,7 +5,7 @@ import type { Maybe } from '@toa.io/types'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Readable } from 'node:stream'
 import type { Component } from '@toa.io/core'
-import type { Output } from '../../Directive'
+import type { Output } from '../../io'
 
 import type { Directive, Input } from './types'
 

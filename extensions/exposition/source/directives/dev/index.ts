@@ -1,3 +1,3 @@
-import Family from './Family'
+import { Development } from './Development'
 
-export = Family
+export const dev = new Development()

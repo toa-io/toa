@@ -132,7 +132,7 @@ function parseDirectives (mapping: Record<string, any>, shortcuts?: Shortcuts): 
 
 function parseDirective (key: string, value: any, shortcuts?: Shortcuts): Directive | null {
   if (shortcuts?.has(key) === true)
-    key = shortcuts.get(key) as string
+    key = shortcuts.get(key)!
 
   const match = key.match(DIRECTIVE_RX)
 

@@ -1,13 +1,13 @@
-import type * as directive from '../../Directive'
+import type * as io from '../../io'
 
 export interface Directive {
   readonly targeted: boolean
 
-  apply: (storage: string, input: Input) => directive.Output | Promise<directive.Output>
+  apply: (storage: string, input: Input) => io.Output | Promise<io.Output>
 }
 
 export interface Extension {
   octets?: string
 }
 
-export type Input = directive.Input & Extension
+export type Input = io.Input & Extension

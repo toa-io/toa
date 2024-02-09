@@ -4,19 +4,18 @@ import { Remotes } from './Remotes'
 import { Tree, syntax } from './RTD'
 import { Server } from './HTTP'
 import { type Endpoint, EndpointsFactory } from './Endpoint'
-import * as directives from './directives'
-import { type Directives, DirectivesFactory, type Family } from './Directive'
+import { families, interceptors } from './directives'
+import { type Directives, DirectivesFactory } from './Directive'
 import { Composition } from './Composition'
 import * as root from './root'
+import { Interception } from './Interception'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader
-  private readonly families: Family[]
 
   public constructor (boot: Bootloader) {
     this.boot = boot
-    this.families = directives.families
   }
 
   public tenant (locator: Locator, node: syntax.Node): Connector {
@@ -32,16 +31,18 @@ export class Factory implements extensions.Factory {
     const remotes = new Remotes(this.boot)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)
-    const directives = new DirectivesFactory(this.families, remotes)
+    const directives = new DirectivesFactory(families, remotes)
+    const interception = new Interception(interceptors)
     const tree = new Tree<Endpoint, Directives>(node, methods, directives)
 
     const composition = new Composition(this.boot)
-    const gateway = new Gateway(broadcast, server, tree)
+    const gateway = new Gateway(broadcast, server, tree, interception)
 
     gateway.depends(remotes)
     gateway.depends(composition)
+    server.depends(gateway)
 
-    return gateway
+    return server
   }
 }
 

@@ -3,6 +3,7 @@ import { trim } from '@toa.io/generic'
 import { buffer } from '@toa.io/streams'
 import * as http from './index'
 import { request } from './request'
+import * as parse from './parse'
 import type { Captures } from './Captures'
 import type { Readable } from 'stream'
 
@@ -31,8 +32,12 @@ export class Agent {
     if (body !== undefined) headers += '\ncontent-length: ' + body?.length
 
     const message = headers + '\n\n' + (body ?? '')
+    const response = await request(message, this.origin)
+    const clone = response.clone()
 
-    this.response = await request(message, this.origin)
+    this.response = await parse.response(response)
+
+    return clone
   }
 
   public responseIncludes (expected: string): void {

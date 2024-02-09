@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { match } from 'matchacho'
 import * as http from '../../HTTP'
 import { Anonymous } from './Anonymous'
@@ -9,9 +10,10 @@ import { Echo } from './Echo'
 import { split } from './split'
 import { Scheme } from './Scheme'
 import { PRIMARY, PROVIDERS } from './schemes'
+import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
-import type { Family, Output } from '../../Directive'
+import type { Family } from '../../Directive'
 import type { Parameter } from '../../RTD'
 import type {
   AuthenticationResult,
@@ -25,7 +27,8 @@ import type {
   Schemes
 } from './types'
 
-class Authorization implements Family<Directive, Extension> {
+export class Authorization implements Family<Directive, Extension> {
+  public readonly depends: string[] = ['Vary']
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
 
@@ -35,20 +38,18 @@ class Authorization implements Family<Directive, Extension> {
   private bans: Component | null = null
 
   public create (name: string, value: any, remotes: Remotes): Directive {
+    assert.ok(name in CLASSES,
+      `Directive '${name}' is not provided by the '${this.name}' family.`)
+
     const Class = CLASSES[name]
 
-    if (Class === undefined)
-      throw new Error(`Directive '${name}' is not provided by the '${this.name}' family.`)
-
-    for (const name of REMOTES) this.discovery[name] ??= remotes.discover('identity', name)
+    for (const name of REMOTES)
+      this.discovery[name] ??= remotes.discover('identity', name)
 
     return match(Class,
-      Role,
-      () => new Role(value, this.discovery.roles),
-      Rule,
-      () => new Rule(value, this.create.bind(this)),
-      Incept,
-      () => new Incept(value, this.discovery),
+      Role, () => new Role(value as string | string[], this.discovery.roles),
+      Rule, () => new Rule(value as Record<string, string>, this.create.bind(this)),
+      Incept, () => new Incept(value as string, this.discovery),
       () => new Class(value))
   }
 
@@ -62,7 +63,8 @@ class Authorization implements Family<Directive, Extension> {
     for (const directive of directives) {
       const allow = await directive.authorize(identity, input, parameters)
 
-      if (allow) return directive.reply?.(identity) ?? null
+      if (allow)
+        return directive.reply?.(identity) ?? null
     }
 
     if (identity === null) throw new http.Unauthorized()
@@ -140,5 +142,3 @@ const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans']
-
-export = new Authorization()

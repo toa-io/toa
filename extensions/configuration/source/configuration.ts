@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { type Locator } from '@toa.io/core'
 import { decode, add } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
@@ -35,8 +36,9 @@ function substituteSecrets (configuration: Configuration): void {
 
     if (match === null) continue
 
-    const name = match.groups?.variable as string
+    const name = match.groups?.variable
 
+    assert.ok(name !== undefined)
     configuration[key] = getSecret(name)
   }
 }

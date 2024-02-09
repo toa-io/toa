@@ -1,3 +1,4 @@
+import * as assert from 'node:assert'
 import { after, binding, given } from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { timeout } from '@toa.io/generic'
@@ -30,9 +31,13 @@ export class Components {
   @given('the `{word}` is stopped')
   public async stop (_?: string): Promise<void> {
     await this.composition?.disconnect()
+
+    this.composition = null
   }
 
   private async runComponent (name: string, manifest?: object): Promise<void> {
+    assert.ok(this.composition === null, 'Composition is already running')
+
     const path = await this.workspace.addComponent(name, manifest)
 
     this.composition = await boot.composition([path])

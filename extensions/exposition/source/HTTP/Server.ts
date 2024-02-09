@@ -1,14 +1,12 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import express from 'express'
-import cors from 'cors'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
 import Negotiator from 'negotiator'
 import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
 import { ClientError, Exception } from './exceptions'
 import { formats, types } from './formats'
-import type { CorsOptions } from 'cors'
 import type { Format } from './formats'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
@@ -41,18 +39,19 @@ export class Server extends Connector {
     const app = express()
 
     app.disable('x-powered-by')
-    app.use(cors(CORS))
+    // app.use(cors(CORS))
     app.use(supportedMethods(properties.methods))
 
     return new Server(app, properties.debug, properties.port)
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: any, response: Response) => {
-      this.extend(request)
-        .then(process)
-        .then(this.success(request, response))
-        .catch(this.fail(request, response))
+    this.app.use((request: Request, response: Response) => {
+      const message = this.extend(request)
+
+      process(message)
+        .then(this.success(message, response))
+        .catch(this.fail(message, response))
     })
   }
 
@@ -72,24 +71,35 @@ export class Server extends Connector {
     this.server?.close(stopped.callback)
 
     await stopped
-    this.server = undefined
-  }
 
-  protected override dispose (): void {
+    this.server = undefined
+
     console.info('HTTP Server has been stopped.')
   }
 
-  private async extend (request: IncomingMessage): Promise<IncomingMessage> {
-    const message = request as unknown as IncomingMessage
+  private extend (request: Request): IncomingMessage {
+    const message = request as IncomingMessage
 
     message.encoder = negotiate(request)
-    message.parse = async <T> (): Promise<T> => await read(request)
+    message.pipelines = { body: [], response: [] }
+
+    message.parse = async <T> (): Promise<T> => {
+      const value = await read(request)
+
+      if (message.pipelines.body.length === 0)
+        return value
+
+      return message.pipelines.body.reduce((value, transform) => transform(value), value)
+    }
 
     return message
   }
 
   private success (request: IncomingMessage, response: Response) {
     return (message: OutgoingMessage) => {
+      for (const transform of request.pipelines.response)
+        transform(message)
+
       let status = message.status
 
       if (status === undefined)
@@ -160,16 +170,9 @@ async function adam (request: Request): Promise<void> {
 }
 
 const DEFAULTS: Properties = {
-  methods: new Set<string>(['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']),
+  methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
   port: 8000
-}
-
-const CORS: CorsOptions = {
-  credentials: true,
-  maxAge: 86400,
-  allowedHeaders: ['accept', 'authorization', 'content-type'],
-  origin: (origin: string | undefined, callback) => callback(null, origin)
 }
 
 interface Properties {

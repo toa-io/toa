@@ -25,7 +25,7 @@ export class Incept implements Directive {
       throw new http.Conflict('Identity inception has failed as the response body ' +
         ` does not contain the '${this.property}' property.`)
 
-    const [scheme, credentials] = split(request.headers.authorization as string)
+    const [scheme, credentials] = split(request.headers.authorization!)
     const provider = PROVIDERS[scheme]
 
     this.schemes[scheme] ??= await this.discovery[provider]

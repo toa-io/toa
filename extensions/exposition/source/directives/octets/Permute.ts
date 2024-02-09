@@ -2,7 +2,7 @@ import { NotAcceptable, NotFound } from '../../HTTP'
 import * as schemas from './schemas'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
-import type { Output } from '../../Directive'
+import type { Output } from '../../io'
 
 import type { Directive, Input } from './types'
 

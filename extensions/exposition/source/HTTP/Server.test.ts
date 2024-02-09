@@ -33,15 +33,6 @@ it('should register request handler', async () => {
   expect(process).toHaveBeenCalledTimes(1)
 })
 
-it('should support cors', async () => {
-  const head = await fetch(`http://localhost:${server.port}/`,
-    { headers: { origin: 'http://localhost' } })
-
-  await head.text()
-  expect(head.headers.get('access-control-allow-origin')).toEqual('http://localhost')
-  expect(head.headers.get('access-control-allow-credentials')).toEqual('true')
-})
-
 it('should send 501 on unknown method', async () => {
   const head = await fetch(`http://localhost:${server.port}/`, { method: 'COPY' })
 

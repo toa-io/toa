@@ -1,10 +1,10 @@
-import { type Output } from '../../Directive'
-import { type Directive } from './types'
+import type { Output } from '../../io'
+import type { Directive } from './types'
 
 export class Stub implements Directive {
-  private readonly value: any
+  private readonly value: unknown
 
-  public constructor (value: any) {
+  public constructor (value: unknown) {
     this.value = value
   }
 
