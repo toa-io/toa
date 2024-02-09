@@ -82,7 +82,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: 3gABo3RtcN4AAqhwcm92aWRlcqN0bXCmcHJlZml4qHdoYXRldmVy
+              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0bXAiLCJwcmVmaXgiOiJ3aGF0ZXZlciJ9fQ==
       """
 
   Scenario: Running 'test:' provider with secrets
@@ -103,6 +103,7 @@ Feature: Storages Extension
       storages:
         tmp:
           provider: test
+          prefix: test
       """
     When I export deployment
     Then exported values should contain:
@@ -111,7 +112,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: 3gABo3RtcN4AAahwcm92aWRlcqR0ZXN0
+              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0ZXN0IiwicHJlZml4IjoidGVzdCJ9fQ==
             - name: TOA_STORAGES_TMP_USERNAME
               secret:
                 name: toa-storages-tmp
@@ -138,7 +139,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
           - name: TOA_STORAGES
-            value: 3gABo3RtcN4AAqhwcm92aWRlcqJzM6ZidWNrZXSkdGVzdA==
+            value: eyJ0bXAiOnsicHJvdmlkZXIiOiJzMyIsInByZWZpeCI6InRlc3QiLCJidWNrZXQiOiJ0ZXN0In19
           - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
             secret:
               name: toa-storages-tmp

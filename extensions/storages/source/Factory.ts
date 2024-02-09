@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { decode } from 'msgpackr'
+import { decode } from '@toa.io/generic'
 import { providers } from './providers'
 import { Storage, type Storages } from './Storage'
 import { Aspect } from './Aspect'
@@ -14,7 +14,7 @@ export class Factory {
 
     if (env === undefined) throw new Error('TOA_STORAGES is not defined')
 
-    this.declaration = decode(Buffer.from(env, 'base64'))
+    this.declaration = decode(env)
   }
 
   public aspect (): Aspect {
