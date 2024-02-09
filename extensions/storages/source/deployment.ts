@@ -18,7 +18,8 @@ export function deployment (instances: Instance[], annotation: Annotation): Depe
   }
 }
 
-function validate (instances: Instance[], annotation: Annotation): void {
+function validate (instances: Instance[],
+  annotation: Annotation): asserts annotation is ValidatedAnnotation {
   assert.ok(annotation !== undefined,
     `Storages annotation is required by: '${instances
       .map((i) => i.component.locator.id)
@@ -26,8 +27,7 @@ function validate (instances: Instance[], annotation: Annotation): void {
 
   for (const instance of instances) contains(instance, annotation)
 
-  for (const { provider } of Object.values(annotation))
-    validateProviderId(provider)
+  for (const { provider } of Object.values(annotation)) validateProviderId(provider)
 }
 
 function contains (instance: Instance, annotation: Annotation): void {
@@ -41,17 +41,11 @@ export function validateProviderId (id: string | undefined): asserts id is keyof
   assert.ok(typeof id === 'string' && id in providers, `Unknown storage provider '${id}'`)
 }
 
-function getSecrets (annotation: Readonly<Annotation>): Variable[] {
+function getSecrets (annotation: ValidatedAnnotation): Variable[] {
   const secrets: Variable[] = []
 
   for (const [storage, props] of Object.entries(annotation)) {
-    const providerId = props.provider
-
-    validateProviderId(providerId)
-
-    const Provider = providers[providerId]
-
-    if (Provider.SECRETS.length === 0) continue
+    const Provider = providers[props.provider]
 
     for (const secret of Provider.SECRETS)
       secrets.push({
@@ -68,4 +62,7 @@ function getSecrets (annotation: Readonly<Annotation>): Variable[] {
 }
 
 type Annotation = Record<string, { [k: string]: unknown, provider: string }>
+type ValidatedAnnotation = Readonly<
+Record<string, { [k: string]: unknown, provider: keyof typeof providers }>
+>
 export type Instance = context.Dependency<string[]>
