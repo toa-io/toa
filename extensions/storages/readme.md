@@ -177,7 +177,7 @@ Annotation format is:
 storages:
   photos@dev:
     provider: tmp
-    path: /var/my-storage
+    prefix: my-app-tmp
 ```
 
 ### Memory
