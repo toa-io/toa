@@ -2,7 +2,7 @@
 
 const { Given, After, Before } = require('@cucumber/cucumber')
 const { parse } = require('@toa.io/yaml')
-const { encode } = require('msgpackr')
+const { encode } = require('@toa.io/generic')
 
 Given('an environment variable {token} is set to {string}',
   setEnv)
@@ -10,7 +10,7 @@ Given('an environment variable {token} is set to {string}',
 Given('an encoded environment variable {token} is set to:',
   function (name, yaml) {
     const value = parse(yaml)
-    const encoded = encode(value).toString('base64')
+    const encoded = encode(value)
 
     setEnv.call(this, name, encoded)
   })

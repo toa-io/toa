@@ -1,5 +1,5 @@
 import { type Parameter } from '../../RTD'
-import { type Directive, type Identity } from './types'
+import type { Input, Directive, Identity } from './types'
 
 export class Rule implements Directive {
   private readonly directives: Directive[] = []
@@ -13,7 +13,7 @@ export class Rule implements Directive {
   }
 
   public async authorize
-  (identity: Identity | null, input: any, parameters: Parameter[]): Promise<boolean> {
+  (identity: Identity | null, input: Input, parameters: Parameter[]): Promise<boolean> {
     for (const directive of this.directives) {
       const authorized = await directive.authorize(identity, input, parameters)
 

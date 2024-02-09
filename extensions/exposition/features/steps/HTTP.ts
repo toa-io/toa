@@ -63,7 +63,7 @@ export class HTTP extends http.Agent {
   }
 }
 
-const FILEDIR = path.resolve(__dirname, '../../../storages/source/test/util')
+const FILEDIR = path.resolve(__dirname, '../../../storages/source/test')
 
 function open (filename: string): Readable {
   return fs.createReadStream(path.join(FILEDIR, filename))

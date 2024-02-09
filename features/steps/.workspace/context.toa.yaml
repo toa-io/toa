@@ -30,4 +30,6 @@ stash@broken-runtime: redis://host.docker.internal
 stash@broken-build: redis://host.docker.internal
 
 storages:
-  tmp: tmp://integration
+  tmp:
+    provider: tmp
+    prefix: test

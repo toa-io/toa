@@ -8,7 +8,7 @@ import { Provider } from '../Provider'
 /**
  * In-memory provider
  */
-export class InMemory extends Provider<void> {
+export class InMemory extends Provider {
   private readonly storage = new Map<string, Buffer>()
 
   public override async get (path: string): Promise<Readable | null> {
@@ -30,9 +30,12 @@ export class InMemory extends Provider<void> {
 
   public override async move (from: string, to: string): Promise<void> {
     assert.notEqual(from, to, 'Source and destination are the same')
-    assert.ok(this.storage.has(from), `File not found: ${from}`)
 
-    this.storage.set(to, this.storage.get(from)!)
+    const buf = this.storage.get(from)
+
+    assert.ok(buf !== undefined, `File not found: ${from}`)
+
+    this.storage.set(to, buf)
     this.storage.delete(from)
   }
 }

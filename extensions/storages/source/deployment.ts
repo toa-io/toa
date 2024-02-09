@@ -1,5 +1,5 @@
 import * as assert from 'node:assert'
-import { encode } from 'msgpackr'
+import { encode } from '@toa.io/generic'
 import { providers } from './providers'
 import type { Dependency, Variable } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
@@ -9,7 +9,7 @@ export const SERIALIZATION_PREFIX = 'TOA_STORAGES'
 export function deployment (instances: Instance[], annotation: Annotation): Dependency {
   validate(instances, annotation)
 
-  const value = encode(annotation).toString('base64')
+  const value = encode(annotation)
   const pointer: Variable = { name: SERIALIZATION_PREFIX, value }
   const secrets = getSecrets(annotation)
 
@@ -22,8 +22,8 @@ function validate (instances: Instance[],
   annotation: Annotation): asserts annotation is ValidatedAnnotation {
   assert.ok(annotation !== undefined,
     `Storages annotation is required by: '${instances
-      .map((i) => i.component.locator.id)
-      .join("', '")}'`)
+    .map((i) => i.component.locator.id)
+    .join("', '")}'`)
 
   for (const instance of instances) contains(instance, annotation)
 
@@ -34,7 +34,7 @@ function contains (instance: Instance, annotation: Annotation): void {
   for (const name of instance.manifest)
     assert.ok(name in annotation,
       `Missing '${name}' storage annotation ` +
-        `declared in '${instance.component.locator.id}'`)
+      `declared in '${instance.component.locator.id}'`)
 }
 
 export function validateProviderId (id: string | undefined): asserts id is keyof typeof providers {
