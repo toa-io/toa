@@ -44,7 +44,7 @@ export class Store implements Directive {
     this.storage ??= await this.discovery.storage
 
     const input = { storage, request, accept: this.accept }
-    const entry = await this.storage.invoke('store', { input })
+    const entry = await this.storage.invoke<Entry>('store', { input })
 
     return match<Output>(entry,
       Error, (error: ErrorType) => this.throw(error),
