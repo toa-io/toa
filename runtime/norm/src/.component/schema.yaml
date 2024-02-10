@@ -76,7 +76,7 @@ properties:
               oneOf:
                 - $ref: 'definitions#/definitions/name'
                 - enum: [_version]
-      initialized:
+      dependent:
         type: boolean
         default: false
     required: [schema]

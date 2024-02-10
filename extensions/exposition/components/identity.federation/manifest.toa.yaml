@@ -15,7 +15,7 @@ entity:
       - iss
       - sub
     additionalProperties: false
-  initialized: true
+  dependent: true
 
 operations:
   transit:

@@ -93,7 +93,7 @@ it('should throw StatePrecondition', async () => {
     .rejects.toMatchObject({ code: codes.StatePrecondition })
 })
 
-it('should assign initialized', async () => {
+it('should assign to dependent', async () => {
   const id = newid()
   await credits.invoke('set', { input: { balance: 30 }, query: { id } })
 

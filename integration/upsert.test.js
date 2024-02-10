@@ -10,8 +10,8 @@ let composition, remote
 beforeAll(async () => {
   framework.dev(true)
 
-  composition = await framework.compose(['initialized'])
-  remote = await framework.remote('dummies.initialized')
+  composition = await framework.compose(['dependent'])
+  remote = await framework.remote('dummies.dependent')
 })
 
 afterAll(async () => {

@@ -19,7 +19,7 @@ const component = async (manifest) => {
   const emission = boot.emission(manifest.events, locator, context)
   const schema = new Schema(manifest.entity.schema)
   const entity = new entities.Factory(schema)
-  const state = new State(storage, entity, emission, manifest.entity.initialized)
+  const state = new State(storage, entity, emission, manifest.entity.dependent)
 
   const operations = remap(manifest.operations, (definition, endpoint) =>
     boot.operation(manifest, endpoint, definition, context, state))

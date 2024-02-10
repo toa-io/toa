@@ -4,7 +4,7 @@ name: bans
 entity:
   schema:
     banned: false
-  initialized: true
+  dependent: true
 
 operations:
   assign:

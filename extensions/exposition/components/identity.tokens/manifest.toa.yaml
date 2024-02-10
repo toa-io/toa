@@ -4,7 +4,7 @@ name: tokens
 entity:
   schema:
     revokedAt: number   # timestamp
-  initialized: true
+  dependent: true
 
 operations:
   encrypt:

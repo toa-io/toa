@@ -1,8 +1,8 @@
 namespace: dummies
-name: initialized
+name: dependent
 
 entity:
-  initialized: true
+  dependent: true
   schema:
     properties:
       a:

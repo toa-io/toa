@@ -7,7 +7,7 @@ entity:
       title: string
       length: integer
     required: [title]
-  initialized: true
+  dependent: true
 
 operations:
   create:
