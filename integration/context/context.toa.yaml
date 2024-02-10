@@ -44,4 +44,6 @@ configuration:
     price: 2
 
 storages:
-  octets: tmp:///octets
+  octets:
+    provider: tmp
+    prefix: test
