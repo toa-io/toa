@@ -24,7 +24,7 @@ class State {
     this.#storage = storage
     this.#entity = entity
     this.#emission = emission
-    this.#dependent = dependent
+    this.#dependent = dependent === true
   }
 
   init (id) {

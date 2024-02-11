@@ -18,8 +18,7 @@ const component = (id) => {
       name,
       id,
       label: `${namespace}-${name}`
-    },
-    entity: null
+    }
   }
 }
 

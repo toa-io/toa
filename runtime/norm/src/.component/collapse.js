@@ -34,8 +34,6 @@ const collapse = (manifest, prototype) => {
     }
   }
 
-  delete prototype.entity?.storage // ???
-
   const { entity, events, extensions } = prototype
 
   merge(manifest, { entity, events, extensions })

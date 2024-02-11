@@ -8,9 +8,13 @@ const defaults = (manifest) => {
   if (manifest.name === undefined) manifest.name = protoName(manifest)
   if (manifest.bindings === undefined) manifest.bindings = ['@toa.io/bindings.amqp']
   if (manifest.bridge === undefined) manifest.bridge = '@toa.io/bridges.node'
-  if (manifest.entity === null || manifest.entity === undefined) manifest.entity = { storage: null }
-  if (manifest.entity.storage === undefined) manifest.entity.storage = '@toa.io/storages.mongodb'
-  if (manifest.entity.storage === null) manifest.entity.storage = '@toa.io/storages.null'
+
+  if ('entity' in manifest) {
+    if (manifest.entity.storage === null) manifest.entity.storage = '@toa.io/storages.null'
+
+    // moved to schema
+    // if (manifest.entity.storage === undefined) manifest.entity.storage = '@toa.io/storages.mongodb'
+  }
 
   // TODO: bridge.version()
   if (manifest.version === undefined) manifest.version = '0.0.0'

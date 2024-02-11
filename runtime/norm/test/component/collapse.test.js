@@ -30,19 +30,6 @@ it('should remove prototype property', () => {
 })
 
 describe('entity', () => {
-  it('should ignore storage', () => {
-    const source = { entity: { storage: 'foo' } }
-    const prototype = { entity: { storage: 'bar' } }
-    const manifest = clone(source)
-
-    collapse(manifest, prototype)
-    expect(manifest).toStrictEqual(source)
-
-    delete manifest.entity.storage
-    collapse(manifest, prototype)
-    expect(manifest).toStrictEqual({ entity: {} })
-  })
-
   it('should merge entity schema', () => {
     const manifest = clone(samples.entity.manifest)
 

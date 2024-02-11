@@ -3,16 +3,14 @@
 const { join } = require('node:path')
 const extensions = require('./extensions')
 
-/**
- * @param {toa.norm.Component} component
- * @returns {toa.core.Storage}
- */
-const storage = (component) => {
-  const [Factory, properties] = load(component)
+const storage = (manifest) => {
+  if (manifest.entity === undefined) return
+
+  const [Factory, properties] = load(manifest)
 
   /** @type {toa.core.storages.Factory} */
   const factory = new Factory()
-  const storage = factory.storage(component.locator, properties)
+  const storage = factory.storage(manifest.locator, properties)
 
   return extensions.storage(storage)
 }
