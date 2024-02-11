@@ -32,6 +32,9 @@ const projection = (projection, properties) => {
       throw new QuerySyntaxException(`Projection property '${property}' is not defined`)
     }
   }
+
+  if (projection.includes('_version') === false)
+    projection.push('_version')
 }
 
 exports.options = options

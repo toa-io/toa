@@ -46,7 +46,7 @@ it('should return projection', async () => {
   const id = created.id
   const reply = await remote.invoke('observe', { query: { id, projection: ['text'] } })
 
-  expect(reply).toEqual({ id, text })
+  expect(reply).toEqual({ id, _version: 1, text })
 })
 
 it('should sort', async () => {
