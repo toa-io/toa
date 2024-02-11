@@ -14,22 +14,21 @@ const manifest = async (path, options = {}) => {
   const manifest = await load(path)
 
   if (options?.bindings !== undefined) {
-    for (const operation of Object.values(manifest.operations)) {
-      operation.bindings = options.bindings
-    }
+    if ('operations' in manifest)
+      for (const operation of Object.values(manifest.operations))
+        operation.bindings = options.bindings
 
     const check = (binding) => require(binding).properties?.async === true
     const asyncBinding = options.bindings.find(check)
 
     if (asyncBinding === undefined) throw new Error('Bindings override must contain at least one async binding')
 
-    for (const event of Object.values(manifest.events)) event.binding = asyncBinding
+    if ('events' in manifest)
+      for (const event of Object.values(manifest.events)) event.binding = asyncBinding
 
-    if (manifest.receivers) {
-      for (const receiver of Object.values(manifest.receivers)) {
+    if ('receivers' in manifest)
+      for (const receiver of Object.values(manifest.receivers))
         if (receiver.source === undefined) receiver.binding = asyncBinding
-      }
-    }
   }
 
   if (manifest.extensions === undefined) manifest.extensions = {}

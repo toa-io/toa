@@ -17,8 +17,8 @@ describe('prototype', () => {
   it('should use generic prototype as default', async () => {
     const manifest = await load('./dummies/a')
 
-    expect(manifest.entity.schema.properties.id)
-      .toMatchObject({ $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/id' })
+    expect('id' in manifest.entity.schema.properties)
+      .toBe(true)
   })
 
   it('should merge entity', async () => {

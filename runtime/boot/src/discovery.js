@@ -4,14 +4,18 @@ const { Discovery, Exposition } = require('@toa.io/core')
 
 const boot = require('./index')
 
-const discovery = async () => {
-  if (discovery.instance === undefined) {
-    discovery.instance = new Discovery(lookup)
+let promise
+let instance = null
 
-    await discovery.instance.connect()
+const discovery = async () => {
+  if (instance === null) {
+    instance = new Discovery(lookup)
+    promise = instance.connect()
   }
 
-  return discovery.instance
+  await promise
+
+  return instance
 }
 
 const lookup = async (locator) => {

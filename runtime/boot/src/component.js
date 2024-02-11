@@ -17,12 +17,20 @@ const component = async (manifest) => {
   const storage = boot.storage(manifest)
   const context = await boot.context(manifest)
   const emission = boot.emission(manifest.events, locator, context)
-  const schema = new Schema(manifest.entity.schema)
-  const entity = new entities.Factory(schema)
-  const state = new State(storage, entity, emission, manifest.entity.dependent)
 
-  const operations = remap(manifest.operations, (definition, endpoint) =>
-    boot.operation(manifest, endpoint, definition, context, state))
+  let state
+
+  if (manifest.entity !== undefined) {
+    const schema = new Schema(manifest.entity.schema)
+    const entity = new entities.Factory(schema)
+
+    state = new State(storage, entity, emission, manifest.entity.dependent)
+  }
+
+  const operations = manifest.operations === undefined
+    ? {}
+    : remap(manifest.operations, (definition, endpoint) =>
+      boot.operation(manifest, endpoint, definition, context, state))
 
   const component = new Component(locator, operations)
 

@@ -4,13 +4,28 @@ const { merge } = require('@toa.io/generic')
 
 const dereference = (manifest) => {
   // schemas
-  const property = resolve(manifest.entity.schema.properties)
+  const resolver = createResolver(manifest.entity?.schema?.properties)
 
-  schema(manifest.entity.schema, property)
+  if (manifest.entity !== undefined)
+    schema(manifest.entity.schema, resolver)
 
+  if ('operations' in manifest)
+    operations(manifest, resolver)
+
+}
+
+const createResolver = (properties) => (property) => {
+  if (properties?.[property] === undefined) {
+    throw new Error(`Referenced property '${property}' is not defined`)
+  }
+
+  return properties[property]
+}
+
+function operations (manifest, resolver) {
   for (const operation of Object.values(manifest.operations)) {
-    if (operation.input !== undefined) operation.input = schema(operation.input, property)
-    if (operation.output !== undefined) operation.output = schema(operation.output, property)
+    if (operation.input !== undefined) operation.input = schema(operation.input, resolver)
+    if (operation.output !== undefined) operation.output = schema(operation.output, resolver)
   }
 
   // forwarding
@@ -21,14 +36,7 @@ const dereference = (manifest) => {
   for (const operation of Object.values(manifest.operations)) {
     delete operation.forwarded
   }
-}
 
-const resolve = (schema) => (property) => {
-  if (schema[property] === undefined) {
-    throw new Error(`Referenced property '${property}' is not defined`)
-  }
-
-  return schema[property]
 }
 
 const schema = (object, resolve) => {

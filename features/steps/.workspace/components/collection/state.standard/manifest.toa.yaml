@@ -1,8 +1,6 @@
 name: standard
 namespace: state
 
-entity: null
-
 operations:
   set:
     input: number

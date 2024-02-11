@@ -3,9 +3,9 @@
 const { contract: { Request, Reply } } = require('@toa.io/core')
 const { Schema } = require('@toa.io/schema')
 
-const request = (definition) => {
-  const request = Request.schema(definition)
-  const schema = new Schema(request, { removeAdditional: true }) // inputs soft
+const request = (definition, entity) => {
+  const request = Request.schema(definition, entity)
+  const schema = new Schema(request, { removeAdditional: true }) // soft inputs
 
   return new Request(schema)
 }
