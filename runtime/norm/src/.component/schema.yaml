@@ -83,6 +83,9 @@ properties:
       dependent:
         type: boolean
         default: false
+      custom:
+        type: boolean
+        default: false
     required: [schema]
     additionalProperties: false
 

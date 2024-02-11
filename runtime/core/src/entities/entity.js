@@ -17,7 +17,7 @@ class Entity {
       this.set(object)
       this.#origin = argument
     } else {
-      const id = typeof argument === 'string' ? argument : newid()
+      const id = argument === undefined ? newid() : argument
       this.#init(id)
     }
   }

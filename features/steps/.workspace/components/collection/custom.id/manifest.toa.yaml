@@ -1,0 +1,12 @@
+namespace: custom
+name: id
+
+entity:
+  schema:
+    id: number
+    value: hello
+  dependent: true
+
+operations:
+  transit:
+    concurrency: retry

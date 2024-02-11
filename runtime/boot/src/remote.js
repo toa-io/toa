@@ -12,7 +12,7 @@ const remote = async (locator, manifest = undefined) => {
 
   const calls = manifest.operations === undefined
     ? {}
-    : remap(manifest.operations, (definition, endpoint) => boot.call(locator, endpoint, definition))
+    : remap(manifest.operations, (definition, endpoint) => boot.call(locator, endpoint, definition, manifest.entity))
 
   const remote = new Remote(locator, calls)
 

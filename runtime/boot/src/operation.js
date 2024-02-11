@@ -8,7 +8,7 @@ const operation = (manifest, endpoint, definition, context, scope) => {
   const cascade = boot.cascade(manifest, endpoint, definition, context)
   const reply = boot.contract.reply(definition.output, definition.error)
   const input = definition.input
-  const request = boot.contract.request({ input })
+  const request = boot.contract.request({ input }, manifest.entity)
   const contracts = { reply, request }
   const query = manifest.entity === undefined
     ? undefined
