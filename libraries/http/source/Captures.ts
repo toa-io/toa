@@ -24,10 +24,10 @@ export class Captures extends Map<string, string> {
 
   /**
    * @returns `undefined` if `source` doesn't match `matcher`
-   * or array of captured keys (may be empty)
+   * or array of captured keys (can be empty)
    */
   public capture (source: string, matcher: string): readonly string[] | undefined {
-    const expression = regexpEscape(matcher).replaceAll(CAPTURE,
+    const expression = PADDING + regexpEscape(matcher).replaceAll(CAPTURE,
       (_, name: string) => `(?<${Buffer.from(name).toString('base64url')}>\\S{1,2048})`)
 
     const rx = new RegExp(expression, 'i')
@@ -55,3 +55,4 @@ function regexpUnescape (text: string): string {
 
 const CAPTURE = /\\\$\\{\\{\s*(?<name>\S{0,32})\s*\\}\\}/g
 const SUBSTITUTE = /\${{\s*(?<name>\S{0,32})\s*}}/g
+const PADDING = '(?:^|\\s+)'
