@@ -201,7 +201,8 @@ Then('the reply stream is received:',
    * @this {toa.features.Context}
    */
   async function (yaml) {
-    if (this.exception !== undefined) throw this.exception
+    if (this.exception !== undefined)
+      throw this.exception
 
     const expected = parse(yaml)
     const received = []
