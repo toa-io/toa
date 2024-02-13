@@ -7,7 +7,7 @@ export class CORS implements Family, Interceptor {
   public readonly name = 'cors'
   public readonly mandatory = true
 
-  private readonly allowedHeaders = new Set<string>(['accept', 'content-type'])
+  private readonly allowedHeaders = new Set<string>(['accept', 'authorization', 'content-type'])
 
   private readonly headers = new Headers({
     'access-control-allow-methods': 'GET, POST, PUT, PATCH, DELETE',
