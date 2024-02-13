@@ -21,8 +21,8 @@ Feature: CORS Support
       access-control-allow-methods: GET, POST, PUT, PATCH, DELETE
       access-control-allow-headers: accept, authorization, content-type
       access-control-allow-credentials: true
-      access-control-max-age: 86400
-      cache-control: public, max-age=86400
+      access-control-max-age: 3600
+      cache-control: public, max-age=3600
       vary: origin
       """
     When the following request is received:

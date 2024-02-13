@@ -70,6 +70,7 @@ credentials, any `origin`, and any request header fields are allowed.
 The following request headers are allowed:
 
 - `accept`
+- `authorization`
 - `content-type`
 - headers used by the [`vary:embed` directive](vary.md#embeddings)
 
