@@ -45,7 +45,7 @@ export class CORS implements Family, Interceptor {
   }
 
   public allowHeader (header: string): void {
-    this.allowedHeaders.add(header)
+    this.allowedHeaders.add(header.toLowerCase())
     this.headers.set('access-control-allow-headers', Array.from(this.allowedHeaders).join(', '))
   }
 }

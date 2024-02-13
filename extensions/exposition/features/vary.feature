@@ -103,6 +103,7 @@ Feature: The Vary directive family
                 name:
                   - language
                   - :foo
+                  - :FOO
                   - :bar
               endpoint: compute
         """
