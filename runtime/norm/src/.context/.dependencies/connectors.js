@@ -9,11 +9,13 @@ const connectors = (context, extracted) => {
   ) ?? []
 
   for (const component of components) {
-    if (connectors[component.entity.storage] === undefined) {
-      connectors[component.entity.storage] = []
-    }
+    if (component.entity !== undefined) {
+      if (connectors[component.entity.storage] === undefined) {
+        connectors[component.entity.storage] = []
+      }
 
-    connectors[component.entity.storage].push(component)
+      connectors[component.entity.storage].push(component)
+    }
 
     const bindings = new Set()
 
