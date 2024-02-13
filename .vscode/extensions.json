@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "alexkrechik.cucumberautocomplete",
+    "joshbolduc.commitlint",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "balrog994.cucumber-test-runner",
+    "orta.vscode-jest",
+    "github.vscode-pull-request-github",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ]
+}

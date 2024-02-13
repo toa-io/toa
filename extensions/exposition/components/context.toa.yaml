@@ -11,5 +11,17 @@ configuration:
   identity.tokens:
     key0: k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA
 
+  identity.federation:
+    trust:
+      - issuer: https://localhost
+        audience:
+          - one
+          - two
+
+storages:
+  tmp:
+    provider: tmp
+    prefix: hello
+
 exposition:
   debug: true

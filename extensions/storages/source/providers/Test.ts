@@ -1,13 +1,13 @@
-import assert from 'node:assert'
-import { Temporary } from './Temporary'
+import { Temporary, type TemporaryOptions } from './Temporary'
+import type { ProviderSecret } from '../Provider'
 
 export class Test extends Temporary {
-  public static readonly SECRETS = ['USERNAME', 'PASSWORD']
+  public static override readonly SECRETS: readonly ProviderSecret[] = [
+    { name: 'USERNAME' },
+    { name: 'PASSWORD' }
+  ]
 
-  public constructor (url: URL, secrets: Record<string, string>) {
-    super(url)
-
-    assert(secrets.USERNAME !== undefined, 'Missing USERNAME')
-    assert(secrets.PASSWORD !== undefined, 'Missing PASSWORD')
+  public constructor (props: TemporaryOptions) {
+    super(props)
   }
 }

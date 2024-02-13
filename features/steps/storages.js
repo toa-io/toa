@@ -24,7 +24,8 @@ Given('I have a {storage} database {word}',
     const id = storage.toLowerCase()
     const module = modules[id]
 
-    if (module === undefined) throw new Error(`Storage '${storage}' is unknown`)
+    if (module === undefined)
+      throw new Error(`Storage '${storage}' is unknown`)
 
     const { Factory } = require(module.provider)
     const factory = new Factory()

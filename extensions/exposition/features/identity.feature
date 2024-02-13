@@ -34,7 +34,23 @@ Feature: Identity resource
       """
       200 OK
 
-      id: efe3a65ebbee47ed95a73edd911ea328
+      id: ${{ User.id }}
+      roles:
+        - developer
+        - system:identity
+      """
+    # checking that it returns the same id for given token
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      authorization: Token ${{ User.token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ User.id }}
       roles:
         - developer
         - system:identity

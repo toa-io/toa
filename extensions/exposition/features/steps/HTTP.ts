@@ -1,27 +1,45 @@
+import * as assert from 'node:assert'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/http'
-import { open } from '../../../storages/source/test/util'
+import * as msgpack from 'msgpackr'
+import * as YAML from 'js-yaml'
+import { Captures } from './Captures'
 import { Parameters } from './Parameters'
 import { Gateway } from './Gateway'
+import type { Readable } from 'node:stream'
 
-@binding([Gateway, Parameters])
+@binding([Gateway, Parameters, Captures])
 export class HTTP extends http.Agent {
   private readonly gateway: Gateway
+  private fetched: Response | null = null
 
-  public constructor (gateway: Gateway, parameters: Parameters) {
-    super(parameters.origin)
+  public constructor (gateway: Gateway, parameters: Parameters, captures: Captures) {
+    super(parameters.origin, captures)
     this.gateway = gateway
   }
 
   @when('the following request is received:')
   public override async request (input: string): Promise<any> {
     await this.gateway.start()
-    await super.request(input)
+    this.fetched = await super.request(input)
   }
 
   @then('the following reply is sent:')
   public override responseIncludes (expected: string): void {
     super.responseIncludes(expected)
+  }
+
+  @then('response body contains {word}-encoded value:')
+  public async bodyIs (format: string, yaml: string): Promise<void> {
+    assert.ok(this.fetched !== null, 'Response is null')
+
+    const buf = await this.fetched.arrayBuffer()
+    const value = encoders[format]?.(buf as Buffer)
+    const expected = YAML.load(yaml)
+
+    assert.deepEqual(value, expected, 'Values are not equal')
   }
 
   @then('the reply does not contain:')
@@ -43,4 +61,14 @@ export class HTTP extends http.Agent {
 
     await super.streamMatch(head, stream)
   }
+}
+
+const FILEDIR = path.resolve(__dirname, '../../../storages/source/test')
+
+function open (filename: string): Readable {
+  return fs.createReadStream(path.join(FILEDIR, filename))
+}
+
+const encoders: Record<string, (buf: Buffer | Uint8Array) => any> = {
+  MessagePack: msgpack.decode
 }

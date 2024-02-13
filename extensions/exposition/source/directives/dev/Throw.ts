@@ -1,10 +1,10 @@
-import { type Output } from '../../Directive'
-import { type Directive } from './types'
+import type { Output } from '../../io'
+import type { Directive } from './types'
 
 export class Throw implements Directive {
-  private readonly message: any
+  private readonly message: string
 
-  public constructor (message: any) {
+  public constructor (message: string) {
     this.message = message
   }
 

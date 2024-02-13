@@ -1,203 +1,126 @@
+import { randomUUID } from 'node:crypto'
 import { Connector } from '@toa.io/core'
-import { immediate } from '@toa.io/generic'
-import { generate } from 'randomstring'
 import { type Processing, Server } from './Server'
 import { type OutgoingMessage } from './messages'
-import { express, cors, createRequest, res, next } from './Server.fixtures'
 import { BadRequest } from './exceptions'
-import type { Express, Request, RequestHandler } from 'express'
-import type { CorsOptions } from 'cors'
-import type http from 'node:http'
-
-jest.mock('express', () => () => express())
-jest.mock('cors', () => (options: CorsOptions) => cors(options))
 
 let server: Server
-let app: jest.MockedObject<Express>
 
-beforeEach(() => {
-  jest.clearAllMocks()
-
-  server = Server.create()
-  app = express.mock.results[0]?.value
+beforeAll(() => {
+  server = Server.create({ port: 0 })
 })
 
 it('should instance of connector', async () => {
   expect(server).toBeInstanceOf(Connector)
 })
 
-it('should create express app', async () => {
-  expect(express).toHaveBeenCalled()
-  expect(app.disable).toHaveBeenCalledWith('x-powered-by')
-})
-
-it('should support cors', async () => {
-  expect(cors).toHaveBeenCalledWith(expect.objectContaining({
-    credentials: true,
-    maxAge: 86400,
-    allowedHeaders: ['accept', 'authorization', 'content-type']
-  } satisfies CorsOptions))
-
-  const middleware = cors.mock.results[0].value
-
-  expect(app.use).toHaveBeenCalledWith(middleware)
-})
-
 it('should start HTTP server', async () => {
-  const stared = server.connect()
+  await server.connect()
 
-  await immediate()
-
-  expect(app.listen).toHaveBeenCalledWith(8000, expect.anything())
-
-  const done = app.listen.mock.calls[0][1]
-
-  if (done !== undefined) done()
-
-  await stared
-})
-
-it('should stop HTTP server', async () => {
-  const started = server.connect()
-
-  await immediate()
-
-  app.listen.mock.calls[0][1]?.() // `listen` callback
-
-  await started
-
-  const stopped = server.disconnect()
-  const httpServer: jest.MockedObject<http.Server> = app.listen.mock.results[0].value
-
-  await immediate()
-
-  expect(httpServer.close).toHaveBeenCalled()
-
-  httpServer.close.mock.calls[0][0]?.() // `close` callback
-
-  await stopped
+  expect(server.connected).toBeTruthy()
+  expect(server.port).toBeGreaterThan(0)
 })
 
 it('should register request handler', async () => {
-  const process = jest.fn(async () => ({})) as unknown as Processing
-  const req = createRequest()
+  const process: Processing = jest.fn().mockResolvedValue(undefined)
 
   server.attach(process)
 
-  await use(req)
+  const res = await fetch(`http://localhost:${server.port}`)
 
-  expect(process).toHaveBeenCalled()
+  await res.text()
+
+  expect(process).toHaveBeenCalledTimes(1)
 })
 
 it('should send 501 on unknown method', async () => {
-  const req = createRequest({ method: generate() })
+  const head = await fetch(`http://localhost:${server.port}/`, { method: 'COPY' })
 
-  await use(req)
+  await head.text()
+  expect(head.status).toBe(501)
+})
 
-  expect(res.sendStatus).toHaveBeenCalledWith(501)
+it('should stop HTTP server', async () => {
+  await server.disconnect()
+  expect(server.port).toBe(0)
+  expect(server.connected).toBeFalsy()
 })
 
 describe('result', () => {
+  beforeEach(async () => {
+    server = Server.create({ port: 0 })
+    await server.connect()
+  })
+
+  afterEach(async () => {
+    await server.disconnect()
+  })
+
   it('should send status code 200 if the result has a value', async () => {
-    const req = createRequest()
-
     server.attach(async (): Promise<OutgoingMessage> => ({
-      headers: new Headers(), body: generate()
+      headers: new Headers(), body: randomUUID()
     }))
-    await use(req)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    const res = await fetch(`http://localhost:${server.port}/`)
+
+    await res.text()
+    expect(res.status).toBe(200)
   })
 
   it('should send status code 204 if the result has no value', async () => {
-    const req = createRequest()
-
     server.attach(async (): Promise<OutgoingMessage> => ({ headers: new Headers() }))
-    await use(req)
 
-    expect(res.status).toHaveBeenCalledWith(204)
+    const res = await fetch(`http://localhost:${server.port}/`)
+
+    await res.text()
+    expect(res.status).toBe(204)
   })
 
   it('should send result', async () => {
-    const body = { [generate()]: generate() }
-    const json = JSON.stringify(body)
-    const buf = Buffer.from(json)
-    const req = createRequest({ headers: { accept: 'application/json' } })
+    const body = { [randomUUID()]: randomUUID() }
 
-    server.attach(async (): Promise<OutgoingMessage> => ({ headers: new Headers(), body }))
-    await use(req)
+    server.attach(async (): Promise<OutgoingMessage> =>
+      ({ headers: new Headers(), body }))
 
-    expect(res.end).toHaveBeenCalledWith(buf)
+    const res = await fetch(`http://localhost:${server.port}/`,
+      { headers: { accept: 'application/json' } })
+
+    const result = await res.json()
+
+    expect(result).toEqual(body)
   })
 
   it('should return 500 on exception', async () => {
-    async function process (): Promise<OutgoingMessage> {
-      throw new Error('Bad')
-    }
+    server.attach(jest.fn().mockRejectedValue(new Error('Bad')))
 
-    const req = createRequest()
+    const res = await fetch(`http://localhost:${server.port}/`)
 
-    server.attach(process)
-    await use(req)
-
-    expect(res.status).toHaveBeenCalledWith(500)
-  })
-
-  it('should output exception message if debug is enabled', async () => {
-    jest.clearAllMocks()
-
-    server = Server.create({ debug: true })
-    app = express.mock.results[0]?.value
-
-    const message = generate()
-    const req = createRequest()
-
-    async function process (): Promise<OutgoingMessage> {
-      throw new Error(message)
-    }
-
-    server.attach(process)
-    await use(req)
-
-    expect(res.status).toHaveBeenCalledWith(500)
+    await res.text()
+    expect(res.status).toBe(500)
   })
 
   it('should send client error', async () => {
-    const req = createRequest()
-    const message = generate()
+    const message = randomUUID()
 
-    async function process (): Promise<OutgoingMessage> {
-      throw new BadRequest(message)
-    }
+    server.attach(jest.fn().mockRejectedValueOnce(new BadRequest(message)))
 
-    server.attach(process)
-    await use(req)
+    const res = await fetch(`http://localhost:${server.port}/`)
+    const text = await res.text()
 
-    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.status).toBe(400)
+    expect(text).toContain(message)
   })
 })
 
 describe('options', () => {
   it('should send 501 on unspecified method', async () => {
-    jest.clearAllMocks()
+    server = Server.create({ methods: new Set(['COPY']), port: 0 })
+    await server.connect()
 
-    server = Server.create({ methods: new Set(['COPY']) })
-    app = express.mock.results[0]?.value
+    const res = await fetch(`http://localhost:${server.port}/`)
 
-    const req = createRequest({ method: 'GET' })
-
-    await use(req)
-
-    expect(res.sendStatus).toHaveBeenCalledWith(501)
+    await res.text()
+    await server.disconnect()
+    expect(res.status).toBe(501)
   })
 })
-
-async function use (req: Request): Promise<void> {
-  for (const call of app.use.mock.calls) {
-    const usage = call[0] as unknown as RequestHandler
-
-    usage(req, res, next)
-  }
-
-  await immediate()
-}

@@ -3,12 +3,12 @@ import { join } from 'node:path'
 
 import { FileSystem } from './FileSystem'
 
+export interface TemporaryOptions {
+  prefix?: string
+}
+
 export class Temporary extends FileSystem {
-  protected override readonly path: string
-
-  public constructor (url: URL) {
-    super(url)
-
-    this.path = join(tmpdir(), url.pathname)
+  public constructor (props: TemporaryOptions) {
+    super({ path: join(tmpdir(), props.prefix ?? '') })
   }
 }

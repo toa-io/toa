@@ -25,8 +25,10 @@
     "@toa.io/generic": "0.24.0-alpha.18",
     "@toa.io/norm": "0.24.0-alpha.18",
     "@toa.io/schema": "0.24.0-alpha.18",
-    "clone-deep": "4.0.1",
     "dotenv": "16.1.1"
+  },
+  "devDependencies": {
+    "clone-deep": "4.0.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

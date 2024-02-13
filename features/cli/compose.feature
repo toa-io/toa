@@ -84,8 +84,18 @@ Feature: toa compose
     Given I have components:
       | dummies.one |
       | dummies.two |
-    And I have a context
+    And I have a context with:
+      """yaml
+      runtime:
+        registry@docker: no://where
+        proxy@docker: no://where
+      """
     When I run `toa env broken-runtime --as .env.broken`
+    And I update an environment file `.env.broken` with:
+      """
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      """
     And I run `toa compose ./components/* --dock --kill --env .env.broken`
     Then program should exit with code 1
     And stderr should contain lines:
@@ -97,8 +107,18 @@ Feature: toa compose
     Given I have components:
       | dummies.one |
       | dummies.two |
-    And I have a context
+    And I have a context with:
+      """yaml
+      registry:
+        build@docker:
+          run: no-such-command
+      """
     When I run `toa env broken-build --as .env.broken`
+    And I update an environment file `.env.broken` with:
+      """
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      """
     And I run `toa compose ./components/* --dock --kill --env .env.broken`
     Then program should exit with code 1
     And stderr should contain lines:

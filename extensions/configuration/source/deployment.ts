@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { type Dependency, type Variable, type Variables } from '@toa.io/operations'
 import * as schemas from '@toa.io/schemas'
 import { encode, overwrite } from '@toa.io/generic'
@@ -40,7 +41,9 @@ function createSecrets (values: object): Variable[] {
 
     if (match === null) continue
 
-    const name = match.groups?.variable as string
+    const name = match.groups?.variable
+
+    assert.ok(name !== undefined)
 
     secrets.push({
       name: PREFIX + '_' + name,

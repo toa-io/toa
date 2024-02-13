@@ -1,4 +1,5 @@
-extends: standard-with-typescript
+extends:
+  - standard-with-typescript
 overrides:
   - files: ['*.ts']
     rules:
@@ -14,7 +15,10 @@ overrides:
           next: [block-like, if]
         - blankLine: always
           prev: [const, let]
-          next: expression
+          next: [expression, for]
+        - blankLine: always
+          prev: expression
+          next: [const, let]
         - blankLine: always
           prev: [multiline-const, multiline-let]
           next: '*'
@@ -57,16 +61,31 @@ overrides:
       '@typescript-eslint/member-ordering': error
       '@typescript-eslint/explicit-member-accessibility': error
       '@typescript-eslint/no-confusing-void-expression': off
+      '@typescript-eslint/return-await': off
+      '@typescript-eslint/no-dynamic-delete': off
       no-void: off
       eqeqeq:
         - error
         - always
         - null: always
+      '@typescript-eslint/no-unsafe-argument': warn
+      '@typescript-eslint/no-non-null-assertion': warn
+      '@typescript-eslint/non-nullable-type-assertion-style': warn
+      '@typescript-eslint/unbound-method': warn
 
+  - files: ["*.test.ts", "**/test/**"]
+    extends: 'plugin:@typescript-eslint/disable-type-checked'
+    env:
+      jest: true
+  - files: ['**/features/**/*.ts']
+    extends: 'plugin:@typescript-eslint/disable-type-checked'
+    rules:
+       '@typescript-eslint/prefer-nullish-coalescing': 'off'
+       '@typescript-eslint/strict-boolean-expressions': 'off'
 parserOptions:
-  project: ./tsconfig.json
+  project: true
 env:
-  jest: true
+  node: true
 ignorePatterns:
   - '*.d.ts'
   - '*.js'

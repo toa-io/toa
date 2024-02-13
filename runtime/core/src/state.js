@@ -18,20 +18,16 @@ class State {
   /** @type {toa.core.entity.Factory} */
   #entity
   #emission
-  #initialized
+  #dependent
 
-  constructor (storage, entity, emission, initialized) {
+  constructor (storage, entity, emission, dependent) {
     this.#storage = storage
     this.#entity = entity
     this.#emission = emission
-    this.#initialized = initialized
+    this.#dependent = dependent === true
   }
 
   init (id) {
-    // if (this.#initialized === true && id === undefined) {
-    //   throw new StateInitializationException('Cannot initialize entity which is initialized. Use request.query.id to access.')
-    // }
-
     return this.#entity.init(id)
   }
 
@@ -39,7 +35,7 @@ class State {
     const record = await this.#storage.get(query)
 
     if (record === null) {
-      if (this.#initialized && query.id !== undefined && query.version === undefined) return this.init(query.id)
+      if (this.#dependent && query.id !== undefined && query.version === undefined) return this.init(query.id)
       else if (query.version !== undefined) throw new StatePreconditionException()
     }
 
@@ -83,7 +79,7 @@ class State {
 
     let upsert
 
-    if (this.#initialized && state.query.id !== undefined && state.query.version === undefined) {
+    if (this.#dependent && state.query.id !== undefined && state.query.version === undefined) {
       upsert = insert
     }
 

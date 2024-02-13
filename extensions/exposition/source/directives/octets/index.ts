@@ -1,3 +1,3 @@
-import Family from './Family'
+import { Octets } from './Octets'
 
-export = Family
+export const octets = new Octets()

@@ -1,0 +1,48 @@
+# Common settings that generally should always be used with your language specific settings
+
+# Auto detect text files and perform LF normalization
+*          text=auto eol=lf
+
+#
+# The above will handle all files NOT found below
+#
+
+# Gherkin
+*.feature  text eol=lf filter=tabspace
+*.feature  linguist-detectable=true
+*.feature  linguist-documentation=false
+*.feature  linguist-language=Gherkin
+
+# Fixes syntax highlighting on GitHub to allow comments
+tsconfig.json linguist-language=JSON-with-Comments
+.vscode/*.json linguist-language=JSON-with-Comments
+
+# Package manager lock files
+package-lock.json linguist-generated -diff -merge
+
+# Documents
+*.md       text diff=markdown
+*.txt      text
+*.sql      text
+
+# Graphics
+*.png      binary
+*.jpg      binary
+# SVG treated as an asset (binary) by default.
+*.svg      text
+
+# Serialisation
+*.json     text eol=lf
+*.xml      text eol=lf
+*.yaml     text eol=lf
+*.yml      text eol=lf
+
+#
+# Exclude files from exporting
+#
+
+.gitattributes export-ignore
+.gitignore export-ignore
+.gitkeep   export-ignore
+package-lock.json export-ignore
+node_modules export-ignore

@@ -5,7 +5,7 @@ entity:
   schema:
     username*: string
     password*: string
-  initialized: true
+  dependent: true
 
 operations:
   transit:

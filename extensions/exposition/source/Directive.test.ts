@@ -1,10 +1,11 @@
+import assert from 'node:assert'
 import { generate } from 'randomstring'
 import { DirectivesFactory, type Family } from './Directive'
 import { type syntax } from './RTD'
 import { type IncomingMessage } from './HTTP'
 import { type Remotes } from './Remotes'
 
-const families: Array<jest.MockedObject<Family>> = [
+const families: Array<jest.MockedObjectDeep<Family>> = [
   {
     name: 'foo',
     mandatory: true,
@@ -25,6 +26,9 @@ let factory: DirectivesFactory
 
 beforeEach(() => {
   jest.clearAllMocks()
+
+  assert.ok(families[0].preflight !== undefined)
+  assert.ok(families[1].preflight !== undefined)
 
   families[0].preflight.mockImplementation(() => null)
   families[1].preflight.mockImplementation(() => null)
@@ -61,7 +65,7 @@ it('should throw error if directive family is not found', async () => {
   }
 
   expect(() => factory.create([declaration]))
-    .toThrowError(`Directive family '${declaration.family}' not found.`)
+    .toThrowError(`Directive family '${declaration.family}' is not found.`)
 })
 
 it('should apply directive', async () => {
@@ -76,6 +80,8 @@ it('should apply directive', async () => {
   const directive = families[0].create.mock.results[0].value
 
   await directives.preflight(request, [])
+
+  assert.ok(families[0].preflight !== undefined)
 
   expect(families[0].preflight.mock.calls[0][0]).toStrictEqual([directive])
   expect(families[0].preflight.mock.calls[0][1]).toEqual(request)

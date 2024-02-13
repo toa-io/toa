@@ -7,6 +7,6 @@ export function decode (buffer: Buffer): any {
   return buffer.toString()
 }
 
-export function encode (value: any): Buffer {
+export function encode (value: { toString: () => string }): Buffer {
   return Buffer.from(value.toString())
 }

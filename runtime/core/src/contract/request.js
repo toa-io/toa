@@ -1,7 +1,5 @@
 'use strict'
 
-const clone = require('clone-deep')
-
 const schemas = require('./schemas')
 const { RequestContractException } = require('../exceptions')
 const { Conditions } = require('./conditions')
@@ -12,8 +10,13 @@ class Request extends Conditions {
   /**
    * @returns {toa.schema.JSON}
    */
-  static schema (definition) {
-    const schema = { type: 'object', properties: { authentic: { type: 'boolean' } }, additionalProperties: true }
+  static schema (definition, entity) {
+    const schema = {
+      type: 'object',
+      properties: { authentic: { type: 'boolean' } },
+      additionalProperties: true
+    }
+
     const required = []
 
     if (definition.input !== undefined) {
@@ -23,6 +26,9 @@ class Request extends Conditions {
       schema.properties.input = { type: 'null' }
     }
 
+    if (entity === undefined)
+      definition.query = false
+
     if (definition.query === true) required.push('query')
 
     if (definition.query === false) {
@@ -30,7 +36,9 @@ class Request extends Conditions {
     }
 
     if (definition.query !== false) {
-      const query = clone(schemas.query)
+      const query = structuredClone(schemas.query)
+
+      query.properties.id = entity.schema.properties.id
 
       if (definition.type === 'observation') {
         delete query.properties.version

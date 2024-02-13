@@ -2,6 +2,9 @@ $schema: https://json-schema.org/draft/2019-09/schema
 $id: https://schemas.toa.io/0.0.0/manifest
 
 definitions:
+  name:
+    type: string
+    pattern: ^[a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?$
   binding:
     type: string
     not:
@@ -20,7 +23,7 @@ properties:
       operations:
         type: object
         propertyNames:
-          $ref: 'definitions#/definitions/name'
+          $ref: '#/definitions/name'
         patternProperties:
           '.*':
             type: object
@@ -63,6 +66,7 @@ properties:
     properties:
       storage:
         type: string
+        default: '@toa.io/storages.mongodb'
       schema:
         $ref: 'definitions#/definitions/schema'
         type: object
@@ -74,9 +78,12 @@ properties:
             type: object
             propertyNames:
               oneOf:
-                - $ref: 'definitions#/definitions/name'
+                - $ref: '#/definitions/name'
                 - enum: [_version]
-      initialized:
+      dependent:
+        type: boolean
+        default: false
+      custom:
         type: boolean
         default: false
     required: [schema]
@@ -94,7 +101,7 @@ properties:
   operations:
     type: object
     propertyNames:
-      $ref: 'definitions#/definitions/name'
+      $ref: '#/definitions/name'
     patternProperties:
       '.*':
         type: object
@@ -106,7 +113,7 @@ properties:
           concurrency:
             enum: [none, retry]
           forward:
-            $ref: 'definitions#/definitions/name'
+            $ref: '#/definitions/name'
           bridge:
             type: string
           bindings:

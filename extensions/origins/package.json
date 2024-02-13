@@ -22,7 +22,7 @@
     "@toa.io/pointer": "0.24.0-alpha.18",
     "@toa.io/schemas": "0.24.0-alpha.18",
     "comq": "0.10.1",
-    "msgpackr": "1.9.5"
+    "msgpackr": "1.10.1"
   },
   "scripts": {
     "transpile": "tsc"

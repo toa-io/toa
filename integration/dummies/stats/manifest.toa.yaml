@@ -2,7 +2,7 @@ namespace: stats
 name: stats
 
 entity:
-  initialized: true
+  dependent: true
   schema:
     messages:
       type: integer

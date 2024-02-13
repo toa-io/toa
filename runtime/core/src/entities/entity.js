@@ -1,6 +1,5 @@
 'use strict'
 
-const clone = require('clone-deep')
 const { difference, newid } = require('@toa.io/generic')
 
 const { EntityContractException } = require('../exceptions')
@@ -14,11 +13,11 @@ class Entity {
     this.#schema = schema
 
     if (typeof argument === 'object') {
-      const object = clone(argument)
+      const object = structuredClone(argument)
       this.set(object)
       this.#origin = argument
     } else {
-      const id = typeof argument === 'string' ? argument : newid()
+      const id = argument === undefined ? newid() : argument
       this.#init(id)
     }
   }

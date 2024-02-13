@@ -14,13 +14,14 @@ beforeEach(() => {
 
 afterEach(() => {
   for (const name of used)
-    process.env[name] = undefined
+    delete process.env[name]
 
   used = []
 })
 
 it('should read value', async () => {
   manifest.schema = { foo: 'string' }
+
   const value: object = { foo: generate() }
 
   set(value)

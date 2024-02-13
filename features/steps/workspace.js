@@ -100,7 +100,10 @@ Given('environment variables:',
 
 After(function () {
   for (const [key, value] of VARS) {
-    process.env[key] = value
+    if (value === undefined)
+      delete process.env[key]
+    else
+      process.env[key] = value
   }
 
   VARS.clear()

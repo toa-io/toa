@@ -47,8 +47,10 @@ function send (message: OutgoingMessage, request: IncomingMessage, response: Res
 
   const buf = request.encoder.encode(message.body)
 
-  response.set('content-type', request.encoder.type)
-  response.end(buf)
+  response
+    .set('content-type', request.encoder.type)
+    .append('vary', 'accept')
+    .end(buf)
 }
 
 function stream
@@ -97,6 +99,10 @@ export interface IncomingMessage extends Request {
   query: Query
   parse: <T> () => Promise<T>
   encoder: Format | null
+  pipelines: {
+    body: Array<(input: unknown) => unknown>
+    response: Array<(output: OutgoingMessage) => void>
+  }
 }
 
 export interface OutgoingMessage {

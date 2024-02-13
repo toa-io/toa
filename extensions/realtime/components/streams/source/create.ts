@@ -1,4 +1,5 @@
 import { type Readable } from 'node:stream'
+import assert from 'node:assert'
 import { type Operation } from '@toa.io/types'
 import { type Context } from './types'
 import { Stream } from './lib/stream'
@@ -16,7 +17,11 @@ export class Effect implements Operation {
     if (!this.streams.has(key))
       this.createStream(key)
 
-    return (this.streams.get(key) as Stream).fork()
+    const stream = this.streams.get(key)
+
+    assert.ok(stream !== undefined)
+
+    return stream.fork()
   }
 
   private createStream (key: string): void {

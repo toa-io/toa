@@ -30,7 +30,7 @@ class Broadcast extends Connector {
   async transmit (label, payload) {
     const exchange = name(this.#locator, label)
 
-    await this.#comm.emit(exchange, payload)
+    await this.#comm.emit(exchange, payload, { deliveryMode: 1, expiration: 1000 })
   }
 
   async receive (label, callback) {

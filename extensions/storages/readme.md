@@ -61,11 +61,14 @@ Add a BLOB to the storage and create an entry under specified `path`.
 BLOB type is identified
 using [magick numbers](https://github.com/sindresorhus/file-type).
 
-If the `type` argument is specified and the value of the `claim` does not match the detected BLOB type, then
+If the `type` argument is specified and the value of the `claim` does not match the detected BLOB
+type, then
 a `TYPE_MISMATCH` error is returned.
-If the BLOB type cannot be identified and the value of the `claim` is not in the list of known types, then the given
+If the BLOB type cannot be identified and the value of the `claim` is not in the list of known
+types, then the given
 value is used.
-If the list of [acceptable types](https://datatracker.ietf.org/doc/html/rfc2616#section-14.1) is passed and the type of
+If the list of [acceptable types](https://datatracker.ietf.org/doc/html/rfc2616#section-14.1) is
+passed and the type of
 the BLOB does not match any of its values, then a `NOT_ACCEPTABLE` error is returned.
 
 Known types
@@ -130,29 +133,64 @@ Custom providers are not supported.
 
 ### Amazon S3
 
-Annotation value formats is `s3://{region}/{bucket}?endpoint={endpoint}`.
+Annotation formats is like:
 
-Requires secrets for the access key and secret key.
+```yaml
+storages:
+  photos:
+    provider: s3
+    bucket: my-bucket
+    region: eu-west-1
+  tmp:
+    provider: s3
+    endpoint: http://localhost:9000
+    bucket: my-bucket
+```
+
+Secrets for the AWS access key and secret key can be provided via SECRETS constructs property. If
+missed standard AWS SDK credentials resolve chain will be used (that means environment variable,
+shared config file, EC2 metadata service, etc.).
 See [`toa conceal`](/runtime/cli/readme.md#conceal) for deployment
 and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
 
-`s3://us-east-1/my-bucket?endpoint=http://s3.my-instance.com:4566`
 
 ### Filesystem
 
-Annotation value format is `file:///{path}`.
+Annotation format is:
 
-`file:///var/my-storage`
+```yaml
+storages:
+  photos@dev:
+    provider: fs
+    path: /var/my-storage
+```
 
 ### Temporary
 
 Filesystem using OS temporary directory.
 
-Annotation value format is `tmp:///{path}`.
+Annotation format is:
 
-`tmp:///my-storage`
+```yaml
+storages:
+  photos@dev:
+    provider: tmp
+    prefix: my-app-tmp
+```
+
+### Memory
+
+In-memory non-persistent storage.
+
+Annotation value format is:
+
+```yaml
+storages:
+  photos@dev:
+    provider: memory
+```
 
 ## Deduplication
 
@@ -199,8 +237,16 @@ provider-specific URLs as values.
 
 ```yaml
 storages:
-  photos: s3://us-east-1/my-bucket
-  photos@dev: file:///var/my-storage
+  photos:
+    provider: s3
+    bucket: my-bucket
+  photos@dev:
+    provider: fs
+    path: /var/my-storage
+  tmp:
+    provider: s3
+    endpoint: http://localhost:9000
+    bucket: my-bucket
 ```
 
 ## Secrets

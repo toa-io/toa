@@ -1,4 +1,3 @@
-import { atob } from 'buffer'
 import { compare } from 'bcryptjs'
 import { type Query, type Maybe } from '@toa.io/types'
 import { Err } from 'error-value'

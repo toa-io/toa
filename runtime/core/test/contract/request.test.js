@@ -17,6 +17,8 @@ beforeEach(() => {
   contract = new Request(fixtures.schema)
 })
 
+const dummy = { schema: { properties: {} } }
+
 it('should extend Conditions', () => {
   expect(contract).toBeInstanceOf(Conditions)
   expect(Conditions).toHaveBeenCalledWith(fixtures.schema)
@@ -38,73 +40,74 @@ describe('schema', () => {
   })
 
   it('should provide schema', () => {
-    expect(Request.schema({})).toBeDefined()
+    expect(Request.schema({}, dummy)).toBeDefined()
   })
 
   it('should add required input if defined', () => {
     const input = { type: 'number' }
 
-    expect(Request.schema({ input }).properties.input).toStrictEqual(input)
+    expect(Request.schema({ input }, dummy).properties.input).toStrictEqual(input)
   })
 
   it('should set input as null if undefined', async () => {
-    expect(Request.schema({}).properties.input).toStrictEqual({ type: 'null' })
+    expect(Request.schema({}, dummy).properties.input).toStrictEqual({ type: 'null' })
   })
 
   it('should contain query if declaration.query is not defined', () => {
-    expect(Request.schema({}).properties.query).toBeDefined()
+    expect(Request.schema({}, dummy).properties.query).toBeDefined()
   })
 
   it('should not contain query if declaration.query is false', () => {
     delete schema.properties.query
     schema.not = { required: ['query'] }
-    expect(Request.schema({ query: false })).toStrictEqual(schema)
+    expect(Request.schema({ query: false }, dummy)).toStrictEqual(schema)
   })
 
   it('should require query if declaration.query is true', () => {
     schema.required = ['query']
-    expect(Request.schema({ query: true }).required).toStrictEqual(expect.arrayContaining(['query']))
+    expect(Request.schema({ query: true }, dummy).required).toStrictEqual(expect.arrayContaining(['query']))
   })
 
   it('should forbid projection for non observations', () => {
-    expect(Request.schema({ type: 'transition' }).properties.query.properties.projection)
+    expect(Request.schema({ type: 'transition' }, dummy).properties.query.properties.projection)
       .toBe(undefined)
 
-    expect(Request.schema({ type: 'assignment' }).properties.query.properties.projection)
+    expect(Request.schema({ type: 'assignment' }, dummy).properties.query.properties.projection)
       .toBe(undefined)
 
-    expect(Request.schema({ type: 'observation' }).properties.query.properties.projection)
+    expect(Request.schema({ type: 'observation' }, dummy).properties.query.properties.projection)
       .toBeDefined()
   })
 
   it('should forbid version for observations', () => {
-    expect(Request.schema({ type: 'transition' }).properties.query.properties.version)
+    expect(Request.schema({ type: 'transition' }, dummy).properties.query.properties.version)
       .toBeDefined()
 
-    expect(Request.schema({ type: 'observation' }).properties.query.properties.version)
+    expect(Request.schema({ type: 'observation' }, dummy).properties.query.properties.version)
       .toBe(undefined)
   })
 
   it('should allow omit, limit only for set observations', () => {
-    const transition = Request.schema({ type: 'transition' }).properties.query.properties
+    const schema = Request.schema({ type: 'transition' }, dummy)
+    const transition = schema.properties.query.properties
 
     expect(transition.omit).toBeUndefined()
     expect(transition.limit).toBeUndefined()
 
-    const entity = Request.schema({
+    const object = Request.schema({
       type: 'observation',
       scope: 'object'
-    }).properties.query.properties
+    }, dummy).properties.query.properties
 
-    expect(entity.omit).toBeUndefined()
-    expect(entity.limit).toBeUndefined()
+    expect(object.omit).toBeUndefined()
+    expect(object.limit).toBeUndefined()
 
-    const set = Request.schema({
+    const objects = Request.schema({
       type: 'observation',
       scope: 'objects'
-    }).properties.query.properties
+    }, dummy).properties.query.properties
 
-    expect(set.omit).toBeDefined()
-    expect(set.limit).toBeDefined()
+    expect(objects.omit).toBeDefined()
+    expect(objects.limit).toBeDefined()
   })
 })

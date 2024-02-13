@@ -117,10 +117,10 @@ describe('entity', () => {
     })
   })
 
-  describe('initialized', () => {
+  describe('dependent', () => {
     it('should provide default', () => {
       expect(() => validate(manifest)).not.toThrow()
-      expect(manifest.entity.initialized).toBe(false)
+      expect(manifest.entity.dependent).toBe(false)
     })
   })
 })

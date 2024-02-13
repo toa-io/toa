@@ -1,18 +1,20 @@
-import { decode } from 'msgpackr'
-import { type ProviderClass, providers } from './providers'
+import assert from 'node:assert'
+import { decode } from '@toa.io/generic'
+import { providers } from './providers'
 import { Storage, type Storages } from './Storage'
 import { Aspect } from './Aspect'
+import { validateProviderId, SERIALIZATION_PREFIX } from './deployment'
+import type { ProviderConstructor } from './Provider'
 
 export class Factory {
-  private readonly declaration: Record<string, string>
+  private readonly declaration: Record<string, Record<string, unknown>>
 
   public constructor () {
     const env = process.env.TOA_STORAGES
 
-    if (env === undefined)
-      throw new Error('TOA_STORAGES is not defined')
+    if (env === undefined) throw new Error('TOA_STORAGES is not defined')
 
-    this.declaration = decode(Buffer.from(env, 'base64')) as Record<string, string>
+    this.declaration = decode(env)
   }
 
   public aspect (): Aspect {
@@ -21,16 +23,14 @@ export class Factory {
     return new Aspect(storages)
   }
 
-  public createStorage (name: string, ref: string): Storage {
-    const url = new URL(ref)
-    const Provider = providers[url.protocol]
+  public createStorage ({ provider: providerId, ...props }: any): Storage {
+    validateProviderId(providerId)
 
-    if (Provider === undefined)
-      throw new Error(`No provider found for '${url.protocol}'`)
+    const Provider = providers[providerId]
 
-    const secrets = this.resolveSecrets(name, Provider)
+    const secrets = this.resolveSecrets(providerId, Provider)
 
-    const provider = new Provider(url, secrets)
+    const provider = new Provider({ ...props, secrets })
 
     return new Storage(provider)
   }
@@ -38,26 +38,26 @@ export class Factory {
   private createStorages (): Storages {
     const storages: Storages = {}
 
-    for (const [name, ref] of Object.entries(this.declaration))
-      storages[name] = this.createStorage(name, ref)
+    for (const [name, props] of Object.entries(this.declaration))
+      storages[name] = this.createStorage(props)
 
     return storages
   }
 
-  private resolveSecrets (name: string, Class: ProviderClass): Record<string, string> {
-    if (Class.SECRETS === undefined)
-      return {}
+  private resolveSecrets (name: string,
+    Class: ProviderConstructor): Record<string, string | undefined> {
+    if (Class.SECRETS === undefined) return {}
 
-    const secrets: Record<string, string> = {}
+    const secrets: Record<string, string | undefined> = {}
 
     for (const secret of Class.SECRETS) {
-      const variable = `TOA_STORAGES_${name.toUpperCase()}_${secret.toUpperCase()}`
+      const variable = `${SERIALIZATION_PREFIX}_${name.toUpperCase()}_${secret.name.toUpperCase()}`
       const value = process.env[variable]
 
-      if (value === undefined)
-        throw new Error(`${variable} is not defined`)
+      assert.ok(secret.optional === true || value !== undefined,
+        `'${variable}' is not defined`)
 
-      secrets[secret] = value
+      secrets[secret.name] = value
     }
 
     return secrets

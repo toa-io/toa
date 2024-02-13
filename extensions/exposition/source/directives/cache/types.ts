@@ -1,4 +1,4 @@
-import { type Input } from '../../Directive'
+import type { Input } from '../../io'
 
 export interface Directive {
   set: (input: Input, headers: Headers) => void

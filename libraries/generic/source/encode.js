@@ -1,21 +1,14 @@
 'use strict'
 
-/** @type {toa.generic.Encode} */
-const encode = (input) => {
-  let value
+function encode (input) {
+  if (typeof input !== 'string')
+    input = JSON.stringify(input)
 
-  if (typeof input !== 'string') value = JSON.stringify(input)
-  else value = input
-
-  const buffer = Buffer.from(value)
-
-  return buffer.toString(ENCODING)
+  return Buffer.from(input).toString(ENCODING)
 }
 
-/** @type {toa.generic.Decode} */
-const decode = (input) => {
-  const buffer = Buffer.from(input, ENCODING)
-  const string = buffer.toString()
+function decode (input) {
+  const string = Buffer.from(input, ENCODING).toString()
 
   try {
     return JSON.parse(string)

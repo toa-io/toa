@@ -9,7 +9,7 @@ import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes'
 import type { ErrorType } from 'error-value'
 import type { Component } from '@toa.io/core'
-import type { Output } from '../../Directive'
+import type { Output } from '../../io'
 import type { Directive, Input } from './types'
 
 export class Store implements Directive {
@@ -44,7 +44,7 @@ export class Store implements Directive {
     this.storage ??= await this.discovery.storage
 
     const input = { storage, request, accept: this.accept }
-    const entry = await this.storage.invoke('store', { input })
+    const entry = await this.storage.invoke<Entry>('store', { input })
 
     return match<Output>(entry,
       Error, (error: ErrorType) => this.throw(error),
@@ -80,7 +80,7 @@ export class Store implements Directive {
     const path = posix.join(request.path, entry.id)
     let interrupted = false
 
-    for (const unit of this.workflow as Workflow) {
+    for (const unit of this.workflow!) {
       if (interrupted)
         break
 

@@ -50,7 +50,7 @@ const load = async (path, base) => {
   }
 
   dereference(manifest)
-  dependencies(manifest)
+  // dependencies(manifest)
 
   return manifest
 }

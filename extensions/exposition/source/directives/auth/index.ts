@@ -1,3 +1,3 @@
-import Family from './Family'
+import { Authorization } from './Authorization'
 
-export = Family
+export const authorization = new Authorization()

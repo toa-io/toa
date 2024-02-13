@@ -2,7 +2,6 @@
 
 const { default: Ajv } = require('ajv/dist/2019')
 const formats = /** @type {(Ajv) => void} */ require('ajv-formats')
-const clone = require('clone-deep')
 
 const { traverse } = require('@toa.io/generic')
 
@@ -115,7 +114,7 @@ class Schema {
     this.#system = this.#validator.compile(system)
 
     // match
-    const match = clone(schema)
+    const match = structuredClone(schema)
 
     if (match.properties !== undefined) properties(match.properties)
 
@@ -132,7 +131,7 @@ class Schema {
     this.#match = this.#validator.compile(match)
 
     // adapt
-    const adaptive = clone(schema)
+    const adaptive = structuredClone(schema)
 
     if (adaptive.properties !== undefined) properties(adaptive.properties)
 
