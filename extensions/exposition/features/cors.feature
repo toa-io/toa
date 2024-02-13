@@ -22,6 +22,7 @@ Feature: CORS Support
       access-control-allow-headers: accept, content-type
       access-control-allow-credentials: true
       access-control-max-age: 86400
+      cache-control: public, max-age=86400
       vary: origin
       """
     When the following request is received:

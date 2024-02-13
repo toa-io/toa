@@ -14,6 +14,7 @@ export class CORS implements Family, Interceptor {
     'access-control-allow-credentials': 'true',
     'access-control-allow-headers': Array.from(this.allowedHeaders).join(', '),
     'access-control-max-age': '86400',
+    'cache-control': 'public, max-age=86400',
     vary: 'origin'
   })
 
