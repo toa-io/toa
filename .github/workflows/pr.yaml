@@ -7,10 +7,7 @@ on:
       - "**/*.ts"
       - "package-lock.json"
       - ".github/workflows/pr.yaml"
-
-  push:
     branches:
-      - main
       - dev
 
 jobs:
