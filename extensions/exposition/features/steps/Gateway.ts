@@ -18,8 +18,7 @@ export class Gateway {
     const annotation = parse(yaml)
 
     if ('/' in annotation) {
-      const node = { '/': annotation['/'] }
-      const tree = syntax.parse(node, shortcuts)
+      const tree = syntax.parse(annotation['/'], shortcuts)
 
       process.env.TOA_EXPOSITION = encode(tree)
     }

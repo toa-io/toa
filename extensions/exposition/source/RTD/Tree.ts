@@ -25,6 +25,9 @@ export class Tree<
   }
 
   public match (path: string): Match<TEndpoint, TDirectives> | null {
+    if (path === '/')
+      return { node: this.trunk, parameters: [] }
+
     const fragments = fragment(path)
 
     return this.trunk.match(fragments)
