@@ -23,12 +23,12 @@ export class Factory {
     return new Aspect(storages)
   }
 
-  public createStorage ({ provider: providerId, ...props }: any): Storage {
+  public createStorage (componentName: string, { provider: providerId, ...props }: any): Storage {
     validateProviderId(providerId)
 
     const Provider = providers[providerId]
 
-    const secrets = this.resolveSecrets(providerId, Provider)
+    const secrets = this.resolveSecrets(componentName, Provider)
 
     const provider = new Provider({ ...props, secrets })
 
@@ -38,20 +38,20 @@ export class Factory {
   private createStorages (): Storages {
     const storages: Storages = {}
 
-    for (const [name, props] of Object.entries(this.declaration))
-      storages[name] = this.createStorage(props)
+    for (const [componentName, props] of Object.entries(this.declaration))
+      storages[componentName] = this.createStorage(componentName, props)
 
     return storages
   }
 
-  private resolveSecrets (name: string,
+  private resolveSecrets (componentName: string,
     Class: ProviderConstructor): Record<string, string | undefined> {
     if (Class.SECRETS === undefined) return {}
 
     const secrets: Record<string, string | undefined> = {}
 
     for (const secret of Class.SECRETS) {
-      const variable = `${SERIALIZATION_PREFIX}_${name.toUpperCase()}_${secret.name.toUpperCase()}`
+      const variable = `${SERIALIZATION_PREFIX}_${componentName}_${secret.name}`.toUpperCase()
       const value = process.env[variable]
 
       assert.ok(secret.optional === true || value !== undefined,
