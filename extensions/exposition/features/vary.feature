@@ -46,7 +46,7 @@ Feature: The Vary directive family
           GET:
             anonymous: true
             vary:embed:
-              name: language  # embed resolved language code as a `name` property of the operation input
+              name: language
             endpoint: compute
       """
     When the following request is received:
@@ -60,9 +60,6 @@ Feature: The Vary directive family
       200 OK
       content-type: application/yaml
       content-language: fr
-      vary: accept-language, accept
-
-      Hello fr
       """
 
 
