@@ -44,14 +44,14 @@ export function validateProviderId (id: string | undefined): asserts id is keyof
 function getSecrets (annotation: ValidatedAnnotation): Variable[] {
   const secrets: Variable[] = []
 
-  for (const [storage, props] of Object.entries(annotation)) {
+  for (const [componentName, props] of Object.entries(annotation)) {
     const Provider = providers[props.provider]
 
     for (const secret of Provider.SECRETS)
       secrets.push({
-        name: `${SERIALIZATION_PREFIX}_${storage.toUpperCase()}_${secret.name.toUpperCase()}`,
+        name: `${SERIALIZATION_PREFIX}_${componentName}_${secret.name}`.toUpperCase(),
         secret: {
-          name: `toa-storages-${storage}`,
+          name: `toa-storages-${componentName}`,
           key: secret.name,
           optional: secret.optional
         }

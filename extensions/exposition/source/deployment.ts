@@ -27,8 +27,7 @@ export function deployment (_: unknown, annotation: Annotation | undefined): Dep
     }
 
   if (annotation?.['/'] !== undefined) {
-    const node = { '/': annotation['/'] }
-    const tree = parse(node, shortcuts)
+    const tree = parse(annotation['/'], shortcuts)
 
     service.variables.push({
       name: 'TOA_EXPOSITION',

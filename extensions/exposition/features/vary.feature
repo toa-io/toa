@@ -1,6 +1,6 @@
 Feature: The Vary directive family
 
-  Scenario Outline: Embedding a language code
+  Scenario Outline: Embedding a `<result>` language code
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
@@ -32,6 +32,36 @@ Feature: The Vary directive family
       | en_US  | en     |
       | fr     | fr     |
       | sw     | en     |
+
+  Scenario: Listing languages on the root
+    Given the annotation:
+    """
+    /:
+      vary:languages: [en, fr]
+    """
+    And the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            anonymous: true
+            vary:embed:
+              name: language
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      accept: application/yaml
+      accept-language: fr
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      content-language: fr
+      """
+
 
   Scenario: Embedding a value of an arbitrary header
     Given the `echo` is running with the following manifest:
