@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "0.24.0-alpha.20",
+  "version": "0.24.0-alpha.21",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {
@@ -24,8 +24,8 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/generic": "0.24.0-alpha.20",
-    "@toa.io/schemas": "0.24.0-alpha.20"
+    "@toa.io/generic": "0.24.0-alpha.21",
+    "@toa.io/schemas": "0.24.0-alpha.21"
   },
   "scripts": {
     "transpile": "tsc"
