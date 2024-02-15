@@ -221,7 +221,8 @@ Then('the reply is received',
    * @this {toa.features.Context}
    */
   function () {
-    if (this.exception !== undefined) throw this.exception
+    if (this.exception !== undefined)
+      throw this.exception
 
     assert.notEqual(this.reply, undefined, 'Reply is not received')
   })
@@ -232,6 +233,8 @@ Then('the following exception is thrown:',
    * @this {toa.features.Context}
    */
   function (yaml) {
+    assert.ok(this.exception !== undefined, 'Exception is not thrown')
+
     const expected = parse(yaml)
     const matches = match(this.exception, expected)
 

@@ -87,7 +87,7 @@ it('should throw if query passed when declaration.query = false', async () => {
   }
 
   await expect(remote.invoke('add', request)).rejects.toMatchObject({
-    code: codes.RequestContract, keyword: 'not'
+    code: codes.RequestContract, message: 'query must be null'
   })
 })
 

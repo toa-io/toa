@@ -58,8 +58,7 @@ describe('schema', () => {
   })
 
   it('should not contain query if declaration.query is false', () => {
-    delete schema.properties.query
-    schema.not = { required: ['query'] }
+    schema.properties.query = { type: 'null' }
     expect(Request.schema({ query: false }, dummy)).toStrictEqual(schema)
   })
 

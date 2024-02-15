@@ -29,11 +29,11 @@ class Request extends Conditions {
     if (entity === undefined)
       definition.query = false
 
-    if (definition.query === true) required.push('query')
+    if (definition.query === true)
+      required.push('query')
 
-    if (definition.query === false) {
-      schema.not = { required: ['query'] }
-    }
+    if (definition.query === false)
+      schema.properties.query = { type: 'null' }
 
     if (definition.query !== false) {
       const query = structuredClone(schemas.query)
@@ -57,7 +57,8 @@ class Request extends Conditions {
       schema.properties.query = query
     }
 
-    if (required.length > 0) schema.required = required
+    if (required.length > 0)
+      schema.required = required
 
     return schema
   }
