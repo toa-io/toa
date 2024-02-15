@@ -32,8 +32,8 @@ function range (value) {
 }
 
 const PARSERS = {
-  'integer': parseInt,
-  'number': parseFloat
+  'integer': Number.parseInt,
+  'number': Number.parseFloat
 }
 
 const RX = /^(?<type>integer|number)[[(]\s?(?<min>[\d.]{0,32})\s?,\s?(?<max>[\d.]{0,32})\s?[)\]]$/
