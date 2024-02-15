@@ -1,4 +1,4 @@
-Feature: Numric ranges
+Feature: Numeric ranges
 
   Scenario: Numeric range <range>
     When I write schema:
