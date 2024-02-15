@@ -37,3 +37,36 @@ Feature: CORS Support
       access-control-expose-headers: authorization, content-type, content-length, etag
       vary: origin
       """
+
+  Scenario: Errors contain CORS headers
+    Given the annotation:
+      """yaml
+      /:
+        /foo:
+          GET:
+            dev:stub: Hello
+      """
+    When the following request is received:
+      """
+      GET /bar/ HTTP/1.1
+      origin: https://hello.world
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      access-control-allow-origin: https://hello.world
+      access-control-expose-headers: authorization, content-type, content-length, etag
+      vary: origin
+      """
+    When the following request is received:
+      """
+      GET /foo/ HTTP/1.1
+      origin: https://hello.world
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      access-control-allow-origin: https://hello.world
+      access-control-expose-headers: authorization, content-type, content-length, etag
+      vary: origin
+      """

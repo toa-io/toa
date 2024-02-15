@@ -9,6 +9,11 @@ import type { Format } from './formats'
 
 export function write
 (request: IncomingMessage, response: Response, message: OutgoingMessage): void {
+  for (const transform of request.pipelines.response)
+    transform(message)
+
+  message.headers?.forEach((value, key) => response.set(key, value))
+
   if (message.body instanceof Readable)
     stream(message, request, response)
   else
@@ -36,7 +41,7 @@ export async function read (request: Request): Promise<any> {
 }
 
 function send (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
-  if (message.body === undefined) {
+  if (message.body === undefined || message.body === null) {
     response.end()
 
     return

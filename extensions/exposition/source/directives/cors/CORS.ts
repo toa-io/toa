@@ -1,4 +1,3 @@
-import type { OutgoingMessage } from '../../HTTP'
 import type { Input, Output } from '../../io'
 import type { Family } from '../../Directive'
 import type { Interceptor } from '../../Interception'
@@ -22,31 +21,39 @@ export class CORS implements Family, Interceptor {
     return null
   }
 
-  public settle (_: unknown[], input: Input, output: OutgoingMessage): void {
-    if (input.headers.origin === undefined)
-      return
-
-    output.headers ??= new Headers()
-    output.headers.set('access-control-allow-origin', input.headers.origin)
-    output.headers.set('access-control-expose-headers',
-      'authorization, content-type, content-length, etag')
-    output.headers.append('vary', 'origin')
-  }
-
   public intercept (input: Input): Output {
-    if (input.method !== 'OPTIONS' || input.headers.origin === undefined)
+    const origin = input.headers.origin
+
+    if (origin === undefined)
       return null
 
-    this.headers.set('access-control-allow-origin', input.headers.origin)
+    if (input.method === 'OPTIONS')
+      return this.preflightResponse(origin)
 
-    return {
-      status: 204,
-      headers: this.headers
-    }
+    input.pipelines.response.push((output) => {
+      output.headers ??= new Headers()
+      output.headers.set('access-control-allow-origin', origin)
+      output.headers.set('access-control-expose-headers',
+        'authorization, content-type, content-length, etag')
+
+      if (input.method === 'GET' || input.method === 'HEAD' || input.method === 'OPTIONS')
+        output.headers.append('vary', 'origin')
+    })
+
+    return null
   }
 
   public allowHeader (header: string): void {
     this.allowedHeaders.add(header.toLowerCase())
     this.headers.set('access-control-allow-headers', Array.from(this.allowedHeaders).join(', '))
+  }
+
+  private preflightResponse (origin: string): Output {
+    this.headers.set('access-control-allow-origin', origin)
+
+    return {
+      status: 204,
+      headers: this.headers
+    }
   }
 }
