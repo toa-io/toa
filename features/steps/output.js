@@ -105,7 +105,7 @@ const compare = (reference, line) => {
   const request = line.trim()
   const escaped = request.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&')
   const expression = escaped.replaceAll(/<[^>]{1,32}>/g, substituteExpression)
-  const rx = new RegExp(`^${expression}`)
+  const rx = new RegExp(`${expression}`)
 
   return rx.test(search)
 }

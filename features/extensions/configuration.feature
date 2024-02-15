@@ -152,3 +152,18 @@ Feature: Configuration Extension
       """
       TOA_CONFIGURATION__FOO_VALUE=
       """
+
+  Scenario: Configuration for non-existent component
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """yaml
+      configuration:
+        foo.bar:
+          foo: 1
+      """
+    When I run `toa env`
+    Then program should exit with code 1
+    And stderr should contain line:
+    """
+    Component 'foo.bar' does not request configuration or does not exist.
+    """
