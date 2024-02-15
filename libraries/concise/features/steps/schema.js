@@ -24,7 +24,8 @@ Then('it is equivalent to:',
    * @this {toa.schema.features.Context}
    */
   function (yaml) {
-    if (this.schema === undefined) throw new Error('No schema given')
+    if (this.schema === undefined)
+      throw new Error('No schema given')
 
     const schema = parse(yaml)
 

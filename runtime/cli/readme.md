@@ -90,8 +90,7 @@ $ toa replay --title "should add numbers"
 ```
 
 If the path is a Context root (containing `context.toa.yaml` file), samples for components within
-the Context will be
-found and replayed sequentially.
+the Context will be found and replayed sequentially.
 
 ### export manifest
 
@@ -104,6 +103,10 @@ found and replayed sequentially.
 <code>--output</code> output format (default <code>yaml</code>)
 </dd>
 </dl>
+
+### export entity
+
+Same as `exprot manifest` but outputs only the `entity`.
 
 ## Operations
 
