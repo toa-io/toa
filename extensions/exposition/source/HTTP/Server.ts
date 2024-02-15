@@ -13,11 +13,16 @@ import type { Express, Request, Response, NextFunction } from 'express'
 
 export class Server extends Connector {
   private server?: http.Server
+  private readonly app: Express
+  private readonly debug: boolean
+  private readonly requestedPort: number
 
-  private constructor (private readonly app: Express,
-    private readonly debug: boolean,
-    private readonly requestedPort: number) {
+  private constructor (app: Express, debug: boolean, port: number) {
     super()
+
+    this.app = app
+    this.debug = debug
+    this.requestedPort = port
   }
 
   public get port (): number {
@@ -39,7 +44,6 @@ export class Server extends Connector {
     const app = express()
 
     app.disable('x-powered-by')
-    // app.use(cors(CORS))
     app.use(supportedMethods(properties.methods))
 
     return new Server(app, properties.debug, properties.port)
