@@ -34,3 +34,17 @@ Feature: Operations failures
       """yaml
       code: 302
       """
+
+  Scenario: Sending a Query to the Effect
+    Given I compose `echo.beacon` component
+    When I call `echo.beacon.echo` with:
+      """yaml
+      query:
+        id: 953c83b370f940408b2a2a924d2b4449
+      input: hello
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 202
+      message: query must be null
+      """
