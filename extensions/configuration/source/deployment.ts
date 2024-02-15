@@ -7,14 +7,14 @@ import * as validators from './schemas'
 import type { context } from '@toa.io/norm'
 
 export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
-  validators.annotation.validate(annotation)
+  validate(annotation, instances)
 
   const variables: Variables = {}
 
   for (const instance of instances) {
     const values = annotation[instance.locator.id]
 
-    validate(instance, values)
+    validateInstance(instance, values)
 
     if (values === undefined) continue
 
@@ -57,7 +57,17 @@ function createSecrets (values: object): Variable[] {
   return secrets
 }
 
-function validate (instace: Instance, values: object = {}): void {
+function validate (annotation: Annotation, instances: Instance[]): void {
+  validators.annotation.validate(annotation)
+
+  const requested = instances.map((instance) => instance.locator.id)
+
+  for (const id of Object.keys(annotation))
+    assert.ok(requested.includes(id),
+      `Component '${id}' does not request configuration or does not exist.`)
+}
+
+function validateInstance (instace: Instance, values: object = {}): void {
   const defaults = instace.manifest.defaults ?? {}
   const configuration = overwrite(defaults, values)
   const schema = schemas.schema(instace.manifest.schema)
