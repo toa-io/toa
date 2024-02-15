@@ -146,5 +146,5 @@ Feature: The Vary directive family
     Then the following reply is sent:
         """
         204 No Content
-        access-control-allow-headers: accept, content-type, accept-language, foo, bar
+        access-control-allow-headers: accept, authorization, content-type, accept-language, foo, bar
         """

@@ -97,9 +97,6 @@ export class Server extends Connector {
 
   private success (request: IncomingMessage, response: Response) {
     return (message: OutgoingMessage) => {
-      for (const transform of request.pipelines.response)
-        transform(message)
-
       let status = message.status
 
       if (status === undefined)
@@ -109,12 +106,7 @@ export class Server extends Connector {
         else status = 200
 
       response.status(status)
-      message.headers?.forEach((value, key) => response.set(key, value))
-
-      if (message.body !== undefined && message.body !== null)
-        write(request, response, message)
-      else
-        response.end()
+      write(request, response, message)
     }
   }
 
@@ -129,16 +121,15 @@ export class Server extends Connector {
 
       response.status(status)
 
-      const outputAllowed = exception instanceof ClientError || this.debug
+      const message: OutgoingMessage = {}
+      const verbose = exception instanceof ClientError || this.debug
 
-      if (outputAllowed) {
-        const body = exception instanceof Exception
+      if (verbose)
+        message.body = exception instanceof Exception
           ? exception.body
           : (exception.stack ?? exception.message)
 
-        write(request, response, { body })
-      } else
-        response.end()
+      write(request, response, message)
     }
   }
 }
