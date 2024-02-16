@@ -1,8 +1,7 @@
 import type { Input, Output } from '../../io'
-import type { Family } from '../../Directive'
 import type { Interceptor } from '../../Interception'
 
-export class CORS implements Family, Interceptor {
+export class CORS implements Interceptor {
   public readonly name = 'cors'
   public readonly mandatory = true
 
@@ -16,10 +15,6 @@ export class CORS implements Family, Interceptor {
     'cache-control': 'public, max-age=3600',
     vary: 'origin'
   })
-
-  public create (): null {
-    return null
-  }
 
   public intercept (input: Input): Output {
     const origin = input.headers.origin
