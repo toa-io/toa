@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "/dev/null",
+    "noEmit": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "ESNext",
