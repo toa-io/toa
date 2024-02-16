@@ -1,0 +1,13 @@
+namespace: users
+name: properties
+
+entity:
+  schema:
+    newbie: false
+  dependent: true
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      newbie*: .

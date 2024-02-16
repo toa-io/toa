@@ -1,25 +1,28 @@
+import assert from 'node:assert'
 import { parse, type Node, type Method, type Query } from './RTD/syntax'
 import { shortcuts } from './Directive'
 import * as schemas from './schemas'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest (declaration: object, manifest: Manifest): Node {
-  declaration = wrap(manifest.name, declaration)
+  assert.ok(typeof declaration === 'object' && declaration !== null,
+    'Exposition declaration must be an object')
 
-  if (manifest.namespace !== undefined && manifest.namespace !== 'default')
-    declaration = wrap(manifest.namespace, declaration)
+  declaration = wrap(declaration, manifest.namespace, manifest.name)
 
   const node = parse(declaration, shortcuts)
 
   concretize(node, manifest)
-
   schemas.node.validate(node)
 
   return node
 }
 
-function wrap (segment: string, declaration: object): object {
-  return { ['/' + segment]: { protected: true, ...declaration } }
+function wrap (declaration: object, namespace: string, name: string): object {
+  const path = (namespace === undefined || namespace === 'default' ? '' : '/' + namespace) +
+    '/' + name
+
+  return { [path]: { protected: true, ...declaration } }
 }
 
 function concretize (node: Node, manifest: Manifest): void {

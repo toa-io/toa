@@ -9,7 +9,7 @@ import { Workspace } from './Workspace'
 @binding([Workspace])
 export class Components {
   private readonly workspace: Workspace
-  private composition: Connector | null = null
+  private compositions: Record<string, Connector> = {}
 
   public constructor (workspace: Workspace) {
     this.workspace = workspace
@@ -27,22 +27,29 @@ export class Components {
     await this.runComponent(name, manifest)
   }
 
-  @after()
   @given('the `{word}` is stopped')
-  public async stop (_?: string): Promise<void> {
-    await this.composition?.disconnect()
+  public async stop (name: string): Promise<void> {
+    assert.ok(name in this.compositions, `Composition '${name}' is not running`)
 
-    this.composition = null
+    await this.compositions[name].disconnect()
+    delete this.compositions[name]
+  }
+
+  @after()
+  public async shutdown (): Promise<void> {
+    const promises = Object.values(this.compositions).map((composition) => composition.disconnect())
+
+    await Promise.all(promises)
   }
 
   private async runComponent (name: string, manifest?: object): Promise<void> {
-    assert.ok(this.composition === null, 'Composition is already running')
+    assert.ok(!(name in this.compositions), `Composition '${name}' is already running`)
 
     const path = await this.workspace.addComponent(name, manifest)
 
-    this.composition = await boot.composition([path])
+    this.compositions[name] = await boot.composition([path])
 
-    await this.composition.connect()
+    await this.compositions[name].connect()
     await timeout(50) // discovery
   }
 }
