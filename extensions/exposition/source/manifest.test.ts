@@ -21,16 +21,8 @@ it('should create branch', async () => {
   const node = manifest(declaration, mf)
 
   expect(node).toBeDefined()
-
-  // namespace route
   expect(node.routes).toHaveLength(1)
-  expect(node.routes[0].path).toBe('/' + namespace)
-
-  const ns = node.routes[0].node
-
-  // component route
-  expect(ns.routes).toHaveLength(1)
-  expect(ns.routes[0].path).toBe('/' + name)
+  expect(node.routes[0].path).toBe('/' + namespace + '/' + name)
 })
 
 it('should not create node for default namespace', async () => {
@@ -43,16 +35,15 @@ it('should not create node for default namespace', async () => {
 })
 
 it('should throw on invalid declaration type', async () => {
-  expect(() => manifest('hello' as unknown as object, mf)).toThrow('RTD parse error')
+  expect(() => manifest('hello' as unknown as object, mf)).toThrow('Exposition declaration must be an object')
 })
 
 it('should set namespace and component', async () => {
   const node = manifest(declaration, mf)
 
-  const ns = node.routes[0].node
-  const cm = ns.routes[0].node
-  const root = cm.routes[0].node
-  const GET = root.methods[0]
+  const root = node.routes[0].node
+  const intemediate = root.routes[0].node
+  const GET = intemediate.methods[0]
 
   expect(GET.mapping?.namespace).toBe(namespace)
   expect(GET.mapping?.component).toBe(name)

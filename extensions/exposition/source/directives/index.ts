@@ -7,5 +7,5 @@ import { vary } from './vary'
 import type { Family } from '../Directive'
 import type { Interceptor } from '../Interception'
 
-export const families: Family[] = [authorization, cache, octets, cors, vary, dev]
+export const families: Family[] = [authorization, cache, octets, vary, dev]
 export const interceptors: Interceptor[] = [cors]
