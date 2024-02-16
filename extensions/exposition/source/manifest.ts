@@ -1,9 +1,13 @@
+import assert from 'node:assert'
 import { parse, type Node, type Method, type Query } from './RTD/syntax'
 import { shortcuts } from './Directive'
 import * as schemas from './schemas'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest (declaration: object, manifest: Manifest): Node {
+  assert.ok(typeof declaration === 'object' && declaration !== null,
+    'Exposition declaration must be an object')
+
   declaration = wrap(declaration, manifest.namespace, manifest.name)
 
   const node = parse(declaration, shortcuts)
