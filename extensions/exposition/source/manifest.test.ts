@@ -35,7 +35,8 @@ it('should not create node for default namespace', async () => {
 })
 
 it('should throw on invalid declaration type', async () => {
-  expect(() => manifest('hello' as unknown as object, mf)).toThrow('Exposition declaration must be an object')
+  expect(() => manifest('hello' as unknown as object, mf))
+    .toThrow('Exposition declaration must be an object')
 })
 
 it('should set namespace and component', async () => {
