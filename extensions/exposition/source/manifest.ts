@@ -4,22 +4,21 @@ import * as schemas from './schemas'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest (declaration: object, manifest: Manifest): Node {
-  declaration = wrap(manifest.name, declaration)
-
-  if (manifest.namespace !== undefined && manifest.namespace !== 'default')
-    declaration = wrap(manifest.namespace, declaration)
+  declaration = wrap(declaration, manifest.namespace, manifest.name)
 
   const node = parse(declaration, shortcuts)
 
   concretize(node, manifest)
-
   schemas.node.validate(node)
 
   return node
 }
 
-function wrap (segment: string, declaration: object): object {
-  return { ['/' + segment]: { protected: true, ...declaration } }
+function wrap (declaration: object, namespace: string, name: string): object {
+  const path = (namespace === undefined || namespace === 'default' ? '' : '/' + namespace) +
+    '/' + name
+
+  return { [path]: { protected: true, ...declaration } }
 }
 
 function concretize (node: Node, manifest: Manifest): void {

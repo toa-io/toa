@@ -9,3 +9,6 @@ operations:
     concurrency: retry
     input:
       name*: ~
+  create:
+    query: false
+    forward: transit

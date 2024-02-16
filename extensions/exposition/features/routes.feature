@@ -87,3 +87,40 @@ Feature: Routes
 
       Hello
       """
+
+  Scenario: Routes with naming conflicts
+    Given the Gateway is running
+    And the `users` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          POST: create
+      """
+    And the `users.properties` is running with the following manifest:
+      """yaml
+      exposition:
+        /:id:
+          GET: observe
+      """
+    When the following request is received:
+      """
+      GET /users/properties/b5534021e30042259badffbd1831e472/ HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      newbie: false
+      """
+    When the following request is received:
+      """
+      POST /users/ HTTP/1.1
+      content-type: application/yaml
+
+      name: Alice
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
