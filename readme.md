@@ -52,7 +52,8 @@ Non-scattered documentation is coming this fall.
 ### Development
 
 - Language interoperability
-  - Node.js support
+  - [Node.js](/connectors/bridges.node)
+  - [Bash](/connectors/bridges.bash)
 - Service prototyping (inheritance)
   - Generic prototype
 - Data and operations contracts

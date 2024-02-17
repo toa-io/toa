@@ -1,12 +1,11 @@
 import { Operation } from '@toa.io/norm/types'
 import { Node, Statement } from '@babel/types'
-import * as _bridges from '@toa.io/core/types/bridges'
 import * as _context from './context'
 import * as _algorithm from './algorithms'
 
-declare namespace toa.node.define {
+declare namespace toa.node.define{
 
-  namespace algorithms {
+  namespace algorithms{
     type Definition = Partial<Operation>
 
     type List = Record<string, Definition>

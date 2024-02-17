@@ -1,9 +1,9 @@
-import type * as _core from '@toa.io/core/types'
+import type * as _core from '@toa.io/core'
 import type * as _request from './request'
 
-declare namespace toa.sampling {
+declare namespace toa.sampling{
 
-  namespace messages {
+  namespace messages{
 
     type Sample = {
       authentic?: boolean

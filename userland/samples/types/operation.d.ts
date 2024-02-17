@@ -1,9 +1,9 @@
-import * as _core from '@toa.io/core/types'
+import * as _core from '@toa.io/core'
 import * as _sampling from '@toa.io/extensions.sampling/types/request'
 
-declare namespace toa.samples {
+declare namespace toa.samples{
 
-  namespace operations {
+  namespace operations{
 
     type Call = {
       input?: any

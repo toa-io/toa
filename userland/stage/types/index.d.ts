@@ -1,4 +1,4 @@
-import * as _core from '@toa.io/core/types'
+import * as _core from '@toa.io/core'
 import * as _norm from '@toa.io/norm/types'
 import * as _composition from '@toa.io/boot/types/composition'
 

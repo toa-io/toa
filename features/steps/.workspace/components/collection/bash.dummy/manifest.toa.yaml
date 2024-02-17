@@ -1,0 +1,10 @@
+namespace: bash
+name: dummy
+
+bridge: '@toa.io/bridges.bash'
+
+operations:
+  echo:
+    input:
+      code: 0
+      message: string

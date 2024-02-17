@@ -1,10 +1,10 @@
-import * as _core from '@toa.io/core/types'
+import * as _core from '@toa.io/core'
 import * as _operations from './operation'
 import * as _messages from './message'
 
-declare namespace toa.samples {
+declare namespace toa.samples{
 
-  namespace suite {
+  namespace suite{
     type Operations = Record<string, _operations.Set>
 
     type Options = {

@@ -1,5 +1,5 @@
 import { Manifest } from './component'
-import { Locator } from '@toa.io/core/types'
+import { Locator } from '@toa.io/core'
 import type { Declaration } from './context/declaration'
 
 interface Runtime{
