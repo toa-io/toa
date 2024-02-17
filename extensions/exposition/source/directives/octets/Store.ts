@@ -3,6 +3,7 @@ import { posix } from 'node:path'
 import { match } from 'matchacho'
 import { promex } from '@toa.io/generic'
 import { BadRequest, UnsupportedMediaType } from '../../HTTP'
+import { cors } from '../cors'
 import * as schemas from './schemas'
 import type { Maybe } from '@toa.io/types'
 import type { Entry } from '@toa.io/extensions.storages'
@@ -38,12 +39,22 @@ export class Store implements Directive {
 
     this.discovery.storage = discovery
     this.remotes = remotes
+
+    cors.allowHeader('content-meta')
   }
 
   public async apply (storage: string, request: Input): Promise<Output> {
     this.storage ??= await this.discovery.storage
 
-    const input = { storage, request, accept: this.accept }
+    const input: StoreInput = { storage, request }
+    const meta = request.headers['content-meta']
+
+    if (this.accept !== undefined)
+      input.accept = this.accept
+
+    if (meta !== undefined)
+      input.meta = this.parseMeta(meta)
+
     const entry = await this.storage.invoke<Entry>('store', { input })
 
     return match<Output>(entry,
@@ -141,6 +152,23 @@ export class Store implements Directive {
 
     return await this.discovery[key]
   }
+
+  private parseMeta (value: string | string[]): Record<string, string> {
+    if (Array.isArray(value))
+      value = value.join(',')
+
+    const meta: Record<string, string> = {}
+
+    for (const pair of value.split(',')) {
+      const [k, v] = pair.trim().split('=')
+      const key = k.trim()
+      const value = v?.trim() ?? 'true'
+
+      meta[key] = value
+    }
+
+    return meta
+  }
 }
 
 type Unit = Record<string, string>
@@ -155,4 +183,11 @@ interface Context {
   storage: string
   path: string
   entry: Entry
+}
+
+interface StoreInput {
+  storage: string
+  request: Input
+  accept?: string
+  meta?: Record<string, string>
 }

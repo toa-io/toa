@@ -10,6 +10,7 @@ operations:
       storage*: string
       request*: ~
       accept: string
+      meta: <string>
   fetch: &simple
     bindings: ~
     input:

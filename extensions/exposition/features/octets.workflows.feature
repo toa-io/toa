@@ -2,7 +2,7 @@ Feature: Octets storage workflows
 
   Scenario: Running a workflow
     Given the `octets.tester` is running
-    Given the annotation:
+    And the annotation:
       """yaml
       /:
         auth:anonymous: true
