@@ -4,7 +4,7 @@ import { buffer } from '@toa.io/streams'
 import * as http from './index'
 import { request } from './request'
 import * as parse from './parse'
-import type { Captures } from './Captures'
+import { Captures } from './Captures'
 import type { Readable } from 'stream'
 
 /*
@@ -20,7 +20,7 @@ export class Agent {
   private readonly keys: Record<string, string> = {}
   private readonly values: Record<string, string> = {}
 
-  public constructor (origin: string, private readonly captures: Captures) {
+  public constructor (origin: string, private readonly captures: Captures = new Captures()) {
     this.origin = origin
   }
 
