@@ -1,6 +1,6 @@
 # Toa
 
-Runtime for low-code distributed systems.
+Runtime for low code eventually consistent distributed systems.
 
 ## Status
 
