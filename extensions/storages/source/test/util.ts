@@ -12,7 +12,7 @@ export const suites = [
   {
     run: true,
     provider: 'tmp',
-    prefix: 'toa-storages-temp'
+    directory: 'toa-storages-temp'
   },
   {
     run: true,

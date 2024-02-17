@@ -155,7 +155,6 @@ and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
 
-
 ### Filesystem
 
 Annotation format is:
@@ -177,8 +176,10 @@ Annotation format is:
 storages:
   photos@dev:
     provider: tmp
-    prefix: my-app-tmp
+    directory: my-app-tmp # optional
 ```
+
+If the `directory` parameter is not specified, random directory name will be used.
 
 ### Memory
 

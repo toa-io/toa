@@ -13,7 +13,9 @@ export class FileSystem extends Provider<FileSystemOptions> {
 
   public constructor (props: FileSystemOptions) {
     super(props)
-    assert.ok(props.path, 'Missing path')
+
+    assert.ok(props.path, 'FileSystem Storage provider requires `path` option')
+
     this.path = props.path
   }
 
