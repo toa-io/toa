@@ -15,7 +15,7 @@ export class Scanner extends PassThrough {
   private detected = false
   private readonly chunks: Buffer[] = []
 
-  public constructor (control?: TypeControl) {
+  public constructor (control?: ScanOptions) {
     super()
 
     this.claim = control?.claim
@@ -121,7 +121,7 @@ const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 const ERR_TYPE_MISMATCH = Err('TYPE_MISMATCH')
 const ERR_NOT_ACCEPTABLE = Err('NOT_ACCEPTABLE')
 
-export interface TypeControl {
+export interface ScanOptions {
   claim?: string
   accept?: string
 }

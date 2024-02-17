@@ -4,7 +4,7 @@ import { decode, encode } from 'msgpackr'
 import { buffer, newid } from '@toa.io/generic'
 import { Err } from 'error-value'
 import { Scanner } from './Scanner'
-import type { TypeControl } from './Scanner'
+import type { ScanOptions } from './Scanner'
 import type { Provider } from './Provider'
 import type { Entry } from './Entry'
 
@@ -15,8 +15,8 @@ export class Storage {
     this.provider = provider
   }
 
-  public async put (path: string, stream: Readable, type?: TypeControl): Maybe<Entry> {
-    const scanner = new Scanner(type)
+  public async put (path: string, stream: Readable, options?: Options): Maybe<Entry> {
+    const scanner = new Scanner(options)
     const pipe = stream.pipe(scanner)
     const tempname = await this.transit(pipe)
 
@@ -27,7 +27,7 @@ export class Storage {
 
     await this.persist(tempname, id)
 
-    return await this.create(path, id, scanner.size, scanner.type)
+    return await this.create(path, id, scanner.size, scanner.type, options?.meta)
   }
 
   public async get (path: string): Maybe<Entry> {
@@ -160,14 +160,15 @@ export class Storage {
   }
 
   // eslint-disable-next-line max-params
-  private async create (path: string, id: string, size: number, type: string): Promise<Entry> {
+  private async create
+  (path: string, id: string, size: number, type: string, meta: Meta = {}): Promise<Entry> {
     const entry: Entry = {
       id,
       size,
       type,
       created: Date.now(),
       variants: [],
-      meta: {}
+      meta
     }
 
     const metafile = posix.join(path, entry.id)
@@ -233,6 +234,12 @@ interface Path {
   rel: string
   id: string
   variant: string | null
+}
+
+type Meta = Record<string, string>
+
+interface Options extends ScanOptions {
+  meta?: Meta
 }
 
 export type Storages = Record<string, Storage>
