@@ -1,6 +1,6 @@
 import { PassThrough, type TransformCallback } from 'node:stream'
 import { createHash } from 'node:crypto'
-import { negotiate } from '@toa.io/http'
+import { negotiate } from '@toa.io/agent'
 import { Err } from 'error-value'
 
 export class Scanner extends PassThrough {
