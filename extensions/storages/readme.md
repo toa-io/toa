@@ -47,29 +47,28 @@ async function effect (_, context) {
 
 > `Maybe<T> = T | Error`
 
-#### `async put(path: string, stream: Readable, type?: TypeControl): Maybe<Entry>`
+#### `async put(path: string, stream: Readable, options?: Options): Maybe<Entry>`
 
 ```
-interface TypeControl {
+interface Options {
   claim?: string
   accept?: string
+  meta?: Record<string, string>
 }
 ```
 
-Add a BLOB to the storage and create an entry under specified `path`.
+Add a BLOB to the storage and create an entry under specified `path`, with given meta-information.
 
 BLOB type is identified
 using [magick numbers](https://github.com/sindresorhus/file-type).
 
 If the `type` argument is specified and the value of the `claim` does not match the detected BLOB
-type, then
-a `TYPE_MISMATCH` error is returned.
+type, then a `TYPE_MISMATCH` error is returned.
 If the BLOB type cannot be identified and the value of the `claim` is not in the list of known
-types, then the given
-value is used.
+types, then the given value is used.
 If the list of [acceptable types](https://datatracker.ietf.org/doc/html/rfc2616#section-14.1) is
-passed and the type of
-the BLOB does not match any of its values, then a `NOT_ACCEPTABLE` error is returned.
+passed and the type of the BLOB does not match any of its values, then a `NOT_ACCEPTABLE` error is
+returned.
 
 Known types
 are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/jxl`, `image/avif`.
