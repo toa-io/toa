@@ -1,6 +1,6 @@
 Feature: Octets storage workflows
 
-  Scenario: Running a workflow on `store`
+  Scenario: Running a workflow
     Given the `octets.tester` is running
     And the annotation:
       """yaml
