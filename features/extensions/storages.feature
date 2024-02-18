@@ -5,7 +5,7 @@ Feature: Storages Extension
       """yaml
       dummy:
         provider: tmp
-        prefix: whatever
+        directory: whatever
       """
     And I compose `storage` component
     When I call `default.storage.put` with:
@@ -52,7 +52,7 @@ Feature: Storages Extension
       """yaml
       dummy:
         provider: tmp
-        prefix: whatever
+        directory: whatever
       """
     And I compose `storage` component
     When I call `default.storage.get` with:
@@ -73,7 +73,7 @@ Feature: Storages Extension
       storages:
         tmp:
           provider: tmp
-          prefix: whatever
+          directory: whatever
       """
     When I export deployment
     Then exported values should contain:
@@ -82,7 +82,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0bXAiLCJwcmVmaXgiOiJ3aGF0ZXZlciJ9fQ==
+              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0bXAiLCJkaXJlY3RvcnkiOiJ3aGF0ZXZlciJ9fQ==
       """
 
   Scenario: Running 'test:' provider with secrets
@@ -90,7 +90,7 @@ Feature: Storages Extension
       """yaml
       dummy:
         provider: test
-        prefix: whatever
+        directory: whatever
       """
     And an environment variable `TOA_STORAGES_DUMMY_USERNAME` is set to "developer"
     And an environment variable `TOA_STORAGES_DUMMY_PASSWORD` is set to "secret"
@@ -103,7 +103,7 @@ Feature: Storages Extension
       storages:
         tmp:
           provider: test
-          prefix: test
+          directory: test
       """
     When I export deployment
     Then exported values should contain:
@@ -112,7 +112,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0ZXN0IiwicHJlZml4IjoidGVzdCJ9fQ==
+              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0ZXN0IiwiZGlyZWN0b3J5IjoidGVzdCJ9fQ==
             - name: TOA_STORAGES_TMP_USERNAME
               secret:
                 name: toa-storages-tmp
@@ -139,7 +139,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
           - name: TOA_STORAGES
-            value: eyJ0bXAiOnsicHJvdmlkZXIiOiJzMyIsInByZWZpeCI6InRlc3QiLCJidWNrZXQiOiJ0ZXN0In19
+            value: eyJ0bXAiOnsicHJvdmlkZXIiOiJzMyIsImRpcmVjdG9yeSI6InRlc3QiLCJidWNrZXQiOiJ0ZXN0In19
           - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
             secret:
               name: toa-storages-tmp

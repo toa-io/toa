@@ -1,5 +1,5 @@
 import { Temporary, type TemporaryOptions } from './Temporary'
-import type { ProviderSecret } from '../Provider'
+import type { ProviderSecret, ProviderSecrets } from '../Provider'
 
 export class Test extends Temporary {
   public static override readonly SECRETS: readonly ProviderSecret[] = [
@@ -7,7 +7,7 @@ export class Test extends Temporary {
     { name: 'PASSWORD' }
   ]
 
-  public constructor (props: TemporaryOptions) {
-    super(props)
+  public constructor (options: TemporaryOptions, secrets?: ProviderSecrets) {
+    super(options, secrets)
   }
 }

@@ -13,7 +13,7 @@ export class Permute implements Directive {
   private storage: Component | null = null
 
   public constructor (value: null, discovery: Promise<Component>) {
-    schemas.remove.validate(value)
+    schemas.permute.validate(value)
 
     this.discovery = discovery
   }

@@ -16,7 +16,7 @@ export class Fetch implements Directive {
   private readonly discovery: Promise<Component>
   private storage: Component = null as unknown as Component
 
-  public constructor (permissions: Partial<Permissions> | null, discovery: Promise<Component>) {
+  public constructor (permissions: Permissions | null, discovery: Promise<Component>) {
     schemas.fetch.validate(permissions)
 
     Object.assign(this.permissions, permissions)
@@ -72,7 +72,7 @@ export class Fetch implements Directive {
   }
 }
 
-interface Permissions {
+export interface Permissions {
   blob: boolean
   meta: boolean
 }

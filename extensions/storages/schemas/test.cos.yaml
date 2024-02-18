@@ -1,0 +1,8 @@
+type: object
+properties:
+  provider:
+    const: test
+  directory:
+    type: string
+required: [provider, directory]
+additionalProperties: false

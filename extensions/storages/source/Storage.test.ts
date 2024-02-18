@@ -8,11 +8,12 @@ import { Storage } from './Storage'
 import { suites } from './test/util'
 import { type Entry } from './Entry'
 import { providers } from './providers'
+import type { ProviderConstructor } from './Provider'
 
 let storage: Storage
 let dir: string
 
-const { run, provider: providerId, ...props } = suites[0]
+const suite = suites[0]
 
 beforeAll(async () => {
   process.chdir(path.join(__dirname, 'test'))
@@ -21,8 +22,8 @@ beforeAll(async () => {
 beforeEach(() => {
   dir = '/' + randomUUID()
 
-  const Provider = providers[providerId]
-  const provider = new Provider(props)
+  const Provider: ProviderConstructor = providers[suite.provider]
+  const provider = new Provider(suite.options)
 
   storage = new Storage(provider)
 })

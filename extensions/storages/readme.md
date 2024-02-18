@@ -187,7 +187,7 @@ Annotation value format is:
 ```yaml
 storages:
   photos@dev:
-    provider: memory
+    provider: mem
 ```
 
 ## Deduplication

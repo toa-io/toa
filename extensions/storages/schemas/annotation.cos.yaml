@@ -1,0 +1,10 @@
+type: object
+patternProperties:
+  '^[a-z0-9_]{1,32}$':
+    oneOf:
+      - $ref: s3
+      - $ref: fs
+      - $ref: tmp
+      - $ref: mem
+      - $ref: test
+additionalProperties: false

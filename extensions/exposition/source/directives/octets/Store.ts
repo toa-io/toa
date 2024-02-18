@@ -174,7 +174,7 @@ export class Store implements Directive {
 type Unit = Record<string, string>
 type Workflow = Unit[]
 
-interface Options {
+export interface Options {
   accept: string | string[]
   workflow: Workflow | Unit
 }

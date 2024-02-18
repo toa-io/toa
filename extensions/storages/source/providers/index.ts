@@ -6,9 +6,11 @@ import { InMemory } from './Memory'
 import type { ProviderConstructor } from '../Provider'
 
 export const providers = {
+  s3: S3,
   fs: FileSystem,
   tmp: Temporary,
-  test: Test,
-  s3: S3,
-  memory: InMemory
+  mem: InMemory,
+  test: Test
 } as const satisfies Record<string, ProviderConstructor>
+
+export type { Declaration } from './Declaration'

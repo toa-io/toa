@@ -1,0 +1,8 @@
+type: object
+properties:
+  provider:
+    const: fs
+  path:
+    type: string
+required: [provider, path]
+additionalProperties: false

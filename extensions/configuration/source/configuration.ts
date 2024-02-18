@@ -4,6 +4,7 @@ import { decode, add } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
 import { PREFIX, SECRET_RX } from './deployment'
 import { type Manifest } from './manifest'
+import type { Schema } from '@toa.io/schemas'
 
 export function get (locator: Locator, manifest: Manifest): Configuration {
   const values = getConfiguration(locator.uppercase)
@@ -13,7 +14,7 @@ export function get (locator: Locator, manifest: Manifest): Configuration {
   if (manifest.defaults !== undefined)
     add(values, manifest.defaults)
 
-  const schema = schemas.schema(manifest.schema)
+  const schema: Schema<any> = schemas.schema(manifest.schema)
 
   schema.validate(values)
 

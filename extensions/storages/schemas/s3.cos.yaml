@@ -1,0 +1,13 @@
+type: object
+properties:
+  provider:
+    const: s3
+  bucket:
+    type: string
+  region:
+    type: string
+  prefix:
+    type: string
+  endpoint:
+    type: string
+required: [provider, bucket]
