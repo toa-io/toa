@@ -47,7 +47,7 @@ Non-standard `content-meta` header can be used
 to set initial [metadata](/extensions/storages/readme.md#entry) value for the Entry.
 
 The value of the `content-meta` header is a comma-separated list of key-value string pairs.
-If no value is provided, the string `true` is used.
+If no value is provided for a key, the string `true` is used.
 
 ```http
 POST /images/ HTTP/1.1
