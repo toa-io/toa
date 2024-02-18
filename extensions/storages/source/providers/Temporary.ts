@@ -1,16 +1,18 @@
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
+import assert from 'node:assert'
 import { FileSystem } from './FileSystem'
 
 export interface TemporaryOptions {
-  directory?: string
+  directory: string
 }
 
 export class Temporary extends FileSystem {
   public constructor (props: TemporaryOptions) {
-    const directory = props.directory ?? Math.random().toString(36).substring(7)
-    const path = join(tmpdir(), directory)
+    assert.ok(props.directory, 'Temporary Storage provider requires `directory` option')
+
+    const path = join(tmpdir(), props.directory)
 
     super({ path })
   }

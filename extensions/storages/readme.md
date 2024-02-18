@@ -175,10 +175,8 @@ Annotation format is:
 storages:
   photos@dev:
     provider: tmp
-    directory: my-app-tmp # optional
+    directory: my-app-tmp
 ```
-
-If the `directory` parameter is not specified, random directory name will be used.
 
 ### Memory
 
