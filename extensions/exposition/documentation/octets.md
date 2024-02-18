@@ -63,6 +63,8 @@ meta:
   baz: '1'
 ```
 
+If the Entry already exists, the `content-meta` header is ignored.
+
 ### Workflows
 
 A workflow is a list of endpoints to be called.

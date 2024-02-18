@@ -7,16 +7,17 @@ Feature: Octets `content-meta` header
       /:
         auth:anonymous: true
         octets:context: octets
-        POST:
-          octets:store: ~
         /*:
-          GET:
-            octets:fetch:
-              meta: true
+          POST:
+            octets:store: ~
+          /*:
+            GET:
+              octets:fetch:
+                meta: true
       """
     When the stream of `lenna.ascii` is received with the following headers:
       """
-      POST / HTTP/1.1
+      POST /meta-header-test/ HTTP/1.1
       content-type: application/octet-stream
       content-meta: foo, bar=baz
       content-meta: baz=1
@@ -27,7 +28,7 @@ Feature: Octets `content-meta` header
       """
     When the following request is received:
       """
-      GET /10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
+      GET /meta-header-test/10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
