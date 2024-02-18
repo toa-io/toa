@@ -36,4 +36,5 @@ export const suites = [
 type Suite = {
   run: boolean
   provider: keyof typeof providers
-} & ProviderSecrets & (FileSystemOptions | S3Options | TemporaryOptions)
+} & ProviderSecrets &
+(FileSystemOptions | S3Options | TemporaryOptions | { [Symbol.hasInstance]?: never })
