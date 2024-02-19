@@ -1,0 +1,13 @@
+namespace: interop
+name: demo
+
+operations:
+  format:
+    bridge: '@toa.io/bridges.bash'
+    input:
+      name*: string
+      greeting: Hello
+  greet:
+    input:
+      name*: string
+      language*: [en, fr]

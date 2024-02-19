@@ -1,0 +1,26 @@
+{
+  "name": "@toa.io/bridges.bash",
+  "version": "0.24.0-alpha.22",
+  "description": "Toa Bash Bridge",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "scripts": {
+    "transpile": "tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
+}

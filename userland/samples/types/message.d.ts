@@ -1,9 +1,9 @@
-import type * as _core from '@toa.io/core/types'
+import type * as _core from '@toa.io/core'
 import type * as _operation from './operation'
 
-declare namespace toa.samples {
+declare namespace toa.samples{
 
-  namespace messages {
+  namespace messages{
 
     type Set = Record<string, Message[]>
 
