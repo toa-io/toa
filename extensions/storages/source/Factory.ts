@@ -4,7 +4,7 @@ import { providers } from './providers'
 import { Storage, type Storages } from './Storage'
 import { Aspect } from './Aspect'
 import { SERIALIZATION_PREFIX } from './deployment'
-import * as schemas from './schemas'
+import { validateAnnotation } from './Annotation'
 import type { Declaration } from './providers'
 import type { Annotation } from './Annotation'
 import type { ProviderConstructor, ProviderSecrets } from './Provider'
@@ -19,7 +19,7 @@ export class Factory {
 
     this.annotation = decode(env)
 
-    schemas.annotation.validate(this.annotation)
+    validateAnnotation(this.annotation)
   }
 
   public aspect (): Aspect {

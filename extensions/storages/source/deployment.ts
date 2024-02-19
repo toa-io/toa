@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import { encode } from '@toa.io/generic'
 import { providers } from './providers'
-import * as schemas from './schemas'
+import { validateAnnotation } from './Annotation'
 import type { Annotation } from './Annotation'
 import type { Dependency, Variable } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
@@ -21,7 +21,7 @@ export function deployment (instances: Instance[], annotation: unknown): Depende
 }
 
 function validate (instances: Instance[], annotation: unknown): asserts annotation is Annotation {
-  schemas.annotation.validate(annotation)
+  validateAnnotation(annotation)
 
   for (const instance of instances)
     contains(instance, annotation)
