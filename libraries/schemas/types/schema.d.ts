@@ -24,7 +24,7 @@ export interface Schema<T = any>{
 
   fit (value: any): Error | null
 
-  validate (value: unknown): asserts value is T
+  validate (value: unknown, message?: string): asserts value is T
 }
 
 export type schema = toa.schemas.constructors.schema
