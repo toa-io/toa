@@ -13,7 +13,7 @@ export class List implements Directive {
   private storage: Component | null = null
 
   public constructor (value: null, discovery: Promise<Component>) {
-    schemas.remove.validate(value)
+    schemas.list.validate(value)
 
     this.discovery = discovery
   }

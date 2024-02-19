@@ -43,6 +43,28 @@ The value of the directive is an object with the following properties:
         analyze: images.analyze
 ```
 
+Non-standard `content-meta` header can be used
+to set initial [metadata](/extensions/storages/readme.md#entry) value for the Entry.
+
+The value of the `content-meta` header is a comma-separated list of key-value string pairs.
+If no value is provided for a key, the string `true` is used.
+
+```http
+POST /images/ HTTP/1.1
+content-type: image/jpeg
+content-meta: foo, bar=baz
+content-meta: baz=1
+```
+
+```yaml
+meta:
+  foo: 'true'
+  bar: 'baz'
+  baz: '1'
+```
+
+If the Entry already exists, the `content-meta` header is ignored.
+
 ### Workflows
 
 A workflow is a list of endpoints to be called.

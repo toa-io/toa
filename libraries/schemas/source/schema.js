@@ -7,9 +7,6 @@ const yaml = require('@toa.io/yaml')
 const { create, is } = require('./validator')
 const betterAjvErrors = require('better-ajv-errors').default
 
-/**
- * @implements {toa.schemas.Schema}
- */
 class Schema {
   /** @type {string} */
   id
@@ -31,16 +28,20 @@ class Schema {
     else return this.#error()
   }
 
-  validate (value) {
+  validate (value, message) {
     const valid = this.#validate(value)
 
     if (!valid) {
       let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
 
-      if (error.length === 0)
-        throw new Error(this.#validate.errors[0].message)
+      const text = error.length === 0
+        ? this.#validate.errors[0].message
+        : error[0].error
 
-      throw new TypeError(error[0].error)
+      if (message !== undefined)
+        message += ': '
+
+      throw new TypeError((message ?? '') + text)
     }
   }
 

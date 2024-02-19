@@ -6,12 +6,12 @@ import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { suites } from '../test/util'
 import { providers } from './index'
+import type { ProviderConstructor } from '../Provider'
 
-describe.each(suites)('$provider', ({ provider: providerId, run, ...props }) => {
-  const it = run ? global.it : global.it.skip
-
-  const Provider = providers[providerId]
-  const provider = new Provider(props as any)
+describe.each(suites)('$provider', (suite) => {
+  const it = suite.run ? global.it : global.it.skip
+  const Provider: ProviderConstructor = providers[suite.provider]
+  const provider = new Provider(suite.options, suite.secrets)
 
   let dir: string
 

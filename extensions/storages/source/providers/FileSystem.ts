@@ -1,8 +1,8 @@
 import { type Readable } from 'node:stream'
 import { dirname, join } from 'node:path'
 import fs from 'node:fs/promises'
-import assert from 'node:assert'
 import { Provider } from '../Provider'
+import type { ProviderSecrets } from '../Provider'
 
 export interface FileSystemOptions {
   path: string
@@ -11,10 +11,10 @@ export interface FileSystemOptions {
 export class FileSystem extends Provider<FileSystemOptions> {
   protected readonly path: string
 
-  public constructor (props: FileSystemOptions) {
-    super(props)
-    assert.ok(props.path, 'Missing path')
-    this.path = props.path
+  public constructor (options: FileSystemOptions, secrets?: ProviderSecrets) {
+    super(options, secrets)
+
+    this.path = options.path
   }
 
   public async get (path: string): Promise<Readable | null> {

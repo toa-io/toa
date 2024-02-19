@@ -72,7 +72,7 @@ export class Fetch implements Directive {
   }
 }
 
-interface Permissions {
+export interface Permissions {
   blob: boolean
   meta: boolean
 }

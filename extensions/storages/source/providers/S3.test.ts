@@ -24,11 +24,10 @@ describe('S3 storage provider', () => {
 
     provider = new S3({
       bucket: TEST_BUCKET_NAME,
-      region: AWS_REGION,
-      secrets: {
-        ACCESS_KEY_ID: 'test-key',
-        SECRET_ACCESS_KEY: 'test-key-secret'
-      }
+      region: AWS_REGION
+    }, {
+      ACCESS_KEY_ID: 'test-key',
+      SECRET_ACCESS_KEY: 'test-key-secret'
     })
   })
 

@@ -4,6 +4,7 @@ import * as schemas from '@toa.io/schemas'
 import { encode, overwrite } from '@toa.io/generic'
 import { type Manifest } from './manifest'
 import * as validators from './schemas'
+import type { Schema } from '@toa.io/schemas'
 import type { context } from '@toa.io/norm'
 
 export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
@@ -70,7 +71,7 @@ function validate (annotation: Annotation, instances: Instance[]): void {
 function validateInstance (instace: Instance, values: object = {}): void {
   const defaults = instace.manifest.defaults ?? {}
   const configuration = overwrite(defaults, values)
-  const schema = schemas.schema(instace.manifest.schema)
+  const schema: Schema<any> = schemas.schema(instace.manifest.schema)
 
   schema.validate(configuration)
 }

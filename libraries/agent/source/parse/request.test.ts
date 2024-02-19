@@ -8,9 +8,7 @@ it('should parse headers', async () => {
 
   const result = request(http)
 
-  expect(result.headers).toEqual({
-    host: 'localhost:3000'
-  })
+  expect(result.headers.get('host')).toEqual('localhost:3000')
 })
 
 it('should parse body', async () => {

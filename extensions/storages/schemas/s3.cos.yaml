@@ -1,0 +1,16 @@
+type: object
+properties:
+  provider:
+    const: s3
+  bucket:
+    type: string
+    minLength: 3
+    maxLength: 63
+  region:
+    type: string
+  prefix:
+    type: string
+  endpoint:
+    type: string
+    format: uri
+required: [provider, bucket]

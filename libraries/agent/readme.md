@@ -15,7 +15,7 @@ Perform an HTTP request.
 ## CLI
 
 ```shell
-$ npm i -g @toa.io/http
+$ npm i -g @toa.io/agent
 $ http
 GET https://google.com/ HTTP/1.1
 ```

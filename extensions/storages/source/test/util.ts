@@ -12,18 +12,22 @@ export const suites = [
   {
     run: true,
     provider: 'tmp',
-    prefix: 'toa-storages-temp'
+    options: {
+      directory: 'toa-storages-temp'
+    }
   },
   {
     run: true,
-    provider: 'memory'
+    provider: 'mem'
   },
   {
     run: process.env.RUN_S3 === '1',
     provider: 's3',
-    endpoint: 'http://localhost:4566',
-    region: 'us-west-1',
-    bucket: 'test-bucket',
+    options: {
+      endpoint: 'http://localhost:4566',
+      region: 'us-west-1',
+      bucket: 'test-bucket'
+    },
     secrets: {
       ACCESS_KEY_ID: 'developer',
       SECRET_ACCESS_KEY: 'secret'
@@ -31,9 +35,11 @@ export const suites = [
   }
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
-] as const satisfies Suite[]
+] satisfies Suite[]
 
-type Suite = {
+interface Suite {
   run: boolean
   provider: keyof typeof providers
-} & ProviderSecrets & (FileSystemOptions | S3Options | TemporaryOptions)
+  options?: FileSystemOptions | S3Options | TemporaryOptions
+  secrets?: ProviderSecrets
+}

@@ -1,6 +1,7 @@
 import { resolve } from 'node:path'
 import * as schemas from '@toa.io/schemas'
 import { type Protocol, protocols } from './protocols'
+import type { Schema } from '@toa.io/schemas'
 import type { Instance } from './extension'
 
 export function normalize (instances: Instance[], annotation: Annotation): void {
@@ -75,7 +76,7 @@ function resolveProtocol (reference: string): Protocol {
 }
 
 const path = resolve(__dirname, '../schemas/annotation.cos.yaml')
-const schema = schemas.schema(path)
+const schema: Schema<any> = schemas.schema(path)
 
 export type Component = Origins | Properties
 export type Annotation = Record<string, Component>
