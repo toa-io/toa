@@ -4,6 +4,8 @@ properties:
     const: s3
   bucket:
     type: string
+    minLength: 3
+    maxLength: 63
   region:
     type: string
   prefix:

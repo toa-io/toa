@@ -11,7 +11,7 @@ const ok = {
   },
   c: {
     provider: 's3',
-    bucket: 'ok'
+    bucket: 'my-bucket'
   },
   d: {
     provider: 'mem'
