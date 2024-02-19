@@ -127,13 +127,12 @@ Feature: Octets storage workflows
             octets:fetch: ~
           DELETE:
             octets:delete:
-            workflow:
-              echo: octets.tester.echo
+              workflow:
+                echo: octets.tester.echo
       """
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
-      accept: application/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
