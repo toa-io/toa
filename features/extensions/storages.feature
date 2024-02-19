@@ -130,7 +130,7 @@ Feature: Storages Extension
       storages:
         tmp:
           provider: s3
-          bucket: test
+          bucket: te
       """
     When I export deployment
     Then exported values should contain:

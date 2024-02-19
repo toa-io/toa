@@ -9,11 +9,17 @@ export type Annotation = Record<string, Declaration>
 export function validateAnnotation (annotation: unknown): asserts annotation is Annotation {
   try {
     schemas.annotation.validate(annotation)
-  } catch {
+  } catch (error) {
     explain(annotation)
+
+    // if all declarations are valid, re-throw the error
+    throw error
   }
 }
 
+/*
+It is required because `oneOf` schema is used for the annotation validation.
+ */
 function explain (annotation: unknown): void {
   assert.ok(typeof annotation === 'object' && annotation !== null,
     'TOA_STORAGES is not an object')
