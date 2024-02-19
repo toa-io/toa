@@ -1,7 +1,7 @@
 namespace: bash
 name: dummy
 
-bridge: '@toa.io/bridges.bash'
+bridge: bash
 
 operations:
   echo:
