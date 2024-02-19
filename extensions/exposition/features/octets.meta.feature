@@ -17,9 +17,9 @@ Feature: Octets `content-meta` header
       """
     When the stream of `lenna.ascii` is received with the following headers:
       """
-      POST /meta-header-test/ HTTP/1.1
+      POST /meta-header/ HTTP/1.1
       content-type: application/octet-stream
-      content-meta: foo, bar=baz
+      content-meta: foo, bar=baz=1
       content-meta: baz=1
       """
     Then the following reply is sent:
@@ -28,7 +28,7 @@ Feature: Octets `content-meta` header
       """
     When the following request is received:
       """
-      GET /meta-header-test/10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
+      GET /meta-header/10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -40,7 +40,7 @@ Feature: Octets `content-meta` header
       size: 8169
       meta:
         foo: 'true'
-        bar: baz
+        bar: baz=1
         baz: '1'
       """
 

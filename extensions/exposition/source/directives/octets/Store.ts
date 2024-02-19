@@ -160,9 +160,9 @@ export class Store implements Directive {
     const meta: Record<string, string> = {}
 
     for (const pair of value.split(',')) {
-      const [k, v] = pair.trim().split('=')
-      const key = k.trim()
-      const value = v?.trim() ?? 'true'
+      const eq = pair.indexOf('=')
+      const key = (eq === -1 ? pair : pair.slice(0, eq)).trim()
+      const value = eq === -1 ? 'true' : pair.slice(eq + 1).trim()
 
       meta[key] = value
     }
