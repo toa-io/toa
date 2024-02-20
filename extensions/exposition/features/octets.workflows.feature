@@ -47,8 +47,8 @@ Feature: Octets storage workflows
       """
     When the following request is received:
       """
-      GET /10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
-      accept: application/yaml
+      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      accept: application/vnd.toa.octets.entry+yaml
       """
     Then the following reply is sent:
       """
@@ -74,7 +74,7 @@ Feature: Octets storage workflows
       content-length: 473831
       """
 
-  Scenario: Getting error when adding metadata to a file
+  Scenario: Getting error when running workflow on `store`
     Given the `octets.tester` is running
     Given the annotation:
       """yaml

@@ -26,19 +26,22 @@ export class Fetch implements Directive {
   public async apply (storage: string, request: Input): Promise<Output> {
     this.storage ??= await this.discovery
 
-    if (request.url.slice(-5) === ':meta')
-      return await this.get(storage, request)
-    else
-      return await this.fetch(storage, request)
-  }
+    const variant = posix.basename(request.url).includes('.')
+    const metadata = request.subtype === 'octets.entry'
 
-  private async fetch (storage: string, request: Input): Promise<Output> {
-    const filename = posix.basename(request.url)
-    const variant = filename.includes('.')
+    if (!variant && metadata)
+      if (this.permissions.meta)
+        return this.get(storage, request)
+      else
+        throw new Forbidden('Metadata is not accessible.')
 
     if (!variant && !this.permissions.blob)
       throw new Forbidden('BLOB variant must be specified.')
 
+    return await this.fetch(storage, request)
+  }
+
+  private async fetch (storage: string, request: Input): Promise<Output> {
     if ('if-none-match' in request.headers)
       return { status: 304 }
 
@@ -58,11 +61,7 @@ export class Fetch implements Directive {
   }
 
   private async get (storage: string, request: Input): Promise<Output> {
-    if (!this.permissions.meta)
-      throw new Forbidden('Metadata is not accessible.')
-
-    const path = request.url.slice(0, -5)
-    const input = { storage, path }
+    const input = { storage, path: request.url }
     const entry = await this.storage.invoke<Maybe<Entry>>('get', { input })
 
     if (entry instanceof Error)
