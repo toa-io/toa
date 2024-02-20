@@ -29,13 +29,8 @@ export class Store implements Directive {
       Array, (types: string[]) => types.join(','),
       undefined)
 
-    if (options?.workflow !== undefined) {
-      const units = match<Unit[]>(options.workflow,
-        Array, (units: Unit[]) => units,
-        Object, (unit: Unit) => [unit])
-
-      this.workflow = new Workflow(units, remotes)
-    }
+    if (options?.workflow !== undefined)
+      this.workflow = new Workflow(options.workflow, remotes)
 
     this.discovery.storage = discovery
 

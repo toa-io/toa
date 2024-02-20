@@ -1,5 +1,6 @@
 import { posix } from 'node:path'
 import { promex } from '@toa.io/generic'
+import { match } from 'matchacho'
 import type { Input } from './types'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Maybe } from '@toa.io/types'
@@ -12,8 +13,11 @@ export class Workflow {
   private readonly components: Record<string, Component> = {}
   private readonly discovery: Record<string, Promise<Component>> = {}
 
-  public constructor (units: Unit[], remotes: Remotes) {
-    this.units = units
+  public constructor (units: Unit[] | Unit, remotes: Remotes) {
+    this.units = match<Unit[]>(units,
+      Array, (units: Unit[]) => units,
+      Object, (unit: Unit) => [unit])
+
     this.remotes = remotes
   }
 
@@ -60,7 +64,7 @@ export class Workflow {
             promise.resolve({ error: { step, ...result } })
 
             // cancel pending promises
-            results[next].resolve(null)
+            results[next]?.resolve(null)
           } else
             promise.resolve({ [step]: result ?? null })
         })().catch((e) => results[next].reject(e))
