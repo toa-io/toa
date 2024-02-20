@@ -28,8 +28,8 @@ Feature: Octets `content-meta` header
       """
     When the following request is received:
       """
-      GET /meta-header/10cf16b458f759e0d617f2f3d83599ff:meta HTTP/1.1
-      accept: application/yaml
+      GET /meta-header/10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      accept: application/vnd.toa.octets.entry+yaml
       """
     Then the following reply is sent:
       """

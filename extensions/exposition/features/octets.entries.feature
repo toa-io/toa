@@ -1,5 +1,51 @@
 Feature: Accessing entires
 
+  Scenario: Entries are not accessible by default
+    Given the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store: ~
+        GET:
+          octets:list: ~
+        /*:
+          GET:
+            octets:fetch: ~
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      accept: application/vnd.toa.octets.entries+yaml
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+
+      Metadata is not accessible.
+      """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      accept: text/vnd.toa.octets.entry+plain
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+
+      Metadata is not accessible.
+      """
+
   Scenario: Accessing entries
     Given the annotation:
       """yaml

@@ -90,8 +90,8 @@ export class Store implements Directive {
 }
 
 export interface Options {
-  accept: string | string[]
-  workflow: Unit[] | Unit
+  accept?: string | string[]
+  workflow?: Unit[] | Unit
 }
 
 interface StoreInput {

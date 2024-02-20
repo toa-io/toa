@@ -65,5 +65,5 @@ export class Delete implements Directive {
 }
 
 export interface Options {
-  workflow: Unit[] | Unit
+  workflow?: Unit[] | Unit
 }

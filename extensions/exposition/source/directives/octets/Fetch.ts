@@ -12,11 +12,11 @@ import type { Directive, Input } from './types'
 export class Fetch implements Directive {
   public readonly targeted = true
 
-  private readonly permissions: Permissions = { blob: true, meta: false }
+  private readonly permissions: Required<Permissions> = { blob: true, meta: false }
   private readonly discovery: Promise<Component>
   private storage: Component = null as unknown as Component
 
-  public constructor (permissions: Partial<Permissions> | null, discovery: Promise<Component>) {
+  public constructor (permissions: Permissions | null, discovery: Promise<Component>) {
     schemas.fetch.validate(permissions)
 
     Object.assign(this.permissions, permissions)
@@ -72,8 +72,8 @@ export class Fetch implements Directive {
 }
 
 export interface Permissions {
-  blob: boolean
-  meta: boolean
+  blob?: boolean
+  meta?: boolean
 }
 
 interface FetchResult {

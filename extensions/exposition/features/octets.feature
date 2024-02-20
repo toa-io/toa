@@ -72,17 +72,6 @@ Feature: Octets directive family
       """
     When the following request is received:
       """
-      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
-      accept: text/vnd.toa.octets.entry+plain
-      """
-    Then the following reply is sent:
-      """
-      403 Forbidden
-
-      Metadata is not accessible.
-      """
-    When the following request is received:
-      """
       GET / HTTP/1.1
       accept: application/yaml
       """
