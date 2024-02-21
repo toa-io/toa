@@ -1,10 +1,12 @@
+import { PassThrough } from 'node:stream'
 import { match } from 'matchacho'
 import { BadRequest, UnsupportedMediaType } from '../../HTTP'
 import { cors } from '../cors'
 import * as schemas from './schemas'
-import { Workflow } from './workflow'
+import { Workflow } from './workflows'
+import type { Readable } from 'stream'
 import type { Parameter } from '../../RTD'
-import type { Unit } from './workflow'
+import type { Unit } from './workflows'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes'
 import type { ErrorType } from 'error-value'
@@ -60,9 +62,21 @@ export class Store implements Directive {
   private reply (request: Input, storage: string, entry: Entry, parameters: Parameter[]): Output {
     const body = this.workflow === undefined
       ? entry
-      : this.workflow.execute(request, storage, entry, parameters)
+      : this.execute(request, storage, entry, parameters)
 
     return { body }
+  }
+
+  // eslint-disable-next-line max-params
+  private execute
+  (request: Input, storage: string, entry: Entry, parameters: Parameter[]): Readable {
+    const stream = new PassThrough({ objectMode: true })
+
+    stream.push(entry)
+
+    this.workflow!.execute(request, storage, entry, parameters).pipe(stream)
+
+    return stream
   }
 
   private throw (error: ErrorType): never {

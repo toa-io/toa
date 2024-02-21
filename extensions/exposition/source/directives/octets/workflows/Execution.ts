@@ -27,8 +27,6 @@ export class Execution extends Readable {
   }
 
   private async run (): Promise<void> {
-    this.push(this.context.entry)
-
     for (const unit of this.units) {
       await this.execute(unit)
 
