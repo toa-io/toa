@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "0.24.0-alpha.23",
+  "version": "0.25.0-alpha.0",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,10 +17,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "0.24.0-alpha.23",
-    "@toa.io/generic": "0.24.0-alpha.23",
-    "@toa.io/schemas": "0.24.0-alpha.23",
-    "@toa.io/streams": "0.24.0-alpha.23",
+    "@toa.io/core": "0.25.0-alpha.0",
+    "@toa.io/generic": "0.25.0-alpha.0",
+    "@toa.io/schemas": "0.25.0-alpha.0",
+    "@toa.io/streams": "0.25.0-alpha.0",
     "bcryptjs": "2.4.3",
     "error-value": "0.3.0",
     "express": "4.18.2",
@@ -45,8 +45,8 @@
     "features": "cucumber-js"
   },
   "devDependencies": {
-    "@toa.io/agent": "0.24.0-alpha.23",
-    "@toa.io/extensions.storages": "0.24.0-alpha.23",
+    "@toa.io/agent": "0.25.0-alpha.0",
+    "@toa.io/extensions.storages": "0.25.0-alpha.0",
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
     "@types/express": "4.17.17",
