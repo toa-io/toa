@@ -41,7 +41,7 @@ export class Execution extends Readable {
 
   private async execute (unit: Unit): Promise<void> {
     const promises = Object.entries(unit).map(async ([step, endpoint]) => {
-      const result = await this.call(endpoint)
+      const result = await this.call(endpoint).catch((error: Error) => console.error(error))
 
       if (result instanceof Error) {
         this.push({ error: { step, ...result } })
