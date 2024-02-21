@@ -11,6 +11,7 @@ export class Execution extends Readable {
   private readonly context: Context
   private readonly components: Record<string, Component> = {}
   private readonly discovery: Record<string, Promise<Component>> = {}
+  private interrupted = false
 
   public constructor (context: Context, units: Unit[], remotes: Remotes) {
     super({ objectMode: true })
@@ -29,28 +30,27 @@ export class Execution extends Readable {
     this.push(this.context.entry)
 
     for (const unit of this.units) {
-      const ok = await this.execute(unit)
+      await this.execute(unit)
 
-      if (!ok)
+      if (this.interrupted)
         break
     }
 
     this.push(null)
   }
 
-  private async execute (unit: Unit): Promise<boolean> {
-    for (const [step, endpoint] of Object.entries(unit)) {
+  private async execute (unit: Unit): Promise<void> {
+    const promises = Object.entries(unit).map(async ([step, endpoint]) => {
       const result = await this.call(endpoint)
 
       if (result instanceof Error) {
         this.push({ error: { step, ...result } })
-
-        return false
+        this.interrupted = true
       } else
         this.push({ [step]: result ?? null })
-    }
+    })
 
-    return true
+    await Promise.all(promises)
   }
 
   private async call (endpoint: string): Promise<Maybe<unknown>> {
