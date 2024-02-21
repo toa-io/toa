@@ -209,6 +209,18 @@ under the request path.
 
 The request body must be a list of entry identifiers.
 
+## `octets:workflow`
+
+Execute a [workflow](#workflows) on the entry under the request path.
+
+```yaml
+/images:
+  /*:
+    DELETE:
+      octets:workflow:
+        archive: images.archive
+```
+
 ## Workflows
 
 A workflow is a list of endpoints to be called.
