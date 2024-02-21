@@ -1,10 +1,9 @@
-import { Readable } from 'node:stream'
 import { match } from 'matchacho'
 import { BadRequest, UnsupportedMediaType } from '../../HTTP'
 import { cors } from '../cors'
 import * as schemas from './schemas'
-import { Workflow } from './Workflow'
-import type { Unit } from './Workflow'
+import { Workflow } from './workflow'
+import type { Unit } from './workflow'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes'
 import type { ErrorType } from 'error-value'
@@ -59,7 +58,7 @@ export class Store implements Directive {
   private reply (request: Input, storage: string, entry: Entry): Output {
     const body = this.workflow === undefined
       ? entry
-      : Readable.from(this.workflow.execute(request, storage, entry))
+      : this.workflow.execute(request, storage, entry)
 
     return { body }
   }
