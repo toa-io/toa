@@ -16,6 +16,6 @@ process.env.TOA_DEV = '1'
 process.env.TOA_STORAGES = encode({
   octets: {
     provider: 'tmp',
-    prefix: 'test'
+    directory: 'exposition'
   }
 })

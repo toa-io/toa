@@ -4,7 +4,7 @@ type Map = {
   [id: string]: Component
 }
 
-type Operation = {
+export type Operation = {
   type: operations.type
   scope?: operations.scope
   bindings?: string[]
@@ -14,9 +14,7 @@ type Operation = {
   query?: boolean
 }
 
-type Operations = {
-  [key: string]: Operation
-}
+export type Operations = Record<string, Operation>
 
 type Event = {
   binding: string

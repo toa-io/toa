@@ -13,7 +13,7 @@ export class Permute implements Directive {
   private storage: Component | null = null
 
   public constructor (value: null, discovery: Promise<Component>) {
-    schemas.remove.validate(value)
+    schemas.permute.validate(value)
 
     this.discovery = discovery
   }
@@ -24,7 +24,7 @@ export class Permute implements Directive {
     if (request.encoder === null)
       throw new NotAcceptable()
 
-    const path = request.path
+    const path = request.url
     const list = await request.parse()
     const input = { storage, path, list }
     const error = await this.storage.invoke<Maybe<unknown>>('permute', { input })

@@ -28,6 +28,10 @@ const define = async (root, manifest, property) => {
 
   // default bridge
   const definition = await scan(manifest.bridge, root, property)
+
+  if (definition === undefined)
+    return
+
   const items = Object.entries(definition)
 
   if (items.length) {
@@ -49,7 +53,9 @@ const define = async (root, manifest, property) => {
 const scan = async (bridge, root, property) => {
   const { define } = require(bridge)
 
-  return define[property](root)
+  if (property in define)
+    return define[property](root)
+  else return undefined
 }
 
 exports.merge = bridge

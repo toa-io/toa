@@ -1,10 +1,10 @@
-import { Connector } from '@toa.io/core/types'
+import { Connector } from '@toa.io/core'
 import { Record } from '@toa.io/core/types/storages'
 
-declare namespace toa.sql {
+declare namespace toa.sql{
 
-  interface Storage extends Connector {
-    store(entity: Record): Promise<boolean>
+  interface Storage extends Connector{
+    store (entity: Record): Promise<boolean>
   }
 
 }

@@ -7,7 +7,6 @@ import Negotiator from 'negotiator'
 import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
 import { ClientError, Exception } from './exceptions'
 import { formats, types } from './formats'
-import type { Format } from './formats'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
 
@@ -84,7 +83,8 @@ export class Server extends Connector {
   private extend (request: Request): IncomingMessage {
     const message = request as IncomingMessage
 
-    message.encoder = negotiate(request)
+    negotiate(request, message)
+
     message.pipelines = { body: [], response: [] }
 
     message.parse = async <T> (): Promise<T> => {
@@ -145,11 +145,23 @@ function supportedMethods (methods: Set<string>) {
   }
 }
 
-function negotiate (request: Request): Format | null {
+function negotiate (request: Request, message: IncomingMessage): void {
+  if (request.headers.accept !== undefined) {
+    const match = SUBTYPE.exec(request.headers.accept)
+
+    if (match !== null) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const { type, subtype, suffix } = match.groups!
+
+      request.headers.accept = `${type}/${suffix}`
+      message.subtype = subtype
+    }
+  }
+
   const negotiator = new Negotiator(request)
   const mediaType = negotiator.mediaType(types)
 
-  return mediaType === undefined ? null : formats[mediaType]
+  message.encoder = mediaType === undefined ? null : formats[mediaType]
 }
 
 // https://github.com/whatwg/fetch/issues/1254
@@ -177,3 +189,5 @@ interface Properties {
 }
 
 export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>
+
+const SUBTYPE = /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/

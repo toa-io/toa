@@ -21,7 +21,7 @@ configuration:
 storages:
   tmp:
     provider: tmp
-    prefix: hello
+    directory: hello
 
 exposition:
   debug: true

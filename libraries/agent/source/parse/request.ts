@@ -34,8 +34,8 @@ export function request (input: string): HTTPRequest {
   return request as HTTPRequest
 }
 
-function reduceHeaders (array: string[]): Record<string, string> {
-  const headers: Record<string, string> = {}
+function reduceHeaders (array: string[]): Headers {
+  const headers = new Headers()
 
   while (array.length > 1) {
     const name = array.shift()
@@ -43,7 +43,7 @@ function reduceHeaders (array: string[]): Record<string, string> {
 
     if (name === undefined || value === undefined) throw new Error('Error parsing headers')
 
-    headers[name] = value
+    headers.append(name, value)
   }
 
   return headers
@@ -52,6 +52,6 @@ function reduceHeaders (array: string[]): Record<string, string> {
 interface HTTPRequest {
   url: string
   method: string
-  headers: Record<string, string>
+  headers: Headers
   body?: Buffer
 }

@@ -1,10 +1,10 @@
-import type * as _core from '@toa.io/core/types'
+import type * as _core from '@toa.io/core'
 
-declare namespace toa.sampling {
+declare namespace toa.sampling{
 
-  namespace request {
+  namespace request{
 
-    namespace context {
+    namespace context{
 
       type Call = {
         request?: _core.Request
@@ -15,7 +15,7 @@ declare namespace toa.sampling {
 
     }
 
-    namespace extensions {
+    namespace extensions{
 
       type Call = {
         arguments?: any[]

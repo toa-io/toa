@@ -1,12 +1,14 @@
 import * as assert from 'node:assert'
 import { encode } from '@toa.io/generic'
 import { providers } from './providers'
+import { validateAnnotation } from './Annotation'
+import type { Annotation } from './Annotation'
 import type { Dependency, Variable } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
 
 export const SERIALIZATION_PREFIX = 'TOA_STORAGES'
 
-export function deployment (instances: Instance[], annotation: Annotation): Dependency {
+export function deployment (instances: Instance[], annotation: unknown): Dependency {
   validate(instances, annotation)
 
   const value = encode(annotation)
@@ -18,16 +20,11 @@ export function deployment (instances: Instance[], annotation: Annotation): Depe
   }
 }
 
-function validate (instances: Instance[],
-  annotation: Annotation): asserts annotation is ValidatedAnnotation {
-  assert.ok(annotation !== undefined,
-    `Storages annotation is required by: '${instances
-    .map((i) => i.component.locator.id)
-    .join("', '")}'`)
+function validate (instances: Instance[], annotation: unknown): asserts annotation is Annotation {
+  validateAnnotation(annotation)
 
-  for (const instance of instances) contains(instance, annotation)
-
-  for (const { provider } of Object.values(annotation)) validateProviderId(provider)
+  for (const instance of instances)
+    contains(instance, annotation)
 }
 
 function contains (instance: Instance, annotation: Annotation): void {
@@ -37,21 +34,17 @@ function contains (instance: Instance, annotation: Annotation): void {
       `declared in '${instance.component.locator.id}'`)
 }
 
-export function validateProviderId (id: string | undefined): asserts id is keyof typeof providers {
-  assert.ok(typeof id === 'string' && id in providers, `Unknown storage provider '${id}'`)
-}
-
-function getSecrets (annotation: ValidatedAnnotation): Variable[] {
+function getSecrets (annotation: Annotation): Variable[] {
   const secrets: Variable[] = []
 
-  for (const [componentName, props] of Object.entries(annotation)) {
-    const Provider = providers[props.provider]
+  for (const [name, declaration] of Object.entries(annotation)) {
+    const Provider = providers[declaration.provider]
 
     for (const secret of Provider.SECRETS)
       secrets.push({
-        name: `${SERIALIZATION_PREFIX}_${componentName}_${secret.name}`.toUpperCase(),
+        name: `${SERIALIZATION_PREFIX}_${name}_${secret.name}`.toUpperCase(),
         secret: {
-          name: `toa-storages-${componentName}`,
+          name: `toa-storages-${name}`,
           key: secret.name,
           optional: secret.optional
         }
@@ -61,8 +54,4 @@ function getSecrets (annotation: ValidatedAnnotation): Variable[] {
   return secrets
 }
 
-type Annotation = Record<string, { [k: string]: unknown, provider: string }>
-type ValidatedAnnotation = Readonly<
-Record<string, { [k: string]: unknown, provider: keyof typeof providers }>
->
 export type Instance = context.Dependency<string[]>

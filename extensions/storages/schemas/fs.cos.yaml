@@ -1,0 +1,9 @@
+type: object
+properties:
+  provider:
+    const: fs
+  path:
+    type: string
+    maxLength: 4096
+required: [provider, path]
+additionalProperties: false

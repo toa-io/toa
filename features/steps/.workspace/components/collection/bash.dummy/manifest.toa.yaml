@@ -1,0 +1,10 @@
+namespace: bash
+name: dummy
+
+bridge: bash
+
+operations:
+  echo:
+    input:
+      code: 0
+      message: string

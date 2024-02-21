@@ -23,7 +23,7 @@ If request's `content-type` is not acceptable, or if the request body does not p
 the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-typecontrol-maybeentry),
 the request is rejected with a `415 Unsupported Media Type` response.
 
-The value of the directive is an object with the following properties:
+The value of the directive is `null` or an object with the following properties:
 
 - `accept`: a media type or an array of media types that are acceptable.
   If the `accept` property is not specified, any media type is acceptable (which is the default).
@@ -43,43 +43,27 @@ The value of the directive is an object with the following properties:
         analyze: images.analyze
 ```
 
-### Workflows
+Non-standard `content-meta` header can be used
+to set initial [metadata](/extensions/storages/readme.md#entry) value for the Entry.
 
-A workflow is a list of endpoints to be called.
-The following input will be passed to each endpoint:
+The value of the `content-meta` header is a comma-separated list of key-value string pairs.
+If no value is provided for a key, the string `true` is used.
 
-```yaml
-storage: string
-path: string
-entry: Entry
+```http
+POST /images/ HTTP/1.1
+content-type: image/jpeg
+content-meta: foo, bar=baz
+content-meta: baz=1
 ```
 
-See [Entry](/extensions/storages/readme.md#entry) and an
-example [workflow step processor](../features/steps/components/octets.tester).
-
-A _workflow unit_ is an object with keys referencing the workflow step identifier, and an endpoint
-as value.
-Steps within a workflow unit are executed in parallel.
-
 ```yaml
-octets:store:
-  workflow:
-    resize: images.resize
-    analyze: images.analyze
+meta:
+  foo: 'true'
+  bar: 'baz'
+  baz: '1'
 ```
 
-A workflow can be a single unit, or an array of units.
-If it's an array, the workflow units are executed in sequence.
-
-```yaml
-octets:store:
-  workflow:
-    - optimize: images.optimize   # executed first
-    - resize: images.resize       # executed second
-      analyze: images.analyze     # executed in parallel with `resize`
-```
-
-If one of the workflow units returns an error, the execution of the workflow is interrupted.
+If the Entry already exists, the `content-meta` header is ignored.
 
 ### Response
 
@@ -147,26 +131,42 @@ The value of the directive is an object with the following properties:
         meta: true  # allow access to an Entry
 ```
 
-To access an Entry, the request path must be suffixed with `:meta`:
+The `octets:fetch: ~` declaration is equivalent to defaults.
+
+To access an Entry, the `accept` request header must contain the `octets.entry` subtype
+in
+the `toa` [vendor tree](https://datatracker.ietf.org/doc/html/rfc6838#section-3.2):
 
 ```http
-GET /images/eecd837c:meta HTTP/1.1
+GET /images/eecd837c HTTP/1.1
+accept: application/vnd.toa.octets.entry+yaml
 ```
-
-The `octets:fetch: ~` declaration is equivalent to defaults.
 
 ## `octets:list`
 
 Lists the entries stored under the request path.
 
+The value of the directive is an object with the following properties:
+
+- `meta`: `boolean` indicating whether the list of Entries is accessible.
+  Defaults to `false`, which means that only entry identifiers are returned.
+
 ```yaml
 /images:
   octets:context: images
   GET:
-    octets:list: ~
+    octets:list:
+      meta: true
 ```
 
-Responds with a list of entry identifiers.
+The `octets:list: ~` declaration is equivalent to defaults.
+
+To access a list of Entries, the `accept` request header must contain the `octets.entries` subtype:
+
+```http
+GET /images/ HTTP/1.1
+accept: application/vnd.toa.octets.entries+yaml
+```
 
 ## `octets:delete`
 
@@ -178,6 +178,20 @@ Delete the entry corresponding to the request path.
   DELETE:
     octets:delete: ~
 ```
+
+The value of the directive may contain a [workflow](#workflows) declaration, to be executed before
+the entry is deleted.
+
+```yaml
+/images:
+  octets:context: images
+  DELETE:
+    octets:delete:
+      workflow:
+        cleanup: images.cleanup
+```
+
+The error returned by the workflow prevents the deletion of the entry.
 
 ## `octets:permute`
 
@@ -194,3 +208,41 @@ under the request path.
 ```
 
 The request body must be a list of entry identifiers.
+
+## Workflows
+
+A workflow is a list of endpoints to be called.
+The following input will be passed to each endpoint:
+
+```yaml
+storage: string
+path: string
+entry: Entry
+```
+
+See [Entry](/extensions/storages/readme.md#entry) and an
+example [workflow step processor](../features/steps/components/octets.tester).
+
+A _workflow unit_ is an object with keys referencing the workflow step identifier, and an endpoint
+as value.
+Steps within a workflow unit are executed in parallel.
+
+```yaml
+octets:store:
+  workflow:
+    resize: images.resize
+    analyze: images.analyze
+```
+
+A workflow can be a single unit, or an array of units.
+If it's an array, the workflow units are executed in sequence.
+
+```yaml
+octets:store:
+  workflow:
+    - optimize: images.optimize   # executed first
+    - resize: images.resize       # executed second
+      analyze: images.analyze     # executed in parallel with `resize`
+```
+
+If one of the workflow units returns an error, the execution of the workflow is interrupted.

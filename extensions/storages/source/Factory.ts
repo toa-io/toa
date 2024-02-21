@@ -3,18 +3,23 @@ import { decode } from '@toa.io/generic'
 import { providers } from './providers'
 import { Storage, type Storages } from './Storage'
 import { Aspect } from './Aspect'
-import { validateProviderId, SERIALIZATION_PREFIX } from './deployment'
-import type { ProviderConstructor } from './Provider'
+import { SERIALIZATION_PREFIX } from './deployment'
+import { validateAnnotation } from './Annotation'
+import type { Declaration } from './providers'
+import type { Annotation } from './Annotation'
+import type { ProviderConstructor, ProviderSecrets } from './Provider'
 
 export class Factory {
-  private readonly declaration: Record<string, Record<string, unknown>>
+  private readonly annotation: Annotation
 
   public constructor () {
     const env = process.env.TOA_STORAGES
 
-    if (env === undefined) throw new Error('TOA_STORAGES is not defined')
+    assert.ok(env !== undefined, 'TOA_STORAGES is not defined')
 
-    this.declaration = decode(env)
+    this.annotation = decode(env)
+
+    validateAnnotation(this.annotation)
   }
 
   public aspect (): Aspect {
@@ -23,35 +28,33 @@ export class Factory {
     return new Aspect(storages)
   }
 
-  public createStorage (componentName: string, { provider: providerId, ...props }: any): Storage {
-    validateProviderId(providerId)
-
-    const Provider = providers[providerId]
-
-    const secrets = this.resolveSecrets(componentName, Provider)
-
-    const provider = new Provider({ ...props, secrets })
-
-    return new Storage(provider)
-  }
-
   private createStorages (): Storages {
     const storages: Storages = {}
 
-    for (const [componentName, props] of Object.entries(this.declaration))
-      storages[componentName] = this.createStorage(componentName, props)
+    for (const [name, declaration] of Object.entries(this.annotation))
+      storages[name] = this.createStorage(name, declaration)
 
     return storages
   }
 
-  private resolveSecrets (componentName: string,
-    Class: ProviderConstructor): Record<string, string | undefined> {
-    if (Class.SECRETS === undefined) return {}
+  private createStorage (name: string, declaration: Declaration): Storage {
+    const { provider: providerId, ...options } = declaration
+    const Provider: ProviderConstructor = providers[providerId]
+    const secrets = this.resolveSecrets(name, Provider)
+    const provider = new Provider(options, secrets)
+
+    return new Storage(provider)
+  }
+
+  private resolveSecrets (storageName: string,
+    Class: ProviderConstructor): ProviderSecrets {
+    if (Class.SECRETS === undefined)
+      return {}
 
     const secrets: Record<string, string | undefined> = {}
 
     for (const secret of Class.SECRETS) {
-      const variable = `${SERIALIZATION_PREFIX}_${componentName}_${secret.name}`.toUpperCase()
+      const variable = `${SERIALIZATION_PREFIX}_${storageName}_${secret.name}`.toUpperCase()
       const value = process.env[variable]
 
       assert.ok(secret.optional === true || value !== undefined,

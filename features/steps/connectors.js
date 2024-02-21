@@ -263,6 +263,9 @@ async function invoke (endpoint, request = {}) {
 
   const reply = await component.invoke(endpoint, request)
 
+  if (reply.exception !== undefined)
+    throw reply.exception
+
   if (reply.error !== undefined) {
     throw new Error(`${exceptions.names[reply.error.code]}: ${reply.error.message}`)
   }

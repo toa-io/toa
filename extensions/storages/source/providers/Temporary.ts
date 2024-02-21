@@ -1,14 +1,16 @@
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-
 import { FileSystem } from './FileSystem'
+import type { ProviderSecrets } from '../Provider'
 
 export interface TemporaryOptions {
-  prefix?: string
+  directory: string
 }
 
 export class Temporary extends FileSystem {
-  public constructor (props: TemporaryOptions) {
-    super({ path: join(tmpdir(), props.prefix ?? '') })
+  public constructor (options: TemporaryOptions, secrets?: ProviderSecrets) {
+    const path = join(tmpdir(), options.directory)
+
+    super({ path }, secrets)
   }
 }

@@ -46,4 +46,4 @@ configuration:
 storages:
   octets:
     provider: tmp
-    prefix: test
+    directory: test

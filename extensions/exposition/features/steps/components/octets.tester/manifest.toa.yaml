@@ -12,4 +12,5 @@ operations:
   bar: *operation
   baz: *operation
   err: *operation
+  echo: *operation
   diversify: *operation

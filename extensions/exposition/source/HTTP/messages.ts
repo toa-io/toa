@@ -104,6 +104,7 @@ export interface IncomingMessage extends Request {
   query: Query
   parse: <T> () => Promise<T>
   encoder: Format | null
+  subtype: string | null
   pipelines: {
     body: Array<(input: unknown) => unknown>
     response: Array<(output: OutgoingMessage) => void>

@@ -5,5 +5,5 @@ export function schema (cos: any): Schema
 
 export function namespace (coses: any[] | string): Namespace
 
-export type Schema = Schema
-export type Namespace = Namespace
+export type { Schema } from './schema'
+export type { Namespace } from './namespace'

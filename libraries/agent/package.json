@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/http",
+  "name": "@toa.io/agent",
   "version": "0.24.0-alpha.22",
-  "description": "Text-level HTTP client",
+  "description": "Text-based HTTP client",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",

@@ -22,10 +22,12 @@ import type { ReadableStream } from 'node:stream/web'
 
 export interface S3Options {
   bucket: string
-  prefix?: string
   region?: string
+  prefix?: string
   endpoint?: string
 }
+
+type S3Secrets = ProviderSecrets<'ACCESS_KEY_ID' | 'SECRET_ACCESS_KEY'>
 
 export class S3 extends Provider<S3Options> {
   public static override readonly SECRETS: readonly ProviderSecret[] = [
@@ -36,29 +38,32 @@ export class S3 extends Provider<S3Options> {
   protected readonly bucket: string
   protected readonly client: S3Client
 
-  public constructor (props: S3Options & ProviderSecrets) {
-    super(props)
+  public constructor (options: S3Options, secrets?: S3Secrets) {
+    super(options)
 
-    assert.ok(props.bucket, 'Missing bucket name')
-    this.bucket = props.bucket
+    this.bucket = options.bucket
 
     const s3Config: S3ClientConfigType = {
       retryMode: 'adaptive',
       ...nodeNativeFetch
     }
 
-    if (props.endpoint !== undefined) {
-      s3Config.forcePathStyle = props.endpoint.startsWith('http://')
-      s3Config.endpoint = props.endpoint
+    if (options.endpoint !== undefined) {
+      s3Config.forcePathStyle = options.endpoint.startsWith('http://')
+      s3Config.endpoint = options.endpoint
     }
 
-    if (props.region !== undefined) s3Config.region = props.region
+    if (options.region !== undefined) s3Config.region = options.region
 
-    if (typeof props.secrets?.ACCESS_KEY_ID === 'string')
+    if (typeof secrets?.ACCESS_KEY_ID === 'string') {
+      assert.ok(secrets.SECRET_ACCESS_KEY !== undefined,
+        'SECRET_ACCESS_KEY is required if ACCESS_KEY_ID is provided')
+
       s3Config.credentials = {
-        accessKeyId: props.secrets.ACCESS_KEY_ID,
-        secretAccessKey: props.secrets.SECRET_ACCESS_KEY
+        accessKeyId: secrets.ACCESS_KEY_ID,
+        secretAccessKey: secrets.SECRET_ACCESS_KEY
       }
+    }
 
     this.client = new S3Client(s3Config)
 

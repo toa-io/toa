@@ -32,4 +32,4 @@ stash@broken-build: redis://host.docker.internal
 storages:
   tmp:
     provider: tmp
-    prefix: test
+    directory: test

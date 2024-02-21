@@ -58,7 +58,7 @@ and the following `tsconfig.json` to the `features/steps` directory:
 {
   "compilerOptions": {
     "target": "ESNext",
-    "outDir": "/dev/null",
+    "noEmit": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
