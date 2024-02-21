@@ -2,6 +2,7 @@ import { Readable } from 'stream'
 import { NotFound } from '../../HTTP'
 import * as schemas from './schemas'
 import { Workflow } from './workflow'
+import type { Parameter } from '../../RTD'
 import type { Unit } from './workflow'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
@@ -26,7 +27,7 @@ export class Delete implements Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, request: Input): Promise<Output> {
+  public async apply (storage: string, request: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery
 
     const entry = await this.storage.invoke<Maybe<Entry>>('get',
@@ -39,7 +40,7 @@ export class Delete implements Directive {
 
     if (this.workflow !== undefined) {
       output.status = 202
-      output.body = Readable.from(this.execute(request, storage, entry))
+      output.body = Readable.from(this.execute(request, storage, entry, parameters))
     } else
       await this.delete(storage, request)
 
@@ -52,9 +53,11 @@ export class Delete implements Directive {
       { input: { storage, path: request.url } })
   }
 
-  private async * execute (request: Input, storage: string, entry: Entry): AsyncGenerator {
+  // eslint-disable-next-line max-params
+  private async * execute
+  (request: Input, storage: string, entry: Entry, parameters: Parameter[]): AsyncGenerator {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    for await (const chunk of this.workflow!.execute(request, storage, entry)) {
+    for await (const chunk of this.workflow!.execute(request, storage, entry, parameters)) {
       yield chunk
 
       if (typeof chunk === 'object' && chunk !== null && 'error' in chunk)

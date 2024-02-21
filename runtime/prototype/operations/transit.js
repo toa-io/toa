@@ -3,7 +3,7 @@
 async function transit (input, object) {
   Object.assign(object, input)
 
-  return { id: object.id }
+  return object
 }
 
 exports.transition = transit

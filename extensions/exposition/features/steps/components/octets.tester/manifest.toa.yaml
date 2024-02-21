@@ -9,8 +9,10 @@ operations:
       storage*: string
       path*: string
       entry: object
+      parameters: object
   bar: *operation
   baz: *operation
   err: *operation
   echo: *operation
+  concat: *operation
   diversify: *operation

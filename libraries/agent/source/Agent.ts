@@ -17,8 +17,6 @@ Use its features to test.
 export class Agent {
   protected readonly origin: string
   protected response: string = ''
-  private readonly keys: Record<string, string> = {}
-  private readonly values: Record<string, string> = {}
 
   public constructor (origin: string, private readonly captures: Captures = new Captures()) {
     this.origin = origin
