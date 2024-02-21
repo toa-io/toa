@@ -1,4 +1,4 @@
-import { Readable } from 'node:stream'
+import { Readable } from 'stream'
 import { NotFound } from '../../HTTP'
 import * as schemas from './schemas'
 import { Workflow } from './workflow'
@@ -30,7 +30,7 @@ export class Delete implements Directive {
     this.storage ??= await this.discovery
 
     const entry = await this.storage.invoke<Maybe<Entry>>('get',
-      { input: { storage, path: request.path } })
+      { input: { storage, path: request.url } })
 
     if (entry instanceof Error)
       throw new NotFound()
@@ -49,7 +49,7 @@ export class Delete implements Directive {
   private async delete (storage: string, request: Input): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await this.storage!.invoke('delete',
-      { input: { storage, path: request.path } })
+      { input: { storage, path: request.url } })
   }
 
   private async * execute (request: Input, storage: string, entry: Entry): AsyncGenerator {
@@ -66,5 +66,5 @@ export class Delete implements Directive {
 }
 
 export interface Options {
-  workflow: Unit[] | Unit
+  workflow?: Unit[] | Unit
 }

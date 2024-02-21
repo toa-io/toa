@@ -131,26 +131,42 @@ The value of the directive is an object with the following properties:
         meta: true  # allow access to an Entry
 ```
 
-To access an Entry, the request path must be suffixed with `:meta`:
+The `octets:fetch: ~` declaration is equivalent to defaults.
+
+To access an Entry, the `accept` request header must contain the `octets.entry` subtype
+in
+the `toa` [vendor tree](https://datatracker.ietf.org/doc/html/rfc6838#section-3.2):
 
 ```http
-GET /images/eecd837c:meta HTTP/1.1
+GET /images/eecd837c HTTP/1.1
+accept: application/vnd.toa.octets.entry+yaml
 ```
-
-The `octets:fetch: ~` declaration is equivalent to defaults.
 
 ## `octets:list`
 
 Lists the entries stored under the request path.
 
+The value of the directive is an object with the following properties:
+
+- `meta`: `boolean` indicating whether the list of Entries is accessible.
+  Defaults to `false`, which means that only entry identifiers are returned.
+
 ```yaml
 /images:
   octets:context: images
   GET:
-    octets:list: ~
+    octets:list:
+      meta: true
 ```
 
-Responds with a list of entry identifiers.
+The `octets:list: ~` declaration is equivalent to defaults.
+
+To access a list of Entries, the `accept` request header must contain the `octets.entries` subtype:
+
+```http
+GET /images/ HTTP/1.1
+accept: application/vnd.toa.octets.entries+yaml
+```
 
 ## `octets:delete`
 
