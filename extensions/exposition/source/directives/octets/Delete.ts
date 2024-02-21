@@ -1,3 +1,4 @@
+import { Readable } from 'stream'
 import { NotFound } from '../../HTTP'
 import * as schemas from './schemas'
 import { Workflow } from './workflow'

@@ -17,8 +17,6 @@ export class Store implements Directive {
   private readonly accept?: string
   private readonly workflow?: Workflow
   private readonly discovery: Record<string, Promise<Component>> = {}
-  private readonly remotes: Remotes
-  private readonly components: Record<string, Component> = {}
   private storage: Component | null = null
 
   public constructor
