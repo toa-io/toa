@@ -60,6 +60,9 @@ configuration:
                 type: string
               uniqueItems: true
               minItems: 1
+            secret:
+              description: HS256 secret
+              type: string
           required:
             - issuer
       explicit_identity_creation:

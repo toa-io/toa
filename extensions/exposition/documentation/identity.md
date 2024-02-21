@@ -80,7 +80,11 @@ configuration:
       - issuer: https://accounts.google.com
         audience:
           - <GOOGLE_CLIENT_ID>
+
       - issuer: https://appleid.apple.com
+
+      - issuer: private.entity
+        secret: <THE-SECRET-STRING-FOR-HS256>
 ```
 
 ## Identity inception

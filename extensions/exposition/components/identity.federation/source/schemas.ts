@@ -42,4 +42,8 @@ export interface TrustConfiguration {
    * @minItems 1
    */
   audience?: [string, ...string[]];
+  /**
+   * HS256 secret
+   */
+  secret?: string;
 }
