@@ -1,9 +1,10 @@
+import type { Parameter } from '../../RTD'
 import type * as io from '../../io'
 
 export interface Directive {
   readonly targeted: boolean
 
-  apply: (storage: string, input: Input) => io.Output | Promise<io.Output>
+  apply: (storage: string, input: Input, parameters: Parameter[]) => io.Output | Promise<io.Output>
 }
 
 export interface Extension {

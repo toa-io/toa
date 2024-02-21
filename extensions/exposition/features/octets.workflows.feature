@@ -213,3 +213,36 @@ Feature: Octets storage workflows
       """
       200 OK
       """
+
+  Scenario: Passing parameters to the workflow
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        /:a/:b:
+          auth:anonymous: true
+          octets:context: octets
+          POST:
+            octets:store:
+              workflow:
+                concat: octets.tester.concat
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST /hello/world/ HTTP/1.1
+      accept: application/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+      id: 10cf16b458f759e0d617f2f3d83599ff
+      type: application/octet-stream
+      size: 8169
+      --cut
+      concat: hello world
+      --cut--
+      """

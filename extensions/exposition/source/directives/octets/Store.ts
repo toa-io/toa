@@ -3,6 +3,7 @@ import { BadRequest, UnsupportedMediaType } from '../../HTTP'
 import { cors } from '../cors'
 import * as schemas from './schemas'
 import { Workflow } from './workflow'
+import type { Parameter } from '../../RTD'
 import type { Unit } from './workflow'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes'
@@ -36,7 +37,7 @@ export class Store implements Directive {
     cors.allowHeader('content-meta')
   }
 
-  public async apply (storage: string, request: Input): Promise<Output> {
+  public async apply (storage: string, request: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery.storage
 
     const input: StoreInput = { storage, request }
@@ -52,13 +53,14 @@ export class Store implements Directive {
 
     return match<Output>(entry,
       Error, (error: ErrorType) => this.throw(error),
-      () => this.reply(request, storage, entry))
+      () => this.reply(request, storage, entry, parameters))
   }
 
-  private reply (request: Input, storage: string, entry: Entry): Output {
+  // eslint-disable-next-line max-params
+  private reply (request: Input, storage: string, entry: Entry, parameters: Parameter[]): Output {
     const body = this.workflow === undefined
       ? entry
-      : this.workflow.execute(request, storage, entry)
+      : this.workflow.execute(request, storage, entry, parameters)
 
     return { body }
   }
