@@ -246,3 +246,41 @@ Feature: Octets storage workflows
       concat: hello world
       --cut--
       """
+
+  Scenario: Executing a workflow with `octets:workflow`
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store: ~
+        /*:
+          DELETE:
+            octets:workflow:
+              echo: octets.tester.echo
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      202 Accepted
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+      echo: 10cf16b458f759e0d617f2f3d83599ff
+      --cut--
+      """
