@@ -17,8 +17,11 @@ export class Algorithm extends Connector implements bridges.Algorithm {
 
   }
 
-  public async execute (input: object): Promise<Reply> {
-    const args = Object.entries(input).map(([key, value]) => `--${key} ${value}`).join(' ')
+  public async execute (input: Record<string, unknown> | undefined | null): Promise<Reply> {
+    const args = (input === undefined || input === null)
+      ? ''
+      : Object.entries(input).map(([key, value]) => `--${key} ${value?.toString()}`).join(' ')
+
     const command = `${this.path}${args === '' ? '' : ` ${args}`}`
 
     try {
