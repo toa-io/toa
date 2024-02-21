@@ -1,7 +1,7 @@
 'use strict'
 
-async function baz (input) {
+function echo (input) {
   return input.entry.id
 }
 
-exports.computation = baz
+exports.computation = echo

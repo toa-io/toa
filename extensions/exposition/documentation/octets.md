@@ -218,6 +218,7 @@ The following input will be passed to each endpoint:
 storage: string
 path: string
 entry: Entry
+parameters: Record<string, string> # route parameters
 ```
 
 See [Entry](/extensions/storages/readme.md#entry) and an

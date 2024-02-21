@@ -10,6 +10,7 @@ import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
 import type { Family } from '../../Directive'
 import type { Directive, Input } from './types'
+import type { Parameter } from '../../RTD'
 
 export class Octets implements Family<Directive> {
   public readonly name: string = 'octets'
@@ -28,7 +29,8 @@ export class Octets implements Family<Directive> {
     return new Class(value, this.discovery, remotes)
   }
 
-  public async preflight (directives: Directive[], input: Input): Promise<Output> {
+  public async preflight
+  (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
     let context: Context | null = null
     let action: Directive | null = null
 
@@ -51,7 +53,7 @@ export class Octets implements Family<Directive> {
     if (targeted !== action.targeted)
       throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}.`)
 
-    return await action.apply(context.storage, input)
+    return await action.apply(context.storage, input, parameters)
   }
 }
 

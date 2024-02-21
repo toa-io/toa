@@ -1,6 +1,8 @@
 import { posix } from 'node:path'
 import { match } from 'matchacho'
 import { Execution } from './Execution'
+import type { Context } from './Execution'
+import type { Parameter } from '../../../RTD'
 import type { Input } from '../types'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../../Remotes'
@@ -17,9 +19,16 @@ export class Workflow {
     this.remotes = remotes
   }
 
-  public execute (request: Input, storage: string, entry: Entry): Execution {
+  // eslint-disable-next-line max-params
+  public execute
+  (request: Input, storage: string, entry: Entry, params: Parameter[]): Execution {
     const path = posix.join(request.path, entry.id)
-    const context = { storage, path, entry }
+    const parameters: Record<string, string> = {}
+
+    for (const { name, value } of params)
+      parameters[name] = value
+
+    const context: Context = { storage, path, entry, parameters }
 
     return new Execution(context, this.units, this.remotes)
   }

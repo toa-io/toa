@@ -74,4 +74,5 @@ export interface Context {
   storage: string
   path: string
   entry: Entry
+  parameters: Record<string, string>
 }
