@@ -1,6 +1,6 @@
 Feature: Octets storage workflows
 
-  Scenario: Running a workflow
+  Scenario: Running a workflow on `store`
     Given the `octets.tester` is running
     And the annotation:
       """yaml
@@ -111,4 +111,105 @@ Feature: Octets storage workflows
         code: ERROR
         message: Something went wrong
       --cut--
+      """
+
+  Scenario: Running a workflow on `delete`
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store: ~
+        /*:
+          GET:
+            octets:fetch: ~
+          DELETE:
+            octets:delete:
+              workflow:
+                echo: octets.tester.echo
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      202 Accepted
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+      echo: 10cf16b458f759e0d617f2f3d83599ff
+      --cut--
+      """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+
+  Scenario: Error in the workflow on `delete`
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store: ~
+        /*:
+          GET:
+            octets:fetch: ~
+          DELETE:
+            octets:delete:
+              workflow:
+                err: octets.tester.err
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      202 Accepted
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+      error:
+        step: err
+        code: ERROR
+        message: Something went wrong
+      --cut--
+      """
+    When the following request is received:
+      """
+      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      200 OK
       """
