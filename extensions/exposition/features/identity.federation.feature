@@ -67,7 +67,7 @@ Feature: Identity Federation
           anonymous: true
           POST:
             incept: id
-            endpoint: transit
+            endpoint: create
       """
     And the IDP token for Bill is issued
     When the following request is received:
