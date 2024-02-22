@@ -80,7 +80,14 @@ configuration:
       - issuer: https://accounts.google.com
         audience:
           - <GOOGLE_CLIENT_ID>
+
       - issuer: https://appleid.apple.com
+
+      - issuer: private.entity
+        secrets:
+          HS384:
+            key0: <THE-SECRET-STRING-FOR-HS384>
+            key1: <THE-SECRET-STRING-FOR-HS384> # selected by `kid` in the JWT header
 ```
 
 ## Identity inception

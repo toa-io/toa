@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
 import * as assert from 'node:assert'
-import type { JwtHeader, IdToken } from './types'
-import { type TrustConfiguration } from './schemas'
+import { type JwtHeader, type IdToken } from '../types'
+import { type TrustConfiguration } from '../schemas'
 
 export function decodeJwt (token: string): {
   header: unknown
@@ -20,20 +20,19 @@ export function decodeJwt (token: string): {
 
 export function validateJwtHeader (header: unknown): asserts header is JwtHeader {
   assert.ok(header !== null && typeof header === 'object', 'Header is not an object')
-  assert.ok('typ' in header, 'Header is missing typ')
-  assert.equal(header.typ, 'JWT')
   assert.ok('alg' in header, 'Header is missing alg')
   assert.ok(typeof header.alg === 'string', 'Header alg is not a string')
-  assert.equal(header.alg, 'RS256', `We only validating RS256 id_tokens, but got ${header.alg}`)
+  assert.match(header.alg, /^RS256|HS\d{3}$/, `Unknown algorithm ${header.alg}`)
+  assert.ok(!('kid' in header) || typeof header.kid === 'string', 'kid must be a string if present')
 }
 
-export function validateJwtPayload (
-  payload: unknown,
-  trusted: TrustConfiguration[] = []
-): asserts payload is IdToken {
+export function validateJwtPayload (payload: unknown,
+  trusted: TrustConfiguration[] = [],
+  header: JwtHeader): asserts payload is IdToken {
   assert.ok(trusted.length > 0, 'No trusted issuers provided')
 
-  // full list of validations is at https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
+  // full list of validations is
+  // at https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
   assert.ok(payload !== null && typeof payload === 'object', 'Payload is not an object')
 
   assert.ok('iss' in payload, 'Payload is missing iss')
@@ -41,9 +40,24 @@ export function validateJwtPayload (
   assert.ok('aud' in payload, 'Payload is missing aud')
   assert.ok(typeof payload.aud === 'string', 'Payload aud is not a string')
 
-  assert.ok(trusted.some(config => config.issuer === payload.iss &&
-     (config.audience === undefined || config.audience.some(a => a === payload.aud))),
-     `Unknown issuer / audience: ${payload.iss} / ${payload.aud}`)
+  const issuer = trusted.find((config) => config.issuer === payload.iss)
+
+  assert.ok(issuer !== undefined &&
+      (issuer.audience === undefined || issuer.audience.some((a) => a === payload.aud),
+      `Unknown issuer / audience: ${payload.iss} / ${payload.aud}`))
+
+  if (header.alg.startsWith('HS')) {
+    const secrets = issuer.secrets
+
+    assert.ok(secrets, `We don't have known secrets for ${payload.iss}`)
+
+    const keys = secrets[header.alg]
+
+    assert.ok(keys, `No known secrets for ${header.alg}`)
+
+    if (typeof header.kid === 'string')
+      assert.ok(header.kid in keys, `No secret ${header.kid} provided for ${header.alg}`)
+  }
 
   assert.ok('sub' in payload, 'Payload is missing sub')
   assert.ok(typeof payload.sub === 'string', 'Payload sub is not a string')
@@ -68,20 +82,39 @@ export async function validateSignature ({
   payload: { iss },
   rawHeader,
   rawPayload,
-  signature
+  signature,
+  trusted = []
 }: {
   readonly header: JwtHeader
   rawHeader: string
   readonly payload: IdToken
   rawPayload: string
   signature: string
+  trusted?: TrustConfiguration[]
 }): Promise<void> {
+  if (alg.startsWith('HS')) {
+    // symmetric algorithm, issuer is validated at this point
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- `kid` is validated
+    const secrets = trusted.find((c) => c.issuer === iss)!.secrets![alg]
+    const secret = kid !== undefined ? secrets[kid] : Object.values(secrets)[0]
+    const algorithm = alg.replace(/^HS(\d{3})$/, 'sha$1') // HS256 -> sha256
+    const hmac = crypto.createHmac(algorithm, secret)
+
+    hmac.update(rawHeader)
+    hmac.update('.')
+    hmac.update(rawPayload)
+    assert.strictEqual(signature, hmac.digest('base64url'), 'Signature does not match')
+
+    return
+  }
+
   // Getting issuer public keys
   const oidcRequest = await fetch(`${iss}/.well-known/openid-configuration`, {
     cache: 'default'
   })
 
-  assert.ok(oidcRequest.ok, `Failed to fetch OpenID configuration: ${oidcRequest.statusText}`)
+  assert.ok(oidcRequest.ok,
+    `Failed to fetch OpenID configuration: ${oidcRequest.statusText}`)
 
   const { jwks_uri: jwksUri } = (await oidcRequest.json()) as { jwks_uri: string }
 
@@ -98,10 +131,8 @@ export async function validateSignature ({
 
   assert.ok(signingKeys.length > 0, 'No acceptable signing keys found')
 
-  assert.ok(
-    kid === undefined || signingKeys.length === 1,
-    'Signing key selection is not deterministic'
-  )
+  assert.ok(kid === undefined || signingKeys.length === 1,
+    'Signing key selection is not deterministic')
 
   const signingKey = kid === undefined ? signingKeys.find((k) => k.kid === kid) : keys[0]
 
@@ -114,29 +145,26 @@ export async function validateSignature ({
   verifyFunction.write(rawPayload)
   verifyFunction.end()
 
-  const signatureValid = verifyFunction.verify(
-    { format: 'jwk', key: signingKey },
+  const signatureValid = verifyFunction.verify({ format: 'jwk', key: signingKey },
     signature,
-    'base64url'
-  )
+    'base64url')
 
   assert.ok(signatureValid, 'Failed to validate signature')
 }
 
-export async function validateIdToken (
-  token: string,
-  trusted?: TrustConfiguration[]
-): Promise<IdToken> {
+export async function validateIdToken (token: string,
+  trusted?: TrustConfiguration[]): Promise<IdToken> {
   const { header, payload, rawHeader, rawPayload, signature } = decodeJwt(token)
 
   validateJwtHeader(header)
-  validateJwtPayload(payload, trusted)
+  validateJwtPayload(payload, trusted, header)
   await validateSignature({
     header,
     rawHeader,
     payload,
     rawPayload,
-    signature
+    signature,
+    trusted
   })
 
   return payload
