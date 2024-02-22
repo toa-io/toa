@@ -31,14 +31,9 @@ interface IdentityTokensRevokeInput {
   query: Query
 }
 
-export enum SupportedTokenAlg {
-  RS256 = 'RS256',
-  HS256 = 'HS256'
-}
-
 export interface JwtHeader {
-  typ: string
-  alg: SupportedTokenAlg
+  typ?: string
+  alg: string
   kid?: string
 }
 

@@ -60,9 +60,18 @@ configuration:
                 type: string
               uniqueItems: true
               minItems: 1
-            secret:
-              description: HS256 secret
-              type: string
+            secrets:
+              description: Symmetric encryption secrets
+              type: object
+              patternProperties:
+                ^HS\d{3}$:
+                  type: object
+                  patternProperties:
+                    ^\w+$:
+                      type: string
+                  minProperties: 1
+              additionalProperties: false
+              minProperties: 1
           required:
             - issuer
       explicit_identity_creation:

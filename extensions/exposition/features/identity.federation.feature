@@ -60,9 +60,11 @@ Feature: Identity Federation
       explicit_identity_creation: false
       trust:
         - issuer: http://localhost:44444
-          secret: the-secret
+          secrets:
+            HS384:
+              k1: the-secret
       """
-    And the IDP symmetric token for GoodUser is issued with following secret:
+    And the IDP HS384 token for GoodUser is issued with following secret:
       """
       the-secret
       """

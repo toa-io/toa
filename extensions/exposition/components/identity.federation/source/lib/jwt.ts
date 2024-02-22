@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import * as assert from 'node:assert'
-import { type JwtHeader, type IdToken, SupportedTokenAlg } from '../types'
+import { type JwtHeader, type IdToken } from '../types'
 import { type TrustConfiguration } from '../schemas'
 
 export function decodeJwt (token: string): {
@@ -20,18 +20,15 @@ export function decodeJwt (token: string): {
 
 export function validateJwtHeader (header: unknown): asserts header is JwtHeader {
   assert.ok(header !== null && typeof header === 'object', 'Header is not an object')
-  // assert.ok('typ' in header, 'Header is missing typ')
-  // assert.ok(typeof header.typ === 'string', 'Header typ is not a string')
-  // assert.equal(header.typ.toUpperCase(), 'JWT')
   assert.ok('alg' in header, 'Header is missing alg')
   assert.ok(typeof header.alg === 'string', 'Header alg is not a string')
-  assert.ok(['RS256', 'HS256'].includes(header.alg),
-    `Unsupported algorithm '${header.alg}'`)
+  assert.match(header.alg, /^RS256|HS\d{3}$/, `Unknown algorithm ${header.alg}`)
+  assert.ok(!('kid' in header) || typeof header.kid === 'string', 'kid must be a string if present')
 }
 
 export function validateJwtPayload (payload: unknown,
   trusted: TrustConfiguration[] = [],
-  alg: SupportedTokenAlg): asserts payload is IdToken {
+  header: JwtHeader): asserts payload is IdToken {
   assert.ok(trusted.length > 0, 'No trusted issuers provided')
 
   // full list of validations is
@@ -49,8 +46,18 @@ export function validateJwtPayload (payload: unknown,
       (issuer.audience === undefined || issuer.audience.some((a) => a === payload.aud),
       `Unknown issuer / audience: ${payload.iss} / ${payload.aud}`))
 
-  assert.ok(alg !== SupportedTokenAlg.HS256 || issuer.secret !== undefined,
-    `Missing a secret for issuer ${payload.iss}`)
+  if (header.alg.startsWith('HS')) {
+    const secrets = issuer.secrets
+
+    assert.ok(secrets, `We don't have known secrets for ${payload.iss}`)
+
+    const keys = secrets[header.alg]
+
+    assert.ok(keys, `No known secrets for ${header.alg}`)
+
+    if (typeof header.kid === 'string')
+      assert.ok(header.kid in keys, `No secret ${header.kid} provided for ${header.alg}`)
+  }
 
   assert.ok('sub' in payload, 'Payload is missing sub')
   assert.ok(typeof payload.sub === 'string', 'Payload sub is not a string')
@@ -85,10 +92,13 @@ export async function validateSignature ({
   signature: string
   trusted?: TrustConfiguration[]
 }): Promise<void> {
-  if (alg === SupportedTokenAlg.HS256) {
+  if (alg.startsWith('HS')) {
     // symmetric algorithm, issuer is validated at this point
-    const { secret } = trusted.find((c) => c.issuer === iss) as { secret: string }
-    const hmac = crypto.createHmac('sha256', secret)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- `kid` is validated
+    const secrets = trusted.find((c) => c.issuer === iss)!.secrets![alg]
+    const secret = kid !== undefined ? secrets[kid] : Object.values(secrets)[0]
+    const algorithm = alg.replace(/^HS(\d{3})$/, 'sha$1') // HS256 -> sha256
+    const hmac = crypto.createHmac(algorithm, secret)
 
     hmac.update(rawHeader)
     hmac.update('.')
@@ -147,7 +157,7 @@ export async function validateIdToken (token: string,
   const { header, payload, rawHeader, rawPayload, signature } = decodeJwt(token)
 
   validateJwtHeader(header)
-  validateJwtPayload(payload, trusted, header.alg)
+  validateJwtPayload(payload, trusted, header)
   await validateSignature({
     header,
     rawHeader,

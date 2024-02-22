@@ -100,7 +100,7 @@ The configuration schema alongside default values is described in the [component
 
 No federated tokens are accepted by default until at least one entry is added to the `trust` configuration.
 
-Toa supports either asymmetric RS256 or symmetric HS256 tokens with pre-shared secrets.
+Toa supports either asymmetric RS256 or symmetric HS256 / HS384 / HS512 tokens with pre-shared secrets.
 
 ```yaml
 # context.toa.yaml
@@ -114,7 +114,9 @@ configuration:
           - https://github.com/temich
 
       - issuer: some.private.issuer
-        secret: <secret-to-be-used-for-hs256>
+        secrets:
+          HS256:
+            k1: <secret-to-be-used-for-hs256>
 ```
 
 ## Stateless tokens

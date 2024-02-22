@@ -43,7 +43,19 @@ export interface TrustConfiguration {
    */
   audience?: [string, ...string[]];
   /**
-   * HS256 secret
+   * Symmetric encryption secrets
    */
-  secret?: string;
+  secrets?: {
+    /**
+     * This interface was referenced by `undefined`'s JSON-Schema definition
+     * via the `patternProperty` "^HS\d{3}$".
+     */
+    [k: string]: {
+      /**
+       * This interface was referenced by `undefined`'s JSON-Schema definition
+       * via the `patternProperty` "^\w+$".
+       */
+      [k: string]: string;
+    };
+  };
 }

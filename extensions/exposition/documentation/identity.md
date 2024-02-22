@@ -84,7 +84,10 @@ configuration:
       - issuer: https://appleid.apple.com
 
       - issuer: private.entity
-        secret: <THE-SECRET-STRING-FOR-HS256>
+        secrets:
+          HS384:
+            key0: <THE-SECRET-STRING-FOR-HS384>
+            key1: <THE-SECRET-STRING-FOR-HS384> # selected by `kid` in the JWT header
 ```
 
 ## Identity inception
