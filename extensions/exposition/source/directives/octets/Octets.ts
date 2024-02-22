@@ -5,6 +5,7 @@ import { Fetch } from './Fetch'
 import { List } from './List'
 import { Delete } from './Delete'
 import { Permute } from './Permute'
+import { WorkflowDirective } from './Workflow'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
@@ -63,7 +64,8 @@ const DIRECTIVES: Record<string, Constructor> = {
   fetch: Fetch,
   list: List,
   delete: Delete,
-  permute: Permute
+  permute: Permute,
+  workflow: WorkflowDirective
 }
 
 type Constructor = new (value: any, discovery: Promise<Component>, remotes: Remotes) => Directive
