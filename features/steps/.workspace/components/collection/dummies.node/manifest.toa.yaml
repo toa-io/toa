@@ -1,4 +1,4 @@
-name: three
+name: node
 namespace: dummies
 
 entity:
@@ -15,7 +15,3 @@ operations:
     input:
       foo: .
       bar: .
-
-exposition:
-  /:
-    POST: transit

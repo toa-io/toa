@@ -54,6 +54,36 @@ Feature: Identity Federation
       id: ${{ User.id }}
       """
 
+  Scenario: Getting identity for a user with symmetric tokens
+    Given the `identity.federation` configuration:
+      """yaml
+      explicit_identity_creation: false
+      trust:
+        - issuer: http://localhost:44444
+          secrets:
+            HS384:
+              k1: the-secret
+      """
+    And the IDP HS384 token for GoodUser is issued with following secret:
+      """
+      the-secret
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      authorization: Bearer ${{ GoodUser.id_token }}
+      accept: application/yaml
+      content-type: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ GoodUser.token }}
+
+      id: ${{ GoodUser.id }}
+      scheme: bearer
+      """
+
   Scenario: Creating an Identity using inception with existing credentials
     Given the `identity.federation` configuration:
       """yaml
@@ -67,7 +97,7 @@ Feature: Identity Federation
           anonymous: true
           POST:
             incept: id
-            endpoint: transit
+            endpoint: create
       """
     And the IDP token for Bill is issued
     When the following request is received:

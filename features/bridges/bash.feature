@@ -11,6 +11,11 @@ Feature: Bash bridge
       """
       hello
       """
+    When I invoke `hi`
+    Then the reply is received:
+      """
+      Hi!
+      """
 
   Scenario: Bash operation returns error
     Given I boot `bash.dummy` component

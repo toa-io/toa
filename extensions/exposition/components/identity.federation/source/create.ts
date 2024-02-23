@@ -1,5 +1,5 @@
-import { assertionsAsValues } from './assertions-as-values.cjs'
-import { validateIdToken } from './jwt.cjs'
+import { assertionsAsValues } from './lib/assertions-as-values.js'
+import { validateIdToken } from './lib/jwt'
 import type { Request } from '@toa.io/core'
 import type { Context, Entity } from './types'
 

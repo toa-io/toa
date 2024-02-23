@@ -13,7 +13,6 @@ const {
   collapse,
   dereference,
   defaults,
-  dependencies,
   normalize,
   extensions
 } = require('./.component')

@@ -11,7 +11,10 @@ describe('fit', () => {
   })
 
   it('should set defaults', () => {
-    const schema = new Schema({ type: 'object', properties: { a: { type: 'string', default: 'not set' } } })
+    const schema = new Schema({
+      type: 'object',
+      properties: { a: { type: 'string', default: 'not set' } }
+    })
     const value = {}
 
     schema.fit(value)
@@ -20,7 +23,10 @@ describe('fit', () => {
   })
 
   it('should provide defaults', () => {
-    const schema = new Schema({ type: 'object', properties: { a: { type: 'string', default: 'not set' } } })
+    const schema = new Schema({
+      type: 'object',
+      properties: { a: { type: 'string', default: 'not set' } }
+    })
     const defaults = schema.defaults()
 
     expect(defaults).toStrictEqual({ a: 'not set' })
@@ -282,19 +288,6 @@ describe('definitions', () => {
     expect(schema.fit({ foo: 'a-b-c' })).toBe(null)
     expect(schema.fit({ foo: 'a-1' })).not.toBe(null)
     expect(schema.fit({ foo: 'a.b' })).not.toBe(null)
-  })
-
-  it('should define version', () => {
-    const schema = new Schema({
-      type: 'object',
-      properties: {
-        version: { $ref: 'https://schemas.toa.io/0.0.0/definitions#/definitions/version' }
-      }
-    })
-
-    expect(schema.fit({ version: '1.0.0' })).toBe(null)
-    expect(schema.fit({ version: '1.0' })).not.toBe(null)
-    expect(schema.fit({ version: 'wrong' })).not.toBe(null)
   })
 })
 

@@ -117,4 +117,33 @@ export class IdP {
 
     this.captures.set(`${user}.id_token`, idToken)
   }
+
+  @given('the IDP {word} token for {word} is issued with following secret:')
+  public async issueSymmetricToken (alg: string, user: string, secret: string): Promise<void> {
+    console.log('Sym token for %s with secret "%s"', user, secret)
+
+    const jwt = [
+      {
+        typ: 'JWT',
+        alg
+      },
+      {
+        iss: IdP.issuer,
+        sub: `${user}-mock-id`,
+        aud: 'test',
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor((Date.now() + 1000 * 60 * 5) / 1000)
+      }
+    ]
+      .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
+      .join('.')
+
+    const signature = crypto.createHmac(alg.replace(/^HS(\d{3})$/, 'sha$1'), secret)
+      .update(jwt)
+      .digest('base64url')
+
+    const idToken = `${jwt}.${signature}`
+
+    this.captures.set(`${user}.id_token`, idToken)
+  }
 }

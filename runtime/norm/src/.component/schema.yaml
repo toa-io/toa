@@ -53,7 +53,7 @@ properties:
         - const: 'system'
 
   version:
-    $ref: 'definitions#/definitions/version'
+    type: string
 
   build:
     type: object

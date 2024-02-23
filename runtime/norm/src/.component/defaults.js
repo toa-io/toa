@@ -1,6 +1,7 @@
 'use strict'
 
 const { hash } = require('@toa.io/generic')
+const assert = require('node:assert')
 
 // these defaults are required before validation
 const defaults = (manifest) => {
@@ -19,7 +20,19 @@ const defaults = (manifest) => {
   if (manifest.prototype === undefined) manifest.prototype = '@toa.io/prototype'
 
   // TODO: bridge.version()
-  if (manifest.version === undefined) manifest.version = '0.0.0'
+
+  if (manifest.version === undefined) {
+    const bridge = require(manifest.bridge)
+
+    if ('version' in bridge)
+      manifest.version = bridge.version(manifest)
+  }
+
+  if (manifest.version === undefined) {
+    console.warn(`Component '${manifest.namespace ? manifest.namespace + '.' : ''}${manifest.name}' has no version`)
+
+    manifest.version = Math.random().toString(36).slice(2)
+  }
 }
 
 function protoName (manifest) {

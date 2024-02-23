@@ -32,7 +32,7 @@ interface IdentityTokensRevokeInput {
 }
 
 export interface JwtHeader {
-  typ: string
+  typ?: string
   alg: string
   kid?: string
 }
