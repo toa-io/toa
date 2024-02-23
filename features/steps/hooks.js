@@ -12,12 +12,14 @@ Before(
   /**
    * @this {toa.features.Context}
    */
-  async function () {
+  async function() {
     this.cwd = await directory.temp()
     this.containers = {}
+
+    console.log('cwd:', this.cwd)
   })
 
 After(
-  async function () {
+  async function() {
     await stage.shutdown()
   })
