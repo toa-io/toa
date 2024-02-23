@@ -21,14 +21,6 @@ describe('runtime', () => {
     expect(() => validate(context)).toThrow(/required/)
   })
 
-  it('should require version as semver', () => {
-    delete context.runtime.version
-    expect(() => validate(context)).toThrow(/required/)
-
-    context.runtime.version = '.'
-    expect(() => validate(context)).toThrow(/pattern/)
-  })
-
   it('should require registry to match uri format', () => {
     context.runtime.registry = 'not-a-uri'
     expect(() => validate(context)).toThrow(/must match format/)

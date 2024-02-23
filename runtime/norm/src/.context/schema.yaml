@@ -4,7 +4,7 @@ $id: https://schemas.toa.io/0.0.0/context
 type: object
 properties:
   version:
-    $ref: 'definitions#/definitions/version'
+    type: string
   name:
     $ref: 'definitions#/definitions/label'
   description:
@@ -20,7 +20,7 @@ properties:
     type: object
     properties:
       version:
-        $ref: 'definitions#/definitions/version'
+        type: string
       registry:
         type: string
         format: uri

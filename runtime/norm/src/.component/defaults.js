@@ -28,8 +28,11 @@ const defaults = (manifest) => {
       manifest.version = bridge.version(manifest)
   }
 
-  if (manifest.version === undefined)
+  if (manifest.version === undefined) {
     console.warn(`Component '${manifest.namespace ? manifest.namespace + '.' : ''}${manifest.name}' has no version`)
+
+    manifest.version = Math.random().toString(36).slice(2)
+  }
 }
 
 function protoName (manifest) {
