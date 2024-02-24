@@ -1,5 +1,6 @@
 namespace: identity
 name: bans
+version: 0.0.0
 
 entity:
   schema:
