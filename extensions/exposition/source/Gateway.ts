@@ -1,7 +1,7 @@
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
-import type { Interceptor } from './Interception'
+import type { Interception } from './Interception'
 import type { Maybe } from '@toa.io/types'
 import type { Method, Parameter, Tree } from './RTD'
 import type { Label } from './discovery'
@@ -12,11 +12,11 @@ import type { Directives } from './Directive'
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree<Endpoint, Directives>
-  private readonly interceptor: Interceptor
+  private readonly interceptor: Interception
   private readonly server: Connector
 
   // eslint-disable-next-line max-params, max-len
-  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint, Directives>, interception: Interceptor) {
+  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint, Directives>, interception: Interception) {
     super()
 
     this.broadcast = broadcast
@@ -41,7 +41,8 @@ export class Gateway extends Connector {
   }
 
   private async process (request: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    const interception = await this.interceptor.intercept(request)
+    const interception = await request.timing.capture('gate:intercept',
+      this.interceptor.intercept(request))
 
     if (interception !== null)
       return interception
@@ -57,10 +58,14 @@ export class Gateway extends Connector {
       throw new http.MethodNotAllowed()
 
     const method = node.methods[request.method]
-    const interruption = await method.directives.preflight(request, parameters)
-    const response = interruption ?? await this.call(method, request, parameters)
 
-    await method.directives.settle(request, response)
+    const interruption = await request.timing.capture('gate:preflight',
+      method.directives.preflight(request, parameters))
+
+    const response = interruption ??
+      await request.timing.capture('gate:call', this.call(method, request, parameters))
+
+    await request.timing.capture('gate:settle', method.directives.settle(request, response))
 
     return response
   }
@@ -78,9 +83,6 @@ export class Gateway extends Connector {
       throw new http.MethodNotAllowed()
 
     const body = await request.parse()
-
-    if ('embed' in request && typeof body === 'object' && body !== null)
-      Object.assign(body, request.embed)
 
     const reply = await method.endpoint
       .call(body, request.query, parameters)

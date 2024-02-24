@@ -1,4 +1,5 @@
 import { Readable } from 'stream'
+import { Timing } from './Timing'
 import type { IncomingMessage } from './messages'
 import type * as http from 'node:http'
 import type { NextFunction, Response, Express, Request } from 'express'
@@ -20,7 +21,12 @@ jest.MockedObject<IncomingMessage> {
   const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content)
   const stream = Readable.from(buffer)
 
-  Object.assign(stream, { headers: {} }, req)
+  const mock: Partial<IncomingMessage> = {
+    headers: {},
+    timing: new Timing(false)
+  }
+
+  Object.assign(stream, mock, req)
 
   return stream as unknown as jest.MockedObject<IncomingMessage>
 }

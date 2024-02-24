@@ -41,6 +41,12 @@ export function deployment (_: unknown, annotation: Annotation | undefined): Dep
       value: '1'
     })
 
+  if (annotation?.trace === true)
+    service.variables.push({
+      name: 'TOA_EXPOSITION_TRACE',
+      value: '1'
+    })
+
   if (annotation !== undefined)
     schemas.annotaion.validate(annotation)
 
