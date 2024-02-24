@@ -1,6 +1,7 @@
 'use strict'
 
 const source = {
+  path: '',
   entity: {
     schema: {
       properties: {
