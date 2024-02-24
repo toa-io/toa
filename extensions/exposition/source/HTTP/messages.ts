@@ -4,9 +4,9 @@ import { type Request, type Response } from 'express'
 import { buffer } from '@toa.io/streams'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import type { Format } from './formats'
 import type { Timing } from './Timing'
 import type { ParsedQs } from 'qs'
-import type { Format } from './formats'
 
 export function write
 (request: IncomingMessage, response: Response, message: OutgoingMessage): void {
@@ -35,9 +35,7 @@ export async function read (request: IncomingMessage): Promise<any> {
   const buf = await request.timing.capture('req:buffer', buffer(request))
 
   try {
-    const body = format.decode(buf)
-
-    return body
+    return format.decode(buf)
   } catch {
     throw new BadRequest()
   }
