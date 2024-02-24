@@ -4,6 +4,7 @@ import { type Request, type Response } from 'express'
 import { buffer } from '@toa.io/streams'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import type { Timing } from './Timing'
 import type { ParsedQs } from 'qs'
 import type { Format } from './formats'
 
@@ -13,6 +14,7 @@ export function write
     transform(message)
 
   message.headers?.forEach((value, key) => response.set(key, value))
+  request.timing.append(response)
 
   if (message.body instanceof Readable)
     stream(message, request, response)
@@ -20,7 +22,7 @@ export function write
     send(message, request, response)
 }
 
-export async function read (request: Request): Promise<any> {
+export async function read (request: IncomingMessage): Promise<any> {
   const type = request.headers['content-type']
 
   if (type === undefined)
@@ -30,11 +32,12 @@ export async function read (request: Request): Promise<any> {
     throw new UnsupportedMediaType()
 
   const format = formats[type]
-
-  const buf = await buffer(request)
+  const buf = await request.timing.capture('req:buffer', buffer(request))
 
   try {
-    return format.decode(buf)
+    const body = format.decode(buf)
+
+    return body
   } catch {
     throw new BadRequest()
   }
@@ -109,6 +112,7 @@ export interface IncomingMessage extends Request {
     body: Array<(input: unknown) => unknown>
     response: Array<(output: OutgoingMessage) => void>
   }
+  timing: Timing
 }
 
 export interface OutgoingMessage {

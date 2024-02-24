@@ -7,6 +7,7 @@ import Negotiator from 'negotiator'
 import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
 import { ClientError, Exception } from './exceptions'
 import { formats, types } from './formats'
+import { Timing } from './Timing'
 import type * as http from 'node:http'
 import type { Express, Request, Response, NextFunction } from 'express'
 
@@ -83,12 +84,13 @@ export class Server extends Connector {
   private extend (request: Request): IncomingMessage {
     const message = request as IncomingMessage
 
+    message.pipelines = { body: [], response: [] }
+    message.timing = new Timing(this.debug)
+
     negotiate(request, message)
 
-    message.pipelines = { body: [], response: [] }
-
     message.parse = async <T> (): Promise<T> => {
-      const value = await read(request)
+      const value = await read(message)
 
       if (message.pipelines.body.length === 0)
         return value
