@@ -26,6 +26,9 @@ export class Gateway {
     if (annotation.debug === true)
       process.env.TOA_EXPOSITION_DEBUG = '1'
 
+    if (annotation.trace === true)
+      process.env.TOA_EXPOSITION_TRACE = '1'
+
     await Gateway.stop()
 
     this.default = false

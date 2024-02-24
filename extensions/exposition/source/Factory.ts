@@ -26,8 +26,9 @@ export class Factory implements extensions.Factory {
 
   public service (): Connector | null {
     const debug = process.env.TOA_EXPOSITION_DEBUG === '1'
+    const trace = process.env.TOA_EXPOSITION_TRACE === '1'
     const broadcast = this.boot.bindings.broadcast(CHANNEL)
-    const server = Server.create({ methods: syntax.verbs, debug })
+    const server = Server.create({ methods: syntax.verbs, debug, trace })
     const remotes = new Remotes(this.boot)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)

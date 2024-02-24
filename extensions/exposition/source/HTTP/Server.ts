@@ -14,19 +14,18 @@ import type { Express, Request, Response, NextFunction } from 'express'
 export class Server extends Connector {
   private server?: http.Server
   private readonly app: Express
-  private readonly debug: boolean
-  private readonly requestedPort: number
+  private readonly properties: Properties
 
-  private constructor (app: Express, debug: boolean, port: number) {
+  private constructor (app: Express, properties: Properties) {
     super()
 
     this.app = app
-    this.debug = debug
-    this.requestedPort = port
+    this.properties = properties
   }
 
   public get port (): number {
-    if (this.server === undefined) return this.requestedPort
+    if (this.server === undefined)
+      return this.properties.port
 
     const address = this.server.address()
 
@@ -46,7 +45,7 @@ export class Server extends Connector {
     app.disable('x-powered-by')
     app.use(supportedMethods(properties.methods))
 
-    return new Server(app, properties.debug, properties.port)
+    return new Server(app, properties)
   }
 
   public attach (process: Processing): void {
@@ -62,7 +61,7 @@ export class Server extends Connector {
   protected override async open (): Promise<void> {
     const listening = promex()
 
-    this.server = this.app.listen(this.requestedPort, listening.callback)
+    this.server = this.app.listen(this.properties.port, listening.callback)
 
     await listening
 
@@ -85,7 +84,7 @@ export class Server extends Connector {
     const message = request as IncomingMessage
 
     message.pipelines = { body: [], response: [] }
-    message.timing = new Timing(this.debug)
+    message.timing = new Timing(this.properties.trace)
 
     negotiate(request, message)
 
@@ -128,7 +127,7 @@ export class Server extends Connector {
       response.status(status)
 
       const message: OutgoingMessage = {}
-      const verbose = exception instanceof ClientError || this.debug
+      const verbose = exception instanceof ClientError || this.properties.debug
 
       if (verbose)
         message.body = exception instanceof Exception
@@ -181,12 +180,14 @@ async function adam (request: Request): Promise<void> {
 const DEFAULTS: Properties = {
   methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
+  trace: false,
   port: 8000
 }
 
 interface Properties {
   methods: Set<string>
   debug: boolean
+  trace: boolean
   port: number
 }
 

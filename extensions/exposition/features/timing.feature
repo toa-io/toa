@@ -25,7 +25,7 @@ Feature: Server timing
   Scenario: Server timing is sent when debug is enabled
     Given the annotation:
       """
-      debug: true
+      trace: true
       """
     When the following request is received:
       """
