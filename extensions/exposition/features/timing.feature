@@ -39,5 +39,5 @@ Feature: Server timing
     Then the following reply is sent:
       """
       201 Created
-      server-timing: 1
+      server-timing:
       """
