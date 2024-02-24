@@ -7,7 +7,8 @@ const {
   events,
   receivers,
   extensions,
-  properties
+  properties,
+  version
 } = require('./.expand')
 
 const expand = (manifest) => {
@@ -18,6 +19,7 @@ const expand = (manifest) => {
   receivers(manifest)
   properties(manifest)
   extensions(manifest)
+  version(manifest)
 }
 
 exports.expand = expand
