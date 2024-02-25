@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import * as http from 'node:http'
 import assert from 'node:assert'
+import { once } from 'node:events'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
 import { type OutgoingMessage, write } from './messages'
@@ -47,11 +48,9 @@ export class Server extends Connector {
   }
 
   protected override async open (): Promise<void> {
-    const listening = promex()
+    this.server.listen(this.properties.port)
 
-    this.server.listen(this.properties.port, listening.callback)
-
-    await listening
+    await once(this.server, 'listening')
 
     console.info('HTTP Server is listening.')
   }
@@ -96,10 +95,14 @@ export class Server extends Connector {
       let status = message.status
 
       if (status === undefined)
-        if (message.body === null) status = 404
-        else if (context.request.method === 'POST') status = 201
-        else if (message.body === undefined) status = 204
-        else status = 200
+        if (message.body === null)
+          status = 404
+        else if (context.request.method === 'POST')
+          status = 201
+        else if (message.body === undefined)
+          status = 204
+        else
+          status = 200
 
       response.statusCode = status
       write(context, response, message)
