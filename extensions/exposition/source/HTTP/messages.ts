@@ -1,19 +1,17 @@
-import { type IncomingHttpHeaders } from 'node:http'
 import { Readable } from 'node:stream'
-import { type Request, type Response } from 'express'
-import { buffer } from '@toa.io/streams'
+import { buffer } from 'node:stream/consumers'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import type * as http from 'node:http'
 import type { Format } from './formats'
 import type { Timing } from './Timing'
-import type { ParsedQs } from 'qs'
 
 export function write
-(request: IncomingMessage, response: Response, message: OutgoingMessage): void {
+(request: IncomingMessage, response: http.ServerResponse, message: OutgoingMessage): void {
   for (const transform of request.pipelines.response)
     transform(message)
 
-  message.headers?.forEach((value, key) => response.set(key, value))
+  message.headers?.forEach((value, key) => response.setHeader(key, value))
   request.timing.append(response)
 
   if (message.body instanceof Readable)
@@ -41,7 +39,8 @@ export async function read (request: IncomingMessage): Promise<any> {
   }
 }
 
-function send (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
+function send
+(message: OutgoingMessage, request: IncomingMessage, response: http.ServerResponse): void {
   if (message.body === undefined || message.body === null) {
     response.end()
 
@@ -54,13 +53,13 @@ function send (message: OutgoingMessage, request: IncomingMessage, response: Res
   const buf = request.encoder.encode(message.body)
 
   response
-    .set('content-type', request.encoder.type)
-    .append('vary', 'accept')
+    .setHeader('content-type', request.encoder.type)
+    .appendHeader('vary', 'accept')
     .end(buf)
 }
 
 function stream
-(message: OutgoingMessage, request: IncomingMessage, response: Response): void {
+(message: OutgoingMessage, request: IncomingMessage, response: http.ServerResponse): void {
   const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
@@ -74,18 +73,18 @@ function stream
   })
 }
 
-function pipe (message: OutgoingMessage, response: Response): void {
-  message.headers?.forEach((value, key) => response.set(key, value))
+function pipe (message: OutgoingMessage, response: http.ServerResponse): void {
   message.body.pipe(response)
 }
 
-function multipart (message: OutgoingMessage, request: IncomingMessage, response: Response): void {
+function multipart
+(message: OutgoingMessage, request: IncomingMessage, response: http.ServerResponse): void {
   if (request.encoder === null)
     throw new NotAcceptable()
 
   const encoder = request.encoder
 
-  response.set('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
+  response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
   message.body
     .map((part: unknown) => Buffer.concat([CUT, encoder.encode(part)]))
@@ -97,12 +96,11 @@ const BOUNDARY = 'cut'
 const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
-export interface IncomingMessage extends Request {
-  method: string
-  path: string
-  url: string
-  headers: IncomingHttpHeaders
-  query: Query
+export interface IncomingMessage extends http.IncomingMessage {
+  method: string // defined
+  url: string // defined
+
+  locator: URL
   parse: <T> () => Promise<T>
   encoder: Format | null
   subtype: string | null
@@ -119,7 +117,9 @@ export interface OutgoingMessage {
   body?: any
 }
 
-export interface Query extends ParsedQs {
+export interface Query {
+  [key: string]: string | undefined
+
   id?: string
   criteria?: string
   sort?: string

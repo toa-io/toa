@@ -47,7 +47,7 @@ export class Gateway extends Connector {
     if (interception !== null)
       return interception
 
-    const match = this.tree.match(request.path)
+    const match = this.tree.match(request.locator.pathname)
 
     if (match === null)
       throw new http.NotFound()
@@ -73,7 +73,7 @@ export class Gateway extends Connector {
   private async call
   (method: Method<Endpoint, Directives>, request: http.IncomingMessage, parameters: Parameter[]):
   Promise<http.OutgoingMessage> {
-    if (request.path[request.path.length - 1] !== '/')
+    if (request.locator.pathname[request.locator.pathname.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required.')
 
     if (request.encoder === null)
@@ -83,9 +83,10 @@ export class Gateway extends Connector {
       throw new http.MethodNotAllowed()
 
     const body = await request.parse()
+    const query = Object.fromEntries(request.locator.searchParams)
 
     const reply = await method.endpoint
-      .call(body, request.query, parameters)
+      .call(body, query, parameters)
       .catch(rethrow) as Maybe<unknown>
 
     if (reply instanceof Error)

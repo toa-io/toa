@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
-import express from 'express'
+import * as http from 'node:http'
+import assert from 'node:assert'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
 import Negotiator from 'negotiator'
@@ -8,23 +9,22 @@ import { read, write, type IncomingMessage, type OutgoingMessage } from './messa
 import { ClientError, Exception } from './exceptions'
 import { formats, types } from './formats'
 import { Timing } from './Timing'
-import type * as http from 'node:http'
-import type { Express, Request, Response, NextFunction } from 'express'
 
 export class Server extends Connector {
-  private server?: http.Server
-  private readonly app: Express
+  private readonly server: http.Server = http.createServer()
   private readonly properties: Properties
+  private process?: Processing
 
-  private constructor (app: Express, properties: Properties) {
+  private constructor (properties: Properties) {
     super()
 
-    this.app = app
     this.properties = properties
+
+    this.server.on('request', (req, res) => this.listener(req, res))
   }
 
   public get port (): number {
-    if (this.server === undefined)
+    if (this.properties.port !== 0)
       return this.properties.port
 
     const address = this.server.address()
@@ -40,28 +40,17 @@ export class Server extends Connector {
       ? DEFAULTS
       : { ...DEFAULTS, ...options }
 
-    const app = express()
-
-    app.disable('x-powered-by')
-    app.use(supportedMethods(properties.methods))
-
-    return new Server(app, properties)
+    return new Server(properties)
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: Request, response: Response) => {
-      const message = this.extend(request)
-
-      process(message)
-        .then(this.success(message, response))
-        .catch(this.fail(message, response))
-    })
+    this.process = process
   }
 
   protected override async open (): Promise<void> {
     const listening = promex()
 
-    this.server = this.app.listen(this.properties.port, listening.callback)
+    this.server.listen(this.properties.port, listening.callback)
 
     await listening
 
@@ -71,18 +60,42 @@ export class Server extends Connector {
   protected override async close (): Promise<void> {
     const stopped = promex()
 
-    this.server?.close(stopped.callback)
+    this.server.close(stopped.callback)
+
+    console.info('HTTP Server stopped accepting new connections.')
 
     await stopped
-
-    this.server = undefined
 
     console.info('HTTP Server has been stopped.')
   }
 
-  private extend (request: Request): IncomingMessage {
+  private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
+    if (request.method === undefined || !this.properties.methods.has(request.method)) {
+      response.writeHead(501).end()
+
+      return
+    }
+
+    if (request.url === undefined) {
+      response.writeHead(400).end()
+
+      return
+    }
+
+    assert.ok(this.process !== undefined,
+      'No processing function has been attached to the server.')
+
+    this.extend(request)
+
+    this.process(request)
+      .then(this.success(request, response))
+      .catch(this.fail(request, response))
+  }
+
+  private extend (request: http.IncomingMessage): asserts request is IncomingMessage {
     const message = request as IncomingMessage
 
+    message.locator = new URL(message.url, `https://${request.headers.host}`)
     message.pipelines = { body: [], response: [] }
     message.timing = new Timing(this.properties.trace)
 
@@ -96,11 +109,9 @@ export class Server extends Connector {
 
       return message.pipelines.body.reduce((value, transform) => transform(value), value)
     }
-
-    return message
   }
 
-  private success (request: IncomingMessage, response: Response) {
+  private success (request: IncomingMessage, response: http.ServerResponse) {
     return (message: OutgoingMessage) => {
       let status = message.status
 
@@ -110,12 +121,12 @@ export class Server extends Connector {
         else if (message.body === undefined) status = 204
         else status = 200
 
-      response.status(status)
+      response.statusCode = status
       write(request, response, message)
     }
   }
 
-  private fail (request: IncomingMessage, response: Response) {
+  private fail (request: IncomingMessage, response: http.ServerResponse) {
     return async (exception: Error) => {
       if (!request.complete)
         await adam(request)
@@ -124,7 +135,7 @@ export class Server extends Connector {
         ? exception.status
         : 500
 
-      response.status(status)
+      response.statusCode = status
 
       const message: OutgoingMessage = {}
       const verbose = exception instanceof ClientError || this.properties.debug
@@ -139,14 +150,7 @@ export class Server extends Connector {
   }
 }
 
-function supportedMethods (methods: Set<string>) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    if (methods.has(req.method)) next()
-    else res.sendStatus(501)
-  }
-}
-
-function negotiate (request: Request, message: IncomingMessage): void {
+function negotiate (request: http.IncomingMessage, message: IncomingMessage): void {
   if (request.headers.accept !== undefined) {
     const match = SUBTYPE.exec(request.headers.accept)
 
@@ -166,7 +170,7 @@ function negotiate (request: Request, message: IncomingMessage): void {
 }
 
 // https://github.com/whatwg/fetch/issues/1254
-async function adam (request: Request): Promise<void> {
+async function adam (request: http.IncomingMessage): Promise<void> {
   const completed = promex()
   const devnull = fs.createWriteStream(os.devNull)
 
@@ -174,7 +178,7 @@ async function adam (request: Request): Promise<void> {
     .on('end', completed.callback)
     .pipe(devnull)
 
-  return await completed
+  return completed
 }
 
 const DEFAULTS: Properties = {

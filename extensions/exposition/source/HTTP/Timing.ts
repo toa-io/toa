@@ -1,5 +1,5 @@
 import { performance } from 'node:perf_hooks'
-import type { Response } from 'express'
+import type { ServerResponse } from 'node:http'
 
 export class Timing {
   private readonly skip: boolean
@@ -22,14 +22,14 @@ export class Timing {
     return result
   }
 
-  public append (response: Response): void {
+  public append (response: ServerResponse): void {
     if (this.skip)
       return
 
     this.breakpoints.push({ id: 'total', duration: performance.now() - this.start })
 
     for (const breakpoint of this.breakpoints)
-      response.append('server-timing',
+      response.appendHeader('server-timing',
         `${breakpoint.id};dur=${breakpoint.duration.toFixed(3)}`)
   }
 }
