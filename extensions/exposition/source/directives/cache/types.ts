@@ -4,6 +4,6 @@ export interface Directive {
   set: (input: Input, headers: Headers) => void
 }
 
-export interface AuthenticatedRequest extends Input {
+export interface AuthenticatedContext extends Input {
   identity?: unknown | null
 }

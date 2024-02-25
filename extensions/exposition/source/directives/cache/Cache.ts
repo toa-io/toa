@@ -23,9 +23,9 @@ export class Cache implements Family<Directive> {
   }
 
   public async settle
-  (directives: Directive[], request: Input, response: http.OutgoingMessage): Promise<void> {
+  (directives: Directive[], input: Input, response: http.OutgoingMessage): Promise<void> {
     response.headers ??= new Headers()
-    directives[0]?.set(request, response.headers)
+    directives[0]?.set(input, response.headers)
   }
 }
 

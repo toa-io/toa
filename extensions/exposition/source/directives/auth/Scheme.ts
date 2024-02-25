@@ -12,10 +12,10 @@ export class Scheme implements Directive {
   }
 
   public authorize (_: Identity | null, input: Input): boolean {
-    if (input.headers.authorization === undefined)
+    if (input.request.headers.authorization === undefined)
       return false
 
-    const [scheme] = split(input.headers.authorization)
+    const [scheme] = split(input.request.headers.authorization)
 
     if (scheme !== this.scheme)
       throw new http.Forbidden(this.Scheme +

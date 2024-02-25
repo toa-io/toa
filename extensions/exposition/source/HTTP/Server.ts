@@ -4,11 +4,10 @@ import * as http from 'node:http'
 import assert from 'node:assert'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
-import Negotiator from 'negotiator'
-import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
+import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
-import { formats, types } from './formats'
-import { Timing } from './Timing'
+import { Context } from './Context'
+import type { IncomingMessage } from './Context'
 
 export class Server extends Connector {
   private readonly server: http.Server = http.createServer()
@@ -85,57 +84,36 @@ export class Server extends Connector {
     assert.ok(this.process !== undefined,
       'No processing function has been attached to the server.')
 
-    this.extend(request)
+    const context = new Context(request as IncomingMessage, this.properties.trace)
 
-    this.process(request)
-      .then(this.success(request, response))
-      .catch(this.fail(request, response))
+    this.process(context)
+      .then(this.success(context, response))
+      .catch(this.fail(context, response))
   }
 
-  private extend (request: http.IncomingMessage): asserts request is IncomingMessage {
-    const message = request as IncomingMessage
-
-    message.locator = new URL(message.url, `https://${request.headers.host}`)
-    message.pipelines = { body: [], response: [] }
-    message.timing = new Timing(this.properties.trace)
-
-    negotiate(request, message)
-
-    message.parse = async <T> (): Promise<T> => {
-      const value = await read(message)
-
-      if (message.pipelines.body.length === 0)
-        return value
-
-      return message.pipelines.body.reduce((value, transform) => transform(value), value)
-    }
-  }
-
-  private success (request: IncomingMessage, response: http.ServerResponse) {
+  private success (context: Context, response: http.ServerResponse) {
     return (message: OutgoingMessage) => {
       let status = message.status
 
       if (status === undefined)
         if (message.body === null) status = 404
-        else if (request.method === 'POST') status = 201
+        else if (context.request.method === 'POST') status = 201
         else if (message.body === undefined) status = 204
         else status = 200
 
       response.statusCode = status
-      write(request, response, message)
+      write(context, response, message)
     }
   }
 
-  private fail (request: IncomingMessage, response: http.ServerResponse) {
+  private fail (context: Context, response: http.ServerResponse) {
     return async (exception: Error) => {
-      if (!request.complete)
-        await adam(request)
+      if (!context.request.complete)
+        await adam(context.request)
 
-      const status = exception instanceof Exception
+      response.statusCode = exception instanceof Exception
         ? exception.status
         : 500
-
-      response.statusCode = status
 
       const message: OutgoingMessage = {}
       const verbose = exception instanceof ClientError || this.properties.debug
@@ -145,28 +123,9 @@ export class Server extends Connector {
           ? exception.body
           : (exception.stack ?? exception.message)
 
-      write(request, response, message)
+      write(context, response, message)
     }
   }
-}
-
-function negotiate (request: http.IncomingMessage, message: IncomingMessage): void {
-  if (request.headers.accept !== undefined) {
-    const match = SUBTYPE.exec(request.headers.accept)
-
-    if (match !== null) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const { type, subtype, suffix } = match.groups!
-
-      request.headers.accept = `${type}/${suffix}`
-      message.subtype = subtype
-    }
-  }
-
-  const negotiator = new Negotiator(request)
-  const mediaType = negotiator.mediaType(types)
-
-  message.encoder = mediaType === undefined ? null : formats[mediaType]
 }
 
 // https://github.com/whatwg/fetch/issues/1254
@@ -195,6 +154,4 @@ interface Properties {
   port: number
 }
 
-export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>
-
-const SUBTYPE = /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/
+export type Processing = (input: Context) => Promise<OutgoingMessage>

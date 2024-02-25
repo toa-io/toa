@@ -56,7 +56,7 @@ export class Authorization implements Family<Directive, Extension> {
   public async preflight (directives: Directive[],
     input: Input,
     parameters: Parameter[]): Promise<Output> {
-    const identity = await this.resolve(input.headers.authorization)
+    const identity = await this.resolve(input.request.headers.authorization)
 
     input.identity = identity
 
@@ -67,8 +67,10 @@ export class Authorization implements Family<Directive, Extension> {
         return directive.reply?.(identity) ?? null
     }
 
-    if (identity === null) throw new http.Unauthorized()
-    else throw new http.Forbidden()
+    if (identity === null)
+      throw new http.Unauthorized()
+    else
+      throw new http.Forbidden()
   }
 
   public async settle (directives: Directive[],

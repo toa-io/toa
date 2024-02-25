@@ -46,14 +46,16 @@ export class Octets implements Family<Directive> {
     if (action === null)
       return null
 
+    // noinspection PointlessBooleanExpressionJS
     if (context === null)
       throw new Error('Octets context is not defined.')
 
-    const targeted = input.url[input.url.length - 1] !== '/'
+    const targeted = input.request.url[input.request.url.length - 1] !== '/'
 
     if (targeted !== action.targeted)
       throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}.`)
 
+    // noinspection JSObjectNullOrUndefined
     return action.apply(context.storage, input, parameters)
   }
 }

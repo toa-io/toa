@@ -24,18 +24,18 @@ export class WorkflowDirective implements Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, request: Input, parameters: Parameter[]): Promise<Output> {
+  public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery
 
     const entry = await this.storage.invoke<Maybe<Entry>>('get',
-      { input: { storage, path: request.url } })
+      { input: { storage, path: input.request.url } })
 
     if (entry instanceof Error)
       throw new NotFound()
 
     return {
       status: 202,
-      body: this.workflow.execute(request, storage, entry, parameters)
+      body: this.workflow.execute(input, storage, entry, parameters)
     }
   }
 }

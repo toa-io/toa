@@ -17,12 +17,12 @@ export class CORS implements Interceptor {
   })
 
   public intercept (input: Input): Output {
-    const origin = input.headers.origin
+    const origin = input.request.headers.origin
 
     if (origin === undefined)
       return null
 
-    if (input.method === 'OPTIONS')
+    if (input.request.method === 'OPTIONS')
       return this.preflightResponse(origin)
 
     input.pipelines.response.push((output) => {
@@ -31,7 +31,9 @@ export class CORS implements Interceptor {
       output.headers.set('access-control-expose-headers',
         'authorization, content-type, content-length, etag')
 
-      if (input.method === 'GET' || input.method === 'HEAD' || input.method === 'OPTIONS')
+      const method = input.request.method
+
+      if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS')
         output.headers.append('vary', 'origin')
     })
 

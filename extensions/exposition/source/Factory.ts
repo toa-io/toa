@@ -9,6 +9,7 @@ import { type Directives, DirectivesFactory } from './Directive'
 import { Composition } from './Composition'
 import * as root from './root'
 import { Interception } from './Interception'
+import type { Broadcast } from './Gateway'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
@@ -19,7 +20,7 @@ export class Factory implements extensions.Factory {
   }
 
   public tenant (locator: Locator, node: syntax.Node): Connector {
-    const broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
+    const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
 
     return new Tenant(broadcast, locator, node)
   }
@@ -27,7 +28,7 @@ export class Factory implements extensions.Factory {
   public service (): Connector | null {
     const debug = process.env.TOA_EXPOSITION_DEBUG === '1'
     const trace = process.env.TOA_EXPOSITION_TRACE === '1'
-    const broadcast = this.boot.bindings.broadcast(CHANNEL)
+    const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
     const server = Server.create({ methods: syntax.verbs, debug, trace })
     const remotes = new Remotes(this.boot)
     const node = root.resolve()
@@ -37,10 +38,12 @@ export class Factory implements extensions.Factory {
     const tree = new Tree<Endpoint, Directives>(node, methods, directives)
 
     const composition = new Composition(this.boot)
-    const gateway = new Gateway(broadcast, server, tree, interception)
+    const gateway = new Gateway(broadcast, tree, interception)
 
     gateway.depends(remotes)
     gateway.depends(composition)
+
+    server.attach(gateway.process.bind(gateway))
     server.depends(gateway)
 
     return server

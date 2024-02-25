@@ -1,4 +1,4 @@
-import type { IncomingMessage, OutgoingMessage } from './HTTP'
+import type { Context, OutgoingMessage } from './HTTP'
 
-export type Input = IncomingMessage
+export type Input = Context
 export type Output = OutgoingMessage | null

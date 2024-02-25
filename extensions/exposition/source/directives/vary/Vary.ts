@@ -21,7 +21,7 @@ export class Vary implements Family {
 
   public preflight (instances: Array<Directive | Property>, request: Input): Output {
     /*
-    To stop consructing `properties` object on each request, Directive Families must be refactored
+    To stop constructing `properties` object on each request, Directive Families must be refactored
     from singleton factories to per-Node instances on the Tree.
      */
     const properties: Properties = {}

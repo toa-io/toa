@@ -14,10 +14,12 @@ export class Role implements Directive {
   public static async set (identity: Identity, discovery: Promise<Component>): Promise<void> {
     this.remote ??= await discovery
 
-    const query: Query = { criteria: `identity==${identity.id}`, limit: 1024 }
-    const roles: string[] = await this.remote.invoke('list', { query })
+    const query: Query = {
+      criteria: `identity==${identity.id}`,
+      limit: 1024
+    }
 
-    identity.roles = roles
+    identity.roles = await this.remote.invoke('list', { query })
   }
 
   public async authorize (identity: Identity | null): Promise<boolean> {

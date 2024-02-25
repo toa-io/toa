@@ -2,26 +2,25 @@ import { Readable } from 'node:stream'
 import { buffer } from 'node:stream/consumers'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
+import type { Context } from './Context'
 import type * as http from 'node:http'
-import type { Format } from './formats'
-import type { Timing } from './Timing'
 
 export function write
-(request: IncomingMessage, response: http.ServerResponse, message: OutgoingMessage): void {
-  for (const transform of request.pipelines.response)
+(context: Context, response: http.ServerResponse, message: OutgoingMessage): void {
+  for (const transform of context.pipelines.response)
     transform(message)
 
   message.headers?.forEach((value, key) => response.setHeader(key, value))
-  request.timing.append(response)
+  context.timing.append(response)
 
   if (message.body instanceof Readable)
-    stream(message, request, response)
+    stream(message, context, response)
   else
-    send(message, request, response)
+    send(message, context, response)
 }
 
-export async function read (request: IncomingMessage): Promise<any> {
-  const type = request.headers['content-type']
+export async function read (context: Context): Promise<any> {
+  const type = context.request.headers['content-type']
 
   if (type === undefined)
     return undefined
@@ -30,7 +29,7 @@ export async function read (request: IncomingMessage): Promise<any> {
     throw new UnsupportedMediaType()
 
   const format = formats[type]
-  const buf = await request.timing.capture('req:buffer', buffer(request))
+  const buf = await context.timing.capture('req:buffer', buffer(context.request))
 
   try {
     return format.decode(buf)
@@ -40,32 +39,32 @@ export async function read (request: IncomingMessage): Promise<any> {
 }
 
 function send
-(message: OutgoingMessage, request: IncomingMessage, response: http.ServerResponse): void {
+(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (message.body === undefined || message.body === null) {
     response.end()
 
     return
   }
 
-  if (request.encoder === null)
+  if (context.encoder === null)
     throw new NotAcceptable()
 
-  const buf = request.encoder.encode(message.body)
+  const buf = context.encoder.encode(message.body)
 
   response
-    .setHeader('content-type', request.encoder.type)
+    .setHeader('content-type', context.encoder.type)
     .appendHeader('vary', 'accept')
     .end(buf)
 }
 
 function stream
-(message: OutgoingMessage, request: IncomingMessage, response: http.ServerResponse): void {
+(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
     pipe(message, response)
   else
-    multipart(message, request, response)
+    multipart(message, context, response)
 
   message.body.on('error', (e: Error) => {
     console.error(e)
@@ -78,11 +77,11 @@ function pipe (message: OutgoingMessage, response: http.ServerResponse): void {
 }
 
 function multipart
-(message: OutgoingMessage, request: IncomingMessage, response: http.ServerResponse): void {
-  if (request.encoder === null)
+(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+  if (context.encoder === null)
     throw new NotAcceptable()
 
-  const encoder = request.encoder
+  const encoder = context.encoder
 
   response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
@@ -95,21 +94,6 @@ function multipart
 const BOUNDARY = 'cut'
 const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
-
-export interface IncomingMessage extends http.IncomingMessage {
-  method: string // defined
-  url: string // defined
-
-  locator: URL
-  parse: <T> () => Promise<T>
-  encoder: Format | null
-  subtype: string | null
-  pipelines: {
-    body: Array<(input: unknown) => unknown>
-    response: Array<(output: OutgoingMessage) => void>
-  }
-  timing: Timing
-}
 
 export interface OutgoingMessage {
   status?: number
