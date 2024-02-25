@@ -15,7 +15,10 @@ export class Context {
   public readonly pipelines: {
     body: Array<(input: unknown) => unknown>
     response: Array<(output: OutgoingMessage) => void>
-  } = { body: [], response: [] }
+  } = {
+      body: [],
+      response: []
+    }
 
   public constructor (request: IncomingMessage, trace = false) {
     this.request = request
@@ -29,7 +32,11 @@ export class Context {
 
       if (match !== null) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- checked by regex
-        const { type, subtype, suffix } = match.groups!
+        const {
+          type,
+          subtype,
+          suffix
+        } = match.groups!
 
         this.request.headers.accept = `${type}/${suffix}`
         this.subtype = subtype

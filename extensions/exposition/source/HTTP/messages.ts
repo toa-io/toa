@@ -62,7 +62,7 @@ function stream
   const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
-    pipe(message, response)
+    message.body.pipe(response)
   else
     multipart(message, context, response)
 
@@ -70,10 +70,6 @@ function stream
     console.error(e)
     response.end()
   })
-}
-
-function pipe (message: OutgoingMessage, response: http.ServerResponse): void {
-  message.body.pipe(response)
 }
 
 function multipart
@@ -86,13 +82,14 @@ function multipart
   response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
   message.body
-    .map((part: unknown) => Buffer.concat([CUT, encoder.encode(part)]))
+    .map((part: unknown) => Buffer.concat([CUT, encoder.encode(part), CRLF]))
     .on('end', () => response.end(FINALCUT))
     .pipe(response)
 }
 
 const BOUNDARY = 'cut'
 const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
+const CRLF = Buffer.from('\r\n')
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
 export interface OutgoingMessage {
