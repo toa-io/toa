@@ -18,7 +18,7 @@ and pepper.
 # context.toa.yaml
 
 configuration:
-  identity.basic:
+  identity.tokens:
     rounds: 10 # salt rounds
     peper: ''  # hashing pepper
 ```
