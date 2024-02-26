@@ -99,11 +99,12 @@ export interface OutgoingMessage {
 }
 
 export interface Query {
-  [key: string]: string | undefined
+  [key: string]: string | number | undefined
 
   id?: string
   criteria?: string
   sort?: string
   omit?: string
   limit?: string
+  version?: number
 }

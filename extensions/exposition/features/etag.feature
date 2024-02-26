@@ -33,16 +33,15 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
       etag: "1"
       """
     When the following request is received:
       """
       PUT /pots/${{ id }}/ HTTP/1.1
       content-type: application/yaml
-      if-match: "nope"
+      if-match: "38"
 
-      title: Bye
+      volume: 2.5
       """
     Then the following reply is sent:
       """
@@ -54,9 +53,10 @@ Feature: Optimistic concurrency control
       content-type: application/yaml
       if-match: "1"
 
-      title: Bye
+      volume: 2.5
       """
     Then the following reply is sent:
       """
       200 OK
+      etag: "2"
       """

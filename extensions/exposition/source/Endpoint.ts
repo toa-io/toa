@@ -1,9 +1,9 @@
-import { type Component, type Reply } from '@toa.io/core'
+import { type Component } from '@toa.io/core'
 import { type Remotes } from './Remotes'
 import { Mapping } from './Mapping'
 import { type Context } from './Context'
+import * as http from './HTTP'
 import type * as RTD from './RTD'
-import type * as http from './HTTP'
 
 export class Endpoint implements RTD.Endpoint<Endpoint> {
   private readonly endpoint: string
@@ -17,12 +17,26 @@ export class Endpoint implements RTD.Endpoint<Endpoint> {
     this.discovery = discovery
   }
 
-  public async call (body: any, query: http.Query, parameters: RTD.Parameter[]): Promise<Reply> {
+  public async call
+  (body: any, query: http.Query, parameters: RTD.Parameter[]): Promise<http.OutgoingMessage> {
     const request = this.mapping.fit(body, query, parameters)
 
     this.remote ??= await this.discovery
 
-    return await this.remote.invoke(this.endpoint, request)
+    const reply = await this.remote.invoke(this.endpoint, request)
+
+    if (reply instanceof Error)
+      throw new http.Conflict(reply)
+
+    const message: http.OutgoingMessage = { body: reply }
+
+    if (typeof reply === 'object' && reply !== null && '_version' in reply) {
+      message.headers ??= new Headers()
+      message.headers.set('etag', `"${reply._version.toString()}"`)
+      delete reply._version
+    }
+
+    return message
   }
 
   public async close (): Promise<void> {

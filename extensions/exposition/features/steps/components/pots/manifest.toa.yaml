@@ -11,11 +11,14 @@ operations:
   create:
     query: false
     forward: transit
+    input:
+      title*: .
+      volume*: .
   transit:
     concurrency: retry
     input:
-      title*: ~
-      volume*: ~
+      title: .
+      volume: .
   observe:
     output:
       id: string
