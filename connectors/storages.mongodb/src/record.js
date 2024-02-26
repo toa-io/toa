@@ -5,9 +5,12 @@
  * @returns {toa.mongodb.Record}
  */
 const to = (entity) => {
-  const { id, _version, ...rest } = entity
+  const {
+    id,
+    ...rest
+  } = entity
 
-  return /** @type {toa.mongodb.Record} */ { _id: id, _version: _version + 1, ...rest }
+  return /** @type {toa.mongodb.Record} */ { _id: id, ...rest }
 }
 
 /**
@@ -17,7 +20,10 @@ const to = (entity) => {
 const from = (record) => {
   if (record === undefined || record === null) return null
 
-  const { _id, ...rest } = record
+  const {
+    _id,
+    ...rest
+  } = record
 
   return { id: _id, ...rest }
 }

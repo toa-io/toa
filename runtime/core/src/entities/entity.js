@@ -1,6 +1,9 @@
 'use strict'
 
-const { difference, newid } = require('@toa.io/generic')
+const {
+  difference,
+  newid
+} = require('@toa.io/generic')
 
 const { EntityContractException } = require('../exceptions')
 
@@ -43,13 +46,23 @@ class Entity {
   }
 
   #init (id) {
-    const value = { ...this.#schema.defaults({ id }), _version: 0 }
+    const value = {
+      ...this.#schema.defaults({ id }),
+      _version: 0
+    }
 
     this.#set(value)
   }
 
   #set (value) {
-    Object.defineProperty(value, 'id', { writable: false, configurable: false })
+    Object.defineProperty(value, 'id', {
+      writable: false,
+      configurable: false
+    })
+
+    if (this.#state !== undefined) {
+      value._version++
+    }
 
     this.#state = value
   }
