@@ -5,7 +5,7 @@ Feature: Request body
       """yaml
       exposition:
         /:
-          POST: transit
+          POST: create
       """
     When the following request is received:
       """

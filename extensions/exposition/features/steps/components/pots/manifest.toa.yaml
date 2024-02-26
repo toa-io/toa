@@ -8,8 +8,11 @@ entity:
     temperature?: number
 
 operations:
-  transit:
+  create:
     query: false
+    forward: transit
+  transit:
+    concurrency: retry
     input:
       title*: ~
       volume*: ~

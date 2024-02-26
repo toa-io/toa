@@ -5,7 +5,7 @@ Feature: Server timing
       """yaml
       exposition:
         /:
-          POST: transit
+          POST: create
       """
 
   Scenario: Server timing is not available by default
