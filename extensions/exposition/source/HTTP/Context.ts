@@ -12,18 +12,14 @@ export class Context {
   public readonly encoder: Format | null = null
   public readonly timing: Timing
 
-  public readonly pipelines: {
-    body: Array<(input: unknown) => unknown>
-    response: Array<(output: OutgoingMessage) => void>
-  } = {
-      body: [],
-      response: []
-    }
+  public readonly pipelines: Pipelines = {
+    body: [],
+    response: []
+  }
 
   public constructor (request: IncomingMessage, trace = false) {
     this.request = request
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- checked by Server
     this.url = new URL(request.url, `https://${request.headers.host}`)
     this.timing = new Timing(trace)
 
@@ -31,7 +27,6 @@ export class Context {
       const match = SUBTYPE.exec(this.request.headers.accept)
 
       if (match !== null) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- checked by regex
         const {
           type,
           subtype,
@@ -62,6 +57,11 @@ export class Context {
 export interface IncomingMessage extends http.IncomingMessage {
   url: string
   method: string
+}
+
+interface Pipelines {
+  body: Array<(input: unknown) => unknown>
+  response: Array<(output: OutgoingMessage) => void>
 }
 
 const SUBTYPE = /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/
