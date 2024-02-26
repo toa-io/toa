@@ -39,42 +39,42 @@ export class Store implements Directive {
     cors.allowHeader('content-meta')
   }
 
-  public async apply (storage: string, request: Input, parameters: Parameter[]): Promise<Output> {
+  public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery.storage
 
-    const input: StoreInput = { storage, request }
-    const meta = request.headers['content-meta']
+    const request: StoreRequest = { input: { storage, request: input.request } }
+    const meta = input.request.headers['content-meta']
 
     if (this.accept !== undefined)
-      input.accept = this.accept
+      request.input.accept = this.accept
 
     if (meta !== undefined)
-      input.meta = this.parseMeta(meta)
+      request.input.meta = this.parseMeta(meta)
 
-    const entry = await this.storage.invoke<Entry>('store', { input })
+    const entry = await this.storage.invoke<Entry>('store', request)
 
     return match<Output>(entry,
       Error, (error: ErrorType) => this.throw(error),
-      () => this.reply(request, storage, entry, parameters))
+      () => this.reply(input, storage, entry, parameters))
   }
 
   // eslint-disable-next-line max-params
-  private reply (request: Input, storage: string, entry: Entry, parameters: Parameter[]): Output {
+  private reply (input: Input, storage: string, entry: Entry, parameters: Parameter[]): Output {
     const body = this.workflow === undefined
       ? entry
-      : this.execute(request, storage, entry, parameters)
+      : this.execute(input, storage, entry, parameters)
 
     return { body }
   }
 
   // eslint-disable-next-line max-params
   private execute
-  (request: Input, storage: string, entry: Entry, parameters: Parameter[]): Readable {
+  (input: Input, storage: string, entry: Entry, parameters: Parameter[]): Readable {
     const stream = new PassThrough({ objectMode: true })
 
     stream.push(entry)
 
-    this.workflow!.execute(request, storage, entry, parameters).pipe(stream)
+    this.workflow!.execute(input, storage, entry, parameters).pipe(stream)
 
     return stream
   }
@@ -108,9 +108,11 @@ export interface Options {
   workflow?: Unit[] | Unit
 }
 
-interface StoreInput {
-  storage: string
-  request: Input
-  accept?: string
-  meta?: Record<string, string>
+interface StoreRequest {
+  input: {
+    storage: string
+    request: Input['request']
+    accept?: string
+    meta?: Record<string, string>
+  }
 }

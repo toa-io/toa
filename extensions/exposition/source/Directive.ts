@@ -1,4 +1,4 @@
-import type { IncomingMessage, OutgoingMessage } from './HTTP'
+import type { Context, OutgoingMessage } from './HTTP'
 import type { Remotes } from './Remotes'
 import type { Output } from './io'
 import type * as RTD from './RTD'
@@ -10,15 +10,15 @@ export class Directives implements RTD.Directives<Directives> {
     this.sets = sets
   }
 
-  public async preflight (request: IncomingMessage, parameters: RTD.Parameter[]): Promise<Output> {
+  public async preflight (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
     for (const set of this.sets) {
       if (set.family.preflight === undefined)
         continue
 
-      const output = await set.family.preflight(set.directives, request, parameters)
+      const output = await set.family.preflight(set.directives, context, parameters)
 
       if (output !== null) {
-        await this.settle(request, output)
+        await this.settle(context, output)
 
         return output
       }
@@ -27,10 +27,10 @@ export class Directives implements RTD.Directives<Directives> {
     return null
   }
 
-  public async settle (request: IncomingMessage, response: OutgoingMessage): Promise<void> {
+  public async settle (context: Context, response: OutgoingMessage): Promise<void> {
     for (const set of this.sets)
       if (set.family.settle !== undefined)
-        await set.family.settle(set.directives, request, response)
+        await set.family.settle(set.directives, context, response)
   }
 
   public merge (directives: Directives): void {
@@ -39,7 +39,7 @@ export class Directives implements RTD.Directives<Directives> {
 }
 
 export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
-  private readonly remtoes: Remotes
+  private readonly remotes: Remotes
   private readonly families: Record<string, Family> = {}
   private readonly mandatory: string[] = []
 
@@ -51,7 +51,7 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
         this.mandatory.push(family.name)
     }
 
-    this.remtoes = remotes
+    this.remotes = remotes
   }
 
   public create (declarations: RTD.syntax.Directive[]): Directives {
@@ -67,7 +67,7 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
       if (family === undefined)
         throw new Error(`Directive family '${declaration.family}' is not found.`)
 
-      const directive = family.create(declaration.name, declaration.value, this.remtoes)
+      const directive = family.create(declaration.name, declaration.value, this.remotes)
 
       groups[family.name] ??= []
       groups[family.name].push(directive)
@@ -109,11 +109,11 @@ export interface Family<TDirective = any, TExtension = any> {
   create: (name: string, value: any, remotes: Remotes) => TDirective
 
   preflight?: (directives: TDirective[],
-    request: IncomingMessage & TExtension,
+    request: Context & TExtension,
     parameters: RTD.Parameter[]) => Output | Promise<Output>
 
   settle?: (directives: TDirective[],
-    request: IncomingMessage & TExtension,
+    request: Context & TExtension,
     response: OutgoingMessage) => void | Promise<void>
 }
 

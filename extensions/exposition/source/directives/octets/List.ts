@@ -22,22 +22,26 @@ export class List implements Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, request: Input): Promise<Output> {
+  public async apply (storage: string, input: Input): Promise<Output> {
     this.storage ??= await this.discovery
 
-    const metadata = request.subtype === 'octets.entries'
+    const metadata = input.subtype === 'octets.entries'
 
     if (metadata && !this.permissions.meta)
       throw new Forbidden('Metadata is not accessible.')
 
-    const input = { storage, path: request.url }
-    const list = await this.storage.invoke<Maybe<string[]>>('list', { input })
+    const list = await this.storage.invoke<Maybe<string[]>>('list', {
+      input: {
+        storage,
+        path: input.request.url
+      }
+    })
 
     if (list instanceof Error)
       throw new NotFound()
 
     const body = metadata
-      ? await this.expand(storage, request.url, list)
+      ? await this.expand(storage, input.request.url, list)
       : list
 
     return { body }
@@ -47,7 +51,11 @@ export class List implements Directive {
   Promise<Array<Maybe<Entry>>> {
     const promises = list.map(async (id) => {
       const path = posix.join(prefix, id)
-      const input = { storage, path }
+
+      const input = {
+        storage,
+        path
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- ensured in `apply`
       return this.storage!.invoke<Maybe<Entry>>('get', { input })

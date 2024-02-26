@@ -2,8 +2,8 @@ import assert from 'node:assert'
 import { generate } from 'randomstring'
 import { DirectivesFactory, type Family } from './Directive'
 import { type syntax } from './RTD'
-import { type IncomingMessage } from './HTTP'
 import { type Remotes } from './Remotes'
+import type { Context } from './HTTP'
 
 const families: Array<jest.MockedObjectDeep<Family>> = [
   {
@@ -76,7 +76,7 @@ it('should apply directive', async () => {
   }
 
   const directives = factory.create([declaration])
-  const request = generate() as unknown as IncomingMessage
+  const request = generate() as unknown as Context
   const directive = families[0].create.mock.results[0].value
 
   await directives.preflight(request, [])
@@ -89,7 +89,7 @@ it('should apply directive', async () => {
 
 it('should apply mandatory families', async () => {
   const directives = factory.create([])
-  const request = generate() as unknown as IncomingMessage
+  const request = generate() as unknown as Context
 
   await directives.preflight(request, [])
 

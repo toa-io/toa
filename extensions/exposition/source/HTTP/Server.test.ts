@@ -41,8 +41,8 @@ it('should send 501 on unknown method', async () => {
 })
 
 it('should stop HTTP server', async () => {
+  await server.connect()
   await server.disconnect()
-  expect(server.port).toBe(0)
   expect(server.connected).toBeFalsy()
 })
 

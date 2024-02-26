@@ -13,21 +13,46 @@ export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree<Endpoint, Directives>
   private readonly interceptor: Interception
-  private readonly server: Connector
 
-  // eslint-disable-next-line max-params, max-len
-  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint, Directives>, interception: Interception) {
+  // eslint-disable-next-line max-len
+  public constructor (broadcast: Broadcast, tree: Tree<Endpoint, Directives>, interception: Interception) {
     super()
 
     this.broadcast = broadcast
     this.tree = tree
     this.interceptor = interception
-    this.server = server
 
     this.depends(broadcast)
-    // this.depends(server)
+  }
 
-    server.attach(this.process.bind(this))
+  public async process (context: http.Context): Promise<http.OutgoingMessage> {
+    const interception = await context.timing.capture('gate:intercept',
+      this.interceptor.intercept(context))
+
+    if (interception !== null)
+      return interception
+
+    const match = this.tree.match(context.url.pathname)
+
+    if (match === null)
+      throw new http.NotFound()
+
+    const { node, parameters } = match
+
+    if (!(context.request.method in node.methods))
+      throw new http.MethodNotAllowed()
+
+    const method = node.methods[context.request.method]
+
+    const interruption = await context.timing.capture('gate:preflight',
+      method.directives.preflight(context, parameters))
+
+    const response = interruption ??
+      await context.timing.capture('gate:call', this.call(method, context, parameters))
+
+    await context.timing.capture('gate:settle', method.directives.settle(context, response))
+
+    return response
   }
 
   protected override async open (): Promise<void> {
@@ -40,52 +65,23 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private async process (request: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    const interception = await request.timing.capture('gate:intercept',
-      this.interceptor.intercept(request))
-
-    if (interception !== null)
-      return interception
-
-    const match = this.tree.match(request.path)
-
-    if (match === null)
-      throw new http.NotFound()
-
-    const { node, parameters } = match
-
-    if (!(request.method in node.methods))
-      throw new http.MethodNotAllowed()
-
-    const method = node.methods[request.method]
-
-    const interruption = await request.timing.capture('gate:preflight',
-      method.directives.preflight(request, parameters))
-
-    const response = interruption ??
-      await request.timing.capture('gate:call', this.call(method, request, parameters))
-
-    await request.timing.capture('gate:settle', method.directives.settle(request, response))
-
-    return response
-  }
-
   private async call
-  (method: Method<Endpoint, Directives>, request: http.IncomingMessage, parameters: Parameter[]):
+  (method: Method<Endpoint, Directives>, context: http.Context, parameters: Parameter[]):
   Promise<http.OutgoingMessage> {
-    if (request.path[request.path.length - 1] !== '/')
+    if (context.url.pathname[context.url.pathname.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required.')
 
-    if (request.encoder === null)
+    if (context.encoder === null)
       throw new http.NotAcceptable()
 
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 
-    const body = await request.parse()
+    const body = await context.body()
+    const query = Object.fromEntries(context.url.searchParams)
 
     const reply = await method.endpoint
-      .call(body, request.query, parameters)
+      .call(body, query, parameters)
       .catch(rethrow) as Maybe<unknown>
 
     if (reply instanceof Error)
@@ -111,4 +107,4 @@ export class Gateway extends Connector {
   }
 }
 
-type Broadcast = bindings.Broadcast<Label>
+export type Broadcast = bindings.Broadcast<Label>

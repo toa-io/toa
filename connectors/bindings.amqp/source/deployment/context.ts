@@ -4,6 +4,7 @@ import { resolveRecord, naming } from '@toa.io/pointer'
 import { type Locator } from '@toa.io/core'
 import { type AnnotationRecord } from '@toa.io/pointer/transpiled/Deployment'
 import { type Annotation } from './annotation'
+import type { URIMap } from '@toa.io/pointer'
 
 export function createDependency (context: Context): Dependency {
   const global: Variable[] = []
@@ -25,7 +26,7 @@ export async function resolveURIs (locator: Locator): Promise<string[]> {
   if (value === undefined)
     throw new Error(`Environment variable ${VARIABLE} is not specified`)
 
-  const map = decode(value)
+  const map = decode<URIMap>(value)
   const record = resolveRecord(map, locator.id)
 
   return await parseRecord(record)
@@ -102,8 +103,10 @@ function readEnv (key: string, name: string): string {
   const variable = naming.nameVariable(ID, key, name)
   const value = process.env[variable]
 
-  if (value === undefined) throw new Error(variable + ' is not set')
-  else return value
+  if (value === undefined)
+    throw new Error(variable + ' is not set')
+  else
+    return value
 }
 
 const ID = 'amqp-context'

@@ -12,7 +12,7 @@ export class Header implements Embedding {
   }
 
   public resolve (input: Input): string | undefined {
-    const value = input.headers[this.name]
+    const value = input.request.headers[this.name]
 
     if (value === undefined)
       return value

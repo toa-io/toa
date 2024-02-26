@@ -21,8 +21,8 @@ export class Workflow {
 
   // eslint-disable-next-line max-params
   public execute
-  (request: Input, storage: string, entry: Entry, params: Parameter[]): Execution {
-    const path = posix.join(request.path, entry.id)
+  (input: Input, storage: string, entry: Entry, params: Parameter[]): Execution {
+    const path = posix.join(input.request.url, entry.id)
     const parameters: Record<string, string> = {}
 
     for (const { name, value } of params)

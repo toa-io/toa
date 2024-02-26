@@ -1,5 +1,5 @@
 import { match } from 'matchacho'
-import type { AuthenticatedRequest, Directive } from './types'
+import type { AuthenticatedContext, Directive } from './types'
 
 export class Control implements Directive {
   protected readonly value: string
@@ -9,16 +9,16 @@ export class Control implements Directive {
     this.value = value
   }
 
-  public set (request: AuthenticatedRequest, headers: Headers): void {
-    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method))
+  public set (context: AuthenticatedContext, headers: Headers): void {
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(context.request.method))
       return
 
-    this.cache ??= this.resolve(request)
+    this.cache ??= this.resolve(context)
 
     headers.set('cache-control', this.cache)
   }
 
-  protected resolve (request: AuthenticatedRequest): string {
+  protected resolve (request: AuthenticatedContext): string {
     if (request.identity === null)
       return this.value
 

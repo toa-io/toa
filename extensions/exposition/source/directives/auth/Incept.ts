@@ -15,28 +15,33 @@ export class Incept implements Directive {
   }
 
   public authorize (identity: Identity | null, input: Input): boolean {
-    return identity === null && 'authorization' in input.headers
+    return identity === null && 'authorization' in input.request.headers
   }
 
-  public async settle (request: Input, response: http.OutgoingMessage): Promise<void> {
+  public async settle (input: Input, response: http.OutgoingMessage): Promise<void> {
     const id = response.body?.[this.property]
 
     if (id === undefined)
       throw new http.Conflict('Identity inception has failed as the response body ' +
         ` does not contain the '${this.property}' property.`)
 
-    const [scheme, credentials] = split(request.headers.authorization!)
+    const [scheme, credentials] = split(input.request.headers.authorization!)
     const provider = PROVIDERS[scheme]
 
     this.schemes[scheme] ??= await this.discovery[provider]
 
     const identity = await this.schemes[scheme]
-      .invoke<Maybe<Identity>>('create', { input: { id, credentials } })
+      .invoke<Maybe<Identity>>('create', {
+      input: {
+        id,
+        credentials
+      }
+    })
 
     if (identity instanceof Error)
       throw new http.Conflict(identity)
 
-    request.identity = identity
-    request.identity.scheme = scheme
+    input.identity = identity
+    input.identity.scheme = scheme
   }
 }
