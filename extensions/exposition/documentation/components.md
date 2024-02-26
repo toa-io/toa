@@ -18,7 +18,7 @@ and pepper.
 # context.toa.yaml
 
 configuration:
-  identity.tokens:
+  identity.basic:
     rounds: 10 # salt rounds
     peper: ''  # hashing pepper
 ```
@@ -142,7 +142,7 @@ using the `key0` configuration value as a secret.
 # context.toa.yaml
 
 configuration:
-  identity.basic:
+  identity.tokens:
     key0: $TOKEN_ENCRYPTION_KEY
 ```
 
@@ -171,7 +171,7 @@ convinience.
 # context.toa.yaml
 
 configuration:
-  identity.basic:
+  identity.tokens:
     lifetime: 2592000 # seconds, 30 days
     refresh: 600      # seconds, 10 minutes
 ```
@@ -199,7 +199,7 @@ the `key0` and `key1` values in order.
 # context.toa.yaml
 
 configuration:
-  identity.basic:
+  identity.tokens:
     key0: $TOKEN_ENCRYPTION_KEY_2023Q3
     key1: $TOKEN_ENCRYPTION_KEY_2023Q2
 ```
@@ -231,7 +231,7 @@ The secret rotation is a 2-step process:
 # context.toa.yaml
 
 configuration:
-  identity.basic:
+  identity.tokens:
     key0: $TOKEN_ENCRYPTION_KEY_2023Q3
     key1: $TOKEN_ENCRYPTION_KEY_2023Q4
 ```
@@ -244,7 +244,7 @@ configuration:
 # context.toa.yaml
 
 configuration:
-  identity.basic:
+  identity.tokens:
     key0: $TOKEN_ENCRYPTION_KEY_2023Q4
     key1: $TOKEN_ENCRYPTION_KEY_2023Q3
 ```
