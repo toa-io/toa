@@ -28,7 +28,10 @@ describe('argument', () => {
   it('should provide initial state if no argument passed', () => {
     const entity = new Entity(fixtures.schema)
     const defaults = fixtures.schema.defaults.mock.results[0].value
-    const expected = { ...defaults, _version: 0 }
+    const expected = {
+      ...defaults,
+      _version: 0
+    }
 
     expect(entity.get()).toStrictEqual(expected)
   })
@@ -54,7 +57,10 @@ it('should provide event', () => {
   expect(event).toEqual({
     state,
     origin,
-    changeset: { foo: 'new value' }
+    changeset: {
+      foo: 'new value',
+      _version: 1
+    }
   })
 })
 
