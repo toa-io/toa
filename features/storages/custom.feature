@@ -12,6 +12,7 @@ Feature: Custom storage
         custom.storage: foo
       """
     When I run `toa env`
+    Then program should exit with code 0
     Then the environment contains:
       """
       TOA_TEST_CUSTOM_STORAGE=foo
