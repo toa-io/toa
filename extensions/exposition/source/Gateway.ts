@@ -94,7 +94,9 @@ export class Gateway extends Connector {
     if (etag !== undefined) {
       const match = etag.match(ETAG)
 
-      if (match !== null)
+      if (match === null)
+        throw new http.BadRequest('Invalid ETag.')
+      else
         query.version = parseInt(match.groups!.version)
     }
 
@@ -118,6 +120,6 @@ export class Gateway extends Connector {
   }
 }
 
-const ETAG = /^"(?<version>\d{1,32})"/
+const ETAG = /^"(?<version>\d{1,32})"$/
 
 export type Broadcast = bindings.Broadcast<Label>

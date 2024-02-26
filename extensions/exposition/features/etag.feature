@@ -60,3 +60,27 @@ Feature: Optimistic concurrency control
       200 OK
       etag: "2"
       """
+
+  Scenario: Unexpected `if-match` format
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          /:id:
+            PUT: transit
+      """
+    When the following request is received:
+      """
+      PUT /pots/fa177da8393544139915795816ad6b97/ HTTP/1.1
+      accept: text/plain
+      content-type: application/yaml
+      if-match: "oopsie"
+
+      volume: 2.5
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      Invalid ETag.
+      """
