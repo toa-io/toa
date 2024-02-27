@@ -108,18 +108,4 @@ export class Agent {
 
     this.responseIncludes(expected)
   }
-
-  /**
-   * @deprecated - use Captures dependency injection
-   */
-  public set (name: string, value: string): void {
-    this.captures.set(name, value)
-  }
-
-  /**
-   * @deprecated - use Captures dependency injection
-   */
-  public get (name: string): string {
-    return this.captures.get(name) ?? ''
-  }
 }
