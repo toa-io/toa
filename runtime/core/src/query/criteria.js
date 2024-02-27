@@ -33,9 +33,9 @@ const coerce = (node, properties) => {
 }
 
 const COERCE = {
-  number: Number,
-  integer: parseInt,
-  boolean: Boolean
+  number: Number.parseFloat,
+  integer: Number.parseInt,
+  boolean: (value) => value === 'true'
 }
 
 exports.criteria = criteria
