@@ -35,12 +35,14 @@ export class Endpoint implements RTD.Endpoint {
     if (typeof reply === 'object' && reply !== null && '_version' in reply) {
       const etag = context.request.headers['if-none-match']
 
+      message.headers ??= new Headers()
+
       if (etag !== undefined && reply._version === this.version(etag)) {
         message.status = 304
+        message.headers.set('etag', etag)
 
         return message
       } else {
-        message.headers ??= new Headers()
         message.headers.set('etag', `"${reply._version.toString()}"`)
         delete reply._version
       }

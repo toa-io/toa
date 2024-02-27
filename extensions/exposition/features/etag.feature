@@ -43,6 +43,7 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       304 Not Modified
+      etag: "1"
       """
     When the following request is received:
       """
