@@ -74,6 +74,28 @@ Feature: Configuration Extension
     { foo: 'secret foo', baz: 'secret baz' }
     """
 
+  Scenario: Secret values within the array
+    Given I have a component `configuration.array`
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.array:
+          greetings:
+            - a: $A_SECRET_VALUE
+              b: $B_SECRET_VALUE
+      """
+    When I run `toa env`
+    And I update an environment with:
+      """
+      TOA_CONFIGURATION__A_SECRET_VALUE=secret-a
+      TOA_CONFIGURATION__B_SECRET_VALUE=secret-b
+      """
+    And I run `toa invoke greet "{ input: 0 }" -p ./components/configuration.array`
+    And stdout should contain lines:
+    """
+    secret-a secret-b
+    """
+
   Scenario: Deployment
     Given I have a component `configuration.base`
     And I have a context with:
@@ -118,6 +140,34 @@ Feature: Configuration Extension
               secret:
                 name: toa-configuration
                 key: BAZ_VALUE
+      """
+
+  Scenario: Deployment of secret values within an array
+    Given I have a component `configuration.array`
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.array:
+          greetings:
+            - a: $A
+              b: $B
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: configuration-array
+          variables:
+            - name: TOA_CONFIGURATION_CONFIGURATION_ARRAY
+              value: eyJncmVldGluZ3MiOlt7ImEiOiIkQSIsImIiOiIkQiJ9XX0=
+            - name: TOA_CONFIGURATION__A
+              secret:
+                name: toa-configuration
+                key: A
+            - name: TOA_CONFIGURATION__B
+              secret:
+                name: toa-configuration
+                key: B
       """
 
   Scenario: Shared secret deployment
