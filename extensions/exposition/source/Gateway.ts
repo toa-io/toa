@@ -2,7 +2,6 @@ import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import type { Interception } from './Interception'
-import type { Maybe } from '@toa.io/types'
 import type { Method, Parameter, Tree } from './RTD'
 import type { Label } from './discovery'
 import type { Branch } from './Branch'
@@ -37,7 +36,10 @@ export class Gateway extends Connector {
     if (match === null)
       throw new http.NotFound()
 
-    const { node, parameters } = match
+    const {
+      node,
+      parameters
+    } = match
 
     if (!(context.request.method in node.methods))
       throw new http.MethodNotAllowed()
@@ -78,16 +80,27 @@ export class Gateway extends Connector {
       throw new http.MethodNotAllowed()
 
     const body = await context.body()
-    const query = Object.fromEntries(context.url.searchParams)
+    const query = this.query(context)
 
-    const reply = await method.endpoint
+    return await method.endpoint
       .call(body, query, parameters)
-      .catch(rethrow) as Maybe<unknown>
+      .catch(rethrow) as http.OutgoingMessage
+  }
 
-    if (reply instanceof Error)
-      throw new http.Conflict(reply)
+  private query (context: http.Context): http.Query {
+    const query: http.Query = Object.fromEntries(context.url.searchParams)
+    const etag = context.request.headers['if-match']
 
-    return { body: reply }
+    if (etag !== undefined) {
+      const match = etag.match(ETAG)
+
+      if (match === null)
+        throw new http.BadRequest('Invalid ETag.')
+      else
+        query.version = parseInt(match.groups!.version)
+    }
+
+    return query
   }
 
   private async discover (): Promise<void> {
@@ -106,5 +119,7 @@ export class Gateway extends Connector {
     }
   }
 }
+
+const ETAG = /^"(?<version>\d{1,32})"$/
 
 export type Broadcast = bindings.Broadcast<Label>

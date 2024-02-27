@@ -1,7 +1,6 @@
 'use strict'
 
 const { generate } = require('randomstring')
-
 const boot = require('@toa.io/boot')
 const { Locator } = require('@toa.io/core')
 const { newid } = require('@toa.io/generic')
@@ -33,7 +32,11 @@ afterAll(async () => {
 })
 
 describe('add', () => {
-  const entity = { id: newid(), _version: 0, foo: generate() }
+  const entity = {
+    id: newid(),
+    _version: 0,
+    foo: generate()
+  }
 
   beforeAll(async () => {
     await storage.add(entity)
@@ -42,25 +45,27 @@ describe('add', () => {
   it('should add', async () => {
     const record = await storage.get({ id: entity.id })
 
-    expect(record).toStrictEqual(expect.objectContaining({ id: entity.id, foo: entity.foo }))
+    expect(record).toStrictEqual(expect.objectContaining({
+      id: entity.id,
+      foo: entity.foo
+    }))
   })
 
   it('should handle on duplicate id', async () => {
     const result = await storage.add(entity)
     expect(result).toStrictEqual(false)
   })
-
-  it('should increment version', async () => {
-    const record = await storage.get({ id: entity.id })
-
-    expect(record._version).toStrictEqual(entity._version + 1)
-  })
 })
 
 describe('find', () => {
   const tag = generate()
 
-  const entities = [{ id: newid(), _version: 0, foo: generate(), tag }, {
+  const entities = [{
+    id: newid(),
+    _version: 0,
+    foo: generate(),
+    tag
+  }, {
     id: newid(),
     _version: 0,
     foo: generate(),
@@ -93,20 +98,28 @@ describe('find', () => {
       id: entity.id,
       foo: entity.foo,
       tag,
-      _version: 1
+      _version: 0
     })))
   })
 })
 
 describe('set', () => {
-  const entity = { id: newid(), _version: 0, foo: generate() }
+  const entity = {
+    id: newid(),
+    _version: 1,
+    foo: generate()
+  }
 
   beforeAll(async () => {
     await storage.add(entity)
   })
 
   it('should set new value', async () => {
-    const replacement = { id: entity.id, _version: 1, bar: generate() }
+    const replacement = {
+      id: entity.id,
+      _version: 2,
+      bar: generate()
+    }
 
     const result = await storage.set(replacement)
     expect(result).toStrictEqual(true)
@@ -122,7 +135,11 @@ describe('set', () => {
 })
 
 describe('store', () => {
-  const entity = { id: newid(), _version: 0, foo: generate() }
+  const entity = {
+    id: newid(),
+    _version: 1,
+    foo: generate()
+  }
 
   beforeAll(async () => {
     const result = await storage.store(entity)
@@ -141,7 +158,11 @@ describe('store', () => {
   })
 
   it('should set if existent', async () => {
-    const replacement = { id: entity.id, _version: 1, bar: generate() }
+    const replacement = {
+      id: entity.id,
+      _version: 2,
+      bar: generate()
+    }
 
     const result = await storage.store(replacement)
 
@@ -158,8 +179,15 @@ describe('store', () => {
 })
 
 describe('upsert', () => {
-  const entity = { id: newid(), _version: 0, foo: generate() }
-  const blank = { id: newid(), _version: 0 }
+  const entity = {
+    id: newid(),
+    _version: 1,
+    foo: generate()
+  }
+  const blank = {
+    id: newid(),
+    _version: 1
+  }
 
   beforeAll(async () => {
     const result = await storage.add(entity)

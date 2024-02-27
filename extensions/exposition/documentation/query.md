@@ -45,7 +45,7 @@ Undefined `query` denies any query arguments in requests.
 
 ## Criteria
 
-Search critaria in [RSQL](https://github.com/jirutka/rsql-parser) format.
+Search criteria in [RSQL](https://github.com/jirutka/rsql-parser) format.
 
 The `criteria` property is considered as *open* when it ends with a `;`, allowing the combination of
 request query criteria using `and` logic.
@@ -77,7 +77,7 @@ query:
 
 ### Path variables
 
-Path variables are prepended to the `criteria` request query parameter using logial AND,
+Path variables are prepended to the `criteria` request query parameter using logical AND,
 except for the [`POST` method](#post-method).
 
 Given the following declaration:
@@ -223,4 +223,47 @@ A list of Entity properties to be included in the Observation result.
 
 ```yaml
 projection: [id, title, timestamp]
+```
+
+## Optimistic concurrency control
+
+If an operation returns an object with `_version` property,
+then its value is passed as the value of
+the [`etag` header](https://datatracker.ietf.org/doc/html/rfc7232#section-2.3) in the response
+(and removed from the object).
+
+Client can use the `if-match` request header to perform an operation only if the corresponding
+object has not been modified since the last retrieval.
+
+```http
+GET /dummies/5e82ed5e/ HTTP/1.1
+
+---
+
+HTTP/1.1 200 OK
+etag: "1"
+
+foo: bar
+```
+
+```http request
+PUT /dummies/5e82ed5e/ HTTP/1.1
+if-match: "1"
+
+foo: baz
+
+---
+
+200 OK
+```
+
+```http request
+PUT /dummies/5e82ed5e/ HTTP/1.1
+if-match: "never"
+
+foo: baz
+
+---
+
+412 Precondition Failed
 ```
