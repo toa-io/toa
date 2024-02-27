@@ -3,9 +3,9 @@ import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
 import { Tree, syntax } from './RTD'
 import { Server } from './HTTP'
-import { type Endpoint, EndpointsFactory } from './Endpoint'
+import { EndpointsFactory } from './Endpoint'
 import { families, interceptors } from './directives'
-import { type Directives, DirectivesFactory } from './Directive'
+import { DirectivesFactory } from './Directive'
 import { Composition } from './Composition'
 import * as root from './root'
 import { Interception } from './Interception'
@@ -29,13 +29,19 @@ export class Factory implements extensions.Factory {
     const debug = process.env.TOA_EXPOSITION_DEBUG === '1'
     const trace = process.env.TOA_EXPOSITION_TRACE === '1'
     const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
-    const server = Server.create({ methods: syntax.verbs, debug, trace })
+
+    const server = Server.create({
+      methods: syntax.verbs,
+      debug,
+      trace
+    })
+
     const remotes = new Remotes(this.boot)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)
     const directives = new DirectivesFactory(families, remotes)
     const interception = new Interception(interceptors)
-    const tree = new Tree<Endpoint, Directives>(node, methods, directives)
+    const tree = new Tree(node, methods, directives)
 
     const composition = new Composition(this.boot)
     const gateway = new Gateway(broadcast, tree, interception)

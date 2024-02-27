@@ -1,6 +1,6 @@
 Feature: Optimistic concurrency control
 
-  Scenario: Receiving `etag`
+  Scenario: Using `etag`
     Given the `pots` is running with the following manifest:
       """yaml
       exposition:
@@ -34,6 +34,15 @@ Feature: Optimistic concurrency control
       """
       200 OK
       etag: "1"
+      """
+    When the following request is received:
+      """
+      GET /pots/${{ id }}/ HTTP/1.1
+      if-none-match: "1"
+      """
+    Then the following reply is sent:
+      """
+      304 Not Modified
       """
     When the following request is received:
       """

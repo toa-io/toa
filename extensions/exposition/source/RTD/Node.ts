@@ -1,20 +1,15 @@
 import { type Route } from './Route'
 import { type Methods } from './Method'
 import { type Match, type Parameter } from './Match'
-import { type Directives } from './Directives'
-import { type Endpoint } from './Endpoint'
 
-export class Node<
-  TEndpoint extends Endpoint<TEndpoint> = any,
-  TDirectives extends Directives<TDirectives> = any
-> {
+export class Node {
   public intermediate: boolean
-  public methods: Methods<TEndpoint, TDirectives>
+  public methods: Methods
   private readonly protected: boolean
   private routes: Route[]
 
   public constructor
-  (routes: Route[], methods: Methods<TEndpoint, TDirectives>, properties: Properties) {
+  (routes: Route[], methods: Methods, properties: Properties) {
     this.routes = routes
     this.methods = methods
     this.protected = properties.protected
@@ -34,26 +29,30 @@ export class Node<
     return null
   }
 
-  public merge (node: Node<TEndpoint, TDirectives>): void {
+  public merge (node: Node): void {
     this.intermediate = node.intermediate
 
-    if (!this.protected) this.replace(node)
-    else this.append(node)
+    if (!this.protected)
+      this.replace(node)
+    else
+      this.append(node)
 
     this.sort()
   }
 
-  private replace (node: Node<TEndpoint, TDirectives>): void {
+  private replace (node: Node): void {
     const methods = Object.values(this.methods)
 
     this.routes = node.routes
     this.methods = node.methods
 
     for (const method of methods)
-      void method.close() // race condition is really unlikely
+      void method.close()
+
+    // race condition is really unlikely
   }
 
-  private append (node: Node<TEndpoint, TDirectives>): void {
+  private append (node: Node): void {
     for (const route of node.routes)
       this.mergeRoute(route)
 

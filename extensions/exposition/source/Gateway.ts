@@ -5,16 +5,13 @@ import type { Interception } from './Interception'
 import type { Method, Parameter, Tree } from './RTD'
 import type { Label } from './discovery'
 import type { Branch } from './Branch'
-import type { Endpoint } from './Endpoint'
-import type { Directives } from './Directive'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
-  private readonly tree: Tree<Endpoint, Directives>
+  private readonly tree: Tree
   private readonly interceptor: Interception
 
-  // eslint-disable-next-line max-len
-  public constructor (broadcast: Broadcast, tree: Tree<Endpoint, Directives>, interception: Interception) {
+  public constructor (broadcast: Broadcast, tree: Tree, interception: Interception) {
     super()
 
     this.broadcast = broadcast
@@ -67,8 +64,7 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private async call
-  (method: Method<Endpoint, Directives>, context: http.Context, parameters: Parameter[]):
+  private async call (method: Method, context: http.Context, parameters: Parameter[]):
   Promise<http.OutgoingMessage> {
     if (context.url.pathname[context.url.pathname.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required.')
@@ -79,28 +75,9 @@ export class Gateway extends Connector {
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 
-    const body = await context.body()
-    const query = this.query(context)
-
     return await method.endpoint
-      .call(body, query, parameters)
+      .call(context, parameters)
       .catch(rethrow) as http.OutgoingMessage
-  }
-
-  private query (context: http.Context): http.Query {
-    const query: http.Query = Object.fromEntries(context.url.searchParams)
-    const etag = context.request.headers['if-match']
-
-    if (etag !== undefined) {
-      const match = etag.match(ETAG)
-
-      if (match === null)
-        throw new http.BadRequest('Invalid ETag.')
-      else
-        query.version = parseInt(match.groups!.version)
-    }
-
-    return query
   }
 
   private async discover (): Promise<void> {
@@ -119,7 +96,5 @@ export class Gateway extends Connector {
     }
   }
 }
-
-const ETAG = /^"(?<version>\d{1,32})"$/
 
 export type Broadcast = bindings.Broadcast<Label>

@@ -7,7 +7,7 @@ import type { Input } from '../../../io'
 
 export class Language implements Embedding {
   public constructor () {
-    cors.allowHeader('accept-language')
+    cors.allow('accept-language')
   }
 
   public resolve (input: Input, properties: Properties): string | undefined {

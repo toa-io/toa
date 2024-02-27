@@ -1,11 +1,13 @@
 import { type Context } from './Context'
+import type * as http from '../HTTP'
 import type * as syntax from './syntax'
+import type * as RTD from './index'
 
-export interface Endpoint<T extends Endpoint = any> {
-  call: T['call']
+export interface Endpoint {
+  call: (context: http.Context, parameters: RTD.Parameter[]) => Promise<http.OutgoingMessage>
   close: () => Promise<void>
 }
 
-export interface EndpointsFactory<T extends Endpoint<T> = any> {
-  create: (method: syntax.Method, context: Context) => T
+export interface EndpointsFactory {
+  create: (method: syntax.Method, context: Context) => Endpoint
 }
