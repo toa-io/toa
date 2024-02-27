@@ -3,10 +3,10 @@ import type { Remotes } from './Remotes'
 import type { Output } from './io'
 import type * as RTD from './RTD'
 
-export class Directives implements RTD.Directives<Directives> {
-  private readonly sets: DirectiveSet[]
+export class Directives implements RTD.Directives {
+  private readonly sets: RTD.DirectiveSet[]
 
-  public constructor (sets: DirectiveSet[]) {
+  public constructor (sets: RTD.DirectiveSet[]) {
     this.sets = sets
   }
 
@@ -32,18 +32,14 @@ export class Directives implements RTD.Directives<Directives> {
       if (set.family.settle !== undefined)
         await set.family.settle(set.directives, context, response)
   }
-
-  public merge (directives: Directives): void {
-    this.sets.push(...directives.sets)
-  }
 }
 
-export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
+export class DirectivesFactory implements RTD.DirectiveFactory {
   private readonly remotes: Remotes
-  private readonly families: Record<string, Family> = {}
+  private readonly families: Record<string, RTD.DirectiveFamily> = {}
   private readonly mandatory: string[] = []
 
-  public constructor (families: Family[], remotes: Remotes) {
+  public constructor (families: RTD.DirectiveFamily[], remotes: Remotes) {
     for (const family of families) {
       this.families[family.name] = family
 
@@ -74,7 +70,7 @@ export class DirectivesFactory implements RTD.DirectivesFactory<Directives> {
       mandatory.delete(family.name)
     }
 
-    const sets: DirectiveSet[] = []
+    const sets: RTD.DirectiveSet[] = []
 
     for (const family of mandatory)
       sets.push({
@@ -99,25 +95,3 @@ export const shortcuts: RTD.syntax.Shortcuts = new Map([
   ['rule', 'auth:rule'],
   ['incept', 'auth:incept']
 ])
-
-export interface Family<TDirective = any, TExtension = any> {
-  readonly name: string
-  readonly mandatory: boolean
-
-  // produce: (declarations: RTD.syntax.Directive[], remotes: Remotes) => TDirective[]
-
-  create: (name: string, value: any, remotes: Remotes) => TDirective
-
-  preflight?: (directives: TDirective[],
-    request: Context & TExtension,
-    parameters: RTD.Parameter[]) => Output | Promise<Output>
-
-  settle?: (directives: TDirective[],
-    request: Context & TExtension,
-    response: OutgoingMessage) => void | Promise<void>
-}
-
-interface DirectiveSet {
-  family: Family
-  directives: any[]
-}

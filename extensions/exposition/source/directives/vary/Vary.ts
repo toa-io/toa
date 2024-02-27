@@ -3,10 +3,10 @@ import { properties, Property } from './Properties'
 import { Embed } from './Embed'
 import type { Properties } from './Properties'
 import type { Directive } from './Directive'
-import type { Family } from '../../Directive'
+import type { DirectiveFamily } from '../../RTD'
 import type { Input, Output } from '../../io'
 
-export class Vary implements Family {
+export class Vary implements DirectiveFamily {
   public readonly name = 'vary'
   public readonly mandatory = false
 

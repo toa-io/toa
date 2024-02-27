@@ -13,8 +13,7 @@ import { PRIMARY, PROVIDERS } from './schemes'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
-import type { Family } from '../../Directive'
-import type { Parameter } from '../../RTD'
+import type { Parameter, DirectiveFamily } from '../../RTD'
 import type {
   AuthenticationResult,
   Ban,
@@ -27,7 +26,7 @@ import type {
   Schemes
 } from './types'
 
-export class Authorization implements Family<Directive, Extension> {
+export class Authorization implements DirectiveFamily<Directive, Extension> {
   public readonly depends: string[] = ['Vary']
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true

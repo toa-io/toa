@@ -2,10 +2,10 @@ import { Control } from './Control'
 import { Exact } from './Exact'
 import type { Input, Output } from '../../io'
 import type { Directive } from './types'
-import type { Family } from '../../Directive'
+import type { DirectiveFamily } from '../../RTD'
 import type * as http from '../../HTTP'
 
-export class Cache implements Family<Directive> {
+export class Cache implements DirectiveFamily<Directive> {
   public readonly name: string = 'cache'
   public readonly mandatory: boolean = false
 

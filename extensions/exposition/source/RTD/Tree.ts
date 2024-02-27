@@ -1,20 +1,20 @@
-import { type Node } from './Node'
 import { createNode } from './factory'
 import { fragment } from './segment'
-import { type Match } from './Match'
-import { type Context } from './Context'
-import { type DirectivesFactory } from './Directives'
-import { type EndpointsFactory } from './Endpoint'
+import type { Node } from './Node'
+import type { Match } from './Match'
+import type { Context } from './Context'
+import type { DirectiveFactory } from './Directives'
+import type { EndpointsFactory } from './Endpoint'
 import type * as syntax from './syntax'
 
 export class Tree {
   private readonly root: syntax.Node
   private readonly trunk: Node
   private readonly endpoints: EndpointsFactory
-  private readonly directives: DirectivesFactory
+  private readonly directives: DirectiveFactory
 
   public constructor
-  (node: syntax.Node, endpoints: EndpointsFactory, directives: DirectivesFactory) {
+  (node: syntax.Node, endpoints: EndpointsFactory, directives: DirectiveFactory) {
     this.endpoints = endpoints
     this.directives = directives
     this.trunk = this.createNode(node, PROTECTED)

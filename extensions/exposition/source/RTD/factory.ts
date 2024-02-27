@@ -1,8 +1,8 @@
 import { Node, type Properties } from './Node'
 import { Route } from './Route'
-import { type Context } from './Context'
 import { segment } from './segment'
 import { Method, type Methods } from './Method'
+import type { Context } from './Context'
 import type * as syntax from './syntax'
 
 export function createNode (node: syntax.Node, context: Context): Node {
