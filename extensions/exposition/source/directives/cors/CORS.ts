@@ -3,9 +3,13 @@ import type { Interceptor } from '../../Interception'
 
 export class CORS implements Interceptor {
   public readonly name = 'cors'
-  public readonly mandatory = true
 
-  private readonly allowedHeaders = new Set<string>(['accept', 'authorization', 'content-type'])
+  private readonly allowedHeaders = new Set<string>([
+    'accept',
+    'authorization',
+    'content-type',
+    'etag'
+  ])
 
   private readonly headers = new Headers({
     'access-control-allow-methods': 'GET, POST, PUT, PATCH, DELETE',
