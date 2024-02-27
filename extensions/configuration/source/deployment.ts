@@ -32,12 +32,12 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
   return { variables }
 }
 
-function createSecrets (values: Record<string, unknown>): Variable[] {
+function createSecrets (values: object): Variable[] {
   const secrets: Variable[] = []
 
   for (const value of Object.values(values)) {
     if (typeof value === 'object' && value !== null)
-      secrets.push(...createSecrets(value as Record<string, unknown>))
+      secrets.push(...createSecrets(value as object))
 
     if (typeof value !== 'string') continue
 
