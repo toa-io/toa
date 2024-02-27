@@ -1,9 +1,10 @@
 'use strict'
 
 async function computation (input, context) {
-  const greetings = context.configuration.greetings
-  const greeting = greetings[input]
-  const { a, b } = greeting
+  const {
+    a,
+    b
+  } = context.configuration.greetings[input]
 
   return `${a} ${b}`
 }

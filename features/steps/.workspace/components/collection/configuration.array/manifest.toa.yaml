@@ -1,5 +1,5 @@
 namespace: configuration
-name: base
+name: array
 
 operations:
   greet:
