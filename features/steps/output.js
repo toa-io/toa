@@ -8,7 +8,7 @@ Then('{word} should be the version',
    * @param {string} channel
    * @this {toa.features.Context}
    */
-  async function (channel) {
+  async function(channel) {
     const { version } = require('@toa.io/runtime')
 
     await this.process
@@ -16,41 +16,41 @@ Then('{word} should be the version',
     assert.equal(this[channel], version)
   })
 
-Then('{word} should contain {int} line(s)', async function (channel, lines) {
+Then('{word} should contain {int} line(s)', async function(channel, lines) {
   await this.process
 
   assert.equal(this[channel + 'Lines'].length, lines, `${channel} contains ${this[channel].length} lines, ${lines} expected`)
 })
 
-Then('{word} should be empty', async function (channel) {
+Then('{word} should be empty', async function(channel) {
   await this.process
 
   assert.equal(this[channel], '')
 })
 
 Then('{word} should contain line(s):',
-  async function (channel, lines) {
+  async function(channel, lines) {
     await this.process
 
     find(this, channel, lines)
   })
 
 Then('{word} should not contain line(s):',
-  async function (channel, lines) {
+  async function(channel, lines) {
     await this.process
 
     find(this, channel, lines, undefined, true)
   })
 
 Then('{word} should contain line(s) once:',
-  async function (channel, lines) {
+  async function(channel, lines) {
     await this.process
 
     find(this, channel, lines, 1)
   })
 
 Then('{word} should be: {string}',
-  async function (channel, line) {
+  async function(channel, line) {
     await this.process
 
     const actual = this[channel]
@@ -72,9 +72,9 @@ const find = (context, channel, lines, exact = undefined, reverse = false) => {
 
   /** @type {number[]} */
   const count = []
+  const output = context[channel + 'Lines']
 
   for (const query of queries) {
-    const output = context[channel + 'Lines']
     let matches = 0
 
     for (const line of output) {
@@ -111,8 +111,11 @@ const compare = (reference, line) => {
 }
 
 function substituteExpression (expression) {
-  if (!(expression in expressions)) return expression
-  else return expressions[expression]
+  if (!(expression in expressions)) {
+    return expression
+  } else {
+    return expressions[expression]
+  }
 }
 
 const expressions = {

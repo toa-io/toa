@@ -9,3 +9,5 @@ operations:
 configuration:
   schema:
     foo: hello
+    bar:
+      baz: world

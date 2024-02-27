@@ -42,12 +42,14 @@ Feature: Configuration Extension
       configuration:
         configuration.base:
           foo: bye
+          bar:
+            baz: bye
       """
     When I run `toa env`
     And I run `toa invoke echo -p ./components/configuration.base`
     And stdout should contain lines:
     """
-    { foo: 'bye' }
+    { foo: 'bye', baz: 'bye' }
     """
 
   Scenario: Secret values
@@ -57,16 +59,19 @@ Feature: Configuration Extension
       configuration:
         configuration.base:
           foo: $FOO_SECRET_VALUE
+          bar:
+            baz: $BAZ_SECRET_VALUE
       """
     When I run `toa env`
     And I update an environment with:
       """
-      TOA_CONFIGURATION__FOO_SECRET_VALUE=super secret password
+      TOA_CONFIGURATION__FOO_SECRET_VALUE=secret foo
+      TOA_CONFIGURATION__BAZ_SECRET_VALUE=secret baz
       """
     And I run `toa invoke echo -p ./components/configuration.base`
     And stdout should contain lines:
     """
-    { foo: 'super secret password' }
+    { foo: 'secret foo', baz: 'secret baz' }
     """
 
   Scenario: Deployment
@@ -94,6 +99,8 @@ Feature: Configuration Extension
       configuration:
         configuration.base:
           foo: $FOO_VALUE
+          bar:
+            baz: $BAZ_VALUE
       """
     When I export deployment
     Then exported values should contain:
@@ -102,11 +109,15 @@ Feature: Configuration Extension
         - name: configuration-base
           variables:
             - name: TOA_CONFIGURATION_CONFIGURATION_BASE
-              value: eyJmb28iOiIkRk9PX1ZBTFVFIn0=
+              value: eyJmb28iOiIkRk9PX1ZBTFVFIiwiYmFyIjp7ImJheiI6IiRCQVpfVkFMVUUifX0=
             - name: TOA_CONFIGURATION__FOO_VALUE
               secret:
                 name: toa-configuration
                 key: FOO_VALUE
+            - name: TOA_CONFIGURATION__BAZ_VALUE
+              secret:
+                name: toa-configuration
+                key: BAZ_VALUE
       """
 
   Scenario: Shared secret deployment
