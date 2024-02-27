@@ -6,7 +6,7 @@ export class Context implements Directive {
   public readonly targeted = false
   public readonly storage: string
 
-  public constructor (value: any) {
+  public constructor (value: unknown) {
     schemas.context.validate(value)
 
     this.storage = value

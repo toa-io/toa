@@ -1,4 +1,5 @@
 name: greeter
+version: 0.0.0
 
 exposition:
   /:

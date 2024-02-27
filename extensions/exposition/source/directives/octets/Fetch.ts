@@ -12,7 +12,11 @@ import type { Directive, Input } from './types'
 export class Fetch implements Directive {
   public readonly targeted = true
 
-  private readonly permissions: Required<Permissions> = { blob: true, meta: false }
+  private readonly permissions: Required<Permissions> = {
+    blob: true,
+    meta: false
+  }
+
   private readonly discovery: Promise<Component>
   private storage: Component = null as unknown as Component
 
@@ -23,30 +27,34 @@ export class Fetch implements Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, request: Input): Promise<Output> {
+  public async apply (storage: string, input: Input): Promise<Output> {
     this.storage ??= await this.discovery
 
-    const variant = posix.basename(request.url).includes('.')
-    const metadata = request.subtype === 'octets.entry'
+    const variant = posix.basename(input.request.url).includes('.')
+    const metadata = input.subtype === 'octets.entry'
 
     if (!variant && metadata)
       if (this.permissions.meta)
-        return this.get(storage, request)
+        return this.get(storage, input)
       else
         throw new Forbidden('Metadata is not accessible.')
 
     if (!variant && !this.permissions.blob)
       throw new Forbidden('BLOB variant must be specified.')
 
-    return await this.fetch(storage, request)
+    return await this.fetch(storage, input)
   }
 
-  private async fetch (storage: string, request: Input): Promise<Output> {
-    if ('if-none-match' in request.headers)
+  private async fetch (storage: string, input: Input): Promise<Output> {
+    if ('if-none-match' in input.request.headers)
       return { status: 304 }
 
-    const input = { storage, path: request.url }
-    const result = await this.storage.invoke<Maybe<FetchResult>>('fetch', { input })
+    const result = await this.storage.invoke<Maybe<FetchResult>>('fetch', {
+      input: {
+        storage,
+        path: input.request.url
+      }
+    })
 
     if (result instanceof Error)
       throw new NotFound()
@@ -57,12 +65,19 @@ export class Fetch implements Directive {
       etag: result.checksum
     })
 
-    return { headers, body: result.stream }
+    return {
+      headers,
+      body: result.stream
+    }
   }
 
-  private async get (storage: string, request: Input): Promise<Output> {
-    const input = { storage, path: request.url }
-    const entry = await this.storage.invoke<Maybe<Entry>>('get', { input })
+  private async get (storage: string, input: Input): Promise<Output> {
+    const entry = await this.storage.invoke<Maybe<Entry>>('get', {
+      input: {
+        storage,
+        path: input.request.url
+      }
+    })
 
     if (entry instanceof Error)
       throw new NotFound()

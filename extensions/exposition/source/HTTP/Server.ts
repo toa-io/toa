@@ -1,31 +1,31 @@
 import fs from 'node:fs'
 import os from 'node:os'
-import express from 'express'
+import * as http from 'node:http'
+import assert from 'node:assert'
+import { once } from 'node:events'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
-import Negotiator from 'negotiator'
-import { read, write, type IncomingMessage, type OutgoingMessage } from './messages'
+import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
-import { formats, types } from './formats'
-import type * as http from 'node:http'
-import type { Express, Request, Response, NextFunction } from 'express'
+import { Context } from './Context'
+import type { IncomingMessage } from './Context'
 
 export class Server extends Connector {
-  private server?: http.Server
-  private readonly app: Express
-  private readonly debug: boolean
-  private readonly requestedPort: number
+  private readonly server: http.Server = http.createServer()
+  private readonly properties: Properties
+  private process?: Processing
 
-  private constructor (app: Express, debug: boolean, port: number) {
+  private constructor (properties: Properties) {
     super()
 
-    this.app = app
-    this.debug = debug
-    this.requestedPort = port
+    this.properties = properties
+
+    this.server.on('request', (req, res) => this.listener(req, res))
   }
 
   public get port (): number {
-    if (this.server === undefined) return this.requestedPort
+    if (this.properties.port !== 0)
+      return this.properties.port
 
     const address = this.server.address()
 
@@ -40,132 +40,97 @@ export class Server extends Connector {
       ? DEFAULTS
       : { ...DEFAULTS, ...options }
 
-    const app = express()
-
-    app.disable('x-powered-by')
-    app.use(supportedMethods(properties.methods))
-
-    return new Server(app, properties.debug, properties.port)
+    return new Server(properties)
   }
 
   public attach (process: Processing): void {
-    this.app.use((request: Request, response: Response) => {
-      const message = this.extend(request)
-
-      process(message)
-        .then(this.success(message, response))
-        .catch(this.fail(message, response))
-    })
+    this.process = process
   }
 
   protected override async open (): Promise<void> {
-    const listening = promex()
+    this.server.listen(this.properties.port)
 
-    this.server = this.app.listen(this.requestedPort, listening.callback)
-
-    await listening
+    await once(this.server, 'listening')
 
     console.info('HTTP Server is listening.')
   }
 
   protected override async close (): Promise<void> {
-    const stopped = promex()
+    this.server.close()
 
-    this.server?.close(stopped.callback)
+    console.info('HTTP Server stopped accepting new connections.')
 
-    await stopped
-
-    this.server = undefined
+    await once(this.server, 'close')
 
     console.info('HTTP Server has been stopped.')
   }
 
-  private extend (request: Request): IncomingMessage {
-    const message = request as IncomingMessage
+  private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
+    if (request.method === undefined || !this.properties.methods.has(request.method)) {
+      response.writeHead(501).end()
 
-    negotiate(request, message)
-
-    message.pipelines = { body: [], response: [] }
-
-    message.parse = async <T> (): Promise<T> => {
-      const value = await read(request)
-
-      if (message.pipelines.body.length === 0)
-        return value
-
-      return message.pipelines.body.reduce((value, transform) => transform(value), value)
+      return
     }
 
-    return message
+    if (request.url === undefined) {
+      response.writeHead(400).end()
+
+      return
+    }
+
+    assert.ok(this.process !== undefined,
+      'No processing function has been attached to the server.')
+
+    const context = new Context(request as IncomingMessage, this.properties.trace)
+
+    this.process(context)
+      .then(this.success(context, response))
+      .catch(this.fail(context, response))
   }
 
-  private success (request: IncomingMessage, response: Response) {
+  private success (context: Context, response: http.ServerResponse) {
     return (message: OutgoingMessage) => {
       let status = message.status
 
       if (status === undefined)
-        if (message.body === null) status = 404
-        else if (request.method === 'POST') status = 201
-        else if (message.body === undefined) status = 204
-        else status = 200
+        if (message.body === null)
+          status = 404
+        else if (context.request.method === 'POST')
+          status = 201
+        else if (message.body === undefined)
+          status = 204
+        else
+          status = 200
 
-      response.status(status)
-      write(request, response, message)
+      response.statusCode = status
+      write(context, response, message)
     }
   }
 
-  private fail (request: IncomingMessage, response: Response) {
+  private fail (context: Context, response: http.ServerResponse) {
     return async (exception: Error) => {
-      if (!request.complete)
-        await adam(request)
+      if (!context.request.complete)
+        await adam(context.request)
 
-      const status = exception instanceof Exception
+      response.statusCode = exception instanceof Exception
         ? exception.status
         : 500
 
-      response.status(status)
-
       const message: OutgoingMessage = {}
-      const verbose = exception instanceof ClientError || this.debug
+      const verbose = exception instanceof ClientError || this.properties.debug
 
       if (verbose)
         message.body = exception instanceof Exception
           ? exception.body
           : (exception.stack ?? exception.message)
 
-      write(request, response, message)
+      write(context, response, message)
     }
   }
-}
-
-function supportedMethods (methods: Set<string>) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    if (methods.has(req.method)) next()
-    else res.sendStatus(501)
-  }
-}
-
-function negotiate (request: Request, message: IncomingMessage): void {
-  if (request.headers.accept !== undefined) {
-    const match = SUBTYPE.exec(request.headers.accept)
-
-    if (match !== null) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const { type, subtype, suffix } = match.groups!
-
-      request.headers.accept = `${type}/${suffix}`
-      message.subtype = subtype
-    }
-  }
-
-  const negotiator = new Negotiator(request)
-  const mediaType = negotiator.mediaType(types)
-
-  message.encoder = mediaType === undefined ? null : formats[mediaType]
 }
 
 // https://github.com/whatwg/fetch/issues/1254
-async function adam (request: Request): Promise<void> {
+async function adam (request: http.IncomingMessage): Promise<void> {
   const completed = promex()
   const devnull = fs.createWriteStream(os.devNull)
 
@@ -173,21 +138,21 @@ async function adam (request: Request): Promise<void> {
     .on('end', completed.callback)
     .pipe(devnull)
 
-  return await completed
+  return completed
 }
 
 const DEFAULTS: Properties = {
   methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
+  trace: false,
   port: 8000
 }
 
 interface Properties {
   methods: Set<string>
   debug: boolean
+  trace: boolean
   port: number
 }
 
-export type Processing = (input: IncomingMessage) => Promise<OutgoingMessage>
-
-const SUBTYPE = /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/
+export type Processing = (input: Context) => Promise<OutgoingMessage>

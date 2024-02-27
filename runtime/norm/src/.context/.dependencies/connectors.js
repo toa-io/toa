@@ -1,5 +1,7 @@
 'use strict'
 
+const { resolve } = require('node:path')
+
 const connectors = (context, extracted) => {
   const connectors = {}
 
@@ -10,11 +12,14 @@ const connectors = (context, extracted) => {
 
   for (const component of components) {
     if (component.entity !== undefined) {
-      if (connectors[component.entity.storage] === undefined) {
-        connectors[component.entity.storage] = []
+      let storage = component.entity.storage
+
+      if (storage[0] === '.') {
+        storage = resolve(component.path, storage)
       }
 
-      connectors[component.entity.storage].push(component)
+      connectors[storage] ??= []
+      connectors[storage].push(component)
     }
 
     const bindings = new Set()

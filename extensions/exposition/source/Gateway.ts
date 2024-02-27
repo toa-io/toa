@@ -1,8 +1,7 @@
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
-import type { Interceptor } from './Interception'
-import type { Maybe } from '@toa.io/types'
+import type { Interception } from './Interception'
 import type { Method, Parameter, Tree } from './RTD'
 import type { Label } from './discovery'
 import type { Branch } from './Branch'
@@ -12,22 +11,50 @@ import type { Directives } from './Directive'
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree<Endpoint, Directives>
-  private readonly interceptor: Interceptor
-  private readonly server: Connector
+  private readonly interceptor: Interception
 
-  // eslint-disable-next-line max-params, max-len
-  public constructor (broadcast: Broadcast, server: http.Server, tree: Tree<Endpoint, Directives>, interception: Interceptor) {
+  // eslint-disable-next-line max-len
+  public constructor (broadcast: Broadcast, tree: Tree<Endpoint, Directives>, interception: Interception) {
     super()
 
     this.broadcast = broadcast
     this.tree = tree
     this.interceptor = interception
-    this.server = server
 
     this.depends(broadcast)
-    // this.depends(server)
+  }
 
-    server.attach(this.process.bind(this))
+  public async process (context: http.Context): Promise<http.OutgoingMessage> {
+    const interception = await context.timing.capture('gate:intercept',
+      this.interceptor.intercept(context))
+
+    if (interception !== null)
+      return interception
+
+    const match = this.tree.match(context.url.pathname)
+
+    if (match === null)
+      throw new http.NotFound()
+
+    const {
+      node,
+      parameters
+    } = match
+
+    if (!(context.request.method in node.methods))
+      throw new http.MethodNotAllowed()
+
+    const method = node.methods[context.request.method]
+
+    const interruption = await context.timing.capture('gate:preflight',
+      method.directives.preflight(context, parameters))
+
+    const response = interruption ??
+      await context.timing.capture('gate:call', this.call(method, context, parameters))
+
+    await context.timing.capture('gate:settle', method.directives.settle(context, response))
+
+    return response
   }
 
   protected override async open (): Promise<void> {
@@ -40,56 +67,40 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private async process (request: http.IncomingMessage): Promise<http.OutgoingMessage> {
-    const interception = await this.interceptor.intercept(request)
-
-    if (interception !== null)
-      return interception
-
-    const match = this.tree.match(request.path)
-
-    if (match === null)
-      throw new http.NotFound()
-
-    const { node, parameters } = match
-
-    if (!(request.method in node.methods))
-      throw new http.MethodNotAllowed()
-
-    const method = node.methods[request.method]
-    const interruption = await method.directives.preflight(request, parameters)
-    const response = interruption ?? await this.call(method, request, parameters)
-
-    await method.directives.settle(request, response)
-
-    return response
-  }
-
   private async call
-  (method: Method<Endpoint, Directives>, request: http.IncomingMessage, parameters: Parameter[]):
+  (method: Method<Endpoint, Directives>, context: http.Context, parameters: Parameter[]):
   Promise<http.OutgoingMessage> {
-    if (request.path[request.path.length - 1] !== '/')
+    if (context.url.pathname[context.url.pathname.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required.')
 
-    if (request.encoder === null)
+    if (context.encoder === null)
       throw new http.NotAcceptable()
 
     if (method.endpoint === null)
       throw new http.MethodNotAllowed()
 
-    const body = await request.parse()
+    const body = await context.body()
+    const query = this.query(context)
 
-    if ('embed' in request && typeof body === 'object' && body !== null)
-      Object.assign(body, request.embed)
+    return await method.endpoint
+      .call(body, query, parameters)
+      .catch(rethrow) as http.OutgoingMessage
+  }
 
-    const reply = await method.endpoint
-      .call(body, request.query, parameters)
-      .catch(rethrow) as Maybe<unknown>
+  private query (context: http.Context): http.Query {
+    const query: http.Query = Object.fromEntries(context.url.searchParams)
+    const etag = context.request.headers['if-match']
 
-    if (reply instanceof Error)
-      throw new http.Conflict(reply)
+    if (etag !== undefined) {
+      const match = etag.match(ETAG)
 
-    return { body: reply }
+      if (match === null)
+        throw new http.BadRequest('Invalid ETag.')
+      else
+        query.version = parseInt(match.groups!.version)
+    }
+
+    return query
   }
 
   private async discover (): Promise<void> {
@@ -109,4 +120,6 @@ export class Gateway extends Connector {
   }
 }
 
-type Broadcast = bindings.Broadcast<Label>
+const ETAG = /^"(?<version>\d{1,32})"$/
+
+export type Broadcast = bindings.Broadcast<Label>

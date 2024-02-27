@@ -3,7 +3,10 @@
 const { Connector } = require('@toa.io/core')
 
 const { translate } = require('./translate')
-const { to, from } = require('./record')
+const {
+  to,
+  from
+} = require('./record')
 
 /**
  * @implements {toa.core.Storage}
@@ -24,7 +27,10 @@ class Storage extends Connector {
   }
 
   async get (query) {
-    const { criteria, options } = translate(query)
+    const {
+      criteria,
+      options
+    } = translate(query)
 
     const record = await this.#connection.get(criteria, options)
 
@@ -32,7 +38,10 @@ class Storage extends Connector {
   }
 
   async find (query) {
-    const { criteria, options } = translate(query)
+    const {
+      criteria,
+      options
+    } = translate(query)
     const recordset = await this.#connection.find(criteria, options)
 
     return recordset.map((item) => from(item))
@@ -45,28 +54,44 @@ class Storage extends Connector {
   }
 
   async set (entity) {
-    const criteria = { _id: entity.id, _version: entity._version }
+    const criteria = {
+      _id: entity.id,
+      _version: entity._version - 1
+    }
     const result = await this.#connection.replace(criteria, to(entity))
 
     return result !== null
   }
 
   async store (entity) {
-    if (entity._version === 0) return this.add(entity)
-    else return this.set(entity)
+    if (entity._version === 1) {
+      return this.add(entity)
+    } else {
+      return this.set(entity)
+    }
   }
 
   async upsert (query, changeset, insert) {
-    const { criteria, options } = translate(query)
-    const update = { $set: { ...changeset }, $inc: { _version: 1 } }
+    const {
+      criteria,
+      options
+    } = translate(query)
+
+    const update = {
+      $set: { ...changeset },
+      $inc: { _version: 1 }
+    }
 
     if (insert !== undefined) {
       delete insert._version
 
       options.upsert = true
 
-      if (criteria._id !== undefined) insert._id = criteria._id
-      else return null // this shouldn't ever happen
+      if (criteria._id !== undefined) {
+        insert._id = criteria._id
+      } else {
+        return null
+      } // this shouldn't ever happen
 
       if (Object.keys(insert) > 0) update.$setOnInsert = insert
     }

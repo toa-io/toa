@@ -17,7 +17,7 @@ export class Language implements Embedding {
     assert.ok(properties.languages.length > 0,
       'List of supported languages is empty.')
 
-    const negotiator = new Negotiator(input)
+    const negotiator = new Negotiator(input.request)
     const language = negotiator.language(properties.languages) ?? properties.languages[0]
 
     input.pipelines.response.push((response) => {

@@ -36,6 +36,9 @@ function createSecrets (values: object): Variable[] {
   const secrets: Variable[] = []
 
   for (const value of Object.values(values)) {
+    if (typeof value === 'object' && value !== null)
+      secrets.push(...createSecrets(value))
+
     if (typeof value !== 'string') continue
 
     const match = value.match(SECRET_RX)

@@ -16,10 +16,13 @@ const state = () => ({
   _created: generate(),
   _updated: generate(),
   _deleted: generate(),
-  _version: generate()
+  _version: 0
 })
 
-const failed = () => ({ ...state(), fail: true })
+const failed = () => ({
+  ...state(),
+  fail: true
+})
 
 exports.schema = schema
 exports.state = state

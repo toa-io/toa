@@ -8,6 +8,7 @@ entity:
       type: integer
       default: 0
     bar: string
+    baz: boolean
 
 operations:
   transit:
@@ -15,3 +16,4 @@ operations:
     input:
       foo: .
       bar: .
+      baz: .

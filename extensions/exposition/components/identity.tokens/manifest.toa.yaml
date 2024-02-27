@@ -1,5 +1,6 @@
 namespace: identity
 name: tokens
+version: 0.0.0
 
 entity:
   schema:

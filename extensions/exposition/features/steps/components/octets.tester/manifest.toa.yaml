@@ -1,5 +1,6 @@
 namespace: octets
 name: tester
+version: 0.0.0
 
 storages: octets
 

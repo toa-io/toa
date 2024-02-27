@@ -127,12 +127,13 @@ exposition:
   host: the.example.com
 ```
 
-| Option        | Type      | Description                                                      |
-|---------------|-----------|------------------------------------------------------------------|
-| `host`        | `string`  | Domain name to be used for the corresponding Kubernetes Ingress. |
-| `class`       | `string`  | Ingress class                                                    |
-| `annotations` | `object`  | Ingress annotations                                              |
-| `debug`       | `boolean` | Output server errors. Default `false`.                           |
+| Option        | Type      | Description                                                                                                       |
+|---------------|-----------|-------------------------------------------------------------------------------------------------------------------|
+| `host`        | `string`  | Domain name to be used for the corresponding Kubernetes Ingress.                                                  |
+| `class`       | `string`  | Ingress class                                                                                                     |
+| `annotations` | `object`  | Ingress annotations                                                                                               |
+| `debug`       | `boolean` | Output server errors. Default `false`.                                                                            |
+| `trace`       | `boolean` | Output [server timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server-Timing). Default `false`. |
 
 ### Context resources
 

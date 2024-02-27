@@ -49,3 +49,25 @@ Feature: Exposition deployment
           - name: TOA_MONGODB_IDENTITY_BASIC
             value: mongodb://database.url
       """
+
+  Scenario: Deploying `debug` and `trace` options
+    Given I have a context with:
+      """yaml
+      configuration:
+        identity.tokens:
+          key0: secret.key.0
+      exposition:
+        debug: true
+        trace: true
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      services:
+        - name: exposition-gateway
+          variables:
+          - name: TOA_EXPOSITION_DEBUG
+            value: "1"
+          - name: TOA_EXPOSITION_TRACE
+            value: "1"
+      """

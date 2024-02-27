@@ -29,7 +29,10 @@ class QueryableMapping extends Mapping {
   public fit (input: any, qs: http.Query, parameters: Parameter[]): core.Request {
     const query = this.query.fit(qs, parameters)
 
-    return { input, query }
+    return {
+      input,
+      query
+    }
   }
 }
 
@@ -38,14 +41,10 @@ class InputMapping extends Mapping {
     if (input === undefined && parameters.length > 0)
       input = {}
 
-    if (typeof input === 'object')
-      this.assign(input, parameters)
+    if (typeof input === 'object' && input !== null)
+      for (const parameter of parameters)
+        input[parameter.name] = parameter.value
 
     return { input }
-  }
-
-  private assign (input: Record<string, any>, parameters: Parameter[]): void {
-    for (const parameter of parameters)
-      input[parameter.name] = parameter.value
   }
 }

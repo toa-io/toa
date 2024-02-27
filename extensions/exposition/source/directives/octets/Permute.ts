@@ -18,16 +18,22 @@ export class Permute implements Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, request: Input): Promise<Output> {
+  public async apply (storage: string, input: Input): Promise<Output> {
     this.storage ??= await this.discovery
 
-    if (request.encoder === null)
+    if (input.encoder === null)
       throw new NotAcceptable()
 
-    const path = request.url
-    const list = await request.parse()
-    const input = { storage, path, list }
-    const error = await this.storage.invoke<Maybe<unknown>>('permute', { input })
+    const path = input.request.url
+    const list = await input.body()
+
+    const error = await this.storage.invoke<Maybe<unknown>>('permute', {
+      input: {
+        storage,
+        path,
+        list
+      }
+    })
 
     if (error instanceof Error)
       throw new NotFound()

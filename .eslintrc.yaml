@@ -69,7 +69,7 @@ overrides:
         - always
         - null: always
       '@typescript-eslint/no-unsafe-argument': warn
-      '@typescript-eslint/no-non-null-assertion': warn
+      '@typescript-eslint/no-non-null-assertion': off
       '@typescript-eslint/non-nullable-type-assertion-style': warn
       '@typescript-eslint/unbound-method': warn
 
@@ -80,8 +80,8 @@ overrides:
   - files: ['**/features/**/*.ts']
     extends: 'plugin:@typescript-eslint/disable-type-checked'
     rules:
-       '@typescript-eslint/prefer-nullish-coalescing': 'off'
-       '@typescript-eslint/strict-boolean-expressions': 'off'
+      '@typescript-eslint/prefer-nullish-coalescing': 'off'
+      '@typescript-eslint/strict-boolean-expressions': 'off'
 parserOptions:
   project: true
 env:

@@ -50,7 +50,7 @@ export class Agent {
         throw new assert.AssertionError({
           message: `Response is missing '${line}'`,
           expected: line,
-          actual: this.response
+          actual: this.response.slice(0, 1024)
         })
     }
   }
@@ -65,7 +65,7 @@ export class Agent {
         throw new assert.AssertionError({
           message: `Response contains '${line}'`,
           expected: line,
-          actual: this.response
+          actual: this.response.slice(0, 1024)
         })
     }
   }
@@ -74,7 +74,12 @@ export class Agent {
     head = trim(head) + '\n\n'
     head = this.captures.substitute(head)
 
-    const { url, method, headers } = http.parse.request(head)
+    const {
+      url,
+      method,
+      headers
+    } = http.parse.request(head)
+
     const href = new URL(url, this.origin).href
 
     const request = {
@@ -102,19 +107,5 @@ export class Agent {
     const expected = head + '\n\n' + text
 
     this.responseIncludes(expected)
-  }
-
-  /**
-   * @deprecated - use Captures dependency injection
-   */
-  public set (name: string, value: string): void {
-    this.captures.set(name, value)
-  }
-
-  /**
-   * @deprecated - use Captures dependency injection
-   */
-  public get (name: string): string {
-    return this.captures.get(name) ?? ''
   }
 }

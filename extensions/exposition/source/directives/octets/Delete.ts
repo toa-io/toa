@@ -27,11 +27,16 @@ export class Delete implements Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, request: Input, parameters: Parameter[]): Promise<Output> {
+  public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery
 
     const entry = await this.storage.invoke<Maybe<Entry>>('get',
-      { input: { storage, path: request.url } })
+      {
+        input: {
+          storage,
+          path: input.request.url
+        }
+      })
 
     if (entry instanceof Error)
       throw new NotFound()
@@ -40,31 +45,36 @@ export class Delete implements Directive {
 
     if (this.workflow !== undefined) {
       output.status = 202
-      output.body = Readable.from(this.execute(request, storage, entry, parameters))
+      output.body = Readable.from(this.execute(input, storage, entry, parameters))
     } else
-      await this.delete(storage, request)
+      await this.delete(storage, input)
 
     return output
   }
 
-  private async delete (storage: string, request: Input): Promise<void> {
+  private async delete (storage: string, input: Input): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await this.storage!.invoke('delete',
-      { input: { storage, path: request.url } })
+      {
+        input: {
+          storage,
+          path: input.request.url
+        }
+      })
   }
 
   // eslint-disable-next-line max-params
   private async * execute
-  (request: Input, storage: string, entry: Entry, parameters: Parameter[]): AsyncGenerator {
+  (input: Input, storage: string, entry: Entry, parameters: Parameter[]): AsyncGenerator {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    for await (const chunk of this.workflow!.execute(request, storage, entry, parameters)) {
+    for await (const chunk of this.workflow!.execute(input, storage, entry, parameters)) {
       yield chunk
 
       if (typeof chunk === 'object' && chunk !== null && 'error' in chunk)
         return
     }
 
-    await this.delete(storage, request)
+    await this.delete(storage, input)
   }
 }
 

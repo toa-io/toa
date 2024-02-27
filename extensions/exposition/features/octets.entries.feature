@@ -1,4 +1,4 @@
-Feature: Accessing entires
+Feature: Accessing entries
 
   Scenario: Entries are not accessible by default
     Given the annotation:

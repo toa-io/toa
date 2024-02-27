@@ -2,14 +2,20 @@
 
 const assert = require('node:assert')
 const { exceptions } = require('@toa.io/core')
-const { transpose, match } = require('@toa.io/generic')
+const {
+  transpose,
+  match
+} = require('@toa.io/generic')
 const { parse } = require('@toa.io/yaml')
 const { diff } = require('jest-diff')
 
 const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')
 
-const { When, Then } = require('@cucumber/cucumber')
+const {
+  When,
+  Then
+} = require('@cucumber/cucumber')
 
 When('I debug command {word}',
   /**
@@ -17,7 +23,7 @@ When('I debug command {word}',
    * @param {import('@cucumber/cucumber').DataTable} inputs
    * @this {toa.features.Context}
    */
-  async function (name, inputs) {
+  async function(name, inputs) {
     const handler = cli(name)
     const argv = Object.fromEntries(inputs.raw())
 
@@ -29,7 +35,7 @@ When('I boot {component} component',
    * @param {string} reference
    * @this {toa.features.Context}
    */
-  async function (reference) {
+  async function(reference) {
     this.connector = /** @type {toa.core.Connector} */ await stage.component(reference)
   })
 
@@ -38,7 +44,7 @@ When('I compose {component} component',
    * @param {string} reference
    * @this {toa.features.Context}
    */
-  async function (reference) {
+  async function(reference) {
     await stage.composition([reference], {})
   })
 
@@ -47,7 +53,7 @@ Then('I compose {component} component and it fails with:',
    * @param {string} reference
    * @this {toa.features.Context}
    */
-  async function (reference, errorMessage) {
+  async function(reference, errorMessage) {
     await assert.rejects(stage.composition([reference], {}), {
       message: errorMessage
     })
@@ -58,7 +64,7 @@ When('I stage {component} component',
    * @param {string} reference
    * @this {toa.features.Context}
    */
-  async function (reference) {
+  async function(reference) {
     await stage.composition([reference])
   })
 
@@ -67,7 +73,7 @@ When('I compose components:',
    * @param {import('@cucumber/cucumber').DataTable} data
    * @this {toa.features.Context}
    */
-  async function (data) {
+  async function(data) {
     const cells = data.raw()
     const rows = transpose(cells)
     const references = rows[0]
@@ -79,7 +85,7 @@ Then('I disconnect',
   /**
    * @this {toa.features.Context}
    */
-  async function () {
+  async function() {
     if (this.connector) await this.connector.disconnect()
     if (this.storage?.migration) await this.storage.migration.disconnect()
 
@@ -94,7 +100,7 @@ When('I invoke {token}',
    * @param {string} endpoint
    * @this {toa.features.Context}
    */
-  async function (endpoint) {
+  async function(endpoint) {
     await invoke.call(this, endpoint)
   })
 
@@ -104,7 +110,7 @@ When('I invoke {token} with:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  async function (endpoint, yaml) {
+  async function(endpoint, yaml) {
     const request = parse(yaml)
 
     await invoke.call(this, endpoint, request)
@@ -116,7 +122,7 @@ When('I call {endpoint} with:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  async function (endpoint, yaml) {
+  async function(endpoint, yaml) {
     const request = parse(yaml)
 
     await call.call(this, endpoint, request)
@@ -128,7 +134,7 @@ When('I call {endpoint} without waiting with:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  async function (endpoint, yaml) {
+  async function(endpoint, yaml) {
     const request = parse(yaml)
 
     void call.call(this, endpoint, request)
@@ -138,7 +144,7 @@ Then('the pending reply is not received yet',
   /**
    * @this {toa.features.Context}
    */
-  async function () {
+  async function() {
     if (this.exception !== undefined) throw this.exception
 
     assert.equal(this.reply, undefined, 'Reply is received')
@@ -148,7 +154,7 @@ Then('the pending reply is received',
   /**
    * @this {toa.features.Context}
    */
-  async function () {
+  async function() {
     if (this.exception !== undefined) throw this.exception
 
     await this.pendingReply
@@ -159,7 +165,7 @@ When('I call {endpoint}',
    * @param {string} endpoint
    * @this {toa.features.Context}
    */
-  async function (endpoint) {
+  async function(endpoint) {
     await call.call(this, endpoint, {})
   })
 
@@ -168,7 +174,7 @@ Then('the reply is received:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  function (yaml) {
+  function(yaml) {
     if (this.exception !== undefined) throw this.exception
 
     const expected = parse(yaml)
@@ -182,12 +188,14 @@ Then('the error is received:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  function (yaml) {
-    if (this.exception !== undefined)
+  function(yaml) {
+    if (this.exception !== undefined) {
       throw this.exception
+    }
 
-    if (!(this.reply instanceof Error))
+    if (!(this.reply instanceof Error)) {
       throw new Error('Reply is not an error')
+    }
 
     const expected = parse(yaml)
     const matches = match(this.reply, expected)
@@ -200,9 +208,10 @@ Then('the reply stream is received:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  async function (yaml) {
-    if (this.exception !== undefined)
+  async function(yaml) {
+    if (this.exception !== undefined) {
       throw this.exception
+    }
 
     const expected = parse(yaml)
     const received = []
@@ -220,9 +229,10 @@ Then('the reply is received',
   /**
    * @this {toa.features.Context}
    */
-  function () {
-    if (this.exception !== undefined)
+  function() {
+    if (this.exception !== undefined) {
       throw this.exception
+    }
 
     assert.notEqual(this.reply, undefined, 'Reply is not received')
   })
@@ -232,7 +242,7 @@ Then('the following exception is thrown:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  function (yaml) {
+  function(yaml) {
     assert.ok(this.exception !== undefined, 'Exception is not thrown')
 
     const expected = parse(yaml)
@@ -247,7 +257,7 @@ When('an event {label} is emitted with the payload:',
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  async function (label, yaml) {
+  async function(label, yaml) {
     const payload = parse(yaml)
 
     await stage.emit(label, payload)
@@ -263,8 +273,14 @@ async function invoke (endpoint, request = {}) {
 
   const reply = await component.invoke(endpoint, request)
 
-  if (reply.exception !== undefined)
+  if (reply === null) {
+    this.reply = null
+    return
+  }
+
+  if (reply.exception !== undefined) {
     throw reply.exception
+  }
 
   if (reply.error !== undefined) {
     throw new Error(`${exceptions.names[reply.error.code]}: ${reply.error.message}`)
