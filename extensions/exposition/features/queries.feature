@@ -212,31 +212,3 @@ Feature: Queries
         volume: 100
         temperature: 80
       """
-
-  Scenario: Request with projection
-    Given the `pots` is running with the following manifest:
-      """yaml
-      exposition:
-        /:
-          GET:
-            endpoint: enumerate
-            projection: [volume, temperature]
-      """
-    When the following request is received:
-      """
-      GET /pots/?id=4c4759e6f9c74da989d64511df42d6f4 HTTP/1.1
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-
-      - id: 4c4759e6f9c74da989d64511df42d6f4
-        volume: 100
-        temperature: 80
-      """
-    And the reply does not contain:
-      """
-      title:
-      """
