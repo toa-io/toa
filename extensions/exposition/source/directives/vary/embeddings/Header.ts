@@ -8,7 +8,7 @@ export class Header implements Embedding {
   public constructor (name: string) {
     this.name = name
 
-    cors.allowHeader(this.name)
+    cors.allow(this.name)
   }
 
   public resolve (input: Input): string | undefined {

@@ -2,13 +2,13 @@ import { Stub } from './Stub'
 import { Throw } from './Throw'
 import { type Directive } from './types'
 import type { Input, Output } from '../../io'
-import type { Family } from '../../Directive'
+import type { DirectiveFamily } from '../../RTD'
 
-export class Development implements Family<Directive> {
+export class Development implements DirectiveFamily<Directive> {
   public readonly name: string = 'dev'
   public readonly mandatory: boolean = false
 
-  public create (name: string, value: any): Directive {
+  public create (name: string, value: unknown): Directive {
     const Class = constructors[name]
 
     if (Class === undefined)

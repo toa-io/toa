@@ -1,14 +1,11 @@
-import { type Directives } from './Directives'
-import { type Endpoint } from './Endpoint'
+import type { Endpoint } from './Endpoint'
+import type { Directives } from './Directives'
 
-export class Method<
-  TEndpoint extends Endpoint<TEndpoint> = any,
-  TDirectives extends Directives<TDirectives> = any
-> {
-  public readonly endpoint: TEndpoint | null
-  public readonly directives: TDirectives
+export class Method {
+  public readonly endpoint: Endpoint | null
+  public readonly directives: Directives
 
-  public constructor (endpoint: TEndpoint | null, directives: TDirectives) {
+  public constructor (endpoint: Endpoint | null, directives: Directives) {
     this.endpoint = endpoint
     this.directives = directives
   }
@@ -18,7 +15,4 @@ export class Method<
   }
 }
 
-export type Methods<
-  TEndpoint extends Endpoint<TEndpoint> = any,
-  TDirectives extends Directives<TDirectives> = any
-> = Record<string, Method<TEndpoint, TDirectives>>
+export type Methods = Record<string, Method>

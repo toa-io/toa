@@ -1,14 +1,11 @@
 import { Node, type Properties } from './Node'
 import { Route } from './Route'
-import { type Context } from './Context'
 import { segment } from './segment'
 import { Method, type Methods } from './Method'
-import { type Endpoint } from './Endpoint'
-import { type Directives } from './Directives'
+import type { Context } from './Context'
 import type * as syntax from './syntax'
 
-export function createNode<TEndpoint extends Endpoint, TDirectives extends Directives>
-(node: syntax.Node, context: Context): Node<TEndpoint, TDirectives> {
+export function createNode (node: syntax.Node, context: Context): Node {
   if (node.isolated === true)
     context.directives.stack = node.directives
   else

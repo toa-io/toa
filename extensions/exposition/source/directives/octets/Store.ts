@@ -36,13 +36,19 @@ export class Store implements Directive {
 
     this.discovery.storage = discovery
 
-    cors.allowHeader('content-meta')
+    cors.allow('content-meta')
   }
 
   public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery.storage
 
-    const request: StoreRequest = { input: { storage, request: input.request } }
+    const request: StoreRequest = {
+      input: {
+        storage,
+        request: input.request
+      }
+    }
+
     const meta = input.request.headers['content-meta']
 
     if (this.accept !== undefined)

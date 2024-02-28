@@ -5,7 +5,7 @@ import { type Context } from './Context'
 import * as http from './HTTP'
 import type * as RTD from './RTD'
 
-export class Endpoint implements RTD.Endpoint<Endpoint> {
+export class Endpoint implements RTD.Endpoint {
   private readonly endpoint: string
   private readonly mapping: Mapping
   private readonly discovery: Promise<Component>
@@ -18,7 +18,9 @@ export class Endpoint implements RTD.Endpoint<Endpoint> {
   }
 
   public async call
-  (body: any, query: http.Query, parameters: RTD.Parameter[]): Promise<http.OutgoingMessage> {
+  (context: http.Context, parameters: RTD.Parameter[]): Promise<http.OutgoingMessage> {
+    const body = await context.body()
+    const query = this.query(context)
     const request = this.mapping.fit(body, query, parameters)
 
     this.remote ??= await this.discovery
@@ -28,13 +30,25 @@ export class Endpoint implements RTD.Endpoint<Endpoint> {
     if (reply instanceof Error)
       throw new http.Conflict(reply)
 
-    const message: http.OutgoingMessage = { body: reply }
+    const message: http.OutgoingMessage = {}
 
     if (typeof reply === 'object' && reply !== null && '_version' in reply) {
+      const etag = context.request.headers['if-none-match']
+
       message.headers ??= new Headers()
-      message.headers.set('etag', `"${reply._version.toString()}"`)
-      delete reply._version
+
+      if (etag !== undefined && reply._version === this.version(etag)) {
+        message.status = 304
+        message.headers.set('etag', etag)
+
+        return message
+      } else {
+        message.headers.set('etag', `"${reply._version.toString()}"`)
+        delete reply._version
+      }
     }
+
+    message.body = reply
 
     return message
   }
@@ -44,9 +58,28 @@ export class Endpoint implements RTD.Endpoint<Endpoint> {
 
     await this.remote.disconnect(INTERRUPT)
   }
+
+  private query (context: http.Context): http.Query {
+    const query: http.Query = Object.fromEntries(context.url.searchParams)
+    const etag = context.request.headers['if-match']
+
+    if (etag !== undefined)
+      query.version = this.version(etag)
+
+    return query
+  }
+
+  private version (etag: string): number {
+    const match = etag.match(ETAG)
+
+    if (match === null)
+      throw new http.BadRequest('Invalid ETag.')
+
+    return Number.parseInt(match.groups!.version)
+  }
 }
 
-export class EndpointsFactory implements RTD.EndpointsFactory<Endpoint> {
+export class EndpointsFactory implements RTD.EndpointsFactory {
   private readonly remotes: Remotes
 
   public constructor (remotes: Remotes) {
@@ -69,5 +102,7 @@ export class EndpointsFactory implements RTD.EndpointsFactory<Endpoint> {
     return new Endpoint(method.mapping.endpoint, mapping, discovery)
   }
 }
+
+const ETAG = /^"(?<version>\d{1,32})"$/
 
 const INTERRUPT = true

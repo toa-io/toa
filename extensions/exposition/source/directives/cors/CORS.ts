@@ -3,16 +3,22 @@ import type { Interceptor } from '../../Interception'
 
 export class CORS implements Interceptor {
   public readonly name = 'cors'
-  public readonly mandatory = true
 
-  private readonly allowedHeaders = new Set<string>(['accept', 'authorization', 'content-type'])
+  private readonly requestHeaders = new Set<string>([
+    'accept',
+    'authorization',
+    'content-type',
+    'etag',
+    'if-match',
+    'if-none-match'
+  ])
 
   private readonly headers = new Headers({
     'access-control-allow-methods': 'GET, POST, PUT, PATCH, DELETE',
     'access-control-allow-credentials': 'true',
-    'access-control-allow-headers': Array.from(this.allowedHeaders).join(', '),
+    'access-control-allow-headers': Array.from(this.requestHeaders).join(', '),
     'access-control-max-age': '3600',
-    'cache-control': 'public, max-age=3600',
+    'cache-control': 'max-age=3600',
     vary: 'origin'
   })
 
@@ -40,9 +46,9 @@ export class CORS implements Interceptor {
     return null
   }
 
-  public allowHeader (header: string): void {
-    this.allowedHeaders.add(header.toLowerCase())
-    this.headers.set('access-control-allow-headers', Array.from(this.allowedHeaders).join(', '))
+  public allow (header: string): void {
+    this.requestHeaders.add(header.toLowerCase())
+    this.headers.set('access-control-allow-headers', Array.from(this.requestHeaders).join(', '))
   }
 
   private preflightResponse (origin: string): Output {

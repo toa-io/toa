@@ -9,11 +9,10 @@ import { WorkflowDirective } from './Workflow'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
-import type { Family } from '../../Directive'
+import type { Parameter, DirectiveFamily } from '../../RTD'
 import type { Directive, Input } from './types'
-import type { Parameter } from '../../RTD'
 
-export class Octets implements Family<Directive> {
+export class Octets implements DirectiveFamily<Directive> {
   public readonly name: string = 'octets'
   public readonly mandatory: boolean = false
 

@@ -1,16 +1,13 @@
-import { type Directives, type DirectivesFactory } from './Directives'
-import { type Endpoint, type EndpointsFactory } from './Endpoint'
+import { type DirectiveFactory } from './Directives'
+import { type EndpointsFactory } from './Endpoint'
+import type { Directive } from './syntax'
 
-export interface Context<
-  TEndpoint extends Endpoint = any,
-  TDirectives extends Directives<TDirectives> = any,
-  TExtension = any
-> {
+export interface Context<TExtension = any> {
   readonly protected: boolean
-  readonly endpoints: EndpointsFactory<TEndpoint>
+  readonly endpoints: EndpointsFactory
   readonly directives: {
-    readonly factory: DirectivesFactory
-    stack: TDirectives[]
+    readonly factory: DirectiveFactory
+    stack: Directive[]
   }
   readonly extension?: TExtension
 }

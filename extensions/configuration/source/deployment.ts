@@ -37,7 +37,7 @@ function createSecrets (values: object): Variable[] {
 
   for (const value of Object.values(values)) {
     if (typeof value === 'object' && value !== null)
-      secrets.push(...createSecrets(value))
+      secrets.push(...createSecrets(value as object))
 
     if (typeof value !== 'string') continue
 
