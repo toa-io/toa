@@ -44,7 +44,7 @@ GET:
 ```
 
 If a method declaration lacks `io:output` directive, it will trigger a warning, and its
-response will consistently be empty with a `204` status code.
+response will consistently be empty.
 If this behavior is intended, a `false` value can be employed to suppress warnings.
 
 ```yaml
