@@ -27,7 +27,7 @@ Feature: Deploy secrets
       """
     Then I run `kubectl delete secret toa-database`
 
-  Scenario: Deploy a secret keys sequentally
+  Scenario: Deploy a secret keys sequentially
     Given I have a kube context kind-kind
     And I run `kubectl create namespace test-secret --dry-run=client -o json | kubectl apply -f -`
     When I run `toa conceal database user=application`
