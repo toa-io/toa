@@ -28,5 +28,6 @@ exposition:
     auth:role: system:identity:roles
     POST: transit
     GET:
+      io:output: true
       auth:id: identity
       endpoint: list

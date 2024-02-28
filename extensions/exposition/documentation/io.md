@@ -52,3 +52,5 @@ GET:
   endpoint: conceal
   io:output: false
 ```
+
+Output restrictions are not applied to stream responses and errors.

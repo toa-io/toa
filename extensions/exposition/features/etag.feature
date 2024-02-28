@@ -5,6 +5,7 @@ Feature: Optimistic concurrency control
       """yaml
       exposition:
         /:
+          io:output: true
           POST: create
           /:id:
             GET: observe

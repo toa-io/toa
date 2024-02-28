@@ -4,6 +4,7 @@ Feature: Response
     Given the annotation:
       """yaml
       /:
+        io:output: true
         GET:
           anonymous: true
           dev:stub: hello
@@ -25,6 +26,7 @@ Feature: Response
       """yaml
       exposition:
         /:
+          io:output: true
           GET: error
       """
     When the following request is received:
@@ -46,6 +48,7 @@ Feature: Response
       """yaml
       exposition:
         /:
+          io:output: true
           GET: error
       """
     When the following request is received:

@@ -7,6 +7,7 @@ Feature: Tokens lifecycle
     Given the annotation:
       """yaml
       /:
+        io:output: true
         /hello/:id:
           auth:id: id
           GET:
@@ -35,6 +36,7 @@ Feature: Tokens lifecycle
     And the annotation:
       """yaml
       /:
+        io:output: true
         /hello/:id:
           auth:id: id
           GET:
@@ -72,6 +74,7 @@ Feature: Tokens lifecycle
     Given the annotation:
       """yaml
       /:
+        io:output: true
         /:id:
           id: id
           GET:

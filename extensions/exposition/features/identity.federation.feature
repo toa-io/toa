@@ -4,7 +4,6 @@ Feature: Identity Federation
     Given the `identity.federation` database is empty
     Given local IDP is running
 
-
   Scenario: Getting identity for a new user
     Given the `identity.federation` configuration:
       """yaml
@@ -27,9 +26,9 @@ Feature: Identity Federation
 
       id: ${{ User.id }}
       roles: []
-      scheme: bearer
+      scheme: BEARER
       """
-    # validate token
+    # validate TOKEN
     When the following request is received:
       """
       GET /identity/ HTTP/1.1

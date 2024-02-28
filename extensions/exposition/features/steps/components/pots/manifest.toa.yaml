@@ -14,11 +14,13 @@ operations:
     input:
       title*: .
       volume*: .
+      temperature: .
   transit:
     concurrency: retry
     input:
       title: .
       volume: .
+      temperature: .
   observe:
     output:
       id: string

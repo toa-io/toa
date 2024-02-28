@@ -42,9 +42,11 @@ configuration:
 exposition:
   isolated: true
   /:
+    io:output: [id]
     anonymous: true
     POST: incept
   /:id:
+    io:output: [id]
     auth:role: system:identity:basic
     auth:scheme: basic
     auth:id: id

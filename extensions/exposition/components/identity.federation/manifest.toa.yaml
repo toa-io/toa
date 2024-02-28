@@ -93,9 +93,3 @@ configuration:
           - sub
         additionalProperties: false
     additionalProperties: false
-
-exposition:
-  isolated: true
-  /:
-    anonymous: true
-    POST: incept

@@ -5,6 +5,7 @@ Feature: The Vary directive family
       """yaml
       exposition:
         /:
+          io:output: true
           vary:languages: [en, fr]
           GET:
             vary:embed:
@@ -43,6 +44,7 @@ Feature: The Vary directive family
       """yaml
       exposition:
         /:
+          io:output: true
           GET:
             anonymous: true
             vary:embed:
@@ -68,6 +70,7 @@ Feature: The Vary directive family
       """yaml
       exposition:
         /:
+          io:output: true
           GET:
             vary:embed:
               name: :foo
@@ -93,6 +96,7 @@ Feature: The Vary directive family
         """yaml
         exposition:
           /:
+            io:output: true
             vary:languages: [en, fr]
             GET:
               vary:embed:
@@ -127,6 +131,7 @@ Feature: The Vary directive family
         """yaml
         exposition:
           /:
+            io:output: true
             vary:languages: [en, fr]
             GET:
               vary:embed:
@@ -140,11 +145,11 @@ Feature: The Vary directive family
     When the following request is received:
         """
         OPTIONS / HTTP/1.1
-        origin: http://example.com
+        origin: https://example.com
         access-control-request-headers: whatever
         """
     Then the following reply is sent:
         """
         204 No Content
-        access-control-allow-headers: accept, authorization, content-type, accept-language, foo, bar
+        access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, accept-language, foo, bar
         """

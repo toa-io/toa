@@ -13,6 +13,7 @@ Feature: Queries
       """yaml
       exposition:
         /pot:
+          io:output: true
           GET: observe
       """
     When the following request is received:
@@ -35,6 +36,7 @@ Feature: Queries
       """yaml
       exposition:
         /:
+          io:output: true
           GET: enumerate
       """
     When the following request is received:
@@ -60,6 +62,7 @@ Feature: Queries
       """yaml
       exposition:
         /:
+          io:output: true
           GET: enumerate
       """
     When the following request is received:
@@ -85,6 +88,7 @@ Feature: Queries
       """yaml
       exposition:
         /:
+          io:output: true
           GET: enumerate
       """
     When the following request is received:
@@ -110,6 +114,7 @@ Feature: Queries
       """yaml
       exposition:
         /:id:
+          io:output: true
           GET: observe
       """
     When the following request is received:
@@ -132,6 +137,7 @@ Feature: Queries
       """yaml
       exposition:
         /big:
+          io:output: true
           GET:
             endpoint: enumerate
             query:
@@ -160,6 +166,7 @@ Feature: Queries
       """yaml
       exposition:
         /big:
+          io:output: true
           GET:
             endpoint: enumerate
             query:
@@ -186,6 +193,7 @@ Feature: Queries
       """yaml
       exposition:
         /hottest2:
+          io:output: true
           GET:
             endpoint: enumerate
             query:

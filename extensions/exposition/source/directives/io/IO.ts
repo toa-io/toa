@@ -1,4 +1,5 @@
 import { Output } from './Output'
+import { Input } from './Input'
 import type { Constructor, Directive } from './Directive'
 import type { Input as Context } from '../../io'
 import type { DirectiveFamily } from '../../RTD'
@@ -6,7 +7,6 @@ import type { DirectiveFamily } from '../../RTD'
 export class IO implements DirectiveFamily<Directive> {
   public readonly name = 'io'
   public readonly mandatory = true
-  private readonly denial: Output = new Output([])
 
   public create (name: string, value: unknown): Directive {
     if (!(name in constructors))
@@ -29,12 +29,15 @@ export class IO implements DirectiveFamily<Directive> {
     }
 
     if (!restricted)
-      this.denial.attach(context)
+      DENIAL.attach(context)
 
     return null
   }
 }
 
 const constructors: Record<string, Constructor> = {
-  output: Output
+  output: Output,
+  input: Input
 }
+
+const DENIAL: Output = new Output([])

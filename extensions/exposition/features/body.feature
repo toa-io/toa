@@ -25,6 +25,7 @@ Feature: Request body
       """yaml
       exposition:
         /:name:
+          io:output: true
           GET: <operation>
       """
     When the following request is received:

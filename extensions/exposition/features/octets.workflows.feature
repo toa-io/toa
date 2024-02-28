@@ -15,6 +15,7 @@ Feature: Octets storage workflows
               - add-baz: octets.tester.baz
               - diversify: octets.tester.diversify
         /*:
+          io:output: true
           GET:
             octets:fetch:
               meta: true

@@ -1,4 +1,6 @@
-import assert from 'node:assert'
+import { Stream } from 'node:stream'
+import * as schemas from './schemas'
+import type { Message } from './Message'
 import type { Directive } from './Directive'
 import type { Input as Context } from '../../io'
 import type { OutgoingMessage } from '../../HTTP'
@@ -20,50 +22,48 @@ export class Output implements Directive {
   }
 
   public static validate (permissions: unknown): asserts permissions is Permissions {
-    assert.ok(typeof permissions === 'boolean' || Array.isArray(permissions),
-      'Incorrect \'io:output\' format: an array of property names or a boolean value is expected.')
+    schemas.output.validate(permissions, 'Incorrect \'io:output\' format')
   }
 
   public attach (context: Context): void {
-    context.pipelines.response.push(this.restrict(context))
+    context.pipelines.response.push(this.restriction(context))
   }
 
-  private restrict (context: Context) {
-    return (message: OutgoingMessage) => {
-      if (this.disabled || message.body === undefined || message.body === null)
+  private restriction (context: Context) {
+    return (message: OutgoingMessage): void => {
+      const error = message.status !== undefined && message.status >= 300
+      const stream = message.body instanceof Stream
+      const none = message.body === undefined || message.body === null
+
+      if (this.disabled || error || stream || none)
         return
 
-      const acceptable = Object.getPrototypeOf(message.body) === PROTO ||
-        (Array.isArray(message.body) &&
-          message.body.every((entity) => Object.getPrototypeOf(entity) === PROTO))
-
-      if (!acceptable || this.permissions.length === 0) {
+      if (typeof message.body !== 'object' || this.permissions.length === 0) {
         if (this.omitted)
-          console.warn(`Permissions for 'io:output' are not specified (${context.request.url}). ` +
-            'Response omitted.')
+          console.warn('Permissions for \'io:output\' are not specified properly ' +
+            `(${context.request.url}). Response omitted.`)
 
         delete message.body
 
         return
       }
 
+      schemas.message.validate(message.body,
+        '\'io:output\' expects response to be an object or array of objects')
+
       if (Array.isArray(message.body))
-        message.body = message.body.map((entity) => this.fit(entity as Entity))
+        message.body = message.body.map((entity) => this.fit(entity))
       else
-        message.body = this.fit(message.body as Entity)
+        message.body = this.fit(message.body)
     }
   }
 
-  private fit (entity: Entity): Entity {
-    const entries = Object.entries(entity)
+  private fit (message: Message): Message | undefined {
+    const entries = Object.entries(message)
       .filter(([key]) => this.permissions.includes(key))
 
     return Object.fromEntries(entries)
   }
 }
-
-const PROTO = Object.getPrototypeOf({})
-
-type Entity = Record<string, unknown>
 
 export type Permissions = string[] | boolean

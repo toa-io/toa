@@ -22,6 +22,7 @@ Feature: Basic authentication
       """yaml
       exposition:
         /:
+          io:output: true
           anonymous: true     # checking compatibility with anonymous access
           POST:
             incept: id
@@ -72,6 +73,7 @@ Feature: Basic authentication
     Given the annotation:
       """yaml
       /:
+        io:output: true
         /:id:
           id: id
           GET:
@@ -113,6 +115,25 @@ Feature: Basic authentication
     Then the following reply is sent:
       """
       200 OK
+      """
+
+  Scenario: Changing other identity the password
+    Given the `identity.basic` database contains:
+      | _id                              | username  | password                                                     | _version |
+      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | 6c0be50cbfb043acafe69cc7d3895f84 | attacker  | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+    When the following request is received:
+      """
+      PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic YXR0YWNrZXI6c2VjcmV0
+      accept: application/yaml
+      content-type: application/yaml
+
+      password: new-secret
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
       """
 
   Scenario Outline: <problem> not meeting the requirements
@@ -173,6 +194,7 @@ Feature: Basic authentication
     And the annotation:
       """yaml
       /:
+        io:output: true
         GET:
           auth:role: system:stub
           dev:stub:
@@ -244,6 +266,7 @@ Feature: Basic authentication
       """yaml
       exposition:
         /:
+          io:output: true
           anonymous: true
           POST:
             incept: id

@@ -4,6 +4,7 @@ Feature: Octets directive family
     Given the annotation:
       """yaml
       /:
+        io:output: true
         auth:anonymous: true
         octets:context: octets
         POST:
@@ -238,6 +239,7 @@ Feature: Octets directive family
     Given the annotation:
       """yaml
       /:
+        io:output: true
         auth:anonymous: true
         octets:context: octets
         POST:
