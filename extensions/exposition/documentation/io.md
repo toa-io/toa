@@ -33,9 +33,6 @@ GET:
   io:output: [name, location]
 ```
 
-A method declaration without `io:output` will cause a startup warning, and its response will always
-be empty with a `204` status code.
-
 When an operation does not return an object (e.g., a primitive or a stream), or an object is dynamic
 and its properties are not known in advance, `io:output` may have a value of `true` to disable
 output restrictions.
@@ -44,4 +41,14 @@ output restrictions.
 GET:
   endpoint: proxy
   io:output: true
+```
+
+If a method declaration lacks `io:output` directive, it will trigger a warning, and its
+response will consistently be empty with a `204` status code.
+If this behavior is intended, a `false` value can be employed to suppress warnings.
+
+```yaml
+GET:
+  endpoint: conceal
+  io:output: false
 ```
