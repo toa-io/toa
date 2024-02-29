@@ -2,16 +2,17 @@ import { Readable } from 'stream'
 import { NotFound } from '../../HTTP'
 import * as schemas from './schemas'
 import { Workflow } from './workflows'
+import { Directive } from './Directive'
 import type { Parameter } from '../../RTD'
 import type { Unit } from './workflows'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
-import type { Directive, Input } from './types'
+import type { Input } from './types'
 import type { Remotes } from '../../Remotes'
 import type { Entry } from '@toa.io/extensions.storages'
 
-export class Delete implements Directive {
+export class Delete extends Directive {
   public readonly targeted = true
 
   private readonly workflow?: Workflow
@@ -19,6 +20,7 @@ export class Delete implements Directive {
   private storage: Component | null = null
 
   public constructor (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
+    super()
     schemas.remove.validate(options)
 
     if (options?.workflow !== undefined)

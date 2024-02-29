@@ -1,15 +1,15 @@
 import { posix } from 'node:path'
 import { Forbidden, NotFound } from '../../HTTP'
 import * as schemas from './schemas'
+import { Directive } from './Directive'
 import type { Maybe } from '@toa.io/types'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Readable } from 'node:stream'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
+import type { Input } from './types'
 
-import type { Directive, Input } from './types'
-
-export class Fetch implements Directive {
+export class Fetch extends Directive {
   public readonly targeted = true
 
   private readonly permissions: Required<Permissions> = {
@@ -21,6 +21,7 @@ export class Fetch implements Directive {
   private storage: Component = null as unknown as Component
 
   public constructor (permissions: Permissions | null, discovery: Promise<Component>) {
+    super()
     schemas.fetch.validate(permissions)
 
     Object.assign(this.permissions, permissions)

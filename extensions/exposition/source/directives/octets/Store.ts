@@ -4,6 +4,7 @@ import { BadRequest, UnsupportedMediaType } from '../../HTTP'
 import { cors } from '../cors'
 import * as schemas from './schemas'
 import { Workflow } from './workflows'
+import { Directive } from './Directive'
 import type { Readable } from 'stream'
 import type { Parameter } from '../../RTD'
 import type { Unit } from './workflows'
@@ -12,9 +13,9 @@ import type { Remotes } from '../../Remotes'
 import type { ErrorType } from 'error-value'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
-import type { Directive, Input } from './types'
+import type { Input } from './types'
 
-export class Store implements Directive {
+export class Store extends Directive {
   public readonly targeted = false
 
   private readonly accept?: string
@@ -24,6 +25,7 @@ export class Store implements Directive {
 
   public constructor
   (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
+    super()
     schemas.store.validate(options)
 
     this.accept = match(options?.accept,

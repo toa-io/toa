@@ -29,7 +29,7 @@ export async function read (context: Context): Promise<any> {
     throw new UnsupportedMediaType()
 
   const format = formats[type]
-  const buf = await context.timing.capture('req:buffer', buffer(context.request))
+  const buf = await context.timing.capture('buffer', buffer(context.request))
 
   try {
     return format.decode(buf)

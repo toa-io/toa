@@ -1,18 +1,19 @@
 import { NotAcceptable, NotFound } from '../../HTTP'
 import * as schemas from './schemas'
+import { Directive } from './Directive'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
+import type { Input } from './types'
 
-import type { Directive, Input } from './types'
-
-export class Permute implements Directive {
+export class Permute extends Directive {
   public readonly targeted = false
 
   private readonly discovery: Promise<Component>
   private storage: Component | null = null
 
   public constructor (value: null, discovery: Promise<Component>) {
+    super()
     schemas.permute.validate(value)
 
     this.discovery = discovery

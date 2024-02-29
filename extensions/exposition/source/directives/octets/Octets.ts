@@ -6,11 +6,12 @@ import { List } from './List'
 import { Delete } from './Delete'
 import { Permute } from './Permute'
 import { WorkflowDirective } from './Workflow'
+import type { Directive } from './Directive'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
 import type { Parameter, DirectiveFamily } from '../../RTD'
-import type { Directive, Input } from './types'
+import type { Input } from './types'
 
 export class Octets implements DirectiveFamily<Directive> {
   public readonly name: string = 'octets'
@@ -55,7 +56,7 @@ export class Octets implements DirectiveFamily<Directive> {
       throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}.`)
 
     // noinspection JSObjectNullOrUndefined
-    return action.apply(context.storage, input, parameters)
+    return await input.timing.capture(action.name, action.apply(context.storage, input, parameters))
   }
 }
 
