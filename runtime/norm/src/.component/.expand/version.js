@@ -33,10 +33,10 @@ async function hashd (path, hash = createHash('sha256')) {
   }
 
   if (stat.isDirectory()) {
-    const entries = await fs.readdir(path)
+    const entries = await fs.opendir(path)
 
-    for (const entry of entries) {
-      await hashd(join(path, entry), hash)
+    for await (const entry of entries) {
+      await hashd(join(entry.path, entry.name), hash)
     }
 
     return hash
