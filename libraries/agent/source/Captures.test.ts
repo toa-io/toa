@@ -23,3 +23,13 @@ it('should not capture parts of the words', async () => {
 
   expect(word).toBe(undefined)
 })
+
+it('should substitute multiple times', async () => {
+  captures.set('word', 'foo')
+
+  expect(() => captures.capture('hey foo foo', 'hey ${{ word }} ${{ word }}'))
+    .not.toThrow()
+
+  expect(() => captures.capture('hey foo bar', 'hey ${{ word }} ${{ word }}'))
+    .toThrow('Capture word already with different value: foo')
+})

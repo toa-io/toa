@@ -27,8 +27,10 @@ export class Captures extends Map<string, string> {
    * or array of captured keys (can be empty)
    */
   public capture (source: string, matcher: string): readonly string[] | undefined {
+    let i = 0
+
     const expression = PADDING + regexpEscape(matcher).replaceAll(CAPTURE,
-      (_, name: string) => `(?<${Buffer.from(name).toString('base64url')}>\\S{1,2048})`)
+      (_, name: string) => `(?<${Buffer.from(name + '.' + i++).toString('base64url')}>\\S{1,2048})`)
 
     const rx = new RegExp(expression, 'i')
     const match = source.match(rx)
@@ -36,7 +38,7 @@ export class Captures extends Map<string, string> {
     if (match === null) return undefined
 
     return Object.entries(match.groups ?? {}).map(([key, value]) => {
-      const name = regexpUnescape(Buffer.from(key, 'base64url').toString())
+      const [name] = regexpUnescape(Buffer.from(key, 'base64url').toString()).split('.')
 
       this.set(name, value)
 
