@@ -41,3 +41,26 @@ Feature: Server timing
       201 Created
       server-timing:
       """
+
+  Scenario: Octets timing
+    Given the annotation:
+      """yaml
+      trace: true
+      /:
+        io:output: true
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store: ~
+      """
+    When the stream of `lenna.png` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      content-type: application/octet-stream
+      """
+    # to debug, break it and look at the console
+    Then the following reply is sent:
+      """
+      201 Created
+      server-timing:
+      """

@@ -1,14 +1,15 @@
 import { posix } from 'node:path'
 import { Forbidden, NotFound } from '../../HTTP'
 import * as schemas from './schemas'
+import { Directive } from './Directive'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
 
-import type { Directive, Input } from './types'
+import type { Input } from './types'
 
-export class List implements Directive {
+export class List extends Directive {
   public readonly targeted = false
 
   private readonly permissions: Required<Permissions> = { meta: false }
@@ -16,6 +17,7 @@ export class List implements Directive {
   private storage: Component | null = null
 
   public constructor (permissions: Permissions | null, discovery: Promise<Component>) {
+    super()
     schemas.list.validate(permissions)
 
     Object.assign(this.permissions, permissions)

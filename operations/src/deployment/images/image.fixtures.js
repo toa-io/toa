@@ -2,9 +2,8 @@
 
 const { Image } = require('./image')
 const { generate } = require('randomstring')
-const { hash } = require('@toa.io/generic')
 
-const version = generate()
+const version = '168b04ff'
 const name = generate()
 
 /**
@@ -22,17 +21,17 @@ class Class extends Image {
 
 /** @type {toa.norm.context.Runtime} */
 const runtime = {
-  version: generate()
+  version: '0.0.0'
 }
 
 /** @type {toa.norm.context.Registry} */
 const registry = {
-  base: generate()
+  base: 'node:alpine'
 }
 
 exports.scope = generate()
 exports.name = name
-exports.version = hash(runtime.version + ';' + version)
+exports.version = 'ba2409fc'
 exports.Class = Class
 exports.runtime = runtime
 exports.registry = registry

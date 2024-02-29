@@ -11,7 +11,7 @@ const {
   version
 } = require('./.expand')
 
-const expand = (manifest) => {
+async function expand (manifest) {
   entity(manifest)
   bridge(manifest)
   operations(manifest)
@@ -19,7 +19,8 @@ const expand = (manifest) => {
   receivers(manifest)
   properties(manifest)
   extensions(manifest)
-  version(manifest)
+
+  await version(manifest)
 }
 
 exports.expand = expand
