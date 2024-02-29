@@ -40,7 +40,7 @@ Feature: Identity Federation
       200 OK
       id: ${{ User.id }}
       """
-    # ensuring identity idemptotency
+    # ensuring identity idempotency
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -95,6 +95,7 @@ Feature: Identity Federation
         /:
           anonymous: true
           POST:
+            io:output: true
             incept: id
             endpoint: create
       """
