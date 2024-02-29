@@ -26,7 +26,9 @@ exposition:
   isolated: true
   /:identity:
     auth:role: system:identity:roles
-    POST: transit
+    POST:
+      io:output: [id]
+      endpoint: transit
     GET:
       io:output: true
       auth:id: identity
