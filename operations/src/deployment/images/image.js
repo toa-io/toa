@@ -1,10 +1,17 @@
 'use strict'
 
-const { join, posix } = require('node:path')
-const { readFile: read, writeFile: write } = require('node:fs/promises')
+const {
+  join,
+  posix
+} = require('node:path')
+const {
+  readFile: read,
+  writeFile: write
+} = require('node:fs/promises')
+const { createHash } = require('node:crypto')
 
-const { hash, overwrite } = require('@toa.io/generic')
-const fs = require('fs-extra')
+const { overwrite } = require('@toa.io/generic')
+const { mkdir } = require('node:fs/promises')
 
 /**
  * @implements {toa.deployment.images.Image}
@@ -31,7 +38,12 @@ class Image {
   }
 
   tag () {
-    const tag = hash(this.#runtime?.version + ';' + this.version)
+    const hash = createHash('sha256')
+
+    hash.update(this.#runtime.version)
+    hash.update(this.version)
+
+    const tag = hash.digest('hex').slice(0, 8)
 
     this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.name}:${tag}`)
   }
@@ -49,7 +61,7 @@ class Image {
 
     const path = join(root, `${this.name}.${this.version}`)
 
-    await fs.ensureDir(path)
+    await mkdir(path, { recursive: true })
 
     const template = await read(this.dockerfile, 'utf-8')
     const contents = template.replace(/{{(\S{1,32})}}/g, (_, key) => this.#value(key))
@@ -69,8 +81,9 @@ class Image {
 
     const image = this.base
 
-    if (image !== undefined)
+    if (image !== undefined) {
       this.#values.build.image = image
+    }
 
     if (this.#values.build.arguments !== undefined) this.#values.build.arguments = createArguments(this.#values.build.arguments)
     if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)

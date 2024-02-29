@@ -1,6 +1,6 @@
 Feature: Docker image tags
 
-  To use these scenarions, update image tags according to the current runtime version.
+  To use these scenarios, update image tags according to the current runtime version.
 
   @skip
   Scenario: Components with version in the manifest
@@ -13,9 +13,9 @@ Feature: Docker image tags
       """yaml
       compositions:
         - name: dummies-one
-          image: localhost:5000/collection/composition-dummies-one:33bff0bf
+          image: localhost:5000/collection/composition-dummies-one:7bf39a7d
         - name: dummies-two
-          image: localhost:5000/collection/composition-dummies-two:88f86dc4
+          image: localhost:5000/collection/composition-dummies-two:94e14bb7
       """
 
   @skip
@@ -36,17 +36,5 @@ Feature: Docker image tags
       """yaml
       compositions:
         - name: dummies
-          image: localhost:5000/collection/composition-dummies:74948b9e
-      """
-
-  @skip
-  Scenario: Components with version in the `package.json` (Node Bridge)
-    Given I have a component `dummies.node`
-    And I have a context
-    When I export deployment
-    Then exported values should contain:
-      """yaml
-      compositions:
-        - name: dummies-node
-          image: localhost:5000/collection/composition-dummies-node:af957b7a
+          image: localhost:5000/collection/composition-dummies:b09d46fe
       """

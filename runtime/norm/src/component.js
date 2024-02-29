@@ -38,7 +38,7 @@ const load = async (path, base) => {
   manifest.path = path
 
   defaults(manifest)
-  expand(manifest)
+  await expand(manifest)
 
   await merge(path, manifest)
 
