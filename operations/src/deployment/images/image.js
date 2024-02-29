@@ -11,7 +11,7 @@ const {
 const { createHash } = require('node:crypto')
 
 const { overwrite } = require('@toa.io/generic')
-const fs = require('fs-extra')
+const { mkdir } = require('node:fs/promises')
 
 /**
  * @implements {toa.deployment.images.Image}
@@ -61,7 +61,7 @@ class Image {
 
     const path = join(root, `${this.name}.${this.version}`)
 
-    await fs.ensureDir(path)
+    await mkdir(path, { recursive: true })
 
     const template = await read(this.dockerfile, 'utf-8')
     const contents = template.replace(/{{(\S{1,32})}}/g, (_, key) => this.#value(key))
