@@ -26,7 +26,6 @@ Feature: Identity Federation
 
       id: ${{ User.id }}
       roles: []
-      scheme: BEARER
       """
     # validate TOKEN
     When the following request is received:
@@ -80,7 +79,6 @@ Feature: Identity Federation
       authorization: Token ${{ GoodUser.token }}
 
       id: ${{ GoodUser.id }}
-      scheme: bearer
       """
 
   Scenario: Creating an Identity using inception with existing credentials
@@ -95,6 +93,7 @@ Feature: Identity Federation
         /:
           anonymous: true
           POST:
+            io:output: true
             incept: id
             endpoint: create
       """
