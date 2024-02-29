@@ -5,29 +5,26 @@ export class Captures extends Map<string, string> {
     if (super.has(key))
       assert.equal(super.get(key),
         value,
-        `Capture ${key} already with different value: ${super.get(key)}`)
+        `Capture ${key} already has different value: ${super.get(key)}`)
 
     return super.set(key, value)
   }
 
-  public override delete (key: string): boolean {
-    throw new Error('Captures should not be deleted')
-  }
-
-  public override clear (): void {
-    throw new Error('Captures should not be cleared')
-  }
-
   public substitute (text: string): string {
-    return text.replaceAll(SUBSTITUTE, (_, name: string) => this.get(name) ?? '')
+    for (const [key, value] of this.entries())
+      text = text.replaceAll(`\${{ ${key} }}`, value)
+
+    return text
   }
 
   /**
    * @returns `undefined` if `source` doesn't match `matcher`
    * or array of captured keys (can be empty)
    */
-  public capture (source: string, matcher: string): readonly string[] | undefined {
+  public capture (source: string, matcher: string): readonly string[] | null {
     let i = 0
+
+    matcher = this.substitute(matcher)
 
     const expression = PADDING + regexpEscape(matcher).replaceAll(CAPTURE,
       (_, name: string) => `(?<${Buffer.from(name + '.' + i++).toString('base64url')}>\\S{1,2048})`)
@@ -35,7 +32,7 @@ export class Captures extends Map<string, string> {
     const rx = new RegExp(expression, 'i')
     const match = source.match(rx)
 
-    if (match === null) return undefined
+    if (match === null) return null
 
     return Object.entries(match.groups ?? {}).map(([key, value]) => {
       const [name] = regexpUnescape(Buffer.from(key, 'base64url').toString()).split('.')
@@ -56,5 +53,4 @@ function regexpUnescape (text: string): string {
 }
 
 const CAPTURE = /\\\$\\{\\{\s*(?<name>\S{0,32})\s*\\}\\}/g
-const SUBSTITUTE = /\${{\s*(?<name>\S{0,32})\s*}}/g
 const PADDING = '(?:^|\\s+)'
