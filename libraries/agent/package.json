@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/agent",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "Text-based HTTP client",
   "homepage": "https://toa.io",
   "author": {
@@ -34,8 +34,8 @@
     "transpile": "tsc"
   },
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.6",
-    "@toa.io/streams": "1.0.0-alpha.6",
+    "@toa.io/generic": "1.0.0-alpha.7",
+    "@toa.io/streams": "1.0.0-alpha.7",
     "http-parser-js": "0.5.8",
     "negotiator": "0.6.3"
   }
