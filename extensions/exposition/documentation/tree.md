@@ -102,7 +102,7 @@ HTTP methods can only be mapped to operations of the corresponding types.
 | `GET`       | **Observation**<br/>**Computation**           |
 | `PATCH`     | **Assignment**<br/>**Effect**                 |
 
-As method mapping is unambiguous for Observation, Assignent, and Computation, a consice syntax is
+As method mapping is unambiguous for Observation, Assignment, and Computation, a concise syntax is
 available:
 
 ```yaml
@@ -110,7 +110,23 @@ available:
 /items/:id: [observe, assign]
 ```
 
-### Intermediate Nodes
+### Projections
+
+A Method can have a `projection` key that specifies the fields of the operation result to be
+included in the response.
+
+```yaml
+/teapots:
+  GET:
+    endpoint: select
+    projection:
+      - name
+      - state
+```
+
+> `id` is always included in the projection.
+
+## Intermediate Nodes
 
 An RTD Node that has a Route with a key `/` is an _intermediate_ Node.
 Intermediate Nodes must not have Methods as they are unreachable.
@@ -124,8 +140,10 @@ Intermediate Nodes must not have Methods as they are unreachable.
 
 ## Directives
 
-RTD Directives are declared using RTD node or Method keys following the `{family}:{directive}` pattern and can be used
-to add or modify the behavior of request processing. Directive declarations are applied to the RTD node where they are
+RTD Directives are declared using RTD node or Method keys following the `{family}:{directive}`
+pattern and can be used
+to add or modify the behavior of request processing. Directive declarations are applied to the RTD
+node where they are
 declared and to all nested nodes.
 
 ```yaml

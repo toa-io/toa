@@ -46,7 +46,7 @@ Feature: Errors
       accept: application/yaml
       """
     Then the following reply is sent:
-      """http
+      """
       405 Method Not Allowed
       """
 
@@ -57,7 +57,7 @@ Feature: Errors
       accept: application/yaml
       """
     Then the following reply is sent:
-      """http
+      """
       501 Not Implemented
       """
 
@@ -197,6 +197,7 @@ Feature: Errors
       """yaml
       /:
         GET:
+          io:output: true
           anonymous: true
           dev:stub: hello
       """

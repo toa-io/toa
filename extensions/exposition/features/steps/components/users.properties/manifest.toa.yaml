@@ -1,5 +1,6 @@
 namespace: users
 name: properties
+version: 0.0.0
 
 entity:
   schema:

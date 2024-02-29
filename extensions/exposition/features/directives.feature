@@ -4,6 +4,7 @@ Feature: Directives
     Given the annotation:
       """yaml
       /:
+        io:output: true
         anonymous: true
         GET:
           dev:stub:
@@ -26,6 +27,7 @@ Feature: Directives
     Given the annotation:
       """yaml
       /:
+        io:output: true
         anonymous: true
         dev:stub:
           hello: again

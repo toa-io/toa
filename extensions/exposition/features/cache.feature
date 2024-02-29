@@ -14,6 +14,7 @@ Feature: Caching
     Given the annotation:
       """yaml
       /:
+        io:output: true
         anonymous: true
         GET:
           cache:control: max-age=60000
@@ -37,6 +38,7 @@ Feature: Caching
     Given the annotation:
       """yaml
       /:
+        io:output: true
         cache:control: max-age=30000
         GET:
           anonymous: true
@@ -120,6 +122,7 @@ Feature: Caching
     Given the annotation:
       """yaml
       /:
+        io:output: true
         auth:role: developer
         cache:exact: max-age=60000, public
         GET:

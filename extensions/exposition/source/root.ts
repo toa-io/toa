@@ -25,6 +25,11 @@ const PREDEFINED: syntax.Node = {
                 family: 'auth',
                 name: 'echo',
                 value: null
+              },
+              {
+                family: 'io',
+                name: 'output',
+                value: ['id', 'roles']
               }
             ]
           }
