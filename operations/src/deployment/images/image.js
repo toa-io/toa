@@ -1,9 +1,16 @@
 'use strict'
 
-const { join, posix } = require('node:path')
-const { readFile: read, writeFile: write } = require('node:fs/promises')
+const {
+  join,
+  posix
+} = require('node:path')
+const {
+  readFile: read,
+  writeFile: write
+} = require('node:fs/promises')
+const { createHash } = require('node:crypto')
 
-const { hash, overwrite } = require('@toa.io/generic')
+const { overwrite } = require('@toa.io/generic')
 const fs = require('fs-extra')
 
 /**
@@ -31,7 +38,12 @@ class Image {
   }
 
   tag () {
-    const tag = hash(this.#runtime?.version + ';' + this.version)
+    const hash = createHash('sha256')
+
+    hash.update(this.#runtime.version)
+    hash.update(this.version)
+
+    const tag = hash.digest('hex').slice(0, 8)
 
     this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.name}:${tag}`)
   }
@@ -69,8 +81,9 @@ class Image {
 
     const image = this.base
 
-    if (image !== undefined)
+    if (image !== undefined) {
       this.#values.build.image = image
+    }
 
     if (this.#values.build.arguments !== undefined) this.#values.build.arguments = createArguments(this.#values.build.arguments)
     if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)

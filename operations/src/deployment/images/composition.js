@@ -1,8 +1,8 @@
 'use strict'
 
 const { join } = require('node:path')
-const { hash } = require('@toa.io/generic')
 const fs = require('fs-extra')
+const { createHash } = require('node:crypto')
 
 const { Image } = require('./image')
 
@@ -26,22 +26,29 @@ class Composition extends Image {
   }
 
   get version () {
-    const tags = this.#components.map((component) => component.locator.id + ':' + component.version)
+    const hash = createHash('sha256')
 
-    return hash(tags.join(';'))
+    for (const component of this.#components) {
+      hash.update(component.locator.id)
+      hash.update(component.version)
+    }
+
+    return hash.digest('hex').slice(0, 8)
   }
 
   get base () {
-    if (this.#image !== undefined)
+    if (this.#image !== undefined) {
       return this.#image
+    }
 
     let image = null
 
     for (const component of this.#components) {
       const value = component.build?.image
 
-      if (image !== null && image !== value)
+      if (image !== null && image !== value) {
         throw new Error(`Composition '${this.#name}' requires different base images for its components. Specify base image for the composition in the context.`)
+      }
 
       image = value
     }
