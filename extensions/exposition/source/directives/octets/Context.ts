@@ -1,18 +1,19 @@
 import * as schemas from './schemas'
+import { Directive } from './Directive'
 import type { Output } from '../../io'
-import type { Directive } from './types'
 
-export class Context implements Directive {
+export class Context extends Directive {
   public readonly targeted = false
   public readonly storage: string
 
   public constructor (value: unknown) {
+    super()
     schemas.context.validate(value)
 
     this.storage = value
   }
 
-  public apply (): Output {
+  public async apply (): Promise<Output> {
     return null
   }
 }
