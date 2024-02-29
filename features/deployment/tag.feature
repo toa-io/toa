@@ -1,6 +1,6 @@
 Feature: Docker image tags
 
-  To use these scenarions, update image tags according to the current runtime version.
+  To use these scenarios, update image tags according to the current runtime version.
 
   @skip
   Scenario: Components with version in the manifest
@@ -13,9 +13,9 @@ Feature: Docker image tags
       """yaml
       compositions:
         - name: dummies-one
-          image: localhost:5000/collection/composition-dummies-one:33bff0bf
+          image: localhost:5000/collection/composition-dummies-one:390aefbb
         - name: dummies-two
-          image: localhost:5000/collection/composition-dummies-two:88f86dc4
+          image: localhost:5000/collection/composition-dummies-two:8e436cc0
       """
 
   @skip

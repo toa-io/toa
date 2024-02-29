@@ -1,6 +1,5 @@
 name: two
 namespace: dummies
-version: 0.0.1
 
 entity:
   storage: ~
