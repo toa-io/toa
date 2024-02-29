@@ -11,6 +11,7 @@ Feature: Dynamic tree updates
       """yaml
       exposition:
         /:
+          io:output: true
           isolated: true
           GET: enumerate
       """
@@ -27,6 +28,7 @@ Feature: Dynamic tree updates
       """yaml
       exposition:
         /:
+          io:output: true
           GET: enumerate
       """
     When the following request is received:
@@ -44,19 +46,22 @@ Feature: Dynamic tree updates
       """yaml
       exposition:
         /:id:
+          io:output: true
           GET: observe
       """
     Then the `pots` is stopped
     Then the `pots` is running with the following manifest:
       """yaml
       exposition:
-        /:id:
-          GET: observe
-        /big:
-          GET:
-            endpoint: enumerate
-            query:
-              criteria: volume>200
+        /:
+          io:output: true
+          /:id:
+            GET: observe
+          /big:
+            GET:
+              endpoint: enumerate
+              query:
+                criteria: volume>200
       """
     When the following request is received:
       """
@@ -73,6 +78,7 @@ Feature: Dynamic tree updates
       """yaml
       exposition:
         /big:
+          io:output: true
           GET:
             endpoint: enumerate
             query:
@@ -83,6 +89,7 @@ Feature: Dynamic tree updates
       """yaml
       exposition:
         /big:
+          io:output: true
           GET:
             endpoint: enumerate
             query:

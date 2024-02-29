@@ -11,6 +11,7 @@ Feature: Roles management
     And the annotation:
       """yaml
       /:
+        io:output: true
         auth:role: test
         GET:
           dev:stub:

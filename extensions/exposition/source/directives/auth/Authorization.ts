@@ -37,10 +37,10 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   private bans: Component | null = null
 
   public create (name: string, value: any, remotes: Remotes): Directive {
-    assert.ok(name in CLASSES,
+    assert.ok(name in constructors,
       `Directive '${name}' is not provided by the '${this.name}' family.`)
 
-    const Class = CLASSES[name]
+    const Class = constructors[name]
 
     for (const name of REMOTES)
       this.discovery[name] ??= remotes.discover('identity', name)
@@ -132,7 +132,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   }
 }
 
-const CLASSES: Record<string, new (value: any, argument?: any) => Directive> = {
+const constructors: Record<string, new (value: any, argument?: any) => Directive> = {
   anonymous: Anonymous,
   id: Id,
   role: Role,

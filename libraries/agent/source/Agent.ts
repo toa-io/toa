@@ -46,7 +46,7 @@ export class Agent {
 
       const match = this.captures.capture(this.response, line)
 
-      if (match === undefined)
+      if (match === null)
         throw new assert.AssertionError({
           message: `Response is missing '${line}'`,
           expected: line,

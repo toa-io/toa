@@ -30,6 +30,7 @@ Feature: Access authorization
     Given the annotation:
       """yaml
       /:
+        io:output: true
         auth:anonymous: true
         GET:
           dev:stub:
@@ -71,6 +72,7 @@ Feature: Access authorization
     Given the annotation:
       """yaml
       /:
+        io:output: true
         /:id:
           auth:id: id
           GET:
@@ -109,6 +111,7 @@ Feature: Access authorization
     And the annotation:
       """yaml
       /:
+        io:output: true
         auth:role: developer
         GET:
           dev:stub:
@@ -146,6 +149,7 @@ Feature: Access authorization
     And the annotation:
       """yaml
       /:
+        io:output: true
         /:
           auth:role: developer:rust:junior  # role scope matches
           /nested:
@@ -190,6 +194,7 @@ Feature: Access authorization
           - developer
           - admin
         GET:
+          io:output: true
           dev:stub:
             access: granted!
       """
@@ -215,6 +220,7 @@ Feature: Access authorization
     And the annotation:
       """yaml
       /:
+        io:output: true
         /rust/:id:
           auth:rule:
             id: id
@@ -257,6 +263,7 @@ Feature: Access authorization
     Given the annotation:
       """yaml
       /:
+        io:output: true
         /:id:
           auth:id: id
           GET:
@@ -295,6 +302,7 @@ Feature: Access authorization
     Given the annotation:
       """yaml
       /:
+        io:output: true
         auth:role: developer
         GET:
           dev:stub:
@@ -335,6 +343,7 @@ Feature: Access authorization
     Given the annotation:
       """yaml
       /:
+        io:output: true
         /:id:
           auth:scheme: basic
           auth:id: id
@@ -374,7 +383,8 @@ Feature: Access authorization
 
     Given the annotation:
       """yaml
-      anonymous: true
+      /:
+        anonymous: true
       """
     When the following request is received:
       """

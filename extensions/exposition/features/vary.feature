@@ -5,6 +5,7 @@ Feature: The Vary directive family
       """yaml
       exposition:
         /:
+          io:output: true
           vary:languages: [en, fr]
           GET:
             vary:embed:
@@ -43,6 +44,7 @@ Feature: The Vary directive family
       """yaml
       exposition:
         /:
+          io:output: true
           GET:
             anonymous: true
             vary:embed:
@@ -62,12 +64,12 @@ Feature: The Vary directive family
       content-language: fr
       """
 
-
   Scenario: Embedding a value of an arbitrary header
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
         /:
+          io:output: true
           GET:
             vary:embed:
               name: :foo
@@ -88,11 +90,38 @@ Feature: The Vary directive family
       Hello bar
       """
 
+  Scenario: Embedding a `host` header value
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET:
+            vary:embed:
+              name: :Host
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      accept: application/yaml
+      foo: bar
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      vary: accept
+
+      Hello 127.0.0.1:8000
+      """
+
   Scenario Outline: Embedding a value from the list of options
     Given the `echo` is running with the following manifest:
         """yaml
         exposition:
           /:
+            io:output: true
             vary:languages: [en, fr]
             GET:
               vary:embed:
@@ -127,6 +156,7 @@ Feature: The Vary directive family
         """yaml
         exposition:
           /:
+            io:output: true
             vary:languages: [en, fr]
             GET:
               vary:embed:
@@ -140,11 +170,11 @@ Feature: The Vary directive family
     When the following request is received:
         """
         OPTIONS / HTTP/1.1
-        origin: http://example.com
+        origin: https://example.com
         access-control-request-headers: whatever
         """
     Then the following reply is sent:
         """
         204 No Content
-        access-control-allow-headers: accept, authorization, content-type, accept-language, foo, bar
+        access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, accept-language, foo, bar
         """

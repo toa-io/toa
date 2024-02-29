@@ -4,6 +4,7 @@ Feature: Annotation
     Given the annotation:
       """yaml
       /:
+        io:output: true
         anonymous: true
         /foo:
           GET:

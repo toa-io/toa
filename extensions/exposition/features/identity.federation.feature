@@ -4,7 +4,6 @@ Feature: Identity Federation
     Given the `identity.federation` database is empty
     Given local IDP is running
 
-
   Scenario: Getting identity for a new user
     Given the `identity.federation` configuration:
       """yaml
@@ -27,9 +26,8 @@ Feature: Identity Federation
 
       id: ${{ User.id }}
       roles: []
-      scheme: bearer
       """
-    # validate token
+    # validate TOKEN
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -41,7 +39,7 @@ Feature: Identity Federation
       200 OK
       id: ${{ User.id }}
       """
-    # ensuring identity idemptotency
+    # ensuring identity idempotency
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -81,7 +79,6 @@ Feature: Identity Federation
       authorization: Token ${{ GoodUser.token }}
 
       id: ${{ GoodUser.id }}
-      scheme: bearer
       """
 
   Scenario: Creating an Identity using inception with existing credentials
@@ -96,6 +93,7 @@ Feature: Identity Federation
         /:
           anonymous: true
           POST:
+            io:output: true
             incept: id
             endpoint: create
       """

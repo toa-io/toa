@@ -6,12 +6,14 @@ Feature: Routes
       namespace: basic
 
       exposition:
-        /strict:
-          GET:
-            endpoint: greet
-        /shortcuts:
-          /operation:
-            GET: greet
+        /:
+          io:output: true
+          /strict:
+            GET:
+              endpoint: greet
+          /shortcuts:
+            /operation:
+              GET: greet
       """
     When the following request is received:
       """
@@ -34,6 +36,7 @@ Feature: Routes
       """yaml
       exposition:
         /:
+          io:output: true
           GET: greet
       """
     When the following request is received:
@@ -52,10 +55,12 @@ Feature: Routes
     Given the `greeter` is running with the following manifest:
       """yaml
       exposition:
-        /*:
-          GET: greet
-        /foo/*/bar:
-          GET: greet
+        /:
+          io:output: true
+          /*:
+            GET: greet
+          /foo/*/bar:
+            GET: greet
       """
     When the following request is received:
       """
@@ -94,12 +99,14 @@ Feature: Routes
       """yaml
       exposition:
         /:
+          io:output: true
           POST: create
       """
     And the `users.properties` is running with the following manifest:
       """yaml
       exposition:
         /:id:
+          io:output: true
           GET: observe
       """
     When the following request is received:

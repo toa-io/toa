@@ -102,7 +102,7 @@ export class Server extends Connector {
         else
           status = 200
 
-      response.statusCode = status
+      response.statusCode = message.status = status
       write(context, response, message)
     }
   }
@@ -116,7 +116,7 @@ export class Server extends Connector {
         ? exception.status
         : 500
 
-      const message: OutgoingMessage = {}
+      const message: OutgoingMessage = { status: response.statusCode }
       const verbose = exception instanceof ClientError || this.properties.debug
 
       if (verbose)

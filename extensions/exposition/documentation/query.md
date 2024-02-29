@@ -6,10 +6,10 @@
 id?: string
 criteria?: string
 sort?: string
-omit?: [integer]
-limit?: [integer]
+omit?: integer
+limit?: integer
 selectors?: string[]
-projection?: [string]
+projection?: string[]
 ```
 
 ```yaml
@@ -251,9 +251,9 @@ PUT /dummies/5e82ed5e/ HTTP/1.1
 if-match: "1"
 
 foo: baz
+```
 
----
-
+```http
 200 OK
 ```
 
@@ -262,8 +262,10 @@ PUT /dummies/5e82ed5e/ HTTP/1.1
 if-match: "never"
 
 foo: baz
+```
 
----
-
+```http
 412 Precondition Failed
 ```
+
+The value within the quotes is mapped to the `version` property of operation call query.

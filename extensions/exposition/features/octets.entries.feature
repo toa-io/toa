@@ -4,6 +4,7 @@ Feature: Accessing entries
     Given the annotation:
       """yaml
       /:
+        io:output: true
         auth:anonymous: true
         octets:context: octets
         POST:
@@ -50,6 +51,7 @@ Feature: Accessing entries
     Given the annotation:
       """yaml
       /:
+        io:output: true
         auth:anonymous: true
         octets:context: octets
         POST:
