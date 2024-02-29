@@ -12,9 +12,8 @@ async function version (manifest) {
 
 async function hash (path) {
   const hash = await hashd(path)
-  const hex = hash.digest('hex')
 
-  return hex.slice(0, 8)
+  return hash.digest('hex').slice(0, 8)
 }
 
 /**
@@ -36,7 +35,7 @@ async function hashd (path, hash = createHash('sha256')) {
     const entries = await fs.opendir(path)
 
     for await (const entry of entries) {
-      await hashd(join(entry.path, entry.name), hash)
+      await hashd(join(path, entry.name), hash)
     }
 
     return hash
