@@ -56,8 +56,7 @@ export class Octets implements DirectiveFamily<Directive> {
       throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}.`)
 
     // noinspection JSObjectNullOrUndefined
-    return await input.timing.capture(`octets.${action.name}`,
-      action.apply(context.storage, input, parameters))
+    return await input.timing.capture(action.name, action.apply(context.storage, input, parameters))
   }
 }
 
