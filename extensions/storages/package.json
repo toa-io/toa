@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -25,15 +25,15 @@
     "transpile": "npx tsc"
   },
   "devDependencies": {
-    "@toa.io/streams": "1.0.0-alpha.6",
+    "@toa.io/streams": "1.0.0-alpha.7",
     "dotenv": "16.3.1"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.481.0",
     "@aws-sdk/lib-storage": "3.481.0",
-    "@toa.io/agent": "1.0.0-alpha.6",
-    "@toa.io/generic": "1.0.0-alpha.6",
-    "@toa.io/schemas": "1.0.0-alpha.6",
+    "@toa.io/agent": "1.0.0-alpha.7",
+    "@toa.io/generic": "1.0.0-alpha.7",
+    "@toa.io/schemas": "1.0.0-alpha.7",
     "error-value": "0.3.0",
     "matchacho": "0.6.0",
     "msgpackr": "1.10.1",
