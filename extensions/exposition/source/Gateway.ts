@@ -22,7 +22,7 @@ export class Gateway extends Connector {
   }
 
   public async process (context: http.Context): Promise<http.OutgoingMessage> {
-    const interception = await context.timing.capture('gate:intercept',
+    const interception = await context.timing.capture('intercept',
       this.interceptor.intercept(context))
 
     if (interception !== null)
@@ -43,13 +43,13 @@ export class Gateway extends Connector {
 
     const method = node.methods[context.request.method]
 
-    const interruption = await context.timing.capture('gate:preflight',
+    const interruption = await context.timing.capture('preflight',
       method.directives.preflight(context, parameters))
 
     const response = interruption ??
-      await context.timing.capture('gate:call', this.call(method, context, parameters))
+      await context.timing.capture('call', this.call(method, context, parameters))
 
-    await context.timing.capture('gate:settle', method.directives.settle(context, response))
+    await context.timing.capture('settle', method.directives.settle(context, response))
 
     return response
   }
