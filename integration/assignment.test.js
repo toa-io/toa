@@ -2,7 +2,10 @@
 
 const { generate } = require('randomstring')
 const { exceptions: { codes } } = require('@toa.io/core')
-const { newid, timeout } = require('@toa.io/generic')
+const {
+  newid,
+  timeout
+} = require('@toa.io/generic')
 
 // noinspection DuplicatedCode
 const framework = require('./framework')
@@ -32,16 +35,29 @@ afterAll(async () => {
 it('should assign', async () => {
   const sender = newid()
   const text = generate()
-  const created = await messages.invoke('add', { input: { sender, text } })
+  const created = await messages.invoke('add', {
+    input: {
+      sender,
+      text
+    }
+  })
   const query = { id: created.id }
 
   expect(created.id).toBeDefined()
 
-  const reply = await messages.invoke('assign', { input: { text: generate() }, query })
+  const reply = await messages.invoke('assign', {
+    input: { text: generate() },
+    query
+  })
 
   await timeout(200)
 
-  expect(reply).toBeUndefined()
+  expect(reply).toEqual({
+    id: query.id,
+    _version: 2,
+    sender,
+    text: expect.not.stringMatching(text)
+  })
 
   const updated = await messages.invoke('observe', { query })
 
@@ -56,7 +72,12 @@ it('should assign', async () => {
 it('should emit events', async () => {
   const sender = newid()
   const text = generate()
-  const created = await messages.invoke('add', { input: { sender, text } })
+  const created = await messages.invoke('add', {
+    input: {
+      sender,
+      text
+    }
+  })
 
   expect(created.id).toBeDefined()
 
@@ -68,7 +89,10 @@ it('should emit events', async () => {
     balance: 9
   })
 
-  await credits.invoke('set', { input: { balance: 0 }, query: { id: sender } })
+  await credits.invoke('set', {
+    input: { balance: 0 },
+    query: { id: sender }
+  })
   await timeout(200)
 
   const stat = await stats.invoke('observe', { query: { id: sender } })
@@ -79,7 +103,10 @@ it('should emit events', async () => {
 it('should throw StateNotFound', async () => {
   const id = newid()
 
-  await expect(messages.invoke('assign', { input: { text: generate() }, query: { id } }))
+  await expect(messages.invoke('assign', {
+    input: { text: generate() },
+    query: { id }
+  }))
     .rejects.toMatchObject({ code: codes.StateNotFound })
 })
 
@@ -88,14 +115,20 @@ it('should throw StatePrecondition', async () => {
 
   await expect(messages.invoke('assign', {
     input: { text: generate() },
-    query: { id, version: 1 }
+    query: {
+      id,
+      version: 1
+    }
   }))
     .rejects.toMatchObject({ code: codes.StatePrecondition })
 })
 
 it('should assign to dependent', async () => {
   const id = newid()
-  await credits.invoke('set', { input: { balance: 30 }, query: { id } })
+  await credits.invoke('set', {
+    input: { balance: 30 },
+    query: { id }
+  })
 
   const reply = await credits.invoke('observe', { query: { id } })
 
