@@ -35,12 +35,16 @@ class State {
     const record = await this.#storage.get(query)
 
     if (record === null) {
-      if (this.#dependent && query.id !== undefined && query.version === undefined) return this.init(query.id)
-      else if (query.version !== undefined) throw new StatePreconditionException()
+      if (this.#dependent && query.id !== undefined && query.version === undefined) {
+        return this.init(query.id)
+      } else if (query.version !== undefined) throw new StatePreconditionException()
     }
 
-    if (record === null) return null
-    else return this.#entity.object(record)
+    if (record === null) {
+      return null
+    } else {
+      return this.#entity.object(record)
+    }
   }
 
   async objects (query) {
@@ -75,7 +79,10 @@ class State {
   }
 
   async apply (state) {
-    const { changeset, insert } = state.export()
+    const {
+      changeset,
+      insert
+    } = state.export()
 
     let upsert
 
@@ -86,12 +93,20 @@ class State {
     const result = await this.#storage.upsert(state.query, changeset, upsert)
 
     if (result === null) {
-      if (state.query.version !== undefined) throw new StatePreconditionException()
-      else throw new StateNotFoundException()
+      if (state.query.version !== undefined) {
+        throw new StatePreconditionException()
+      } else {
+        throw new StateNotFoundException()
+      }
     }
 
     // same as above
-    await this.#emission.emit({ changeset, state: result })
+    await this.#emission.emit({
+      changeset,
+      state: result
+    })
+
+    return result
   }
 }
 
