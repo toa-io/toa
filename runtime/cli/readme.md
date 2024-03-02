@@ -60,38 +60,6 @@ Credentials specified in the output file are preserved.
 
 > It is recommended to add `.env*` to `.gitignore`.
 
-### replay
-
-[Replay](/extensions/sampling/docs/replay.md) samples. Reports in [TAP](https://testanything.org)
-format.
-
-<dl>
-<dt><code>toa replay [paths...]</code></dt>
-<dd>
-<code>paths</code> Path(s) to Component(s) or a Context (default <code>.</code>).<br/>
-<code>--component &lt;id&gt;</code> Replay samples for a specified component <code>id</code>.<br/>
-<code>--integration</code> Replay integration tests only.<br/>
-<code>--autonomous</code> Replay autonomous tests only.<br/>
-<code>--operation &lt;name&gt;</code> Replay samples for specified operation.<br/>
-<code>--title &lt;regexp&gt;</code> Regexp to match sample titles.<br/>
-<code>--dock</code> Run in Docker. Applicable only for component samples.
-</dd>
-</dl>
-
-#### Examples
-
-```shell
-$ toa replay
-$ toa replay ./path/to/component
-$ toa replay ./components/a ./components/b --dock
-$ toa replay ./components/*
-$ toa replay ./path/to/context
-$ toa replay --title "should add numbers"
-```
-
-If the path is a Context root (containing `context.toa.yaml` file), samples for components within
-the Context will be found and replayed sequentially.
-
 ### export manifest
 
 <dl>

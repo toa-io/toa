@@ -1,3 +1,0 @@
-component: string
-request:
-  $ref: request

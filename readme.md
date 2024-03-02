@@ -58,8 +58,7 @@ Non-scattered documentation is coming this fall.
   - Generic prototype
 - Data and operations contracts
 - Declarative API Gateway endpoints with authorization policies
-- [Declarative integration tests](/userland/samples)
-  - [Running in Docker](/runtime/cli/readme.md#replay)
+- [Integration tests SDK](/userland/stage)
 - [Runtime bootloader API](/userland/stage)
 - Development environment configuration
 - [CLI](/runtime/cli)

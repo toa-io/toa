@@ -51,8 +51,6 @@ const manifest = async (path, options = {}) => {
   return manifest
 }
 
-const DEFAULTS = {
-  // extensions: ['@toa.io/extensions.sampling']
-}
+const DEFAULTS = {}
 
 exports.manifest = manifest

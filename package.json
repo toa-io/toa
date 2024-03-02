@@ -66,8 +66,6 @@
     "test:stage": "jest --roots userland/example/stage --testPathIgnorePatterns .*/transpiled/",
     "test:integration": "jest --roots integration --runInBand --testTimeout 180000",
     "features": "cucumber-js -t 'not @skip' && npm run features --workspaces --if-present",
-    "test:samples:unit": "toa replay userland/example/components/*",
-    "test:samples:all": "TOA_DEV=1 toa replay userland/example",
     "test:all": "npm run test && npm run test:integration && npm run test:stage && npm run features",
     "lint": "eslint . --fix",
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
