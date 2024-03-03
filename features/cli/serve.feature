@@ -21,7 +21,7 @@ Feature: toa serve
     Given my working directory is /toa
     And environment variables:
       """
-      TOA_STORAGES=3gABo3RtcKp0bXA6Ly8vdG1w
+      TOA_STORAGES=eyJ0bXAiOnsicHJvdmlkZXIiOiJ0bXAiLCJkaXJlY3RvcnkiOiJ0ZXN0In19
       TOA_CONFIGURATION_IDENTITY_TOKENS=eyJrZXkwIjoiJElERU5USVRZX1RPS0VOU19LRVkwIn0=
       TOA_CONFIGURATION__IDENTITY_TOKENS_KEY0=k3.local.RyDuSdkJimIuxKsqZJbKGemlnizOjuXdR9QDF-Olr_A
       """

@@ -80,6 +80,13 @@ properties:
               oneOf:
                 - $ref: '#/definitions/name'
                 - enum: [_version]
+      unique:
+        type: object
+        patternProperties:
+          '.*':
+            type: array
+            items:
+              type: string
       dependent:
         type: boolean
         default: false

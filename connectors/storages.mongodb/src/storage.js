@@ -1,6 +1,9 @@
 'use strict'
 
-const { Connector } = require('@toa.io/core')
+const {
+  Connector,
+  exceptions
+} = require('@toa.io/core')
 
 const { translate } = require('./translate')
 const {
@@ -8,22 +11,21 @@ const {
   from
 } = require('./record')
 
-/**
- * @implements {toa.core.Storage}
- */
 class Storage extends Connector {
-  /** @type {toa.mongodb.Connection} */
   #connection
+  #entity
 
-  /**
-   * @param {toa.mongodb.Connection} connection
-   */
-  constructor (connection) {
+  constructor (connection, entity) {
     super()
 
     this.#connection = connection
+    this.#entity = entity
 
     this.depends(connection)
+  }
+
+  async open () {
+    await this.index()
   }
 
   async get (query) {
@@ -49,8 +51,9 @@ class Storage extends Connector {
 
   async add (entity) {
     const record = to(entity)
+    const result = await this.#connection.add(record)
 
-    return await this.#connection.add(record)
+    return result.acknowledged
   }
 
   async set (entity) {
@@ -64,10 +67,18 @@ class Storage extends Connector {
   }
 
   async store (entity) {
-    if (entity._version === 1) {
-      return this.add(entity)
-    } else {
-      return this.set(entity)
+    try {
+      if (entity._version === 1) {
+        return await this.add(entity)
+      } else {
+        return await this.set(entity)
+      }
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new exceptions.DuplicateException(error.keyValue)
+      } else {
+        throw error
+      }
     }
   }
 
@@ -102,6 +113,73 @@ class Storage extends Connector {
 
     return from(result)
   }
+
+  async index () {
+    const indexes = []
+
+    if (this.#entity.unique) {
+      for (const [name, fields] of Object.entries(this.#entity.unique)) {
+        const sparse = this.checkFields(fields)
+
+        const unique = await this.uniqueIndex(name, fields, sparse)
+
+        indexes.push(unique)
+      }
+    }
+
+    await this.removeObsolete(indexes)
+  }
+
+  async uniqueIndex (name, properties, sparse = false) {
+    const fields = properties.reduce((acc, property) => {
+      acc[property] = 1
+      return acc
+    }, {})
+
+    name = 'unique_' + name
+
+    await this.#connection.index(fields, {
+      name,
+      unique: true,
+      sparse
+    })
+
+    return name
+  }
+
+  async removeObsolete (desired) {
+    const current = await this.#connection.indexes()
+    const obsolete = current.filter((name) => !desired.includes(name))
+
+    if (obsolete.length > 0) {
+      console.info(`Remove obsolete indexes: [${obsolete.join(', ')}]`)
+
+      await this.#connection.dropIndexes(obsolete)
+    }
+  }
+
+  checkFields (fields) {
+    const optional = []
+
+    for (const field of fields) {
+      if (!(field in this.#entity.schema.properties)) {
+        throw new Error(`Index field '${field}' is not defined.`)
+      }
+
+      if (!this.#entity.schema.required?.includes(field)) {
+        optional.push(field)
+      }
+    }
+
+    if (optional.length > 0) {
+      console.info(`Index fields [${optional.join(', ')}] are optional, creating sparse index.`)
+
+      return true
+    } else {
+      return false
+    }
+  }
+
 }
 
 exports.Storage = Storage

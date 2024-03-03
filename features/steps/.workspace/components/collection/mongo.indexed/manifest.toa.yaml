@@ -1,0 +1,21 @@
+namespace: mongo
+name: indexed
+
+entity:
+  schema:
+    name*: string
+    email*: string
+    birthday: number
+    weight: number
+  unique:
+    email: [email]
+#  index:
+#    search_0:
+#      birthday: desc
+#      weight: asc
+#    search_1:
+#      name: hash
+
+operations:
+  transit:
+    concurrency: retry

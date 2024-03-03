@@ -5,7 +5,6 @@
 const { MongoClient } = require('mongodb')
 const { Connector } = require('@toa.io/core')
 const { resolve } = require('@toa.io/pointer')
-const { Conveyor } = require('@toa.io/conveyor')
 const { ID } = require('./deployment')
 
 class Connection extends Connector {
@@ -14,8 +13,6 @@ class Connection extends Connector {
   #client
   /** @type {import('mongodb').Collection<toa.mongodb.Record>} */
   #collection
-  /** @type {toa.conveyor.Conveyor<toa.core.storages.Record, boolean>} */
-  #conveyor
 
   constructor (locator) {
     super()
@@ -33,7 +30,6 @@ class Connection extends Connector {
     await this.#client.connect()
 
     this.#collection = this.#client.db(db).collection(collection)
-    this.#conveyor = new Conveyor((objects) => this.addMany(objects))
 
     console.info(`Storage Mongo '${this.#locator.id}' connected`)
   }
@@ -58,22 +54,7 @@ class Connection extends Connector {
 
   /** @hot */
   async add (record) {
-    return this.#conveyor.process(record)
-  }
-
-  async addMany (records) {
-    let result
-
-    try {
-      const response = await this.#collection.insertMany(records, { ordered: false })
-
-      result = response.acknowledged
-    } catch (e) {
-      if (e.code === ERR_DUPLICATE_KEY) result = false
-      else throw e
-    }
-
-    return result
+    return await this.#collection.insertOne(record)
   }
 
   /** @hot */
@@ -86,9 +67,28 @@ class Connection extends Connector {
     return this.#collection.findOneAndUpdate(query, update, options)
   }
 
+  async index (keys, options) {
+    return this.#collection.createIndex(keys, options)
+  }
+
+  async indexes () {
+    const array = await this.#collection.listIndexes().toArray()
+
+    return array.map(({ name }) => name).filter((name) => name !== '_id_')
+  }
+
+  async dropIndexes (names) {
+    const all = names.map((name) => this.#collection.dropIndex(name))
+
+    return Promise.all(all)
+  }
+
   async #resolveURLs () {
-    if (process.env.TOA_DEV === '1') return ['mongodb://developer:secret@localhost']
-    else return await resolve(ID, this.#locator.id)
+    if (process.env.TOA_DEV === '1') {
+      return ['mongodb://developer:secret@localhost']
+    } else {
+      return await resolve(ID, this.#locator.id)
+    }
   }
 }
 
