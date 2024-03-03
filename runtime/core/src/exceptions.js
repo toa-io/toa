@@ -19,6 +19,7 @@ const codes = {
   StatePrecondition: 303,
   StateConcurrency: 304,
   StateInitialization: 305,
+  Duplicate: 306,
 
   Communication: 400,
   Transmission: 401

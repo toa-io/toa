@@ -17,7 +17,6 @@ Feature: MongoDB storage
     And I run `TOA_DEV=0 toa invoke transit "{ input: { foo: 1, bar: 'test' } }" -p ./components/mongo.one`
     Then program should exit with code 0
 
-  @skip # MongoBulkWriteError on Mac M1
   Scenario: Create a record in MongoDB with reconnection
     Given environment variables:
       """

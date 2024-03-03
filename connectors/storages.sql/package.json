@@ -20,7 +20,6 @@
   },
   "dependencies": {
     "@toa.io/console": "1.0.0-alpha.7",
-    "@toa.io/conveyor": "1.0.0-alpha.7",
     "@toa.io/generic": "1.0.0-alpha.7",
     "@toa.io/pointer": "1.0.0-alpha.7",
     "knex": "2.4.2",

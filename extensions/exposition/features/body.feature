@@ -5,6 +5,7 @@ Feature: Request body
       """yaml
       exposition:
         /:
+          io:output: true
           POST: create
       """
     When the following request is received:

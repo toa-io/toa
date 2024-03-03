@@ -50,11 +50,6 @@ describe('add', () => {
       foo: entity.foo
     }))
   })
-
-  it('should handle on duplicate id', async () => {
-    const result = await storage.add(entity)
-    expect(result).toStrictEqual(false)
-  })
 })
 
 describe('find', () => {

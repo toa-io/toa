@@ -72,6 +72,7 @@ it('should assign', async () => {
 it('should emit events', async () => {
   const sender = newid()
   const text = generate()
+
   const created = await messages.invoke('add', {
     input: {
       sender,

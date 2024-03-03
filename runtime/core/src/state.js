@@ -4,21 +4,14 @@ const { empty } = require('@toa.io/generic')
 
 const {
   StatePreconditionException,
-  StateNotFoundException,
-  StateInitializationException
+  StateNotFoundException
 } = require('./exceptions')
 
-/**
- * @implements {toa.core.State}
- */
 class State {
-  /** @type {toa.core.Storage} */
+  #dependent
   #storage
-
-  /** @type {toa.core.entity.Factory} */
   #entity
   #emission
-  #dependent
 
   constructor (storage, entity, emission, dependent) {
     this.#storage = storage
@@ -98,13 +91,13 @@ class State {
       } else {
         throw new StateNotFoundException()
       }
+    } else {
+      // same as above
+      await this.#emission.emit({
+        changeset,
+        state: result
+      })
     }
-
-    // same as above
-    await this.#emission.emit({
-      changeset,
-      state: result
-    })
 
     return result
   }

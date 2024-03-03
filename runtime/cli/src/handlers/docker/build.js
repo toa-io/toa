@@ -14,8 +14,9 @@ async function build (contextPath, componentPatterns) {
   await registry.build()
 
   const composition = context.compositions[0].name
+  const base = context.registry.base === undefined ? '' : context.registry.base + '/'
 
-  return `${context.registry.base === undefined ? '' : context.registry.base + '/'}${context.name}/composition-${composition}`
+  return `${base}${context.name}/composition-${composition}`
 }
 
 async function createContext (contextPath, componentPatterns) {
@@ -24,10 +25,13 @@ async function createContext (contextPath, componentPatterns) {
   const paths = componentPatterns.map((pattern) => find.components(pattern))
   const components = await loadComponents(paths)
   const rnd = newid().substring(0, 6)
-  const name = 'replay-' + rnd
+  const name = 'temp-' + rnd
 
   context.name += '-' + rnd
-  context.compositions = [{ name, components }]
+  context.compositions = [{
+    name,
+    components
+  }]
 
   return context
 }

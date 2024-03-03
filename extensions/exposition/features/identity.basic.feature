@@ -16,6 +16,18 @@ Feature: Basic authentication
       """
       201 Created
       """
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      content-type: application/yaml
+
+      username: developer
+      password: secret#1234
+      """
+    Then the following reply is sent:
+      """
+      409 Conflict
+      """
 
   Scenario: Creating new Identity using inception
     Given the `users` is running with the following manifest:
