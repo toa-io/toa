@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, binding, given } from 'cucumber-tsflow'
-import { type DataTable } from '@cucumber/cucumber'
 import { MongoClient } from 'mongodb'
+import type { DataTable } from '@cucumber/cucumber'
 
 @binding()
 export class Database {

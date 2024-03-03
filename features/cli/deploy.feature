@@ -22,13 +22,13 @@ Feature: Deployment
     When I wait 5 seconds
     And I run `kubectl get pods`
     Then stdout should contain lines:
-    """
-    composition-dummies-one-<...> Running
-    composition-dummies-two-<...> Running
-    composition-default-stash-<...> Running
-    composition-exposed-one-<...> Running
-    extension-exposition-gateway-<...> Running
-    """
+      """
+      composition-dummies-one-<...> Running
+      composition-dummies-two-<...> Running
+      composition-default-stash-<...> Running
+      composition-exposed-one-<...> Running
+      extension-exposition-gateway-<...> Running
+      """
     Then I run `helm uninstall collection`
     And I run `kubectl delete secret toa-amqp-context.default`
     And I run `kubectl delete secret toa-mongodb.default`

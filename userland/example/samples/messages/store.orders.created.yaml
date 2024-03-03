@@ -1,8 +1,0 @@
-title: Should book a pot
-component: tea.pots
-payload:
-  pot: a959effedd5d4c34a3ee9f640dab2d7e
-input:
-  booked: true
-query:
-  id: a959effedd5d4c34a3ee9f640dab2d7e

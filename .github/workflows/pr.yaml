@@ -25,7 +25,7 @@ jobs:
           HUSKY: 0
 
       - name: Run lint
-        run: npm run test:lint
+        run: npx eslint .
 
       - name: Run unit tests
         run: npm run test:unit -- --coverage --testTimeout=30000 --reporters=github-actions --reporters=summary

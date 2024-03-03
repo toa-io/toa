@@ -6,6 +6,8 @@ entity:
   schema:
     username*: string
     password*: string
+  unique:
+    username: [username]
   dependent: true
 
 operations:

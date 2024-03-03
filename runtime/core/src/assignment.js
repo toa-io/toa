@@ -9,13 +9,22 @@ class Assignment extends Operation {
   }
 
   async commit (store) {
-    const { scope, state, reply } = store
+    const {
+      scope,
+      state,
+      reply
+    } = store
 
     if (reply.error !== undefined) return
 
     scope.set(state)
 
-    await this.scope.apply(scope)
+    const output = await this.scope.apply(scope)
+
+    // assignment returns new state by default
+    if (store.reply.output === undefined) {
+      store.reply.output = output
+    }
   }
 }
 

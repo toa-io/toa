@@ -1,6 +1,0 @@
-title: Something happened with a pot
-payload:
-  foo: bar
-input: foo
-query:
-  id: bar

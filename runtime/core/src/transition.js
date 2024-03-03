@@ -3,7 +3,12 @@
 const { retry } = require('@toa.io/generic')
 
 const { Operation } = require('./operation')
-const { StateConcurrencyException, StateNotFoundException } = require('./exceptions')
+const {
+  StateConcurrencyException,
+  StateNotFoundException,
+  DuplicateException,
+  Exception
+} = require('./exceptions')
 
 class Transition extends Operation {
   #concurrency
@@ -29,18 +34,29 @@ class Transition extends Operation {
   }
 
   async commit (store) {
-    const { scope, state, reply, retry } = store
+    const {
+      scope,
+      state,
+      reply,
+      retry
+    } = store
 
     if (reply.error !== undefined) return
 
     scope.set(state)
 
-    const ok = await this.scope.commit(scope)
+    const result = await this.scope.commit(scope)
 
-    if (ok !== true) {
-      if (this.#concurrency === 'retry') retry()
-      else throw new StateConcurrencyException()
+    if (result === false ||
+      (result instanceof DuplicateException && result.message.includes('_id'))) {
+      if (this.#concurrency === 'retry') {
+        return retry()
+      } else {
+        throw new StateConcurrencyException()
+      }
     }
+
+    if (result instanceof Exception) throw result
   }
 
   async #retry (store, retry) {

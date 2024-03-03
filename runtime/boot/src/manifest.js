@@ -14,28 +14,34 @@ const manifest = async (path, options = {}) => {
   const manifest = await load(path)
 
   if (options?.bindings !== undefined) {
-    if ('operations' in manifest)
-      for (const operation of Object.values(manifest.operations))
+    if ('operations' in manifest) {
+      for (const operation of Object.values(manifest.operations)) {
         operation.bindings = options.bindings
+      }
+    }
 
     const check = (binding) => require(binding).properties?.async === true
     const asyncBinding = options.bindings.find(check)
 
     if (asyncBinding === undefined) throw new Error('Bindings override must contain at least one async binding')
 
-    if ('events' in manifest)
+    if ('events' in manifest) {
       for (const event of Object.values(manifest.events)) event.binding = asyncBinding
+    }
 
-    if ('receivers' in manifest)
-      for (const receiver of Object.values(manifest.receivers))
+    if ('receivers' in manifest) {
+      for (const receiver of Object.values(manifest.receivers)) {
         if (receiver.source === undefined) receiver.binding = asyncBinding
+      }
+    }
   }
 
   if (manifest.extensions === undefined) manifest.extensions = {}
 
-  // add `null` manifests
-  for (const extension of options.extensions) {
-    if (!(extension in manifest.extensions)) manifest.extensions[extension] = null
+  if (options.extensions !== undefined) {
+    for (const extension of options.extensions) {
+      if (!(extension in manifest.extensions)) manifest.extensions[extension] = null
+    }
   }
 
   if ('storage' in options && 'entity' in manifest) manifest.entity.storage = options.storage
@@ -45,8 +51,6 @@ const manifest = async (path, options = {}) => {
   return manifest
 }
 
-const DEFAULTS = {
-  extensions: ['@toa.io/extensions.sampling']
-}
+const DEFAULTS = {}
 
 exports.manifest = manifest
