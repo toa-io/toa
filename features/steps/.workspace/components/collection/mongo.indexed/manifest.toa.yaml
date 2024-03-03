@@ -9,12 +9,12 @@ entity:
     weight: number
   unique:
     email: [email]
-#  index:
-#    search_0:
-#      birthday: desc
-#      weight: asc
-#    search_1:
-#      name: hash
+  index:
+    some:
+      birthday: desc
+      weight: asc
+    some_other:
+      name: hash
 
 operations:
   transit:

@@ -117,13 +117,29 @@ class Storage extends Connector {
   async index () {
     const indexes = []
 
-    if (this.#entity.unique) {
+    if (this.#entity.unique !== undefined) {
       for (const [name, fields] of Object.entries(this.#entity.unique)) {
         const sparse = this.checkFields(fields)
-
         const unique = await this.uniqueIndex(name, fields, sparse)
 
         indexes.push(unique)
+      }
+    }
+
+    if (this.#entity.index !== undefined) {
+      for (const [suffix, declaration] of Object.entries(this.#entity.index)) {
+        const name = 'index_' + suffix
+        const fields = Object.fromEntries(Object.entries(declaration)
+          .map(([name, type]) => [name, INDEX_TYPES[type]]))
+
+        const sparse = this.checkFields(Object.keys(fields))
+
+        await this.#connection.index(fields, {
+          name,
+          sparse
+        })
+
+        indexes.push(name)
       }
     }
 
@@ -180,6 +196,12 @@ class Storage extends Connector {
     }
   }
 
+}
+
+const INDEX_TYPES = {
+  'asc': 1,
+  'desc': -1,
+  'hash': 'hashed'
 }
 
 exports.Storage = Storage

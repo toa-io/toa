@@ -87,6 +87,15 @@ properties:
             type: array
             items:
               type: string
+      index:
+        type: object
+        patternProperties:
+          '.*':
+            type: object
+            patternProperties:
+              '.*':
+                type: string
+                enum: [asc, desc, hash]
       dependent:
         type: boolean
         default: false

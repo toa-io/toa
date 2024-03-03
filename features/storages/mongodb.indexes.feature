@@ -17,3 +17,4 @@ Feature: MongoDB indexes
       message:
         email: john@example.com
       """
+    # see collection indexes in the database
