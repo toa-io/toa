@@ -1,11 +1,13 @@
 'use strict'
 
-const { Connection } = require('./connection')
+const { Client } = require('./client')
+const { Collection } = require('./collection')
 const { Storage } = require('./storage')
 
 class Factory {
   storage (locator, entity) {
-    const connection = new Connection(locator)
+    const client = new Client(locator)
+    const connection = new Collection(client)
 
     return new Storage(connection, entity)
   }

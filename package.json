@@ -66,7 +66,7 @@
     "test:integration": "jest --roots integration --runInBand --testTimeout 180000",
     "features": "cucumber-js -t 'not @skip' && npm run features --workspaces --if-present",
     "test:all": "npm run test && npm run test:integration && npm run test:stage && npm run features",
-    "lint": "eslint $(git diff --name-only HEAD | grep -E '\\.(js|ts)$' | xargs)",
+    "lint": "eslint $(git diff --name-only --diff-filter=d HEAD | grep -E '\\.ts$' | xargs)",
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
     "version:local": "lerna version --conventional-prerelease --preid local --no-commit-hooks --no-changelog --yes --no-git-tag-version && git commit -am 'chore: local bump' --no-verify",
     "publish:canary": "lerna publish --canary --preid local --registry http://localhost:4873",
