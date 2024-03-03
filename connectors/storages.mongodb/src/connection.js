@@ -72,9 +72,13 @@ class Connection extends Connector {
   }
 
   async indexes () {
-    const array = await this.#collection.listIndexes().toArray()
+    try {
+      const array = await this.#collection.listIndexes().toArray()
 
-    return array.map(({ name }) => name).filter((name) => name !== '_id_')
+      return array.map(({ name }) => name).filter((name) => name !== '_id_')
+    } catch {
+      return []
+    }
   }
 
   async dropIndexes (names) {

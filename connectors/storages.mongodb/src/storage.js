@@ -74,8 +74,8 @@ class Storage extends Connector {
         return await this.set(entity)
       }
     } catch (error) {
-      if (error.code === 11000) {
-        throw new exceptions.DuplicateException(Object.keys(error.keyValue))
+      if (error.code === ERR_DUPLICATE_KEY) {
+        return new exceptions.DuplicateException(Object.keys(error.keyValue))
       } else {
         throw error
       }
@@ -203,5 +203,7 @@ const INDEX_TYPES = {
   'desc': -1,
   'hash': 'hashed'
 }
+
+const ERR_DUPLICATE_KEY = 11000
 
 exports.Storage = Storage
