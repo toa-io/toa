@@ -75,7 +75,7 @@ class Storage extends Connector {
       }
     } catch (error) {
       if (error.code === 11000) {
-        throw new exceptions.DuplicateException(error.keyValue)
+        throw new exceptions.DuplicateException(Object.keys(error.keyValue))
       } else {
         throw error
       }

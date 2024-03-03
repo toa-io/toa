@@ -14,7 +14,6 @@ Feature: MongoDB indexes
     Then the following exception is thrown:
       """yaml
       code: 306
-      message:
-        email: john@example.com
+      message: [email]
       """
     # see collection indexes in the database
