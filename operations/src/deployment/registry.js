@@ -39,7 +39,9 @@ class Registry {
   async build () {
     await this.prepare()
 
-    for (const image of this.#images) await this.#build(image)
+    for (const image of this.#images) {
+      await this.#build(image)
+    }
   }
 
   async push () {
@@ -69,7 +71,11 @@ class Registry {
   async #build (image, push = false) {
     const args = ['--context=default', 'buildx', 'build']
 
-    if (push) args.push('--push')
+    if (push) {
+      args.push('--push')
+    } else {
+      args.push('--load')
+    }
 
     args.push('--tag', image.reference, image.context)
 
@@ -86,7 +92,9 @@ class Registry {
       args.push('--builder', BUILDER)
 
       await this.#ensureBuilder()
-    } else args.push('--builder', 'default')
+    } else {
+      args.push('--builder', 'default')
+    }
 
     args.push('--progress', 'plain')
 
