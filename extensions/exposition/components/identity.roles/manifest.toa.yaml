@@ -4,14 +4,20 @@ name: roles
 entity:
   schema:
     identity*: string
-    role*: string
+    role*: /^[a-zA-Z0-9]{1,16}(:[a-zA-Z0-9]{1,16}){1,8}$/
+    delegator: string
+  unique:
+    unique: [identity, role]
 
 operations:
-  transit:
+  grant:
     query: false
     input:
-      identity*: string
-      role*: string
+      identity*: .
+      role*: .
+      delegator:
+        id: string
+        roles: [string]
   list:
     output: [string]
   principal:
@@ -25,9 +31,12 @@ exposition:
   isolated: true
   /:identity:
     auth:role: system:identity:roles
+    auth:rule:
+      delegate: delegator
+      role: system:identity:roles:delegation
     POST:
       io:output: [id]
-      endpoint: transit
+      endpoint: grant
     GET:
       io:output: true # array of strings
       auth:id: identity

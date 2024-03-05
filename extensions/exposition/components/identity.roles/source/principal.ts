@@ -1,7 +1,14 @@
-import { type Call } from '@toa.io/types'
+import type { Entity } from './lib/Entity'
+import type { Call } from '@toa.io/types'
+import type { Input as GrantInput } from './grant'
 
 export async function effect (input: Identity, context: Context): Promise<void> {
-  await context.local.transit({ input: { identity: input.id, role: 'system' } })
+  await context.local.grant({
+    input: {
+      identity: input.id,
+      role: 'system'
+    }
+  })
 }
 
 interface Identity {
@@ -10,11 +17,6 @@ interface Identity {
 
 export interface Context {
   local: {
-    transit: Call<void, TransitInput>
+    grant: Call<Entity, GrantInput>
   }
-}
-
-interface TransitInput {
-  identity: string
-  role: string
 }
