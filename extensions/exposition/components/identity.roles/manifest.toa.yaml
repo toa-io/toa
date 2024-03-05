@@ -26,6 +26,7 @@ operations:
 
 receivers:
   identity.basic.principal: principal
+  identity.federation.principal: principal
 
 exposition:
   isolated: true

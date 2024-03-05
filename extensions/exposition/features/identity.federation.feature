@@ -37,6 +37,7 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       200 OK
+
       id: ${{ User.id }}
       """
     # ensuring identity idempotency
@@ -49,6 +50,7 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       200 OK
+
       id: ${{ User.id }}
       """
 
@@ -150,4 +152,46 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       403 Forbidden
+      """
+
+  Scenario: Granting a `system` role to a Principal
+    Given the `identity.federation` configuration:
+      """yaml
+      explicit_identity_creation: false
+      trust:
+        - issuer: http://localhost:44444
+      principal:
+        iss: http://localhost:44444
+        sub: root-mock-id
+      """
+    And the IDP token for root is issued
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      authorization: Bearer ${{ root.id_token }}
+      accept: application/yaml
+      content-type: application/yaml
+      """
+    # create an identity
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ root.token }}
+
+      id: ${{ root.id }}
+      """
+    # check the role
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      accept: application/yaml
+      authorization: Token ${{ root.token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ root.id }}
+      roles:
+        - system
       """
