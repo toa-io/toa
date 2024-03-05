@@ -32,11 +32,11 @@ exposition:
   isolated: true
   /:identity:
     auth:role: system:identity:roles
-    auth:rule:
-      delegate: delegator
-      role: system:identity:roles:delegation
     POST:
       io:output: [id]
+      auth:rule:
+        delegate: delegator
+        role: system:identity:roles:delegation
       endpoint: grant
     GET:
       io:output: true # array of strings
