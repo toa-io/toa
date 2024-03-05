@@ -4,7 +4,7 @@ name: roles
 entity:
   schema:
     identity*: string
-    role*: /^[a-zA-Z0-9]{1,16}(:[a-zA-Z0-9]{1,16}){1,8}$/
+    role*: /^[a-zA-Z0-9]{1,16}(:[a-zA-Z0-9]{1,16}){0,8}$/
     delegator: string
   unique:
     unique: [identity, role]
