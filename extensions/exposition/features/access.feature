@@ -406,6 +406,7 @@ Feature: Access authorization
       """yaml
       /:
         /:id:
+          io:output: true
           auth:id: id
           GET:
             dev:stub:
@@ -435,7 +436,7 @@ Feature: Access authorization
       """
     Then the following reply is sent:
       """
-      204 No Content
+      200 OK
       """
     # accessing a resource with a banned Identity
     When the following request is received:
