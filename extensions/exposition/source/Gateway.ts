@@ -44,12 +44,13 @@ export class Gateway extends Connector {
     const method = node.methods[context.request.method]
 
     const interruption = await context.timing.capture('preflight',
-      method.directives.preflight(context, parameters))
+      method.directives.preflight(context, parameters)).catch(rethrow)
 
     const response = interruption ??
       await context.timing.capture('call', this.call(method, context, parameters))
 
-    await context.timing.capture('settle', method.directives.settle(context, response))
+    await context.timing.capture('settle',
+      method.directives.settle(context, response)).catch(rethrow)
 
     return response
   }

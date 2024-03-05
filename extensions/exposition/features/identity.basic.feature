@@ -83,6 +83,22 @@ Feature: Basic authentication
       """
       200 OK
       """
+    # username is taken
+    When the following request is received:
+      """
+      POST /users/ HTTP/1.1
+      authorization: Basic dXNlcjphbm90aGVycGFzczEyMzQ=
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: Bill Smith
+      """
+    Then the following reply is sent:
+      """
+      409 Conflict
+
+      - username
+      """
 
   Scenario: Changing the password
     Given the annotation:
