@@ -7,8 +7,9 @@ import { Role } from './Role'
 import { Rule } from './Rule'
 import { Incept } from './Incept'
 import { Echo } from './Echo'
-import { split } from './split'
 import { Scheme } from './Scheme'
+import { Delegate } from './Delegate'
+import { split } from './split'
 import { PRIMARY, PROVIDERS } from './schemes'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
@@ -139,7 +140,8 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   rule: Rule,
   incept: Incept,
   scheme: Scheme,
-  echo: Echo
+  echo: Echo,
+  delegate: Delegate
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans']

@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./operations",
+    "outDir": "./operations"
   },
   "include": [
     "source"

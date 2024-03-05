@@ -96,11 +96,14 @@ The `identity.federation` component manages OpenID Connect federated identities.
 Both implicit identities creation and forced [identity inception](./identity.md) are supported
 as in case with basic credentials. `principal` is also working in the same way.
 
-The configuration schema alongside default values is described in the [component manifest](../components/identity.federation/manifest.toa.yaml).
+The configuration schema alongside default values is described in
+the [component manifest](../components/identity.federation/manifest.toa.yaml).
 
-No federated tokens are accepted by default until at least one entry is added to the `trust` configuration.
+No federated tokens are accepted by default until at least one entry is added to the `trust`
+configuration.
 
-Toa supports either asymmetric RS256 or symmetric HS256 / HS384 / HS512 tokens with pre-shared secrets.
+Toa supports either asymmetric RS256 or symmetric HS256 / HS384 / HS512 tokens with pre-shared
+secrets.
 
 ```yaml
 # context.toa.yaml
@@ -251,11 +254,10 @@ configuration:
 
 ## Roles
 
-The `identity.roles` component manages roles of an Identity used by [access authorization](access.md#role).
+The `identity.roles` component manages roles of an Identity used
+by [access authorization](access.md#role).
 
-### Role resources
-
-#### `/identity/roles/:id/`
+### `/identity/roles/:id/`
 
 `GET` Get roles of an Identity.
 
@@ -267,12 +269,16 @@ Access requires credentials of the Identity or `system:identity:roles` role.
 role: string
 ```
 
-Access requires `system:identity:roles` role.
+To assign arbitrary roles, the `system:identity:roles` role is required.
+
+An Identity having `system:identity:roles:delegation` role can delegate roles within its own
+Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
 
 ## Banned Identities
 
 The `identity.bans` component manages banned identities.
-A banned identity will fail to authenticate with any associated credentials (except [tokens](#stateless-tokens) within
+A banned identity will fail to authenticate with any associated credentials (
+except [tokens](#stateless-tokens) within
 the `refresh` period).
 
 ```http

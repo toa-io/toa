@@ -14,7 +14,8 @@
 The Authorization is implemented as a set of [RTD Directives](tree.md#directives).
 
 Directives are executed in a predetermined order until one of them grants access to a resource.
-If none of the directives grants access, then the Authorization interrupts request processing and responds with an
+If none of the directives grants access, then the Authorization interrupts request processing and
+responds with an
 authorization error.
 
 > The Authorization directive provider is named `authorization`,
@@ -73,8 +74,7 @@ Read [Roles](#roles) section for more details.
 ### `rule`
 
 The Rule is a collection of authorization directives. It allows access only if all the specified
-directives grant
-access. The value of the `rule` directive can be a single Rule or a list of Rules.
+directives grant access. The value of the `rule` directive can be a single Rule or a list of Rules.
 
 #### Example
 
@@ -90,12 +90,19 @@ exposition:
 
 Access will be granted if an Identity matches a `user-id` placeholder and has a Role of `developer`.
 
+### `delegate`
+
+Embeds the value of the current Identity into the request body as a property named after the value
+of the directive value, and grants access.
+
+> The request body must be an object.
+
 ## Roles
 
 Role values are strings that can be assigned to an Identity and used for matching with values of
 the [`role` directive](#role).
 
-### Hierarchy
+### Hierarchies
 
 Role values are alphanumeric tokens separated by a colon (`:`).
 Each token defines a Role Scope, forming a hierarchy.
@@ -128,13 +135,6 @@ In other words, the Identity must have a specified or more general Role.
 > The root-level Role Scope `system` is preserved and cannot be used with the `role` directives.
 
 See also [role management resources](components.md#roles).
-
-#### Authorization Directives
-
-```yaml
-/identity/roles/:id:
-  role: system:roles
-````
 
 ## Policies
 
