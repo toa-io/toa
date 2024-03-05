@@ -42,10 +42,8 @@ export class Endpoint implements RTD.Endpoint {
         message.headers.set('etag', etag)
 
         return message
-      } else {
+      } else
         message.headers.set('etag', `"${reply._version.toString()}"`)
-        delete reply._version
-      }
     }
 
     message.body = reply

@@ -20,6 +20,7 @@ Feature: Basic authentication
       """
       POST /identity/basic/ HTTP/1.1
       content-type: application/yaml
+      accept: application/yaml
 
       username: developer
       password: secret#1234
@@ -27,6 +28,8 @@ Feature: Basic authentication
     Then the following reply is sent:
       """
       409 Conflict
+
+      - username
       """
 
   Scenario: Creating new Identity using inception
@@ -79,6 +82,22 @@ Feature: Basic authentication
     Then the following reply is sent:
       """
       200 OK
+      """
+    # username is taken
+    When the following request is received:
+      """
+      POST /users/ HTTP/1.1
+      authorization: Basic dXNlcjphbm90aGVycGFzczEyMzQ=
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: Bill Smith
+      """
+    Then the following reply is sent:
+      """
+      409 Conflict
+
+      - username
       """
 
   Scenario: Changing the password

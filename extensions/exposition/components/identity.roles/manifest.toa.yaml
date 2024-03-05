@@ -1,6 +1,5 @@
 namespace: identity
 name: roles
-version: 0.0.0
 
 entity:
   schema:
@@ -30,6 +29,6 @@ exposition:
       io:output: [id]
       endpoint: transit
     GET:
-      io:output: true
+      io:output: true # array of strings
       auth:id: identity
       endpoint: list
