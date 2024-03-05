@@ -7,7 +7,7 @@ entity:
     role*: /^[a-zA-Z0-9]{1,16}(:[a-zA-Z0-9]{1,16}){0,8}$/
     delegator: string
   unique:
-    unique: [identity, role]
+    role: [identity, role]
 
 operations:
   grant:
