@@ -99,6 +99,20 @@ Feature: Basic authentication
 
       - username
       """
+    # credentials already exists
+    When the following request is received:
+      """
+      POST /users/ HTTP/1.1
+      authorization: Basic dXNlcjpwYXNzMTIzNA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: Bill Smith
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
 
   Scenario: Changing the password
     Given the annotation:
