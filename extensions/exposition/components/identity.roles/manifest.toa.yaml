@@ -4,7 +4,7 @@ name: roles
 entity:
   schema:
     identity*: string
-    role*: /^[a-zA-Z0-9]{1,16}(:[a-zA-Z0-9]{1,16}){0,8}$/
+    role*: /^[a-zA-Z0-9]{1,32}(:[a-zA-Z0-9]{1,32}){0,8}$/
     delegator: string
   unique:
     role: [identity, role]
@@ -32,11 +32,11 @@ exposition:
   isolated: true
   /:identity:
     auth:role: system:identity:roles
-    auth:rule:
-      delegate: delegator
-      role: system:identity:roles:delegation
     POST:
       io:output: [id]
+      auth:rule:
+        delegate: delegator
+        role: system:identity:roles:delegation
       endpoint: grant
     GET:
       io:output: true # array of strings

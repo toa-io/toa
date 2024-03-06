@@ -72,6 +72,9 @@ The following request headers are allowed:
 - `accept`
 - `authorization`
 - `content-type`
+- `etag`
+- `if-match`
+- `if-none-match`
 - headers used by the [`vary:embed` directive](vary.md#embeddings)
 
 The following response headers are exposed:
