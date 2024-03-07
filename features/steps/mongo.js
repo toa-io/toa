@@ -15,7 +15,8 @@ Given('the {component} database contains:',
     await client.connect()
 
     const [name, namespace = 'default'] = id.split('.').reverse()
-    const collection = client.db(namespace).collection(name)
+    const collname = `${namespace}_${name}`.toLowerCase()
+    const collection = client.db('toa-dev').collection(collname)
     const columns = table.raw()[0]
     const rows = table.rows()
     const documents = []

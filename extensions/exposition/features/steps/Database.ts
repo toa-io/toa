@@ -9,7 +9,8 @@ export class Database {
   @given('the `{word}` database contains:')
   public async upsert (id: string, table: DataTable): Promise<void> {
     const [name, namespace = 'default'] = id.split('.').reverse()
-    const collection = Database.client.db(namespace).collection(name)
+    const col = `${namespace}_${name}`.toLowerCase()
+    const collection = Database.client.db('toa-dev').collection(col)
 
     const columns = table.raw()[0]
     const rows = table.rows()

@@ -1,7 +1,11 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { timeout, random, newid } = require('@toa.io/generic')
+const {
+  timeout,
+  random,
+  newid
+} = require('@toa.io/generic')
 
 const framework = require('./framework')
 
@@ -33,7 +37,13 @@ it('should receive', async () => {
   const text = generate()
 
   for (let i = 0; i < times; i++) {
-    await messages.invoke('add', { input: { sender, text, free: true } })
+    await messages.invoke('add', {
+      input: {
+        sender,
+        text,
+        free: true
+      }
+    })
   }
 
   await timeout(200) // events processing
@@ -50,20 +60,30 @@ it('should receive conditionally', async () => {
 
   // 10 initial credits
   for (let i = 0; i < 9; i++) {
-    await messages.invoke('add', { input: { sender, text: generate() } })
+    await messages.invoke('add', {
+      input: {
+        sender,
+        text: generate()
+      }
+    })
   }
 
   await timeout(200)
 
   const before = await stats.invoke('observe', { query: { id: sender } })
 
-  expect(before).toEqual({
+  expect(before).toEqual(expect.objectContaining({
     id: sender,
     messages: 9,
     _version: 9
-  })
+  }))
 
-  await messages.invoke('add', { input: { sender, text: generate() } })
+  await messages.invoke('add', {
+    input: {
+      sender,
+      text: generate()
+    }
+  })
 
   await timeout(100)
 
@@ -72,10 +92,10 @@ it('should receive conditionally', async () => {
 
   expect(balance.balance).toBe(0)
 
-  expect(after).toEqual({
+  expect(after).toEqual(expect.objectContaining({
     id: sender,
     messages: 10,
     bankrupt: true,
     _version: 11
-  })
+  }))
 })

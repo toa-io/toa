@@ -57,17 +57,17 @@ class Client extends Connector {
    */
   async open () {
     const urls = await this.resolveURLs()
+    const db = process.env.CONTEXT ?? 'toa-dev'
+    const collection = this.locator.lowercase
 
-    this.key = getKey(urls)
+    this.key = getKey(db, urls)
 
     INSTANCES[this.key] ??= this.createInstance(urls)
 
     this.instance = await INSTANCES[this.key]
     this.instance.count++
 
-    this.collection = this.instance.client
-      .db(this.locator.namespace)
-      .collection(this.locator.name)
+    this.collection = this.instance.client.db(db).collection(collection)
   }
 
   /**
@@ -118,8 +118,8 @@ class Client extends Connector {
   }
 }
 
-function getKey (urls) {
-  return urls.sort().join(' ')
+function getKey (db, urls) {
+  return db + ':' + urls.sort().join(' ')
 }
 
 const OPTIONS = {

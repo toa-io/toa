@@ -11,6 +11,7 @@ properties:
     type: string
   packages:
     type: string
+    default: components/*
   build:
     type: object
     properties:
@@ -64,5 +65,5 @@ properties:
       required: [name, components]
   annotations:
     type: object
-required: [runtime, name, packages, registry]
+required: [runtime, name, registry]
 additionalProperties: false

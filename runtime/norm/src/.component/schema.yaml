@@ -79,7 +79,7 @@ properties:
             propertyNames:
               oneOf:
                 - $ref: '#/definitions/name'
-                - enum: [_version]
+                - enum: [_version, _created, _updated]
       unique:
         type: object
         patternProperties:

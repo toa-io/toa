@@ -72,9 +72,10 @@ it('should require name as label', () => {
   expect(() => validate(context)).not.toThrow(/pattern/)
 })
 
-it('should require packages location', () => {
+it('should set default packages location', () => {
   delete context.packages
-  expect(() => validate(context)).toThrow(/required/)
+  expect(() => validate(context)).not.toThrow()
+  expect(context.packages).toBe('components/*')
 })
 
 it('should require registry url', () => {

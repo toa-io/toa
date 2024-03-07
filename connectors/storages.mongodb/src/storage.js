@@ -75,14 +75,20 @@ class Storage extends Connector {
       }
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY) {
-        return new exceptions.DuplicateException(Object.keys(error.keyValue))
+        const keys = error.keyValue ? Object.keys(error.keyValue) : undefined
+
+        if (keys === undefined) {
+          console.error(error)
+        }
+
+        return new exceptions.DuplicateException(keys)
       } else {
         throw error
       }
     }
   }
 
-  async upsert (query, changeset, insert) {
+  async upsert (query, changeset) {
     const {
       criteria,
       options
@@ -91,20 +97,6 @@ class Storage extends Connector {
     const update = {
       $set: { ...changeset },
       $inc: { _version: 1 }
-    }
-
-    if (insert !== undefined) {
-      delete insert._version
-
-      options.upsert = true
-
-      if (criteria._id !== undefined) {
-        insert._id = criteria._id
-      } else {
-        return null
-      } // this shouldn't ever happen
-
-      if (Object.keys(insert) > 0) update.$setOnInsert = insert
     }
 
     options.returnDocument = 'after'
