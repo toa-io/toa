@@ -12,7 +12,7 @@ export class Development implements DirectiveFamily<Directive> {
     const Class = constructors[name]
 
     if (Class === undefined)
-      throw new Error(`Directive '${name}' is not provided by the '${this.name}' family.`)
+      throw new Error(`Directive 'dev:${name}' is not implemented.`)
 
     return new Class(value)
   }

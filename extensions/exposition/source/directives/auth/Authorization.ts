@@ -39,7 +39,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
   public create (name: string, value: any, remotes: Remotes): Directive {
     assert.ok(name in constructors,
-      `Directive '${name}' is not provided by the '${this.name}' family.`)
+      `Directive 'auth:${name}' is not implemented.`)
 
     const Class = constructors[name]
 
