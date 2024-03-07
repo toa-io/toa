@@ -31,7 +31,7 @@ export class Gateway extends Connector {
     const match = this.tree.match(context.url.pathname)
 
     if (match === null)
-      throw new http.NotFound('No matching route found.')
+      throw new http.NotFound('Route not found')
 
     const {
       node,

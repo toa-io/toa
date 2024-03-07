@@ -75,8 +75,12 @@ class Storage extends Connector {
       }
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY) {
-        // AWS DocumentDB does not return neither `keyValue` nor `keyPattern`
-        if (error.message.includes(' index: _id_ ')) {
+
+        const id = error.keyPattern === undefined
+          ? error.message.includes(' index: _id_ ') // AWS DocumentDB
+          : error.keyPattern._id === 1
+
+        if (id) {
           return false
         } else {
           throw new exceptions.DuplicateException()

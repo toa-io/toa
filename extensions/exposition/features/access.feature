@@ -458,3 +458,31 @@ Feature: Access authorization
       """
       401 Unauthorized
       """
+
+  Scenario: Authorization delegation
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    And the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          auth:delegate: identity
+          GET: identity
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      identity:
+        id: efe3a65ebbee47ed95a73edd911ea328
+        roles:
+          - developer
+      """

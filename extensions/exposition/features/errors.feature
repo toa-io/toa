@@ -14,7 +14,7 @@ Feature: Errors
       """
       404 Not Found
 
-      No matching route found.
+      Route not found
       """
     Examples:
       | path                                 |

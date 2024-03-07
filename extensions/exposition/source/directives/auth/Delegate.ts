@@ -19,6 +19,9 @@ export class Delegate implements Directive {
   }
 
   private embed (body: unknown, identity: Identity): Record<string, unknown> {
+    if (body === undefined)
+      body = {}
+
     check(body)
     body[this.property] = identity
 
@@ -28,5 +31,5 @@ export class Delegate implements Directive {
 
 function check (body: unknown): asserts body is Record<string, unknown> {
   if (typeof body !== 'object' || body === null)
-    throw new BadRequest('Invalid request body.')
+    throw new BadRequest('Invalid request body')
 }
