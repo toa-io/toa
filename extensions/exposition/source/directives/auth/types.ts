@@ -8,7 +8,7 @@ export interface Directive {
   authorize: (
     identity: Identity | null,
     input: Input,
-    parameters: Parameter[],
+    parameters: Parameter[]
   ) => boolean | Promise<boolean>
 
   reply?: (identity: Identity | null) => http.OutgoingMessage

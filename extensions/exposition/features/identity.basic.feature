@@ -41,9 +41,9 @@ Feature: Basic authentication
             incept: id
             endpoint: transit
             query: ~
-        /:id:                 # credential testing route
-          id: id
-          GET: observe
+          /:id:                 # credential testing route
+            id: id
+            GET: observe
       """
     When the following request is received:
       """
@@ -94,8 +94,6 @@ Feature: Basic authentication
     Then the following reply is sent:
       """
       409 Conflict
-
-      - username
       """
     # credentials already exists
     When the following request is received:

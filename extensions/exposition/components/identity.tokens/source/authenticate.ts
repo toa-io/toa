@@ -26,13 +26,16 @@ export class Computation implements Operation {
     if (stale) {
       const revocation = await this.observe({ query: { id: identity.id } })
 
-      if (revocation !== null && iat < revocation.revokedAt)
+      if (revocation?.revokedAt !== undefined && iat < revocation.revokedAt)
         return ERR_TOKEN_REVOKED
     }
 
     const refresh = stale || claim.refresh
 
-    return { identity, refresh }
+    return {
+      identity,
+      refresh
+    }
   }
 }
 

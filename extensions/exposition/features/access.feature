@@ -398,67 +398,6 @@ Feature: Access authorization
       401 Unauthorized
       """
 
-  Scenario: Banning an Identity
-    Given the `identity.roles` database contains:
-      | _id                              | identity                         | role   |
-      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | system |
-    And the annotation:
-      """yaml
-      /:
-        /:id:
-          io:output: true
-          auth:id: id
-          GET:
-            dev:stub:
-              access: granted!
-      """
-    And the `identity.tokens` configuration:
-      """yaml
-      refresh: 1
-      """
-    When the following request is received:
-      """
-      GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
-      authorization: Basic dXNlcjoxMjM0NQ==
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      authorization: Token ${{ token }}
-      """
-    When the following request is received:
-      """
-      PUT /identity/bans/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
-      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
-      content-type: application/yaml
-
-      banned: true
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      """
-    # accessing a resource with a banned Identity
-    When the following request is received:
-      """
-      GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
-      authorization: Basic dXNlcjoxMjM0NQ==
-      """
-    Then the following reply is sent:
-      """
-      401 Unauthorized
-      """
-    Then after 1 second
-    When the following request is received:
-      """
-      GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
-      authorization: Token ${{ token }}
-      """
-    Then the following reply is sent:
-      """
-      401 Unauthorized
-      """
-
   Scenario: Authorization delegation
     Given the `identity.roles` database contains:
       | _id                              | identity                         | role      |

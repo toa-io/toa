@@ -18,7 +18,10 @@ export class Effect implements Operation {
       ? undefined
       : new Date(Date.now() + lifetime).toISOString()
 
-    const payload: Partial<Claim> = { identity: input.identity, exp }
+    const payload: Partial<Claim> = {
+      identity: input.identity,
+      exp
+    }
 
     return await V3.encrypt(payload, this.key)
   }
