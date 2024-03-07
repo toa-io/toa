@@ -8,11 +8,13 @@ Feature: Errors
     When the following request is received:
       """
       GET <path> HTTP/1.1
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       404 Not Found
+
+      No matching node found.
       """
     Examples:
       | path                                 |
