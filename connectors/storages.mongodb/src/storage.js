@@ -75,7 +75,13 @@ class Storage extends Connector {
       }
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY) {
-        return new exceptions.DuplicateException(Object.keys(error.keyValue))
+        const keys = error.keyValue ? Object.keys(error.keyValue) : undefined
+
+        if (keys === undefined) {
+          console.error(error)
+        }
+
+        return new exceptions.DuplicateException(keys)
       } else {
         throw error
       }
