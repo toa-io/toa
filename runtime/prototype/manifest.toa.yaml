@@ -14,16 +14,26 @@ entity:
         type: integer
       _updated:
         type: integer
+      _deleted:
+        type: integer
+        nullable: true
+        default: null
     required: [id]
 
 operations:
   transit:
     virtual: true
-    input: object
+    input:
+      type: object
+      nullable: true
+      default: null
     output: object
   observe:
     output: object
   assign:
-    input: object
+    input:
+      type: object
+      nullable: true
+      default: null
   enumerate:
     output: array

@@ -13,3 +13,8 @@ Feature: Transition
       foo: 1
       bar: baz
       """
+    When I call `dummies.one.transit`
+    Then the reply is received:
+      """
+      foo: 0
+      """

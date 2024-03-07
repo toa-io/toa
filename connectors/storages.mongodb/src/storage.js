@@ -44,6 +44,7 @@ class Storage extends Connector {
       criteria,
       options
     } = translate(query)
+
     const recordset = await this.#connection.find(criteria, options)
 
     return recordset.map((item) => from(item))
@@ -96,6 +97,11 @@ class Storage extends Connector {
       criteria,
       options
     } = translate(query)
+
+    if (!('_deleted' in changeset) || changeset._deleted === null) {
+      delete criteria._deleted
+      changeset._deleted = null
+    }
 
     const update = {
       $set: { ...changeset },
