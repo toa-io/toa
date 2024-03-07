@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { generate } from 'randomstring'
 import { timeout } from '@toa.io/generic'
 import { Effect as Encrypt } from './encrypt'
@@ -22,7 +23,11 @@ beforeEach(() => {
 it('should encrypt with given lifetime', async () => {
   const identity: Identity = { id: generate() }
   const lifetime = 0.1
-  const encrypted = await encrypt.execute({ identity, lifetime })
+
+  const encrypted = await encrypt.execute({
+    identity,
+    lifetime
+  })
 
   if (encrypted === undefined)
     throw new Error('?')
@@ -32,4 +37,20 @@ it('should encrypt with given lifetime', async () => {
   await timeout(lifetime * 1000)
 
   await expect(decrypt(encrypted, context)).resolves.toMatchObject({ message: 'INVALID_TOKEN' })
+})
+
+it('should encrypt without lifetime INSECURE', async () => {
+  const identity: Identity = { id: generate() }
+  const lifetime = 0
+
+  const encrypted = await encrypt.execute({
+    identity,
+    lifetime
+  })
+
+  const decrypted = await decrypt(encrypted, context)
+
+  assert.ok(!(decrypted instanceof Error))
+
+  expect(decrypted.identity).toMatchObject(identity)
 })

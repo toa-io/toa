@@ -33,7 +33,7 @@ function createRoute (route: syntax.Route, context: Context): Route {
 }
 
 function createMethod (method: syntax.Method, context: Context): Method {
-  const stack = context.directives.stack.concat(method.directives.reverse())
+  const stack = context.directives.stack.concat(method.directives)
   const directives = context.directives.factory.create(stack)
 
   const endpoint = method.mapping?.endpoint === undefined

@@ -3,7 +3,7 @@ name: tokens
 
 entity:
   schema:
-    revokedAt: number   # timestamp
+    revokedAt: integer # timestamp
   dependent: true
 
 operations:
@@ -12,7 +12,7 @@ operations:
       identity*: &identity
         id: string
         ...: true
-      lifetime: number # seconds
+      lifetime: integer[0,) # seconds
     output: string
   decrypt:
     input: string
@@ -37,3 +37,11 @@ configuration:
   key1: string
   lifetime: 2592000 # seconds, 30 days
   refresh: 600      # seconds, 10 minutes
+
+exposition:
+  /:
+    POST:
+      auth:scheme: token
+      auth:delegate: identity
+      io:output: true # string
+      endpoint: encrypt
