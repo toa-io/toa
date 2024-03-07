@@ -54,10 +54,6 @@ class Transition extends Operation {
         throw new StateConcurrencyException()
       }
     }
-
-    if (result instanceof Exception) {
-      throw result
-    }
   }
 
   async #retry (store, retry) {

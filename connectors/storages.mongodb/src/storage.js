@@ -79,7 +79,7 @@ class Storage extends Connector {
         if (error.message.includes(' index: _id_ ')) {
           return false
         } else {
-          return new exceptions.DuplicateException(undefined)
+          throw new exceptions.DuplicateException(undefined)
         }
       } else {
         throw error
