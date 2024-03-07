@@ -1,10 +1,11 @@
-export class Locator {
+export class Locator{
   public readonly name: string
   public readonly namespace: string
 
   public readonly id: string
   public readonly label: string
   public readonly uppercase: string
+  public readonly lowercase: string
 
   constructor (name: string, namespace?: string)
 

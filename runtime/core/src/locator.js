@@ -12,6 +12,7 @@ class Locator {
   id
   label
   uppercase
+  lowercase
 
   /**
    * @param {string} name
@@ -26,6 +27,7 @@ class Locator {
     this.id = concat(namespace, '.') + name
     this.label = (concat(namespace, '-') + name).toLowerCase()
     this.uppercase = (concat(namespace, '_') + name).toUpperCase()
+    this.lowercase = (concat(namespace, '_') + name).toLowerCase()
   }
 
   hostname (prefix) {
@@ -39,8 +41,11 @@ class Locator {
   static parse (string) {
     const [namespace, name] = string.split(DOT)
 
-    if (name === undefined) return new Locator(namespace)
-    else return new Locator(name, namespace)
+    if (name === undefined) {
+      return new Locator(namespace)
+    } else {
+      return new Locator(name, namespace)
+    }
   }
 }
 
