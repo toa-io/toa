@@ -1,6 +1,10 @@
 'use strict'
 
-const { merge, overwrite, newid } = require('@toa.io/generic')
+const {
+  merge,
+  overwrite,
+  newid
+} = require('@toa.io/generic')
 const { EntityContractException } = require('../exceptions')
 
 class Changeset {
@@ -25,6 +29,8 @@ class Changeset {
     const error = this.#schema.adapt(value)
 
     if (error !== null) throw new EntityContractException(error)
+
+    value._updated = Date.now()
 
     this.#state = value
   }

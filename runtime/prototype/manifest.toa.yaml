@@ -10,7 +10,11 @@ entity:
         type: integer
         minimum: 0
         default: 0
-    required: [id]
+      _created:
+        type: integer
+      _updated:
+        type: integer
+    required: [id, _created]
 
 operations:
   transit:
