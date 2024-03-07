@@ -263,9 +263,8 @@ lifetime?: number # seconds
 ```
 
 Providing a value of `0` will result in the token being issued with no expiration.
-
-> However, it will still become invalid once the encryption key used is out
-> of [rotation](#secret-rotation).
+However, it will still become invalid once the encryption key used is out
+of [rotation](#secret-rotation).
 
 ## Roles
 
