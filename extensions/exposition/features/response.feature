@@ -7,7 +7,8 @@ Feature: Response
         io:output: true
         GET:
           anonymous: true
-          dev:stub: hello
+          dev:stub:
+            hello: world
       """
     When the following request is received:
       """
@@ -19,6 +20,8 @@ Feature: Response
       200 OK
       content-type: application/json
       vary: accept
+
+      {"hello":"world"}
       """
 
   Scenario: Error as YAML
