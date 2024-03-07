@@ -47,8 +47,7 @@ class Transition extends Operation {
 
     const result = await this.scope.commit(scope)
 
-    if (result === false ||
-      (result instanceof DuplicateException && result.message.includes('_id'))) {
+    if (result === false) {
       if (this.#concurrency === 'retry') {
         return retry()
       } else {
@@ -56,7 +55,9 @@ class Transition extends Operation {
       }
     }
 
-    if (result instanceof Exception) throw result
+    if (result instanceof Exception) {
+      throw result
+    }
   }
 
   async #retry (store, retry) {

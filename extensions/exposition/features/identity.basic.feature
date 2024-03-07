@@ -28,8 +28,6 @@ Feature: Basic authentication
     Then the following reply is sent:
       """
       409 Conflict
-
-      - username
       """
 
   Scenario: Creating new Identity using inception

@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, binding, given } from 'cucumber-tsflow'
 import { MongoClient } from 'mongodb'
+import type { Collection } from 'mongodb'
 import type { DataTable } from '@cucumber/cucumber'
 
 @binding()
@@ -8,10 +9,7 @@ export class Database {
 
   @given('the `{word}` database contains:')
   public async upsert (id: string, table: DataTable): Promise<void> {
-    const [name, namespace = 'default'] = id.split('.').reverse()
-    const col = `${namespace}_${name}`.toLowerCase()
-    const collection = Database.client.db('toa-dev').collection(col)
-
+    const collection = this.collection(id)
     const columns = table.raw()[0]
     const rows = table.rows()
     const documents: Document[] = []
@@ -37,10 +35,7 @@ export class Database {
 
   @given('the `{word}` database is empty')
   public async truncate (id: string): Promise<void> {
-    const [name, namespace = 'default'] = id.split('.').reverse()
-    const collection = Database.client.db(namespace).collection(name)
-
-    await collection.deleteMany({})
+    await this.collection(id).deleteMany({})
   }
 
   @beforeAll()
@@ -53,6 +48,13 @@ export class Database {
   @afterAll()
   public static async disconnect (): Promise<void> {
     await this.client.close()
+  }
+
+  private collection (id: string): Collection {
+    const [name, namespace = 'default'] = id.split('.').reverse()
+    const collection = `${namespace}_${name}`.toLowerCase()
+
+    return Database.client.db('toa-dev').collection(collection)
   }
 }
 

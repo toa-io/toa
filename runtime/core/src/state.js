@@ -65,7 +65,9 @@ class State {
       ok = await this.#storage.store(object)
 
       // #20
-      await this.#emission.emit(event)
+      if (ok === true) {
+        await this.#emission.emit(event)
+      }
     }
 
     return ok
