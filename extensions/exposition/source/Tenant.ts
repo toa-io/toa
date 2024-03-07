@@ -25,14 +25,6 @@ export class Tenant extends Connector {
   public override async open (): Promise<void> {
     await this.expose()
     await this.broadcast.receive('ping', this.expose.bind(this))
-
-    console.info('Exposition Tenant for ' +
-      `'${this.branch.namespace}.${this.branch.component}' has started.`)
-  }
-
-  public override async dispose (): Promise<void> {
-    console.info('Exposition Tenant for ' +
-      `'${this.branch.namespace}.${this.branch.component}' has been stopped.`)
   }
 
   private async expose (): Promise<void> {
