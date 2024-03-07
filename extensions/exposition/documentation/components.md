@@ -252,6 +252,21 @@ configuration:
     key1: $TOKEN_ENCRYPTION_KEY_2023Q3
 ```
 
+### Token resources
+
+`/identity/tokens/`
+
+`POST` Issue a new token for the Identity. Request body is as follows:
+
+```yaml
+lifetime?: number # seconds
+```
+
+Providing a value of `0` will result in the token being issued with no expiration.
+
+> However, it will still become invalid once the encryption key used is out
+> of [rotation](#secret-rotation).
+
 ## Roles
 
 The `identity.roles` component manages roles of an Identity used
