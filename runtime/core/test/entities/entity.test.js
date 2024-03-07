@@ -33,7 +33,7 @@ describe('argument', () => {
       _version: 0
     }
 
-    expect(entity.get()).toStrictEqual(expected)
+    expect(entity.get()).toStrictEqual(expect.objectContaining(expected))
   })
 
   it('should set state', () => {
@@ -54,14 +54,14 @@ it('should provide event', () => {
 
   const event = entity.event()
 
-  expect(event).toEqual({
+  expect(event).toEqual(expect.objectContaining({
     state,
     origin,
-    changeset: {
+    changeset: expect.objectContaining({
       foo: 'new value',
       _version: 1
-    }
-  })
+    })
+  }))
 })
 
 it('should define `id` as readonly', async () => {

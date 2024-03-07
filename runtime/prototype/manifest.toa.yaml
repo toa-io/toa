@@ -10,6 +10,10 @@ entity:
         type: integer
         minimum: 0
         default: 0
+      _created:
+        type: integer
+      _updated:
+        type: integer
     required: [id]
 
 operations:

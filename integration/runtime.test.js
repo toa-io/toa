@@ -29,8 +29,15 @@ afterAll(async () => {
 it('should preform operations', async () => {
   const id = newid()
 
-  await component.invoke('debit', { input: 1, query: { id } })
+  await component.invoke('debit', {
+    input: 1,
+    query: { id }
+  })
   const reply = await component.invoke('observe', { query: { id } })
 
-  expect(reply.output).toEqual({ id, balance: 9, _version: 1 })
+  expect(reply.output).toMatchObject({
+    id,
+    balance: 9,
+    _version: 1
+  })
 })

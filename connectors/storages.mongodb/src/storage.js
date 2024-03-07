@@ -88,7 +88,7 @@ class Storage extends Connector {
     }
   }
 
-  async upsert (query, changeset, insert) {
+  async upsert (query, changeset) {
     const {
       criteria,
       options
@@ -97,20 +97,6 @@ class Storage extends Connector {
     const update = {
       $set: { ...changeset },
       $inc: { _version: 1 }
-    }
-
-    if (insert !== undefined) {
-      delete insert._version
-
-      options.upsert = true
-
-      if (criteria._id !== undefined) {
-        insert._id = criteria._id
-      } else {
-        return null
-      } // this shouldn't ever happen
-
-      if (Object.keys(insert) > 0) update.$setOnInsert = insert
     }
 
     options.returnDocument = 'after'

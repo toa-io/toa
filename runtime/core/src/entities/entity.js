@@ -48,7 +48,8 @@ class Entity {
   #init (id) {
     const value = {
       ...this.#schema.defaults({ id }),
-      _version: 0
+      _version: 0,
+      _created: Date.now()
     }
 
     this.#set(value)
@@ -61,6 +62,7 @@ class Entity {
     })
 
     if (this.#state !== undefined) {
+      value._updated = Date.now()
       value._version++
     }
 
