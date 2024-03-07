@@ -85,3 +85,4 @@ Feature: Export local deployment environment variables
     And I have a context
     When I run `toa env some --as .env.some`
     Then the file ./.env.some contains exact line 'TOA_ENV=some'
+    And the file ./.env.some contains exact line 'TOA_CONTEXT=collection'

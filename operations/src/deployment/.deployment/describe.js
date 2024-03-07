@@ -6,7 +6,16 @@ const describe = (context, compositions, dependency) => {
   const { services } = dependency
 
   dependency.variables.global ??= []
-  dependency.variables.global.unshift({ name: 'TOA_ENV', value: context.environment })
+
+  dependency.variables.global.unshift(
+    {
+      name: 'TOA_CONTEXT',
+      value: context.name
+    }, {
+      name: 'TOA_ENV',
+      value: context.environment
+    }
+  )
 
   const components = get.components(compositions)
   const credentials = context.registry?.credentials
@@ -18,7 +27,7 @@ const describe = (context, compositions, dependency) => {
     compositions,
     components,
     services,
-    credentials,
+    credentials
   }
 }
 
