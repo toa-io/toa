@@ -72,18 +72,9 @@ class State {
   }
 
   async apply (state) {
-    const {
-      changeset,
-      insert
-    } = state.export()
+    const changeset = state.export()
 
-    let upsert
-
-    if (this.#dependent && state.query.id !== undefined && state.query.version === undefined) {
-      upsert = insert
-    }
-
-    const result = await this.#storage.upsert(state.query, changeset, upsert)
+    const result = await this.#storage.upsert(state.query, changeset)
 
     if (result === null) {
       if (state.query.version !== undefined) {

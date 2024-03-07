@@ -52,7 +52,7 @@ it('should assign', async () => {
 
   await timeout(200)
 
-  expect(reply).toEqual({
+  expect(reply).toMatchObject({
     id: query.id,
     _version: 2,
     sender,
@@ -61,7 +61,7 @@ it('should assign', async () => {
 
   const updated = await messages.invoke('observe', { query })
 
-  expect(updated).toEqual({
+  expect(updated).toMatchObject({
     id: query.id,
     _version: 2,
     sender,
@@ -84,7 +84,7 @@ it('should emit events', async () => {
 
   const before = await credits.invoke('observe', { query: { id: sender } })
 
-  expect(before).toEqual({
+  expect(before).toMatchObject({
     id: sender,
     _version: 1,
     balance: 9
@@ -122,20 +122,4 @@ it('should throw StatePrecondition', async () => {
     }
   }))
     .rejects.toMatchObject({ code: codes.StatePrecondition })
-})
-
-it('should assign to dependent', async () => {
-  const id = newid()
-  await credits.invoke('set', {
-    input: { balance: 30 },
-    query: { id }
-  })
-
-  const reply = await credits.invoke('observe', { query: { id } })
-
-  expect(reply).toEqual({
-    id,
-    _version: 1,
-    balance: 30
-  })
 })

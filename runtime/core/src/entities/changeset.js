@@ -36,17 +36,7 @@ class Changeset {
   }
 
   export () {
-    const changeset = this.#state
-    const result = { changeset }
-    const insert = merge({ id: newid() }, changeset)
-    const error = this.#schema.fit(insert)
-
-    if (error === null) {
-      delete insert.id
-      result.insert = overwrite(insert, changeset)
-    }
-
-    return result
+    return this.#state
   }
 }
 

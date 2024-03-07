@@ -14,7 +14,7 @@ entity:
         type: integer
       _updated:
         type: integer
-    required: [id, _created]
+    required: [id]
 
 operations:
   transit:
