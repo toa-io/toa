@@ -10,7 +10,11 @@ export function rethrow (exception: Exception): void {
     302, NOT_FOUND,
     303, PRECONDITION_FAILED,
     306, () => new http.Conflict(),
-    () => exception)
+    () => {
+      console.error(exception)
+
+      return exception
+    })
 }
 
 function badRequest (code: number): boolean {
