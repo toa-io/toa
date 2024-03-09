@@ -215,6 +215,10 @@ Feature: Roles management
     And the annotation:
       """yaml
       /:
+        /broken:
+          auth:role: app:{org}:moderation
+          GET:
+            dev:stub: never
         /:org:
           io:output: true
           auth:role: app:{org}:moderation
@@ -225,7 +229,7 @@ Feature: Roles management
     When the following request is received:
       """
       GET /29e54ae1/ HTTP/1.1
-      authorization: Basic YXNzaXN0YW50OnBhc3M=
+      authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:
       """
@@ -234,9 +238,18 @@ Feature: Roles management
     When the following request is received:
       """
       GET /88584c9b/ HTTP/1.1
-      authorization: Basic YXNzaXN0YW50OnBhc3M=
+      authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:
       """
       403 Forbidden
+      """
+    When the following request is received:
+      """
+      GET /broken/ HTTP/1.1
+      authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      500 Internal Server Error
       """
