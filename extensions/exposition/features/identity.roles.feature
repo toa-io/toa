@@ -204,3 +204,52 @@ Feature: Roles management
       | app!          |
       | app:          |
       | app:no spaces |
+
+  Scenario: Dynamic roles
+    Given the `identity.basic` database contains:
+      | _id                              | username  | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+    And the `identity.roles` database contains:
+      | _id                              | identity                         | role                    |
+      | 30c969e05ff6437097ed5f07fc52358e | 72cf9b0ab0ac4ab2b8036e4e940ddcae | app:29e54ae1:moderation |
+    And the annotation:
+      """yaml
+      /:
+        /broken:
+          auth:role: app:{org}:moderation
+          GET:
+            dev:stub: never
+        /:org:
+          io:output: true
+          auth:role: app:{org}:moderation
+          GET:
+            dev:stub:
+              access: granted!
+      """
+    When the following request is received:
+      """
+      GET /29e54ae1/ HTTP/1.1
+      authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    When the following request is received:
+      """
+      GET /88584c9b/ HTTP/1.1
+      authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+    When the following request is received:
+      """
+      GET /broken/ HTTP/1.1
+      authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      500 Internal Server Error
+      """

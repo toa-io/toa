@@ -136,6 +136,7 @@ Feature: IO restrictions
       exposition:
         /:
           io:input: [title, volume]
+          io:output: [id]
           POST: create
       """
     When the following request is received:
