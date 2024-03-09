@@ -57,7 +57,7 @@ class Client extends Connector {
    */
   async open () {
     const urls = await this.resolveURLs()
-    const db = process.env.CONTEXT ?? 'toa-dev'
+    const db = process.env.TOA_CONTEXT ?? 'toa-dev'
     const collection = this.locator.lowercase
 
     this.key = getKey(db, urls)
