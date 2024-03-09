@@ -57,7 +57,7 @@ class Client extends Connector {
    */
   async open () {
     const urls = await this.resolveURLs()
-    const db = process.env.TOA_CONTEXT ?? 'toa-dev'
+    const db = this.resolveDB()
     const collection = this.locator.lowercase
 
     this.key = getKey(db, urls)
@@ -115,6 +115,22 @@ class Client extends Connector {
     } else {
       return await resolve(ID, this.locator.id)
     }
+  }
+
+  /**
+   * @private
+   * @return {string}
+   */
+  resolveDB () {
+    if (process.env.TOA_CONTEXT !== undefined) {
+      return process.env.TOA_CONTEXT
+    }
+
+    if (process.env.TOA_DEV === '1') {
+      return 'toa-dev'
+    }
+
+    throw new Error('Environment variable TOA_CONTEXT is not defined')
   }
 }
 
