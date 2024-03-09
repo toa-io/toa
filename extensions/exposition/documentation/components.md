@@ -291,9 +291,8 @@ Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
 ## Banned Identities
 
 The `identity.bans` component manages banned identities.
-A banned identity will fail to authenticate with any associated credentials (
-except [tokens](#stateless-tokens) within
-the `refresh` period).
+A banned identity will fail to authenticate with any associated credentials
+(except [tokens](#stateless-tokens) within the `refresh` period).
 
 ```http
 PUT /identity/bans/:id/
@@ -301,6 +300,7 @@ authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 content-type: application/yaml
 
 banned: true
+comment: Bye bye
 ```
 
 Access requires `system:identity:bans` role.
