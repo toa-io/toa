@@ -21,7 +21,11 @@ export class Database {
         const str = rows[r][c]
         const int = parseInt(str)
 
-        document[columns[c]] = int.toString() === str ? int : str
+        document[columns[c]] = int.toString() === str
+          ? int
+          : str === 'null'
+            ? null
+            : str
       }
 
       documents.push(document)
@@ -58,4 +62,4 @@ export class Database {
   }
 }
 
-type Document = Record<string, string | number>
+type Document = Record<string, string | number | null>

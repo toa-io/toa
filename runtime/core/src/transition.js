@@ -5,9 +5,7 @@ const { retry } = require('@toa.io/generic')
 const { Operation } = require('./operation')
 const {
   StateConcurrencyException,
-  StateNotFoundException,
-  DuplicateException,
-  Exception
+  StateNotFoundException
 } = require('./exceptions')
 
 class Transition extends Operation {
@@ -28,7 +26,9 @@ class Transition extends Operation {
 
     store.scope = request.query ? await this.query(request.query) : this.scope.init()
 
-    if (store.scope === null) throw new StateNotFoundException()
+    if (store.scope === null) {
+      throw new StateNotFoundException()
+    }
 
     store.state = store.scope.get()
   }

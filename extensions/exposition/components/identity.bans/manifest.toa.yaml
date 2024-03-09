@@ -4,16 +4,24 @@ name: bans
 entity:
   schema:
     banned: false
+    originator: string
+    comment: string
   dependent: true
 
 operations:
-  assign:
+  transit:
+    concurrency: retry
     input:
-      banned: true
+      banned*: boolean
+      originator*:
+        id: string
+      comment: string
 
 exposition:
   isolated: true
   /:id:
     io:output: false
-    auth:role: system:identity:bans
-    PUT: assign
+    auth:rule:
+      role: system:identity:bans
+      delegate: originator
+    PUT: transit

@@ -37,7 +37,7 @@ export class NotFound extends ClientError {
 }
 
 export class Conflict extends ClientError {
-  public constructor (body: any) {
+  public constructor (body?: any) {
     super(409, body)
   }
 }

@@ -1,9 +1,7 @@
 'use strict'
 
-async function transit (input, object) {
-  Object.assign(object, input)
-
-  return object
+function transit (input, object) {
+  return Object.assign(object, input)
 }
 
 exports.transition = transit

@@ -22,7 +22,8 @@ const match = (reference, candidate) => {
 function arrays (reference, candidate) {
   if (!Array.isArray(reference)) return false
 
-  return candidate.reduce((result, value) => (result && reference.some((item) => match(item, value))), true)
+  return candidate.length === reference.length &&
+    candidate.reduce((result, value) => (result && reference.some((item) => match(item, value))), true)
 }
 
 /**
@@ -31,8 +32,9 @@ function arrays (reference, candidate) {
  * @return {boolean}
  */
 function objects (candidate, reference) {
-  if (candidate === null) return reference === null
-  else if (reference === null) return false
+  if (candidate === null) {
+    return reference === null
+  } else if (reference === null) return false
 
   for (const [key, value] of Object.entries(candidate)) {
     if (match(reference[key], value) === false) return false

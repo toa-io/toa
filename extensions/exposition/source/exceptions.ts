@@ -9,7 +9,7 @@ export function rethrow (exception: Exception): void {
     badRequest, () => new http.BadRequest(exception.message),
     302, NOT_FOUND,
     303, PRECONDITION_FAILED,
-    306, () => new http.Conflict(exception.message),
+    306, () => new http.Conflict(),
     () => exception)
 }
 
