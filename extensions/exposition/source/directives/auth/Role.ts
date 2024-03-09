@@ -33,10 +33,11 @@ export class Role implements Directive {
 
     await Role.set(identity, this.discovery)
 
-    if (identity.roles === undefined)
+    if (identity.roles!.length === 0) // Role.set()
+
       return false
 
-    return this.match(identity.roles, parameters)
+    return this.match(identity.roles!, parameters)
   }
 
   private match (roles: string[], parameters: Parameter[]): boolean {
