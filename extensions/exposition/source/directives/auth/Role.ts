@@ -43,7 +43,7 @@ export class Role implements Directive {
     const required = this.dynamic ? this.substitute(parameters) : this.roles
 
     for (const role of roles) {
-      const ok = required.some((expected) => compare(expected, role))
+      const ok = required.some((expected) => expected === role || expected.startsWith(role + ':'))
 
       if (ok)
         return true
@@ -62,15 +62,4 @@ export class Role implements Directive {
       return value
     }))
   }
-}
-
-function compare (expected: string, actual: string): boolean {
-  const exp = expected.split(':')
-  const act = actual.split(':')
-
-  for (let i = 0; i < act.length; i++)
-    if (exp[i] !== act[i])
-      return false
-
-  return true
 }
