@@ -1,7 +1,7 @@
 'use strict'
 
-async function observation (_, objects) {
+function enumerate (_, objects) {
   return objects
 }
 
-exports.observation = observation
+exports.observation = enumerate

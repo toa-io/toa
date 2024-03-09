@@ -1,6 +1,6 @@
 'use strict'
 
-async function observe (_, object) {
+function observe (_, object) {
   return object
 }
 

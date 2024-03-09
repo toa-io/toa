@@ -30,6 +30,7 @@ operations:
     concurrency: retry
 
 receivers:
+  identity.bans.created: revoke
   identity.bans.updated: revoke
 
 configuration:

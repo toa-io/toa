@@ -296,7 +296,9 @@ async function invoke (endpoint, request = {}) {
  * @return {Promise<void>}
  */
 async function call (endpoint, request) {
+  this.exception = undefined
   this.reply = undefined
+
   const operation = endpoint.split('.').pop()
   const remote = await stage.remote(endpoint)
 

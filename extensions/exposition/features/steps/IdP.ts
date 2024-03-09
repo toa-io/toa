@@ -14,7 +14,8 @@ export class IdP {
   private static privateKey?: crypto.KeyObject
   private static issuer?: string
 
-  public constructor (private readonly captures: Captures) {}
+  public constructor (private readonly captures: Captures) {
+  }
 
   @afterAll()
   public static async stop (): Promise<void> {
@@ -29,14 +30,21 @@ export class IdP {
     if (IdP.server instanceof http.Server) return
 
     // creating the key
-    const { publicKey, privateKey } = await util.promisify(crypto.generateKeyPair)('rsa', {
+    const {
+      publicKey,
+      privateKey
+    } = await util.promisify(crypto.generateKeyPair)('rsa', {
       modulusLength: 2048
     })
 
     IdP.privateKey = privateKey
 
     const jwk = JSON.stringify({
-      keys: [{ use: 'sig', alg: 'RS256', ...publicKey.export({ format: 'jwk' }) }]
+      keys: [{
+        use: 'sig',
+        alg: 'RS256',
+        ...publicKey.export({ format: 'jwk' })
+      }]
     })
 
     const JWK_URL = '/.well-known/jwks'
@@ -54,24 +62,23 @@ export class IdP {
           response.end(jwk)
           break
 
-        case '/.well-known/openid-configuration':
-          {
-            const openIdConfiguration = JSON.stringify({
-              issuer: IdP.issuer,
-              jwks_uri: IdP.issuer + JWK_URL,
-              response_types_supported: ['id_token'],
-              subject_types_supported: ['public'],
-              id_token_signing_alg_values_supported: ['RS256'],
-              scopes_supported: ['openid']
-            })
+        case '/.well-known/openid-configuration': {
+          const openIdConfiguration = JSON.stringify({
+            issuer: IdP.issuer,
+            jwks_uri: IdP.issuer + JWK_URL,
+            response_types_supported: ['id_token'],
+            subject_types_supported: ['public'],
+            id_token_signing_alg_values_supported: ['RS256'],
+            scopes_supported: ['openid']
+          })
 
-            response.writeHead(200, {
-              'Content-Type': 'application/json',
-              'Cache-Control': 'public, max-age=3600',
-              'Content-Length': openIdConfiguration.length
-            })
-            response.end(openIdConfiguration)
-          }
+          response.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'public, max-age=3600',
+            'Content-Length': openIdConfiguration.length
+          })
+          response.end(openIdConfiguration)
+        }
 
           break
 
@@ -120,8 +127,6 @@ export class IdP {
 
   @given('the IDP {word} token for {word} is issued with following secret:')
   public async issueSymmetricToken (alg: string, user: string, secret: string): Promise<void> {
-    console.log('Sym token for %s with secret "%s"', user, secret)
-
     const jwt = [
       {
         typ: 'JWT',

@@ -26,7 +26,7 @@ authorization error.
 Grants access if its value is `true` and no credentials were provided[^1].
 
 [^1]: Credentials in the request make the
-response [non-chachable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
+response [non-cachable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
 
 ### `id`
 
@@ -57,8 +57,6 @@ is `87480f2bd88048518c529d7957475ecd`.
 
 Grants access if resolved Identity has a role matching the directive's value or one of its values.
 
-#### Example
-
 ```yaml
 # context.toa.yaml
 
@@ -70,6 +68,18 @@ exposition:
 Access will be granted if the resolved Identity has a role that matches `developer` or `reviewer`.
 
 Read [Roles](#roles) section for more details.
+
+#### Dynamic roles
+
+The `role` directive can be used with a placeholder in the route.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  /:org-id:
+    role: app:{org-id}:moderator
+```
 
 ### `rule`
 

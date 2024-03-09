@@ -34,13 +34,15 @@
   },
   "scripts": {
     "test": "jest",
-    "transpile": "tsc && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation",
+    "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation",
+    "transpile:bans": "tsc -p ./components/identity.bans",
     "transpile:basic": "tsc -p ./components/identity.basic",
     "transpile:tokens": "tsc -p ./components/identity.tokens",
     "transpile:roles": "tsc -p ./components/identity.roles",
     "pretranspile:federation": "js-yaml components/identity.federation/manifest.toa.yaml | jq -M '{ type: \"object\", properties: {configuration: .configuration.schema, entity: .entity.schema }, additionalProperties: false}' > schemas.json && json2ts -i schemas.json -o components/identity.federation/source/schemas.ts && rm schemas.json",
     "transpile:federation": "tsc -p ./components/identity.federation",
-    "features": "cucumber-js"
+    "features": "cucumber-js",
+    "features:security": "cucumber-js --tags @security"
   },
   "devDependencies": {
     "@toa.io/agent": "1.0.0-alpha.13",

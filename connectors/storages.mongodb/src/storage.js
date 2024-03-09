@@ -44,6 +44,7 @@ class Storage extends Connector {
       criteria,
       options
     } = translate(query)
+
     const recordset = await this.#connection.find(criteria, options)
 
     return recordset.map((item) => from(item))
@@ -75,13 +76,16 @@ class Storage extends Connector {
       }
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY) {
-        const keys = error.keyValue ? Object.keys(error.keyValue) : undefined
 
-        if (keys === undefined) {
-          console.error(error)
+        const id = error.keyPattern === undefined
+          ? error.message.includes(' index: _id_ ') // AWS DocumentDB
+          : error.keyPattern._id === 1
+
+        if (id) {
+          return false
+        } else {
+          throw new exceptions.DuplicateException()
         }
-
-        return new exceptions.DuplicateException(keys)
       } else {
         throw error
       }
@@ -93,6 +97,11 @@ class Storage extends Connector {
       criteria,
       options
     } = translate(query)
+
+    if (!('_deleted' in changeset) || changeset._deleted === null) {
+      delete criteria._deleted
+      changeset._deleted = null
+    }
 
     const update = {
       $set: { ...changeset },

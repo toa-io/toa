@@ -89,7 +89,7 @@ for (const [name, code] of Object.entries(codes)) {
   if (exports[classname] === undefined) {
     exports[classname] = class extends Exception {
       constructor (message) {
-        super(code, message || classname)
+        super(code, message ?? classname)
       }
     }
   }

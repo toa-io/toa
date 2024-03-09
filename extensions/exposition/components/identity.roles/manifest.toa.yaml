@@ -5,7 +5,7 @@ entity:
   schema:
     identity*: string
     role*: /^[a-zA-Z0-9]{1,32}(:[a-zA-Z0-9]{1,32}){0,8}$/
-    delegator: string
+    grantor: string
   unique:
     role: [identity, role]
 
@@ -15,7 +15,7 @@ operations:
     input:
       identity*: .
       role*: .
-      delegator:
+      grantor:
         id: string
         roles: [string]
   list:
@@ -33,9 +33,9 @@ exposition:
   /:identity:
     auth:role: system:identity:roles
     POST:
-      io:output: [id]
+      io:output: [id, grantor]
       auth:rule:
-        delegate: delegator
+        delegate: grantor
         role: system:identity:roles:delegation
       endpoint: grant
     GET:

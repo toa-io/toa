@@ -1,3 +1,4 @@
+@security
 Feature: IO restrictions
 
   Background:
@@ -135,6 +136,7 @@ Feature: IO restrictions
       exposition:
         /:
           io:input: [title, volume]
+          io:output: [id]
           POST: create
       """
     When the following request is received:
@@ -164,4 +166,31 @@ Feature: IO restrictions
     Then the following reply is sent:
       """
       201 Created
+      """
+
+  Scenario: IO shortcuts
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          input: [title, volume]
+          output: [id, title, volume]
+          POST: create
+      """
+    When the following request is received:
+      """
+      POST /pots/ HTTP/1.1
+      accept: application/yaml
+      content-type: application/yaml
+
+      title: Hello
+      volume: 1.5
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id:
+      title: Hello
+      volume: 1.5
       """

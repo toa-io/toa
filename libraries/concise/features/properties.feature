@@ -155,3 +155,23 @@ Feature: Object properties
       | value |
       | true  |
       | false |
+
+  Scenario: Mixed properties syntax
+    When I write schema:
+      """yaml
+      title: string
+      foo:
+        type: string
+        const: a
+      """
+    Then it is equivalent to:
+      """yaml
+      type: object
+      properties:
+        title:
+          type: string
+        foo:
+          type: string
+          const: a
+      additionalProperties: false
+      """

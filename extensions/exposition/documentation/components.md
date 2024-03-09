@@ -252,6 +252,20 @@ configuration:
     key1: $TOKEN_ENCRYPTION_KEY_2023Q3
 ```
 
+### Token resources
+
+`/identity/tokens/`
+
+`POST` Issue a new token for the Identity. Request body is as follows:
+
+```yaml
+lifetime?: number # seconds
+```
+
+Providing a value of `0` will result in the token being issued with no expiration.
+However, it will still become invalid once the encryption key used is out
+of [rotation](#secret-rotation).
+
 ## Roles
 
 The `identity.roles` component manages roles of an Identity used
@@ -277,9 +291,8 @@ Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
 ## Banned Identities
 
 The `identity.bans` component manages banned identities.
-A banned identity will fail to authenticate with any associated credentials (
-except [tokens](#stateless-tokens) within
-the `refresh` period).
+A banned identity will fail to authenticate with any associated credentials
+(except [tokens](#stateless-tokens) within the `refresh` period).
 
 ```http
 PUT /identity/bans/:id/
@@ -287,6 +300,7 @@ authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 content-type: application/yaml
 
 banned: true
+comment: Bye bye
 ```
 
 Access requires `system:identity:bans` role.

@@ -1,3 +1,4 @@
+@security
 Feature: Tokens lifecycle
 
   Scenario: Switching to Token authentication scheme
