@@ -1,3 +1,4 @@
+@security
 Feature: IO restrictions
 
   Background:

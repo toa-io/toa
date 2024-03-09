@@ -1,3 +1,4 @@
+@security
 Feature: Access authorization
 
   Background:

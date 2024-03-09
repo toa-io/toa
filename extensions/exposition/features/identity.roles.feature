@@ -1,3 +1,4 @@
+@security
 Feature: Roles management
 
   Scenario: Granting a role to an Identity
