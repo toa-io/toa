@@ -1,10 +1,13 @@
-import { type Exception } from '@toa.io/core'
 import { match } from 'matchacho'
 import * as http from './HTTP'
+import { Exception as HTTPException } from './HTTP'
+import type { Exception } from '@toa.io/core'
 
-export function rethrow (exception: Exception): void {
+export function rethrow (exception: Exception | HTTPException): void {
+  if (exception instanceof HTTPException)
+    throw exception
+
   // see /runtime/core/src/exceptions.js
-
   throw match(exception.code,
     badRequest, () => new http.BadRequest(exception.message),
     302, NOT_FOUND,
