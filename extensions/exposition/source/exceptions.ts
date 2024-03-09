@@ -5,7 +5,7 @@ import * as http from './HTTP'
 export function rethrow (exception: Exception): void {
   // see /runtime/core/src/exceptions.js
 
-  throw match<Error>(exception.code,
+  throw match(exception.code,
     badRequest, () => new http.BadRequest(exception.message),
     302, NOT_FOUND,
     303, PRECONDITION_FAILED,

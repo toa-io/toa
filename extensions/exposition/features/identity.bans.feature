@@ -44,6 +44,7 @@ Feature: Bans
       content-type: application/yaml
 
       banned: true
+      comment: Bye bye
       """
     Then the following reply is sent:
       """

@@ -1,6 +1,6 @@
 Feature: Roles management
 
-  Scenario: Adding a role to an Identity
+  Scenario: Granting a role to an Identity
     # root:secret
     # user:pass
     Given the `identity.basic` database contains:
@@ -34,6 +34,7 @@ Feature: Roles management
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
       authorization: Basic cm9vdDpzZWNyZXQ=
+      accept: application/yaml
       content-type: application/yaml
 
       role: test
@@ -41,6 +42,8 @@ Feature: Roles management
     Then the following reply is sent:
       """
       201 Created
+
+      grantor: 72cf9b0ab0ac4ab2b8036e4e940ddcae
       """
     When the following request is received:
       # user now have the role

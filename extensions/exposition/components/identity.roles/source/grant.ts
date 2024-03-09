@@ -2,21 +2,22 @@ import { Err } from 'error-value'
 import type { Entity } from './lib/Entity'
 
 export async function transition (input: Input, object: Entity): Promise<Entity | Error> {
-  if (input.delegator === undefined)
+  if (input.grantor === undefined)
     return Object.assign(object, input)
 
-  if (!allowed(input.role, input.delegator.roles))
+  if (!within('system:identity:roles', input.grantor.roles) &&
+    !within(input.role, input.grantor.roles))
     return ERR_OUT_OF_SCOPE
 
   object.role = input.role
   object.identity = input.identity
-  object.delegator = input.delegator.id
+  object.grantor = input.grantor.id
 
   return object
 }
 
-function allowed (scope: string, roles: string[]): boolean {
-  return roles.some((role) => scope.startsWith(role))
+function within (role: string, scopes: string[]): boolean {
+  return scopes.some((scope) => role === scope || role.startsWith(scope + ':'))
 }
 
 const ERR_OUT_OF_SCOPE = Err('OUT_OF_SCOPE')
@@ -24,7 +25,7 @@ const ERR_OUT_OF_SCOPE = Err('OUT_OF_SCOPE')
 export interface Input {
   identity: string
   role: string
-  delegator?: {
+  grantor?: {
     id: string
     roles: string[]
   }

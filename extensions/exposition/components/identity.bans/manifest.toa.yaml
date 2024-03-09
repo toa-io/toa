@@ -3,8 +3,8 @@ name: bans
 
 entity:
   schema:
-    banned: false
-    originator: string
+    banned*: false
+    originator*: string
     comment: string
   dependent: true
 
