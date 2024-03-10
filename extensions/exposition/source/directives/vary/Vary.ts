@@ -3,7 +3,7 @@ import { properties, Property } from './Properties'
 import { Embed } from './Embed'
 import type { Properties } from './Properties'
 import type { Directive } from './Directive'
-import type { DirectiveFamily } from '../../RTD'
+import type { DirectiveFamily, Parameter } from '../../RTD'
 import type { Input, Output } from '../../io'
 
 export class Vary implements DirectiveFamily {
@@ -19,7 +19,9 @@ export class Vary implements DirectiveFamily {
       })
   }
 
-  public preflight (instances: Array<Directive | Property>, request: Input): Output {
+  public preflight (instances: Array<Directive | Property>,
+    context: Input,
+    parameters: Parameter[]): Output {
     /*
     To stop constructing `properties` object on each request, Directive Families must be refactored
     from singleton factories to per-Node instances on the Tree.
@@ -34,7 +36,7 @@ export class Vary implements DirectiveFamily {
         directives.push(instance)
 
     for (const directive of directives)
-      directive.preflight(request, properties)
+      directive.preflight(context, properties, parameters)
 
     return null
   }

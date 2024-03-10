@@ -151,6 +151,29 @@ Feature: The Vary directive family
       | bar             | baz   |
       | accept-language | en    |
 
+  Scenario: Embedding route parameter
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:friend:
+          io:output: true
+          GET:
+            vary:embed:
+              name: /:friend
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/Ken/ HTTP/1.1
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello Ken
+      """
+
   Scenario: Adding headers used by defined embeddings to CORS permissions
     Given the `echo` is running with the following manifest:
         """yaml
