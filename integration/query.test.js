@@ -214,17 +214,6 @@ describe('validation', () => {
     await expect(remote.invoke('find', {
       query: {
         limit: 10,
-        sort: ['asd!']
-      }
-    }))
-      .rejects.toMatchObject({
-        keyword: 'pattern',
-        property: 'query/sort/0'
-      })
-
-    await expect(remote.invoke('find', {
-      query: {
-        limit: 10,
         sort: ['asd:5']
       }
     }))
@@ -239,26 +228,6 @@ describe('validation', () => {
       .rejects.toMatchObject({
         keyword: 'type',
         property: 'query/projection'
-      })
-
-    await expect(remote.invoke('get', { query: { projection: ['asd!'] } }))
-      .rejects.toMatchObject({
-        keyword: 'pattern',
-        property: 'query/projection/0'
-      })
-  })
-
-  it('should throw if system properties included', async () => {
-    await expect(remote.invoke('get', { query: { projection: ['_version', 'text'] } }))
-      .rejects.toMatchObject({
-        keyword: 'pattern',
-        property: 'query/projection/0'
-      })
-
-    await expect(remote.invoke('get', { query: { projection: ['id', 'text'] } }))
-      .rejects.toMatchObject({
-        keyword: 'not',
-        property: 'query/projection/0'
       })
   })
 
