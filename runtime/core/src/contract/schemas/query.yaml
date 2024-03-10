@@ -18,14 +18,13 @@ properties:
     minItems: 1
     items:
       type: string
-      pattern: ^[a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(:(asc|desc))?$
+      pattern: ^[^:]+?(:(asc|desc))?$
   projection:
     type: array
     uniqueItems: true
     minItems: 1
     items:
       type: string
-      pattern: ^([a-zA-Z]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?)$
       not:
         const: id
 additionalProperties: false
