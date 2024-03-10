@@ -9,13 +9,14 @@ operation call.
 exposition:
   realms:
     toa: the.toa.io
-  /:
+  /:group:
     vary:languages: [en, fr]
     GET:
       vary:embed:
         lang: language # predefined embeddings
         realm: realm
         token: :x-access-token # raw header value
+        group: /:group # route parameter
       endpoint: dummies.get
 ```
 
@@ -47,14 +48,19 @@ If neither of the supported languages matches, the first supported language is u
 
 ### Raw header values
 
-Keys in the embedding map starting with a semicolon (:) are the names of HTTP request headers whose
-values to be embedded into an operation call.
+Values in the embedding map starting with a semicolon (:) are the names of HTTP request headers
+whose values to be embedded into an operation call.
 The names of these headers are then included in the `vary` HTTP response header
 and [Access-Control-Allow-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers)
 of the [CORS](protocol.md#cors).
 
 [Multiple header fields](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2) are embedded
 as a comma-separated list.
+
+### Route parameters
+
+Values in the embedding map starting with `/:` are the names of route parameters whose values
+to be embedded into an operation call.
 
 ### Fallbacks
 
