@@ -155,17 +155,17 @@ Feature: The Vary directive family
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
-        /:name:
+        /:friend:
           io:output: true
           GET:
             vary:embed:
-              name: /:name
+              name: /:friend
             endpoint: compute
       """
     When the following request is received:
       """
       GET /echo/Ken/ HTTP/1.1
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """

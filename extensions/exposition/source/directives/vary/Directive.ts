@@ -1,6 +1,7 @@
 import type { Properties } from './Properties'
 import type { Input } from '../../io'
+import type { Parameter } from '../../RTD'
 
 export interface Directive {
-  preflight: (request: Input, properties: Properties) => void
+  preflight: (context: Input, properties: Properties, parameters: Parameter[]) => void
 }

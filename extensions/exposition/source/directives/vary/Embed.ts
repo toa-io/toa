@@ -1,9 +1,10 @@
 import assert from 'node:assert'
-import { Header, embeddings } from './embeddings'
+import { Header, embeddings, Parameter } from './embeddings'
 import type { Embedding } from './embeddings'
 import type { Input } from '../../io'
 import type { Directive } from './Directive'
 import type { Properties } from './Properties'
+import type * as RTD from '../../RTD'
 
 export class Embed implements Directive {
   private readonly embeddings: Array<[string, Embedding[]]> = []
@@ -16,6 +17,9 @@ export class Embed implements Directive {
         if (name[0] === ':')
           return new Header(name.slice(1))
 
+        if (name.slice(0, 2) === '/:')
+          return new Parameter(name.slice(2))
+
         assert.ok(name in embeddings, `Unknown embedding: ${name}`)
 
         return new embeddings[name]()
@@ -25,26 +29,28 @@ export class Embed implements Directive {
     }
   }
 
-  public preflight (input: Input, properties: Properties): void {
+  public preflight (context: Input, properties: Properties, parameters: RTD.Parameter[]): void {
     const values: Record<string, unknown> = {}
 
     for (const [key, instances] of this.embeddings)
-      values[key] = this.resolve(instances, input, properties)
+      values[key] = this.resolve(instances, context, properties, parameters)
 
-    input.pipelines.body.push(this.embedding(values))
+    context.pipelines.body.push(this.embedding(values))
   }
 
-  private resolve (instances: Embedding[], input: Input, properties: Properties): unknown {
+  // eslint-disable-next-line max-params
+  private resolve (instances: Embedding[],
+    input: Input,
+    properties: Properties,
+    parameters: RTD.Parameter[]): unknown {
     let value
 
     for (const instance of instances) {
-      value = instance.resolve(input, properties)
+      value = instance.resolve(input, properties, parameters)
 
       if (value !== undefined)
         break
     }
-
-    assert.ok(value !== undefined, 'Neither embedding resolved a value.')
 
     return value
   }
