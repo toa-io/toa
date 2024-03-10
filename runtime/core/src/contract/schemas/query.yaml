@@ -18,7 +18,6 @@ properties:
     minItems: 1
     items:
       type: string
-      pattern: ^[^:]+?(:(asc|desc))?$
   projection:
     type: array
     uniqueItems: true
