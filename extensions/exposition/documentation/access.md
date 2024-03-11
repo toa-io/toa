@@ -104,8 +104,11 @@ Access will be granted if an Identity matches a `user-id` placeholder and has a 
 
 Embeds the value of the current Identity into the request body as a property named after the value
 of the directive value, and grants access.
+The request body must be an object.
 
-> The request body must be an object.
+> :warning:<br/>
+> The intended use case for this directive is audit.
+> **Using it to pass Identity to the application logic is strongly discouraged.**
 
 ## Roles
 
@@ -140,7 +143,6 @@ In other words, the Identity must have a specified or more general Role.
     <img alt="IA3" width="600" height="425" src=".assets/role-scopes-light.jpg">
   </picture>
 </a>
-
 
 > The root-level Role Scope `system` is preserved and cannot be used with the `role` directives.
 
