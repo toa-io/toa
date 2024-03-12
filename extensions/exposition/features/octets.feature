@@ -190,37 +190,40 @@ Feature: Octets directive family
       201 Created
       """
 
-  Scenario Outline: Receiving <type> image
+  Scenario Outline: Detecting `<type>`
     When the stream of `sample.<ext>` is received with the following headers:
       """
       POST /media/images/ HTTP/1.1
       accept: application/yaml
-      content-type: <type>
       """
     Then the following reply is sent:
       """
       201 Created
 
-      id: ${{ id }}
+      type: <type>
       """
-    When the following request is received:
+    Examples:
+      | ext  | type       |
+      | jpeg | image/jpeg |
+      | jxl  | image/jxl  |
+      | gif  | image/gif  |
+      | heic | image/heic |
+      | avif | image/avif |
+      | webp | image/webp |
+
+  Scenario: Accepting `image/svg+xml`
+    When the stream of `sample.svg` is received with the following headers:
       """
-      GET /media/images/${{ id }} HTTP/1.1
+      POST /media/images/ HTTP/1.1
+      content-type: image/svg+xml
+      accept: application/yaml
       """
     Then the following reply is sent:
       """
-      200 OK
-      content-type: <type>
+      201 Created
+
+      type: image/svg+xml
       """
-    Examples:
-      | ext  | type          |
-      | jpeg | image/jpeg    |
-      | jxl  | image/jxl     |
-      | gif  | image/gif     |
-      | heic | image/heic    |
-      | avif | image/avif    |
-      | webp | image/webp    |
-      | svg  | image/svg+xml |
 
   Scenario: Fetching non-existent BLOB
     When the following request is received:
