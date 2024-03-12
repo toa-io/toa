@@ -33,6 +33,9 @@ Feature: Octets directive family
             POST:
               octets:store:
                 accept: image/*
+            /*:
+              GET:
+                octets:fetch: ~
       """
 
   Scenario: Basic storage operations
@@ -187,23 +190,37 @@ Feature: Octets directive family
       201 Created
       """
 
-  Scenario Outline: Receiving <format> images
-    When the stream of `sample.<format>` is received with the following headers:
+  Scenario Outline: Receiving <type> image
+    When the stream of `sample.<ext>` is received with the following headers:
       """
       POST /media/images/ HTTP/1.1
+      accept: application/yaml
+      content-type: <type>
       """
     Then the following reply is sent:
       """
       201 Created
+
+      id: ${{ id }}
+      """
+    When the following request is received:
+      """
+      GET /media/images/${{ id }} HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: <type>
       """
     Examples:
-      | format |
-      | jpeg   |
-      | jxl    |
-      | gif    |
-      | heic   |
-      | avif   |
-      | webp   |
+      | ext  | type          |
+      | jpeg | image/jpeg    |
+      | jxl  | image/jxl     |
+      | gif  | image/gif     |
+      | heic | image/heic    |
+      | avif | image/avif    |
+      | webp | image/webp    |
+      | svg  | image/svg+xml |
 
   Scenario: Fetching non-existent BLOB
     When the following request is received:
