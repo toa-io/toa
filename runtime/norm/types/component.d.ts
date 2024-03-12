@@ -37,7 +37,7 @@ type Receiver = {
 type Entity = {
   schema: Object
   storage?: string
-  dependent?: boolean
+  associated?: boolean
 }
 
 type Declaration = {

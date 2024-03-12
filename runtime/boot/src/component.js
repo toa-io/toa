@@ -1,7 +1,12 @@
 'use strict'
 
 const { remap } = require('@toa.io/generic')
-const { Component, Locator, State, entities } = require('@toa.io/core')
+const {
+  Component,
+  Locator,
+  State,
+  entities
+} = require('@toa.io/core')
 const { Schema } = require('@toa.io/schema')
 
 const boot = require('./index')
@@ -24,7 +29,7 @@ const component = async (manifest) => {
     const schema = new Schema(manifest.entity.schema)
     const entity = new entities.Factory(schema)
 
-    state = new State(storage, entity, emission, manifest.entity.dependent)
+    state = new State(storage, entity, emission, manifest.entity.associated)
   }
 
   const operations = manifest.operations === undefined

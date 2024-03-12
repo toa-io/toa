@@ -5,7 +5,7 @@ version: 0.0.0
 entity:
   schema:
     newbie: false
-  dependent: true
+  associated: true
 
 operations:
   transit:

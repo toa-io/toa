@@ -112,15 +112,18 @@ describe('entity', () => {
     })
 
     it('should allow default id', () => {
-      manifest.entity.schema.properties.id = { type: 'string', pattern: '^[a-fA-F0-9]+$' }
+      manifest.entity.schema.properties.id = {
+        type: 'string',
+        pattern: '^[a-fA-F0-9]+$'
+      }
       expect(() => validate(manifest)).not.toThrow()
     })
   })
 
-  describe('dependent', () => {
+  describe('associated', () => {
     it('should provide default', () => {
       expect(() => validate(manifest)).not.toThrow()
-      expect(manifest.entity.dependent).toBe(false)
+      expect(manifest.entity.associated).toBe(false)
     })
   })
 })

@@ -8,16 +8,16 @@ const {
 } = require('./exceptions')
 
 class State {
-  #dependent
+  #associated
   #storage
   #entity
   #emission
 
-  constructor (storage, entity, emission, dependent) {
+  constructor (storage, entity, emission, associated) {
     this.#storage = storage
     this.#entity = entity
     this.#emission = emission
-    this.#dependent = dependent === true
+    this.#associated = associated === true
   }
 
   init (id) {
@@ -28,7 +28,7 @@ class State {
     const record = await this.#storage.get(query)
 
     if (record === null) {
-      if (this.#dependent && query.id !== undefined && query.version === undefined) {
+      if (this.#associated && query.id !== undefined && query.version === undefined) {
         return this.init(query.id)
       } else if (query.version !== undefined) throw new StatePreconditionException()
     }

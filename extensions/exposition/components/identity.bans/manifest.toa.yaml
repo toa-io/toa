@@ -6,7 +6,7 @@ entity:
     banned*: false
     originator*: string
     comment: string
-  dependent: true
+  associated: true
 
 operations:
   transit:
