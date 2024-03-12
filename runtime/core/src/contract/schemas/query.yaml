@@ -18,6 +18,7 @@ properties:
     minItems: 1
     items:
       type: string
+      pattern: ^\w{1,32}(?::(?:asc|desc))?$
   projection:
     type: array
     uniqueItems: true
