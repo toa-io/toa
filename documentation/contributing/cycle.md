@@ -121,13 +121,13 @@ must be updated with:
 
 ### Change Requests
 
-List of changes to be made at the most top-level available in the software being developed. Each
+The list of changes to be made at the most top-level available in the software being developed. Each
 item basically should be the message for the future commit or pull request conforming the existent
 commit message convention.
 
 In case a commit message is not enough to fully describe the request, then it should become an
-inassociated iteration of the Cycle without blocking current. Thereby, problem decomposition will
-continue until it compose a decision tree with elementary leaves described with a commit message.
+independent iteration of the Cycle without blocking current. Thereby, problem decomposition will
+continue until it composes a decision tree with elementary leaves described with a commit message.
 
 #### Example
 
