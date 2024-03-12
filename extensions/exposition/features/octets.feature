@@ -255,7 +255,7 @@ Feature: Octets directive family
       Trailing slash is redundant.
       """
 
-  Scenario: Original BLOLB is not accessible
+  Scenario: Original BLOB is not accessible
     Given the annotation:
       """yaml
       /:
