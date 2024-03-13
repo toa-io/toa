@@ -1,9 +1,15 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { Locator, Connector } = require('@toa.io/core')
+const {
+  Locator,
+  Connector
+} = require('@toa.io/core')
 
-const { binding, Factory } = require('../../src/binding')
+const {
+  binding,
+  Factory
+} = require('../../src/binding')
 
 const factory = new Factory()
 
@@ -51,4 +57,22 @@ it('should call receiver', async () => {
   await emitter.emit(message)
 
   expect(callback).toHaveBeenCalledWith(message)
+})
+
+it('should not modify message', async () => {
+  const callback = jest.fn((payload) => {
+    payload.payload.foo = 'bar'
+  })
+
+  await binding.subscribe(label, callback)
+
+  const payload = { [generate()]: generate() }
+
+  /** @type {toa.core.Message} */
+  const message = { payload }
+  const origin = JSON.parse(JSON.stringify(message))
+
+  await emitter.emit(message)
+
+  expect(origin).toEqual(message)
 })

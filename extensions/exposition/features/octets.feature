@@ -33,6 +33,9 @@ Feature: Octets directive family
             POST:
               octets:store:
                 accept: image/*
+            /*:
+              GET:
+                octets:fetch: ~
       """
 
   Scenario: Basic storage operations
@@ -187,23 +190,40 @@ Feature: Octets directive family
       201 Created
       """
 
-  Scenario Outline: Receiving <format> images
-    When the stream of `sample.<format>` is received with the following headers:
+  Scenario Outline: Detecting `<type>`
+    When the stream of `sample.<ext>` is received with the following headers:
       """
       POST /media/images/ HTTP/1.1
+      accept: application/yaml
       """
     Then the following reply is sent:
       """
       201 Created
+
+      type: <type>
       """
     Examples:
-      | format |
-      | jpeg   |
-      | jxl    |
-      | gif    |
-      | heic   |
-      | avif   |
-      | webp   |
+      | ext  | type       |
+      | jpeg | image/jpeg |
+      | jxl  | image/jxl  |
+      | gif  | image/gif  |
+      | heic | image/heic |
+      | avif | image/avif |
+      | webp | image/webp |
+
+  Scenario: Accepting `image/svg+xml`
+    When the stream of `sample.svg` is received with the following headers:
+      """
+      POST /media/images/ HTTP/1.1
+      content-type: image/svg+xml
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      type: image/svg+xml
+      """
 
   Scenario: Fetching non-existent BLOB
     When the following request is received:
@@ -235,7 +255,7 @@ Feature: Octets directive family
       Trailing slash is redundant.
       """
 
-  Scenario: Original BLOLB is not accessible
+  Scenario: Original BLOB is not accessible
     Given the annotation:
       """yaml
       /:

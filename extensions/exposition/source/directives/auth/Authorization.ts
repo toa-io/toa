@@ -92,9 +92,9 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     const token = await this.tokens.invoke<string>('encrypt', { input: { identity } })
     const authorization = `Token ${token}`
 
-    if (response.headers === undefined) response.headers = new Headers()
-
+    response.headers ??= new Headers()
     response.headers.set('authorization', authorization)
+    response.headers.append('cache-control', 'no-store')
   }
 
   private async resolve (authorization: string | undefined): Promise<Identity | null> {

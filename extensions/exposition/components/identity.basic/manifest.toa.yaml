@@ -7,7 +7,7 @@ entity:
     password*: string
   unique:
     username: [username]
-  dependent: true
+  associated: true
 
 operations:
   transit:

@@ -5,7 +5,7 @@ entity:
   schema:
     id: number
     value: hello
-  dependent: true
+  associated: true
 
 operations:
   transit:

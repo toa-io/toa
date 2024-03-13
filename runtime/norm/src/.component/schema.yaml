@@ -96,7 +96,7 @@ properties:
               '.*':
                 type: string
                 enum: [asc, desc, hash]
-      dependent:
+      associated:
         type: boolean
         default: false
       custom:

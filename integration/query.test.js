@@ -214,7 +214,7 @@ describe('validation', () => {
     await expect(remote.invoke('find', {
       query: {
         limit: 10,
-        sort: ['asd:5']
+        sort: ['text:5']
       }
     }))
       .rejects.toMatchObject({

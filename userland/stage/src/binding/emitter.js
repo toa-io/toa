@@ -19,6 +19,7 @@ class Emitter extends Connector {
   }
 
   async emit (message) {
+    message = JSON.parse(JSON.stringify(message))
     await binding.emit(this.#label, message)
   }
 }

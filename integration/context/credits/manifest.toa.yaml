@@ -7,7 +7,7 @@ entity:
       balance:
         type: integer
         default: 10
-  dependent: true
+  associated: true
 
 operations:
   transit:

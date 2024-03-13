@@ -15,8 +15,7 @@ The Authorization is implemented as a set of [RTD Directives](tree.md#directives
 
 Directives are executed in a predetermined order until one of them grants access to a resource.
 If none of the directives grants access, then the Authorization interrupts request processing and
-responds with an
-authorization error.
+responds with an authorization error.
 
 > The Authorization directive provider is named `authorization`,
 > so the full names of the directives are `authorization:{directive}`.
@@ -104,8 +103,11 @@ Access will be granted if an Identity matches a `user-id` placeholder and has a 
 
 Embeds the value of the current Identity into the request body as a property named after the value
 of the directive value, and grants access.
+The request body must be an object.
 
-> The request body must be an object.
+> :warning:<br/>
+> The intended use case for this directive is audit.
+> **Using it to pass Identity to the application logic is strongly discouraged.**
 
 ## Roles
 
@@ -140,7 +142,6 @@ In other words, the Identity must have a specified or more general Role.
     <img alt="IA3" width="600" height="425" src=".assets/role-scopes-light.jpg">
   </picture>
 </a>
-
 
 > The root-level Role Scope `system` is preserved and cannot be used with the `role` directives.
 
