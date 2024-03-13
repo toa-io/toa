@@ -23,6 +23,8 @@ class Consumer extends Connector {
   }
 
   async request (request) {
+    request = JSON.parse(JSON.stringify(request))
+
     return binding.request(this.#label, request)
   }
 }
