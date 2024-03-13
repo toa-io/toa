@@ -135,6 +135,14 @@ The new token is issued each time the request is made:
 1. Using authentication scheme other than `Token`.
 2. Using `Token` authentication scheme with an [obsolete token](#token-rotation).
 
+When the token is issued it is sent in the `authorization` response header and the `cache-control`
+is set to `no-store`.
+
+```http
+authorization: Token ...
+cache-control: no-store
+```
+
 ### Token encryption
 
 Issued tokens are encrypted

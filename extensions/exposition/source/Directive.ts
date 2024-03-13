@@ -17,11 +17,8 @@ export class Directives implements RTD.Directives {
 
       const output = await set.family.preflight(set.directives, context, parameters)
 
-      if (output !== null) {
-        await this.settle(context, output)
-
+      if (output !== null)
         return output
-      }
     }
 
     return null

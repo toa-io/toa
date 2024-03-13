@@ -15,7 +15,10 @@ export class Control implements Directive {
 
     this.cache ??= this.resolve(context)
 
-    headers.set('cache-control', this.cache)
+    const disabled = headers.get('cache-control')?.includes('no-store') ?? false
+
+    if (!disabled)
+      headers.append('cache-control', this.cache)
   }
 
   protected resolve (request: AuthenticatedContext): string {

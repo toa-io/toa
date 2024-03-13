@@ -67,6 +67,7 @@ Feature: Tokens lifecycle
       """
       200 OK
       authorization: Token
+      cache-control: no-store
 
       Hello
       """
@@ -160,4 +161,58 @@ Feature: Tokens lifecycle
     Then the following reply is sent:
       """
       403 Forbidden
+      """
+
+  Scenario: Responses with tokens comes with `no-store`
+    Given the `identity.tokens` configuration:
+      """yaml
+      refresh: 1
+      """
+    And the annotation:
+      """yaml
+      /:
+        io:output: true
+        /hello/:id:
+          auth:id: id
+          GET:
+            dev:stub: Hello
+        /cacheable/:id:
+          auth:id: id
+          cache:control: max-age=10000
+          GET:
+            dev:stub: Keep it
+
+      """
+    When the following request is received:
+      """
+      GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      cache-control: no-store
+      """
+    Then after 1 second
+    When the following request is received:
+      """
+      GET /cacheable/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ fresh_token }}
+      cache-control: no-store
+      """
+    When the following request is received:
+      """
+      GET /cacheable/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Token ${{ fresh_token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: private, max-age=10000
       """
