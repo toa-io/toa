@@ -156,19 +156,16 @@ The `key0` configuration value is required.
 ### Token rotation
 
 Issued tokens are valid for a `lifetime` period defined in the configuration. After the `refresh`
-period, the token is
-considered obsolete (yet still valid), and a new token is [issued](#issuing-tokens) unless the
-provided one has
-been [revoked](#token-revocation).
+period, the token is considered obsolete (yet still valid), and a new token
+is [issued](#issuing-tokens) unless the provided one has been [revoked](#token-revocation).
 
 This essentially means that if the client uses the token at least once every `lifetime` period, it
-will always have a
-valid token to authenticate with. Also, token revocation or changing roles of an Identity will take
-effect once
-the `refresh` period of the currently issued tokens has expired.
+will always have a valid token to authenticate with.
+Also, token revocation or changing roles of an Identity will take effect once the `refresh` period
+of the currently issued tokens has expired.
 
 Adjusting these two values is a delicate trade-off between security, performance and client
-convinience.
+convenience.
 
 ```yaml
 # context.toa.yaml

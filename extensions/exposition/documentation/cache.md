@@ -17,7 +17,7 @@ to [safe HTTP methods](https://developer.mozilla.org/en-US/docs/Glossary/Safe/HT
 
 ### Implicit modifications
 
-In terms of security, the following implicit modifications are made to the `Cache-Control` header:
+In terms of security, the following implicit modifications are made to the `cache-control` header:
 
 - If it contains the `public` directive without `no-cache` and the request is authenticated,
   the `no-cache` directive is added.
@@ -25,6 +25,13 @@ In terms of security, the following implicit modifications are made to the `Cach
 - If it does not contain the `private` directive and the request is authenticated, the `private`
   directive is added.
   This is to prevent the storage of private data in shared caches.
+- If it contains `private` directive and the request is authenticated, then `vary: authorization` is
+  added.
+  This is to prevent the reuse of private data when authenticated as another identity.[^1]
+
+[^1]: This also will invalidate the cache each time a new token is used for the same identity, thus
+limiting the `max-age` value to the token's `refresh` time.
+See [Issuing tokens](components.md#issuing-tokens).
 
 ## `cache:exact`
 
