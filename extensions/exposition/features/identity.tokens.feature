@@ -181,7 +181,6 @@ Feature: Tokens lifecycle
           cache:control: max-age=10000
           GET:
             dev:stub: Keep it
-
       """
     When the following request is received:
       """

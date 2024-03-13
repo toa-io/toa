@@ -161,3 +161,39 @@ Feature: Caching
       """
       cache-control:
       """
+
+  Scenario: Private responses are sent with `vary: authorization`
+    Given the `identity.basic` database contains:
+      | _id                              | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the annotation:
+      """yaml
+      /:
+        /:id:
+          auth:id: id
+          cache:control: max-age=10000
+          GET:
+            dev:stub: Keep it
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    # `no-store` when token is issued
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: private, max-age=10000
+      vary: authorization
+      """
