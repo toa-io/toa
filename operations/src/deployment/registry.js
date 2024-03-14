@@ -1,6 +1,7 @@
 'use strict'
 
 const workspace = require('./workspace')
+const { newid } = require('@toa.io/generic')
 
 /**
  * @implements {toa.deployment.Registry}
@@ -87,11 +88,11 @@ class Registry {
 
     if (multiarch) {
       const platform = this.#registry.platforms.join(',')
+      const builder = await this.#createBuilder()
 
       args.push('--platform', platform)
-      args.push('--builder', BUILDER)
+      args.push('--builder', builder)
 
-      await this.#ensureBuilder()
     } else {
       args.push('--builder', 'default')
     }
@@ -105,20 +106,13 @@ class Registry {
     await this.#build(image, true)
   }
 
-  async #ensureBuilder () {
-    const ls = 'buildx ls'.split(' ')
-    const output = await this.#process.execute('docker', ls, { silently: true })
-    const exists = output.split('\n').findIndex((line) => line.startsWith('toa '))
-
-    if (exists === -1) await this.#createBuilder()
-  }
-
   async #createBuilder () {
-    const create = `buildx create --name ${BUILDER} --append --use`.split(' ')
-    const bootstrap = 'buildx inspect --bootstrap'.split(' ')
+    const name = `toa-${newid()}`
+    const create = `buildx create --name ${name} --bootstrap --use`.split(' ')
 
     await this.#process.execute('docker', create)
-    await this.#process.execute('docker', bootstrap)
+
+    return name
   }
 }
 
