@@ -114,7 +114,7 @@ class Registry {
   }
 
   async #createBuilder () {
-    const create = `buildx create --name ${BUILDER} --use`.split(' ')
+    const create = `buildx create --name ${BUILDER} --append --use`.split(' ')
     const bootstrap = 'buildx inspect --bootstrap'.split(' ')
 
     await this.#process.execute('docker', create)
