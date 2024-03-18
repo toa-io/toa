@@ -1,6 +1,6 @@
 Feature: Request requirements
 
-  Scenario Outline: Required header
+  Scenario Outline: Require headers
     Given the `pots` is running with the following manifest:
       """yaml
       exposition:
@@ -32,7 +32,7 @@ Feature: Request requirements
       """
     When the following request is received:
       """
-      POST /pots/<variant>/${{ id }}/ HTTP/1.1
+      PUT /pots/<variant>/${{ id }}/ HTTP/1.1
       content-type: application/yaml
       accept: text/plain
 
@@ -43,11 +43,11 @@ Feature: Request requirements
       """
       400 Bad Request
 
-      'if-match' header is required.
+      Header required: if-match
       """
     When the following request is received:
       """
-      PUT /pots/${{ id }}/ HTTP/1.1
+      PUT /pots/<variant>/${{ id }}/ HTTP/1.1
       content-type: application/yaml
       accept: text/plain
       if-match: ${{ etag }}
