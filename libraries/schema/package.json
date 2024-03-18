@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/schema",
-  "version": "1.0.0-alpha.19",
+  "version": "1.0.0-alpha.20",
   "description": "Toa Schema",
   "homepage": "https://toa.io",
   "author": {
@@ -23,9 +23,9 @@
   },
   "main": "source/index.js",
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.19",
-    "@toa.io/schemas": "1.0.0-alpha.19",
-    "@toa.io/yaml": "1.0.0-alpha.19",
+    "@toa.io/generic": "1.0.0-alpha.20",
+    "@toa.io/schemas": "1.0.0-alpha.20",
+    "@toa.io/yaml": "1.0.0-alpha.20",
     "ajv": "8.12.0",
     "ajv-formats": "2.1.1"
   },
