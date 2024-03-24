@@ -17,7 +17,7 @@ Feature: MongoDB indexes
     Then the following exception is thrown:
       """yaml
       code: 306
-      message: [email]
+      message: DuplicateException
       """
     # see collection indexes in the database
 
@@ -33,5 +33,5 @@ Feature: MongoDB indexes
     Then the following exception is thrown:
       """yaml
       code: 306
-      message: [email]
+      message: DuplicateException
       """
