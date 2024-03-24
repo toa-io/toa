@@ -10,6 +10,6 @@ requires a set of headers to be present.
 ```yaml
 exposition:
   /:id:
-    requires:header: if-match # enforce concurrency control
+    require:header: if-match # enforce concurrency control
     PUT: transit
 ```

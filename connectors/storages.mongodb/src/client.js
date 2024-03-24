@@ -57,17 +57,27 @@ class Client extends Connector {
    */
   async open () {
     const urls = await this.resolveURLs()
-    const db = this.resolveDB()
-    const collection = this.locator.lowercase
+    const dbname = this.resolveDB()
+    const collname = this.locator.lowercase
 
-    this.key = getKey(db, urls)
+    this.key = getKey(dbname, urls)
 
     INSTANCES[this.key] ??= this.createInstance(urls)
 
     this.instance = await INSTANCES[this.key]
     this.instance.count++
 
-    this.collection = this.instance.client.db(db).collection(collection)
+    const db = this.instance.client.db(dbname)
+
+    try {
+      this.collection = await db.createCollection(collname)
+    } catch (e) {
+      if (e.code !== ALREADY_EXISTS) {
+        throw e
+      }
+
+      this.collection = db.collection(collname)
+    }
   }
 
   /**
@@ -143,5 +153,7 @@ const OPTIONS = {
   connectTimeoutMS: 0,
   serverSelectionTimeoutMS: 0
 }
+
+const ALREADY_EXISTS = 48
 
 exports.Client = Client
