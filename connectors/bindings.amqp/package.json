@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.amqp",
-  "version": "1.0.0-alpha.20",
+  "version": "1.0.0-alpha.21",
   "description": "Toa AMQP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,10 +17,10 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/console": "1.0.0-alpha.20",
-    "@toa.io/core": "1.0.0-alpha.20",
-    "@toa.io/generic": "1.0.0-alpha.20",
-    "@toa.io/pointer": "1.0.0-alpha.20",
+    "@toa.io/console": "1.0.0-alpha.21",
+    "@toa.io/core": "1.0.0-alpha.21",
+    "@toa.io/generic": "1.0.0-alpha.21",
+    "@toa.io/pointer": "1.0.0-alpha.21",
     "comq": "0.10.1"
   },
   "scripts": {
