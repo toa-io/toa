@@ -11,6 +11,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -27,6 +28,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ User.token }}
       accept: application/yaml
       """
@@ -43,6 +45,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ User.token }}
       accept: application/yaml
       """
@@ -61,6 +64,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       """
     Then the following reply is sent:
@@ -70,6 +74,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """

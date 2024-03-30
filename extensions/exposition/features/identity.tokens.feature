@@ -17,6 +17,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: text/plain
       """
@@ -46,6 +47,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: text/plain
       """
@@ -60,6 +62,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       accept: text/plain
       """
@@ -93,6 +96,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -103,6 +107,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
 
@@ -116,6 +121,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       """
     Then the following reply is sent:
@@ -130,6 +136,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -140,6 +147,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       POST /identity/tokens/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       content-type: application/yaml
 
@@ -153,6 +161,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       POST /identity/tokens/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
 
@@ -185,6 +194,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /hello/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -197,6 +207,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /cacheable/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       """
     Then the following reply is sent:
@@ -208,6 +219,7 @@ Feature: Tokens lifecycle
     When the following request is received:
       """
       GET /cacheable/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ fresh_token }}
       """
     Then the following reply is sent:

@@ -16,6 +16,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Bearer ${{ User.id_token }}
       accept: application/yaml
       content-type: application/yaml
@@ -32,6 +33,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       authorization: Token ${{ User.token }}
       """
@@ -45,6 +47,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Bearer ${{ User.id_token }}
       accept: application/yaml
       """
@@ -72,6 +75,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Bearer ${{ GoodUser.id_token }}
       accept: application/yaml
       content-type: application/yaml
@@ -105,6 +109,7 @@ Feature: Identity Federation
       # identity inception
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Bearer ${{ Bill.id_token }}
       accept: application/yaml
       content-type: application/yaml
@@ -122,6 +127,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ Bill.token }}
       accept: application/yaml
       """
@@ -133,6 +139,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Bearer ${{ Bill.id_token }}
       accept: application/yaml
       """
@@ -145,6 +152,7 @@ Feature: Identity Federation
       # same credentials
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Bearer ${{ Bill.id_token }}
       content-type: text/plain
 
@@ -169,6 +177,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Bearer ${{ root.id_token }}
       accept: application/yaml
       content-type: application/yaml
@@ -185,6 +194,7 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       authorization: Token ${{ root.token }}
       """

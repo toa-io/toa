@@ -6,6 +6,7 @@ import { encode, timeout } from '@toa.io/generic'
 import { Factory } from '../../source'
 import * as syntax from '../../source/RTD/syntax'
 import { shortcuts } from '../../source/Directive'
+import type * as http from '../../source/HTTP'
 
 let instance: Connector | null = null
 
@@ -24,7 +25,16 @@ export class Gateway {
     }
 
     const { debug, trace, authorities } = annotation
-    const properties = { debug, trace, authorities }
+    const properties = Object.assign({}, DEFAULT_PROPERTIES)
+
+    if (debug !== undefined)
+      properties.debug = debug
+
+    if (trace !== undefined)
+      properties.trace = trace
+
+    if (authorities !== undefined)
+      properties.authorities = authorities
 
     process.env.TOA_EXPOSITION_PROPERTIES = encode(properties)
 
@@ -53,7 +63,8 @@ export class Gateway {
     if (instance !== null)
       return
 
-    process.env.TOA_EXPOSITION ??= DEFAULT_ANNOTATION
+    process.env.TOA_EXPOSITION ??= DEFAULT_TREE
+    process.env.TOA_EXPOSITION_PROPERTIES ??= encode(DEFAULT_PROPERTIES)
 
     this.writeConfiguration()
 
@@ -75,6 +86,7 @@ export class Gateway {
       return
 
     delete process.env.TOA_EXPOSITION
+    delete process.env.TOA_EXPOSITION_PROPERTIES
 
     await Gateway.stop()
   }
@@ -95,7 +107,7 @@ export class Gateway {
   }
 }
 
-const DEFAULT_ANNOTATION = encode({
+const DEFAULT_TREE = encode({
   routes: [],
   methods: [],
   directives: [
@@ -106,6 +118,12 @@ const DEFAULT_ANNOTATION = encode({
     }
   ]
 } satisfies syntax.Node)
+
+const DEFAULT_PROPERTIES: Partial<http.Options> = {
+  authorities: {
+    toa: 'nex.toa.io'
+  }
+}
 
 const DEFAULT_CONFIGURATION: Record<string, object> = {
   'identity.tokens': {

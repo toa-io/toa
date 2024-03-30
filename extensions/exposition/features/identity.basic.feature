@@ -8,6 +8,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       username: developer
@@ -20,6 +21,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       accept: application/yaml
 
@@ -49,6 +51,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
@@ -66,6 +69,7 @@ Feature: Basic authentication
       # basic credentials have been created
       """
       GET /users/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       """
     Then the following reply is sent:
@@ -76,6 +80,7 @@ Feature: Basic authentication
       # valid token has been issued
       """
       GET /users/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       """
     Then the following reply is sent:
@@ -86,6 +91,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjphbm90aGVycGFzczEyMzQ=
       accept: application/yaml
       content-type: application/yaml
@@ -100,6 +106,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
@@ -128,6 +135,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       content-type: application/yaml
@@ -142,6 +150,7 @@ Feature: Basic authentication
       # old password
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -152,6 +161,7 @@ Feature: Basic authentication
       # new password
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOm5ldy1zZWNyZXQ=
       """
     Then the following reply is sent:
@@ -167,6 +177,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic YXR0YWNrZXI6c2VjcmV0
       accept: application/yaml
       content-type: application/yaml
@@ -182,6 +193,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 
@@ -213,6 +225,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       content-type: application/yaml
@@ -245,6 +258,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 
@@ -262,6 +276,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       GET /identity/roles/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
       accept: application/yaml
       """
@@ -275,6 +290,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       accept: application/yaml
       """
@@ -288,6 +304,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       PATCH /identity/basic/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       accept: application/yaml
       content-type: application/yaml
@@ -318,6 +335,7 @@ Feature: Basic authentication
       # identity inception
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
@@ -332,6 +350,7 @@ Feature: Basic authentication
       # same credentials
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       content-type: text/plain
 

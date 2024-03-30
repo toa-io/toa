@@ -19,6 +19,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/pot/?id=99988d785d7d445cad45dbf8531f560b HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -42,6 +43,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/?criteria=volume<300&limit=10 HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -68,6 +70,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/?omit=1&limit=2 HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -94,6 +97,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/?sort=volume:desc&limit=2 HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -120,6 +124,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/99988d785d7d445cad45dbf8531f560b/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -146,6 +151,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/big/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -175,6 +181,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/big/?criteria=temperature>50 HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -204,6 +211,7 @@ Feature: Queries
     When the following request is received:
       """
       GET /pots/hottest2/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:

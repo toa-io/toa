@@ -24,6 +24,7 @@ Feature: Roles management
       # user doesn't have the required role
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNz
       """
     Then the following reply is sent:
@@ -34,6 +35,7 @@ Feature: Roles management
       # root adds a role to a user
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic cm9vdDpzZWNyZXQ=
       accept: application/yaml
       content-type: application/yaml
@@ -50,6 +52,7 @@ Feature: Roles management
       # user now have the role
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNz
       """
     Then the following reply is sent:
@@ -81,6 +84,7 @@ Feature: Roles management
       # assistant doesn't have the required role
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic YXNzaXN0YW50OnBhc3M=
       """
     Then the following reply is sent:
@@ -91,6 +95,7 @@ Feature: Roles management
       # moderator delegates a role to an assistant
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       content-type: application/yaml
 
@@ -104,6 +109,7 @@ Feature: Roles management
       # assistant has access
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic YXNzaXN0YW50OnBhc3M=
       """
     Then the following reply is sent:
@@ -136,6 +142,7 @@ Feature: Roles management
     When the following request is received:
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
@@ -169,6 +176,7 @@ Feature: Roles management
     When the following request is received:
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
 
@@ -190,6 +198,7 @@ Feature: Roles management
       # root adds a role to a user
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic cm9vdDpzZWNyZXQ=
       content-type: application/yaml
 
@@ -229,6 +238,7 @@ Feature: Roles management
     When the following request is received:
       """
       GET /29e54ae1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -238,6 +248,7 @@ Feature: Roles management
     When the following request is received:
       """
       GET /88584c9b/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -247,6 +258,7 @@ Feature: Roles management
     When the following request is received:
       """
       GET /broken/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:

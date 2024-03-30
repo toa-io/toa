@@ -11,6 +11,7 @@ Feature: Request body
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       title: Hello
@@ -32,6 +33,7 @@ Feature: Request body
     When the following request is received:
       """
       GET /echo/world/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:

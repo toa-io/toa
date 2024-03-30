@@ -31,6 +31,7 @@ Feature: Bans
     When the following request is received:
       """
       GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjoxMjM0NQ==
       """
     Then the following reply is sent:
@@ -41,6 +42,7 @@ Feature: Bans
     When the following request is received:
       """
       PUT /identity/bans/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
 
@@ -55,6 +57,7 @@ Feature: Bans
     When the following request is received:
       """
       GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjoxMjM0NQ==
       """
     Then the following reply is sent:
@@ -65,6 +68,7 @@ Feature: Bans
     When the following request is received:
       """
       GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       """
     Then the following reply is sent:
@@ -74,6 +78,7 @@ Feature: Bans
     When the following request is received:
       """
       PUT /identity/bans/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
 
@@ -86,6 +91,7 @@ Feature: Bans
     When the following request is received:
       """
       GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjoxMjM0NQ==
       """
     Then the following reply is sent:
@@ -98,6 +104,7 @@ Feature: Bans
     When the following request is received:
       """
       PUT /identity/bans/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
 
@@ -110,6 +117,7 @@ Feature: Bans
     When the following request is received:
       """
       GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjoxMjM0NQ==
       """
     Then the following reply is sent:
@@ -120,6 +128,7 @@ Feature: Bans
     When the following request is received:
       """
       GET /e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ new_token }}
       """
     Then the following reply is sent:

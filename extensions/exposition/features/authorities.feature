@@ -26,7 +26,7 @@ Feature: Authorities
       """
     Then the following reply is sent:
       """
-      400 Bad Request
+      404 Not Found
 
       Unknown authority
       """

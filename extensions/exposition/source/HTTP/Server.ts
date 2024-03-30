@@ -3,7 +3,6 @@ import os from 'node:os'
 import * as http from 'node:http'
 import { once } from 'node:events'
 import { Connector } from '@toa.io/core'
-import { promex } from '@toa.io/generic'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
 import { Context } from './Context'
@@ -72,7 +71,7 @@ export class Server extends Connector {
     }
 
     if (request.headers.host === undefined || !(request.headers.host in this.authorities)) {
-      response.writeHead(400).end('Unknown authority')
+      response.writeHead(404).end('Unknown authority')
 
       return
     }
@@ -126,13 +125,12 @@ export class Server extends Connector {
 }
 
 // https://github.com/whatwg/fetch/issues/1254
-async function adam (request: http.IncomingMessage): Promise<void> {
-  const completed = promex()
+async function adam (request: http.IncomingMessage): Promise<any> {
   const devnull = fs.createWriteStream(os.devNull)
 
-  request.on('end', completed.callback).pipe(devnull)
+  request.pipe(devnull)
 
-  return completed
+  return once(request, 'end')
 }
 
 const DEFAULTS: Omit<Properties, 'authorities'> = {

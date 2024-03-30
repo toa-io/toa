@@ -12,6 +12,7 @@ Feature: CORS Support
     When the following request is received:
       """
       OPTIONS / HTTP/1.1
+      host: nex.toa.io
       origin: https://hello.world
       """
     Then the following reply is sent:
@@ -28,6 +29,7 @@ Feature: CORS Support
     When the following request is received:
       """
       GET /foo/ HTTP/1.1
+      host: nex.toa.io
       origin: https://hello.world
       """
     Then the following reply is sent:
@@ -49,6 +51,7 @@ Feature: CORS Support
     When the following request is received:
       """
       GET /bar/ HTTP/1.1
+      host: nex.toa.io
       origin: https://hello.world
       """
     Then the following reply is sent:
@@ -61,6 +64,7 @@ Feature: CORS Support
     When the following request is received:
       """
       GET /foo/ HTTP/1.1
+      host: nex.toa.io
       origin: https://hello.world
       """
     Then the following reply is sent:

@@ -15,6 +15,7 @@ Feature: The Vary directive family
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       accept-language: <accept>
       """
@@ -54,6 +55,7 @@ Feature: The Vary directive family
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       accept-language: fr
       """
@@ -78,6 +80,7 @@ Feature: The Vary directive family
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       foo: bar
       """
@@ -104,6 +107,7 @@ Feature: The Vary directive family
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       foo: bar
       """
@@ -134,6 +138,7 @@ Feature: The Vary directive family
     When the following request is received:
         """
         GET /echo/ HTTP/1.1
+      host: nex.toa.io
         accept: application/yaml
         <header>: <value>
         """
@@ -165,6 +170,7 @@ Feature: The Vary directive family
     When the following request is received:
       """
       GET /echo/Ken/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -193,6 +199,7 @@ Feature: The Vary directive family
     When the following request is received:
         """
         OPTIONS / HTTP/1.1
+      host: nex.toa.io
         origin: https://example.com
         access-control-request-headers: whatever
         """

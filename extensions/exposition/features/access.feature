@@ -21,6 +21,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -40,6 +41,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -62,6 +64,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -83,6 +86,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -96,6 +100,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjoxMjM0NQ==
       accept: application/yaml
       """
@@ -122,6 +127,7 @@ Feature: Access authorization
       # identity with `developer` and `user` roles
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -136,6 +142,7 @@ Feature: Access authorization
       # identity with no roles
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjoxMjM0NQ==
       """
     Then the following reply is sent:
@@ -164,6 +171,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /nested/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: text/plain
       """
@@ -177,6 +185,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /javascript/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -203,6 +212,7 @@ Feature: Access authorization
       # identity with `developer` and `user` roles
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -240,6 +250,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /rust/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -253,6 +264,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /javascript/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -274,6 +286,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token v3.local.9oEtVJkfRw4cOJ8M4DxuVuAN29dGT26XMYyPAoXtwrkdkiJVSVj46sMNAOdlxwKGszJZV_ReOL26dxDVlsQ7QAIuRhRPlvsHYNOhcD-LApoAXV0S3IK16EMoEv7tE9z70FCLC3WoIW9RIQ8PR3uZhAdhSgBilsVOpWrk4XtnfCIlVwhYMKu79a66oZZhV2Q7Kl3nfYsf84-6rAL_1H0MsqCDUHVXuIg
       accept: application/yaml
       """
@@ -291,6 +304,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token v3.local.cjlxn4IJ9hI92KuksguzDx7_kYxgDFFGFnfNchf0cWnmos34dqX2XpTAUBd-LqgqfuH-lVGfNvjBUkw5JtHRBiIAVaPHF3Ncc0eafwgH2DPme9pndZL92fWryGnJ-sMHA28Q6UcXsIfhgd2JZ0n-585SBhwlosC3gKTcVHK7XNljeaTen4jZPw8uY-pdbsm6dDq3aKMzl8K78_BTTfiNPG2cI_aNuHw
       accept: application/yaml
       """
@@ -315,6 +329,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -329,6 +344,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       accept: application/yaml
       """
@@ -355,6 +371,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -368,6 +385,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token v3.local.9oEtVJkfRw4cOJ8M4DxuVuAN29dGT26XMYyPAoXtwrkdkiJVSVj46sMNAOdlxwKGszJZV_ReOL26dxDVlsQ7QAIuRhRPlvsHYNOhcD-LApoAXV0S3IK16EMoEv7tE9z70FCLC3WoIW9RIQ8PR3uZhAdhSgBilsVOpWrk4XtnfCIlVwhYMKu79a66oZZhV2Q7Kl3nfYsf84-6rAL_1H0MsqCDUHVXuIg
       accept: text/plain
       """
@@ -390,6 +408,7 @@ Feature: Access authorization
     When the following request is received:
       """
       POST /identity/roles/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       role: developer
@@ -414,6 +433,7 @@ Feature: Access authorization
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """

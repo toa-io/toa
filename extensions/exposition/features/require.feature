@@ -17,6 +17,7 @@ Feature: Request requirements
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       accept: application/yaml
 
@@ -33,6 +34,7 @@ Feature: Request requirements
     When the following request is received:
       """
       PUT /pots/<variant>/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       accept: text/plain
 
@@ -48,6 +50,7 @@ Feature: Request requirements
     When the following request is received:
       """
       PUT /pots/<variant>/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       accept: text/plain
       if-match: ${{ etag }}
