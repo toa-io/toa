@@ -33,10 +33,7 @@ export class Gateway extends Connector {
     if (match === null)
       throw new http.NotFound('Route not found')
 
-    const {
-      node,
-      parameters
-    } = match
+    const { node, parameters } = match
 
     if (!(context.request.method in node.methods))
       throw new http.MethodNotAllowed()

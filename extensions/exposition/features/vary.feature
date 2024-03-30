@@ -208,3 +208,45 @@ Feature: The Vary directive family
         204 No Content
         access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, accept-language, foo, bar
         """
+
+  Scenario: Embedding authority
+    Given the annotation:
+      """yaml
+      authorities:
+        one: the.one.com
+        two: the.two.com
+      """
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET:
+            vary:embed:
+              name: authority
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      host: the.one.com
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello one
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      host: the.two.com
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello two
+      """
