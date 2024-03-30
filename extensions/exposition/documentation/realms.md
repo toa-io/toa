@@ -38,3 +38,13 @@ exposition:
         realm: realm
       endpoint: observe
 ```
+
+## Identity
+
+Credentials stored or issued by the [authentication system](identity.md) are associated with a
+realm.
+Credentials of one realm are not valid in another realm; in other words, Identity exists in the
+context of a realm.
+
+> :warning:<br/>
+> Changing the realm identifier will break compatibility with existing stored or issued credentials.
