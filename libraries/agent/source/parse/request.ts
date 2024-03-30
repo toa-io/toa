@@ -1,4 +1,5 @@
 import { HTTPParser } from 'http-parser-js'
+import type * as undici from 'undici'
 
 export function request (input: string): HTTPRequest {
   const parser = new HTTPParser(HTTPParser.REQUEST)
@@ -8,7 +9,7 @@ export function request (input: string): HTTPRequest {
   let complete = false
 
   parser[HTTPParser.kOnHeadersComplete] = function (req) {
-    request.method = HTTPParser.methods[req.method]
+    request.method = HTTPParser.methods[req.method] as undici.Dispatcher.HttpMethod
     request.url = req.url
     request.headers = reduceHeaders(req.headers)
   }
@@ -26,7 +27,8 @@ export function request (input: string): HTTPRequest {
   parser.execute(buffer)
   parser.finish()
 
-  if (!complete) throw new Error('Failed to parse the request')
+  if (!complete)
+    throw new Error('Failed to parse request')
 
   if (bodyChunks.length > 0)
     request.body = Buffer.concat(bodyChunks)
@@ -51,7 +53,7 @@ function reduceHeaders (array: string[]): Headers {
 
 interface HTTPRequest {
   url: string
-  method: string
+  method: undici.Dispatcher.HttpMethod
   headers: Headers
   body?: Buffer
 }

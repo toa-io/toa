@@ -35,8 +35,9 @@
   },
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.21",
-    "@toa.io/streams": "1.0.0-alpha.21",
     "http-parser-js": "0.5.8",
-    "negotiator": "0.6.3"
+    "http-status-codes": "2.3.0",
+    "negotiator": "0.6.3",
+    "undici": "6.10.2"
   }
 }
