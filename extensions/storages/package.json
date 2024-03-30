@@ -24,9 +24,8 @@
     "test": "jest",
     "transpile": "npx tsc"
   },
-  "devDependencies": {
-    "@toa.io/streams": "1.0.0-alpha.21",
-    "dotenv": "16.3.1"
+  "peerDependencies": {
+    "dotenv": "*"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.481.0",
