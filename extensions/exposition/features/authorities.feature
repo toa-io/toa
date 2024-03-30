@@ -26,7 +26,7 @@ Feature: Authorities
       """
     Then the following reply is sent:
       """
-      404 Not Found
+      400 Bad Request
 
-      Realm not found
+      Unknown authority
       """

@@ -23,11 +23,10 @@ export class Gateway {
       process.env.TOA_EXPOSITION = encode(tree)
     }
 
-    if (annotation.debug === true)
-      process.env.TOA_EXPOSITION_DEBUG = '1'
+    const { debug, trace, authorities } = annotation
+    const properties = { debug, trace, authorities }
 
-    if (annotation.trace === true)
-      process.env.TOA_EXPOSITION_TRACE = '1'
+    process.env.TOA_EXPOSITION_PROPERTIES = encode(properties)
 
     await Gateway.stop()
 

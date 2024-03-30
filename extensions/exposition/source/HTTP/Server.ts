@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import * as http from 'node:http'
-import assert from 'node:assert'
 import { once } from 'node:events'
 import { Connector } from '@toa.io/core'
 import { promex } from '@toa.io/generic'
@@ -13,12 +12,14 @@ import type { IncomingMessage } from './Context'
 export class Server extends Connector {
   private readonly server: http.Server = http.createServer()
   private readonly properties: Properties
+  private readonly authorities: Record<string, string>
   private process?: Processing
 
   private constructor (properties: Properties) {
     super()
 
     this.properties = properties
+    this.authorities = Object.fromEntries(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
 
     this.server.on('request', (req, res) => this.listener(req, res))
   }
@@ -35,10 +36,8 @@ export class Server extends Connector {
     return address.port
   }
 
-  public static create (options?: Partial<Properties>): Server {
-    const properties = options === undefined
-      ? DEFAULTS
-      : { ...DEFAULTS, ...options }
+  public static create (options: Options): Server {
+    const properties: Properties = Object.assign({}, DEFAULTS, options)
 
     return new Server(properties)
   }
@@ -72,18 +71,16 @@ export class Server extends Connector {
       return
     }
 
-    if (request.url === undefined) {
-      response.writeHead(400).end()
+    if (request.headers.host === undefined || !(request.headers.host in this.authorities)) {
+      response.writeHead(400).end('Unknown authority')
 
       return
     }
 
-    assert.ok(this.process !== undefined,
-      'No processing function has been attached to the server.')
+    const authority = this.authorities[request.headers.host]
+    const context = new Context(authority, request as IncomingMessage, this.properties.trace)
 
-    const context = new Context(request as IncomingMessage, this.properties.trace)
-
-    this.process(context)
+    this.process!(context)
       .then(this.success(context, response))
       .catch(this.fail(context, response))
   }
@@ -112,17 +109,16 @@ export class Server extends Connector {
       if (!context.request.complete)
         await adam(context.request)
 
-      response.statusCode = exception instanceof Exception
-        ? exception.status
-        : 500
+      response.statusCode = exception instanceof Exception ? exception.status : 500
 
       const message: OutgoingMessage = { status: response.statusCode }
       const verbose = exception instanceof ClientError || this.properties.debug
 
       if (verbose)
-        message.body = exception instanceof Exception
-          ? exception.body
-          : (exception.stack ?? exception.message)
+        message.body =
+          exception instanceof Exception
+            ? exception.body
+            : exception.stack ?? exception.message
 
       write(context, response, message)
     }
@@ -134,14 +130,12 @@ async function adam (request: http.IncomingMessage): Promise<void> {
   const completed = promex()
   const devnull = fs.createWriteStream(os.devNull)
 
-  request
-    .on('end', completed.callback)
-    .pipe(devnull)
+  request.on('end', completed.callback).pipe(devnull)
 
   return completed
 }
 
-const DEFAULTS: Properties = {
+const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
   trace: false,
@@ -149,10 +143,15 @@ const DEFAULTS: Properties = {
 }
 
 interface Properties {
+  authorities: Record<string, string>
   methods: Set<string>
   debug: boolean
   trace: boolean
   port: number
+}
+
+export type Options = {
+  [K in keyof Properties]: K extends 'authorities' ? Properties[K] : Properties[K] | undefined
 }
 
 export type Processing = (input: Context) => Promise<OutgoingMessage>
