@@ -148,8 +148,8 @@ interface Properties {
   port: number
 }
 
-export type Options = {
-  [K in keyof Properties]: K extends 'authorities' ? Properties[K] : Properties[K] | undefined
+export type Options = { authorities: Properties['authorities'] } & {
+  [K in Exclude<keyof Properties, 'authorities'>]?: Properties[K]
 }
 
 export type Processing = (input: Context) => Promise<OutgoingMessage>
