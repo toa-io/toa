@@ -16,6 +16,9 @@ exposition:
     two: the.two.com
 ```
 
+> If the application is accessed with the `Host` header that does not match any of the realms, the
+> `404 Not Found` response is returned.
+
 ## Ingress
 
 Each host in the Realms definition is used to create a Kubernetes Ingress resource.

@@ -20,7 +20,8 @@ exposition:
 # context.toa.yaml
 
 exposition:
-  host: api.example.com
+  realms:
+    example: api.example.com
 ```
 
 ```http
@@ -117,19 +118,20 @@ The Exposition annotation declares options for its deployment.
 ```yaml
 annotations:
   '@toa.io/extensions.exposition':
-    host: the.exmaple.com
+    realms:
+      example: the.example.com
 ```
 
 A shortcut is also available.
 
 ```yaml
 exposition:
-  host: the.example.com
+  realms:
+    example: the.example.com
 ```
 
 | Option        | Description                                                                                                       |
 |---------------|-------------------------------------------------------------------------------------------------------------------|
-| `host`        | Domain name to be used for the corresponding Kubernetes Ingress.                                                  |
 | `realms`      | Mapping of realms to domain names. See [Realms](documentation/realms.md).                                         |
 | `class`       | Ingress class.                                                                                                    |
 | `annotations` | Ingress annotations.                                                                                              |
@@ -144,7 +146,8 @@ Exposition annotation can contain [resource declaration](documentation/tree.md) 
 # context.toa.yaml
 
 exposition:
-  host: the.example.com
+  realms:
+    example: the.example.com
   /:
     /code:
       GET:
@@ -163,8 +166,9 @@ If component resource branch conflicts with an annotation, the annotation takes 
 
 ```yaml
 exposition:
-  host: the.example.com
-  host@staging: the.example.dev
+  realms:
+    example: the.example.com
+    example@staging: the.example.dev
   class: alb
   debug@staging: true
   annotations:
