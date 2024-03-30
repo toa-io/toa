@@ -20,7 +20,7 @@ and pepper.
 configuration:
   identity.basic:
     rounds: 10 # salt rounds
-    peper: ''  # hashing pepper
+    pepper: '' # hashing pepper
 ```
 
 ### Credentials constraints

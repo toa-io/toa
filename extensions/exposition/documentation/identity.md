@@ -1,36 +1,30 @@
 # Identity
 
 Identity is the fundamental entity within an authentication system that represents the **unique
-identifier** of an
-individual, organization, application or device.
+identifier** of an individual, organization, application or device.
 
-In order to prove its Identity, the request originator must provide a valid _credentials_ that are
-associated with that
-Identity.
+To prove its Identity, the request originator must provide a valid _credentials_ that are associated
+with that Identity.
 
 Identity is intrinsically linked to credentials, as an Identity is established only when the first
-set of credentials
-for that Identity is created.
+set of credentials for that Identity is created.
 In other words, the creation of credentials marks the inception of an Identity.
 Once the last credentials are removed from the Identity, it ceases to exist.
 Without credentials, there is no basis for defining or asserting an Identity.
 
 ## Authentication
 
-The Authenticaiton system resolves provided credentials to an Identity using one of the supported
-authentication
-schemes.
+The Authentication system resolves provided credentials to an Identity using one of the supported
+authentication schemes.
 
 The Authentication is request-agnostic, meaning it does not depend on the specific URL being
-requested or the content of
-the request body.
+requested or the content of the request body.
 The only information it handles is the value of the `Authorization` header.
 
-> Except for its own [management resources](#persistent-credentials).
+> Except for its own [management resources](components.md).
 
 If the provided credentials are not valid or not associated with an Identity, then Authentication
-interrupts request
-processing and responds with an authentication error.
+interrupts request processing and responds with an authentication error.
 
 ### Basic scheme
 
@@ -52,8 +46,8 @@ Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
 
 The `Token` is the **primary** authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response
-containing `Token`
-credentials and will be required to switch to the `Token` scheme for any subsequent requests.
+containing `Token`credentials and will be required to switch to the `Token` scheme for any
+subsequent requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.
 
 See [`identity.tokens` component](components.md#stateless-tokens).
@@ -69,7 +63,8 @@ to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.ht
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
-Trusted providers are specified using the `identity.federation` property within the configuration annotation.
+Trusted providers are specified using the `identity.federation` property within the configuration
+annotation.
 
 ```yaml
 # context.toa.yaml
