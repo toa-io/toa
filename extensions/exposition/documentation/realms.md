@@ -1,6 +1,6 @@
 # Realms
 
-Realms is a mechanism that allows serving multiple business domains from a single instance of the
+Realms are a mechanism that allows serving multiple business domains from a single instance of the
 application.
 
 ## Definition
@@ -46,8 +46,9 @@ exposition:
 
 Credentials stored or issued by the [authentication system](identity.md) are associated with a
 realm.
-Credentials of one realm are not valid in another realm; in other words, Identity exists in the
-context of a realm.
+Credentials of one realm are not valid in another realm,
+or may be associated with a different Identity; in other words, Identity exists in the context of a
+realm.
 
 > :warning:<br/>
 > Changing the realm identifier will break compatibility with existing stored or issued credentials.
