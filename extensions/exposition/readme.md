@@ -20,7 +20,7 @@ exposition:
 # context.toa.yaml
 
 exposition:
-  realms:
+  authorities:
     example: api.example.com
 ```
 
@@ -118,7 +118,7 @@ The Exposition annotation declares options for its deployment.
 ```yaml
 annotations:
   '@toa.io/extensions.exposition':
-    realms:
+    authorities:
       example: the.example.com
 ```
 
@@ -126,13 +126,13 @@ A shortcut is also available.
 
 ```yaml
 exposition:
-  realms:
+  authorities:
     example: the.example.com
 ```
 
 | Option        | Description                                                                                                       |
 |---------------|-------------------------------------------------------------------------------------------------------------------|
-| `realms`      | Mapping of realms to domain names. See [Realms](documentation/realms.md).                                         |
+| `auhorities`  | Mapping of authority identifiers to domain names. See [Authorities](documentation/authorities.md).                |
 | `class`       | Ingress class.                                                                                                    |
 | `annotations` | Ingress annotations.                                                                                              |
 | `debug`       | Output server errors. Default `false`.                                                                            |
@@ -146,7 +146,7 @@ Exposition annotation can contain [resource declaration](documentation/tree.md) 
 # context.toa.yaml
 
 exposition:
-  realms:
+  authorities:
     example: the.example.com
   /:
     /code:
@@ -166,7 +166,7 @@ If component resource branch conflicts with an annotation, the annotation takes 
 
 ```yaml
 exposition:
-  realms:
+  authorities:
     example: the.example.com
     example@staging: the.example.dev
   class: alb
