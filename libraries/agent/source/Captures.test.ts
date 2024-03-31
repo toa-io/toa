@@ -43,3 +43,32 @@ it('should substitute parts of the words', async () => {
   expect(captures.capture('https://domain.com/path', 'https://${{ host }}/path'))
     .toEqual([])
 })
+
+describe('pipelines', () => {
+  it('should generate id', async () => {
+    const result = captures.substitute('hello #{{ id }}')
+
+    expect(result).toMatch(/^hello [a-z0-9]{32}$/)
+  })
+
+  it('should set variable', async () => {
+    const result = captures.substitute('hello #{{ id | set test }}')
+
+    expect(result).toMatch(/^hello [a-z0-9]{32}$/)
+    expect(captures.get('test')).toMatch(/^[a-z0-9]{32}$/)
+  })
+
+  it('should encode basic credentials', async () => {
+    captures.set('Bubba.username', 'bubba')
+    captures.set('Bubba.password', 'password')
+
+    const result = captures.substitute('Basic #{{ basic Bubba }}')
+
+    expect(result).toBe('Basic YnViYmE6cGFzc3dvcmQ=')
+  })
+
+  it('should generate password', async () => {
+    expect(captures.substitute('#{{ password }}')).toMatch(/^\S{12}$/)
+    expect(captures.substitute('#{{ password 8 }}')).toMatch(/^\S{8}$/)
+  })
+})

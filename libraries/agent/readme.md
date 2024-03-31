@@ -1,21 +1,27 @@
-# HTTP
+# Agent
 
-Text-level http client.
+Text-based HTTP client with variables and pipelines.
 
-Combination of [http-parser-js](https://github.com/creationix/http-parser-js)
-and Fetch API
+## Pipelines
 
-`request(http: string): string`
+- `id`: generate UUID in hex format
+- `password [length]`: generate password of a given length (default `12`)
+- `basic (credentials)`: encode `credentials.username` and `credentials.password` to base64-encoded
+  credentials
+- `set (variable)`: set a variable to the current pipeline value
 
-Perform an HTTP request.
+```http
+POST /identity/basic/ HTTP/1.1
+host: the.one.com
+content-type: application/yaml
+accept: application/yaml
 
-> `Request-URI` must be passed in the `absoluteURI`
-> form [[5.1.2]](https://datatracker.ietf.org/doc/html/rfc2616#section-5.1.2).
+username: #{{ id | set Bubba.username }}
+password: #{{ password 8 | set Bubba.password }}
+```
 
-## CLI
-
-```shell
-$ npm i -g @toa.io/agent
-$ http
-GET https://google.com/ HTTP/1.1
+```http
+GET / HTTP/1.1
+host: the.one.com
+authorization: Basic #{{ basic Bubba }}
 ```
