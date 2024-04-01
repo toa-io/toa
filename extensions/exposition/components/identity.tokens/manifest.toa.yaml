@@ -9,6 +9,7 @@ entity:
 operations:
   encrypt:
     input:
+      authority*: string
       identity*: &identity
         id: string
         ...: true
@@ -17,12 +18,15 @@ operations:
   decrypt:
     input: string
     output:
+      authority: string
       identity: *identity
       iat: string
       exp: string
       refresh: boolean
   authenticate:
-    input: string
+    input:
+      authority*: string
+      credentials*: string
     output:
       identity: *identity
       refresh: boolean

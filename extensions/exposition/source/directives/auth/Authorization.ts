@@ -80,16 +80,22 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     const identity = request.identity
 
-    if (identity === null) return
+    if (identity === null)
+      return
 
-    if (identity.scheme === PRIMARY && !identity.refresh) return
+    if (identity.scheme === PRIMARY && !identity.refresh)
+      return
 
     // Role directive may have already set the value
-    if (identity.roles === undefined) await Role.set(identity, this.discovery.roles)
+    if (identity.roles === undefined)
+      await Role.set(identity, this.discovery.roles)
 
     this.tokens ??= await this.discovery.tokens
 
-    const token = await this.tokens.invoke<string>('encrypt', { input: { identity } })
+    const token = await this.tokens.invoke<string>('encrypt', {
+      input: { authority: request.authority, identity }
+    })
+
     const authorization = `Token ${token}`
 
     response.headers ??= new Headers()

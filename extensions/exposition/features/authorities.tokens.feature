@@ -1,6 +1,6 @@
-Feature: Basic credentials with authorities
+Feature: Token credentials with authorities
 
-  Scenario: Basic credentials are scoped to authorities
+  Scenario: Tokens are scoped to authorities
     Given the annotation:
       """yaml
       authorities:
@@ -13,7 +13,7 @@ Feature: Basic credentials with authorities
             dev:stub: Hello
       """
 
-    # create basic credentials within the `one` authority
+    # create identity within the `one` authority
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
@@ -27,11 +27,23 @@ Feature: Basic credentials with authorities
     Then the following reply is sent:
       """
       201 Created
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: the.one.com
+      accept: application/yaml
+      authorization: Basic #{{ basic one }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ one.token }}
 
       id: ${{ one.id }}
       """
 
-    # create basic credentials within the `two` authority
+    # create identity within the `two` authority
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
@@ -45,16 +57,29 @@ Feature: Basic credentials with authorities
     Then the following reply is sent:
       """
       201 Created
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: the.two.com
+      accept: application/yaml
+      authorization: Basic #{{ basic two }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ two.token }}
 
       id: ${{ two.id }}
       """
 
-    # access the resource with the `one` authority
+    # access `one` authority
     When the following request is received:
       """
       GET /${{ one.id }}/ HTTP/1.1
       host: the.one.com
-      authorization: Basic #{{ basic one }}
+      accept: application/yaml
+      authorization: Token ${{ one.token }}
       """
     Then the following reply is sent:
       """
@@ -64,19 +89,21 @@ Feature: Basic credentials with authorities
       """
       GET /${{ two.id }}/ HTTP/1.1
       host: the.one.com
-      authorization: Basic #{{ basic two }}
+      accept: application/yaml
+      authorization: Token ${{ two.token }}
       """
     Then the following reply is sent:
       """
       401 Unauthorized
       """
 
-    # access the resource with the `two` authority
+    # access `two` authority
     When the following request is received:
       """
       GET /${{ one.id }}/ HTTP/1.1
       host: the.two.com
-      authorization: Basic #{{ basic one }}
+      accept: application/yaml
+      authorization: Token ${{ one.token }}
       """
     Then the following reply is sent:
       """
@@ -86,55 +113,10 @@ Feature: Basic credentials with authorities
       """
       GET /${{ two.id }}/ HTTP/1.1
       host: the.two.com
-      authorization: Basic #{{ basic two }}
+      accept: application/yaml
+      authorization: Token ${{ two.token }}
       """
     Then the following reply is sent:
       """
       200 OK
-      """
-
-    # create `one` credentials in the `two` authority
-    When the following request is received:
-      """
-      POST /identity/basic/ HTTP/1.1
-      host: the.one.com
-      content-type: application/yaml
-      accept: application/yaml
-
-      username: ${{ one.username }}
-      password: ${{ one.password }}
-      """
-    Then the following reply is sent:
-      """
-      409 Conflict
-      """
-    When the following request is received:
-      """
-      POST /identity/basic/ HTTP/1.1
-      host: the.two.com
-      content-type: application/yaml
-      accept: application/yaml
-
-      username: ${{ one.username }}
-      password: ${{ one.password }}
-      """
-    Then the following reply is sent:
-      """
-      201 Created
-      """
-
-    # create `two` credentials in the `one` authority
-    When the following request is received:
-      """
-      POST /identity/basic/ HTTP/1.1
-      host: the.one.com
-      content-type: application/yaml
-      accept: application/yaml
-
-      username: ${{ two.username }}
-      password: ${{ two.password }}
-      """
-    Then the following reply is sent:
-      """
-      201 Created
       """
