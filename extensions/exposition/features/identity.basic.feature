@@ -130,8 +130,8 @@ Feature: Basic authentication
               access: granted!
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | _version | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1

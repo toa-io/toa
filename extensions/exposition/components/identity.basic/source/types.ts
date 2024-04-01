@@ -3,7 +3,7 @@ import { type Call, type Maybe, type Observation, type Query } from '@toa.io/typ
 export interface Context {
   local: {
     observe: Observation<Maybe<Entity>>
-    transit: Call<Output, Input>
+    transit: Call<TransitOutput, TransitInput>
   }
   remote: {
     identity: {
@@ -29,13 +29,13 @@ export interface Entity {
   password: string
 }
 
-export interface Input {
+export interface TransitInput {
   authority: string
   username?: string
   password?: string
 }
 
-export interface Output {
+export interface TransitOutput {
   id: string
 }
 

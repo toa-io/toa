@@ -5,9 +5,9 @@ Feature: Bans
     Given the `identity.basic` database contains:
     # developer:secret
     # user:12345
-      | _id                              | username  | password                                                     | _deleted |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | null     |
-      | e8e4f9c2a68d419b861403d71fabc915 | user      | $2b$10$Frszmrmsz9iwSXzBbRRMKeDVKsNxozkrLNSsN.SnVC.KPxLtQr/bK | null     |
+      | _id                              | authority | username  | password                                                     | _deleted |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | null     |
+      | e8e4f9c2a68d419b861403d71fabc915 | nex       | user      | $2b$10$Frszmrmsz9iwSXzBbRRMKeDVKsNxozkrLNSsN.SnVC.KPxLtQr/bK | null     |
     And the `identity.bans` database is empty
 
   Scenario: Banning an Identity

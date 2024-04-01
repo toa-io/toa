@@ -121,7 +121,7 @@ const DEFAULT_TREE = encode({
 
 const DEFAULT_PROPERTIES: Partial<http.Options> = {
   authorities: {
-    toa: 'nex.toa.io'
+    nex: 'nex.toa.io'
   }
 }
 

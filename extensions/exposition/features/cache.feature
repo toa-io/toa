@@ -4,8 +4,8 @@ Feature: Caching
     Given the `identity.basic` database contains:
       # developer:secret
       # user:12345
-      | _id                              | username  | password                                                     |
-      | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | authority | username  | password                                                     |
+      | b70a7dbca6b14a2eaac8a9eb4b2ff4db | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     Given the `identity.roles` database contains:
       | _id                              | identity                         | role      |
       | 775a648d054e4ce1a65f8f17e5b51803 | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer |

@@ -3,8 +3,8 @@ Feature: Tokens lifecycle
 
   Scenario: Switching to Token authentication scheme
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     Given the annotation:
       """yaml
       /:
@@ -91,8 +91,8 @@ Feature: Tokens lifecycle
       refresh: 0.1
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | _version | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
@@ -131,8 +131,8 @@ Feature: Tokens lifecycle
 
   Scenario: Issuing own token
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
