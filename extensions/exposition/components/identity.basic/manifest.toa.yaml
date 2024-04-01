@@ -3,32 +3,38 @@ name: basic
 
 entity:
   schema:
+    authority*: string
     username*: string
     password*: string
   unique:
-    username: [username]
+    authority_username: [authority, username]
   associated: true
 
 operations:
   transit:
     concurrency: retry
     input:
+      authority: string
       username: string
       password: string
-  incept:
+  create:
     forward: transit
     query: false
     input:
+      authority*: string
       username*: string
       password*: string
-  create:
+  incept:
     input:
+      authority*: string
       id*: string
       credentials*: string
     output:
       id: string
   authenticate:
-    input: string
+    input:
+      authority*: string
+      credentials*: string
     output:
       identity:
         id: string
@@ -45,7 +51,10 @@ exposition:
   /:
     io:output: [id]
     anonymous: true
-    POST: incept
+    POST:
+      vary:embed:
+        authority: authority
+      endpoint: create
   /:id:
     io:output: [id]
     auth:role: system:identity:basic

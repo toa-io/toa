@@ -1,7 +1,7 @@
 import { genSalt, hash } from 'bcryptjs'
 import { Err } from 'error-value'
 import type { Maybe, Operation } from '@toa.io/types'
-import type { Context, Entity, TransitInput, TransitOutput } from './types'
+import type { Context, Entity, Input, Output } from './types'
 
 export class Transition implements Operation {
   private rounds: number = 10
@@ -21,11 +21,13 @@ export class Transition implements Operation {
     this.passwordRx = toRx(context.configuration.password)
   }
 
-  public async execute (input: TransitInput, object: Entity): Promise<Maybe<TransitOutput>> {
+  public async execute (input: Input, object: Entity): Promise<Maybe<Output>> {
     const existent = object._version !== 0
 
     if (existent)
       await this.tokens.revoke({ query: { id: object.id } })
+    else
+      object.authority = input.authority
 
     if (input.username !== undefined) {
       if (existent && object.username === this.principal)
