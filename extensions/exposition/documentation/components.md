@@ -111,8 +111,8 @@ secrets.
 configuration:
   identity.federation:
     trust:
-      - issuer: https://token.actions.githubusercontent.com
-        audience:
+      - iss: https://token.actions.githubusercontent.com
+        aud:
           - https://github.com/tinovyatkin
           - https://github.com/temich
 

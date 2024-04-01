@@ -72,13 +72,13 @@ annotation.
 configuration:
   identity.federation:
     trust:
-      - issuer: https://accounts.google.com
-        audience:
+      - iss: https://accounts.google.com
+        aud:
           - <GOOGLE_CLIENT_ID>
 
-      - issuer: https://appleid.apple.com
+      - iss: https://appleid.apple.com
 
-      - issuer: private.entity
+      - iss: private.entity
         secrets:
           HS384:
             key0: <THE-SECRET-STRING-FOR-HS384>

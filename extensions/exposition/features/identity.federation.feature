@@ -10,7 +10,7 @@ Feature: Identity Federation
       """yaml
       explicit_identity_creation: false
       trust:
-        - issuer: http://localhost:44444
+        - iss: http://localhost:44444
       """
     And the IDP token for User is issued
     When the following request is received:
@@ -63,7 +63,7 @@ Feature: Identity Federation
       """yaml
       explicit_identity_creation: false
       trust:
-        - issuer: http://localhost:44444
+        - iss: http://localhost:44444
           secrets:
             HS384:
               k1: the-secret
@@ -92,7 +92,7 @@ Feature: Identity Federation
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - issuer: http://localhost:44444
+        - iss: http://localhost:44444
       """
     Given the `users` is running with the following manifest:
       """yaml
@@ -168,7 +168,7 @@ Feature: Identity Federation
       """yaml
       explicit_identity_creation: false
       trust:
-        - issuer: http://localhost:44444
+        - iss: http://localhost:44444
       principal:
         iss: http://localhost:44444
         sub: root-mock-id
