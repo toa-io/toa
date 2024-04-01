@@ -49,4 +49,6 @@ exposition:
       auth:scheme: token
       auth:delegate: identity
       io:output: true # string
+      vary:embed:
+        authority: authority
       endpoint: encrypt

@@ -29,9 +29,9 @@ operations:
       sub*: string
   incept:
     input:
-      authority*: string
-      id*: string
+      authority: string
       credentials*: string
+      id: string
     output:
       id: string
   authenticate:
@@ -41,6 +41,16 @@ operations:
     output:
       identity:
         id: string
+
+exposition:
+  /:
+    POST:
+      anonymous: true
+      io:input: [authority, credentials]
+      io:output: [id]
+      vary:embed:
+        authority: authority
+      endpoint: incept
 
 configuration:
   schema:

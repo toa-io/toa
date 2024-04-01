@@ -49,9 +49,9 @@ configuration:
 exposition:
   isolated: true
   /:
-    io:output: [id]
-    anonymous: true
     POST:
+      anonymous: true
+      io:output: [id]
       vary:embed:
         authority: authority
       endpoint: create
