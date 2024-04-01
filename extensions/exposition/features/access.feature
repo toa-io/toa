@@ -285,9 +285,37 @@ Feature: Access authorization
       """
     When the following request is received:
       """
-      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      GET /identity/ HTTP/1.1
       host: nex.toa.io
-      authorization: Token v3.local.9oEtVJkfRw4cOJ8M4DxuVuAN29dGT26XMYyPAoXtwrkdkiJVSVj46sMNAOdlxwKGszJZV_ReOL26dxDVlsQ7QAIuRhRPlvsHYNOhcD-LApoAXV0S3IK16EMoEv7tE9z70FCLC3WoIW9RIQ8PR3uZhAdhSgBilsVOpWrk4XtnfCIlVwhYMKu79a66oZZhV2Q7Kl3nfYsf84-6rAL_1H0MsqCDUHVXuIg
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ developer.token }}
+
+      id: ${{ developer.id }}
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjoxMjM0NQ==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ user.token }}
+
+      id: ${{ user.id }}
+      """
+    When the following request is received:
+      """
+      GET /${{ developer.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ developer.token }}
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -303,9 +331,9 @@ Feature: Access authorization
       """
     When the following request is received:
       """
-      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      GET /${{ user.id }}/ HTTP/1.1
       host: nex.toa.io
-      authorization: Token v3.local.cjlxn4IJ9hI92KuksguzDx7_kYxgDFFGFnfNchf0cWnmos34dqX2XpTAUBd-LqgqfuH-lVGfNvjBUkw5JtHRBiIAVaPHF3Ncc0eafwgH2DPme9pndZL92fWryGnJ-sMHA28Q6UcXsIfhgd2JZ0n-585SBhwlosC3gKTcVHK7XNljeaTen4jZPw8uY-pdbsm6dDq3aKMzl8K78_BTTfiNPG2cI_aNuHw
+      authorization: Token ${{ developer.token }}
       accept: application/yaml
       """
     Then the following reply is sent:

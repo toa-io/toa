@@ -169,11 +169,11 @@ Feature: Basic authentication
       200 OK
       """
 
-  Scenario: Changing other identity the password
+  Scenario: Changing other identity's password
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     | _version |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
-      | 6c0be50cbfb043acafe69cc7d3895f84 | attacker  | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | _id                              | authority | username  | password                                                     | _version |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | 6c0be50cbfb043acafe69cc7d3895f84 | nex       | attacker  | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
@@ -208,11 +208,11 @@ Feature: Basic authentication
       message: <problem> is not meeting the requirements.
       """
     Examples:
-      | username        | password    | problem  | code             |
-      | with whitespace | secret#1234 | Username | INVALID_USERNAME |
-      | root            | short       | Password | INVALID_PASSWORD |
+      | username                                                                                                                          | password    | problem  | code             |
+      | zYF8G6obtE3c5ARpZjnMwv0L7lX2dQUyJ1KiHS9ag4fThDPVxCsuIWmNeBqkOrzYF8G6obtE3c5ARpZjnMwv0L7lX2dQUyJ1KiHS9ag4fThDPVxCsuIWmNeBqkOris129 | secret#1234 | Username | INVALID_USERNAME |
+      | root                                                                                                                              | short       | Password | INVALID_PASSWORD |
 
-  Scenario Outline: Given <property> is not meeting one of requirements
+  Scenario Outline: <property> is not meeting one of requirements
     Given the `identity.basic` configuration:
       """yaml
       <property>:
@@ -220,8 +220,8 @@ Feature: Basic authentication
         - ^[^A]{1,16}$  # should not contain 'A'
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | _version | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
