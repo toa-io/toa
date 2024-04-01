@@ -62,8 +62,7 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private async call (method: Method, context: http.Context, parameters: Parameter[]):
-  Promise<http.OutgoingMessage> {
+  private async call (method: Method, context: http.Context, parameters: Parameter[]): Promise<http.OutgoingMessage> {
     if (context.url.pathname[context.url.pathname.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required.')
 

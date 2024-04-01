@@ -202,7 +202,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
 
       code: <code>
       message: <problem> is not meeting the requirements.
@@ -234,7 +234,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
       """
     Examples:
       | property |
@@ -313,7 +313,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
 
       code: PRINCIPAL_LOCKED
       message: Principal username cannot be changed.

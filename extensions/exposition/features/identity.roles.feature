@@ -151,7 +151,7 @@ Feature: Roles management
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
 
       code: OUT_OF_SCOPE
       """

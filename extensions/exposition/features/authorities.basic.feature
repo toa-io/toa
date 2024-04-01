@@ -106,7 +106,7 @@ Feature: Basic credentials with authorities
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
       """
     When the following request is received:
       """

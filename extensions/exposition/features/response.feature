@@ -41,7 +41,7 @@ Feature: Response
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
       content-type: application/yaml
 
       code: CODE
@@ -64,7 +64,7 @@ Feature: Response
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
       content-type: application/msgpack
       """
     And response body contains MessagePack-encoded value:
