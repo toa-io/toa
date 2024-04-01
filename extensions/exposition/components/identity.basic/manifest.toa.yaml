@@ -43,8 +43,8 @@ configuration:
   rounds: 10
   pepper: ''
   principal: string
-  username+: ^\S{1,128}$
-  password+: ^\S{8,32}$
+  username+: ^.{1,128}$
+  password+: ^.{8,32}$
 
 exposition:
   isolated: true
