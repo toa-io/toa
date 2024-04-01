@@ -1,6 +1,7 @@
 /* eslint-disable no-template-curly-in-string */
 
 import { Captures } from './Captures'
+import type { Functions } from './functions'
 
 let captures: Captures
 
@@ -68,7 +69,20 @@ describe('pipelines', () => {
   })
 
   it('should generate password', async () => {
-    expect(captures.substitute('#{{ password }}')).toMatch(/^\S{12}$/)
-    expect(captures.substitute('#{{ password 8 }}')).toMatch(/^\S{8}$/)
+    expect(captures.substitute('#{{ password }}')).toMatch(/^.{16}$/)
+    expect(captures.substitute('#{{ password 8 }}')).toMatch(/^.{8}$/)
+  })
+
+  it('should execute custom function', async () => {
+    const functions: Functions = {
+      // eslint-disable-next-line max-params
+      concat: function (this: Captures, value: string, a: string, b: string): string {
+        return a + b
+      }
+    }
+
+    const captures = new Captures(functions)
+
+    expect(captures.substitute('#{{ concat foo bar }}')).toBe('foobar')
   })
 })

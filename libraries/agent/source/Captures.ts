@@ -1,7 +1,15 @@
 import * as assert from 'node:assert'
 import { functions } from './functions'
+import type { Functions } from './functions'
 
 export class Captures extends Map<string, string> {
+  private readonly functions: Functions | undefined
+
+  public constructor (functions?: Functions) {
+    super()
+    this.functions = functions
+  }
+
   public override set (key: string, value: string): this {
     if (super.has(key))
       assert.equal(super.get(key),
@@ -22,10 +30,11 @@ export class Captures extends Map<string, string> {
 
       for (const expression of expressions) {
         const [fn, ...args] = expression.split(/\s+/)
+        const f = this.functions?.[fn] ?? functions[fn]
 
-        assert.ok(fn in functions, `Unknown pipeline function: ${fn}`)
+        assert.ok(f !== undefined, `Unknown pipeline function: ${fn}`)
 
-        value = functions[fn].call(this, value, ...args)
+        value = f.call(this, value, ...args)
       }
 
       return value

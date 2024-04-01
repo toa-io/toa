@@ -5,6 +5,10 @@ import { password } from './password'
 
 import type { Captures } from '../Captures'
 
-export const functions: Record<string, (this: Captures, value: string, ...args: string[]) => string> = {
+export const functions: Functions = {
   id, set, basic, password
 }
+
+type Fn = (this: Captures, value: string, ...args: string[]) => string
+
+export type Functions = Record<string, Fn>
