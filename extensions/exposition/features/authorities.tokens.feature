@@ -78,7 +78,6 @@ Feature: Token credentials with authorities
       """
       GET /${{ one.id }}/ HTTP/1.1
       host: the.one.com
-      accept: application/yaml
       authorization: Token ${{ one.token }}
       """
     Then the following reply is sent:
@@ -89,7 +88,6 @@ Feature: Token credentials with authorities
       """
       GET /${{ two.id }}/ HTTP/1.1
       host: the.one.com
-      accept: application/yaml
       authorization: Token ${{ two.token }}
       """
     Then the following reply is sent:
@@ -102,7 +100,6 @@ Feature: Token credentials with authorities
       """
       GET /${{ one.id }}/ HTTP/1.1
       host: the.two.com
-      accept: application/yaml
       authorization: Token ${{ one.token }}
       """
     Then the following reply is sent:
@@ -113,7 +110,6 @@ Feature: Token credentials with authorities
       """
       GET /${{ two.id }}/ HTTP/1.1
       host: the.two.com
-      accept: application/yaml
       authorization: Token ${{ two.token }}
       """
     Then the following reply is sent:
