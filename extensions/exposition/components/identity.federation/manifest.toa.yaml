@@ -2,6 +2,7 @@ namespace: identity
 name: federation
 
 entity:
+  associated: true
   schema:
     type: object
     properties:
@@ -15,10 +16,12 @@ entity:
         description: The ID that represents the principal making the request
         type: string
     required:
+      - authority
       - iss
       - sub
     additionalProperties: false
-  associated: true
+  unique:
+    token: [authority, iss, sub]
 
 operations:
   transit:
