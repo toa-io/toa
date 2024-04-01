@@ -5,7 +5,7 @@ Text-based HTTP client with variables and pipelines.
 ## Pipelines
 
 - `id`: generate UUID in hex format
-- `password [length]`: generate password of a given length (default `12`)
+- `password [length]`: generate password of a given length (default `16`)
 - `basic (credentials)`: encode `credentials.username` and `credentials.password` to base64-encoded
   credentials
 - `set (variable)`: set a variable to the current pipeline value
