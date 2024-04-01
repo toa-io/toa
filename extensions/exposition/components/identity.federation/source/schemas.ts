@@ -24,7 +24,7 @@ export interface Schemas {
     /**
      * The authority token is valid for
      */
-    authority?: string;
+    authority: string;
     /**
      * The issuer, or signer, of the token, URI like `https://accounts.google.com`
      */
