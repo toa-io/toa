@@ -92,3 +92,49 @@ Feature: Basic credentials with authorities
       """
       200 OK
       """
+
+    # create `one` credentials in the `two` authority
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      host: the.one.com
+      content-type: application/yaml
+      accept: application/yaml
+
+      username: ${{ one.username }}
+      password: ${{ one.password }}
+      """
+    Then the following reply is sent:
+      """
+      409 Conflict
+      """
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      host: the.two.com
+      content-type: application/yaml
+      accept: application/yaml
+
+      username: ${{ one.username }}
+      password: ${{ one.password }}
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+
+    # create `two` credentials in the `one` authority
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      host: the.one.com
+      content-type: application/yaml
+      accept: application/yaml
+
+      username: ${{ two.username }}
+      password: ${{ two.password }}
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
