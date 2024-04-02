@@ -5,6 +5,7 @@ Text-based HTTP client with variables and expressions.
 ## Function pipelines
 
 - `id`: generate UUID in hex format
+- `email (@domain)`: generate email address with a given domain (default `@agent.test`)
 - `password [length]`: generate password of a given length (default `16`)
 - `basic (credentials)`: encode `credentials.username` and `credentials.password` to base64-encoded
   credentials
@@ -16,7 +17,7 @@ host: the.one.com
 content-type: application/yaml
 accept: application/yaml
 
-username: #{{ id | set Bubba.username }}
+username: #{{ email @bubbas.net | set Bubba.username }}
 password: '#{{ password 8 | set Bubba.password }}'
 ```
 

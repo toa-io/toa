@@ -73,6 +73,11 @@ describe('pipelines', () => {
     expect(captures.substitute('#{{ password 8 }}')).toMatch(/^.{8}$/)
   })
 
+  it('should generate email', async () => {
+    expect(captures.substitute('#{{ email }}')).toMatch(/^.*@agent\.test$/)
+    expect(captures.substitute('#{{ email @example.com }}')).toMatch(/^.*@example\.com$/)
+  })
+
   it('should execute custom function', async () => {
     const functions: Functions = {
       // eslint-disable-next-line max-params
