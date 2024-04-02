@@ -1,7 +1,7 @@
 import { HTTPParser } from 'http-parser-js'
 import type * as undici from 'undici'
 
-export function request (input: string): HTTPRequest {
+export function request (input: string, origin?: string): HTTPRequest {
   const parser = new HTTPParser(HTTPParser.REQUEST)
   const request: Partial<HTTPRequest> = {}
   const bodyChunks: Buffer[] = []
@@ -12,6 +12,9 @@ export function request (input: string): HTTPRequest {
     request.method = HTTPParser.methods[req.method] as undici.Dispatcher.HttpMethod
     request.url = req.url
     request.headers = reduceHeaders(req.headers)
+
+    if (request.headers.get('host') === null && origin !== undefined)
+      request.headers.set('host', new URL(origin).host)
   }
 
   parser[HTTPParser.kOnBody] = function (chunk, offset, length) {

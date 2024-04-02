@@ -2,7 +2,7 @@ import * as undici from 'undici'
 import * as parse from './parse'
 
 export async function request (http: string, origin?: string): Promise<undici.Dispatcher.ResponseData> {
-  const { method, url, headers, body } = parse.request(http)
+  const { method, url, headers, body } = parse.request(http, origin)
 
   const href = new URL(url, origin).href
 
