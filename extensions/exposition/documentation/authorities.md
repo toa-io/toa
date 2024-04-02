@@ -22,7 +22,7 @@ exposition:
 Each host in the authority definition is used to create a Kubernetes Ingress resource.
 
 > If the application is accessed with the `:authority` that does not match the authority definition,
-> the response with `400` status code is returned.
+> the response with `404` status code is returned.
 
 ## Embedding
 
