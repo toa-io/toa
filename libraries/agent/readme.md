@@ -34,8 +34,8 @@ authorization: Basic #{{ basic Bubba }}
 import { Agent, Captures, type Functions } from '@toa.io/agent'
 
 const functions: Functions = {
-  duplicate: function(this: Captures, value: string): string {
-    return value + value
+  duplicate: function(this: Captures, value: string, arg: string): string {
+    return arg + arg
   },
   append: function(this: Captures, value: string, arg: string): string {
     return value + arg
