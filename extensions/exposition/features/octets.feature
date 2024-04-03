@@ -11,8 +11,6 @@ Feature: Octets directive family
           octets:store: ~
         GET:
           octets:list: ~
-        PUT:
-          octets:permute: ~
         /*:
           GET:
             octets:fetch: ~
@@ -116,63 +114,6 @@ Feature: Octets directive family
     Then the following reply is sent:
       """
       404 Not Found
-      """
-
-  Scenario: Entries permutation
-    When the stream of `lenna.ascii` is received with the following headers:
-      """
-      POST / HTTP/1.1
-      host: nex.toa.io
-      accept: application/yaml
-      content-type: application/octet-stream
-      """
-    And the stream of `lenna.png` is received with the following headers:
-      """
-      POST / HTTP/1.1
-      host: nex.toa.io
-      accept: application/yaml
-      content-type: application/octet-stream
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      host: nex.toa.io
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-
-      - 10cf16b458f759e0d617f2f3d83599ff
-      - 814a0034f5549e957ee61360d87457e5
-      """
-    When the following request is received:
-      """
-      PUT / HTTP/1.1
-      host: nex.toa.io
-      content-type: application/yaml
-
-      - 814a0034f5549e957ee61360d87457e5
-      - 10cf16b458f759e0d617f2f3d83599ff
-      """
-    Then the following reply is sent:
-      """
-      204 No Content
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      host: nex.toa.io
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-
-      - 814a0034f5549e957ee61360d87457e5
-      - 10cf16b458f759e0d617f2f3d83599ff
       """
 
   Scenario: Media type control

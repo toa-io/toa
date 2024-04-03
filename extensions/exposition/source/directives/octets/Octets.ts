@@ -4,7 +4,6 @@ import { Store } from './Store'
 import { Fetch } from './Fetch'
 import { List } from './List'
 import { Delete } from './Delete'
-import { Permute } from './Permute'
 import { WorkflowDirective } from './Workflow'
 import type { Directive } from './Directive'
 import type { Output } from '../../io'
@@ -66,7 +65,6 @@ const DIRECTIVES: Record<string, Constructor> = {
   fetch: Fetch,
   list: List,
   delete: Delete,
-  permute: Permute,
   workflow: WorkflowDirective
 }
 
