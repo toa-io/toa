@@ -75,8 +75,6 @@ are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/
 
 See [source](source/Scanner.ts).
 
-If the entry already exists, it is returned and [revealed](#async-revealpath-string-maybevoid).
-
 #### `async get(path: string): Maybe<Entry>`
 
 Get an entry.
@@ -97,28 +95,28 @@ Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` er
 
 Delete the entry specified by `path`.
 
-#### `async list(path: string): string[]`
+#### `async move(path: string, to: string): Maybe<void>`
 
-Get ordered list of `id`s of entries in under the `path`.
+Moves the entry specified by `path` to the new path.
 
-#### `async permute(path: string, ids: string[]): Maybe<void>`
+`to` may be an absolute or relative path (starting with `.`), if it ends with `/`, the entry is
+moved to the `to` directory, otherwise, the entry is moved to the `to` path.
 
-Reorder entries under the `path`.
+The following examples are equivalent:
 
-Given list must be a permutation of the current list, otherwise a `PERMUTATION_MISMATCH` error is
-returned.
+```javascript
+await storage.move('/path/to/eecd837c', '/path/to/sub/eecd837c')
+await storage.move('/path/to/eecd837c', './sub/eecd837c')
+await storage.move('/path/to/eecd837c', './sub/')
+```
+
+#### `async entries(path: string): Entry[]`
+
+Get a list of entries under the `path`.
 
 #### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
 Add or replace a `name` variant of the entry specified by `path`.
-
-#### `async conceal(path: string): Maybe<void>`
-
-Remove the entry from the list.
-
-#### `async reveal(path: string): Maybe<void>`
-
-Restore the entry to the list.
 
 #### `async annotate(path: string, key: string, value: any): Maybe<void>`
 
@@ -132,7 +130,7 @@ Custom providers are not supported.
 
 ### Amazon S3
 
-Annotation formats is like:
+Annotation formats are like:
 
 ```yaml
 storages:
@@ -205,10 +203,10 @@ Underlying directory structure:
   b4f577e0            # checksum
 /storage
   /path/to
-    .list             # list of entries
+    /.entries/
+      b4f577e0        # entry
     /b4f577e0
-      .meta           # entry
-      thumbnail.jpeg  # variant BLOBs
+      thumbnail.jpeg  # variant
       thumbnail.webp
 ```
 

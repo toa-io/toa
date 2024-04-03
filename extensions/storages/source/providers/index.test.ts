@@ -69,6 +69,16 @@ describe.each(suites)('$provider', (suite) => {
     expect(result).toBeNull()
   })
 
+  it('should list files', async () => {
+    const stream = createReadStream('lenna.png')
+
+    await provider.put(dir, 'lenna.png', stream)
+
+    const result = await provider.list(dir)
+
+    expect(result).toContain('lenna.png')
+  })
+
   describe('danger', () => {
     /*
 

@@ -1,7 +1,8 @@
 import { Readable } from 'node:stream'
 import { posix } from 'node:path'
+import { buffer } from 'node:stream/consumers'
 import { decode, encode } from 'msgpackr'
-import { buffer, newid } from '@toa.io/generic'
+import { newid } from '@toa.io/generic'
 import { Err } from 'error-value'
 import { Scanner } from './Scanner'
 import type { ScanOptions } from './Scanner'
@@ -31,11 +32,19 @@ export class Storage {
   }
 
   public async get (path: string): Maybe<Entry> {
-    const metapath = posix.join(ENTRIES, path, META)
-    const result = await this.provider.get(metapath)
+    const paths = this.destruct(path)
+    const result = await this.provider.get(paths.metafile)
 
-    if (result === null) return ERR_NOT_FOUND
-    else return decode(await buffer(result))
+    if (result === null)
+      return ERR_NOT_FOUND
+    else
+      return decode(await buffer(result))
+  }
+
+  public async list (path: string): Promise<string[]> {
+    const dir = posix.join(ENTRIES_ROOT, path, ENTRIES_DIR)
+
+    return await this.provider.list(dir)
   }
 
   public async fetch (path: string): Maybe<Readable> {
@@ -50,12 +59,14 @@ export class Storage {
 
     const blob = variant === null
       ? posix.join(BLOBs, id)
-      : posix.join(ENTRIES, rel, id, variant)
+      : posix.join(ENTRIES_ROOT, rel, id, variant)
 
     const stream = await this.provider.get(blob)
 
-    if (stream === null) return ERR_NOT_FOUND
-    else return stream
+    if (stream === null)
+      return ERR_NOT_FOUND
+    else
+      return stream
   }
 
   public async delete (path: string): Maybe<void> {
@@ -64,57 +75,38 @@ export class Storage {
     if (entry instanceof Error)
       return entry
 
-    await this.conceal(path)
-    await this.provider.delete(posix.join(ENTRIES, path))
+    const paths = this.destruct(path)
+
+    await Promise.all([
+      this.provider.delete(paths.metafile),
+      this.provider.delete(paths.vardir)
+    ])
   }
 
-  public async list (path: string): Promise<string[]> {
-    const listfile = posix.join(ENTRIES, path, LIST)
-    const stream = await this.provider.get(listfile)
+  public async move (path: string, to: string): Maybe<void> {
+    const source = this.destruct(path)
+    const rel = to.startsWith('.')
+    const dir = to.endsWith('/')
 
-    return stream === null ? [] : decode(await buffer(stream))
-  }
+    if (rel)
+      to = posix.resolve(source.rel + '/', to)
 
-  public async permute (path: string, ids: string[]): Maybe<void> {
-    const unique = new Set(ids)
-    const dir = posix.join(ENTRIES, path)
-    const list = await this.list(path)
+    if (dir)
+      to = posix.join(to, source.ent)
 
-    if (list.length !== ids.length || unique.size !== ids.length)
-      return ERR_PERMUTATION_MISMATCH
+    const target = this.destruct(to)
 
-    for (const id of ids)
-      if (!list.includes(id))
-        return ERR_PERMUTATION_MISMATCH
-
-    await this.provider.put(dir, LIST, Readable.from(encode(ids)))
-  }
-
-  public async conceal (path: string): Maybe<void> {
-    const { id, rel } = this.parse(path)
-    const dir = posix.join(ENTRIES, rel)
-    const list = await this.list(rel)
-    const index = list.indexOf(id)
-
-    if (index === -1)
-      return ERR_NOT_FOUND
-
-    list.splice(index, 1)
-
-    await this.provider.put(dir, LIST, Readable.from(encode(list)))
-  }
-
-  public async reveal (path: string): Maybe<void> {
-    const { id, rel } = this.parse(path)
-
-    return await this.enroll(rel, id)
+    await Promise.all([
+      this.provider.move(source.metafile, target.metafile),
+      this.provider.moveDir(source.vardir, target.vardir)
+    ])
   }
 
   public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
     const scanner = new Scanner()
     const pipe = stream.pipe(scanner)
 
-    await this.provider.put(posix.join(ENTRIES, path), name, pipe)
+    await this.provider.put(posix.join(ENTRIES_ROOT, path), name, pipe)
 
     if (scanner.error !== null)
       return scanner.error
@@ -138,8 +130,10 @@ export class Storage {
       return entry
 
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    if (value === undefined) delete entry.meta[key]
-    else entry.meta[key] = value
+    if (value === undefined)
+      delete entry.meta[key]
+    else
+      entry.meta[key] = value
 
     await this.save(path, entry)
   }
@@ -177,36 +171,14 @@ export class Storage {
     if (existing instanceof Error)
       await this.save(metafile, entry)
 
-    await this.enroll(path, id, true)
-
     return entry
   }
 
-  private async save (rel: string, entry: Entry): Promise<void> {
-    const buffer = encode(entry)
-    const stream = Readable.from(buffer)
+  private async save (path: string, entry: Entry): Promise<void> {
+    const paths = this.destruct(path)
+    const stream = Readable.from(encode(entry))
 
-    await this.provider.put(posix.join(ENTRIES, rel), META, stream)
-  }
-
-  private async enroll (path: string, id: string, addition: boolean = false): Maybe<void> {
-    const dir = posix.join(ENTRIES, path)
-    const list = await this.list(path)
-    const index = list.indexOf(id)
-
-    if (index !== -1)
-      if (addition) list.splice(index, 1)
-      else return
-    else if (!addition) {
-      const entry = await this.get(posix.join(path, id))
-
-      if (entry instanceof Error)
-        return entry
-    }
-
-    list.push(id)
-
-    await this.provider.put(dir, LIST, Readable.from(encode(list)))
+    await this.provider.put(paths.metadir, paths.ent, stream)
   }
 
   private parse (path: string): Path {
@@ -217,16 +189,25 @@ export class Storage {
 
     return { rel, id, variant }
   }
+
+  private destruct (path: string): Paths {
+    const rel = posix.dirname(path)
+    const dir = posix.join(ENTRIES_ROOT, rel)
+    const ent = posix.basename(path)
+    const metadir = posix.join(dir, ENTRIES_DIR)
+    const metafile = posix.join(metadir, ent)
+    const vardir = posix.join(dir, ent)
+
+    return { rel, dir, ent, metadir, metafile, vardir }
+  }
 }
 
 const ERR_NOT_FOUND = Err('NOT_FOUND')
-const ERR_PERMUTATION_MISMATCH = Err('PERMUTATION_MISMATCH')
 
 const TEMP = '/temp'
 const BLOBs = '/blobs'
-const ENTRIES = '/entries'
-const LIST = '.list'
-const META = '.meta'
+const ENTRIES_ROOT = '/entries'
+const ENTRIES_DIR = '.meta'
 
 type Maybe<T> = Promise<T | Error>
 
@@ -234,6 +215,15 @@ interface Path {
   rel: string
   id: string
   variant: string | null
+}
+
+interface Paths {
+  rel: string
+  dir: string
+  ent: string
+  metadir: string
+  metafile: string
+  vardir: string
 }
 
 type Meta = Record<string, string>

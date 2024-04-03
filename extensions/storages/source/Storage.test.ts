@@ -13,7 +13,7 @@ import type { ProviderConstructor } from './Provider'
 let storage: Storage
 let dir: string
 
-const suite = suites[0]
+const suite = suites[0] // replace with 2 to run tests for S3
 
 beforeAll(async () => {
   process.chdir(path.join(__dirname, 'test'))
@@ -103,18 +103,6 @@ describe('put', () => {
   })
 
   describe('existing entry', () => {
-    it('should unhide existing', async () => {
-      const stream = createReadStream('lenna.png')
-      const path = `${dir}/${lenna.id}`
-
-      await storage.conceal(path)
-      await storage.put(dir, stream)
-
-      const list = await storage.list(dir)
-
-      expect(list).toContainEqual(lenna.id)
-    })
-
     it('should preserve meta', async () => {
       const path = `${dir}/${lenna.id}`
       const stream = createReadStream('lenna.png')
@@ -145,67 +133,6 @@ describe('list', () => {
     const list = await storage.list(dir)
 
     expect(list).toEqual([albert.id, lenna.id])
-  })
-
-  it('should permutate', async () => {
-    const error = await storage.permute(dir, [lenna.id, albert.id])
-
-    expect(error).toBeUndefined()
-
-    const list = await storage.list(dir)
-
-    expect(list).toEqual([lenna.id, albert.id])
-  })
-
-  it('should return PERMUTATION_MISMATCH', async () => {
-    const cases = [
-      [lenna.id],
-      [albert.id, lenna.id, 'unknown'],
-      [lenna.id, lenna.id],
-      [lenna.id, lenna.id, albert.id]
-    ]
-
-    for (const permutation of cases) {
-      const error = await storage.permute(dir, permutation)
-
-      expect(error).toBeInstanceOf(Error)
-      expect(error).toHaveProperty('code', 'PERMUTATION_MISMATCH')
-    }
-  })
-
-  it('should exclude concealed', async () => {
-    const path = `${dir}/${lenna.id}`
-
-    await storage.conceal(path)
-
-    const entries = await storage.list(dir)
-
-    expect(entries).toEqual([albert.id])
-  })
-
-  it('should reveal', async () => {
-    const path = `${dir}/${lenna.id}`
-
-    await storage.conceal(path)
-    await storage.reveal(path)
-    await storage.reveal(path) // test that no duplicates are created
-
-    const entries = await storage.list(dir)
-
-    expect(entries).toEqual([albert.id, lenna.id])
-  })
-
-  it('should return ERR_NOT_FOOUD if entry doesnt exist', async () => {
-    const path = `${dir}/oopsie`
-
-    const methods: Array<'reveal' | 'conceal'> = ['reveal', 'conceal']
-
-    for (const method of methods) {
-      const error = await storage[method](path)
-
-      expect(error).toBeInstanceOf(Error)
-      expect(error).toHaveProperty('code', 'NOT_FOUND')
-    }
   })
 })
 
@@ -380,6 +307,62 @@ describe('delete', () => {
   })
 })
 
+describe('move', () => {
+  let lenna: Entry
+
+  beforeEach(async () => {
+    const stream = createReadStream('lenna.png')
+
+    lenna = (await storage.put(dir, stream)) as Entry
+  })
+
+  it('should move entry', async () => {
+    const path = `${dir}/${lenna.id}`
+    const to = `${dir}/lenna`
+
+    await storage.move(path, to)
+
+    const entry = await storage.get(to)
+
+    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
+  })
+
+  it('should move to subdirectory', async () => {
+    const path = `${dir}/${lenna.id}`
+    const to = `${dir}/sub/`
+
+    await storage.move(path, to)
+
+    const entry = await storage.get(to + lenna.id)
+
+    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
+  })
+
+  it('should move to relative path', async () => {
+    const path = `${dir}/${lenna.id}`
+    const to = './sub/'
+
+    await storage.move(path, to)
+
+    const entry = await storage.get(`${dir}/sub/${lenna.id}`)
+
+    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
+  })
+
+  it('should move variants', async () => {
+    const stream = createReadStream('sample.jpeg')
+
+    const path = `${dir}/${lenna.id}`
+
+    await storage.diversify(path, 'foo', stream)
+    await storage.move(path, `${dir}/lenna`)
+
+    const variant = await storage.fetch(`${dir}/lenna.foo`)
+
+    assert.ok(variant instanceof Readable)
+  })
+})
+
 describe('signatures', () => {
   it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
     async (type) => {
@@ -391,7 +374,7 @@ describe('signatures', () => {
     })
 })
 
-it("should return error if type doesn't match", async () => {
+it('should return error if type doesn\'t match', async () => {
   const stream = createReadStream('sample.jpeg')
 
   const result = await storage.put(dir, stream, { claim: 'image/png' })
