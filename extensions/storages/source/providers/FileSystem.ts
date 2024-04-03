@@ -29,11 +29,19 @@ export class FileSystem extends Provider<FileSystemOptions> {
     }
   }
 
+  public async list (path: string): Promise<string[]> {
+    const dir = join(this.path, path)
+
+    return (await fs.readdir(dir, { withFileTypes: true }))
+      .filter((dirent) => dirent.isFile())
+      .map((dirent) => dirent.name)
+  }
+
   public async put (rel: string, filename: string, stream: Readable): Promise<void> {
     const dir = join(this.path, rel)
     const path = join(dir, filename)
 
-    await fs.mkdir(dirname(path), { recursive: true })
+    await fs.mkdir(dir, { recursive: true })
     await fs.writeFile(path, stream)
   }
 
@@ -47,5 +55,9 @@ export class FileSystem extends Provider<FileSystemOptions> {
 
     await fs.mkdir(dirname(to), { recursive: true })
     await fs.rename(from, to)
+  }
+
+  public async moveDir (from: string, to: string): Promise<void> {
+    await this.move(from, to).catch(() => null)
   }
 }

@@ -66,7 +66,8 @@ Credentials specified in the output file are preserved.
 <dt><code>toa export manifest</code></dt>
 <dd>Print normalized manifest.
 
-<code>--path</code> path to component (default <code>.</code>)<br/>
+<code>--path</code> path to a component (default <code>.</code>)<br/>
+<code>--jsonpath</code> JSONPath expression to filter the output<br/>
 <code>--error</code> print errors only<br/>
 <code>--output</code> output format (default <code>yaml</code>)
 </dd>
