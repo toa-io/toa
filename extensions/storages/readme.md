@@ -99,26 +99,11 @@ Delete the entry specified by `path`.
 
 #### `async list(path: string): string[]`
 
-Get ordered list of `id`s of entries in under the `path`.
-
-#### `async permute(path: string, ids: string[]): Maybe<void>`
-
-Reorder entries under the `path`.
-
-Given list must be a permutation of the current list, otherwise a `PERMUTATION_MISMATCH` error is
-returned.
+Get a list of `id`s of entries under the `path`.
 
 #### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
 Add or replace a `name` variant of the entry specified by `path`.
-
-#### `async conceal(path: string): Maybe<void>`
-
-Remove the entry from the list.
-
-#### `async reveal(path: string): Maybe<void>`
-
-Restore the entry to the list.
 
 #### `async annotate(path: string, key: string, value: any): Maybe<void>`
 
@@ -205,10 +190,10 @@ Underlying directory structure:
   b4f577e0            # checksum
 /storage
   /path/to
-    .list             # list of entries
+    /.entries/
+      b4f577e0        # entry
     /b4f577e0
-      .meta           # entry
-      thumbnail.jpeg  # variant BLOBs
+      thumbnail.jpeg  # variant
       thumbnail.webp
 ```
 

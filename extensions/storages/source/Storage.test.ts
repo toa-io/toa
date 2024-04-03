@@ -147,7 +147,7 @@ describe('list', () => {
     expect(list).toEqual([albert.id, lenna.id])
   })
 
-  it('should permutate', async () => {
+  it('should permute', async () => {
     const error = await storage.permute(dir, [lenna.id, albert.id])
 
     expect(error).toBeUndefined()
@@ -195,7 +195,7 @@ describe('list', () => {
     expect(entries).toEqual([albert.id, lenna.id])
   })
 
-  it('should return ERR_NOT_FOOUD if entry doesnt exist', async () => {
+  it('should return ERR_NOT_FOUND if entry doesnt exist', async () => {
     const path = `${dir}/oopsie`
 
     const methods: Array<'reveal' | 'conceal'> = ['reveal', 'conceal']
@@ -391,7 +391,7 @@ describe('signatures', () => {
     })
 })
 
-it("should return error if type doesn't match", async () => {
+it('should return error if type doesn\'t match', async () => {
   const stream = createReadStream('sample.jpeg')
 
   const result = await storage.put(dir, stream, { claim: 'image/png' })
