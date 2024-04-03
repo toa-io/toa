@@ -17,6 +17,12 @@ const builder = (yargs) => {
       desc: 'Path to a component',
       default: '.'
     })
+    .option('jsonpath', {
+      alias: 'j',
+      group: 'Command options:',
+      type: 'string',
+      desc: 'JSONPath expression'
+    })
     .option('output', {
       alias: 'o',
       group: 'Command options:',

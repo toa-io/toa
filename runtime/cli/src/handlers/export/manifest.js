@@ -1,5 +1,6 @@
 'use strict'
 
+const jsonpath = require('jsonpath')
 const { component } = require('@toa.io/norm')
 const { console } = require('@toa.io/console')
 const yaml = require('@toa.io/yaml')
@@ -11,7 +12,10 @@ const print = async (argv) => {
 
   if (path === undefined) throw new Error(`No component found in ${argv.path}`)
 
-  const manifest = await component(path)
+  let manifest = await component(path)
+
+  if (argv.jsonpath !== undefined)
+    manifest = jsonpath.query(manifest, argv.jsonpath)
 
   if (argv.error !== true) {
     const result = argv.output === 'json'
