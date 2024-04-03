@@ -19,6 +19,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       GET /pots/4c4759e6f9c74da989d64511df42d6f4/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -28,6 +29,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -47,6 +49,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       GET /pots/4c4759e6f9c74da989d64511df42d6f4/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -68,6 +71,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       GET /pots/4c4759e6f9c74da989d64511df42d6f4/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -85,6 +89,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -114,6 +119,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 
@@ -142,6 +148,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       content-type: application/yaml
 
@@ -158,6 +165,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       title: Hello
@@ -180,6 +188,7 @@ Feature: IO restrictions
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 

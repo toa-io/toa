@@ -14,6 +14,7 @@ Feature: Optimistic concurrency control
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 
@@ -30,6 +31,7 @@ Feature: Optimistic concurrency control
     When the following request is received:
       """
       GET /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -39,6 +41,7 @@ Feature: Optimistic concurrency control
     When the following request is received:
       """
       GET /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       if-none-match: "1"
       """
     Then the following reply is sent:
@@ -49,6 +52,7 @@ Feature: Optimistic concurrency control
     When the following request is received:
       """
       PUT /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       if-match: "38"
 
@@ -61,6 +65,7 @@ Feature: Optimistic concurrency control
     When the following request is received:
       """
       PUT /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       if-match: "1"
 
@@ -83,6 +88,7 @@ Feature: Optimistic concurrency control
     When the following request is received:
       """
       PUT /pots/fa177da8393544139915795816ad6b97/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       content-type: application/yaml
       if-match: "oopsie"

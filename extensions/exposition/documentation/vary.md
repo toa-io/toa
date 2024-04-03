@@ -7,17 +7,15 @@ operation call.
 
 ```yaml
 exposition:
-  realms:
-    toa: the.toa.io
   /:group:
     vary:languages: [en, fr]
     GET:
       vary:embed:
-        lang: language # predefined embeddings
-        realm: realm
+        app: authority # predefined embeddings
+        lang: language
         token: :x-access-token # raw header value
         group: /:group # route parameter
-      endpoint: dummies.get
+      endpoint: observe
 ```
 
 ## Embeddings
@@ -31,13 +29,9 @@ If the value is an array, the first non-empty embedding function's result is use
 > If a property is already present in the input, the embedded value will overwrite its current
 > value.
 
-### Realm
+### Authority
 
-Realm is an identifier of a domain used to access the Exposition.
-The list of domains is defined by the `vary:realms` directive,
-which is a map of realm names to their domain names.
-
-The `realm` embedding substitutes the realm identified based on the `host` request header.
+The `authority` embedding substitutes request [authority identifier](authorities.md).
 
 ### Language
 

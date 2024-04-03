@@ -7,6 +7,8 @@ let configuration: Configuration
 let context: Context
 let encrypt: Encrypt
 
+const authority = generate()
+
 beforeEach(() => {
   configuration = {
     key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
@@ -25,14 +27,14 @@ it('should decrypt', async () => {
   const identity: Identity = { id: generate() }
   const lifetime = 100
 
-  const reply = await encrypt.execute({ identity, lifetime })
+  const reply = await encrypt.execute({ authority, identity, lifetime })
 
   if (reply === undefined)
     throw new Error('?')
 
   const decrypted = await decrypt(reply, context)
 
-  expect(decrypted).toMatchObject({ identity, refresh: false })
+  expect(decrypted).toMatchObject({ authority, identity, refresh: false })
 })
 
 it('should decrypt with key1', async () => {
@@ -48,7 +50,7 @@ it('should decrypt with key1', async () => {
   const identity: Identity = { id: generate() }
   const lifetime = 100
 
-  const encrypted = await encrypt.execute({ identity, lifetime })
+  const encrypted = await encrypt.execute({ authority, identity, lifetime })
 
   if (encrypted === undefined)
     throw new Error('?')

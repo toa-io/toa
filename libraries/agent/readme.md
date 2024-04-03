@@ -1,21 +1,57 @@
-# HTTP
+# Agent
 
-Text-level http client.
+Text-based HTTP client with variables and expressions.
 
-Combination of [http-parser-js](https://github.com/creationix/http-parser-js)
-and Fetch API
+## Function pipelines
 
-`request(http: string): string`
+- `id`: generate UUID in hex format
+- `email (@domain)`: generate email address with a given domain (default `@agent.test`)
+- `password [length]`: generate password of a given length (default `16`)
+- `basic (credentials)`: encode `credentials.username` and `credentials.password` to base64-encoded
+  credentials
+- `set (variable)`: set a variable to the current pipeline value
 
-Perform an HTTP request.
+```http
+POST /identity/basic/ HTTP/1.1
+host: the.one.com
+content-type: application/yaml
+accept: application/yaml
 
-> `Request-URI` must be passed in the `absoluteURI`
-> form [[5.1.2]](https://datatracker.ietf.org/doc/html/rfc2616#section-5.1.2).
-
-## CLI
-
-```shell
-$ npm i -g @toa.io/agent
-$ http
-GET https://google.com/ HTTP/1.1
+username: #{{ email @bubbas.net | set Bubba.username }}
+password: '#{{ password 8 | set Bubba.password }}'
 ```
+
+> Quotes must surround passwords to prevent invalid YAML.
+
+```http
+GET / HTTP/1.1
+host: the.one.com
+authorization: Basic #{{ basic Bubba }}
+```
+
+### Custom functions
+
+```typescript
+import { Agent, Captures, type Functions } from '@toa.io/agent'
+
+const functions: Functions = {
+  duplicate: function(this: Captures, value: string, arg: string): string {
+    return arg + arg
+  },
+  append: function(this: Captures, value: string, arg: string): string {
+    return value + arg
+  }
+}
+
+const captures = new Captures(functions)
+const agent = new Agent('http://localhost:8000', captures)
+```
+
+```http request
+PUT / HTTP/1.1
+content-type: application/yaml
+
+foo: #{{ duplicate bar | append baz }}
+```
+
+In the above example, `foo` will be set to `barbarbaz`.

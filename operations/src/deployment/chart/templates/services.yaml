@@ -38,6 +38,7 @@ spec:
       targetPort: {{ .port }}
 ---
 {{- if .ingress }}
+{{- $service := .name }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -51,15 +52,17 @@ spec:
   ingressClassName: {{ .ingress.class }}
   {{- end }}
   rules:
-    - host: {{ required "ingress.host is required" .ingress.host }}
+    {{- range .ingress.hosts }}
+    - host: {{ . }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: extension-{{ .name }}
+                name: extension-{{ $service }}
                 port:
                   number: 8000
+    {{- end }}
 {{- end }}
 {{- end }}

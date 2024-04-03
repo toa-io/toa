@@ -28,7 +28,7 @@ export class Endpoint implements RTD.Endpoint {
     const reply = await this.remote.invoke(this.endpoint, request)
 
     if (reply instanceof Error)
-      throw new http.Conflict(reply)
+      throw new http.UnprocessableEntity(reply)
 
     const message: http.OutgoingMessage = {}
 

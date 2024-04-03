@@ -42,6 +42,7 @@ Feature: Octets directive family
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
       """
@@ -57,6 +58,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       """
     Then the stream equals to `lenna.ascii` is sent with the following headers:
       """
@@ -68,6 +70,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       if-none-match: ${{ ETAG }}
       """
     Then the following reply is sent:
@@ -77,6 +80,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -89,6 +93,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff?foo=bar HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -97,6 +102,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -105,6 +111,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -115,18 +122,21 @@ Feature: Octets directive family
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
       """
     And the stream of `lenna.png` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
       """
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -140,6 +150,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       PUT / HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       - 814a0034f5549e957ee61360d87457e5
@@ -152,6 +163,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -167,6 +179,7 @@ Feature: Octets directive family
     When the stream of `lenna.png` is received with the following headers:
       """
       POST /media/jpeg-or-png/ HTTP/1.1
+      host: nex.toa.io
       content-type: image/jpeg
       """
     Then the following reply is sent:
@@ -176,6 +189,7 @@ Feature: Octets directive family
     When the stream of `lenna.png` is received with the following headers:
       """
       POST /media/jpeg/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -184,6 +198,7 @@ Feature: Octets directive family
     When the stream of `lenna.png` is received with the following headers:
       """
       POST /media/jpeg-or-png/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -194,6 +209,7 @@ Feature: Octets directive family
     When the stream of `sample.<ext>` is received with the following headers:
       """
       POST /media/images/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -215,6 +231,7 @@ Feature: Octets directive family
     When the stream of `sample.svg` is received with the following headers:
       """
       POST /media/images/ HTTP/1.1
+      host: nex.toa.io
       content-type: image/svg+xml
       accept: application/yaml
       """
@@ -229,6 +246,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET /whatever HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -239,12 +257,14 @@ Feature: Octets directive family
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
       """
     And the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -273,6 +293,7 @@ Feature: Octets directive family
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -281,6 +302,7 @@ Feature: Octets directive family
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:

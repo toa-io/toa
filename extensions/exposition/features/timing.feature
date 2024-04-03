@@ -12,6 +12,7 @@ Feature: Server timing
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       title: Hello
@@ -30,6 +31,7 @@ Feature: Server timing
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       title: Hello
@@ -56,6 +58,7 @@ Feature: Server timing
     When the stream of `lenna.png` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       content-type: application/octet-stream
       """
     # to debug, break it and look at the console

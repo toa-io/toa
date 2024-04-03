@@ -4,8 +4,8 @@ Feature: Caching
     Given the `identity.basic` database contains:
       # developer:secret
       # user:12345
-      | _id                              | username  | password                                                     |
-      | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | authority | username  | password                                                     |
+      | b70a7dbca6b14a2eaac8a9eb4b2ff4db | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     Given the `identity.roles` database contains:
       | _id                              | identity                         | role      |
       | 775a648d054e4ce1a65f8f17e5b51803 | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer |
@@ -23,6 +23,7 @@ Feature: Caching
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -55,7 +56,20 @@ Feature: Caching
       """
     When the following request is received:
       """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      cache-control: no-store
+      """
+    When the following request is received:
+      """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -69,8 +83,9 @@ Feature: Caching
     When the following request is received:
       """
       GET /foo/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
-      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      authorization: Token ${{ token }}
       """
     Then the following reply is sent:
       """
@@ -83,8 +98,9 @@ Feature: Caching
     When the following request is received:
       """
       GET /bar/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
-      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      authorization: Token ${{ token }}
       """
     Then the following reply is sent:
       """
@@ -111,6 +127,7 @@ Feature: Caching
     When the following request is received:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the reply does not contain:
@@ -130,8 +147,21 @@ Feature: Caching
       """
     When the following request is received:
       """
-      GET / HTTP/1.1
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      cache-control: no-store
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
       accept: text/plain
 
       """
@@ -155,6 +185,7 @@ Feature: Caching
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the reply does not contain:
@@ -178,6 +209,7 @@ Feature: Caching
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     # `no-store` when token is issued
@@ -185,10 +217,12 @@ Feature: Caching
       """
       200 OK
       authorization: Token ${{ token }}
+      cache-control: no-store
       """
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       """
     Then the following reply is sent:

@@ -18,6 +18,7 @@ Feature: Routes
     When the following request is received:
       """
       GET /basic/greeter<route> HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -42,6 +43,7 @@ Feature: Routes
     When the following request is received:
       """
       GET /greeter/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -65,6 +67,7 @@ Feature: Routes
     When the following request is received:
       """
       GET /greeter/baz/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -76,6 +79,7 @@ Feature: Routes
     When the following request is received:
       """
       GET /greeter/baz/qux/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -84,6 +88,7 @@ Feature: Routes
     When the following request is received:
       """
       GET /greeter/foo/baz/bar/ HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -112,6 +117,7 @@ Feature: Routes
     When the following request is received:
       """
       GET /users/properties/b5534021e30042259badffbd1831e472/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -123,6 +129,7 @@ Feature: Routes
     When the following request is received:
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       name: Alice

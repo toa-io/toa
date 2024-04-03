@@ -9,5 +9,5 @@ const path = resolve(__dirname, '../schemas')
 const namespace = schemas.namespace(path)
 
 export const querystring: Schema<Query> = namespace.schema('querystring')
-export const annotaion: Schema<Annotation> = namespace.schema('annotation')
+export const annotation: Schema<Annotation> = namespace.schema('annotation')
 export const node: Schema<Node> = namespace.schema('node')

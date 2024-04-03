@@ -23,6 +23,7 @@ Feature: Octets storage workflows
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
       """
@@ -49,6 +50,7 @@ Feature: Octets storage workflows
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       accept: application/vnd.toa.octets.entry+yaml
       """
     Then the following reply is sent:
@@ -67,6 +69,7 @@ Feature: Octets storage workflows
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff.hello.png HTTP/1.1
+      host: nex.toa.io
       """
     Then the stream equals to `lenna.png` is sent with the following headers:
       """
@@ -92,6 +95,7 @@ Feature: Octets storage workflows
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
       """
@@ -134,6 +138,7 @@ Feature: Octets storage workflows
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -143,6 +148,7 @@ Feature: Octets storage workflows
     When the following request is received:
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -157,6 +163,7 @@ Feature: Octets storage workflows
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -183,6 +190,7 @@ Feature: Octets storage workflows
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -192,6 +200,7 @@ Feature: Octets storage workflows
     When the following request is received:
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -209,6 +218,7 @@ Feature: Octets storage workflows
     When the following request is received:
       """
       GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -231,6 +241,7 @@ Feature: Octets storage workflows
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST /hello/world/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
       """
@@ -265,6 +276,7 @@ Feature: Octets storage workflows
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
+      host: nex.toa.io
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -274,6 +286,7 @@ Feature: Octets storage workflows
     When the following request is received:
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:

@@ -13,9 +13,9 @@ Feature: Docker image tags
       """yaml
       compositions:
         - name: dummies-one
-          image: localhost:5000/collection/composition-dummies-one:7bf39a7d
+          image: localhost:5000/collection/composition-dummies-one:0076e53d
         - name: dummies-two
-          image: localhost:5000/collection/composition-dummies-two:94e14bb7
+          image: localhost:5000/collection/composition-dummies-two:30f2dab4
       """
 
   @skip
@@ -36,5 +36,5 @@ Feature: Docker image tags
       """yaml
       compositions:
         - name: dummies
-          image: localhost:5000/collection/composition-dummies:b09d46fe
+          image: localhost:5000/collection/composition-dummies:08137e38
       """

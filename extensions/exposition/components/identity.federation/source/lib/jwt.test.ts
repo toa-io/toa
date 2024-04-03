@@ -22,7 +22,7 @@ describe('jwt', () => {
       signature: '4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg',
       trusted: [
         {
-          issuer: 'test-issuer',
+          iss: 'test-issuer',
           secrets: {
             HS256: {
               k1: 'old-secret',
@@ -43,7 +43,7 @@ describe('jwt', () => {
       signature: 'signature',
       trusted: [
         {
-          issuer: 'test-issuer',
+          iss: 'test-issuer',
           secrets: {
             HS256: {
               theKey: 'secret'

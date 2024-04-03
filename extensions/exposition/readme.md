@@ -20,7 +20,8 @@ exposition:
 # context.toa.yaml
 
 exposition:
-  host: api.example.com
+  authorities:
+    example: api.example.com
 ```
 
 ```http
@@ -117,33 +118,36 @@ The Exposition annotation declares options for its deployment.
 ```yaml
 annotations:
   '@toa.io/extensions.exposition':
-    host: the.exmaple.com
+    authorities:
+      example: the.example.com
 ```
 
 A shortcut is also available.
 
 ```yaml
 exposition:
-  host: the.example.com
+  authorities:
+    example: the.example.com
 ```
 
-| Option        | Type      | Description                                                                                                       |
-|---------------|-----------|-------------------------------------------------------------------------------------------------------------------|
-| `host`        | `string`  | Domain name to be used for the corresponding Kubernetes Ingress.                                                  |
-| `class`       | `string`  | Ingress class                                                                                                     |
-| `annotations` | `object`  | Ingress annotations                                                                                               |
-| `debug`       | `boolean` | Output server errors. Default `false`.                                                                            |
-| `trace`       | `boolean` | Output [server timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server-Timing). Default `false`. |
+| Option        | Description                                                                                                       |
+|---------------|-------------------------------------------------------------------------------------------------------------------|
+| `auhorities`  | Mapping of authority identifiers to domain names. See [Authorities](documentation/authorities.md).                |
+| `class`       | Ingress class.                                                                                                    |
+| `annotations` | Ingress annotations.                                                                                              |
+| `debug`       | Output server errors. Default `false`.                                                                            |
+| `trace`       | Output [server timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server-Timing). Default `false`. |
 
 ### Context resources
 
-Exposition annotaion can contain [resource declaration](documentation/tree.md) under the `/` key.
+Exposition annotation can contain [resource declaration](documentation/tree.md) under the `/` key.
 
 ```yaml
 # context.toa.yaml
 
 exposition:
-  host: the.example.com
+  authorities:
+    example: the.example.com
   /:
     /code:
       GET:
@@ -162,8 +166,9 @@ If component resource branch conflicts with an annotation, the annotation takes 
 
 ```yaml
 exposition:
-  host: the.example.com
-  host@staging: the.example.dev
+  authorities:
+    example: the.example.com
+    example@staging: the.example.dev
   class: alb
   debug@staging: true
   annotations:

@@ -31,8 +31,9 @@ export class Incept implements Directive {
     this.schemes[scheme] ??= await this.discovery[provider]
 
     const identity = await this.schemes[scheme]
-      .invoke<Maybe<Identity>>('create', {
+      .invoke<Maybe<Identity>>('incept', {
       input: {
+        authority: input.authority,
         id,
         credentials
       }

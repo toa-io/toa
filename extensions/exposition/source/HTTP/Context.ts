@@ -6,6 +6,7 @@ import type { OutgoingMessage } from './messages'
 import type * as http from 'node:http'
 
 export class Context {
+  public readonly authority: string
   public readonly request: IncomingMessage
   public readonly url: URL
   public readonly subtype: string | null = null
@@ -17,7 +18,8 @@ export class Context {
     response: []
   }
 
-  public constructor (request: IncomingMessage, trace = false) {
+  public constructor (authority: string, request: IncomingMessage, trace = false) {
+    this.authority = authority
     this.request = request
 
     this.url = new URL(request.url, `https://${request.headers.host}`)

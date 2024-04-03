@@ -33,10 +33,7 @@ export class Gateway extends Connector {
     if (match === null)
       throw new http.NotFound('Route not found')
 
-    const {
-      node,
-      parameters
-    } = match
+    const { node, parameters } = match
 
     if (!(context.request.method in node.methods))
       throw new http.MethodNotAllowed()
@@ -65,8 +62,7 @@ export class Gateway extends Connector {
     console.info('Gateway is closed.')
   }
 
-  private async call (method: Method, context: http.Context, parameters: Parameter[]):
-  Promise<http.OutgoingMessage> {
+  private async call (method: Method, context: http.Context, parameters: Parameter[]): Promise<http.OutgoingMessage> {
     if (context.url.pathname[context.url.pathname.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required.')
 

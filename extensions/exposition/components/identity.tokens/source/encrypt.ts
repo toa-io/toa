@@ -20,6 +20,7 @@ export class Effect implements Operation {
 
     const payload: Partial<Claim> = {
       identity: input.identity,
+      aud: input.authority,
       exp
     }
 

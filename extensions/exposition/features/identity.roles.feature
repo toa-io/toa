@@ -5,9 +5,9 @@ Feature: Roles management
     # root:secret
     # user:pass
     Given the `identity.basic` database contains:
-      | _id                              | username | password                                                     |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | root     | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
-      | 4344518184ad44228baffce7a44fd0b1 | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+      | _id                              | authority | username | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | root     | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
     And the `identity.roles` database contains:
       | _id                              | identity                         | role                  |
       | 9c4702490ff84f2a9e1b1da2ab64bdd4 | 72cf9b0ab0ac4ab2b8036e4e940ddcae | system:identity:roles |
@@ -24,6 +24,7 @@ Feature: Roles management
       # user doesn't have the required role
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNz
       """
     Then the following reply is sent:
@@ -34,6 +35,7 @@ Feature: Roles management
       # root adds a role to a user
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic cm9vdDpzZWNyZXQ=
       accept: application/yaml
       content-type: application/yaml
@@ -50,6 +52,7 @@ Feature: Roles management
       # user now have the role
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNz
       """
     Then the following reply is sent:
@@ -61,9 +64,9 @@ Feature: Roles management
     # moderator:secret
     # assistant:pass
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
-      | 4344518184ad44228baffce7a44fd0b1 | assistant | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+      | _id                              | authority | username  | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | assistant | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
     And the `identity.roles` database contains:
       | _id                              | identity                         | role                             |
       | 9c4702490ff84f2a9e1b1da2ab64bdd4 | 72cf9b0ab0ac4ab2b8036e4e940ddcae | system:identity:roles:delegation |
@@ -81,6 +84,7 @@ Feature: Roles management
       # assistant doesn't have the required role
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic YXNzaXN0YW50OnBhc3M=
       """
     Then the following reply is sent:
@@ -91,6 +95,7 @@ Feature: Roles management
       # moderator delegates a role to an assistant
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       content-type: application/yaml
 
@@ -104,6 +109,7 @@ Feature: Roles management
       # assistant has access
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic YXNzaXN0YW50OnBhc3M=
       """
     Then the following reply is sent:
@@ -117,9 +123,9 @@ Feature: Roles management
 
   Scenario: Delegating role out of own scope
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
-      | 4344518184ad44228baffce7a44fd0b1 | assistant | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+      | _id                              | authority | username  | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | assistant | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
     And the `identity.roles` database contains:
       | _id                              | identity                         | role                             |
       | 9c4702490ff84f2a9e1b1da2ab64bdd4 | 72cf9b0ab0ac4ab2b8036e4e940ddcae | system:identity:roles:delegation |
@@ -136,6 +142,7 @@ Feature: Roles management
     When the following request is received:
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
@@ -144,16 +151,16 @@ Feature: Roles management
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
 
       code: OUT_OF_SCOPE
       """
 
   Scenario: Delegating role without `system:identity:roles:delegation` role
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
-      | 4344518184ad44228baffce7a44fd0b1 | assistant | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+      | _id                              | authority | username  | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | assistant | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
     And the `identity.roles` database contains:
       | _id                              | identity                         | role           |
       | 30c969e05ff6437097ed5f07fc52358e | 72cf9b0ab0ac4ab2b8036e4e940ddcae | app:moderation |
@@ -169,6 +176,7 @@ Feature: Roles management
     When the following request is received:
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
 
@@ -181,8 +189,8 @@ Feature: Roles management
 
   Scenario Outline: Invalid role name
     Given the `identity.basic` database contains:
-      | _id                              | username | password                                                     |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | root     | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | _id                              | authority | username | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | root     | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
     And the `identity.roles` database contains:
       | _id                              | identity                         | role                  |
       | 9c4702490ff84f2a9e1b1da2ab64bdd4 | 72cf9b0ab0ac4ab2b8036e4e940ddcae | system:identity:roles |
@@ -190,6 +198,7 @@ Feature: Roles management
       # root adds a role to a user
       """
       POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic cm9vdDpzZWNyZXQ=
       content-type: application/yaml
 
@@ -207,8 +216,8 @@ Feature: Roles management
 
   Scenario: Dynamic roles
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | _id                              | authority | username  | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | moderator | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
     And the `identity.roles` database contains:
       | _id                              | identity                         | role                    |
       | 30c969e05ff6437097ed5f07fc52358e | 72cf9b0ab0ac4ab2b8036e4e940ddcae | app:29e54ae1:moderation |
@@ -229,6 +238,7 @@ Feature: Roles management
     When the following request is received:
       """
       GET /29e54ae1/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -238,6 +248,7 @@ Feature: Roles management
     When the following request is received:
       """
       GET /88584c9b/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -247,6 +258,7 @@ Feature: Roles management
     When the following request is received:
       """
       GET /broken/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic bW9kZXJhdG9yOnNlY3JldA==
       """
     Then the following reply is sent:

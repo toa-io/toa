@@ -3,24 +3,25 @@ import { validateIdToken } from './lib/jwt'
 import type { Request } from '@toa.io/core'
 import type { Context, Entity } from './types'
 
-async function create (input: CreateInput, context: Context): Promise<CreateOutput> {
+async function incept (input: Input, context: Context): Promise<Output> {
   const { iss, sub } = await validateIdToken(input.credentials, context.configuration.trust)
 
-  const request: Request = {
-    input: { iss, sub } satisfies Omit<Entity, 'id'>,
-    query: { id: input.id }
-  }
+  const request: Request = { input: { authority: input.authority, iss, sub } satisfies Omit<Entity, 'id'> }
+
+  if (input.id !== undefined)
+    request.query = { id: input.id }
 
   return await context.local.transit(request)
 }
 
-interface CreateInput {
-  id: string
+interface Input {
+  authority: string
   credentials: string
+  id?: string
 }
 
-interface CreateOutput {
+interface Output {
   id: string
 }
 
-export const effect = assertionsAsValues(create)
+export const effect = assertionsAsValues(incept)

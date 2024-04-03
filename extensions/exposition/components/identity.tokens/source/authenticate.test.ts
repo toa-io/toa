@@ -8,6 +8,7 @@ let output: DecryptOutput
 let authenticate: Authenticate
 
 const identity: Identity = { id: generate() }
+const authority = generate()
 
 beforeEach(() => {
   configuration = {
@@ -36,9 +37,12 @@ it.each([
   const iat = new Date(now - configuration.refresh * 1000 + shift).toISOString()
   const exp = new Date(now + 1000).toISOString()
 
-  output = { identity, exp, iat, refresh: false }
+  output = { authority, identity, exp, iat, refresh: false }
 
-  const result = await authenticate.execute('')
+  const result = await authenticate.execute({
+    authority,
+    credentials: ''
+  })
 
   expect(result).toEqual({ identity, refresh: expected })
 })
@@ -48,9 +52,12 @@ it.each([true, false])('should return stale: %s',
     const iat = new Date().toISOString()
     const exp = new Date(Date.now() + 1000).toISOString()
 
-    output = { identity, exp, iat, refresh }
+    output = { authority, identity, exp, iat, refresh }
 
-    const result = await authenticate.execute('')
+    const result = await authenticate.execute({
+      authority,
+      credentials: ''
+    })
 
     expect(result).toEqual({ identity, refresh })
   })

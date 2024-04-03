@@ -33,3 +33,7 @@ storages:
   tmp:
     provider: tmp
     directory: test
+
+exposition:
+  authorities:
+    local: localhost

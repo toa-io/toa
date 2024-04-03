@@ -26,6 +26,8 @@ export class Transition implements Operation {
 
     if (existent)
       await this.tokens.revoke({ query: { id: object.id } })
+    else
+      object.authority = input.authority
 
     if (input.username !== undefined) {
       if (existent && object.username === this.principal)

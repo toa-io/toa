@@ -1,14 +1,16 @@
+import assert from 'node:assert'
+import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
 import { Tree, syntax } from './RTD'
-import { Server } from './HTTP'
 import { EndpointsFactory } from './Endpoint'
 import { families, interceptors } from './directives'
 import { DirectivesFactory } from './Directive'
 import { Composition } from './Composition'
 import * as root from './root'
 import { Interception } from './Interception'
+import * as http from './HTTP'
 import type { Broadcast } from './Gateway'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
@@ -26,16 +28,12 @@ export class Factory implements extensions.Factory {
   }
 
   public service (): Connector | null {
-    const debug = process.env.TOA_EXPOSITION_DEBUG === '1'
-    const trace = process.env.TOA_EXPOSITION_TRACE === '1'
+    assert.ok(process.env.TOA_EXPOSITION_PROPERTIES,
+      'TOA_EXPOSITION_PROPERTIES is undefined')
+
+    const options = decode<http.Options>(process.env.TOA_EXPOSITION_PROPERTIES)
     const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
-
-    const server = Server.create({
-      methods: syntax.verbs,
-      debug,
-      trace
-    })
-
+    const server = http.Server.create({ ...options, methods: syntax.verbs })
     const remotes = new Remotes(this.boot)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)

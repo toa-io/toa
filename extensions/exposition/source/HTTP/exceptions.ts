@@ -42,6 +42,12 @@ export class Conflict extends ClientError {
   }
 }
 
+export class UnprocessableEntity extends ClientError {
+  public constructor (body?: any) {
+    super(422, body)
+  }
+}
+
 export class MethodNotAllowed extends ClientError {
   public constructor () {
     super(405)

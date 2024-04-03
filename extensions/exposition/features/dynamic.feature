@@ -18,6 +18,7 @@ Feature: Dynamic tree updates
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """
@@ -34,6 +35,7 @@ Feature: Dynamic tree updates
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -66,6 +68,7 @@ Feature: Dynamic tree updates
     When the following request is received:
       """
       GET /pots/big/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -98,6 +101,7 @@ Feature: Dynamic tree updates
     When the following request is received:
       """
       GET /pots/big/?criteria=temperature>50 HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
