@@ -1,8 +1,10 @@
 import { Language } from './Language'
+import { Authority } from './Authority'
 import type { Embedding } from './Embedding'
 
 export const embeddings: Record<string, new () => Embedding> = {
-  language: Language
+  language: Language,
+  authority: Authority
 }
 
 export type { Embedding }

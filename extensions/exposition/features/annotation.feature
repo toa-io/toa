@@ -18,6 +18,7 @@ Feature: Annotation
     When the following request is received:
       """
       GET /foo/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:

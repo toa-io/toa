@@ -13,6 +13,7 @@ Feature: Directives
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: application/json
       """
     Then the following reply is sent:
@@ -38,6 +39,7 @@ Feature: Directives
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -50,6 +52,7 @@ Feature: Directives
     When the following request is received:
       """
       GET /pots/non-existent/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:

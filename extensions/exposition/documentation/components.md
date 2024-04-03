@@ -20,7 +20,7 @@ and pepper.
 configuration:
   identity.basic:
     rounds: 10 # salt rounds
-    peper: ''  # hashing pepper
+    pepper: '' # hashing pepper
 ```
 
 ### Credentials constraints
@@ -111,8 +111,8 @@ secrets.
 configuration:
   identity.federation:
     trust:
-      - issuer: https://token.actions.githubusercontent.com
-        audience:
+      - iss: https://token.actions.githubusercontent.com
+        aud:
           - https://github.com/tinovyatkin
           - https://github.com/temich
 

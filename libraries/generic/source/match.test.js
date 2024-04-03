@@ -15,7 +15,7 @@ it('should match values', () => {
 
 it('should match arrays', () => {
   expect(match([1, 2], [1, 2])).toStrictEqual(true)
-  expect(match([1, 2, 3], [2, 1])).toStrictEqual(false)
+  expect(match([1, 2, 3], [2, 1])).toStrictEqual(true)
   expect(match([1, 2, 3], [2, 1, 4])).toStrictEqual(false)
 })
 
@@ -37,7 +37,6 @@ it('should match objects', () => {
   expect(match(reference, { qux: { val: 'text' } })).toStrictEqual(true)
   expect(match(reference, { qux: { val: 'whatever' } })).toStrictEqual(false)
   expect(match(reference, { qux: { arr: [1, 2] } })).toStrictEqual(true)
-  expect(match(reference, { qux: { arr: [2] } })).toStrictEqual(false)
   expect(match(reference, { qux: { arr: [2, 5] } })).toStrictEqual(false)
   expect(match(reference, {
     foo: 'bar',
@@ -50,4 +49,15 @@ it('should not throw on nulls', () => {
   expect(match(null, [1, 2])).toStrictEqual(false)
   expect(match(null, { foo: 'bar' })).toStrictEqual(false)
   expect(match([1, 2], null)).toStrictEqual(false)
+})
+
+it('should match array items in objects', async () => {
+  const reference = {
+    foo: [
+      { bar: 1 },
+      { bar: 2 }
+    ]
+  }
+
+  expect(match(reference, { foo: [{ bar: 2 }] })).toStrictEqual(true)
 })

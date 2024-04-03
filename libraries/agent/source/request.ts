@@ -1,9 +1,10 @@
+import * as undici from 'undici'
 import * as parse from './parse'
 
-export async function request (http: string, origin?: string): Promise<Response> {
-  const { method, url, headers, body } = parse.request(http)
+export async function request (http: string, origin?: string): Promise<undici.Dispatcher.ResponseData> {
+  const { method, url, headers, body } = parse.request(http, origin)
 
-  const reference = new URL(url, origin).href
+  const href = new URL(url, origin).href
 
-  return await fetch(reference, { method, headers, body })
+  return undici.request(href, { method, headers, body })
 }

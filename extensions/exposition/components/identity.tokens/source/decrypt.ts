@@ -2,8 +2,7 @@ import { V3 } from 'paseto'
 import { type Maybe } from '@toa.io/types'
 import { type Context, type Claim, type DecryptOutput } from './types'
 
-export async function computation (token: string, context: Context):
-Promise<Maybe<DecryptOutput>> {
+export async function computation (token: string, context: Context): Promise<Maybe<DecryptOutput>> {
   let refresh = false
   let claim = await decrypt(token, context.configuration.key0)
 
@@ -14,12 +13,14 @@ Promise<Maybe<DecryptOutput>> {
 
   if (claim === null)
     return ERR_INVALID_TOKEN
-  else return {
-    identity: claim.identity,
-    iat: claim.iat,
-    exp: claim.exp,
-    refresh
-  }
+  else
+    return {
+      authority: claim.aud,
+      identity: claim.identity,
+      iat: claim.iat,
+      exp: claim.exp,
+      refresh
+    }
 }
 
 async function decrypt (token: string, key: string): Promise<Claim | null> {

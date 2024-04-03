@@ -8,6 +8,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
 
       username: developer
@@ -20,6 +21,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/yaml
       accept: application/yaml
 
@@ -49,6 +51,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
@@ -66,6 +69,7 @@ Feature: Basic authentication
       # basic credentials have been created
       """
       GET /users/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       """
     Then the following reply is sent:
@@ -76,6 +80,7 @@ Feature: Basic authentication
       # valid token has been issued
       """
       GET /users/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       """
     Then the following reply is sent:
@@ -86,6 +91,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjphbm90aGVycGFzczEyMzQ=
       accept: application/yaml
       content-type: application/yaml
@@ -100,6 +106,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
@@ -123,11 +130,12 @@ Feature: Basic authentication
               access: granted!
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | _version | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       content-type: application/yaml
@@ -142,6 +150,7 @@ Feature: Basic authentication
       # old password
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
@@ -152,6 +161,7 @@ Feature: Basic authentication
       # new password
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOm5ldy1zZWNyZXQ=
       """
     Then the following reply is sent:
@@ -159,14 +169,15 @@ Feature: Basic authentication
       200 OK
       """
 
-  Scenario: Changing other identity the password
+  Scenario: Changing other identity's password
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     | _version |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
-      | 6c0be50cbfb043acafe69cc7d3895f84 | attacker  | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | _id                              | authority | username  | password                                                     | _version |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | 6c0be50cbfb043acafe69cc7d3895f84 | nex       | attacker  | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic YXR0YWNrZXI6c2VjcmV0
       accept: application/yaml
       content-type: application/yaml
@@ -182,6 +193,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 
@@ -190,17 +202,17 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
 
       code: <code>
       message: <problem> is not meeting the requirements.
       """
     Examples:
-      | username        | password    | problem  | code             |
-      | with whitespace | secret#1234 | Username | INVALID_USERNAME |
-      | root            | short       | Password | INVALID_PASSWORD |
+      | username                                                                                                                          | password    | problem  | code             |
+      | zYF8G6obtE3c5ARpZjnMwv0L7lX2dQUyJ1KiHS9ag4fThDPVxCsuIWmNeBqkOrzYF8G6obtE3c5ARpZjnMwv0L7lX2dQUyJ1KiHS9ag4fThDPVxCsuIWmNeBqkOris129 | secret#1234 | Username | INVALID_USERNAME |
+      | root                                                                                                                              | short       | Password | INVALID_PASSWORD |
 
-  Scenario Outline: Given <property> is not meeting one of requirements
+  Scenario Outline: <property> is not meeting one of requirements
     Given the `identity.basic` configuration:
       """yaml
       <property>:
@@ -208,11 +220,12 @@ Feature: Basic authentication
         - ^[^A]{1,16}$  # should not contain 'A'
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | _version | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       content-type: application/yaml
@@ -221,7 +234,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
       """
     Examples:
       | property |
@@ -245,6 +258,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 
@@ -262,6 +276,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       GET /identity/roles/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
       accept: application/yaml
       """
@@ -275,6 +290,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       accept: application/yaml
       """
@@ -288,6 +304,7 @@ Feature: Basic authentication
     When the following request is received:
       """
       PATCH /identity/basic/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ token }}
       accept: application/yaml
       content-type: application/yaml
@@ -296,7 +313,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
 
       code: PRINCIPAL_LOCKED
       message: Principal username cannot be changed.
@@ -318,6 +335,7 @@ Feature: Basic authentication
       # identity inception
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       accept: application/yaml
       content-type: application/yaml
@@ -332,6 +350,7 @@ Feature: Basic authentication
       # same credentials
       """
       POST /users/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       content-type: text/plain
 

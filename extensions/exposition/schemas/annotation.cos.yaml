@@ -1,4 +1,4 @@
-host: string
+authorities*: <string>
 class: string
 annotations: <string>
 debug: boolean

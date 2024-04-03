@@ -57,6 +57,9 @@ Feature: Exposition deployment
         identity.tokens:
           key0: secret.key.0
       exposition:
+        authorities:
+          a: api.a.dev
+          b: api.b.dev
         debug: true
         trace: true
       """
@@ -66,8 +69,6 @@ Feature: Exposition deployment
       services:
         - name: exposition-gateway
           variables:
-          - name: TOA_EXPOSITION_DEBUG
-            value: "1"
-          - name: TOA_EXPOSITION_TRACE
-            value: "1"
+          - name: TOA_EXPOSITION_PROPERTIES
+            value: "eyJhdXRob3JpdGllcyI6eyJsb2NhbCI6ImxvY2FsaG9zdCIsImEiOiJhcGkuYS5kZXYiLCJiIjoiYXBpLmIuZGV2In0sImRlYnVnIjp0cnVlLCJ0cmFjZSI6dHJ1ZX0="
       """

@@ -3,32 +3,38 @@ name: basic
 
 entity:
   schema:
+    authority*: string
     username*: string
     password*: string
   unique:
-    username: [username]
+    authority_username: [authority, username]
   associated: true
 
 operations:
   transit:
     concurrency: retry
     input:
+      authority: string
       username: string
       password: string
-  incept:
+  create:
     forward: transit
     query: false
     input:
+      authority*: string
       username*: string
       password*: string
-  create:
+  incept:
     input:
+      authority*: string
       id*: string
       credentials*: string
     output:
       id: string
   authenticate:
-    input: string
+    input:
+      authority*: string
+      credentials*: string
     output:
       identity:
         id: string
@@ -37,15 +43,18 @@ configuration:
   rounds: 10
   pepper: ''
   principal: string
-  username+: ^\S{1,128}$
-  password+: ^\S{8,32}$
+  username+: ^.{1,128}$
+  password+: ^.{8,32}$
 
 exposition:
   isolated: true
   /:
-    io:output: [id]
-    anonymous: true
-    POST: incept
+    POST:
+      anonymous: true
+      io:output: [id]
+      vary:embed:
+        authority: authority
+      endpoint: create
   /:id:
     io:output: [id]
     auth:role: system:identity:basic

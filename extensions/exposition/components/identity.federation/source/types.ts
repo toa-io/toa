@@ -19,6 +19,7 @@ export interface Context {
 export type Entity = Required<Schemas>['entity']
 
 export interface TransitInput {
+  readonly authority: string
   readonly iss: string
   readonly sub: string
 }
@@ -47,6 +48,11 @@ export interface IdToken {
   exp: number
   iat: number
   nbf?: number
+}
+
+export interface AuthenticateInput {
+  authority: string
+  credentials: string
 }
 
 export interface AuthenticateOutput {

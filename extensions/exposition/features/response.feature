@@ -13,6 +13,7 @@ Feature: Response
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: application/json
       """
     Then the following reply is sent:
@@ -35,11 +36,12 @@ Feature: Response
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
       content-type: application/yaml
 
       code: CODE
@@ -57,11 +59,12 @@ Feature: Response
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
+      host: nex.toa.io
       accept: application/msgpack
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      422 Unprocessable Entity
       content-type: application/msgpack
       """
     And response body contains MessagePack-encoded value:

@@ -29,7 +29,7 @@ services:
     port: 8000
     replicas: 2
     ingress:
-      host: dummies.toa.io
+      hosts: [dummies.toa.io]
       class: alb
       annotations:
         alb.ingress.kubernetes.io/scheme: internet-facing

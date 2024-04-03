@@ -24,11 +24,13 @@ export interface Context {
 export interface Entity {
   readonly id: string
   readonly _version: number
+  authority: string
   username: string
   password: string
 }
 
 export interface TransitInput {
+  authority: string
   username?: string
   password?: string
 }

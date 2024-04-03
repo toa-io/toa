@@ -40,10 +40,10 @@ export function validateJwtPayload (payload: unknown,
   assert.ok('aud' in payload, 'Payload is missing aud')
   assert.ok(typeof payload.aud === 'string', 'Payload aud is not a string')
 
-  const issuer = trusted.find((config) => config.issuer === payload.iss)
+  const issuer = trusted.find((config) => config.iss === payload.iss)
 
   assert.ok(issuer !== undefined &&
-      (issuer.audience === undefined || issuer.audience.some((a) => a === payload.aud),
+    (issuer.aud === undefined || issuer.aud.some((a) => a === payload.aud),
       `Unknown issuer / audience: ${payload.iss} / ${payload.aud}`))
 
   if (header.alg.startsWith('HS')) {
@@ -95,7 +95,7 @@ export async function validateSignature ({
   if (alg.startsWith('HS')) {
     // symmetric algorithm, issuer is validated at this point
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- `kid` is validated
-    const secrets = trusted.find((c) => c.issuer === iss)!.secrets![alg]
+    const secrets = trusted.find((c) => c.iss === iss)!.secrets![alg]
     const secret = kid !== undefined ? secrets[kid] : Object.values(secrets)[0]
     const algorithm = alg.replace(/^HS(\d{3})$/, 'sha$1') // HS256 -> sha256
     const hmac = crypto.createHmac(algorithm, secret)

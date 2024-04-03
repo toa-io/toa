@@ -2,41 +2,58 @@ namespace: identity
 name: federation
 
 entity:
+  associated: true
   schema:
     type: object
     properties:
+      authority:
+        description: The authority token is valid for
+        type: string
       iss:
         description: The issuer, or signer, of the token, URI like `https://accounts.google.com`
         type: string
       sub:
-        description: the ID that represents the principal making the request
+        description: The ID that represents the principal making the request
         type: string
     required:
+      - authority
       - iss
       - sub
     additionalProperties: false
-  associated: true
+  unique:
+    token: [authority, iss, sub]
 
 operations:
   transit:
     concurrency: retry
-  incept:
-    forward: transit
-    query: false
     input:
+      authority*: string
       iss*: string
       sub*: string
-  create:
+  incept:
     input:
-      id*: string
+      authority: string
       credentials*: string
+      id: string
     output:
       id: string
   authenticate:
-    input: string
+    input:
+      authority*: string
+      credentials*: string
     output:
       identity:
         id: string
+
+exposition:
+  /:
+    POST:
+      anonymous: true
+      io:input: [authority, credentials]
+      io:output: [id]
+      vary:embed:
+        authority: authority
+      endpoint: incept
 
 configuration:
   schema:
@@ -49,11 +66,11 @@ configuration:
           type: object
           additionalProperties: false
           properties:
-            issuer:
+            iss:
               description: Allowed origins for a token `iss` field
               type: string
               format: uri
-            audience:
+            aud:
               description: Acceptable `aud` value(s)
               type: array
               items:
@@ -73,7 +90,7 @@ configuration:
               additionalProperties: false
               minProperties: 1
           required:
-            - issuer
+            - iss
       explicit_identity_creation:
         description: Force identities to be explicitly created or incept before being used in authentication
         type: boolean

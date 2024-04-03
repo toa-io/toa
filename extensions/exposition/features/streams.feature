@@ -10,6 +10,7 @@ Feature: Reply streams
     When the following request is received:
       """
       POST /sequences/ HTTP/1.1
+      host: nex.toa.io
       content-type: text/plain
       accept: text/plain
 

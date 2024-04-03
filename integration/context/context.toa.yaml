@@ -24,9 +24,10 @@ mongodb: mongodb://is-not-defined # this is not deployable, value must present t
 mongodb@dev: mongodb://host.docker.internal
 
 exposition:
-  host: dummies.toa.dev
-  host@staging: dummies.stage.toa.dev
-  host@dev: local.kind
+  authorities:
+    dev: dummies.toa.dev
+    dev@staging: dummies.stage.toa.dev
+    dev@dev: local.kind
 
   class: alb
   class@dev: nginx

@@ -28,9 +28,7 @@ overrides:
       function-paren-newline:
         - error
         - never
-      max-len:
-        - error
-        - 100
+      max-len: off
       max-depth: [error, 2]
       max-statements-per-line:
         - error

@@ -12,8 +12,10 @@ export class Query {
     if (query.criteria !== undefined) {
       const open = query.criteria[query.criteria.length - 1] === ';'
 
-      if (open) query.criteria = query.criteria.slice(0, -1)
-      else this.closed = true
+      if (open)
+        query.criteria = query.criteria.slice(0, -1)
+      else
+        this.closed = true
     }
 
     this.query = query
@@ -55,8 +57,10 @@ export class Query {
     }
 
     if (query.criteria !== undefined)
-      if (this.closed) throw new http.BadRequest('Query criteria is closed.')
-      else criteria.push(query.criteria)
+      if (this.closed)
+        throw new http.BadRequest('Query criteria is closed')
+      else
+        criteria.push(query.criteria)
 
     switch (criteria.length) {
       case 0:
@@ -99,7 +103,7 @@ function fit (string: string, range: [number, number], name: string): number {
 
   if (number < range[0] || number > range[1])
     throw new http.BadRequest(`Query ${name} must be between ` +
-      `${range[0]} and ${range[1]} inclusive.`)
+      `${range[0]} and ${range[1]} inclusive`)
 
   return number
 }

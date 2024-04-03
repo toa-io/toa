@@ -2,8 +2,8 @@ Feature: Identity resource
 
   Scenario: Requesting own Identity
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     And the `identity.roles` database contains:
       | _id                              | identity                         | role            |
       | 9c4702490ff84f2a9e1b1da2ab64bdd4 | efe3a65ebbee47ed95a73edd911ea328 | developer       |
@@ -11,6 +11,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml
       """
@@ -27,6 +28,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ User.token }}
       accept: application/yaml
       """
@@ -43,6 +45,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Token ${{ User.token }}
       accept: application/yaml
       """
@@ -61,6 +64,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
       """
     Then the following reply is sent:
@@ -70,6 +74,7 @@ Feature: Identity resource
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      host: nex.toa.io
       """
     Then the following reply is sent:
       """

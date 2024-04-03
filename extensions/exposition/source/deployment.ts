@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { type Dependency, type Service } from '@toa.io/operations'
 import { encode } from '@toa.io/generic'
 import { type Annotation } from './Annotation'
@@ -6,7 +7,10 @@ import { shortcuts } from './Directive'
 import { components } from './Composition'
 import { parse } from './RTD/syntax'
 
-export function deployment (_: unknown, annotation: Annotation | undefined): Dependency {
+export function deployment (_: unknown, annotation?: Annotation): Dependency {
+  assert.ok(annotation !== undefined, 'Exposition context annotation is required')
+  schemas.annotation.validate(annotation)
+
   const labels = components().labels
 
   const service: Service = {
@@ -16,15 +20,9 @@ export function deployment (_: unknown, annotation: Annotation | undefined): Dep
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     version: require('../package.json').version,
     variables: [],
-    components: labels
+    components: labels,
+    ingress: { hosts: [] }
   }
-
-  if (annotation?.host !== undefined)
-    service.ingress = {
-      host: annotation.host,
-      class: annotation.class,
-      annotations: annotation.annotations
-    }
 
   if (annotation?.['/'] !== undefined) {
     const tree = parse(annotation['/'], shortcuts)
@@ -35,20 +33,26 @@ export function deployment (_: unknown, annotation: Annotation | undefined): Dep
     })
   }
 
-  if (annotation?.debug === true)
-    service.variables.push({
-      name: 'TOA_EXPOSITION_DEBUG',
-      value: '1'
-    })
+  const { debug, trace, authorities } = annotation
 
-  if (annotation?.trace === true)
-    service.variables.push({
-      name: 'TOA_EXPOSITION_TRACE',
-      value: '1'
-    })
+  service.ingress.hosts = Object.values(authorities)
+  service.ingress.class = annotation.class
+  service.ingress.annotations = annotation.annotations
 
-  if (annotation !== undefined)
-    schemas.annotaion.validate(annotation)
+  const properties: Properties = { authorities }
+
+  if (debug === true)
+    properties.debug = true
+
+  if (trace === true)
+    properties.trace = true
+
+  service.variables.push({
+    name: 'TOA_EXPOSITION_PROPERTIES',
+    value: encode(properties)
+  })
 
   return { services: [service] }
 }
+
+type Properties = Pick<Annotation, 'authorities' | 'debug' | 'trace'>

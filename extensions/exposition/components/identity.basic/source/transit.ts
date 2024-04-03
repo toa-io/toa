@@ -1,7 +1,7 @@
 import { genSalt, hash } from 'bcryptjs'
-import { type Maybe, type Operation } from '@toa.io/types'
 import { Err } from 'error-value'
-import { type Context, type Entity, type TransitInput, type TransitOutput } from './types'
+import type { Maybe, Operation } from '@toa.io/types'
+import type { Context, Entity, TransitInput, TransitOutput } from './types'
 
 export class Transition implements Operation {
   private rounds: number = 10
@@ -9,7 +9,7 @@ export class Transition implements Operation {
   private principal?: string
   private tokens: Tokens = undefined as unknown as Tokens
   private usernameRx: RegExp[] = []
-  private passwrodRx: RegExp[] = []
+  private passwordRx: RegExp[] = []
 
   public mount (context: Context): void {
     this.rounds = context.configuration.rounds
@@ -18,7 +18,7 @@ export class Transition implements Operation {
     this.tokens = context.remote.identity.tokens
 
     this.usernameRx = toRx(context.configuration.username)
-    this.passwrodRx = toRx(context.configuration.password)
+    this.passwordRx = toRx(context.configuration.password)
   }
 
   public async execute (input: TransitInput, object: Entity): Promise<Maybe<TransitOutput>> {
@@ -26,6 +26,8 @@ export class Transition implements Operation {
 
     if (existent)
       await this.tokens.revoke({ query: { id: object.id } })
+    else
+      object.authority = input.authority
 
     if (input.username !== undefined) {
       if (existent && object.username === this.principal)
@@ -38,7 +40,7 @@ export class Transition implements Operation {
     }
 
     if (input.password !== undefined) {
-      if (invalid(input.password, this.passwrodRx))
+      if (invalid(input.password, this.passwordRx))
         return ERR_INVALID_PASSWORD
 
       const salt = await genSalt(this.rounds)

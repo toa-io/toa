@@ -22,11 +22,15 @@ export interface Schemas {
   };
   entity?: {
     /**
+     * The authority token is valid for
+     */
+    authority: string;
+    /**
      * The issuer, or signer, of the token, URI like `https://accounts.google.com`
      */
     iss: string;
     /**
-     * the ID that represents the principal making the request
+     * The ID that represents the principal making the request
      */
     sub: string;
   };
@@ -35,13 +39,13 @@ export interface TrustConfiguration {
   /**
    * Allowed origins for a token `iss` field
    */
-  issuer: string;
+  iss: string;
   /**
    * Acceptable `aud` value(s)
    *
    * @minItems 1
    */
-  audience?: [string, ...string[]];
+  aud?: [string, ...string[]];
   /**
    * Symmetric encryption secrets
    */

@@ -13,8 +13,8 @@ configuration:
 
   identity.federation:
     trust:
-      - issuer: https://localhost
-        audience:
+      - iss: https://localhost
+        aud:
           - one
           - two
 

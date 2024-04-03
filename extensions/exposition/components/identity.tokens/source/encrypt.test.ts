@@ -8,6 +8,7 @@ import { type Context, type Identity } from './types'
 let encrypt: Encrypt
 
 const context: Context = {} as unknown as Context
+const authority = generate()
 
 beforeEach(() => {
   context.configuration = {
@@ -25,6 +26,7 @@ it('should encrypt with given lifetime', async () => {
   const lifetime = 0.1
 
   const encrypted = await encrypt.execute({
+    authority,
     identity,
     lifetime
   })
@@ -32,7 +34,7 @@ it('should encrypt with given lifetime', async () => {
   if (encrypted === undefined)
     throw new Error('?')
 
-  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ identity })
+  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ authority, identity })
 
   await timeout(lifetime * 1000)
 
@@ -44,6 +46,7 @@ it('should encrypt without lifetime INSECURE', async () => {
   const lifetime = 0
 
   const encrypted = await encrypt.execute({
+    authority,
     identity,
     lifetime
   })

@@ -1,6 +1,6 @@
 import { request } from './request'
 
-it('should parse headers', async () => {
+it('should parse headers', () => {
   const http =
     'GET / HTTP/1.1\n' +
     'host: localhost:3000\n' +
@@ -11,7 +11,7 @@ it('should parse headers', async () => {
   expect(result.headers.get('host')).toEqual('localhost:3000')
 })
 
-it('should parse body', async () => {
+it('should parse body', () => {
   const http =
     'POST / HTTP/1.1\n' +
     'host: localhost:3000\n' +
@@ -23,4 +23,15 @@ it('should parse body', async () => {
   const result = request(http)
 
   expect(result.body?.toString()).toEqual('hello world')
+  expect(result.headers.get('host')).toEqual('localhost:3000')
+})
+
+it('should add default host header', () => {
+  const http =
+    'GET / HTTP/1.1\n' +
+    '\n'
+
+  const result = request(http, 'https://foo.bar')
+
+  expect(result.headers.get('host')).toEqual('foo.bar')
 })

@@ -1,5 +1,5 @@
 import { type Maybe, type Operation } from '@toa.io/types'
-import { type AuthenticateOutput, type Context } from './types'
+import type { AuthenticateInput, AuthenticateOutput, Context } from './types'
 
 export class Computation implements Operation {
   private refresh: number = 0
@@ -12,11 +12,14 @@ export class Computation implements Operation {
     this.observe = context.local.observe
   }
 
-  public async execute (token: string): Promise<Maybe<AuthenticateOutput>> {
-    const claim = await this.decrypt({ input: token })
+  public async execute (input: AuthenticateInput): Promise<Maybe<AuthenticateOutput>> {
+    const claim = await this.decrypt({ input: input.credentials })
 
     if (claim instanceof Error)
       return claim
+
+    if (claim.authority !== input.authority)
+      return ERR_AUTHORITY
 
     const identity = claim.identity
     const iat = new Date(claim.iat).getTime()
@@ -39,4 +42,5 @@ export class Computation implements Operation {
   }
 }
 
+const ERR_AUTHORITY = new Error('AUTHORITY_MISMATCH')
 const ERR_TOKEN_REVOKED = new Error('TOKEN_REVOKED')

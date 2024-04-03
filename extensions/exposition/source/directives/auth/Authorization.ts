@@ -56,7 +56,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   public async preflight (directives: Directive[],
     input: Input,
     parameters: Parameter[]): Promise<Output> {
-    const identity = await this.resolve(input.request.headers.authorization)
+    const identity = await this.resolve(input.authority, input.request.headers.authorization)
 
     input.identity = identity
 
@@ -80,16 +80,22 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     const identity = request.identity
 
-    if (identity === null) return
+    if (identity === null)
+      return
 
-    if (identity.scheme === PRIMARY && !identity.refresh) return
+    if (identity.scheme === PRIMARY && !identity.refresh)
+      return
 
     // Role directive may have already set the value
-    if (identity.roles === undefined) await Role.set(identity, this.discovery.roles)
+    if (identity.roles === undefined)
+      await Role.set(identity, this.discovery.roles)
 
     this.tokens ??= await this.discovery.tokens
 
-    const token = await this.tokens.invoke<string>('encrypt', { input: { identity } })
+    const token = await this.tokens.invoke<string>('encrypt', {
+      input: { authority: request.authority, identity }
+    })
+
     const authorization = `Token ${token}`
 
     response.headers ??= new Headers()
@@ -97,8 +103,9 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     response.headers.append('cache-control', 'no-store')
   }
 
-  private async resolve (authorization: string | undefined): Promise<Identity | null> {
-    if (authorization === undefined) return null
+  private async resolve (authority: string, authorization: string | undefined): Promise<Identity | null> {
+    if (authorization === undefined)
+      return null
 
     const [scheme, credentials] = split(authorization)
     const provider = PROVIDERS[scheme]
@@ -109,7 +116,10 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.schemes[scheme] ??= await this.discovery[provider]
 
     const result = await this.schemes[scheme].invoke<AuthenticationResult>('authenticate', {
-      input: credentials
+      input: {
+        authority,
+        credentials
+      }
     })
 
     if (result instanceof Error) return null

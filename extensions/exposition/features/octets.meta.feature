@@ -19,6 +19,7 @@ Feature: Octets `content-meta` header
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST /meta-header/ HTTP/1.1
+      host: nex.toa.io
       content-type: application/octet-stream
       content-meta: foo, bar=baz=1
       content-meta: baz=1
@@ -30,6 +31,7 @@ Feature: Octets `content-meta` header
     When the following request is received:
       """
       GET /meta-header/10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      host: nex.toa.io
       accept: application/vnd.toa.octets.entry+yaml
       """
     Then the following reply is sent:
@@ -56,6 +58,7 @@ Feature: Octets `content-meta` header
     When the following request is received:
       """
       OPTIONS / HTTP/1.1
+      host: nex.toa.io
       origin: https://example.com
       """
     Then the following reply is sent:

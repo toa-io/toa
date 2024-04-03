@@ -1,6 +1,7 @@
 import * as assert from 'node:assert'
+import { buffer } from 'node:stream/consumers'
 import { trim } from '@toa.io/generic'
-import { buffer } from '@toa.io/streams'
+import * as undici from 'undici'
 import * as http from './index'
 import { request } from './request'
 import * as parse from './parse'
@@ -15,8 +16,8 @@ Use its features to test.
  */
 
 export class Agent {
-  protected readonly origin: string
-  protected response: string = ''
+  public readonly origin: string
+  public response: string = ''
 
   public constructor (origin: string, private readonly captures: Captures = new Captures()) {
     this.origin = origin
@@ -31,11 +32,8 @@ export class Agent {
 
     const message = headers + '\n\n' + (body ?? '')
     const response = await request(message, this.origin)
-    const clone = response.clone()
 
     this.response = await parse.response(response)
-
-    return clone
   }
 
   public responseIncludes (expected: string): void {
@@ -82,15 +80,14 @@ export class Agent {
 
     const href = new URL(url, this.origin).href
 
-    const request = {
+    const options = {
       method,
       headers,
-      body: stream as unknown as ReadableStream,
-      duplex: 'half'
+      body: stream
     }
 
     try {
-      const response = await fetch(href, request)
+      const response = await undici.request(href, options)
 
       this.response = await http.parse.response(response)
     } catch (e: any) {

@@ -8,6 +8,7 @@ Feature: Errors
     When the following request is received:
       """
       GET <path> HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -30,6 +31,7 @@ Feature: Errors
     When the following request is received:
       """
       GET /basic/greeter HTTP/1.1
+      host: nex.toa.io
       accept: application/json
       """
     Then the following reply is sent:
@@ -45,6 +47,7 @@ Feature: Errors
     When the following request is received:
       """
       PATCH /greeter/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -56,6 +59,7 @@ Feature: Errors
     When the following request is received:
       """
       COPY /basic/greeter/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -73,6 +77,7 @@ Feature: Errors
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
+      host: nex.toa.io
       accept: application/yaml
       content-type: application/yaml
 
@@ -97,6 +102,7 @@ Feature: Errors
     When the following request is received:
       """
       GET /pots/?limit=1001 HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -120,6 +126,7 @@ Feature: Errors
     When the following request is received:
       """
       GET /pots/hot/?criteria=volume>500 HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -127,7 +134,7 @@ Feature: Errors
       400 Bad Request
       content-type: text/plain
 
-      Query criteria is closed.
+      Query criteria is closed
       """
 
   Scenario: Additional query parameters
@@ -141,6 +148,7 @@ Feature: Errors
     When the following request is received:
       """
       GET /pots/?foo=bar HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -160,6 +168,7 @@ Feature: Errors
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       authorization: Basic
       accept: text/plain
       """
@@ -182,6 +191,7 @@ Feature: Errors
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: text/plain
       """
     Then the following reply is sent:
@@ -206,6 +216,7 @@ Feature: Errors
     When the following request is received:
       """
       GET / HTTP/1.1
+      host: nex.toa.io
       accept: image/jpeg
       """
     Then the following reply is sent:
