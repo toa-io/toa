@@ -97,6 +97,21 @@ Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` er
 
 Delete the entry specified by `path`.
 
+#### `async move(path: string, to: string): Maybe<void>`
+
+Moves the entry specified by `path` to the new path.
+
+`to` may be an absolute or relative path (starting with `.`), if it ends with `/`, the entry is
+moved to the `to` directory, otherwise, the entry is moved to the `to` path.
+
+The following examples are equivalent:
+
+```javascript
+await storage.move('/path/to/eecd837c', '/path/to/sub/eecd837c')
+await storage.move('/path/to/eecd837c', './sub/eecd837c')
+await storage.move('/path/to/eecd837c', './sub/')
+```
+
 #### `async list(path: string): string[]`
 
 Get a list of `id`s of entries under the `path`.
