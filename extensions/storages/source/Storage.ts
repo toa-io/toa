@@ -32,15 +32,19 @@ export class Storage {
   }
 
   public async get (path: string): Maybe<Entry> {
-    const dirname = posix.dirname(path)
-    const filename = posix.basename(path)
-    const metapath = posix.join(ENTRIES_ROOT, dirname, ENTRIES_DIR, filename)
-    const result = await this.provider.get(metapath)
+    const paths = this.destruct(path)
+    const result = await this.provider.get(paths.metafile)
 
     if (result === null)
       return ERR_NOT_FOUND
     else
       return decode(await buffer(result))
+  }
+
+  public async list (path: string): Promise<string[]> {
+    const dir = posix.join(ENTRIES_ROOT, path, ENTRIES_DIR)
+
+    return await this.provider.list(dir)
   }
 
   public async fetch (path: string): Maybe<Readable> {
@@ -71,21 +75,31 @@ export class Storage {
     if (entry instanceof Error)
       return entry
 
-    const dir = posix.join(ENTRIES_ROOT, posix.dirname(path))
-    const ent = posix.basename(path)
-    const metafile = posix.join(dir, ENTRIES_DIR, ent)
-    const vardir = posix.join(dir, ent)
+    const paths = this.destruct(path)
 
     await Promise.all([
-      this.provider.delete(metafile),
-      this.provider.delete(vardir)
+      this.provider.delete(paths.metafile),
+      this.provider.delete(paths.vardir)
     ])
   }
 
-  public async list (path: string): Promise<string[]> {
-    const dir = posix.join(ENTRIES_ROOT, path, ENTRIES_DIR)
+  public async move (path: string, to: string): Maybe<void> {
+    const source = this.destruct(path)
+    const rel = to.startsWith('.')
+    const dir = to.endsWith('/')
 
-    return await this.provider.list(dir)
+    if (rel)
+      to = posix.resolve(source.rel + '/', to)
+
+    if (dir)
+      to = posix.join(to, source.ent)
+
+    const target = this.destruct(to)
+
+    await Promise.all([
+      this.provider.move(source.metafile, target.metafile),
+      this.provider.moveDir(source.vardir, target.vardir)
+    ])
   }
 
   public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
@@ -161,12 +175,10 @@ export class Storage {
   }
 
   private async save (path: string, entry: Entry): Promise<void> {
-    const dirname = posix.dirname(path)
-    const filename = posix.basename(path)
-    const metadir = posix.join(ENTRIES_ROOT, dirname, ENTRIES_DIR)
+    const paths = this.destruct(path)
     const stream = Readable.from(encode(entry))
 
-    await this.provider.put(metadir, filename, stream)
+    await this.provider.put(paths.metadir, paths.ent, stream)
   }
 
   private parse (path: string): Path {
@@ -176,6 +188,17 @@ export class Storage {
     const rel = segments.reverse().join('/')
 
     return { rel, id, variant }
+  }
+
+  private destruct (path: string): Paths {
+    const rel = posix.dirname(path)
+    const dir = posix.join(ENTRIES_ROOT, rel)
+    const ent = posix.basename(path)
+    const metadir = posix.join(dir, ENTRIES_DIR)
+    const metafile = posix.join(metadir, ent)
+    const vardir = posix.join(dir, ent)
+
+    return { rel, dir, ent, metadir, metafile, vardir }
   }
 }
 
@@ -192,6 +215,15 @@ interface Path {
   rel: string
   id: string
   variant: string | null
+}
+
+interface Paths {
+  rel: string
+  dir: string
+  ent: string
+  metadir: string
+  metafile: string
+  vardir: string
 }
 
 type Meta = Record<string, string>

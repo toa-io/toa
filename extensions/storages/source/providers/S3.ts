@@ -148,10 +148,6 @@ export class S3 extends Provider<S3Options> {
 
     const objectsToRemove: ObjectIdentifier[] = await this.listObjects(Key)
 
-    // for await (const page of paginateListObjectsV2({ client }, { Bucket, Prefix: Key }))
-    //   for (const { Key } of page.Contents ?? [])
-    //     objectsToRemove.push({ Key })
-
     // Removing all objects in parallel in batches
     await Promise.all((function * () {
       while (objectsToRemove.length > 0)
@@ -173,6 +169,18 @@ export class S3 extends Provider<S3Options> {
     }))
 
     await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: from }))
+  }
+
+  public async moveDir (from: string, to: string): Promise<void> {
+    const objects: ObjectIdentifier[] = await this.listObjects(from)
+
+    await Promise.all(objects.map(async ({ Key }) => {
+      const ent = posix.basename(Key!)
+      const source = posix.join(from, ent)
+      const target = posix.join(to, ent)
+
+      return this.move(source, target)
+    }))
   }
 
   private async listObjects (Prefix: string): Promise<ObjectIdentifier[]> {

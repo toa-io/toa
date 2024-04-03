@@ -25,6 +25,8 @@ export abstract class Provider<Options = void> {
   public abstract delete (path: string): Promise<void>
 
   public abstract move (from: string, to: string): Promise<void>
+
+  public abstract moveDir (from: string, to: string): Promise<void>
 }
 
 export interface ProviderConstructor {

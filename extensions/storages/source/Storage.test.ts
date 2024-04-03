@@ -307,6 +307,62 @@ describe('delete', () => {
   })
 })
 
+describe('move', () => {
+  let lenna: Entry
+
+  beforeEach(async () => {
+    const stream = createReadStream('lenna.png')
+
+    lenna = (await storage.put(dir, stream)) as Entry
+  })
+
+  it('should move entry', async () => {
+    const path = `${dir}/${lenna.id}`
+    const to = `${dir}/lenna`
+
+    await storage.move(path, to)
+
+    const entry = await storage.get(to)
+
+    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
+  })
+
+  it('should move to subdirectory', async () => {
+    const path = `${dir}/${lenna.id}`
+    const to = `${dir}/sub/`
+
+    await storage.move(path, to)
+
+    const entry = await storage.get(to + lenna.id)
+
+    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
+  })
+
+  it('should move to relative path', async () => {
+    const path = `${dir}/${lenna.id}`
+    const to = './sub/'
+
+    await storage.move(path, to)
+
+    const entry = await storage.get(`${dir}/sub/${lenna.id}`)
+
+    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
+  })
+
+  it('should move variants', async () => {
+    const stream = createReadStream('sample.jpeg')
+
+    const path = `${dir}/${lenna.id}`
+
+    await storage.diversify(path, 'foo', stream)
+    await storage.move(path, `${dir}/lenna`)
+
+    const variant = await storage.fetch(`${dir}/lenna.foo`)
+
+    assert.ok(variant instanceof Readable)
+  })
+})
+
 describe('signatures', () => {
   it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
     async (type) => {

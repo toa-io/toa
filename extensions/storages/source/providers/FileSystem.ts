@@ -56,4 +56,8 @@ export class FileSystem extends Provider<FileSystemOptions> {
     await fs.mkdir(dirname(to), { recursive: true })
     await fs.rename(from, to)
   }
+
+  public async moveDir (from: string, to: string): Promise<void> {
+    await this.move(from, to).catch(() => null)
+  }
 }
