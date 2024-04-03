@@ -18,6 +18,8 @@ export abstract class Provider<Options = void> {
 
   public abstract get (path: string): Promise<Readable | null>
 
+  public abstract list (path: string): Promise<string[]>
+
   public abstract put (path: string, filename: string, stream: Readable): Promise<void>
 
   public abstract delete (path: string): Promise<void>

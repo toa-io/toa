@@ -2,6 +2,7 @@ import { Readable } from 'node:stream'
 import { Blob } from 'node:buffer'
 import { join } from 'node:path/posix'
 import assert from 'node:assert'
+import { posix } from 'node:path'
 import { Upload } from '@aws-sdk/lib-storage'
 import {
   S3Client,
@@ -70,10 +71,12 @@ export class S3 extends Provider<S3Options> {
     this.client.middlewareStack.add((next, _context) => async (args) => {
       if ('Key' in args.input && typeof args.input.Key === 'string')
       // removes leading slash
+
         args.input.Key = args.input.Key.replace(/^\//, '')
 
       if ('Prefix' in args.input && typeof args.input.Prefix === 'string')
       // removes leading slash and ensures finishing slash
+
         args.input.Prefix = args.input.Prefix.replace(/^\/|\/$/g, '') + '/'
 
       return next(args)
@@ -100,9 +103,16 @@ export class S3 extends Provider<S3Options> {
         ? fileResponse.Body.stream()
         : fileResponse.Body) as ReadableStream) // types mismatch between Node 20 and aws-sdk
     } catch (err) {
-      if (err instanceof NotFound || err instanceof NoSuchKey) return null
-      else throw err
+      if (err instanceof NotFound || err instanceof NoSuchKey)
+        return null
+      else
+        throw err
     }
+  }
+
+  public async list (prefix: string): Promise<string[]> {
+    return (await this.listObjects(prefix))
+      .map(({ Key }) => posix.basename(Key!))
   }
 
   public async put (path: string, filename: string, stream: Readable): Promise<void> {
@@ -136,10 +146,11 @@ export class S3 extends Provider<S3Options> {
         assert.ok(err instanceof NotFound || err instanceof NoSuchKey, err as Error)
       }
 
-    const objectsToRemove: ObjectIdentifier[] = []
+    const objectsToRemove: ObjectIdentifier[] = await this.listObjects(Key)
 
-    for await (const page of paginateListObjectsV2({ client }, { Bucket, Prefix: Key }))
-      for (const { Key } of page.Contents ?? []) objectsToRemove.push({ Key })
+    // for await (const page of paginateListObjectsV2({ client }, { Bucket, Prefix: Key }))
+    //   for (const { Key } of page.Contents ?? [])
+    //     objectsToRemove.push({ Key })
 
     // Removing all objects in parallel in batches
     await Promise.all((function * () {
@@ -162,5 +173,16 @@ export class S3 extends Provider<S3Options> {
     }))
 
     await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: from }))
+  }
+
+  private async listObjects (Prefix: string): Promise<ObjectIdentifier[]> {
+    const { client, bucket: Bucket } = this
+    const objects: ObjectIdentifier[] = []
+
+    for await (const page of paginateListObjectsV2({ client }, { Bucket, Prefix }))
+      for (const { Key } of page.Contents ?? [])
+        objects.push({ Key })
+
+    return objects
   }
 }

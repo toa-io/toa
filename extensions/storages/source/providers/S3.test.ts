@@ -105,6 +105,7 @@ describe('S3 storage provider', () => {
       deleteHandler))
 
     await provider.delete('/some/absolute/path_to_remove')
+
     expect(headHandler).toHaveBeenCalledTimes(1)
     expect(listHandler).toHaveBeenCalledTimes(2)
     expect(deleteHandler).toHaveBeenCalledTimes(1)

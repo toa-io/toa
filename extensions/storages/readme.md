@@ -75,8 +75,6 @@ are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/
 
 See [source](source/Scanner.ts).
 
-If the entry already exists, it is returned and [revealed](#async-revealpath-string-maybevoid).
-
 #### `async get(path: string): Maybe<Entry>`
 
 Get an entry.
@@ -112,9 +110,9 @@ await storage.move('/path/to/eecd837c', './sub/eecd837c')
 await storage.move('/path/to/eecd837c', './sub/')
 ```
 
-#### `async list(path: string): string[]`
+#### `async entries(path: string): Entry[]`
 
-Get a list of `id`s of entries under the `path`.
+Get a list of entries under the `path`.
 
 #### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
 
@@ -132,7 +130,7 @@ Custom providers are not supported.
 
 ### Amazon S3
 
-Annotation formats is like:
+Annotation formats are like:
 
 ```yaml
 storages:

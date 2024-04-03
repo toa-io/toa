@@ -1,5 +1,5 @@
 import { Readable } from 'node:stream'
-import { join } from 'node:path'
+import { join, posix } from 'node:path'
 import { buffer } from 'node:stream/consumers'
 import * as assert from 'node:assert'
 
@@ -11,12 +11,18 @@ import { Provider } from '../Provider'
 export class InMemory extends Provider {
   private readonly storage = new Map<string, Buffer>()
 
-  public override async get (path: string): Promise<Readable | null> {
+  public async get (path: string): Promise<Readable | null> {
     const data = this.storage.get(path)
 
     if (data === undefined) return null
 
     return Readable.from(data)
+  }
+
+  public async list (path: string): Promise<string[]> {
+    return Array.from(this.storage.keys())
+      .filter((f) => posix.dirname(f) === path)
+      .map((f) => posix.basename(f))
   }
 
   public override async put (path: string, filename: string, stream: Readable): Promise<void> {

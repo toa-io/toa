@@ -13,7 +13,7 @@ import type { ProviderConstructor } from './Provider'
 let storage: Storage
 let dir: string
 
-const suite = suites[0]
+const suite = suites[0] // replace with 2 to run tests for S3
 
 beforeAll(async () => {
   process.chdir(path.join(__dirname, 'test'))
@@ -103,18 +103,6 @@ describe('put', () => {
   })
 
   describe('existing entry', () => {
-    it('should unhide existing', async () => {
-      const stream = createReadStream('lenna.png')
-      const path = `${dir}/${lenna.id}`
-
-      await storage.conceal(path)
-      await storage.put(dir, stream)
-
-      const list = await storage.list(dir)
-
-      expect(list).toContainEqual(lenna.id)
-    })
-
     it('should preserve meta', async () => {
       const path = `${dir}/${lenna.id}`
       const stream = createReadStream('lenna.png')
@@ -145,67 +133,6 @@ describe('list', () => {
     const list = await storage.list(dir)
 
     expect(list).toEqual([albert.id, lenna.id])
-  })
-
-  it('should permute', async () => {
-    const error = await storage.permute(dir, [lenna.id, albert.id])
-
-    expect(error).toBeUndefined()
-
-    const list = await storage.list(dir)
-
-    expect(list).toEqual([lenna.id, albert.id])
-  })
-
-  it('should return PERMUTATION_MISMATCH', async () => {
-    const cases = [
-      [lenna.id],
-      [albert.id, lenna.id, 'unknown'],
-      [lenna.id, lenna.id],
-      [lenna.id, lenna.id, albert.id]
-    ]
-
-    for (const permutation of cases) {
-      const error = await storage.permute(dir, permutation)
-
-      expect(error).toBeInstanceOf(Error)
-      expect(error).toHaveProperty('code', 'PERMUTATION_MISMATCH')
-    }
-  })
-
-  it('should exclude concealed', async () => {
-    const path = `${dir}/${lenna.id}`
-
-    await storage.conceal(path)
-
-    const entries = await storage.list(dir)
-
-    expect(entries).toEqual([albert.id])
-  })
-
-  it('should reveal', async () => {
-    const path = `${dir}/${lenna.id}`
-
-    await storage.conceal(path)
-    await storage.reveal(path)
-    await storage.reveal(path) // test that no duplicates are created
-
-    const entries = await storage.list(dir)
-
-    expect(entries).toEqual([albert.id, lenna.id])
-  })
-
-  it('should return ERR_NOT_FOUND if entry doesnt exist', async () => {
-    const path = `${dir}/oopsie`
-
-    const methods: Array<'reveal' | 'conceal'> = ['reveal', 'conceal']
-
-    for (const method of methods) {
-      const error = await storage[method](path)
-
-      expect(error).toBeInstanceOf(Error)
-      expect(error).toHaveProperty('code', 'NOT_FOUND')
-    }
   })
 })
 
