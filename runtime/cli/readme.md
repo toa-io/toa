@@ -73,10 +73,6 @@ Credentials specified in the output file are preserved.
 </dd>
 </dl>
 
-### export entity
-
-Same as `exprot manifest` but outputs only the `entity`.
-
 ## Operations
 
 > Some commands use current `kubectl` and `docker` context.
