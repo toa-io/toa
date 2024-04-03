@@ -3,11 +3,7 @@ export type Service = {
   name: string
   version: string
   port: number
-  ingress?: {
-    host: string
-    class?: string
-    annotations?: object
-  }
+  ingress: Ingress
   variables: Variable[]
   components?: string[]
 }
@@ -27,4 +23,10 @@ export type Variables = Record<'global' | string, Variable[]>
 export type Dependency = {
   services?: Service[]
   variables?: Variables
+}
+
+type Ingress = {
+  hosts: string[]
+  class?: string
+  annotations?: object
 }

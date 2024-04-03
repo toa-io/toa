@@ -1,8 +1,8 @@
 export interface Annotation {
-  host?: string
+  authorities: Record<string, string>
   class?: string
   annotations?: Record<string, string>
-  debug: boolean
-  trace: boolean
+  debug?: boolean
+  trace?: boolean
   '/'?: object // parsed and validated by RTD.syntax.parse
 }
