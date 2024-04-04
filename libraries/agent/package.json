@@ -38,6 +38,6 @@
     "http-parser-js": "0.5.8",
     "http-status-codes": "2.3.0",
     "negotiator": "0.6.3",
-    "undici": "6.10.2"
+    "undici": "6.11.1"
   }
 }
