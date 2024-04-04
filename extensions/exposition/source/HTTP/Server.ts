@@ -77,7 +77,7 @@ export class Server extends Connector {
     }
 
     const authority = this.authorities[request.headers.host]
-    const context = new Context(authority, request as IncomingMessage, this.properties.trace)
+    const context = new Context(authority, request as IncomingMessage, this.properties)
 
     this.process!(context)
       .then(this.success(context, response))
