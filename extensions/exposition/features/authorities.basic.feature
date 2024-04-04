@@ -23,7 +23,7 @@ Feature: Basic credentials with authorities
       accept: application/yaml
 
       username: #{{ id | set one.username }}
-      password: '#{{ password 8 | set one.password }}'
+      password: #{{ password 8 | set one.password }}
       """
     Then the following reply is sent:
       """
