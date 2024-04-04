@@ -377,7 +377,7 @@ Feature: Basic authentication
       """
       GET /identity/ HTTP/1.1
       host: nex.toa.io
-      authorization: Basic SGVsbG8gV29ybGQh===
+      authorization: Basic not-base64
       """
     Then the following reply is sent:
       """
@@ -387,7 +387,7 @@ Feature: Basic authentication
       """
       POST /users/ HTTP/1.1
       host: nex.toa.io
-      authorization: Basic SGVsbG8gV29ybGQh===
+      authorization: Basic not-base64
       accept: application/yaml
       content-type: application/yaml
 
