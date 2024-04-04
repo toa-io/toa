@@ -360,3 +360,42 @@ Feature: Basic authentication
       """
       403 Forbidden
       """
+
+  Scenario: Incorrect credentials format
+    Given the `identity.basic` database is empty
+    And the `users` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          anonymous: true
+          POST:
+            incept: id
+            endpoint: transit
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic SGVsbG8gV29ybGQh===
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    When the following request is received:
+      """
+      POST /users/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic SGVsbG8gV29ybGQh===
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: Bill Smith
+      """
+    Then the following reply is sent:
+      """
+      422 Unprocessable Entity
+
+      code: INVALID_CREDENTIALS
+      """

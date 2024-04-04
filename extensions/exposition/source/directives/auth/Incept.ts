@@ -40,7 +40,7 @@ export class Incept implements Directive {
     })
 
     if (identity instanceof Error)
-      throw new http.Conflict(identity)
+      throw new http.UnprocessableEntity(identity)
 
     input.identity = identity
     input.identity.scheme = scheme
