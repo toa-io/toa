@@ -16,10 +16,10 @@ Use its features to test.
  */
 
 export class Agent {
-  public readonly origin: string
+  public readonly origin?: string
   public response: string = ''
 
-  public constructor (origin: string, private readonly captures: Captures = new Captures()) {
+  public constructor (origin?: string, private readonly captures: Captures = new Captures()) {
     this.origin = origin
   }
 
