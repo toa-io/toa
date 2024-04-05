@@ -4,4 +4,4 @@ export function password (_: unknown, length: string = '16'): string {
   return Array.from({ length: l }, () => CHARSET[Math.floor(Math.random() * CHARSET.length)]).join('')
 }
 
-const CHARSET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-='
+const CHARSET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'

@@ -4,8 +4,12 @@ import { Err } from 'error-value'
 import { type Context } from './types'
 
 export async function computation (input: Input, context: Context): Promise<Maybe<Output>> {
-  const [username, password] = Buffer.from(input.credentials, 'base64').toString().split(':')
-  const query: Query = { criteria: `authority==${input.authority};username==${username}` }
+  const [username, password] = Buffer
+    .from(input.credentials, 'base64')
+    .toString()
+    .split(':')
+
+  const query: Query = { criteria: `authority==${input.authority};username=='${username}'` }
   const credentials = await context.local.observe({ query })
 
   if (credentials instanceof Error)

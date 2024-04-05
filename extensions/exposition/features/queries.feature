@@ -113,7 +113,7 @@ Feature: Queries
         volume: 300
       """
 
-  Scenario: Request to a route with a path variable
+  Scenario: Request to a route with path variable
     Given the `pots` is running with the following manifest:
       """yaml
       exposition:
@@ -167,7 +167,7 @@ Feature: Queries
         volume: 400
       """
 
-  Scenario: Request to a route with combined criteria
+  Scenario: Request to a route with open criteria
     Given the `pots` is running with the following manifest:
       """yaml
       exposition:

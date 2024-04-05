@@ -12,18 +12,20 @@ export class Context {
   public readonly subtype: string | null = null
   public readonly encoder: Format | null = null
   public readonly timing: Timing
+  public readonly debug: boolean
 
   public readonly pipelines: Pipelines = {
     body: [],
     response: []
   }
 
-  public constructor (authority: string, request: IncomingMessage, trace = false) {
+  public constructor (authority: string, request: IncomingMessage, properties: Properties) {
     this.authority = authority
     this.request = request
 
     this.url = new URL(request.url, `https://${request.headers.host}`)
-    this.timing = new Timing(trace)
+    this.timing = new Timing(properties.trace)
+    this.debug = properties.debug
 
     if (this.request.headers.accept !== undefined) {
       const match = SUBTYPE.exec(this.request.headers.accept)
@@ -64,6 +66,11 @@ export interface IncomingMessage extends http.IncomingMessage {
 interface Pipelines {
   body: Array<(input: unknown) => unknown>
   response: Array<(output: OutgoingMessage) => void>
+}
+
+interface Properties {
+  debug: boolean
+  trace: boolean
 }
 
 const SUBTYPE = /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/

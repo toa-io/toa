@@ -18,10 +18,8 @@ content-type: application/yaml
 accept: application/yaml
 
 username: #{{ email @bubbas.net | set Bubba.username }}
-password: '#{{ password 8 | set Bubba.password }}'
+password: #{{ password 8 | set Bubba.password }}
 ```
-
-> Quotes must surround passwords to prevent invalid YAML.
 
 ```http
 GET / HTTP/1.1

@@ -9,6 +9,7 @@ Feature: Basic credentials with authorities
       /:
         /:id:
           auth:id: id
+          io:output: true
           GET:
             dev:stub: Hello
       """
@@ -22,7 +23,7 @@ Feature: Basic credentials with authorities
       accept: application/yaml
 
       username: #{{ id | set one.username }}
-      password: '#{{ password 8 | set one.password }}'
+      password: #{{ password 8 | set one.password }}
       """
     Then the following reply is sent:
       """
@@ -40,7 +41,7 @@ Feature: Basic credentials with authorities
       accept: application/yaml
 
       username: #{{ id | set two.username }}
-      password: '#{{ password 8 | set two.password }}'
+      password: #{{ password 8 | set two.password }}
       """
     Then the following reply is sent:
       """
@@ -106,7 +107,7 @@ Feature: Basic credentials with authorities
       """
     Then the following reply is sent:
       """
-      422 Unprocessable Entity
+      409 Conflict
       """
     When the following request is received:
       """

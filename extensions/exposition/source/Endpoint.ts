@@ -17,8 +17,7 @@ export class Endpoint implements RTD.Endpoint {
     this.discovery = discovery
   }
 
-  public async call
-  (context: http.Context, parameters: RTD.Parameter[]): Promise<http.OutgoingMessage> {
+  public async call (context: http.Context, parameters: RTD.Parameter[]): Promise<http.OutgoingMessage> {
     const body = await context.body()
     const query = this.query(context)
     const request = this.mapping.fit(body, query, parameters)
@@ -26,6 +25,9 @@ export class Endpoint implements RTD.Endpoint {
     this.remote ??= await this.discovery
 
     const reply = await this.remote.invoke(this.endpoint, request)
+
+    if (context.debug)
+      console.debug('Call', `${this.remote.locator.id}.${this.endpoint}`, request)
 
     if (reply instanceof Error)
       throw new http.UnprocessableEntity(reply)
