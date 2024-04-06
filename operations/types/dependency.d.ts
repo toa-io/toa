@@ -6,6 +6,7 @@ export type Service = {
   ingress: Ingress
   variables: Variable[]
   components?: string[]
+  probe?: Probe
 }
 
 export type Variable = {
@@ -29,4 +30,10 @@ type Ingress = {
   hosts: string[]
   class?: string
   annotations?: object
+}
+
+interface Probe {
+  port: number
+  path: string
+  delay?: number
 }

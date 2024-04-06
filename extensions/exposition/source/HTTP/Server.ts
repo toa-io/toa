@@ -15,6 +15,7 @@ export class Server extends Connector {
   private readonly authorities: Record<string, string>
   private process?: Processing
   private ready: boolean = false
+  private startedAt: number = 0
 
   private constructor (properties: Properties) {
     super()
@@ -36,28 +37,29 @@ export class Server extends Connector {
   }
 
   protected override async open (): Promise<void> {
+    this.startedAt = Date.now()
     this.server.listen(this.properties.port)
 
     await once(this.server, 'listening')
 
-    console.info('HTTP Server is listening.')
+    console.info('HTTP Server is listening')
 
     await setTimeout(this.properties.delay)
 
     this.ready = true
 
-    console.info('HTTP Server is ready')
+    console.info('Ready')
   }
 
   protected override async close (): Promise<void> {
     this.server.close()
     this.ready = false
 
-    console.info('HTTP Server stopped accepting new connections.')
+    console.info('HTTP Server stopped accepting new connections')
 
     await once(this.server, 'close')
 
-    console.info('HTTP Server has been stopped.')
+    console.info('HTTP Server has been stopped')
   }
 
   private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
@@ -68,7 +70,13 @@ export class Server extends Connector {
     }
 
     if (request.url === '/.ready') {
-      response.writeHead(this.ready ? 200 : 503).end()
+      if (this.ready)
+        response.writeHead(200).end()
+      else {
+        const remaining = (Math.ceil((Date.now() - this.startedAt) / 1000)).toString()
+
+        response.writeHead(503, { 'retry-after': remaining }).end()
+      }
 
       return
     }
@@ -136,12 +144,15 @@ async function adam (request: http.IncomingMessage): Promise<any> {
   return once(request, 'end')
 }
 
+export const PORT = 8000
+export const DELAY = 3 // seconds
+
 const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
   trace: false,
-  port: 8000,
-  delay: 1000
+  port: PORT,
+  delay: DELAY * 1000
 }
 
 interface Properties {
