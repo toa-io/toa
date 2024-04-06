@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import * as http from 'node:http'
 import { once } from 'node:events'
+import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
@@ -13,6 +14,8 @@ export class Server extends Connector {
   private readonly properties: Properties
   private readonly authorities: Record<string, string>
   private process?: Processing
+  private ready: boolean = false
+  private startedAt: number = 0
 
   private constructor (properties: Properties) {
     super()
@@ -21,18 +24,6 @@ export class Server extends Connector {
     this.authorities = Object.fromEntries(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
 
     this.server.on('request', (req, res) => this.listener(req, res))
-  }
-
-  public get port (): number {
-    if (this.properties.port !== 0)
-      return this.properties.port
-
-    const address = this.server.address()
-
-    if (address === null || typeof address === 'string')
-      throw new Error('Server is not listening on a port.')
-
-    return address.port
   }
 
   public static create (options: Options): Server {
@@ -46,26 +37,46 @@ export class Server extends Connector {
   }
 
   protected override async open (): Promise<void> {
+    this.startedAt = Date.now()
     this.server.listen(this.properties.port)
 
     await once(this.server, 'listening')
 
-    console.info('HTTP Server is listening.')
+    console.info('HTTP Server is listening')
+
+    await setTimeout(this.properties.delay)
+
+    this.ready = true
+
+    console.info('Ready')
   }
 
   protected override async close (): Promise<void> {
     this.server.close()
+    this.ready = false
 
-    console.info('HTTP Server stopped accepting new connections.')
+    console.info('HTTP Server stopped accepting new connections')
 
     await once(this.server, 'close')
 
-    console.info('HTTP Server has been stopped.')
+    console.info('HTTP Server has been stopped')
   }
 
   private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
     if (request.method === undefined || !this.properties.methods.has(request.method)) {
       response.writeHead(501).end()
+
+      return
+    }
+
+    if (request.url === '/.ready') {
+      if (this.ready)
+        response.writeHead(200, { 'cache-control': 'no-store' }).end()
+      else {
+        const remaining = (Math.ceil((Date.now() - this.startedAt) / 1000)).toString()
+
+        response.writeHead(503, { 'retry-after': remaining }).end()
+      }
 
       return
     }
@@ -133,11 +144,15 @@ async function adam (request: http.IncomingMessage): Promise<any> {
   return once(request, 'end')
 }
 
+export const PORT = 8000
+export const DELAY = 3 // seconds
+
 const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
   trace: false,
-  port: 8000
+  port: PORT,
+  delay: DELAY * 1000
 }
 
 interface Properties {
@@ -146,6 +161,7 @@ interface Properties {
   debug: boolean
   trace: boolean
   port: number
+  delay: number
 }
 
 export type Options = { authorities: Properties['authorities'] } & {

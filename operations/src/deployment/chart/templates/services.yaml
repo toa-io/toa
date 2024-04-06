@@ -22,6 +22,15 @@ spec:
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}
+          {{- if .probe }}
+          readinessProbe:
+            httpGet:
+              path: {{ .probe.path }}
+              port: {{ .probe.port }}
+            {{- if .probe.delay }}
+            initialDelaySeconds: {{ .probe.delay }}
+            {{- end }}
+          {{- end }}
 ---
 apiVersion: v1
 kind: Service
