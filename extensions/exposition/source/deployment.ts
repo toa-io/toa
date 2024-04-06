@@ -17,7 +17,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   const service: Service = {
     group: 'exposition',
     name: 'gateway',
-    port: 8000,
+    port: PORT,
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     version: require('../package.json').version,
     variables: [],

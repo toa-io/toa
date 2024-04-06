@@ -71,7 +71,7 @@ export class Server extends Connector {
 
     if (request.url === '/.ready') {
       if (this.ready)
-        response.writeHead(200).end()
+        response.writeHead(200, { 'cache-control': 'no-store' }).end()
       else {
         const remaining = (Math.ceil((Date.now() - this.startedAt) / 1000)).toString()
 

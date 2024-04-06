@@ -10,4 +10,5 @@ Feature: Probes
     Then the following reply is sent:
       """
       200 OK
+      cache-control: no-store
       """
