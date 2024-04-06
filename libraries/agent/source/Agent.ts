@@ -23,7 +23,7 @@ export class Agent {
     this.origin = origin
   }
 
-  public async send (input: string): Promise<undici.Dispatcher.ResponseData> {
+  public async fetch (input: string): Promise<undici.Dispatcher.ResponseData> {
     const substituted = this.captures.substitute(input)
 
     let [headers, body] = trim(substituted).split('\n\n')
@@ -36,7 +36,7 @@ export class Agent {
   }
 
   public async request (input: string): Promise<any> {
-    const response = await this.send(input)
+    const response = await this.fetch(input)
 
     this.response = await parse.response(response)
   }
