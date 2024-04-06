@@ -5,6 +5,7 @@ const boot = require('@toa.io/boot')
 const { version } = require('@toa.io/runtime')
 
 const docker = require('./docker')
+const { graceful } = require('./lib/graceful')
 const { components: find } = require('../util/find')
 
 /**
@@ -22,6 +23,8 @@ async function compose (argv) {
   await composition.connect()
 
   if (argv.kill === true) await composition.disconnect()
+
+  return graceful(composition)
 }
 
 /**

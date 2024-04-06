@@ -4,6 +4,7 @@ const boot = require('@toa.io/boot')
 const { shortcuts } = require('@toa.io/norm')
 const { directory: { find } } = require('@toa.io/filesystem')
 const { version } = require('@toa.io/runtime')
+const { graceful } = require('./lib/graceful')
 
 const serve = async (argv) => {
   console.log('Runtime', version)
@@ -22,8 +23,7 @@ const serve = async (argv) => {
 
   await service.connect()
 
-  // for tests
-  return service
+  return graceful(service)
 }
 
 exports.serve = serve
