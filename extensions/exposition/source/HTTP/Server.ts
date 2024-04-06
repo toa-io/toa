@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import * as http from 'node:http'
 import { once } from 'node:events'
+import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
@@ -13,6 +14,7 @@ export class Server extends Connector {
   private readonly properties: Properties
   private readonly authorities: Record<string, string>
   private process?: Processing
+  private ready: boolean = false
 
   private constructor (properties: Properties) {
     super()
@@ -21,18 +23,6 @@ export class Server extends Connector {
     this.authorities = Object.fromEntries(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
 
     this.server.on('request', (req, res) => this.listener(req, res))
-  }
-
-  public get port (): number {
-    if (this.properties.port !== 0)
-      return this.properties.port
-
-    const address = this.server.address()
-
-    if (address === null || typeof address === 'string')
-      throw new Error('Server is not listening on a port.')
-
-    return address.port
   }
 
   public static create (options: Options): Server {
@@ -51,10 +41,17 @@ export class Server extends Connector {
     await once(this.server, 'listening')
 
     console.info('HTTP Server is listening.')
+
+    await setTimeout(this.properties.delay)
+
+    this.ready = true
+
+    console.info('HTTP Server is ready')
   }
 
   protected override async close (): Promise<void> {
     this.server.close()
+    this.ready = false
 
     console.info('HTTP Server stopped accepting new connections.')
 
@@ -66,6 +63,12 @@ export class Server extends Connector {
   private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
     if (request.method === undefined || !this.properties.methods.has(request.method)) {
       response.writeHead(501).end()
+
+      return
+    }
+
+    if (request.url === '/.ready') {
+      response.writeHead(this.ready ? 200 : 503).end()
 
       return
     }
@@ -137,7 +140,8 @@ const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
   debug: false,
   trace: false,
-  port: 8000
+  port: 8000,
+  delay: 1000
 }
 
 interface Properties {
@@ -146,6 +150,7 @@ interface Properties {
   debug: boolean
   trace: boolean
   port: number
+  delay: number
 }
 
 export type Options = { authorities: Properties['authorities'] } & {
