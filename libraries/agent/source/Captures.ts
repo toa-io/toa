@@ -10,15 +10,6 @@ export class Captures extends Map<string, string> {
     this.functions = functions
   }
 
-  public override set (key: string, value: string): this {
-    if (super.has(key))
-      assert.equal(super.get(key),
-        value,
-        `Capture ${key} already has different value: ${super.get(key)}`)
-
-    return super.set(key, value)
-  }
-
   public substitute (text: string): string {
     for (const [key, value] of this.entries())
       text = text.replaceAll(`\${{ ${key} }}`, value)
