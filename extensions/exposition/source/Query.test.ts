@@ -16,7 +16,7 @@ it('should combine request criteria', async () => {
   const instance = new Query(query)
   const result = instance.fit({ criteria: 'qux==4' }, parameters)
 
-  expect(result.criteria).toStrictEqual('(foo==1);(bar==2;baz==3);(qux==4)')
+  expect(result.criteria).toStrictEqual('(bar==2;baz==3);(foo==1);(qux==4)')
 })
 
 it('should set id parameter as query.id', async () => {

@@ -77,8 +77,12 @@ query:
 
 ### Path variables
 
-Path variables are prepended to the `criteria` request query parameter using logical AND,
-except for the [`POST` method](#post-method).
+Path variables are prepended to the `criteria` request query parameter except for
+the [`POST` method](#post-method).
+
+If query criteria starts with logical operator (`,` or `;`), then path variables are prepended
+accordingly.
+`AND` logical operator is used by default.
 
 Given the following declaration:
 
@@ -92,7 +96,7 @@ exposition:
     GET:
       endpoint: observe
       query:
-        criteria: state==hot; # open criteria
+        criteria: ,state==hot; # open criteria
 ```
 
 and the following request:
@@ -104,7 +108,7 @@ GET /dummies/cool/?criteria=rank==5
 Operation call will have the following query criteria:
 
 ```yaml
-criteria: state==hot;type==cool;rank=5
+criteria: (type==cool,state==hot);(rank=5)
 ```
 
 #### POST method

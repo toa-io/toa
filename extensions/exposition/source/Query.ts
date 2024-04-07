@@ -7,15 +7,20 @@ import type * as core from '@toa.io/core'
 export class Query {
   private readonly query: syntax.Query
   private readonly closed: boolean = false
+  private readonly prepend: ',' | ';' = ';'
 
   public constructor (query: syntax.Query) {
     if (query.criteria !== undefined) {
-      const open = query.criteria[query.criteria.length - 1] === ';'
-
-      if (open)
+      if (query.criteria.endsWith(';'))
         query.criteria = query.criteria.slice(0, -1)
       else
         this.closed = true
+
+      if (query.criteria.startsWith(',') || query.criteria.startsWith(';')) {
+        this.prepend = query.criteria[0] as ',' | ';'
+
+        query.criteria = query.criteria.slice(1)
+      }
     }
 
     this.query = query
@@ -35,11 +40,7 @@ export class Query {
   }
 
   private fitCriteria (query: http.Query, parameters: Parameter[]): void {
-    const criteria: string[] = []
-
-    if (this.query.criteria !== undefined)
-      criteria.push(this.query.criteria)
-
+    const groups: CriteriaGroup[] = []
     const idx = parameters.findIndex((parameter) => parameter.name === 'id')
 
     if (idx !== -1) {
@@ -49,29 +50,28 @@ export class Query {
     }
 
     if (parameters.length > 0) {
-      const chunks = parameters
+      const criteria = parameters
         .map(({ name, value }) => `${name}==${value}`)
         .join(';')
 
-      criteria.push(chunks)
+      groups.push({ criteria, operator: this.prepend })
     }
+
+    if (this.query.criteria !== undefined)
+      groups.push({ criteria: this.query.criteria, operator: ';' })
 
     if (query.criteria !== undefined)
       if (this.closed)
         throw new http.BadRequest('Query criteria is closed')
       else
-        criteria.push(query.criteria)
+        groups.push({ criteria: query.criteria, operator: WHATEVER })
 
-    switch (criteria.length) {
-      case 0:
-        break
-      case 1:
-        query.criteria = criteria[0]
-        break
-      default:
-        query.criteria = '(' + criteria.join(');(') + ')'
-        break
-    }
+    if (groups.length > 0)
+      query.criteria = groups.reduce((acc, { criteria, operator }, i) => {
+        return i === groups.length - 1
+          ? `${acc}(${criteria})`
+          : `${acc}(${criteria})${operator}`
+      }, '')
   }
 
   private fitRanges (qs: http.Query): void {
@@ -106,4 +106,11 @@ function fit (string: string, range: [number, number], name: string): number {
       `${range[0]} and ${range[1]} inclusive`)
 
   return number
+}
+
+const WHATEVER = ';'
+
+interface CriteriaGroup {
+  criteria: string
+  operator: ',' | ';'
 }
