@@ -6,6 +6,7 @@ import * as schemas from './schemas'
 import { shortcuts } from './Directive'
 import { components } from './Composition'
 import { parse } from './RTD/syntax'
+import { DELAY, PORT } from './HTTP/Server'
 
 export function deployment (_: unknown, annotation?: Annotation): Dependency {
   assert.ok(annotation !== undefined, 'Exposition context annotation is required')
@@ -16,12 +17,17 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   const service: Service = {
     group: 'exposition',
     name: 'gateway',
-    port: 8000,
+    port: PORT,
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     version: require('../package.json').version,
     variables: [],
     components: labels,
-    ingress: { hosts: [] }
+    ingress: { hosts: [] },
+    probe: {
+      path: '/.ready',
+      port: PORT,
+      delay: DELAY
+    }
   }
 
   if (annotation?.['/'] !== undefined) {

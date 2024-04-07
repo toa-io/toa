@@ -15,6 +15,7 @@ Feature: Deployment
         identity.tokens:
           key0: secret.key.0
       """
+    When I run `kubens toa-integration`
     When I run `toa conceal amqp-context.default username=developer password=secret`
     When I run `toa conceal mongodb.default username=developer password=secret`
     And I run `toa deploy docker --wait`

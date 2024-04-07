@@ -55,16 +55,16 @@ export class Gateway extends Connector {
   protected override async open (): Promise<void> {
     await this.discover()
 
-    console.info('Gateway has started and is awaiting resource branches.')
+    console.info('Gateway has started and is awaiting resource branches')
   }
 
   protected override dispose (): void {
-    console.info('Gateway is closed.')
+    console.info('Gateway is closed')
   }
 
   private async call (method: Method, context: http.Context, parameters: Parameter[]): Promise<http.OutgoingMessage> {
     if (context.url.pathname[context.url.pathname.length - 1] !== '/')
-      throw new http.NotFound('Trailing slash is required.')
+      throw new http.NotFound('Trailing slash is required')
 
     if (context.encoder === null)
       throw new http.NotAcceptable()
@@ -87,7 +87,7 @@ export class Gateway extends Connector {
       this.tree.merge(branch.node, branch)
 
       console.info('Resource branch of ' +
-        `'${branch.namespace}.${branch.component}' has been merged.`)
+        `'${branch.namespace}.${branch.component}' has been merged`)
     } catch (exception) {
       console.error(exception)
     }
