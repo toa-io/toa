@@ -137,6 +137,37 @@ Feature: Queries
       volume: 200
       """
 
+  Scenario: Request to a route with path variable using OR operator
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:volume:
+          io:output: true
+          GET:
+            query:
+              criteria: ',volume==100'
+            endpoint: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/200/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      - id: 4c4759e6f9c74da989d64511df42d6f4
+        title: First pot
+        volume: 100
+        temperature: 80
+      - id: 99988d785d7d445cad45dbf8531f560b
+        title: Second pot
+        volume: 200
+      """
+
   Scenario: Request to a route with predefined criteria
     Given the `pots` is running with the following manifest:
       """yaml
