@@ -36,4 +36,19 @@ Feature: Introspection
       GET:
         output:
           type: array
+            name:
+              type: string
+              description: The name of the pot
+            description:
+              type: string
+              description: A description of the pot
+        output:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The id of the pot
+        unprocessable:
+          - INVALID_NAME
+          - INVALID_DESCRIPTION
       """
