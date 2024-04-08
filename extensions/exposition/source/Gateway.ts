@@ -2,7 +2,7 @@ import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import type { Interception } from './Interception'
-import type { Method, Parameter, Tree } from './RTD'
+import type { Node, Method, Parameter, Tree } from './RTD'
 import type { Label } from './discovery'
 import type { Branch } from './Branch'
 
@@ -34,6 +34,9 @@ export class Gateway extends Connector {
       throw new http.NotFound('Route not found')
 
     const { node, parameters } = match
+
+    if (context.request.method === 'OPTIONS')
+      return await this.explain(node)
 
     if (!(context.request.method in node.methods))
       throw new http.MethodNotAllowed()
@@ -75,6 +78,20 @@ export class Gateway extends Connector {
     return await method.endpoint
       .call(context, parameters)
       .catch(rethrow) as http.OutgoingMessage
+  }
+
+  private async explain (node: Node): Promise<http.OutgoingMessage> {
+    const methods: Record<string, unknown> = {}
+
+    const explaining = Object.entries(node.methods)
+      .map(async ([verb, method]) => (methods[verb] = await method.explain()))
+
+    await Promise.all(explaining)
+
+    const allow = [...Object.keys(node.methods), 'OPTIONS'].join(', ')
+    const headers = new Headers({ allow })
+
+    return { body: methods, headers }
   }
 
   private async discover (): Promise<void> {

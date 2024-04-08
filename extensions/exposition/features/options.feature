@@ -6,6 +6,7 @@ Feature: Options
       exposition:
         /:
           io:output: true
+          GET: enumerate
           POST: create
       """
     When the following request is received:
@@ -17,24 +18,21 @@ Feature: Options
     Then the following reply is sent:
       """
       200 OK
+      Allow: GET, POST, OPTIONS
 
       POST:
         input:
           type: object
           properties:
-            name:
+            title:
               type: string
-              description: The name of the pot
-            description:
-              type: string
-              description: A description of the pot
+            temperature:
+              type: number
+            volume:
+              type: number
         output:
           type: object
-          properties:
-            id:
-              type: string
-              description: The id of the pot
-        unprocessable:
-          - INVALID_NAME
-          - INVALID_DESCRIPTION
+      GET:
+        output:
+          type: array
       """

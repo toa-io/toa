@@ -5,6 +5,9 @@ import type * as RTD from './index'
 
 export interface Endpoint {
   call: (context: http.Context, parameters: RTD.Parameter[]) => Promise<http.OutgoingMessage>
+
+  explain: () => unknown
+
   close: () => Promise<void>
 }
 
