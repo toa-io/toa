@@ -22,7 +22,6 @@
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.42",
     "@toa.io/generic": "1.0.0-alpha.42",
-    "@toa.io/schema": "1.0.0-alpha.42",
     "@toa.io/schemas": "1.0.0-alpha.42",
     "@toa.io/yaml": "1.0.0-alpha.42"
   },

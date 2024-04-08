@@ -3,10 +3,10 @@
 const path = require('node:path')
 
 const { load } = require('@toa.io/yaml')
-const { Schema } = require('@toa.io/schema')
+const schemas = require('@toa.io/schemas')
 
 const object = load.sync(path.resolve(__dirname, 'schema.yaml'))
-const schema = new Schema(object)
+const schema = schemas.schema(object)
 
 const validate = (manifest) => {
   const error = schema.fit(manifest)

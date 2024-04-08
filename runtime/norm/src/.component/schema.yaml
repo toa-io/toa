@@ -38,15 +38,19 @@ properties:
     type: object
     properties:
       id:
-        $ref: 'definitions#/definitions/locator'
+        type: string
+        pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))$
       label:
-        $ref: 'definitions#/definitions/label'
+        type: string
+        pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(-([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$
 
   name:
-    $ref: 'definitions#/definitions/token'
+    type: string
+    pattern: ^[a-zA-Z]([a-zA-Z0-9]{1,31})?$
 
   namespace:
-    $ref: 'definitions#/definitions/token'
+    type: string
+    pattern: ^[a-zA-Z]([a-zA-Z0-9]{1,31})?$
     default: 'default'
     not:
       oneOf:
@@ -68,7 +72,7 @@ properties:
         type: string
         default: '@toa.io/storages.mongodb'
       schema:
-        $ref: 'definitions#/definitions/schema'
+        $ref: https://json-schema.org/draft/2019-09/schema
         type: object
         properties:
           type:
@@ -135,9 +139,9 @@ properties:
           bindings:
             $ref: '#/properties/bindings'
           input:
-            $ref: 'definitions#/definitions/schema'
+            $ref: https://json-schema.org/draft/2019-09/schema
           output:
-            $ref: 'definitions#/definitions/schema'
+            $ref: https://json-schema.org/draft/2019-09/schema
           query:
             type: boolean
         required: [type, scope, bindings]
@@ -213,7 +217,7 @@ properties:
   events:
     type: object
     propertyNames:
-      $ref: 'definitions#/definitions/name'
+      $ref: '#/definitions/name'
     patternProperties:
       '.*':
         type: object
@@ -240,13 +244,13 @@ properties:
         type: object
         properties:
           operation:
-            $ref: 'definitions#/definitions/name'
+            $ref: '#/definitions/name'
           bridge:
             type: string
           binding:
             type: string
           source:
-            $ref: 'definitions#/definitions/name'
+            $ref: '#/definitions/name'
             not:
               const: context
           path:

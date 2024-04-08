@@ -20,13 +20,13 @@ it('should be ok', () => {
 it('should provide error', () => {
   manifest.foo = 'bar'
 
-  expect(() => validate(manifest)).toThrow(/must NOT have additional property/)
+  expect(() => validate(manifest)).toThrow(/must NOT have additional/)
 })
 
 it('should not have additional properties', () => {
   manifest.foo = 'bar'
 
-  expect(() => validate(manifest)).toThrow(/must NOT have additional property/)
+  expect(() => validate(manifest)).toThrow(/must NOT have additional/)
 })
 
 describe('namespace', () => {
@@ -83,7 +83,7 @@ describe('entity', () => {
 
   it('should not have additional properties', () => {
     manifest.entity.foo = 'bar'
-    expect(() => validate(manifest)).toThrow(/must NOT have additional property/)
+    expect(() => validate(manifest)).toThrow(/must NOT have additional/)
   })
 
   describe('schema', () => {
@@ -99,7 +99,7 @@ describe('entity', () => {
 
     it('should be JSON schema object of type object', () => {
       manifest.entity.schema = { type: 'integer' }
-      expect(() => validate(manifest)).toThrow(/must be equal to constant 'object'/)
+      expect(() => validate(manifest)).toThrow(/must be equal to constant/)
 
       manifest.entity.schema = {}
       validate(manifest)
@@ -154,7 +154,7 @@ describe('operations', () => {
 
   it('should not have additional properties', () => {
     manifest.operations.get.foo = 'bar'
-    expect(() => validate(manifest)).toThrow(/additional property/)
+    expect(() => validate(manifest)).toThrow(/must NOT have additional/)
   })
 
   it('should have type (transition or observation)', () => {

@@ -3,15 +3,12 @@
 const { resolve } = require('node:path')
 
 const { load } = require('@toa.io/yaml')
-const { Schema } = require('@toa.io/schema')
+const schemas = require('@toa.io/schemas')
 
 const path = resolve(__dirname, 'schema.yaml')
 const object = load.sync(path)
-const schema = new Schema(object)
+const schema = schemas.schema(object)
 
-/**
- * @param {toa.norm.context.Declaration} context
- */
 const validate = (context) => {
   schema.validate(context)
 }
