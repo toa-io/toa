@@ -4,7 +4,6 @@ const { swap } = require('@toa.io/generic')
 
 const codes = {
   System: 0,
-  NotImplemented: 10,
 
   Contract: 200,
   RequestSyntax: 201,

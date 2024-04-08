@@ -2,19 +2,19 @@
 
 const { generate } = require('randomstring')
 
-const { Conditions } = require('../../src/contract/conditions')
+const { Contract } = require('../../src/contract/contract')
 const fixtures = require('./contract.fixtures')
 
-let conditions
+let contract
 
 beforeEach(() => {
-  conditions = new Conditions(fixtures.schema)
+  contract = new Contract(fixtures.schema)
 })
 
 it('should fit value', () => {
   const value = { foo: generate() }
 
-  conditions.fit(value)
+  contract.fit(value)
 
   expect(fixtures.schema.fit).toHaveBeenCalledWith(value)
 })
@@ -22,5 +22,5 @@ it('should fit value', () => {
 it('should throw on invalid value', () => {
   const value = { invalid: true }
 
-  expect(() => conditions.fit(value)).toThrow()
+  expect(() => contract.fit(value)).toThrow()
 })

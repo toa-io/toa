@@ -37,6 +37,10 @@ class Call extends Connector {
         return reply.output
     }
   }
+
+  explain () {
+    return this.#contract.contracts
+  }
 }
 
 exports.Call = Call

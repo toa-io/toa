@@ -5,14 +5,14 @@ const { Schema } = require('@toa.io/schema')
 
 const request = (definition, entity) => {
   const request = Request.schema(definition, entity)
-  const schema = new Schema(request, { removeAdditional: true }) // soft inputs
+  const schema = new Schema(request)
 
-  return new Request(schema)
+  return new Request(schema, definition)
 }
 
 const reply = (output, error) => {
   const reply = Reply.schema(output, error)
-  const schema = new Schema(reply) // outputs strict
+  const schema = new Schema(reply)
 
   return new Reply(schema)
 }

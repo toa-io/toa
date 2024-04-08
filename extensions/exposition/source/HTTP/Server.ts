@@ -136,12 +136,12 @@ export class Server extends Connector {
 }
 
 // https://github.com/whatwg/fetch/issues/1254
-async function adam (request: http.IncomingMessage): Promise<any> {
+async function adam (request: http.IncomingMessage): Promise<void> {
   const devnull = fs.createWriteStream(os.devNull)
 
   request.pipe(devnull)
 
-  return once(request, 'end')
+  await once(request, 'end')
 }
 
 export const PORT = 8000

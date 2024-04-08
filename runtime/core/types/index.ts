@@ -5,6 +5,7 @@ export * as bridges from './bridges'
 export * as operations from './operations'
 
 export type { Component } from './component'
+export type { Remote } from './remote'
 export { Connector } from './connector'
 export type { Context } from './context'
 export type { Exception } from './exception'

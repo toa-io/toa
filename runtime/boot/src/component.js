@@ -5,10 +5,6 @@ const { Schema } = require('@toa.io/schema')
 
 const boot = require('./index')
 
-/**
- * @param {toa.norm.Component} manifest
- * @returns {Promise<toa.core.Component>}
- */
 const component = async (manifest) => {
   boot.extensions.load(manifest)
 

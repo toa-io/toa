@@ -3,10 +3,10 @@
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
-jest.mock('../../src/contract/conditions')
+jest.mock('../../src/contract/contract')
 
 const { Request } = require('../../src/contract/request')
-const { Conditions } = require('../../src/contract/conditions')
+const { Contract } = require('../../src/contract/contract')
 const fixtures = require('./contract.fixtures')
 
 let contract
@@ -14,14 +14,14 @@ let contract
 beforeEach(() => {
   jest.clearAllMocks()
 
-  contract = new Request(fixtures.schema)
+  contract = new Request(fixtures.schema, {})
 })
 
 const dummy = { schema: { properties: {} } }
 
 it('should extend Conditions', () => {
-  expect(contract).toBeInstanceOf(Conditions)
-  expect(Conditions).toHaveBeenCalledWith(fixtures.schema)
+  expect(contract).toBeInstanceOf(Contract)
+  expect(Contract).toHaveBeenCalledWith(fixtures.schema)
 })
 
 it('should fit request', () => {
@@ -29,7 +29,7 @@ it('should fit request', () => {
 
   contract.fit(request)
 
-  expect(Conditions.mock.instances[0].fit).toHaveBeenCalledWith(request)
+  expect(Contract.mock.instances[0].fit).toHaveBeenCalledWith(request)
 })
 
 describe('schema', () => {
