@@ -23,17 +23,3 @@ entity:
 operations:
   transit:
     virtual: true
-    input:
-      type: object
-      nullable: true
-      default: null
-    output: object
-  observe:
-    output: object
-  assign:
-    input:
-      type: object
-      nullable: true
-      default: null
-  enumerate:
-    output: array
