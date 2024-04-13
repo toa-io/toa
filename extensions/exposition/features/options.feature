@@ -1,6 +1,6 @@
-Feature: Options
+Feature: Introspection
 
-  Scenario: Getting options
+  Scenario: Introspect a resource
     Given the `pots` is running with the following manifest:
       """yaml
       exposition:
@@ -30,6 +30,7 @@ Feature: Options
               type: number
             volume:
               type: number
+          additionalProperties: false
         output:
           type: object
       GET:
