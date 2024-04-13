@@ -1,5 +1,3 @@
-// noinspection JSUnresolvedVariable
-
 'use strict'
 
 const clone = require('clone-deep')
