@@ -183,6 +183,17 @@ Feature: Octets directive family
       type: image/svg+xml
       """
 
+    Scenario: Rejection video/avi
+    When the stream of `sample.avi` is received with the following headers:
+      """
+      POST /media/images/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      415 Unsupported Media Type
+      """
+
   Scenario: Fetching non-existent BLOB
     When the following request is received:
       """

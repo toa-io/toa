@@ -54,7 +54,12 @@ export class Scanner extends PassThrough {
     const header = Buffer.concat(this.chunks).toString('hex')
 
     const signature = SIGNATURES
-      .find(({ hex, off }) => header.slice(off, off + hex.length) === hex)
+      .find(({ hex, off }) => {
+        const value = header.slice(off, off + hex.length)
+        const [start, end] = hex.split(/_+/)
+
+        return value.startsWith(start) && (end === undefined || value.endsWith(end))
+      })
 
     const type = signature?.type ?? this.claim
 
@@ -103,10 +108,12 @@ const SIGNATURES: Signature[] = [
   { hex: 'ffd8ffdb', off: 0, type: 'image/jpeg' },
   { hex: '89504e47', off: 0, type: 'image/png' },
   { hex: '47494638', off: 0, type: 'image/gif' },
-  { hex: '52494646', off: 0, type: 'image/webp' },
+  { hex: '52494646________57454250', off: 0, type: 'image/webp' },
   { hex: '4a584c200d0a870a', off: 8, type: 'image/jxl' },
   { hex: '6674797068656963', off: 8, type: 'image/heic' },
-  { hex: '6674797061766966', off: 8, type: 'image/avif' }
+  { hex: '6674797061766966', off: 8, type: 'image/avif' },
+  { hex: '52494646________41564920', off: 0, type: 'video/avi' },
+  { hex: '52494646________57415645', off: 0, type: 'audio/wav' }
   /*
   When adding a new signature, include a copyright-free sample file in the `.tests` directory
   and update the 'signatures' test group in `Storage.test.ts`.
@@ -128,6 +135,7 @@ export interface ScanOptions {
 
 interface Signature {
   hex: string
+  hexEnd?: string
   off: number
   type: string
 }
