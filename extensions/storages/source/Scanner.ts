@@ -54,11 +54,10 @@ export class Scanner extends PassThrough {
     const header = Buffer.concat(this.chunks).toString('hex')
 
     const signature = SIGNATURES
-      .find(({ hex, off }) => {
-        const value = header.slice(off, off + hex.length)
-        const [start, end] = hex.split(/_+/)
+      .find(({ hex, hexEnd, off, size }) => {
+        const value = header.slice(off, off + size)
 
-        return value.startsWith(start) && (end === undefined || value.endsWith(end))
+        return value.startsWith(hex) && (hexEnd === undefined || value.endsWith(hexEnd))
       })
 
     const type = signature?.type ?? this.claim
@@ -102,18 +101,18 @@ export class Scanner extends PassThrough {
 
 // https://en.wikipedia.org/wiki/List_of_file_signatures
 const SIGNATURES: Signature[] = [
-  { hex: 'ffd8ffe0', off: 0, type: 'image/jpeg' },
-  { hex: 'ffd8ffe1', off: 0, type: 'image/jpeg' },
-  { hex: 'ffd8ffee', off: 0, type: 'image/jpeg' },
-  { hex: 'ffd8ffdb', off: 0, type: 'image/jpeg' },
-  { hex: '89504e47', off: 0, type: 'image/png' },
-  { hex: '47494638', off: 0, type: 'image/gif' },
-  { hex: '52494646________57454250', off: 0, type: 'image/webp' },
-  { hex: '4a584c200d0a870a', off: 8, type: 'image/jxl' },
-  { hex: '6674797068656963', off: 8, type: 'image/heic' },
-  { hex: '6674797061766966', off: 8, type: 'image/avif' },
-  { hex: '52494646________41564920', off: 0, type: 'video/avi' },
-  { hex: '52494646________57415645', off: 0, type: 'audio/wav' }
+  { hex: 'ffd8ffe0', off: 0, size: 8, type: 'image/jpeg' },
+  { hex: 'ffd8ffe1', off: 0, size: 8, type: 'image/jpeg' },
+  { hex: 'ffd8ffee', off: 0, size: 8, type: 'image/jpeg' },
+  { hex: 'ffd8ffdb', off: 0, size: 8, type: 'image/jpeg' },
+  { hex: '89504e47', off: 0, size: 8, type: 'image/png' },
+  { hex: '47494638', off: 0, size: 8, type: 'image/gif' },
+  { hex: '52494646', hexEnd: '57454250', size: 24, off: 0, type: 'image/webp' },
+  { hex: '4a584c200d0a870a', size: 16, off: 8, type: 'image/jxl' },
+  { hex: '6674797068656963', size: 16, off: 8, type: 'image/heic' },
+  { hex: '6674797061766966', size: 16, off: 8, type: 'image/avif' },
+  { hex: '52494646', hexEnd: '41564920', size: 24, off: 0, type: 'video/avi' },
+  { hex: '52494646', hexEnd: '57415645', size: 24, off: 0, type: 'audio/wav' }
   /*
   When adding a new signature, include a copyright-free sample file in the `.tests` directory
   and update the 'signatures' test group in `Storage.test.ts`.
@@ -121,7 +120,7 @@ const SIGNATURES: Signature[] = [
 ]
 
 const HEADER_SIZE = SIGNATURES
-  .reduce((max, { off, hex }) => Math.max(max, off + hex.length), 0) / 2
+  .reduce((max, { off, size }) => Math.max(max, off + size), 0) / 2
 
 const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
@@ -136,6 +135,7 @@ export interface ScanOptions {
 interface Signature {
   hex: string
   hexEnd?: string
+  size: number
   off: number
   type: string
 }
