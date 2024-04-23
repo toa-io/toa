@@ -54,10 +54,12 @@ export class Scanner extends PassThrough {
     const header = Buffer.concat(this.chunks).toString('hex')
 
     const signature = SIGNATURES
-      .find(({ hex, hexEnd, off, size }) => {
-        const value = header.slice(off, off + size)
+      .find(({ off, hex, expression }) => {
+        const sig = header.slice(off, off + hex.length)
 
-        return value.startsWith(hex) && (hexEnd === undefined || value.endsWith(hexEnd))
+        return expression === undefined
+          ? sig === hex
+          : expression.test(sig)
       })
 
     const type = signature?.type ?? this.claim
@@ -101,26 +103,37 @@ export class Scanner extends PassThrough {
 
 // https://en.wikipedia.org/wiki/List_of_file_signatures
 const SIGNATURES: Signature[] = [
-  { hex: 'ffd8ffe0', off: 0, size: 8, type: 'image/jpeg' },
-  { hex: 'ffd8ffe1', off: 0, size: 8, type: 'image/jpeg' },
-  { hex: 'ffd8ffee', off: 0, size: 8, type: 'image/jpeg' },
-  { hex: 'ffd8ffdb', off: 0, size: 8, type: 'image/jpeg' },
-  { hex: '89504e47', off: 0, size: 8, type: 'image/png' },
-  { hex: '47494638', off: 0, size: 8, type: 'image/gif' },
-  { hex: '52494646', hexEnd: '57454250', size: 24, off: 0, type: 'image/webp' },
-  { hex: '4a584c200d0a870a', size: 16, off: 8, type: 'image/jxl' },
-  { hex: '6674797068656963', size: 16, off: 8, type: 'image/heic' },
-  { hex: '6674797061766966', size: 16, off: 8, type: 'image/avif' },
-  { hex: '52494646', hexEnd: '41564920', size: 24, off: 0, type: 'video/avi' },
-  { hex: '52494646', hexEnd: '57415645', size: 24, off: 0, type: 'audio/wav' }
+  { hex: 'ff d8 ff e0', off: 0, type: 'image/jpeg' },
+  { hex: 'ff d8 ff e1', off: 0, type: 'image/jpeg' },
+  { hex: 'ff d8 ff ee', off: 0, type: 'image/jpeg' },
+  { hex: 'ff d8 ff db', off: 0, type: 'image/jpeg' },
+  { hex: '89 50 4e 47', off: 0, type: 'image/png' },
+  { hex: '47 49 46 38', off: 0, type: 'image/gif' },
+  { hex: '52 49 46 46 ?? ?? ?? ?? 57 45 42 50', off: 0, type: 'image/webp' },
+  { hex: '4a 58 4c 20 0d 0a 87 0a', off: 8, type: 'image/jxl' },
+  { hex: '66 74 79 70 68 65 69 63', off: 8, type: 'image/heic' },
+  { hex: '66 74 79 70 61 76 69 66', off: 8, type: 'image/avif' },
+  { hex: '52 49 46 46 ?? ?? ?? ?? 41 56 49 20', off: 0, type: 'video/avi' },
+  { hex: '52 49 46 46 ?? ?? ?? ?? 57 41 56 45', off: 0, type: 'audio/wav' }
   /*
   When adding a new signature, include a copyright-free sample file in the `.tests` directory
   and update the 'signatures' test group in `Storage.test.ts`.
    */
-]
+].map((signature: Signature) => {
+  signature.hex = signature.hex.replaceAll(' ', '')
+
+  if (signature.hex.includes('??')) {
+    const expression = signature.hex.replaceAll(/(?<wildcards>\?{1,24})/g,
+      (_, wildcards) => `[0-9a-f]{${wildcards.length}}`)
+
+    signature.expression = new RegExp(expression, 'i')
+  }
+
+  return signature
+})
 
 const HEADER_SIZE = SIGNATURES
-  .reduce((max, { off, size }) => Math.max(max, off + size), 0) / 2
+  .reduce((max, { off, hex }) => Math.max(max, off + hex.length), 0) / 2
 
 const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
@@ -133,9 +146,8 @@ export interface ScanOptions {
 }
 
 interface Signature {
-  hex: string
-  hexEnd?: string
-  size: number
-  off: number
   type: string
+  off: number
+  hex: string
+  expression?: RegExp
 }
