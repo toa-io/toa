@@ -363,7 +363,7 @@ describe('move', () => {
   })
 })
 
-describe.only('signatures', () => {
+describe('signatures', () => {
   it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
     async (type) => {
       const stream = createReadStream('sample.' + type)
