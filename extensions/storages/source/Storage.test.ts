@@ -372,6 +372,22 @@ describe('signatures', () => {
 
       expect(entry).toHaveProperty('type', 'image/' + type)
     })
+  it.each(['avi'])('should detect video/%s',
+    async (type) => {
+      const stream = createReadStream('sample.' + type)
+
+      const entry = (await storage.put(dir, stream)) as Entry
+
+      expect(entry).toHaveProperty('type', 'video/' + type)
+    })
+  it.each(['wav'])('should detect audio/%s',
+    async (type) => {
+      const stream = createReadStream('sample.' + type)
+
+      const entry = (await storage.put(dir, stream)) as Entry
+
+      expect(entry).toHaveProperty('type', 'audio/' + type)
+    })
 })
 
 it('should return error if type doesn\'t match', async () => {
