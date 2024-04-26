@@ -27,6 +27,11 @@ export class Context {
     this.timing = new Timing(properties.trace)
     this.debug = properties.debug
 
+    if (this.debug) {
+      console.debug(`${request.method} ${this.url.href}`)
+      console.debug(request.headers)
+    }
+
     if (this.request.headers.accept !== undefined) {
       const match = SUBTYPE.exec(this.request.headers.accept)
 
