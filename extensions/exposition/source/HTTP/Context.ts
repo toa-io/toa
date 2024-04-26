@@ -2,6 +2,7 @@ import Negotiator from 'negotiator'
 import { Timing } from './Timing'
 import { type Format, formats, types } from './formats'
 import { read } from './messages'
+import { logHeaders } from './headers'
 import type { OutgoingMessage } from './messages'
 import type * as http from 'node:http'
 
@@ -29,7 +30,7 @@ export class Context {
 
     if (this.debug) {
       console.debug(`${request.method} ${this.url.href}`)
-      console.debug(request.headers)
+      logHeaders(request.headers)
     }
 
     if (this.request.headers.accept !== undefined) {
