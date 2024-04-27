@@ -23,7 +23,7 @@ Feature: Server timing
       server-timing:
       """
 
-  Scenario: Server timing is sent when debug is enabled
+  Scenario: Server timing is sent when `trace` is enabled
     Given the annotation:
       """
       trace: true

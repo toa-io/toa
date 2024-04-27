@@ -38,6 +38,8 @@ class QueryableMapping extends Mapping {
 
 class InputMapping extends Mapping {
   public fit (input: any, _: unknown, parameters: Parameter[]): core.Request {
+    const request: core.Request = {}
+
     if (input === undefined && parameters.length > 0)
       input = {}
 
@@ -45,6 +47,9 @@ class InputMapping extends Mapping {
       for (const parameter of parameters)
         input[parameter.name] = parameter.value
 
-    return { input }
+    if (input !== undefined)
+      request.input = input
+
+    return request
   }
 }

@@ -99,8 +99,7 @@ Feature: Routes
       """
 
   Scenario: Routes with naming conflicts
-    Given the Gateway is running
-    And the `users` is running with the following manifest:
+    Given the `users` is running with the following manifest:
       """yaml
       exposition:
         /:

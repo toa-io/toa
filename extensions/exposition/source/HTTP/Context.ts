@@ -27,6 +27,9 @@ export class Context {
     this.timing = new Timing(properties.trace)
     this.debug = properties.debug
 
+    if (this.debug)
+      this.log(request)
+
     if (this.request.headers.accept !== undefined) {
       const match = SUBTYPE.exec(this.request.headers.accept)
 
@@ -55,6 +58,16 @@ export class Context {
     return this.pipelines.body.length === 0
       ? value
       : this.pipelines.body.reduce((value, transform) => transform(value), value)
+  }
+
+  private log (request: IncomingMessage): void {
+    const message = `${request.method} ${request.url}`
+    const { authorization, ...headers } = request.headers
+
+    if (authorization !== undefined)
+      headers.authorization = authorization.slice(0, authorization.indexOf(' '))
+
+    console.debug(message, headers)
   }
 }
 
