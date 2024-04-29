@@ -8,6 +8,7 @@
 1. Approved [Bug or Feature](https://github.com/toa-io/toa/issues)
 2. [Node LTS](https://nodejs.org/)
 3. [Docker Desktop](https://www.docker.com/get-started)
+4. [./jq](https://jqlang.github.io/jq/)
 
 To work with [operations](operations):
 
