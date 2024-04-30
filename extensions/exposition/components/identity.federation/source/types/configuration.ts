@@ -5,33 +5,17 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface Schemas {
-  configuration?: {
-    trust?: TrustConfiguration[];
-    /**
-     * Force identities to be explicitly created or incept before being used in authentication
-     */
-    explicit_identity_creation?: boolean;
-    /**
-     * The value of `sub` of an identity token that will be assigned the `system` Role
-     */
-    principal?: {
-      iss: string;
-      sub: string;
-    };
-  };
-  entity?: {
-    /**
-     * The authority token is valid for
-     */
-    authority: string;
-    /**
-     * The issuer, or signer, of the token, URI like `https://accounts.google.com`
-     */
+export interface Configuration {
+  trust?: TrustConfiguration[];
+  /**
+   * Force identities to be explicitly created or incept before being used in authentication
+   */
+  explicit_identity_creation?: boolean;
+  /**
+   * The value of `sub` of an identity token that will be assigned the `system` Role
+   */
+  principal?: {
     iss: string;
-    /**
-     * The ID that represents the principal making the request
-     */
     sub: string;
   };
 }

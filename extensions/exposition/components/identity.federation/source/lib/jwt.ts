@@ -1,7 +1,6 @@
 import crypto from 'node:crypto'
 import * as assert from 'node:assert'
-import { type JwtHeader, type IdToken } from '../types'
-import { type TrustConfiguration } from '../schemas'
+import type { JwtHeader, IdToken, TrustConfiguration } from '../types'
 
 export function decodeJwt (token: string): {
   header: unknown
