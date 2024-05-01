@@ -15,7 +15,7 @@ const print = async (argv) => {
   let manifest = await component(path)
 
   if (argv.jsonpath !== undefined)
-    manifest = jsonpath.query(manifest, argv.jsonpath)
+    manifest = jsonpath.value(manifest, argv.jsonpath)
 
   if (argv.error !== true) {
     const result = argv.output === 'json'
