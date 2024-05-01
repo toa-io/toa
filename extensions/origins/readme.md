@@ -62,11 +62,36 @@ async function transition (input, object, context) {
 Uses [ComQ](https://github.com/toa-io/comq), thus, provides interface of `comq.IO` restricted
 to `emit` and `request` methods.
 
+## Google Pub/Sub Aspect
+
+[Google Pub/Sub](https://cloud.google.com/pubsub) client.
+
+```javascript
+async function transition (input, object, context) {
+  await context.pubsub.publish('topic', { message: 'Hello, World!' })
+}
+```
+
+Messages are batched with a maximum delay of 1 second.
+
+### Pub/Sub credentials
+
+Google Pub/Sub [URL](#context-annotation) must follow the following format:
+
+```yaml
+my-topic: pubsub://{emulator_host?}/{project}/{topic}
+```
+
+For each `project`,
+a secret `TOA_ORIGINS_PUBSUB_{project}`
+with [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) must be
+deployed.
+
 ## Manifest
 
 `origins` manifest is a [Pointer](/libraries/pointer) with origin names as keys.
 Its values can be overridden by the context [annotation](#context-annotation).
-If the value is `null`, then it _must_ be overriden.
+If the value is `null`, then it _must_ be overridden.
 
 ### `null` manifest
 
@@ -90,7 +115,7 @@ origins:
     queues: amqps://amqp.azure.com
 ```
 
-### HTTP URL Permissions
+### HTTP URL permissions
 
 The rules for arbitrary HTTP requests are stored in the `http` property of the corresponding
 component as an object.
