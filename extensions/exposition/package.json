@@ -39,7 +39,6 @@
     "transpile:basic": "tsc -p ./components/identity.basic",
     "transpile:tokens": "tsc -p ./components/identity.tokens",
     "transpile:roles": "tsc -p ./components/identity.roles",
-    "pretranspile:federation": "toa export manifest -p components/identity.federation -j $.entity.schema -o json > components/identity.federation/entity.json && json2ts -i components/identity.federation/entity.json -o components/identity.federation/source/types/entity.ts && rm components/identity.federation/entity.json && toa export manifest -p components/identity.federation -j $.extensions..schema -o json > components/identity.federation/configuration.json && json2ts -i components/identity.federation/configuration.json -o components/identity.federation/source/types/configuration.ts && rm components/identity.federation/configuration.json",
     "transpile:federation": "tsc -p ./components/identity.federation",
     "features": "cucumber-js",
     "features:security": "cucumber-js --tags @security"

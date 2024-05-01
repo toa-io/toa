@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import * as assert from 'node:assert'
-import type { JwtHeader, IdToken, TrustConfiguration } from '../types'
+import type { JwtHeader, IdToken, Trust } from '../types'
 
 export function decodeJwt (token: string): {
   header: unknown
@@ -26,7 +26,7 @@ export function validateJwtHeader (header: unknown): asserts header is JwtHeader
 }
 
 export function validateJwtPayload (payload: unknown,
-  trusted: TrustConfiguration[] = [],
+  trusted: Trust[] = [],
   header: JwtHeader): asserts payload is IdToken {
   assert.ok(trusted.length > 0, 'No trusted issuers provided')
 
@@ -89,7 +89,7 @@ export async function validateSignature ({
   readonly payload: IdToken
   rawPayload: string
   signature: string
-  trusted?: TrustConfiguration[]
+  trusted?: Trust[]
 }): Promise<void> {
   if (alg.startsWith('HS')) {
     // symmetric algorithm, issuer is validated at this point
@@ -152,7 +152,7 @@ export async function validateSignature ({
 }
 
 export async function validateIdToken (token: string,
-  trusted?: TrustConfiguration[]): Promise<IdToken> {
+  trusted?: Trust[]): Promise<IdToken> {
   const { header, payload, rawHeader, rawPayload, signature } = decodeJwt(token)
 
   validateJwtHeader(header)
