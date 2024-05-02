@@ -82,6 +82,8 @@ Google Pub/Sub [URL](#context-annotation) must follow the following format:
 my-topic: pubsub://{emulator_host?}/projects/{project}/topics/{topic}
 ```
 
+> Messages are published using JSON serialization.
+
 For each `project`,
 a secret `TOA_ORIGINS_PUBSUB_{project}`
 with [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) must be
