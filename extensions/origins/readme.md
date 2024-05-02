@@ -79,7 +79,7 @@ Messages are batched with a maximum delay of 1 second.
 Google Pub/Sub [URL](#context-annotation) must follow the following format:
 
 ```yaml
-my-topic: pubsub://{emulator_host?}/{project}/{topic}
+my-topic: pubsub://{emulator_host?}/projects/{project}/topics/{topic}
 ```
 
 For each `project`,

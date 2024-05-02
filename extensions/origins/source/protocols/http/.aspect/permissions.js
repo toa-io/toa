@@ -12,16 +12,11 @@ class Permissions extends Connector {
 
   #resolve
 
-  constructor (resolve) {
+  constructor (properties) {
     super()
 
-    this.#resolve = resolve
-  }
-
-  async open () {
-    const { properties } = await this.#resolve()
-
-    if (properties !== undefined) this.#parse(properties)
+    if (properties !== undefined)
+      this.#parse(properties)
   }
 
   test (url) {

@@ -73,3 +73,8 @@ services:
     volumes:
       - "./integration/scripts/localstack.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
       - "/var/run/docker.sock:/var/run/docker.sock"
+  gcloud:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:474.0.0-emulators
+    ports:
+      - '8085:8085'
+    command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085 --project=toa-test

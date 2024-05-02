@@ -7,20 +7,17 @@ const protocol = require('./index')
 class Aspect extends Connector {
   name = protocol.id
 
-  #resolve
-
-  /** @type {Record<string, Partial<comq.IO>>} */
+  #declarations
   #origins = {}
 
-  constructor (resolve) {
+  constructor (origins) {
     super()
 
-    this.#resolve = resolve
+    this.#declarations = origins
   }
 
   async open () {
-    const cfg = await this.#resolve()
-    const promises = Object.entries(cfg.origins).map(this.#open)
+    const promises = Object.entries(this.#declarations).map(this.#open)
 
     await Promise.all(promises)
   }
@@ -50,10 +47,6 @@ class Aspect extends Connector {
   }
 }
 
-/**
- * @param {comq.IO} io
- * @return {Partial<comq.IO>}
- */
 function restrict (io) {
   // noinspection JSUnresolvedReference
   return {
@@ -63,8 +56,8 @@ function restrict (io) {
   }
 }
 
-function create (resolve) {
-  return new Aspect(resolve)
+function create (declaration) {
+  return new Aspect(declaration.origins)
 }
 
 exports.create = create

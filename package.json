@@ -34,6 +34,7 @@
     "@commitlint/cli": "14.1.0",
     "@commitlint/config-conventional": "14.1.0",
     "@cucumber/cucumber": "10.0.1",
+    "@google-cloud/pubsub": "4.3.3",
     "@types/jest": "29.5.3",
     "@types/node": "20.8.10",
     "@types/randomstring": "1.1.8",

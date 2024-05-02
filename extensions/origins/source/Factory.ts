@@ -1,6 +1,5 @@
 import { decode } from 'msgpackr'
 import { resolve, type URIMap } from '@toa.io/pointer'
-import { memo } from '@toa.io/generic'
 import { type Protocol, protocols } from './protocols'
 import { ENV_PREFIX, ID_PREFIX, PROPERTIES_SUFFIX } from './extension'
 import type { Properties } from './annotation'
@@ -14,31 +13,29 @@ export class Factory implements extensions.Factory {
 
   private createAspect (locator: Locator, manifest: Manifest, protocol: Protocol):
   extensions.Aspect {
-    const resolver = this.resolver(locator, manifest, protocol)
+    const declaration = this.resolve(locator, manifest, protocol)
 
-    return protocol.create(resolver)
+    return protocol.create(declaration)
   }
 
-  private resolver (locator: Locator, manifest: Manifest, protocol: Protocol): Resolver {
-    return memo(async (): Promise<Configuration> => {
-      const uris = await this.getURIs(locator, manifest)
-      const allProperties = this.getProperties(locator)
+  private resolve (locator: Locator, manifest: Manifest, protocol: Protocol): Declaration {
+    const uris = this.getURIs(locator, manifest)
+    const allProperties = this.getProperties(locator)
 
-      const origins = this.filterOrigins(uris, protocol.protocols)
-      const properties = allProperties['.' + protocol.id as keyof Properties] ?? {}
+    const origins = this.filterOrigins(uris, protocol.protocols)
+    const properties = allProperties['.' + protocol.id as keyof Properties] ?? {}
 
-      return { origins, properties }
-    })
+    return { origins, properties }
   }
 
-  private async getURIs (locator: Locator, manifest: Manifest): Promise<URIMap> {
+  private getURIs (locator: Locator, manifest: Manifest): URIMap {
     const map: URIMap = {}
 
     if (manifest === null) return map
 
     for (const [name, value] of Object.entries(manifest))
       try {
-        map[name] = await this.readOrigin(locator, name)
+        map[name] = this.readOrigin(locator, name)
       } catch {
         // eslint-disable-next-line max-depth
         if (value === null) throw new Error(`Origin value ${name} is not defined`)
@@ -62,10 +59,10 @@ export class Factory implements extensions.Factory {
     return filtered
   }
 
-  private async readOrigin (locator: Locator, name: string): Promise<string[]> {
+  private readOrigin (locator: Locator, name: string): string[] {
     const id = ID_PREFIX + locator.label
 
-    return await resolve(id, name)
+    return resolve(id, name)
   }
 
   private getProperties (locator: Locator): Properties {
@@ -80,9 +77,7 @@ export class Factory implements extensions.Factory {
   }
 }
 
-export interface Configuration {
+export interface Declaration {
   origins: URIMap
   properties: Record<string, boolean>
 }
-
-export type Resolver = () => Promise<Configuration>

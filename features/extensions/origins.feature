@@ -22,7 +22,7 @@ Feature: Origins extension
       originalUrl: '/some/path'
       """
 
-  Scenario: HTTP Aspect with overriden value
+  Scenario: HTTP Aspect with overridden value
     Given I have a component `origins.http`
     And I have a context with:
       """
