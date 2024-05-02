@@ -34,12 +34,7 @@ class Transition extends Operation {
   }
 
   async commit (store) {
-    const {
-      scope,
-      state,
-      reply,
-      retry
-    } = store
+    const { scope, state, reply, retry } = store
 
     if (reply.error !== undefined) return
 
@@ -48,11 +43,10 @@ class Transition extends Operation {
     const result = await this.scope.commit(scope)
 
     if (result === false) {
-      if (this.#concurrency === 'retry') {
+      if (this.#concurrency === 'retry')
         return retry()
-      } else {
+      else
         throw new StateConcurrencyException()
-      }
     }
   }
 
