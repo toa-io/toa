@@ -40,7 +40,9 @@ export class Connection extends Connector {
   }
 
   private async resolveURLs (): Promise<string[]> {
-    if (process.env.TOA_DEV === '1') return ['redis://localhost']
-    else return await resolve(ID, this.locator.id)
+    if (process.env.TOA_DEV === '1')
+      return ['redis://localhost']
+    else
+      return resolve(ID, this.locator.id)
   }
 }
