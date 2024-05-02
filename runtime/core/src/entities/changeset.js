@@ -1,10 +1,5 @@
 'use strict'
 
-const {
-  merge,
-  overwrite,
-  newid
-} = require('@toa.io/generic')
 const { EntityContractException } = require('../exceptions')
 
 class Changeset {
