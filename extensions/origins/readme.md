@@ -85,9 +85,14 @@ my-topic: pubsub://{emulator_host?}/projects/{project}/topics/{topic}
 > Messages are published using JSON serialization.
 
 For each `project`,
-a secret `TOA_ORIGINS_PUBSUB_{project}`
+a secret `TOA_ORIGINS_PUBSUB__{project}`
 with [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) must be
 deployed.
+
+```shell
+$ kubectl create secret generic toa-origins-pubsub
+$ kubectl patch secret toa-origins-pubsub -p '{"data": {"project-name": "'"$(cat adc.json | base64)"'"}}'
+```
 
 ## Manifest
 

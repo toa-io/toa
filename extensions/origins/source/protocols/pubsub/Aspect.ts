@@ -50,7 +50,8 @@ function toOrigins (declaration: Declaration): Record<string, Origin> {
 function toOrigin (reference: string): Origin {
   const url = new URL(reference)
   const [, , project, , topic] = url.pathname.split('/')
-  const json = process.env['TOA_ORIGINS_PUBSUB_' + project]
+  const suffix = project.replaceAll('-', '_').toUpperCase()
+  const json = process.env['TOA_ORIGINS_PUBSUB__' + suffix]
   const credentials = json !== undefined ? JSON.parse(json) : undefined
 
   return {
