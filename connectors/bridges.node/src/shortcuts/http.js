@@ -3,7 +3,7 @@
 const { underlay } = require('@toa.io/generic')
 
 /** @type {toa.node.shortcut} */
-const http = (context, aspect) => {
+function http (context, aspect) {
   context.http = underlay(async (segs, args) => {
     if (segs.length < 2) throw new Error(`Origins call requires at least 2 arguments, ${segs.length} given`)
 

@@ -1,9 +1,7 @@
 import { type Maybe } from '@toa.io/types'
 import { Err } from 'error-value'
 import { assertionsAsValues } from './lib/assertions-as-values.js'
-import {
-  validateIdToken
-} from './lib/jwt'
+import { validateIdToken } from './lib/jwt'
 import type { AuthenticateInput, AuthenticateOutput, Context } from './types'
 import type { Request } from '@toa.io/core'
 

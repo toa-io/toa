@@ -1,5 +1,6 @@
 import { type Call, type Observation, type Query } from '@toa.io/types'
-import type { Schemas } from './schemas'
+import type { Entity } from './entity'
+import type { Configuration } from './configuration'
 
 export interface Context {
   local: {
@@ -13,10 +14,8 @@ export interface Context {
       }
     }
   }
-  configuration: Required<Schemas>['configuration']
+  configuration: Configuration
 }
-
-export type Entity = Required<Schemas>['entity']
 
 export interface TransitInput {
   readonly authority: string

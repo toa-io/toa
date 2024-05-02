@@ -3,7 +3,7 @@
 const { generate } = require('@toa.io/generic')
 
 /** @type {toa.node.shortcut} */
-const state = (context, aspect) => {
+function state (context, aspect) {
   context.state = generate((segs, value) => {
     if (value === undefined) return get(aspect, segs)
     else set(aspect, segs, value)
