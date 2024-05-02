@@ -82,6 +82,10 @@ Google Pub/Sub [URL](#context-annotation) must follow the following format:
 my-topic: pubsub://{emulator_host?}/projects/{project}/topics/{topic}
 ```
 
+```javascript
+await context.pubsub.topic.publish({ message: 'Hello, World!' })
+```
+
 > Messages are published using JSON serialization.
 
 For each `project`,
