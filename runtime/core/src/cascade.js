@@ -1,16 +1,15 @@
 'use strict'
 
-const { merge } = require('@toa.io/generic')
 const { Connector } = require('./connector')
 
 class Cascade extends Connector {
-  #bridges
+  // #bridges
   #last
 
   constructor (bridges) {
     super()
 
-    this.#bridges = bridges
+    // this.#bridges = bridges
     this.#last = bridges[bridges.length - 1]
 
     this.depends(bridges)

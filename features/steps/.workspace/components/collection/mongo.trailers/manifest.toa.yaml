@@ -1,0 +1,15 @@
+name: trailers
+namespace: mongo
+
+entity:
+  storage: mongodb
+  schema:
+    foo:
+      type: integer
+      default: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      inc: integer

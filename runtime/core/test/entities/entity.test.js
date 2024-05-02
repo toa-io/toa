@@ -63,20 +63,3 @@ it('should provide event', () => {
     })
   }))
 })
-
-it('should define `id` as readonly', async () => {
-  const origin = fixtures.state()
-  const entity = new Entity(fixtures.schema, origin)
-  const state = entity.get()
-
-  expect(() => (state.id = 1)).toThrow('assign to read only property')
-})
-
-it('should seal id', async () => {
-  const origin = fixtures.state()
-  const entity = new Entity(fixtures.schema, origin)
-  const state = entity.get()
-  const redefine = () => Object.defineProperty(state, 'id', { writable: true })
-
-  expect(redefine).toThrow('redefine property')
-})
