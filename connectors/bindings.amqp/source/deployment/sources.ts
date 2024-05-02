@@ -20,15 +20,17 @@ export function createDependency (sources: Sources, instances: Instance[]): Depe
 }
 
 export async function resolveURIs (locator: Locator): Promise<string[]> {
-  return await resolve(ID, locator.id)
+  return resolve(ID, locator.id)
 }
 
 function createRequest (instance: Instance): Request | null {
   const group = instance.locator.label
   const selectors = createSelectors(instance.component)
 
-  if (selectors === null) return null
-  else return { group, selectors }
+  if (selectors === null)
+    return null
+  else
+    return { group, selectors }
 }
 
 function createSelectors (component: Manifest): string[] | null {

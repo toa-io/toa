@@ -42,16 +42,22 @@ export class Deployment {
   }
 
   private createSecrets (selector: string): Variable[] {
-    const varialbes: Variable[] = []
+    const variables: Variable[] = []
     const { key, references } = this.resolveRecord(selector)
 
-    if (this.insecure(references)) return []
+    const protocol = new URL(references[0]).protocol
+
+    if (insecureProtocols.includes(protocol))
+      return []
+
+    if (protocol in specialProtocols)
+      return specialProtocols[protocol](references)
 
     for (const token of ['username', 'password']) {
       const varName = nameVariable(this.id, selector, token)
       const secretName = nameSecret(this.id, key)
 
-      varialbes.push({
+      variables.push({
         name: varName,
         secret: {
           name: secretName,
@@ -60,18 +66,11 @@ export class Deployment {
       })
     }
 
-    return varialbes
+    return variables
   }
 
   private resolveRecord (selector: string): AnnotationRecord {
     return resolveRecord(this.annotation, selector)
-  }
-
-  private insecure (references: string[]): boolean {
-    const reference = references[0]
-    const url = new URL(reference)
-
-    return insecureProtocols.includes(url.protocol)
   }
 }
 
@@ -86,5 +85,22 @@ export interface AnnotationRecord {
 }
 
 const insecureProtocols = ['http:', 'https:', 'redis:']
+
+const specialProtocols: Record<string, (references: string[]) => Variable[]> = {
+  'pubsub:': (references: string[]) => {
+    const path = new URL(references[0]).pathname
+    const [, , project] = path.split('/')
+    const name = nameVariable('ORIGINS_PUBSUB_', project)
+
+    return [{
+      name,
+      secret: {
+        name: 'toa-origins-pubsub',
+        key: project,
+        optional: true
+      }
+    } satisfies Variable]
+  }
+}
 
 export type URIMap = Record<string, string[]>

@@ -1,0 +1,10 @@
+name: pubsub
+namespace: origins
+
+operations:
+  publish:
+    input: object
+    output: string
+
+origins:
+  test: pubsub://localhost:8085/projects/toa-test/topics/test

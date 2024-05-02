@@ -11,23 +11,16 @@ class Aspect extends Connector {
   /** @readonly */
   name = protocol.id
 
-  #resolve
   #origins
   #permissions
 
-  constructor (resolve, permissions) {
+  constructor (origins, permissions) {
     super()
 
-    this.#resolve = resolve
+    this.#origins = origins
     this.#permissions = permissions
 
     this.depends(permissions)
-  }
-
-  async open () {
-    const { origins } = await this.#resolve()
-
-    this.#origins = origins
   }
 
   async invoke (name, path, request, options) {
@@ -98,10 +91,10 @@ function isAbsoluteURL (path) {
 
 const PLACEHOLDER = /\*/g
 
-function create (resolve) {
-  const permissions = new Permissions(resolve)
+function create (declaration) {
+  const permissions = new Permissions(declaration.properties)
 
-  return new Aspect(resolve, permissions)
+  return new Aspect(declaration.origins, permissions)
 }
 
 exports.create = create

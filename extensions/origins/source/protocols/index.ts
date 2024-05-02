@@ -1,16 +1,15 @@
-'use strict'
-
-import { type Resolver } from '../Factory'
 import amqp from './amqp'
 import http from './http'
+import pubsub from './pubsub'
+import type { Declaration } from '../Factory'
 import type { extensions } from '@toa.io/core'
 
-export const protocols: Protocol[] = [http, amqp]
+export const protocols: Protocol[] = [http, amqp, pubsub]
 
 export interface Protocol {
   id: ProtocolID
   protocols: string[]
-  create: (resolver: Resolver) => extensions.Aspect
+  create: (declaration: Declaration) => extensions.Aspect
 }
 
-export type ProtocolID = 'http' | 'amqp'
+export type ProtocolID = 'http' | 'amqp' | 'pubsub'

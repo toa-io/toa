@@ -1,13 +1,7 @@
 'use strict'
 
-const {
-  Given,
-  Then
-} = require('@cucumber/cucumber')
-const {
-  serve,
-  shutdown
-} = require('@toa.io/userland/stage')
+const { Given, Then } = require('@cucumber/cucumber')
+const { serve, shutdown } = require('@toa.io/userland/stage')
 
 Given('the {token} service is staged',
   /**

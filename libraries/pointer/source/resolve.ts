@@ -1,7 +1,7 @@
 import { nameVariable } from './naming'
 import { type AnnotationRecord, type URIMap } from './Deployment'
 
-export async function resolve (id: string, selector: string): Promise<string[]> {
+export function resolve (id: string, selector: string): string[] {
   const variable = nameVariable(id, selector)
   const value = process.env[variable]
 
@@ -25,8 +25,10 @@ export function resolveRecord (uris: URIMap, selector: string): AnnotationRecord
     if (current in uris) return getRecord(uris, current)
   }
 
-  if ('.' in uris) return getRecord(uris, '.')
-  else throw new Error(`Selector '${selector}' cannot be resolved.`)
+  if ('.' in uris)
+    return getRecord(uris, '.')
+  else
+    throw new Error(`Selector '${selector}' cannot be resolved.`)
 }
 
 function withCredentials (variable: string, urls: string[]): string[] {

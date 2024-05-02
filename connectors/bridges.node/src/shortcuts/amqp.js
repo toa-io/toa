@@ -1,11 +1,12 @@
 'use strict'
 
 const { underlay } = require('@toa.io/generic')
+const assert = require('node:assert')
 
 /** @type {toa.node.shortcut} */
-const amqp = (context, aspect) => {
+function amqp (context, aspect) {
   context.amqp = underlay(async (segs, args) => {
-    if (segs.length !== 2) throw new Error(`AMQP aspect call should have 2 segments [${segs.join(', ')}] given`)
+    assert(segs.length === 2, `AMQP aspect call should have 2 segments [${segs.join(', ')}] given`)
 
     const [origin, method] = segs
 

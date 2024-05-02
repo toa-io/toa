@@ -54,7 +54,8 @@ class Context extends Connector {
 
       map[aspect.name] = aspect.invoke.bind(aspect)
 
-      if (aspect.name in shortcuts) shortcuts[aspect.name](this, aspect)
+      if (aspect.name in shortcuts)
+        shortcuts[aspect.name](this, aspect)
     }
 
     return map

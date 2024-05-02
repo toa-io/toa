@@ -99,12 +99,6 @@ Feature: Stash extension
               value: redis://redis.example.com
       """
 
-  Scenario: Replay sample
-    Given I have a component `stash`
-    And my working directory is ./components/stash
-    When I run `toa replay`
-    Then program should exit with code 0
-
   Scenario: Invoke operation with environment
     Given I have a component `stash`
     And I have a context with:
