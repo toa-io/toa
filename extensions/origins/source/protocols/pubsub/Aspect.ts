@@ -68,14 +68,20 @@ function toTopics (origins: Record<string, Origin>): Record<string, Topic> {
 
   for (const [name, origin] of Object.entries(origins)) {
     if (!(origin.project in pubsub))
-      pubsub[origin.project] = new PubSub({
-        projectId: origin.project,
-        apiEndpoint: origin.endpoint,
-        credentials: origin.credentials
-      })
+      pubsub[origin.project] = createPubSub(origin)
 
     topics[name] = new Topic(pubsub[origin.project], origin)
   }
 
   return topics
+}
+
+function createPubSub (origin: Origin): PubSub {
+  console.info(`Using Pub/Sub project ${origin.project} as ${origin.credentials?.client_id ?? 'unauthenticated'} client`)
+
+  return new PubSub({
+    projectId: origin.project,
+    apiEndpoint: origin.endpoint,
+    credentials: origin.credentials
+  })
 }
