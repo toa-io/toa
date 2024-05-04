@@ -1,5 +1,6 @@
 Feature: Operation trailers
 
+  # debug the receiver
   Scenario: Adding a trailer to an event
     Given I compose `events.trailers` component
     When I call `events.trailers.transit` with:

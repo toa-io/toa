@@ -260,6 +260,8 @@ properties:
           adaptive:
             type: boolean
             default: false
+          arguments:
+            type: array
         required: [operation]
         additionalProperties: false
 
