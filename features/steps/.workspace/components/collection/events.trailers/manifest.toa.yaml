@@ -1,6 +1,3 @@
-name: trailers
-namespace: events
-
 entity:
   storage: mongodb
   schema:
