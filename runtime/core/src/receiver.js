@@ -16,18 +16,13 @@ class Receiver extends Connector {
   /** @type {string} */
   #endpoint
 
-  /** @type {toa.core.Component} */
+  /** @type {unknown[]} */
+  #arguments
+
   #local
 
-  /** @type {toa.core.bridges.Receiver} */
   #bridge
 
-  /**
-   *
-   * @param {toa.norm.component.Receiver} definition
-   * @param {toa.core.Component} local
-   * @param {toa.core.bridges.Receiver} bridge
-   */
   constructor (definition, local, bridge) {
     super()
 
@@ -36,6 +31,7 @@ class Receiver extends Connector {
     this.#conditioned = conditioned
     this.#adaptive = adaptive
     this.#endpoint = operation
+    this.#arguments = definition.arguments
 
     this.#local = local
     this.#bridge = bridge
@@ -58,7 +54,7 @@ class Receiver extends Connector {
   }
 
   async #request (payload) {
-    return this.#adaptive ? await this.#bridge.request(payload) : { input: payload }
+    return this.#adaptive ? await this.#bridge.request(payload, ...(this.#arguments ?? [])) : { input: payload }
   }
 }
 

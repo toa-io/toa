@@ -20,7 +20,7 @@ const {
 const component = async (path) => {
   const manifest = await load(path)
 
-  normalize(manifest)
+  normalize(manifest, path)
   validate(manifest)
   extensions(manifest)
 
@@ -29,7 +29,7 @@ const component = async (path) => {
   return manifest
 }
 
-const load = async (path, base) => {
+const load = async (path, base, proto = false) => {
   if (base !== undefined) path = find(path, base, MANIFEST)
 
   const file = join(path, MANIFEST)
@@ -37,13 +37,13 @@ const load = async (path, base) => {
 
   manifest.path = path
 
-  defaults(manifest)
+  defaults(manifest, proto)
   await expand(manifest)
 
   await merge(path, manifest)
 
   if (manifest.prototype !== null) {
-    const prototype = await load(manifest.prototype, path)
+    const prototype = await load(manifest.prototype, path, true)
 
     collapse(manifest, prototype)
   }

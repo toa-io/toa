@@ -1,0 +1,8 @@
+receivers:
+  mongo.one.created:
+    operation: log
+    arguments: [hello, world]
+
+operations:
+  log:
+    input: string
