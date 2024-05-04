@@ -1,8 +1,8 @@
 Feature: Operation trailers
 
   Scenario: Adding a trailer to an event
-    Given I compose `mongo.trailers` component
-    When I call `mongo.trailers.transit` with:
+    Given I compose `events.trailers` component
+    When I call `events.trailers.transit` with:
       """yaml
       input:
         inc: 3

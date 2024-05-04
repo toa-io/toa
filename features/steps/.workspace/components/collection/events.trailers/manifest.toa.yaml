@@ -1,5 +1,5 @@
 name: trailers
-namespace: mongo
+namespace: events
 
 entity:
   storage: mongodb
