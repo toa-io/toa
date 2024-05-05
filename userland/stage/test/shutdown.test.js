@@ -4,16 +4,13 @@ const { generate } = require('randomstring')
 
 const mock = {
   boot: require('./boot.mock'),
-  state: require('./state.mock'),
-  binding: require('./binding.mock')
+  state: require('./state.mock')
 }
 
 jest.mock('@toa.io/boot', () => mock.boot)
 jest.mock('../src/state', () => mock.state)
-jest.mock('../src/binding', () => mock.binding)
 
 const { state } = require('../src/state')
-const { binding } = require('../src/binding')
 const stage = require('../')
 
 beforeEach(() => {
@@ -57,10 +54,4 @@ it('should reset state', async () => {
   await stage.shutdown()
 
   expect(state.reset).toHaveBeenCalled()
-})
-
-it('should reset binding', async () => {
-  await stage.shutdown()
-
-  expect(binding.reset).toHaveBeenCalled()
 })

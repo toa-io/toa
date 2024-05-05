@@ -25,14 +25,3 @@ it('should boot composition', async () => {
 
   expect(composition.connect).toHaveBeenCalled()
 })
-
-it('should override bindings', async () => {
-  await stage.composition(paths)
-
-  const path = require.resolve('../src/binding')
-
-  /** @type {toa.boot.composition.Options} */
-  const options = { bindings: [path] }
-
-  expect(mock.boot.composition.mock.calls[0][1]).toStrictEqual(options)
-})

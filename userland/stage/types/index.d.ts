@@ -15,5 +15,3 @@ export function serve (ref: string): Promise<_core.Component>
 export function remote (id: string): Promise<_core.Component>
 
 export function shutdown (): Promise<void>
-
-export * as binding from './binding'
