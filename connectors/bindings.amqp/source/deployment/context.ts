@@ -17,7 +17,7 @@ export function createDependency (context: Context): Dependency {
   return { variables }
 }
 
-export async function resolveURIs (locator: Locator): Promise<string[]> {
+export function resolveURIs (locator: Locator): string[] {
   if (process.env.TOA_DEV === '1')
     return ['amqp://developer:secret@localhost']
 
@@ -29,7 +29,7 @@ export async function resolveURIs (locator: Locator): Promise<string[]> {
   const map = decode<URIMap>(value)
   const record = resolveRecord(map, locator.id)
 
-  return await parseRecord(record)
+  return parseRecord(record)
 }
 
 function createVariables (context: Context): Variable[] {
@@ -81,7 +81,7 @@ function createSecretVariable (key: string, secretKey: string): Variable {
   }
 }
 
-async function parseRecord (record: AnnotationRecord): Promise<string[]> {
+function parseRecord (record: AnnotationRecord): string[] {
   const urls = new Array(record.references.length)
   const key = record.key === '.' ? '' : record.key
   const username = readEnv(key, 'USERNAME')

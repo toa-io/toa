@@ -1,21 +1,14 @@
 'use strict'
 
 const assert = require('node:assert')
-const { exceptions } = require('@toa.io/core')
-const {
-  transpose,
-  match
-} = require('@toa.io/generic')
-const { parse } = require('@toa.io/yaml')
+const { When, Then } = require('@cucumber/cucumber')
 const { diff } = require('jest-diff')
+const { exceptions } = require('@toa.io/core')
+const { transpose, match } = require('@toa.io/generic')
+const { parse } = require('@toa.io/yaml')
 
 const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')
-
-const {
-  When,
-  Then
-} = require('@cucumber/cucumber')
 
 When('I debug command {word}',
   /**
@@ -249,18 +242,6 @@ Then('the following exception is thrown:',
     const matches = match(this.exception, expected)
 
     assert.equal(matches, true, diff(expected, this.exception))
-  })
-
-When('an event {label} is emitted with the payload:',
-  /**
-   * @param {string} label
-   * @param {string} yaml
-   * @this {toa.features.Context}
-   */
-  async function(label, yaml) {
-    const payload = parse(yaml)
-
-    await stage.emit(label, payload)
   })
 
 /**

@@ -16,6 +16,8 @@ jest.mock('@toa.io/boot', () => mock.boot)
 
 require('../connectors')
 
+process.env.TOA_DEV = '1'
+
 beforeEach(() => {
   jest.clearAllMocks()
 })
@@ -80,7 +82,7 @@ describe('When I compose components:', () => {
 
     await step.call(context, data)
 
-    expect(mock.boot.composition).toHaveBeenCalledWith(paths, expect.any(Object))
+    expect(mock.boot.composition).toHaveBeenCalledWith(paths, undefined)
 
     const composition = mock.boot.composition.mock.results[0].value
 
@@ -309,12 +311,6 @@ describe('Then the following exception is thrown:', () => {
     expect(() => step.call(context, yaml)).not.toThrow()
 
   })
-})
-
-describe('When an event {label} is emitted with the payload:', () => {
-  gherkin.steps.Wh('an event {label} is emitted with the payload:')
-
-  it('should be', async () => undefined)
 })
 
 const COLLECTION = resolve(__dirname, '../.workspace/components/collection')

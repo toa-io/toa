@@ -10,6 +10,7 @@ let stream: Readable
 let events: Record<string, any[]> = {}
 
 beforeEach(async () => {
+  process.env.TOA_DEV = '1'
   await run()
 })
 
