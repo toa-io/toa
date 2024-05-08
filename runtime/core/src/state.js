@@ -46,6 +46,10 @@ class State {
     return this.#entity.objects(recordset)
   }
 
+  async stream (query) {
+    return this.#storage.stream(query)
+  }
+
   changeset (query) {
     return this.#entity.changeset(query)
   }

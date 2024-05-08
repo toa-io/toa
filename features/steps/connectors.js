@@ -121,6 +121,20 @@ When('I call {endpoint} with:',
     await call.call(this, endpoint, request)
   })
 
+When('I call {endpoint} {int} time(s) with:',
+  /**
+   * @param {string} endpoint
+   * @param {number} times
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function(endpoint, times, yaml) {
+    const request = parse(yaml)
+
+    for (let i = 0; i < times; i++)
+      await call.call(this, endpoint, request)
+  })
+
 When('I call {endpoint} without waiting with:',
   /**
    * @param {string} endpoint
@@ -202,9 +216,8 @@ Then('the reply stream is received:',
    * @this {toa.features.Context}
    */
   async function(yaml) {
-    if (this.exception !== undefined) {
+    if (this.exception !== undefined)
       throw this.exception
-    }
 
     const expected = parse(yaml)
     const received = []
@@ -216,6 +229,24 @@ Then('the reply stream is received:',
     const matches = match(received, expected)
 
     assert.equal(matches, true, diff(expected, received))
+  })
+
+Then('the stream of {int} item(s) is received',
+  /**
+   * @param {number} expected
+   * @this {toa.features.Context}
+   */
+  async function(expected) {
+    if (this.exception !== undefined)
+      throw this.exception
+
+    // count items in the stream
+    let received = 0
+
+    for await (const _ of this.reply)
+      received++
+
+    assert.equal(received, expected, diff(expected, received))
   })
 
 Then('the reply is received',

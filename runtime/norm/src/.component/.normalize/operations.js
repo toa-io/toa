@@ -4,7 +4,7 @@ const operations = (component) => {
   if (component.operations === undefined) return
 
   for (const [endpoint, operation] of Object.entries(component.operations)) {
-    if (operation.type === 'computation' || operation.type === 'effect')
+    if (operation.scope === 'none')
       operation.query = false
 
     if (operation.bindings === undefined) operation.bindings = component.bindings

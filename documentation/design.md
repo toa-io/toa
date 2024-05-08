@@ -30,6 +30,9 @@ Retrieve or commit phases may be optional depending on operation's type.
     </picture>
 </a>
 
+Retrieve phase provides the Scope, which is the current state of the Entity Object, or a set of
+Entity Objects, or a stream of Entity Objects.
+
 #### Transition
 
 Operates on the current state of the Entity Object, allowing for modifications to be made. Once the
@@ -46,7 +49,13 @@ completed, the Entity Object is updated in the Storage.
 
 ### Special Types
 
-**Computation** and **Effect** are operations that don't use the Entity.
+#### Computation
+
+Operation that neither use the Scope nor produce side effects.
+
+#### Effect
+
+Special case of the Observation that optionally uses the Scope and produces side effects.
 
 ### Safety
 
