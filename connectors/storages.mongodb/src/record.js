@@ -10,10 +10,9 @@ function from (record) {
   if (record === undefined || record === null)
     return null
 
-  record.id = record._id
-  delete record._id
+  const { _id, ...rest } = record
 
-  return record
+  return { id: _id, ...rest }
 }
 
 exports.to = to
