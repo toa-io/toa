@@ -13,6 +13,8 @@ const define = (descriptor) => {
   definition.type = name
 
   if (node.params.length > 1) definition.scope = scope(node.params[1].name)
+  else definition.scope = 'none'
+
   if (node.params.length === 0) definition.input = null
 
   return definition
@@ -27,11 +29,15 @@ const test = (statement, type) => {
   return func && known
 }
 
-/**
- * @param {string} name
- * @returns {string}
- */
-const scope = (name) => scopes.includes(name) ? name : undefined
+function scope (name) {
+  if (scopes.includes(name))
+    return name
+
+  if (name === 'context')
+    return 'none'
+
+  return undefined
+}
 
 const nodes = ['FunctionDeclaration', 'ArrowFunctionExpression', 'ClassMethod']
 
