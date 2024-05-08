@@ -78,11 +78,15 @@ describe('pipelines', () => {
     expect(captures.substitute('#{{ email @example.com }}')).toMatch(/^.*@example\.com$/)
   })
 
-  it('should substitute Date.now', async () => {
-    const result = captures.substitute('hello #{{ now }}')
-    const now = Date.now().toString()
+  it('should substitute now', async () => {
+    // non-deterministic :(
+    const now = Date.now().toString().slice(0, -3)
+    const past = (Date.now() - 86400000).toString().slice(0, -3)
+    const nowRx = new RegExp(`hello ${now}\\d{2}`)
+    const pastRx = new RegExp(`hello ${past}\\d{2}`)
 
-    expect(result).toBe(`hello ${now}`)
+    expect(captures.substitute('hello #{{ now }}')).toMatch(nowRx)
+    expect(captures.substitute('hello #{{ now -86400000 }}')).toMatch(pastRx)
   })
 
   it('should execute custom function', async () => {
