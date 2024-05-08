@@ -67,7 +67,7 @@ describe('function', () => {
     const module = { computation }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'computation', scope: undefined })
+    expect(definition).toMatchObject({ type: 'computation', scope: 'none' })
   })
 
   it('should parse effect declaration', () => {
@@ -76,7 +76,7 @@ describe('function', () => {
     const module = { effect }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'effect', scope: undefined })
+    expect(definition).toMatchObject({ type: 'effect', scope: 'none' })
   })
 
   it('should parse expression', () => {
@@ -103,8 +103,8 @@ describe('function', () => {
     expect(definition.scope).toStrictEqual(undefined)
   })
 
-  it('should not define scope', async () => {
-    const observation = (input) => null
+  it('should not define unknown scope', async () => {
+    const observation = (input, message) => null
     const module = { observation }
     const definition = define(module)
 
@@ -168,7 +168,7 @@ describe('class', () => {
     expect(() => define(module)).toThrow('does not match conventions')
   })
 
-  it('should define not define default scope', async () => {
+  it('should define none scope', async () => {
     class Observation {
       execute (input) {}
     }
@@ -176,7 +176,7 @@ describe('class', () => {
     const module = { Observation }
     const definition = define(module)
 
-    expect(definition.scope).toBeUndefined()
+    expect(definition.scope).toBe('none')
   })
 
   it('should define null input', async () => {
