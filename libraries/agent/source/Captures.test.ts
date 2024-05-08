@@ -78,6 +78,13 @@ describe('pipelines', () => {
     expect(captures.substitute('#{{ email @example.com }}')).toMatch(/^.*@example\.com$/)
   })
 
+  it('should substitute Date.now', async () => {
+    const result = captures.substitute('hello #{{ now }}')
+    const now = Date.now().toString()
+
+    expect(result).toBe(`hello ${now}`)
+  })
+
   it('should execute custom function', async () => {
     const functions: Functions = {
       // eslint-disable-next-line max-params

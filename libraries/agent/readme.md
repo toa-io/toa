@@ -9,6 +9,7 @@ Text-based HTTP client with variables and expressions.
 - `password [length]`: generate password of a given length (default `16`)
 - `basic (credentials)`: encode `credentials.username` and `credentials.password` to base64-encoded
   credentials
+- `now`: result of `Date.now()`
 - `set (variable)`: set a variable to the current pipeline value
 
 ```http
