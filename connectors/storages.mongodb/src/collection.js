@@ -25,9 +25,11 @@ class Collection extends Connector {
 
   /** @hot */
   async find (query, options) {
-    const cursor = this.#collection.find(query, options)
+    return this.#collection.find(query, options).toArray()
+  }
 
-    return cursor.toArray()
+  async stream (query, options, transform) {
+    return this.#collection.find(query, options).stream({ transform })
   }
 
   /** @hot */

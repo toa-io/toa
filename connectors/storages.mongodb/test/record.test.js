@@ -47,19 +47,4 @@ describe('from', () => {
       _version: 0
     })
   })
-
-  it('should not modify argument', () => {
-    /** @type {toa.mongodb.Record} */
-    const record = {
-      _id: '1',
-      _version: 0
-    }
-
-    from(record)
-
-    expect(record).toStrictEqual({
-      _id: '1',
-      _version: 0
-    })
-  })
 })

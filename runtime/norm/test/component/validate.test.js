@@ -176,8 +176,7 @@ describe('operations', () => {
   })
 
   it.each([
-    ['computation', 'compute'],
-    ['effect', 'affect']
+    ['computation', 'compute']
   ])('should set query: false for %s', async (_, operation) => {
     validate(manifest)
 

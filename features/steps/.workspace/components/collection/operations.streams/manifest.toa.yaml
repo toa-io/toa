@@ -1,0 +1,14 @@
+name: streams
+namespace: operations
+
+entity:
+  schema:
+    foo: 0
+    bar: string
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      foo: .
+      bar: .
