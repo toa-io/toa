@@ -2,6 +2,8 @@
 
 const { Connector } = require('./connector')
 const { SystemException } = require('./exceptions')
+const { Entity } = require('./entities/entity')
+const { Readable } = require('node:stream')
 
 class Operation extends Connector {
   scope
@@ -47,7 +49,16 @@ class Operation extends Connector {
     return store.reply
   }
 
-  async acquire () {}
+  async acquire (store) {
+    if (this.#scope === 'none')
+      return
+
+    const scope = await this.query(store.request.query)
+    const raw = scope === null || scope instanceof Readable
+
+    store.scope = scope
+    store.state = raw ? scope : scope.get()
+  }
 
   async run (store) {
     const { request, state } = store

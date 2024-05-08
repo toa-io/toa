@@ -1,15 +1,9 @@
 'use strict'
 
-const {
-  Connector,
-  exceptions
-} = require('@toa.io/core')
+const { Connector, exceptions } = require('@toa.io/core')
 
 const { translate } = require('./translate')
-const {
-  to,
-  from
-} = require('./record')
+const { to, from } = require('./record')
 
 class Storage extends Connector {
   #connection
@@ -29,25 +23,23 @@ class Storage extends Connector {
   }
 
   async get (query) {
-    const {
-      criteria,
-      options
-    } = translate(query)
-
+    const { criteria, options } = translate(query)
     const record = await this.#connection.get(criteria, options)
 
     return from(record)
   }
 
   async find (query) {
-    const {
-      criteria,
-      options
-    } = translate(query)
-
+    const { criteria, options } = translate(query)
     const recordset = await this.#connection.find(criteria, options)
 
     return recordset.map((item) => from(item))
+  }
+
+  async stream (query = undefined) {
+    const { criteria, options } = translate(query)
+
+    return await this.#connection.stream(criteria, options, from)
   }
 
   async add (entity) {

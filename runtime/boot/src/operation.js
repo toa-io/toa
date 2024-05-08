@@ -24,7 +24,7 @@ const TYPES = {
   observation: Observation,
   assignment: Assignment,
   computation: Operation,
-  effect: Operation
+  effect: Observation
 }
 
 exports.operation = operation

@@ -125,7 +125,7 @@ properties:
           type:
             enum: [transition, observation, assignment, computation, effect]
           scope:
-            enum: [object, objects, changeset, none]
+            enum: [object, objects, changeset, stream, none]
           concurrency:
             enum: [none, retry]
           forward:
@@ -174,7 +174,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [object, objects, none]
+                  enum: [object, objects, stream, none]
                 query:
                   not:
                     const: false
@@ -205,11 +205,8 @@ properties:
             then:
               properties:
                 scope:
-                  const: none
                   default: none
-                query:
-                  const: false
-                  default: false
+                  enum: [object, objects, stream, none]
         additionalProperties: false
     additionalProperties: false
 
