@@ -50,6 +50,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       Role, () => new Role(value as string | string[], this.discovery.roles),
       Rule, () => new Rule(value as Record<string, string>, this.create.bind(this)),
       Incept, () => new Incept(value as string, this.discovery),
+      Delegate, () => new Delegate(value as string, this.discovery.roles),
       () => new Class(value))
   }
 

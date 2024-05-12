@@ -1,17 +1,24 @@
 import { BadRequest } from '../../HTTP'
 import { type Directive, type Identity } from './types'
+import { Role } from './Role'
+import type { Component } from '@toa.io/core'
 import type { Input } from '../../io'
 
 export class Delegate implements Directive {
   private readonly property: string
+  private readonly discovery: Promise<Component>
 
-  public constructor (property: string) {
+  public constructor (property: string, discovery: Promise<Component>) {
     this.property = property
+    this.discovery = discovery
   }
 
-  public authorize (identity: Identity | null, context: Input): boolean {
+  public async authorize (identity: Identity | null, context: Input): Promise<boolean> {
     if (identity === null)
       return false
+
+    if (identity.roles === undefined)
+      await Role.set(identity, this.discovery)
 
     context.pipelines.body.push((body) => this.embed(body, identity))
 
@@ -23,7 +30,7 @@ export class Delegate implements Directive {
       body = {}
 
     check(body)
-    body[this.property] = identity
+    body[this.property] = structuredClone(identity)
 
     return body
   }
