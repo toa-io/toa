@@ -5,6 +5,7 @@ import type { Configuration } from './configuration'
 export interface Context {
   local: {
     observe: Observation<Entity & { id: string }>
+    transit: Call<TransitOutput, TransitInput>
     ensure: Call<EnsureOutput>
   }
   remote: {
@@ -15,6 +16,16 @@ export interface Context {
     }
   }
   configuration: Configuration
+}
+
+export interface TransitInput {
+  readonly authority: string
+  readonly iss: string
+  readonly sub: string
+}
+
+export interface TransitOutput {
+  id: string
 }
 
 export interface EnsureOutput {
