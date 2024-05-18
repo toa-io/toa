@@ -19,8 +19,8 @@ algorithm is an entry point for an application developer.
 
 ### Types
 
-Operations have three phases: *retrieve* - get current state using *query*, *run* - execute
-algorithm, and *commit* - store new state.
+Operations have three phases: *Retrieve* - acquire the current state, *run* - execute algorithm, and
+*commit* - store the new state.
 
 Retrieve or commit phases may be optional depending on operation's type.
 
@@ -55,7 +55,11 @@ Operation that neither use the Scope nor produce side effects.
 
 #### Effect
 
-Special case of the Observation that optionally uses the Scope and produces side effects.
+Special case of the Observation (unsafe Observation) that optionally uses the Scope and produces
+side effects.
+
+If the Effect is called with `entity` property of the Request, the current state will be acquired
+using atomic "get or create."
 
 ### Safety
 
