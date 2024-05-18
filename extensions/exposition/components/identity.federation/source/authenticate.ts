@@ -9,18 +9,19 @@ async function authenticate ({ authority, credentials }: AuthenticateInput,
   context: Context): Promise<Maybe<AuthenticateOutput>> {
   const { iss, sub } = await validateIdToken(credentials, context.configuration.trust)
 
-  const request: Request = { query: { criteria: `authority==${authority};iss==${iss};sub==${sub}` } }
+  if (context.configuration.explicit_identity_creation === true) {
+    const request: Request = { query: { criteria: `authority==${authority};iss==${iss};sub==${sub}` } }
+    const id = (await context.local.observe(request))?.id
 
-  let id = (await context.local.observe(request))?.id
-
-  if (id === undefined) {
-    if (context.configuration.explicit_identity_creation === true)
+    if (id === undefined)
       return NOT_FOUND
+    else
+      return { identity: { id } }
+  } else {
+    const { id } = await context.local.ensure({ entity: { authority, iss, sub } })
 
-    id = (await context.local.transit({ input: { authority, iss, sub } })).id
+    return { identity: { id } }
   }
-
-  return { identity: { id } }
 }
 
 // Exporting as a function returning assertion errors as values
