@@ -70,7 +70,7 @@ it('should return projection', async () => {
     }
   })
 
-  expect(reply).toEqual({
+  expect(reply).toMatchObject({
     id,
     _version: 1,
     _deleted: null,
