@@ -4,15 +4,16 @@ const { Connector, exceptions } = require('@toa.io/core')
 
 const { translate } = require('./translate')
 const { to, from } = require('./record')
+const { ReturnDocument } = require('mongodb')
 
 class Storage extends Connector {
-  #connection
+  #collection
   #entity
 
   constructor (connection, entity) {
     super()
 
-    this.#connection = connection
+    this.#collection = connection
     this.#entity = entity
 
     this.depends(connection)
@@ -24,14 +25,14 @@ class Storage extends Connector {
 
   async get (query) {
     const { criteria, options } = translate(query)
-    const record = await this.#connection.get(criteria, options)
+    const record = await this.#collection.get(criteria, options)
 
     return from(record)
   }
 
   async find (query) {
     const { criteria, options } = translate(query)
-    const recordset = await this.#connection.find(criteria, options)
+    const recordset = await this.#collection.find(criteria, options)
 
     return recordset.map((item) => from(item))
   }
@@ -39,12 +40,12 @@ class Storage extends Connector {
   async stream (query = undefined) {
     const { criteria, options } = translate(query)
 
-    return await this.#connection.stream(criteria, options, from)
+    return await this.#collection.stream(criteria, options, from)
   }
 
   async add (entity) {
     const record = to(entity)
-    const result = await this.#connection.add(record)
+    const result = await this.#collection.add(record)
 
     return result.acknowledged
   }
@@ -54,7 +55,7 @@ class Storage extends Connector {
       _id: entity.id,
       _version: entity._version - 1
     }
-    const result = await this.#connection.replace(criteria, to(entity))
+    const result = await this.#collection.replace(criteria, to(entity))
 
     return result !== null
   }
@@ -85,10 +86,7 @@ class Storage extends Connector {
   }
 
   async upsert (query, changeset) {
-    const {
-      criteria,
-      options
-    } = translate(query)
+    const { criteria, options } = translate(query)
 
     if (!('_deleted' in changeset) || changeset._deleted === null) {
       delete criteria._deleted
@@ -100,11 +98,32 @@ class Storage extends Connector {
       $inc: { _version: 1 }
     }
 
-    options.returnDocument = 'after'
+    options.returnDocument = ReturnDocument.AFTER
 
-    const result = await this.#connection.update(criteria, update, options)
+    const result = await this.#collection.update(criteria, update, options)
 
     return from(result)
+  }
+
+  async ensure (query, properties, state) {
+    let { criteria, options } = translate(query)
+
+    if (query === undefined)
+      criteria = properties
+
+    options.upsert = true
+    options.returnDocument = ReturnDocument.AFTER
+
+    const update = {
+      $setOnInsert: to(state)
+    }
+
+    const result = await this.#collection.update(criteria, update, options)
+
+    if (result._deleted !== undefined && result._deleted !== null)
+      return null
+    else
+      return from(result)
   }
 
   async index () {
@@ -127,7 +146,7 @@ class Storage extends Connector {
 
         const sparse = this.checkFields(Object.keys(fields))
 
-        await this.#connection.index(fields, {
+        await this.#collection.index(fields, {
           name,
           sparse
         })
@@ -147,7 +166,7 @@ class Storage extends Connector {
 
     name = 'unique_' + name
 
-    await this.#connection.index(fields, {
+    await this.#collection.index(fields, {
       name,
       unique: true,
       sparse
@@ -157,13 +176,13 @@ class Storage extends Connector {
   }
 
   async removeObsolete (desired) {
-    const current = await this.#connection.indexes()
+    const current = await this.#collection.indexes()
     const obsolete = current.filter((name) => !desired.includes(name))
 
     if (obsolete.length > 0) {
       console.info(`Remove obsolete indexes: [${obsolete.join(', ')}]`)
 
-      await this.#connection.dropIndexes(obsolete)
+      await this.#collection.dropIndexes(obsolete)
     }
   }
 

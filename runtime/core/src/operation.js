@@ -33,6 +33,10 @@ class Operation extends Connector {
       if ('query' in request)
         request.query = this.#query.parse(request.query)
 
+      // validate entity
+      if ('entity' in request)
+        this.scope.fit(request.entity)
+
       const store = { request }
 
       return await this.process(store)
