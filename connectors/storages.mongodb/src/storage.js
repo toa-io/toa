@@ -7,32 +7,37 @@ const { to, from } = require('./record')
 const { ReturnDocument } = require('mongodb')
 
 class Storage extends Connector {
+  #client
+
+  /** @type {import('mongodb').Collection} */
   #collection
   #entity
 
-  constructor (connection, entity) {
+  constructor (client, entity) {
     super()
 
-    this.#collection = connection
+    this.#client = client
     this.#entity = entity
 
-    this.depends(connection)
+    this.depends(client)
   }
 
   async open () {
+    this.#collection = this.#client.collection
+
     await this.index()
   }
 
   async get (query) {
     const { criteria, options } = translate(query)
-    const record = await this.#collection.get(criteria, options)
+    const record = await this.#collection.findOne(criteria, options)
 
     return from(record)
   }
 
   async find (query) {
     const { criteria, options } = translate(query)
-    const recordset = await this.#collection.find(criteria, options)
+    const recordset = await this.#collection.find(criteria, options).toArray()
 
     return recordset.map((item) => from(item))
   }
@@ -40,12 +45,12 @@ class Storage extends Connector {
   async stream (query = undefined) {
     const { criteria, options } = translate(query)
 
-    return await this.#collection.stream(criteria, options, from)
+    return await this.#collection.find(criteria, options).stream({ transform: from })
   }
 
   async add (entity) {
     const record = to(entity)
-    const result = await this.#collection.add(record)
+    const result = await this.#collection.insertOne(record)
 
     return result.acknowledged
   }
@@ -55,33 +60,30 @@ class Storage extends Connector {
       _id: entity.id,
       _version: entity._version - 1
     }
-    const result = await this.#collection.replace(criteria, to(entity))
+
+    const result = await this.#collection.findOneAndReplace(criteria, to(entity))
 
     return result !== null
   }
 
   async store (entity) {
     try {
-      if (entity._version === 1) {
+      if (entity._version === 1)
         return await this.add(entity)
-      } else {
+      else
         return await this.set(entity)
-      }
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY) {
-
         const id = error.keyPattern === undefined
           ? error.message.includes(' index: _id_ ') // AWS DocumentDB
           : error.keyPattern._id === 1
 
-        if (id) {
+        if (id)
           return false
-        } else {
+        else
           throw new exceptions.DuplicateException()
-        }
-      } else {
+      } else
         throw error
-      }
     }
   }
 
@@ -100,7 +102,7 @@ class Storage extends Connector {
 
     options.returnDocument = ReturnDocument.AFTER
 
-    const result = await this.#collection.update(criteria, update, options)
+    const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
     return from(result)
   }
@@ -118,7 +120,7 @@ class Storage extends Connector {
       $setOnInsert: to(state)
     }
 
-    const result = await this.#collection.update(criteria, update, options)
+    const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
     if (result._deleted !== undefined && result._deleted !== null)
       return null
@@ -146,16 +148,13 @@ class Storage extends Connector {
 
         const sparse = this.checkFields(Object.keys(fields))
 
-        await this.#collection.index(fields, {
-          name,
-          sparse
-        })
+        await this.#collection.createIndex(fields, { name, sparse })
 
         indexes.push(name)
       }
     }
 
-    await this.removeObsolete(indexes)
+    await this.removeObsoleteIndexes(indexes)
   }
 
   async uniqueIndex (name, properties, sparse = false) {
@@ -166,23 +165,29 @@ class Storage extends Connector {
 
     name = 'unique_' + name
 
-    await this.#collection.index(fields, {
-      name,
-      unique: true,
-      sparse
-    })
+    await this.#collection.createIndex(fields, { name, unique: true, sparse })
 
     return name
   }
 
-  async removeObsolete (desired) {
-    const current = await this.#collection.indexes()
+  async removeObsoleteIndexes (desired) {
+    const current = await this.getCurrentIndexes()
     const obsolete = current.filter((name) => !desired.includes(name))
 
     if (obsolete.length > 0) {
       console.info(`Remove obsolete indexes: [${obsolete.join(', ')}]`)
 
-      await this.#collection.dropIndexes(obsolete)
+      await Promise.all(obsolete.map((name) => this.#collection.dropIndex(name)))
+    }
+  }
+
+  async getCurrentIndexes () {
+    try {
+      const array = await this.#collection.listIndexes().toArray()
+
+      return array.map(({ name }) => name).filter((name) => name !== '_id_')
+    } catch {
+      return []
     }
   }
 
@@ -190,22 +195,19 @@ class Storage extends Connector {
     const optional = []
 
     for (const field of fields) {
-      if (!(field in this.#entity.schema.properties)) {
+      if (!(field in this.#entity.schema.properties))
         throw new Error(`Index field '${field}' is not defined.`)
-      }
 
-      if (!this.#entity.schema.required?.includes(field)) {
+      if (!this.#entity.schema.required?.includes(field))
         optional.push(field)
-      }
     }
 
     if (optional.length > 0) {
       console.info(`Index fields [${optional.join(', ')}] are optional, creating sparse index.`)
 
       return true
-    } else {
+    } else
       return false
-    }
   }
 
 }

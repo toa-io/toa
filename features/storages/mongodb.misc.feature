@@ -60,6 +60,7 @@ Feature: MongoDB storage
       TOA_MONGODB_MONGO_ONE_USERNAME=testcontainersuser
       TOA_MONGODB_MONGO_ONE_PASSWORD=secret
       TOA_ENV=local
+      TOA_CONTEXT=toa-dev
       TOA_AMQP_CONTEXT=eyIuIjpbImFtcXA6Ly9sb2NhbGhvc3QiXX0=
       TOA_AMQP_CONTEXT__USERNAME=developer
       TOA_AMQP_CONTEXT__PASSWORD=secret
