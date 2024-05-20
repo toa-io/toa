@@ -121,12 +121,10 @@ class Storage extends Connector {
     if (query === undefined)
       criteria = properties
 
+    const update = { $setOnInsert: to(state) }
+
     options.upsert = true
     options.returnDocument = ReturnDocument.AFTER
-
-    const update = {
-      $setOnInsert: to(state)
-    }
 
     const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 

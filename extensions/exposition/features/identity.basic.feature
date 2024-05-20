@@ -39,7 +39,7 @@ Feature: Basic authentication
       exposition:
         /:
           io:output: true
-          anonymous: true     # checking compatibility with anonymous access
+          anonymous: true       # checking compatibility with anonymous access
           POST:
             incept: id
             endpoint: transit
@@ -115,7 +115,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      403 Forbidden
+      409 Conflict
       """
 
   Scenario: Changing the password
@@ -320,8 +320,7 @@ Feature: Basic authentication
       """
 
   Scenario: Creating an Identity using inception with existing credentials
-    Given the `identity.basic` database is empty
-    And the `users` is running with the following manifest:
+    Given the `users` is running with the following manifest:
       """yaml
       exposition:
         /:
@@ -329,6 +328,7 @@ Feature: Basic authentication
           anonymous: true
           POST:
             incept: id
+            query: false
             endpoint: transit
       """
     When the following request is received:
@@ -352,13 +352,13 @@ Feature: Basic authentication
       POST /users/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
-      content-type: text/plain
+      content-type: application/yaml
 
       name: Mary Louis
       """
     Then the following reply is sent:
       """
-      403 Forbidden
+      409 Conflict
       """
 
   Scenario: Incorrect credentials format
