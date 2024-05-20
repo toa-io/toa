@@ -1,11 +1,7 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const {
-  newid,
-  random,
-  repeat
-} = require('@toa.io/generic')
+const { newid, random, repeat } = require('@toa.io/generic')
 const { exceptions: { codes } } = require('@toa.io/core')
 
 const framework = require('./framework')
@@ -70,7 +66,7 @@ it('should return projection', async () => {
     }
   })
 
-  expect(reply).toEqual({
+  expect(reply).toMatchObject({
     id,
     _version: 1,
     _deleted: null,

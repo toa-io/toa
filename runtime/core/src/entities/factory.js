@@ -1,5 +1,7 @@
 'use strict'
 
+const { newid } = require('@toa.io/generic')
+
 const { Entity } = require('./entity')
 const { EntitySet } = require('./set')
 const { Changeset } = require('./changeset')
@@ -9,6 +11,10 @@ class Factory {
 
   constructor (schema) {
     this.#schema = schema
+  }
+
+  fit (values) {
+    this.#schema.validate({ id: newid(), ...values }, 'Entity')
   }
 
   init (id) {

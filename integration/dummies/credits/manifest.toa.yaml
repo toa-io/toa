@@ -2,12 +2,12 @@ namespace: credits
 name: balance
 
 entity:
+  associated: true
   schema:
     properties:
       balance:
         type: integer
         default: 10
-  associated: true
 
 operations:
   transit:

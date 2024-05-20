@@ -1,8 +1,7 @@
 'use strict'
 
 const { Connector } = require('./connector')
-const { SystemException } = require('./exceptions')
-const { Entity } = require('./entities/entity')
+const { SystemException, RequestContractException } = require('./exceptions')
 const { Readable } = require('node:stream')
 
 class Operation extends Connector {
@@ -28,8 +27,15 @@ class Operation extends Connector {
 
   async invoke (request) {
     try {
-      if (request.authentic !== true) this.#contracts.request.fit(request)
-      if ('query' in request) request.query = this.#query.parse(request.query)
+      if (request.authentic !== true)
+        this.#contracts.request.fit(request)
+
+      if ('query' in request)
+        request.query = this.#query.parse(request.query)
+
+      // validate entity
+      if ('entity' in request)
+        this.scope.fit(request.entity)
 
       const store = { request }
 
@@ -73,6 +79,9 @@ class Operation extends Connector {
   async commit () {}
 
   async query (query) {
+    if (query === undefined)
+      throw new RequestContractException('Request query is required')
+
     return this.scope[this.#scope](query)
   }
 }

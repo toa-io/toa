@@ -55,10 +55,10 @@ class Schema {
     else return this.#error()
   }
 
-  validate (value) {
+  validate (value, prefix) {
     const valid = this.#validate(value)
 
-    if (!valid) this.#throw()
+    if (!valid) this.#throw(prefix)
   }
 
   match (value) {
@@ -185,10 +185,11 @@ class Schema {
   /**
    * @throws {TypeError}
    */
-  #throw () {
+  #throw (prefix) {
     const error = this.#error()
+    const message = prefix === undefined ? error.message : prefix + ': ' + error.message
 
-    throw new TypeError(error.message)
+    throw new TypeError(message)
   }
 }
 
