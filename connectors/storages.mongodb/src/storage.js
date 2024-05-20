@@ -66,7 +66,7 @@ class Storage extends Connector {
     return result !== null
   }
 
-  async store (entity) {
+  async store (entity, attempt = 0) {
     try {
       if (entity._version === 1)
         return await this.add(entity)
@@ -82,6 +82,14 @@ class Storage extends Connector {
           return false
         else
           throw new exceptions.DuplicateException()
+      } else if (error.cause?.code === 'ECONNREFUSED') {
+        // This is temporary and should be replaced with a class decorator.
+        if (attempt > 10)
+          throw error
+
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        return this.store(entity)
       } else
         throw error
     }
