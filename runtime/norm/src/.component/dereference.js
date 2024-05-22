@@ -25,7 +25,12 @@ const createResolver = (properties) => (property) => {
 function operations (manifest, resolver) {
   for (const operation of Object.values(manifest.operations)) {
     if (operation.input !== undefined) operation.input = schema(operation.input, resolver)
-    if (operation.output !== undefined) operation.output = schema(operation.output, resolver)
+
+    if (operation.output !== undefined)
+      if (Array.isArray(operation.output) && operation.output.length === 1)
+        operation.output = [schema(operation.output[0], resolver)]
+      else
+        operation.output = schema(operation.output, resolver)
   }
 
   // forwarding
