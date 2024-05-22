@@ -25,8 +25,8 @@ class Entity {
     return this.#state
   }
 
-  set (value) {
-    const error = this.#schema.fit(value)
+  set (value, optional = false) {
+    const error = optional ? this.#schema.fitOptional(value) : this.#schema.fit(value)
 
     if (error !== null)
       throw new EntityContractException(error)
@@ -44,12 +44,9 @@ class Entity {
   }
 
   #init (id) {
-    const value = {
-      ...this.#schema.defaults({ id }),
-      _version: 0
-    }
+    const value = { id, _version: 0 }
 
-    this.#set(value)
+    this.set(value, true)
   }
 
   #set (value) {

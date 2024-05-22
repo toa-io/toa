@@ -4,28 +4,40 @@ const { expand } = require('@toa.io/concise')
 const { defined } = require('@toa.io/generic')
 const { file } = require('@toa.io/filesystem')
 const yaml = require('@toa.io/yaml')
-const { create, is } = require('./validator')
+const { create, is, ajv } = require('./validator')
 const betterAjvErrors = require('better-ajv-errors').default
 
 class Schema {
-  /** @type {string} */
   id
 
+  /** @type {import('ajv').ValidateFunction} */
   #validate
+
+  /** @type {import('ajv').ValidateFunction} */
+  #validateOptional
 
   /**
    * @param {import('ajv').ValidateFunction} validate
+   * @param {import('ajv').ValidateFunction} validateOptional
    */
-  constructor (validate) {
+  constructor (validate, validateOptional) {
     this.id = validate.schema.$id
     this.#validate = validate
+    this.#validateOptional = validateOptional
   }
 
-  fit (value) {
-    const valid = this.#validate(value)
+  fit (value, validate = this.#validate) {
+    const valid = validate(value)
 
     if (valid) return null
     else return this.#error()
+  }
+
+  fitOptional (value) {
+    if (this.#validateOptional === undefined)
+      throw new Error('Optional schema is not defined')
+
+    return this.fit(value, this.#validateOptional)
   }
 
   validate (value, message) {
@@ -61,15 +73,22 @@ class Schema {
   }
 }
 
-/** @type {toa.schemas.constructors.schema} */
 const schema = (cos) => {
-  if (typeof cos === 'string' && file.is.sync(cos)) cos = yaml.load.sync(cos)
+  if (typeof cos === 'string' && file.is.sync(cos))
+    cos = yaml.load.sync(cos)
 
-  const validator = create()
   const schema = expand(cos, is)
-  const validate = validator.compile(schema)
+  const validate = create(schema)
 
-  return new Schema(validate)
+  let validateOptional
+
+  if (schema.type === 'object') {
+    const { required, ...rest } = schema
+
+    validateOptional = ajv().compile(rest)
+  }
+
+  return new Schema(validate, validateOptional)
 }
 
 exports.Schema = Schema

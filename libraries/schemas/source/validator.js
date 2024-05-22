@@ -2,26 +2,28 @@
 
 const { default: Ajv } = require('ajv/dist/2019')
 const formats = /** @type {Function} */ require('ajv-formats')
-const { add } = require('@toa.io/generic')
+
+/**
+ * @param {object} schema
+ */
+function create (schema) {
+  return ajv().compile(schema)
+}
+
+function is (schema) {
+  return ajv().validateSchema(schema) === true
+}
 
 /**
  * @param {object[]} [schemas]
  */
-const create = (schemas) => {
-  const options = add({ schemas }, OPTIONS)
-  // noinspection JSCheckFunctionSignatures
+function ajv (schemas) {
+  const options = Object.assign({ schemas }, OPTIONS)
   const ajv = new Ajv(options)
 
   formats(ajv)
 
   return ajv
-}
-
-/** @type {toa.schemas.is} */
-const is = (schema) => {
-  const validator = new Ajv()
-
-  return validator.validateSchema(schema) === true
 }
 
 const OPTIONS = {
@@ -32,3 +34,4 @@ const OPTIONS = {
 
 exports.create = create
 exports.is = is
+exports.ajv = ajv
