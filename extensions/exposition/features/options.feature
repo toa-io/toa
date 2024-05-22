@@ -20,35 +20,54 @@ Feature: Introspection
       200 OK
       Allow: GET, POST, OPTIONS
 
+      GET:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              pattern: ^[a-fA-F0-9]{32}$
+            title:
+              type: string
+              maxLength: 64
+            volume:
+              type: number
+              exclusiveMinimum: 0
+              maximum: 1000
+            temperature:
+              type: number
+              exclusiveMinimum: 0
+              maximum: 300
+          additionalProperties: false
+          required:
+            - id
+            - title
+            - volume
       POST:
         input:
           type: object
           properties:
             title:
               type: string
+              maxLength: 64
             temperature:
               type: number
+              exclusiveMinimum: 0
+              maximum: 300
             volume:
               type: number
+              exclusiveMinimum: 0
+              maximum: 1000
           additionalProperties: false
-        output:
-          type: object
-      GET:
-        output:
-          type: array
-            name:
-              type: string
-              description: The name of the pot
-            description:
-              type: string
-              description: A description of the pot
+          required:
+            - title
+            - volume
         output:
           type: object
           properties:
             id:
               type: string
-              description: The id of the pot
-        unprocessable:
-          - INVALID_NAME
-          - INVALID_DESCRIPTION
+              pattern: ^[a-fA-F0-9]{32}$
+          additionalProperties: false
       """

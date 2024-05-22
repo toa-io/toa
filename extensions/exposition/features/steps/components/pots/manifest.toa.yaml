@@ -3,9 +3,9 @@ version: 0.0.0
 
 entity:
   schema:
-    title: string
-    volume: number
-    temperature?: number
+    title: string(64)
+    volume: number(0, 1000]
+    temperature?: number(0, 300]
 
 operations:
   create:
@@ -29,3 +29,9 @@ operations:
       title: string
       volume: number
       temperature: number
+  enumerate:
+    output:
+      - id: .
+        title: .
+        volume: .
+        temperature?: .
