@@ -142,6 +142,7 @@ properties:
             $ref: https://json-schema.org/draft/2019-09/schema
           output:
             $ref: https://json-schema.org/draft/2019-09/schema
+            default: { }
           errors:
             type: array
             items:
