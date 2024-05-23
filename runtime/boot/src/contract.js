@@ -10,8 +10,8 @@ const request = (definition, entity) => {
   return new Request(schema, definition)
 }
 
-const reply = (output, error) => {
-  const reply = Reply.schema(output, error)
+const reply = (output, errors) => {
+  const reply = Reply.schema(output, errors)
   const schema = schemas.schema(reply)
 
   return new Reply(schema)

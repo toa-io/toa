@@ -7,19 +7,25 @@ const { ResponseContractException } = require('../exceptions')
 class Reply extends Contract {
   static Exception = ResponseContractException
 
-  /**
-   * @returns {toa.schema.JSON}
-   */
-  static schema (output, error) {
+  static schema (output, errors) {
     const schema = { type: 'object', properties: {}, additionalProperties: false }
 
     if (output !== undefined)
       schema.properties.output = output
 
-    if (error !== undefined)
-      schema.properties.error = error
-    else
-      schema.properties.error = schemas.error
+    if (errors !== undefined)
+      schema.properties.error = {
+        type: 'object',
+        properties: {
+          code: {
+            enum: errors
+          },
+          message: {
+            type: 'string'
+          }
+        },
+        required: ['code']
+      }
 
     return schema
   }

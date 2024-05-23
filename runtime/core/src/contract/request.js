@@ -6,14 +6,14 @@ const { Contract } = require('./contract')
 
 class Request extends Contract {
   /** @readonly */
-  contracts = {}
+  discovery = {}
 
   constructor (schema, definition) {
     super(schema)
 
     for (const key of ['input', 'output', 'errors'])
       if (definition[key] !== undefined)
-        this.contracts[key] = definition[key]
+        this.discovery[key] = definition[key]
   }
 
   static Exception = RequestContractException
@@ -33,8 +33,7 @@ class Request extends Contract {
     if (definition.input !== undefined) {
       schema.properties.input = definition.input
       required.push('input')
-    }
-    else
+    } else
       schema.properties.input = { type: 'null' }
 
     if (entity === undefined)
@@ -53,16 +52,14 @@ class Request extends Contract {
 
       if (definition.type === 'observation') {
         delete query.properties.version
-      }
-      else {
+      } else {
         delete query.properties.projection
       }
 
       if (definition.type !== 'observation' || definition.scope !== 'objects') {
         delete query.properties.omit
         delete query.properties.limit
-      }
-      else {
+      } else {
         if (query.required === undefined) query.required = ['limit']
         else query.required.push('limit')
       }

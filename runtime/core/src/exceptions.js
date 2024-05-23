@@ -52,7 +52,7 @@ class ContractException extends Exception {
     super(code || codes.Contract, typeof error === 'string' ? error : error?.message)
 
     if (typeof error === 'object' && error !== null)
-      for (const k of ['keyword', 'property', 'schema', 'path'])
+      for (const k of ['keyword', 'property', 'schema', 'path', 'params'])
         if (k in error)
           this[k] = error[k]
   }

@@ -11,7 +11,7 @@ const schema = schemas.schema(object)
 const validate = (manifest) => {
   const error = schema.fit(manifest)
 
-  if (error) throw new Error(error.message)
+  if (error) throw error
 
   if (manifest.events !== undefined) events(manifest)
   if (manifest.receivers !== undefined) receivers(manifest)

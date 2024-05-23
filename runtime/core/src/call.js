@@ -39,7 +39,7 @@ class Call extends Connector {
   }
 
   explain () {
-    return this.#contract.contracts
+    return this.#contract.discovery
   }
 }
 
