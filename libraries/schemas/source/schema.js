@@ -30,7 +30,7 @@ class Schema {
     const valid = validate(value)
 
     if (valid) return null
-    else return this.#error()
+    else return this.#error(value)
   }
 
   fitOptional (value) {
@@ -57,11 +57,12 @@ class Schema {
     }
   }
 
-  #error = () => {
+  #error = (value) => {
     const error = this.#validate.errors[0]
+    let be = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
 
     const mapped = {
-      message: error.message,
+      message: be[0].error,
       keyword: error.keyword,
       property: error.propertyName,
       path: error.instancePath,
