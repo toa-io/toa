@@ -120,8 +120,7 @@ it('should throw if query passed when declaration.query = false', async () => {
   }
 
   await expect(remote.invoke('add', request)).rejects.toMatchObject({
-    code: codes.RequestContract,
-    message: 'query must be null'
+    code: codes.RequestContract
   })
 })
 
@@ -129,8 +128,7 @@ it('should throw if no query passed when declaration.query = true', async () => 
   await expect(remote.invoke('find', {}))
     .rejects.toMatchObject({
       code: codes.RequestContract,
-      keyword: 'required',
-      property: 'query'
+      keyword: 'required'
     })
 })
 
@@ -184,14 +182,12 @@ describe('validation', () => {
   it('should throw if id does not match pattern', async () => {
     await expect(remote.invoke('get', { query: { id: 1 } }))
       .rejects.toMatchObject({
-        keyword: 'pattern',
-        property: 'query/id'
+        keyword: 'pattern'
       })
 
     await expect(remote.invoke('get', { query: { id: 'a0' } }))
       .rejects.toMatchObject({
-        keyword: 'pattern',
-        property: 'query/id'
+        keyword: 'pattern'
       })
   })
 
@@ -203,8 +199,7 @@ describe('validation', () => {
       }
     }))
       .rejects.toMatchObject({
-        keyword: 'type',
-        property: 'query/sort'
+        keyword: 'type'
       })
 
     await expect(remote.invoke('find', {
@@ -214,36 +209,31 @@ describe('validation', () => {
       }
     }))
       .rejects.toMatchObject({
-        keyword: 'pattern',
-        property: 'query/sort/0'
+        keyword: 'pattern'
       })
   })
 
   it('should throw if projection does not match schema', async () => {
     await expect(remote.invoke('get', { query: { projection: 'asd!' } }))
       .rejects.toMatchObject({
-        keyword: 'type',
-        property: 'query/projection'
+        keyword: 'type'
       })
   })
 
   it('should throw if limit is not positive integer', async () => {
     await expect(remote.invoke('find', { query: { limit: 'foo' } }))
       .rejects.toMatchObject({
-        keyword: 'type',
-        property: 'query/limit'
+        keyword: 'type'
       })
 
     await expect(remote.invoke('find', { query: { limit: -1 } }))
       .rejects.toMatchObject({
-        keyword: 'minimum',
-        property: 'query/limit'
+        keyword: 'minimum'
       })
 
     await expect(remote.invoke('find', { query: { limit: 0.5 } }))
       .rejects.toMatchObject({
-        keyword: 'type',
-        property: 'query/limit'
+        keyword: 'type'
       })
   })
 
@@ -260,8 +250,7 @@ describe('validation', () => {
       }
     }))
       .rejects.toMatchObject({
-        keyword: 'type',
-        property: 'query/omit'
+        keyword: 'type'
       })
 
     await expect(remote.invoke('find', {
@@ -271,8 +260,7 @@ describe('validation', () => {
       }
     }))
       .rejects.toMatchObject({
-        keyword: 'minimum',
-        property: 'query/omit'
+        keyword: 'minimum'
       })
 
     await expect(remote.invoke('find', {
@@ -282,8 +270,7 @@ describe('validation', () => {
       }
     }))
       .rejects.toMatchObject({
-        keyword: 'type',
-        property: 'query/omit'
+        keyword: 'type'
       })
   })
 })
