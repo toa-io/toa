@@ -1,6 +1,6 @@
 Feature: Introspection
 
-  Scenario: Introspect a resource
+  Scenario: Resource introspection
     Given the `pots` is running with the following manifest:
       """yaml
       exposition:
