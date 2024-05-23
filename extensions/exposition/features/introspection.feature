@@ -70,4 +70,7 @@ Feature: Introspection
               type: string
               pattern: ^[a-fA-F0-9]{32}$
           additionalProperties: false
+        errors:
+          - NO_WAY
+          - WONT_CREATE
       """

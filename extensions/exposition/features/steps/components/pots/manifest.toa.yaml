@@ -17,6 +17,9 @@ operations:
       temperature: .
     output:
       id: .
+    errors:
+      - NO_WAY
+      - WONT_CREATE
   transit:
     concurrency: retry
     input:
