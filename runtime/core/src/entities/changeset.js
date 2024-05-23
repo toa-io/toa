@@ -13,7 +13,7 @@ class Changeset {
     this.query = query
 
     this.#schema = schema
-    this.#state = schema.system()
+    this.#state = {}
   }
 
   get () {
@@ -21,10 +21,12 @@ class Changeset {
   }
 
   set (value) {
-    const error = this.#schema.adapt(value)
+    const error = this.#schema.fitOptional(value)
 
-    if (error !== null) throw new EntityContractException(error)
+    if (error !== null)
+      throw new EntityContractException(error)
 
+    delete value._version
     value._updated = Date.now()
 
     this.#state = value

@@ -10,8 +10,10 @@ class Reply extends Contract {
   static schema (output, errors) {
     const schema = { type: 'object', properties: {}, additionalProperties: false }
 
-    if (output !== undefined)
+    if (output !== undefined) {
+      output.additionalProperties = true
       schema.properties.output = output
+    }
 
     if (errors !== undefined)
       schema.properties.error = {

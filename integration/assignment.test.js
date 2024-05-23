@@ -35,20 +35,12 @@ afterAll(async () => {
 it('should assign', async () => {
   const sender = newid()
   const text = generate()
-  const created = await messages.invoke('add', {
-    input: {
-      sender,
-      text
-    }
-  })
+  const created = await messages.invoke('add', { input: { sender, text } })
   const query = { id: created.id }
 
   expect(created.id).toBeDefined()
 
-  const reply = await messages.invoke('assign', {
-    input: { text: generate() },
-    query
-  })
+  const reply = await messages.invoke('assign', { input: { text: generate() }, query })
 
   await timeout(200)
 
@@ -94,6 +86,7 @@ it('should emit events', async () => {
     input: { balance: 0 },
     query: { id: sender }
   })
+
   await timeout(200)
 
   const stat = await stats.invoke('observe', { query: { id: sender } })

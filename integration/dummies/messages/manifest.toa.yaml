@@ -57,6 +57,9 @@ operations:
   assign:
     input:
       text: .
+    output: undefined
+  observe:
+    output: undefined
 
 configuration:
   price: 1
