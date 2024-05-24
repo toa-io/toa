@@ -1,7 +1,6 @@
 export interface Configuration {
   trust?: Trust[]
   principal?: Principal
-  explicit_identity_creation?: boolean
 }
 
 export interface Trust {

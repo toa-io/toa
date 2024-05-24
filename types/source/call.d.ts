@@ -1,9 +1,10 @@
-export interface Request<Input = undefined>{
+export interface Request<Input = unknown, Entity = unknown> {
   input?: Input
   query?: Query
+  entity?: Entity
 }
 
-export interface Query{
+export interface Query {
   id?: string
   version?: number
   criteria?: string

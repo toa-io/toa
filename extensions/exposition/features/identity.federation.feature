@@ -8,7 +8,6 @@ Feature: Identity Federation
   Scenario: Getting identity for a new user
     Given the `identity.federation` configuration:
       """yaml
-      explicit_identity_creation: false
       trust:
         - iss: http://localhost:44444
       """
@@ -61,7 +60,6 @@ Feature: Identity Federation
   Scenario: Getting identity for a user with symmetric tokens
     Given the `identity.federation` configuration:
       """yaml
-      explicit_identity_creation: false
       trust:
         - iss: http://localhost:44444
           secrets:
@@ -88,7 +86,7 @@ Feature: Identity Federation
       id: ${{ GoodUser.id }}
       """
 
-  Scenario: Creating an Identity using inception with existing credentials
+  Scenario: Creating an Identity using inception
     Given the `identity.federation` configuration:
       """yaml
       trust:
@@ -100,8 +98,8 @@ Feature: Identity Federation
         /:
           anonymous: true
           POST:
-            io:output: true
-            incept: id
+            io:output: [id]
+            auth:incept: id
             endpoint: create
       """
     And the IDP token for Bill is issued
@@ -146,6 +144,7 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       200 OK
+
       id: ${{ Bill.id }}
       """
     And the following request is received:
@@ -154,19 +153,18 @@ Feature: Identity Federation
       POST /users/ HTTP/1.1
       host: nex.toa.io
       authorization: Bearer ${{ Bill.id_token }}
-      content-type: text/plain
+      content-type: application/yaml
 
       name: Mary Louis
       """
     Then the following reply is sent:
       """
-      403 Forbidden
+      409 Conflict
       """
 
   Scenario: Granting a `system` role to a Principal
     Given the `identity.federation` configuration:
       """yaml
-      explicit_identity_creation: false
       trust:
         - iss: http://localhost:44444
       principal:
@@ -174,6 +172,8 @@ Feature: Identity Federation
         sub: root-mock-id
       """
     And the IDP token for root is issued
+
+    # create an identity
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -182,7 +182,6 @@ Feature: Identity Federation
       accept: application/yaml
       content-type: application/yaml
       """
-    # create an identity
     Then the following reply is sent:
       """
       200 OK
@@ -190,6 +189,7 @@ Feature: Identity Federation
 
       id: ${{ root.id }}
       """
+
     # check the role
     When the following request is received:
       """

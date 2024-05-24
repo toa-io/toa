@@ -1,49 +1,47 @@
 'use strict'
 
-const { empty } = require('@toa.io/generic')
-
-const {
-  StatePreconditionException,
-  StateNotFoundException
-} = require('./exceptions')
+const { empty, newid } = require('@toa.io/generic')
+const { StatePreconditionException, StateNotFoundException } = require('./exceptions')
 
 class State {
   #associated
   #storage
-  #entity
+  #entities
   #emission
 
   constructor (storage, entity, emission, associated) {
     this.#storage = storage
-    this.#entity = entity
+    this.#entities = entity
     this.#emission = emission
     this.#associated = associated === true
   }
 
   init (id) {
-    return this.#entity.init(id)
+    return this.#entities.init(id)
+  }
+
+  fit (values) {
+    return this.#entities.fit(values)
   }
 
   async object (query) {
     const record = await this.#storage.get(query)
 
     if (record === null) {
-      if (this.#associated && query.id !== undefined && query.version === undefined) {
+      if (this.#associated && query.id !== undefined && query.version === undefined)
         return this.init(query.id)
-      } else if (query.version !== undefined) throw new StatePreconditionException()
-    }
+      else if (query.version !== undefined)
+        throw new StatePreconditionException()
 
-    if (record === null) {
       return null
-    } else {
-      return this.#entity.object(record)
-    }
+    } else
+      return this.#entities.object(record)
   }
 
   async objects (query) {
     const recordset = await this.#storage.find(query)
 
-    return this.#entity.objects(recordset)
+    return this.#entities.objects(recordset)
   }
 
   async stream (query) {
@@ -51,11 +49,29 @@ class State {
   }
 
   changeset (query) {
-    return this.#entity.changeset(query)
+    return this.#entities.changeset(query)
   }
 
   none () {
     return null
+  }
+
+  async ensure (query, properties) {
+    const object = this.#entities.init()
+    const blank = object.get()
+
+    Object.assign(blank, properties)
+
+    object.set(blank)
+
+    const record = await this.#storage.ensure(query, properties, object.get())
+
+    if (record.id !== blank.id) // exists
+      return this.#entities.object(record)
+
+    await this.#emission.emit(object.event())
+
+    return object
   }
 
   async commit (state) {

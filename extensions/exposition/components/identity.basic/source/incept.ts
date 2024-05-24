@@ -12,8 +12,14 @@ export async function effect (input: Input, context: Context): Promise<Maybe<Out
     return INVALID_CREDENTIALS
 
   const request = {
-    input: { authority: input.authority, username, password },
-    query: { id: input.id }
+    input: {
+      authority: input.authority,
+      username,
+      password
+    },
+    query: {
+      id: input.id
+    }
   }
 
   return await context.local.transit(request)

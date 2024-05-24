@@ -50,13 +50,22 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       Role, () => new Role(value as string | string[], this.discovery.roles),
       Rule, () => new Rule(value as Record<string, string>, this.create.bind(this)),
       Incept, () => new Incept(value as string, this.discovery),
+      Delegate, () => new Delegate(value as string, this.discovery.roles),
       () => new Class(value))
   }
 
   public async preflight (directives: Directive[],
     input: Input,
     parameters: Parameter[]): Promise<Output> {
-    const identity = await this.resolve(input.authority, input.request.headers.authorization)
+    /**
+     * Some authentication scheme providers may create identity during authentication;
+     * therefore, we need to skip the authentication process if the Incept directive is present.
+     *
+     * If the provided credentials already exist,
+     * the inception will cause a unique constraint violation on the settle stage.
+     */
+    const inception = directives.reduce((yes, directive) => yes || directive instanceof Incept, false)
+    const identity = inception ? null : await this.resolve(input.authority, input.request.headers.authorization)
 
     input.identity = identity
 

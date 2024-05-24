@@ -149,9 +149,7 @@ function getKey (db, urls) {
 }
 
 const OPTIONS = {
-  ignoreUndefined: true,
-  connectTimeoutMS: 0,
-  serverSelectionTimeoutMS: 0
+  ignoreUndefined: true
 }
 
 const ALREADY_EXISTS = 48

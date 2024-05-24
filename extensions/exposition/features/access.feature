@@ -468,9 +468,24 @@ Feature: Access authorization
     Then the following reply is sent:
       """
       200 OK
+      authorization: Token ${{ token }}
 
       identity:
         id: efe3a65ebbee47ed95a73edd911ea328
         roles:
           - developer
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    And the reply does not contain:
+      """
+      authorization: Token
       """

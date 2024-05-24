@@ -2,21 +2,21 @@ namespace: identity
 name: basic
 
 entity:
+  associated: true
   schema:
     authority*: string
     username*: string
     password*: string
   unique:
     authority_username: [authority, username]
-  associated: true
 
 operations:
   transit:
     concurrency: retry
     input:
-      authority: string
       username: string
       password: string
+      authority: string
   create:
     forward: transit
     query: false
@@ -57,6 +57,7 @@ exposition:
       endpoint: create
   /:id:
     io:output: [id]
+    io:input: [username, password]
     auth:role: system:identity:basic
     auth:scheme: basic
     auth:id: id

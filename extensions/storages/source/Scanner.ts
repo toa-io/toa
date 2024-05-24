@@ -105,6 +105,7 @@ export class Scanner extends PassThrough {
 const SIGNATURES: Signature[] = [
   { hex: 'ff d8 ff e0', off: 0, type: 'image/jpeg' },
   { hex: 'ff d8 ff e1', off: 0, type: 'image/jpeg' },
+  { hex: 'ff d8 ff e2', off: 0, type: 'image/jpeg' },
   { hex: 'ff d8 ff ee', off: 0, type: 'image/jpeg' },
   { hex: 'ff d8 ff db', off: 0, type: 'image/jpeg' },
   { hex: '89 50 4e 47', off: 0, type: 'image/png' },

@@ -49,18 +49,13 @@ class SystemException extends Exception {
 }
 
 class ContractException extends Exception {
-  keyword
-  property
-  schema
-  path
-
   constructor (code, error) {
-    super(code || codes.Contract, error.message)
+    super(code || codes.Contract, typeof error === 'string' ? error : error?.message)
 
-    this.keyword = error.keyword
-    this.property = error.property
-    this.schema = error.schema
-    this.path = error.path
+    if (typeof error === 'object' && error !== null)
+      for (const k of ['keyword', 'property', 'schema', 'path'])
+        if (k in error)
+          this[k] = error[k]
   }
 }
 
