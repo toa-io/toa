@@ -28,6 +28,8 @@ class Reply extends Contract {
         },
         required: ['code']
       }
+    else
+      schema.properties.error = schemas.error
 
     return schema
   }
