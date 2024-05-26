@@ -48,3 +48,14 @@ Feature: Operations failures
       code: 202
       message: query must be null
       """
+
+  Scenario: Thrown exception
+    Given I compose `echo.beacon` component
+    When I call `echo.beacon.throw` with:
+      """yaml
+      input: hello
+      """
+    Then the following exception is thrown:
+      """yaml
+      message: hello
+      """
