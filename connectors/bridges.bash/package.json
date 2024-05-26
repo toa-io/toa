@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.bash",
-  "version": "1.0.0-alpha.37",
+  "version": "1.0.0-alpha.38",
   "description": "Toa Bash Bridge",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
