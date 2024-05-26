@@ -17,3 +17,6 @@ operations:
     forward: echo
     input: ok
     output: string
+  throw:
+    input: string
+    output: undefined
