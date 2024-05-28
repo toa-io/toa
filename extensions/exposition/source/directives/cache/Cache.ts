@@ -1,13 +1,13 @@
 import { Control } from './Control'
 import { Exact } from './Exact'
-import type { Input, Output } from '../../io'
-import type { Directive } from './types'
+import type { Output } from '../../io'
+import type { AuthenticatedContext, Directive } from './types'
 import type { DirectiveFamily } from '../../RTD'
 import type * as http from '../../HTTP'
 
 export class Cache implements DirectiveFamily<Directive> {
   public readonly name: string = 'cache'
-  public readonly mandatory: boolean = false
+  public readonly mandatory: boolean = true
 
   public create (name: string, value: any): Directive {
     const Class = constructors[name]
@@ -23,9 +23,16 @@ export class Cache implements DirectiveFamily<Directive> {
   }
 
   public async settle
-  (directives: Directive[], input: Input, response: http.OutgoingMessage): Promise<void> {
+  (directives: Directive[], context: AuthenticatedContext, response: http.OutgoingMessage): Promise<void> {
+    const directive = directives[0]
+
     response.headers ??= new Headers()
-    directives[0]?.set(input, response.headers)
+
+    if (directive === undefined) {
+      if (context.identity !== null && !Control.disabled(response.headers))
+        response.headers.set('cache-control', 'private')
+    } else
+      directive.set(context, response.headers)
   }
 }
 
