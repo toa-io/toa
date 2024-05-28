@@ -1,3 +1,4 @@
+@security
 Feature: Caching
 
   Background:
@@ -195,8 +196,8 @@ Feature: Caching
 
   Scenario: Private responses are sent with `vary: authorization`
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     And the annotation:
       """yaml
       /:
