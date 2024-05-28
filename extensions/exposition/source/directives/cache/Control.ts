@@ -10,16 +10,27 @@ export class Control implements Directive {
     this.value = value
   }
 
+  public static disabled (headers: Headers): boolean {
+    const value = headers.get('cache-control')
+
+    if (value === null)
+      return false
+
+    const directives = mask(value)
+
+    return (directives & NO_STORE) === NO_STORE
+  }
+
   public set (context: AuthenticatedContext, headers: Headers): void {
     if (!['GET', 'HEAD', 'OPTIONS'].includes(context.request.method))
       return
 
     this.cache ??= this.resolve(context)
 
-    if (this.disabled(headers))
+    if (Control.disabled(headers))
       return
 
-    headers.append('cache-control', this.cache)
+    headers.set('cache-control', this.cache)
 
     if (this.vary !== null)
       headers.append('vary', 'authorization')
@@ -44,17 +55,6 @@ export class Control implements Directive {
     }
 
     return this.value
-  }
-
-  private disabled (headers: Headers): boolean {
-    const value = headers.get('cache-control')
-
-    if (value === null)
-      return false
-
-    const directives = mask(value)
-
-    return (directives & NO_STORE) === NO_STORE
   }
 }
 
