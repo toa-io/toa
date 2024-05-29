@@ -2,9 +2,6 @@
 
 const { Effect } = require('./effectClass')
 
-/**
- * @implements {toa.node.algorithms.Factory}
- */
 class EffectFactory {
   #context
 
@@ -12,7 +9,7 @@ class EffectFactory {
     this.#context = context
   }
 
-  create () {
+  async create () {
     return new Effect()
   }
 }

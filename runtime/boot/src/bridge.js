@@ -1,7 +1,8 @@
 'use strict'
 
-const algorithm = (bridge, path, endpoint, context) => {
-  const algorithm = resolve(bridge).algorithm(path, endpoint, context)
+async function algorithm (bridge, path, endpoint, context) {
+  const factory = resolve(bridge)
+  const algorithm = await factory.algorithm(path, endpoint, context)
 
   algorithm.depends(context)
 
