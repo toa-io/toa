@@ -1,3 +1,4 @@
+@security
 Feature: Caching
 
   Background:
@@ -9,6 +10,40 @@ Feature: Caching
     Given the `identity.roles` database contains:
       | _id                              | identity                         | role      |
       | 775a648d054e4ce1a65f8f17e5b51803 | b70a7dbca6b14a2eaac8a9eb4b2ff4db | developer |
+
+  Scenario: Default caching
+    Given the annotation:
+      """yaml
+      /:
+        anonymous: true
+        GET:
+          dev:stub: foo
+        /private:
+          auth:role: developer
+          GET:
+            dev:stub: bar
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the reply does not contain:
+      """
+      cache-control:
+      """
+    When the following request is received:
+      """
+      GET /private/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      cache-control: private
+      """
 
   Scenario: Caching successful response
     Given the annotation:
@@ -64,7 +99,7 @@ Feature: Caching
       """
       200 OK
       authorization: Token ${{ token }}
-      cache-control: no-store
+      cache-control: private
       """
     When the following request is received:
       """
@@ -155,7 +190,7 @@ Feature: Caching
       """
       200 OK
       authorization: Token ${{ token }}
-      cache-control: no-store
+      cache-control: private
       """
     When the following request is received:
       """
@@ -195,8 +230,8 @@ Feature: Caching
 
   Scenario: Private responses are sent with `vary: authorization`
     Given the `identity.basic` database contains:
-      | _id                              | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     And the annotation:
       """yaml
       /:
@@ -212,12 +247,11 @@ Feature: Caching
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
-    # `no-store` when token is issued
     Then the following reply is sent:
       """
       200 OK
       authorization: Token ${{ token }}
-      cache-control: no-store
+      cache-control: private
       """
     When the following request is received:
       """

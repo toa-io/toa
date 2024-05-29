@@ -1,3 +1,4 @@
+@security
 Feature: CORS Support
 
   Scenario: Using CORS

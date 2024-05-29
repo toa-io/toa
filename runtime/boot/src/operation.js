@@ -4,8 +4,8 @@ const { Transition, Observation, Assignment, Operation, Query, Effect } = requir
 
 const boot = require('./index')
 
-const operation = (manifest, endpoint, definition, context, scope) => {
-  const cascade = boot.cascade(manifest, endpoint, definition, context)
+async function operation (manifest, endpoint, definition, context, scope) {
+  const cascade = await boot.cascade(manifest, endpoint, definition, context)
   const reply = boot.contract.reply(definition.output, definition.error)
   const input = definition.input
   const request = boot.contract.request({ input }, manifest.entity)

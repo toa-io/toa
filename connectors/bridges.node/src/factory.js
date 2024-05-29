@@ -8,7 +8,7 @@ const { Context } = require('./context')
 const { extract } = require('./define/operations')
 
 class Factory {
-  algorithm (root, name, context) {
+  async algorithm (root, name, context) {
     const module = load.operation(root, name)
     const ctx = new Context(context)
 
@@ -36,11 +36,11 @@ class Factory {
  * @param {toa.node.Context} context
  * @returns {Runner}
  */
-function runner (module, context) {
+async function runner (module, context) {
   const descriptor = extract(module)
   const func = module[descriptor.name]
   const factory = require('./algorithms/' + descriptor.syntax)
-  const instance = factory.create(func)
+  const instance = await factory.create(func)
 
   return new Runner(instance, context)
 }

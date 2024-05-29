@@ -109,7 +109,6 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     response.headers ??= new Headers()
     response.headers.set('authorization', authorization)
-    response.headers.append('cache-control', 'no-store')
   }
 
   private async resolve (authority: string, authorization: string | undefined): Promise<Identity | null> {

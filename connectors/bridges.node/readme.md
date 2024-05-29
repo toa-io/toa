@@ -72,7 +72,7 @@ it defines operation's `scope`.
 
 ```javascript
 class ObjectTransitionFactory {
-  create () {
+  async create () {
     // ...
   }
 }
