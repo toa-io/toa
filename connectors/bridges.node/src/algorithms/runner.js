@@ -24,6 +24,10 @@ class Runner extends Connector {
     await this.#algorithm.mount?.(this.#context)
   }
 
+  async close () {
+    await this.#algorithm.unmount?.()
+  }
+
   async execute (input, state) {
     const reply = await this.#algorithm.execute(input, state)
 
