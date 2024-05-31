@@ -72,7 +72,7 @@ function stream
   })
 }
 
-function multipart
+export function multipart
 (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (context.encoder === null)
     throw new NotAcceptable()
@@ -82,7 +82,11 @@ function multipart
   response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
   message.body
-    .map((part: unknown) => Buffer.concat([CUT, encoder.encode(part), CRLF]))
+    .map((part: unknown) => Buffer.concat([
+      CUT,
+      CRLF /* indicates no boundary headers */,
+      encoder.encode(part),
+      CRLF]))
     .on('end', () => response.end(FINALCUT))
     .pipe(response)
 }

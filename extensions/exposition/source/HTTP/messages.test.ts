@@ -1,9 +1,12 @@
-import { Readable } from 'node:stream'
+import { PassThrough, Readable } from 'node:stream'
+import * as streamConsumers from 'node:stream/consumers'
+import { once } from 'node:events'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
-import { read } from './messages'
+import { multipart, read, type OutgoingMessage } from './messages'
 import { BadRequest, UnsupportedMediaType } from './exceptions'
 import { Timing } from './Timing'
+import type * as http from 'node:http'
 import type { Context } from './Context'
 
 beforeEach(() => {
@@ -68,6 +71,39 @@ describe('read', () => {
     const request = createContext(path, headers, text)
 
     await expect(read(request)).rejects.toThrow(BadRequest)
+  })
+
+  it('should output correct mulitpart format', async () => {
+    const response = new class extends PassThrough {
+      public readonly headers = new Headers()
+
+      public setHeader (key: string, value: string): this {
+        this.headers.set(key, value)
+
+        return this
+      }
+    }()
+
+    const context = { encoder: new TextEncoder() } as unknown as Context
+    const message = { body: Readable.from(['Hello', 'New', 'World']) } as unknown as OutgoingMessage
+
+    multipart(message, context, response as unknown as http.ServerResponse)
+
+    await once(message.body, 'end')
+
+    const result = await streamConsumers.text(response)
+
+    expect(result).toBe([
+      '--cut',
+      '',
+      'Hello',
+      '--cut',
+      '',
+      'New',
+      '--cut',
+      '',
+      'World',
+      '--cut--'].join('\r\n'))
   })
 })
 
