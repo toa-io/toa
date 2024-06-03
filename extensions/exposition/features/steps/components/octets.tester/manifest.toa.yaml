@@ -7,9 +7,10 @@ storages: octets
 operations:
   foo: &operation
     input:
+      authority*: string
       storage*: string
       path*: string
-      entry: object
+      entry*: object
       parameters: object
   bar: *operation
   baz: *operation
@@ -19,3 +20,4 @@ operations:
   diversify: *operation
   yield: *operation
   yex: *operation
+  authority: *operation

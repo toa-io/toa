@@ -222,8 +222,8 @@ A workflow is a list of endpoints to be called.
 The following input will be passed to each endpoint:
 
 ```yaml
-storage: string
 authority: string
+storage: string
 path: string
 entry: Entry
 parameters: Record<string, string> # route parameters
