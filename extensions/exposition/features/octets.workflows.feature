@@ -356,9 +356,11 @@ Feature: Octets storage workflows
       content-type: multipart/yaml; boundary=cut
 
       --cut
+
       step: echo
       status: completed
       output: 10cf16b458f759e0d617f2f3d83599ff
+
       --cut--
       """
 
