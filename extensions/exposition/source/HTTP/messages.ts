@@ -85,8 +85,7 @@ export function multipart
     .map((part: unknown) => Buffer.concat([
       CUT,
       CRLF /* indicates no boundary headers */,
-      encoder.encode(part),
-      CRLF]))
+      encoder.encode(part)]))
     .on('end', () => response.end(FINALCUT))
     .pipe(response)
 }
