@@ -20,7 +20,7 @@ Stores the content of the request body into a storage, under the request path wi
 specified `content-type`.
 
 If request's `content-type` is not acceptable, or if the request body does not pass
-the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-type-typecontrol-maybeentry),
+the [validation](/extensions/storages/readme.md#async-putpath-string-stream-readable-options-options-maybeentry),
 the request is rejected with a `415 Unsupported Media Type` response.
 
 The value of the directive is `null` or an object with the following properties:
@@ -83,7 +83,8 @@ is [multipart](protocol.md#multipart-types).
 The first part represents the created Entry, which is sent immediately after the BLOB is stored,
 while subsequent parts are results from the workflow endpoints, sent as soon as they are available.
 
-In case a workflow endpoint returns an `Error`, the error part is sent, and the response is closed.
+In case a workflow endpoint returns an `Error`, the error part is sent,
+and the response is closed.
 Error's properties are added to the error part, among with the `step` identifier.
 
 ```
@@ -91,16 +92,29 @@ Error's properties are added to the error part, among with the `step` identifier
 content-type: multipart/yaml; boundary=cut
 
 --cut
+
 id: eecd837c
 type: image/jpeg
 created: 1698004822358
+
 --cut
-optimize: null
+
+step: optimize
+status: completed
+
 --cut
+
+step: resize
 error:
-  step: resize
   code: TOO_SMALL
   message: Image is too small
+status: completed
+
+--cut
+
+step: analyze
+status: exception
+
 --cut--
 ```
 
@@ -193,22 +207,6 @@ the entry is deleted.
 
 The error returned by the workflow prevents the deletion of the entry.
 
-## `octets:permute`
-
-Performs
-a [permutation](/extensions/storages/readme.md#async-permutepath-string-ids-string-maybevoid) on the
-entries
-under the request path.
-
-```yaml
-/images:
-  octets:context: images
-  PUT:
-    octets:permute: ~
-```
-
-The request body must be a list of entry identifiers.
-
 ## `octets:workflow`
 
 Execute a [workflow](#workflows) on the entry under the request path.
@@ -227,14 +225,16 @@ A workflow is a list of endpoints to be called.
 The following input will be passed to each endpoint:
 
 ```yaml
+authority: string
 storage: string
 path: string
 entry: Entry
 parameters: Record<string, string> # route parameters
 ```
 
-See [Entry](/extensions/storages/readme.md#entry) and an
-example [workflow step processor](../features/steps/components/octets.tester).
+- [Storages](/extensions/storages/readme.md)
+- [Authorities](authorities.md)
+- Example [workflow step processor](../features/steps/components/octets.tester)
 
 A _workflow unit_ is an object with keys referencing the workflow step identifier, and an endpoint
 as value.
@@ -258,4 +258,5 @@ octets:store:
       analyze: images.analyze     # executed in parallel with `resize`
 ```
 
-If one of the workflow units returns an error, the execution of the workflow is interrupted.
+If one of the workflow units returns or throws an error,
+the execution of the workflow is interrupted.

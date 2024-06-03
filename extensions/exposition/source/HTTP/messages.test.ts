@@ -5,6 +5,7 @@ import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
 import { multipart, read, type OutgoingMessage } from './messages'
 import { BadRequest, UnsupportedMediaType } from './exceptions'
+import { formats } from './formats'
 import { Timing } from './Timing'
 import type * as http from 'node:http'
 import type { Context } from './Context'
@@ -84,7 +85,7 @@ describe('read', () => {
       }
     }()
 
-    const context = { encoder: new TextEncoder() } as unknown as Context
+    const context = { encoder: formats['text/plain'] } as unknown as Context
     const message = { body: Readable.from(['Hello', 'New', 'World']) } as unknown as OutgoingMessage
 
     multipart(message, context, response as unknown as http.ServerResponse)
