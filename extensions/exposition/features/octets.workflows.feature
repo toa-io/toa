@@ -323,3 +323,94 @@ Feature: Octets storage workflows
       output: 10cf16b458f759e0d617f2f3d83599ff
       --cut--
       """
+
+  Scenario: Workflow with streaming response
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            workflow:
+              - foo: octets.tester.foo
+              - yield: octets.tester.yield
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+
+      id: 10cf16b458f759e0d617f2f3d83599ff
+      type: application/octet-stream
+      --cut
+
+      step: foo
+      status: completed
+      --cut
+
+      step: yield
+      output: hello
+      --cut
+
+      step: yield
+      output: world
+      --cut
+
+      step: yield
+      status: completed
+      --cut--
+      """
+
+  Scenario: Workflow with streaming response and an exception
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            workflow:
+              yield: octets.tester.yex
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+
+      id: 10cf16b458f759e0d617f2f3d83599ff
+      type: application/octet-stream
+      --cut
+
+      step: yield
+      output: hello
+      --cut
+
+      step: yield
+      output: world
+      --cut
+
+      step: yield
+      status: exception
+      --cut--
+      """

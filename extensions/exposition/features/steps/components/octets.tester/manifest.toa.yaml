@@ -17,3 +17,5 @@ operations:
   echo: *operation
   concat: *operation
   diversify: *operation
+  yield: *operation
+  yex: *operation

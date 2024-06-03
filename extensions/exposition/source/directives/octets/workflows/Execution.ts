@@ -1,4 +1,4 @@
-import { Readable } from 'stream'
+import { Readable } from 'node:stream'
 import type { Unit } from './Workflow'
 import type { Remotes } from '../../../Remotes'
 import type { Component } from '@toa.io/core'
@@ -42,34 +42,49 @@ export class Execution extends Readable {
       try {
         const result = await this.call(endpoint)
 
-        this.report(step, null, result)
-      } catch (e: any) {
-        this.report(step, e)
-        this.interrupted = true
+        if (result instanceof Readable)
+          return await this.stream(step, result)
+
+        this.report(step, result)
+      } catch (e: unknown) {
+        this.exception(step, e)
       }
     })
 
     await Promise.all(promises)
   }
 
-  private report (step: string, exception: any, result?: Maybe<unknown>): void {
+  private async stream (step: string, stream: Readable): Promise<void> {
+    try {
+      for await (const result of stream)
+        this.report(step, result, false)
+
+      this.report(step, undefined, true)
+    } catch (e: unknown) {
+      this.exception(step, e)
+    }
+  }
+
+  private report (step: string, result?: Maybe<unknown>, completed = true): void {
     const report: Report = { step }
 
-    if (exception === null) {
+    if (completed)
       report.status = 'completed'
 
-      if (result instanceof Error) {
-        report.error = result
-        this.interrupted = true
-      } else if (result !== undefined)
-        report.output = result
-    } else {
-      report.status = 'exception'
-
-      console.error(exception)
-    }
+    if (result instanceof Error) {
+      report.error = result
+      this.interrupted = true
+    } else if (result !== undefined)
+      report.output = result
 
     this.push(report)
+  }
+
+  private exception (step: string, error: unknown): void {
+    this.push({ step, status: 'exception' } satisfies Report)
+    this.interrupted = true
+
+    console.error(error)
   }
 
   private async call (endpoint: string): Promise<Maybe<unknown>> {
