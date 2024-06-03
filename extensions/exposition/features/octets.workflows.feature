@@ -24,7 +24,7 @@ Feature: Octets storage workflows
       """
       POST / HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -107,7 +107,7 @@ Feature: Octets storage workflows
       """
       POST / HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -164,7 +164,7 @@ Feature: Octets storage workflows
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       """
     Then the following reply is sent:
       """
@@ -218,7 +218,7 @@ Feature: Octets storage workflows
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       """
     Then the following reply is sent:
       """
@@ -261,7 +261,7 @@ Feature: Octets storage workflows
       """
       POST /hello/world/ HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -299,7 +299,7 @@ Feature: Octets storage workflows
       """
       POST /hello/world/ HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -348,7 +348,7 @@ Feature: Octets storage workflows
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       """
     Then the following reply is sent:
       """
@@ -381,7 +381,7 @@ Feature: Octets storage workflows
       """
       POST / HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -393,22 +393,27 @@ Feature: Octets storage workflows
 
       id: 10cf16b458f759e0d617f2f3d83599ff
       type: application/octet-stream
+
       --cut
 
       step: foo
       status: completed
+
       --cut
 
       step: yield
       output: hello
+
       --cut
 
       step: yield
       output: world
+
       --cut
 
       step: yield
       status: completed
+
       --cut--
       """
 
@@ -428,7 +433,7 @@ Feature: Octets storage workflows
       """
       POST / HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -440,17 +445,21 @@ Feature: Octets storage workflows
 
       id: 10cf16b458f759e0d617f2f3d83599ff
       type: application/octet-stream
+
       --cut
 
       step: yield
       output: hello
+
       --cut
 
       step: yield
       output: world
+
       --cut
 
       step: yield
       status: exception
+
       --cut--
       """
