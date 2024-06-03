@@ -123,7 +123,6 @@ Feature: Accessing entries
       """
       200 OK
       content-type: application/yaml
-      content-length: 124
 
       id: 10cf16b458f759e0d617f2f3d83599ff
       type: application/octet-stream

@@ -1,4 +1,4 @@
-import { Readable } from 'stream'
+import { Readable } from 'node:stream'
 import type { Unit } from './Workflow'
 import type { Remotes } from '../../../Remotes'
 import type { Component } from '@toa.io/core'
@@ -39,16 +39,52 @@ export class Execution extends Readable {
 
   private async execute (unit: Unit): Promise<void> {
     const promises = Object.entries(unit).map(async ([step, endpoint]) => {
-      const result = await this.call(endpoint).catch((error: Error) => console.error(error))
+      try {
+        const result = await this.call(endpoint)
 
-      if (result instanceof Error) {
-        this.push({ error: { step, ...result } })
-        this.interrupted = true
-      } else
-        this.push({ [step]: result ?? null })
+        if (result instanceof Readable)
+          return await this.stream(step, result)
+
+        this.report(step, result)
+      } catch (e: unknown) {
+        this.exception(step, e)
+      }
     })
 
     await Promise.all(promises)
+  }
+
+  private async stream (step: string, stream: Readable): Promise<void> {
+    try {
+      for await (const result of stream)
+        this.report(step, result, false)
+
+      this.report(step, undefined, true)
+    } catch (e: unknown) {
+      this.exception(step, e)
+    }
+  }
+
+  private report (step: string, result?: Maybe<unknown>, completed = true): void {
+    const report: Report = { step }
+
+    if (completed)
+      report.status = 'completed'
+
+    if (result instanceof Error) {
+      report.error = result
+      this.interrupted = true
+    } else if (result !== undefined)
+      report.output = result
+
+    this.push(report)
+  }
+
+  private exception (step: string, error: unknown): void {
+    this.push({ step, status: 'exception' } satisfies Report)
+    this.interrupted = true
+
+    console.error(error)
   }
 
   private async call (endpoint: string): Promise<Maybe<unknown>> {
@@ -57,7 +93,7 @@ export class Execution extends Readable {
 
     this.components[key] ??= await this.discover(key, namespace, component)
 
-    return await this.components[key].invoke(operation, { input: this.context })
+    return this.components[key].invoke(operation, { input: this.context })
   }
 
   private async discover (key: string, namespace: string, component: string): Promise<Component> {
@@ -69,8 +105,16 @@ export class Execution extends Readable {
 }
 
 export interface Context {
+  authority: string
   storage: string
   path: string
   entry: Entry
   parameters: Record<string, string>
+}
+
+interface Report {
+  step: string
+  status?: 'completed' | 'exception'
+  output?: unknown
+  error?: Error
 }

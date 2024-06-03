@@ -23,12 +23,13 @@ export class Workflow {
   public execute
   (input: Input, storage: string, entry: Entry, params: Parameter[]): Execution {
     const path = posix.join(input.request.url, entry.id)
+    const authority = input.authority
     const parameters: Record<string, string> = {}
 
     for (const { name, value } of params)
       parameters[name] = value
 
-    const context: Context = { storage, path, entry, parameters }
+    const context: Context = { authority, storage, path, entry, parameters }
 
     return new Execution(context, this.units, this.remotes)
   }

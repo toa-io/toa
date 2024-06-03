@@ -24,7 +24,7 @@ Feature: Octets storage workflows
       """
       POST / HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -33,18 +33,29 @@ Feature: Octets storage workflows
       content-type: multipart/yaml; boundary=cut
 
       --cut
+
       id: 10cf16b458f759e0d617f2f3d83599ff
       type: application/octet-stream
       size: 8169
       --cut
-      add-foo: null
+
+      step: add-foo
+      status: completed
       --cut
-      add-bar:
+
+      step: add-bar
+      output:
         bar: baz
+      status: completed
       --cut
-      add-baz: null
+
+      step: add-baz
+      status: completed
       --cut
-      diversify: null
+
+      step: diversify
+      output: hello
+      status: completed
       --cut--
       """
     When the following request is received:
@@ -88,15 +99,15 @@ Feature: Octets storage workflows
         POST:
           octets:store:
             workflow:
-              add-foo: octets.tester.foo
-              add-bar: octets.tester.err
-              add-baz: octets.tester.baz
+              - add-foo: octets.tester.foo
+              - add-bar: octets.tester.err
+              - add-baz: octets.tester.baz
       """
     When the stream of `lenna.ascii` is received with the following headers:
       """
       POST / HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -109,12 +120,16 @@ Feature: Octets storage workflows
       type: application/octet-stream
       size: 8169
       --cut
-      add-foo: null
+
+      step: add-foo
+      status: completed
       --cut
+
+      step: add-bar
       error:
-        step: add-bar
         code: ERROR
         message: Something went wrong
+      status: completed
       --cut--
       """
 
@@ -149,7 +164,7 @@ Feature: Octets storage workflows
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       """
     Then the following reply is sent:
       """
@@ -157,7 +172,9 @@ Feature: Octets storage workflows
       content-type: multipart/yaml; boundary=cut
 
       --cut
-      echo: 10cf16b458f759e0d617f2f3d83599ff
+      step: echo
+      status: completed
+      output: 10cf16b458f759e0d617f2f3d83599ff
       --cut--
       """
     When the following request is received:
@@ -201,7 +218,7 @@ Feature: Octets storage workflows
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       """
     Then the following reply is sent:
       """
@@ -209,8 +226,10 @@ Feature: Octets storage workflows
       content-type: multipart/yaml; boundary=cut
 
       --cut
+
+      step: err
+      status: completed
       error:
-        step: err
         code: ERROR
         message: Something went wrong
       --cut--
@@ -242,7 +261,7 @@ Feature: Octets storage workflows
       """
       POST /hello/world/ HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       content-type: application/octet-stream
       """
     Then the following reply is sent:
@@ -251,11 +270,53 @@ Feature: Octets storage workflows
       content-type: multipart/yaml; boundary=cut
 
       --cut
+
       id: 10cf16b458f759e0d617f2f3d83599ff
       type: application/octet-stream
       size: 8169
       --cut
-      concat: hello world
+
+      step: concat
+      status: completed
+      output: hello world
+      --cut--
+      """
+
+  Scenario: Passing authority to the workflow
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        /:a/:b:
+          auth:anonymous: true
+          octets:context: octets
+          POST:
+            octets:store:
+              workflow:
+                authority: octets.tester.authority
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST /hello/world/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml, multipart/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+
+      id: 10cf16b458f759e0d617f2f3d83599ff
+      type: application/octet-stream
+      size: 8169
+      --cut
+
+      step: authority
+      status: completed
+      output: nex
       --cut--
       """
 
@@ -287,7 +348,7 @@ Feature: Octets storage workflows
       """
       DELETE /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
+      accept: application/yaml, multipart/yaml
       """
     Then the following reply is sent:
       """
@@ -295,6 +356,110 @@ Feature: Octets storage workflows
       content-type: multipart/yaml; boundary=cut
 
       --cut
-      echo: 10cf16b458f759e0d617f2f3d83599ff
+
+      step: echo
+      status: completed
+      output: 10cf16b458f759e0d617f2f3d83599ff
+
+      --cut--
+      """
+
+  Scenario: Workflow with streaming response
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            workflow:
+              - foo: octets.tester.foo
+              - yield: octets.tester.yield
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml, multipart/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+
+      id: 10cf16b458f759e0d617f2f3d83599ff
+      type: application/octet-stream
+
+      --cut
+
+      step: foo
+      status: completed
+
+      --cut
+
+      step: yield
+      output: hello
+
+      --cut
+
+      step: yield
+      output: world
+
+      --cut
+
+      step: yield
+      status: completed
+
+      --cut--
+      """
+
+  Scenario: Workflow with streaming response and an exception
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            workflow:
+              yield: octets.tester.yex
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml, multipart/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+
+      id: 10cf16b458f759e0d617f2f3d83599ff
+      type: application/octet-stream
+
+      --cut
+
+      step: yield
+      output: hello
+
+      --cut
+
+      step: yield
+      output: world
+
+      --cut
+
+      step: yield
+      status: exception
+
       --cut--
       """
