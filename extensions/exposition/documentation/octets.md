@@ -96,10 +96,12 @@ content-type: multipart/yaml; boundary=cut
 id: eecd837c
 type: image/jpeg
 created: 1698004822358
+
 --cut
 
 step: optimize
 status: completed
+
 --cut
 
 step: resize
@@ -107,11 +109,12 @@ error:
   code: TOO_SMALL
   message: Image is too small
 status: completed
+
 --cut
 
 step: analyze
-exception: SyntaxError: Invalid or unexpected token
 status: exception
+
 --cut--
 ```
 
