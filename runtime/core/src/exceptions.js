@@ -4,7 +4,6 @@ const { swap } = require('@toa.io/generic')
 
 const codes = {
   System: 0,
-  NotImplemented: 10,
 
   Contract: 200,
   RequestSyntax: 201,
@@ -53,7 +52,7 @@ class ContractException extends Exception {
     super(code || codes.Contract, typeof error === 'string' ? error : error?.message)
 
     if (typeof error === 'object' && error !== null)
-      for (const k of ['keyword', 'property', 'schema', 'path'])
+      for (const k of ['keyword', 'property', 'schema', 'path', 'params'])
         if (k in error)
           this[k] = error[k]
   }

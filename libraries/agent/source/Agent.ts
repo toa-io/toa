@@ -53,7 +53,7 @@ export class Agent {
         throw new assert.AssertionError({
           message: `Response is missing '${line}'`,
           expected: line,
-          actual: this.response.slice(0, 1024)
+          actual: this.response.slice(0, MAX_DIFF_LENGTH)
         })
     }
   }
@@ -68,7 +68,7 @@ export class Agent {
         throw new assert.AssertionError({
           message: `Response contains '${line}'`,
           expected: line,
-          actual: this.response.slice(0, 1024)
+          actual: this.response.slice(0, MAX_DIFF_LENGTH)
         })
     }
   }
@@ -111,3 +111,5 @@ export class Agent {
     this.responseIncludes(expected)
   }
 }
+
+const MAX_DIFF_LENGTH = 4096

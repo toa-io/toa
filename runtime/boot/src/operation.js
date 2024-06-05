@@ -10,6 +10,7 @@ async function operation (manifest, endpoint, definition, context, scope) {
   const input = definition.input
   const request = boot.contract.request({ input }, manifest.entity)
   const contracts = { reply, request }
+
   const query = manifest.entity === undefined
     ? undefined
     : new Query(manifest.entity.schema.properties)

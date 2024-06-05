@@ -1,7 +1,6 @@
 type: object
 properties:
   provider:
-    type: string
     const: tmp
   directory:
     type: string

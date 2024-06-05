@@ -15,6 +15,13 @@ operations:
     input:
       properties:
         balance: .
+    output:
+      id: .
+      balance: integer
+  observe:
+    output:
+      id: .
+      balance: integer
   deduce:
     concurrency: none
     input: integer
@@ -36,6 +43,7 @@ operations:
   set:
     input:
       balance: .
+    output: undefined
     forward: assign
   add:
     input:

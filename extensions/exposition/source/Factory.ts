@@ -3,7 +3,7 @@ import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
-import { Tree, syntax } from './RTD'
+import { Tree } from './RTD'
 import { EndpointsFactory } from './Endpoint'
 import { families, interceptors } from './directives'
 import { DirectivesFactory } from './Directive'
@@ -11,6 +11,7 @@ import { Composition } from './Composition'
 import * as root from './root'
 import { Interception } from './Interception'
 import * as http from './HTTP'
+import type { syntax } from './RTD'
 import type { Broadcast } from './Gateway'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
@@ -33,7 +34,7 @@ export class Factory implements extensions.Factory {
 
     const options = decode<http.Options>(process.env.TOA_EXPOSITION_PROPERTIES)
     const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
-    const server = http.Server.create({ ...options, methods: syntax.verbs })
+    const server = http.Server.create({ ...options })
     const remotes = new Remotes(this.boot)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)

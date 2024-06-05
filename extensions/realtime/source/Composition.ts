@@ -19,11 +19,11 @@ export class Composition extends Connector {
 
     this.depends(composition)
 
-    console.info('Composition complete.')
+    console.info('Composition complete')
   }
 
   protected override dispose (): void {
-    console.info('Composition shutdown complete.')
+    console.info('Composition shutdown complete')
   }
 }
 

@@ -1,14 +1,10 @@
 'use strict'
 
 const { Component, Locator, State, entities } = require('@toa.io/core')
-const { Schema } = require('@toa.io/schema')
+const schemas = require('@toa.io/schemas')
 
 const boot = require('./index')
 
-/**
- * @param {toa.norm.Component} manifest
- * @returns {Promise<toa.core.Component>}
- */
 const component = async (manifest) => {
   boot.extensions.load(manifest)
 
@@ -20,7 +16,7 @@ const component = async (manifest) => {
   let state
 
   if (manifest.entity !== undefined) {
-    const schema = new Schema(manifest.entity.schema)
+    const schema = schemas.schema(manifest.entity.schema)
     const entity = new entities.Factory(schema)
 
     state = new State(storage, entity, emission, manifest.entity.associated)

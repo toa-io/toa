@@ -1,7 +1,6 @@
 'use strict'
 
 const { hash } = require('@toa.io/generic')
-const assert = require('node:assert')
 
 // these defaults are required before validation
 const defaults = (manifest, proto) => {

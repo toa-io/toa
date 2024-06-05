@@ -10,6 +10,10 @@ export class Method {
     this.directives = directives
   }
 
+  public async explain (): Promise<unknown> {
+    return (await this.endpoint?.explain()) ?? null
+  }
+
   public async close (): Promise<void> {
     await this.endpoint?.close()
   }

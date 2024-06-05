@@ -3,6 +3,7 @@
 const { Component } = require('../src/component')
 const { codes } = require('../src/exceptions')
 const fixtures = require('./component.fixtures')
+const { AssertionError } = require('node:assert')
 
 describe('Invocations', () => {
   const name = ['foo', 'bar'][Math.floor(2 * Math.random())]
@@ -21,7 +22,7 @@ describe('Invocations', () => {
 
   it('should throw on unknown invocation name', async () => {
     await expect(() => component.invoke('baz'))
-      .rejects.toMatchObject({ code: codes.NotImplemented })
+      .rejects.toThrow(AssertionError)
   })
 
   it('should invoke input and query', async () => {

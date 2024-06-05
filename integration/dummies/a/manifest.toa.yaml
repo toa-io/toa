@@ -14,12 +14,16 @@ operations:
     concurrency: retry
     input:
       title: .
+    output: undefined
   create:
     forward: transit
     query: false
     input:
       title: .
       length: .
+    output: undefined
+  observe:
+    output: undefined
 
 receivers:
   messages.created: transit
