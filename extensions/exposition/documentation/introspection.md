@@ -10,29 +10,59 @@ accept: application/yaml
 
 ```http
 200 OK
-content-type: application/yaml
+Allow: GET, POST, OPTIONS
 
 GET:
-  output:
+  type: array
+  items:
     type: object
     properties:
       id:
         type: string
-        pattern: ^[0-9a-f]{32}$
+        pattern: ^[a-fA-F0-9]{32}$
       title:
         type: string
+        maxLength: 64
       volume:
         type: number
-    required: [id, title]
+        exclusiveMinimum: 0
+        maximum: 1000
+      temperature:
+        type: number
+        exclusiveMinimum: 0
+        maximum: 300
     additionalProperties: false
-PATCH:
+    required:
+      - id
+      - title
+      - volume
+POST:
   input:
     type: object
     properties:
       title:
         type: string
+        maxLength: 64
+      temperature:
+        type: number
+        exclusiveMinimum: 0
+        maximum: 300
       volume:
         type: number
-    required: [title, volume]
+        exclusiveMinimum: 0
+        maximum: 1000
     additionalProperties: false
+    required:
+      - title
+      - volume
+  output:
+    type: object
+    properties:
+      id:
+        type: string
+        pattern: ^[a-fA-F0-9]{32}$
+    additionalProperties: false
+  errors:
+    - NO_WAY
+    - WONT_CREATE
 ```
