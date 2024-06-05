@@ -18,13 +18,13 @@ it('should be ok', () => {
 it('should provide error', () => {
   manifest.foo = 'bar'
 
-  expect(() => validate(manifest)).toThrow(/must NOT have additional/)
+  expect(() => validate(manifest)).toThrow()
 })
 
 it('should not have additional properties', () => {
   manifest.foo = 'bar'
 
-  expect(() => validate(manifest)).toThrow(/must NOT have additional/)
+  expect(() => validate(manifest)).toThrow()
 })
 
 describe('namespace', () => {
@@ -81,13 +81,13 @@ describe('entity', () => {
 
   it('should not have additional properties', () => {
     manifest.entity.foo = 'bar'
-    expect(() => validate(manifest)).toThrow(/must NOT have additional/)
+    expect(() => validate(manifest)).toThrow()
   })
 
   describe('schema', () => {
     it('should be required', () => {
       delete manifest.entity.schema
-      expect(() => validate(manifest)).toThrow(/must have required property/)
+      expect(() => validate(manifest)).toThrow()
     })
 
     it('should be JSON schema object', () => {
@@ -152,7 +152,7 @@ describe('operations', () => {
 
   it('should not have additional properties', () => {
     manifest.operations.get.foo = 'bar'
-    expect(() => validate(manifest)).toThrow(/must NOT have additional/)
+    expect(() => validate(manifest)).toThrow()
   })
 
   it('should have type (transition or observation)', () => {

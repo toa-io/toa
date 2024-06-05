@@ -5,9 +5,10 @@ const formats = /** @type {Function} */ require('ajv-formats')
 
 /**
  * @param {object} schema
+ * @param {object} [options]
  */
-function create (schema) {
-  return ajv().compile(schema)
+function create (schema, options) {
+  return ajv(undefined, options).compile(schema)
 }
 
 function is (schema) {
@@ -16,9 +17,10 @@ function is (schema) {
 
 /**
  * @param {object[]} [schemas]
+ * @param {object} [additional]
  */
-function ajv (schemas) {
-  const options = Object.assign({ schemas }, OPTIONS)
+function ajv (schemas, additional = {}) {
+  const options = Object.assign({ schemas }, additional, OPTIONS)
   const ajv = new Ajv(options)
 
   formats(ajv)

@@ -11,7 +11,11 @@ class Reply extends Contract {
     const schema = { type: 'object', properties: {}, additionalProperties: false }
 
     if (output !== undefined) {
-      output.additionalProperties = true
+      if (output.type === 'object')
+        output.additionalProperties = true
+      else if (output.type === 'array' && output.items?.type === 'object')
+        output.items.additionalProperties = true
+
       schema.properties.output = output
     }
 

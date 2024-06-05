@@ -62,7 +62,7 @@ class Schema {
     let be = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
 
     const mapped = {
-      message: be[0].error,
+      message: be[0].error.trim(),
       keyword: error.keyword,
       property: error.propertyName,
       path: error.instancePath,
@@ -74,12 +74,12 @@ class Schema {
   }
 }
 
-const schema = (cos) => {
+const schema = (cos, options) => {
   if (typeof cos === 'string' && file.is.sync(cos))
     cos = yaml.load.sync(cos)
 
   const schema = expand(cos, is)
-  const validate = create(schema)
+  const validate = create(schema, options)
 
   let validateOptional
 

@@ -5,7 +5,7 @@ const schemas = require('@toa.io/schemas')
 
 const request = (definition, entity) => {
   const request = Request.schema(definition, entity)
-  const schema = schemas.schema(request)
+  const schema = schemas.schema(request, { removeAdditional: true })
 
   return new Request(schema, definition)
 }

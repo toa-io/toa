@@ -24,7 +24,7 @@
     "@toa.io/filesystem": "1.0.0-alpha.42",
     "@toa.io/generic": "1.0.0-alpha.42",
     "@toa.io/norm": "1.0.0-alpha.42",
-    "@toa.io/schema": "1.0.0-alpha.42",
+    "@toa.io/schemas": "1.0.0-alpha.42",
     "clone-deep": "4.0.1",
     "dotenv": "16.1.1"
   },
