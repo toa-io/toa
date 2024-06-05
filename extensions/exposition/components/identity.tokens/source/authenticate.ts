@@ -1,4 +1,5 @@
 import { type Maybe, type Operation } from '@toa.io/types'
+import { Err } from 'error-value'
 import type { AuthenticateInput, AuthenticateOutput, Context } from './types'
 
 export class Computation implements Operation {
@@ -42,5 +43,5 @@ export class Computation implements Operation {
   }
 }
 
-const ERR_AUTHORITY = new Error('AUTHORITY_MISMATCH')
-const ERR_TOKEN_REVOKED = new Error('TOKEN_REVOKED')
+const ERR_AUTHORITY = Err('AUTHORITY_MISMATCH')
+const ERR_TOKEN_REVOKED = Err('TOKEN_REVOKED')

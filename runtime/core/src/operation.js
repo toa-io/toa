@@ -70,10 +70,11 @@ class Operation extends Connector {
 
   async run (store) {
     const { request, state } = store
-    // noinspection UnnecessaryLocalVariableJS
-    const reply = await this.#cascade.run(request.input, state) || {}
+    const reply = await this.#cascade.run(request.input, state)
 
-    // this.#contracts.reply.fit(reply)
+    // validate reply only on local environments
+    if (process.env.TOA_ENV === 'local')
+      this.#contracts.reply.fit(reply)
 
     store.reply = reply
   }

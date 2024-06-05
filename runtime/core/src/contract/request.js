@@ -2,9 +2,20 @@
 
 const schemas = require('./schemas')
 const { RequestContractException } = require('../exceptions')
-const { Conditions } = require('./conditions')
+const { Contract } = require('./contract')
 
-class Request extends Conditions {
+class Request extends Contract {
+  /** @readonly */
+  discovery = {}
+
+  constructor (schema, definition) {
+    super(schema)
+
+    for (const key of ['input', 'output', 'errors'])
+      if (definition[key] !== undefined)
+        this.discovery[key] = definition[key]
+  }
+
   static Exception = RequestContractException
 
   /**
@@ -22,9 +33,8 @@ class Request extends Conditions {
     if (definition.input !== undefined) {
       schema.properties.input = definition.input
       required.push('input')
-    } else {
+    } else
       schema.properties.input = { type: 'null' }
-    }
 
     if (entity === undefined)
       definition.query = false

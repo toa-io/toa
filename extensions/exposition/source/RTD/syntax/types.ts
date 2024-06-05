@@ -45,4 +45,4 @@ export interface Range {
   range: [number, number]
 }
 
-export const verbs = new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'])
+export const verbs = new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])

@@ -1,1 +1,7 @@
 name: nope
+
+operations:
+  nope:
+    errors:
+      - SOMETHING
+      - SOMETHING_ELSE

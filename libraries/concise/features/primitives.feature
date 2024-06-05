@@ -27,6 +27,14 @@ Feature: Primitive types
       """yaml
       {}
       """
+    When I write schema:
+      """yaml
+      undefined
+      """
+    Then it is equivalent to:
+      """yaml
+      {}
+      """
 
   Scenario Outline: Default value of <type> type
     When I write schema:

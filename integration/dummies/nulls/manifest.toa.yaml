@@ -15,6 +15,7 @@ operations:
     input:
       foo: .
       bar: .
+    output: undefined
 
 exposition:
   /:

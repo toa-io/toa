@@ -1,17 +1,17 @@
-import { type Component } from '@toa.io/core'
-import { type Remotes } from './Remotes'
 import { Mapping } from './Mapping'
-import { type Context } from './Context'
 import * as http from './HTTP'
+import type { Remote } from '@toa.io/core'
+import type { Remotes } from './Remotes'
+import type { Context } from './Context'
 import type * as RTD from './RTD'
 
 export class Endpoint implements RTD.Endpoint {
   private readonly endpoint: string
   private readonly mapping: Mapping
-  private readonly discovery: Promise<Component>
-  private remote: Component | null = null
+  private readonly discovery: Promise<Remote>
+  private remote: Remote | null = null
 
-  public constructor (endpoint: string, mapping: Mapping, discovery: Promise<Component>) {
+  public constructor (endpoint: string, mapping: Mapping, discovery: Promise<Remote>) {
     this.endpoint = endpoint
     this.mapping = mapping
     this.discovery = discovery
@@ -51,6 +51,12 @@ export class Endpoint implements RTD.Endpoint {
     message.body = reply
 
     return message
+  }
+
+  public async explain (): Promise<unknown> {
+    this.remote ??= await this.discovery
+
+    return this.remote.explain(this.endpoint) ?? null
   }
 
   public async close (): Promise<void> {

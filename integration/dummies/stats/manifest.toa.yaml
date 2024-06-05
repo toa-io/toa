@@ -10,11 +10,14 @@ entity:
     bankrupt: boolean
 
 operations:
+  observe:
+    output: undefined
   update:
     concurrency: retry
     input:
       messages: boolean
       bankrupt: boolean
+    output: undefined
 
 receivers:
   messages.created: update

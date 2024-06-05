@@ -20,8 +20,9 @@ class Exposition extends Connector {
 }
 
 const expose = (manifest) => {
-  const { namespace, name, operations, events, entity } = manifest
-  return { namespace, name, operations, events, entity }
+  const { namespace, name, entity, operations, events } = manifest
+
+  return { namespace, name, entity, operations, events }
 }
 
 exports.Exposition = Exposition

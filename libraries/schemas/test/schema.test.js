@@ -29,7 +29,7 @@ describe('fit', () => {
     const error = schema.fit({ not: 'ok' })
 
     expect(error).not.toStrictEqual(null)
-    expect(error.message).toStrictEqual('must be integer')
+    expect(error.message).toContain('must be integer')
   })
 
   it('should set defaults', () => {

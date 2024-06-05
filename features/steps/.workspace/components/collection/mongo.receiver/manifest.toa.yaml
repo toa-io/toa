@@ -1,0 +1,14 @@
+name: receiver
+namespace: mongo
+
+entity:
+  associated: true
+  schema:
+    count: 0
+
+operations:
+  increment:
+    concurrency: retry
+
+receivers:
+  mongo.one.sync: increment

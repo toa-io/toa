@@ -62,10 +62,10 @@ export class Context {
 
   private log (request: IncomingMessage): void {
     const message = `${request.method} ${request.url}`
-    const { authorization, ...headers } = request.headers
+    const headers = { ...request.headers }
 
-    if (authorization !== undefined)
-      headers.authorization = authorization.slice(0, authorization.indexOf(' '))
+    if (headers.authorization !== undefined)
+      headers.authorization = headers.authorization.slice(0, headers.authorization.indexOf(' '))
 
     console.debug(message, headers)
   }

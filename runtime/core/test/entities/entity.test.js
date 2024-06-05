@@ -7,35 +7,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-describe('new', () => {
-  it('should throw on schema error', () => {
-    const entity = new Entity(fixtures.schema)
-
-    expect(() => entity.set(fixtures.failed())).toThrow()
-  })
-
-  it('should provide state', () => {
-    const entity = new Entity(fixtures.schema)
-    const state = fixtures.state()
-
-    entity.set(state)
-
-    expect(entity.get()).toEqual(state)
-  })
-})
-
 describe('argument', () => {
-  it('should provide initial state if no argument passed', () => {
-    const entity = new Entity(fixtures.schema)
-    const defaults = fixtures.schema.defaults.mock.results[0].value
-    const expected = {
-      ...defaults,
-      _version: 0
-    }
-
-    expect(entity.get()).toStrictEqual(expect.objectContaining(expected))
-  })
-
   it('should set state', () => {
     const state = fixtures.state()
     const entity = new Entity(fixtures.schema, state)

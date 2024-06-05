@@ -3,9 +3,9 @@ version: 0.0.0
 
 entity:
   schema:
-    title: string
-    volume: number
-    temperature?: number
+    title: string(64)
+    volume: number(0, 1000]
+    temperature?: number(0, 300]
 
 operations:
   create:
@@ -15,6 +15,11 @@ operations:
       title*: .
       volume*: .
       temperature: .
+    output:
+      id: .
+    errors:
+      - NO_WAY
+      - WONT_CREATE
   transit:
     concurrency: retry
     input:
@@ -27,3 +32,9 @@ operations:
       title: string
       volume: number
       temperature: number
+  enumerate:
+    output:
+      - id: .
+        title: .
+        volume: .
+        temperature?: .

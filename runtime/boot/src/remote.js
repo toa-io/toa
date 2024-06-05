@@ -5,10 +5,13 @@ const { remap } = require('@toa.io/generic')
 
 const boot = require('./index')
 
-const remote = async (locator, manifest = undefined) => {
-  const discovery = await boot.discovery.discovery()
+const remote = async (locator, manifest) => {
+  let discovery
 
-  if (manifest === undefined) manifest = await discovery.lookup(locator)
+  if (manifest === undefined) {
+    discovery = await boot.discovery.discovery(locator)
+    manifest = await discovery.lookup(locator)
+  }
 
   const calls = manifest.operations === undefined
     ? {}
@@ -17,7 +20,8 @@ const remote = async (locator, manifest = undefined) => {
   const remote = new Remote(locator, calls)
 
   // ensure discovery shutdown
-  remote.depends(discovery)
+  if (discovery !== undefined)
+    remote.depends(discovery)
 
   return remote
 }
