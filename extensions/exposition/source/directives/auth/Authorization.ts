@@ -11,7 +11,6 @@ import { Scheme } from './Scheme'
 import { Delegate } from './Delegate'
 import { split } from './split'
 import { PRIMARY, PROVIDERS } from './schemes'
-import { compress, decompress } from './compressor'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
@@ -68,7 +67,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     const inception = directives.reduce((yes, directive) => yes || directive instanceof Incept, false)
     const identity = inception ? null : await this.resolve(input.authority, input.request.headers.authorization)
 
-    input.identity = identity === null ? null : decompress(identity)
+    input.identity = identity
 
     for (const directive of directives) {
       const allow = await directive.authorize(identity, input, parameters)
@@ -103,7 +102,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.tokens ??= await this.discovery.tokens
 
     const token = await this.tokens.invoke<string>('encrypt', {
-      input: { authority: request.authority, identity: compress(identity) }
+      input: { authority: request.authority, identity }
     })
 
     const authorization = `Token ${token}`
