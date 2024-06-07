@@ -88,12 +88,19 @@ export class Execution extends Readable {
   }
 
   private async call (endpoint: string): Promise<Maybe<unknown>> {
+    let task = false
+
+    if (endpoint.startsWith('task:')) {
+      endpoint = endpoint.slice(5)
+      task = true
+    }
+
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
     const key = `${namespace}.${component}`
 
     this.components[key] ??= await this.discover(key, namespace, component)
 
-    return this.components[key].invoke(operation, { input: this.context })
+    return this.components[key].invoke(operation, { input: this.context, task })
   }
 
   private async discover (key: string, namespace: string, component: string): Promise<Component> {
