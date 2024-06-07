@@ -258,7 +258,7 @@ Then('the reply is received',
       throw this.exception
     }
 
-    assert.notEqual(this.reply, undefined, 'Reply is not received')
+    assert.notStrictEqual(this.reply, undefined, 'Reply is not received')
   })
 
 Then('the following exception is thrown:',

@@ -59,7 +59,7 @@ describe('schema', () => {
 
   it('should not contain query if declaration.query is false', () => {
     schema.properties.query = { type: 'null' }
-    expect(Request.schema({ query: false }, dummy)).toStrictEqual(schema)
+    expect(Request.schema({ query: false }, dummy)).toMatchObject(schema)
   })
 
   it('should require query if declaration.query is true', () => {

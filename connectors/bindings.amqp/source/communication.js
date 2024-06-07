@@ -44,6 +44,14 @@ class Communication extends Connector {
   async consume (exchange, group, consumer) {
     await this.#io.consume(exchange, group, consumer)
   }
+
+  async process (queue, consumer) {
+    await this.#io.process(queue, consumer)
+  }
+
+  async enqueue (queue, message) {
+    await this.#io.enqueue(queue, message)
+  }
 }
 
 exports.Communication = Communication

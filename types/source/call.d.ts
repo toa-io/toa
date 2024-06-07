@@ -2,6 +2,7 @@ export interface Request<Input = unknown, Entity = unknown> {
   input?: Input
   query?: Query
   entity?: Entity
+  task?: boolean
 }
 
 export interface Query {

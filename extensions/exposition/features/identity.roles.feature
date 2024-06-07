@@ -15,7 +15,7 @@ Feature: Roles management
       """yaml
       /:
         io:output: true
-        auth:role: test
+        auth:role: foo:bar
         GET:
           dev:stub:
             access: granted!
@@ -40,7 +40,7 @@ Feature: Roles management
       accept: application/yaml
       content-type: application/yaml
 
-      role: test
+      role: foo:bar
       """
     Then the following reply is sent:
       """
@@ -49,11 +49,39 @@ Feature: Roles management
       grantor: 72cf9b0ab0ac4ab2b8036e4e940ddcae
       """
     When the following request is received:
-      # user now have the role
+      # root adds a role to a user
+      """
+      POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic cm9vdDpzZWNyZXQ=
+      accept: application/yaml
+      content-type: application/yaml
+
+      role: foo:baz
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+
+    # user now have the role
+    When the following request is received:
       """
       GET / HTTP/1.1
       host: nex.toa.io
       authorization: Basic dXNlcjpwYXNz
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      """
+    # repeat with token
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
       """
     Then the following reply is sent:
       """

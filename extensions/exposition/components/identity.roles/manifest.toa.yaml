@@ -4,7 +4,7 @@ name: roles
 entity:
   schema:
     identity*: string
-    role*: /^[a-zA-Z0-9]{1,32}(:[a-zA-Z0-9]{1,32}){0,8}$/
+    role*: /^[a-zA-Z0-9]{0,32}(:[a-zA-Z0-9]{0,32}){0,8}$/
     grantor: string
   unique:
     role: [identity, role]

@@ -14,6 +14,7 @@ export interface Request {
   input?: any
   query?: Query
   authentic?: boolean
+  task?: boolean
 }
 
 export interface Reply {
