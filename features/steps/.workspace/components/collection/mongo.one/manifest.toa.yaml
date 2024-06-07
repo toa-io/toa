@@ -17,3 +17,8 @@ operations:
       foo: .
       bar: .
       baz: .
+  assign:
+    input:
+      foo: .
+      bar: .
+      baz: .

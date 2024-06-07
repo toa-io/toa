@@ -12,6 +12,8 @@ const communication = () => (
     reply: jest.fn(async () => undefined),
     emit: jest.fn(async () => undefined),
     consume: jest.fn(async () => undefined),
+    enqueue: jest.fn(async () => undefined),
+    process: jest.fn(async () => undefined),
 
     link: jest.fn()
   }

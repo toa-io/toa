@@ -260,3 +260,13 @@ octets:store:
 
 If one of the workflow units returns or throws an error,
 the execution of the workflow is interrupted.
+
+### Workflow tasks
+
+A workflow unit which value starts with `task:` prefix will be executed as a Task.
+
+```yaml
+octets:store:
+  workflow:
+    optimize: task:images.optimize
+```

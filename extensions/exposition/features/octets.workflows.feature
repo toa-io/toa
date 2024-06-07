@@ -463,3 +463,45 @@ Feature: Octets storage workflows
 
       --cut--
       """
+
+  Scenario: Task workflow
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            workflow:
+              foo: task:octets.tester.foo
+        /*:
+          io:output: true
+          GET:
+            octets:fetch:
+              meta: true
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml, multipart/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: multipart/yaml; boundary=cut
+
+      --cut
+
+      id: 10cf16b458f759e0d617f2f3d83599ff
+
+      --cut
+
+      step: foo
+      status: completed
+      output: null
+
+      --cut--
+      """

@@ -24,7 +24,7 @@ class Request extends Contract {
   static schema (definition, entity) {
     const schema = {
       type: 'object',
-      properties: { authentic: { type: 'boolean' } },
+      properties: { authentic: { type: 'boolean' }, task: { type: 'boolean' } },
       additionalProperties: true
     }
 
