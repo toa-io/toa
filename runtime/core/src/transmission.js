@@ -22,7 +22,7 @@ class Transmission extends Connector {
 
       i++
 
-      if (request.task === true) {
+      if (request?.task === true) {
         if (binding.task === undefined)
           continue
 
