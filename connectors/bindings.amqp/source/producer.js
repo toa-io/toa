@@ -35,8 +35,12 @@ class Producer extends Connector {
 
   async #endpoint (endpoint) {
     const queue = name(this.#locator, endpoint)
+    const promises = [this.#comm.reply(queue, (request) => this.#component.invoke(endpoint, request))]
 
-    await this.#comm.reply(queue, (request) => this.#component.invoke(endpoint, request))
+    if (endpoint[0] !== '.')
+      promises.push(this.#comm.process(queue + '..tasks', async (request) => await this.#component.invoke(endpoint, request)))
+
+    await Promise.all(promises)
   }
 }
 

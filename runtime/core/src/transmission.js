@@ -18,13 +18,22 @@ class Transmission extends Connector {
     let i = 0
 
     while (reply === false && i < this.#bindings.length) {
-      reply = await this.#bindings[i].request(request)
+      const binding = this.#bindings[i]
+
       i++
+
+      if (request.task === true) {
+        if (binding.task === undefined)
+          continue
+
+        await binding.task(request)
+        reply = null
+      } else
+        reply = await binding.request(request)
     }
 
-    if (reply === false) {
+    if (reply === false)
       throw new TransmissionException(`All (${this.#bindings.length}) bindings rejected.`)
-    }
 
     return reply
   }

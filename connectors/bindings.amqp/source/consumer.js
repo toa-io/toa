@@ -10,6 +10,9 @@ class Consumer extends Connector {
   /** @type {string} */
   #queue
 
+  /** @type {string} */
+  #tasksQueue
+
   /** @type {toa.amqp.Communication} */
   #comm
 
@@ -17,6 +20,7 @@ class Consumer extends Connector {
     super()
 
     this.#queue = name(locator, endpoint)
+    this.#tasksQueue = this.#queue + '..tasks'
     this.#comm = comm
 
     this.depends(comm)
@@ -24,6 +28,10 @@ class Consumer extends Connector {
 
   async request (request) {
     return this.#comm.request(this.#queue, request)
+  }
+
+  async task (request) {
+    await this.#comm.enqueue(this.#tasksQueue, request)
   }
 }
 
