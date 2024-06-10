@@ -1,3 +1,4 @@
 blob: boolean
 meta: boolean
+redirect: string
 _: true
