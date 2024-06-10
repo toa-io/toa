@@ -21,3 +21,8 @@ operations:
   yield: *operation
   yex: *operation
   authority: *operation
+  redirect:
+    input:
+      authority*: string
+      path*: string
+    output: string
