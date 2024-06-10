@@ -25,4 +25,5 @@ operations:
     input:
       authority*: string
       path*: string
+      parameters: <string>
     output: string
