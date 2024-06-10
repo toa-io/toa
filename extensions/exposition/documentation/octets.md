@@ -137,7 +137,7 @@ The value of the directive is an object with the following properties:
 - `redirect`: `string` specifying endpoint to be called for the redirection url.
 
 Redirection endpoint must return a `string` or an `Error`.
-Request `path` and `authority` are passed as input.
+Request `authority`, `path` and `parameters` are passed as input.
 
 ```yaml
 /images:
