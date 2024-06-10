@@ -6,7 +6,7 @@ Feature: Octets redirection
       """yaml
       /:
         octets:context: octets
-        /:foo/*:
+        /:type:
           GET:
             anonymous: true
             io:output: true
@@ -15,7 +15,7 @@ Feature: Octets redirection
       """
     When the following request is received:
       """
-      GET /bar/direct HTTP/1.1
+      GET /rfc HTTP/1.1
       host: nex.toa.io
       """
     Then the following reply is sent:
@@ -24,4 +24,23 @@ Feature: Octets redirection
       content-type: text/plain
 
       Faster Than Light Speed Protocol (FLIP)
+      """
+    When the following request is received:
+      """
+      GET /img HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: image/jpeg
+      """
+    When the following request is received:
+      """
+      GET /err HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
       """
