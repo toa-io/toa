@@ -6,7 +6,7 @@ Feature: Octets redirection
       """yaml
       /:
         octets:context: octets
-        /re/*:
+        /:foo/*:
           GET:
             anonymous: true
             io:output: true
@@ -15,7 +15,7 @@ Feature: Octets redirection
       """
     When the following request is received:
       """
-      GET /re/direct HTTP/1.1
+      GET /bar/direct HTTP/1.1
       host: nex.toa.io
       """
     Then the following reply is sent:

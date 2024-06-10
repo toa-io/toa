@@ -9,6 +9,7 @@ import type { Entry } from '@toa.io/extensions.storages'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
 import type { Input } from './types'
+import type { Parameter } from '../../RTD'
 
 export class Fetch extends Directive {
   public readonly targeted = true
@@ -35,9 +36,9 @@ export class Fetch extends Directive {
     this.remotes = remotes
   }
 
-  public async apply (storage: string, input: Input): Promise<Output> {
+  public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
     if (this.options.redirect !== null)
-      return this.redirect(input, this.options.redirect)
+      return this.redirect(input, parameters)
 
     this.storage ??= await this.discovery
 
@@ -82,11 +83,11 @@ export class Fetch extends Directive {
     }
   }
 
-  private async redirect (input: Input, redirect: string): Promise<Output> {
+  private async redirect (input: Input, parameters: Parameter[]): Promise<Output> {
     if ('if-none-match' in input.request.headers)
       return { status: 304 }
 
-    const [operation, name, namespace = 'default'] = redirect.split('.').reverse()
+    const [operation, name, namespace = 'default'] = this.options.redirect!.split('.').reverse()
 
     if (this.connecting === null)
       this.connecting = this.remotes.discover(namespace, name)
@@ -96,7 +97,8 @@ export class Fetch extends Directive {
     const url = await this.remote.invoke<Maybe<string>>(operation, {
       input: {
         authority: input.authority,
-        path: input.request.url
+        path: input.request.url,
+        parameters: Object.fromEntries(parameters.map(({ name, value }) => [name, value]))
       }
     })
 
