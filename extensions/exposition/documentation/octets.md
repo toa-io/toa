@@ -136,8 +136,11 @@ The value of the directive is an object with the following properties:
   Defaults to `true`.
 - `redirect`: `string` specifying endpoint to be called for the redirection url.
 
-Redirection endpoint must return a `string` or an `Error`.
-Request `authority`, `path` and `parameters` are passed as input.
+Request `authority`, `path` and `parameters` are passed as input to redirection endpoint,
+and it must return a `string` or an `Error`.
+If it returns a `string` then the response of the `GET` request to this URL is returned as the
+response of the original request,
+among with the `content-type`, `content-length`, and `etag` headers.
 
 ```yaml
 /images:
