@@ -12,7 +12,7 @@ export function manifest (declaration: object, manifest: Manifest): Node {
 
   const node = parse(declaration, shortcuts)
 
-  concretize(node, manifest)
+  specify(node, manifest)
   schemas.node.validate(node)
 
   return node
@@ -25,26 +25,25 @@ function wrap (declaration: object, namespace: string, name: string): object {
   return { [path]: { protected: true, ...declaration } }
 }
 
-function concretize (node: Node, manifest: Manifest): void {
+function specify (node: Node, manifest: Manifest): void {
   for (const route of node.routes) {
     for (const method of route.node.methods)
-      concretizeMethod(method, manifest)
+      specifyMethod(method, manifest)
 
-    concretize(route.node, manifest)
+    specify(route.node, manifest)
   }
 }
 
-function concretizeMethod (method: Method, manifest: Manifest): void {
-  if (method.mapping === undefined)
+function specifyMethod (method: Method, manifest: Manifest): void {
+  if (method.mapping?.endpoint === undefined)
     return
 
   const operation = manifest.operations[method.mapping.endpoint]
 
-  if (operation === undefined)
-    throw new Error(`Operation '${method.mapping.endpoint}' not found`)
+  assert.ok(operation !== undefined, `Operation '${method.mapping.endpoint}' not found`)
 
   if (method.mapping.query === undefined && operation.query !== false)
-    method.mapping.query = {} as unknown as Query // schema will substitute default values
+    method.mapping.query = {} as unknown as Query
 
   method.mapping.namespace = manifest.namespace
   method.mapping.component = manifest.name

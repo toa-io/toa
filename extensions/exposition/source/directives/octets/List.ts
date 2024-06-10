@@ -12,15 +12,15 @@ import type { Input } from './types'
 export class List extends Directive {
   public readonly targeted = false
 
-  private readonly permissions: Required<Permissions> = { meta: false }
+  private readonly options: Required<Options> = { meta: false }
   private readonly discovery: Promise<Component>
   private storage: Component | null = null
 
-  public constructor (permissions: Permissions | null, discovery: Promise<Component>) {
+  public constructor (permissions: Options | null, discovery: Promise<Component>) {
     super()
     schemas.list.validate(permissions)
 
-    Object.assign(this.permissions, permissions)
+    Object.assign(this.options, permissions)
     this.discovery = discovery
   }
 
@@ -29,7 +29,7 @@ export class List extends Directive {
 
     const metadata = input.subtype === 'octets.entries'
 
-    if (metadata && !this.permissions.meta)
+    if (metadata && !this.options.meta)
       throw new Forbidden('Metadata is not accessible.')
 
     const list = await this.storage.invoke<Maybe<string[]>>('list', {
@@ -67,6 +67,6 @@ export class List extends Directive {
   }
 }
 
-export interface Permissions {
+export interface Options {
   meta?: boolean
 }

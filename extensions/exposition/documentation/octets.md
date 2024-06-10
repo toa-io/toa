@@ -134,6 +134,10 @@ The value of the directive is an object with the following properties:
   [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be
   specified in the path otherwise.
   Defaults to `true`.
+- `redirect`: `string` specifying endpoint to be called for the redirection url.
+
+Redirection endpoint must return a `string` or an `Error`.
+Request `path` and `authority` are passed as input.
 
 ```yaml
 /images:
