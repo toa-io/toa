@@ -33,7 +33,7 @@ Feature: Octets redirection
     Then the following reply is sent:
       """
       200 OK
-      content-type: image/jpeg
+      content-type: image/svg+xml
       """
     When the following request is received:
       """

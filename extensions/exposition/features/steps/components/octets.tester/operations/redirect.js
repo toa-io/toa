@@ -6,7 +6,7 @@ async function redirect (input) {
 
 const urls = {
   'rfc': 'https://www.rfc-editor.org/rfc/rfc9564.txt',
-  'img': 'https://picsum.photos/10'
+  'img': 'https://www.w3.org/assets/logos/w3c/w3c-no-bars.svg'
 }
 
 exports.computation = redirect
