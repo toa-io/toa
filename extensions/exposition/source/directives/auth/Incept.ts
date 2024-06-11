@@ -23,7 +23,7 @@ export class Incept implements Directive {
 
     if (id === undefined)
       throw new http.Conflict('Identity inception has failed as the response body ' +
-        ` does not contain the '${this.property}' property.`)
+        `does not contain the '${this.property}' property.`)
 
     const [scheme, credentials] = split(input.request.headers.authorization!)
     const provider = PROVIDERS[scheme]
