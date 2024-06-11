@@ -10,8 +10,7 @@ Feature: Octets redirection
           GET:
             anonymous: true
             io:output: true
-            octets:fetch:
-              redirect: octets.tester.redirect
+            redirect: octets.tester.redirect
       """
     When the following request is received:
       """
