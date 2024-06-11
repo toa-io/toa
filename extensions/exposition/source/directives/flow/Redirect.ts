@@ -2,26 +2,24 @@ import { Readable } from 'node:stream'
 import assert from 'node:assert'
 import { match } from 'matchacho'
 import { NotFound } from '../../HTTP'
-import { Directive } from './Directive'
+import type { Directive } from './types'
 import type { ReadableStream } from 'node:stream/web'
 import type { Remotes } from '../../Remotes'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
-import type { Input } from './types'
+import type { Input } from '../octets/types'
 import type { Parameter } from '../../RTD'
 
-export class Redirect extends Directive {
+export class Redirect implements Directive {
   public readonly targeted = true
 
   private readonly connecting: Promise<Component>
   private remote: Component | null = null
   private readonly operation: string
 
-  public constructor (endpoint: string, _: unknown, discovery: Remotes) {
-    super()
-
-    assert.equal(typeof endpoint, 'string', '`octets:redirect` must be a string')
+  public constructor (endpoint: string, discovery: Remotes) {
+    assert.equal(typeof endpoint, 'string', '`flow:redirect` must be a string')
 
     const [operation, name, namespace = 'default'] = endpoint.split('.').reverse()
 
@@ -29,7 +27,7 @@ export class Redirect extends Directive {
     this.connecting = discovery.discover(namespace, name)
   }
 
-  public async apply (_: string, input: Input, parameters: Parameter[]): Promise<Output> {
+  public async apply (input: Input, parameters: Parameter[]): Promise<Output> {
     if ('if-none-match' in input.request.headers)
       return { status: 304 }
 

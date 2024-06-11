@@ -1,4 +1,4 @@
-Feature: Octets redirection
+Feature: Request flow
 
   Scenario: Redirecting request
     Given the `octets.tester` is running
