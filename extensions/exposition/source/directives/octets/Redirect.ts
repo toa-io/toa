@@ -1,7 +1,9 @@
 import { Readable } from 'node:stream'
 import assert from 'node:assert'
+import { match } from 'matchacho'
 import { NotFound } from '../../HTTP'
 import { Directive } from './Directive'
+import type { ReadableStream } from 'node:stream/web'
 import type { Remotes } from '../../Remotes'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
@@ -33,7 +35,7 @@ export class Redirect extends Directive {
 
     this.remote ??= await this.connecting
 
-    const url = await this.remote.invoke<Maybe<string>>(this.operation, {
+    const request = await this.remote.invoke<Maybe<Request | string>>(this.operation, {
       input: {
         authority: input.authority,
         path: input.request.url,
@@ -41,10 +43,21 @@ export class Redirect extends Directive {
       }
     })
 
-    if (url instanceof Error)
-      throw new NotFound(url)
+    if (request instanceof Error)
+      throw new NotFound(request)
 
-    const response = await fetch(url)
+    const { url, options } = match<Request>(request,
+      String, { url: request },
+      (request: Request): Request => ({
+        url: request.url,
+        options: {
+          method: request.options?.method ?? 'GET',
+          body: request.options?.body,
+          headers: request.options?.headers
+        }
+      }))
+
+    const response = await fetch(url, options)
 
     if (!response.ok)
       throw new NotFound()
@@ -60,7 +73,18 @@ export class Redirect extends Directive {
 
     return {
       headers,
-      body: response.body === null ? null : Readable.fromWeb(response.body as any)
+      body: response.body === null ? null : Readable.fromWeb(response.body as ReadableStream)
     }
   }
+}
+
+interface Request {
+  url: string
+  options?: RequestOptions
+}
+
+interface RequestOptions {
+  method?: string
+  body?: string
+  headers?: Record<string, string>
 }

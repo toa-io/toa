@@ -1,7 +1,7 @@
 'use strict'
 
-async function redirect (input) {
-  return urls[input.parameters.type] ?? new Error()
+function redirect (input) {
+  return input.parameters.type in urls ? { url: urls[input.parameters.type] } : new Error()
 }
 
 const urls = {
