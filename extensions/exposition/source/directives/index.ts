@@ -6,8 +6,9 @@ import { octets } from './octets'
 import { io } from './io'
 import { vary } from './vary'
 import { req } from './require'
+import { flow } from './flow'
 import type { DirectiveFamily } from '../RTD'
 import type { Interceptor } from '../Interception'
 
-export const families: DirectiveFamily[] = [authorization, io, cache, vary, req, octets, dev]
+export const families: DirectiveFamily[] = [authorization, io, cache, vary, req, flow, octets, dev]
 export const interceptors: Interceptor[] = [cors]

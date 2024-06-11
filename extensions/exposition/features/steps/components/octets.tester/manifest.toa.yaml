@@ -26,4 +26,15 @@ operations:
       authority*: string
       path*: string
       parameters: <string>
-    output: string
+    output:
+      type: object
+      properties:
+        url: string
+        options:
+          type: object
+          properties:
+            method: string
+            headers: object
+            body: string
+      required:
+        - url
