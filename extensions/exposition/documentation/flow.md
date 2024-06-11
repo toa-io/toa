@@ -16,8 +16,8 @@ options?:
   body?: string
 ```
 
-If it returns URL or Request, then the response to the specified request is returned as the
-response of the original request, among with the `content-type`, `content-length`, and `etag`
+If it returns a URL or Request, then the response to the specified request is returned as the
+response to the original request, along with the `content-type`, `content-length`, and `etag`
 headers.
 
 > Shortcut `redirect` is available.
