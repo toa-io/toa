@@ -1,6 +1,6 @@
-Feature: Octets redirection
+Feature: Request flow
 
-  Scenario: Redirecting request
+  Scenario: Fetching url
     Given the `octets.tester` is running
     And the annotation:
       """yaml
@@ -10,8 +10,7 @@ Feature: Octets redirection
           GET:
             anonymous: true
             io:output: true
-            octets:fetch:
-              redirect: octets.tester.redirect
+            flow:fetch: octets.tester.redirect
       """
     When the following request is received:
       """
