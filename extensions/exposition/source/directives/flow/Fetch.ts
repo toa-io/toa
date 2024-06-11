@@ -11,7 +11,7 @@ import type { Output } from '../../io'
 import type { Input } from '../octets/types'
 import type { Parameter } from '../../RTD'
 
-export class Redirect implements Directive {
+export class Fetch implements Directive {
   public readonly targeted = true
 
   private readonly connecting: Promise<Component>

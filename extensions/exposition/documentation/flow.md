@@ -1,6 +1,8 @@
 # Request flow
 
-## `flow:redirect`
+## `flow:fetch`
+
+Fetches the content from the resource returned by the specified endpoint.
 
 The value of the directive is a `string` specifying endpoint to be called for the redirection
 request.

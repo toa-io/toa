@@ -1,4 +1,4 @@
-import { Redirect } from './Redirect'
+import { Fetch } from './Fetch'
 import type { Directive } from './types'
 import type { Input, Output } from '../../io'
 import type { DirectiveFamily, Parameter } from '../../RTD'
@@ -30,5 +30,5 @@ export class Flow implements DirectiveFamily<Directive> {
 }
 
 const constructors: Record<string, new (value: any, discovery: Remotes) => Directive> = {
-  redirect: Redirect
+  fetch: Fetch
 }
