@@ -12,3 +12,10 @@ operations:
       identity:
         id: string
         roles: [string]
+  parameters:
+    input: &parameters
+      type: object
+      properties:
+        a: string
+        b: string
+    output: *parameters

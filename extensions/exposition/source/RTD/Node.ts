@@ -20,7 +20,8 @@ export class Node {
 
   public match (fragments: string[], parameters: Parameter[] = []): Match | null {
     for (const route of this.routes) {
-      const match = route.match(fragments, parameters)
+      const params = parameters.slice()
+      const match = route.match(fragments, params)
 
       if (match !== null)
         return match
