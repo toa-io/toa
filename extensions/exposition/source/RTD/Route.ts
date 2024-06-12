@@ -31,8 +31,10 @@ export class Route {
 
     const exact = this.segments.length === fragments.length
 
-    if (exact && !this.node.intermediate) return { node: this.node, parameters }
-    else return this.matchNested(fragments, parameters)
+    if (exact && !this.node.intermediate)
+      return { node: this.node, parameters }
+    else
+      return this.matchNested(fragments, parameters)
   }
 
   public equals (route: Route): boolean {
@@ -52,7 +54,6 @@ export class Route {
 
   private matchNested (fragments: string[], parameters: Parameter[]): Match | null {
     fragments = fragments.slice(this.segments.length)
-    parameters = parameters.slice()
 
     return this.node.match(fragments, parameters)
   }

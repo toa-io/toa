@@ -137,3 +137,25 @@ Feature: Routes
       """
       201 Created
       """
+
+  Scenario: Routes with parameters
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:a/:b:
+          io:output: true
+          GET: parameters
+      """
+    When the following request is received:
+      """
+      GET /echo/foo/bar/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      a: foo
+      b: bar
+      """
