@@ -81,13 +81,8 @@ export class Server extends Connector {
       return
     }
 
-    if (request.headers.host === undefined || !(request.headers.host in this.authorities)) {
-      response.writeHead(404).end('Unknown authority')
-
-      return
-    }
-
-    const authority = this.authorities[request.headers.host]
+    const host = request.headers.host!
+    const authority = this.authorities[host] ?? host
     const context = new Context(authority, request as IncomingMessage, this.properties)
 
     this.process!(context)
