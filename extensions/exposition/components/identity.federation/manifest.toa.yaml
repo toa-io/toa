@@ -44,6 +44,10 @@ operations:
     output:
       identity:
         id: string
+        claim:
+          iss: string
+          aud: string
+          sub: string
 
 exposition:
   /:

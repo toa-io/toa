@@ -3,7 +3,7 @@ Feature: Identity Federation
 
   Background:
     Given the `identity.federation` database is empty
-    Given local IDP is running
+    And local IDP is running
 
   Scenario: Getting identity for a new user
     Given the `identity.federation` configuration:
@@ -169,7 +169,7 @@ Feature: Identity Federation
         - iss: http://localhost:44444
       principal:
         iss: http://localhost:44444
-        sub: root-mock-id
+        sub: root
       """
     And the IDP token for root is issued
 
