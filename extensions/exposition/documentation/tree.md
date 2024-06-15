@@ -58,19 +58,16 @@ The priority of Routes with the same specificity is determined by the order of d
 
 ## Route forwarding
 
-A Route can be forwarded to another Route by using the `forward` key.
+A Route can be forwarded to another Route by specifying the destination Route as the value of the
+Route.
 
 ```yaml
-/dest/:var: ...
-/static:
-  forward: /dest/hello
-/variables/:foo/:bar: # foo is lost
-  forward: /dest/:bar
+/destination/:var: ...
+/static: /destination/hello
+/variables/:bar: /destination/:bar
 ```
 
 Forwarding Route variables are mapped to the forwarded Route variables if they have the same name.
-
-Directives attached to the destination Route are not executed.
 
 ## Methods
 
