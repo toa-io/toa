@@ -182,3 +182,15 @@ Feature: Routes
 
       a: foo
       """
+    When the following request is received:
+      """
+      GET /echo/mirror/bar/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      a: bar
+      """

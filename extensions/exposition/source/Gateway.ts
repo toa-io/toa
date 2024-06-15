@@ -69,7 +69,17 @@ export class Gateway extends Connector {
     if (match.node.forward === null)
       return match
 
-    const forward = this.tree.match(match.node.forward)
+    const destination = match.node.forward.replace(/\/:([^/]+)/,
+      (_, name) => {
+        const value = match.parameters.find((parameter) => parameter.name === name)?.value
+
+        if (value === undefined)
+          throw new Error(`Forwarded parameter '${name}' not found`)
+
+        return `/${value}`
+      })
+
+    const forward = this.tree.match(destination)
 
     if (forward === null)
       throw new Error('Forwarded route not found')
