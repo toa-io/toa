@@ -17,12 +17,20 @@ export function parse (input: object, shortcuts?: Shortcuts): Node {
   return node
 }
 
-function parseNode (input: object, shortcuts?: Shortcuts): Node {
+function parseNode (input: object | string, shortcuts?: Shortcuts): Node {
   const node = createNode()
 
-  for (const [key, value] of Object.entries(input)) {
-    if (PROPERTIES.includes(key as keyof Node)) {
-      node[key as keyof Node] = value
+  if (typeof input === 'string') {
+    node.forward = input
+
+    return node
+  }
+
+  for (const [key, value] of Object.entries(input) as Array<[keyof Node, any]>) {
+    if (PROPERTIES.includes(key)) {
+      // eslint-disable-next-line
+      // @ts-ignore
+      node[key] = value
 
       continue
     }
@@ -149,6 +157,6 @@ function expandRange (range: number): Range {
 }
 
 const DIRECTIVE_RX = /^(?<family>\w{1,32}):(?<name>\w{1,32})$/
-const PROPERTIES: Array<keyof Node> = ['protected', 'isolated']
+const PROPERTIES: Array<keyof Node> = ['protected', 'isolated', 'forward']
 
 export type Shortcuts = Map<string, string>

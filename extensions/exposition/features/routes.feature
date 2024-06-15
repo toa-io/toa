@@ -159,3 +159,26 @@ Feature: Routes
       a: foo
       b: bar
       """
+
+  Scenario: Route forwarding
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /greetings/:a:
+          io:output: true
+          GET: parameters
+        /hello: /echo/greetings/foo
+        /mirror/:a: /echo/greetings/:a
+      """
+    When the following request is received:
+      """
+      GET /echo/hello/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      a: foo
+      """
