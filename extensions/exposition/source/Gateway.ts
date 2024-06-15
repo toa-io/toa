@@ -69,7 +69,7 @@ export class Gateway extends Connector {
     if (match.node.forward === null)
       return match
 
-    const destination = match.node.forward.replace(/\/:([^/]+)/,
+    const destination = match.node.forward.replace(/\/:([^/]+)/g,
       (_, name) => {
         const value = match.parameters.find((parameter) => parameter.name === name)?.value
 
