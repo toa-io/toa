@@ -73,7 +73,7 @@ The `role` directive can be used with a placeholder in the route.
 
 ### `claim`
 
-Grants access if `Bearer` authentication scheme is used and the claim's property match specified.
+Grants access if `Bearer` authentication scheme is used and the claim's property matches specified.
 
 ```yaml
 /:
@@ -85,7 +85,7 @@ Grants access if `Bearer` authentication scheme is used and the claim's property
 
 At least one property is required.
 
-Values may be referred to the Route parameters, or a request authority.
+Values may refer to the Route parameters, or a request authority:
 
 ```yaml
 /secrets/:org-id:
@@ -96,7 +96,7 @@ Values may be referred to the Route parameters, or a request authority.
 ```
 
 An expression `:domain` will match if the domain in the value of `iss` matches the request
-authority, excluding the least subdomain.
+authority, excluding the most specific subdomain.
 
 Issuer `https://accounts.example.com` matches request authorities `images.example.com`
 and `sub.images.example.com`, but not `images.another.com`.
