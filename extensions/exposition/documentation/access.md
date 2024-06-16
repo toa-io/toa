@@ -95,6 +95,19 @@ Values may be referred to the Route parameters, or a request authority.
     aud: :authority
 ```
 
+An expression `:domain` will match if the domain in the value of `iss` matches the request
+authority, excluding the least subdomain.
+
+Issuer `https://accounts.example.com` matches request authorities `images.example.com`
+and `sub.images.example.com`, but not `images.another.com`.
+
+```yaml
+/images/:user-id:
+  auth:claim:
+    iss: :domain
+    sub: /:org-id
+```
+
 ### `rule`
 
 The Rule is a collection of authorization directives. It allows access only if all the specified

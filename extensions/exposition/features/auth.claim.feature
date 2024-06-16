@@ -145,3 +145,26 @@ Feature: Federated identity authentication
       """
       200 OK
       """
+
+  Scenario: `iss` matching authority common domain
+    Given the annotation:
+      """yaml
+      /:
+        /:id:
+          GET:
+            auth:claim:
+              iss: :domain
+              sub: /:id
+            dev:stub: ok
+      """
+
+    When the following request is received:
+      """
+      GET /Bob/ HTTP/1.1
+      host: localhost
+      authorization: Bearer ${{ Bob.id_token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """

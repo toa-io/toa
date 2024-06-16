@@ -5,8 +5,8 @@ import type { Parameter } from '../../RTD'
 export class Federation implements Directive {
   private readonly matchers: Array<[keyof Claim, Matcher]>
 
-  public constructor (requirements: Options) {
-    this.matchers = (Object.entries(requirements) as Array<[keyof Claim, string]>)
+  public constructor (options: Options) {
+    this.matchers = (Object.entries(options) as Array<[keyof Claim, string]>)
       .map(([key, value]) => [key, toMatcher(value)])
 
     assert.ok(this.matchers.length > 0, 'auth:claim requires at least one property defined')
@@ -26,27 +26,34 @@ export class Federation implements Directive {
   }
 }
 
-function toMatcher (declaration: string): Matcher {
-  if (declaration.startsWith(':')) {
-    const property = declaration.slice(1) as 'authority'
+function toMatcher (expression: string): Matcher {
+  if (expression.startsWith(':')) {
+    const fn = expression.slice(1) as 'authority'
 
-    assert.ok(SPECIAL_CASES.includes(property),
-      `Unknown syntax: ${declaration}`)
+    if (fn === 'authority')
+      return (value, context) => value === context[fn]
 
-    return (value, context) => value === context[property]
+    if (fn === 'domain')
+      return (iss, context) => {
+        const hostname = new URL(iss).hostname
+        const dot = hostname.indexOf('.')
+        const basename = dot === -1 ? hostname : hostname.slice(dot)
+
+        return context.authority.slice(-basename.length) === basename
+      }
+
+    throw new Error(`Unknown 'auth:claim' syntax: ${expression}`)
   }
 
-  if (declaration.startsWith('/:')) {
-    const name = declaration.slice(2)
+  if (expression.startsWith('/:')) {
+    const name = expression.slice(2)
 
     return (value, _, parameters) => parameters
       .some((parameter) => parameter.name === name && parameter.value === value)
   }
 
-  return (value) => value === declaration
+  return (value) => value === expression
 }
-
-const SPECIAL_CASES = ['authority']
 
 type Matcher = (value: string, context: Input, parameters: Parameter[]) => boolean
 
