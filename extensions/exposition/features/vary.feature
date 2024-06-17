@@ -214,7 +214,6 @@ Feature: The Vary directive family
       """yaml
       authorities:
         one: the.one.com
-        two: the.two.com
       """
     Given the `echo` is running with the following manifest:
       """yaml
@@ -248,5 +247,5 @@ Feature: The Vary directive family
       """
       200 OK
 
-      Hello two
+      Hello the.two.com
       """

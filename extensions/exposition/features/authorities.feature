@@ -19,6 +19,8 @@ Feature: Authorities
       """
       200 OK
       """
+
+    # arbitrary authorities are also allowed
     When the following request is received:
       """
       GET / HTTP/1.1
@@ -26,7 +28,5 @@ Feature: Authorities
       """
     Then the following reply is sent:
       """
-      404 Not Found
-
-      Unknown authority
+      200 OK
       """

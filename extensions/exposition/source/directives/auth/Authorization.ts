@@ -130,7 +130,8 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       }
     })
 
-    if (result instanceof Error) return null
+    if (result instanceof Error)
+      return null
 
     const identity = result.identity
 

@@ -5,7 +5,6 @@ Feature: Token credentials with authorities
       """yaml
       authorities:
         one: the.one.com
-        two: the.two.com
       /:
         /:id:
           auth:id: id
@@ -43,7 +42,7 @@ Feature: Token credentials with authorities
       id: ${{ one.id }}
       """
 
-    # create identity within the `two` authority
+    # create identity within the `the.two.com` authority
     When the following request is received:
       """
       POST /identity/basic/ HTTP/1.1
