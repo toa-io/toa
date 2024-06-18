@@ -1,5 +1,6 @@
 protected: boolean
 isolated: boolean
+forward: string
 routes: [ref:route]
 methods: [ref:method]
 directives: [ref:directive]

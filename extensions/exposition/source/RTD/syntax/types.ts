@@ -1,6 +1,7 @@
 export interface Node {
   protected?: boolean
   isolated?: boolean
+  forward?: string
   routes: Route[]
   methods: Method[]
   directives: Directive[]

@@ -4,6 +4,7 @@ import { type Match, type Parameter } from './Match'
 
 export class Node {
   public intermediate: boolean
+  public forward: string | null
   public methods: Methods
   private readonly protected: boolean
   private routes: Route[]
@@ -13,6 +14,7 @@ export class Node {
     this.routes = routes
     this.methods = methods
     this.protected = properties.protected
+    this.forward = properties.forward ?? null
     this.intermediate = this.routes.findIndex((route) => route.root) !== -1
 
     this.sort()
@@ -82,4 +84,5 @@ export class Node {
 
 export interface Properties {
   protected: boolean
+  forward?: string
 }
