@@ -37,13 +37,22 @@ export function validateJwtPayload (payload: unknown,
   assert.ok('iss' in payload, 'Payload is missing iss')
   assert.ok(typeof payload.iss === 'string', 'Payload iss is not a string')
   assert.ok('aud' in payload, 'Payload is missing aud')
-  assert.ok(typeof payload.aud === 'string', 'Payload aud is not a string')
+  assert.ok(typeof payload.aud === 'string' ||
+    (Array.isArray(payload.aud) && payload.aud.every((e): e is string => typeof e === 'string')),
+  'Payload aud is not a string nor an array of strings')
 
   const issuer = trusted.find((config) => config.iss === payload.iss)
 
-  assert.ok(issuer !== undefined &&
-    (issuer.aud === undefined || issuer.aud.some((a) => a === payload.aud),
-      `Unknown issuer / audience: ${payload.iss} / ${payload.aud}`))
+  assert.ok(issuer, `Unknown issuer: ${payload.iss}`)
+
+  if (Array.isArray(issuer.aud)) {
+    const tokenAud = payload.aud
+
+    if (typeof tokenAud === 'string')
+      assert.ok(issuer.aud.some((a) => a === tokenAud), `Unknown audience: ${tokenAud}`)
+    else
+      assert.ok(issuer.aud.some((a) => tokenAud.includes(a)), `Unknown audiences: ${tokenAud.join(', ')}`)
+  }
 
   if (header.alg.startsWith('HS')) {
     const secrets = issuer.secrets
@@ -93,7 +102,7 @@ export async function validateSignature ({
 }): Promise<void> {
   if (alg.startsWith('HS')) {
     // symmetric algorithm, issuer is validated at this point
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- `kid` is validated
+
     const secrets = trusted.find((c) => c.iss === iss)!.secrets![alg]
     const secret = kid !== undefined ? secrets[kid] : Object.values(secrets)[0]
     const algorithm = alg.replace(/^HS(\d{3})$/, 'sha$1') // HS256 -> sha256
