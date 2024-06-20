@@ -17,13 +17,6 @@ exposition:
     two: the.two.com
 ```
 
-## Ingress
-
-Each host in the authority definition is used to create a Kubernetes Ingress resource.
-
-> If the application is accessed with the `:authority` that does not match the authority definition,
-> the response with `404` status code is returned.
-
 ## Embedding
 
 To pass the requested authority to the operation call, [`vary:embed` directive](vary.md#embeddings)
@@ -39,6 +32,9 @@ exposition:
         app: authority
       endpoint: observe
 ```
+
+If the value of the `authority` pseudo-header is not present in the `authorities` definition,
+then the value of the `authority` pseudo-header is embedded as is.
 
 ## Identity
 

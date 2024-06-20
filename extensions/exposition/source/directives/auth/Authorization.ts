@@ -9,6 +9,7 @@ import { Incept } from './Incept'
 import { Echo } from './Echo'
 import { Scheme } from './Scheme'
 import { Delegate } from './Delegate'
+import { Federation } from './Federation'
 import { split } from './split'
 import { PRIMARY, PROVIDERS } from './schemes'
 import type { Output } from '../../io'
@@ -130,7 +131,8 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       }
     })
 
-    if (result instanceof Error) return null
+    if (result instanceof Error)
+      return null
 
     const identity = result.identity
 
@@ -159,7 +161,8 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   incept: Incept,
   scheme: Scheme,
   echo: Echo,
-  delegate: Delegate
+  delegate: Delegate,
+  claim: Federation
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans']

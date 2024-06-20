@@ -1,8 +1,54 @@
-/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { validateSignature, decodeJwt } from './jwt'
+import { validateSignature, decodeJwt, validateJwtPayload } from './jwt'
+import type { IdToken, JwtHeader, Trust } from '../types'
 
 describe('jwt', () => {
+  describe('validateJwtPayload', () => {
+    const jwtHeader: JwtHeader = { alg: 'HS256', kid: 'k1' }
+
+    const trusted: Trust[] = [{
+      iss: 'test-iss',
+      aud: ['test-aud1', 'test-aud2'],
+      secrets: { [jwtHeader.alg]: { [jwtHeader.kid!]: 'test-secrete' } }
+    }]
+
+    const validJwtPayload: IdToken = {
+      iss: trusted[0].iss,
+      sub: 'test-sub',
+      iat: Date.now() / 1000,
+      exp: Date.now() / 1000 + 2000,
+      aud: trusted[0].aud![1]
+    }
+
+    describe('aud', () => {
+      test('throws without it', () => {
+        const { aud, ...noAudPayload } = validJwtPayload
+
+        expect(() => validateJwtPayload(noAudPayload, trusted, jwtHeader)).toThrow('Payload is missing aud')
+      })
+
+      test('passes with a single string', () => {
+        expect(validJwtPayload.aud).toEqual(expect.any(String))
+        expect(() => validateJwtPayload(validJwtPayload, trusted, jwtHeader)).not.toThrow()
+      })
+
+      test('passes with an array', () => {
+        const arrayAudPayload = { ...validJwtPayload, aud: trusted[0].aud }
+
+        expect(arrayAudPayload.aud).toEqual(expect.any(Array))
+        expect(() => validateJwtPayload(arrayAudPayload, trusted, jwtHeader)).not.toThrow()
+      })
+
+      test('throws with an array that does not intersects', () => {
+        const arrayAudPayload = { ...validJwtPayload, aud: ['boo', 'foo'] }
+
+        expect(arrayAudPayload.aud).toEqual(expect.any(Array))
+        expect(() => validateJwtPayload(arrayAudPayload, trusted, jwtHeader))
+          .toThrow('Unknown audiences: boo, foo')
+      })
+    })
+  })
+
   test('decode', () => {
     const { header, payload } = decodeJwt('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg')
 

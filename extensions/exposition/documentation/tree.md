@@ -56,6 +56,19 @@ as it provides a more specific match compared to the generic `/users/:id` route.
 
 The priority of Routes with the same specificity is determined by the order of declaration.
 
+## Route forwarding
+
+A Route can be forwarded to another Route by specifying the destination Route as the value of the
+Route.
+
+```yaml
+/destination/:var: ...
+/static: /destination/hello
+/variables/:bar: /destination/:bar
+```
+
+Forwarding Route variables are mapped to the forwarded Route variables if they have the same name.
+
 ## Methods
 
 Methods are mappings of the HTTP methods to the corresponding operations.

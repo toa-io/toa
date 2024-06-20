@@ -17,42 +17,56 @@ export function parse (input: object, shortcuts?: Shortcuts): Node {
   return node
 }
 
-function parseNode (input: object, shortcuts?: Shortcuts): Node {
+function parseNode (input: object | string, shortcuts?: Shortcuts): Node {
   const node = createNode()
 
-  for (const [key, value] of Object.entries(input)) {
-    if (PROPERTIES.includes(key as keyof Node)) {
-      node[key as keyof Node] = value
+  if (typeof input === 'string') {
+    node.forward = input
 
-      continue
-    }
-
-    if (key[0] === '/') {
-      const route = parseRoute(key, value as Node, shortcuts)
-
-      node.routes.push(route)
-
-      continue
-    }
-
-    if (verbs.has(key)) {
-      const method = parseMethod(key, value as Mapping, shortcuts)
-
-      node.methods.push(method)
-
-      continue
-    }
-
-    const directive = parseDirective(key, value, shortcuts)
-
-    if (directive !== null) {
-      node.directives.push(directive)
-
-      continue
-    }
-
-    throw new Error(`RTD parse error: unknown key '${key}'.`)
+    return node
   }
+
+  for (const [key, value] of Object.entries(input) as Array<[keyof Node, unknown]>)
+    switch (key) {
+      case 'protected':
+      case 'isolated':
+        node[key] = value as boolean
+        break
+      case 'forward':
+        node[key] = value as string
+        break
+
+      default:
+        // eslint-disable-next-line max-depth
+        if (key[0] === '/') {
+          const route = parseRoute(key, value as Node, shortcuts)
+
+          node.routes.push(route)
+
+          continue
+        }
+
+        // eslint-disable-next-line max-depth
+        if (verbs.has(key)) {
+          const method = parseMethod(key, value as Mapping, shortcuts)
+
+          node.methods.push(method)
+
+          continue
+        }
+
+        // eslint-disable-next-line no-case-declarations
+        const directive = parseDirective(key, value, shortcuts)
+
+        // eslint-disable-next-line max-depth
+        if (directive !== null) {
+          node.directives.push(directive)
+
+          continue
+        }
+
+        throw new Error(`RTD parse error: unknown key '${key}'.`)
+    }
 
   return node
 }
@@ -149,6 +163,5 @@ function expandRange (range: number): Range {
 }
 
 const DIRECTIVE_RX = /^(?<family>\w{1,32}):(?<name>\w{1,32})$/
-const PROPERTIES: Array<keyof Node> = ['protected', 'isolated']
 
 export type Shortcuts = Map<string, string>

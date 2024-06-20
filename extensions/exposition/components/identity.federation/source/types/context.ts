@@ -48,7 +48,7 @@ export interface JwtHeader {
 export interface IdToken {
   iss: string
   sub: string
-  aud: string
+  aud: string | string[]
   exp: number
   iat: number
   nbf?: number
@@ -62,5 +62,6 @@ export interface AuthenticateInput {
 export interface AuthenticateOutput {
   identity: {
     id: string
+    claim: Pick<IdToken, 'iss' | 'sub' | 'aud'>
   }
 }

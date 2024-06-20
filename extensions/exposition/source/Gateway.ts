@@ -1,8 +1,9 @@
+import assert from 'node:assert'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import type { Interception } from './Interception'
-import type { Node, Method, Parameter, Tree } from './RTD'
+import type { Node, Method, Parameter, Tree, Match } from './RTD'
 import type { Label } from './discovery'
 import type { Branch } from './Branch'
 
@@ -28,12 +29,7 @@ export class Gateway extends Connector {
     if (interception !== null)
       return interception
 
-    const match = this.tree.match(context.url.pathname)
-
-    if (match === null)
-      throw new http.NotFound('Route not found')
-
-    const { node, parameters } = match
+    const { node, parameters } = this.match(context)
 
     if (context.request.method === 'OPTIONS')
       return await this.explain(node)
@@ -63,6 +59,31 @@ export class Gateway extends Connector {
 
   protected override dispose (): void {
     console.info('Gateway is closed')
+  }
+
+  private match (context: http.Context): Match {
+    const match = this.tree.match(context.url.pathname)
+
+    if (match === null)
+      throw new http.NotFound('Route not found')
+
+    if (match.node.forward === null)
+      return match
+
+    const destination = match.node.forward.replace(/\/:([^/]+)/g,
+      (_, name) => {
+        const value = match.parameters.find((parameter) => parameter.name === name)?.value
+
+        assert.ok(value !== undefined, `Forwarded parameter '${name}' not found`)
+
+        return `/${value}`
+      })
+
+    const forward = this.tree.match(destination)
+
+    assert.ok(forward !== null, 'Forwarded route not found')
+
+    return forward
   }
 
   private async call (method: Method, context: http.Context, parameters: Parameter[]): Promise<http.OutgoingMessage> {

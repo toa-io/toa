@@ -17,7 +17,10 @@ export function createNode (node: syntax.Node, context: Context): Node {
   for (const method of node.methods)
     methods[method.verb] = createMethod(method, context)
 
-  const properties: Properties = { protected: node.protected ?? context.protected }
+  const properties: Properties = {
+    protected: node.protected ?? context.protected,
+    forward: node.forward
+  }
 
   return new Node(routes, methods, properties)
 }

@@ -5,7 +5,6 @@ Feature: OIDC tokens with authorities
       """yaml
       authorities:
         one: the.one.com
-        two: the.two.com
       /:
         /:id:
           auth:id: id
@@ -65,6 +64,8 @@ Feature: OIDC tokens with authorities
       """
       200 OK
       """
+
+    # authorization will create new identity within `one` authority
     When the following request is received:
       """
       GET /${{ Two.id }}/ HTTP/1.1
@@ -73,7 +74,7 @@ Feature: OIDC tokens with authorities
       """
     Then the following reply is sent:
       """
-      401 Unauthorized
+      403 Forbidden
       """
 
     # access `two` authority
@@ -85,7 +86,7 @@ Feature: OIDC tokens with authorities
       """
     Then the following reply is sent:
       """
-      401 Unauthorized
+      403 Forbidden
       """
     When the following request is received:
       """
