@@ -28,18 +28,16 @@ export class Federation implements Directive {
 
 function toMatcher (expression: string): Matcher {
   if (expression.startsWith(':')) {
-    const fn = expression.slice(1) as 'authority'
+    const key = expression.slice(1) as 'authority'
 
-    if (fn === 'authority')
-      return (value, context) => value === context[fn]
+    if (key === 'authority')
+      return (value, context) => matches(value, context[key])
 
-    if (fn === 'domain')
-      return (iss, context) => {
-        const hostname = new URL(iss).hostname
-        const dot = hostname.indexOf('.')
-        const basename = dot === -1 ? hostname : hostname.slice(dot)
-
-        return context.authority.slice(-basename.length) === basename
+    if (key === 'domain')
+      return (value, context) => {
+        return Array.isArray(value)
+          ? value.some((iss) => codomain(iss, context))
+          : codomain(value, context)
       }
 
     throw new Error(`Unknown 'auth:claim' syntax: ${expression}`)
@@ -49,18 +47,32 @@ function toMatcher (expression: string): Matcher {
     const name = expression.slice(2)
 
     return (value, _, parameters) => parameters
-      .some((parameter) => parameter.name === name && parameter.value === value)
+      .some((parameter) => parameter.name === name && matches(value, parameter.value))
   }
 
-  return (value) => value === expression
+  return (value) => matches(value, expression)
 }
 
-type Matcher = (value: string, context: Input, parameters: Parameter[]) => boolean
+function matches (value: string | string[], reference: string): boolean {
+  return Array.isArray(value)
+    ? value.includes(reference)
+    : value === reference
+}
+
+function codomain (iss: string, context: Input): boolean {
+  const hostname = new URL(iss).hostname
+  const dot = hostname.indexOf('.')
+  const basename = dot === -1 ? hostname : hostname.slice(dot)
+
+  return context.authority.slice(-basename.length) === basename
+}
+
+type Matcher = (value: string | string[], context: Input, parameters: Parameter[]) => boolean
 
 interface Claim {
   iss: string
   sub: string
-  aud: string
+  aud: string | string[]
 }
 
 interface Options extends Partial<Claim> {

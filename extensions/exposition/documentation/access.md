@@ -83,6 +83,10 @@ Grants access if `Bearer` authentication scheme is used and the claim's property
     aud: stars
 ```
 
+> If OIDC token claim contains `aud`
+> as [an array](https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation), the
+> directive will match if at least one value.
+
 At least one property is required.
 
 Values may refer to the Route parameters, or a request authority:
