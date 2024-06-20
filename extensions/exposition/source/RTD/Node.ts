@@ -78,7 +78,11 @@ export class Node {
   }
 
   private sort (): void {
-    this.routes.sort((a, b) => a.variables - b.variables)
+    this.routes.sort((a, b) => {
+      return a.variables === b.variables
+        ? b.segments.length - a.segments.length // routes with more segments should be matched first
+        : a.variables - b.variables // routes with more variables should be matched last
+    })
   }
 }
 
