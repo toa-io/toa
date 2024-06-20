@@ -73,6 +73,16 @@ Credentials specified in the output file are preserved.
 </dd>
 </dl>
 
+### export secrets
+
+<dl>
+<dt><code>toa export secrets &lt;environment&gt;</code></dt>
+<dd>Print deployment secrets.
+
+<code>--path</code> path to context (default <code>.</code>)<br/>
+</dd>
+</dl>
+
 ## Operations
 
 > Some commands use current `kubectl` and `docker` context.
