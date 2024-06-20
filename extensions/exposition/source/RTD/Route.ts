@@ -5,7 +5,7 @@ import { type Match, type Parameter } from './Match'
 export class Route {
   public readonly root: boolean
   public readonly variables: number = 0
-  private readonly segments: Segment[]
+  public readonly segments: Segment[]
   private readonly node: Node
 
   public constructor (segments: Segment[], node: Node) {

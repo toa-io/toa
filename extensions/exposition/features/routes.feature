@@ -138,6 +138,32 @@ Feature: Routes
       201 Created
       """
 
+  Scenario: Routes with default namespace conflicts
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:foo:
+          io:output: true
+          PUT: compute
+      """
+    And the `echo.beacon` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET: hello
+      """
+    When the following request is received:
+      """
+      GET /echo/beacon/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+
   Scenario: Routes with parameters
     Given the `echo` is running with the following manifest:
       """yaml
