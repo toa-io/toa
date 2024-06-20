@@ -1,0 +1,10 @@
+namespace: receivers
+name: exceptions
+
+operations:
+  throw:
+    input:
+      bar: string
+
+receivers:
+  mongo.one.sync: throw
