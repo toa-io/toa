@@ -62,5 +62,6 @@ export interface AuthenticateInput {
 export interface AuthenticateOutput {
   identity: {
     id: string
+    claim: Pick<IdToken, 'iss' | 'sub' | 'aud'>
   }
 }

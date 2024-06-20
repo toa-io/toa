@@ -37,11 +37,8 @@ the directive's value.
 Given the Route declaration and corresponding HTTP request:
 
 ```yaml
-# context.toa.yaml
-
-exposition:
-  /users/:user-id:
-    id: "user-id"
+/users/:user-id:
+  id: "user-id"
 ```
 
 ```http
@@ -57,11 +54,8 @@ is `87480f2bd88048518c529d7957475ecd`.
 Grants access if resolved Identity has a role matching the directive's value or one of its values.
 
 ```yaml
-# context.toa.yaml
-
-exposition:
-  /code:
-    role: [developer, reviewer]
+/code:
+  role: [developer, reviewer]
 ```
 
 Access will be granted if the resolved Identity has a role that matches `developer` or `reviewer`.
@@ -73,11 +67,49 @@ Read [Roles](#roles) section for more details.
 The `role` directive can be used with a placeholder in the route.
 
 ```yaml
-# context.toa.yaml
+/:org-id:
+  role: app:{org-id}:moderator
+```
 
-exposition:
-  /:org-id:
-    role: app:{org-id}:moderator
+### `claim`
+
+Grants access if `Bearer` authentication scheme is used and the claim's property matches specified.
+
+```yaml
+/:
+  auth:claim:
+    iss: https://id.example.com
+    sub: someone
+    aud: stars
+```
+
+> If OIDC token claim contains `aud`
+> as [an array](https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation), the
+> directive will match if at least one value.
+
+At least one property is required.
+
+Values may refer to the Route parameters, or a request authority:
+
+```yaml
+/secrets/:org-id:
+  auth:claim:
+    iss: https://id.org.com
+    sub: /:org-id
+    aud: :authority
+```
+
+An expression `:domain` will match if the domain in the value of `iss` matches the request
+authority, excluding the most specific subdomain.
+
+Issuer `https://accounts.example.com` matches request authorities `images.example.com`
+and `sub.images.example.com`, but not `images.another.com`.
+
+```yaml
+/images/:user-id:
+  auth:claim:
+    iss: :domain
+    sub: /:org-id
 ```
 
 ### `rule`
@@ -88,13 +120,10 @@ directives grant access. The value of the `rule` directive can be a single Rule 
 #### Example
 
 ```yaml
-# context.toa.yaml
-
-exposition:
-  /commits/:user-id:
-    rule:
-      id: user-id
-      role: developer
+/commits/:user-id:
+  rule:
+    id: user-id
+    role: developer
 ```
 
 Access will be granted if an Identity matches a `user-id` placeholder and has a Role of `developer`.
@@ -124,11 +153,8 @@ directive.
 #### Example
 
 ```yaml
-# context.toa.yaml
-
-/exposition:
-  /commits/:user-id:
-    role: developer:senior
+/commits/:user-id:
+  role: developer:senior
 ```
 
 The example above defines a `role` directive with the specified `developer:senior` Role Scope.
