@@ -23,18 +23,18 @@ const secrets = async (argv) => {
 
   for (const secret of secrets) {
     if (current === null || current.name !== secret.name) {
-      current = { name: secret.name, keys: new Set() }
+      current = { name: secret.name, keys: new Map() }
       groups.push(current)
     }
 
-    current.keys.add(secret.key)
+    current.keys.set(secret.key, secret.optional)
   }
 
   for (const group of groups) {
     console.log(`${group.name}:`)
 
-    for (const key of group.keys)
-      console.log('  ' + key)
+    for (const [key, optional] of group.keys)
+      console.log('  ' + key + (optional ? ' (optional)' : ''))
   }
 }
 
