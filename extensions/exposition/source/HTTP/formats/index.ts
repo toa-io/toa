@@ -5,10 +5,10 @@ import * as msgpack from './msgpack'
 import * as text from './text'
 
 export const formats: Record<string, Format> = {
-  [msgpack.type]: msgpack,
-  [yaml.type]: yaml,
   [json.type]: json,
-  [text.type]: text
+  [yaml.type]: yaml,
+  [text.type]: text,
+  [msgpack.type]: msgpack
 }
 
 export const types = Object.keys(formats)
