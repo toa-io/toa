@@ -50,6 +50,35 @@ describe('fit', () => {
 
     expect(value.foo).toStrictEqual('1')
   })
+
+  it('should not delete arrays that belongs to Daria', () => {
+    const schema = schemas.schema({
+      type: 'object',
+      properties: {
+        arr: {
+          type: 'array',
+          items: {
+            type: 'string'
+          },
+          default: ['foo']
+        }
+      }
+    })
+
+    const o = {}
+    const error = schema.fit(o)
+
+    expect(error).toStrictEqual(null)
+    expect(o.arr).toStrictEqual(['foo'])
+
+    o.arr = ['bar']
+
+    const error2 = schema.fit(o)
+
+    expect(error2).toStrictEqual(null)
+    expect(o.arr).toStrictEqual(['bar'])
+  })
+
 })
 
 describe('validate', () => {

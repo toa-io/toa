@@ -24,6 +24,35 @@ Feature: Response
 
       {"hello":"world"}
       """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+      vary: accept
+
+      hello: world
+      """
+
+    # default is JSON
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/json
+      vary: accept
+
+      {"hello":"world"}
+      """
 
   Scenario: Error as YAML
     Given the `echo` is running with the following manifest:
