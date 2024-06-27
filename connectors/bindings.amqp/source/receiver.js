@@ -24,6 +24,7 @@ class Receiver extends Connector {
     this.#receiver = receiver
 
     this.depends(comm)
+    this.depends(receiver)
   }
 
   async open () {

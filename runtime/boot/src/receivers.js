@@ -5,7 +5,7 @@ const { Receiver, Locator } = require('@toa.io/core')
 const boot = require('./index')
 const extensions = require('./extensions')
 
-const receivers = async (manifest, runtime) => {
+const receivers = async (manifest, component) => {
   if (manifest.receivers === undefined) return []
 
   const receivers = []
@@ -21,7 +21,7 @@ const receivers = async (manifest, runtime) => {
     const source = definition.source ? Locator.parse(definition.source) : locator
     const binding = boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
 
-    binding.depends(runtime)
+    binding.depends(component)
     receivers.push(binding)
   }
 
