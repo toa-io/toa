@@ -145,7 +145,7 @@ describe('annotate', () => {
     lenna = (await storage.put(dir, stream)) as Entry
   })
 
-  it('should set meta', async () => {
+  it('should set meta property', async () => {
     const path = `${dir}/${lenna.id}`
 
     await storage.annotate(path, 'foo', 'bar')
@@ -153,6 +153,22 @@ describe('annotate', () => {
     const state0 = (await storage.get(path)) as Entry
 
     expect(state0).toHaveProperty('meta.foo', 'bar')
+
+    await storage.annotate(path, 'foo')
+
+    const state1 = (await storage.get(path)) as Entry
+
+    expect(state1.meta).not.toHaveProperty('foo')
+  })
+
+  it('should set meta with object', async () => {
+    const path = `${dir}/${lenna.id}`
+
+    await storage.annotate(path, { foo: 1, bar: 'baz' })
+
+    const state0 = (await storage.get(path)) as Entry
+
+    expect(state0.meta).toStrictEqual({ foo: 1, bar: 'baz' })
 
     await storage.annotate(path, 'foo')
 

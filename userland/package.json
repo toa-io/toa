@@ -31,8 +31,7 @@
     "@toa.io/norm": "1.0.0-alpha.52",
     "@toa.io/schemas": "1.0.0-alpha.52",
     "@toa.io/storages.null": "0.22.0",
-    "@toa.io/yaml": "1.0.0-alpha.52",
-    "tap": "16.3.4"
+    "@toa.io/yaml": "1.0.0-alpha.52"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

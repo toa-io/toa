@@ -123,17 +123,22 @@ export class Storage {
     await this.save(path, entry)
   }
 
-  public async annotate (path: string, key: string, value?: unknown): Maybe<void> {
+  public async annotate (path: string, key: string | Record<string, unknown>, value?: unknown): Maybe<void> {
     const entry = await this.get(path)
 
     if (entry instanceof Error)
       return entry
 
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    if (value === undefined)
-      delete entry.meta[key]
-    else
-      entry.meta[key] = value
+    const update = typeof key === 'string'
+      ? { [key]: value }
+      : key
+
+    Object.assign(entry.meta, update)
+
+    // filter undefined values
+    for (const key of Object.keys(entry.meta))
+      if (entry.meta[key] === undefined)
+        delete entry.meta[key]
 
     await this.save(path, entry)
   }
