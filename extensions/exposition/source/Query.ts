@@ -18,18 +18,20 @@ export class Query {
     if (this.queryable) {
       query.omit ??= { value: 0, range: [0, 1000] }
       query.limit ??= { value: 10, range: [1, 100] }
-    }
 
-    if (query.criteria !== undefined) {
-      if (query.criteria.endsWith(';'))
-        query.criteria = query.criteria.slice(0, -1)
-      else
-        this.closed = true
+      if (query.criteria !== undefined) {
+        // eslint-disable-next-line max-depth
+        if (query.criteria.endsWith(';'))
+          query.criteria = query.criteria.slice(0, -1)
+        else
+          this.closed = true
 
-      if (query.criteria.startsWith(',') || query.criteria.startsWith(';')) {
-        this.prepend = query.criteria[0] as ',' | ';'
+        // eslint-disable-next-line max-depth
+        if (query.criteria.startsWith(',') || query.criteria.startsWith(';')) {
+          this.prepend = query.criteria[0] as ',' | ';'
 
-        query.criteria = query.criteria.slice(1)
+          query.criteria = query.criteria.slice(1)
+        }
       }
     }
 
@@ -62,7 +64,7 @@ export class Query {
   } {
     let parameters: Record<string, string> | null = null
 
-    if (this.query.parameters !== undefined)
+    if (this.query?.parameters !== undefined)
       for (const key in query)
         // eslint-disable-next-line max-depth
         if (this.query.parameters.includes(key)) {

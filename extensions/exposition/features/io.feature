@@ -50,7 +50,6 @@ Feature: IO restrictions
       """
       GET /pots/4c4759e6f9c74da989d64511df42d6f4/ HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
       """
     Then the following reply is sent:
       """
