@@ -87,6 +87,7 @@ Feature: Basic authentication
       """
       200 OK
       """
+
     # username is taken
     When the following request is received:
       """
@@ -102,6 +103,7 @@ Feature: Basic authentication
       """
       409 Conflict
       """
+
     # credentials already exists
     When the following request is received:
       """

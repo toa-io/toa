@@ -2,12 +2,7 @@ prototype: '../configuration.base'
 namespace: configuration
 name: extended
 
-operations:
-  echo:
-    output:
-      bar: number
-
 configuration:
   schema:
-    bar: 1
     baz: something
+    qux: 1

@@ -1,10 +1,8 @@
 import assert from 'node:assert'
 import { type Dependency, type Variable, type Variables } from '@toa.io/operations'
-import * as schemas from '@toa.io/schemas'
-import { encode, overwrite } from '@toa.io/generic'
+import { encode } from '@toa.io/generic'
 import { type Manifest } from './manifest'
 import * as validators from './schemas'
-import type { Schema } from '@toa.io/schemas'
 import type { context } from '@toa.io/norm'
 
 export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
@@ -15,9 +13,8 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
   for (const instance of instances) {
     const values = annotation[instance.locator.id]
 
-    validateInstance(instance, values)
-
-    if (values === undefined) continue
+    if (values === undefined)
+      continue
 
     variables[instance.locator.label] = [{
       name: PREFIX + instance.locator.uppercase,
@@ -69,14 +66,6 @@ function validate (annotation: Annotation, instances: Instance[]): void {
   for (const id of Object.keys(annotation))
     assert.ok(requested.includes(id),
       `Component '${id}' does not request configuration or does not exist.`)
-}
-
-function validateInstance (instace: Instance, values: object = {}): void {
-  const defaults = instace.manifest.defaults ?? {}
-  const configuration = overwrite(defaults, values)
-  const schema: Schema<any> = schemas.schema(instace.manifest.schema)
-
-  schema.validate(configuration)
 }
 
 export const SECRET_RX = /^\$(?<variable>[A-Z0-9_]{1,32})$/

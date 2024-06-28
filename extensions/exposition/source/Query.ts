@@ -1,6 +1,8 @@
+import assert from 'node:assert'
 import * as http from './HTTP'
 import { type Parameter } from './RTD'
 import * as schemas from './schemas'
+import { queryable } from './Mapping'
 import type * as syntax from './RTD/syntax'
 import type * as core from '@toa.io/core'
 
@@ -8,35 +10,77 @@ export class Query {
   private readonly query: syntax.Query
   private readonly closed: boolean = false
   private readonly prepend: ',' | ';' = ';'
+  private readonly queryable: boolean
 
-  public constructor (query: syntax.Query) {
-    if (query.criteria !== undefined) {
-      if (query.criteria.endsWith(';'))
-        query.criteria = query.criteria.slice(0, -1)
-      else
-        this.closed = true
+  public constructor (query: syntax.Query = {}) {
+    this.queryable = queryable(query)
 
-      if (query.criteria.startsWith(',') || query.criteria.startsWith(';')) {
-        this.prepend = query.criteria[0] as ',' | ';'
+    if (this.queryable) {
+      query.omit ??= { value: 0, range: [0, 1000] }
+      query.limit ??= { value: 10, range: [1, 100] }
 
-        query.criteria = query.criteria.slice(1)
+      if (query.criteria !== undefined) {
+        // eslint-disable-next-line max-depth
+        if (query.criteria.endsWith(';'))
+          query.criteria = query.criteria.slice(0, -1)
+        else
+          this.closed = true
+
+        // eslint-disable-next-line max-depth
+        if (query.criteria.startsWith(',') || query.criteria.startsWith(';')) {
+          this.prepend = query.criteria[0] as ',' | ';'
+
+          query.criteria = query.criteria.slice(1)
+        }
       }
     }
 
     this.query = query
   }
 
-  public fit (query: http.Query, parameters: Parameter[]): core.Query {
-    const error = schemas.querystring.fit(query)
+  public fit (query: http.Query, parameters: Parameter[]): QueryString {
+    const qs = this.split(query)
 
-    if (error !== null)
-      throw new http.BadRequest('Query ' + error.message)
+    if (qs.query !== null) {
+      const error = schemas.querystring.fit(qs.query)
 
-    this.fitCriteria(query, parameters)
-    this.fitRanges(query)
-    this.fitSort(query)
+      if (error !== null)
+        throw new http.BadRequest('Query ' + error.message)
 
-    return query as core.Query
+      this.fitCriteria(qs.query, parameters)
+      this.fitRanges(qs.query)
+      this.fitSort(qs.query)
+    }
+
+    return {
+      query: qs.query as core.Query,
+      parameters: qs.parameters
+    }
+  }
+
+  private split (query: http.Query): {
+    query: http.Query | null
+    parameters: Record<string, string> | null
+  } {
+    let parameters: Record<string, string> | null = null
+
+    if (this.query?.parameters !== undefined)
+      for (const key in query)
+        // eslint-disable-next-line max-depth
+        if (this.query.parameters.includes(key)) {
+          parameters ??= {}
+          parameters[key] = query[key] as string
+
+          delete query[key]
+        }
+
+    if (!this.queryable && Object.keys(query).length === 0)
+      query = null!
+
+    return {
+      query,
+      parameters
+    }
   }
 
   private fitCriteria (query: http.Query, parameters: Parameter[]): void {
@@ -77,6 +121,9 @@ export class Query {
   private fitRanges (qs: http.Query): void {
     const query = qs as core.Query
 
+    assert.ok(this.query.limit !== undefined, 'Query limit must be defined')
+    assert.ok(this.query.omit !== undefined, 'Query limit range must be defined')
+
     if (qs.limit !== undefined)
       query.limit = fit(qs.limit, this.query.limit.range, 'limit')
     else
@@ -113,4 +160,9 @@ const WHATEVER = ';'
 interface CriteriaGroup {
   criteria: string
   operator: ',' | ';'
+}
+
+export interface QueryString {
+  query: core.Query | null
+  parameters: Record<string, string> | null
 }

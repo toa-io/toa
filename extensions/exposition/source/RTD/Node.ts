@@ -35,10 +35,10 @@ export class Node {
   public merge (node: Node): void {
     this.intermediate = node.intermediate
 
-    if (!this.protected)
-      this.replace(node)
-    else
+    if (this.protected)
       this.append(node)
+    else
+      this.replace(node)
 
     this.sort()
   }
@@ -49,24 +49,20 @@ export class Node {
     this.routes = node.routes
     this.methods = node.methods
 
+    // race condition is really unlikely
     for (const method of methods)
       void method.close()
-
-    // race condition is really unlikely
   }
 
   private append (node: Node): void {
     for (const route of node.routes)
-      this.mergeRoute(route)
+      this.route(route)
 
     for (const [verb, method] of Object.entries(node.methods))
-      if (verb in this.methods)
-        console.warn(`Overriding of the protected method ${verb} is not permitted.`)
-      else
-        this.methods[verb] = method
+      this.methods[verb] = method
   }
 
-  private mergeRoute (candidate: Route): void {
+  private route (candidate: Route): void {
     for (const route of this.routes)
       if (candidate.equals(route)) {
         route.merge(candidate)

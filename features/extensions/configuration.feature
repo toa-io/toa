@@ -31,7 +31,9 @@ Feature: Configuration Extension
     Then the reply is received:
       """yaml
       foo: hello
-      bar: 1
+      bar: world
+      baz: something
+      qux: 1
       """
     And I disconnect
 
@@ -42,14 +44,13 @@ Feature: Configuration Extension
       configuration:
         configuration.base:
           foo: bye
-          bar:
-            baz: bye
+          bar: bye
       """
     When I run `toa env`
     And I run `toa invoke echo -p ./components/configuration.base`
     And stdout should contain lines:
     """
-    { foo: 'bye', baz: 'bye' }
+    { foo: 'bye', bar: 'bye' }
     """
 
   Scenario: Secret values
@@ -59,19 +60,18 @@ Feature: Configuration Extension
       configuration:
         configuration.base:
           foo: $FOO_SECRET_VALUE
-          bar:
-            baz: $BAZ_SECRET_VALUE
+          bar: $BAR_SECRET_VALUE
       """
     When I run `toa env`
     And I update an environment with:
       """
       TOA_CONFIGURATION__FOO_SECRET_VALUE=secret foo
-      TOA_CONFIGURATION__BAZ_SECRET_VALUE=secret baz
+      TOA_CONFIGURATION__BAR_SECRET_VALUE=secret bar
       """
     And I run `toa invoke echo -p ./components/configuration.base`
     And stdout should contain lines:
     """
-    { foo: 'secret foo', baz: 'secret baz' }
+    { foo: 'secret foo', bar: 'secret bar' }
     """
 
   Scenario: Secret values within the array
@@ -121,8 +121,7 @@ Feature: Configuration Extension
       configuration:
         configuration.base:
           foo: $FOO_VALUE
-          bar:
-            baz: $BAZ_VALUE
+          bar: $BAR_VALUE
       """
     When I export deployment
     Then exported values should contain:
@@ -131,15 +130,15 @@ Feature: Configuration Extension
         - name: configuration-base
           variables:
             - name: TOA_CONFIGURATION_CONFIGURATION_BASE
-              value: eyJmb28iOiIkRk9PX1ZBTFVFIiwiYmFyIjp7ImJheiI6IiRCQVpfVkFMVUUifX0=
+              value: eyJmb28iOiIkRk9PX1ZBTFVFIiwiYmFyIjoiJEJBUl9WQUxVRSJ9
             - name: TOA_CONFIGURATION__FOO_VALUE
               secret:
                 name: toa-configuration
                 key: FOO_VALUE
-            - name: TOA_CONFIGURATION__BAZ_VALUE
+            - name: TOA_CONFIGURATION__BAR_VALUE
               secret:
                 name: toa-configuration
-                key: BAZ_VALUE
+                key: BAR_VALUE
       """
 
   Scenario: Deployment of secret values within an array
@@ -227,4 +226,23 @@ Feature: Configuration Extension
     And stderr should contain line:
     """
     Component 'foo.bar' does not request configuration or does not exist.
+    """
+
+  Scenario: Type coercion
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.base:
+          num: $NUM_SECRET
+      """
+    When I run `toa env`
+    And I update an environment with:
+      """
+      TOA_CONFIGURATION__NUM_SECRET=3
+      """
+    And I run `toa invoke echo -p ./components/configuration.base`
+    And stdout should contain lines:
+    """
+    { foo: 'hello', bar: 'world', num: 3 }
     """

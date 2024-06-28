@@ -5,9 +5,11 @@ operations:
   echo:
     output:
       foo: string
+      bar: string
+      num: integer
 
 configuration:
   schema:
     foo: hello
-    bar:
-      baz: world
+    bar: world
+    num: integer
