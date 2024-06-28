@@ -26,17 +26,14 @@
     "matchacho": "0.3.5",
     "msgpackr": "1.10.1",
     "negotiator": "0.6.3",
-    "paseto": "3.1.4",
-    "ultrafetch": "0.4.0"
+    "paseto": "3.1.4"
   },
   "jest": {
-    "transform": {
-      "^.+\\.ts$": "jest-esbuild"
-    },
+    "preset": "ts-jest",
     "testEnvironment": "node"
   },
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "jest",
     "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation",
     "transpile:bans": "tsc -p ./components/identity.bans",
     "transpile:basic": "tsc -p ./components/identity.basic",
@@ -51,8 +48,7 @@
     "@toa.io/extensions.storages": "1.0.0-alpha.54",
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
-    "@types/negotiator": "0.6.1",
-    "jest-esbuild": "0.3.0"
+    "@types/negotiator": "0.6.1"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }

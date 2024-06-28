@@ -1,6 +1,5 @@
 import crypto from 'node:crypto'
 import * as assert from 'node:assert'
-
 import type { JwtHeader, IdToken, Trust } from '../types'
 
 export function decodeJwt (token: string): {
@@ -118,14 +117,16 @@ export async function validateSignature ({
   }
 
   // Getting issuer public keys
-  const oidcRequest = await cachedFetch(`${iss}/.well-known/openid-configuration`)
+  const oidcRequest = await fetch(`${iss}/.well-known/openid-configuration`, {
+    cache: 'default'
+  })
 
   assert.ok(oidcRequest.ok,
     `Failed to fetch OpenID configuration: ${oidcRequest.statusText}`)
 
   const { jwks_uri: jwksUri } = (await oidcRequest.json()) as { jwks_uri: string }
 
-  const jwkRequest = await cachedFetch(jwksUri)
+  const jwkRequest = await fetch(jwksUri, { cache: 'default' })
 
   assert.ok(jwkRequest.ok, `Failed to fetch issuer keys: ${jwkRequest.statusText}`)
 
@@ -175,17 +176,4 @@ export async function validateIdToken (token: string,
   })
 
   return payload
-}
-
-// workaround for ultrafetch being ESM only
-let _cachedFetch: typeof fetch | undefined
-
-export async function cachedFetch (url: string, init?: RequestInit): Promise<Response> {
-  if (typeof _cachedFetch !== 'function') {
-    const { withCache } = await import('ultrafetch')
-
-    _cachedFetch = withCache(fetch)
-  }
-
-  return _cachedFetch(url, init)
 }
