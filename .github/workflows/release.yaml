@@ -74,7 +74,7 @@ jobs:
           if [ ${{ github.base_ref }} = release ]; then
             npx lerna publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
           else
-            npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message "ci: %s" --git-tag-command "echo %s" --sign-git-commit
+            npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
           fi
 
           git fetch
