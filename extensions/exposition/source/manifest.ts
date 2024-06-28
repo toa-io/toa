@@ -22,7 +22,7 @@ function wrap (declaration: object, namespace: string, name: string): object {
   const path = (namespace === undefined || namespace === 'default' ? '' : '/' + namespace) +
     '/' + name
 
-  return { [path]: { protected: true, ...declaration } }
+  return { [path]: declaration }
 }
 
 function specify (node: Node, manifest: Manifest): void {

@@ -266,6 +266,7 @@ Feature: Queries
       exposition:
         /:
           GET:
+            io:output: true
             query:
               parameters: [name]
             endpoint: compute
@@ -280,5 +281,5 @@ Feature: Queries
       """
       200 OK
 
-      Hello John!
+      Hello John
       """

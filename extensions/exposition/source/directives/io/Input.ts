@@ -23,13 +23,13 @@ export class Input implements Directive {
     try {
       schemas.message.validate(body)
     } catch {
-      throw new BadRequest('Invalid request body.')
+      throw new BadRequest('Invalid request body')
     }
 
     const property = this.violation(body)
 
     if (property !== undefined)
-      throw new BadRequest(`Unexpected input: ${property}.`)
+      throw new BadRequest(`Unexpected input: ${property}`)
 
     return body
   }
