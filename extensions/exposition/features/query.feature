@@ -259,3 +259,26 @@ Feature: Queries
         volume: 100
         temperature: 80
       """
+
+  Scenario: Query parameters
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            query:
+              parameters: [name]
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/?name=John HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello John!
+      """
