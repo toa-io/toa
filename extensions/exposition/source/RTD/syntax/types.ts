@@ -35,10 +35,11 @@ export interface Query {
   id?: string
   criteria?: string
   sort?: string
-  omit: Range
-  limit: Range
+  omit?: Range
+  limit?: Range
   selectors?: string[]
   projection?: string[]
+  parameters?: string[]
 }
 
 export interface Range {

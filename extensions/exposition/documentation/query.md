@@ -177,6 +177,10 @@ Constant values can be declared using the shortcut:
 limit: 10
 ```
 
+```http
+GET /dummies/?omit=100&limit=10
+```
+
 ## Sort
 
 The `sort` query property defines the result order of Observations within an `objects` scope
@@ -213,6 +217,8 @@ GET /dummies/?sort=timestamp:asc
 
 ## Selectors
 
+![Not implemented](https://img.shields.io/badge/Not_implemented-red)
+
 The `selectors` query property contains a list of Entity properties allowed for a client to use in
 the `criteria` and `sort` query parameters.
 If no value is provided, then no selectors are allowed.
@@ -227,6 +233,21 @@ A list of Entity properties to be included in the Observation result.
 
 ```yaml
 projection: [id, title, timestamp]
+```
+
+## Parameters
+
+By default, the only query parameters allowed are described above. Arbitrary query parameters
+can be allowed by specifying them in the `parameters` property.
+
+```yaml
+parameters: [foo, bar]
+```
+
+These parameters are embedded in the operation call input, which must be an object.
+
+```http
+GET /dummies/?foo=0&bar=baz
 ```
 
 ## Optimistic concurrency control
