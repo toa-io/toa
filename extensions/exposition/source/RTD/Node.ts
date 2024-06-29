@@ -43,6 +43,18 @@ export class Node {
     this.sort()
   }
 
+  public async explain (parameters: Parameter[]): Promise<Record<string, unknown>> {
+    const methods: Record<string, unknown> = {}
+
+    const explained = Object.entries(this.methods)
+      .map(async ([verb, method]) =>
+        (methods[verb] = await method.explain(parameters)))
+
+    await Promise.all(explained)
+
+    return methods
+  }
+
   private replace (node: Node): void {
     const methods = Object.values(this.methods)
 

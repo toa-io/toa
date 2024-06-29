@@ -16,6 +16,8 @@ operations:
     input: &parameters
       type: object
       properties:
-        a: string
-        b: string
+        a:
+          type: string
+        b:
+          type: string
     output: *parameters

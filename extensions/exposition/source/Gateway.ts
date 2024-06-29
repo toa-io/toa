@@ -32,7 +32,7 @@ export class Gateway extends Connector {
     const { node, parameters } = this.match(context)
 
     if (context.request.method === 'OPTIONS')
-      return await this.explain(node)
+      return await this.explain(node, parameters)
 
     if (!(context.request.method in node.methods))
       throw new http.MethodNotAllowed()
@@ -101,18 +101,12 @@ export class Gateway extends Connector {
       .catch(rethrow) as http.OutgoingMessage
   }
 
-  private async explain (node: Node): Promise<http.OutgoingMessage> {
-    const methods: Record<string, unknown> = {}
-
-    const explaining = Object.entries(node.methods)
-      .map(async ([verb, method]) => (methods[verb] = await method.explain()))
-
-    await Promise.all(explaining)
-
-    const allow = [...Object.keys(node.methods), 'OPTIONS'].join(', ')
+  private async explain (node: Node, parameters: Parameter[]): Promise<http.OutgoingMessage> {
+    const body = await node.explain(parameters)
+    const allow = [...Object.keys(node.methods)].join(', ')
     const headers = new Headers({ allow })
 
-    return { body: methods, headers }
+    return { body, headers }
   }
 
   private async discover (): Promise<void> {
