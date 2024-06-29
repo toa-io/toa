@@ -1,5 +1,6 @@
 import { Mapping } from './Mapping'
 import * as http from './HTTP'
+import type { Introspection, Schema } from './Introspection'
 import type { Remote } from '@toa.io/core'
 import type { Remotes } from './Remotes'
 import type { Context } from './Context'
@@ -53,10 +54,39 @@ export class Endpoint implements RTD.Endpoint {
     return message
   }
 
-  public async explain (): Promise<unknown> {
+  public async explain (parameters: RTD.Parameter[]): Promise<Introspection> {
     this.remote ??= await this.discovery
 
-    return this.remote.explain(this.endpoint) ?? null
+    // eslint-disable-next-line @typescript-eslint/await-thenable
+    const operation = await this.remote.explain(this.endpoint)
+
+    let route: Record<string, Schema> | null = null
+
+    if (operation.input?.type === 'object')
+      for (const parameter of parameters) {
+        const schema = operation.input.properties[parameter.name]
+
+        // eslint-disable-next-line max-depth
+        if (schema !== undefined) {
+          route ??= {}
+          route[parameter.name] = schema
+
+          delete operation.input.properties[parameter.name]
+        }
+      }
+
+    const query = this.mapping.explain(operation)
+    const introspection: Introspection = {}
+
+    if (route !== null)
+      introspection.route = route
+
+    if (query !== null)
+      introspection.query = query
+
+    Object.assign(introspection, operation)
+
+    return introspection
   }
 
   public async close (): Promise<void> {

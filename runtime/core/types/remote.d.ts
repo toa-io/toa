@@ -1,11 +1,18 @@
 import { Component } from './component'
 
 export class Remote extends Component {
-  explain: (endpoint: string) => Explanation
+  explain (endpoint: string): Promise<Explanation>
 }
 
 interface Explanation {
-  input: object | null
-  output: object | null
+  input: Schema | null
+  output: Schema | null
   errors?: string[]
+}
+
+interface Schema {
+  type: string
+  properties: {
+    [key: string]: Schema
+  }
 }
