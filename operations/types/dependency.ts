@@ -1,4 +1,4 @@
-export type Service = {
+export interface Service {
   group: string
   name: string
   version: string
@@ -9,24 +9,26 @@ export type Service = {
   probe?: Probe
 }
 
-export type Variable = {
+export interface Variable {
   name: string
   value?: string
   secret?: {
-    name: string,
+    name: string
     key: string
     optional?: boolean
   }
 }
 
 export type Variables = Record<'global' | string, Variable[]>
+export type Mounts = Record<'global' | string, Mount[]>
 
-export type Dependency = {
+export interface Dependency {
   services?: Service[]
   variables?: Variables
+  mounts?: Mounts
 }
 
-type Ingress = {
+interface Ingress {
   hosts: string[]
   class?: string
   annotations?: object
@@ -36,4 +38,10 @@ interface Probe {
   port: number
   path: string
   delay?: number
+}
+
+interface Mount {
+  name: string
+  path: string
+  claim: string
 }

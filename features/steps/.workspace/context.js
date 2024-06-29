@@ -2,7 +2,6 @@
 
 const { join } = require('node:path')
 
-const { overwrite } = require('@toa.io/generic')
 const { save, load, parse } = require('@toa.io/yaml')
 
 /**
@@ -16,7 +15,7 @@ const template = async (directory, additions) => {
   if (additions !== undefined) {
     const add = parse(additions)
 
-    overwrite(template, add)
+    Object.assign(template, add)
   }
 
   await save(template, path)

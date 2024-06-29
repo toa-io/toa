@@ -130,7 +130,7 @@ Feature: Storages Extension
       storages:
         tmp:
           provider: s3
-          bucket: te
+          bucket: test
       """
     When I export deployment
     Then exported values should contain:
@@ -139,7 +139,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
           - name: TOA_STORAGES
-            value: eyJ0bXAiOnsicHJvdmlkZXIiOiJzMyIsImRpcmVjdG9yeSI6InRlc3QiLCJidWNrZXQiOiJ0ZXN0In19
+            value: eyJ0bXAiOnsicHJvdmlkZXIiOiJzMyIsImJ1Y2tldCI6InRlc3QifX0=
           - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
             secret:
               name: toa-storages-tmp
@@ -150,4 +150,25 @@ Feature: Storages Extension
               name: toa-storages-tmp
               key: SECRET_ACCESS_KEY
               optional: true
+      """
+
+  Scenario: Deploying fs storage with mount
+    Given I have a component `storage`
+    And I have a context with:
+      """yaml
+      storages:
+        tmp:
+          provider: fs
+          path: /mnt/tmp
+          claim: mount-pvc
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: default-storage
+          mounts:
+          - name: tmp
+            path: /mnt/tmp
+            claim: mount-pvc
       """

@@ -1,6 +1,6 @@
 'use strict'
 
-const get = require('./.describe')
+const desc = require('./.describe')
 
 const describe = (context, compositions, dependency) => {
   const { services } = dependency
@@ -17,11 +17,11 @@ const describe = (context, compositions, dependency) => {
     }
   )
 
-  const components = get.components(compositions)
+  const components = desc.components(compositions)
   const credentials = context.registry?.credentials
 
-  get.compositions(compositions, dependency.variables, context.environment)
-  get.services(services, dependency.variables)
+  desc.compositions(compositions, dependency)
+  desc.services(services, dependency.variables)
 
   return {
     compositions,
