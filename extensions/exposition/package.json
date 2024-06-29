@@ -41,7 +41,8 @@
     "transpile:roles": "tsc -p ./components/identity.roles",
     "transpile:federation": "tsc -p ./components/identity.federation",
     "features": "cucumber-js",
-    "features:security": "cucumber-js --tags @security"
+    "features:security": "cucumber-js --tags @security",
+    "features:octets": "cucumber-js features/octets.*"
   },
   "devDependencies": {
     "@toa.io/agent": "1.0.0-alpha.55",

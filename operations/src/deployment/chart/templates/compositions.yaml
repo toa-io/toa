@@ -25,9 +25,24 @@ spec:
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}
+          {{- if .mounts }}
+          volumeMounts:
+            {{- range .mounts }}
+            - name: {{ .name }}
+              mountPath: {{ .path }}
+            {{- end }}
+          {{- end }}
       {{- if $.Values.credentials }}
       imagePullSecrets:
         - name: {{ $.Values.credentials }}
+      {{- end }}
+      {{- if .mounts }}
+      volumes:
+        {{- range .mounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ .claim }}
+        {{- end }}
       {{- end }}
 ---
 {{- end }}

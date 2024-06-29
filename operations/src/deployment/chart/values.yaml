@@ -3,6 +3,10 @@ compositions:
   - name: todos
     image: localhost:5000/composition-todos:0.0.0
     replicas: 2
+    mounts:
+      - name: mount-name
+        path: /storage
+        claim: storage-pvc
     components:
       - todos-tasks
       - todos-stats
@@ -18,7 +22,6 @@ compositions:
     replicas: 3
     components:
       - users-users
-# TODO: create component services only if sync binding is being used
 components:
   - todos-tasks
   - todos-stats
