@@ -158,9 +158,20 @@ Annotation format is:
 
 ```yaml
 storages:
-  photos@dev:
+  photos:
     provider: fs
-    path: /var/my-storage
+    path: /var/my-photos
+```
+
+[Kubernetes PVC](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) can be mounted to
+the storage:
+
+```yaml
+storages:
+  photos:
+    provider: fs
+    path: /var/my-photos
+    claim: photos-pvc
 ```
 
 ### Temporary

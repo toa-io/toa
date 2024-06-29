@@ -22,7 +22,7 @@
     "access": "public"
   },
   "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "types": "types/index.ts",
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },

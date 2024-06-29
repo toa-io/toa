@@ -18,7 +18,7 @@ Feature: Introspection
     Then the following reply is sent:
       """
       200 OK
-      Allow: GET, POST, OPTIONS
+      Allow: GET, POST
 
       GET:
         type: array
@@ -73,4 +73,81 @@ Feature: Introspection
         errors:
           - NO_WAY
           - WONT_CREATE
+      """
+
+  Scenario: Introspection with route parameters
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:a:
+          io:output: true
+          PATCH: parameters
+      """
+    When the following request is received:
+      """
+      OPTIONS /echo/:a/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: PATCH
+
+      PATCH:
+        route:
+          a:
+            type: string
+        input:
+          type: object
+          properties:
+            b:
+              type: string
+        output:
+          type: object
+          properties:
+            a:
+              type: string
+            b:
+              type: string
+      """
+
+  Scenario: Introspection with query parameters
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          PATCH:
+            query:
+              parameters: [a]
+            endpoint: parameters
+      """
+    When the following request is received:
+      """
+      OPTIONS /echo/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: PATCH
+
+      PATCH:
+        query:
+          a:
+            type: string
+        input:
+          type: object
+          properties:
+            b:
+              type: string
+        output:
+          type: object
+          properties:
+            a:
+              type: string
+            b:
+              type: string
       """

@@ -1,5 +1,6 @@
 import { type Parameter } from './RTD'
 import { Query } from './Query'
+import type { Introspection, Schema } from './Introspection'
 import type { QueryString } from './Query'
 import type * as http from './HTTP'
 import type * as syntax from './RTD/syntax'
@@ -18,6 +19,10 @@ export abstract class Mapping {
     return queryable(query)
       ? new QueryableMapping(q)
       : new InputMapping(q)
+  }
+
+  public explain (introspection: Introspection): Record<string, Schema> | null {
+    return this.query.explain(introspection)
   }
 
   protected assign (input: any, qs: QueryString): void {

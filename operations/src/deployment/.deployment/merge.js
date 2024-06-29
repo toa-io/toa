@@ -13,14 +13,17 @@ const merge = (dependencies) => {
   /** @type {toa.deployment.dependency.Variables} */
   const variables = {}
 
+  const mounts = {}
+
   for (const dependency of dependencies) {
     if (dependency.references !== undefined) references.push(...dependency.references)
     if (dependency.services !== undefined) services.push(...dependency.services)
     if (dependency.proxies !== undefined) proxies.push(...dependency.proxies)
     if (dependency.variables !== undefined) append(variables, dependency.variables)
+    if (dependency.mounts !== undefined) append(mounts, dependency.mounts)
   }
 
-  return { references, services, proxies, variables }
+  return { references, services, proxies, variables, mounts }
 }
 
 const append = (merged, variables) => {

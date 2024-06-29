@@ -1,10 +1,12 @@
 'use strict'
 
 const { addVariables } = require('./variables')
+const { addMounts } = require('./mounts')
 
-function compositions (compositions, variables) {
+function compositions (compositions, dependency) {
   for (const composition of compositions) {
-    addVariables(composition, variables)
+    addVariables(composition, dependency.variables)
+    addMounts(composition, dependency.mounts)
   }
 }
 

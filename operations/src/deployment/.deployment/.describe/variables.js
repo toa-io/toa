@@ -1,17 +1,18 @@
 'use strict'
 
-function addVariables (deployment, variables) {
+function addVariables (composition, variables) {
   const used = new Set()
 
-  deployment.variables ??= []
+  composition.variables ??= []
 
   for (const [key, set] of Object.entries(variables)) {
-    if (key !== 'global' && !deployment.components?.includes(key)) continue
+    if (key !== 'global' && !composition.components?.includes(key))
+      continue
 
     for (const variable of set) {
       if (used.has(variable.name)) continue
 
-      deployment.variables.push(variable)
+      composition.variables.push(variable)
       used.add(variable.name)
     }
   }

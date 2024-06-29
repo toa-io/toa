@@ -6,6 +6,7 @@ import type { ProviderSecrets } from '../Provider'
 
 export interface FileSystemOptions {
   path: string
+  claim?: string
 }
 
 export class FileSystem extends Provider<FileSystemOptions> {

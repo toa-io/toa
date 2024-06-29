@@ -3,6 +3,7 @@ import * as http from './HTTP'
 import { type Parameter } from './RTD'
 import * as schemas from './schemas'
 import { queryable } from './Mapping'
+import type { Introspection, Schema } from './Introspection'
 import type * as syntax from './RTD/syntax'
 import type * as core from '@toa.io/core'
 
@@ -56,6 +57,26 @@ export class Query {
       query: qs.query as core.Query,
       parameters: qs.parameters
     }
+  }
+
+  public explain (introspection: Introspection): Record<string, Schema> | null {
+    if (this.query?.parameters === undefined || introspection.input?.type !== 'object')
+      return null
+
+    let query: Record<string, Schema> | null = null
+
+    for (const parameter of this.query.parameters) {
+      const schema = introspection.input.properties[parameter]
+
+      if (schema !== undefined) {
+        query ??= {}
+        query[parameter] = schema
+      }
+
+      delete introspection.input.properties[parameter]
+    }
+
+    return query
   }
 
   private split (query: http.Query): {
