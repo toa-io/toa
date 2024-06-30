@@ -21,7 +21,7 @@
     "@toa.io/core": "1.0.0-alpha.55",
     "@toa.io/generic": "1.0.0-alpha.55",
     "@toa.io/pointer": "1.0.0-alpha.55",
-    "comq": "0.11.1"
+    "comq": "0.11.2"
   },
   "scripts": {
     "transpile": "tsc"

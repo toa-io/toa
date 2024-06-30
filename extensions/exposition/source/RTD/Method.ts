@@ -27,7 +27,6 @@ export class Method {
   }
 
   public async close (): Promise<void> {
-    console.log('!!! Closing method')
     await this.endpoint?.close()
   }
 }
