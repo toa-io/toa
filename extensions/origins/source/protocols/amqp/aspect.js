@@ -39,20 +39,11 @@ class Aspect extends Connector {
   #open = async ([origin, references]) => {
     const io = await assert(...references)
 
-    this.#origins[origin] = restrict(io)
+    this.#origins[origin] = io
   }
 
   #close = async (io) => {
     await io.close()
-  }
-}
-
-function restrict (io) {
-  // noinspection JSUnresolvedReference
-  return {
-    request: (...args) => io.request(...args),
-    emit: (...args) => io.emit(...args),
-    close: () => io.close()
   }
 }
 
