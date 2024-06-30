@@ -3,7 +3,7 @@ import { encode } from '@toa.io/generic'
 import { providers } from './providers'
 import { validateAnnotation } from './Annotation'
 import type { Annotation } from './Annotation'
-import type { Dependency, Variable } from '@toa.io/operations'
+import type { Dependency, Variable, Mounts } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
 
 export const SERIALIZATION_PREFIX = 'TOA_STORAGES'
@@ -14,10 +14,14 @@ export function deployment (instances: Instance[], annotation: unknown): Depende
   const value = encode(annotation)
   const pointer: Variable = { name: SERIALIZATION_PREFIX, value }
   const secrets = getSecrets(annotation)
+  const mounts = getMounts(instances, annotation)
 
-  return {
-    variables: { global: [pointer, ...secrets] }
-  }
+  const dependency: Dependency = { variables: { global: [pointer, ...secrets] } }
+
+  if (mounts !== null)
+    dependency.mounts = mounts
+
+  return dependency
 }
 
 function validate (instances: Instance[], annotation: unknown): asserts annotation is Annotation {
@@ -52,6 +56,33 @@ function getSecrets (annotation: Annotation): Variable[] {
   }
 
   return secrets
+}
+
+function getMounts (instances: Instance[], annotation: Annotation): Mounts | null {
+  let mounts: Mounts | null = null
+
+  for (const { locator, manifest } of instances)
+    for (const name of manifest) {
+      const declaration = annotation[name]
+
+      // eslint-disable-next-line max-depth
+      if (declaration.provider !== 'fs')
+        continue
+
+      // eslint-disable-next-line max-depth
+      if (declaration.claim !== undefined) {
+        mounts ??= {}
+        mounts[locator.label] ??= []
+
+        mounts[locator.label].push({
+          name,
+          path: declaration.path,
+          claim: declaration.claim
+        })
+      }
+    }
+
+  return mounts
 }
 
 export type Instance = context.Dependency<string[]>
