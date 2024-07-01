@@ -19,3 +19,6 @@ entity:
 operations:
   transit:
     concurrency: retry
+    input:
+      name: string
+      email: string

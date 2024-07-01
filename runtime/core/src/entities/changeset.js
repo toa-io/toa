@@ -21,10 +21,10 @@ class Changeset {
   }
 
   set (value) {
-    const error = this.#schema.fitOptional(value)
+    const error = this.#schema.match(value)
 
     if (error !== null)
-      throw new EntityContractException(error)
+      throw new EntityContractException(error, value)
 
     delete value._version
     value._updated = Date.now()

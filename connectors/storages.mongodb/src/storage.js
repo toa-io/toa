@@ -81,7 +81,7 @@ class Storage extends Connector {
         if (id)
           return false
         else
-          throw new exceptions.DuplicateException()
+          throw new exceptions.DuplicateException(this.#client.name, entity)
       } else if (error.cause?.code === 'ECONNREFUSED') {
         // This is temporary and should be replaced with a class decorator.
         if (attempt > 10)
