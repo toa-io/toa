@@ -31,9 +31,12 @@ class Exception {
   code
   message
 
-  constructor (code, message) {
+  constructor (code, message, cause) {
     this.code = code
     this.message = message
+
+    if (cause !== undefined)
+      this.cause = cause
   }
 }
 
@@ -48,8 +51,8 @@ class SystemException extends Exception {
 }
 
 class ContractException extends Exception {
-  constructor (code, error) {
-    super(code || codes.Contract, typeof error === 'string' ? error : error?.message)
+  constructor (code, error, cause) {
+    super(code || codes.Contract, typeof error === 'string' ? error : error?.message, cause)
 
     if (typeof error === 'object' && error !== null)
       for (const k of ['keyword', 'property', 'schema', 'path', 'params'])
@@ -59,15 +62,15 @@ class ContractException extends Exception {
 }
 
 class RequestContractException extends ContractException {
-  constructor (error) { super(codes.RequestContract, error) }
+  constructor (error, cause) { super(codes.RequestContract, error, cause) }
 }
 
 class ResponseContractException extends ContractException {
-  constructor (error) { super(codes.ResponseContract, error) }
+  constructor (error, cause) { super(codes.ResponseContract, error, cause) }
 }
 
 class EntityContractException extends ContractException {
-  constructor (error) { super(codes.EntityContract, error) }
+  constructor (error, cause) { super(codes.EntityContract, error, cause) }
 }
 
 // #region exports
@@ -82,8 +85,12 @@ for (const [name, code] of Object.entries(codes)) {
 
   if (exports[classname] === undefined) {
     exports[classname] = class extends Exception {
-      constructor (message) {
-        super(code, message ?? classname)
+      constructor (message, cause) {
+        message = message
+          ? `${classname}: ${message}`
+          : classname
+
+        super(code, message ?? classname, cause)
       }
     }
   }

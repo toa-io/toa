@@ -17,6 +17,8 @@ const { MongoClient } = require('mongodb')
 const INSTANCES = {}
 
 class Client extends Connector {
+  name
+
   /**
    * @public
    * @type {import('mongodb').Collection}
@@ -58,8 +60,8 @@ class Client extends Connector {
   async open () {
     const urls = await this.resolveURLs()
     const dbname = this.resolveDB()
-    const collname = this.locator.lowercase
 
+    this.name = this.locator.lowercase
     this.key = getKey(dbname, urls)
 
     INSTANCES[this.key] ??= this.createInstance(urls)
@@ -70,13 +72,13 @@ class Client extends Connector {
     const db = this.instance.client.db(dbname)
 
     try {
-      this.collection = await db.createCollection(collname)
+      this.collection = await db.createCollection(this.name)
     } catch (e) {
       if (e.code !== ALREADY_EXISTS) {
         throw e
       }
 
-      this.collection = db.collection(collname)
+      this.collection = db.collection(this.name)
     }
   }
 
