@@ -13,7 +13,7 @@ class Contract {
     const error = this.schema.fit(value)
 
     if (error !== null)
-      throw new this.constructor.Exception(error)
+      throw new this.constructor.Exception(error, value)
   }
 
   static Exception = SystemException

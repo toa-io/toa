@@ -16,14 +16,18 @@ class Schema {
   /** @type {import('ajv').ValidateFunction} */
   #validateOptional
 
+  /** @type {import('ajv').ValidateFunction} */
+  #match
+
   /**
    * @param {import('ajv').ValidateFunction} validate
    * @param {import('ajv').ValidateFunction} validateOptional
    */
-  constructor (validate, validateOptional) {
+  constructor (validate, validateOptional, match) {
     this.id = validate.schema.$id
     this.#validate = validate
     this.#validateOptional = validateOptional
+    this.#match = match
   }
 
   fit (value, validate = this.#validate) {
@@ -38,6 +42,13 @@ class Schema {
       throw new Error('Optional schema is not defined')
 
     return this.fit(value, this.#validateOptional)
+  }
+
+  match (value) {
+    if (this.#match() === undefined)
+      throw new Error('Matching schema is not defined')
+
+    return this.fit(value, this.#match)
   }
 
   validate (value, message) {
@@ -82,14 +93,16 @@ const schema = (cos, options) => {
   const validate = create(schema, options)
 
   let validateOptional
+  let match
 
   if (schema.type === 'object') {
-    const { required, ...rest } = schema
+    const { required, ...optional } = schema
 
-    validateOptional = ajv().compile(rest)
+    validateOptional = create(optional)
+    match = create(optional, { useDefaults: false })
   }
 
-  return new Schema(validate, validateOptional)
+  return new Schema(validate, validateOptional, match)
 }
 
 exports.Schema = Schema

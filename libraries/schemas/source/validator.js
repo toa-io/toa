@@ -19,8 +19,8 @@ function is (schema) {
  * @param {object[]} [schemas]
  * @param {object} [additional]
  */
-function ajv (schemas, additional = {}) {
-  const options = Object.assign({ schemas }, additional, OPTIONS)
+function ajv (schemas, override = {}) {
+  const options = Object.assign({ schemas }, OPTIONS, override)
   const ajv = new Ajv(options)
 
   formats(ajv)

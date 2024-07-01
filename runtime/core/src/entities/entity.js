@@ -29,7 +29,7 @@ class Entity {
     const error = optional ? this.#schema.fitOptional(value) : this.#schema.fit(value)
 
     if (error !== null)
-      throw new EntityContractException(error)
+      throw new EntityContractException(error, value)
 
     this.#set(value)
   }
