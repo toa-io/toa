@@ -39,7 +39,7 @@ Feature: Errors
       404 Not Found
       content-type: application/json
 
-      "Trailing slash is required."
+      "Trailing slash is required"
       """
 
   Scenario: Missing method
@@ -110,7 +110,7 @@ Feature: Errors
       400 Bad Request
       content-type: text/plain
 
-      Query limit must be between 1 and 1000 inclusive.
+      Query limit must be between 1 and 100 inclusive
       """
 
   Scenario: Closed query criteria
@@ -121,7 +121,7 @@ Feature: Errors
           GET:
             endpoint: enumerate
             query:
-              criteria: temerature>60
+              criteria: temperature>60
       """
     When the following request is received:
       """
@@ -156,7 +156,7 @@ Feature: Errors
       400 Bad Request
       content-type: text/plain
 
-      Query must NOT have additional properties
+      Query Property foo is not expected to be here
       """
 
   Scenario: Malformed authorization header
@@ -176,7 +176,7 @@ Feature: Errors
       """
       401 Unauthorized
 
-      Malformed authorization header.
+      Malformed authorization header
       """
 
   Scenario Outline: Exception is thrown (debug: <debug>)

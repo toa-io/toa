@@ -73,7 +73,7 @@ class Operation extends Connector {
     const reply = await this.#cascade.run(request.input, state)
 
     // validate reply only on local environments
-    if (process.env.TOA_ENV === 'local')
+    if (process.env.TOA_ENV === 'local' && !(reply instanceof Readable))
       this.#contracts.reply.fit(reply)
 
     store.reply = reply
