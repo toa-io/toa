@@ -1,5 +1,6 @@
 'use strict'
 
+const { Readable } = require('node:stream')
 const { SystemException } = require('../exceptions')
 
 class Contract {
