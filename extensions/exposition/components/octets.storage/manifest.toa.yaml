@@ -11,6 +11,11 @@ operations:
       request*: ~
       accept: string
       meta: <string>
+      trust: ~ # array of strings or regular expressions
+    errors:
+      - LOCATION_UNTRUSTED
+      - LOCATION_LENGTH
+      - LOCATION_UNAVAILABLE
   fetch: &simple
     bindings: ~
     input:

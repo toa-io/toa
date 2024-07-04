@@ -1,3 +1,4 @@
 accept+: string
 workflow+: <string>
+trust: [string]
 _: true

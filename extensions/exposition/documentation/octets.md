@@ -72,12 +72,15 @@ If the Entry already exists, the `content-meta` header is ignored.
 
 ### Downloading external content
 
-The `octets:store` directive can be used to download external:
+The `octets:store` directive can be used to download external content:
 
 ```http
 POST /images/ HTTP/1.1
 content-location: https://example.com/image.jpg
+content-length: 0
 ```
+
+Requests with `content-location` header must have an empty body (`content-length: 0` header).
 
 Target origin must be allowed by the `trust` property,
 which can contain a list of trusted origins or regular expressions to match the full URL.
@@ -89,7 +92,7 @@ which can contain a list of trusted origins or regular expressions to match the 
     octets:store:
       trust:
         - https://example.com
-        - ^https://example\.com/[a-z]+\.jpg$
+        - ^https://example\.com/[a-z]+\.jpe?g$
 ```
 
 ### Response
