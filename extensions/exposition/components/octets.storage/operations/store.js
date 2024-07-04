@@ -18,19 +18,19 @@ async function store (input, context) {
 }
 
 /**
- * @param {string | string[] | undefined} value
+ * @param {string | string[] | undefined} values
  * @returns {Record<string, string>}
  */
-function parseMeta (value) {
+function parseMeta (values) {
   const meta = {}
 
-  if (value === undefined)
+  if (values === undefined)
     return meta
 
-  if (Array.isArray(value))
-    value = value.join(',')
+  if (typeof values === 'string')
+    values = values.split(',')
 
-  for (const pair of value.split(',')) {
+  for (const pair of values) {
     const eq = pair.indexOf('=')
     const key = (eq === -1 ? pair : pair.slice(0, eq)).trim()
 
