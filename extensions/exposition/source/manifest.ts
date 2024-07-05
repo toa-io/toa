@@ -42,8 +42,8 @@ function specifyMethod (method: Method, manifest: Manifest): void {
 
   assert.ok(operation !== undefined, `Operation '${method.mapping.endpoint}' not found`)
 
-  if (method.mapping.query === undefined && operation.query !== false)
-    method.mapping.query = {} as unknown as Query
+  if (method.mapping.query === undefined)
+    method.mapping.query = operation.query === false ? null : {} as unknown as Query
 
   method.mapping.namespace = manifest.namespace
   method.mapping.component = manifest.name
