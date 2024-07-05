@@ -13,7 +13,7 @@ export class Query {
   private readonly prepend: ',' | ';' = ';'
   private readonly queryable: boolean
 
-  public constructor (query: syntax.Query = {}) {
+  public constructor (query: syntax.Query) {
     this.queryable = queryable(query)
 
     if (this.queryable) {

@@ -13,8 +13,8 @@ export abstract class Mapping {
     this.query = query
   }
 
-  public static create (query?: syntax.Query): Mapping {
-    const q = new Query(query)
+  public static create (query?: syntax.Query | null): Mapping {
+    const q = new Query(query!)
 
     return queryable(query)
       ? new QueryableMapping(q)
@@ -82,7 +82,7 @@ class InputMapping extends Mapping {
   }
 }
 
-export function queryable (query?: syntax.Query): boolean {
+export function queryable (query?: syntax.Query | null): boolean {
   if (query === undefined || query === null)
     return false
 
