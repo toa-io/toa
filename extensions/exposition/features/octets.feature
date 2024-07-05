@@ -183,7 +183,7 @@ Feature: Octets directive family
       type: image/svg+xml
       """
 
-    Scenario: Rejection video/avi
+  Scenario: Rejection video/avi
     When the stream of `sample.avi` is received with the following headers:
       """
       POST /media/images/ HTTP/1.1

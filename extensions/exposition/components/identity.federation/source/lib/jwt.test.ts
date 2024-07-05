@@ -1,5 +1,9 @@
+import * as http from 'node:http'
+
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { validateSignature, decodeJwt, validateJwtPayload } from './jwt'
+import { once } from 'node:events'
+import { validateSignature, decodeJwt, validateJwtPayload, cachedFetch } from './jwt'
+import type { AddressInfo } from 'node:net'
 import type { IdToken, JwtHeader, Trust } from '../types'
 
 describe('jwt', () => {
@@ -98,5 +102,74 @@ describe('jwt', () => {
         }
       ]
     } as Parameters<typeof validateSignature>[0])).rejects.toThrow('Signature does not match')
+  })
+
+  describe.skip('cachedFetch', () => {
+    let server: http.Server
+    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+    const handler = jest.fn<void, [http.IncomingMessage, http.ServerResponse]>()
+    let endpoint: string
+
+    beforeAll(async () => {
+      server = http.createServer(handler)
+
+      server.listen(0, 'localhost')
+      await once(server, 'listening')
+
+      const { address, port } = server.address() as AddressInfo
+
+      endpoint = `http://${address}:${port}`
+    })
+
+    afterEach(() => {
+      handler.mockReset()
+    })
+
+    afterAll(async () => {
+      server.close()
+      await once(server, 'close')
+    })
+
+    test('fetches only once', async () => {
+      handler.mockImplementationOnce((req, res) => {
+        res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'public, max-age=3600' })
+        res.end(JSON.stringify({ foo: 'bar' }))
+      }).mockImplementationOnce((req, res) => {
+        res.writeHead(500)
+        res.end()
+      })
+
+      const firstRequest = await cachedFetch(endpoint)
+
+      expect(firstRequest.ok).toBe(true)
+      await expect(firstRequest.json()).resolves.toEqual({ foo: 'bar' })
+
+      const secondRequest = await cachedFetch(endpoint)
+
+      expect(secondRequest.ok).toBe(true)
+      await expect(secondRequest.json()).resolves.toEqual({ foo: 'bar' })
+
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    test('respects caching headers', async () => {
+      handler.mockImplementation((req, res) => {
+        res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-cache' })
+        res.end(JSON.stringify({ foo: 'bar' }))
+      })
+
+      const firstRequest = await cachedFetch(endpoint + '/no-cache')
+
+      expect(firstRequest.headers.get('cache-control')).toBe('no-cache')
+      expect(firstRequest.ok).toBe(true)
+      await expect(firstRequest.json()).resolves.toEqual({ foo: 'bar' })
+
+      const secondRequest = await cachedFetch(endpoint + '/no-cache')
+
+      expect(secondRequest.ok).toBe(true)
+      await expect(secondRequest.json()).resolves.toEqual({ foo: 'bar' })
+
+      expect(handler).toHaveBeenCalledTimes(2)
+    })
   })
 })

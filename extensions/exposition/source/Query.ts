@@ -95,7 +95,7 @@ export class Query {
           delete query[key]
         }
 
-    if (!this.queryable && Object.keys(query).length === 0)
+    if (!this.queryable)
       query = null!
 
     return {

@@ -28,7 +28,7 @@ export interface Mapping {
   namespace?: string
   component?: string
   endpoint: string
-  query?: Query
+  query?: Query | null
 }
 
 export interface Query {

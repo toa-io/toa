@@ -1,9 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./operations"
+    "outDir": "./operations",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "target": "ES2022"
   },
-  "include": [
-    "source"
-  ]
+  "include": ["source"]
 }

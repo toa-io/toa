@@ -101,3 +101,28 @@ Feature: Optimistic concurrency control
 
       Invalid ETag.
       """
+
+  Scenario: Etag with non-queryable operation
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:foo/:id:
+          GET:
+            io:output: true
+            vary:embed:
+              name: :if-match
+            endpoint: affect
+      """
+    When the following request is received:
+      """
+      GET /echo/foo/Bob/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      if-match: "1"
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello "1"
+      """

@@ -1,6 +1,6 @@
 import { PassThrough } from 'node:stream'
 import { match } from 'matchacho'
-import { BadRequest, UnsupportedMediaType } from '../../HTTP'
+import * as http from '../../HTTP'
 import { cors } from '../cors'
 import * as schemas from './schemas'
 import { Workflow } from './workflows'
@@ -19,6 +19,7 @@ export class Store extends Directive {
   public readonly targeted = false
 
   private readonly accept?: string
+  private readonly trust?: Array<string | RegExp>
   private readonly workflow?: Workflow
   private readonly discovery: Record<string, Promise<Component>> = {}
   private storage: Component | null = null
@@ -36,6 +37,10 @@ export class Store extends Directive {
     if (options?.workflow !== undefined)
       this.workflow = new Workflow(options.workflow, remotes)
 
+    if (options?.trust !== undefined)
+      this.trust = options.trust.map((value: string) =>
+        value.startsWith('/') ? new RegExp(value.slice(1, -1)) : value)
+
     this.discovery.storage = discovery
 
     cors.allow('content-meta')
@@ -47,7 +52,8 @@ export class Store extends Directive {
     const request: StoreRequest = {
       input: {
         storage,
-        request: input.request
+        request: input.request,
+        trust: this.trust
       }
     }
 
@@ -57,7 +63,7 @@ export class Store extends Directive {
       request.input.accept = this.accept
 
     if (meta !== undefined)
-      request.input.meta = this.parseMeta(meta)
+      request.input.meta = this.meta(meta)
 
     const entry = await this.storage.invoke<Entry>('store', request)
 
@@ -89,12 +95,15 @@ export class Store extends Directive {
 
   private throw (error: ErrorType): never {
     throw match(error.code,
-      'NOT_ACCEPTABLE', () => new UnsupportedMediaType(),
-      'TYPE_MISMATCH', () => new BadRequest(),
+      'NOT_ACCEPTABLE', () => new http.UnsupportedMediaType(),
+      'TYPE_MISMATCH', () => new http.BadRequest(),
+      'LOCATION_UNTRUSTED', () => new http.Forbidden(error.message),
+      'LOCATION_LENGTH', () => new http.BadRequest(error.message),
+      'LOCATION_UNAVAILABLE', () => new http.NotFound(error.message),
       error)
   }
 
-  private parseMeta (value: string | string[]): Record<string, string> {
+  private meta (value: string | string[]): Record<string, string> {
     if (Array.isArray(value))
       value = value.join(',')
 
@@ -114,6 +123,7 @@ export class Store extends Directive {
 export interface Options {
   accept?: string | string[]
   workflow?: Unit[] | Unit
+  trust?: string[]
 }
 
 interface StoreRequest {
@@ -121,6 +131,7 @@ interface StoreRequest {
     storage: string
     request: Input['request']
     accept?: string
+    trust?: Array<string | RegExp>
     meta?: Record<string, string>
   }
 }

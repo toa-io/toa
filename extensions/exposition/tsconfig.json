@@ -1,12 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./transpiled"
+    "outDir": "./transpiled",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "target": "ES2022"
   },
-  "include": [
-    "source"
-  ],
-  "exclude": [
-    "**/*.test.ts"
-  ]
+  "include": ["source"],
+  "exclude": ["**/*.test.ts"],
+  "ts-node": {
+    "swc": true
+  }
 }
