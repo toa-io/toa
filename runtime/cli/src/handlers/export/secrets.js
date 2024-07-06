@@ -5,7 +5,7 @@ const { context: find } = require('../../util/find')
 const { deployment: { Factory } } = require('@toa.io/operations')
 
 /**
- * @param {{ path: string, target: string, environment?: string }} argv
+ * @param {{ path: string, target: string, environment: string }} argv
  * @returns {Promise<void>}
  */
 const secrets = async (argv) => {

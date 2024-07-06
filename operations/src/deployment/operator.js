@@ -50,6 +50,10 @@ class Operator {
   variables () {
     return this.#deployment.variables()
   }
+
+  tags () {
+    return this.#registry.tags()
+  }
 }
 
 /** @type {toa.deployment.installation.Options} */
