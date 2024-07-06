@@ -160,3 +160,28 @@ Feature: Download and store
       """
       413 Request Entity Too Large
       """
+
+  Scenario: Allow `content-location` request header
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            limit: 1kb
+            trust:
+              - https://avatars.githubusercontent.com
+      """
+    When the following request is received:
+      """
+      OPTIONS / HTTP/1.1
+      host: nex.toa.io
+      origin: https://hello.world
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-meta, content-location
+      """

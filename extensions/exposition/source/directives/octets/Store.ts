@@ -47,6 +47,7 @@ export class Store extends Directive {
     this.discovery.storage = discovery
 
     cors.allow('content-meta')
+    cors.allow('content-location')
   }
 
   public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
