@@ -10,10 +10,8 @@ import type { Unit } from './workflows'
 const path = resolve(__dirname, '../../../schemas/octets')
 const namespace = schemas.namespace(path)
 
-export const context: Schema<string> = namespace.schema('context')
 export const store: Schema<StoreOptions | null> = namespace.schema('store')
 export const fetch: Schema<FetchOptions | null> = namespace.schema('fetch')
 export const remove: Schema<DeleteOptions | null> = namespace.schema('delete')
 export const list: Schema<ListOptions | null> = namespace.schema('list')
-export const permute: Schema<null> = namespace.schema('permute')
 export const workflow: Schema<Unit[] | Unit> = namespace.schema('workflow')
