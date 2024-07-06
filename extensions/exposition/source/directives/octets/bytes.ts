@@ -1,8 +1,9 @@
+import assert from 'node:assert'
+
 export function toBytes (input: string): number {
   const match = RX.exec(input)
 
-  if (match === null)
-    throw new TypeError(`Invalid bytes format: ${input}`)
+  assert.ok(match !== null, `Invalid bytes format: ${input}`)
 
   const value = parseFloat(match.groups!.value)
   const prefix = match.groups!.prefix?.[0].toLowerCase() ?? ''
