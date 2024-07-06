@@ -134,3 +134,29 @@ Feature: Download and store
       | type       | location                                   |
       | origin     | https://avatars.githubusercontent.com      |
       | expression | /^https://avatars\.githubusercontent\.com/ |
+
+  Scenario: Download size limit
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            limit: 1kb
+            trust:
+              - https://avatars.githubusercontent.com
+      """
+    When the following request is received:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      content-location: https://avatars.githubusercontent.com/u/92763022?s=48&v=4
+      content-length: 0
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      413 Request Entity Too Large
+      """

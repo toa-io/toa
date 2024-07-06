@@ -1,4 +1,25 @@
-accept+: string
-workflow+: <string>
-trust: [string]
-_: true
+type: object
+nullable: true
+properties:
+  accept:
+    anyOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+  limit:
+    type: string
+    pattern: ^(\d+(\.\d+)?)([kmgtKMBGT]i?)?[bB]?$
+  trust:
+    type: array
+    items:
+      type: string
+  workflow:
+    anyOf:
+      - &unit
+        type: object
+        patternProperties:
+          ^.+$:
+            type: string
+      - type: array
+        items: *unit

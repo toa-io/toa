@@ -5,6 +5,7 @@ import { cors } from '../cors'
 import * as schemas from './schemas'
 import { Workflow } from './workflows'
 import { Directive } from './Directive'
+import { toBytes } from './bytes'
 import type { Readable } from 'stream'
 import type { Parameter } from '../../RTD'
 import type { Unit } from './workflows'
@@ -19,6 +20,7 @@ export class Store extends Directive {
   public readonly targeted = false
 
   private readonly accept?: string
+  private readonly limit: number
   private readonly trust?: Array<string | RegExp>
   private readonly workflow?: Workflow
   private readonly discovery: Record<string, Promise<Component>> = {}
@@ -41,6 +43,7 @@ export class Store extends Directive {
       this.trust = options.trust.map((value: string) =>
         value.startsWith('/') ? new RegExp(value.slice(1, -1)) : value)
 
+    this.limit = toBytes(options?.limit ?? '64MiB')
     this.discovery.storage = discovery
 
     cors.allow('content-meta')
@@ -53,14 +56,13 @@ export class Store extends Directive {
       input: {
         storage,
         request: input.request,
+        accept: this.accept,
+        limit: this.limit,
         trust: this.trust
       }
     }
 
     const meta = input.request.headers['content-meta']
-
-    if (this.accept !== undefined)
-      request.input.accept = this.accept
 
     if (meta !== undefined)
       request.input.meta = this.meta(meta)
@@ -97,6 +99,7 @@ export class Store extends Directive {
     throw match(error.code,
       'NOT_ACCEPTABLE', () => new http.UnsupportedMediaType(),
       'TYPE_MISMATCH', () => new http.BadRequest(),
+      'LIMIT_EXCEEDED', () => new http.RequestEntityTooLarge(error.message),
       'LOCATION_UNTRUSTED', () => new http.Forbidden(error.message),
       'LOCATION_LENGTH', () => new http.BadRequest(error.message),
       'LOCATION_UNAVAILABLE', () => new http.NotFound(error.message),
@@ -122,6 +125,7 @@ export class Store extends Directive {
 
 export interface Options {
   accept?: string | string[]
+  limit?: string
   workflow?: Unit[] | Unit
   trust?: string[]
 }
@@ -131,6 +135,7 @@ interface StoreRequest {
     storage: string
     request: Input['request']
     accept?: string
+    limit?: number
     trust?: Array<string | RegExp>
     meta?: Record<string, string>
   }
