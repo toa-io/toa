@@ -160,10 +160,13 @@ Feature: Octets directive family
       POST /limit-1kb/ HTTP/1.1
       host: nex.toa.io
       content-type: image/jpeg
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       413 Request Entity Too Large
+
+      Size limit is 1kb
       """
 
     When the stream of `albert.jpg` is received with the following headers:

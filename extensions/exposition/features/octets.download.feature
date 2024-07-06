@@ -154,11 +154,13 @@ Feature: Download and store
       host: nex.toa.io
       content-location: https://avatars.githubusercontent.com/u/92763022?s=48&v=4
       content-length: 0
-      accept: application/yaml
+      accept: text/plain
       """
     Then the following reply is sent:
       """
       413 Request Entity Too Large
+
+      Size limit is 1kb
       """
 
   Scenario: Allow `content-location` request header
