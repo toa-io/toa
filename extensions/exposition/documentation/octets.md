@@ -25,8 +25,7 @@ the request is rejected with a `415 Unsupported Media Type` response.
 
 The value of the directive is `null` or an object with the following properties:
 
-- `limit`: [maximum size](#stream-size-limit) of the incoming stream
-  (default is 64MB, which should be enough for everyone ©).
+- `limit`: [maximum size](#stream-size-limit) of the incoming stream.
 - `accept`: a media type or an array of media types that are acceptable.
   If the `accept` property is not specified, any media type is acceptable (which is the default).
 - `workflow`: [workflow](#workflows) to be executed once the content is successfully stored.
@@ -82,6 +81,8 @@ it will default to a binary prefix interpretation.
 - `10KB`: 1000 bytes
 - `10KiB`: 1024 bytes
 - `10kb`: 1024 bytes
+
+The default value is `64MiB`.
 
 ### Downloading external content
 
