@@ -85,6 +85,9 @@ Requests with `content-location` header must have an empty body (`content-length
 Target origin must be allowed by the `trust` property,
 which can contain a list of trusted origins or regular expressions to match the full URL.
 
+URL of the downloaded content is stored in the `origin` property of
+the [Entry](/extensions/storages/readme.md#entry).
+
 ```yaml
 /images:
   octets:context: images

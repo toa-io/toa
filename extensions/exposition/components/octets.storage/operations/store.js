@@ -9,12 +9,31 @@ async function store (input, context) {
   const path = request.url
   const claim = request.headers['content-type']
   const meta = parseMeta(request.headers['content-meta'])
-  const body = await download(request, trust)
+  const location = request.headers['content-location']
 
-  if (body instanceof Error)
-    return body
+  /** @type {Readable} */
+  let body = request
 
-  return context.storages[storage].put(path, body, { claim, accept, meta })
+  const options = { claim, accept, meta }
+
+  if (location !== undefined) {
+    const length = Number.parseInt(request.headers['content-length'])
+
+    if (length !== 0)
+      return ERR_LENGTH
+
+    if (!trusted(location, trust))
+      return ERR_UNTRUSTED
+
+    body = await download(location)
+
+    if (body instanceof Error)
+      return body
+
+    options.origin = location
+  }
+
+  return context.storages[storage].put(path, body, options)
 }
 
 /**
@@ -41,25 +60,10 @@ function parseMeta (values) {
 }
 
 /**
- * @param {Request} request
- * @param {Trust | undefined} trust
- * @return {import('node:stream').Readable | Error}
+ * @param {string} location
+ * @return {Readable | Error}
  */
-async function download (request, trust) {
-  /** @type {string | undefined} */
-  const location = request.headers['content-location']
-
-  if (location === undefined)
-    return request
-
-  const length = Number.parseInt(request.headers['content-length'])
-
-  if (length !== 0)
-    return ERR_LENGTH
-
-  if (!trusted(location, trust))
-    return ERR_UNTRUSTED
-
+async function download (location) {
   const response = await fetch(location)
 
   if (!response.ok)
@@ -111,3 +115,4 @@ const ERR_UNAVAILABLE = Err('LOCATION_UNAVAILABLE', 'Location is not available')
 exports.effect = store
 
 /** @typedef {Array<string | RegExp>} Trust */
+/** @typedef {import('node:stream').Readable} Readable */

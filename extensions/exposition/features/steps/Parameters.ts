@@ -16,6 +16,6 @@ process.env.TOA_DEV = '1'
 process.env.TOA_STORAGES = encode({
   octets: {
     provider: 'tmp',
-    directory: 'exposition'
+    directory: Math.random().toString(36).substring(2)
   }
 })

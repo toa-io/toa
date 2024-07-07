@@ -9,6 +9,7 @@ BLOBs are stored with the meta-information object (Entry) having the following p
 - `id` - checksum
 - `size` - size in bytes
 - `type` - MIME type
+- `origin` - URL of the original BLOB (optional)
 - `created` - creation timestamp (UNIX time, ms)
 - `variants` - array of:
   - `name` - unique name

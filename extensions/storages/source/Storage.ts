@@ -28,7 +28,17 @@ export class Storage {
 
     await this.persist(tempname, id)
 
-    return await this.create(path, id, scanner.size, scanner.type, options?.meta)
+    const entry: Entry = {
+      id,
+      size: scanner.size,
+      type: scanner.type,
+      origin: options?.origin,
+      created: Date.now(),
+      variants: [],
+      meta: options?.meta ?? {}
+    }
+
+    return await this.create(path, entry)
   }
 
   public async get (path: string): Maybe<Entry> {
@@ -160,16 +170,7 @@ export class Storage {
 
   // eslint-disable-next-line max-params
   private async create
-  (path: string, id: string, size: number, type: string, meta: Meta = {}): Promise<Entry> {
-    const entry: Entry = {
-      id,
-      size,
-      type,
-      created: Date.now(),
-      variants: [],
-      meta
-    }
-
+  (path: string, entry: Entry): Promise<Entry> {
     const metafile = posix.join(path, entry.id)
     const existing = await this.get(metafile)
 
@@ -234,6 +235,7 @@ interface Paths {
 type Meta = Record<string, string>
 
 interface Options extends ScanOptions {
+  origin?: string
   meta?: Meta
 }
 

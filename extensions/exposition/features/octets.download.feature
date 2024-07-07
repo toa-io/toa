@@ -14,7 +14,8 @@ Feature: Download and store
               - https://github.com
         /*:
           GET:
-            octets:fetch: ~
+            octets:fetch:
+              meta: true
       """
 
     When the following request is received:
@@ -43,6 +44,24 @@ Feature: Download and store
       200 OK
       content-type: image/png
       content-length: 1288
+      etag: "${{ id }}"
+      """
+
+    # origin is stored in the entry
+    When the following request is received:
+      """
+      GET /${{ id }} HTTP/1.1
+      host: nex.toa.io
+      accept: application/vnd.toa.octets.entry+yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      id: ${{ id }}
+      type: image/png
+      origin: https://avatars.githubusercontent.com/u/92763022?s=48&v=4
       """
 
     # untrusted location
