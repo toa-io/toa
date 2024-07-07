@@ -77,10 +77,10 @@ Both [binary and decimal prefixes](https://en.wikipedia.org/wiki/Binary_prefix) 
 If the prefix or unit is specified _incorrectly_ (e.g., `1mb`),
 it will default to a binary prefix interpretation.
 
-- `10b`, `10B`: 10 bytes
-- `10KB`: 1000 bytes
-- `10KiB`: 1024 bytes
-- `10kb`: 1024 bytes
+- `1b`, `1B`: 1 byte
+- `1KB`: 1000 bytes
+- `1KiB`: 1024 bytes
+- `1kb`: 1024 bytes
 
 The default value is `64MiB`.
 
