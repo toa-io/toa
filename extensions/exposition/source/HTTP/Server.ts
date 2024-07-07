@@ -142,7 +142,7 @@ export const PORT = 8000
 export const DELAY = 3 // seconds
 
 const DEFAULTS: Omit<Properties, 'authorities'> = {
-  methods: new Set<string>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']),
+  methods: new Set<string>(['OPTIONS', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
   debug: false,
   trace: false,
   port: PORT,

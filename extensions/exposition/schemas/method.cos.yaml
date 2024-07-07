@@ -1,4 +1,4 @@
-verb: /^(GET|POST|PUT|PATCH|DELETE)$/
+verb: /^(GET|POST|PUT|PATCH|DELETE|LOCK|UNLOCK)$/
 mapping:
   namespace: string
   component: string
