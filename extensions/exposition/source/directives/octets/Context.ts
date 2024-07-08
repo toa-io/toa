@@ -9,7 +9,7 @@ export class Context extends Directive {
   public constructor (value: unknown) {
     super()
 
-    assert.ok(typeof value === 'string', 'Incorrect \'octets:context\' format')
+    assert.ok(typeof value === 'string', 'Directive \'octets:context\' must must be a string')
 
     this.storage = value
   }
