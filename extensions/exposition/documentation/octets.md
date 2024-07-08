@@ -25,10 +25,7 @@ the request is rejected with a `415 Unsupported Media Type` response.
 
 The value of the directive is `null` or an object with the following properties:
 
-- `limit`: a number of bytes (or
-  a [string with units](https://www.npmjs.com/package/bytes#bytesparsestringnumber-value-numbernull))
-  to limit the size of the uploaded content
-  (default is 64MB, which should be enough for everyone ©).
+- `limit`: [maximum size](#stream-size-limit) of the incoming stream.
 - `accept`: a media type or an array of media types that are acceptable.
   If the `accept` property is not specified, any media type is acceptable (which is the default).
 - `workflow`: [workflow](#workflows) to be executed once the content is successfully stored.
@@ -70,6 +67,23 @@ meta:
 
 If the Entry already exists, the `content-meta` header is ignored.
 
+### Stream size limit
+
+The `limit` property can be used to set the maximum size of the incoming stream in bytes.
+
+The property value can be specified as a number
+(representing bytes) or a string that combines a number with a unit (e.g., `1MB`).
+Both [binary and decimal prefixes](https://en.wikipedia.org/wiki/Binary_prefix) are supported.
+If the prefix or unit is specified _incorrectly_ (e.g., `1mb`),
+it will default to a binary prefix interpretation.
+
+- `1b`, `1B`: 1 byte
+- `1KB`: 1000 bytes
+- `1KiB`: 1024 bytes
+- `1kb`: 1024 bytes
+
+The default value is `64MiB`.
+
 ### Downloading external content
 
 The `octets:store` directive can be used to download external content:
@@ -84,6 +98,9 @@ Requests with `content-location` header must have an empty body (`content-length
 
 Target origin must be allowed by the `trust` property,
 which can contain a list of trusted origins or regular expressions to match the full URL.
+
+URL of the downloaded content is stored in the `origin` property of
+the [Entry](/extensions/storages/readme.md#entry).
 
 ```yaml
 /images:

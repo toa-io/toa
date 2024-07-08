@@ -470,7 +470,6 @@ it('should accept wildcard types', async () => {
 
 it('should handle root entries', async () => {
   const stream = createReadStream('sample.jpeg')
-
   const result = (await storage.put('hello', stream)) as Entry
 
   expect(result).not.toBeInstanceOf(Error)
@@ -493,4 +492,26 @@ it('should store empty file', async () => {
   const buf = await buffer(stored)
 
   expect(buf).toHaveLength(0)
+})
+
+it('should return error of stream size limit exceeded', async () => {
+  const stream = createReadStream('sample.jpeg')
+  const result = await storage.put(dir, stream, { limit: 1024 })
+
+  expect(result).toBeInstanceOf(Error)
+  expect(result).toHaveProperty('code', 'LIMIT_EXCEEDED')
+})
+
+it('should set origin', async () => {
+  const origin = 'https://example.com/image.jpeg'
+  const stream = createReadStream('sample.jpeg')
+  const result = (await storage.put('/origins', stream, { origin })) as Entry
+
+  assert.ok(!(result instanceof Error))
+
+  const stored = await storage.get('/origins/' + result.id)
+
+  assert.ok(!(stored instanceof Error))
+
+  expect(stored.origin).toBe(origin)
 })

@@ -64,7 +64,7 @@ export class Fetch extends Directive {
     const headers = new Headers({
       'content-type': result.type,
       'content-length': result.size.toString(),
-      etag: result.checksum
+      etag: `"${result.checksum}"`
     })
 
     return {

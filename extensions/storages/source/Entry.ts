@@ -3,6 +3,7 @@ export interface Entry {
   size: number
   type: string
   created: number
+  origin?: string
   variants: Variant[]
   meta: Record<string, unknown>
 }

@@ -12,7 +12,7 @@ export class Input implements Directive {
   }
 
   public static validate (permissions: unknown): asserts permissions is Permissions {
-    schemas.input.validate(permissions, 'Incorrect \'io:input\' format')
+    schemas.input.validate<Permissions>(permissions, 'Incorrect \'io:input\' format')
   }
 
   public attach (context: Context): void {
@@ -21,7 +21,7 @@ export class Input implements Directive {
 
   private check (body: unknown): unknown {
     try {
-      schemas.message.validate(body)
+      schemas.message.validate<Message | Message[]>(body)
     } catch {
       throw new BadRequest('Invalid request body')
     }

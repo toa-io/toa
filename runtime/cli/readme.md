@@ -83,6 +83,16 @@ Credentials specified in the output file are preserved.
 </dd>
 </dl>
 
+### export image tags
+
+<dl>
+<dt><code>toa export tags &lt;environment&gt;</code></dt>
+<dd>Print image tags.
+
+<code>--path</code> path to context (default <code>.</code>)<br/>
+</dd>
+</dl>
+
 ## Operations
 
 > Some commands use current `kubectl` and `docker` context.

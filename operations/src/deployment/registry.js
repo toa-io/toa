@@ -51,6 +51,10 @@ class Registry {
     for (const image of this.#images) await this.#push(image)
   }
 
+  tags () {
+    return this.#images.map((image) => image.reference)
+  }
+
   /**
    * @param {'composition' | 'service'} type
    * @param {...any} args

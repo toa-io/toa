@@ -11,8 +11,9 @@ export class Scanner extends PassThrough {
   private readonly hash = createHash('md5')
   private readonly claim?: string
   private readonly accept?: string
+  private readonly limit?: number
   private position = 0
-  private detected = false
+  private completed = false
   private readonly chunks: Buffer[] = []
 
   public constructor (control?: ScanOptions) {
@@ -20,6 +21,7 @@ export class Scanner extends PassThrough {
 
     this.claim = control?.claim
     this.accept = control?.accept
+    this.limit = control?.limit
   }
 
   public digest (): string {
@@ -37,7 +39,7 @@ export class Scanner extends PassThrough {
     this.size += buffer.length
     this.hash.update(buffer)
 
-    if (this.detected)
+    if (this.completed)
       return
 
     if (this.position + buffer.length > HEADER_SIZE)
@@ -48,6 +50,9 @@ export class Scanner extends PassThrough {
 
     if (this.position === HEADER_SIZE)
       this.complete()
+
+    if (this.limit !== undefined && this.size > this.limit)
+      this.interrupt(ERR_LIMIT_EXCEEDED)
   }
 
   private complete (): void {
@@ -70,7 +75,7 @@ export class Scanner extends PassThrough {
     }
 
     this.verify(signature)
-    this.detected = true
+    this.completed = true
   }
 
   private verify (signature: Signature | undefined): void {
@@ -96,6 +101,7 @@ export class Scanner extends PassThrough {
   }
 
   private interrupt (error: Error): void {
+    this.completed = true
     this.error = error
     this.end()
   }
@@ -140,10 +146,12 @@ const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
 const ERR_TYPE_MISMATCH = Err('TYPE_MISMATCH')
 const ERR_NOT_ACCEPTABLE = Err('NOT_ACCEPTABLE')
+const ERR_LIMIT_EXCEEDED = Err('LIMIT_EXCEEDED')
 
 export interface ScanOptions {
   claim?: string
   accept?: string
+  limit?: number
 }
 
 interface Signature {

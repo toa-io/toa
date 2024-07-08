@@ -1,8 +1,8 @@
-declare namespace toa.schemas{
+declare namespace toa.schemas {
 
   type is = (object: object) => boolean
 
-  namespace constructors{
+  namespace constructors {
 
     type schema = (schema: any) => Schema
 
@@ -16,15 +16,14 @@ declare namespace toa.schemas{
     path?: string
   }
 
-
 }
 
-export interface Schema<T = any>{
+export interface Schema<T = any> {
   id: string
 
   fit (value: any): Error | null
 
-  validate (value: unknown, message?: string): asserts value is T
+  validate<T> (value: unknown, message?: string): asserts value is T
 }
 
 export type schema = toa.schemas.constructors.schema
