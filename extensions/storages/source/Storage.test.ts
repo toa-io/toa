@@ -494,6 +494,14 @@ it('should store empty file', async () => {
   expect(buf).toHaveLength(0)
 })
 
+it('should return error of stream size limit exceeded', async () => {
+  const stream = createReadStream('sample.jpeg')
+  const result = await storage.put(dir, stream, { limit: 1024 })
+
+  expect(result).toBeInstanceOf(Error)
+  expect(result).toHaveProperty('code', 'LIMIT_EXCEEDED')
+})
+
 it('should set origin', async () => {
   const origin = 'https://example.com/image.jpeg'
   const stream = createReadStream('sample.jpeg')

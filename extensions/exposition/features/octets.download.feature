@@ -134,3 +134,56 @@ Feature: Download and store
       | type       | location                                   |
       | origin     | https://avatars.githubusercontent.com      |
       | expression | /^https://avatars\.githubusercontent\.com/ |
+
+  Scenario: Download size limit
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            limit: 1kb
+            trust:
+              - https://avatars.githubusercontent.com
+      """
+    When the following request is received:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      content-location: https://avatars.githubusercontent.com/u/92763022?s=48&v=4
+      content-length: 0
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      413 Request Entity Too Large
+
+      Size limit is 1kb
+      """
+
+  Scenario: Allow `content-location` request header
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:store:
+            limit: 1kb
+            trust:
+              - https://avatars.githubusercontent.com
+      """
+    When the following request is received:
+      """
+      OPTIONS / HTTP/1.1
+      host: nex.toa.io
+      origin: https://hello.world
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-meta, content-location
+      """

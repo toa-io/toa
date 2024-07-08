@@ -10,6 +10,7 @@ operations:
       storage*: string
       request*: ~
       accept: string
+      limit: number
       meta: <string>
       trust: ~ # array of strings or regular expressions
     errors:

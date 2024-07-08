@@ -5,7 +5,7 @@ const { Err } = require('error-value')
 const { match } = require('matchacho')
 
 async function store (input, context) {
-  const { storage, request, accept, trust } = input
+  const { storage, request, accept, limit, trust } = input
   const path = request.url
   const claim = request.headers['content-type']
   const meta = parseMeta(request.headers['content-meta'])
@@ -32,6 +32,9 @@ async function store (input, context) {
 
     options.origin = location
   }
+
+  if (limit !== undefined)
+    options.limit = limit
 
   return context.storages[storage].put(path, body, options)
 }

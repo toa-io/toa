@@ -34,6 +34,14 @@ Feature: Octets directive family
             /*:
               GET:
                 octets:fetch: ~
+        /limit-1kb:
+          POST:
+            octets:store:
+              limit: 1kb
+        /limit-100kb:
+          POST:
+            octets:store:
+              limit: 100kb
       """
 
   Scenario: Basic storage operations
@@ -140,6 +148,32 @@ Feature: Octets directive family
       """
       POST /media/jpeg-or-png/ HTTP/1.1
       host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+
+  Scenario: Size limit
+    When the stream of `albert.jpg` is received with the following headers:
+      """
+      POST /limit-1kb/ HTTP/1.1
+      host: nex.toa.io
+      content-type: image/jpeg
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      413 Request Entity Too Large
+
+      Size limit is 1kb
+      """
+
+    When the stream of `albert.jpg` is received with the following headers:
+      """
+      POST /limit-100kb/ HTTP/1.1
+      host: nex.toa.io
+      content-type: image/jpeg
       """
     Then the following reply is sent:
       """

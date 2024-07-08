@@ -1,4 +1,4 @@
-import * as schemas from './schemas'
+import assert from 'node:assert'
 import { Directive } from './Directive'
 import type { Output } from '../../io'
 
@@ -8,7 +8,8 @@ export class Context extends Directive {
 
   public constructor (value: unknown) {
     super()
-    schemas.context.validate(value)
+
+    assert.ok(typeof value === 'string', 'Directive \'octets:context\' must must be a string')
 
     this.storage = value
   }

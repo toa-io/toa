@@ -71,3 +71,9 @@ export class PreconditionFailed extends ClientError {
     super(412)
   }
 }
+
+export class RequestEntityTooLarge extends ClientError {
+  public constructor (body?: any) {
+    super(413, body)
+  }
+}

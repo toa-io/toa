@@ -48,7 +48,7 @@ export class Output implements Directive {
         return
       }
 
-      schemas.message.validate(message.body,
+      schemas.message.validate<Message>(message.body,
         '\'io:output\' expects response to be an object or array of objects')
 
       if (Array.isArray(message.body))
