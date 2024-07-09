@@ -142,7 +142,7 @@ In cases where a URL matches multiple rules, denial takes priority.
 # context.toa.yaml
 origins:
   dummies.dummy:
-    http:
+    .http:
       /^https?:\/\/api.domain.com/: true
       /^http:\/\/sandbox.domain.com/@staging: true  # `staging` environment
       /.*hackers.*/: false                          # deny
