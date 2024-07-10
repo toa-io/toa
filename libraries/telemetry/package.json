@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/tomato",
+  "name": "openspan",
   "version": "1.0.0-alpha.59",
-  "description": "Gherkin Mock",
+  "description": "OpenTelemetry tools",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
