@@ -21,10 +21,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "source/index.js",
-  "types": "types/index.d.ts",
-  "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.59"
-  },
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
 }
