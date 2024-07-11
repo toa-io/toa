@@ -3,7 +3,7 @@
 function graceful (connector) {
   ['SIGTERM', 'SIGINT']
     .forEach(event => process.once(event, async () => {
-      console.info(event)
+      console.info(`Received ${event}, shutting down...`)
 
       await connector.disconnect()
     }))
