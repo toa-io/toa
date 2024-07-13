@@ -9,12 +9,11 @@ export class Console {
   public readonly warn = this.channel('warn')
   public readonly error = this.channel('error')
 
-  private context?: object
-
   private level: number = LEVELS.debug
   private formatter = formatters.json
   private stdout: NodeJS.WriteStream = process.stdout
   private stderr: NodeJS.WriteStream = process.stderr
+  private context?: object
 
   public constructor (options: Options = {}) {
     this.configure(options)

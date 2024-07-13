@@ -1,6 +1,7 @@
 'use strict'
 
 const knex = require('knex')
+const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 const { resolve } = require('@toa.io/pointer')
 const { ID } = require('./deployment')
@@ -23,12 +24,17 @@ class Connection extends Connector {
   }
 
   async open () {
-    this.#client = await this.#configure()
+    const config = await this.#configure()
+    this.#client = knex(config)
+
+    console.info('Connecting to SQL database', {
+      host: config.connection.host,
+      user: config.connection.user,
+      database: config.connection.database
+    })
 
     // https://github.com/knex/knex/issues/1886
     await this.#client.raw('select 1')
-
-    console.info('SQL storage connected')
   }
 
   async close () {
@@ -69,7 +75,7 @@ class Connection extends Connector {
       }
     }
 
-    return knex(config)
+    return config
   }
 
   async #resolveURLs () {

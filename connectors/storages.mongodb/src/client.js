@@ -108,7 +108,7 @@ class Client extends Connector {
     const client = new MongoClient(urls.join(','), OPTIONS)
     const hosts = urls.map((str) => new URL(str).host)
 
-    console.info('Connecting to MongoDB', { addr: hosts.join(', ') })
+    console.info('Connecting to MongoDB', { address: hosts.join(', ') })
 
     await client.connect()
 

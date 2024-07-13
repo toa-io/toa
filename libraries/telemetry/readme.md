@@ -39,3 +39,10 @@ attributes:
   foo: bar
 */
 ```
+
+```javascript
+import { console } from 'openspan'
+
+console.configure({ level: 'warn' })
+console.info('ingnored')
+```
