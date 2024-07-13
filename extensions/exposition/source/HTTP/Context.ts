@@ -1,4 +1,5 @@
 import Negotiator from 'negotiator'
+import { console } from 'openspan'
 import { Timing } from './Timing'
 import { type Format, formats, types } from './formats'
 import { read } from './messages'

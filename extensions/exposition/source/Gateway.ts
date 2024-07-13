@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { console } from 'openspan'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
@@ -54,7 +55,7 @@ export class Gateway extends Connector {
   protected override async open (): Promise<void> {
     await this.discover()
 
-    console.info('Gateway has started and is awaiting resource branches')
+    console.info('Gateway started')
   }
 
   protected override dispose (): void {
@@ -118,10 +119,9 @@ export class Gateway extends Connector {
     try {
       this.tree.merge(branch.node, branch)
 
-      console.info('Resource branch of ' +
-        `'${branch.namespace}.${branch.component}' has been merged`)
+      console.info('Branch merged', { source: branch.namespace + '.' + branch.component })
     } catch (exception) {
-      console.error(exception)
+      console.error('Branch merge exception', exception)
     }
   }
 }

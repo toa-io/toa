@@ -1,5 +1,6 @@
 'use strict'
 
+const { console } = require('openspan')
 const { Connector } = require('./connector')
 
 class Discovery extends Connector {
@@ -24,7 +25,7 @@ class Discovery extends Connector {
       this.depends(this.#lookups[id])
     }
 
-    const warning = () => console.warn(`Waiting for lookup response from '${id}'...`)
+    const warning = () => console.warn(`Waiting for lookup response from %s...`, id)
     const timeout = setTimeout(warning, TIMEOUT)
 
     const output = await this.#lookups[id].invoke()

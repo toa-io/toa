@@ -18,12 +18,6 @@ export class Composition extends Connector {
     await composition.connect()
 
     this.depends(composition)
-
-    console.info('Composition complete')
-  }
-
-  protected override dispose (): void {
-    console.info('Composition shutdown complete')
   }
 }
 
