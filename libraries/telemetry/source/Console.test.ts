@@ -21,7 +21,7 @@ const channels = ['debug', 'info', 'warn', 'error'] as Array<'debug' | 'info' | 
 beforeEach(() => {
   jest.clearAllMocks()
 
-  instance = new Console({ context, streams })
+  instance = new Console({ streams, context })
 })
 
 it('should be', async () => {
@@ -68,11 +68,26 @@ describe.each(channels)('%s',
 
       instance[severity]('hello %s', 'world', attributes)
 
-      expect(pop(channel)).toMatchObject({
-        attributes
-      })
+      expect(pop(channel)).toMatchObject({ attributes })
     })
   })
+
+it('should not print below given level', () => {
+  instance.configure({ level: 'warn' })
+  instance.info('a')
+  instance.error('b')
+
+  expect(pop(streams.stdout)).toBeUndefined()
+  expect(pop(streams.stderr)).toBeDefined()
+})
+
+it('should consider log() as debug()', async () => {
+  instance.log('foo')
+
+  const entry = pop(streams.stdout)
+
+  expect(entry).toMatchObject({ severity: 'DEBUG' })
+})
 
 describe.each(channels)('console instance (%s)', (channel) => {
   it('should print message', () => {
@@ -84,16 +99,11 @@ describe.each(channels)('console instance (%s)', (channel) => {
   })
 })
 
-describe('terminal', () => {
-  it.each(channels)('should %s', (channel) => {
-    process.env.OPENSPAN_TERMINAL = '1'
-    console[channel]('Here we go again', { foo: 'okay', bar: 42 })
-    process.env.OPENSPAN_TERMINAL = undefined
-  })
-})
-
 function pop (channel: any): any {
-  const buffer = channel.write.mock.calls[0][0] as Buffer
+  const buffer = channel.write.mock.calls[0]?.[0] as Buffer
+
+  if (buffer === undefined)
+    return undefined
 
   return JSON.parse(buffer.toString())
 }

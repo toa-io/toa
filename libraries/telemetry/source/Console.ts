@@ -3,28 +3,44 @@ import { formatters } from './formatters'
 import type { Format } from './formatters'
 
 export class Console {
+  public readonly log = this.channel('debug')
   public readonly debug = this.channel('debug')
   public readonly info = this.channel('info')
   public readonly warn = this.channel('warn')
   public readonly error = this.channel('error')
 
-  private readonly stdout
-  private readonly stderr
+  private context?: object
 
-  private readonly context?: object
+  private level: number = LEVELS.debug
+  private formatter = formatters.json
+  private stdout: NodeJS.WriteStream = process.stdout
+  private stderr: NodeJS.WriteStream = process.stderr
 
   public constructor (options: Partial<Options> = {}) {
-    options.streams ??= process
+    this.configure(options)
+  }
 
-    this.stdout = options.streams.stdout
-    this.stderr = options.streams.stderr
-    this.context = options.context
+  public configure (options: Partial<Options> = {}): void {
+    this.level = LEVELS[options.level ?? 'debug']
+    this.formatter = formatters[options.format ?? 'json']
+
+    if (options.streams !== undefined) {
+      this.stdout = options.streams.stdout
+      this.stderr = options.streams.stderr
+    }
+
+    if (options.context !== undefined)
+      this.context = options.context
   }
 
   private channel (channel: Channel): Method {
+    const level = LEVELS[channel]
     const severity = channel.toUpperCase() as Severity
 
     return (template: string, ...values: unknown[]) => {
+      if (level < this.level)
+        return
+
       let attributes: object | undefined
 
       const last = values[values.length - 1]
@@ -46,8 +62,7 @@ export class Console {
       if (this.context !== undefined)
         entry.context = this.context
 
-      const formatter = formatters[process.env.OPENSPAN_TERMINAL !== undefined ? 'terminal' : 'json']
-      const buffer = formatter.format(entry)
+      const buffer = this.formatter.format(entry)
 
       if (channel === 'error')
         this.stderr.write(buffer)
@@ -57,11 +72,19 @@ export class Console {
   }
 }
 
+export const LEVELS: Record<Channel, number> = {
+  debug: -2,
+  info: -1,
+  warn: 0,
+  error: 1
+}
+
 export const console = new Console()
 
 interface Options {
-  format: Format
-  streams: Streams
+  level: Channel
+  streams?: Streams
+  format?: Format
   context?: Record<string, unknown>
 }
 
@@ -78,6 +101,6 @@ export interface Entry {
   context?: object
 }
 
-type Channel = 'debug' | 'info' | 'warn' | 'error'
+export type Channel = 'debug' | 'info' | 'warn' | 'error'
 type Severity = Uppercase<Channel>
 type Method = (template: string, ...values: unknown[]) => void
