@@ -1,6 +1,5 @@
 'use strict'
 
-const { console } = require('@toa.io/console')
 const { newid } = require('@toa.io/generic')
 
 /**

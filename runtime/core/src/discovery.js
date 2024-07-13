@@ -1,6 +1,5 @@
 'use strict'
 
-const { console } = require('@toa.io/console')
 const { Connector } = require('./connector')
 
 class Discovery extends Connector {

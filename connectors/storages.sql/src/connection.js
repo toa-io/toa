@@ -2,7 +2,6 @@
 
 const knex = require('knex')
 const { Connector } = require('@toa.io/core')
-const { console } = require('@toa.io/console')
 const { resolve } = require('@toa.io/pointer')
 const { ID } = require('./deployment')
 

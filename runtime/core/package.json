@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@rsql/parser": "1.2.4",
-    "@toa.io/console": "1.0.0-alpha.59",
     "@toa.io/generic": "1.0.0-alpha.59",
     "@toa.io/yaml": "1.0.0-alpha.59",
     "error-value": "0.3.0"

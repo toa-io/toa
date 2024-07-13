@@ -1,7 +1,5 @@
 'use strict'
 
-const { console } = require('@toa.io/console')
-
 const assert = require('node:assert')
 const { Component } = require('./component')
 

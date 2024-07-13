@@ -2,7 +2,6 @@
 
 const jsonpath = require('jsonpath')
 const { component } = require('@toa.io/norm')
-const { console } = require('@toa.io/console')
 const yaml = require('@toa.io/yaml')
 
 const { components: find } = require('../../util/find')

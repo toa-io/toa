@@ -1,6 +1,5 @@
 'use strict'
 
-const { console } = require('@toa.io/console')
 const { context: find } = require('../../util/find')
 const { deployment: { Factory } } = require('@toa.io/operations')
 
