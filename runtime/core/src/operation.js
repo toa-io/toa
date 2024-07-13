@@ -1,5 +1,6 @@
 'use strict'
 
+const { console } = require('openspan')
 const { Connector } = require('./connector')
 const { SystemException, RequestContractException } = require('./exceptions')
 const { Readable } = require('node:stream')

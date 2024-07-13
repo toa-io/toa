@@ -16,13 +16,16 @@ export class Console {
   private stdout: NodeJS.WriteStream = process.stdout
   private stderr: NodeJS.WriteStream = process.stderr
 
-  public constructor (options: Partial<Options> = {}) {
+  public constructor (options: Options = {}) {
     this.configure(options)
   }
 
-  public configure (options: Partial<Options> = {}): void {
-    this.level = LEVELS[options.level ?? 'debug']
-    this.formatter = formatters[options.format ?? 'json']
+  public configure (options: Options = {}): void {
+    if (options.level !== undefined)
+      this.level = LEVELS[options.level]
+
+    if (options.format !== undefined)
+      this.formatter = formatters[options.format]
 
     if (options.streams !== undefined) {
       this.stdout = options.streams.stdout
@@ -82,7 +85,7 @@ export const LEVELS: Record<Channel, number> = {
 export const console = new Console()
 
 interface Options {
-  level: Channel
+  level?: Channel
   streams?: Streams
   format?: Format
   context?: Record<string, unknown>

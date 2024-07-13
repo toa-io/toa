@@ -1,5 +1,6 @@
 'use strict'
 
+const { console } = require('openspan')
 const { Connector } = require('./connector')
 
 class Composition extends Connector {

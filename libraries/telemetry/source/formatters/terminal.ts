@@ -9,7 +9,7 @@ export function format (entry: Entry): Buffer {
   if (entry.context !== undefined)
     message += '\n' + print(entry.context)
 
-  return Buffer.from('---\n' + message + '\n')
+  return Buffer.from(message + '\n')
 }
 
 function print (object: object): string {
