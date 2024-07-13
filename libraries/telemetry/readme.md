@@ -16,11 +16,11 @@ The last argument can be an object with additional attributes to be included in 
 Log entry format:
 
 ```yaml
-severity: string  # DEBUG, INFO, WARN, ERROR
-context: object   # context passed to the constructor
 time: string      # ISO 8601 timestamp
+severity: string  # DEBUG, INFO, WARN, ERROR
 message: string
 attributes: object
+context: object   # context passed to the constructor
 ```
 
 ### Example

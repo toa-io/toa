@@ -1,4 +1,6 @@
 import { format } from 'node:util'
+import { formatters } from './formatters'
+import type { Format } from './formatters'
 
 export class Console {
   public readonly debug = this.channel('debug')
@@ -9,18 +11,20 @@ export class Console {
   private readonly stdout
   private readonly stderr
 
-  private readonly context: object
+  private readonly context?: object
 
-  public constructor (context: object, streams: Streams = process) {
-    this.stdout = streams.stdout
-    this.stderr = streams.stderr
-    this.context = context
+  public constructor (options: Partial<Options> = {}) {
+    options.streams ??= process
+
+    this.stdout = options.streams.stdout
+    this.stderr = options.streams.stderr
+    this.context = options.context
   }
 
   private channel (channel: Channel): Method {
     const severity = channel.toUpperCase() as Severity
 
-    return (template: string, ...values: Primitive[]) => {
+    return (template: string, ...values: unknown[]) => {
       let attributes: object | undefined
 
       const last = values[values.length - 1]
@@ -31,16 +35,19 @@ export class Console {
       }
 
       const entry: Entry = {
-        severity,
-        context: this.context,
         time: new Date().toISOString(),
+        severity,
         message: format(template, ...values)
       }
 
       if (attributes !== undefined)
         entry.attributes = attributes
 
-      const buffer = Buffer.from(JSON.stringify(entry))
+      if (this.context !== undefined)
+        entry.context = this.context
+
+      const formatter = formatters[process.env.OPENSPAN_TERMINAL !== undefined ? 'terminal' : 'json']
+      const buffer = formatter.format(entry)
 
       if (channel === 'error')
         this.stderr.write(buffer)
@@ -50,20 +57,27 @@ export class Console {
   }
 }
 
+export const console = new Console()
+
+interface Options {
+  format: Format
+  streams: Streams
+  context?: Record<string, unknown>
+}
+
 interface Streams {
   stdout: NodeJS.WriteStream
   stderr: NodeJS.WriteStream
 }
 
-interface Entry {
-  severity: Severity
-  context: object
+export interface Entry {
   time: string
+  severity: Severity
   message: string
   attributes?: object
+  context?: object
 }
 
 type Channel = 'debug' | 'info' | 'warn' | 'error'
 type Severity = Uppercase<Channel>
-type Primitive = string | number | boolean
-type Method = (template: string, ...values: Primitive[]) => void
+type Method = (template: string, ...values: unknown[]) => void
