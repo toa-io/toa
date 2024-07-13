@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream'
+import { console } from 'openspan'
 import { Connector, type Message } from '@toa.io/core'
 import { decode } from '@toa.io/generic'
 import { type Bootloader } from './Factory'
@@ -39,11 +40,11 @@ export class Routes extends Connector {
     await Promise.all(connecting)
     this.depends(consumers)
 
-    console.log(`Event sources (${creating.length}) connected.`)
+    console.info('Event sources connected (%n)', creating.length)
   }
 
   public override async close (): Promise<void> {
-    console.log('Event sources disconnected.')
+    console.info('Event sources disconnected')
   }
 
   private getReceiver (event: string, properties: string[]): Receiver {
@@ -53,7 +54,7 @@ export class Routes extends Connector {
           const key = message.payload[property]
 
           if (key === undefined) {
-            console.error(`Event '${event}' does not contain the '${property}' property.`)
+            console.error('Event does not contain the expected property', { event, property })
 
             return
           }

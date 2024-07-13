@@ -1,3 +1,4 @@
+import { console } from 'openspan'
 import { type Component, Connector } from '@toa.io/core'
 import { type Routes } from './Routes'
 
@@ -19,11 +20,11 @@ export class Realtime extends Connector {
 
     await this.streams.connect()
 
-    console.log('Realtime has started.')
+    console.info('Realtime service started')
   }
 
   protected override dispose (): void {
-    console.log('Realtime shutdown complete.')
+    console.info('Realtime service shutdown complete')
   }
 
   private push (event: Event): void {
