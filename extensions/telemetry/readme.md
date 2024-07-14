@@ -72,3 +72,37 @@ context.logs.info(`User ${user.id} created`)
 ```javascript
 context.logs.info('User created', { id: user.id })
 ```
+
+Use concise messages and attributes to provide context of the event, to identify the source of the
+log entry.
+Do not include stories, explanations, or required actions in the log message.
+Logs are not comments or documentation, nor are they a replacement for them.
+
+:-1: Don't:
+
+```javascript
+context.logs.error('Failed to send the email, please check the email server configuration')
+```
+
+:+1: Do:
+
+```javascript
+context.logs.error('Failed to send the email', { reason: 'SMTP error', status: 1024 })
+```
+
+Avoid logging any information received from the user.
+It may contain private, sensitive, security-related, or GDPR protected data.
+
+:-1: Don't:
+
+```javascript
+context.logs.info('User logged in', { name: user.name })
+context.logs.error('Failed to send chat message', { message: message.text })
+```
+
+:x: Never do:
+
+```javascript
+context.logs.error('Password is incorrect', { password: user.password })
+context.logs.info('Payment received', { creditCard: request.creditCardNumber })
+```
