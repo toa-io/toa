@@ -7,7 +7,7 @@ declaration.
 
 ```javascript
 async function computation (input, context) {
-  context.logs.info('Hello, %s!', 'world', { foo: 'bar' })
+  context.logs.info('Hello, world', { foo: 'bar' })
 }
 ```
 
