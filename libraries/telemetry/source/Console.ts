@@ -21,7 +21,7 @@ export class Console {
 
   public configure (options: Options = {}): void {
     if (options.level !== undefined)
-      this.level = LEVELS[options.level]
+      this.level = typeof options.level === 'string' ? LEVELS[options.level] : options.level
 
     if (options.format !== undefined)
       this.formatter = formatters[options.format]
@@ -33,6 +33,18 @@ export class Console {
 
     if (options.context !== undefined)
       this.context = options.context
+  }
+
+  public fork (context: object): Console {
+    return new Console({
+      level: this.level,
+      format: this.formatter.name,
+      streams: {
+        stdout: this.stdout,
+        stderr: this.stderr
+      },
+      context: { ...this.context, ...context }
+    })
   }
 
   private channel (channel: Channel): Method {
@@ -84,7 +96,7 @@ export const LEVELS: Record<Channel, number> = {
 export const console = new Console()
 
 interface Options {
-  level?: Channel
+  level?: Channel | number
   streams?: Streams
   format?: Format
   context?: Record<string, unknown>

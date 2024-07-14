@@ -1,1 +1,1 @@
-export { console, Console } from './Console'
+export * from './Console'

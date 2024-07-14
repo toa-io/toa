@@ -99,6 +99,16 @@ describe.each(channels)('console instance (%s)', (channel) => {
   })
 })
 
+it('should fork', async () => {
+  const con = instance.fork({ bar: 'foo' })
+
+  con.debug('hello')
+
+  expect(pop(streams.stdout)).toMatchObject({
+    context: { foo: 'bar', baz: 42, bar: 'foo' }
+  })
+})
+
 function pop (channel: any): any {
   const buffer = channel.write.mock.calls[0]?.[0] as Buffer
 

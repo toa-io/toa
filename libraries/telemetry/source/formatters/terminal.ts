@@ -1,5 +1,7 @@
 import type { Entry } from '../Console'
 
+export const name = 'terminal'
+
 export function format (entry: Entry): Buffer {
   let message = `${entry.severity} ${entry.message}`
 
