@@ -23,10 +23,8 @@
     "@rsql/parser": "1.2.4",
     "@toa.io/generic": "1.0.0-alpha.59",
     "@toa.io/yaml": "1.0.0-alpha.59",
-    "error-value": "0.3.0"
-  },
-  "devDependencies": {
-    "clone-deep": "4.0.1"
+    "error-value": "0.3.0",
+    "openspan": "1.0.0-alpha.59"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

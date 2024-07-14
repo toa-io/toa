@@ -23,6 +23,9 @@
   },
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
+  "scripts": {
+    "transpile": "tsc"
+  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"

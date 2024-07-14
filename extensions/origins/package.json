@@ -23,7 +23,8 @@
     "@toa.io/pointer": "1.0.0-alpha.61",
     "@toa.io/schemas": "1.0.0-alpha.61",
     "comq": "0.11.3",
-    "msgpackr": "1.10.1"
+    "msgpackr": "1.10.1",
+    "openspan": "1.0.0-alpha.59"
   },
   "scripts": {
     "transpile": "tsc"

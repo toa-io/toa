@@ -16,6 +16,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "openspan": "1.0.0-alpha.59"
+  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
