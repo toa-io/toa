@@ -11,10 +11,6 @@ async function computation (input, context) {
 }
 ```
 
-Messages are formatted
-using [`util.format`](https://nodejs.org/api/util.html#utilformatformat-args).
-The last argument can be an object with additional attributes to be included in the log entry.
-
 Logs are written to stdout or stderr and formatted as JSON objects. The log entry format is:
 
 ```yaml
