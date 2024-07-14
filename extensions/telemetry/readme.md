@@ -43,7 +43,7 @@ telemetry:
     severity@production: info
 ```
 
-Logs configuration can be overridden for specific components.
+Logs configuration can be overridden for specific components or namespaces.
 
 ```yaml
 # context.toa.yaml
@@ -53,6 +53,8 @@ telemetry:
     severity: info
     identity.federation:
       severity: debug
+    users.*:
+      severity: warn
 ```
 
 ### Logs best practices
