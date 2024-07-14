@@ -1,10 +1,9 @@
 # Telemetry
 
-Telemetry is a built-in extension available without specific declaration.
-
 ## Structured logs
 
-Structured logs can be written using the `logs` Context Aspect.
+Structured logs can be written using the `logs` Context Aspect, available without specific
+declaration.
 
 ```javascript
 async function computation (input, context) {
@@ -60,14 +59,14 @@ telemetry:
 
 Use constant messages and attributes to facilitate log analysis.
 
-:+1: Do:
-
-```javascript
-context.logs.info('User created', { id: user.id })
-```
-
 :-1: Don't:
 
 ```javascript
 context.logs.info(`User ${user.id} created`)
+```
+
+:+1: Do:
+
+```javascript
+context.logs.info('User created', { id: user.id })
 ```
