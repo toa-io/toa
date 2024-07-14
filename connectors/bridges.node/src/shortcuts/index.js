@@ -7,6 +7,7 @@ const { state } = require('./state')
 const { stash } = require('./stash')
 const { storages } = require('./storages')
 const { pubsub } = require('./pubsub')
+const { logs } = require('./logs')
 
 exports.http = http
 exports.amqp = amqp
@@ -15,3 +16,4 @@ exports.state = state
 exports.stash = stash
 exports.storages = storages
 exports.pubsub = pubsub
+exports.logs = logs

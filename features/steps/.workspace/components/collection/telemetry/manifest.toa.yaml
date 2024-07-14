@@ -1,0 +1,16 @@
+name: telemetry
+
+operations:
+  log:
+    input:
+      type: object
+      properties:
+        level:
+          type: string
+          enum: [debug, info, warn, error]
+        message:
+          type: string
+        attributes:
+          type: object
+          additionalProperties: true
+      required: [level, message]

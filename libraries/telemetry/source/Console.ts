@@ -1,15 +1,14 @@
-import { format } from 'node:util'
 import { formatters } from './formatters'
 import type { Format } from './formatters'
 
 export class Console {
-  public readonly log = this.channel('debug')
   public readonly debug = this.channel('debug')
+  public readonly log = this.debug
   public readonly info = this.channel('info')
   public readonly warn = this.channel('warn')
   public readonly error = this.channel('error')
 
-  private level: number = LEVELS.debug
+  private level: Level = LEVELS.debug
   private formatter = formatters.json
   private stdout: NodeJS.WriteStream = process.stdout
   private stderr: NodeJS.WriteStream = process.stderr
@@ -51,23 +50,14 @@ export class Console {
     const level = LEVELS[channel]
     const severity = channel.toUpperCase() as Severity
 
-    return (template: string, ...values: unknown[]) => {
+    return (message: string, attributes?: object) => {
       if (level < this.level)
         return
-
-      let attributes: object | undefined
-
-      const last = values[values.length - 1]
-
-      if (typeof last === 'object' && last !== null) {
-        attributes = last
-        values.pop()
-      }
 
       const entry: Entry = {
         time: new Date().toISOString(),
         severity,
-        message: format(template, ...values)
+        message
       }
 
       if (attributes !== undefined)
@@ -86,20 +76,20 @@ export class Console {
   }
 }
 
-export const LEVELS: Record<Channel, number> = {
-  debug: -2,
-  info: -1,
-  warn: 0,
-  error: 1
+export const LEVELS: Record<Channel, Level> = {
+  debug: -1,
+  info: 0,
+  warn: 1,
+  error: 2
 }
 
 export const console = new Console()
 
 interface Options {
-  level?: Channel | number
-  streams?: Streams
-  format?: Format
+  level?: Channel | Level
   context?: Record<string, unknown>
+  format?: Format
+  streams?: Streams
 }
 
 interface Streams {
@@ -116,5 +106,6 @@ export interface Entry {
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
+type Level = -1 | 0 | 1 | 2
 type Severity = Uppercase<Channel>
-type Method = (template: string, ...values: unknown[]) => void
+type Method = (message: string, attributes?: object) => void

@@ -32,15 +32,16 @@ context:
 
 Logs can be configured using `telemetry` Context Annotation.
 
-- `severity`: limits the log level. It can be set to `debug`, `info` (default), `warn`, or `error`.
+- `level`: limits the minimum log level.
+  It can be set to `debug`, `info` (default), `warn`, or `error`.
 
 ```yaml
 # context.toa.yaml
 
 telemetry:
   logs:
-    severity: debug  # debug, info, warn, error
-    severity@production: info
+    level: debug  # debug < info < warn < error
+    level@production: info
 ```
 
 Logs configuration can be overridden for specific components or namespaces.
@@ -50,11 +51,11 @@ Logs configuration can be overridden for specific components or namespaces.
 
 telemetry:
   logs:
-    severity: info
+    level: info
     identity.federation:
-      severity: debug
+      level: debug
     users.*:
-      severity: warn
+      level: warn
 ```
 
 ### Logs best practices
@@ -106,3 +107,10 @@ context.logs.error('Failed to send chat message', { message: message.text })
 context.logs.error('Password is incorrect', { password: user.password })
 context.logs.info('Payment received', { creditCard: request.creditCardNumber })
 ```
+
+Choose the appropriate log level for the message:
+
+- `debug`: Used for development and troubleshooting purposes. Should not be enabled in production.
+- `info`: Tracks the application flow and provides context for events.
+- `warn`: Indicates potential issues that may require attention.
+- `error`: Indicates a failure or an unexpected event that requires immediate attention.

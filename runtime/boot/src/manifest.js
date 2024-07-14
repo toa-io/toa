@@ -51,6 +51,8 @@ const manifest = async (path, options = {}) => {
   return manifest
 }
 
-const DEFAULTS = {}
+const DEFAULTS = {
+  extensions: ['@toa.io/extensions.telemetry']
+}
 
 exports.manifest = manifest

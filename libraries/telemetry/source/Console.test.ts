@@ -44,7 +44,7 @@ describe.each(channels)('%s',
     })
 
     it('should format message', () => {
-      instance[severity]('hello %s', 'world')
+      instance[severity]('hello world')
 
       expect(pop(channel)).toMatchObject({
         time: expect.any(String),
@@ -66,7 +66,7 @@ describe.each(channels)('%s',
         baz: 24
       }
 
-      instance[severity]('hello %s', 'world', attributes)
+      instance[severity]('hello world', attributes)
 
       expect(pop(channel)).toMatchObject({ attributes })
     })
@@ -95,7 +95,7 @@ describe.each(channels)('console instance (%s)', (channel) => {
   })
 
   it('should print attributes', async () => {
-    console[channel]('Hello %s', 'again', { foo: 42 })
+    console[channel]('Hello again', { foo: 42 })
   })
 })
 
@@ -107,6 +107,15 @@ it('should fork', async () => {
   expect(pop(streams.stdout)).toMatchObject({
     context: { foo: 'bar', baz: 42, bar: 'foo' }
   })
+})
+
+it('should not log undefined attributes', async () => {
+  instance.info('hello', undefined)
+
+  const entry = pop(streams.stdout)
+
+  expect('attributes' in entry).toBe(false)
+  expect(entry.message).toBe('hello')
 })
 
 function pop (channel: any): any {

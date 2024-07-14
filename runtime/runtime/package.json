@@ -37,6 +37,7 @@
     "@toa.io/extensions.stash": "1.0.0-alpha.61",
     "@toa.io/extensions.state": "1.0.0-alpha.59",
     "@toa.io/extensions.storages": "1.0.0-alpha.62",
+    "@toa.io/extensions.telemetry": "1.0.0-alpha.59",
     "@toa.io/norm": "1.0.0-alpha.61",
     "@toa.io/operations": "1.0.0-alpha.61",
     "@toa.io/prototype": "1.0.0-alpha.59",
