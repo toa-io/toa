@@ -18,5 +18,8 @@
   },
   "scripts": {
     "transpile": "tsc"
+  },
+  "dependencies": {
+    "openspan": "1.0.0-alpha.59"
   }
 }
