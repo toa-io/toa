@@ -13,6 +13,7 @@ export class Factory implements extensions.Factory {
     const globEnv = process.env[LOGS_PREFIX]
 
     this.logsOptions = globEnv === undefined ? { level: 'info' } : decode(globEnv)
+    this.logsOptions.level ??= 'info'
 
     console.configure({ level: this.logsOptions.level })
   }
