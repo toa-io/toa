@@ -17,6 +17,21 @@ Feature: Telemetry
       | warn  |
       | error |
 
+  Scenario: Default level is `info`
+    Given I boot `telemetry` component
+    When I invoke `log` with:
+      """yaml
+      input:
+        level: info
+        message: "level: info"
+      """
+    When I invoke `log` with:
+      """yaml
+      input:
+        level: debug
+        message: "level: debug"
+      """
+
   Scenario: Logs env
     Given an encoded environment variable `TOA_TELEMETRY_LOGS` is set to:
       """yaml
@@ -93,4 +108,14 @@ Feature: Telemetry
               value: eyJsZXZlbCI6ImluZm8ifQ==
             - name: TOA_TELEMETRY_LOGS_DEFAULT_TELEMETRY
               value: eyJsZXZlbCI6Indhcm4ifQ==
+      """
+
+  Scenario: Logs without annotations
+    Given I have a component `telemetry`
+    And I have a context
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-telemetry
       """

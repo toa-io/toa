@@ -7,15 +7,14 @@ import type { Dependency, Variables } from '@toa.io/operations'
 import type { Channel } from 'openspan'
 
 export class Factory implements extensions.Factory {
-  private readonly logsOptions?: LogsOptions
+  private readonly logsOptions: LogsOptions
 
   public constructor () {
     const globEnv = process.env[LOGS_PREFIX]
 
-    if (globEnv !== undefined) {
-      this.logsOptions = decode(globEnv)
-      console.configure({ level: this.logsOptions.level })
-    }
+    this.logsOptions = globEnv === undefined ? { level: 'info' } : decode(globEnv)
+
+    console.configure({ level: this.logsOptions.level })
   }
 
   public aspect (locator: Locator): extensions.Aspect[] {
@@ -37,7 +36,8 @@ export class Factory implements extensions.Factory {
 export function deployment (_: unknown, annotation: Annotation): Dependency {
   const variables: Variables = { global: [] }
 
-  addLogsVariables(annotation.logs, variables)
+  if (annotation?.logs !== undefined)
+    addLogsVariables(annotation.logs, variables)
 
   return { variables }
 }
