@@ -14,11 +14,11 @@ export class Console {
   private stderr: NodeJS.WriteStream = process.stderr
   private context?: object
 
-  public constructor (options: Options = {}) {
+  public constructor (options: ConsoleOptions = {}) {
     this.configure(options)
   }
 
-  public configure (options: Options = {}): void {
+  public configure (options: ConsoleOptions = {}): void {
     if (options.level !== undefined)
       this.level = typeof options.level === 'string' ? LEVELS[options.level] : options.level
 
@@ -85,7 +85,7 @@ export const LEVELS: Record<Channel, Level> = {
 
 export const console = new Console()
 
-interface Options {
+export interface ConsoleOptions {
   level?: Channel | Level
   context?: Record<string, unknown>
   format?: Format

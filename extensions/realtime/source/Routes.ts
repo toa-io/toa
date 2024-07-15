@@ -40,7 +40,7 @@ export class Routes extends Connector {
     await Promise.all(connecting)
     this.depends(consumers)
 
-    console.info('Event sources connected (%n)', creating.length)
+    console.info('Event sources connected', { amount: creating.length })
   }
 
   public override async close (): Promise<void> {

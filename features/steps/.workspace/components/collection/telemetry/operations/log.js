@@ -1,5 +1,5 @@
 'use strict'
 
 exports.computation = (input, context) => {
-  context.logs[input.severity](input.message, input.attributes)
+  context.logs[input.level](input.message, input.attributes)
 }
