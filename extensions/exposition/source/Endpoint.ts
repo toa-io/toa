@@ -1,3 +1,4 @@
+import { console } from 'openspan'
 import { Mapping } from './Mapping'
 import * as http from './HTTP'
 import type { Introspection, Schema } from './Introspection'
