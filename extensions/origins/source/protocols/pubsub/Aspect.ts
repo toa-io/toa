@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { PubSub } from '@google-cloud/pubsub'
 import { Topic } from './Topic'
@@ -77,7 +78,7 @@ function toTopics (origins: Record<string, Origin>): Record<string, Topic> {
 }
 
 function createPubSub (origin: Origin): PubSub {
-  console.info(`Using Pub/Sub project ${origin.project} as ${origin.credentials?.client_id ?? 'unauthenticated'} client`)
+  console.info('Using Pub/Sub', { project: origin.project, client: origin.credentials?.client_id ?? 'unauthenticated' })
 
   return new PubSub({
     projectId: origin.project,

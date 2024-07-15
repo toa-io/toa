@@ -21,13 +21,14 @@
     "@toa.io/generic": "1.0.0-alpha.59",
     "@toa.io/schemas": "1.0.0-alpha.61",
     "bcryptjs": "2.4.3",
-    "error-value": "0.3.0",
     "js-yaml": "4.1.0",
     "matchacho": "0.3.5",
     "msgpackr": "1.10.1",
     "negotiator": "0.6.3",
     "paseto": "3.1.4",
-    "ultrafetch": "0.4.0"
+    "ultrafetch": "0.4.0",
+    "error-value": "0.3.0",
+    "openspan": "1.0.0-alpha.59"
   },
   "jest": {
     "transform": {

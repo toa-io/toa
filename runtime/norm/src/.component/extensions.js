@@ -4,7 +4,10 @@ const { directory: { find } } = require('@toa.io/filesystem')
 const { resolve } = require('../shortcuts')
 
 const extensions = (manifest) => {
-  if (manifest.extensions === undefined) return
+  if (manifest.extensions === undefined)
+    manifest.extensions = PREDEFINED
+  else
+    Object.assign({}, PREDEFINED, manifest.extensions)
 
   const extensions = manifest.extensions
 
@@ -27,6 +30,10 @@ const extensions = (manifest) => {
     // shortcut was used
     if (reference !== key) delete extensions[reference]
   }
+}
+
+const PREDEFINED = {
+  '@toa.io/extensions.telemetry': null
 }
 
 exports.extensions = extensions

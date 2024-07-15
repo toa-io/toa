@@ -19,11 +19,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/console": "1.0.0-alpha.59",
     "@toa.io/generic": "1.0.0-alpha.59",
     "@toa.io/pointer": "1.0.0-alpha.61",
     "knex": "2.4.2",
-    "pg": "8.9.0"
+    "pg": "8.9.0",
+    "openspan": "1.0.0-alpha.59"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

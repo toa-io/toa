@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/console",
+  "name": "openspan",
   "version": "1.0.0-alpha.59",
-  "description": "Toa Console",
+  "description": "OpenTelemetry tools",
   "homepage": "https://toa.io",
   "author": {
     "name": "Artem Gurtovoi",
@@ -16,14 +16,18 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "engines": {
-    "node": ">= 18.0.0"
+    "node": ">= 20.0.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "main": "source/index.js",
-  "dependencies": {
-    "chalk": "4.1.2"
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "scripts": {
+    "transpile": "tsc"
   },
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
 }

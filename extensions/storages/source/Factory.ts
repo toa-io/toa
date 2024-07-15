@@ -3,7 +3,7 @@ import { decode } from '@toa.io/generic'
 import { providers } from './providers'
 import { Storage, type Storages } from './Storage'
 import { Aspect } from './Aspect'
-import { SERIALIZATION_PREFIX } from './deployment'
+import { ENV_PREFIX } from './deployment'
 import { validateAnnotation } from './Annotation'
 import type { Declaration } from './providers'
 import type { Annotation } from './Annotation'
@@ -13,9 +13,9 @@ export class Factory {
   private readonly annotation: Annotation
 
   public constructor () {
-    const env = process.env.TOA_STORAGES
+    const env = process.env[ENV_PREFIX]
 
-    assert.ok(env !== undefined, 'TOA_STORAGES is not defined')
+    assert.ok(env !== undefined, `${ENV_PREFIX} is not defined`)
 
     this.annotation = decode(env)
 
@@ -54,7 +54,7 @@ export class Factory {
     const secrets: Record<string, string | undefined> = {}
 
     for (const secret of Class.SECRETS) {
-      const variable = `${SERIALIZATION_PREFIX}_${storageName}_${secret.name}`.toUpperCase()
+      const variable = `${ENV_PREFIX}_${storageName}_${secret.name}`.toUpperCase()
       const value = process.env[variable]
 
       assert.ok(secret.optional === true || value !== undefined,

@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('@toa.io/console')
+const { console } = require('openspan')
 const { newid } = require('@toa.io/generic')
 
 /**
@@ -86,8 +86,6 @@ class Connector {
 
     this.#disconnecting = undefined
 
-    console.debug(`Connecting '${this.id}' with ${this.#dependencies.length} dependencies...`)
-
     this.#connecting = (async () => {
       await Promise.all(this.#dependencies.map((connector) => connector.connect()))
       await this.open()
@@ -100,8 +98,6 @@ class Connector {
       await this.disconnect(true)
       throw e
     }
-
-    console.debug(`Connector '${this.id}' connected`)
   }
 
   /**
@@ -132,7 +128,8 @@ class Connector {
       const interval = setInterval(() => {
         const delay = +new Date() - start
 
-        if (delay > DELAY) console.warn(`Connector ${this.id} still disconnecting (${delay})`)
+        if (delay > DELAY)
+          console.warn(`Connector ${this.id} still disconnecting (${delay})`)
       }, DELAY)
 
       if (interrupt !== true) await this.close()
@@ -145,8 +142,6 @@ class Connector {
     })()
 
     await this.#disconnecting
-
-    console.debug(`Connector '${this.id}' disconnected`)
   }
 
   async reconnect () {

@@ -5,29 +5,23 @@ const { underlay } = require('@toa.io/generic')
 
 const shortcuts = require('./shortcuts')
 
-/**
- * @implements {toa.node.Context}
- */
 class Context extends Connector {
+  operation
   aspects
-  configuration
-  origins
 
   #context
 
-  /**
-   * @param {toa.core.Context} context
-   */
-  constructor (context) {
+  constructor (context, operation) {
     super()
 
+    this.operation = operation
     this.#context = context
 
     this.depends(context)
   }
 
   async open () {
-    this.aspects = this.#aspects(/** @type {toa.core.extensions.Aspect[]} */ this.#context.aspects)
+    this.aspects = this.#aspects(this.#context.aspects)
   }
 
   local = underlay(async ([endpoint], [request]) => {
@@ -42,10 +36,6 @@ class Context extends Connector {
     return this.#context.call(namespace, name, endpoint, request)
   })
 
-  /**
-   * @param {toa.core.extensions.Aspect[]} aspects
-   * @returns {{ [key: string]: Function}}
-   */
   #aspects (aspects) {
     const map = {}
 

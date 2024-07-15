@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('@toa.io/console')
+const { console } = require('openspan')
 const { Connector } = require('./connector')
 
 class Composition extends Connector {

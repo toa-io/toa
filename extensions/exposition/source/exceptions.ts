@@ -1,4 +1,5 @@
 import { match } from 'matchacho'
+import { console } from 'openspan'
 import * as http from './HTTP'
 import { Exception as HTTPException } from './HTTP'
 import type { Exception } from '@toa.io/core'
@@ -14,7 +15,7 @@ export function rethrow (exception: Exception | HTTPException): void {
     303, PRECONDITION_FAILED,
     306, () => new http.Conflict(),
     () => {
-      console.error(exception)
+      console.error('Request processing exception', exception)
 
       return exception
     })

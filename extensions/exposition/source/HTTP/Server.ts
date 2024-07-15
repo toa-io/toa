@@ -3,6 +3,7 @@ import os from 'node:os'
 import * as http from 'node:http'
 import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
+import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
@@ -55,11 +56,11 @@ export class Server extends Connector {
     this.server.close()
     this.ready = false
 
-    console.info('HTTP Server stopped accepting new connections')
+    console.info('Stopped accepting new connections')
 
     await once(this.server, 'close')
 
-    console.info('HTTP Server has been stopped')
+    console.info('Stopped')
   }
 
   private listener (request: http.IncomingMessage, response: http.ServerResponse): void {

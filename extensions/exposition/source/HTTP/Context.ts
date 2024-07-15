@@ -1,4 +1,5 @@
 import Negotiator from 'negotiator'
+import { console } from 'openspan'
 import { Timing } from './Timing'
 import { type Format, formats, types } from './formats'
 import { read } from './messages'
@@ -65,6 +66,7 @@ export class Context {
     const headers = { ...request.headers }
 
     if (headers.authorization !== undefined)
+      // only scheme
       headers.authorization = headers.authorization.slice(0, headers.authorization.indexOf(' '))
 
     console.debug(message, headers)

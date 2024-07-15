@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream'
+import { console } from 'openspan'
 import type { Unit } from './Workflow'
 import type { Remotes } from '../../../Remotes'
 import type { Component } from '@toa.io/core'
@@ -84,7 +85,7 @@ export class Execution extends Readable {
     this.push({ step, status: 'exception' } satisfies Report)
     this.interrupted = true
 
-    console.error(error)
+    console.error('Workflow exception', error as Error)
   }
 
   private async call (endpoint: string): Promise<Maybe<unknown>> {
