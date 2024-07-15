@@ -11,7 +11,7 @@ async function computation (input, context) {
 }
 ```
 
-Logs are written to stdout or stderr and formatted as JSON objects. The log entry format is:
+Logs are formatted as JSON objects and written to stdout or stderr. The log entry format is:
 
 ```yaml
 time: string      # ISO 8601 timestamp
