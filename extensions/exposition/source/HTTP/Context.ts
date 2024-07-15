@@ -66,6 +66,7 @@ export class Context {
     const headers = { ...request.headers }
 
     if (headers.authorization !== undefined)
+      // only scheme
       headers.authorization = headers.authorization.slice(0, headers.authorization.indexOf(' '))
 
     console.debug(message, headers)

@@ -1,5 +1,6 @@
 import { Readable } from 'node:stream'
 import { buffer } from 'node:stream/consumers'
+import { console } from 'openspan'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 import type { Context } from './Context'
@@ -66,8 +67,8 @@ function stream
   else
     multipart(message, context, response)
 
-  message.body.on('error', (e: Error) => {
-    console.error(e)
+  message.body.on('error', (exception: Error) => {
+    console.error('Stream error', { path: context.url.pathname, exception })
     response.end()
   })
 }

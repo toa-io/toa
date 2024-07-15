@@ -1,4 +1,5 @@
 import { Stream } from 'node:stream'
+import { console } from 'openspan'
 import * as schemas from './schemas'
 import type { Message } from './Message'
 import type { Directive } from './Directive'
@@ -40,8 +41,8 @@ export class Output implements Directive {
 
       if (typeof message.body !== 'object' || this.permissions.length === 0) {
         if (this.omitted)
-          console.warn('Permissions for \'io:output\' are not specified properly ' +
-            `(${context.request.url}). Response omitted.`)
+          console.warn('Permissions for \'io:output\' are not specified properly. Response omitted.',
+            { path: context.url.pathname })
 
         delete message.body
 

@@ -121,7 +121,7 @@ export class Gateway extends Connector {
 
       console.info('Branch merged', { source: branch.namespace + '.' + branch.component })
     } catch (exception) {
-      console.error('Branch merge exception', exception as object)
+      console.error('Branch merge exception', exception as Error)
     }
   }
 }
