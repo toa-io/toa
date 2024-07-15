@@ -25,7 +25,7 @@ class Discovery extends Connector {
       this.depends(this.#lookups[id])
     }
 
-    const warning = () => console.warn(`Waiting for lookup response from %s...`, id)
+    const warning = () => console.warn(`Waiting for lookup response`, { component: id })
     const timeout = setTimeout(warning, TIMEOUT)
 
     const output = await this.#lookups[id].invoke()

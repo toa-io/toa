@@ -7,7 +7,7 @@ const extensions = (manifest) => {
   if (manifest.extensions === undefined)
     manifest.extensions = PREDEFINED
   else
-    Object.assign({}, PREDEFINED, manifest.extensions)
+    manifest.extensions = Object.assign({}, PREDEFINED, manifest.extensions)
 
   const extensions = manifest.extensions
 

@@ -62,14 +62,13 @@ export class Context {
   }
 
   private log (request: IncomingMessage): void {
-    const message = `${request.method} ${request.url}`
     const headers = { ...request.headers }
 
     if (headers.authorization !== undefined)
       // only scheme
       headers.authorization = headers.authorization.slice(0, headers.authorization.indexOf(' '))
 
-    console.debug(message, headers)
+    console.debug('Received request', { method: request.method, url: request.url, headers })
   }
 }
 
