@@ -6,13 +6,13 @@ import type { Annotation } from './Annotation'
 import type { Dependency, Variable, Mounts } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
 
-export const SERIALIZATION_PREFIX = 'TOA_STORAGES'
+export const ENV_PREFIX = 'TOA_STORAGES'
 
 export function deployment (instances: Instance[], annotation: unknown): Dependency {
   validate(instances, annotation)
 
   const value = encode(annotation)
-  const pointer: Variable = { name: SERIALIZATION_PREFIX, value }
+  const pointer: Variable = { name: ENV_PREFIX, value }
   const secrets = getSecrets(annotation)
   const mounts = getMounts(instances, annotation)
 
@@ -46,7 +46,7 @@ function getSecrets (annotation: Annotation): Variable[] {
 
     for (const secret of Provider.SECRETS)
       secrets.push({
-        name: `${SERIALIZATION_PREFIX}_${name}_${secret.name}`.toUpperCase(),
+        name: `${ENV_PREFIX}_${name}_${secret.name}`.toUpperCase(),
         secret: {
           name: `toa-storages-${name}`,
           key: secret.name,

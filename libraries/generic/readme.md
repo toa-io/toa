@@ -1,5 +1,11 @@
 # Toa Generic Tools
 
+> DEPRECATED
+>
+> Do not use anything from this library.
+
+---
+
 Library is for internal use only. Barely documented. If you really need to understand something,
 see [tests](source).
 

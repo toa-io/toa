@@ -31,6 +31,8 @@ Non-scattered documentation is coming this fall.
   - Built-in implementations
     - MongoDB
     - SQL ([Knex](https://knexjs.org))
+- [Telemetry](/extensions/telemetry)
+  - Structured logs
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery

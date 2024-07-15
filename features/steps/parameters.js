@@ -1,6 +1,9 @@
 'use strict'
 
+const { console } = require('openspan')
 const { defineParameterType, setDefaultTimeout } = require('@cucumber/cucumber')
+
+console.configure({ format: 'terminal' })
 
 defineParameterType({
   name: 'path',

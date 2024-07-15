@@ -6,6 +6,7 @@
  * @typedef {import('@toa.io/core').Locator} Locator
  */
 
+const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 const { resolve } = require('@toa.io/pointer')
 const { ID } = require('./deployment')
@@ -107,7 +108,7 @@ class Client extends Connector {
     const client = new MongoClient(urls.join(','), OPTIONS)
     const hosts = urls.map((str) => new URL(str).host)
 
-    console.info('Connecting to MongoDB:', hosts.join(', '))
+    console.info('Connecting to MongoDB', { address: hosts.join(', ') })
 
     await client.connect()
 

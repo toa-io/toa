@@ -1,4 +1,5 @@
 import { Redis, type ClusterOptions } from 'ioredis'
+import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
 import { resolve } from '@toa.io/pointer'
 import { ID } from './extension'
@@ -24,19 +25,21 @@ export class Connection extends Connector {
     const connecting = this.redises.map(this.connectNode.bind(this))
 
     await Promise.all(connecting)
+
+    console.info('Stash is running')
   }
 
   protected override async close (): Promise<void> {
     for (const redis of this.redises)
       redis.disconnect()
 
-    console.log('Stash disconnected')
+    console.info('Stash shutdown complete')
   }
 
   private async connectNode (redis: Redis): Promise<void> {
     await redis.connect()
 
-    console.log(`Stash connected to ${redis.options.host}:${String(redis.options.port)}`)
+    console.info('Stash connected to redis', { host: redis.options.host })
   }
 
   private async resolveURLs (): Promise<string[]> {

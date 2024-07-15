@@ -4,7 +4,6 @@
 
 const yargs = require('yargs/yargs')
 
-const { console } = require('@toa.io/console')
 const { version } = require('@toa.io/runtime')
 
 yargs(process.argv.slice(2))
@@ -13,8 +12,6 @@ yargs(process.argv.slice(2))
   })
   .middleware((argv) => {
     if (argv.log === undefined) argv.log = process.env.TOA_DEBUG === '1' ? 'debug' : 'info'
-
-    console.level(argv.log)
   })
   .middleware(async (argv) => {
     if (argv.env === undefined) return

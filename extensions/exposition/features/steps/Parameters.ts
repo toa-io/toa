@@ -1,5 +1,6 @@
 import { setDefaultTimeout } from '@cucumber/cucumber'
 import { encode } from '@toa.io/generic'
+import { console } from 'openspan'
 
 export class Parameters {
   public readonly origin: string
@@ -10,6 +11,8 @@ export class Parameters {
 }
 
 setDefaultTimeout(30 * 1000)
+
+console.configure({ format: 'terminal' })
 
 process.env.TOA_DEV = '1'
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const { Connector, exceptions } = require('@toa.io/core')
-
+const { console } = require('openspan')
 const { translate } = require('./translate')
 const { to, from } = require('./record')
 const { ReturnDocument } = require('mongodb')
@@ -181,7 +181,7 @@ class Storage extends Connector {
     const obsolete = current.filter((name) => !desired.includes(name))
 
     if (obsolete.length > 0) {
-      console.info(`Remove obsolete indexes: [${obsolete.join(', ')}]`)
+      console.info('Removing obsolete indexes', { indexes: obsolete.join(', ') })
 
       await Promise.all(obsolete.map((name) => this.#collection.dropIndex(name)))
     }
@@ -209,7 +209,7 @@ class Storage extends Connector {
     }
 
     if (optional.length > 0) {
-      console.info(`Index fields [${optional.join(', ')}] are optional, creating sparse index.`)
+      console.info('Index fields are optional, creating sparse index', { fields: optional.join(', ') })
 
       return true
     } else

@@ -37,13 +37,15 @@
     "@toa.io/extensions.stash": "1.0.0-alpha.61",
     "@toa.io/extensions.state": "1.0.0-alpha.59",
     "@toa.io/extensions.storages": "1.0.0-alpha.62",
+    "@toa.io/extensions.telemetry": "1.0.0-alpha.59",
     "@toa.io/norm": "1.0.0-alpha.61",
     "@toa.io/operations": "1.0.0-alpha.61",
     "@toa.io/prototype": "1.0.0-alpha.59",
     "@toa.io/storages.mongodb": "1.0.0-alpha.61",
     "@toa.io/storages.null": "1.0.0-alpha.59",
     "@toa.io/storages.sql": "1.0.0-alpha.61",
-    "@toa.io/userland": "1.0.0-alpha.61"
+    "@toa.io/userland": "1.0.0-alpha.61",
+    "openspan": "1.0.0-alpha.59"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

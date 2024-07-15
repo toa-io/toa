@@ -15,8 +15,6 @@ Before(
   async function() {
     this.cwd = await directory.temp()
     this.containers = {}
-
-    console.log('cwd:', this.cwd)
   })
 
 After(

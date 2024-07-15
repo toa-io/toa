@@ -10,7 +10,7 @@ const { extract } = require('./define/operations')
 class Factory {
   async algorithm (root, name, context) {
     const module = load.operation(root, name)
-    const ctx = new Context(context)
+    const ctx = new Context(context, name)
 
     return runner(module, ctx)
   }
