@@ -23,7 +23,7 @@ function print (object: object, level = 1): string {
     if (value?.constructor === Object)
       lines.push(`${pad}${key}:\n${print(value, level + 1)}`)
     else
-      lines.push(`${pad}${key}: ${value?.toString()}`)
+      lines.push(`${pad}${key}: ${value}`)
 
   return lines.join('\n')
 }
