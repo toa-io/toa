@@ -2,13 +2,19 @@
 
 ## Structured logs
 
-Structured logs can be written using the `logs` Context Aspect, available without specific
-declaration.
+Structured logs can be written using the `logs` Context Aspect.
 
 ```javascript
 async function computation (input, context) {
   context.logs.info('Hello, world', { foo: 'bar' })
 }
+```
+
+Methods `debug`, `info`, `warn`, and `error` are available to log messages with different severity
+levels, with the following signature:
+
+```
+(message: string, attributes?: object) => void
 ```
 
 Logs are formatted as JSON objects and written to stdout or stderr. The log entry format is:
@@ -82,7 +88,10 @@ context.logs.error('Failed to send the email, please check the email server conf
 :+1: Do:
 
 ```javascript
-context.logs.error('Failed to send the email', { reason: 'SMTP error', status: response.statusCode })
+context.logs.error('Failed to send the email', {
+  reason: 'SMTP error',
+  status: response.statusCode
+})
 ```
 
 Avoid logging any information received from the user.
