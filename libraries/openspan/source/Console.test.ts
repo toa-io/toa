@@ -138,6 +138,19 @@ it('should log empty objects', () => {
   con.info('baz')
 })
 
+it('should log Error', () => {
+  const con = new Console({ format: 'terminal' })
+
+  con.info('foo', new Error('ok'))
+  con.info('foo', { error: new Error('ok') })
+})
+
+it('should log null', () => {
+  const con = new Console({ format: 'terminal' })
+
+  con.info('foo', { foo: null })
+})
+
 function pop (channel: any): any {
   const buffer = channel.write.mock.calls[0]?.[0] as Buffer
 
