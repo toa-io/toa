@@ -82,7 +82,7 @@ context.logs.error('Failed to send the email, please check the email server conf
 :+1: Do:
 
 ```javascript
-context.logs.error('Failed to send the email', { reason: 'SMTP error', status: 1024 })
+context.logs.error('Failed to send the email', { reason: 'SMTP error', status: response.statusCode })
 ```
 
 Avoid logging any information received from the user.
@@ -98,7 +98,7 @@ context.logs.error('Failed to send chat message', { message: message.text })
 :x: Never do:
 
 ```javascript
-context.logs.error('Password is incorrect', { password: user.password })
+context.logs.error('Password is incorrect', { password: credentials.password })
 context.logs.info('Payment received', { creditCard: request.creditCardNumber })
 ```
 
