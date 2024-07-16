@@ -130,6 +130,14 @@ it('should measure', async () => {
   expect(await console.measure('foo', { att: 'ok' }, fn())).toBe('foo')
 })
 
+it('should log empty objects', () => {
+  const con = new Console({ format: 'terminal' })
+
+  con.info('foo', { foo: {}, bar: 'baz' })
+  con.info('bar', {})
+  con.info('baz')
+})
+
 function pop (channel: any): any {
   const buffer = channel.write.mock.calls[0]?.[0] as Buffer
 
