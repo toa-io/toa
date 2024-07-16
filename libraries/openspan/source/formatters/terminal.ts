@@ -16,7 +16,6 @@ export function format (entry: Entry): Buffer {
 
 function print (object: object, level = 1): string {
   const lines = []
-
   const pad = PAD.repeat(level)
 
   for (const [key, value] of Object.entries(object))

@@ -46,11 +46,24 @@ export class Console {
     })
   }
 
+  public async measure<T = unknown> (message: string, promise: Promise<T>): Promise<T>
+  public async measure<T = unknown> (message: string, attributes: object, promise: Promise<T>): Promise<T>
+  public async measure<T = unknown> (message: string, arg1: object | Promise<T>, arg2?: Promise<T>): Promise<T> {
+    const attributes = arg2 === undefined ? undefined : arg1 as object
+    const promise = arg2 ?? arg1 as Promise<T>
+    const start = Date.now()
+    const result = await promise
+
+    this.info(message, attributes, { duration: Date.now() - start })
+
+    return result
+  }
+
   private channel (channel: Channel): Method {
     const level = LEVELS[channel]
     const severity = channel.toUpperCase() as Severity
 
-    return (message: string, attributes?: object) => {
+    return (message: string, attributes?: object, properties?: Record<string, unknown>) => {
       if (level < this.level)
         return
 
@@ -65,6 +78,9 @@ export class Console {
 
       if (this.context !== undefined)
         entry.context = this.context
+
+      if (properties !== undefined)
+        Object.assign(entry, properties)
 
       const buffer = this.formatter.format(entry)
 
@@ -108,4 +124,4 @@ export interface Entry {
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
 type Level = -1 | 0 | 1 | 2
 type Severity = Uppercase<Channel>
-type Method = (message: string, attributes?: object) => void
+type Method = (message: string, attributes?: object, properties?: Record<string, unknown>) => void
