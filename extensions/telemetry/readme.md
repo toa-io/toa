@@ -17,7 +17,7 @@ levels, with the following signature:
 (message: string, attributes?: object) => void
 ```
 
-Logs are formatted as JSON objects and written to stdout or stderr. The log entry format is:
+Logs are formatted as JSON and written to stdout or stderr. The log entry format is:
 
 ```yaml
 time: string      # ISO 8601 timestamp
@@ -108,7 +108,7 @@ context.logs.error('Failed to send chat message', { message: message.text })
 
 ```javascript
 context.logs.error('Password is incorrect', { password: credentials.password })
-context.logs.info('Payment received', { creditCard: request.creditCardNumber })
+context.logs.info('Payment received', { creditCard: card.number })
 ```
 
 Choose the appropriate log level for the message:

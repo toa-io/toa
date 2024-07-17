@@ -84,7 +84,7 @@ export class Console {
 
       const buffer = this.formatter.format(entry)
 
-      if (channel === 'error')
+      if (level === LEVELS.error)
         this.stderr.write(buffer)
       else
         this.stdout.write(buffer)
