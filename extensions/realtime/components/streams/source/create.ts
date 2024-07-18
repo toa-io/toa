@@ -1,17 +1,19 @@
 import { type Readable } from 'node:stream'
 import assert from 'node:assert'
 import { type Operation } from '@toa.io/types'
-import { type Context } from './types'
+import { type Context } from './lib/types'
 import { Stream } from './lib/stream'
 
 export class Effect implements Operation {
   private readonly streams = new Map<string, Stream>()
+  private logs: any
 
   public mount (context: Context): void {
     context.state.streams = this.streams
+    this.logs = context.logs
   }
 
-  public async execute (input: Input, context: Context): Promise<Readable> {
+  public async execute (input: Input): Promise<Readable> {
     const key = input.key
 
     if (!this.streams.has(key))
@@ -29,7 +31,12 @@ export class Effect implements Operation {
 
     this.streams.set(key, stream)
 
-    stream.once('close', () => this.streams.delete(key))
+    stream.once('close', () => {
+      this.logs.info('Stream closed', { key })
+      this.streams.delete(key)
+    })
+
+    this.logs.info('Stream created', { key })
   }
 }
 

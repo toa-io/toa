@@ -1,8 +1,11 @@
-import { type Stream } from './lib/stream'
+import { type Stream } from './stream'
 
 export interface Context {
   state: {
     streams: Map<string, Stream>
+  }
+  logs: {
+    info: (m: string, att?: object) => void
   }
 }
 
