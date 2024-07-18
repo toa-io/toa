@@ -1,8 +1,9 @@
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
-import { Connector, type Message } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
 import { decode } from '@toa.io/generic'
 import { type Bootloader } from './Factory'
+import { Receiver } from './Receiver'
 
 export class Routes extends Connector {
   public events = new Events()
@@ -27,7 +28,7 @@ export class Routes extends Connector {
     const creating = []
 
     for (const { event, properties } of routes) {
-      const consumer = this.boot.receive(event, this.getReceiver(event, properties))
+      const consumer = this.boot.receive(event, new Receiver(event, properties, this.events))
 
       creating.push(consumer)
     }
@@ -46,24 +47,6 @@ export class Routes extends Connector {
   public override async close (): Promise<void> {
     console.info('Event sources disconnected')
   }
-
-  private getReceiver (event: string, properties: string[]): Receiver {
-    return {
-      receive: (message: Message<Record<string, string>>) => {
-        for (const property of properties) {
-          const key = message.payload[property]
-
-          if (key === undefined) {
-            console.error('Event does not contain the expected property', { event, property })
-
-            return
-          }
-
-          this.events.push({ key, event, data: message.payload })
-        }
-      }
-    }
-  }
 }
 
 class Events extends Readable {
@@ -78,8 +61,4 @@ class Events extends Readable {
 export interface Route {
   event: string
   properties: string[]
-}
-
-interface Receiver {
-  receive: (message: Message<Record<string, string>>) => void
 }
