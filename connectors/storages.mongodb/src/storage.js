@@ -173,8 +173,6 @@ class Storage extends Connector {
 
         const sparse = this.checkFields(Object.keys(fields))
 
-        console.debug('Database query', { method: 'createIndex', fields, name, sparse })
-
         await this.#collection.createIndex(fields, { name, sparse })
 
         indexes.push(name)
