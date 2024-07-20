@@ -1,4 +1,5 @@
-import http from 'node:http'
+import * as http from 'node:http'
+import * as https from 'node:https'
 import * as assert from 'node:assert'
 import { buffer } from 'node:stream/consumers'
 import { trim } from '@toa.io/generic'
@@ -49,8 +50,10 @@ export class Agent {
     for (const [key, value] of req.headers)
       headers[key] = value
 
+    const protocol = new URL(req.url).protocol === 'https:' ? https : http
+
     const response = await new Promise<http.IncomingMessage>((resolve) => {
-      const request = http.request(req.url, {
+      const request = protocol.request(req.url, {
         method: req.method,
         headers
       }, (response) => resolve(response))
