@@ -34,6 +34,12 @@ const builder = (yargs) => {
       boolean: true,
       desc: 'Wait for deployment ready state'
     })
+    .option('timeout', {
+      alias: 't',
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Deployment timeout'
+    })
 }
 
 exports.command = 'deploy [environment]'

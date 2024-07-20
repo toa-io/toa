@@ -42,6 +42,7 @@ class Deployment {
 
     if (options.namespace !== undefined) args.push('-n', options.namespace)
     if (options.wait === true) args.push('--wait')
+    if (options.timeout !== undefined) args.push('--timeout', options.timeout)
 
     await this.#process.execute('helm', ['dependency', 'update', this.#target])
     await this.#process.execute('helm', ['upgrade', this.#chart.name, '-i', ...args, this.#target])

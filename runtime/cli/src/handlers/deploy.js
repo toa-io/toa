@@ -25,6 +25,7 @@ const deploy = async (argv) => {
 
     if (argv.namespace !== undefined) options.namespace = argv.namespace
     if (argv.wait === true) options.wait = true
+    if (argv.timeout !== undefined) options.timeout = argv.timeout
 
     await operator.install(options)
   }
