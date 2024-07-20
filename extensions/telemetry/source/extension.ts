@@ -11,9 +11,10 @@ export class Factory implements extensions.Factory {
 
   public constructor () {
     const globEnv = process.env[LOGS_PREFIX]
+    const level = process.env.TOA_DEV === '1' ? 'debug' : 'info'
 
-    this.logsOptions = globEnv === undefined ? { level: 'info' } : decode(globEnv)
-    this.logsOptions.level ??= 'info'
+    this.logsOptions = globEnv === undefined ? { level } : decode(globEnv)
+    this.logsOptions.level ??= level
 
     console.configure({ level: this.logsOptions.level })
   }

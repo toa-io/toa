@@ -30,6 +30,9 @@ class Storage extends Connector {
 
   async get (query) {
     const { criteria, options } = translate(query)
+
+    console.debug('Database query', { method: 'findOne', criteria, options })
+
     const record = await this.#collection.findOne(criteria, options)
 
     return from(record)
@@ -37,6 +40,9 @@ class Storage extends Connector {
 
   async find (query) {
     const { criteria, options } = translate(query)
+
+    console.debug('Database query', { method: 'find', criteria, options })
+
     const recordset = await this.#collection.find(criteria, options).toArray()
 
     return recordset.map((item) => from(item))
@@ -45,11 +51,16 @@ class Storage extends Connector {
   async stream (query = undefined) {
     const { criteria, options } = translate(query)
 
-    return await this.#collection.find(criteria, options).stream({ transform: from })
+    console.debug('Database query', { method: 'find (stream)', criteria, options })
+
+    return this.#collection.find(criteria, options).stream({ transform: from })
   }
 
   async add (entity) {
     const record = to(entity)
+
+    console.debug('Database query', { method: 'insertOne', record })
+
     const result = await this.#collection.insertOne(record)
 
     return result.acknowledged
@@ -61,7 +72,11 @@ class Storage extends Connector {
       _version: entity._version - 1
     }
 
-    const result = await this.#collection.findOneAndReplace(criteria, to(entity))
+    const record = to(entity)
+
+    console.debug('Database query', { method: 'findOneAndReplace', criteria, record })
+
+    const result = await this.#collection.findOneAndReplace(criteria, record)
 
     return result !== null
   }
@@ -110,6 +125,8 @@ class Storage extends Connector {
 
     options.returnDocument = ReturnDocument.AFTER
 
+    console.debug('Database query', { method: 'findOneAndUpdate', criteria, update, options })
+
     const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
     return from(result)
@@ -125,6 +142,8 @@ class Storage extends Connector {
 
     options.upsert = true
     options.returnDocument = ReturnDocument.AFTER
+
+    console.debug('Database query', { method: 'findOneAndUpdate', criteria, update, options })
 
     const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
@@ -153,6 +172,8 @@ class Storage extends Connector {
           .map(([name, type]) => [name, INDEX_TYPES[type]]))
 
         const sparse = this.checkFields(Object.keys(fields))
+
+        console.debug('Database query', { method: 'createIndex', fields, name, sparse })
 
         await this.#collection.createIndex(fields, { name, sparse })
 
