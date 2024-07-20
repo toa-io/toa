@@ -82,13 +82,26 @@ export function multipart
 
   response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
+  response.write(Buffer.concat([
+    CUT,
+    CRLF,
+    encoder.encode('hi'),
+    CRLF,
+    CUT
+  ]))
+
   message.body
     .map((part: unknown) => Buffer.concat([
-      CUT,
       CRLF /* indicates no boundary headers */,
       encoder.encode(part),
-      CRLF]))
-    .on('end', () => response.end(FINALCUT))
+      CRLF,
+      CUT]))
+    .on('end', () => response.end(Buffer.concat([
+      CRLF,
+      encoder.encode('bye'),
+      CRLF,
+      FINALCUT
+    ])))
     .pipe(response)
 }
 

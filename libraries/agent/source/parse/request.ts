@@ -54,7 +54,7 @@ function reduceHeaders (array: string[]): Headers {
   return headers
 }
 
-interface HTTPRequest {
+export interface HTTPRequest {
   url: string
   method: undici.Dispatcher.HttpMethod
   headers: Headers

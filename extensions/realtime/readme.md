@@ -12,6 +12,8 @@
 Realtime extension combines application events into streams according to defined routes.
 Clients may consume these streams [via Exposition](/extensions/exposition).
 
+If stream is idle for 16 seconds, a `heartbeat` message is sent.
+
 ## Static routes
 
 Static route specifies an event that should be combined into a stream using specified property of

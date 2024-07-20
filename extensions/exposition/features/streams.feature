@@ -22,10 +22,14 @@ Feature: Reply streams
       content-type: multipart/text; boundary=cut
 
       --cut
+      hi
+      --cut
       0
       --cut
       1
       --cut
       2
+      --cut
+      bye
       --cut--
       """

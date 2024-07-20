@@ -38,6 +38,9 @@ the parts:
 | `multipart/json`    | `application/json`    |
 | `multipart/text`    | `text/plain`          |
 
+Each multipart response is started with a text chunk `hi`, and finished with a text
+chunk `bye`.
+
 Example:
 
 ```
@@ -50,9 +53,13 @@ accept: application/yaml
 content-type: multipart/yaml; boundary=cut
 
 --cut
+hi
+--cut
 foo: bar
 --cut
 baz: qux
+--cut
+bye
 --cut--
 ```
 
