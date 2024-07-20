@@ -24,6 +24,15 @@ const resolve = (references, annotations) => {
     }
   }
 
+  for (const dependency of Object.keys(annotations)) {
+    const { module } = load(dependency)
+
+    if (!module.standalone || (dependency in dependencies))
+      continue
+
+    dependencies[dependency] = []
+  }
+
   return dependencies
 }
 

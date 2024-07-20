@@ -1,10 +1,13 @@
+import type { Manifest } from '@toa.io/norm'
+import type { Locator } from '@toa.io/core'
+
 export interface Service {
   group: string
   name: string
   version: string
-  port: number
-  ingress: Ingress
-  variables: Variable[]
+  port?: number
+  ingress?: Ingress
+  variables?: Variable[]
   components?: string[]
   probe?: Probe
 }
@@ -18,6 +21,14 @@ export interface Variable {
     optional?: boolean
   }
 }
+
+export interface Instance<T> {
+  locator: Locator
+  manifest: T
+  component: Manifest
+}
+
+export type Instances<T> = Array<Instance<T>>
 
 export type Variables = Record<'global' | string, Variable[]>
 export type Mounts = Record<'global' | string, Mount[]>

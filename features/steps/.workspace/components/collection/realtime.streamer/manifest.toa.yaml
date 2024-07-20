@@ -1,0 +1,6 @@
+namespace: realtime
+name: streamer
+
+realtime:
+  created: streamer
+  deleted: [id, streamer]

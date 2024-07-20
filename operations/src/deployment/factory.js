@@ -15,7 +15,6 @@ class Factory {
   #dependencies
   #registry
   #process
-  #extensionComponents = []
 
   constructor (context) {
     this.#context = context
