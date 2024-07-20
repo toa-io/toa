@@ -31,7 +31,7 @@ class Storage extends Connector {
   async get (query) {
     const { criteria, options } = translate(query)
 
-    console.debug('Database query', { method: 'findOne', criteria, options })
+    this.debug('findOne', { criteria, options })
 
     const record = await this.#collection.findOne(criteria, options)
 
@@ -41,7 +41,7 @@ class Storage extends Connector {
   async find (query) {
     const { criteria, options } = translate(query)
 
-    console.debug('Database query', { method: 'find', criteria, options })
+    this.debug('find', { criteria, options })
 
     const recordset = await this.#collection.find(criteria, options).toArray()
 
@@ -51,7 +51,7 @@ class Storage extends Connector {
   async stream (query = undefined) {
     const { criteria, options } = translate(query)
 
-    console.debug('Database query', { method: 'find (stream)', criteria, options })
+    this.debug('find (stream)', { criteria, options })
 
     return this.#collection.find(criteria, options).stream({ transform: from })
   }
@@ -59,7 +59,7 @@ class Storage extends Connector {
   async add (entity) {
     const record = to(entity)
 
-    console.debug('Database query', { method: 'insertOne', record })
+    this.debug('insertOne', { record })
 
     const result = await this.#collection.insertOne(record)
 
@@ -74,7 +74,7 @@ class Storage extends Connector {
 
     const record = to(entity)
 
-    console.debug('Database query', { method: 'findOneAndReplace', criteria, record })
+    this.debug('findOneAndReplace', { criteria, record })
 
     const result = await this.#collection.findOneAndReplace(criteria, record)
 
@@ -125,7 +125,7 @@ class Storage extends Connector {
 
     options.returnDocument = ReturnDocument.AFTER
 
-    console.debug('Database query', { method: 'findOneAndUpdate', criteria, update, options })
+    this.debug('findOneAndUpdate', { criteria, update, options })
 
     const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
@@ -235,6 +235,13 @@ class Storage extends Connector {
       return false
   }
 
+  debug (method, attributes) {
+    console.debug('Database query', {
+      collection: this.#client.name,
+      method,
+      ...attributes
+    })
+  }
 }
 
 const INDEX_TYPES = {

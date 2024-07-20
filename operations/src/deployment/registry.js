@@ -74,6 +74,11 @@ class Registry {
    * @returns {Promise<void>}
    */
   async #build (image, push = false) {
+    if (await this.exists(image.reference)) {
+      console.log('Image already exists, skipping:', image.reference)
+      return
+    }
+
     const args = ['--context=default', 'buildx', 'build']
 
     if (push) {
@@ -96,7 +101,6 @@ class Registry {
 
       args.push('--platform', platform)
       args.push('--builder', builder)
-
     } else {
       args.push('--builder', 'default')
     }
@@ -108,6 +112,18 @@ class Registry {
 
   async #push (image) {
     await this.#build(image, true)
+  }
+
+  async exists (tag) {
+    const args = ['inspect', tag]
+
+    try {
+      await this.#process.execute('docker', args, { silently: true })
+    } catch {
+      return false
+    }
+
+    return true
   }
 
   async #createBuilder () {
