@@ -58,6 +58,9 @@ export class Agent {
       request.end()
     })
 
+    assert.ok(response.statusCode === 200,
+      `Request failed with status ${response.statusCode}: ${req.url}`)
+
     this.pending.add(response)
     response.on('end', () => this.pending.delete(response))
 
