@@ -6,7 +6,7 @@ import * as schemas from './schemas'
 import { shortcuts } from './Directive'
 import { components } from './Composition'
 import { parse } from './RTD/syntax'
-import { DELAY, PORT } from './HTTP/Server'
+import { DELAY, PORT } from './HTTP'
 
 export function deployment (_: unknown, annotation?: Annotation): Dependency {
   assert.ok(annotation !== undefined, 'Exposition context annotation is required')
