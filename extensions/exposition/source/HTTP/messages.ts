@@ -85,7 +85,7 @@ export function multipart
   response.write(Buffer.concat([
     CUT,
     CRLF,
-    encoder.encode('hi'),
+    encoder.encode('ACK'),
     CRLF,
     CUT
   ]))
@@ -98,7 +98,7 @@ export function multipart
       CUT]))
     .on('end', () => response.end(Buffer.concat([
       CRLF,
-      encoder.encode('bye'),
+      encoder.encode('FIN'),
       CRLF,
       FINALCUT
     ])))

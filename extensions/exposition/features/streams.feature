@@ -22,7 +22,7 @@ Feature: Reply streams
       content-type: multipart/text; boundary=cut
 
       --cut
-      hi
+      ACK
       --cut
       0
       --cut
@@ -30,6 +30,6 @@ Feature: Reply streams
       --cut
       2
       --cut
-      bye
+      FIN
       --cut--
       """
