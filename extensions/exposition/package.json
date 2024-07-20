@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.66",
+  "version": "1.0.0-alpha.67",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,7 +17,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.66",
+    "@toa.io/core": "1.0.0-alpha.67",
     "@toa.io/generic": "1.0.0-alpha.63",
     "@toa.io/schemas": "1.0.0-alpha.63",
     "bcryptjs": "2.4.3",
@@ -26,7 +26,7 @@
     "matchacho": "0.3.5",
     "msgpackr": "1.10.1",
     "negotiator": "0.6.3",
-    "openspan": "1.0.0-alpha.66",
+    "openspan": "1.0.0-alpha.67",
     "paseto": "3.1.4",
     "ultrafetch": "0.4.0"
   },
@@ -51,8 +51,8 @@
   "devDependencies": {
     "@swc/core": "1.6.6",
     "@swc/helpers": "0.5.11",
-    "@toa.io/agent": "1.0.0-alpha.63",
-    "@toa.io/extensions.storages": "1.0.0-alpha.63",
+    "@toa.io/agent": "1.0.0-alpha.67",
+    "@toa.io/extensions.storages": "1.0.0-alpha.67",
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
     "@types/negotiator": "0.6.1",
