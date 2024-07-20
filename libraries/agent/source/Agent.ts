@@ -1,10 +1,12 @@
+import http from 'node:http'
 import * as assert from 'node:assert'
 import { buffer } from 'node:stream/consumers'
 import { trim } from '@toa.io/generic'
 import * as undici from 'undici'
-import * as http from './index'
-import { request } from './request'
-import * as parse from './parse'
+import { meros } from 'meros/node'
+import * as protocol from './index'
+import { parse, request } from './request'
+import * as parser from './parse'
 import { Captures } from './Captures'
 import type { Readable } from 'stream'
 
@@ -18,19 +20,16 @@ Use its features to test.
 export class Agent {
   public readonly origin?: string
   public response: string = ''
+  public readonly captures: Captures
+  public pending = new Set<http.IncomingMessage>()
 
-  public constructor (origin?: string, private readonly captures: Captures = new Captures()) {
+  public constructor (origin?: string, captures: Captures = new Captures()) {
     this.origin = origin
+    this.captures = captures
   }
 
   public async fetch (input: string): Promise<undici.Dispatcher.ResponseData> {
-    const substituted = this.captures.substitute(input)
-
-    let [headers, body] = trim(substituted).split('\n\n')
-
-    if (body !== undefined) headers += '\ncontent-length: ' + body?.length
-
-    const message = headers + '\n\n' + (body ?? '')
+    const message = this.normalize(input)
 
     return await request(message, this.origin)
   }
@@ -38,7 +37,38 @@ export class Agent {
   public async request (input: string): Promise<any> {
     const response = await this.fetch(input)
 
-    this.response = await parse.response(response)
+    this.response = await parser.response(response)
+  }
+
+  public async parts (input: string): Promise<ReturnType<typeof meros>> {
+    const message = this.normalize(input)
+    const req = parse(message, this.origin)
+
+    const headers: Record<string, string> = {}
+
+    for (const [key, value] of req.headers)
+      headers[key] = value
+
+    const response = await new Promise<http.IncomingMessage>((resolve) => {
+      const request = http.request(req.url, {
+        method: req.method,
+        headers
+      }, (response) => resolve(response))
+
+      request.end()
+    })
+
+    this.pending.add(response)
+    response.on('end', () => this.pending.delete(response))
+
+    return await meros(response)
+  }
+
+  public abort (): void {
+    for (const response of this.pending)
+      response.destroy()
+
+    this.pending.clear()
   }
 
   public responseIncludes (expected: string): void {
@@ -81,7 +111,7 @@ export class Agent {
       url,
       method,
       headers
-    } = http.parse.request(head)
+    } = protocol.parse.request(head)
 
     const href = new URL(url, this.origin).href
 
@@ -94,7 +124,7 @@ export class Agent {
     try {
       const response = await undici.request(href, options)
 
-      this.response = await http.parse.response(response)
+      this.response = await protocol.parse.response(response)
     } catch (e: any) {
       console.error(e)
       console.error(e.cause)
@@ -109,6 +139,16 @@ export class Agent {
     const expected = head + '\n\n' + text
 
     this.responseIncludes(expected)
+  }
+
+  private normalize (input: string): string {
+    const substituted = this.captures.substitute(input)
+
+    let [headers, body] = trim(substituted).split('\n\n')
+
+    if (body !== undefined) headers += '\ncontent-length: ' + body?.length
+
+    return headers + '\n\n' + (body ?? '')
   }
 }
 

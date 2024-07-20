@@ -1,11 +1,15 @@
 'use strict'
 
+const { console } = require('openspan')
 const { Composition } = require('@toa.io/core')
+const { version } = require('@toa.io/runtime/package.json')
 
 const boot = require('./index')
 
 async function composition (paths, options) {
   options = Object.assign({}, options)
+
+  console.info('Starting composition', { runtime: version })
 
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
   const tenants = await Promise.all(manifests.map(boot.extensions.tenants))

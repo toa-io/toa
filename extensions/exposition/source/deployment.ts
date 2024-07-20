@@ -6,7 +6,7 @@ import * as schemas from './schemas'
 import { shortcuts } from './Directive'
 import { components } from './Composition'
 import { parse } from './RTD/syntax'
-import { DELAY, PORT } from './HTTP/Server'
+import { DELAY, PORT } from './HTTP'
 
 export function deployment (_: unknown, annotation?: Annotation): Dependency {
   assert.ok(annotation !== undefined, 'Exposition context annotation is required')
@@ -33,7 +33,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   if (annotation?.['/'] !== undefined) {
     const tree = parse(annotation['/'], shortcuts)
 
-    service.variables.push({
+    service.variables!.push({
       name: 'TOA_EXPOSITION',
       value: encode(tree)
     })
@@ -41,9 +41,9 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
 
   const { debug, trace, authorities } = annotation
 
-  service.ingress.hosts = Object.values(authorities)
-  service.ingress.class = annotation.class
-  service.ingress.annotations = annotation.annotations
+  service.ingress!.hosts = Object.values(authorities)
+  service.ingress!.class = annotation.class
+  service.ingress!.annotations = annotation.annotations
 
   const properties: Properties = { authorities }
 
@@ -53,7 +53,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   if (trace === true)
     properties.trace = true
 
-  service.variables.push({
+  service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
     value: encode(properties)
   })

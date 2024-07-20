@@ -2,9 +2,12 @@ import { PassThrough, Readable } from 'node:stream'
 
 export class Stream extends Readable {
   private forks: number = 0
+  private interval: NodeJS.Timeout | null = null
 
   public constructor () {
     super(objectMode)
+
+    this.once('resume', () => this.heartbeat())
   }
 
   public fork (): PassThrough {
@@ -22,6 +25,20 @@ export class Stream extends Readable {
   public override _read (): void {
   }
 
+  public override _destroy (error: Error | null, callback: (error?: (Error | null)) => void): void {
+    if (this.interval !== null)
+      clearInterval(this.interval)
+
+    super._destroy(error, callback)
+  }
+
+  private heartbeat (): void {
+    if (this.interval === null)
+      this.interval = setInterval(() => {
+        this.push('heartbeat')
+      }, HEARTBEAT_INTERVAL)
+  }
+
   private increment (): void {
     this.forks++
   }
@@ -34,4 +51,5 @@ export class Stream extends Readable {
   }
 }
 
+const HEARTBEAT_INTERVAL = 16_000
 const objectMode = { objectMode: true }

@@ -21,7 +21,7 @@ export class Composition extends Connector {
   }
 }
 
-function find (): string[] {
+export function find (): string[] {
   return entries().map((entry) => resolve(ROOT, entry.name))
 }
 

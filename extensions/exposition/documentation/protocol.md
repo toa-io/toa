@@ -4,9 +4,9 @@
 
 The following media types are supported for both requests and responses:
 
-- `application/msgpack` using [msgpackr](https://github.com/kriszyp/msgpackr)
-- `application/yaml` using [js-yaml](https://github.com/nodeca/js-yaml)
 - `application/json`
+- `application/yaml` using [js-yaml](https://github.com/nodeca/js-yaml)
+- `application/msgpack` using [msgpackr](https://github.com/kriszyp/msgpackr)
 - `text/plain`
 
 The response format is determined by content negotiation
@@ -26,7 +26,7 @@ foo: bar
 
 ### Multipart types
 
-Multipart responses are endoded using content negotiation,
+Multipart responses are encoded using content negotiation,
 and the `content-type` of the response is set to one of the custom `multipart/` subtypes,
 corresponding to the type of
 the parts:
@@ -37,6 +37,9 @@ the parts:
 | `multipart/yaml`    | `application/yaml`    |
 | `multipart/json`    | `application/json`    |
 | `multipart/text`    | `text/plain`          |
+
+Multipart responses are started with a text chunk `ACK`, and finished with a text
+chunk `FIN`.
 
 Example:
 
@@ -50,9 +53,13 @@ accept: application/yaml
 content-type: multipart/yaml; boundary=cut
 
 --cut
+ACK
+--cut
 foo: bar
 --cut
 baz: qux
+--cut
+FIN
 --cut--
 ```
 

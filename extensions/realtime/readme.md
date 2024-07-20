@@ -10,7 +10,9 @@
 </a>
 
 Realtime extension combines application events into streams according to defined routes.
-Clients may consume these streams [via Exposition](#exposition).
+Clients may consume these streams [via Exposition](/extensions/exposition).
+
+If stream is idle for 16 seconds, a `heartbeat` message is sent.
 
 ## Static routes
 
@@ -31,7 +33,7 @@ realtime:
 # context.toa.yaml
 realtime:
   users.updated: id
-  orders.created: custromer_id
+  orders.created: customer_id
 ```
 
 In case of conflict, the Context annotation takes precedence.
@@ -92,8 +94,7 @@ Realtime extension, and are
 accessible via the `/realtime/streams/:key/` resource with
 the [`auth:id: key`](/extensions/exposition/documentation/access.md#id) authorization rule.
 
-Refer to the [Exposition extension](/extensions/exposition) for more
-details:
+Refer to the [Exposition extension](/extensions/exposition) for more details:
 
-- [Streams](/extensions/exposition/documentation/protocol.md#streams)
+- [Multipart responses](/extensions/exposition/documentation/protocol.md#multipart-types)
 - [Access authorization](/extensions/exposition/documentation/access.md)

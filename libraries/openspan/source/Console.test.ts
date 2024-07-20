@@ -1,3 +1,4 @@
+import { setTimeout } from 'node:timers/promises'
 import { console, Console } from './'
 
 let instance: Console
@@ -116,6 +117,38 @@ it('should not log undefined attributes', async () => {
 
   expect('attributes' in entry).toBe(false)
   expect(entry.message).toBe('hello')
+})
+
+it('should measure', async () => {
+  async function fn (): Promise<string> {
+    await setTimeout(10)
+
+    return 'foo'
+  }
+
+  expect(await console.measure('foo', fn())).toBe('foo')
+  expect(await console.measure('foo', { att: 'ok' }, fn())).toBe('foo')
+})
+
+it('should log empty objects', () => {
+  const con = new Console({ format: 'terminal' })
+
+  con.info('foo', { foo: {}, bar: 'baz' })
+  con.info('bar', {})
+  con.info('baz')
+})
+
+it('should log Error', () => {
+  const con = new Console({ format: 'terminal' })
+
+  con.info('foo', new Error('ok'))
+  con.info('foo', { error: new Error('ok') })
+})
+
+it('should log null', () => {
+  const con = new Console({ format: 'terminal' })
+
+  con.info('foo', { foo: null })
 })
 
 function pop (channel: any): any {

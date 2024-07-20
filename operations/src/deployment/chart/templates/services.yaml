@@ -31,6 +31,7 @@ spec:
             initialDelaySeconds: {{ .probe.delay }}
             {{- end }}
           {{- end }}
+{{- if .port }}
 ---
 apiVersion: v1
 kind: Service
@@ -45,6 +46,7 @@ spec:
       protocol: TCP
       port: {{ .port }}
       targetPort: {{ .port }}
+{{- end }}
 ---
 {{- if .ingress }}
 {{- $service := .name }}

@@ -70,5 +70,5 @@ Feature: Exposition deployment
         - name: exposition-gateway
           variables:
           - name: TOA_EXPOSITION_PROPERTIES
-            value: "eyJhdXRob3JpdGllcyI6eyJsb2NhbCI6ImxvY2FsaG9zdCIsImEiOiJhcGkuYS5kZXYiLCJiIjoiYXBpLmIuZGV2In0sImRlYnVnIjp0cnVlLCJ0cmFjZSI6dHJ1ZX0="
+            value: "eyJhdXRob3JpdGllcyI6eyJhIjoiYXBpLmEuZGV2IiwiYiI6ImFwaS5iLmRldiJ9LCJkZWJ1ZyI6dHJ1ZSwidHJhY2UiOnRydWV9"
       """

@@ -40,3 +40,9 @@ import { console } from 'openspan'
 console.configure({ level: 'warn' })
 console.info('ingnored')
 ```
+
+### Measuring intervals
+
+```javascript
+const response = await console.measure('fetch', { foo: 'bar' }, () => fetch('https://example.com'))
+```

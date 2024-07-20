@@ -2,8 +2,7 @@
 
 ## Structured logs
 
-Structured logs can be written using the `logs` Context Aspect, available without specific
-declaration.
+Structured logs can be written using the `logs` Context Aspect.
 
 ```javascript
 async function computation (input, context) {
@@ -11,7 +10,14 @@ async function computation (input, context) {
 }
 ```
 
-Logs are formatted as JSON objects and written to stdout or stderr. The log entry format is:
+Methods `debug`, `info`, `warn`, and `error` are available to log messages with different severity
+levels, with the following signature:
+
+```
+(message: string, attributes?: object) => void
+```
+
+Logs are formatted as JSON and written to stdout or stderr. The log entry format is:
 
 ```yaml
 time: string      # ISO 8601 timestamp
@@ -82,7 +88,10 @@ context.logs.error('Failed to send the email, please check the email server conf
 :+1: Do:
 
 ```javascript
-context.logs.error('Failed to send the email', { reason: 'SMTP error', status: 1024 })
+context.logs.error('Failed to send the email', {
+  reason: 'SMTP error',
+  status: response.statusCode
+})
 ```
 
 Avoid logging any information received from the user.
@@ -98,8 +107,8 @@ context.logs.error('Failed to send chat message', { message: message.text })
 :x: Never do:
 
 ```javascript
-context.logs.error('Password is incorrect', { password: user.password })
-context.logs.info('Payment received', { creditCard: request.creditCardNumber })
+context.logs.error('Password is incorrect', { password: credentials.password })
+context.logs.info('Payment received', { creditCard: card.number })
 ```
 
 Choose the appropriate log level for the message:

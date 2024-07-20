@@ -97,6 +97,9 @@ describe('read', () => {
     expect(result).toBe([
       '--cut',
       '',
+      'ACK',
+      '--cut',
+      '',
       'Hello',
       '--cut',
       '',
@@ -104,6 +107,9 @@ describe('read', () => {
       '--cut',
       '',
       'World',
+      '--cut',
+      '',
+      'FIN',
       '--cut--'].join('\r\n'))
   })
 })
