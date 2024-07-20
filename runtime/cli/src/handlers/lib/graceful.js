@@ -1,9 +1,11 @@
 'use strict'
 
+const { console } = require('openspan')
+
 function graceful (connector) {
   ['SIGTERM', 'SIGINT']
-    .forEach(event => process.once(event, async () => {
-      console.info(`Received ${event}, shutting down...`)
+    .forEach(signal => process.once(signal, async () => {
+      console.info('Shutting down', { signal })
 
       await connector.disconnect()
     }))
