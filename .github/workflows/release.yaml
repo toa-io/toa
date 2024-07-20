@@ -28,7 +28,7 @@ jobs:
       - name: Run environment
         run: docker compose up -d --quiet-pull
       - name: Install dependencies
-        run: npm i
+        run: npm ci
         env:
           HUSKY: 0
       - name: Run tests
