@@ -9,6 +9,7 @@ Feature: Dynamic tree updates
     Given the Gateway is running
     And the `pots` is running with the following manifest:
       """yaml
+      version: 1
       exposition:
         /:
           io:output: true
@@ -26,6 +27,45 @@ Feature: Dynamic tree updates
       """
     Then the `pots` is stopped
     Then the `pots` is running with the following manifest:
+      """yaml
+      version: 2
+      exposition:
+        /:
+          io:output: true
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+
+  Scenario: Repeat routes
+    Given the Gateway is running
+    And the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    Then the `pots` is stopped
+    And the `pots` is running with the following manifest:
       """yaml
       exposition:
         /:
@@ -46,6 +86,7 @@ Feature: Dynamic tree updates
   Scenario: Updating routes with conflict
     And the `pots` is running with the following manifest:
       """yaml
+      version: 1.0.0
       exposition:
         /:id:
           io:output: true
@@ -54,6 +95,7 @@ Feature: Dynamic tree updates
     Then the `pots` is stopped
     Then the `pots` is running with the following manifest:
       """yaml
+      version: 1.1.0
       exposition:
         /:
           io:output: true
@@ -79,6 +121,7 @@ Feature: Dynamic tree updates
   Scenario: Updating method mapping
     Given the `pots` is running with the following manifest:
       """yaml
+      version: a
       exposition:
         /big:
           io:output: true
@@ -90,6 +133,7 @@ Feature: Dynamic tree updates
     Then the `pots` is stopped
     Then the `pots` is running with the following manifest:
       """yaml
+      version: b
       exposition:
         /big:
           io:output: true

@@ -12,6 +12,7 @@ export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree
   private readonly interceptor: Interception
+  private readonly merged = new Set<string>()
 
   public constructor (broadcast: Broadcast, tree: Tree, interception: Interception) {
     super()
@@ -116,11 +117,26 @@ export class Gateway extends Connector {
   }
 
   private merge (branch: Branch): void {
+    const id = branch.namespace + '.' + branch.component + '@' + branch.version
+
+    if (this.merged.has(id)) {
+      console.info('Branch already merged, ignoring', {
+        namespace: branch.namespace,
+        component: branch.component,
+        version: branch.version
+      })
+
+      return
+    }
+
+    this.merged.add(id)
+
     try {
       this.tree.merge(branch.node, branch)
 
       console.info('Branch merged', {
-        source: branch.namespace + '.' + branch.component,
+        namespace: branch.namespace,
+        component: branch.component,
         version: branch.version
       })
     } catch (exception) {
