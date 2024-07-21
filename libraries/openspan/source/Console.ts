@@ -55,9 +55,9 @@ export class Console {
         return
 
       const entry: Entry = {
-        time: new Date().toISOString(),
         severity,
-        message
+        message,
+        time: new Date().toISOString()
       }
 
       if (attributes !== undefined)
