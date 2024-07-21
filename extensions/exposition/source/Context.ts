@@ -5,4 +5,5 @@ export type Context = RTD.Context<Extension>
 interface Extension {
   namespace: string
   component: string
+  version: string
 }

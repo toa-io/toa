@@ -5,9 +5,6 @@ const { merge } = require('@toa.io/generic')
 const { component: load } = require('@toa.io/norm')
 const { Locator } = require('@toa.io/core')
 
-/**
- * @type {toa.boot.Manifest}
- */
 const manifest = async (path, options = {}) => {
   options = merge(clone(options), DEFAULTS)
 

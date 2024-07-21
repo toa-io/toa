@@ -46,19 +46,6 @@ export class Console {
     })
   }
 
-  public async measure<T = unknown> (message: string, promise: Promise<T>): Promise<T>
-  public async measure<T = unknown> (message: string, attributes: object, promise: Promise<T>): Promise<T>
-  public async measure<T = unknown> (message: string, arg1: object | Promise<T>, arg2?: Promise<T>): Promise<T> {
-    const attributes = arg2 === undefined ? undefined : arg1 as object
-    const promise = arg2 ?? arg1 as Promise<T>
-    const start = Date.now()
-    const result = await promise
-
-    this.info(message, attributes, { duration: Date.now() - start })
-
-    return result
-  }
-
   private channel (channel: Channel): Method {
     const level = LEVELS[channel]
     const severity = channel.toUpperCase() as Severity

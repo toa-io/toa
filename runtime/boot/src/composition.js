@@ -9,9 +9,13 @@ const boot = require('./index')
 async function composition (paths, options) {
   options = Object.assign({}, options)
 
-  console.info('Starting composition', { runtime: version })
-
   const manifests = await Promise.all(paths.map((path) => boot.manifest(path, options)))
+
+  console.info('Starting composition', {
+    runtime: version,
+    components: manifests.map((manifest) => manifest.locator.id)
+  })
+
   const tenants = await Promise.all(manifests.map(boot.extensions.tenants))
   const expositions = await Promise.all(manifests.map(boot.discovery.expose))
   const components = await Promise.all(manifests.map(boot.component))

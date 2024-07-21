@@ -119,7 +119,10 @@ export class Gateway extends Connector {
     try {
       this.tree.merge(branch.node, branch)
 
-      console.info('Branch merged', { source: branch.namespace + '.' + branch.component })
+      console.info('Branch merged', {
+        source: branch.namespace + '.' + branch.component,
+        version: branch.version
+      })
     } catch (exception) {
       console.error('Branch merge exception', exception as Error)
     }
