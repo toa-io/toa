@@ -120,7 +120,7 @@ export class Gateway extends Connector {
     const id = branch.namespace + '.' + branch.component + '@' + branch.version
 
     if (this.merged.has(id)) {
-      console.info('Branch already merged, ignoring', {
+      console.debug('Branch already merged, ignoring', {
         namespace: branch.namespace,
         component: branch.component,
         version: branch.version
