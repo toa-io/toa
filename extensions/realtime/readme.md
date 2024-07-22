@@ -23,6 +23,7 @@ Static routes may be defined in Component manifest or the Context annotation.
 
 ```yaml
 # manifest.toa.yaml
+
 name: users
 
 realtime:
@@ -31,12 +32,23 @@ realtime:
 
 ```yaml
 # context.toa.yaml
+
 realtime:
   users.updated: id
   orders.created: customer_id
 ```
 
 In case of conflict, the Context annotation takes precedence.
+
+Multiple stream keys may be defined for a single event.
+
+```yaml
+# manifest.toa.yaml
+name: messages
+
+realtime:
+  updated: [sender_id, recipient_id]
+```
 
 ### Static route examples
 
