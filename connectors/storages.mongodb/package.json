@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/storages.mongodb",
-  "version": "1.0.0-alpha.72",
+  "version": "1.0.0-alpha.73",
   "description": "Toa MongoDB Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,11 +20,11 @@
   },
   "dependencies": {
     "@toa.io/conveyor": "1.0.0-alpha.63",
-    "@toa.io/core": "1.0.0-alpha.67",
+    "@toa.io/core": "1.0.0-alpha.73",
     "@toa.io/generic": "1.0.0-alpha.63",
     "@toa.io/pointer": "1.0.0-alpha.63",
     "mongodb": "6.7.0",
-    "openspan": "1.0.0-alpha.67",
+    "openspan": "1.0.0-alpha.73",
     "saslprep": "1.0.3"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"

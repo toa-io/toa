@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.realtime",
-  "version": "1.0.0-alpha.69",
+  "version": "1.0.0-alpha.73",
   "description": "Toa Realtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,8 +17,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.67",
-    "openspan": "1.0.0-alpha.67"
+    "@toa.io/core": "1.0.0-alpha.73",
+    "openspan": "1.0.0-alpha.73"
   },
   "jest": {
     "preset": "ts-jest",
