@@ -3,9 +3,10 @@ import * as _component from './component'
 import * as _context from './context'
 import * as _storages from './storages'
 import * as _bindings from './bindings'
+import { Manifest } from '@toa.io/norm'
 
-export interface Factory{
-  tenant? (locator: _core.Locator, manifest: object): _core.Connector
+export interface Factory {
+  tenant? (locator: _core.Locator, manifest: object, component: Manifest): _core.Connector
 
   aspect? (locator: _core.Locator, manifest: object | null): Aspect | Aspect[]
 
@@ -22,7 +23,7 @@ export interface Factory{
   receiver? (receiver: _core.Receiver, locator: _core.Locator): _core.Receiver
 }
 
-export interface Aspect extends _core.Connector{
+export interface Aspect extends _core.Connector {
   name: string
 
   invoke (...args: any[]): any

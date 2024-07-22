@@ -22,7 +22,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     version: require('../package.json').version,
     variables: [],
     components: labels,
-    ingress: { hosts: [] },
+    ingress: { default: true, hosts: [] },
     probe: {
       path: '/.ready',
       port: PORT,

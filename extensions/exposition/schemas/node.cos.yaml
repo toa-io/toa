@@ -4,3 +4,4 @@ forward: string
 routes: [ref:route]
 methods: [ref:method]
 directives: [ref:directive]
+version: string

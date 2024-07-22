@@ -16,4 +16,4 @@ COPY --chown=node:node . /composition
 RUN for entry in *; do if [ -f "$entry/package.json" ]; then (cd $entry && npm i --omit=dev); fi; done
 
 USER node
-CMD toa compose *
+CMD ["toa", "compose", "*"]

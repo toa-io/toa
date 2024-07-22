@@ -16,7 +16,7 @@ const tenants = (manifest) => {
 
     if (factory.tenant === undefined) continue
 
-    const tenant = factory.tenant(manifest.locator, declaration)
+    const tenant = factory.tenant(manifest.locator, declaration, manifest)
 
     tenants.push(tenant)
   }

@@ -32,6 +32,7 @@ services:
     port: 8000
     replicas: 2
     ingress:
+      default: true
       hosts: [dummies.toa.io]
       class: alb
       annotations:

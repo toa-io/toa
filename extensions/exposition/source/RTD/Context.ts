@@ -9,5 +9,5 @@ export interface Context<TExtension = any> {
     readonly factory: DirectiveFactory
     stack: Directive[]
   }
-  readonly extension?: TExtension
+  readonly extension: TExtension
 }

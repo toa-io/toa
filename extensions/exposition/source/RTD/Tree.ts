@@ -33,14 +33,14 @@ export class Tree {
     return this.trunk.match(fragments)
   }
 
-  public merge (node: syntax.Node, extension: any): void {
+  public merge (node: syntax.Node, extension: unknown): void {
     const branch = this.createNode(node, !PROTECTED, extension)
 
     this.trunk.merge(branch)
   }
 
   private createNode
-  (node: syntax.Node, protect: boolean, extension?: any): Node {
+  (node: syntax.Node, protect: boolean, extension?: unknown): Node {
     const context: Context = {
       protected: protect,
       endpoints: this.endpoints,

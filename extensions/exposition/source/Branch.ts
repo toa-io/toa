@@ -5,4 +5,5 @@ export interface Branch {
   component: string
   isolated: boolean
   node: RTD.Node
+  version: string
 }

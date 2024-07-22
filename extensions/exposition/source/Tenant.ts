@@ -1,23 +1,17 @@
-import { Connector, type Locator, type bindings } from '@toa.io/core'
-import { type Label } from './discovery'
-import { type Branch } from './Branch'
-import type * as RTD from './RTD/syntax'
+import { Connector } from '@toa.io/core'
+import type { bindings } from '@toa.io/core'
+import type { Label } from './discovery'
+import type { Branch } from './Branch'
 
 export class Tenant extends Connector {
   private readonly broadcast: Broadcast
   private readonly branch: Branch
 
-  public constructor (broadcast: Broadcast, locator: Locator, node: RTD.Node) {
+  public constructor (broadcast: Broadcast, branch: Branch) {
     super()
 
     this.broadcast = broadcast
-
-    this.branch = {
-      namespace: locator.namespace,
-      component: locator.name,
-      isolated: locator.namespace === 'identity',
-      node
-    }
+    this.branch = branch
 
     this.depends(broadcast)
   }
