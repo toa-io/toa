@@ -11,4 +11,4 @@ COPY --chown=node:node . /service
 RUN npm i --omit=dev
 
 USER node
-CMD ["toa", "serve", "."]
+CMD toa serve .
