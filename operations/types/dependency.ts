@@ -40,7 +40,8 @@ export interface Dependency {
 }
 
 interface Ingress {
-  hosts: string[]
+  default?: boolean
+  hosts?: string[]
   class?: string
   annotations?: object
 }
