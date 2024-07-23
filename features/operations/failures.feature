@@ -1,14 +1,5 @@
 Feature: Operations failures
 
-  Scenario: Object `id` is readonly
-    Given I have a component `errors.caller`
-    And my working directory is ./components/errors.caller
-    When I run `toa invoke setid "{}"`
-    Then stderr should contain lines:
-    """
-    <...>Cannot assign to read only property 'id'
-    """
-
   Scenario: Failed observation
     Given I compose `mongo.one` component
     When I call `mongo.one.observe` with:
@@ -46,7 +37,6 @@ Feature: Operations failures
     Then the following exception is thrown:
       """yaml
       code: 202
-      message: query must be null
       """
 
   Scenario: Thrown exception

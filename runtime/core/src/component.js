@@ -1,7 +1,8 @@
 'use strict'
 
-const { Connector } = require('./connector')
 const assert = require('node:assert')
+const { console } = require('openspan')
+const { Connector } = require('./connector')
 
 class Component extends Connector {
   locator
@@ -22,7 +23,15 @@ class Component extends Connector {
     assert.ok(endpoint in this.operations,
       `Endpoint '${endpoint}' is not provided by '${this.locator.id}'`)
 
-    return this.operations[endpoint].invoke(request)
+    const reply = await this.operations[endpoint].invoke(request)
+
+    if (reply?.exception !== undefined)
+      console.error('Failed to execute operation', {
+        endpoint: `${this.locator.id}.${endpoint}`,
+        exception: reply.exception
+      })
+
+    return reply
   }
 }
 

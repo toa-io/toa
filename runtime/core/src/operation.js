@@ -42,8 +42,6 @@ class Operation extends Connector {
 
       return await this.process(store)
     } catch (e) {
-      console.error('Failed to execute operation', e)
-
       const exception = e instanceof Error ? new SystemException(e) : e
 
       return { exception }
