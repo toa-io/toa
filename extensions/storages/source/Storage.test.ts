@@ -515,3 +515,9 @@ it('should set origin', async () => {
 
   expect(stored.origin).toBe(origin)
 })
+
+it('should expose path', () => {
+  const path = storage.path()
+
+  expect(typeof path === 'string' || path === null)
+})

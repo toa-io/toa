@@ -10,7 +10,7 @@ export interface FileSystemOptions {
 }
 
 export class FileSystem extends Provider<FileSystemOptions> {
-  protected readonly path: string
+  public override readonly path: string
 
   public constructor (options: FileSystemOptions, secrets?: ProviderSecrets) {
     super(options, secrets)
