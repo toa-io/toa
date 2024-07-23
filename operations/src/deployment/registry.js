@@ -115,11 +115,13 @@ class Registry {
   }
 
   async exists (tag) {
-    const args = ['inspect', tag]
+    const args = ['manifest', 'inspect', tag]
 
     try {
       await this.#process.execute('docker', args, { silently: true })
-    } catch {
+    } catch (error) {
+      console.log(error.message)
+
       return false
     }
 
