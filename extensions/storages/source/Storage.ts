@@ -153,6 +153,10 @@ export class Storage {
     await this.save(path, entry)
   }
 
+  public path (): string | null {
+    return this.provider.path
+  }
+
   private async transit (stream: Readable): Promise<string> {
     const tempname = newid()
 

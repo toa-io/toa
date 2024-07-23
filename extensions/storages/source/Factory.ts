@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { console } from 'openspan'
 import { decode } from '@toa.io/generic'
 import { providers } from './providers'
 import { Storage, type Storages } from './Storage'
@@ -42,6 +43,8 @@ export class Factory {
     const Provider: ProviderConstructor = providers[providerId]
     const secrets = this.resolveSecrets(name, Provider)
     const provider = new Provider(options, secrets)
+
+    console.debug('Storage created', { name, provider: providerId, options, path: provider.path })
 
     return new Storage(provider)
   }

@@ -10,6 +10,7 @@ export interface ProviderSecret {
 
 export abstract class Provider<Options = void> {
   public static readonly SECRETS: readonly ProviderSecret[] = []
+  public readonly path: string | null = null
 
   public constructor (_: Options, secrets?: ProviderSecrets) {
     for (const { name, optional = false } of new.target.SECRETS)
