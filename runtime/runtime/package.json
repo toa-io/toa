@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "1.0.0-alpha.75",
+  "version": "1.0.0-alpha.76",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,7 +23,7 @@
     "postversion": "jq --argjson value \"$(jq '.version' package.json)\" '.version = $value' ../../package.json > tmp.json && mv tmp.json ../../package.json"
   },
   "dependencies": {
-    "@toa.io/bindings.amqp": "1.0.0-alpha.75",
+    "@toa.io/bindings.amqp": "1.0.0-alpha.76",
     "@toa.io/bindings.loop": "1.0.0-alpha.63",
     "@toa.io/boot": "1.0.0-alpha.75",
     "@toa.io/bridges.bash": "1.0.0-alpha.59",
@@ -32,7 +32,7 @@
     "@toa.io/core": "1.0.0-alpha.75",
     "@toa.io/extensions.configuration": "1.0.0-alpha.75",
     "@toa.io/extensions.exposition": "1.0.0-alpha.75",
-    "@toa.io/extensions.origins": "1.0.0-alpha.75",
+    "@toa.io/extensions.origins": "1.0.0-alpha.76",
     "@toa.io/extensions.realtime": "1.0.0-alpha.75",
     "@toa.io/extensions.sampling": "1.0.0-alpha.7",
     "@toa.io/extensions.stash": "1.0.0-alpha.73",
