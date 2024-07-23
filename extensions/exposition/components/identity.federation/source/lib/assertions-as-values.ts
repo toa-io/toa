@@ -10,10 +10,11 @@ export function assertionsAsValues<T extends (...args: any[]) => Promise<any>> (
     try {
       return await fn(...args)
     } catch (err) {
-      console.error('OIDC Authentication exception', err as Error)
+      if (err instanceof assert.AssertionError) {
+        console.error('OIDC Authentication exception', { message: err.message })
 
-      if (err instanceof assert.AssertionError)
         return err
+      }
 
       throw err
     }
