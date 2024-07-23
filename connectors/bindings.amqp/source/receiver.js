@@ -35,7 +35,7 @@ class Receiver extends Connector {
   }
 
   async open () {
-    if (this.#queue !== null)
+    if (this.#queue !== undefined)
       await this.#comm.process(this.#queue, this.#receive)
     else
       await this.#comm.consume(this.#exchange, this.#group, this.#receive)
