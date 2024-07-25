@@ -41,4 +41,4 @@ const multipliers: Record<string, number> = {
   days: 86400000
 }
 
-const SHIFT_RX = /^(?<value>-?\d+(?:\.\d)?)(?<unit>\w{1,3})?$/
+const SHIFT_RX = /^(?<value>-?\d+(?:\.\d)?)(?<unit>\w{1,16})?$/

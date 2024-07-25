@@ -19,3 +19,9 @@ it('should parse seconds', () => {
 
   expect(ms).toBeGreaterThanOrEqual(time + 1000)
 })
+
+it('should parse hours', () => {
+  const ms = Number.parseInt(now(undefined, '2hours'))
+
+  expect(ms).toBeGreaterThanOrEqual(time + 7200000)
+})
