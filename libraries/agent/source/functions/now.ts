@@ -1,20 +1,21 @@
+import assert from 'node:assert'
+
 export function now (_: unknown, shift = '0'): string {
   const match = SHIFT_RX.exec(shift) as Match | null
 
-  if (match === null)
-    throw new Error(`Invalid shift: ${shift}`)
+  assert.ok(match !== null, `Invalid shift: ${shift}`)
 
-  const s = parse(match.groups.value, match.groups.unit)
+  const ms = parse(match.groups.value, match.groups.unit)
 
-  return (Date.now() + s).toString()
+  return (Date.now() + ms).toString()
 }
 
 function parse (value: string, unit?: string): number {
   const number = Number.parseFloat(value)
   const multiplier = unit === undefined ? 1 : multipliers[unit]
 
-  if (multiplier === undefined)
-    throw new Error(`Invalid unit: ${unit}`)
+  assert.ok(!Number.isNaN(number), `Invalid number: ${value}`)
+  assert.ok(multiplier !== undefined, `Invalid unit: ${unit}`)
 
   return number * multiplier
 }
