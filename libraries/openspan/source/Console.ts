@@ -34,16 +34,22 @@ export class Console {
       this.context = options.context
   }
 
-  public fork (context: object): Console {
-    return new Console({
+  public fork (ctx?: object): Console {
+    const options: ConsoleOptions = {
       level: this.level,
       format: this.formatter.name,
       streams: {
         stdout: this.stdout,
         stderr: this.stderr
-      },
-      context: { ...this.context, ...context }
-    })
+      }
+    }
+
+    const context = this.context === undefined ? ctx : { ...this.context, ...ctx }
+
+    if (context !== undefined)
+      options.context = context
+
+    return new Console(options)
   }
 
   private channel (channel: Channel): Method {
@@ -90,7 +96,7 @@ export const console = new Console()
 
 export interface ConsoleOptions {
   level?: Channel | Level
-  context?: Record<string, unknown>
+  context?: object
   format?: Format
   streams?: Streams
 }

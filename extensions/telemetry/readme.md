@@ -117,3 +117,20 @@ Choose the appropriate log level for the message:
 - `info`: Tracks the application flow and provides context for events.
 - `warn`: Indicates potential issues that may require attention.
 - `error`: Indicates a failure or an unexpected event that requires immediate attention.
+
+Avoid logging configuration objects, as they may contain secrets. Log specific values instead.
+
+:-1: Don't:
+
+```javascript
+context.logs.debug('Configuration', context.configuration)
+```
+
+:+1: Do:
+
+```javascript
+context.logs.debug('Limits', {
+  max: context.configuration.limits.max,
+  min: context.configuration.limits.min
+})
+```

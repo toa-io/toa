@@ -223,3 +223,15 @@ Feature: Errors
       """
       406 Not Acceptable
       """
+
+  Scenario: Not acceptable request with error
+    When the following request is received:
+      """
+      GET /robots.txt HTTP/1.1
+      host: nex.toa.io
+      accept: text/html
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """

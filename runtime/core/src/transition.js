@@ -1,12 +1,8 @@
 'use strict'
 
 const { retry } = require('@toa.io/generic')
-
 const { Operation } = require('./operation')
-const {
-  StateConcurrencyException,
-  StateNotFoundException
-} = require('./exceptions')
+const { StateConcurrencyException, StateNotFoundException } = require('./exceptions')
 
 class Transition extends Operation {
   #concurrency
@@ -26,9 +22,8 @@ class Transition extends Operation {
 
     store.scope = request.query ? await this.query(request.query) : this.scope.init()
 
-    if (store.scope === null) {
+    if (store.scope === null || store.scope.deleted === true)
       throw new StateNotFoundException()
-    }
 
     store.state = store.scope.get()
   }
@@ -61,7 +56,7 @@ const RETRY = {
   base: 10,
   max: 5000,
   dispersion: 1,
-  retries: Infinity
+  retries: 32
 }
 
 exports.Transition = Transition

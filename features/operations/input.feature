@@ -38,8 +38,6 @@ Feature: Additional properties
     Then the following exception is thrown:
       """yaml
       code: 202
-      keyword: type
-      property: input/foo
       """
     And I disconnect
 

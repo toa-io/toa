@@ -9,7 +9,7 @@ Text-based HTTP client with variables and expressions.
 - `password [length]`: generate password of a given length (default `16`)
 - `basic (credentials)`: encode `credentials.username` and `credentials.password` to base64-encoded
   credentials
-- `now`: result of `Date.now()`
+- `now [shift]`: result of `Date.now()`, optionally shifted by a given number of milliseconds[^1]
 - `set (variable)`: set a variable to the current pipeline value
 
 ```http
@@ -54,3 +54,6 @@ foo: #{{ duplicate bar | append baz }}
 ```
 
 In the above example, `foo` will be set to `barbarbaz`.
+
+[^1]: Also supports some human-readable values like `now -1d`, `now +1h`. Supported units
+are `ms`, `s`, `sec`, `m`, `min`, `h`, `hr`, `hour`, `hours`, `d`, `day`, `days`.

@@ -1,5 +1,6 @@
 'use strict'
 
+const { console } = require('openspan')
 const { add } = require('@toa.io/generic')
 const { Connector } = require('./connector')
 
@@ -50,7 +51,13 @@ class Receiver extends Connector {
 
     add(request, extensions)
 
-    await this.#local.invoke(this.#endpoint, request)
+    try {
+      await this.#local.invoke(this.#endpoint, request)
+    } catch (error) {
+      console.error('Receiver error', error)
+
+      throw error
+    }
   }
 
   async #request (payload) {
