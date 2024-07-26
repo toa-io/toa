@@ -3,11 +3,13 @@ import { PassThrough, Readable } from 'node:stream'
 export class Stream extends Readable {
   private forks: number = 0
   private interval: NodeJS.Timeout | null = null
+  private readonly logs: any
 
-  public constructor () {
+  public constructor (logs: any) {
     super(objectMode)
 
     this.once('resume', () => this.heartbeat())
+    this.logs = logs
   }
 
   public fork (): PassThrough {
@@ -41,10 +43,14 @@ export class Stream extends Readable {
 
   private increment (): void {
     this.forks++
+
+    this.logs.debug('Stream forked', { forks: this.forks })
   }
 
   private decrement (): void {
     this.forks--
+
+    this.logs.debug('Stream fork closed', { forks: this.forks })
 
     if (this.forks === 0)
       this.destroy()
