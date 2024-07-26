@@ -119,7 +119,9 @@ export class Server extends Connector {
 
       const message: OutgoingMessage = { status: response.statusCode }
 
-      if (exception instanceof ClientError || this.properties.debug)
+      if (context.encoder === null)
+        message.body = undefined
+      else if (exception instanceof ClientError || this.properties.debug)
         message.body =
           exception instanceof Exception
             ? exception.body
