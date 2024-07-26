@@ -28,7 +28,7 @@ Given('the {component} database contains:',
         const str = rows[r][c]
         const int = parseInt(str)
 
-        document[columns[c]] = int.toString() === str ? int : str
+        document[columns[c]] = int.toString() === str ? int : (str === 'null' ? null : str)
       }
 
       documents.push(document)

@@ -41,6 +41,8 @@ class Storage extends Connector {
   async find (query) {
     const { criteria, options } = translate(query)
 
+    criteria._deleted = null
+
     this.debug('find', { criteria, options })
 
     const recordset = await this.#collection.find(criteria, options).toArray()

@@ -185,6 +185,12 @@ Then('the reply is received:',
     if (this.exception !== undefined) throw this.exception
 
     const expected = parse(yaml)
+
+    if (Array.isArray(this.reply)) {
+      assert.ok(Array.isArray(expected), 'Expected reply is not an array')
+      assert.equal(this.reply.length, expected.length, diff(expected, this.reply))
+    }
+
     const matches = match(this.reply, expected)
 
     assert.equal(matches, true, diff(expected, this.reply))
