@@ -1,0 +1,18 @@
+namespace: mongo
+name: associated
+
+entity:
+  associated: true
+  schema:
+    foo: &foo
+      type: integer
+      default: 0
+    bar: &bar
+      type: string
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      foo: *foo
+      bar: *bar

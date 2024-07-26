@@ -4,6 +4,7 @@ const { difference, newid } = require('@toa.io/generic')
 const { EntityContractException } = require('../exceptions')
 
 class Entity {
+  deleted = false
   #schema
   #origin = null
   #state
@@ -60,6 +61,9 @@ class Entity {
 
     if (!('_created' in value))
       value._created = Date.now()
+
+    if (value._deleted !== null)
+      this.deleted = true
 
     if (this.#state !== undefined) {
       value._updated = Date.now()

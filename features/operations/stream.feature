@@ -2,6 +2,7 @@ Feature: Stream scope
 
   @skip # run this once
   Scenario: Prepare data
+    Given I compose `operations.streams` component
     And I call `operations.streams.transit` 2000 times with:
       """yaml
       input:

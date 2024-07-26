@@ -12,15 +12,11 @@ const translate = (query) => {
     options: query?.options === undefined ? {} : parse.options(query.options)
   }
 
-  if (query?.id !== undefined) {
+  if (query?.id !== undefined)
     result.criteria._id = query.id
-  }
 
-  if (query?.version !== undefined) {
+  if (query?.version !== undefined)
     result.criteria._version = query.version
-  }
-
-  result.criteria._deleted = null
 
   return result
 }
