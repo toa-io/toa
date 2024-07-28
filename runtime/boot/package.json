@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "1.0.0-alpha.81",
+  "version": "1.0.0-alpha.82",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,7 +23,7 @@
     "@toa.io/core": "1.0.0-alpha.81",
     "@toa.io/filesystem": "1.0.0-alpha.63",
     "@toa.io/generic": "1.0.0-alpha.63",
-    "@toa.io/norm": "1.0.0-alpha.81",
+    "@toa.io/norm": "1.0.0-alpha.82",
     "@toa.io/schemas": "1.0.0-alpha.63",
     "clone-deep": "4.0.1",
     "dotenv": "16.1.1",
