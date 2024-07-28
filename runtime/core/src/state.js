@@ -56,7 +56,7 @@ class State {
     return null
   }
 
-  async ensure (query, properties) {
+  async ensure (query, properties, input) {
     const object = this.#entities.init()
     const blank = object.get()
 
@@ -69,13 +69,15 @@ class State {
     if (record.id !== blank.id) // exists
       return this.#entities.object(record)
 
-    await this.#emission.emit(object.event())
+    const event = object.event(input)
+
+    await this.#emission.emit(event)
 
     return object
   }
 
-  async commit (state) {
-    const event = state.event()
+  async commit (state, input) {
+    const event = state.event(input)
 
     let ok = true
 
@@ -85,9 +87,8 @@ class State {
       ok = await this.#storage.store(object)
 
       // #20
-      if (ok === true) {
+      if (ok === true)
         await this.#emission.emit(event)
-      }
     }
 
     return ok
