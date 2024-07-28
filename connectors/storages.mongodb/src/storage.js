@@ -176,6 +176,7 @@ class Storage extends Connector {
         const sparse = this.checkFields(Object.keys(fields))
 
         await this.#collection.createIndex(fields, { name, sparse })
+          .catch((e) => console.warn('Index creation failed', { name, fields, error: e }))
 
         indexes.push(name)
       }
@@ -193,6 +194,7 @@ class Storage extends Connector {
     name = 'unique_' + name
 
     await this.#collection.createIndex(fields, { name, unique: true, sparse })
+      .catch((e) => console.warn('Unique index creation failed', { name, fields, error: e }))
 
     return name
   }
