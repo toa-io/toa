@@ -95,8 +95,14 @@ export class Query {
           delete query[key]
         }
 
-    if (!this.queryable)
+    if (!this.queryable) {
+      const keys = Object.keys(query)
+
+      if (keys.length > 0)
+        throw new http.BadRequest(`Query parameter '${keys[0]}' is not allowed`)
+
       query = null!
+    }
 
     return {
       query,
