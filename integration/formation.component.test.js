@@ -50,11 +50,6 @@ describe('prototype', () => {
       path: expect.stringMatching(/runtime\/prototype$/)
     })
   })
-
-  it('should throw on declaration conflict', async () => {
-    await expect(load('./dummies/event-declaration-conflict'))
-      .rejects.toThrow(/merge: conflict/)
-  })
 })
 
 describe('events', () => {

@@ -283,3 +283,15 @@ Feature: Queries
 
       Hello John
       """
+    When the following request is received:
+      """
+      GET /echo/?foo=bar HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      Query parameter 'foo' is not allowed
+      """
