@@ -35,7 +35,7 @@ class Transition extends Operation {
 
     scope.set(state)
 
-    const result = await this.scope.commit(scope)
+    const result = await this.scope.commit(scope, store.request.input)
 
     if (result === false) {
       if (this.#concurrency === 'retry')

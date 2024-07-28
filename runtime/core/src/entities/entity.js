@@ -35,12 +35,13 @@ class Entity {
     this.#set(value)
   }
 
-  event () {
+  event (input = undefined) {
     return {
       origin: this.#origin,
       state: this.#state,
       changeset: this.#origin === null ? this.#state : difference(this.#origin, this.#state),
-      trailers: this.#state._trailers
+      trailers: this.#state._trailers,
+      input
     }
   }
 
