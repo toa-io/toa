@@ -20,7 +20,8 @@ export class Receiver extends Connector {
       const key = message.payload[property]
 
       if (key === undefined) {
-        console.error('Event does not contain the expected property', { event, property })
+        console.error('Event does not contain the expected property',
+          { event: this.event, property })
 
         return
       }
