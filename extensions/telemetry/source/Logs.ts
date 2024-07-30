@@ -17,14 +17,18 @@ export class Logs extends Connector implements extensions.Aspect {
     this.console.configure(options)
   }
 
+  public invoke (operation: string, fork: 'fork', context: object): Console
   // eslint-disable-next-line max-params
-  public invoke (operation: string, severity: Channel, message: string, attributes?: object): void {
+  public invoke (operation: string, severity: Channel | 'fork', message: string | object, attributes?: object): Console | undefined {
     if (!(operation in this.consoles))
       this.consoles[operation] = this.console.fork({
         endpoint: `${this.locator.id}.${operation}`
       })
 
-    this.consoles[operation][severity](message, attributes)
+    if (severity === 'fork')
+      return this.consoles[operation].fork(message as object)
+    else
+      this.consoles[operation][severity](message as string, attributes)
   }
 }
 
