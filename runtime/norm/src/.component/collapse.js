@@ -34,6 +34,8 @@ const collapse = (manifest, prototype) => {
     }
   }
 
+  const { entity, events, extensions } = prototype
+
   if (manifest.entity?.schema?.properties.id !== undefined && entity?.schema?.properties.id !== undefined) {
     manifest.entity.custom = true
 
@@ -44,8 +46,6 @@ const collapse = (manifest, prototype) => {
     for (const event of Object.keys(prototype.events))
       if (event in manifest.events)
         delete prototype.events[event]
-
-  const { entity, events, extensions } = prototype
 
   merge(manifest, { entity, events, extensions })
 }
