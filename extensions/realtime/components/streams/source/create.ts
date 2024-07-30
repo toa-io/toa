@@ -31,7 +31,7 @@ export class Effect implements Operation {
   }
 
   private createStream (key: string): void {
-    const stream = new Stream(this.logs)
+    const stream = new Stream(this.logs.fork({ key }))
 
     this.streams.set(key, stream)
 

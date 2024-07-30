@@ -10,6 +10,8 @@ function logs (context, aspect) {
 
     return logs
   }, {})
+
+  context.logs.fork = (ctx) => aspect.invoke(context.operation, 'fork', ctx)
 }
 
 const CHANNELS = ['debug', 'info', 'warn', 'error']
