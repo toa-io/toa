@@ -77,6 +77,83 @@ Feature: Optimistic concurrency control
       etag: "2"
       """
 
+  Scenario: Weak `etag`
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST: create
+          /:id:
+            GET: observe
+            PUT: transit
+      """
+    When the following request is received:
+      """
+      POST /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      title: Hello
+      volume: 1.5
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      etag: "1"
+
+      id: ${{ id }}
+      """
+    When the following request is received:
+      """
+      GET /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: "1"
+      """
+    When the following request is received:
+      """
+      GET /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      if-none-match: W/"1"
+      """
+    Then the following reply is sent:
+      """
+      304 Not Modified
+      etag: W/"1"
+      """
+    When the following request is received:
+      """
+      PUT /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+      if-match: W/"38"
+
+      volume: 2.5
+      """
+    Then the following reply is sent:
+      """
+      412 Precondition Failed
+      """
+    When the following request is received:
+      """
+      PUT /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+      if-match: W/"1"
+
+      volume: 2.5
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: "2"
+      """
+
   Scenario: Unexpected `if-match` format
     Given the `pots` is running with the following manifest:
       """yaml
