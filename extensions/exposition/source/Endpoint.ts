@@ -143,6 +143,6 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
   }
 }
 
-const ETAG = /^"(?<version>\d{1,32})"$/
+const ETAG = /^(W\/)?"(?<version>\d{1,32})"$/
 
 const INTERRUPT = true
