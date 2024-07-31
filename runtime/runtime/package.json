@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "1.0.0-alpha.83",
+  "version": "1.0.0-alpha.84",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -31,7 +31,7 @@
     "@toa.io/cli": "1.0.0-alpha.83",
     "@toa.io/core": "1.0.0-alpha.81",
     "@toa.io/extensions.configuration": "1.0.0-alpha.81",
-    "@toa.io/extensions.exposition": "1.0.0-alpha.82",
+    "@toa.io/extensions.exposition": "1.0.0-alpha.84",
     "@toa.io/extensions.origins": "1.0.0-alpha.81",
     "@toa.io/extensions.realtime": "1.0.0-alpha.83",
     "@toa.io/extensions.sampling": "1.0.0-alpha.7",
