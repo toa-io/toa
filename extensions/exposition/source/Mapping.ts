@@ -8,6 +8,7 @@ import type * as core from '@toa.io/core'
 
 export abstract class Mapping {
   protected readonly query: Query
+  public abstract readonly queryable: boolean
 
   public constructor (query: Query) {
     this.query = query
@@ -38,6 +39,8 @@ export abstract class Mapping {
 }
 
 class QueryableMapping extends Mapping {
+  public override readonly queryable = true
+
   public fit (input: any, query: http.Query, parameters: Parameter[]): core.Request {
     const request: core.Request = {}
     const qs = this.query.fit(query, parameters)
@@ -58,6 +61,8 @@ class QueryableMapping extends Mapping {
 }
 
 class InputMapping extends Mapping {
+  public override readonly queryable = false
+
   public fit (input: any, query: http.Query, parameters: Parameter[]): core.Request {
     const request: core.Request = {}
     const qs = this.query.fit(query, parameters)
