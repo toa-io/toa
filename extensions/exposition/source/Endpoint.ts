@@ -103,7 +103,7 @@ export class Endpoint implements RTD.Endpoint {
     const query: http.Query = Object.fromEntries(context.url.searchParams)
     const etag = context.request.headers['if-match']
 
-    if (etag !== undefined)
+    if (etag !== undefined && this.mapping.queryable)
       query.version = this.version(etag)
 
     return query
