@@ -59,6 +59,22 @@ Feature: Identity resource
         - system:identity
       """
 
+  Scenario: Getting transient Identity
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      authorization: Token ${{ token }}
+
+      id: ${{ id }}
+      roles: []
+      """
+
   Scenario: Requesting Identity with non-existent credentials
     Given the `identity.basic` database is empty
     When the following request is received:
@@ -66,15 +82,6 @@ Feature: Identity resource
       GET /identity/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic dXNlcjpwYXNzMTIzNA==
-      """
-    Then the following reply is sent:
-      """
-      401 Unauthorized
-      """
-    When the following request is received:
-      """
-      GET /identity/ HTTP/1.1
-      host: nex.toa.io
       """
     Then the following reply is sent:
       """

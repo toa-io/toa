@@ -66,29 +66,29 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
      * the inception will cause a unique constraint violation on the settle stage.
      */
     const inception = directives.reduce((yes, directive) => yes || directive instanceof Incept, false)
-    const identity = inception ? null : await this.resolve(input.authority, input.request.headers.authorization)
 
-    input.identity = identity
+    input.identity = inception ? null : await this.resolve(input.authority, input.request.headers.authorization)
 
     for (const directive of directives) {
-      const allow = await directive.authorize(identity, input, parameters)
+      const allow = await directive.authorize(input.identity, input, parameters)
 
       if (allow)
-        return directive.reply?.(identity) ?? null
+        return directive.reply?.(input.identity) ?? null
     }
 
-    if (identity === null)
+    if (input.identity === null)
       throw new http.Unauthorized()
     else
       throw new http.Forbidden()
   }
 
   public async settle (directives: Directive[],
-    request: Input,
+    input: Input,
     response: http.OutgoingMessage): Promise<void> {
-    for (const directive of directives) await directive.settle?.(request, response)
+    await Promise.all(directives.map(async (directive) =>
+      directive.settle?.(input, response)))
 
-    const identity = request.identity
+    const identity = input.identity
 
     if (identity === null)
       return
@@ -103,7 +103,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.tokens ??= await this.discovery.tokens
 
     const token = await this.tokens.invoke<string>('encrypt', {
-      input: { authority: request.authority, identity }
+      input: { authority: input.authority, identity }
     })
 
     const authorization = `Token ${token}`

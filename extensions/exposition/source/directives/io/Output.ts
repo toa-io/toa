@@ -53,7 +53,7 @@ export class Output implements Directive {
         '\'io:output\' expects response to be an object or array of objects')
 
       if (Array.isArray(message.body))
-        message.body = message.body.map((entity) => this.fit(entity))
+        message.body = message.body.map((entity) => this.fit(entity as Message))
       else
         message.body = this.fit(message.body)
     }
