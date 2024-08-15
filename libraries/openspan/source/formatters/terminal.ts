@@ -20,7 +20,8 @@ function print (object: object, level = 1): string {
 
   for (const [key, value] of Object.entries(object))
     if (value?.constructor === Object)
-      lines.push(`${pad}${key}:` + (Object.keys(value).length > 0 ? `\n${print(value, level + 1)}` : ''))
+      lines.push(`${pad}${key}:` +
+        (Object.keys(value as object).length > 0 ? `\n${print(value as object, level + 1)}` : ''))
     else
       lines.push(`${pad}${key}: ${value}`)
 

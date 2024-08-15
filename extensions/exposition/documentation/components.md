@@ -329,3 +329,17 @@ roles:
   - developer
   - system:identity:roles
 ```
+
+When no credentials are provided, transient Identity is created.
+
+```http
+GET /identity/
+accept: application/yaml
+```
+
+```
+201 Created
+
+id: 332017649c814649b25ee466c1fe4534
+roles: []
+```

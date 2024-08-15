@@ -22,14 +22,14 @@ const PREDEFINED: syntax.Node = {
             verb: 'GET',
             directives: [
               {
-                family: 'auth',
-                name: 'echo',
-                value: null
-              },
-              {
                 family: 'io',
                 name: 'output',
                 value: ['id', 'roles']
+              },
+              {
+                family: 'auth',
+                name: 'echo',
+                value: null
               }
             ]
           }
