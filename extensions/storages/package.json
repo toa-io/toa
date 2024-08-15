@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "1.0.0-alpha.79",
+  "version": "1.0.0-alpha.86",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -36,7 +36,7 @@
     "error-value": "0.3.0",
     "matchacho": "0.6.0",
     "msgpackr": "1.10.1",
-    "openspan": "1.0.0-alpha.79",
+    "openspan": "1.0.0-alpha.86",
     "smithy-node-native-fetch": "1.0.6"
   }
 }
