@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "1.0.0-alpha.86",
+  "version": "1.0.0-alpha.87",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -25,12 +25,12 @@
   "dependencies": {
     "@toa.io/bindings.amqp": "1.0.0-alpha.86",
     "@toa.io/bindings.loop": "1.0.0-alpha.63",
-    "@toa.io/boot": "1.0.0-alpha.86",
+    "@toa.io/boot": "1.0.0-alpha.87",
     "@toa.io/bridges.bash": "1.0.0-alpha.59",
     "@toa.io/bridges.node": "1.0.0-alpha.86",
     "@toa.io/cli": "1.0.0-alpha.86",
     "@toa.io/core": "1.0.0-alpha.86",
-    "@toa.io/extensions.configuration": "1.0.0-alpha.86",
+    "@toa.io/extensions.configuration": "1.0.0-alpha.87",
     "@toa.io/extensions.exposition": "1.0.0-alpha.86",
     "@toa.io/extensions.origins": "1.0.0-alpha.86",
     "@toa.io/extensions.realtime": "1.0.0-alpha.86",
@@ -45,7 +45,7 @@
     "@toa.io/storages.mongodb": "1.0.0-alpha.86",
     "@toa.io/storages.null": "1.0.0-alpha.59",
     "@toa.io/storages.sql": "1.0.0-alpha.86",
-    "@toa.io/userland": "1.0.0-alpha.86",
+    "@toa.io/userland": "1.0.0-alpha.87",
     "openspan": "1.0.0-alpha.86"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
