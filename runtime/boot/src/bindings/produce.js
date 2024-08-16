@@ -9,18 +9,19 @@ const produce = (component, operations) => group(operations, (factory, endpoints
 const group = (operations, callback) => {
   const map = {}
 
-  for (const [endpoint, operation] of Object.entries(operations)) {
-    // noinspection JSUnresolvedVariable
-    const bindings = global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
-      ? operation.bindings
-      : [LOOP].concat(operation.bindings)
+  if (operations !== undefined)
+    for (const [endpoint, operation] of Object.entries(operations)) {
+      // noinspection JSUnresolvedVariable
+      const bindings = global.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
+        ? operation.bindings
+        : [LOOP].concat(operation.bindings)
 
-    for (const binding of bindings) {
-      if (!map[binding]) map[binding] = []
+      for (const binding of bindings) {
+        if (!map[binding]) map[binding] = []
 
-      map[binding].push(endpoint)
+        map[binding].push(endpoint)
+      }
     }
-  }
 
   return Object.entries(map).map(([binding, endpoints]) => callback(factory(binding), endpoints))
 }
