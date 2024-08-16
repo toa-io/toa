@@ -63,9 +63,18 @@ function validate (annotation: Annotation, instances: Instance[]): void {
 
   const requested = instances.map((instance) => instance.locator.id)
 
-  for (const id of Object.keys(annotation))
+  for (let id of Object.keys(annotation)) {
+    if (!id.includes('.')) {
+      const newid = 'default.' + id
+
+      annotation[newid] = annotation[id]
+      delete annotation[id]
+      id = newid
+    }
+
     assert.ok(requested.includes(id),
       `Component '${id}' does not request configuration or does not exist.`)
+  }
 }
 
 export const SECRET_RX = /^\$(?<variable>[A-Z0-9_]{1,32})$/
