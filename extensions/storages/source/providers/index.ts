@@ -1,6 +1,6 @@
 import { FileSystem } from './FileSystem'
 import { S3 } from './S3'
-import { Cloudinary } from './Cloudinary'
+import { Cloudinary } from './cloudinary'
 import { Temporary } from './Temporary'
 import { Test } from './Test'
 import { InMemory } from './Memory'

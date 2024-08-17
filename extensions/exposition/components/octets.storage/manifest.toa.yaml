@@ -23,5 +23,4 @@ operations:
       storage*: string
       path*: string
   get: *simple
-  list: *simple
   delete: *simple

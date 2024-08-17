@@ -2,7 +2,6 @@ import { NotFound } from '../../HTTP'
 import { Context } from './Context'
 import { Store } from './Store'
 import { Fetch } from './Fetch'
-import { List } from './List'
 import { Delete } from './Delete'
 import { WorkflowDirective } from './Workflow'
 import type { Directive } from './Directive'
@@ -63,7 +62,6 @@ const DIRECTIVES: Record<string, Constructor> = {
   context: Context,
   store: Store,
   fetch: Fetch,
-  list: List,
   delete: Delete,
   workflow: WorkflowDirective
 }

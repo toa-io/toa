@@ -9,8 +9,6 @@ Feature: Octets directive family
         octets:context: octets
         POST:
           octets:store: ~
-        GET:
-          octets:list: ~
         /*:
           GET:
             octets:fetch: ~
@@ -82,19 +80,6 @@ Feature: Octets directive family
     Then the following reply is sent:
       """
       304 Not Modified
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      host: nex.toa.io
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-
-      - 10cf16b458f759e0d617f2f3d83599ff
       """
     When the following request is received:
       """

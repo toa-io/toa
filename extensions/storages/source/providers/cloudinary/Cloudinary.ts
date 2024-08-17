@@ -1,16 +1,20 @@
 import { join } from 'node:path'
 import { Readable } from 'node:stream'
 import { v2 as cloudinary } from 'cloudinary'
-import { Provider } from '../Provider'
+import { console } from 'openspan'
+import { Provider } from '../../Provider'
+import { parse } from './parse'
 import type { ReadableStream } from 'node:stream/web'
 import type { ConfigOptions as CloudinaryConfig } from 'cloudinary'
-import type { ProviderSecret, ProviderSecrets } from '../Provider'
+import type { ProviderSecret, ProviderSecrets } from '../../Provider'
 
 export class Cloudinary extends Provider<CloudinaryOptions> {
   public static override readonly SECRETS: readonly ProviderSecret[] = [
     { name: 'API_KEY' },
     { name: 'API_SECRET' }
   ]
+
+  public override readonly dynamic = true
 
   private readonly type: StorageType
   private readonly config: CloudinaryConfig
@@ -31,19 +35,27 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
   }
 
   public async get (path: string): Promise<Readable | null> {
-    const id = join(this.prefix, path)
-    const resource = await this.resource(id)
+    const url = this.url(path)
 
-    const url = resource === null
-      ? this.cloudinary().url(id, { resource_type: 'raw', version: 2 })
-      : resource.url
+    if (url === null)
+      return null
 
     const response = await fetch(url)
+
+    console.debug('Fetched from Cloudinary', {
+      ok: response.ok,
+      url,
+      type: response.headers.get('content-type'),
+      size: response.headers.get('content-length')
+    })
+
+    // https://res.cloudinary.com/dl5z4zgth/image/upload/c_thumb,g_face,z_1/v2/toa-dev/blobs/814a0034f5549e957ee61360d87457e5?_a=BAMAGSWM0
+    // https://res.cloudinary.com/dl5z4zgth/image/upload/v2/toa-dev/blobs/814a0034f5549e957ee61360d87457e5?_a=BAMAGSWM0
 
     if (!response.ok)
       return null
 
-    return Readable.fromWeb(response.body as ReadableStream)
+    return response.body === null ? null : Readable.fromWeb(response.body as ReadableStream)
   }
 
   public async put (path: string, id: string, stream: Readable): Promise<void> {
@@ -56,8 +68,15 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
           else resolve(result)
         }))
 
-      stream.on('error', resolve)
+      stream.on('error', (error: any) => {
+        if (error.code === 'TYPE_MISMATCH')
+          resolve(null)
+        else
+          reject(error)
+      })
     })
+
+    console.debug('Uploaded to Cloudinary', { path, id })
   }
 
   public async delete (path: string): Promise<void> {
@@ -70,41 +89,46 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       await this.cloudinary().api.delete_resources_by_prefix(id)
       await this.cloudinary().api.delete_folder(id).catch(() => undefined)
     }
+
+    console.debug('Deleted from Cloudinary', { path: id })
   }
 
   public async move (from: string, to: string): Promise<void> {
     const source = join(this.prefix, from)
     const target = join(this.prefix, to)
-    const resource = await this.resource(source)
+    const type = this.resourceType(source)
 
     await this.cloudinary().uploader.rename(source, target,
       {
         overwrite: true,
-        resource_type: resource?.resource_type
+        resource_type: type
       })
   }
 
-  private cloudinary (): typeof cloudinary {
-    cloudinary.config(this.config)
+  private url (path: string): string | null {
+    const [rel, transformation] = parse(path, this.type)
 
-    return cloudinary
+    if (rel === null)
+      return null
+
+    const id = join(this.prefix, rel)
+    const type = this.resourceType(id)
+
+    return this.cloudinary().url(id, {
+      resource_type: type,
+      transformation,
+      version: 2
+    })
   }
 
   private resourceType (path: string): string {
     return path.includes('.meta') ? 'raw' : this.type
   }
 
-  private async resource (id: string): Promise<CloudinaryResource | null> {
-    const type = this.resourceType(id)
+  private cloudinary (): typeof cloudinary {
+    cloudinary.config(this.config)
 
-    return await this.cloudinary().api
-      .resource(id, { resource_type: type })
-      .catch(async (exception) => {
-        if (exception.error.http_code === 404)
-          return null
-        else
-          throw exception
-      })
+    return cloudinary
   }
 }
 
@@ -116,10 +140,4 @@ export interface CloudinaryOptions {
 
 type StorageType = 'image' | 'video'
 
-interface CloudinaryResource {
-  url: string
-  resource_type: string
-  display_name: string
-}
-
-type CloudinarySecrets = ProviderSecrets<'API_KEY' | 'API_SECRET'>
+export type CloudinarySecrets = ProviderSecrets<'API_KEY' | 'API_SECRET'>

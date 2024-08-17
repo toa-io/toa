@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import dotenv from 'dotenv'
-import type { CloudinaryOptions } from '../providers/Cloudinary'
+import type { CloudinaryOptions } from '../providers/cloudinary/Cloudinary'
 import type { ProviderSecrets } from '../Provider'
 import type { providers } from '../providers'
 import type { FileSystemOptions } from '../providers/FileSystem'
@@ -43,8 +43,8 @@ export const suites = [
       prefix: 'toa-dev'
     },
     secrets: {
-      API_KEY: process.env.CLOUDINARY_API_KEY,
-      API_SECRET: process.env.CLOUDINARY_API_SECRET
+      API_KEY: process.env.CLOUDINARY_API_KEY ?? '',
+      API_SECRET: process.env.CLOUDINARY_API_SECRET ?? ''
     }
   }
   // add more providers here, use `run` as a condition to run the test

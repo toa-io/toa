@@ -8,19 +8,15 @@ async function fetch (input, context) {
   const basename = posix.basename(input.path)
   const path = posix.dirname(input.path)
   const [id, suffix] = split(basename)
+
   const entry = await storage.get(posix.join(path, id))
 
   if (entry instanceof Error)
     return entry
 
-  let variant
-
-  if (suffix !== undefined) {
-    variant = entry.variants.find((variant) => variant.name === suffix)
-
-    if (variant === undefined)
-      return NOT_FOUND
-  }
+  const variant = suffix === undefined
+    ? undefined
+    : entry.variants.find((variant) => variant.name === suffix)
 
   const stream = await storage.fetch(input.path)
 

@@ -1,4 +1,4 @@
-import type { CloudinaryOptions } from './Cloudinary'
+import type { CloudinaryOptions } from './cloudinary/Cloudinary'
 import type { S3Options } from './S3'
 import type { FileSystemOptions } from './FileSystem'
 import type { TemporaryOptions } from './Temporary'

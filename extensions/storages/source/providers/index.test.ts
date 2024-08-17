@@ -36,14 +36,13 @@ describe.each(suites)('$provider', (suite) => {
   })
 
   it('should create entry', async () => {
-    const filename = 'lenna.png'
-    const stream = createReadStream(filename)
+    const stream = createReadStream('lenna.png')
 
-    await provider.put(dir, filename, stream)
+    await provider.put(dir, 'lenna', stream)
 
-    const readable = await provider.get(dir + '/' + filename) as Readable
+    const readable = await provider.get(dir + '/lenna') as Readable
     const output = await buffer(readable)
-    const lenna = await readFile(filename)
+    const lenna = await readFile('lenna.png')
 
     expect(output.compare(lenna)).toBe(0)
   })
@@ -52,10 +51,10 @@ describe.each(suites)('$provider', (suite) => {
     const stream0 = createReadStream('lenna.png')
     const stream1 = createReadStream('albert.jpg')
 
-    await provider.put(dir, 'lenna.png', stream0)
-    await provider.put(dir, 'lenna.png', stream1)
+    await provider.put(dir, 'lenna', stream0)
+    await provider.put(dir, 'lenna', stream1)
 
-    const readable = await provider.get(dir + '/lenna.png') as Readable
+    const readable = await provider.get(dir + '/lenna') as Readable
     const output = await buffer(readable)
     const albert = await readFile('albert.jpg')
 
@@ -65,9 +64,9 @@ describe.each(suites)('$provider', (suite) => {
   it('should get by path', async () => {
     const stream = createReadStream('lenna.png')
 
-    await provider.put(dir, 'lenna.png', stream)
+    await provider.put(dir, 'lenna', stream)
 
-    const result = await provider.get('/bar/lenna.png')
+    const result = await provider.get('/bar/lenna')
 
     expect(result).toBeNull()
   })
@@ -87,10 +86,10 @@ describe.each(suites)('$provider', (suite) => {
     it('should delete entry', async () => {
       const stream = createReadStream('lenna.png')
 
-      await provider.put(dir, 'lenna.png', stream)
-      await provider.delete(dir + '/lenna.png')
+      await provider.put(dir, 'lenna', stream)
+      await provider.delete(dir + '/lenna')
 
-      const result = await provider.get(dir + '/lenna.png')
+      const result = await provider.get(dir + '/lenna')
 
       expect(result).toBeNull()
     })
@@ -102,29 +101,29 @@ describe.each(suites)('$provider', (suite) => {
     it('should delete directory', async () => {
       const stream = createReadStream('lenna.png')
 
-      await provider.put(dir, 'lenna.png', stream)
+      await provider.put(dir, 'lenna', stream)
       await provider.delete(dir)
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      if (suite.provider === 'cloudinary')
+        await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      const result = await provider.get(dir + '/lenna.png')
+      const result = await provider.get(dir + '/lenna')
 
       expect(result).toBeNull()
     })
 
     it('should move an entry', async () => {
-      const filename = 'lenna.png'
-      const stream = createReadStream(filename)
+      const stream = createReadStream('lenna.png')
       const dir2 = '/' + randomUUID()
 
-      await provider.put(dir, filename, stream)
-      await provider.move(dir + '/' + filename, dir2 + '/' + filename)
+      await provider.put(dir, 'lenna', stream)
+      await provider.move(dir + '/' + 'lenna', dir2 + '/lenna')
 
-      const result = await provider.get(dir2 + '/' + filename) as Readable
+      const result = await provider.get(dir2 + '/lenna') as Readable
 
       expect(result).not.toBeNull()
 
-      const nope = await provider.get(dir + '/' + filename)
+      const nope = await provider.get(dir + '/lenna')
 
       expect(nope).toBeNull()
     })

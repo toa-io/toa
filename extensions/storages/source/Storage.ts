@@ -54,12 +54,24 @@ export class Storage {
   public async fetch (path: string): Maybe<Readable> {
     const { rel, id, variant } = this.parse(path)
 
-    // if (variant === null && rel !== '') {
-    //   const entry = await this.get(path)
-    //
-    //   if (entry instanceof Error)
-    //     return entry
-    // }
+    if (this.provider.dynamic) {
+      const blob = posix.join(BLOBs, id + '.' + variant)
+      const stream = await this.provider.get(blob)
+
+      if (stream === null)
+        return ERR_NOT_FOUND
+      else
+        return stream
+    }
+
+    console.debug('TEMP', { path, rel, id, variant })
+
+    if (variant === null && rel !== '') {
+      const entry = await this.get(path)
+
+      if (entry instanceof Error)
+        return entry
+    }
 
     const blob = variant === null
       ? posix.join(BLOBs, id)

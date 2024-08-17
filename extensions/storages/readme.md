@@ -111,18 +111,6 @@ await storage.move('/path/to/eecd837c', './sub/eecd837c')
 await storage.move('/path/to/eecd837c', './sub/')
 ```
 
-#### `async entries(path: string): Entry[]`
-
-Get a list of entries under the `path`.
-
-#### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
-
-Add or replace a `name` variant of the entry specified by `path`.
-
-#### `async annotate(path: string, key: string, value: any): Maybe<void>`
-
-Set a `key` property in the `meta` of the entry specified by `path`.
-
 ## Providers
 
 Storage uses underlying providers to store BLOBs and entries.
@@ -157,6 +145,15 @@ for local environment.
 
 [Cloudinary](https://cloudinary.com) provider is used to store and transform media files.
 
+Stored media can be fetched in different formats and sizes by adding transformations to the path.
+
+```
+/path/to/eecd837c.100x100.jpeg    # crop
+/path/to/eecd837c.100x.webp       # format jpeg or webp
+/path/to/eecd837c.128x128z50.webp # zoom
+/path/to/eecd837c.[128x128].webp  # resize inside the box
+```
+
 Annotation format is:
 
 ```yaml
@@ -164,6 +161,7 @@ storages:
   media:
     provider: cloudinary
     environment: my-cloud
+    type: image # image or video
     prefix: my-app
 ```
 

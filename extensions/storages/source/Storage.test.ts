@@ -10,6 +10,8 @@ import { type Entry } from './Entry'
 import { providers } from './providers'
 import type { ProviderConstructor } from './Provider'
 
+jest.setTimeout(10_000)
+
 let storage: Storage
 let dir: string
 
