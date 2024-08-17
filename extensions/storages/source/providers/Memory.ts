@@ -1,5 +1,5 @@
 import { Readable } from 'node:stream'
-import { join, posix } from 'node:path'
+import { join } from 'node:path'
 import { buffer } from 'node:stream/consumers'
 import * as assert from 'node:assert'
 
@@ -19,12 +19,6 @@ export class InMemory extends Provider {
     return Readable.from(data)
   }
 
-  public async list (path: string): Promise<string[]> {
-    return Array.from(this.storage.keys())
-      .filter((f) => posix.dirname(f) === path)
-      .map((f) => posix.basename(f))
-  }
-
   public async put (path: string, filename: string, stream: Readable): Promise<void> {
     this.storage.set(join(path, filename), await buffer(stream))
   }
@@ -41,15 +35,5 @@ export class InMemory extends Provider {
 
     this.storage.set(to, buf)
     this.storage.delete(from)
-  }
-
-  public async moveDir (from: string, to: string): Promise<void> {
-    for (const f of this.storage.keys())
-      if (f.startsWith(from)) {
-        const toPath = to + f.slice(from.length)
-
-        this.storage.set(toPath, this.storage.get(f)!)
-        this.storage.delete(f)
-      }
   }
 }

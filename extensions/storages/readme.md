@@ -153,6 +153,25 @@ and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
 
+### Cloudinary
+
+[Cloudinary](https://cloudinary.com) provider is used to store and transform media files.
+
+Annotation format is:
+
+```yaml
+storages:
+  media:
+    provider: cloudinary
+    environment: my-cloud
+    prefix: my-app
+```
+
+Secrets:
+
+- `API_KEY`
+- `API_SECRET`
+
 ### Filesystem
 
 Annotation format is:

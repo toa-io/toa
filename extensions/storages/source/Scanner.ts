@@ -103,7 +103,7 @@ export class Scanner extends PassThrough {
   private interrupt (error: Error): void {
     this.completed = true
     this.error = error
-    this.end()
+    this.destroy(error)
   }
 }
 

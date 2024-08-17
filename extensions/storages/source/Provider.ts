@@ -1,5 +1,5 @@
-import { type Readable } from 'node:stream'
 import * as assert from 'node:assert'
+import { type Readable } from 'node:stream'
 
 export type ProviderSecrets<K extends string = string> = Record<K | string, string | undefined>
 
@@ -19,15 +19,11 @@ export abstract class Provider<Options = void> {
 
   public abstract get (path: string): Promise<Readable | null>
 
-  public abstract list (path: string): Promise<string[]>
-
   public abstract put (path: string, filename: string, stream: Readable): Promise<void>
 
   public abstract delete (path: string): Promise<void>
 
   public abstract move (from: string, to: string): Promise<void>
-
-  public abstract moveDir (from: string, to: string): Promise<void>
 }
 
 export interface ProviderConstructor {

@@ -13,7 +13,6 @@ describe('S3 storage provider', () => {
   let s3endpoint: ReturnType<typeof setupServer>
 
   const AWS_REGION = 'us-east-1'
-
   const TEST_BUCKET_NAME = 'test-bucket'
   const S3_ENDPOINT = `https://${TEST_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com`
 

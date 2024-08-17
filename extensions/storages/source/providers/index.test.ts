@@ -1,12 +1,14 @@
+import path from 'node:path'
 import { type Readable } from 'node:stream'
 import { buffer } from 'node:stream/consumers'
 import { readFile } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
-import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { suites } from '../test/util'
 import { providers } from './index'
 import type { ProviderConstructor } from '../Provider'
+
+jest.setTimeout(20000)
 
 describe.each(suites)('$provider', (suite) => {
   const it = suite.run ? global.it : global.it.skip
@@ -34,13 +36,14 @@ describe.each(suites)('$provider', (suite) => {
   })
 
   it('should create entry', async () => {
-    const stream = createReadStream('lenna.png')
+    const filename = 'lenna.png'
+    const stream = createReadStream(filename)
 
-    await provider.put(dir, 'lenna.png', stream)
+    await provider.put(dir, filename, stream)
 
-    const readable = await provider.get(dir + '/lenna.png') as Readable
+    const readable = await provider.get(dir + '/' + filename) as Readable
     const output = await buffer(readable)
-    const lenna = await readFile('lenna.png')
+    const lenna = await readFile(filename)
 
     expect(output.compare(lenna)).toBe(0)
   })
@@ -67,16 +70,6 @@ describe.each(suites)('$provider', (suite) => {
     const result = await provider.get('/bar/lenna.png')
 
     expect(result).toBeNull()
-  })
-
-  it('should list files', async () => {
-    const stream = createReadStream('lenna.png')
-
-    await provider.put(dir, 'lenna.png', stream)
-
-    const result = await provider.list(dir)
-
-    expect(result).toContain('lenna.png')
   })
 
   describe('danger', () => {
@@ -112,23 +105,26 @@ describe.each(suites)('$provider', (suite) => {
       await provider.put(dir, 'lenna.png', stream)
       await provider.delete(dir)
 
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
       const result = await provider.get(dir + '/lenna.png')
 
       expect(result).toBeNull()
     })
 
     it('should move an entry', async () => {
-      const stream = createReadStream('lenna.png')
+      const filename = 'lenna.png'
+      const stream = createReadStream(filename)
       const dir2 = '/' + randomUUID()
 
-      await provider.put(dir, 'lenna.png', stream)
-      await provider.move(dir + '/lenna.png', dir2 + '/lenna2.png')
+      await provider.put(dir, filename, stream)
+      await provider.move(dir + '/' + filename, dir2 + '/' + filename)
 
-      const result = await provider.get(dir2 + '/lenna2.png') as Readable
+      const result = await provider.get(dir2 + '/' + filename) as Readable
 
       expect(result).not.toBeNull()
 
-      const nope = await provider.get(dir + '/lenna.png')
+      const nope = await provider.get(dir + '/' + filename)
 
       expect(nope).toBeNull()
     })

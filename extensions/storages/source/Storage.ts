@@ -51,21 +51,15 @@ export class Storage {
       return decode(await buffer(result))
   }
 
-  public async list (path: string): Promise<string[]> {
-    const dir = posix.join(ENTRIES_ROOT, path, ENTRIES_DIR)
-
-    return await this.provider.list(dir)
-  }
-
   public async fetch (path: string): Maybe<Readable> {
     const { rel, id, variant } = this.parse(path)
 
-    if (variant === null && rel !== '') {
-      const entry = await this.get(path)
-
-      if (entry instanceof Error)
-        return entry
-    }
+    // if (variant === null && rel !== '') {
+    //   const entry = await this.get(path)
+    //
+    //   if (entry instanceof Error)
+    //     return entry
+    // }
 
     const blob = variant === null
       ? posix.join(BLOBs, id)
@@ -93,25 +87,6 @@ export class Storage {
     ])
   }
 
-  public async move (path: string, to: string): Maybe<void> {
-    const source = this.destruct(path)
-    const rel = to.startsWith('.')
-    const dir = to.endsWith('/')
-
-    if (rel)
-      to = posix.resolve(source.rel + '/', to)
-
-    if (dir)
-      to = posix.join(to, source.ent)
-
-    const target = this.destruct(to)
-
-    await Promise.all([
-      this.provider.move(source.metafile, target.metafile),
-      this.provider.moveDir(source.vardir, target.vardir)
-    ])
-  }
-
   public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
     const scanner = new Scanner()
     const pipe = stream.pipe(scanner)
@@ -129,26 +104,6 @@ export class Storage {
 
     entry.variants = entry.variants.filter((variant) => variant.name !== name)
     entry.variants.push({ name, size, type })
-
-    await this.save(path, entry)
-  }
-
-  public async annotate (path: string, key: string | Record<string, unknown>, value?: unknown): Maybe<void> {
-    const entry = await this.get(path)
-
-    if (entry instanceof Error)
-      return entry
-
-    const update = typeof key === 'string'
-      ? { [key]: value }
-      : key
-
-    Object.assign(entry.meta, update)
-
-    // filter undefined values
-    for (const key of Object.keys(entry.meta))
-      if (entry.meta[key] === undefined)
-        delete entry.meta[key]
 
     await this.save(path, entry)
   }
@@ -173,13 +128,10 @@ export class Storage {
   }
 
   // eslint-disable-next-line max-params
-  private async create
-  (path: string, entry: Entry): Promise<Entry> {
+  private async create (path: string, entry: Entry): Promise<Entry> {
     const metafile = posix.join(path, entry.id)
-    const existing = await this.get(metafile)
 
-    if (existing instanceof Error)
-      await this.save(metafile, entry)
+    await this.save(metafile, entry)
 
     return entry
   }

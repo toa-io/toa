@@ -2,7 +2,6 @@ import { Readable } from 'node:stream'
 import { Blob } from 'node:buffer'
 import { join } from 'node:path/posix'
 import assert from 'node:assert'
-import { posix } from 'node:path'
 import { Upload } from '@aws-sdk/lib-storage'
 import {
   S3Client,
@@ -110,11 +109,6 @@ export class S3 extends Provider<S3Options> {
     }
   }
 
-  public async list (prefix: string): Promise<string[]> {
-    return (await this.listObjects(prefix))
-      .map(({ Key }) => posix.basename(Key!))
-  }
-
   public async put (path: string, filename: string, stream: Readable): Promise<void> {
     await new Upload({
       client: this.client,
@@ -169,18 +163,6 @@ export class S3 extends Provider<S3Options> {
     }))
 
     await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: from }))
-  }
-
-  public async moveDir (from: string, to: string): Promise<void> {
-    const objects: ObjectIdentifier[] = await this.listObjects(from)
-
-    await Promise.all(objects.map(async ({ Key }) => {
-      const ent = posix.basename(Key!)
-      const source = posix.join(from, ent)
-      const target = posix.join(to, ent)
-
-      return this.move(source, target)
-    }))
   }
 
   private async listObjects (Prefix: string): Promise<ObjectIdentifier[]> {
