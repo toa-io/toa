@@ -10,12 +10,10 @@ import { type Entry } from './Entry'
 import { providers } from './providers'
 import type { ProviderConstructor } from './Provider'
 
-jest.setTimeout(10_000)
-
 let storage: Storage
 let dir: string
 
-const suite = suites[3]
+const suite = suites[0]
 
 beforeAll(async () => {
   process.chdir(path.join(__dirname, 'test'))
@@ -208,7 +206,8 @@ describe('delete', () => {
     await storage.delete(`${dir}/${lenna.id}`)
 
     // Cloudinary needs some time to invalidate the cache
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    if (suite.provider === 'cloudinary')
+      await new Promise((resolve) => setTimeout(resolve, 5000))
 
     const result = await storage.get(`${dir}/${lenna.id}`)
 

@@ -1,0 +1,16 @@
+type: object
+properties:
+  provider:
+    const: cloudinary
+  environment:
+    type: string
+  type:
+    enum:
+      - image
+      - video
+  prefix:
+    type: string
+required:
+  - environment
+  - type
+additionalProperties: false
