@@ -5,14 +5,14 @@ import { Cloudinary } from './Cloudinary'
 import type { CloudinaryOptions, CloudinarySecrets } from './Cloudinary'
 
 const lenna = resolve(__dirname, '../../test/lenna.png')
-const suite = suites[3] as CloudinarySuite
+const suite = suites[2] as CloudinarySuite
 const cloudinary = new Cloudinary(suite.options, suite.secrets)
 const test = (suite.run) ? it : it.skip
 
 test('run me once', async () => {
-  const input = createReadStream(lenna)
+  const stream = createReadStream(lenna)
 
-  await cloudinary.put('/resize', 'lenna', input)
+  await cloudinary.put('/resize/lenna', { stream, metadata: { type: 'image/png', size: 0, created: Date.now() } })
 
   const output = await cloudinary.get('/resize/lenna')
 
