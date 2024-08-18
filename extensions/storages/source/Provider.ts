@@ -1,35 +1,23 @@
 import * as assert from 'node:assert'
-import { type Readable } from 'node:stream'
-
-export type ProviderSecrets<K extends string = string> = Record<K | string, string | undefined>
-
-export interface ProviderSecret {
-  readonly name: string
-  readonly optional?: boolean
-}
+import type { Secret, Secrets } from './Secrets'
+import type { Entry } from './Entry'
 
 export abstract class Provider<Options = void> {
-  public static readonly SECRETS: readonly ProviderSecret[] = []
-  public readonly path: string | null = null
-  public readonly dynamic: boolean = false
+  public static readonly SECRETS?: readonly Secret[]
+  public readonly root?: string
 
-  public constructor (_: Options, secrets?: ProviderSecrets) {
-    for (const { name, optional = false } of new.target.SECRETS)
-      assert.ok(optional || secrets?.[name] !== undefined, `Missing secret '${name}'`)
+  public constructor (_: Options, secrets?: Secrets) {
+    new.target.SECRETS?.forEach(({ name, optional }) =>
+      assert.ok(optional === true || secrets?.[name] !== undefined, `Missing secret '${name}'`))
   }
 
-  public abstract get (path: string): Promise<Readable | null>
+  public abstract get (path: string): Promise<Entry | Error>
 
-  public abstract put (path: string, filename: string, stream: Readable): Promise<void>
+  public abstract put (path: string, entry: Omit<Entry, 'metadata'>): Promise<void>
 
   public abstract delete (path: string): Promise<void>
 
-  public abstract move (from: string, to: string): Promise<void>
+  public abstract move (from: string, to: string): Promise<void | Error>
 }
 
-export interface ProviderConstructor {
-  readonly SECRETS: readonly ProviderSecret[]
-  prototype: Provider
-
-  new (options: any, secrets?: ProviderSecrets): Provider
-}
+export type Constructor = typeof Provider

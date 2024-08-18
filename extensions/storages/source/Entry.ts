@@ -1,15 +1,15 @@
+import type { Readable } from 'node:stream'
+
 export interface Entry {
-  id: string
-  size: number
-  type: string
-  created: number
-  origin?: string
-  variants: Variant[]
-  meta: Record<string, unknown>
+  stream: Readable
+  metadata: Metadata
 }
 
-interface Variant {
-  name: string
-  size: number
+export interface Metadata {
   type: string
+  size: number
+  created: number
+  attributes?: Attributes
 }
+
+type Attributes = Record<string, any>

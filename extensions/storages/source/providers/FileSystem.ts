@@ -1,8 +1,9 @@
-import { type Readable } from 'node:stream'
-import { dirname, join } from 'node:path'
 import fs from 'node:fs/promises'
+import { createReadStream } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { Err } from 'error-value'
 import { Provider } from '../Provider'
-import type { ProviderSecrets } from '../Provider'
+import type { Entry } from '../Entry'
 
 export interface FileSystemOptions {
   path: string
@@ -10,45 +11,79 @@ export interface FileSystemOptions {
 }
 
 export class FileSystem extends Provider<FileSystemOptions> {
-  public override readonly path: string
+  public override readonly root: string
 
-  public constructor (options: FileSystemOptions, secrets?: ProviderSecrets) {
-    super(options, secrets)
+  public constructor (options: FileSystemOptions) {
+    super(options)
 
-    this.path = options.path
+    this.root = options.path
   }
 
-  public async get (path: string): Promise<Readable | null> {
-    try {
-      const fd = await fs.open(join(this.path, path))
+  public async get (rel: string): Promise<Entry | Error> {
+    const blob = join(this.root, rel)
+    const meta = blob + '.meta'
 
-      return fd.createReadStream()
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') return null
+    return this.try<Entry>(async () => {
+      const contents = await fs.readFile(meta, 'utf8')
+      const metadata = JSON.parse(contents)
+      const stream = createReadStream(blob)
+
+      return { stream, metadata }
+    })
+  }
+
+  public async put (rel: string, entry: Entry): Promise<void> {
+    const blob = join(this.root, rel)
+    const meta = blob + '.meta'
+    const dir = dirname(blob)
+
+    entry.stream.on('error', () =>
+      void fs.rm(blob, { force: true }).catch(() => undefined))
+
+    await fs.mkdir(dir, { recursive: true })
+
+    await Promise.all([
+      fs.writeFile(blob, entry.stream),
+      fs.writeFile(meta, JSON.stringify(entry.metadata))
+    ])
+  }
+
+  public async delete (path: string): Promise<void> {
+    const blob = join(this.root, path)
+    const meta = blob + '.meta'
+
+    await Promise.all([
+      fs.rm(meta, { force: true }),
+      fs.rm(blob, { force: true })
+    ])
+  }
+
+  public async move (from: string, to: string): Promise<void | Error> {
+    await fs.mkdir(dirname(to), { recursive: true })
+
+    const bf = join(this.root, from)
+    const bt = join(this.root, to)
+    const mf = bf + '.meta'
+    const mt = bt + '.meta'
+
+    return await this.try(async () => {
+      await Promise.all([
+        fs.rename(bf, bt),
+        fs.rename(mf, mt)
+      ])
+    })
+  }
+
+  private async try<T = void> (action: () => Promise<T>): Promise<T | Error> {
+    try {
+      return await action()
+    } catch (err: NodeJS.ErrnoException | any) {
+      if (err?.code === 'ENOENT')
+        return NOT_FOUND
 
       throw err
     }
   }
-
-  public async put (rel: string, filename: string, stream: Readable): Promise<void> {
-    const dir = join(this.path, rel)
-    const path = join(dir, filename)
-
-    stream.on('error', () => void fs.rm(path, { force: true }))
-
-    await fs.mkdir(dir, { recursive: true })
-    await fs.writeFile(path, stream).catch(() => undefined)
-  }
-
-  public async delete (path: string): Promise<void> {
-    await fs.rm(join(this.path, path), { recursive: true, force: true })
-  }
-
-  public async move (from: string, to: string): Promise<void> {
-    from = join(this.path, from)
-    to = join(this.path, to)
-
-    await fs.mkdir(dirname(to), { recursive: true })
-    await fs.rename(from, to)
-  }
 }
+
+const NOT_FOUND = new Err('NOT_FOUND')
