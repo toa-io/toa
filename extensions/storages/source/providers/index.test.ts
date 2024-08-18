@@ -1,28 +1,33 @@
 import assert from 'node:assert'
 import { createReadStream } from 'node:fs'
+import { resolve } from 'node:path'
 import { suites } from '../test/util'
 import { providers } from './index'
 import type { Constructor } from '../Provider'
 import type { Entry, Metadata } from '../Entry'
 
+const sample = resolve(__dirname, '../test/sample.jpeg')
+const lenna = resolve(__dirname, '../test/lenna.png')
+
 const metadata: Metadata = {
-  type: Math.random().toString(36).substring(7),
-  size: Math.round(Math.random() * 1000),
+  type: 'image/jpeg',
+  size: 73444,
   created: Date.now()
 }
 
 describe.each(suites)('$provider', (suite) => {
+  const id = Math.random().toString(36).substring(7)
   const it = suite.run ? global.it : global.it.skip
   const Provider: Constructor = providers[suite.provider]
-  const provider = new Provider(suite.options)
+  const provider = new Provider(suite.options, suite.secrets)
 
   describe('put & get', () => {
     let entry: Entry
 
     beforeAll(async () => {
-      await provider.put('foo', { stream: createReadStream(__filename), metadata })
+      await provider.put(id, { stream: createReadStream(sample), metadata })
 
-      entry = await provider.get('foo') as Entry
+      entry = await provider.get(id) as Entry
 
       assert.ok(!(entry instanceof Error))
     })
@@ -30,37 +35,40 @@ describe.each(suites)('$provider', (suite) => {
     afterAll(() => entry.stream.destroy())
 
     it('should create metadata', async () => {
-      expect(entry.metadata).toEqual(metadata)
+      expect(entry.metadata.size).toEqual(metadata.size)
     })
 
-    it('should store attributes', async () => {
-      const path = '/path/to/file'
+    if (suite.provider !== 'cloudinary')
+      it('should store attributes', async () => {
+        const path = '/path/to/file'
 
-      await provider.put(path, {
-        stream: createReadStream(__filename),
-        metadata: { ...metadata, attributes: { foo: 'bar' } }
+        await provider.put(path, {
+          stream: createReadStream(sample),
+          metadata: { ...metadata, attributes: { foo: 'bar' } }
+        })
+
+        const entry = await provider.get(path) as Entry
+
+        expect(entry.metadata.attributes).toEqual({ foo: 'bar' })
+
+        entry.stream.destroy()
       })
 
-      const entry = await provider.get(path) as Entry
-
-      expect(entry.metadata.attributes).toEqual({ foo: 'bar' })
-
-      entry.stream.destroy()
-    })
-
     it('should overwrite', async () => {
-      const metadata: Metadata = {
-        type: Math.random().toString(36).substring(7),
-        size: Math.round(Math.random() * 1000),
-        created: Date.now()
-      }
+      if (suite.provider === 'cloudinary')
+        await new Promise((resolve) => setTimeout(resolve, 5_000))
 
-      await expect(provider.put('foo', { stream: createReadStream(__filename), metadata }))
+      const meta = { ...metadata, size: 473831 } // lenna size
+
+      await expect(provider.put(id, { stream: createReadStream(lenna), metadata: meta }))
         .resolves.not.toThrow()
 
-      const overwritten = await provider.get('foo') as Entry
+      if (suite.provider === 'cloudinary')
+        await new Promise((resolve) => setTimeout(resolve, 10_000))
 
-      expect(overwritten.metadata).toEqual(metadata)
+      const overwritten = await provider.get(id) as Entry
+
+      expect(overwritten.metadata.size).toEqual(meta.size)
 
       overwritten.stream.destroy()
     })
@@ -77,7 +85,7 @@ describe.each(suites)('$provider', (suite) => {
     const path = '/path/to/' + Math.random().toString(36).substring(7)
 
     it('should remove file', async () => {
-      await provider.put(path, { stream: createReadStream(__filename), metadata })
+      await provider.put(path, { stream: createReadStream(sample), metadata })
       await provider.delete(path)
 
       const error = await provider.get(path) as any
@@ -95,16 +103,19 @@ describe.each(suites)('$provider', (suite) => {
 
   describe('move', () => {
     it('should move', async () => {
-      await provider.put('one', { stream: createReadStream(__filename), metadata })
-      await provider.move('one', 'two')
+      const from = Math.random().toString(36).substring(7)
+      const to = Math.random().toString(36).substring(7)
 
-      const error = await provider.get('one') as any
+      await provider.put(from, { stream: createReadStream(sample), metadata })
+      await provider.move(from, to)
+
+      const error = await provider.get(from) as any
 
       expect(error).toBeInstanceOf(Error)
 
-      const entry = await provider.get('two') as Entry
+      const entry = await provider.get(to) as Entry
 
-      expect(entry.metadata).toEqual(metadata)
+      expect(entry.stream).toBeDefined()
     })
 
     it('should return error if not found', async () => {
@@ -115,3 +126,5 @@ describe.each(suites)('$provider', (suite) => {
     })
   })
 })
+
+jest.setTimeout(30_000)

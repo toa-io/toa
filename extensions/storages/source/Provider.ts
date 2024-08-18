@@ -1,4 +1,5 @@
 import * as assert from 'node:assert'
+import { Err } from 'error-value'
 import type { Secret, Secrets } from './Secrets'
 import type { Entry } from './Entry'
 
@@ -19,6 +20,8 @@ export abstract class Provider<Options = void> {
 
   public abstract move (from: string, to: string): Promise<void | Error>
 }
+
+export const NOT_FOUND = new Err('NOT_FOUND')
 
 export interface Constructor {
   SECRETS?: readonly Secret[]

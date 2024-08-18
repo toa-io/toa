@@ -5,8 +5,7 @@ import assert from 'node:assert'
 import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
 import * as nodeNativeFetch from 'smithy-node-native-fetch'
-import { Err } from 'error-value'
-import { Provider } from '../Provider'
+import { NOT_FOUND, Provider } from '../Provider'
 import type { Entry } from '../Entry'
 import type { Secret, Secrets } from '../Secrets'
 import type { ReadableStream } from 'node:stream/web'
@@ -139,5 +138,3 @@ export class S3 extends Provider<S3Options> {
     }
   }
 }
-
-const NOT_FOUND = new Err('NOT_FOUND')

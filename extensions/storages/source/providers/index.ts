@@ -1,13 +1,13 @@
 import { FileSystem } from './FileSystem'
 import { S3 } from './S3'
-// import { Cloudinary } from './cloudinary'
+import { Cloudinary } from './cloudinary'
 import { Temporary } from './Temporary'
 import { Test } from './Test'
 import type { Constructor } from '../Provider'
 
 export const providers = {
   s3: S3,
-  // cloudinary: Cloudinary,
+  cloudinary: Cloudinary,
   fs: FileSystem,
   tmp: Temporary,
   test: Test

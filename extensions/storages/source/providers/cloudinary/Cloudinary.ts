@@ -1,20 +1,21 @@
-import { join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { Readable } from 'node:stream'
 import { v2 as cloudinary } from 'cloudinary'
 import { console } from 'openspan'
-import { Provider } from '../../Provider'
+import { NOT_FOUND, Provider } from '../../Provider'
 import { parse } from './parse'
+import type { Entry, Metadata } from '../../Entry'
+import type { Secret, Secrets } from '../../Secrets'
 import type { ReadableStream } from 'node:stream/web'
 import type { ConfigOptions as CloudinaryConfig } from 'cloudinary'
-import type { ProviderSecret, ProviderSecrets } from '../../Provider'
+
+export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
 
 export class Cloudinary extends Provider<CloudinaryOptions> {
-  public static override readonly SECRETS: readonly ProviderSecret[] = [
+  public static override readonly SECRETS: readonly Secret[] = [
     { name: 'API_KEY' },
     { name: 'API_SECRET' }
   ]
-
-  public override readonly dynamic = true
 
   private readonly type: StorageType
   private readonly config: CloudinaryConfig
@@ -34,41 +35,51 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     this.prefix = options.prefix ?? '/'
   }
 
-  public async get (path: string): Promise<Readable | null> {
+  public async get (path: string): Promise<Entry | Error> {
     const url = this.url(path)
 
     if (url === null)
-      return null
+      return NOT_FOUND
 
     const response = await fetch(url)
 
+    if (!response.ok)
+      return NOT_FOUND
+
+    const stream = Readable.fromWeb(response.body as ReadableStream)
+
+    const metadata: Metadata = {
+      type: response.headers.get('content-type')!,
+      size: Number.parseInt(response.headers.get('content-length') ?? '0'),
+      created: Date.parse(response.headers.get('date') ?? '')
+    }
+
     console.debug('Fetched from Cloudinary', {
-      ok: response.ok,
-      url,
-      type: response.headers.get('content-type'),
-      size: response.headers.get('content-length')
+      path,
+      metadata
     })
 
-    // https://res.cloudinary.com/dl5z4zgth/image/upload/c_thumb,g_face,z_1/v2/toa-dev/blobs/814a0034f5549e957ee61360d87457e5?_a=BAMAGSWM0
-    // https://res.cloudinary.com/dl5z4zgth/image/upload/v2/toa-dev/blobs/814a0034f5549e957ee61360d87457e5?_a=BAMAGSWM0
-
-    if (!response.ok)
-      return null
-
-    return response.body === null ? null : Readable.fromWeb(response.body as ReadableStream)
+    return { stream, metadata }
   }
 
-  public async put (path: string, id: string, stream: Readable): Promise<void> {
-    const folder = join(this.prefix, path)
+  public async put (path: string, entry: Entry): Promise<void> {
+    const id = basename(path)
+    const folder = join(this.prefix, dirname(path))
 
     await new Promise((resolve, reject) => {
-      stream.pipe(this.cloudinary().uploader.upload_stream({ public_id: id, folder, resource_type: 'auto', overwrite: true },
-        (error, result) => {
-          if (error !== undefined) reject(error)
-          else resolve(result)
-        }))
+      entry.stream.pipe(this.cloudinary().uploader.upload_stream({
+        public_id: id,
+        folder,
+        resource_type: 'auto',
+        overwrite: true,
+        invalidate: true
+      },
+      (error, result) => {
+        if (error !== undefined) reject(error)
+        else resolve(result)
+      }))
 
-      stream.on('error', (error: any) => {
+      entry.stream.on('error', (error: any) => {
         if (error.code === 'TYPE_MISMATCH')
           resolve(null)
         else
@@ -76,33 +87,31 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       })
     })
 
-    console.debug('Uploaded to Cloudinary', { path, id })
+    console.debug('Uploaded to Cloudinary', { path })
   }
 
   public async delete (path: string): Promise<void> {
     const id = join(this.prefix, path)
-    const type = this.resourceType(id)
 
-    const ok = await this.cloudinary().uploader.destroy(id, { resource_type: type, invalidate: true })
-
-    if (ok.result === 'not found') {
-      await this.cloudinary().api.delete_resources_by_prefix(id)
-      await this.cloudinary().api.delete_folder(id).catch(() => undefined)
-    }
+    await this.cloudinary().uploader.destroy(id,
+      { resource_type: this.type, invalidate: true })
 
     console.debug('Deleted from Cloudinary', { path: id })
   }
 
-  public async move (from: string, to: string): Promise<void> {
+  public async move (from: string, to: string): Promise<void | Error> {
     const source = join(this.prefix, from)
     const target = join(this.prefix, to)
-    const type = this.resourceType(source)
 
-    await this.cloudinary().uploader.rename(source, target,
-      {
-        overwrite: true,
-        resource_type: type
-      })
+    try {
+      await this.cloudinary().uploader.rename(source, target,
+        { resource_type: this.type, overwrite: true })
+    } catch (error: any) {
+      if (error.http_code === 404)
+        return NOT_FOUND
+      else
+        throw error
+    }
   }
 
   private url (path: string): string | null {
@@ -112,17 +121,12 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       return null
 
     const id = join(this.prefix, rel)
-    const type = this.resourceType(id)
 
     return this.cloudinary().url(id, {
-      resource_type: type,
+      resource_type: this.type,
       transformation,
       version: 2
-    })
-  }
-
-  private resourceType (path: string): string {
-    return path.includes('.meta') ? 'raw' : this.type
+    }) + '-' + Math.random().toString(36).substring(7)
   }
 
   private cloudinary (): typeof cloudinary {
@@ -139,5 +143,3 @@ export interface CloudinaryOptions {
 }
 
 type StorageType = 'image' | 'video'
-
-export type CloudinarySecrets = ProviderSecrets<'API_KEY' | 'API_SECRET'>

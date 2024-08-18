@@ -29,20 +29,20 @@ export const suites = [
       ACCESS_KEY_ID: 'developer',
       SECRET_ACCESS_KEY: 'secret'
     }
+  },
+  {
+    run: process.env.RUN_CLOUDINARY === '1',
+    provider: 'cloudinary',
+    options: {
+      environment: 'dl5z4zgth',
+      type: 'image',
+      prefix: 'toa-dev'
+    },
+    secrets: {
+      API_KEY: process.env.CLOUDINARY_API_KEY ?? '',
+      API_SECRET: process.env.CLOUDINARY_API_SECRET ?? ''
+    }
   }
-  // {
-  //   run: process.env.RUN_CLOUDINARY === '1',
-  //   provider: 'cloudinary',
-  //   options: {
-  //     environment: 'dl5z4zgth',
-  //     type: 'image',
-  //     prefix: 'toa-dev'
-  //   },
-  //   secrets: {
-  //     API_KEY: process.env.CLOUDINARY_API_KEY ?? '',
-  //     API_SECRET: process.env.CLOUDINARY_API_SECRET ?? ''
-  //   }
-  // }
   // add more providers here, use `run` as a condition to run the test
   // e.g.: `run: process.env.ACCESS_KEY_ID !== undefined`
 ] satisfies Suite[]

@@ -1,8 +1,7 @@
 import fs from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { Err } from 'error-value'
-import { Provider } from '../Provider'
+import { NOT_FOUND, Provider } from '../Provider'
 import type { Entry } from '../Entry'
 
 export interface FileSystemOptions {
@@ -85,5 +84,3 @@ export class FileSystem extends Provider<FileSystemOptions> {
     }
   }
 }
-
-const NOT_FOUND = new Err('NOT_FOUND')
