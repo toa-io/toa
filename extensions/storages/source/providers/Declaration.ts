@@ -8,5 +8,4 @@ export type Declaration =
   | ({ provider: 'cloudinary' } & CloudinaryOptions)
   | ({ provider: 'fs' } & FileSystemOptions)
   | ({ provider: 'tmp' } & TemporaryOptions)
-  | ({ provider: 'mem' })
   | ({ provider: 'test' } & TemporaryOptions)

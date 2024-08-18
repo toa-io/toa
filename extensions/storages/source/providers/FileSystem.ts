@@ -80,8 +80,8 @@ export class FileSystem extends Provider<FileSystemOptions> {
     } catch (err: NodeJS.ErrnoException | any) {
       if (err?.code === 'ENOENT')
         return NOT_FOUND
-
-      throw err
+      else
+        throw err
     }
   }
 }

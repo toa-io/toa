@@ -1,131 +1,117 @@
-import path from 'node:path'
-import { type Readable } from 'node:stream'
-import { buffer } from 'node:stream/consumers'
-import { readFile } from 'node:fs/promises'
+import assert from 'node:assert'
 import { createReadStream } from 'node:fs'
-import { randomUUID } from 'node:crypto'
 import { suites } from '../test/util'
 import { providers } from './index'
-import type { ProviderConstructor } from '../Provider'
+import type { Constructor } from '../Provider'
+import type { Entry, Metadata } from '../Entry'
 
-jest.setTimeout(20000)
+const metadata: Metadata = {
+  type: Math.random().toString(36).substring(7),
+  size: Math.round(Math.random() * 1000),
+  created: Date.now()
+}
 
 describe.each(suites)('$provider', (suite) => {
   const it = suite.run ? global.it : global.it.skip
-  const Provider: ProviderConstructor = providers[suite.provider]
-  const provider = new Provider(suite.options, suite.secrets)
+  const Provider: Constructor = providers[suite.provider]
+  const provider = new Provider(suite.options)
 
-  let dir: string
+  describe('put & get', () => {
+    let entry: Entry
 
-  beforeAll(async () => {
-    process.chdir(path.resolve(__dirname, '../test/'))
-  })
+    beforeAll(async () => {
+      await provider.put('foo', { stream: createReadStream(__filename), metadata })
 
-  beforeEach(() => {
-    dir = '/' + randomUUID()
-  })
+      entry = await provider.get('foo') as Entry
 
-  it('should be', async () => {
-    expect(provider).toBeInstanceOf(Provider)
-  })
-
-  it('should return null if file not found', async () => {
-    const result = await provider.get(randomUUID())
-
-    expect(result).toBeNull()
-  })
-
-  it('should create entry', async () => {
-    const stream = createReadStream('lenna.png')
-
-    await provider.put(dir, 'lenna', stream)
-
-    const readable = await provider.get(dir + '/lenna') as Readable
-    const output = await buffer(readable)
-    const lenna = await readFile('lenna.png')
-
-    expect(output.compare(lenna)).toBe(0)
-  })
-
-  it('should overwrite existing entry', async () => {
-    const stream0 = createReadStream('lenna.png')
-    const stream1 = createReadStream('albert.jpg')
-
-    await provider.put(dir, 'lenna', stream0)
-    await provider.put(dir, 'lenna', stream1)
-
-    const readable = await provider.get(dir + '/lenna') as Readable
-    const output = await buffer(readable)
-    const albert = await readFile('albert.jpg')
-
-    expect(output.compare(albert)).toBe(0)
-  })
-
-  it('should get by path', async () => {
-    const stream = createReadStream('lenna.png')
-
-    await provider.put(dir, 'lenna', stream)
-
-    const result = await provider.get('/bar/lenna')
-
-    expect(result).toBeNull()
-  })
-
-  describe('danger', () => {
-    /*
-
-    WHEN MAKING CHANGES TO DELETION,
-    ALWAYS RUN TESTS IN STEP-BY-STEP DEBUGGING MODE
-
-    YOU MAY EVENTUALLY DELETE YOUR ENTIRE FILE SYSTEM
-
-                              Sincerely yours, Murphy
-
-     */
-
-    it('should delete entry', async () => {
-      const stream = createReadStream('lenna.png')
-
-      await provider.put(dir, 'lenna', stream)
-      await provider.delete(dir + '/lenna')
-
-      const result = await provider.get(dir + '/lenna')
-
-      expect(result).toBeNull()
+      assert.ok(!(entry instanceof Error))
     })
 
-    it('should not throw if path does not exists', async () => {
-      await expect(provider.delete(dir + '/whatever')).resolves.not.toThrow()
+    afterAll(() => entry.stream.destroy())
+
+    it('should create metadata', async () => {
+      expect(entry.metadata).toEqual(metadata)
     })
 
-    it('should delete directory', async () => {
-      const stream = createReadStream('lenna.png')
+    it('should store attributes', async () => {
+      const path = '/path/to/file'
 
-      await provider.put(dir, 'lenna', stream)
-      await provider.delete(dir)
+      await provider.put(path, {
+        stream: createReadStream(__filename),
+        metadata: { ...metadata, attributes: { foo: 'bar' } }
+      })
 
-      if (suite.provider === 'cloudinary')
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+      const entry = await provider.get(path) as Entry
 
-      const result = await provider.get(dir + '/lenna')
+      expect(entry.metadata.attributes).toEqual({ foo: 'bar' })
 
-      expect(result).toBeNull()
+      entry.stream.destroy()
     })
 
-    it('should move an entry', async () => {
-      const stream = createReadStream('lenna.png')
-      const dir2 = '/' + randomUUID()
+    it('should overwrite', async () => {
+      const metadata: Metadata = {
+        type: Math.random().toString(36).substring(7),
+        size: Math.round(Math.random() * 1000),
+        created: Date.now()
+      }
 
-      await provider.put(dir, 'lenna', stream)
-      await provider.move(dir + '/' + 'lenna', dir2 + '/lenna')
+      await expect(provider.put('foo', { stream: createReadStream(__filename), metadata }))
+        .resolves.not.toThrow()
 
-      const result = await provider.get(dir2 + '/lenna') as Readable
+      const overwritten = await provider.get('foo') as Entry
 
-      expect(result).not.toBeNull()
+      expect(overwritten.metadata).toEqual(metadata)
 
-      const nope = await provider.get(dir + '/lenna')
+      overwritten.stream.destroy()
+    })
 
-      expect(nope).toBeNull()
+    it('should return error if not found', async () => {
+      const error = await provider.get(Math.random().toString(36).substring(7)) as any
+
+      expect(error).toBeInstanceOf(Error)
+      expect(error.code).toBe('NOT_FOUND')
+    })
+  })
+
+  describe('delete', () => {
+    const path = '/path/to/' + Math.random().toString(36).substring(7)
+
+    it('should remove file', async () => {
+      await provider.put(path, { stream: createReadStream(__filename), metadata })
+      await provider.delete(path)
+
+      const error = await provider.get(path) as any
+
+      expect(error).toBeInstanceOf(Error)
+      expect(error.code).toBe('NOT_FOUND')
+    })
+
+    it('should not return error if not found', async () => {
+      const empty = await provider.delete(Math.random().toString(36).substring(7))
+
+      expect(empty).toBeUndefined()
+    })
+  })
+
+  describe('move', () => {
+    it('should move', async () => {
+      await provider.put('one', { stream: createReadStream(__filename), metadata })
+      await provider.move('one', 'two')
+
+      const error = await provider.get('one') as any
+
+      expect(error).toBeInstanceOf(Error)
+
+      const entry = await provider.get('two') as Entry
+
+      expect(entry.metadata).toEqual(metadata)
+    })
+
+    it('should return error if not found', async () => {
+      const error = await provider.move(Math.random().toString(36).substring(7), 'whatever') as any
+
+      expect(error).toBeInstanceOf(Error)
+      expect(error.code).toBe('NOT_FOUND')
     })
   })
 })
