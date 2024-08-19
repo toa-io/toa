@@ -29,7 +29,7 @@ export class WorkflowDirective extends Directive {
   public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery
 
-    const entry = await this.storage.invoke<Maybe<Entry>>('get',
+    const entry = await this.storage.invoke<Maybe<Entry>>('head',
       {
         input: {
           storage,

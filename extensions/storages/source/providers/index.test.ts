@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 import { suites } from '../test/util'
 import { providers } from './index'
 import type { Constructor } from '../Provider'
-import type { Entry, Metadata } from '../Entry'
+import type { Metadata, Stream } from '../Entry'
 
 const sample = resolve(__dirname, '../test/sample.jpeg')
 const lenna = resolve(__dirname, '../test/lenna.png')
@@ -22,12 +22,13 @@ describe.each(suites)('$provider', (suite) => {
   const provider = new Provider(suite.options, suite.secrets)
 
   describe('put & get', () => {
-    let entry: Entry
+    let entry: Stream
 
     beforeAll(async () => {
-      await provider.put(id, { stream: createReadStream(sample), metadata })
+      await provider.put(id, createReadStream(sample))
+      await provider.commit(id, metadata)
 
-      entry = await provider.get(id) as Entry
+      entry = await provider.get(id) as Stream
 
       assert.ok(!(entry instanceof Error))
     })
@@ -35,21 +36,19 @@ describe.each(suites)('$provider', (suite) => {
     afterAll(() => entry.stream.destroy())
 
     it('should create metadata', async () => {
-      expect(entry.metadata.size).toEqual(metadata.size)
+      expect(entry.size).toEqual(metadata.size)
     })
 
     if (suite.provider !== 'cloudinary')
       it('should store attributes', async () => {
         const path = '/path/to/file'
 
-        await provider.put(path, {
-          stream: createReadStream(sample),
-          metadata: { ...metadata, attributes: { foo: 'bar' } }
-        })
+        await provider.put(path, createReadStream(sample))
+        await provider.commit(path, { ...metadata, attributes: { foo: 'bar' } })
 
-        const entry = await provider.get(path) as Entry
+        const entry = await provider.get(path) as Stream
 
-        expect(entry.metadata.attributes).toEqual({ foo: 'bar' })
+        expect(entry.attributes).toEqual({ foo: 'bar' })
 
         entry.stream.destroy()
       })
@@ -60,15 +59,17 @@ describe.each(suites)('$provider', (suite) => {
 
       const meta = { ...metadata, size: 473831 } // lenna size
 
-      await expect(provider.put(id, { stream: createReadStream(lenna), metadata: meta }))
+      await expect(provider.put(id, createReadStream(lenna)))
         .resolves.not.toThrow()
+
+      await provider.commit(id, meta)
 
       if (suite.provider === 'cloudinary')
         await new Promise((resolve) => setTimeout(resolve, 10_000))
 
-      const overwritten = await provider.get(id) as Entry
+      const overwritten = await provider.get(id) as Stream
 
-      expect(overwritten.metadata.size).toEqual(meta.size)
+      expect(overwritten.size).toEqual(meta.size)
 
       overwritten.stream.destroy()
     })
@@ -85,7 +86,8 @@ describe.each(suites)('$provider', (suite) => {
     const path = '/path/to/' + Math.random().toString(36).substring(7)
 
     it('should remove file', async () => {
-      await provider.put(path, { stream: createReadStream(sample), metadata })
+      await provider.put(path, createReadStream(sample))
+      await provider.commit(path, metadata)
       await provider.delete(path)
 
       const error = await provider.get(path) as any
@@ -102,18 +104,25 @@ describe.each(suites)('$provider', (suite) => {
   })
 
   describe('move', () => {
-    it('should move', async () => {
+    it.each([true, false])('should move (commit: %s)', async (committed) => {
       const from = Math.random().toString(36).substring(7)
       const to = Math.random().toString(36).substring(7)
 
-      await provider.put(from, { stream: createReadStream(sample), metadata })
+      await provider.put(from, createReadStream(sample))
+
+      if (committed)
+        await provider.commit(from, metadata)
+
       await provider.move(from, to)
+
+      if (!committed)
+        await provider.commit(to, metadata)
 
       const error = await provider.get(from) as any
 
       expect(error).toBeInstanceOf(Error)
 
-      const entry = await provider.get(to) as Entry
+      const entry = await provider.get(to) as Stream
 
       expect(entry.stream).toBeDefined()
     })

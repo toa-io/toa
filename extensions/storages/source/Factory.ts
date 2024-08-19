@@ -6,9 +6,10 @@ import { Storage, type Storages } from './Storage'
 import { Aspect } from './Aspect'
 import { ENV_PREFIX } from './deployment'
 import { validateAnnotation } from './Annotation'
+import type { Constructor } from './Provider'
 import type { Declaration } from './providers'
 import type { Annotation } from './Annotation'
-import type { ProviderConstructor, ProviderSecrets } from './Provider'
+import type { Secrets } from './Secrets'
 
 export class Factory {
   private readonly annotation: Annotation
@@ -39,18 +40,17 @@ export class Factory {
   }
 
   private createStorage (name: string, declaration: Declaration): Storage {
-    const { provider: providerId, ...options } = declaration
-    const Provider: ProviderConstructor = providers[providerId]
+    const { provider: id, ...options } = declaration
+    const Provider: Constructor = providers[id]
     const secrets = this.resolveSecrets(name, Provider)
     const provider = new Provider(options, secrets)
 
-    console.debug('Storage created', { name, provider: providerId, options, path: provider.path })
+    console.debug('Storage created', { name, provider: id, options, root: provider.root })
 
     return new Storage(provider)
   }
 
-  private resolveSecrets (storageName: string,
-    Class: ProviderConstructor): ProviderSecrets {
+  private resolveSecrets (storageName: string, Class: Constructor): Secrets {
     if (Class.SECRETS === undefined)
       return {}
 

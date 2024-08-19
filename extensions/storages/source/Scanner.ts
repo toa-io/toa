@@ -6,7 +6,7 @@ import { Err } from 'error-value'
 export class Scanner extends PassThrough {
   public size = 0
   public type = 'application/octet-stream'
-  public error: Error | null = null
+  public error?: Error
 
   private readonly hash = createHash('md5')
   private readonly claim?: string
@@ -124,7 +124,7 @@ const SIGNATURES: Signature[] = [
   { hex: '52 49 46 46 ?? ?? ?? ?? 57 41 56 45', off: 0, type: 'audio/wav' }
   /*
   When adding a new signature, include a copyright-free sample file in the `.tests` directory
-  and update the 'signatures' test group in `Storage.test.ts`.
+  and update the `signatures` test group in `Storage.test.ts`.
    */
 ].map((signature: Signature) => {
   signature.hex = signature.hex.replaceAll(' ', '')
@@ -144,9 +144,9 @@ const HEADER_SIZE = SIGNATURES
 
 const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
-const ERR_TYPE_MISMATCH = Err('TYPE_MISMATCH')
-const ERR_NOT_ACCEPTABLE = Err('NOT_ACCEPTABLE')
-const ERR_LIMIT_EXCEEDED = Err('LIMIT_EXCEEDED')
+const ERR_TYPE_MISMATCH = new Err('TYPE_MISMATCH')
+const ERR_NOT_ACCEPTABLE = new Err('NOT_ACCEPTABLE')
+const ERR_LIMIT_EXCEEDED = new Err('LIMIT_EXCEEDED')
 
 export interface ScanOptions {
   claim?: string

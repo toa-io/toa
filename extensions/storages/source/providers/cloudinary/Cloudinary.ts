@@ -2,9 +2,11 @@ import { basename, dirname, join } from 'node:path'
 import { Readable } from 'node:stream'
 import { v2 as cloudinary } from 'cloudinary'
 import { console } from 'openspan'
-import { NOT_FOUND, Provider } from '../../Provider'
+import { Provider } from '../../Provider'
+import { ERR_NOT_FOUND } from '../../errors'
 import { parse } from './parse'
-import type { Entry, Metadata } from '../../Entry'
+import type { Maybe } from '@toa.io/types'
+import type { Stream } from '../../Entry'
 import type { Secret, Secrets } from '../../Secrets'
 import type { ReadableStream } from 'node:stream/web'
 import type { ConfigOptions as CloudinaryConfig } from 'cloudinary'
@@ -35,39 +37,42 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     this.prefix = options.prefix ?? '/'
   }
 
-  public async get (path: string): Promise<Entry | Error> {
+  public async get (path: string): Promise<Maybe<Stream>> {
     const url = this.url(path)
 
     if (url === null)
-      return NOT_FOUND
+      return ERR_NOT_FOUND
 
-    const response = await fetch(url)
+    const response = await fetch(url).catch((e) => e)
 
-    if (!response.ok)
-      return NOT_FOUND
-
-    const stream = Readable.fromWeb(response.body as ReadableStream)
-
-    const metadata: Metadata = {
-      type: response.headers.get('content-type')!,
-      size: Number.parseInt(response.headers.get('content-length') ?? '0'),
-      created: Date.parse(response.headers.get('date') ?? '')
-    }
+    // noinspection PointlessBooleanExpressionJS,SuspiciousTypeOfGuard
+    if (response instanceof Error || response.ok === false)
+      return ERR_NOT_FOUND
 
     console.debug('Fetched from Cloudinary', {
       path,
-      metadata
+      url
     })
 
-    return { stream, metadata }
+    const size = response.headers.get('content-length') === undefined
+      ? 0
+      : Number.parseInt(response.headers.get('content-length') as string)
+
+    return {
+      stream: Readable.fromWeb(response.body as ReadableStream),
+      type: response.headers.get('content-type')!,
+      size,
+      created: response.headers.get('date'),
+      attributes: {}
+    }
   }
 
-  public async put (path: string, entry: Entry): Promise<void> {
+  public async put (path: string, stream: Readable): Promise<void> {
     const id = basename(path)
     const folder = join(this.prefix, dirname(path))
 
     await new Promise((resolve, reject) => {
-      entry.stream.pipe(this.cloudinary().uploader.upload_stream({
+      stream.pipe(this.cloudinary().uploader.upload_stream({
         public_id: id,
         folder,
         resource_type: 'auto',
@@ -79,15 +84,14 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
         else resolve(result)
       }))
 
-      entry.stream.on('error', (error: any) => {
-        if (error.code === 'TYPE_MISMATCH')
-          resolve(null)
-        else
-          reject(error)
-      })
+      stream.on('error', reject)
     })
 
     console.debug('Uploaded to Cloudinary', { path })
+  }
+
+  public async commit (): Promise<void> {
+    // metadata is read-only
   }
 
   public async delete (path: string): Promise<void> {
@@ -108,7 +112,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
         { resource_type: this.type, overwrite: true })
     } catch (error: any) {
       if (error.http_code === 404)
-        return NOT_FOUND
+        return ERR_NOT_FOUND
       else
         throw error
     }

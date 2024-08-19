@@ -12,7 +12,7 @@ const test = (suite.run) ? it : it.skip
 test('run me once', async () => {
   const stream = createReadStream(lenna)
 
-  await cloudinary.put('/resize/lenna', { stream, metadata: { type: 'image/png', size: 0, created: Date.now() } })
+  await cloudinary.put('/resize/lenna', stream)
 
   const output = await cloudinary.get('/resize/lenna')
 

@@ -5,10 +5,13 @@ import assert from 'node:assert'
 import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
 import * as nodeNativeFetch from 'smithy-node-native-fetch'
-import { NOT_FOUND, Provider } from '../Provider'
-import type { Entry } from '../Entry'
-import type { Secret, Secrets } from '../Secrets'
+import { console } from 'openspan'
+import { Provider } from '../Provider'
+import { ERR_NOT_FOUND } from '../errors'
 import type { ReadableStream } from 'node:stream/web'
+import type { Maybe } from '@toa.io/types'
+import type { Stream } from '../Entry'
+import type { Secret, Secrets } from '../Secrets'
 
 export interface S3Options {
   bucket: string
@@ -76,8 +79,8 @@ export class S3 extends Provider<S3Options> {
     })
   }
 
-  public async get (Key: string): Promise<Entry | Error> {
-    return await this.try<Entry>(async () => {
+  public async get (Key: string): Promise<Maybe<Stream>> {
+    return await this.try<Stream>(async () => {
       const entry = await this.client.send(new s3.GetObjectCommand({
         Bucket: this.bucket,
         Key
@@ -89,33 +92,43 @@ export class S3 extends Provider<S3Options> {
           ? entry.Body.stream()
           : entry.Body) as ReadableStream)
 
-      const metadata = entry.Metadata?.value === undefined
-        ? {}
-        : JSON.parse(entry.Metadata.value)
+      if (entry.Metadata?.value === undefined)
+        return ERR_NOT_FOUND
 
-      return { stream, metadata }
+      const metadata = JSON.parse(entry.Metadata.value)
+
+      return { stream, ...metadata }
     })
   }
 
-  public async put (Key: string, entry: Entry): Promise<void> {
+  public async put (Key: string, stream: Readable): Promise<void> {
     await new Upload({
       client: this.client,
       params: {
         Bucket: this.bucket,
         Key,
-        Body: entry.stream,
-        Metadata: {
-          value: JSON.stringify(entry.metadata)
-        }
+        Body: stream
       }
     }).done()
+  }
+
+  public async commit (Key: string, metadata: object): Promise<void> {
+    await this.client.send(new s3.CopyObjectCommand({
+      Bucket: this.bucket,
+      Key,
+      CopySource: join(this.bucket, Key),
+      Metadata: { value: JSON.stringify(metadata) },
+      MetadataDirective: 'REPLACE'
+    }))
+
+    console.debug('Uploaded to S3', { bucket: this.bucket, path: Key, metadata })
   }
 
   public async delete (Key: string): Promise<void> {
     await this.client.send(new s3.DeleteObjectCommand({ Bucket: this.bucket, Key }))
   }
 
-  public async move (from: string, keyTo: string): Promise<void | Error> {
+  public async move (from: string, keyTo: string): Promise<Maybe<void>> {
     return await this.try(async () => {
       await this.client.send(new s3.CopyObjectCommand({
         Bucket: this.bucket,
@@ -127,12 +140,12 @@ export class S3 extends Provider<S3Options> {
     })
   }
 
-  private async try<T = void> (action: () => Promise<T>): Promise<T | Error> {
+  private async try<T = void> (action: () => Promise<T>): Promise<Maybe<T>> {
     try {
       return await action()
     } catch (err: any) {
       if (err?.name === 'NotFound' || err?.name === 'NoSuchKey')
-        return NOT_FOUND
+        return ERR_NOT_FOUND
       else
         throw err
     }

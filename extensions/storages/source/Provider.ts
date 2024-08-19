@@ -1,7 +1,8 @@
 import * as assert from 'node:assert'
-import { Err } from 'error-value'
+import type { Readable } from 'node:stream'
+import type { Maybe } from '@toa.io/types'
 import type { Secret, Secrets } from './Secrets'
-import type { Entry } from './Entry'
+import type { Metadata, Stream } from './Entry'
 
 export abstract class Provider<Options = void> {
   public static readonly SECRETS?: readonly Secret[]
@@ -12,16 +13,16 @@ export abstract class Provider<Options = void> {
       assert.ok(optional === true || secrets?.[name] !== undefined, `Missing secret '${name}'`))
   }
 
-  public abstract get (path: string): Promise<Entry | Error>
+  public abstract get (path: string): Promise<Maybe<Stream>>
 
-  public abstract put (path: string, entry: Entry): Promise<void>
+  public abstract put (path: string, stream: Readable): Promise<void>
+
+  public abstract commit (path: string, metadata: Metadata): Promise<void>
 
   public abstract delete (path: string): Promise<void>
 
-  public abstract move (from: string, to: string): Promise<void | Error>
+  public abstract move (from: string, to: string): Promise<Maybe<void>>
 }
-
-export const NOT_FOUND = new Err('NOT_FOUND')
 
 export interface Constructor {
   SECRETS?: readonly Secret[]

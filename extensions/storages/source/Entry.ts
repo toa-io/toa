@@ -1,15 +1,14 @@
 import type { Readable } from 'node:stream'
 
-export interface Entry {
-  stream: Readable
-  metadata: Metadata
-}
+export type Stream = { stream: Readable } & Metadata
+
+export type Entry = { id: string } & Metadata
 
 export interface Metadata {
   type: string
   size: number
-  created: number
-  attributes?: Attributes
+  created: string
+  attributes: Attributes
 }
 
-type Attributes = Record<string, any>
+export type Attributes = Record<string, string>
