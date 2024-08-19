@@ -1,13 +1,10 @@
-import { Readable } from 'node:stream'
-import { posix } from 'node:path'
-import { buffer } from 'node:stream/consumers'
-import { decode, encode } from 'msgpackr'
+import { basename, join } from 'node:path'
 import { newid } from '@toa.io/generic'
-import { Err } from 'error-value'
 import { Scanner } from './Scanner'
+import type { Readable } from 'node:stream'
+import type { Attributes, Entry, Stream } from './Entry'
 import type { ScanOptions } from './Scanner'
 import type { Provider } from './Provider'
-import type { Entry } from './Entry'
 
 export class Storage {
   private readonly provider: Provider
@@ -18,229 +15,92 @@ export class Storage {
 
   public async put (path: string, stream: Readable, options?: Options): Maybe<Entry> {
     const scanner = new Scanner(options)
-    const pipe = stream.pipe(scanner)
-    const tempname = await this.transit(pipe)
+    const pipe = stream.pipe(scanner).on('error', () => undefined)
 
-    if (scanner.error !== null)
-      return scanner.error
+    const temp: string | Error = await this.transit(path, pipe).catch((error: any) => {
+      if (error === scanner.error) return error
+      else throw error
+    })
+
+    if (temp instanceof Error)
+      return temp
 
     const id = scanner.digest()
 
-    await this.persist(tempname, id)
-
-    const entry: Entry = {
+    const metadata: Entry = {
       id,
       size: scanner.size,
       type: scanner.type,
-      origin: options?.origin,
-      created: Date.now(),
-      variants: [],
-      meta: options?.meta ?? {}
+      checksum: id,
+      created: new Date().toISOString(),
+      attributes: options?.attributes ?? {}
     }
 
-    return await this.create(path, entry)
+    if (options?.origin !== undefined)
+      metadata.attributes.origin = options.origin
+
+    const location = this.locate(path, id)
+
+    await this.persist(temp, location, metadata)
+
+    return metadata
   }
 
-  public async get (path: string): Maybe<Entry> {
-    const paths = this.destruct(path)
-    const result = await this.provider.get(paths.metafile)
+  public async get (path: string): Maybe<Stream> {
+    const location = this.locate(path)
 
-    if (result === null)
-      return ERR_NOT_FOUND
-    else
-      return decode(await buffer(result))
+    return await this.provider.get(location)
   }
 
-  public async list (path: string): Promise<string[]> {
-    const dir = posix.join(ENTRIES_ROOT, path, ENTRIES_DIR)
+  public async head (path: string): Promise<Maybe<Entry>> {
+    const id = basename(path)
+    const location = this.locate(path)
+    const metadata = await this.provider.head(location)
 
-    return await this.provider.list(dir)
-  }
+    if (metadata instanceof Error)
+      return metadata
 
-  public async fetch (path: string): Maybe<Readable> {
-    const { rel, id, variant } = this.parse(path)
-
-    if (variant === null && rel !== '') {
-      const entry = await this.get(path)
-
-      if (entry instanceof Error)
-        return entry
+    return {
+      id,
+      ...metadata
     }
-
-    const blob = variant === null
-      ? posix.join(BLOBs, id)
-      : posix.join(ENTRIES_ROOT, rel, id, variant)
-
-    const stream = await this.provider.get(blob)
-
-    if (stream === null)
-      return ERR_NOT_FOUND
-    else
-      return stream
   }
 
   public async delete (path: string): Maybe<void> {
-    const entry = await this.get(path)
+    const location = this.locate(path)
 
-    if (entry instanceof Error)
-      return entry
-
-    const paths = this.destruct(path)
-
-    await Promise.all([
-      this.provider.delete(paths.metafile),
-      this.provider.delete(paths.vardir)
-    ])
-  }
-
-  public async move (path: string, to: string): Maybe<void> {
-    const source = this.destruct(path)
-    const rel = to.startsWith('.')
-    const dir = to.endsWith('/')
-
-    if (rel)
-      to = posix.resolve(source.rel + '/', to)
-
-    if (dir)
-      to = posix.join(to, source.ent)
-
-    const target = this.destruct(to)
-
-    await Promise.all([
-      this.provider.move(source.metafile, target.metafile),
-      this.provider.moveDir(source.vardir, target.vardir)
-    ])
-  }
-
-  public async diversify (path: string, name: string, stream: Readable): Maybe<void> {
-    const scanner = new Scanner()
-    const pipe = stream.pipe(scanner)
-
-    await this.provider.put(posix.join(ENTRIES_ROOT, path), name, pipe)
-
-    if (scanner.error !== null)
-      return scanner.error
-
-    const { size, type } = scanner
-    const entry = await this.get(path)
-
-    if (entry instanceof Error)
-      return entry
-
-    entry.variants = entry.variants.filter((variant) => variant.name !== name)
-    entry.variants.push({ name, size, type })
-
-    await this.save(path, entry)
-  }
-
-  public async annotate (path: string, key: string | Record<string, unknown>, value?: unknown): Maybe<void> {
-    const entry = await this.get(path)
-
-    if (entry instanceof Error)
-      return entry
-
-    const update = typeof key === 'string'
-      ? { [key]: value }
-      : key
-
-    Object.assign(entry.meta, update)
-
-    // filter undefined values
-    for (const key of Object.keys(entry.meta))
-      if (entry.meta[key] === undefined)
-        delete entry.meta[key]
-
-    await this.save(path, entry)
+    return this.provider.delete(location)
   }
 
   public path (): string | null {
-    return this.provider.path
+    return this.provider.root ?? null
   }
 
-  private async transit (stream: Readable): Promise<string> {
-    const tempname = newid()
+  private async transit (path: string, stream: Readable): Promise<string> {
+    const location = this.locate(path, newid() + '.temp')
 
-    await this.provider.put(TEMP, tempname, stream)
+    await this.provider.put(location, stream)
 
-    return tempname
+    return location
   }
 
-  private async persist (tempname: string, id: string): Promise<void> {
-    const temp = posix.join(TEMP, tempname)
-    const blob = posix.join(BLOBs, id)
-
-    await this.provider.move(temp, blob)
+  private async persist (from: string, to: string, entry: Entry): Promise<void> {
+    await this.provider.move(from, to)
+    await this.provider.commit(to, entry)
   }
 
-  // eslint-disable-next-line max-params
-  private async create
-  (path: string, entry: Entry): Promise<Entry> {
-    const metafile = posix.join(path, entry.id)
-    const existing = await this.get(metafile)
-
-    if (existing instanceof Error)
-      await this.save(metafile, entry)
-
-    return entry
-  }
-
-  private async save (path: string, entry: Entry): Promise<void> {
-    const paths = this.destruct(path)
-    const stream = Readable.from(encode(entry))
-
-    await this.provider.put(paths.metadir, paths.ent, stream)
-  }
-
-  private parse (path: string): Path {
-    const [last, ...segments] = path.split('/').reverse()
-    const [id, ...rest] = last.split('.')
-    const variant = rest.length > 0 ? rest.join('.') : null
-    const rel = segments.reverse().join('/')
-
-    return { rel, id, variant }
-  }
-
-  private destruct (path: string): Paths {
-    const rel = posix.dirname(path)
-    const dir = posix.join(ENTRIES_ROOT, rel)
-    const ent = posix.basename(path)
-    const metadir = posix.join(dir, ENTRIES_DIR)
-    const metafile = posix.join(metadir, ent)
-    const vardir = posix.join(dir, ent)
-
-    return { rel, dir, ent, metadir, metafile, vardir }
+  private locate (...rel: string[]): string {
+    return join(ENTRIES, ...rel)
   }
 }
 
-const ERR_NOT_FOUND = Err('NOT_FOUND')
-
-const TEMP = '/temp'
-const BLOBs = '/blobs'
-const ENTRIES_ROOT = '/entries'
-const ENTRIES_DIR = '.meta'
-
-type Maybe<T> = Promise<T | Error>
-
-interface Path {
-  rel: string
-  id: string
-  variant: string | null
-}
-
-interface Paths {
-  rel: string
-  dir: string
-  ent: string
-  metadir: string
-  metafile: string
-  vardir: string
-}
-
-type Meta = Record<string, string>
+const ENTRIES = '/'
 
 interface Options extends ScanOptions {
   origin?: string
-  meta?: Meta
+  attributes?: Attributes
 }
+
+type Maybe<T> = Promise<T | Error>
 
 export type Storages = Record<string, Storage>

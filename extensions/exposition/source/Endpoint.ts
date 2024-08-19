@@ -113,7 +113,7 @@ export class Endpoint implements RTD.Endpoint {
     const match = etag.match(ETAG)
 
     if (match === null)
-      throw new http.BadRequest('Invalid ETag.')
+      throw new http.BadRequest('Invalid ETag')
 
     return Number.parseInt(match.groups!.version)
   }
@@ -128,14 +128,14 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
 
   public create (method: RTD.syntax.Method, context: Context): Endpoint {
     if (method.mapping === undefined)
-      throw new Error('Cannot create Endpoint without mapping.')
+      throw new Error('Cannot create Endpoint without mapping')
 
     const mapping = Mapping.create(method.mapping.query)
     const namespace = method.mapping.namespace ?? context.extension.namespace
     const component = method.mapping.component ?? context.extension.component
 
     if (namespace === undefined || component === undefined)
-      throw new Error('Annotation endpoints must be fully qualified.')
+      throw new Error('Annotation endpoints must be fully qualified')
 
     const discovery = this.remotes.discover(namespace, component, context.extension.version)
 

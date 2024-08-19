@@ -14,7 +14,7 @@ directives under the current RTD Node.
   octets:context: images
 ```
 
-## `octets:store`
+## `octets:put`
 
 Stores the content of the request body into a storage, under the request path with
 specified `content-type`.
@@ -35,7 +35,7 @@ The value of the directive is `null` or an object with the following properties:
 /images:
   octets:context: images
   POST:
-    octets:store:
+    octets:put:
       accept:
         - image/jpeg
         - image/png
@@ -45,7 +45,7 @@ The value of the directive is `null` or an object with the following properties:
         analyze: images.analyze
 ```
 
-Non-standard `content-meta` header can be used
+Non-standard `content-attributes` header can be used
 to set initial [metadata](/extensions/storages/readme.md#entry) value for the Entry.
 
 The value of the `content-meta` header is a comma-separated list of key-value string pairs.
@@ -54,18 +54,18 @@ If no value is provided for a key, the string `true` is used.
 ```http
 POST /images/ HTTP/1.1
 content-type: image/jpeg
-content-meta: foo, bar=baz
-content-meta: baz=1
+content-attributes: foo, bar=baz
+content-attributes: baz=1
 ```
 
 ```yaml
-meta:
+attributes:
   foo: 'true'
   bar: 'baz'
   baz: '1'
 ```
 
-If the Entry already exists, the `content-meta` header is ignored.
+If the Entry already exists, the `content-attributes` header is ignored.
 
 ### Stream size limit
 
@@ -86,7 +86,7 @@ The default value is `64MiB`.
 
 ### Downloading external content
 
-The `octets:store` directive can be used to download external content:
+The `octets:put` directive can be used to download external content:
 
 ```http
 POST /images/ HTTP/1.1
@@ -106,7 +106,7 @@ the [Entry](/extensions/storages/readme.md#entry).
 /images:
   octets:context: images
   POST:
-    octets:store:
+    octets:put:
       trust:
         - https://example.com
         - ^https://example\.com/[a-z]+\.jpe?g$
@@ -114,7 +114,7 @@ the [Entry](/extensions/storages/readme.md#entry).
 
 ### Response
 
-The response of the `octets:store` directive is the created Entry.
+The response of the `octets:put` directive is the created Entry.
 
 ```
 201 Created
@@ -125,7 +125,7 @@ type: image/jpeg
 created: 1698004822358
 ```
 
-If the `octets:store` directive contains a `workflow`, the response
+If the `octets:put` directive contains a `workflow`, the response
 is [multipart](protocol.md#multipart-types).
 The first part represents the created Entry, which is sent immediately after the BLOB is stored,
 while subsequent parts are results from the workflow endpoints, sent as soon as they are available.
@@ -165,7 +165,7 @@ status: exception
 --cut--
 ```
 
-## `octets:fetch`
+## `octets:get`
 
 Fetches the content of a stored BLOB corresponding to the request path, and returns it as the
 response body with the corresponding `content-type`, `content-length`
@@ -177,22 +177,18 @@ The value of the directive is an object with the following properties:
 
 - `meta`: `boolean` indicating whether an Entry is accessible.
   Defaults to `false`.
-- `blob`: `boolean` indicating whether the original BLOB is accessible,
-  [BLOB variant](/extensions/storages/readme.md#async-fetchpath-string-maybereadable) must be
-  specified in the path otherwise.
-  Defaults to `true`.
 
 ```yaml
 /images:
   octets:context: images
   /*:
     GET:
-      octets:fetch:
+      octets:get:
         blob: false # prevent access to the original BLOB
         meta: true  # allow access to an Entry
 ```
 
-The `octets:fetch: ~` declaration is equivalent to defaults.
+The `octets:get: ~` declaration is equivalent to defaults.
 
 To access an Entry, the `accept` request header must contain the `octets.entry` subtype
 in
@@ -201,32 +197,6 @@ the `toa` [vendor tree](https://datatracker.ietf.org/doc/html/rfc6838#section-3.
 ```http
 GET /images/eecd837c HTTP/1.1
 accept: application/vnd.toa.octets.entry+yaml
-```
-
-## `octets:list`
-
-Lists the entries stored under the request path.
-
-The value of the directive is an object with the following properties:
-
-- `meta`: `boolean` indicating whether the list of Entries is accessible.
-  Defaults to `false`, which means that only entry identifiers are returned.
-
-```yaml
-/images:
-  octets:context: images
-  GET:
-    octets:list:
-      meta: true
-```
-
-The `octets:list: ~` declaration is equivalent to defaults.
-
-To access a list of Entries, the `accept` request header must contain the `octets.entries` subtype:
-
-```http
-GET /images/ HTTP/1.1
-accept: application/vnd.toa.octets.entries+yaml
 ```
 
 ## `octets:delete`
@@ -288,7 +258,7 @@ as value.
 Steps within a workflow unit are executed in parallel.
 
 ```yaml
-octets:store:
+octets:put:
   workflow:
     resize: images.resize
     analyze: images.analyze
@@ -298,7 +268,7 @@ A workflow can be a single unit, or an array of units.
 If it's an array, the workflow units are executed in sequence.
 
 ```yaml
-octets:store:
+octets:put:
   workflow:
     - optimize: images.optimize   # executed first
     - resize: images.resize       # executed second
@@ -313,7 +283,7 @@ the execution of the workflow is interrupted.
 A workflow unit which value starts with `task:` prefix will be executed as a Task.
 
 ```yaml
-octets:store:
+octets:put:
   workflow:
     optimize: task:images.optimize
 ```

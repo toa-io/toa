@@ -8,39 +8,37 @@ Feature: Octets directive family
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store: ~
-        GET:
-          octets:list: ~
+          octets:put: ~
         /*:
           GET:
-            octets:fetch: ~
+            octets:get: ~
           DELETE:
             octets:delete: ~
         /media:
           /jpeg:
             POST:
-              octets:store:
+              octets:put:
                 accept: image/jpeg
           /jpeg-or-png:
             POST:
-              octets:store:
+              octets:put:
                 accept:
                   - image/jpeg
                   - image/png
           /images:
             POST:
-              octets:store:
+              octets:put:
                 accept: image/*
             /*:
               GET:
-                octets:fetch: ~
+                octets:get: ~
         /limit-1kb:
           POST:
-            octets:store:
+            octets:put:
               limit: 1kb
         /limit-100kb:
           POST:
-            octets:store:
+            octets:put:
               limit: 100kb
       """
 
@@ -82,19 +80,6 @@ Feature: Octets directive family
     Then the following reply is sent:
       """
       304 Not Modified
-      """
-    When the following request is received:
-      """
-      GET / HTTP/1.1
-      host: nex.toa.io
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-
-      - 10cf16b458f759e0d617f2f3d83599ff
       """
     When the following request is received:
       """
@@ -259,41 +244,4 @@ Feature: Octets directive family
       content-type: text/plain
 
       Trailing slash is redundant.
-      """
-
-  Scenario: Original BLOB is not accessible
-    Given the annotation:
-      """yaml
-      /:
-        io:output: true
-        auth:anonymous: true
-        octets:context: octets
-        POST:
-          octets:store: ~
-        /*:
-          GET:
-            octets:fetch:
-              meta: true
-              blob: false
-      """
-    When the stream of `lenna.ascii` is received with the following headers:
-      """
-      POST / HTTP/1.1
-      host: nex.toa.io
-      """
-    Then the following reply is sent:
-      """
-      201 Created
-      """
-    When the following request is received:
-      """
-      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
-      host: nex.toa.io
-      accept: text/plain
-      """
-    Then the following reply is sent:
-      """
-      403 Forbidden
-
-      BLOB variant must be specified.
       """

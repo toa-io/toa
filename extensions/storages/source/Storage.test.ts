@@ -1,4 +1,3 @@
-import { Readable } from 'node:stream'
 import { randomUUID } from 'node:crypto'
 import { buffer } from 'node:stream/consumers'
 import { createReadStream } from 'node:fs'
@@ -6,26 +5,20 @@ import path from 'node:path'
 import assert from 'node:assert'
 import { Storage } from './Storage'
 import { suites } from './test/util'
-import { type Entry } from './Entry'
 import { providers } from './providers'
-import type { ProviderConstructor } from './Provider'
+import type { Entry, Metadata, Stream } from './Entry'
+import type { Constructor } from './Provider'
 
-let storage: Storage
-let dir: string
+jest.setTimeout(15_000)
 
-const suite = suites[0] // replace with 2 to run tests for S3
+const suite = suites[0]
+const Provider: Constructor = providers[suite.provider]
+const provider = new Provider(suite.options, suite.secrets)
+const storage = new Storage(provider)
+const dir = '/' + randomUUID()
 
 beforeAll(async () => {
   process.chdir(path.join(__dirname, 'test'))
-})
-
-beforeEach(() => {
-  dir = '/' + randomUUID()
-
-  const Provider: ProviderConstructor = providers[suite.provider]
-  const provider = new Provider(suite.options)
-
-  storage = new Storage(provider)
 })
 
 it('should be', async () => {
@@ -40,6 +33,7 @@ it('should return error if entry is not found', async () => {
 })
 
 describe('put', () => {
+  let path: string
   let lenna: Entry
   let startCreation: number
 
@@ -47,7 +41,10 @@ describe('put', () => {
     const stream = createReadStream('lenna.png')
 
     startCreation = Date.now()
-    lenna = (await storage.put(dir, stream)) as Entry
+    lenna = await storage.put(dir, stream) as Entry
+    path = `${dir}/${lenna.id}`
+
+    assert(!(lenna instanceof Error))
   })
 
   it('should not return error', async () => {
@@ -61,9 +58,10 @@ describe('put', () => {
   it('should return id as checksum', async () => {
     const stream = createReadStream('lenna.png')
     const dir2 = '/' + randomUUID()
-    const copy = (await storage.put(dir2, stream)) as Entry
+    const copy = await storage.put(dir2, stream) as Entry
 
     expect(copy).toHaveProperty('id', lenna.id)
+    expect(copy.checksum).toBe(lenna.checksum)
   })
 
   it('should detect file type', async () => {
@@ -78,199 +76,59 @@ describe('put', () => {
     expect(lenna).toMatchObject({
       id: lenna.id,
       type: 'image/png',
-      variants: [],
-      meta: {}
-    })
+      size: 473831,
+      checksum: lenna.id,
+      created: expect.any(String),
+      attributes: {}
+    } satisfies Entry)
   })
 
-  it('should create entry', async () => {
-    const entry = await storage.get(`${dir}/${lenna.id}`)
+  it('should create metadata', async () => {
+    const entry = await storage.get(path) as Stream
 
     expect(entry).toMatchObject({
-      id: lenna.id,
       type: 'image/png',
-      variants: [],
-      meta: {}
-    })
+      size: 473831,
+      checksum: lenna.id,
+      created: expect.any(String),
+      attributes: {}
+    } satisfies Metadata)
   })
 
   it('should set timestamp', async () => {
-    const now = Date.now()
-    const entry = (await storage.get(`${dir}/${lenna.id}`)) as Entry
+    const now = Date.now() + 1000 // Cloudinary has 1s resolution
+    const entry = await storage.get(path) as Stream
+    const created = new Date(entry.created).getTime()
 
-    expect(entry.created).toBeLessThanOrEqual(now)
-    expect(entry.created).toBeGreaterThanOrEqual(startCreation)
-  })
-
-  describe('existing entry', () => {
-    it('should preserve meta', async () => {
-      const path = `${dir}/${lenna.id}`
-      const stream = createReadStream('lenna.png')
-
-      await storage.annotate(path, 'foo', 'bar')
-      await storage.put(dir, stream)
-
-      const entry = await storage.get(path)
-
-      expect(entry).toHaveProperty('meta', expect.objectContaining({ foo: 'bar' }))
-    })
+    expect(created).toBeLessThanOrEqual(now)
+    expect(created).toBeGreaterThanOrEqual(startCreation)
   })
 })
 
-describe('list', () => {
-  let albert: Entry
+describe('get, head', () => {
   let lenna: Entry
-
-  beforeEach(async () => {
-    const stream0 = createReadStream('albert.jpg')
-    const stream1 = createReadStream('lenna.png')
-
-    albert = (await storage.put(dir, stream0)) as Entry
-    lenna = (await storage.put(dir, stream1)) as Entry
-  })
-
-  it('should list entries', async () => {
-    const list = await storage.list(dir)
-
-    expect(list).toEqual([albert.id, lenna.id])
-  })
-})
-
-describe('annotate', () => {
-  let lenna: Entry
+  let path: string
 
   beforeEach(async () => {
     const stream = createReadStream('lenna.png')
 
-    lenna = (await storage.put(dir, stream)) as Entry
+    lenna = await storage.put(dir, stream) as Entry
+
+    path = `${dir}/${lenna.id}`
   })
 
-  it('should set meta property', async () => {
-    const path = `${dir}/${lenna.id}`
-
-    await storage.annotate(path, 'foo', 'bar')
-
-    const state0 = (await storage.get(path)) as Entry
-
-    expect(state0).toHaveProperty('meta.foo', 'bar')
-
-    await storage.annotate(path, 'foo')
-
-    const state1 = (await storage.get(path)) as Entry
-
-    expect(state1.meta).not.toHaveProperty('foo')
-  })
-
-  it('should set meta with object', async () => {
-    const path = `${dir}/${lenna.id}`
-
-    await storage.annotate(path, { foo: 1, bar: 'baz' })
-
-    const state0 = (await storage.get(path)) as Entry
-
-    expect(state0.meta).toStrictEqual({ foo: 1, bar: 'baz' })
-
-    await storage.annotate(path, 'foo')
-
-    const state1 = (await storage.get(path)) as Entry
-
-    expect(state1.meta).not.toHaveProperty('foo')
-  })
-})
-
-describe('variants', () => {
-  let lenna: Entry
-
-  beforeEach(async () => {
-    const stream = createReadStream('lenna.png')
-
-    lenna = (await storage.put(dir, stream)) as Entry
-  })
-
-  it('should add variant', async () => {
-    const stream = createReadStream('sample.jpeg')
-
-    const path = `${dir}/${lenna.id}`
-
-    await storage.diversify(path, 'foo', stream)
-
-    const state = (await storage.get(path)) as Entry
-
-    expect(state).toHaveProperty('variants',
-      expect.arrayContaining([{ name: 'foo', size: 73444, type: 'image/jpeg' }]))
-  })
-
-  it('should replace variant', async () => {
-    const stream0 = createReadStream('sample.jpeg')
-    const stream1 = createReadStream('sample.webp')
-    const path = `${dir}/${lenna.id}`
-
-    await storage.diversify(path, 'foo', stream0)
-    await storage.diversify(path, 'foo', stream1)
-
-    const state = (await storage.get(path)) as Entry
-
-    expect(state).toHaveProperty('variants',
-      expect.arrayContaining([expect.objectContaining({ name: 'foo', type: 'image/webp' })]))
-  })
-})
-
-describe('fetch', () => {
-  let lenna: Entry
-
-  beforeEach(async () => {
-    const stream = createReadStream('lenna.png')
-
-    lenna = (await storage.put(dir, stream)) as Entry
-  })
-
-  it('should fetch', async () => {
-    const path = `${dir}/${lenna.id}`
-    const stream = await storage.fetch(path)
-
-    assert.ok(stream instanceof Readable)
-
-    const stored = await buffer(stream)
+  it('should get', async () => {
+    const entry = await storage.get(path) as Stream
+    const stored = await buffer(entry.stream)
     const buf = await buffer(createReadStream('lenna.png'))
 
     expect(stored.compare(buf)).toBe(0)
   })
 
-  it('should fetch blob by id', async () => {
-    const stream = createReadStream('lenna.ascii')
-    const entry = (await storage.put(dir, stream)) as Entry
-    const stored = await storage.fetch(entry.id)
+  it('should get entry', async () => {
+    const entry = await storage.head(path) as Entry
 
-    if (stored instanceof Error) throw stored
-
-    const buf = await buffer(stored)
-    const expected = await buffer(createReadStream('lenna.ascii'))
-
-    expect(buf.compare(expected)).toBe(0)
-  })
-
-  it('should fetch variant', async () => {
-    const stream = createReadStream('sample.jpeg')
-
-    const buf = await buffer(stream)
-    const path = `${dir}/${lenna.id}`
-
-    await storage.diversify(path, '100x100.jpeg', Readable.from(buf))
-
-    const variant = await storage.fetch(`${path}.100x100.jpeg`)
-
-    assert.ok(variant instanceof Readable)
-
-    const stored = await buffer(variant)
-
-    expect(stored.compare(buf)).toBe(0)
-  })
-
-  it('should not fetch blob by id and fake path', async () => {
-    const stored = await storage.fetch(`fake/${lenna.id}`)
-
-    expect(stored).toBeInstanceOf(Error)
-    expect(stored).toHaveProperty('code', 'NOT_FOUND')
+    expect(entry.id).toBe(lenna.id)
   })
 })
 
@@ -280,19 +138,15 @@ describe('delete', () => {
   beforeEach(async () => {
     const stream = createReadStream('lenna.png')
 
-    lenna = (await storage.put(dir, stream)) as Entry
-  })
-
-  it('should remove from the list', async () => {
-    await storage.delete(`${dir}/${lenna.id}`)
-
-    const list = await storage.list(dir)
-
-    expect(list).not.toContain(lenna.id)
+    lenna = await storage.put(dir, stream) as Entry
   })
 
   it('should delete entry', async () => {
     await storage.delete(`${dir}/${lenna.id}`)
+
+    // Cloudinary needs some time to invalidate the cache
+    if (suite.provider === 'cloudinary')
+      await new Promise((resolve) => setTimeout(resolve, 10_000))
 
     const result = await storage.get(`${dir}/${lenna.id}`)
 
@@ -300,82 +154,10 @@ describe('delete', () => {
     expect(result).toHaveProperty('code', 'NOT_FOUND')
   })
 
-  it('should delete variants', async () => {
-    const stream = createReadStream('sample.jpeg')
-
-    const path = `${dir}/${lenna.id}`
-
-    await storage.diversify(path, 'foo', stream)
-    await storage.delete(`${dir}/${lenna.id}`)
-    stream.destroy()
-
-    const variant = await storage.fetch(`${path}.foo`)
-
-    expect(variant).toBeInstanceOf(Error)
-    expect(variant).toHaveProperty('code', 'NOT_FOUND')
-  })
-
-  it('should throw if path is not an entry', async () => {
+  it('should not return error', async () => {
     const result = await storage.delete(dir)
 
-    expect(result).toBeInstanceOf(Error)
-    expect(result).toMatchObject({ code: 'NOT_FOUND' })
-  })
-})
-
-describe('move', () => {
-  let lenna: Entry
-
-  beforeEach(async () => {
-    const stream = createReadStream('lenna.png')
-
-    lenna = (await storage.put(dir, stream)) as Entry
-  })
-
-  it('should move entry', async () => {
-    const path = `${dir}/${lenna.id}`
-    const to = `${dir}/lenna`
-
-    await storage.move(path, to)
-
-    const entry = await storage.get(to)
-
-    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
-  })
-
-  it('should move to subdirectory', async () => {
-    const path = `${dir}/${lenna.id}`
-    const to = `${dir}/sub/`
-
-    await storage.move(path, to)
-
-    const entry = await storage.get(to + lenna.id)
-
-    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
-  })
-
-  it('should move to relative path', async () => {
-    const path = `${dir}/${lenna.id}`
-    const to = './sub/'
-
-    await storage.move(path, to)
-
-    const entry = await storage.get(`${dir}/sub/${lenna.id}`)
-
-    expect(entry).toMatchObject({ id: lenna.id, type: 'image/png' })
-  })
-
-  it('should move variants', async () => {
-    const stream = createReadStream('sample.jpeg')
-
-    const path = `${dir}/${lenna.id}`
-
-    await storage.diversify(path, 'foo', stream)
-    await storage.move(path, `${dir}/lenna`)
-
-    const variant = await storage.fetch(`${dir}/lenna.foo`)
-
-    assert.ok(variant instanceof Readable)
+    expect(result).toBeUndefined()
   })
 })
 
@@ -383,8 +165,7 @@ describe('signatures', () => {
   it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
     async (type) => {
       const stream = createReadStream('sample.' + type)
-
-      const entry = (await storage.put(dir, stream)) as Entry
+      const entry = await storage.put(dir, stream) as Entry
 
       expect(entry).toHaveProperty('type', 'image/' + type)
     })
@@ -392,8 +173,7 @@ describe('signatures', () => {
   it.each(['avi'])('should detect video/%s',
     async (type) => {
       const stream = createReadStream('sample.' + type)
-
-      const entry = (await storage.put(dir, stream)) as Entry
+      const entry = await storage.put(dir, stream) as Entry
 
       expect(entry).toHaveProperty('type', 'video/' + type)
     })
@@ -470,28 +250,13 @@ it('should accept wildcard types', async () => {
 
 it('should handle root entries', async () => {
   const stream = createReadStream('sample.jpeg')
-  const result = (await storage.put('hello', stream)) as Entry
+  const result = await storage.put('/', stream) as Entry
 
   expect(result).not.toBeInstanceOf(Error)
 
-  const stored = await storage.fetch(result.id)
+  const stored = await storage.get(result.id)
 
   expect(stored).not.toBeInstanceOf(Error)
-})
-
-it('should store empty file', async () => {
-  const stream = createReadStream('empty.txt')
-  const result = (await storage.put('empty', stream)) as Entry
-
-  expect(result).toHaveProperty('size', 0)
-
-  const stored = (await storage.fetch(result.id)) as Readable
-
-  expect(stored).not.toBeInstanceOf(Error)
-
-  const buf = await buffer(stored)
-
-  expect(buf).toHaveLength(0)
 })
 
 it('should return error of stream size limit exceeded', async () => {
@@ -502,19 +267,20 @@ it('should return error of stream size limit exceeded', async () => {
   expect(result).toHaveProperty('code', 'LIMIT_EXCEEDED')
 })
 
-it('should set origin', async () => {
-  const origin = 'https://example.com/image.jpeg'
-  const stream = createReadStream('sample.jpeg')
-  const result = (await storage.put('/origins', stream, { origin })) as Entry
+if (suite.provider !== 'cloudinary')
+  it('should add origin attribute', async () => {
+    const origin = 'https://example.com/image.jpeg'
+    const stream = createReadStream('sample.jpeg')
+    const result = await storage.put('/origins', stream, { origin }) as Entry
 
-  assert.ok(!(result instanceof Error))
+    assert.ok(!(result instanceof Error))
 
-  const stored = await storage.get('/origins/' + result.id)
+    const entry = await storage.get('/origins/' + result.id)
 
-  assert.ok(!(stored instanceof Error))
+    assert.ok(!(entry instanceof Error))
 
-  expect(stored.origin).toBe(origin)
-})
+    expect(entry.attributes.origin).toBe(origin)
+  })
 
 it('should expose path', () => {
   const path = storage.path()

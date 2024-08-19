@@ -41,7 +41,7 @@ export class Output implements Directive {
 
       if (typeof message.body !== 'object' || this.permissions.length === 0) {
         if (this.omitted)
-          console.warn('Permissions for \'io:output\' are not specified properly. Response omitted.',
+          console.warn('Permissions for \'io:output\' are not specified properly, response omitted',
             { path: context.url.pathname })
 
         delete message.body

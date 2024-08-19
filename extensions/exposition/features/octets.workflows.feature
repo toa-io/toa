@@ -13,7 +13,6 @@ Feature: Octets storage workflows
               - add-foo: octets.tester.foo
                 add-bar: octets.tester.bar
               - add-baz: octets.tester.baz
-              - diversify: octets.tester.diversify
         /*:
           io:output: true
           GET:
@@ -51,42 +50,7 @@ Feature: Octets storage workflows
 
       step: add-baz
       status: completed
-      --cut
-
-      step: diversify
-      output: hello
-      status: completed
       --cut--
-      """
-    When the following request is received:
-      """
-      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
-      host: nex.toa.io
-      accept: application/vnd.toa.octets.entry+yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      content-type: application/yaml
-
-      id: 10cf16b458f759e0d617f2f3d83599ff
-      type: application/octet-stream
-      size: 8169
-      meta:
-        foo: bar
-        bar: baz
-        baz: qux
-      """
-    When the following request is received:
-      """
-      GET /10cf16b458f759e0d617f2f3d83599ff.hello.png HTTP/1.1
-      host: nex.toa.io
-      """
-    Then the stream equals to `lenna.png` is sent with the following headers:
-      """
-      200 OK
-      content-type: image/png
-      content-length: 473831
       """
 
   Scenario: Getting error when running workflow on `store`
