@@ -5,7 +5,7 @@ import { Provider } from '../Provider'
 import { ERR_NOT_FOUND } from '../errors'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/types'
-import type { Metadata, Stream } from '../Entry'
+import type { Metadata, MetadataStream } from '../Entry'
 
 export interface FileSystemOptions {
   path: string
@@ -21,7 +21,7 @@ export class FileSystem extends Provider<FileSystemOptions> {
     this.root = options.path
   }
 
-  public async get (rel: string): Promise<Maybe<Stream>> {
+  public async get (rel: string): Promise<Maybe<MetadataStream>> {
     const path = this.blob(rel)
     const metadata = await this.head(rel)
 
@@ -31,6 +31,16 @@ export class FileSystem extends Provider<FileSystemOptions> {
     const stream = createReadStream(path)
 
     return { stream, ...metadata }
+  }
+
+  public async head (rel: string): Promise<Maybe<Metadata>> {
+    const path = this.meta(rel)
+
+    return this.try(async () => {
+      const contents = await fs.readFile(path, 'utf8')
+
+      return JSON.parse(contents)
+    })
   }
 
   public async put (rel: string, stream: Readable): Promise<void> {
@@ -67,16 +77,6 @@ export class FileSystem extends Provider<FileSystemOptions> {
         fs.rename(bf, bt),
         fs.rename(mf, mt)
       ])
-    })
-  }
-
-  private async head (rel: string): Promise<Maybe<Metadata>> {
-    const path = this.meta(rel)
-
-    return this.try(async () => {
-      const contents = await fs.readFile(path, 'utf8')
-
-      return JSON.parse(contents)
     })
   }
 

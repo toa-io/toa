@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 import { suites } from '../test/util'
 import { providers } from './index'
 import type { Constructor } from '../Provider'
-import type { Metadata, Stream } from '../Entry'
+import type { Metadata, EntryStream } from '../Entry'
 
 const sample = resolve(__dirname, '../test/sample.jpeg')
 const lenna = resolve(__dirname, '../test/lenna.png')
@@ -12,7 +12,8 @@ const lenna = resolve(__dirname, '../test/lenna.png')
 const metadata: Metadata = {
   type: 'image/jpeg',
   size: 73444,
-  created: Date.now()
+  created: new Date().toISOString(),
+  attributes: {}
 }
 
 describe.each(suites)('$provider', (suite) => {
@@ -21,16 +22,14 @@ describe.each(suites)('$provider', (suite) => {
   const Provider: Constructor = providers[suite.provider]
   const provider = new Provider(suite.options, suite.secrets)
 
-  describe('put & get', () => {
-    let entry: Stream
+  describe('put, get, head', () => {
+    let entry: EntryStream
 
     beforeAll(async () => {
       await provider.put(id, createReadStream(sample))
       await provider.commit(id, metadata)
 
-      entry = await provider.get(id) as Stream
-
-      assert.ok(!(entry instanceof Error))
+      entry = await provider.get(id) as EntryStream
     })
 
     afterAll(() => entry.stream.destroy())
@@ -46,7 +45,7 @@ describe.each(suites)('$provider', (suite) => {
         await provider.put(path, createReadStream(sample))
         await provider.commit(path, { ...metadata, attributes: { foo: 'bar' } })
 
-        const entry = await provider.get(path) as Stream
+        const entry = await provider.get(path) as EntryStream
 
         expect(entry.attributes).toEqual({ foo: 'bar' })
 
@@ -54,20 +53,25 @@ describe.each(suites)('$provider', (suite) => {
       })
 
     it('should overwrite', async () => {
+      const path = Math.random().toString(36).substring(7)
+
+      await provider.put(path, createReadStream(sample))
+      await provider.commit(path, metadata)
+
       if (suite.provider === 'cloudinary')
         await new Promise((resolve) => setTimeout(resolve, 5_000))
 
-      const meta = { ...metadata, size: 473831 } // lenna size
-
-      await expect(provider.put(id, createReadStream(lenna)))
+      await expect(provider.put(path, createReadStream(lenna)))
         .resolves.not.toThrow()
 
-      await provider.commit(id, meta)
+      const meta = { ...metadata, size: 473831 } // lenna size
+
+      await provider.commit(path, meta)
 
       if (suite.provider === 'cloudinary')
         await new Promise((resolve) => setTimeout(resolve, 10_000))
 
-      const overwritten = await provider.get(id) as Stream
+      const overwritten = await provider.get(path) as EntryStream
 
       expect(overwritten.size).toEqual(meta.size)
 
@@ -79,6 +83,14 @@ describe.each(suites)('$provider', (suite) => {
 
       expect(error).toBeInstanceOf(Error)
       expect(error.code).toBe('NOT_FOUND')
+    })
+
+    it('should return entry', async () => {
+      const entry = await provider.head(id)
+
+      assert.ok(!(entry instanceof Error))
+
+      expect(entry.size).toEqual(metadata.size)
     })
   })
 
@@ -122,7 +134,7 @@ describe.each(suites)('$provider', (suite) => {
 
       expect(error).toBeInstanceOf(Error)
 
-      const entry = await provider.get(to) as Stream
+      const entry = await provider.get(to) as EntryStream
 
       expect(entry.stream).toBeDefined()
     })

@@ -6,7 +6,7 @@ import assert from 'node:assert'
 import { Storage } from './Storage'
 import { suites } from './test/util'
 import { providers } from './providers'
-import type { Entry, Metadata, Stream } from './Entry'
+import type { Entry, Metadata, EntryStream } from './Entry'
 import type { Constructor } from './Provider'
 
 jest.setTimeout(15_000)
@@ -76,47 +76,56 @@ describe('put', () => {
       id: lenna.id,
       type: 'image/png',
       size: 473831,
-      created: expect.any(Number),
+      created: expect.any(String),
       attributes: {}
     } satisfies Entry)
   })
 
   it('should create metadata', async () => {
-    const entry = await storage.get(path) as Stream
+    const entry = await storage.get(path) as EntryStream
 
     expect(entry).toMatchObject({
       type: 'image/png',
       size: 473831,
-      created: expect.any(Number),
+      created: expect.any(String),
       attributes: {}
     } satisfies Metadata)
   })
 
   it('should set timestamp', async () => {
     const now = Date.now() + 1000 // Cloudinary has 1s resolution
-    const entry = await storage.get(path) as Stream
+    const entry = await storage.get(path) as EntryStream
+    const created = new Date(entry.created).getTime()
 
-    expect(entry.created).toBeLessThanOrEqual(now)
-    expect(entry.created).toBeGreaterThanOrEqual(startCreation)
+    expect(created).toBeLessThanOrEqual(now)
+    expect(created).toBeGreaterThanOrEqual(startCreation)
   })
 })
 
-describe('get', () => {
+describe('get, head', () => {
   let lenna: Entry
+  let path: string
 
   beforeEach(async () => {
     const stream = createReadStream('lenna.png')
 
-    lenna = (await storage.put(dir, stream)) as Entry
+    lenna = await storage.put(dir, stream) as Entry
+
+    path = `${dir}/${lenna.id}`
   })
 
   it('should get', async () => {
-    const path = `${dir}/${lenna.id}`
-    const entry = await storage.get(path) as Stream
+    const entry = await storage.get(path) as EntryStream
     const stored = await buffer(entry.stream)
     const buf = await buffer(createReadStream('lenna.png'))
 
     expect(stored.compare(buf)).toBe(0)
+  })
+
+  it('should get entry', async () => {
+    const entry = await storage.head(path) as Entry
+
+    expect(entry.id).toBe(lenna.id)
   })
 })
 

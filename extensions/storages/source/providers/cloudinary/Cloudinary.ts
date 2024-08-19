@@ -6,7 +6,7 @@ import { Provider } from '../../Provider'
 import { ERR_NOT_FOUND } from '../../errors'
 import { parse } from './parse'
 import type { Maybe } from '@toa.io/types'
-import type { Stream } from '../../Entry'
+import type { Metadata, MetadataStream } from '../../Entry'
 import type { Secret, Secrets } from '../../Secrets'
 import type { ReadableStream } from 'node:stream/web'
 import type { ConfigOptions as CloudinaryConfig } from 'cloudinary'
@@ -37,34 +37,27 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     this.prefix = options.prefix ?? '/'
   }
 
-  public async get (path: string): Promise<Maybe<Stream>> {
-    const url = this.url(path)
+  public async get (path: string): Promise<Maybe<MetadataStream>> {
+    const response = await this.fetch(path)
 
-    if (url === null)
+    if (response instanceof Error)
       return ERR_NOT_FOUND
 
-    const response = await fetch(url).catch((e) => e)
-
-    // noinspection PointlessBooleanExpressionJS,SuspiciousTypeOfGuard
-    if (response instanceof Error || response.ok === false)
-      return ERR_NOT_FOUND
-
-    console.debug('Fetched from Cloudinary', {
-      path,
-      url
-    })
-
-    const size = response.headers.get('content-length') === undefined
-      ? 0
-      : Number.parseInt(response.headers.get('content-length') as string)
+    const metadata = this.toMetadata(response)
 
     return {
       stream: Readable.fromWeb(response.body as ReadableStream),
-      type: response.headers.get('content-type')!,
-      size,
-      created: response.headers.get('date'),
-      attributes: {}
+      ...metadata
     }
+  }
+
+  public async head (path: string): Promise<Maybe<Metadata>> {
+    const response = await this.fetch(path, 'HEAD')
+
+    if (response instanceof Error)
+      return ERR_NOT_FOUND
+
+    return this.toMetadata(response)
   }
 
   public async put (path: string, stream: Readable): Promise<void> {
@@ -118,6 +111,27 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     }
   }
 
+  private async fetch (path: string, method = 'GET'): Promise<Maybe<Response>> {
+    const url = this.url(path)
+
+    if (url === null)
+      return ERR_NOT_FOUND
+
+    const response = await fetch(url, { method }).catch((e) => e)
+
+    // noinspection PointlessBooleanExpressionJS,SuspiciousTypeOfGuard
+    if (response instanceof Error || response.ok === false)
+      return ERR_NOT_FOUND
+
+    console.debug('Fetched from Cloudinary', {
+      method,
+      path,
+      url
+    })
+
+    return response
+  }
+
   private url (path: string): string | null {
     const [rel, transformation] = parse(path, this.type)
 
@@ -130,7 +144,22 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       resource_type: this.type,
       transformation,
       version: 2
-    }) + '-' + Math.random().toString(36).substring(7)
+    })
+  }
+
+  private toMetadata (response: Response): Metadata {
+    const size = response.headers.get('content-length') === null
+      ? 0
+      : Number.parseInt(response.headers.get('content-length')!)
+
+    const created = response.headers.get('date') ?? new Date().toISOString()
+
+    return {
+      type: response.headers.get('content-type')!,
+      size,
+      created,
+      attributes: {}
+    }
   }
 
   private cloudinary (): typeof cloudinary {
