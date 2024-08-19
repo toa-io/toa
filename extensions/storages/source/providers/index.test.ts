@@ -12,6 +12,7 @@ const lenna = resolve(__dirname, '../test/lenna.png')
 const metadata: Metadata = {
   type: 'image/jpeg',
   size: 73444,
+  checksum: 'd41d8cd98f00b204e9800998ecf8427e',
   created: new Date().toISOString(),
   attributes: {}
 }

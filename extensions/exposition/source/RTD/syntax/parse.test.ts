@@ -148,7 +148,7 @@ describe('validation', () => {
   it('should throw on unknown key', async () => {
     const declaration = { hello: 'world' }
 
-    expect(() => parse(declaration)).toThrow('RTD parse error: unknown key \'hello\'.')
+    expect(() => parse(declaration)).toThrow('RTD parse error: unknown key \'hello\'')
   })
 
   it('should throw on invalid mapping', async () => {

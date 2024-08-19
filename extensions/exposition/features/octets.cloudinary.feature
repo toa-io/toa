@@ -8,10 +8,10 @@ Feature: Octets with Cloudinary storage
         auth:anonymous: true
         octets:context: cloudinary
         POST:
-          octets:store: ~
+          octets:put: ~
         /*:
           GET:
-            octets:fetch: ~
+            octets:get: ~
           DELETE:
             octets:delete: ~
       """
@@ -50,7 +50,7 @@ Feature: Octets with Cloudinary storage
       """
       POST / HTTP/1.1
       host: nex.toa.io
-      content-type: application/octet-stream
+      content-type: image/png
       """
     Then the following reply is sent:
       """
@@ -61,7 +61,7 @@ Feature: Octets with Cloudinary storage
       GET /814a0034f5549e957ee61360d87457e5.48x48.jpeg HTTP/1.1
       host: nex.toa.io
       """
-    Then the stream equals to `lenna.png` is sent with the following headers:
+    Then the stream equals to `lenna.48x48.jpeg` is sent with the following headers:
       """
       200 OK
       content-type: image/jpeg

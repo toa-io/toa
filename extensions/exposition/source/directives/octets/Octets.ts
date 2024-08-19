@@ -1,7 +1,7 @@
 import { NotFound } from '../../HTTP'
 import { Context } from './Context'
-import { Store } from './Store'
-import { Fetch } from './Fetch'
+import { Put } from './Put'
+import { Get } from './Get'
 import { Delete } from './Delete'
 import { WorkflowDirective } from './Workflow'
 import type { Directive } from './Directive'
@@ -39,14 +39,14 @@ export class Octets implements DirectiveFamily<Directive> {
       else if (action === null)
         action = directive
       else
-        throw new Error('Octets action is umbiguous.')
+        throw new Error('Octets action is ambiguous')
 
     if (action === null)
       return null
 
     // noinspection PointlessBooleanExpressionJS
     if (context === null)
-      throw new Error('Octets context is not defined.')
+      throw new Error('Octets context is not defined')
 
     const targeted = input.request.url[input.request.url.length - 1] !== '/'
 
@@ -60,8 +60,8 @@ export class Octets implements DirectiveFamily<Directive> {
 
 const DIRECTIVES: Record<string, Constructor> = {
   context: Context,
-  store: Store,
-  fetch: Fetch,
+  put: Put,
+  get: Get,
   delete: Delete,
   workflow: WorkflowDirective
 }

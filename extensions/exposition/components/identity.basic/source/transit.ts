@@ -63,8 +63,8 @@ function invalid (value: string, expressions: RegExp[]): boolean {
   return expressions.some((expression) => !expression.test(value))
 }
 
-const ERR_PRINCIPAL_LOCKED = Err('PRINCIPAL_LOCKED', 'Principal username cannot be changed.')
-const ERR_INVALID_USERNAME = Err('INVALID_USERNAME', 'Username is not meeting the requirements.')
-const ERR_INVALID_PASSWORD = Err('INVALID_PASSWORD', 'Password is not meeting the requirements.')
+const ERR_PRINCIPAL_LOCKED = Err('PRINCIPAL_LOCKED', 'Principal username cannot be changed')
+const ERR_INVALID_USERNAME = Err('INVALID_USERNAME', 'Username is not meeting the requirements')
+const ERR_INVALID_PASSWORD = Err('INVALID_PASSWORD', 'Password is not meeting the requirements')
 
 type Tokens = Context['remote']['identity']['tokens']

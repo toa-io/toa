@@ -1,6 +1,6 @@
-Feature: Accessing entries
+Feature: Accessing metadata
 
-  Scenario: Entries are not accessible by default
+  Scenario: Metadata is not accessible by default
     Given the annotation:
       """yaml
       /:
@@ -8,10 +8,10 @@ Feature: Accessing entries
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store: ~
+          octets:put: ~
         /*:
           GET:
-            octets:fetch: ~
+            octets:get: ~
       """
     When the stream of `lenna.ascii` is received with the following headers:
       """
@@ -33,10 +33,10 @@ Feature: Accessing entries
       """
       403 Forbidden
 
-      Metadata is not accessible.
+      Metadata is not accessible
       """
 
-  Scenario: Accessing entries
+  Scenario: Accessing metadata
     Given the annotation:
       """yaml
       /:
@@ -44,10 +44,10 @@ Feature: Accessing entries
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store: ~
+          octets:put: ~
         /*:
           GET:
-            octets:fetch:
+            octets:get:
               meta: true
       """
     When the stream of `lenna.ascii` is received with the following headers:

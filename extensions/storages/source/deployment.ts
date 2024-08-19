@@ -44,15 +44,17 @@ function getSecrets (annotation: Annotation): Variable[] {
   for (const [name, declaration] of Object.entries(annotation)) {
     const Provider = providers[declaration.provider]
 
-    for (const secret of Provider.SECRETS)
-      secrets.push({
-        name: `${ENV_PREFIX}_${name}_${secret.name}`.toUpperCase(),
-        secret: {
-          name: `toa-storages-${name}`,
-          key: secret.name,
-          optional: secret.optional
-        }
-      })
+    if (Provider.SECRETS !== undefined)
+      // eslint-disable-next-line max-depth
+      for (const secret of Provider.SECRETS)
+        secrets.push({
+          name: `${ENV_PREFIX}_${name}_${secret.name}`.toUpperCase(),
+          secret: {
+            name: `toa-storages-${name}`,
+            key: secret.name,
+            optional: secret.optional
+          }
+        })
   }
 
   return secrets
