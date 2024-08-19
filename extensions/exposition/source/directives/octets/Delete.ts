@@ -32,20 +32,20 @@ export class Delete extends Directive {
   public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
     this.storage ??= await this.discovery
 
-    const entry = await this.storage.invoke<Maybe<Entry>>('get',
-      {
-        input: {
-          storage,
-          path: input.request.url
-        }
-      })
-
-    if (entry instanceof Error)
-      throw new NotFound()
-
     const output: Output = {}
 
     if (this.workflow !== undefined) {
+      const entry = await this.storage.invoke<Maybe<Entry>>('head',
+        {
+          input: {
+            storage,
+            path: input.request.url
+          }
+        })
+
+      if (entry instanceof Error)
+        throw new NotFound()
+
       output.status = 202
       output.body = Readable.from(this.execute(input, storage, entry, parameters))
     } else

@@ -6,16 +6,11 @@ Shared BLOB storage.
 
 BLOBs are stored with the meta-information object (Entry) having the following properties:
 
-- `id` - checksum
-- `size` - size in bytes
-- `type` - MIME type
-- `origin` - URL of the original BLOB (optional)
-- `created` - creation timestamp (UNIX time, ms)
-- `variants` - array of:
-  - `name` - unique name
-  - `size` - size in bytes
-  - `type` - variant MIME type
-- `meta` - object with application-specific information, empty by default
+- `size`: size in bytes
+- `type`: MIME type
+- `checksum`: content checksum
+- `created`: creation timestamp (ISO 8601)
+- `attributes`: `Record<string, string>` with application-specific information, empty by default
 
 ### Example
 
@@ -23,12 +18,7 @@ BLOBs are stored with the meta-information object (Entry) having the following p
 id: eecd837c
 type: image/jpeg
 created: 1698004822358
-variants:
-  - name: thumbnail.jpeg
-    type: image/jpeg
-  - name: thumbnail.webp
-    type: image/webp
-meta:
+attributes:
   face: true
   nudity: false
 ```
@@ -40,7 +30,7 @@ containing named Storage instances, according to the annotation.
 
 ```javascript
 async function effect (_, context) {
-  await context.storages.photos.fetch('/path/to/b4f577e0.thumbnail.jpeg')
+  await context.storages.photos.get('/path/to/b4f577e0.thumbnail.jpeg')
 }
 ```
 
@@ -54,7 +44,7 @@ async function effect (_, context) {
 interface Options {
   claim?: string
   accept?: string
-  meta?: Record<string, string>
+  attributes?: Record<string, string>
 }
 ```
 
@@ -76,13 +66,13 @@ are: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/heic`, `image/
 
 See [source](source/Scanner.ts).
 
-#### `async get(path: string): Maybe<Entry>`
+#### `async head(path: string): Maybe<Entry>`
 
 Get an entry.
 
 If the entry does not exist, a `NOT_FOUND` error is returned.
 
-#### `async fetch(path: string): Maybe<Readable>`
+#### `async get(path: string): Maybe<Readable>`
 
 Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` error is returned.
 
@@ -110,18 +100,6 @@ await storage.move('/path/to/eecd837c', '/path/to/sub/eecd837c')
 await storage.move('/path/to/eecd837c', './sub/eecd837c')
 await storage.move('/path/to/eecd837c', './sub/')
 ```
-
-#### `async entries(path: string): Entry[]`
-
-Get a list of entries under the `path`.
-
-#### `async diversify(path: string, name: string, stream: Readable): Maybe<void>`
-
-Add or replace a `name` variant of the entry specified by `path`.
-
-#### `async annotate(path: string, key: string, value: any): Maybe<void>`
-
-Set a `key` property in the `meta` of the entry specified by `path`.
 
 ## Providers
 
@@ -152,6 +130,35 @@ See [`toa conceal`](/runtime/cli/readme.md#conceal) for deployment
 and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
+
+### Cloudinary
+
+[Cloudinary](https://cloudinary.com) provider is used to store and transform media files.
+
+Stored media can be fetched in different formats and sizes by adding transformations to the path.
+
+```
+/path/to/eecd837c.100x100.jpeg    # crop
+/path/to/eecd837c.100x.webp       # format jpeg or webp
+/path/to/eecd837c.128x128z50.webp # zoom
+/path/to/eecd837c.[128x128].webp  # resize inside the box
+```
+
+Annotation format is:
+
+```yaml
+storages:
+  media:
+    provider: cloudinary
+    environment: my-cloud
+    type: image # image or video
+    prefix: my-app
+```
+
+Secrets:
+
+- `API_KEY`
+- `API_SECRET`
 
 ### Filesystem
 

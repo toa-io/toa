@@ -70,6 +70,7 @@ overrides:
       '@typescript-eslint/no-non-null-assertion': off
       '@typescript-eslint/non-nullable-type-assertion-style': warn
       '@typescript-eslint/unbound-method': warn
+      '@typescript-eslint/no-invalid-void-type': off
 
   - files: ["*.test.ts", "**/test/**"]
     extends: 'plugin:@typescript-eslint/disable-type-checked'

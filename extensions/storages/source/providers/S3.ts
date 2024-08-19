@@ -2,24 +2,16 @@ import { Readable } from 'node:stream'
 import { Blob } from 'node:buffer'
 import { join } from 'node:path/posix'
 import assert from 'node:assert'
-import { posix } from 'node:path'
 import { Upload } from '@aws-sdk/lib-storage'
-import {
-  S3Client,
-  GetObjectCommand,
-  CopyObjectCommand,
-  DeleteObjectsCommand,
-  paginateListObjectsV2,
-  HeadObjectCommand,
-  NotFound,
-  DeleteObjectCommand,
-  NoSuchKey,
-  type S3ClientConfigType,
-  type ObjectIdentifier
-} from '@aws-sdk/client-s3'
+import * as s3 from '@aws-sdk/client-s3'
 import * as nodeNativeFetch from 'smithy-node-native-fetch'
-import { Provider, type ProviderSecret, type ProviderSecrets } from '../Provider'
+import { console } from 'openspan'
+import { Provider } from '../Provider'
+import { ERR_NOT_FOUND } from '../errors'
 import type { ReadableStream } from 'node:stream/web'
+import type { Maybe } from '@toa.io/types'
+import type { Metadata, Stream } from '../Entry'
+import type { Secret, Secrets } from '../Secrets'
 
 export interface S3Options {
   bucket: string
@@ -28,23 +20,23 @@ export interface S3Options {
   endpoint?: string
 }
 
-type S3Secrets = ProviderSecrets<'ACCESS_KEY_ID' | 'SECRET_ACCESS_KEY'>
+type S3Secrets = Secrets<'ACCESS_KEY_ID' | 'SECRET_ACCESS_KEY'>
 
 export class S3 extends Provider<S3Options> {
-  public static override readonly SECRETS: readonly ProviderSecret[] = [
+  public static override readonly SECRETS: readonly Secret[] = [
     { name: 'ACCESS_KEY_ID', optional: true },
     { name: 'SECRET_ACCESS_KEY', optional: true }
   ]
 
-  protected readonly bucket: string
-  protected readonly client: S3Client
+  private readonly bucket: string
+  private readonly client: s3.S3Client
 
   public constructor (options: S3Options, secrets?: S3Secrets) {
-    super(options)
+    super(options, secrets)
 
     this.bucket = options.bucket
 
-    const s3Config: S3ClientConfigType = {
+    const s3Config: s3.S3ClientConfigType = {
       retryMode: 'adaptive',
       ...nodeNativeFetch
     }
@@ -54,7 +46,8 @@ export class S3 extends Provider<S3Options> {
       s3Config.endpoint = options.endpoint
     }
 
-    if (options.region !== undefined) s3Config.region = options.region
+    if (options.region !== undefined)
+      s3Config.region = options.region
 
     if (typeof secrets?.ACCESS_KEY_ID === 'string') {
       assert.ok(secrets.SECRET_ACCESS_KEY !== undefined,
@@ -66,17 +59,15 @@ export class S3 extends Provider<S3Options> {
       }
     }
 
-    this.client = new S3Client(s3Config)
+    this.client = new s3.S3Client(s3Config)
 
     this.client.middlewareStack.add((next, _context) => async (args) => {
-      if ('Key' in args.input && typeof args.input.Key === 'string')
       // removes leading slash
-
+      if ('Key' in args.input && typeof args.input.Key === 'string')
         args.input.Key = args.input.Key.replace(/^\//, '')
 
-      if ('Prefix' in args.input && typeof args.input.Prefix === 'string')
       // removes leading slash and ensures finishing slash
-
+      if ('Prefix' in args.input && typeof args.input.Prefix === 'string')
         args.input.Prefix = args.input.Prefix.replace(/^\/|\/$/g, '') + '/'
 
       return next(args)
@@ -88,109 +79,89 @@ export class S3 extends Provider<S3Options> {
     })
   }
 
-  public async get (Key: string): Promise<Readable | null> {
-    try {
-      const fileResponse = await this.client.send(new GetObjectCommand({
+  public async get (Key: string): Promise<Maybe<Stream>> {
+    return await this.try<Stream>(async () => {
+      const entry = await this.client.send(new s3.GetObjectCommand({
         Bucket: this.bucket,
         Key
       }))
 
-      if (fileResponse.Body === undefined) return null // should never happen
+      const stream = entry.Body instanceof Readable
+        ? entry.Body
+        : Readable.fromWeb((entry.Body instanceof Blob
+          ? entry.Body.stream()
+          : entry.Body) as ReadableStream)
 
-      if (fileResponse.Body instanceof Readable) return fileResponse.Body
+      if (entry.Metadata?.value === undefined)
+        return ERR_NOT_FOUND
 
-      return Readable.fromWeb((fileResponse.Body instanceof Blob
-        ? fileResponse.Body.stream()
-        : fileResponse.Body) as ReadableStream) // types mismatch between Node 20 and aws-sdk
-    } catch (err) {
-      if (err instanceof NotFound || err instanceof NoSuchKey)
-        return null
-      else
-        throw err
-    }
+      const metadata = JSON.parse(entry.Metadata.value)
+
+      return { stream, ...metadata }
+    })
   }
 
-  public async list (prefix: string): Promise<string[]> {
-    return (await this.listObjects(prefix))
-      .map(({ Key }) => posix.basename(Key!))
+  public async head (Key: string): Promise<Maybe<Metadata>> {
+    return await this.try<Metadata>(async () => {
+      const entry = await this.client.send(new s3.HeadObjectCommand({
+        Bucket: this.bucket,
+        Key
+      }))
+
+      if (entry.Metadata?.value === undefined)
+        return ERR_NOT_FOUND
+
+      return JSON.parse(entry.Metadata.value)
+    })
   }
 
-  public async put (path: string, filename: string, stream: Readable): Promise<void> {
+  public async put (Key: string, stream: Readable): Promise<void> {
     await new Upload({
       client: this.client,
       params: {
         Bucket: this.bucket,
-        Key: join(path, filename),
+        Key,
         Body: stream
       }
     }).done()
   }
 
-  /**
-   * Deletes either a single object or "directory" - all objects
-   * with given prefix (prefix will be enforced to finish with `/`)
-   * @param Key - key name or path prefix
-   */
-  public async delete (Key: string): Promise<void> {
-    const { client, bucket: Bucket } = this
-
-    // checking if given key is a single file
-    if (!Key.endsWith('/'))
-      try {
-        // DeleteObject on S3 returns no error if object does not exist
-        await client.send(new HeadObjectCommand({ Bucket, Key }))
-        await client.send(new DeleteObjectCommand({ Bucket, Key }))
-
-        return
-      } catch (err) {
-        assert.ok(err instanceof NotFound || err instanceof NoSuchKey, err as Error)
-      }
-
-    const objectsToRemove: ObjectIdentifier[] = await this.listObjects(Key)
-
-    // Removing all objects in parallel in batches
-    await Promise.all((function * () {
-      while (objectsToRemove.length > 0)
-        yield client.send(new DeleteObjectsCommand({
-          Bucket,
-          Delete: {
-            Objects: objectsToRemove.splice(0,
-              1000 /* max batch size for DeleteObjects */)
-          }
-        }))
-    })())
-  }
-
-  public async move (from: string, keyTo: string): Promise<void> {
-    await this.client.send(new CopyObjectCommand({
+  public async commit (Key: string, metadata: object): Promise<void> {
+    await this.client.send(new s3.CopyObjectCommand({
       Bucket: this.bucket,
-      Key: keyTo,
-      CopySource: join(this.bucket, from)
+      Key,
+      CopySource: join(this.bucket, Key),
+      Metadata: { value: JSON.stringify(metadata) },
+      MetadataDirective: 'REPLACE'
     }))
 
-    await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: from }))
+    console.debug('Uploaded to S3', { bucket: this.bucket, path: Key, metadata })
   }
 
-  public async moveDir (from: string, to: string): Promise<void> {
-    const objects: ObjectIdentifier[] = await this.listObjects(from)
-
-    await Promise.all(objects.map(async ({ Key }) => {
-      const ent = posix.basename(Key!)
-      const source = posix.join(from, ent)
-      const target = posix.join(to, ent)
-
-      return this.move(source, target)
-    }))
+  public async delete (Key: string): Promise<void> {
+    await this.client.send(new s3.DeleteObjectCommand({ Bucket: this.bucket, Key }))
   }
 
-  private async listObjects (Prefix: string): Promise<ObjectIdentifier[]> {
-    const { client, bucket: Bucket } = this
-    const objects: ObjectIdentifier[] = []
+  public async move (from: string, keyTo: string): Promise<Maybe<void>> {
+    return await this.try(async () => {
+      await this.client.send(new s3.CopyObjectCommand({
+        Bucket: this.bucket,
+        Key: keyTo,
+        CopySource: join(this.bucket, from)
+      }))
 
-    for await (const page of paginateListObjectsV2({ client }, { Bucket, Prefix }))
-      for (const { Key } of page.Contents ?? [])
-        objects.push({ Key })
+      await this.client.send(new s3.DeleteObjectCommand({ Bucket: this.bucket, Key: from }))
+    })
+  }
 
-    return objects
+  private async try<T = void> (action: () => Promise<T>): Promise<Maybe<T>> {
+    try {
+      return await action()
+    } catch (err: any) {
+      if (err?.name === 'NotFound' || err?.name === 'NoSuchKey')
+        return ERR_NOT_FOUND
+      else
+        throw err
+    }
   }
 }

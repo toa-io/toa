@@ -1,6 +1,6 @@
-Feature: Octets `content-meta` header
+Feature: Octets `content-attributes` header
 
-  Scenario: Sending `content-meta` header
+  Scenario: Sending `content-attributes` header
     Given the `octets.tester` is running
     And the annotation:
       """yaml
@@ -10,19 +10,19 @@ Feature: Octets `content-meta` header
         octets:context: octets
         /*:
           POST:
-            octets:store: ~
+            octets:put: ~
           /*:
             GET:
-              octets:fetch:
+              octets:get:
                 meta: true
       """
     When the stream of `lenna.ascii` is received with the following headers:
       """
-      POST /meta-header/ HTTP/1.1
+      POST /attributes-header/ HTTP/1.1
       host: nex.toa.io
       content-type: application/octet-stream
-      content-meta: foo, bar=baz=1
-      content-meta: baz=1
+      content-attributes: foo, bar=baz=1
+      content-attributes: baz=1
       """
     Then the following reply is sent:
       """
@@ -30,7 +30,7 @@ Feature: Octets `content-meta` header
       """
     When the following request is received:
       """
-      GET /meta-header/10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      GET /attributes-header/10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
       host: nex.toa.io
       accept: application/vnd.toa.octets.entry+yaml
       """
@@ -41,19 +41,20 @@ Feature: Octets `content-meta` header
       id: 10cf16b458f759e0d617f2f3d83599ff
       type: application/octet-stream
       size: 8169
-      meta:
+      checksum: 10cf16b458f759e0d617f2f3d83599ff
+      attributes:
         foo: 'true'
         bar: baz=1
         baz: '1'
       """
 
-  Scenario: CORS allows `content-meta` header
+  Scenario: CORS allows `content-attributes` header
     Given the annotation:
       """yaml
       /:
         octets:context: octets
         POST:
-          octets:store: ~
+          octets:put: ~
       """
     When the following request is received:
       """
@@ -65,5 +66,5 @@ Feature: Octets `content-meta` header
       """
       204 No Content
       access-control-allow-origin: https://example.com
-      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-meta
+      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-attributes
       """

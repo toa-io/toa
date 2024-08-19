@@ -19,7 +19,7 @@ export class Scheme implements Directive {
 
     if (scheme !== this.scheme)
       throw new http.Forbidden(this.Scheme +
-        ' authentication scheme is required to access this resource.')
+        ' authentication scheme is required to access this resource')
 
     return false
   }

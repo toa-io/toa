@@ -4,24 +4,22 @@ name: storage
 storages: ~
 
 operations:
-  store:
+  put:
     bindings: ~
     input:
       storage*: string
       request*: ~
       accept: string
       limit: number
-      meta: <string>
       trust: ~ # array of strings or regular expressions
     errors:
       - LOCATION_UNTRUSTED
       - LOCATION_LENGTH
       - LOCATION_UNAVAILABLE
-  fetch: &simple
+  get: &simple
     bindings: ~
     input:
       storage*: string
       path*: string
-  get: *simple
-  list: *simple
+  head: *simple
   delete: *simple

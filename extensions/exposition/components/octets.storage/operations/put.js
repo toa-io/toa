@@ -4,17 +4,17 @@ const { Readable } = require('node:stream')
 const { Err } = require('error-value')
 const { match } = require('matchacho')
 
-async function store (input, context) {
+async function put (input, context) {
   const { storage, request, accept, limit, trust } = input
   const path = request.url
   const claim = request.headers['content-type']
-  const meta = parseMeta(request.headers['content-meta'])
+  const attributes = parseAttributes(request.headers['content-attributes'])
   const location = request.headers['content-location']
 
   /** @type {Readable} */
   let body = request
 
-  const options = { claim, accept, meta }
+  const options = { claim, accept, attributes }
 
   if (location !== undefined) {
     const length = Number.parseInt(request.headers['content-length'])
@@ -43,11 +43,11 @@ async function store (input, context) {
  * @param {string | string[] | undefined} values
  * @returns {Record<string, string>}
  */
-function parseMeta (values) {
-  const meta = {}
+function parseAttributes (values) {
+  const attributes = {}
 
   if (values === undefined)
-    return meta
+    return attributes
 
   if (typeof values === 'string')
     values = values.split(',')
@@ -56,10 +56,10 @@ function parseMeta (values) {
     const eq = pair.indexOf('=')
     const key = (eq === -1 ? pair : pair.slice(0, eq)).trim()
 
-    meta[key] = eq === -1 ? 'true' : pair.slice(eq + 1).trim()
+    attributes[key] = eq === -1 ? 'true' : pair.slice(eq + 1).trim()
   }
 
-  return meta
+  return attributes
 }
 
 /**
@@ -115,7 +115,7 @@ const ERR_UNTRUSTED = Err('LOCATION_UNTRUSTED', 'Location is not trusted')
 const ERR_LENGTH = Err('LOCATION_LENGTH', 'Content-Length must be 0 when Content-Location is used')
 const ERR_UNAVAILABLE = Err('LOCATION_UNAVAILABLE', 'Location is not available')
 
-exports.effect = store
+exports.effect = put
 
 /** @typedef {Array<string | RegExp>} Trust */
 /** @typedef {import('node:stream').Readable} Readable */

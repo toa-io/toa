@@ -1,8 +1,11 @@
-import { type Readable } from 'node:stream'
-import { dirname, join } from 'node:path'
 import fs from 'node:fs/promises'
+import { createReadStream } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { Provider } from '../Provider'
-import type { ProviderSecrets } from '../Provider'
+import { ERR_NOT_FOUND } from '../errors'
+import type { Readable } from 'node:stream'
+import type { Maybe } from '@toa.io/types'
+import type { Metadata, Stream } from '../Entry'
 
 export interface FileSystemOptions {
   path: string
@@ -10,55 +13,93 @@ export interface FileSystemOptions {
 }
 
 export class FileSystem extends Provider<FileSystemOptions> {
-  public override readonly path: string
+  public override readonly root: string
 
-  public constructor (options: FileSystemOptions, secrets?: ProviderSecrets) {
-    super(options, secrets)
+  public constructor (options: FileSystemOptions) {
+    super(options)
 
-    this.path = options.path
+    this.root = options.path
   }
 
-  public async get (path: string): Promise<Readable | null> {
-    try {
-      const fd = await fs.open(join(this.path, path))
+  public async get (rel: string): Promise<Maybe<Stream>> {
+    const path = this.blob(rel)
+    const metadata = await this.head(rel)
 
-      return fd.createReadStream()
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') return null
+    if (metadata instanceof Error)
+      return metadata
 
-      throw err
-    }
+    const stream = createReadStream(path)
+
+    return { stream, ...metadata }
   }
 
-  public async list (path: string): Promise<string[]> {
-    const dir = join(this.path, path)
+  public async head (rel: string): Promise<Maybe<Metadata>> {
+    const path = this.meta(rel)
 
-    return (await fs.readdir(dir, { withFileTypes: true }))
-      .filter((dirent) => dirent.isFile())
-      .map((dirent) => dirent.name)
+    return this.try(async () => {
+      const contents = await fs.readFile(path, 'utf8')
+
+      return JSON.parse(contents)
+    })
   }
 
-  public async put (rel: string, filename: string, stream: Readable): Promise<void> {
-    const dir = join(this.path, rel)
-    const path = join(dir, filename)
+  public async put (rel: string, stream: Readable): Promise<void> {
+    const path = this.blob(rel)
+    const dir = dirname(path)
 
     await fs.mkdir(dir, { recursive: true })
     await fs.writeFile(path, stream)
   }
 
+  public async commit (rel: string, metadata: Metadata): Promise<void> {
+    const path = this.meta(rel)
+
+    await fs.writeFile(path, JSON.stringify(metadata), 'utf8')
+  }
+
   public async delete (path: string): Promise<void> {
-    await fs.rm(join(this.path, path), { recursive: true, force: true })
+    await Promise.all([
+      fs.rm(this.blob(path), { force: true }),
+      fs.rm(this.meta(path), { force: true })
+    ])
   }
 
-  public async move (from: string, to: string): Promise<void> {
-    from = join(this.path, from)
-    to = join(this.path, to)
+  public async move (from: string, to: string): Promise<Maybe<void>> {
+    const bf = this.blob(from)
+    const bt = this.blob(to)
+    const mf = this.meta(from)
+    const mt = this.meta(to)
 
-    await fs.mkdir(dirname(to), { recursive: true })
-    await fs.rename(from, to)
+    await fs.mkdir(dirname(bt), { recursive: true })
+
+    return await this.try(async () => {
+      await Promise.all([
+        fs.rename(bf, bt),
+        fs.rename(mf, mt)
+      ])
+    })
   }
 
-  public async moveDir (from: string, to: string): Promise<void> {
-    await this.move(from, to).catch(() => null)
+  private blob (rel: string): string {
+    return this.join(rel, '.blob')
+  }
+
+  private meta (rel: string): string {
+    return this.join(rel, '.meta')
+  }
+
+  private join (rel: string, ext: string): string {
+    return join(this.root, rel) + ext
+  }
+
+  private async try<T = void> (action: () => Promise<T>): Promise<Maybe<T>> {
+    try {
+      return await action()
+    } catch (err: NodeJS.ErrnoException | any) {
+      if (err?.code === 'ENOENT')
+        return ERR_NOT_FOUND
+      else
+        throw err
+    }
   }
 }

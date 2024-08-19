@@ -16,7 +16,7 @@ import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
 import type { Input } from './types'
 
-export class Store extends Directive {
+export class Put extends Directive {
   public readonly targeted = false
 
   private readonly accept?: string
@@ -31,7 +31,7 @@ export class Store extends Directive {
   (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
     super()
 
-    schemas.store.validate<Options>(options)
+    schemas.put.validate<Options>(options)
 
     this.accept = match(options?.accept,
       String, (value: string) => value,
@@ -49,7 +49,7 @@ export class Store extends Directive {
     this.limit = toBytes(this.limitString)
     this.discovery.storage = discovery
 
-    cors.allow('content-meta')
+    cors.allow('content-attributes')
     cors.allow('content-location')
   }
 
@@ -66,12 +66,7 @@ export class Store extends Directive {
       }
     }
 
-    const meta = input.request.headers['content-meta']
-
-    if (meta !== undefined)
-      request.input.meta = this.meta(meta)
-
-    const entry = await this.storage.invoke<Entry>('store', request)
+    const entry = await this.storage.invoke<Entry>('put', request)
 
     return match<Output>(entry,
       Error, (error: ErrorType) => this.throw(error),
@@ -110,20 +105,20 @@ export class Store extends Directive {
       error)
   }
 
-  private meta (value: string | string[]): Record<string, string> {
+  private attributes (value: string | string[]): Record<string, string> {
     if (Array.isArray(value))
       value = value.join(',')
 
-    const meta: Record<string, string> = {}
+    const attributes: Record<string, string> = {}
 
     for (const pair of value.split(',')) {
       const eq = pair.indexOf('=')
       const key = (eq === -1 ? pair : pair.slice(0, eq)).trim()
 
-      meta[key] = eq === -1 ? 'true' : pair.slice(eq + 1).trim()
+      attributes[key] = eq === -1 ? 'true' : pair.slice(eq + 1).trim()
     }
 
-    return meta
+    return attributes
   }
 }
 
@@ -141,6 +136,6 @@ interface StoreRequest {
     accept?: string
     limit?: number
     trust?: Array<string | RegExp>
-    meta?: Record<string, string>
+    attributes?: Record<string, string>
   }
 }

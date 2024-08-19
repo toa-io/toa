@@ -1,4 +1,4 @@
-Feature: Download and store
+Feature: Download external resources
 
   Scenario Outline: Download from trusted location defined as <type>
     Given the annotation:
@@ -8,13 +8,13 @@ Feature: Download and store
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             trust:
               - <location> # <type>
               - https://github.com
         /*:
           GET:
-            octets:fetch:
+            octets:get:
               meta: true
       """
 
@@ -143,7 +143,7 @@ Feature: Download and store
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             limit: 1kb
             trust:
               - https://avatars.githubusercontent.com
@@ -171,7 +171,7 @@ Feature: Download and store
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             limit: 1kb
             trust:
               - https://avatars.githubusercontent.com
@@ -185,5 +185,5 @@ Feature: Download and store
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-meta, content-location
+      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-attributes, content-location
       """

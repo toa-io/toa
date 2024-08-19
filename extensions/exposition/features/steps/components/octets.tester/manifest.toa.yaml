@@ -17,7 +17,6 @@ operations:
   err: *operation
   echo: *operation
   concat: *operation
-  diversify: *operation
   yield: *operation
   yex: *operation
   authority: *operation
