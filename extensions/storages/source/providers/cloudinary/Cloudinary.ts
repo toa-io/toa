@@ -43,7 +43,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     if (response instanceof Error)
       return ERR_NOT_FOUND
 
-    const metadata = this.toMetadata(response)
+    const metadata = this.metadata(response)
 
     return {
       stream: Readable.fromWeb(response.body as ReadableStream),
@@ -57,7 +57,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     if (response instanceof Error)
       return ERR_NOT_FOUND
 
-    return this.toMetadata(response)
+    return this.metadata(response)
   }
 
   public async put (path: string, stream: Readable): Promise<void> {
@@ -147,7 +147,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     })
   }
 
-  private toMetadata (response: Response): Metadata {
+  private metadata (response: Response): Metadata {
     const size = response.headers.get('content-length') === null
       ? 0
       : Number.parseInt(response.headers.get('content-length')!)

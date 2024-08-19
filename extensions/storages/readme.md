@@ -135,14 +135,15 @@ for local environment.
 
 [Cloudinary](https://cloudinary.com) provider is used to store and transform media files.
 
-Stored media can be fetched in different formats and sizes by adding transformations to the path.
+Objects stored in the Cloudinary storage can be requested with transformations,
+using dot-separated path extensions: `/path/to/eecd837c.{extension}.{extension}`.
 
-```
-/path/to/eecd837c.100x100.jpeg    # crop
-/path/to/eecd837c.100x.webp       # format jpeg or webp
-/path/to/eecd837c.128x128z50.webp # zoom
-/path/to/eecd837c.[128x128].webp  # resize inside the box
-```
+Transformation is defined by the `extension` property, which is a regular expression with named
+groups.
+The named groups are used to replace the placeholders in the `transform` object.
+
+`transform` object is an element of
+the [Cloudinary `transformation` array](https://cloudinary.com/documentation/node_image_manipulation#apply_common_image_transformations).
 
 Annotation format is:
 
@@ -153,7 +154,29 @@ storages:
     environment: my-cloud
     type: image # image or video
     prefix: my-app
+    transformations:
+      - extension: (?<width>\d*)x(?<height>\d*)
+        transformation:
+          width: <width>
+          height: <height>
+          crop: thumb
+          gravity: face
+      - extension: (?<format>jpeg|webp)
+        optional: true # default is false
+        transformation:
+          format: <format>
 ```
+
+Path extensions must be specified in the same order as in the annotation.
+
+For the above example:
+
+- `/path/to/eecd837c.100x100.jpeg`: matches
+- `/path/to/eecd837c.jpeg.100x100`: does not match
+
+If a path extension is not matched,
+or if at least one of the transformations is not matched (unless it is `optional`),
+then an error is returned.
 
 Secrets:
 
