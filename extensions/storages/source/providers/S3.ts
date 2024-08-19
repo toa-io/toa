@@ -10,7 +10,7 @@ import { Provider } from '../Provider'
 import { ERR_NOT_FOUND } from '../errors'
 import type { ReadableStream } from 'node:stream/web'
 import type { Maybe } from '@toa.io/types'
-import type { Metadata, MetadataStream } from '../Entry'
+import type { Metadata, Stream } from '../Entry'
 import type { Secret, Secrets } from '../Secrets'
 
 export interface S3Options {
@@ -79,8 +79,8 @@ export class S3 extends Provider<S3Options> {
     })
   }
 
-  public async get (Key: string): Promise<Maybe<MetadataStream>> {
-    return await this.try<MetadataStream>(async () => {
+  public async get (Key: string): Promise<Maybe<Stream>> {
+    return await this.try<Stream>(async () => {
       const entry = await this.client.send(new s3.GetObjectCommand({
         Bucket: this.bucket,
         Key

@@ -1,5 +1,5 @@
 import * as assert from 'node:assert'
-import type { Metadata, MetadataStream } from './Entry'
+import type { Metadata, Stream } from './Entry'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/types'
 import type { Secret, Secrets } from './Secrets'
@@ -13,7 +13,7 @@ export abstract class Provider<Options = void> {
       assert.ok(optional === true || secrets?.[name] !== undefined, `Missing secret '${name}'`))
   }
 
-  public abstract get (path: string): Promise<Maybe<MetadataStream>>
+  public abstract get (path: string): Promise<Maybe<Stream>>
 
   public abstract head (path: string): Promise<Maybe<Metadata>>
 

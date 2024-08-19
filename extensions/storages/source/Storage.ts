@@ -2,7 +2,7 @@ import { basename, join } from 'node:path'
 import { newid } from '@toa.io/generic'
 import { Scanner } from './Scanner'
 import type { Readable } from 'node:stream'
-import type { Attributes, Entry, EntryStream } from './Entry'
+import type { Attributes, Entry, Stream } from './Entry'
 import type { ScanOptions } from './Scanner'
 import type { Provider } from './Provider'
 
@@ -31,6 +31,7 @@ export class Storage {
       id,
       size: scanner.size,
       type: scanner.type,
+      checksum: id,
       created: new Date().toISOString(),
       attributes: options?.attributes ?? {}
     }
@@ -45,18 +46,10 @@ export class Storage {
     return metadata
   }
 
-  public async get (path: string): Maybe<EntryStream> {
-    const id = basename(path)
+  public async get (path: string): Maybe<Stream> {
     const location = this.locate(path)
-    const entry = await this.provider.get(location)
 
-    if (entry instanceof Error)
-      return entry
-
-    return {
-      id,
-      ...entry
-    }
+    return await this.provider.get(location)
   }
 
   public async head (path: string): Promise<Maybe<Entry>> {

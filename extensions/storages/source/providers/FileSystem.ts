@@ -5,7 +5,7 @@ import { Provider } from '../Provider'
 import { ERR_NOT_FOUND } from '../errors'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/types'
-import type { Metadata, MetadataStream } from '../Entry'
+import type { Metadata, Stream } from '../Entry'
 
 export interface FileSystemOptions {
   path: string
@@ -21,7 +21,7 @@ export class FileSystem extends Provider<FileSystemOptions> {
     this.root = options.path
   }
 
-  public async get (rel: string): Promise<Maybe<MetadataStream>> {
+  public async get (rel: string): Promise<Maybe<Stream>> {
     const path = this.blob(rel)
     const metadata = await this.head(rel)
 

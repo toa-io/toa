@@ -6,7 +6,7 @@ import assert from 'node:assert'
 import { Storage } from './Storage'
 import { suites } from './test/util'
 import { providers } from './providers'
-import type { Entry, Metadata, EntryStream } from './Entry'
+import type { Entry, Metadata, Stream } from './Entry'
 import type { Constructor } from './Provider'
 
 jest.setTimeout(15_000)
@@ -61,6 +61,7 @@ describe('put', () => {
     const copy = await storage.put(dir2, stream) as Entry
 
     expect(copy).toHaveProperty('id', lenna.id)
+    expect(copy.checksum).toBe(lenna.checksum)
   })
 
   it('should detect file type', async () => {
@@ -76,17 +77,19 @@ describe('put', () => {
       id: lenna.id,
       type: 'image/png',
       size: 473831,
+      checksum: lenna.id,
       created: expect.any(String),
       attributes: {}
     } satisfies Entry)
   })
 
   it('should create metadata', async () => {
-    const entry = await storage.get(path) as EntryStream
+    const entry = await storage.get(path) as Stream
 
     expect(entry).toMatchObject({
       type: 'image/png',
       size: 473831,
+      checksum: lenna.id,
       created: expect.any(String),
       attributes: {}
     } satisfies Metadata)
@@ -94,7 +97,7 @@ describe('put', () => {
 
   it('should set timestamp', async () => {
     const now = Date.now() + 1000 // Cloudinary has 1s resolution
-    const entry = await storage.get(path) as EntryStream
+    const entry = await storage.get(path) as Stream
     const created = new Date(entry.created).getTime()
 
     expect(created).toBeLessThanOrEqual(now)
@@ -115,7 +118,7 @@ describe('get, head', () => {
   })
 
   it('should get', async () => {
-    const entry = await storage.get(path) as EntryStream
+    const entry = await storage.get(path) as Stream
     const stored = await buffer(entry.stream)
     const buf = await buffer(createReadStream('lenna.png'))
 

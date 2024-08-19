@@ -6,7 +6,7 @@ import { Provider } from '../../Provider'
 import { ERR_NOT_FOUND } from '../../errors'
 import { parse } from './parse'
 import type { Maybe } from '@toa.io/types'
-import type { Metadata, MetadataStream } from '../../Entry'
+import type { Metadata, Stream } from '../../Entry'
 import type { Secret, Secrets } from '../../Secrets'
 import type { ReadableStream } from 'node:stream/web'
 import type { ConfigOptions as CloudinaryConfig } from 'cloudinary'
@@ -37,7 +37,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     this.prefix = options.prefix ?? '/'
   }
 
-  public async get (path: string): Promise<Maybe<MetadataStream>> {
+  public async get (path: string): Promise<Maybe<Stream>> {
     const response = await this.fetch(path)
 
     if (response instanceof Error)
@@ -153,10 +153,13 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       : Number.parseInt(response.headers.get('content-length')!)
 
     const created = response.headers.get('date') ?? new Date().toISOString()
+    const etag = response.headers.get('etag')
+    const checksum = etag === null ? basename(response.url) : etag.slice(1, -1)
 
     return {
       type: response.headers.get('content-type')!,
       size,
+      checksum,
       created,
       attributes: {}
     }
