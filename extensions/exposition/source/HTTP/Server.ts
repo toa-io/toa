@@ -28,7 +28,7 @@ export class Server extends Connector {
 
     if (this.properties.debug)
       this.server.on('connection', (socket) =>
-        console.debug('Connection established', { address: socket.remoteAddress }))
+        console.debug('Connected', { address: socket.remoteAddress }))
   }
 
   public static create (options: Options): Server {
