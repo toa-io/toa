@@ -145,6 +145,10 @@ The named groups are used to replace the placeholders in the `transform` object.
 `transform` object is an element of
 the [Cloudinary `transformation` array](https://cloudinary.com/documentation/node_image_manipulation#apply_common_image_transformations).
 
+> - `zoom` should be specified as integer [0–100].
+> - `format` value `jpeg` is converted to `jpg`.
+> - `^` and `$` are added to the regular expression automatically, unless they are already present.
+
 Annotation format is:
 
 ```yaml
@@ -155,16 +159,17 @@ storages:
     type: image # image or video
     prefix: my-app
     transformations:
-      - extension: (?<width>\d*)x(?<height>\d*)
+      - extension: (?<width>\d*)x(?<height>\d*)(z(?<zoom>\d*))?
         transformation:
           width: <width>
           height: <height>
+          zoom: <zoom>
           crop: thumb
           gravity: face
       - extension: (?<format>jpeg|webp)
         optional: true # default is false
         transformation:
-          format: <format>
+          fetch_format: <format>
 ```
 
 Path extensions must be specified in the same order as in the annotation.

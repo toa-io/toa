@@ -10,6 +10,20 @@ properties:
       - video
   prefix:
     type: string
+  transformations:
+    type: array
+    items:
+      type: object
+      properties:
+        extension:
+          type: string
+        transformation:
+          type: object
+        optional:
+          type: boolean
+      required:
+        - extension
+        - transformation
 required:
   - environment
   - type

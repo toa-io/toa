@@ -36,7 +36,36 @@ export const suites = [
     options: {
       environment: 'dl5z4zgth',
       type: 'image',
-      prefix: 'toa-dev'
+      prefix: 'toa-dev',
+      transformations: [
+        {
+          extension: '(?<width>\\d*)x(?<height>\\d*)(z(?<zoom>\\d*))?',
+          transformation: {
+            width: '<width>',
+            height: '<height>',
+            zoom: '<zoom>',
+            crop: 'thumb',
+            gravity: 'face'
+          },
+          optional: true
+        },
+        {
+          extension: '\\[(?<width>\\d*)x(?<height>\\d*)\\](z(?<zoom>\\d+))?',
+          transformation: {
+            width: '<width>',
+            height: '<height>',
+            zoom: '<zoom>',
+            crop: 'fit'
+          },
+          optional: true
+        },
+        {
+          extension: '(?<format>jpeg|webp)',
+          transformation: {
+            fetch_format: '<format>'
+          }
+        }
+      ]
     },
     secrets: {
       API_KEY: process.env.CLOUDINARY_API_KEY ?? '',

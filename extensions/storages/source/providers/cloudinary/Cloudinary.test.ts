@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import { createReadStream } from 'node:fs'
+import assert from 'node:assert'
 import { suites } from '../../test/util'
 import { Cloudinary } from './Cloudinary'
 import type { CloudinaryOptions, CloudinarySecrets } from './Cloudinary'
@@ -14,7 +15,7 @@ test('run me once', async () => {
 
   await cloudinary.put('/resize/lenna', stream)
 
-  const output = await cloudinary.get('/resize/lenna')
+  const output = await cloudinary.get('/resize/lenna.jpeg')
 
   expect(output).not.toBeNull()
 })
@@ -23,10 +24,12 @@ test('should be', async () => {
   expect(cloudinary).toBeInstanceOf(Cloudinary)
 })
 
-test.each(['48x48', 'x60', '[128x128]z50'])('should resize to %s', async (transform) => {
-  const stream = await cloudinary.get(`/resize/lenna.${transform}.jpeg`)
+test.each(['48x48.webp', 'x60.jpeg', '[128x128]z50.jpeg'])('should resize to %s', async (extensions) => {
+  const stream = await cloudinary.get(`/resize/lenna.${extensions}`)
 
-  expect(stream).not.toBeNull()
+  assert.ok(!(stream instanceof Error))
+
+  expect(stream.checksum).toBeDefined()
 })
 
 interface CloudinarySuite {
