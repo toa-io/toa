@@ -29,6 +29,36 @@ process.env.TOA_STORAGES = encode({
     provider: 'cloudinary',
     environment: process.env.CLOUDINARY_ENVIRONMENT ?? 'nope',
     type: 'image',
-    prefix: 'toa-dev'
+    prefix: 'toa-dev',
+    transformations: [
+      {
+        extension: '(?<width>\\d*)x(?<height>\\d*)(z(?<zoom>\\d*))?',
+        transformation: {
+          width: '<width>',
+          height: '<height>',
+          zoom: '<zoom>',
+          crop: 'thumb',
+          gravity: 'face'
+        },
+        optional: true
+      },
+      {
+        extension: '\\[(?<width>\\d*)x(?<height>\\d*)\\](z(?<zoom>\\d+))?',
+        transformation: {
+          width: '<width>',
+          height: '<height>',
+          zoom: '<zoom>',
+          crop: 'fit'
+        },
+        optional: true
+      },
+      {
+        extension: '(?<format>jpeg|webp)',
+        transformation: {
+          fetch_format: '<format>'
+        },
+        optional: true
+      }
+    ]
   }
 })

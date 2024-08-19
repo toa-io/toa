@@ -4,12 +4,15 @@ import { v2 as cloudinary } from 'cloudinary'
 import { console } from 'openspan'
 import { Provider } from '../../Provider'
 import { ERR_NOT_FOUND } from '../../errors'
-import { parse } from './parse'
 import type { Maybe } from '@toa.io/types'
 import type { Metadata, Stream } from '../../Entry'
 import type { Secret, Secrets } from '../../Secrets'
 import type { ReadableStream } from 'node:stream/web'
-import type { ConfigOptions as CloudinaryConfig } from 'cloudinary'
+import type {
+  ConfigOptions as CloudinaryConfig,
+  ImageTransformationOptions,
+  VideoTransformationOptions
+} from 'cloudinary'
 
 export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
 
@@ -20,6 +23,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
   ]
 
   private readonly type: StorageType
+  private readonly transformations: Transformation[] = []
   private readonly config: CloudinaryConfig
   private readonly prefix: string
 
@@ -27,6 +31,24 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     super(options, secrets)
 
     this.type = options.type
+
+    if (options.transformations !== undefined)
+      this.transformations = options.transformations.map((transformation) => {
+        const { extension, ...rest } = transformation
+
+        let expression = extension
+
+        if (!extension.startsWith('^'))
+          expression = '^' + extension
+
+        if (!extension.endsWith('$'))
+          expression = extension + '$'
+
+        return {
+          extension: new RegExp(expression),
+          ...rest
+        }
+      })
 
     this.config = {
       cloud_name: options.environment,
@@ -43,7 +65,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     if (response instanceof Error)
       return ERR_NOT_FOUND
 
-    const metadata = this.toMetadata(response)
+    const metadata = this.metadata(response)
 
     return {
       stream: Readable.fromWeb(response.body as ReadableStream),
@@ -57,7 +79,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     if (response instanceof Error)
       return ERR_NOT_FOUND
 
-    return this.toMetadata(response)
+    return this.metadata(response)
   }
 
   public async put (path: string, stream: Readable): Promise<void> {
@@ -133,12 +155,12 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
   }
 
   private url (path: string): string | null {
-    const [rel, transformation] = parse(path, this.type)
+    const [base, transformation] = this.toTransformation(path)
 
-    if (rel === null)
+    if (base === null)
       return null
 
-    const id = join(this.prefix, rel)
+    const id = join(this.prefix, base)
 
     return this.cloudinary().url(id, {
       resource_type: this.type,
@@ -147,7 +169,62 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     })
   }
 
-  private toMetadata (response: Response): Metadata {
+  private toTransformation (path: string): [string | null, TransformationOptions[] | undefined] {
+    if (this.transformations.length === 0)
+      return [path, undefined]
+
+    const [base, ...extensions] = path.split('.')
+    const transformations: TransformationOptions[] = []
+
+    let t = 0
+
+    for (const extension of extensions) {
+      let found = false
+
+      for (t; t < this.transformations.length && !found; t++) {
+        const { extension: regex, transformation: options, optional } = this.transformations[t]
+
+        const match = regex.exec(extension)
+
+        // eslint-disable-next-line max-depth
+        if (match === null)
+          if (optional === true)
+            continue
+          else
+            return [null, undefined]
+
+        const transformation = Object.fromEntries(Object.entries(options).map(([key, value]) => {
+          if (typeof value !== 'string')
+            return [key, value]
+
+          if (value.startsWith('<') && value.endsWith('>'))
+            value = match.groups![value.slice(1, -1)]
+
+          if (key === 'zoom' && value !== undefined)
+            value = Number.parseInt(value) / 100
+
+          if (key === 'fetch_format' && value === 'jpeg')
+            value = 'jpg'
+
+          return [key, value]
+        }))
+
+        transformations.push(transformation)
+        found = true
+      }
+
+      if (!found)
+        return [null, undefined]
+    }
+
+    for (t; t < this.transformations.length; t++)
+      if (this.transformations[t].optional !== true)
+        return [null, undefined]
+
+    return [base, transformations]
+  }
+
+  private metadata (response: Response): Metadata {
     const size = response.headers.get('content-length') === null
       ? 0
       : Number.parseInt(response.headers.get('content-length')!)
@@ -176,6 +253,17 @@ export interface CloudinaryOptions {
   environment: string
   type: StorageType
   prefix?: string
+  transformations?: TransformationDeclaration[]
 }
+
+type TransformationDeclaration = Omit<Transformation, 'extension'> & { extension: string }
+
+interface Transformation {
+  extension: RegExp
+  transformation: object
+  optional?: boolean
+}
+
+type TransformationOptions = ImageTransformationOptions | VideoTransformationOptions
 
 type StorageType = 'image' | 'video'
