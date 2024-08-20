@@ -166,15 +166,15 @@ storages:
           zoom: <zoom>
           crop: thumb
           gravity: face
+        optional: true
       - extension: (?<format>jpeg|webp)
-        optional: true # default is false
         transformation:
           fetch_format: <format>
 ```
 
 Path extensions must be specified in the same order as in the annotation.
 
-For the above example:
+For the example above:
 
 - `/path/to/eecd837c.100x100.jpeg`: matches
 - `/path/to/eecd837c.jpeg.100x100`: does not match
