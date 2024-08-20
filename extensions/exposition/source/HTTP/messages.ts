@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream'
 import { buffer } from 'node:stream/consumers'
 import { console } from 'openspan'
+import { version } from '../../package.json'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 import type { Context } from './Context'
@@ -10,6 +11,8 @@ export function write
 (context: Context, response: http.ServerResponse, message: OutgoingMessage): void {
   for (const transform of context.pipelines.response)
     transform(message)
+
+  response.setHeader('server', 'Exposition/' + version)
 
   message.headers?.forEach((value, key) => response.setHeader(key, value))
   context.timing.append(response)
