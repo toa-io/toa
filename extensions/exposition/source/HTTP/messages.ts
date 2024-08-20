@@ -1,13 +1,12 @@
 import { Readable } from 'node:stream'
 import { buffer } from 'node:stream/consumers'
 import { console } from 'openspan'
-import { version } from '../../package.json'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 import type { Context } from './Context'
 import type * as http from 'node:http'
 
-const server = `Exposition/${version}` +
+const server = `Exposition/${require('../../package.json').version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
     (process.env.TOE_ENV === undefined ? '' : `/${process.env.TOE_ENV}`))
 

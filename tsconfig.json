@@ -13,8 +13,7 @@
     "experimentalDecorators": true,
     "noImplicitOverride": true,
     "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": [
     "**/transpiled"
