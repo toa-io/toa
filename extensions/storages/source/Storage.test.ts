@@ -84,7 +84,7 @@ describe('put', () => {
   })
 
   it('should create metadata', async () => {
-    const entry = await storage.get(path) as Stream
+    const entry = await storage.head(path) as Entry
 
     expect(entry).toMatchObject({
       type: 'image/png',

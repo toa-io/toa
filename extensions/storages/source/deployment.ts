@@ -1,5 +1,4 @@
 import * as assert from 'node:assert'
-import { encode } from '@toa.io/generic'
 import { providers } from './providers'
 import { validateAnnotation } from './Annotation'
 import type { Annotation } from './Annotation'
@@ -11,7 +10,7 @@ export const ENV_PREFIX = 'TOA_STORAGES'
 export function deployment (instances: Instance[], annotation: unknown): Dependency {
   validate(instances, annotation)
 
-  const value = encode(annotation)
+  const value = JSON.stringify(annotation)
   const pointer: Variable = { name: ENV_PREFIX, value }
   const secrets = getSecrets(annotation)
   const mounts = getMounts(instances, annotation)

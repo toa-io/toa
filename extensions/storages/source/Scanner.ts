@@ -1,7 +1,7 @@
 import { PassThrough, type TransformCallback } from 'node:stream'
 import { createHash } from 'node:crypto'
-import { negotiate } from '@toa.io/agent'
 import { Err } from 'error-value'
+import Negotiator from 'negotiator'
 
 export class Scanner extends PassThrough {
   public size = 0
@@ -94,10 +94,14 @@ export class Scanner extends PassThrough {
     if (this.accept === undefined)
       return
 
-    const unacceptable = negotiate(this.accept, [type]) === null
+    const unacceptable = this.negotiate(this.accept, [type]) === null
 
     if (unacceptable)
       this.interrupt(ERR_NOT_ACCEPTABLE)
+  }
+
+  private negotiate (accept: string, type: string[]): string | null {
+    return new Negotiator({ headers: { accept } }).mediaType(type) ?? null
   }
 
   private interrupt (error: Error): void {

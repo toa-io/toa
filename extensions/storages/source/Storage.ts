@@ -1,5 +1,5 @@
 import { basename, join } from 'node:path'
-import { newid } from '@toa.io/generic'
+import { randomUUID } from 'node:crypto'
 import { Scanner } from './Scanner'
 import type { Readable } from 'node:stream'
 import type { Attributes, Entry, Stream } from './Entry'
@@ -77,7 +77,7 @@ export class Storage {
   }
 
   private async transit (path: string, stream: Readable): Promise<string> {
-    const location = this.locate(path, newid() + '.temp')
+    const location = this.locate(path, randomUUID())
 
     await this.provider.put(location, stream)
 
