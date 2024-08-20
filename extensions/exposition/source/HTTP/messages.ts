@@ -7,12 +7,16 @@ import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 import type { Context } from './Context'
 import type * as http from 'node:http'
 
+const server = `Exposition/${version}` +
+  ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
+    (process.env.TOE_ENV === undefined ? '' : `/${process.env.TOE_ENV}`))
+
 export function write
 (context: Context, response: http.ServerResponse, message: OutgoingMessage): void {
   for (const transform of context.pipelines.response)
     transform(message)
 
-  response.setHeader('server', 'Exposition/' + version)
+  response.setHeader('server', server)
 
   message.headers?.forEach((value, key) => response.setHeader(key, value))
   context.timing.append(response)
