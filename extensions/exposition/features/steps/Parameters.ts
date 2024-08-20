@@ -1,7 +1,6 @@
 import { join } from 'node:path'
 import * as dotenv from 'dotenv'
 import { setDefaultTimeout } from '@cucumber/cucumber'
-import { encode } from '@toa.io/generic'
 import { console } from 'openspan'
 
 dotenv.config({ path: join(__dirname, '.env') })
@@ -20,7 +19,7 @@ console.configure({ format: 'terminal' })
 
 process.env.TOA_DEV = '1'
 
-process.env.TOA_STORAGES = encode({
+process.env.TOA_STORAGES = JSON.stringify({
   octets: {
     provider: 'tmp',
     directory: Math.random().toString(36).substring(2)

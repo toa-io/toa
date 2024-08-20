@@ -1,11 +1,13 @@
 import { join } from 'node:path'
 import dotenv from 'dotenv'
 import type { Secrets } from '../Secrets'
-import type { providers } from '../providers'
-import type { S3Options } from '../providers/S3'
-import type { CloudinaryOptions } from '../providers/cloudinary/Cloudinary'
-import type { FileSystemOptions } from '../providers/FileSystem'
-import type { TemporaryOptions } from '../providers/Temporary'
+import type {
+  providers,
+  S3Options,
+  CloudinaryOptions,
+  FileSystemOptions,
+  TemporaryOptions
+} from '../providers'
 
 dotenv.config({ path: join(__dirname, '.env') })
 
@@ -63,7 +65,8 @@ export const suites = [
           extension: '(?<format>jpeg|webp)',
           transformation: {
             fetch_format: '<format>'
-          }
+          },
+          optional: true
         }
       ]
     },
