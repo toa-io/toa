@@ -32,6 +32,13 @@ test.each(['48x48.webp', 'x60.jpeg', '[128x128]z50.jpeg'])('should resize to %s'
   expect(stream.checksum).toBeDefined()
 })
 
+test.each(['48x48.unknown', 'jpeg.48x48', '48x48'])('should fail: %s', async (extensions) => {
+  const error = await cloudinary.get(`/resize/lenna.${extensions}`) as any
+
+  expect(error).toBeInstanceOf(Error)
+  expect(error.code).toBe('NOT_FOUND')
+})
+
 interface CloudinarySuite {
   run: boolean
   options: CloudinaryOptions
