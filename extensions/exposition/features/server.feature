@@ -17,5 +17,5 @@ Feature: `Server` response header
     Then the following reply is sent:
       """
       200 OK
-      server: Exposition1/
+      server: Exposition/
       """
