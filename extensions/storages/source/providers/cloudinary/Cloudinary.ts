@@ -9,7 +9,7 @@ import type { Metadata, Stream } from '../../Entry'
 import type { Secret, Secrets } from '../../Secrets'
 import type { ReadableStream } from 'node:stream/web'
 import type {
-  ConfigOptions as CloudinaryConfig,
+  ConfigOptions,
   ImageTransformationOptions,
   VideoTransformationOptions
 } from 'cloudinary'
@@ -24,7 +24,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
   private readonly type: StorageType
   private readonly transformations: Transformation[] = []
-  private readonly config: CloudinaryConfig
+  private readonly config: ConfigOptions
   private readonly prefix: string
 
   public constructor (options: CloudinaryOptions, secrets?: CloudinarySecrets) {
@@ -201,7 +201,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
             value = match.groups![value.slice(1, -1)]
 
           if (key === 'zoom' && value !== undefined)
-            value = Number.parseInt(value) / 100
+            value = Number.parseInt(value as string) / 100
 
           if (key === 'fetch_format' && value === 'jpeg')
             value = 'jpg'

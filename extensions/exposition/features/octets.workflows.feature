@@ -8,7 +8,7 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             workflow:
               - add-foo: octets.tester.foo
                 add-bar: octets.tester.bar
@@ -16,7 +16,7 @@ Feature: Octets storage workflows
         /*:
           io:output: true
           GET:
-            octets:fetch:
+            octets:get:
               meta: true
       """
     When the stream of `lenna.ascii` is received with the following headers:
@@ -61,7 +61,7 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             workflow:
               - add-foo: octets.tester.foo
               - add-bar: octets.tester.err
@@ -105,10 +105,10 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store: ~
+          octets:put: ~
         /*:
           GET:
-            octets:fetch: ~
+            octets:get: ~
           DELETE:
             octets:delete:
               workflow:
@@ -159,10 +159,10 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store: ~
+          octets:put: ~
         /*:
           GET:
-            octets:fetch: ~
+            octets:get: ~
           DELETE:
             octets:delete:
               workflow:
@@ -217,7 +217,7 @@ Feature: Octets storage workflows
           auth:anonymous: true
           octets:context: octets
           POST:
-            octets:store:
+            octets:put:
               workflow:
                 concat: octets.tester.concat
       """
@@ -255,7 +255,7 @@ Feature: Octets storage workflows
           auth:anonymous: true
           octets:context: octets
           POST:
-            octets:store:
+            octets:put:
               workflow:
                 authority: octets.tester.authority
       """
@@ -292,7 +292,7 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store: ~
+          octets:put: ~
         /*:
           DELETE:
             octets:workflow:
@@ -336,7 +336,7 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             workflow:
               - foo: octets.tester.foo
               - yield: octets.tester.yield
@@ -389,7 +389,7 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             workflow:
               yield: octets.tester.yex
       """
@@ -436,13 +436,13 @@ Feature: Octets storage workflows
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store:
+          octets:put:
             workflow:
               foo: task:octets.tester.foo
         /*:
           io:output: true
           GET:
-            octets:fetch:
+            octets:get:
               meta: true
       """
     When the stream of `lenna.ascii` is received with the following headers:
