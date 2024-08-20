@@ -1,5 +1,6 @@
 import assert from 'node:assert'
 import { console } from 'openspan'
+import { decode } from '@toa.io/generic'
 import { providers } from './providers'
 import { Storage, type Storages } from './Storage'
 import { Aspect } from './Aspect'
@@ -18,7 +19,7 @@ export class Factory {
 
     assert.ok(env !== undefined, `${ENV_PREFIX} is not defined`)
 
-    this.annotation = JSON.parse(env)
+    this.annotation = decode(env)
 
     validateAnnotation(this.annotation)
   }
