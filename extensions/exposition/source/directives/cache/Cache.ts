@@ -13,7 +13,7 @@ export class Cache implements DirectiveFamily<Directive> {
     const Class = constructors[name]
 
     if (Class === undefined)
-      throw new Error(`Directive 'cache:${name}' is not implemented.`)
+      throw new Error(`Directive 'cache:${name}' is not implemented`)
 
     return new Class(value)
   }

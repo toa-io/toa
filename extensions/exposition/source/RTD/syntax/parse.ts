@@ -65,7 +65,7 @@ function parseNode (input: object | string, shortcuts?: Shortcuts): Node {
           continue
         }
 
-        throw new Error(`RTD parse error: unknown key '${key}'.`)
+        throw new Error(`RTD parse error: unknown key '${key}'`)
     }
 
   return node

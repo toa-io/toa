@@ -21,7 +21,7 @@ export class Octets implements DirectiveFamily<Directive> {
     const Class = DIRECTIVES[name]
 
     if (Class === undefined)
-      throw new Error(`Directive 'octets:${name}' is not implemented.`)
+      throw new Error(`Directive 'octets:${name}' is not implemented`)
 
     this.discovery ??= remotes.discover('octets', 'storage')
 
@@ -51,7 +51,7 @@ export class Octets implements DirectiveFamily<Directive> {
     const targeted = input.request.url[input.request.url.length - 1] !== '/'
 
     if (targeted !== action.targeted)
-      throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}.`)
+      throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}`)
 
     // noinspection JSObjectNullOrUndefined
     return await input.timing.capture(action.name, action.apply(context.storage, input, parameters))

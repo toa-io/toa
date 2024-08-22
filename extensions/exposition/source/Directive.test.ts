@@ -65,7 +65,7 @@ it('should throw error if directive family is not found', async () => {
   }
 
   expect(() => factory.create([declaration]))
-    .toThrowError(`Directive family '${declaration.family}' is not found.`)
+    .toThrowError(`Directive family '${declaration.family}' is not found`)
 })
 
 it('should apply directive', async () => {

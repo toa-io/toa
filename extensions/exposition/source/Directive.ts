@@ -58,7 +58,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
       const family = this.families[declaration.family]
 
       if (family === undefined)
-        throw new Error(`Directive family '${declaration.family}' is not found.`)
+        throw new Error(`Directive family '${declaration.family}' is not found`)
 
       const directive = family.create(declaration.name, declaration.value, this.remotes)
 

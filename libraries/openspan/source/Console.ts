@@ -12,7 +12,7 @@ export class Console {
   private formatter = formatters.json
   private stdout: NodeJS.WriteStream = process.stdout
   private stderr: NodeJS.WriteStream = process.stderr
-  private context?: object
+  private context?: Unknown
 
   public constructor (options: ConsoleOptions = {}) {
     this.configure(options)
@@ -34,7 +34,7 @@ export class Console {
       this.context = options.context
   }
 
-  public fork (ctx?: object): Console {
+  public fork (ctx?: Unknown): Console {
     const options: ConsoleOptions = {
       level: this.level,
       format: this.formatter.name,
@@ -56,7 +56,7 @@ export class Console {
     const level = LEVELS[channel]
     const severity = channel.toUpperCase() as Severity
 
-    return (message: string, attributes?: object, properties?: Record<string, unknown>) => {
+    return (message: string, attributes?: Unknown, properties?: Unknown) => {
       if (level < this.level)
         return
 
@@ -66,7 +66,17 @@ export class Console {
         time: new Date().toISOString()
       }
 
-      if (attributes !== undefined)
+      if (attributes instanceof Error) {
+        entry.attributes = {}
+
+        // @ts-expect-error -- custom error classes
+        if (attributes.code !== undefined)
+          // @ts-expect-error -- custom error classes
+          entry.attributes.code = attributes.code
+
+        if (attributes.message !== undefined)
+          entry.attributes.message = attributes.message
+      } else if (attributes !== undefined)
         entry.attributes = attributes
 
       if (this.context !== undefined)
@@ -96,7 +106,7 @@ export const console = new Console()
 
 export interface ConsoleOptions {
   level?: Channel | Level
-  context?: object
+  context?: Unknown
   format?: Format
   streams?: Streams
 }
@@ -110,11 +120,12 @@ export interface Entry {
   time: string
   severity: Severity
   message: string
-  attributes?: object
-  context?: object
+  attributes?: Unknown
+  context?: Unknown
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
 type Level = -1 | 0 | 1 | 2
 type Severity = Uppercase<Channel>
-type Method = (message: string, attributes?: object, properties?: Record<string, unknown>) => void
+type Method = (message: string, attributes?: Unknown, properties?: Unknown) => void
+type Unknown = Record<string, unknown> | ({ code?: string | number, message: string })

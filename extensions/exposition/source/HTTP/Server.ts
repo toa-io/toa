@@ -96,7 +96,7 @@ export class Server extends Connector {
   }
 
   private success (context: Context, response: http.ServerResponse) {
-    return (message: OutgoingMessage) => {
+    return async (message: OutgoingMessage) => {
       let status = message.status
 
       if (status === undefined)
@@ -110,7 +110,7 @@ export class Server extends Connector {
           status = 200
 
       response.statusCode = message.status = status
-      write(context, response, message)
+      await write(context, response, message)
     }
   }
 
@@ -131,7 +131,7 @@ export class Server extends Connector {
             ? exception.body
             : exception.stack ?? exception.message
 
-      write(context, response, message)
+      await write(context, response, message)
     }
   }
 }

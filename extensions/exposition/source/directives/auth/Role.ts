@@ -58,7 +58,7 @@ export class Role implements Directive {
       const value = parameters.find((parameter) => parameter.name === key)?.value
 
       assert.ok(value !== undefined,
-        `Role '${role}' requires '${key}' route parameter.`)
+        `Role '${role}' requires '${key}' route parameter`)
 
       return value
     }))

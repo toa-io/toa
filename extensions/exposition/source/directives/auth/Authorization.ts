@@ -40,7 +40,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
   public create (name: string, value: any, remotes: Remotes): Directive {
     assert.ok(name in constructors,
-      `Directive 'auth:${name}' is not implemented.`)
+      `Directive 'auth:${name}' is not implemented`)
 
     const Class = constructors[name]
 
@@ -120,7 +120,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     const provider = PROVIDERS[scheme]
 
     if (!(provider in this.discovery))
-      throw new http.Unauthorized(`Unknown authentication scheme '${scheme}'.`)
+      throw new http.Unauthorized(`Unknown authentication scheme '${scheme}'`)
 
     this.schemes[scheme] ??= await this.discovery[provider]
 

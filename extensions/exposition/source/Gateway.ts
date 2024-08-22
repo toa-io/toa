@@ -139,8 +139,8 @@ export class Gateway extends Connector {
         component: branch.component,
         version: branch.version
       })
-    } catch (exception) {
-      console.error('Branch merge exception', exception as Error)
+    } catch (exception: any) {
+      console.error('Branch merge exception', exception as Record<string, unknown>)
     }
   }
 }
