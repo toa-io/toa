@@ -10,7 +10,7 @@ export class IO implements DirectiveFamily<Directive> {
 
   public create (name: string, value: unknown): Directive {
     if (!(name in constructors))
-      throw new Error(`Directive 'io:${name}' is not implemented.`)
+      throw new Error(`Directive 'io:${name}' is not implemented`)
 
     const Directive = constructors[name]
 

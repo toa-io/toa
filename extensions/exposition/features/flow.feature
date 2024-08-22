@@ -1,6 +1,6 @@
 Feature: Request flow
 
-  Scenario: Fetching url
+  Scenario: Fetching URL
     Given the `octets.tester` is running
     And the annotation:
       """yaml
@@ -42,4 +42,55 @@ Feature: Request flow
     Then the following reply is sent:
       """
       404 Not Found
+      """
+
+  Scenario: Composing a stream
+    Given the `sequences` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          flow:compose:
+            a: $[0]
+            b: $[1]
+            c: $[2]
+            sum: $[0] + $[1] + $[2]
+            str: \hello
+            num: 1
+            arr:
+              - $[0]
+              - $[1]
+              - $[2]
+              - $[0] + $[1] + $[2]
+            copy: $
+          POST: numbers
+      """
+    When the following request is received:
+      """
+      POST /sequences/ HTTP/1.1
+      host: nex.toa.io
+      content-type: text/plain
+      accept: application/yaml
+
+      3
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: application/yaml
+
+      a: 0
+      b: 1
+      c: 2
+      sum: 3
+      str: hello
+      num: 1
+      arr:
+        - 0
+        - 1
+        - 2
+        - 3
+      copy:
+        - 0
+        - 1
+        - 2
       """

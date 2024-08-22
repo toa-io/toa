@@ -15,7 +15,7 @@ export class Vary implements DirectiveFamily {
       () => name in properties, (name: PN) => new Property(name, value as PV),
       () => name in directives, (name: keyof typeof directives) => new directives[name](value),
       () => {
-        throw new Error(`Directive 'vary:${name}' is not implemented.`)
+        throw new Error(`Directive 'vary:${name}' is not implemented`)
       })
   }
 

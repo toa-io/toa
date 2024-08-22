@@ -79,7 +79,7 @@ export interface IncomingMessage extends http.IncomingMessage {
 
 interface Pipelines {
   body: Array<(input: unknown) => unknown>
-  response: Array<(output: OutgoingMessage) => void>
+  response: Array<(output: OutgoingMessage) => void | Promise<void>>
 }
 
 interface Properties {

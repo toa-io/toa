@@ -1,4 +1,5 @@
 import { Fetch } from './Fetch'
+import { Compose } from './Compose'
 import type { Directive } from './types'
 import type { Input, Output } from '../../io'
 import type { DirectiveFamily, Parameter } from '../../RTD'
@@ -12,13 +13,19 @@ export class Flow implements DirectiveFamily<Directive> {
     const Class = constructors[name]
 
     if (Class === undefined)
-      throw new Error(`Directive '${this.name}:${name}' is not implemented.`)
+      throw new Error(`Directive '${this.name}:${name}' is not implemented`)
 
     return new Class(value, remotes)
   }
 
   public async preflight (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
     for (const directive of directives) {
+      if (directive.attach !== undefined)
+        directive.attach(input)
+
+      if (directive.apply === undefined)
+        continue
+
       const output = await directive.apply(input, parameters)
 
       if (output !== null)
@@ -30,5 +37,6 @@ export class Flow implements DirectiveFamily<Directive> {
 }
 
 const constructors: Record<string, new (value: any, discovery: Remotes) => Directive> = {
-  fetch: Fetch
+  fetch: Fetch,
+  compose: Compose
 }

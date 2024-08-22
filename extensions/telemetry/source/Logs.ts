@@ -26,9 +26,9 @@ export class Logs extends Connector implements extensions.Aspect {
       })
 
     if (severity === 'fork')
-      return this.consoles[operation].fork(message as object)
+      return this.consoles[operation].fork(message as Record<string, unknown>)
     else
-      this.consoles[operation][severity](message as string, attributes)
+      this.consoles[operation][severity](message as string, attributes as Record<string, unknown>)
   }
 }
 

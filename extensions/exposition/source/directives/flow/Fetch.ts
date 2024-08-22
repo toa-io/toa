@@ -12,14 +12,12 @@ import type { Input } from '../octets/types'
 import type { Parameter } from '../../RTD'
 
 export class Fetch implements Directive {
-  public readonly targeted = true
-
   private readonly connecting: Promise<Component>
   private remote: Component | null = null
   private readonly operation: string
 
   public constructor (endpoint: string, discovery: Remotes) {
-    assert.equal(typeof endpoint, 'string', '`flow:redirect` must be a string')
+    assert.equal(typeof endpoint, 'string', '`flow:fetch` must be a string')
 
     const [operation, name, namespace = 'default'] = endpoint.split('.').reverse()
 
