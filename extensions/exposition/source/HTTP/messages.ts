@@ -8,7 +8,7 @@ import type * as http from 'node:http'
 
 const server = `Exposition/${require('../../package.json').version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
-    (process.env.TOE_ENV === undefined ? '' : `/${process.env.TOE_ENV}`))
+    (process.env.TOA_ENV === undefined ? '' : `/${process.env.TOA_ENV}`))
 
 export function write
 (context: Context, response: http.ServerResponse, message: OutgoingMessage): void {
