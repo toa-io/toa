@@ -125,7 +125,7 @@ export interface Entry {
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
+export type Severity = Uppercase<Channel>
 type Level = -1 | 0 | 1 | 2
-type Severity = Uppercase<Channel>
 type Method = (message: string, attributes?: Unknown, properties?: Unknown) => void
 type Unknown = Record<string, unknown> | ({ code?: string | number, message: string })

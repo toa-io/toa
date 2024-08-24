@@ -29,5 +29,8 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "chalk": "4.1.2"
   }
 }
