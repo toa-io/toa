@@ -1,14 +1,9 @@
 'use strict'
 
-const uuid = require('uuid').v4
+const { randomUUID } = require('node:crypto')
 
-/** @type {toa.generic.Identify} */
 const newid = () => {
-  const buffer = Buffer.allocUnsafe(16)
-
-  uuid({}, buffer)
-
-  return buffer.toString('hex')
+  return randomUUID().replace(/-/g, '')
 }
 
 exports.newid = newid
