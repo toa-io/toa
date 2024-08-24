@@ -56,7 +56,7 @@ function json (node: object | string): string {
       return node
 
   if (Array.isArray(node))
-    return `[${node.map((v) => json(v)).join(',')}]`
+    return `[${node.map((v) => json(v as object | string)).join(',')}]`
 
   if (node.constructor !== Object)
     return JSON.stringify(node)
