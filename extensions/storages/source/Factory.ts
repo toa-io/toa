@@ -45,7 +45,12 @@ export class Factory {
     const secrets = this.resolveSecrets(name, Provider)
     const provider = new Provider(options, secrets)
 
-    console.debug('Storage created', { name, provider: id, options, root: provider.root })
+    console.debug('Storage created', {
+      name,
+      provider: id,
+      options,
+      ...(provider.root === undefined ? undefined : { root: provider.root })
+    })
 
     return new Storage(provider)
   }

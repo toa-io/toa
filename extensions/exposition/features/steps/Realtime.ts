@@ -130,7 +130,7 @@ export class Realtime {
       id: \${{ ${name}.id }}
     `)
 
-    return this.agent.captures.get(`${name}.id`)
+    return this.agent.captures.get(`${name}.id`) as string
   }
 
   private async consume (id: string, parts: any): Promise<void> {
