@@ -118,6 +118,12 @@ it('should not log undefined attributes', async () => {
   expect(entry.message).toBe('hello')
 })
 
+it.each(channels)('should print %s in terminal format', (channel) => {
+  const con = new Console({ format: 'terminal', context: { channel } })
+
+  con[channel]('hello', { foo: 'bar', baz: [{ ok: { nested: [{ ok: true }] } }] })
+})
+
 it('should log empty objects', () => {
   const con = new Console({ format: 'terminal' })
 
