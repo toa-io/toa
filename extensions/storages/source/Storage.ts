@@ -16,8 +16,10 @@ export class Storage {
   public async put (path: string, stream: Readable, options?: Options): Maybe<Entry> {
     const scanner = new Scanner(options)
     const pipe = stream.pipe(scanner).on('error', () => undefined)
+    const id = randomUUID().replace(/-/g, '')
+    const location = this.locate(path, id)
 
-    const temp: string | Error = await this.transit(path, pipe).catch((error: any) => {
+    const temp: string | Error = await this.provider.put(location, pipe).catch((error: any) => {
       if (error === scanner.error) return error
       else throw error
     })
@@ -25,13 +27,11 @@ export class Storage {
     if (temp instanceof Error)
       return temp
 
-    const id = scanner.digest()
-
     const metadata: Entry = {
       id,
       size: scanner.size,
       type: scanner.type,
-      checksum: id,
+      checksum: scanner.digest(),
       created: new Date().toISOString(),
       attributes: options?.attributes ?? {}
     }
@@ -39,9 +39,7 @@ export class Storage {
     if (options?.origin !== undefined)
       metadata.attributes.origin = options.origin
 
-    const location = this.locate(path, id)
-
-    await this.persist(temp, location, metadata)
+    await this.provider.commit(location, metadata)
 
     return metadata
   }
@@ -74,19 +72,6 @@ export class Storage {
 
   public path (): string | null {
     return this.provider.root ?? null
-  }
-
-  private async transit (path: string, stream: Readable): Promise<string> {
-    const location = this.locate(path, randomUUID())
-
-    await this.provider.put(location, stream)
-
-    return location
-  }
-
-  private async persist (from: string, to: string, entry: Entry): Promise<void> {
-    await this.provider.move(from, to)
-    await this.provider.commit(to, entry)
   }
 
   private locate (...rel: string[]): string {

@@ -53,15 +53,7 @@ describe('put', () => {
 
   it('should return entry id', async () => {
     expect(lenna.id).toBeDefined()
-  })
-
-  it('should return id as checksum', async () => {
-    const stream = createReadStream('lenna.png')
-    const dir2 = '/' + randomUUID()
-    const copy = await storage.put(dir2, stream) as Entry
-
-    expect(copy).toHaveProperty('id', lenna.id)
-    expect(copy.checksum).toBe(lenna.checksum)
+    expect(lenna.id).toHaveLength(32)
   })
 
   it('should detect file type', async () => {
@@ -77,7 +69,7 @@ describe('put', () => {
       id: lenna.id,
       type: 'image/png',
       size: 473831,
-      checksum: lenna.id,
+      checksum: lenna.checksum,
       created: expect.any(String),
       attributes: {}
     } satisfies Entry)
@@ -89,7 +81,7 @@ describe('put', () => {
     expect(entry).toMatchObject({
       type: 'image/png',
       size: 473831,
-      checksum: lenna.id,
+      checksum: lenna.checksum,
       created: expect.any(String),
       attributes: {}
     } satisfies Metadata)
