@@ -24,14 +24,8 @@ jobs:
         env:
           HUSKY: 0
 
-      - name: Run lint
+      - name: Check code style
         run: npx eslint .
 
       - name: Run unit tests
-        run: npm run test:unit -- --coverage --testTimeout=30000 --reporters=github-actions --reporters=summary
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          flags: unit
-          fail_ci_if_error: false
+        run: npm run test:unit -- --testTimeout=30000 --reporters=github-actions --reporters=summary

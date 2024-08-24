@@ -84,20 +84,6 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "coverageProvider": "v8",
-    "coverageReporters": [
-      "lcov",
-      "text",
-      "text-summary",
-      "json"
-    ],
-    "coveragePathIgnorePatterns": [
-      "node_modules/",
-      "transpiled/"
-    ],
-    "collectCoverageFrom": [
-      "**/source/**"
-    ],
     "roots": [
       "<rootDir>/runtime",
       "<rootDir>/connectors",
