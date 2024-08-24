@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import * as assert from 'node:assert'
-
+import { get } from './get'
 import type { JwtHeader, IdToken, Trust } from '../types'
 
 export function decodeJwt (token: string): {
@@ -31,7 +31,7 @@ export function validateJwtPayload (payload: unknown,
   header: JwtHeader): asserts payload is IdToken {
   assert.ok(trusted.length > 0, 'No trusted issuers provided')
 
-  // full list of validations is
+  // the full list of validations is
   // at https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
   assert.ok(payload !== null && typeof payload === 'object', 'Payload is not an object')
 
@@ -118,14 +118,14 @@ export async function validateSignature ({
   }
 
   // Getting issuer public keys
-  const oidcRequest = await cachedFetch(`${iss}/.well-known/openid-configuration`)
+  const oidcRequest = await get(`${iss}/.well-known/openid-configuration`)
 
   assert.ok(oidcRequest.ok,
     `Failed to fetch OpenID configuration: ${oidcRequest.statusText}`)
 
   const { jwks_uri: jwksUri } = (await oidcRequest.json()) as { jwks_uri: string }
 
-  const jwkRequest = await cachedFetch(jwksUri)
+  const jwkRequest = await get(jwksUri)
 
   assert.ok(jwkRequest.ok, `Failed to fetch issuer keys: ${jwkRequest.statusText}`)
 
@@ -175,17 +175,4 @@ export async function validateIdToken (token: string,
   })
 
   return payload
-}
-
-// workaround for ultrafetch being ESM only
-let _cachedFetch: typeof fetch | undefined
-
-export async function cachedFetch (url: string, init?: RequestInit): Promise<Response> {
-  if (typeof _cachedFetch !== 'function') {
-    const { withCache } = await import('ultrafetch')
-
-    _cachedFetch = withCache(fetch)
-  }
-
-  return _cachedFetch(url, init)
 }

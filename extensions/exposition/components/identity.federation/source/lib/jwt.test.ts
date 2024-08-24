@@ -2,7 +2,8 @@ import * as http from 'node:http'
 
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { once } from 'node:events'
-import { validateSignature, decodeJwt, validateJwtPayload, cachedFetch } from './jwt'
+import { validateSignature, decodeJwt, validateJwtPayload } from './jwt'
+import { get } from './get'
 import type { AddressInfo } from 'node:net'
 import type { IdToken, JwtHeader, Trust } from '../types'
 
@@ -104,7 +105,7 @@ describe('jwt', () => {
     } as Parameters<typeof validateSignature>[0])).rejects.toThrow('Signature does not match')
   })
 
-  describe.skip('cachedFetch', () => {
+  describe('cache', () => {
     let server: http.Server
     // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
     const handler = jest.fn<void, [http.IncomingMessage, http.ServerResponse]>()
@@ -116,9 +117,9 @@ describe('jwt', () => {
       server.listen(0, 'localhost')
       await once(server, 'listening')
 
-      const { address, port } = server.address() as AddressInfo
+      const { port } = server.address() as AddressInfo
 
-      endpoint = `http://${address}:${port}`
+      endpoint = `http://localhost:${port}`
     })
 
     afterEach(() => {
@@ -139,12 +140,15 @@ describe('jwt', () => {
         res.end()
       })
 
-      const firstRequest = await cachedFetch(endpoint)
+      const firstRequest = await get(endpoint)
 
       expect(firstRequest.ok).toBe(true)
-      await expect(firstRequest.json()).resolves.toEqual({ foo: 'bar' })
 
-      const secondRequest = await cachedFetch(endpoint)
+      const json = await firstRequest.json()
+
+      expect(json).toEqual({ foo: 'bar' })
+
+      const secondRequest = await get(endpoint)
 
       expect(secondRequest.ok).toBe(true)
       await expect(secondRequest.json()).resolves.toEqual({ foo: 'bar' })
@@ -158,13 +162,13 @@ describe('jwt', () => {
         res.end(JSON.stringify({ foo: 'bar' }))
       })
 
-      const firstRequest = await cachedFetch(endpoint + '/no-cache')
+      const firstRequest = await get(endpoint + '/no-cache')
 
       expect(firstRequest.headers.get('cache-control')).toBe('no-cache')
       expect(firstRequest.ok).toBe(true)
       await expect(firstRequest.json()).resolves.toEqual({ foo: 'bar' })
 
-      const secondRequest = await cachedFetch(endpoint + '/no-cache')
+      const secondRequest = await get(endpoint + '/no-cache')
 
       expect(secondRequest.ok).toBe(true)
       await expect(secondRequest.json()).resolves.toEqual({ foo: 'bar' })
