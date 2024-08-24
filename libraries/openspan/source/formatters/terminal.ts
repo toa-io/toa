@@ -20,7 +20,7 @@ export function format (entry: Entry): Buffer {
 }
 
 function print (value: any): string {
-  return PAD + util.format(value).split('\n').join('\n' + PAD)
+  return PAD + util.inspect(value, { depth: null, colors: true }).split('\n').join('\n' + PAD)
 }
 
 const PAD = '  '
