@@ -12,7 +12,7 @@ export class Console {
   private formatter = formatters.json
   private stdout: NodeJS.WriteStream = process.stdout
   private stderr: NodeJS.WriteStream = process.stderr
-  private context?: Unknown
+  private context?: any
 
   public constructor (options: ConsoleOptions = {}) {
     this.configure(options)
@@ -34,7 +34,7 @@ export class Console {
       this.context = options.context
   }
 
-  public fork (ctx?: Unknown): Console {
+  public fork (ctx?: any): Console {
     const options: ConsoleOptions = {
       level: this.level,
       format: this.formatter.name,
@@ -56,7 +56,7 @@ export class Console {
     const level = LEVELS[channel]
     const severity = channel.toUpperCase() as Severity
 
-    return (message: string, attributes?: Unknown, properties?: Unknown) => {
+    return (message: string, attributes?: any, properties?: any) => {
       if (level < this.level)
         return
 
@@ -106,7 +106,7 @@ export const console = new Console()
 
 export interface ConsoleOptions {
   level?: Channel | Level
-  context?: Unknown
+  context?: any
   format?: Format
   streams?: Streams
 }
@@ -120,12 +120,11 @@ export interface Entry {
   time: string
   severity: Severity
   message: string
-  attributes?: Unknown
-  context?: Unknown
+  attributes?: any
+  context?: any
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
 export type Severity = Uppercase<Channel>
 type Level = -1 | 0 | 1 | 2
-type Method = (message: string, attributes?: Unknown, properties?: Unknown) => void
-type Unknown = Record<string, unknown> | ({ code?: string | number, message: string })
+type Method = (message: string, attributes?: any, properties?: any) => void

@@ -86,6 +86,8 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     const id = basename(path)
     const folder = join(this.prefix, dirname(path))
 
+    console.debug('Uploading to Cloudinary', { path })
+
     await new Promise((resolve, reject) => {
       stream.pipe(this.cloudinary().uploader.upload_stream({
         public_id: id,
@@ -101,8 +103,6 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
       stream.on('error', reject)
     })
-
-    console.debug('Uploaded to Cloudinary', { path })
   }
 
   public async commit (): Promise<void> {
@@ -112,10 +112,10 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
   public async delete (path: string): Promise<void> {
     const id = join(this.prefix, path)
 
+    console.debug('Deleting from Cloudinary', { path: id })
+
     await this.cloudinary().uploader.destroy(id,
       { resource_type: this.type, invalidate: true })
-
-    console.debug('Deleted from Cloudinary', { path: id })
   }
 
   public async move (from: string, to: string): Promise<void | Error> {
@@ -139,17 +139,19 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     if (url === null)
       return ERR_NOT_FOUND
 
-    const response = await fetch(url, { method }).catch((e) => e)
-
-    // noinspection PointlessBooleanExpressionJS,SuspiciousTypeOfGuard
-    if (response instanceof Error || response.ok === false)
-      return ERR_NOT_FOUND
-
-    console.debug('Fetched from Cloudinary', {
+    console.debug('Fetching from Cloudinary', {
       method,
       path,
       url
     })
+
+    const response = await fetch(url, { method }).catch((e) => e)
+
+    if (response instanceof Error || response.ok === false) {
+      console.debug('Failed to fetch from Cloudinary', response)
+
+      return ERR_NOT_FOUND
+    }
 
     return response
   }
