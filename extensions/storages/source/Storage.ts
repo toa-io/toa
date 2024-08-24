@@ -19,13 +19,17 @@ export class Storage {
     const id = randomUUID().replace(/-/g, '')
     const location = this.locate(path, id)
 
-    const temp: string | Error = await this.provider.put(location, pipe).catch((error: any) => {
+    /**
+     * Provider can return or throw an error.
+     * If thrown error is TYPE_MISMATCH from the Scanner, it should be returned.
+     */
+    const error: Error | undefined = await this.provider.put(location, pipe).catch((error: any) => {
       if (error === scanner.error) return error
       else throw error
     })
 
-    if (temp instanceof Error)
-      return temp
+    if (error instanceof Error)
+      return error
 
     const metadata: Entry = {
       id,
