@@ -51,13 +51,19 @@ operations:
 
 exposition:
   /:
+    vary:embed:
+      authority: authority
     POST:
       anonymous: true
       io:input: [authority, credentials]
       io:output: [id]
-      vary:embed:
-        authority: authority
       endpoint: incept
+    /:id:
+      POST:
+        auth:id: id
+        io:input: [authority, credentials]
+        io:output: false
+        endpoint: incept
 
 configuration:
   schema:

@@ -22,7 +22,9 @@ export class Logs extends Connector implements extensions.Aspect {
   public invoke (operation: string, severity: Channel | 'fork', message: string | object, attributes?: object): Console | undefined {
     if (!(operation in this.consoles))
       this.consoles[operation] = this.console.fork({
-        endpoint: `${this.locator.id}.${operation}`
+        namespace: this.locator.namespace,
+        component: this.locator.name,
+        operation
       })
 
     if (severity === 'fork')

@@ -18,7 +18,6 @@ Feature: Identity Federation
       host: nex.toa.io
       authorization: Bearer ${{ User.id_token }}
       accept: application/yaml
-      content-type: application/yaml
       """
     Then the following reply is sent:
       """
@@ -76,7 +75,6 @@ Feature: Identity Federation
       host: nex.toa.io
       authorization: Bearer ${{ GoodUser.id_token }}
       accept: application/yaml
-      content-type: application/yaml
       """
     Then the following reply is sent:
       """
@@ -205,4 +203,61 @@ Feature: Identity Federation
       id: ${{ root.id }}
       roles:
         - system
+      """
+
+  Scenario: Adding federation to an existing identity
+    Given the `identity.federation` configuration:
+      """yaml
+      trust:
+        - iss: http://localhost:44444
+      """
+    And the `identity.basic` database is empty
+
+    # create an identity
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+      accept: application/yaml
+
+      username: #{{ id | set Bob.username }}
+      password: #{{ password 8 | set Bob.password }}
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ Bob.id }}
+      """
+
+    When the IDP token for Bob is issued
+
+    # add federation
+    When the following request is received:
+      """
+      POST /identity/federation/${{ User.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic #{{ basic Bob }}
+      content-type: application/yaml
+      accept: application/yaml
+
+      credentials: ${{ Bob.id_token }}
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    And the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Bob.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ Bob.id }}
       """

@@ -176,7 +176,7 @@ Feature: Optimistic concurrency control
       """
       400 Bad Request
 
-      Invalid ETag.
+      Invalid ETag
       """
 
   Scenario: Etag with non-queryable operation
