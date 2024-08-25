@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "1.0.0-alpha.92",
+  "version": "1.0.0-alpha.93",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,15 +22,15 @@
     "@toa.io/runtime": "*"
   },
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.63",
+    "@toa.io/generic": "1.0.0-alpha.93",
     "@toa.io/kubernetes": "1.0.0-alpha.63",
-    "@toa.io/norm": "1.0.0-alpha.92",
-    "@toa.io/operations": "1.0.0-alpha.92",
-    "@toa.io/yaml": "1.0.0-alpha.63",
+    "@toa.io/norm": "1.0.0-alpha.93",
+    "@toa.io/operations": "1.0.0-alpha.93",
+    "@toa.io/yaml": "1.0.0-alpha.93",
     "dotenv": "16.1.1",
     "find-up": "5.0.0",
     "jsonpath": "1.1.1",
-    "openspan": "1.0.0-alpha.92",
+    "openspan": "1.0.0-alpha.93",
     "paseto": "3.1.4",
     "yargs": "17.6.2"
   },
