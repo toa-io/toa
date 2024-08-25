@@ -243,5 +243,5 @@ Feature: Octets directive family
       404 Not Found
       content-type: text/plain
 
-      Trailing slash is redundant.
+      Trailing slash is redundant
       """

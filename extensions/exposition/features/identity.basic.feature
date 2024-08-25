@@ -207,7 +207,7 @@ Feature: Basic authentication
       422 Unprocessable Entity
 
       code: <code>
-      message: <problem> is not meeting the requirements.
+      message: <problem> is not meeting the requirements
       """
     Examples:
       | username                                                                                                                          | password    | problem  | code             |
@@ -318,7 +318,7 @@ Feature: Basic authentication
       422 Unprocessable Entity
 
       code: PRINCIPAL_LOCKED
-      message: Principal username cannot be changed.
+      message: Principal username cannot be changed
       """
 
   Scenario: Creating an Identity using inception with existing credentials

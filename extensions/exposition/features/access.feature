@@ -421,12 +421,12 @@ Feature: Access authorization
       """
       403 Forbidden
 
-      Basic authentication scheme is required to access this resource.
+      Basic authentication scheme is required to access this resource
       """
 
   Scenario: Adding a role without required permissions
 
-  Trunk directives should not be applied to the Identity management resources.
+  Trunk directives should not be applied to the Identity management resources
 
     Given the annotation:
       """yaml

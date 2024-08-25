@@ -53,15 +53,3 @@ export interface IdToken {
   iat: number
   nbf?: number
 }
-
-export interface AuthenticateInput {
-  authority: string
-  credentials: string
-}
-
-export interface AuthenticateOutput {
-  identity: {
-    id: string
-    claim: Pick<IdToken, 'iss' | 'sub' | 'aud'>
-  }
-}

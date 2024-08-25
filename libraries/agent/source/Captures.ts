@@ -34,10 +34,6 @@ export class Captures extends Map<string, string> {
     return text
   }
 
-  // GET /2e87be116aa84c378f5267738170aefe/ HTTP/1.1
-  // host: the.one.com
-  // authorization: Basic ODM0NDIyOTRjNDNhNDM4MzliN2FlOWRlZjY2MzliMWM6Z29DZEJiYyU=
-
   /**
    * @returns `undefined` if `source` doesn't match `matcher`
    * or array of captured keys (can be empty)

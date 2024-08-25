@@ -159,12 +159,12 @@ export async function validateSignature ({
   assert.ok(signatureValid, 'Failed to validate signature')
 }
 
-export async function validateIdToken (token: string,
-  trusted?: Trust[]): Promise<IdToken> {
+export async function decode (token: string, trusted?: Trust[]): Promise<IdToken> {
   const { header, payload, rawHeader, rawPayload, signature } = decodeJwt(token)
 
   validateJwtHeader(header)
   validateJwtPayload(payload, trusted, header)
+
   await validateSignature({
     header,
     rawHeader,
