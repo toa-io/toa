@@ -95,6 +95,22 @@ describe('put', () => {
     expect(created).toBeLessThanOrEqual(now)
     expect(created).toBeGreaterThanOrEqual(startCreation)
   })
+
+  it('should store with given id', async () => {
+    const stream = createReadStream('lenna.png')
+    const id = Math.random().toString(36).slice(2)
+
+    const entry = await storage.put(dir, stream, { id }) as Entry
+
+    expect(entry.id).toBe(id)
+
+    const check = await storage.head(`${dir}/${id}`)
+
+    if (check instanceof Error)
+      throw check
+
+    expect(check.id).toBe(id)
+  })
 })
 
 describe('get, head', () => {

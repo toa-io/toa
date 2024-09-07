@@ -102,6 +102,7 @@ export class Put extends Directive {
       'LOCATION_UNTRUSTED', () => new http.Forbidden(error.message),
       'LOCATION_LENGTH', () => new http.BadRequest(error.message),
       'LOCATION_UNAVAILABLE', () => new http.NotFound(error.message),
+      'INVALID_ID', () => new http.BadRequest(error.message),
       error)
   }
 

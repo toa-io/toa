@@ -236,7 +236,7 @@ Feature: Identity Federation
     # add federation
     When the following request is received:
       """
-      POST /identity/federation/${{ User.id }}/ HTTP/1.1
+      POST /identity/federation/${{ Bob.id }}/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic #{{ basic Bob }}
       content-type: application/yaml

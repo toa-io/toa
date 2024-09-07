@@ -1,8 +1,7 @@
-Feature: Octets `content-attributes` header
+Feature: Octets metadata
 
-  Scenario: Sending `content-attributes` header
-    Given the `octets.tester` is running
-    And the annotation:
+  Scenario: Content-ID
+    Given the annotation:
       """yaml
       /:
         io:output: true
@@ -18,8 +17,53 @@ Feature: Octets `content-attributes` header
       """
     When the stream of `lenna.ascii` is received with the following headers:
       """
-      POST /attributes-header/ HTTP/1.1
+      POST /attributes/ HTTP/1.1
       host: nex.toa.io
+      accept: application/yaml
+      content-type: application/octet-stream
+      content-id: hello
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: hello
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST /attributes/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      content-type: application/octet-stream
+      content-id: hello.txt
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      Invalid Content-ID
+      """
+
+  Scenario: Content-Attributes
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:anonymous: true
+        octets:context: octets
+        /*:
+          POST:
+            octets:put: ~
+          /*:
+            GET:
+              octets:get:
+                meta: true
+      """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST /attributes/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
       content-type: application/octet-stream
       content-attributes: foo, bar=baz=1
       content-attributes: baz=1
@@ -27,10 +71,12 @@ Feature: Octets `content-attributes` header
     Then the following reply is sent:
       """
       201 Created
+
+      id: ${{ id }}
       """
     When the following request is received:
       """
-      GET /attributes-header/10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      GET /attributes/${{ id }} HTTP/1.1
       host: nex.toa.io
       accept: application/vnd.toa.octets.entry+yaml
       """
@@ -38,7 +84,7 @@ Feature: Octets `content-attributes` header
       """
       200 OK
 
-      id: 10cf16b458f759e0d617f2f3d83599ff
+      id: ${{ id }}
       type: application/octet-stream
       size: 8169
       checksum: 10cf16b458f759e0d617f2f3d83599ff

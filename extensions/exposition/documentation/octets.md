@@ -45,15 +45,19 @@ The value of the directive is `null` or an object with the following properties:
         analyze: images.analyze
 ```
 
+`content-id` header can be used to set the ID of the Entry.
+The value must match the following regular expression `^[a-zA-Z0-9-_]{1,16}$`.
+
 Non-standard `content-attributes` header can be used
 to set initial [metadata](/extensions/storages/readme.md#entry) value for the Entry.
 
-The value of the `content-meta` header is a comma-separated list of key-value string pairs.
+The value of the `content-attributes` header is a comma-separated list of key-value string pairs.
 If no value is provided for a key, the string `true` is used.
 
 ```http
 POST /images/ HTTP/1.1
 content-type: image/jpeg
+content-id: example-id
 content-attributes: foo, bar=baz
 content-attributes: baz=1
 ```

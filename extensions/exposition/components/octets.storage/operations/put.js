@@ -7,6 +7,7 @@ const { match } = require('matchacho')
 async function put (input, context) {
   const { storage, request, accept, limit, trust } = input
   const path = request.url
+  const id = request.headers['content-id']
   const claim = request.headers['content-type']
   const attributes = parseAttributes(request.headers['content-attributes'])
   const location = request.headers['content-location']
@@ -15,6 +16,13 @@ async function put (input, context) {
   let body = request
 
   const options = { claim, accept, attributes }
+
+  if (id !== undefined) {
+    if (!ID_RX.test(id))
+      return ERR_INVALID_ID
+
+    options.id = id
+  }
 
   if (location !== undefined) {
     const length = Number.parseInt(request.headers['content-length'])
@@ -114,6 +122,9 @@ function toURL (location) {
 const ERR_UNTRUSTED = Err('LOCATION_UNTRUSTED', 'Location is not trusted')
 const ERR_LENGTH = Err('LOCATION_LENGTH', 'Content-Length must be 0 when Content-Location is used')
 const ERR_UNAVAILABLE = Err('LOCATION_UNAVAILABLE', 'Location is not available')
+const ERR_INVALID_ID = Err('INVALID_ID', 'Invalid Content-ID')
+
+const ID_RX = /^[a-zA-Z0-9-_]{1,16}$/
 
 exports.effect = put
 

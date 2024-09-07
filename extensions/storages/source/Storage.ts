@@ -16,7 +16,7 @@ export class Storage {
   public async put (path: string, stream: Readable, options?: Options): Maybe<Entry> {
     const scanner = new Scanner(options)
     const pipe = stream.pipe(scanner).on('error', () => undefined)
-    const id = randomUUID().replace(/-/g, '')
+    const id = options?.id ?? randomUUID().replace(/-/g, '')
     const location = this.locate(path, id)
 
     /**
@@ -86,6 +86,7 @@ export class Storage {
 const ENTRIES = '/'
 
 interface Options extends ScanOptions {
+  id?: string
   origin?: string
   attributes?: Attributes
 }
