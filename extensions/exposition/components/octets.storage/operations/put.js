@@ -7,6 +7,7 @@ const { match } = require('matchacho')
 async function put (input, context) {
   const { storage, request, accept, limit, trust } = input
   const path = request.url
+  const id = request.headers['content-id']
   const claim = request.headers['content-type']
   const attributes = parseAttributes(request.headers['content-attributes'])
   const location = request.headers['content-location']
@@ -15,6 +16,9 @@ async function put (input, context) {
   let body = request
 
   const options = { claim, accept, attributes }
+
+  if (id !== undefined)
+    options.id = id
 
   if (location !== undefined) {
     const length = Number.parseInt(request.headers['content-length'])
