@@ -1,6 +1,6 @@
 Feature: Octets metadata
 
-  Scenario: ID
+  Scenario: Content-ID
     Given the annotation:
       """yaml
       /:
@@ -29,8 +29,22 @@ Feature: Octets metadata
 
       id: hello
       """
+    When the stream of `lenna.ascii` is received with the following headers:
+      """
+      POST /attributes/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      content-type: application/octet-stream
+      content-id: hello.txt
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
 
-  Scenario: Attributes
+      Invalid Content-ID
+      """
+
+  Scenario: Content-Attributes
     Given the annotation:
       """yaml
       /:

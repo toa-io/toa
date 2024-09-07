@@ -16,6 +16,7 @@ operations:
       - LOCATION_UNTRUSTED
       - LOCATION_LENGTH
       - LOCATION_UNAVAILABLE
+      - INVALID_ID
   get: &simple
     bindings: ~
     input:
