@@ -42,7 +42,9 @@ export class Get extends Directive {
     if ('if-none-match' in input.request.headers)
       return { status: 304 }
 
-    const entry = await this.storage.invoke<Maybe<Stream>>('get', {
+    const endpoint = input.request.method === 'GET' ? 'get' : 'head'
+
+    const entry = await this.storage.invoke<Maybe<Stream>>(endpoint, {
       input: {
         storage,
         path: input.request.url
@@ -60,7 +62,7 @@ export class Get extends Directive {
 
     return {
       headers,
-      body: entry.stream
+      body: endpoint === 'get' ? entry.stream : undefined
     }
   }
 

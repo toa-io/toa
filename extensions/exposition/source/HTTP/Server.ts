@@ -104,7 +104,7 @@ export class Server extends Connector {
           status = 404
         else if (context.request.method === 'POST')
           status = 201
-        else if (message.body === undefined)
+        else if (message.body === undefined && context.request.method !== 'HEAD')
           status = 204
         else
           status = 200
@@ -149,7 +149,7 @@ export const PORT = 8000
 export const DELAY = 3 // seconds
 
 const DEFAULTS: Omit<Properties, 'authorities'> = {
-  methods: new Set<string>(['OPTIONS', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
+  methods: new Set<string>(['OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
   debug: false,
   trace: false,
   port: PORT,

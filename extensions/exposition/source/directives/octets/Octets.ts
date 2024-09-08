@@ -62,6 +62,7 @@ const DIRECTIVES: Record<string, Constructor> = {
   context: Context,
   put: Put,
   get: Get,
+  head: Get,
   delete: Delete,
   workflow: WorkflowDirective
 }
