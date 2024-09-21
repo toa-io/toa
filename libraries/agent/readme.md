@@ -12,6 +12,7 @@ Text-based HTTP client with variables and expressions.
   If `credentials` is omitted, generates a random username and password.
 - `now [shift]`: result of `Date.now()`, optionally shifted by a given number of milliseconds.[^1]
 - `set (variable)`: set a variable to the current pipeline value.
+- `print`: print the current pipeline value to the console.
 
 ```http
 POST /identity/basic/ HTTP/1.1

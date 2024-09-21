@@ -97,6 +97,12 @@ describe('pipelines', () => {
     expect(captures.substitute('hello #{{ now -86400000 }}')).toMatch(pastRx)
   })
 
+  it('should print', () => {
+    captures.substitute('hello #{{ now | print }}')
+
+    // look at the console
+  })
+
   it('should execute custom function', () => {
     const functions: Functions = {
       // eslint-disable-next-line max-params
