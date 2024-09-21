@@ -4,19 +4,21 @@ Text-based HTTP client with variables and expressions.
 
 ## Function pipelines
 
-- `id [length]`: generate UUID in hex format, truncated to a given length if provided
-- `email (@domain)`: generate email address with a given domain (default `@agent.test`)
-- `password [length]`: generate password of a given length (default `16`)
-- `basic (credentials)`: encode `credentials.username` and `credentials.password` to base64-encoded
-  credentials
-- `now [shift]`: result of `Date.now()`, optionally shifted by a given number of milliseconds[^1]
-- `set (variable)`: set a variable to the current pipeline value
+- `id [length]`: generate UUID in hex format, truncated to a given length if provided.
+- `email (@domain)`: generate email address with a given domain (default `@agent.test`).
+- `password [length]`: generate password of a given length (default `16`).
+- `basic [credentials]`: encode `credentials.username` and `credentials.password` to base64-encoded
+  credentials.
+  If `credentials` is omitted, generates a random username and password.
+- `now [shift]`: result of `Date.now()`, optionally shifted by a given number of milliseconds.[^1]
+- `set (variable)`: set a variable to the current pipeline value.
+- `omit`: do not substitute the current pipeline value.
 
 ```http
 POST /identity/basic/ HTTP/1.1
 host: the.one.com
-content-type: application/yaml
 accept: application/yaml
+content-type: application/yaml
 
 username: #{{ email @bubbas.net | set Bubba.username }}
 password: #{{ password 8 | set Bubba.password }}
