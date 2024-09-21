@@ -13,3 +13,8 @@ export const functions: Functions = {
 type Fn = (this: Captures, value: string, ...args: string[]) => string
 
 export type Functions = Record<string, Fn>
+
+export {
+  email,
+  password
+}

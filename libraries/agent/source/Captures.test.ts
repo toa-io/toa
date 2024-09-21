@@ -9,7 +9,7 @@ beforeEach(() => {
   captures = new Captures()
 })
 
-it('should capture parts of the source', async () => {
+it('should capture parts of the source', () => {
   captures.capture('hello world', 'hello ${{ word }}')
 
   const word = captures.get('word')
@@ -17,7 +17,7 @@ it('should capture parts of the source', async () => {
   expect(word).toBe('world')
 })
 
-it('should not capture parts of the words', async () => {
+it('should not capture parts of the words', () => {
   captures.capture('super-hello world', 'hello ${{ word }}')
 
   const word = captures.get('word')
@@ -25,7 +25,7 @@ it('should not capture parts of the words', async () => {
   expect(word).toBe(undefined)
 })
 
-it('should substitute multiple times', async () => {
+it('should substitute multiple times', () => {
   captures.set('word', 'foo')
 
   expect(captures.capture('hey foo foo', 'hey ${{ word }} ${{ word }}'))
@@ -35,7 +35,7 @@ it('should substitute multiple times', async () => {
     .toBe(null)
 })
 
-it('should substitute parts of the words', async () => {
+it('should substitute parts of the words', () => {
   captures.set('host', 'domain.com')
 
   expect(captures.capture('foo', 'https://${{ host }}/path'))
@@ -46,20 +46,20 @@ it('should substitute parts of the words', async () => {
 })
 
 describe('pipelines', () => {
-  it('should generate id', async () => {
+  it('should generate id', () => {
     const result = captures.substitute('hello #{{ id }}')
 
     expect(result).toMatch(/^hello [a-z0-9]{32}$/)
   })
 
-  it('should set variable', async () => {
+  it('should set variable', () => {
     const result = captures.substitute('hello #{{ id | set test }}')
 
     expect(result).toMatch(/^hello [a-z0-9]{32}$/)
     expect(captures.get('test')).toMatch(/^[a-z0-9]{32}$/)
   })
 
-  it('should encode basic credentials', async () => {
+  it('should encode basic credentials', () => {
     captures.set('Bubba.username', 'bubba')
     captures.set('Bubba.password', 'password')
 
@@ -68,17 +68,25 @@ describe('pipelines', () => {
     expect(result).toBe('Basic YnViYmE6cGFzc3dvcmQ=')
   })
 
-  it('should generate password', async () => {
+  it('should generate password', () => {
     expect(captures.substitute('#{{ password }}')).toMatch(/^.{16}$/)
     expect(captures.substitute('#{{ password 8 }}')).toMatch(/^.{8}$/)
   })
 
-  it('should generate email', async () => {
+  it('should generate email', () => {
     expect(captures.substitute('#{{ email }}')).toMatch(/^.*@agent\.test$/)
     expect(captures.substitute('#{{ email @example.com }}')).toMatch(/^.*@example\.com$/)
   })
 
-  it('should substitute now', async () => {
+  it('should generate random basic credentials', () => {
+    const credentials = captures.substitute('#{{ basic }}')
+    const [username, password] = Buffer.from(credentials, 'base64').toString().split(':')
+
+    expect(username).toMatch(/^.*@agent\.test$/)
+    expect(password).toMatch(/^.{16}$/)
+  })
+
+  it('should substitute now', () => {
     // non-deterministic :(
     const now = Date.now().toString().slice(0, -3)
     const past = (Date.now() - 86400000).toString().slice(0, -3)
@@ -89,7 +97,7 @@ describe('pipelines', () => {
     expect(captures.substitute('hello #{{ now -86400000 }}')).toMatch(pastRx)
   })
 
-  it('should execute custom function', async () => {
+  it('should execute custom function', () => {
     const functions: Functions = {
       // eslint-disable-next-line max-params
       concat: function (this: Captures, value: string, a: string, b: string): string {

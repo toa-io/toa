@@ -124,7 +124,7 @@ const ERR_LENGTH = Err('LOCATION_LENGTH', 'Content-Length must be 0 when Content
 const ERR_UNAVAILABLE = Err('LOCATION_UNAVAILABLE', 'Location is not available')
 const ERR_INVALID_ID = Err('INVALID_ID', 'Invalid Content-ID')
 
-const ID_RX = /^[a-zA-Z0-9-_]{1,16}$/
+const ID_RX = /^[a-zA-Z0-9-_]{1,32}$/
 
 exports.effect = put
 
