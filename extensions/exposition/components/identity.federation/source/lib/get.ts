@@ -20,9 +20,7 @@ export async function get (url: string, init?: RequestInit): Promise<Response> {
     return new Response(cached.body, { headers })
   }
 
-  // check request
   const response = await fetch(url, init)
-
   const policy = new Policy(request, { status: response.status, headers: toRecord(response.headers) })
   const ttl = policy.timeToLive()
 
