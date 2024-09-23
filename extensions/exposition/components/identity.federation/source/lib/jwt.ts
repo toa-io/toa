@@ -118,7 +118,7 @@ export async function validateSignature ({
   }
 
   // Getting issuer public keys
-  const oidcRequest = await get(`${iss}/.well-known/openid-configuration`)
+  const oidcRequest = await get(new URL('/.well-known/openid-configuration', iss).href)
 
   assert.ok(oidcRequest.ok,
     `Failed to fetch OpenID configuration: ${oidcRequest.statusText}`)
@@ -138,7 +138,7 @@ export async function validateSignature ({
 
   assert.ok(signingKeys.length > 0, 'No acceptable signing keys found')
 
-  assert.ok(kid === undefined || signingKeys.length === 1,
+  assert.ok(kid !== undefined || signingKeys.length === 1,
     'Signing key selection is not deterministic')
 
   const signingKey = kid === undefined ? signingKeys.find((k) => k.kid === kid) : keys[0]
