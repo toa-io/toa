@@ -65,9 +65,9 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
      * If the provided credentials already exist,
      * the inception will cause a unique constraint violation on the settle stage.
      */
-    const inception = directives.reduce((yes, directive) => yes || directive instanceof Incept, false)
+    // const inception = directives.reduce((yes, directive) => yes || directive instanceof Incept, false)
 
-    input.identity = inception ? null : await this.resolve(input.authority, input.request.headers.authorization)
+    input.identity = await this.resolve(input.authority, input.request.headers.authorization)
 
     for (const directive of directives) {
       const allow = await directive.authorize(input.identity, input, parameters)
@@ -162,7 +162,7 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   scheme: Scheme,
   echo: Echo,
   delegate: Delegate,
-  claim: Federation
+  claims: Federation
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans']

@@ -63,8 +63,7 @@ to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.ht
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
-Trusted providers are specified using the `identity.federation` property within the configuration
-annotation.
+Trusted providers are specified using the `identity.federation`  configuration.
 
 ```yaml
 # context.toa.yaml
@@ -83,7 +82,17 @@ configuration:
           HS384:
             key0: <THE-SECRET-STRING-FOR-HS384>
             key1: <THE-SECRET-STRING-FOR-HS384> # selected by `kid` in the JWT header
+    principal:
+      iss: https://accounts.google.com
+      sub: 4218230498234
+    implicit: true
 ```
+
+`principal` specifies the values of the `iss` and `sub` claims of an Identity that will be granted
+with a `system` role.
+
+`implicit` indicates whether the Identity should be implicitly created when a valid token for a
+non-existent Identity is provided (default `false`).
 
 ## Identity inception
 

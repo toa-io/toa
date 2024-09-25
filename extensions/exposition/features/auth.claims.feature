@@ -16,7 +16,7 @@ Feature: Federated identity authentication
       """yaml
       /:
         GET:
-          auth:claim:
+          auth:claims:
             iss: http://localhost:44444
             aud: test
             sub: Bob
@@ -39,7 +39,7 @@ Feature: Federated identity authentication
       """yaml
       /:
         GET:
-          auth:claim:
+          auth:claims:
             sub: Bob
           dev:stub: ok
       """
@@ -60,7 +60,7 @@ Feature: Federated identity authentication
       """yaml
       /:
         GET:
-          auth:claim:
+          auth:claims:
             iss: http://localhost:44444
             aud: test
           dev:stub: ok
@@ -82,7 +82,7 @@ Feature: Federated identity authentication
       """yaml
       /:
         GET:
-          auth:claim:
+          auth:claims:
             iss: http://localhost:44444
             sub: Alice
           dev:stub: ok
@@ -104,7 +104,7 @@ Feature: Federated identity authentication
       """yaml
       /:
         GET:
-          auth:claim:
+          auth:claims:
             iss: http://localhost:44444
             aud: goalkeepers
           dev:stub: ok
@@ -129,7 +129,7 @@ Feature: Federated identity authentication
       /:
         /:id:
           GET:
-            auth:claim:
+            auth:claims:
               aud: :authority
               sub: /:id
             dev:stub: ok
@@ -152,7 +152,7 @@ Feature: Federated identity authentication
       /:
         /:id:
           GET:
-            auth:claim:
+            auth:claims:
               iss: :domain
               sub: /:id
             dev:stub: ok

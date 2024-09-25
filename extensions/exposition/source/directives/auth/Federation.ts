@@ -3,20 +3,20 @@ import type { Directive, Identity, Input } from './types'
 import type { Parameter } from '../../RTD'
 
 export class Federation implements Directive {
-  private readonly matchers: Array<[keyof Claim, Matcher]>
+  private readonly matchers: Array<[keyof Claims, Matcher]>
 
   public constructor (options: Options) {
-    this.matchers = (Object.entries(options) as Array<[keyof Claim, string]>)
+    this.matchers = (Object.entries(options) as Array<[keyof Claims, string]>)
       .map(([key, value]) => [key, toMatcher(value)])
 
     assert.ok(this.matchers.length > 0, 'auth:claim requires at least one property defined')
   }
 
   public authorize (identity: Identity | null, context: Input, parameters: Parameter[]): boolean {
-    if (identity === null || !('claim' in identity))
+    if (identity === null || !('claims' in identity))
       return false
 
-    const claim = (identity as FederatedIdentity).claim
+    const claim = (identity as FederatedIdentity).claims
 
     for (const [key, match] of this.matchers)
       if (!match(claim[key], context, parameters))
@@ -69,16 +69,16 @@ function codomain (iss: string, context: Input): boolean {
 
 type Matcher = (value: string | string[], context: Input, parameters: Parameter[]) => boolean
 
-interface Claim {
+interface Claims {
   iss: string
   sub: string
   aud: string | string[]
 }
 
-interface Options extends Partial<Claim> {
+interface Options extends Partial<Claims> {
   iss: string
 }
 
 interface FederatedIdentity extends Identity {
-  claim: Claim
+  claims: Claims
 }

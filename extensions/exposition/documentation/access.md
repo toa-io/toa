@@ -71,13 +71,14 @@ The `role` directive can be used with a placeholder in the route.
   role: app:{org-id}:moderator
 ```
 
-### `claim`
+### `claims`
 
-Grants access if `Bearer` authentication scheme is used and the claim's property matches specified.
+Grants access if `Bearer` authentication scheme is used
+and the Token's claims matches the specified values.
 
 ```yaml
 /:
-  auth:claim:
+  auth:claims:
     iss: https://id.example.com
     sub: someone
     aud: stars
@@ -93,7 +94,7 @@ Values may refer to the Route parameters, or a request authority:
 
 ```yaml
 /secrets/:org-id:
-  auth:claim:
+  auth:claims:
     iss: https://id.org.com
     sub: /:org-id
     aud: :authority
@@ -107,7 +108,7 @@ and `sub.images.example.com`, but not `images.another.com`.
 
 ```yaml
 /images/:user-id:
-  auth:claim:
+  auth:claims:
     iss: :domain
     sub: /:org-id
 ```
