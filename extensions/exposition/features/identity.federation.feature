@@ -5,11 +5,12 @@ Feature: Identity Federation
     Given the `identity.federation` database is empty
     And local IDP is running
 
-  Scenario: Getting identity for a new user
+  Scenario: Asymmetric tokens
     Given the `identity.federation` configuration:
       """yaml
       trust:
         - iss: http://localhost:44444
+      implicit: true
       """
     And the IDP token for User is issued
     When the following request is received:
@@ -56,7 +57,7 @@ Feature: Identity Federation
       id: ${{ User.id }}
       """
 
-  Scenario: Getting identity for a user with symmetric tokens
+  Scenario: Symmetric tokens
     Given the `identity.federation` configuration:
       """yaml
       trust:
@@ -64,6 +65,7 @@ Feature: Identity Federation
           secrets:
             HS384:
               k1: the-secret
+      implicit: true
       """
     And the IDP HS384 token for GoodUser is issued with following secret:
       """
@@ -157,7 +159,7 @@ Feature: Identity Federation
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      403 Forbidden
       """
 
   Scenario: Granting a `system` role to a Principal
@@ -168,6 +170,7 @@ Feature: Identity Federation
       principal:
         iss: http://localhost:44444
         sub: root
+      implicit: true
       """
     And the IDP token for root is issued
 
@@ -187,6 +190,8 @@ Feature: Identity Federation
 
       id: ${{ root.id }}
       """
+
+    Then after 0.1 seconds
 
     # check the role
     When the following request is received:

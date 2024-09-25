@@ -7,6 +7,7 @@ Feature: OIDC tokens with authorities
       """yaml
       trust:
         - iss: http://localhost:44444
+      implicit: true
       """
 
 
@@ -27,31 +28,27 @@ Feature: OIDC tokens with authorities
     # create identities
     When the following request is received:
       """
-      POST /identity/federation/ HTTP/1.1
+      GET /identity/ HTTP/1.1
       host: the.one.com
+      authorization: Bearer ${{ One.id_token }}
       accept: application/yaml
-      content-type: application/yaml
-
-      token: ${{ One.id_token }}
       """
     Then the following reply is sent:
       """
-      201 Created
+      200 OK
 
       id: ${{ One.id }}
       """
     When the following request is received:
       """
-      POST /identity/federation/ HTTP/1.1
+      GET /identity/ HTTP/1.1
+      authorization: Bearer ${{ Two.id_token }}
       host: the.two.com
       accept: application/yaml
-      content-type: application/yaml
-
-      token: ${{ Two.id_token }}
       """
     Then the following reply is sent:
       """
-      201 Created
+      200 OK
 
       id: ${{ Two.id }}
       """

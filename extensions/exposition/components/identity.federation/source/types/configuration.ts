@@ -1,4 +1,5 @@
 export interface Configuration {
+  implicit: boolean
   trust?: Trust[]
   principal?: Principal
 }

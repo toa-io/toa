@@ -48,20 +48,17 @@ operations:
           iss: string
           aud: string
           sub: string
+    errors:
+      - ERR_NOT_FOUND
 
 exposition:
   /:
-    vary:embed:
-      authority: authority
-    POST:
-      anonymous: true
-      io:input: [authority, credentials]
-      io:output: [id]
-      endpoint: incept
     /:id:
       POST:
+        vary:embed:
+          authority: authority
         auth:id: id
-        io:input: [authority, credentials]
+        io:input: [credentials]
         io:output: false
         endpoint: incept
 
@@ -72,7 +69,7 @@ configuration:
       trust:
         type: array
         items:
-          title: Trust Configuration
+          title: Trusted Identity Providers
           type: object
           additionalProperties: false
           properties:
@@ -102,7 +99,8 @@ configuration:
           required:
             - iss
       principal:
-        description: The value of `sub` of an identity token that will be assigned the `system` Role
+        title: Principal
+        description: Subject that will be assigned the `system` Role
         type: object
         properties:
           iss:
@@ -114,4 +112,9 @@ configuration:
           - iss
           - sub
         additionalProperties: false
+      implicit:
+        title: Implicitly create Identity
+        description: Enabling this will make Identity inception impossible
+        type: boolean
+        default: false
     additionalProperties: false
