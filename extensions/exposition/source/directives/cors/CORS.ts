@@ -34,6 +34,7 @@ export class CORS implements Interceptor {
     input.pipelines.response.push((output) => {
       output.headers ??= new Headers()
       output.headers.set('access-control-allow-origin', origin)
+      output.headers.set('access-control-allow-credentials', 'true')
       output.headers.set('access-control-expose-headers',
         'authorization, content-type, content-length, etag')
 
