@@ -82,7 +82,7 @@ The following request headers are allowed:
 - `etag`
 - `if-match`
 - `if-none-match`
-- headers used by the [`vary:embed` directive](vary.md#embeddings)
+- headers used by the [`map` directive family](map.md)
 
 The following response headers are exposed:
 
