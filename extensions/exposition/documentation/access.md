@@ -25,7 +25,11 @@ responds with an authorization error.
 Grants access if its value is `true` and no credentials were provided[^1].
 
 [^1]: Credentials in the request make the
-response [non-cachable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
+response [non-cacheable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
+
+### `anyone`
+
+Grants access if its value is `true` and valid credentials were provided.
 
 ### `id`
 
@@ -90,7 +94,7 @@ and the Token's claims matches the specified values.
 
 At least one property is required.
 
-Values may refer to the Route parameters, or a request authority:
+Values may refer to the Route parameters or the request authority:
 
 ```yaml
 /secrets/:org-id:
