@@ -9,17 +9,17 @@ export class Federation implements Directive {
     this.matchers = (Object.entries(options) as Array<[keyof Claims, string]>)
       .map(([key, value]) => [key, toMatcher(value)])
 
-    assert.ok(this.matchers.length > 0, 'auth:claim requires at least one property defined')
+    assert.ok(this.matchers.length > 0, '`auth:claims` requires at least one property defined')
   }
 
   public authorize (identity: Identity | null, context: Input, parameters: Parameter[]): boolean {
     if (identity === null || !('claims' in identity))
       return false
 
-    const claim = (identity as FederatedIdentity).claims
+    const claims = (identity as FederatedIdentity).claims
 
     for (const [key, match] of this.matchers)
-      if (!match(claim[key], context, parameters))
+      if (!match(claims[key], context, parameters))
         return false
 
     return true
@@ -40,7 +40,7 @@ function toMatcher (expression: string): Matcher {
           : codomain(value, context)
       }
 
-    throw new Error(`Unknown 'auth:claim' syntax: ${expression}`)
+    throw new Error('Unknown `auth:claims` syntax: ' + expression)
   }
 
   if (expression.startsWith('/:')) {

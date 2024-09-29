@@ -204,3 +204,38 @@ Feature: HTTP context mapping
 
       Hello the.two.com
       """
+
+  Scenario: Mapping Bearer token claims
+    Given local IDP is running
+    And the `identity.federation` configuration:
+      """yaml
+      trust:
+        - iss: http://localhost:44444
+      implicit: true
+      """
+    And the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anyone: true
+          io:output: true
+          GET:
+            map:claims:
+              name: email
+            endpoint: compute
+      """
+    And the IDP token for Alice is issued
+
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      authorization: Bearer ${{ Alice.id_token }}
+      host: the.two.com
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello Alice@test.local
+      """

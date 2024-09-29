@@ -9,5 +9,5 @@ export abstract class Mapping<T = unknown> {
     this.value = value
   }
 
-  public abstract properties (context: Input, parameters: Parameter[], directives: Directive[]): Record<string, unknown>
+  public abstract properties (context: Input, parameters: Parameter[], directives: Directive[]): Record<string, unknown> | null
 }

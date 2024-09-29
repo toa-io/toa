@@ -44,7 +44,7 @@ operations:
     output:
       identity:
         id: string
-        claim:
+        claims:
           iss: string
           aud: string
           sub: string

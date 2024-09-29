@@ -6,6 +6,7 @@ import { Languages } from './Languages'
 import { Language } from './Language'
 import { Segments } from './Segments'
 import { Authority } from './Authority'
+import { Claims } from './Claims'
 import type { Directive } from './Directive'
 import type { Properties } from './Properties'
 import type { DirectiveFamily, Parameter } from '../../RTD'
@@ -50,5 +51,6 @@ const mappings: Record<string, new (value: any) => Directive> = {
   headers: Headers,
   languages: Languages,
   language: Language,
-  segments: Segments
+  segments: Segments,
+  claims: Claims
 }
