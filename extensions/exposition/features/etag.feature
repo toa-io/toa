@@ -186,8 +186,8 @@ Feature: Optimistic concurrency control
         /:foo/:id:
           GET:
             io:output: true
-            vary:embed:
-              name: :if-match
+            map:headers:
+              name: if-match
             endpoint: affect
       """
     When the following request is received:

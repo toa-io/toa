@@ -92,5 +92,6 @@ export const shortcuts: RTD.syntax.Shortcuts = new Map([
   ['rule', 'auth:rule'],
   ['incept', 'auth:incept'],
   ['input', 'io:input'],
-  ['output', 'io:output']
+  ['output', 'io:output'],
+  ['languages', 'map:languages']
 ])

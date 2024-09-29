@@ -56,18 +56,6 @@ of the [CORS](protocol.md#cors).
 [Multiple header fields](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2) are combined
 as a comma-separated list.
 
-### Fallbacks
-
-If the key in the mapping is an array, the first non-empty resolved value is used.
-
-```yaml
-map:headers:
-  ip:
-    - CloudFront-Viewer-Address
-    - CF-Connecting-IP
-    - X-Appengine-User-IP
-```
-
 ## Route parameters
 
 The `map:segments` directive maps the values of route parameters to operation call input properties.

@@ -55,8 +55,7 @@ exposition:
   /:
     /:id:
       POST:
-        vary:embed:
-          authority: authority
+        map:authority: authority
         auth:id: id
         io:input: [credentials]
         io:output: false

@@ -1,15 +1,14 @@
-Feature: The Vary directive family
+Feature: HTTP context mapping
 
-  Scenario Outline: Embedding a `<result>` language code
+  Scenario Outline: Mapping `<result>` language code
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
         /:
           io:output: true
-          vary:languages: [en, fr]
+          map:languages: [en, fr]
           GET:
-            vary:embed:
-              name: language  # embed resolved language code as a `name` property of the operation input
+            map:language: name # map resolved language code to the `name` property of the operation input
             endpoint: compute
       """
     When the following request is received:
@@ -39,7 +38,7 @@ Feature: The Vary directive family
     Given the annotation:
     """
     /:
-      vary:languages: [en, fr]
+      languages: [en, fr]
     """
     And the `echo` is running with the following manifest:
       """yaml
@@ -48,33 +47,55 @@ Feature: The Vary directive family
           io:output: true
           GET:
             anonymous: true
-            vary:embed:
-              name: language
+            map:language: name
             endpoint: compute
       """
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
       host: nex.toa.io
-      accept: application/yaml
       accept-language: fr
       """
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
       content-language: fr
       """
 
-  Scenario: Embedding a value of an arbitrary header
+  Scenario: Headers used by mappings are added to CORS permissions
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          vary:languages: [en, fr]
+          GET:
+            map:language: name
+            map:headers:
+              name: foo
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      OPTIONS / HTTP/1.1
+      host: nex.toa.io
+      origin: https://example.com
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, accept-language, foo
+      """
+
+  Scenario: Mapping the value of an arbitrary header
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
         /:
           io:output: true
           GET:
-            vary:embed:
-              name: :foo
+            map:headers:
+              name: foo
             endpoint: compute
       """
     When the following request is received:
@@ -93,15 +114,15 @@ Feature: The Vary directive family
       Hello bar
       """
 
-  Scenario: Embedding a `host` header value
+  Scenario: Mapping the `host` header value
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
         /:
           io:output: true
           GET:
-            vary:embed:
-              name: :Host
+            map:headers:
+              name: host
             endpoint: compute
       """
     When the following request is received:
@@ -117,54 +138,18 @@ Feature: The Vary directive family
       content-type: application/yaml
       vary: accept
 
-      Hello 127.0.0.1:8000
+      Hello nex.toa.io
       """
 
-  Scenario Outline: Embedding a value from the list of options
-    Given the `echo` is running with the following manifest:
-        """yaml
-        exposition:
-          /:
-            io:output: true
-            vary:languages: [en, fr]
-            GET:
-              vary:embed:
-                name:
-                  - :foo
-                  - :bar
-                  - language
-              endpoint: compute
-        """
-    When the following request is received:
-        """
-        GET /echo/ HTTP/1.1
-      host: nex.toa.io
-        accept: application/yaml
-        <header>: <value>
-        """
-    Then the following reply is sent:
-        """
-        200 OK
-        content-type: application/yaml
-        vary: <header>, accept
-
-        Hello <value>
-        """
-    Examples:
-      | header          | value |
-      | foo             | bar   |
-      | bar             | baz   |
-      | accept-language | en    |
-
-  Scenario: Embedding route parameter
+  Scenario: Mapping a route parameter
     Given the `echo` is running with the following manifest:
       """yaml
       exposition:
         /:friend:
           io:output: true
           GET:
-            vary:embed:
-              name: /:friend
+            map:segments:
+              name: friend
             endpoint: compute
       """
     When the following request is received:
@@ -180,36 +165,7 @@ Feature: The Vary directive family
       Hello Ken
       """
 
-  Scenario: Adding headers used by defined embeddings to CORS permissions
-    Given the `echo` is running with the following manifest:
-        """yaml
-        exposition:
-          /:
-            io:output: true
-            vary:languages: [en, fr]
-            GET:
-              vary:embed:
-                name:
-                  - language
-                  - :foo
-                  - :FOO
-                  - :bar
-              endpoint: compute
-        """
-    When the following request is received:
-        """
-        OPTIONS / HTTP/1.1
-      host: nex.toa.io
-        origin: https://example.com
-        access-control-request-headers: whatever
-        """
-    Then the following reply is sent:
-        """
-        204 No Content
-        access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, accept-language, foo, bar
-        """
-
-  Scenario: Embedding authority
+  Scenario: Mapping the authority
     Given the annotation:
       """yaml
       authorities:
@@ -221,8 +177,7 @@ Feature: The Vary directive family
         /:
           io:output: true
           GET:
-            vary:embed:
-              name: authority
+            map:authority: name
             endpoint: compute
       """
     When the following request is received:
