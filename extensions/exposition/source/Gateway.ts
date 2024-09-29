@@ -131,16 +131,18 @@ export class Gateway extends Connector {
 
     this.merged.add(id)
 
+    const attributes = {
+      namespace: branch.namespace,
+      component: branch.component,
+      version: branch.version
+    }
+
     try {
       this.tree.merge(branch.node, branch)
 
-      console.info('Branch merged', {
-        namespace: branch.namespace,
-        component: branch.component,
-        version: branch.version
-      })
-    } catch (exception: any) {
-      console.error('Branch merge exception', exception as Record<string, unknown>)
+      console.info('Branch merged', attributes)
+    } catch (exception: unknown) {
+      console.error('Branch merge exception', { exception, ...attributes })
     }
   }
 }

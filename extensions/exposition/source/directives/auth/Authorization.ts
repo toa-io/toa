@@ -12,6 +12,7 @@ import { Delegate } from './Delegate'
 import { Federation } from './Federation'
 import { split } from './split'
 import { PRIMARY, PROVIDERS } from './schemes'
+import { Anyone } from './Anyone'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
@@ -155,6 +156,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
 const constructors: Record<string, new (value: any, argument?: any) => Directive> = {
   anonymous: Anonymous,
+  anyone: Anyone,
   id: Id,
   role: Role,
   rule: Rule,

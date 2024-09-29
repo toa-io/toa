@@ -1,5 +1,5 @@
 export interface Properties {
-  languages?: string[]
+  languages: string[]
 }
 
 export class Property<K extends keyof Properties = keyof Properties> {
@@ -12,6 +12,4 @@ export class Property<K extends keyof Properties = keyof Properties> {
   }
 }
 
-export const properties: Properties = {
-  languages: []
-}
+export const properties = new Set('languages')

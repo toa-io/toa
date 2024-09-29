@@ -111,6 +111,7 @@ export class IdP {
         iss: IdP.issuer,
         sub: user,
         aud: 'test',
+        email: user + '@test.local',
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor((Date.now() + 1000 * 60 * 5) / 1000)
       }

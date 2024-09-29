@@ -17,9 +17,9 @@ exposition:
     two: the.two.com
 ```
 
-## Embedding
+## Mappings
 
-To pass the requested authority to the operation call, [`vary:embed` directive](vary.md#embeddings)
+To pass the requested authority to the operation call, [`map:authority` directive](map#embeddings)
 can be used.
 
 ```yaml
@@ -28,13 +28,12 @@ can be used.
 exposition:
   /:
     GET:
-      vary:embed:
-        app: authority
+      map:authority: hostname
       endpoint: observe
 ```
 
 If the value of the `authority` pseudo-header is not present in the `authorities` definition,
-then the value of the `authority` pseudo-header is embedded as is.
+then the value is embedded as is.
 
 ## Identity
 

@@ -51,9 +51,8 @@ exposition:
   /:
     POST:
       anonymous: true
+      map:authority: authority
       io:output: [id]
-      vary:embed:
-        authority: authority
       endpoint: create
   /:id:
     io:output: [id]

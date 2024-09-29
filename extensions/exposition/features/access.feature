@@ -52,6 +52,56 @@ Feature: Access authorization
       access: granted!
       """
 
+  Scenario: Allow access to anyone
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:anyone: true
+        GET:
+          dev:stub:
+            access: granted!
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      access: granted!
+      """
+
+    # request without credentials
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+
+    # request with invalid credentials
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic bm9uOmV4aXN0ZW50
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+
   Scenario: Deny access with credentials to a resource with anonymous access
     Given the annotation:
       """yaml

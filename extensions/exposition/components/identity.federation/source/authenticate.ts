@@ -5,7 +5,8 @@ import { decode } from './lib/jwt'
 import type { Context, IdToken } from './types'
 
 async function authenticate ({ authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
-  const { iss, sub, aud } = await decode(credentials, context.configuration.trust)
+  const claims = await decode(credentials, context.configuration.trust)
+  const { iss, sub } = claims
 
   const identity = context.configuration.implicit
     ? await context.local.ensure({ entity: { authority, iss, sub } })
@@ -14,7 +15,7 @@ async function authenticate ({ authority, credentials }: Input, context: Context
   if (identity === null)
     return ERR_NOT_FOUND
 
-  return { identity: { id: identity.id, claim: { iss, sub, aud } } }
+  return { identity: { id: identity.id, claims } }
 }
 
 const ERR_NOT_FOUND = Err('NOT_FOUND')
@@ -30,6 +31,6 @@ interface Input {
 interface Output {
   identity: {
     id: string
-    claim: Pick<IdToken, 'iss' | 'sub' | 'aud'>
+    claims: Pick<IdToken, 'iss' | 'sub' | 'aud'>
   }
 }
