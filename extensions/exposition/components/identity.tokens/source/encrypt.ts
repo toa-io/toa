@@ -1,6 +1,6 @@
 import { V3 } from 'paseto'
 import { type Operation } from '@toa.io/types'
-import { type Claim, type Context, type EncryptInput } from './types'
+import { type Claims, type Context, type EncryptInput } from './types'
 
 export class Effect implements Operation {
   private key: string = ''
@@ -18,9 +18,9 @@ export class Effect implements Operation {
       ? undefined
       : new Date(Date.now() + lifetime).toISOString()
 
-    const payload: Partial<Claim> = {
+    const payload: Partial<Claims> = {
       identity: input.identity,
-      aud: input.authority,
+      iss: input.authority,
       exp
     }
 

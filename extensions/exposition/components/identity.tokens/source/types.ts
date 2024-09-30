@@ -47,9 +47,9 @@ export interface DecryptOutput {
   refresh: boolean
 }
 
-export interface Claim {
+export interface Claims {
   identity: Identity
-  aud: string
+  iss: string
   iat: string
   exp?: string
 }
