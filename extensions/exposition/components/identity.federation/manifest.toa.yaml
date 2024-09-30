@@ -42,12 +42,26 @@ operations:
       authority*: string
       credentials*: string
     output:
-      identity:
-        id: string
-        claims:
-          iss: string
-          aud: string
-          sub: string
+      properties:
+        identity:
+          properties:
+            id:
+              type: string
+            claims:
+              properties:
+                iss:
+                  type: string
+                aud:
+                  type: string
+                sub:
+                  type: string
+              additionalProperties: true
+              required:
+                - iss
+                - sub
+          required:
+            - id
+            - claims
     errors:
       - ERR_NOT_FOUND
 

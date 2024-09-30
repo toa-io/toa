@@ -117,7 +117,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      403 Forbidden
       """
 
   Scenario: Changing the password
@@ -360,7 +360,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      403 Forbidden
       """
 
   Scenario: Incorrect credentials format
