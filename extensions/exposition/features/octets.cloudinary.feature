@@ -29,13 +29,13 @@ Feature: Octets with Cloudinary storage
       201 Created
       content-type: application/yaml
 
-      id: 814a0034f5549e957ee61360d87457e5
+      id: ${{ id }}
       type: image/png
       size: 473831
       """
     When the following request is received:
       """
-      GET /814a0034f5549e957ee61360d87457e5 HTTP/1.1
+      GET /${{ id }} HTTP/1.1
       host: nex.toa.io
       """
     Then the stream equals to `lenna.png` is sent with the following headers:

@@ -22,7 +22,7 @@
     "@toa.io/generic": "1.0.0-alpha.93",
     "@toa.io/schemas": "1.0.0-alpha.93",
     "bcryptjs": "2.4.3",
-    "error-value": "0.3.0",
+    "error-value": "0.4.1",
     "http-cache-semantics": "4.1.1",
     "js-yaml": "4.1.0",
     "matchacho": "0.3.5",

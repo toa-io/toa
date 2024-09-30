@@ -30,6 +30,9 @@ operations:
     output:
       identity: *identity
       refresh: boolean
+    errors:
+      - AUTHORITY_MISMATCH
+      - TOKEN_REVOKED
   revoke:
     concurrency: retry
 

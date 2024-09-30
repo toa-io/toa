@@ -27,8 +27,8 @@ export async function computation (input: Input, context: Context): Promise<Mayb
     return ERR_PASSWORD_MISMATCH
 }
 
-const ERR_NOT_FOUND = Err('NOT_FOUND')
-const ERR_PASSWORD_MISMATCH = Err('PASSWORD_MISMATCH')
+const ERR_NOT_FOUND = new Err('NOT_FOUND')
+const ERR_PASSWORD_MISMATCH = new Err('PASSWORD_MISMATCH')
 
 interface Input {
   authority: string

@@ -17,6 +17,10 @@ operations:
       username: string
       password: string
       authority: string
+    errors:
+      - PRINCIPAL_LOCKED
+      - INVALID_USERNAME
+      - INVALID_PASSWORD
   create:
     forward: transit
     query: false
@@ -31,6 +35,8 @@ operations:
       credentials*: string
     output:
       id: string
+    errors:
+      - INVALID_CREDENTIALS
   authenticate:
     input:
       authority*: string
@@ -38,6 +44,9 @@ operations:
     output:
       identity:
         id: string
+    errors:
+      - NOT_FOUND
+      - PASSWORD_MISMATCH
 
 configuration:
   rounds: 10

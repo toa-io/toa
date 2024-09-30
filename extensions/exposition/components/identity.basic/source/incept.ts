@@ -25,7 +25,7 @@ export async function effect (input: Input, context: Context): Promise<Maybe<Out
   return await context.local.transit(request)
 }
 
-const INVALID_CREDENTIALS = Err('INVALID_CREDENTIALS')
+const INVALID_CREDENTIALS = new Err('INVALID_CREDENTIALS')
 
 interface Input {
   authority: string

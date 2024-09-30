@@ -43,5 +43,5 @@ export class Computation implements Operation {
   }
 }
 
-const ERR_AUTHORITY = Err('AUTHORITY_MISMATCH')
-const ERR_TOKEN_REVOKED = Err('TOKEN_REVOKED')
+const ERR_AUTHORITY = new Err('AUTHORITY_MISMATCH')
+const ERR_TOKEN_REVOKED = new Err('TOKEN_REVOKED')

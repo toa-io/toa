@@ -20,7 +20,7 @@ function within (role: string, scopes: string[]): boolean {
   return scopes.some((scope) => role === scope || role.startsWith(scope + ':'))
 }
 
-const ERR_OUT_OF_SCOPE = Err('OUT_OF_SCOPE')
+const ERR_OUT_OF_SCOPE = new Err('OUT_OF_SCOPE')
 
 export interface Input {
   identity: string

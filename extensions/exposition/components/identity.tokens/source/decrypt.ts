@@ -1,5 +1,6 @@
 import { V3 } from 'paseto'
 import { type Maybe } from '@toa.io/types'
+import { Err } from 'error-value'
 import { type Context, type Claim, type DecryptOutput } from './types'
 
 export async function computation (token: string, context: Context): Promise<Maybe<DecryptOutput>> {
@@ -31,4 +32,4 @@ async function decrypt (token: string, key: string): Promise<Claim | null> {
   }
 }
 
-const ERR_INVALID_TOKEN = new Error('INVALID_TOKEN')
+const ERR_INVALID_TOKEN = new Err('INVALID_TOKEN')
