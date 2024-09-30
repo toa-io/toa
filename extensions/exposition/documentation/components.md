@@ -122,9 +122,9 @@ configuration:
             k1: <secret-to-be-used-for-hs256>
 ```
 
-## Stateless tokens
+## Local tokens
 
-The `identity.tokens` component manages stateless authentication tokens.
+The `identity.tokens` component manages local authentication tokens.
 
 These tokens carry the information required to authenticate the Identity and authorize access.
 
@@ -142,6 +142,40 @@ is set to `no-store`.
 authorization: Token ...
 cache-control: no-store
 ```
+
+### Manual token issuance
+
+```
+POST /identity/tokens/
+host: nex.toa.io
+authorization: Token <token>
+accept: application/yaml
+content-type: application/yaml
+
+lifetime: 3600
+roles: [app:developer]
+permissions:
+  /users/fc8e66dd/: [GET, PUT]
+  /posts/fc8e66dd/**/comments/: '*'
+```
+
+```
+201 Created
+content-type: application/yaml
+
+token: <token>
+```
+
+- `lifetime`: Issued token will be valid for this period.
+  The value of `0` means the token will not expire, which is supported, but
+  **strongly not recommended** for production environments.
+- `roles`: Issued token will assume only these roles. See [Roles](access.md#roles) for more details.
+- `permissions`: Issued token will have permissions to access only specified resources and methods.
+  Supports [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html)
+  and a wildcard method.
+
+> `roles` and `permissions` are additional restrictions applied on top of the Identity’s inherent
+> privileges.
 
 ### Token encryption
 
