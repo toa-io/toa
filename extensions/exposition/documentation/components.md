@@ -182,17 +182,18 @@ token: <token>
 
 Issued tokens are encrypted
 with [PASETO V3 encryption](https://github.com/panva/paseto/blob/main/docs/README.md#v3encryptpayload-key-options)
-using the `key0` configuration value as a secret.
+using the first key from the `keys` configuration value.
 
 ```yaml
 # context.toa.yaml
 
 configuration:
   identity.tokens:
-    key0: $TOKEN_ENCRYPTION_KEY
+    keys:
+      2024q1: $TOKEN_SECRET_2024Q1
 ```
 
-The `key0` configuration value is required.
+At least one key in the `keys` configuration value is required.
 
 > Valid secret key may be generated using the [`toa key` command](/runtime/cli/readme.md#key).
 
@@ -232,43 +233,18 @@ Token revocation takes effect once the `refresh` period of the currently issued 
 
 ### Secret rotation
 
-Tokens are always encrypted using the `key0` configuration value, and they will be decrypted by
-attempting both
-the `key0` and `key1` values in order.
+Tokens are always encrypted using the first key from the `keys` configuration value,
+and decrypted by the key used to encrypt them.
 
-`key0` is considered the "current key," and `key1` is considered the "previous key."
+To rotate the secret key, a new key must be added to the top of the `keys` configuration value, that
+is, it will be used to encrypt new tokens.
 
-```yaml
-# context.toa.yaml
+Old keys must be removed only after the `refresh` period of the previously issued tokens has
+expired.
 
-configuration:
-  identity.tokens:
-    key0: $TOKEN_ENCRYPTION_KEY_2023Q3
-    key1: $TOKEN_ENCRYPTION_KEY_2023Q2
-```
-
-Secret rotation is performed by adding a new key as the `key0` value and moving the existing `key0`
-to the `key1` value.
-
-When rolling out the new secret key, there will be a period of time when the new key is deployed to
-some Exposition
-instances. During this time, these instances will start using the new key to encrypt tokens, while
-other instances will
-continue using the current key and will not be able to decrypt tokens encrypted with the new key.
-
-To address this issue, the `key1` configuration value may be used as a "transient key."
-
-The secret rotation is a 2-step process:
-
-> The process **must not** be performed earlier than the `lifetime` period since the last rotation,
-> as it may invalidate
-> tokens before they expire. Therefore, it is guaranteed that there are no valid tokens issued with
-> the current `key1`
-> value.
-
-1. Deploy the new secret key to all Exposition instances as `key1`. This enables all instances to
-   decrypt tokens
-   encrypted with the new key while still using the current key for encryption.
+> Let's say you are adding a new secret key each quarter: `2024Q1`, `2024Q2` and so on.
+> The old key `2024Q1` must be removed from the configuration only when the `refresh` period after
+> the new key `2024Q2` was added has expired.
 
 ```yaml
 # context.toa.yaml
