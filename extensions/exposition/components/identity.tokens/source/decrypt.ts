@@ -1,35 +1,68 @@
 import { V3 } from 'paseto'
-import { type Maybe } from '@toa.io/types'
 import { Err } from 'error-value'
-import { type Context, type Claims, type DecryptOutput } from './types'
+import type { Maybe, Operation } from '@toa.io/types'
+import type { Context, Claims, DecryptOutput } from './lib'
 
-export async function computation (token: string, context: Context): Promise<Maybe<DecryptOutput>> {
-  let refresh = false
-  let claim = await decrypt(token, context.configuration.key0)
+export class Computation implements Operation {
+  private latest!: string
+  private keys!: Record<string, string>
 
-  if (claim === null && context.configuration.key1 !== undefined) {
-    refresh = true
-    claim = await decrypt(token, context.configuration.key1)
+  public mount (context: Context): void {
+    this.latest = Object.keys(context.configuration.keys)[0]
+    this.keys = context.configuration.keys
   }
 
-  if (claim === null)
-    return ERR_INVALID_TOKEN
-  else
+  public async execute (token: string): Promise<Maybe<DecryptOutput>> {
+    const kid = this.kid(token)
+
+    if (kid instanceof Error)
+      return kid
+
+    const key = this.key(kid)
+
+    if (key instanceof Error)
+      return key
+
+    const claims = await decrypt(token, key)
+
+    if (claims instanceof Error)
+      return claims
+
     return {
-      authority: claim.iss,
-      identity: claim.identity,
-      iat: claim.iat,
-      exp: claim.exp,
-      refresh
+      iss: claims.iss,
+      iat: claims.iat,
+      exp: claims.exp,
+      identity: claims.identity,
+      refresh: kid !== this.latest
     }
+  }
+
+  private kid (token: string): string | Error {
+    const [, , , footer] = token.split('.')
+
+    if (footer === undefined)
+      return ERR_INVALID_TOKEN
+
+    return Buffer.from(footer, 'base64url').toString('utf-8')
+  }
+
+  private key (kid: string): string | Error {
+    const key = this.keys[kid]
+
+    if (key === undefined)
+      return ERR_INVALID_KEY
+
+    return key
+  }
 }
 
-async function decrypt (token: string, key: string): Promise<Claims | null> {
+async function decrypt (token: string, key: string): Promise<Maybe<Claims>> {
   try {
     return await V3.decrypt<Claims>(token, key)
   } catch (e) {
-    return null
+    return ERR_INVALID_TOKEN
   }
 }
 
 const ERR_INVALID_TOKEN = new Err('INVALID_TOKEN')
+const ERR_INVALID_KEY = new Err('INVALID_KEY')

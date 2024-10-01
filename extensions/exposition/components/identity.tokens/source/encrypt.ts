@@ -1,14 +1,16 @@
 import { V3 } from 'paseto'
 import { Err } from 'error-value'
 import type { Operation, Maybe } from '@toa.io/types'
-import type { Identity, Claims, Context, EncryptInput } from './types'
+import type { Identity, Claims, Context, EncryptInput, Key } from './lib'
 
 export class Effect implements Operation {
-  private key: string = ''
+  private key!: Key
   private lifetime: number = 0
 
   public mount (context: Context): void {
-    this.key = context.configuration.key0
+    const [name, value] = Object.entries(context.configuration.keys)[0]
+
+    this.key = { name, value }
     this.lifetime = context.configuration.lifetime * 1000
   }
 
@@ -38,7 +40,7 @@ export class Effect implements Operation {
     if (exp !== undefined)
       payload.exp = exp
 
-    return await V3.encrypt(payload, this.key)
+    return await V3.encrypt(payload, this.key.value, { footer: this.key.name })
   }
 }
 

@@ -9,8 +9,7 @@ export interface Context {
 }
 
 export interface Configuration {
-  readonly key0: string
-  readonly key1?: string
+  readonly keys: Record<string, string>
   readonly lifetime: number
   readonly refresh: number
 }
@@ -43,10 +42,10 @@ export interface EncryptInput {
 }
 
 export interface DecryptOutput {
-  authority: string
-  identity: Identity
+  iss: string
   iat: string
   exp?: string
+  identity: Identity
   refresh: boolean
 }
 
@@ -55,4 +54,9 @@ export interface Claims {
   iss: string
   iat: string
   exp?: string
+}
+
+export interface Key {
+  name: string
+  value: string
 }

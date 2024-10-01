@@ -1,18 +1,21 @@
 import { generate } from 'randomstring'
 import { Effect as Encrypt } from './encrypt'
-import { computation as decrypt } from './decrypt'
-import { type Configuration, type Context, type Identity } from './types'
+import { Computation as Decrypt } from './decrypt'
+import { type Configuration, type Context, type Identity } from './lib'
 
 let configuration: Configuration
 let context: Context
 let encrypt: Encrypt
+let decrypt: Decrypt
 
 const authority = generate()
 
 beforeEach(() => {
   configuration = {
-    key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
-    key1: 'k3.local.-498jfWenrZH-Dqw3-zQJih_hKzDgBgUMfe37OCqSOA',
+    keys: {
+      key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
+      key1: 'k3.local.-498jfWenrZH-Dqw3-zQJih_hKzDgBgUMfe37OCqSOA'
+    },
     lifetime: 1000,
     refresh: 500
   }
@@ -21,6 +24,9 @@ beforeEach(() => {
 
   encrypt = new Encrypt()
   encrypt.mount(context)
+
+  decrypt = new Decrypt()
+  decrypt.mount(context)
 })
 
 it('should decrypt', async () => {
@@ -32,15 +38,17 @@ it('should decrypt', async () => {
   if (reply instanceof Error)
     throw reply
 
-  const decrypted = await decrypt(reply, context)
+  const decrypted = await decrypt.execute(reply)
 
-  expect(decrypted).toMatchObject({ authority, identity, refresh: false })
+  expect(decrypted).toMatchObject({ iss: authority, identity, refresh: false })
 })
 
 it('should decrypt with key1', async () => {
   const k1context = {
     configuration: {
-      key0: configuration.key1
+      keys: {
+        key1: configuration.keys.key1
+      }
     }
   } as unknown as Context
 
@@ -55,7 +63,7 @@ it('should decrypt with key1', async () => {
   if (encrypted instanceof Error)
     throw encrypted
 
-  const decrypted = await decrypt(encrypted, context)
+  const decrypted = await decrypt.execute(encrypted)
 
   expect(decrypted).toMatchObject({ identity, refresh: true })
 })

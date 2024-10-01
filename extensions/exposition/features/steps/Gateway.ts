@@ -127,6 +127,8 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
 
 const DEFAULT_CONFIGURATION: Record<string, object> = {
   'identity.tokens': {
-    key0: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA'
+    keys: {
+      0: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA'
+    }
   }
 }

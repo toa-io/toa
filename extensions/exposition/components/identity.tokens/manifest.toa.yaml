@@ -28,6 +28,9 @@ operations:
       iat: string
       exp: string
       refresh: boolean
+    errors:
+      - INVALID_TOKEN
+      - INVALID_KEY
   authenticate:
     input:
       authority*: string
@@ -46,8 +49,11 @@ receivers:
   identity.bans.updated: revoke
 
 configuration:
-  key0*: string
-  key1: string
+  keys:
+    type: object
+    minProperties: 1
+    additionalProperties:
+      type: string
   lifetime: 2592000 # seconds, 30 days
   refresh: 600      # seconds, 10 minutes
 
