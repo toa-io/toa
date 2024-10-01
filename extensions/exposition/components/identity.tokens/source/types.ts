@@ -1,4 +1,4 @@
-import { type Call, type Maybe, type Observation } from '@toa.io/types'
+import type { Call, Maybe, Observation } from '@toa.io/types'
 
 export interface Context {
   local: {
@@ -21,6 +21,7 @@ export interface Entity {
 
 export interface Identity extends Record<string, any> {
   id: string
+  permissions?: Record<string, [string]>
 }
 
 export interface AuthenticateInput {
@@ -37,6 +38,8 @@ export interface EncryptInput {
   authority: string
   identity: Identity
   lifetime?: number
+  scopes?: string[]
+  permissions?: Record<string, [string]>
 }
 
 export interface DecryptOutput {

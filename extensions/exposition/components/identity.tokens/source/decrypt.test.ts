@@ -29,8 +29,8 @@ it('should decrypt', async () => {
 
   const reply = await encrypt.execute({ authority, identity, lifetime })
 
-  if (reply === undefined)
-    throw new Error('?')
+  if (reply instanceof Error)
+    throw reply
 
   const decrypted = await decrypt(reply, context)
 
@@ -52,8 +52,8 @@ it('should decrypt with key1', async () => {
 
   const encrypted = await encrypt.execute({ authority, identity, lifetime })
 
-  if (encrypted === undefined)
-    throw new Error('?')
+  if (encrypted instanceof Error)
+    throw encrypted
 
   const decrypted = await decrypt(encrypted, context)
 

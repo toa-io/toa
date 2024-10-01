@@ -1,11 +1,11 @@
-import { type Maybe, type Operation } from '@toa.io/types'
 import { Err } from 'error-value'
+import type { Maybe, Operation } from '@toa.io/types'
 import type { AuthenticateInput, AuthenticateOutput, Context } from './types'
 
 export class Computation implements Operation {
   private refresh: number = 0
-  private decrypt: Context['local']['decrypt'] = undefined as unknown as Context['local']['decrypt']
-  private observe: Context['local']['observe'] = undefined as unknown as Context['local']['observe']
+  private decrypt!: Context['local']['decrypt']
+  private observe!: Context['local']['observe']
 
   public mount (context: Context): void {
     this.refresh = context.configuration.refresh * 1000

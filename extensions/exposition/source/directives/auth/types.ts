@@ -18,8 +18,9 @@ export interface Directive {
 
 export interface Identity {
   readonly id: string
-  scheme: string | null // null for transient identities
   roles?: string[]
+  permissions?: Record<string, string[]>
+  scheme: string | null // null for transient identities
   refresh: boolean
 }
 

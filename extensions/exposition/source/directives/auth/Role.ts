@@ -15,7 +15,7 @@ export class Role implements Directive {
     this.dynamic = this.roles.some((role) => role.includes('{'))
   }
 
-  public static async set (identity: Identity, discovery: Promise<Component>): Promise<void> {
+  public static async get (identity: Identity, discovery: Promise<Component>): Promise<string[]> {
     this.remote ??= await discovery
 
     const query: Query = {
@@ -23,7 +23,7 @@ export class Role implements Directive {
       limit: 1024
     }
 
-    identity.roles = await this.remote.invoke('list', { query })
+    return await this.remote.invoke('list', { query })
   }
 
   public async authorize
@@ -31,13 +31,9 @@ export class Role implements Directive {
     if (identity === null)
       return false
 
-    await Role.set(identity, this.discovery)
+    identity.roles ??= await Role.get(identity, this.discovery)
 
-    if (identity.roles!.length === 0) // Role.set()
-
-      return false
-
-    return this.match(identity.roles!, parameters)
+    return this.match(identity.roles, parameters)
   }
 
   private match (roles: string[], parameters: Parameter[]): boolean {

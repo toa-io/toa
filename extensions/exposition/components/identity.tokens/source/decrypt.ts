@@ -27,7 +27,7 @@ export async function computation (token: string, context: Context): Promise<May
 async function decrypt (token: string, key: string): Promise<Claims | null> {
   try {
     return await V3.decrypt<Claims>(token, key)
-  } catch {
+  } catch (e) {
     return null
   }
 }

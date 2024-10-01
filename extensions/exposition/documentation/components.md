@@ -143,7 +143,7 @@ authorization: Token ...
 cache-control: no-store
 ```
 
-### Manual token issuance
+### Custom tokens
 
 ```
 POST /identity/tokens/
@@ -153,10 +153,10 @@ accept: application/yaml
 content-type: application/yaml
 
 lifetime: 3600
-roles: [app:developer]
+scopes: [app:developer]
 permissions:
   /users/fc8e66dd/: [GET, PUT]
-  /posts/fc8e66dd/**/comments/: '*'
+  /posts/fc8e66dd/**/comments/: [*]
 ```
 
 ```
@@ -166,10 +166,11 @@ content-type: application/yaml
 token: <token>
 ```
 
-- `lifetime`: Issued token will be valid for this period.
+- `lifetime`: Issued token will be valid for this period
+  (default is specified in [the configuration](#token-rotation)).
   The value of `0` means the token will not expire, which is supported, but
   **strongly not recommended** for production environments.
-- `roles`: Issued token will assume only these roles. See [Roles](access.md#roles) for more details.
+- `scopes`: Issued token will assume only specified [role scopes](access.md#roles).
 - `permissions`: Issued token will have permissions to access only specified resources and methods.
   Supports [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html)
   and a wildcard method.

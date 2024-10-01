@@ -13,12 +13,30 @@ const authority = generate()
 beforeEach(() => {
   context.configuration = {
     key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
-    lifetime: 1000,
+    lifetime: 1,
     refresh: 2
   }
 
   encrypt = new Encrypt()
   encrypt.mount(context)
+})
+
+it('should encrypt with configured lifetime by default', async () => {
+  const identity: Identity = { id: generate() }
+
+  const encrypted = await encrypt.execute({
+    authority,
+    identity
+  })
+
+  if (encrypted instanceof Error)
+    throw encrypted
+
+  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ authority, identity })
+
+  await timeout(context.configuration.lifetime * 1000)
+
+  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ code: 'INVALID_TOKEN' })
 })
 
 it('should encrypt with given lifetime', async () => {
@@ -31,14 +49,14 @@ it('should encrypt with given lifetime', async () => {
     lifetime
   })
 
-  if (encrypted === undefined)
-    throw new Error('?')
+  if (encrypted instanceof Error)
+    throw encrypted
 
   await expect(decrypt(encrypted, context)).resolves.toMatchObject({ authority, identity })
 
   await timeout(lifetime * 1000)
 
-  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ message: 'INVALID_TOKEN' })
+  await expect(decrypt(encrypted, context)).resolves.toMatchObject({ code: 'INVALID_TOKEN' })
 })
 
 it('should encrypt without lifetime INSECURE', async () => {
@@ -50,6 +68,9 @@ it('should encrypt without lifetime INSECURE', async () => {
     identity,
     lifetime
   })
+
+  if (encrypted instanceof Error)
+    throw encrypted
 
   const decrypted = await decrypt(encrypted, context)
 

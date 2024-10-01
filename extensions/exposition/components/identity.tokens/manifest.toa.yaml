@@ -14,7 +14,12 @@ operations:
         id: string
         ...: true
       lifetime: integer[0,) # seconds
+      scopes: [string]
+      permissions:
+        ~: [string]
     output: string
+    errors:
+      - ERR_INACCESSIBLE_SCOPE
   decrypt:
     input: string
     output:
@@ -49,7 +54,6 @@ configuration:
 exposition:
   /:
     POST:
-      auth:scheme: token
       auth:delegate: identity
       io:output: true # string
       map:authority: authority
