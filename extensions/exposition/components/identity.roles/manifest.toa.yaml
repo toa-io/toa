@@ -18,6 +18,8 @@ operations:
       grantor:
         id: string
         roles: [string]
+    errors:
+      - INACCESSIBLE_SCOPE
   list:
     output: [string]
   principal:

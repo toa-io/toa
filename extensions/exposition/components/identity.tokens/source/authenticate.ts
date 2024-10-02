@@ -1,11 +1,11 @@
-import { type Maybe, type Operation } from '@toa.io/types'
 import { Err } from 'error-value'
-import type { AuthenticateInput, AuthenticateOutput, Context } from './types'
+import type { Maybe, Operation } from '@toa.io/types'
+import type { AuthenticateInput, AuthenticateOutput, Context } from './lib'
 
 export class Computation implements Operation {
   private refresh: number = 0
-  private decrypt: Context['local']['decrypt'] = undefined as unknown as Context['local']['decrypt']
-  private observe: Context['local']['observe'] = undefined as unknown as Context['local']['observe']
+  private decrypt!: Context['local']['decrypt']
+  private observe!: Context['local']['observe']
 
   public mount (context: Context): void {
     this.refresh = context.configuration.refresh * 1000
@@ -14,17 +14,17 @@ export class Computation implements Operation {
   }
 
   public async execute (input: AuthenticateInput): Promise<Maybe<AuthenticateOutput>> {
-    const claim = await this.decrypt({ input: input.credentials })
+    const claims = await this.decrypt({ input: input.credentials })
 
-    if (claim instanceof Error)
-      return claim
+    if (claims instanceof Error)
+      return claims
 
-    if (claim.authority !== input.authority)
+    if (claims.iss !== input.authority)
       return ERR_AUTHORITY
 
-    const identity = claim.identity
-    const iat = new Date(claim.iat).getTime()
-    const transient = claim.exp !== undefined
+    const identity = claims.identity
+    const iat = new Date(claims.iat).getTime()
+    const transient = claims.exp !== undefined
     const stale = transient && (iat + this.refresh < Date.now())
 
     if (stale) {
@@ -34,7 +34,7 @@ export class Computation implements Operation {
         return ERR_TOKEN_REVOKED
     }
 
-    const refresh = stale || claim.refresh
+    const refresh = stale || claims.refresh
 
     return {
       identity,
@@ -43,5 +43,5 @@ export class Computation implements Operation {
   }
 }
 
-const ERR_AUTHORITY = Err('AUTHORITY_MISMATCH')
-const ERR_TOKEN_REVOKED = Err('TOKEN_REVOKED')
+const ERR_AUTHORITY = new Err('AUTHORITY_MISMATCH')
+const ERR_TOKEN_REVOKED = new Err('TOKEN_REVOKED')

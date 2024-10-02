@@ -11,7 +11,7 @@ import type { Parameter } from '../../RTD'
 import type { Unit } from './workflows'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes'
-import type { ErrorType } from 'error-value'
+import type { Err } from 'error-value'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
 import type { Input } from './types'
@@ -69,7 +69,7 @@ export class Put extends Directive {
     const entry = await this.storage.invoke<Entry>('put', request)
 
     return match<Output>(entry,
-      Error, (error: ErrorType) => this.throw(error),
+      Error, (error: Err) => this.throw(error),
       () => this.reply(input, storage, entry, parameters))
   }
 
@@ -94,7 +94,7 @@ export class Put extends Directive {
     return stream
   }
 
-  private throw (error: ErrorType): never {
+  private throw (error: Err): never {
     throw match(error.code,
       'NOT_ACCEPTABLE', () => new http.UnsupportedMediaType(),
       'TYPE_MISMATCH', () => new http.BadRequest(),
@@ -104,22 +104,6 @@ export class Put extends Directive {
       'LOCATION_UNAVAILABLE', () => new http.NotFound(error.message),
       'INVALID_ID', () => new http.BadRequest(error.message),
       error)
-  }
-
-  private attributes (value: string | string[]): Record<string, string> {
-    if (Array.isArray(value))
-      value = value.join(',')
-
-    const attributes: Record<string, string> = {}
-
-    for (const pair of value.split(',')) {
-      const eq = pair.indexOf('=')
-      const key = (eq === -1 ? pair : pair.slice(0, eq)).trim()
-
-      attributes[key] = eq === -1 ? 'true' : pair.slice(eq + 1).trim()
-    }
-
-    return attributes
   }
 }
 

@@ -17,9 +17,7 @@ export class Delegate implements Directive {
     if (identity === null)
       return false
 
-    if (identity.roles === undefined)
-      await Role.set(identity, this.discovery)
-
+    identity.roles ??= await Role.get(identity, this.discovery)
     context.pipelines.body.push((body) => this.embed(body, identity))
 
     return true

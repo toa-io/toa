@@ -122,9 +122,9 @@ configuration:
             k1: <secret-to-be-used-for-hs256>
 ```
 
-## Stateless tokens
+## Local tokens
 
-The `identity.tokens` component manages stateless authentication tokens.
+The `identity.tokens` component manages local authentication tokens.
 
 These tokens carry the information required to authenticate the Identity and authorize access.
 
@@ -143,21 +143,84 @@ authorization: Token ...
 cache-control: no-store
 ```
 
+### Custom tokens
+
+Custom tokens can be issued with a specific set of permissions and scopes for the own Identity or by
+an Identity with the `system:identity:tokens` role.
+
+Tokens are issued with custom secret keys and are not subject to [token rotation](#token-rotation).
+To invalidate a custom token, its secret key must be deleted.
+
+Custom tokens have no `refresh` period, that is, never become obsolete and never refreshed.
+
+```
+POST /identity/tokens/<identity>/
+host: nex.toa.io
+authorization: ...
+accept: application/yaml
+content-type: application/yaml
+
+lifetime: 3600
+scopes: [app:developer]
+permissions:
+  /users/fc8e66dd/: [GET, PUT]
+  /posts/fc8e66dd/**/comments/: [*]
+```
+
+```
+201 Created
+content-type: application/yaml
+
+token: <token>
+```
+
+- `lifetime`: Issued token will be valid for this period
+  (default is specified in [the configuration](#token-rotation)).
+  The value of `0` means the token will not expire, which is supported, but
+  **strongly not recommended** for production environments.
+- `scopes`: Issued token will assume only specified [role scopes](access.md#roles).
+- `permissions`: Issued token will have permissions to access only specified resources and methods.
+  Supports [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html)
+  and a wildcard method.
+
+> `roles` and `permissions` are additional restrictions applied on top of the Identity’s inherent
+> privileges.
+
+### Custom token invalidation
+
+Custom tokens can be invalidated by deleting the secret key used to issue them.
+This can be done by the Identity that issued the token or by an Identity with
+the `system:identity:keys` role.
+
+```
+DELETE /identity/keys/<identity>/<key.id>/
+authorization: ...
+```
+
+Token secret key `id` can be obtained from the list of issued tokens (or from the footer of the
+token itself).
+
+```
+GET /identity/keys/<identity>/
+authorization: ...
+```
+
 ### Token encryption
 
 Issued tokens are encrypted
 with [PASETO V3 encryption](https://github.com/panva/paseto/blob/main/docs/README.md#v3encryptpayload-key-options)
-using the `key0` configuration value as a secret.
+using the first key from the `keys` configuration value.
 
 ```yaml
 # context.toa.yaml
 
 configuration:
   identity.tokens:
-    key0: $TOKEN_ENCRYPTION_KEY
+    keys:
+      2024q1: $TOKEN_SECRET_2024Q1
 ```
 
-The `key0` configuration value is required.
+At least one key in the `keys` configuration value is required.
 
 > Valid secret key may be generated using the [`toa key` command](/runtime/cli/readme.md#key).
 
@@ -197,43 +260,18 @@ Token revocation takes effect once the `refresh` period of the currently issued 
 
 ### Secret rotation
 
-Tokens are always encrypted using the `key0` configuration value, and they will be decrypted by
-attempting both
-the `key0` and `key1` values in order.
+Tokens are always encrypted using the first key from the `keys` configuration value,
+and decrypted by the key used to encrypt them.
 
-`key0` is considered the "current key," and `key1` is considered the "previous key."
+To rotate the secret key, a new key must be added to the top of the `keys` configuration value, that
+is, it will be used to encrypt new tokens.
 
-```yaml
-# context.toa.yaml
+Old keys must be removed only after the `refresh` period of the previously issued tokens has
+expired.
 
-configuration:
-  identity.tokens:
-    key0: $TOKEN_ENCRYPTION_KEY_2023Q3
-    key1: $TOKEN_ENCRYPTION_KEY_2023Q2
-```
-
-Secret rotation is performed by adding a new key as the `key0` value and moving the existing `key0`
-to the `key1` value.
-
-When rolling out the new secret key, there will be a period of time when the new key is deployed to
-some Exposition
-instances. During this time, these instances will start using the new key to encrypt tokens, while
-other instances will
-continue using the current key and will not be able to decrypt tokens encrypted with the new key.
-
-To address this issue, the `key1` configuration value may be used as a "transient key."
-
-The secret rotation is a 2-step process:
-
-> The process **must not** be performed earlier than the `lifetime` period since the last rotation,
-> as it may invalidate
-> tokens before they expire. Therefore, it is guaranteed that there are no valid tokens issued with
-> the current `key1`
-> value.
-
-1. Deploy the new secret key to all Exposition instances as `key1`. This enables all instances to
-   decrypt tokens
-   encrypted with the new key while still using the current key for encryption.
+> Let's say you are adding a new secret key each quarter: `2024Q1`, `2024Q2` and so on.
+> The old key `2024Q1` must be removed from the configuration only when the `refresh` period after
+> the new key `2024Q2` was added has expired.
 
 ```yaml
 # context.toa.yaml

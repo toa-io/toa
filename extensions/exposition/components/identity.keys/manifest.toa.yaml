@@ -1,0 +1,41 @@
+namespace: identity
+name: keys
+
+entity:
+  schema:
+    properties:
+      identity: &identity
+        type: string
+      key:
+        type: string
+      name: &name
+        type: string
+        minLength: 1
+        maxLength: 32
+    required:
+      - identity
+      - key
+
+operations:
+  create:
+    query: false
+    input:
+      properties:
+        identity: *identity
+        name: *name
+    output:
+      id: string
+      key: string
+exposition:
+  /:identity:
+    auth:id: identity
+    auth:role: system:identity:keys
+    GET:
+      io:output: [id, name]
+      query:
+        sort: _created:desc
+      endpoint: enumerate
+    /:id:
+      DELETE:
+        io:output: false
+        endpoint: terminate

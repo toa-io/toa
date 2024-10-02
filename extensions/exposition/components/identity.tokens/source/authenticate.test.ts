@@ -1,20 +1,23 @@
 import { generate } from 'randomstring'
-import { type Configuration, type Context, type DecryptOutput, type Identity } from './types'
 import { Computation as Authenticate } from './authenticate'
+import type { Configuration, Context, DecryptOutput, Identity } from './lib'
 
 let configuration: Configuration
 let context: Context
 let output: DecryptOutput
 let authenticate: Authenticate
 
-const identity: Identity = { id: generate() }
+const identity: Identity = { id: generate(), roles: [] }
 const authority = generate()
 
 beforeEach(() => {
   configuration = {
-    key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
+    keys: {
+      key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'
+    },
     lifetime: 2592000,
-    refresh: 600
+    refresh: 600,
+    cache: 600
   }
 
   context = {
@@ -23,7 +26,7 @@ beforeEach(() => {
       decrypt: jest.fn(async () => (output)),
       observe: jest.fn(async () => null)
     }
-  }
+  } as unknown as Context
 
   authenticate = new Authenticate()
   authenticate.mount(context)
@@ -37,7 +40,7 @@ it.each([
   const iat = new Date(now - configuration.refresh * 1000 + shift).toISOString()
   const exp = new Date(now + 1000).toISOString()
 
-  output = { authority, identity, exp, iat, refresh: false }
+  output = { iss: authority, identity, exp, iat, refresh: false }
 
   const result = await authenticate.execute({
     authority,
@@ -52,7 +55,7 @@ it.each([true, false])('should return stale: %s',
     const iat = new Date().toISOString()
     const exp = new Date(Date.now() + 1000).toISOString()
 
-    output = { authority, identity, exp, iat, refresh }
+    output = { iss: authority, identity, exp, iat, refresh }
 
     const result = await authenticate.execute({
       authority,

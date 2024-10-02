@@ -44,8 +44,13 @@ const define = async (root, manifest, property) => {
 
       const declared = manifest[property][endpoint]
 
-      if (declared === undefined) manifest[property][endpoint] = item
-      else merge(declared, item)
+      try {
+        if (declared === undefined) manifest[property][endpoint] = item
+        else merge(declared, item)
+      } catch (error) {
+        console.error(`Error merging ${singular} '${endpoint}' in ${root}`)
+        throw error
+      }
     }
   }
 }

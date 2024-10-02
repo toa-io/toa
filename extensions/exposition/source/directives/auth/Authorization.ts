@@ -1,5 +1,7 @@
 import assert from 'node:assert'
 import { match } from 'matchacho'
+import { console } from 'openspan'
+import { minimatch } from 'minimatch'
 import * as http from '../../HTTP'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
@@ -57,27 +59,21 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   }
 
   public async preflight (directives: Directive[],
-    input: Input,
+    context: Input,
     parameters: Parameter[]): Promise<Output> {
-    /**
-     * Some authentication scheme providers may create identity during authentication;
-     * therefore, we need to skip the authentication process if the Incept directive is present.
-     *
-     * If the provided credentials already exist,
-     * the inception will cause a unique constraint violation on the settle stage.
-     */
-    // const inception = directives.reduce((yes, directive) => yes || directive instanceof Incept, false)
-
-    input.identity = await this.resolve(input.authority, input.request.headers.authorization)
+    context.identity = await this.resolve(context.authority, context.request.headers.authorization)
 
     for (const directive of directives) {
-      const allow = await directive.authorize(input.identity, input, parameters)
+      const allow = await directive.authorize(context.identity, context, parameters)
 
       if (allow)
-        return directive.reply?.(input.identity) ?? null
+        if (this.permitted(context))
+          return directive.reply?.(context.identity) ?? null
+        else
+          throw new http.Forbidden()
     }
 
-    if (input.identity === null)
+    if (context.identity === null)
       throw new http.Unauthorized()
     else
       throw new http.Forbidden()
@@ -98,9 +94,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       return
 
     // Role directive may have already set the value
-    if (identity.roles === undefined)
-      await Role.set(identity, this.discovery.roles)
-
+    identity.roles ??= await Role.get(identity, this.discovery.roles)
     this.tokens ??= await this.discovery.tokens
 
     const token = await this.tokens.invoke<string>('encrypt', {
@@ -132,8 +126,14 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       }
     })
 
-    if (result instanceof Error)
+    if (result instanceof Error) {
+      const code: string | unknown = (result as unknown as { code: string }).code
+
+      if (typeof code === 'string')
+        console.info('Authentication failed', { code })
+
       return null
+    }
 
     const identity = result.identity
 
@@ -143,6 +143,18 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     identity.refresh = result.refresh
 
     return identity
+  }
+
+  private permitted (context: Input): boolean {
+    const permissions = context.identity?.permissions
+
+    if (permissions === undefined)
+      return true
+
+    return Object.entries(permissions).some(([pattern, methods]) => {
+      return methods.some((method) => method === '*' || method === context.request.method) &&
+        minimatch(context.request.url, pattern)
+    })
   }
 
   private async banned (identity: Identity): Promise<boolean> {

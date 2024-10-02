@@ -18,7 +18,7 @@ async function authenticate ({ authority, credentials }: Input, context: Context
   return { identity: { id: identity.id, claims } }
 }
 
-const ERR_NOT_FOUND = Err('NOT_FOUND')
+const ERR_NOT_FOUND = new Err('NOT_FOUND')
 
 // Exporting as a function returning assertion errors as values
 export const computation = assertionsAsValues(authenticate)

@@ -7,7 +7,7 @@ export async function transition (input: Input, object: Entity): Promise<Entity 
 
   if (!within('system:identity:roles', input.grantor.roles) &&
     !within(input.role, input.grantor.roles))
-    return ERR_OUT_OF_SCOPE
+    return ERR_INACCESSIBLE_SCOPE
 
   object.role = input.role
   object.identity = input.identity
@@ -20,7 +20,7 @@ function within (role: string, scopes: string[]): boolean {
   return scopes.some((scope) => role === scope || role.startsWith(scope + ':'))
 }
 
-const ERR_OUT_OF_SCOPE = Err('OUT_OF_SCOPE')
+const ERR_INACCESSIBLE_SCOPE = new Err('INACCESSIBLE_SCOPE')
 
 export interface Input {
   identity: string
