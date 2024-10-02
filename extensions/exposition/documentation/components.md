@@ -145,10 +145,18 @@ cache-control: no-store
 
 ### Custom tokens
 
+Custom tokens can be issued with a specific set of permissions and scopes for the own Identity or by
+an Identity with the `system:identity:tokens` role.
+
+Tokens are issued with custom secret keys and are not subject to [token rotation](#token-rotation).
+To invalidate a custom token, its secret key must be deleted.
+
+Custom tokens have no `refresh` period, that is, never become obsolete and never refreshed.
+
 ```
-POST /identity/tokens/
+POST /identity/tokens/<identity>/
 host: nex.toa.io
-authorization: Token <token>
+authorization: ...
 accept: application/yaml
 content-type: application/yaml
 
@@ -177,6 +185,25 @@ token: <token>
 
 > `roles` and `permissions` are additional restrictions applied on top of the Identity’s inherent
 > privileges.
+
+### Custom token invalidation
+
+Custom tokens can be invalidated by deleting the secret key used to issue them.
+This can be done by the Identity that issued the token or by an Identity with
+the `system:identity:keys` role.
+
+```
+DELETE /identity/keys/<identity>/<key.id>/
+authorization: ...
+```
+
+Token secret key `id` can be obtained from the list of issued tokens (or from the footer of the
+token itself).
+
+```
+GET /identity/keys/<identity>/
+authorization: ...
+```
 
 ### Token encryption
 

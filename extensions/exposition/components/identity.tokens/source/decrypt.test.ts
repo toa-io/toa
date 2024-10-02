@@ -8,6 +8,7 @@ let context: Context
 let encrypt: Encrypt
 let decrypt: Decrypt
 
+const remote = { identity: { keys: null } }
 const authority = generate()
 
 beforeEach(() => {
@@ -17,10 +18,11 @@ beforeEach(() => {
       key1: 'k3.local.-498jfWenrZH-Dqw3-zQJih_hKzDgBgUMfe37OCqSOA'
     },
     lifetime: 1000,
-    refresh: 500
+    refresh: 500,
+    cache: 600
   }
 
-  context = { configuration } as unknown as Context
+  context = { configuration, remote } as unknown as Context
 
   encrypt = new Encrypt()
   encrypt.mount(context)
@@ -30,7 +32,7 @@ beforeEach(() => {
 })
 
 it('should decrypt', async () => {
-  const identity: Identity = { id: generate() }
+  const identity: Identity = { id: generate(), roles: [] }
   const lifetime = 100
 
   const reply = await encrypt.execute({ authority, identity, lifetime })
@@ -55,7 +57,7 @@ it('should decrypt with key1', async () => {
   encrypt = new Encrypt()
   encrypt.mount(k1context)
 
-  const identity: Identity = { id: generate() }
+  const identity: Identity = { id: generate(), roles: [] }
   const lifetime = 100
 
   const encrypted = await encrypt.execute({ authority, identity, lifetime })

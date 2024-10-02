@@ -3,7 +3,19 @@ import type { Call, Maybe, Observation } from '@toa.io/types'
 export interface Context {
   local: {
     observe: Observation<Entity>
+    encrypt: Call<Maybe<string>, EncryptInput>
     decrypt: Call<Maybe<DecryptOutput>, string>
+  }
+  remote: {
+    identity: {
+      keys: {
+        observe: Observation<CustomKey>
+        create: Call<Key>
+      }
+      roles: {
+        list: Call<string[]>
+      }
+    }
   }
   configuration: Configuration
 }
@@ -12,6 +24,7 @@ export interface Configuration {
   readonly keys: Record<string, string>
   readonly lifetime: number
   readonly refresh: number
+  readonly cache: number
 }
 
 export interface Entity {
@@ -20,7 +33,8 @@ export interface Entity {
 
 export interface Identity extends Record<string, any> {
   id: string
-  permissions?: Record<string, [string]>
+  roles: string[]
+  permissions?: Record<string, string[]>
 }
 
 export interface AuthenticateInput {
@@ -38,7 +52,8 @@ export interface EncryptInput {
   identity: Identity
   lifetime?: number
   scopes?: string[]
-  permissions?: Record<string, [string]>
+  permissions?: Record<string, string[]>
+  key?: Key
 }
 
 export interface DecryptOutput {
@@ -57,6 +72,10 @@ export interface Claims {
 }
 
 export interface Key {
-  name: string
-  value: string
+  id: string
+  key: string
+}
+
+export interface CustomKey extends Key {
+  identity: string
 }

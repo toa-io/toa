@@ -13,10 +13,13 @@ operations:
       identity*: &identity
         id: string
         ...: true
-      lifetime: integer[0,) # seconds
+      lifetime: &lifetime integer[0,) # seconds
       scopes: [string]
       permissions:
         ~: [string]
+      key:
+        id: string
+        key: string
     output: string
     errors:
       - ERR_INACCESSIBLE_SCOPE
@@ -31,6 +34,7 @@ operations:
     errors:
       - INVALID_TOKEN
       - INVALID_KEY
+      - FORGED_KEY
   authenticate:
     input:
       authority*: string
@@ -41,6 +45,18 @@ operations:
     errors:
       - AUTHORITY_MISMATCH
       - TOKEN_REVOKED
+  issue:
+    input:
+      authority*: string
+      identity*: string
+      lifetime: *lifetime
+      scopes: [string]
+      permissions:
+        ~: [string]
+      name: string
+    output: string
+    errors:
+      - ERR_INACCESSIBLE_SCOPE
   revoke:
     concurrency: retry
 
@@ -55,12 +71,15 @@ configuration:
     additionalProperties:
       type: string
   lifetime: 2592000 # seconds, 30 days
-  refresh: 600      # seconds, 10 minutes
+  refresh: 600
+  cache: 600
 
 exposition:
-  /:
+  /:identity:
+    auth:id: identity
+    auth:role: system:identity:tokens
     POST:
-      auth:delegate: identity
-      io:output: true # string
       map:authority: authority
-      endpoint: encrypt
+      io:input: [authority, identity, lifetime, scopes, permissions, name]
+      io:output: true # string
+      endpoint: issue

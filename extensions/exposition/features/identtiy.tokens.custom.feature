@@ -1,4 +1,5 @@
-Feature: Manual token issuance
+@security
+Feature: Custom tokens
 
   Background:
     Given the `identity.basic` database contains:
@@ -7,6 +8,7 @@ Feature: Manual token issuance
     And the `identity.roles` database contains:
       | _id                              | identity                         | role      |
       | 9c4702490ff84f2a9e1b1da2ab64bdd4 | efe3a65ebbee47ed95a73edd911ea328 | app:notes |
+    And the `identity.keys` database is empty
     And the annotation:
       """yaml
       /:
@@ -31,13 +33,14 @@ Feature: Manual token issuance
   Scenario: Issuing token
     When the following request is received:
       """
-      POST /identity/tokens/ HTTP/1.1
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
       accept: application/json
 
       lifetime: 0
+      name: Dev token
       """
     Then the following reply is sent:
       """
@@ -59,10 +62,22 @@ Feature: Manual token issuance
       id: efe3a65ebbee47ed95a73edd911ea328
       """
 
+    # debug LRU cache
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+
   Scenario: Token with restricted scopes
     When the following request is received:
       """
-      POST /identity/tokens/ HTTP/1.1
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/json
@@ -101,7 +116,7 @@ Feature: Manual token issuance
   Scenario: Token with restricted permissions
     When the following request is received:
       """
-      POST /identity/tokens/ HTTP/1.1
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/json
@@ -151,4 +166,71 @@ Feature: Manual token issuance
     Then the following reply is sent:
       """
       403 Forbidden
+      """
+
+  Scenario: Token revocation
+    Given the `identity.tokens` configuration:
+      """yaml
+      cache: 1
+      """
+    When the following request is received:
+      """
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      content-type: application/yaml
+      accept: application/json
+
+      lifetime: 0
+      name: One-time token
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      "${{ token }}"
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: efe3a65ebbee47ed95a73edd911ea328
+      """
+    When the following request is received:
+      """
+      GET /identity/keys/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: ${{ token.kid }}
+        name: One-time token
+      """
+    When the following request is received:
+      """
+      DELETE /identity/keys/efe3a65ebbee47ed95a73edd911ea328/${{ token.kid }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    And after 1 second
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
       """

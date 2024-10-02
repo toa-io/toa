@@ -8,7 +8,7 @@ import { type Context, type Identity } from './lib'
 let encrypt: Encrypt
 let decrypt: Decrypt
 
-const context: Context = {} as unknown as Context
+const context: Context = { remote: { identity: { keys: null } } } as unknown as Context
 const authority = generate()
 
 beforeEach(() => {
@@ -17,7 +17,8 @@ beforeEach(() => {
       key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'
     },
     lifetime: 1,
-    refresh: 2
+    refresh: 2,
+    cache: 3
   }
 
   encrypt = new Encrypt()
@@ -28,7 +29,7 @@ beforeEach(() => {
 })
 
 it('should encrypt with configured lifetime by default', async () => {
-  const identity: Identity = { id: generate() }
+  const identity: Identity = { id: generate(), roles: [] }
 
   const encrypted = await encrypt.execute({
     authority,
@@ -46,7 +47,7 @@ it('should encrypt with configured lifetime by default', async () => {
 })
 
 it('should encrypt with given lifetime', async () => {
-  const identity: Identity = { id: generate() }
+  const identity: Identity = { id: generate(), roles: [] }
   const lifetime = 0.1
 
   const encrypted = await encrypt.execute({
@@ -66,7 +67,7 @@ it('should encrypt with given lifetime', async () => {
 })
 
 it('should encrypt without lifetime INSECURE', async () => {
-  const identity: Identity = { id: generate() }
+  const identity: Identity = { id: generate(), roles: [] }
   const lifetime = 0
 
   const encrypted = await encrypt.execute({

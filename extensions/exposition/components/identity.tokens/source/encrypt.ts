@@ -8,9 +8,9 @@ export class Effect implements Operation {
   private lifetime: number = 0
 
   public mount (context: Context): void {
-    const [name, value] = Object.entries(context.configuration.keys)[0]
+    const [id, secret] = Object.entries(context.configuration.keys)[0]
 
-    this.key = { name, value }
+    this.key = { id, key: secret }
     this.lifetime = context.configuration.lifetime * 1000
   }
 
@@ -40,7 +40,9 @@ export class Effect implements Operation {
     if (exp !== undefined)
       payload.exp = exp
 
-    return await V3.encrypt(payload, this.key.value, { footer: this.key.name })
+    const key = input.key ?? this.key
+
+    return await V3.encrypt(payload, key.key, { footer: { kid: key.id } })
   }
 }
 

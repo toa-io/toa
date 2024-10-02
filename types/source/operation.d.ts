@@ -1,4 +1,4 @@
-export interface Operation{
-  mount: (context: any) => void | Promise<void>
-  execute: (input: any, scope: any) => Promise<any>
+export interface Operation<Input = any, Output = any> {
+  mount?: (context: any) => void | Promise<void>
+  execute: (input: Input, scope: any) => Promise<Output>
 }

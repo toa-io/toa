@@ -7,7 +7,7 @@ let context: Context
 let output: DecryptOutput
 let authenticate: Authenticate
 
-const identity: Identity = { id: generate() }
+const identity: Identity = { id: generate(), roles: [] }
 const authority = generate()
 
 beforeEach(() => {
@@ -16,7 +16,8 @@ beforeEach(() => {
       key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'
     },
     lifetime: 2592000,
-    refresh: 600
+    refresh: 600,
+    cache: 600
   }
 
   context = {
@@ -25,7 +26,7 @@ beforeEach(() => {
       decrypt: jest.fn(async () => (output)),
       observe: jest.fn(async () => null)
     }
-  }
+  } as unknown as Context
 
   authenticate = new Authenticate()
   authenticate.mount(context)
