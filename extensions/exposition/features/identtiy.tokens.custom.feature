@@ -214,14 +214,18 @@ Feature: Custom tokens
       """
       200 OK
 
-      - id: ${{ token.kid }}
+      - id: ${{ kid }}
         name: One-time token
       """
     When the following request is received:
       """
-      DELETE /identity/keys/efe3a65ebbee47ed95a73edd911ea328/${{ token.kid }}/ HTTP/1.1
+      DELETE /identity/keys/efe3a65ebbee47ed95a73edd911ea328/${{ kid }}/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
       """
     And after 1 second
     When the following request is received:
