@@ -215,6 +215,7 @@ Feature: Custom tokens
       200 OK
 
       - id: ${{ kid }}
+        _created:
         name: One-time token
       """
     When the following request is received:

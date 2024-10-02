@@ -31,7 +31,7 @@ exposition:
     auth:id: identity
     auth:role: system:identity:keys
     GET:
-      io:output: [id, name]
+      io:output: [id, name, _created]
       query:
         sort: _created:desc
       endpoint: enumerate
