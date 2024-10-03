@@ -24,7 +24,10 @@ export interface Configuration {
   readonly keys: Record<string, string>
   readonly lifetime: number
   readonly refresh: number
-  readonly cache: number
+  readonly cache: {
+    max: number
+    ttl: number
+  }
 }
 
 export interface Entity {
@@ -74,6 +77,7 @@ export interface Claims {
 export interface Key {
   id: string
   key: string
+  label: string
 }
 
 export interface CustomKey extends Key {

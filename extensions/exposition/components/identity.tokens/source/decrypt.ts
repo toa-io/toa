@@ -13,7 +13,7 @@ export class Computation implements Operation {
   public mount (context: Context): void {
     this.latest = Object.keys(context.configuration.keys)[0]
     this.remote = context.remote.identity.keys
-    this.cache = new LRUCache<string, KeyEntry>({ max: 1024, ttl: context.configuration.cache * 1000 })
+    this.cache = new LRUCache<string, KeyEntry>(context.configuration.cache)
 
     for (const [kid, key] of Object.entries(context.configuration.keys))
       this.keys[kid] = { key }

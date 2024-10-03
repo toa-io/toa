@@ -19,7 +19,10 @@ beforeEach(() => {
     },
     lifetime: 1000,
     refresh: 500,
-    cache: 600
+    cache: {
+      max: 1024,
+      ttl: 600
+    }
   }
 
   context = { configuration, remote } as unknown as Context

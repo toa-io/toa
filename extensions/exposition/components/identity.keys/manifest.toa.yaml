@@ -8,13 +8,16 @@ entity:
         type: string
       key:
         type: string
-      name: &name
+      label: &label
         type: string
         minLength: 1
-        maxLength: 32
+        maxLength: 64
+      expires: &expires
+        type: number
     required:
       - identity
       - key
+      - label
 
 operations:
   create:
@@ -22,16 +25,26 @@ operations:
     input:
       properties:
         identity: *identity
-        name: *name
+        label: *label
+        expires: *expires
+      required:
+        - identity
+        - label
     output:
-      id: string
-      key: string
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+      required:
+        - id
+        - key
 exposition:
   /:identity:
     auth:id: identity
     auth:role: system:identity:keys
     GET:
-      io:output: [id, name, _created]
+      io:output: [id, label, expires, _created]
       query:
         sort: _created:desc
       endpoint: enumerate

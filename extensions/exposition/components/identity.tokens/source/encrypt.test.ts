@@ -18,7 +18,10 @@ beforeEach(() => {
     },
     lifetime: 1,
     refresh: 2,
-    cache: 3
+    cache: {
+      max: 1024,
+      ttl: 3
+    }
   }
 
   encrypt = new Encrypt()

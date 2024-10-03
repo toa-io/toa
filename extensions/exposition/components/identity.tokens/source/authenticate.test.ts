@@ -17,7 +17,10 @@ beforeEach(() => {
     },
     lifetime: 2592000,
     refresh: 600,
-    cache: 600
+    cache: {
+      max: 1024,
+      ttl: 600
+    }
   }
 
   context = {

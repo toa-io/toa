@@ -30,23 +30,25 @@ Feature: Custom tokens
                 access: granted!
       """
 
-  Scenario: Issuing token
+  Scenario: Issuing a token
     When the following request is received:
       """
       POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       content-type: application/yaml
-      accept: application/json
+      accept: application/yaml
 
-      lifetime: 0
-      name: Dev token
+      label: Dev token
+      lifetime: 600
       """
     Then the following reply is sent:
       """
       201 Created
 
-      "${{ token }}"
+      kid: ${{ kid }}
+      exp: ${{ exp }}
+      token: ${{ token }}
       """
     When the following request is received:
       """
@@ -80,17 +82,18 @@ Feature: Custom tokens
       POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
-      accept: application/json
+      accept: application/yaml
       content-type: application/yaml
 
-      lifetime: 10
+      label: Production token
+      lifetime: 0
       scopes: [app:notes:public]
       """
     Then the following reply is sent:
       """
       201 Created
 
-      "${{ token }}"
+      token: ${{ token }}
       """
     When the following request is received:
       """
@@ -119,10 +122,11 @@ Feature: Custom tokens
       POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
-      accept: application/json
+      accept: application/yaml
       content-type: application/yaml
 
-      lifetime: 10
+      label: Restricted token
+      lifetime: 0
       permissions: {
         /notes/: [GET]
       }
@@ -131,7 +135,7 @@ Feature: Custom tokens
       """
       201 Created
 
-      "${{ token }}"
+      token: ${{ token }}
       """
     When the following request is received:
       """
@@ -171,24 +175,25 @@ Feature: Custom tokens
   Scenario: Token revocation
     Given the `identity.tokens` configuration:
       """yaml
-      cache: 1
+      cache:
+        ttl: 1
       """
     When the following request is received:
       """
       POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
       content-type: application/yaml
-      accept: application/json
 
-      lifetime: 0
-      name: One-time token
+      label: One-time token
+      lifetime: 60
       """
     Then the following reply is sent:
       """
       201 Created
 
-      "${{ token }}"
+      token: ${{ token }}
       """
     When the following request is received:
       """
@@ -215,8 +220,9 @@ Feature: Custom tokens
       200 OK
 
       - id: ${{ kid }}
-        _created:
-        name: One-time token
+        label: One-time token
+        expires: ${{ expires }}
+        _created: ${{ created }}
       """
     When the following request is received:
       """
