@@ -4,8 +4,8 @@ import type { Operation, Maybe } from '@toa.io/types'
 import type { Identity, Claims, Context, EncryptInput, Key } from './lib'
 
 export class Effect implements Operation {
-  private key!: Key
-  private lifetime: number = 0
+  private key!: Pick<Key, 'id' | 'key'>
+  private lifetime!: number
 
   public mount (context: Context): void {
     const [id, secret] = Object.entries(context.configuration.keys)[0]

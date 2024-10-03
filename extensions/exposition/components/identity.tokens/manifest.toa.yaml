@@ -13,14 +13,24 @@ operations:
       identity*: &identity
         id: string
         ...: true
-      lifetime: &lifetime integer[0,) # seconds
+      lifetime: &lifetime
+        type: number
+        minimum: 0
       scopes: [string]
       permissions:
         ~: [string]
       key:
-        id: string
-        key: string
-    output: string
+        type: object
+        properties:
+          id:
+            type: string
+          key:
+            type: string
+        required:
+          - id
+          - key
+    output:
+      type: string
     errors:
       - ERR_INACCESSIBLE_SCOPE
   decrypt:
@@ -47,14 +57,36 @@ operations:
       - TOKEN_REVOKED
   issue:
     input:
-      authority*: string
-      identity*: string
-      lifetime: *lifetime
-      scopes: [string]
-      permissions:
-        ~: [string]
-      name: string
-    output: string
+      type: object
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+        lifetime: *lifetime
+        scopes:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        label:
+          type: string
+          minLength: 1
+          maxLength: 64
+      required:
+        - authority
+        - identity
+        - lifetime
+        - label
+    output:
+      kid: string
+      exp: number
+      token: string
     errors:
       - ERR_INACCESSIBLE_SCOPE
   revoke:
@@ -70,9 +102,25 @@ configuration:
     minProperties: 1
     additionalProperties:
       type: string
-  lifetime: 2592000 # seconds, 30 days
-  refresh: 600
-  cache: 600
+  lifetime:
+    description: Token expiration time in seconds (default 30 days)
+    type: number
+    default: 2592000
+  refresh:
+    description: Token refresh time in seconds (default 10 minutes)
+    type: number
+    default: 600
+  cache:
+    description: Custom token keys LRU cache configuration
+    properties:
+      max:
+        type: number
+        default: 1024
+      ttl:
+        type: number
+        default: 600_000
+    default: { }
+
 
 exposition:
   /:identity:
@@ -80,6 +128,6 @@ exposition:
     auth:role: system:identity:tokens
     POST:
       map:authority: authority
-      io:input: [authority, identity, lifetime, scopes, permissions, name]
-      io:output: true # string
+      io:input: [authority, identity, lifetime, label, scopes, permissions]
+      io:output: [kid, exp, token, label]
       endpoint: issue
