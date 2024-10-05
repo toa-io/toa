@@ -175,8 +175,8 @@ Feature: HTTP context mapping
       """yaml
       exposition:
         /:
-          io:output: true
           GET:
+            io:output: true
             map:authority: name
             endpoint: compute
       """
@@ -238,4 +238,28 @@ Feature: HTTP context mapping
       200 OK
 
       Hello Alice@test.local
+      """
+
+  Scenario: Mapping non-exposed properties
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            io:output: true
+            io:input: [] # disallow input
+            map:authority: name
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      host: the.one.com
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello the.one.com
       """

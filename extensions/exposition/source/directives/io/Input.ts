@@ -19,7 +19,10 @@ export class Input implements Directive {
     context.pipelines.body.push((body) => this.check(body))
   }
 
-  private check (body: unknown): unknown {
+  private check (body: unknown): Message | Message[] | undefined {
+    if (body === undefined)
+      return body
+
     try {
       schemas.message.validate<Message | Message[]>(body)
     } catch {
