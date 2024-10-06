@@ -126,6 +126,38 @@ export class IdP {
     this.captures.set(`${user}.id_token`, idToken)
   }
 
+  @given('the IDP random token is issued')
+  public async issueNewToken (): Promise<void> {
+    assert.ok(IdP.privateKey, 'IdP private key is not available')
+
+    const sub = Math.random().toString(36).substring(7)
+
+    const jwt = [
+      {
+        typ: 'JWT',
+        alg: 'RS256'
+      },
+      {
+        iss: IdP.issuer,
+        sub,
+        aud: 'test',
+        email: sub + '@test.local',
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor((Date.now() + 1000 * 60 * 5) / 1000)
+      }
+    ]
+      .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
+      .join('.')
+
+    const signature = crypto.createSign('RSA-SHA256').end(jwt).sign(IdP.privateKey, 'base64url')
+
+    const idToken = `${jwt}.${signature}`
+
+    this.captures.set('random.sub', sub)
+    this.captures.set('random.email', sub + '@test.local')
+    this.captures.set('random.id_token', idToken)
+  }
+
   @given('the IDP {word} token for {word} is issued with following secret:')
   public async issueSymmetricToken (alg: string, user: string, secret: string): Promise<void> {
     const jwt = [

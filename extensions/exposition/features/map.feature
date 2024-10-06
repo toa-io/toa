@@ -175,8 +175,8 @@ Feature: HTTP context mapping
       """yaml
       exposition:
         /:
-          io:output: true
           GET:
+            io:output: true
             map:authority: name
             endpoint: compute
       """
@@ -217,9 +217,9 @@ Feature: HTTP context mapping
       """yaml
       exposition:
         /:
-          anyone: true
-          io:output: true
           GET:
+            anyone: true
+            io:output: true
             map:claims:
               name: email
             endpoint: compute
@@ -238,4 +238,68 @@ Feature: HTTP context mapping
       200 OK
 
       Hello Alice@test.local
+      """
+
+  Scenario: Mapping Bearer token claims during inception
+    Given local IDP is running
+    And the `identity.federation` configuration:
+      """yaml
+      trust:
+        - iss: http://localhost:44444
+      """
+    And the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          POST:
+            auth:incept: id
+            io:input: [title, volume]
+            io:output: [id, title, volume]
+            map:claims:
+              title: email
+            endpoint: create
+      """
+    And the IDP random token is issued
+
+    When the following request is received:
+      """
+      POST /pots/ HTTP/1.1
+      host: the.two.com
+      authorization: Bearer ${{ random.id_token }}
+      accept: application/yaml
+      content-type: application/yaml
+
+      volume: 1.5
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      title: ${{ random.email }}
+      volume: 1.5
+      """
+
+  Scenario: Mapping non-exposed properties
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            io:output: true
+            io:input: [] # disallow input
+            map:authority: name
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      host: the.one.com
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello the.one.com
       """

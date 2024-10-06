@@ -1,11 +1,10 @@
 import { type Maybe } from '@toa.io/types'
 import { Err } from 'error-value'
 import { assertionsAsValues } from './lib/assertions-as-values.js'
-import { decode } from './lib/jwt'
 import type { Context, IdToken } from './types'
 
 async function authenticate ({ authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
-  const claims = await decode(credentials, context.configuration.trust)
+  const claims = await context.local.decode({ input: credentials })
   const { iss, sub } = claims
 
   const identity = context.configuration.implicit

@@ -47,7 +47,7 @@ operations:
           properties:
             id:
               type: string
-            claims:
+            claims: &claims
               properties:
                 iss:
                   type: string
@@ -64,6 +64,9 @@ operations:
             - claims
     errors:
       - ERR_NOT_FOUND
+  decode:
+    input: string
+    output: *claims
 
 exposition:
   /:

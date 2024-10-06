@@ -7,6 +7,7 @@ export interface Context {
     observe: Observation<Entity>
     transit: Call<TransitOutput, TransitInput>
     ensure: Call<EnsureOutput>
+    decode: Call<IdToken, string>
   }
   remote: {
     identity: {
