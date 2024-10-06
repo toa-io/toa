@@ -1,5 +1,4 @@
 name: pots
-version: 0.0.0
 
 entity:
   schema:
@@ -15,8 +14,6 @@ operations:
       title*: .
       volume*: .
       temperature: .
-    output:
-      id: .
     errors:
       - NO_WAY
       - WONT_CREATE
