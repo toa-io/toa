@@ -8,7 +8,9 @@ operations:
   transit:
     concurrency: retry
     input:
-      name*: ~
+      name*: .
   create:
+    concurrency: retry
     query: false
-    forward: transit
+    input:
+      name*: .

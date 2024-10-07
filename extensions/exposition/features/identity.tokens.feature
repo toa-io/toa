@@ -55,6 +55,7 @@ Feature: Tokens lifecycle
       """
       200 OK
       authorization: Token ${{ token }}
+      cache-control: no-store
 
       Hello
       """
@@ -70,6 +71,7 @@ Feature: Tokens lifecycle
       """
       200 OK
       authorization: Token
+      cache-control: no-store
 
       Hello
       """
