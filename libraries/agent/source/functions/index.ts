@@ -1,4 +1,5 @@
 import { id } from './id'
+import { get } from './get'
 import { set } from './set'
 import { basic } from './basic'
 import { email } from './email'
@@ -9,7 +10,7 @@ import { print } from './print'
 import type { Captures } from '../Captures'
 
 export const functions: Functions = {
-  id, set, basic, email, password, now, iso, print
+  id, get, set, basic, email, password, now, iso, print
 }
 
 type Fn = (this: Captures, value: string, ...args: string[]) => string

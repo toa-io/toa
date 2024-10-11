@@ -59,6 +59,12 @@ describe('pipelines', () => {
     expect(captures.get('test')).toMatch(/^[a-z0-9]{32}$/)
   })
 
+  it('should get variable', () => {
+    captures.set('foo', 'world')
+
+    expect(captures.substitute('hello #{{ get foo }}')).toBe('hello world')
+  })
+
   it('should encode basic credentials', () => {
     captures.set('Bubba.username', 'bubba')
     captures.set('Bubba.password', 'password')
