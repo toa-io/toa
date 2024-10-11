@@ -97,6 +97,17 @@ describe('pipelines', () => {
     expect(captures.substitute('hello #{{ now -86400000 }}')).toMatch(pastRx)
   })
 
+  it('should convert date to iso', () => {
+    const now = new Date().toISOString().slice(0, -5)
+    const nowRx = new RegExp(`hello ${now}.\\d{3}Z`)
+    const past = new Date(Date.now() - 86400000).toISOString().slice(0, -5)
+    const pastRx = new RegExp(`hello ${past}.\\d{3}Z`)
+
+    expect(captures.substitute('hello #{{ iso }}')).toMatch(nowRx)
+    expect(captures.substitute('hello #{{ now | iso }}')).toMatch(nowRx)
+    expect(captures.substitute('hello #{{ now -86400000 | iso }}')).toMatch(pastRx)
+  })
+
   it('should print', () => {
     captures.substitute('hello #{{ now | print }}')
 
