@@ -2,10 +2,26 @@ import * as undici from 'undici'
 import * as parser from './parse'
 import type { HTTPRequest } from './parse/request'
 
-export async function request (http: string, origin?: string): Promise<undici.Dispatcher.ResponseData> {
-  const { method, headers, body, url } = parse(http, origin)
+const pools = new Map<string, undici.Pool>()
 
-  return undici.request(url, { method, headers, body })
+export async function request (http: string, base?: string): Promise<undici.Dispatcher.ResponseData> {
+  const { method, headers, body, url } = parse(http, base)
+  const { origin, pathname, search } = new URL(url)
+
+  if (origin === undefined)
+    throw new Error('Invalid Host header')
+
+  if (!pools.has(origin))
+    pools.set(origin, new undici.Pool(origin))
+
+  const pool = pools.get(origin)!
+
+  return await pool.request({
+    path: pathname + search,
+    method,
+    headers,
+    body
+  })
 }
 
 export function parse (http: string, origin?: string): HTTPRequest {

@@ -59,6 +59,12 @@ describe('pipelines', () => {
     expect(captures.get('test')).toMatch(/^[a-z0-9]{32}$/)
   })
 
+  it('should get variable', () => {
+    captures.set('foo', 'world')
+
+    expect(captures.substitute('hello #{{ get foo }}')).toBe('hello world')
+  })
+
   it('should encode basic credentials', () => {
     captures.set('Bubba.username', 'bubba')
     captures.set('Bubba.password', 'password')
@@ -95,6 +101,17 @@ describe('pipelines', () => {
 
     expect(captures.substitute('hello #{{ now }}')).toMatch(nowRx)
     expect(captures.substitute('hello #{{ now -86400000 }}')).toMatch(pastRx)
+  })
+
+  it('should convert date to utc string', () => {
+    const now = new Date().toUTCString().slice(0, -7)
+    const past = new Date(Date.now() - 86400000).toUTCString().slice(0, -7)
+    const nowRx = new RegExp(`hello ${now}:\\d{2} GMT`)
+    const pastRx = new RegExp(`hello ${past}:\\d{2} GMT`)
+
+    expect(captures.substitute('hello #{{ utc }}')).toMatch(nowRx)
+    expect(captures.substitute('hello #{{ now | utc }}')).toMatch(nowRx)
+    expect(captures.substitute('hello #{{ now -86400000 | utc }}')).toMatch(pastRx)
   })
 
   it('should print', () => {

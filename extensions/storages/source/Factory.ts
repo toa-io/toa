@@ -48,7 +48,6 @@ export class Factory {
     console.debug('Storage created', {
       name,
       provider: id,
-      options,
       ...(provider.root === undefined ? undefined : { root: provider.root })
     })
 

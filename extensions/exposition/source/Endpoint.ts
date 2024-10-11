@@ -39,6 +39,7 @@ export class Endpoint implements RTD.Endpoint {
 
     const message: http.OutgoingMessage = {}
 
+    // etag
     if (typeof reply === 'object' && reply !== null && '_version' in reply) {
       const etag = context.request.headers['if-none-match']
 
@@ -51,6 +52,15 @@ export class Endpoint implements RTD.Endpoint {
         return message
       } else
         message.headers.set('etag', `"${reply._version.toString()}"`)
+    }
+
+    // last-modified
+    if (typeof reply === 'object' && reply !== null && ('_updated' in reply || '_created' in reply)) {
+      const timestamp = reply._updated ?? reply._created
+      const date = new Date(timestamp)
+
+      message.headers ??= new Headers()
+      message.headers.set('last-modified', date.toUTCString())
     }
 
     message.body = reply

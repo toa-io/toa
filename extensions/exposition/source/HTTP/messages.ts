@@ -48,6 +48,7 @@ export async function read (context: Context): Promise<any> {
 function send
 (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (message.body === undefined || message.body === null) {
+    response.setHeader('content-length', '0')
     response.end()
 
     return
@@ -60,6 +61,7 @@ function send
 
   response
     .setHeader('content-type', context.encoder.type)
+    .setHeader('content-length', buf.length.toString())
     .appendHeader('vary', 'accept')
     .end(buf)
 }
