@@ -38,7 +38,7 @@ Feature: CORS Support
       200 OK
       access-control-allow-origin: https://hello.world
       access-control-allow-credentials: true
-      access-control-expose-headers: authorization, content-type, content-length, etag
+      access-control-expose-headers: authorization, content-type, content-length, etag, last-modified
       vary: origin
       """
 

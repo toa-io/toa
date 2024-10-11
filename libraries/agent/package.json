@@ -23,9 +23,6 @@
   },
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
-  "bin": {
-    "http": "bin/http"
-  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"

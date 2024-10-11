@@ -36,10 +36,15 @@ export class Gateway extends Connector {
     if (context.request.method === 'OPTIONS')
       return await this.explain(node, parameters)
 
-    if (!(context.request.method in node.methods))
+    let verb = context.request.method
+
+    if (!(verb in node.methods) && verb === 'HEAD' && 'GET' in node.methods)
+      verb = 'GET'
+
+    if (!(verb in node.methods))
       throw new http.MethodNotAllowed()
 
-    const method = node.methods[context.request.method]
+    const method = node.methods[verb]
 
     const interruption = await context.timing.capture('preflight',
       method.directives.preflight(context, parameters)).catch(rethrow)
