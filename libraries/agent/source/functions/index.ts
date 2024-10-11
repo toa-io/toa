@@ -5,12 +5,12 @@ import { basic } from './basic'
 import { email } from './email'
 import { password } from './password'
 import { now } from './now'
-import { iso } from './iso'
+import { utc } from './utc'
 import { print } from './print'
 import type { Captures } from '../Captures'
 
 export const functions: Functions = {
-  id, get, set, basic, email, password, now, iso, print
+  id, get, set, basic, email, password, now, utc, print
 }
 
 type Fn = (this: Captures, value: string, ...args: string[]) => string

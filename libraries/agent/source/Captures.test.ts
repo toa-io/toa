@@ -103,15 +103,15 @@ describe('pipelines', () => {
     expect(captures.substitute('hello #{{ now -86400000 }}')).toMatch(pastRx)
   })
 
-  it('should convert date to iso', () => {
-    const now = new Date().toISOString().slice(0, -5)
-    const nowRx = new RegExp(`hello ${now}.\\d{3}Z`)
-    const past = new Date(Date.now() - 86400000).toISOString().slice(0, -5)
-    const pastRx = new RegExp(`hello ${past}.\\d{3}Z`)
+  it('should convert date to utc string', () => {
+    const now = new Date().toUTCString().slice(0, -7)
+    const past = new Date(Date.now() - 86400000).toUTCString().slice(0, -7)
+    const nowRx = new RegExp(`hello ${now}:\\d{2} GMT`)
+    const pastRx = new RegExp(`hello ${past}:\\d{2} GMT`)
 
-    expect(captures.substitute('hello #{{ iso }}')).toMatch(nowRx)
-    expect(captures.substitute('hello #{{ now | iso }}')).toMatch(nowRx)
-    expect(captures.substitute('hello #{{ now -86400000 | iso }}')).toMatch(pastRx)
+    expect(captures.substitute('hello #{{ utc }}')).toMatch(nowRx)
+    expect(captures.substitute('hello #{{ now | utc }}')).toMatch(nowRx)
+    expect(captures.substitute('hello #{{ now -86400000 | utc }}')).toMatch(pastRx)
   })
 
   it('should print', () => {
