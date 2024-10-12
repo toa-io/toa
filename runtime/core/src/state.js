@@ -28,7 +28,7 @@ class State {
     const record = await this.#storage.get(query)
 
     if (record === null) {
-      if (this.#associated && query.id !== undefined && query.version === undefined)
+      if (this.#associated && query.id !== undefined && query.criteria === undefined && query.version === undefined)
         return this.init(query.id)
       else if (query.version !== undefined)
         throw new StatePreconditionException()
