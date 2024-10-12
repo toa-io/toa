@@ -114,6 +114,12 @@ describe('pipelines', () => {
     expect(captures.substitute('hello #{{ now -86400000 | utc }}')).toMatch(pastRx)
   })
 
+  it('should convert to timestamp', () => {
+    const timestamp = Math.floor(Date.now() / 1000)
+
+    expect(captures.substitute('hello #{{ now | utc | unix }}')).toBe(`hello ${timestamp}`)
+  })
+
   it('should print', () => {
     captures.substitute('hello #{{ now | print }}')
 
