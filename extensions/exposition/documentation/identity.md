@@ -141,6 +141,9 @@ id: 2428c31ecb6e4a51a24ef52f0c4181b9
 As a result of processing the above request, the provided Basic credentials associated with the
 Identity `2428c31ecb6e4a51a24ef52f0c4181b9` are created.
 
+> `auth:incept` directive may have a `null` value, which means that the Identity will be created
+> without any associated entity.
+
 ## FAQ
 
 <dl>
