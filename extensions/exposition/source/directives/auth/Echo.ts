@@ -1,4 +1,4 @@
-import { newid } from '@toa.io/generic'
+import { create } from './create'
 import type { OutgoingMessage } from '../../HTTP'
 import type { Directive, Identity, Input } from './types'
 
@@ -7,20 +7,16 @@ export class Echo implements Directive {
     if (identity === null && 'authorization' in input.request.headers)
       return false
 
-    input.identity ??= this.create()
+    input.identity ??= create()
 
     return true
   }
 
-  public reply (identity: Identity | null): OutgoingMessage {
-    const body = identity!
+  public reply (context: Input): OutgoingMessage {
+    const body = context.identity!
 
     return body.scheme === null
       ? { status: 201, body }
       : { body }
-  }
-
-  private create (): Identity {
-    return { id: newid(), scheme: null, refresh: false, roles: [] }
   }
 }

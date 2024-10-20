@@ -68,7 +68,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
       if (allow)
         if (this.permitted(context))
-          return directive.reply?.(context.identity) ?? null
+          return directive.reply?.(context) ?? null
         else
           throw new http.Forbidden()
     }

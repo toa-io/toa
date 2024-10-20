@@ -32,6 +32,21 @@ const PREDEFINED: syntax.Node = {
                 value: null
               }
             ]
+          },
+          {
+            verb: 'POST',
+            directives: [
+              {
+                family: 'io',
+                name: 'output',
+                value: ['id', 'roles']
+              },
+              {
+                family: 'auth',
+                name: 'incept',
+                value: null
+              }
+            ]
           }
         ],
         directives: []

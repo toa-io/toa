@@ -7,13 +7,13 @@ import type * as io from '../../io'
 export interface Directive {
   authorize: (
     identity: Identity | null,
-    input: Input,
+    context: Input,
     parameters: Parameter[]
   ) => boolean | Promise<boolean>
 
-  reply?: (identity: Identity | null) => http.OutgoingMessage
+  reply?: (context: Input) => http.OutgoingMessage | null
 
-  settle?: (request: Input, response: http.OutgoingMessage) => Promise<void>
+  settle?: (context: Input, response: http.OutgoingMessage) => Promise<void>
 }
 
 export interface Identity {
