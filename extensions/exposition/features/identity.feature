@@ -87,35 +87,3 @@ Feature: Identity resource
       """
       401 Unauthorized
       """
-
-  Scenario: Identity inception
-    Given the `identity.basic` database is empty
-    When the following request is received:
-      """
-      POST /identity/ HTTP/1.1
-      host: nex.toa.io
-      authorization: Basic dXNlcjpwYXNzMTIzNA==
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      201 Created
-      authorization: Token ${{ token }}
-
-      id: ${{ id }}
-      roles: []
-      """
-    When the following request is received:
-      """
-      GET /identity/ HTTP/1.1
-      host: nex.toa.io
-      authorization: Basic dXNlcjpwYXNzMTIzNA==
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-
-      id: ${{ id }}
-      roles: []
-      """

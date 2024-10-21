@@ -1,18 +1,18 @@
 import { create } from './create'
 import type { OutgoingMessage } from '../../HTTP'
-import type { Directive, Identity, Input } from './types'
+import type { Directive, Identity, Context } from './types'
 
 export class Echo implements Directive {
-  public authorize (identity: Identity | null, input: Input): boolean {
-    if (identity === null && 'authorization' in input.request.headers)
+  public authorize (identity: Identity | null, context: Context): boolean {
+    if (identity === null && 'authorization' in context.request.headers)
       return false
 
-    input.identity ??= create()
+    context.identity ??= create()
 
     return true
   }
 
-  public reply (context: Input): OutgoingMessage {
+  public reply (context: Context): OutgoingMessage {
     const body = context.identity!
 
     return body.scheme === null

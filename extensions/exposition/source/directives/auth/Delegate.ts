@@ -1,8 +1,7 @@
 import { BadRequest } from '../../HTTP'
-import { type Directive, type Identity } from './types'
 import { Role } from './Role'
+import type { Context, Directive, Identity } from './types'
 import type { Component } from '@toa.io/core'
-import type { Input } from '../../io'
 
 export class Delegate implements Directive {
   private readonly property: string
@@ -13,7 +12,7 @@ export class Delegate implements Directive {
     this.discovery = discovery
   }
 
-  public async authorize (identity: Identity | null, context: Input): Promise<boolean> {
+  public async authorize (identity: Identity | null, context: Context): Promise<boolean> {
     if (identity === null)
       return false
 

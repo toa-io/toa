@@ -12,9 +12,10 @@ import { Echo } from './Echo'
 import { Scheme } from './Scheme'
 import { Delegate } from './Delegate'
 import { Federation } from './Federation'
+import { Anyone } from './Anyone'
+import { Input } from './Input'
 import { split } from './split'
 import { PRIMARY, PROVIDERS } from './schemes'
-import { Anyone } from './Anyone'
 import type { Output } from '../../io'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes'
@@ -26,7 +27,7 @@ import type {
   Discovery,
   Extension,
   Identity,
-  Input,
+  Context,
   Remote,
   Schemes
 } from './types'
@@ -53,15 +54,17 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     return match(Class,
       Role, () => new Role(value as string | string[], this.discovery.roles),
       Rule, () => new Rule(value as Record<string, string>, this.create.bind(this)),
+      Input, () => new Input(value, this.create.bind(this)),
       Incept, () => new Incept(value as string, this.discovery),
       Delegate, () => new Delegate(value as string, this.discovery.roles),
       () => new Class(value))
   }
 
   public async preflight (directives: Directive[],
-    context: Input,
+    context: Context,
     parameters: Parameter[]): Promise<Output> {
     context.identity = await this.resolve(context.authority, context.request.headers.authorization)
+    directives.sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1))
 
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
@@ -80,12 +83,12 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   }
 
   public async settle (directives: Directive[],
-    input: Input,
+    context: Context,
     response: http.OutgoingMessage): Promise<void> {
     await Promise.all(directives.map(async (directive) =>
-      directive.settle?.(input, response)))
+      directive.settle?.(context, response)))
 
-    const identity = input.identity
+    const identity = context.identity
 
     if (identity === null)
       return
@@ -98,7 +101,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.tokens ??= await this.discovery.tokens
 
     const token = await this.tokens.invoke<string>('encrypt', {
-      input: { authority: input.authority, identity }
+      input: { authority: context.authority, identity }
     })
 
     const authorization = `Token ${token}`
@@ -146,7 +149,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     return identity
   }
 
-  private permitted (context: Input): boolean {
+  private permitted (context: Context): boolean {
     const permissions = context.identity?.permissions
 
     if (permissions === undefined)
@@ -177,7 +180,8 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   scheme: Scheme,
   echo: Echo,
   delegate: Delegate,
-  claims: Federation
+  claims: Federation,
+  input: Input
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans']

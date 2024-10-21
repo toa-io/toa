@@ -8,7 +8,7 @@ export class Id implements Directive {
     this.parameter = parameter
   }
 
-  public authorize (identity: Identity | null, _: any, parameters: Parameter[]): boolean {
+  public authorize (identity: Identity | null, _: unknown, parameters: Parameter[]): boolean {
     if (identity === null)
       return false
 

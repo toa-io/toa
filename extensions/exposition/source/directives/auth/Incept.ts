@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { type Maybe } from '@toa.io/types'
 import * as http from '../../HTTP'
-import { type Directive, type Discovery, type Identity, type Input, type Schemes } from './types'
+import { type Directive, type Discovery, type Identity, type Context, type Schemes } from './types'
 import { split } from './split'
 import { create } from './create'
 import { PROVIDERS } from './schemes'
@@ -19,11 +19,11 @@ export class Incept implements Directive {
     this.discovery = discovery
   }
 
-  public authorize (identity: Identity | null, context: Input): boolean {
+  public authorize (identity: Identity | null, context: Context): boolean {
     return identity === null && 'authorization' in context.request.headers
   }
 
-  public reply (context: Input): http.OutgoingMessage | null {
+  public reply (context: Context): http.OutgoingMessage | null {
     if (this.property !== null)
       return null
 
@@ -32,14 +32,14 @@ export class Incept implements Directive {
     return { body }
   }
 
-  public async settle (input: Input, response: http.OutgoingMessage): Promise<void> {
+  public async settle (context: Context, response: http.OutgoingMessage): Promise<void> {
     const id = response.body?.[this.property ?? 'id']
 
     if (id === undefined)
       throw new http.Conflict('Identity inception has failed as the response body ' +
         `does not contain the '${this.property}' property`)
 
-    const [scheme, credentials] = split(input.request.headers.authorization!)
+    const [scheme, credentials] = split(context.request.headers.authorization!)
     const provider = PROVIDERS[scheme]
 
     this.schemes[scheme] ??= await this.discovery[provider]
@@ -47,7 +47,7 @@ export class Incept implements Directive {
     const identity = await this.schemes[scheme]
       .invoke<Maybe<Identity>>('incept', {
       input: {
-        authority: input.authority,
+        authority: context.authority,
         id,
         credentials
       }
@@ -56,7 +56,7 @@ export class Incept implements Directive {
     if (identity instanceof Error)
       throw new http.UnprocessableEntity(identity)
 
-    input.identity = identity
-    input.identity.scheme = scheme
+    context.identity = identity
+    context.identity.scheme = scheme
   }
 }
