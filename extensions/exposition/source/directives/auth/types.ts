@@ -5,15 +5,17 @@ import type * as http from '../../HTTP'
 import type * as io from '../../io'
 
 export interface Directive {
+  priority?: number
+
   authorize: (
     identity: Identity | null,
-    context: Input,
+    context: Context,
     parameters: Parameter[]
   ) => boolean | Promise<boolean>
 
-  reply?: (context: Input) => http.OutgoingMessage | null
+  reply?: (context: Context) => http.OutgoingMessage | null
 
-  settle?: (context: Input, response: http.OutgoingMessage) => Promise<void>
+  settle?: (context: Context, response: http.OutgoingMessage) => Promise<void>
 }
 
 export interface Identity {
@@ -32,10 +34,12 @@ export interface Ban {
   banned: boolean
 }
 
-export type Input = io.Input & Extension
+export type Context = io.Input & Extension
 export type AuthenticationResult = Maybe<{ identity: Identity, refresh: boolean }>
 
 export type Scheme = 'basic' | 'token' | 'bearer'
 export type Remote = 'basic' | 'federation' | 'tokens' | 'roles' | 'bans'
 export type Discovery = Record<Remote, Promise<Component>>
 export type Schemes = Record<Scheme, Component>
+
+export type Create = (name: string, value: any, ...args: any[]) => Directive

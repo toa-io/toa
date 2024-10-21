@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import type { Directive, Identity, Input } from './types'
+import type { Directive, Identity, Context } from './types'
 import type { Parameter } from '../../RTD'
 
 export class Federation implements Directive {
@@ -12,7 +12,7 @@ export class Federation implements Directive {
     assert.ok(this.matchers.length > 0, '`auth:claims` requires at least one property defined')
   }
 
-  public authorize (identity: Identity | null, context: Input, parameters: Parameter[]): boolean {
+  public authorize (identity: Identity | null, context: Context, parameters: Parameter[]): boolean {
     if (identity === null || !('claims' in identity))
       return false
 
@@ -59,7 +59,7 @@ function matches (value: string | string[], reference: string): boolean {
     : value === reference
 }
 
-function codomain (iss: string, context: Input): boolean {
+function codomain (iss: string, context: Context): boolean {
   const hostname = new URL(iss).hostname
   const dot = hostname.indexOf('.')
   const basename = dot === -1 ? hostname : hostname.slice(dot)
@@ -67,7 +67,7 @@ function codomain (iss: string, context: Input): boolean {
   return context.authority.slice(-basename.length) === basename
 }
 
-type Matcher = (value: string | string[], context: Input, parameters: Parameter[]) => boolean
+type Matcher = (value: string | string[], context: Context, parameters: Parameter[]) => boolean
 
 interface Claims {
   iss: string

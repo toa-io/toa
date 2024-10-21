@@ -1,4 +1,4 @@
-import { type Directive, type Input } from './types'
+import { type Directive, type Context } from './types'
 
 export class Anyone implements Directive {
   private readonly allow: boolean
@@ -7,7 +7,7 @@ export class Anyone implements Directive {
     this.allow = allow
   }
 
-  public authorize (_: any, input: Input): boolean {
-    return input.identity !== null && this.allow
+  public authorize (_: any, context: Context): boolean {
+    return context.identity !== null && this.allow
   }
 }

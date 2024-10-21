@@ -133,6 +133,26 @@ directives grant access. The value of the `rule` directive can be a single Rule 
 
 Access will be granted if an Identity matches a `user-id` placeholder and has a Role of `developer`.
 
+### `input`
+
+Restricts access based on the request body (which must be an object).
+
+```yaml
+/commits/:id:
+  PUT:
+    auth:role: [developer, reviewer]
+    auth:input:
+      - prop: approved
+        role: reviewer
+      - prop: message
+        role: developer
+```
+
+The example above restricts access to the `approved` property of the request body to the identity
+with the `reviewer` role, and the `message` property to the identity with the `developer` role.
+
+> `auth:input` directive does not grant access by itself.
+
 ### `delegate`
 
 Embeds the value of the current Identity into the request body as a property named after the value

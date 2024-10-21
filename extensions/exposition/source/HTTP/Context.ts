@@ -54,11 +54,12 @@ export class Context {
   }
 
   public async body<T> (): Promise<T> {
-    const value = await read(this)
+    let value = await read(this)
 
-    return this.pipelines.body.length === 0
-      ? value
-      : this.pipelines.body.reduce((value, transform) => transform(value), value)
+    for (const transform of this.pipelines.body)
+      value = await transform(value)
+
+    return value
   }
 
   private log (request: IncomingMessage): void {
