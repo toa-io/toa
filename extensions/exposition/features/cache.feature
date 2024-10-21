@@ -42,7 +42,7 @@ Feature: Caching
       """
       200 OK
 
-      cache-control: private
+      cache-control: no-store
       """
 
   Scenario: Caching successful response
@@ -99,7 +99,7 @@ Feature: Caching
       """
       200 OK
       authorization: Token ${{ token }}
-      cache-control: private
+      cache-control: no-store
       """
     When the following request is received:
       """
@@ -190,7 +190,7 @@ Feature: Caching
       """
       200 OK
       authorization: Token ${{ token }}
-      cache-control: private
+      cache-control: no-store
       """
     When the following request is received:
       """
@@ -251,7 +251,7 @@ Feature: Caching
       """
       200 OK
       authorization: Token ${{ token }}
-      cache-control: private
+      cache-control: no-store
       """
     When the following request is received:
       """
