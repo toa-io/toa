@@ -22,6 +22,10 @@ class Storage extends Connector {
     this.depends(client)
   }
 
+  get raw () {
+    return this.#collection
+  }
+
   async open () {
     this.#collection = this.#client.collection
 

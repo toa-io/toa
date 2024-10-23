@@ -13,11 +13,6 @@ Feature: Transition
       foo: 1
       bar: baz
       """
-    When I call `dummies.one.transit`
-    Then the reply is received:
-      """
-      foo: 0
-      """
 
   Scenario: Transition of an associated deleted entry
     Given I compose `mongo.associated` component

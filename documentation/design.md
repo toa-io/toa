@@ -61,6 +61,20 @@ side effects.
 If the Effect is called with `entity` property of the Request, the current state will be acquired
 using atomic "get or create."
 
+#### Unmanaged
+
+Unmanaged operations have direct access to the underlying client of the Storage.
+
+```javascript
+// MongoDB Storage
+async function unmanaged (input, collection, context) {
+  return await collection.findOne({ id: input.id })
+}
+```
+
+> Unmanaged operations lack concurrency control, events, object identification, versioning,
+> timestamps and other features provided by the runtime.
+
 ### Safety
 
 Operations are categorized into two types based on their impact on the State: *safe* and *unsafe*.

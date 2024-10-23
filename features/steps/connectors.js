@@ -346,8 +346,8 @@ async function call (endpoint, request) {
   this.exception = undefined
   this.reply = undefined
 
-  const operation = endpoint.split('.').pop()
-  const remote = await stage.remote(endpoint)
+  const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
+  const remote = await stage.remote(`${namespace}.${component}`)
 
   try {
     this.pendingReply = remote.invoke(operation, request)

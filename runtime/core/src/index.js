@@ -20,6 +20,7 @@ const { Component } = require('./component')
 const { State } = require('./state')
 const { Transition } = require('./transition')
 const { Transmission } = require('./transmission')
+const { Unmanaged } = require('./unmanaged')
 
 exports.entities = require('./entities')
 exports.exceptions = require('./exceptions')
@@ -47,3 +48,4 @@ exports.Remote = Remote
 exports.State = State
 exports.Transition = Transition
 exports.Transmission = Transmission
+exports.Unmanaged = Unmanaged
