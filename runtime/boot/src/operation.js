@@ -1,6 +1,14 @@
 'use strict'
 
-const { Transition, Observation, Assignment, Operation, Query, Effect } = require('@toa.io/core')
+const {
+  Transition,
+  Observation,
+  Assignment,
+  Operation,
+  Query,
+  Effect,
+  Unmanaged
+} = require('@toa.io/core')
 
 const boot = require('./index')
 
@@ -25,7 +33,8 @@ const TYPES = {
   observation: Observation,
   assignment: Assignment,
   computation: Operation,
-  effect: Effect
+  effect: Effect,
+  unmanaged: Unmanaged
 }
 
 exports.operation = operation

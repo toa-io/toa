@@ -1,16 +1,17 @@
 'use strict'
 
-const { empty, newid } = require('@toa.io/generic')
+const { empty } = require('@toa.io/generic')
 const { StatePreconditionException, StateNotFoundException } = require('./exceptions')
 
 class State {
+  storage
+
   #associated
-  #storage
   #entities
   #emission
 
   constructor (storage, entity, emission, associated) {
-    this.#storage = storage
+    this.storage = storage
     this.#entities = entity
     this.#emission = emission
     this.#associated = associated === true
@@ -25,7 +26,7 @@ class State {
   }
 
   async object (query) {
-    const record = await this.#storage.get(query)
+    const record = await this.storage.get(query)
 
     if (record === null) {
       if (this.#associated && query.id !== undefined && query.criteria === undefined && query.version === undefined)
@@ -39,13 +40,13 @@ class State {
   }
 
   async objects (query) {
-    const recordset = await this.#storage.find(query)
+    const recordset = await this.storage.find(query)
 
     return this.#entities.objects(recordset)
   }
 
   async stream (query) {
-    return this.#storage.stream(query)
+    return this.storage.stream(query)
   }
 
   changeset (query) {
@@ -64,7 +65,7 @@ class State {
 
     object.set(blank)
 
-    const record = await this.#storage.ensure(query, properties, object.get())
+    const record = await this.storage.ensure(query, properties, object.get())
 
     if (record.id !== blank.id) // exists
       return this.#entities.object(record)
@@ -84,7 +85,7 @@ class State {
     if (!empty(event.changeset)) {
       const object = state.get()
 
-      ok = await this.#storage.store(object)
+      ok = await this.storage.store(object)
 
       // #20
       if (ok === true)
@@ -97,7 +98,7 @@ class State {
   async apply (state) {
     const changeset = state.export()
 
-    const result = await this.#storage.upsert(state.query, changeset)
+    const result = await this.storage.upsert(state.query, changeset)
 
     if (result === null) {
       if (state.query.version !== undefined) {

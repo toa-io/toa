@@ -127,7 +127,7 @@ properties:
         type: object
         properties:
           type:
-            enum: [transition, observation, assignment, computation, effect]
+            enum: [transition, observation, assignment, computation, effect, unmanaged]
           scope:
             enum: [object, objects, changeset, stream, none]
           concurrency:
@@ -198,7 +198,7 @@ properties:
           - if: # computation
               properties:
                 type:
-                  const: computation
+                  enum: [computation, unmanaged]
             then:
               properties:
                 scope:
