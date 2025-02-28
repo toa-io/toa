@@ -65,7 +65,7 @@ class Entity {
       value._updated ??= value._created
     }
 
-    if (value._deleted !== null)
+    if ('_deleted' in value && value._deleted !== null)
       this.deleted = true
 
     if (this.#state !== undefined) {

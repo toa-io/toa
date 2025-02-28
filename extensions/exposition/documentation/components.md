@@ -89,6 +89,15 @@ password?: string
 
 Access requires basic credentials of the modified Identity or `system:identity:basic` role.
 
+#### `/identity/basic/usernames/:username/`
+
+<code>GET</code> Check if the username is available.
+
+`username` must be Base64 URL encoded.
+
+Returns empty response with status `204`
+if the username is already taken or `404` if it is available.
+
 ## Identity federation (OpenID connect)
 
 The `identity.federation` component manages OpenID Connect federated identities.

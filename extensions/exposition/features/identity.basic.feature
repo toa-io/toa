@@ -401,3 +401,26 @@ Feature: Basic authentication
 
       code: INVALID_CREDENTIALS
       """
+
+  Scenario: Check if username is available
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username  | password                                                     | _version |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+    When the following request is received:
+      """
+      GET /identity/basic/usernames/ZGV2ZWxvcGVy/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      """
+    When the following request is received:
+      """
+      GET /identity/basic/username/bWFuYWdlcg/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
