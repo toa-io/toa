@@ -74,6 +74,12 @@ username: string
 password: string
 ```
 
+Returns `201 Created` if the Identity is created,
+or `422 Unprocessable Entity` with one of the error codes:
+
+- `INVALID_USERNAME` - `username` does not match constraints
+- `INVALID_PASSWORD` - `password` does not match constraints
+
 Access is [anonymous](access.md#anonymous).
 
 #### `/identity/basic/:id/`

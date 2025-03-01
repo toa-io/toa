@@ -8,6 +8,7 @@ import { Id } from './Id'
 import { Role } from './Role'
 import { Rule } from './Rule'
 import { Incept } from './Incept'
+import { Assert } from './Assert'
 import { Echo } from './Echo'
 import { Scheme } from './Scheme'
 import { Delegate } from './Delegate'
@@ -177,6 +178,7 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   role: Role,
   rule: Rule,
   incept: Incept,
+  assert: Assert,
   scheme: Scheme,
   echo: Echo,
   delegate: Delegate,
