@@ -47,6 +47,16 @@ operations:
     errors:
       - NOT_FOUND
       - PASSWORD_MISMATCH
+  check:
+    input:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+      required:
+        - username
+    output: null
 
 configuration:
   rounds: 10
@@ -70,3 +80,8 @@ exposition:
     auth:scheme: basic
     auth:id: id
     PATCH: transit
+  /usernames/:username:
+    GET:
+      map:authority: authority
+      anonymous: true
+      endpoint: check

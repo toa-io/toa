@@ -74,6 +74,12 @@ username: string
 password: string
 ```
 
+Returns `201 Created` if the Identity is created,
+or `422 Unprocessable Entity` with one of the error codes:
+
+- `INVALID_USERNAME` - `username` does not match constraints
+- `INVALID_PASSWORD` - `password` does not match constraints
+
 Access is [anonymous](access.md#anonymous).
 
 #### `/identity/basic/:id/`
@@ -88,6 +94,15 @@ password?: string
 ```
 
 Access requires basic credentials of the modified Identity or `system:identity:basic` role.
+
+#### `/identity/basic/usernames/:username/`
+
+<code>GET</code> Check if the username is available.
+
+`username` must be Base64 URL encoded.
+
+Returns empty response with status `204`
+if the username is already taken or `404` if it is available.
 
 ## Identity federation (OpenID connect)
 

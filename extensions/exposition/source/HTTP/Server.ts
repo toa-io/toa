@@ -124,7 +124,8 @@ export class Server extends Connector {
         else
           status = 200
 
-      response.statusCode = message.status = status
+      message.status = status
+
       await write(context, response, message)
     }
   }

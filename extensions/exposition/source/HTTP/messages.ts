@@ -15,6 +15,9 @@ export async function write
   for (const transform of context.pipelines.response)
     await transform(message)
 
+  if (message?.status !== undefined)
+    response.statusCode = message.status
+
   response.setHeader('server', server)
   message.headers?.forEach((value, key) => response.setHeader(key, value))
   context.timing.append(response)

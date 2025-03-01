@@ -144,6 +144,31 @@ Identity `2428c31ecb6e4a51a24ef52f0c4181b9` are created.
 > `auth:incept` directive may have a `null` value, which means that the Identity will be created
 > without any associated entity.
 
+Inception is supported for `Basic` and `Bearer` authentication schemes.
+
+## Identity assertion
+
+`auth:assert` directive is used to ensure that given credentials are associated with an existing
+Identity or to create a new Identity if it does not exist.
+The directive itself does not allow or deny access to the requested resource.
+
+> Used authentication scheme must support inception.
+
+```yaml
+  /accounts/echo:
+    auth:assert: true
+    auth:anyone: true
+    endpoint: echo
+```
+
+```http
+GET /accounts/echo/
+authorization: Basic new-or-existent-credentials
+```
+
+If new Identity is created and endpoint returns a successful response, the status code `201 Created`
+is returned.
+
 ## FAQ
 
 <dl>
