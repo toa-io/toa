@@ -130,7 +130,9 @@ configuration:
         additionalProperties: false
       implicit:
         title: Implicitly create Identity
-        description: Enabling this will make Identity inception impossible
+        description: |
+          Enabling this will make Identity inception impossible.
+          DEPRECATED: use `auth:assert`
         type: boolean
         default: false
     additionalProperties: false
