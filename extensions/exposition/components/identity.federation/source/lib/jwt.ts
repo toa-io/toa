@@ -133,7 +133,7 @@ export async function validateSignature ({
     keys: Array<{ use: string, kid?: string, alg?: string } & crypto.JsonWebKey>
   }
 
-  // getting corresponding signing key
+  // getting the corresponding signing key
   const signingKeys = keys.filter((k) => k.use === 'sig' && k.alg === alg)
 
   assert.ok(signingKeys.length > 0, 'No acceptable signing keys found')
@@ -141,7 +141,7 @@ export async function validateSignature ({
   assert.ok(kid !== undefined || signingKeys.length === 1,
     'Signing key selection is not deterministic')
 
-  const signingKey = kid === undefined ? signingKeys.find((k) => k.kid === kid) : keys[0]
+  const signingKey = kid === undefined ? keys[0] : signingKeys.find((k) => k.kid === kid)
 
   assert.ok(signingKey, 'Signing key was not found in issuer keys')
 
