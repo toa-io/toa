@@ -2,6 +2,7 @@ import crypto from 'node:crypto'
 import * as assert from 'node:assert'
 import { get } from './get'
 import type { JwtHeader, IdToken, Trust } from '../types'
+import type { Stash } from '@toa.io/types'
 
 export function decodeJwt (token: string): {
   header: unknown
@@ -27,7 +28,7 @@ export function validateJwtHeader (header: unknown): asserts header is JwtHeader
 }
 
 export function validateJwtPayload (payload: unknown,
-  trusted: Trust[] = [],
+  trusted: Trust[],
   header: JwtHeader): asserts payload is IdToken {
   assert.ok(trusted.length > 0, 'No trusted issuers provided')
 
@@ -84,6 +85,9 @@ export function validateJwtPayload (payload: unknown,
     assert.ok(typeof payload.nbf === 'number', 'Payload nbf is not a number')
     assert.ok(Date.now() >= payload.nbf * 1000, 'Token is not valid yet')
   }
+
+  if ('jti' in payload)
+    assert.ok(typeof payload.jti === 'string', 'Payload jti is not a string')
 }
 
 export async function validateSignature ({
@@ -159,11 +163,27 @@ export async function validateSignature ({
   assert.ok(signatureValid, 'Failed to validate signature')
 }
 
-export async function decode (token: string, trusted?: Trust[]): Promise<IdToken> {
+async function validateJti (token: IdToken, stash: Stash): Promise<void> {
+  const key = `identity:federation:jti:${token.jti}`
+  const used = await stash.exists(key)
+
+  assert.ok(used === 0, 'Token has already been used')
+
+  const ttl = token.exp - Math.floor(Date.now() / 1000)
+
+  await stash.set(key, '1', 'EX', ttl)
+}
+
+export async function decode (token: string, trusted: Trust[] | undefined, stash: Stash): Promise<IdToken> {
+  assert.ok(trusted !== undefined, 'No trusted issuers provided')
+
   const { header, payload, rawHeader, rawPayload, signature } = decodeJwt(token)
 
   validateJwtHeader(header)
   validateJwtPayload(payload, trusted, header)
+
+  if (payload.jti !== undefined)
+    await validateJti(payload, stash)
 
   await validateSignature({
     header,

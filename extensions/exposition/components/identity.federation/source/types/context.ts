@@ -1,4 +1,4 @@
-import { type Call, type Observation, type Query } from '@toa.io/types'
+import type { Call, Observation, Query, Stash, telemetry } from '@toa.io/types'
 import type { Entity } from './entity'
 import type { Configuration } from './configuration'
 
@@ -16,6 +16,8 @@ export interface Context {
       }
     }
   }
+  logs: telemetry.Logs
+  stash: Stash
   configuration: Configuration
 }
 
@@ -53,4 +55,5 @@ export interface IdToken {
   exp: number
   iat: number
   nbf?: number
+  jti?: string
 }

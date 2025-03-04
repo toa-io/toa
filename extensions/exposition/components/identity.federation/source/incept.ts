@@ -4,7 +4,7 @@ import type { Request } from '@toa.io/types'
 import type { Context, Entity, TransitInput } from './types'
 
 async function incept (input: Input, context: Context): Promise<Output> {
-  const { iss, sub } = await decode(input.credentials, context.configuration.trust)
+  const { iss, sub } = await decode(input.credentials, context.configuration.trust, context.stash)
   const request: Request<TransitInput> = { input: { authority: input.authority, iss, sub } satisfies Omit<Entity, 'id'> }
 
   if (input.id !== undefined)

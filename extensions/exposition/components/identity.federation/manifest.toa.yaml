@@ -136,3 +136,5 @@ configuration:
         type: boolean
         default: false
     additionalProperties: false
+
+stash: ~
