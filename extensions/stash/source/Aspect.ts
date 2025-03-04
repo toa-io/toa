@@ -66,5 +66,5 @@ export class Aspect extends Connector implements extensions.Aspect {
   }
 }
 
-type Routine<T> = () => Promise<T>
-type Resources = string | string[]
+export type Routine<T> = () => Promise<T>
+export type Resources = string | string[]

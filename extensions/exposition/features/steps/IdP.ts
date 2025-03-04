@@ -184,4 +184,33 @@ export class IdP {
 
     this.captures.set(`${user}.id_token`, idToken)
   }
+
+  @given('ID token with jti is issued for {word}')
+  public async issueTokenWithJti (user: string): Promise<void> {
+    assert.ok(IdP.privateKey, 'IdP private key is not available')
+
+    const jwt = [
+      {
+        typ: 'JWT',
+        alg: 'RS256'
+      },
+      {
+        iss: IdP.issuer,
+        sub: user,
+        aud: 'test',
+        email: user + '@test.local',
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor((Date.now() + 1000 * 60 * 5) / 1000),
+        jti: crypto.randomUUID()
+      }
+    ]
+      .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
+      .join('.')
+
+    const signature = crypto.createSign('RSA-SHA256').end(jwt).sign(IdP.privateKey, 'base64url')
+
+    const idToken = `${jwt}.${signature}`
+
+    this.captures.set(`${user}.id_token`, idToken)
+  }
 }
