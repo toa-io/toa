@@ -149,7 +149,7 @@ Feature: HTTP context mapping
           io:output: true
           GET:
             map:segments:
-              name: friend
+              name: ~friend
             endpoint: compute
       """
     When the following request is received:
