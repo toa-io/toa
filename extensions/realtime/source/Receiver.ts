@@ -35,7 +35,13 @@ export class Receiver extends Connector {
     }
   }
 
-  private push (key: string, data: Record<string, string>): void {
+  private push (key: string | null, data: Record<string, string>): void {
+    if (key === null || typeof key === 'undefined') {
+      console.debug('Key is null or undefined, skipping', { key, event: this.event })
+
+      return
+    }
+
     console.debug('Pushing event to stream', { key, event: this.event, data })
 
     this.stream.push({ key, event: this.event, data })
