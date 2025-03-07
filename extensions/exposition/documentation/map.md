@@ -62,8 +62,18 @@ The `map:segments` directive maps the values of route parameters to operation ca
 The value of the directive is a map where keys are the names of the input properties, and values are
 the names of the route parameters.
 
-> The mapped segment is no longer available to remaining directives, nor used as criteria in the
-> operation call.
+Parameter name may be prefixed with `~`
+to indicate that the parameter should not be available to the
+remaining directives or used as criteria in the operation call.
+
+```yaml
+/:id/:tag:
+  POST:
+    map:segments:
+      id: id
+      tag: ~tag
+    endpoint: create
+```
 
 ## Bearer token claims
 
