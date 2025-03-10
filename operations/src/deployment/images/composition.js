@@ -5,6 +5,7 @@ const fs = require('fs-extra')
 const { createHash } = require('node:crypto')
 
 const { Image } = require('./image')
+const { undef } = require('@toa.io/concise/source/expressions/undefined')
 
 class Composition extends Image {
   dockerfile = join(__dirname, 'composition.Dockerfile')
@@ -37,11 +38,7 @@ class Composition extends Image {
   }
 
   get base () {
-    if (this.#image !== undefined) {
-      return this.#image
-    }
-
-    let image = null
+    let image = this.#image
 
     for (const component of this.#components) {
       const value = component.build?.image
@@ -53,7 +50,20 @@ class Composition extends Image {
       image = value
     }
 
-    return image ?? undefined
+    return image
+  }
+
+  get run () {
+    const commands = []
+
+    for (const component of this.#components) {
+      const run = component.build?.run
+
+      if (run !== undefined)
+        commands.push(run)
+    }
+
+    return commands.join('\n')
   }
 
   async prepare (root) {

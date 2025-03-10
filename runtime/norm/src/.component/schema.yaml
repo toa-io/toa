@@ -64,6 +64,8 @@ properties:
     properties:
       image:
         type: string
+      run:
+        type: string
 
   entity:
     type: object

@@ -54,6 +54,8 @@ class Image {
 
   get base () {}
 
+  get run () {}
+
   async prepare (root) {
     if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')
 
@@ -81,9 +83,13 @@ class Image {
 
     const image = this.base
 
-    if (image !== undefined) {
+    if (image !== undefined)
       this.#values.build.image = image
-    }
+
+    const run = this.run
+
+    if (run !== undefined)
+      this.#values.build.run = (this.#values.build.run === undefined ? '' : this.#values.build.run + '\n') + run
 
     if (this.#values.build.arguments !== undefined) this.#values.build.arguments = createArguments(this.#values.build.arguments)
     if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)

@@ -115,3 +115,15 @@ Feature: Container Building Options
       """
     When I export images
     Then the file ./images/*conflict*/Dockerfile contains exact line 'FROM node:20.0.0-buster-slim'
+
+  Scenario: Building a component with additional RUN
+    Given I have a component `build.run`
+    And I have a context with:
+    """
+    registry:
+      build:
+        run: echo context
+    """
+    When I export images
+    Then the file ./images/*build-run*/Dockerfile contains exact line 'RUN echo context'
+    Then the file ./images/*build-run*/Dockerfile contains exact line 'RUN echo component'

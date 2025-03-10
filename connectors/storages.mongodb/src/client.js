@@ -65,7 +65,11 @@ class Client extends Connector {
 
     this.key = getKey(dbname, urls)
 
-    INSTANCES[this.key] ??= this.createInstance(urls)
+    try {
+      INSTANCES[this.key] ??= this.createInstance(urls)
+    } catch (error) {
+      console.error('Failed to connect to MongoDB', { urls, error })
+    }
 
     this.instance = await INSTANCES[this.key]
     this.instance.count++

@@ -47,7 +47,7 @@ properties:
           - linux/amd64
           - linux/arm/v7
           - linux/arm64
-    required: [base, platforms]
+    # required: [base]
   compositions:
     type: array
     minItems: 1
