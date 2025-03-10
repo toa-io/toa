@@ -27,7 +27,7 @@ class Image {
   #runtime
   #values = {
     build: {
-      image: 'node:20.9.0-alpine3.18'
+      image: 'node:22.14.0-alpine3.21'
     }
   }
 

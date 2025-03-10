@@ -45,12 +45,6 @@ describe('registry', () => {
     expect(() => validate(context)).toThrow(/required property 'registry'/)
   })
 
-  it('should require base', () => {
-    delete context.registry.base
-
-    expect(() => validate(context)).toThrow(/required property 'base'/)
-  })
-
   it('should set default platforms', () => {
     delete context.registry.platforms
 

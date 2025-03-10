@@ -73,7 +73,7 @@ Feature: Container Building Options
     Given I have a component `dummies.one`
     Given I have a context
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'FROM node:20.9.0-alpine3.18'
+    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'FROM node:22.14.0-alpine3.21'
 
   Scenario: Building an image with custom base image
     Given I have a component `dummies.debian`
