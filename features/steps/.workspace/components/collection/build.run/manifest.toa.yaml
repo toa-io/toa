@@ -1,0 +1,5 @@
+namespace: build
+name: run
+
+build:
+  run: echo component
