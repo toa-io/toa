@@ -24,7 +24,13 @@ export class Server extends Connector {
 
     this.properties = properties
     this.authorities = Object.fromEntries(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
+
     this.server.on('request', (req, res) => this.listener(req, res))
+
+    this.server.on('clientError', (error, socket) => {
+      console.warn('Client connection error', error)
+      socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+    })
   }
 
   public static create (options: Options): Server {
@@ -75,7 +81,7 @@ export class Server extends Connector {
     }
 
     request.on('error', (error) => console.warn('Request error', errorAttributes(request, error)))
-    response.on('error', (error) => console.warn('Response error', errorAttributes(request, error)))
+    request.socket.on('error', (error) => console.warn('Socket error', errorAttributes(request, error)))
 
     if (request.method === undefined || !this.properties.methods.has(request.method)) {
       response.writeHead(501).end()
