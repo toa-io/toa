@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.142",
+  "version": "1.0.0-alpha.143",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -21,7 +21,7 @@
     "@simplewebauthn/server": "13.1.1",
     "@toa.io/core": "1.0.0-alpha.136",
     "@toa.io/generic": "1.0.0-alpha.93",
-    "@toa.io/schemas": "1.0.0-alpha.125",
+    "@toa.io/schemas": "1.0.0-alpha.143",
     "bcryptjs": "2.4.3",
     "error-value": "0.4.2",
     "http-cache-semantics": "4.1.1",
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@toa.io/agent": "1.0.0-alpha.124",
-    "@toa.io/extensions.storages": "1.0.0-alpha.125",
+    "@toa.io/extensions.storages": "1.0.0-alpha.143",
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
     "@types/http-cache-semantics": "4.0.4",
