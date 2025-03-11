@@ -1,0 +1,35 @@
+{
+  "name": "@toa.io/extensions.mail",
+  "version": "1.0.0-alpha.139",
+  "description": "Toa Mail",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest",
+    "transpile": "tsc",
+    "features": "cucumber-js"
+  },
+  "dependencies": {
+    "@toa.io/schemas": "1.0.0-alpha.125",
+    "cheerio": "1.0.0",
+    "resend": "4.1.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "jest-esbuild"
+    },
+    "testEnvironment": "node"
+  }
+}

@@ -2,7 +2,7 @@ import * as boot from '@toa.io/boot'
 import { encode } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
 import { after, binding } from 'cucumber-tsflow'
-import { Factory } from '../../source/Factory'
+import { Factory } from '../../source'
 
 @binding()
 export class Realtime {
