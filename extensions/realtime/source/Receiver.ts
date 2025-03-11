@@ -28,7 +28,7 @@ export class Receiver extends Connector {
 
       if (Array.isArray(key))
         // eslint-disable-next-line max-depth
-        for (const k of key)
+        for (const k of key as string[])
           this.push(k, message.payload)
       else
         this.push(key, message.payload)

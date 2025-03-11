@@ -21,7 +21,7 @@ declare namespace toa.schemas {
 export interface Schema<T = any> {
   id: string
 
-  fit (value: any): Error | null
+  fit (value: unknown): Error | null
 
   validate<T> (value: unknown, message?: string): asserts value is T
 }
