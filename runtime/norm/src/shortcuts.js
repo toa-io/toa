@@ -51,7 +51,8 @@ const SHORTCUTS = {
   origins: '@toa.io/extensions.origins',
   stash: '@toa.io/extensions.stash',
   storages: '@toa.io/extensions.storages',
-  telemetry: '@toa.io/extensions.telemetry'
+  telemetry: '@toa.io/extensions.telemetry',
+  mail: '@toa.io/extensions.mail'
 }
 
 exports.recognize = recognize

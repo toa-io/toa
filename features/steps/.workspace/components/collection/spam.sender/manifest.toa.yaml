@@ -1,0 +1,4 @@
+namespace: spam
+name: sender
+
+mail: ~

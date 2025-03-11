@@ -1,5 +1,6 @@
 'use strict'
 
+const { console } = require('openspan')
 const { Remote } = require('@toa.io/core')
 const { remap } = require('@toa.io/generic')
 
@@ -9,6 +10,8 @@ const remote = async (locator, manifest) => {
   let discovery
 
   if (manifest === undefined) {
+    console.debug('Lookup', { locator: locator.id })
+
     discovery = await boot.discovery.discovery(locator)
     manifest = await discovery.lookup(locator)
   }
