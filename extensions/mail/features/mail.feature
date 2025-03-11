@@ -1,6 +1,6 @@
 Feature: Sending an email
 
-  Scenario: Sending HTML email
+  Scenario: Sending an email
     Given the `mail.agent` configuration:
       """yaml
       templates: http://localhost:8088/emails/
