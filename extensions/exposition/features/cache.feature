@@ -281,3 +281,42 @@ Feature: Caching
       cache-control: private
       vary: authorization
       """
+
+  Scenario: Authenticated `no-cache` responses
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the annotation:
+      """yaml
+      /:
+        /:id:
+          auth:id: id
+          cache:control: no-cache
+          GET:
+            dev:stub: Keep it
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    # no-store since the response contains the token
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      cache-control: no-store
+      """
+    When the following request is received:
+      """
+      GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    # private is added since the response is authenticated
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: private, no-cache
+      """
