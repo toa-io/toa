@@ -1,4 +1,4 @@
-const { assert } = require('node:assert')
+const assert = require('node:assert')
 const { Resend: Client } = require('resend')
 
 class Resend {
