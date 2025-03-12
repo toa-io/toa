@@ -31,4 +31,4 @@ export class Aspect extends Connector implements extensions.Aspect {
   }
 }
 
-type Input = { sync?: boolean } & toa.extensions.mail.Message
+type Input = { sync?: boolean } & object

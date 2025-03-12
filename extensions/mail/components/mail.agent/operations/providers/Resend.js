@@ -19,6 +19,11 @@ export class Resend {
    * @return {Promise<void>}
    */
   async send (message) {
-    await this.resend.emails.send(message)
+    const { data, error } = await this.resend.emails.send(message)
+
+    if (error !== null)
+      this.logs.error('Resend error', error)
+    else
+      this.logs.debug('Email sent', data)
   }
 }

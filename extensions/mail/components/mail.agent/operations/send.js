@@ -1,8 +1,8 @@
-import * as assert from 'node:assert'
-import * as providers from './providers'
-import { load as parse } from 'cheerio'
+const assert = require('node:assert')
+const providers = require('./providers')
+const { load: parse } = require('cheerio')
 
-export class Effect {
+class Effect {
   /**
    * Base url for rendering
    */
@@ -79,3 +79,5 @@ export class Effect {
     return { title, html }
   }
 }
+
+exports.Effect = Effect
