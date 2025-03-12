@@ -1,7 +1,7 @@
-import * as assert from 'node:assert'
-import * as resend from 'resend'
+const { assert } = require('node:assert')
+const { Resend: Client } = require('resend')
 
-export class Resend {
+class Resend {
   resend
   logs
 
@@ -10,7 +10,7 @@ export class Resend {
 
     assert.ok(typeof key === 'string', 'Resend API key is not set')
 
-    this.resend = new resend.Resend(key)
+    this.resend = new Client(key)
     this.logs = context.logs
   }
 
@@ -27,3 +27,5 @@ export class Resend {
       this.logs.debug('Email sent', data)
   }
 }
+
+exports.Resend = Resend

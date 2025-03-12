@@ -21,5 +21,5 @@ configuration:
       provider: { type: string, enum: [Console, Resend] }
       from: { type: string, format: email }
       templates: { type: string, format: uri }
-      options: { type: object }
+      options: { type: object } # provider-specific options
     required: [provider, from]
