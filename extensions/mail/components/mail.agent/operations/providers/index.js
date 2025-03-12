@@ -1,2 +1,5 @@
-export { Console } from './Console'
-export { Resend } from './Resend'
+const { Console } = require('./Console')
+const { Resend } = require('./Resend')
+
+exports.Console = Console
+exports.Resend = Resend
