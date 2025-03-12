@@ -1,4 +1,4 @@
-export class Console {
+class Console {
   logs
 
   constructor (context) {
@@ -9,3 +9,5 @@ export class Console {
     this.logs.debug('Email kinda sent', message)
   }
 }
+
+exports.Console = Console
