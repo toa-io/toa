@@ -3,16 +3,11 @@ name: spam
 operations:
   send:
     input:
-      type: object
       properties:
+        from: { type: string }
         to: { type: string }
         subject: { type: string }
         text: { type: string }
-        template: { type: string }
-        data: { type: object }
-      required: [to]
-      oneOf:
-        - required: [subject, text]
-        - required: [template]
+      required: [from, to, subject, text]
 
 mail: ~

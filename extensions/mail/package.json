@@ -26,7 +26,7 @@
     "@toa.io/core": "1.0.0-alpha.136",
     "@toa.io/generic": "1.0.0-alpha.93",
     "@toa.io/schemas": "1.0.0-alpha.143",
-    "cheerio": "1.0.0",
+    "error-value": "0.4.4",
     "resend": "4.1.2"
   }
 }

@@ -7,5 +7,5 @@ export const PROVIDERS: Record<Scheme, Remote> = {
   otp: 'otp'
 }
 
-export const INCEPTION: Remote[] = ['basic', 'federation', 'otp']
+export const INCEPTION: Remote[] = ['basic', 'federation']
 export const PRIMARY: Scheme = 'token'
