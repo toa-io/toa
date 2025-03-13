@@ -1,0 +1,39 @@
+namespace: identity
+name: otp
+
+entity:
+  schema: &entity
+    properties:
+      authority: { type: string }
+      username: { type: string }
+    required: [authority, username]
+  index:
+    username:
+      authority: asc
+      username: asc
+
+operations:
+  issue:
+    input: *entity
+  authenticate:
+    input:
+      properties:
+        authority: { type: string }
+        credentials: { type: string }
+      required: [authority, credentials]
+    output:
+      properties:
+        identity:
+          properties:
+            id: { type: string }
+    errors:
+      - INVALID_CREDENTIALS
+      - EXPIRED
+      - NOT_FOUND
+
+configuration:
+  schema:
+    properties:
+      lifetime: { type: number, default: 60 }
+
+stash: ~

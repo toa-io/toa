@@ -186,4 +186,4 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   input: Input
 }
 
-const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans']
+const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans', 'otp']

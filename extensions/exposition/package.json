@@ -42,7 +42,7 @@
   },
   "scripts": {
     "test": "jest",
-    "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation && npm run transpile:keys && npm run transpile:passkeys",
+    "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation && npm run transpile:keys && npm run transpile:passkeys && npm run transpile:otp",
     "transpile:bans": "tsc -p ./components/identity.bans",
     "transpile:basic": "tsc -p ./components/identity.basic",
     "transpile:tokens": "tsc -p ./components/identity.tokens",
@@ -50,6 +50,7 @@
     "transpile:federation": "tsc -p ./components/identity.federation",
     "transpile:keys": "tsc -p ./components/identity.keys",
     "transpile:passkeys": "tsc -p ./components/identity.passkeys",
+    "transpile:otp": "tsc -p ./components/identity.otp",
     "features": "cucumber-js",
     "features:security": "cucumber-js --tags @security",
     "features:octets": "cucumber-js features/octets.*"
