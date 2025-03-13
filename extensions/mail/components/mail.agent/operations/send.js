@@ -1,14 +1,10 @@
 const assert = require('node:assert')
+const { Err } = require('error-value')
 const providers = require('./providers')
-const { load: parse } = require('cheerio')
 
 class Effect {
-  /**
-   * Base url for rendering
-   */
-  base
-  from
   provider
+  config
   logs
 
   mount (context) {
@@ -17,27 +13,18 @@ class Effect {
     const Provider = providers[context.configuration.provider]
 
     this.provider = new Provider(context)
-    this.from = context.configuration.from
-    this.base = context.configuration.templates
+    this.config = context.configuration
     this.logs = context.logs
   }
 
-  async execute ({ to, subject, text, template, data }) {
-    if (to.endsWith('.null')) {
-      this.logs.debug('Mail skipped', { to, template })
+  async execute (message) {
+    if (this.invalidSender(message.from))
+      return ERR_INVALID_SENDER
+
+    if (message.to.endsWith('.null')) {
+      this.logs.debug('Mail skipped', { to: message.to })
 
       return
-    }
-
-    const properties = template === undefined ? { text } : await this.html(template, data)
-
-    if (subject !== undefined)
-      properties.subject = subject
-
-    const message = {
-      ...properties,
-      to,
-      from: this.from
     }
 
     this.logs.debug('Sending mail', message)
@@ -45,39 +32,17 @@ class Effect {
     await this.provider.send(message)
   }
 
-  async html (template, data) {
-    const { title, html } = await this.render(template, data)
+  invalidSender (from) {
+    const domain = from.split('@')[1]
+    const invalid = !this.config.domains.includes(domain)
 
-    /** @type {toa.extensions.mail.Message} */
-    return { subject: title, html }
-  }
+    if (invalid)
+      this.logs.debug('Sender domain not allowed', { domain })
 
-  async render (template, data) {
-    assert.ok(this.base !== undefined, 'Base url for rendering is not set, cannot send HTML mail')
-
-    const url = new URL(`./${template}/`, this.base).href
-
-    this.logs.debug('Requesting render', { url, data })
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-
-    const type = response.headers.get('content-type')
-
-    assert.ok(response.status >= 200 && response.status < 300, `Failed to render ${response.status}`)
-    assert.ok(type === 'text/html', `Rendering reply must be text/html, ${type} received`)
-
-    const html = await response.text()
-    const $ = parse(html)
-    const title = $('title').text()
-
-    return { title, html }
+    return invalid
   }
 }
+
+const ERR_INVALID_SENDER = new Err('INVALID_SENDER')
 
 exports.Effect = Effect
