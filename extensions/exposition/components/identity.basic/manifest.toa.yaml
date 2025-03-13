@@ -9,6 +9,10 @@ entity:
     password*: string
   unique:
     authority_username: [authority, username]
+  index:
+    username:
+      authority: asc
+      username: asc
 
 operations:
   transit:

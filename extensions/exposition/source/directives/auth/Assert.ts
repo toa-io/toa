@@ -14,6 +14,13 @@ export class Assert implements Directive {
   }
 
   public async authorize (identity: Identity | null, context: Context): Promise<boolean> {
+    if (!this.disabled)
+      await this.incept(context, identity)
+
+    return false
+  }
+
+  private async incept (context: Context, identity: Identity | null): Promise<void> {
     if (context.request.headers.authorization === undefined)
       throw new http.Unauthorized()
 
@@ -24,7 +31,5 @@ export class Assert implements Directive {
         response.status = 201
       })
     }
-
-    return false
   }
 }

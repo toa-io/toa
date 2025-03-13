@@ -1,11 +1,11 @@
-import { type Remote, type Scheme } from './types'
+import type { Remote, Scheme } from './types'
 
 export const PROVIDERS: Record<Scheme, Remote> = {
   basic: 'basic',
   token: 'tokens',
-  bearer: 'federation'
+  bearer: 'federation',
+  otp: 'otp'
 }
 
-export const INCEPTION: Remote[] = ['basic', 'federation']
-
+export const INCEPTION: Remote[] = ['basic', 'federation', 'otp']
 export const PRIMARY: Scheme = 'token'

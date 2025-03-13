@@ -5,7 +5,7 @@ Runtime for low code eventually consistent distributed systems.
 ## Status
 
 The project is under heavy development, while being used in production by its authors.
-Non-scattered documentation is coming this fall.
+Non-scattered documentation is coming some time later.
 
 ## Features
 
@@ -31,15 +31,20 @@ Non-scattered documentation is coming this fall.
   - Built-in implementations
     - MongoDB
     - SQL ([Knex](https://knexjs.org))
-- [Telemetry](/extensions/telemetry)
-  - Structured logs
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery
   - [Identity](extensions/exposition/documentation/identity.md)
+    - Basis authentication
+    - Identity federation (OIDC)
+    - Passkeys (WebAuthn)
+    - OTP authentication
   - [Access control](extensions/exposition/documentation/access.md)
   - [Cache control](/extensions/exposition/documentation/cache.md)
   - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
+- Distributed lock manager
+- [Telemetry](/extensions/telemetry)
+  - Structured logs
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation
@@ -72,12 +77,12 @@ Non-scattered documentation is coming this fall.
 
 ### Operations
 
+- Standardized containerization
+- Environment variables
 - Standalone infrastructure configuration
-- Multi-environment configuration
-- Components distribution across containers
 - One-command fully automated deployment
   - Preset multi-arch docker images
   - Helm deployment to kubernetes
 - CLI utilities
   - Secrets management
-  - Remote Container Shell
+  - Remote container shell

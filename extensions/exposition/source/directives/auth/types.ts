@@ -37,8 +37,8 @@ export interface Ban {
 export type Context = io.Input & Extension
 export type AuthenticationResult = Maybe<{ identity: Identity, refresh: boolean }>
 
-export type Scheme = 'basic' | 'token' | 'bearer'
-export type Remote = 'basic' | 'federation' | 'tokens' | 'roles' | 'bans'
+export type Scheme = 'basic' | 'token' | 'bearer' | 'otp'
+export type Remote = 'basic' | 'federation' | 'tokens' | 'roles' | 'bans' | 'otp'
 export type Discovery = Record<Remote, Promise<Component>>
 export type Schemes = Record<Scheme, Component>
 

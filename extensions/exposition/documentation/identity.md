@@ -94,6 +94,40 @@ with a `system` role.
 `implicit` indicates whether the Identity should be implicitly created when a valid token for a
 non-existent Identity is provided (default `false`).
 
+### OTP scheme
+
+One-time passwords.
+
+Passwords can be issued by calling `identity.otp.issue` operation, with the following input:
+
+```yaml
+authority: string
+username: string
+```
+
+The reply will contain the `code` property of type `string` formed as a random 6-digit number,
+valid for 60 seconds by default.
+
+```yaml
+code: 123456
+```
+
+OTP can be used with `OTP` authentication formatted as `base64(username:password)`.
+
+```
+GET /identity/ HTTP/1.1
+authentication: OTP dXNlcm5hbWU6MTIzNDU2
+```
+
+OTP expiration time can be configured using the `identity.otp` configuration.
+
+```yaml
+# context.toa.yaml
+configuration:
+  identity.otp:
+    lifetime: 60 # seconds
+```
+
 ## Identity inception
 
 The simplest way to establish a relationship between an Identity and an entity representing a user

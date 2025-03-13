@@ -1,5 +1,4 @@
-import type { Observation, Transition } from '@toa.io/types'
-import type { Redis } from 'ioredis'
+import type { Observation, Stash, Transition } from '@toa.io/types'
 import type { Logs } from '@toa.io/extensions.telemetry'
 import type { Configuration } from './Configuration'
 import type { Passkey } from './Passkey'
@@ -7,7 +6,7 @@ import type { Input as UseInput, Output as UseOutput } from '../use'
 
 export interface Context {
   configuration: Configuration
-  stash: Redis
+  stash: Stash
   logs: Logs
   local: {
     enumerate: Observation<Passkey[], never, Passkey>
