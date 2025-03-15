@@ -290,7 +290,11 @@ export class IDP {
       expiresAt: Date.now() + 60 * 1000
     })
 
+    const json = JSON.stringify({ code, iss: IDP.issuer, for: redirectUri })
+    const base64 = Buffer.from(json).toString('base64')
+
     this.captures.set(`${user}.auth_code`, code)
+    this.captures.set(`${user}.code_credentials`, base64)
   }
 
   private generateIdToken (sub: string, email: string, clientId: string): string {

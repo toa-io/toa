@@ -284,8 +284,8 @@ Feature: Identity Federation
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
+      authorization: Code ${{ Alice.code_credentials }}
       host: nex.toa.io
-      authorization: Code code=${{ Alice.auth_code }},iss=http://localhost:44444,for=http://web.toa.io/callback/
       accept: application/yaml
       """
     Then the following reply is sent:

@@ -7,7 +7,7 @@ import type { Trust } from '../types'
 const jwks: Record<string, Awaited<ReturnType<typeof createRemoteJWKSet>>> = {}
 
 export async function exchange (credentials: string, trust: Trust[]): Promise<Payload | Error> {
-  const properties = parse(credentials)
+  const properties = decode(credentials)
 
   if (properties instanceof Error)
     return properties
@@ -27,6 +27,7 @@ export async function exchange (credentials: string, trust: Trust[]): Promise<Pa
   if (configuration.token_endpoint === undefined)
     return errors.ERR_CONFIG
 
+  // array actually is not expected here, but it is a valid format
   const aud = Array.isArray(trusted.aud) ? trusted.aud[0] : trusted.aud
   const params = new URLSearchParams()
 
@@ -62,23 +63,19 @@ export async function exchange (credentials: string, trust: Trust[]): Promise<Pa
   return payload as Payload
 }
 
-// Credentials format is "code=<code>, iss=<iss>, redirect=<redirect>"
-function parse (credentials: string): Properties | Error {
-  const properties: Partial<Properties> = {}
+function decode (credentials: string): Properties | Error {
+  const json = Buffer.from(credentials, 'base64').toString('utf8')
+  const properties = JSON.parse(json) as Properties
 
-  for (const pair of credentials.split(',')) {
-    const [key, value] = pair.trim().split('=') as [keyof Properties, string]
+  if (
+    typeof properties.code !== 'string' ||
+    typeof properties.iss !== 'string' ||
+    typeof properties.for !== 'string' ||
+    Object.keys(properties).length !== CREDENTIAL_PROPERTIES.length
+  )
+    return errors.ERR_CODE_SCHEMA
 
-    if (!CREDENTIAL_PROPERTIES.includes(key))
-      return errors.ERR_CODE_PARAMETERS
-
-    properties[key] = value
-  }
-
-  if (Object.keys(properties).length !== CREDENTIAL_PROPERTIES.length)
-    return errors.ERR_CODE_PARAMETERS
-
-  return properties as Properties
+  return properties
 }
 
 const CREDENTIAL_PROPERTIES: Array<keyof Properties> = ['for', 'iss', 'code']

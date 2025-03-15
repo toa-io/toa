@@ -101,10 +101,19 @@ non-existent Identity is provided (default `false`).
 
 ```
 GET /identity/
-authorization: Code code=<code>, from=https://appleid.apple.com, to=https://web.example.com/auth/callback/
+authorization: Code <credentials>
 ```
 
-> `aud` and `secret` values are required to enable the Authorization Code Flow.
+`<credentials>` is a base64-encoded JSON containing the following properties:
+
+```yaml
+code: authorization code
+iss: code issuer
+for: redirect URI
+```
+
+> Trust configuration for the issuer requires `aud` and `secret` values
+> to enable the Authorization Code Flow.
 > If `aud` is an array, the first value is used.
 
 ### OTP scheme
