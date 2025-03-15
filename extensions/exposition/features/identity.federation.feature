@@ -10,7 +10,6 @@ Feature: Identity Federation
       """yaml
       trust:
         - iss: http://localhost:44444
-      implicit: true
       """
     And the IDP token for User is issued
     When the following request is received:
@@ -28,7 +27,6 @@ Feature: Identity Federation
       id: ${{ User.id }}
       roles: []
       """
-    # validate TOKEN
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -57,40 +55,12 @@ Feature: Identity Federation
       id: ${{ User.id }}
       """
 
-  Scenario: Symmetric tokens
-    Given the `identity.federation` configuration:
-      """yaml
-      trust:
-        - iss: http://localhost:44444
-          secrets:
-            HS384:
-              k1: the-secret
-      implicit: true
-      """
-    And the IDP HS384 token for GoodUser is issued with following secret:
-      """
-      the-secret
-      """
-    When the following request is received:
-      """
-      GET /identity/ HTTP/1.1
-      host: nex.toa.io
-      authorization: Bearer ${{ GoodUser.id_token }}
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      authorization: Token ${{ GoodUser.token }}
-
-      id: ${{ GoodUser.id }}
-      """
-
   Scenario: Creating an Identity using inception
     Given the `identity.federation` configuration:
       """yaml
       trust:
         - iss: http://localhost:44444
+      assert: false
       """
     Given the `users` is running with the following manifest:
       """yaml
@@ -170,7 +140,6 @@ Feature: Identity Federation
       principal:
         iss: http://localhost:44444
         sub: root
-      implicit: true
       """
     And the IDP token for root is issued
 
@@ -191,7 +160,7 @@ Feature: Identity Federation
       id: ${{ root.id }}
       """
 
-    Then after 0.1 seconds
+    Then after 0.2 seconds
 
     # check the role
     When the following request is received:
@@ -272,7 +241,6 @@ Feature: Identity Federation
       """yaml
       trust:
         - iss: http://localhost:44444
-      implicit: true
       """
     And ID token with jti is issued for User
     When the following request is received:

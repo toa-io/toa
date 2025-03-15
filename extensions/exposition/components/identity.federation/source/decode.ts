@@ -1,9 +1,7 @@
-import * as jwt from './lib/jwt'
-import { assertionsAsValues } from './lib/assertions-as-values'
-import type { Context, IdToken } from './types'
+import { decode } from './lib'
+import type { JWTPayload } from 'jose'
+import type { Context } from './types'
 
-async function decode (token: string, context: Context): Promise<IdToken> {
-  return await jwt.decode(token, context.configuration.trust, context.stash)
+export async function effect (token: string, context: Context): Promise<JWTPayload | Error> {
+  return await decode(token, context.configuration.trust, context.stash)
 }
-
-export const computation = assertionsAsValues(decode)

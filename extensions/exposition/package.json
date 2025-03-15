@@ -25,6 +25,7 @@
     "bcryptjs": "2.4.3",
     "error-value": "0.4.2",
     "http-cache-semantics": "4.1.1",
+    "jose": "5.10.0",
     "js-yaml": "4.1.0",
     "lru-cache": "11.0.1",
     "matchacho": "0.3.5",
@@ -35,9 +36,6 @@
     "paseto": "3.1.4"
   },
   "jest": {
-    "transform": {
-      "^.+\\.ts$": "jest-esbuild"
-    },
     "testEnvironment": "node"
   },
   "scripts": {
@@ -61,8 +59,7 @@
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
     "@types/http-cache-semantics": "4.0.4",
-    "@types/negotiator": "0.6.1",
-    "jest-esbuild": "0.3.0"
+    "@types/negotiator": "0.6.1"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
