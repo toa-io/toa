@@ -17,26 +17,21 @@
     "access": "public"
   },
   "dependencies": {
-    "@isaacs/ttlcache": "1.4.1",
     "@simplewebauthn/server": "13.1.1",
     "@toa.io/core": "1.0.0-alpha.136",
     "@toa.io/generic": "1.0.0-alpha.93",
     "@toa.io/schemas": "1.0.0-alpha.143",
     "bcryptjs": "2.4.3",
     "error-value": "0.4.2",
-    "http-cache-semantics": "4.1.1",
     "jose": "5.10.0",
     "js-yaml": "4.1.0",
     "lru-cache": "11.0.1",
     "matchacho": "0.3.5",
     "minimatch": "10.0.1",
     "msgpackr": "1.10.1",
-    "negotiator": "0.6.3",
+    "negotiator": "0.6.4",
     "openspan": "1.0.0-alpha.93",
     "paseto": "3.1.4"
-  },
-  "jest": {
-    "testEnvironment": "node"
   },
   "scripts": {
     "test": "jest",
@@ -58,8 +53,14 @@
     "@toa.io/extensions.storages": "1.0.0-alpha.143",
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
-    "@types/http-cache-semantics": "4.0.4",
-    "@types/negotiator": "0.6.1"
+    "@types/negotiator": "0.6.1",
+    "jest-esbuild": "0.3.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "jest-esbuild"
+    },
+    "testEnvironment": "node"
   },
   "gitHead": "24d68d70a56717f2f4441cc9884a60f9fee0863e"
 }
