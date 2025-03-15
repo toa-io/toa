@@ -94,14 +94,16 @@ configuration:
               type: string
               format: uri
             aud:
-              description: Acceptable `aud` value(s)
+              description: Acceptable `aud` value(s). Required for Authorization Code Flow.
               anyOf:
                 - type: string
                 - type: array
                   items: { type: string }
                   uniqueItems: true
                   minItems: 1
-
+            secret:
+              description: Client secret for the Identity Provider. Required for Authorization Code Flow.
+              type: string
           required:
             - iss
         default: []

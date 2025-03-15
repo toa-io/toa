@@ -72,10 +72,11 @@ configuration:
   identity.federation:
     trust:
       - iss: https://accounts.google.com
-        aud:
-          - <GOOGLE_CLIENT_ID>
+        aud: <GOOGLE_CLIENT_ID>
 
       - iss: https://appleid.apple.com
+        aud: <APPLE_CLIENT_ID>
+        secret: <APPLE_CLIENT_SECRET> # enables Authorization Code Flow
 
       - iss: private.entity
         secrets:
@@ -93,6 +94,18 @@ with a `system` role.
 
 `implicit` indicates whether the Identity should be implicitly created when a valid token for a
 non-existent Identity is provided (default `false`).
+
+### Authorization Code Flow
+
+[OAuth 2.0 RFC 6749, section 4.1](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1)
+
+```
+GET /identity/
+authorization: Code code=<code>, from=https://appleid.apple.com, to=https://web.example.com/auth/callback/
+```
+
+> `aud` and `secret` values are required to enable the Authorization Code Flow.
+> If `aud` is an array, the first value is used.
 
 ### OTP scheme
 

@@ -4,6 +4,7 @@ export const PROVIDERS: Record<Scheme, Remote> = {
   basic: 'basic',
   token: 'tokens',
   bearer: 'federation',
+  code: 'federation',
   otp: 'otp'
 }
 

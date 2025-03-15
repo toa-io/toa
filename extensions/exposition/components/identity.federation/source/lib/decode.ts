@@ -1,7 +1,8 @@
 import * as jose from 'jose'
-import { Err } from 'error-value'
 import { createRemoteJWKSet } from './discovery'
+import { ERR_TRUST, ERR_ISS, ERR_SUB, ERR_REPLAY, ERR_EXP } from './errors'
 import type { Stash } from '@toa.io/types'
+import type { Payload } from './Payload'
 import type { Trust } from '../types'
 
 const jwks: Record<string, Awaited<ReturnType<typeof createRemoteJWKSet>>> = {}
@@ -44,15 +45,4 @@ async function validateJti (payload: jose.JWTPayload, stash: Stash): Promise<voi
 
   if (ok === null)
     return ERR_REPLAY
-}
-
-const ERR_ISS = new Err('ISS', 'Invalid issuer')
-const ERR_SUB = new Err('SUB', 'Invalid subject')
-const ERR_EXP = new Err('EXP', 'Token does not have an expiration time')
-const ERR_TRUST = new Err('TRUST', 'Issuer not trusted')
-const ERR_REPLAY = new Err('REPLAY', 'Token has already been used')
-
-export interface Payload extends jose.JWTPayload {
-  iss: string
-  sub: string
 }

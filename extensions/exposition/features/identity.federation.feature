@@ -271,3 +271,27 @@ Feature: Identity Federation
       """
       401 Unauthorized
       """
+
+  Scenario: Authorization code flow
+    Given the `identity.federation` configuration:
+      """yaml
+      trust:
+        - iss: http://localhost:44444
+          aud: nex
+          secret: secret
+      """
+    And auth code for Alice is issued for https://web.toa.io/callback/
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Code code=${{ Alice.auth_code }},iss=http://localhost:44444,for=http://web.toa.io/callback/
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ Alice.token }}
+
+      id: ${{ Alice.id }}
+      """

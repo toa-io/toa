@@ -1,11 +1,13 @@
 import { Err } from 'error-value'
-import { decode } from './lib'
+import { decode, exchange } from './lib'
 import type { JWTPayload } from 'jose'
 import type { Maybe } from '@toa.io/types'
 import type { Context } from './types'
 
-export async function effect ({ authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
-  const claims = await decode(credentials, context.configuration.trust, context.stash)
+export async function effect ({ scheme, authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
+  const claims = scheme === 'Bearer'
+    ? await decode(credentials, context.configuration.trust, context.stash)
+    : await exchange(credentials, context.configuration.trust)
 
   if (claims instanceof Error)
     return claims
@@ -30,6 +32,7 @@ export async function effect ({ authority, credentials }: Input, context: Contex
 const ERR_NOT_FOUND = new Err('NOT_FOUND')
 
 interface Input {
+  scheme: 'Bearer' | 'Code'
   authority: string
   credentials: string
 }
