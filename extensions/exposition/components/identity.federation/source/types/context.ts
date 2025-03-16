@@ -1,3 +1,5 @@
+import type { JWTPayload } from 'jose'
+
 import type { Call, Observation, Query, Stash, telemetry } from '@toa.io/types'
 import type { Entity } from './entity'
 import type { Configuration } from './configuration'
@@ -7,7 +9,7 @@ export interface Context {
     observe: Observation<Entity>
     transit: Call<TransitOutput, TransitInput>
     ensure: Call<EnsureOutput>
-    decode: Call<IdToken, string>
+    decode: Call<JWTPayload, string>
   }
   remote: {
     identity: {
@@ -37,23 +39,4 @@ export interface EnsureOutput {
 
 interface IdentityTokensRevokeInput {
   query: Query
-}
-
-export interface JwtHeader {
-  typ?: string
-  alg: string
-  kid?: string
-}
-
-/**
- * @see {@link https://openid.net/specs/openid-connect-core-1_0.html#IDToken}
- */
-export interface IdToken {
-  iss: string
-  sub: string
-  aud: string | string[]
-  exp: number
-  iat: number
-  nbf?: number
-  jti?: string
 }

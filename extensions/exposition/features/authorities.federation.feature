@@ -7,7 +7,6 @@ Feature: OIDC tokens with authorities
       """yaml
       trust:
         - iss: http://localhost:44444
-      implicit: true
       """
 
 

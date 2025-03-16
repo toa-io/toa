@@ -126,6 +126,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     const result = await this.schemes[scheme].invoke<AuthenticationResult>('authenticate', {
       input: {
+        scheme,
         authority,
         credentials
       }

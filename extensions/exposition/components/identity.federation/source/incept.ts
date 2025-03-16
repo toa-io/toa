@@ -1,10 +1,21 @@
-import { assertionsAsValues } from './lib/assertions-as-values.js'
-import { decode } from './lib/jwt'
+import { Err } from 'error-value'
+import { decode } from './lib'
 import type { Request } from '@toa.io/types'
-import type { Context, Entity, TransitInput } from './types'
+import type { Context, Entity, TransitInput, Scheme } from './types'
 
-async function incept (input: Input, context: Context): Promise<Output> {
-  const { iss, sub } = await decode(input.credentials, context.configuration.trust, context.stash)
+export async function effect (input: Input, context: Context): Promise<Output | Error> {
+  if (input.scheme !== 'bearer') return ERR_SCHEME
+
+  const payload = await decode(input.credentials, {
+    trust: context.configuration.trust,
+    stash: context.stash,
+    logs: context.logs
+  })
+
+  if (payload instanceof Error)
+    return payload
+
+  const { iss, sub } = payload
   const request: Request<TransitInput> = { input: { authority: input.authority, iss, sub } satisfies Omit<Entity, 'id'> }
 
   if (input.id !== undefined)
@@ -13,7 +24,10 @@ async function incept (input: Input, context: Context): Promise<Output> {
   return await context.local.transit(request)
 }
 
+const ERR_SCHEME = new Err('ERR_SCHEME', 'Unsupported scheme')
+
 export interface Input {
+  scheme: Scheme
   authority: string
   credentials: string
   id?: string
@@ -22,5 +36,3 @@ export interface Input {
 export interface Output {
   id: string
 }
-
-export const effect = assertionsAsValues(incept)
