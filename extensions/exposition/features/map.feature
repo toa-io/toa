@@ -205,13 +205,12 @@ Feature: HTTP context mapping
       Hello the.two.com
       """
 
-  Scenario: Mapping Bearer token claims
+  Scenario: Mapping OIDC token claims
     Given local IDP is running
     And the `identity.federation` configuration:
       """yaml
       trust:
         - iss: http://localhost:44444
-      implicit: true
       """
     And the `echo` is running with the following manifest:
       """yaml

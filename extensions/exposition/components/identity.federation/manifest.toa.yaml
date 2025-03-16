@@ -41,6 +41,7 @@ operations:
     input:
       authority*: string
       credentials*: string
+      scheme: [bearer, code]
     output:
       properties:
         identity:
@@ -90,30 +91,29 @@ configuration:
           additionalProperties: false
           properties:
             iss:
-              description: Allowed origins for a token `iss` field
+              description: Allowed values for a token `iss` field
               type: string
               format: uri
             aud:
-              description: Acceptable `aud` value(s)
-              type: array
-              items:
-                type: string
-              uniqueItems: true
-              minItems: 1
-            secrets:
-              description: Symmetric encryption secrets
-              type: object
-              patternProperties:
-                ^HS\d{3}$:
-                  type: object
-                  patternProperties:
-                    ^\w+$:
-                      type: string
-                  minProperties: 1
-              additionalProperties: false
-              minProperties: 1
+              description: Acceptable `aud` value(s). Required for Authorization Code Flow.
+              anyOf:
+                - type: string
+                - type: array
+                  items: { type: string }
+                  uniqueItems: true
+                  minItems: 1
+            signature:
+              properties:
+                iss: { type: string }
+                kid: { type: string }
+                key: { type: string }
+              required: [iss, kid, key]
+            secret:
+              description: Client secret for the Identity Provider. Required for Authorization Code Flow.
+              type: string
           required:
             - iss
+        default: []
       principal:
         title: Principal
         description: Subject that will be assigned the `system` Role
@@ -128,13 +128,10 @@ configuration:
           - iss
           - sub
         additionalProperties: false
-      implicit:
-        title: Implicitly create Identity
-        description: |
-          Enabling this will make Identity inception impossible.
-          DEPRECATED: use `auth:assert`
+      assert:
+        title: Implicitly incept Identity for new credentials
         type: boolean
-        default: false
+        default: true
     additionalProperties: false
 
 stash: ~

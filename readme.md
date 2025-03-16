@@ -37,6 +37,8 @@ Non-scattered documentation is coming some time later.
   - [Identity](extensions/exposition/documentation/identity.md)
     - Basis authentication
     - Identity federation (OIDC)
+      - `id_token` authentication
+      - Authorization code flow
     - Passkeys (WebAuthn)
     - OTP authentication
   - [Access control](extensions/exposition/documentation/access.md)

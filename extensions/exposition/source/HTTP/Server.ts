@@ -80,8 +80,8 @@ export class Server extends Connector {
       return
     }
 
-    request.on('error', (error) => console.warn('Request error', errorAttributes(request, error)))
-    request.socket.on('error', (error) => console.warn('Socket error', errorAttributes(request, error)))
+    request.once('error', (error) => console.warn('Request error', errorAttributes(request, error)))
+    request.socket.once('error', (error) => console.warn('Socket error', errorAttributes(request, error)))
 
     if (request.method === undefined || !this.properties.methods.has(request.method)) {
       response.writeHead(501).end()
@@ -112,6 +112,7 @@ export class Server extends Connector {
       .catch(this.fail(context, response))
       .finally(() => {
         request.removeAllListeners('error')
+        request.socket.removeAllListeners('error')
         response.removeAllListeners('error')
       })
   }

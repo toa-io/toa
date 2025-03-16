@@ -1,13 +1,18 @@
 export interface Configuration {
-  trust?: Trust[]
-  implicit: boolean
+  trust: Trust[]
   principal?: Principal
+  assert?: boolean
 }
 
 export interface Trust {
   iss: string
-  aud?: [string, ...string[]]
-  secrets?: Record<string, Record<string, string>>
+  aud?: string | [string, ...string[]]
+  secret?: string
+  signature?: {
+    iss: string
+    kid: string
+    key: string
+  }
 }
 
 interface Principal {

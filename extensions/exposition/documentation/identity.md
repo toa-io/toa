@@ -72,10 +72,11 @@ configuration:
   identity.federation:
     trust:
       - iss: https://accounts.google.com
-        aud:
-          - <GOOGLE_CLIENT_ID>
+        aud: <GOOGLE_CLIENT_ID>
 
       - iss: https://appleid.apple.com
+        aud: <APPLE_CLIENT_ID>
+        secret: <APPLE_CLIENT_SECRET> # enables Authorization Code Flow
 
       - iss: private.entity
         secrets:
@@ -93,6 +94,44 @@ with a `system` role.
 
 `implicit` indicates whether the Identity should be implicitly created when a valid token for a
 non-existent Identity is provided (default `false`).
+
+### Authorization Code Flow
+
+[OAuth 2.0 RFC 6749, section 4.1](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1)
+
+```
+GET /identity/
+authorization: Code <credentials>
+```
+
+`<credentials>` is a base64-encoded JSON containing the following properties:
+
+```yaml
+code: authorization code
+iss: code issuer
+for: redirect URI
+```
+
+Trust configuration for the issuer requires `aud` and either `secret` or `signature`
+values to enable the Authorization Code Flow.
+
+> If `aud` is an array, the first value is used.
+
+```yaml
+# context.toa.yaml
+configuration:
+  identity.federation:
+    trust:
+      - iss: https://accounts.google.com
+        aud: 1045282659797-n705sf85j4b2rodtpdn43od43tvseiet.apps.googleusercontent.com
+        secret: $GOOGLE_CLIENT_SECRET
+      - iss: https://appleid.apple.com
+        aud: io.toa.services.id
+        signature:
+          iss: team-id
+          kid: key-id
+          key: $APPLE_PRIVATE_KEY
+```
 
 ### OTP scheme
 
