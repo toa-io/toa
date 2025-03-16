@@ -41,6 +41,7 @@ operations:
     input:
       authority*: string
       credentials*: string
+      scheme: [bearer, code]
     output:
       properties:
         identity:

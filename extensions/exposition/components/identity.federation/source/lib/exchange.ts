@@ -1,12 +1,12 @@
 import * as jose from 'jose'
 import { createRemoteJWKSet, discover } from './discovery'
 import * as errors from './errors'
+import type { Ctx } from './Ctx'
 import type { Payload } from './Payload'
-import type { Trust } from '../types'
 
 const jwks: Record<string, Awaited<ReturnType<typeof createRemoteJWKSet>>> = {}
 
-export async function exchange (credentials: string, trust: Trust[]): Promise<Payload | Error> {
+export async function exchange (credentials: string, ctx: Ctx): Promise<Payload | Error> {
   const properties = decode(credentials)
 
   if (properties instanceof Error)
@@ -14,7 +14,7 @@ export async function exchange (credentials: string, trust: Trust[]): Promise<Pa
 
   const { code, iss, for: redirect } = properties
 
-  const trusted = trust.find((trust) => trust.iss === iss)
+  const trusted = ctx.trust.find((trust) => trust.iss === iss)
 
   if (trusted === undefined)
     return errors.ERR_TRUST
@@ -45,8 +45,11 @@ export async function exchange (credentials: string, trust: Trust[]): Promise<Pa
     body: params
   })
 
-  if (!response.ok)
+  if (!response.ok) {
+    ctx.logs.error('Token exchange failed', { status: response.status, text: await response.text() })
+
     return errors.ERR_RESPONSE
+  }
 
   const tokens = await response.json() as { id_token: string }
 
