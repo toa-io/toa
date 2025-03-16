@@ -8,6 +8,11 @@ export interface Trust {
   iss: string
   aud?: string | [string, ...string[]]
   secret?: string
+  signature?: {
+    iss: string
+    kid: string
+    key: string
+  }
 }
 
 interface Principal {

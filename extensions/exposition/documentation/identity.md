@@ -112,9 +112,26 @@ iss: code issuer
 for: redirect URI
 ```
 
-> Trust configuration for the issuer requires `aud` and `secret` values
-> to enable the Authorization Code Flow.
+Trust configuration for the issuer requires `aud` and either `secret` or `signature`
+values to enable the Authorization Code Flow.
+
 > If `aud` is an array, the first value is used.
+
+```yaml
+# context.toa.yaml
+configuration:
+  identity.federation:
+    trust:
+      - iss: https://accounts.google.com
+        aud: 1045282659797-n705sf85j4b2rodtpdn43od43tvseiet.apps.googleusercontent.com
+        secret: $GOOGLE_CLIENT_SECRET
+      - iss: https://appleid.apple.com
+        aud: io.toa.services.id
+        signature:
+          iss: team-id
+          kid: key-id
+          key: $APPLE_PRIVATE_KEY
+```
 
 ### OTP scheme
 

@@ -102,6 +102,12 @@ configuration:
                   items: { type: string }
                   uniqueItems: true
                   minItems: 1
+            signature:
+              properties:
+                iss: { type: string }
+                kid: { type: string }
+                key: { type: string }
+              required: [iss, kid, key]
             secret:
               description: Client secret for the Identity Provider. Required for Authorization Code Flow.
               type: string

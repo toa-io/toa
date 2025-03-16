@@ -6,7 +6,11 @@ import type { Context, Entity, TransitInput, Scheme } from './types'
 export async function effect (input: Input, context: Context): Promise<Output | Error> {
   if (input.scheme !== 'bearer') return ERR_SCHEME
 
-  const payload = await decode(input.credentials, context.configuration.trust, context.stash)
+  const payload = await decode(input.credentials, {
+    trust: context.configuration.trust,
+    stash: context.stash,
+    logs: context.logs
+  })
 
   if (payload instanceof Error)
     return payload

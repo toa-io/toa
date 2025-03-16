@@ -272,7 +272,7 @@ Feature: Identity Federation
       401 Unauthorized
       """
 
-  Scenario: Authorization code flow
+  Scenario: Authorization code flow with secret
     Given the `identity.federation` configuration:
       """yaml
       trust:
@@ -294,4 +294,31 @@ Feature: Identity Federation
       authorization: Token ${{ Alice.token }}
 
       id: ${{ Alice.id }}
+      """
+
+  Scenario: Authorization code flow with signature
+    Given the `identity.federation` configuration:
+      """yaml
+      trust:
+        - iss: http://localhost:44444
+          aud: nex
+          signature:
+            iss: io.toa.nex.id
+            kid: key-id
+            key: secret
+      """
+    And auth code for Bob is issued for https://web.toa.io/callback/
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      authorization: Code ${{ Bob.code_credentials }}
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ Bob.token }}
+
+      id: ${{ Bob.id }}
       """
