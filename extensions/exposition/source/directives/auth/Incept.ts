@@ -35,6 +35,7 @@ export class Incept implements Directive {
 
     const identity = await Incept.schemes[scheme].invoke<Maybe<Identity>>('incept', {
       input: {
+        scheme,
         authority: context.authority,
         id,
         credentials

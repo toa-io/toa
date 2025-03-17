@@ -236,42 +236,6 @@ Feature: Identity Federation
       id: ${{ Bob.id }}
       """
 
-  Scenario: Tokens with `jti` are one-time
-    Given the `identity.federation` configuration:
-      """yaml
-      trust:
-        - iss: http://localhost:44444
-      """
-    And ID token with jti is issued for User
-    When the following request is received:
-      """
-      GET /identity/ HTTP/1.1
-      host: nex.toa.io
-      authorization: Bearer ${{ User.id_token }}
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      authorization: Token ${{ User.token }}
-
-      id: ${{ User.id }}
-      roles: []
-      """
-
-    # second use
-    When the following request is received:
-      """
-      GET /identity/ HTTP/1.1
-      host: nex.toa.io
-      authorization: Bearer ${{ User.id_token }}
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      401 Unauthorized
-      """
-
   Scenario: Authorization code flow with secret
     Given the `identity.federation` configuration:
       """yaml
@@ -305,7 +269,7 @@ Feature: Identity Federation
           signature:
             iss: io.toa.nex.id
             kid: key-id
-            key: secret
+            key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0hBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJHMHdhd0lCQVFRZzl4OURhdHdIMEdaSFNDbzkKVE1IVFZYeWVZMFlROHFiNzNqSFYydjRNc3llaFJBTkNBQVF3YVlsbmEyaFNWM0cvUklsTkxWNDFsZzhQbTRLZgpIZkN1S0tpdzNCSUpUblNBckFNSkxTeTF2WXdTSU1IejcyMG1rbVdUcld1UWtranZrRHBaeGZSdgotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0t
       """
     And auth code for Bob is issued for https://web.toa.io/callback/
     When the following request is received:

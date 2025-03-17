@@ -32,16 +32,17 @@ operations:
       sub*: string
   incept:
     input:
-      authority: string
+      scheme: [bearer, code]
+      authority*: string
       credentials*: string
       id: string
     output:
       id: string
   authenticate:
     input:
+      scheme*: [bearer, code]
       authority*: string
       credentials*: string
-      scheme: [bearer, code]
     output:
       properties:
         identity:
@@ -68,16 +69,6 @@ operations:
   decode:
     input: string
     output: *claims
-
-exposition:
-  /:
-    /:id:
-      POST:
-        map:authority: authority
-        auth:id: id
-        io:input: [credentials]
-        io:output: false
-        endpoint: incept
 
 configuration:
   schema:
@@ -134,4 +125,12 @@ configuration:
         default: true
     additionalProperties: false
 
-stash: ~
+exposition:
+  /:
+    /:id:
+      POST:
+        map:authority: authority
+        auth:id: id
+        io:input: [credentials]
+        io:output: false
+        endpoint: incept
