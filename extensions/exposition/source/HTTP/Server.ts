@@ -113,7 +113,6 @@ export class Server extends Connector {
       .finally(() => {
         request.removeAllListeners('error')
         request.socket.removeAllListeners('error')
-        response.removeAllListeners('error')
       })
   }
 
