@@ -33,9 +33,10 @@ Consider a basic throttling rule:
 ### Concept
 
 1. Divide `INTERVAL` into `N` spans (`N >= 2`).
-2. At the end of each span, record the number of requests received for each `KEY` in
-   Redis ([INCRBY](https://redis.io/docs/latest/commands/incrby/)), using a key composed of the
-   `KEY` and the current ordinal number of `INTERVAL`
+2. At the end of each span,
+   atomically increment the value in Redis ([INCRBY](https://redis.io/docs/latest/commands/incrby/))
+   by the number of requests received for each `KEY`, using a key composed of the `KEY` and the
+   current ordinal number of `INTERVAL`
    in [Unix epoch](https://en.wikipedia.org/wiki/Unix_time).
 3. If the returned value exceeds `MAX_REQUESTS`, block access to `KEY`.
 4. If the write operation fails and `REQUESTS > MAX_REQUESTS / N` (i.e., the quota is exceeded
