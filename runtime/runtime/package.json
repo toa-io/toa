@@ -49,5 +49,8 @@
     "@toa.io/userland": "1.0.0-alpha.143",
     "openspan": "1.0.0-alpha.93"
   },
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
+  "devDependencies": {
+    "wtfnode": "0.10.0"
+  }
 }

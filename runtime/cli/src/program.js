@@ -28,6 +28,9 @@ yargs(process.argv.slice(2))
   .option('log', {
     describe: 'Log level'
   })
+  .option('wtf', {
+    describe: 'Enable wtf'
+  })
   .option('env', {
     type: 'string',
     describe: 'Path to environment variables file (.env format)'
