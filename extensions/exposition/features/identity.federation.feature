@@ -236,42 +236,6 @@ Feature: Identity Federation
       id: ${{ Bob.id }}
       """
 
-  Scenario: Tokens with `jti` are one-time
-    Given the `identity.federation` configuration:
-      """yaml
-      trust:
-        - iss: http://localhost:44444
-      """
-    And ID token with jti is issued for User
-    When the following request is received:
-      """
-      GET /identity/ HTTP/1.1
-      host: nex.toa.io
-      authorization: Bearer ${{ User.id_token }}
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      200 OK
-      authorization: Token ${{ User.token }}
-
-      id: ${{ User.id }}
-      roles: []
-      """
-
-    # second use
-    When the following request is received:
-      """
-      GET /identity/ HTTP/1.1
-      host: nex.toa.io
-      authorization: Bearer ${{ User.id_token }}
-      accept: application/yaml
-      """
-    Then the following reply is sent:
-      """
-      401 Unauthorized
-      """
-
   Scenario: Authorization code flow with secret
     Given the `identity.federation` configuration:
       """yaml

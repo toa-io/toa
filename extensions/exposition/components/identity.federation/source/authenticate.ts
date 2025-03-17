@@ -10,7 +10,6 @@ export async function effect ({ scheme, authority, credentials }: Input, context
 
   const ctx: Ctx = {
     trust: context.configuration.trust,
-    stash: context.stash,
     logs: context.logs
   }
 
