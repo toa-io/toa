@@ -49,7 +49,7 @@ Point 4 can be improved by estimating the approximate number of active API Gatew
 1. Time desynchronization between nodes is not significant for the selected `N` (i.e., span >>
    desync).
 
-# Further Reading
+## Further Reading
 
 - [Throttling Solutions in Standalone and Distributed Scenarios](https://www.alibabacloud.com/blog/throttling-solutions-in-standalone-and-distributed-scenarios_596984)
   by Jianfeng Fu
