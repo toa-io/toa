@@ -125,8 +125,6 @@ configuration:
         default: true
     additionalProperties: false
 
-stash: ~
-
 exposition:
   /:
     /:id:

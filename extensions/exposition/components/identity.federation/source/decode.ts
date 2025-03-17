@@ -5,7 +5,6 @@ import type { Context } from './types'
 export async function effect (token: string, context: Context): Promise<JWTPayload | Error> {
   return await decode(token, {
     trust: context.configuration.trust,
-    stash: context.stash,
     logs: context.logs
   })
 }

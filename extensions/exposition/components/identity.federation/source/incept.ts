@@ -8,7 +8,6 @@ export async function effect (input: Input, context: Context): Promise<Output | 
 
   const payload = await decode(input.credentials, {
     trust: context.configuration.trust,
-    stash: context.stash,
     logs: context.logs
   })
 

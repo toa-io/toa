@@ -269,12 +269,7 @@ Feature: Identity Federation
           signature:
             iss: io.toa.nex.id
             kid: key-id
-            key: |
-              -----BEGIN PRIVATE KEY-----
-              MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg9x9DatwH0GZHSCo9
-              TMHTVXyeY0YQ8qb73jHV2v4MsyehRANCAAQwaYlna2hSV3G/RIlNLV41lg8Pm4Kf
-              HfCuKKiw3BIJTnSArAMJLSy1vYwSIMHz720mkmWTrWuQkkjvkDpZxfRv
-              -----END PRIVATE KEY-----
+            key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0hBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJHMHdhd0lCQVFRZzl4OURhdHdIMEdaSFNDbzkKVE1IVFZYeWVZMFlROHFiNzNqSFYydjRNc3llaFJBTkNBQVF3YVlsbmEyaFNWM0cvUklsTkxWNDFsZzhQbTRLZgpIZkN1S0tpdzNCSUpUblNBckFNSkxTeTF2WXdTSU1IejcyMG1rbVdUcld1UWtranZrRHBaeGZSdgotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0t
       """
     And auth code for Bob is issued for https://web.toa.io/callback/
     When the following request is received:

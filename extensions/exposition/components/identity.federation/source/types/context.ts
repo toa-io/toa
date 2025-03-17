@@ -1,6 +1,5 @@
 import type { JWTPayload } from 'jose'
-
-import type { Call, Observation, Query, Stash, telemetry } from '@toa.io/types'
+import type { Call, Observation, Query, telemetry } from '@toa.io/types'
 import type { Entity } from './entity'
 import type { Configuration } from './configuration'
 
@@ -19,7 +18,6 @@ export interface Context {
     }
   }
   logs: telemetry.Logs
-  stash: Stash
   configuration: Configuration
 }
 
