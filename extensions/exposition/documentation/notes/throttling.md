@@ -1,4 +1,4 @@
-# Decentralized Request Throttling
+# Simple Decentralized Request Throttling
 
 ## Problem
 
@@ -40,18 +40,24 @@ Consider a basic throttling rule:
    in [Unix epoch](https://en.wikipedia.org/wiki/Unix_time).
 3. If the returned value exceeds `MAX_REQUESTS`, block access to `KEY`, remove after `COOLDOWN`.
 4. If the write operation fails and `REQUESTS > MAX_REQUESTS / N` (i.e., the quota is exceeded
-   locally), block access to `KEY`, remove after `COOLDOWN`.
+   locally), block access to `KEY`, remove after `COOLDOWN`.[^1]
 
-Point 4 can be improved by estimating the approximate number of active API Gateway instances
+[^1]: Point 4 can be improved by estimating the approximate number of active API Gateway instances
 (`nodes`) based on previous records. In this case, compare `REQUESTS * nodes > MAX_REQUESTS / N`.
+
+Each API Gateway instance will generate the `KEY` based on its own local time,
+which, in general, will lead to simultaneous writes (from Redis’s local time perspective) to
+different `KEY`s.
+
+However, the total contribution of each node to each `KEY` will correspond to the actual request
+rate experienced by that node.
+
+<img src="desync.jpg" width="960" height="655" alt="Desynchronization" />
+
+Dividing the `INTERVAL` into spans smooths the desynchronization effect.
 
 ### Caveats
 
-1. Time desynchronization between nodes is not significant for the selected `N` (i.e., span >>
-   desync).
-2. In worst case scenario, the quota is exceeded by `MAX_REQUESTS / N` in a span on each node.
-
-## Further Reading
-
-- [Throttling Solutions in Standalone and Distributed Scenarios](https://www.alibabacloud.com/blog/throttling-solutions-in-standalone-and-distributed-scenarios_596984)
-  by Jianfeng Fu
+1. In worst case scenario, the quota is exceeded by `MAX_REQUESTS / N` in a span on each node.
+2. Time desynchronization between nodes is not significant for the selected `INTERVAL` (i.e.,
+   `INTERVAL` >> desync).
