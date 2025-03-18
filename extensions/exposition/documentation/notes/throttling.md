@@ -47,10 +47,8 @@ Consider a basic throttling rule:
 
 Each API Gateway instance will generate the `KEY` based on its own local time,
 which, in general, will lead to simultaneous writes (from Redis’s local time perspective) to
-different `KEY`s.
-
-However, the total contribution of each node to each `KEY` will correspond to the actual request
-rate experienced by that node.
+different `KEY`s. However, the total contribution of each node to each `KEY` will correspond to the
+actual request rate experienced by that node.
 
 <img src="desync.jpg" width="960" height="655" alt="Desynchronization" />
 
