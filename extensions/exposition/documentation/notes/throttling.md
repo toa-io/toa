@@ -46,7 +46,7 @@ which, in general, will lead to simultaneous writes (from Redis’s local time p
 different `KEY`s. However, the total contribution of each node to each `KEY` will correspond to the
 actual request rate experienced by that node.
 
-<img src="desync.jpg" width="640" height="437" alt="Desynchronization" />
+<img src="desync.jpg" alt="Desynchronization" />
 
 Dividing the `INTERVAL` into spans smooths the desynchronization effect.
 
@@ -55,11 +55,21 @@ Dividing the `INTERVAL` into spans smooths the desynchronization effect.
 Introduce `nodes`, the approximate number of active API Gateway instances, to improve the algorithm.
 
 1. Initially, `nodes` equals to `1`.
-2. On each writing to Redis, estimate the number of active nodes by dividing the response by
-   the number of `REQUESTS` written.
-3. Update point 4: `REQUESTS * nodes > MAX_REQUESTS / N`.
+2. During each `INTERVAL`, sum the total request count for each `KEY`, keep current and previous
+   values.
+3. At the end of each interval:
+
+- Read the value from the `KEY` for the previous interval. At this point, it is assumed that all
+  nodes
+  have switched to the next interval.
+- Update the `nodes` value by dividing response form Redis by the number of `REQUESTS` counted for
+  the previous interval.
+- Set the previous value to the current value.
+- Set the current value to `0`
+
+4. Update point 4 of the [Concept](#concept): `REQUESTS * nodes > MAX_REQUESTS / N`.
    This will increase the precision of the local quota enforcement.
-4. Add a new step: if `REQUESTS * nodes > MAX_REQUESTS`, block access to `KEY`, remove after
+   5Add a new step: if `REQUESTS * nodes > MAX_REQUESTS`, block access to `KEY`, remove after
    `COOLDOWN`.
 
 When nodes are added or removed, the algorithm will adapt in the upcoming intervals.
@@ -68,4 +78,4 @@ When nodes are added or removed, the algorithm will adapt in the upcoming interv
 
 1. In worst case scenario, the quota is exceeded by `MAX_REQUESTS / N` in a span on each node.
 2. Time desynchronization between nodes should be insignificant for the selected `INTERVAL` (i.e.,
-   `INTERVAL` >> desync).
+   `INTERVAL` >> desync). See Extension point 3.
