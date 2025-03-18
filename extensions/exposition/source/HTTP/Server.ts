@@ -29,7 +29,9 @@ export class Server extends Connector {
 
     this.server.on('clientError', (error, socket) => {
       console.warn('Client connection error', error)
-      socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+
+      if (socket.writable) socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+      else socket.destroy()
     })
   }
 
@@ -70,6 +72,20 @@ export class Server extends Connector {
   }
 
   private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
+    request.once('error', (error) => {
+      console.warn('Request error', errorAttributes(request, error))
+
+      if (!response.writableEnded)
+        response.destroy()
+    })
+
+    request.socket.once('error', (error) => {
+      console.warn('Socket error', errorAttributes(request, error))
+
+      if (!response.writableEnded)
+        response.destroy()
+    })
+
     const invalid = validate(request)
 
     if (invalid !== null) {
@@ -79,9 +95,6 @@ export class Server extends Connector {
 
       return
     }
-
-    request.once('error', (error) => console.warn('Request error', errorAttributes(request, error)))
-    request.socket.once('error', (error) => console.warn('Socket error', errorAttributes(request, error)))
 
     if (request.method === undefined || !this.properties.methods.has(request.method)) {
       response.writeHead(501).end()
@@ -138,22 +151,36 @@ export class Server extends Connector {
 
   private fail (context: Context, response: http.ServerResponse) {
     return async (exception: Error) => {
-      if (!context.request.complete)
-        await adam(context.request)
+      try {
+        if (!context.request.complete)
+          await adam(context.request)
 
-      response.statusCode = exception instanceof Exception ? exception.status : 500
+        if (!response.writableEnded) {
+          response.statusCode = exception instanceof Exception ? exception.status : 500
 
-      const message: OutgoingMessage = { status: response.statusCode }
+          const message: OutgoingMessage = { status: response.statusCode }
 
-      if (context.encoder === null)
-        message.body = undefined
-      else if (exception instanceof ClientError || this.properties.debug)
-        message.body =
-          exception instanceof Exception
-            ? exception.body
-            : exception.stack ?? exception.message
+          // eslint-disable-next-line max-depth
+          if (context.encoder === null)
+            message.body = undefined
+          else if (exception instanceof ClientError || this.properties.debug)
+            message.body =
+              exception instanceof Exception
+                ? exception.body
+                : exception.stack ?? exception.message
 
-      await write(context, response, message)
+          await write(context, response, message)
+        }
+      } catch (final) {
+        console.error('Error in error handler', final)
+
+        if (!response.writableEnded)
+          try {
+            response.writeHead(500).end()
+          } catch (e) {
+            // Nothing more we can do
+          }
+      }
     }
   }
 }
