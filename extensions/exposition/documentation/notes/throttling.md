@@ -39,10 +39,7 @@ Consider a basic throttling rule:
    in [Unix epoch](https://en.wikipedia.org/wiki/Unix_time).
 3. If the returned value exceeds `MAX_REQUESTS`, block access to `KEY`, remove after `COOLDOWN`.
 4. If the write operation fails and `REQUESTS > MAX_REQUESTS / N` (i.e., the quota is exceeded
-   locally), block access to `KEY`, remove after `COOLDOWN`.[^1]
-
-[^1]: Point 4 can be improved by estimating the approximate number of active API Gateway instances
-(`nodes`) based on previous records. In this case, compare `REQUESTS * nodes > MAX_REQUESTS / N`.
+   locally), block access to `KEY`, remove after `COOLDOWN`.
 
 Each API Gateway instance will generate the `KEY` based on its own local time,
 which, in general, will lead to simultaneous writes (from Redis’s local time perspective) to
@@ -52,6 +49,20 @@ actual request rate experienced by that node.
 <img src="desync.jpg" width="960" height="655" alt="Desynchronization" />
 
 Dividing the `INTERVAL` into spans smooths the desynchronization effect.
+
+### Extension
+
+Introduce `nodes`, the approximate number of active API Gateway instances, to improve the algorithm.
+
+1. Initially, `nodes` equals to `1`.
+2. On each writing to Redis, estimate the number of active nodes by dividing the response by
+   the number of requests written.
+3. Update point 4: `REQUESTS * nodes > MAX_REQUESTS / N`.
+   This will increase the precision of the local quota enforcement.
+4. Add a new step: if `REQUESTS * nodes > MAX_REQUESTS`, block access to `KEY`, remove after
+   `COOLDOWN`.
+
+When nodes are added or removed, the algorithm will adapt in the upcoming intervals.
 
 ### Caveats
 
