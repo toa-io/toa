@@ -68,7 +68,7 @@ Introduce `nodes`, the approximate number of active API Gateway instances, to im
 
 4. Update point 4 of the [Concept](#concept): `REQUESTS * nodes > MAX_REQUESTS / N`.
    This will increase the precision of the local quota enforcement.
-   5Add a new step: if `REQUESTS * nodes > MAX_REQUESTS`, block access to `KEY`, remove after
+5. Add a new step: if `REQUESTS * nodes > MAX_REQUESTS`, block access to `KEY`, remove after
    `COOLDOWN`.
 
 When nodes are added or removed, the algorithm will adapt in the upcoming intervals.
