@@ -56,7 +56,7 @@ Introduce `nodes`, the approximate number of active API Gateway instances, to im
 
 1. Initially, `nodes` equals to `1`.
 2. On each writing to Redis, estimate the number of active nodes by dividing the response by
-   the number of requests written.
+   the number of `REQUESTS` written.
 3. Update point 4: `REQUESTS * nodes > MAX_REQUESTS / N`.
    This will increase the precision of the local quota enforcement.
 4. Add a new step: if `REQUESTS * nodes > MAX_REQUESTS`, block access to `KEY`, remove after
