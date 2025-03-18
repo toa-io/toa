@@ -15,8 +15,7 @@ error.
 
 ## Forces
 
-1. An additional round trip to fetch the current quota state for each request (centralized
-   throttling) is unacceptable.
+1. No per request IO is allowed (centralized solutions do not fit).
 2. In a distributed system, there is no concept of a *global current time*.
 3. Failure to retrieve the quota state should not result in Gateway failure.
 
