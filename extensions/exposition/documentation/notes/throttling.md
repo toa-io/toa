@@ -28,7 +28,7 @@ Redis.
 Consider a basic throttling rule:
 
 1. No more than `MAX_REQUESTS` within `INTERVAL` time for any API route (`KEY`).
-2. If the limit is exceeded, block access to `KEY` for `COOLDOWN` seconds.
+2. If the limit is exceeded, block requests to `KEY` for `COOLDOWN` seconds.
 
 ### Concept
 
@@ -38,17 +38,18 @@ Consider a basic throttling rule:
    by the number of requests received for each `KEY`, using a key composed of the `KEY` and the
    current ordinal number of `INTERVAL`
    in [Unix epoch](https://en.wikipedia.org/wiki/Unix_time).
-3. If the returned value exceeds `MAX_REQUESTS`, block access to `KEY`.
+3. If the returned value exceeds `MAX_REQUESTS`, block access to `KEY`, remove after `COOLDOWN`.
 4. If the write operation fails and `REQUESTS > MAX_REQUESTS / N` (i.e., the quota is exceeded
    locally), block access to `KEY`, remove after `COOLDOWN`.
 
 Point 4 can be improved by estimating the approximate number of active API Gateway instances
 (`nodes`) based on previous records. In this case, compare `REQUESTS * nodes > MAX_REQUESTS / N`.
 
-### Assumptions
+### Caveats
 
 1. Time desynchronization between nodes is not significant for the selected `N` (i.e., span >>
    desync).
+2. In worst case scenario, the quota is exceeded by `MAX_REQUESTS / N` in a span on each node.
 
 ## Further Reading
 
