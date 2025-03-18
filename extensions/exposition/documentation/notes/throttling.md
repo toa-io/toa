@@ -67,5 +67,5 @@ When nodes are added or removed, the algorithm will adapt in the upcoming interv
 ### Caveats
 
 1. In worst case scenario, the quota is exceeded by `MAX_REQUESTS / N` in a span on each node.
-2. Time desynchronization between nodes is not significant for the selected `INTERVAL` (i.e.,
+2. Time desynchronization between nodes should be insignificant for the selected `INTERVAL` (i.e.,
    `INTERVAL` >> desync).
