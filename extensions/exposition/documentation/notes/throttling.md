@@ -60,8 +60,7 @@ Introduce `nodes`, the approximate number of active API Gateway instances, to im
 3. At the end of each interval:
 
 - Read the value from the `KEY` for the previous interval. At this point, it is assumed that all
-  nodes
-  have switched to the next interval.
+  nodes have switched to the next interval.
 - Update the `nodes` value by dividing response form Redis by the number of `REQUESTS` counted for
   the previous interval.
 - Set the previous value to the current value.
