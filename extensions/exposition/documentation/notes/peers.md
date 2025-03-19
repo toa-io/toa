@@ -37,3 +37,6 @@ At the start of each `interval` in [Unix epoch](https://en.wikipedia.org/wiki/Un
 ## Caveats
 
 - The first result will become known between `interval` and `interval × 2` seconds.
+- If the `index` or `replicas` changes (which typically does not happen), the algorithm consumer
+  must execute _safe index transition_, to prevent task duplication or loss.
+  Such a transition is outside the scope of this algorithm.
