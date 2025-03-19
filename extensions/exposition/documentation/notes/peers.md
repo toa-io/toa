@@ -34,9 +34,26 @@ At the start of each `interval` in [Unix epoch](https://en.wikipedia.org/wiki/Un
 
 5. Store the response (3) in `index`.
 
+## Safe index transition
+
+If the `index` or `replicas` changes, the algorithm consumer must stop consuming new tasks
+and execute _safe index transition_, to prevent task duplication or loss.
+
+The transition can be implemented in a manner similar to the described algorithm, using a dedicated
+`{name}:transition` key.
+However, this process is considered outside the scope of this document.
+
+## Extension
+
+If the system clocks are too precisely synchronized (skew is less than a round-trip time to Redis),
+this may result in continuous [index transitions](#safe-index-transition).
+
+To mitigate this, the algorithm can be extended with a random delay:
+
+1. Before starting the algorithm, define a random constant clock skew, significantly smaller than
+   `interval`: `skew = random() * (interval / 2)`
+2. Start the algorithm at each `interval + skew`.
+
 ## Caveats
 
 - The first result will become known between `interval` and `interval × 2` seconds.
-- If the `index` or `replicas` changes (which typically does not happen), the algorithm consumer
-  must execute _safe index transition_, to prevent task duplication or loss.
-  Such a transition is outside the scope of this algorithm.
