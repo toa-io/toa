@@ -34,6 +34,6 @@ At the start of each `interval` in [Unix epoch](https://en.wikipedia.org/wiki/Un
 
 5. Store the response (3) in `index`.
 
-# Caveats
+## Caveats
 
 - The first result will become known between `interval` and `interval × 2` seconds.
