@@ -3,7 +3,7 @@
 The Exposition comes with `io` directives to control access to the operation's input and output
 properties.
 
-## `io:input`
+## Input
 
 The `io:input` optional directive contains a list of properties that are allowed to be specified in
 the request body.
@@ -22,7 +22,7 @@ not in the list, the request will be rejected with a `400` status code.
 > Therefore, `io:input` is only applicable to operations which input is an object or an
 > array of objects.
 
-## `io:output`
+## Output
 
 The `io:output` mandatory directive contains a list of properties that are allowed to be included in
 the response body.
@@ -54,3 +54,43 @@ GET:
 ```
 
 Output restrictions are not applied to stream responses and errors.
+
+## Throttling
+
+The `io:throttle` directive is used to limit the rate of the requests meeting the specified
+criteria.
+See [algorithm description](notes/throttling.md).
+
+```yaml
+exposition:
+  /:
+    io:throttle:
+      key:
+        - route
+        - ip
+        - identity
+        - segment: id
+        - header: x-real-ip
+        - status: [4xx, 5xx]
+      requests: 500
+      interval: 30
+      cooldown: 30
+      status: 429
+```
+
+Once the rate limit is reached, the server will block the requests with the specified `status`
+code (429 by default) until the `cooldown` period expires.
+
+> Currently, only `header` and `status` key components are supported.
+
+### Request key components
+
+Request components used to track quota usage and block requests:
+
+- `header`: name of the header (or a list of header names), which value(s) will be used
+
+### Response key components
+
+Response components used only to track quota usage:
+
+- `status`: response status code (or a list of status codes)

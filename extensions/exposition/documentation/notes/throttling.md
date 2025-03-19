@@ -1,4 +1,4 @@
-# Simple Decentralized Request Throttling
+# Decentralized Request Throttling
 
 ## Problem
 
@@ -12,6 +12,7 @@ error.
    quota usage.
 2. Precise quota enforcement (per request, per second) is not critical; the goal is to prevent
    significant overuse.
+3. Quota configuration is static.
 
 ## Forces
 
