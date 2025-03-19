@@ -1,4 +1,4 @@
-# Distributed peer indexing
+# Distributed Peer Indexing
 
 ## Problem
 
