@@ -34,4 +34,6 @@ At the start[^1] of each `interval` in [Unix epoch](https://en.wikipedia.org/wik
 
 5. Store the response (3) in `index`.
 
-[^1]: in the worst case scenario, the first result is known after `interval` seconds
+# Caveats
+
+- The first result will become known between `interval` and `interval × 2` seconds.
