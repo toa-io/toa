@@ -22,7 +22,7 @@ Define the following parameters:
 - `interval`: indexing interval that is deliberately greater than the expected clock skew among
   instances
 
-At the start[^1] of each `interval` in [Unix epoch](https://en.wikipedia.org/wiki/Unix_time):
+At the start of each `interval` in [Unix epoch](https://en.wikipedia.org/wiki/Unix_time):
 
 1. Calculate an ordinal number of the current interval: `number = ceil(now() / interval)`
 2. Compose a `key` as `{name}:{number}`
