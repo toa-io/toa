@@ -1,0 +1,23 @@
+definitions:
+  component: &component
+    type: string
+    enum: [route]
+properties:
+  key: &rule
+    type: array
+    minItems: 1
+    items: *component
+  condition: *rule
+  requests:
+    type: integer
+    minimum: 1
+  interval: &interval
+    description: Seconds
+    type: integer
+    minimum: 1
+  cooldown: *interval
+required:
+  - key
+  - requests
+  - interval
+  - cooldown

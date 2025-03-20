@@ -26,7 +26,7 @@ export class Output implements Directive {
     schemas.output.validate(permissions, 'Incorrect \'io:output\' format')
   }
 
-  public attach (context: Context): void {
+  public preflight (context: Context): void {
     context.pipelines.response.push(this.restriction(context))
   }
 

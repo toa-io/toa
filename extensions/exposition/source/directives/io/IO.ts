@@ -1,5 +1,6 @@
 import { Output } from './Output'
 import { Input } from './Input'
+import { Throttle } from './Throttle'
 import type { Constructor, Directive } from './Directive'
 import type { Input as Context } from '../../io'
 import type { DirectiveFamily } from '../../RTD'
@@ -25,19 +26,20 @@ export class IO implements DirectiveFamily<Directive> {
     for (const directive of directives) {
       restricted ||= directive instanceof Output
 
-      directive.attach(context)
+      directive.preflight(context)
     }
 
     if (!restricted)
-      DENIAL.attach(context)
+      DENIAL.preflight(context)
 
     return null
   }
 }
 
 const constructors: Record<string, Constructor> = {
+  input: Input,
   output: Output,
-  input: Input
+  throttle: Throttle
 }
 
 const DENIAL: Output = new Output([])

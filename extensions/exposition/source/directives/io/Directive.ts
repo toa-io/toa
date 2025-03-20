@@ -1,7 +1,7 @@
 import type { Input } from '../../io'
 
 export interface Directive {
-  attach: (context: Input) => void
+  preflight: (context: Input) => void
 }
 
 export interface Constructor {
