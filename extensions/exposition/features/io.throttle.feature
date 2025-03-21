@@ -29,3 +29,12 @@ Feature: Request throttling
       """
       429 Too Many Requests
       """
+    Then after 1 second
+    When the following request is received:
+      """
+      GET /echo/beacon/ HTTP/1.1
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
