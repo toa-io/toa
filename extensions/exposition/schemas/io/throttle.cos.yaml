@@ -1,13 +1,26 @@
 definitions:
   component: &component
     type: string
-    enum: [route]
+    enum: [ip, path]
+  condition: &condition
+    type: object
+    properties:
+      status:
+        type: number
+type: object
 properties:
-  key: &rule
-    type: array
-    minItems: 1
-    items: *component
-  condition: *rule
+  key:
+    anyOf:
+      - *component
+      - type: array
+        items: *component
+        minItems: 1
+  condition:
+    anyOf:
+      - *condition
+      - type: array
+        items: *condition
+        minItems: 1
   requests:
     type: integer
     minimum: 1

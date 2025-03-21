@@ -19,6 +19,7 @@ export class Quotas {
     this.keys = options.keys
 
     this.interval.on('tick', this.reset)
+    console.log('Quotas created')
   }
 
   public static create (configuration: Configuration): Quotas {
@@ -42,11 +43,18 @@ export class Quotas {
     if (key === null)
       return
 
-    const quota = (this.quotas[key] ??= new Quota(this.requests))
-    const ok = quota.use()
+    this.quotas[key] ??= new Quota(this.requests)
+
+    const ok = this.quotas[key]!.use()
+
+    console.log('Quotas used', Object.keys(this.quotas).length)
 
     if (!ok)
       this.block(key)
+  }
+
+  public dispose (): void {
+    this.interval.dispose()
   }
 
   private readonly reset = (): void => {
@@ -68,8 +76,8 @@ export class Quotas {
 }
 
 interface Options {
+  keys: Keys
   requests: number
   cooldown: number
-  keys: Keys
   interval: Interval
 }

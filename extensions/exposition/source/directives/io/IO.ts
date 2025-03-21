@@ -1,8 +1,8 @@
 import { Output } from './Output'
 import { Input } from './Input'
 import { Throttle } from './Throttle'
+import type * as http from '../../HTTP'
 import type { Constructor, Directive } from './Directive'
-import type { Input as Context } from '../../io'
 import type { DirectiveFamily } from '../../RTD'
 
 export class IO implements DirectiveFamily<Directive> {
@@ -20,7 +20,7 @@ export class IO implements DirectiveFamily<Directive> {
     return new Directive(value)
   }
 
-  public preflight (directives: Directive[], context: Context): null {
+  public preflight (directives: Directive[], context: http.Context): null {
     let restricted = false
 
     for (const directive of directives) {
@@ -33,6 +33,16 @@ export class IO implements DirectiveFamily<Directive> {
       DENIAL.preflight(context)
 
     return null
+  }
+
+  public async settle (directives: Directive[], context: http.Context, output: http.OutgoingMessage): Promise<void> {
+    for (const directive of directives)
+      await directive.settle?.(context, output)
+  }
+
+  public dispose (directives: Directive[]): void {
+    for (const directive of directives)
+      directive.dispose?.()
   }
 }
 

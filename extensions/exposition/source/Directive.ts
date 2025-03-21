@@ -36,12 +36,18 @@ export class Directives implements RTD.Directives {
       if (set.family.settle !== undefined)
         await set.family.settle(set.directives, context, response)
   }
+
+  public dispose (): void {
+    for (const set of this.sets)
+      set.family.dispose?.(set.directives)
+  }
 }
 
 export class DirectivesFactory implements RTD.DirectiveFactory {
   private readonly remotes: Remotes
   private readonly families: Record<string, RTD.DirectiveFamily> = {}
   private readonly mandatory: string[] = []
+  private readonly instances: Directives[] = []
 
   public constructor (families: RTD.DirectiveFamily[], remotes: Remotes) {
     for (const family of families) {
@@ -88,7 +94,16 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
         directives
       })
 
-    return new Directives(sets)
+    const directives = new Directives(sets)
+
+    this.instances.push(directives)
+
+    return directives
+  }
+
+  public dispose (): void {
+    for (const directives of this.instances)
+      directives.dispose()
   }
 }
 

@@ -39,6 +39,10 @@ export class Tree {
     this.trunk.merge(branch)
   }
 
+  public dispose (): void {
+    this.directives.dispose()
+  }
+
   private createNode
   (node: syntax.Node, protect: boolean, extension?: unknown): Node {
     const context: Context = {

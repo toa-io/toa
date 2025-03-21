@@ -1,40 +1,32 @@
+import { TooManyRequests } from '../../HTTP'
 import * as schemas from './schemas'
-import type { Input as Context } from '../../io'
+import { parse, Quotas, type Declaration } from './lib/throttle'
+import type * as http from '../../HTTP'
 import type { Directive } from './Directive'
-import type { Configuration } from './lib/throttle'
 
 export class Throttle implements Directive {
-  private readonly configuration: Configuration
+  private readonly quotas: Quotas
 
-  public constructor (configuration: Configuration) {
-    this.configuration = configuration
+  public constructor (declaration: Declaration) {
+    const configuration = parse(declaration)
+
+    this.quotas = Quotas.create(configuration)
   }
 
-  public static validate (configuration: unknown): asserts configuration is Configuration {
-    schemas.throttle.validate<Permissions>(configuration, 'Incorrect \'io:throttle\' format')
+  public static validate (declaration: unknown): asserts declaration is Declaration {
+    schemas.throttle.validate(declaration, 'Incorrect \'io:throttle\' format')
   }
 
-  public preflight (context: Context): void {
-    /*
-    const quota = this.quotas.get(context)
-
-    if (quota === null)
-      throw new Error('Access locked')
-
-    quota.use()
-     */
+  public preflight (context: http.Context): void {
+    if (!this.quotas.ok(context))
+      throw new TooManyRequests()
   }
 
-  private getQuota (): void {
-    /*
-    const quota = new Quota(this.configuration.requests)
-    const interval = new Interval(this.configuration.interval)
-    const coordinator = new Coordinator(quota, interval, this.configuration.cooldown)
+  public settle (context: http.Context, output: http.OutgoingMessage): void {
+    this.quotas.use(context, output)
+  }
 
-    await interval.tick
-    quota.reset()
-
-    return quota
-     */
+  public dispose (): void {
+    this.quotas.dispose()
   }
 }
