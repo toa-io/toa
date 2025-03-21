@@ -1,3 +1,4 @@
+import { console } from 'openspan'
 import { Keys } from './Keys'
 import { Quota } from './Quota'
 import { Interval } from './Interval'
@@ -19,7 +20,6 @@ export class Quotas {
     this.keys = options.keys
 
     this.interval.on('tick', this.reset)
-    console.log('Quotas created')
   }
 
   public static create (configuration: Configuration): Quotas {
@@ -47,8 +47,6 @@ export class Quotas {
 
     const ok = this.quotas[key]!.use()
 
-    console.log('Quotas used', Object.keys(this.quotas).length)
-
     if (!ok)
       this.block(key)
   }
@@ -72,6 +70,8 @@ export class Quotas {
     this.blocked[key] = true
 
     setTimeout(() => delete this.blocked[key], this.cooldown)
+
+    console.info('Quota exceeded, key blocked', { key, cooldown: this.cooldown })
   }
 }
 
