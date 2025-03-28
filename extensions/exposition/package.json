@@ -17,6 +17,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@aws-sdk/protocol-http": "3.370.0",
     "@simplewebauthn/server": "13.1.1",
     "@toa.io/core": "1.0.0-alpha.136",
     "@toa.io/generic": "1.0.0-alpha.93",
