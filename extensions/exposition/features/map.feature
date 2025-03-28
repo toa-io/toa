@@ -165,6 +165,30 @@ Feature: HTTP context mapping
       Hello Ken
       """
 
+  Scenario: Mapping wildcard route parameter
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /foo/**:
+          io:output: true
+          GET:
+            map:segments:
+              name: '**'
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/foo/bar/baz/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello bar/baz
+      """
+
   Scenario: Mapping the authority
     Given the annotation:
       """yaml

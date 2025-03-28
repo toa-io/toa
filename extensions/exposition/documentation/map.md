@@ -75,6 +75,16 @@ remaining directives or used as criteria in the operation call.
     endpoint: create
 ```
 
+Wildcard routes are supported by using `**` as the parameter name.
+
+```yaml
+/path/to/**:
+  GET:
+    map:segments:
+      path: '**'
+    endpoint: observe
+```
+
 ## Bearer token claims
 
 The `map:claims` directive maps the values of

@@ -1,4 +1,17 @@
 #!/usr/bin/env node
 'use strict'
 
+if (process.argv.includes('--wtf')) {
+  const wtf = require('wtfnode')
+
+  function wtfdump () {
+    wtf.dump()
+  }
+
+  console.debug('wtf enabled')
+
+  // dump each 30 seconds
+  setInterval(wtfdump, 10000)
+}
+
 require('@toa.io/cli')

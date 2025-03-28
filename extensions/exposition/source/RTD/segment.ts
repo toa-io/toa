@@ -15,6 +15,7 @@ export function fragment (path: string): string[] {
 function parse (segment: string): Segment {
   if (segment[0] === ':') return { fragment: null, placeholder: segment.substring(1) }
   else if (segment === '*') return { fragment: null, placeholder: null }
+  else if (segment === '**') return { fragment: null, placeholder: null, wildcard: true }
   else return { fragment: segment }
 }
 
@@ -23,4 +24,5 @@ export type Segment = {
 } | {
   fragment: null
   placeholder: string | null
+  wildcard?: boolean
 }

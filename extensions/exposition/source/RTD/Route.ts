@@ -7,6 +7,7 @@ export class Route {
   public readonly variables: number = 0
   public readonly segments: Segment[]
   private readonly node: Node
+  private readonly wildcard: boolean = false
 
   public constructor (segments: Segment[], node: Node) {
     this.root = segments.length === 0
@@ -14,8 +15,10 @@ export class Route {
     this.node = node
 
     for (const segment of segments)
-      if (segment.fragment === null)
+      if (segment.fragment === null) {
         this.variables++
+        this.wildcard ||= segment.wildcard === true
+      }
   }
 
   public match (fragments: string[], parameters: Parameter[]): Match | null {
@@ -27,11 +30,14 @@ export class Route {
 
       if (segment.fragment === null && segment.placeholder !== null)
         parameters.push({ name: segment.placeholder, value: fragments[i] })
+
+      if (segment.fragment === null && segment.wildcard === true)
+        parameters.push({ name: '**', value: fragments.slice(this.segments.length - 1).join('/') })
     }
 
     const exact = this.segments.length === fragments.length
 
-    if (exact && !this.node.intermediate)
+    if ((exact && !this.node.intermediate) || this.wildcard)
       return { node: this.node, parameters }
     else
       return this.matchNested(fragments, parameters)
