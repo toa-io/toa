@@ -1,0 +1,36 @@
+definitions:
+  component: &component
+    type: string
+    enum: [ip, path]
+  condition: &condition
+    type: object
+    properties:
+      status:
+        type: number
+type: object
+properties:
+  key:
+    anyOf:
+      - *component
+      - type: array
+        items: *component
+        minItems: 1
+  condition:
+    anyOf:
+      - *condition
+      - type: array
+        items: *condition
+        minItems: 1
+  requests:
+    type: integer
+    minimum: 1
+  interval: &interval
+    description: Seconds
+    type: integer
+    minimum: 1
+  cooldown: *interval
+required:
+  - key
+  - requests
+  - interval
+  - cooldown

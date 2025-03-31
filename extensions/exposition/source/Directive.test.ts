@@ -11,14 +11,16 @@ const families: Array<jest.MockedObjectDeep<DirectiveFamily>> = [
     mandatory: true,
     create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
     preflight: jest.fn(),
-    settle: jest.fn()
+    settle: jest.fn(),
+    dispose: jest.fn()
   },
   {
     name: 'bar',
     mandatory: false,
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
     preflight: jest.fn(),
-    settle: jest.fn()
+    settle: jest.fn(),
+    dispose: jest.fn()
   }
 ]
 

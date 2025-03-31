@@ -6,10 +6,12 @@ import type { Output } from '../io'
 export interface Directives {
   preflight: (context: Context, parameters: Parameter[]) => Promise<Output>
   settle: (context: Context, response: OutgoingMessage) => Promise<void>
+  dispose: () => void
 }
 
 export interface DirectiveFactory {
   create: (directives: syntax.Directive[]) => Directives
+  dispose: () => void
 }
 
 export interface DirectiveSet {
@@ -30,4 +32,6 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
   settle?: (directives: TDirective[],
     request: Context & TExtension,
     response: OutgoingMessage) => void | Promise<void>
+
+  dispose?: (directives: TDirective[]) => void
 }
