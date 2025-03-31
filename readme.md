@@ -44,15 +44,14 @@ Non-scattered documentation is coming some time later.
   - [Access control](extensions/exposition/documentation/access.md)
   - [Cache control](/extensions/exposition/documentation/cache.md)
   - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
-- Distributed lock manager
+  - [Decentralized throttling](/extensions/exposition/documentation/io.md#throttling)
+- [Distributed lock manager](/extensions/stash/readme.md#distributed-lock-manager)
 - [Telemetry](/extensions/telemetry)
   - Structured logs
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation
-  - Deduplication
-  - Arbitrary orderings
-  - Providers: file system, Amazon S3
+  - Providers: file system, Amazon S3, Cloudinary
 - [Transient state](/extensions/stash)
 - [External communications](/extensions/origins) governance
   - HTTP
@@ -62,10 +61,10 @@ Non-scattered documentation is coming some time later.
 
 - Language interoperability
   - [Node.js](/connectors/bridges.node)
-  - [Bash](/connectors/bridges.bash)
+  - [Bash](/connectors/bridges.bash) :)
 - Service prototyping (inheritance)
   - Generic prototype
-- Data and operations contracts
+- Data and operations schemas
 - Declarative API Gateway endpoints with authorization policies
 - [Integration tests SDK](/userland/stage)
 - [Runtime bootloader API](/userland/stage)

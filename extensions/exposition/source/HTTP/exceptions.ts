@@ -36,18 +36,6 @@ export class NotFound extends ClientError {
   }
 }
 
-export class Conflict extends ClientError {
-  public constructor (body?: any) {
-    super(409, body)
-  }
-}
-
-export class UnprocessableEntity extends ClientError {
-  public constructor (body?: any) {
-    super(422, body)
-  }
-}
-
 export class MethodNotAllowed extends ClientError {
   public constructor () {
     super(405)
@@ -60,9 +48,9 @@ export class NotAcceptable extends ClientError {
   }
 }
 
-export class UnsupportedMediaType extends ClientError {
-  public constructor () {
-    super(415)
+export class Conflict extends ClientError {
+  public constructor (body?: any) {
+    super(409, body)
   }
 }
 
@@ -75,5 +63,23 @@ export class PreconditionFailed extends ClientError {
 export class RequestEntityTooLarge extends ClientError {
   public constructor (body?: any) {
     super(413, body)
+  }
+}
+
+export class UnsupportedMediaType extends ClientError {
+  public constructor () {
+    super(415)
+  }
+}
+
+export class UnprocessableEntity extends ClientError {
+  public constructor (body?: any) {
+    super(422, body)
+  }
+}
+
+export class TooManyRequests extends ClientError {
+  public constructor () {
+    super(429)
   }
 }

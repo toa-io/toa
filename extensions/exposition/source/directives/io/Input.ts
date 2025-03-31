@@ -15,7 +15,7 @@ export class Input implements Directive {
     schemas.input.validate<Permissions>(permissions, 'Incorrect \'io:input\' format')
   }
 
-  public attach (context: Context): void {
+  public preflight (context: Context): void {
     context.pipelines.body.push((body) => this.check(body))
   }
 

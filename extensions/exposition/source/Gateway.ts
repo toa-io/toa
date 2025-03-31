@@ -65,6 +65,8 @@ export class Gateway extends Connector {
   }
 
   protected override dispose (): void {
+    this.tree.dispose()
+
     console.info('Gateway is closed')
   }
 
