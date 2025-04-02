@@ -1,0 +1,16 @@
+name: search
+namespace: mongo
+
+entity:
+  schema:
+    type: object
+    properties:
+      foo:
+        type: string
+      bar:
+        type: string
+    required: [foo, bar]
+  index:
+    search:
+      foo: text
+      bar: text

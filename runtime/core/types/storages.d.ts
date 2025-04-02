@@ -30,36 +30,37 @@ declare namespace toa.core {
       id?: string
       version?: number
       criteria?: ast.Node
+      search?: string
       options?: Object
     }
 
     interface Migration {
-      disconnect(): Promise<void>
+      disconnect (): Promise<void>
 
-      database(name: string): Promise<void>
+      database (name: string): Promise<void>
 
-      table(database: string, locator: Locator, schema: Object, reset?: boolean): Promise<string>
+      table (database: string, locator: Locator, schema: Object, reset?: boolean): Promise<string>
     }
 
     interface Factory {
-      storage(locator: Locator, properties?: object): Storage
+      storage (locator: Locator, properties?: object): Storage
 
-      migration?(driver?: string): Migration
+      migration? (driver?: string): Migration
     }
   }
 
   interface Storage extends Connector {
     // object observation
-    get?(query: storages.Query): Promise<storages.Record | null>
+    get? (query: storages.Query): Promise<storages.Record | null>
 
     // objects observation
-    find?(query: storages.Query): Promise<storages.Record[]>
+    find? (query: storages.Query): Promise<storages.Record[]>
 
     // commit
-    store?(record: storages.Record): Promise<boolean>
+    store? (record: storages.Record): Promise<boolean>
 
     // assignment
-    upsert?(query: storages.Query, changeset: Object, insert: storages.Record): Promise<storages.Record>
+    upsert? (query: storages.Query, changeset: Object, insert: storages.Record): Promise<storages.Record>
   }
 
 }

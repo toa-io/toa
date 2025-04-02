@@ -295,3 +295,49 @@ Feature: Queries
 
       Query parameter 'foo' is not allowed
       """
+
+  Scenario: Text search
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            io:output: true
+            query:
+              search: true
+            endpoint: enumerate
+          /non-searchable:
+            GET:
+              io:output: true
+              endpoint: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/?search=fourth HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: bc6913d317334d76acd07d9f25f73535
+        title: Fourth pot
+        volume: 400
+      """
+    And the reply does not contain:
+      """
+      - id: 4c4759e6f9c74da989d64511df42d6f4
+        title: First pot
+        volume: 100
+      """
+    When the following request is received:
+      """
+      GET /pots/non-searchable/?search=first HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      """

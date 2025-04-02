@@ -34,6 +34,7 @@ export interface Mapping {
 export interface Query {
   id?: string
   criteria?: string
+  search?: boolean
   sort?: string
   omit?: Range
   limit?: Range

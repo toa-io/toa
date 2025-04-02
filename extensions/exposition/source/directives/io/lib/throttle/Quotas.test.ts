@@ -39,7 +39,7 @@ describe('common', () => {
 
     expect(quotas.ok(context)).toBe(false)
 
-    await setTimeout(configuration.cooldown)
+    await timeout(configuration.cooldown)
 
     expect(quotas.ok(context)).toBe(true)
   })
@@ -48,7 +48,7 @@ describe('common', () => {
     quotas.use(context, output)
 
     // pseudo-synchronous intervals start somewhere between 0 and interval
-    await setTimeout(configuration.interval * 2)
+    await timeout(configuration.interval * 2)
 
     quotas.use(context, output)
 
@@ -129,4 +129,8 @@ function createConfiguration (properties?: Partial<Configuration>): Configuratio
 
 function createContext (properties?: any): Context {
   return Object.assign({ url: new URL('http://localhost/') }, properties) as unknown as Context
+}
+
+async function timeout (ms: number): Promise<void> {
+  await setTimeout(ms * 1.2)
 }
