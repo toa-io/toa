@@ -68,6 +68,7 @@ jobs:
           GIT_COMMITTER_NAME: ${{ steps.gpg.outputs.name }}
           GIT_COMMITTER_EMAIL: ${{ steps.gpg.outputs.email }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          HUSKY: 0
         run: |
           npm ci
 
@@ -80,6 +81,7 @@ jobs:
       - name: Push to dev branch
         env:
           GITHUB_TOKEN: ${{ secrets.TOABOT_GITHUB_TOKEN }}
+          HUSKY: 0
         run: |
           git fetch
           git checkout dev
