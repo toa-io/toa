@@ -179,7 +179,7 @@ class Storage extends Connector {
       for (const [suffix, declaration] of Object.entries(this.#entity.index)) {
         const name = 'index_' + suffix
         const fields = Object.fromEntries(Object.entries(declaration)
-          .map(([name, type]) => [name, INDEX_TYPES[type]]))
+          .map(([name, type]) => [name, INDEX_TYPES[type] ?? type]))
 
         const sparse = this.checkFields(Object.keys(fields))
 
