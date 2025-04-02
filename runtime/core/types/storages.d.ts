@@ -30,7 +30,7 @@ declare namespace toa.core {
       id?: string
       version?: number
       criteria?: ast.Node
-      text?: string
+      search?: string
       options?: Object
     }
 

@@ -19,14 +19,14 @@ class Query {
   parse (query) {
     /** @type {toa.core.storages.Query} */
     const result = {}
-    const { id, version, criteria, text, ...rest } = query
+    const { id, version, criteria, search, ...rest } = query
 
     const options = this.#options(rest)
 
     if (id !== undefined) result.id = id
     if (version !== undefined) result.version = version
     if (criteria !== undefined) result.criteria = parse.criteria(criteria, this.#properties)
-    if (text !== undefined) result.text = text
+    if (search !== undefined) result.search = search
     if (options !== undefined) result.options = options
 
     return result

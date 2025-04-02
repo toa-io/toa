@@ -151,7 +151,7 @@ rank: 5
 
 ## Text search
 
-For entities with `text` indexes, search queries can be enabled using the `text` property.
+For entities with `text` indexes, search queries can be enabled using the `search` property.
 
 ```yaml
 # manifest.toa.yaml
@@ -163,11 +163,11 @@ exposition:
     GET:
       endpoint: observe
       query:
-        text: true
+        search: true
 ```
 
 ```yaml
-GET /dummies/?some+text+query
+GET /dummies/?search=some+text+query
 ```
 
 ## Omit, limit

@@ -3,6 +3,7 @@ import { Exception } from './exception'
 export interface Query {
   id?: string
   criteria?: string
+  search?: string
   omit?: number
   limit?: number
   sort?: Array<string>

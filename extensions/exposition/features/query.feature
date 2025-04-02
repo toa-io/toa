@@ -301,15 +301,19 @@ Feature: Queries
       """yaml
       exposition:
         /:
-          io:output: true
           GET:
+            io:output: true
             query:
-              text: true
+              search: true
             endpoint: enumerate
+          /non-searchable:
+            GET:
+              io:output: true
+              endpoint: enumerate
       """
     When the following request is received:
       """
-      GET /pots/?fourth+pot HTTP/1.1
+      GET /pots/?search=fourth HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
       """
@@ -326,4 +330,14 @@ Feature: Queries
       - id: 4c4759e6f9c74da989d64511df42d6f4
         title: First pot
         volume: 100
+      """
+    When the following request is received:
+      """
+      GET /pots/non-searchable/?search=first HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
       """

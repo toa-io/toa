@@ -6,7 +6,7 @@ properties:
     minimum: 0
   criteria:
     type: string
-  text:
+  search:
     type: string
   omit:
     type: integer

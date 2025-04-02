@@ -1,4 +1,4 @@
-name: text
+name: search
 namespace: mongo
 
 entity:
