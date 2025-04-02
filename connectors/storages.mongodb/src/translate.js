@@ -18,6 +18,9 @@ const translate = (query) => {
   if (query?.version !== undefined)
     result.criteria._version = query.version
 
+  if (query?.search !== undefined)
+    result.criteria.$text = { $search: query.search }
+
   return result
 }
 

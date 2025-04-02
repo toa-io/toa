@@ -1,6 +1,7 @@
 id?: string
 criteria?: string
 sort?: string
+search?: boolean
 omit?:
   $ref: range
 limit?:

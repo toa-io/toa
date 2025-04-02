@@ -1,5 +1,6 @@
 id: string
 criteria: string
+search: text
 sort: string
 omit: number
 limit: number

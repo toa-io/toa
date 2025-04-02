@@ -6,6 +6,8 @@ properties:
     minimum: 0
   criteria:
     type: string
+  search:
+    type: string
   omit:
     type: integer
     minimum: 0

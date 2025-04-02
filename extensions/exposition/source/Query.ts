@@ -12,9 +12,11 @@ export class Query {
   private readonly closed: boolean = false
   private readonly prepend: ',' | ';' = ';'
   private readonly queryable: boolean
+  private readonly searchable: boolean
 
   public constructor (query: syntax.Query) {
     this.queryable = queryable(query)
+    this.searchable = query?.search === true
 
     if (this.queryable) {
       query.omit ??= { value: 0, range: [0, 1000] }
@@ -103,6 +105,9 @@ export class Query {
 
       query = null!
     }
+
+    if (query.search !== undefined && !this.searchable)
+      throw new http.BadRequest('Query search is not allowed')
 
     return {
       query,
