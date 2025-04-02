@@ -295,3 +295,35 @@ Feature: Queries
 
       Query parameter 'foo' is not allowed
       """
+
+  Scenario: Text search
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET:
+            query:
+              text: true
+            endpoint: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/?fourth+pot HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: bc6913d317334d76acd07d9f25f73535
+        title: Fourth pot
+        volume: 400
+      """
+    And the reply does not contain:
+      """
+      - id: 4c4759e6f9c74da989d64511df42d6f4
+        title: First pot
+        volume: 100
+      """

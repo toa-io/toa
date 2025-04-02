@@ -5,6 +5,9 @@ entity:
     title: string(64)
     volume: number(0, 1000]
     temperature?: number(0, 300]
+  index:
+    text:
+      title: text
 
 operations:
   create:

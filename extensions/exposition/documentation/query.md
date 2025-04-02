@@ -30,6 +30,7 @@ exposition:
         query:
           criteria: state==hot
           sort: rank:desc
+          text: true
           limit: 10
   /latest:
     GET:
@@ -147,6 +148,27 @@ rank: 5
 ```
 
 > In case of conflict, path variables override input properties.
+
+## Text search
+
+For entities with `text` indexes, search queries can be enabled using the `text` property.
+
+```yaml
+# manifest.toa.yaml
+
+name: dummies
+
+exposition:
+  /:type:
+    GET:
+      endpoint: observe
+      query:
+        text: true
+```
+
+```yaml
+GET /dummies/?some+text+query
+```
 
 ## Omit, limit
 
