@@ -106,7 +106,7 @@ export class Query {
       query = null!
     }
 
-    if (query.search !== undefined && !this.searchable)
+    if (query?.search !== undefined && !this.searchable)
       throw new http.BadRequest('Query search is not allowed')
 
     return {
