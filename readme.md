@@ -56,6 +56,7 @@ Non-scattered documentation is coming some time later.
 - [External communications](/extensions/origins) governance
   - HTTP
   - AMQP
+  - Google PubSub
 
 ### Development
 
