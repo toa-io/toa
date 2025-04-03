@@ -4,6 +4,8 @@ declare namespace toa.core {
     id?: string
     version?: number
     criteria?: Object
+    search?: string
+    sample?: number
     omit?: number
     limit?: number
     sort?: string[]

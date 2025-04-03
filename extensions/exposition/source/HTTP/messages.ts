@@ -139,6 +139,7 @@ export interface Query {
   id?: string
   criteria?: string
   search?: string
+  sample?: number
   sort?: string
   omit?: string
   limit?: string

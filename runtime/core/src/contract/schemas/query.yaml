@@ -8,6 +8,8 @@ properties:
     type: string
   search:
     type: string
+  sample:
+    type: number
   omit:
     type: integer
     minimum: 0

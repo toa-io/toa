@@ -9,7 +9,8 @@ const parse = { ...require('./translate/criteria'), ...require('./translate/opti
 const translate = (query) => {
   const result = {
     criteria: query?.criteria === undefined ? {} : parse.criteria(query.criteria),
-    options: query?.options === undefined ? {} : parse.options(query.options)
+    options: query?.options === undefined ? {} : parse.options(query.options),
+    sample: query?.options?.sample
   }
 
   if (query?.id !== undefined)
