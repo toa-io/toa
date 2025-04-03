@@ -341,3 +341,22 @@ Feature: Queries
       """
       400 Bad Request
       """
+
+  Scenario: Querying sample
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            io:output: true
+            endpoint: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/?sample=2 HTTP/1.1
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
