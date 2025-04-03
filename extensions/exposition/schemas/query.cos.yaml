@@ -2,6 +2,7 @@ id?: string
 criteria?: string
 sort?: string
 search?: boolean
+sample?: integer
 omit?:
   $ref: range
 limit?:

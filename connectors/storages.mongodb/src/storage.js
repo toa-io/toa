@@ -47,13 +47,26 @@ class Storage extends Connector {
   }
 
   async find (query) {
-    const { criteria, options } = translate(query)
+    debugger
+    const { criteria, options, sample } = translate(query)
 
     criteria._deleted = null
 
-    this.debug('find', { criteria, options })
+    let cursor
 
-    const recordset = await this.#collection.find(criteria, options).toArray()
+    if (sample === undefined) {
+      this.debug('find', { criteria, options })
+
+      cursor = this.#collection.find(criteria, options)
+    } else {
+      const pipeline = toPipeline(criteria, options, sample)
+
+      this.debug('aggregate', { pipeline })
+
+      cursor = this.#collection.aggregate(pipeline)
+    }
+
+    const recordset = await cursor.toArray()
 
     return recordset.map((item) => from(item))
   }
@@ -253,6 +266,24 @@ class Storage extends Connector {
       ...attributes
     })
   }
+}
+
+function toPipeline (criteria, options, sample) {
+  const pipeline = []
+
+  if (criteria !== undefined)
+    pipeline.push({ $match: criteria })
+
+  if (sample !== undefined)
+    pipeline.push({ $sample: { size: sample } })
+
+  if (options?.sort !== undefined)
+    pipeline.push({ $sort: options.sort })
+
+  if (options?.projection !== undefined)
+    pipeline.push({ $project: options.projection })
+
+  return pipeline
 }
 
 const INDEX_TYPES = {

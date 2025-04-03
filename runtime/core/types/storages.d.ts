@@ -31,6 +31,7 @@ declare namespace toa.core {
       version?: number
       criteria?: ast.Node
       search?: string
+      sample?: number
       options?: Object
     }
 

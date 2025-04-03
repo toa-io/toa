@@ -4,6 +4,7 @@ export interface Query {
   id?: string
   criteria?: string
   search?: string
+  sample?: number
   omit?: number
   limit?: number
   sort?: Array<string>

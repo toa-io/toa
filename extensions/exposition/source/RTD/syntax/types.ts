@@ -35,6 +35,7 @@ export interface Query {
   id?: string
   criteria?: string
   search?: boolean
+  sample?: number
   sort?: string
   omit?: Range
   limit?: Range
