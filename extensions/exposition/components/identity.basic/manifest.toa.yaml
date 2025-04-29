@@ -64,7 +64,7 @@ operations:
 
 configuration:
   rounds: 10
-  pepper: ''
+  pepper: ""
   principal: string
   username+: ^.{1,128}$
   password+: ^.{8,32}$
