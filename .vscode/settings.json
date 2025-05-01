@@ -31,5 +31,8 @@
   },
   "editor.rulers": [
     100
+  ],
+  "cucumber_runner.features": [
+    "**/features/**/*.feature"
   ]
 }
