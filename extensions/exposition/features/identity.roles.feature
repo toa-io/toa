@@ -215,6 +215,27 @@ Feature: Roles management
       403 Forbidden
       """
 
+  Scenario: Invalid identity id
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | root     | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+    And the `identity.roles` database contains:
+      | _id                              | identity                         | role                  |
+      | 9c4702490ff84f2a9e1b1da2ab64bdd4 | 72cf9b0ab0ac4ab2b8036e4e940ddcae | system:identity:roles |
+    When the following request is received:
+      """
+      POST /identity/roles/invalid/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic cm9vdDpzZWNyZXQ=
+      content-type: application/yaml
+
+      role: app:test
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      """
+
   Scenario Outline: Invalid role name
     Given the `identity.basic` database contains:
       | _id                              | authority | username | password                                                     |

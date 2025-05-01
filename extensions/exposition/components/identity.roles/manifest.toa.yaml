@@ -3,7 +3,7 @@ name: roles
 
 entity:
   schema:
-    identity*: string
+    identity*: /[a-z0-9]{32}/
     role*: /^[a-zA-Z0-9]{0,32}(:[a-zA-Z0-9]{0,32}){0,8}$/
     grantor: string
   unique:
