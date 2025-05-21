@@ -47,7 +47,6 @@ class Storage extends Connector {
   }
 
   async find (query) {
-    debugger
     const { criteria, options, sample } = translate(query)
 
     criteria._deleted = null
