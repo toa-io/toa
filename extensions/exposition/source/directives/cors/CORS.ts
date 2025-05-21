@@ -8,7 +8,6 @@ export class CORS implements Interceptor {
     'accept',
     'authorization',
     'content-type',
-    'etag',
     'if-match',
     'if-none-match'
   ])
@@ -36,7 +35,7 @@ export class CORS implements Interceptor {
       output.headers.set('access-control-allow-origin', origin)
       output.headers.set('access-control-allow-credentials', 'true')
       output.headers.set('access-control-expose-headers',
-        'authorization, content-type, content-length, etag, last-modified')
+        'authorization, content-type, content-length, date, etag, last-modified')
 
       const method = input.request.method
 
