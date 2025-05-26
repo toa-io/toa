@@ -14,6 +14,13 @@ Feature: Octets with Cloudinary storage
             octets:get: ~
           DELETE:
             octets:delete: ~
+        /video:
+          octets:context: cloudinary_video
+          POST:
+            octets:put: ~
+          /*:
+            GET:
+              octets:get: ~
       """
 
   Scenario: Upload an image
@@ -68,4 +75,30 @@ Feature: Octets with Cloudinary storage
       """
       200 OK
       content-type: image/jpeg
+      """
+
+  Scenario: Upload a video
+    When the stream of `plank.mp4` is received with the following headers:
+      """
+      POST /video/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: video/mp4
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+    
+    When the following request is received:
+      """
+      HEAD /video/${{ id }}.mp4 HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: video/mp4
       """

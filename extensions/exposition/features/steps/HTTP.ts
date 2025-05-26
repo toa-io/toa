@@ -36,7 +36,7 @@ export class HTTP extends http.Agent {
     assert.ok(this.fetched !== null, 'Response is null')
 
     const buf = await this.fetched.arrayBuffer()
-    const value = encoders[format]?.(buf as Buffer)
+    const value = encoders[format]?.(buf as unknown as Buffer)
     const expected = YAML.load(yaml)
 
     assert.deepEqual(value, expected, 'Values are not equal')
