@@ -10,6 +10,10 @@ properties:
       - video
   prefix:
     type: string
+  eager:
+    type: array
+    items: &transformation
+      type: object
   transformations:
     type: array
     items:
@@ -17,8 +21,7 @@ properties:
       properties:
         extension:
           type: string
-        transformation:
-          type: object
+        transformation: *transformation
         optional:
           type: boolean
       required:

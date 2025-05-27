@@ -40,7 +40,7 @@ async function effect (_, context) {
 
 #### `async put(path: string, stream: Readable, options?: Options): Maybe<Entry>`
 
-```
+```ts
 interface Options {
   claim?: string
   accept?: string
@@ -243,7 +243,7 @@ Variants, on the other hand, are not deduplicated across different entries.
 
 Underlying directory structure:
 
-```
+```text
 /temp
   c28f4dfd            # random id
 /blobs

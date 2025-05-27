@@ -56,9 +56,14 @@ export class Get extends Directive {
 
     const headers = new Headers({
       'content-type': entry.type,
-      'content-length': entry.size.toString(),
       etag: `"${entry.checksum}"`
     })
+
+    // `size` should have been designed as nullable
+    if (entry.size === 0)
+      headers.set('transfer-encoding', 'chunked')
+    else
+      headers.set('content-length', entry.size.toString())
 
     return {
       headers,

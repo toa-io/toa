@@ -130,7 +130,7 @@ describe('get, head', () => {
     const stored = await buffer(entry.stream)
     const buf = await buffer(createReadStream('lenna.png'))
 
-    expect(stored.compare(buf)).toBe(0)
+    expect(stored.compare(new Uint8Array(buf.buffer))).toBe(0)
   })
 
   it('should get entry', async () => {

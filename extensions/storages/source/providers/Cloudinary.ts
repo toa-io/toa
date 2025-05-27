@@ -10,8 +10,10 @@ import type { Secret, Secrets } from '../Secrets'
 import type { ReadableStream } from 'node:stream/web'
 import type {
   ConfigOptions,
-  ImageTransformationOptions,
-  VideoTransformationOptions
+  TransformationOptions,
+  UploadApiOptions
+  // ImageTransformationOptions,
+  // VideoTransformationOptions
 } from 'cloudinary'
 
 export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
@@ -23,6 +25,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
   ]
 
   private readonly type: StorageType
+  private readonly eager: TransformationOptions[] = []
   private readonly transformations: Transformation[] = []
   private readonly config: ConfigOptions
   private readonly prefix: string
@@ -31,6 +34,9 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     super(options, secrets)
 
     this.type = options.type
+
+    if (options.eager !== undefined)
+      this.eager = options.eager
 
     if (options.transformations !== undefined)
       this.transformations = options.transformations.map((transformation) => {
@@ -86,22 +92,28 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     const id = basename(path)
     const folder = join(this.prefix, dirname(path))
 
-    console.debug('Uploading to Cloudinary', { path })
-
     await new Promise((resolve, reject) => {
-      stream.pipe(this.cloudinary().uploader.upload_stream({
+      const options: UploadApiOptions = {
         public_id: id,
         folder,
-        resource_type: 'auto',
-        overwrite: true,
-        invalidate: true
-      },
-      (error, result) => {
-        if (error !== undefined) reject(error)
-        else resolve(result)
-      }))
+        eager: this.eager,
+        resource_type: this.type
+      }
 
-      stream.on('error', reject)
+      console.debug('Uploading to Cloudinary', { path, options })
+
+      stream.pipe(this.cloudinary().uploader.upload_stream(options,
+        (error, result) => {
+          if (error !== undefined) reject(error)
+          else resolve(result)
+        }))
+
+      stream.on('error', (e) => {
+        console.error('Cloudinary stream error', { path, error: e })
+        stream.destroy()
+
+        reject(e)
+      })
     })
   }
 
@@ -150,11 +162,17 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     if (response instanceof Error || response.ok === false) {
       console.debug('Failed to fetch from Cloudinary', {
         url,
+        status: response.status,
         message: response.message
       })
 
       return ERR_NOT_FOUND
-    }
+    } else
+      console.debug('Received response from Cloudinary', {
+        url,
+        status: response.status,
+        headers: response.headers
+      })
 
     return response
   }
@@ -258,6 +276,7 @@ export interface CloudinaryOptions {
   environment: string
   type: StorageType
   prefix?: string
+  eager?: TransformationOptions[]
   transformations?: TransformationDeclaration[]
 }
 
@@ -269,6 +288,6 @@ interface Transformation {
   optional?: boolean
 }
 
-type TransformationOptions = ImageTransformationOptions | VideoTransformationOptions
+// type TransformationOptions = ImageTransformationOptions | VideoTransformationOptions
 
 type StorageType = 'image' | 'video'

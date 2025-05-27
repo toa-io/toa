@@ -60,5 +60,36 @@ process.env.TOA_STORAGES = encode({
         optional: true
       }
     ]
+  },
+  cloudinary_video: {
+    provider: 'cloudinary',
+    environment: process.env.CLOUDINARY_ENVIRONMENT ?? 'nope',
+    type: 'video',
+    prefix: 'toa-dev',
+    eager: [
+      {
+        width: 200,
+        height: 200,
+        crop: 'fill'
+      }
+    ],
+    transformations: [
+      {
+        extension: '200x200',
+        transformation: {
+          width: 200,
+          height: 200,
+          crop: 'fill'
+        },
+        optional: true
+      },
+      {
+        extension: '(?<format>mp4)',
+        transformation: {
+          quality: 'auto',
+          fetch_format: '<format>'
+        }
+      }
+    ]
   }
 })
