@@ -66,12 +66,19 @@ process.env.TOA_STORAGES = encode({
     environment: process.env.CLOUDINARY_ENVIRONMENT ?? 'nope',
     type: 'video',
     prefix: 'toa-dev',
+    eager: [
+      {
+        width: 200,
+        height: 200,
+        crop: 'fill'
+      }
+    ],
     transformations: [
       {
-        extension: '(?<width>\\d{0,4})x(?<height>\\d{0,4})',
+        extension: '200x200',
         transformation: {
-          width: '<width>',
-          height: '<height>',
+          width: 200,
+          height: 200,
           crop: 'fill'
         },
         optional: true

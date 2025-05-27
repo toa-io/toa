@@ -91,15 +91,42 @@ Feature: Octets with Cloudinary storage
 
       id: ${{ id }}
       """
-    
+
+    # initially Cloudinary returns a chunked response
     When the following request is received:
       """
-      HEAD /video/${{ id }}.mp4 HTTP/1.1
+      GET /video/${{ id }}.mp4 HTTP/1.1
       host: nex.toa.io
       """
     Then the following reply is sent:
       """
       200 OK
+      transfer-encoding: chunked
+      content-type: video/mp4
+      """
+
+    # after a while, Cloudinary returns a content-length response
+    When the following request is received:
+      """
+      GET /video/${{ id }}.mp4 HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: video/mp4
+      content-length: 175043
+      """
+
+    When the following request is received:
+      """
+      GET /video/${{ id }}.200x200.mp4 HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      transfer-encoding: chunked
       content-type: video/mp4
       """
 
