@@ -102,3 +102,14 @@ Feature: Octets with Cloudinary storage
       200 OK
       content-type: video/mp4
       """
+
+    When the following request is received:
+      """
+      HEAD /video/${{ id }}.200x200.mp4 HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: video/mp4
+      """

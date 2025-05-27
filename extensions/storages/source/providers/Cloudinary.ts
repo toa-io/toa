@@ -150,6 +150,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     if (response instanceof Error || response.ok === false) {
       console.debug('Failed to fetch from Cloudinary', {
         url,
+        status: response.status,
         message: response.message
       })
 

@@ -68,6 +68,15 @@ process.env.TOA_STORAGES = encode({
     prefix: 'toa-dev',
     transformations: [
       {
+        extension: '(?<width>\\d{0,4})x(?<height>\\d{0,4})',
+        transformation: {
+          width: '<width>',
+          height: '<height>',
+          crop: 'fill'
+        },
+        optional: true
+      },
+      {
         extension: '(?<format>mp4)',
         transformation: {
           quality: 'auto',
