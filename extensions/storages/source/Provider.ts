@@ -13,7 +13,7 @@ export abstract class Provider<Options = void> {
       assert.ok(optional === true || secrets?.[name] !== undefined, `Missing secret '${name}'`))
   }
 
-  public abstract get (path: string): Promise<Maybe<Stream>>
+  public abstract get (path: string, options?: unknown): Promise<Maybe<Stream>>
 
   public abstract head (path: string): Promise<Maybe<Metadata>>
 

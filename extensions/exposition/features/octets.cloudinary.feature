@@ -140,3 +140,33 @@ Feature: Octets with Cloudinary storage
       200 OK
       content-type: video/mp4
       """
+
+  Scenario: Range headers
+    When the stream of `plank.mp4` is received with the following headers:
+      """
+      POST /video/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: video/mp4
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+
+    When the following request is received:
+      """
+      GET /video/${{ id }}.mp4 HTTP/1.1
+      user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Safari/605.1.15
+      host: nex.toa.io
+      range: bytes=0-1
+      """
+
+    Then the following reply is sent:
+      """
+      206 Partial Content
+      content-type: video/mp4
+      content-length: 2
+      """

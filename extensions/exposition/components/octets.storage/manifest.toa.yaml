@@ -23,5 +23,7 @@ operations:
     input:
       storage*: string
       path*: string
+      range: string
+      agent: string
   head: *simple
   delete: *simple
