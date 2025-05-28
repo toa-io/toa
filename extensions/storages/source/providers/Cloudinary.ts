@@ -65,8 +65,16 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     this.prefix = options.prefix ?? '/'
   }
 
-  public async get (path: string): Promise<Maybe<Stream>> {
-    const response = await this.fetch(path)
+  public async get (path: string, options?: GetOptions): Promise<Maybe<Stream>> {
+    const headers: Record<string, string> = {}
+
+    if (options?.range !== undefined)
+      headers.range = options.range
+
+    if (options?.agent !== undefined)
+      headers['user-agent'] = options.agent
+
+    const response = await this.fetch(path, { method: 'GET', headers })
 
     if (response instanceof Error)
       return ERR_NOT_FOUND
@@ -80,7 +88,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
   }
 
   public async head (path: string): Promise<Maybe<Metadata>> {
-    const response = await this.fetch(path, 'HEAD')
+    const response = await this.fetch(path, { method: 'HEAD' })
 
     if (response instanceof Error)
       return ERR_NOT_FOUND
@@ -145,19 +153,19 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     }
   }
 
-  private async fetch (path: string, method = 'GET'): Promise<Maybe<Response>> {
+  private async fetch (path: string, options: RequestInit = { method: 'GET' }): Promise<Maybe<Response>> {
     const url = this.url(path)
 
     if (url === null)
       return ERR_NOT_FOUND
 
     console.debug('Fetching from Cloudinary', {
-      method,
+      method: options.method,
       path,
       url
     })
 
-    const response = await fetch(url, { method }).catch((e) => e)
+    const response = await fetch(url, options).catch((e) => e)
 
     if (response instanceof Error || response.ok === false) {
       console.debug('Failed to fetch from Cloudinary', {
@@ -249,18 +257,20 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
   private metadata (response: Response): Metadata {
     const size = response.headers.get('content-length') === null
-      ? 0
+      ? null
       : Number.parseInt(response.headers.get('content-length')!)
 
     const created = response.headers.get('date') ?? new Date().toISOString()
     const etag = response.headers.get('etag')
     const checksum = etag === null ? basename(response.url) : etag.slice(1, -1)
+    const range = response.headers.get('content-range')
 
     return {
       type: response.headers.get('content-type')!,
       size,
       checksum,
       created,
+      range: range ?? undefined,
       attributes: {}
     }
   }
@@ -270,6 +280,11 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
     return cloudinary
   }
+}
+
+interface GetOptions {
+  agent?: string
+  range?: string
 }
 
 export interface CloudinaryOptions {

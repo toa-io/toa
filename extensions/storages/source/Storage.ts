@@ -48,10 +48,10 @@ export class Storage {
     return metadata
   }
 
-  public async get (path: string): Maybe<Stream> {
+  public async get (path: string, options?: unknown): Maybe<Stream> {
     const location = this.locate(path)
 
-    return await this.provider.get(location)
+    return await this.provider.get(location, options)
   }
 
   public async head (path: string): Promise<Maybe<Entry>> {

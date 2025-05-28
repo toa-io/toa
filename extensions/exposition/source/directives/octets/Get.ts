@@ -47,7 +47,9 @@ export class Get extends Directive {
     const entry = await this.storage.invoke<Maybe<Stream>>(endpoint, {
       input: {
         storage,
-        path: input.request.url
+        path: input.request.url,
+        range: input.request.headers.range,
+        agent: input.request.headers['user-agent']
       }
     })
 
@@ -59,13 +61,16 @@ export class Get extends Directive {
       etag: `"${entry.checksum}"`
     })
 
-    // `size` should have been designed as nullable
-    if (entry.size === 0)
+    if (entry.range !== undefined)
+      headers.set('content-range', entry.range)
+
+    if (entry.size === null)
       headers.set('transfer-encoding', 'chunked')
     else
       headers.set('content-length', entry.size.toString())
 
     return {
+      status: entry.range === undefined ? 200 : 206,
       headers,
       body: endpoint === 'get' ? entry.stream : undefined
     }

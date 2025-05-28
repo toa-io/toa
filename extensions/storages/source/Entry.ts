@@ -5,10 +5,11 @@ export type Stream = { stream: Readable } & Metadata
 
 export interface Metadata {
   type: string
-  size: number
+  size: number | null
   checksum: string
   created: string
   attributes: Attributes
+  range?: string
 }
 
 export type Attributes = Record<string, string>
