@@ -180,8 +180,8 @@ class Storage extends Connector {
 
     if (this.#entity.unique !== undefined) {
       for (const [name, fields] of Object.entries(this.#entity.unique)) {
-        const sparse = this.checkFields(fields)
-        const unique = await this.uniqueIndex(name, fields, sparse)
+        const optional = this.getOptional(fields)
+        const unique = await this.uniqueIndex(name, fields, optional)
 
         indexes.push(unique)
       }
@@ -193,9 +193,12 @@ class Storage extends Connector {
         const fields = Object.fromEntries(Object.entries(declaration)
           .map(([name, type]) => [name, INDEX_TYPES[type] ?? type]))
 
-        const sparse = this.checkFields(Object.keys(fields))
+        const optional = this.getOptional(Object.keys(fields))
+        const options = { name, sparse: optional.length > 0 }
 
-        await this.#collection.createIndex(fields, { name, sparse })
+        console.info('Creating index', { fields, options })
+
+        await this.#collection.createIndex(fields, options)
           .catch((e) => this.#logs.warn('Index creation failed', { name, fields, error: e }))
 
         indexes.push(name)
@@ -205,7 +208,7 @@ class Storage extends Connector {
     await this.removeObsoleteIndexes(indexes)
   }
 
-  async uniqueIndex (name, properties, sparse = false) {
+  async uniqueIndex (name, properties, optional) {
     const fields = properties.reduce((acc, property) => {
       acc[property] = 1
       return acc
@@ -213,7 +216,14 @@ class Storage extends Connector {
 
     name = 'unique_' + name
 
-    await this.#collection.createIndex(fields, { name, unique: true, sparse })
+    const options = { name, unique: true }
+
+    if (optional.length > 0)
+      options.partialFilterExpression = Object.fromEntries(optional.map((field) => [field, { $exists: true }]))
+
+    console.info('Creating unique index', { name, fields, options })
+
+    await this.#collection.createIndex(fields, options)
       .catch((e) => this.#logs.warn('Unique index creation failed', { name, fields, error: e }))
 
     return name
@@ -240,7 +250,7 @@ class Storage extends Connector {
     }
   }
 
-  checkFields (fields) {
+  getOptional (fields) {
     const optional = []
 
     for (const field of fields) {
@@ -251,12 +261,7 @@ class Storage extends Connector {
         optional.push(field)
     }
 
-    if (optional.length > 0) {
-      this.#logs.info('Index fields are optional, creating sparse index', { fields: optional })
-
-      return true
-    } else
-      return false
+    return optional
   }
 
   debug (method, attributes) {
