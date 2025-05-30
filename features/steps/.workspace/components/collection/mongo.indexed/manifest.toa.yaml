@@ -7,8 +7,10 @@ entity:
     email*: string
     birthday: number
     weight: number
+    tag: string
   unique:
     email: [email]
+    optional: [tag]
   index:
     some:
       birthday: desc

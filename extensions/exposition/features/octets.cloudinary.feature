@@ -141,7 +141,7 @@ Feature: Octets with Cloudinary storage
       content-type: video/mp4
       """
 
-  Scenario: Range headers
+  Scenario: Range headers and gif support
     When the stream of `plank.mp4` is received with the following headers:
       """
       POST /video/ HTTP/1.1
@@ -169,4 +169,16 @@ Feature: Octets with Cloudinary storage
       206 Partial Content
       content-type: video/mp4
       content-length: 2
+      """
+
+    # gif
+    When the following request is received:
+      """
+      GET /video/${{ id }}.200x200.gif HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: image/gif
       """

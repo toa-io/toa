@@ -105,7 +105,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
         public_id: id,
         folder,
         eager: this.eager,
-        resource_type: this.type
+        resource_type: 'auto'
       }
 
       console.debug('Uploading to Cloudinary', { path, options })
@@ -271,6 +271,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       checksum,
       created,
       range: range ?? undefined,
+      partial: response.status === 206,
       attributes: {}
     }
   }
