@@ -84,11 +84,12 @@ process.env.TOA_STORAGES = encode({
         optional: true
       },
       {
-        extension: '(?<format>mp4)',
+        extension: '(?<format>mp4|gif)',
         transformation: {
           quality: 'auto',
           fetch_format: '<format>'
-        }
+        },
+        optional: true
       }
     ]
   }
