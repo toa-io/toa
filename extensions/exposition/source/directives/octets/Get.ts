@@ -70,7 +70,7 @@ export class Get extends Directive {
       headers.set('content-length', entry.size.toString())
 
     return {
-      status: entry.range === undefined ? 200 : 206,
+      status: entry.partial === true ? 206 : 200,
       headers,
       body: endpoint === 'get' ? entry.stream : undefined
     }

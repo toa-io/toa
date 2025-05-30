@@ -10,6 +10,7 @@ export interface Metadata {
   created: string
   attributes: Attributes
   range?: string
+  partial?: boolean
 }
 
 export type Attributes = Record<string, string>

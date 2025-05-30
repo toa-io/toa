@@ -271,6 +271,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       checksum,
       created,
       range: range ?? undefined,
+      partial: response.status === 206,
       attributes: {}
     }
   }
