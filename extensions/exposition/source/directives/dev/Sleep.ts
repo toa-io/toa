@@ -14,7 +14,7 @@ export class Sleep implements Directive {
     assert.ok(Number.isInteger(value), '`dev:sleep` directive value must be an integer')
 
     if (!Sleep.warned) {
-      console.warn(`Sleep directive is enabled (maximum: ${value}ms)`)
+      console.warn('Sleep directive is enabled', { maximum: value })
       Sleep.warned = true
     }
 
