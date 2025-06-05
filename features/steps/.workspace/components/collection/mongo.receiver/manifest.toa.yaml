@@ -5,10 +5,14 @@ entity:
   associated: true
   schema:
     count: 0
+    deleted: false
 
 operations:
   increment:
     concurrency: retry
+  delete:
+    concurrency: retry
 
 receivers:
   mongo.one.sync: increment
+  mongo.one.deleted: delete
