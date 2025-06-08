@@ -50,7 +50,7 @@ export async function read (context: Context): Promise<any> {
   const buf = await context.timing.capture('buffer', buffer(context.request))
 
   try {
-    return format.decode(buf)
+    return format.decode(Uint8Array.from(buf))
   } catch (error: unknown) {
     console.debug('Failed to decode message', { path: context.url.pathname, error })
     throw new BadRequest()
@@ -126,9 +126,9 @@ export function multipart
 }
 
 const BOUNDARY = 'cut'
-const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
-const CRLF = Buffer.from('\r\n')
-const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
+const CUT = Uint8Array.from(Buffer.from(`--${BOUNDARY}\r\n`))
+const CRLF = Uint8Array.from(Buffer.from('\r\n'))
+const FINALCUT = Uint8Array.from(Buffer.from(`--${BOUNDARY}--`))
 
 export interface OutgoingMessage {
   status?: number

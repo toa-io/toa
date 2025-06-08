@@ -1,4 +1,3 @@
-import { type Buffer } from 'node:buffer'
 import * as json from './json'
 import * as yaml from './yaml'
 import * as msgpack from './msgpack'
@@ -17,6 +16,6 @@ export interface Format {
   readonly type: string
   readonly multipart: string
 
-  encode: (value: any) => Buffer
-  decode: (buffer: Buffer) => any
+  encode: (value: any) => Uint8Array
+  decode: (buffer: Uint8Array) => any
 }
