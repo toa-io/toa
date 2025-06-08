@@ -28,6 +28,9 @@ export async function write
     return
   }
 
+  response.on('error', (exception: Error) =>
+    console.error('HTTP response error', { path: context.url.pathname, exception }))
+
   if (message.body instanceof Readable)
     stream(message, context, response)
   else
@@ -85,7 +88,7 @@ function stream
     multipart(message, context, response)
 
   message.body.on('error', (exception: Error) => {
-    console.error('Stream error', { path: context.url.pathname, exception })
+    console.error('Message stream error', { path: context.url.pathname, exception })
     response.end()
   })
 }
