@@ -50,7 +50,7 @@ export async function read (context: Context): Promise<any> {
   const buf = await context.timing.capture('buffer', buffer(context.request))
 
   try {
-    return format.decode(Uint8Array.from(buf))
+    return format.decode(buf)
   } catch (error: unknown) {
     console.debug('Failed to decode message', { path: context.url.pathname, error })
     throw new BadRequest()
@@ -105,7 +105,7 @@ export function multipart
   response.write(Buffer.concat([
     CUT,
     CRLF,
-    encoder.encode('ACK'),
+    Uint8Array.from(encoder.encode('ACK')),
     CRLF,
     CUT
   ]))
@@ -113,12 +113,12 @@ export function multipart
   message.body
     .map((part: unknown) => Buffer.concat([
       CRLF /* indicates no boundary headers */,
-      encoder.encode(part),
+      Uint8Array.from(encoder.encode(part)),
       CRLF,
       CUT]))
     .on('end', () => response.end(Buffer.concat([
       CRLF,
-      encoder.encode('FIN'),
+      Uint8Array.from(encoder.encode('FIN')),
       CRLF,
       FINALCUT
     ])))

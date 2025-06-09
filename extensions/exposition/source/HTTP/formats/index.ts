@@ -16,6 +16,6 @@ export interface Format {
   readonly type: string
   readonly multipart: string
 
-  encode: (value: any) => Uint8Array
-  decode: (buffer: Uint8Array) => any
+  encode: (value: any) => Buffer
+  decode: (buffer: Buffer) => any
 }

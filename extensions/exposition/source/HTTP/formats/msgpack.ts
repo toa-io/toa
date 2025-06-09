@@ -1,14 +1,14 @@
 import { pack, unpack } from 'msgpackr'
 
-export function decode (buffer: Uint8Array): any {
+export function decode (buffer: Buffer): any {
   return unpack(buffer)
 }
 
-export function encode (value: any): Uint8Array {
+export function encode (value: any): Buffer {
   if (typeof value === 'object' && value !== null)
     Object.setPrototypeOf(value, null)
 
-  return Uint8Array.from(pack(value))
+  return pack(value)
 }
 
 export const type = 'application/msgpack'
