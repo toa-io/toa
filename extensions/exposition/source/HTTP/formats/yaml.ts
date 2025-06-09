@@ -1,4 +1,3 @@
-import { Buffer } from 'node:buffer'
 import * as yaml from 'js-yaml'
 
 export const type = 'application/yaml'

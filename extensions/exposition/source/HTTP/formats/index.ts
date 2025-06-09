@@ -1,4 +1,3 @@
-import { type Buffer } from 'node:buffer'
 import * as json from './json'
 import * as yaml from './yaml'
 import * as msgpack from './msgpack'

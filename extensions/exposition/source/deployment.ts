@@ -18,10 +18,10 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     group: 'exposition',
     name: 'gateway',
     port: PORT,
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     version: require('../package.json').version,
     variables: [],
     components: labels,
+    resources: annotation.resources,
     ingress: { default: true, hosts: [] },
     probe: {
       path: '/.ready',

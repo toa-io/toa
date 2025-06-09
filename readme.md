@@ -80,6 +80,7 @@ Non-scattered documentation is coming some time later.
 ### Operations
 
 - Standardized containerization
+- Resource management
 - Environment variables
 - Standalone infrastructure configuration
 - One-command fully automated deployment

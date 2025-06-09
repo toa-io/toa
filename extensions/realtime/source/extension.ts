@@ -1,15 +1,17 @@
 import { basename } from 'node:path'
 import { encode } from '@toa.io/generic'
 import { find } from './Composition'
-import type { Dependency, Instances, Service } from '@toa.io/operations'
+import type { Dependency, Instances, Resources, Service } from '@toa.io/operations'
 
 export const standalone = true
 
-export function deployment (instances: Instances<Declaration>, annotation?: Declaration): Dependency {
+export function deployment (instances: Instances<Declaration>, annotation?: Declaration & Annotation): Dependency {
   const routes = []
 
-  if (annotation !== undefined)
-    routes.push(...parse(annotation))
+  const { resources, ...annotatedRoutes } = annotation ?? {}
+
+  if (annotatedRoutes !== undefined)
+    routes.push(...parse(annotatedRoutes))
 
   for (const instance of instances) {
     const completed: Declaration = {}
@@ -26,9 +28,10 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
   const service: Service = {
     group: 'realtime',
     name: 'streams',
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+
     version: require('../package.json').version,
     components: labels(),
+    resources,
     variables: [{
       name: 'TOA_REALTIME',
       value: encode(routes)
@@ -59,4 +62,8 @@ type Declaration = Record<string, string | string[]>
 interface Route {
   event: string
   properties: string[]
+}
+
+interface Annotation {
+  resources?: Resources
 }

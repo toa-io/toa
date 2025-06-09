@@ -110,3 +110,16 @@ Refer to the [Exposition extension](/extensions/exposition) for more details:
 
 - [Multipart responses](/extensions/exposition/documentation/protocol.md#multipart-types)
 - [Access authorization](/extensions/exposition/documentation/access.md)
+
+## Resources management
+
+Resource requests and limits can be specified by `resources` annotation:
+
+```yaml
+# context.toa.yaml
+
+realtime:
+  resources:
+    cpu: [100m, 500m]
+    memory: [100Mi, 200Mi]
+```

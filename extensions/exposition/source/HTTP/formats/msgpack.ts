@@ -1,4 +1,3 @@
-import { type Buffer } from 'node:buffer'
 import { pack, unpack } from 'msgpackr'
 
 export function decode (buffer: Buffer): any {

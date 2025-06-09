@@ -1,6 +1,6 @@
 name: collection
 version: 0.0.0
-packages: 'components/*' # do not change it, it's correct. integration tests will copy components under this path.
+packages: "components/*" # do not change it, it's correct. integration tests will copy components under this path.
 runtime:
   registry: http://host.docker.internal:4873
   proxy: http://host.docker.internal:4873
@@ -25,6 +25,7 @@ sql@docker: pg://host.docker.internal/developer
 sql@broken-runtime: pg://host.docker.internal/developer
 sql@broken-build: pg://host.docker.internal/developer
 
+stash: redis://localhost
 stash@docker: redis://host.docker.internal
 stash@broken-runtime: redis://host.docker.internal
 stash@broken-build: redis://host.docker.internal
