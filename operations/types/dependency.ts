@@ -7,6 +7,7 @@ export interface Service {
   version: string
   port?: number
   ingress?: Ingress
+  resources?: Resources
   variables?: Variable[]
   components?: string[]
   probe?: Probe
@@ -56,4 +57,9 @@ interface Mount {
   name: string
   path: string
   claim: string
+}
+
+export interface Resources {
+  cpu: string[]
+  memory: string[]
 }

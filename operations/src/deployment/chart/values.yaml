@@ -31,6 +31,9 @@ services:
     image: localhost:5000/resources-gateway:0.0.0
     port: 8000
     replicas: 2
+    resources:
+      cpu: [100m, 1]
+      memory: [100Mi, 1Gi]
     ingress:
       default: true
       hosts: [dummies.toa.io]

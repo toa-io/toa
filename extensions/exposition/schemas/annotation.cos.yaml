@@ -1,5 +1,12 @@
 authorities*: <string>
 class: string
+resources:
+  cpu: &constraint
+    type: array
+    items: { type: string }
+    minItems: 2
+    maxItems: 2
+  memory: *constraint
 annotations: <string>
 debug: boolean
 trace: boolean

@@ -16,6 +16,25 @@ spec:
       containers:
         - name: extension-{{ .name }}
           image: {{ .image }}
+          {{- if .resources }}
+          resources:
+            {{- if or .resources.cpu .resources.memory }}
+            requests:
+              {{- if .resources.cpu }}
+              cpu: {{ index .resources.cpu 0 }}
+              {{- end }}
+              {{- if .resources.memory }}
+              memory: {{ index .resources.memory 0 }}
+              {{- end }}
+            limits:
+              {{- if .resources.cpu }}
+              cpu: {{ index .resources.cpu 1 }}
+              {{- end }}
+              {{- if .resources.memory }}
+              memory: {{ index .resources.memory 1 }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
           {{- if .variables }}
           env:
             {{- range .variables }}
