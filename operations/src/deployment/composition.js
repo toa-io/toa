@@ -10,6 +10,7 @@ class Composition {
     this.name = composition.name
     this.image = image.reference
     this.components = composition.components.map(component)
+    this.resources = composition.resources
   }
 }
 

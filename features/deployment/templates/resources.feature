@@ -53,3 +53,29 @@ Feature: Resource management
           cpu: 200m
           memory: 1Gi
       """
+
+  Scenario: Deploy Composition with resource constraints
+    Given I have a component `exposed.one`
+    And I have a context with:
+      """yaml
+      compositions:
+        - name: one
+          resources:
+            cpu: [100m, 1]
+            memory: [100Mi, 1Gi]
+          components:
+            - exposed.one
+      """
+    When I export deployment for dev
+    And I run `helm template deployment`
+    Then program should exit
+    And composition-one Deployment container spec should contain:
+      """
+      resources:
+        requests:
+          cpu: 100m
+          memory: 100Mi
+        limits:
+          cpu: 1
+          memory: 1Gi
+      """
