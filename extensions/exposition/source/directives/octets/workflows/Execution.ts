@@ -75,8 +75,10 @@ export class Execution extends Readable {
     if (result instanceof Error) {
       report.error = result
       this.interrupted = true
-    } else if (result !== undefined)
+    } else if (result !== undefined) {
       report.output = result
+      this.context.steps[step] = structuredClone(result)
+    }
 
     this.push(report)
   }
@@ -119,6 +121,7 @@ export interface Context {
   path: string
   entry: Entry
   parameters: Record<string, string>
+  steps: Record<string, unknown>
 }
 
 interface Report {

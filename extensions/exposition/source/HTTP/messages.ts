@@ -105,7 +105,7 @@ export function multipart
   response.write(Buffer.concat([
     CUT,
     CRLF,
-    Uint8Array.from(encoder.encode('ACK')),
+    encoder.encode('ACK'),
     CRLF,
     CUT
   ]))
@@ -113,12 +113,12 @@ export function multipart
   message.body
     .map((part: unknown) => Buffer.concat([
       CRLF /* indicates no boundary headers */,
-      Uint8Array.from(encoder.encode(part)),
+      encoder.encode(part),
       CRLF,
       CUT]))
     .on('end', () => response.end(Buffer.concat([
       CRLF,
-      Uint8Array.from(encoder.encode('FIN')),
+      encoder.encode('FIN'),
       CRLF,
       FINALCUT
     ])))
@@ -126,9 +126,9 @@ export function multipart
 }
 
 const BOUNDARY = 'cut'
-const CUT = Uint8Array.from(Buffer.from(`--${BOUNDARY}\r\n`))
-const CRLF = Uint8Array.from(Buffer.from('\r\n'))
-const FINALCUT = Uint8Array.from(Buffer.from(`--${BOUNDARY}--`))
+const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
+const CRLF = Buffer.from('\r\n')
+const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
 export interface OutgoingMessage {
   status?: number
