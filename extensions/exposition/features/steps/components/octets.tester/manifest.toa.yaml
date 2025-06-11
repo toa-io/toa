@@ -12,6 +12,7 @@ operations:
       path*: string
       entry*: object
       parameters: object
+      steps: object
   bar: *operation
   baz: *operation
   err: *operation

@@ -30,7 +30,8 @@ export class Workflow {
       storage: location.storage,
       path: posix.join(location.path, entry.id),
       entry,
-      parameters
+      parameters,
+      steps: {}
     }
 
     return new Execution(context, this.units, this.remotes)

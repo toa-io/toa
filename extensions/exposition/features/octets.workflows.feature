@@ -46,6 +46,11 @@ Feature: Octets storage workflows
 
       step: add-baz
       status: completed
+      output: 
+        add-foo:
+          foo: bar
+        add-bar:
+          bar: baz
       --cut--
       """
 
