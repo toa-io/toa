@@ -14,8 +14,6 @@ export class Server extends Connector {
   private readonly server: http.Server = http.createServer()
   private readonly properties: Properties
   private readonly authorities: Record<string, string>
-  private readonly pending = new Map<string, Pending>()
-  private pendingInterval: NodeJS.Timeout | null = null
   private process?: Processor
   private ready: boolean = false
   private startedAt: number = 0
@@ -54,10 +52,6 @@ export class Server extends Connector {
 
     console.info('HTTP Server is listening')
 
-    this.pendingInterval = setInterval(() =>
-      console.debug('Pending requests',
-        Array.from(this.pending.values()).map(({ method, path }) => (`${method} ${path}`))), 15000)
-
     await setTimeout(this.properties.delay)
 
     this.ready = true
@@ -72,9 +66,6 @@ export class Server extends Connector {
     console.info('Stopped accepting new connections')
 
     await once(this.server, 'close')
-
-    if (this.pendingInterval !== null)
-      clearInterval(this.pendingInterval)
 
     console.info('Stopped')
   }
@@ -128,13 +119,10 @@ export class Server extends Connector {
     const authority = this.authorities[host] ?? host
     const context = new Context(authority, request as IncomingMessage, this.properties)
 
-    this.pending.set(context.id, { method: request.method, path: request.url! })
-
     this.process(context)
       .then(this.success(context, response))
       .catch(this.fail(context, response))
       .finally(() => {
-        this.pending.delete(context.id)
         request.removeAllListeners('error')
         request.socket.removeAllListeners('error')
       })
@@ -263,9 +251,4 @@ interface RequestErrorAttributes {
   name: string
   code?: string
   stack?: string
-}
-
-interface Pending {
-  method: string
-  path: string
 }
