@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { console } = require('openspan')
 
 const { name } = require('./queues')
 
@@ -35,10 +36,18 @@ class Producer extends Connector {
 
   async #endpoint (endpoint) {
     const queue = name(this.#locator, endpoint)
-    const promises = [this.#comm.reply(queue, (request) => this.#component.invoke(endpoint, request))]
+    const promises = [this.#comm.reply(queue, (request) => {
+      console.debug('AMQP request received', { label: queue, request })
+
+      return this.#component.invoke(endpoint, request)
+    })]
 
     if (endpoint[0] !== '.')
-      promises.push(this.#comm.process(queue + '..tasks', async (request) => await this.#component.invoke(endpoint, request)))
+      promises.push(this.#comm.process(queue + '..tasks', async (request) => {
+        console.debug('AMQP task received', { label: queue, request })
+
+        return await this.#component.invoke(endpoint, request)
+      }))
 
     await Promise.all(promises)
   }
