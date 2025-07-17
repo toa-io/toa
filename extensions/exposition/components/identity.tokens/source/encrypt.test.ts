@@ -8,7 +8,11 @@ import { type Context, type Identity } from './lib'
 let encrypt: Encrypt
 let decrypt: Decrypt
 
-const context: Context = { remote: { identity: { keys: null } } } as unknown as Context
+const context: Context = {
+  remote: { identity: { keys: null } },
+  logs: { debug: () => undefined }
+} as unknown as Context
+
 const authority = generate()
 
 beforeEach(() => {
