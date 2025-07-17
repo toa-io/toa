@@ -118,8 +118,7 @@ configuration:
       ttl:
         type: number
         default: 600_000
-    default: { }
-
+    default: {}
 
 exposition:
   /:identity:
