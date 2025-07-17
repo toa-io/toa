@@ -25,7 +25,7 @@ beforeEach(() => {
     }
   }
 
-  context = { configuration, remote } as unknown as Context
+  context = { configuration, remote, logs: { debug: () => undefined } } as unknown as Context
 
   encrypt = new Encrypt()
   encrypt.mount(context)
