@@ -1,4 +1,4 @@
-import type { Call, Maybe, Observation } from '@toa.io/types'
+import type { Call, Maybe, Observation, telemetry } from '@toa.io/types'
 
 export interface Context {
   local: {
@@ -18,6 +18,7 @@ export interface Context {
     }
   }
   configuration: Configuration
+  logs: telemetry.Logs
 }
 
 export interface Configuration {

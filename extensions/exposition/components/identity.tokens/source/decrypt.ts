@@ -9,11 +9,13 @@ export class Computation implements Operation {
   private cache!: LRUCache<string, KeyEntry>
   private latest!: string
   private remote!: Context['remote']['identity']['keys']
+  private logs!: Context['logs']
 
   public mount (context: Context): void {
     this.latest = Object.keys(context.configuration.keys)[0]
     this.remote = context.remote.identity.keys
     this.cache = new LRUCache<string, KeyEntry>(context.configuration.cache)
+    this.logs = context.logs
 
     for (const [kid, key] of Object.entries(context.configuration.keys))
       this.keys[kid] = { key }
@@ -34,6 +36,8 @@ export class Computation implements Operation {
 
     if (claims instanceof Error)
       return claims
+
+    this.logs.debug('Token claims', claims)
 
     if (key.identity !== undefined && claims.identity.id !== key.identity)
       return ERR_FORGED_KEY

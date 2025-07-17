@@ -29,7 +29,7 @@ export class Incept implements Directive {
       throw new http.BadRequest('Authentication scheme is not supported')
 
     if (!INCEPTION.includes(provider))
-      throw new http.BadRequest('Authentication scheme does not support identity inception')
+      throw new http.Unauthorized()
 
     Incept.schemes[scheme] ??= await Incept.discovery[provider]
 
