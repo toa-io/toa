@@ -58,7 +58,7 @@ export class Agent {
         headers
       }, (response) => resolve(response))
 
-      request.end()
+      request.end(req.body)
     })
 
     assert.ok(response.statusCode === 200 || response.statusCode === 201,

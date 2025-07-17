@@ -72,7 +72,6 @@ export class Endpoint implements RTD.Endpoint {
   public async explain (parameters: RTD.Parameter[]): Promise<Introspection> {
     this.remote ??= await this.discovery
 
-    // eslint-disable-next-line @typescript-eslint/await-thenable
     const operation = await this.remote.explain(this.endpoint)
 
     let route: Record<string, Schema> | null = null

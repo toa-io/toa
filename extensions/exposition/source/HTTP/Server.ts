@@ -8,8 +8,7 @@ import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
-import { Context } from './Context'
-import type { IncomingMessage } from './Context'
+import { Context, type IncomingMessage } from './Context'
 
 export class Server extends Connector {
   private readonly server: http.Server = http.createServer()

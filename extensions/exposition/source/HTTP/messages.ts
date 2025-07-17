@@ -10,6 +10,8 @@ const server = `Exposition/${require('../../package.json').version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
     (process.env.TOA_ENV === undefined ? '' : `/${process.env.TOA_ENV}`))
 
+const pending = new Map<string, PendingStream>()
+
 export async function write
 (context: Context, response: http.ServerResponse, message: OutgoingMessage): Promise<void> {
   for (const transform of context.pipelines.response)
@@ -91,6 +93,9 @@ function stream
     console.warn('Message stream error', { path: context.url.pathname, exception })
     response.end()
   })
+
+  if (context.debug)
+    debugStream(context, response)
 }
 
 export function multipart
@@ -130,6 +135,35 @@ const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
 const CRLF = Buffer.from('\r\n')
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
+const PENDING_DEBUG_INTERVAL = 30000
+
+let pendingInterval: NodeJS.Timeout | null = null
+
+function debugStream (context: Context, response: http.ServerResponse): void {
+  const ctx = { method: context.request.method, path: context.url.pathname }
+
+  console.debug('Stream opened', ctx)
+  pending.set(context.id, ctx)
+
+  response.on('close', () => {
+    console.debug('Stream closed', ctx)
+    pending.delete(context.id)
+
+    if (pending.size === 0) {
+      if (pendingInterval !== null)
+        clearInterval(pendingInterval)
+
+      pendingInterval = null
+    }
+  })
+
+  if (pendingInterval === null)
+    pendingInterval = setInterval(() =>
+      console.debug('Pending streams',
+        Array.from(pending.values()).map(({ method, path }) => (`${method} ${path}`))),
+    PENDING_DEBUG_INTERVAL)
+}
+
 export interface OutgoingMessage {
   status?: number
   headers?: Headers
@@ -147,4 +181,9 @@ export interface Query {
   omit?: string
   limit?: string
   version?: number
+}
+
+interface PendingStream {
+  method: string
+  path: string
 }

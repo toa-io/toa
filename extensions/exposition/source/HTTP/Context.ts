@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import Negotiator from 'negotiator'
 import { console } from 'openspan'
 import { Timing } from './Timing'
@@ -7,6 +8,7 @@ import type { OutgoingMessage } from './messages'
 import type * as http from 'node:http'
 
 export class Context {
+  public readonly id: string
   public readonly authority: string
   public readonly request: IncomingMessage
   public readonly url: URL
@@ -24,6 +26,7 @@ export class Context {
     this.authority = authority
     this.request = request
 
+    this.id = crypto.randomUUID()
     this.url = new URL(request.url, `https://${request.headers.host}`)
     this.timing = new Timing(properties.trace)
     this.debug = properties.debug

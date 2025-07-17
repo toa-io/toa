@@ -71,6 +71,7 @@
     "npm:login:local": "npm adduser --registry http://localhost:4873 --auth-type=legacy",
     "version:local": "lerna version --conventional-prerelease --preid local --no-commit-hooks --no-changelog --yes --no-git-tag-version && git commit -am 'chore: local bump' --no-verify",
     "publish:canary": "lerna publish --canary --preid local --registry http://localhost:4873",
+    "publish:alpha": "npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message \"ci: %s\" --sign-git-commit",
     "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
     "setup": "docker compose up -d && npm run cluster && npm run publish:local && npm ci && toa deploy ./integration/context",
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",

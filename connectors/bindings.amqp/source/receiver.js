@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { console } = require('openspan')
 
 class Receiver extends Connector {
   /** @type {string | undefined} */
@@ -47,6 +48,8 @@ class Receiver extends Connector {
    */
   #receive = async (message, properties) => {
     if (!('toa.io/amqp' in properties.headers)) message = { payload: message }
+
+    console.debug('AMQP event received', { label: this.#exchange ?? this.#queue, message, properties })
 
     await this.#receiver.receive(message)
   }

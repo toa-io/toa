@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.165",
+  "version": "1.0.0-alpha.169",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -50,7 +50,7 @@
     "features:octets": "cucumber-js features/octets.*"
   },
   "devDependencies": {
-    "@toa.io/agent": "1.0.0-alpha.162",
+    "@toa.io/agent": "1.0.0-alpha.167",
     "@toa.io/extensions.storages": "1.0.0-alpha.161",
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
