@@ -84,19 +84,17 @@ export class Execution extends Readable {
   }
 
   private exception (step: string, error: unknown): void {
+    console.error('Workflow exception', error as Error)
+
     this.push({ step, status: 'exception' } satisfies Report)
     this.interrupted = true
-
-    console.error('Workflow exception', error as Error)
   }
 
   private async call (endpoint: string): Promise<Maybe<unknown>> {
-    let task = false
+    const task = endpoint.startsWith('task:')
 
-    if (endpoint.startsWith('task:')) {
+    if (task)
       endpoint = endpoint.slice(5)
-      task = true
-    }
 
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
     const key = `${namespace}.${component}`
