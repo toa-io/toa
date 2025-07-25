@@ -30,3 +30,23 @@ Feature: Sync event
       """yaml
       count: 1
       """
+
+    # assignment
+    When I call `mongo.one.assign` with:
+      """yaml
+      input:
+        foo: 2
+        bar: baz
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    And I wait 0.1 second
+    And I call `mongo.receiver.observe` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    Then the reply is received:
+      """yaml
+      count: 2
+      """

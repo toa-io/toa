@@ -37,6 +37,6 @@ const receivers = (manifest) => {
   }
 }
 
-const TYPES = new Set(['transition', 'effect', 'unmanaged'])
+const TYPES = new Set(['transition', 'assignment', 'effect', 'unmanaged'])
 
 exports.validate = validate
