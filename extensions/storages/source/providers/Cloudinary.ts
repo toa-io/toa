@@ -12,8 +12,6 @@ import type {
   ConfigOptions,
   TransformationOptions,
   UploadApiOptions
-  // ImageTransformationOptions,
-  // VideoTransformationOptions
 } from 'cloudinary'
 
 export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
@@ -213,7 +211,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       let found = false
 
       for (t; t < this.transformations.length && !found; t++) {
-        const { extension: regex, transformation: options, optional } = this.transformations[t]
+        const { extension: regex, condition, transformation: options, optional } = this.transformations[t]
 
         const match = regex.exec(extension)
 
@@ -240,8 +238,15 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
           return [key, value]
         }))
 
-        transformations.push(transformation)
         found = true
+
+        if (condition === undefined)
+          transformations.push(transformation)
+        else {
+          transformations.push({ if: condition })
+          transformations.push(transformation)
+          transformations.push({ if: 'end' })
+        }
       }
 
       if (!found)
@@ -272,7 +277,9 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       created,
       range: range ?? undefined,
       partial: response.status === 206,
-      attributes: {}
+      attributes: {
+        url: response.url
+      }
     }
   }
 
@@ -300,10 +307,9 @@ type TransformationDeclaration = Omit<Transformation, 'extension'> & { extension
 
 interface Transformation {
   extension: RegExp
+  condition?: string
   transformation: object
   optional?: boolean
 }
-
-// type TransformationOptions = ImageTransformationOptions | VideoTransformationOptions
 
 type StorageType = 'image' | 'video'

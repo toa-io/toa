@@ -62,6 +62,14 @@ export const suites = [
           optional: true
         },
         {
+          extension: 'vertical',
+          condition: 'w_gt_h',
+          transformation: {
+            angle: 90
+          },
+          optional: true
+        },
+        {
           extension: '(?<format>jpeg|webp)',
           transformation: {
             fetch_format: '<format>'

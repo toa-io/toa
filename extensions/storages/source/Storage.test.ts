@@ -138,6 +138,26 @@ describe('get, head', () => {
 
     expect(entry.id).toBe(lenna.id)
   })
+
+  if (suite.provider === 'cloudinary') {
+    it('should return cloudinary url', async () => {
+      const entry = await storage.head(`${path}.jpeg`) as Entry
+
+      expect(entry.attributes.url).toMatch(/^https:\/\//)
+    })
+
+    it('should support conditions', async () => {
+      const entry = await storage.head(`${path}.vertical.jpeg`) as Entry
+
+      expect(entry.attributes.url.includes('/if_w_gt_h/a_90/if_end/')).toBe(true)
+    })
+
+    it('should return entry id when requested with extensions', async () => {
+      const entry = await storage.head(`${path}.jpeg`) as Entry
+
+      expect(entry.id).toBe(lenna.id)
+    })
+  }
 })
 
 describe('delete', () => {
