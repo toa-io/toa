@@ -55,7 +55,7 @@ export class Storage {
   }
 
   public async head (path: string): Promise<Maybe<Entry>> {
-    const id = basename(path)
+    const id = basename(path).split('.')[0]
     const location = this.locate(path)
     const metadata = await this.provider.head(location)
 

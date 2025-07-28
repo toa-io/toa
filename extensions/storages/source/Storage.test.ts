@@ -11,7 +11,7 @@ import type { Constructor } from './Provider'
 
 jest.setTimeout(15_000)
 
-const suite = suites[0]
+const suite = suites[2]
 const Provider: Constructor = providers[suite.provider]
 const provider = new Provider(suite.options, suite.secrets)
 const storage = new Storage(provider)
@@ -135,6 +135,12 @@ describe('get, head', () => {
 
   it('should get entry', async () => {
     const entry = await storage.head(path) as Entry
+
+    expect(entry.id).toBe(lenna.id)
+  })
+
+  it('should return entry id when requested with extensions', async () => {
+    const entry = await storage.head(`${path}.jpeg`) as Entry
 
     expect(entry.id).toBe(lenna.id)
   })
