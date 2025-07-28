@@ -12,8 +12,6 @@ import type {
   ConfigOptions,
   TransformationOptions,
   UploadApiOptions
-  // ImageTransformationOptions,
-  // VideoTransformationOptions
 } from 'cloudinary'
 
 export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
@@ -240,8 +238,17 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
           return [key, value]
         }))
 
-        transformations.push(transformation)
         found = true
+
+        if (transformation.if === undefined)
+          transformations.push(transformation)
+        else {
+          const { if: condition, ...rest } = transformation
+
+          transformations.push({ if: condition })
+          transformations.push(rest)
+          transformations.push({ if: 'end' })
+        }
       }
 
       if (!found)
@@ -303,7 +310,5 @@ interface Transformation {
   transformation: object
   optional?: boolean
 }
-
-// type TransformationOptions = ImageTransformationOptions | VideoTransformationOptions
 
 type StorageType = 'image' | 'video'

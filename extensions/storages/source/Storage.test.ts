@@ -11,7 +11,7 @@ import type { Constructor } from './Provider'
 
 jest.setTimeout(15_000)
 
-const suite = suites[2]
+const suite = suites[0]
 const Provider: Constructor = providers[suite.provider]
 const provider = new Provider(suite.options, suite.secrets)
 const storage = new Storage(provider)
@@ -144,6 +144,13 @@ describe('get, head', () => {
 
     expect(entry.id).toBe(lenna.id)
   })
+
+  if (suite.provider === 'cloudinary')
+    it('should support conditions', async () => {
+      const entry = await storage.head(`${path}.rotated.jpeg`) as Entry
+
+      expect(entry.id).toBe(lenna.id)
+    })
 })
 
 describe('delete', () => {
