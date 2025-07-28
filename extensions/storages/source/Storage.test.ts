@@ -11,7 +11,7 @@ import type { Constructor } from './Provider'
 
 jest.setTimeout(15_000)
 
-const suite = suites[2]
+const suite = suites[0]
 const Provider: Constructor = providers[suite.provider]
 const provider = new Provider(suite.options, suite.secrets)
 const storage = new Storage(provider)
