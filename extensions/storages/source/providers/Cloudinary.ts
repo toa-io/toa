@@ -211,7 +211,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       let found = false
 
       for (t; t < this.transformations.length && !found; t++) {
-        const { extension: regex, transformation: options, optional } = this.transformations[t]
+        const { extension: regex, condition, transformation: options, optional } = this.transformations[t]
 
         const match = regex.exec(extension)
 
@@ -240,13 +240,11 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
         found = true
 
-        if (transformation.if === undefined)
+        if (condition === undefined)
           transformations.push(transformation)
         else {
-          const { if: condition, ...rest } = transformation
-
           transformations.push({ if: condition })
-          transformations.push(rest)
+          transformations.push(transformation)
           transformations.push({ if: 'end' })
         }
       }
@@ -279,7 +277,9 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       created,
       range: range ?? undefined,
       partial: response.status === 206,
-      attributes: {}
+      attributes: {
+        url: response.url
+      }
     }
   }
 
@@ -307,6 +307,7 @@ type TransformationDeclaration = Omit<Transformation, 'extension'> & { extension
 
 interface Transformation {
   extension: RegExp
+  condition?: string
   transformation: object
   optional?: boolean
 }
