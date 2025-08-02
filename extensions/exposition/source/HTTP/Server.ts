@@ -198,7 +198,8 @@ function validate (request: http.IncomingMessage): null | Error {
 async function adam (request: http.IncomingMessage): Promise<void> {
   const devnull = fs.createWriteStream(os.devNull)
 
-  request.pipe(devnull)
+  devnull.on('error', () => undefined)
+  request.pipe(devnull).on('error', () => undefined)
 
   await once(request, 'end')
 }
