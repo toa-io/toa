@@ -35,7 +35,7 @@ describe.each(channels)('%s',
     it('should write', () => {
       instance[severity]('hello')
 
-      expect(channel.write).toBeCalled()
+      expect(channel.write).toHaveBeenCalled()
 
       expect(pop(channel)).toMatchObject({
         severity: severity.toUpperCase(),
