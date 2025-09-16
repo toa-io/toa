@@ -8,7 +8,6 @@ export class Stream extends Readable {
   public constructor (logs: any) {
     super(objectMode)
 
-    this.once('resume', () => this.heartbeat())
     this.logs = logs
   }
 
@@ -17,6 +16,7 @@ export class Stream extends Readable {
 
     through.once('close', this.decrement.bind(this))
 
+    this.heartbeat(through)
     this.increment()
     this.pipe(through)
 
@@ -25,6 +25,8 @@ export class Stream extends Readable {
 
   // has to be here
   public override _read (): void {
+    if (this.interval === null)
+      this.interval = setInterval(() => this.heartbeat(), HEARTBEAT_INTERVAL)
   }
 
   public override _destroy (error: Error | null, callback: (error?: (Error | null)) => void): void {
@@ -36,11 +38,15 @@ export class Stream extends Readable {
     super._destroy(error, callback)
   }
 
-  private heartbeat (): void {
-    if (this.interval === null)
-      this.interval = setInterval(() => {
-        this.push('heartbeat ' + Date.now())
-      }, HEARTBEAT_INTERVAL)
+  private heartbeat (stream: Readable = this): boolean {
+    const resume = stream.push('heartbeat ' + Date.now())
+
+    if (!resume && this.interval !== null) {
+      clearInterval(this.interval)
+      this.interval = null
+    }
+
+    return resume
   }
 
   private increment (): void {
