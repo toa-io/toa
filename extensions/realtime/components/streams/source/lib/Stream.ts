@@ -31,13 +31,15 @@ export class Stream extends Readable {
     if (this.interval !== null)
       clearInterval(this.interval)
 
+    this.logs.debug('Stream destroyed', { forks: this.forks })
+
     super._destroy(error, callback)
   }
 
   private heartbeat (): void {
     if (this.interval === null)
       this.interval = setInterval(() => {
-        this.push('heartbeat')
+        this.push('heartbeat ' + Date.now())
       }, HEARTBEAT_INTERVAL)
   }
 
@@ -57,5 +59,5 @@ export class Stream extends Readable {
   }
 }
 
-const HEARTBEAT_INTERVAL = 16_000
+const HEARTBEAT_INTERVAL = 16_000 // why?
 const objectMode = { objectMode: true }
