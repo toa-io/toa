@@ -55,7 +55,7 @@
     "@types/bcryptjs": "2.4.3",
     "@types/cors": "2.8.13",
     "@types/negotiator": "0.6.1",
-    "jest-esbuild": "0.3.0"
+    "jest-esbuild": "0.4.0"
   },
   "jest": {
     "transform": {

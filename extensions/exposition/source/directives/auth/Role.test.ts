@@ -31,7 +31,7 @@ it('should return false if not matched', async () => {
   expect(result).toBe(false)
 
   expect(remote.invoke)
-    .toBeCalledWith('list', {
+    .toHaveBeenCalledWith('list', {
       query: {
         criteria: `identity==${identity.id}`,
         limit: 1024

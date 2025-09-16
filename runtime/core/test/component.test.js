@@ -17,7 +17,7 @@ describe('Invocations', () => {
   it('should invoke', async () => {
     await component.invoke(name)
 
-    expect(invocation.invoke).toBeCalled()
+    expect(invocation.invoke).toHaveBeenCalled()
   })
 
   it('should throw on unknown invocation name', async () => {
@@ -30,7 +30,7 @@ describe('Invocations', () => {
     const query = { test: Math.random() }
     await component.invoke(name, { input, query })
 
-    expect(invocation.invoke).toBeCalledWith({ input, query })
+    expect(invocation.invoke).toHaveBeenCalledWith({ input, query })
   })
 
   it('should return io', async () => {
