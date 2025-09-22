@@ -150,9 +150,7 @@ export class Agent {
   private normalize (input: string): string {
     const substituted = this.captures.substitute(input)
 
-    let [headers, body] = trim(substituted).split('\n\n')
-
-    if (body !== undefined) headers += '\ncontent-length: ' + body?.length
+    const [headers, body] = trim(substituted).split('\n\n')
 
     return headers + '\n\n' + (body ?? '')
   }
