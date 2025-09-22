@@ -29,6 +29,9 @@ export async function request (http: string, options: Options = {}): Promise<und
 export function parse (http: string, origin?: string): HTTPRequest {
   const { method, url, headers, body } = parser.request(http, origin)
 
+  if (body !== undefined && headers.get('content-length') === undefined)
+    headers.set('content-length', body.length.toString())
+
   origin ??= 'https://' + headers.get('host')
 
   const href = new URL(url, origin).href
