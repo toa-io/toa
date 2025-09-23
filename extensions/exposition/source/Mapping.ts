@@ -67,12 +67,13 @@ class InputMapping extends Mapping {
     const request: core.Request = {}
     const qs = this.query.fit(query, parameters)
 
-    if (input === undefined && (parameters.length > 0 || qs.parameters !== null))
+    if (input === undefined &&
+      (this.query.parameterized || parameters.length > 0 || qs.parameters !== null))
       input = {}
 
     if (parameters.length > 0) {
       if (typeof input !== 'object' || input === null)
-        throw new Error('Input must be an object to embed route parameters')
+        throw new Error('Input must be an object to embed parameters')
 
       for (const parameter of parameters)
         input[parameter.name] = parameter.value

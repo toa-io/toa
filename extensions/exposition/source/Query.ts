@@ -8,6 +8,8 @@ import type * as syntax from './RTD/syntax'
 import type * as core from '@toa.io/core'
 
 export class Query {
+  public readonly parameterized: boolean
+
   private readonly query: syntax.Query
   private readonly closed: boolean = false
   private readonly prepend: ',' | ';' = ';'
@@ -15,6 +17,7 @@ export class Query {
   private readonly searchable: boolean
 
   public constructor (query: syntax.Query) {
+    this.parameterized = query?.parameters !== undefined
     this.queryable = queryable(query)
     this.searchable = query?.search === true
 
