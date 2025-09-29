@@ -4,6 +4,7 @@ import * as http from '../../HTTP'
 import { split } from './split'
 import { create } from './create'
 import { PROVIDERS, INCEPTION } from './schemes'
+import { Role } from './Role'
 import type { Maybe } from '@toa.io/types'
 import type { Directive, Discovery, Identity, Context, Schemes } from './types'
 
@@ -80,7 +81,11 @@ export class Incept implements Directive {
 
     if (context.request.headers.authorization !== undefined)
       context.identity = await Incept.incept(context, id)
-    else
-      context.identity = { id, scheme: null, refresh: true, roles: [] }
+    else {
+      const identity = { id, scheme: null, refresh: true }
+      const roles = await Role.get(identity, Incept.discovery.roles)
+
+      context.identity = { ...identity, roles }
+    }
   }
 }
