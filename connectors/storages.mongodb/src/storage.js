@@ -253,8 +253,8 @@ class Storage extends Connector {
   getOptional (fields) {
     const optional = []
 
-    for (const field of fields) {
-      if (!(field in this.#entity.schema.properties))
+    for (const field of fields) {      
+      if (!field.includes('.') && !(field in this.#entity.schema.properties))
         throw new Error(`Index field '${field}' is not defined.`)
 
       if (!this.#entity.schema.required?.includes(field))
