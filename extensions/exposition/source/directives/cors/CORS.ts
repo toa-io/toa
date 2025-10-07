@@ -24,18 +24,18 @@ export class CORS implements Interceptor {
   public intercept (input: Input): Output {
     const origin = input.request.headers.origin
 
-    if (origin === undefined)
-      return null
-
-    if (input.request.method === 'OPTIONS')
+    if (origin !== undefined && input.request.method === 'OPTIONS')
       return this.preflightResponse(origin)
 
     input.pipelines.response.push((output) => {
       output.headers ??= new Headers()
-      output.headers.set('access-control-allow-origin', origin)
-      output.headers.set('access-control-allow-credentials', 'true')
-      output.headers.set('access-control-expose-headers',
-        'authorization, content-type, content-length, date, etag, last-modified')
+
+      if (origin !== undefined) {
+        output.headers.set('access-control-allow-origin', origin)
+        output.headers.set('access-control-allow-credentials', 'true')
+        output.headers.set('access-control-expose-headers',
+          'authorization, content-type, content-length, date, etag, last-modified')
+      }
 
       const method = input.request.method
 

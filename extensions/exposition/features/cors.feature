@@ -42,7 +42,26 @@ Feature: CORS Support
       vary: origin
       """
 
-  Scenario: Errors contain CORS headers
+  Scenario: Always vary CORS
+    Given the annotation:
+      """yaml
+      /:
+        anonymous: true
+        GET:
+          dev:stub: hello
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      vary: origin
+      """
+
+  Scenario: Errors have CORS headers
     Given the annotation:
       """yaml
       /:
@@ -60,7 +79,7 @@ Feature: CORS Support
       """
       404 Not Found
       access-control-allow-origin: https://hello.world
-      access-control-expose-headers: authorization, content-type, content-length, etag
+      access-control-expose-headers: authorization, content-type, content-length, date, etag, last-modified
       vary: origin
       """
     When the following request is received:
@@ -73,6 +92,6 @@ Feature: CORS Support
       """
       401 Unauthorized
       access-control-allow-origin: https://hello.world
-      access-control-expose-headers: authorization, content-type, content-length, etag
+      access-control-expose-headers: authorization, content-type, content-length, date, etag, last-modified
       vary: origin
       """
