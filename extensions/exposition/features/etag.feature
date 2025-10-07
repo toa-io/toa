@@ -77,6 +77,37 @@ Feature: Optimistic concurrency control
       etag: "2"
       """
 
+  Scenario: Using etag with enumeration
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: ${{ etag }}
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      if-none-match: ${{ etag }}
+      """
+    Then the following reply is sent:
+      """
+      304 Not Modified
+      etag: ${{ etag }}
+      """
+
   Scenario: Weak `etag`
     Given the `pots` is running with the following manifest:
       """yaml

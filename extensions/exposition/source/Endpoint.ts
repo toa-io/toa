@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream'
+import { createHash } from 'node:crypto'
 import { console } from 'openspan'
 import { Mapping } from './Mapping'
 import * as http from './HTTP'
@@ -41,18 +42,30 @@ export class Endpoint implements RTD.Endpoint {
     const message: http.OutgoingMessage = {}
 
     // etag
-    if (typeof reply === 'object' && reply !== null && '_version' in reply) {
+    if (reply !== null) {
       const etag = context.request.headers['if-none-match']
 
       message.headers ??= new Headers()
 
-      if (etag !== undefined && reply._version === this.version(etag)) {
-        message.status = 304
-        message.headers.set('etag', etag)
+      if (typeof reply === 'object' && '_version' in reply)
+        if (etag !== undefined && reply._version === this.version(etag)) {
+          message.status = 304
+          message.headers.set('etag', etag)
 
-        return message
-      } else
-        message.headers.set('etag', `"${reply._version.toString()}"`)
+          return message
+        } else
+          message.headers.set('etag', `"${reply._version.toString()}"`)
+      else if (!(reply instanceof Readable)) {
+        const hash = `"${createHash('sha256').update(JSON.stringify(reply)).digest('hex')}"`
+
+        if (etag === hash) {
+          message.status = 304
+          message.headers.set('etag', etag)
+
+          return message
+        } else
+          message.headers.set('etag', hash)
+      }
     }
 
     // last-modified
