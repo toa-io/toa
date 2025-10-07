@@ -44,12 +44,14 @@ Feature: Octets with Cloudinary storage
       """
       GET /${{ id }} HTTP/1.1
       host: nex.toa.io
+      origin: https://toa.io
       """
     Then the stream equals to `lenna.png` is sent with the following headers:
       """
       200 OK
       content-type: image/png
       content-length: 473831
+      access-control-allow-origin: https://toa.io
       """
 
   Scenario: Image transformations
