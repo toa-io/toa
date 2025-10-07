@@ -22,7 +22,7 @@ Feature: Dev
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, sleep
+      access-control-allow-headers: accept, authorization, content-type, if-match, if-none-match, sleep
       """
     When the following request is received:
       """
