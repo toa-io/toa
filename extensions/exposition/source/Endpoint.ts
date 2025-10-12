@@ -42,7 +42,7 @@ export class Endpoint implements RTD.Endpoint {
     const message: http.OutgoingMessage = {}
 
     // etag
-    if (reply !== null) {
+    if (reply !== null && reply !== undefined) {
       const etag = context.request.headers['if-none-match']
 
       message.headers ??= new Headers()
