@@ -33,7 +33,7 @@
     "@aws-sdk/protocol-http": "3.370.0",
     "@toa.io/generic": "1.0.0-alpha.173",
     "@toa.io/schemas": "1.0.0-alpha.173",
-    "cloudinary": "2.4.0",
+    "cloudinary": "2.7.0",
     "error-value": "0.4.1",
     "negotiator": "0.6.3",
     "openspan": "1.0.0-alpha.173",
