@@ -28,13 +28,28 @@ export class Sleep implements Directive {
     if (value === undefined)
       return null
 
-    const duration = Number.parseInt(value)
+    const [min, max] = this.parse(value)
 
-    if (Number.isNaN(duration) || duration < 0 || duration > this.maximum)
+    if (min < 0 || max < 0 || min > max || max > this.maximum)
       throw new BadRequest('Invalid sleep duration')
+
+    const duration = Math.floor(Math.random() * (max - min)) + min
 
     await setTimeout(duration)
 
     return null
+  }
+
+  private parse (value: string): [number, number] {
+    try {
+      const pair = JSON.parse(value) as [number, number]
+
+      if (!Array.isArray(pair) || pair.length !== 2)
+        throw new Error()
+
+      return pair
+    } catch (error) {
+      throw new BadRequest('Invalid sleep duration value')
+    }
   }
 }

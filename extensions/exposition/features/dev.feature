@@ -27,7 +27,7 @@ Feature: Dev
     When the following request is received:
       """
       GET / HTTP/1.1
-      sleep: 2500
+      sleep: [1000, 2000]
       """
     # check the response time
     Then the following reply is sent:
@@ -37,7 +37,7 @@ Feature: Dev
     When the following request is received:
       """
       GET /nested/ HTTP/1.1
-      sleep: 500
+      sleep: [100, 300]
       """
     Then the following reply is sent:
       """
@@ -46,7 +46,7 @@ Feature: Dev
     When the following request is received:
       """
       GET / HTTP/1.1
-      sleep: 3500
+      sleep: [1000, 3500]
       """
     Then the following reply is sent:
       """

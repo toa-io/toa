@@ -14,10 +14,10 @@ Returns a successful response with the given body.
 
 ## `dev:sleep`
 
-Enables delay before processing the request, up to given maximum time in milliseconds (unlimited by
-if value is
-`0`).
-Desired delay can be set in the `sleep` request header.
+Enables random delay before processing the request, up to given maximum time in milliseconds.
+
+Desired delay range can be set in the `sleep` request header as a JSON array of two numbers, the minimum
+and maximum delay in milliseconds.
 
 ```yaml
 /foo:
@@ -26,5 +26,5 @@ Desired delay can be set in the `sleep` request header.
 
 ```http
 GET /foo/ HTTP/1.1
-sleep: 500
+sleep: [500, 1000]
 ```
