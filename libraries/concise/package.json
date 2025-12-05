@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/concise",
-  "version": "1.0.0-alpha.173",
+  "version": "1.0.0-alpha.182",
   "description": "Toa Concise Object Schema",
   "homepage": "https://toa.io",
   "author": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.173",
-    "@toa.io/yaml": "1.0.0-alpha.173"
+    "@toa.io/yaml": "1.0.0-alpha.182"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
