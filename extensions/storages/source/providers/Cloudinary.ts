@@ -211,7 +211,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       let found = false
 
       for (t; t < this.transformations.length && !found; t++) {
-        const { extension: regex, condition, transformation: options, optional } = this.transformations[t]
+        const { extension: regex, condition, transformation, optional } = this.transformations[t]
 
         const match = regex.exec(extension)
 
@@ -222,29 +222,16 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
           else
             return [null, undefined]
 
-        const transformation = Object.fromEntries(Object.entries(options).map(([key, value]) => {
-          if (typeof value !== 'string')
-            return [key, value]
-
-          if (value.startsWith('<') && value.endsWith('>'))
-            value = match.groups![value.slice(1, -1)]
-
-          if (key === 'zoom' && value !== undefined)
-            value = Number.parseInt(value as string) / 100
-
-          if (key === 'fetch_format' && value === 'jpeg')
-            value = 'jpg'
-
-          return [key, value]
-        }))
+        const options = Array.isArray(transformation) ? transformation : [transformation]
+        const stages = options.map((stage) => this.mapTransformation(stage, match.groups!))
 
         found = true
 
         if (condition === undefined)
-          transformations.push(transformation)
+          transformations.push(...stages)
         else {
           transformations.push({ if: condition })
-          transformations.push(transformation)
+          transformations.push(...stages)
           transformations.push({ if: 'end' })
         }
       }
@@ -258,6 +245,24 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
         return [null, undefined]
 
     return [base, transformations]
+  }
+
+  private mapTransformation (options: Record<string, unknown>, groups: Record<string, string>): TransformationOptions {
+    return Object.fromEntries(Object.entries(options).map(([key, value]) => {
+      if (typeof value !== 'string')
+        return [key, value]
+
+      if (value.startsWith('<') && value.endsWith('>'))
+        value = groups[value.slice(1, -1)]
+
+      if (key === 'zoom' && value !== undefined)
+        value = Number.parseInt(value as string) / 100
+
+      if (key === 'fetch_format' && value === 'jpeg')
+        value = 'jpg'
+
+      return [key, value]
+    }))
   }
 
   private metadata (response: Response): Metadata {
@@ -308,7 +313,7 @@ type TransformationDeclaration = Omit<Transformation, 'extension'> & { extension
 interface Transformation {
   extension: RegExp
   condition?: string
-  transformation: object
+  transformation: Record<string, unknown> | Array<Record<string, unknown>>
   optional?: boolean
 }
 

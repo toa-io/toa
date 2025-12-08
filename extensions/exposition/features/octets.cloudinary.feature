@@ -78,6 +78,16 @@ Feature: Octets with Cloudinary storage
       200 OK
       content-type: image/jpeg
       """
+    When the following request is received:
+      """
+      GET /${{ id }}.icon.jpeg HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: image/jpeg
+      """
 
   Scenario: Upload a video
     When the stream of `plank.mp4` is received with the following headers:

@@ -32,6 +32,17 @@ process.env.TOA_STORAGES = encode({
     prefix: 'toa-dev',
     transformations: [
       {
+        extension: 'icon',
+        transformation: [{
+          width: 48,
+          height: 48,
+          crop: 'fill'
+        }, {
+          border: '10px_solid_white'
+        }],
+        optional: true
+      },
+      {
         extension: '(?<width>\\d*)x(?<height>\\d*)(z(?<zoom>\\d*))?',
         transformation: {
           width: '<width>',
