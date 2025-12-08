@@ -21,7 +21,11 @@ properties:
       properties:
         extension:
           type: string
-        transformation: *transformation
+        transformation:
+          anyOf:
+            - *transformation
+            - type: array
+              items: *transformation
         optional:
           type: boolean
       required:
