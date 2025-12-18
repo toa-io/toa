@@ -54,6 +54,33 @@ Feature: Octets with Cloudinary storage
       access-control-allow-origin: https://toa.io
       """
 
+  Scenario: Upload an svg
+    When the stream of `sample.svg` is received with the following headers:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/octet-stream
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: application/yaml
+
+      id: ${{ id }}
+      type: image/svg+xml
+      """
+    When the following request is received:
+      """
+      GET /${{ id }} HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the stream equals to `lenna.png` is sent with the following headers:
+      """
+      200 OK
+      content-type: image/svg+xml
+      """
+
   Scenario: Image transformations
     When the stream of `lenna.png` is received with the following headers:
       """
