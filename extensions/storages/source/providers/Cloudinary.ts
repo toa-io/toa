@@ -103,7 +103,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
         public_id: id,
         folder,
         eager: this.eager,
-        resource_type: 'auto'
+        resource_type: this.type
       }
 
       console.debug('Uploading to Cloudinary', { path, options })
