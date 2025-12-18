@@ -38,5 +38,6 @@
     "negotiator": "0.6.3",
     "openspan": "1.0.0-alpha.173",
     "smithy-node-native-fetch": "1.1.0"
-  }
+  },
+  "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }
