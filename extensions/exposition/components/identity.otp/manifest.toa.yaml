@@ -2,8 +2,8 @@ namespace: identity
 name: otp
 
 entity:
-  schema: &entity
-    properties:
+  schema:
+    properties: &properties
       authority: { type: string }
       username: { type: string }
     required: [authority, username]
@@ -14,7 +14,14 @@ entity:
 
 operations:
   issue:
-    input: *entity
+    input:
+      properties:
+        <<: *properties
+        lifetime: &lifetime
+          type: number
+          minimum: 1
+          maximum: 36000 # 10 hours
+      required: [authority, username]
   authenticate:
     input:
       properties:
@@ -34,6 +41,8 @@ operations:
 configuration:
   schema:
     properties:
-      lifetime: { type: number, default: 60 }
+      lifetime:
+        <<: *lifetime
+        default: 300
 
 stash: ~
