@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.amqp",
-  "version": "1.0.0-alpha.182",
+  "version": "1.0.0-alpha.185",
   "description": "Toa AMQP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
