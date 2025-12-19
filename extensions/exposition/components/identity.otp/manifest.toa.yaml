@@ -3,6 +3,11 @@ name: otp
 
 entity:
   schema:
+    definitions:
+      id: &id
+        type: string
+        pattern: ^[0-9a-f]{32}$
+    type: object
     properties: &properties
       authority: { type: string }
       username: { type: string }
@@ -17,6 +22,7 @@ operations:
     input:
       properties:
         <<: *properties
+        identity: *id
         lifetime: &lifetime
           type: number
           minimum: 1
