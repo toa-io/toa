@@ -424,3 +424,53 @@ Feature: Basic authentication
       """
       404 Not Found
       """
+
+  Scenario: Adding new basic credentials
+    Given transient identity
+    When the following request is received:
+      """
+      POST /identity/basic/${{ identity.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ identity.token }}
+      accept: application/yaml
+      content-type: application/yaml
+
+      username: developer
+      password: secret#1234
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldCMxMjM0 
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ id }}
+      """
+
+    # credentials already exist
+    When the following request is received:
+      """
+      POST /identity/basic/${{ identity.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ identity.token }}
+      accept: application/yaml
+      content-type: application/yaml
+
+      username: painter
+      password: secret#4321
+      """
+    Then the following reply is sent:
+      """
+      422 Unprocessable Entity
+
+      code: EXISTS
+      """
