@@ -13,8 +13,6 @@ class Storage extends Connector {
   #collection
   #entity
 
-  #logs
-
   constructor (client, entity) {
     super()
 
@@ -22,8 +20,6 @@ class Storage extends Connector {
     this.#entity = entity
 
     this.depends(client)
-
-    this.#logs = console.fork({ collection: client.name })
   }
 
   get raw () {
@@ -165,7 +161,7 @@ class Storage extends Connector {
     options.upsert = true
     options.returnDocument = ReturnDocument.AFTER
 
-    this.#logs.debug('Database query', { method: 'findOneAndUpdate', criteria, update, options })
+    console.debug('Database query', { collection: this.#collection.name, method: 'findOneAndUpdate', criteria, update, options })
 
     const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
@@ -199,7 +195,7 @@ class Storage extends Connector {
         console.info('Creating index', { fields, options })
 
         await this.#collection.createIndex(fields, options)
-          .catch((e) => this.#logs.warn('Index creation failed', { name, fields, error: e }))
+          .catch((e) => console.warn('MongoDB index creation failed', { collection: this.#collection.name, name, fields, error: e }))
 
         indexes.push(name)
       }
@@ -224,7 +220,8 @@ class Storage extends Connector {
     console.info('Creating unique index', { name, fields, options })
 
     await this.#collection.createIndex(fields, options)
-      .catch((e) => this.#logs.warn('Unique index creation failed', { name, fields, error: e }))
+      .catch((e) => console.warn('MongoDB unique index creation failed', 
+        { collection: this.#collection.name, name, fields, error: e }))
 
     return name
   }
@@ -234,7 +231,7 @@ class Storage extends Connector {
     const obsolete = current.filter((name) => !desired.includes(name))
 
     if (obsolete.length > 0) {
-      this.#logs.info('Removing obsolete indexes', { indexes: obsolete.join(', ') })
+      console.info('Removing obsolete indexes', { collection: this.#collection.name, indexes: obsolete.join(', ') })
 
       await Promise.all(obsolete.map((name) => this.#collection.dropIndex(name)))
     }
@@ -265,7 +262,8 @@ class Storage extends Connector {
   }
 
   debug (method, attributes) {
-    this.#logs.debug('Database query', {
+    console.debug('Database query', {
+      collection: this.#collection.name,
       method,
       ...attributes
     })
