@@ -27,8 +27,11 @@ export function deployment (instances: Instance[], annotation: unknown): Depende
 function validate (instances: Instance[], annotation: unknown): asserts annotation is Annotation {
   validateAnnotation(annotation)
 
-  for (const instance of instances)
+  for (const instance of instances) {
+    instance.manifest ??= []
+    
     contains(instance, annotation)
+  }
 }
 
 function contains (instance: Instance, annotation: Annotation): void {

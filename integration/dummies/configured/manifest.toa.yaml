@@ -22,7 +22,15 @@ operations:
       sum: number
 
 configuration:
-  foo: Hello
-  bar:
-    a: 1
-    b: 2
+  schema:
+    type: object
+    properties:
+      foo:
+        type: string
+        default: Hello
+      bar:
+        type: object
+        properties:
+          a: { type: integer }
+          b: { type: integer }
+        default: { a: 1, b: 2 }

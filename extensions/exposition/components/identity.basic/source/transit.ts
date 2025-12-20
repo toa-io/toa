@@ -56,9 +56,7 @@ export class Transition implements Operation {
   }
 }
 
-function toRx (input: string | string[]): RegExp[] {
-  const expressions = typeof input === 'string' ? [input] : input
-
+function toRx (expressions: string[]): RegExp[] {
   return expressions.map((expression) => new RegExp(expression))
 }
 

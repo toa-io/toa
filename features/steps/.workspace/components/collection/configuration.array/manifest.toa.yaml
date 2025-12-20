@@ -8,10 +8,18 @@ operations:
 
 configuration:
   schema:
-    greetings: [{ a: string, b: string }]
-  defaults:
-    greetings:
-      - a: good
-        b: day
-      - a: good
-        b: afternoon
+    type: object
+    properties:
+      greetings:
+        type: array
+        items:
+          type: object
+          properties:
+            a: string
+            b: string
+          required: [a, b]
+        default:
+          - a: good
+            b: day
+          - a: good
+            b: afternoon

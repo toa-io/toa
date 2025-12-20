@@ -96,29 +96,32 @@ receivers:
   identity.bans.updated: revoke
 
 configuration:
-  keys:
+  schema:
     type: object
-    minProperties: 1
-    additionalProperties:
-      type: string
-  lifetime:
-    description: Token expiration time in seconds (default 30 days)
-    type: number
-    default: 2592000
-  refresh:
-    description: Token refresh time in seconds (default 10 minutes)
-    type: number
-    default: 600
-  cache:
-    description: Custom token keys LRU cache configuration
     properties:
-      max:
-        type: number
-        default: 1024
-      ttl:
-        type: number
-        default: 600_000
-    default: {}
+      keys:
+        type: object
+        minProperties: 1
+        additionalProperties:
+          type: string
+      lifetime:
+        description: Token expiration time in seconds (default 30 days)
+        type: integer
+        default: 2592000
+      refresh:
+        description: Token refresh time in seconds (default 10 minutes)
+        type: integer
+        default: 600
+      cache:
+        description: Custom token keys LRU cache configuration
+        properties:
+          max:
+            type: integer
+            default: 1024
+          ttl:
+            type: integer
+            default: 600_000
+        default: {}
 
 exposition:
   /:identity:

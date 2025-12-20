@@ -71,11 +71,27 @@ operations:
     output: null
 
 configuration:
-  rounds: 10
-  pepper: ""
-  principal: string
-  username+: ^.{1,128}$
-  password+: ^.{8,32}$
+  schema:
+    type: object
+    properties:
+      rounds:
+        type: integer
+        default: 10
+      pepper:
+        type: string
+        default: ""
+      principal:
+        type: string
+      username:
+        type: array
+        items:
+          type: string
+        default: ["^.{1,128}$"]
+      password:
+        type: array
+        items:
+          type: string
+        default: ["^.{8,32}$"]
 
 exposition:
   isolated: true

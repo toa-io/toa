@@ -10,6 +10,14 @@ operations:
 
 configuration:
   schema:
-    foo: hello
-    bar: world
-    num: integer
+    type: object
+    properties:
+      foo:
+        type: string
+        default: hello
+      bar:
+        type: string
+        default: world
+      num:
+        type: integer
+        default: 0

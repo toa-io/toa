@@ -40,4 +40,9 @@ operations:
     output: string
 
 configuration:
-  foo: 'bar'
+  schema:
+    type: object
+    properties:
+      foo:
+        type: string
+        default: bar

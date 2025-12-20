@@ -17,8 +17,8 @@ export interface Context {
     readonly rounds: number
     readonly pepper: string
     readonly principal?: string
-    readonly username: string | string[]
-    readonly password: string | string[]
+    readonly username: string[]
+    readonly password: string[]
   }
 }
 

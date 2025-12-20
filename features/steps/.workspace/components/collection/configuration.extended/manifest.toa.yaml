@@ -1,8 +1,14 @@
-prototype: '../configuration.base'
+prototype: "../configuration.base"
 namespace: configuration
 name: extended
 
 configuration:
   schema:
-    baz: something
-    qux: 1
+    type: object
+    properties:
+      baz:
+        type: string
+        default: something
+      qux:
+        type: integer
+        default: 1
