@@ -24,7 +24,14 @@ const extensions = (manifest) => {
 
     if (extension.manifest !== undefined) {
       declaration = extension.manifest(declaration, manifest)
+
+      if (declaration === undefined) throw new Error(`Extension '${reference}' hasn't returned manifest`)
     }
+
+    extensions[key] = declaration
+
+    // shortcut was used
+    if (reference !== key) delete extensions[reference]
   }
 }
 
