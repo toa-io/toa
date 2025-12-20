@@ -166,7 +166,7 @@ export class Server extends Connector {
             message.body =
               exception instanceof Exception
                 ? exception.body
-                : exception.stack ?? exception.message
+                : (this.properties.debug && exception.stack) ?? exception.message
 
           await write(context, response, message)
         }

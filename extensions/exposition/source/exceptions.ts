@@ -11,9 +11,11 @@ export function rethrow (exception: Exception | HTTPException): void {
   // see /runtime/core/src/exceptions.js
   throw match(exception.code,
     badRequest, () => new http.BadRequest(exception.message),
-    302, NOT_FOUND,
-    303, PRECONDITION_FAILED,
-    306, () => new http.Conflict(),
+    CORE_EXCEPTIONS.StateNotFound, NOT_FOUND,
+    CORE_EXCEPTIONS.StatePrecondition, PRECONDITION_FAILED,
+    CORE_EXCEPTIONS.Duplicate, CONFLICT,
+    CORE_EXCEPTIONS.StateConcurrency, CONFLICT,
+    CORE_EXCEPTIONS.EntityGuard, CONFLICT,
     () => {
       console.error('Request processing exception', exception)
 
@@ -27,3 +29,12 @@ function badRequest (code: number): boolean {
 
 const NOT_FOUND = new http.NotFound()
 const PRECONDITION_FAILED = new http.PreconditionFailed()
+const CONFLICT = new http.Conflict()
+
+const CORE_EXCEPTIONS = {
+  StateNotFound: 302,
+  StatePrecondition: 303,
+  StateConcurrency: 304,
+  EntityGuard: 213,
+  Duplicate: 306,
+}
