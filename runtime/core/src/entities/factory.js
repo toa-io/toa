@@ -8,9 +8,11 @@ const { Changeset } = require('./changeset')
 
 class Factory {
   #schema
+  #guards
 
-  constructor (schema) {
+  constructor (schema, guards) {
     this.#schema = schema
+    this.#guards = guards
   }
 
   fit (values) {
@@ -18,11 +20,11 @@ class Factory {
   }
 
   init (id) {
-    return new Entity(this.#schema, id)
+    return new Entity(this.#schema, id, this.#guards)
   }
 
   object (record) {
-    return new Entity(this.#schema, record)
+    return new Entity(this.#schema, record, this.#guards)
   }
 
   objects (recordset) {

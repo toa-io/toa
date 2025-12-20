@@ -1,16 +1,18 @@
 'use strict'
 
 const { difference, newid } = require('@toa.io/generic')
-const { EntityContractException } = require('../exceptions')
+const { EntityContractException, EntityGuardException } = require('../exceptions')
 
 class Entity {
   deleted = false
   #schema
+  #guards
   #origin = null
   #state
 
-  constructor (schema, argument) {
+  constructor (schema, argument, guards) {
     this.#schema = schema
+    this.#guards = guards
 
     if (typeof argument === 'object') {
       const object = structuredClone(argument)
@@ -32,6 +34,9 @@ class Entity {
     if (error !== null)
       throw new EntityContractException(error, value)
 
+    if (!optional)
+      this.#guard(value)
+
     this.#set(value)
   }
 
@@ -49,6 +54,18 @@ class Entity {
     const value = { id, _version: 0 }
 
     this.set(value, true)
+  }
+
+  #guard (value) {
+    if (this.#guards === undefined)
+      return
+
+    for (const guard of this.#guards) {
+      const ok = guard.fit(value)
+
+      if (ok === false)
+        throw new EntityGuardException(guard.name, value)
+    }
   }
 
   #set (value) {

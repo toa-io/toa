@@ -1,0 +1,16 @@
+name: guards
+namespace: transition
+
+entity:
+  storage: ~
+  schema: &schema
+    type: object
+    properties:
+      a: { type: integer }
+      b: { type: integer }
+    required: [a, b]
+
+operations:
+  transit:
+    concurrency: retry
+    input: *schema

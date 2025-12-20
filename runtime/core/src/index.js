@@ -21,6 +21,7 @@ const { State } = require('./state')
 const { Transition } = require('./transition')
 const { Transmission } = require('./transmission')
 const { Unmanaged } = require('./unmanaged')
+const { Guard } = require('./guard')
 
 exports.entities = require('./entities')
 exports.exceptions = require('./exceptions')
@@ -49,3 +50,4 @@ exports.State = State
 exports.Transition = Transition
 exports.Transmission = Transmission
 exports.Unmanaged = Unmanaged
+exports.Guard = Guard

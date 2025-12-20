@@ -8,7 +8,7 @@ definitions:
   binding:
     type: string
     not:
-      const: '@toa.io/bindings.loop' # loop is for system use only
+      const: "@toa.io/bindings.loop" # loop is for system use only
 
 type: object
 properties:
@@ -17,19 +17,19 @@ properties:
     nullable: true
     properties:
       prototype:
-        $ref: '#/properties/prototype'
+        $ref: "#/properties/prototype"
       path:
         type: string
       operations:
         type: object
         propertyNames:
-          $ref: '#/definitions/name'
+          $ref: "#/definitions/name"
         patternProperties:
-          '.*':
+          ".*":
             type: object
             properties:
               bridge:
-                $ref: '#/properties/bridge'
+                $ref: "#/properties/bridge"
 
   path:
     type: string
@@ -51,10 +51,10 @@ properties:
   namespace:
     type: string
     pattern: ^[a-zA-Z]([a-zA-Z0-9]{1,31})?$
-    default: 'default'
+    default: "default"
     not:
       oneOf:
-        - const: 'system'
+        - const: "system"
 
   version:
     type: string
@@ -72,7 +72,7 @@ properties:
     properties:
       storage:
         type: string
-        default: '@toa.io/storages.mongodb'
+        default: "@toa.io/storages.mongodb"
       schema:
         $ref: https://json-schema.org/draft/2019-09/schema
         type: object
@@ -84,22 +84,22 @@ properties:
             type: object
             propertyNames:
               oneOf:
-                - $ref: '#/definitions/name'
+                - $ref: "#/definitions/name"
                 - enum: [_version, _created, _updated, _deleted]
       unique:
         type: object
         patternProperties:
-          '.*':
+          ".*":
             type: array
             items:
               type: string
       index:
         type: object
         patternProperties:
-          '.*':
+          ".*":
             type: object
             patternProperties:
-              '.*':
+              ".*":
                 type: string
                 enum: [asc, desc, hash, text]
       associated:
@@ -115,7 +115,7 @@ properties:
     type: array
     uniqueItems: true
     items:
-      $ref: '#/definitions/binding'
+      $ref: "#/definitions/binding"
 
   bridge:
     type: string
@@ -123,28 +123,36 @@ properties:
   operations:
     type: object
     propertyNames:
-      $ref: '#/definitions/name'
+      $ref: "#/definitions/name"
     patternProperties:
-      '.*':
+      ".*":
         type: object
         properties:
           type:
-            enum: [transition, observation, assignment, computation, effect, unmanaged]
+            enum:
+              [
+                transition,
+                observation,
+                assignment,
+                computation,
+                effect,
+                unmanaged,
+              ]
           scope:
             enum: [object, objects, changeset, stream, none]
           concurrency:
             enum: [none, retry]
           forward:
-            $ref: '#/definitions/name'
+            $ref: "#/definitions/name"
           bridge:
             type: string
           bindings:
-            $ref: '#/properties/bindings'
+            $ref: "#/properties/bindings"
           input:
             $ref: https://json-schema.org/draft/2019-09/schema
           output:
             $ref: https://json-schema.org/draft/2019-09/schema
-            default: { }
+            default: {}
           errors:
             type: array
             items:
@@ -224,9 +232,9 @@ properties:
   events:
     type: object
     propertyNames:
-      $ref: '#/definitions/name'
+      $ref: "#/definitions/name"
     patternProperties:
-      '.*':
+      ".*":
         type: object
         properties:
           bridge:
@@ -234,7 +242,7 @@ properties:
           path:
             type: string
           binding:
-            $ref: '#/definitions/binding'
+            $ref: "#/definitions/binding"
           conditioned:
             type: boolean
             default: false
@@ -247,17 +255,17 @@ properties:
   receivers:
     type: object
     patternProperties:
-      '.*':
+      ".*":
         type: object
         properties:
           operation:
-            $ref: '#/definitions/name'
+            $ref: "#/definitions/name"
           bridge:
             type: string
           binding:
             type: string
           source:
-            $ref: '#/definitions/name'
+            $ref: "#/definitions/name"
             not:
               const: context
           path:
@@ -271,6 +279,17 @@ properties:
           arguments:
             type: array
         required: [operation]
+        additionalProperties: false
+
+  guards:
+    type: object
+    patternProperties:
+      ".*":
+        type: object
+        properties:
+          bridge: { type: string }
+          path: { type: string }
+        required: [bridge, path]
         additionalProperties: false
 
   extensions:

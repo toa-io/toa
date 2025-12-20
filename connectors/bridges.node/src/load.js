@@ -6,6 +6,7 @@ const { file: { glob } } = require('@toa.io/filesystem')
 const operation = (root, name) => load(root, OPERATIONS_DIRECTORY, name)
 const event = (root, name) => load(root, EVENTS_DIRECTORY, name)
 const receiver = (root, name) => load(root, RECEIVERS_DIRECTORY, name)
+const guard = (root, name) => load(root, GUARDS_DIRECTORY, name)
 
 const scan = (directory) => async (root) => {
   const pattern = resolve(root, directory, '*' + EXTENSION)
@@ -20,10 +21,13 @@ const EXTENSION = '.js'
 const EVENTS_DIRECTORY = 'events'
 const RECEIVERS_DIRECTORY = 'receivers'
 const OPERATIONS_DIRECTORY = 'operations'
+const GUARDS_DIRECTORY = 'guards'
 
 exports.operation = operation
 exports.event = event
 exports.receiver = receiver
+exports.guard = guard
 exports.operations = scan(OPERATIONS_DIRECTORY)
 exports.events = scan(EVENTS_DIRECTORY)
 exports.receivers = scan(RECEIVERS_DIRECTORY)
+exports.guards = scan(GUARDS_DIRECTORY)

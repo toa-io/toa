@@ -24,7 +24,7 @@ class Transition extends Operation {
 
     if (store.scope === null || store.scope.deleted === true)
       throw new StateNotFoundException()
-
+  
     store.state = store.scope.get()
   }
 

@@ -66,3 +66,32 @@ Feature: Transition
       """
       null
       """
+
+  Scenario: Transition guards
+    # guard: `b` must be greater than `a`
+    Given I compose `transition.guards` component
+    When I call `transition.guards.transit` with:
+      """yaml
+      input:
+        a: 1
+        b: 2
+      """
+    Then the reply is received:
+      """
+      a: 1
+      b: 2
+      """
+    When I call `transition.guards.transit` with:
+      """yaml
+      input:
+        a: 2
+        b: 1
+      """
+    Then the following exception is thrown:
+      """
+      code: 213
+      message: less
+      cause:
+        a: 2
+        b: 1
+      """

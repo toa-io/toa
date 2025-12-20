@@ -11,6 +11,7 @@ const codes = {
   RequestConflict: 203,
   ResponseContract: 211,
   EntityContract: 212,
+  EntityGuard: 213,
   QuerySyntax: 221,
 
   State: 300,
@@ -73,12 +74,17 @@ class EntityContractException extends ContractException {
   constructor (error, cause) { super(codes.EntityContract, error, cause) }
 }
 
+class EntityGuardException extends ContractException {
+  constructor (name, cause) { super(codes.EntityGuard, name, cause) }
+}
+
 // #region exports
 exports.Exception = Exception
 exports.SystemException = SystemException
 exports.RequestContractException = RequestContractException
 exports.ResponseContractException = ResponseContractException
 exports.EntityContractException = EntityContractException
+exports.EntityGuardException = EntityGuardException
 
 for (const [name, code] of Object.entries(codes)) {
   const classname = name + 'Exception'

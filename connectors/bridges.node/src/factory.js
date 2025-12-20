@@ -4,6 +4,7 @@ const load = require('./load')
 const { Runner } = require('./algorithms/runner')
 const { Event } = require('./event')
 const { Receiver } = require('./receiver')
+const { Guard } = require('./guard')
 const { Context } = require('./context')
 const { extract } = require('./define/operations')
 
@@ -28,6 +29,13 @@ class Factory {
     const receiver = load.receiver(root, label)
 
     return new Receiver(receiver)
+  }
+
+  guard (root, label, context) {
+    const guard = load.guard(root, label)
+    const ctx = new Context(context)
+
+    return new Guard(guard, ctx)
   }
 }
 
