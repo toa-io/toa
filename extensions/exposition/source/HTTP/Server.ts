@@ -253,3 +253,18 @@ interface RequestErrorAttributes {
   code?: string
   stack?: string
 }
+
+
+/**
+ * I'm too fucking dumb to figure out how to handle this in a better way.
+ * It can be reproduced by calling `response.destroy()` on the client side while reading 
+ * an empty stream.
+ */
+process.on('uncaughtException', (err: unknown) => {
+  if ((err as { code?: string }).code === 'ECONNRESET') {
+    console.warn('ECONNRESET');
+    return
+  }
+
+  throw err
+})
