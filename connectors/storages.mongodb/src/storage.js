@@ -45,7 +45,8 @@ class Storage extends Connector {
   async find (query) {
     const { criteria, options, sample } = translate(query)
 
-    criteria._deleted = null
+    if (query?.options?.deleted !== true)
+      criteria._deleted = null
 
     let cursor
 

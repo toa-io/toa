@@ -22,7 +22,7 @@ class Transition extends Operation {
 
     store.scope = request.query ? await this.query(request.query) : this.scope.init()
 
-    if (store.scope === null || store.scope.deleted === true)
+    if (store.scope === null || (store.scope.deleted === true && request.query?.options?.deleted !== true))
       throw new StateNotFoundException()
   
     store.state = store.scope.get()

@@ -67,6 +67,60 @@ Feature: Transition
       null
       """
 
+  Scenario: Undelete
+    Given I compose `mongo.associated` component
+
+    When I call `mongo.associated.assign` with:
+      """yaml
+      query:
+        id: 12317562d0504f8a9a84d330b4ed2699
+      """
+
+    When I call `mongo.associated.terminate` with:
+      """yaml
+      query:
+        id: 12317562d0504f8a9a84d330b4ed2699
+      """
+    Then the reply is received
+
+    # observe deleted
+    When I call `mongo.associated.observe` with:
+      """yaml
+      query:
+        id: 12317562d0504f8a9a84d330b4ed2699
+        deleted: true
+      """
+    Then the reply is received:
+      """
+      id: 12317562d0504f8a9a84d330b4ed2699
+      """
+
+    # update deleted
+    When I call `mongo.associated.undelete` with:
+      """yaml
+      input:
+        foo: 2
+        bar: foo
+      query:
+        id: 12317562d0504f8a9a84d330b4ed2699
+        deleted: true
+      """
+    Then the reply is received:
+      """
+      id: 12317562d0504f8a9a84d330b4ed2699
+      """
+
+    # now undeleted
+    When I call `mongo.associated.observe` with:
+      """yaml
+      query:
+        id: 12317562d0504f8a9a84d330b4ed2699
+      """
+    Then the reply is received:
+      """
+      id: 12317562d0504f8a9a84d330b4ed2699
+      """
+
   Scenario: Transition guards
     # guard: `b` must be greater than `a`
     Given I compose `transition.guards` component
@@ -95,3 +149,4 @@ Feature: Transition
         a: 2
         b: 1
       """
+      

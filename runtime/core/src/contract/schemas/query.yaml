@@ -1,6 +1,6 @@
 type: object
 properties:
-  id: { }
+  id: {}
   version:
     type: integer
     minimum: 0
@@ -31,4 +31,6 @@ properties:
       type: string
       not:
         const: id
+  deleted:
+    type: boolean
 additionalProperties: false

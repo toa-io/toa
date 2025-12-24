@@ -16,3 +16,8 @@ operations:
     input:
       foo: *foo
       bar: *bar
+  undelete:
+    concurrency: retry
+    input:
+      foo: *foo
+      bar: *bar
