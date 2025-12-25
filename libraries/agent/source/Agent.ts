@@ -78,23 +78,32 @@ export class Agent {
   }
 
   public responseIncludes (expected: string): void {
-    const lines = trim(expected).split('\n')
+    const line = this.mismatch(this.response, expected)
+
+    if (line !== null)
+      throw new assert.AssertionError({
+        message: `Response is missing '${line}'`,
+        expected: line,
+        actual: this.response.slice(0, MAX_DIFF_LENGTH)
+      })
+  }
+
+  public mismatch(sample: string, reference: string): string | null {
+    const lines = trim(reference).split('\n')
 
     for (const line of lines) {
       if (line.trim() === '') continue
 
-      const match = this.captures.capture(this.response, line)
+      const match = this.captures.capture(sample, line)
 
       if (match === null)
-        throw new assert.AssertionError({
-          message: `Response is missing '${line}'`,
-          expected: line,
-          actual: this.response.slice(0, MAX_DIFF_LENGTH)
-        })
+        return line
     }
+
+    return null
   }
 
-  public responseExcludes (expected: string): void {
+  public responseExcludes (expected: string): void {    
     const lines = trim(expected).split('\n')
 
     for (const line of lines) {
