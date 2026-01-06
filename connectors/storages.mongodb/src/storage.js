@@ -164,12 +164,19 @@ class Storage extends Connector {
 
     console.debug('Database query', { collection: this.#collection.name, method: 'findOneAndUpdate', criteria, update, options })
 
-    const result = await this.#collection.findOneAndUpdate(criteria, update, options)
+    try {
+      const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
-    if (result._deleted !== undefined && result._deleted !== null)
-      return null
-    else
-      return from(result)
+      if (result._deleted !== undefined && result._deleted !== null)
+        return null
+      else
+        return from(result)
+    } catch (error) {
+      if (error.code === ERR_DUPLICATE_KEY)
+        throw new exceptions.DuplicateException(this.#client.name)
+      else
+        throw error
+    }
   }
 
   async index () {
