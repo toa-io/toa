@@ -9,9 +9,9 @@ export async function effect (input: Input, context: Context): Promise<Output> {
   if (identity !== undefined)
     await context.local.ensure({
       entity: {
-        id: identity,
         authority,
-        username
+        username,
+        identity,
       }
     })
   

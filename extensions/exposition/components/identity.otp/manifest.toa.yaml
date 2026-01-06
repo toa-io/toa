@@ -11,6 +11,7 @@ entity:
     properties: &properties
       authority: { type: string }
       username: { type: string }
+      identity: *id
     required: [authority, username]
   index:
     username:
