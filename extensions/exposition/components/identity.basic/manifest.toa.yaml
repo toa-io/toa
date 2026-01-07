@@ -36,6 +36,7 @@ operations:
     errors: *transit.errors
   add:
     input:
+      id*: string
       authority*: string
       username*: string
       password*: string
