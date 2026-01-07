@@ -32,7 +32,7 @@ operations:
       sub*: string
   incept:
     input:
-      scheme: [bearer, code]
+      scheme*: [bearer, code]
       authority*: string
       credentials*: string
       id: string
@@ -131,6 +131,6 @@ exposition:
       POST:
         map:authority: authority
         auth:id: id
-        io:input: [credentials]
+        io:input: [scheme, credentials]
         io:output: false
         endpoint: incept

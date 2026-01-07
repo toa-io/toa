@@ -1,21 +1,23 @@
-import { Err } from 'error-value'
-import { decode } from './lib'
+import { decode, exchange, type Ctx } from './lib'
 import type { Request } from '@toa.io/types'
 import type { Context, Entity, TransitInput, Scheme } from './types'
 
 export async function effect (input: Input, context: Context): Promise<Output | Error> {
-  if (input.scheme === 'code') return ERR_SCHEME
-
-  const payload = await decode(input.credentials, {
+  const ctx: Ctx = {
     trust: context.configuration.trust,
     logs: context.logs
-  })
+  }
 
-  if (payload instanceof Error)
-    return payload
+  const claims = input.scheme === 'bearer'
+    ? await decode(input.credentials, ctx)
+    : await exchange(input.credentials, ctx)
 
-  const { iss, sub } = payload
-  const request: Request<TransitInput> = { input: { authority: input.authority, iss, sub } satisfies Omit<Entity, 'id'> }
+
+  if (claims instanceof Error)
+    return claims
+
+  const { iss, sub } = claims
+  const request: Request<TransitInput> = { input: { authority: input.authority, iss, sub } }
 
   if (input.id !== undefined)
     request.query = { id: input.id }
@@ -23,12 +25,10 @@ export async function effect (input: Input, context: Context): Promise<Output | 
   return await context.local.transit(request)
 }
 
-const ERR_SCHEME = new Err('ERR_SCHEME', 'Unsupported scheme')
-
 export interface Input {
   authority: string
+  scheme: Scheme
   credentials: string
-  scheme?: Scheme
   id?: string
 }
 
