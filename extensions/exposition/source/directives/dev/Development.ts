@@ -1,6 +1,7 @@
 import { Stub } from './Stub'
 import { Throw } from './Throw'
 import { Sleep } from './Sleep'
+import { Faulty } from './Faulty'
 import { type Directive } from './types'
 import type { Input, Output } from '../../io'
 import type { DirectiveFamily } from '../../RTD'
@@ -36,5 +37,6 @@ export class Development implements DirectiveFamily<Directive> {
 const constructors: Record<string, new (value: any) => Directive> = {
   stub: Stub,
   throw: Throw,
-  sleep: Sleep
+  sleep: Sleep,
+  faulty: Faulty
 }

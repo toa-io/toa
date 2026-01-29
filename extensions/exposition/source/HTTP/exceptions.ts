@@ -83,3 +83,9 @@ export class TooManyRequests extends ClientError {
     super(429)
   }
 }
+
+export class ServiceUnavailable extends Exception {
+  public constructor (body?: any) {
+    super(503, body)
+  }
+}
