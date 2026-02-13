@@ -6,11 +6,15 @@ import type { Attributes, Entry, Stream } from './Entry'
 import type { ScanOptions } from './Scanner'
 import type { Provider } from './Provider'
 
-export class Storage {
-  private readonly provider: Provider
+export class Storage<T extends Provider = Provider> {
+  private readonly provider: T
 
-  public constructor (provider: Provider) {
+  public constructor (provider: T) {
     this.provider = provider
+  }
+
+  public options (): T['options'] {
+    return this.provider.options
   }
 
   public async put (path: string, stream: Readable, options?: Options): Maybe<Entry> {

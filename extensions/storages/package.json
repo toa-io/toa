@@ -28,16 +28,16 @@
     "dotenv": "*"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.633.0",
-    "@aws-sdk/lib-storage": "3.633.0",
-    "@aws-sdk/protocol-http": "3.370.0",
+    "@aws-sdk/client-s3": "3.989.0",
+    "@aws-sdk/lib-storage": "3.989.0",
+    "@aws-sdk/protocol-http": "3.374.0",
     "@toa.io/generic": "1.0.0-alpha.173",
     "@toa.io/schemas": "1.0.0-alpha.182",
-    "cloudinary": "2.7.0",
+    "cloudinary": "2.9.0",
     "error-value": "0.4.1",
     "negotiator": "0.6.3",
     "openspan": "1.0.0-alpha.173",
-    "smithy-node-native-fetch": "1.1.0"
+    "smithy-node-native-fetch": "1.2.1"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }
