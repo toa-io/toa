@@ -28,7 +28,7 @@
     "js-yaml": "4.1.1",
     "lru-cache": "11.0.1",
     "matchacho": "0.3.5",
-    "minimatch": "10.2.1",
+    "minimatch": "10.2.3",
     "msgpackr": "1.10.1",
     "negotiator": "0.6.4",
     "openspan": "1.0.0-alpha.173",
