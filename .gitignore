@@ -7,3 +7,4 @@ lerna-debug.log
 **/.env
 .eslintcache
 coverage/
+.mongo-keyfile

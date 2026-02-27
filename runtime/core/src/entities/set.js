@@ -19,6 +19,10 @@ class EntitySet {
 
     values.forEach((value, index) => this.#set[index].set(value))
   }
+
+  events (input = undefined) {
+    return this.#set.map((entity) => entity.event(input))
+  }
 }
 
 exports.EntitySet = EntitySet

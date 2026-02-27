@@ -16,13 +16,23 @@ services:
       RABBITMQ_DEFAULT_USER: developer
       RABBITMQ_DEFAULT_PASS: secret
   mongodb:
-    image: mongo:5.0.8
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    image: mongo:8.0.16
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/etc/mongo-keyfile/keyfile",
+      ]
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - ./.mongo-keyfile:/etc/mongo-keyfile/keyfile:ro
     healthcheck:
       test: >
         bash -lc 'mongosh "mongodb://developer:secret@localhost:27017/admin?directConnection=true" --quiet

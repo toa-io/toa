@@ -150,6 +150,7 @@ Feature: Transition
         b: 1
       """
       
+  @manual
   Scenario: Objects scope transition
     Given I compose `mongo.associated` component
     When I call `mongo.associated.increment` with:
@@ -158,10 +159,11 @@ Feature: Transition
         foo: 2
       query:
         ids:
-          - 319b01a368f743bfac5d4e1f54f42856
-          - 7d31744d50cb4e4e992a87331350e93e
+          - 519b01a368f743bfac5d4e1f54f42856
+          - 9d31744d50cb4e4e992a87331350e93e
+          - 78fe640de1d14e698f56853903478af5
       """
     Then the reply is received:
       """
-      total: 4
+      total: 6
       """

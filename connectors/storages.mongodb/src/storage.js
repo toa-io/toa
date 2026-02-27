@@ -107,18 +107,48 @@ class Storage extends Connector {
       else
         return await this.set(entity)
     } catch (error) {
-      const retry = retriable(error, entity, attempt, this.#client.name)
+      const retry = await retriable(error, attempt)
 
-      if (retry) {
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        return this.store(entity)
-      } else
+      if (retry)
+        return await this.store(entity, attempt + 1)
+      else
         return false
     }
   }
 
-  async massStore (entities) {
+  async massStore (entities, attempt = 0) {
+    if (entities.length === 0)
+      return true
+
+    const operations = entities.map((entity) => {
+      const record = to(entity)
+
+      if (entity._version === 1)
+        return { insertOne: { document: record } }
+      else
+        return { replaceOne: { filter: { _id: entity.id, _version: entity._version - 1 }, replacement: record } }
+    })
+
+    const client = this.#client.instance.client
+
+    try {
+      await client.withSession(async (session) => {
+        await session.withTransaction(async () => {
+          this.debug('bulkWrite', { operations: operations.length })
+
+          await this.#collection.bulkWrite(operations, { session })
+        })
+      })
+
+      return true
+    } catch (error) {
+      const retry = await retriable(error, attempt)
+
+      if (retry)
+        return await this.massStore(entities, attempt + 1)
+      else
+        return false
+    }
   }
 
   async upsert (query, changeset) {
@@ -154,7 +184,7 @@ class Storage extends Connector {
     options.upsert = true
     options.returnDocument = ReturnDocument.AFTER
 
-    console.debug('Database query', { collection: this.#collection.name, method: 'findOneAndUpdate', criteria, update, options })
+    console.debug('Database query', { collection: this.#collection.collectionName, method: 'findOneAndUpdate', criteria, update, options })
 
     try {
       const result = await this.#collection.findOneAndUpdate(criteria, update, options)
@@ -195,7 +225,7 @@ class Storage extends Connector {
         console.info('Creating index', { fields, options })
 
         await this.#collection.createIndex(fields, options)
-          .catch((e) => console.warn('MongoDB index creation failed', { collection: this.#collection.name, name, fields, error: e }))
+          .catch((e) => console.warn('MongoDB index creation failed', { collection: this.#collection.collectionName, name, fields, error: e }))
 
         indexes.push(name)
       }
@@ -221,7 +251,7 @@ class Storage extends Connector {
 
     await this.#collection.createIndex(fields, options)
       .catch((e) => console.warn('MongoDB unique index creation failed', 
-        { collection: this.#collection.name, name, fields, error: e }))
+        { collection: this.#collection.collectionName, name, fields, error: e }))
 
     return name
   }
@@ -231,7 +261,7 @@ class Storage extends Connector {
     const obsolete = current.filter((name) => !desired.includes(name))
 
     if (obsolete.length > 0) {
-      console.info('Removing obsolete indexes', { collection: this.#collection.name, indexes: obsolete.join(', ') })
+      console.info('Removing obsolete indexes', { collection: this.#collection.collectionName, indexes: obsolete.join(', ') })
 
       await Promise.all(obsolete.map((name) => this.#collection.dropIndex(name)))
     }
@@ -262,8 +292,8 @@ class Storage extends Connector {
   }
 
   debug (method, attributes) {
-    console.debug('Database query', {
-      collection: this.#collection.name,
+    console.debug('MongoDB query', {
+      collection: this.#collection.collectionName,
       method,
       ...attributes
     })
@@ -296,7 +326,7 @@ const INDEX_TYPES = {
 
 const ERR_DUPLICATE_KEY = 11000
 
-function retriable (error, entity, attempt, clientName) {
+async function retriable (error, attempt) {
   if (error.code === ERR_DUPLICATE_KEY) {
     const id = error.keyPattern === undefined
       ? error.message.includes(' index: _id_ ') // AWS DocumentDB
@@ -305,14 +335,20 @@ function retriable (error, entity, attempt, clientName) {
     if (id)
       return false
     else
-      throw new exceptions.DuplicateException(clientName, entity)
+      throw new exceptions.DuplicateException()
   } else if (error.cause?.code === 'ECONNREFUSED') {
-    if (attempt > 10)
+    if (attempt === LAST_ATTEMPT)
       throw error
+
+    const timeout = 1000 + 500 * attempt
+
+    await new Promise((resolve) => setTimeout(resolve, timeout))
 
     return true
   } else
     throw error
 }
+
+const LAST_ATTEMPT = 9
 
 exports.Storage = Storage

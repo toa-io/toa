@@ -1,5 +1,6 @@
 'use strict'
 
+const { stat } = require('fs')
 const { StatePreconditionException, StateNotFoundException } = require('./exceptions')
 
 class State {
@@ -79,14 +80,31 @@ class State {
   }
 
   async commit (state, input) {
-    const object = state.get()
-    const ok = await this.storage.store(object)
+    if (state.constructor.name === 'EntitySet') 
+      return this.massCommit(state, input)
+
+    const data = state.get()
+    const ok = await this.storage.store(data)
 
     // #20
     if (ok === true) {
       const event = state.event(input)
 
       await this.#emission.emit(event)
+    }
+
+    return ok
+  }
+
+  async massCommit (state, input) {
+    const data = state.get()
+    const ok = await this.storage.massStore(data)
+
+    // #20
+    if (ok === true) {
+      const events = state.events(input)
+
+      await Promise.all(events.map((event) => this.#emission.emit(event)))
     }
 
     return ok
