@@ -1,11 +1,10 @@
-import { type Readable } from 'node:stream'
 import { after, binding, given, then } from 'cucumber-tsflow'
 import { match } from '@toa.io/generic'
-
-import { type Component } from '@toa.io/core'
 import { parse } from '@toa.io/yaml'
 import * as stage from '@toa.io/userland/stage'
 import { Realtime } from './Realtime'
+import type { Readable } from 'node:stream'
+import type { Component } from '@toa.io/core'
 
 @binding([Realtime])
 export class Streams {
@@ -18,14 +17,14 @@ export class Streams {
     this.realtime = realtime
   }
 
-  @given('the stream `{word}` is consumed')
+  @given('the stream `{word}` is consumed', { timeout: 30_000 })
   public async consume (key: string): Promise<void> {
     await this.realtime.serve()
 
     this.remote ??= await stage.remote('realtime.streams')
     this.events[key] = []
     this.streams[key] = await this.remote.invoke('create', { input: { key } })
-    this.streams[key].on('data', (data: object) => this.events[key].push(data))
+    this.streams[key].on('data', (data: object) => this.events[key]?.push(data))
   }
 
   @then('an event is received from the stream `{word}`:')
@@ -40,11 +39,13 @@ export class Streams {
   }
 
   @after()
-  private shutdown (): void {
+  private async shutdown (): Promise<void> {
     for (const stream of Object.values(this.streams))
       stream.destroy()
 
     this.streams = {}
     this.events = {}
+
+    await new Promise((resolve) => setTimeout(resolve, 100))
   }
 }

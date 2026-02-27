@@ -27,7 +27,8 @@ export class Effect implements Operation {
 
     const stream = this.streams.get(key)!
 
-    return stream.fork()
+    // return stream.fork()
+    return stream
   }
 
   private createStream (key: string): void {

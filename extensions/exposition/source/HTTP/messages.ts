@@ -165,8 +165,7 @@ function debugStream (context: Context, response: http.ServerResponse): void {
 
   if (pendingInterval === null)
     pendingInterval = setInterval(() =>
-      console.debug('Pending streams',
-        Array.from(pending.values()).map(({ method, path }) => (`${method} ${path}`))),
+      console.debug('Pending streams', { size: pending.size }),
     PENDING_DEBUG_INTERVAL)
 }
 

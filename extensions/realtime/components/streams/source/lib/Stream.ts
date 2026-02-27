@@ -17,7 +17,7 @@ export class Stream extends Readable {
     through.once('close', this.decrement.bind(this))
 
     this.increment()
-    this.heartbeat(through)
+    // this.heartbeat(through)
     this.pipe(through)
 
     return through

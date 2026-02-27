@@ -1,5 +1,12 @@
 Feature: Static routes
 
+  Scenario: Debug
+    Given the `messages` component is running with routes:
+      """yaml
+      created: [sender, recipient]
+      """
+    And the stream `004e02a959c04cecaf111827f91caa36` is consumed
+
   Scenario: Routing an event
     Given the `messages` component is running with routes:
       """yaml
