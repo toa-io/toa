@@ -168,8 +168,8 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [object]
-              if: # transition query: false
+                  enum: [object, objects]
+              if: # not query: false
                 not:
                   properties:
                     query:
@@ -177,6 +177,17 @@ properties:
                   required: [query]
               then:
                 required: [concurrency]
+          - if: # transition and scope=objects
+              properties:
+                type:
+                  const: transition
+                scope:
+                  const: objects
+            then:
+              properties:
+                query:
+                  not:
+                    const: false
           - if: # not transition
               not:
                 properties:

@@ -150,3 +150,18 @@ Feature: Transition
         b: 1
       """
       
+  Scenario: Objects scope transition
+    Given I compose `mongo.associated` component
+    When I call `mongo.associated.increment` with:
+      """yaml
+      input:
+        foo: 2
+      query:
+        ids:
+          - 319b01a368f743bfac5d4e1f54f42856
+          - 7d31744d50cb4e4e992a87331350e93e
+      """
+    Then the reply is received:
+      """
+      total: 4
+      """

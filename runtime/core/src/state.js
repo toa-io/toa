@@ -40,8 +40,10 @@ class State {
 
   async objects (query) {
     const recordset = await this.storage.find(query)
-
-    return this.#entities.objects(recordset)
+    const missing = this.#associated && query.ids !== undefined && recordset.length < query.ids.length
+    const init = missing ? query.ids.filter((id) => !recordset.some((record) => record.id === id)) : undefined
+    
+    return this.#entities.objects(recordset, init)
   }
 
   async stream (query) {

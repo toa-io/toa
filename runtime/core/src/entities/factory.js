@@ -27,8 +27,12 @@ class Factory {
     return new Entity(this.#schema, record, this.#guards)
   }
 
-  objects (recordset) {
+  objects (recordset, init) {
     const set = recordset.map((record) => this.object(record))
+
+    if (init !== undefined) 
+      for (const id of init)
+        set.unshift(this.init(id))
 
     return new EntitySet(set)
   }

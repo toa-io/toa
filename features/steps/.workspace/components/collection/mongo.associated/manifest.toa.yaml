@@ -21,3 +21,7 @@ operations:
     input:
       foo: *foo
       bar: *bar
+  increment:
+    concurrency: retry
+    input:
+      foo: *foo

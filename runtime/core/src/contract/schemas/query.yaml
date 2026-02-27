@@ -1,6 +1,13 @@
 type: object
 properties:
-  id: {}
+  id:
+    type: string
+  ids:
+    type: array
+    uniqueItems: true
+    minItems: 1
+    items:
+      type: string
   version:
     type: integer
     minimum: 0

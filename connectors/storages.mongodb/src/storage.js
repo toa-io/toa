@@ -107,26 +107,18 @@ class Storage extends Connector {
       else
         return await this.set(entity)
     } catch (error) {
-      if (error.code === ERR_DUPLICATE_KEY) {
-        const id = error.keyPattern === undefined
-          ? error.message.includes(' index: _id_ ') // AWS DocumentDB
-          : error.keyPattern._id === 1
+      const retry = retriable(error, entity, attempt, this.#client.name)
 
-        if (id)
-          return false
-        else
-          throw new exceptions.DuplicateException(this.#client.name, entity)
-      } else if (error.cause?.code === 'ECONNREFUSED') {
-        // This is temporary and should be replaced with a class decorator.
-        if (attempt > 10)
-          throw error
-
+      if (retry) {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         return this.store(entity)
       } else
-        throw error
+        return false
     }
+  }
+
+  async massStore (entities) {
   }
 
   async upsert (query, changeset) {
@@ -303,5 +295,24 @@ const INDEX_TYPES = {
 }
 
 const ERR_DUPLICATE_KEY = 11000
+
+function retriable (error, entity, attempt, clientName) {
+  if (error.code === ERR_DUPLICATE_KEY) {
+    const id = error.keyPattern === undefined
+      ? error.message.includes(' index: _id_ ') // AWS DocumentDB
+      : error.keyPattern._id === 1
+
+    if (id)
+      return false
+    else
+      throw new exceptions.DuplicateException(clientName, entity)
+  } else if (error.cause?.code === 'ECONNREFUSED') {
+    if (attempt > 10)
+      throw error
+
+    return true
+  } else
+    throw error
+}
 
 exports.Storage = Storage
