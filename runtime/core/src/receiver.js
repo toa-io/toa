@@ -54,7 +54,11 @@ class Receiver extends Connector {
     try {
       await this.#local.invoke(this.#endpoint, request)
     } catch (error) {
-      console.error('Receiver error', error)
+      console.error('Receiver error', { 
+        component: this.#local.locator.id, 
+        endpoint: this.#endpoint,
+        error
+       })
 
       throw error
     }
