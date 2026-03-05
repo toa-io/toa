@@ -24,6 +24,11 @@ export class Cache implements DirectiveFamily<Directive> {
 
   public async settle
   (directives: Directive[], context: AuthenticatedContext, response: http.OutgoingMessage): Promise<void> {
+    const method = context.request.method
+    
+    if (method !== 'GET' && method !== 'HEAD')
+      return
+    
     const directive = directives[0]
 
     response.headers ??= new Headers()
