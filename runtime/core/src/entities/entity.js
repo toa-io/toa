@@ -29,13 +29,13 @@ class Entity {
   }
 
   set (value, optional = false) {
+    if (!optional)
+      this.#guard(value)
+
     const error = optional ? this.#schema.fitOptional(value) : this.#schema.fit(value)
 
     if (error !== null)
       throw new EntityContractException(error, value)
-
-    if (!optional)
-      this.#guard(value)
 
     this.#set(value)
   }
