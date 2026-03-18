@@ -36,7 +36,7 @@
     "@cucumber/cucumber": "11.3.0",
     "@google-cloud/pubsub": "4.11.0",
     "@types/jest": "30.0.0",
-    "@types/node": "24.4.0",
+    "@types/node": "24.12.0",
     "@types/randomstring": "1.1.12",
     "clone-deep": "4.0.1",
     "cucumber-tsflow": "4.5.2",
