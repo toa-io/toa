@@ -28,23 +28,22 @@ export class Effect implements Operation {
       stream = this.createStream(key)
 
       this.logs.debug('Stream created', { key })
-    } else {
+    } else
       stream = this.streams.get(key)!
 
-      setTimeout(() => stream?.heartbeat(), 1000)
-    }
+    // welcome
+    setTimeout(() => stream?.heartbeat(), 1000)
 
-    // return stream.fork()
     return stream
   }
 
   private createStream (key: string): Stream {
-    const stream = new Stream(this.logs.fork({ key }))
+    const stream = new Stream()
 
     this.streams.set(key, stream)
 
-    stream.on('close', () => {
-      this.logs.debug('Stream closed', { key })
+    stream.events.once('destroy', () => {
+      this.logs.debug('Stream destroyed', { key })
       this.streams.delete(key)
     })
 

@@ -1,30 +1,12 @@
-import { PassThrough, Readable } from 'node:stream'
+import { EventEmitter, Readable } from 'node:stream'
 
 export class Stream extends Readable {
-  private forks: number = 0
+  public events = new EventEmitter()
+
   private interval: NodeJS.Timeout | null = null
-  private readonly logs: any
 
-  public constructor (logs: any) {
+  public constructor () {
     super(objectMode)
-
-    this.logs = logs
-  }
-
-  public fork (): PassThrough {
-    const through = new PassThrough(objectMode)
-
-    through.once('close', this.decrement.bind(this))
-
-    this.increment()
-    this.heartbeat(through)
-    this.pipe(through)
-
-    return through
-  }
-
-  public ping (): void {
-    this.heartbeat()
   }
 
   // has to be here
@@ -37,7 +19,7 @@ export class Stream extends Readable {
     if (this.interval !== null)
       clearInterval(this.interval)
 
-    this.logs.debug('Stream destroyed', { forks: this.forks })
+    this.events.emit('destroy')
 
     super._destroy(error, callback)
   }
@@ -51,21 +33,6 @@ export class Stream extends Readable {
     }
 
     return resume
-  }
-
-  private increment (): void {
-    this.forks++
-
-    this.logs.debug('Stream forked', { forks: this.forks })
-  }
-
-  private decrement (): void {
-    this.forks--
-
-    this.logs.debug('Stream fork closed', { forks: this.forks })
-
-    if (this.forks === 0)
-      this.destroy()
   }
 }
 
