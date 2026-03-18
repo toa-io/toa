@@ -12,8 +12,7 @@ const server = `Exposition/${require('../../package.json').version}` +
 
 const pending = new Map<string, PendingStream>()
 
-export async function write
-(context: Context, response: http.ServerResponse, message: OutgoingMessage): Promise<void> {
+export async function write (context: Context, response: http.ServerResponse, message: OutgoingMessage): Promise<void> {
   for (const transform of context.pipelines.response)
     await transform(message)
 
@@ -65,8 +64,7 @@ export async function read (context: Context): Promise<any> {
   }
 }
 
-function send
-(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+function send (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (message.body === undefined || message.body === null) {
     response.setHeader('content-length', '0')
     response.end()
@@ -86,8 +84,7 @@ function send
     .end(buf)
 }
 
-function stream
-(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+function stream (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
@@ -104,8 +101,7 @@ function stream
     debugStream(context, response)
 }
 
-export function multipart
-(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+export function multipart (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (context.encoder === null)
     throw new NotAcceptable()
 

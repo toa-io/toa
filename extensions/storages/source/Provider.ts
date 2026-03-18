@@ -11,7 +11,7 @@ export abstract class Provider<Options = unknown> {
 
   protected constructor (options: Options, secrets?: Secrets) {
     this.options = options
-    
+
     new.target.SECRETS?.forEach(({ name, optional }) =>
       assert.ok(optional === true || secrets?.[name] !== undefined, `Missing secret '${name}'`))
   }

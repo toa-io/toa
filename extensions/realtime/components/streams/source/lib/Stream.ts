@@ -17,10 +17,14 @@ export class Stream extends Readable {
     through.once('close', this.decrement.bind(this))
 
     this.increment()
-    // this.heartbeat(through)
+    this.heartbeat(through)
     this.pipe(through)
 
     return through
+  }
+
+  public ping (): void {
+    this.heartbeat()
   }
 
   // has to be here
@@ -38,7 +42,7 @@ export class Stream extends Readable {
     super._destroy(error, callback)
   }
 
-  private heartbeat (stream: Readable = this): boolean {
+  public heartbeat (stream: Readable = this): boolean {
     const resume = stream.push('heartbeat ' + Date.now())
 
     if (!resume && this.interval !== null) {

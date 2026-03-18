@@ -154,7 +154,7 @@ export class S3 extends Provider<S3Options> {
     })
   }
 
-  private async try<T = void> (action: () => Promise<T>): Promise<Maybe<T>> {
+  private async try<T = void>(action: () => Promise<T>): Promise<Maybe<T>> {
     try {
       return await action()
     } catch (err: any) {

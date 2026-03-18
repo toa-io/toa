@@ -26,8 +26,7 @@ export class Role implements Directive {
     return await this.remote.invoke('list', { query })
   }
 
-  public async authorize
-  (identity: Identity | null, _: unknown, parameters: Parameter[]): Promise<boolean> {
+  public async authorize (identity: Identity | null, _: unknown, parameters: Parameter[]): Promise<boolean> {
     if (identity === null)
       return false
 

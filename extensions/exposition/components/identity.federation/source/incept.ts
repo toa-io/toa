@@ -1,6 +1,6 @@
 import { decode, exchange, type Ctx } from './lib'
 import type { Request } from '@toa.io/types'
-import type { Context, Entity, TransitInput, Scheme } from './types'
+import type { Context, TransitInput, Scheme } from './types'
 
 export async function effect (input: Input, context: Context): Promise<Output | Error> {
   const ctx: Ctx = {
@@ -11,7 +11,6 @@ export async function effect (input: Input, context: Context): Promise<Output | 
   const claims = input.scheme === 'bearer'
     ? await decode(input.credentials, ctx)
     : await exchange(input.credentials, ctx)
-
 
   if (claims instanceof Error)
     return claims

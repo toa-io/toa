@@ -28,8 +28,7 @@ export class Put extends Directive {
   private readonly discovery: Record<string, Promise<Component>> = {}
   private storage: Component | null = null
 
-  public constructor
-  (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
+  public constructor (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
     super()
 
     schemas.put.validate<Options>(options)
@@ -88,8 +87,7 @@ export class Put extends Directive {
   }
 
   // eslint-disable-next-line max-params
-  private execute
-  (input: Input, storage: string, entry: Entry, parameters: Parameter[]): Readable {
+  private execute (input: Input, storage: string, entry: Entry, parameters: Parameter[]): Readable {
     const stream = new PassThrough({ objectMode: true })
 
     stream.push(entry)

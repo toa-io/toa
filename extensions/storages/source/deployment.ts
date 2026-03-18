@@ -29,7 +29,7 @@ function validate (instances: Instance[], annotation: unknown): asserts annotati
 
   for (const instance of instances) {
     instance.manifest ??= []
-    
+
     contains(instance, annotation)
   }
 }

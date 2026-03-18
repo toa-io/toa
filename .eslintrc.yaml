@@ -1,7 +1,7 @@
 extends:
   - standard-with-typescript
 overrides:
-  - files: ['*.ts']
+  - files: ["*.ts"]
     rules:
       import/no-default-export: error
       newline-before-return: error
@@ -9,9 +9,9 @@ overrides:
         - error
         - blankLine: always
           prev: [block-like, if]
-          next: '*'
+          next: "*"
         - blankLine: always
-          prev: '*'
+          prev: "*"
           next: [block-like, if]
         - blankLine: always
           prev: [const, let]
@@ -21,9 +21,9 @@ overrides:
           next: [const, let]
         - blankLine: always
           prev: [multiline-const, multiline-let]
-          next: '*'
+          next: "*"
         - blankLine: always
-          prev: '*'
+          prev: "*"
           next: [multiline-const, multiline-let]
       function-paren-newline:
         - error
@@ -34,7 +34,7 @@ overrides:
         - error
         - max: 1
       curly: [error, multi]
-      no-trailing-spaces: warn      # prevents IDE
+      no-trailing-spaces: warn # prevents IDE
       no-multiple-empty-lines: warn # from going crazy
       import/order:
         - error
@@ -53,39 +53,39 @@ overrides:
       func-style:
         - error
         - declaration
-      '@typescript-eslint/consistent-type-imports':
+      "@typescript-eslint/consistent-type-imports":
         - error
         - fixStyle: separate-type-imports
-      '@typescript-eslint/member-ordering': error
-      '@typescript-eslint/explicit-member-accessibility': error
-      '@typescript-eslint/no-confusing-void-expression': off
-      '@typescript-eslint/return-await': off
-      '@typescript-eslint/no-dynamic-delete': off
+      "@typescript-eslint/member-ordering": error
+      "@typescript-eslint/explicit-member-accessibility": error
+      "@typescript-eslint/no-confusing-void-expression": off
+      "@typescript-eslint/return-await": off
+      "@typescript-eslint/no-dynamic-delete": off
       no-void: off
       eqeqeq:
         - error
         - always
         - null: always
-      '@typescript-eslint/no-unsafe-argument': warn
-      '@typescript-eslint/no-non-null-assertion': off
-      '@typescript-eslint/non-nullable-type-assertion-style': warn
-      '@typescript-eslint/unbound-method': warn
-      '@typescript-eslint/no-invalid-void-type': off
-      '@typescript-eslint/no-var-requires': off
+      "@typescript-eslint/no-unsafe-argument": warn
+      "@typescript-eslint/no-non-null-assertion": off
+      "@typescript-eslint/non-nullable-type-assertion-style": warn
+      "@typescript-eslint/unbound-method": warn
+      "@typescript-eslint/no-invalid-void-type": off
+      "@typescript-eslint/no-var-requires": off
 
   - files: ["*.test.ts", "**/test/**"]
-    extends: 'plugin:@typescript-eslint/disable-type-checked'
+    extends: "plugin:@typescript-eslint/disable-type-checked"
     env:
       jest: true
-  - files: ['**/features/**/*.ts']
-    extends: 'plugin:@typescript-eslint/disable-type-checked'
+  - files: ["**/features/**/*.ts"]
+    extends: "plugin:@typescript-eslint/disable-type-checked"
     rules:
-      '@typescript-eslint/prefer-nullish-coalescing': 'off'
-      '@typescript-eslint/strict-boolean-expressions': 'off'
+      "@typescript-eslint/prefer-nullish-coalescing": "off"
+      "@typescript-eslint/strict-boolean-expressions": "off"
 parserOptions:
   project: true
 env:
   node: true
 ignorePatterns:
-  - '*.d.ts'
-  - '*.js'
+  - "*.d.ts"
+  - "*.js"

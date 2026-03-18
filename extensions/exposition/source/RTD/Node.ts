@@ -9,8 +9,7 @@ export class Node {
   private readonly protected: boolean
   private routes: Route[]
 
-  public constructor
-  (routes: Route[], methods: Methods, properties: Properties) {
+  public constructor (routes: Route[], methods: Methods, properties: Properties) {
     this.routes = routes
     this.methods = methods
     this.protected = properties.protected

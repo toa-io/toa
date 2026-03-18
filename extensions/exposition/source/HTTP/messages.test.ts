@@ -114,8 +114,7 @@ describe('read', () => {
   })
 })
 
-export function createContext
-(url: string, headers: Record<string, string> = {}, content: string | Buffer = ''):
+export function createContext (url: string, headers: Record<string, string> = {}, content: string | Buffer = ''):
 jest.MockedObject<Context> {
   const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content)
   const stream = Readable.from(buffer)

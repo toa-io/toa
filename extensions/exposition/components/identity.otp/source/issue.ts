@@ -11,15 +11,14 @@ export async function effect (input: Input, context: Context): Promise<Output> {
       entity: {
         authority,
         username,
-        identity,
+        identity
       }
     })
-  
 
   context.logs.debug('Issue OTP', { authority, username, identity, code, lifetime })
 
   await context.stash.set(key, 1, 'EX', lifetime)
-  
+
   return { code }
 }
 

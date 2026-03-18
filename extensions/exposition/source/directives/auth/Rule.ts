@@ -12,8 +12,7 @@ export class Rule implements Directive {
     }
   }
 
-  public async authorize
-  (identity: Identity | null, context: Context, parameters: Parameter[]): Promise<boolean> {
+  public async authorize (identity: Identity | null, context: Context, parameters: Parameter[]): Promise<boolean> {
     for (const directive of this.directives) {
       const authorized = await directive.authorize(identity, context, parameters)
 

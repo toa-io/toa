@@ -28,8 +28,7 @@ export class Octets implements DirectiveFamily<Directive> {
     return new Class(value, this.discovery, remotes)
   }
 
-  public async preflight
-  (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
+  public async preflight (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
     let context: Context | null = null
     let action: Directive | null = null
 

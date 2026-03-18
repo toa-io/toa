@@ -1,11 +1,11 @@
 import assert from 'node:assert'
-import type { Directive } from './types'
 import { ServiceUnavailable } from '../../HTTP'
-import { Output } from '../../io'
 import { cors } from '../cors'
+import type { Output } from '../../io'
+import type { Directive } from './types'
 
 export class Faulty implements Directive {
-  private static warned = false
+  private static readonly warned = false
   private readonly probability: number
 
   public constructor (probability: number) {

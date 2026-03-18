@@ -54,7 +54,7 @@ export class Context {
       this.encoder = formats[mediaType]
   }
 
-  public async body<T> (): Promise<T> {
+  public async body<T>(): Promise<T> {
     let value = await read(this)
 
     for (const transform of this.pipelines.body)

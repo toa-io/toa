@@ -13,8 +13,7 @@ export class Tree {
   private readonly endpoints: EndpointsFactory
   private readonly directives: DirectiveFactory
 
-  public constructor
-  (node: syntax.Node, endpoints: EndpointsFactory, directives: DirectiveFactory) {
+  public constructor (node: syntax.Node, endpoints: EndpointsFactory, directives: DirectiveFactory) {
     this.endpoints = endpoints
     this.directives = directives
     this.trunk = this.createNode(node, PROTECTED)
@@ -43,8 +42,7 @@ export class Tree {
     this.directives.dispose()
   }
 
-  private createNode
-  (node: syntax.Node, protect: boolean, extension?: unknown): Node {
+  private createNode (node: syntax.Node, protect: boolean, extension?: unknown): Node {
     const context: Context = {
       protected: protect,
       endpoints: this.endpoints,

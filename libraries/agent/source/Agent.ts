@@ -88,7 +88,7 @@ export class Agent {
       })
   }
 
-  public mismatch(sample: string, reference: string): string | null {
+  public mismatch (sample: string, reference: string): string | null {
     const lines = trim(reference).split('\n')
 
     for (const line of lines) {
@@ -103,7 +103,7 @@ export class Agent {
     return null
   }
 
-  public responseExcludes (expected: string): void {    
+  public responseExcludes (expected: string): void {
     const lines = trim(expected).split('\n')
 
     for (const line of lines) {

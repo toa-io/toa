@@ -36,5 +36,5 @@ const CORE_EXCEPTIONS = {
   StatePrecondition: 303,
   StateConcurrency: 304,
   EntityGuard: 213,
-  Duplicate: 306,
+  Duplicate: 306
 }

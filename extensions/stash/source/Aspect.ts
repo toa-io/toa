@@ -57,7 +57,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     return buffer === null ? null : decode(buffer)
   }
 
-  private async lock<T> (key: Resources, routine: Routine<T>): Promise<T | null> {
+  private async lock<T>(key: Resources, routine: Routine<T>): Promise<T | null> {
     if (this.redlock === null) return null
 
     if (typeof key === 'string') key = [key]

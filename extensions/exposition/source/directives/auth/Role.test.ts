@@ -93,8 +93,7 @@ it('should return false on mismatch with parameters', async () => {
   expect(result).toBe(false)
 })
 
-async function match
-(expected: string[], actual: string[], parameters: Parameter[] = []): Promise<boolean> {
+async function match (expected: string[], actual: string[], parameters: Parameter[] = []): Promise<boolean> {
   const directive = new Role(expected, discovery)
 
   const identity: Identity = {

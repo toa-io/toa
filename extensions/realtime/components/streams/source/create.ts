@@ -22,26 +22,33 @@ export class Effect implements Operation {
   public async execute (input: Input): Promise<Readable> {
     const key = input.key
 
-    if (!this.streams.has(key))
-      this.createStream(key)
+    let stream: Stream | undefined
 
-    const stream = this.streams.get(key)!
+    if (!this.streams.has(key)) {
+      stream = this.createStream(key)
+
+      this.logs.debug('Stream created', { key })
+    } else {
+      stream = this.streams.get(key)!
+
+      setTimeout(() => stream?.heartbeat(), 1000)
+    }
 
     // return stream.fork()
     return stream
   }
 
-  private createStream (key: string): void {
+  private createStream (key: string): Stream {
     const stream = new Stream(this.logs.fork({ key }))
 
     this.streams.set(key, stream)
 
-    stream.once('close', () => {
+    stream.on('close', () => {
       this.logs.debug('Stream closed', { key })
       this.streams.delete(key)
     })
 
-    this.logs.debug('Stream created', { key })
+    return stream
   }
 }
 
