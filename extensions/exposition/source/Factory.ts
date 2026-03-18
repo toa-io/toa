@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { createHash } from 'node:crypto'
 import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
@@ -26,13 +27,14 @@ export class Factory implements extensions.Factory {
 
   public tenant (locator: Locator, node: syntax.Node, manifest: Manifest): Connector {
     const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
+    const hash = createHash('sha256').update(JSON.stringify(node)).digest('hex')
 
     const branch: Branch = {
       namespace: locator.namespace,
       component: locator.name,
       isolated: locator.namespace === 'identity',
       node,
-      version: manifest.version
+      version: hash
     }
 
     return new Tenant(broadcast, branch)
