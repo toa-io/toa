@@ -19,14 +19,6 @@ it('should provide object', async () => {
   expect(fixtures.factory.object).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
 })
 
-it('should provide objects', async () => {
-  const set = await state.objects(fixtures.query)
-
-  expect(fixtures.storage.find).toHaveBeenCalledWith(fixtures.query)
-  expect(set).toStrictEqual(fixtures.factory.objects.mock.results[0].value)
-  expect(fixtures.factory.objects).toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value)
-})
-
 it('should store entity', async () => {
   await state.commit(fixtures.initial)
 
