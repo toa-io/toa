@@ -56,6 +56,9 @@ export class Query {
       this.fitCriteria(qs.query, parameters)
       this.fitRanges(qs.query)
       this.fitSort(qs.query)
+
+      if (this.query.deleted !== undefined)
+        (qs.query as core.Query).deleted = this.query.deleted
     }
 
     return {

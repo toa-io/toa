@@ -10,6 +10,7 @@ export interface Query {
   sort?: Array<string>
   projection?: Array<string>
   version?: number
+  deleted?: boolean
 }
 
 export interface Request {

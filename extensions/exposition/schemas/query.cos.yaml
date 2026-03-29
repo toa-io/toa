@@ -10,4 +10,5 @@ limit?:
 selectors?: [string]
 projection?: [string]
 parameters?: [string]
+deleted?: boolean
 _: true
