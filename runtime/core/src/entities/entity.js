@@ -61,7 +61,7 @@ class Entity {
       return
 
     for (const guard of this.#guards) {
-      const ok = guard.fit(value)
+      const ok = guard.fit(value, this.#state)
 
       if (ok === false)
         throw new EntityGuardException(guard.name, value)

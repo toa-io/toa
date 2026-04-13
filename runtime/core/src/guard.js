@@ -9,8 +9,8 @@ class Guard {
     this.#bridge = bridge
   }
 
-  fit (state) {
-    return this.#bridge.fit(state)
+  fit (state, origin) {
+    return this.#bridge.fit(state, origin)
   }
 }
 

@@ -9,8 +9,8 @@ class Guard {
     this.#context = context
   }
 
-  fit (state) {
-    return this.#guard.guard(state, this.#context)
+  fit (state, origin) {
+    return this.#guard.guard(state, origin, this.#context)
   }
 }
 
