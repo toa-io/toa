@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.205",
+  "version": "1.0.0-alpha.206",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -19,7 +19,7 @@
   "dependencies": {
     "@aws-sdk/protocol-http": "3.370.0",
     "@simplewebauthn/server": "13.1.1",
-    "@toa.io/core": "1.0.0-alpha.205",
+    "@toa.io/core": "1.0.0-alpha.206",
     "@toa.io/generic": "1.0.0-alpha.173",
     "@toa.io/schemas": "1.0.0-alpha.200",
     "bcryptjs": "2.4.3",
