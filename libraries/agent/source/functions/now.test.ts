@@ -14,6 +14,12 @@ it('should add shift', () => {
   expect(ms).toBeGreaterThanOrEqual(time + 1000)
 })
 
+it('should parse +', () => {
+  const ms = Number.parseInt(now(undefined, '+1000'))
+
+  expect(ms).toBeGreaterThanOrEqual(time + 1000)
+})
+
 it('should parse seconds', () => {
   const ms = Number.parseInt(now(undefined, '1s'))
 
