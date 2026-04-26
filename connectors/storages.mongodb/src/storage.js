@@ -125,10 +125,29 @@ class Storage extends Connector {
     const operations = entities.map((entity) => {
       const record = to(entity)
 
-      if (entity._version === 1)
-        return { insertOne: { document: record } }
-      else
-        return { replaceOne: { filter: { _id: entity.id, _version: entity._version - 1 }, replacement: record } }
+      if (entity._version === 1) {
+        const { _version, ...rest } = record
+
+        return { // upsert in required when document is deleted
+          updateOne: {
+            filter: { _id: entity.id },
+            update: {
+              $set: {    
+                ...rest,
+                _deleted: null
+              },
+              $inc: { _version: 1 },
+            },
+            upsert: true
+          } 
+        }
+      } else
+        return {  
+          replaceOne: { 
+            filter: { _id: entity.id, _version: entity._version - 1 },
+            replacement: record
+          }
+        }
     })
 
     const client = this.#client.instance.client
