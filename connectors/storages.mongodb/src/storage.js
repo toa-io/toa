@@ -107,6 +107,8 @@ class Storage extends Connector {
       else
         return await this.set(entity)
     } catch (error) {
+      console.error('MongoDB error', error)
+
       const retry = await retriable(error, attempt)
 
       if (retry)
@@ -142,6 +144,8 @@ class Storage extends Connector {
 
       return true
     } catch (error) {
+      console.error('MongoDB error', error)
+
       const retry = await retriable(error, attempt)
 
       if (retry)

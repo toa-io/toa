@@ -1,6 +1,5 @@
 'use strict'
 
-const { stat } = require('fs')
 const { StatePreconditionException, StateNotFoundException } = require('./exceptions')
 
 class State {
