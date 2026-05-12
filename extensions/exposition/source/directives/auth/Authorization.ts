@@ -97,6 +97,9 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (identity.scheme === PRIMARY && !identity.refresh)
       return
 
+    if (await this.banned(identity))
+      throw new http.Unauthorized()
+
     // Role directive may have already set the value
     identity.roles ??= await Role.get(identity, this.discovery.roles)
     this.tokens ??= await this.discovery.tokens
