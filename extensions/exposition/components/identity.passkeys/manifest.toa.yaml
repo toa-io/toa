@@ -214,6 +214,7 @@ exposition:
           - pubKeyCredParams
           - allowCredentials
           - excludeCredentials
+        auth:incept: identity
         endpoint: challenge
       /:identity:
         POST:
