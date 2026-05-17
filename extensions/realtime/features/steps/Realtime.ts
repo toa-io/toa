@@ -15,7 +15,7 @@ export class Realtime {
   }
 
   @after()
-  private async shutdown (): Promise<void> {
+  public async shutdown (): Promise<void> {
     this.connected = false
 
     await this.service.disconnect()

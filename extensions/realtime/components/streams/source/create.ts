@@ -1,15 +1,19 @@
 import { type Readable } from 'node:stream'
 import { type Operation } from '@toa.io/types'
 import { type Context } from './lib/types'
-import { Stream } from './lib/Stream'
+import { Stream, Stash } from './lib'
 
 export class Effect implements Operation {
   private readonly streams = new Map<string, Stream>()
+  private stash!: Stash
   private logs: any
 
   public mount (context: Context): void {
     context.state.streams = this.streams
+    context.state.stash = new Stash(context.stash, context.configuration)
+
     this.logs = context.logs
+    this.stash = context.state.stash
   }
 
   public unmount (): void {
@@ -22,25 +26,47 @@ export class Effect implements Operation {
   public async execute (input: Input): Promise<Readable> {
     const key = input.key
 
-    let stream: Stream | undefined
-
     if (!this.streams.has(key)) {
-      stream = this.createStream(key)
+      const stream = this.createStream(key)
 
+      this.streams.set(key, stream)
       this.logs.debug('Stream created', { key })
-    } else
-      stream = this.streams.get(key)!
+    }
 
     // welcome
-    setTimeout(() => stream?.heartbeat(), 1000)
+    setTimeout(() => this.streams.get(key)?.heartbeat(), 1000)
 
-    return stream
+    if (input.token === undefined)
+      void this.stash.connect(key).then((token) => {
+        if (token instanceof Error)
+          this.logs.error('Failed to connect to stash', { key, error: token })
+        else
+          this.streams.get(key)?.push({ event: 'token', data: token })
+      })
+    else
+      void this.stash.pop(key, input.token).then((result) => {
+        if (result instanceof Error)
+          this.logs.error('Failed to pop from stash', { key, error: result })
+        else if (result !== null) {
+          const stream = this.streams.get(key)
+
+          if (stream === undefined)
+            return
+
+          const [token, events] = result
+
+          for (const event of events as Event[])
+            stream.push({ event: event.event, data: event.data })
+
+          stream.push({ event: 'token', data: token })
+        }
+      })
+
+    return this.streams.get(key)!
   }
 
   private createStream (key: string): Stream {
     const stream = new Stream()
-
-    this.streams.set(key, stream)
 
     stream.events.once('destroy', () => {
       this.logs.debug('Stream destroyed', { key })
@@ -53,4 +79,10 @@ export class Effect implements Operation {
 
 interface Input {
   key: string
+  token?: string
+}
+
+interface Event {
+  event: string
+  data: unknown
 }
