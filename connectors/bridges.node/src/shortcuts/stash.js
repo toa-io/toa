@@ -4,7 +4,7 @@ const { underlay } = require('@toa.io/generic')
 
 /** @type {toa.node.shortcut} */
 function stash (context, aspect) {
-  context.stash = underlay(async (segs, args) => {
+  context.stash = underlay((segs, args) => {
     if (segs.length !== 1)
       throw new Error(`Stash aspect call should have 1 segment, [${segs.join(', ')}] given`)
 
