@@ -1,7 +1,6 @@
 'use strict'
 
-const { newid } = require('@toa.io/generic')
-
+const { newid } = require('./newid')
 const { Entity } = require('./entity')
 const { EntitySet } = require('./set')
 const { Changeset } = require('./changeset')

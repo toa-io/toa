@@ -1,7 +1,8 @@
 'use strict'
 
-const { difference, newid } = require('@toa.io/generic')
+const { difference } = require('@toa.io/generic')
 const { EntityContractException, EntityGuardException } = require('../exceptions')
+const { newid } = require('./newid')
 
 class Entity {
   deleted = false

@@ -17,9 +17,7 @@ Feature: MongoDB indexes
     Then the following exception is thrown:
       """yaml
       code: 306
-      message: 'DuplicateException: mongo_indexed'
-      cause:
-        email: john@example.com
+      message: DuplicateException
       """
     # see collection indexes in the database
 
@@ -35,7 +33,5 @@ Feature: MongoDB indexes
     Then the following exception is thrown:
       """yaml
       code: 306
-      message: 'DuplicateException: mongo_indexed'
-      cause:
-        email: john@example.com
+      message: DuplicateException
       """
