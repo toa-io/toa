@@ -29,6 +29,8 @@ Feature: Realtime extension
           variables:
           - name: TOA_REALTIME
             value: W3siZXZlbnQiOiJyZWFsdGltZS5zdHJlYW1lci5jcmVhdGVkIiwicHJvcGVydGllcyI6WyJzdHJlYW1lciJdfSx7ImV2ZW50IjoicmVhbHRpbWUuc3RyZWFtZXIuZGVsZXRlZCIsInByb3BlcnRpZXMiOlsiaWQiLCJzdHJlYW1lciJdfV0=
+          - name: TOA_STASH_REALTIME_STREAMS
+            value: redis://localhost
           components:
             - realtime-streams
       """
