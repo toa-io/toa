@@ -45,21 +45,27 @@ export class Effect implements Operation {
       })
     else
       void this.stash.pop(key, input.token).then((result) => {
-        if (result instanceof Error)
+        if (result === null) return
+
+        if ('code' in result && result.code === 'NO_RESULTS') return
+
+        if (result instanceof Error) {
           this.logs.error('Failed to pop from stash', { key, error: result })
-        else if (result !== null) {
-          const stream = this.streams.get(key)
 
-          if (stream === undefined)
-            return
-
-          const [token, events] = result
-
-          for (const event of events as Event[])
-            stream.push({ event: event.event, data: event.data })
-
-          stream.push({ event: 'token', data: token })
+          return
         }
+
+        const stream = this.streams.get(key)
+
+        if (stream === undefined)
+          return
+
+        const [token, events] = result
+
+        for (const event of events as Event[])
+          stream.push({ event: event.event, data: event.data })
+
+        stream.push({ event: 'token', data: token })
       })
 
     return this.streams.get(key)!
