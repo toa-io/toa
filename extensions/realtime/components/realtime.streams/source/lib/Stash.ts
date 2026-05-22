@@ -3,10 +3,12 @@ import type { Redis } from 'ioredis'
 export class Stash {
   private readonly stash: Redis
   private readonly configuration: Configuration
+  private readonly logs: any
 
-  public constructor (stash: any, configuration: Configuration) {
+  public constructor (stash: any, configuration: Configuration, logs: any) {
     this.stash = stash
     this.configuration = configuration
+    this.logs = logs
   }
 
   public async connect (key: string): Promise<string | Error> {
@@ -43,7 +45,12 @@ export class Stash {
 
       lastStamp = item[0]
 
-      events.push({ event, data: JSON.parse(json) })
+      const data = json === undefined ? undefined : JSON.parse(json)
+
+      if (data === undefined)
+        this.logs.debug('Undefined event payload', { key, event })
+
+      events.push({ event, data })
     }
 
     if (lastStamp === null)

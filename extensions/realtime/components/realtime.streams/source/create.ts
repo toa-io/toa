@@ -10,7 +10,7 @@ export class Effect implements Operation {
 
   public mount (context: Context): void {
     context.state.streams = this.streams
-    context.state.stash = new Stash(context.stash, context.configuration)
+    context.state.stash = new Stash(context.stash, context.configuration, context.logs)
 
     this.logs = context.logs
     this.stash = context.state.stash
