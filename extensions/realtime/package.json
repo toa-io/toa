@@ -25,7 +25,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "transpile": "npx tsc && npx tsc -p ./components/streams",
+    "transpile": "npx tsc && npx tsc -p ./components/realtime.streams",
     "features": "npx cucumber-js"
   }
 }
