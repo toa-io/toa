@@ -24,3 +24,8 @@ operations:
   echo:
     input:
       type: object
+  unwrap:
+    input:
+      type: object
+      properties:
+        buf: string
