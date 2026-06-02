@@ -17,5 +17,5 @@ export interface Format {
   readonly multipart: string
 
   encode: (value: any) => Buffer
-  decode: (buffer: Buffer) => any
+  decode: (buffer: Buffer, charset?: string) => any
 }

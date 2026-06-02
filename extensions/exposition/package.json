@@ -23,6 +23,7 @@
     "@toa.io/generic": "1.0.0-alpha.208",
     "@toa.io/schemas": "1.0.0-alpha.208",
     "bcryptjs": "2.4.3",
+    "content-type": "1.0.5",
     "error-value": "0.4.2",
     "jose": "5.10.0",
     "js-yaml": "4.1.1",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@toa.io/extensions.storages": "*",
     "@types/bcryptjs": "2.4.6",
+    "@types/content-type": "1.1.9",
     "@types/cors": "2.8.19",
     "@types/negotiator": "0.6.4",
     "jest-esbuild": "0.4.0"

@@ -57,6 +57,17 @@ describe('read', () => {
     expect(output).toStrictEqual(input)
   })
 
+  it('should parse application/json with charset parameter', async () => {
+    const path = generate()
+    const headers = { 'content-type': 'application/json; charset=utf-8' }
+    const input = { [generate()]: generate() }
+    const json = JSON.stringify(input)
+    const context = createContext(path, headers, json)
+    const output = await read(context)
+
+    expect(output).toStrictEqual(input)
+  })
+
   it('should throw on unsupported request media type', async () => {
     const path = generate()
     const headers = { 'content-type': 'wtf/' + generate() }

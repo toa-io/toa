@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream'
+import contentType from 'content-type'
 import { console } from 'openspan'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
@@ -38,10 +39,12 @@ export async function write (context: Context, response: http.ServerResponse, me
 }
 
 export async function read (context: Context): Promise<any> {
-  const type = context.request.headers['content-type']
+  const header = context.request.headers['content-type']
 
-  if (type === undefined)
+  if (header === undefined)
     return undefined
+
+  const { type, parameters } = contentType.parse(header)
 
   if (!(type in formats))
     throw new UnsupportedMediaType()
@@ -50,7 +53,7 @@ export async function read (context: Context): Promise<any> {
   const buf = await context.buffer()
 
   try {
-    return format.decode(buf)
+    return format.decode(buf, parameters.charset)
   } catch (error: unknown) {
     console.debug('Failed to decode message', {
       path: context.url.pathname,

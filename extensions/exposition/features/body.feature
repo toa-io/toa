@@ -47,3 +47,30 @@ Feature: Request body
       | operation |
       | compute   |
       | affect    |
+
+  Scenario: JSON body with charset in content-type
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST:
+            endpoint: echo
+      """
+    When the following request is received:
+      """
+      POST /echo/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      content-type: application/json; charset=utf-8
+
+      {"foo":"bar"}
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: application/json
+      vary: accept
+
+      {"foo":"bar"}
+      """
