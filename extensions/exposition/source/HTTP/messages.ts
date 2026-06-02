@@ -1,5 +1,4 @@
 import { Readable } from 'node:stream'
-import { buffer } from 'node:stream/consumers'
 import { console } from 'openspan'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
@@ -48,7 +47,7 @@ export async function read (context: Context): Promise<any> {
     throw new UnsupportedMediaType()
 
   const format = formats[type]
-  const buf = await context.timing.capture('buffer', buffer(context.request))
+  const buf = await context.buffer()
 
   try {
     return format.decode(buf)

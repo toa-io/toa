@@ -6,6 +6,7 @@ import { Languages } from './Languages'
 import { Language } from './Language'
 import { Segments } from './Segments'
 import { Authority } from './Authority'
+import { BufferMapping } from './Buffer'
 import { Claims } from './Claims'
 import type { Directive } from './Directive'
 import type { Properties } from './Properties'
@@ -53,6 +54,7 @@ type PV = Properties[PN]
 
 const mappings: Record<string, new (value: any, remotes: Remotes) => Directive> = {
   authority: Authority,
+  buffer: BufferMapping,
   headers: Headers,
   languages: Languages,
   language: Language,

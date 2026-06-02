@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import { buffer } from 'node:stream/consumers'
 import Negotiator from 'negotiator'
 import { console } from 'openspan'
 import { Timing } from './Timing'
@@ -21,6 +22,8 @@ export class Context {
     body: [],
     response: []
   }
+
+  private consumed = false
 
   public constructor (authority: string, request: IncomingMessage, properties: Properties) {
     this.authority = authority
@@ -54,8 +57,14 @@ export class Context {
       this.encoder = formats[mediaType]
   }
 
+  public async buffer (): Promise<Buffer> {
+    this.consumed = true
+
+    return await buffer(this.request)
+  }
+
   public async body<T>(): Promise<T> {
-    let value = await read(this)
+    let value = this.consumed ? null : await read(this)
 
     for (const transform of this.pipelines.body)
       value = await transform(value)

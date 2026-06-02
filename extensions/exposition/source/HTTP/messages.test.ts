@@ -116,8 +116,9 @@ describe('read', () => {
 
 export function createContext (url: string, headers: Record<string, string> = {}, content: string | Buffer = ''):
 jest.MockedObject<Context> {
-  const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content)
-  const stream = Readable.from(buffer)
+  const data = Buffer.isBuffer(content) ? content : Buffer.from(content)
+  const stream = Readable.from(data)
+  let consumed = false
 
   const mock: Partial<Context> = {
     request: Object.assign(stream, {
@@ -125,7 +126,15 @@ jest.MockedObject<Context> {
       headers
     }) as unknown as Context['request'],
     url: new URL(url, 'https://host.local'),
-    timing: new Timing(false)
+    timing: new Timing(false),
+    buffer: async () => {
+      if (consumed)
+        throw new Error('Request body already consumed')
+
+      consumed = true
+
+      return data
+    }
   }
 
   return mock as unknown as jest.MockedObject<Context>
