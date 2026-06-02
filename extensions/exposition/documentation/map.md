@@ -15,6 +15,7 @@ exposition:
       map:language: lang      # requested language
       map:headers: # raw header values
         token: x-access-token
+      map:buffer: body # unparsed request body
       map:segments: # route parameters
         group: group
       map:claims: # Bearer token claims
@@ -55,6 +56,24 @@ of the [CORS](protocol.md#cors).
 
 [Multiple header fields](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2) are combined
 as a comma-separated list.
+
+## Raw body
+
+The `map:buffer` directive maps the unparsed request body to an operation call input property.
+The directive value is the name of the input property.
+
+```yaml
+/webhook:
+  POST:
+    map:buffer: body
+    map:headers:
+      signature: x-signature
+    endpoint: verify
+```
+
+The body is read from the request stream as raw bytes and delivered as a UTF-8 string.
+
+Body parsing is bypassed, so the route does not depend on a supported `Content-Type` or format decoding. The request stream is consumed; a route with `map:buffer` cannot also receive a parsed body from the same request.
 
 ## Route parameters
 

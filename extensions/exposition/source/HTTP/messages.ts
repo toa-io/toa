@@ -53,12 +53,10 @@ export async function read (context: Context): Promise<any> {
   try {
     return format.decode(buf)
   } catch (error: unknown) {
-    const entry: Record<string, unknown> = { path: context.url.pathname, error: error?.toString?.() }
-
-    if (context.debug)
-      entry.input = buf.toString('utf-8')
-
-    console.debug('Failed to decode message', entry)
+    console.debug('Failed to decode message', {
+      path: context.url.pathname,
+      error: error?.toString?.()
+    })
 
     throw new BadRequest()
   }
