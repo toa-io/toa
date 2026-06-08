@@ -10,7 +10,7 @@ entity:
     type: object
     properties: &properties
       authority: { type: string }
-      username: { type: string }
+      username: { type: string, minLength: 1, maxLength: 256 }
       identity: *id
     required: [authority, username]
   index:
@@ -25,9 +25,10 @@ operations:
         <<: *properties
         identity: *id
         lifetime: &lifetime
+          description: OTP expiration time in seconds
           type: number
           minimum: 1
-          maximum: 36000 # 10 hours
+          maximum: 3600
       required: [authority, username]
   authenticate:
     input:
@@ -49,7 +50,20 @@ configuration:
   schema:
     properties:
       lifetime:
+        description: OTP expiration time in seconds
         <<: *lifetime
         default: 300
 
 stash: ~
+
+exposition:
+  /:identity:
+    auth:id: identity
+    auth:role: system:identity:otp
+    POST:
+      io:input: []
+      io:output: [code]
+      map:authority: authority
+      map:segments:
+        username: identity
+      endpoint: issue

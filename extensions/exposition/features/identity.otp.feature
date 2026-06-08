@@ -69,3 +69,33 @@ Feature: OTP authentication
       """
       401 Unauthorized
       """
+
+  Scenario: Generate own OTP
+    Given transient identity bob
+    When the following request is received:
+      """
+      POST /identity/otp/${{ bob.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ bob.token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      code: '${{ bob.code }}'
+      """
+
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: OTP #{{ otp bob }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ bob.id }}
+      """

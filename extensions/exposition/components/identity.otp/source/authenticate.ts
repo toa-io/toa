@@ -27,7 +27,7 @@ export async function effect (input: Input, context: Context): Promise<Output | 
   if (entry === null)
     return ERR_NOT_FOUND
 
-  const id = entry.identity ?? entry.id
+  const id = entry.identity ?? entry.id // identity inception
 
   return { identity: { id } }
 }

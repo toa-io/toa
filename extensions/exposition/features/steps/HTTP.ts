@@ -23,6 +23,7 @@ export class HTTP extends http.Agent {
   @when('the following request is received:')
   public override async request (input: string): Promise<any> {
     await this.gateway.start()
+
     this.fetched = await super.request(input)
   }
 
