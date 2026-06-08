@@ -101,7 +101,7 @@ Dynamic routes are managed by the `realtime.routes` component, running in the Re
 
 ## Exposition
 
-Streams are exposed by the [`realtime.streams`](components/streams) component, running in the
+Streams are exposed by the [`realtime.streams`](components/realtime.streams) component, running in the
 Realtime extension, and are
 accessible via the `/realtime/streams/:key/` resource with
 the [`auth:id: key`](/extensions/exposition/documentation/access.md#id) authorization rule.
