@@ -260,11 +260,10 @@ interface RequestErrorAttributes {
  * an empty stream.
  */
 process.on('uncaughtException', (err: unknown) => {
-  if ((err as { code?: string }).code === 'ECONNRESET') {
-    console.warn('ECONNRESET')
+  const code = (err as { code?: string }).code
 
-    return
-  }
-
-  throw err
+  if (code === 'ECONNRESET' || code === 'EPIPE')
+    console.warn('Connection reset by peer', code)
+  else
+    throw err
 })
