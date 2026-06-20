@@ -26,7 +26,7 @@
   "dependencies": {
     "@toa.io/filesystem": "1.0.0-alpha.208",
     "@toa.io/generic": "1.0.0-alpha.208",
-    "js-yaml": "4.1.1"
+    "js-yaml": "4.2.0"
   },
   "devDependencies": {
     "@types/js-yaml": "4.0.5"
