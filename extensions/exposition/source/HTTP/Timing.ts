@@ -10,7 +10,7 @@ export class Timing {
     this.skip = !enabled
   }
 
-  public async capture<T> (id: string, promise: Promise<T>): Promise<T> {
+  public async capture<T>(id: string, promise: Promise<T>): Promise<T> {
     if (this.skip)
       return promise
 

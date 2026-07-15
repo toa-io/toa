@@ -149,7 +149,9 @@ export class Gateway extends Connector {
 
       console.info('Branch merged', attributes)
     } catch (exception: unknown) {
-      console.error('Branch merge exception', { exception, ...attributes })
+      const message = exception instanceof Error ? exception.message : 'Unknown error'
+
+      console.error('Branch merge exception', { message, ...attributes })
     }
   }
 }

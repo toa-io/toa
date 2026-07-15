@@ -29,6 +29,13 @@ const builder = (yargs) => {
       type: 'boolean',
       default: false
     })
+    .option('dev', {
+      alias: 'd',
+      group: 'Command options:',
+      describe: 'Fill secrets with local/dev defaults',
+      type: 'boolean',
+      default: false
+    })
 }
 
 exports.command = 'env [environment]'

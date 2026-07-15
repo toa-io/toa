@@ -11,6 +11,7 @@ async function algorithm (bridge, path, endpoint, context) {
 
 const event = (bridge, path, label, context) => resolve(bridge).event(path, label, context)
 const receiver = (bridge, path, label) => resolve(bridge).receiver(path, label)
+const guard = (bridge, path, label, context) => resolve(bridge).guard(path, label, context)
 
 const factories = {}
 
@@ -27,3 +28,4 @@ const resolve = (bridge) => {
 exports.algorithm = algorithm
 exports.event = event
 exports.receiver = receiver
+exports.guard = guard

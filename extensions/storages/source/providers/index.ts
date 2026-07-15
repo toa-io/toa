@@ -19,3 +19,4 @@ export type { S3Options } from './S3'
 export type { CloudinaryOptions } from './Cloudinary'
 export type { FileSystemOptions } from './FileSystem'
 export type { TemporaryOptions } from './Temporary'
+export type { FileSystem, S3, Cloudinary, Temporary }

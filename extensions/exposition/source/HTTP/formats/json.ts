@@ -1,8 +1,8 @@
 export const type = 'application/json'
 export const multipart = 'multipart/json'
 
-export function decode (buffer: Buffer): any {
-  const text = buffer.toString()
+export function decode (buffer: Buffer, charset = 'utf-8'): any {
+  const text = buffer.toString(charset as BufferEncoding)
 
   return JSON.parse(text)
 }

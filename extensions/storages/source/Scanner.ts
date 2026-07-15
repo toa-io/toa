@@ -28,8 +28,7 @@ export class Scanner extends PassThrough {
     return this.hash.digest('hex')
   }
 
-  public override _transform
-  (buffer: Buffer, encoding: BufferEncoding, callback: TransformCallback): void {
+  public override _transform (buffer: Buffer, encoding: BufferEncoding, callback: TransformCallback): void {
     super._transform(buffer, encoding, callback)
 
     this.process(buffer)

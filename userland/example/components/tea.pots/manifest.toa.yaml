@@ -4,7 +4,7 @@ namespace: tea
 entity:
   storage: mongodb
   schema:
-    material*: [ glass, ceramic, steel ]
+    material*: [glass, ceramic, steel]
     volume: number
     booked: false
 
@@ -25,4 +25,9 @@ receivers:
     binding: amqp # avoid discovery
 
 configuration:
-  step: 0.5
+  schema:
+    type: object
+    properties:
+      step:
+        type: number
+        default: 0.5

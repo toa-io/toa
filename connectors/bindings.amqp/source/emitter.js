@@ -1,6 +1,7 @@
 'use strict'
 
 const { Connector } = require('@toa.io/core')
+const { console } = require('openspan')
 
 const { name } = require('./queues')
 
@@ -24,6 +25,8 @@ class Emitter extends Connector {
   }
 
   async emit (message) {
+    console.debug('Emitting AMQP event', { exchange: this.#exchange, message })
+
     await this.#comm.emit(this.#exchange, message, PROPERTIES)
   }
 }

@@ -17,7 +17,8 @@ const component = async (manifest) => {
 
   if (manifest.entity !== undefined) {
     const schema = schemas.schema(manifest.entity.schema)
-    const entity = new entities.Factory(schema)
+    const guards = await boot.guards(manifest, context)
+    const entity = new entities.Factory(schema, guards)
 
     state = new State(storage, entity, emission, manifest.entity.associated)
   }

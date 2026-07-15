@@ -40,8 +40,10 @@ class State {
 
   async objects (query) {
     const recordset = await this.storage.find(query)
-
-    return this.#entities.objects(recordset)
+    const missing = this.#associated && query.ids !== undefined && recordset.length < query.ids.length
+    const init = missing ? query.ids.filter((id) => !recordset.some((record) => record.id === id)) : undefined
+    
+    return this.#entities.objects(recordset, init)
   }
 
   async stream (query) {
@@ -77,14 +79,31 @@ class State {
   }
 
   async commit (state, input) {
-    const object = state.get()
-    const ok = await this.storage.store(object)
+    if (state.constructor.name === 'EntitySet') 
+      return this.massCommit(state, input)
+
+    const data = state.get()
+    const ok = await this.storage.store(data)
 
     // #20
     if (ok === true) {
       const event = state.event(input)
 
       await this.#emission.emit(event)
+    }
+
+    return ok
+  }
+
+  async massCommit (state, input) {
+    const data = state.get()
+    const ok = await this.storage.massStore(data)
+
+    // #20
+    if (ok === true) {
+      const events = state.events(input)
+
+      await Promise.all(events.map((event) => this.#emission.emit(event)))
     }
 
     return ok

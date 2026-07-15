@@ -13,8 +13,6 @@ class Storage extends Connector {
   #collection
   #entity
 
-  #logs
-
   constructor (client, entity) {
     super()
 
@@ -22,8 +20,6 @@ class Storage extends Connector {
     this.#entity = entity
 
     this.depends(client)
-
-    this.#logs = console.fork({ collection: client.name })
   }
 
   get raw () {
@@ -49,7 +45,8 @@ class Storage extends Connector {
   async find (query) {
     const { criteria, options, sample } = translate(query)
 
-    criteria._deleted = null
+    if (query?.options?.deleted !== true)
+      criteria._deleted = null
 
     let cursor
 
@@ -110,25 +107,70 @@ class Storage extends Connector {
       else
         return await this.set(entity)
     } catch (error) {
-      if (error.code === ERR_DUPLICATE_KEY) {
-        const id = error.keyPattern === undefined
-          ? error.message.includes(' index: _id_ ') // AWS DocumentDB
-          : error.keyPattern._id === 1
+      console.error('MongoDB error', error)
 
-        if (id)
-          return false
-        else
-          throw new exceptions.DuplicateException(this.#client.name, entity)
-      } else if (error.cause?.code === 'ECONNREFUSED') {
-        // This is temporary and should be replaced with a class decorator.
-        if (attempt > 10)
-          throw error
+      const retry = await retriable(error, attempt)
 
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+      if (retry)
+        return await this.store(entity, attempt + 1)
+      else
+        return false
+    }
+  }
 
-        return this.store(entity)
+  async massStore (entities, attempt = 0) {
+    if (entities.length === 0)
+      return true
+
+    const operations = entities.map((entity) => {
+      const record = to(entity)
+
+      if (entity._version === 1) {
+        const { _version, ...rest } = record
+
+        return { // upsert in required when document is deleted
+          updateOne: {
+            filter: { _id: entity.id },
+            update: {
+              $set: {    
+                ...rest,
+                _deleted: null
+              },
+              $inc: { _version: 1 },
+            },
+            upsert: true
+          } 
+        }
       } else
-        throw error
+        return {  
+          replaceOne: { 
+            filter: { _id: entity.id, _version: entity._version - 1 },
+            replacement: record
+          }
+        }
+    })
+
+    const client = this.#client.instance.client
+
+    try {
+      await client.withSession(async (session) => {
+        await session.withTransaction(async () => {
+          this.debug('bulkWrite', { operations: operations.length })
+
+          await this.#collection.bulkWrite(operations, { session })
+        })
+      })
+
+      return true
+    } catch (error) {
+      console.error('MongoDB error', error)
+
+      const retry = await retriable(error, attempt)
+
+      if (retry)
+        return await this.massStore(entities, attempt + 1)
+      else
+        return false
     }
   }
 
@@ -165,14 +207,21 @@ class Storage extends Connector {
     options.upsert = true
     options.returnDocument = ReturnDocument.AFTER
 
-    this.#logs.debug('Database query', { method: 'findOneAndUpdate', criteria, update, options })
+    console.debug('Database query', { collection: this.#collection.collectionName, method: 'findOneAndUpdate', criteria, update, options })
 
-    const result = await this.#collection.findOneAndUpdate(criteria, update, options)
+    try {
+      const result = await this.#collection.findOneAndUpdate(criteria, update, options)
 
-    if (result._deleted !== undefined && result._deleted !== null)
-      return null
-    else
-      return from(result)
+      if (result._deleted !== undefined && result._deleted !== null)
+        return null
+      else
+        return from(result)
+    } catch (error) {
+      if (error.code === ERR_DUPLICATE_KEY)
+        throw new exceptions.DuplicateException(this.#client.name)
+      else
+        throw error
+    }
   }
 
   async index () {
@@ -199,7 +248,7 @@ class Storage extends Connector {
         console.info('Creating index', { fields, options })
 
         await this.#collection.createIndex(fields, options)
-          .catch((e) => this.#logs.warn('Index creation failed', { name, fields, error: e }))
+          .catch((e) => console.warn('MongoDB index creation failed', { collection: this.#collection.collectionName, name, fields, error: e }))
 
         indexes.push(name)
       }
@@ -224,7 +273,8 @@ class Storage extends Connector {
     console.info('Creating unique index', { name, fields, options })
 
     await this.#collection.createIndex(fields, options)
-      .catch((e) => this.#logs.warn('Unique index creation failed', { name, fields, error: e }))
+      .catch((e) => console.warn('MongoDB unique index creation failed', 
+        { collection: this.#collection.collectionName, name, fields, error: e }))
 
     return name
   }
@@ -234,7 +284,7 @@ class Storage extends Connector {
     const obsolete = current.filter((name) => !desired.includes(name))
 
     if (obsolete.length > 0) {
-      this.#logs.info('Removing obsolete indexes', { indexes: obsolete.join(', ') })
+      console.info('Removing obsolete indexes', { collection: this.#collection.collectionName, indexes: obsolete.join(', ') })
 
       await Promise.all(obsolete.map((name) => this.#collection.dropIndex(name)))
     }
@@ -265,7 +315,8 @@ class Storage extends Connector {
   }
 
   debug (method, attributes) {
-    this.#logs.debug('Database query', {
+    console.debug('MongoDB query', {
+      collection: this.#collection.collectionName,
       method,
       ...attributes
     })
@@ -297,5 +348,30 @@ const INDEX_TYPES = {
 }
 
 const ERR_DUPLICATE_KEY = 11000
+
+async function retriable (error, attempt) {
+  if (error.code === ERR_DUPLICATE_KEY) {
+    const id = error.keyPattern === undefined
+      ? error.message.includes(' index: _id_ ') // AWS DocumentDB
+      : error.keyPattern._id === 1
+
+    if (id)
+      return false
+    else
+      throw new exceptions.DuplicateException()
+  } else if (error.cause?.code === 'ECONNREFUSED') {
+    if (attempt === LAST_ATTEMPT)
+      throw error
+
+    const timeout = 1000 + 500 * attempt
+
+    await new Promise((resolve) => setTimeout(resolve, timeout))
+
+    return true
+  } else
+    throw error
+}
+
+const LAST_ATTEMPT = 9
 
 exports.Storage = Storage

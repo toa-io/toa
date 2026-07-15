@@ -205,7 +205,15 @@ exposition:
       auth:anonymous: true
       POST:
         map:authority: authority
-        io:output: &challenge [identity, challenge, timeout, userVerification, authenticatorSelection, pubKeyCredParams, allowCredentials, excludeCredentials]
+        io:output: &challenge
+          - identity
+          - challenge
+          - timeout
+          - userVerification
+          - authenticatorSelection
+          - pubKeyCredParams
+          - allowCredentials
+          - excludeCredentials
         auth:incept: identity
         endpoint: challenge
       /:identity:

@@ -10,8 +10,7 @@ export class Input implements Directive {
     this.statements = declarations.map((declaration) => new Statement(declaration, create))
   }
 
-  public async authorize
-  (identity: Identity | null, context: Context, parameters: Parameter[]): Promise<boolean> {
+  public async authorize (identity: Identity | null, context: Context, parameters: Parameter[]): Promise<boolean> {
     context.pipelines.body.push(async (body) => this.check(identity, context, parameters, body))
 
     return false

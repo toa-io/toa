@@ -6,8 +6,7 @@ import * as yaml from '@toa.io/yaml'
 export class Workspace {
   private root: string = devNull
 
-  public static exists
-  (_0: unknown, _1: unknown, descriptor: PropertyDescriptor): PropertyDescriptor {
+  public static exists (_0: unknown, _1: unknown, descriptor: PropertyDescriptor): PropertyDescriptor {
     const method = descriptor.value
 
     descriptor.value = async function (this: Workspace, ...args: any[]): Promise<any> {

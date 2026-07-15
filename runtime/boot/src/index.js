@@ -14,6 +14,7 @@ const { operation } = require('./operation')
 const { receivers, receive } = require('./receivers')
 const { remote } = require('./remote')
 const { storage } = require('./storage')
+const { guards } = require('./guards')
 
 exports.bindings = require('./bindings')
 exports.bridge = require('./bridge')
@@ -34,3 +35,4 @@ exports.receivers = receivers
 exports.receive = receive
 exports.remote = remote
 exports.storage = storage
+exports.guards = guards

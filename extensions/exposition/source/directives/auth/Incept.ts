@@ -5,12 +5,14 @@ import { split } from './split'
 import { create } from './create'
 import { PROVIDERS, INCEPTION } from './schemes'
 import { Role } from './Role'
+import type { Component } from '@toa.io/core'
 import type { Maybe } from '@toa.io/types'
-import type { Directive, Discovery, Identity, Context, Schemes } from './types'
+import type { Directive, Discovery, Identity, Context, Schemes, Ban } from './types'
 
 export class Incept implements Directive {
   private static readonly schemes: Schemes = {} as unknown as Schemes
   private static discovery: Discovery
+  private static bans: Component | null = null
 
   private readonly property: string | null
 
@@ -30,6 +32,13 @@ export class Incept implements Directive {
       throw new http.BadRequest('Authentication scheme is not supported')
 
     if (!INCEPTION.includes(provider))
+      throw new http.Unauthorized()
+
+    Incept.bans ??= await Incept.discovery.bans
+
+    const ban = await Incept.bans.invoke<Ban>('observe', { query: { id } })
+
+    if (ban.banned)
       throw new http.Unauthorized()
 
     Incept.schemes[scheme] ??= await Incept.discovery[provider]

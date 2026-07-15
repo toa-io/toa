@@ -1,4 +1,4 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+#!/usr/bin/env sh
 
-npx commitlint --edit $1
+# Prefer local binary — GUI git PATH may miss npx (stale nvm entry).
+node_modules/.bin/commitlint --edit "$1"

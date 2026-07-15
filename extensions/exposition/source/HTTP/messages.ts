@@ -1,5 +1,5 @@
 import { Readable } from 'node:stream'
-import { buffer } from 'node:stream/consumers'
+import contentType from 'content-type'
 import { console } from 'openspan'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
@@ -12,8 +12,7 @@ const server = `Exposition/${require('../../package.json').version}` +
 
 const pending = new Map<string, PendingStream>()
 
-export async function write
-(context: Context, response: http.ServerResponse, message: OutgoingMessage): Promise<void> {
+export async function write (context: Context, response: http.ServerResponse, message: OutgoingMessage): Promise<void> {
   for (const transform of context.pipelines.response)
     await transform(message)
 
@@ -40,33 +39,32 @@ export async function write
 }
 
 export async function read (context: Context): Promise<any> {
-  const type = context.request.headers['content-type']
+  const header = context.request.headers['content-type']
 
-  if (type === undefined)
+  if (header === undefined)
     return undefined
+
+  const { type, parameters } = contentType.parse(header)
 
   if (!(type in formats))
     throw new UnsupportedMediaType()
 
   const format = formats[type]
-  const buf = await context.timing.capture('buffer', buffer(context.request))
+  const buf = await context.buffer()
 
   try {
-    return format.decode(buf)
+    return format.decode(buf, parameters.charset)
   } catch (error: unknown) {
-    const entry: Record<string, unknown> = { path: context.url.pathname, error: error?.toString?.() }
-
-    if (context.debug)
-      entry.input = buf.toString('utf-8')
-
-    console.debug('Failed to decode message', entry)
+    console.debug('Failed to decode message', {
+      path: context.url.pathname,
+      error: error?.toString?.()
+    })
 
     throw new BadRequest()
   }
 }
 
-function send
-(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+function send (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (message.body === undefined || message.body === null) {
     response.setHeader('content-length', '0')
     response.end()
@@ -86,8 +84,7 @@ function send
     .end(buf)
 }
 
-function stream
-(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+function stream (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
@@ -104,8 +101,7 @@ function stream
     debugStream(context, response)
 }
 
-export function multipart
-(message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+export function multipart (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (context.encoder === null)
     throw new NotAcceptable()
 
@@ -165,8 +161,7 @@ function debugStream (context: Context, response: http.ServerResponse): void {
 
   if (pendingInterval === null)
     pendingInterval = setInterval(() =>
-      console.debug('Pending streams',
-        Array.from(pending.values()).map(({ method, path }) => (`${method} ${path}`))),
+      console.debug('Pending streams', { size: pending.size }),
     PENDING_DEBUG_INTERVAL)
 }
 

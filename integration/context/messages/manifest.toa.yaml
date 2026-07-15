@@ -58,4 +58,9 @@ operations:
       text: .
 
 configuration:
-  price: 1
+  schema:
+    type: object
+    properties:
+      price:
+        type: integer
+        default: 1

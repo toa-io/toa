@@ -54,3 +54,34 @@ Feature: Dev
 
       "Invalid sleep duration"
       """
+
+  Scenario: Faulty mode
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        anonymous: true
+        dev:faulty: 1
+        GET:
+          dev:stub: hello
+      """
+    # CORS permission
+    When the following request is received:
+      """
+      OPTIONS / HTTP/1.1
+      origin: http://example.com
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      access-control-allow-headers: accept, authorization, content-type, if-match, if-none-match, faulty
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      faulty: 1
+      """
+    Then the following reply is sent:
+      """
+      503 Service Unavailable
+      """

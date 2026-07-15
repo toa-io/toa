@@ -52,7 +52,8 @@ Export environment to a `.env` file.
 <code>environment</code> deployment environment name (default <code>local</code>).<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
 <code>--as</code> output file path (default <code>.env</code>)<br/>
-<code>--interactive</code> prompt for secret values
+<code>--interactive</code> prompt for secret values<br/>
+<code>--dev</code> / <code>-d</code> fill secrets with local/dev defaults; unresolved secrets throw unless <code>--interactive</code> is also set
 </dd>
 </dl>
 

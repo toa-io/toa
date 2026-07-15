@@ -6,7 +6,8 @@ const bridge = async (root, manifest) => {
   await Promise.all([
     define(root, manifest, 'operations'),
     define(root, manifest, 'events'),
-    define(root, manifest, 'receivers')
+    define(root, manifest, 'receivers'),
+    define(root, manifest, 'guards')
   ])
 }
 
@@ -19,7 +20,7 @@ const define = async (root, manifest, property) => {
       if (item.bridge === undefined || item.bridge === manifest.bridge) continue // default bridge later
 
       const bridge = item.bridge || manifest.bridge
-      const { define } = require(bridge)
+      const define = req(bridge).define
       const definition = await define[singular](root, endpoint)
 
       merge(item, definition)
@@ -55,8 +56,16 @@ const define = async (root, manifest, property) => {
   }
 }
 
+const cache = {}
+
+function req(mod) {
+  cache[mod] ??= require(mod)
+
+  return cache[mod]
+}
+
 const scan = async (bridge, root, property) => {
-  const { define } = require(bridge)
+  const define = req(bridge).define
 
   if (property in define)
     return define[property](root)

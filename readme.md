@@ -26,8 +26,9 @@ Non-scattered documentation is coming some time later.
   - Messages validation
 - Persistent state management
   - Concurrency control
-  - Batching
   - Data validation
+  - Multi-document transactions
+  - Invariants (guards)
   - Built-in implementations
     - MongoDB
     - SQL ([Knex](https://knexjs.org))

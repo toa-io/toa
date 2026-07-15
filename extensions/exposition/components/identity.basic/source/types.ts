@@ -17,8 +17,8 @@ export interface Context {
     readonly rounds: number
     readonly pepper: string
     readonly principal?: string
-    readonly username: string | string[]
-    readonly password: string | string[]
+    readonly username: string[]
+    readonly password: string[]
   }
 }
 
@@ -34,7 +34,14 @@ export interface TransitInput {
   authority: string
   username?: string
   password?: string
-  id?: string
+  inception?: boolean
+}
+
+export interface AddInput {
+  id: string
+  authority: string
+  username: string
+  password: string
 }
 
 export interface IdOutput {

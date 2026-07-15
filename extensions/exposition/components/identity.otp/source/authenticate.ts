@@ -17,17 +17,19 @@ export async function effect (input: Input, context: Context): Promise<Output | 
     return ERR_EXPIRED
   }
 
-  const identity = await context.local.ensure({
+  const entry = await context.local.ensure({
     entity: {
       authority,
       username
     }
   })
 
-  if (identity === null)
+  if (entry === null)
     return ERR_NOT_FOUND
 
-  return { identity: { id: identity.id } }
+  const id = entry.identity ?? entry.id // identity inception
+
+  return { identity: { id } }
 }
 
 const ERR_INVALID_CREDENTIALS = new Err('INVALID_CREDENTIALS')

@@ -2,10 +2,16 @@ namespace: identity
 name: otp
 
 entity:
-  schema: &entity
-    properties:
+  schema:
+    definitions:
+      id: &id
+        type: string
+        pattern: ^[0-9a-f]{32}$
+    type: object
+    properties: &properties
       authority: { type: string }
-      username: { type: string }
+      username: { type: string, minLength: 1, maxLength: 256 }
+      identity: *id
     required: [authority, username]
   index:
     username:
@@ -14,7 +20,16 @@ entity:
 
 operations:
   issue:
-    input: *entity
+    input:
+      properties:
+        <<: *properties
+        identity: *id
+        lifetime: &lifetime
+          description: OTP expiration time in seconds
+          type: number
+          minimum: 1
+          maximum: 3600
+      required: [authority, username]
   authenticate:
     input:
       properties:
@@ -34,6 +49,21 @@ operations:
 configuration:
   schema:
     properties:
-      lifetime: { type: number, default: 60 }
+      lifetime:
+        description: OTP expiration time in seconds
+        <<: *lifetime
+        default: 300
 
 stash: ~
+
+exposition:
+  /:identity:
+    auth:id: identity
+    auth:role: system:identity:otp
+    POST:
+      io:input: []
+      io:output: [code]
+      map:authority: authority
+      map:segments:
+        username: identity
+      endpoint: issue

@@ -166,7 +166,7 @@ export class Server extends Connector {
             message.body =
               exception instanceof Exception
                 ? exception.body
-                : exception.stack ?? exception.message
+                : (this.properties.debug && exception.stack) ?? exception.message
 
           await write(context, response, message)
         }
@@ -253,3 +253,17 @@ interface RequestErrorAttributes {
   code?: string
   stack?: string
 }
+
+/**
+ * I'm too fucking dumb to figure out how to handle this in a better way.
+ * It can be reproduced by calling `response.destroy()` on the client side while reading
+ * an empty stream.
+ */
+process.on('uncaughtException', (err: unknown) => {
+  const code = (err as { code?: string }).code
+
+  if (code === 'ECONNRESET' || code === 'EPIPE')
+    console.warn('Connection reset by peer', code)
+  else
+    throw err
+})

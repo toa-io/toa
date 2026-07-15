@@ -21,10 +21,11 @@ operations:
       username: string
       password: string
       authority: string
-    errors:
+    errors: &transit.errors
       - PRINCIPAL_LOCKED
       - INVALID_USERNAME
       - INVALID_PASSWORD
+      - EXISTS
   create:
     forward: transit
     query: false
@@ -32,6 +33,14 @@ operations:
       authority*: string
       username*: string
       password*: string
+    errors: *transit.errors
+  add:
+    input:
+      id*: string
+      authority*: string
+      username*: string
+      password*: string
+    errors: *transit.errors
   incept:
     input:
       authority*: string
@@ -63,11 +72,27 @@ operations:
     output: null
 
 configuration:
-  rounds: 10
-  pepper: ""
-  principal: string
-  username+: ^.{1,128}$
-  password+: ^.{8,32}$
+  schema:
+    type: object
+    properties:
+      rounds:
+        type: integer
+        default: 10
+      pepper:
+        type: string
+        default: ""
+      principal:
+        type: string
+      username:
+        type: array
+        items:
+          type: string
+        default: ["^.{1,128}$"]
+      password:
+        type: array
+        items:
+          type: string
+        default: ["^.{8,32}$"]
 
 exposition:
   isolated: true
@@ -81,9 +106,16 @@ exposition:
     io:output: [id]
     io:input: [username, password]
     auth:role: system:identity:basic
-    auth:scheme: basic
     auth:id: id
-    PATCH: transit
+    PATCH:
+      auth:scheme: basic
+      endpoint: transit
+    POST:
+      map:authority: authority
+      map:segments:
+        id: id
+      endpoint: add
+
   /usernames/:username:
     GET:
       map:authority: authority

@@ -92,7 +92,7 @@ export class FileSystem extends Provider<FileSystemOptions> {
     return join(this.root, rel) + ext
   }
 
-  private async try<T = void> (action: () => Promise<T>): Promise<Maybe<T>> {
+  private async try<T = void>(action: () => Promise<T>): Promise<Maybe<T>> {
     try {
       return await action()
     } catch (err: NodeJS.ErrnoException | any) {

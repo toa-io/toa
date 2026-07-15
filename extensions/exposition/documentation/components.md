@@ -95,14 +95,22 @@ password?: string
 
 Access requires basic credentials of the modified Identity or `system:identity:basic` role.
 
+<code>POST</code> Incept new basic credentials. Request body is as follows:
+
+```yaml
+username: string
+password: string
+```
+
+Identity should not have associated basic credentials. Access requires any credentials of the Identity.
+
 #### `/identity/basic/usernames/:username/`
 
 <code>GET</code> Check if the username is available.
 
 `username` must be Base64 URL encoded.
 
-Returns empty response with status `204`
-if the username is already taken or `404` if it is available.
+Returns empty response with status `204` if the username is already taken or `404` if it is available.
 
 ## Identity federation (OpenID connect)
 

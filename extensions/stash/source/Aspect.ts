@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import Redlock from 'redlock-temp-fix'
 import { encode, decode } from 'msgpackr'
 import { Connector, type extensions } from '@toa.io/core'
@@ -17,23 +18,23 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.depends(connection)
   }
 
-  public async invoke (method: 'store', key: string, value: object): Promise<void>
-  public async invoke (method: 'fetch', key: string): Promise<object>
-  public async invoke<T> (method: 'lock', key: Resources, routine: Routine<T>): Promise<T>
-  public async invoke (method: string, ...args: unknown[]): Promise<any>
-  public async invoke (method: string, ...args: unknown[]): Promise<any> {
+  public invoke (method: 'store', key: string, value: object): any
+  public invoke (method: 'fetch', key: string): any
+  public invoke<T> (method: 'lock', key: Resources, routine: Routine<T>): any
+  public invoke (method: string, ...args: unknown[]): any
+  public invoke (method: string, ...args: unknown[]): any {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     if (typeof this.redis[method] === 'function') return this.redis[method](...args)
 
     if (method === 'store')
-      await this.store(args[0] as string, args[1] as object, ...args.slice(2))
+      this.store(args[0] as string, args[1] as object, ...args.slice(2))
 
     if (method === 'fetch')
-      return await this.fetch(args[0] as string)
+      return this.fetch(args[0] as string)
 
     if (method === 'lock')
-      return await this.lock(args[0] as Resources, args[1] as () => any)
+      return this.lock(args[0] as Resources, args[1] as () => any)
   }
 
   protected override async open (): Promise<void> {
@@ -57,7 +58,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     return buffer === null ? null : decode(buffer)
   }
 
-  private async lock<T> (key: Resources, routine: Routine<T>): Promise<T | null> {
+  private async lock<T>(key: Resources, routine: Routine<T>): Promise<T | null> {
     if (this.redlock === null) return null
 
     if (typeof key === 'string') key = [key]

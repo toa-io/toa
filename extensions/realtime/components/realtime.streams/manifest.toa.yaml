@@ -5,6 +5,7 @@ operations:
   create:
     input:
       key: string
+      token: string
   push:
     bindings: ~ # only for internal use
     input:
@@ -12,7 +13,18 @@ operations:
       event*: string
       data: ~
 
+configuration:
+  schema:
+    properties:
+      maxlen:
+        type: number
+        default: 1000
+      expire:
+        type: number
+        default: 300
+
 state: ~
+stash: ~
 
 exposition:
   /:key:

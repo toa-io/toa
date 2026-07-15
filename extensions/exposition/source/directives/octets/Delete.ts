@@ -65,8 +65,7 @@ export class Delete extends Directive {
   }
 
   // eslint-disable-next-line max-params
-  private async * execute
-  (input: Input, storage: string, entry: Entry, parameters: Parameter[]): AsyncGenerator {
+  private async * execute (input: Input, storage: string, entry: Entry, parameters: Parameter[]): AsyncGenerator {
     const location: Location = {
       storage,
       authority: input.authority,

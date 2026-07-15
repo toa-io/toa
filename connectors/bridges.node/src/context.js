@@ -6,8 +6,10 @@ const { underlay } = require('@toa.io/generic')
 const shortcuts = require('./shortcuts')
 
 class Context extends Connector {
-  operation
+  env
+  name
   aspects
+  operation
 
   #context
 
@@ -15,6 +17,8 @@ class Context extends Connector {
     super()
 
     this.operation = operation
+    this.env = context.env
+    this.name = context.name
     this.#context = context
 
     this.depends(context)

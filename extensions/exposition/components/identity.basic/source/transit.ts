@@ -24,9 +24,12 @@ export class Transition implements Operation {
   public async execute (input: TransitInput, object: Entity): Promise<Maybe<IdOutput>> {
     const existent = object._version !== 0
 
-    if (existent)
+    if (existent) {
+      if (input.inception === true)
+        return ERR_EXISTS
+
       await this.tokens.revoke({ query: { id: object.id } })
-    else
+    } else
       object.authority = input.authority
 
     if (input.username !== undefined) {
@@ -53,9 +56,7 @@ export class Transition implements Operation {
   }
 }
 
-function toRx (input: string | string[]): RegExp[] {
-  const expressions = typeof input === 'string' ? [input] : input
-
+function toRx (expressions: string[]): RegExp[] {
   return expressions.map((expression) => new RegExp(expression))
 }
 
@@ -66,5 +67,6 @@ function invalid (value: string, expressions: RegExp[]): boolean {
 const ERR_PRINCIPAL_LOCKED = new Err('PRINCIPAL_LOCKED', 'Principal username cannot be changed')
 const ERR_INVALID_USERNAME = new Err('INVALID_USERNAME', 'Username is not meeting the requirements')
 const ERR_INVALID_PASSWORD = new Err('INVALID_PASSWORD', 'Password is not meeting the requirements')
+const ERR_EXISTS = new Err('EXISTS', 'Basic credentials already exist')
 
 type Tokens = Context['remote']['identity']['tokens']

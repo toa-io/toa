@@ -1,7 +1,6 @@
 'use strict'
 
 const { console } = require('openspan')
-const { newid } = require('@toa.io/generic')
 
 /**
  * Abstract connections hierarchy
@@ -26,7 +25,7 @@ class Connector {
   connected = false
 
   constructor () {
-    this.id = this.constructor.name + '#' + newid().substring(0, 8)
+    this.id = this.constructor.name + '#' + Math.random().toString(36).substring(2, 8)
   }
 
   /**

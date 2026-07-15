@@ -4,6 +4,8 @@
 const difference = (a, b) => {
   const diff = {}
 
+  if (b === undefined || typeof b !== 'object' || b === null) return undefined
+
   const keys = new Set([...Object.keys(a), ...Object.keys(b)])
 
   for (const key of keys) {

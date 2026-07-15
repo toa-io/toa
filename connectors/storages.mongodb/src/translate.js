@@ -16,6 +16,9 @@ const translate = (query) => {
   if (query?.id !== undefined)
     result.criteria._id = query.id
 
+  if (query?.ids !== undefined)
+    result.criteria._id = { $in: query.ids }
+
   if (query?.version !== undefined)
     result.criteria._version = query.version
 

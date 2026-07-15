@@ -42,6 +42,7 @@ export interface Query {
   selectors?: string[]
   projection?: string[]
   parameters?: string[]
+  deleted?: boolean
 }
 
 export interface Range {

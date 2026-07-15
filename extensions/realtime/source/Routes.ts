@@ -2,8 +2,8 @@ import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { decode } from '@toa.io/generic'
-import { type Bootloader } from './Factory'
 import { Receiver } from './Receiver'
+import type { Bootloader } from './Factory'
 
 export class Routes extends Connector {
   public events = new Events()

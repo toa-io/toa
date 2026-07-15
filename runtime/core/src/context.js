@@ -6,6 +6,8 @@ const { Connector } = require('./connector')
  * @implements {toa.core.Context}
  */
 class Context extends Connector {
+  env
+  name
   aspects
 
   #local
@@ -15,6 +17,8 @@ class Context extends Connector {
   constructor (local, discover, aspects = []) {
     super()
 
+    this.env = process.env.TOA_ENV
+    this.name = process.env.TOA_CONTEXT
     this.aspects = aspects
 
     this.#local = local
