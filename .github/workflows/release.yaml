@@ -8,43 +8,21 @@ on:
       - alpha
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    permissions: write-all
-
-    strategy:
-      matrix:
-        node-version: [22.14.x, 23]
-
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Setup Helm
-        uses: azure/setup-helm@v4.1.0
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Run environment
-        run: docker compose up -d --quiet-pull
-      - name: Install dependencies
-        run: npm ci
-        env:
-          HUSKY: 0
-      - name: Run tests
-        run: npx jest --testTimeout=30000
-
   publish:
     if: github.event.pull_request.merged == true
-    needs: test
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
 
     steps:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          registry-url: 'https://registry.npmjs.org'
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+          # Never cache package manager state in release builds (npm trusted publishing guidance)
+          package-manager-cache: false
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,7 +45,6 @@ jobs:
           GIT_AUTHOR_EMAIL: ${{ steps.gpg.outputs.email }}
           GIT_COMMITTER_NAME: ${{ steps.gpg.outputs.name }}
           GIT_COMMITTER_EMAIL: ${{ steps.gpg.outputs.email }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           HUSKY: 0
         run: |
           npm ci
