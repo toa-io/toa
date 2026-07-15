@@ -7,6 +7,8 @@ on:
       - release
       - alpha
 
+permissions: {}
+
 jobs:
   publish:
     if: github.event.pull_request.merged == true
@@ -21,7 +23,6 @@ jobs:
         with:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
-          # Never cache package manager state in release builds (npm trusted publishing guidance)
           package-manager-cache: false
 
       - name: Checkout
