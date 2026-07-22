@@ -25,6 +25,9 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
 
+      - name: Upgrade npm
+        run: npm i -g npm@latest
+
       - name: Checkout
         uses: actions/checkout@v7
         with:
