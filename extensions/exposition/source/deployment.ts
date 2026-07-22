@@ -22,7 +22,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     variables: [],
     components: labels,
     resources: annotation.resources,
-    ingress: { default: true, hosts: [] },
+    ingress: { hosts: [] },
     probe: {
       path: '/.ready',
       port: PORT,
