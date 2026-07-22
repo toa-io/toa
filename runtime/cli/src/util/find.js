@@ -26,10 +26,10 @@ const find = (from, filename, test) => {
   const cwd = resolve(process.cwd(), from)
   const path = findUpSync(filename, { cwd })
 
-  if (path === undefined) {
+  if (path === undefined)
     if (test === true) return null
     else throw new Error(`Cannot find '${filename}' from '${from}'`)
-  }
+  
 
   return dirname(path)
 }
