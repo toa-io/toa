@@ -120,7 +120,7 @@ configuration:
             default: 1024
           ttl:
             type: integer
-            default: 600_000
+            default: 600000
         default: {}
 
 exposition:

@@ -7,11 +7,24 @@ on:
       - release
       - alpha
 
+  workflow_dispatch:
+    inputs:
+      from-package:
+        description: Publish versions already in package.json (no version bump)
+        required: true
+        default: true
+        type: boolean
+      dist-tag:
+        description: npm dist-tag for from-package publish
+        required: true
+        default: alpha
+        type: string
+
 permissions: {}
 
 jobs:
   publish:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -34,6 +47,7 @@ jobs:
           fetch-depth: 0
 
       - name: Import GPG key
+        if: github.event_name != 'workflow_dispatch' || inputs.from-package == false
         id: gpg
         uses: crazy-max/ghaction-import-gpg@v7
         with:
@@ -53,13 +67,16 @@ jobs:
         run: |
           npm ci
 
-          if [ ${{ github.base_ref }} = release ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.from-package }}" = "true" ]; then
+            npx lerna publish from-package --dist-tag ${{ inputs.dist-tag }} --yes
+          elif [ "${{ github.base_ref }}" = "release" ]; then
             npx lerna publish --conventional-graduate --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
           else
             npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
           fi
 
       - name: Push to dev branch
+        if: github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.TOABOT_GITHUB_TOKEN }}
           HUSKY: 0
