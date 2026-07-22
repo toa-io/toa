@@ -1,0 +1,42 @@
+name: Publish from package
+
+on:
+  workflow_dispatch:
+    inputs:
+      dist-tag:
+        description: npm dist-tag
+        required: true
+        default: alpha
+        type: string
+
+permissions: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      - name: Upgrade npm
+        run: npm i -g npm@latest
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Publish
+        env:
+          HUSKY: 0
+        run: |
+          npm ci
+          npx lerna publish from-package --dist-tag ${{ inputs.dist-tag }} --yes
