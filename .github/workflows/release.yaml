@@ -7,6 +7,8 @@ on:
       - release
       - alpha
 
+permissions: {}
+
 jobs:
   publish:
     if: github.event.pull_request.merged == true
@@ -17,21 +19,20 @@ jobs:
 
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
-          # Never cache package manager state in release builds (npm trusted publishing guidance)
           package-manager-cache: false
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Import GPG key
         id: gpg
-        uses: crazy-max/ghaction-import-gpg@v6
+        uses: crazy-max/ghaction-import-gpg@v7
         with:
           gpg_private_key: ${{ secrets.TOABOT_GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.TOABOT_GPG_PASSPHRASE }}

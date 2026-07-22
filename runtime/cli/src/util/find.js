@@ -1,7 +1,7 @@
 'use strict'
 
 const { dirname, resolve } = require('node:path')
-const findUp = require('find-up')
+const { findUpSync } = require('find-up')
 
 /**
  * @param {string | string[]} from
@@ -24,7 +24,7 @@ const find = (from, filename, test) => {
   }
 
   const cwd = resolve(process.cwd(), from)
-  const path = findUp.sync(filename, { cwd })
+  const path = findUpSync(filename, { cwd })
 
   if (path === undefined) {
     if (test === true) return null
