@@ -22,6 +22,7 @@ const EVENTS_DIRECTORY = 'events'
 const RECEIVERS_DIRECTORY = 'receivers'
 const OPERATIONS_DIRECTORY = 'operations'
 const GUARDS_DIRECTORY = 'guards'
+const RC_DIRECTORY = 'rc'
 
 exports.operation = operation
 exports.event = event
@@ -31,3 +32,4 @@ exports.operations = scan(OPERATIONS_DIRECTORY)
 exports.events = scan(EVENTS_DIRECTORY)
 exports.receivers = scan(RECEIVERS_DIRECTORY)
 exports.guards = scan(GUARDS_DIRECTORY)
+exports.rcs = scan(RC_DIRECTORY)
