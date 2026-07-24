@@ -24,8 +24,10 @@ const component = async (manifest) => {
   }
 
   const operations = await bootOperations(manifest, context, state)
+  const rc = await boot.rc(manifest, context)
   const component = new Component(locator, operations)
 
+  if (rc) component.depends(rc)
   if (storage) component.depends(storage)
   if (emission) component.depends(emission)
 

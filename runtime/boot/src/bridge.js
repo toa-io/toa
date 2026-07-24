@@ -13,6 +13,15 @@ const event = (bridge, path, label, context) => resolve(bridge).event(path, labe
 const receiver = (bridge, path, label) => resolve(bridge).receiver(path, label)
 const guard = (bridge, path, label, context) => resolve(bridge).guard(path, label, context)
 
+async function rc (bridge, path, context) {
+  const factory = resolve(bridge)
+
+  if (factory.rc === undefined)
+    return
+
+  return factory.rc(path, context)
+}
+
 const factories = {}
 
 const resolve = (bridge) => {
@@ -29,3 +38,4 @@ exports.algorithm = algorithm
 exports.event = event
 exports.receiver = receiver
 exports.guard = guard
+exports.rc = rc

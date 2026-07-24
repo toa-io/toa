@@ -6,6 +6,7 @@ const { Event } = require('./event')
 const { Receiver } = require('./receiver')
 const { Guard } = require('./guard')
 const { Context } = require('./context')
+const { RC } = require('./rc')
 const { extract } = require('./define/operations')
 
 class Factory {
@@ -36,6 +37,21 @@ class Factory {
     const ctx = new Context(context)
 
     return new Guard(guard, ctx)
+  }
+
+  async rc (root, context) {
+    const modules = await load.rcs(root)
+    const ctx = new Context(context)
+    const rcs = []
+
+    for (const [name, module] of modules) {
+      if (typeof module.rc !== 'function')
+        throw new Error(`RC '${name}' not found`)
+
+      rcs.push(module.rc)
+    }
+
+    return new RC(rcs, ctx)
   }
 }
 

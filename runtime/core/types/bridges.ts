@@ -1,5 +1,6 @@
 import type { Request, Reply } from './request'
 import type { Context } from './context'
+import type { Connector } from './connector'
 
 export interface Algorithm {
   mount: (context?: Context) => Promise<void>
@@ -27,4 +28,6 @@ export interface Factory {
   event?: (path: string, label: string) => Event
 
   receiver?: (path: string, label: string) => Receiver
+
+  rc?: (path: string, context: Context) => Promise<Connector>
 }
