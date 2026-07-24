@@ -5,6 +5,7 @@ const {
   Observation,
   Assignment,
   Operation,
+  Query,
   Effect,
   Unmanaged
 } = require('@toa.io/core')
