@@ -90,14 +90,17 @@ export class Agent {
 
   public mismatch (sample: string, reference: string): string | null {
     const lines = trim(reference).split('\n')
+    let rest = sample
 
     for (const line of lines) {
       if (line.trim() === '') continue
 
-      const match = this.captures.capture(sample, line)
+      const match = this.captures.capture(rest, line)
 
       if (match === null)
         return line
+
+      rest = rest.slice(match.end)
     }
 
     return null

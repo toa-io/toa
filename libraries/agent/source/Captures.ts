@@ -35,10 +35,10 @@ export class Captures extends Map<string, string> {
   }
 
   /**
-   * @returns `undefined` if `source` doesn't match `matcher`
-   * or array of captured keys (can be empty)
+   * @returns `null` if `source` doesn't match `matcher`
+   * or array of captured keys (can be empty) with `end` set to the index after the match
    */
-  public capture (source: string, matcher: string): readonly string[] | null {
+  public capture (source: string, matcher: string): Capture | null {
     let i = 0
 
     matcher = this.substitute(matcher)
@@ -51,16 +51,24 @@ export class Captures extends Map<string, string> {
 
     if (match === null) return null
 
-    return Object.entries(match.groups ?? {}).map(([key, value]) => {
+    const keys = Object.entries(match.groups ?? {}).map(([key, value]) => {
       const parts = regexpUnescape(Buffer.from(key, 'base64url').toString()).split('#')
       const name = parts.slice(0, -1).join('#')
 
       this.set(name, value)
 
       return name
+    }) as Capture
+
+    Object.defineProperty(keys, 'end', {
+      value: match.index! + match[0].length
     })
+
+    return keys
   }
 }
+
+export type Capture = string[] & { readonly end: number }
 
 function regexpEscape (text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
