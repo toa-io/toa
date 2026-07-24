@@ -23,25 +23,24 @@ const component = async (manifest) => {
     state = new State(storage, entity, emission, manifest.entity.associated)
   }
 
-  const operations = await bootOperations(manifest, context, state)
   const rc = await boot.rc(manifest, context)
+  const operations = await bootOperations(manifest, context, state, rc)
   const component = new Component(locator, operations)
 
-  if (rc) component.depends(rc)
   if (storage) component.depends(storage)
   if (emission) component.depends(emission)
 
   return boot.extensions.component(component)
 }
 
-async function bootOperations (manifest, context, state) {
+async function bootOperations (manifest, context, state, rc) {
   if (manifest.operations === undefined)
     return {}
 
   const operations = {}
 
   for (const [endpoint, definition] of Object.entries(manifest.operations))
-    operations[endpoint] = await boot.operation(manifest, endpoint, definition, context, state)
+    operations[endpoint] = await boot.operation(manifest, endpoint, definition, context, state, rc)
 
   return operations
 }
