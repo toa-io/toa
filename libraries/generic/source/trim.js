@@ -1,7 +1,8 @@
 'use strict'
 
 /**
- * Removes leading/trailing blank lines and dedents by the first line's padding.
+ * Removes leading/trailing blank lines, dedents by the first line's padding,
+ * and strips trailing whitespace from each line.
  *
  * @param {string} input
  * @return {string}
@@ -21,11 +22,13 @@ function trim (input) {
   const match = lines[0].match(/^\s*/)
   const padding = match === null ? '' : match[0]
 
-  if (padding === '')
-    return lines.join('\n')
-
   return lines
-    .map((line) => line.startsWith(padding) ? line.slice(padding.length) : line)
+    .map((line) => {
+      if (padding !== '' && line.startsWith(padding))
+        line = line.slice(padding.length)
+
+      return line.trimEnd()
+    })
     .join('\n')
 }
 
