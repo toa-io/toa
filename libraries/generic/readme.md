@@ -156,7 +156,7 @@ Constructs an object by picking the set of `properties` from `source` object.
 
 `trim (input: string): string`
 
-Trim lines of multiline text.
+Dedent multiline text using the first line's leading padding.
 
 ## Buffer
 
