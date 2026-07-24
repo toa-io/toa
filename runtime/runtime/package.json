@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "1.0.0-alpha.226",
+  "version": "1.0.0-alpha.227",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -25,14 +25,14 @@
   "dependencies": {
     "@toa.io/bindings.amqp": "1.0.0-alpha.226",
     "@toa.io/bindings.loop": "1.0.0-alpha.225",
-    "@toa.io/boot": "1.0.0-alpha.226",
+    "@toa.io/boot": "1.0.0-alpha.227",
     "@toa.io/bridges.bash": "1.0.0-alpha.59",
     "@toa.io/bridges.node": "1.0.0-alpha.226",
     "@toa.io/cli": "1.0.0-alpha.226",
     "@toa.io/core": "1.0.0-alpha.226",
     "@toa.io/extensions.configuration": "1.0.0-alpha.226",
     "@toa.io/extensions.exposition": "1.0.0-alpha.226",
-    "@toa.io/extensions.mail": "1.0.0-alpha.226",
+    "@toa.io/extensions.mail": "1.0.0-alpha.227",
     "@toa.io/extensions.origins": "1.0.0-alpha.226",
     "@toa.io/extensions.realtime": "1.0.0-alpha.226",
     "@toa.io/extensions.sampling": "1.0.0-alpha.7",
@@ -46,7 +46,7 @@
     "@toa.io/storages.mongodb": "1.0.0-alpha.226",
     "@toa.io/storages.null": "1.0.0-alpha.59",
     "@toa.io/storages.sql": "1.0.0-alpha.225",
-    "@toa.io/userland": "1.0.0-alpha.226",
+    "@toa.io/userland": "1.0.0-alpha.227",
     "openspan": "1.0.0-alpha.173"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee",
