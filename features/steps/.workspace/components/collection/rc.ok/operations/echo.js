@@ -1,5 +1,13 @@
-function computation(_, context) {
-  return context.state.ok
+class Computation {
+  ok
+
+  mount (ctx) {
+    this.ok = ctx.state.ok
+  }
+
+  execute() {
+    return this.ok
+  }
 }
 
-module.exports = { computation }
+module.exports = { Computation }

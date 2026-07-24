@@ -4,7 +4,7 @@ const { Cascade } = require('@toa.io/core')
 
 const boot = require('./index')
 
-async function cascade (manifest, endpoint, definition, context) {
+async function cascade (manifest, endpoint, definition, context, rc) {
   const bridges = []
 
   if (definition.forward) endpoint = definition.forward
@@ -27,7 +27,7 @@ async function cascade (manifest, endpoint, definition, context) {
     bridges.unshift(bridge)
   }
 
-  return new Cascade(bridges)
+  return new Cascade(bridges, rc)
 }
 
 exports.cascade = cascade
