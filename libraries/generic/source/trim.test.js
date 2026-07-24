@@ -35,3 +35,9 @@ it('should trim tabs by first line padding', async () => {
 
   expect(trimmed).toStrictEqual('line one\nline two\n\tindented')
 })
+
+it('should trim trailing spaces', async () => {
+  const trimmed = trim('  line one \n  line two  ')
+
+  expect(trimmed).toStrictEqual('line one\nline two')
+})
