@@ -133,14 +133,17 @@ operations:
 // Node.js Bridge
 async function transition (input, entity, context) {
   const price = context.configuration.price
-  const request = { input: price, query: { id: input.sender } }
-  const reply = await context.remote.credits.balance.debit(request)
+
+  const reply = await context.remote.credits.balance.debit({ 
+    input: { price }, 
+    query: { id: input.senderId } 
+  })
 
   if (reply instanceof Error)
     return reply
 
   Object.assign(entity, input)
 
-  return { output: { id: entity.id } }
+  return entity
 }
 ```
