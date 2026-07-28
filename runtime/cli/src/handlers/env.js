@@ -111,9 +111,17 @@ async function resolveDevSecrets (variables) {
 
     const key = getKey(variable.secret)
 
-    if (!(key in DEV_SECRETS) || key in secrets) continue
+    if (key in secrets) continue
 
-    secrets[key] = await resolveDevSecret(key)
+    if (key in DEV_SECRETS) {
+      secrets[key] = await resolveDevSecret(key)
+      continue
+    }
+
+    const value = process.env[variable.secret.key]
+
+    if (value !== undefined && value !== '')
+      secrets[key] = value
   }
 
   return secrets
@@ -128,15 +136,6 @@ async function resolveDevSecret (key) {
 
   if (source.value !== undefined)
     return source.value
-
-  if (source.env !== undefined) {
-    const value = process.env[source.env]
-
-    if (value === undefined || value === '')
-      throw new Error(`${source.env} is not set`)
-
-    return value
-  }
 
   if (source.generate === true)
     return /** @type {string} */ (await V3.generateKey('local', { format: 'paserk' }))
@@ -189,17 +188,14 @@ function getKey (secret) {
 const SECRETS = {}
 
 /**
- * @type {Record<string, { value?: string, env?: string, generate?: boolean }>}
+ * @type {Record<string, { value?: string, generate?: boolean }>}
  */
 const DEV_SECRETS = {
   'toa-mongodb.default/username': { value: 'developer' },
   'toa-mongodb.default/password': { value: 'secret' },
   'toa-amqp-context.default/username': { value: 'developer' },
   'toa-amqp-context.default/password': { value: 'secret' },
-  'toa-storages-assets/API_KEY': { env: 'CLOUDINARY_API_KEY' },
-  'toa-storages-assets/API_SECRET': { env: 'CLOUDINARY_API_SECRET' },
-  'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: true },
-  'toa-configuration/RESEND_KEY': { env: 'RESEND_KEY' }
+  'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: true }
 }
 
 exports.env = env

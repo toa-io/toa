@@ -134,7 +134,7 @@ Feature: Export local deployment environment variables
     Then program should exit with code 0
     And the environment variable TOA_CONFIGURATION__IDENTITY_TOKENS_KEY0 starts with 'k3.local.'
 
-  Scenario: Fill Cloudinary secrets from process environment with `--dev`
+  Scenario: Fill secrets from process environment by secret key with `--dev`
     Given I have a component `storage`
     And I have a context with:
       """yaml
@@ -151,8 +151,8 @@ Feature: Export local deployment environment variables
       """
     And environment variables:
       """
-      CLOUDINARY_API_KEY=cloud-key
-      CLOUDINARY_API_SECRET=cloud-secret
+      API_KEY=cloud-key
+      API_SECRET=cloud-secret
       """
     When I run `toa env --dev`
     Then the environment contains:
@@ -161,7 +161,7 @@ Feature: Export local deployment environment variables
       TOA_STORAGES_ASSETS_API_SECRET=cloud-secret
       """
 
-  Scenario: Throw when Cloudinary environment variables are missing with `--dev`
+  Scenario: Throw when secret key environment variables are missing with `--dev`
     Given I have a component `storage`
     And I have a context with:
       """yaml
@@ -180,10 +180,30 @@ Feature: Export local deployment environment variables
     Then program should exit with code 1
     And stderr should contain lines:
       """
-      CLOUDINARY_API_KEY is not set
+      toa-storages-assets/API_KEY, toa-storages-assets/API_SECRET is not set
       """
 
-  Scenario: Throw when unmapped secret is requested with `--dev`
+  Scenario: Fill configuration secret from process environment with `--dev`
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      configuration:
+        configuration.base:
+          foo: $FOO_VALUE
+      """
+    And environment variables:
+      """
+      FOO_VALUE=bar
+      """
+    When I run `toa env --dev`
+    Then the environment contains:
+      """
+      TOA_CONFIGURATION__FOO_VALUE=bar
+      """
+
+  Scenario: Throw when secret key is missing from process environment with `--dev`
     Given I have a component `configuration.base`
     And I have a context with:
       """yaml
