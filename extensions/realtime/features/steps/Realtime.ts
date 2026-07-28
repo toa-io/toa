@@ -3,6 +3,7 @@ import { encode } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
 import { after, binding } from 'cucumber-tsflow'
 import { Factory } from '../../source'
+import type { Route } from '../../source/extension'
 
 @binding()
 export class Realtime {
@@ -21,8 +22,8 @@ export class Realtime {
     await this.service.disconnect()
   }
 
-  public declare (event: string, properties: string[]): void {
-    this.routes.push({ event, properties })
+  public declare (event: string, properties: string[], expose?: string[]): void {
+    this.routes.push({ event, properties, expose })
   }
 
   public async serve (): Promise<void> {
@@ -35,9 +36,4 @@ export class Realtime {
 
     await this.service.connect()
   }
-}
-
-interface Route {
-  event: string
-  properties: string[]
 }
