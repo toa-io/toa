@@ -3,6 +3,7 @@ import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { decode } from '@toa.io/generic'
 import { Receiver } from './Receiver'
+import type { Route } from './extension'
 import type { Bootloader } from './Factory'
 
 export class Routes extends Connector {
@@ -27,8 +28,8 @@ export class Routes extends Connector {
     const routes = Routes.read()
     const creating = []
 
-    for (const { event, properties } of routes) {
-      const consumer = this.boot.receive(event, new Receiver(event, properties, this.events))
+    for (const { event, properties, expose } of routes) {
+      const consumer = this.boot.receive(event, new Receiver(event, properties, this.events, expose))
 
       creating.push(consumer)
     }
@@ -58,7 +59,4 @@ class Events extends Readable {
   }
 }
 
-export interface Route {
-  event: string
-  properties: string[]
-}
+export type { Route }

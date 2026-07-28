@@ -5,6 +5,7 @@ import { parse } from '@toa.io/yaml'
 import * as stage from '@toa.io/userland/stage'
 import { type Component, type Request } from '@toa.io/core'
 import { timeout } from '@toa.io/generic'
+import { parse as parseRoutes, type Declaration } from '../../source/extension'
 import { Realtime } from './Realtime'
 
 @binding([Realtime])
@@ -18,14 +19,14 @@ export class Components {
 
   @given('the `{word}` component is running with routes:')
   public async run (component: string, yaml: string): Promise<void> {
-    const routes = parse<Manifest>(yaml)
+    const declaration = parse<Declaration>(yaml)
     const [name, namespace = 'default'] = component.split('.').reverse()
+    const routes = parseRoutes(declaration)
 
-    for (const [event, value] of Object.entries(routes)) {
-      const label = `${namespace}.${name}.${event}`
-      const properties = Array.isArray(value) ? value : [value]
+    for (const route of routes) {
+      const label = `${namespace}.${name}.${route.event}`
 
-      this.realtime.declare(label, properties)
+      this.realtime.declare(label, route.properties, route.expose)
     }
   }
 
@@ -65,7 +66,3 @@ function componentPaths (): string[] {
 }
 
 const ROOT = resolve(__dirname, 'components')
-
-interface Manifest {
-  realtime: Map<string, string | string[]>
-}

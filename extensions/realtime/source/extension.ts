@@ -41,23 +41,41 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
   return { services: [service] }
 }
 
-function parse (declaration: Declaration): Route[] {
+export function parse (declaration: Declaration): Route[] {
   const routes: Route[] = []
 
   for (const [event, value] of Object.entries(declaration)) {
-    const properties = Array.isArray(value) ? value : [value]
+    if (isObject(value)) {
+      const properties = Array.isArray(value.key) ? value.key : [value.key]
 
-    routes.push({ event, properties })
+      routes.push({ event, properties, expose: value.expose })
+    } else {
+      const properties = Array.isArray(value) ? value : [value]
+
+      routes.push({ event, properties })
+    }
   }
 
   return routes
 }
 
-type Declaration = Record<string, string | string[]>
+function isObject (value: Entry): value is RouteDeclaration {
+  return typeof value === 'object' && !Array.isArray(value)
+}
 
-interface Route {
+export type Entry = string | string[] | RouteDeclaration
+
+export type Declaration = Record<string, Entry>
+
+export interface RouteDeclaration {
+  key: string | string[]
+  expose?: string[]
+}
+
+export interface Route {
   event: string
   properties: string[]
+  expose?: string[]
 }
 
 interface Annotation {
