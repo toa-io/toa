@@ -56,6 +56,34 @@ Feature: Query
       - id: 8754448197e64403878fb16d06020f0c
       """
 
+  Scenario: Observing skips deleted entries
+    Given the `mongo.one` database contains:
+      | _id                              | foo | bar   | _version | _created      | _deleted      |
+      | bcb6780f50e243348cad40ed6b5ef575 | 1   | hello | 1        | 1722011800000 | 1722011755487 |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 2   | hello | 1        | 1722011700000 | null          |
+    And I boot `mongo.one` component
+    When I invoke `observe` with:
+      """yaml
+      query:
+        criteria: bar==hello
+        sort: [_created:desc]
+      """
+    Then the reply is received:
+      """
+      id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    When I invoke `observe` with:
+      """yaml
+      query:
+        criteria: bar==hello
+        sort: [_created:desc]
+        deleted: true
+      """
+    Then the reply is received:
+      """
+      id: bcb6780f50e243348cad40ed6b5ef575
+      """
+
   Scenario: Querying sample
     Given the `mongo.one` database contains:
       | _id                              | foo | bar   | _version |
