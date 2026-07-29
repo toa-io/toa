@@ -35,6 +35,11 @@ class Storage extends Connector {
   async get (query) {
     const { criteria, options } = translate(query)
 
+    // identity lookups must return deleted records, so that callers
+    // can tell a deleted entity from a missing one
+    if (query?.id === undefined && query?.options?.deleted !== true)
+      criteria._deleted = null
+
     this.debug('findOne', { criteria, options })
 
     const record = await this.#collection.findOne(criteria, options)
@@ -69,6 +74,9 @@ class Storage extends Connector {
 
   async stream (query = undefined) {
     const { criteria, options } = translate(query)
+
+    if (query?.options?.deleted !== true)
+      criteria._deleted = null
 
     this.debug('find (stream)', { criteria, options })
 
