@@ -116,6 +116,10 @@ Feature: Service Deployment
         maxUnavailable: 50%
         maxSurge: 50%
       """
+    And extension-exposition-gateway Deployment spec spec should contain:
+      """
+      progressDeadlineSeconds: 900
+      """
 
   Scenario: Deploy a service with connection draining
     Given I have a component `exposed.one`

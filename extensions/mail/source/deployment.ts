@@ -1,7 +1,8 @@
 import { components } from './Composition'
+import type { Annotation } from './Annotation'
 import type { Dependency, Service } from '@toa.io/operations'
 
-export function deployment (): Dependency {
+export function deployment (_: unknown, annotation?: Annotation): Dependency {
   const labels = components().labels
 
   const service: Service = {
@@ -10,7 +11,8 @@ export function deployment (): Dependency {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     version: require('../package.json').version,
     variables: [],
-    components: labels
+    components: labels,
+    resources: annotation?.resources
   }
 
   return { services: [service] }
