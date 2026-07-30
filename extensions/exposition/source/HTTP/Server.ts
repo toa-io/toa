@@ -60,12 +60,20 @@ export class Server extends Connector {
   }
 
   protected override async close (): Promise<void> {
-    this.server.close()
     this.ready = false
+
+    this.server.close()
+    this.server.closeIdleConnections()
 
     console.info('Stopped accepting new connections')
 
-    await once(this.server, 'close')
+    // keep-alive clients hold connections open indefinitely, so the drain is bounded
+    await Promise.race([
+      once(this.server, 'close'),
+      setTimeout(this.properties.drain, undefined, { ref: false })
+    ])
+
+    this.server.closeAllConnections()
 
     console.info('Stopped')
   }
@@ -222,13 +230,15 @@ function errorAttributes (request: http.IncomingMessage, error: Error & any): Re
 
 export const PORT = 8000
 export const DELAY = 3 // seconds
+export const DRAIN = 10 // seconds
 
 const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
   debug: false,
   trace: false,
   port: PORT,
-  delay: DELAY * 1000
+  delay: DELAY * 1000,
+  drain: DRAIN * 1000
 }
 
 interface Properties {
@@ -238,6 +248,7 @@ interface Properties {
   trace: boolean
   port: number
   delay: number
+  drain: number
 }
 
 export type Options = { authorities: Properties['authorities'] } & {

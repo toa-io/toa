@@ -5,6 +5,11 @@ metadata:
   name: extension-{{ required "deployment name is required" .name }}
 spec:
   replicas: {{ .replicas | default 2 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   selector:
     matchLabels:
       toa.io/service: extension-{{ .name }}
@@ -42,14 +47,29 @@ spec:
             {{- end }}
           {{- end }}
           {{- if .probe }}
-          readinessProbe:
+          startupProbe:
             httpGet:
               path: {{ .probe.path }}
               port: {{ .probe.port }}
             {{- if .probe.delay }}
             initialDelaySeconds: {{ .probe.delay }}
             {{- end }}
+            periodSeconds: 2
+            timeoutSeconds: 3
+            failureThreshold: 150
+          readinessProbe:
+            httpGet:
+              path: {{ .probe.path }}
+              port: {{ .probe.port }}
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
           {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command: [sleep, "5"]
+      terminationGracePeriodSeconds: 45
 {{- if .port }}
 ---
 apiVersion: v1
