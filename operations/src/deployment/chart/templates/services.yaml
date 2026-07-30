@@ -5,6 +5,9 @@ metadata:
   name: extension-{{ required "deployment name is required" .name }}
 spec:
   replicas: {{ .replicas | default 2 }}
+  # A backstop for stuck rollouts only. Must stay above the `helm upgrade --timeout`
+  # the deploy runs with, so a slow but progressing rollout is not marked failed.
+  progressDeadlineSeconds: 900
   strategy:
     type: RollingUpdate
     rollingUpdate:

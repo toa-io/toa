@@ -8,7 +8,12 @@ export class Receiver extends Connector {
   private readonly expose?: string[]
   private readonly stream: Readable
 
-  public constructor (event: string, properties: string[], stream: Readable, expose?: string[]) {
+  public constructor ({ event, properties, stream, expose }: {
+    event: string
+    properties: string[]
+    stream: Readable
+    expose?: string[]
+  }) {
     super()
 
     this.event = event

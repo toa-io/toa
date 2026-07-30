@@ -44,7 +44,7 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
 export function parse (declaration: Declaration): Route[] {
   const routes: Route[] = []
 
-  for (const [event, value] of Object.entries(declaration)) {
+  for (const [event, value] of Object.entries(declaration))
     if (isObject(value)) {
       const properties = Array.isArray(value.key) ? value.key : [value.key]
 
@@ -54,7 +54,6 @@ export function parse (declaration: Declaration): Route[] {
 
       routes.push({ event, properties })
     }
-  }
 
   return routes
 }
