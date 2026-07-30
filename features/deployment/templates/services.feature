@@ -5,6 +5,8 @@ Feature: Service Deployment
     And I have a context with:
       """yaml
       exposition:
+        authorities:
+          local: api.dev
         /:
           GET:
             dev:stub: ok!
@@ -54,11 +56,13 @@ Feature: Service Deployment
       - host: api.bar.dev
       """
 
-  Scenario: Deploy a service with probe
+  Scenario: Deploy a service with probes
     Given I have a component `exposed.one`
     And I have a context with:
       """yaml
       exposition:
+        authorities:
+          local: api.dev
         /:
           GET:
             dev:stub: ok!
@@ -71,9 +75,73 @@ Feature: Service Deployment
     Then program should exit
     And extension-exposition-gateway Deployment container spec should contain:
       """
+      startupProbe:
+        httpGet:
+          path: /.ready
+          port: 8000
+        initialDelaySeconds: 3
+        periodSeconds: 2
+        timeoutSeconds: 3
+        failureThreshold: 150
       readinessProbe:
         httpGet:
           path: /.ready
           port: 8000
-        initialDelaySeconds: 1
+        periodSeconds: 10
+        timeoutSeconds: 3
+        failureThreshold: 3
+      """
+
+  Scenario: Replicas are replaced in parallel
+    Given I have a component `exposed.one`
+    And I have a context with:
+      """yaml
+      exposition:
+        authorities:
+          local: api.dev
+        /:
+          GET:
+            dev:stub: ok!
+      configuration:
+        identity.tokens:
+          key0: secret.key
+      """
+    When I export deployment for dev
+    And I run `helm template deployment`
+    Then program should exit
+    And extension-exposition-gateway Deployment strategy spec should contain:
+      """
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 50%
+        maxSurge: 50%
+      """
+
+  Scenario: Deploy a service with connection draining
+    Given I have a component `exposed.one`
+    And I have a context with:
+      """yaml
+      exposition:
+        authorities:
+          local: api.dev
+        /:
+          GET:
+            dev:stub: ok!
+      configuration:
+        identity.tokens:
+          key0: secret.key
+      """
+    When I export deployment for dev
+    And I run `helm template deployment`
+    Then program should exit
+    And extension-exposition-gateway Deployment container spec should contain:
+      """
+      lifecycle:
+        preStop:
+          exec:
+            command: [sleep, "5"]
+      """
+    And extension-exposition-gateway Deployment template.spec spec should contain:
+      """
+      terminationGracePeriodSeconds: 45
       """
