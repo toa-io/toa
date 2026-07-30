@@ -1,5 +1,4 @@
 /* eslint-disable no-template-curly-in-string */
-/// <reference types="jest" />
 
 import { Agent } from './Agent'
 
