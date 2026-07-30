@@ -28,6 +28,7 @@ const extract = (spec, node) => {
   if (node === 'container') return spec.spec.template.spec.containers[0]
   if (node === 'template.spec') return spec.spec.template.spec
   if (node === 'strategy') return spec.spec.strategy
+  if (node === 'spec') return spec.spec
   if (node === 'rules') return spec.spec.rules
 
   throw new Error(`Unknown node '${node}'`)

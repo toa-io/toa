@@ -1,5 +1,5 @@
+import type { Resources } from '@toa.io/operations'
+
 export interface Annotation {
-  provider: string
-  from: string
-  templates?: string
+  resources?: Resources
 }
