@@ -26,9 +26,7 @@ class Image {
   #registry
   #runtime
   #values = {
-    build: {
-      image: 'node:24.14.0-alpine3.22'
-    }
+    build: {}
   }
 
   constructor (scope, runtime, registry) {
@@ -79,7 +77,9 @@ class Image {
 
   #setValues () {
     this.#values.runtime = this.#runtime
-    this.#values.build = overwrite(this.#values.build, this.#registry.build)
+    this.#values.build = overwrite({
+      image: `${RUNTIME_IMAGE}:${this.#runtime.version}`
+    }, this.#registry.build)
 
     const image = this.base
 
@@ -127,4 +127,7 @@ function createArguments (variables) {
   return args.join('\n')
 }
 
+const RUNTIME_IMAGE = 'ghcr.io/toa-io/runtime'
+
 exports.Image = Image
+exports.RUNTIME_IMAGE = RUNTIME_IMAGE

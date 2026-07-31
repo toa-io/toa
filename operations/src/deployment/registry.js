@@ -1,12 +1,14 @@
 'use strict'
 
+const { posix } = require('node:path')
 const workspace = require('./workspace')
-const { newid } = require('@toa.io/generic')
 
 /**
  * @implements {toa.deployment.Registry}
  */
 class Registry {
+  #scope
+
   #registry
 
   #factory
@@ -15,7 +17,11 @@ class Registry {
 
   #images = []
 
-  constructor (registry, factory, process) {
+  /** @type {string | undefined} */
+  #builder
+
+  constructor (scope, registry, factory, process) {
+    this.#scope = scope
     this.#registry = registry
     this.#factory = factory
     this.#process = process
@@ -40,9 +46,8 @@ class Registry {
   async build () {
     await this.prepare()
 
-    for (const image of this.#images) {
+    for (const image of this.#images)
       await this.#build(image)
-    }
   }
 
   async push () {
@@ -81,11 +86,10 @@ class Registry {
 
     const args = ['--context=default', 'buildx', 'build']
 
-    if (push) {
+    if (push)
       args.push('--push')
-    } else {
+    else
       args.push('--load')
-    }
 
     args.push('--tag', image.reference, image.context)
 
@@ -97,13 +101,15 @@ class Registry {
 
     if (multiarch) {
       const platform = this.#registry.platforms.join(',')
-      const builder = await this.#createBuilder()
+      const builder = await this.#ensureBuilder()
 
       args.push('--platform', platform)
       args.push('--builder', builder)
-    } else {
+
+      if (this.#registry.base !== undefined)
+        this.#appendCache(args)
+    } else
       args.push('--builder', 'default')
-    }
 
     args.push('--progress', 'plain')
 
@@ -128,13 +134,29 @@ class Registry {
     return true
   }
 
-  async #createBuilder () {
-    const name = `toa-${newid()}`
-    const create = `buildx create --name ${name} --bootstrap --use`.split(' ')
+  async #ensureBuilder () {
+    if (this.#builder !== undefined)
+      return this.#builder
 
-    await this.#process.execute('docker', create)
+    try {
+      await this.#process.execute('docker', ['buildx', 'inspect', BUILDER], { silently: true })
+    } catch {
+      await this.#process.execute('docker', ['buildx', 'create', '--name', BUILDER, '--bootstrap'])
+    }
 
-    return name
+    this.#builder = BUILDER
+
+    return BUILDER
+  }
+
+  /**
+   * @param {string[]} args
+   */
+  #appendCache (args) {
+    const ref = posix.join(this.#registry.base, this.#scope, 'buildcache')
+
+    args.push('--cache-from', `type=registry,ref=${ref}`)
+    args.push('--cache-to', `type=registry,ref=${ref},mode=max,image-manifest=true`)
   }
 }
 

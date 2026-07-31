@@ -29,6 +29,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
+      packages: write
 
     steps:
       - name: Setup Node
@@ -74,6 +75,38 @@ jobs:
           else
             npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
           fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish runtime image
+        run: |
+          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
+          IMAGE=ghcr.io/toa-io/runtime
+          TAGS=(--tag "$IMAGE:$VERSION")
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAGS+=(--tag "$IMAGE:${{ inputs.dist-tag }}")
+          elif [ "${{ github.base_ref }}" = "release" ]; then
+            TAGS+=(--tag "$IMAGE:latest")
+          else
+            TAGS+=(--tag "$IMAGE:alpha")
+          fi
+
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --build-arg VERSION="$VERSION" \
+            "${TAGS[@]}" \
+            --push \
+            -f operations/image/runtime.Dockerfile \
+            operations/image
 
       - name: Push to dev branch
         if: github.event_name == 'pull_request'

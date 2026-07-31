@@ -4,6 +4,22 @@
 
 ### Container Registry
 
+Deploy images default to `FROM ghcr.io/toa-io/runtime:<runtime.version>`
+(published with each Toa release). The base image already has `@toa.io/runtime`
+installed; composition/service Dockerfiles only install component dependencies.
+
+To use a custom base image, set `registry.build.image` (or `composition.image`).
+That image must provide the `toa` CLI, or install it via `registry.build.run`:
+
+```yaml
+# context.toa.yaml
+
+registry:
+  build:
+    image: node:24.14.0-alpine3.22
+    run: npm i -g @toa.io/runtime --omit=dev
+```
+
 #### Build Options
 
 ```yaml
