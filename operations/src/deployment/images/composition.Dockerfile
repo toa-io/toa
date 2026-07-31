@@ -5,8 +5,6 @@ FROM {{build.image}}
 ENV NODE_ENV=production
 RUN if [ "{{runtime.registry}}" != "" ]; then npm set registry {{runtime.registry}}; fi
 RUN if [ "{{runtime.proxy}}" != "" ]; then npm set proxy {{runtime.proxy}}; fi
-RUN --mount=type=cache,target=/root/.npm \
-  npm i -g @toa.io/runtime@{{runtime.version}} --omit=dev
 
 WORKDIR /composition
 COPY --chown=node:node . /composition
