@@ -22,7 +22,7 @@ class Factory {
 
     const imagesFactory = new ImagesFactory(context.name, context.runtime, context.registry)
 
-    this.#registry = new Registry(context.registry, imagesFactory, this.#process)
+    this.#registry = new Registry(context.name, context.registry, imagesFactory, this.#process)
     this.#compositions = context.compositions.map((composition) => this.#composition(composition))
     this.#dependencies = this.#getDependencies()
   }
