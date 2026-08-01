@@ -132,5 +132,12 @@ jobs:
         run: |
           git fetch
           git checkout dev
-          git merge ${{ github.base_ref }}
+          # package-lock.json has -merge in .gitattributes, so concurrent
+          # lockfile edits (e.g. Dependabot) always conflict with the release bump.
+          if ! git merge ${{ github.base_ref }}; then
+            git checkout --ours package-lock.json
+            npm install --package-lock-only --ignore-scripts
+            git add package-lock.json
+            git -c core.hooksPath=/dev/null commit --no-edit
+          fi
           git push --all origin --no-verify
