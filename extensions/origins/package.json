@@ -22,7 +22,7 @@
     "@toa.io/generic": "1.0.0-alpha.225",
     "@toa.io/pointer": "1.0.0-alpha.225",
     "@toa.io/schemas": "1.0.0-alpha.225",
-    "comq": "0.13.0",
+    "comq": "0.15.0",
     "msgpackr": "2.0.1",
     "openspan": "1.0.0-alpha.173"
   },
