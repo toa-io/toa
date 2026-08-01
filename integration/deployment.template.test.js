@@ -58,6 +58,17 @@ describe('compositions', () => {
         expect(labels[component]).toStrictEqual('1')
       }
 
+      expect(deployment.spec.template.spec.topologySpreadConstraints).toStrictEqual([{
+        maxSkew: 1,
+        topologyKey: 'kubernetes.io/hostname',
+        whenUnsatisfiable: 'ScheduleAnyway',
+        labelSelector: {
+          matchLabels: {
+            'toa.io/composition': composition.name
+          }
+        }
+      }])
+
       const container = deployment.spec.template.spec.containers[0]
 
       expect(container.name).toStrictEqual(composition.name)
@@ -114,6 +125,17 @@ describe('services', () => {
       expect(deployment.spec.replicas).toStrictEqual(2)
       expect(deployment.spec.selector.matchLabels['toa.io/service']).toStrictEqual(service.name)
       expect(deployment.spec.template.metadata.labels['toa.io/service']).toStrictEqual(service.name)
+
+      expect(deployment.spec.template.spec.topologySpreadConstraints).toStrictEqual([{
+        maxSkew: 1,
+        topologyKey: 'kubernetes.io/hostname',
+        whenUnsatisfiable: 'ScheduleAnyway',
+        labelSelector: {
+          matchLabels: {
+            'toa.io/service': service.name
+          }
+        }
+      }])
 
       const container = deployment.spec.template.spec.containers[0]
 

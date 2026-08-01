@@ -73,6 +73,13 @@ spec:
               exec:
                 command: [sleep, "5"]
       terminationGracePeriodSeconds: 45
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              toa.io/service: extension-{{ .name }}
 {{- if .port }}
 ---
 apiVersion: v1
