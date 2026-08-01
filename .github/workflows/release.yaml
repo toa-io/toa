@@ -86,6 +86,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # npm publish can succeed before the version is visible to subsequent
+      # registry reads (CDN lag). Poll instead of a fixed sleep.
+      - name: Wait for npm
+        run: |
+          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
+          for i in $(seq 1 36); do
+            if npm view "@toa.io/runtime@$VERSION" version >/dev/null 2>&1; then
+              echo "@toa.io/runtime@$VERSION is available"
+              exit 0
+            fi
+            echo "waiting for @toa.io/runtime@$VERSION ($i/36)"
+            sleep 5
+          done
+          echo "::error::timed out waiting for @toa.io/runtime@$VERSION on npm"
+          exit 1
+
       - name: Publish runtime image
         run: |
           VERSION=$(node -p "require('./runtime/runtime/package.json').version")
