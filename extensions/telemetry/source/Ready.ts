@@ -1,5 +1,4 @@
 import * as http from 'node:http'
-import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
@@ -13,6 +12,7 @@ export class Ready extends Connector {
   private ready = false
   private startedAt = 0
   private listening = false
+  private skipped = false
 
   public constructor (options: ReadyOptions) {
     super()
@@ -31,19 +31,48 @@ export class Ready extends Connector {
   }
 
   public async listen (): Promise<void> {
-    if (this.listening)
+    if (this.listening || this.skipped)
       return
 
     this.startedAt = Date.now()
-    this.server.listen(this.options.port)
 
-    await once(this.server, 'listening')
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const onError = (error: Error): void => {
+          this.server.off('listening', onListening)
+          reject(error)
+        }
+
+        const onListening = (): void => {
+          this.server.off('error', onError)
+          resolve()
+        }
+
+        this.server.once('error', onError)
+        this.server.once('listening', onListening)
+        this.server.listen(this.options.port)
+      })
+    } catch (error: any) {
+      // Local multi-process (pm2 + features) shares a host; k8s pods do not.
+      if (error?.code === 'EADDRINUSE') {
+        this.skipped = true
+        console.warn('Ready probe port already in use, skipping', { port: this.options.port })
+
+        return
+      }
+
+      throw error
+    }
 
     this.listening = true
   }
 
   public async complete (): Promise<void> {
     await this.listen()
+
+    if (this.skipped)
+      return
+
     await setTimeout(this.options.delay)
 
     this.ready = true
