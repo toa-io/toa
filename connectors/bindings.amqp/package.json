@@ -20,7 +20,7 @@
     "@toa.io/core": "1.0.0-alpha.228",
     "@toa.io/generic": "1.0.0-alpha.225",
     "@toa.io/pointer": "1.0.0-alpha.225",
-    "comq": "0.15.0",
+    "comq": "0.15.1",
     "openspan": "1.0.0-alpha.173"
   },
   "scripts": {
