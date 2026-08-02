@@ -52,8 +52,7 @@ it('should transmit', async () => {
   const exchange = mock.queues.name.mock.results[0].value
 
   expect(comm.emit).toHaveBeenCalledWith(exchange, message, {
-    'deliveryMode': 1,
-    'expiration': 1000
+    'deliveryMode': 1
   })
 })
 
