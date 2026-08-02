@@ -153,16 +153,6 @@ export class Gateway extends Connector {
   private merge (branch: Branch): void {
     const id = branch.namespace + '.' + branch.component + '@' + branch.version
 
-    if (this.merged.has(id)) {
-      console.debug('Branch already merged, ignoring', {
-        namespace: branch.namespace,
-        component: branch.component,
-        version: branch.version
-      })
-
-      return
-    }
-
     const attributes = {
       namespace: branch.namespace,
       component: branch.component,
@@ -175,6 +165,12 @@ export class Gateway extends Connector {
       const message = exception instanceof Error ? exception.message : 'Unknown error'
 
       console.error('Branch merge exception', { message, ...attributes })
+
+      return
+    }
+
+    if (this.merged.has(id)) {
+      console.debug('Branch refreshed', attributes)
 
       return
     }

@@ -22,6 +22,9 @@ export class Route {
   }
 
   public match (fragments: string[], parameters: Parameter[]): Match | null {
+    if (Date.now() >= this.node.expiration)
+      return null
+
     for (let i = 0; i < this.segments.length; i++) {
       const segment = this.segments[i]
 

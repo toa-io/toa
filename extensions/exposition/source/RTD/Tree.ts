@@ -16,8 +16,8 @@ export class Tree {
   public constructor (node: syntax.Node, endpoints: EndpointsFactory, directives: DirectiveFactory) {
     this.endpoints = endpoints
     this.directives = directives
-    this.trunk = this.createNode(node, PROTECTED)
     this.root = node
+    this.trunk = this.createNode(node, PROTECTED)
   }
 
   public match (path: string): Match | null {
@@ -48,7 +48,7 @@ export class Tree {
       endpoints: this.endpoints,
       directives: {
         factory: this.directives,
-        stack: this.root?.directives ?? []
+        stack: this.root.directives ?? []
       },
       extension
     }

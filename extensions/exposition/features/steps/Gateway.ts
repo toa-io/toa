@@ -58,6 +58,15 @@ export class Gateway {
     this.default = false
   }
 
+  @given('the branch TTL is {float} second(s)')
+  public async setBranchTTL (seconds: number): Promise<void> {
+    process.env.__TESTING_EXPOSITION_BRANCH_TTL = String(seconds * 1000)
+
+    await Gateway.stop()
+
+    this.default = false
+  }
+
   @given('the Gateway is running')
   public async start (): Promise<void> {
     if (instance !== null)
@@ -82,6 +91,8 @@ export class Gateway {
 
   @after()
   public async cleanup (): Promise<void> {
+    delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
+
     if (this.default)
       return
 
