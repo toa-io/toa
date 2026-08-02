@@ -153,16 +153,6 @@ export class Gateway extends Connector {
   private merge (branch: Branch): void {
     const id = branch.namespace + '.' + branch.component + '@' + branch.version
 
-    if (this.merged.has(id)) {
-      console.debug('Branch already merged, ignoring', {
-        namespace: branch.namespace,
-        component: branch.component,
-        version: branch.version
-      })
-
-      return
-    }
-
     const attributes = {
       namespace: branch.namespace,
       component: branch.component,
@@ -179,6 +169,12 @@ export class Gateway extends Connector {
       return
     }
 
+    if (this.merged.has(id)) {
+      console.debug('Branch refreshed', attributes)
+
+      return
+    }
+
     this.merged.add(id)
     this.lastMerge = Date.now()
     this.resolveFirstMerge?.()
@@ -190,6 +186,6 @@ export class Gateway extends Connector {
 
 export type Broadcast = bindings.Broadcast<Label>
 
-const SETTLE_QUIET = 1000
+const SETTLE_QUIET = 10_000
 const SETTLE_TIMEOUT = 30_000
 const SETTLE_POLL = 50

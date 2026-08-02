@@ -83,7 +83,43 @@ Feature: Dynamic tree updates
       200 OK
       """
 
+  Scenario: Stale branch expires
+    Given the branch TTL is 0.5 seconds
+    And the Gateway is running
+    And the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    Then the `pots` is stopped
+    And after 0.8 seconds
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+
+      Route not found
+      """
+
   Scenario: Updating routes with conflict
+    Given the Gateway is running
     And the `pots` is running with the following manifest:
       """yaml
       version: 1.0.0
@@ -119,7 +155,8 @@ Feature: Dynamic tree updates
       """
 
   Scenario: Updating method mapping
-    Given the `pots` is running with the following manifest:
+    Given the Gateway is running
+    And the `pots` is running with the following manifest:
       """yaml
       version: a
       exposition:

@@ -1,3 +1,4 @@
+import { BRANCH_TTL } from '../const'
 import { Node, type Properties } from './Node'
 import { Route } from './Route'
 import { segment } from './segment'
@@ -17,12 +18,26 @@ export function createNode (node: syntax.Node, context: Context): Node {
   for (const method of node.methods)
     methods[method.verb] = createMethod(method, context)
 
+  const protect = node.protected ?? context.protected
+
   const properties: Properties = {
-    protected: node.protected ?? context.protected,
-    forward: node.forward
+    protected: protect,
+    forward: node.forward,
+    expiration: protect ? Infinity : Date.now() + branchTTL()
   }
 
   return new Node(routes, methods, properties)
+}
+
+function branchTTL (): number {
+  const value = process.env.__TESTING_EXPOSITION_BRANCH_TTL
+
+  if (value === undefined || value === '')
+    return BRANCH_TTL
+
+  const parsed = Number(value)
+
+  return Number.isFinite(parsed) ? parsed : BRANCH_TTL
 }
 
 function createRoute (route: syntax.Route, context: Context): Route {

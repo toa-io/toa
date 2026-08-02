@@ -5,6 +5,7 @@ import { type Match, type Parameter } from './Match'
 export class Node {
   public intermediate: boolean
   public forward: string | null
+  public expiration: number
   public methods: Methods
   private readonly protected: boolean
   private routes: Route[]
@@ -14,6 +15,7 @@ export class Node {
     this.methods = methods
     this.protected = properties.protected
     this.forward = properties.forward ?? null
+    this.expiration = properties.expiration ?? Infinity
     this.intermediate = this.routes.findIndex((route) => route.root) !== -1
 
     this.sort()
@@ -59,6 +61,8 @@ export class Node {
 
     this.routes = node.routes
     this.methods = node.methods
+    this.expiration = node.expiration
+    this.forward = node.forward
 
     // race condition is really unlikely
     for (const method of methods)
@@ -96,4 +100,5 @@ export class Node {
 export interface Properties {
   protected: boolean
   forward?: string
+  expiration?: number
 }
