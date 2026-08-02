@@ -47,6 +47,27 @@ spec:
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}
+          {{- if .probe }}
+          ports:
+            - containerPort: {{ .probe.port }}
+          startupProbe:
+            httpGet:
+              path: {{ .probe.path }}
+              port: {{ .probe.port }}
+            {{- if .probe.delay }}
+            initialDelaySeconds: {{ .probe.delay }}
+            {{- end }}
+            periodSeconds: 2
+            timeoutSeconds: 3
+            failureThreshold: 150
+          readinessProbe:
+            httpGet:
+              path: {{ .probe.path }}
+              port: {{ .probe.port }}
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          {{- end }}
           {{- if .mounts }}
           volumeMounts:
             {{- range .mounts }}
@@ -54,6 +75,11 @@ spec:
               mountPath: {{ .path }}
             {{- end }}
           {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command: [sleep, "5"]
+      terminationGracePeriodSeconds: 45
       {{- if $.Values.credentials }}
       imagePullSecrets:
         - name: {{ $.Values.credentials }}

@@ -119,3 +119,41 @@ Feature: Telemetry
       compositions:
         - name: default-telemetry
       """
+
+  Scenario: Ready probe is declared by default
+    Given I have a component `telemetry`
+    And I have a context
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-telemetry
+          probe:
+            path: /.ready
+            port: 8001
+            delay: 3
+          variables:
+            - name: TOA_TELEMETRY_READY
+      """
+
+  Scenario: Ready can be disabled
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        ready: false
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-telemetry
+          variables:
+            - name: TOA_TELEMETRY_READY
+              value: ZmFsc2U=
+      """
+
+  Scenario: Composition becomes ready
+    Given I compose `dummies.one` component
+    When I request ready probe
+    Then ready probe status is 200

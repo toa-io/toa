@@ -16,6 +16,8 @@ export interface Factory {
 
   context? (context: _context.Context): _context.Context
 
+  manage? (composition: _core.Connector): _core.Connector
+
   storage? (storage: _storages.Storage): _storages.Storage
 
   emitter? (emitter: _bindings.Emitter, label: string): _bindings.Emitter

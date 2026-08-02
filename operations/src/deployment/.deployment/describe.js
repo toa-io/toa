@@ -21,7 +21,7 @@ const describe = (context, compositions, dependency) => {
   const credentials = context.registry?.credentials
 
   desc.compositions(compositions, dependency)
-  desc.services(services, dependency.variables)
+  desc.services(services, dependency.variables, dependency.probe)
 
   return {
     compositions,

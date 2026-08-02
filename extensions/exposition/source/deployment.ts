@@ -58,6 +58,12 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     value: encode(properties)
   })
 
+  // Nested identity composition shares this process; gateway already exposes /.ready.
+  service.variables!.push({
+    name: 'TOA_TELEMETRY_READY',
+    value: encode(false)
+  })
+
   return { services: [service] }
 }
 
