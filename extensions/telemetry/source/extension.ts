@@ -1,13 +1,21 @@
 import { console } from 'openspan'
 import { decode, encode } from '@toa.io/generic'
 import { Logs } from './Logs'
+import {
+  DEFAULT_ANNOTATION,
+  normalizeAnnotation,
+  Ready,
+  READY_ENV,
+  type ReadyAnnotation
+} from './Ready'
 import type { LogsOptions } from './Logs'
-import type { Locator, extensions } from '@toa.io/core'
-import type { Dependency, Variables } from '@toa.io/operations'
+import type { Connector, Locator, extensions } from '@toa.io/core'
+import type { Dependency, Probe, Variables } from '@toa.io/operations'
 import type { Channel } from 'openspan'
 
 export class Factory implements extensions.Factory {
   private readonly logsOptions: LogsOptions
+  private readonly ready: Ready | null
 
   public constructor () {
     const globEnv = process.env[LOGS_PREFIX]
@@ -17,12 +25,36 @@ export class Factory implements extensions.Factory {
     this.logsOptions.level ??= level
 
     console.configure({ level: this.logsOptions.level })
+
+    this.ready = Ready.create()
   }
 
   public aspect (locator: Locator): extensions.Aspect[] {
     const logs = this.createLogs(locator)
 
     return [logs]
+  }
+
+  public manage (composition: Connector): Connector {
+    if (this.ready === null)
+      return composition
+
+    const ready = this.ready
+    const connect = composition.connect.bind(composition)
+    const disconnect = composition.disconnect.bind(composition)
+
+    composition.connect = async () => {
+      await ready.listen()
+      await connect()
+      await ready.complete()
+    }
+
+    composition.disconnect = async (interrupt?: boolean) => {
+      await ready.disconnect(interrupt)
+      await disconnect(interrupt)
+    }
+
+    return composition
   }
 
   private createLogs (locator: Locator): extensions.Aspect {
@@ -35,13 +67,29 @@ export class Factory implements extensions.Factory {
   }
 }
 
-export function deployment (_: unknown, annotation: Annotation): Dependency {
+export function deployment (_: unknown, annotation?: Annotation): Dependency {
   const variables: Variables = { global: [] }
 
   if (annotation?.logs !== undefined)
     addLogsVariables(annotation.logs, variables)
 
-  return { variables }
+  const ready = normalizeAnnotation(annotation?.ready)
+
+  if (ready === false) {
+    variables.global.push({ name: READY_ENV, value: encode(false) })
+
+    return { variables, probe: false }
+  }
+
+  variables.global.push({ name: READY_ENV, value: encode(ready) })
+
+  const probe: Probe = {
+    path: ready.path ?? DEFAULT_ANNOTATION.path,
+    port: ready.port ?? DEFAULT_ANNOTATION.port,
+    delay: ready.delay ?? DEFAULT_ANNOTATION.delay
+  }
+
+  return { variables, probe }
 }
 
 function addLogsVariables (annotation: LogsAnnotation, variables: Variables): void {
@@ -63,7 +111,8 @@ function addLogsVariables (annotation: LogsAnnotation, variables: Variables): vo
 }
 
 interface Annotation {
-  logs: LogsAnnotation & Record<string, LogsAnnotation>
+  logs?: LogsAnnotation & Record<string, LogsAnnotation>
+  ready?: ReadyAnnotation
 }
 
 interface LogsAnnotation {

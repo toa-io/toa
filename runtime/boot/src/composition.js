@@ -26,7 +26,9 @@ async function composition (paths, options) {
   const receivers = await Promise.all(components.map((component, index) =>
     boot.receivers(manifests[index], component)))
 
-  return new Composition(expositions.flat(), producers.flat(), receivers.flat(), tenants.flat())
+  const composition = new Composition(expositions.flat(), producers.flat(), receivers.flat(), tenants.flat())
+
+  return boot.extensions.manage(composition)
 }
 
 exports.composition = composition

@@ -10,7 +10,7 @@ export interface Service {
   resources?: Resources
   variables?: Variable[]
   components?: string[]
-  probe?: Probe
+  probe?: Probe | false
 }
 
 export interface Variable {
@@ -38,6 +38,8 @@ export interface Dependency {
   services?: Service[]
   variables?: Variables
   mounts?: Mounts
+  /** Default probe for compositions and services without their own probe. `false` disables. */
+  probe?: Probe | false
 }
 
 interface Ingress {
@@ -47,7 +49,7 @@ interface Ingress {
   annotations?: object
 }
 
-interface Probe {
+export interface Probe {
   port: number
   path: string
   delay?: number

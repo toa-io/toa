@@ -1,5 +1,25 @@
 # Telemetry
 
+## Ready probe
+
+Compositions expose `GET /.ready` (default port `8001`) for Kubernetes startup/readiness probes.
+The endpoint returns `503` until the composition has connected, then `200` after a short delay.
+
+Configure or disable via `telemetry` Context Annotation:
+
+```yaml
+# context.toa.yaml
+telemetry:
+  ready:
+    port: 8001
+    delay: 3
+```
+
+```yaml
+telemetry:
+  ready: false
+```
+
 ## Structured logs
 
 Structured logs can be written using the `logs` Context Aspect.
