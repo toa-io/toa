@@ -190,6 +190,6 @@ export class Gateway extends Connector {
 
 export type Broadcast = bindings.Broadcast<Label>
 
-const SETTLE_QUIET = 1000
+const SETTLE_QUIET = 10_000
 const SETTLE_TIMEOUT = 30_000
 const SETTLE_POLL = 50
