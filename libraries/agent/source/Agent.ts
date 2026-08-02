@@ -52,20 +52,25 @@ export class Agent {
 
     const protocol = new URL(req.url).protocol === 'https:' ? https : http
 
-    const response = await new Promise<http.IncomingMessage>((resolve) => {
+    const response = await new Promise<http.IncomingMessage>((resolve, reject) => {
       const request = protocol.request(req.url, {
         method: req.method,
         headers
       }, (response) => resolve(response))
 
+      request.on('error', reject)
       request.end(req.body)
     })
 
-    assert.ok(response.statusCode === 200 || response.statusCode === 201,
-      `Request failed with status ${response.statusCode}: ${req.url}`)
+    if (response.statusCode !== 200 && response.statusCode !== 201) {
+      response.destroy()
+
+      assert.fail(`Request failed with status ${response.statusCode}: ${req.url}`)
+    }
 
     this.pending.add(response)
     response.on('end', () => this.pending.delete(response))
+    response.on('error', () => this.pending.delete(response))
 
     return await meros(response)
   }
