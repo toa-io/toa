@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
@@ -13,6 +14,8 @@ export class Gateway extends Connector {
   private readonly tree: Tree
   private readonly interceptor: Interception
   private readonly merged = new Set<string>()
+  private lastMerge = 0
+  private resolveFirstMerge: (() => void) | null = null
 
   public constructor (broadcast: Broadcast, tree: Tree, interception: Interception) {
     super()
@@ -119,8 +122,32 @@ export class Gateway extends Connector {
   }
 
   private async discover (): Promise<void> {
+    const first = new Promise<void>((resolve) => {
+      this.resolveFirstMerge = resolve
+    })
+
     await this.broadcast.receive<Branch>('expose', this.merge.bind(this))
     await this.broadcast.transmit<null>('ping', null)
+    await this.settled(first)
+  }
+
+  private async settled (first: Promise<void>): Promise<void> {
+    const deadline = Date.now() + SETTLE_TIMEOUT
+
+    await Promise.race([first, setTimeout(SETTLE_TIMEOUT)])
+
+    if (this.lastMerge === 0) {
+      console.warn('Discovery timed out waiting for the first expose')
+
+      return
+    }
+
+    while (Date.now() - this.lastMerge < SETTLE_QUIET) {
+      if (Date.now() >= deadline)
+        break
+
+      await setTimeout(SETTLE_POLL)
+    }
   }
 
   private merge (branch: Branch): void {
@@ -136,8 +163,6 @@ export class Gateway extends Connector {
       return
     }
 
-    this.merged.add(id)
-
     const attributes = {
       namespace: branch.namespace,
       component: branch.component,
@@ -146,14 +171,25 @@ export class Gateway extends Connector {
 
     try {
       this.tree.merge(branch.node, branch)
-
-      console.info('Branch merged', attributes)
     } catch (exception: unknown) {
       const message = exception instanceof Error ? exception.message : 'Unknown error'
 
       console.error('Branch merge exception', { message, ...attributes })
+
+      return
     }
+
+    this.merged.add(id)
+    this.lastMerge = Date.now()
+    this.resolveFirstMerge?.()
+    this.resolveFirstMerge = null
+
+    console.info('Branch merged', attributes)
   }
 }
 
 export type Broadcast = bindings.Broadcast<Label>
+
+const SETTLE_QUIET = 1000
+const SETTLE_TIMEOUT = 30_000
+const SETTLE_POLL = 50
