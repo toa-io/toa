@@ -1,12 +1,12 @@
-import { type Node } from './Node'
 import { type Segment } from './segment'
 import { type Match, type Parameter } from './Match'
+import type { Node } from './Node'
 
 export class Route {
   public readonly root: boolean
   public readonly variables: number = 0
   public readonly segments: Segment[]
-  private readonly node: Node
+  public readonly node: Node
   private readonly wildcard: boolean = false
 
   public constructor (segments: Segment[], node: Node) {
@@ -57,8 +57,8 @@ export class Route {
     return true
   }
 
-  public merge (route: Route): void {
-    this.node.merge(route.node)
+  public merge (route: Route): Node[] {
+    return this.node.merge(route.node)
   }
 
   private matchNested (fragments: string[], parameters: Parameter[]): Match | null {

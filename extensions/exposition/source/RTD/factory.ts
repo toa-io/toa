@@ -29,7 +29,7 @@ export function createNode (node: syntax.Node, context: Context): Node {
   return new Node(routes, methods, properties)
 }
 
-function branchTTL (): number {
+export function branchTTL (): number {
   const value = process.env.__TESTING_EXPOSITION_BRANCH_TTL
 
   if (value === undefined || value === '')
