@@ -48,13 +48,8 @@ export class Node {
   }
 
   public touch (expiration: number): void {
-    if (this.protected)
-      return
-
-    this.expiration = expiration
-
-    for (const route of this.routes)
-      route.node.touch(expiration)
+    if (!this.protected)
+      this.expiration = expiration
   }
 
   public async explain (parameters: Parameter[]): Promise<Record<string, unknown>> {
@@ -81,7 +76,7 @@ export class Node {
     for (const method of methods)
       void method.close()
 
-    return [this]
+    return this.nodes()
   }
 
   private append (node: Node): Node[] {
@@ -103,7 +98,16 @@ export class Node {
 
     this.routes.push(candidate)
 
-    return [candidate.node]
+    return candidate.node.nodes()
+  }
+
+  private nodes (): Node[] {
+    const nodes: Node[] = [this]
+
+    for (const route of this.routes)
+      nodes.push(...route.node.nodes())
+
+    return nodes
   }
 
   private sort (): void {
