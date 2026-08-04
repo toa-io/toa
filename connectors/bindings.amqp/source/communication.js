@@ -21,7 +21,14 @@ class Communication extends Connector {
 
     this.#io = await assert(...references)
 
-    this.#diagnose()
+    // `assert` shares one connection per broker, while every connector gets its own
+    // IO, so diagnosing here unconditionally would log each event once per connector
+    const key = references.join()
+
+    if (!diagnosed.has(key)) {
+      diagnosed.add(key)
+      this.#diagnose()
+    }
   }
 
   async close () {
@@ -100,5 +107,8 @@ class Communication extends Connector {
       console.debug('AMQP connection open', { shard }))
   }
 }
+
+/** @type {Set<string>} */
+const diagnosed = new Set()
 
 exports.Communication = Communication
