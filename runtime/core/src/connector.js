@@ -110,7 +110,11 @@ class Connector {
    * @returns {Promise<void>}
    */
   async disconnect (interrupt) {
-    if (interrupt !== true) await this.#connecting
+    // a connector that has not finished connecting has nothing to close, and
+    // awaiting a connection that may never settle outlives any grace period
+    const pending = interrupt === true || this.connected === false
+
+    if (!pending) await this.#connecting
 
     if (this.#disconnecting) return this.#disconnecting
 
@@ -131,7 +135,7 @@ class Connector {
           console.warn(`Connector ${this.id} still disconnecting (${delay})`)
       }, DELAY)
 
-      if (interrupt !== true) await this.close()
+      if (!pending) await this.close()
 
       clearInterval(interval)
 

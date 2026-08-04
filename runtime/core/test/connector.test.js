@@ -1,5 +1,7 @@
 'use strict'
 
+const { timeout } = require('@toa.io/generic')
+
 const fixtures = require('./connector.fixtures')
 
 let sequence
@@ -105,6 +107,7 @@ describe('dependencies', () => {
     a.depends(b).depends(c)
     b.depends(d)
 
+    await a.connect()
     await a.disconnect()
 
     expect(sequence.indexOf('-a')).toBeLessThan(sequence.indexOf('-b'))
@@ -144,6 +147,23 @@ describe('dependencies', () => {
 
   it('should throw if depends not on Connector', async () => {
     expect(() => a.depends({})).toThrow()
+  })
+
+  it('should disconnect while still connecting', async () => {
+    const stuck = new fixtures.StuckConnector()
+
+    a.depends(stuck).depends(b)
+
+    void a.connect()
+
+    while (b.connected !== true) await timeout(1)
+
+    // `a` never connects, and disconnecting must not wait for it to
+    expect(a.connected).toStrictEqual(false)
+
+    await a.disconnect()
+
+    expect(sequence).toEqual(['+b', '-b', '*b', '*a'])
   })
 
   describe('errors', () => {
