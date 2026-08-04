@@ -25,17 +25,26 @@ class Discovery extends Connector {
       this.depends(this.#lookups[id])
     }
 
-    const warning = () => console.warn(`Waiting for lookup response`, { component: id })
-    const timeout = setTimeout(warning, TIMEOUT)
+    const since = Date.now()
+
+    // the wait is unbounded by design, as a dependency may still be starting,
+    // so repeating is the only way a component stuck on one stays visible
+    const warning = setInterval(() => {
+      const waiting = Math.round((Date.now() - since) / 1000)
+
+      console.warn('Waiting for lookup response', { component: id, waiting })
+    }, INTERVAL)
+
+    warning.unref()
 
     const output = await this.#lookups[id].invoke()
 
-    clearTimeout(timeout)
+    clearInterval(warning)
 
     return output
   }
 }
 
-const TIMEOUT = 5000
+const INTERVAL = 5000
 
 exports.Discovery = Discovery
