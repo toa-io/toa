@@ -36,5 +36,13 @@ class FailingConnector extends Connector {
   }
 }
 
+/** Stands for a connector waiting for something that never arrives. */
+class StuckConnector extends Connector {
+  async open () {
+    return new Promise(() => undefined)
+  }
+}
+
 exports.TestConnector = TestConnector
 exports.FailingConnector = FailingConnector
+exports.StuckConnector = StuckConnector
