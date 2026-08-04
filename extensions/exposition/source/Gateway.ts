@@ -5,7 +5,7 @@ import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
 import type { Interception } from './Interception'
-import type { Node, Method, Parameter, Tree, Match } from './RTD'
+import type { Method, Node, Parameter, Tree, Match } from './RTD'
 import type { Label } from './discovery'
 import type { Branch } from './Branch'
 
@@ -13,8 +13,11 @@ export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree
   private readonly interceptor: Interception
-  private readonly merged = new Set<string>()
+  private readonly branches = new Map<string, Exposed>()
   private lastMerge = 0
+  private lastPing = 0
+  private stopped = false
+  private reconciliation: NodeJS.Timeout | null = null
   private resolveFirstMerge: (() => void) | null = null
 
   public constructor (broadcast: Broadcast, tree: Tree, interception: Interception) {
@@ -68,6 +71,11 @@ export class Gateway extends Connector {
   }
 
   protected override dispose (): void {
+    this.stopped = true
+
+    if (this.reconciliation !== null)
+      clearInterval(this.reconciliation)
+
     this.tree.dispose()
 
     console.info('Gateway is closed')
@@ -76,8 +84,12 @@ export class Gateway extends Connector {
   private match (context: http.Context): Match {
     const match = this.tree.match(context.url.pathname)
 
-    if (match === null)
+    if (match === null) {
+      // the route may be missing because an expose has been lost
+      this.reping()
+
       throw new http.NotFound('Route not found')
+    }
 
     if (match.node.forward === null)
       return match
@@ -127,8 +139,47 @@ export class Gateway extends Connector {
     })
 
     await this.broadcast.receive<Branch>('expose', this.merge.bind(this))
-    await this.broadcast.transmit<null>('ping', null)
+
+    void this.knock()
+
     await this.settled(first)
+
+    this.reconciliation = setInterval(() => void this.ping(), RECONCILE_INTERVAL)
+    this.reconciliation.unref()
+  }
+
+  /**
+   * A single ping is enough only if every tenant is listening by then, which is
+   * not the case while the deployment is still rolling out.
+   */
+  private async knock (): Promise<void> {
+    for (const delay of KNOCK_DELAYS) {
+      if (this.stopped)
+        return
+
+      if (delay > 0)
+        await setTimeout(delay, undefined, { ref: false })
+
+      await this.ping()
+    }
+  }
+
+  private async ping (): Promise<void> {
+    if (this.stopped)
+      return
+
+    this.lastPing = Date.now()
+
+    await this.broadcast.transmit<null>('ping', null)
+      .catch((exception: Error) => console.error('Discovery ping failed',
+        { message: exception.message }))
+  }
+
+  private reping (): void {
+    if (Date.now() - this.lastPing < PING_COOLDOWN)
+      return
+
+    void this.ping()
   }
 
   private async settled (first: Promise<void>): Promise<void> {
@@ -151,7 +202,7 @@ export class Gateway extends Connector {
   }
 
   private merge (branch: Branch): void {
-    const id = branch.namespace + '.' + branch.component + '@' + branch.version
+    const id = branch.namespace + '.' + branch.component
 
     const attributes = {
       namespace: branch.namespace,
@@ -159,8 +210,20 @@ export class Gateway extends Connector {
       version: branch.version
     }
 
+    const exposed = this.branches.get(id)
+
+    // rebuilding an identical branch would only tear down its live endpoints
+    if (exposed?.version === branch.version) {
+      this.tree.refresh(exposed.nodes)
+      console.debug('Branch refreshed', attributes)
+
+      return
+    }
+
+    let nodes: Node[]
+
     try {
-      this.tree.merge(branch.node, branch)
+      nodes = this.tree.merge(branch.node, branch)
     } catch (exception: unknown) {
       const message = exception instanceof Error ? exception.message : 'Unknown error'
 
@@ -169,13 +232,7 @@ export class Gateway extends Connector {
       return
     }
 
-    if (this.merged.has(id)) {
-      console.debug('Branch refreshed', attributes)
-
-      return
-    }
-
-    this.merged.add(id)
+    this.branches.set(id, { version: branch.version, nodes })
     this.lastMerge = Date.now()
     this.resolveFirstMerge?.()
     this.resolveFirstMerge = null
@@ -186,6 +243,14 @@ export class Gateway extends Connector {
 
 export type Broadcast = bindings.Broadcast<Label>
 
+interface Exposed {
+  version: string
+  nodes: Node[]
+}
+
 const SETTLE_QUIET = 10_000
 const SETTLE_TIMEOUT = 30_000
 const SETTLE_POLL = 50
+const KNOCK_DELAYS = [0, 500, 1000, 1500]
+const RECONCILE_INTERVAL = 30_000
+const PING_COOLDOWN = 5_000

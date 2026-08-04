@@ -35,6 +35,30 @@ const pots: syntax.Node = {
   directives: []
 }
 
+it('should extend expiration without rebuilding the branch', () => {
+  process.env.__TESTING_EXPOSITION_BRANCH_TTL = '1000'
+
+  const now = jest.spyOn(Date, 'now').mockReturnValue(10_000)
+  const tree = new Tree(root, endpoints, directives)
+  const nodes = tree.merge(pots, { namespace: 'default', component: 'pots' })
+  const match = tree.match('/pots/')
+
+  expect(match).not.toBeNull()
+
+  now.mockReturnValue(10_900)
+  tree.refresh(nodes)
+
+  now.mockReturnValue(11_500)
+
+  const refreshed = tree.match('/pots/')
+
+  expect(refreshed).not.toBeNull()
+  expect(refreshed?.node).toBe(match?.node)
+
+  now.mockRestore()
+  delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
+})
+
 it('should ignore expired nodes during match', () => {
   process.env.__TESTING_EXPOSITION_BRANCH_TTL = '1000'
 

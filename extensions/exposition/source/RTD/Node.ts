@@ -33,15 +33,28 @@ export class Node {
     return null
   }
 
-  public merge (node: Node): void {
+  /**
+   * Returns the nodes the merged branch has landed on, so that its expiration
+   * can later be extended without rebuilding anything.
+   */
+  public merge (node: Node): Node[] {
     this.intermediate = node.intermediate
 
-    if (this.protected)
-      this.append(node)
-    else
-      this.replace(node)
+    const nodes = this.protected ? this.append(node) : this.replace(node)
 
     this.sort()
+
+    return nodes
+  }
+
+  public touch (expiration: number): void {
+    if (this.protected)
+      return
+
+    this.expiration = expiration
+
+    for (const route of this.routes)
+      route.node.touch(expiration)
   }
 
   public async explain (parameters: Parameter[]): Promise<Record<string, unknown>> {
@@ -56,7 +69,7 @@ export class Node {
     return methods
   }
 
-  private replace (node: Node): void {
+  private replace (node: Node): Node[] {
     const methods = Object.values(this.methods)
 
     this.routes = node.routes
@@ -67,25 +80,30 @@ export class Node {
     // race condition is really unlikely
     for (const method of methods)
       void method.close()
+
+    return [this]
   }
 
-  private append (node: Node): void {
+  private append (node: Node): Node[] {
+    const nodes: Node[] = []
+
     for (const route of node.routes)
-      this.route(route)
+      nodes.push(...this.route(route))
 
     for (const [verb, method] of Object.entries(node.methods))
       this.methods[verb] = method
+
+    return nodes
   }
 
-  private route (candidate: Route): void {
+  private route (candidate: Route): Node[] {
     for (const route of this.routes)
-      if (candidate.equals(route)) {
-        route.merge(candidate)
-
-        return
-      }
+      if (candidate.equals(route))
+        return route.merge(candidate)
 
     this.routes.push(candidate)
+
+    return [candidate.node]
   }
 
   private sort (): void {

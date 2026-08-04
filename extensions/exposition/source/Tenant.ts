@@ -1,6 +1,5 @@
 import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
-import { BRANCH_TTL } from './const'
 import type { bindings } from '@toa.io/core'
 import type { Label } from './discovery'
 import type { Branch } from './Branch'
@@ -56,7 +55,9 @@ function exposeInterval (uptime: number): number {
 }
 
 const EXPOSE_MIN = 5_000
-const EXPOSE_MAX = Math.round(BRANCH_TTL / 2.1)
+
+// a refresh no longer rebuilds the branch, so exposing often is cheap
+const EXPOSE_MAX = 120_000
 const EXPOSE_TAU = 900_000
 
 type Broadcast = bindings.Broadcast<Label>

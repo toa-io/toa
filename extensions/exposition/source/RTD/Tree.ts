@@ -1,4 +1,4 @@
-import { createNode } from './factory'
+import { branchTTL, createNode } from './factory'
 import { fragment } from './segment'
 import type { Node } from './Node'
 import type { Match } from './Match'
@@ -32,10 +32,21 @@ export class Tree {
     return this.trunk.match(fragments)
   }
 
-  public merge (node: syntax.Node, extension: unknown): void {
+  public merge (node: syntax.Node, extension: unknown): Node[] {
     const branch = this.createNode(node, !PROTECTED, extension)
 
-    this.trunk.merge(branch)
+    return this.trunk.merge(branch)
+  }
+
+  /**
+   * Extends the expiration of an already merged branch, leaving its endpoints
+   * and their remotes intact.
+   */
+  public refresh (nodes: Node[]): void {
+    const expiration = Date.now() + branchTTL()
+
+    for (const node of nodes)
+      node.touch(expiration)
   }
 
   public dispose (): void {
