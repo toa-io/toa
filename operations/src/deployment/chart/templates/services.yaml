@@ -11,7 +11,9 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 50%
+      # a replacement must pass readiness before a running replica is taken out,
+      # otherwise a single pod serves all traffic while the others start up
+      maxUnavailable: 0
       maxSurge: 50%
   selector:
     matchLabels:

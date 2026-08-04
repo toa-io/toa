@@ -92,7 +92,7 @@ Feature: Service Deployment
         failureThreshold: 3
       """
 
-  Scenario: Replicas are replaced in parallel
+  Scenario: Replicas are replaced without reducing availability
     Given I have a component `exposed.one`
     And I have a context with:
       """yaml
@@ -113,7 +113,7 @@ Feature: Service Deployment
       """
       type: RollingUpdate
       rollingUpdate:
-        maxUnavailable: 50%
+        maxUnavailable: 0
         maxSurge: 50%
       """
     And extension-exposition-gateway Deployment spec spec should contain:
