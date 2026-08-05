@@ -1,5 +1,6 @@
 import assert from 'node:assert'
 import { createHash } from 'node:crypto'
+import { console } from 'openspan'
 import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
@@ -16,6 +17,7 @@ import type { Branch } from './Branch'
 import type { syntax } from './RTD'
 import type { Broadcast } from './Gateway'
 import type { Connector, Locator, extensions } from '@toa.io/core'
+import type { Channel } from 'openspan'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader
@@ -43,6 +45,8 @@ export class Factory implements extensions.Factory {
     assert.ok(process.env.TOA_EXPOSITION_PROPERTIES,
       'TOA_EXPOSITION_PROPERTIES is undefined')
 
+    configureLogs()
+
     const options = decode<http.Options>(process.env.TOA_EXPOSITION_PROPERTIES)
     const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
     const server = http.Server.create({ ...options })
@@ -67,6 +71,15 @@ export class Factory implements extensions.Factory {
 }
 
 const CHANNEL = 'exposition'
+const LOGS_PREFIX = 'TOA_TELEMETRY_LOGS'
+
+function configureLogs (): void {
+  const globEnv = process.env[LOGS_PREFIX]
+  const level: Channel = process.env.TOA_DEV === '1' ? 'debug' : 'info'
+  const options = globEnv === undefined ? { level } : decode<{ level?: Channel }>(globEnv)
+
+  console.configure({ level: options.level ?? level })
+}
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 export type Bootloader = typeof import('@toa.io/boot')

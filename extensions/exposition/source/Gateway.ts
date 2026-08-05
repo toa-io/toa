@@ -17,7 +17,6 @@ export class Gateway extends Connector {
   private lastMerge = 0
   private lastPing = 0
   private stopped = false
-  private reconciliation: NodeJS.Timeout | null = null
   private resolveFirstMerge: (() => void) | null = null
 
   public constructor (broadcast: Broadcast, tree: Tree, interception: Interception) {
@@ -72,9 +71,6 @@ export class Gateway extends Connector {
 
   protected override dispose (): void {
     this.stopped = true
-
-    if (this.reconciliation !== null)
-      clearInterval(this.reconciliation)
 
     this.tree.dispose()
 
@@ -143,9 +139,6 @@ export class Gateway extends Connector {
     void this.knock()
 
     await this.settled(first)
-
-    this.reconciliation = setInterval(() => void this.ping(), RECONCILE_INTERVAL)
-    this.reconciliation.unref()
   }
 
   /**
@@ -252,5 +245,4 @@ const SETTLE_QUIET = 10_000
 const SETTLE_TIMEOUT = 30_000
 const SETTLE_POLL = 50
 const KNOCK_DELAYS = [0, 500, 1000, 1500]
-const RECONCILE_INTERVAL = 30_000
 const PING_COOLDOWN = 5_000
