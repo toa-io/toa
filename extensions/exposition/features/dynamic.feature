@@ -84,7 +84,7 @@ Feature: Dynamic tree updates
       """
 
   Scenario: Stale branch expires
-    Given the branch TTL is 0.5 seconds
+    Given the branch TTL is 5 seconds
     And the Gateway is running
     And the `pots` is running with the following manifest:
       """yaml
@@ -104,7 +104,7 @@ Feature: Dynamic tree updates
       200 OK
       """
     Then the `pots` is stopped
-    And after 0.8 seconds
+    And after 6 seconds
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
