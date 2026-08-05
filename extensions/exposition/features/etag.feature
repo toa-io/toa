@@ -185,6 +185,45 @@ Feature: Optimistic concurrency control
       etag: "2"
       """
 
+  Scenario: Hash `if-none-match` on versioned resource
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST: create
+          /:id:
+            GET: observe
+      """
+    When the following request is received:
+      """
+      POST /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      title: Hello
+      volume: 1.5
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      etag: "1"
+
+      id: ${{ id }}
+      """
+    When the following request is received:
+      """
+      GET /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      if-none-match: "ef4a2abb4c896c06d0ab3037427e6c7c3e9a32a0c982eee2df68679babd96da3"
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: "1"
+      """
+
   Scenario: Unexpected `if-match` format
     Given the `pots` is running with the following manifest:
       """yaml

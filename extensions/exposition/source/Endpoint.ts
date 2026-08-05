@@ -45,27 +45,8 @@ export class Endpoint implements RTD.Endpoint {
     if (reply !== null && reply !== undefined) {
       const etag = context.request.headers['if-none-match']
 
-      message.headers ??= new Headers()
-
-      if (typeof reply === 'object' && '_version' in reply)
-        if (etag !== undefined && reply._version === this.version(etag)) {
-          message.status = 304
-          message.headers.set('etag', etag)
-
-          return message
-        } else
-          message.headers.set('etag', `"${reply._version.toString()}"`)
-      else if (!(reply instanceof Readable)) {
-        const hash = `"${createHash('sha256').update(JSON.stringify(reply)).digest('hex')}"`
-
-        if (etag === hash) {
-          message.status = 304
-          message.headers.set('etag', etag)
-
-          return message
-        } else
-          message.headers.set('etag', hash)
-      }
+      if (this.conditionalGet(reply, etag, message))
+        return message
     }
 
     // last-modified
@@ -122,6 +103,41 @@ export class Endpoint implements RTD.Endpoint {
     await this.remote.disconnect(INTERRUPT)
   }
 
+  private conditionalGet (reply: unknown, etag: string | undefined, message: http.OutgoingMessage): boolean {
+    message.headers ??= new Headers()
+
+    if (typeof reply === 'object' && reply !== null && '_version' in reply) {
+      const matched = etag === undefined ? null : this.matchVersion(etag)
+
+      if (etag !== undefined && matched !== null && reply._version === matched) {
+        message.status = 304
+        message.headers.set('etag', etag)
+
+        return true
+      }
+
+      message.headers.set('etag', `"${reply._version.toString()}"`)
+
+      return false
+    }
+
+    if (reply instanceof Readable)
+      return false
+
+    const hash = `"${createHash('sha256').update(JSON.stringify(reply)).digest('hex')}"`
+
+    if (etag === hash) {
+      message.status = 304
+      message.headers.set('etag', etag)
+
+      return true
+    }
+
+    message.headers.set('etag', hash)
+
+    return false
+  }
+
   private query (context: http.Context): http.Query {
     const query: http.Query = Object.fromEntries(context.url.searchParams)
     const etag = context.request.headers['if-match']
@@ -132,13 +148,22 @@ export class Endpoint implements RTD.Endpoint {
     return query
   }
 
-  private version (etag: string): number {
+  private matchVersion (etag: string): number | null {
     const match = etag.match(ETAG)
 
     if (match === null)
-      throw new http.BadRequest('Invalid ETag')
+      return null
 
     return Number.parseInt(match.groups!.version)
+  }
+
+  private version (etag: string): number {
+    const version = this.matchVersion(etag)
+
+    if (version === null)
+      throw new http.BadRequest('Invalid ETag')
+
+    return version
   }
 }
 
