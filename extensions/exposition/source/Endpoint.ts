@@ -107,16 +107,17 @@ export class Endpoint implements RTD.Endpoint {
     message.headers ??= new Headers()
 
     if (typeof reply === 'object' && reply !== null && '_version' in reply) {
+      const version = reply._version as number
       const matched = etag === undefined ? null : this.matchVersion(etag)
 
-      if (etag !== undefined && matched !== null && reply._version === matched) {
+      if (etag !== undefined && matched !== null && version === matched) {
         message.status = 304
         message.headers.set('etag', etag)
 
         return true
       }
 
-      message.headers.set('etag', `"${reply._version.toString()}"`)
+      message.headers.set('etag', `"${version.toString()}"`)
 
       return false
     }
