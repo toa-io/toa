@@ -1,4 +1,4 @@
-import { console, Console } from './'
+import { console, Console, create, run } from './'
 
 let instance: Console
 
@@ -169,6 +169,119 @@ it('should serialize non-Error cause', () => {
 
 it('should log null', () => {
   instance.info('foo', { foo: null })
+})
+
+describe('tracing', () => {
+  it('should stamp trace_id and span_id within context', () => {
+    const context = create()
+
+    run(context, () => instance.info('hello'))
+
+    expect(pop(streams.stdout)).toMatchObject({
+      trace_id: context.traceId,
+      span_id: context.spanId
+    })
+  })
+
+  it('should not stamp outside of context', () => {
+    instance.info('hello')
+
+    const entry = pop(streams.stdout)
+
+    expect('trace_id' in entry).toBe(false)
+    expect('span_id' in entry).toBe(false)
+  })
+})
+
+describe('span', () => {
+  it('should return task result', async () => {
+    const result = await instance.span('task', () => 42)
+
+    expect(result).toBe(42)
+  })
+
+  it('should write span entry with duration', async () => {
+    await instance.span('fetch', async () => await new Promise((resolve) => setTimeout(resolve, 10)))
+
+    const entry = pop(streams.stdout)
+
+    expect(entry).toMatchObject({
+      severity: 'INFO',
+      message: 'fetch',
+      trace_id: expect.stringMatching(/^[\da-f]{32}$/),
+      span_id: expect.stringMatching(/^[\da-f]{16}$/),
+      duration: expect.any(Number)
+    })
+
+    expect(entry.duration).toBeGreaterThanOrEqual(5)
+    expect('status' in entry).toBe(false)
+  })
+
+  it('should write attributes', async () => {
+    await instance.span('fetch', { url: 'example.com' }, () => null)
+
+    expect(pop(streams.stdout)).toMatchObject({
+      attributes: { url: 'example.com' }
+    })
+  })
+
+  it('should nest spans', async () => {
+    await instance.span('outer', async () => {
+      await instance.span('inner', () => null)
+    })
+
+    const inner = pop(streams.stdout)
+    const outer = JSON.parse(streams.stdout.write.mock.calls[1][0].toString())
+
+    expect(inner.message).toBe('inner')
+    expect(outer.message).toBe('outer')
+    expect(inner.trace_id).toBe(outer.trace_id)
+    expect(inner.parent_id).toBe(outer.span_id)
+  })
+
+  it('should link logs to the span', async () => {
+    await instance.span('work', () => instance.info('step'))
+
+    const log = pop(streams.stdout)
+    const span = JSON.parse(streams.stdout.write.mock.calls[1][0].toString())
+
+    expect(log.message).toBe('step')
+    expect(log.trace_id).toBe(span.trace_id)
+    expect(log.span_id).toBe(span.span_id)
+  })
+
+  it('should continue current trace', async () => {
+    const context = create()
+
+    await run(context, async () => await instance.span('work', () => null))
+
+    expect(pop(streams.stdout)).toMatchObject({
+      trace_id: context.traceId,
+      parent_id: context.spanId
+    })
+  })
+
+  it('should rethrow and mark status on failure', async () => {
+    const oops = new Error('oops')
+
+    await expect(instance.span('work', () => Promise.reject(oops))).rejects.toThrow(oops)
+
+    expect(pop(streams.stderr)).toMatchObject({
+      severity: 'ERROR',
+      message: 'work',
+      status: 'error',
+      duration: expect.any(Number)
+    })
+  })
+
+  it('should execute task even below log level', async () => {
+    instance.configure({ level: 'error' })
+
+    const result = await instance.span('quiet', () => 'done')
+
+    expect(result).toBe('done')
+    expect(pop(streams.stdout)).toBeUndefined()
+  })
 })
 
 function pop (channel: any): any {

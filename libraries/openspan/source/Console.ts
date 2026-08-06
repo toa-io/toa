@@ -1,3 +1,6 @@
+import { create, current, run } from './tracing'
+import type { SpanContext } from './tracing'
+
 export class Console {
   public readonly debug = this.channel('debug')
   public readonly log = this.debug
@@ -27,6 +30,27 @@ export class Console {
       this.context = options.context
   }
 
+  public async span<T> (name: string, task: Task<T>): Promise<T>
+  public async span<T> (name: string, attributes: object, task: Task<T>): Promise<T>
+  public async span<T> (name: string, arg: object | Task<T>, task?: Task<T>): Promise<T> {
+    const attributes = typeof arg === 'function' ? undefined : arg
+    const fn = (typeof arg === 'function' ? arg : task) as Task<T>
+    const context = create(current())
+    const start = performance.now()
+
+    try {
+      const result = await run(context, fn)
+
+      this.complete(context, name, attributes, start)
+
+      return result
+    } catch (error) {
+      this.complete(context, name, attributes, start, error)
+
+      throw error
+    }
+  }
+
   public fork (ctx?: any): Console {
     const options: ConsoleOptions = {
       level: this.level,
@@ -52,27 +76,66 @@ export class Console {
       if (level < this.level)
         return
 
-      const entry: Entry = {
-        severity,
-        message,
-        time: new Date().toISOString()
-      }
-
-      if (attributes instanceof Error)
-        entry.attributes = serialize(attributes)
-      else if (attributes !== undefined)
-        entry.attributes = attributes
-
-      if (this.context !== undefined)
-        entry.context = this.context
-
-      const buffer = Buffer.from(JSON.stringify(entry) + '\n')
-
-      if (level === LEVELS.error)
-        this.stderr.write(buffer)
-      else
-        this.stdout.write(buffer)
+      this.write(level, severity, message, attributes)
     }
+  }
+
+  // eslint-disable-next-line max-params
+  private complete (context: SpanContext, name: string, attributes: object | undefined, start: number, error?: unknown): void {
+    const duration = Math.round((performance.now() - start) * 1000) / 1000
+    const level = error === undefined ? LEVELS.info : LEVELS.error
+    const severity = error === undefined ? 'INFO' : 'ERROR'
+
+    if (level < this.level)
+      return
+
+    const span: Partial<Entry> = {
+      trace_id: context.traceId,
+      span_id: context.spanId,
+      duration
+    }
+
+    if (context.parentId !== undefined)
+      span.parent_id = context.parentId
+
+    if (error !== undefined)
+      span.status = 'error'
+
+    this.write(level, severity as Severity, name, attributes, span)
+  }
+
+  // eslint-disable-next-line max-params
+  private write (level: Level, severity: Severity, message: string, attributes?: any, span?: Partial<Entry>): void {
+    const entry: Entry = {
+      severity,
+      message,
+      time: new Date().toISOString()
+    }
+
+    if (attributes instanceof Error)
+      entry.attributes = serialize(attributes)
+    else if (attributes !== undefined)
+      entry.attributes = attributes
+
+    if (this.context !== undefined)
+      entry.context = this.context
+
+    const context = current()
+
+    if (context !== undefined) {
+      entry.trace_id = context.traceId
+      entry.span_id = context.spanId
+    }
+
+    if (span !== undefined)
+      Object.assign(entry, span)
+
+    const buffer = Buffer.from(JSON.stringify(entry) + '\n')
+
+    if (level === LEVELS.error)
+      this.stderr.write(buffer)
+    else
+      this.stdout.write(buffer)
   }
 }
 
@@ -119,9 +182,15 @@ export interface Entry {
   message: string
   attributes?: Record<string, any>
   context?: Record<string, any>
+  trace_id?: string
+  span_id?: string
+  parent_id?: string
+  duration?: number
+  status?: 'error'
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
 export type Severity = Uppercase<Channel>
+export type Task<T> = () => T | Promise<T>
 type Level = -1 | 0 | 1 | 2
 type Method = (message: string, attributes?: any) => void
