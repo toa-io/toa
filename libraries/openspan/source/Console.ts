@@ -1,6 +1,3 @@
-import { formatters } from './formatters'
-import type { Format } from './formatters'
-
 export class Console {
   public readonly debug = this.channel('debug')
   public readonly log = this.debug
@@ -9,7 +6,6 @@ export class Console {
   public readonly error = this.channel('error')
 
   private level: Level = LEVELS.debug
-  private formatter = formatters.json
   private stdout: NodeJS.WriteStream = process.stdout
   private stderr: NodeJS.WriteStream = process.stderr
   private context?: any
@@ -21,9 +17,6 @@ export class Console {
   public configure (options: ConsoleOptions = {}): void {
     if (options.level !== undefined)
       this.level = typeof options.level === 'string' ? LEVELS[options.level] : options.level
-
-    if (options.format !== undefined)
-      this.formatter = formatters[options.format]
 
     if (options.streams !== undefined) {
       this.stdout = options.streams.stdout
@@ -37,7 +30,6 @@ export class Console {
   public fork (ctx?: any): Console {
     const options: ConsoleOptions = {
       level: this.level,
-      format: this.formatter.name,
       streams: {
         stdout: this.stdout,
         stderr: this.stderr
@@ -74,7 +66,7 @@ export class Console {
       if (this.context !== undefined)
         entry.context = this.context
 
-      const buffer = this.formatter.format(entry)
+      const buffer = Buffer.from(JSON.stringify(entry) + '\n')
 
       if (level === LEVELS.error)
         this.stderr.write(buffer)
@@ -113,7 +105,6 @@ export const console = new Console()
 export interface ConsoleOptions {
   level?: Channel | Level
   context?: any
-  format?: Format
   streams?: Streams
 }
 

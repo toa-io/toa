@@ -118,25 +118,15 @@ it('should not log undefined attributes', async () => {
   expect(entry.message).toBe('hello')
 })
 
-it.each(channels)('should print %s in terminal format', (channel) => {
-  const con = new Console({ format: 'terminal', context: { channel } })
-
-  con[channel]('hello', { foo: 'bar', baz: [{ ok: { nested: [{ ok: true }] } }] })
-})
-
 it('should log empty objects', () => {
-  const con = new Console({ format: 'terminal' })
-
-  con.info('foo', { foo: {}, bar: 'baz' })
-  con.info('bar', {})
-  con.info('baz')
+  instance.info('foo', { foo: {}, bar: 'baz' })
+  instance.info('bar', {})
+  instance.info('baz')
 })
 
 it('should log Error', () => {
-  const con = new Console({ format: 'terminal' })
-
-  con.info('foo', new Error('ok'))
-  con.info('foo', { error: new Error('ok') })
+  instance.info('foo', new Error('ok'))
+  instance.info('foo', { error: new Error('ok') })
 })
 
 it('should serialize Error with stack', () => {
@@ -178,9 +168,7 @@ it('should serialize non-Error cause', () => {
 })
 
 it('should log null', () => {
-  const con = new Console({ format: 'terminal' })
-
-  con.info('foo', { foo: null })
+  instance.info('foo', { foo: null })
 })
 
 function pop (channel: any): any {
