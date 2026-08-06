@@ -274,6 +274,20 @@ describe('span', () => {
     })
   })
 
+  it('should write span kind', async () => {
+    await instance.span({ name: 'handle', kind: 'server' }, () => null)
+
+    expect(pop(streams.stdout)).toMatchObject({ kind: 'server' })
+  })
+
+  it('should omit internal kind', async () => {
+    await instance.span({ name: 'step', kind: 'internal' }, () => null)
+
+    const entry = pop(streams.stdout)
+
+    expect('kind' in entry).toBe(false)
+  })
+
   it('should suppress span entries above trace level', async () => {
     instance.configure({ level: 'debug' })
 

@@ -4,6 +4,8 @@ const assert = require('node:assert')
 const { Component } = require('./component')
 
 class Remote extends Component {
+  kind = 'client'
+
   explain (endpoint) {
     assert.ok(endpoint in this.operations,
       `Endpoint '${endpoint}' is not provided by '${this.locator.id}'`)

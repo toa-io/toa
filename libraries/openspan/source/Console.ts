@@ -30,22 +30,27 @@ export class Console {
       this.context = options.context
   }
 
-  public async span<T> (name: string, task: Task<T>): Promise<T>
+  public async span<T> (name: string | SpanOptions, task: Task<T>): Promise<T>
   public async span<T> (name: string, attributes: object, task: Task<T>): Promise<T>
-  public async span<T> (name: string, arg: object | Task<T>, task?: Task<T>): Promise<T> {
-    const attributes = typeof arg === 'function' ? undefined : arg
-    const fn = (typeof arg === 'function' ? arg : task) as Task<T>
+  public async span<T> (naming: string | SpanOptions, arg: object | Task<T>, task?: Task<T>): Promise<T> {
+    const options: SpanOptions = typeof naming === 'string' ? { name: naming } : naming
+
+    if (typeof arg === 'function')
+      task = arg as Task<T>
+    else
+      options.attributes = arg
+
     const context = create(current())
     const start = performance.now()
 
     try {
-      const result = await run(context, fn)
+      const result = await run(context, task!)
 
-      this.complete(context, name, attributes, start)
+      this.complete(context, options, start)
 
       return result
     } catch (error) {
-      this.complete(context, name, attributes, start, error)
+      this.complete(context, options, start, error)
 
       throw error
     }
@@ -81,7 +86,7 @@ export class Console {
   }
 
   // eslint-disable-next-line max-params
-  private complete (context: SpanContext, name: string, attributes: object | undefined, start: number, error?: unknown): void {
+  private complete (context: SpanContext, options: SpanOptions, start: number, error?: unknown): void {
     const duration = Math.round((performance.now() - start) * 1000) / 1000
 
     if (LEVELS.trace < this.level)
@@ -96,10 +101,13 @@ export class Console {
     if (context.parentId !== undefined)
       span.parent_id = context.parentId
 
+    if (options.kind !== undefined && options.kind !== 'internal')
+      span.kind = options.kind
+
     if (error !== undefined)
       span.status = 'error'
 
-    this.write(LEVELS.trace, 'TRACE', name, attributes, span)
+    this.write(LEVELS.trace, 'TRACE', options.name, options.attributes, span)
   }
 
   // eslint-disable-next-line max-params
@@ -185,13 +193,23 @@ export interface Entry {
   span_id?: string
   parent_id?: string
   duration?: number
+  kind?: Kind
   status?: 'error'
+}
+
+export interface SpanOptions {
+  name: string
+  kind?: Kind // 'internal' when omitted
+  attributes?: object
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
 
 // `trace` is a level but not a channel: span entries are written with the TRACE severity
 export type LevelName = 'trace' | Channel
+
+// https://opentelemetry.io/docs/concepts/signals/traces/#span-kind
+export type Kind = 'internal' | 'server' | 'client' | 'producer' | 'consumer'
 export type Severity = Uppercase<LevelName>
 export type Task<T> = () => T | Promise<T>
 type Level = -2 | -1 | 0 | 1 | 2

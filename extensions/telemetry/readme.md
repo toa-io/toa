@@ -76,8 +76,12 @@ trace_id: string   # 32 hex characters, shared by all spans and logs of the trac
 span_id: string    # 16 hex characters
 parent_id?: string # span_id of the enclosing span
 duration: number   # milliseconds
+kind?: string      # server, client, producer, consumer; internal when omitted
 status?: error     # present if an exception was thrown
 ```
+
+Remote calls and events produce a `client`/`server` span pair: the gap between their durations
+is the transport latency. Spans created with `context.span` are `internal`.
 
 Span entries are written only when the `trace` log level is enabled (the default on local
 environments). Spans are executed regardless of the log level.

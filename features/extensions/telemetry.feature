@@ -29,6 +29,22 @@ Feature: Telemetry
       42
       """
 
+  Scenario: Trace propagation over remote calls
+    Given I compose components:
+      | math.calculations |
+      | math.proxy        |
+    When I call `math.proxy.sum` with:
+      """yaml
+      input:
+        a: 1
+        b: 2
+      """
+    Then the reply is received:
+      """yaml
+      3
+      """
+    And I disconnect
+
   Scenario: Default level is `info`
     Given I boot `telemetry` component
     When I invoke `log` with:

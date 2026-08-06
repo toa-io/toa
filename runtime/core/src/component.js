@@ -10,6 +10,9 @@ class Component extends Connector {
   /** @protected */
   operations
 
+  /** @protected */
+  kind = 'server'
+
   constructor (locator, operations) {
     super()
 
@@ -35,7 +38,7 @@ class Component extends Connector {
 
   /** @private */
   async process (endpoint, request) {
-    return console.span(`${this.locator.id}.${endpoint}`, async () => {
+    return console.span({ name: `${this.locator.id}.${endpoint}`, kind: this.kind }, async () => {
       const reply = await this.operations[endpoint].invoke(request)
 
       if (reply?.exception !== undefined)

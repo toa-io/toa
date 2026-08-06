@@ -1,5 +1,6 @@
 'use strict'
 
+const { current, encode } = require('openspan')
 const { Connector } = require('./connector')
 
 /**
@@ -31,6 +32,11 @@ class Event extends Connector {
 
       /** @type {toa.core.Message} */
       const message = { payload }
+
+      const context = current()
+
+      if (context !== undefined)
+        message.telemetry = encode(context)
 
       await this.#emitter.emit(message)
     }
