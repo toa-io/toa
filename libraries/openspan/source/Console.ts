@@ -56,7 +56,7 @@ export class Console {
     const level = LEVELS[channel]
     const severity = channel.toUpperCase() as Severity
 
-    return (message: string, attributes?: any, properties?: any) => {
+    return (message: string, attributes?: any) => {
       if (level < this.level)
         return
 
@@ -66,24 +66,13 @@ export class Console {
         time: new Date().toISOString()
       }
 
-      if (attributes instanceof Error) {
-        entry.attributes = {}
-
-        // @ts-expect-error -- custom error classes
-        if (attributes.code !== undefined)
-          // @ts-expect-error -- custom error classes
-          entry.attributes.code = attributes.code
-
-        if (attributes.message !== undefined)
-          entry.attributes.message = attributes.message
-      } else if (attributes !== undefined)
+      if (attributes instanceof Error)
+        entry.attributes = serialize(attributes)
+      else if (attributes !== undefined)
         entry.attributes = attributes
 
       if (this.context !== undefined)
         entry.context = this.context
-
-      if (properties !== undefined)
-        Object.assign(entry, properties)
 
       const buffer = this.formatter.format(entry)
 
@@ -93,6 +82,23 @@ export class Console {
         this.stdout.write(buffer)
     }
   }
+}
+
+function serialize (error: Error): Record<string, any> {
+  const attributes: Record<string, any> = { message: error.message }
+
+  // @ts-expect-error -- custom error classes
+  if (error.code !== undefined)
+    // @ts-expect-error -- custom error classes
+    attributes.code = error.code
+
+  if (error.stack !== undefined)
+    attributes.stack = error.stack
+
+  if (error.cause !== undefined)
+    attributes.cause = error.cause instanceof Error ? serialize(error.cause) : error.cause
+
+  return attributes
 }
 
 export const LEVELS: Record<Channel, Level> = {
@@ -127,4 +133,4 @@ export interface Entry {
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
 export type Severity = Uppercase<Channel>
 type Level = -1 | 0 | 1 | 2
-type Method = (message: string, attributes?: any, properties?: any) => void
+type Method = (message: string, attributes?: any) => void

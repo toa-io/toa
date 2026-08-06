@@ -139,6 +139,44 @@ it('should log Error', () => {
   con.info('foo', { error: new Error('ok') })
 })
 
+it('should serialize Error with stack', () => {
+  const error = Object.assign(new Error('oops'), { code: 'E_TEST' })
+
+  instance.error('Failed', error)
+
+  const entry = pop(streams.stderr)
+
+  expect(entry.attributes).toMatchObject({
+    message: 'oops',
+    code: 'E_TEST'
+  })
+
+  expect(entry.attributes.stack).toContain('Error: oops')
+})
+
+it('should serialize Error cause chain', () => {
+  const root = new Error('root')
+  const error = new Error('wrapper', { cause: root })
+
+  instance.error('Failed', error)
+
+  const entry = pop(streams.stderr)
+
+  expect(entry.attributes.message).toBe('wrapper')
+  expect(entry.attributes.cause.message).toBe('root')
+  expect(entry.attributes.cause.stack).toContain('Error: root')
+})
+
+it('should serialize non-Error cause', () => {
+  const error = new Error('wrapper', { cause: 'just a string' })
+
+  instance.error('Failed', error)
+
+  const entry = pop(streams.stderr)
+
+  expect(entry.attributes.cause).toBe('just a string')
+})
+
 it('should log null', () => {
   const con = new Console({ format: 'terminal' })
 
