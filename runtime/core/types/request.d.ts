@@ -18,6 +18,7 @@ export interface Request {
   query?: Query
   authentic?: boolean
   task?: boolean
+  telemetry?: string // W3C traceparent
 }
 
 export interface Reply {

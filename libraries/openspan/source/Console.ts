@@ -8,7 +8,7 @@ export class Console {
   public readonly warn = this.channel('warn')
   public readonly error = this.channel('error')
 
-  private level: Level = LEVELS.debug
+  private level: Level = LEVELS.trace
   private stdout: NodeJS.WriteStream = process.stdout
   private stderr: NodeJS.WriteStream = process.stderr
   private context?: any
@@ -83,10 +83,8 @@ export class Console {
   // eslint-disable-next-line max-params
   private complete (context: SpanContext, name: string, attributes: object | undefined, start: number, error?: unknown): void {
     const duration = Math.round((performance.now() - start) * 1000) / 1000
-    const level = error === undefined ? LEVELS.info : LEVELS.error
-    const severity = error === undefined ? 'INFO' : 'ERROR'
 
-    if (level < this.level)
+    if (LEVELS.trace < this.level)
       return
 
     const span: Partial<Entry> = {
@@ -101,7 +99,7 @@ export class Console {
     if (error !== undefined)
       span.status = 'error'
 
-    this.write(level, severity as Severity, name, attributes, span)
+    this.write(LEVELS.trace, 'TRACE', name, attributes, span)
   }
 
   // eslint-disable-next-line max-params
@@ -156,7 +154,8 @@ function serialize (error: Error): Record<string, any> {
   return attributes
 }
 
-export const LEVELS: Record<Channel, Level> = {
+export const LEVELS: Record<LevelName, Level> = {
+  trace: -2,
   debug: -1,
   info: 0,
   warn: 1,
@@ -166,7 +165,7 @@ export const LEVELS: Record<Channel, Level> = {
 export const console = new Console()
 
 export interface ConsoleOptions {
-  level?: Channel | Level
+  level?: LevelName | Level
   context?: any
   streams?: Streams
 }
@@ -190,7 +189,10 @@ export interface Entry {
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'
-export type Severity = Uppercase<Channel>
+
+// `trace` is a level but not a channel: span entries are written with the TRACE severity
+export type LevelName = 'trace' | Channel
+export type Severity = Uppercase<LevelName>
 export type Task<T> = () => T | Promise<T>
-type Level = -1 | 0 | 1 | 2
+type Level = -2 | -1 | 0 | 1 | 2
 type Method = (message: string, attributes?: any) => void

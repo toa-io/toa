@@ -1,6 +1,7 @@
 import { console } from 'openspan'
 import { decode, encode } from '@toa.io/generic'
 import { Logs } from './Logs'
+import { Span } from './Span'
 import {
   DEFAULT_ANNOTATION,
   normalizeAnnotation,
@@ -11,7 +12,7 @@ import {
 import type { LogsOptions } from './Logs'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
-import type { Channel } from 'openspan'
+import type { LevelName } from 'openspan'
 
 export class Factory implements extensions.Factory {
   private readonly logsOptions: LogsOptions
@@ -19,7 +20,7 @@ export class Factory implements extensions.Factory {
 
   public constructor () {
     const globEnv = process.env[LOGS_PREFIX]
-    const level = process.env.TOA_DEV === '1' ? 'debug' : 'info'
+    const level = process.env.TOA_DEV === '1' ? 'trace' : 'info'
 
     this.logsOptions = globEnv === undefined ? { level } : decode(globEnv)
     this.logsOptions.level ??= level
@@ -31,8 +32,9 @@ export class Factory implements extensions.Factory {
 
   public aspect (locator: Locator): extensions.Aspect[] {
     const logs = this.createLogs(locator)
+    const span = new Span(locator)
 
-    return [logs]
+    return [logs, span]
   }
 
   public manage (composition: Connector): Connector {
@@ -116,7 +118,7 @@ interface Annotation {
 }
 
 interface LogsAnnotation {
-  level: Channel
+  level: LevelName
 }
 
 const ENV_PREFIX = 'TOA_TELEMETRY'

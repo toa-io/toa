@@ -17,6 +17,18 @@ Feature: Telemetry
       | warn  |
       | error |
 
+  Scenario: Tracing an invocation
+    Given I boot `telemetry` component
+    When I invoke `trace` with:
+      """yaml
+      input:
+        value: 21
+      """
+    Then the reply is received:
+      """yaml
+      42
+      """
+
   Scenario: Default level is `info`
     Given I boot `telemetry` component
     When I invoke `log` with:

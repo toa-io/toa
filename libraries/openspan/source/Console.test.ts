@@ -206,7 +206,7 @@ describe('span', () => {
     const entry = pop(streams.stdout)
 
     expect(entry).toMatchObject({
-      severity: 'INFO',
+      severity: 'TRACE',
       message: 'fetch',
       trace_id: expect.stringMatching(/^[\da-f]{32}$/),
       span_id: expect.stringMatching(/^[\da-f]{16}$/),
@@ -266,16 +266,16 @@ describe('span', () => {
 
     await expect(instance.span('work', () => Promise.reject(oops))).rejects.toThrow(oops)
 
-    expect(pop(streams.stderr)).toMatchObject({
-      severity: 'ERROR',
+    expect(pop(streams.stdout)).toMatchObject({
+      severity: 'TRACE',
       message: 'work',
       status: 'error',
       duration: expect.any(Number)
     })
   })
 
-  it('should execute task even below log level', async () => {
-    instance.configure({ level: 'error' })
+  it('should suppress span entries above trace level', async () => {
+    instance.configure({ level: 'debug' })
 
     const result = await instance.span('quiet', () => 'done')
 
