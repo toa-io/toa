@@ -115,6 +115,23 @@ it('should not fail on export errors', async () => {
   await expect(exporter.flush()).resolves.toBeUndefined()
 })
 
+it('should not fail on serialization errors and keep exporting', async () => {
+  const exporter = new Otlp({ endpoint: 'http://localhost:4318' })
+  const circular: Record<string, unknown> = {}
+
+  circular.self = circular
+
+  exporter.export({ ...span, attributes: { circular } })
+
+  await expect(exporter.flush()).resolves.toBeUndefined()
+
+  exporter.export(span)
+
+  await expect(exporter.flush()).resolves.toBeUndefined()
+
+  expect(fetch).toHaveBeenCalledTimes(1)
+})
+
 it('should send custom headers', async () => {
   const exporter = new Otlp({
     endpoint: 'http://localhost:4318',

@@ -56,10 +56,10 @@ export class Otlp implements Exporter {
     return await this.pending
   }
 
+  // never rejects, as a rejection would break the `pending` chain and crash the process
   private async post (spans: Span[]): Promise<void> {
-    const body = JSON.stringify(this.request(spans))
-
     try {
+      const body = JSON.stringify(this.request(spans))
       const response = await fetch(this.url, { method: 'POST', headers: this.headers, body })
 
       if (!response.ok)
