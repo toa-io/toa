@@ -24,14 +24,11 @@ export class Gateway {
       process.env.TOA_EXPOSITION = encode(tree)
     }
 
-    const { debug, trace, authorities } = annotation
+    const { debug, authorities } = annotation
     const properties = Object.assign({}, DEFAULT_PROPERTIES)
 
     if (debug !== undefined)
       properties.debug = debug
-
-    if (trace !== undefined)
-      properties.trace = trace
 
     if (authorities !== undefined)
       properties.authorities = authorities

@@ -4,7 +4,7 @@ import os from 'node:os'
 import * as http from 'node:http'
 import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
-import { console } from 'openspan'
+import { console, current, decode, run, type SpanContext } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
@@ -125,15 +125,42 @@ export class Server extends Connector {
 
     const host = request.headers.host!
     const authority = this.authorities[host] ?? host
-    const context = new Context(authority, request as IncomingMessage, this.properties)
 
-    this.process(context)
-      .then(this.success(context, response))
-      .catch(this.fail(context, response))
-      .finally(() => {
-        request.removeAllListeners('error')
-        request.socket.removeAllListeners('error')
-      })
+    // if the request carries no trace context, the trace starts here
+    const remote = trace(request.headers)
+
+    const processing = remote === null
+      ? this.serve(request, response, authority)
+      : run(remote, async () => await this.serve(request, response, authority))
+
+    processing.catch((error) => {
+      console.error('Request processing failed', error)
+
+      if (!response.writableEnded)
+        response.writeHead(500).end()
+    })
+  }
+
+  private async serve (request: http.IncomingMessage,
+    response: http.ServerResponse,
+    authority: string): Promise<void> {
+    await console.span({
+      name: `${request.method} ${request.url}`,
+      kind: 'server',
+      attributes: { method: request.method, url: request.url, authority }
+    }, async () => {
+      response.setHeader('ray', current()!.traceId)
+
+      const context = new Context(authority, request as IncomingMessage, this.properties)
+
+      await this.process!(context)
+        .then(this.success(context, response))
+        .catch(this.fail(context, response))
+        .finally(() => {
+          request.removeAllListeners('error')
+          request.socket.removeAllListeners('error')
+        })
+    })
   }
 
   private success (context: Context, response: http.ServerResponse) {
@@ -232,10 +259,28 @@ export const PORT = 8000
 export const DELAY = 3 // seconds
 export const DRAIN = 10 // seconds
 
+/**
+ * Extracts the remote trace context from the request headers.
+ *
+ * The `ray` header adopts the trace by ID only and does not bypass sampling:
+ * the sampling decision is made by the server.
+ */
+function trace (headers: http.IncomingHttpHeaders): SpanContext | null {
+  if (typeof headers.traceparent === 'string')
+    return decode(headers.traceparent)
+
+  if (typeof headers.ray === 'string' && RAY.test(headers.ray) && headers.ray !== ZERO_RAY)
+    return { traceId: headers.ray.toLowerCase(), sampled: true }
+
+  return null
+}
+
+const RAY = /^[\da-f]{32}$/i
+const ZERO_RAY = '0'.repeat(32)
+
 const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
   debug: false,
-  trace: false,
   port: PORT,
   delay: DELAY * 1000,
   drain: DRAIN * 1000
@@ -245,7 +290,6 @@ interface Properties {
   authorities: Record<string, string>
   methods: Set<string>
   debug: boolean
-  trace: boolean
   port: number
   delay: number
   drain: number

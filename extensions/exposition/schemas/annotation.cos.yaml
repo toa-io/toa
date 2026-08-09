@@ -9,5 +9,4 @@ resources:
   memory: *constraint
 annotations: <string>
 debug: boolean
-trace: boolean
 /: ~

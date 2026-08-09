@@ -31,7 +31,7 @@ export class Context {
 
     this.id = crypto.randomUUID()
     this.url = new URL(request.url, `https://${request.headers.host}`)
-    this.timing = new Timing(properties.trace)
+    this.timing = new Timing()
     this.debug = properties.debug
     this.log(request)
 
@@ -95,7 +95,6 @@ interface Pipelines {
 
 interface Properties {
   debug: boolean
-  trace: boolean
 }
 
 const SUBTYPE = /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/

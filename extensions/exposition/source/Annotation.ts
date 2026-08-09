@@ -6,6 +6,5 @@ export interface Annotation {
   resources?: Resources
   annotations?: Record<string, string>
   debug?: boolean
-  trace?: boolean
   '/'?: object // parsed and validated by RTD.syntax.parse
 }

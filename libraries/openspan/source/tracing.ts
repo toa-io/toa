@@ -18,7 +18,7 @@ export function create (parent?: SpanContext): SpanContext {
     sampled: parent?.sampled ?? true
   }
 
-  if (parent !== undefined)
+  if (parent?.spanId !== undefined)
     context.parentId = parent.spanId
 
   return context
@@ -44,12 +44,14 @@ export function decode (traceparent: string): SpanContext | null {
 }
 
 export function encode (context: SpanContext): string {
-  return `00-${context.traceId}-${context.spanId}-${context.sampled ? '01' : '00'}`
+  return `00-${context.traceId}-${context.spanId ?? ZERO_SPAN}-${context.sampled ? '01' : '00'}`
 }
 
 export interface SpanContext {
   traceId: string
-  spanId: string
+
+  /** absent when the trace is adopted by ID only, without a known parent span */
+  spanId?: string
   parentId?: string
   sampled: boolean
 }
