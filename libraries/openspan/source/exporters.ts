@@ -1,3 +1,4 @@
+import { state } from './state'
 import type { Console, Kind } from './Console'
 
 /**
@@ -10,18 +11,16 @@ export const consoleExporter: Exporter = {
   }
 }
 
-let registry: Exporter[] = [consoleExporter]
-
 /**
  * Replaces the set of span exporters entirely.
  * Defaults to the console exporter.
  */
 export function exporting (exporters: Exporter[]): void {
-  registry = exporters
+  state.exporters = exporters
 }
 
 export function exporters (): Exporter[] {
-  return registry
+  return state.exporters ?? [consoleExporter]
 }
 
 /**
@@ -29,7 +28,7 @@ export function exporters (): Exporter[] {
  * which does not emit `beforeExit`.
  */
 export async function flush (): Promise<void> {
-  await Promise.all(registry.map(async (exporter) => exporter.flush?.()))
+  await Promise.all(exporters().map(async (exporter) => exporter.flush?.()))
 }
 
 export interface Exporter {

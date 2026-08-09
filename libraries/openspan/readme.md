@@ -113,6 +113,11 @@ message.telemetry = encode(current()) // '00-{trace_id}-{span_id}-{flags}'
 - `run(context, fn)` — executes `fn` with the given context as active.
 - `decode(traceparent)` / `encode(context)` — W3C `traceparent` codec.
 
+The trace context, the sampling configuration and the exporters are shared via `globalThis`,
+so multiple copies of the package loaded within one process (e.g. installed both locally
+and within a globally installed runtime) act as one: spans keep their parents across copies,
+and the sampling decision is never re-made in the middle of a trace.
+
 ## Sampling
 
 Head-based sampling: the decision is made once when a trace root is created, and is inherited
