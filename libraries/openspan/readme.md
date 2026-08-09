@@ -105,8 +105,8 @@ message.telemetry = encode(current()) // '00-{trace_id}-{span_id}-{flags}'
 ## Sampling
 
 Head-based sampling: the decision is made once when a trace root is created, and is inherited
-by child contexts. Unsampled spans execute normally and propagate the context, but span entries
-are not written; log entries carry `trace_id` regardless.
+by child contexts. Unsampled spans execute normally and propagate the context, but are not
+exported; log entries carry `trace_id` regardless.
 
 ```javascript
 import { sampling } from 'openspan'
@@ -119,3 +119,35 @@ sampling({
 
 `sampling()` replaces the configuration entirely, `decide()` makes a sampling decision for
 a trace root (used when adopting a trace by ID).
+
+## Exporters
+
+Completed spans are passed to a set of exporters. The default is the console exporter, which
+writes spans as `TRACE` log entries using the emitting console, respecting its log level.
+
+The `Otlp` exporter sends batches of spans to an
+[OTLP/HTTP](https://opentelemetry.io/docs/specs/otlp/#otlphttp) endpoint (JSON encoding):
+spans are flushed when the batch is full, on an interval, and on process exit.
+
+```javascript
+import { exporting, consoleExporter, Otlp } from 'openspan'
+
+exporting([consoleExporter, new Otlp({ endpoint: 'http://localhost:4318' })])
+```
+
+Custom exporters implement the `Exporter` interface: `export(span, output)` is called for each
+completed sampled span, optional `flush()` is awaited on shutdown.
+
+`traces()` configures sampling and exporters at once:
+
+```javascript
+import { traces } from 'openspan'
+
+traces({
+  sample: 0.1,
+  exporters: {
+    console: null,
+    otlp: { endpoint: 'http://localhost:4318' }
+  }
+})
+```

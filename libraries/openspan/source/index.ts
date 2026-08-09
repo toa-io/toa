@@ -1,2 +1,5 @@
 export * from './Console'
 export * from './tracing'
+export * from './exporters'
+export * from './Otlp'
+export * from './traces'

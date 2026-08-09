@@ -1,4 +1,6 @@
 import { create, current, run } from './tracing'
+import { exporters } from './exporters'
+import type { Span } from './exporters'
 import type { SpanContext } from './tracing'
 
 export class Console {
@@ -41,19 +43,45 @@ export class Console {
       options.attributes = arg
 
     const context = create(current())
+    const time = Date.now()
     const start = performance.now()
 
     try {
       const result = await run(context, task!)
 
-      this.complete(context, options, start)
+      this.complete(context, options, time, start)
 
       return result
     } catch (error) {
-      this.complete(context, options, start, error)
+      this.complete(context, options, time, start, error)
 
       throw error
     }
+  }
+
+  /**
+   * Writes a span as a TRACE log entry. Used by the console exporter.
+   */
+  public trace (span: Span): void {
+    if (LEVELS.trace < this.level)
+      return
+
+    const fields: Partial<Entry> = {
+      trace_id: span.traceId,
+      span_id: span.spanId,
+      duration: span.duration
+    }
+
+    if (span.parentId !== undefined)
+      fields.parent_id = span.parentId
+
+    if (span.kind !== 'internal')
+      fields.kind = span.kind
+
+    if (span.status !== undefined)
+      fields.status = span.status
+
+    this.write(LEVELS.trace, 'TRACE', span.name, span.attributes, fields)
   }
 
   public fork (ctx?: any): Console {
@@ -86,28 +114,34 @@ export class Console {
   }
 
   // eslint-disable-next-line max-params
-  private complete (context: SpanContext, options: SpanOptions, start: number, error?: unknown): void {
-    const duration = Math.round((performance.now() - start) * 1000) / 1000
-
-    if (!context.sampled || LEVELS.trace < this.level)
+  private complete (context: SpanContext, options: SpanOptions, time: number, start: number,
+    error?: unknown): void {
+    if (!context.sampled)
       return
 
-    const span: Partial<Entry> = {
-      trace_id: context.traceId,
-      span_id: context.spanId,
-      duration
+    const span: Span = {
+      name: options.name,
+      traceId: context.traceId,
+      spanId: context.spanId!,
+      kind: options.kind ?? 'internal',
+      time,
+      duration: Math.round((performance.now() - start) * 1000) / 1000
     }
 
     if (context.parentId !== undefined)
-      span.parent_id = context.parentId
+      span.parentId = context.parentId
 
-    if (options.kind !== undefined && options.kind !== 'internal')
-      span.kind = options.kind
+    if (options.attributes !== undefined)
+      span.attributes = options.attributes
+
+    if (this.context !== undefined)
+      span.scope = this.context
 
     if (error !== undefined)
       span.status = 'error'
 
-    this.write(LEVELS.trace, 'TRACE', options.name, options.attributes, span)
+    for (const exporter of exporters())
+      exporter.export(span, this)
   }
 
   // eslint-disable-next-line max-params

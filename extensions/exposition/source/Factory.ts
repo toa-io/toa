@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { createHash } from 'node:crypto'
-import { console, sampling, type LevelName, type SamplingOptions } from 'openspan'
+import { console, traces, type LevelName, type TracesOptions } from 'openspan'
 import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
@@ -82,7 +82,7 @@ function configureLogs (): void {
 
   const tracesEnv = process.env[TRACES_ENV]
 
-  sampling(tracesEnv === undefined ? {} : decode<SamplingOptions>(tracesEnv))
+  traces(tracesEnv === undefined ? {} : decode<TracesOptions>(tracesEnv))
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports

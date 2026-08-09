@@ -151,6 +151,32 @@ telemetry:
 When both are set, a trace is recorded if the `sample` lottery passes *and* the rate limit
 is not exceeded.
 
+### Exporting
+
+Recorded spans are passed to a set of *exporters*:
+
+- `console` — writes spans as `TRACE` log entries to stdout (requires the `trace` log level,
+  the default on local environments)
+- `otlp` — sends spans to an [OTLP/HTTP](https://opentelemetry.io/docs/specs/otlp/#otlphttp)
+  endpoint (Grafana Tempo, OpenTelemetry Collector, etc.), batched
+
+```yaml
+# context.toa.yaml
+
+telemetry:
+  traces:
+    exporters:
+      console: ~
+      otlp:
+        endpoint: http://tempo:4318  # POSTs to {endpoint}/v1/traces
+```
+
+When the `exporters` key is omitted, spans are exported to the console.
+When it is present, it is exhaustive: list `console` explicitly to keep it.
+
+Local `docker compose up tempo grafana` starts [Tempo](https://grafana.com/oss/tempo/)
+(OTLP on `http://localhost:4318`) and [Grafana](http://localhost:3000) to explore the traces.
+
 ## Logs best practices
 
 Use constant messages and attributes to facilitate log analysis.

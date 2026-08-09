@@ -46,6 +46,27 @@ Feature: Telemetry
       42
       """
 
+  # requires tempo (docker compose up tempo)
+  # open http://localhost:3000 (Explore > Tempo) to see the trace
+  Scenario: Exporting traces over OTLP
+    Given an encoded environment variable `TOA_TELEMETRY_TRACES` is set to:
+      """yaml
+      exporters:
+        console: ~
+        otlp:
+          endpoint: http://localhost:4318
+      """
+    And I boot `telemetry` component
+    When I invoke `trace` with:
+      """yaml
+      input:
+        value: 21
+      """
+    Then the reply is received:
+      """yaml
+      42
+      """
+
   Scenario: Trace propagation over remote calls
     Given I compose components:
       | math.calculations |

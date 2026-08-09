@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { console, sampling } from 'openspan'
+import { console, traces } from 'openspan'
 import { decode, encode } from '@toa.io/generic'
 import { Logs } from './Logs'
 import { Span } from './Span'
@@ -13,7 +13,7 @@ import {
 import type { LogsOptions } from './Logs'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
-import type { LevelName } from 'openspan'
+import type { ExportersConfig, LevelName } from 'openspan'
 
 export class Factory implements extensions.Factory {
   private readonly logsOptions: LogsOptions
@@ -30,7 +30,7 @@ export class Factory implements extensions.Factory {
 
     const tracesEnv = process.env[TRACES_ENV]
 
-    sampling(tracesEnv === undefined ? {} : decode(tracesEnv))
+    traces(tracesEnv === undefined ? {} : decode(tracesEnv))
 
     this.ready = Ready.create()
   }
@@ -121,7 +121,7 @@ function addLogsVariables (annotation: LogsAnnotation, variables: Variables): vo
 }
 
 function addTracesVariables (annotation: TracesAnnotation, variables: Variables): void {
-  const { sample, rate } = annotation
+  const { sample, rate, exporters } = annotation
 
   if (sample !== undefined)
     assert.ok(typeof sample === 'number' && sample >= 0 && sample <= 1,
@@ -131,7 +131,11 @@ function addTracesVariables (annotation: TracesAnnotation, variables: Variables)
     assert.ok(typeof rate === 'number' && rate > 0,
       'telemetry.traces.rate must be a positive number')
 
-  variables.global.push({ name: TRACES_ENV, value: encode({ sample, rate }) })
+  if (exporters?.otlp !== undefined)
+    assert.ok(typeof exporters.otlp.endpoint === 'string',
+      'telemetry.traces.exporters.otlp.endpoint is required')
+
+  variables.global.push({ name: TRACES_ENV, value: encode({ sample, rate, exporters }) })
 }
 
 interface Annotation {
@@ -147,6 +151,7 @@ interface LogsAnnotation {
 interface TracesAnnotation {
   sample?: number
   rate?: number
+  exporters?: ExportersConfig
 }
 
 const ENV_PREFIX = 'TOA_TELEMETRY'
