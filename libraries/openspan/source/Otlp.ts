@@ -12,6 +12,7 @@ export class Otlp implements Exporter {
   private readonly url: string
   private readonly headers: Record<string, string>
   private readonly service: string
+  private readonly namespace?: string
   private queue: Span[] = []
   private timer: NodeJS.Timeout | null = null
   private pending: Promise<void> = Promise.resolve()
@@ -19,7 +20,8 @@ export class Otlp implements Exporter {
   public constructor (options: OtlpOptions) {
     this.url = options.endpoint.replace(/\/$/, '') + '/v1/traces'
     this.headers = { 'content-type': 'application/json', ...options.headers }
-    this.service = options.service ?? process.env.TOA_CONTEXT ?? 'toa'
+    this.service = options.service ?? 'toa'
+    this.namespace = options.namespace ?? process.env.TOA_CONTEXT
 
     process.once('beforeExit', () => void this.flush())
   }
@@ -85,7 +87,10 @@ export class Otlp implements Exporter {
     return {
       resourceSpans: Array.from(services, ([service, spans]) => ({
         resource: {
-          attributes: attributes({ 'service.name': service })
+          attributes: attributes({
+            'service.name': service,
+            'service.namespace': this.namespace
+          })
         },
         scopeSpans: [{
           scope: { name: 'openspan' },
@@ -132,7 +137,12 @@ function attribute (value: unknown): object {
 export interface OtlpOptions {
   endpoint: string
   headers?: Record<string, string>
+
+  /** fallback `service.name` for spans without a service, defaults to 'toa' */
   service?: string
+
+  /** `service.namespace` resource attribute, defaults to `TOA_CONTEXT` (the application name) */
+  namespace?: string
 }
 
 // https://opentelemetry.io/docs/specs/otlp/#otlphttp
