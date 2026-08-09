@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import Redlock from 'redlock-temp-fix'
 import { encode, decode } from 'msgpackr'
+import { console, type SpanOptions } from 'openspan'
 import { Connector, type extensions } from '@toa.io/core'
 import type { Connection } from './Connection'
 import type { Redis } from 'ioredis'
@@ -25,16 +26,21 @@ export class Aspect extends Connector implements extensions.Aspect {
   public invoke (method: string, ...args: unknown[]): any {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    if (typeof this.redis[method] === 'function') return this.redis[method](...args)
+    if (typeof this.redis[method] === 'function')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      return console.span(span(method, args[0]), () => this.redis[method](...args))
 
     if (method === 'store')
-      this.store(args[0] as string, args[1] as object, ...args.slice(2))
+      console.span(span(method, args[0]),
+        async () => { await this.store(args[0] as string, args[1] as object, ...args.slice(2)) })
 
     if (method === 'fetch')
-      return this.fetch(args[0] as string)
+      return console.span(span(method, args[0]), async () => await this.fetch(args[0] as string))
 
     if (method === 'lock')
-      return this.lock(args[0] as Resources, args[1] as () => any)
+      return console.span(span(method, args[0]),
+        async () => await this.lock(args[0] as Resources, args[1] as () => any))
   }
 
   protected override async open (): Promise<void> {
@@ -65,6 +71,21 @@ export class Aspect extends Connector implements extensions.Aspect {
 
     return await this.redlock.using<T>(key, 5000, routine)
   }
+}
+
+function span (method: string, key: unknown): SpanOptions {
+  // https://opentelemetry.io/docs/specs/semconv/database/redis/
+  const attributes: Record<string, unknown> = {
+    'db.system': 'redis',
+    'db.operation.name': method
+  }
+
+  if (typeof key === 'string')
+    attributes.key = key
+  else if (Array.isArray(key))
+    attributes.key = key.join(' ')
+
+  return { name: `${method} stash`, kind: 'client', attributes }
 }
 
 type Routine<T> = () => Promise<T>

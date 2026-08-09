@@ -9,6 +9,7 @@ const definition = /** @type {toa.norm.component.Receiver} */ {
 }
 
 const local = /** @type {toa.core.Component} */ {
+  locator: { id: 'default.dummy' },
   invoke: jest.fn()
 }
 

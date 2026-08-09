@@ -1,7 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./transpiled"
+    "outDir": "./transpiled",
+    "types": ["node", "jest"]
   },
   "include": [
     "source"

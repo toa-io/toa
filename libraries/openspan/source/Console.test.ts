@@ -1,4 +1,8 @@
-import { console, Console } from './'
+import { console, Console, create, run, sampling } from './'
+
+afterEach(() => {
+  sampling()
+})
 
 let instance: Console
 
@@ -118,31 +122,204 @@ it('should not log undefined attributes', async () => {
   expect(entry.message).toBe('hello')
 })
 
-it.each(channels)('should print %s in terminal format', (channel) => {
-  const con = new Console({ format: 'terminal', context: { channel } })
-
-  con[channel]('hello', { foo: 'bar', baz: [{ ok: { nested: [{ ok: true }] } }] })
-})
-
 it('should log empty objects', () => {
-  const con = new Console({ format: 'terminal' })
-
-  con.info('foo', { foo: {}, bar: 'baz' })
-  con.info('bar', {})
-  con.info('baz')
+  instance.info('foo', { foo: {}, bar: 'baz' })
+  instance.info('bar', {})
+  instance.info('baz')
 })
 
 it('should log Error', () => {
-  const con = new Console({ format: 'terminal' })
+  instance.info('foo', new Error('ok'))
+  instance.info('foo', { error: new Error('ok') })
+})
 
-  con.info('foo', new Error('ok'))
-  con.info('foo', { error: new Error('ok') })
+it('should serialize Error with stack', () => {
+  const error = Object.assign(new Error('oops'), { code: 'E_TEST' })
+
+  instance.error('Failed', error)
+
+  const entry = pop(streams.stderr)
+
+  expect(entry.attributes).toMatchObject({
+    message: 'oops',
+    code: 'E_TEST'
+  })
+
+  expect(entry.attributes.stack).toContain('Error: oops')
+})
+
+it('should serialize Error cause chain', () => {
+  const root = new Error('root')
+  const error = new Error('wrapper', { cause: root })
+
+  instance.error('Failed', error)
+
+  const entry = pop(streams.stderr)
+
+  expect(entry.attributes.message).toBe('wrapper')
+  expect(entry.attributes.cause.message).toBe('root')
+  expect(entry.attributes.cause.stack).toContain('Error: root')
+})
+
+it('should serialize non-Error cause', () => {
+  const error = new Error('wrapper', { cause: 'just a string' })
+
+  instance.error('Failed', error)
+
+  const entry = pop(streams.stderr)
+
+  expect(entry.attributes.cause).toBe('just a string')
 })
 
 it('should log null', () => {
-  const con = new Console({ format: 'terminal' })
+  instance.info('foo', { foo: null })
+})
 
-  con.info('foo', { foo: null })
+describe('tracing', () => {
+  it('should stamp trace_id and span_id within context', () => {
+    const context = create()
+
+    run(context, () => instance.info('hello'))
+
+    expect(pop(streams.stdout)).toMatchObject({
+      trace_id: context.traceId,
+      span_id: context.spanId
+    })
+  })
+
+  it('should not stamp outside of context', () => {
+    instance.info('hello')
+
+    const entry = pop(streams.stdout)
+
+    expect('trace_id' in entry).toBe(false)
+    expect('span_id' in entry).toBe(false)
+  })
+})
+
+describe('span', () => {
+  it('should return task result', async () => {
+    const result = await instance.span('task', () => 42)
+
+    expect(result).toBe(42)
+  })
+
+  it('should write span entry with duration', async () => {
+    await instance.span('fetch', async () => await new Promise((resolve) => setTimeout(resolve, 10)))
+
+    const entry = pop(streams.stdout)
+
+    expect(entry).toMatchObject({
+      severity: 'TRACE',
+      message: 'fetch',
+      trace_id: expect.stringMatching(/^[\da-f]{32}$/),
+      span_id: expect.stringMatching(/^[\da-f]{16}$/),
+      duration: expect.any(Number)
+    })
+
+    expect(entry.duration).toBeGreaterThanOrEqual(5)
+    expect('status' in entry).toBe(false)
+  })
+
+  it('should write attributes', async () => {
+    await instance.span('fetch', { url: 'example.com' }, () => null)
+
+    expect(pop(streams.stdout)).toMatchObject({
+      attributes: { url: 'example.com' }
+    })
+  })
+
+  it('should nest spans', async () => {
+    await instance.span('outer', async () => {
+      await instance.span('inner', () => null)
+    })
+
+    const inner = pop(streams.stdout)
+    const outer = JSON.parse(streams.stdout.write.mock.calls[1][0].toString())
+
+    expect(inner.message).toBe('inner')
+    expect(outer.message).toBe('outer')
+    expect(inner.trace_id).toBe(outer.trace_id)
+    expect(inner.parent_id).toBe(outer.span_id)
+  })
+
+  it('should link logs to the span', async () => {
+    await instance.span('work', () => instance.info('step'))
+
+    const log = pop(streams.stdout)
+    const span = JSON.parse(streams.stdout.write.mock.calls[1][0].toString())
+
+    expect(log.message).toBe('step')
+    expect(log.trace_id).toBe(span.trace_id)
+    expect(log.span_id).toBe(span.span_id)
+  })
+
+  it('should continue current trace', async () => {
+    const context = create()
+
+    await run(context, async () => await instance.span('work', () => null))
+
+    expect(pop(streams.stdout)).toMatchObject({
+      trace_id: context.traceId,
+      parent_id: context.spanId
+    })
+  })
+
+  it('should rethrow and mark status on failure', async () => {
+    const oops = new Error('oops')
+
+    await expect(instance.span('work', () => Promise.reject(oops))).rejects.toThrow(oops)
+
+    expect(pop(streams.stdout)).toMatchObject({
+      severity: 'TRACE',
+      message: 'work',
+      status: 'error',
+      duration: expect.any(Number)
+    })
+  })
+
+  it('should write span kind', async () => {
+    await instance.span({ name: 'handle', kind: 'server' }, () => null)
+
+    expect(pop(streams.stdout)).toMatchObject({ kind: 'server' })
+  })
+
+  it('should omit internal kind', async () => {
+    await instance.span({ name: 'step', kind: 'internal' }, () => null)
+
+    const entry = pop(streams.stdout)
+
+    expect('kind' in entry).toBe(false)
+  })
+
+  it('should suppress span entries above trace level', async () => {
+    instance.configure({ level: 'debug' })
+
+    const result = await instance.span('quiet', () => 'done')
+
+    expect(result).toBe('done')
+    expect(pop(streams.stdout)).toBeUndefined()
+  })
+
+  it('should not write span entries of unsampled traces', async () => {
+    sampling({ sample: 0 })
+
+    const result = await instance.span('unsampled', () => 'done')
+
+    expect(result).toBe('done')
+    expect(pop(streams.stdout)).toBeUndefined()
+  })
+
+  it('should stamp trace_id into logs of unsampled traces', async () => {
+    sampling({ sample: 0 })
+
+    await instance.span('unsampled', () => instance.info('step'))
+
+    const log = pop(streams.stdout)
+
+    expect(log.message).toBe('step')
+    expect(log.trace_id).toMatch(/^[\da-f]{32}$/)
+  })
 })
 
 function pop (channel: any): any {

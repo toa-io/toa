@@ -8,26 +8,7 @@ Feature: Server timing
           POST: create
       """
 
-  Scenario: Server timing is not available by default
-    When the following request is received:
-      """
-      POST /pots/ HTTP/1.1
-      host: nex.toa.io
-      content-type: application/yaml
-
-      title: Hello
-      volume: 1.5
-      """
-    Then the reply does not contain:
-      """
-      server-timing:
-      """
-
-  Scenario: Server timing is sent when `trace` is enabled
-    Given the annotation:
-      """
-      trace: true
-      """
+  Scenario: Server timing is sent
     When the following request is received:
       """
       POST /pots/ HTTP/1.1
@@ -47,13 +28,12 @@ Feature: Server timing
   Scenario: Octets timing
     Given the annotation:
       """yaml
-      trace: true
       /:
         io:output: true
         auth:anonymous: true
         octets:context: octets
         POST:
-          octets:store: ~
+          octets:put: ~
       """
     When the stream of `lenna.png` is received with the following headers:
       """

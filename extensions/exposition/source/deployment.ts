@@ -39,7 +39,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     })
   }
 
-  const { debug, trace, authorities } = annotation
+  const { debug, authorities } = annotation
 
   service.ingress!.hosts = Object.values(authorities)
   service.ingress!.class = annotation.class
@@ -49,9 +49,6 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
 
   if (debug === true)
     properties.debug = true
-
-  if (trace === true)
-    properties.trace = true
 
   service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
@@ -67,4 +64,4 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   return { services: [service] }
 }
 
-type Properties = Pick<Annotation, 'authorities' | 'debug' | 'trace'>
+type Properties = Pick<Annotation, 'authorities' | 'debug'>

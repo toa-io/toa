@@ -1,3 +1,4 @@
+import { console, type SpanOptions } from 'openspan'
 import type { Context, OutgoingMessage } from './HTTP'
 import type { Remotes } from './Remotes'
 import type { Output } from './io'
@@ -17,7 +18,8 @@ export class Directives implements RTD.Directives {
       if (set.family.preflight === undefined)
         continue
 
-      const out = await set.family.preflight(set.directives, context, parameters)
+      const out = await console.span(options(set, 'preflight'),
+        async () => await set.family.preflight!(set.directives, context, parameters))
 
       if (out === null)
         continue
@@ -34,7 +36,8 @@ export class Directives implements RTD.Directives {
   public async settle (context: Context, response: OutgoingMessage): Promise<void> {
     for (const set of this.sets)
       if (set.family.settle !== undefined)
-        await set.family.settle(set.directives, context, response)
+        await console.span(options(set, 'settle'),
+          async () => await set.family.settle!(set.directives, context, response))
   }
 
   public dispose (): void {
@@ -67,6 +70,8 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     declarations.sort((a, b) =>
       (mandatory.has(b.family) ? 1 : 0) - (mandatory.has(a.family) ? 1 : 0))
 
+    const names: Record<string, string[]> = {}
+
     for (const declaration of declarations) {
       const family = this.families[declaration.family]
 
@@ -77,6 +82,8 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
 
       groups[family.name] ??= []
       groups[family.name].push(directive)
+      names[family.name] ??= []
+      names[family.name].push(`${declaration.family}:${declaration.name}`)
       mandatory.delete(family.name)
     }
 
@@ -85,13 +92,15 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     for (const family of mandatory)
       sets.push({
         family: this.families[family],
-        directives: []
+        directives: [],
+        names: []
       })
 
     for (const [family, directives] of Object.entries(groups))
       sets.push({
         family: this.families[family],
-        directives
+        directives,
+        names: names[family]
       })
 
     const directives = new Directives(sets)
@@ -105,6 +114,15 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     for (const directives of this.instances)
       directives.dispose()
   }
+}
+
+function options (set: RTD.DirectiveSet, stage: 'preflight' | 'settle'): SpanOptions {
+  const options: SpanOptions = { name: `${set.family.name} ${stage}` }
+
+  if (set.names !== undefined && set.names.length > 0)
+    options.attributes = { directives: Array.from(new Set(set.names)).join(' ') }
+
+  return options
 }
 
 export const shortcuts: RTD.syntax.Shortcuts = new Map([

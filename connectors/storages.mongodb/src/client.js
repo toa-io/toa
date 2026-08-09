@@ -11,6 +11,7 @@ const { Connector } = require('@toa.io/core')
 const { resolve } = require('@toa.io/pointer')
 const { ID } = require('./deployment')
 const { MongoClient } = require('mongodb')
+const { monitor } = require('./monitoring')
 
 /**
  * @type {Record<string, Promise<Instance>>}
@@ -112,6 +113,8 @@ class Client extends Connector {
     const client = new MongoClient(urls.join(','), OPTIONS)
     const hosts = urls.map((str) => new URL(str).host)
 
+    monitor(client)
+
     console.info('Connecting to MongoDB', { address: hosts.join(', ') })
 
     await client.connect()
@@ -156,7 +159,8 @@ function getKey (db, urls) {
 }
 
 const OPTIONS = {
-  ignoreUndefined: true
+  ignoreUndefined: true,
+  monitorCommands: true
 }
 
 const ALREADY_EXISTS = 48

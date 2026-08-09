@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { createHash } from 'node:crypto'
-import { console } from 'openspan'
+import { console, traces, type LevelName, type TracesOptions } from 'openspan'
 import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
@@ -17,7 +17,6 @@ import type { Branch } from './Branch'
 import type { syntax } from './RTD'
 import type { Broadcast } from './Gateway'
 import type { Connector, Locator, extensions } from '@toa.io/core'
-import type { Channel } from 'openspan'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader
@@ -72,13 +71,18 @@ export class Factory implements extensions.Factory {
 
 const CHANNEL = 'exposition'
 const LOGS_PREFIX = 'TOA_TELEMETRY_LOGS'
+const TRACES_ENV = 'TOA_TELEMETRY_TRACES'
 
 function configureLogs (): void {
   const globEnv = process.env[LOGS_PREFIX]
-  const level: Channel = process.env.TOA_DEV === '1' ? 'debug' : 'info'
-  const options = globEnv === undefined ? { level } : decode<{ level?: Channel }>(globEnv)
+  const level: LevelName = process.env.TOA_DEV === '1' ? 'trace' : 'info'
+  const options = globEnv === undefined ? { level } : decode<{ level?: LevelName }>(globEnv)
 
   console.configure({ level: options.level ?? level })
+
+  const tracesEnv = process.env[TRACES_ENV]
+
+  traces(tracesEnv === undefined ? {} : decode<TracesOptions>(tracesEnv))
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports

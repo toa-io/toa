@@ -13,7 +13,7 @@ const emission = (definitions, locator, context) => {
     const decorator = extensions.emitter(emitter, label)
     const bridge = boot.bridge.event(definition.bridge, definition.path, label, context)
 
-    return new Event(definition, decorator, bridge)
+    return new Event({ ...definition, label: `${locator.id}.${label}` }, decorator, bridge)
   })
 
   return new Emission(events)

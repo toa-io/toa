@@ -1,7 +1,6 @@
 import { join } from 'node:path'
 import * as dotenv from 'dotenv'
 import { setDefaultTimeout } from '@cucumber/cucumber'
-import { console } from 'openspan'
 import { encode } from '@toa.io/generic'
 
 dotenv.config({ path: join(__dirname, '.env') })
@@ -16,9 +15,16 @@ export class Parameters {
 
 setDefaultTimeout(60 * 1000)
 
-console.configure({ format: 'terminal' })
-
 process.env.TOA_DEV = '1'
+
+// export traces to the local Tempo (`docker compose up tempo grafana`),
+// unavailability of the endpoint is harmless
+process.env.TOA_TELEMETRY_TRACES ??= encode({
+  exporters: {
+    console: null,
+    otlp: { endpoint: 'http://localhost:4318' }
+  }
+})
 
 process.env.TOA_STORAGES = encode({
   octets: {

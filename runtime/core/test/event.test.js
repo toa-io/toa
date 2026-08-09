@@ -41,7 +41,7 @@ describe('condition', () => {
       await emit()
 
       const payload = await fixtures.bridge.payload.mock.results[0].value
-      const message = { payload }
+      const message = { payload, telemetry: expect.any(String) }
       expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })
 
@@ -71,7 +71,7 @@ describe('condition', () => {
       expect(fixtures.bridge.condition).not.toHaveBeenCalledWith()
 
       const payload = await fixtures.bridge.payload.mock.results[0].value
-      const message = { payload }
+      const message = { payload, telemetry: expect.any(String) }
 
       expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })
@@ -84,7 +84,7 @@ describe('payload', () => {
       await emit()
 
       const payload = await fixtures.bridge.payload.mock.results[0].value
-      const message = { payload }
+      const message = { payload, telemetry: expect.any(String) }
 
       expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })
@@ -110,7 +110,7 @@ describe('payload', () => {
       await emit()
 
       const payload = fixtures.event.state
-      const message = { payload }
+      const message = { payload, telemetry: expect.any(String) }
 
       expect(fixtures.binding.emit).toHaveBeenCalledWith(message)
     })

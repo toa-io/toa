@@ -1,6 +1,7 @@
 'use strict'
 
 const { Readable } = require('node:stream')
+const { current, encode } = require('openspan')
 const { Connector } = require('./connector')
 const { Err } = require('error-value')
 
@@ -24,6 +25,11 @@ class Call extends Connector {
 
     // avoid validation on the recipient's side
     request.authentic = true
+
+    const context = current()
+
+    if (context !== undefined)
+      request.telemetry = encode(context)
 
     const reply = await this.#transmitter.request(request)
 

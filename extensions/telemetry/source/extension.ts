@@ -1,6 +1,8 @@
-import { console } from 'openspan'
+import assert from 'node:assert'
+import { console, traces } from 'openspan'
 import { decode, encode } from '@toa.io/generic'
 import { Logs } from './Logs'
+import { Span } from './Span'
 import {
   DEFAULT_ANNOTATION,
   normalizeAnnotation,
@@ -11,7 +13,7 @@ import {
 import type { LogsOptions } from './Logs'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
-import type { Channel } from 'openspan'
+import type { ExportersConfig, LevelName } from 'openspan'
 
 export class Factory implements extensions.Factory {
   private readonly logsOptions: LogsOptions
@@ -19,20 +21,25 @@ export class Factory implements extensions.Factory {
 
   public constructor () {
     const globEnv = process.env[LOGS_PREFIX]
-    const level = process.env.TOA_DEV === '1' ? 'debug' : 'info'
+    const level = process.env.TOA_DEV === '1' ? 'trace' : 'info'
 
     this.logsOptions = globEnv === undefined ? { level } : decode(globEnv)
     this.logsOptions.level ??= level
 
     console.configure({ level: this.logsOptions.level })
 
+    const tracesEnv = process.env[TRACES_ENV]
+
+    traces(tracesEnv === undefined ? {} : decode(tracesEnv))
+
     this.ready = Ready.create()
   }
 
   public aspect (locator: Locator): extensions.Aspect[] {
     const logs = this.createLogs(locator)
+    const span = new Span(locator)
 
-    return [logs]
+    return [logs, span]
   }
 
   public manage (composition: Connector): Connector {
@@ -40,18 +47,16 @@ export class Factory implements extensions.Factory {
       return composition
 
     const ready = this.ready
-    const connect = composition.connect.bind(composition)
-    const disconnect = composition.disconnect.bind(composition)
 
+    // the composition manages the probe server lifecycle (listen on connect, close on disconnect)
+    composition.depends(ready)
+
+    const connect = composition.connect.bind(composition)
+
+    // readiness is a post-connect phase, not expressible as a dependency
     composition.connect = async () => {
-      await ready.listen()
       await connect()
       await ready.complete()
-    }
-
-    composition.disconnect = async (interrupt?: boolean) => {
-      await ready.disconnect(interrupt)
-      await disconnect(interrupt)
     }
 
     return composition
@@ -72,6 +77,9 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
 
   if (annotation?.logs !== undefined)
     addLogsVariables(annotation.logs, variables)
+
+  if (annotation?.traces !== undefined)
+    addTracesVariables(annotation.traces, variables)
 
   const ready = normalizeAnnotation(annotation?.ready)
 
@@ -110,15 +118,41 @@ function addLogsVariables (annotation: LogsAnnotation, variables: Variables): vo
   }
 }
 
+function addTracesVariables (annotation: TracesAnnotation, variables: Variables): void {
+  const { sample, rate, exporters } = annotation
+
+  if (sample !== undefined)
+    assert.ok(typeof sample === 'number' && sample >= 0 && sample <= 1,
+      'telemetry.traces.sample must be a number within [0, 1]')
+
+  if (rate !== undefined)
+    assert.ok(typeof rate === 'number' && rate > 0,
+      'telemetry.traces.rate must be a positive number')
+
+  if (exporters?.otlp !== undefined)
+    assert.ok(typeof exporters.otlp.endpoint === 'string',
+      'telemetry.traces.exporters.otlp.endpoint is required')
+
+  variables.global.push({ name: TRACES_ENV, value: encode({ sample, rate, exporters }) })
+}
+
 interface Annotation {
   logs?: LogsAnnotation & Record<string, LogsAnnotation>
+  traces?: TracesAnnotation
   ready?: ReadyAnnotation
 }
 
 interface LogsAnnotation {
-  level: Channel
+  level: LevelName
+}
+
+interface TracesAnnotation {
+  sample?: number
+  rate?: number
+  exporters?: ExportersConfig
 }
 
 const ENV_PREFIX = 'TOA_TELEMETRY'
 const LOGS_PREFIX = ENV_PREFIX + '_LOGS'
+const TRACES_ENV = ENV_PREFIX + '_TRACES'
 export const ID = 'telemetry'

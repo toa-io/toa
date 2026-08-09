@@ -1,0 +1,13 @@
+name: audit
+
+operations:
+  record:
+    input:
+      id: string
+      title: string
+      volume: number
+      price: number
+    output: undefined
+
+receivers:
+  orders.created: record

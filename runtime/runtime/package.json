@@ -51,6 +51,6 @@
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee",
   "devDependencies": {
-    "wtfnode": "0.10.0"
+    "wtfnode": "0.10.1"
   }
 }

@@ -51,7 +51,7 @@ export class Factory {
       ...(provider.root === undefined ? undefined : { root: provider.root })
     })
 
-    return new Storage(provider)
+    return new Storage(provider, { name, provider: id })
   }
 
   private resolveSecrets (storageName: string, Class: Constructor): Secrets {

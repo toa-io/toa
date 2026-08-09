@@ -136,7 +136,13 @@ exposition:
 | `class`       | Ingress class.                                                                                                    |
 | `annotations` | Ingress annotations.                                                                                              |
 | `debug`       | Output server errors. Default `false`.                                                                            |
-| `trace`       | Output [server timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server-Timing). Default `false`. |
+
+### Observability
+
+Each response contains a `ray` header with the trace ID of the request, and
+[server timing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server-Timing) headers.
+
+Incoming trace context is continued, see [Tracing](documentation/tracing.md).
 
 ### Context resources
 

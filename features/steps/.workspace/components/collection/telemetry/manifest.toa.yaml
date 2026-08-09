@@ -1,6 +1,10 @@
 name: telemetry
 
 operations:
+  trace:
+    input:
+      value: number
+    output: number
   log:
     input:
       type: object

@@ -4,11 +4,16 @@ const { Component, Locator, State, entities } = require('@toa.io/core')
 const schemas = require('@toa.io/schemas')
 
 const boot = require('./index')
+const { span } = require('./span')
 
 const component = async (manifest) => {
-  boot.extensions.load(manifest)
-
   const locator = new Locator(manifest.name, manifest.namespace)
+
+  return span(`component ${locator.id}`, () => create(manifest, locator))
+}
+
+const create = async (manifest, locator) => {
+  boot.extensions.load(manifest)
   const storage = boot.storage(manifest)
   const context = await boot.context(manifest)
   const emission = boot.emission(manifest.events, locator, context)

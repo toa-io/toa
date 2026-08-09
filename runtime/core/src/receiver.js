@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('openspan')
+const { console, decode, run } = require('openspan')
 const { add } = require('@toa.io/generic')
 const { Connector } = require('./connector')
 
@@ -17,6 +17,12 @@ class Receiver extends Connector {
   /** @type {string} */
   #endpoint
 
+  /** @type {string} */
+  #label
+
+  /** @type {string} */
+  #destination
+
   /** @type {unknown[]} */
   #arguments
 
@@ -32,6 +38,8 @@ class Receiver extends Connector {
     this.#conditioned = conditioned
     this.#adaptive = adaptive
     this.#endpoint = operation
+    this.#label = definition.label ?? operation
+    this.#destination = definition.destination ?? this.#label
     this.#arguments = definition.arguments
 
     this.#local = local
@@ -43,7 +51,7 @@ class Receiver extends Connector {
 
   /** @hot */
   async receive (message) {
-    const { payload, ...extensions } = message
+    const { payload, telemetry, ...extensions } = message
 
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
@@ -51,17 +59,51 @@ class Receiver extends Connector {
 
     add(request, extensions)
 
-    try {
-      await this.#local.invoke(this.#endpoint, request)
-    } catch (error) {
-      console.error('Receiver error', { 
-        component: this.#local.locator.id, 
-        endpoint: this.#endpoint,
-        error
-       })
+    // continue the trace from the producer span
+    const remote = telemetry === undefined ? null : decode(telemetry)
+    const task = () => this.#process(request)
 
-      throw error
+    if (remote === null)
+      await task()
+    else
+      await run(remote, task)
+  }
+
+  async #process (request) {
+    /*
+     * The delivery span is created on behalf of the messaging destination, so that
+     * each consumer forms its own complete producer/consumer pair, and service graphs
+     * display fan-out correctly: producer -> destination -> each consumer
+     * (Tempo pairs spans one-to-one, thus multiple consumers can not pair
+     * with a single producer span, see grafana/tempo#5408)
+     */
+    const delivery = {
+      name: `${this.#label} deliver`,
+      kind: 'producer',
+      service: this.#destination,
+      attributes: { 'messaging.destination.name': this.#destination }
     }
+
+    const options = {
+      name: `${this.#label} process`,
+      kind: 'consumer',
+      service: this.#local.locator.id,
+      attributes: { 'messaging.destination.name': this.#destination }
+    }
+
+    return console.span(delivery, async () => console.span(options, async () => {
+      try {
+        await this.#local.invoke(this.#endpoint, request)
+      } catch (error) {
+        console.error('Receiver error', {
+          component: this.#local.locator.id,
+          endpoint: this.#endpoint,
+          error
+        })
+
+        throw error
+      }
+    }))
   }
 
   async #request (payload) {
