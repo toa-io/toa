@@ -79,6 +79,17 @@ status?: error     # present if an exception was thrown
 Spans nest: spans created and logs written inside the task are linked to the enclosing span
 through [AsyncLocalStorage](https://nodejs.org/api/async_context.html).
 
+`SpanOptions.service` declares the logical service emitting the span (the OTLP `service.name`).
+It is inherited by nested spans within the process and is not propagated over the wire.
+
+A span can be marked as failed without throwing:
+
+```javascript
+await console.span('work', () => {
+  current().status = 'error'
+})
+```
+
 ## Tracing
 
 The `tracing` module provides trace context primitives compatible with
@@ -137,6 +148,9 @@ exporting([consoleExporter, new Otlp({ endpoint: 'http://localhost:4318' })])
 
 Custom exporters implement the `Exporter` interface: `export(span, output)` is called for each
 completed sampled span, optional `flush()` is awaited on shutdown.
+
+`record(span)` passes an externally completed span to the exporters — for event-based
+instrumentation (e.g. database driver monitoring events), where a span cannot wrap a task.
 
 `traces()` configures sampling and exporters at once:
 

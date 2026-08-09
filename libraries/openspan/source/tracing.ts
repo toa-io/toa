@@ -46,6 +46,9 @@ export function create (parent?: SpanContext): SpanContext {
   if (parent?.spanId !== undefined)
     context.parentId = parent.spanId
 
+  if (parent?.service !== undefined)
+    context.service = parent.service
+
   return context
 }
 
@@ -111,6 +114,15 @@ export interface SpanContext {
   spanId?: string
   parentId?: string
   sampled: boolean
+
+  /**
+   * The logical service emitting the span (`service.name`).
+   * Inherited by child spans within the process, never propagated over the wire.
+   */
+  service?: string
+
+  /** Allows marking the active span as failed without throwing */
+  status?: 'error'
 }
 
 const EXPRESSION = /^00-([\da-f]{32})-([\da-f]{16})-([\da-f]{2})$/

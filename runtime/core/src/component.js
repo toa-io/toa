@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('node:assert')
-const { console, decode, run } = require('openspan')
+const { console, current, decode, run } = require('openspan')
 const { Connector } = require('./connector')
 
 class Component extends Connector {
@@ -38,14 +38,24 @@ class Component extends Connector {
 
   /** @private */
   async process (endpoint, request) {
-    return console.span({ name: `${this.locator.id}.${endpoint}`, kind: this.kind }, async () => {
+    const options = { name: `${this.locator.id}.${endpoint}`, kind: this.kind }
+
+    // the server span is emitted by the component itself,
+    // while the client span belongs to the calling service and inherits it from the context
+    if (this.kind === 'server')
+      options.service = this.locator.id
+
+    return console.span(options, async () => {
       const reply = await this.operations[endpoint].invoke(request)
 
-      if (reply?.exception !== undefined)
+      if (reply?.exception !== undefined) {
+        current().status = 'error'
+
         console.error('Failed to execute operation', {
           endpoint: `${this.locator.id}.${endpoint}`,
           exception: reply.exception
         })
+      }
 
       return reply
     })

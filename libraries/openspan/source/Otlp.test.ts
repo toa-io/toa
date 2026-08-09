@@ -83,6 +83,28 @@ it('should batch spans', async () => {
   expect(body.resourceSpans[0].scopeSpans[0].spans).toHaveLength(2)
 })
 
+it('should group spans by service', async () => {
+  const exporter = new Otlp({ endpoint: 'http://localhost:4318', service: 'fallback' })
+
+  exporter.export({ ...span, service: 'orders' })
+  exporter.export({ ...span, name: 'second', service: 'orders' })
+  exporter.export({ ...span, name: 'third' })
+  await exporter.flush()
+
+  const body = JSON.parse(fetch.mock.calls[0][1]?.body as string)
+
+  expect(body.resourceSpans).toHaveLength(2)
+
+  const services = body.resourceSpans.map((resource: any) =>
+    resource.resource.attributes.find((attribute: any) => attribute.key === 'service.name').value.stringValue)
+
+  expect(services).toEqual(expect.arrayContaining(['orders', 'fallback']))
+
+  const orders = body.resourceSpans[services.indexOf('orders')]
+
+  expect(orders.scopeSpans[0].spans).toHaveLength(2)
+})
+
 it('should not fail on export errors', async () => {
   fetch.mockRejectedValueOnce(new Error('ECONNREFUSED'))
 

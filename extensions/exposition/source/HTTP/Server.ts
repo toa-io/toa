@@ -147,6 +147,7 @@ export class Server extends Connector {
     await console.span({
       name: `${request.method} ${request.url}`,
       kind: 'server',
+      service: 'exposition',
       attributes: { method: request.method, url: request.url, authority }
     }, async () => {
       response.setHeader('ray', current()!.traceId)
@@ -189,8 +190,15 @@ export class Server extends Connector {
         if (!context.request.complete)
           await adam(context.request)
 
+        const status = exception instanceof Exception ? exception.status : 500
+        const span = current()
+
+        // https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+        if (status >= 500 && span !== undefined)
+          span.status = 'error'
+
         if (!response.writableEnded) {
-          response.statusCode = exception instanceof Exception ? exception.status : 500
+          response.statusCode = status
 
           const message: OutgoingMessage = { status: response.statusCode }
 

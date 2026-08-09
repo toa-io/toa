@@ -43,6 +43,10 @@ export class Console {
       options.attributes = arg
 
     const context = create(current())
+
+    if (options.service !== undefined)
+      context.service = options.service
+
     const time = Date.now()
     const start = performance.now()
 
@@ -137,7 +141,10 @@ export class Console {
     if (this.context !== undefined)
       span.scope = this.context
 
-    if (error !== undefined)
+    if (context.service !== undefined)
+      span.service = context.service
+
+    if (error !== undefined || context.status === 'error')
       span.status = 'error'
 
     for (const exporter of exporters())
@@ -206,6 +213,16 @@ export const LEVELS: Record<LevelName, Level> = {
 
 export const console = new Console()
 
+/**
+ * Passes an externally completed span to the exporters.
+ * Used for event-based instrumentation (e.g. database drivers),
+ * where spans cannot wrap a task.
+ */
+export function record (span: Span, output: Console = console): void {
+  for (const exporter of exporters())
+    exporter.export(span, output)
+}
+
 export interface ConsoleOptions {
   level?: LevelName | Level
   context?: any
@@ -235,6 +252,9 @@ export interface SpanOptions {
   name: string
   kind?: Kind // 'internal' when omitted
   attributes?: object
+
+  /** the logical service emitting the span, inherited from the parent context when omitted */
+  service?: string
 }
 
 export type Channel = 'debug' | 'info' | 'warn' | 'error'

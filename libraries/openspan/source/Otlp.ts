@@ -70,16 +70,28 @@ export class Otlp implements Exporter {
   }
 
   private request (spans: Span[]): object {
+    const services = new Map<string, Span[]>()
+
+    for (const span of spans) {
+      const service = span.service ?? this.service
+      const group = services.get(service)
+
+      if (group === undefined)
+        services.set(service, [span])
+      else
+        group.push(span)
+    }
+
     return {
-      resourceSpans: [{
+      resourceSpans: Array.from(services, ([service, spans]) => ({
         resource: {
-          attributes: attributes({ 'service.name': this.service })
+          attributes: attributes({ 'service.name': service })
         },
         scopeSpans: [{
           scope: { name: 'openspan' },
           spans: spans.map((span) => this.span(span))
         }]
-      }]
+      }))
     }
   }
 

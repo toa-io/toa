@@ -39,5 +39,6 @@ export interface Span {
   duration: number // milliseconds
   attributes?: object
   scope?: object // context of the emitting console (namespace, component, operation)
+  service?: string // the logical service emitting the span (`service.name`)
   status?: 'error'
 }
