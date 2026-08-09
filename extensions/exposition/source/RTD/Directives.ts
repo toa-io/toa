@@ -17,6 +17,9 @@ export interface DirectiveFactory {
 export interface DirectiveSet {
   family: DirectiveFamily
   directives: any[]
+
+  /** qualified directive names, e.g. `auth:id` */
+  names?: string[]
 }
 
 export interface DirectiveFamily<TDirective = any, TExtension = any> {
