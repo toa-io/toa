@@ -4,7 +4,7 @@ import { encode, decode } from 'msgpackr'
 import { console, type SpanOptions } from 'openspan'
 import { Connector, type extensions } from '@toa.io/core'
 import type { Connection } from './Connection'
-import type { Redis } from 'ioredis'
+import type { Redis, ChainableCommander } from 'ioredis'
 
 export class Aspect extends Connector implements extensions.Aspect {
   public readonly name = 'stash'
@@ -26,10 +26,29 @@ export class Aspect extends Connector implements extensions.Aspect {
   public invoke (method: string, ...args: unknown[]): any {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    if (typeof this.redis[method] === 'function')
+    if (typeof this.redis[method] === 'function') {
+      // multi/pipeline return a sync chainable; the span wraps exec() instead
+      if (method === 'multi' || method === 'pipeline') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const chain: ChainableCommander = this.redis[method](...args)
+        const exec = chain.exec.bind(chain)
+
+        chain.exec = async () => {
+          const options = span(method, args[0])
+
+          Object.assign(options.attributes as object, { 'db.operation.batch.size': chain.length })
+
+          return await console.span(options, exec)
+        }
+
+        return chain
+      }
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       return console.span(span(method, args[0]), () => this.redis[method](...args))
+    }
 
     if (method === 'store')
       console.span(span(method, args[0]),
