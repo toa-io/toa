@@ -37,7 +37,13 @@ class Event extends Connector {
       /** @type {toa.core.Message} */
       const message = { payload }
 
-      await console.span({ name: `${this.#label} publish`, kind: 'producer' }, async () => {
+      const options = {
+        name: `${this.#label} publish`,
+        kind: 'producer',
+        attributes: { 'messaging.destination.name': this.#label }
+      }
+
+      await console.span(options, async () => {
         const context = current()
 
         if (context !== undefined)

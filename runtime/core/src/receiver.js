@@ -20,6 +20,9 @@ class Receiver extends Connector {
   /** @type {string} */
   #label
 
+  /** @type {string} */
+  #destination
+
   /** @type {unknown[]} */
   #arguments
 
@@ -36,6 +39,7 @@ class Receiver extends Connector {
     this.#adaptive = adaptive
     this.#endpoint = operation
     this.#label = definition.label ?? operation
+    this.#destination = definition.destination ?? this.#label
     this.#arguments = definition.arguments
 
     this.#local = local
@@ -66,13 +70,28 @@ class Receiver extends Connector {
   }
 
   async #process (request) {
+    /*
+     * The delivery span is created on behalf of the messaging destination, so that
+     * each consumer forms its own complete producer/consumer pair, and service graphs
+     * display fan-out correctly: producer -> destination -> each consumer
+     * (Tempo pairs spans one-to-one, thus multiple consumers can not pair
+     * with a single producer span, see grafana/tempo#5408)
+     */
+    const delivery = {
+      name: `${this.#label} deliver`,
+      kind: 'producer',
+      service: this.#destination,
+      attributes: { 'messaging.destination.name': this.#destination }
+    }
+
     const options = {
       name: `${this.#label} process`,
       kind: 'consumer',
-      service: this.#local.locator.id
+      service: this.#local.locator.id,
+      attributes: { 'messaging.destination.name': this.#destination }
     }
 
-    return console.span(options, async () => {
+    return console.span(delivery, async () => console.span(options, async () => {
       try {
         await this.#local.invoke(this.#endpoint, request)
       } catch (error) {
@@ -84,7 +103,7 @@ class Receiver extends Connector {
 
         throw error
       }
-    })
+    }))
   }
 
   async #request (payload) {

@@ -12,13 +12,15 @@ const receivers = async (manifest, component) => {
   const local = await boot.remote(manifest.locator, manifest)
 
   for (const [label, definition] of Object.entries(manifest.receivers)) {
+    const locator = Locator.parse(label)
+    const source = definition.source ? Locator.parse(definition.source) : locator
+    const destination = `${source.id}.${label.split('.').pop()}`
+
     const bridge = definition.bridge !== undefined ? boot.bridge.receiver(definition.bridge, manifest.path, label) : undefined
-    const receiver = new Receiver({ ...definition, label }, local, bridge)
+    const receiver = new Receiver({ ...definition, label, destination }, local, bridge)
     const decorator = extensions.receiver(receiver, manifest.locator)
 
-    const locator = Locator.parse(label)
     const transport = definition.binding ?? await resolveBinding(locator, label)
-    const source = definition.source ? Locator.parse(definition.source) : locator
     const binding = boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
 
     binding.depends(component)
