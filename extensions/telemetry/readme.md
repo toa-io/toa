@@ -83,10 +83,12 @@ status?: error     # present if an exception was thrown
 Remote calls produce a `client`/`server` span pair: the gap between their durations
 is the transport latency. Spans created with `context.span` are `internal`.
 
-Emitting an event produces a `producer` span measuring the broker publish confirmation,
-and each receiver processes the event within a `consumer` span, which is a child of the
-`producer` span. Event processing does not block the emitting operation, so `consumer`
-spans may complete after the operation span ends.
+Emitting an event produces a `producer` span measuring the broker publish confirmation.
+Each receiver processes the event within a `consumer` span, wrapped in a delivery span
+created on behalf of the messaging destination (e.g. `default.orders.created`), so that
+service graphs display event fan-out correctly: producer, the destination as a virtual
+node, and each consumer. Event processing does not block the emitting operation,
+so `consumer` spans may complete after the operation span ends.
 
 Spans marked with `status: error` are those that threw an exception, operation invocations
 that returned an exception, and HTTP requests that resulted in a 5xx response.
@@ -200,8 +202,7 @@ telemetry:
 When the `exporters` key is omitted, spans are exported to the console.
 When it is present, it is exhaustive: list `console` explicitly to keep it.
 
-Local `docker compose up tempo grafana` starts [Tempo](https://grafana.com/oss/tempo/)
-(OTLP on `http://localhost:4318`) and [Grafana](http://localhost:3000) to explore the traces.
+See [Grafana stack setup](grafana.md) for local and production wiring.
 
 ## Logs best practices
 

@@ -1,8 +1,18 @@
 apiVersion: 1
 
 datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
   - name: Tempo
     type: tempo
     access: proxy
     url: http://tempo:3200
     isDefault: true
+    jsonData:
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true

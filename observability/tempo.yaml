@@ -15,3 +15,27 @@ storage:
       path: /var/tempo/blocks
     wal:
       path: /var/tempo/wal
+
+# derives service graph and span metrics from incoming spans,
+# writes them to Prometheus (used by the Grafana 'Service graph' tab)
+metrics_generator:
+  processor:
+    service_graphs:
+      # unpaired producer spans become edges to virtual nodes of messaging destinations
+      peer_attributes:
+        - messaging.destination.name
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  traces_storage:
+    path: /var/tempo/generator/traces
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics]

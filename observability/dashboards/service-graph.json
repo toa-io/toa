@@ -1,0 +1,33 @@
+{
+  "title": "Service Graph",
+  "uid": "toa-service-graph",
+  "schemaVersion": 39,
+  "tags": ["observability"],
+  "time": { "from": "now-30m", "to": "now" },
+  "refresh": "30s",
+  "panels": [
+    {
+      "type": "nodeGraph",
+      "title": "Services (green) and events (purple)",
+      "gridPos": { "h": 24, "w": 24, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "refId": "nodes",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum by (id, title, color) (label_replace(label_replace(label_replace(increase(traces_service_graph_request_total{connection_type=\"messaging_system\", client=~\".+[.].+[.].+\"}[$__range]), \"id\", \"$1\", \"client\", \"(.+)\"), \"title\", \"$1\", \"client\", \"(.+)\"), \"color\", \"#b877d9\", \"client\", \"(.+)\") or label_replace(label_replace(label_replace(increase(traces_service_graph_request_total{connection_type=~\"virtual_node|messaging_system\", server=~\".+[.].+[.].+\"}[$__range]), \"id\", \"$1\", \"server\", \"(.+)\"), \"title\", \"$1\", \"server\", \"(.+)\"), \"color\", \"#b877d9\", \"server\", \"(.+)\")) or sum by (id, title, color) (label_replace(label_replace(label_replace(increase(traces_service_graph_request_total{client!~\".+[.].+[.].+\"}[$__range]), \"id\", \"$1\", \"client\", \"(.+)\"), \"title\", \"$1\", \"client\", \"(.+)\"), \"color\", \"#73bf69\", \"client\", \"(.+)\") or label_replace(label_replace(label_replace(increase(traces_service_graph_request_total{server!~\".+[.].+[.].+\"}[$__range]), \"id\", \"$1\", \"server\", \"(.+)\"), \"title\", \"$1\", \"server\", \"(.+)\"), \"color\", \"#73bf69\", \"server\", \"(.+)\"))",
+          "instant": true,
+          "format": "table"
+        },
+        {
+          "refId": "edges",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "label_join(label_join(label_join(sum by (client, server) (increase(traces_service_graph_request_total[$__range])), \"id\", \"--\", \"client\", \"server\"), \"source\", \"\", \"client\"), \"target\", \"\", \"server\")",
+          "instant": true,
+          "format": "table"
+        }
+      ],
+      "options": {}
+    }
+  ]
+}

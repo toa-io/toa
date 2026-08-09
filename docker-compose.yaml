@@ -117,6 +117,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-remote-write-receiver
+    ports:
+      - "9090:9090"
   grafana:
     image: grafana/grafana:11.4.0
     ports:
@@ -127,3 +134,5 @@ services:
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
     volumes:
       - ./observability/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+      - ./observability/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./observability/dashboards:/var/lib/grafana/dashboards:ro
