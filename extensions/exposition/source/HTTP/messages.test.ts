@@ -137,7 +137,7 @@ jest.MockedObject<Context> {
       headers
     }) as unknown as Context['request'],
     url: new URL(url, 'https://host.local'),
-    timing: new Timing(false),
+    timing: new Timing(),
     buffer: async () => {
       if (consumed)
         throw new Error('Request body already consumed')
