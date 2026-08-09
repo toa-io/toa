@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('openspan')
+const { console, decode, run } = require('openspan')
 const { add } = require('@toa.io/generic')
 const { Connector } = require('./connector')
 
@@ -17,6 +17,9 @@ class Receiver extends Connector {
   /** @type {string} */
   #endpoint
 
+  /** @type {string} */
+  #label
+
   /** @type {unknown[]} */
   #arguments
 
@@ -32,6 +35,7 @@ class Receiver extends Connector {
     this.#conditioned = conditioned
     this.#adaptive = adaptive
     this.#endpoint = operation
+    this.#label = definition.label ?? operation
     this.#arguments = definition.arguments
 
     this.#local = local
@@ -43,7 +47,7 @@ class Receiver extends Connector {
 
   /** @hot */
   async receive (message) {
-    const { payload, ...extensions } = message
+    const { payload, telemetry, ...extensions } = message
 
     if (this.#conditioned && await this.#bridge.condition(payload) === false) return
 
@@ -51,17 +55,36 @@ class Receiver extends Connector {
 
     add(request, extensions)
 
-    try {
-      await this.#local.invoke(this.#endpoint, request)
-    } catch (error) {
-      console.error('Receiver error', { 
-        component: this.#local.locator.id, 
-        endpoint: this.#endpoint,
-        error
-       })
+    // continue the trace from the producer span
+    const remote = telemetry === undefined ? null : decode(telemetry)
+    const task = () => this.#process(request)
 
-      throw error
+    if (remote === null)
+      await task()
+    else
+      await run(remote, task)
+  }
+
+  async #process (request) {
+    const options = {
+      name: `${this.#label} process`,
+      kind: 'consumer',
+      service: this.#local.locator.id
     }
+
+    return console.span(options, async () => {
+      try {
+        await this.#local.invoke(this.#endpoint, request)
+      } catch (error) {
+        console.error('Receiver error', {
+          component: this.#local.locator.id,
+          endpoint: this.#endpoint,
+          error
+        })
+
+        throw error
+      }
+    })
   }
 
   async #request (payload) {

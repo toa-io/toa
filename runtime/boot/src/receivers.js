@@ -13,7 +13,7 @@ const receivers = async (manifest, component) => {
 
   for (const [label, definition] of Object.entries(manifest.receivers)) {
     const bridge = definition.bridge !== undefined ? boot.bridge.receiver(definition.bridge, manifest.path, label) : undefined
-    const receiver = new Receiver(definition, local, bridge)
+    const receiver = new Receiver({ ...definition, label }, local, bridge)
     const decorator = extensions.receiver(receiver, manifest.locator)
 
     const locator = Locator.parse(label)

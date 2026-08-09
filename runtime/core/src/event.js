@@ -1,6 +1,6 @@
 'use strict'
 
-const { current, encode } = require('openspan')
+const { console, current, encode } = require('openspan')
 const { Connector } = require('./connector')
 
 /**
@@ -13,11 +13,15 @@ class Event extends Connector {
   #conditioned
   #subjective
 
+  /** @type {string} */
+  #label
+
   constructor (definition, emitter, bridge = undefined) {
     super()
 
     this.#conditioned = definition.conditioned
     this.#subjective = definition.subjective
+    this.#label = definition.label ?? 'event'
     this.#emitter = emitter
     this.#bridge = bridge
 
@@ -33,12 +37,14 @@ class Event extends Connector {
       /** @type {toa.core.Message} */
       const message = { payload }
 
-      const context = current()
+      await console.span({ name: `${this.#label} publish`, kind: 'producer' }, async () => {
+        const context = current()
 
-      if (context !== undefined)
-        message.telemetry = encode(context)
+        if (context !== undefined)
+          message.telemetry = encode(context)
 
-      await this.#emitter.emit(message)
+        await this.#emitter.emit(message)
+      })
     }
   }
 }
