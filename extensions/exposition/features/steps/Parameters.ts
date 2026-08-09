@@ -17,6 +17,15 @@ setDefaultTimeout(60 * 1000)
 
 process.env.TOA_DEV = '1'
 
+// export traces to the local Tempo (`docker compose up tempo grafana`),
+// unavailability of the endpoint is harmless
+process.env.TOA_TELEMETRY_TRACES ??= encode({
+  exporters: {
+    console: null,
+    otlp: { endpoint: 'http://localhost:4318' }
+  }
+})
+
 process.env.TOA_STORAGES = encode({
   octets: {
     provider: 'tmp',

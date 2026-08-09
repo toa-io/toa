@@ -1,0 +1,13 @@
+name: notify
+
+operations:
+  send:
+    input:
+      id: string
+      title: string
+      volume: number
+      price: number
+    output: undefined
+
+receivers:
+  orders.created: send

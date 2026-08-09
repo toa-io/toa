@@ -1,0 +1,15 @@
+name: orders
+
+entity:
+  schema:
+    title: string
+    volume: number
+    price?: number
+
+operations:
+  create:
+    concurrency: retry
+    query: false
+    input:
+      title*: .
+      volume*: .
