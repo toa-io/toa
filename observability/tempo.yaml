@@ -8,14 +8,6 @@ distributor:
         http:
           endpoint: 0.0.0.0:4318
 
-storage:
-  trace:
-    backend: local
-    local:
-      path: /var/tempo/blocks
-    wal:
-      path: /var/tempo/wal
-
 # derives service graph and span metrics from incoming spans,
 # writes them to Prometheus (used by the Grafana 'Service graph' tab)
 metrics_generator:
@@ -32,10 +24,19 @@ metrics_generator:
     remote_write:
       - url: http://prometheus:9090/api/v1/write
         send_exemplars: true
-  traces_storage:
-    path: /var/tempo/generator/traces
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/blocks
+    wal:
+      path: /var/tempo/wal
 
 overrides:
   defaults:
     metrics_generator:
       processors: [service-graphs, span-metrics]
+
+usage_report:
+  reporting_enabled: false
