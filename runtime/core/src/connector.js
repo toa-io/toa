@@ -85,10 +85,18 @@ class Connector {
 
     this.#disconnecting = undefined
 
-    this.#connecting = (async () => {
+    const work = async () => {
       await Promise.all(this.#dependencies.map((connector) => connector.connect()))
       await this.open()
-    })()
+    }
+
+    // anonymous grouping nodes are not worth a span
+    this.#connecting = TRACE_BOOT && this.constructor.name !== 'Connector'
+      ? console.span({
+        name: `connect ${this.constructor.name}`,
+        attributes: { id: this.locator?.id ?? this.id }
+      }, work)
+      : work()
 
     try {
       await this.#connecting
@@ -177,5 +185,6 @@ class Connector {
 }
 
 const DELAY = 5000
+const TRACE_BOOT = process.env.TOA_BOOT_TRACE === '1'
 
 exports.Connector = Connector

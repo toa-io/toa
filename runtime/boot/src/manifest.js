@@ -1,14 +1,18 @@
 'use strict'
 
 const clone = require('clone-deep')
+const { basename } = require('node:path')
 const { merge } = require('@toa.io/generic')
 const { component: load } = require('@toa.io/norm')
 const { Locator } = require('@toa.io/core')
 
+const { span } = require('./span')
+
 const manifest = async (path, options = {}) => {
   options = merge(clone(options), DEFAULTS)
 
-  const manifest = await load(path)
+  const manifest = await span({ name: `manifest ${basename(path)}`, attributes: { path } },
+    async () => await load(path))
 
   if (options?.bindings !== undefined) {
     if ('operations' in manifest) {

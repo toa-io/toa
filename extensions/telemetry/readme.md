@@ -96,6 +96,15 @@ by the OpenTelemetry specification.
 Connectors may record additional spans within the trace of the current invocation
 (see the documentation of a specific connector).
 
+Process startup can be traced as well: with `TOA_BOOT_TRACE=1`, `toa compose` and
+`toa serve` produce a trace covering boot phases (manifest loading, component creation)
+and connector connections, so the startup time breakdown can be explored.
+Boot tracing is disabled by default.
+
+```shell
+TOA_BOOT_TRACE=1 toa compose ./components/*
+```
+
 Span entries are written only when the `trace` log level is enabled (the default on local
 environments). Spans are executed regardless of the log level.
 

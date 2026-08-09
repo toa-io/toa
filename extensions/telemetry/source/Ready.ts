@@ -73,7 +73,12 @@ export class Ready extends Connector {
     if (this.skipped)
       return
 
-    await setTimeout(this.options.delay)
+    const delay = async (): Promise<void> => await setTimeout(this.options.delay)
+
+    if (process.env.TOA_BOOT_TRACE === '1')
+      await console.span({ name: 'ready delay', attributes: { delay: this.options.delay } }, delay)
+    else
+      await delay()
 
     this.ready = true
 

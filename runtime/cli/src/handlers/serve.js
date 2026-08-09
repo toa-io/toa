@@ -1,5 +1,6 @@
 'use strict'
 
+const { console: output } = require('openspan')
 const boot = require('@toa.io/boot')
 const { shortcuts } = require('@toa.io/norm')
 const { directory: { find } } = require('@toa.io/filesystem')
@@ -11,19 +12,27 @@ const serve = async (argv) => {
 
   argv.path = shortcuts.resolve(argv.path)
 
-  const module = find(argv.path, process.cwd())
+  const start = async () => {
+    const module = find(argv.path, process.cwd())
 
-  const { Factory } = require(module)
+    const { Factory } = require(module)
 
-  const factory = new Factory(boot)
+    const factory = new Factory(boot)
 
-  if (factory.service === undefined) throw new Error(`Service is not implemented by ${argv.path}`)
+    if (factory.service === undefined) throw new Error(`Service is not implemented by ${argv.path}`)
 
-  const service = factory.service()
+    const service = factory.service()
 
-  graceful(service)
+    graceful(service)
 
-  await service.connect()
+    await service.connect()
+  }
+
+  // the trace of the startup
+  if (process.env.TOA_BOOT_TRACE === '1')
+    await output.span({ name: 'toa serve', attributes: { path: argv.path } }, start)
+  else
+    await start()
 }
 
 exports.serve = serve
