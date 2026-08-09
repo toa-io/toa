@@ -1,6 +1,6 @@
 import { Console, record } from './Console'
 import { current } from './tracing'
-import { consoleExporter, exporters, exporting } from './exporters'
+import { consoleExporter, exporters, exporting, flush } from './exporters'
 import { Otlp } from './Otlp'
 import { traces } from './traces'
 import type { Exporter, Span } from './exporters'
@@ -28,6 +28,17 @@ describe('traces', () => {
 
     expect(exporters()).toHaveLength(1)
     expect(exporters()[0]).toBeInstanceOf(Otlp)
+  })
+
+  it('should flush exporters', async () => {
+    const flusher = jest.fn(async () => undefined)
+    const exporter: Exporter = { export: () => undefined, flush: flusher }
+
+    exporting([exporter, consoleExporter]) // consoleExporter has no flush
+
+    await flush()
+
+    expect(flusher).toHaveBeenCalled()
   })
 })
 

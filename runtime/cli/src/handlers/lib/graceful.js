@@ -1,6 +1,6 @@
 'use strict'
 
-const { console } = require('openspan')
+const { console, flush } = require('openspan')
 
 function graceful (connector) {
   ['SIGTERM', 'SIGINT']
@@ -8,6 +8,9 @@ function graceful (connector) {
       console.info('Shutting down', { signal })
 
       await connector.disconnect()
+
+      // process.exit() does not emit 'beforeExit', so flush span exporters explicitly
+      await flush()
 
       process.exit(0)
     }))

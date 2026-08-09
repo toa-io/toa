@@ -24,6 +24,14 @@ export function exporters (): Exporter[] {
   return registry
 }
 
+/**
+ * Flushes all exporters, e.g. before `process.exit()`,
+ * which does not emit `beforeExit`.
+ */
+export async function flush (): Promise<void> {
+  await Promise.all(registry.map(async (exporter) => exporter.flush?.()))
+}
+
 export interface Exporter {
   export: (span: Span, output: Console) => void
   flush?: () => Promise<void>
