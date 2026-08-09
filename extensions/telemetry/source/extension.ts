@@ -47,19 +47,16 @@ export class Factory implements extensions.Factory {
       return composition
 
     const ready = this.ready
-    const connect = composition.connect.bind(composition)
-    const disconnect = composition.disconnect.bind(composition)
 
+    // the composition manages the probe server lifecycle (listen on connect, close on disconnect)
+    composition.depends(ready)
+
+    const connect = composition.connect.bind(composition)
+
+    // readiness is a post-connect phase, not expressible as a dependency
     composition.connect = async () => {
-      // connect (rather than listen) so that disconnect closes the server
-      await ready.connect()
       await connect()
       await ready.complete()
-    }
-
-    composition.disconnect = async (interrupt?: boolean) => {
-      await ready.disconnect(interrupt)
-      await disconnect(interrupt)
     }
 
     return composition
