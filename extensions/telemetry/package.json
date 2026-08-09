@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.telemetry",
-  "version": "1.0.0-alpha.248",
+  "version": "1.0.0-alpha.249",
   "description": "Toa Telemetry extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,6 +20,6 @@
     "transpile": "tsc"
   },
   "dependencies": {
-    "openspan": "1.0.0-alpha.248"
+    "openspan": "1.0.0-alpha.249"
   }
 }
