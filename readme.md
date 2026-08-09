@@ -49,6 +49,7 @@ Non-scattered documentation is coming some time later.
 - [Distributed lock manager](/extensions/stash/readme.md#distributed-lock-manager)
 - [Telemetry](/extensions/telemetry)
   - Structured logs
+  - Distributed tracing
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation
