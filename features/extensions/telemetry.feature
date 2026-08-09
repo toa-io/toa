@@ -29,6 +29,23 @@ Feature: Telemetry
       42
       """
 
+  # no TRACE entries are expected in the output, while logs still carry trace_id
+  Scenario: Tracing an invocation with sampling disabled
+    Given an encoded environment variable `TOA_TELEMETRY_TRACES` is set to:
+      """yaml
+      sample: 0
+      """
+    And I boot `telemetry` component
+    When I invoke `trace` with:
+      """yaml
+      input:
+        value: 21
+      """
+    Then the reply is received:
+      """yaml
+      42
+      """
+
   Scenario: Trace propagation over remote calls
     Given I compose components:
       | math.calculations |

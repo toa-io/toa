@@ -4,7 +4,7 @@ import os from 'node:os'
 import * as http from 'node:http'
 import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
-import { console, current, decode, run, type SpanContext } from 'openspan'
+import { console, current, decide, decode, run, type SpanContext } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
@@ -269,8 +269,9 @@ function trace (headers: http.IncomingHttpHeaders): SpanContext | null {
   if (typeof headers.traceparent === 'string')
     return decode(headers.traceparent)
 
+  // adopting a trace by ID does not bypass sampling
   if (typeof headers.ray === 'string' && RAY.test(headers.ray) && headers.ray !== ZERO_RAY)
-    return { traceId: headers.ray.toLowerCase(), sampled: true }
+    return { traceId: headers.ray.toLowerCase(), sampled: decide() }
 
   return null
 }

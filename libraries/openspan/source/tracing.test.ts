@@ -1,4 +1,8 @@
-import { create, current, decode, encode, run } from './tracing'
+import { create, current, decide, decode, encode, run, sampling } from './tracing'
+
+afterEach(() => {
+  sampling()
+})
 
 describe('create', () => {
   it('should create root context', () => {
@@ -24,6 +28,55 @@ describe('create', () => {
     const child = create(parent)
 
     expect(child.sampled).toBe(false)
+  })
+})
+
+describe('sampling', () => {
+  it('should sample all traces by default', () => {
+    for (let i = 0; i < 10; i++)
+      expect(decide()).toBe(true)
+  })
+
+  it('should not sample when sample is 0', () => {
+    sampling({ sample: 0 })
+
+    for (let i = 0; i < 10; i++)
+      expect(create().sampled).toBe(false)
+  })
+
+  it('should not re-decide for children', () => {
+    sampling({ sample: 0 })
+
+    const parent = { ...create(), sampled: true }
+
+    expect(create(parent).sampled).toBe(true)
+  })
+
+  it('should limit the rate of recorded traces', () => {
+    sampling({ rate: 2 })
+
+    const decisions = Array.from({ length: 10 }, () => create().sampled)
+
+    expect(decisions.filter(Boolean).length).toBe(2)
+  })
+
+  it('should refill the bucket over time', async () => {
+    sampling({ rate: 100 })
+
+    while (decide());
+
+    expect(decide()).toBe(false)
+
+    await new Promise((resolve) => setTimeout(resolve, 30))
+
+    expect(decide()).toBe(true)
+  })
+
+  it('should allow at least one trace for fractional rate', () => {
+    sampling({ rate: 0.1 })
+
+    expect(decide()).toBe(true)
+    expect(decide()).toBe(false)
   })
 })
 

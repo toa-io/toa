@@ -127,6 +127,30 @@ async function computation (input, context) {
 }
 ```
 
+### Sampling
+
+Whether a trace is recorded is decided once, at the trace root — by the process that starts
+the trace. The decision is propagated along with the trace context, so a trace is either
+recorded as a whole or not at all. Unrecorded traces still create and propagate the trace
+context: log entries carry `trace_id`, only span entries are not written.
+
+```yaml
+# context.toa.yaml
+
+telemetry:
+  traces:
+    sample: 0.1  # probability of recording a trace, 0..1, defaults to 1
+    rate: 5      # maximum recorded traces per second per process, unlimited when omitted
+```
+
+- `sample: 0` disables recording entirely, `1` records every trace.
+- `rate` protects against traffic spikes: with `sample`, the recorded volume is proportional
+  to the traffic, while `rate` sets a hard cap (token bucket). It may be fractional:
+  `0.5` is one trace per 2 seconds.
+
+When both are set, a trace is recorded if the `sample` lottery passes *and* the rate limit
+is not exceeded.
+
 ## Logs best practices
 
 Use constant messages and attributes to facilitate log analysis.

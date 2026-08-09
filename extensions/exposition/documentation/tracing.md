@@ -58,10 +58,12 @@ the *spans* of the trace are recorded.
 
 The decision is made once, by the process that starts the trace, and is propagated along with
 the trace context (the flags byte of `traceparent`), so a trace is either recorded as a whole
-or not at all.
+or not at all. Sampling is configured with the
+[`telemetry.traces` annotation](../../telemetry/readme.md#sampling).
 
-Sending a trace context does not bypass sampling: whether the trace is recorded is decided by the
-server. The incoming trace ID is used for correlation, not as a recording demand.
+Sending a trace context does not bypass sampling: an incoming `ray` header adopts the trace ID,
+while the recording decision is still made by the gateway. The `sampled` flag of an incoming
+`traceparent` is respected, as the decision belongs to the trace root.
 
 ## See also
 

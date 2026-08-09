@@ -1,4 +1,5 @@
-import { console } from 'openspan'
+import assert from 'node:assert'
+import { console, sampling } from 'openspan'
 import { decode, encode } from '@toa.io/generic'
 import { Logs } from './Logs'
 import { Span } from './Span'
@@ -26,6 +27,10 @@ export class Factory implements extensions.Factory {
     this.logsOptions.level ??= level
 
     console.configure({ level: this.logsOptions.level })
+
+    const tracesEnv = process.env[TRACES_ENV]
+
+    sampling(tracesEnv === undefined ? {} : decode(tracesEnv))
 
     this.ready = Ready.create()
   }
@@ -75,6 +80,9 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   if (annotation?.logs !== undefined)
     addLogsVariables(annotation.logs, variables)
 
+  if (annotation?.traces !== undefined)
+    addTracesVariables(annotation.traces, variables)
+
   const ready = normalizeAnnotation(annotation?.ready)
 
   if (ready === false) {
@@ -112,8 +120,23 @@ function addLogsVariables (annotation: LogsAnnotation, variables: Variables): vo
   }
 }
 
+function addTracesVariables (annotation: TracesAnnotation, variables: Variables): void {
+  const { sample, rate } = annotation
+
+  if (sample !== undefined)
+    assert.ok(typeof sample === 'number' && sample >= 0 && sample <= 1,
+      'telemetry.traces.sample must be a number within [0, 1]')
+
+  if (rate !== undefined)
+    assert.ok(typeof rate === 'number' && rate > 0,
+      'telemetry.traces.rate must be a positive number')
+
+  variables.global.push({ name: TRACES_ENV, value: encode({ sample, rate }) })
+}
+
 interface Annotation {
   logs?: LogsAnnotation & Record<string, LogsAnnotation>
+  traces?: TracesAnnotation
   ready?: ReadyAnnotation
 }
 
@@ -121,6 +144,12 @@ interface LogsAnnotation {
   level: LevelName
 }
 
+interface TracesAnnotation {
+  sample?: number
+  rate?: number
+}
+
 const ENV_PREFIX = 'TOA_TELEMETRY'
 const LOGS_PREFIX = ENV_PREFIX + '_LOGS'
+const TRACES_ENV = ENV_PREFIX + '_TRACES'
 export const ID = 'telemetry'

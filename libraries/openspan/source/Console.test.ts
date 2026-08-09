@@ -1,4 +1,8 @@
-import { console, Console, create, run } from './'
+import { console, Console, create, run, sampling } from './'
+
+afterEach(() => {
+  sampling()
+})
 
 let instance: Console
 
@@ -295,6 +299,26 @@ describe('span', () => {
 
     expect(result).toBe('done')
     expect(pop(streams.stdout)).toBeUndefined()
+  })
+
+  it('should not write span entries of unsampled traces', async () => {
+    sampling({ sample: 0 })
+
+    const result = await instance.span('unsampled', () => 'done')
+
+    expect(result).toBe('done')
+    expect(pop(streams.stdout)).toBeUndefined()
+  })
+
+  it('should stamp trace_id into logs of unsampled traces', async () => {
+    sampling({ sample: 0 })
+
+    await instance.span('unsampled', () => instance.info('step'))
+
+    const log = pop(streams.stdout)
+
+    expect(log.message).toBe('step')
+    expect(log.trace_id).toMatch(/^[\da-f]{32}$/)
   })
 })
 

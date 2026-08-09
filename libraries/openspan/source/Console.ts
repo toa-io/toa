@@ -89,7 +89,7 @@ export class Console {
   private complete (context: SpanContext, options: SpanOptions, start: number, error?: unknown): void {
     const duration = Math.round((performance.now() - start) * 1000) / 1000
 
-    if (LEVELS.trace < this.level)
+    if (!context.sampled || LEVELS.trace < this.level)
       return
 
     const span: Partial<Entry> = {
