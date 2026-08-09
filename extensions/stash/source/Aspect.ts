@@ -37,7 +37,7 @@ export class Aspect extends Connector implements extensions.Aspect {
         chain.exec = async () => {
           const options = span(method, args[0])
 
-          Object.assign(options.attributes as object, { 'db.operation.batch.size': chain.length })
+          Object.assign(options.attributes!, { 'db.operation.batch.size': chain.length })
 
           return await console.span(options, exec)
         }
