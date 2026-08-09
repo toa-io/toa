@@ -1,6 +1,7 @@
-import { console } from 'openspan'
+import { console, run } from 'openspan'
 import { type Component, Connector } from '@toa.io/core'
 import { type Routes } from './Routes'
+import type { Push } from './Receiver'
 
 export class Realtime extends Connector {
   private readonly discovery: Promise<Component>
@@ -27,14 +28,36 @@ export class Realtime extends Connector {
     console.info('Realtime service shutdown complete')
   }
 
-  private push (event: Event): void {
-    void this.streams?.invoke('push', { input: event })
-      .catch((error) => console.error('Realtime push failed', error))
-  }
-}
+  private push ({ telemetry, ...event }: Push): void {
+    const processing = telemetry === null
+      ? this.deliver(event)
+      : run(telemetry, async () => await this.deliver(event))
 
-interface Event {
-  key: string
-  event: string
-  data: string
+    void processing.catch((error) => console.error('Realtime push failed', error))
+  }
+
+  private async deliver (event: Omit<Push, 'telemetry'>): Promise<void> {
+    /*
+     * The delivery span is created on behalf of the messaging destination
+     * (same as the core Receiver), so that service graphs display the fan-out:
+     * producer -> destination -> realtime
+     */
+    const delivery = {
+      name: `${event.event} deliver`,
+      kind: 'producer' as const,
+      service: event.event,
+      attributes: { 'messaging.destination.name': event.event }
+    }
+
+    const options = {
+      name: `${event.event} push`,
+      kind: 'consumer' as const,
+      service: 'realtime',
+      attributes: { 'messaging.destination.name': event.event }
+    }
+
+    await console.span(delivery, async () => await console.span(options, async () => {
+      await this.streams?.invoke('push', { input: event })
+    }))
+  }
 }

@@ -1,5 +1,6 @@
-import { console } from 'openspan'
+import { console, decode } from 'openspan'
 import { Connector, type Message } from '@toa.io/core'
+import type { SpanContext } from 'openspan'
 import type { Readable } from 'node:stream'
 
 export class Receiver extends Connector {
@@ -25,6 +26,9 @@ export class Receiver extends Connector {
   public receive (message: Message<Record<string, string>>): void {
     const data = this.fit(message.payload)
 
+    // the push continues the trace from the producer
+    const telemetry = message.telemetry === undefined ? null : decode(message.telemetry)
+
     for (const property of this.properties) {
       const key = message.payload[property]
 
@@ -38,9 +42,9 @@ export class Receiver extends Connector {
       if (Array.isArray(key))
         // eslint-disable-next-line max-depth
         for (const k of key as string[])
-          this.push(k, data)
+          this.push(k, data, telemetry)
       else
-        this.push(key, data)
+        this.push(key, data, telemetry)
     }
   }
 
@@ -54,7 +58,7 @@ export class Receiver extends Connector {
     return Object.fromEntries(entries)
   }
 
-  private push (key: string | null, data: Record<string, string>): void {
+  private push (key: string | null, data: Record<string, string>, telemetry: SpanContext | null): void {
     if (key === null || typeof key === 'undefined') {
       console.debug('Key is null or undefined, skipping', { key, event: this.event })
 
@@ -63,6 +67,13 @@ export class Receiver extends Connector {
 
     console.debug('Pushing event to stream', { key, event: this.event, data })
 
-    this.stream.push({ key, event: this.event, data })
+    this.stream.push({ key, event: this.event, data, telemetry } satisfies Push)
   }
+}
+
+export interface Push {
+  key: string
+  event: string
+  data: Record<string, string>
+  telemetry: SpanContext | null
 }

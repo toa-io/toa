@@ -94,8 +94,11 @@ export class Aspect extends Connector implements extensions.Aspect {
 
 function span (method: string, key: unknown): SpanOptions {
   // https://opentelemetry.io/docs/specs/semconv/database/redis/
+  // `db.namespace` names the database node on service graphs,
+  // which otherwise displays 'unknown'
   const attributes: Record<string, unknown> = {
     'db.system': 'redis',
+    'db.namespace': 'stash',
     'db.operation.name': method
   }
 
