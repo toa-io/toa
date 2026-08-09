@@ -34,10 +34,15 @@ telemetry:
 - Skip the usual per-process `service.name` setup (`OTEL_SERVICE_NAME` and the like):
   Toa attributes spans to component ids (`default.orders`) or `exposition` automatically,
   even when multiple components run in a single process.
+  The application (context) name is exported as `service.namespace`.
 - For the service graph, enable the Tempo metrics-generator with `service-graphs`
   and `span-metrics` processors, and add `messaging.destination.name`
   to `peer_attributes` — event destinations then appear as virtual nodes
   between producers and consumers.
+- On multi-tenant infrastructure, add `service.namespace` to the `service_graphs`
+  processor `dimensions` (with `enable_client_server_prefix: true`) —
+  otherwise components with equal ids from different applications merge
+  into a single service graph node.
 - Sampling is head-based and decided by Toa (see [Sampling](readme.md#sampling)),
   so no tail sampling is required on the collector side; `sample` and `rate`
   are the knobs controlling the exported volume.
