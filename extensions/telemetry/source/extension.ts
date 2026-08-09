@@ -51,7 +51,8 @@ export class Factory implements extensions.Factory {
     const disconnect = composition.disconnect.bind(composition)
 
     composition.connect = async () => {
-      await ready.listen()
+      // connect (rather than listen) so that disconnect closes the server
+      await ready.connect()
       await connect()
       await ready.complete()
     }

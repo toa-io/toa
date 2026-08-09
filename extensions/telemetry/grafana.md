@@ -27,10 +27,6 @@ telemetry:
         endpoint: http://localhost:4318
 ```
 
-The built-in service graph renders all nodes identically; to distinguish services
-from event destinations, provision a custom node graph dashboard
-(see [`dashboards/service-graph.json`](../../observability/dashboards/service-graph.json)).
-
 ## Production
 
 - Point `exporters.otlp.endpoint` at any OTLP/HTTP receiver (`/v1/traces` is appended).
