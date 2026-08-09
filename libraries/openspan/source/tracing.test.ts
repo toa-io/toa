@@ -1,4 +1,5 @@
 import { create, current, decide, decode, encode, run, sampling } from './tracing'
+import type * as tracing from './tracing'
 
 afterEach(() => {
   sampling()
@@ -108,6 +109,36 @@ describe('traceparent', () => {
     ['zero span id', '00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-01']
   ])('should reject %s', (_, header) => {
     expect(decode(header)).toBeNull()
+  })
+})
+
+describe('module copies', () => {
+  // a process may load several copies of the module (the package installed more than once)
+  let copy: typeof tracing
+
+  beforeEach(() => {
+    jest.isolateModules(() => {
+      copy = require('./tracing')
+    })
+  })
+
+  it('should share the context', () => {
+    const context = create()
+
+    run(context, () => expect(copy.current()).toBe(context))
+  })
+
+  it('should share the sampling configuration', () => {
+    copy.sampling({ sample: 0 })
+
+    expect(decide()).toBe(false)
+  })
+
+  it('should share the rate limit', () => {
+    copy.sampling({ rate: 1 })
+
+    expect(decide()).toBe(true)
+    expect(copy.decide()).toBe(false)
   })
 })
 

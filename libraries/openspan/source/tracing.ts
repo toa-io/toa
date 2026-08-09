@@ -1,17 +1,12 @@
-import { AsyncLocalStorage } from 'node:async_hooks'
 import { randomBytes } from 'node:crypto'
-
-const storage = new AsyncLocalStorage<SpanContext>()
-
-let sample = 1
-let bucket: Bucket | null = null
+import { state } from './state'
 
 export function run<T> (context: SpanContext, fn: () => T): T {
-  return storage.run(context, fn)
+  return state.storage.run(context, fn)
 }
 
 export function current (): SpanContext | undefined {
-  return storage.getStore()
+  return state.storage.getStore()
 }
 
 /**
@@ -22,18 +17,18 @@ export function current (): SpanContext | undefined {
  * (may be fractional: 0.5 is one trace per 2 seconds), unlimited when omitted.
  */
 export function sampling (options: SamplingOptions = {}): void {
-  sample = options.sample ?? 1
-  bucket = options.rate === undefined ? null : new Bucket(options.rate)
+  state.sample = options.sample ?? 1
+  state.bucket = options.rate === undefined ? null : new Bucket(options.rate)
 }
 
 /**
  * Makes the sampling decision for a trace root.
  */
 export function decide (): boolean {
-  if (sample !== 1 && Math.random() >= sample)
+  if (state.sample !== 1 && Math.random() >= state.sample)
     return false
 
-  return bucket?.take() ?? true
+  return state.bucket?.take() ?? true
 }
 
 export function create (parent?: SpanContext): SpanContext {

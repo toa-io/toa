@@ -30,6 +30,21 @@ describe('traces', () => {
     expect(exporters()[0]).toBeInstanceOf(Otlp)
   })
 
+  it('should share exporters between module copies', () => {
+    // a process may load several copies of the module (the package installed more than once)
+    let copy!: { exporting: typeof exporting, exporters: typeof exporters }
+
+    jest.isolateModules(() => {
+      copy = require('./exporters')
+    })
+
+    const exporter: Exporter = { export: () => undefined }
+
+    copy.exporting([exporter])
+
+    expect(exporters()).toEqual([exporter])
+  })
+
   it('should flush exporters', async () => {
     const flusher = jest.fn(async () => undefined)
     const exporter: Exporter = { export: () => undefined, flush: flusher }
