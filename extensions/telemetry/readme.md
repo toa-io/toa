@@ -80,8 +80,21 @@ kind?: string      # server, client, producer, consumer; internal when omitted
 status?: error     # present if an exception was thrown
 ```
 
-Remote calls and events produce a `client`/`server` span pair: the gap between their durations
+Remote calls produce a `client`/`server` span pair: the gap between their durations
 is the transport latency. Spans created with `context.span` are `internal`.
+
+Emitting an event produces a `producer` span measuring the broker publish confirmation,
+and each receiver processes the event within a `consumer` span, which is a child of the
+`producer` span. Event processing does not block the emitting operation, so `consumer`
+spans may complete after the operation span ends.
+
+Spans marked with `status: error` are those that threw an exception, operation invocations
+that returned an exception, and HTTP requests that resulted in a 5xx response.
+Successful spans have no status, as [recommended](https://opentelemetry.io/docs/specs/otel/trace/api/#set-status)
+by the OpenTelemetry specification.
+
+Connectors may record additional spans within the trace of the current invocation
+(see the documentation of a specific connector).
 
 Span entries are written only when the `trace` log level is enabled (the default on local
 environments). Spans are executed regardless of the log level.
@@ -159,6 +172,10 @@ Recorded spans are passed to a set of *exporters*:
   the default on local environments)
 - `otlp` — sends spans to an [OTLP/HTTP](https://opentelemetry.io/docs/specs/otlp/#otlphttp)
   endpoint (Grafana Tempo, OpenTelemetry Collector, etc.), batched
+
+The OTLP `service.name` resource attribute is the logical service emitting the span:
+the component id (e.g. `default.orders`) for operation spans and their outgoing calls,
+or `exposition` for HTTP request spans.
 
 ```yaml
 # context.toa.yaml
