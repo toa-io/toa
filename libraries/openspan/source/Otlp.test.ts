@@ -69,54 +69,6 @@ it('should encode spans as OTLP JSON', async () => {
   ]))
 })
 
-it('should set the service.namespace resource attribute', async () => {
-  const exporter = new Otlp({ endpoint: 'http://localhost:4318', namespace: 'ants' })
-
-  exporter.export(span)
-  await exporter.flush()
-
-  const body = JSON.parse(fetch.mock.calls[0][1]?.body as string)
-
-  expect(body.resourceSpans[0].resource.attributes).toContainEqual({
-    key: 'service.namespace',
-    value: { stringValue: 'ants' }
-  })
-})
-
-it('should default service.namespace to TOA_CONTEXT', async () => {
-  process.env.TOA_CONTEXT = 'colony'
-
-  try {
-    const exporter = new Otlp({ endpoint: 'http://localhost:4318' })
-
-    exporter.export(span)
-    await exporter.flush()
-
-    const body = JSON.parse(fetch.mock.calls[0][1]?.body as string)
-
-    expect(body.resourceSpans[0].resource.attributes).toContainEqual({
-      key: 'service.namespace',
-      value: { stringValue: 'colony' }
-    })
-  } finally {
-    delete process.env.TOA_CONTEXT
-  }
-})
-
-it('should omit service.namespace when unknown', async () => {
-  delete process.env.TOA_CONTEXT
-
-  const exporter = new Otlp({ endpoint: 'http://localhost:4318' })
-
-  exporter.export(span)
-  await exporter.flush()
-
-  const body = JSON.parse(fetch.mock.calls[0][1]?.body as string)
-  const keys = body.resourceSpans[0].resource.attributes.map((attribute: any) => attribute.key)
-
-  expect(keys).not.toContain('service.namespace')
-})
-
 it('should batch spans', async () => {
   const exporter = new Otlp({ endpoint: 'http://localhost:4318' })
 

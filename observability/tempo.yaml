@@ -16,10 +16,10 @@ metrics_generator:
       # unpaired producer spans become edges to virtual nodes of messaging destinations
       peer_attributes:
         - messaging.destination.name
-      # split graph nodes by application (service.namespace) in multi-tenant setups
-      enable_client_server_prefix: true
-      dimensions:
-        - service.namespace
+      # names database nodes (Toa sets `db.namespace` on storage and stash spans)
+      database_name_attributes:
+        - db.namespace
+        - db.name
   registry:
     external_labels:
       source: tempo

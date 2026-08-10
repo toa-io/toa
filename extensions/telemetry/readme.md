@@ -188,11 +188,6 @@ The OTLP `service.name` resource attribute is the logical service emitting the s
 the component id (e.g. `default.orders`) for operation spans and their outgoing calls,
 or `exposition` for HTTP request spans.
 
-The `service.namespace` resource attribute is the application (context) name,
-distinguishing services of different applications sharing an infrastructure —
-following the [OTel convention](https://opentelemetry.io/docs/specs/semconv/resource/#service):
-`service.name` is unique within a namespace.
-
 ```yaml
 # context.toa.yaml
 
