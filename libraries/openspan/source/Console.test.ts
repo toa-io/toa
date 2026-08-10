@@ -93,6 +93,15 @@ it('should consider log() as debug()', async () => {
   expect(entry).toMatchObject({ severity: 'DEBUG' })
 })
 
+it('should share the singleton between module copies', () => {
+  jest.isolateModules(() => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const copy = require('./Console')
+
+    expect(copy.console).toBe(console)
+  })
+})
+
 describe.each(channels)('console instance (%s)', (channel) => {
   it('should print message', () => {
     console[channel]('Hello')

@@ -211,7 +211,16 @@ export const LEVELS: Record<LevelName, Level> = {
   error: 2
 }
 
-export const console = new Console()
+const KEY = Symbol.for('openspan.console')
+
+/**
+ * A process may load several copies of this module (see `state.ts`).
+ * The singleton is shared via `globalThis`, so that `configure()`
+ * (e.g. the log level set by the telemetry extension) applies to every copy.
+ */
+export const console: Console = ((globalThis as Global)[KEY] ??= new Console())
+
+type Global = typeof globalThis & { [KEY]?: Console }
 
 /**
  * Passes an externally completed span to the exporters.
