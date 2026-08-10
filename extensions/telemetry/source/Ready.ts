@@ -1,5 +1,4 @@
 import * as http from 'node:http'
-import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { decode } from '@toa.io/generic'
@@ -73,13 +72,6 @@ export class Ready extends Connector {
     if (this.skipped)
       return
 
-    const delay = async (): Promise<void> => await setTimeout(this.options.delay)
-
-    if (process.env.TOA_BOOT_TRACE === '1')
-      await console.span({ name: 'ready delay', attributes: { delay: this.options.delay } }, delay)
-    else
-      await delay()
-
     this.ready = true
 
     console.info('Ready')
@@ -129,8 +121,7 @@ export function resolveOptions (): ReadyOptions | null {
 
   return {
     path: decoded.path ?? DEFAULTS.path,
-    port: decoded.port ?? DEFAULTS.port,
-    delay: (decoded.delay ?? DEFAULT_ANNOTATION.delay) * 1000
+    port: decoded.port ?? DEFAULTS.port
   }
 }
 
@@ -144,39 +135,30 @@ export function normalizeAnnotation (ready: ReadyAnnotation | undefined): ReadyC
   return {
     enabled: true,
     path: ready.path ?? DEFAULT_ANNOTATION.path,
-    port: ready.port ?? DEFAULT_ANNOTATION.port,
-    delay: ready.delay ?? DEFAULT_ANNOTATION.delay
+    port: ready.port ?? DEFAULT_ANNOTATION.port
   }
 }
 
 export const READY_ENV = 'TOA_TELEMETRY_READY'
 export const DEFAULT_ANNOTATION = {
   path: '/.ready',
-  port: 8001,
-  delay: 3
+  port: 8001
 } as const
 
-const DEFAULTS: ReadyOptions = {
-  path: DEFAULT_ANNOTATION.path,
-  port: DEFAULT_ANNOTATION.port,
-  delay: DEFAULT_ANNOTATION.delay * 1000
-}
+const DEFAULTS: ReadyOptions = { ...DEFAULT_ANNOTATION }
 
 export interface ReadyOptions {
   path: string
   port: number
-  delay: number
 }
 
 export type ReadyAnnotation = false | {
   path?: string
   port?: number
-  delay?: number
 }
 
 export type ReadyConfig = false | {
   enabled?: boolean
   path?: string
   port?: number
-  delay?: number
 }

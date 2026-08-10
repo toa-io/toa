@@ -197,7 +197,6 @@ Feature: Telemetry
           probe:
             path: /.ready
             port: 8001
-            delay: 3
           variables:
             - name: TOA_TELEMETRY_READY
       """

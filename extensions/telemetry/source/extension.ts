@@ -93,8 +93,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
 
   const probe: Probe = {
     path: ready.path ?? DEFAULT_ANNOTATION.path,
-    port: ready.port ?? DEFAULT_ANNOTATION.port,
-    delay: ready.delay ?? DEFAULT_ANNOTATION.delay
+    port: ready.port ?? DEFAULT_ANNOTATION.port
   }
 
   return { variables, probe }
