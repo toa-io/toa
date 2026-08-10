@@ -1,4 +1,4 @@
-# Toa
+# Toa: Microservice Operations Distributed Runtime
 
 **Toa is a runtime for low-code, eventually consistent distributed systems.**
 
