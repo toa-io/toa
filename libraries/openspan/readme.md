@@ -151,6 +151,9 @@ import { exporting, consoleExporter, Otlp } from 'openspan'
 exporting([consoleExporter, new Otlp({ endpoint: 'http://localhost:4318' })])
 ```
 
+`OtlpOptions.service` is the fallback `service.name` for spans without a declared service
+(defaults to the `TOA_CONTEXT` environment variable, then `toa`).
+
 Custom exporters implement the `Exporter` interface: `export(span, output)` is called for each
 completed sampled span, optional `flush()` is awaited on shutdown.
 
