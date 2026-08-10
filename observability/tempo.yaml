@@ -20,10 +20,6 @@ metrics_generator:
       database_name_attributes:
         - db.namespace
         - db.name
-      # split graph nodes by application (service.namespace) in multi-tenant setups
-      enable_client_server_prefix: true
-      dimensions:
-        - service.namespace
   registry:
     external_labels:
       source: tempo
