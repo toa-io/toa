@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.origins",
-  "version": "1.0.0-alpha.249",
+  "version": "1.0.0-alpha.250",
   "description": "Toa Origins",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -18,13 +18,13 @@
   "types": "transpiled/index.d.ts",
   "dependencies": {
     "@google-cloud/pubsub": "4.3.3",
-    "@toa.io/core": "1.0.0-alpha.249",
+    "@toa.io/core": "1.0.0-alpha.250",
     "@toa.io/generic": "1.0.0-alpha.225",
     "@toa.io/pointer": "1.0.0-alpha.246",
     "@toa.io/schemas": "1.0.0-alpha.246",
     "comq": "0.15.3",
     "msgpackr": "2.0.1",
-    "openspan": "1.0.0-alpha.249"
+    "openspan": "1.0.0-alpha.250"
   },
   "scripts": {
     "transpile": "tsc"

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.mail",
-  "version": "1.0.0-alpha.249",
+  "version": "1.0.0-alpha.250",
   "description": "Toa Mail",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,8 +22,8 @@
     "features": "cucumber-js"
   },
   "dependencies": {
-    "@toa.io/boot": "1.0.0-alpha.249",
-    "@toa.io/core": "1.0.0-alpha.249",
+    "@toa.io/boot": "1.0.0-alpha.250",
+    "@toa.io/core": "1.0.0-alpha.250",
     "@toa.io/generic": "1.0.0-alpha.225",
     "@toa.io/schemas": "1.0.0-alpha.246",
     "error-value": "0.4.4",
