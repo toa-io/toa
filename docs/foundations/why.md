@@ -37,8 +37,6 @@ The order approval above is a complete, valid Toa operation:
 // operations/approve.js
 async function transition (input, order, context) {
   order.status = 'approved'
-
-  return order
 }
 ```
 
@@ -87,8 +85,6 @@ async function transition (input, order, context) {
     return new Error('ORDER_NOT_PENDING')
 
   order.status = 'approved'
-
-  return order
 }
 ```
 

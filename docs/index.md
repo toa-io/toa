@@ -30,8 +30,6 @@ operations:
 // operations/approve.js
 async function transition (input, order, context) {
   order.status = 'approved'
-
-  return order
 }
 ```
 

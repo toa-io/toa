@@ -99,8 +99,6 @@ async function transition (input, order, context) {
     return new Error('NOT_PENDING')
 
   order.status = 'approved'
-
-  return order
 }
 
 module.exports = { transition }
