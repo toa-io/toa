@@ -17,7 +17,8 @@ it('lists indexed credentials and a legacy associated credential', async () => {
     query: {
       criteria: 'authority==nex;identity==identity',
       projection: ['iss'],
-      sort: ['_created:desc']
+      sort: ['_created:desc'],
+      limit: 100
     }
   })
 })

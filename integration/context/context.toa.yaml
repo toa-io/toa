@@ -40,7 +40,12 @@ exposition:
 
 configuration:
   identity.tokens:
-    key0: secret-key-0
+    keys:
+      - id: key0
+        key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
+      - id: legacy0
+        key: $IDENTITY_TOKENS_KEY0
+        format: paseto
   messages.messages:
     price: 2
 

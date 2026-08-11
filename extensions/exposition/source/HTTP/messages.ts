@@ -1,5 +1,5 @@
 import { Readable } from 'node:stream'
-import contentType from 'content-type'
+import * as contentType from 'content-type'
 import { console } from 'openspan'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'

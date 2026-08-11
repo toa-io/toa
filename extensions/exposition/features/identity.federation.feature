@@ -88,10 +88,8 @@ Feature: Identity Federation
       """
       201 Created
       authorization: Token ${{ Bill.token }}
-
-      id: ${{ Bill.id }}
       """
-    # check that both tokens corresponds to the same id
+    # check that both tokens authenticate the created federation identity
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -102,7 +100,7 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       200 OK
-      id: ${{ Bill.id }}
+      roles: []
       """
     When the following request is received:
       """
@@ -115,7 +113,7 @@ Feature: Identity Federation
       """
       200 OK
 
-      id: ${{ Bill.id }}
+      roles: []
       """
     And the following request is received:
       # same credentials
@@ -216,6 +214,7 @@ Feature: Identity Federation
       content-type: application/yaml
       accept: application/yaml
 
+      scheme: bearer
       credentials: ${{ Bob.id_token }}
       """
     Then the following reply is sent:

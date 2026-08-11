@@ -41,19 +41,22 @@ See [`identity.basic` component](components.md#basic-credentials).
 
 ### Token scheme
 
-Tokens issued by the Authentication system. These tokens are [PASETO](https://paseto.io).
+Tokens issued by the Authentication system. New tokens are compact
+[JSON Web Encryption (JWE)](https://www.rfc-editor.org/rfc/rfc7516) values using direct symmetric
+encryption (`alg: dir`) and AES-256-GCM (`enc: A256GCM`). Legacy PASETO V3.local tokens remain
+accepted during migration and are always replaced on successful authentication.
 
 ```http
-Authrization: Token v4.local.eyJzdWIiOiJqb2hu...
+Authorization: Token eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwidHlwIjoiSldUIiwia2lkIjo...
 ```
 
 The `Token` is the **primary** authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response
-containing `Token`credentials and will be required to switch to the `Token` scheme for any
+containing `Token` credentials and will be required to switch to the `Token` scheme for any
 subsequent requests.
 Continued use of other authentication schemes will result in temporary blocking of requests.
 
-See [`identity.tokens` component](components.md#stateless-tokens).
+See [`identity.tokens` component](components.md#local-tokens).
 
 ### Bearer scheme
 
@@ -66,7 +69,8 @@ to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.ht
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
-Trusted providers are specified using the `identity.federation`  configuration.
+Trusted providers are specified using the `identity.federation` configuration. Provider metadata
+and signing keys are discovered using OpenID Connect discovery and JWKS.
 
 ```yaml
 # context.toa.yaml
@@ -80,23 +84,17 @@ configuration:
       - iss: https://appleid.apple.com
         aud: <APPLE_CLIENT_ID>
         secret: <APPLE_CLIENT_SECRET> # enables Authorization Code Flow
-
-      - iss: private.entity
-        secrets:
-          HS384:
-            key0: <THE-SECRET-STRING-FOR-HS384>
-            key1: <THE-SECRET-STRING-FOR-HS384> # selected by `kid` in the JWT header
     principal:
       iss: https://accounts.google.com
       sub: 4218230498234
-    implicit: true
+    assert: true
 ```
 
 `principal` specifies the values of the `iss` and `sub` claims of an Identity that will be granted
 with a `system` role.
 
-`implicit` indicates whether the Identity should be implicitly created when a valid token for a
-non-existent Identity is provided (default `false`).
+`assert` indicates whether the Identity should be implicitly created when valid credentials for a
+non-existent Identity are provided (default `true`).
 
 ### Authorization Code Flow
 

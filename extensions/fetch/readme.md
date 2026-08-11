@@ -7,6 +7,11 @@ It is built in and requires no manifest declaration.
 const response = await context.fetch('https://example.com/items')
 ```
 
+It delegates network attempts to the native Node.js fetch implementation. Node manages its
+connection pool and reuses eligible HTTP connections automatically; callers do not need to create
+an `http.Agent` merely to enable keep-alive. Response bodies should still be consumed or cancelled
+so a connection can be reused promptly.
+
 ## Retry
 
 Retries are disabled unless `retry` is provided in the second argument.

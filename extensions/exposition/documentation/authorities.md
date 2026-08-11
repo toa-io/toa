@@ -19,7 +19,7 @@ exposition:
 
 ## Mappings
 
-To pass the requested authority to the operation call, [`map:authority` directive](map#embeddings)
+To pass the requested authority to the operation call, [`map:authority` directive](map.md#authority)
 can be used.
 
 ```yaml

@@ -1,12 +1,11 @@
-import * as jose from 'jose'
+import { load } from './jose'
 import { createRemoteJWKSet } from './discovery'
 import { ERR_TRUST, ERR_ISS, ERR_SUB } from './errors'
 import type { Ctx } from './Ctx'
 import type { Payload } from './Payload'
 
-const jwks: Record<string, Awaited<ReturnType<typeof createRemoteJWKSet>>> = {}
-
 export async function decode (token: string, ctx: Ctx): Promise<Payload | Error> {
+  const jose = await load()
   const { iss, sub } = jose.decodeJwt(token)
 
   if (typeof iss !== 'string')
@@ -20,9 +19,9 @@ export async function decode (token: string, ctx: Ctx): Promise<Payload | Error>
   if (trusted === undefined)
     return ERR_TRUST
 
-  jwks[iss] ??= await createRemoteJWKSet(iss)
+  const jwks = await createRemoteJWKSet(iss, ctx.fetch)
 
-  const { payload } = await jose.jwtVerify(token, jwks[iss], { audience: trusted.aud })
+  const { payload } = await jose.jwtVerify(token, jwks, { audience: trusted.aud })
 
   return payload as Payload
 }

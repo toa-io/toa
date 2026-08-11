@@ -9,7 +9,12 @@ mongodb: mongodb://localhost
 
 configuration:
   identity.tokens:
-    key0: k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA
+    keys:
+      - id: key0
+        key: sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs
+      - id: legacy0
+        key: k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA
+        format: paseto
 
   identity.federation:
     trust:

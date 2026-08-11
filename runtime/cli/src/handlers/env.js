@@ -1,6 +1,7 @@
 'use strict'
 
 const { join } = require('node:path')
+const { randomBytes } = require('node:crypto')
 const readline = require('node:readline/promises')
 const { stdin: input, stdout: output } = require('node:process')
 const dotenv = require('dotenv')
@@ -137,7 +138,10 @@ async function resolveDevSecret (key) {
   if (source.value !== undefined)
     return source.value
 
-  if (source.generate === true)
+  if (source.generate === 'jwe')
+    return randomBytes(32).toString('base64url')
+
+  if (source.generate === true || source.generate === 'paseto')
     return /** @type {string} */ (await V3.generateKey('local', { format: 'paserk' }))
 
   throw new Error(`Unknown dev secret source for ${key}`)
@@ -195,7 +199,8 @@ const DEV_SECRETS = {
   'toa-mongodb.default/password': { value: 'secret' },
   'toa-amqp-context.default/username': { value: 'developer' },
   'toa-amqp-context.default/password': { value: 'secret' },
-  'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: true }
+  'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: 'paseto' },
+  'toa-configuration/IDENTITY_TOKENS_ENCRYPTION_KEY0': { generate: 'jwe' }
 }
 
 exports.env = env

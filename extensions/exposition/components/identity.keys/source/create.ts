@@ -1,9 +1,9 @@
-import { V3 } from 'paseto'
+import { randomBytes } from 'node:crypto'
 import type { Operation } from '@toa.io/types'
 
 export class Transition implements Operation {
   public async execute (input: Input, object: Key): Promise<Output> {
-    object.key = await V3.generateKey('local', { format: 'paserk' })
+    object.key = randomBytes(32).toString('base64url')
     object.identity = input.identity
     object.label = input.label
 

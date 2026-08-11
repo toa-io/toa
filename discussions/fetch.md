@@ -240,4 +240,4 @@ Then regenerate `package-lock.json` and run transpilation, lint, unit tests, and
 
 ## Definition of done
 
-The repository no longer contains the `origins` infrastructure extension or the `context.http` API. Every Node component receives the built-in WHATWG-compatible `context.fetch` without a manifest declaration. Calls create logical spans named `METHOD origin` with nested client spans for network attempts, and retries are available only through an explicitly provided `init.retry`. The extension contains no HTTP caching or storage mechanism.
+The repository no longer contains the `origins` infrastructure extension or the `context.http` API. Every Node component receives the built-in WHATWG-compatible `context.fetch` without a manifest declaration. Calls create logical spans named `METHOD origin` with nested client spans for network attempts, and retries are available only through an explicitly provided `init.retry`. The extension contains no HTTP caching or storage mechanism. `identity.federation` uses it for OIDC discovery, authorization-code exchange, and remote JWKS loading.

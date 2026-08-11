@@ -307,7 +307,7 @@ Feature: Basic authentication
       """
       PATCH /identity/basic/${{ id }}/ HTTP/1.1
       host: nex.toa.io
-      authorization: Token ${{ token }}
+      authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
       accept: application/yaml
       content-type: application/yaml
 

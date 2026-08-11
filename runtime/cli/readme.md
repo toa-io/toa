@@ -186,7 +186,19 @@ $ toa shell -- ping 1.1 # extra arguments can be passed
 
 ### key
 
-Generate a secret PASETO key.
+Generate a 256-bit base64url JWE encryption key. Use `--format paseto` only for
+legacy PASETO-compatible keys.
+
+```shell
+toa key
+toa key --format paseto
+toa key --public
+```
+
+The default output can be used in an `identity.tokens.keys` entry with `format: jwe` or with the
+format omitted. `--format paseto` generates a V3.local PASERK value for a transitional
+`format: paseto` entry. `--public` generates a PASETO V3.public secret/public pair and ignores the
+symmetric key format.
 
 <dl>
 <dt>
@@ -194,5 +206,6 @@ Generate a secret PASETO key.
 </dt>
 <dd>
 <code>--public</code> <code>boolean</code> generate a public/private key pair.<br/>
+<code>--format</code> <code>jwe | paseto</code> secret key format (default: <code>jwe</code>).<br/>
 </dd>
 </dl>

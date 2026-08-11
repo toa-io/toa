@@ -42,6 +42,7 @@ operations:
       required:
         - id
         - key
+
 exposition:
   /:identity:
     auth:id: identity
