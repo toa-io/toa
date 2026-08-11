@@ -4,13 +4,14 @@ Feature: Fetch
     Given an HTTP endpoint responds with statuses "503, 201"
     And I boot `fetch` component
     And I capture fetch spans
-    When I fetch with:
+    When I invoke `request` with:
       """yaml
-      method: POST
-      retry:
-        attempts: 3
-        expected: [201]
-        delay: 0
+      input:
+        method: POST
+        retry:
+          attempts: 3
+          expected: [201]
+          delay: 0
       """
     Then the reply is received:
       """yaml
@@ -28,9 +29,10 @@ Feature: Fetch
   Scenario: Fetch does not retry by default
     Given an HTTP endpoint responds with statuses "503, 201"
     And I boot `fetch` component
-    When I fetch with:
+    When I invoke `request` with:
       """yaml
-      method: GET
+      input:
+        method: GET
       """
     Then the reply is received:
       """yaml

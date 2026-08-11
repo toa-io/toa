@@ -5,7 +5,6 @@ operations:
     input:
       type: object
       properties:
-        url: string
         method: string
         retry:
           type: object
@@ -17,7 +16,7 @@ operations:
             delay: number
             factor: number
           required: [attempts]
-      required: [url, method]
+      required: [method]
     output:
       status: number
       attempt: number

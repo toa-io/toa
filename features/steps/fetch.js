@@ -2,7 +2,7 @@
 
 const assert = require('node:assert')
 const http = require('node:http')
-const { Given, When, Then, After } = require('@cucumber/cucumber')
+const { Given, Then, After } = require('@cucumber/cucumber')
 const { consoleExporter, exporting } = require('openspan')
 const { parse } = require('@toa.io/yaml')
 
@@ -31,21 +31,7 @@ Given('an HTTP endpoint responds with statuses {string}',
     assert.notEqual(typeof address, 'string')
 
     this.fetchOrigin = `http://127.0.0.1:${address.port}`
-  })
-
-When('I fetch with:',
-  /**
-   * @param {string} yaml
-   * @this {toa.features.Context}
-   */
-  async function(yaml) {
-    const input = { ...parse(yaml), url: this.fetchOrigin }
-    const reply = await this.connector.invoke('request', { input })
-
-    if (reply.exception !== undefined) throw reply.exception
-    if (reply.error !== undefined) throw new Error(reply.error.message)
-
-    this.reply = reply.output
+    process.env.TOA_FEATURES_FETCH_URL = this.fetchOrigin
   })
 
 Given('I capture fetch spans',
@@ -85,6 +71,7 @@ After(
    */
   async function() {
     exporting([consoleExporter])
+    delete process.env.TOA_FEATURES_FETCH_URL
 
     if (this.fetchServer !== undefined)
       await new Promise((resolve, reject) => this.fetchServer.close((error) =>
