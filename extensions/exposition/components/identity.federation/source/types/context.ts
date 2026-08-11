@@ -1,13 +1,15 @@
 import type { JWTPayload } from 'jose'
-import type { Call, Observation, Query, telemetry } from '@toa.io/types'
+import type { Call, Observation, Query, telemetry, Transition } from '@toa.io/types'
 import type { Entity } from './entity'
 import type { Configuration } from './configuration'
 
 export interface Context {
   local: {
     observe: Observation<Entity>
+    enumerate: Observation<Entity[], never, Entity>
+    terminate: Transition<void, void, Entity>
     transit: Call<TransitOutput, TransitInput>
-    ensure: Call<EnsureOutput>
+    ensure: Call<Entity>
     decode: Call<JWTPayload, string>
   }
   remote: {
@@ -25,13 +27,10 @@ export interface TransitInput {
   readonly authority: string
   readonly iss: string
   readonly sub: string
+  readonly identity?: string
 }
 
 export interface TransitOutput {
-  id: string
-}
-
-export interface EnsureOutput {
   id: string
 }
 

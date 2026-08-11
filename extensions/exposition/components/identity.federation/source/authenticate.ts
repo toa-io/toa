@@ -34,7 +34,7 @@ export async function effect ({ scheme, authority, credentials }: Input, context
   if (identity instanceof Error)
     return identity
 
-  return { identity: { id: identity.id, claims } }
+  return { identity: { id: identity.identity ?? identity.id, claims } }
 }
 
 const ERR_NOT_FOUND = new Err('NOT_FOUND')

@@ -3,4 +3,6 @@ export interface Entity {
   authority: string
   iss: string
   sub: string
+  identity?: string
+  _created: number
 }

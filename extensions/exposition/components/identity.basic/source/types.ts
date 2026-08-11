@@ -1,8 +1,9 @@
-import { type Call, type Maybe, type Observation, type Query } from '@toa.io/types'
+import { type Call, type Maybe, type Observation, type Query, type Transition } from '@toa.io/types'
 
 export interface Context {
   local: {
     observe: Observation<Maybe<Entity>>
+    terminate: Transition<void, void, Entity>
     transit: Call<IdOutput, TransitInput>
     create: Call<IdOutput, TransitInput>
   }
