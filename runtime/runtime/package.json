@@ -32,7 +32,6 @@
     "@toa.io/core": "1.0.0-alpha.251",
     "@toa.io/extensions.configuration": "1.0.0-alpha.251",
     "@toa.io/extensions.exposition": "1.0.0-alpha.251",
-    "@toa.io/extensions.mail": "1.0.0-alpha.251",
     "@toa.io/extensions.fetch": "1.0.0-alpha.251",
     "@toa.io/extensions.realtime": "1.0.0-alpha.251",
     "@toa.io/extensions.sampling": "1.0.0-alpha.7",
