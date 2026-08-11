@@ -33,7 +33,6 @@
     "@toa.io/extensions.configuration": "1.0.0-alpha.252",
     "@toa.io/extensions.exposition": "1.0.0-alpha.252",
     "@toa.io/extensions.fetch": "1.0.0-alpha.252",
-    "@toa.io/extensions.mail": "1.0.0-alpha.252",
     "@toa.io/extensions.realtime": "1.0.0-alpha.252",
     "@toa.io/extensions.sampling": "1.0.0-alpha.7",
     "@toa.io/extensions.stash": "1.0.0-alpha.252",

@@ -55,11 +55,11 @@ An Identity can have at most one Basic credential in an authority. See
 [Basic credentials configuration](components.md#basic-credentials) for password hashing,
 constraints, and principal configuration.
 
-## Federation credentials
+## Federated credentials
 
 - `POST /identity/federation/:identity/` associates credentials from a trusted issuer.
-- `GET /identity/federation/:identity/` lists federation credentials.
-- `DELETE /identity/federation/:identity/:credential/` removes one federation credential.
+- `GET /identity/federation/:identity/` lists federated credentials.
+- `DELETE /identity/federation/:identity/:credential/` removes one federated credential.
 
 An Identity can have credentials from multiple issuers and can have multiple subjects from the
 same issuer. The `:credential` segment is the `id` returned by either listing resource. Federation

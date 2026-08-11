@@ -285,6 +285,7 @@ context.logs.debug('Limits', {
 
 Compositions expose `GET /.ready` (default port `8001`) for Kubernetes startup/readiness probes.
 The endpoint returns `503` until the composition has connected, then `200`.
+When ready, the process also sends `process.send('ready')` (for PM2 `wait_ready`).
 
 Configure or disable via `telemetry` Context Annotation:
 
@@ -299,3 +300,13 @@ telemetry:
 telemetry:
   ready: false
 ```
+
+### Exposition
+
+The exposition gateway is a separate service process with a nested identity composition in-process.
+
+It exposes its own `GET /.ready` on the **gateway HTTP port (`8000`)**, not `8001`.
+Deployment sets `TOA_TELEMETRY_READY=false` for that service so the nested composition does **not**
+start a second probe. Kubernetes probes the gateway on **8000**; composition Deployments on **8001**.
+
+See [exposition ready probe](../exposition/readme.md#ready-probe).

@@ -186,6 +186,25 @@ exposition:
       GET: foo.bar.observe
 ```
 
+## Ready probe
+
+The gateway serves `GET /.ready` on port `8000` for Kubernetes startup/readiness probes.
+
+It returns `200` only after:
+
+1. The in-process identity composition has connected
+2. Initial route discovery has settled
+3. The HTTP server is listening
+4. The startup delay has elapsed (default `3s`)
+
+Before listen, probes get connection refused; after listen but before ready, `503`.
+When ready, the process also sends `process.send('ready')` (for PM2 `wait_ready`).
+
+The nested identity composition shares this process. Deployment disables telemetry's port-`8001`
+probe (`TOA_TELEMETRY_READY=false`) so only the gateway `/.ready` is used.
+
+See also [telemetry ready probe](../telemetry/readme.md#ready-probe).
+
 ## See Also
 
 - [Protocol support](documentation/protocol.md)
