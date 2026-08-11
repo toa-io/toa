@@ -414,8 +414,8 @@ Feature: Access authorization
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
       authorization: Token ${{ token }}
+      content-type: application/yaml
 
       access: granted!
       """

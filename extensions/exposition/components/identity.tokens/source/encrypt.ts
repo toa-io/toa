@@ -1,28 +1,30 @@
-import { V3 } from 'paseto'
 import { Err } from 'error-value'
+import { jweKey } from './lib'
+import { load } from './lib/jose'
 import type { Operation, Maybe } from '@toa.io/types'
-import type { Identity, Claims, Context, EncryptInput, Key } from './lib'
+import type { Identity, Context, EncryptInput, Key } from './lib'
 
 export class Effect implements Operation {
   private key!: Pick<Key, 'id' | 'key'>
   private lifetime!: number
 
   public mount (context: Context): void {
-    const [id, secret] = Object.entries(context.configuration.keys)[0]
+    const key = context.configuration.keys.find(({ format }) => format !== 'paseto')
 
-    this.key = { id, key: secret }
+    if (key === undefined)
+      throw new TypeError('At least one JWE key must be configured')
+
+    this.key = key
     this.lifetime = context.configuration.lifetime * 1000
   }
 
   public async execute (input: EncryptInput): Promise<Maybe<string>> {
+    const { EncryptJWT } = await load()
+
     if (input.scopes?.some((scope) => !within(scope, input.identity.roles)) === true)
       return ERR_INACCESSIBLE_SCOPE
 
     const lifetime = input.lifetime === undefined ? this.lifetime : (input.lifetime * 1000)
-
-    const exp = lifetime === 0
-      ? undefined
-      : new Date(Date.now() + lifetime).toISOString()
 
     const identity: Identity = {
       id: input.identity.id,
@@ -32,17 +34,17 @@ export class Effect implements Operation {
     if (input.permissions !== undefined)
       identity.permissions = input.permissions
 
-    const payload: Partial<Claims> = {
-      identity,
-      iss: input.authority
-    }
-
-    if (exp !== undefined)
-      payload.exp = exp
-
     const key = input.key ?? this.key
 
-    return await V3.encrypt(payload, key.key, { footer: { kid: key.id } })
+    let token = new EncryptJWT({ identity })
+      .setProtectedHeader({ alg: 'dir', enc: 'A256GCM', typ: 'JWT', kid: key.id })
+      .setIssuer(input.authority)
+      .setIssuedAt(Date.now() / 1000)
+
+    if (lifetime !== 0)
+      token = token.setExpirationTime((Date.now() + lifetime) / 1000)
+
+    return await token.encrypt(jweKey(key.key))
   }
 }
 

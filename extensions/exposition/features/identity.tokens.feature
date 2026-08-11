@@ -24,8 +24,8 @@ Feature: Tokens lifecycle
     Then the following reply is sent:
       """
       200 OK
-      content-type: text/plain
       authorization: Token ${{ token }}
+      content-type: text/plain
 
       Hello
       """
@@ -89,7 +89,7 @@ Feature: Tokens lifecycle
       """
     And the `identity.tokens` configuration:
       """yaml
-      refresh: 0.1
+      refresh: 1
       """
     And the `identity.basic` database contains:
       | _id                              | _version | authority | username  | password                                                     |
@@ -118,7 +118,7 @@ Feature: Tokens lifecycle
       """
       200 OK
       """
-    Then after 0.2 seconds
+    Then after 1.1 seconds
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1

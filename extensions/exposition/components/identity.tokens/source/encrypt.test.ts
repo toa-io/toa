@@ -17,9 +17,10 @@ const authority = generate()
 
 beforeEach(() => {
   context.configuration = {
-    keys: {
-      key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'
-    },
+    keys: [
+      { id: 'key0', key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs' },
+      { id: 'legacy0', key: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog', format: 'paseto' }
+    ],
     lifetime: 1,
     refresh: 2,
     cache: {
@@ -33,6 +34,32 @@ beforeEach(() => {
 
   decrypt = new Decrypt()
   decrypt.mount(context)
+})
+
+it('should use the first encryption key as active and expose its id as kid', async () => {
+  context.configuration.keys.unshift({
+    id: 'legacy-first',
+    key: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
+    format: 'paseto'
+  })
+  context.configuration.keys.push({
+    id: 'key1',
+    key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0'
+  })
+
+  encrypt.mount(context)
+
+  const encrypted = await encrypt.execute({
+    authority,
+    identity: { id: generate(), roles: [] }
+  })
+
+  if (encrypted instanceof Error)
+    throw encrypted
+
+  const header = JSON.parse(Buffer.from(encrypted.split('.')[0], 'base64url').toString())
+
+  expect(header).toMatchObject({ kid: 'key0', alg: 'dir', enc: 'A256GCM' })
 })
 
 it('should encrypt with configured lifetime by default', async () => {

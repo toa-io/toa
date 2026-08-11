@@ -1,5 +1,7 @@
 # Development Requirements
 
+Toa requires Node.js 24 or newer. CI and the published runtime image use Node.js 24.
+
 ## Unit of Work
 
 [TDD](https://en.wikipedia.org/wiki/Test-driven_development) is considered to be the way (but

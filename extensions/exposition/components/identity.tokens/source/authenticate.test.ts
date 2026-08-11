@@ -12,9 +12,10 @@ const authority = generate()
 
 beforeEach(() => {
   configuration = {
-    keys: {
-      key0: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'
-    },
+    keys: [
+      { id: 'key0', key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs' },
+      { id: 'legacy0', key: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog', format: 'paseto' }
+    ],
     lifetime: 2592000,
     refresh: 600,
     cache: {

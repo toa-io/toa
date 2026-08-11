@@ -6,7 +6,8 @@ import type { Context, TransitInput, Scheme } from './types'
 export async function effect (input: Input, context: Context): Promise<Output | Error> {
   const ctx: Ctx = {
     trust: context.configuration.trust,
-    logs: context.logs
+    logs: context.logs,
+    fetch: context.fetch
   }
 
   const claims = input.scheme === 'bearer'
