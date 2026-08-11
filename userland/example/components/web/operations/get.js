@@ -1,7 +1,7 @@
 'use strict'
 
 async function computation (_, context) {
-  const response = await context.http.dev.path.to.resource.get()
+  const response = await context.fetch('http://api.example.com/path/to/resource')
   const type = response.headers.get('content-type')
 
   if (type !== 'application/json')

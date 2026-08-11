@@ -1,6 +1,6 @@
 'use strict'
 
-const { http } = require('./http')
+const { fetch } = require('./fetch')
 const { amqp } = require('./amqp')
 const { configuration } = require('./configuration')
 const { state } = require('./state')
@@ -11,7 +11,7 @@ const { logs } = require('./logs')
 const { span } = require('./span')
 const { mail } = require('./mail')
 
-exports.http = http
+exports.fetch = fetch
 exports.amqp = amqp
 exports.configuration = configuration
 exports.state = state

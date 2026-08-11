@@ -6,10 +6,7 @@ const { resolve } = require('../shortcuts')
 const cache = {}
 
 const extensions = (manifest) => {
-  if (manifest.extensions === undefined)
-    manifest.extensions = PREDEFINED
-  else
-    manifest.extensions = Object.assign({}, PREDEFINED, manifest.extensions)
+  manifest.extensions = Object.assign({}, PREDEFINED, manifest.extensions)
 
   const extensions = manifest.extensions
 
@@ -36,7 +33,8 @@ const extensions = (manifest) => {
 }
 
 const PREDEFINED = {
-  '@toa.io/extensions.telemetry': null
+  '@toa.io/extensions.telemetry': null,
+  '@toa.io/extensions.fetch': null
 }
 
 exports.extensions = extensions

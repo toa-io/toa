@@ -1,5 +1,0 @@
-/^[a-zA-Z0-9]{1,32}\.[a-zA-Z0-9]{1,32}$/:
-  /^\.http$/: <boolean>
-  /^[a-zA-Z0-9]{1,32}$/+: string
-  ...: false
-...: false
