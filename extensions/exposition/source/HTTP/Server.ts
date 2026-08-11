@@ -57,6 +57,7 @@ export class Server extends Connector {
     this.ready = true
 
     console.info('Ready')
+    process.send?.('ready')
   }
 
   protected override async close (): Promise<void> {

@@ -75,6 +75,7 @@ export class Ready extends Connector {
     this.ready = true
 
     console.info('Ready')
+    process.send?.('ready')
   }
 
   protected override async open (): Promise<void> {
