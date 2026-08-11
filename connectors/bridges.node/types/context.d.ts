@@ -1,6 +1,7 @@
 import { Underlay } from '@toa.io/generic/types'
 import { Connector } from '@toa.io/core'
 import { Aspect } from '@toa.io/core/types/extensions'
+import type { FetchInit } from '@toa.io/extensions.fetch'
 
 declare namespace toa.node{
 
@@ -10,7 +11,7 @@ declare namespace toa.node{
     aspects: Record<string, Function>
 
     // known extensions
-    http?: Underlay
+    fetch: (input: string | URL | Request, init?: FetchInit) => Promise<Response>
     amqp?: Underlay
     configuration?: object
     state?: object

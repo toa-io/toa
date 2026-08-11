@@ -55,10 +55,7 @@ Non-scattered documentation is coming some time later.
   - MIME type detection and validation
   - Providers: file system, Amazon S3, Cloudinary
 - [Transient state](/extensions/stash)
-- [External communications](/extensions/origins) governance
-  - HTTP
-  - AMQP
-  - Google PubSub
+- Built-in [Fetch](/extensions/fetch) with retries and telemetry
 
 ### Development
 

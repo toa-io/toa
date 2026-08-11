@@ -1,0 +1,57 @@
+namespace: identity
+name: credentials
+
+operations:
+  list:
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+      required: [authority, identity]
+    output:
+      type: object
+      properties:
+        basic:
+          type: object
+          nullable: true
+          additionalProperties: false
+          properties:
+            username:
+              type: string
+          required: [username]
+        federation:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              id: { type: string }
+              iss: { type: string }
+              _created: { type: number }
+            required: [id, iss, _created]
+        passkeys:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              id: { type: string }
+              aid: { type: string }
+              synced: { type: boolean }
+              label: { type: string }
+              _created: { type: number }
+            required: [id, aid, synced, _created]
+      required: [basic, federation, passkeys]
+
+exposition:
+  /:identity:
+    GET:
+      auth:id: identity
+      map:authority: authority
+      map:segments:
+        identity: identity
+      io:output: true
+      endpoint: list

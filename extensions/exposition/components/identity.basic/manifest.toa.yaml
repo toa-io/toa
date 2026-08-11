@@ -70,6 +70,16 @@ operations:
       required:
         - username
     output: null
+  info:
+    input:
+      authority*: string
+      identity*: string
+    output:
+      username: string
+  delete:
+    input:
+      authority*: string
+      identity*: string
 
 configuration:
   schema:
@@ -115,6 +125,12 @@ exposition:
       map:segments:
         id: id
       endpoint: add
+    DELETE:
+      map:authority: authority
+      map:segments:
+        id: identity
+      io:output: false
+      endpoint: delete
 
   /usernames/:username:
     GET:

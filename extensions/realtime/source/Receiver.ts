@@ -1,4 +1,4 @@
-import { console, decode } from 'openspan'
+import { console, decode, run } from 'openspan'
 import { Connector, type Message } from '@toa.io/core'
 import type { SpanContext } from 'openspan'
 import type { Readable } from 'node:stream'
@@ -24,10 +24,17 @@ export class Receiver extends Connector {
   }
 
   public receive (message: Message<Record<string, string>>): void {
-    const data = this.fit(message.payload)
-
     // the push continues the trace from the producer
     const telemetry = message.telemetry === undefined ? null : decode(message.telemetry)
+
+    if (telemetry === null)
+      this.process(message, telemetry)
+    else
+      run(telemetry, () => this.process(message, telemetry))
+  }
+
+  private process (message: Message<Record<string, string>>, telemetry: SpanContext | null): void {
+    const data = this.fit(message.payload)
 
     for (const property of this.properties) {
       const key = message.payload[property]

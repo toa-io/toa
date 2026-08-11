@@ -1,0 +1,30 @@
+{
+  "name": "@toa.io/extensions.fetch",
+  "version": "1.0.0-alpha.251",
+  "description": "Toa Fetch extension",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "transpile": "tsc"
+  },
+  "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.251",
+    "openspan": "1.0.0-alpha.251"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
+}

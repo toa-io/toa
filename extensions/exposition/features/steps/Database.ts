@@ -25,7 +25,11 @@ export class Database {
           ? int
           : str === 'null'
             ? null
-            : str
+            : str === 'true'
+              ? true
+              : str === 'false'
+                ? false
+                : str
       }
 
       documents.push(document)
@@ -62,4 +66,4 @@ export class Database {
   }
 }
 
-type Document = Record<string, string | number | null>
+type Document = Record<string, string | number | boolean | null>

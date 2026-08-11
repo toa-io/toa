@@ -15,6 +15,9 @@ entity:
       sub:
         description: The ID that represents the principal making the request
         type: string
+      identity:
+        description: Identity associated with these credentials
+        type: string
     required:
       - authority
       - iss
@@ -22,6 +25,11 @@ entity:
     additionalProperties: false
   unique:
     token: [authority, iss, sub]
+  index:
+    list:
+      authority: asc
+      identity: asc
+      _created: desc
 
 operations:
   transit:
@@ -30,6 +38,7 @@ operations:
       authority*: string
       iss*: string
       sub*: string
+      identity: string
   incept:
     input:
       scheme*: [bearer, code]
@@ -38,6 +47,8 @@ operations:
       id: string
     output:
       id: string
+    errors:
+      - EXISTS
   authenticate:
     input:
       scheme*: [bearer, code]
@@ -69,6 +80,15 @@ operations:
   decode:
     input: string
     output: *claims
+  list:
+    input:
+      authority*: string
+      identity*: string
+  delete:
+    input:
+      authority*: string
+      identity*: string
+      id*: string
 
 configuration:
   schema:
@@ -128,9 +148,23 @@ configuration:
 exposition:
   /:
     /:id:
+      auth:id: id
       POST:
         map:authority: authority
-        auth:id: id
         io:input: [scheme, credentials]
         io:output: false
         endpoint: incept
+      GET:
+        map:authority: authority
+        map:segments:
+          id: identity
+        io:output: [id, iss, _created]
+        endpoint: list
+      /:credential:
+        DELETE:
+          map:authority: authority
+          map:segments:
+            id: identity
+            credential: id
+          io:output: false
+          endpoint: delete

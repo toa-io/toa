@@ -5,6 +5,9 @@ configured in the same
 way as if they were a part of the Context. Resources exposed by the components
 are [isolated](tree.md#directives).
 
+See [Persistent credentials](credentials.md) for the centralized Basic, federation, and passkey
+management API.
+
 ## Basic credentials
 
 The `identity.basic` component stores basic credentials.

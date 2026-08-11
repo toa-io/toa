@@ -284,7 +284,7 @@ context.logs.debug('Limits', {
 ## Ready probe
 
 Compositions expose `GET /.ready` (default port `8001`) for Kubernetes startup/readiness probes.
-The endpoint returns `503` until the composition has connected, then `200` after a short delay.
+The endpoint returns `503` until the composition has connected, then `200`.
 
 Configure or disable via `telemetry` Context Annotation:
 
@@ -293,7 +293,6 @@ Configure or disable via `telemetry` Context Annotation:
 telemetry:
   ready:
     port: 8001
-    delay: 3
 ```
 
 ```yaml

@@ -6,6 +6,9 @@ identifier** of an individual, organization, application or device.
 To prove its Identity, the request originator must provide a valid _credentials_ that are associated
 with that Identity.
 
+Persistent authentication methods and their management resources are described in
+[Persistent credentials](credentials.md).
+
 Identity is intrinsically linked to credentials, as an Identity is established only when the first
 set of credentials for that Identity is created.
 In other words, the creation of credentials marks the inception of an Identity.

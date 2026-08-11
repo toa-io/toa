@@ -1,9 +1,7 @@
 'use strict'
-
-const { dirname } = require('node:path')
 const clone = require('clone-deep')
 
-const { normalize } = require('../../src/.component')
+const { normalize, extensions } = require('../../src/.component')
 const fixtures = require('./normalize.fixtures')
 
 let manifest
@@ -21,13 +19,22 @@ describe('operations', () => {
 })
 
 describe('extensions', () => {
-  it('should resolve absolute references', () => {
-    const origins = manifest.extensions['@toa.io/extensions.origins']
-    const path = dirname(require.resolve('@toa.io/extensions.origins/package.json'))
+  it('should add predefined extensions', () => {
+    extensions(manifest)
 
-    normalize(manifest)
+    expect(manifest.extensions['@toa.io/extensions.telemetry']).toBeNull()
+    expect(manifest.extensions['@toa.io/extensions.fetch']).toBeNull()
+  })
 
-    expect(manifest.extensions[path]).toStrictEqual(origins)
+  it('should add predefined extensions without explicit declarations', () => {
+    delete manifest.extensions
+
+    extensions(manifest)
+
+    expect(manifest.extensions).toStrictEqual({
+      '@toa.io/extensions.telemetry': null,
+      '@toa.io/extensions.fetch': null
+    })
   })
 })
 

@@ -50,9 +50,6 @@ export class Deployment {
     if (insecureProtocols.includes(protocol))
       return []
 
-    if (protocol in specialProtocols)
-      return specialProtocols[protocol](references)
-
     for (const token of ['username', 'password']) {
       const varName = nameVariable(this.id, selector, token)
       const secretName = nameSecret(this.id, key)
@@ -85,22 +82,5 @@ export interface AnnotationRecord {
 }
 
 const insecureProtocols = ['http:', 'https:', 'redis:']
-
-const specialProtocols: Record<string, (references: string[]) => Variable[]> = {
-  'pubsub:': (references: string[]) => {
-    const path = new URL(references[0]).pathname
-    const [, , project] = path.split('/')
-    const name = nameVariable('ORIGINS_PUBSUB_', project)
-
-    return [{
-      name,
-      secret: {
-        name: 'toa-origins-pubsub',
-        key: project,
-        optional: true
-      }
-    } satisfies Variable]
-  }
-}
 
 export type URIMap = Record<string, string[]>

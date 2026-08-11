@@ -1,0 +1,22 @@
+name: fetch
+
+operations:
+  request:
+    input:
+      type: object
+      properties:
+        method: string
+        retry:
+          type: object
+          properties:
+            attempts: number
+            expected:
+              type: array
+              items: number
+            delay: number
+            factor: number
+          required: [attempts]
+      required: [method]
+    output:
+      status: number
+      attempt: number

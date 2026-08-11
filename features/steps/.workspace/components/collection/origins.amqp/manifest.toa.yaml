@@ -1,9 +1,0 @@
-name: amqp
-namespace: origins
-
-operations:
-  test:
-    output: object
-
-origins:
-  queue: ~
