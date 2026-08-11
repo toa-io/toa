@@ -22,13 +22,17 @@ export interface Context {
 }
 
 export interface Configuration {
-  readonly keys: Record<string, string>
+  readonly keys: ConfiguredKey[]
   readonly lifetime: number
   readonly refresh: number
   readonly cache: {
     max: number
     ttl: number
   }
+}
+
+export interface ConfiguredKey extends Pick<Key, 'id' | 'key'> {
+  format?: 'jwe' | 'paseto'
 }
 
 export interface Entity {
@@ -73,6 +77,13 @@ export interface Claims {
   iss: string
   iat: string
   exp?: string
+}
+
+export interface JWEClaims {
+  identity: Identity
+  iss: string
+  iat: number
+  exp?: number
 }
 
 export interface Key {

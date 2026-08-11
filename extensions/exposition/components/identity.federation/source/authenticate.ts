@@ -10,7 +10,8 @@ export async function effect ({ scheme, authority, credentials }: Input, context
 
   const ctx: Ctx = {
     trust: context.configuration.trust,
-    logs: context.logs
+    logs: context.logs,
+    fetch: context.fetch
   }
 
   const claims = scheme === 'bearer'

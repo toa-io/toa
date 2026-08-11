@@ -100,10 +100,26 @@ configuration:
     type: object
     properties:
       keys:
-        type: object
-        minProperties: 1
-        additionalProperties:
-          type: string
+        type: array
+        minItems: 1
+        contains:
+          properties:
+            format:
+              enum: [jwe]
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              minLength: 1
+            key:
+              type: string
+            format:
+              type: string
+              enum: [jwe, paseto]
+              default: jwe
+          required: [id, key]
+          additionalProperties: false
       lifetime:
         description: Token expiration time in seconds (default 30 days)
         type: integer
@@ -122,6 +138,7 @@ configuration:
             type: integer
             default: 600000
         default: {}
+    required: [keys]
 
 exposition:
   /:identity:

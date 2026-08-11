@@ -10,7 +10,8 @@ export function decode (buffer: Buffer, charset = 'utf-8'): any {
 }
 
 export function encode (value: any): Buffer {
-  const text = yaml.dump(value, { lineWidth: -1, noRefs: true })
+  const serializable = value instanceof Error ? Object.assign({}, value) : value
+  const text = yaml.dump(serializable, { lineWidth: -1, noRefs: true })
 
   return Buffer.from(text)
 }

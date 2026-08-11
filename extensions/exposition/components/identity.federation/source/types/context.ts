@@ -4,6 +4,7 @@ import type { Entity } from './entity'
 import type { Configuration } from './configuration'
 
 export interface Context {
+  fetch: Fetch
   local: {
     observe: Observation<Entity>
     enumerate: Observation<Entity[], never, Entity>
@@ -22,6 +23,8 @@ export interface Context {
   logs: telemetry.Logs
   configuration: Configuration
 }
+
+export type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>
 
 export interface TransitInput {
   readonly authority: string

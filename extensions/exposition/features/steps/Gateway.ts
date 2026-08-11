@@ -135,8 +135,16 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
 
 const DEFAULT_CONFIGURATION: Record<string, object> = {
   'identity.tokens': {
-    keys: {
-      0: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA'
-    }
+    keys: [
+      {
+        id: 'key0',
+        key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs'
+      },
+      {
+        id: 'legacy0',
+        key: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA',
+        format: 'paseto'
+      }
+    ]
   }
 }

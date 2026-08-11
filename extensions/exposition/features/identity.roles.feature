@@ -181,7 +181,7 @@ Feature: Roles management
       """
       422 Unprocessable Entity
 
-      code: OUT_OF_SCOPE
+      code: INACCESSIBLE_SCOPE
       """
 
   Scenario: Delegating role without `system:identity:roles:delegation` role

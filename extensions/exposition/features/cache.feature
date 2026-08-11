@@ -64,8 +64,8 @@ Feature: Caching
     Then the following reply is sent:
       """
       200 OK
-      content-type: text/plain
       cache-control: max-age=60000
+      content-type: text/plain
 
       hello
       """
@@ -110,8 +110,8 @@ Feature: Caching
     Then the following reply is sent:
       """
       200 OK
-      content-type: text/plain
       cache-control: max-age=30000
+      content-type: text/plain
 
       hello
       """
@@ -125,8 +125,8 @@ Feature: Caching
     Then the following reply is sent:
       """
       200 OK
-      content-type: text/plain
       cache-control: private, max-age=30000
+      content-type: text/plain
 
       hello
       """
@@ -140,8 +140,8 @@ Feature: Caching
     Then the following reply is sent:
       """
       200 OK
-      content-type: text/plain
       cache-control: no-cache, max-age=60000, public
+      content-type: text/plain
 
       hello
       """
@@ -203,8 +203,8 @@ Feature: Caching
     Then the following reply is sent:
       """
       200 OK
-      content-type: text/plain
       cache-control: max-age=60000, public
+      content-type: text/plain
 
       hello
       """

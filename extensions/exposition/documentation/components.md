@@ -128,8 +128,10 @@ the [component manifest](../components/identity.federation/manifest.toa.yaml).
 No federated tokens are accepted by default until at least one entry is added to the `trust`
 configuration.
 
-Toa supports either asymmetric RS256 or symmetric HS256 / HS384 / HS512 tokens with pre-shared
-secrets.
+Issuer metadata is loaded from `<iss>/.well-known/openid-configuration`; signing keys are then
+loaded from its `jwks_uri`. These requests, including Authorization Code token exchange, use the
+built-in `context.fetch`, so they participate in standard HTTP telemetry and connection pooling.
+JWKS resolvers are cached per fetch instance and issuer.
 
 ```yaml
 # context.toa.yaml
@@ -142,10 +144,8 @@ configuration:
           - https://github.com/tinovyatkin
           - https://github.com/temich
 
-      - issuer: some.private.issuer
-        secrets:
-          HS256:
-            k1: <secret-to-be-used-for-hs256>
+      - iss: https://accounts.google.com
+        aud: <GOOGLE_CLIENT_ID>
 ```
 
 ## Local tokens
@@ -187,6 +187,7 @@ accept: application/yaml
 content-type: application/yaml
 
 lifetime: 3600
+label: CI deployment token
 scopes: [app:developer]
 permissions:
   /users/fc8e66dd/: [GET, PUT]
@@ -197,6 +198,8 @@ permissions:
 201 Created
 content-type: application/yaml
 
+kid: <key-id>
+exp: <unix-time-ms>
 token: <token>
 ```
 
@@ -204,6 +207,7 @@ token: <token>
   (default is specified in [the configuration](#token-rotation)).
   The value of `0` means the token will not expire, which is supported, but
   **strongly not recommended** for production environments.
+- `label`: Required human-readable name used when listing and revoking issued tokens.
 - `scopes`: Issued token will assume only specified [role scopes](access.md#roles).
 - `permissions`: Issued token will have permissions to access only specified resources and methods.
   Supports [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html)
@@ -223,19 +227,35 @@ DELETE /identity/keys/<identity>/<key.id>/
 authorization: ...
 ```
 
-Token secret key `id` can be obtained from the list of issued tokens (or from the footer of the
-token itself).
+The key `id` is returned as `kid` when the token is issued, is visible in the JWE protected header,
+and can also be obtained by listing issued token keys. The secret key itself is never returned by
+the listing endpoint.
 
 ```
 GET /identity/keys/<identity>/
 authorization: ...
 ```
 
+The listing returns `id`, `label`, optional `expires`, and `_created`. Deletion prevents new cache
+lookups from finding the key. A runtime that already cached it can continue accepting the token for
+up to `identity.tokens.cache.ttl` milliseconds (10 minutes by default).
+
+Both listing and deletion require credentials of the owning Identity or the
+`system:identity:keys` role. Key creation is internal to `identity.tokens`; there is no public
+endpoint that returns a stored secret.
+
 ### Token encryption
 
-Issued tokens are encrypted
-with [PASETO V3 encryption](https://github.com/panva/paseto/blob/main/docs/README.md#v3encryptpayload-key-options)
-using the first key from the `keys` configuration value.
+Issued tokens are compact JWE tokens encrypted with direct symmetric encryption. Their protected
+header is `{ alg: 'dir', enc: 'A256GCM', typ: 'JWT', kid: <key id> }`. Keys are configured in one
+`keys` array. The first entry whose `format` is `jwe` or omitted is the active issuance key.
+Keys are 256-bit secrets encoded with base64url and can be generated with `toa key`.
+
+The optional `format` is `jwe` by default. Entries with `format: paseto` contain legacy PASETO
+V3.local secrets and are used only to read old tokens. Legacy tokens are always marked for refresh;
+only JWE tokens are issued.
+The `format` property is transitional and can be removed together with the PASETO entries after the
+legacy compatibility window ends.
 
 ```yaml
 # context.toa.yaml
@@ -243,10 +263,15 @@ using the first key from the `keys` configuration value.
 configuration:
   identity.tokens:
     keys:
-      2024q1: $TOKEN_SECRET_2024Q1
+      - id: 2026q3
+        key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
+      - id: legacy
+        key: $IDENTITY_TOKENS_KEY0
+        format: paseto
 ```
 
-At least one key in the `keys` configuration value is required.
+At least one JWE entry is required. PASETO entries are required only while previously issued legacy
+tokens must remain readable.
 
 > Valid secret key may be generated using the [`toa key` command](/runtime/cli/readme.md#key).
 
@@ -279,47 +304,62 @@ configuration:
 
 All currently issued tokens of an Identity are revoked when:
 
-1. Basic credentials associated with the Identity are [modified](#identitybasicid).
+1. [Basic credentials](#basic-credentials) associated with the Identity are modified.
 2. Identity is [banned](#banned-identities).
 
 Token revocation takes effect once the `refresh` period of the currently issued tokens has expired.
 
 ### Secret rotation
 
-Tokens are always encrypted using the first key from the `keys` configuration value,
-and decrypted by the key used to encrypt them.
+Tokens are always encrypted using the first JWE entry of the `keys` array and decrypted by the
+entry in the corresponding format branch whose `id` matches the token's `kid`.
 
-To rotate the secret key, a new key must be added to the top of the `keys` configuration value, that
-is, it will be used to encrypt new tokens.
+Rotation uses array order rather than object property order: index `0` is active for issuance and
+the remaining entries are decrypt-only. Use the staged procedure below so every runtime knows the
+new key before it becomes active.
 
-Old keys must be removed only after the `refresh` period of the previously issued tokens has
-expired.
+Old keys must remain configured until every token issued with them has expired. In the default
+configuration this means retaining them for at least `lifetime` (30 days) after making a new key
+active. The shorter `refresh` interval only controls replacement during active client use and is
+not a safe removal window for clients that remain idle.
 
 > Let's say you are adding a new secret key each quarter: `2024Q1`, `2024Q2` and so on.
-> The old key `2024Q1` must be removed from the configuration only when the `refresh` period after
-> the new key `2024Q2` was added has expired.
+> The old key `2024Q1` must be removed only after the maximum lifetime of tokens issued with it has
+> elapsed.
 
 ```yaml
 # context.toa.yaml
 
 configuration:
   identity.tokens:
-    key0: $TOKEN_ENCRYPTION_KEY_2023Q3
-    key1: $TOKEN_ENCRYPTION_KEY_2023Q4
+    keys:
+      - id: 2026q3
+        key: $TOKEN_ENCRYPTION_KEY_2026Q3
+      - id: 2026q4
+        key: $TOKEN_ENCRYPTION_KEY_2026Q4
 ```
 
-2. Move the new secret key from `key1` to `key0`, and move the current key from `key0` to `key1`.
-   During this rollout,
-   all instances can decrypt tokens encrypted with both the new key and the current key.
+1. First deploy both keys everywhere with the current key at index `0`, as shown above.
+2. In an atomic rollout, move the new entry to index `0` and keep the current entry after it.
+   All instances can then decrypt tokens encrypted with both the new key and the current key.
 
 ```yaml
 # context.toa.yaml
 
 configuration:
   identity.tokens:
-    key0: $TOKEN_ENCRYPTION_KEY_2023Q4
-    key1: $TOKEN_ENCRYPTION_KEY_2023Q3
+    keys:
+      - id: 2026q4
+        key: $TOKEN_ENCRYPTION_KEY_2026Q4
+      - id: 2026q3
+        key: $TOKEN_ENCRYPTION_KEY_2026Q3
 ```
+
+3. Remove `2026q3` only after its last possible token has expired.
+
+The PASETO-to-JWE runtime migration must also be atomic: legacy runtimes cannot decrypt newly
+issued JWE tokens. Keep every `format: paseto` entry until its last token has expired;
+`toa key --format paseto` exists only for maintaining those legacy secrets.
 
 ### Token resources
 
@@ -361,7 +401,7 @@ Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
 
 The `identity.bans` component manages banned identities.
 A banned identity will fail to authenticate with any associated credentials
-(except [tokens](#stateless-tokens) within the `refresh` period).
+(except [tokens](#local-tokens) within the `refresh` period).
 
 ```http
 PUT /identity/bans/:id/

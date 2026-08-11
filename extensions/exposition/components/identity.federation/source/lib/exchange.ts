@@ -1,13 +1,12 @@
-import * as jose from 'jose'
+import { load } from './jose'
 import { createRemoteJWKSet, discover } from './discovery'
 import * as errors from './errors'
 import type { Trust } from '../types'
 import type { Ctx } from './Ctx'
 import type { Payload } from './Payload'
 
-const jwks: Record<string, Awaited<ReturnType<typeof createRemoteJWKSet>>> = {}
-
 export async function exchange (credentials: string, ctx: Ctx): Promise<Payload | Error> {
+  const jose = await load()
   const properties = decode(credentials)
 
   if (properties instanceof Error)
@@ -23,7 +22,7 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
   if (trusted.aud === undefined || (trusted.secret === undefined && trusted.signature === undefined))
     return errors.ERR_CODE_NOT_ENABLED
 
-  const configuration = await discover(iss)
+  const configuration = await discover(iss, ctx.fetch)
 
   if (configuration.token_endpoint === undefined)
     return errors.ERR_CONFIG
@@ -47,7 +46,7 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
     code
   })
 
-  const response = await fetch(configuration.token_endpoint, {
+  const response = await ctx.fetch(configuration.token_endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -66,9 +65,9 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
   if (tokens.id_token === undefined)
     return errors.ERR_NO_TOKEN
 
-  jwks[iss] ??= await createRemoteJWKSet(iss)
+  const jwks = await createRemoteJWKSet(iss, ctx.fetch)
 
-  const { payload } = await jose.jwtVerify(tokens.id_token, jwks[iss], {
+  const { payload } = await jose.jwtVerify(tokens.id_token, jwks, {
     audience: trusted.aud,
     issuer: iss
   })
@@ -92,6 +91,7 @@ function decode (credentials: string): Properties | Error {
 }
 
 async function sign (trust: Trust): Promise<string> {
+  const jose = await load()
   const signature = trust.signature!
   const aud = Array.isArray(trust.aud) ? trust.aud[0] : trust.aud!
   const now = Math.floor(Date.now() / 1000)

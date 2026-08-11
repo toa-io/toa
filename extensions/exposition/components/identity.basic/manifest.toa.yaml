@@ -128,7 +128,7 @@ exposition:
     DELETE:
       map:authority: authority
       map:segments:
-        id: identity
+        identity: id
       io:output: false
       endpoint: delete
 
