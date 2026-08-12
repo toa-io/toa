@@ -22,15 +22,20 @@ export class Transition implements Operation {
   }
 
   public async execute (input: TransitInput, object: Entity): Promise<Maybe<IdOutput>> {
-    const existent = object._version !== 0
+    const deleted = object._deleted !== undefined && object._deleted !== null
+    const existent = object._version !== 0 && !deleted
 
     if (existent) {
       if (input.inception === true)
         return ERR_EXISTS
 
       await this.tokens.revoke({ query: { id: object.id } })
-    } else
+    } else {
       object.authority = input.authority
+
+      if (deleted)
+        object._deleted = null
+    }
 
     if (input.username !== undefined) {
       if (existent && object.username === this.principal)
