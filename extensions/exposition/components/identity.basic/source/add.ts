@@ -9,6 +9,7 @@ export async function effect (input: AddInput, context: Context): Promise<Maybe<
       password: input.password,
       inception: true
     },
-    query: { id: input.id }
+    // `delete` leaves a tombstone, which the transition revives
+    query: { id: input.id, deleted: true }
   })
 }
