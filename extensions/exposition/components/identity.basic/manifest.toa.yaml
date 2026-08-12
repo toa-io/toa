@@ -75,7 +75,13 @@ operations:
       authority*: string
       identity*: string
     output:
-      username: string
+      type: object
+      nullable: true
+      additionalProperties: false
+      properties:
+        username:
+          type: string
+      required: [username]
   delete:
     input:
       authority*: string
