@@ -57,12 +57,15 @@ constraints, and principal configuration.
 
 ## Federated credentials
 
-- `POST /identity/federation/:identity/` associates credentials from a trusted issuer.
+- `POST /identity/federation/:identity/` associates credentials from a trusted issuer and returns
+  the associated credential as it is listed.
 - `GET /identity/federation/:identity/` lists federated credentials.
 - `DELETE /identity/federation/:identity/:credential/` removes one federated credential.
 
+If the credentials are already associated with the Identity, the existing credential is returned.
+
 An Identity can have credentials from multiple issuers and can have multiple subjects from the
-same issuer. The `:credential` segment is the `id` returned by either listing resource. Federation
+same issuer. The `:credential` segment is the `id` returned by any of these resources. Federation
 resources are provider-independent; issuer-specific authorization flows remain the responsibility
 of the application.
 

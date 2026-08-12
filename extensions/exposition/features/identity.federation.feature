@@ -220,6 +220,24 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       201 Created
+
+      id: ${{ Bob.credential }}
+      iss: http://localhost:44444
+      """
+    # the created credential is listed as is
+    When the following request is received:
+      """
+      GET /identity/federation/${{ Bob.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic #{{ basic Bob }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: ${{ Bob.credential }}
+        iss: http://localhost:44444
       """
     And the following request is received:
       """

@@ -46,7 +46,18 @@ operations:
       credentials*: string
       id: string
     output:
-      id: string
+      properties:
+        id:
+          description: Credential ID, the `:credential` segment of the federation resource
+          type: string
+        iss:
+          type: string
+        _created:
+          type: number
+      required:
+        - id
+        - iss
+        - _created
     errors:
       - EXISTS
   authenticate:
@@ -152,13 +163,13 @@ exposition:
       POST:
         map:authority: authority
         io:input: [scheme, credentials]
-        io:output: false
+        io:output: &credential [id, iss, _created]
         endpoint: incept
       GET:
         map:authority: authority
         map:segments:
           identity: id
-        io:output: [id, iss, _created]
+        io:output: *credential
         endpoint: list
       /:credential:
         DELETE:
