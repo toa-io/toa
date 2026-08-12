@@ -43,7 +43,8 @@ export class Incept implements Directive {
 
     Incept.schemes[scheme] ??= await Incept.discovery[provider]
 
-    const identity = await Incept.schemes[scheme].invoke<Maybe<Identity>>('incept', {
+    // inception reports the credentials it has associated, while the Identity is the given one
+    const inception = await Incept.schemes[scheme].invoke<Maybe<unknown>>('incept', {
       input: {
         scheme,
         authority: context.authority,
@@ -52,13 +53,10 @@ export class Incept implements Directive {
       }
     })
 
-    if (identity instanceof Error)
-      throw new http.UnprocessableEntity(identity)
+    if (inception instanceof Error)
+      throw new http.UnprocessableEntity(inception)
 
-    identity.scheme = scheme
-    identity.roles = []
-
-    return identity
+    return { id, scheme, roles: [], refresh: true }
   }
 
   public authorize (identity: Identity | null): boolean {
