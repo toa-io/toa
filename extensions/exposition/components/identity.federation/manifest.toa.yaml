@@ -45,19 +45,6 @@ operations:
       authority*: string
       credentials*: string
       id: string
-    output:
-      properties:
-        id:
-          description: Credential ID, the `:credential` segment of the federation resource
-          type: string
-        iss:
-          type: string
-        _created:
-          type: number
-      required:
-        - id
-        - iss
-        - _created
     errors:
       - EXISTS
   authenticate:
