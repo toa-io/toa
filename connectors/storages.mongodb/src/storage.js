@@ -101,6 +101,10 @@ class Storage extends Connector {
 
     const record = to(entity)
 
+    // deletion goes through upsert(), so replacement lifts
+    // a tombstone carried over from the loaded record
+    record._deleted = null
+
     this.debug('findOneAndReplace', { criteria, record })
 
     const result = await this.#collection.findOneAndReplace(criteria, record)

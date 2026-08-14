@@ -30,12 +30,8 @@ export class Transition implements Operation {
         return ERR_EXISTS
 
       await this.tokens.revoke({ query: { id: object.id } })
-    } else {
+    } else
       object.authority = input.authority
-
-      if (deleted)
-        object._deleted = null
-    }
 
     if (input.username !== undefined) {
       if (existent && object.username === this.principal)

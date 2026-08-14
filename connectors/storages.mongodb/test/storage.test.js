@@ -51,6 +51,19 @@ describe('get', () => {
   })
 })
 
+describe('set', () => {
+  it('should lift the tombstone', async () => {
+    collection.findOneAndReplace = jest.fn(async () => ({}))
+
+    const id = 'bcb6780f50e243348cad40ed6b5ef575'
+
+    await storage.set({ id, _version: 3, _deleted: 1786625599108 })
+
+    expect(collection.findOneAndReplace)
+      .toHaveBeenCalledWith({ _id: id, _version: 2 }, { _id: id, _version: 3, _deleted: null })
+  })
+})
+
 describe('stream', () => {
   it('should filter deleted', async () => {
     await storage.stream()
