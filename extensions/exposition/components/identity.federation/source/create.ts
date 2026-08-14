@@ -11,14 +11,21 @@ export async function effect (input: Input, context: Context): Promise<Entity | 
   const { iss, sub } = claims
 
   const existent = await context.local.observe({
-    query: { criteria: `authority==${input.authority};iss==${iss};sub==${sub}` }
+    query: { criteria: `authority==${input.authority};iss==${iss};sub==${sub}`, deleted: true }
   })
 
-  if (existent !== null)
+  const record = { authority: input.authority, iss, sub, identity: input.id }
+
+  if (existent === null)
+    return await context.local.transit({ input: record })
+
+  if (existent._deleted === undefined || existent._deleted === null)
     return (existent.identity ?? existent.id) === input.id ? existent : ERR_EXISTS
 
+  // a deleted record still occupies the unique index, so the transition revives it
   return await context.local.transit({
-    input: { authority: input.authority, iss, sub, identity: input.id }
+    input: record,
+    query: { id: existent.id, deleted: true }
   })
 }
 
