@@ -53,6 +53,8 @@ operations:
       authority*: string
       credentials*: string
       id: string
+    output:
+      id: string
     errors:
       - EXISTS
   authenticate:
