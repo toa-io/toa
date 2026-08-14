@@ -5,4 +5,5 @@ export interface Entity {
   sub: string
   identity?: string
   _created: number
+  _deleted?: number | null
 }
