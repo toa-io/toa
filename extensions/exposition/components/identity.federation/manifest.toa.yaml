@@ -39,6 +39,14 @@ operations:
       iss*: string
       sub*: string
       identity: string
+  create:
+    input:
+      scheme*: [bearer, code]
+      authority*: string
+      credentials*: string
+      id*: string
+    errors:
+      - EXISTS
   incept:
     input:
       scheme*: [bearer, code]
@@ -151,7 +159,7 @@ exposition:
         map:authority: authority
         io:input: [scheme, credentials]
         io:output: &credential [id, iss, _created]
-        endpoint: incept
+        endpoint: create
       GET:
         map:authority: authority
         map:segments:
