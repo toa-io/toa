@@ -88,8 +88,10 @@ Feature: Identity Federation
       """
       201 Created
       authorization: Token ${{ Bill.token }}
+
+      id: ${{ Bill.id }}
       """
-    # check that both tokens authenticate the created federation identity
+    # check that both tokens authenticate the created user's Identity
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -100,6 +102,8 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       200 OK
+
+      id: ${{ Bill.id }}
       roles: []
       """
     When the following request is received:
@@ -113,6 +117,7 @@ Feature: Identity Federation
       """
       200 OK
 
+      id: ${{ Bill.id }}
       roles: []
       """
     And the following request is received:
