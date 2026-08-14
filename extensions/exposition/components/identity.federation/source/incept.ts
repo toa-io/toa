@@ -1,18 +1,10 @@
 import { Err } from 'error-value'
-import { decode, exchange, type Ctx } from './lib'
+import { resolve } from './lib'
 import type { Request } from '@toa.io/types'
 import type { Context, Entity, TransitInput, Scheme } from './types'
 
 export async function effect (input: Input, context: Context): Promise<Entity | Error> {
-  const ctx: Ctx = {
-    trust: context.configuration.trust,
-    logs: context.logs,
-    fetch: context.fetch
-  }
-
-  const claims = input.scheme === 'bearer'
-    ? await decode(input.credentials, ctx)
-    : await exchange(input.credentials, ctx)
+  const claims = await resolve(input.scheme, input.credentials, context)
 
   if (claims instanceof Error)
     return claims

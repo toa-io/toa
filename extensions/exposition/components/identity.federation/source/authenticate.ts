@@ -1,6 +1,5 @@
 import { Err } from 'error-value'
-import { decode, exchange } from './lib'
-import type { Ctx } from './lib'
+import { resolve } from './lib'
 import type { JWTPayload } from 'jose'
 import type { Maybe } from '@toa.io/types'
 import type { Context, Scheme } from './types'
@@ -8,15 +7,7 @@ import type { Context, Scheme } from './types'
 export async function effect ({ scheme, authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
   context.logs.debug('Authenticating', { scheme, authority, credentials })
 
-  const ctx: Ctx = {
-    trust: context.configuration.trust,
-    logs: context.logs,
-    fetch: context.fetch
-  }
-
-  const claims = scheme === 'bearer'
-    ? await decode(credentials, ctx)
-    : await exchange(credentials, ctx)
+  const claims = await resolve(scheme, credentials, context)
 
   if (claims instanceof Error)
     return claims
