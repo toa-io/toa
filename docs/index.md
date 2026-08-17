@@ -1,6 +1,13 @@
-# Toa: A Distributed Runtime for Microservice Operations
+# Toa: Composable Application Runtime
 
-**Toa is a runtime for low-code, eventually consistent optionally distributed systems.**
+**Execution environment for low-code, eventually consistent, optionally distributed systems.**
+
+Toa is built around **product–platform separation**. Application code defines the product: its
+business state, behavior, contracts, and integrations. The runtime provides the platform machinery
+required to execute it. This allows different products to be built on the same execution model
+without rebuilding that machinery inside each one.
+
+## Motivation
 
 Most of the code in a typical backend service is not business logic.
 It is transport, serialization, validation, concurrency control, state persistence, retries,
@@ -12,34 +19,22 @@ An application developer writes *operations* — small, pure functions expressin
 and *declares* everything else: data schemas, communication endpoints, HTTP resources,
 access policies, storage requirements.
 
-```yaml
-# manifest.toa.yaml
-name: orders
-
-entity:
-  schema:
-    properties:
-      status: { type: string, enum: [pending, approved] }
-
-operations:
-  approve:
-    concurrency: retry
-```
-
 ```javascript
 // operations/approve.js
-async function transition (input, order, context) {
+async function transition (input, order) {
   order.status = 'approved'
 }
 ```
 
-The runtime provides the machinery: it persists state with optimistic concurrency control,
+The runtime provides the machinery: it persists state with concurrency control,
 transmits requests and events reliably across processes and protocols, validates messages,
 discovers services, exposes HTTP APIs, and deploys the whole system to Kubernetes with one command.
 
 The result is a system where a service is often a handful of one-liner functions and a YAML
 manifest — yet runs as a set of independently scalable, fault-tolerant processes with
 eventual consistency guarantees.
+
+## Documentation
 
 This documentation explains Toa from first principles: starting with the ideas the runtime is
 built on, descending through its core abstractions, down to the implementation details of
