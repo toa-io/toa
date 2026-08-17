@@ -1,6 +1,6 @@
 # Toa: A Distributed Runtime for Microservice Operations
 
-**Toa is a runtime for low-code, eventually consistent distributed systems.**
+**Toa is a runtime for low-code, eventually consistent optionally distributed systems.**
 
 Most of the code in a typical backend service is not business logic.
 It is transport, serialization, validation, concurrency control, state persistence, retries,
