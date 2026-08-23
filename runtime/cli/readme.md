@@ -123,7 +123,8 @@ Build Docker images.
 <dl>
 <dt><code>toa build</code></dt>
 <dd>
-<code>--path</code> path to a Context (default <code>.</code>)
+<code>--path</code> path to a Context (default <code>.</code>)<br/>
+<code>--mono</code> build a single image that runs <code>toa mono</code>
 </dd>
 </dl>
 
@@ -144,9 +145,24 @@ Deploy a Context.
 <code>--namespace</code> Kubernetes namespace to apply the Helm chat to<br/>
 <code>--wait</code> wait until all
 Pods [are ready](https://helm.sh/docs/intro/using_helm/#helpful-options-for-installupgraderollback)<br/>
-<code>--dry</code> do not apply the Helm chart
+<code>--dry</code> do not apply the Helm chart<br/>
+<code>--mono</code> build one image and deploy it as a single Deployment
 </dd>
 </dl>
+
+`toa build --mono` and `toa export deployment --mono` use the same layout.
+
+Optional `mono:` in the context sets replicas and resources (environment-suffixed as `mono@dev`):
+
+```yaml
+mono:
+  replicas: 2
+  resources:
+    cpu: [200m, 2]
+    memory: [256Mi, 2Gi]
+```
+
+Without `mono:`, `--mono` defaults to 2 replicas and no resource requests or limits.
 
 ### conceal
 

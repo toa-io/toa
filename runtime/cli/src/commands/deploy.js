@@ -40,6 +40,11 @@ const builder = (yargs) => {
       type: 'string',
       desc: 'Deployment timeout'
     })
+    .option('mono', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Deploy as a single image'
+    })
 }
 
 exports.command = 'deploy [environment]'

@@ -15,6 +15,11 @@ const builder = (yargs) => {
       desc: 'Path to context',
       default: '.'
     })
+    .option('mono', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Export the single-image tag'
+    })
 }
 
 exports.command = ['tags <environment>']

@@ -6,10 +6,10 @@ const { deployment: { Factory } } = require('@toa.io/operations')
 /**
  * @param {string} [environment]
  */
-async function deployment (environment = undefined) {
+async function deployment (environment = undefined, options = {}) {
   const context = this.cwd
   const target = join(this.cwd, 'deployment')
-  const factory = await Factory.create(context, environment)
+  const factory = await Factory.create(context, environment, options)
   const operator = factory.operator()
 
   await operator.export(target)

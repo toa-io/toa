@@ -70,3 +70,15 @@ it('should require registry url', () => {
   delete context.registry
   expect(() => validate(context)).toThrow(/required/)
 })
+
+it('should allow mono replicas and resources', () => {
+  context.mono = {
+    replicas: 2,
+    resources: {
+      cpu: ['200m', '2'],
+      memory: ['256Mi', '2Gi']
+    }
+  }
+
+  expect(() => validate(context)).not.toThrow()
+})

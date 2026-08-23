@@ -9,7 +9,7 @@ const { deployment: { Factory } } = require('@toa.io/operations')
  */
 const tags = async (argv) => {
   const path = find(argv.path)
-  const factory = await Factory.create(path, argv.environment)
+  const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
   const operator = factory.operator()
   const tags = operator.tags()
 

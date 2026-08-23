@@ -11,24 +11,42 @@ const { Service } = require('./service')
 
 class Factory {
   #context
+  #root
+  #mono
   #compositions
   #dependencies
   #registry
   #process
+  #image
 
-  constructor (context) {
+  constructor (context, options = {}) {
     this.#context = context
+    this.#root = options.root
+    this.#mono = options.mono === true
     this.#process = new Process()
 
     const imagesFactory = new ImagesFactory(context.name, context.runtime, context.registry)
 
     this.#registry = new Registry(context.name, context.registry, imagesFactory, this.#process)
-    this.#compositions = context.compositions.map((composition) => this.#composition(composition))
     this.#dependencies = this.#getDependencies()
+    this.#compositions = []
+
+    if (this.#mono)
+      this.#image = this.#registry.mono({
+        components: context.components
+      }, this.#root)
+    else
+      this.#compositions = context.compositions.map((composition) => this.#composition(composition))
   }
 
   operator () {
-    const deployment = new Deployment(this.#context, this.#compositions, this.#dependencies, this.#process)
+    const deployment = new Deployment(
+      this.#context,
+      this.#compositions,
+      this.#dependencies,
+      this.#process,
+      this.#image
+    )
 
     return new Operator(deployment, this.#registry)
   }
@@ -70,7 +88,8 @@ class Factory {
     const dependency = module.deployment(instances, annotation)
 
     /** @type {toa.deployment.Service[]} */
-    const services = dependency.services?.map((service) => this.#service(path, service))
+    const services = dependency.services?.map((service) =>
+      this.#mono ? service : this.#service(path, service))
 
     return { ...dependency, services }
   }
@@ -86,10 +105,10 @@ class Factory {
     return new Service(service, image)
   }
 
-  static async create (path, environment) {
+  static async create (path, environment, options = {}) {
     const context = await load(path, environment)
 
-    return new Factory(context)
+    return new Factory(context, { ...options, root: path })
   }
 }
 

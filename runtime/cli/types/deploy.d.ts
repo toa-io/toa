@@ -7,5 +7,6 @@ declare namespace toa.cli.deploy {
     dry: boolean
     wait: boolean
     timeout: string
+    mono?: boolean
   }
 }

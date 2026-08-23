@@ -5,7 +5,7 @@ const { deployment: { Factory } } = require('@toa.io/operations')
 
 const build = async (argv) => {
   const path = find(argv.path)
-  const factory = await Factory.create(path, argv.environment)
+  const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
   const registry = factory.registry()
 
   await registry.build()

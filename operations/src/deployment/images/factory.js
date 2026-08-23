@@ -2,6 +2,7 @@
 
 const { Composition } = require('./composition')
 const { Service } = require('./service')
+const { Mono } = require('./mono')
 
 class Factory {
   /** @type {string} */
@@ -40,6 +41,17 @@ class Factory {
    */
   service (path, service) {
     const instance = new Service(this.#scope, this.#runtime, this.#registry, path, service)
+
+    instance.tag()
+
+    return instance
+  }
+
+  /**
+   * @returns {Mono}
+   */
+  mono (composition, root) {
+    const instance = new Mono(this.#scope, this.#runtime, this.#registry, composition, root)
 
     instance.tag()
 

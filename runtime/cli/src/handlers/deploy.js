@@ -9,7 +9,7 @@ const { context: find } = require('../util/find')
  */
 const deploy = async (argv) => {
   const path = find(argv.path)
-  const factory = await Factory.create(path, argv.environment)
+  const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
   const operator = factory.operator()
 
   if (argv.dry === true) {
