@@ -54,6 +54,21 @@ Feature: Identity Federation
 
       id: ${{ User.id }}
       """
+    # credential id is detached from the Identity
+    When the following request is received:
+      """
+      GET /identity/federation/${{ User.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ User.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: ${{ User.credential }}
+        iss: http://localhost:44444
+      """
 
   Scenario: Creating an Identity using inception
     Given the `identity.federation` configuration:
@@ -119,6 +134,21 @@ Feature: Identity Federation
 
       id: ${{ Bill.id }}
       roles: []
+      """
+    # credential id is detached from the Identity
+    When the following request is received:
+      """
+      GET /identity/federation/${{ Bill.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Bill.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: ${{ Bill.credential }}
+        iss: http://localhost:44444
       """
     And the following request is received:
       # same credentials

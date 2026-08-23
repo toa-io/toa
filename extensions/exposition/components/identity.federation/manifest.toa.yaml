@@ -2,7 +2,6 @@ namespace: identity
 name: federation
 
 entity:
-  associated: true
   schema:
     type: object
     properties:
@@ -22,6 +21,7 @@ entity:
       - authority
       - iss
       - sub
+      - identity
     additionalProperties: false
   unique:
     token: [authority, iss, sub]
@@ -38,7 +38,7 @@ operations:
       authority*: string
       iss*: string
       sub*: string
-      identity: string
+      identity*: string
   create:
     input:
       scheme*: [bearer, code]
@@ -52,7 +52,7 @@ operations:
       scheme*: [bearer, code]
       authority*: string
       credentials*: string
-      id: string
+      id*: string
     output:
       id: string
     errors:

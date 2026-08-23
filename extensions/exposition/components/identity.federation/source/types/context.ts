@@ -30,7 +30,7 @@ export interface TransitInput {
   readonly authority: string
   readonly iss: string
   readonly sub: string
-  readonly identity?: string
+  readonly identity: string
 }
 
 interface IdentityTokensRevokeInput {

@@ -20,7 +20,7 @@ export async function effect (input: Input, context: Context): Promise<Entity | 
     return await context.local.transit({ input: record })
 
   if (existent._deleted === undefined || existent._deleted === null)
-    return (existent.identity ?? existent.id) === input.id ? existent : ERR_EXISTS
+    return existent.identity === input.id ? existent : ERR_EXISTS
 
   // a deleted record still occupies the unique index, so the transition revives it
   return await context.local.transit({
