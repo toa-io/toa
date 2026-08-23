@@ -19,7 +19,6 @@ const {
 const context = async (root, environment = process.env.TOA_ENV) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await load(path)
-  const pattern = resolve(root, context.packages)
 
   context.environment = environment
 
@@ -29,7 +28,7 @@ const context = async (root, environment = process.env.TOA_ENV) => {
 
   validate(context)
 
-  const paths = await glob(pattern)
+  const paths = await glob(resolve(root, COMPONENTS))
 
   context.components = await Promise.all(paths.map(component))
   context.dependencies = await dependencies(context)
@@ -41,5 +40,6 @@ const context = async (root, environment = process.env.TOA_ENV) => {
 }
 
 const CONTEXT = 'context.toa.yaml'
+const COMPONENTS = 'components/*'
 
 exports.context = context

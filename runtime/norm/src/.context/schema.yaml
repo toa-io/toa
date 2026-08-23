@@ -10,9 +10,6 @@ properties:
     pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(-([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$
   description:
     type: string
-  packages:
-    type: string
-    default: components/*
   build:
     type: object
     properties:

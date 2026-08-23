@@ -1,6 +1,5 @@
 name: collection
 version: 0.0.0
-packages: "components/*" # do not change it, it's correct. integration tests will copy components under this path.
 runtime:
   registry: http://host.docker.internal:4873
   proxy: http://host.docker.internal:4873

@@ -26,6 +26,24 @@ Run composition.
 
 > Note that your `localhost` it is accessible from a container as `host.docker.internal`.
 
+### mono
+
+Run the context composition and extension services in one process.
+
+Application components are loaded from `components/*` next to `context.toa.yaml`.
+Extension services are started for each context dependency whose `Factory` implements `service()`.
+
+<dl>
+<dt><code>toa mono [path]</code></dt>
+<dd>
+<code>path</code> Path to a Context (default <code>.</code>).<br/>
+<code>--kill</code> Shutdown after it's started.
+</dd>
+</dl>
+
+Environment variables must be provided as with <code>compose</code> and <code>serve</code>
+(typically via <code>toa env</code> / <code>--env</code>).
+
 ### call
 
 Call endpoint.

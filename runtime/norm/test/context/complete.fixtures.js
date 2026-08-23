@@ -21,7 +21,6 @@ const context = {
   name: 'test',
   description: 'context fixture',
   version: '0.0.0',
-  packages: 'namespaces/**/*',
   registry: 'localhost:5000',
   components: [
     component('a.b'),

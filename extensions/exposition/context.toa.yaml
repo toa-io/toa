@@ -1,7 +1,6 @@
 # used for development only
 
 name: exposition
-packages: '*'
 registry: localhost
 
 amqp: amqp://localhost

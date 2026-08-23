@@ -51,3 +51,7 @@ $ npx cucumber-js -p exposition --name 'Changing the password'
 ```
 
 Profiles set `failFast`, so a run stops at the first failed scenario.
+
+## Tests
+
+`integration/` is obsolete. Do not add or change tests there. New coverage belongs in Cucumber features.

@@ -11,7 +11,6 @@ export interface Declaration {
   version?: string
   runtime?: Runtime | string
   registry?: Registry | string
-  packages?: string
   compositions?: Composition[]
   annotations?: Record<string, object>
 }

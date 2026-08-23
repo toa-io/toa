@@ -1,5 +1,4 @@
 name: examples
-packages: components/*
 registry: example
 
 amqp: amqp://localhost
