@@ -72,9 +72,9 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.from-package }}" = "true" ]; then
             npx lerna publish from-package --dist-tag ${{ inputs.dist-tag }} --yes
           elif [ "${{ github.base_ref }}" = "release" ]; then
-            npx lerna publish --conventional-graduate --create-release github --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
+            npx lerna publish --conventional-graduate --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
           else
-            npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --create-release github --no-commit-hooks --no-changelog --yes --message "ci: %s" --sign-git-commit
+            npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
           fi
 
       - name: Set up Docker Buildx
