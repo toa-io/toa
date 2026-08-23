@@ -70,6 +70,7 @@ Non-scattered documentation is coming some time later.
 - [Runtime bootloader API](/userland/stage)
 - Development environment configuration
 - [CLI](/runtime/cli)
+  - `toa mono` — composition and extension services in one process
 - Extensibility:
   - Persistent storages
   - Communication protocols
@@ -85,6 +86,7 @@ Non-scattered documentation is coming some time later.
 - One-command fully automated deployment
   - Preset multi-arch docker images
   - Helm deployment to kubernetes
+  - Single-image (`toa deploy --mono`) deployment
 - CLI utilities
   - Secrets management
   - Remote container shell
