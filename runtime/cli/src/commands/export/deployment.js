@@ -19,6 +19,11 @@ const builder = (yargs) => {
       desc: 'Path to context',
       default: '.'
     })
+    .option('mono', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Export a single-image deployment'
+    })
 }
 
 exports.command = ['deployment <environment> <target>', 'dep']

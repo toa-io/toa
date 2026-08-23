@@ -1,7 +1,6 @@
 # used for development only
 
 name: realtime
-packages: '*'
 registry: localhost
 
 amqp: amqp://localhost

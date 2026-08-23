@@ -26,6 +26,24 @@ Run composition.
 
 > Note that your `localhost` it is accessible from a container as `host.docker.internal`.
 
+### mono
+
+Run the context composition and extension services in one process.
+
+Application components are loaded from `components/*` next to `context.toa.yaml`.
+Extension services are started for each context dependency whose `Factory` implements `service()`.
+
+<dl>
+<dt><code>toa mono [path]</code></dt>
+<dd>
+<code>path</code> Path to a Context (default <code>.</code>).<br/>
+<code>--kill</code> Shutdown after it's started.
+</dd>
+</dl>
+
+Environment variables must be provided as with <code>compose</code> and <code>serve</code>
+(typically via <code>toa env</code> / <code>--env</code>).
+
 ### call
 
 Call endpoint.
@@ -105,7 +123,8 @@ Build Docker images.
 <dl>
 <dt><code>toa build</code></dt>
 <dd>
-<code>--path</code> path to a Context (default <code>.</code>)
+<code>--path</code> path to a Context (default <code>.</code>)<br/>
+<code>--mono</code> build a single image that runs <code>toa mono</code>
 </dd>
 </dl>
 
@@ -126,9 +145,24 @@ Deploy a Context.
 <code>--namespace</code> Kubernetes namespace to apply the Helm chat to<br/>
 <code>--wait</code> wait until all
 Pods [are ready](https://helm.sh/docs/intro/using_helm/#helpful-options-for-installupgraderollback)<br/>
-<code>--dry</code> do not apply the Helm chart
+<code>--dry</code> do not apply the Helm chart<br/>
+<code>--mono</code> build one image and deploy it as a single Deployment
 </dd>
 </dl>
+
+`toa build --mono` and `toa export deployment --mono` use the same layout.
+
+Optional `mono:` in the context sets replicas and resources (environment-suffixed as `mono@dev`):
+
+```yaml
+mono:
+  replicas: 2
+  resources:
+    cpu: [200m, 2]
+    memory: [256Mi, 2Gi]
+```
+
+Without `mono:`, `--mono` defaults to 2 replicas and no resource requests or limits.
 
 ### conceal
 

@@ -1,0 +1,168 @@
+{{- if .Values.mono }}
+{{- with .Values.mono }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mono
+spec:
+  replicas: {{ .replicas | default 2 }}
+  progressDeadlineSeconds: 900
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 50%
+  selector:
+    matchLabels:
+      toa.io/composition: mono
+  template:
+    metadata:
+      labels:
+        toa.io/composition: mono
+        {{- range .components }}
+        {{ . }}: "1"
+        {{- end }}
+    spec:
+      containers:
+        - name: mono
+          image: {{ .image }}
+          {{- if .port }}
+          ports:
+            - containerPort: {{ .port }}
+          {{- else if .probe }}
+          ports:
+            - containerPort: {{ .probe.port }}
+          {{- end }}
+          {{- if .resources }}
+          resources:
+            {{- if or .resources.cpu .resources.memory }}
+            requests:
+              {{- if .resources.cpu }}
+              cpu: {{ index .resources.cpu 0 }}
+              {{- end }}
+              {{- if .resources.memory }}
+              memory: {{ index .resources.memory 0 }}
+              {{- end }}
+            limits:
+              {{- if .resources.cpu }}
+              cpu: {{ index .resources.cpu 1 }}
+              {{- end }}
+              {{- if .resources.memory }}
+              memory: {{ index .resources.memory 1 }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if .variables }}
+          env:
+            {{- range .variables }}
+            {{- include "env.var" . | indent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .probe }}
+          startupProbe:
+            httpGet:
+              path: {{ .probe.path }}
+              port: {{ .probe.port }}
+            {{- if .probe.delay }}
+            initialDelaySeconds: {{ .probe.delay }}
+            {{- end }}
+            periodSeconds: 2
+            timeoutSeconds: 3
+            failureThreshold: 150
+          readinessProbe:
+            httpGet:
+              path: {{ .probe.path }}
+              port: {{ .probe.port }}
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          {{- end }}
+          {{- if .mounts }}
+          volumeMounts:
+            {{- range .mounts }}
+            - name: {{ .name }}
+              mountPath: {{ .path }}
+            {{- end }}
+          {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command: [sleep, "5"]
+      terminationGracePeriodSeconds: 45
+      {{- if $.Values.credentials }}
+      imagePullSecrets:
+        - name: {{ $.Values.credentials }}
+      {{- end }}
+      {{- if .mounts }}
+      volumes:
+        {{- range .mounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ .claim }}
+        {{- end }}
+      {{- end }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              toa.io/composition: mono
+{{- if .port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mono
+spec:
+  type: ClusterIP
+  selector:
+    toa.io/composition: mono
+  ports:
+    - name: port-{{ .port }}
+      protocol: TCP
+      port: {{ .port }}
+      targetPort: {{ .port }}
+{{- end }}
+{{- if .ingress }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mono
+  {{- if .ingress.annotations }}
+  annotations:
+{{ toYaml .ingress.annotations | indent 4 }}
+  {{- end }}
+spec:
+  {{- if .ingress.class }}
+  ingressClassName: {{ .ingress.class }}
+  {{- end }}
+  rules:
+    {{- range .ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mono
+                port:
+                  number: {{ $.Values.mono.port | default 8000 }}
+    {{- end }}
+    {{- if .ingress.default }}
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mono
+                port:
+                  number: {{ $.Values.mono.port | default 8000 }}
+    {{- end }}
+{{- end }}
+---
+{{- end }}
+{{- end }}

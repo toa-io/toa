@@ -26,6 +26,16 @@ When('I export deployment for {word}',
     return extract.deployment.call(this, env)
   })
 
+When('I export a mono deployment',
+  function () {
+    return extract.deployment.call(this, undefined, { mono: true })
+  })
+
+When('I export a mono deployment for {word}',
+  function (env) {
+    return extract.deployment.call(this, env, { mono: true })
+  })
+
 Then('exported {helm-artifact} should contain:',
   /**
    * @param {string} artifact

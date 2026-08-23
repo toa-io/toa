@@ -35,6 +35,10 @@ class Registry {
     return this.#create('service', path, service)
   }
 
+  mono (composition, root) {
+    return this.#create('mono', composition, root)
+  }
+
   async prepare (root) {
     const path = await workspace.create('images', root)
 
@@ -61,7 +65,7 @@ class Registry {
   }
 
   /**
-   * @param {'composition' | 'service'} type
+   * @param {'composition' | 'service' | 'mono'} type
    * @param {...any} args
    * @returns {toa.deployment.images.Image}
    */

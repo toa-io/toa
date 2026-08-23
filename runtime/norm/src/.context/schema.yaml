@@ -10,9 +10,6 @@ properties:
     pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(-([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$
   description:
     type: string
-  packages:
-    type: string
-    default: components/*
   build:
     type: object
     properties:
@@ -66,6 +63,29 @@ properties:
             type: string
             pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))$
       required: [name, components]
+  mono:
+    type: object
+    additionalProperties: false
+    properties:
+      replicas:
+        type: integer
+        minimum: 1
+      resources:
+        type: object
+        additionalProperties: false
+        properties:
+          cpu:
+            type: array
+            items:
+              type: string
+            minItems: 2
+            maxItems: 2
+          memory:
+            type: array
+            items:
+              type: string
+            minItems: 2
+            maxItems: 2
   annotations:
     type: object
 required: [runtime, name, registry]

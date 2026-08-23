@@ -13,11 +13,11 @@ class Deployment {
   #process
   #target
 
-  constructor (context, compositions, dependencies, process) {
+  constructor (context, compositions, dependencies, process, image) {
     const dependency = merge(dependencies)
 
     this.#chart = declare(context, dependency)
-    this.#values = describe(context, compositions, dependency)
+    this.#values = describe(context, compositions, dependency, image)
     this.#process = process
   }
 
@@ -68,6 +68,9 @@ class Deployment {
 
     addVariables(this.#values.compositions, variables, used)
     addVariables(this.#values.services, variables, used)
+
+    if (this.#values.mono !== undefined)
+      addVariables([this.#values.mono], variables, used)
 
     return variables
   }

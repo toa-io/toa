@@ -66,13 +66,19 @@ it('should require name as label', () => {
   expect(() => validate(context)).not.toThrow(/pattern/)
 })
 
-it('should set default packages location', () => {
-  delete context.packages
-  expect(() => validate(context)).not.toThrow()
-  expect(context.packages).toBe('components/*')
-})
-
 it('should require registry url', () => {
   delete context.registry
   expect(() => validate(context)).toThrow(/required/)
+})
+
+it('should allow mono replicas and resources', () => {
+  context.mono = {
+    replicas: 2,
+    resources: {
+      cpu: ['200m', '2'],
+      memory: ['256Mi', '2Gi']
+    }
+  }
+
+  expect(() => validate(context)).not.toThrow()
 })

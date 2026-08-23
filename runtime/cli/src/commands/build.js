@@ -11,6 +11,11 @@ const builder = (yargs) => {
       desc: 'Path to context',
       default: '.'
     })
+    .option('mono', {
+      group: 'Command options:',
+      type: 'boolean',
+      desc: 'Build a single image'
+    })
 }
 
 exports.command = 'build'
