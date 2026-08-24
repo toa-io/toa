@@ -474,3 +474,57 @@ Feature: Basic authentication
 
       code: EXISTS
       """
+
+  Scenario: Adding basic credentials after they have been deleted
+    Given transient identity
+    When the following request is received:
+      """
+      POST /identity/basic/${{ identity.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ identity.token }}
+      content-type: application/yaml
+
+      username: developer
+      password: secret#1234
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      DELETE /identity/basic/${{ identity.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ identity.token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    When the following request is received:
+      """
+      POST /identity/basic/${{ identity.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ identity.token }}
+      content-type: application/yaml
+
+      username: painter
+      password: secret#4321
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic cGFpbnRlcjpzZWNyZXQjNDMyMQ==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ identity.id }}
+      """

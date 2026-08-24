@@ -38,6 +38,7 @@ class Entity {
     if (error !== null)
       throw new EntityContractException(error, value)
 
+    this.#revive(value)
     this.#set(value)
   }
 
@@ -67,6 +68,16 @@ class Entity {
       if (ok === false)
         throw new EntityGuardException(guard.name, value)
     }
+  }
+
+  // deletion is only expressed as a new _deleted timestamp,
+  // so committing over a tombstone without touching it means revival
+  #revive (value) {
+    if (this.#origin?._deleted == null || value._deleted !== this.#origin._deleted)
+      return
+
+    value._deleted = null
+    this.deleted = false
   }
 
   #set (value) {

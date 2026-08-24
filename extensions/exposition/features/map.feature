@@ -269,6 +269,7 @@ Feature: HTTP context mapping
       """yaml
       trust:
         - iss: http://localhost:44444
+      assert: false
       """
     And the `pots` is running with the following manifest:
       """yaml
@@ -299,8 +300,8 @@ Feature: HTTP context mapping
       201 Created
 
       id: ${{ id }}
-      title: ${{ random.email }}
       volume: 1.5
+      title: ${{ random.email }}
       """
 
   Scenario: Mapping non-exposed properties
