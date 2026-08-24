@@ -95,7 +95,7 @@ async function sign (trust: Trust): Promise<string> {
   const signature = trust.signature!
   const aud = Array.isArray(trust.aud) ? trust.aud[0] : trust.aud!
   const now = Math.floor(Date.now() / 1000)
-  const key = await jose.importPKCS8(atob(signature.key), 'ES256')
+  const key = await jose.importPKCS8(signature.key, 'ES256')
 
   return await new jose.SignJWT({})
     .setProtectedHeader({ alg: 'ES256', kid: signature.kid })
