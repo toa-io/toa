@@ -25,6 +25,7 @@ entity:
     additionalProperties: false
   unique:
     token: [authority, iss, sub]
+    identity: [authority, iss, identity]
   index:
     list:
       authority: asc
