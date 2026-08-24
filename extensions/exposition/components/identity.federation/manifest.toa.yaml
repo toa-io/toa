@@ -2,7 +2,6 @@ namespace: identity
 name: federation
 
 entity:
-  associated: true
   schema:
     type: object
     properties:
@@ -22,9 +21,11 @@ entity:
       - authority
       - iss
       - sub
+      - identity
     additionalProperties: false
   unique:
     token: [authority, iss, sub]
+    identity: [authority, iss, identity]
   index:
     list:
       authority: asc
@@ -38,13 +39,21 @@ operations:
       authority*: string
       iss*: string
       sub*: string
-      identity: string
+      identity*: string
+  create:
+    input:
+      scheme*: [bearer, code]
+      authority*: string
+      credentials*: string
+      id*: string
+    errors:
+      - EXISTS
   incept:
     input:
       scheme*: [bearer, code]
       authority*: string
       credentials*: string
-      id: string
+      id*: string
     output:
       id: string
     errors:
@@ -152,13 +161,13 @@ exposition:
       POST:
         map:authority: authority
         io:input: [scheme, credentials]
-        io:output: false
-        endpoint: incept
+        io:output: &credential [id, iss, _created]
+        endpoint: create
       GET:
         map:authority: authority
         map:segments:
           identity: id
-        io:output: [id, iss, _created]
+        io:output: *credential
         endpoint: list
       /:credential:
         DELETE:

@@ -9,7 +9,7 @@ export interface Context {
     observe: Observation<Entity>
     enumerate: Observation<Entity[], never, Entity>
     terminate: Transition<void, void, Entity>
-    transit: Call<TransitOutput, TransitInput>
+    transit: Call<Entity, TransitInput>
     ensure: Call<Entity>
     decode: Call<JWTPayload, string>
   }
@@ -30,11 +30,7 @@ export interface TransitInput {
   readonly authority: string
   readonly iss: string
   readonly sub: string
-  readonly identity?: string
-}
-
-export interface TransitOutput {
-  id: string
+  readonly identity: string
 }
 
 interface IdentityTokensRevokeInput {

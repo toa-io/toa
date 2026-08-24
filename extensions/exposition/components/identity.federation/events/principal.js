@@ -15,8 +15,8 @@ exports.condition = function (event, context) {
 }
 
 /**
- * @param {{ state: import('../source/types').Entity & { id: string } }} event
+ * @param {{ state: import('../source/types').Entity }} event
  */
 exports.payload = function (event) {
-  return { id: event.state.id }
+  return { identity: event.state.identity }
 }

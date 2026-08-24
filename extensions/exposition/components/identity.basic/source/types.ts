@@ -29,6 +29,9 @@ export interface Entity {
   username: string
   password: string
   readonly _version: number
+
+  /** Deletion timestamp; `null` or absent while the credentials are in effect. */
+  _deleted?: number | null
 }
 
 export interface TransitInput {

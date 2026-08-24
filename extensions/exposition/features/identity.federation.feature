@@ -54,6 +54,21 @@ Feature: Identity Federation
 
       id: ${{ User.id }}
       """
+    # credential id is detached from the Identity
+    When the following request is received:
+      """
+      GET /identity/federation/${{ User.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ User.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: ${{ User.credential }}
+        iss: http://localhost:44444
+      """
 
   Scenario: Creating an Identity using inception
     Given the `identity.federation` configuration:
@@ -88,8 +103,10 @@ Feature: Identity Federation
       """
       201 Created
       authorization: Token ${{ Bill.token }}
+
+      id: ${{ Bill.id }}
       """
-    # check that both tokens authenticate the created federation identity
+    # check that both tokens authenticate the created user's Identity
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -100,6 +117,8 @@ Feature: Identity Federation
     Then the following reply is sent:
       """
       200 OK
+
+      id: ${{ Bill.id }}
       roles: []
       """
     When the following request is received:
@@ -113,7 +132,23 @@ Feature: Identity Federation
       """
       200 OK
 
+      id: ${{ Bill.id }}
       roles: []
+      """
+    # credential id is detached from the Identity
+    When the following request is received:
+      """
+      GET /identity/federation/${{ Bill.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Bill.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: ${{ Bill.credential }}
+        iss: http://localhost:44444
       """
     And the following request is received:
       # same credentials
@@ -206,6 +241,64 @@ Feature: Identity Federation
     When the IDP token for Bob is issued
 
     # add federation
+    When the following request is received:
+      """
+      POST /identity/federation/${{ Bob.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic #{{ basic Bob }}
+      content-type: application/yaml
+      accept: application/yaml
+
+      scheme: bearer
+      credentials: ${{ Bob.id_token }}
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ Bob.credential }}
+      iss: http://localhost:44444
+      """
+    # the created credential is listed as is
+    When the following request is received:
+      """
+      GET /identity/federation/${{ Bob.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic #{{ basic Bob }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - id: ${{ Bob.credential }}
+        iss: http://localhost:44444
+      """
+    And the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Bob.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ Bob.id }}
+      """
+    # delete the federation credential
+    When the following request is received:
+      """
+      DELETE /identity/federation/${{ Bob.id }}/${{ Bob.credential }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic #{{ basic Bob }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    # add the same federation again
     When the following request is received:
       """
       POST /identity/federation/${{ Bob.id }}/ HTTP/1.1

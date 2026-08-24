@@ -1,3 +1,4 @@
+root: true
 extends:
   - standard-with-typescript
 overrides:
