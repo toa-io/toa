@@ -131,7 +131,7 @@ configuration:
         signature:
           iss: team-id
           kid: key-id
-          key: $APPLE_PRIVATE_KEY
+          key: $APPLE_PRIVATE_KEY # PKCS8 PEM, as in the .p8 file
 ```
 
 ### OTP scheme

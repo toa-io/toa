@@ -126,7 +126,9 @@ configuration:
               properties:
                 iss: { type: string }
                 kid: { type: string }
-                key: { type: string }
+                key:
+                  description: PKCS8 private key in PEM form
+                  type: string
               required: [iss, kid, key]
             secret:
               description: Client secret for the Identity Provider. Required for Authorization Code Flow.
