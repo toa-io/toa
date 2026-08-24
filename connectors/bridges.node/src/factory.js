@@ -6,7 +6,7 @@ const { Event } = require('./event')
 const { Receiver } = require('./receiver')
 const { Guard } = require('./guard')
 const { Context } = require('./context')
-const { RC } = require('./rc')
+const { Phase } = require('./rc')
 const { extract } = require('./define/operations')
 
 class Factory {
@@ -41,17 +41,29 @@ class Factory {
 
   async rc (root, context) {
     const modules = await load.rcs(root)
+
+    if (modules.length === 0)
+      return
+
     const ctx = new Context(context)
-    const rcs = []
+    const preflights = []
+    const settles = []
 
     for (const [name, module] of modules) {
-      if (typeof module.rc !== 'function')
-        throw new Error(`RC '${name}' not found`)
+      if (typeof module.preflight !== 'function' && typeof module.settle !== 'function')
+        throw new Error(`RC '${name}' must export preflight and/or settle`)
 
-      rcs.push(module.rc)
+      if (typeof module.preflight === 'function')
+        preflights.push(module.preflight)
+
+      if (typeof module.settle === 'function')
+        settles.push(module.settle)
     }
 
-    return new RC(rcs, ctx)
+    return {
+      preflight: preflights.length > 0 ? new Phase(preflights, ctx) : undefined,
+      settle: settles.length > 0 ? new Phase(settles, ctx) : undefined
+    }
   }
 }
 

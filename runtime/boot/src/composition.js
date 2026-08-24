@@ -25,19 +25,48 @@ async function composition (paths, options) {
     const expositions = await span('expose discovery',
       async () => await Promise.all(manifests.map(boot.discovery.expose)))
 
-    const components = await span('create components',
-      async () => await Promise.all(manifests.map(boot.component)))
+    try {
+      const components = await span('create components',
+        async () => await Promise.all(manifests.map(boot.component)))
 
-    const producers = components.map((component, index) =>
-      boot.bindings.produce(component, manifests[index].operations))
+      const groups = components.map((component, index) =>
+        boot.bindings.produce(component, manifests[index].operations))
 
-    const receivers = await span('create receivers',
-      async () => await Promise.all(components.map((component, index) =>
-        boot.receivers(manifests[index], component))))
+      const receivers = await span('create receivers',
+        async () => await Promise.all(components.map((component, index) =>
+          boot.receivers(manifests[index], component))))
 
-    const composition = new Composition(expositions.flat(), producers.flat(), receivers.flat(), tenants.flat())
+      const producers = []
+      const settles = []
 
-    return boot.extensions.manage(composition)
+      for (let i = 0; i < components.length; i++) {
+        const { local, other } = groups[i]
+        const settle = components[i].settle
+
+        producers.push(...local, ...other)
+
+        if (settle === undefined)
+          continue
+
+        if (local.length > 0)
+          settle.depends(local)
+
+        for (const producer of other)
+          producer.depends(settle)
+
+        for (const receiver of receivers[i])
+          receiver.depends(settle)
+
+        settles.push(settle)
+      }
+
+      const composition = new Composition(expositions.flat(), producers.concat(settles), receivers.flat(), tenants.flat())
+
+      return boot.extensions.manage(composition)
+    } catch (exception) {
+      await Promise.all(expositions.flat().map((connector) => connector.disconnect(true)))
+      throw exception
+    }
   })
 }
 

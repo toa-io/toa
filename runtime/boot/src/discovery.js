@@ -29,7 +29,8 @@ const lookup = async (locator) => {
 const expose = async (manifest) => {
   const exposition = new Exposition(manifest.locator, manifest)
   const operations = { [ENDPOINT]: { bindings: BINDINGS } }
-  const producers = boot.bindings.produce(exposition, operations)
+  const { local, other } = boot.bindings.produce(exposition, operations)
+  const producers = local.concat(other)
 
   await Promise.all(producers.map((producer) => producer.connect()))
 

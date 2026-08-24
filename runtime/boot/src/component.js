@@ -28,24 +28,29 @@ const create = async (manifest, locator) => {
     state = new State(storage, entity, emission, manifest.entity.associated)
   }
 
-  const rc = await boot.rc(manifest, context)
-  const operations = await bootOperations(manifest, context, state, rc)
+  const phases = await boot.rc(manifest, context)
+  const operations = await bootOperations(manifest, context, state, phases?.preflight)
   const component = new Component(locator, operations)
 
   if (storage) component.depends(storage)
   if (emission) component.depends(emission)
 
-  return boot.extensions.component(component)
+  const decorated = boot.extensions.component(component)
+
+  if (phases?.settle !== undefined)
+    decorated.settle = phases.settle
+
+  return decorated
 }
 
-async function bootOperations (manifest, context, state, rc) {
+async function bootOperations (manifest, context, state, preflight) {
   if (manifest.operations === undefined)
     return {}
 
   const operations = {}
 
   for (const [endpoint, definition] of Object.entries(manifest.operations))
-    operations[endpoint] = await boot.operation(manifest, endpoint, definition, context, state, rc)
+    operations[endpoint] = await boot.operation(manifest, endpoint, definition, context, state, preflight)
 
   return operations
 }

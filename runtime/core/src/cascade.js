@@ -6,16 +6,16 @@ class Cascade extends Connector {
   // #bridges
   #last
 
-  constructor (bridges, rc) {
+  constructor (bridges, preflight) {
     super()
 
     // this.#bridges = bridges
     this.#last = bridges[bridges.length - 1]
 
-    if (rc === undefined)
+    if (preflight === undefined)
       this.depends(bridges)
     else
-      this.depends(bridges).depends(rc)
+      this.depends(bridges).depends(preflight)
   }
 
   async run (...args) {

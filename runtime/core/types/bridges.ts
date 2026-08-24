@@ -29,5 +29,5 @@ export interface Factory {
 
   receiver?: (path: string, label: string) => Receiver
 
-  rc?: (path: string, context: Context) => Promise<Connector>
+  rc?: (path: string, context: Context) => Promise<{ preflight?: Connector, settle?: Connector } | undefined>
 }
