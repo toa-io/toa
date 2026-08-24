@@ -2,25 +2,25 @@
 
 const { Connector } = require('@toa.io/core')
 
-class RC extends Connector {
+class Phase extends Connector {
   /** @type {Function[]} */
-  #rcs
+  #fns
 
   /** @type {toa.node.Context} */
   #context
 
-  constructor (rcs, context) {
+  constructor (fns, context) {
     super()
 
-    this.#rcs = rcs
+    this.#fns = fns
     this.#context = context
 
     this.depends(context)
   }
 
   async open () {
-    await Promise.all(this.#rcs.map((rc) => rc(this.#context)))
+    await Promise.all(this.#fns.map((fn) => fn(this.#context)))
   }
 }
 
-exports.RC = RC
+exports.Phase = Phase

@@ -1,5 +1,5 @@
-function rc(ctx) {
+function preflight(ctx) {
   ctx.state.ok = 'ok'
 }
 
-module.exports = { rc }
+module.exports = { preflight }

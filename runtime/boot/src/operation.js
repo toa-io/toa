@@ -12,8 +12,8 @@ const {
 
 const boot = require('./index')
 
-async function operation (manifest, endpoint, definition, context, scope, rc) {
-  const cascade = await boot.cascade(manifest, endpoint, definition, context, rc)
+async function operation (manifest, endpoint, definition, context, scope, preflight) {
+  const cascade = await boot.cascade(manifest, endpoint, definition, context, preflight)
   const reply = boot.contract.reply(definition.output, definition.error)
   const input = definition.input
   const request = boot.contract.request({ input }, manifest.entity)
