@@ -5,12 +5,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [1.0.0-alpha.257](https://github.com/toa-io/toa/compare/v1.0.0-alpha.256...v1.0.0-alpha.257) (2026-08-24)
 
-**Note:** Version bump only for package @toa.io/boot
-
-
-
-
-
-# [1.0.0-alpha.256](https://github.com/toa-io/toa/compare/v1.0.0-alpha.255...v1.0.0-alpha.256) (2026-08-23)
-
-**Note:** Version bump only for package @toa.io/boot
+**Note:** Version bump only for package @toa.io/bridges.node
