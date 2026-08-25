@@ -64,8 +64,8 @@ class Communication extends Connector {
   }
 
   /**
-   * Without this, an undeliverable message, a discarded request or a shard
-   * dropping out leave no trace at all.
+   * Without this, an undeliverable message, a discarded request, a shard
+   * dropping out or a failed reconnect leave no trace at all.
    */
   #diagnose () {
     this.#io.diagnose('return', (type, message, shard) =>
@@ -87,6 +87,9 @@ class Communication extends Connector {
     this.#io.diagnose('remove', (type, shard) =>
       console.warn('AMQP shard removed', { type, shard }))
 
+    this.#io.diagnose('lost', (type, shard) =>
+      console.warn('AMQP shard lost', { type, shard }))
+
     this.#io.diagnose('recover', (type, shard) =>
       console.info('AMQP channel recovered', { type, shard }))
 
@@ -102,6 +105,9 @@ class Communication extends Connector {
       else
         console.warn('AMQP connection lost', { message: error.message, shard })
     })
+
+    this.#io.diagnose('error', (error, shard) =>
+      console.warn('AMQP connection failed', { message: error.message, shard }))
 
     this.#io.diagnose('open', (shard) =>
       console.debug('AMQP connection open', { shard }))
