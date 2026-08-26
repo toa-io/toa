@@ -1,12 +1,12 @@
 'use strict'
 
-function addVariables (composition, variables) {
+function addVariables (composition, variables, keys = composition.components) {
   composition.variables ??= []
 
   const used = new Set(composition.variables.map((variable) => variable.name))
 
   for (const [key, set] of Object.entries(variables)) {
-    if (key !== 'global' && !composition.components?.includes(key))
+    if (key !== 'global' && !keys?.includes(key))
       continue
 
     for (const variable of set) {
