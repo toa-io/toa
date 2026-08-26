@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "1.0.0-alpha.260",
+  "version": "1.0.0-alpha.261",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,12 +23,12 @@
     "postversion": "jq --argjson value \"$(jq '.version' package.json)\" '.version = $value' ../../package.json > tmp.json && mv tmp.json ../../package.json"
   },
   "dependencies": {
-    "@toa.io/bindings.amqp": "1.0.0-alpha.260",
+    "@toa.io/bindings.amqp": "1.0.0-alpha.261",
     "@toa.io/bindings.loop": "1.0.0-alpha.259",
     "@toa.io/boot": "1.0.0-alpha.259",
     "@toa.io/bridges.bash": "1.0.0-alpha.59",
     "@toa.io/bridges.node": "1.0.0-alpha.259",
-    "@toa.io/cli": "1.0.0-alpha.259",
+    "@toa.io/cli": "1.0.0-alpha.261",
     "@toa.io/core": "1.0.0-alpha.259",
     "@toa.io/extensions.configuration": "1.0.0-alpha.259",
     "@toa.io/extensions.exposition": "1.0.0-alpha.259",
@@ -39,7 +39,7 @@
     "@toa.io/extensions.storages": "1.0.0-alpha.254",
     "@toa.io/extensions.telemetry": "1.0.0-alpha.254",
     "@toa.io/norm": "1.0.0-alpha.259",
-    "@toa.io/operations": "1.0.0-alpha.259",
+    "@toa.io/operations": "1.0.0-alpha.261",
     "@toa.io/prototype": "1.0.0-alpha.162",
     "@toa.io/storages.mongodb": "1.0.0-alpha.259",
     "@toa.io/storages.null": "1.0.0-alpha.59",

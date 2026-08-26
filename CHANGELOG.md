@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.261](https://github.com/toa-io/toa/compare/v1.0.0-alpha.260...v1.0.0-alpha.261) (2026-08-26)
+
+
+### Bug Fixes
+
+* **operations:** include extension pointer variables in --mono ([f8be23d](https://github.com/toa-io/toa/commit/f8be23d2aaf7bbe1b0580101c8bf4d32c3cab99f))
+
+
+
+
+
 # [1.0.0-alpha.260](https://github.com/toa-io/toa/compare/v1.0.0-alpha.259...v1.0.0-alpha.260) (2026-08-25)
 
 
