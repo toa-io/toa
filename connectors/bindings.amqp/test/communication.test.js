@@ -33,6 +33,7 @@ it('should diagnose the connection', async () => {
   expect(events).toContain('return')
   expect(events).toContain('error')
   expect(events).toContain('lost')
+  expect(events).toContain('reconnect')
 })
 
 it('should diagnose the shared connection once', async () => {
