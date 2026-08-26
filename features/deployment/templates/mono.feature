@@ -86,3 +86,26 @@ Feature: Mono deployment
           path: /.ready
           port: 8000
       """
+
+  Scenario: Include pointer variables of extension components
+    Given I have components:
+      | exposed.one |
+      | realtime.streamer |
+    And I have a context with:
+      """yaml
+      configuration:
+        identity.tokens:
+          key0: secret.key
+      """
+    When I export a mono deployment
+    Then exported values should contain:
+      """yaml
+      mono:
+        variables:
+          - name: TOA_STASH_REALTIME_STREAMS
+            value: redis://localhost
+          - name: TOA_STASH_IDENTITY_OTP
+            value: redis://localhost
+          - name: TOA_MONGODB_IDENTITY_TOKENS
+            value: mongodb://localhost
+      """

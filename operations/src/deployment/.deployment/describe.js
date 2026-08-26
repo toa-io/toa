@@ -51,6 +51,9 @@ const describe = (context, compositions, dependency, image) => {
 function unit (context, dependency) {
   const components = (context.components ?? []).map((component) => component.locator.label)
 
+  const variables = dependency.variables ?? {}
+  const mounts = dependency.mounts ?? {}
+
   const mono = {
     replicas: context.mono?.replicas,
     resources: context.mono?.resources,
@@ -58,8 +61,8 @@ function unit (context, dependency) {
     variables: []
   }
 
-  addVariables(mono, dependency.variables ?? {})
-  addMounts(mono, dependency.mounts)
+  addVariables(mono, variables, Object.keys(variables))
+  addMounts(mono, dependency.mounts, Object.keys(mounts))
 
   for (const service of dependency.services ?? []) {
     if (service.variables !== undefined)

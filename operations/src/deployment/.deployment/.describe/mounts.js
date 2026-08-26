@@ -1,13 +1,13 @@
 'use strict'
 
-function addMounts (composition, mounts) {
+function addMounts (composition, mounts, keys = composition.components) {
   if (mounts === undefined)
     return
 
   const used = new Set()
 
   for (const [key, mount] of Object.entries(mounts)) {
-    if (key !== 'global' && !composition.components?.includes(key))
+    if (key !== 'global' && !keys?.includes(key))
       continue
 
     for (const { name, path, claim } of mount) {
