@@ -8,6 +8,14 @@ Feature: Mono deployment
       --mono
       """
 
+  Scenario: Mono image does not include the context file
+    Given I have a component `dummies.one`
+    And I have a context
+    When I run `toa export images ./images --mono`
+    Then program should exit with code 0
+    And I run `find images -name context.toa.yaml`
+    Then stdout should be empty
+
   Scenario: Deploy as a single image
     Given I have a component `dummies.one`
     And I have a context

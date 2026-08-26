@@ -50,8 +50,8 @@ class Factory {
   /**
    * @returns {Mono}
    */
-  mono (composition, root) {
-    const instance = new Mono(this.#scope, this.#runtime, this.#registry, composition, root)
+  mono (composition) {
+    const instance = new Mono(this.#scope, this.#runtime, this.#registry, composition)
 
     instance.tag()
 

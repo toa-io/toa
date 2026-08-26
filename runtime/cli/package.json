@@ -22,6 +22,7 @@
     "@toa.io/runtime": "*"
   },
   "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.259",
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/kubernetes": "1.0.0-alpha.254",
     "@toa.io/norm": "1.0.0-alpha.259",

@@ -11,7 +11,6 @@ const { Service } = require('./service')
 
 class Factory {
   #context
-  #root
   #mono
   #compositions
   #dependencies
@@ -21,7 +20,6 @@ class Factory {
 
   constructor (context, options = {}) {
     this.#context = context
-    this.#root = options.root
     this.#mono = options.mono === true
     this.#process = new Process()
 
@@ -34,7 +32,7 @@ class Factory {
     if (this.#mono)
       this.#image = this.#registry.mono({
         components: context.components
-      }, this.#root)
+      })
     else
       this.#compositions = context.compositions.map((composition) => this.#composition(composition))
   }
@@ -108,7 +106,7 @@ class Factory {
   static async create (path, environment, options = {}) {
     const context = await load(path, environment)
 
-    return new Factory(context, { ...options, root: path })
+    return new Factory(context, options)
   }
 }
 
