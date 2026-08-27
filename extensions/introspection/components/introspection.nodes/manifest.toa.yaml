@@ -18,17 +18,15 @@ entity:
     extensions: ~
 
 operations:
-  transit:
+  # a mass transition: the scope is inferred from the algorithm's `objects` parameter
+  merge:
     concurrency: retry
     input:
-      namespace*: string
-      component*: string
-      version: string
-      entity: ~
-      operations: ~
-      events: ~
-      receivers: ~
-      extensions: ~
+      type: object
+      properties:
+        nodes:
+          type: object
+      required: [nodes]
 
 # the map must not describe itself
 introspection: false

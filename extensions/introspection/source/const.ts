@@ -6,12 +6,6 @@ export const ENV = 'TOA_INTROSPECTION'
 export const NODES = 'nodes'
 export const EDGES = 'edges'
 
-/** `introspection.nodes` upserts a component description. */
-export const TRANSIT = 'transit'
-
-/** `introspection.edges` folds a batch of increments in, over `query.ids`. */
-export const MERGE = 'merge'
-
 export const DEFAULT_INTERVAL = 15
 export const DEFAULT_THRESHOLD = 256
 

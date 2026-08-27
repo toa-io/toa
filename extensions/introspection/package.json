@@ -23,7 +23,7 @@
     "openspan": "1.0.0-alpha.254"
   },
   "scripts": {
-    "transpile": "npx tsc && npx tsc -p ./components/introspection.edges",
+    "transpile": "npx tsc && npx tsc -p ./components/introspection.nodes && npx tsc -p ./components/introspection.edges",
     "features": "npx cucumber-js --tags 'not @samples and not @shutdown' && TOA_INTROSPECTION_SAMPLES=1 npx cucumber-js --tags @samples && TOA_INTROSPECTION_INTERVAL=3600 npx cucumber-js --tags @shutdown"
   }
 }
