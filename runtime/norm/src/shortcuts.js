@@ -50,7 +50,8 @@ const SHORTCUTS = {
   configuration: '@toa.io/extensions.configuration',
   stash: '@toa.io/extensions.stash',
   storages: '@toa.io/extensions.storages',
-  telemetry: '@toa.io/extensions.telemetry'
+  telemetry: '@toa.io/extensions.telemetry',
+  introspection: '@toa.io/extensions.introspection'
 }
 
 exports.recognize = recognize

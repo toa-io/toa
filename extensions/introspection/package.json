@@ -1,0 +1,29 @@
+{
+  "name": "@toa.io/extensions.introspection",
+  "version": "1.0.0-alpha.259",
+  "description": "Toa Introspection",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.259",
+    "@toa.io/generic": "1.0.0-alpha.254",
+    "@toa.io/schemas": "1.0.0-alpha.254",
+    "openspan": "1.0.0-alpha.254"
+  },
+  "scripts": {
+    "transpile": "npx tsc && npx tsc -p ./components/introspection.edges",
+    "features": "npx cucumber-js --tags 'not @samples and not @shutdown' && TOA_INTROSPECTION_SAMPLES=1 npx cucumber-js --tags @samples && TOA_INTROSPECTION_INTERVAL=3600 npx cucumber-js --tags @shutdown"
+  }
+}

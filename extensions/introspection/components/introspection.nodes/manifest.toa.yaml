@@ -1,0 +1,42 @@
+namespace: introspection
+name: nodes
+
+# The static description of an application component: entity, operations, events, receivers.
+# Every replica of a component announces the same id, thus `transit` is an upsert
+# (`associated` initializes a missing object) and re-announcing refreshes `_updated`.
+
+entity:
+  associated: true
+  schema:
+    namespace*: string
+    component*: string
+    version: string
+    entity: ~
+    operations: ~
+    events: ~
+    receivers: ~
+    extensions: ~
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      namespace*: string
+      component*: string
+      version: string
+      entity: ~
+      operations: ~
+      events: ~
+      receivers: ~
+      extensions: ~
+
+# the map must not describe itself
+introspection: false
+
+exposition:
+  /:
+    auth:role: system:introspection
+    GET: enumerate
+  /:id:
+    auth:role: system:introspection
+    GET: observe

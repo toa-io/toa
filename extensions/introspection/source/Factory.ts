@@ -1,0 +1,140 @@
+import { Connector } from '@toa.io/core'
+import { DISABLED, environment, component as declaration, settings } from './annotation'
+import { NAMESPACE } from './const'
+import { describe } from './describe'
+import { Reporter } from './Reporter'
+import { Tenant } from './Tenant'
+import { Composition } from './Composition'
+import { Explorer } from './Explorer'
+import { capture, samplable } from './sample'
+import type { Declaration, Options, Settings } from './annotation'
+import type { Kind, Origin, Outcome, Target } from './model'
+import type { Manifest } from '@toa.io/norm'
+import type { Component, Locator, Reply, Request, bindings, extensions } from '@toa.io/core'
+
+export class Factory implements extensions.Factory {
+  private readonly boot: Bootloader
+  private readonly options: Options | null
+  private readonly settings: Record<string, Settings> = {}
+  private reporter: Reporter | null = null
+
+  public constructor (boot: Bootloader) {
+    this.boot = boot
+    this.options = environment()
+  }
+
+  public tenant (locator: Locator, decl: Declaration | null, manifest: Manifest): Connector {
+    const resolved = settings(locator.namespace, declaration(decl), this.options)
+
+    this.settings[locator.id] = resolved
+
+    if (!resolved.enabled || locator.namespace === NAMESPACE)
+      return new Connector()
+
+    return new Tenant(this.collector(), describe(manifest))
+  }
+
+  public component (component: Component): Component {
+    const locator = component.locator
+    const resolved = this.resolve(locator)
+
+    if (!resolved.enabled)
+      return component
+
+    const reporter = this.collector()
+    const invoke = component.invoke.bind(component)
+
+    component.invoke = async (endpoint: string, request: Request): Promise<any> => {
+      let outcome: Outcome = 'ok'
+      let reply: Reply | undefined
+
+      try {
+        reply = await invoke(endpoint, request)
+
+        if (reply?.exception !== undefined) outcome = 'exception'
+        else if (reply?.error !== undefined) outcome = 'error'
+
+        return reply
+      } catch (error) {
+        outcome = 'exception'
+
+        throw error
+      } finally {
+        // a call that failed is still a connection between two components
+        const src: Origin = request?.source ?? UNKNOWN
+        const dst: Target = { namespace: locator.namespace, component: locator.name, operation: endpoint }
+        const kind: Kind = 'event' in src ? 'event' : 'call'
+
+        const sample = resolved.samples && samplable(request?.input)
+          ? capture(request?.input, outcome)
+          : undefined
+
+        reporter.observe({ kind, src, dst, sample })
+      }
+    }
+
+    component.depends(reporter)
+
+    return component
+  }
+
+  public emitter (emitter: bindings.Emitter, label: string, locator: Locator): bindings.Emitter {
+    const resolved = this.resolve(locator)
+
+    if (!resolved.enabled)
+      return emitter
+
+    const reporter = this.collector()
+    const emit = emitter.emit.bind(emitter)
+
+    // an event with no subscribers has no inbound edge, this is what makes it visible
+    const src: Origin = { namespace: locator.namespace, component: locator.name }
+    const dst: Target = { namespace: locator.namespace, component: locator.name, event: label }
+
+    emitter.emit = async (message) => {
+      reporter.observe({ kind: 'publish', src, dst })
+
+      return await emit(message)
+    }
+
+    emitter.depends(reporter)
+
+    return emitter
+  }
+
+  public service (): Connector | null {
+    if (this.options === null)
+      return null
+
+    const composition = new Composition(this.boot)
+    const explorer = new Explorer()
+
+    explorer.depends(composition)
+
+    return explorer
+  }
+
+  /**
+   * `tenant()` runs before any component is created, so settings are warm.
+   * A component booted on its own (without a composition) falls back to
+   * the environment, with sampling off.
+   */
+  private resolve (locator: Locator): Settings {
+    if (locator.namespace === NAMESPACE)
+      return DISABLED
+
+    return this.settings[locator.id] ??
+      settings(locator.namespace, {}, this.options === null ? null : { ...this.options, samples: false })
+  }
+
+  private collector (): Reporter {
+    this.reporter ??= new Reporter(this.boot, this.options!)
+
+    return this.reporter
+  }
+}
+
+const UNKNOWN = { service: 'unknown' } as const
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+export type Bootloader = typeof import('@toa.io/boot')

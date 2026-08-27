@@ -3,7 +3,7 @@
 const extensions = async (context) => {
   const extensions = {}
   const components = context.components?.slice() ?? []
-  const extracted = await extractExtensionComponents(components, extensions)
+  const extracted = await extractExtensionComponents(components, extensions, context.annotations)
 
   components.push(...extracted)
 
@@ -20,8 +20,9 @@ const extensions = async (context) => {
   return { extensions, components: extracted }
 }
 
-async function extractExtensionComponents (components, extensions) {
+async function extractExtensionComponents (components, extensions, annotations) {
   const { component: load } = require('../../component')
+  const { load: loadDependency } = require('./load')
 
   const extracted = []
 
@@ -33,11 +34,14 @@ async function extractExtensionComponents (components, extensions) {
 
       extensions[reference] = []
 
-      const mod = require(reference)
+      const { metadata, module: mod } = loadDependency(reference)
 
       if (mod.components === undefined) continue
 
-      for (const path of mod.components().paths) {
+      // the annotation decides whether an extension contributes components at all
+      const annotation = annotations?.[metadata?.name ?? reference]
+
+      for (const path of mod.components(annotation).paths) {
         const component = await load(path)
 
         extracted.push(component)
@@ -48,7 +52,7 @@ async function extractExtensionComponents (components, extensions) {
   if (extracted.length === 0)
     return extracted
 
-  const deeper = await extractExtensionComponents(extracted, extensions)
+  const deeper = await extractExtensionComponents(extracted, extensions, annotations)
 
   return extracted.concat(deeper)
 }

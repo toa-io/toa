@@ -1,0 +1,36 @@
+namespace: introspection
+name: edges
+
+# One document per edge of the map. Every replica of a component derives the same
+# id for the same edge, so `merge` is an upsert and `_updated` shows when the edge
+# was last observed.
+
+entity:
+  associated: true
+  schema:
+    kind*: string # call | event | publish
+    src: ~
+    dst: ~
+    sample: ~
+
+operations:
+  # a mass transition: the scope is inferred from the algorithm's `objects` parameter
+  merge:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        edges:
+          type: object
+      required: [edges]
+
+# the map must not describe itself
+introspection: false
+
+exposition:
+  /:
+    auth:role: system:introspection
+    GET: enumerate
+  /:id:
+    auth:role: system:introspection
+    GET: observe

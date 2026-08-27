@@ -1,0 +1,11 @@
+namespace: probe
+name: quiet
+
+# opted out entirely: neither described nor instrumented
+introspection: false
+
+operations:
+  ping:
+    input:
+      a: number
+    output: number
