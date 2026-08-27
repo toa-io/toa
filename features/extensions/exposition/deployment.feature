@@ -11,7 +11,7 @@ Feature: Exposition deployment
           key0: secret.key
       """
     When I export images
-    Then the file ./images/extension-exposition-gateway.*/Dockerfile contains exact line 'CMD ["toa", "serve", "."]'
+    Then the file ./images/extension-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve .'
 
   Scenario: Deploying component configuration
     Given I have a context with:
@@ -50,7 +50,7 @@ Feature: Exposition deployment
             value: mongodb://database.url
       """
 
-  Scenario: Deploying `debug` and `trace` options
+  Scenario: Deploying the `debug` option
     Given I have a context with:
       """yaml
       configuration:
@@ -61,7 +61,6 @@ Feature: Exposition deployment
           a: api.a.dev
           b: api.b.dev
         debug: true
-        trace: true
       """
     When I export deployment
     Then exported values should contain:
@@ -70,5 +69,5 @@ Feature: Exposition deployment
         - name: exposition-gateway
           variables:
           - name: TOA_EXPOSITION_PROPERTIES
-            value: "eyJhdXRob3JpdGllcyI6eyJhIjoiYXBpLmEuZGV2IiwiYiI6ImFwaS5iLmRldiJ9LCJkZWJ1ZyI6dHJ1ZSwidHJhY2UiOnRydWV9"
+            value: "eyJhdXRob3JpdGllcyI6eyJhIjoiYXBpLmEuZGV2IiwiYiI6ImFwaS5iLmRldiJ9LCJkZWJ1ZyI6dHJ1ZX0="
       """
