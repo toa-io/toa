@@ -15,6 +15,16 @@ export interface Mono {
   resources?: Resources
 }
 
+/**
+ * Cluster-level ingress configuration, applied to every service that declares one.
+ */
+export interface Ingress {
+  hosts?: string[]
+  class?: string
+  annotations?: Record<string, string>
+  default?: boolean
+}
+
 export interface Declaration {
   name: string
   description?: string
@@ -23,5 +33,6 @@ export interface Declaration {
   registry?: Registry | string
   compositions?: Composition[]
   mono?: Mono
+  ingress?: Ingress
   annotations?: Record<string, object>
 }

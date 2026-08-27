@@ -56,6 +56,86 @@ Feature: Service Deployment
       - host: api.bar.dev
       """
 
+  Scenario: A service claims a path prefix and its own port
+    Given I have a component `exposed.one`
+    And I have a context with:
+      """yaml
+      exposition:
+        authorities:
+          local: api.dev
+        /:
+          GET:
+            dev:stub: ok!
+      configuration:
+        identity.tokens:
+          key0: secret.key
+      ingress:
+        hosts:
+          - api.dev
+      """
+    When I export deployment for dev
+    And I run `helm template deployment`
+    Then program should exit
+    And extension-introspection-explorer Ingress rules spec should contain:
+      """
+      - host: api.dev
+        http:
+          paths:
+            - path: /.introspection
+              pathType: Prefix
+              backend:
+                service:
+                  name: extension-introspection-explorer
+                  port:
+                    number: 8002
+      """
+    And extension-exposition-gateway Ingress rules spec should contain:
+      """
+      - host: api.dev
+        http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: extension-exposition-gateway
+                  port:
+                    number: 8000
+      """
+
+  Scenario: The context supplies ingress annotations to every service
+    Given I have a component `exposed.one`
+    And I have a context with:
+      """yaml
+      exposition:
+        authorities:
+          local: api.dev
+        /:
+          GET:
+            dev:stub: ok!
+      configuration:
+        identity.tokens:
+          key0: secret.key
+      ingress:
+        hosts:
+          - api.dev
+        annotations:
+          alb.ingress.kubernetes.io/group.name: example
+      """
+    When I export deployment for dev
+    And I run `helm template deployment`
+    Then program should exit
+    And extension-introspection-explorer Ingress metadata spec should contain:
+      """
+      annotations:
+        alb.ingress.kubernetes.io/group.name: example
+      """
+    And extension-exposition-gateway Ingress metadata spec should contain:
+      """
+      annotations:
+        alb.ingress.kubernetes.io/group.name: example
+      """
+
   Scenario: Deploy a service with probes
     Given I have a component `exposed.one`
     And I have a context with:
