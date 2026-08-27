@@ -12,7 +12,7 @@ async function invoke (argv) {
   await composition.connect()
 
   const manifest = await boot.manifest(path)
-  const remote = await boot.remote(manifest.locator, manifest)
+  const remote = await boot.remote(manifest.locator, SOURCE, manifest)
   await remote.connect()
 
   let reply
@@ -26,5 +26,7 @@ async function invoke (argv) {
 
   if (reply !== undefined) console.log(reply)
 }
+
+const SOURCE = { service: 'cli' }
 
 exports.invoke = invoke

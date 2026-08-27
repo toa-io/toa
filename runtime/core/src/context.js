@@ -9,6 +9,7 @@ class Context extends Connector {
   env
   name
   aspects
+  locator
 
   #local
   #discover
@@ -20,6 +21,7 @@ class Context extends Connector {
     this.env = process.env.TOA_ENV
     this.name = process.env.TOA_CONTEXT
     this.aspects = aspects
+    this.locator = local?.locator
 
     this.#local = local
     this.#discover = discover

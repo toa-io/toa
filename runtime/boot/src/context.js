@@ -5,7 +5,7 @@ const { Context, Locator } = require('@toa.io/core')
 const boot = require('./index')
 
 const context = async (manifest) => {
-  const local = await boot.remote(manifest.locator, manifest)
+  const local = await boot.remote(manifest.locator, undefined, manifest)
   const aspects = boot.extensions.aspects(manifest)
 
   const lookup = async (namespace, name) => {
