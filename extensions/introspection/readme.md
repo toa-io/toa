@@ -22,6 +22,7 @@ introspection:
   samples: false      # capture the actual payloads of calls
   interval: 15        # how often a component reports, seconds
   threshold: 256      # report earlier once this many edges are pending
+  ui: true            # publish the UI
   resources:          # explorer pod limits
     cpu: [100m, 500m]
     memory: [128Mi, 256Mi]
@@ -61,6 +62,34 @@ handles personal data should opt out permanently in its own manifest.
 Payloads of the `identity` namespace are never captured, keys that look like secrets are masked, and
 oversized payloads are dropped.
 
+## The UI
+
+The UI is published at `/.introspection`, on the hosts the context declares:
+
+```yaml
+# context.toa.yaml
+
+ingress:
+  hosts:
+    - api.example.com
+  class: alb
+  annotations:
+    alb.ingress.kubernetes.io/group.name: example
+```
+
+This section is what every service uses to reach the outside; without it the UI has nowhere to land
+and `toa export` says so. To collect the map without publishing anything, set `ui: false`.
+
+List the same hostnames Exposition serves — the page is static and reads the map from the API on its
+own origin, so a host Exposition does not serve gives a page that cannot load anything.
+
+Two services now share one host, which is a question for the ingress controller rather than for
+Toa: ingress-nginx merges them, while AWS ALB needs `alb.ingress.kubernetes.io/group.name` on both.
+The `annotations` above are applied to every service, which is the place to put it.
+
+Reading the map still needs the `system:introspection` role. The page itself is served without
+authentication — it is a page, and it displays nothing the API has not already granted.
+
 ## Reading the map
 
 The map lives in two ordinary components, `introspection.nodes` and `introspection.edges`. Both
@@ -78,5 +107,9 @@ that no longer exists is recognized.
 
 ## Resources
 
-The explorer runs as the `introspection-explorer` service. It needs a database: the components use
-the context's `mongodb` annotation like any other.
+The explorer runs as the `introspection-explorer` service on port `8002`. It needs a database: the
+components use the context's `mongodb` annotation like any other.
+
+A port belongs to one service only — `toa export` refuses two claims on the same one, because
+`toa mono` and a local run put every service in one process. Taken so far: `8000` by the exposition
+gateway, `8001` by the telemetry readiness probe, `8002` here.

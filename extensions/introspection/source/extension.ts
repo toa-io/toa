@@ -1,7 +1,7 @@
 import { encode } from '@toa.io/generic'
 import { options } from './annotation'
 import { components } from './Composition'
-import { ENV } from './const'
+import { ENV, UI_PATH, UI_PORT } from './const'
 import * as schemas from './schemas'
 import type { Annotation } from './annotation'
 import type { Dependency, Instances, Service } from '@toa.io/operations'
@@ -22,6 +22,8 @@ export function deployment (_: Instances<unknown>, annotation?: Annotation): Dep
   if (annotation !== undefined)
     schemas.annotation.validate(annotation)
 
+  const opts = options(annotation)
+
   const service: Service = {
     group: 'introspection',
     name: 'explorer',
@@ -31,8 +33,13 @@ export function deployment (_: Instances<unknown>, annotation?: Annotation): Dep
     variables: []
   }
 
+  if (opts.ui) {
+    service.port = UI_PORT
+    service.ingress = { path: UI_PATH }
+  }
+
   return {
     services: [service],
-    variables: { global: [{ name: ENV, value: encode(options(annotation)) }] }
+    variables: { global: [{ name: ENV, value: encode(opts) }] }
   }
 }

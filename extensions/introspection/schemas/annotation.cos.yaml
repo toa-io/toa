@@ -6,6 +6,7 @@ interval:
 threshold:
   type: integer
   minimum: 1
+ui: boolean
 resources:
   cpu: &constraint
     type: array

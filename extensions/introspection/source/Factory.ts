@@ -1,11 +1,12 @@
 import { Connector } from '@toa.io/core'
 import { DISABLED, environment, component as declaration, settings } from './annotation'
-import { NAMESPACE } from './const'
+import { NAMESPACE, UI_PATH, UI_PORT } from './const'
 import { describe } from './describe'
 import { Reporter } from './Reporter'
 import { Tenant } from './Tenant'
 import { Composition } from './Composition'
 import { Explorer } from './Explorer'
+import { UI } from './UI'
 import { capture, samplable } from './sample'
 import type { Declaration, Options, Settings } from './annotation'
 import type { Kind, Origin, Outcome, Target } from './model'
@@ -110,6 +111,9 @@ export class Factory implements extensions.Factory {
     const explorer = new Explorer()
 
     explorer.depends(composition)
+
+    if (this.options.ui)
+      explorer.depends(new UI(UI_PORT, UI_PATH))
 
     return explorer
   }

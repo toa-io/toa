@@ -53,7 +53,7 @@ export class Map {
     this.composition = null
   }
 
-  @before()
+  @before('not @ui')
   public async run (): Promise<void> {
     await clean()
 
@@ -67,7 +67,7 @@ export class Map {
     await this.composition.connect()
   }
 
-  @after()
+  @after('not @ui')
   public async shutdown (): Promise<void> {
     this.remotes = {}
 

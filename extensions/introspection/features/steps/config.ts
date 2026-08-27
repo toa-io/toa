@@ -11,7 +11,10 @@ process.env.TOA_DEV = '1'
 process.env.TOA_INTROSPECTION = encode({
   samples: process.env.TOA_INTROSPECTION_SAMPLES === '1',
   interval: Number(process.env.TOA_INTROSPECTION_INTERVAL ?? 1),
-  threshold: 64
+  threshold: 64,
+
+  // `ui.feature` starts its own server; the explorer must not take the port first
+  ui: false
 })
 
 setDefaultTimeout(60 * 1000)

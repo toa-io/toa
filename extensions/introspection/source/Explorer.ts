@@ -2,8 +2,8 @@ import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 
 /**
- * The explorer process. It hosts the introspection components and nothing else:
- * the map is read through their own operations.
+ * The explorer process. It hosts the introspection components — the map is read
+ * through their own operations — and serves the UI.
  */
 export class Explorer extends Connector {
   protected override async open (): Promise<void> {

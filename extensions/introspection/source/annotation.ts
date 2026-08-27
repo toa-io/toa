@@ -10,6 +10,8 @@ export type Annotation = false | {
   interval?: number
   /** Flush as soon as this many distinct edges are buffered. */
   threshold?: number
+  /** Publish the UI. On by default. */
+  ui?: boolean
   resources?: Resources
 }
 
@@ -23,6 +25,7 @@ export interface Options {
   samples: boolean
   interval: number
   threshold: number
+  ui: boolean
 }
 
 /** The effective per-component decision. */
@@ -39,7 +42,8 @@ export function options (annotation?: Annotation): Options {
   return {
     samples: declaration.samples === true,
     interval: declaration.interval ?? DEFAULT_INTERVAL,
-    threshold: declaration.threshold ?? DEFAULT_THRESHOLD
+    threshold: declaration.threshold ?? DEFAULT_THRESHOLD,
+    ui: declaration.ui !== false
   }
 }
 

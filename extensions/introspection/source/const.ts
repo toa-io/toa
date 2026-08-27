@@ -6,6 +6,10 @@ export const ENV = 'TOA_INTROSPECTION'
 export const NODES = 'nodes'
 export const EDGES = 'edges'
 
+/** Where the UI is mounted; `/introspection/*` belongs to the components' own API. */
+export const UI_PATH = '/.introspection'
+export const UI_PORT = 8002
+
 export const DEFAULT_INTERVAL = 15
 export const DEFAULT_THRESHOLD = 256
 

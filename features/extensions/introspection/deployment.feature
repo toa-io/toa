@@ -45,7 +45,7 @@ Feature: Introspection deployment
       compositions:
         - variables:
           - name: TOA_INTROSPECTION
-            value: eyJzYW1wbGVzIjpmYWxzZSwiaW50ZXJ2YWwiOjE1LCJ0aHJlc2hvbGQiOjI1Nn0=
+            value: eyJzYW1wbGVzIjpmYWxzZSwiaW50ZXJ2YWwiOjE1LCJ0aHJlc2hvbGQiOjI1NiwidWkiOnRydWV9
       """
 
   Scenario: Enabling samples
@@ -60,7 +60,7 @@ Feature: Introspection deployment
       compositions:
         - variables:
           - name: TOA_INTROSPECTION
-            value: eyJzYW1wbGVzIjp0cnVlLCJpbnRlcnZhbCI6MTUsInRocmVzaG9sZCI6MjU2fQ==
+            value: eyJzYW1wbGVzIjp0cnVlLCJpbnRlcnZhbCI6MTUsInRocmVzaG9sZCI6MjU2LCJ1aSI6dHJ1ZX0=
       """
 
   Scenario: Disabling introspection
@@ -94,4 +94,41 @@ Feature: Introspection deployment
       """yaml
       services:
         - name: introspection-explorer
+      """
+
+  Scenario: Publishing the UI
+    Given I have a context
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      services:
+        - name: introspection-explorer
+          port: 8002
+          ingress:
+            path: /.introspection
+            hosts:
+              - localhost
+      """
+
+  Scenario: Collecting the map without publishing the UI
+    Given I have a context with:
+      """yaml
+      introspection:
+        ui: false
+      """
+    When I export deployment
+    Then exported values should not contain:
+      """yaml
+      services:
+        - name: introspection-explorer
+          ingress:
+            path: /.introspection
+      """
+
+  Scenario: The UI has nowhere to be published
+    Given I have a context
+    And the context has no `ingress` annotation
+    Then exporting deployment fails with:
+      """
+      Service 'introspection-explorer' declares an ingress, but no hosts are defined. Declare them in the context's 'ingress' section.
       """
