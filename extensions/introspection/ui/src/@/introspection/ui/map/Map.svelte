@@ -1,9 +1,6 @@
 <script lang="ts">
   import { Async, combined } from 'svas'
-  import { ArrowLeft } from '@lucide/svelte'
   import { edges, nodes } from '@/introspection'
-  import { Button } from '$ui/button'
-  import { base } from '$app/paths'
   import { dict } from '../intl'
   import { viewport, zoomIdentity, type Controls, type ZoomTransform } from './viewport'
   import { build } from './graph'
@@ -68,17 +65,4 @@
       </div>
     {/snippet}
   </Async>
-
-  {#if focus !== null}
-    <Button
-      variant="secondary"
-      size="sm"
-      href="{base}/map/"
-      class="absolute start-4 top-4"
-      data-sveltekit-noscroll
-    >
-      <ArrowLeft />
-      {$dict.map.back}
-    </Button>
-  {/if}
 </div>

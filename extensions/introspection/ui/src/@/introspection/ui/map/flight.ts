@@ -32,7 +32,7 @@ export async function open(id: string): Promise<void> {
   // the name has to be on the element before the browser takes the leaving snapshot
   await tick()
 
-  await goto(`${base}/map/${slug(id)}/`)
+  await goto(`${base}/${slug(id)}/`)
 }
 
 /**
@@ -41,5 +41,5 @@ export async function open(id: string): Promise<void> {
  */
 export async function leave(): Promise<void> {
   if (window.navigation?.canGoBack === true) window.history.back()
-  else await goto(`${base}/map/`)
+  else await goto(`${base}/`)
 }

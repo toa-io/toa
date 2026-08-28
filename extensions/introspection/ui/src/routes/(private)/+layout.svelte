@@ -40,8 +40,8 @@
   }
 
   const tabs = $derived([
-    { id: 'list', href: `${base}/`, label: $dict.nav.list, Icon: List },
-    { id: 'map', href: `${base}/map/`, label: $dict.nav.map, Icon: Waypoints },
+    { id: 'map', href: `${base}/`, label: $dict.nav.map, Icon: Waypoints },
+    { id: 'list', href: `${base}/list/`, label: $dict.nav.list, Icon: List },
   ])
 
   /**

@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { Nodes } from '@/introspection/ui'
+  import { Map } from '@/introspection/ui/map'
 </script>
 
-<div class="mx-auto h-full max-w-3xl overflow-auto px-4 pb-12">
-  <Nodes />
-</div>
+<Map class="h-full" />
