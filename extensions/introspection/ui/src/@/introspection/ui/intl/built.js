@@ -56,7 +56,9 @@ export const dictionaries = {
       "binding": "binding",
       "conditioned": "conditioned",
       "adaptive": "adaptive",
-      "none": "none"
+      "none": "none",
+      "copy": "Copy JSON Schema",
+      "unset": "not defined"
     },
     "map": {
       "empty": "The map has no connections yet.",

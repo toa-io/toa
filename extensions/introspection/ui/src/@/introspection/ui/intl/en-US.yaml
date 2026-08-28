@@ -27,6 +27,8 @@ node:
   conditioned: conditioned
   adaptive: adaptive
   none: none
+  copy: Copy JSON Schema
+  unset: not defined
 map:
   empty: The map has no connections yet.
   back: Back to the map

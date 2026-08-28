@@ -6,7 +6,7 @@
   import { browser } from '$app/environment'
   import type { Props, Retriever } from './Clipboard'
 
-  const { text, label, disabled, oncopy, class: classes, ...rest }: Props = $props()
+  const { text, label, disabled, oncopy, icon, class: classes, ...rest }: Props = $props()
 
   let copied = $state(false)
   let waiting = $state(false)
@@ -54,6 +54,8 @@
     <Check class="text-constructive" strokeWidth={3} />
   {:else if waiting}
     <Spinner />
+  {:else if icon !== undefined}
+    {@render icon()}
   {:else}
     <Copy />
   {/if}

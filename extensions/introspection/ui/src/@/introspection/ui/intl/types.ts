@@ -27,6 +27,8 @@ export type Dictionary = {
         conditioned: string
         adaptive: string
         none: string
+        copy: string
+        unset: string
       }
       map: {
         empty: string

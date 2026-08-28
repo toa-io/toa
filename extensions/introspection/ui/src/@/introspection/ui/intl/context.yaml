@@ -55,6 +55,12 @@ inputs:
     none:
       input: none
       context: inline field label in a technical inspector, lowercase, no sentence case
+    copy:
+      input: Copy the JSON Schema
+      context: accessible name of a small icon button that puts the original schema on the clipboard
+    unset:
+      input: not defined
+      context: "stands where a manifest declares no schema at all: the input, output or errors of an operation"
   map:
     empty:
       input: The map has no connections yet.
