@@ -4,6 +4,10 @@ Feature: Call edges
   it is, on the request, so a caller that runs no collector of its own — a service,
   the CLI — still appears on the map. A local call and a remote one are the same.
 
+  The origin is what tells a direct call apart from the delivery of an event. Which
+  events exist and who receives them is declared, so it is a node's business; an
+  edge is what actually happened.
+
   Scenario: A remote call
     When the `probe.source.relay` is called with:
       """yaml
@@ -13,7 +17,6 @@ Feature: Call edges
       """
     Then the map contains an edge:
       """yaml
-      kind: call
       src:
         namespace: probe
         component: source
@@ -22,6 +25,26 @@ Feature: Call edges
         namespace: probe
         component: target
         operation: compute
+      """
+
+  Scenario: A call caused by an event
+    When the `probe.source.transit` is called with:
+      """yaml
+      query:
+        id: c0ffee00c0ffee00c0ffee00c0ffee00
+      input:
+        value: 1
+      """
+    Then the map contains an edge:
+      """yaml
+      src:
+        namespace: probe
+        component: source
+        event: created
+      dst:
+        namespace: probe
+        component: target
+        operation: count
       """
 
   Scenario: A call from a service
@@ -35,7 +58,6 @@ Feature: Call edges
       """
     Then the map contains an edge:
       """yaml
-      kind: call
       src:
         service: cli
       dst:
@@ -53,7 +75,6 @@ Feature: Call edges
       """
     Then the map contains an edge:
       """yaml
-      kind: call
       src:
         service: unknown
       dst:
@@ -69,7 +90,6 @@ Feature: Call edges
       """
     Then the map contains an edge:
       """yaml
-      kind: call
       dst:
         namespace: probe
         component: source
@@ -83,7 +103,6 @@ Feature: Call edges
       """
     Then the map contains an edge:
       """yaml
-      kind: call
       dst:
         namespace: probe
         component: source

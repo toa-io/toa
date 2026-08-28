@@ -1,7 +1,9 @@
 Feature: Component descriptions
 
   The static half of the map: what each component is, taken from its manifest
-  when the composition starts.
+  when the composition starts. This is where the event graph lives — which events
+  a component publishes, and which event each of its receivers takes — since all
+  of it is declared, and none of it needs traffic to be true.
 
   Scenario: Describing operations
     Then the map contains a node:
@@ -54,6 +56,7 @@ Feature: Component descriptions
       receivers:
         - label: probe.source.created
           source: probe.source
+          event: created
           operation: count
           conditioned: false
           adaptive: false

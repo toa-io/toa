@@ -18,7 +18,6 @@ Feature: Graceful shutdown
     And the components are stopped
     Then the map contains an edge:
       """yaml
-      kind: call
       src:
         namespace: probe
         component: source

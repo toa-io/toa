@@ -3,9 +3,10 @@
 Builds a map of an application: its components, and the connections between them.
 
 The map has two halves. The **nodes** describe each component as its manifest declares it — entity,
-operations with their input and output schemas, events, receivers. The **edges** are the connections
-observed while the application runs — which operation calls which, which event reaches which
-receiver, and which events are published, including those nobody listens to.
+operations with their input and output schemas, events it publishes, receivers and the event each of
+them takes. This is the whole wiring of the application, and it is true before a single request is
+served. The **edges** are the calls observed while it runs, each carrying the origin that caused
+it — another operation, an event, or a service — which is how the wiring is seen to be alive.
 
 The extension participates in every composition. Nothing has to be declared to get a map.
 

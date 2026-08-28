@@ -3,20 +3,17 @@ import type { Source } from '@toa.io/core'
 export type { Source }
 
 /**
- * The caller side of an edge. A publish has no operation: the emitting
- * component itself is the origin.
+ * The caller side of an edge: the operation that made the call, the event that
+ * caused it, or the service the call came from.
  */
-export type Origin = Source | { namespace: string, component: string }
+export type Origin = Source
 
 /** The callee side of an edge. */
 export interface Target {
   namespace: string
   component: string
-  operation?: string
-  event?: string
+  operation: string
 }
-
-export type Kind = 'call' | 'event' | 'publish'
 
 export interface Operation {
   endpoint: string
@@ -36,6 +33,7 @@ export interface Event {
 export interface Receiver {
   label: string
   source: string
+  event: string
   operation: string
   conditioned: boolean
   adaptive: boolean
@@ -71,11 +69,13 @@ export interface Sample {
 export type Outcome = 'ok' | 'error' | 'exception'
 
 /**
- * A connection observed in a process between flushes.
+ * A call observed in a process between flushes. What the application declares —
+ * which events exist, and which receiver takes which — is a node's business;
+ * an edge is what actually happened.
+ *
  * Sent to `introspection.edges`.
  */
 export interface Edge {
-  kind: Kind
   src: Origin
   dst: Target
   sample?: Sample

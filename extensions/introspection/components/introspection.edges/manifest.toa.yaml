@@ -1,14 +1,17 @@
 namespace: introspection
 name: edges
 
-# One document per edge of the map. Every replica of a component derives the same
-# id for the same edge, so `merge` is an upsert and `_updated` shows when the edge
-# was last observed.
+# One document per edge of the map: a call one component made to another, with `src`
+# saying what caused it — another operation, an event, or a service. What the
+# application declares is described by `introspection.nodes`; an edge is what
+# actually happened.
+#
+# Every replica of a component derives the same id for the same edge, so `merge` is
+# an upsert and `_updated` shows when the edge was last observed.
 
 entity:
   associated: true
   schema:
-    kind*: string # call | event | publish
     src: ~
     dst: ~
     sample: ~

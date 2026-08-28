@@ -9,9 +9,9 @@ import { Explorer } from './Explorer'
 import { UI } from './UI'
 import { capture, samplable } from './sample'
 import type { Declaration, Options, Settings } from './annotation'
-import type { Kind, Origin, Outcome, Target } from './model'
+import type { Origin, Outcome, Target } from './model'
 import type { Manifest } from '@toa.io/norm'
-import type { Component, Locator, Reply, Request, bindings, extensions } from '@toa.io/core'
+import type { Component, Locator, Reply, Request, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader
@@ -64,43 +64,18 @@ export class Factory implements extensions.Factory {
         // a call that failed is still a connection between two components
         const src: Origin = request?.source ?? UNKNOWN
         const dst: Target = { namespace: locator.namespace, component: locator.name, operation: endpoint }
-        const kind: Kind = 'event' in src ? 'event' : 'call'
 
         const sample = resolved.samples && samplable(request?.input)
           ? capture(request?.input, outcome)
           : undefined
 
-        reporter.observe({ kind, src, dst, sample })
+        reporter.observe({ src, dst, sample })
       }
     }
 
     component.depends(reporter)
 
     return component
-  }
-
-  public emitter (emitter: bindings.Emitter, label: string, locator: Locator): bindings.Emitter {
-    const resolved = this.resolve(locator)
-
-    if (!resolved.enabled)
-      return emitter
-
-    const reporter = this.collector()
-    const emit = emitter.emit.bind(emitter)
-
-    // an event with no subscribers has no inbound edge, this is what makes it visible
-    const src: Origin = { namespace: locator.namespace, component: locator.name }
-    const dst: Target = { namespace: locator.namespace, component: locator.name, event: label }
-
-    emitter.emit = async (message) => {
-      reporter.observe({ kind: 'publish', src, dst })
-
-      return await emit(message)
-    }
-
-    emitter.depends(reporter)
-
-    return emitter
   }
 
   public service (): Connector | null {

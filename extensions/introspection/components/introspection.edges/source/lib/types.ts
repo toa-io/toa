@@ -9,8 +9,7 @@ export interface Source {
 export interface Target {
   namespace: string
   component: string
-  operation?: string
-  event?: string
+  operation: string
 }
 
 export interface Sample {
@@ -20,7 +19,6 @@ export interface Sample {
 }
 
 export interface Observed {
-  kind: string
   src: Source
   dst: Target
   sample?: Sample

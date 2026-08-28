@@ -1,7 +1,7 @@
 import type { Edge, Input } from './lib/types'
 
 /**
- * Records the edges observed by a collector since its last flush.
+ * Records the calls observed by a collector since its last flush.
  *
  * The scope is `objects`, so the caller passes every affected id in `query.ids`
  * and the matching edge under `edges[id]`. Unknown edges are initialized by the
@@ -14,7 +14,6 @@ export function transition (input: Input, objects: Edge[]): Edge[] {
     if (observed === undefined)
       continue
 
-    edge.kind = observed.kind
     edge.src = observed.src
     edge.dst = observed.dst
 

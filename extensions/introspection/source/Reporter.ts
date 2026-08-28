@@ -44,9 +44,9 @@ export class Reporter extends Connector {
     void this.flush()
   }
 
-  /** A connection between two components. */
+  /** A call between two components. */
   public observe (observed: Edge): void {
-    const id = keys.edge(observed.kind, observed.src, observed.dst)
+    const id = keys.edge(observed.src, observed.dst)
     const edge = this.edges.get(id)
 
     if (edge === undefined) {

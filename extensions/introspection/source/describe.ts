@@ -60,6 +60,7 @@ function receivers (manifest: Manifest): Receiver[] {
     .map(([label, definition]: [string, any]) => ({
       label,
       source: definition.source ?? label.split('.').slice(0, 2).join('.'),
+      event: label.split('.').pop()!,
       operation: definition.operation,
       conditioned: definition.conditioned === true,
       adaptive: definition.adaptive === true
