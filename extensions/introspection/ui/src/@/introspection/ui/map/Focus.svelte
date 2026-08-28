@@ -167,7 +167,12 @@
   {#each [...spot.incoming, ...spot.outgoing] as satellite (satellite.id)}
     <!-- the same component can stand on both sides: it is two cards, one per direction -->
     <div
-      class="absolute top-0 left-0 z-20 cursor-pointer transition-opacity"
+      class={[
+        'absolute top-0 left-0 cursor-pointer transition-opacity',
+        // a closed card is passed behind; an opened one has lines leaving its own rows,
+        // and they would be hidden between the row and the edge of the card
+        opened === satellite.id ? 'z-0' : 'z-20',
+      ]}
       style:translate="{at(satellite.id).x}px {at(satellite.id).y}px"
       style:width="{opened === satellite.id ? FOCUSED.width : CARD.width}px"
       style:opacity={found(satellite.vertex, $query) &&
