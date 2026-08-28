@@ -1,14 +1,14 @@
 # Toa Introspection
 
-Builds a map of an application: its components, and the connections between them.
+Collects and shows how the parts of an application talk to each other.
 
-The map has two halves. The **nodes** describe each component as its manifest declares it — entity,
-operations with their input and output schemas, events it publishes, receivers and the event each of
-them takes. This is the whole wiring of the application, and it is true before a single request is
-served. The **edges** are the calls observed while it runs, each carrying the origin that caused
-it — another operation, an event, or a service — which is how the wiring is seen to be alive.
+Two things make that picture. Every component describes itself — what it can be asked to do, what it
+announces, what it reacts to — and that much is true before a single request is served. Every call
+between components is then recorded as it happens, along with what set it off. One says how the
+application is put together, the other what it actually does.
 
-The extension participates in every composition. Nothing has to be declared to get a map.
+It comes out as a page: a map of the components and the calls between them, and a list of what each
+one declares. Nothing has to be declared to get it — the extension takes part in every composition.
 
 ## Configuration
 
