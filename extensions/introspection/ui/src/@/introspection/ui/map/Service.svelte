@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Radio } from '@lucide/svelte'
+  import { Bolt } from '@lucide/svelte'
   import * as Item from '$ui/item'
   import { SERVICE } from './layout'
   import type { Props } from './Service'
@@ -15,7 +15,7 @@
   class={['bg-muted items-center', className]}
 >
   <Item.Media>
-    <Radio class="text-muted-foreground size-4" />
+    <Bolt class="text-muted-foreground size-4" />
   </Item.Media>
 
   <Item.Content>
