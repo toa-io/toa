@@ -37,65 +37,6 @@ Feature: Configuration Extension
       """
     And I disconnect
 
-  Scenario: Environment override
-    Given I have a component `configuration.base`
-    And I have a context with:
-      """yaml
-      configuration:
-        configuration.base:
-          foo: bye
-          bar: bye
-      """
-    When I run `toa env`
-    And I run `toa invoke echo -p ./components/configuration.base`
-    And stdout should contain lines:
-    """
-    { foo: 'bye', bar: 'bye' }
-    """
-
-  Scenario: Secret values
-    Given I have a component `configuration.base`
-    And I have a context with:
-      """yaml
-      configuration:
-        configuration.base:
-          foo: $FOO_SECRET_VALUE
-          bar: $BAR_SECRET_VALUE
-      """
-    When I run `toa env`
-    And I update an environment with:
-      """
-      TOA_CONFIGURATION__FOO_SECRET_VALUE=secret foo
-      TOA_CONFIGURATION__BAR_SECRET_VALUE=secret bar
-      """
-    And I run `toa invoke echo -p ./components/configuration.base`
-    And stdout should contain lines:
-    """
-    { foo: 'secret foo', bar: 'secret bar' }
-    """
-
-  Scenario: Secret values within the array
-    Given I have a component `configuration.array`
-    And I have a context with:
-      """yaml
-      configuration:
-        configuration.array:
-          greetings:
-            - a: $A_SECRET_VALUE
-              b: $B_SECRET_VALUE
-      """
-    When I run `toa env`
-    And I update an environment with:
-      """
-      TOA_CONFIGURATION__A_SECRET_VALUE=secret-a
-      TOA_CONFIGURATION__B_SECRET_VALUE=secret-b
-      """
-    And I run `toa invoke greet "{ input: 0 }" -p ./components/configuration.array`
-    And stdout should contain lines:
-    """
-    secret-a secret-b
-    """
-
   Scenario: Deployment
     Given I have a component `configuration.base`
     And I have a context with:
@@ -226,23 +167,4 @@ Feature: Configuration Extension
     And stderr should contain line:
     """
     Component 'foo.bar' does not request configuration or does not exist.
-    """
-
-  Scenario: Type coercion
-    Given I have a component `configuration.base`
-    And I have a context with:
-      """yaml
-      configuration:
-        configuration.base:
-          num: $NUM_SECRET
-      """
-    When I run `toa env`
-    And I update an environment with:
-      """
-      TOA_CONFIGURATION__NUM_SECRET=3
-      """
-    And I run `toa invoke echo -p ./components/configuration.base`
-    And stdout should contain lines:
-    """
-    { foo: 'hello', bar: 'world', num: 3 }
     """

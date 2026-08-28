@@ -25,7 +25,7 @@ export class Factory implements extensions.Factory {
   private async discovery (): Promise<Component> {
     const locator = new Locator('streams', 'realtime')
 
-    return await this.boot.remote(locator)
+    return await this.boot.remote(locator, { service: 'realtime' })
   }
 }
 

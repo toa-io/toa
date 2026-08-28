@@ -1,0 +1,27 @@
+namespace: probe
+name: source
+
+entity:
+  associated: true
+  storage: null
+  schema:
+    value:
+      type: integer
+      default: 0
+    secret: string
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      value: .
+      secret: .
+  relay:
+    input:
+      a: number
+      b: number
+    output: number
+  crash: {}
+  fail:
+    errors:
+      - NOPE

@@ -90,3 +90,4 @@ env:
 ignorePatterns:
   - "*.d.ts"
   - "*.js"
+  - "extensions/introspection/ui" # its own project, with its own flat config

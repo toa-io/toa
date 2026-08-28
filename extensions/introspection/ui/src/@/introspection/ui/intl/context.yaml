@@ -1,0 +1,76 @@
+context: Mount 'introspection' context
+inputs:
+  nodes:
+    empty:
+      input: Nothing has reported yet.
+      context: shown when the map holds no components
+    nomatch:
+      input: Nothing matches the filter.
+      context: shown when the filter leaves the list empty
+  node:
+    operations:
+      input: operation
+    events:
+      input: event
+    receivers:
+      input: receiver
+    state:
+      input: state
+      context: "label: the component stores state"
+    extensions:
+      input: extension
+    schema:
+      input: schema
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    input:
+      input: input
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    output:
+      input: output
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    errors:
+      input: errors
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    storage:
+      input: storage
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    associated:
+      input: associated
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    version:
+      input: version
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    binding:
+      input: binding
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    conditioned:
+      input: conditioned
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    adaptive:
+      input: adaptive
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    none:
+      input: none
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    copy:
+      input: Copy the JSON Schema
+      context: accessible name of a small icon button that puts the original schema on the clipboard
+    unset:
+      input: not defined
+      context: "stands where a manifest declares no schema at all: the input, output or errors of an operation"
+  map:
+    empty:
+      input: The map has no connections yet.
+      context: shown when no calls have been observed between components
+    expand:
+      input: Show details
+      context: accessible name of an icon-only chevron button that opens a component card on the map
+    restore:
+      input: ⇧+Click
+      context: keyboard hint shown over a silenced card on the map; holding shift and clicking brings its lines back. Keep the shift symbol, translate the word for a mouse click
+  space:
+    user:
+      input: Userspace
+    system:
+      input: System
+      context: heading over the components the runtime provides, such as identity

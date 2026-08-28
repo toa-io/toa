@@ -1,0 +1,8 @@
+native: English
+locale: en-US
+dir: ltr
+nav:
+  list: List
+  map: Map
+  signout: Sign out
+  filter: Filter components

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "./tools/hooks/guard-intl.sh",
+        "matcher": "Write|Edit"
+      }
+    ]
+  }
+}

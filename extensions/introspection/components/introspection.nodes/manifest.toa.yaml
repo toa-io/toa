@@ -1,0 +1,49 @@
+namespace: introspection
+name: nodes
+
+# The static description of an application component: entity, operations, events, receivers.
+# Every replica of a component announces the same id, thus `merge` is an upsert
+# (`associated` initializes a missing object) and re-announcing refreshes `_updated`.
+
+entity:
+  associated: true
+  schema:
+    namespace*: string
+    component*: string
+    version: string
+    entity: ~
+    operations: ~
+    events: ~
+    receivers: ~
+    extensions: ~
+
+operations:
+  # a mass transition: the scope is inferred from the algorithm's `objects` parameter
+  merge:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        nodes:
+          type: object
+      required: [nodes]
+
+# the map must not describe itself
+introspection: false
+
+exposition:
+  /:
+    auth:role: system:introspection
+
+    # the map is the whole document, and its shape is what the application happens to declare
+    io:output: true
+    cache:control: max-age=60, public
+    # the map is read whole: a page of ten is of no use to anything that draws it
+    GET:
+      endpoint: enumerate
+      query:
+        limit:
+          value: 1000
+          range: [1, 1000]
+    /:id:
+      GET: observe

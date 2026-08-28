@@ -47,6 +47,15 @@ Given('I have a context with:',
     await context.template(this.cwd, additions)
   })
 
+Given('the context has no {token} annotation',
+  /**
+   * @param {string} key
+   * @this {toa.features.Context}
+   */
+  async function(key) {
+    await context.remove(this.cwd, key)
+  })
+
 Then('the environment contains:',
   /**
    * @param {string} [search]

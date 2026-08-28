@@ -1,0 +1,91 @@
+context: Mount 'iam' context
+inputs:
+  auth:
+    refresh:
+      description:
+        input: |-
+          !js
+                  (name) => `${name ? name + ", for" : "For"} security reasons, your credentials have expired. Please log in again to continue.`
+        context: Preserve html tags where appropriate
+      title:
+        input: Welcome back
+      continue:
+        input: Continue
+    signout:
+      input: Sign out
+    login:
+      input: Login
+    signin:
+      input: Sign In
+    copyId:
+      input: Copy the account id
+      context: accessible name of the button that copies the id; the button itself shows only its first characters
+  credentials:
+    connect:
+      input: Connect
+      context: Inert CTA button on a provider row
+    email:
+      title:
+        input: Email
+        context: Provider name
+      description:
+        input: Connect your email address
+    google:
+      title:
+        input: Google
+      description:
+        input: Connect your Google account
+        context: Google provider row description
+    apple:
+      title:
+        input: Apple
+      description:
+        input: Connect your Apple ID
+        context: Apple provider row description
+    passkeys:
+      title:
+        input: Passkeys
+        context: card title for the passkey manager
+      tagline:
+        input: Sign in faster with a passkey
+        context: shown when the user has no passkeys yet
+      create:
+        input: Create
+      manage:
+        input: Manage
+        context: CTA to expand the passkey list
+      collapse:
+        input: Collapse
+        context: CTA to close the expanded passkey card
+      add:
+        input: Enter passkey name
+        context: input placeholder for naming a new passkey
+      delete:
+        input: Hold to delete
+        context: press-and-hold label to remove a passkey
+      unknown:
+        input: Unknown
+        context: fallback name for an unrecognized authenticator
+      count:
+        input: "{n} passkey"
+      meta:
+        input: "!js (added, used) => `Added ${added} · Used ${used}`"
+      duplicate:
+        input: This device already has a passkey for your account
+        context: error shown under the passkey name field when registration is refused as a duplicate
+      failed:
+        input: Could not create the passkey. Please try again.
+        context: generic error shown under the passkey name field when registration fails
+    transfer:
+      action:
+        input: Sign in on another device
+        context: ghost button label that opens a QR dialog to transfer the session to a second device
+      title:
+        input: Scan to sign in
+        context: title of the QR login dialog
+      description:
+        input: Use your other device to scan this code and sign in.
+        context: description under the QR code in the login dialog
+      done:
+        input: Done
+        context: button that closes the QR login dialog

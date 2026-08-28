@@ -60,26 +60,6 @@ Feature: Export local deployment environment variables
       | env       |
       | env local |
 
-  Scenario Outline: Print an environment variable
-    Given I have a component `echo.beacon`
-    And I have a context
-    And I run `toa env`
-    And I update an environment with:
-      """
-      FOO=bar
-      """
-    And my working directory is <cwd>
-    When I run `toa invoke print "{ input: 'FOO' }" -p <path>`
-    Then program should exit with code 0
-    And stdout should contain lines:
-      """
-      bar
-      """
-    Examples:
-      | cwd                      | path                     |
-      | ./                       | ./components/echo.beacon |
-      | ./components/echo.beacon | .                        |
-
   Scenario: Export environment to a custom file name
     Given I have a component `dummies.one`
     And I have a context

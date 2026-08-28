@@ -43,6 +43,8 @@ export interface Dependency {
 }
 
 interface Ingress {
+  /** Path prefix this service claims on the host. Defaults to `/`. */
+  path?: string
   default?: boolean
   hosts?: string[]
   class?: string

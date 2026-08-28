@@ -62,6 +62,14 @@ async function composition (paths, options) {
 
       const composition = new Composition(expositions.flat(), producers.concat(settles), receivers.flat(), tenants.flat())
 
+      /*
+       * A lookup that is never answered holds a connection open, and whoever
+       * awaits it has nothing to disconnect — the remote it would belong to does
+       * not exist yet. The composition owns the process's discovery instead, so
+       * an unanswered lookup cannot outlive it.
+       */
+      composition.depends(await boot.discovery.discovery())
+
       return boot.extensions.manage(composition)
     } catch (exception) {
       await Promise.all(expositions.flat().map((connector) => connector.disconnect(true)))

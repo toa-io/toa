@@ -22,7 +22,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     variables: [],
     components: labels,
     resources: annotation.resources,
-    ingress: { hosts: [] },
+    ingress: { path: '/', hosts: [] },
     probe: {
       path: '/.ready',
       port: PORT,
@@ -42,8 +42,13 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   const { debug, authorities } = annotation
 
   service.ingress!.hosts = Object.values(authorities)
-  service.ingress!.class = annotation.class
-  service.ingress!.annotations = annotation.annotations
+
+  // leaving these undefined lets the context's own ingress section supply them
+  if (annotation.class !== undefined)
+    service.ingress!.class = annotation.class
+
+  if (annotation.annotations !== undefined)
+    service.ingress!.annotations = annotation.annotations
 
   const properties: Properties = { authorities }
 

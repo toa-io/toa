@@ -33,6 +33,7 @@
     "@toa.io/extensions.configuration": "1.0.0-alpha.259",
     "@toa.io/extensions.exposition": "1.0.0-alpha.259",
     "@toa.io/extensions.fetch": "1.0.0-alpha.259",
+    "@toa.io/extensions.introspection": "1.0.0-alpha.259",
     "@toa.io/extensions.realtime": "1.0.0-alpha.259",
     "@toa.io/extensions.stash": "1.0.0-alpha.254",
     "@toa.io/extensions.state": "1.0.0-alpha.254",

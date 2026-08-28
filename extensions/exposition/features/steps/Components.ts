@@ -5,6 +5,9 @@ import { timeout } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
 import { parse } from '@toa.io/yaml'
 import { Workspace } from './Workspace'
+import { components as map } from './map'
+
+const MAP = 'introspection'
 
 @binding([Workspace])
 export class Components {
@@ -25,6 +28,17 @@ export class Components {
     const manifest = parse(yaml)
 
     await this.runComponent(name, manifest)
+  }
+
+  /** One composition, as the explorer hosts them. */
+  @given('the introspection components are running')
+  public async runMap (): Promise<void> {
+    assert.ok(!(MAP in this.compositions), `Composition '${MAP}' is already running`)
+
+    this.compositions[MAP] = await boot.composition(map())
+
+    await this.compositions[MAP].connect()
+    await timeout(50) // discovery
   }
 
   @given('the `{word}` is stopped')

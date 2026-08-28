@@ -1,0 +1,64 @@
+auth:
+  signupTitle: One-tap sign-up
+  passwordTitle: Hop in with password
+  passwordDescription: Create an account or sign in
+  passkey: Passkeys
+  email: Email
+  alreadyHaveAccount: Already have an account?
+  betterSecurity: Better security
+  passkeysNotSupported: Passkeys not supported
+  passkeysWarning: Your browser does not respect your privacy and security.
+  learnMore: Learn more
+  passwordBlank: Leave password blank <nobr>to receive</nobr> <nobr>a one-time</nobr> passcode.
+  otpInstructions: Enter the code sent to your email. It expires in 5 minutes.
+  continueWith: |
+    !js
+    (provider) => {
+      return `Continue with ${provider}`
+    }
+  passkeysDescription: Passkeys are safer than passwords, easier to use, and can’t be stolen.
+  yourName: Your name
+  password: Password
+  refresh:
+    description: |-
+      !js
+      (name) => `${name ? name + ", for" : "For"} security reasons, your credentials have expired. Please log in again to continue.`
+    title: Welcome back
+    continue: Continue
+  signout: Sign out
+  login: Log In
+  signin: Sign In
+  copyId: Copy account ID
+credentials:
+  connect: Connect
+  email:
+    title: Email
+    description: Connect your email address
+  google:
+    title: Google
+    description: Connect your Google account
+  apple:
+    title: Apple
+    description: Connect your Apple ID
+  passkeys:
+    title: Passkeys
+    tagline: Sign in faster with a passkey
+    create: Create
+    manage: Manage
+    collapse: Collapse
+    add: Enter passkey name
+    delete: Hold to delete
+    unknown: Unknown
+    count:
+      - one: "{n} passkey"
+        other: "{n} passkeys"
+    meta: |-
+      !js
+      (added, used) => `Added ${added} · Used ${used}`
+    duplicate: This device already has a passkey for your account
+    failed: Could not create the passkey. Please try again.
+  transfer:
+    action: Sign in on another device
+    title: Scan to sign in
+    description: Use your other device to scan this code and sign in.
+    done: Done

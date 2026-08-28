@@ -21,7 +21,23 @@ const template = async (directory, additions) => {
   await save(template, path)
 }
 
+/**
+ * Drops a top-level annotation from an already written context.
+ *
+ * @param {string} directory
+ * @param {string} key
+ */
+const remove = async (directory, key) => {
+  const path = join(directory, FILENAME)
+  const context = await load(path)
+
+  delete context[key]
+
+  await save(context, path)
+}
+
 const FILENAME = 'context.toa.yaml'
 const TEMPLATE = load.sync(join(__dirname, FILENAME))
 
 exports.template = template
+exports.remove = remove

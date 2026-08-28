@@ -23,6 +23,11 @@ const serve = async (argv) => {
 
     const service = factory.service()
 
+    // an extension that is off in this environment has nothing to run, and said so
+    if (service === null)
+      throw new Error(`'${argv.path}' has no service to run in this environment: ` +
+        'its variables are absent. Regenerate the environment file with `toa env`.')
+
     graceful(service)
 
     await service.connect()

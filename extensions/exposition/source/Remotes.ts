@@ -1,4 +1,4 @@
-import { Locator, Connector, type Remote } from '@toa.io/core'
+import { Locator, Connector, type Remote, type Source } from '@toa.io/core'
 import { type Bootloader } from './Factory'
 
 export class Remotes extends Connector {
@@ -20,7 +20,8 @@ export class Remotes extends Connector {
   }
 
   private async locate (locator: Locator): Promise<Remote> {
-    const remote = await this.boot.remote(locator)
+    // the gateway is the origin of every call it forwards
+    const remote = await this.boot.remote(locator, SOURCE)
 
     this.depends(remote)
 
@@ -29,3 +30,5 @@ export class Remotes extends Connector {
     return remote
   }
 }
+
+const SOURCE: Source = { service: 'exposition' }

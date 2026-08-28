@@ -95,6 +95,58 @@ Feature: Mono deployment
           port: 8000
       """
 
+  Scenario: Every service keeps its own path and port in mono
+    Given I have a component `exposed.one`
+    And I have a context with:
+      """yaml
+      exposition:
+        authorities:
+          foo: api.foo.dev
+        /:
+          GET:
+            dev:stub: ok!
+      configuration:
+        identity.tokens:
+          key0: secret.key
+      ingress:
+        hosts:
+          - api.foo.dev
+      """
+    When I export a mono deployment for dev
+    And I run `helm template deployment`
+    Then program should exit
+    And mono Ingress rules spec should contain:
+      """
+      - host: api.foo.dev
+        http:
+          paths:
+            - path: /.introspection
+              pathType: Prefix
+              backend:
+                service:
+                  name: mono
+                  port:
+                    number: 8002
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: mono
+                  port:
+                    number: 8000
+      """
+    And mono Service ports spec should contain:
+      """
+      - name: port-8002
+        protocol: TCP
+        port: 8002
+        targetPort: 8002
+      - name: port-8000
+        protocol: TCP
+        port: 8000
+        targetPort: 8000
+      """
+
   Scenario: Include pointer variables of extension components
     Given I have components:
       | exposed.one |

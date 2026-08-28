@@ -30,6 +30,8 @@ const extract = (spec, node) => {
   if (node === 'strategy') return spec.spec.strategy
   if (node === 'spec') return spec.spec
   if (node === 'rules') return spec.spec.rules
+  if (node === 'metadata') return spec.metadata
+  if (node === 'ports') return spec.spec.ports
 
   throw new Error(`Unknown node '${node}'`)
 }

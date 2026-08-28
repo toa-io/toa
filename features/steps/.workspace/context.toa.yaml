@@ -37,3 +37,7 @@ storages:
 exposition:
   authorities:
     local: localhost
+
+ingress:
+  hosts:
+    - localhost

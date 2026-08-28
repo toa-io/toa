@@ -100,6 +100,8 @@ spec:
 {{- end }}
 {{- if .ingress }}
 {{- $service := .name }}
+{{- $port := .port }}
+{{- $path := .ingress.path | default "/" }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -118,24 +120,24 @@ spec:
     - host: {{ . }}
       http:
         paths:
-          - path: /
+          - path: {{ $path }}
             pathType: Prefix
             backend:
               service:
                 name: extension-{{ $service }}
                 port:
-                  number: 8000
+                  number: {{ $port }}
     {{- end }}
     {{- if .ingress.default }}
     - http:
         paths:
-          - path: /
+          - path: {{ $path }}
             pathType: Prefix
             backend:
               service:
                 name: extension-{{ $service }}
                 port:
-                  number: 8000
+                  number: {{ $port }}
     {{- end }}
 {{- end }}
 ---

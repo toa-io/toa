@@ -1,0 +1,12 @@
+namespace: probe
+name: discreet
+
+# on the map, but its payloads are never captured
+introspection:
+  samples: false
+
+operations:
+  ping:
+    input:
+      a: number
+    output: number
