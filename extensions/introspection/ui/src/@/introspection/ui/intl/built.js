@@ -36,7 +36,6 @@ export const dictionaries = {
       return (table[rule] ?? table.other).replace(/{n}/g, new Intl.NumberFormat(locale).format(count));
     },
       "state": "state",
-      "stateless": "stateless",
       "extensions": (count) => {
       const forms = {"one":"{n} extension","other":"{n} extensions"};
       const locale = "en-US"; // This will be replaced by the build system

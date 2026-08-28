@@ -12,8 +12,13 @@ export interface Size {
   height: number
 }
 
-/** The card geometry the layout reserves; the real height is measured once rendered. */
-export const CARD = { width: 220, height: 76, gap: 32 }
+/**
+ * The card geometry the layout reserves; the real height is measured once rendered. A
+ * card is a name and a row of counts, and the two gaps differ on purpose: cards in a
+ * column stand nearer each other than columns do, which is what makes columns read as
+ * columns.
+ */
+export const CARD = { width: 220, height: 61, gap: 32, row: 20 }
 
 /** A service card is a single line. `Service.svelte` is held to this, so the row below it sits right. */
 export const SERVICE = { height: 40 }
@@ -63,7 +68,7 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
     .filter((vertex): vertex is Component => vertex.kind === 'component')
     .sort(byName)
 
-  const step = { x: CARD.width + CARD.gap, y: CARD.height + CARD.gap }
+  const step = { x: CARD.width + CARD.gap, y: CARD.height + CARD.row }
 
   // a group with nothing in it is not named: the line would say there is something there
   const groups = (
@@ -80,7 +85,7 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
   for (const group of groups) {
     bands.push({ id: BAND.prefix + group.label, label: group.label, x: 0, y: top, width: 0 })
 
-    top += BAND.height + CARD.gap
+    top += BAND.height + CARD.row
 
     group.of.forEach((component, i) =>
       positions.set(component.id, {
@@ -154,7 +159,7 @@ export function arrange(
     columns(satellites).forEach((column, index) => {
       const lane = CARD.gap + index * step
       const heights = column.map((satellite) => size(sizes, satellite.id, CARD).height)
-      const total = heights.reduce((sum, height) => sum + height, 0) + CARD.gap * (column.length - 1)
+      const total = heights.reduce((sum, height) => sum + height, 0) + CARD.row * (column.length - 1)
 
       let y = middle - total / 2
 
@@ -166,7 +171,7 @@ export function arrange(
           y,
         })
 
-        y += heights[at] + CARD.gap
+        y += heights[at] + CARD.row
       })
     })
   }

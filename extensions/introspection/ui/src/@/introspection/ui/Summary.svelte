@@ -1,22 +1,31 @@
 <script lang="ts">
+  import { Circle, CircleDashed, Database, Zap } from '@lucide/svelte'
   import { dict } from './intl'
   import type { Props } from './Summary'
 
   const { node, class: className }: Props = $props()
 
   const counts = $derived([
-    { key: 'operations', phrase: $dict.node.operations(node.operations.length), of: node.operations },
-    { key: 'events', phrase: $dict.node.events(node.events.length), of: node.events },
-    { key: 'receivers', phrase: $dict.node.receivers(node.receivers.length), of: node.receivers },
+    { key: 'operations', Icon: Circle, of: node.operations, label: $dict.node.operations },
+    { key: 'events', Icon: Zap, of: node.events, label: $dict.node.events },
+    { key: 'receivers', Icon: CircleDashed, of: node.receivers, label: $dict.node.receivers },
   ])
 </script>
 
-<div class={['flex flex-wrap gap-x-3 gap-y-1', className]}>
+<!-- the words are the label rather than the text: what a card is asked at a glance is how
+     much of each a component has, and three numbers say it in the room a phrase wanted -->
+<div class={['flex flex-wrap items-center gap-x-3 gap-y-1', className]}>
   {#each counts as count (count.key)}
-    <span class={[count.of.length === 0 && 'opacity-40']}>{count.phrase}</span>
+    <span
+      class={['inline-flex items-center gap-1', count.of.length === 0 && 'opacity-40']}
+      aria-label={count.label(count.of.length)}
+    >
+      <count.Icon class="size-3.5" aria-hidden="true" />
+      {count.of.length}
+    </span>
   {/each}
 
-  <span class={[node.entity === null && 'opacity-40']}>
-    {node.entity === null ? $dict.node.stateless : $dict.node.state}
-  </span>
+  {#if node.entity !== null}
+    <Database class="size-3.5" aria-label={$dict.node.state} />
+  {/if}
 </div>

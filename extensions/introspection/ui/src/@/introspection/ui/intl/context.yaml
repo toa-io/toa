@@ -17,9 +17,6 @@ inputs:
     state:
       input: state
       context: "label: the component stores state"
-    stateless:
-      input: stateless
-      context: inline label next to 'state', lowercase, no sentence case
     extensions:
       input: extension
     schema:

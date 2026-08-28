@@ -14,7 +14,6 @@ export type Dictionary = {
         events: (value: number) => string
         receivers: (value: number) => string
         state: string
-        stateless: string
         extensions: (value: number) => string
         schema: string
         input: string

@@ -12,7 +12,7 @@
 
 <Item.Root variant="outline" size="sm" class={['bg-card flex-col items-stretch gap-0', className]}>
   <div class="flex items-start gap-2">
-    <div class="min-w-0 flex-1">
+    <Item.Content class="min-w-0">
       <Item.Title class="gap-0">
         {#if node.namespace !== DEFAULT}<span class="text-muted-foreground">{node.namespace}.</span
           >{/if}{node.component}
@@ -21,7 +21,7 @@
       <Item.Description class="text-xs">
         <Summary {node} />
       </Item.Description>
-    </div>
+    </Item.Content>
 
     {#if ontoggle !== undefined}
       <button

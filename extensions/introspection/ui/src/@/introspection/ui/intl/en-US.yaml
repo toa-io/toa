@@ -12,7 +12,6 @@ node:
     - one: "{n} receiver"
       other: "{n} receivers"
   state: state
-  stateless: stateless
   extensions:
     - one: "{n} extension"
       other: "{n} extensions"
