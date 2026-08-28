@@ -37,6 +37,21 @@ Feature: Publishing the UI
     Then the status is 200
     And the body contains "the page"
 
+  Scenario: A route that looks like a file is still a route
+    A component is named `namespace.component`, so the address of one carries a dot and
+    an extension is no way to tell an asset from a route.
+
+    Given the UI is published
+    When "/.introspection/identity.passkeys/" is requested
+    Then the status is 200
+    And the body contains "the page"
+
+  Scenario: And with no trailing slash to give it away
+    Given the UI is published
+    When "/.introspection/identity.passkeys" is requested
+    Then the status is 200
+    And the body contains "the page"
+
   Scenario: A hashed asset is served forever
     Given the UI is published
     When "/.introspection/_app/immutable/asset.js" is requested

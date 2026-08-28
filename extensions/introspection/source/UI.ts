@@ -126,8 +126,15 @@ export class UI extends Connector {
     if (isFile(file))
       return file
 
-    // a name with an extension is an asset, and a missing asset is missing
-    return path.extname(relative) === '' ? path.join(this.root, 'index.html') : null
+    /*
+     * A missing asset is missing, but a route can look like one: `identity.passkeys` is a
+     * component, not a file with an extension. What this server would have served is what
+     * it knows how to serve, so anything else is a route and falls back to the page — as
+     * does anything ending in a slash, which is no name for a file at all.
+     */
+    const asset = !relative.endsWith('/') && path.extname(relative) in TYPES
+
+    return asset ? null : path.join(this.root, 'index.html')
   }
 
   private async send (file: string, request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
