@@ -47,7 +47,7 @@
   {/if}
 
   {#if node.extensions.length > 0}
-    <Section title={$dict.node.extensions(node.extensions.length)} class="gap-1">
+    <Section title={$dict.node.extensions(node.extensions.length)} class="gap-1" collapsible>
       {#each node.extensions as extension (extension)}
         <span class="text-muted-foreground">{extension}</span>
       {/each}
