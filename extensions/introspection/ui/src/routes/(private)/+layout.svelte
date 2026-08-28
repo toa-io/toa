@@ -35,7 +35,9 @@
 
 <Authenticated>
   <div class="flex h-dvh flex-col">
-    <header class="flex items-center gap-4 px-4 py-3">
+    <!-- named, so the chrome stays put while the screen under it changes: what is not
+         named is the page, and the page is what a view transition moves -->
+    <header class="flex items-center gap-4 px-4 py-3" style="view-transition-name: chrome">
       <h1 class="hidden text-lg font-medium md:block">{meta.title}</h1>
 
       <nav class="flex gap-1">

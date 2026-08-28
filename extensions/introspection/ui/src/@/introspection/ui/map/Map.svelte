@@ -3,29 +3,30 @@
   import { ArrowLeft } from '@lucide/svelte'
   import { edges, nodes } from '@/introspection'
   import { Button } from '$ui/button'
+  import { base } from '$app/paths'
   import { dict } from '../intl'
   import { viewport, zoomIdentity, type Controls, type ZoomTransform } from './viewport'
   import { build } from './graph'
+  import { leave } from './flight'
   import Grid from './Grid.svelte'
   import Focus from './Focus.svelte'
   import type { Props } from './Map'
 
-  const { class: className }: Props = $props()
+  const { focus = null, class: className }: Props = $props()
 
   let transform = $state<ZoomTransform>(zoomIdentity)
   let controls = $state<Controls | null>(null)
-  let focused = $state<string | null>(null)
   const view = $state({ width: 0, height: 0 })
 
-  /** Every arrangement opens centred, wherever the last one had been dragged to. */
-  function select(id: string | null): void {
-    focused = id
+  // every arrangement opens centred, wherever the last one had been dragged to
+  $effect(() => recentre(focus))
 
+  function recentre(_of: string | null): void {
     controls?.reset()
   }
 
   function escape(event: KeyboardEvent): void {
-    if (event.key === 'Escape' && focused !== null) select(null)
+    if (event.key === 'Escape' && focus !== null) void leave()
   }
 </script>
 
@@ -55,20 +56,27 @@
         style:translate="{transform.x}px {transform.y}px"
         style:scale={transform.k}
       >
-        {#if focused === null}
-          <Grid {graph} {view} onselect={select} />
+        {#if focus === null}
+          <Grid {graph} {view} />
         {:else}
-          <!-- keyed: what the reader silenced was about this card, not the next one -->
-          {#key focused}
-            <Focus {graph} {view} id={focused} onselect={select} />
+          <!-- keyed: what the reader silenced was about this card, not the next one, and
+               a step from one component to another keeps the same page component -->
+          {#key focus}
+            <Focus {graph} {view} id={focus} />
           {/key}
         {/if}
       </div>
     {/snippet}
   </Async>
 
-  {#if focused !== null}
-    <Button variant="secondary" size="sm" class="absolute start-4 top-4" onclick={() => select(null)}>
+  {#if focus !== null}
+    <Button
+      variant="secondary"
+      size="sm"
+      href="{base}/map/"
+      class="absolute start-4 top-4"
+      data-sveltekit-noscroll
+    >
       <ArrowLeft />
       {$dict.map.back}
     </Button>

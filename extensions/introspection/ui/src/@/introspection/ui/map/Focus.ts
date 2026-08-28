@@ -6,5 +6,4 @@ export interface Props {
   /** The vertex the arrangement is built around. */
   id: string
   view: Size
-  onselect: (id: string) => void
 }

@@ -1,4 +1,4 @@
-import { identify, matches, rank, shorten } from '../ui'
+import { DEFAULT, identify, matches, rank, shorten } from '../ui'
 
 import type { Edge, Node } from '@/introspection'
 
@@ -65,7 +65,25 @@ export function build(nodes: Node[], edges: Edge[]): Graph {
 }
 
 function origin(src: Edge['src']): string {
-  return 'service' in src ? `svc:${src.service}` : identify(src)
+  return 'service' in src ? SVC + src.service : identify(src)
+}
+
+/** What marks a caller from outside apart from a component of the application. */
+const SVC = 'svc:'
+
+/** What stands for it in an address, where a colon reads as machinery. */
+const MARK = '@'
+
+/** A vertex as it reads in the address bar: `epics`, `identity.tokens`, `@exposition`. */
+export function slug(id: string): string {
+  return id.startsWith(SVC) ? MARK + id.slice(SVC.length) : shorten(id)
+}
+
+/** And back. A name without a namespace is in the one an application does not name. */
+export function unslug(slug: string): string {
+  if (slug.startsWith(MARK)) return SVC + slug.slice(MARK.length)
+
+  return slug.includes('.') ? slug : `${DEFAULT}.${slug}`
 }
 
 /** Whether the call was raised by an event rather than made by whoever wanted it. */

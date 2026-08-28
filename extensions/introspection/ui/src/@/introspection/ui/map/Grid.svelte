@@ -5,6 +5,7 @@
   import { measure } from './measure'
   import { CARD, DIMMED, grid } from './layout'
   import { found, label, neighbours, touching } from './graph'
+  import { FLYER, MORPH, flying, open } from './flight'
   import Service from './Service.svelte'
   import Edges from './Edges.svelte'
   import Component from './Component.svelte'
@@ -12,7 +13,7 @@
   import type { Vertex } from './graph'
   import type { Props } from './Grid'
 
-  const { graph, view, onselect }: Props = $props()
+  const { graph, view }: Props = $props()
 
   const sizes = new SvelteMap<string, Size>()
 
@@ -55,10 +56,12 @@
     style:translate="{at.x}px {at.y}px"
     style:width="{CARD.width}px"
     style:opacity={lit(vertex) ? 1 : DIMMED}
+    style:view-transition-name={$flying === vertex.id ? FLYER : undefined}
+    style:view-transition-class={$flying === vertex.id ? MORPH : undefined}
     onmouseenter={() => (hovered = vertex.id)}
     onmouseleave={() => (hovered = null)}
     use:measure={{ into: sizes, id: vertex.id }}
-    use:press={() => onselect(vertex.id)}
+    use:press={() => void open(vertex.id)}
     role="button"
     tabindex="0"
     aria-label={label(vertex)}

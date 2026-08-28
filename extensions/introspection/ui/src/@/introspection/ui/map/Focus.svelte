@@ -10,6 +10,7 @@
   import { arrange, CARD, DIMMED, FOCUSED, STUB } from './layout'
   import { hover } from './hover'
   import { focus, found, label } from './graph'
+  import { FLYER, MORPH, flying, open } from './flight'
   import Service from './Service.svelte'
   import Edges from './Edges.svelte'
   import Component from './Component.svelte'
@@ -19,7 +20,11 @@
   import type { Props } from './Focus'
   import type { Anchor, Arc } from './Edges'
 
-  const { graph, id, view, onselect }: Props = $props()
+  const { graph, id, view }: Props = $props()
+
+  // the card in the middle is the one that flew here, and the one that will fly back.
+  // Arriving by a press has already said so; this is for arriving by an address.
+  $effect(() => flying.set(id))
 
   const sizes = new SvelteMap<string, Size>()
   const lines = new SvelteMap<string, Row>()
@@ -151,10 +156,21 @@
 
   /** A plain press asks about the card; a held shift takes it out of the picture, or back. */
   function touch(satellite: Satellite, shift: boolean): void {
-    if (!shift) onselect(satellite.vertex.id)
+    if (!shift) void open(satellite.vertex.id)
     else if (muted.has(satellite.id)) muted.delete(satellite.id)
     else muted.add(satellite.id)
   }
+
+  /**
+   * The satellite that carries the flight name. A component standing on both sides is two
+   * cards and only one of them can be named — two elements under one name abort the whole
+   * transition — so the first of them takes it.
+   */
+  const flyer = $derived(
+    [...(spot?.incoming ?? []), ...(spot?.outgoing ?? [])].find(
+      (satellite) => satellite.vertex.id === $flying,
+    )?.id ?? null,
+  )
 
   function at(of: string): Position {
     return positions.get(of) ?? { x: 0, y: 0 }
@@ -177,6 +193,8 @@
       ]}
       style:translate="{at(satellite.id).x}px {at(satellite.id).y}px"
       style:width="{opened === satellite.id ? FOCUSED.width : CARD.width}px"
+      style:view-transition-name={flyer === satellite.id ? FLYER : undefined}
+      style:view-transition-class={flyer === satellite.id ? MORPH : undefined}
       onmouseenter={() =>
         (asked = muted.has(satellite.id) ? null : { of: 'card', id: satellite.id })}
       onmouseleave={() => (asked = null)}
@@ -222,6 +240,8 @@
     class="absolute top-0 left-0"
     style:translate="{at(spot.vertex.id).x}px {at(spot.vertex.id).y}px"
     style:width="{FOCUSED.width}px"
+    style:view-transition-name={$flying === spot.vertex.id ? FLYER : undefined}
+    style:view-transition-class={$flying === spot.vertex.id ? MORPH : undefined}
     use:measure={{ into: sizes, id: spot.vertex.id }}
     use:rows={{ into: lines, of: spot.vertex.id }}
     use:hover={(row) => (asked = row === null ? null : { of: 'row', id: row })}

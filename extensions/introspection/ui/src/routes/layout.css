@@ -162,7 +162,7 @@
 }
 
 @layer transitions {
-  @media (prefers-reduced-motion) {
+  @media (prefers-reduced-motion: reduce) {
     ::view-transition-group(*),
     ::view-transition-old(*),
     ::view-transition-new(*) {
@@ -174,26 +174,51 @@
   ::view-transition-old(*.transition-spring),
   ::view-transition-new(*.transition-spring) {
     animation-duration: 300ms;
-    animation-timing-function: cubic-bezier(0.2, 1.4, 0.4, 1);
+    animation-timing-function: cubic-bezier(0.2, 1.2, 0.2, 1);
   }
 
-	@media (prefers-reduced-motion: reduce) {
-		::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) {
-			animation: none !important;
-		}
-	}
-	::view-transition-group(*.transition-spring), ::view-transition-old(*.transition-spring), ::view-transition-new(*.transition-spring) {
-		animation-duration: 300ms;
-		animation-timing-function: cubic-bezier(0.2, 1.2, 0.2, 1);
-	}
-	::view-transition-old(.transition-morph), ::view-transition-new(.transition-morph) {
-		animation-duration: 300ms;
-		block-size: 100%;
-	}
-	::view-transition-group(*.transition-instant), ::view-transition-old(*.transition-instant), ::view-transition-new(*.transition-instant) {
-		animation-duration: 0s;
-	}
+  ::view-transition-old(.transition-morph),
+  ::view-transition-new(.transition-morph) {
+    animation-duration: 300ms;
+    block-size: 100%;
+  }
+
+  ::view-transition-group(*.transition-instant),
+  ::view-transition-old(*.transition-instant),
+  ::view-transition-new(*.transition-instant) {
+    animation-duration: 0s;
+  }
+
+  /* One card flies between the two screens of the map, over everything else. */
+  ::view-transition-group(card) {
+    z-index: 2;
+  }
+
+  /* Everything the page is not carrying by name recedes as one piece, rather than card
+     by card: the screen being left goes back and out, the one arriving settles in. */
+  ::view-transition-old(root) {
+    animation: recede 300ms cubic-bezier(0.2, 1.2, 0.2, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: arrive 300ms cubic-bezier(0.2, 1.2, 0.2, 1) both;
+  }
+
+  @keyframes recede {
+    to {
+      opacity: 0;
+      scale: 0.94;
+    }
+  }
+
+  @keyframes arrive {
+    from {
+      opacity: 0;
+      scale: 1.03;
+    }
+  }
 }
+
 
 @custom-variant tim {
 
