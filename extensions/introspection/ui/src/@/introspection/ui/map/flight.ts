@@ -17,6 +17,14 @@ export const FLYER = 'card'
 /** The house morph: the registry's spring, stretched rather than boxed. */
 export const MORPH = 'transition-spring transition-morph'
 
+/**
+ * A name the browser will take. A vertex id is full of dots and colons, and a
+ * `view-transition-name` is an identifier.
+ */
+export function ident(id: string): string {
+  return 'card-' + id.replace(/[^a-z0-9]+/gi, '-')
+}
+
 /** Opens a vertex, having first said which card is about to leave. */
 export async function open(id: string): Promise<void> {
   flying.set(id)

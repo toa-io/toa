@@ -29,7 +29,8 @@
         aria-expanded={open}
         aria-label={$dict.map.expand}
         onclick={ontoggle}
-        class="text-muted-foreground hover:text-foreground -m-1 shrink-0 cursor-pointer p-1"
+        class="text-muted-foreground hover:bg-muted hover:text-foreground -m-1 shrink-0
+          cursor-pointer rounded-md p-1 transition-colors"
       >
         <ChevronDown class={['size-4 transition-transform', open && 'rotate-180']} />
       </button>

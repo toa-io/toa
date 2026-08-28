@@ -195,12 +195,13 @@
   }
 
   /* Everything the page is not carrying by name recedes as one piece, rather than card
-     by card: the screen being left goes back and out, the one arriving settles in. */
-  ::view-transition-old(root) {
+     by card: the screen being left goes back and out, the one arriving settles in. Only
+     on a navigation — a card opened in place is not the screen changing. */
+  html:active-view-transition-type(route)::view-transition-old(root) {
     animation: recede 300ms cubic-bezier(0.2, 1.2, 0.2, 1) both;
   }
 
-  ::view-transition-new(root) {
+  html:active-view-transition-type(route)::view-transition-new(root) {
     animation: arrive 300ms cubic-bezier(0.2, 1.2, 0.2, 1) both;
   }
 

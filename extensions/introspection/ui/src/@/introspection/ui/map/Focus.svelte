@@ -1,6 +1,7 @@
 <script lang="ts">
   import { SvelteMap, SvelteSet } from 'svelte/reactivity'
   import { Kbd } from '$ui/kbd'
+  import { transit, transition } from '$lib/tools'
   import { query } from '../ui'
   import { dict } from '../intl'
   import Node from '../Node.svelte'
@@ -10,7 +11,7 @@
   import { arrange, CARD, DIMMED, FOCUSED, STUB } from './layout'
   import { hover } from './hover'
   import { focus, found, label } from './graph'
-  import { FLYER, MORPH, flying, open } from './flight'
+  import { FLYER, MORPH, flying, ident, open } from './flight'
   import Service from './Service.svelte'
   import Edges from './Edges.svelte'
   import Component from './Component.svelte'
@@ -150,8 +151,15 @@
     return { y: at.top + at.height / 2, x: stub === undefined ? undefined : at.right + stub }
   }
 
+  /**
+   * Through a transition, so the card grows into its rows and the column re-stacks around
+   * it rather than jumping. The lines are pixels to the browser and cross-fade with the
+   * rest; nothing here animates anything itself.
+   */
   function toggle(satellite: Satellite): void {
-    opened = opened === satellite.id ? null : satellite.id
+    void transit(() => {
+      opened = opened === satellite.id ? null : satellite.id
+    })
   }
 
   /** A plain press asks about the card; a held shift takes it out of the picture, or back. */
@@ -200,6 +208,7 @@
       onmouseleave={() => (asked = null)}
       use:measure={{ into: sizes, id: satellite.id }}
       use:rows={{ into: lines, of: satellite.id }}
+      use:transition={{ name: ident(satellite.id), classes: MORPH }}
       use:press={(shift) => touch(satellite, shift)}
       role="button"
       tabindex="0"
@@ -246,13 +255,12 @@
     use:rows={{ into: lines, of: spot.vertex.id }}
     use:hover={(row) => (asked = row === null ? null : { of: 'row', id: row })}
   >
-    <!-- a card opened by looking at it, and closed again when the map moves on -->
-    {#key spot.vertex.id}
-      {#if spot.vertex.kind === 'component'}
-        <Node class="bg-card" node={spot.vertex.node} open />
-      {:else}
-        <Service name={spot.vertex.name} />
-      {/if}
-    {/key}
+    <!-- the card the screen is about: it has nowhere to fold to, so it does not fold.
+         Resetting what is open inside it belongs to the route, which remounts this. -->
+    {#if spot.vertex.kind === 'component'}
+      <Node class="bg-card" node={spot.vertex.node} collapsible={false} />
+    {:else}
+      <Service name={spot.vertex.name} />
+    {/if}
   </div>
 {/if}

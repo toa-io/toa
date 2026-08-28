@@ -47,11 +47,16 @@ export function navigate(nav: OnNavigate): Promise<void> | void {
   if (document.startViewTransition === undefined) return
 
   return new Promise((resolve) => {
-    const transition = document.startViewTransition(async () => {
-      land()
-      resolve()
+    // typed `route`, so a page can style what a navigation does to the whole screen
+    // without styling what every in-page `transit` does to it
+    const transition = document.startViewTransition({
+      types: ['route'],
+      update: async () => {
+        land()
+        resolve()
 
-      await nav.complete
+        await nav.complete
+      },
     })
 
     // the same unwinding `transit` does, and for the same reason: an aborted transition
