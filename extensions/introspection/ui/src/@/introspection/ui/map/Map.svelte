@@ -1,0 +1,68 @@
+<script lang="ts">
+  import { Async, combined } from 'svas'
+  import { edges, nodes } from '@/introspection'
+  import { dict } from '../intl'
+  import { viewport, zoomIdentity, type Controls, type ZoomTransform } from './viewport'
+  import { build } from './graph'
+  import { leave } from './flight'
+  import Grid from './Grid.svelte'
+  import Focus from './Focus.svelte'
+  import type { Props } from './Map'
+
+  const { focus = null, class: className }: Props = $props()
+
+  let transform = $state<ZoomTransform>(zoomIdentity)
+  let controls = $state<Controls | null>(null)
+  const view = $state({ width: 0, height: 0 })
+
+  // every arrangement opens centred, wherever the last one had been dragged to
+  $effect(() => recentre(focus))
+
+  function recentre(_of: string | null): void {
+    controls?.reset()
+  }
+
+  function escape(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && focus !== null) void leave()
+  }
+</script>
+
+<svelte:window onkeydown={escape} />
+
+<div
+  class={['bg-muted/30 relative touch-none overflow-hidden', className]}
+  bind:clientWidth={view.width}
+  bind:clientHeight={view.height}
+  use:viewport={{
+    onchange: (next) => (transform = next),
+    onready: (next) => (controls = next),
+  }}
+>
+  <Async store={combined(nodes, edges)}>
+    {#snippet awaited([list, calls])}
+      {@const graph = build(list, calls)}
+
+      {#if graph.links.length === 0}
+        <p class="text-muted-foreground absolute inset-x-0 top-4 text-center text-sm">
+          {$dict.map.empty}
+        </p>
+      {/if}
+
+      <div
+        class="absolute top-0 left-0 origin-top-left"
+        style:translate="{transform.x}px {transform.y}px"
+        style:scale={transform.k}
+      >
+        {#if focus === null}
+          <Grid {graph} {view} />
+        {:else}
+          <!-- keyed: what the reader silenced was about this card, not the next one, and
+               a step from one component to another keeps the same page component -->
+          {#key focus}
+            <Focus {graph} {view} id={focus} />
+          {/key}
+        {/if}
+      </div>
+    {/snippet}
+  </Async>
+</div>

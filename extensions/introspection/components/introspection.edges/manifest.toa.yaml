@@ -1,0 +1,48 @@
+namespace: introspection
+name: edges
+
+# One document per edge of the map: a call one component made to another, with `src`
+# saying what caused it — another operation, an event, or a service. What the
+# application declares is described by `introspection.nodes`; an edge is what
+# actually happened.
+#
+# Every replica of a component derives the same id for the same edge, so `merge` is
+# an upsert and `_updated` shows when the edge was last observed.
+
+entity:
+  associated: true
+  schema:
+    src: ~
+    dst: ~
+    sample: ~
+
+operations:
+  # a mass transition: the scope is inferred from the algorithm's `objects` parameter
+  merge:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        edges:
+          type: object
+      required: [edges]
+
+# the map must not describe itself
+introspection: false
+
+exposition:
+  /:
+    auth:role: system:introspection
+
+    # the map is the whole document, and its shape is what the application happens to declare
+    io:output: true
+    cache:control: max-age=60, public
+    # the map is read whole: a page of ten is of no use to anything that draws it
+    GET:
+      endpoint: enumerate
+      query:
+        limit:
+          value: 10000
+          range: [1, 10000]
+    /:id:
+      GET: observe

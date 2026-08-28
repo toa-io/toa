@@ -180,13 +180,16 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
       throw new Error('Cannot create Endpoint without mapping')
 
     const mapping = Mapping.create(method.mapping.query)
-    const namespace = method.mapping.namespace ?? context.extension.namespace
-    const component = method.mapping.component ?? context.extension.component
+
+    const branch = context.extension
+
+    const namespace = method.mapping.namespace ?? branch?.namespace
+    const component = method.mapping.component ?? branch?.component
 
     if (namespace === undefined || component === undefined)
       throw new Error('Annotation endpoints must be fully qualified')
 
-    const discovery = this.remotes.discover(namespace, component, context.extension.version)
+    const discovery = this.remotes.discover(namespace, component, branch?.version)
 
     return new Endpoint(method.mapping.endpoint, mapping, discovery)
   }

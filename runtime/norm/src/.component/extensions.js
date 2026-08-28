@@ -34,7 +34,8 @@ const extensions = (manifest) => {
 
 const PREDEFINED = {
   '@toa.io/extensions.telemetry': null,
-  '@toa.io/extensions.fetch': null
+  '@toa.io/extensions.fetch': null,
+  '@toa.io/extensions.introspection': null
 }
 
 exports.extensions = extensions

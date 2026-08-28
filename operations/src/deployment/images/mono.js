@@ -9,14 +9,12 @@ const { Image } = require('./image')
 class Mono extends Image {
   dockerfile = join(__dirname, 'mono.Dockerfile')
 
-  #root
   #image
   #components
 
-  constructor (scope, runtime, registry, composition, root) {
+  constructor (scope, runtime, registry, composition) {
     super(scope, runtime, registry)
 
-    this.#root = root
     this.#image = composition.image
     this.#components = composition.components
   }
@@ -67,16 +65,11 @@ class Mono extends Image {
   async prepare (root) {
     const context = await super.prepare(root)
 
-    await fs.copy(join(this.#root, CONTEXT), join(context, CONTEXT))
-    await fs.ensureDir(join(context, 'components'))
-
     for (const component of this.#components)
-      await fs.copy(component.path, join(context, 'components', component.locator.label))
+      await fs.copy(component.path, join(context, component.locator.label))
 
     return context
   }
 }
-
-const CONTEXT = 'context.toa.yaml'
 
 exports.Mono = Mono

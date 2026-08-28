@@ -33,7 +33,8 @@ describe('extensions', () => {
 
     expect(manifest.extensions).toStrictEqual({
       '@toa.io/extensions.telemetry': null,
-      '@toa.io/extensions.fetch': null
+      '@toa.io/extensions.fetch': null,
+      '@toa.io/extensions.introspection': {}
     })
   })
 })

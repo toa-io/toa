@@ -1,0 +1,16 @@
+# context.toa.yaml introspection annotation
+samples: boolean
+interval:
+  type: integer
+  minimum: 1
+threshold:
+  type: integer
+  minimum: 1
+ui: boolean
+resources:
+  cpu: &constraint
+    type: array
+    items: { type: string }
+    minItems: 2
+    maxItems: 2
+  memory: *constraint

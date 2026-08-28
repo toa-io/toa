@@ -26,6 +26,9 @@ class Receiver extends Connector {
   /** @type {unknown[]} */
   #arguments
 
+  /** @type {toa.core.Source} */
+  #origin
+
   #local
 
   #bridge
@@ -41,6 +44,7 @@ class Receiver extends Connector {
     this.#label = definition.label ?? operation
     this.#destination = definition.destination ?? this.#label
     this.#arguments = definition.arguments
+    this.#origin = definition.origin
 
     this.#local = local
     this.#bridge = bridge
@@ -58,6 +62,9 @@ class Receiver extends Connector {
     const request = await this.#request(payload)
 
     add(request, extensions)
+
+    // set after `add`, so that a message field can not spoof the origin
+    if (this.#origin !== undefined) request.source = this.#origin
 
     // continue the trace from the producer span
     const remote = telemetry === undefined ? null : decode(telemetry)

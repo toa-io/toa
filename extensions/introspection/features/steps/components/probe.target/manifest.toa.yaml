@@ -1,0 +1,24 @@
+namespace: probe
+name: target
+
+entity:
+  storage: null
+  schema:
+    counted:
+      type: integer
+      default: 0
+
+operations:
+  compute:
+    input:
+      a: number
+      b: number
+    output: number
+  count:
+    concurrency: retry
+    input:
+      type: object
+      additionalProperties: true
+
+receivers:
+  probe.source.created: count

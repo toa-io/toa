@@ -12,7 +12,7 @@ COPY --chown=node:node . /composition
 {{build.run}}
 
 RUN --mount=type=cache,target=/root/.npm \
-  for entry in components/*; do if [ -f "$entry/package.json" ]; then (cd $entry && npm i --omit=dev); fi; done
+  for entry in *; do if [ -f "$entry/package.json" ]; then (cd $entry && npm i --omit=dev); fi; done
 
 USER node
-CMD toa mono .
+CMD toa mono *

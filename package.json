@@ -110,7 +110,8 @@
     ],
     "testPathIgnorePatterns": [
       ".*/transpiled/",
-      "<rootDir>/userland/example/stage"
+      "<rootDir>/userland/example/stage",
+      "<rootDir>/extensions/introspection/ui"
     ],
     "bail": true
   }

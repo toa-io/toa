@@ -35,8 +35,8 @@ class Registry {
     return this.#create('service', path, service)
   }
 
-  mono (composition, root) {
-    return this.#create('mono', composition, root)
+  mono (composition) {
+    return this.#create('mono', composition)
   }
 
   async prepare (root) {

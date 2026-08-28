@@ -109,6 +109,9 @@ class Communication extends Connector {
     this.#io.diagnose('error', (error, shard) =>
       console.warn('AMQP connection failed', { message: error.message, shard }))
 
+    this.#io.diagnose('reconnect', (shard) =>
+      console.warn('AMQP reconnecting', { shard }))
+
     this.#io.diagnose('open', (shard) =>
       console.debug('AMQP connection open', { shard }))
   }

@@ -12,6 +12,7 @@ class Context extends Connector {
   operation
 
   #context
+  #source
 
   constructor (context, operation) {
     super()
@@ -20,6 +21,7 @@ class Context extends Connector {
     this.env = context.env
     this.name = context.name
     this.#context = context
+    this.#source = source(context.locator, operation)
 
     this.depends(context)
   }
@@ -29,7 +31,7 @@ class Context extends Connector {
   }
 
   local = underlay(async ([endpoint], [request]) => {
-    return this.#context.apply(endpoint, request)
+    return this.#context.apply(endpoint, this.#attribute(request))
   })
 
   remote = underlay(async (segments, [request]) => {
@@ -37,8 +39,20 @@ class Context extends Connector {
 
     const [namespace, name, endpoint] = segments
 
-    return this.#context.call(namespace, name, endpoint, request)
+    return this.#context.call(namespace, name, endpoint, this.#attribute(request))
   })
+
+  /**
+   * Stamps the origin of the call, unless the caller has set one explicitly.
+   */
+  #attribute (request) {
+    if (this.#source === undefined) return request
+
+    request ??= {}
+    request.source ??= this.#source
+
+    return request
+  }
 
   #aspects (aspects) {
     const map = {}
@@ -54,6 +68,16 @@ class Context extends Connector {
 
     return map
   }
+}
+
+/**
+ * Events, guards and rc phases get a Context without an operation,
+ * thus their calls are not attributed.
+ */
+function source (locator, operation) {
+  if (locator === undefined || operation === undefined) return undefined
+
+  return { namespace: locator.namespace, component: locator.name, operation }
 }
 
 exports.Context = Context

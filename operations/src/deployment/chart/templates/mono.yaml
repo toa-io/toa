@@ -26,12 +26,14 @@ spec:
       containers:
         - name: mono
           image: {{ .image }}
-          {{- if .port }}
+          {{- if or .backends .probe }}
           ports:
+            {{- range .backends }}
             - containerPort: {{ .port }}
-          {{- else if .probe }}
-          ports:
+            {{- end }}
+            {{- if .probe }}
             - containerPort: {{ .probe.port }}
+            {{- end }}
           {{- end }}
           {{- if .resources }}
           resources:
@@ -108,7 +110,7 @@ spec:
           labelSelector:
             matchLabels:
               toa.io/composition: mono
-{{- if .port }}
+{{- if .backends }}
 ---
 apiVersion: v1
 kind: Service
@@ -119,10 +121,12 @@ spec:
   selector:
     toa.io/composition: mono
   ports:
+    {{- range .backends }}
     - name: port-{{ .port }}
       protocol: TCP
       port: {{ .port }}
       targetPort: {{ .port }}
+    {{- end }}
 {{- end }}
 {{- if .ingress }}
 ---
@@ -138,29 +142,34 @@ spec:
   {{- if .ingress.class }}
   ingressClassName: {{ .ingress.class }}
   {{- end }}
+  {{- $backends := .backends }}
   rules:
     {{- range .ingress.hosts }}
     - host: {{ . }}
       http:
         paths:
-          - path: /
+          {{- range $backends }}
+          - path: {{ .path }}
             pathType: Prefix
             backend:
               service:
                 name: mono
                 port:
-                  number: {{ $.Values.mono.port | default 8000 }}
+                  number: {{ .port }}
+          {{- end }}
     {{- end }}
     {{- if .ingress.default }}
     - http:
         paths:
-          - path: /
+          {{- range $backends }}
+          - path: {{ .path }}
             pathType: Prefix
             backend:
               service:
                 name: mono
                 port:
-                  number: {{ $.Values.mono.port | default 8000 }}
+                  number: {{ .port }}
+          {{- end }}
     {{- end }}
 {{- end }}
 ---

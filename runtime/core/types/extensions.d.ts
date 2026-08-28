@@ -20,7 +20,7 @@ export interface Factory {
 
   storage? (storage: _storages.Storage): _storages.Storage
 
-  emitter? (emitter: _bindings.Emitter, label: string): _bindings.Emitter
+  emitter? (emitter: _bindings.Emitter, label: string, locator: _core.Locator): _bindings.Emitter
 
   receiver? (receiver: _core.Receiver, locator: _core.Locator): _core.Receiver
 }

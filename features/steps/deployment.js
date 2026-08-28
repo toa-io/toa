@@ -21,6 +21,15 @@ When('I export images',
     return extract.images.call(this)
   })
 
+Then('exporting deployment fails with:',
+  /**
+   * @param {string} message
+   * @this {toa.features.Context}
+   */
+  async function (message) {
+    await assert.rejects(extract.deployment.call(this), { message })
+  })
+
 When('I export deployment for {word}',
   function (env) {
     return extract.deployment.call(this, env)

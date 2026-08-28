@@ -4,11 +4,12 @@ const { mono } = require('../handlers/mono')
 
 const builder = (yargs) => {
   yargs
-    .positional('path', {
+    .positional('paths', {
       type: 'string',
-      desc: 'Path to a Context',
+      desc: 'Paths to components',
       default: '.'
     })
+    .array('paths')
     .option('kill', {
       group: 'Command options:',
       type: 'boolean',
@@ -16,7 +17,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'mono [path]'
+exports.command = 'mono [paths...]'
 exports.desc = 'Run composition and services'
 exports.builder = builder
 exports.handler = mono

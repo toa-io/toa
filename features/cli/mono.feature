@@ -7,14 +7,13 @@ Feature: toa mono
     Then program should exit
     And stdout should contain lines:
       """
-      toa mono [path]
+      toa mono [paths...]
       Run composition and services
       """
 
   Scenario: Shutdown after it's started
     Given I have a component `dummies.one`
-    And I have a context
-    When I run `toa mono --kill`
+    When I run `toa mono ./components/* --kill`
     Then program should exit with code 0
     And stdout should contain lines:
       """
@@ -22,7 +21,7 @@ Feature: toa mono
       Composition shutdown complete
       """
 
-  Scenario: Run composition and exposition
+  Scenario: Run composition and exposition without a context file
     Given I have a component `exposed.one`
     And I have a context with:
       """yaml
@@ -33,7 +32,8 @@ Feature: toa mono
               key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
       """
     When I run `toa env --dev`
-    And I run `toa mono --kill`
+    And I run `rm context.toa.yaml`
+    And I run `toa mono ./components/* --kill`
     Then program should exit with code 0
     And stdout should contain lines:
       """

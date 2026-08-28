@@ -110,3 +110,42 @@ describe('schema', () => {
     expect(objects.limit).toBeDefined()
   })
 })
+
+describe('source', () => {
+  const schemas = require('@toa.io/schemas')
+
+  const compile = (definition, entity) =>
+    schemas.schema(Request.schema(definition, entity), { removeAdditional: true })
+
+  it('should declare source', () => {
+    const schema = Request.schema({}, dummy)
+
+    expect(schema.properties.source).toBeDefined()
+    expect(schema.properties.source.additionalProperties).toStrictEqual(false)
+  })
+
+  it('should pass known source variants', () => {
+    const schema = compile({}, undefined)
+
+    for (const source of [
+      { namespace: 'a', component: 'b', operation: 'c' },
+      { namespace: 'a', component: 'b', event: 'c' },
+      { service: 'exposition' }
+    ]) {
+      const request = { input: null, query: null, source }
+
+      expect(schema.fit(request)).toStrictEqual(null)
+      expect(request.source).toStrictEqual(source)
+    }
+  })
+
+  // `source` crosses the wire and keys the introspection map, so whatever
+  // a peer adds to it must not survive
+  it('should strip unknown source properties', () => {
+    const schema = compile({}, undefined)
+    const request = { input: null, query: null, source: { service: 'exposition', evil: 'x' } }
+
+    expect(schema.fit(request)).toStrictEqual(null)
+    expect(request.source).toStrictEqual({ service: 'exposition' })
+  })
+})

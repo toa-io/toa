@@ -1,0 +1,37 @@
+nodes:
+  empty: No components have reported yet.
+  nomatch: No results match the filter.
+node:
+  operations:
+    - one: "{n} operation"
+      other: "{n} operations"
+  events:
+    - one: "{n} event"
+      other: "{n} events"
+  receivers:
+    - one: "{n} receiver"
+      other: "{n} receivers"
+  state: state
+  extensions:
+    - one: "{n} extension"
+      other: "{n} extensions"
+  schema: schema
+  input: input
+  output: output
+  errors: errors
+  storage: storage
+  associated: associated
+  version: version
+  binding: binding
+  conditioned: conditioned
+  adaptive: adaptive
+  none: none
+  copy: Copy JSON Schema
+  unset: not defined
+map:
+  empty: The map has no connections yet.
+  expand: Show details
+  restore: ⇧+Click
+space:
+  user: Userspace
+  system: System

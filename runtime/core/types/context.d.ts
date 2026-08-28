@@ -1,10 +1,13 @@
 import * as _request from './request'
+import { Locator } from './locator'
 import * as _reply from './reply'
 import * as _extensions from './extensions'
 import * as _connector from './connector'
 
 export interface Context extends _connector.Connector{
   aspects: _extensions.Aspect[]
+
+  locator: Locator
 
   /**
    * Calls local endpoint

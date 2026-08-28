@@ -28,15 +28,15 @@ Run composition.
 
 ### mono
 
-Run the context composition and extension services in one process.
+Run composition and extension services in one process.
 
-Application components are loaded from `components/*` next to `context.toa.yaml`.
-Extension services are started for each context dependency whose `Factory` implements `service()`.
+Application components are found by `manifest.toa.yaml`, same as <code>compose</code>.
+Extension services are started for each component extension whose `Factory` implements `service()`.
 
 <dl>
-<dt><code>toa mono [path]</code></dt>
+<dt><code>toa mono [paths...]</code></dt>
 <dd>
-<code>path</code> Path to a Context (default <code>.</code>).<br/>
+<code>paths</code> Glob patterns to look for components (default <code>.</code>).<br/>
 <code>--kill</code> Shutdown after it's started.
 </dd>
 </dl>

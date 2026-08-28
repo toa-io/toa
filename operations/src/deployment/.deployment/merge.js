@@ -27,7 +27,40 @@ const merge = (dependencies) => {
     if (dependency.probe !== undefined) probe = dependency.probe
   }
 
+  reserve(services, probe)
+
   return { references, services, proxies, variables, mounts, probe }
+}
+
+/**
+ * In Kubernetes these are separate pods, but `toa mono` and a local run put every
+ * service in one process — so a port may be claimed once and only once.
+ */
+const reserve = (services, probe) => {
+  const claimed = new Map()
+
+  if (probe !== undefined && probe !== false)
+    claimed.set(probe.port, 'the readiness probe')
+
+  for (const service of services)
+    for (const [port, claimant] of ports(service)) {
+      const conflicting = claimed.get(port)
+
+      if (conflicting !== undefined)
+        throw new Error(`Port ${port} is claimed by both ${conflicting} and ${claimant}`)
+
+      claimed.set(port, claimant)
+    }
+}
+
+function * ports (service) {
+  const name = `'${service.group}-${service.name}'`
+
+  if (service.port !== undefined)
+    yield [service.port, name]
+
+  if (service.probe !== undefined && service.probe !== false && service.probe.port !== service.port)
+    yield [service.probe.port, `the readiness probe of ${name}`]
 }
 
 const append = (merged, variables) => {

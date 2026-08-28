@@ -38,7 +38,7 @@ const describe = (context, compositions, dependency, image) => {
   const components = desc.components(compositions)
 
   desc.compositions(compositions, dependency)
-  desc.services(services, dependency.variables, dependency.probe)
+  desc.services(services, dependency.variables, dependency.probe, context.ingress)
 
   return {
     compositions,
@@ -61,6 +61,9 @@ function unit (context, dependency) {
     variables: []
   }
 
+  if (context.ingress !== undefined)
+    mono.ingress = Object.assign({}, context.ingress)
+
   addVariables(mono, variables, Object.keys(variables))
   addMounts(mono, dependency.mounts, Object.keys(mounts))
 
@@ -70,11 +73,19 @@ function unit (context, dependency) {
         if (!mono.variables.some((item) => item.name === variable.name))
           mono.variables.push(variable)
 
+    // every declared port is bound by the single mono process, none is primary
     if (service.port !== undefined)
-      mono.port = service.port
+      (mono.backends ??= []).push({ port: service.port, path: service.ingress?.path ?? '/' })
 
-    if (service.ingress !== undefined)
-      mono.ingress = service.ingress
+    if (service.ingress !== undefined) {
+      const { path, hosts, ...ingress } = service.ingress
+
+      mono.ingress = Object.assign(mono.ingress ?? {}, ingress)
+
+      // one Ingress serves every path, so its hosts are the union, not the last word
+      if (hosts !== undefined)
+        mono.ingress.hosts = [...new Set([...(mono.ingress.hosts ?? []), ...hosts])]
+    }
 
     if (service.probe !== undefined && service.probe !== false)
       mono.probe = service.probe
@@ -82,6 +93,9 @@ function unit (context, dependency) {
 
   if (mono.probe === undefined && dependency.probe !== undefined && dependency.probe !== false)
     mono.probe = dependency.probe
+
+  // the more specific prefix must come first, whatever the controller's tie-break
+  mono.backends?.sort((a, b) => b.path.length - a.path.length)
 
   return mono
 }

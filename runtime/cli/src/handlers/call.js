@@ -10,7 +10,7 @@ async function call (argv) {
   const locator = new Locator(component, namespace)
   const request = argv.request ? yaml.parse(argv.request) : {}
 
-  const remote = await boot.remote(locator)
+  const remote = await boot.remote(locator, SOURCE)
   await remote.connect()
 
   let reply
@@ -32,5 +32,7 @@ async function call (argv) {
     if (exception !== undefined) process.exit(1)
   }
 }
+
+const SOURCE = { service: 'cli' }
 
 exports.call = call

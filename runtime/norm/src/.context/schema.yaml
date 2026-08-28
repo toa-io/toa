@@ -86,6 +86,21 @@ properties:
               type: string
             minItems: 2
             maxItems: 2
+  ingress:
+    type: object
+    additionalProperties: false
+    properties:
+      hosts:
+        type: array
+        minItems: 1
+        items:
+          type: string
+      class:
+        type: string
+      annotations:
+        type: object
+      default:
+        type: boolean
   annotations:
     type: object
 required: [runtime, name, registry]

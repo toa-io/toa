@@ -1,51 +1,57 @@
 'use strict'
 
 const { console: output } = require('openspan')
+const { Connector } = require('@toa.io/core')
 const boot = require('@toa.io/boot')
-const { context: load } = require('@toa.io/norm')
+const { component } = require('@toa.io/norm')
 const { version } = require('@toa.io/runtime')
 
 const { graceful } = require('./lib/graceful')
-const { context: find } = require('../util/find')
+const { components: find } = require('../util/find')
 
 /**
- * @param {Record<string, string | boolean>} argv
+ * @param {Record<string, string | boolean | string[]>} argv
  * @return {Promise<void>}
  */
 async function mono (argv) {
   console.log('Runtime', version)
 
-  const root = find(argv.path)
-  const context = await load(root)
-  const paths = context.components.map((component) => component.path)
-  const services = createServices(context.dependencies)
+  const paths = find(argv.paths)
+  const services = await createServices(paths)
+  const composition = await boot.composition(paths, argv)
+  const connector = new Connector()
 
-  let composition
+  connector.depends([composition, ...services])
 
   const start = async () => {
-    composition = await boot.composition(paths, argv)
+    graceful(connector)
 
-    const connectors = [composition, ...services]
-
-    graceful({ disconnect: () => disconnectAll(connectors) })
-
-    await connectAll(connectors)
+    await connector.connect()
   }
 
   if (process.env.TOA_BOOT_TRACE === '1') await output.span('toa mono', start)
   else await start()
 
-  if (argv.kill === true) await disconnectAll([composition, ...services])
+  if (argv.kill === true) await connector.disconnect()
 }
 
 /**
- * @param {Record<string, unknown>} [dependencies]
- * @return {toa.core.Connector[]}
+ * @param {string[]} paths
+ * @return {Promise<toa.core.Connector[]>}
  */
-function createServices (dependencies) {
+async function createServices (paths) {
+  const references = new Set()
+
+  for (const path of paths) {
+    const manifest = await component(path)
+
+    for (const reference of Object.keys(manifest.extensions ?? {}))
+      references.add(reference)
+  }
+
   const services = []
 
-  for (const reference of Object.keys(dependencies ?? {})) {
+  for (const reference of references) {
     const { Factory } = require(reference)
 
     if (typeof Factory?.prototype.service !== 'function') continue
@@ -56,22 +62,6 @@ function createServices (dependencies) {
   }
 
   return services
-}
-
-/**
- * @param {toa.core.Connector[]} connectors
- * @return {Promise<void>}
- */
-function connectAll (connectors) {
-  return Promise.all(connectors.map((connector) => connector.connect()))
-}
-
-/**
- * @param {toa.core.Connector[]} connectors
- * @return {Promise<void>}
- */
-function disconnectAll (connectors) {
-  return Promise.all(connectors.map((connector) => connector.disconnect()))
 }
 
 exports.mono = mono
