@@ -34,7 +34,7 @@ introspection: false
 exposition:
   /:
     auth:role: system:introspection
+    cache:control: max-age=60, public
     GET: enumerate
-  /:id:
-    auth:role: system:introspection
-    GET: observe
+    /:id:
+      GET: observe
