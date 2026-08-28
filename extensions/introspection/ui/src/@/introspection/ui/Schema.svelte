@@ -6,9 +6,7 @@
   import { dict } from './intl'
   import type { Props } from './Schema'
 
-  const { label, value, class: className }: Props = $props()
-
-  let open = $state(false)
+  let { label, value, open = $bindable(false), class: className }: Props = $props()
 
   const empty = $derived(
     value === null ||
