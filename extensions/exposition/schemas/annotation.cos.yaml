@@ -1,12 +1,17 @@
 authorities*: <string>
 class: string
 resources:
-  cpu: &constraint
-    type: array
-    items: { type: string }
-    minItems: 2
-    maxItems: 2
-  memory: *constraint
+  # `null` deploys the service without any, which every deployment has to state one way
+  # or the other — see `migrations/263.md`.
+  type: object
+  nullable: true
+  properties:
+    cpu: &constraint
+      type: array
+      items: { type: string }
+      minItems: 2
+      maxItems: 2
+    memory: *constraint
 annotations: <string>
 debug: boolean
 /: ~

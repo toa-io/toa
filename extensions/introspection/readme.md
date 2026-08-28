@@ -12,7 +12,8 @@ one declares. Nothing has to be declared to get it — the extension takes part 
 
 ## Configuration
 
-Both levels of the annotation are optional. Everything below shows the defaults.
+Both levels of the annotation are optional; what follows shows the defaults, except for
+`resources`, which has none and has to be stated.
 
 ### Context
 
@@ -24,10 +25,19 @@ introspection:
   interval: 15        # how often a component reports, seconds
   threshold: 256      # report earlier once this many edges are pending
   ui: true            # publish the UI
-  resources:          # explorer pod limits
+```
+
+The explorer is a deployment like any other, so it states what it may take. There is no
+default — a deployment that states nothing is refused at export:
+
+```yaml
+introspection:
+  resources:
     cpu: [100m, 500m]
     memory: [128Mi, 256Mi]
 ```
+
+It may also take the context's `resources`, or say `resources: null` to run without any.
 
 To turn introspection off completely — no explorer, no collection:
 
