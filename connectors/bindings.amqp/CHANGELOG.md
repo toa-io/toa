@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.262](https://github.com/toa-io/toa/compare/v1.0.0-alpha.261...v1.0.0-alpha.262) (2026-08-28)
+
+
+### Bug Fixes
+
+* **amqp:** log reconnect attempts ([3903dc9](https://github.com/toa-io/toa/commit/3903dc9e31ba8365cd5aef20c09366a0cb7a56fe))
+
+
+
+
+
 # [1.0.0-alpha.261](https://github.com/toa-io/toa/compare/v1.0.0-alpha.260...v1.0.0-alpha.261) (2026-08-26)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp

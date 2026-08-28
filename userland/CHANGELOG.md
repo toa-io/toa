@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.262](https://github.com/toa-io/toa/compare/v1.0.0-alpha.261...v1.0.0-alpha.262) (2026-08-28)
+
+
+### Bug Fixes
+
+* **stage:** name the feature suite as the caller ([e4e593b](https://github.com/toa-io/toa/commit/e4e593b795cc7dc113f06e8a1554ae2ef36442c0))
+
+
+
+
+
 # [1.0.0-alpha.259](https://github.com/toa-io/toa/compare/v1.0.0-alpha.258...v1.0.0-alpha.259) (2026-08-24)
 
 **Note:** Version bump only for package @toa.io/userland
