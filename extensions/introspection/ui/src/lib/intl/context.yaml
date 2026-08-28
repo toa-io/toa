@@ -1,0 +1,24 @@
+context: Internationalization project
+inputs:
+  locale:
+    input: locale
+    context: BCP 47 language tag, should not be translated, always use the target language code
+  native:
+    input: native
+    context: native name of the language in that language, should not be translated
+  nav:
+    list:
+      input: List
+      context: tab label for the component list
+    map:
+      input: Map
+      context: tab label for the interactive map of components and their calls
+    signout:
+      input: Sign out
+      context: button that ends the session
+    filter:
+      input: Filter components
+      context: placeholder of the search box in the header
+mounts:
+  iam: ../../@/iam/ui/intl
+  introspection: ../../@/introspection/ui/intl

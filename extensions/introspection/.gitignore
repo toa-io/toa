@@ -1,1 +1,5 @@
 /components/**/operations/
+
+# the UI build. Kept here rather than in `ui/.gitignore` because npm reads nested ignore
+# files when packing, and a rule there would drop it from the tarball.
+/ui/dist/

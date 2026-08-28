@@ -1,0 +1,95 @@
+<script lang="ts">
+  import { List, LogOut, Search, Waypoints } from '@lucide/svelte'
+  import { query } from '@/introspection/ui'
+  import { Authenticated } from '@/iam/ui'
+  import { logout } from '@/iam'
+  import { Kbd } from '$ui/kbd'
+  import { Input } from '$ui/input'
+  import { Button } from '$ui/button'
+  import { apple } from '$lib/tools'
+  import { dict } from '$lib/intl'
+  import { meta } from '$config'
+  import { page } from '$app/state'
+  import { base } from '$app/paths'
+
+  const { children } = $props()
+
+  let filter = $state<HTMLInputElement | null>(null)
+
+  // the shortcut every search field has; ⌘ on Apple, Ctrl everywhere else
+  function shortcut(event: KeyboardEvent) {
+    if (event.key !== 'k' || !(event.metaKey || event.ctrlKey)) return
+
+    event.preventDefault()
+    filter?.focus()
+    filter?.select()
+  }
+
+  const tabs = $derived([
+    { id: 'list', href: `${base}/`, label: $dict.nav.list, Icon: List },
+    { id: 'map', href: `${base}/map/`, label: $dict.nav.map, Icon: Waypoints },
+  ])
+</script>
+
+<svelte:window onkeydown={shortcut} />
+
+<Authenticated>
+  <div class="flex h-dvh flex-col">
+    <header class="flex items-center gap-4 px-4 py-3">
+      <h1 class="hidden text-lg font-medium md:block">{meta.title}</h1>
+
+      <nav class="flex gap-1">
+        {#each tabs as tab (tab.id)}
+          {@const active = page.url.pathname === tab.href}
+
+          <a
+            id={`nav-${tab.id}-link`}
+            href={tab.href}
+            aria-current={active ? 'page' : undefined}
+            aria-label={tab.label}
+            class={[
+              'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm transition-colors',
+              active ? 'bg-muted font-medium' : 'text-muted-foreground hover:text-foreground',
+            ]}
+          >
+            <tab.Icon class="size-4" />
+            <span class="hidden md:inline">{tab.label}</span>
+          </a>
+        {/each}
+      </nav>
+
+      <div class="relative w-full max-w-64 min-w-0">
+        <Search
+          class="text-muted-foreground pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2"
+        />
+
+        <Input
+          id="nav-filter-input"
+          type="search"
+          bind:ref={filter}
+          bind:value={$query}
+          aria-label={$dict.nav.filter}
+          class="ps-8 pe-3 md:pe-14 [&::-webkit-search-cancel-button]:hidden"
+        />
+
+        <Kbd class="absolute end-2 top-1/2 hidden -translate-y-1/2 md:inline-flex">{apple ? '⌘K' : 'Ctrl K'}</Kbd>
+      </div>
+
+      <!-- the label is the first thing to go when the header runs out of room -->
+      <Button
+        id="iam-logout-button"
+        variant="ghost"
+        aria-label={$dict.nav.signout}
+        class="ms-auto"
+        onclick={logout}
+      >
+        <LogOut />
+        <span class="hidden md:inline">{$dict.nav.signout}</span>
+      </Button>
+    </header>
+
+    <main class="min-h-0 flex-1">
+      {@render children()}
+    </main>
+  </div>
+</Authenticated>

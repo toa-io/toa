@@ -91,6 +91,31 @@ The `annotations` above are applied to every service, which is the place to put 
 Reading the map still needs the `system:introspection` role. The page itself is served without
 authentication — it is a page, and it displays nothing the API has not already granted.
 
+### Developing the UI
+
+The page is a Svelte application under `ui`, built into `ui/dist` — a directory of files the
+explorer serves, with no server rendering and nothing to run beside it. The mount path is baked
+into the bundle, because the ingress forwards it rather than rewriting it, and the client router
+matches against it.
+
+The build is git-ignored and produced on `npm publish`, so from a checkout it is a one-time step,
+like `npm run transpile`:
+
+```shell
+$ npm run build:ui                  # in this package
+```
+
+The explorer then answers on port `8002`, and `/` redirects to the mount path, so a local run
+opens at <http://localhost:8002>. To work on the page itself:
+
+```shell
+$ npm --prefix ui run dev           # http://localhost:5173/.introspection
+```
+
+Either way the API is the page's own origin — except on a local host, where the explorer and the
+gateway are separate ports and the page asks `:8000` instead. Nothing configures this; see
+`ui/src/config/index.ts`.
+
 ## Reading the map
 
 The map lives in two ordinary components, `introspection.nodes` and `introspection.edges`. Both

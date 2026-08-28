@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "skills": {
+    "antcn": {
+      "source": "cn.ants.dev",
+      "sourceUrl": "https://cn.ants.dev",
+      "sourceType": "well-known",
+      "computedHash": "9dc789fa80bcdffb1347075dd3be6fb10fa13d5ac6f5b4831cb3ef8eb2d94e16",
+      "wellKnownDigest": "sha256:d4ca7d272fcbb9fb577db347542947414a40d530b0ae260b9c83bb827e675714"
+    },
+    "shadcn-svelte": {
+      "source": "huntabyte/shadcn-svelte",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn-svelte/SKILL.md",
+      "computedHash": "d4f3f983a71466a86649985a8a7fbce47da29f44de3a9d02540bbcf3167134e0"
+    },
+    "svas": {
+      "source": "temich/svas",
+      "sourceType": "github",
+      "skillPath": "skills/svas/SKILL.md",
+      "computedHash": "4c40a657053dd5a475b72bdc4163047cee30bba901c98be246303a95d9fe9d2c"
+    },
+    "svintl": {
+      "source": "temich/svintl",
+      "sourceType": "github",
+      "skillPath": "skills/svintl/SKILL.md",
+      "computedHash": "e243a29a69fd45b98e05c683c116e3bdce2a2d8c7e2858b89e81ae7b52e86008"
+    }
+  }
+}
