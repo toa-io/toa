@@ -1,4 +1,6 @@
-import type { Focus, Graph, Satellite, Vertex } from './graph'
+import { system } from '../ui'
+
+import type { Component, Focus, Graph, Satellite, Vertex } from './graph'
 
 export interface Position {
   x: number
@@ -25,6 +27,23 @@ export const DIMMED = 0.25
 /** Air between the end of a row and the line that leaves it. */
 export const STUB = 8
 
+/** The line naming a group of cards, and the room the map reserves for it. */
+export const BAND = { height: 20, prefix: 'band:' }
+
+/** Where a group of the map is named, once the map knows how wide it turned out. */
+export interface Band {
+  id: string
+  label: 'user' | 'system'
+  x: number
+  y: number
+  width: number
+}
+
+export interface Grid {
+  positions: Map<string, Position>
+  bands: Band[]
+}
+
 /** More neighbours than this on one side, and that side becomes two columns. */
 const COLUMN = 6
 
@@ -32,35 +51,75 @@ const COLUMN = 6
 const PAD = 32
 
 /**
- * The static arrangement: the components in a grid, and the callers from outside in a
- * row beneath them, the whole thing centred in the viewport.
+ * The static arrangement: what the application declared, then what the runtime gave it,
+ * then the callers from outside in a row beneath them all — the whole thing centred in
+ * the viewport, each group under a line saying which it is.
  */
-export function grid(graph: Graph, view: Size, columns = 4): Map<string, Position> {
+export function grid(graph: Graph, view: Size, columns = 4): Grid {
   const positions = new Map<string, Position>()
-  const services = graph.vertices.filter((v) => v.kind === 'service')
-  const components = graph.vertices.filter((v) => v.kind === 'component').sort(byName)
+  const services = graph.vertices.filter((vertex) => vertex.kind === 'service')
+
+  const components = graph.vertices
+    .filter((vertex): vertex is Component => vertex.kind === 'component')
+    .sort(byName)
 
   const step = { x: CARD.width + CARD.gap, y: CARD.height + CARD.gap }
 
-  components.forEach((component, i) =>
-    positions.set(component.id, {
-      x: (i % columns) * step.x,
-      y: Math.floor(i / columns) * step.y,
-    }),
-  )
+  // a group with nothing in it is not named: the line would say there is something there
+  const groups = (
+    [
+      { label: 'user' as const, of: components.filter((one) => !system(one.node)) },
+      { label: 'system' as const, of: components.filter((one) => system(one.node)) },
+    ] satisfies { label: Band['label']; of: Component[] }[]
+  ).filter((group) => group.of.length > 0)
 
-  const under = Math.ceil(components.length / columns) * step.y
+  const bands: Band[] = []
 
-  services.forEach((service, i) => positions.set(service.id, { x: i * step.x, y: under }))
+  let top = 0
+
+  for (const group of groups) {
+    bands.push({ id: BAND.prefix + group.label, label: group.label, x: 0, y: top, width: 0 })
+
+    top += BAND.height + CARD.gap
+
+    group.of.forEach((component, i) =>
+      positions.set(component.id, {
+        x: (i % columns) * step.x,
+        y: top + Math.floor(i / columns) * step.y,
+      }),
+    )
+
+    top += Math.ceil(group.of.length / columns) * step.y
+  }
+
+  services.forEach((service, i) => positions.set(service.id, { x: i * step.x, y: top }))
+
+  // to the end of the widest row the map turned out to have, so both lines agree
+  const width = [...positions.values()].reduce((widest, at) => Math.max(widest, at.x), 0) + CARD.width
+
+  for (const band of bands) {
+    band.width = width
+    positions.set(band.id, { x: band.x, y: band.y })
+  }
 
   // a service card is a line rather than a card, and the row of them is what the map now
   // ends with: reserving a whole card for it would centre the map around nothing
   const heights = new Map(services.map((service) => [service.id, SERVICE.height]))
 
-  return centre(positions, view, (id) => ({
-    width: CARD.width,
-    height: heights.get(id) ?? CARD.height,
+  centre(positions, view, (id) => ({
+    width: id.startsWith(BAND.prefix) ? width : CARD.width,
+    height: id.startsWith(BAND.prefix) ? BAND.height : (heights.get(id) ?? CARD.height),
   }))
+
+  for (const band of bands) {
+    const at = positions.get(band.id)
+
+    if (at !== undefined) Object.assign(band, at)
+
+    positions.delete(band.id)
+  }
+
+  return { positions, bands }
 }
 
 /**

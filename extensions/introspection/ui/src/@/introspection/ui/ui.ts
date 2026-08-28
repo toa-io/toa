@@ -18,6 +18,18 @@ export function shorten(id: string): string {
   return id.startsWith(DEFAULT + '.') ? id.slice(DEFAULT.length + 1) : id
 }
 
+/**
+ * The namespaces the runtime provides components in. Introspection has no notion of a
+ * system component — a manifest does not record which package it came from — so this is
+ * a list, and it grows when the runtime ships another one.
+ */
+const SYSTEM = new Set(['identity', 'octets', 'realtime'])
+
+/** Whether a component came with the runtime rather than with the application. */
+export function system(of: { namespace: string }): boolean {
+  return SYSTEM.has(of.namespace)
+}
+
 export function identify(of: { namespace: string; component: string }): string {
   return `${of.namespace}.${of.component}`
 }

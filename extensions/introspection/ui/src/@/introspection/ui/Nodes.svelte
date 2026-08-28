@@ -1,8 +1,9 @@
 <script lang="ts">
   import { Async } from 'svas'
   import { nodes } from '@/introspection'
+  import { Separator } from '$ui/separator'
   import * as Item from '$ui/item'
-  import { query, rank } from './ui'
+  import { query, rank, system } from './ui'
   import { dict } from './intl'
   import Node from './Node.svelte'
   import type { Props } from './Nodes'
@@ -17,6 +18,17 @@
       a.node.namespace.localeCompare(b.node.namespace) ||
       a.node.component.localeCompare(b.node.component)
     )
+  }
+
+  /**
+   * What the application declared, then what it was given. A group the filter has emptied
+   * is not a group: its heading would say there is something there and there is not.
+   */
+  function group(ranked: Ranked[]) {
+    return [
+      { id: 'user', label: $dict.space.user, of: ranked.filter((it) => !system(it.node)) },
+      { id: 'system', label: $dict.space.system, of: ranked.filter((it) => system(it.node)) },
+    ].filter((group) => group.of.length > 0)
   }
 
   interface Ranked {
@@ -37,11 +49,22 @@
     {:else if shown.length === 0}
       <p class="text-muted-foreground py-20 text-center">{$dict.nodes.nomatch}</p>
     {:else}
-      <Item.Group class={['gap-2', className]} {...props}>
-        {#each shown as ranked (ranked.node.id)}
-          <Node node={ranked.node} />
+      <div class={['flex flex-col gap-6', className]} {...props}>
+        {#each group(shown) as band (band.id)}
+          <section class="flex flex-col gap-2">
+            <div class="text-muted-foreground flex items-center gap-3">
+              <span class="text-xs font-medium tracking-wide uppercase">{band.label}</span>
+              <Separator class="flex-1" />
+            </div>
+
+            <Item.Group class="gap-2">
+              {#each band.of as ranked (ranked.node.id)}
+                <Node node={ranked.node} />
+              {/each}
+            </Item.Group>
+          </section>
         {/each}
-      </Item.Group>
+      </div>
     {/if}
   {/snippet}
 </Async>

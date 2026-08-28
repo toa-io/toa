@@ -32,8 +32,11 @@ export type Dictionary = {
       }
       map: {
         empty: string
-        back: string
         expand: string
         restore: string
+      }
+      space: {
+        user: string
+        system: string
       }
     }
