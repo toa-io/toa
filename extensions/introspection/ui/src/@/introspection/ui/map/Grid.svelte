@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SvelteMap } from 'svelte/reactivity'
   import { Separator } from '$ui/separator'
-  import { query } from '../ui'
+  import { only, query } from '../ui'
   import { dict } from '../intl'
   import { press } from './press'
   import { measure } from './measure'
@@ -38,6 +38,16 @@
       dashed: link.events === link.calls,
     })),
   )
+
+  // pressing a card opens it, so that is what the key does when only one is left
+  $effect(() => {
+    const left = graph.vertices.filter((vertex) => found(vertex, $query))
+    const single = left.length === 1 ? left[0].id : null
+
+    only.set(single === null ? null : () => void open(single))
+
+    return () => only.set(null)
+  })
 
   function lit(vertex: Vertex): boolean {
     if (!found(vertex, $query)) return false

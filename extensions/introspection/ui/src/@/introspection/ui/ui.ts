@@ -4,6 +4,13 @@ import type { Node } from '@/introspection'
 /** What the header's filter holds. Transient: not persisted, not in the URL. */
 export const query = writable('')
 
+/**
+ * What Enter in the filter does, set by whichever screen is showing. A filter narrowed to
+ * one thing leaves nothing to choose, so the key does what pressing that thing does; with
+ * none or many left there is nothing to mean by it.
+ */
+export const only = writable<(() => void) | null>(null)
+
 type Searchable = Pick<Node, 'namespace' | 'component' | 'operations' | 'events'>
 
 /** A name match outranks a match on something the component merely holds. */

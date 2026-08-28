@@ -1,6 +1,6 @@
 <script lang="ts">
   import { List, LogOut, Search, Waypoints } from '@lucide/svelte'
-  import { query } from '@/introspection/ui'
+  import { only, query } from '@/introspection/ui'
   import { Authenticated, Authorized } from '@/iam/ui'
   import { logout } from '@/iam'
   import { Kbd } from '$ui/kbd'
@@ -11,13 +11,24 @@
   import { meta } from '$config'
   import { page } from '$app/state'
   import { base } from '$app/paths'
+  import { onNavigate } from '$app/navigation'
 
   const { children } = $props()
+
+  // a filter is about the screen it was typed on, and the next screen is not that one
+  onNavigate(() => query.set(''))
 
   /** What an account needs to read the map. `auth:role` in both component manifests. */
   const ROLE = 'system:introspection'
 
   let filter = $state<HTMLInputElement | null>(null)
+
+  /** With one thing left, the key does what pressing that thing does. */
+  function enter(event: KeyboardEvent): void {
+    if (event.key !== 'Enter') return
+
+    $only?.()
+  }
 
   // the shortcut every search field has; ⌘ on Apple, Ctrl everywhere else
   function shortcut(event: KeyboardEvent) {
@@ -32,6 +43,17 @@
     { id: 'list', href: `${base}/`, label: $dict.nav.list, Icon: List },
     { id: 'map', href: `${base}/map/`, label: $dict.nav.map, Icon: Waypoints },
   ])
+
+  /**
+   * The deepest tab the address is inside, so a component opened on the map keeps the map
+   * marked. Deepest rather than matching: every address starts with the list's.
+   */
+  const inside = $derived(
+    tabs
+      .map((tab) => tab.href)
+      .filter((href) => page.url.pathname.startsWith(href))
+      .reduce((deepest, href) => (href.length > deepest.length ? href : deepest), ''),
+  )
 </script>
 
 <svelte:window onkeydown={shortcut} />
@@ -45,7 +67,7 @@
 
       <nav class="flex gap-1">
         {#each tabs as tab (tab.id)}
-          {@const active = page.url.pathname === tab.href}
+          {@const active = tab.href === inside}
 
           <a
             id={`nav-${tab.id}-link`}
@@ -73,6 +95,7 @@
           type="search"
           bind:ref={filter}
           bind:value={$query}
+          onkeydown={enter}
           aria-label={$dict.nav.filter}
           class="ps-8 pe-3 md:pe-14 [&::-webkit-search-cancel-button]:hidden"
         />

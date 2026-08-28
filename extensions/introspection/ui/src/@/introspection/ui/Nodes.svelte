@@ -1,15 +1,37 @@
 <script lang="ts">
-  import { Async } from 'svas'
+  import { SvelteSet } from 'svelte/reactivity'
+  import { Async, ok } from 'svas'
   import { nodes } from '@/introspection'
   import { Separator } from '$ui/separator'
   import * as Item from '$ui/item'
-  import { query, rank, system } from './ui'
+  import { identify, only, query, rank, system } from './ui'
   import { dict } from './intl'
   import Node from './Node.svelte'
   import type { Props } from './Nodes'
   import type { NodeLike } from './Node'
 
   const { class: className, ...props }: Props = $props()
+
+  /** Which cards are open. Held here so the filter can open the one it has left. */
+  const opened = new SvelteSet<string>()
+
+  const list = $derived(ok($nodes) ? $nodes : [])
+
+  const shown = $derived(
+    list
+      .map((node) => ({ node, rank: rank(node, $query) }))
+      .filter((ranked) => ranked.rank > 0)
+      .sort(order),
+  )
+
+  // pressing a card opens it, so that is what the key does when only one is left
+  $effect(() => {
+    const single = shown.length === 1 ? identify(shown[0].node) : null
+
+    only.set(single === null ? null : () => opened.add(single))
+
+    return () => only.set(null)
+  })
 
   /** Best answers first; the map arrives in whatever order the database returns it. */
   function order(a: Ranked, b: Ranked) {
@@ -38,12 +60,7 @@
 </script>
 
 <Async store={nodes}>
-  {#snippet awaited(list)}
-    {@const shown = list
-      .map((node) => ({ node, rank: rank(node, $query) }))
-      .filter((ranked) => ranked.rank > 0)
-      .sort(order)}
-
+  {#snippet awaited()}
     {#if list.length === 0}
       <p class="text-muted-foreground py-20 text-center">{$dict.nodes.empty}</p>
     {:else if shown.length === 0}
@@ -59,7 +76,13 @@
 
             <Item.Group class="gap-2">
               {#each band.of as ranked (ranked.node.id)}
-                <Node node={ranked.node} />
+                {@const id = identify(ranked.node)}
+
+                <Node
+                  node={ranked.node}
+                  bind:open={() => opened.has(id),
+                  (open) => (open ? opened.add(id) : opened.delete(id))}
+                />
               {/each}
             </Item.Group>
           </section>
