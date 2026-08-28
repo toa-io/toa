@@ -1,6 +1,8 @@
 <script lang="ts">
   import { SvelteMap, SvelteSet } from 'svelte/reactivity'
+  import { Kbd } from '$ui/kbd'
   import { query } from '../ui'
+  import { dict } from '../intl'
   import Node from '../Node.svelte'
   import { rows } from './rows'
   import { press } from './press'
@@ -168,18 +170,13 @@
     <!-- the same component can stand on both sides: it is two cards, one per direction -->
     <div
       class={[
-        'absolute top-0 left-0 cursor-pointer transition-opacity',
+        'absolute top-0 left-0 cursor-pointer',
         // a closed card is passed behind; an opened one has lines leaving its own rows,
         // and they would be hidden between the row and the edge of the card
         opened === satellite.id ? 'z-0' : 'z-20',
       ]}
       style:translate="{at(satellite.id).x}px {at(satellite.id).y}px"
       style:width="{opened === satellite.id ? FOCUSED.width : CARD.width}px"
-      style:opacity={found(satellite.vertex, $query) &&
-      involved(satellite) &&
-      !muted.has(satellite.id)
-        ? 1
-        : DIMMED}
       onmouseenter={() =>
         (asked = muted.has(satellite.id) ? null : { of: 'card', id: satellite.id })}
       onmouseleave={() => (asked = null)}
@@ -190,14 +187,33 @@
       tabindex="0"
       aria-label={label(satellite.vertex)}
     >
-      {#if satellite.vertex.kind === 'component'}
-        <Component
-          node={satellite.vertex.node}
-          open={opened === satellite.id}
-          ontoggle={() => toggle(satellite)}
-        />
-      {:else}
-        <Service name={satellite.vertex.name} />
+      <!-- the card steps back, not the whole of it: what is written over a silenced
+           card is how to bring it back, and it is of no use at a quarter strength -->
+      <div
+        class="transition-opacity"
+        style:opacity={found(satellite.vertex, $query) &&
+        involved(satellite) &&
+        !muted.has(satellite.id)
+          ? 1
+          : DIMMED}
+      >
+        {#if satellite.vertex.kind === 'component'}
+          <Component
+            node={satellite.vertex.node}
+            open={opened === satellite.id}
+            ontoggle={() => toggle(satellite)}
+          />
+        {:else}
+          <Service name={satellite.vertex.name} />
+        {/if}
+      </div>
+
+      <!-- only on the services, which are the cards that start silenced: the gesture is
+           learned once here, and a component silenced by hand needs no reminding of it -->
+      {#if muted.has(satellite.id) && satellite.vertex.kind === 'service'}
+        <div class="pointer-events-none absolute inset-y-0 end-2 flex items-center">
+          <Kbd>{$dict.map.restore}</Kbd>
+        </div>
       {/if}
     </div>
   {/each}

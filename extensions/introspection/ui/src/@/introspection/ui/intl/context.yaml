@@ -71,3 +71,6 @@ inputs:
     expand:
       input: Show details
       context: accessible name of an icon-only chevron button that opens a component card on the map
+    restore:
+      input: ⇧+Click
+      context: keyboard hint shown over a silenced card on the map; holding shift and clicking brings its lines back. Keep the shift symbol, translate the word for a mouse click

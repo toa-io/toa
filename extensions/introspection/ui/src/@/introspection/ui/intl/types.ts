@@ -34,5 +34,6 @@ export type Dictionary = {
         empty: string
         back: string
         expand: string
+        restore: string
       }
     }
