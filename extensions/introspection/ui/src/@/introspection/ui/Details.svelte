@@ -12,7 +12,7 @@
 
 <div class={['flex flex-col gap-4 text-sm', className]}>
   {#if node.entity !== null}
-    <Section title={$dict.node.state}>
+    <Section title={$dict.node.state} class="gap-1">
       <div class="text-muted-foreground flex flex-wrap gap-x-4">
         <span>{$dict.node.storage} {node.entity.storage ?? $dict.node.none}</span>
         {#if node.entity.associated}<span>{$dict.node.associated}</span>{/if}
@@ -25,7 +25,7 @@
   {#if node.operations.length > 0}
     <Section title={$dict.node.operations(node.operations.length)}>
       {#each node.operations as operation (operation.endpoint)}
-        <Operation {operation} />
+        <Operation {operation} row="operation:{operation.endpoint}" />
       {/each}
     </Section>
   {/if}
@@ -33,7 +33,7 @@
   {#if node.events.length > 0}
     <Section title={$dict.node.events(node.events.length)}>
       {#each node.events as event (event.label)}
-        <Event {event} />
+        <Event {event} row="event:{event.label}" />
       {/each}
     </Section>
   {/if}
@@ -41,13 +41,13 @@
   {#if node.receivers.length > 0}
     <Section title={$dict.node.receivers(node.receivers.length)}>
       {#each node.receivers as receiver (receiver.label)}
-        <Receiver {receiver} />
+        <Receiver {receiver} row="receiver:{receiver.label}" />
       {/each}
     </Section>
   {/if}
 
   {#if node.extensions.length > 0}
-    <Section title={$dict.node.extensions(node.extensions.length)}>
+    <Section title={$dict.node.extensions(node.extensions.length)} class="gap-1">
       {#each node.extensions as extension (extension)}
         <span class="text-muted-foreground">{extension}</span>
       {/each}

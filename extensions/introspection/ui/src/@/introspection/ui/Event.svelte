@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { Props } from './Event'
 
-  const { event, class: className }: Props = $props()
+  const { event, row, class: className }: Props = $props()
 </script>
 
-<div class={['flex flex-wrap items-baseline gap-2', className]}>
+<div data-row={row} class={['-mx-2 rounded-md px-2 py-1 transition-colors hover:bg-muted flex w-fit flex-wrap items-baseline gap-2', className]}>
   <span class="font-medium">{event.label}</span>
 
   {#if event.binding !== undefined}

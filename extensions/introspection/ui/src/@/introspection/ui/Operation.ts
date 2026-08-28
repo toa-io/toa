@@ -8,6 +8,8 @@ type OperationLike = Pick<
 
 export interface Props {
   operation: OperationLike
+  /** Names the line an edge of the map can point at, once the card is opened. */
+  row?: string
   class?: ClassValue
 }
 

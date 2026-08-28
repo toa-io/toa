@@ -6,13 +6,16 @@
   import Schema from './Schema.svelte'
   import type { Props } from './Operation'
 
-  const { operation, class: className }: Props = $props()
+  const { operation, row, class: className }: Props = $props()
 
   let open = $state(false)
 </script>
 
 <Collapsible.Root bind:open class={className}>
-  <Collapsible.Trigger class="flex w-full items-center gap-2 text-start">
+  <Collapsible.Trigger
+    data-row={row}
+    class="-mx-2 rounded-md px-2 py-1 transition-colors hover:bg-muted flex w-fit items-center gap-2 text-start"
+  >
     <ChevronDown
       class={['text-muted-foreground size-3 shrink-0 transition-transform', open && 'rotate-180']}
     />
