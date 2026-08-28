@@ -8,6 +8,11 @@ export interface Props {
   node: NodeLike
   /** Opened from the outside where the card is the point of the screen, as on the map. */
   open?: boolean
+  /**
+   * Whether it folds at all. A card that is the whole of what a screen is about has
+   * nowhere to fold to, and a chevron on it only invites the reader to make it useless.
+   */
+  collapsible?: boolean
   class?: ClassValue
 }
 

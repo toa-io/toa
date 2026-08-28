@@ -27,9 +27,11 @@
   </Collapsible.Trigger>
 
   <Collapsible.Content class="ms-4 mt-1 flex flex-col gap-1">
-    <!-- what an operation takes is the reason to open it; the rest is asked for -->
-    <Schema label={$dict.node.input} value={operation.input} open />
-    <Schema label={$dict.node.output} value={operation.output} />
-    <Schema label={$dict.node.errors} value={operation.errors} />
+    {#if open}
+      <!-- what an operation takes is the reason to open it; the rest is asked for -->
+      <Schema label={$dict.node.input} value={operation.input} open />
+      <Schema label={$dict.node.output} value={operation.output} />
+      <Schema label={$dict.node.errors} value={operation.errors} />
+    {/if}
   </Collapsible.Content>
 </Collapsible.Root>

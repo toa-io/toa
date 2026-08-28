@@ -22,7 +22,9 @@
     </Collapsible.Trigger>
 
     <Collapsible.Content class={['flex flex-col', className]}>
-      {@render children()}
+      {#if open}
+        {@render children()}
+      {/if}
     </Collapsible.Content>
   </Collapsible.Root>
 {:else}

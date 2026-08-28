@@ -31,7 +31,8 @@
     </Collapsible.Trigger>
 
     <Collapsible.Content>
-      <div class="relative mt-1">
+      {#if open}
+        <div class="relative mt-1">
         <div
           data-scrollable
           class="bg-muted/50 max-h-80 overflow-auto rounded-md p-2 font-mono text-xs whitespace-nowrap"
@@ -70,7 +71,8 @@
             {/snippet}
           </Clipboard>
         {/if}
-      </div>
+        </div>
+      {/if}
     </Collapsible.Content>
   </Collapsible.Root>
 {/if}
