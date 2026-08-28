@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { Circle, CircleDashed, Database, Zap } from '@lucide/svelte'
+  import { Database, Play, Radio, Zap } from '@lucide/svelte'
   import { dict } from './intl'
   import type { Props } from './Summary'
 
   const { node, class: className }: Props = $props()
 
   const counts = $derived([
-    { key: 'operations', Icon: Circle, of: node.operations, label: $dict.node.operations },
+    { key: 'operations', Icon: Play, of: node.operations, label: $dict.node.operations },
     { key: 'events', Icon: Zap, of: node.events, label: $dict.node.events },
-    { key: 'receivers', Icon: CircleDashed, of: node.receivers, label: $dict.node.receivers },
+    { key: 'receivers', Icon: Radio, of: node.receivers, label: $dict.node.receivers },
   ])
 </script>
 
