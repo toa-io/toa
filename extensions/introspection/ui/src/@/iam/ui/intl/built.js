@@ -29,7 +29,8 @@ export const dictionaries = {
       },
       "signout": "Sign out",
       "login": "Log In",
-      "signin": "Sign In"
+      "signin": "Sign In",
+      "copyId": "Copy account ID"
     },
     "credentials": {
       "connect": "Connect",

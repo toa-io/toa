@@ -30,6 +30,7 @@ export type Dictionary = {
         signout: string
         login: string
         signin: string
+        copyId: string
       }
       credentials: {
         connect: string

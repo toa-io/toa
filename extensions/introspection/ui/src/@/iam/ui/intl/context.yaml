@@ -17,6 +17,9 @@ inputs:
       input: Login
     signin:
       input: Sign In
+    copyId:
+      input: Copy the account id
+      context: accessible name of the button that copies the id; the button itself shows only its first characters
   credentials:
     connect:
       input: Connect

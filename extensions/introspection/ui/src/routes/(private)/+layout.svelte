@@ -1,7 +1,7 @@
 <script lang="ts">
   import { List, LogOut, Search, Waypoints } from '@lucide/svelte'
   import { query } from '@/introspection/ui'
-  import { Authenticated } from '@/iam/ui'
+  import { Authenticated, Authorized } from '@/iam/ui'
   import { logout } from '@/iam'
   import { Kbd } from '$ui/kbd'
   import { Input } from '$ui/input'
@@ -13,6 +13,9 @@
   import { base } from '$app/paths'
 
   const { children } = $props()
+
+  /** What an account needs to read the map. `auth:role` in both component manifests. */
+  const ROLE = 'system:introspection'
 
   let filter = $state<HTMLInputElement | null>(null)
 
@@ -91,7 +94,13 @@
     </header>
 
     <main class="min-h-0 flex-1">
-      {@render children()}
+      <!-- the same role the map's own API is read through, declared in the manifests of
+           `introspection.nodes` and `introspection.edges`. Gating here rather than letting
+           the page ask and be refused is what keeps the request from being made at all:
+           the stores fetch when something subscribes, and nothing does. -->
+      <Authorized role={ROLE}>
+        {@render children()}
+      </Authorized>
     </main>
   </div>
 </Authenticated>

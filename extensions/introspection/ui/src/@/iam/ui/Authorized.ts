@@ -15,6 +15,12 @@ interface Checks {
 
 export interface Props extends Checks {
   children: Snippet
+  /**
+   * What stands in place of the children when the checks say no. Without it the account
+   * is told what it is missing and given its own id to ask with; a gate that guards a
+   * control rather than a screen passes an empty snippet.
+   */
+  denied?: Snippet
 }
 
 type Principal = Pick<Echo, 'id' | 'roles'>
