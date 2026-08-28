@@ -33,7 +33,16 @@ introspection: false
 exposition:
   /:
     auth:role: system:introspection
+
+    # the map is the whole document, and its shape is what the application happens to declare
+    io:output: true
     cache:control: max-age=60, public
-    GET: enumerate
+    # the map is read whole: a page of ten is of no use to anything that draws it
+    GET:
+      endpoint: enumerate
+      query:
+        limit:
+          value: 10000
+          range: [1, 10000]
     /:id:
       GET: observe

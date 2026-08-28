@@ -6,6 +6,7 @@ import { encode, timeout } from '@toa.io/generic'
 import { Factory } from '../../source'
 import * as syntax from '../../source/RTD/syntax'
 import { shortcuts } from '../../source/Directive'
+import { manifests } from './map'
 import type * as http from '../../source/HTTP'
 
 let instance: Connector | null = null
@@ -34,6 +35,31 @@ export class Gateway {
       properties.authorities = authorities
 
     process.env.TOA_EXPOSITION_PROPERTIES = encode(properties)
+
+    await Gateway.stop()
+
+    this.default = false
+  }
+
+  /**
+   * The routes of the introspection map, taken from its own manifests. `norm` runs the
+   * exposition extension over them, so what lands here is what a deployment would carry.
+   */
+  @given('the annotation of the introspection map')
+  public async annotateMap (): Promise<void> {
+    const tree: syntax.Node = { routes: [], methods: [], directives: [] }
+
+    for (const manifest of await manifests()) {
+      const node = manifest.extensions?.[EXPOSITION] as syntax.Node | undefined
+
+      if (node === undefined)
+        throw new Error(`'${manifest.namespace}.${manifest.name}' declares no exposition`)
+
+      tree.routes.push(...node.routes)
+    }
+
+    process.env.TOA_EXPOSITION = encode(tree)
+    process.env.TOA_EXPOSITION_PROPERTIES = encode(DEFAULT_PROPERTIES)
 
     await Gateway.stop()
 
@@ -114,6 +140,8 @@ export class Gateway {
     }
   }
 }
+
+const EXPOSITION = '@toa.io/extensions.exposition'
 
 const DEFAULT_TREE = encode({
   routes: [],
