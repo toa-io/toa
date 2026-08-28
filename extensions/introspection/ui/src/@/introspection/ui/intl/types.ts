@@ -30,5 +30,7 @@ export type Dictionary = {
       }
       map: {
         empty: string
+        back: string
+        expand: string
       }
     }

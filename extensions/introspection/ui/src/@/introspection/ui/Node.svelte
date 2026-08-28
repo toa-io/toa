@@ -7,9 +7,7 @@
   import Details from './Details.svelte'
   import type { Props } from './Node'
 
-  const { node, class: className }: Props = $props()
-
-  let open = $state(false)
+  let { node, open = $bindable(false), class: className }: Props = $props()
 </script>
 
 <Collapsible.Root bind:open class={className}>

@@ -1,19 +1,22 @@
 <script lang="ts">
+  import { DIMMED } from './layout'
   import { curve, entry, exit, loop, type Props } from './Edges'
 
-  const { links, positions, sizes, class: className }: Props = $props()
+  const { arcs, positions, sizes, class: className }: Props = $props()
 
   const paths = $derived(
-    links
-      .map((link) => {
-        const from = box(link.from)
-        const to = box(link.to)
+    arcs
+      .map((arc) => {
+        const from = box(arc.from)
+        const to = box(arc.to)
 
         if (from === null || to === null) return null
 
-        if (link.from === link.to) return { id: link.id, d: loop(from) }
+        const d = arc.from === arc.to
+          ? loop(from)
+          : curve(exit(from, to.x, arc.out), entry(to, from.x, arc.in))
 
-        return { id: link.id, d: curve(exit(from, to.x), entry(to, from.x)) }
+        return { id: arc.id, d, dashed: arc.dashed === true, dimmed: arc.dimmed === true }
       })
       .filter((path) => path !== null),
   )
@@ -44,11 +47,15 @@
   </defs>
 
   {#each paths as path (path.id)}
+    <!-- dashed says an event raised the call rather than one component asking for it -->
     <path
       d={path.d}
       fill="none"
       stroke="currentColor"
       stroke-width="1.5"
+      stroke-dasharray={path.dashed ? '4 3' : undefined}
+      opacity={path.dimmed ? DIMMED : undefined}
+      class="transition-opacity"
       marker-end="url(#map-arrow)"
     />
   {/each}

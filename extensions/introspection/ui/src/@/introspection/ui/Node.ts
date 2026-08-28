@@ -6,6 +6,8 @@ type NodeLike = Omit<Node, 'id' | '_created' | '_updated' | '_version' | '_delet
 
 export interface Props {
   node: NodeLike
+  /** Opened from the outside where the card is the point of the screen, as on the map. */
+  open?: boolean
   class?: ClassValue
 }
 

@@ -4,8 +4,14 @@ import type { Action } from 'svelte/action'
 
 export { zoomIdentity, type ZoomTransform }
 
+export interface Controls {
+  /** Puts the map back where it opens: unpanned, unzoomed. */
+  reset: () => void
+}
+
 export interface Options {
   onchange: (transform: ZoomTransform) => void
+  onready?: (controls: Controls) => void
 }
 
 const SCALE: [number, number] = [0.25, 2]
@@ -23,7 +29,11 @@ export const viewport: Action<HTMLElement, Options> = (element, options) => {
     .filter(allowed)
     .on('zoom', (event: { transform: ZoomTransform }) => onchange(event.transform))
 
-  select<HTMLElement, unknown>(element).call(behavior).on('dblclick.zoom', null)
+  const selection = select<HTMLElement, unknown>(element)
+
+  selection.call(behavior).on('dblclick.zoom', null)
+
+  options.onready?.({ reset: () => behavior.transform(selection, zoomIdentity) })
 
   return {
     update: (next: Options) => {

@@ -59,3 +59,9 @@ inputs:
     empty:
       input: The map has no connections yet.
       context: shown when no calls have been observed between components
+    back:
+      input: Back to the map
+      context: button that leaves a focused component and shows the whole map again
+    expand:
+      input: Show details
+      context: accessible name of an icon-only chevron button that opens a component card on the map

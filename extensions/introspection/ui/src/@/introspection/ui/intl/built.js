@@ -59,7 +59,9 @@ export const dictionaries = {
       "none": "none"
     },
     "map": {
-      "empty": "The map has no connections yet."
+      "empty": "The map has no connections yet.",
+      "back": "Back to the map",
+      "expand": "Show details"
     }
   }
 };
