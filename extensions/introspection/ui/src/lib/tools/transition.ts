@@ -20,6 +20,11 @@ export function transit(fn?: (() => void) | (() => Promise<void>)): Promise<void
     // next transition. Handling both settlements also keeps the rejection from escaping.
     transition.finished.then(done, done)
 
+    // and so does `ready`, which nothing here waits on: it rejects whenever the transition
+    // is skipped — a hidden tab, a second one started on top of this — and an unhandled
+    // rejection is not what a page should show for an animation it merely did without
+    transition.ready.catch(ignore)
+
     function done() {
       if (fly) arrive()
 
@@ -28,10 +33,32 @@ export function transit(fn?: (() => void) | (() => Promise<void>)): Promise<void
   })
 }
 
+function ignore(): void {}
+
+/**
+ * SvelteKit navigation, wrapped. The update callback has to outlive the navigation it
+ * lets through: it resolves to unblock the router, and only then waits for the new page
+ * to be there. Returning any sooner captures the outgoing page as both the old state and
+ * the new one, and the transition animates nothing at all.
+ */
 export function navigate(nav: OnNavigate): Promise<void> | void {
   if (nav.type === 'popstate' && nav.event.hasUAVisualTransition) return
 
-  return transit()
+  if (document.startViewTransition === undefined) return
+
+  return new Promise((resolve) => {
+    const transition = document.startViewTransition(async () => {
+      land()
+      resolve()
+
+      await nav.complete
+    })
+
+    // the same unwinding `transit` does, and for the same reason: an aborted transition
+    // rejects, and a name left on a departed element breaks the next one
+    transition.finished.then(touchdown, touchdown)
+    transition.ready.catch(ignore)
+  })
 }
 
 let launch: Launch | null = null
