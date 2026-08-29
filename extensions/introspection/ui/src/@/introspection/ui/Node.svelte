@@ -19,7 +19,8 @@
         >{/if}{node.component}
     </Item.Title>
 
-    <Item.Description>
+    <!-- see the map card: a clamp meant for prose has no row of counts to shorten -->
+    <Item.Description class="line-clamp-none">
       <Summary {node} />
     </Item.Description>
   </Item.Content>
