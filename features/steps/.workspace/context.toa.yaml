@@ -41,3 +41,6 @@ exposition:
 ingress:
   hosts:
     - localhost
+
+# every deployment states what it may take, and these deploy nowhere
+resources: ~

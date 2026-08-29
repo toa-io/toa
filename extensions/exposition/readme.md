@@ -195,7 +195,6 @@ It returns `200` only after:
 1. The in-process identity composition has connected
 2. Initial route discovery has settled
 3. The HTTP server is listening
-4. The startup delay has elapsed (default `3s`)
 
 Before listen, probes get connection refused; after listen but before ready, `503`.
 When ready, the process also sends `process.send('ready')` (for PM2 `wait_ready`).

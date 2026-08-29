@@ -3,6 +3,7 @@
 const desc = require('./.describe')
 const { addVariables } = require('./.describe/variables')
 const { addMounts } = require('./.describe/mounts')
+const { resources } = require('./.describe/resources')
 
 const describe = (context, compositions, dependency, image) => {
   const { services } = dependency
@@ -26,13 +27,17 @@ const describe = (context, compositions, dependency, image) => {
 
     mono.image = image.reference
 
-    return {
+    const values = {
       compositions: [],
       components: mono.components,
       services: [],
       credentials,
       mono
     }
+
+    resources(context, values)
+
+    return values
   }
 
   const components = desc.components(compositions)
@@ -40,12 +45,16 @@ const describe = (context, compositions, dependency, image) => {
   desc.compositions(compositions, dependency)
   desc.services(services, dependency.variables, dependency.probe, context.ingress)
 
-  return {
+  const values = {
     compositions,
     components,
     services,
     credentials
   }
+
+  resources(context, values)
+
+  return values
 }
 
 function unit (context, dependency) {

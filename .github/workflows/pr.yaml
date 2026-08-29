@@ -30,5 +30,8 @@ jobs:
       - name: Check code style
         run: npx eslint .
 
+      - name: Check types of the step definitions
+        run: npm run typecheck
+
       - name: Run unit tests
         run: npm run test:unit -- --testTimeout=30000 --reporters=github-actions --reporters=summary

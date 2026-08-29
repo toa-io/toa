@@ -52,8 +52,6 @@ export class Server extends Connector {
 
     console.info('HTTP Server is listening')
 
-    await setTimeout(this.properties.delay)
-
     this.ready = true
 
     console.info('Ready')
@@ -265,6 +263,11 @@ function errorAttributes (request: http.IncomingMessage, error: Error & any): Re
 }
 
 export const PORT = 8000
+
+/**
+ * The initial delay of the readiness probe. The server does not sleep for it: whoever
+ * probes is the one that waits, and doing it here as well only delayed the process twice.
+ */
 export const DELAY = 3 // seconds
 export const DRAIN = 10 // seconds
 
@@ -292,7 +295,6 @@ const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
   debug: false,
   port: PORT,
-  delay: DELAY * 1000,
   drain: DRAIN * 1000
 }
 
@@ -301,7 +303,6 @@ interface Properties {
   methods: Set<string>
   debug: boolean
   port: number
-  delay: number
   drain: number
 }
 

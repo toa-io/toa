@@ -62,6 +62,8 @@ properties:
           items:
             type: string
             pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))$
+        resources:
+          $ref: '#/definitions/resources'
       required: [name, components]
   mono:
     type: object
@@ -71,21 +73,7 @@ properties:
         type: integer
         minimum: 1
       resources:
-        type: object
-        additionalProperties: false
-        properties:
-          cpu:
-            type: array
-            items:
-              type: string
-            minItems: 2
-            maxItems: 2
-          memory:
-            type: array
-            items:
-              type: string
-            minItems: 2
-            maxItems: 2
+        $ref: '#/definitions/resources'
   ingress:
     type: object
     additionalProperties: false
@@ -103,5 +91,28 @@ properties:
         type: boolean
   annotations:
     type: object
+  resources:
+    $ref: '#/definitions/resources'
 required: [runtime, name, registry]
 additionalProperties: false
+
+definitions:
+  # What a deployment may take. `null` deploys it without any, which is a decision
+  # rather than an omission — every deployment has to make one.
+  resources:
+    type: object
+    nullable: true
+    additionalProperties: false
+    properties:
+      cpu:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+      memory:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2

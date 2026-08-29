@@ -50,6 +50,7 @@ Non-scattered documentation is coming some time later.
 - [Telemetry](/extensions/telemetry)
   - Structured logs
   - Distributed tracing
+- [Introspection](/extensions/introspection): product topology collection and visualization
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation

@@ -1,141 +1,135 @@
 # Toa Introspection
 
-Collects and shows how the parts of an application talk to each other.
+Introspection collects information about a product's topology and presents it as a graph of
+components and their interactions.
 
-Two things make that picture. Every component describes itself — what it can be asked to do, what it
-announces, what it reacts to — and that much is true before a single request is served. Every call
-between components is then recorded as it happens, along with what set it off. One says how the
-application is put together, the other what it actually does.
+The topology includes:
 
-It comes out as a page: a map of the components and the calls between them, and a list of what each
-one declares. Nothing has to be declared to get it — the extension takes part in every composition.
+- components and their entities, operations, events, and receivers;
+- declared event relations between components;
+- calls observed between components and services at runtime;
+- input and outcome samples for observed calls, when sampling is enabled.
+
+This provides a single view of both the product's declared structure and the communication paths
+that are exercised at runtime. The topology is available through a web UI and an HTTP API.
+
+Introspection is enabled by default for every component in a composition.
 
 ## Configuration
 
-Both levels of the annotation are optional. Everything below shows the defaults.
-
-### Context
+Configure Introspection in `context.toa.yaml`:
 
 ```yaml
-# context.toa.yaml
-
 introspection:
-  samples: false      # capture the actual payloads of calls
-  interval: 15        # how often a component reports, seconds
-  threshold: 256      # report earlier once this many edges are pending
-  ui: true            # publish the UI
-  resources:          # explorer pod limits
+  samples: false
+  interval: 300
+  threshold: 1024
+  ui: true
+```
+
+All properties are optional.
+
+| Property | Default | Description |
+| --- | --- | --- |
+| `samples` | `false` | Enables collection of call input and outcome samples. |
+| `interval` | `300` | Interval between topology updates, in seconds. |
+| `threshold` | `1024` | Number of distinct observed interactions that triggers an update before the interval expires. |
+| `ui` | `true` | Publishes the web UI. |
+| `resources` | — | Resource requirements for the Introspection deployment. |
+
+Resource requirements can be declared specifically for Introspection:
+
+```yaml
+introspection:
+  resources:
     cpu: [100m, 500m]
     memory: [128Mi, 256Mi]
 ```
 
-To turn introspection off completely — no explorer, no collection:
+If omitted, Introspection uses the context-level `resources` declaration. Set `resources: null` to
+run without resource requirements.
+
+Disable Introspection for the entire context:
 
 ```yaml
 introspection: false
 ```
 
-Introspection exposes the map over HTTP and therefore requires the
-[exposition](../exposition) extension. An application that does not use exposition has to turn
-introspection off.
+Introspection requires the [Exposition](../exposition) extension to publish its API. A context that
+does not use Exposition must disable Introspection.
 
-### Component
+### Component configuration
+
+Sampling can be prohibited for an individual component in `manifest.toa.yaml`:
 
 ```yaml
-# manifest.toa.yaml
-
 introspection:
-  samples: false      # never capture this component's payloads
+  samples: false
 ```
 
-To keep a component off the map entirely:
+This restriction cannot be overridden by the context configuration.
+
+Exclude a component from the topology entirely:
 
 ```yaml
 introspection: false
 ```
 
-### Samples
+## Samples
 
-A sample is the actual input of a call, kept on the edge. It is production data, so it is off by
-default, and both the context and the component have to allow it — either can veto. A component that
-handles personal data should opt out permanently in its own manifest.
+A sample contains the input and outcome of an observed call. Sampling is disabled by default
+because call inputs may contain production or personal data.
 
-Payloads of the `identity` namespace are never captured, keys that look like secrets are masked, and
-oversized payloads are dropped.
+Samples are collected only when they are enabled in the context and not prohibited by the target
+component. Payloads in the `identity` namespace are never collected. Properties whose names match
+known secret patterns are redacted, streams are excluded, and oversized values are replaced with a
+truncation marker.
 
-## The UI
+Components that process sensitive data should disable sampling explicitly in their manifests.
 
-The UI is published at `/.introspection`, on the hosts the context declares:
+## Web UI
+
+The web UI visualizes the product topology and is enabled by default. It is published at
+`/.introspection/` on the hosts declared in the context:
 
 ```yaml
-# context.toa.yaml
-
 ingress:
   hosts:
     - api.example.com
-  class: alb
-  annotations:
-    alb.ingress.kubernetes.io/group.name: example
 ```
 
-This section is what every service uses to reach the outside; without it the UI has nowhere to land
-and `toa export` says so. To collect the map without publishing anything, set `ui: false`.
+Open the following URL after deploying the composition:
 
-List the same hostnames Exposition serves — the page is static and reads the map from the API on its
-own origin, so a host Exposition does not serve gives a page that cannot load anything.
-
-Two services now share one host, which is a question for the ingress controller rather than for
-Toa: ingress-nginx merges them, while AWS ALB needs `alb.ingress.kubernetes.io/group.name` on both.
-The `annotations` above are applied to every service, which is the place to put it.
-
-Reading the map still needs the `system:introspection` role. The page itself is served without
-authentication — it is a page, and it displays nothing the API has not already granted.
-
-### Developing the UI
-
-The page is a Svelte application under `ui`, built into `ui/dist` — a directory of files the
-explorer serves, with no server rendering and nothing to run beside it. The mount path is baked
-into the bundle, because the ingress forwards it rather than rewriting it, and the client router
-matches against it.
-
-The build is git-ignored and produced on `npm publish`, so from a checkout it is a one-time step,
-like `npm run transpile`:
-
-```shell
-$ npm run build:ui                  # in this package
+```text
+https://api.example.com/.introspection/
 ```
 
-The explorer then answers on port `8002`, and `/` redirects to the mount path, so a local run
-opens at <http://localhost:8002>. To work on the page itself:
+The configured host must also be served by Exposition because the UI reads topology data from the
+Introspection API on the same origin.
 
-```shell
-$ npm --prefix ui run dev           # http://localhost:5173/.introspection
+Access to topology data requires the `system:introspection` role. The UI page itself is public, but
+it cannot display topology data without an authorized API session.
+
+To collect topology data without publishing the UI:
+
+```yaml
+introspection:
+  ui: false
 ```
 
-Either way the API is the page's own origin — except on a local host, where the explorer and the
-gateway are separate ports and the page asks `:8000` instead. Nothing configures this; see
-`ui/src/config/index.ts`.
+## HTTP API
 
-## Reading the map
+The topology is available through the following endpoints:
 
-The map lives in two ordinary components, `introspection.nodes` and `introspection.edges`. Both
-answer `enumerate` and `observe`, and both are exposed under the `system:introspection` role:
-
-```
+```text
 GET /introspection/nodes/
-GET /introspection/nodes/:id
+GET /introspection/nodes/:id/
 GET /introspection/edges/
-GET /introspection/edges/:id
+GET /introspection/edges/:id/
 ```
 
-Records carry `_updated`, which is when the node or edge was last observed — that is how a component
-that no longer exists is recognized.
+Nodes describe components and their declared interfaces. Edges represent calls observed between
+components or services. Both endpoint groups support listing all records and retrieving an
+individual record by its identifier.
 
-## Resources
-
-The explorer runs as the `introspection-explorer` service on port `8002`. It needs a database: the
-components use the context's `mongodb` annotation like any other.
-
-A port belongs to one service only — `toa export` refuses two claims on the same one, because
-`toa mono` and a local run put every service in one process. Taken so far: `8000` by the exposition
-gateway, `8001` by the telemetry readiness probe, `8002` here.
+API access requires the `system:introspection` role.

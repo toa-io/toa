@@ -15,6 +15,7 @@ export class Gateway extends Connector {
   private readonly interceptor: Interception
   private readonly branches = new Map<string, Exposed>()
   private lastMerge = 0
+  private widestGap = 0
   private lastPing = 0
   private stopped = false
   private resolveFirstMerge: (() => void) | null = null
@@ -177,8 +178,12 @@ export class Gateway extends Connector {
 
   private async settled (first: Promise<void>): Promise<void> {
     const deadline = Date.now() + SETTLE_TIMEOUT
+    const abort = new AbortController()
 
-    await Promise.race([first, setTimeout(SETTLE_TIMEOUT)])
+    // an uncancelled timer keeps the process alive long after the race is won
+    await Promise.race([first, setTimeout(SETTLE_TIMEOUT, undefined, { signal: abort.signal })])
+      .finally(() => { abort.abort() })
+      .catch(() => {})
 
     if (this.lastMerge === 0) {
       console.warn('Discovery timed out waiting for the first expose')
@@ -186,12 +191,25 @@ export class Gateway extends Connector {
       return
     }
 
-    while (Date.now() - this.lastMerge < SETTLE_QUIET) {
+    while (Date.now() - this.lastMerge < this.quiet()) {
       if (Date.now() >= deadline)
         break
 
       await setTimeout(SETTLE_POLL)
     }
+  }
+
+  /**
+   * How long the branches must stay quiet before discovery counts as settled.
+   *
+   * Every tenant of a local composition answers the first ping at once, so a short window
+   * is enough; a rolling deployment brings them up seconds apart, and the window grows with
+   * the widest gap seen so far to keep waiting for the ones still starting.
+   */
+  private quiet (): number {
+    const adaptive = this.widestGap * SETTLE_QUIET_FACTOR
+
+    return Math.min(Math.max(adaptive, SETTLE_QUIET_MIN), SETTLE_QUIET_MAX)
   }
 
   private merge (branch: Branch): void {
@@ -226,6 +244,10 @@ export class Gateway extends Connector {
     }
 
     this.branches.set(id, { version: branch.version, nodes })
+
+    if (this.lastMerge !== 0)
+      this.widestGap = Math.max(this.widestGap, Date.now() - this.lastMerge)
+
     this.lastMerge = Date.now()
     this.resolveFirstMerge?.()
     this.resolveFirstMerge = null
@@ -241,7 +263,9 @@ interface Exposed {
   nodes: Node[]
 }
 
-const SETTLE_QUIET = 10_000
+const SETTLE_QUIET_MIN = 500
+const SETTLE_QUIET_MAX = 10_000
+const SETTLE_QUIET_FACTOR = 2
 const SETTLE_TIMEOUT = 30_000
 const SETTLE_POLL = 50
 const KNOCK_DELAYS = [0, 500, 1000, 1500]

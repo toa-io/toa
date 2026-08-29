@@ -10,8 +10,8 @@ export const EDGES = 'edges'
 export const UI_PATH = '/.introspection'
 export const UI_PORT = 8002
 
-export const DEFAULT_INTERVAL = 15
-export const DEFAULT_THRESHOLD = 256
+export const DEFAULT_INTERVAL = 300
+export const DEFAULT_THRESHOLD = 1024
 
 /** How often a component re-announces its description, so that removed components fade out. */
 export const ANNOUNCE_INTERVAL = 1_800_000
