@@ -18,6 +18,11 @@ The same components can run in one composition, like a monolith; each can run in
 composition, like microservices; or they can be grouped somewhere in between. The application
 code does not change when the grouping changes.
 
+For development and compact deployments, `toa mono` takes the same separation one step further:
+it boots the application composition and extension services in one process. `toa deploy --mono`
+packages that process into one image and one Kubernetes Deployment. This changes the operational
+shape, not the component model.
+
 ## Logical architecture: components
 
 A component owns a business concept. It declares its state, exposes operations, emits events, and
@@ -113,6 +118,16 @@ compositions:
 The application runs as one process. It has the operational simplicity of a monolith, while its
 state ownership and integration boundaries remain explicit components.
 
+The CLI can discover manifests under `components/*` and boot this shape directly:
+
+```shell
+toa mono
+```
+
+The same application can be built and deployed as a single image with `toa deploy --mono`.
+Extension services join the process as well, so this is the most compact physical form of a Toa
+application rather than merely a composition containing every component.
+
 ### One composition per component: microservice deployment
 
 ```yaml
@@ -156,8 +171,10 @@ to its components:
 ```yaml
 # context.toa.yaml
 name: shop
-packages: components/*
 ```
+
+By convention, components under `components/*` are discovered automatically. A `packages`
+declaration is only needed when the application uses another layout.
 
 The Context also contains deployment concerns: compositions, infrastructure addresses,
 extension configuration, and environment-specific values.
@@ -271,6 +288,32 @@ logical component contract.
 
 Like a composition boundary, the HTTP boundary is supplied by the runtime. It does not become part
 of the operation.
+
+## Introspection: seeing the resulting system
+
+Location transparency keeps deployment mechanics out of components, but operators still need to
+see the system that those declarations and runtime interactions produce. The introspection
+extension collects that topology and presents it as a graph.
+
+Its nodes describe components and their declared entities, operations, events, receivers, and
+extension surfaces. Its edges combine declared event relations with calls observed between
+components and services at runtime. Optional call samples can capture inputs and outcomes;
+sampling is off by default and can be prohibited by an individual component.
+
+Introspection is enabled by default. It publishes a protected HTTP API and, unless disabled, a web
+UI at `/.introspection/`; both rely on Exposition. A context can tune collection or turn it off:
+
+```yaml
+# context.toa.yaml
+introspection:
+  samples: false
+  interval: 300
+  ui: true
+```
+
+This does not weaken component boundaries. Introspection observes declarations and runtime
+communication from the platform side; business operations do not acquire discovery or telemetry
+code to participate.
 
 That is the central architectural move in Toa:
 

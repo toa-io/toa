@@ -104,7 +104,7 @@ Toa applications.*
    — language interoperability; the Node.js bridge in detail; the Bash bridge;
    how to implement a bridge for another language.
 4. **[The CLI](building/cli.md)**
-   — developing, running, and inspecting applications; the development environment;
+   — developing, running, and inspecting applications; `toa mono`; the development environment;
    replay and debugging workflows.
 5. **[Testing](building/testing.md)**
    — unit testing operations as pure functions; the integration stage SDK;
@@ -126,7 +126,7 @@ optional for using it.*
    guard, cascade, reflection; how a request travels through the runtime.
 4. **[Compositions and Processes](runtime/composition.md)**
    — grouping components into deployable units; local vs. distributed calls;
-   scaling model.
+   scaling model; running a whole application as a single process and image.
 5. **[Extensibility](runtime/extensibility.md)**
    — the extension contract: manifest extension points, tenants, aspects;
    how to write your own extension, storage driver, or binding.
@@ -164,11 +164,11 @@ optional for using it.*
 4. **[Stash](extensions/stash.md)** — shared cache and the distributed lock manager.
 5. **[Storages](extensions/storages.md)** — shared BLOB storage; MIME detection and validation;
    file system, Amazon S3, and Cloudinary providers.
-6. **[Origins](extensions/origins.md)** — governed external communications: HTTP, AMQP,
-   Google Pub/Sub.
+6. **[Fetch](extensions/fetch.md)** — outbound HTTP with retries and telemetry.
 7. **[Realtime](extensions/realtime.md)** — pushing events to clients.
 8. **[Telemetry](extensions/telemetry.md)** — structured logs and distributed tracing.
-9. **[Mail](extensions/mail.md)** — sending email.
+9. **[Introspection](extensions/introspection.md)** — collecting declared and observed product
+   topology; component and service interactions; call samples; the topology API and web UI.
 
 ### Chapter VII. Operations
 

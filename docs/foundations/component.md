@@ -43,6 +43,7 @@ receivers:             # events it reacts to
 configuration: ...     # what can be tuned per deployment
 
 exposition: ...        # extension: HTTP resources
+introspection: ...     # extension: topology visibility and sampling policy
 ```
 
 The component's full name is `shop.orders`; operations are addressed as
@@ -251,6 +252,18 @@ exposition:
 Each extension chapter covers its section; the point here is the pattern: a component gains
 capabilities by *declaring* them, and the manifest remains the single place where the component's
 entire surface — state, logic, events, HTTP, configuration — can be read.
+
+Some extensions are predefined and therefore need no declaration in the common case.
+Introspection, for example, includes the component in the product topology by default. A component
+that handles sensitive data can prohibit call samples, even when sampling is enabled for the
+application:
+
+```yaml
+introspection:
+  samples: false
+```
+
+Setting `introspection: false` excludes the component from topology collection entirely.
 
 ## Why the ignorance matters
 
