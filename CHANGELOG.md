@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.263](https://github.com/toa-io/toa/compare/v1.0.0-alpha.262...v1.0.0-alpha.263) (2026-08-29)
+
+
+### Bug Fixes
+
+* **exposition:** cancel the discovery settle timeout ([0124c9f](https://github.com/toa-io/toa/commit/0124c9f8956722b967681ac7bd49a26556761e66))
+* **introspection:** retain edges for seven days ([9b2c988](https://github.com/toa-io/toa/commit/9b2c988faddefad6a5b3a70d887f3e9a58d38b16))
+
+
+### Features
+
+* **introspection:** give a service its own mark ([a01d66f](https://github.com/toa-io/toa/commit/a01d66fb7068efa5db45cddfdf24658b0d6dd92d))
+* **introspection:** limit topology update windows ([9b4cfab](https://github.com/toa-io/toa/commit/9b4cfab196f4b4b3e6f3af201c973df837cfa28a))
+* **introspection:** name the counts by what they are ([7244ba8](https://github.com/toa-io/toa/commit/7244ba86a7f9c2dd42cd22847082e20da325bc77))
+
+
+### Performance Improvements
+
+* **exposition:** let the probe own the startup delay ([1cb8e04](https://github.com/toa-io/toa/commit/1cb8e0459981d0a47c68dce48e17fa1fceb79a61))
+* **exposition:** settle discovery as soon as the branches go quiet ([d40bafd](https://github.com/toa-io/toa/commit/d40bafd5b6c71f34a2fcac201697823870460fa5))
+* **schemas:** compile each schema once ([935031d](https://github.com/toa-io/toa/commit/935031d0b634583876c629dde4860af22cb570fc))
+
+
+
+
+
 # [1.0.0-alpha.262](https://github.com/toa-io/toa/compare/v1.0.0-alpha.261...v1.0.0-alpha.262) (2026-08-28)
 
 

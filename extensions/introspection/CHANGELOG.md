@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.263](https://github.com/toa-io/toa/compare/v1.0.0-alpha.262...v1.0.0-alpha.263) (2026-08-29)
+
+
+### Bug Fixes
+
+* **introspection:** retain edges for seven days ([9b2c988](https://github.com/toa-io/toa/commit/9b2c988faddefad6a5b3a70d887f3e9a58d38b16))
+
+
+### Features
+
+* **introspection:** give a service its own mark ([a01d66f](https://github.com/toa-io/toa/commit/a01d66fb7068efa5db45cddfdf24658b0d6dd92d))
+* **introspection:** limit topology update windows ([9b4cfab](https://github.com/toa-io/toa/commit/9b4cfab196f4b4b3e6f3af201c973df837cfa28a))
+* **introspection:** name the counts by what they are ([7244ba8](https://github.com/toa-io/toa/commit/7244ba86a7f9c2dd42cd22847082e20da325bc77))
+
+
+
+
+
 # [1.0.0-alpha.262](https://github.com/toa-io/toa/compare/v1.0.0-alpha.261...v1.0.0-alpha.262) (2026-08-28)
 
 
