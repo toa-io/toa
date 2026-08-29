@@ -293,6 +293,10 @@ Compositions expose `GET /.ready` (default port `8001`) for Kubernetes startup/r
 The endpoint returns `503` until the composition has connected, then `200`.
 When ready, the process also sends `process.send('ready')` (for PM2 `wait_ready`).
 
+Several processes share a host in a local run (PM2 apps, a feature suite), so only the first
+of them gets the probe port; the rest log `Ready probe port already in use, skipping` and serve
+no probe. They still send the `ready` signal — it reports the composition, not the port.
+
 Configure or disable via `telemetry` Context Annotation:
 
 ```yaml
