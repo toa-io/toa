@@ -14,50 +14,102 @@ const { SYSTEM } = require('./constants')
 const { Communication } = require('./communication')
 
 class Factory {
+  /**
+   * The communications in use, by what holds them. An IO opens a channel of its own for
+   * requests, for replies and for events, and a connection has some two thousand
+   * channels to give, so a connector cannot have a communication to itself.
+   *
+   * @type {Map<string, Communication>}
+   */
+  #communications = new Map()
+
+  #serial = 0
+
   producer (locator, endpoints, component) {
-    const comm = this.#getContext(locator)
+    const comm = this.#communication(locator.id, context.resolveURIs(locator))
 
     return new Producer(comm, locator, endpoints, component)
   }
 
   consumer (locator, endpoint) {
-    const comm = this.#getContext(locator)
+    const comm = this.#communication(OUTBOUND, context.resolveURIs(locator))
 
     return new Consumer(comm, locator, endpoint)
   }
 
   emitter (locator, label) {
-    const comm = this.#getContext(locator)
+    const comm = this.#communication(locator.id, context.resolveURIs(locator))
 
     return new Emitter(comm, locator, label)
   }
 
   receiver (locator, label, group, receiver) {
-    const comm = this.#getSource(locator)
+    const references = locator.namespace === undefined
+      ? sources.resolveURIs(locator)
+      : context.resolveURIs(locator)
+
+    // the locator names the component the events come *from*, while `group` names the
+    // one that consumes them — and it is that component's teardown the sealing precedes
+    const comm = this.#communication(group ?? this.#alone(), references)
 
     return new Receiver(comm, label, group, receiver)
   }
 
   broadcast (name, group) {
     const locator = new Locator(name, SYSTEM)
-    const comm = this.#getContext(locator)
+    const owner = group === undefined ? this.#alone() : locator.id
+    const comm = this.#communication(owner, context.resolveURIs(locator))
 
     return new Broadcast(comm, locator, group)
   }
 
-  #getContext (locator) {
-    const resolve = async () => context.resolveURIs(locator)
+  /**
+   * The communication `owner` holds over `references`, made if there is none.
+   *
+   * Sealing stops every consumer of a communication at once and cannot be undone, so
+   * what shares one must be what stops consuming together: a component's own producers
+   * and receivers, and nothing besides. Connectors that only publish are pooled apart,
+   * where nothing seals.
+   *
+   * @param {string} owner
+   * @param {string[]} references
+   * @returns {Communication}
+   */
+  #communication (owner, references) {
+    const key = owner + SEPARATOR + references.join()
+    const existing = this.#communications.get(key)
 
-    return new Communication(resolve)
+    // a sealed communication consumes nothing ever again, so it is never handed out
+    if (existing !== undefined && !existing.sealed) return existing
+
+    const communication = new Communication(references, () => {
+      if (this.#communications.get(key) === communication) this.#communications.delete(key)
+    })
+
+    this.#communications.set(key, communication)
+
+    return communication
   }
 
-  #getSource (locator) {
-    const resolve = (locator.namespace === undefined)
-      ? async () => sources.resolveURIs(locator)
-      : async () => context.resolveURIs(locator)
-
-    return new Communication(resolve)
+  /**
+   * An owner of one connector.
+   *
+   * A subscription with no group consumes from an exclusive queue, and comq remembers
+   * that queue by the exchange alone — two of them on one communication would share it,
+   * and the broker would hand each event to only one of the two.
+   *
+   * @returns {string}
+   */
+  #alone () {
+    return ALONE + ++this.#serial
   }
 }
+
+/** What connectors that only publish are pooled under. Nothing seals them. */
+const OUTBOUND = '\u0000outbound'
+
+const ALONE = '\u0000alone:'
+
+const SEPARATOR = '\u0000'
 
 exports.Factory = Factory

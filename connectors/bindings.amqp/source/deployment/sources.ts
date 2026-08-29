@@ -19,7 +19,7 @@ export function createDependency (sources: Sources, instances: Instance[]): Depe
   return { variables }
 }
 
-export async function resolveURIs (locator: Locator): Promise<string[]> {
+export function resolveURIs (locator: Locator): string[] {
   return resolve(ID, locator.id)
 }
 

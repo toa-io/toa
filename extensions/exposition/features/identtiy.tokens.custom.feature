@@ -127,9 +127,8 @@ Feature: Custom tokens
 
       label: Restricted token
       lifetime: 0
-      permissions: {
+      permissions:
         /notes/: [GET]
-      }
       """
     Then the following reply is sent:
       """
@@ -220,9 +219,9 @@ Feature: Custom tokens
       200 OK
 
       - id: ${{ kid }}
+        _created: ${{ created }}
         label: One-time token
         expires: ${{ expires }}
-        _created: ${{ created }}
       """
     When the following request is received:
       """
