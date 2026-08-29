@@ -85,54 +85,9 @@ jobs:
 
           npx lerna publish from-package --dist-tag "$DIST_TAG" --no-ignore-scripts --yes
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # npm publish can succeed before the version is visible to subsequent
-      # registry reads (CDN lag). Poll instead of a fixed sleep.
-      - name: Wait for npm
-        run: |
-          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
-          for i in $(seq 1 36); do
-            if npm view "@toa.io/runtime@$VERSION" version >/dev/null 2>&1; then
-              echo "@toa.io/runtime@$VERSION is available"
-              exit 0
-            fi
-            echo "waiting for @toa.io/runtime@$VERSION ($i/36)"
-            sleep 5
-          done
-          echo "::error::timed out waiting for @toa.io/runtime@$VERSION on npm"
-          exit 1
-
-      - name: Publish runtime image
-        run: |
-          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
-          IMAGE=ghcr.io/toa-io/runtime
-          TAGS=(--tag "$IMAGE:$VERSION")
-
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TAGS+=(--tag "$IMAGE:${{ inputs.dist-tag }}")
-          elif [ "${{ github.base_ref }}" = "release" ]; then
-            TAGS+=(--tag "$IMAGE:latest")
-          else
-            TAGS+=(--tag "$IMAGE:alpha")
-          fi
-
-          docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            --build-arg VERSION="$VERSION" \
-            "${TAGS[@]}" \
-            --push \
-            -f operations/image/runtime.Dockerfile \
-            operations/image
-
+      # the version bump is the source of truth for the next release, so it reaches
+      # `dev` as soon as publishing succeeded — an image that fails to build must not
+      # strand it on the release branch alone
       - name: Push to dev branch
         if: github.event_name == 'pull_request'
         env:
@@ -150,3 +105,76 @@ jobs:
             git -c core.hooksPath=/dev/null commit --no-edit
           fi
           git push --all origin --no-verify
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # npm publish can succeed before what it published is visible to subsequent
+      # registry reads (CDN lag). The image installs the whole dependency closure,
+      # and `@toa.io/runtime` being visible says nothing about the packages it
+      # depends on: alpha.265 failed here on `@toa.io/cli` while the runtime itself
+      # was already there. Resolve exactly what the image installs, from an empty
+      # directory, so neither the workspace nor its `.npmrc` takes part.
+      - name: Wait for npm
+        run: |
+          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
+
+          cd "$(mktemp -d)"
+
+          for i in $(seq 1 60); do
+            if npm install -g "@toa.io/runtime@$VERSION" --omit=dev --dry-run --prefer-online >/dev/null 2>&1; then
+              echo "@toa.io/runtime@$VERSION resolves with its dependencies"
+              exit 0
+            fi
+
+            echo "waiting for @toa.io/runtime@$VERSION and its dependencies ($i/60)"
+            sleep 5
+          done
+
+          echo "::error::timed out waiting for @toa.io/runtime@$VERSION on npm"
+          exit 1
+
+      - name: Publish runtime image
+        run: |
+          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
+          IMAGE=ghcr.io/toa-io/runtime
+          TAGS=(--tag "$IMAGE:$VERSION")
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAGS+=(--tag "$IMAGE:${{ inputs.dist-tag }}")
+          elif [ "${{ github.base_ref }}" = "release" ]; then
+            TAGS+=(--tag "$IMAGE:latest")
+          else
+            TAGS+=(--tag "$IMAGE:alpha")
+          fi
+
+          # the builder reads the registry through its own edge, which the poll
+          # above cannot warm, so a first failure is not necessarily a real one
+          build () {
+            docker buildx build \
+              --platform linux/amd64,linux/arm64 \
+              --build-arg VERSION="$VERSION" \
+              "${TAGS[@]}" \
+              --push \
+              -f operations/image/runtime.Dockerfile \
+              operations/image
+          }
+
+          for attempt in 1 2 3; do
+            if build; then
+              exit 0
+            fi
+
+            echo "image build failed, retrying in 30s ($attempt/3)"
+            sleep 30
+          done
+
+          echo "::error::failed to build the runtime image for $VERSION"
+          exit 1
