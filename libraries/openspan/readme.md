@@ -154,6 +154,13 @@ exporting([consoleExporter, new Otlp({ endpoint: 'http://localhost:4318' })])
 `OtlpOptions.service` is the fallback `service.name` for spans without a declared service
 (defaults to the `TOA_CONTEXT` environment variable, then `toa`).
 
+An absent or unavailable endpoint is tolerated and never affects the process: a request is
+bounded by `timeout` (5s by default) and its socket is released as soon as it expires, a failed
+batch is dropped, and the exporter then suspends itself for `cooldown` (30s by default),
+dropping spans instead of queueing them. One warning is logged per outage, and one info entry
+when the endpoint recovers. As a result a shutdown waits at most one `timeout` for an
+unreachable endpoint, and nothing at all while the exporter is suspended.
+
 Custom exporters implement the `Exporter` interface: `export(span, output)` is called for each
 completed sampled span, optional `flush()` is awaited on shutdown.
 
