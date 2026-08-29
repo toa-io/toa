@@ -130,9 +130,6 @@ class Connector {
 
     if (linked && interrupt !== true) return
 
-    this.connected = false
-    this.#connecting = undefined
-
     this.#disconnecting = (async () => {
       const start = +new Date()
 
@@ -144,6 +141,13 @@ class Connector {
       }, DELAY)
 
       if (!pending) await this.close()
+
+      // said once the closing is done rather than when it starts: a dependant that is
+      // still closing is still using what it depends on, and the check above reads this
+      // of every dependant. Saying it early lets the first to start tear down a shared
+      // dependency under the others.
+      this.connected = false
+      this.#connecting = undefined
 
       clearInterval(interval)
 

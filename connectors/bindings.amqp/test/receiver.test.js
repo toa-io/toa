@@ -24,6 +24,7 @@ const group = generate()
 
 const processor = /** @type {jest.MockedObject<toa.core.Receiver>} */ {
   connect: jest.fn(async () => undefined),
+  disconnect: jest.fn(async () => undefined),
   link: jest.fn(),
   receive: jest.fn(async () => undefined)
 }
@@ -72,4 +73,53 @@ it('should consume foreign events', async () => {
   await callback(message, properties)
 
   expect(processor.receive).toHaveBeenCalledWith({ payload: message })
+})
+
+describe('closing', () => {
+  it('should stop consuming', async () => {
+    await receiver.connect()
+    await receiver.disconnect()
+
+    expect(comm.seal).toHaveBeenCalled()
+  })
+
+  // sealing cancels the consumer but does not recall what has already been dispatched,
+  // and the receiver is torn down as soon as this connector is closed
+  it('should wait for deliveries still running', async () => {
+    let complete
+    let closed = false
+
+    processor.receive.mockImplementationOnce(async () =>
+      await new Promise((resolve) => { complete = resolve }))
+
+    await receiver.connect()
+
+    const callback = comm.consume.mock.calls[0][2]
+    const delivery = callback({ payload: generate() }, { headers: { 'toa.io/amqp': '0' } })
+    const closing = receiver.disconnect().then(() => { closed = true })
+
+    await new Promise((resolve) => setImmediate(resolve))
+
+    expect(closed).toBe(false)
+
+    complete()
+
+    await delivery
+    await closing
+
+    expect(closed).toBe(true)
+  })
+
+  it('should not be held by a delivery that failed', async () => {
+    processor.receive.mockImplementationOnce(async () => { throw new Error('nope') })
+
+    await receiver.connect()
+
+    const callback = comm.consume.mock.calls[0][2]
+
+    await expect(callback({ payload: generate() }, { headers: { 'toa.io/amqp': '0' } }))
+      .rejects.toThrow('nope')
+
+    await expect(receiver.disconnect()).resolves.not.toThrow()
+  })
 })
