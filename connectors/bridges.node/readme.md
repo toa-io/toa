@@ -91,3 +91,38 @@ implement [Algorithm Factory interface](#).
 
 > Algorithm definition should store reference to the `context` object without copying its value
 > type variables as they may change over operation lifetime.
+
+## Run Commands
+
+Modules in the `rc` directory of the component root run once per component lifetime, outside any
+operation. A module must export at least one of three phases, and may export several.
+
+```javascript
+// rc/providers.js
+
+async function preflight (context) {
+  context.state.providers = await connect(context)
+}
+
+async function dispose (context) {
+  await release(context.state.providers)
+}
+
+module.exports = { preflight, dispose }
+```
+
+| Phase       | When                                                                            |
+|-------------|---------------------------------------------------------------------------------|
+| `preflight` | on connection, before operations are served                                     |
+| `settle`    | on connection, once the component can call its own operations (`context.local`) |
+| `dispose`   | on disconnection, after the component has stopped serving                       |
+
+`dispose` is the counterpart of `preflight`: what a component opened there is released here. It runs
+before the context it is given is disconnected, so a component can still reach its remotes while
+releasing — but nothing calls it into the component any more, so it must not expect its own
+operations to answer.
+
+Anything a component leaves open holds the process: a `toa compose` exits when the last handle is
+released, and a feature suite that boots a composition in its own process does the same. Background
+work a component starts and does not await — a stream it drives, a client it keeps — belongs in
+`dispose`.

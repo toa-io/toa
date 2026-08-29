@@ -40,6 +40,11 @@ const create = async (manifest, locator) => {
   if (phases?.settle !== undefined)
     decorated.settle = phases.settle
 
+  // a dependency closes after its dependant, so the component is already closed
+  // when the RC releases what it opened
+  if (phases?.dispose !== undefined)
+    decorated.depends(phases.dispose)
+
   return decorated
 }
 

@@ -69,12 +69,12 @@ export class Ready extends Connector {
   public async complete (): Promise<void> {
     await this.listen()
 
-    if (this.skipped)
-      return
-
     this.ready = true
 
     console.info('Ready')
+
+    // the IPC signal is not tied to the probe: a process that gave up the shared port
+    // is still ready, and pm2 `wait_ready` would otherwise block until `listen_timeout`
     process.send?.('ready')
   }
 
