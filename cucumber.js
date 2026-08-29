@@ -1,5 +1,5 @@
 const common = {
-  requireModule: ['ts-node/register'],
+  requireModule: ['ts-node/register/transpile-only'],
   failFast: true
 }
 

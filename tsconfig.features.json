@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "features/**/*.ts",
+    "extensions/*/features/**/*.ts"
+  ]
+}

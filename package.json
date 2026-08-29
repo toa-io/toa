@@ -72,7 +72,8 @@
   "scripts": {
     "prepare": "husky || true",
     "install": "npm run transpile",
-    "test": "npm run lint && npm run test:unit",
+    "test": "npm run lint && npm run typecheck && npm run test:unit",
+    "typecheck": "tsc -p tsconfig.features.json",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --roots runtime connectors extensions operations libraries features userland",
     "test:stage": "jest --roots userland/example/stage --testPathIgnorePatterns .*/transpiled/",
     "test:integration": "jest --roots integration --runInBand --testTimeout 180000",
