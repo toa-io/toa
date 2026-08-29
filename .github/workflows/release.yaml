@@ -47,6 +47,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      # `from-package` publishes whatever versions the checked out commit happens to
+      # carry, so a run started on the wrong ref republishes stale ones and reports
+      # success. Only the commit lerna tagged is a release.
+      - name: Verify the ref is a release commit
+        if: github.event_name == 'workflow_dispatch' && inputs.from-package
+        run: |
+          VERSION=$(node -p "require('./lerna.json').version")
+
+          if ! git describe --exact-match --tags HEAD 2>/dev/null | grep -qx "v$VERSION"; then
+            echo "::error::'${{ github.ref_name }}' is not a release commit: HEAD carries no v$VERSION tag"
+            exit 1
+          fi
+
+          echo "releasing v$VERSION from ${{ github.ref_name }}"
+
       - name: Import GPG key
         if: github.event_name != 'workflow_dispatch' || inputs.from-package == false
         id: gpg
@@ -71,10 +86,23 @@ jobs:
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.from-package }}" = "true" ]; then
             npx lerna publish from-package --dist-tag ${{ inputs.dist-tag }} --yes
-          elif [ "${{ github.base_ref }}" = "release" ]; then
-            npx lerna publish --conventional-graduate --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
+            exit 0
+          fi
+
+          if [ "${{ github.base_ref }}" = "release" ]; then
+            DIST_TAG=latest
+            npx lerna publish --conventional-graduate --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit || INCOMPLETE=1
           else
-            npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
+            DIST_TAG=alpha
+            npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit || INCOMPLETE=1
+          fi
+
+          # One package failing to publish aborts every other, and the version commit and
+          # its tag are pushed by then — so the release is left half done. `from-package`
+          # publishes what is missing; a failure that is not transient still fails here.
+          if [ -n "$INCOMPLETE" ]; then
+            echo "::warning::publish did not complete, publishing the packages it left behind"
+            npx lerna publish from-package --dist-tag "$DIST_TAG" --yes
           fi
 
       - name: Set up Docker Buildx
@@ -87,20 +115,33 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # npm publish can succeed before the version is visible to subsequent
-      # registry reads (CDN lag). Poll instead of a fixed sleep.
+      # npm publish can succeed before the version is visible to subsequent registry
+      # reads (CDN lag). The image installs the runtime with its whole dependency tree,
+      # so every package of this release has to be readable, not the runtime alone.
       - name: Wait for npm
         run: |
-          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
+          PENDING=$(npx lerna list --json --loglevel error |
+            node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).map((p) => p.name + '@' + p.version).join(' ')")
+
           for i in $(seq 1 36); do
-            if npm view "@toa.io/runtime@$VERSION" version >/dev/null 2>&1; then
-              echo "@toa.io/runtime@$VERSION is available"
+            REMAINING=""
+
+            for SPEC in $PENDING; do
+              npm view "$SPEC" version >/dev/null 2>&1 || REMAINING="$REMAINING $SPEC"
+            done
+
+            PENDING=$REMAINING
+
+            if [ -z "$PENDING" ]; then
+              echo "every published version is available"
               exit 0
             fi
-            echo "waiting for @toa.io/runtime@$VERSION ($i/36)"
+
+            echo "waiting for ($i/36):$PENDING"
             sleep 5
           done
-          echo "::error::timed out waiting for @toa.io/runtime@$VERSION on npm"
+
+          echo "::error::timed out waiting for npm:$PENDING"
           exit 1
 
       - name: Publish runtime image
