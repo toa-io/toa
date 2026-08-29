@@ -22,8 +22,8 @@ Configure Introspection in `context.toa.yaml`:
 ```yaml
 introspection:
   samples: false
-  interval: 15
-  threshold: 256
+  interval: 300
+  threshold: 1024
   ui: true
 ```
 
@@ -32,8 +32,8 @@ All properties are optional.
 | Property | Default | Description |
 | --- | --- | --- |
 | `samples` | `false` | Enables collection of call input and outcome samples. |
-| `interval` | `15` | Interval between topology updates, in seconds. |
-| `threshold` | `256` | Number of distinct observed interactions that triggers an update before the interval expires. |
+| `interval` | `300` | Interval between topology updates, in seconds. |
+| `threshold` | `1024` | Number of distinct observed interactions that triggers an update before the interval expires. |
 | `ui` | `true` | Publishes the web UI. |
 | `resources` | — | Resource requirements for the Introspection deployment. |
 
