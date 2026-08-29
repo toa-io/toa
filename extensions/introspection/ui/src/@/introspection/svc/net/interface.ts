@@ -6,8 +6,9 @@ const nodes = origin.resource<Node[]>('/introspection/nodes/')
 const edges = origin.resource<Edge[]>('/introspection/edges/')
 
 const MINUTE = 60 * 1000
+const DAY = 24 * 60 * MINUTE
 const NODES_MAX_AGE = 75 * MINUTE
-const EDGES_MAX_AGE = 12.5 * MINUTE
+const EDGES_MAX_AGE = 7 * DAY
 
 export async function get(): Promise<Node[] | Error> {
   return await nodes.json(updatedSince(NODES_MAX_AGE), { credentials: 'include' })
