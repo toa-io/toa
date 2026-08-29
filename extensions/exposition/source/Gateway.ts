@@ -177,8 +177,12 @@ export class Gateway extends Connector {
 
   private async settled (first: Promise<void>): Promise<void> {
     const deadline = Date.now() + SETTLE_TIMEOUT
+    const abort = new AbortController()
 
-    await Promise.race([first, setTimeout(SETTLE_TIMEOUT)])
+    // an uncancelled timer keeps the process alive long after the race is won
+    await Promise.race([first, setTimeout(SETTLE_TIMEOUT, undefined, { signal: abort.signal })])
+      .finally(() => { abort.abort() })
+      .catch(() => {})
 
     if (this.lastMerge === 0) {
       console.warn('Discovery timed out waiting for the first expose')
