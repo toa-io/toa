@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.267](https://github.com/toa-io/toa/compare/v1.0.0-alpha.266...v1.0.0-alpha.267) (2026-08-29)
+
+
+### Bug Fixes
+
+* **bindings.amqp:** hold one communication per component, not per connector ([a89710b](https://github.com/toa-io/toa/commit/a89710b24f4e5c2a0257d3fe88261173f95e1c9f))
+
+
+
+
+
 # [1.0.0-alpha.266](https://github.com/toa-io/toa/compare/v1.0.0-alpha.265...v1.0.0-alpha.266) (2026-08-29)
 
 
