@@ -6,7 +6,7 @@ const { Event } = require('./event')
 const { Receiver } = require('./receiver')
 const { Guard } = require('./guard')
 const { Context } = require('./context')
-const { Phase } = require('./rc')
+const { Phase, Teardown } = require('./rc')
 const { extract } = require('./define/operations')
 
 class Factory {
@@ -48,21 +48,27 @@ class Factory {
     const ctx = new Context(context)
     const preflights = []
     const settles = []
+    const disposals = []
 
     for (const [name, module] of modules) {
-      if (typeof module.preflight !== 'function' && typeof module.settle !== 'function')
-        throw new Error(`RC '${name}' must export preflight and/or settle`)
+      if (typeof module.preflight !== 'function' && typeof module.settle !== 'function' &&
+        typeof module.dispose !== 'function')
+        throw new Error(`RC '${name}' must export preflight, settle and/or dispose`)
 
       if (typeof module.preflight === 'function')
         preflights.push(module.preflight)
 
       if (typeof module.settle === 'function')
         settles.push(module.settle)
+
+      if (typeof module.dispose === 'function')
+        disposals.push(module.dispose)
     }
 
     return {
       preflight: preflights.length > 0 ? new Phase(preflights, ctx) : undefined,
-      settle: settles.length > 0 ? new Phase(settles, ctx) : undefined
+      settle: settles.length > 0 ? new Phase(settles, ctx) : undefined,
+      dispose: disposals.length > 0 ? new Teardown(disposals, ctx) : undefined
     }
   }
 }
