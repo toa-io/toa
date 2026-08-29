@@ -19,6 +19,9 @@ class Receiver extends Connector {
   /** @type {toa.core.Receiver} */
   #receiver
 
+  /** @type {Set<Promise<any>>} */
+  #pending = new Set()
+
   constructor (comm, label, group, receiver) {
     super()
 
@@ -43,6 +46,19 @@ class Receiver extends Connector {
   }
 
   /**
+   * Stops consuming before the receiver it consumes for is taken apart.
+   *
+   * The receiver is a dependency, and a dependency is disconnected only once this has
+   * returned — so what is closed here is closed while the receiver is still whole.
+   * Sealing does not recall deliveries already dispatched, hence the wait for those
+   * still running.
+   */
+  async close () {
+    await this.#comm.seal()
+    await Promise.allSettled(this.#pending)
+  }
+
+  /**
    * @param {any} message
    * @param {object} properties
    */
@@ -51,7 +67,15 @@ class Receiver extends Connector {
 
     console.debug('AMQP event received', { label: this.#exchange ?? this.#queue, message, properties })
 
-    await this.#receiver.receive(message)
+    const promise = this.#receiver.receive(message)
+
+    this.#pending.add(promise)
+
+    try {
+      await promise
+    } finally {
+      this.#pending.delete(promise)
+    }
   }
 }
 

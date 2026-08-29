@@ -31,8 +31,19 @@ class Communication extends Connector {
     }
   }
 
-  async close () {
+  /**
+   * Stops consuming, leaving publishing open until the connection is disposed of.
+   *
+   * A connector that consumes for something it depends on seals here rather than waiting
+   * for its own disconnection to reach this one: a dependency is torn down after its
+   * dependant, so by then it would be too late.
+   */
+  async seal () {
     await this.#io?.seal()
+  }
+
+  async close () {
+    await this.seal()
   }
 
   async dispose () {
