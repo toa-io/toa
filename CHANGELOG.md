@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.265](https://github.com/toa-io/toa/compare/v1.0.0-alpha.264...v1.0.0-alpha.265) (2026-08-29)
+
+
+### Bug Fixes
+
+* **telemetry:** signal readiness when the probe port is taken ([19722b8](https://github.com/toa-io/toa/commit/19722b8b2f3b9af969fc66c3c67e4d9cd87b952f))
+
+
+### Features
+
+* **bridges.node:** add the dispose run command phase ([00df715](https://github.com/toa-io/toa/commit/00df7158f638b976ab09d4007102a4ead3c696c3))
+
+
+
+
+
 # [1.0.0-alpha.264](https://github.com/toa-io/toa/compare/v1.0.0-alpha.263...v1.0.0-alpha.264) (2026-08-29)
 
 
