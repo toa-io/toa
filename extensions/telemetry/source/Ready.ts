@@ -88,8 +88,12 @@ export class Ready extends Connector {
     if (!this.listening)
       return
 
-    this.server.close()
     this.listening = false
+
+    // keep-alive connections would otherwise hold the server handle, delaying the exit
+    this.server.closeAllConnections()
+
+    await new Promise<void>((resolve) => this.server.close(() => resolve()))
   }
 
   #listener (request: http.IncomingMessage, response: http.ServerResponse): void {
