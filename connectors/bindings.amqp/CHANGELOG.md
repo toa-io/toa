@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.266](https://github.com/toa-io/toa/compare/v1.0.0-alpha.265...v1.0.0-alpha.266) (2026-08-29)
+
+
+### Bug Fixes
+
+* **bindings.amqp:** stop consuming before what it consumes for is gone ([b081ea1](https://github.com/toa-io/toa/commit/b081ea10d52e53cf3c8bdfb2d3b21e4a8a97fe83))
+
+
+
+
+
 # [1.0.0-alpha.265](https://github.com/toa-io/toa/compare/v1.0.0-alpha.264...v1.0.0-alpha.265) (2026-08-29)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp
