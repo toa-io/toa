@@ -69,13 +69,21 @@ jobs:
         run: |
           npm ci
 
+          # Versioning and publishing are one command no longer. `lerna publish` reads the
+          # `ignoreScripts` of `command.version` as its own, so it skipped `prepack` too and
+          # a package shipped without what that script builds. Versioning still ignores
+          # scripts, as it is meant to; publishing says so explicitly.
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.from-package }}" = "true" ]; then
-            npx lerna publish from-package --dist-tag ${{ inputs.dist-tag }} --yes
+            DIST_TAG=${{ inputs.dist-tag }}
           elif [ "${{ github.base_ref }}" = "release" ]; then
-            npx lerna publish --conventional-graduate --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
+            DIST_TAG=latest
+            npx lerna version --conventional-graduate --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
           else
-            npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
+            DIST_TAG=alpha
+            npx lerna version --conventional-prerelease --preid alpha --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
           fi
+
+          npx lerna publish from-package --dist-tag "$DIST_TAG" --no-ignore-scripts --yes
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4

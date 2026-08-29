@@ -197,10 +197,16 @@ telemetry:
       console: ~
       otlp:
         endpoint: http://tempo:4318  # POSTs to {endpoint}/v1/traces
+        timeout: 5000                # request timeout, milliseconds
+        cooldown: 30000              # how long to drop spans for after a failed export
 ```
 
 When the `exporters` key is omitted, spans are exported to the console.
 When it is present, it is exhaustive: list `console` explicitly to keep it.
+
+A missing or unavailable endpoint is reported with a single warning and spans are dropped
+until it recovers, so that neither the throughput nor the shutdown is delayed by the absence
+of the tracing backend.
 
 See [Grafana stack setup](grafana.md) for local and production wiring.
 

@@ -18,7 +18,9 @@
           >{/if}{node.component}
       </Item.Title>
 
-      <Item.Description class="text-xs">
+      <!-- the counts are a row, not prose: the description clamps text by default and
+           Safari cuts the row short although it takes half the width a card gives it -->
+      <Item.Description class="text-xs line-clamp-none">
         <Summary {node} />
       </Item.Description>
     </Item.Content>
