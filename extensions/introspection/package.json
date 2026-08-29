@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.introspection",
-  "version": "1.0.0-alpha.263",
+  "version": "1.0.0-alpha.264",
   "description": "Toa Introspection",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,10 +17,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.262",
+    "@toa.io/core": "1.0.0-alpha.264",
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/schemas": "1.0.0-alpha.263",
-    "openspan": "1.0.0-alpha.254"
+    "openspan": "1.0.0-alpha.264"
   },
   "scripts": {
     "transpile": "npx tsc && npx tsc -p ./components/introspection.nodes && npx tsc -p ./components/introspection.edges",
