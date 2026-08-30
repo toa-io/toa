@@ -9,19 +9,3 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * **stash:** add distributed counting ([6d0af7e](https://github.com/toa-io/toa/commit/6d0af7e58a1deece00256129bc976bebc416ae90))
-
-
-
-
-
-# [1.0.0-alpha.264](https://github.com/toa-io/toa/compare/v1.0.0-alpha.263...v1.0.0-alpha.264) (2026-08-29)
-
-**Note:** Version bump only for package @toa.io/extensions.stash
-
-
-
-
-
-# [1.0.0-alpha.263](https://github.com/toa-io/toa/compare/v1.0.0-alpha.262...v1.0.0-alpha.263) (2026-08-29)
-
-**Note:** Version bump only for package @toa.io/extensions.stash

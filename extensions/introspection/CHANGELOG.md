@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.268](https://github.com/toa-io/toa/compare/v1.0.0-alpha.267...v1.0.0-alpha.268) (2026-08-30)
+
+
+### Bug Fixes
+
+* **introspection:** treat exposition as a system namespace ([0374f22](https://github.com/toa-io/toa/commit/0374f229a0c822763c3d92c6384a61d66269a8cc))
+
+
+
+
+
 # [1.0.0-alpha.266](https://github.com/toa-io/toa/compare/v1.0.0-alpha.265...v1.0.0-alpha.266) (2026-08-29)
 
 **Note:** Version bump only for package @toa.io/extensions.introspection
