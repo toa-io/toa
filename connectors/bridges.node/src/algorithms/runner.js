@@ -2,7 +2,6 @@
 
 const { Readable } = require('node:stream')
 const { Connector } = require('@toa.io/core')
-const { match } = require('matchacho')
 
 class Runner extends Connector {
   /** @type {toa.node.Algorithm} */
@@ -31,12 +30,16 @@ class Runner extends Connector {
   async execute (input, state) {
     const reply = await this.#algorithm.execute(input, state)
 
-    return match(reply,
-      Error, (error) => ({ error }),
-      Readable, reply,
-      isGenerator, (generator) => Readable.from(generator),
-      (output) => ({ output })
-    )
+    if (reply instanceof Error)
+      return { error: reply }
+
+    if (reply instanceof Readable)
+      return reply
+
+    if (isGenerator(reply))
+      return Readable.from(reply)
+
+    return { output: reply }
   }
 }
 

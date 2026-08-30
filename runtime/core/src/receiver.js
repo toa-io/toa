@@ -33,6 +33,12 @@ class Receiver extends Connector {
 
   #bridge
 
+  /** @type {object} */
+  #delivery
+
+  /** @type {object} */
+  #processing
+
   constructor (definition, local, bridge) {
     super()
 
@@ -51,6 +57,27 @@ class Receiver extends Connector {
 
     this.depends(local)
     if (bridge !== undefined) this.depends(bridge)
+
+    /*
+     * The delivery span is created on behalf of the messaging destination, so that
+     * each consumer forms its own complete producer/consumer pair, and service graphs
+     * display fan-out correctly: producer -> destination -> each consumer
+     * (Tempo pairs spans one-to-one, thus multiple consumers can not pair
+     * with a single producer span, see grafana/tempo#5408)
+     */
+    this.#delivery = {
+      name: `${this.#label} deliver`,
+      kind: 'producer',
+      service: this.#destination,
+      attributes: { 'messaging.destination.name': this.#destination }
+    }
+
+    this.#processing = {
+      name: `${this.#label} process`,
+      kind: 'consumer',
+      service: local.locator.id,
+      attributes: { 'messaging.destination.name': this.#destination }
+    }
   }
 
   /** @hot */
@@ -77,28 +104,7 @@ class Receiver extends Connector {
   }
 
   async #process (request) {
-    /*
-     * The delivery span is created on behalf of the messaging destination, so that
-     * each consumer forms its own complete producer/consumer pair, and service graphs
-     * display fan-out correctly: producer -> destination -> each consumer
-     * (Tempo pairs spans one-to-one, thus multiple consumers can not pair
-     * with a single producer span, see grafana/tempo#5408)
-     */
-    const delivery = {
-      name: `${this.#label} deliver`,
-      kind: 'producer',
-      service: this.#destination,
-      attributes: { 'messaging.destination.name': this.#destination }
-    }
-
-    const options = {
-      name: `${this.#label} process`,
-      kind: 'consumer',
-      service: this.#local.locator.id,
-      attributes: { 'messaging.destination.name': this.#destination }
-    }
-
-    return console.span(delivery, async () => console.span(options, async () => {
+    return console.span(this.#delivery, async () => console.span(this.#processing, async () => {
       try {
         await this.#local.invoke(this.#endpoint, request)
       } catch (error) {
