@@ -28,17 +28,38 @@ Then('the file {path} contains exact line {string}',
    * @this {toa.features.Context}
    */
   async function (relative, line) {
-    const pattern = resolve(this.cwd, relative)
-    const paths = await file.glob(pattern)
-
-    check(paths)
-
-    const path = paths[0]
-    const lines = await file.lines(path)
+    const lines = await read.call(this, relative)
     const found = lines.some((item) => item === line)
 
     assert.equal(found, true, `Line '${line}' not found in '${relative}'`)
   })
+
+Then('the file {path} contains line starting with {string}',
+  /**
+   * @param {string} relative
+   * @param {string} prefix
+   * @this {toa.features.Context}
+   */
+  async function (relative, prefix) {
+    const lines = await read.call(this, relative)
+    const found = lines.some((item) => item.startsWith(prefix))
+
+    assert.equal(found, true, `Line starting with '${prefix}' not found in '${relative}'`)
+  })
+
+/**
+ * @param {string} relative
+ * @this {toa.features.Context}
+ * @return {Promise<string[]>}
+ */
+async function read (relative) {
+  const pattern = resolve(this.cwd, relative)
+  const paths = await file.glob(pattern)
+
+  check(paths)
+
+  return file.lines(paths[0])
+}
 
 /**
  * @param {string} cwd

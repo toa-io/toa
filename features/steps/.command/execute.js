@@ -1,42 +1,56 @@
 'use strict'
 
-const util = require('node:util')
-
-/** @type {(command: string, options: import('child_process').SpawnOptions) => Promise<import('child_process').ChildProcess>} */
-const exec = util.promisify(require('child_process').exec)
+const { spawn } = require('node:child_process')
+const { once } = require('node:events')
 
 /**
  * @param {string} command
- * @param {import('child_process').ExecOptions} [options]
+ * @param {import('child_process').SpawnOptions} [options]
  * @this {toa.features.Context}
  */
 async function execute (command, options = {}) {
   options.cwd = this.cwd
 
-  this.controller = new AbortController()
+  // the command leads its own process group, so aborting it takes the program along;
+  // signalling the shell alone leaves what it started holding on to ports
+  options.detached = true
 
-  options.signal = this.controller.signal
+  const child = spawn('/bin/sh', ['-c', command], options)
 
-  /** @type {any} */
-  let result
+  let stdout = ''
+  let stderr = ''
 
-  try {
-    result = await exec(command, options)
+  child.stdout.on('data', (chunk) => (stdout += chunk))
+  child.stderr.on('data', (chunk) => (stderr += chunk))
 
-    this.exitCode = 0
-  } catch (e) {
-    result = e
+  this.aborted = false
+  this.controller = { abort: () => abort.call(this, child) }
 
-    this.exitCode = e.code
+  const [code] = await once(child, 'close')
 
-    if (e.code === 'ABORT_ERR') this.aborted = true
-    else console.error(e)
-  }
+  this.exitCode = code
 
-  this.stdout = result.stdout.trim()
-  this.stderr = result.stderr.trim()
+  if (code !== 0 && this.aborted !== true)
+    console.error(`Command '${command}' exited with code ${code}\n${stderr}`)
+
+  this.stdout = stdout.trim()
+  this.stderr = stderr.trim()
   this.stdoutLines = lines(this.stdout)
   this.stderrLines = lines(this.stderr)
+}
+
+/**
+ * @param {import('child_process').ChildProcess} child
+ * @this {toa.features.Context}
+ */
+function abort (child) {
+  this.aborted = true
+
+  try {
+    process.kill(-child.pid, 'SIGTERM')
+  } catch {
+    // the program is already gone
+  }
 }
 
 /**

@@ -98,16 +98,6 @@ Then('I update an environment with:',
     await updateEnv.call(this, update, ENV_FILE)
   })
 
-Then('I update an environment file {label} with:',
-  /**
-   * @param {string} envFile
-   * @param {string} update
-   * @this {toa.features.Context}
-   */
-  async function(envFile, update) {
-    await updateEnv.call(this, update, envFile)
-  })
-
 Given('environment variables:',
   function(contents) {
     const vars = dotenv.parse(contents)

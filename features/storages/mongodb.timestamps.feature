@@ -2,8 +2,8 @@ Feature: MongoDB Timestamps
 
   Background:
     Given the `mongo.one` database contains:
-      | _id                              | foo | bar   | baz   | _created      | _version |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 3   | hello | world | 1709781946176 | 1        |
+      | _id                              | foo | bar   | _created      | _version |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 3   | hello | 1709781946176 | 1        |
     And I compose `mongo.one` component
 
   Scenario: Querying with `_created`
@@ -18,7 +18,6 @@ Feature: MongoDB Timestamps
       - id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
         foo: 3
         bar: hello
-        baz: world
         _created: 1709781946176
         _version: 1
       """

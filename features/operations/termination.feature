@@ -49,7 +49,11 @@ Feature: Termination
       """
       code: 302
       """
-    When I call `mongo.one.enumerate`
+    When I call `mongo.one.enumerate` with:
+      """yaml
+      query:
+        limit: 10
+      """
     Then the reply is received:
       """
       []
@@ -58,6 +62,7 @@ Feature: Termination
       """yaml
       query:
         id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      input: {}
       """
     Then the reply is received:
       """

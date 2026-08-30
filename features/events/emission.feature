@@ -1,7 +1,8 @@
 Feature: Events emission
 
   Background:
-    Given the `mongo.one` database contains:
+    Given the `mongo.receiver` event queues are empty
+    And the `mongo.one` database contains:
       | _id                              | foo | bar   | _version |
       | ff0431dac0e14fce95c4496c21086781 | 0   | hello | 1        |
     And the `mongo.receiver` database contains:

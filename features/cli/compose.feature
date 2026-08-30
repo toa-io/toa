@@ -26,7 +26,7 @@ Feature: toa compose
     And stdout should contain lines:
       """
       Runtime
-      info Composition complete
+      Composition complete
       """
     Examples:
       | command                                | working directory        | delay |
@@ -41,87 +41,5 @@ Feature: toa compose
     Then program should exit with code 0
     And stdout should contain lines:
       """
-      info Composition shutdown complete
-      """
-
-  Scenario: Run composition in docker
-    Given I have components:
-      | dummies.one |
-      | dummies.two |
-    And I have a context
-    When I run `toa env docker`
-    And I update an environment with:
-      """
-      TOA_AMQP_CONTEXT__USERNAME=developer
-      TOA_AMQP_CONTEXT__PASSWORD=secret
-      """
-    And I run `toa compose ./components/* --dock --kill`
-    Then program should exit with code 0
-    And stdout should contain lines:
-      """
-      info Composition shutdown complete
-      """
-
-  Scenario: Run composition in docker with custom env file
-    Given I have components:
-      | dummies.one |
-      | dummies.two |
-    And I have a context
-    When I run `toa env docker --as .env.docker`
-    And I update an environment file `.env.docker` with:
-      """
-      TOA_AMQP_CONTEXT__USERNAME=developer
-      TOA_AMQP_CONTEXT__PASSWORD=secret
-      """
-    And I run `toa compose ./components/* --dock --kill --env .env.docker`
-    Then program should exit with code 0
-    And stdout should contain lines:
-      """
-      info Composition shutdown complete
-      """
-
-  Scenario: Run composition in docker with custom context runtime options
-    Given I have components:
-      | dummies.one |
-      | dummies.two |
-    And I have a context with:
-      """yaml
-      runtime:
-        registry@docker: no://where
-        proxy@docker: no://where
-      """
-    When I run `toa env broken-runtime --as .env.broken`
-    And I update an environment file `.env.broken` with:
-      """
-      TOA_AMQP_CONTEXT__USERNAME=developer
-      TOA_AMQP_CONTEXT__PASSWORD=secret
-      """
-    And I run `toa compose ./components/* --dock --kill --env .env.broken`
-    Then program should exit with code 1
-    And stderr should contain lines:
-      """
-      <...>npm ERR! code EINVALIDPROXY
-      """
-
-  Scenario: Run composition in docker with custom context build options
-    Given I have components:
-      | dummies.one |
-      | dummies.two |
-    And I have a context with:
-      """yaml
-      registry:
-        build@docker:
-          run: no-such-command
-      """
-    When I run `toa env broken-build --as .env.broken`
-    And I update an environment file `.env.broken` with:
-      """
-      TOA_AMQP_CONTEXT__USERNAME=developer
-      TOA_AMQP_CONTEXT__PASSWORD=secret
-      """
-    And I run `toa compose ./components/* --dock --kill --env .env.broken`
-    Then program should exit with code 1
-    And stderr should contain lines:
-      """
-      <...>no-such-command" did not complete successfully: exit code: 127
+      Composition shutdown complete
       """

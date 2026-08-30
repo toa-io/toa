@@ -1,5 +1,9 @@
 Feature: Custom Entity id
 
+  Background:
+    Given the `custom.id` database contains:
+      | _id | value | _version |
+
   Scenario: Getting a default value
     Given I compose `custom.id` component
     When I call `custom.id.observe` with:

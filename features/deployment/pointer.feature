@@ -39,6 +39,8 @@ Feature: Pointer
     And I have a context with:
       """yaml
       stash:
+        # the default covers the built-in components the context brings in
+        .: redis://localhost
         <key>: redis://redis.example.com
       """
     When I export deployment

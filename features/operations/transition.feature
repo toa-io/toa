@@ -70,11 +70,23 @@ Feature: Transition
   Scenario: Undelete
     Given I compose `mongo.associated` component
 
+    # restore
     When I call `mongo.associated.assign` with:
       """yaml
       query:
         id: 12317562d0504f8a9a84d330b4ed2699
       """
+
+    # create or update
+    When I call `mongo.associated.transit` with:
+      """yaml
+      input:
+        foo: 1
+        bar: baz
+      query:
+        id: 12317562d0504f8a9a84d330b4ed2699
+      """
+    Then the reply is received
 
     When I call `mongo.associated.terminate` with:
       """yaml
@@ -150,9 +162,10 @@ Feature: Transition
         b: 1
       """
       
-  @manual
   Scenario: Objects scope transition
-    Given I compose `mongo.associated` component
+    Given the `mongo.associated` database contains:
+      | _id | foo | bar | _version |
+    And I compose `mongo.associated` component
     When I call `mongo.associated.increment` with:
       """yaml
       input:

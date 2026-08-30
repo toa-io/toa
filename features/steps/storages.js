@@ -5,7 +5,7 @@ const knex = require('knex')
 
 const { load } = require('./.workspace/components')
 
-const { Given, Then } = require('@cucumber/cucumber')
+const { After, Given, Then } = require('@cucumber/cucumber')
 
 Given('I have a {storage} database {word}',
   /**
@@ -85,4 +85,13 @@ Then('the table of {component} must contain rows:',
     }
 
     await sql.destroy()
+  })
+
+// a failed scenario never reaches `I disconnect`, and an open pool keeps the process alive
+After(
+  /**
+   * @this {toa.features.Context}
+   */
+  async function () {
+    if (this.storage?.migration !== undefined) await this.storage.migration.disconnect()
   })
