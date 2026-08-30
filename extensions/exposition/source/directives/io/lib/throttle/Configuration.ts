@@ -17,7 +17,8 @@ export type KeyConditionMethod = 'status'
 export type KeyComponent = Rule<KeyComponentMethod>
 export type KeyCondition = Rule<KeyConditionMethod>
 
-type KeyEntry = KeyComponentMethod | Record<KeyComponentMethod, unknown>
+/** A bare component, or the one that takes an argument. */
+type KeyEntry = KeyComponentMethod | { segment: string }
 type KeyDeclaration = KeyEntry | KeyEntry[]
 
 type ConditionDeclaration =
