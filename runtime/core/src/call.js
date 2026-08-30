@@ -21,13 +21,15 @@ class Call extends Connector {
   }
 
   async invoke (request = {}) {
-    request.input ??= null
-
     // the caller may have attributed the call itself, as the node bridge does
     if (this.#source !== undefined)
       request.source ??= this.#source
 
+    // fitting first lets the input schema supply its default;
+    // an operation that takes no input still has to send an explicit null
     this.#contract.fit(request)
+
+    request.input ??= null
 
     // avoid validation on the recipient's side
     request.authentic = true
