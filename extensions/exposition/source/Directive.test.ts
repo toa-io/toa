@@ -15,6 +15,14 @@ const families: Array<jest.MockedObjectDeep<DirectiveFamily>> = [
     dispose: jest.fn()
   },
   {
+    name: 'qux',
+    mandatory: true,
+    create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
+    preflight: jest.fn(),
+    settle: jest.fn(),
+    dispose: jest.fn()
+  },
+  {
     name: 'bar',
     mandatory: false,
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
@@ -29,11 +37,12 @@ let factory: DirectivesFactory
 beforeEach(() => {
   jest.clearAllMocks()
 
-  assert.ok(families[0].preflight !== undefined)
-  assert.ok(families[1].preflight !== undefined)
+  for (const family of families) {
+    assert.ok(family.preflight !== undefined)
 
-  families[0].preflight.mockImplementation(() => null)
-  families[1].preflight.mockImplementation(() => null)
+    family.preflight.mockImplementation(() => null)
+  }
+
   factory = new DirectivesFactory(families, {} as unknown as Remotes)
 })
 
@@ -53,10 +62,20 @@ it('should create directive', async () => {
 
   factory.create(declarations)
 
-  for (let i = 0; i < declarations.length; i++) {
-    expect(families[i].create.mock.calls[0][0]).toBe(declarations[i].name)
-    expect(families[i].create.mock.calls[0][1]).toBe(declarations[i].value)
+  for (const declaration of declarations) {
+    const family = families.find(({ name }) => name === declaration.family)!
+
+    expect(family.create.mock.calls[0][0]).toBe(declaration.name)
+    expect(family.create.mock.calls[0][1]).toBe(declaration.value)
   }
+})
+
+it('should pass the route to the families', async () => {
+  const route = '/' + generate()
+
+  factory.create([{ family: 'foo', name: generate(), value: generate() }], route)
+
+  expect(families[0].create.mock.calls[0][3]).toBe(route)
 })
 
 it('should throw error if directive family is not found', async () => {
@@ -96,4 +115,50 @@ it('should apply mandatory families', async () => {
   await directives.preflight(request, [])
 
   expect(families[0].preflight).toHaveBeenCalled()
+})
+
+describe('order', () => {
+  function order (): string[] {
+    return families
+      .filter(({ preflight }) => preflight!.mock.calls.length > 0)
+      .sort((a, b) => a.preflight!.mock.invocationCallOrder[0] -
+        b.preflight!.mock.invocationCallOrder[0])
+      .map(({ name }) => name)
+  }
+
+  it('should run mandatory families in their own order, whatever a manifest says', async () => {
+    // `qux` declared first, but `foo` is registered first and both are mandatory
+    const directives = factory.create([
+      { family: 'qux', name: generate(), value: generate() },
+      { family: 'foo', name: generate(), value: generate() }
+    ])
+
+    await directives.preflight(generate() as unknown as Context, [])
+
+    expect(order()).toStrictEqual(['foo', 'qux'])
+  })
+
+  it('should run a mandatory family before a declared one it is not declared with',
+    async () => {
+      // only `qux` is declared: `foo` still has to run first, not merely first of
+      // whatever had no declarations
+      const directives = factory.create([
+        { family: 'qux', name: generate(), value: generate() }
+      ])
+
+      await directives.preflight(generate() as unknown as Context, [])
+
+      expect(order()).toStrictEqual(['foo', 'qux'])
+    })
+
+  it('should run mandatory families before the rest', async () => {
+    const directives = factory.create([
+      { family: 'bar', name: generate(), value: generate() },
+      { family: 'qux', name: generate(), value: generate() }
+    ])
+
+    await directives.preflight(generate() as unknown as Context, [])
+
+    expect(order()).toStrictEqual(['foo', 'qux', 'bar'])
+  })
 })

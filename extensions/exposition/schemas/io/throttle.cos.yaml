@@ -1,7 +1,14 @@
 definitions:
   component: &component
-    type: string
-    enum: [ip, path]
+    anyOf:
+      - type: string
+        enum: [ip, path, route, identity]
+      - type: object
+        properties:
+          segment:
+            type: string
+        required: [segment]
+        additionalProperties: false
   condition: &condition
     type: object
     properties:

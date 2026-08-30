@@ -57,9 +57,7 @@ Output restrictions are not applied to stream responses and errors.
 
 ## Throttling
 
-The `io:throttle` directive is used to limit the rate of the requests meeting the specified
-criteria.
-See [algorithm description](notes/throttling.md).
+The `io:throttle` directive limits the rate of requests meeting the specified criteria.
 
 ```yaml
 exposition:
@@ -68,29 +66,59 @@ exposition:
       key:
         - route
         - ip
-        - identity
-        - segment: id
-        - header: x-real-ip
-        - status: [4xx, 5xx]
+      condition:
+        status: 404
       requests: 500
       interval: 30
       cooldown: 30
-      status: 429
 ```
 
-Once the rate limit is reached, the server will block the requests with the specified `status`
-code (429 by default) until the `cooldown` period expires.
+Requests are counted per `key`. Once `requests` are counted within `interval` seconds, further
+requests carrying that key are answered `429 Too Many Requests` until `cooldown` seconds pass.
+`interval` and `cooldown` are in seconds.
 
-> Currently, only `header` and `status` key components are supported.
+`requests` is a budget for the **whole group** of gateway instances, not for one of them. Counting
+goes through Redis, so the instances converge on one number rather than each enforcing the limit
+separately. The number they act on is a lower bound: it never claims more requests than were really
+made, and it can lag by up to one interval. Precise per-request enforcement is not what this is for.
 
-### Request key components
+The lag is worth knowing about when `requests` is small. An instance sends what it has counted once
+an interval, and what the group made of it only comes back an interval later — so between its send
+and that reply, an instance is going on what it alone has counted since. A limit of `1` blocks on
+the first request whatever happens; a limit of a handful can be overshot in the first interval of a
+burst, before any instance has a group number to act on. Set `requests` for the rate you want to
+stop, not for an exact ceiling.
 
-Request components used to track quota usage and block requests:
+An instance that cannot reach Redis keeps throttling on what it has seen itself, and keeps serving.
 
-- `header`: name of the header (or a list of header names), which value(s) will be used
+### Key components
 
-### Response key components
+What a request is counted against. Give one, or a list — a list keys on the combination, so
+`[route, ip]` counts each address separately on each route.
 
-Response components used only to track quota usage:
+- `ip` — the client address, read from `X-Forwarded-For` where it is set and not private,
+  and from the connection otherwise.
+- `path` — the path the request came in on, `/users/1`.
+- `route` — the route as declared, `/users/:id`. Every path matching the route shares one budget,
+  which `path` cannot do: keyed on `path`, walking ids is a way around the limit.
+- `identity` — the authenticated identity. Requests carrying none share a single budget between
+  them, so pair it with `ip` if that matters.
+- `segment: <name>` — the value bound to a named route segment, `1` for `:id` in `/users/:id`.
 
-- `status`: response status code (or a list of status codes)
+### Conditions
+
+What is counted, as opposed to what it is counted against. A request that fails a condition is
+served and not counted. Conditions are evaluated against the response, so they cannot decide whether
+to block — only whether to count.
+
+- `status: <code>` — count only responses with this status.
+
+```yaml
+io:throttle:
+  key: ip
+  condition:
+    status: 404
+  requests: 20
+  interval: 60
+  cooldown: 600
+```

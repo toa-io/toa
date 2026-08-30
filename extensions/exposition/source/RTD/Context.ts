@@ -9,5 +9,8 @@ export interface Context<TExtension = any> {
     readonly factory: DirectiveFactory
     stack: Directive[]
   }
+
+  /** The route being built, accumulated on the way down and restored on the way up. */
+  path: string
   readonly extension: TExtension
 }

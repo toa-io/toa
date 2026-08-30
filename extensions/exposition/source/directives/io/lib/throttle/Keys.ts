@@ -2,7 +2,10 @@ import { createHash } from 'node:crypto'
 import { Components, type Component } from './components'
 import { Conditions, type Condition } from './conditions'
 import type { KeyComponent, KeyCondition } from './Configuration'
+import type { Parameter } from '../../../../RTD'
 import type { Input as Context, Output } from '../../../../io'
+
+const NONE: Parameter[] = []
 
 export class Keys {
   private readonly components: Component[]
@@ -13,28 +16,26 @@ export class Keys {
     this.conditions = conditions
   }
 
-  public static create (componentRules: KeyComponent[], conditionRules?: KeyCondition[]): Keys {
-    const components = componentRules.map((rule) => new Components[rule.method](rule.options))
+  public static create (componentRules: KeyComponent[], conditionRules?: KeyCondition[],
+    route: string = ''): Keys {
+    const components = componentRules.map((rule) =>
+      new Components[rule.method](rule.options, route))
+
     const conditions = conditionRules?.map((rule) => new Conditions[rule.method](rule.options))
 
     return new this(components, conditions)
   }
 
-  public get (context: Context): string {
+  public get (context: Context, parameters: Parameter[] = NONE): string {
     const hash = createHash('sha256')
 
     for (const component of this.components)
-      hash.update(component.get(context))
+      hash.update(component.get(context, parameters))
 
     return hash.digest('hex')
   }
 
-  public match (input: Context, output: Output): string | null {
-    const miss = this.conditions?.some((condition) => !condition.match(input, output))
-
-    if (miss === true)
-      return null
-    else
-      return this.get(input)
+  public matches (input: Context, output: Output): boolean {
+    return this.conditions?.some((condition) => !condition.match(input, output)) !== true
   }
 }

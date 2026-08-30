@@ -11,13 +11,14 @@ interface Rule<T, K = unknown> {
   options?: K
 }
 
-export type KeyComponentMethod = 'ip' | 'path'
+export type KeyComponentMethod = 'ip' | 'path' | 'route' | 'identity' | 'segment'
 export type KeyConditionMethod = 'status'
 
 export type KeyComponent = Rule<KeyComponentMethod>
 export type KeyCondition = Rule<KeyConditionMethod>
 
-type KeyDeclaration = KeyComponentMethod | KeyComponentMethod[]
+type KeyEntry = KeyComponentMethod | Record<KeyComponentMethod, unknown>
+type KeyDeclaration = KeyEntry | KeyEntry[]
 
 type ConditionDeclaration =
   Record<KeyConditionMethod, unknown>
@@ -41,9 +42,14 @@ export function parse (declaration: Declaration): Configuration {
 }
 
 function mapKey (declaration: KeyDeclaration): KeyComponent[] {
-  const methods = Array.isArray(declaration) ? declaration : [declaration]
+  const entries = Array.isArray(declaration) ? declaration : [declaration]
 
-  return methods.map((method) => ({ method }))
+  // a bare `path`, or `segment: id` for the ones that take an argument
+  return entries.flatMap((entry): KeyComponent[] =>
+    typeof entry === 'string'
+      ? [{ method: entry }]
+      : Object.entries(entry).map(([method, options]) =>
+        ({ method: method as KeyComponentMethod, options })))
 }
 
 function mapCondition (declaration?: ConditionDeclaration): KeyCondition[] | undefined {

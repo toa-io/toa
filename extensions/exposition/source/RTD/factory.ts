@@ -42,17 +42,27 @@ export function branchTTL (): number {
 
 function createRoute (route: syntax.Route, context: Context): Route {
   const stack = context.directives.stack.slice()
+  const path = context.path
   const segments = segment(route.path)
+
+  context.path = join(path, route.path)
+
   const node = createNode(route.node, context)
 
   context.directives.stack = stack // restore
+  context.path = path
 
   return new Route(segments, node)
 }
 
+function join (base: string, path: string): string {
+  // '/one/' and '/two/' would otherwise read as '/one//two/'
+  return (base + path).replace(/\/+/g, '/').replace(/(.)\/$/, '$1')
+}
+
 function createMethod (method: syntax.Method, context: Context): Method {
   const stack = method.directives.concat(context.directives.stack)
-  const directives = context.directives.factory.create(stack)
+  const directives = context.directives.factory.create(stack, context.path)
 
   const endpoint = method.mapping?.endpoint === undefined
     ? null

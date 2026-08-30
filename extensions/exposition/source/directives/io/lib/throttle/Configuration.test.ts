@@ -38,3 +38,24 @@ it('should convert condition', () => {
     ]
   })
 })
+
+it('should convert a key component that takes an argument', () => {
+  expect(parse({ key: { segment: 'id' }, ...rest })).toMatchObject({
+    key: [
+      {
+        method: 'segment',
+        options: 'id'
+      }
+    ]
+  })
+})
+
+it('should convert a mixed key', () => {
+  expect(parse({ key: ['route', { segment: 'id' }, 'identity'], ...rest })).toMatchObject({
+    key: [
+      { method: 'route' },
+      { method: 'segment', options: 'id' },
+      { method: 'identity' }
+    ]
+  })
+})
