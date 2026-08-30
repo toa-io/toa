@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { match } from 'matchacho'
 import { console } from 'openspan'
-import { minimatch } from 'minimatch'
+import { Minimatch } from 'minimatch'
 import * as http from '../../HTTP'
 import { Anonymous } from './Anonymous'
 import { Id } from './Id'
@@ -61,11 +61,14 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       () => new Class(value))
   }
 
+  public arrange (directives: Directive[]): void {
+    directives.sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1))
+  }
+
   public async preflight (directives: Directive[],
     context: Context,
     parameters: Parameter[]): Promise<Output> {
     context.identity = await this.resolve(context.authority, context.request.headers.authorization)
-    directives.sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1))
 
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
@@ -162,7 +165,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     return Object.entries(permissions).some(([pattern, methods]) => {
       return methods.some((method) => method === '*' || method === context.request.method) &&
-        minimatch(context.request.url, pattern)
+        glob(pattern).match(context.request.url)
     })
   }
 
@@ -174,6 +177,29 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     return ban.banned
   }
 }
+
+/**
+ * `minimatch(str, pattern)` compiles the pattern on every call, and a permission is
+ * matched on every request the identity makes. Patterns arrive with an identity, hence
+ * the bound.
+ */
+function glob (pattern: string): Minimatch {
+  let compiled = GLOBS.get(pattern)
+
+  if (compiled === undefined) {
+    if (GLOBS.size >= GLOBS_LIMIT)
+      GLOBS.clear()
+
+    compiled = new Minimatch(pattern)
+
+    GLOBS.set(pattern, compiled)
+  }
+
+  return compiled
+}
+
+const GLOBS = new Map<string, Minimatch>()
+const GLOBS_LIMIT = 1024
 
 const constructors: Record<string, new (value: any, argument?: any) => Directive> = {
   anonymous: Anonymous,
