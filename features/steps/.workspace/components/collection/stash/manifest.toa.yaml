@@ -28,5 +28,10 @@ operations:
     input:
       delay: 0
     output: number
+  count:
+    input:
+      name*: string
+      times*: number
+    output: number
 
 stash: ~

@@ -98,3 +98,22 @@ Feature: Stash extension
             - name: TOA_STASH_DEFAULT_STASH
               value: redis://redis.example.com
       """
+
+  # The assertion is on the number counting returns, which is local by design.
+  # The wait is what lets the buffer reach Redis before the component shuts down,
+  # so the scenario exercises the flush even though it cannot assert on it: the
+  # group's total only becomes readable an interval later, and which interval a
+  # fixed wait lands in depends on where in the current one the run started.
+  Scenario: Counting
+    Given I boot `stash` component
+    When I invoke `count` with:
+      """yaml
+      input:
+        name: bursts
+        times: 3
+      """
+    Then the reply is received:
+      """yaml
+      3
+      """
+    When I wait 0.5 second
