@@ -16,9 +16,9 @@ declare namespace toa.core {
   interface State {
     init(id: string): _entity.Entity
 
-    object(query: _storages.Query): Promise<_entity.Entity>
+    object(query: _storages.Query, mutable?: boolean): Promise<_entity.Entity>
 
-    objects(query: _storages.Query): Promise<_entity.Entity[]>
+    objects(query: _storages.Query, mutable?: boolean): Promise<_entity.Entity[]>
 
     changeset(query: _storages.Query): _entity.Changeset
 

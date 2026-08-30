@@ -22,12 +22,12 @@ class Factory {
     return new Entity(this.#schema, id, this.#guards)
   }
 
-  object (record) {
-    return new Entity(this.#schema, record, this.#guards)
+  object (record, mutable = true) {
+    return new Entity(this.#schema, record, this.#guards, mutable)
   }
 
-  objects (recordset, init) {
-    const set = recordset.map((record) => this.object(record))
+  objects (recordset, init, mutable = true) {
+    const set = recordset.map((record) => this.object(record, mutable))
 
     if (init !== undefined) 
       for (const id of init)

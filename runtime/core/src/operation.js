@@ -7,6 +7,15 @@ const { Readable } = require('node:stream')
 class Operation extends Connector {
   scope
 
+  /**
+   * Whether what this operation acquires may be modified and committed. Only a
+   * transition commits, and only a commit needs the pre-image an entity keeps
+   * to diff the new state against.
+   *
+   * @protected
+   */
+  mutable = false
+
   #cascade
   #contracts
   #query
@@ -83,7 +92,7 @@ class Operation extends Connector {
     if (query === undefined)
       throw new RequestContractException('Request query is required')
 
-    return this.scope[this.#scope](query)
+    return this.scope[this.#scope](query, this.mutable)
   }
 }
 

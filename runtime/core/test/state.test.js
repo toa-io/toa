@@ -16,7 +16,22 @@ it('should provide object', async () => {
 
   expect(fixtures.storage.get).toHaveBeenCalledWith(fixtures.query)
   expect(entity).toStrictEqual(fixtures.factory.object.mock.results[0].value)
-  expect(fixtures.factory.object).toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value)
+  expect(fixtures.factory.object)
+    .toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value, true)
+})
+
+it('should provide read-only object', async () => {
+  await state.object(fixtures.query, false)
+
+  expect(fixtures.factory.object)
+    .toHaveBeenCalledWith(fixtures.storage.get.mock.results[0].value, false)
+})
+
+it('should provide read-only objects', async () => {
+  await state.objects(fixtures.query, false)
+
+  expect(fixtures.factory.objects)
+    .toHaveBeenCalledWith(fixtures.storage.find.mock.results[0].value, undefined, false)
 })
 
 it('should store entity', async () => {

@@ -8,9 +8,9 @@ declare namespace toa.core {
     interface Factory {
       init(id: string): Entity
 
-      object(record: Object): Entity
+      object(record: Object, mutable?: boolean): Entity
 
-      objects(recordset: Object[]): Entity[]
+      objects(recordset: Object[], init?: string[], mutable?: boolean): Entity[]
 
       changeset(query: _storages.Query): Changeset
     }
