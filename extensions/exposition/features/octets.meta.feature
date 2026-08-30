@@ -85,8 +85,8 @@ Feature: Octets metadata
       200 OK
 
       id: ${{ id }}
-      type: application/octet-stream
       size: 8169
+      type: application/octet-stream
       checksum: 10cf16b458f759e0d617f2f3d83599ff
       attributes:
         foo: 'true'
@@ -111,6 +111,6 @@ Feature: Octets metadata
     Then the following reply is sent:
       """
       204 No Content
+      access-control-allow-headers: accept, authorization, content-attributes, content-location, content-type, if-match, if-none-match, origin
       access-control-allow-origin: https://example.com
-      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-attributes
       """

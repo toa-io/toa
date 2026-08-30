@@ -35,6 +35,6 @@ Feature: Octets headers
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/octet-stream
       content-length: 8169
+      content-type: application/octet-stream
       """

@@ -37,8 +37,8 @@ Feature: Octets with Cloudinary storage
       content-type: application/yaml
 
       id: ${{ id }}
-      type: image/png
       size: 473831
+      type: image/png
       """
     When the following request is received:
       """
@@ -49,18 +49,20 @@ Feature: Octets with Cloudinary storage
     Then the stream equals to `lenna.png` is sent with the following headers:
       """
       200 OK
-      content-type: image/png
-      content-length: 473831
       access-control-allow-origin: https://toa.io
+      content-length: 473831
+      content-type: image/png
       """
 
+  # SVG has no binary signature, so the type on upload is whatever the client states;
+  # on the way back it is what Cloudinary serves
   Scenario: Upload an svg
     When the stream of `sample.svg` is received with the following headers:
       """
       POST / HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
-      content-type: application/octet-stream
+      content-type: image/svg+xml
       """
     Then the following reply is sent:
       """
@@ -75,7 +77,8 @@ Feature: Octets with Cloudinary storage
       GET /${{ id }} HTTP/1.1
       host: nex.toa.io
       """
-    Then the stream equals to `lenna.png` is sent with the following headers:
+    # Cloudinary rewrites the SVG it stores, so only the type is asserted
+    Then the following reply is sent:
       """
       200 OK
       content-type: image/svg+xml
@@ -140,8 +143,8 @@ Feature: Octets with Cloudinary storage
     Then the following reply is sent:
       """
       200 OK
-      transfer-encoding: chunked
       content-type: video/mp4
+      transfer-encoding: chunked
       """
 
     # after a while, Cloudinary returns a content-length response
@@ -153,8 +156,8 @@ Feature: Octets with Cloudinary storage
     Then the following reply is sent:
       """
       200 OK
-      content-type: video/mp4
       content-length: 175043
+      content-type: video/mp4
       """
 
     When the following request is received:
@@ -165,8 +168,8 @@ Feature: Octets with Cloudinary storage
     Then the following reply is sent:
       """
       200 OK
-      transfer-encoding: chunked
       content-type: video/mp4
+      transfer-encoding: chunked
       """
 
     When the following request is received:
@@ -206,8 +209,8 @@ Feature: Octets with Cloudinary storage
     Then the following reply is sent:
       """
       206 Partial Content
-      content-type: video/mp4
       content-length: 2
+      content-type: video/mp4
       """
 
     # gif

@@ -1,0 +1,12 @@
+namespace: exposition
+name: stash
+
+stash: ~
+
+operations:
+  count:
+    bindings: ~ # the gateway calls this in its own process, over the loop
+    input:
+      name*: string
+      interval*: number
+      amount*: number

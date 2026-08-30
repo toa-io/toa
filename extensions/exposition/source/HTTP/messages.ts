@@ -66,7 +66,11 @@ export async function read (context: Context): Promise<any> {
 
 function send (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
   if (message.body === undefined || message.body === null) {
-    response.setHeader('content-length', '0')
+    // a HEAD reply carries no body but must still report the length a GET would
+    // have returned, so a length already set by a directive is left alone
+    if (!response.hasHeader('content-length'))
+      response.setHeader('content-length', '0')
+
     response.end()
 
     return

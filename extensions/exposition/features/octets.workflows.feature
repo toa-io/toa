@@ -39,14 +39,14 @@ Feature: Octets storage workflows
       --cut
 
       step: add-bar
+      status: completed
       output:
         bar: baz
-      status: completed
       --cut
 
       step: add-baz
       status: completed
-      output: 
+      output:
         add-foo:
           foo: bar
         add-bar:
@@ -115,8 +115,8 @@ Feature: Octets storage workflows
 
       --cut
       id: ${{ id }}
-      type: application/octet-stream
       size: 8169
+      type: application/octet-stream
       --cut
 
       step: add-foo
@@ -124,10 +124,10 @@ Feature: Octets storage workflows
       --cut
 
       step: add-bar
+      status: completed
       error:
         code: ERROR
         message: Something went wrong
-      status: completed
       --cut--
       """
 
@@ -281,8 +281,8 @@ Feature: Octets storage workflows
       --cut
 
       id: ${{ id }}
-      type: application/octet-stream
       size: 8169
+      type: application/octet-stream
       --cut
 
       step: concat
@@ -320,8 +320,8 @@ Feature: Octets storage workflows
       --cut
 
       id: ${{ id }}
-      type: application/octet-stream
       size: 8169
+      type: application/octet-stream
       --cut
 
       step: authority
@@ -361,8 +361,8 @@ Feature: Octets storage workflows
       --cut
 
       id: ${{ id }}
-      type: application/octet-stream
       size: 8169
+      type: application/octet-stream
       --cut
 
       step: identity

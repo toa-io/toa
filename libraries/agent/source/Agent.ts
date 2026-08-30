@@ -168,10 +168,15 @@ export class Agent {
     const substituted = this.captures.substitute(input)
     let [headers, body] = trim(substituted).split('\n\n')
 
-    if (body !== undefined) headers += '\ncontent-length: ' + Buffer.byteLength(body)
+    // a request that states its own length is testing that length, and appending
+    // a second header would make the client reject it before it is ever sent
+    if (body !== undefined && !DECLARES_LENGTH.test(headers))
+      headers += '\ncontent-length: ' + Buffer.byteLength(body)
 
     return headers + '\n\n' + (body ?? '')
   }
 }
 
 const MAX_DIFF_LENGTH = 4096
+
+const DECLARES_LENGTH = /^content-length:/im

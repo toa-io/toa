@@ -10,7 +10,7 @@ export interface Directives {
 }
 
 export interface DirectiveFactory {
-  create: (directives: syntax.Directive[]) => Directives
+  create: (directives: syntax.Directive[], route: string) => Directives
   dispose: () => void
 }
 

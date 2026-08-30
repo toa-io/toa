@@ -32,6 +32,7 @@ Feature: Download external resources
 
       id: ${{ id }}
       type: image/png
+      checksum: ${{ checksum }}
       """
 
     When the following request is received:
@@ -42,9 +43,9 @@ Feature: Download external resources
     Then the following reply is sent:
       """
       200 OK
-      content-type: image/png
       content-length: 1288
-      etag: "${{ id }}"
+      content-type: image/png
+      etag: "${{ checksum }}"
       """
 
     # origin is stored in the entry
@@ -185,5 +186,5 @@ Feature: Download external resources
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, content-attributes, content-location
+      access-control-allow-headers: accept, authorization, content-attributes, content-location, content-type, if-match, if-none-match, origin
       """

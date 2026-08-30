@@ -56,6 +56,7 @@ Feature: Accessing metadata
       host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
+      content-id: lenna-ascii
       """
     And the stream of `lenna.png` is received with the following headers:
       """
@@ -63,10 +64,11 @@ Feature: Accessing metadata
       host: nex.toa.io
       accept: application/yaml
       content-type: application/octet-stream
+      content-id: lenna-png
       """
     When the following request is received:
       """
-      GET /10cf16b458f759e0d617f2f3d83599ff HTTP/1.1
+      GET /lenna-ascii HTTP/1.1
       host: nex.toa.io
       accept: application/vnd.toa.octets.entry+yaml
       """
@@ -75,7 +77,7 @@ Feature: Accessing metadata
       200 OK
       content-type: application/yaml
 
-      id: 10cf16b458f759e0d617f2f3d83599ff
-      type: application/octet-stream
+      id: lenna-ascii
       size: 8169
+      type: application/octet-stream
       """

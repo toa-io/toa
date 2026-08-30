@@ -1,5 +1,5 @@
-namespace: octets
-name: storage
+namespace: exposition
+name: octets
 
 storages: ~
 

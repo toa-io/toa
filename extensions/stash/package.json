@@ -17,11 +17,12 @@
     "access": "public"
   },
   "dependencies": {
+    "@sesamecare-oss/redlock": "1.4.0",
     "@toa.io/pointer": "1.0.0-alpha.263",
-    "ioredis": "5.10.1",
-    "msgpackr": "2.0.1",
-    "openspan": "1.0.0-alpha.264",
-    "redlock-temp-fix": "5.0.0-beta.2"
+    "comcount": "0.1.0",
+    "ioredis": "6.0.0",
+    "msgpackr": "2.1.0",
+    "openspan": "1.0.0-alpha.264"
   },
   "scripts": {
     "transpile": "tsc"

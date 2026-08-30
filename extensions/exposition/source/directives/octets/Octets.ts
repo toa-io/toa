@@ -23,7 +23,7 @@ export class Octets implements DirectiveFamily<Directive> {
     if (Class === undefined)
       throw new Error(`Directive 'octets:${name}' is not implemented`)
 
-    this.discovery ??= remotes.discover('octets', 'storage')
+    this.discovery ??= remotes.discover('exposition', 'octets')
 
     return new Class(value, this.discovery, remotes)
   }

@@ -61,11 +61,28 @@ export class Tree {
         factory: this.directives,
         stack: this.root.directives ?? []
       },
+      path: label(extension),
       extension
     }
 
     return createNode(node, context)
   }
+}
+
+/**
+ * A branch's routes are relative to wherever it is merged, and the mount point is not
+ * known while it is being built — so the component it came from is what keeps two
+ * branches from looking like the same route.
+ */
+function label (extension: unknown): string {
+  if (extension === null || typeof extension !== 'object')
+    return ''
+
+  const { namespace, component } = extension as Record<string, unknown>
+
+  return typeof namespace === 'string' && typeof component === 'string'
+    ? `${namespace}.${component}`
+    : ''
 }
 
 const PROTECTED = true

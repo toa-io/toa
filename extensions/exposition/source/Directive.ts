@@ -63,12 +63,9 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     this.remotes = remotes
   }
 
-  public create (declarations: RTD.syntax.Directive[]): Directives {
+  public create (declarations: RTD.syntax.Directive[], route: string = ''): Directives {
     const groups: Record<string, any> = {}
     const mandatory = new Set(this.mandatory)
-
-    declarations.sort((a, b) =>
-      (mandatory.has(b.family) ? 1 : 0) - (mandatory.has(a.family) ? 1 : 0))
 
     const names: Record<string, string[]> = {}
 
@@ -78,7 +75,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
       if (family === undefined)
         throw new Error(`Directive family '${declaration.family}' is not found`)
 
-      const directive = family.create(declaration.name, declaration.value, this.remotes)
+      const directive = family.create(declaration.name, declaration.value, this.remotes, route)
 
       groups[family.name] ??= []
       groups[family.name].push(directive)
@@ -103,6 +100,12 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
         names: names[family]
       })
 
+    // Mandatory families run in the order they are registered in, not in the order a
+    // manifest happens to mention them: `auth` must resolve the identity before `io`
+    // can key a quota on it, and a request it denies should not reach `io` at all.
+    // The rest keep the order they were declared in, the sort being stable.
+    sets.sort((a, b) => this.rank(a.family.name) - this.rank(b.family.name))
+
     const directives = new Directives(sets)
 
     this.instances.push(directives)
@@ -113,6 +116,13 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   public dispose (): void {
     for (const directives of this.instances)
       directives.dispose()
+  }
+
+  /** Mandatory families first, in their own order; everything else keeps its own. */
+  private rank (family: string): number {
+    const index = this.mandatory.indexOf(family)
+
+    return index === -1 ? this.mandatory.length : index
   }
 }
 

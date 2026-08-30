@@ -1,5 +1,11 @@
 # Decentralized Request Throttling
 
+> **Superseded.** The design below was never implemented. `io:throttle` now counts through
+> [comcount](https://github.com/temich/comcount), by way of the `stash` extension's `count`, which
+> solves the same problem the same way — per-process buffers, periodically reconciled through Redis,
+> never failing the request path — with the interval number derived from Redis' own clock instead of
+> each node's. This note is kept for the problem statement and the forces, which have not changed.
+
 ## Problem
 
 To prevent an unnecessary load, API requests should be throttled when made maliciously or due to an

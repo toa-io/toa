@@ -56,8 +56,8 @@ Feature: Octets directive family
       content-type: application/yaml
 
       id: ${{ id }}
-      type: application/octet-stream
       size: 8169
+      type: application/octet-stream
       """
     When the following request is received:
       """
@@ -67,15 +67,15 @@ Feature: Octets directive family
     Then the stream equals to `lenna.ascii` is sent with the following headers:
       """
       200 OK
-      content-type: application/octet-stream
       content-length: 8169
-      etag: ${{ ETAG }}
+      content-type: application/octet-stream
+      etag: "${{ ETAG }}"
       """
     When the following request is received:
       """
       GET /${{ id }} HTTP/1.1
       host: nex.toa.io
-      if-none-match: ${{ ETAG }}
+      if-none-match: "${{ ETAG }}"
       """
     Then the following reply is sent:
       """
