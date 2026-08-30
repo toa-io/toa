@@ -25,15 +25,27 @@ const resolve = (references, annotations) => {
   }
 
   for (const dependency of Object.keys(annotations)) {
-    const { module } = load(dependency)
+    if (dependency in dependencies) continue
 
-    if (!module.standalone || (dependency in dependencies))
-      continue
+    // an annotation may be keyed by a dependency id rather than by a module reference
+    const module = optional(dependency)
 
-    dependencies[dependency] = []
+    if (module?.standalone === true) dependencies[dependency] = []
   }
 
   return dependencies
+}
+
+/**
+ * @param {string} reference
+ * @returns {object | null}
+ */
+function optional (reference) {
+  try {
+    return load(reference).module
+  } catch {
+    return null
+  }
 }
 
 exports.resolve = resolve
