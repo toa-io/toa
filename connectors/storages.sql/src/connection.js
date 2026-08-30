@@ -49,6 +49,12 @@ class Connection extends Connector {
     return true
   }
 
+  async update (table, criteria, object) {
+    const count = await this.#client(table).where(criteria).update(object)
+
+    return count === 1
+  }
+
   async #configure () {
     const references = await this.#resolveURLs()
     const reference = references[0]

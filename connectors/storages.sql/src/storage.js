@@ -2,8 +2,6 @@
 
 const { Connector } = require('@toa.io/core')
 
-const { to } = require('./.storage/translate')
-
 class Storage extends Connector {
   /** @type {toa.sql.Client} */
   #client
@@ -17,22 +15,20 @@ class Storage extends Connector {
   }
 
   async store (entity) {
-    if (entity._version === 0) return this.#add(entity)
+    // the entity carries the version it is being stored with,
+    // so the first one it ever has is the one a new row gets
+    if (entity._version === 1) return this.#add(entity)
     else return this.#update(entity)
   }
 
   async #add (entity) {
-    const object = to(entity)
-
-    return this.#client.insert(object)
+    return this.#client.insert({ ...entity })
   }
 
   async #update (entity) {
-    const { id, _version } = entity
-    const criteria = { id, _version }
-    const object = to(entity)
+    const criteria = { id: entity.id, _version: entity._version - 1 }
 
-    return this.#client.update(criteria, object)
+    return this.#client.update(criteria, { ...entity })
   }
 }
 

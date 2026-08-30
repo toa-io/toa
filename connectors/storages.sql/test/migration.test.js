@@ -98,8 +98,8 @@ describe('table', () => {
     const pieces = [
       `create table ${locator.namespace}.${locator.name}`,
       'id char(32) primary key',
-      '_version integer',
-      'foo integer',
+      '_version bigint',
+      'foo bigint',
       'bar varchar'
     ]
 
