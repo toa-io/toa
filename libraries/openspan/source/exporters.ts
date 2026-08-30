@@ -13,15 +13,25 @@ export const consoleExporter: Exporter = {
 
 /**
  * Replaces the set of span exporters entirely.
- * Defaults to the console exporter.
+ * Defaults to none: tracing is off until an exporter is configured.
  */
 export function exporting (exporters: Exporter[]): void {
   state.exporters = exporters
 }
 
 export function exporters (): Exporter[] {
-  return state.exporters ?? [consoleExporter]
+  return state.exporters ?? NONE
 }
+
+/**
+ * Whether anything at all consumes spans. When nothing does, traces are not
+ * sampled and spans are not created — see `decide()`.
+ */
+export function recording (): boolean {
+  return exporters().length > 0
+}
+
+const NONE: Exporter[] = []
 
 /**
  * Flushes all exporters, e.g. before `process.exit()`,

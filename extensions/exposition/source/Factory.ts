@@ -82,7 +82,22 @@ function configureLogs (): void {
 
   const tracesEnv = process.env[TRACES_ENV]
 
-  traces(tracesEnv === undefined ? {} : decode<TracesOptions>(tracesEnv))
+  traces(tracesEnv === undefined ? development() : decode<TracesOptions>(tracesEnv))
+}
+
+/**
+ * Tracing is off unless it is configured. The console exporter is a local development
+ * mechanism, so it is turned on for `toa dev` and for a boot trace the CLI has already
+ * asked for (`runtime/boot/src/span.js`), and nowhere else — a deployment that wants
+ * traces annotates `telemetry.traces.exporters`.
+ *
+ * The gateway boots without the telemetry extension, hence the copy of
+ * `extensions/telemetry/source/extension.ts`.
+ */
+function development (): TracesOptions {
+  const local = process.env.TOA_DEV === '1' || process.env.TOA_BOOT_TRACE === '1'
+
+  return local ? { exporters: { console: {} } } : {}
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports

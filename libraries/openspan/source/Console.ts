@@ -35,14 +35,25 @@ export class Console {
   public async span<T> (name: string | SpanOptions, task: Task<T>): Promise<T>
   public async span<T> (name: string, attributes: object, task: Task<T>): Promise<T>
   public async span<T> (naming: string | SpanOptions, arg: object | Task<T>, task?: Task<T>): Promise<T> {
-    const options: SpanOptions = typeof naming === 'string' ? { name: naming } : naming
-
     if (typeof arg === 'function')
       task = arg as Task<T>
-    else
+
+    const parent = current()
+
+    /*
+     * An unsampled trace records nothing, and the context a child would inherit is the
+     * one already in scope — so there is nothing to create and nothing to propagate.
+     * The decision itself is made once, when the trace root is opened below.
+     */
+    if (parent !== undefined && !parent.sampled)
+      return await task!()
+
+    const options: SpanOptions = typeof naming === 'string' ? { name: naming } : naming
+
+    if (typeof arg !== 'function')
       options.attributes = arg
 
-    const context = create(current())
+    const context = create(parent)
 
     if (options.service !== undefined)
       context.service = options.service

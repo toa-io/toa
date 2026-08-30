@@ -1,6 +1,6 @@
 import { Console, record } from './Console'
 import { current } from './tracing'
-import { consoleExporter, exporters, exporting, flush } from './exporters'
+import { consoleExporter, exporters, exporting, flush, recording } from './exporters'
 import { Otlp } from './Otlp'
 import { traces } from './traces'
 import type { Exporter, Span } from './exporters'
@@ -10,10 +10,18 @@ afterEach(() => {
 })
 
 describe('traces', () => {
-  it('should default to the console exporter', () => {
+  it('should default to no exporters', () => {
     traces()
 
+    expect(exporters()).toHaveLength(0)
+    expect(recording()).toBe(false)
+  })
+
+  it('should opt into the console exporter', () => {
+    traces({ exporters: { console: {} } })
+
     expect(exporters()).toEqual([consoleExporter])
+    expect(recording()).toBe(true)
   })
 
   it('should create configured exporters', () => {

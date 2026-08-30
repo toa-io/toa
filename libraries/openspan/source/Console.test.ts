@@ -1,7 +1,8 @@
-import { console, Console, create, run, sampling } from './'
+import { console, Console, consoleExporter, create, current, exporting, run, sampling } from './'
 
 afterEach(() => {
   sampling()
+  exporting([])
 })
 
 let instance: Console
@@ -207,10 +208,35 @@ describe('tracing', () => {
 })
 
 describe('span', () => {
+  // a span that nothing consumes is not created at all
+  beforeEach(() => {
+    exporting([consoleExporter])
+  })
+
   it('should return task result', async () => {
     const result = await instance.span('task', () => 42)
 
     expect(result).toBe(42)
+  })
+
+  it('should not open a span within an unsampled trace', async () => {
+    const context = { ...create(), sampled: false }
+
+    const inner = await run(context, async () => await instance.span('work', () => current()))
+
+    // the context in scope is reused rather than replaced, so there is nothing to propagate
+    expect(inner).toBe(context)
+    expect(streams.stdout.write).not.toHaveBeenCalled()
+  })
+
+  it('should still run the task when nothing consumes spans', async () => {
+    exporting([])
+
+    const context = { ...create(), sampled: false }
+    const result = await run(context, async () => await instance.span('work', () => 42))
+
+    expect(result).toBe(42)
+    expect(streams.stdout.write).not.toHaveBeenCalled()
   })
 
   it('should write span entry with duration', async () => {
