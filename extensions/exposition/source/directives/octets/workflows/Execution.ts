@@ -73,7 +73,9 @@ export class Execution extends Readable {
       report.status = 'completed'
 
     if (result instanceof Error) {
-      report.error = result
+      // an Error cannot be serialized where it sits, and the encoders only unwrap
+      // one they are handed directly — this one travels nested inside the report
+      report.error = { ...result }
       this.interrupted = true
     } else if (result !== undefined) {
       report.output = result
@@ -126,5 +128,5 @@ interface Report {
   step: string
   status?: 'completed' | 'exception'
   output?: unknown
-  error?: Error
+  error?: Record<string, unknown>
 }
