@@ -85,9 +85,10 @@ Feature: Optimistic concurrency control
           io:output: true
           GET: enumerate
       """
+    # sorted and bounded, or the collection does not enumerate the same way twice
     When the following request is received:
       """
-      GET /pots/ HTTP/1.1
+      GET /pots/?sort=id:asc&limit=2 HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
       """
@@ -99,7 +100,7 @@ Feature: Optimistic concurrency control
     # the same representation must be asked for, the tag identifies it
     When the following request is received:
       """
-      GET /pots/ HTTP/1.1
+      GET /pots/?sort=id:asc&limit=2 HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
       if-none-match: "${{ etag }}"

@@ -10,6 +10,7 @@ export class Output implements Directive {
   private readonly disabled: boolean = false
   private readonly omitted: boolean = true
   private readonly permissions: string[] = []
+  private readonly allowed: Set<string>
 
   public constructor (permissions: Permissions) {
     if (typeof permissions === 'boolean')
@@ -20,6 +21,8 @@ export class Output implements Directive {
 
     else
       this.permissions = permissions
+
+    this.allowed = new Set(this.permissions)
   }
 
   public static validate (permissions: unknown): asserts permissions is Permissions {
@@ -59,11 +62,16 @@ export class Output implements Directive {
     }
   }
 
-  private fit (message: Message): Message | undefined {
-    const entries = Object.entries(message)
-      .filter(([key]) => this.permissions.includes(key))
+  /** Runs per entity of a collection, hence the set and the absence of intermediates. */
+  private fit (message: Message): Message {
+    const output: Message = {}
 
-    return Object.fromEntries(entries)
+    // the keys of the entity, so that the response keeps the order it was built in
+    for (const key of Object.keys(message))
+      if (this.allowed.has(key))
+        output[key] = message[key]
+
+    return output
   }
 }
 

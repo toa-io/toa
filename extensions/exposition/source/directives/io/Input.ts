@@ -5,10 +5,10 @@ import type { Directive } from './Directive'
 import type { Input as Context } from '../../io'
 
 export class Input implements Directive {
-  private readonly permissions: Permissions
+  private readonly allowed: Set<string>
 
   public constructor (permissions: Permissions) {
-    this.permissions = permissions
+    this.allowed = new Set(permissions)
   }
 
   public static validate (permissions: unknown): asserts permissions is Permissions {
@@ -43,7 +43,7 @@ export class Input implements Directive {
 
   private violation (value: Message | Message[]): string | undefined {
     if (!Array.isArray(value))
-      return Object.keys(value).find((key) => !this.permissions.includes(key))
+      return Object.keys(value).find((key) => !this.allowed.has(key))
 
     for (const item of value) {
       const property = this.violation(item)
