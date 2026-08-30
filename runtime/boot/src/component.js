@@ -52,10 +52,16 @@ async function bootOperations (manifest, context, state, preflight) {
   if (manifest.operations === undefined)
     return {}
 
+  const entries = Object.entries(manifest.operations)
+
+  // each one loads its algorithm from disk and compiles its contracts
+  const booted = await Promise.all(entries.map(([endpoint, definition]) =>
+    boot.operation(manifest, endpoint, definition, context, state, preflight)))
+
   const operations = {}
 
-  for (const [endpoint, definition] of Object.entries(manifest.operations))
-    operations[endpoint] = await boot.operation(manifest, endpoint, definition, context, state, preflight)
+  for (let i = 0; i < entries.length; i++)
+    operations[entries[i][0]] = booted[i]
 
   return operations
 }

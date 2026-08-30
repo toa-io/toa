@@ -227,19 +227,18 @@ class Storage extends Connector {
     }
   }
 
+  /** A component does not start before this returns, so the indexes are created at once. */
   async index () {
-    const indexes = []
+    const pending = []
 
-    if (this.#entity.unique !== undefined) {
+    if (this.#entity.unique !== undefined)
       for (const [name, fields] of Object.entries(this.#entity.unique)) {
         const optional = this.getOptional(fields)
-        const unique = await this.uniqueIndex(name, fields, optional)
 
-        indexes.push(unique)
+        pending.push(this.uniqueIndex(name, fields, optional))
       }
-    }
 
-    if (this.#entity.index !== undefined) {
+    if (this.#entity.index !== undefined)
       for (const [suffix, declaration] of Object.entries(this.#entity.index)) {
         const name = 'index_' + suffix
         const fields = Object.fromEntries(Object.entries(declaration)
@@ -250,12 +249,12 @@ class Storage extends Connector {
 
         console.info('Creating index', { fields, options })
 
-        await this.#collection.createIndex(fields, options)
+        pending.push(this.#collection.createIndex(fields, options)
           .catch((e) => console.warn('MongoDB index creation failed', { collection: this.#collection.collectionName, name, fields, error: e }))
-
-        indexes.push(name)
+          .then(() => name))
       }
-    }
+
+    const indexes = await Promise.all(pending)
 
     await this.removeObsoleteIndexes(indexes)
   }

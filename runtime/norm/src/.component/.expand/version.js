@@ -3,45 +3,59 @@
 const { join } = require('node:path')
 const { createHash } = require('node:crypto')
 const fs = require('node:fs/promises')
-const { createReadStream } = require('node:fs')
-const { once } = require('node:events')
 
 async function version (manifest) {
   manifest.version ??= await hash(manifest.path)
 }
 
+/**
+ * Identifies a build of a component: it becomes the tag of its image, so it must be the
+ * same for the same sources and different for different ones — on any machine.
+ *
+ * What the image excludes cannot change it: `node_modules` is in the `.dockerignore` the
+ * build writes (see `operations/src/deployment/images/image.js`), so hashing it would only
+ * retag an identical image after a local install.
+ */
 async function hash (path) {
-  const hash = await hashd(path)
+  const files = (await list(path)).sort()
+  const digests = await Promise.all(files.map((file) => digest(join(path, file))))
+  const total = createHash('sha256')
 
-  return hash.digest('hex').slice(0, 8)
+  // the path is part of it: moving a file changes the build even if no content did
+  for (let i = 0; i < files.length; i++)
+    total.update(files[i]).update(digests[i])
+
+  return total.digest('hex').slice(0, 8)
 }
 
 /**
- * @param {string} path
- * @param {import('node:crypto').Hash} hash
+ * @param {string} root
+ * @param {string} [path] relative
+ * @param {string[]} [acc]
+ * @returns {Promise<string[]>} paths relative to `root`
  */
-async function hashd (path, hash = createHash('sha256')) {
-  const stat = await fs.stat(path)
+async function list (root, path = '', acc = []) {
+  const entries = await fs.readdir(join(root, path), { withFileTypes: true })
 
-  if (stat.isFile()) {
-    const stream = createReadStream(path)
+  for (const entry of entries) {
+    if (EXCLUDED.has(entry.name))
+      continue
 
-    stream.pipe(hash, { end: false })
+    const relative = path === '' ? entry.name : `${path}/${entry.name}`
 
-    await once(stream, 'end')
-
-    return hash
+    if (entry.isDirectory())
+      await list(root, relative, acc)
+    else if (entry.isFile())
+      acc.push(relative)
   }
 
-  if (stat.isDirectory()) {
-    const entries = await fs.opendir(path)
-
-    for await (const entry of entries) {
-      await hashd(join(path, entry.name), hash)
-    }
-
-    return hash
-  }
+  return acc
 }
+
+async function digest (path) {
+  return createHash('sha256').update(await fs.readFile(path)).digest()
+}
+
+const EXCLUDED = new Set(['node_modules', '.git'])
 
 exports.version = version
