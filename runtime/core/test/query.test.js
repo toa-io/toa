@@ -22,6 +22,23 @@ describe('criteria', () => {
     expect(query.criteria).toEqual(fixtures.samples.simple.parsed.criteria)
   })
 
+  it('should keep a parsed criteria', () => {
+    const instance = new Query(fixtures.samples.simple.properties)
+
+    const first = instance.parse(fixtures.samples.simple.query).criteria
+    const second = instance.parse(fixtures.samples.simple.query).criteria
+
+    expect(second).toBe(first)
+  })
+
+  it('should not keep an invalid criteria', () => {
+    const instance = new Query(fixtures.samples.simple.properties)
+    const query = { criteria: 'nonexistent==1' }
+
+    expect(() => instance.parse(query)).toThrow()
+    expect(() => instance.parse(query)).toThrow()
+  })
+
   it('should parse criteria with type coercion', () => {
     const instance = new Query(fixtures.samples.extended.properties)
     const query = instance.parse(fixtures.samples.extended.query)
