@@ -11,7 +11,6 @@ const { Connector } = require('@toa.io/core')
 const { resolve } = require('@toa.io/pointer')
 const { ID } = require('./deployment')
 const { MongoClient } = require('mongodb')
-const { monitor } = require('./monitoring')
 
 /**
  * @type {Record<string, Promise<Instance>>}
@@ -113,8 +112,6 @@ class Client extends Connector {
     const client = new MongoClient(urls.join(','), OPTIONS)
     const hosts = urls.map((str) => new URL(str).host)
 
-    monitor(client)
-
     console.info('Connecting to MongoDB', { address: hosts.join(', ') })
 
     await client.connect()
@@ -158,9 +155,14 @@ function getKey (db, urls) {
   return db + ':' + urls.sort().join(' ')
 }
 
+/**
+ * `monitorCommands` is deliberately absent. It makes the driver materialize every reply
+ * eagerly to populate the monitoring event (`CommandSucceededEvent`), which defeats the
+ * lazy per-document deserialization a cursor exists for — a 100-document batch is then
+ * deserialized twice. `Storage` times its own calls instead.
+ */
 const OPTIONS = {
-  ignoreUndefined: true,
-  monitorCommands: true
+  ignoreUndefined: true
 }
 
 const ALREADY_EXISTS = 48
