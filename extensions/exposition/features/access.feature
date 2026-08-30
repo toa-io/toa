@@ -539,3 +539,58 @@ Feature: Access authorization
       """
       authorization: Token
       """
+
+  Scenario: Delegation does not violate input restrictions
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role      |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | developer |
+    # `auth:` is declared before `io:`, and the identity it embeds is the server's
+    # own addition — what `io:input` restricts is the body the client sent
+    And the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          POST:
+            auth:rule:
+              role: developer
+              delegate: identity
+            io:input: [foo]
+            io:output: true
+            endpoint: echo
+      """
+    When the following request is received:
+      """
+      POST /echo/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      foo: bar
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      foo: bar
+      identity:
+        id: efe3a65ebbee47ed95a73edd911ea328
+      """
+    # and a property the client is not allowed to send is still refused
+    When the following request is received:
+      """
+      POST /echo/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      foo: bar
+      baz: qux
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      'Unexpected input: baz'
+      """

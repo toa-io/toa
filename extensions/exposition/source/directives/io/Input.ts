@@ -16,7 +16,11 @@ export class Input implements Directive {
   }
 
   public preflight (context: Context): void {
-    context.pipelines.body.push((body) => this.check(body))
+    // Restrictions are on what the client sent, so the check goes to the front of the
+    // pipeline whatever order the families ran in: `auth:delegate` embeds the identity
+    // and `map:*` assigns mapped properties, and those additions are the server's own,
+    // not input to be restricted.
+    context.pipelines.body.unshift((body) => this.check(body))
   }
 
   private check (body: unknown): Message | Message[] | undefined {
