@@ -1,4 +1,4 @@
-import { Redis, type ClusterOptions } from 'ioredis'
+import { Redis, type RedisOptions } from 'ioredis'
 import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
 import { resolve } from '@toa.io/pointer'
@@ -6,7 +6,7 @@ import { ID } from './extension'
 
 export class Connection extends Connector {
   public readonly redises: Redis[] = []
-  private readonly locator: Locator
+  public readonly locator: Locator
 
   public constructor (locator: Locator) {
     super()
@@ -16,7 +16,15 @@ export class Connection extends Connector {
 
   protected override async open (): Promise<void> {
     const keyPrefix = `${this.locator.namespace}:${this.locator.name}:`
-    const options: ClusterOptions = { keyPrefix, enableReadyCheck: true, lazyConnect: true }
+
+    const options: RedisOptions = {
+      keyPrefix,
+      enableReadyCheck: true,
+      lazyConnect: true,
+      protocol: 3,
+      replyMapping: 'resp3'
+    }
+
     const urls = await this.resolveURLs()
 
     for (const url of urls)

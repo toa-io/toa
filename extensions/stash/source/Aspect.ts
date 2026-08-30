@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import Redlock from 'redlock-temp-fix'
+import { Redlock } from '@sesamecare-oss/redlock'
 import { encode, decode } from 'msgpackr'
 import { console, type SpanOptions } from 'openspan'
 import { Connector, type extensions } from '@toa.io/core'
