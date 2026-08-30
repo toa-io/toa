@@ -64,6 +64,9 @@ export class Ready extends Connector {
     }
 
     this.listening = true
+
+    // a readiness probe answers while the process runs; it must never be the reason it keeps running
+    this.server.unref()
   }
 
   public async complete (): Promise<void> {
