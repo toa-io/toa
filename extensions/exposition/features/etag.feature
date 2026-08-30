@@ -94,18 +94,67 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      etag: ${{ etag }}
+      etag: "${{ etag }}"
       """
+    # the same representation must be asked for, the tag identifies it
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
       host: nex.toa.io
-      if-none-match: ${{ etag }}
+      accept: application/yaml
+      if-none-match: "${{ etag }}"
       """
     Then the following reply is sent:
       """
       304 Not Modified
-      etag: ${{ etag }}
+      etag: "${{ etag }}"
+      """
+
+  Scenario: `etag` of a reply that carries no version
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:name:
+          io:output: true
+          GET: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/Bob/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: "2d6a12ffc0a952fbd09f8909de4e0e4b20ba2b906cd12ac22bbef4ee5bd9003e"
+
+      Hello Bob
+      """
+    When the following request is received:
+      """
+      GET /echo/Bob/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      if-none-match: "2d6a12ffc0a952fbd09f8909de4e0e4b20ba2b906cd12ac22bbef4ee5bd9003e"
+      """
+    Then the following reply is sent:
+      """
+      304 Not Modified
+      etag: "2d6a12ffc0a952fbd09f8909de4e0e4b20ba2b906cd12ac22bbef4ee5bd9003e"
+      """
+    # the tag identifies the representation, which is what `vary: accept` says
+    When the following request is received:
+      """
+      GET /echo/Bob/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      if-none-match: "2d6a12ffc0a952fbd09f8909de4e0e4b20ba2b906cd12ac22bbef4ee5bd9003e"
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: "360c52c694c418b4a793a4815e611206ab17fe04836351a65638a15d1491810b"
       """
 
   Scenario: Weak `etag`
