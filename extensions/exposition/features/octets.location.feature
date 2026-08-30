@@ -71,8 +71,8 @@ Feature: Octets location
       --cut
 
       id: ${{ id }}
-      type: application/octet-stream
       size: 8169
+      type: application/octet-stream
       --cut
 
       step: echo

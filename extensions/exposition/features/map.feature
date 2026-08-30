@@ -21,9 +21,9 @@ Feature: HTTP context mapping
     Then the following reply is sent:
       """
       200 OK
-      content-type: application/yaml
       content-language: <result>
-      vary: accept-language, accept
+      vary: origin, accept-language, accept
+      content-type: application/yaml
 
       Hello <result>
       """
@@ -84,7 +84,7 @@ Feature: HTTP context mapping
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-headers: accept, authorization, content-type, etag, if-match, if-none-match, accept-language, foo
+      access-control-allow-headers: accept, accept-language, authorization, content-type, foo, if-match, if-none-match, origin
       """
 
   Scenario: Mapping the value of an arbitrary header
@@ -108,8 +108,8 @@ Feature: HTTP context mapping
     Then the following reply is sent:
       """
       200 OK
+      vary: origin, foo, accept
       content-type: application/yaml
-      vary: foo, accept
 
       Hello bar
       """
@@ -135,8 +135,8 @@ Feature: HTTP context mapping
     Then the following reply is sent:
       """
       200 OK
+      vary: origin, accept
       content-type: application/yaml
-      vary: accept
 
       Hello nex.toa.io
       """
