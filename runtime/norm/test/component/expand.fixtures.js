@@ -1,7 +1,7 @@
 'use strict'
 
 const source = {
-  path: '',
+  path: __dirname, // `version` hashes the component directory
   entity: {
     schema: {
       properties: {

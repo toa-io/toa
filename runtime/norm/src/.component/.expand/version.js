@@ -28,7 +28,9 @@ async function hashd (path, hash = createHash('sha256')) {
 
     stream.pipe(hash, { end: false })
 
-    return await once(stream, 'end')
+    await once(stream, 'end')
+
+    return hash
   }
 
   if (stat.isDirectory()) {
