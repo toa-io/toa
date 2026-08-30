@@ -30,7 +30,7 @@ export function shorten(id: string): string {
  * system component — a manifest does not record which package it came from — so this is
  * a list, and it grows when the runtime ships another one.
  */
-const SYSTEM = new Set(['identity', 'octets', 'realtime'])
+const SYSTEM = new Set(['identity', 'exposition', 'realtime'])
 
 /** Whether a component came with the runtime rather than with the application. */
 export function system(of: { namespace: string }): boolean {
