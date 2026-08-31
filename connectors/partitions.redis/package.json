@@ -1,0 +1,29 @@
+{
+  "name": "@toa.io/partitions.redis",
+  "version": "1.0.0-alpha.271",
+  "description": "Toa Redis Partitions Connector",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@toa.io/core": "*"
+  },
+  "dependencies": {
+    "ioredis": "6.0.0",
+    "n-and-i": "0.3.0",
+    "openspan": "1.0.0-alpha.270"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
