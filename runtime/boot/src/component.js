@@ -17,6 +17,7 @@ const create = async (manifest, locator) => {
   const storage = boot.storage(manifest)
   const context = await boot.context(manifest)
   const emission = boot.emission(manifest.events, locator, context)
+  const outbox = boot.outbox(manifest, storage, emission)
 
   let state
 
@@ -25,7 +26,7 @@ const create = async (manifest, locator) => {
     const guards = await boot.guards(manifest, context)
     const entity = new entities.Factory(schema, guards)
 
-    state = new State(storage, entity, emission, manifest.entity.associated)
+    state = new State(storage, entity, outbox, manifest.entity.associated)
   }
 
   const phases = await boot.rc(manifest, context)
@@ -33,7 +34,10 @@ const create = async (manifest, locator) => {
   const component = new Component(locator, operations)
 
   if (storage) component.depends(storage)
-  if (emission) component.depends(emission)
+
+  // the outbox owns the emission and the storage, so it drains before either goes down
+  if (outbox) component.depends(outbox)
+  else if (emission) component.depends(emission)
 
   const decorated = boot.extensions.component(component)
 

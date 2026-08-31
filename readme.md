@@ -28,6 +28,7 @@ Non-scattered documentation is coming some time later.
   - Concurrency control
   - Data validation
   - Multi-document transactions
+  - [Transactional outbox](/documentation/outbox.md): state and its events commit together
   - Invariants (guards)
   - Built-in implementations
     - MongoDB

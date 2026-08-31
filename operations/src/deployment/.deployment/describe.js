@@ -20,6 +20,26 @@ const describe = (context, compositions, dependency, image) => {
     }
   )
 
+  const outbox = context.outbox
+
+  if (outbox?.redis !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_OUTBOX_REDIS',
+      value: Array.isArray(outbox.redis) ? outbox.redis.join(' ') : outbox.redis
+    })
+
+  if (outbox?.interval !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_OUTBOX_INTERVAL',
+      value: String(outbox.interval)
+    })
+
+  if (outbox?.retention !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_OUTBOX_RETENTION',
+      value: String(outbox.retention)
+    })
+
   const credentials = context.registry?.credentials
 
   if (image !== undefined) {

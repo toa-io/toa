@@ -8,7 +8,10 @@ const storage = {
   find: jest.fn(() => ([{ id: generate() }])),
   add: jest.fn(() => true),
   set: jest.fn(() => true),
-  store: jest.fn(() => true)
+  store: jest.fn(() => true),
+  massStore: jest.fn(() => true),
+  upsert: jest.fn(() => ({ id: generate() })),
+  ensure: jest.fn((query, properties, state) => state)
 }
 
 const factory = {
@@ -20,9 +23,7 @@ const query = generate()
 
 const entity = {
   get: jest.fn(() => ({ [generate()]: generate() })),
-  event: jest.fn(() => ({
-    state: { [generate()]: generate() }, changeset: { [generate()]: generate() }
-  }))
+  event: jest.fn(() => ({ state: { [generate()]: generate() } }))
 }
 
 const initial = {
@@ -31,16 +32,18 @@ const initial = {
 
 const unchanged = {
   ...entity,
-  event: jest.fn(() => ({ state: { [generate()]: generate() }, changeset: {} }))
+  event: jest.fn(() => ({ state: { [generate()]: generate() } }))
 }
 
-const emitter = {
-  emit: jest.fn()
+// a legacy outbox: no storage capability, so `publish` emits inline
+const outbox = {
+  row: jest.fn((event) => ({ id: generate(), lane: 0, published: false, pending: 0, event })),
+  publish: jest.fn()
 }
 
 exports.storage = storage
 exports.factory = factory
-exports.emitter = emitter
+exports.outbox = outbox
 exports.query = query
 exports.entity = entity
 exports.initial = initial

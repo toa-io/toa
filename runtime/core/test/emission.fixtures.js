@@ -9,8 +9,7 @@ const events = [0, 1, 2].map((index) => ({
 
 const event = {
   origin: { [generate()]: generate() },
-  state: { [generate()]: generate() },
-  changeset: { [generate()]: generate() }
+  state: { [generate()]: generate() }
 }
 
 exports.events = events

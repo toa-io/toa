@@ -1,0 +1,41 @@
+# no prototype, therefore no inherited events — the one shape in which a component with an
+# entity declares nothing to publish, and so takes no outbox and no transaction
+prototype: null
+
+namespace: proto
+name: plain
+
+entity:
+  storage: mongodb
+  schema:
+    properties:
+      id:
+        type: string
+        pattern: ^[a-fA-F0-9]{32}$
+      _version:
+        type: integer
+        minimum: 0
+        default: 0
+      _created:
+        type: integer
+      _updated:
+        type: integer
+      _deleted:
+        type: integer
+        nullable: true
+        default: null
+      foo:
+        type: integer
+        default: 0
+    required: [id]
+
+operations:
+  write:
+    type: transition
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        foo:
+          type: integer
+      required: [foo]
