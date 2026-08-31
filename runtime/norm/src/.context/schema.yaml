@@ -65,22 +65,21 @@ properties:
         resources:
           $ref: '#/definitions/resources'
       required: [name, components]
+  atomicity:
+    description: >
+      Where replicas agree on who owns what, exclusively. System infrastructure rather than a
+      per-component resource: it holds interval counters and nothing else, one small key per
+      group. Absent, nothing is owned and whoever asked stands down.
+    oneOf:
+      - type: string
+      - type: array
+        minItems: 1
+        items:
+          type: string
   outbox:
     type: object
     additionalProperties: false
     properties:
-      redis:
-        description: >
-          Coordination for the outbox sweep. System infrastructure rather than a per-component
-          resource: it holds nothing but interval counters, one small key per component. Absent,
-          every replica sweeps every lane, which is correct and only publishes a stranded row
-          more than once.
-        oneOf:
-          - type: string
-          - type: array
-            minItems: 1
-            items:
-              type: string
       interval:
         description: >
           The cycle, in milliseconds. One cycle marks what was published, then sweeps what was

@@ -5,8 +5,8 @@ const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 
 /**
- * One client per process. Every component in a composition registers in the same Redis, under
- * its own group key, so five components open one connection between them.
+ * One client per process. Every group registers in the same Redis under a key of its own, so
+ * a composition of five components opens one connection between them.
  */
 class Connection extends Connector {
   /** @type {import('ioredis').Redis} */
@@ -17,12 +17,12 @@ class Connection extends Connector {
 
     if (urls.length === 0) return
 
-    // one node is enough: the counters are per group and a group lives in one slot
+    // one node is enough: a group's counters live in one slot
     this.redis = new Redis(urls[0], { lazyConnect: true, enableReadyCheck: true })
 
     await this.redis.connect()
 
-    console.info('Outbox partitioning connected to redis', { host: this.redis.options.host })
+    console.info('Atomicity connected to redis', { host: this.redis.options.host })
   }
 
   async close () {
@@ -40,13 +40,13 @@ function resolve () {
 
 let instance
 
-/** the connection is shared by every component of the process */
+/** the connection is shared by every group of the process */
 const connection = () => (instance ??= new Connection())
 
 /** @internal for tests */
 const reset = () => (instance = undefined)
 
-const VARIABLE = 'TOA_OUTBOX_REDIS'
+const VARIABLE = 'TOA_ATOMICITY_REDIS'
 
 exports.Connection = Connection
 exports.connection = connection

@@ -1,7 +1,7 @@
 {
-  "name": "@toa.io/partitions.redis",
+  "name": "@toa.io/atomicity",
   "version": "1.0.0-alpha.271",
-  "description": "Toa Redis Partitions Connector",
+  "description": "Toa Atomicity Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
   "main": "src/index.js",

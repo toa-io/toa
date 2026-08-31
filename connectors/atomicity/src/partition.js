@@ -4,11 +4,14 @@ const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 
 /**
- * Answers which lanes this replica owns. Read on both paths — at write time to pick a lane
- * for a new row, and at sweep time to decide what to look at — which is what keeps a row with
- * the process that wrote it.
+ * Answers which of a fixed number of slots this replica owns, exclusively: while it holds one,
+ * no other replica of the group does.
  *
- * @implements {toa.core.outbox.Partition}
+ * The arithmetic is n-and-i. Every replica registers in a Redis counter once per interval and
+ * receives a `{ i, n }` pair once two consecutive intervals have agreed on it, so a replica
+ * that has just joined, stalled or restarted claims nothing until the group has settled.
+ *
+ * @implements {toa.core.atomicity.Partition}
  */
 class Partition extends Connector {
   #connection
@@ -24,7 +27,7 @@ class Partition extends Connector {
   /** @type {Promise<void>} */
   #discovering
 
-  /** the loop's own logger, carrying the component every line belongs to */
+  /** the loop's own logger, carrying the group every line belongs to */
   #console
 
   constructor (connection, name, interval) {
@@ -33,8 +36,7 @@ class Partition extends Connector {
     this.#connection = connection
     this.#name = name
     this.#interval = interval ?? override() ?? INTERVAL
-    // every line the loop writes carries the component it belongs to
-    this.#console = console.fork({ component: name })
+    this.#console = console.fork({ group: name })
 
     this.depends(connection)
   }
@@ -43,7 +45,7 @@ class Partition extends Connector {
    * @param total {number}
    * @returns {number[] | null} null while this replica owns nothing
    */
-  lanes (total) {
+  slots (total) {
     const assignment = this.#assignment
 
     if (assignment === null) return null
@@ -51,7 +53,7 @@ class Partition extends Connector {
     const { i, n } = assignment
     const owned = []
 
-    for (let lane = i; lane < total; lane += n) owned.push(lane)
+    for (let slot = i; slot < total; slot += n) owned.push(slot)
 
     return owned
   }
@@ -59,8 +61,7 @@ class Partition extends Connector {
   async open () {
     const redis = this.#connection.redis
 
-    // without a Redis there is no partitioning; every replica then sweeps every lane, which
-    // is correct and only publishes a stranded row more than once
+    // without a Redis nothing can be owned exclusively, so nothing is claimed at all
     if (redis === undefined) return
 
     this.#abort = new AbortController()
@@ -88,19 +89,19 @@ class Partition extends Connector {
     })
 
     try {
+      // the loop yields when ownership changes, which is exactly when work has to be
+      // handed over
       for await (const { i, n } of loop) {
-        // the loop yields when ownership changes, which is exactly when work has to be
-        // handed over; the sweep is idempotent, so there is nothing to drain first
         this.#assignment = i === null ? null : { i, n }
 
-        this.#console.info('Outbox partition assigned', this.#assignment ?? { i: null })
+        this.#console.info('Slots assigned', this.#assignment ?? { i: null })
       }
     } catch (error) {
       if (this.#abort.signal.aborted) return
 
-      // standing down is the safe failure: nothing is swept until an assignment returns,
-      // which is preferable to every replica publishing every stranded row
-      this.#console.error('Outbox partitioning failed; this replica sweeps nothing until it recovers',
+      // owning nothing is the safe failure: whoever depends on this stands down rather
+      // than acting on a claim it cannot support
+      this.#console.error('Assignment failed; this replica owns nothing until it recovers',
         { error })
 
       this.#assignment = null
@@ -109,7 +110,7 @@ class Partition extends Connector {
 }
 
 function override () {
-  const value = Number(process.env.TOA_OUTBOX_PARTITION_INTERVAL)
+  const value = Number(process.env.TOA_ATOMICITY_INTERVAL)
 
   return Number.isNaN(value) || value <= 0 ? undefined : value
 }

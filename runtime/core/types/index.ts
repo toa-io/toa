@@ -2,6 +2,7 @@ export * as bindings from './bindings'
 export * as extensions from './extensions'
 export * as storages from './storages'
 export * as outbox from './outbox'
+export * as atomicity from './atomicity'
 export * as bridges from './bridges'
 export * as operations from './operations'
 

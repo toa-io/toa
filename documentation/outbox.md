@@ -35,15 +35,15 @@ existed. A component with no declared events has no outbox and takes no transact
 
 ```yaml
 # context.toa.yaml
+atomicity: redis://redis.example.com   # who owns what; see below
 outbox:
-  redis: redis://redis.example.com    # a string, or a list for a cluster
-  interval: 5000                      # the cycle, in milliseconds
-  retention: 86400                    # seconds a published row is kept as a change log
+  interval: 5000                       # the cycle, in milliseconds
+  retention: 86400                     # seconds a published row is kept as a change log
 ```
 
 Every field is optional, and each reaches the runtime as one environment variable —
-`TOA_OUTBOX_REDIS`, `TOA_OUTBOX_INTERVAL`, `TOA_OUTBOX_RETENTION`. What `redis` is for, and what
-happens without it, is [below](#partitioning).
+`TOA_ATOMICITY_REDIS`, `TOA_OUTBOX_INTERVAL`, `TOA_OUTBOX_RETENTION`. What `atomicity` is for, and
+what happens without it, is [below](#partitioning).
 
 ## How it works
 
@@ -105,14 +105,18 @@ evenly.
 
 ### Partitioning
 
-Ownership is `lane % n === i`, and the pair comes from [n-and-i](https://github.com/temich/nandi):
-every replica registers in a Redis counter once per interval and receives an exclusive pair once
-two consecutive intervals have agreed on it. A replica owns nothing while it holds no pair —
-after a restart, during a rollout, or while Redis is unreachable.
+Ownership comes from [`@toa.io/atomicity`](/connectors/atomicity), which is not an outbox thing:
+it hands any group of replicas an exclusive slot out of a fixed number, and the outbox is the
+first to ask. A lane *is* one of those slots — which replica sweeps a row, and nothing else.
 
-This Redis is system infrastructure rather than a per-component resource — it holds nothing but
-interval counters, one small key per component — so it is declared once, in the context's `outbox`
-section, and reaches the runtime as a single `TOA_OUTBOX_REDIS`.
+A replica owns the lanes where `lane % n === i`, and owns none until two consecutive intervals
+have agreed on its pair — after a restart, during a rollout, or while coordination is unreachable.
+How that is arrived at is the connector's business, not the outbox's.
+
+```yaml
+# context.toa.yaml
+atomicity: redis://redis.example.com    # a string, or a list for a cluster
+```
 
 **While a replica does not know its lanes, its sweep is suspended.** The cycle keeps running and
 keeps marking what it published; only the reading half waits, and it resumes by itself the moment
@@ -121,7 +125,7 @@ as long as the group takes to agree.
 
 That is the normal state during a rebalance. A replica joining or leaving costs about an interval
 in which nobody holds a pair, and the group settles a couple of intervals later. It is also the
-state without `TOA_OUTBOX_REDIS` at all, or while Redis is unreachable: rows are still written and
+state without `atomicity` configured at all, or while it is unreachable: rows are still written and
 still published as they are committed, and what fails to publish waits for an owner.
 
 The connector's invariant follows: *when in doubt, own nothing*. Sweeping without an assignment
@@ -132,10 +136,8 @@ not.
 The second thing partitioning buys is the reason a lane is chosen at write time at all: a replica
 writes into a lane it owns, so it marks its own rows before it ever sweeps them.
 
-What the loop is doing is reported through the runtime's own logger, at `debug` while a group is
-healthy and `info` when a lease is granted or lost — registration round trips, pair agreement, and
-the clock skew between the replica and Redis. Anything above `info` means the group is not
-healthy: `warn` that a lease was lost, `error` that something outside the coordination broke.
+What the coordination is doing goes to the runtime's own logger, and a healthy group never rises
+above `info`. The connector's readme has the detail.
 
 ### Timings
 
@@ -176,8 +178,8 @@ the broker comes back.
 
 **Recovery needs coordination.** Without an assignment the sweep is suspended, so what fails to
 publish is not merely slower to arrive — it waits. The rows are durable and visible throughout,
-and they go out when an assignment returns. An outbox running without `TOA_OUTBOX_REDIS` says so
-at startup.
+and they go out when an assignment returns. An outbox running without `atomicity` says so at
+startup.
 
 ## The event
 
@@ -234,7 +236,7 @@ The mechanism is dormant when everything works, so it needs a way to suppress th
 |---|---|
 | `TOA_OUTBOX_DEFER=1` | Skip immediate publication; only the sweep delivers. This is what makes the sweep, `gap` and recovery observable at all, and it doubles as a kill switch if the immediate path ever misbehaves. It is announced at startup rather than applied silently. |
 | `TOA_OUTBOX_INTERVAL` | The cycle in milliseconds — configuration rather than a switch, set from the context's `outbox.interval`. `gap` follows from it, so one value moves both. The feature suite runs at 100 ms. |
-| `TOA_OUTBOX_PARTITION_INTERVAL` | Override the registration interval, 10 seconds by default. A replica owns nothing until two consecutive intervals have agreed on its pair, so recovery is not observable before then. The feature suite runs at 150 ms. |
+| `TOA_ATOMICITY_INTERVAL` | Override the registration interval, 10 seconds by default. A replica owns nothing until two consecutive intervals have agreed on its pair, so recovery is not observable before then. The feature suite runs at 150 ms. |
 
 Seeding a row directly *is* the post-crash state — the entity was written, the event was not sent,
 and nothing but the sweep is left to send it — which is how `features/events/outbox.feature` tests

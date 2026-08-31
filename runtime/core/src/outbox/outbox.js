@@ -110,7 +110,7 @@ class Outbox extends Connector {
     if (this.#partition === undefined)
       console.warn('Outbox has no partitioning, so its sweep stays suspended: rows are written ' +
         'and published, but what fails to publish waits until lanes can be assigned. ' +
-        'Set TOA_OUTBOX_REDIS.')
+        'Set TOA_ATOMICITY_REDIS.')
 
     this.#timer = setInterval(() => this.#tick(), this.#interval)
     this.#timer.unref()
@@ -209,7 +209,7 @@ class Outbox extends Connector {
    * @private
    */
   async #sweep () {
-    const lanes = this.#partition?.lanes(LANES) ?? null
+    const lanes = this.#partition?.slots(LANES) ?? null
 
     if (lanes === null || lanes.length === 0) return
 
@@ -272,7 +272,7 @@ class Outbox extends Connector {
    * @private
    */
   #lane () {
-    const owned = this.#partition?.lanes(LANES) ?? null
+    const owned = this.#partition?.slots(LANES) ?? null
 
     return owned === null || owned.length === 0
       ? Math.floor(Math.random() * LANES)

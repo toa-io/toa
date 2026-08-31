@@ -12,9 +12,9 @@ BeforeAll(() => {
   process.env.TOA_OUTBOX_INTERVAL ??= '100'
 
   // a replica sweeps nothing until it knows which lanes are its own, so recovery is only
-  // observable with coordination running; nandi needs two agreeing intervals to hand out a pair
-  process.env.TOA_OUTBOX_REDIS ??= 'redis://localhost'
-  process.env.TOA_OUTBOX_PARTITION_INTERVAL ??= '150'
+  // observable with coordination running; it takes two agreeing intervals to hand out a pair
+  process.env.TOA_ATOMICITY_REDIS ??= 'redis://localhost'
+  process.env.TOA_ATOMICITY_INTERVAL ??= '150'
 })
 
 Before(

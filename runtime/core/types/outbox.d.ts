@@ -1,4 +1,5 @@
 import * as _state from './state'
+import * as _atomicity from './atomicity'
 
 declare namespace toa.core {
 
@@ -23,24 +24,6 @@ declare namespace toa.core {
       event: _state.Event
     }
 
-    /**
-     * Which lanes this replica owns. Read on both paths — at write time to pick a lane for a
-     * new row, and at sweep time to decide what to look at — which is what keeps a row with
-     * the process that wrote it.
-     */
-    interface Partition extends Connector {
-      /**
-       * `null` while this replica owns nothing, which suspends its sweep: reading without an
-       * assignment would be a different guarantee, one where every replica publishes every
-       * stranded row.
-       */
-      lanes (total: number): number[] | null
-    }
-
-    interface Factory {
-      partition (locator: Locator, options?: object): Partition
-    }
-
     /** What a storage offers when it can commit a row atomically with the entity. */
     interface Storage {
       insert (row: Row, session?: unknown): Promise<void>
@@ -58,6 +41,10 @@ declare namespace toa.core {
 }
 
 export type Row = toa.core.outbox.Row
-export type Partition = toa.core.outbox.Partition
-export type Factory = toa.core.outbox.Factory
 export type Storage = toa.core.outbox.Storage
+
+/**
+ * A lane is a slot of `atomicity`: which replica sweeps a row, and nothing else. The outbox is
+ * the first thing to partition itself this way, not the last.
+ */
+export type Partition = _atomicity.Partition
