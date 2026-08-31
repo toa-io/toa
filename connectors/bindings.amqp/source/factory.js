@@ -48,9 +48,17 @@ class Factory {
       ? sources.resolveURIs(locator)
       : context.resolveURIs(locator)
 
-    // the locator names the component the events come *from*, while `group` names the
-    // one that consumes them — and it is that component's teardown the sealing precedes
-    const comm = this.#communication(group ?? this.#alone(), references)
+    /*
+     * The locator names the component the events come *from*, while `group` names the one
+     * that consumes them — and it is that component's teardown the sealing precedes.
+     *
+     * Receivers of one component share a communication with each other but not with that
+     * component's producers, even though the two do stop consuming together. A delivery
+     * calls an operation of the component it was received for, and that call is served by
+     * those producers: sharing would have a receiver seal the very thing its own drain is
+     * waiting on.
+     */
+    const comm = this.#communication(group === undefined ? this.#alone() : group + RECEIVING, references)
 
     return new Receiver(comm, label, group, receiver)
   }
@@ -66,10 +74,10 @@ class Factory {
   /**
    * The communication `owner` holds over `references`, made if there is none.
    *
-   * Sealing stops every consumer of a communication at once and cannot be undone, so
-   * what shares one must be what stops consuming together: a component's own producers
-   * and receivers, and nothing besides. Connectors that only publish are pooled apart,
-   * where nothing seals.
+   * Sealing stops every consumer of a communication at once and cannot be undone, so what
+   * shares one must be what stops consuming together *and* needs nothing from the other:
+   * a component's producers, or its receivers, but not both at once — see `receiver`.
+   * Connectors that only publish are pooled apart, where nothing seals.
    *
    * @param {string} owner
    * @param {string[]} references
@@ -110,6 +118,7 @@ const OUTBOUND = '\u0000outbound'
 
 const ALONE = '\u0000alone:'
 
+const RECEIVING = ':receiving'
 const SEPARATOR = '\u0000'
 
 exports.Factory = Factory

@@ -42,8 +42,18 @@ async function composition (paths, options) {
       for (let i = 0; i < components.length; i++) {
         const { local, other } = groups[i]
         const settle = components[i].settle
+        const serving = [...local, ...other]
 
-        producers.push(...local, ...other)
+        producers.push(...serving)
+
+        /*
+         * A receiver turns an event into a call to an operation of its own component, and
+         * that call is served by these — the loop producer first, the broker's if it has
+         * already gone. They are siblings under the composition otherwise, so a receiver
+         * still draining a delivery would be left calling something already torn down.
+         */
+        if (serving.length > 0)
+          for (const receiver of receivers[i]) receiver.depends(serving)
 
         if (settle === undefined)
           continue
