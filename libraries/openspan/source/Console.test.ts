@@ -1,4 +1,5 @@
 import { console, Console, consoleExporter, create, current, exporting, run, sampling } from './'
+import type { Channel } from './Console'
 
 afterEach(() => {
   sampling()
@@ -21,7 +22,7 @@ const context = {
   baz: 42
 }
 
-const channels = ['debug', 'info', 'warn', 'error'] as Array<'debug' | 'info' | 'warn' | 'error'>
+const channels = ['trace', 'debug', 'info', 'warn', 'error'] as Channel[]
 
 beforeEach(() => {
   jest.clearAllMocks()
