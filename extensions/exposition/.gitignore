@@ -1,1 +1,5 @@
-components/**/operations/
+# The identity components are TypeScript and their operations are transpiled into
+# this directory, so it is generated. The `exposition.*` components are plain
+# JavaScript and nothing generates theirs — those are the source and belong in the
+# tree, which a wider rule would silently keep out of it.
+components/identity.*/operations/
