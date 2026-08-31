@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.270](https://github.com/toa-io/toa/compare/v1.0.0-alpha.269...v1.0.0-alpha.270) (2026-08-31)
+
+
+### Bug Fixes
+
+* **core:** apply the input default on a remote call ([341699b](https://github.com/toa-io/toa/commit/341699b26c9299963a898368671633a9b3fb97ed))
+
+
+### Performance Improvements
+
+* **core:** do not snapshot a record an operation cannot commit ([a5e695b](https://github.com/toa-io/toa/commit/a5e695b0b1d4b00a91e40336deecd476c9646c89))
+* **core:** keep the parsed criteria of a query ([7efc694](https://github.com/toa-io/toa/commit/7efc694814c2a071ae7e48dbf1c6014db6025a9f))
+* stop rebuilding per-call values that never change ([4202504](https://github.com/toa-io/toa/commit/4202504c33fb9ef9694f9995f3d0397d3a186438))
+
+
+
+
+
 # [1.0.0-alpha.266](https://github.com/toa-io/toa/compare/v1.0.0-alpha.265...v1.0.0-alpha.266) (2026-08-29)
 
 

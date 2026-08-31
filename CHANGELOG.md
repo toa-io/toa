@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.270](https://github.com/toa-io/toa/compare/v1.0.0-alpha.269...v1.0.0-alpha.270) (2026-08-31)
+
+
+### Bug Fixes
+
+* **core:** apply the input default on a remote call ([341699b](https://github.com/toa-io/toa/commit/341699b26c9299963a898368671633a9b3fb97ed))
+* **norm:** resolve annotations keyed by a dependency id ([e2860cd](https://github.com/toa-io/toa/commit/e2860cd2cc93dd3a135c092db1d943f80648ee56))
+* **norm:** return the hash after hashing a file ([35058bd](https://github.com/toa-io/toa/commit/35058bdaae19f367197ea5b800742349e507ab11))
+* **operations:** let a composition set its own base image ([61ba331](https://github.com/toa-io/toa/commit/61ba3319dc91915a3197d348111af411bbd5bff1))
+* **storages.sql:** implement update and follow the current storage contract ([b7bd5e2](https://github.com/toa-io/toa/commit/b7bd5e2b8a0595d1977135d144bd00d523628772))
+* **telemetry:** keep the ready probe from holding the process open ([1cb180b](https://github.com/toa-io/toa/commit/1cb180be2a0d13f61fc6d78ceecd18b339a94cf0))
+
+
+* feat(exposition)!: throttle by a distributed GCRA ([287eb25](https://github.com/toa-io/toa/commit/287eb254b11339b20ef011deb659eb11f225defe))
+
+
+### Performance Improvements
+
+* **boot:** stop paying for what a composition does not need to start ([1619c27](https://github.com/toa-io/toa/commit/1619c2743072f4706939ce72f3074e615d26a91e))
+* **core:** do not snapshot a record an operation cannot commit ([a5e695b](https://github.com/toa-io/toa/commit/a5e695b0b1d4b00a91e40336deecd476c9646c89))
+* **core:** keep the parsed criteria of a query ([7efc694](https://github.com/toa-io/toa/commit/7efc694814c2a071ae7e48dbf1c6014db6025a9f))
+* **exposition:** project io restrictions through a set ([d70b364](https://github.com/toa-io/toa/commit/d70b36478626dd29958a55ebf72f0373e07e34f5))
+* **exposition:** stop recomputing per-request what a route fixes ([b52f335](https://github.com/toa-io/toa/commit/b52f335023e58db42a21f1ee6bd99470e8547a2c))
+* **exposition:** tag a reply from the body already encoded ([e6ea7d7](https://github.com/toa-io/toa/commit/e6ea7d7b169783becddb2854ae6fb24caf611398))
+* **openspan:** create a span only when something records it ([a6efb0e](https://github.com/toa-io/toa/commit/a6efb0eed38393f4c169b067f23d7447f0169bca))
+* stop rebuilding per-call values that never change ([4202504](https://github.com/toa-io/toa/commit/4202504c33fb9ef9694f9995f3d0397d3a186438))
+* **storages.mongodb:** time the call instead of monitoring the command ([135f1a9](https://github.com/toa-io/toa/commit/135f1a97c753b1caed9291f85cea0521ef68b0e3))
+
+
+### BREAKING CHANGES
+
+* `io:throttle` no longer takes `cooldown`, and its schema now
+rejects unknown properties, so a declaration carrying one fails at boot instead of
+being ignored quietly. Metering earns the budget back rather than locking a key
+out, so the lockout is expressed as a rate: `requests: 20, interval: 600` admits a
+burst of twenty and then one every thirty seconds, where `requests: 20, interval:
+60, cooldown: 600` used to refuse everything for ten minutes. The stash aspect's
+`count` is replaced by `meter`, which takes a batch of keys and debts and answers
+what the group has reached.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
+
+
+
+
 # [1.0.0-alpha.269](https://github.com/toa-io/toa/compare/v1.0.0-alpha.268...v1.0.0-alpha.269) (2026-08-30)
 
 

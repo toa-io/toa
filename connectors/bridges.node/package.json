@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.node",
-  "version": "1.0.0-alpha.266",
+  "version": "1.0.0-alpha.270",
   "description": "Toa Node Bridge (inproc)",
   "homepage": "https://toa.io",
   "author": {
@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "@babel/parser": "7.24.7",
-    "@toa.io/core": "1.0.0-alpha.266",
-    "@toa.io/extensions.fetch": "1.0.0-alpha.266",
+    "@toa.io/core": "1.0.0-alpha.270",
+    "@toa.io/extensions.fetch": "1.0.0-alpha.270",
     "@toa.io/filesystem": "1.0.0-alpha.254",
     "@toa.io/generic": "1.0.0-alpha.254",
     "fast-glob": "3.2.7",

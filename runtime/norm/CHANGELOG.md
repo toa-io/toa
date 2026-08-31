@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.270](https://github.com/toa-io/toa/compare/v1.0.0-alpha.269...v1.0.0-alpha.270) (2026-08-31)
+
+
+### Bug Fixes
+
+* **norm:** resolve annotations keyed by a dependency id ([e2860cd](https://github.com/toa-io/toa/commit/e2860cd2cc93dd3a135c092db1d943f80648ee56))
+* **norm:** return the hash after hashing a file ([35058bd](https://github.com/toa-io/toa/commit/35058bdaae19f367197ea5b800742349e507ab11))
+
+
+### Performance Improvements
+
+* **boot:** stop paying for what a composition does not need to start ([1619c27](https://github.com/toa-io/toa/commit/1619c2743072f4706939ce72f3074e615d26a91e))
+
+
+
+
+
 # [1.0.0-alpha.266](https://github.com/toa-io/toa/compare/v1.0.0-alpha.265...v1.0.0-alpha.266) (2026-08-29)
 
 **Note:** Version bump only for package @toa.io/norm
