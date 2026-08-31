@@ -7,18 +7,27 @@ import type * as RTD from './RTD'
 export class Directives implements RTD.Directives {
   private readonly sets: RTD.DirectiveSet[]
 
+  /** the span of a stage depends only on the set, so it is built once per route */
+  private readonly spans: Spans[]
+
   public constructor (sets: RTD.DirectiveSet[]) {
     this.sets = sets
+    this.spans = sets.map((set) => ({
+      preflight: options(set, 'preflight'),
+      settle: options(set, 'settle')
+    }))
   }
 
   public async preflight (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
     let output = null
 
-    for (const set of this.sets) {
+    for (let i = 0; i < this.sets.length; i++) {
+      const set = this.sets[i]
+
       if (set.family.preflight === undefined)
         continue
 
-      const out = await console.span(options(set, 'preflight'),
+      const out = await console.span(this.spans[i].preflight,
         async () => await set.family.preflight!(set.directives, context, parameters))
 
       if (out === null)
@@ -34,10 +43,13 @@ export class Directives implements RTD.Directives {
   }
 
   public async settle (context: Context, response: OutgoingMessage): Promise<void> {
-    for (const set of this.sets)
+    for (let i = 0; i < this.sets.length; i++) {
+      const set = this.sets[i]
+
       if (set.family.settle !== undefined)
-        await console.span(options(set, 'settle'),
+        await console.span(this.spans[i].settle,
           async () => await set.family.settle!(set.directives, context, response))
+    }
   }
 
   public dispose (): void {
@@ -106,6 +118,10 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     // The rest keep the order they were declared in, the sort being stable.
     sets.sort((a, b) => this.rank(a.family.name) - this.rank(b.family.name))
 
+    // whatever order a family needs among its own directives is fixed here, not per request
+    for (const set of sets)
+      set.family.arrange?.(set.directives)
+
     const directives = new Directives(sets)
 
     this.instances.push(directives)
@@ -133,6 +149,11 @@ function options (set: RTD.DirectiveSet, stage: 'preflight' | 'settle'): SpanOpt
     options.attributes = { directives: Array.from(new Set(set.names)).join(' ') }
 
   return options
+}
+
+interface Spans {
+  preflight: SpanOptions
+  settle: SpanOptions
 }
 
 export const shortcuts: RTD.syntax.Shortcuts = new Map([

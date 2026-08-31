@@ -11,9 +11,23 @@ beforeEach(() => {
   source = clone(fixtures.source)
 })
 
-it('should expand', () => {
-  expand(source)
+it('should expand', async () => {
+  await expand(source)
   expect(source).toMatchObject(fixtures.target)
+})
+
+it('should derive version from the component contents', async () => {
+  await expand(source)
+
+  expect(source.version).toMatch(/^[0-9a-f]{8}$/)
+})
+
+it('should keep declared version', async () => {
+  source.version = '1.0.0'
+
+  await expand(source)
+
+  expect(source.version).toStrictEqual('1.0.0')
 })
 
 it('should recognize storages.queues', async () => {
@@ -21,7 +35,7 @@ it('should recognize storages.queues', async () => {
 
   source.queues = clone(queues)
 
-  expand(source)
+  await expand(source)
 
   expect(source.queues).toBeUndefined()
   expect(source.properties['@toa.io/storages.queues']).toMatchObject(queues)

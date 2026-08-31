@@ -31,13 +31,12 @@ properties:
   requests:
     type: integer
     minimum: 1
-  interval: &interval
+  interval:
     description: Seconds
     type: integer
     minimum: 1
-  cooldown: *interval
+additionalProperties: false
 required:
   - key
   - requests
   - interval
-  - cooldown

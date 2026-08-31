@@ -1,5 +1,4 @@
 import { Readable } from 'node:stream'
-import { createHash } from 'node:crypto'
 import { console } from 'openspan'
 import { Mapping } from './Mapping'
 import * as http from './HTTP'
@@ -125,16 +124,13 @@ export class Endpoint implements RTD.Endpoint {
     if (reply instanceof Readable)
       return false
 
-    const hash = `"${createHash('sha256').update(JSON.stringify(reply)).digest('hex')}"`
-
-    if (etag === hash) {
-      message.status = 304
-      message.headers.set('etag', etag)
-
-      return true
-    }
-
-    message.headers.set('etag', hash)
+    /*
+     * A reply that carries no version is tagged with a hash of its body. The body is
+     * serialized anyway when the response is written, so the tag is computed from what
+     * is actually sent rather than from a second serialization of the reply — which
+     * makes it specific to the negotiated representation, hence `vary: accept`.
+     */
+    message.etag = true
 
     return false
   }

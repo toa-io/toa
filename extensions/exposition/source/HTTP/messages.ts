@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream'
+import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
 import { formats } from './formats'
@@ -81,11 +82,38 @@ function send (message: OutgoingMessage, context: Context, response: http.Server
 
   const buf = context.encoder.encode(message.body)
 
+  if (message.etag === true && conditional(context, response, buf))
+    return
+
   response
     .setHeader('content-type', context.encoder.type)
     .setHeader('content-length', buf.length.toString())
     .appendHeader('vary', 'accept')
     .end(buf)
+}
+
+/**
+ * Tags a reply that carries no version with a hash of the body being sent, and answers
+ * `304` when the client already has it. The tag is taken from the encoded body rather
+ * than from a serialization of its own, so it identifies the representation — which is
+ * what `vary` says.
+ */
+function conditional (context: Context, response: http.ServerResponse, buf: Buffer): boolean {
+  const etag = `"${createHash('sha256').update(buf).digest('hex')}"`
+
+  response.setHeader('etag', etag)
+
+  if (context.request.headers['if-none-match'] !== etag)
+    return false
+
+  response
+    .setHeader('content-length', '0')
+    .appendHeader('vary', 'accept')
+
+  response.statusCode = 304
+  response.end()
+
+  return true
 }
 
 function stream (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
@@ -173,6 +201,9 @@ export interface OutgoingMessage {
   status?: number
   headers?: Headers
   body?: any
+
+  /** tag the response with a hash of the encoded body, see `conditional` */
+  etag?: boolean
 }
 
 export interface Query {

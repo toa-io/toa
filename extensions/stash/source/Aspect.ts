@@ -3,7 +3,7 @@ import { Redlock } from '@sesamecare-oss/redlock'
 import { encode, decode } from 'msgpackr'
 import { console, type SpanOptions } from 'openspan'
 import { Connector, type extensions } from '@toa.io/core'
-import { Counters } from './Counters'
+import { Meter } from './Meter'
 import type { Connection } from './Connection'
 import type { Redis, ChainableCommander } from 'ioredis'
 
@@ -12,7 +12,7 @@ export class Aspect extends Connector implements extensions.Aspect {
   private readonly connection: Connection
   private redis: Redis | null = null
   private redlock: Redlock | null = null
-  private counters: Counters | null = null
+  private meter: Meter | null = null
 
   public constructor (connection: Connection) {
     super()
@@ -21,16 +21,23 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.depends(connection)
   }
 
-  public invoke (method: 'count', name: string, interval: number, amount?: number): number
+  public invoke (method: 'meter', keys: string[], deltas: number[]): Promise<number[]>
   public invoke (method: 'store', key: string, value: object): any
   public invoke (method: 'fetch', key: string): any
   public invoke<T> (method: 'lock', key: Resources, routine: Routine<T>): any
   public invoke (method: string, ...args: unknown[]): any
+  // eslint-disable-next-line @typescript-eslint/promise-function-async
   public invoke (method: string, ...args: unknown[]): any {
-    // counting answers from what the process already knows, so it must stay
-    // synchronous — a span would turn it into a promise
-    if (method === 'count')
-      return this.counters!.count(args[0] as string, args[1] as number, args[2] as number)
+    // `defineCommand` puts `meter` on the client, so this has to come first or the
+    // generic branch below would forward it the wrong arguments
+    if (method === 'meter') {
+      const keys = args[0] as string[]
+      const options = span(method, undefined)
+
+      Object.assign(options.attributes!, { 'db.operation.batch.size': keys.length })
+
+      return console.span(options, async () => await this.meter!.meter(keys, args[1] as number[]))
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
@@ -73,11 +80,7 @@ export class Aspect extends Connector implements extensions.Aspect {
   protected override async open (): Promise<void> {
     this.redis = this.connection.redises[0]
     this.redlock = new Redlock(this.connection.redises, { retryCount: -1 })
-    this.counters = new Counters(this.redis)
-  }
-
-  protected override async close (): Promise<void> {
-    this.counters?.close()
+    this.meter = new Meter(this.redis)
   }
 
   private async store (key: string, value: object, ...args: unknown[]): Promise<void> {

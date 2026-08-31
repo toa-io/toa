@@ -28,7 +28,7 @@ function create (schema, options) {
     return cached
   }
 
-  const validate = ajv(undefined, options).compile(schema)
+  const validate = compile(schema, options)
 
   COMPILED.set(key, validate)
 
@@ -38,6 +38,38 @@ function create (schema, options) {
 
   return validate
 }
+
+/**
+ * An Ajv instance compiles its own meta-schemas and format code the first time it is
+ * asked for a validator, and that is most of what compiling one costs: 4.3 ms on a fresh
+ * instance against 0.6 on a warm one. So instances are shared, one per set of options —
+ * the options decide what is generated.
+ *
+ * A shared instance must not keep the schema it just compiled: another schema may carry
+ * the same `$id`, and Ajv refuses to register one twice. Removing it leaves the validator
+ * that was already generated intact, references and all.
+ */
+function compile (schema, options) {
+  const key = JSON.stringify(options ?? null)
+
+  let compiler = COMPILERS.get(key)
+
+  if (compiler === undefined) {
+    compiler = ajv(undefined, options)
+
+    COMPILERS.set(key, compiler)
+  }
+
+  try {
+    return compiler.compile(schema)
+  } finally {
+    if (schema.$id !== undefined)
+      compiler.removeSchema(schema.$id)
+  }
+}
+
+/** @type {Map<string, import('ajv').default>} by their options */
+const COMPILERS = new Map()
 
 let VALIDATOR
 

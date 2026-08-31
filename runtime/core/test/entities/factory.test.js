@@ -30,7 +30,8 @@ it('should create instance', () => {
   const object = factory.object(fixtures.entity)
 
   expect(object).toBeInstanceOf(mock.Entity)
-  expect(object.constructor).toHaveBeenCalledWith(fixtures.schema, fixtures.entity, expect.any(Function))
+  expect(object.constructor)
+    .toHaveBeenCalledWith(fixtures.schema, fixtures.entity, expect.any(Function), true)
 })
 
 it('should create set', () => {
@@ -39,7 +40,8 @@ it('should create set', () => {
   expect(objects).toBeInstanceOf(mock.EntitySet)
 
   const instances = fixtures.set.map((entity, index) => {
-    expect(mock.Entity).toHaveBeenNthCalledWith(index + 1, fixtures.schema, entity, expect.any(Function))
+    expect(mock.Entity)
+      .toHaveBeenNthCalledWith(index + 1, fixtures.schema, entity, expect.any(Function), true)
 
     return mock.Entity.mock.instances[index]
   })

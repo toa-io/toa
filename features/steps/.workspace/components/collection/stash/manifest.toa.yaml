@@ -28,10 +28,12 @@ operations:
     input:
       delay: 0
     output: number
-  count:
+  meter:
     input:
       name*: string
-      times*: number
-    output: number
+      delta*: number
+    output:
+      debt*: number
+      adds*: boolean
 
 stash: ~

@@ -5,6 +5,9 @@ const { Operation } = require('./operation')
 const { StateConcurrencyException, StateNotFoundException } = require('./exceptions')
 
 class Transition extends Operation {
+  /** a transition is the only operation that commits */
+  mutable = true
+
   #concurrency
 
   constructor (cascade, scope, contract, query, definition) {

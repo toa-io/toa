@@ -24,7 +24,7 @@ class State {
     return this.#entities.fit(values)
   }
 
-  async object (query) {
+  async object (query, mutable = true) {
     const record = await this.storage.get(query)
 
     if (record === null) {
@@ -35,15 +35,15 @@ class State {
 
       return null
     } else
-      return this.#entities.object(record)
+      return this.#entities.object(record, mutable)
   }
 
-  async objects (query) {
+  async objects (query, mutable = true) {
     const recordset = await this.storage.find(query)
     const missing = this.#associated && query.ids !== undefined && recordset.length < query.ids.length
     const init = missing ? query.ids.filter((id) => !recordset.some((record) => record.id === id)) : undefined
     
-    return this.#entities.objects(recordset, init)
+    return this.#entities.objects(recordset, init, mutable)
   }
 
   async stream (query) {
@@ -69,7 +69,7 @@ class State {
     const record = await this.storage.ensure(query, properties, object.get())
 
     if (record.id !== blank.id) // exists
-      return this.#entities.object(record)
+      return this.#entities.object(record, NOT_MUTABLE)
 
     const event = object.event(input)
 
@@ -131,5 +131,8 @@ class State {
     return result
   }
 }
+
+/** an effect never commits what `ensure` hands it, see `Effect` */
+const NOT_MUTABLE = false
 
 exports.State = State

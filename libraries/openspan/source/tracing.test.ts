@@ -1,8 +1,17 @@
 import { create, current, decide, decode, encode, run, sampling } from './tracing'
+import { exporting } from './exporters'
 import type * as tracing from './tracing'
+
+const exporter = { export: () => undefined }
+
+// a trace is only sampled if something consumes what it records
+beforeEach(() => {
+  exporting([exporter])
+})
 
 afterEach(() => {
   sampling()
+  exporting([])
 })
 
 describe('create', () => {
@@ -33,6 +42,23 @@ describe('create', () => {
 })
 
 describe('sampling', () => {
+  it('should not sample when nothing consumes spans', () => {
+    exporting([])
+
+    for (let i = 0; i < 10; i++)
+      expect(decide()).toBe(false)
+  })
+
+  it('should sample once an exporter is configured', () => {
+    exporting([])
+
+    expect(decide()).toBe(false)
+
+    exporting([exporter])
+
+    expect(decide()).toBe(true)
+  })
+
   it('should sample all traces by default', () => {
     for (let i = 0; i < 10; i++)
       expect(decide()).toBe(true)

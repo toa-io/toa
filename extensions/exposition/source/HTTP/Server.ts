@@ -92,10 +92,10 @@ export class Server extends Connector {
         response.destroy()
     })
 
-    const invalid = validate(request)
+    const url = parse(request)
 
-    if (invalid !== null) {
-      console.warn('Invalid request', errorAttributes(request, invalid))
+    if (url instanceof Error) {
+      console.warn('Invalid request', errorAttributes(request, url))
 
       response.writeHead(400).end()
 
@@ -129,8 +129,8 @@ export class Server extends Connector {
     const remote = trace(request.headers)
 
     const processing = remote === null
-      ? this.serve(request, response, authority)
-      : run(remote, async () => await this.serve(request, response, authority))
+      ? this.serve(request, response, authority, url)
+      : run(remote, async () => await this.serve(request, response, authority, url))
 
     processing.catch((error) => {
       console.error('Request processing failed', error)
@@ -140,9 +140,11 @@ export class Server extends Connector {
     })
   }
 
+  // eslint-disable-next-line max-params
   private async serve (request: http.IncomingMessage,
     response: http.ServerResponse,
-    authority: string): Promise<void> {
+    authority: string,
+    url: URL): Promise<void> {
     await console.span({
       name: `${request.method} ${request.url}`,
       kind: 'server',
@@ -151,7 +153,7 @@ export class Server extends Connector {
     }, async () => {
       response.setHeader('ray', current()!.traceId)
 
-      const context = new Context(authority, request as IncomingMessage, this.properties)
+      const context = new Context(authority, request as IncomingMessage, this.properties, url)
 
       await this.process!(context)
         .then(this.success(context, response))
@@ -202,6 +204,10 @@ export class Server extends Connector {
           const message: OutgoingMessage = { status: response.statusCode }
 
           // eslint-disable-next-line max-depth
+          if (exception instanceof Exception && exception.headers !== undefined)
+            message.headers = exception.headers
+
+          // eslint-disable-next-line max-depth
           if (context.encoder === null)
             message.body = undefined
           else if (exception instanceof ClientError || this.properties.debug)
@@ -226,11 +232,10 @@ export class Server extends Connector {
   }
 }
 
-function validate (request: http.IncomingMessage): null | Error {
+/** Parsing the URL is how a request is validated, so the `Context` is handed the result. */
+function parse (request: http.IncomingMessage): URL | Error {
   try {
-    void new URL(request.url!, `https://${request.headers.host}`)
-
-    return null
+    return new URL(request.url!, `https://${request.headers.host}`)
   } catch (error) {
     return error as Error
   }

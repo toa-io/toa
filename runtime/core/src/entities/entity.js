@@ -10,15 +10,28 @@ class Entity {
   #guards
   #origin = null
   #state
+  #mutable = true
 
-  constructor (schema, argument, guards) {
+  /**
+   * @param {boolean} [mutable] whether the entity may be modified and committed
+   */
+  constructor (schema, argument, guards, mutable = true) {
     this.#schema = schema
     this.#guards = guards
 
     if (typeof argument === 'object') {
-      const object = structuredClone(argument)
-      this.#set(object)
-      this.#origin = argument
+      /*
+       * The origin is the pre-image a commit diffs the new state against. An operation
+       * that cannot commit has nothing to diff, so it takes the record as it came from
+       * the storage instead of paying for a deep copy of every record it read.
+       */
+      this.#mutable = mutable
+
+      if (mutable) {
+        this.#set(structuredClone(argument))
+        this.#origin = argument
+      } else
+        this.#set(argument)
     } else {
       const id = argument === undefined ? newid() : argument
       this.#init(id)
@@ -30,6 +43,9 @@ class Entity {
   }
 
   set (value, optional = false) {
+    if (!this.#mutable)
+      throw new Error('Entity acquired by a read-only operation cannot be modified')
+
     if (!optional)
       this.#guard(value)
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const types = {
-  integer: () => 'integer',
+  integer: () => 'bigint', // timestamps are stored as epoch milliseconds
   string: () => 'varchar'
 }
 

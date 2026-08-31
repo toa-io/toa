@@ -52,5 +52,8 @@ Feature: Print manifest
     # which has invalid manifest
     And my working directory is ./components/dummies.invalid
     When I run `toa export manifest -e`
-    Then stderr should be: "error Error: name must match pattern"
-    Then stdout should be empty
+    Then stderr should contain lines:
+      """
+      <...>/name: pattern must match pattern<...>
+      """
+    And stdout should be empty

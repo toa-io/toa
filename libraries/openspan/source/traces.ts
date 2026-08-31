@@ -9,7 +9,9 @@ import type { SamplingOptions } from './tracing'
  * Configures tracing: sampling and span exporters.
  * Replaces the current configuration entirely.
  *
- * When `exporters` is omitted, spans are exported to the console.
+ * When `exporters` is omitted, tracing is off: nothing consumes a span, so none is
+ * created. The console exporter is a local development mechanism and is opted into
+ * explicitly (`{ exporters: { console: {} } }`); a deployment configures `otlp`.
  */
 export function traces (options: TracesOptions = {}): void {
   sampling(options)
@@ -18,7 +20,7 @@ export function traces (options: TracesOptions = {}): void {
 
 function createExporters (config?: ExportersConfig): Exporter[] {
   if (config === undefined)
-    return [consoleExporter]
+    return []
 
   const exporters: Exporter[] = []
 

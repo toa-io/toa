@@ -28,6 +28,12 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
 
   create: (name: string, ...rest: any[]) => TDirective
 
+  /**
+   * Puts the directives of one route in the order they must run in. Called once, when
+   * the set is built — the order cannot depend on the request.
+   */
+  arrange?: (directives: TDirective[]) => void
+
   preflight?: (directives: TDirective[],
     request: Context & TExtension,
     parameters: Parameter[]) => Output | Promise<Output>

@@ -13,7 +13,7 @@ import {
 import type { LogsOptions } from './Logs'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
-import type { ExportersConfig, LevelName } from 'openspan'
+import type { ExportersConfig, LevelName, TracesOptions } from 'openspan'
 
 export class Factory implements extensions.Factory {
   private readonly logsOptions: LogsOptions
@@ -30,7 +30,7 @@ export class Factory implements extensions.Factory {
 
     const tracesEnv = process.env[TRACES_ENV]
 
-    traces(tracesEnv === undefined ? {} : decode(tracesEnv))
+    traces(tracesEnv === undefined ? development() : decode(tracesEnv))
 
     this.ready = Ready.create()
   }
@@ -70,6 +70,21 @@ export class Factory implements extensions.Factory {
 
     return new Logs(locator, { level })
   }
+}
+
+/**
+ * Tracing is off unless it is configured. The console exporter is a local development
+ * mechanism, so it is turned on for `toa dev` and for a boot trace the CLI has already
+ * asked for (`runtime/boot/src/span.js`), and nowhere else — a deployment that wants
+ * traces annotates `telemetry.traces.exporters`.
+ *
+ * `extensions/exposition/source/Factory.ts` says the same thing for the gateway process,
+ * which boots without this extension.
+ */
+function development (): TracesOptions {
+  const local = process.env.TOA_DEV === '1' || process.env.TOA_BOOT_TRACE === '1'
+
+  return local ? { exporters: { console: {} } } : {}
 }
 
 export function deployment (_: unknown, annotation?: Annotation): Dependency {

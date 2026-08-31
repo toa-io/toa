@@ -16,7 +16,7 @@ Feature: Storages Extension
       """
     Then the reply is received:
       """yaml
-      id: 10cf16b458f759e0d617f2f3d83599ff
+      checksum: 10cf16b458f759e0d617f2f3d83599ff
       size: 8169
       type: application/octet-stream
       """
@@ -42,7 +42,7 @@ Feature: Storages Extension
       """
     Then the reply is received:
       """yaml
-      id: 10cf16b458f759e0d617f2f3d83599ff
+      checksum: 10cf16b458f759e0d617f2f3d83599ff
       size: 8169
       type: application/octet-stream
       """

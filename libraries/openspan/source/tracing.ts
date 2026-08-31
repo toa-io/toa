@@ -1,5 +1,6 @@
-import { randomBytes } from 'node:crypto'
+import { randomFillSync } from 'node:crypto'
 import { state } from './state'
+import { recording } from './exporters'
 
 export function run<T> (context: SpanContext, fn: () => T): T {
   return state.storage.run(context, fn)
@@ -25,6 +26,10 @@ export function sampling (options: SamplingOptions = {}): void {
  * Makes the sampling decision for a trace root.
  */
 export function decide (): boolean {
+  // a span nothing consumes is not worth creating
+  if (!recording())
+    return false
+
   if (state.sample !== 1 && Math.random() >= state.sample)
     return false
 
@@ -33,8 +38,8 @@ export function decide (): boolean {
 
 export function create (parent?: SpanContext): SpanContext {
   const context: SpanContext = {
-    traceId: parent?.traceId ?? randomBytes(16).toString('hex'),
-    spanId: randomBytes(8).toString('hex'),
+    traceId: parent?.traceId ?? id(TRACE_ID),
+    spanId: id(SPAN_ID),
     sampled: parent?.sampled ?? decide()
   }
 
@@ -69,6 +74,30 @@ export function decode (traceparent: string): SpanContext | null {
 export function encode (context: SpanContext): string {
   return `00-${context.traceId}-${context.spanId ?? ZERO_SPAN}-${context.sampled ? '01' : '00'}`
 }
+
+/**
+ * Identifiers are drawn from a pre-filled buffer: a `randomBytes` call per span costs
+ * an order of magnitude more than the rest of opening one, and a span is opened on
+ * every call. Same source of randomness, refilled a few hundred identifiers at a time.
+ */
+function id (bytes: number): string {
+  if (offset + bytes > POOL.length) {
+    randomFillSync(POOL)
+    offset = 0
+  }
+
+  const value = POOL.toString('hex', offset, offset + bytes)
+
+  offset += bytes
+
+  return value
+}
+
+const TRACE_ID = 16
+const SPAN_ID = 8
+const POOL = Buffer.allocUnsafe(4096)
+
+let offset = POOL.length // forces a fill on the first draw
 
 class Bucket {
   private readonly rate: number

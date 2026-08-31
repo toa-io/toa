@@ -14,7 +14,7 @@ export class Computation {
   }
 
   async mount () {
-    this.server.listen(3000)
+    this.server.listen(PORT)
 
     await once(this.server, 'listening')
   }
@@ -29,3 +29,5 @@ export class Computation {
     return 1
   }
 }
+
+const PORT = 3456

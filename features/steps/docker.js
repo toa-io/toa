@@ -1,6 +1,6 @@
 'use strict'
 
-const { When } = require('@cucumber/cucumber')
+const { After, When } = require('@cucumber/cucumber')
 const { Wait, GenericContainer } = require('testcontainers')
 const { setTimeout } = require('node:timers/promises')
 
@@ -28,6 +28,18 @@ When('I stop docker container {component}',
     await this.containers[container].stop({ timeout: 10000 })
     await setTimeout(50) // wait network to unbind the port
     delete this.containers[container]
+  })
+
+// a container left running keeps testcontainers' reaper connected, and the process alive
+After(
+  /**
+   * @this {toa.features.Context}
+   */
+  async function () {
+    for (const container of Object.values(this.containers))
+      await container.stop({ timeout: 10000 })
+
+    this.containers = {}
   })
 
 const containersUpStrategies = {

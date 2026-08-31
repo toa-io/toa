@@ -14,6 +14,37 @@ describe('argument', () => {
 
     expect(entity.get()).toEqual(state)
   })
+
+  it('should snapshot the record it may commit', () => {
+    const record = fixtures.state()
+    const entity = new Entity(fixtures.schema, record)
+
+    expect(entity.get()).not.toBe(record)
+    expect(entity.event().origin).toBe(record)
+  })
+})
+
+describe('read-only', () => {
+  it('should take the record as it came', () => {
+    const record = fixtures.state()
+    const entity = new Entity(fixtures.schema, record, undefined, false)
+
+    // no pre-image to diff against, hence no copy of it
+    expect(entity.get()).toBe(record)
+  })
+
+  it('should still report a tombstone', () => {
+    const record = { ...fixtures.state(), _deleted: Date.now() }
+    const entity = new Entity(fixtures.schema, record, undefined, false)
+
+    expect(entity.deleted).toBe(true)
+  })
+
+  it('should refuse to be modified', () => {
+    const entity = new Entity(fixtures.schema, fixtures.state(), undefined, false)
+
+    expect(() => entity.set(entity.get())).toThrow('read-only')
+  })
 })
 
 describe('tombstone', () => {

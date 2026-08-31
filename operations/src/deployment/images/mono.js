@@ -35,18 +35,14 @@ class Mono extends Image {
   }
 
   get base () {
-    let image = this.#image
+    if (this.#image !== undefined) return this.#image
 
-    for (const component of this.#components) {
-      const value = component.build?.image
+    const images = new Set(this.#components.map((component) => component.build?.image))
 
-      if (image !== null && image !== value)
-        throw new Error('Mono deployment requires different base images for its components. Specify base image for the composition in the context.')
+    if (images.size > 1)
+      throw new Error('Mono deployment requires different base images for its components. Specify base image for the composition in the context.')
 
-      image = value
-    }
-
-    return image
+    return images.values().next().value
   }
 
   get run () {

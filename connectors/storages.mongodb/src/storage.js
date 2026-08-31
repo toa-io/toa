@@ -13,6 +13,9 @@ class Storage extends Connector {
   #collection
   #entity
 
+  /** @type {Map<string, object>} span options per driver method */
+  #spans = new Map()
+
   constructor (client, entity) {
     super()
 
@@ -29,6 +32,8 @@ class Storage extends Connector {
   async open () {
     this.#collection = this.#client.collection
 
+    this.#spans.clear()
+
     await this.index()
   }
 
@@ -40,9 +45,8 @@ class Storage extends Connector {
     if (query?.id === undefined && query?.options?.deleted !== true)
       criteria._deleted = null
 
-    this.debug('findOne', { criteria, options })
-
-    const record = await this.#collection.findOne(criteria, options)
+    const record = await this.command('findOne', { criteria, options },
+      () => this.#collection.findOne(criteria, options))
 
     return from(record)
   }
@@ -53,23 +57,20 @@ class Storage extends Connector {
     if (query?.options?.deleted !== true)
       criteria._deleted = null
 
-    let cursor
-
-    if (sample === undefined) {
-      this.debug('find', { criteria, options })
-
-      cursor = this.#collection.find(criteria, options)
-    } else {
-      const pipeline = toPipeline(criteria, options, sample)
-
-      this.debug('aggregate', { pipeline })
-
-      cursor = this.#collection.aggregate(pipeline)
-    }
-
-    const recordset = await cursor.toArray()
+    const recordset = sample === undefined
+      ? await this.command('find', { criteria, options },
+        async () => await this.#collection.find(criteria, options).toArray())
+      : await this.aggregate(criteria, options, sample)
 
     return recordset.map((item) => from(item))
+  }
+
+  /** @private */
+  async aggregate (criteria, options, sample) {
+    const pipeline = toPipeline(criteria, options, sample)
+
+    return await this.command('aggregate', { pipeline },
+      async () => await this.#collection.aggregate(pipeline).toArray())
   }
 
   async stream (query = undefined) {
@@ -86,9 +87,8 @@ class Storage extends Connector {
   async add (entity) {
     const record = to(entity)
 
-    this.debug('insertOne', { record })
-
-    const result = await this.#collection.insertOne(record)
+    const result = await this.command('insertOne', { record },
+      () => this.#collection.insertOne(record))
 
     return result.acknowledged
   }
@@ -101,9 +101,8 @@ class Storage extends Connector {
 
     const record = to(entity)
 
-    this.debug('findOneAndReplace', { criteria, record })
-
-    const result = await this.#collection.findOneAndReplace(criteria, record)
+    const result = await this.command('findOneAndReplace', { criteria, record },
+      () => this.#collection.findOneAndReplace(criteria, record))
 
     return result !== null
   }
@@ -162,11 +161,9 @@ class Storage extends Connector {
 
     try {
       await client.withSession(async (session) => {
-        await session.withTransaction(async () => {
-          this.debug('bulkWrite', { operations: operations.length })
-
-          await this.#collection.bulkWrite(operations, { session })
-        })
+        await session.withTransaction(async () =>
+          await this.command('bulkWrite', { operations: operations.length },
+            async () => await this.#collection.bulkWrite(operations, { session })))
       })
 
       return true
@@ -197,9 +194,8 @@ class Storage extends Connector {
 
     options.returnDocument = ReturnDocument.AFTER
 
-    this.debug('findOneAndUpdate', { criteria, update, options })
-
-    const result = await this.#collection.findOneAndUpdate(criteria, update, options)
+    const result = await this.command('findOneAndUpdate', { criteria, update, options },
+      () => this.#collection.findOneAndUpdate(criteria, update, options))
 
     return from(result)
   }
@@ -215,10 +211,9 @@ class Storage extends Connector {
     options.upsert = true
     options.returnDocument = ReturnDocument.AFTER
 
-    console.debug('Database query', { collection: this.#collection.collectionName, method: 'findOneAndUpdate', criteria, update, options })
-
     try {
-      const result = await this.#collection.findOneAndUpdate(criteria, update, options)
+      const result = await this.command('findOneAndUpdate', { criteria, update, options },
+        () => this.#collection.findOneAndUpdate(criteria, update, options))
 
       if (result._deleted !== undefined && result._deleted !== null)
         return null
@@ -232,19 +227,18 @@ class Storage extends Connector {
     }
   }
 
+  /** A component does not start before this returns, so the indexes are created at once. */
   async index () {
-    const indexes = []
+    const pending = []
 
-    if (this.#entity.unique !== undefined) {
+    if (this.#entity.unique !== undefined)
       for (const [name, fields] of Object.entries(this.#entity.unique)) {
         const optional = this.getOptional(fields)
-        const unique = await this.uniqueIndex(name, fields, optional)
 
-        indexes.push(unique)
+        pending.push(this.uniqueIndex(name, fields, optional))
       }
-    }
 
-    if (this.#entity.index !== undefined) {
+    if (this.#entity.index !== undefined)
       for (const [suffix, declaration] of Object.entries(this.#entity.index)) {
         const name = 'index_' + suffix
         const fields = Object.fromEntries(Object.entries(declaration)
@@ -255,12 +249,12 @@ class Storage extends Connector {
 
         console.info('Creating index', { fields, options })
 
-        await this.#collection.createIndex(fields, options)
+        pending.push(this.#collection.createIndex(fields, options)
           .catch((e) => console.warn('MongoDB index creation failed', { collection: this.#collection.collectionName, name, fields, error: e }))
-
-        indexes.push(name)
+          .then(() => name))
       }
-    }
+
+    const indexes = await Promise.all(pending)
 
     await this.removeObsoleteIndexes(indexes)
   }
@@ -320,6 +314,48 @@ class Storage extends Connector {
     }
 
     return optional
+  }
+
+  /**
+   * Names, logs and times a call into the driver. The driver's own command monitoring is
+   * off (see `client.js`), so this is where a query becomes a span.
+   *
+   * @private
+   */
+  async command (method, attributes, task) {
+    this.debug(method, attributes)
+
+    return console.span(this.span(method), task)
+  }
+
+  /**
+   * The span of a driver method is the same object every time: the collection is fixed
+   * for a storage, and nothing downstream writes to what it is given.
+   *
+   * @private
+   */
+  span (method) {
+    let options = this.#spans.get(method)
+
+    if (options === undefined) {
+      const collection = this.#collection.collectionName
+
+      options = {
+        name: `${method} ${collection}`,
+        kind: 'client',
+        // https://opentelemetry.io/docs/specs/semconv/database/mongodb/
+        attributes: {
+          'db.system': 'mongodb',
+          'db.namespace': this.#collection.dbName,
+          'db.operation.name': method,
+          'db.collection.name': collection
+        }
+      }
+
+      this.#spans.set(method, options)
+    }
+
+    return options
   }
 
   debug (method, attributes) {

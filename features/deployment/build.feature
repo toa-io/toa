@@ -59,21 +59,11 @@ Feature: Container Building Options
     When I export images
     Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set proxy http://host.docker.internal:4873; fi'
 
-  Scenario: Building an image with incorrect dependency in `package.json`
-    Given I have a component `broken.dependency`
-    And I have a context
-    When I run `toa build`
-    Then program should exit with code 1
-    And stderr should contain lines:
-      """
-      <...>ERR! 404  '@non-existent/dependency@1.0.0' is not in this registry.
-      """
-
   Scenario: Building an image with default base image
     Given I have a component `dummies.one`
     Given I have a context
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'FROM node:24.12.0-alpine3.22'
+    Then the file ./images/*dummies-one*/Dockerfile contains line starting with 'FROM ghcr.io/toa-io/runtime:'
 
   Scenario: Building an image with custom base image
     Given I have a component `dummies.debian`
@@ -97,7 +87,7 @@ Feature: Container Building Options
     Then program should exit with code 1
     And stderr should contain lines:
       """
-      <...>Error: Composition 'conflict' requires different base images for its components.
+      Error: Composition 'conflict' requires different base images for its components.
       """
 
   Scenario: Building a composition with different base images

@@ -45,8 +45,10 @@ Non-scattered documentation is coming some time later.
   - [Access control](extensions/exposition/documentation/access.md)
   - [Cache control](/extensions/exposition/documentation/cache.md)
   - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
-  - [Decentralized throttling](/extensions/exposition/documentation/io.md#throttling)
+  - [Throttling](/extensions/exposition/documentation/io.md#throttling): a distributed
+    [GCRA](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm), with no per-request I/O
 - [Distributed lock manager](/extensions/stash/readme.md#distributed-lock-manager)
+- [Shared rate metering](/extensions/stash/readme.md#shared-rate-metering)
 - [Telemetry](/extensions/telemetry)
   - Structured logs
   - Distributed tracing
