@@ -204,6 +204,10 @@ export class Server extends Connector {
           const message: OutgoingMessage = { status: response.statusCode }
 
           // eslint-disable-next-line max-depth
+          if (exception instanceof Exception && exception.headers !== undefined)
+            message.headers = exception.headers
+
+          // eslint-disable-next-line max-depth
           if (context.encoder === null)
             message.body = undefined
           else if (exception instanceof ClientError || this.properties.debug)

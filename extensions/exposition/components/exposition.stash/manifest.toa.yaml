@@ -4,9 +4,18 @@ name: stash
 stash: ~
 
 operations:
-  count:
+  meter:
     bindings: ~ # the gateway calls this in its own process, over the loop
     input:
-      name*: string
-      interval*: number
-      amount*: number
+      type: object
+      properties:
+        keys:
+          type: array
+          items:
+            type: string
+        deltas:
+          type: array
+          items:
+            type: number
+      required: [keys, deltas]
+      additionalProperties: false

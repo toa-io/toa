@@ -1,10 +1,11 @@
 # Decentralized Request Throttling
 
-> **Superseded.** The design below was never implemented. `io:throttle` now counts through
-> [comcount](https://github.com/temich/comcount), by way of the `stash` extension's `count`, which
-> solves the same problem the same way — per-process buffers, periodically reconciled through Redis,
-> never failing the request path — with the interval number derived from Redis' own clock instead of
-> each node's. This note is kept for the problem statement and the forces, which have not changed.
+> **Superseded.** The design below was never implemented. `io:throttle` is now a
+> [GCRA](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm) deciding in each process, with
+> its state periodically reconciled through Redis by way of the `stash` extension's `meter`. It
+> answers the same forces the same way — decide locally, reconcile in the background, never fail the
+> request path — and the section below records what it does instead. The problem statement and the
+> forces have not changed.
 
 ## Problem
 
@@ -86,3 +87,36 @@ When nodes are added or removed, the algorithm will adapt in the upcoming interv
    in a span on each node.
 2. Time desynchronization between nodes should be insignificant for the selected `INTERVAL` (i.e.,
    `INTERVAL` >> desync). See Extension point 3.
+
+## What was implemented instead
+
+Windows were dropped for a GCRA. A key holds one theoretical arrival time: the moment it would be
+back at zero if nothing more arrived. An admitted request pushes it `interval / requests`
+milliseconds further out, time drags it back, and a request is admitted while it stays within
+`interval` of now. So `requests` is what a key may spend at once and `requests / interval` the rate
+it earns back, with no window edge to burst across and no lockout to time out of — which is why
+`cooldown` is gone.
+
+Deciding reads nothing but a local map, so the request path stays free of I/O, exactly as force 1
+demands. What the other gateways have spent arrives on a timer, as **debt**: the milliseconds a key
+owes, draining at a millisecond a millisecond. Debt is the right thing to send for two reasons.
+
+1. It is a duration, not a moment, so processes exchanging it need not agree on the time — force 2,
+   answered by not needing an answer. The one clock that matters is Redis', read inside the script.
+2. It is additive in admissions, so a process reports only its own increments and Redis keeps the
+   running total. Nothing has to be divided by a number of nodes, which is as well: the gateway
+   cannot observe how many of it there are.
+
+The consequences worth knowing:
+
+- **Reconciling is decoupled from `interval`.** The timer runs at a tenth of `interval`, clamped
+  between 250ms and 2s, so a minute-long budget is no staler than a second-long one. The overshoot
+  is bounded by what the other instances admit within one tick — the caveat that replaces the old
+  note's `MAX_REQUESTS / N` per span.
+- **The cost is one round trip a tick**, not one per key. Every quota in the process flushes into a
+  single script call, which matters because a limiter keyed on `ip` watches as many keys as it has
+  clients.
+- **Redis keys expire on their own**, after the debt on them plus a grace, so nothing sweeps them.
+- **Failure degrades, as force 3 demands.** A tick that cannot reach Redis leaves its debt to the
+  next one rather than losing it; until then the instance throttles on what it alone has seen, and
+  keeps serving.

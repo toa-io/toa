@@ -2,10 +2,14 @@ export class Exception extends Error {
   public readonly status: number
   public readonly body?: any
 
-  protected constructor (status: number, body?: any) {
+  /** Headers the status is not complete without, like `Retry-After` on a 429. */
+  public readonly headers?: Headers
+
+  protected constructor (status: number, body?: any, headers?: Headers) {
     super()
     this.status = status
     this.body = body
+    this.headers = headers
   }
 }
 
@@ -79,8 +83,10 @@ export class UnprocessableEntity extends ClientError {
 }
 
 export class TooManyRequests extends ClientError {
-  public constructor () {
-    super(429)
+  /** @param retry Seconds until the request would be admitted. */
+  public constructor (retry?: number) {
+    super(429, undefined,
+      retry === undefined ? undefined : new Headers({ 'retry-after': String(retry) }))
   }
 }
 

@@ -99,21 +99,19 @@ Feature: Stash extension
               value: redis://redis.example.com
       """
 
-  # The assertion is on the number counting returns, which is local by design.
-  # The wait is what lets the buffer reach Redis before the component shuts down,
-  # so the scenario exercises the flush even though it cannot assert on it: the
-  # group's total only becomes readable an interval later, and which interval a
-  # fixed wait lands in depends on where in the current one the run started.
-  Scenario: Counting
+  # A key that did not exist owes exactly what is put on it, which is what makes the
+  # first number assertable; the second only has to be larger, because between two
+  # round trips the debt has drained by however long they took.
+  Scenario: Metering
     Given I boot `stash` component
-    When I invoke `count` with:
+    When I invoke `meter` with:
       """yaml
       input:
         name: bursts
-        times: 3
+        delta: 60000
       """
     Then the reply is received:
       """yaml
-      3
+      debt: 60000
+      adds: true
       """
-    When I wait 0.5 second

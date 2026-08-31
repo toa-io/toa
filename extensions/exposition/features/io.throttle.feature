@@ -9,7 +9,6 @@ Feature: Request throttling
             key: [path]
             requests: 1
             interval: 1
-            cooldown: 1
           GET:
             endpoint: hello
       """
@@ -25,11 +24,13 @@ Feature: Request throttling
       """
       GET /echo/beacon/ HTTP/1.1
       """
+    # an emission is a second, which is what the budget takes to earn one back
     Then the following reply is sent:
       """
       429 Too Many Requests
+      retry-after: 1
       """
-    Then after 1 second
+    Then after 2 seconds
     When the following request is received:
       """
       GET /echo/beacon/ HTTP/1.1
@@ -49,7 +50,6 @@ Feature: Request throttling
               key: [route]
               requests: 1
               interval: 5
-              cooldown: 5
             GET:
               dev:stub:
                 hello: true
@@ -84,7 +84,6 @@ Feature: Request throttling
                 - segment: id
               requests: 1
               interval: 5
-              cooldown: 5
             GET:
               dev:stub:
                 hello: true
@@ -129,7 +128,6 @@ Feature: Request throttling
               key: [identity]
               requests: 1
               interval: 5
-              cooldown: 5
             endpoint: hello
       """
     And transient identity alice

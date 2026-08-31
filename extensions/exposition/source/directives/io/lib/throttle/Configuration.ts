@@ -3,7 +3,6 @@ export interface Configuration {
   condition?: KeyCondition[]
   requests: number
   interval: number
-  cooldown: number
 }
 
 interface Rule<T, K = unknown> {
@@ -31,14 +30,13 @@ export interface Declaration extends Omit<Configuration, 'key' | 'condition'> {
 }
 
 export function parse (declaration: Declaration): Configuration {
-  const { key, condition, requests, interval, cooldown } = declaration
+  const { key, condition, requests, interval } = declaration
 
   return {
     key: mapKey(key),
     condition: mapCondition(condition),
     requests,
-    interval: interval * 1000,
-    cooldown: cooldown * 1000
+    interval: interval * 1000
   }
 }
 

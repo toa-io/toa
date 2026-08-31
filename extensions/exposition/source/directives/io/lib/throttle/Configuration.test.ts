@@ -2,8 +2,7 @@ import { parse, type Configuration } from './Configuration'
 
 const rest: Omit<Configuration, 'key' | 'condition'> = {
   interval: 1,
-  requests: 1,
-  cooldown: 1
+  requests: 1
 }
 
 it('should convert key', () => {

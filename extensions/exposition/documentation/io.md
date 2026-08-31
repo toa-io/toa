@@ -70,31 +70,32 @@ exposition:
         status: 404
       requests: 500
       interval: 30
-      cooldown: 30
 ```
 
-Requests are counted per `key`. Once `requests` are counted within `interval` seconds, further
-requests carrying that key are answered `429 Too Many Requests` until `cooldown` seconds pass.
-`interval` and `cooldown` are in seconds.
+Requests are metered per `key`. A key may spend `requests` at once, and earns them back at a rate of
+`requests` per `interval` seconds. A request carrying a key with nothing left to spend is answered
+`429 Too Many Requests`, with a `Retry-After` saying how long until one would be admitted again.
+`interval` is in seconds.
 
-`requests` is a budget for the **whole group** of gateway instances, not for one of them. Counting
-goes through Redis, so the instances converge on one number rather than each enforcing the limit
-separately. The number they act on is a lower bound: it never claims more requests than were really
-made, and it can lag by up to one interval. Precise per-request enforcement is not what this is for.
+So `requests` is the burst, and `requests / interval` the rate it is repaid at. There is no window to
+save a budget up in and spend twice across the edge of, and no lockout to sit out: a key that has
+overspent is admitted again as soon as it has earned a single request back, and a client that keeps
+asking meanwhile is not penalised for it.
 
-The lag is worth knowing about when `requests` is small. An instance sends what it has counted once
-an interval, and what the group made of it only comes back an interval later — so between its send
-and that reply, an instance is going on what it alone has counted since. A limit of `1` blocks on
-the first request whatever happens; a limit of a handful can be overshot in the first interval of a
-burst, before any instance has a group number to act on. Set `requests` for the rate you want to
-stop, not for an exact ceiling.
+`requests` is a budget for the **whole group** of gateway instances, not for one of them. Instances
+reconcile through Redis on a timer, so they converge on one number rather than each enforcing the
+limit separately. Between two of those, an instance goes on what it alone has spent — so the group
+can overshoot by what the other instances admit within that window, and by no more. The window is a
+tenth of `interval`, between a quarter of a second and two seconds, whatever `interval` is. Precise
+per-request enforcement is not what this is for.
 
-An instance that cannot reach Redis keeps throttling on what it has seen itself, and keeps serving.
+An instance that cannot reach Redis keeps throttling on what it has seen itself and keeps serving,
+and reports what it could not the next time it gets through.
 
 ### Key components
 
-What a request is counted against. Give one, or a list — a list keys on the combination, so
-`[route, ip]` counts each address separately on each route.
+What a request is metered against. Give one, or a list — a list keys on the combination, so
+`[route, ip]` meters each address separately on each route.
 
 - `ip` — the client address, read from `X-Forwarded-For` where it is set and not private,
   and from the connection otherwise.
@@ -107,11 +108,11 @@ What a request is counted against. Give one, or a list — a list keys on the co
 
 ### Conditions
 
-What is counted, as opposed to what it is counted against. A request that fails a condition is
-served and not counted. Conditions are evaluated against the response, so they cannot decide whether
-to block — only whether to count.
+What is metered, as opposed to what it is metered against. A request that fails a condition is served
+and costs nothing. Conditions are evaluated against the response, so they cannot decide whether to
+refuse a request — only whether it is charged for, once it has been answered.
 
-- `status: <code>` — count only responses with this status.
+- `status: <code>` — charge only for responses with this status.
 
 ```yaml
 io:throttle:
@@ -119,6 +120,8 @@ io:throttle:
   condition:
     status: 404
   requests: 20
-  interval: 60
-  cooldown: 600
+  interval: 600
 ```
+
+An address may probe for twenty missing paths at once, and thereafter for one every thirty seconds.
+Requests that find something are served and never counted against it.

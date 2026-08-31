@@ -1,7 +1,7 @@
 import { Output } from './Output'
 import { Input } from './Input'
 import { Throttle } from './Throttle'
-import type { Remote } from '@toa.io/core'
+import { Sync } from './lib/throttle'
 import type * as http from '../../HTTP'
 import type { Parameter, DirectiveFamily } from '../../RTD'
 import type { Remotes } from '../../Remotes'
@@ -11,8 +11,8 @@ export class IO implements DirectiveFamily<Directive> {
   public readonly name = 'io'
   public readonly mandatory = true
 
-  /** Throttling counts through a component, because only a component has a stash aspect. */
-  private counter: Promise<Remote> | null = null
+  /** Throttling reconciles through a component, because only a component has a stash aspect. */
+  private sync: Sync | null = null
 
   // eslint-disable-next-line max-params
   public create (name: string, value: unknown, remotes: Remotes, route: string): Directive {
@@ -25,9 +25,9 @@ export class IO implements DirectiveFamily<Directive> {
 
     // discovering boots the component, so nothing is discovered until something throttles
     if (name === 'throttle')
-      this.counter ??= remotes.discover('exposition', 'stash')
+      this.sync ??= new Sync(remotes.discover('exposition', 'stash'))
 
-    return new Directive(value, this.counter!, route)
+    return new Directive(value, this.sync!, route)
   }
 
   public preflight (directives: Directive[], context: http.Context,
@@ -46,14 +46,19 @@ export class IO implements DirectiveFamily<Directive> {
     return null
   }
 
-  public async settle (directives: Directive[], context: http.Context, output: http.OutgoingMessage): Promise<void> {
+  public settle (directives: Directive[], context: http.Context,
+    output: http.OutgoingMessage): void {
     for (const directive of directives)
-      await directive.settle?.(context, output)
+      directive.settle?.(context, output)
   }
 
-  public dispose (directives: Directive[]): void {
-    for (const directive of directives)
-      directive.dispose?.()
+  /**
+   * The ticker belongs to the family rather than to any route's directives, and the
+   * factory disposes every route it made — so this runs once per route at shutdown,
+   * and disposing an already stopped ticker is what makes that harmless.
+   */
+  public dispose (): void {
+    this.sync?.dispose()
   }
 }
 
