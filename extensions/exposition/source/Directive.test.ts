@@ -10,6 +10,7 @@ const families: Array<jest.MockedObjectDeep<DirectiveFamily>> = [
     name: 'foo',
     mandatory: true,
     create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
+    arrange: jest.fn(),
     preflight: jest.fn(),
     settle: jest.fn(),
     dispose: jest.fn()
@@ -18,6 +19,7 @@ const families: Array<jest.MockedObjectDeep<DirectiveFamily>> = [
     name: 'qux',
     mandatory: true,
     create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
+    arrange: jest.fn(),
     preflight: jest.fn(),
     settle: jest.fn(),
     dispose: jest.fn()
@@ -26,6 +28,7 @@ const families: Array<jest.MockedObjectDeep<DirectiveFamily>> = [
     name: 'bar',
     mandatory: false,
     create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
+    arrange: jest.fn(),
     preflight: jest.fn(),
     settle: jest.fn(),
     dispose: jest.fn()
