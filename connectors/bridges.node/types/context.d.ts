@@ -30,8 +30,12 @@ declare namespace toa.node{
     /** Debt the replicas have run up under each key, in milliseconds. */
     meter: (keys: string[], deltas: number[]) => Promise<number[]>
 
-    /** Runs `routine` while no other replica holds `keys`. */
-    lock: <T>(keys: string | string[], routine: () => Promise<T>) => Promise<T>
+    /**
+     * Runs `routine` while no other replica holds `keys`. The signal aborts when the lease
+     * could not be extended.
+     */
+    lock: <T>(keys: string | string[],
+      routine: (signal: AbortSignal, context: unknown) => Promise<T>) => Promise<T>
   }
 
   type shortcut = (context: Context, aspect: Aspect) => void

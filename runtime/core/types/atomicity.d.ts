@@ -35,9 +35,14 @@ declare namespace toa.core {
        * Runs `routine` holding `keys`, and while it holds them no other replica of the group
        * does. Waits for as long as it takes to acquire them.
        *
+       * The lease is extended for as long as the routine runs. An extension that fails aborts
+       * the signal the routine is given, which is the only way it learns it no longer holds
+       * what it is working under.
+       *
        * Rejects where there is nothing to arbitrate through.
        */
-      lock<T> (keys: string | string[], routine: () => Promise<T>): Promise<T>
+      lock<T> (keys: string | string[],
+        routine: (signal: AbortSignal, context: unknown) => Promise<T>): Promise<T>
     }
 
     interface Factory {

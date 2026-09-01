@@ -22,11 +22,20 @@ const describe = (context, compositions, dependency, image) => {
 
   const atomicity = context.atomicity
 
-  if (atomicity?.redis !== undefined)
+  if (atomicity?.redis !== undefined) {
+    const addresses = Array.isArray(atomicity.redis) ? atomicity.redis : [atomicity.redis]
+
+    // a lock is taken on `floor(n / 2) + 1` of them, so an even number tolerates no more
+    // losses than the odd number below it, and two tolerate fewer than one does
+    if (addresses.length % 2 === 0)
+      throw new Error(`'atomicity.redis' takes an odd number of addresses, ` +
+        `${addresses.length} given`)
+
     dependency.variables.global.push({
       name: 'TOA_ATOMICITY_REDIS',
-      value: atomicity.redis
+      value: addresses.join(' ')
     })
+  }
 
   if (atomicity?.interval !== undefined)
     dependency.variables.global.push({

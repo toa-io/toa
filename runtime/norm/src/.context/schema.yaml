@@ -74,8 +74,16 @@ properties:
     additionalProperties: false
     properties:
       redis:
-        description: One address.
-        type: string
+        description: >
+          One address, or an odd number of them — independent servers, not the nodes of a
+          cluster. A lock is taken on a quorum of them; the registry and the meter use the
+          first, because each of them counts on a single key.
+        oneOf:
+          - type: string
+          - type: array
+            minItems: 1
+            items:
+              type: string
       interval:
         description: >
           How often a replica registers, in milliseconds. It has to comfortably exceed a round

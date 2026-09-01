@@ -77,7 +77,7 @@ class Atom extends Connector {
     if (meter === undefined)
       throw new Error('Metering requires atomicity. Set TOA_ATOMICITY_REDIS.')
 
-    return meter.meter(this.#keys('meter', keys), deltas)
+    return meter.meter(this.#keys(METER, keys), deltas)
   }
 
   /**
@@ -94,18 +94,19 @@ class Atom extends Connector {
     if (redlock === undefined)
       throw new Error('Locking requires atomicity. Set TOA_ATOMICITY_REDIS.')
 
-    return redlock.using(this.#keys('lock', keys), LEASE, routine)
+    return redlock.using(this.#keys(LOCK, keys), LEASE, routine)
   }
 
   /**
-   * Keys belong to the group, so two groups using the same name do not meet.
+   * A key names what it is for and whose it is, in that order, so that a name used for a lock
+   * and for a meter is two keys, and two groups using the same name do not meet either.
    *
    * @private
    */
   #keys (kind, keys) {
     if (typeof keys === 'string') keys = [keys]
 
-    return keys.map((key) => `${this.#name}:${kind}:${key}`)
+    return keys.map((key) => `${kind}${this.#name}:${key}`)
   }
 
   async open () {
@@ -139,6 +140,7 @@ class Atom extends Connector {
 
     const loop = discover({
       redis,
+      prefix: SLOTS,
       name: this.#name,
       interval: this.#interval,
       signal: this.#abort.signal,
@@ -161,5 +163,14 @@ const INTERVAL = 5000
 
 /** how long a lock is held before it has to be extended, in milliseconds */
 const LEASE = 5000
+
+/*
+ * What a key is for, ahead of whose it is. The three live in one Redis and are written by
+ * three different things, so nothing but this keeps a group's lock on a name apart from its
+ * meter on the same name.
+ */
+const SLOTS = 'slots:'
+const METER = 'meter:'
+const LOCK = 'lock:'
 
 exports.Atom = Atom

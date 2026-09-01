@@ -38,10 +38,22 @@ takes, and a lease is extended for as long as the routine runs.
 await context.atom.lock('the ledger', async () => { … })
 ```
 
-Uses [redlock](https://github.com/mike-marcacci/node-redlock) against one Redis, not a quorum of
-independent masters. Mutual exclusion holds while that Redis holds the key: a restart that loses it,
-or a failover to a replica that has not received it, can leave two holders. Entity writes do not
-rest on this — they have `_version` — so it is a lock for the work, not for correctness.
+Uses [redlock](https://github.com/sesamecare/redlock). The key is written to every address and a
+majority holding it is the lock, so a minority can be lost or failed over without invalidating one.
+Against a single address there is no majority to lose: a restart that drops the key, or a failover
+to a replica that has not received it, can leave two holders. Entity writes do not rest on either —
+they have `_version`.
+
+The routine is given an `AbortSignal` and a context. Extension can fail while the routine runs, and
+the signal is how it says so:
+
+```javascript
+await context.atom.lock('the ledger', async (signal) => {
+  await something()
+
+  if (signal.aborted) throw signal.error
+})
+```
 
 ## Outside a component
 
@@ -60,11 +72,19 @@ Requires Redis.
 ```yaml
 # context.toa.yaml
 atomicity:
-  redis: redis://redis.example.com    # one address
+  redis: redis://redis.example.com    # one address, or an odd number of them
   interval: 5000                      # how often a replica registers, milliseconds
 ```
 
+Several addresses are **independent servers**, not the nodes of a cluster. The lock is taken on a
+quorum of them; partitioning and metering use the first, because each of them counts on a single
+key. An even number is refused: `floor(n / 2) + 1` means four tolerate one loss exactly as three do,
+and two tolerate none at all.
+
 `redis://localhost` under `TOA_DEV=1`.
 
-One client per process, shared by every atom in it, and an unreachable Redis does not fail a
-start.
+One set of clients per process, shared by every atom in it, and an unreachable Redis does not fail
+a start.
+
+A key names what it is for and whose it is: `slots:{group}:…`, `meter:<group>:<key>`,
+`lock:<group>:<key>`.
