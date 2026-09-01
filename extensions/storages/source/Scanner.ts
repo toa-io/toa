@@ -1,6 +1,5 @@
 import { PassThrough, type TransformCallback } from 'node:stream'
 import { createHash } from 'node:crypto'
-import { Err } from 'error-value'
 import Negotiator from 'negotiator'
 
 export class Scanner extends PassThrough {
@@ -147,9 +146,17 @@ const HEADER_SIZE = SIGNATURES
 
 const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 
-const ERR_TYPE_MISMATCH = new Err('TYPE_MISMATCH')
-const ERR_NOT_ACCEPTABLE = new Err('NOT_ACCEPTABLE')
-const ERR_LIMIT_EXCEEDED = new Err('LIMIT_EXCEEDED')
+const ERR_TYPE_MISMATCH = new (class TypeMismatchError extends Error {
+  public readonly code = 'TYPE_MISMATCH'
+})()
+
+const ERR_NOT_ACCEPTABLE = new (class NotAcceptableError extends Error {
+  public readonly code = 'NOT_ACCEPTABLE'
+})()
+
+const ERR_LIMIT_EXCEEDED = new (class LimitExceededError extends Error {
+  public readonly code = 'LIMIT_EXCEEDED'
+})()
 
 export interface ScanOptions {
   claim?: string

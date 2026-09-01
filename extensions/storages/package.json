@@ -33,7 +33,6 @@
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/schemas": "1.0.0-alpha.270",
     "cloudinary": "2.9.0",
-    "error-value": "0.4.1",
     "negotiator": "0.6.3",
     "openspan": "1.0.0-alpha.270"
   },
