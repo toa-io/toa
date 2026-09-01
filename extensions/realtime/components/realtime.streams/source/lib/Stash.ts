@@ -32,10 +32,11 @@ export class Stash {
     if (results instanceof Error)
       return results
 
-    if (results.length === 0)
+    const items = entries(results)
+
+    if (items === null)
       return null
 
-    const [, items] = results[0]
     const events: Event[] = []
 
     let lastStamp: string | null = null
@@ -94,6 +95,26 @@ export class Stash {
     return Buffer.from(token, 'base64url').toString()
   }
 }
+
+/**
+ * `xread` answers with an array of `[stream, entries]` pairs over RESP2 and with an
+ * object keyed by stream name over RESP3. One stream is read, so either way it is the
+ * first, and an empty answer means nothing has been added since the token.
+ */
+function entries (results: unknown): Entry[] | null {
+  if (Array.isArray(results))
+    return results.length === 0 ? null : (results[0] as [string, Entry[]])[1]
+
+  if (typeof results === 'object' && results !== null) {
+    const streams = Object.values(results as Record<string, Entry[]>)
+
+    return streams.length === 0 ? null : streams[0]
+  }
+
+  return null
+}
+
+type Entry = [stamp: string, fields: string[]]
 
 interface Configuration {
   maxlen: number
