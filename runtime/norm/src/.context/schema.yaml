@@ -95,11 +95,17 @@ properties:
     properties:
       interval:
         description: >
-          The cycle, in milliseconds. One cycle marks what was published, then sweeps what was
-          not. In steady state the sweep finds nothing, so this is budgeted for how fast a rare
+          The pump's cycle, in milliseconds. One cycle reads what is unpublished, publishes it
+          and marks it. In steady state it reads nothing, so this is budgeted for how fast a rare
           failure heals rather than for how fast events flow.
         type: integer
         minimum: 100
+      batch:
+        description: >
+          How many rows one read brings back. A page that comes back full is read on from,
+          so this bounds a read rather than a cycle.
+        type: integer
+        minimum: 1
       retention:
         description: >
           Seconds a published row is kept as a change log before it expires. A row that never

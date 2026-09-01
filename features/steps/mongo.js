@@ -27,7 +27,7 @@ Given('the {component} database contains:',
 Given('the {component} outbox contains:',
   /**
    * Seeding a row directly is the post-crash state: the entity was written, the event was
-   * not published, and nothing is left to publish it but the sweep.
+   * not published, and nothing is left to publish it but the pump.
    */
   async function (id, table) {
     const rows = parse(table).map(({ event, ...rest }) => ({

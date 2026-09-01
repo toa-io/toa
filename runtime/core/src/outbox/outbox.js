@@ -22,20 +22,20 @@ class Outbox extends Connector {
 
   #gap
   #interval
+  #batch
   #defer
 
-  /** ids published but not yet marked so, settled in one batch on the tick */
-  #settled = new Set()
+  /** ids this process has published, held until a cycle marks them */
+  #published = new Set()
 
   /** in-flight publications, awaited (with a bound) on close */
   #inflight = new Set()
 
-  /** rows this replica is publishing right now, so a sweep does not pick them up again */
+  /** rows this replica is publishing right now, so a cycle does not pick them up again */
   #publishing = new Set()
 
   #timer
-  #settling = false
-  #sweeping = false
+  #pumping = false
   #closing = false
 
   constructor (emission, storage, atom, options = {}) {
@@ -45,7 +45,8 @@ class Outbox extends Connector {
     this.#storage = storage
     this.#atom = atom
 
-    this.#interval = interval(options.interval)
+    this.#interval = number('TOA_OUTBOX_INTERVAL', options.interval, INTERVAL)
+    this.#batch = number('TOA_OUTBOX_BATCH', options.batch, BATCH)
     this.#gap = options.gap ?? this.#interval * K
     this.#defer = process.env.TOA_OUTBOX_DEFER === '1'
 
@@ -55,7 +56,7 @@ class Outbox extends Connector {
 
     /*
      * The atom is deliberately not a dependency. Whether rows are durable at all is only known
-     * once the storage is open, and coordinating the sweep of a storage that cannot commit a
+     * once the storage is open, and coordinating the pump of a storage that cannot commit a
      * row would open a connection to accomplish nothing.
      */
   }
@@ -93,7 +94,7 @@ class Outbox extends Connector {
      * durable, so leaving it is exactly what it is for.
      */
     if (this.#closing || this.#defer ||
-      this.#inflight.size >= INFLIGHT || this.#settled.size >= SETTLED)
+      this.#inflight.size >= INFLIGHT || this.#published.size >= PUBLISHED)
       return
 
     void this.#publish(row)
@@ -105,10 +106,10 @@ class Outbox extends Connector {
     await this.#atom?.connect()
 
     if (this.#defer)
-      console.warn('Outbox immediate publication is deferred; events are published by the sweep only')
+      console.warn('Outbox immediate publication is deferred; events are published by the pump only')
 
     if (this.#atom === undefined)
-      console.warn('Outbox has no atomicity, so its sweep stays suspended: rows are written ' +
+      console.warn('Outbox has no atomicity, so its pump reads nothing: rows are written ' +
         'and published, but what fails to publish waits until lanes can be claimed. ' +
         'Set TOA_ATOMICITY_REDIS.')
 
@@ -121,12 +122,12 @@ class Outbox extends Connector {
 
     if (this.#timer !== undefined) clearInterval(this.#timer)
 
-    // stop reading before draining: a sweep that started would publish into a broker
+    // stop reading before draining: a cycle that started would publish into a broker
     // connection that is about to go
     await this.#atom?.disconnect()
 
     await this.#drain()
-    await this.#settle()
+    await this.#mark()
   }
 
   /**
@@ -150,10 +151,9 @@ class Outbox extends Connector {
     try {
       await publishing
 
-      this.#settled.add(row.id)
+      this.#published.add(row.id)
     } catch (error) {
-      console.error('Event publication failed; the outbox will retry it',
-        { row: row.id, error })
+      console.warn('Event publication failed', { row: row.id, error })
     } finally {
       this.#inflight.delete(publishing)
       this.#publishing.delete(row.id)
@@ -173,101 +173,100 @@ class Outbox extends Connector {
   }
 
   /**
-   * The two halves are guarded apart. A replica writes into a lane it owns, so settling first
-   * means its own rows are already marked by the time it looks at that lane — but a
-   * publication waiting on a broker that is down must not take the marking down with it, and
-   * it would if one guard covered both.
+   * Reads what is due, publishes it, and marks everything this process has sent — what it just
+   * published and what the immediate path published since the last cycle. One cycle at a time.
    *
    * @private
    */
   #tick () {
-    if (!this.#settling) {
-      this.#settling = true
+    if (this.#pumping) return
 
-      void this.#settle().finally(() => (this.#settling = false))
-    }
+    this.#pumping = true
 
-    if (!this.#sweeping) {
-      this.#sweeping = true
+    void this.#pump().finally(() => (this.#pumping = false))
+  }
 
-      void this.#sweep().finally(() => (this.#sweeping = false))
-    }
+  /** @private */
+  async #pump () {
+    let page
+
+    do {
+      page = await this.#read(page?.[page.length - 1]?.id)
+
+      if (page.length === 0) break
+
+      /*
+       * A row is unpublished in the database until a cycle marks it, so a page includes what
+       * this replica is sending right now and what a failed marking left behind. Only this
+       * process knows either.
+       */
+      const rows = page.filter((row) =>
+        !this.#published.has(row.id) && !this.#publishing.has(row.id))
+
+      if (rows.length > 0) {
+        console.info('Outbox recovering unpublished events', { count: rows.length })
+
+        // every row is given its chance; what the broker refused stays unpublished and comes
+        // back on a later cycle
+        await Promise.allSettled(rows.map((row) => this.#publish(row)))
+      }
+
+      // a full page is a page that may have been cut short
+    } while (page.length === this.#batch)
+
+    await this.#mark()
   }
 
   /**
-   * The recovery path. In a healthy system the query returns nothing, every cycle — a row is
-   * only due here if the process that wrote it failed to publish or died before settling.
+   * One page of what is due. In a healthy system the first one is empty, every cycle — a row is
+   * due only if the process that wrote it failed to publish or died before marking it.
    *
    * Reading is suspended, not stopped, while this replica does not know which lanes are its
-   * own: the cycle keeps running and keeps settling, and the sweep resumes by itself as soon
-   * as an assignment arrives. So a rebalance pauses recovery for an interval or two rather
-   * than ending it, and rows simply wait for their owner.
-   *
-   * Sweeping without an assignment would not be a degraded version of this — it would be a
-   * different guarantee, one where every replica publishes every stranded row.
+   * own: the cycle keeps running and keeps marking, and reading resumes as soon as an
+   * assignment arrives. Reading without an assignment would be a different guarantee, where
+   * every replica publishes every stranded row.
    *
    * @private
+   * @param {string} [after] the last id of the page before, so a page is never read twice
    */
-  async #sweep () {
+  async #read (after) {
     const lanes = this.#atom?.slots(LANES) ?? null
 
-    if (lanes === null || lanes.length === 0) return
+    if (lanes === null || lanes.length === 0) return []
 
-    const due = await this.#storage.outbox.pending(lanes, Date.now(), LIMIT)
+    return this.#storage.outbox.pending(lanes, Date.now(), this.#batch, after)
       .catch((error) => {
-        console.error('Outbox sweep failed', { error })
+        console.warn('Outbox read failed', { error })
 
         return []
       })
-
-    /*
-     * A row is unpublished in the database until a cycle marks it, so what is due there
-     * includes what this replica has already sent and what it is sending right now. Only this
-     * process knows that, and only until it marks them.
-     *
-     * The in-flight case needs `gap` to have elapsed while a publication was still pending,
-     * which is unlikely — and it is exactly the unlikely case that would otherwise deliver
-     * twice for no reason.
-     */
-    const rows = due.filter((row) => !this.#settled.has(row.id) && !this.#publishing.has(row.id))
-
-    if (rows.length === 0) return
-
-    console.info('Outbox recovering unpublished events', { count: rows.length })
-
-    // every row is given its chance; what the broker refused stays unpublished and comes
-    // back on a later cycle
-    await Promise.allSettled(rows.map((row) => this.#publish(row)))
   }
 
   /**
    * One batched write for many events, which is why the ids are held in memory rather than
-   * marked one by one. Ids that fail to settle go back and are retried; a row that is never
-   * settled is simply published again by a sweep, which is within the contract.
+   * marked one by one. Ids that fail to be marked are kept and retried; a row that is never
+   * marked is simply published again, which is within the contract.
    *
    * @private
    */
-  async #settle () {
-    if (this.#settled.size === 0) return
+  async #mark () {
+    if (this.#published.size === 0) return
 
-    const ids = [...this.#settled]
+    const ids = [...this.#published]
 
     try {
       await this.#storage.outbox.settle(ids)
 
-      // held until the write is through, not until it is issued: a sweep running in the
-      // meantime reads a row that is still unpublished in the database, and this set is the
-      // only thing that knows better
-      for (const id of ids) this.#settled.delete(id)
+      for (const id of ids) this.#published.delete(id)
     } catch (error) {
-      console.error('Outbox settle failed; the ids will be retried', { count: ids.length, error })
+      console.warn('Outbox marking failed', { count: ids.length, error })
     }
   }
 
    /**
    * A lane this replica currently owns, so that in steady state it settles its own rows
-   * before it ever sweeps them. Any lane at all when it owns none: the row still has to be
-   * written, and whoever ends up owning that lane will sweep it.
+   * before it ever reads them. Any lane at all when it owns none: the row still has to be
+   * written, and whoever ends up owning that lane will pump it.
    *
    * @private
    */
@@ -280,12 +279,12 @@ class Outbox extends Connector {
   }
 }
 
-function interval (declared) {
-  const override = Number(process.env.TOA_OUTBOX_INTERVAL)
+function number (variable, declared, fallback) {
+  if (declared !== undefined) return declared
 
-  if (!Number.isNaN(override) && override > 0) return override
+  const value = Number(process.env[variable])
 
-  return declared ?? INTERVAL
+  return Number.isNaN(value) || value <= 0 ? fallback : value
 }
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms).unref())
@@ -297,20 +296,22 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms).unref())
  */
 const LANES = 128
 
-/** one tick settles, then sweeps; in steady state it finds nothing to sweep */
+/** one cycle reads, publishes and marks; in steady state it finds nothing to read */
 const INTERVAL = 5000
 
 /**
  * `gap = interval * K`. Not a steady-state necessity — a replica writes into a lane it owns
- * and settles before it sweeps — but a guard for when a lane changes hands between the write
+ * and marks what it published — but a guard for when a lane changes hands between the write
  * and the settle. Two cycles of separation, plus one of margin.
  */
 const K = 3
 
-const LIMIT = 200
+/** how many rows one read brings back; the pump reads on while a page comes back full */
+const BATCH = 200
+
 const DRAIN = 10_000
 const INFLIGHT = 1000
-const SETTLED = 10_000
+const PUBLISHED = 10_000
 
 exports.Outbox = Outbox
 exports.LANES = LANES

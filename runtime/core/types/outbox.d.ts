@@ -13,7 +13,7 @@ declare namespace toa.core {
     interface Row {
       id: string
 
-      /** which replica sweeps this row; carries no other meaning, and no ordering */
+      /** which replica pumps this row; carries no other meaning, and no ordering */
       lane: number
 
       published: boolean
@@ -30,8 +30,11 @@ declare namespace toa.core {
 
       insertMany (rows: Row[], session?: unknown): Promise<void>
 
-      /** due, still unpublished, and in one of the given lanes */
-      pending (lanes: number[], now: number, limit: number): Promise<Row[]>
+      /**
+       * One page of what is due, still unpublished, and in one of the given lanes, in the
+       * order the rows were written. `after` continues from the last id of the page before.
+       */
+      pending (lanes: number[], now: number, limit: number, after?: string): Promise<Row[]>
 
       settle (ids: string[]): Promise<void>
     }
@@ -44,7 +47,7 @@ export type Row = toa.core.outbox.Row
 export type Storage = toa.core.outbox.Storage
 
 /**
- * A lane is a slot of `atomicity`: which replica sweeps a row, and nothing else. The outbox is
+ * A lane is a slot of `atomicity`: which replica pumps a row, and nothing else. The outbox is
  * the first thing to claim slots this way, not the last.
  */
 export type Atom = _atomicity.Atom

@@ -32,12 +32,20 @@ class Outbox {
   }
 
   /**
-   * What this replica should publish: due, still unpublished, and in a lane it owns.
-   * In steady state this returns nothing, every cycle.
+   * One page of what this replica should publish: due, still unpublished, and in a lane it
+   * owns. In steady state the first page is empty.
+   *
+   * `after` continues from the last id of the page before. Ids are uuid v7, so their order is
+   * the order rows were written and a page is never read twice within a cycle — which matters
+   * because a row stays unpublished in the database until the cycle that sent it marks it.
    */
-  async pending (lanes, now, limit) {
+  async pending (lanes, now, limit, after = undefined) {
+    const criteria = { lane: { $in: lanes }, published: false, pending: { $lte: now } }
+
+    if (after !== undefined) criteria._id = { $gt: after }
+
     const rows = await this.#collection
-      .find({ lane: { $in: lanes }, published: false, pending: { $lte: now } })
+      .find(criteria)
       .sort({ _id: 1 })
       .limit(limit)
       .toArray()

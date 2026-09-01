@@ -64,9 +64,9 @@ Feature: Transactional outbox
     Then the reply is received
     And the `mongo.outbox` record matches the last reply
 
-  Scenario: A row left behind by a crash is recovered by the sweep
+  Scenario: A row left behind by a crash is recovered by the pump
     # seeding a row *is* the post-crash state: the entity was written, the event was not sent,
-    # and nothing but the sweep is left to send it
+    # and nothing but the pump is left to send it
     Given the `mongo.outbox` outbox contains:
       | _id                              | lane | pending | event                                                                                                       |
       | aa11e57cc0e14fce95c4496c21086781 | 0    | 0       | {"trailers":{"inc":9},"state":{"id":"6b93e57cc0e14fce95c4496c21086781","foo":9,"bar":"recovered","_version":2,"_deleted":null}} |
@@ -85,7 +85,7 @@ Feature: Transactional outbox
       """
     And the `mongo.outbox` outbox holds 1 published row
 
-  Scenario: With immediate publication deferred, the sweep alone delivers
+  Scenario: With immediate publication deferred, the pump alone delivers
     Given an environment variable `TOA_OUTBOX_DEFER` is set to "1"
     And I compose components:
       | mongo.outbox |
@@ -154,6 +154,26 @@ Feature: Transactional outbox
       """
     Then the reply is received
     And the `proto.plain` outbox is empty
+
+  Scenario: Without atomicity nothing is read
+    Given an environment variable `TOA_ATOMICITY_REDIS` is set to ""
+    And the `mongo.outbox` outbox contains:
+      | _id                              | lane | pending | event                                                                                                       |
+      | bb22e57cc0e14fce95c4496c21086781 | 0    | 0       | {"trailers":{"inc":1},"state":{"id":"6b93e57cc0e14fce95c4496c21086781","foo":1,"bar":"stranded","_version":2,"_deleted":null}} |
+    And I compose components:
+      | mongo.outbox |
+      | mongo.sink   |
+    And I wait 1.5 second
+    When I call `mongo.sink.observe` with:
+      """yaml
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received:
+      """yaml
+      count: 0
+      """
+    And the `mongo.outbox` outbox holds 1 unpublished row
 
   Scenario: The broker is down at commit, and the event goes out when it returns
     # the failure the outbox exists for: the state change must not be lost with the publish

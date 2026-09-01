@@ -42,6 +42,12 @@ const describe = (context, compositions, dependency, image) => {
       value: String(outbox.interval)
     })
 
+  if (outbox?.batch !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_OUTBOX_BATCH',
+      value: String(outbox.batch)
+    })
+
   if (outbox?.retention !== undefined)
     dependency.variables.global.push({
       name: 'TOA_OUTBOX_RETENTION',
