@@ -18,10 +18,10 @@ class Connection extends Connector {
     if (urls.length === 0) return
 
     /*
-     * More than one address is a cluster, not a list of alternatives: a group's keys carry a
-     * hash tag, so they never go cross-slot, and the client routes to whichever node holds
-     * them. One address is one server — its own availability is whatever it points at, a
-     * service, a sentinel-backed endpoint or a managed one.
+     * More than one address is a cluster, which is a matter of fitting into a deployment
+     * rather than of scale: there is nothing here to shard, but a cluster cannot be reached
+     * with a plain client, and one that already exists is what an operator has to point at.
+     * A group's keys carry a hash tag, so they never go cross-slot.
      */
     this.redis = urls.length === 1
       ? new Redis(urls[0], OPTIONS)

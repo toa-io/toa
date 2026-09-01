@@ -49,19 +49,27 @@ ten to thirty seconds suits most groups, and it wants stability rather than spee
 **One address is one server.** Its availability is whatever the address points at — a service, a
 sentinel-backed endpoint, a managed one — and the client reconnects to it for as long as it takes.
 
-**Several addresses are a cluster**, not a list of alternatives. A group's keys carry a hash tag,
-so all of them land in one slot and the two keys a registration touches are never cross-slot; the
-client routes to whichever node holds them and re-discovers the topology when it moves.
+**Several addresses are a cluster**, and the reason to accept one is deployment, not scale. There
+is nothing here to shard: a group is one small key, written once per replica per interval. But a
+deployment that already runs Redis Cluster has no standalone instance to point at, and a cluster
+cannot be reached with a plain client — the keys would answer `MOVED`. So the client is a cluster
+client when given more than one address, and routes to whichever node holds the group. A hash tag
+is what makes that safe: a group's keys land in one slot, so the two a registration touches are
+never cross-slot.
+
+Availability, either way, is the endpoint's own. A cluster promotes a replica when a master goes;
+a sentinel-backed address moves; a managed service does whatever it does. This connector arranges
+none of it and does not need to.
 
 **Unreachable reads exactly like unconfigured.** Nothing is owned, `slots` answers `null`, and
 whoever asked stands down. Connecting is therefore not awaited and a failure to connect is not an
 error: a process that could not start because coordination was down would be the opposite of
 standing down. A Redis that comes up later is picked up on its own, with nothing restarted.
 
-That is the whole of the fault tolerance here, and it is deliberate. There is no quorum and no
-failover between instances, because there is nothing to fail over *to*: what this hands out is an
-exclusive claim, and a claim that two stores could disagree about would be worse than no claim at
-all. Losing the store loses the claim, which is the safe direction.
+What is deliberately absent is a quorum over independent stores, the way a distributed lock is
+built. What this hands out is an exclusive claim, and a claim that two stores could disagree about
+would be worse than no claim at all — so it lives in one place, and losing that place loses the
+claim rather than splitting it.
 
 ## Invariant
 
