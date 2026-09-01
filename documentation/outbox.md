@@ -131,10 +131,11 @@ The collection is a change log and a dead-letter queue at once.
 db.tea_pots_outbox.find({ published: false }).sort({ _id: 1 })   // what is stuck, oldest first
 ```
 
-Published rows expire by TTL. Unpublished rows have no expiry field and MongoDB's TTL monitor
-skips documents that lack one, so a row that never made it out is never reaped.
+A published row carries `publishedAt` and expires by TTL. An unpublished row has no `publishedAt`,
+and MongoDB's TTL monitor skips documents that lack one, so a row that never made it out is never
+reaped.
 
-Two indexes: `{ lane, pending }` over unpublished rows, and a TTL index over the marking timestamp.
+Two indexes: `{ lane, pending }` over unpublished rows, and a TTL index over `publishedAt`.
 
 ## Development
 

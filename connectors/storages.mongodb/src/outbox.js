@@ -61,7 +61,7 @@ class Outbox {
     if (ids.length === 0) return
 
     await this.#collection.updateMany({ _id: { $in: ids } },
-      { $set: { published: true, _published: new Date() } })
+      { $set: { published: true, publishedAt: new Date() } })
   }
 
   /**
@@ -75,11 +75,11 @@ class Outbox {
         fields: { lane: 1, pending: 1 },
         options: { name: 'outbox_pending', partialFilterExpression: { published: false } }
       },
-      // an unpublished row has no `_published`, and the TTL monitor skips those — so a row
+      // an unpublished row has no `publishedAt`, and the TTL monitor skips those — so a row
       // that never made it out is never reaped
-      outbox_published: {
-        fields: { _published: 1 },
-        options: { name: 'outbox_published', expireAfterSeconds: this.#retention }
+      outbox_published_at: {
+        fields: { publishedAt: 1 },
+        options: { name: 'outbox_published_at', expireAfterSeconds: this.#retention }
       }
     }
 
