@@ -36,19 +36,13 @@ and costs nothing to ask, so it can be read on a hot path.
 
 ### How it decides
 
-The arithmetic is [n-and-i](https://github.com/temich/nandi). Every replica registers in a Redis
-counter once per interval and receives a `{ i, n }` pair — its index and how many there are — once
-two consecutive intervals have agreed on it. A replica owns the slots where `slot % n === i`.
+The scheme and its guarantees are [n-and-i](https://github.com/temich/nandi)'s.
 
-Two agreeing intervals is what makes the claim exclusive: a pair that has just changed is not yet
-held by the whole group, and taking it up while a replica that has not registered this interval is
-still on the old one is what would put two mappings live at once. A replica that has just joined,
-stalled or restarted therefore claims nothing until the group has settled, which takes two to
-three intervals.
-
-`TOA_ATOMICITY_INTERVAL` overrides the interval, which is 10 seconds by default. Ten to thirty
-seconds suits most groups: it wants stability rather than speed, and a shorter one buys nothing
-but churn.
+Two of its consequences are worth knowing from here. A replica claims nothing for the first
+couple of intervals after it joins, restarts or stalls, so `slots` answers `null` for a while at
+startup and after every rollout. And the interval — `TOA_ATOMICITY_INTERVAL`, 10 seconds by
+default — wants stability rather than speed: ten to thirty suits most groups, and a shorter one
+buys nothing but churn.
 
 ### When in doubt, own nothing
 
@@ -79,8 +73,7 @@ sentinel-backed endpoint, a managed one — and the client reconnects to it for 
 is nothing here to shard. But a deployment that already runs Redis Cluster has no standalone
 instance to point at, and a cluster cannot be reached with a plain client — the keys would answer
 `MOVED`. So the client is a cluster client when given more than one address, and routes to
-whichever node holds the key. Keys carry a hash tag, so those a single decision touches land in
-one slot and are never cross-slot.
+whichever node holds the key, which the keys are laid out to allow.
 
 Availability, either way, is the endpoint's own. A cluster promotes a replica when a master goes;
 a sentinel-backed address moves; a managed service does whatever it does. This connector arranges
