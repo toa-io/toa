@@ -1,15 +1,18 @@
 'use strict'
 
-const { Partition } = require('./partition')
+const { Atom } = require('./atom')
 const { connection } = require('./connection')
 
 class Factory {
   /**
-   * @param {string} group what the replicas registering together have in common
+   * What the replicas of one group decide together. They find each other by `group` and by
+   * nothing else, so what shares a name shares a decision.
+   *
+   * @param {string} group
    * @param {object} [options]
    */
-  partition (group, options = {}) {
-    return new Partition(connection(), group, options.interval)
+  atom (group, options = {}) {
+    return new Atom(connection(), group, options.interval)
   }
 }
 

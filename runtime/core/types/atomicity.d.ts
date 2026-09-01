@@ -7,26 +7,30 @@ declare namespace toa.core {
   namespace atomicity {
 
     /**
-     * Which of a fixed number of slots this replica owns, exclusively: while it holds one, no
-     * other replica of the group does. Answered from memory, so it costs nothing to ask.
+     * What one group of replicas decides together, in one place. The decisions here are the
+     * ones processes cannot arrange by talking to each other: they need a single arbiter and a
+     * step indivisible from its point of view.
      */
-    interface Partition extends Connector {
+    interface Atom extends Connector {
       /**
+       * An exclusive claim on slots of `0..total`: while this replica holds one, no other
+       * replica of the group does. Answered from memory, so it costs nothing to ask.
+       *
        * `null` while this replica owns nothing — after a restart, during a rollout, or while
-       * coordination is unreachable. Whoever asks must be able to stand down: acting on a claim
-       * that cannot be supported is a different guarantee, not a degraded one.
+       * coordination is unreachable. Whoever asks must be able to stand down: acting on a
+       * claim that cannot be supported is a different guarantee, not a degraded one.
        */
       slots (total: number): number[] | null
     }
 
     interface Factory {
-      /** @param group what the replicas registering together have in common */
-      partition (group: string, options?: object): Partition
+      /** @param group what the replicas deciding together have in common */
+      atom (group: string, options?: object): Atom
     }
 
   }
 
 }
 
-export type Partition = toa.core.atomicity.Partition
+export type Atom = toa.core.atomicity.Atom
 export type Factory = toa.core.atomicity.Factory

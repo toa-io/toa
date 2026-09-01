@@ -5,8 +5,8 @@ const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 
 /**
- * One client per process. Every group registers in the same Redis under a key of its own, so
- * a composition of five components opens one connection between them.
+ * One client per process, shared by every atom in it. Each keeps its own keys, so a composition
+ * of five components opens one connection between them however much they decide.
  */
 class Connection extends Connector {
   /** @type {import('ioredis').Redis} */
@@ -59,7 +59,7 @@ function resolve () {
 
 let instance
 
-/** the connection is shared by every group of the process */
+/** the connection every atom of the process shares */
 const connection = () => (instance ??= new Connection())
 
 /** @internal for tests */

@@ -4,16 +4,12 @@ const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 
 /**
- * Answers which of a fixed number of slots this replica owns, exclusively: while it holds one,
- * no other replica of the group does.
+ * What one group of replicas decides together, in one place. `slots` is the first of those
+ * decisions and will not be the last.
  *
- * The arithmetic is n-and-i. Every replica registers in a Redis counter once per interval and
- * receives a `{ i, n }` pair once two consecutive intervals have agreed on it, so a replica
- * that has just joined, stalled or restarted claims nothing until the group has settled.
- *
- * @implements {toa.core.atomicity.Partition}
+ * @implements {toa.core.atomicity.Atom}
  */
-class Partition extends Connector {
+class Atom extends Connector {
   #connection
   #name
   #interval
@@ -42,6 +38,14 @@ class Partition extends Connector {
   }
 
   /**
+   * An exclusive claim on slots of `0..total`: while this replica holds one, no other replica
+   * of the group does.
+   *
+   * The arithmetic is n-and-i. Every replica registers in a Redis counter once per interval
+   * and receives a `{ i, n }` pair once two consecutive intervals have agreed on it, so a
+   * replica that has just joined, stalled or restarted claims nothing until the group has
+   * settled.
+   *
    * @param total {number}
    * @returns {number[] | null} null while this replica owns nothing
    */
@@ -117,4 +121,4 @@ function override () {
 
 const INTERVAL = 10_000
 
-exports.Partition = Partition
+exports.Atom = Atom

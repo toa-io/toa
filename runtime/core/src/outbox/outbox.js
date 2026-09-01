@@ -18,7 +18,7 @@ const { newid } = require('../entities/newid')
 class Outbox extends Connector {
   #emission
   #storage
-  #partition
+  #atom
 
   #gap
   #interval
@@ -38,12 +38,12 @@ class Outbox extends Connector {
   #sweeping = false
   #closing = false
 
-  constructor (emission, storage, partition, options = {}) {
+  constructor (emission, storage, atom, options = {}) {
     super()
 
     this.#emission = emission
     this.#storage = storage
-    this.#partition = partition
+    this.#atom = atom
 
     this.#interval = interval(options.interval)
     this.#gap = options.gap ?? this.#interval * K
@@ -54,9 +54,9 @@ class Outbox extends Connector {
     if (storage !== undefined) this.depends(storage)
 
     /*
-     * The partition is deliberately not a dependency. Whether rows are durable at all is only
-     * known once the storage is open, and coordinating the sweep of a storage that cannot
-     * commit a row would open a connection to accomplish nothing.
+     * The atom is deliberately not a dependency. Whether rows are durable at all is only known
+     * once the storage is open, and coordinating the sweep of a storage that cannot commit a
+     * row would open a connection to accomplish nothing.
      */
   }
 
@@ -102,14 +102,14 @@ class Outbox extends Connector {
   async open () {
     if (!this.durable) return
 
-    await this.#partition?.connect()
+    await this.#atom?.connect()
 
     if (this.#defer)
       console.warn('Outbox immediate publication is deferred; events are published by the sweep only')
 
-    if (this.#partition === undefined)
-      console.warn('Outbox has no partitioning, so its sweep stays suspended: rows are written ' +
-        'and published, but what fails to publish waits until lanes can be assigned. ' +
+    if (this.#atom === undefined)
+      console.warn('Outbox has no atomicity, so its sweep stays suspended: rows are written ' +
+        'and published, but what fails to publish waits until lanes can be claimed. ' +
         'Set TOA_ATOMICITY_REDIS.')
 
     this.#timer = setInterval(() => this.#tick(), this.#interval)
@@ -123,7 +123,7 @@ class Outbox extends Connector {
 
     // stop reading before draining: a sweep that started would publish into a broker
     // connection that is about to go
-    await this.#partition?.disconnect()
+    await this.#atom?.disconnect()
 
     await this.#drain()
     await this.#settle()
@@ -209,7 +209,7 @@ class Outbox extends Connector {
    * @private
    */
   async #sweep () {
-    const lanes = this.#partition?.slots(LANES) ?? null
+    const lanes = this.#atom?.slots(LANES) ?? null
 
     if (lanes === null || lanes.length === 0) return
 
@@ -272,7 +272,7 @@ class Outbox extends Connector {
    * @private
    */
   #lane () {
-    const owned = this.#partition?.slots(LANES) ?? null
+    const owned = this.#atom?.slots(LANES) ?? null
 
     return owned === null || owned.length === 0
       ? Math.floor(Math.random() * LANES)

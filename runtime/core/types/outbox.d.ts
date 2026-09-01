@@ -45,6 +45,6 @@ export type Storage = toa.core.outbox.Storage
 
 /**
  * A lane is a slot of `atomicity`: which replica sweeps a row, and nothing else. The outbox is
- * the first thing to partition itself this way, not the last.
+ * the first thing to claim slots this way, not the last.
  */
-export type Partition = _atomicity.Partition
+export type Atom = _atomicity.Atom

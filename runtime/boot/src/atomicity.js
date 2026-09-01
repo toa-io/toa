@@ -12,7 +12,7 @@ const atomicity = (group) => {
 
   const { Factory } = require(MODULE)
 
-  return new Factory().partition(group)
+  return new Factory().atom(group)
 }
 
 const VARIABLE = 'TOA_ATOMICITY_REDIS'
