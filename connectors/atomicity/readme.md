@@ -41,10 +41,7 @@ atomicity: redis://redis.example.com    # a string, or a list of cluster nodes
 ```
 
 `TOA_ATOMICITY_REDIS` at runtime, space-separated for a list. One client per process, shared by
-every atom in it.
-
-Redis being down is not an error here. Connecting is not awaited, so it cannot fail a start, and
-while it is unreachable nothing is owned and callers stand down. It is picked up again on its own.
+every atom in it, and an unreachable Redis does not fail a start.
 
 ## Diagnostics
 
