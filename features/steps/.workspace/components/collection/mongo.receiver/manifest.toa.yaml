@@ -4,8 +4,14 @@ namespace: mongo
 entity:
   associated: true
   schema:
-    count: 0
-    deleted: false
+    properties:
+      count:
+        type: number
+        default: 0
+      deleted:
+        type: boolean
+        default: false
+    type: object
 
 operations:
   increment:

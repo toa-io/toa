@@ -3,11 +3,18 @@ name: audit
 operations:
   record:
     input:
-      id: string
-      title: string
-      volume: number
-      price: number
-    output: undefined
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        volume:
+          type: number
+        price:
+          type: number
+      type: object
+    output:
+      {}
 
 receivers:
   orders.created: record

@@ -2,7 +2,9 @@ name: sequences
 
 operations:
   numbers:
-    input: 5
+    input:
+      type: number
+      default: 5
 
 exposition:
   /tokens:

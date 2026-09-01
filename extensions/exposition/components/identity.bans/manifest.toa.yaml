@@ -3,19 +3,38 @@ name: bans
 
 entity:
   schema:
-    banned*: false
-    originator*: string
-    comment: string
+    properties:
+      comment:
+        type: string
+      banned:
+        type: boolean
+        default: false
+      originator:
+        type: string
+    type: object
+    required:
+      - banned
+      - originator
   associated: true
 
 operations:
   transit:
     concurrency: retry
     input:
-      banned*: boolean
-      originator*:
-        id: string
-      comment: string
+      properties:
+        comment:
+          type: string
+        banned:
+          type: boolean
+        originator:
+          properties:
+            id:
+              type: string
+          type: object
+      type: object
+      required:
+        - banned
+        - originator
 
 exposition:
   isolated: true

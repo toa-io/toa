@@ -4,8 +4,8 @@ import type { Manifest } from '@toa.io/norm'
 /**
  * Turns a normalized component manifest into the node of the map.
  *
- * Everything here is already expanded by norm: concise schemas are resolved and
- * the prototype chain is collapsed, so this is the shape the runtime actually runs.
+ * Everything here is already normalized by norm: the prototype chain is collapsed,
+ * so this is the shape the runtime actually runs.
  */
 export function describe (manifest: Manifest): Node {
   return {

@@ -4,15 +4,25 @@ namespace: external
 entity:
   storage: sql
   schema:
-    time: integer
-    description: string
+    properties:
+      time:
+        type: integer
+      description:
+        type: string
+    type: object
 
 operations:
   transit:
     concurrency: none
     input:
-      time: .
-      description: .
+      properties:
+        time:
+          type: string
+          default: .
+        description:
+          type: string
+          default: .
+      type: object
     query: false
 
 receivers:

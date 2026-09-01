@@ -11,8 +11,12 @@ namespace: dummies
 
 configuration:
   schema:
-    foo: string
-    bar: number
+    type: object
+    properties:
+      foo:
+        type: string
+      bar:
+        type: number
   defaults:
     foo: bar
     bar: 1
@@ -60,7 +64,7 @@ containing `schema` and optionnaly `defaults` properties.
 
 ### Schema
 
-Configuration schema is declared with [COS](/libraries/concise).
+Configuration schema is declared with [JSONSchema](https://json-schema.org).
 
 ```yaml
 # manifest.toa.yaml
@@ -85,8 +89,12 @@ name: dummy
 namespace: dummies
 
 configuration:
-  foo: string
-  bar: number
+  type: object
+  properties:
+    foo:
+      type: string
+    bar:
+      type: number
 ```
 
 ### Defaults
@@ -101,24 +109,13 @@ namespace: dummies
 
 configuration:
   schema:
-    foo: string
-    bar: number
+    type: object
+    properties:
+      foo:
+        type: string
+      bar:
+        type: number
   defaults:
-    foo: hello
-    bar: 0
-```
-
-#### Schema defaults hint
-
-The configuration schema itself can contain default primitive values using the COS syntax.
-
-```yaml
-# manifest.toa.yaml
-name: dummy
-namespace: dummies
-
-configuration:
-  schema:
     foo: hello
     bar: 0
 ```

@@ -8,5 +8,9 @@ introspection:
 operations:
   ping:
     input:
-      a: number
-    output: number
+      properties:
+        a:
+          type: number
+      type: object
+    output:
+      type: number

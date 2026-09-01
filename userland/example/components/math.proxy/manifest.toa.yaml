@@ -4,6 +4,11 @@ namespace: math
 operations:
   add:
     input:
-      a: number
-      b: number
-    output: number
+      properties:
+        a:
+          type: number
+        b:
+          type: number
+      type: object
+    output:
+      type: number

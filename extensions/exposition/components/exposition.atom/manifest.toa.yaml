@@ -15,5 +15,7 @@ operations:
           type: array
           items:
             type: number
-      required: [keys, deltas]
+      required:
+        - keys
+        - deltas
       additionalProperties: false

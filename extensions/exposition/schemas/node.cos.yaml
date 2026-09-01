@@ -1,7 +1,22 @@
-protected: boolean
-isolated: boolean
-forward: string
-routes: [ref:route]
-methods: [ref:method]
-directives: [ref:directive]
-version: string
+properties:
+  protected:
+    type: boolean
+  isolated:
+    type: boolean
+  forward:
+    type: string
+  routes:
+    type: array
+    items:
+      $ref: route
+  methods:
+    type: array
+    items:
+      $ref: method
+  directives:
+    type: array
+    items:
+      $ref: directive
+  version:
+    type: string
+type: object

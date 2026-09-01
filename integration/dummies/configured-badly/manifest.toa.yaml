@@ -4,10 +4,13 @@ name: configured
 entity:
   storage: ~
   schema:
-    foo:
-      type: string
-      default: 0
-    bar: string
+    properties:
+      foo:
+        type: string
+        default: 0
+      bar:
+        type: string
+    type: object
 
 configuration:
   type: not-a-type

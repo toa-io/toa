@@ -1,1 +1,4 @@
-<object>
+type: object
+patternProperties:
+  ^.+$:
+    type: object

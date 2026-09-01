@@ -7,6 +7,7 @@ entity:
       balance:
         type: integer
         default: 10
+    type: object
   associated: true
 
 operations:
@@ -14,32 +15,51 @@ operations:
     concurrency: none
     input:
       properties:
-        balance: .
+        balance:
+          type: string
+          default: .
+      type: object
   deduce:
     concurrency: none
-    input: integer
-    output: integer
+    input:
+      type: integer
+    output:
+      type: integer
     query: true
   debit:
     concurrency: retry
-    input: integer
-    output: integer
+    input:
+      type: integer
+    output:
+      type: integer
     query: true
   transfer:
     concurrency: none
-    input: id   # source balance
-    output: integer
+    input:
+      type: string
+      default: id
+    output:
+      type: integer
     query: true # target balance
   nullify:
     concurrency: retry
-    output: integer
+    output:
+      type: integer
   set:
     input:
-      balance: .
+      properties:
+        balance:
+          type: string
+          default: .
+      type: object
     forward: assign
   add:
     input:
-      balance: .
+      properties:
+        balance:
+          type: string
+          default: .
+      type: object
     query: false
     forward: transit
 

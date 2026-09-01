@@ -8,11 +8,21 @@ entity:
       a:
         type: integer
         default: 10
-      b: string
-    required: [a, b]
+      b:
+        type: string
+    required:
+      - a
+      - b
+    type: object
 
 operations:
   assign:
     input:
-      a: .
-      b: .
+      properties:
+        a:
+          type: string
+          default: .
+        b:
+          type: string
+          default: .
+      type: object

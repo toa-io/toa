@@ -4,14 +4,23 @@ namespace: dummies
 entity:
   storage: ~
   schema:
-    foo:
-      type: integer
-      default: 0
-    bar: string
+    properties:
+      foo:
+        type: integer
+        default: 0
+      bar:
+        type: string
+    type: object
 
 operations:
   transit:
     concurrency: retry
     input:
-      foo: .
-      bar: .
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+      type: object

@@ -1,21 +1,31 @@
 # context.toa.yaml introspection annotation
-samples: boolean
-interval:
-  type: integer
-  minimum: 1
-threshold:
-  type: integer
-  minimum: 1
-ui: boolean
-resources:
-  # `null` deploys the service without any, which every deployment has to state one way
-  # or the other — see `migrations/263.md`.
-  type: object
-  nullable: true
-  properties:
-    cpu: &constraint
-      type: array
-      items: { type: string }
-      minItems: 2
-      maxItems: 2
-    memory: *constraint
+properties:
+  samples:
+    type: boolean
+  interval:
+    type: integer
+    minimum: 1
+  threshold:
+    type: integer
+    minimum: 1
+  ui:
+    type: boolean
+  resources:
+    # `null` deploys the service without any, which every deployment has to state one way
+    # or the other — see `migrations/263.md`.
+    type: object
+    nullable: true
+    properties:
+      cpu:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+      memory:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+type: object

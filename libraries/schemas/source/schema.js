@@ -1,6 +1,5 @@
 'use strict'
 
-const { expand } = require('@toa.io/concise')
 const { defined } = require('@toa.io/generic')
 const { statSync } = require('node:fs')
 const yaml = require('@toa.io/yaml')
@@ -118,7 +117,7 @@ const schema = (cos, options) => {
   if (typeof cos === 'string' && isFile(cos))
     cos = yaml.load.sync(cos)
 
-  const schema = expand(cos, is)
+  const schema = cos
   const validate = create(schema, options)
 
   let compileOptional

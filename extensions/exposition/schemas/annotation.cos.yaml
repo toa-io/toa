@@ -1,17 +1,37 @@
-authorities*: <string>
-class: string
-resources:
-  # `null` deploys the service without any, which every deployment has to state one way
-  # or the other — see `migrations/263.md`.
-  type: object
-  nullable: true
-  properties:
-    cpu: &constraint
-      type: array
-      items: { type: string }
-      minItems: 2
-      maxItems: 2
-    memory: *constraint
-annotations: <string>
-debug: boolean
-/: ~
+properties:
+  class:
+    type: string
+  resources:
+    # `null` deploys the service without any, which every deployment has to state one way
+    # or the other — see `migrations/263.md`.
+    type: object
+    nullable: true
+    properties:
+      cpu:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+      memory:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+  annotations:
+    type: object
+    patternProperties:
+      ^.+$:
+        type: string
+  debug:
+    type: boolean
+  /: {}
+  authorities:
+    type: object
+    patternProperties:
+      ^.+$:
+        type: string
+type: object
+required:
+  - authorities

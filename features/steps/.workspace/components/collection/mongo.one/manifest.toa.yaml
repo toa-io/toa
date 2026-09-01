@@ -4,23 +4,43 @@ namespace: mongo
 entity:
   storage: mongodb
   schema:
-    foo:
-      type: integer
-      default: 0
-    bar: string
-    baz: boolean
+    properties:
+      foo:
+        type: integer
+        default: 0
+      bar:
+        type: string
+      baz:
+        type: boolean
+    type: object
 
 operations:
   transit:
     concurrency: retry
     input:
-      foo: .
-      bar: .
-      baz: .
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+        baz:
+          type: string
+          default: .
+      type: object
   assign:
     input:
-      foo: .
-      bar: .
-      baz: .
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+        baz:
+          type: string
+          default: .
+      type: object
   nothing:
     concurrency: retry

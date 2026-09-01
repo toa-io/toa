@@ -12,7 +12,7 @@ properties:
     type: string
   eager:
     type: array
-    items: &transformation
+    items:
       type: object
   transformations:
     type: array
@@ -23,9 +23,10 @@ properties:
           type: string
         transformation:
           anyOf:
-            - *transformation
+            - type: object
             - type: array
-              items: *transformation
+              items:
+                type: object
         optional:
           type: boolean
       required:

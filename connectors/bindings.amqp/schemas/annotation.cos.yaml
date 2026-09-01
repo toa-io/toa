@@ -1,2 +1,14 @@
-context*: <string>
-sources: <string>
+properties:
+  sources:
+    type: object
+    patternProperties:
+      ^.+$:
+        type: string
+  context:
+    type: object
+    patternProperties:
+      ^.+$:
+        type: string
+type: object
+required:
+  - context

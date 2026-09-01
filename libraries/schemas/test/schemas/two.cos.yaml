@@ -1,3 +1,8 @@
-bar: string
-foo: ref:one#/foo
-baz: ref:nested/and.three#/qux
+properties:
+  bar:
+    type: string
+  foo:
+    $ref: one#/properties/foo
+  baz:
+    $ref: nested/and.three#/properties/qux
+type: object

@@ -1,3 +1,14 @@
-.: [uri]
-/^[a-zA-Z0-9]{1,32}(\.[a-zA-Z0-9]{1,32}){0,3}$/: [uri]
-...: false
+properties:
+  .:
+    type: array
+    items:
+      type: string
+      format: uri
+additionalProperties: false
+type: object
+patternProperties:
+  ^[a-zA-Z0-9]{1,32}(\.[a-zA-Z0-9]{1,32}){0,3}$:
+    type: array
+    items:
+      type: string
+      format: uri

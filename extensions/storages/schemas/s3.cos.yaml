@@ -13,5 +13,7 @@ properties:
   endpoint:
     type: string
     format: uri
-required: [provider, bucket]
+required:
+  - provider
+  - bucket
 additionalProperties: false

@@ -8,7 +8,12 @@ let manifest: Manifest
 
 beforeEach(() => {
   locator = new Locator(generate(), generate())
-  manifest = { schema: { foo: 'string' } }
+  manifest = {
+    schema: {
+      type: 'object',
+      properties: { foo: { type: 'string' } }
+    }
+  }
 })
 
 afterEach(() => {
@@ -19,7 +24,10 @@ afterEach(() => {
 })
 
 it('should read value', async () => {
-  manifest.schema = { foo: 'string' }
+  manifest.schema = {
+    type: 'object',
+    properties: { foo: { type: 'string' } }
+  }
 
   const value: object = { foo: generate() }
 
@@ -46,7 +54,15 @@ it('should substitute secrets', async () => {
 })
 
 it('should use defaults', async () => {
-  manifest.schema = { foo: 'string', bar: ['number'], 'baz?': 'string' }
+  manifest.schema = {
+    type: 'object',
+    properties: {
+      foo: { type: 'string' },
+      bar: { type: 'array', items: { type: 'number' } },
+      baz: { type: 'string' }
+    },
+    required: ['foo', 'bar']
+  }
   manifest.defaults = { foo: 'bar', bar: [1] }
 
   const values = { bar: [2], baz: 'foo' }
@@ -63,7 +79,13 @@ it('should use defaults', async () => {
 })
 
 it('should validate', async () => {
-  manifest.schema = { foo: 'hello', bar: 'number' }
+  manifest.schema = {
+    type: 'object',
+    properties: {
+      foo: { type: 'string', default: 'hello' },
+      bar: { type: 'number' }
+    }
+  }
 
   const values = { bar: 5 }
 

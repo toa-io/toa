@@ -5,7 +5,6 @@ const fs = require('fs-extra')
 const { createHash } = require('node:crypto')
 
 const { Image } = require('./image')
-const { undef } = require('@toa.io/concise/source/expressions/undefined')
 
 class Composition extends Image {
   dockerfile = join(__dirname, 'composition.Dockerfile')

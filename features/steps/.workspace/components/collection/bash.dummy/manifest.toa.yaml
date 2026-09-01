@@ -6,5 +6,10 @@ bridge: bash
 operations:
   echo:
     input:
-      code: 0
-      message: string
+      properties:
+        code:
+          type: number
+          default: 0
+        message:
+          type: string
+      type: object

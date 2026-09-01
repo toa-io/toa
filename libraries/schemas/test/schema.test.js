@@ -18,14 +18,14 @@ it('should expose schema id', async () => {
 
 describe('fit', () => {
   it('should fit', () => {
-    const schema = schemas.schema('integer')
+    const schema = schemas.schema({ type: 'integer' })
     const error = schema.fit(5)
 
     expect(error).toStrictEqual(null)
   })
 
   it('should return error', async () => {
-    const schema = schemas.schema('integer')
+    const schema = schemas.schema({ type: 'integer' })
     const error = schema.fit({ not: 'ok' })
 
     expect(error).not.toStrictEqual(null)
@@ -34,7 +34,10 @@ describe('fit', () => {
 
   it('should set defaults', () => {
     const def = generate()
-    const schema = schemas.schema({ foo: def })
+    const schema = schemas.schema({
+      type: 'object',
+      properties: { foo: { type: 'string', default: def } }
+    })
     const value = {}
 
     schema.fit(value)
@@ -43,7 +46,11 @@ describe('fit', () => {
   })
 
   it('should coerce types', async () => {
-    const schema = schemas.schema({ foo: 'string' })
+    const schema = schemas.schema({
+      type: 'object',
+      properties: { foo: { type: 'string' } }
+    })
+
     const value = { foo: 1 }
 
     schema.fit(value)
@@ -85,7 +92,11 @@ describe('validate', () => {
   it('should throw Exception', async () => {
     expect.assertions(1)
 
-    const schema = schemas.schema({ foo: 'string' })
+    const schema = schemas.schema({
+      type: 'object',
+      properties: { foo: { type: 'string' } }
+    })
+
     const value = { foo: { not: 'ok' } }
 
     try {

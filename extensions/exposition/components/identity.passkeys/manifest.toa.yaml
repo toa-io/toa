@@ -28,7 +28,7 @@ entity:
         type: array
         items:
           type: string
-      label: &label
+      label:
         type: string
         minLength: 1
         maxLength: 64
@@ -57,7 +57,9 @@ operations:
       properties:
         type:
           type: string
-          enum: [creation, request]
+          enum:
+            - creation
+            - request
         authority:
           type: string
         identity:
@@ -76,7 +78,10 @@ operations:
           type: string
         identity:
           type: string
-        label: *label
+        label:
+          type: string
+          minLength: 1
+          maxLength: 64
         id:
           type: string
         type:
@@ -128,7 +133,7 @@ operations:
     query: true
     input:
       type: object
-      properties: &use.input
+      properties:
         origin:
           type: string
         id:
@@ -160,7 +165,27 @@ operations:
       properties:
         authority:
           type: string
-        <<: *use.input
+        origin:
+          type: string
+        id:
+          type: string
+        type:
+          type: string
+        response:
+          type: object
+          properties:
+            authenticatorData:
+              type: string
+            clientDataJSON:
+              type: string
+            signature:
+              type: string
+            userHandle:
+              type: string
+        authenticatorAttachment:
+          type: string
+        clientExtensionResults:
+          type: object
       required:
         - authority
         - origin
@@ -256,21 +281,26 @@ configuration:
         type: array
         items:
           type: number
-        default: [-7, -257]
+        default:
+          - -7
+          - -257
       timeout:
         type: integer
         default: 60000
       verification:
         description: AuthenticatorSelectionCriteria.userVerification
         type: string
-        enum: &requirement
+        enum:
           - required
           - preferred
           - discouraged
       residence:
         description: AuthenticatorSelectionCriteria.residentKey
         type: string
-        enum: *requirement
+        enum:
+          - required
+          - preferred
+          - discouraged
         default: required
 
 stash: ~

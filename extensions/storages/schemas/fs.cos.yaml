@@ -7,5 +7,7 @@ properties:
     maxLength: 4096
   claim:
     type: string
-required: [provider, path]
+required:
+  - provider
+  - path
 additionalProperties: false

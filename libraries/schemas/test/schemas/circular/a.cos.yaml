@@ -1,3 +1,9 @@
-foo:
-  b: ref:b
-  value: number
+properties:
+  foo:
+    properties:
+      b:
+        $ref: b
+      value:
+        type: number
+    type: object
+type: object

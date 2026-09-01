@@ -3,20 +3,33 @@ namespace: echo
 
 operations:
   echo:
-    input: string
-    output: string
+    input:
+      type: string
+    output:
+      type: string
   reflect:
     input:
-      id: string
-      ...: true
-    output: object
+      properties:
+        id:
+          type: string
+      additionalProperties: true
+      type: object
+    output:
+      type: object
   print:
-    input: string
-    output: string
+    input:
+      type: string
+    output:
+      type: string
   def:
     forward: echo
-    input: ok
-    output: string
+    input:
+      type: string
+      default: ok
+    output:
+      type: string
   throw:
-    input: string
-    output: undefined
+    input:
+      type: string
+    output:
+      {}

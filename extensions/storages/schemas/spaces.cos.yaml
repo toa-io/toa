@@ -9,5 +9,8 @@ properties:
   region:
     type: string
     minLength: 1
-required: [provider, space, region]
+required:
+  - provider
+  - space
+  - region
 additionalProperties: false

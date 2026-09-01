@@ -1,12 +1,17 @@
 entity:
   storage: mongodb
   schema:
-    foo:
-      type: integer
-      default: 0
+    properties:
+      foo:
+        type: integer
+        default: 0
+    type: object
 
 operations:
   transit:
     concurrency: retry
     input:
-      inc: integer
+      properties:
+        inc:
+          type: integer
+      type: object

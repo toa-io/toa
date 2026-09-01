@@ -1,2 +1,15 @@
-workflow+: <string>
-_: true
+properties:
+  workflow:
+    oneOf:
+      - type: object
+        patternProperties:
+          ^.+$:
+            type: string
+      - type: array
+        items:
+          type: object
+          patternProperties:
+            ^.+$:
+              type: string
+nullable: true
+type: object

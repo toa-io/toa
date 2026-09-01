@@ -1,2 +1,10 @@
-value?: number
-range: [number]
+properties:
+  range:
+    type: array
+    items:
+      type: number
+  value:
+    type: number
+type: object
+required:
+  - range

@@ -2,17 +2,46 @@ name: messages
 
 entity:
   schema:
-    sender*: string(32)
-    recipient*: string(32)
-    text*: string
-    watchers: [string(32)]
+    properties:
+      watchers:
+        type: array
+        items:
+          type: string
+          maxLength: 32
+      sender:
+        type: string
+        maxLength: 32
+      recipient:
+        type: string
+        maxLength: 32
+      text:
+        type: string
+    type: object
+    required:
+      - sender
+      - recipient
+      - text
 
 operations:
   create:
     query: false
     forward: transit
     input:
-      sender*: .
-      recipient*: .
-      text*: .
-      watchers: .
+      properties:
+        watchers:
+          type: string
+          default: .
+        sender:
+          type: string
+          default: .
+        recipient:
+          type: string
+          default: .
+        text:
+          type: string
+          default: .
+      type: object
+      required:
+        - sender
+        - recipient
+        - text

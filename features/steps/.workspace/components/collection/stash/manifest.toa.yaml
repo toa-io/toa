@@ -2,14 +2,19 @@ name: stash
 
 operations:
   set:
-    input: string
+    input:
+      type: string
   get:
-    output: string
+    output:
+      type: string
   inc:
-    input: string
-    output: number
+    input:
+      type: string
+    output:
+      type: number
   del:
-    input: string
+    input:
+      type: string
   store:
     input:
       oneOf:

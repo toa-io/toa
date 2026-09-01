@@ -4,7 +4,6 @@ definitions:
     patternProperties:
       ^[a-zA-Z0-9_]+$:
         type: string
-
 oneOf:
   - $ref: '#/definitions/unit'
   - type: array

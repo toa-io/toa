@@ -1,14 +1,31 @@
-id?: string
-criteria?: string
-sort?: string
-search?: boolean
-sample?: integer
-omit?:
-  $ref: range
-limit?:
-  $ref: range
-selectors?: [string]
-projection?: [string]
-parameters?: [string]
-deleted?: boolean
-_: true
+properties:
+  id:
+    type: string
+  criteria:
+    type: string
+  sort:
+    type: string
+  search:
+    type: boolean
+  sample:
+    type: integer
+  omit:
+    $ref: range
+  limit:
+    $ref: range
+  selectors:
+    type: array
+    items:
+      type: string
+  projection:
+    type: array
+    items:
+      type: string
+  parameters:
+    type: array
+    items:
+      type: string
+  deleted:
+    type: boolean
+nullable: true
+type: object

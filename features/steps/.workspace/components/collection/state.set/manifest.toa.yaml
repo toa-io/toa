@@ -3,8 +3,14 @@ namespace: state
 
 operations:
   set:
-    input: [number]
+    input:
+      type: array
+      items:
+        type: number
   get:
-    output: [number]
+    output:
+      type: array
+      items:
+        type: number
 
 state: ~

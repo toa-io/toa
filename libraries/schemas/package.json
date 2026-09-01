@@ -24,7 +24,6 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/concise": "1.0.0-alpha.254",
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/yaml": "1.0.0-alpha.254",
     "ajv": "8.18.0",

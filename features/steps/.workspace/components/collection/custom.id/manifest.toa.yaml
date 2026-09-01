@@ -3,12 +3,21 @@ name: id
 
 entity:
   schema:
-    id: number
-    value: hello
+    properties:
+      id:
+        type: number
+      value:
+        type: string
+        default: hello
+    type: object
   associated: true
 
 operations:
   transit:
     concurrency: retry
     input:
-      value: .
+      properties:
+        value:
+          type: string
+          default: .
+      type: object

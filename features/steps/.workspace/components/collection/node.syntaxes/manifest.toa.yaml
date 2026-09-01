@@ -7,37 +7,52 @@ entity:
 operations:
   transitionFunction:
     concurrency: none
-    output: string
+    output:
+      type: string
   transitionClass:
     concurrency: none
-    output: string
+    output:
+      type: string
   transitionFactory:
     concurrency: none
-    output: string
+    output:
+      type: string
   observationFunction:
-    output: string
+    output:
+      type: string
   observationClass:
-    output: string
+    output:
+      type: string
   observationFactory:
-    output: string
+    output:
+      type: string
   assignmentFunction:
-    output: string
+    output:
+      type: string
   assignmentClass:
-    output: string
+    output:
+      type: string
   assignmentFactory:
-    output: string
+    output:
+      type: string
   computationFunction:
-    output: string
+    output:
+      type: string
   computationClass:
-    output: string
+    output:
+      type: string
   computationFactory:
-    output: string
+    output:
+      type: string
   effectFunction:
-    output: string
+    output:
+      type: string
   effectClass:
-    output: string
+    output:
+      type: string
   effectFactory:
-    output: string
+    output:
+      type: string
 
 configuration:
   schema:

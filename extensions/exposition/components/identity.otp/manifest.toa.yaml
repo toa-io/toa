@@ -4,15 +4,23 @@ name: otp
 entity:
   schema:
     definitions:
-      id: &id
+      id:
         type: string
         pattern: ^[0-9a-f]{32}$
     type: object
-    properties: &properties
-      authority: { type: string }
-      username: { type: string, minLength: 1, maxLength: 256 }
-      identity: *id
-    required: [authority, username]
+    properties:
+      authority:
+        type: string
+      username:
+        type: string
+        minLength: 1
+        maxLength: 256
+      identity:
+        type: string
+        pattern: ^[0-9a-f]{32}$
+    required:
+      - authority
+      - username
   index:
     username:
       authority: asc
@@ -22,25 +30,43 @@ operations:
   issue:
     input:
       properties:
-        <<: *properties
-        identity: *id
-        lifetime: &lifetime
+        authority:
+          type: string
+        username:
+          type: string
+          minLength: 1
+          maxLength: 256
+        identity:
+          type: string
+          pattern: ^[0-9a-f]{32}$
+        lifetime:
           description: OTP expiration time in seconds
           type: number
           minimum: 1
           maximum: 3600
-      required: [authority, username]
+      required:
+        - authority
+        - username
+      type: object
   authenticate:
     input:
       properties:
-        authority: { type: string }
-        credentials: { type: string }
-      required: [authority, credentials]
+        authority:
+          type: string
+        credentials:
+          type: string
+      required:
+        - authority
+        - credentials
+      type: object
     output:
       properties:
         identity:
           properties:
-            id: { type: string }
+            id:
+              type: string
+          type: object
+      type: object
     errors:
       - INVALID_CREDENTIALS
       - EXPIRED
@@ -51,8 +77,11 @@ configuration:
     properties:
       lifetime:
         description: OTP expiration time in seconds
-        <<: *lifetime
+        type: number
+        minimum: 1
+        maximum: 3600
         default: 300
+    type: object
 
 stash: ~
 

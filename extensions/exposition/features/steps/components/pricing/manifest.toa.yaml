@@ -3,5 +3,11 @@ name: pricing
 operations:
   quote:
     input:
-      volume*: number
-    output: number
+      properties:
+        volume:
+          type: number
+      type: object
+      required:
+        - volume
+    output:
+      type: number

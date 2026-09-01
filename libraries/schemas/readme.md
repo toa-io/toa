@@ -1,11 +1,10 @@
 # Toa Schema Validator
 
-Takes your [COS](/libraries/concise), transforms it to JSONSchema and feeds it
-to [Ajv](https://ajv.js.org).
+Feeds your JSONSchema to [Ajv](https://ajv.js.org).
 
 *Also, slightly transforms validation error objects for no obvious reason.*
 
-## schema(schema: cos): Schema
+## schema(schema: object): Schema
 
 Factory for [Schema class](./types/schema.d.ts).
 
@@ -17,7 +16,7 @@ Returns [error](./types/schema.d.ts) if given value doesn't match the schema, `n
 
 Loads schema from a file.
 
-## namespace(schemas: cos[]): Namespace
+## namespace(schemas: object[]): Namespace
 
 Factory for [Namespace class](./types/namespace.d.ts).
 

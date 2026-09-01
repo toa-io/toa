@@ -5,22 +5,36 @@ entity:
   associated: true
   storage: null
   schema:
-    value:
-      type: integer
-      default: 0
-    secret: string
+    properties:
+      value:
+        type: integer
+        default: 0
+      secret:
+        type: string
+    type: object
 
 operations:
   transit:
     concurrency: retry
     input:
-      value: .
-      secret: .
+      properties:
+        value:
+          type: string
+          default: .
+        secret:
+          type: string
+          default: .
+      type: object
   relay:
     input:
-      a: number
-      b: number
-    output: number
+      properties:
+        a:
+          type: number
+        b:
+          type: number
+      type: object
+    output:
+      type: number
   crash: {}
   fail:
     errors:

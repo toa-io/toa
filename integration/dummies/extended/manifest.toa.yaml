@@ -4,7 +4,10 @@ name: extended
 entity:
   storage: ~
   schema:
-    foo: string
+    properties:
+      foo:
+        type: string
+    type: object
 
 extensions:
   ./extension: ok

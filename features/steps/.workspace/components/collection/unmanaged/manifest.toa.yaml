@@ -2,7 +2,9 @@ name: unmanaged
 
 entity:
   schema:
-    name:
-      type: string
-    value:
-      type: string
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    type: object

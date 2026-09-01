@@ -3,24 +3,48 @@ name: echo
 operations:
   compute:
     input:
-      name*: string
+      properties:
+        name:
+          type: string
+      type: object
+      required:
+        - name
   affect:
     input:
-      name*: string
+      properties:
+        name:
+          type: string
+      type: object
+      required:
+        - name
   identity:
     input:
-      identity:
-        id: string
-        roles: [string]
+      properties:
+        identity:
+          properties:
+            id:
+              type: string
+            roles:
+              type: array
+              items:
+                type: string
+          type: object
+      type: object
   parameters:
-    input: &parameters
+    input:
       type: object
       properties:
         a:
           type: string
         b:
           type: string
-    output: *parameters
+    output:
+      type: object
+      properties:
+        a:
+          type: string
+        b:
+          type: string
   echo:
     input:
       type: object
@@ -28,4 +52,5 @@ operations:
     input:
       type: object
       properties:
-        buf: string
+        buf:
+          type: string

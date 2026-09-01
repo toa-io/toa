@@ -8,24 +8,33 @@ it('should be', async () => {
   expect(schemas.namespace).toBeDefined()
 })
 
-it('should expand COS', async () => {
-  const cos = {
-    $id: 'foo', bar: 'string', baz: 'number'
+it('should build a namespace', async () => {
+  const declaration = {
+    $id: 'foo',
+    type: 'object',
+    properties: { bar: { type: 'string' }, baz: { type: 'number' } }
   }
 
-  const namespace = schemas.namespace([cos])
-  const schema = namespace.schema(cos.$id)
+  const namespace = schemas.namespace([declaration])
+  const schema = namespace.schema(declaration.$id)
 
   expect(schema.fit({ baz: 5 })).toStrictEqual(null)
 })
 
 it('should resolve references', async () => {
   const foo = {
-    $id: generate(), foo: 'string'
+    $id: generate(),
+    type: 'object',
+    properties: { foo: { type: 'string' } }
   }
 
   const bar = {
-    $id: generate(), bar: { $ref: foo.$id }, baz: { $ref: foo.$id + '#/properties/foo' }
+    $id: generate(),
+    type: 'object',
+    properties: {
+      bar: { $ref: foo.$id },
+      baz: { $ref: foo.$id + '#/properties/foo' }
+    }
   }
 
   const namespace = schemas.namespace([foo, bar])

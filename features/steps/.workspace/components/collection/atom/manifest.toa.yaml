@@ -3,21 +3,58 @@ name: atom
 operations:
   slots:
     input:
-      total*: number
-    output: [number]
+      properties:
+        total:
+          type: number
+      type: object
+      required:
+        - total
+    output:
+      type: array
+      items:
+        type: number
   locks:
     input:
-      delay: 0
-    output: [number]
+      properties:
+        delay:
+          type: number
+          default: 0
+      type: object
+    output:
+      type: array
+      items:
+        type: number
   plus:
     input:
-      delay: 0
-      key*: string
-    output: number
+      properties:
+        delay:
+          type: number
+          default: 0
+        key:
+          type: string
+      type: object
+      required:
+        - key
+    output:
+      type: number
   meter:
     input:
-      name*: string
-      delta*: number
+      properties:
+        name:
+          type: string
+        delta:
+          type: number
+      type: object
+      required:
+        - name
+        - delta
     output:
-      debt*: number
-      adds*: boolean
+      properties:
+        debt:
+          type: number
+        adds:
+          type: boolean
+      type: object
+      required:
+        - debt
+        - adds

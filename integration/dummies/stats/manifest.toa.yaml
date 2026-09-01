@@ -4,20 +4,29 @@ name: stats
 entity:
   associated: true
   schema:
-    messages:
-      type: integer
-      default: 0
-    bankrupt: boolean
+    properties:
+      messages:
+        type: integer
+        default: 0
+      bankrupt:
+        type: boolean
+    type: object
 
 operations:
   observe:
-    output: undefined
+    output:
+      {}
   update:
     concurrency: retry
     input:
-      messages: boolean
-      bankrupt: boolean
-    output: undefined
+      properties:
+        messages:
+          type: boolean
+        bankrupt:
+          type: boolean
+      type: object
+    output:
+      {}
 
 receivers:
   messages.created: update

@@ -3,18 +3,28 @@ name: telemetry
 operations:
   trace:
     input:
-      value: number
-    output: number
+      properties:
+        value:
+          type: number
+      type: object
+    output:
+      type: number
   log:
     input:
       type: object
       properties:
         level:
           type: string
-          enum: [debug, info, warn, error]
+          enum:
+            - debug
+            - info
+            - warn
+            - error
         message:
           type: string
         attributes:
           type: object
           additionalProperties: true
-      required: [level, message]
+      required:
+        - level
+        - message

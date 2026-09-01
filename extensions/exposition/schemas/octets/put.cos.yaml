@@ -18,11 +18,14 @@ properties:
       type: string
   workflow:
     anyOf:
-      - &unit
-        type: object
+      - type: object
         patternProperties:
           ^.+$:
             type: string
       - type: array
-        items: *unit
+        items:
+          type: object
+          patternProperties:
+            ^.+$:
+              type: string
 additionalProperties: false

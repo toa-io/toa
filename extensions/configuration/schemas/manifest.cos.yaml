@@ -1,3 +1,9 @@
-schema: object
-defaults?: object
-...: false
+properties:
+  schema:
+    type: object
+  defaults:
+    type: object
+additionalProperties: false
+type: object
+required:
+  - schema

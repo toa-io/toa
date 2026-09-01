@@ -1,3 +1,7 @@
-family: string
-name: string
-value: ~
+properties:
+  family:
+    type: string
+  name:
+    type: string
+  value: {}
+type: object

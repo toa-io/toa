@@ -4,20 +4,21 @@ name: keys
 entity:
   schema:
     properties:
-      identity: &identity
+      identity:
         type: string
       key:
         type: string
-      label: &label
+      label:
         type: string
         minLength: 1
         maxLength: 64
-      expires: &expires
+      expires:
         type: number
     required:
       - identity
       - key
       - label
+    type: object
   index:
     identity:
       identity: asc
@@ -27,12 +28,18 @@ operations:
     query: false
     input:
       properties:
-        identity: *identity
-        label: *label
-        expires: *expires
+        identity:
+          type: string
+        label:
+          type: string
+          minLength: 1
+          maxLength: 64
+        expires:
+          type: number
       required:
         - identity
         - label
+      type: object
     output:
       properties:
         id:
@@ -42,6 +49,7 @@ operations:
       required:
         - id
         - key
+      type: object
 
 exposition:
   /:identity:

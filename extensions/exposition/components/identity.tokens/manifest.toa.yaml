@@ -3,55 +3,102 @@ name: tokens
 
 entity:
   schema:
-    revokedAt: integer # timestamp
+    properties:
+      revokedAt:
+        type: integer
+    type: object
   associated: true
 
 operations:
   encrypt:
     input:
-      authority*: string
-      identity*: &identity
-        id: string
-        ...: true
-      lifetime: &lifetime
-        type: number
-        minimum: 0
-      scopes: [string]
-      permissions:
-        ~: [string]
-      key:
-        type: object
-        properties:
-          id:
+      properties:
+        lifetime:
+          type: number
+          minimum: 0
+        scopes:
+          type: array
+          items:
             type: string
-          key:
-            type: string
-        required:
-          - id
-          - key
+        permissions:
+          type: object
+          patternProperties:
+            ^.*$:
+              type: array
+              items:
+                type: string
+        key:
+          type: object
+          properties:
+            id:
+              type: string
+            key:
+              type: string
+          required:
+            - id
+            - key
+        authority:
+          type: string
+        identity:
+          properties:
+            id:
+              type: string
+          additionalProperties: true
+          type: object
+      type: object
+      required:
+        - authority
+        - identity
     output:
       type: string
     errors:
       - ERR_INACCESSIBLE_SCOPE
   decrypt:
-    input: string
+    input:
+      type: string
     output:
-      authority: string
-      identity: *identity
-      iat: string
-      exp: string
-      refresh: boolean
+      properties:
+        authority:
+          type: string
+        identity:
+          properties:
+            id:
+              type: string
+          additionalProperties: true
+          type: object
+        iat:
+          type: string
+        exp:
+          type: string
+        refresh:
+          type: boolean
+      type: object
     errors:
       - INVALID_TOKEN
       - INVALID_KEY
       - FORGED_KEY
   authenticate:
     input:
-      authority*: string
-      credentials*: string
+      properties:
+        authority:
+          type: string
+        credentials:
+          type: string
+      type: object
+      required:
+        - authority
+        - credentials
     output:
-      identity: *identity
-      refresh: boolean
+      properties:
+        identity:
+          properties:
+            id:
+              type: string
+          additionalProperties: true
+          type: object
+        refresh:
+          type: boolean
+      type: object
     errors:
       - AUTHORITY_MISMATCH
       - TOKEN_REVOKED
@@ -63,7 +110,9 @@ operations:
           type: string
         identity:
           type: string
-        lifetime: *lifetime
+        lifetime:
+          type: number
+          minimum: 0
         scopes:
           type: array
           items:
@@ -83,9 +132,14 @@ operations:
         - identity
         - label
     output:
-      kid: string
-      exp: number
-      token: string
+      properties:
+        kid:
+          type: string
+        exp:
+          type: number
+        token:
+          type: string
+      type: object
     errors:
       - ERR_INACCESSIBLE_SCOPE
   revoke:
@@ -105,7 +159,8 @@ configuration:
         contains:
           properties:
             format:
-              enum: [jwe]
+              enum:
+                - jwe
         items:
           type: object
           properties:
@@ -116,9 +171,13 @@ configuration:
               type: string
             format:
               type: string
-              enum: [jwe, paseto]
+              enum:
+                - jwe
+                - paseto
               default: jwe
-          required: [id, key]
+          required:
+            - id
+            - key
           additionalProperties: false
       lifetime:
         description: Token expiration time in seconds (default 30 days)
@@ -138,7 +197,8 @@ configuration:
             type: integer
             default: 600000
         default: {}
-    required: [keys]
+    required:
+      - keys
 
 exposition:
   /:identity:

@@ -3,14 +3,27 @@ namespace: transition
 
 entity:
   storage: ~
-  schema: &schema
+  schema:
     type: object
     properties:
-      a: { type: integer }
-      b: { type: integer }
-    required: [a, b]
+      a:
+        type: integer
+      b:
+        type: integer
+    required:
+      - a
+      - b
 
 operations:
   transit:
     concurrency: retry
-    input: *schema
+    input:
+      type: object
+      properties:
+        a:
+          type: integer
+        b:
+          type: integer
+      required:
+        - a
+        - b

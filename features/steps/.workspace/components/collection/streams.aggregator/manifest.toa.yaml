@@ -4,4 +4,7 @@ name: aggregator
 operations:
   sum:
     input:
-      limit: number
+      properties:
+        limit:
+          type: number
+      type: object

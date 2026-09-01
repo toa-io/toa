@@ -4,20 +4,43 @@ namespace: tea
 entity:
   storage: mongodb
   schema:
-    material*: [glass, ceramic, steel]
-    volume: number
-    booked: false
+    properties:
+      volume:
+        type: number
+      booked:
+        type: boolean
+        default: false
+      material:
+        type: string
+        enum:
+          - glass
+          - ceramic
+          - steel
+    type: object
+    required:
+      - material
 
 operations:
   transit:
     concurrency: none
     input:
-      material: .
-      volume: .
-      booked: .
+      properties:
+        material:
+          type: string
+          default: .
+        volume:
+          type: string
+          default: .
+        booked:
+          type: string
+          default: .
+      type: object
   same:
-    input: .material
-    output: array
+    input:
+      type: string
+      default: .material
+    output:
+      type: array
 
 receivers:
   store.orders.created:

@@ -3,11 +3,21 @@ name: indexed
 
 entity:
   schema:
-    name*: string
-    email*: string
-    birthday: number
-    weight: number
-    tag: string
+    properties:
+      birthday:
+        type: number
+      weight:
+        type: number
+      tag:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+    type: object
+    required:
+      - name
+      - email
   unique:
     email: [email]
     optional: [tag]
@@ -22,5 +32,9 @@ operations:
   transit:
     concurrency: retry
     input:
-      name: string
-      email: string
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+      type: object
