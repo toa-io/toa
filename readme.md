@@ -49,7 +49,7 @@ Non-scattered documentation is coming some time later.
   - [Throttling](/extensions/exposition/documentation/io.md#throttling): a distributed
     [GCRA](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm), with no per-request I/O
 - [Distributed lock manager](/extensions/stash/readme.md#distributed-lock-manager)
-- [Shared rate metering](/extensions/stash/readme.md#shared-rate-metering)
+- [Shared rate metering](/connectors/atomicity/readme.md#metering)
 - [Telemetry](/extensions/telemetry)
   - Structured logs
   - Distributed tracing

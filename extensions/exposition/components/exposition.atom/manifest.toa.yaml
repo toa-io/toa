@@ -1,7 +1,5 @@
 namespace: exposition
-name: stash
-
-stash: ~
+name: atom
 
 operations:
   meter:

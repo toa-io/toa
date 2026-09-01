@@ -39,29 +39,6 @@ async function computation (input, context) {
 }
 ```
 
-## Shared rate metering
-
-`async meter(keys: string[], deltas: number[]): number[]`
-
-Adds each delta to the debt on its key and answers what every process metering that key has reached
-between them. Debt is counted in milliseconds and drains at a millisecond a millisecond, so a key
-that is left alone returns to zero and expires on its own.
-
-```javascript
-async function computation (input, context) {
-  const [debt] = await context.stash.meter(['alice'], [1000])
-}
-```
-
-This is what a rate limiter needs and a counter cannot give it: debt is a duration, so processes
-reporting it need not agree on the time — the clock is Redis' own — and it is additive, so each
-process reports only its own increments, on its own schedule, and still reads back where the group
-stands. A whole batch is metered by one script, because a limiter watches as many keys as it has
-clients.
-
-`io:throttle` of the [Exposition](/extensions/exposition/documentation/io.md#throttling) is built on
-this.
-
 ## Manifest
 
 To enable extension for a component, add `null` definition to its manifest:

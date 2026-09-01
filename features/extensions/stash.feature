@@ -98,20 +98,3 @@ Feature: Stash extension
             - name: TOA_STASH_DEFAULT_STASH
               value: redis://redis.example.com
       """
-
-  # A key that did not exist owes exactly what is put on it, which is what makes the
-  # first number assertable; the second only has to be larger, because between two
-  # round trips the debt has drained by however long they took.
-  Scenario: Metering
-    Given I boot `stash` component
-    When I invoke `meter` with:
-      """yaml
-      input:
-        name: bursts
-        delta: 60000
-      """
-    Then the reply is received:
-      """yaml
-      debt: 60000
-      adds: true
-      """
