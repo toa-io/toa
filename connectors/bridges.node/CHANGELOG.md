@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.272](https://github.com/toa-io/toa/compare/v1.0.0-alpha.271...v1.0.0-alpha.272) (2026-09-01)
+
+
+* feat(atomicity)!: take a quorum of independent servers ([862562f](https://github.com/toa-io/toa/commit/862562f24d77ec00127dbbd88d43802b208c643b))
+* refactor(atomicity)!: take the lock manager from the stash ([4fd91eb](https://github.com/toa-io/toa/commit/4fd91eb2fdb68f7b87aaf16d182794bbc567ba57))
+* feat(openspan)!: make trace a log channel ([b107944](https://github.com/toa-io/toa/commit/b10794473ee442b28fa6b9b1c48ef9fc1d4471e5))
+
+
+### Features
+
+* **core:** give every component an atom aspect ([b501b9c](https://github.com/toa-io/toa/commit/b501b9cd3d5f5408d9faa71213e953fe2792cf9f))
+
+
+### BREAKING CHANGES
+
+* `atomicity.redis` accepts a list again, of independent servers rather
+than cluster nodes, and refuses an even number of them.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+* `context.stash.lock` is gone; lock through `context.atom` instead.
+A stash pointer resolving to several addresses now uses the first.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+* `Console.trace(span)` is gone. `trace` is a log channel taking
+`(message, attributes)`, and a span is written with `Console.entry` instead.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
+
+
+
+
 # [1.0.0-alpha.270](https://github.com/toa-io/toa/compare/v1.0.0-alpha.269...v1.0.0-alpha.270) (2026-08-31)
 
 
