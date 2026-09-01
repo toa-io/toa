@@ -84,8 +84,6 @@
     "lint:diff": "files=$(git diff --cached --name-only --diff-filter=d -- '*.ts'); [ -z \"$files\" ] || ESLINT_USE_FLAT_CONFIG=false eslint $files",
     "version:local": "lerna version --conventional-prerelease --preid local --no-commit-hooks --no-changelog --yes --no-git-tag-version && git commit -am 'chore: local bump' --no-verify",
     "publish:alpha": "npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message \"ci: %s\" --sign-git-commit",
-    "cluster": "chmod +x ./integration/scripts/cluster.sh && ./integration/scripts/cluster.sh",
-    "setup": "npm run setup:mongo && docker compose up -d && npm run cluster && npm run publish:local && npm ci && toa deploy ./integration/context",
     "setup:mongo": "openssl rand -base64 756 > ./.mongo-keyfile && chmod 400 ./.mongo-keyfile",
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",
     "transpile": "lerna run transpile",
