@@ -77,10 +77,17 @@ class Atom extends Connector {
 
     this.#abort?.abort()
 
-    await this.#discovering?.catch(() => undefined)
+    await this.#discovering
   }
 
-  /** @private */
+  /**
+   * Nothing is caught here on purpose. A registration that fails is handled inside n-and-i,
+   * which hands out the idle pair rather than raising, and an aborted signal ends the loop the
+   * way `break` does — so the only thing that can reach this is a fault in the call itself,
+   * and a fault deserves to be seen rather than turned into standing down.
+   *
+   * @private
+   */
   async #discover (redis) {
     const { discover } = await import('n-and-i')
 
@@ -92,23 +99,11 @@ class Atom extends Connector {
       console: this.#console
     })
 
-    try {
-      // the loop yields when ownership changes, which is exactly when work has to be
-      // handed over
-      for await (const { i, n } of loop) {
-        this.#assignment = i === null ? null : { i, n }
+    // the loop yields when ownership changes, which is exactly when work has to be handed over
+    for await (const { i, n } of loop) {
+      this.#assignment = i === null ? null : { i, n }
 
-        this.#console.info('Slots assigned', this.#assignment ?? { i: null })
-      }
-    } catch (error) {
-      if (this.#abort.signal.aborted) return
-
-      // owning nothing is the safe failure: whoever depends on this stands down rather
-      // than acting on a claim it cannot support
-      this.#console.error('Assignment failed; this replica owns nothing until it recovers',
-        { error })
-
-      this.#assignment = null
+      this.#console.info('Slots assigned', this.#assignment ?? { i: null })
     }
   }
 }
