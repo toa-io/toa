@@ -42,6 +42,7 @@
     "@toa.io/norm": "1.0.0-alpha.270",
     "@toa.io/operations": "1.0.0-alpha.270",
     "@toa.io/prototype": "1.0.0-alpha.162",
+    "@toa.io/atomicity": "1.0.0-alpha.271",
     "@toa.io/storages.mongodb": "1.0.0-alpha.270",
     "@toa.io/storages.null": "1.0.0-alpha.59",
     "@toa.io/storages.sql": "1.0.0-alpha.270",

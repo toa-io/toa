@@ -11,7 +11,7 @@ import type { Remote } from '@toa.io/core'
  * the debt the whole group has reached, which the quotas then decide on locally.
  */
 export class Sync {
-  private readonly stash: Promise<Remote>
+  private readonly atom: Promise<Remote>
   private readonly quotas: Quotas[] = []
   private remote: Remote | null = null
   private timer: NodeJS.Timeout | null = null
@@ -20,8 +20,8 @@ export class Sync {
   /** Ticks do not overlap: a slow round trip delays reconciling, it does not double it. */
   private reconciling = false
 
-  public constructor (stash: Promise<Remote>) {
-    this.stash = stash
+  public constructor (atom: Promise<Remote>) {
+    this.atom = atom
   }
 
   public register (quotas: Quotas): void {
@@ -74,7 +74,7 @@ export class Sync {
 
   private async reconcile (batch: Batch[]): Promise<void> {
     try {
-      this.remote ??= await this.stash
+      this.remote ??= await this.atom
 
       const keys = batch.map((entry) => entry.quotas.name(entry.key))
       const deltas = batch.map((entry) => entry.delta)

@@ -1,5 +1,6 @@
 'use strict'
 
+const { atom } = require('./atom')
 const { fetch } = require('./fetch')
 const { amqp } = require('./amqp')
 const { configuration } = require('./configuration')
@@ -9,6 +10,7 @@ const { storages } = require('./storages')
 const { logs } = require('./logs')
 const { span } = require('./span')
 
+exports.atom = atom
 exports.fetch = fetch
 exports.amqp = amqp
 exports.configuration = configuration

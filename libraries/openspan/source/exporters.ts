@@ -1,13 +1,32 @@
 import { state } from './state'
-import type { Console, Kind } from './Console'
+import type { Console, Entry, Kind } from './Console'
 
 /**
- * Writes spans as TRACE log entries using the emitting console,
- * respecting its log level.
+ * Writes spans as TRACE log entries using the emitting console, respecting its log level.
+ *
+ * Rendering a span as a line belongs here rather than on the console: a console writes
+ * messages, and a span is not one. What it borrows is the writer — the level, the context and
+ * the streams of whichever console emitted the span.
  */
 export const consoleExporter: Exporter = {
   export (span: Span, output: Console): void {
-    output.trace(span)
+    const entry: Partial<Entry> = {
+      attributes: span.attributes as Record<string, any>,
+      trace_id: span.traceId,
+      span_id: span.spanId,
+      duration: span.duration
+    }
+
+    if (span.parentId !== undefined)
+      entry.parent_id = span.parentId
+
+    if (span.kind !== 'internal')
+      entry.kind = span.kind
+
+    if (span.status !== undefined)
+      entry.status = span.status
+
+    output.entry('trace', span.name, entry)
   }
 }
 

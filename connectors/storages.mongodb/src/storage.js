@@ -4,6 +4,7 @@ const { Connector, exceptions } = require('@toa.io/core')
 const { console } = require('openspan')
 const { translate } = require('./translate')
 const { to, from } = require('./record')
+const { Outbox } = require('./outbox')
 const { ReturnDocument } = require('mongodb')
 
 class Storage extends Connector {
@@ -12,6 +13,12 @@ class Storage extends Connector {
   /** @type {import('mongodb').Collection} */
   #collection
   #entity
+
+  /**
+   * @type {Outbox | undefined} absent when nothing consumes this component's events, or when
+   * the deployment cannot run transactions
+   */
+  #outbox
 
   /** @type {Map<string, object>} span options per driver method */
   #spans = new Map()
@@ -29,12 +36,25 @@ class Storage extends Connector {
     return this.#collection
   }
 
+  /**
+   * The outbox is offered only where a row can be committed atomically with the entity.
+   * Without that it would be a second write with a window in front of it — worse than the
+   * inline emission it replaces — so the storage simply does not advertise it.
+   */
+  get outbox () {
+    return this.#outbox
+  }
+
   async open () {
     this.#collection = this.#client.collection
+
+    if (this.#client.outbox !== undefined)
+      this.#outbox = new Outbox(this.#client.outbox)
 
     this.#spans.clear()
 
     await this.index()
+    await this.#outbox?.index()
   }
 
   async get (query) {
@@ -84,16 +104,16 @@ class Storage extends Connector {
     return this.#collection.find(criteria, options).stream({ transform: from })
   }
 
-  async add (entity) {
+  async add (entity, session = undefined) {
     const record = to(entity)
 
     const result = await this.command('insertOne', { record },
-      () => this.#collection.insertOne(record))
+      () => this.#collection.insertOne(record, { session }))
 
     return result.acknowledged
   }
 
-  async set (entity) {
+  async set (entity, session = undefined) {
     const criteria = {
       _id: entity.id,
       _version: entity._version - 1
@@ -102,30 +122,52 @@ class Storage extends Connector {
     const record = to(entity)
 
     const result = await this.command('findOneAndReplace', { criteria, record },
-      () => this.#collection.findOneAndReplace(criteria, record))
+      () => this.#collection.findOneAndReplace(criteria, record, { session }))
 
     return result !== null
   }
 
-  async store (entity, attempt = 0) {
+  async store (entity, row = undefined, attempt = 0) {
     try {
-      if (entity._version === 1)
-        return await this.add(entity)
-      else
-        return await this.set(entity)
+      if (row === undefined || this.#outbox === undefined) {
+        if (entity._version === 1)
+          return await this.add(entity)
+        else
+          return await this.set(entity)
+      }
+
+      const committed = await this.#client.transaction(async (session) => {
+        const ok = entity._version === 1
+          ? await this.add(entity, session)
+          : await this.set(entity, session)
+
+        // a lost compare-and-swap must take the row down with it, or a retried transition
+        // leaves a row for a write that never happened
+        if (!ok) {
+          await session.abortTransaction()
+
+          return false
+        }
+
+        await this.#outbox.insert(row, session)
+
+        return true
+      })
+
+      return committed === true
     } catch (error) {
       console.error('MongoDB error', error)
 
       const retry = await retriable(error, attempt)
 
       if (retry)
-        return await this.store(entity, attempt + 1)
+        return await this.store(entity, row, attempt + 1)
       else
         return false
     }
   }
 
-  async massStore (entities, attempt = 0) {
+  async massStore (entities, rows = undefined, attempt = 0) {
     if (entities.length === 0)
       return true
 
@@ -157,13 +199,13 @@ class Storage extends Connector {
         }
     })
 
-    const client = this.#client.instance.client
-
     try {
-      await client.withSession(async (session) => {
-        await session.withTransaction(async () =>
-          await this.command('bulkWrite', { operations: operations.length },
-            async () => await this.#collection.bulkWrite(operations, { session })))
+      await this.#client.transaction(async (session) => {
+        await this.command('bulkWrite', { operations: operations.length },
+          async () => await this.#collection.bulkWrite(operations, { session }))
+
+        if (rows !== undefined && this.#outbox !== undefined)
+          await this.#outbox.insertMany(rows, session)
       })
 
       return true
@@ -173,13 +215,13 @@ class Storage extends Connector {
       const retry = await retriable(error, attempt)
 
       if (retry)
-        return await this.massStore(entities, attempt + 1)
+        return await this.massStore(entities, rows, attempt + 1)
       else
         return false
     }
   }
 
-  async upsert (query, changeset) {
+  async upsert (query, changeset, row = undefined) {
     const { criteria, options } = translate(query)
 
     if (!('_deleted' in changeset) || changeset._deleted === null) {
@@ -192,15 +234,45 @@ class Storage extends Connector {
       $inc: { _version: 1 }
     }
 
-    options.returnDocument = ReturnDocument.AFTER
+    // BEFORE, so that the filter is applied once and atomically and the pre-image comes back
+    // with it — an assignment is the one event whose images are the write's own
+    options.returnDocument = ReturnDocument.BEFORE
 
-    const result = await this.command('findOneAndUpdate', { criteria, update, options },
-      () => this.#collection.findOneAndUpdate(criteria, update, options))
+    const apply = async (session) => {
+      const found = await this.command('findOneAndUpdate', { criteria, update, options },
+        () => this.#collection.findOneAndUpdate(criteria, update, { ...options, session }))
 
-    return from(result)
+      if (found === null) return null
+
+      const origin = from(found)
+
+      /*
+       * The post-image is `update` applied to the pre-image, computed rather than read back.
+       * That is exact, not approximate: `$set` on top-level keys is a spread (entity property
+       * names cannot contain dots, so a changeset never carries a path), and `_version` is
+       * incremented by one. It is also a coupling — an operator added to `update` and not
+       * mirrored here diverges silently — which `features/events/outbox.feature` guards.
+       */
+      const state = { ...origin, ...changeset, _version: origin._version + 1 }
+
+      // an assignment's event is the write's own images, so they are filled in here whether
+      // or not the row is going to be committed
+      if (row !== undefined)
+        row.event = { origin, state, ...row.event }
+
+      if (row !== undefined && this.#outbox !== undefined)
+        await this.#outbox.insert(row, session)
+
+      return state
+    }
+
+    if (row === undefined || this.#outbox === undefined)
+      return apply(undefined)
+
+    return this.#client.transaction(apply)
   }
 
-  async ensure (query, properties, state) {
+  async ensure (query, properties, state, row = undefined) {
     let { criteria, options } = translate(query)
 
     if (query === undefined)
@@ -212,8 +284,19 @@ class Storage extends Connector {
     options.returnDocument = ReturnDocument.AFTER
 
     try {
-      const result = await this.command('findOneAndUpdate', { criteria, update, options },
-        () => this.#collection.findOneAndUpdate(criteria, update, options))
+      const result = row === undefined || this.#outbox === undefined
+        ? await this.command('findOneAndUpdate', { criteria, update, options },
+          () => this.#collection.findOneAndUpdate(criteria, update, options))
+        : await this.#client.transaction(async (session) => {
+          const found = await this.command('findOneAndUpdate', { criteria, update, options },
+            () => this.#collection.findOneAndUpdate(criteria, update, { ...options, session }))
+
+          // only an insert is an event; finding an existing record is not
+          if (found !== null && found._id === state.id)
+            await this.#outbox.insert(row, session)
+
+          return found
+        })
 
       if (result._deleted !== undefined && result._deleted !== null)
         return null

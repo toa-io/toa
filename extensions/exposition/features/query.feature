@@ -283,6 +283,33 @@ Feature: Queries
 
       Hello John
       """
+
+  # a declared parameter is taken out of the query string before what is left of it is
+  # answered for. A route that declares nothing but parameters is not queryable, so what
+  # is left has to be nothing at all
+  Scenario: Query parameters beside an undeclared one
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET:
+            io:output: true
+            query:
+              parameters: [name]
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/?name=John&foo=bar HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      Query parameter 'foo' is not allowed
+      """
     When the following request is received:
       """
       GET /echo/?foo=bar HTTP/1.1

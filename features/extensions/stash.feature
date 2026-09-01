@@ -52,37 +52,6 @@ Feature: Stash extension
       1
       """
 
-  Scenario: Using DLM
-    Given I compose `stash` component
-    When I call `default.stash.set` with:
-      """yaml
-      input: 0
-      """
-    And I call `default.stash.locks` with:
-      """yaml
-      input: {}
-      """
-    Then the reply is received:
-      """yaml
-      [1, 2]
-      """
-
-  Scenario: Using DLM with delay
-    Given I compose `stash` component
-    When I call `default.stash.set` with:
-      """yaml
-      input: 0
-      """
-    And I call `default.stash.locks` with:
-      """yaml
-      input:
-        delay: 5000
-      """
-    Then the reply is received:
-      """yaml
-      [1, 2]
-      """
-
   Scenario: Deployment
     Given I have a component `stash`
     And I have a context with:
@@ -97,21 +66,4 @@ Feature: Stash extension
           variables:
             - name: TOA_STASH_DEFAULT_STASH
               value: redis://redis.example.com
-      """
-
-  # A key that did not exist owes exactly what is put on it, which is what makes the
-  # first number assertable; the second only has to be larger, because between two
-  # round trips the debt has drained by however long they took.
-  Scenario: Metering
-    Given I boot `stash` component
-    When I invoke `meter` with:
-      """yaml
-      input:
-        name: bursts
-        delta: 60000
-      """
-    Then the reply is received:
-      """yaml
-      debt: 60000
-      adds: true
       """

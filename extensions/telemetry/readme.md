@@ -10,8 +10,8 @@ async function computation (input, context) {
 }
 ```
 
-Methods `debug`, `info`, `warn`, and `error` are available to log messages with different severity
-levels, with the following signature:
+Methods `trace`, `debug`, `info`, `warn`, and `error` are available to log messages with different
+severity levels, with the following signature:
 
 ```
 (message: string, attributes?: object) => void

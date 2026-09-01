@@ -2,6 +2,7 @@
 
 import { Locator } from './locator'
 import { Connector } from './connector'
+import * as outbox from './outbox'
 
 declare namespace toa.core {
 
@@ -43,8 +44,13 @@ declare namespace toa.core {
       table (database: string, locator: Locator, schema: Object, reset?: boolean): Promise<string>
     }
 
+    interface Options {
+      /** whether this component publishes anything, and so needs an outbox */
+      outbox?: boolean
+    }
+
     interface Factory {
-      storage (locator: Locator, properties?: object): Storage
+      storage (locator: Locator, properties?: object, options?: Options): Storage
 
       migration? (driver?: string): Migration
     }
@@ -58,10 +64,27 @@ declare namespace toa.core {
     find? (query: storages.Query): Promise<storages.Record[]>
 
     // commit
-    store? (record: storages.Record): Promise<boolean>
+    store? (record: storages.Record, row?: outbox.Row): Promise<boolean>
+
+    // mass commit
+    massStore? (records: storages.Record[], rows?: outbox.Row[]): Promise<boolean>
 
     // assignment
-    upsert? (query: storages.Query, changeset: Object, insert: storages.Record): Promise<storages.Record>
+    upsert? (query: storages.Query, changeset: Object, row?: outbox.Row): Promise<storages.Record>
+
+    // atomic get-or-create
+    ensure? (query: storages.Query, properties: Object, record: storages.Record, row?: outbox.Row): Promise<storages.Record>
+
+    /**
+     * Present only where a row can be committed atomically with the entity. Its absence is
+     * what makes the runtime fall back to publishing inline, so a storage that cannot do
+     * this must not offer it: a row written outside the transaction would be a second write
+     * with a crash window in front of it, which is the defect the outbox exists to close.
+     *
+     * The row schema is the connector's own — it also owns `pending` and `settle` — and
+     * never crosses this boundary.
+     */
+    outbox?: outbox.Storage
   }
 
 }

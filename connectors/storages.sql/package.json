@@ -19,6 +19,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@toa.io/conveyor": "1.0.0-alpha.254",
+    "@toa.io/core": "1.0.0-alpha.270",
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/pointer": "1.0.0-alpha.270",
     "knex": "2.4.2",

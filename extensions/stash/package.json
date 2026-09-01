@@ -17,7 +17,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@sesamecare-oss/redlock": "1.4.0",
     "@toa.io/pointer": "1.0.0-alpha.270",
     "ioredis": "6.0.0",
     "msgpackr": "2.1.0",

@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { Redlock } from '@sesamecare-oss/redlock'
 import { encode, decode } from 'msgpackr'
 import { console, type SpanOptions } from 'openspan'
 import { Connector, type extensions } from '@toa.io/core'
-import { Meter } from './Meter'
 import type { Connection } from './Connection'
 import type { Redis, ChainableCommander } from 'ioredis'
 
@@ -11,8 +9,6 @@ export class Aspect extends Connector implements extensions.Aspect {
   public readonly name = 'stash'
   private readonly connection: Connection
   private redis: Redis | null = null
-  private redlock: Redlock | null = null
-  private meter: Meter | null = null
 
   public constructor (connection: Connection) {
     super()
@@ -21,24 +17,11 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.depends(connection)
   }
 
-  public invoke (method: 'meter', keys: string[], deltas: number[]): Promise<number[]>
   public invoke (method: 'store', key: string, value: object): any
   public invoke (method: 'fetch', key: string): any
-  public invoke<T> (method: 'lock', key: Resources, routine: Routine<T>): any
   public invoke (method: string, ...args: unknown[]): any
   // eslint-disable-next-line @typescript-eslint/promise-function-async
   public invoke (method: string, ...args: unknown[]): any {
-    // `defineCommand` puts `meter` on the client, so this has to come first or the
-    // generic branch below would forward it the wrong arguments
-    if (method === 'meter') {
-      const keys = args[0] as string[]
-      const options = span(method, undefined)
-
-      Object.assign(options.attributes!, { 'db.operation.batch.size': keys.length })
-
-      return console.span(options, async () => await this.meter!.meter(keys, args[1] as number[]))
-    }
-
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     if (typeof this.redis[method] === 'function') {
@@ -71,16 +54,10 @@ export class Aspect extends Connector implements extensions.Aspect {
 
     if (method === 'fetch')
       return console.span(span(method, args[0]), async () => await this.fetch(args[0] as string))
-
-    if (method === 'lock')
-      return console.span(span(method, args[0]),
-        async () => await this.lock(args[0] as Resources, args[1] as () => any))
   }
 
   protected override async open (): Promise<void> {
-    this.redis = this.connection.redises[0]
-    this.redlock = new Redlock(this.connection.redises, { retryCount: -1 })
-    this.meter = new Meter(this.redis)
+    this.redis = this.connection.redis
   }
 
   private async store (key: string, value: object, ...args: unknown[]): Promise<void> {
@@ -97,14 +74,6 @@ export class Aspect extends Connector implements extensions.Aspect {
     const buffer = await this.redis.getBuffer(key)
 
     return buffer === null ? null : decode(buffer)
-  }
-
-  private async lock<T>(key: Resources, routine: Routine<T>): Promise<T | null> {
-    if (this.redlock === null) return null
-
-    if (typeof key === 'string') key = [key]
-
-    return await this.redlock.using<T>(key, 5000, routine)
   }
 }
 
@@ -125,6 +94,3 @@ function span (method: string, key: unknown): SpanOptions {
 
   return { name: `${method} stash`, kind: 'client', attributes }
 }
-
-type Routine<T> = () => Promise<T>
-type Resources = string | string[]

@@ -8,7 +8,7 @@ let state
 beforeEach(() => {
   jest.clearAllMocks()
 
-  state = new State(fixtures.storage, fixtures.factory, fixtures.emitter)
+  state = new State(fixtures.storage, fixtures.factory, fixtures.outbox)
 })
 
 it('should provide object', async () => {
@@ -37,11 +37,58 @@ it('should provide read-only objects', async () => {
 it('should store entity', async () => {
   await state.commit(fixtures.initial)
 
-  expect(fixtures.storage.store).toHaveBeenCalledWith(fixtures.initial.get.mock.results[0].value)
+  expect(fixtures.storage.store).toHaveBeenCalledWith(
+    fixtures.initial.get.mock.results[0].value,
+    fixtures.outbox.row.mock.results[0].value)
 })
 
-it('should emit', async () => {
+it('should publish the row', async () => {
   await state.commit(fixtures.entity)
 
-  expect(fixtures.emitter.emit).toHaveBeenCalledWith(fixtures.entity.event.mock.results[0].value)
+  expect(fixtures.outbox.row).toHaveBeenCalledWith(fixtures.entity.event.mock.results[0].value)
+  expect(fixtures.outbox.publish).toHaveBeenCalledWith(fixtures.outbox.row.mock.results[0].value)
+})
+
+it('should not publish if the write did not happen', async () => {
+  fixtures.storage.store.mockImplementationOnce(() => false)
+
+  await state.commit(fixtures.entity)
+
+  expect(fixtures.outbox.publish).not.toHaveBeenCalled()
+})
+
+it('should build the row before the write', async () => {
+  // the storage commits the row in the same transaction, so it must already exist
+  fixtures.storage.store.mockImplementationOnce((_, row) => {
+    expect(row).toBeDefined()
+
+    return true
+  })
+
+  expect.assertions(1)
+
+  await state.commit(fixtures.entity)
+})
+
+describe('assignment', () => {
+  const changeset = { query: 'q', export: () => ({ foo: 1 }) }
+
+  it('should pass the row to upsert and publish it', async () => {
+    const result = await state.apply(changeset, { foo: 1 })
+
+    expect(fixtures.storage.upsert).toHaveBeenCalledWith(
+      changeset.query, { foo: 1 }, fixtures.outbox.row.mock.results[0].value)
+
+    expect(fixtures.outbox.publish).toHaveBeenCalledWith(fixtures.outbox.row.mock.results[0].value)
+    expect(result).toStrictEqual(fixtures.storage.upsert.mock.results[0].value)
+  })
+
+  it('should fill the state a storage without the outbox left alone', async () => {
+    await state.apply(changeset, { foo: 1 })
+
+    const row = fixtures.outbox.row.mock.results[0].value
+
+    expect(row.event.state).toStrictEqual(fixtures.storage.upsert.mock.results[0].value)
+    expect(row.event.input).toStrictEqual({ foo: 1 })
+  })
 })

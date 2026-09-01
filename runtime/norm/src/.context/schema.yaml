@@ -65,6 +65,65 @@ properties:
         resources:
           $ref: '#/definitions/resources'
       required: [name, components]
+  atomicity:
+    description: >
+      Where the replicas of a component decide together: who owns what, what they have spent
+      between them, and which of them holds a name while it works. Absent or unreachable,
+      nothing is owned and whoever asked stands down; metering and locking are refused.
+    type: object
+    additionalProperties: false
+    properties:
+      redis:
+        description: >
+          One address, or an odd number of them — independent servers, not the nodes of a
+          cluster. A lock is taken on a quorum of them; the registry and the meter use the
+          first, because each of them counts on a single key.
+        oneOf:
+          - type: string
+          - type: array
+            minItems: 1
+            items:
+              type: string
+      interval:
+        description: >
+          How often a replica registers, in milliseconds. It has to comfortably exceed a round
+          trip to Redis and the jitter around it, and nothing is owned until two consecutive
+          intervals have agreed — so this is also how long a replica owns nothing after it
+          joins, restarts or stalls.
+        type: integer
+        minimum: 100
+    required: [redis]
+  outbox:
+    type: object
+    additionalProperties: false
+    properties:
+      interval:
+        description: >
+          The pump's cycle, in milliseconds. One cycle reads what is unpublished, publishes it
+          and marks it. In steady state it reads nothing, so this is budgeted for how fast a rare
+          failure heals rather than for how fast events flow.
+        type: integer
+        minimum: 100
+      batch:
+        description: >
+          How many rows one read brings back. A page that comes back full is read on from,
+          so this bounds a read rather than a cycle.
+        type: integer
+        minimum: 1
+      retention:
+        description: >
+          Seconds a published row is kept as a change log before it expires. A row that never
+          made it out has no expiry and is never reaped.
+        type: integer
+        minimum: 0
+  events:
+    description: >
+      Events of this context that are consumed outside it. An event is otherwise published only
+      where something in the context receives it.
+    type: array
+    items:
+      type: string
+      pattern: ^[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][a-zA-Z0-9]*$
   mono:
     type: object
     additionalProperties: false

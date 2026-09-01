@@ -28,6 +28,7 @@ Non-scattered documentation is coming some time later.
   - Concurrency control
   - Data validation
   - Multi-document transactions
+  - [Transactional outbox](/documentation/outbox.md): state and its events commit together
   - Invariants (guards)
   - Built-in implementations
     - MongoDB
@@ -47,8 +48,11 @@ Non-scattered documentation is coming some time later.
   - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
   - [Throttling](/extensions/exposition/documentation/io.md#throttling): a distributed
     [GCRA](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm), with no per-request I/O
-- [Distributed lock manager](/extensions/stash/readme.md#distributed-lock-manager)
-- [Shared rate metering](/extensions/stash/readme.md#shared-rate-metering)
+- [Atomicity](/connectors/atomicity): what the replicas of a component decide together
+  - [Partitioning](/connectors/atomicity/readme.md#partitioning): an exclusive claim on one of a
+    fixed number of slots
+  - [Distributed lock manager](/connectors/atomicity/readme.md#locking)
+  - [Shared rate metering](/connectors/atomicity/readme.md#metering)
 - [Telemetry](/extensions/telemetry)
   - Structured logs
   - Distributed tracing
