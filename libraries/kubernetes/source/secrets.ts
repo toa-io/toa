@@ -1,8 +1,11 @@
-import { $ } from '@toa.io/command'
+import { promisify } from 'node:util'
+import { exec as execute } from 'node:child_process'
+
+const exec = promisify(execute)
 
 export async function get (name: string, namespace?: string): Promise<Data | null> {
   try {
-    const { stdout } = await $`kubectl get secret ${name}${n(namespace)} -o json`
+    const { stdout } = await exec(`kubectl get secret ${name}${n(namespace)} -o json`)
     const secret = JSON.parse(stdout) as Secret
 
     return decode(secret.data)
@@ -23,7 +26,7 @@ async function deploy (name: string, data: Data, namespace?: string): Promise<vo
   const secret = encode(name, data)
   const json = JSON.stringify(secret)
 
-  await $`echo '${json}' | kubectl apply${n(namespace)} -f -`
+  await exec(`echo '${json}' | kubectl apply${n(namespace)} -f -`)
 }
 
 function decode (data: Data): Data {
