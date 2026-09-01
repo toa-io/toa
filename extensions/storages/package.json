@@ -30,14 +30,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1107.0",
     "@aws-sdk/lib-storage": "3.1107.0",
-    "@smithy/protocol-http": "3.3.0",
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/schemas": "1.0.0-alpha.270",
     "cloudinary": "2.9.0",
     "error-value": "0.4.1",
     "negotiator": "0.6.3",
-    "openspan": "1.0.0-alpha.270",
-    "smithy-node-native-fetch": "1.2.1"
+    "openspan": "1.0.0-alpha.270"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }

@@ -4,7 +4,6 @@ import { join } from 'node:path/posix'
 import assert from 'node:assert'
 import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
-import * as nodeNativeFetch from 'smithy-node-native-fetch'
 import { console } from 'openspan'
 import { Provider } from '../Provider'
 import { ERR_NOT_FOUND } from '../errors'
@@ -37,8 +36,7 @@ export class S3 extends Provider<S3Options> {
     this.bucket = options.bucket
 
     const s3Config: s3.S3ClientConfigType = {
-      retryMode: 'adaptive',
-      ...nodeNativeFetch
+      retryMode: 'adaptive'
     }
 
     if (options.endpoint !== undefined) {
