@@ -146,6 +146,6 @@ exposition:
     auth:role: system:identity:tokens
     POST:
       map:authority: authority
-      io:input: [authority, identity, lifetime, label, scopes, permissions]
+      io:input: [lifetime, label, scopes, permissions]
       io:output: [kid, exp, token, label]
       endpoint: issue
