@@ -2,9 +2,6 @@
 
 Decisions several replicas have to make together, arbitrated by Redis.
 
-Today that is **partitioning**. Shared rate metering, which lives in
-[`stash`](/extensions/stash#shared-rate-metering) for now, belongs here too.
-
 ## Partitioning
 
 An exclusive claim on one of a fixed number of slots: while a replica holds a slot, no other
@@ -20,15 +17,9 @@ await atom.connect()
 const slots = atom.slots(128) // [0, 2, 4, …] — or null, owning nothing
 ```
 
-An atom is what one group decides together; replicas find each other by the group name and by
-nothing else.
+Returns `null` while this replica owns nothing — at startup, during a rollout, or while Redis is unreachable.
 
-`slots(total)` is answered from memory, so it is free to ask on a hot path. It returns `null`
-while this replica owns nothing — at startup, during a rollout, or while Redis is unreachable —
-and a caller has to be able to stand down rather than assume.
-
-The scheme is [n-and-i](https://github.com/temich/nandi)'s. Nothing is owned for the first couple
-of intervals after a replica joins, restarts or stalls.
+Uses [n-and-i](https://github.com/temich/nandi).
 
 ## Configuration
 
