@@ -1,5 +1,4 @@
 import { V3 } from 'paseto'
-import { Err } from 'error-value'
 import { LRUCache } from 'lru-cache'
 import { jweKey } from './lib'
 import { load } from './lib/jose'
@@ -161,6 +160,14 @@ interface KeyEntry {
   value: Key | null
 }
 
-const ERR_INVALID_TOKEN = new Err('INVALID_TOKEN')
-const ERR_INVALID_KEY = new Err('INVALID_KEY')
-const ERR_FORGED_KEY = new Err('FORGED_KEY')
+const ERR_INVALID_TOKEN = new (class InvalidTokenError extends Error {
+  public readonly code = 'INVALID_TOKEN'
+})()
+
+const ERR_INVALID_KEY = new (class InvalidKeyError extends Error {
+  public readonly code = 'INVALID_KEY'
+})()
+
+const ERR_FORGED_KEY = new (class ForgedKeyError extends Error {
+  public readonly code = 'FORGED_KEY'
+})()

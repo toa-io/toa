@@ -23,7 +23,6 @@
     "@toa.io/schemas": "1.0.0-alpha.270",
     "bcryptjs": "3.0.3",
     "content-type": "2.1.0",
-    "error-value": "0.4.4",
     "jose": "6.2.10",
     "js-yaml": "5.4.1",
     "lru-cache": "11.5.2",

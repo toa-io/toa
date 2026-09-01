@@ -1,4 +1,3 @@
-import { Err } from 'error-value'
 import type { Context } from './types'
 import type { AuthenticationResponseJSON } from '@simplewebauthn/server'
 import type { Operation } from '@toa.io/types'
@@ -38,7 +37,9 @@ export class Effect implements Operation {
   }
 }
 
-const ERR_MISS = new Err('MISS')
+const ERR_MISS = new (class MissError extends Error {
+  public readonly code = 'MISS'
+})()
 
 export interface Input extends Omit<AuthenticationResponseJSON, 'rawId'> {
   authority: string

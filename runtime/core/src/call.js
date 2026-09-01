@@ -3,7 +3,6 @@
 const { Readable } = require('node:stream')
 const { current, encode } = require('openspan')
 const { Connector } = require('./connector')
-const { Err } = require('error-value')
 
 class Call extends Connector {
   #transmitter
@@ -48,7 +47,7 @@ class Call extends Connector {
         throw reply.exception
 
       if (reply.error !== undefined)
-        return Err(reply.error.code, reply.error)
+        return new RemoteError(reply.error)
       else
         return reply.output
     }
@@ -60,3 +59,12 @@ class Call extends Connector {
 }
 
 exports.Call = Call
+
+// the remote error as a value: every property it carries, and nothing else enumerable
+class RemoteError extends Error {
+  constructor (error) {
+    super()
+
+    Object.assign(this, error)
+  }
+}

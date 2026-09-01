@@ -1,4 +1,3 @@
-import { Err } from 'error-value'
 import { verifyAuthenticationResponse } from '@simplewebauthn/server'
 import type { AuthenticationResponseJSON, WebAuthnCredential } from '@simplewebauthn/server'
 import type { Operation } from '@toa.io/types'
@@ -65,8 +64,13 @@ function toCredential (passkey: Passkey): WebAuthnCredential {
   }
 }
 
-const ERR_FAILED = new Err('FAILED')
-const ERR_INVALID = new Err('INVALID')
+const ERR_FAILED = new (class FailedError extends Error {
+  public readonly code = 'FAILED'
+})()
+
+const ERR_INVALID = new (class InvalidError extends Error {
+  public readonly code = 'INVALID'
+})()
 
 export interface Input extends Omit<AuthenticationResponseJSON, 'rawId'> {
   origin: string

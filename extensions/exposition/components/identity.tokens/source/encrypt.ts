@@ -1,4 +1,3 @@
-import { Err } from 'error-value'
 import { jweKey } from './lib'
 import { load } from './lib/jose'
 import type { Operation, Maybe } from '@toa.io/types'
@@ -52,4 +51,6 @@ function within (scope: string, roles: string[]): boolean {
   return roles.some((role) => role === scope || scope.startsWith(role + ':'))
 }
 
-const ERR_INACCESSIBLE_SCOPE = new Err('INACCESSIBLE_SCOPE')
+const ERR_INACCESSIBLE_SCOPE = new (class InaccessibleScopeError extends Error {
+  public readonly code = 'INACCESSIBLE_SCOPE'
+})()
