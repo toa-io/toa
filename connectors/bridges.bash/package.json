@@ -22,5 +22,8 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.270"
   }
 }
