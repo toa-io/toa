@@ -1,4 +1,4 @@
-import type { Redis } from 'ioredis'
+'use strict'
 
 /**
  * Debt shared with every other process metering under the same key.
@@ -14,34 +14,39 @@ import type { Redis } from 'ioredis'
  * A whole batch is metered by one script, because the callers are rate limiters and
  * the number of keys they watch is the number of clients they are watching for.
  */
-export class Meter {
-  private readonly redis: Redis
+class Meter {
+  #redis
 
-  public constructor (redis: Redis) {
-    this.redis = redis
+  constructor (redis) {
+    this.#redis = redis
 
     redis.defineCommand(COMMAND, { lua: SCRIPT })
   }
 
-  /** Adds each delta to its key, and answers what the group has reached. */
-  public async meter (keys: string[], deltas: number[]): Promise<number[]> {
-    if (keys.length <= CHUNK)
-      return await this.call(keys, deltas)
+  /**
+   * Adds each delta to its key, and answers what the group has reached.
+   *
+   * @param {string[]} keys
+   * @param {number[]} deltas
+   * @returns {Promise<number[]>}
+   */
+  async meter (keys, deltas) {
+    if (keys.length <= CHUNK) return this.#call(keys, deltas)
 
     // arguments are spread into the call, so a batch is split rather than risking the
     // engine's limit on how many there may be
-    const debts: number[] = []
+    const debts = []
 
     for (let i = 0; i < keys.length; i += CHUNK)
-      debts.push(...await this.call(keys.slice(i, i + CHUNK), deltas.slice(i, i + CHUNK)))
+      debts.push(...await this.#call(keys.slice(i, i + CHUNK), deltas.slice(i, i + CHUNK)))
 
     return debts
   }
 
-  private async call (keys: string[], deltas: number[]): Promise<number[]> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error `defineCommand` extends the client at runtime
-    return await this.redis[COMMAND](keys.length, ...keys, ...deltas)
+  /** @private */
+  async #call (keys, deltas) {
+    // `defineCommand` extends the client at runtime
+    return this.#redis[COMMAND](keys.length, ...keys, ...deltas)
   }
 }
 
@@ -74,3 +79,5 @@ end
 
 return debts
 `
+
+exports.Meter = Meter

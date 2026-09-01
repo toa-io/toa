@@ -11,7 +11,7 @@ export class IO implements DirectiveFamily<Directive> {
   public readonly name = 'io'
   public readonly mandatory = true
 
-  /** Throttling reconciles through a component, because only a component has a stash aspect. */
+  /** Throttling reconciles through a component, because only a component has an atom aspect. */
   private sync: Sync | null = null
 
   // eslint-disable-next-line max-params
@@ -25,7 +25,7 @@ export class IO implements DirectiveFamily<Directive> {
 
     // discovering boots the component, so nothing is discovered until something throttles
     if (name === 'throttle')
-      this.sync ??= new Sync(remotes.discover('exposition', 'stash'))
+      this.sync ??= new Sync(remotes.discover('exposition', 'atom'))
 
     return new Directive(value, this.sync!, route)
   }

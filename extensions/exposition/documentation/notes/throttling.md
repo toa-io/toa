@@ -2,7 +2,7 @@
 
 > **Superseded.** The design below was never implemented. `io:throttle` is now a
 > [GCRA](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm) deciding in each process, with
-> its state periodically reconciled through Redis by way of the `stash` extension's `meter`. It
+> its state periodically reconciled through Redis by way of the `atom` aspect's `meter`. It
 > answers the same forces the same way — decide locally, reconcile in the background, never fail the
 > request path — and the section below records what it does instead. The problem statement and the
 > forces have not changed.

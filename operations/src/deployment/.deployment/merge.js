@@ -13,6 +13,9 @@ const merge = (dependencies) => {
   /** @type {toa.deployment.dependency.Variables} */
   const variables = {}
 
+  /** event labels consumed by something other than a component's own receivers */
+  const events = []
+
   const mounts = {}
 
   /** @type {toa.deployment.dependency.Probe | false | undefined} */
@@ -23,13 +26,14 @@ const merge = (dependencies) => {
     if (dependency.services !== undefined) services.push(...dependency.services)
     if (dependency.proxies !== undefined) proxies.push(...dependency.proxies)
     if (dependency.variables !== undefined) append(variables, dependency.variables)
+    if (dependency.events !== undefined) events.push(...dependency.events)
     if (dependency.mounts !== undefined) append(mounts, dependency.mounts)
     if (dependency.probe !== undefined) probe = dependency.probe
   }
 
   reserve(services, probe)
 
-  return { references, services, proxies, variables, mounts, probe }
+  return { references, services, proxies, variables, mounts, events, probe }
 }
 
 /**

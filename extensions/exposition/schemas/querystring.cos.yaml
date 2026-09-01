@@ -1,7 +1,9 @@
 id: string
 criteria: string
 search: string
+sample: number
 sort: string
 omit: number
 limit: number
 version: number
+...: false

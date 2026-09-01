@@ -1,6 +1,5 @@
 'use strict'
 
-const { difference } = require('@toa.io/generic')
 const { EntityContractException, EntityGuardException } = require('../exceptions')
 const { newid } = require('./newid')
 
@@ -62,7 +61,6 @@ class Entity {
     return {
       origin: this.#origin,
       state: this.#state,
-      changeset: this.#origin === null ? this.#state : difference(this.#origin, this.#state),
       trailers: this.#state._trailers,
       input
     }

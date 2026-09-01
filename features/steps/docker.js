@@ -43,6 +43,22 @@ After(
   })
 
 const containersUpStrategies = {
+  // a broker on the port the runtime expects, so that stopping it is an outage rather than a
+  // misconfiguration
+  rabbitmq: async function () {
+    return new GenericContainer('rabbitmq:3.10.0-management')
+      .withExposedPorts({
+        container: 5672,
+        host: 5673
+      })
+      .withEnvironment({
+        RABBITMQ_DEFAULT_USER: 'developer',
+        RABBITMQ_DEFAULT_PASS: 'secret'
+      })
+      .withWaitStrategy(Wait.forLogMessage('Server startup complete'))
+      .withStartupTimeout(120000)
+      .start()
+  },
   mongodb: async function () {
     return new GenericContainer('mongo:5.0.8')
       .withExposedPorts({

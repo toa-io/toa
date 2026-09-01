@@ -1,7 +1,6 @@
 # Toa Stash
 
-Shared cache and distributed lock manager on top of [ioredis](https://github.com/redis/ioredis)
-and [redlock](https://github.com/mike-marcacci/node-redlock).
+Shared cache on top of [ioredis](https://github.com/redis/ioredis).
 
 ## Shared cache
 
@@ -26,41 +25,6 @@ Keys are component-scoped, meaning that the underlying Redis keys are `namespace
 starting from third.
 
 Values are encoded using [msgpack](https://msgpack.org).
-
-## Distributed lock manager
-
-`async lock<T>(id: string | string[], routine: async? () => T): T`
-
-Executes `routine` once a lock is successfully acquired. Lock ID is component-scoped.
-
-```javascript
-async function computation (input, context) {
-  await context.stash.lock('lock id', () => console.log('Lock acquired'))
-}
-```
-
-## Shared rate metering
-
-`async meter(keys: string[], deltas: number[]): number[]`
-
-Adds each delta to the debt on its key and answers what every process metering that key has reached
-between them. Debt is counted in milliseconds and drains at a millisecond a millisecond, so a key
-that is left alone returns to zero and expires on its own.
-
-```javascript
-async function computation (input, context) {
-  const [debt] = await context.stash.meter(['alice'], [1000])
-}
-```
-
-This is what a rate limiter needs and a counter cannot give it: debt is a duration, so processes
-reporting it need not agree on the time — the clock is Redis' own — and it is additive, so each
-process reports only its own increments, on its own schedule, and still reads back where the group
-stands. A whole batch is metered by one script, because a limiter watches as many keys as it has
-clients.
-
-`io:throttle` of the [Exposition](/extensions/exposition/documentation/io.md#throttling) is built on
-this.
 
 ## Manifest
 

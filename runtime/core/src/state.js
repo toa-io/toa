@@ -7,12 +7,12 @@ class State {
 
   #associated
   #entities
-  #emission
+  #outbox
 
-  constructor (storage, entity, emission, associated) {
+  constructor (storage, entity, outbox, associated) {
     this.storage = storage
     this.#entities = entity
-    this.#emission = emission
+    this.#outbox = outbox
     this.#associated = associated === true
   }
 
@@ -66,14 +66,14 @@ class State {
 
     object.set(blank)
 
-    const record = await this.storage.ensure(query, properties, object.get())
+    const row = this.#outbox?.row(object.event(input))
+    const record = await this.storage.ensure(query, properties, object.get(), row)
 
     if (record.id !== blank.id) // exists
       return this.#entities.object(record, NOT_MUTABLE)
 
-    const event = object.event(input)
-
-    await this.#emission.emit(event)
+    if (row !== undefined)
+      await this.#outbox.publish(row)
 
     return object
   }
@@ -83,36 +83,39 @@ class State {
       return this.massCommit(state, input)
 
     const data = state.get()
-    const ok = await this.storage.store(data)
 
-    // #20
-    if (ok === true) {
-      const event = state.event(input)
+    // the row is built before the write so that the storage can commit it in the same
+    // transaction, closing the window this used to have
+    const row = this.#outbox?.row(state.event(input))
+    const ok = await this.storage.store(data, row)
 
-      await this.#emission.emit(event)
-    }
+    if (ok === true && row !== undefined)
+      await this.#outbox.publish(row)
 
     return ok
   }
 
   async massCommit (state, input) {
     const data = state.get()
-    const ok = await this.storage.massStore(data)
+    const rows = this.#outbox === undefined
+      ? undefined
+      : state.events(input).map((event) => this.#outbox.row(event))
 
-    // #20
-    if (ok === true) {
-      const events = state.events(input)
+    const ok = await this.storage.massStore(data, rows)
 
-      await Promise.all(events.map((event) => this.#emission.emit(event)))
-    }
+    if (ok === true && rows !== undefined)
+      await Promise.all(rows.map((row) => this.#outbox.publish(row)))
 
     return ok
   }
 
-  async apply (state) {
+  async apply (state, input) {
     const changeset = state.export()
 
-    const result = await this.storage.upsert(state.query, changeset)
+    // an assignment's event is the write's own images, so the storage fills them in;
+    // see `apply` in the outbox design
+    const row = this.#outbox?.row({ input })
+    const result = await this.storage.upsert(state.query, changeset, row)
 
     if (result === null) {
       if (state.query.version !== undefined) {
@@ -120,12 +123,13 @@ class State {
       } else {
         throw new StateNotFoundException()
       }
-    } else {
-      // same as above
-      await this.#emission.emit({
-        changeset,
-        state: result
-      })
+    } else if (row !== undefined) {
+      // the storage fills `origin` and `state` from its own write; a storage that does not
+      // know how leaves the event with what it was given
+      row.event.state ??= result
+      row.event.origin ??= null
+
+      await this.#outbox.publish(row)
     }
 
     return result

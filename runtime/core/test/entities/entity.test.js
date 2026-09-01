@@ -58,7 +58,7 @@ describe('tombstone', () => {
 
     expect(entity.get()._deleted).toBeNull()
     expect(entity.deleted).toBe(false)
-    expect(entity.event().changeset._deleted).toBeNull()
+    expect(entity.event().state._deleted).toBeNull()
   })
 
   it('should keep tombstone written by transition', () => {
@@ -85,12 +85,8 @@ it('should provide event', () => {
 
   const event = entity.event()
 
-  expect(event).toEqual(expect.objectContaining({
-    state,
-    origin,
-    changeset: expect.objectContaining({
-      foo: 'new value',
-      _version: 1
-    })
-  }))
+  expect(event).toEqual(expect.objectContaining({ state, origin }))
+  expect(event.state.foo).toBe('new value')
+  expect(event.state._version).toBe(1)
+  expect(event.origin.foo).not.toBe('new value')
 })

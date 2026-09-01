@@ -12,14 +12,15 @@ class Assignment extends Operation {
     const {
       scope,
       state,
-      reply
+      reply,
+      request
     } = store
 
     if (reply.error !== undefined) return
 
     scope.set(state)
 
-    const output = await this.scope.apply(scope)
+    const output = await this.scope.apply(scope, request.input)
 
     // assignment returns new state by default
     if (store.reply.output === undefined) {

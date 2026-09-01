@@ -36,7 +36,7 @@ declare namespace toa.features {
     reply?: Reply
     pendingReply?: Promise<Reply>
     exception?: Exception
-    env?: string[]
+    env?: Array<[string, string | undefined]>
     containers?: Record<string, StartedTestContainer>
   }
 

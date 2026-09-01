@@ -6,9 +6,12 @@ declare namespace toa.core {
   namespace transition {
 
     type Event = {
-      origin: Object
+      /** the pre-image; null when the entity did not exist before */
+      origin: Object | null
       state: Object
-      changeset: Object
+      /** out-of-band values an algorithm wrote into `state._trailers`; must be serializable */
+      trailers?: Object
+      input?: Object
     }
 
   }
@@ -24,9 +27,9 @@ declare namespace toa.core {
 
     none(): null
 
-    commit(entity: _entity.Entity): Promise<boolean>
+    commit(entity: _entity.Entity, input?: Object): Promise<boolean>
 
-    apply(changeset: _entity.Changeset): Promise<void>
+    apply(changeset: _entity.Changeset, input?: Object): Promise<_storages.Record>
   }
 
 }

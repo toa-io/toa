@@ -21,55 +21,48 @@ Feature: Introspection
       Allow: GET, POST
 
       GET:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-              pattern: ^[a-fA-F0-9]{32}$
-            title:
-              type: string
-              maxLength: 64
-            volume:
-              type: number
-              exclusiveMinimum: 0
-              maximum: 1000
-            temperature:
-              type: number
-              exclusiveMinimum: 0
-              maximum: 300
-          additionalProperties: false
-          required:
-            - id
-            - title
-            - volume
+        output:
+          type: array
+          items:
+            properties:
+              id:
+                type: string
+                pattern: ^[a-fA-F0-9]{32}$
+              title:
+                type: string
+                maxLength: 64
+              volume:
+                type: number
+                exclusiveMinimum: 0
+                maximum: 1000
+              temperature:
+                type: number
+                exclusiveMinimum: 0
+                maximum: 300
+            type: object
+            required:
+              - id
+              - title
+              - volume
       POST:
         input:
-          type: object
           properties:
-            title:
-              type: string
-              maxLength: 64
             temperature:
               type: number
               exclusiveMinimum: 0
               maximum: 300
+            title:
+              type: string
+              maxLength: 64
             volume:
               type: number
               exclusiveMinimum: 0
               maximum: 1000
-          additionalProperties: false
+          type: object
           required:
             - title
             - volume
-        output:
-          type: object
-          properties:
-            id:
-              type: string
-              pattern: ^[a-fA-F0-9]{32}$
-          additionalProperties: false
+        output: {}
         errors:
           - NO_WAY
           - WONT_CREATE

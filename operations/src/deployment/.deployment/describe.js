@@ -4,6 +4,7 @@ const desc = require('./.describe')
 const { addVariables } = require('./.describe/variables')
 const { addMounts } = require('./.describe/mounts')
 const { resources } = require('./.describe/resources')
+const { events } = require('./.describe/events')
 
 const describe = (context, compositions, dependency, image) => {
   const { services } = dependency
@@ -19,6 +20,51 @@ const describe = (context, compositions, dependency, image) => {
       value: context.environment
     }
   )
+
+  const atomicity = context.atomicity
+
+  if (atomicity?.redis !== undefined) {
+    const addresses = Array.isArray(atomicity.redis) ? atomicity.redis : [atomicity.redis]
+
+    // a lock is taken on `floor(n / 2) + 1` of them, so an even number tolerates no more
+    // losses than the odd number below it, and two tolerate fewer than one does
+    if (addresses.length % 2 === 0)
+      throw new Error(`'atomicity.redis' takes an odd number of addresses, ` +
+        `${addresses.length} given`)
+
+    dependency.variables.global.push({
+      name: 'TOA_ATOMICITY_REDIS',
+      value: addresses.join(' ')
+    })
+  }
+
+  if (atomicity?.interval !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_ATOMICITY_INTERVAL',
+      value: String(atomicity.interval)
+    })
+
+  const outbox = context.outbox
+
+  if (outbox?.interval !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_OUTBOX_INTERVAL',
+      value: String(outbox.interval)
+    })
+
+  if (outbox?.batch !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_OUTBOX_BATCH',
+      value: String(outbox.batch)
+    })
+
+  if (outbox?.retention !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_OUTBOX_RETENTION',
+      value: String(outbox.retention)
+    })
+
+  events(context, dependency)
 
   const credentials = context.registry?.credentials
 

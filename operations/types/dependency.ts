@@ -38,6 +38,8 @@ export interface Dependency {
   services?: Service[]
   variables?: Variables
   mounts?: Mounts
+  /** Event labels (`namespace.name.event`) this dependency consumes. */
+  events?: string[]
   /** Default probe for compositions and services without their own probe. `false` disables. */
   probe?: Probe | false
 }

@@ -4,6 +4,7 @@ import type { Span } from './exporters'
 import type { SpanContext } from './tracing'
 
 export class Console {
+  public readonly trace = this.channel('trace')
   public readonly debug = this.channel('debug')
   public readonly log = this.debug
   public readonly info = this.channel('info')
@@ -75,28 +76,19 @@ export class Console {
   }
 
   /**
-   * Writes a span as a TRACE log entry. Used by the console exporter.
+   * Writes an entry carrying fields a message alone cannot: a span rendered as a log line,
+   * for instance. The channels above are the ordinary way in; this is for whoever composes
+   * an entry of their own, which today is the console span exporter.
    */
-  public trace (span: Span): void {
-    if (LEVELS.trace < this.level)
+  public entry (channel: Channel, message: string, rest: Partial<Entry> = {}): void {
+    const level = LEVELS[channel]
+
+    if (level < this.level)
       return
 
-    const fields: Partial<Entry> = {
-      trace_id: span.traceId,
-      span_id: span.spanId,
-      duration: span.duration
-    }
+    const { attributes, ...fields } = rest
 
-    if (span.parentId !== undefined)
-      fields.parent_id = span.parentId
-
-    if (span.kind !== 'internal')
-      fields.kind = span.kind
-
-    if (span.status !== undefined)
-      fields.status = span.status
-
-    this.write(LEVELS.trace, 'TRACE', span.name, span.attributes, fields)
+    this.write(level, channel.toUpperCase() as Severity, message, attributes, fields)
   }
 
   public fork (ctx?: any): Console {
@@ -277,10 +269,8 @@ export interface SpanOptions {
   service?: string
 }
 
-export type Channel = 'debug' | 'info' | 'warn' | 'error'
-
-// `trace` is a level but not a channel: span entries are written with the TRACE severity
-export type LevelName = 'trace' | Channel
+export type Channel = 'trace' | 'debug' | 'info' | 'warn' | 'error'
+export type LevelName = Channel
 
 // https://opentelemetry.io/docs/concepts/signals/traces/#span-kind
 export type Kind = 'internal' | 'server' | 'client' | 'producer' | 'consumer'

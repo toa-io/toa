@@ -70,11 +70,19 @@ export class Gateway extends Connector {
     console.info('Gateway started')
   }
 
-  protected override dispose (): void {
+  /**
+   * Both of these reach into components, and a dependency is torn down only once this has
+   * returned — where `dispose` runs after every one of them already has. The throttling
+   * ticker firing in between calls an endpoint that has just been unbound, and reports the
+   * refusal as a failure to reconcile.
+   */
+  protected override async close (): Promise<void> {
     this.stopped = true
 
     this.tree.dispose()
+  }
 
+  protected override dispose (): void {
     console.info('Gateway is closed')
   }
 

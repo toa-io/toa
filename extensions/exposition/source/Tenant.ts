@@ -29,7 +29,13 @@ export class Tenant extends Connector {
     void this.announce()
   }
 
-  protected override dispose (): void {
+  /**
+   * Announcing is stopped where the teardown begins, not in `dispose`, which a connector
+   * runs after every one of its dependencies has gone. A component on its way out that
+   * announces itself once more has its routes held open by whoever is listening, and the
+   * requests that follow reach nothing.
+   */
+  protected override async close (): Promise<void> {
     this.stopped = true
   }
 
@@ -47,6 +53,11 @@ export class Tenant extends Connector {
   }
 
   private async expose (): Promise<void> {
+    // the ping subscription outlives the announcing loop, and answering one on the way out
+    // is the same announcement by another route
+    if (this.stopped)
+      return
+
     await this.broadcast.transmit('expose', this.branch)
   }
 }
