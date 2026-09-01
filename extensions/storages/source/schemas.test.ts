@@ -13,9 +13,6 @@ const ok = {
     provider: 's3',
     bucket: 'my-bucket'
   },
-  d: {
-    provider: 'mem'
-  },
   e: {
     provider: 'spaces',
     space: 'my-space',
@@ -44,12 +41,6 @@ const oh = [
     whatever: {
 
       provider: 's3'
-    }
-  },
-  {
-    whatever: {
-      provider: 'mem',
-      extra: true
     }
   },
   {

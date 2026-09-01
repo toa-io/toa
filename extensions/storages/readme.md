@@ -241,18 +241,6 @@ storages:
     directory: my-app-tmp
 ```
 
-### Memory
-
-In-memory non-persistent storage.
-
-Annotation value format is:
-
-```yaml
-storages:
-  photos@dev:
-    provider: mem
-```
-
 ## Deduplication
 
 BLOBs are stored in the underlying storage with their checksum as the key, ensuring that identical

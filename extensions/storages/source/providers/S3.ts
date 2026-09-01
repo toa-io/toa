@@ -15,7 +15,6 @@ import type { Secret, Secrets } from '../Secrets'
 export interface S3Options {
   bucket: string
   region?: string
-  prefix?: string
   endpoint?: string
 }
 

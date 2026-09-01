@@ -7,6 +7,5 @@ patternProperties:
       - $ref: cloudinary
       - $ref: fs
       - $ref: tmp
-      - $ref: mem
       - $ref: test
 additionalProperties: false

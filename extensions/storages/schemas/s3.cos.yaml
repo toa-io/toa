@@ -8,8 +8,6 @@ properties:
     maxLength: 63
   region:
     type: string
-  prefix:
-    type: string
   endpoint:
     type: string
     format: uri
