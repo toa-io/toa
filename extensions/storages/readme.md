@@ -131,6 +131,24 @@ and [`toa env`](/runtime/cli/readme.md#env)
 for local environment.
 `endpoint` parameter is optional.
 
+### DigitalOcean Spaces
+
+Annotation format is:
+
+```yaml
+storages:
+  photos:
+    provider: spaces
+    space: my-space
+    region: fra1
+```
+
+`region` is the datacenter slug, the endpoint is derived from it.
+
+Secrets `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` are required.
+Keys are created in the DigitalOcean control panel,
+under Spaces Object Storage, on the Access Keys tab.
+
 ### Cloudinary
 
 [Cloudinary](https://cloudinary.com) provider is used to store and transform media files.

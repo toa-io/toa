@@ -30,13 +30,15 @@ export class S3 extends Provider<S3Options> {
   private readonly bucket: string
   private readonly client: s3.S3Client
 
-  public constructor (options: S3Options, secrets?: S3Secrets) {
+  public constructor (options: S3Options, secrets?: S3Secrets,
+    config?: Partial<s3.S3ClientConfigType>) {
     super(options, secrets)
 
     this.bucket = options.bucket
 
     const s3Config: s3.S3ClientConfigType = {
-      retryMode: 'adaptive'
+      retryMode: 'adaptive',
+      ...config
     }
 
     if (options.endpoint !== undefined) {

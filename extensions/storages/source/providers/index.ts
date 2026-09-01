@@ -1,5 +1,6 @@
 import { FileSystem } from './FileSystem'
 import { S3 } from './S3'
+import { Spaces } from './Spaces'
 import { Cloudinary } from './Cloudinary'
 import { Temporary } from './Temporary'
 import { Test } from './Test'
@@ -7,6 +8,7 @@ import type { Constructor } from '../Provider'
 
 export const providers = {
   s3: S3,
+  spaces: Spaces,
   cloudinary: Cloudinary,
   fs: FileSystem,
   tmp: Temporary,
@@ -16,7 +18,8 @@ export const providers = {
 export type { Declaration } from './Declaration'
 
 export type { S3Options } from './S3'
+export type { SpacesOptions } from './Spaces'
 export type { CloudinaryOptions } from './Cloudinary'
 export type { FileSystemOptions } from './FileSystem'
 export type { TemporaryOptions } from './Temporary'
-export type { FileSystem, S3, Cloudinary, Temporary }
+export type { FileSystem, S3, Spaces, Cloudinary, Temporary }

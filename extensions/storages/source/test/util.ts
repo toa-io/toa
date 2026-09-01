@@ -4,6 +4,7 @@ import type { Secrets } from '../Secrets'
 import type {
   providers,
   S3Options,
+  SpacesOptions,
   CloudinaryOptions,
   FileSystemOptions,
   TemporaryOptions
@@ -30,6 +31,18 @@ export const suites = [
     secrets: {
       ACCESS_KEY_ID: 'developer',
       SECRET_ACCESS_KEY: 'secret'
+    }
+  },
+  {
+    run: process.env.RUN_SPACES === '1',
+    provider: 'spaces',
+    options: {
+      space: 'ants',
+      region: 'fra1'
+    },
+    secrets: {
+      ACCESS_KEY_ID: process.env.SPACES_KEY_ID ?? '',
+      SECRET_ACCESS_KEY: process.env.SPACES_ACCESS_KEY ?? ''
     }
   },
   {
@@ -90,6 +103,6 @@ export const suites = [
 export interface Suite {
   run: boolean
   provider: keyof typeof providers
-  options?: S3Options | CloudinaryOptions | FileSystemOptions | TemporaryOptions
+  options?: S3Options | SpacesOptions | CloudinaryOptions | FileSystemOptions | TemporaryOptions
   secrets?: Secrets
 }
