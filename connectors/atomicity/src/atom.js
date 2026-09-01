@@ -4,8 +4,8 @@ const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 
 /**
- * What one group of replicas decides together, in one place. `slots` is the first of those
- * decisions and will not be the last.
+ * What one group of replicas decides together, in one place: which of them owns what, and what
+ * they have spent between them.
  *
  * @implements {toa.core.atomicity.Atom}
  */
@@ -60,6 +60,27 @@ class Atom extends Connector {
     for (let slot = i; slot < total; slot += n) owned.push(slot)
 
     return owned
+  }
+
+  /**
+   * Debt the group has run up under each key, in milliseconds: every call adds its own deltas
+   * and reads back where the group stands, so a replica reports only what it has spent and
+   * still throttles on what all of them have.
+   *
+   * Keys belong to the group and are hash-tagged with it, so two groups metering the same name
+   * do not meet and a batch never goes cross-slot on a cluster.
+   *
+   * @param {string[]} keys
+   * @param {number[]} deltas
+   * @returns {Promise<number[]>}
+   */
+  async meter (keys, deltas) {
+    const meter = this.#connection.meter
+
+    if (meter === undefined)
+      throw new Error('Metering requires atomicity. Set TOA_ATOMICITY_REDIS.')
+
+    return meter.meter(keys.map((key) => `{${this.#name}}:meter:${key}`), deltas)
   }
 
   async open () {

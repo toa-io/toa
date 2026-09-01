@@ -3,6 +3,7 @@
 const { Redis, Cluster } = require('ioredis')
 const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
+const { Meter } = require('./meter')
 
 /**
  * One client per process, shared by every atom in it. Each keeps its own keys, so a composition
@@ -12,10 +13,18 @@ class Connection extends Connector {
   /** @type {import('ioredis').Redis} */
   redis
 
+  /** @type {Meter} */
+  meter
+
   async open () {
     const urls = resolve()
 
-    if (urls.length === 0) return
+    if (urls.length === 0) {
+      console.warn('Atomicity is not configured, so nothing is owned and nothing is metered. ' +
+        'Set TOA_ATOMICITY_REDIS.')
+
+      return
+    }
 
     /*
      * More than one address is a cluster, which is a matter of fitting into a deployment
@@ -39,11 +48,19 @@ class Connection extends Connector {
       console.warn('Atomicity is unreachable, so nothing is owned',
         { error: error.code ?? error.message }))
 
+    // one script per process, whatever the groups sharing this client meter under
+    this.meter = new Meter(this.redis)
+
     console.info('Atomicity connecting to redis', { nodes: urls.length })
   }
 
   async close () {
     this.redis?.disconnect()
+
+    // a closed connection holds nothing: it is opened again with whatever is configured then,
+    // and a client that has been disconnected would fail every command put to it
+    this.redis = undefined
+    this.meter = undefined
   }
 }
 
@@ -52,7 +69,9 @@ const OPTIONS = { enableReadyCheck: true }
 function resolve () {
   const value = process.env[VARIABLE]
 
-  if (value === undefined || value === '') return []
+  // an empty value is atomicity turned off, where an absent one in development is the
+  // local Redis — as everything else in development resolves
+  if (value === undefined) return process.env.TOA_DEV === '1' ? [DEV] : []
 
   return value.split(' ').filter((url) => url !== '')
 }
@@ -66,6 +85,7 @@ const connection = () => (instance ??= new Connection())
 const reset = () => (instance = undefined)
 
 const VARIABLE = 'TOA_ATOMICITY_REDIS'
+const DEV = 'redis://localhost'
 
 exports.Connection = Connection
 exports.connection = connection

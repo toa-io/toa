@@ -21,6 +21,15 @@ declare namespace toa.core {
        * claim that cannot be supported is a different guarantee, not a degraded one.
        */
       slots (total: number): number[] | null
+
+      /**
+       * Debt the group has run up under each key, in milliseconds. Every call adds its own
+       * deltas and reads back where the group stands, so a replica reports what it alone has
+       * spent and still decides on what all of them have.
+       *
+       * Rejects where there is nothing to arbitrate through.
+       */
+      meter (keys: string[], deltas: number[]): Promise<number[]>
     }
 
     interface Factory {
