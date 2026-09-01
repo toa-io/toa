@@ -28,7 +28,8 @@ export class Factory implements extensions.Factory {
     const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
     const hash = createHash('sha256').update(JSON.stringify(node)).digest('hex')
 
-    const branch: Branch = {
+    // no timestamp: the tenant stamps each announcement with its own start time
+    const branch: Omit<Branch, 'timestamp'> = {
       namespace: locator.namespace,
       component: locator.name,
       isolated: locator.namespace === 'identity',

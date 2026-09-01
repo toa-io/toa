@@ -4,10 +4,11 @@ import { console } from 'openspan'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP'
 import { rethrow } from './exceptions'
+import { decide } from './Branch'
 import type { Interception } from './Interception'
 import type { Method, Node, Parameter, Tree, Match } from './RTD'
 import type { Label } from './discovery'
-import type { Branch } from './Branch'
+import type { Branch, Exposed } from './Branch'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast
@@ -231,13 +232,24 @@ export class Gateway extends Connector {
 
     const exposed = this.branches.get(id)
 
-    // rebuilding an identical branch would only tear down its live endpoints
-    if (exposed?.version === branch.version) {
-      this.tree.refresh(exposed.nodes)
-      console.debug('Branch refreshed', attributes)
+    if (exposed !== undefined)
+      switch (decide(exposed, branch)) {
+        // rebuilding an identical branch would only tear down its live endpoints
+        case 'refresh':
+          this.tree.refresh(exposed.nodes)
+          console.debug('Branch refreshed', attributes)
 
-      return
-    }
+          return
+
+        case 'superseded':
+          console.debug('Branch superseded', {
+            ...attributes,
+            timestamp: branch.timestamp,
+            exposed: exposed.timestamp
+          })
+
+          return
+      }
 
     let nodes: Node[]
 
@@ -251,7 +263,7 @@ export class Gateway extends Connector {
       return
     }
 
-    this.branches.set(id, { version: branch.version, nodes })
+    this.branches.set(id, { version: branch.version, timestamp: branch.timestamp, nodes })
 
     if (this.lastMerge !== 0)
       this.widestGap = Math.max(this.widestGap, Date.now() - this.lastMerge)
@@ -265,11 +277,6 @@ export class Gateway extends Connector {
 }
 
 export type Broadcast = bindings.Broadcast<Label>
-
-interface Exposed {
-  version: string
-  nodes: Node[]
-}
 
 const SETTLE_QUIET_MIN = 500
 const SETTLE_QUIET_MAX = 10_000
