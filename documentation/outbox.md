@@ -250,13 +250,13 @@ already tearing down — which synchronous publication had made unreachable. Two
 runtime were not ready for it, and both are fixed:
 
 A receiver turns a delivery into a call to an operation of its own component, served by that
-component's producers. Those producers shared a broker communication with the receiver, and
-sealing one seals every consumer on it at once — so a receiver sealed the request serving that its
-own drain was waiting for, and shutdown deadlocked. Receivers now pool apart from producers: they
-still stop consuming together, but neither seals what the other needs.
+component's producers. Those producers were siblings of the receiver under the composition and
+torn down alongside it, so a receiver still draining a delivery was left calling something already
+gone — the loop binding had dropped its endpoint, and the broker's had stopped consuming. A
+receiver is now torn down before them.
 
-The producers were also siblings of the receiver under the composition, torn down alongside it.
-A receiver is now torn down before them, so a delivery still draining has something to call.
+That ordering needs one producer at a time: `Connector.depends` given an array links the group it
+makes rather than its members, and it is the members whose teardown has to wait.
 
 ## Why it is built this way
 

@@ -52,8 +52,10 @@ async function composition (paths, options) {
          * already gone. They are siblings under the composition otherwise, so a receiver
          * still draining a delivery would be left calling something already torn down.
          */
-        if (serving.length > 0)
-          for (const receiver of receivers[i]) receiver.depends(serving)
+        // one at a time: `depends` given an array links the group it makes rather than its
+        // members, and it is the members whose teardown has to wait for this one
+        for (const receiver of receivers[i])
+          for (const producer of serving) receiver.depends(producer)
 
         if (settle === undefined)
           continue

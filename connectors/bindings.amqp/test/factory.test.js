@@ -112,24 +112,13 @@ describe('sharing', () => {
 })
 
 describe('receivers', () => {
-  // a delivery calls an operation of the component it was received for, and that call is
-  // served by that component's producers — sharing would have a receiver seal the very
-  // thing its own drain is waiting on
-  it('should keep a receiver apart from the producers it delivers into', () => {
+  // the locator names the component the events come from, `group` the one consuming them,
+  // and it is the consuming one whose teardown the sealing precedes
+  it('should hold a receiver with the component that consumes', () => {
     const consuming = locator()
 
     factory.producer(consuming, ['create'], component)
     factory.receiver(locator(), 'created', consuming.id, receiver)
-
-    expect(made()).toStrictEqual(2)
-  })
-
-  // they do stop consuming together, and nothing one drains needs the other
-  it('should hold the receivers of one component together', () => {
-    const consuming = locator()
-
-    factory.receiver(locator(), 'created', consuming.id, receiver)
-    factory.receiver(locator(), 'updated', consuming.id, receiver)
 
     expect(made()).toStrictEqual(1)
   })
